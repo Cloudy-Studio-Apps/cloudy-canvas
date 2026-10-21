@@ -68,6 +68,15 @@ export const DB_HEADER_COLORS = [
   { name: "Seal", value: "#e6e8eb" },
 ] as const;
 
+/** Outline of ER entities (rectangles), as in the classic Chen drawings. */
+export const ER_ENTITY_COLOR = "#e0484d";
+/** Outline of ER relations (diamonds). */
+export const ER_RELATION_COLOR = "#3a83c9";
+/** Outline of ER attributes (ellipses). */
+export const ER_ATTRIBUTE_COLOR = "#2a2f37";
+/** Fill of every ER shape. */
+export const ER_FILL_COLOR = "#ffffff";
+
 /** Body of a database table. */
 export const DB_BODY_COLOR = "#ffffff";
 

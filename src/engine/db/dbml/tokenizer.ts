@@ -2,8 +2,8 @@ import { DbmlSyntaxError } from "./dbml-error";
 import type { Token, TokenKind } from "./tokenizer.types";
 
 const SYMBOLS = new Set(["{", "}", "[", "]", "(", ")", ":", ",", ".", ">", "<", "-", "~"]);
-const IDENT_START = /[A-Za-z_]/;
-const IDENT_PART = /[A-Za-z0-9_]/;
+const IDENT_START = /[\p{L}_]/u;
+const IDENT_PART = /[\p{L}\p{N}_]/u;
 const DIGIT = /[0-9]/;
 const HEX = /[0-9A-Fa-f]/;
 

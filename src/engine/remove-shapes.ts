@@ -1,12 +1,14 @@
 import { connectorEndpoints } from "./connectors";
 import { pruneRefs } from "./db";
+import { pruneEr } from "./er";
 import { isConnector, type BoardDocument, type ConnectorEnd } from "./document";
 import type { Point } from "./geometry.types";
 import type { Scene } from "./scene";
 
 /**
  * Removes shapes as one undo step. Connectors attached to a removed shape keep their end where it
- * was (now free), and database relations pointing at removed tables are cleared.
+ * was (now free), database relations pointing at removed tables are cleared, and ER attributes and
+ * participants of removed shapes go with them.
  */
 export function removeShapes(doc: BoardDocument, scene: Scene, ids: Iterable<string>): void {
   const removing = new Set(ids);
@@ -24,6 +26,7 @@ export function removeShapes(doc: BoardDocument, scene: Scene, ids: Iterable<str
     }
     doc.remove(removing);
     pruneRefs(doc);
+    pruneEr(doc);
   });
 }
 

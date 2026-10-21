@@ -1,5 +1,6 @@
 import { BoardToolbar } from "./components/board-toolbar";
 import { DbPanel } from "./components/db-panel";
+import { ErPanel } from "./components/er-panel";
 import { BoardTopBar } from "./components/board-top-bar";
 import { ToolOptions } from "./components/tool-options/tool-options";
 import { ZoomControls } from "./components/zoom-controls";
@@ -17,6 +18,7 @@ export function BoardChrome() {
       </div>
       <div className="absolute top-3 right-3 bottom-16 flex flex-col">
         <DbPanel />
+        <ErPanel />
       </div>
       <div className="absolute right-3 bottom-4">
         <ZoomControls />

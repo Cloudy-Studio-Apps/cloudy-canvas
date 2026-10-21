@@ -8,6 +8,3 @@ export interface DbmlEditorProps {
   label: string;
   hint: string;
 }
-
-export type DbmlStatus =
-  Pick<Extract<DbApplyResult, { ok: false }>, "error"> | { warnings: string[] };

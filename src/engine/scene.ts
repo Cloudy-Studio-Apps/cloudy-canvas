@@ -1,5 +1,6 @@
 import { draftPath, resolveEnumLinks, resolveRelations, type EnumLink, type Relation } from "./db";
 import { resolveConnector } from "./connectors";
+import { resolveErLinks, type ErLink } from "./er";
 import {
   compareZOrder,
   isConnector,
@@ -33,6 +34,7 @@ export class Scene {
   private hoverId: string | null = null;
   private relationList: Relation[] = [];
   private enumLinkList: EnumLink[] = [];
+  private erLinkList: ErLink[] = [];
   marquee: Rect | null = null;
   /** Relation being dragged out of a column handle. */
   draftRelation: DraftRelation | null = null;
@@ -65,6 +67,7 @@ export class Scene {
     this.byId = new Map(this.list.map((shape) => [shape.id, shape]));
     this.relationList = resolveRelations(this.list);
     this.enumLinkList = resolveEnumLinks(this.list);
+    this.erLinkList = resolveErLinks(this.list);
   }
 
   /** A shape as the scene sees it (connectors resolved). */
@@ -127,6 +130,7 @@ export class Scene {
     return {
       relations: this.relationList,
       enumLinks: this.enumLinkList,
+      erLinks: this.erLinkList,
       highlighted: this.selection.ids,
       draft: draft && isDbTable(from) ? draftPath(from, draft.row, draft.end) : null,
     };

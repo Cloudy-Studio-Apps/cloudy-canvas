@@ -25,3 +25,8 @@ export const SECTION_FONT_SIZE = 14;
 export const SECTION_TITLE_H = 28;
 export const SECTION_DEFAULT_W = 640;
 export const SECTION_DEFAULT_H = 400;
+
+export const ER_FONT_SIZE = 14;
+export const ER_STROKE_WIDTH = 1.5;
+/** Gap between the two outlines of weak entities, identifying relations and multivalued attributes. */
+export const ER_DOUBLE_GAP = 4;

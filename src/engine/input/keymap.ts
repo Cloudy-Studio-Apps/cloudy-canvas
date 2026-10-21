@@ -35,6 +35,7 @@ export const KEYMAP: Record<CommandId, readonly Shortcut[]> = {
   "tool.connector": [{ key: "x" }],
   "tool.section": [{ key: "s", shift: true }],
   "tool.db": [{ key: "d" }],
+  "tool.er": [{ key: "e" }],
 };
 
 const ENTRIES = Object.entries(KEYMAP) as [CommandId, readonly Shortcut[]][];

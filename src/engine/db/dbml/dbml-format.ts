@@ -1,4 +1,4 @@
-const PLAIN_NAME = /^[A-Za-z_][A-Za-z0-9_]*$/;
+const PLAIN_NAME = /^[\p{L}_][\p{L}\p{N}_]*$/u;
 const PLAIN_TYPE = /^[A-Za-z_][A-Za-z0-9_.]*(\([^()]*\))?(\[\])?$/;
 
 /** A table or column name, double-quoted when it isn't a plain identifier. */

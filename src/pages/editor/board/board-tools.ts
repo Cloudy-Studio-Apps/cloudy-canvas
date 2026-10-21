@@ -4,6 +4,7 @@ import {
   Hand,
   Highlighter,
   MousePointer2,
+  Network,
   Shapes,
   Spline,
   StickyNote,
@@ -26,5 +27,8 @@ export const BOARD_TOOL_GROUPS: BoardToolItem[][] = [
     { id: "connector", label: "Connector", icon: Spline },
     { id: "section", label: "Section", icon: Frame },
   ],
-  [{ id: "db", label: "Database table", icon: Database }],
+  [
+    { id: "db", label: "Database table", icon: Database },
+    { id: "er", label: "ER entity", icon: Network },
+  ],
 ];

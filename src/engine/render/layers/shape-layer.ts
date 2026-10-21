@@ -2,8 +2,7 @@ import { Container } from "pixi.js";
 
 import { zOrderKey, type Shape } from "../../document";
 import { ShapeView } from "../shapes/shape-view";
-
-const MAX_TEXT_RESOLUTION = 8;
+import { textResolution } from "../text-resolution";
 
 /** Keeps one ShapeView per shape, in drawing order (sections behind, then fractional index). */
 export class ShapeLayer extends Container<ShapeView> {
@@ -38,8 +37,7 @@ export class ShapeLayer extends Container<ShapeView> {
 
   /** Re-rasterizes text for the current zoom so it stays crisp. */
   setTextZoom(zoom: number): void {
-    const dpr = window.devicePixelRatio || 1;
-    const resolution = Math.min(dpr * Math.max(1, Math.ceil(zoom * 2) / 2), MAX_TEXT_RESOLUTION);
+    const resolution = textResolution(zoom);
     if (resolution === this.textResolution) return;
     this.textResolution = resolution;
     for (const view of this.views.values()) view.setTextResolution(resolution);

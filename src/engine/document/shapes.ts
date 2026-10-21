@@ -4,6 +4,7 @@ import type {
   DbEnumShape,
   DbTableShape,
   EditableShape,
+  ErShape,
   GeoShape,
   SectionShape,
   Shape,
@@ -36,7 +37,8 @@ export function isConnectable(shape: Shape | undefined): shape is ConnectableSha
     shape?.type === "sticky" ||
     shape?.type === "text" ||
     shape?.type === "db-table" ||
-    shape?.type === "db-enum"
+    shape?.type === "db-enum" ||
+    isErShape(shape)
   );
 }
 
@@ -46,4 +48,10 @@ export function isDbEnum(shape: Shape | undefined): shape is DbEnumShape {
 
 export function isSection(shape: Shape | undefined): shape is SectionShape {
   return shape?.type === "section";
+}
+
+export function isErShape(shape: Shape | undefined): shape is ErShape {
+  return (
+    shape?.type === "er-entity" || shape?.type === "er-relation" || shape?.type === "er-attribute"
+  );
 }

@@ -1,5 +1,6 @@
 import type { Camera } from "../camera";
 import type { DbSchema, HandleHit } from "../db";
+import type { ErModel } from "../er";
 import type {
   ArrowHead,
   BoardDocument,
@@ -47,13 +48,17 @@ export interface ToolOptions {
 export interface ToolContext {
   readonly doc: BoardDocument;
   readonly db: DbSchema;
+  readonly er: ErModel;
   readonly camera: Camera;
   getOptions(): ToolOptions;
   getSelection(): ReadonlySet<string>;
   setSelection(ids: Iterable<string>): void;
   setTool(tool: ToolId): void;
   shapeAt(world: Point): Shape | undefined;
-  /** The ids plus everything inside any of them that is a section (nested sections included). */
+  /**
+   * The ids plus what moves with them: everything inside a section (nested sections included) and
+   * the attributes of ER shapes.
+   */
   withSectionMembers(ids: Iterable<string>): Set<string>;
   /** A shape as the scene sees it (connectors resolved). */
   getShape(id: string): Shape | undefined;

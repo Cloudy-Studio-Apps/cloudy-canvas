@@ -62,13 +62,26 @@ Path aliases: `@app`, `@pages`, `@engine`, `@core`, `@ui`, `@platform`, `@stores
   - `DbSchema` (`engine.db`) is a facade and the only place that edits the schema. The logic lives in `table-edits.ts`, `enum-edits.ts` (an enum rename also retypes its columns) and `schema-dbml.ts`, which has `applyTableDbml` / `applyEnumDbml` (one slice), `applySchemaDbml` (the whole schema) and `importSchemaDbml` (merge).
   - DBML is a generated view (`db/dbml/`: a hand-written parser and serializer for a subset). Parsed text goes through `reconcile.ts` and `reconcile-*.ts`, which match tables, columns, enums, values and notes by name, then by position for renames, so ids survive. Tables that refs name but nothing defines are created by `add-missing-tables.ts` on import, paste and blur (not while typing, so half-typed names don't become tables). Older boards get new fields filled by `document/fill-shape-defaults.ts`.
   - Relations are resolved in `Scene` and drawn by `render/layers/relation-layer.ts` under the shapes. New relations are dragged from column handles by `tools/connect-gesture.ts`, with `input/edge-auto-pan.ts` panning when the pointer nears the edge.
+- **ER diagrams** (`er/`, the `er` tool). These are Chen-notation entity–relationship diagrams written as text. They use three shape types, all sized from their name:
+  - `er-entity`: a rectangle, doubled when `weak`.
+  - `er-relation`: a diamond, doubled when `identifying`. Its `participants` point at entities **by id** with a `(min,max)` cardinality and an optional role.
+  - `er-attribute`: an ellipse. `ownerId` is an entity, a relation or a composite attribute's parent. It has `key` (`pk`/`partial`), `multivalued`, `derived`, and an `order` that keeps the text order.
+  - Lines aren't shapes. `er-links.ts` derives them from participants and owners. `Scene` resolves them, and `render/layers/er-link-layer.ts` draws them under the shapes with the cardinality labels. The relation drawer shows the derived `1:N`/`N:M` ratio (`cardinality-ratio.ts`).
+  - `ErModel` (`engine.er`) is the facade. The text (`er/lang/`: `Entity X [weak] { attr [pk, multi, derived, partial] … }`, `Relation r [identifying] { Entity (0,n) as role … }`) is a generated view parsed with the DBML tokenizer. `reconcile-er.ts` matches entities, relations and attributes by name, then position, so ids and positions survive.
+  - `er/layout/` is deterministic auto-layout:
+    - `entity-grid.ts` puts entities in grid cells next to the entities they relate to.
+    - `place-relations.ts` puts diamonds between their entities.
+    - `place-attributes.ts`/`fan-out.ts` fan attributes over the free directions, avoiding boxes and lines.
+    - `resolve-overlaps.ts` pushes leftover overlaps apart.
+  - `applyErPlan` lays out an all-new diagram fresh and places only the new shapes around an existing one. `relayout()` redoes everything as one undo step.
+  - Dragging or deleting an ER shape takes its attributes along (`withErMembers`), and `pruneEr` removes orphaned attributes and participants.
 - **UI state** is exposed as an immutable `EngineState` snapshot (`utils/store.ts`, shallow-compared), via `engine.subscribe` / `engine.getState`.
 
 ## React host (`src/pages/editor/board/`)
 
 - `useCanvasEngine` creates and mounts the engine into a container div. The canvas theme is resolved from CSS tokens via `readCanvasTheme()`.
 - The engine is provided through `EngineContext`. Chrome components use `useEngine()` and `useEngineState(selector)` (from `engine/engine-context.ts`), selecting primitives or stable references so each one re-renders only for its slice.
-- **Never put canvas shapes in React state.** React only hosts the canvas and draws the UI around it. The DB side panel (`components/db-panel/`) reads tables through `useDbQuery` / `useDbTable` (read-through caches keyed on `engine.db.getVersion()`).
+- **Never put canvas shapes in React state.** React only hosts the canvas and draws the UI around it. Text views of the document (DBML, ER) share `components/source-editor/`, which applies text while typing and shows errors. The ER panel (`components/er-panel/`) opens when an ER shape is selected. The DB side panel (`components/db-panel/`) reads tables through `useDbQuery` / `useDbTable` (read-through caches keyed on `engine.db.getVersion()`).
 - **Files:** `file/` loads the board's `BoardDocument` from `Storage` (or starts an empty one for a new id) and saves it. A `.cboard` file is the `CCBD` magic, a u32 format version and a Yjs update (`core/board-file.ts`). `TauriStorage` keeps a recent-files index (id → path) in the app data folder. Ctrl+S / Ctrl+Shift+S are engine commands that call the host's `setHostActions`.
 
 ## Code conventions

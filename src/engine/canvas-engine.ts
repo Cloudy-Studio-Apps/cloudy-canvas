@@ -2,12 +2,14 @@ import { Camera } from "./camera";
 import { createCommands } from "./commands";
 import type { CommandHandler, CommandId } from "./commands.types";
 import { DbSchema } from "./db";
+import { ErModel, withErMembers } from "./er";
 import { findInteraction } from "./find-interaction";
 import { hitTestShape, shapeBounds } from "./hit-test";
 import {
   BoardDocument,
   isConnectable,
   isEditableShape,
+  isErShape,
   isSection,
   type DocumentChange,
   type SectionShape,
@@ -48,6 +50,8 @@ export class CanvasEngine {
   readonly doc: BoardDocument;
   /** The board's database schema (all `db-table` shapes), for tools and the host's table editor. */
   readonly db: DbSchema;
+  /** The board's ER diagram (all `er-*` shapes), for the ER tool and the host's ER text editor. */
+  readonly er: ErModel;
   readonly commands: Record<CommandId, CommandHandler>;
   private readonly ownsDocument: boolean;
   private readonly camera = new Camera();
@@ -81,6 +85,7 @@ export class CanvasEngine {
     this.doc = document ?? new BoardDocument();
     this.ownsDocument = !document;
     this.db = new DbSchema(this.doc);
+    this.er = new ErModel(this.doc);
     this.renderer = new Renderer(theme);
     this.scene = new Scene(this.doc);
     this.tools = createTools(this.createToolContext());
@@ -132,6 +137,7 @@ export class CanvasEngine {
     this.disposables.dispose();
     this.textEditor?.destroy();
     this.db.destroy();
+    this.er.destroy();
     this.store.destroy();
     this.contentEmitter.clear();
     // If mount() is still awaiting init, it destroys the renderer itself once init resolves.
@@ -208,8 +214,8 @@ export class CanvasEngine {
   /** Returns `false` when nothing was selected. */
   deleteSelection(): boolean {
     if (this.scene.selection.size === 0) return false;
-    // Deleting a section deletes what's inside it, like FigJam.
-    const ids = withSectionMembers(this.scene.selection.ids, this.scene.shapes);
+    // Deleting a section deletes what's inside it, like FigJam; an ER shape takes its attributes.
+    const ids = this.withMembers(this.scene.selection.ids);
     removeShapes(this.doc, this.scene, ids);
     this.setSelection([]);
     return true;
@@ -273,6 +279,7 @@ export class CanvasEngine {
     return {
       doc: this.doc,
       db: this.db,
+      er: this.er,
       camera: this.camera,
       getOptions: () => this.options,
       getSelection: () => this.scene.selection.ids,
@@ -294,7 +301,7 @@ export class CanvasEngine {
         this.requestRender();
       },
       getShape: (id) => this.scene.get(id),
-      withSectionMembers: (ids) => withSectionMembers(ids, this.scene.shapes),
+      withSectionMembers: (ids) => this.withMembers(ids),
       connectableAt: (world, exclude) => this.connectableAt(world, exclude),
       getHover: () => this.scene.hoveredId,
       interactionAt: (world) => findInteraction(this.doc, this.scene, world, this.camera.zoom),
@@ -411,6 +418,11 @@ export class CanvasEngine {
 
   // ── State helpers ─────────────────────────────────────────────────────
 
+  /** The ids plus what moves and deletes with them: section contents and ER attributes. */
+  private withMembers(ids: Iterable<string>): Set<string> {
+    return withErMembers(withSectionMembers(ids, this.scene.shapes), this.scene.shapes);
+  }
+
   private shapeAt(world: Point): Shape | undefined {
     return this.scene.shapeAt(world, HIT_TOLERANCE_PX / this.camera.zoom);
   }
@@ -459,6 +471,7 @@ export class CanvasEngine {
       selectionCount: this.scene.selection.size,
       selectedTableId: this.selectedOfType("db-table"),
       selectedEnumId: this.selectedOfType("db-enum"),
+      erSelected: [...this.scene.selection.ids].some((id) => isErShape(this.doc.get(id))),
       selectionTypes: this.selectionTypes(),
       canUndo: this.doc.canUndo(),
       canRedo: this.doc.canRedo(),

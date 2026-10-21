@@ -5,6 +5,7 @@ import type { Shape } from "../document";
 import type { CanvasTheme } from "./canvas-theme.types";
 import { DraftRelationLayer } from "./layers/draft-relation-layer";
 import { DraftStrokeLayer } from "./layers/draft-stroke-layer";
+import { ErLinkLayer } from "./layers/er-link-layer";
 import { GridLayer } from "./layers/grid-layer";
 import { OverlayLayer } from "./layers/overlay-layer";
 import { RelationLayer } from "./layers/relation-layer";
@@ -24,6 +25,7 @@ export class Renderer {
   readonly draftStroke = new DraftStrokeLayer();
   private readonly grid = new GridLayer();
   private readonly relations = new RelationLayer();
+  private readonly erLinks = new ErLinkLayer();
   private readonly draftRelation = new DraftRelationLayer();
   private readonly world = new Container();
   private readonly overlay = new OverlayLayer();
@@ -44,6 +46,7 @@ export class Renderer {
     this.world.addChild(
       this.sections,
       this.relations,
+      this.erLinks,
       this.shapes,
       this.draftStroke,
       this.draftRelation,
@@ -77,6 +80,7 @@ export class Renderer {
   setTextZoom(zoom: number): void {
     this.sections.setTextZoom(zoom);
     this.shapes.setTextZoom(zoom);
+    this.erLinks.setTextZoom(zoom);
   }
 
   /** Hides a shape's canvas text while the DOM text editor shows it. */
@@ -90,6 +94,7 @@ export class Renderer {
     this.world.position.set(camera.x * camera.zoom, camera.y * camera.zoom);
     this.grid.draw(camera, this.theme.grid);
     this.relations.draw(relations, camera.zoom, this.theme.relation, this.theme.selection);
+    this.erLinks.draw(relations.erLinks, relations.highlighted, this.theme.selection);
     this.draftRelation.draw(relations.draft, camera.zoom, this.theme.selection);
     this.overlay.draw(camera, overlay, this.theme.selection);
     this.app.render();

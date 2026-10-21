@@ -1,5 +1,6 @@
 import { ConnectorTool } from "./connector-tool";
 import { DbTool } from "./db-tool";
+import { ErTool } from "./er-tool";
 import { HandTool } from "./hand-tool";
 import { MarkerTool } from "./marker-tool";
 import { SelectTool } from "./select-tool";
@@ -21,5 +22,6 @@ export function createTools(ctx: ToolContext): Record<ToolId, Tool> {
     connector: new ConnectorTool(ctx),
     section: new SectionTool(ctx),
     db: new DbTool(ctx),
+    er: new ErTool(ctx),
   };
 }

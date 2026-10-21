@@ -2,6 +2,9 @@ import type { Shape, ShapeType } from "../../document";
 import { drawConnector } from "./draw-connector";
 import { drawDbEnum } from "./draw-db-enum";
 import { drawDbTable } from "./draw-db-table";
+import { drawErAttribute } from "./draw-er-attribute";
+import { drawErEntity } from "./draw-er-entity";
+import { drawErRelation } from "./draw-er-relation";
 import { drawGeo } from "./draw-geo";
 import { drawSection } from "./draw-section";
 import { drawSticky } from "./draw-sticky";
@@ -20,6 +23,9 @@ const DRAWERS: { [K in ShapeType]: ShapeDrawer<Extract<Shape, { type: K }>> } = 
   geo: drawGeo,
   connector: drawConnector,
   section: drawSection,
+  "er-entity": drawErEntity,
+  "er-relation": drawErRelation,
+  "er-attribute": drawErAttribute,
 };
 
 export function drawShape(view: ShapeView, shape: Shape): void {

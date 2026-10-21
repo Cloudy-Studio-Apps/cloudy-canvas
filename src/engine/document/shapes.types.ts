@@ -1,5 +1,15 @@
 export type ShapeType =
-  "sticky" | "text" | "stroke" | "db-table" | "db-enum" | "geo" | "connector" | "section";
+  | "sticky"
+  | "text"
+  | "stroke"
+  | "db-table"
+  | "db-enum"
+  | "geo"
+  | "connector"
+  | "section"
+  | "er-entity"
+  | "er-relation"
+  | "er-attribute";
 
 export interface ShapeBase {
   id: string;
@@ -168,6 +178,52 @@ export interface SectionShape extends ShapeBase {
   color: string;
 }
 
+/** An ER (Chen notation) entity: a rectangle, doubled when weak. Its size comes from the name. */
+export interface ErEntityShape extends ShapeBase {
+  type: "er-entity";
+  name: string;
+  weak: boolean;
+  color: string;
+}
+
+/** One entity taking part in an ER relation, by id so renames and moves never break it. */
+export interface ErParticipant {
+  id: string;
+  entityId: string;
+  /** Cardinality, e.g. `0` and `n` for `(0,n)`; both empty when none was given. */
+  min: string;
+  max: string;
+  /** Role name for unary relations (`Empleado (0,1) as jefe`), or empty. */
+  role: string;
+}
+
+/** An ER relation: a diamond (doubled when identifying) linked to its participants. */
+export interface ErRelationShape extends ShapeBase {
+  type: "er-relation";
+  name: string;
+  identifying: boolean;
+  color: string;
+  participants: ErParticipant[];
+}
+
+export type ErAttributeKey = "none" | "pk" | "partial";
+
+/** An ER attribute: an ellipse linked to its owner (an entity, a relation or a composite attribute). */
+export interface ErAttributeShape extends ShapeBase {
+  type: "er-attribute";
+  ownerId: string;
+  name: string;
+  key: ErAttributeKey;
+  /** Drawn as a double ellipse. */
+  multivalued: boolean;
+  /** Drawn dashed. */
+  derived: boolean;
+  /** Position among the owner's attributes, so the text keeps their order. */
+  order: number;
+}
+
+export type ErShape = ErEntityShape | ErRelationShape | ErAttributeShape;
+
 /** Looks of a connector, shared by the connector tool options and new connectors. */
 export interface ConnectorStyleOptions {
   style: ConnectorStyle;
@@ -184,7 +240,10 @@ export type Shape =
   | DbEnumShape
   | GeoShape
   | ConnectorShape
-  | SectionShape;
+  | SectionShape
+  | ErEntityShape
+  | ErRelationShape
+  | ErAttributeShape;
 
 /** Fields that can be changed after creation (id and type are immutable). */
 export type ShapePatch = Partial<Omit<StickyShape, "id" | "type">> &
@@ -194,10 +253,21 @@ export type ShapePatch = Partial<Omit<StickyShape, "id" | "type">> &
   Partial<Omit<DbEnumShape, "id" | "type">> &
   Partial<Omit<GeoShape, "id" | "type">> &
   Partial<Omit<ConnectorShape, "id" | "type">> &
-  Partial<Omit<SectionShape, "id" | "type">>;
+  Partial<Omit<SectionShape, "id" | "type">> &
+  Partial<Omit<ErEntityShape, "id" | "type">> &
+  Partial<Omit<ErRelationShape, "id" | "type">> &
+  Partial<Omit<ErAttributeShape, "id" | "type">>;
 
 /** Shapes whose text can be edited in place. */
 export type EditableShape = StickyShape | TextShape | GeoShape | SectionShape;
 
 /** Shapes connectors can attach to. */
-export type ConnectableShape = StickyShape | TextShape | DbTableShape | DbEnumShape | GeoShape;
+export type ConnectableShape =
+  | StickyShape
+  | TextShape
+  | DbTableShape
+  | DbEnumShape
+  | GeoShape
+  | ErEntityShape
+  | ErRelationShape
+  | ErAttributeShape;
