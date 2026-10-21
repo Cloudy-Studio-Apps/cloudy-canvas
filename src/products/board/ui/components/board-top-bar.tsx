@@ -7,6 +7,7 @@ import { useAgentServerStore } from "@shared/stores/agent-server-store";
 import { SealLogo } from "@shared/ui/brand/seal-logo";
 import { Badge } from "@shared/ui/components/ui/badge";
 import { useBoardFile } from "../file";
+import { SaveIndicator } from "./save-indicator";
 import { SectionsMenu } from "./sections-menu";
 import { useBoardPanelStore } from "../stores/board-panel-store";
 
@@ -28,22 +29,20 @@ export function BoardTopBar() {
       <h1 className="ml-1 max-w-56 truncate text-sm font-medium" title={file.name}>
         {file.name}
       </h1>
-      {file.dirty && (
-        <span
-          className="text-muted-foreground"
-          title="Unsaved changes"
-          aria-label="Unsaved changes"
-        >
-          •
-        </span>
-      )}
+      <SaveIndicator />
       <Badge variant="board" className="ml-1">
         Board
       </Badge>
       <PanelDivider className="mx-1.5" />
       <HistoryControls />
       <ToolButton
-        label={file.status === "error" ? "Couldn't save. Try again" : "Save"}
+        label={
+          file.status === "error"
+            ? "Couldn't save. Try again"
+            : file.draft
+              ? "Save to a file"
+              : "Save"
+        }
         shortcut={engine.keymap.label("save")}
         side="bottom"
         disabled={file.status === "saving"}

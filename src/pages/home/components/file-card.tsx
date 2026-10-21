@@ -62,7 +62,11 @@ export function FileCard({ file, missing, onOpen }: FileCardProps) {
             <time dateTime={file.updatedAt}>{formatRelativeTime(file.updatedAt)}</time>
           </p>
         </div>
-        {missing && <Badge variant="destructive">Missing</Badge>}
+        {missing ? (
+          <Badge variant="destructive">Missing</Badge>
+        ) : (
+          file.draft && <Badge variant="outline">Draft</Badge>
+        )}
       </div>
     </button>
   );

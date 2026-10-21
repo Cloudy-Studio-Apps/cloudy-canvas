@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Copy, ExternalLink, FolderOpen, FolderSearch, X } from "lucide-react";
+import { Copy, ExternalLink, FolderOpen, FolderSearch, Trash2, X } from "lucide-react";
 
 import { clipboard, revealFile } from "@platform";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
@@ -24,8 +24,8 @@ export function useFileActions({ file, missing, onOpen }: FileActionsOptions): F
     };
     const remove: FileAction = {
       id: "forget",
-      label: "Remove from recents",
-      icon: X,
+      label: file.draft ? "Delete draft" : "Remove from recents",
+      icon: file.draft ? Trash2 : X,
       destructive: true,
       run: () => void forget(file.id),
     };

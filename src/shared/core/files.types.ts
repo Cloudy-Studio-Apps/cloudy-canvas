@@ -11,4 +11,6 @@ export interface FileInfo {
   /** ISO 8601 timestamp */
   updatedAt: string;
   formatVersion: number;
+  /** Autosaved in the app data folder because no location was chosen yet (a board never saved). */
+  draft?: boolean;
 }

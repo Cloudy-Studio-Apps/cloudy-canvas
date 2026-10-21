@@ -77,6 +77,7 @@ export function isFileInfo(value: unknown): value is FileInfo {
     typeof file.path === "string" &&
     typeof file.createdAt === "string" &&
     typeof file.updatedAt === "string" &&
-    typeof file.formatVersion === "number"
+    typeof file.formatVersion === "number" &&
+    (file.draft === undefined || typeof file.draft === "boolean")
   );
 }

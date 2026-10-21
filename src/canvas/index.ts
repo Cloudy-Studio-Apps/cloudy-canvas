@@ -29,4 +29,4 @@ export { BASE_COMMAND_LABELS, BASE_KEYBINDINGS, Keymap } from "./input";
 export { ElementView } from "./render";
 export { centerTextTop, measureText, measureWrapped } from "./text";
 export { createBaseTools, selectAndEdit } from "./tools";
-export { Emitter, Registry } from "./utils";
+export { debounce, Emitter, Registry } from "./utils";

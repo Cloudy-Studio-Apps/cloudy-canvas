@@ -5,6 +5,7 @@ import {
   mkdir,
   readFile,
   readTextFile,
+  remove,
   rename,
   writeFile,
   writeTextFile,
@@ -13,6 +14,7 @@ import {
 import {
   createId,
   CURRENT_FORMAT_VERSION,
+  FILE_EXTENSIONS,
   fileNameFromPath,
   fileTypeFromPath,
   isFileInfo,
@@ -27,6 +29,8 @@ const INDEX_FILE = "recent-files.json";
 /** Where an unreadable index is moved, so nothing is lost for good. */
 const CORRUPT_INDEX_FILE = "recent-files.corrupt.json";
 const MAX_RECENTS = 50;
+/** Folder in the app data where boards that were never saved are autosaved. */
+const DRAFTS_DIR = "drafts";
 
 /** Desktop storage: files live wherever the user saved them; an index remembers recent ones. */
 export class TauriStorage implements Storage {
@@ -79,12 +83,18 @@ export class TauriStorage implements Storage {
     });
   }
 
-  forget(id: string): Promise<void> {
-    return this.mutate((files) => ({ files: files.filter((f) => f.id !== id), result: undefined }));
+  async forget(id: string): Promise<void> {
+    const forgotten = await this.mutate((files) => ({
+      files: files.filter((f) => f.id !== id),
+      result: files.find((f) => f.id === id),
+    }));
+    // A draft is only reachable through the recent files, so forgetting it deletes it.
+    if (forgotten?.draft) await removeDraft(forgotten.path);
   }
 
   clear(): Promise<void> {
-    return this.mutate(() => ({ files: [], result: undefined }));
+    // Drafts stay: the list is the only way back to them.
+    return this.mutate((files) => ({ files: files.filter((f) => f.draft), result: undefined }));
   }
 
   async indexLocation(): Promise<string | null> {
@@ -102,22 +112,28 @@ export class TauriStorage implements Storage {
 
   async save(id: string, path: string, data: Uint8Array): Promise<FileInfo> {
     const type = requireFileType(path);
-    // Write beside the file and swap it in, so a failed save never leaves half a file.
-    await writeFile(`${path}.tmp`, data);
-    await rename(`${path}.tmp`, path);
-    return this.mutate((files) => {
-      const now = new Date().toISOString();
+    await writeAtomic(path, data);
+    const { file, draft } = await this.mutate((files) => {
       const previous = files.find((f) => f.id === id);
-      const file: FileInfo = {
-        id,
-        name: fileNameFromPath(path),
-        type,
-        path,
-        createdAt: previous?.createdAt ?? now,
-        updatedAt: now,
-        formatVersion: CURRENT_FORMAT_VERSION,
-      };
+      const file = fileEntry(id, fileNameFromPath(path), type, path, previous);
       // Saving over another recent file's path replaces that entry.
+      const rest = files.filter((f) => f.id !== id && f.path !== path);
+      const draft = previous?.draft && previous.path !== path ? previous.path : null;
+      return { files: [file, ...rest], result: { file, draft } };
+    });
+    // The draft now has a real file, so its autosaved copy goes.
+    if (draft) await removeDraft(draft);
+    return file;
+  }
+
+  async saveDraft(id: string, name: string, type: FileType, data: Uint8Array): Promise<FileInfo> {
+    const folder = await join(await appDataDir(), DRAFTS_DIR);
+    await mkdir(folder, { recursive: true });
+    const path = await join(folder, `${id}.${FILE_EXTENSIONS[type]}`);
+    await writeAtomic(path, data);
+    return this.mutate((files) => {
+      const previous = files.find((f) => f.id === id);
+      const file: FileInfo = { ...fileEntry(id, name, type, path, previous), draft: true };
       const rest = files.filter((f) => f.id !== id && f.path !== path);
       return { files: [file, ...rest], result: file };
     });
@@ -170,6 +186,41 @@ export class TauriStorage implements Storage {
     const path = await indexPath(INDEX_FILE);
     await writeTextFile(`${path}.tmp`, JSON.stringify(files.slice(0, MAX_RECENTS), null, 2));
     await rename(`${path}.tmp`, path);
+  }
+}
+
+/** The index entry for a file just written, keeping when it was first recorded. */
+function fileEntry(
+  id: string,
+  name: string,
+  type: FileType,
+  path: string,
+  previous: FileInfo | undefined,
+): FileInfo {
+  const now = new Date().toISOString();
+  return {
+    id,
+    name,
+    type,
+    path,
+    createdAt: previous?.createdAt ?? now,
+    updatedAt: now,
+    formatVersion: CURRENT_FORMAT_VERSION,
+  };
+}
+
+/** Writes beside the file and swaps it in, so a failed save never leaves half a file. */
+async function writeAtomic(path: string, data: Uint8Array): Promise<void> {
+  await writeFile(`${path}.tmp`, data);
+  await rename(`${path}.tmp`, path);
+}
+
+/** Deletes a draft's file; a failure only leaves a stray file in the drafts folder. */
+async function removeDraft(path: string): Promise<void> {
+  try {
+    if (await exists(path)) await remove(path);
+  } catch (error) {
+    console.error("[storage] Couldn't delete the draft.", error);
   }
 }
 
