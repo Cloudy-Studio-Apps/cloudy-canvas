@@ -24,6 +24,16 @@ export class GeoKind extends QuickConnectKind<GeoElement> {
   readonly description = "A rectangle, ellipse, diamond or other diagram shape, with a label.";
   override readonly tool = "shape";
   override readonly defaults = GEO_DEFAULTS;
+  override readonly patchableFields: ReadonlySet<string> = new Set([
+    "x",
+    "y",
+    "w",
+    "h",
+    "text",
+    "kind",
+    "fill",
+    "stroke",
+  ]);
 
   draw(view: ElementView, el: GeoElement): void {
     drawGeo(view, el, this.textStyle(el));
@@ -42,12 +52,19 @@ export class GeoKind extends QuickConnectKind<GeoElement> {
 
   override build(spec: ElementSpec, index: string): GeoElement {
     const kind = spec.kind ?? "rectangle";
-    const variant = geoVariants.get(kind);
-    if (!variant) throw new Error(`"kind" must be one of: ${geoVariants.keys().join(", ")}.`);
+    const variant = requireVariant(kind);
     const rect = this.specRect(spec, variant.defaultSize);
     const fill = spec.fill ?? SHAPE_FILLS[0].value;
     const stroke = spec.stroke ?? SHAPE_STROKES[0].value;
     return { ...createGeo(rect, kind, fill, stroke, index), text: spec.text ?? "" };
+  }
+
+  override completePatch(
+    _el: GeoElement,
+    patch: ElementPatch<GeoElement>,
+  ): ElementPatch<GeoElement> {
+    if (patch.kind !== undefined) requireVariant(patch.kind);
+    return patch;
   }
 
   override anchor(el: GeoElement, side: ElementSide): Point {
@@ -70,4 +87,10 @@ export class GeoKind extends QuickConnectKind<GeoElement> {
     if (options.shapeStroke) patch.stroke = options.shapeStroke;
     return patch;
   }
+}
+
+function requireVariant(kind: string) {
+  const variant = geoVariants.get(kind);
+  if (!variant) throw new Error(`"kind" must be one of: ${geoVariants.keys().join(", ")}.`);
+  return variant;
 }

@@ -21,10 +21,17 @@ import { drawConnector } from "./connector.draw";
 import {
   arrowHeadFrom,
   CONNECTOR_SPEC_PROPERTIES,
+  connectorEnd,
   connectorEndFrom,
+  connectorSizeFrom,
   connectorStyleFrom,
 } from "./connector-spec";
-import type { ConnectorDefaults, ConnectorElement, ConnectorEnd } from "./connector.types";
+import type {
+  ConnectorDefaults,
+  ConnectorElement,
+  ConnectorEnd,
+  ConnectorEndsPatch,
+} from "./connector.types";
 
 /**
  * Lines between two ends that follow the elements they're attached to. The board resolves their
@@ -45,6 +52,8 @@ export class ConnectorKind extends LineKind<ConnectorElement, BoardToolOptions> 
     "size",
     "startHead",
     "endHead",
+    "from",
+    "to",
   ]);
   protected override readonly reach = CONNECTOR_DEFAULTS.reach;
 
@@ -96,14 +105,22 @@ export class ConnectorKind extends LineKind<ConnectorElement, BoardToolOptions> 
     return createConnector(start, end, look, index);
   }
 
+  /** Also re-attaches ends: `from`/`to` (as in a spec) become `start`/`end`. */
   override completePatch(
     _el: ConnectorElement,
     patch: ElementPatch<ConnectorElement>,
+    context: ElementBuildContext,
   ): ElementPatch<ConnectorElement> {
     connectorStyleFrom(patch.style);
+    connectorSizeFrom(patch.size);
     arrowHeadFrom(patch.startHead, "startHead");
     arrowHeadFrom(patch.endHead, "endHead");
-    return patch;
+    const { from, to, ...rest } = patch as ElementPatch<ConnectorElement> & ConnectorEndsPatch;
+    return {
+      ...rest,
+      ...(from !== undefined && { start: connectorEnd(from, "from", context) }),
+      ...(to !== undefined && { end: connectorEnd(to, "to", context) }),
+    };
   }
 
   override describe(el: ConnectorElement): ElementDescription {

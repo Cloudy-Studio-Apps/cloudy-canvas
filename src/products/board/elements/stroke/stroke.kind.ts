@@ -1,13 +1,16 @@
-import { type ElementPatch, type ElementView, LineKind } from "@canvas";
+import { type ElementPatch, type ElementSpec, type ElementView, LineKind } from "@canvas";
 import type { BoardToolOptions } from "../../board-options.types";
 
 import { drawStroke } from "./stroke.draw";
 import { STROKE_DEFAULTS } from "./stroke.defaults";
+import { strokeSizePatch } from "./stroke-size";
+import { buildStroke, STROKE_SPEC_PROPERTIES, strokeSizeFrom } from "./stroke-spec";
 import type { StrokeDefaults, StrokeElement } from "./stroke.types";
 
 /**
  * Freehand strokes, drawn with the pen or the highlighter. Their points are the content: they're
- * only moved, and restyled (color and thickness) from the options panel.
+ * only moved, and restyled (color and thickness) from the options panel. Agents draw them from a
+ * list of points.
  */
 export class StrokeKind extends LineKind<StrokeElement, BoardToolOptions> {
   readonly type = "stroke";
@@ -15,8 +18,8 @@ export class StrokeKind extends LineKind<StrokeElement, BoardToolOptions> {
   readonly description = "Pen, highlighter and eraser.";
   override readonly tool = "marker";
   override readonly defaults: StrokeDefaults = STROKE_DEFAULTS;
-  override readonly creatable = false;
-  override readonly patchableFields: ReadonlySet<string> = new Set(["x", "y"]);
+  override readonly specProperties = STROKE_SPEC_PROPERTIES;
+  override readonly patchableFields: ReadonlySet<string> = new Set(["x", "y", "color", "size"]);
 
   draw(view: ElementView, el: StrokeElement): void {
     drawStroke(view, el);
@@ -24,6 +27,19 @@ export class StrokeKind extends LineKind<StrokeElement, BoardToolOptions> {
 
   protected lineWidth(el: StrokeElement): number {
     return el.size;
+  }
+
+  override build(spec: ElementSpec, index: string): StrokeElement {
+    return buildStroke(spec, index);
+  }
+
+  override completePatch(
+    el: StrokeElement,
+    patch: ElementPatch<StrokeElement>,
+  ): ElementPatch<StrokeElement> {
+    const size = strokeSizeFrom(patch.size);
+    if (size === undefined || size === el.size) return patch;
+    return { ...patch, ...strokeSizePatch({ ...el, ...patch, size: el.size }, size) };
   }
 
   override fillDefaults(el: StrokeElement): StrokeElement {
@@ -45,18 +61,7 @@ export class StrokeKind extends LineKind<StrokeElement, BoardToolOptions> {
     const size = highlighter ? options.highlighterSize : options.markerSize;
     const patch: ElementPatch<StrokeElement> = {};
     if (color) patch.color = color;
-    if (size !== undefined && size !== el.size) {
-      // The line stays where it is; the padded bounds grow or shrink around it.
-      const d = (size - el.size) / 2;
-      Object.assign(patch, {
-        size,
-        x: el.x - d,
-        y: el.y - d,
-        w: el.w + d * 2,
-        h: el.h + d * 2,
-        points: el.points.map((value) => value + d),
-      });
-    }
+    if (size !== undefined && size !== el.size) Object.assign(patch, strokeSizePatch(el, size));
     return patch;
   }
 }

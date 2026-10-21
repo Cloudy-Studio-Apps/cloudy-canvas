@@ -32,7 +32,7 @@ export class EmbedKind extends BoxKind<EmbedElement, BoardToolOptions> {
   override readonly specProperties = {
     url: { type: "string", description: "embed: the http(s) link to show as a card." },
   };
-  override readonly patchableFields: ReadonlySet<string> = new Set(["x", "y", "w"]);
+  override readonly patchableFields: ReadonlySet<string> = new Set(["x", "y", "w", "url"]);
 
   draw(view: ElementView, el: EmbedElement): void {
     drawEmbed(view, el);
@@ -40,9 +40,7 @@ export class EmbedKind extends BoxKind<EmbedElement, BoardToolOptions> {
 
   override build(spec: ElementSpec, index: string): EmbedElement {
     const { url } = spec.args;
-    const parsed = typeof url === "string" ? parseWebUrl(url) : null;
-    if (!parsed) throw new Error('"url" must be an http(s) link.');
-    return createEmbed(parsed, { x: spec.x, y: spec.y }, index, spec.w);
+    return createEmbed(requireWebUrl(url), { x: spec.x, y: spec.y }, index, spec.w);
   }
 
   override interactionAt(
@@ -58,10 +56,21 @@ export class EmbedKind extends BoxKind<EmbedElement, BoardToolOptions> {
     return { x: rect.x, y: rect.y, w, h: embedHeight(w, hasPreview(el)) };
   }
 
+  /** A new `url` starts the card over: it loads the new link's preview. */
   override completePatch(
     el: EmbedElement,
     patch: ElementPatch<EmbedElement>,
   ): ElementPatch<EmbedElement> {
+    if (patch.url !== undefined) {
+      const fresh = createEmbed(
+        requireWebUrl(patch.url),
+        { x: patch.x ?? el.x, y: patch.y ?? el.y },
+        el.index,
+        patch.w ?? el.w,
+      );
+      const { url, provider, title, siteName, imageId, status, w, h } = fresh;
+      return { ...patch, url, provider, title, siteName, imageId, status, w, h };
+    }
     if (patch.w === undefined) return patch;
     const w = Math.max(EMBED_DEFAULTS.minWidth, patch.w);
     return { ...patch, w, h: embedHeight(w, hasPreview(el)) };
@@ -85,4 +94,10 @@ export class EmbedKind extends BoxKind<EmbedElement, BoardToolOptions> {
   override describe(el: EmbedElement): ElementDescription {
     return { label: `${el.title} (${el.url})`, kind: el.provider };
   }
+}
+
+function requireWebUrl(value: unknown): URL {
+  const parsed = typeof value === "string" ? parseWebUrl(value) : null;
+  if (!parsed) throw new Error('"url" must be an http(s) link.');
+  return parsed;
 }

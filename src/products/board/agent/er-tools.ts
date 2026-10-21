@@ -17,10 +17,7 @@ export const erTools: BoardAgentTool[] = [
     inputSchema: { type: "object", properties: {} },
     run: (host) => {
       const diagrams = requireBoard(host).er.diagrams();
-      if (diagrams.length === 0) return "The board has no ER diagrams.";
-      return JSON.stringify(
-        diagrams.map(({ id, name, label, entityCount }) => ({ id, name, label, entityCount })),
-      );
+      return diagrams.map(({ id, name, label, entityCount }) => ({ id, name, label, entityCount }));
     },
   },
   {
@@ -37,8 +34,9 @@ export const erTools: BoardAgentTool[] = [
     description:
       "Replaces one ER diagram with this text as one undo step. Entities, relations and " +
       "attributes matched by name keep their ids and positions; new ones are laid out " +
-      "automatically. Read get_er_text first and send the full edited text. Pass `new: true` " +
-      "to start a separate diagram instead.",
+      "automatically. Entities a relation names but nothing defines are created. Read " +
+      "get_er_text first and send the full edited text. Pass `new: true` to start a separate " +
+      "diagram instead.",
     inputSchema: {
       type: "object",
       required: ["text"],
@@ -52,7 +50,9 @@ export const erTools: BoardAgentTool[] = [
       const { engine, er } = requireBoard(host);
       const text = stringArg(args, "text");
       const diagram = diagramArg(er, args, true);
-      return reportApplied(asUndoStep(engine.doc, () => diagram.applyText(text)));
+      return reportApplied(
+        asUndoStep(engine.doc, () => diagram.applyText(text, { createMissing: true })),
+      );
     },
   },
   {
@@ -60,7 +60,9 @@ export const erTools: BoardAgentTool[] = [
     description: "Lays one ER diagram out again (one undo step).",
     inputSchema: DIAGRAM_ONLY,
     run: (host, args) => {
-      diagramArg(requireBoard(host).er, args, false).relayout();
+      const { engine, er } = requireBoard(host);
+      const diagram = diagramArg(er, args, false);
+      asUndoStep(engine.doc, () => diagram.relayout());
       return "Done.";
     },
   },

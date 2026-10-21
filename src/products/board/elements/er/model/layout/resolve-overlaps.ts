@@ -1,5 +1,6 @@
 import type { Size } from "@canvas";
 
+import { escapeFixed } from "./escape-fixed";
 import type { Centers } from "./layout.types";
 
 const MARGIN = 12;
@@ -7,7 +8,8 @@ const PASSES = 60;
 
 /**
  * Pushes overlapping boxes apart along the axis where they overlap least. Only `movable` boxes
- * move; when both boxes are movable they share the push.
+ * move; when both boxes are movable they share the push. A movable box still on a fixed one at
+ * the end goes to the nearest free spot.
  */
 export function resolveOverlaps(
   centers: Centers,
@@ -27,8 +29,9 @@ export function resolveOverlaps(
         if (separate(centers, sizes, a, b, moveA, moveB)) moved = true;
       }
     }
-    if (!moved) return;
+    if (!moved) break;
   }
+  escapeFixed(centers, sizes, movable, MARGIN);
 }
 
 function separate(

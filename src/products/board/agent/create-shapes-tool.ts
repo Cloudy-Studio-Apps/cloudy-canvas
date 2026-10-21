@@ -18,7 +18,8 @@ export const createShapesTool: BoardAgentTool = {
   description:
     "Adds shapes to the open board as one undo step and returns their ids. Coordinates are world " +
     "units, x/y the top-left corner (a sticky is 200x200). Give a shape a `key` to connect it " +
-    "with a connector in the same call. Colors are hex strings.",
+    "with a connector in the same call. Colors are hex strings. Stickers are stamped with " +
+    "stamp_stickers instead.",
   // A getter, so the schema lists the types and variants registered when an agent asks (plugins too).
   get inputSchema() {
     return {
@@ -42,7 +43,10 @@ export const createShapesTool: BoardAgentTool = {
               w: { type: "number" },
               h: { type: "number" },
               text: { type: "string", description: "Sticky text, shape label or section title." },
-              color: { type: "string", description: "Sticky, text, section or connector color." },
+              color: {
+                type: "string",
+                description: "Sticky, text, section, table header, connector or stroke color.",
+              },
               kind: { enum: geoVariants.keys(), description: "Geo shape kind." },
               fill: { type: "string", description: 'Geo fill, or "transparent".' },
               stroke: { type: "string", description: 'Geo outline, or "transparent".' },

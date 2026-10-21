@@ -244,6 +244,17 @@ export class CanvasEngine<O extends object = object> {
     return true;
   }
 
+  /**
+   * Copies elements, with what moves with them, offset by `offset` (a paste step by default), as
+   * one undo step, as Ctrl+D does without touching the selection. Returns each copied id's new id.
+   */
+  duplicateElements(
+    ids: Iterable<string>,
+    offset: Point = { x: PASTE_STEP, y: PASTE_STEP },
+  ): Map<string, string> {
+    return this.clipboard.duplicate([...ids], offset);
+  }
+
   /** Label, description and hotkey of an element type, or `undefined` if it isn't registered. */
   elementInfo(type: string): ElementInfo | undefined {
     const kind = this.kinds.get(type);
@@ -556,7 +567,7 @@ export class CanvasEngine<O extends object = object> {
   // ── State helpers ─────────────────────────────────────────────────────
 
   /** The ids plus what the product says goes with them when moved or deleted. */
-  private withMembers(ids: Iterable<string>, purpose: "move" | "delete"): Set<string> {
+  withMembers(ids: Iterable<string>, purpose: "move" | "delete"): Set<string> {
     const set = new Set(ids);
     return this.product.withMembers?.(set, this.scene.elements, purpose) ?? set;
   }

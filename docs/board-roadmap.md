@@ -24,7 +24,6 @@ What's still missing for the board to feel like FigJam, roughly ordered by value
   - A `LineKind` with a fixed thickness and pattern fills.
 - [ ] **More link card providers**: GitHub, Figma, Google Docs, Loom.
   - Extend `fetchLinkPreview` (`shared/core/links/`) and the embed `provider`.
-- [ ] **Stickers for agents**: let `create_shapes` stamp stickers from the catalog.
 - [ ] **Charts**: a small bar, line or pie chart.
   - Fed from a table element as its data source.
 - [ ] **Lasso select**: freeform area selection.

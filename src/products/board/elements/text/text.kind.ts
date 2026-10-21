@@ -23,6 +23,13 @@ export class TextKind extends ElementKind<TextElement, BoardToolOptions> {
   override readonly tool = "text";
   override readonly defaults = TEXT_DEFAULTS;
   override readonly connectable = true;
+  override readonly patchableFields: ReadonlySet<string> = new Set([
+    "x",
+    "y",
+    "text",
+    "color",
+    "fontSize",
+  ]);
 
   override readonly text: ElementText<TextElement> = {
     get: (el) => el.text,
@@ -55,6 +62,16 @@ export class TextKind extends ElementKind<TextElement, BoardToolOptions> {
     patch: ElementPatch<TextElement>,
   ): ElementPatch<TextElement> {
     if (patch.text === undefined && patch.fontSize === undefined) return patch;
+    if (patch.text !== undefined && !patch.text.trim()) {
+      throw new Error("A text element needs some text; remove it with delete_shapes instead.");
+    }
+    const { minFontSize, maxFontSize } = TEXT_DEFAULTS;
+    if (
+      patch.fontSize !== undefined &&
+      (patch.fontSize < minFontSize || patch.fontSize > maxFontSize)
+    ) {
+      throw new Error(`"fontSize" must be between ${minFontSize} and ${maxFontSize}.`);
+    }
     return { ...patch, ...measureText(patch.text ?? el.text, patch.fontSize ?? el.fontSize) };
   }
 

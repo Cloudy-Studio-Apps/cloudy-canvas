@@ -1,6 +1,7 @@
 import { rectContainsPoint } from "../geometry";
 import type { Point, Rect, Size } from "../geometry.types";
 import type { ElementView } from "../render/element-view";
+import { ELEMENT_DEFAULTS } from "./element.defaults";
 import type { CanvasElement, ElementPatch } from "./element.types";
 import type { ElementInteraction, InteractionQuery } from "./element.interaction.types";
 import type {
@@ -135,11 +136,21 @@ export abstract class ElementKind<
 
   /** Bounds for a new element from a spec: its position, and its size or the type's default. */
   protected specRect(spec: ElementSpec, size: Size): Rect {
+    for (const key of ["w", "h"] as const) {
+      const value = spec[key];
+      if (value !== undefined && value < ELEMENT_DEFAULTS.minSize) {
+        throw new Error(`"${key}" must be at least ${ELEMENT_DEFAULTS.minSize}.`);
+      }
+    }
     return { x: spec.x, y: spec.y, w: spec.w ?? size.w, h: spec.h ?? size.h };
   }
 
-  /** Completes an agent's patch with the fields that follow from it (e.g. a text's size). */
-  completePatch(_el: E, patch: ElementPatch<E>): ElementPatch<E> {
+  /**
+   * Completes an agent's patch with the fields that follow from it (e.g. a text's size), and
+   * throws with a message the agent can act on when a value is invalid. `context` finds the
+   * elements a patch refers to (e.g. a connector's new end).
+   */
+  completePatch(_el: E, patch: ElementPatch<E>, _context: ElementBuildContext): ElementPatch<E> {
     return patch;
   }
 

@@ -6,11 +6,13 @@ import { http } from "@platform";
 /** Fetches the previews of link cards still loading: pasted ones, and any a file was saved with. */
 export function useEmbedPreviews(engine: BoardEngine): void {
   useEffect(() => {
+    // Keyed by link too, so a card given a new link (by an agent) loads again.
     const started = new Set<string>();
     const scan = () => {
       for (const el of pendingEmbeds(engine.doc.all())) {
-        if (started.has(el.id)) continue;
-        started.add(el.id);
+        const key = `${el.id} ${el.url}`;
+        if (started.has(key)) continue;
+        started.add(key);
         void loadEmbedPreview(engine.doc, el, http);
       }
     };

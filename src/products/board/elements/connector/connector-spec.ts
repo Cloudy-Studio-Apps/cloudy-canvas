@@ -35,7 +35,15 @@ export function connectorEndFrom(
   key: "from" | "to",
   context: ElementBuildContext,
 ): ConnectorEnd {
-  const end = spec.args[key];
+  return connectorEnd(spec.args[key], key, context);
+}
+
+/** A connector end from an agent's `from`/`to` value (in a spec or a patch). */
+export function connectorEnd(
+  end: unknown,
+  key: "from" | "to",
+  context: ElementBuildContext,
+): ConnectorEnd {
   if (typeof end !== "object" || end === null) {
     throw new Error(`A connector needs "${key}": { shapeId }, { key } or { x, y }.`);
   }
@@ -54,6 +62,13 @@ export function connectorEndFrom(
     throw new Error(`"${key}" needs a shapeId or key, or both x and y.`);
   }
   return { shapeId: null, side: null, x, y };
+}
+
+/** A connector's line width from an agent's patch. */
+export function connectorSizeFrom(value: unknown): number | undefined {
+  if (value === undefined || value === null) return undefined;
+  if (typeof value !== "number" || value <= 0) throw new Error('"size" must be a positive number.');
+  return value;
 }
 
 export function connectorStyleFrom(value: unknown): ConnectorStyle | undefined {

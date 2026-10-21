@@ -19,8 +19,10 @@ import { INK_COLOR, TABLE_COLORS } from "../../palette";
 import { createTable } from "./table.factory";
 import { drawTable } from "./table.draw";
 import { TABLE_DEFAULTS } from "./table.defaults";
+import { readCells, readFills, requireRows } from "./table-args";
 import {
   clearCells,
+  gridFills,
   gridFromCells,
   gridPatch,
   removeLine,
@@ -48,7 +50,10 @@ export class TableKind extends BoxKind<TableElement, BoardToolOptions> {
   override readonly patchableFields: ReadonlySet<string> = new Set([
     "x",
     "y",
+    "w",
+    "h",
     "cells",
+    "fills",
     "header",
     "color",
   ]);
@@ -61,6 +66,11 @@ export class TableKind extends BoxKind<TableElement, BoardToolOptions> {
     header: {
       type: "boolean",
       description: "Table only: whether the first row is a bold, tinted header.",
+    },
+    fills: {
+      type: "array",
+      items: { type: "array", items: { type: "string" } },
+      description: 'Table only: cell background colors, one array per row ("" for none).',
     },
   };
 
@@ -150,18 +160,30 @@ export class TableKind extends BoxKind<TableElement, BoardToolOptions> {
     const color = spec.color ?? TABLE_COLORS[0].value;
     const header = typeof spec.args.header === "boolean" ? spec.args.header : false;
     const table = createTable(spec, color, header, index);
-    const cells = readCells(spec.args.cells);
-    return { ...table, ...(cells ? gridFromCells(table, cells) : gridPatch(table, {})) };
+    const cells =
+      spec.args.cells === undefined ? undefined : requireRows(readCells, spec.args.cells, "cells");
+    const grid = { ...table, ...(cells ? gridFromCells(table, cells) : gridPatch(table, {})) };
+    return this.withFills(grid, spec.args.fills);
   }
 
   override completePatch(
     el: TableElement,
     patch: ElementPatch<TableElement>,
   ): ElementPatch<TableElement> {
-    const cells = patch.cells && readCells(patch.cells);
-    if (cells) return { ...patch, ...gridFromCells({ ...el, ...patch }, cells) };
-    if (patch.header !== undefined) return { ...patch, ...gridPatch({ ...el, ...patch }, {}) };
-    return patch;
+    const cells =
+      patch.cells === undefined ? undefined : requireRows(readCells, patch.cells, "cells");
+    let next = patch;
+    if (cells) next = { ...patch, ...gridFromCells({ ...el, ...patch }, cells) };
+    else if (patch.header !== undefined) next = { ...patch, ...gridPatch({ ...el, ...patch }, {}) };
+    if (patch.fills === undefined) return next;
+    const { fills } = this.withFills({ ...el, ...next }, patch.fills);
+    return { ...next, fills };
+  }
+
+  /** The table with an agent's `fills` (fitted to its grid), if given. */
+  private withFills(el: TableElement, value: unknown): TableElement {
+    if (value === undefined) return el;
+    return { ...el, fills: gridFills(el, requireRows(readFills, value, "fills")) };
   }
 
   override fillDefaults(el: TableElement): TableElement {
@@ -225,13 +247,4 @@ export class TableKind extends BoxKind<TableElement, BoardToolOptions> {
       padY,
     };
   }
-}
-
-/** An agent's `cells`: rows of strings (numbers are written as text), or `undefined` if invalid. */
-function readCells(value: unknown): string[][] | undefined {
-  if (!Array.isArray(value)) return undefined;
-  if (value.length === 0 || !value.every((row) => Array.isArray(row))) return undefined;
-  return value.map((row: unknown[]) =>
-    row.map((cell) => (typeof cell === "string" || typeof cell === "number" ? String(cell) : "")),
-  );
 }

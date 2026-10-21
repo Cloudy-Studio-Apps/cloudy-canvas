@@ -48,7 +48,8 @@ export const fileTools: BoardAgentTool[] = [
     run: async (host) => {
       const board = requireBoard(host);
       if (!board.path) {
-        void board.save();
+        // The save dialog waits for the user; the editor reports a failed save itself.
+        board.save().catch(() => undefined);
         return "Asked the user where to save the board.";
       }
       await board.save();

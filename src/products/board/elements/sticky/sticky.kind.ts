@@ -19,6 +19,14 @@ export class StickyKind extends QuickConnectKind<StickyElement> {
   readonly description = "A colored note for jotting down an idea.";
   override readonly tool = "sticky";
   override readonly defaults = STICKY_DEFAULTS;
+  override readonly patchableFields: ReadonlySet<string> = new Set([
+    "x",
+    "y",
+    "w",
+    "h",
+    "text",
+    "color",
+  ]);
 
   draw(view: ElementView, el: StickyElement): void {
     drawSticky(view, el, this.textStyle());

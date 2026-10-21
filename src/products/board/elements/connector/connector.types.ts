@@ -64,3 +64,9 @@ export interface ConnectorDefaults extends ElementDefaults {
   quickConnectOffset: number;
   quickConnectRadius: number;
 }
+
+/** An agent's patch may re-attach ends with `from`/`to`, given as in a spec. */
+export interface ConnectorEndsPatch {
+  from?: unknown;
+  to?: unknown;
+}

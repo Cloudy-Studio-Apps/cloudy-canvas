@@ -4,6 +4,8 @@ import type { ImageDefaults } from "./image.types";
 export const IMAGE_DEFAULTS = {
   background: "none",
   padding: 0,
+  backgrounds: ["none", "white"],
+  maxPadding: 256,
   paddings: [
     { name: "None", value: 0 },
     { name: "Small", value: 16 },

@@ -29,6 +29,14 @@ export class SectionKind extends TextBoxKind<SectionElement, BoardToolOptions> {
   override readonly defaults = SECTION_DEFAULTS;
   override readonly frame = true;
   override readonly connectable = false;
+  override readonly patchableFields: ReadonlySet<string> = new Set([
+    "x",
+    "y",
+    "w",
+    "h",
+    "text",
+    "color",
+  ]);
 
   draw(view: ElementView, el: SectionElement): void {
     drawSection(view, el, this.textStyle());

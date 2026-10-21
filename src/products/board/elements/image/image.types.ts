@@ -20,6 +20,10 @@ export interface ImagePaddingOption {
 export interface ImageDefaults extends ElementDefaults {
   background: ImageBackground;
   padding: number;
+  /** Every background, so agents' values can be checked. */
+  backgrounds: readonly ImageBackground[];
+  /** The largest padding agents may set. */
+  maxPadding: number;
   /** The paddings the options panel offers. */
   paddings: readonly ImagePaddingOption[];
   /** A pasted image is shrunk to fit this share of the view (never enlarged). */

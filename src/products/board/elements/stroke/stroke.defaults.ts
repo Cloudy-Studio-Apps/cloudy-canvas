@@ -9,4 +9,5 @@ export const STROKE_DEFAULTS = {
   },
   smoothTolerance: 2.5,
   smoothPasses: 2,
+  maxSize: 64,
 } as const satisfies StrokeDefaults;

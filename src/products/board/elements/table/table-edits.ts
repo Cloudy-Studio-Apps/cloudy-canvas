@@ -144,6 +144,11 @@ export function gridFromCells(el: TableElement, cells: readonly (readonly string
   });
 }
 
+/** Cell colors for the table's grid from a list of rows (e.g. an agent's), padded or cut to fit. */
+export function gridFills(el: TableElement, fills: readonly (readonly string[])[]): string[][] {
+  return el.rows.map((_, r) => el.columns.map((_, c) => fills[r]?.[c] ?? ""));
+}
+
 /** Applies the same row-list edit to every per-cell matrix. */
 function mapMatrices(el: TableElement, edit: (matrix: string[][]) => string[][]): CellMatrices {
   return { cells: edit(el.cells), fills: edit(el.fills) };

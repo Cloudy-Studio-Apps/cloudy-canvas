@@ -10,4 +10,7 @@ export interface TextElement extends CanvasElement {
 
 export interface TextDefaults extends ElementDefaults {
   fontSize: number;
+  /** The font sizes agents may set. */
+  minFontSize: number;
+  maxFontSize: number;
 }

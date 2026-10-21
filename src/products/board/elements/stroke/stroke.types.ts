@@ -32,4 +32,6 @@ export interface StrokeDefaults extends ElementDefaults {
   smoothTolerance: number;
   /** Corner-cutting passes after simplifying a smoothed stroke. */
   smoothPasses: number;
+  /** The largest thickness agents may set, in world units. */
+  maxSize: number;
 }

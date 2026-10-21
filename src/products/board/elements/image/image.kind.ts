@@ -3,6 +3,7 @@ import { BoxKind, ELEMENT_DEFAULTS, type ElementPatch, type ElementView, type Re
 import type { BoardToolOptions } from "../../board-options.types";
 import { drawImage } from "./image.draw";
 import { IMAGE_DEFAULTS } from "./image.defaults";
+import { imagePaddingPatch } from "./image-padding";
 import type { ImageDefaults, ImageElement } from "./image.types";
 
 /**
@@ -16,7 +17,14 @@ export class ImageKind extends BoxKind<ImageElement, BoardToolOptions> {
   override readonly defaults: ImageDefaults = IMAGE_DEFAULTS;
   override readonly creatable = false;
   override readonly keepsRatio = true;
-  override readonly patchableFields: ReadonlySet<string> = new Set(["x", "y", "w", "h"]);
+  override readonly patchableFields: ReadonlySet<string> = new Set([
+    "x",
+    "y",
+    "w",
+    "h",
+    "background",
+    "padding",
+  ]);
 
   draw(view: ElementView, el: ImageElement): void {
     drawImage(view, el);
@@ -30,6 +38,25 @@ export class ImageKind extends BoxKind<ImageElement, BoardToolOptions> {
     // The image itself never gets smaller than the minimum size.
     const min = ELEMENT_DEFAULTS.minSize + el.padding * 2;
     return { x: rect.x, y: rect.y, w: Math.max(min, rect.w), h: Math.max(min, rect.h) };
+  }
+
+  override completePatch(
+    el: ImageElement,
+    patch: ElementPatch<ImageElement>,
+  ): ElementPatch<ImageElement> {
+    const { backgrounds, maxPadding } = IMAGE_DEFAULTS;
+    if (patch.background !== undefined && !backgrounds.includes(patch.background)) {
+      throw new Error(`"background" must be one of: ${backgrounds.join(", ")}.`);
+    }
+    if (patch.padding === undefined) return patch;
+    if (patch.padding < 0 || patch.padding > maxPadding) {
+      throw new Error(`"padding" must be between 0 and ${maxPadding}.`);
+    }
+    // The padding grows the bounds as given (or as they are) around the image.
+    return {
+      ...patch,
+      ...imagePaddingPatch({ ...el, ...patch, padding: el.padding }, patch.padding),
+    };
   }
 
   override fillDefaults(el: ImageElement): ImageElement {
@@ -51,15 +78,7 @@ export class ImageKind extends BoxKind<ImageElement, BoardToolOptions> {
     const patch: ElementPatch<ImageElement> = {};
     if (options.imageBackground) patch.background = options.imageBackground;
     if (options.imagePadding !== undefined && options.imagePadding !== el.padding) {
-      // The image stays where it is; the bounds grow or shrink around it.
-      const d = options.imagePadding - el.padding;
-      Object.assign(patch, {
-        padding: options.imagePadding,
-        x: el.x - d,
-        y: el.y - d,
-        w: el.w + d * 2,
-        h: el.h + d * 2,
-      });
+      Object.assign(patch, imagePaddingPatch(el, options.imagePadding));
     }
     return patch;
   }
