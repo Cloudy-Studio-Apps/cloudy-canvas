@@ -1,5 +1,6 @@
 import { FloatingPanel, PanelDivider, ToolButton, useEngine, useEngineState } from "@canvas-ui";
 import { BOARD_TOOL_GROUPS } from "../board-tools";
+import { LibraryButton } from "./library";
 
 export function BoardToolbar() {
   const engine = useEngine();
@@ -35,6 +36,8 @@ export function BoardToolbar() {
           })}
         </div>
       ))}
+      <PanelDivider />
+      <LibraryButton />
     </FloatingPanel>
   );
 }

@@ -2,7 +2,7 @@ import type { CanvasProduct } from "@canvas";
 
 import { DEFAULT_BOARD_OPTIONS } from "./board-options";
 import type { BoardToolOptions } from "./board-options.types";
-import { BOARD_KEYBINDINGS } from "./board-keybindings";
+import { BOARD_HOST_COMMANDS, BOARD_KEYBINDINGS } from "./board-keybindings";
 import {
   boardKinds,
   createPastedEmbed,
@@ -56,6 +56,8 @@ export const boardProduct: CanvasProduct<BoardToolOptions> = {
     new StickerTool(ctx),
   ],
   keybindings: BOARD_KEYBINDINGS,
+  // The library of widgets, templates and more is a panel in the editor.
+  hostCommands: [BOARD_HOST_COMMANDS.openLibrary],
   defaultOptions: DEFAULT_BOARD_OPTIONS,
   createLinks: () => [new DbLinks(), new ErLinks()],
   // Aggregation boxes and constraints follow the ER elements they're about, and connectors follow

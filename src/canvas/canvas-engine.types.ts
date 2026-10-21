@@ -4,11 +4,11 @@ import type { CanvasProduct } from "./canvas-product.types";
 import type { CanvasDocument } from "./document";
 import type { CanvasTheme } from "./render";
 
-/** Actions the host app implements (e.g. file dialogs), triggered by engine shortcuts. */
-export interface HostActions {
-  save?: () => void;
-  saveAs?: () => void;
-}
+/**
+ * Actions the host app implements (file dialogs, opening a panel), triggered by engine shortcuts:
+ * `save`, `saveAs` and the product's `hostCommands`.
+ */
+export type HostAction = () => void;
 
 /**
  * An element asked the host to do something the engine doesn't know about (e.g. play a video, open

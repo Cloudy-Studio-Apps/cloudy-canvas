@@ -10,9 +10,12 @@ export interface BoardPanelState {
   erTab: ErEditorTab;
   /** The ER diagram the editor shows: the selected elements' one, or the last one picked. */
   erDiagram: string | null;
+  /** Whether the library of widgets, templates and more is open above the toolbar. */
+  libraryOpen: boolean;
   setSchemaOpen: (open: boolean) => void;
   setTableTab: (tab: TableEditorTab) => void;
   setErOpen: (open: boolean) => void;
   setErTab: (tab: ErEditorTab) => void;
   setErDiagram: (diagram: string | null) => void;
+  setLibraryOpen: (open: boolean) => void;
 }

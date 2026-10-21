@@ -52,8 +52,12 @@ export function useBoardSaver(
   const saveFileAs = useCallback(() => save(true), [save]);
 
   useEffect(() => {
-    engine.setHostActions({ save: () => void save(false), saveAs: () => void save(true) });
-    return () => engine.setHostActions({});
+    const removeSave = engine.handleHostAction("save", () => void save(false));
+    const removeSaveAs = engine.handleHostAction("saveAs", () => void save(true));
+    return () => {
+      removeSave();
+      removeSaveAs();
+    };
   }, [engine, save]);
 
   return {

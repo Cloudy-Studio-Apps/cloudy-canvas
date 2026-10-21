@@ -1,5 +1,5 @@
 import { BASE_COMMAND_LABELS } from "@canvas";
-import { BOARD_KEYBINDINGS, boardKinds } from "@board";
+import { BOARD_HOST_COMMAND_LABELS, BOARD_KEYBINDINGS, boardKinds } from "@board";
 import { BOARD_TOOL_GROUPS } from "../../board-tools";
 import type { ShortcutGroup, ShortcutRow } from "./board-shortcut-rows.types";
 
@@ -22,7 +22,7 @@ export function boardShortcutGroups(): ShortcutGroup[] {
     return [...own, ...subTools];
   });
 
-  const editing = Object.entries(BASE_COMMAND_LABELS)
+  const editing = Object.entries({ ...BASE_COMMAND_LABELS, ...BOARD_HOST_COMMAND_LABELS })
     .filter(([command]) => !command.startsWith(TOOL_PREFIX))
     .flatMap(([command, label]): ShortcutRow[] => {
       const shortcuts = bindingsOf(command);

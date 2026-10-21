@@ -19,6 +19,11 @@ export interface CanvasProduct<O extends object = object> {
   createTools(ctx: ToolContext<O>): Tool[];
   /** Every command's shortcuts: `BASE_KEYBINDINGS` plus `tool.<id>` for the product's tools. */
   readonly keybindings: Keybindings;
+  /**
+   * Commands the host app implements (e.g. opening a panel), bound in `keybindings` like any other.
+   * The host handles each with `engine.handleHostAction(id, handler)`.
+   */
+  readonly hostCommands?: readonly string[];
   /** Tool options a new editor starts with. */
   readonly defaultOptions: O;
   /**

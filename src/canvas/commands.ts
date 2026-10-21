@@ -3,11 +3,17 @@ import type { CommandHandler, Commands } from "./commands.types";
 
 /**
  * Named engine actions, shared by keyboard shortcuts and any host UI that wants to trigger them.
- * Every tool gets a `tool.<id>` command, so a product's tools are reachable from its keymap.
+ * Every tool gets a `tool.<id>` command, so a product's tools are reachable from its keymap, and
+ * each of the product's host commands runs the host's handler for it.
  */
-export function createCommands(engine: CanvasEngine, toolIds: readonly string[]): Commands {
+export function createCommands(
+  engine: CanvasEngine,
+  toolIds: readonly string[],
+  hostCommands: readonly string[],
+): Commands {
   const toolCommands: Record<string, CommandHandler> = {};
   for (const id of toolIds) toolCommands[`tool.${id}`] = () => engine.setTool(id);
+  for (const id of hostCommands) toolCommands[id] = () => engine.runHostAction(id);
 
   return {
     undo: () => engine.undo(),

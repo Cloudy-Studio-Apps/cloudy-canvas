@@ -21,7 +21,7 @@ import { Scene } from "./scene";
 import { loadFonts, TextEditor } from "./text";
 import { createBaseTools, type CanvasPointer, type Tool, type ToolContext } from "./tools";
 import { debounce, Disposables, Emitter, FrameScheduler, Store } from "./utils";
-import type { CanvasEngineOptions, ElementAction, HostActions } from "./canvas-engine.types";
+import type { CanvasEngineOptions, ElementAction, HostAction } from "./canvas-engine.types";
 import type { CanvasProduct } from "./canvas-product.types";
 import type { CanvasLinks } from "./links";
 
@@ -66,7 +66,7 @@ export class CanvasEngine<O extends object = object> {
 
   private readonly viewChanges = new Emitter();
   private readonly elementActions = new Set<(action: ElementAction) => void>();
-  private hostActions: HostActions = {};
+  private readonly hostActions = new Map<string, HostAction>();
   private tool: Tool;
   private options: O;
   private container: HTMLElement | null = null;
@@ -93,7 +93,7 @@ export class CanvasEngine<O extends object = object> {
     const tools = [...createBaseTools(ctx), ...product.createTools(ctx)];
     this.tools = new Map(tools.map((tool) => [tool.id, tool]));
     this.tool = tools[0]!;
-    this.commands = createCommands(this, [...this.tools.keys()]);
+    this.commands = createCommands(this, [...this.tools.keys()], product.hostCommands ?? []);
     this.store = new Store(this.buildState());
   }
 
@@ -157,14 +157,20 @@ export class CanvasEngine<O extends object = object> {
     this.requestRender();
   }
 
-  /** Lets the host handle shortcuts like Save that need app-level UI. */
-  setHostActions(actions: HostActions): void {
-    this.hostActions = actions;
+  /**
+   * Lets the host handle a shortcut that needs app-level UI (`save`, `saveAs` or one of the
+   * product's `hostCommands`). Returns a function that removes the handler.
+   */
+  handleHostAction(action: string, handler: HostAction): () => void {
+    this.hostActions.set(action, handler);
+    return () => {
+      if (this.hostActions.get(action) === handler) this.hostActions.delete(action);
+    };
   }
 
   /** Returns `false` when the host doesn't handle the action, so the key event isn't consumed. */
-  runHostAction(action: keyof HostActions): boolean {
-    const handler = this.hostActions[action];
+  runHostAction(action: string): boolean {
+    const handler = this.hostActions.get(action);
     if (!handler) return false;
     this.textEditor?.commit();
     handler();
