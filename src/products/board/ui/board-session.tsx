@@ -4,7 +4,7 @@ import { useAgentBoard } from "./agent";
 import { BoardChrome } from "./board-chrome";
 import { EmbedPlayer, useEmbedPreviews } from "./embed";
 import { ErModelContext, useErModelOf } from "./er";
-import { BoardFileContext, useBoardSaver } from "./file";
+import { BoardFileContext, useBoardSaver, useBoardThumbnail } from "./file";
 import { BoardSchemaContext, useDbSchema } from "./schema";
 import type { BoardSessionProps } from "./board-session.types";
 
@@ -18,6 +18,7 @@ export function BoardSession({ id, engine, info }: BoardSessionProps) {
   const er = useErModelOf(engine);
   useAgentBoard(id, { engine, schema, er }, file);
   useEmbedPreviews(engine);
+  useBoardThumbnail(id, engine);
 
   return (
     <EngineContext value={engine}>

@@ -15,7 +15,10 @@ export interface Storage {
   register(path: string): Promise<FileInfo>;
   /** Points a known file at its new location (it was moved), keeping its id. */
   relocate(id: string, path: string): Promise<FileInfo>;
-  /** Removes a file from the recent files. The file itself is left alone, unless it's a draft. */
+  /**
+   * Removes a file from the recent files, with its preview picture. The file itself is left
+   * alone, unless it's a draft.
+   */
   forget(id: string): Promise<void>;
   /** Empties the recent files, except drafts. The files themselves are left alone. */
   clear(): Promise<void>;
@@ -38,6 +41,10 @@ export interface Storage {
     data: Uint8Array,
     meta?: FileMeta,
   ): Promise<FileInfo>;
+  /** A file's preview picture (an image file), or `null` when it has none. */
+  loadThumbnail(id: string): Promise<Uint8Array | null>;
+  /** Stores a file's preview picture; `null` removes it (e.g. the canvas is empty). */
+  saveThumbnail(id: string, image: Uint8Array | null): Promise<void>;
   /**
    * True once after the recent files had to be reset because they couldn't be read
    * (the unreadable list is kept aside), so the UI can say so.

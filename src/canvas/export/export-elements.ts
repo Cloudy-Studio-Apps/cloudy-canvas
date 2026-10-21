@@ -1,5 +1,6 @@
 import { unionRects } from "../geometry";
 import type { Rect } from "../geometry.types";
+import { canvasBlob } from "./canvas-blob";
 import { encodeCsv } from "./encode-csv";
 import { encodePdf } from "./encode-pdf";
 import type { ExportHost, ExportOptions } from "./export.types";
@@ -61,14 +62,4 @@ function padded({ x, y, w, h }: Rect): Rect {
     w: Math.ceil(w + EXPORT_PADDING * 2),
     h: Math.ceil(h + EXPORT_PADDING * 2),
   };
-}
-
-function canvasBlob(canvas: HTMLCanvasElement, type: string, quality?: number): Promise<Blob> {
-  return new Promise((resolve, reject) =>
-    canvas.toBlob(
-      (blob) => (blob ? resolve(blob) : reject(new Error("Couldn't encode the image."))),
-      type,
-      quality,
-    ),
-  );
 }

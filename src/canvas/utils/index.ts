@@ -1,5 +1,6 @@
 export type { Debounced } from "./debounce.types";
 export { debounce } from "./debounce";
+export { delay } from "./delay";
 export { Disposables } from "./disposables";
 export { Emitter } from "./emitter";
 export { FrameScheduler } from "./frame-scheduler";

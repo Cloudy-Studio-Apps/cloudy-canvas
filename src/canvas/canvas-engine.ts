@@ -24,9 +24,11 @@ import {
 import {
   exportElements,
   hasRows,
+  renderThumbnail,
   type ExportArea,
   type ExportHost,
   type ExportOptions,
+  type ThumbnailOptions,
 } from "./export";
 import { findInteraction } from "./find-interaction";
 import type { EngineState } from "./engine-state.types";
@@ -36,7 +38,7 @@ import { Renderer, type CanvasTheme } from "./render";
 import { Scene } from "./scene";
 import { loadFonts, TextEditor } from "./text";
 import { createBaseTools, type CanvasPointer, type Tool, type ToolContext } from "./tools";
-import { debounce, Disposables, Emitter, FrameScheduler, Store } from "./utils";
+import { debounce, delay, Disposables, Emitter, FrameScheduler, Store } from "./utils";
 import type {
   CanvasEngineOptions,
   ContextMenuRequest,
@@ -52,6 +54,8 @@ const HIT_TOLERANCE_PX = 4;
 const TEXT_ZOOM_DELAY_MS = 150;
 /** Pixels per world unit of "Copy as PNG". */
 const COPY_PNG_SCALE = 2;
+/** How long `close()` waits for its tasks before destroying the engine anyway. */
+const CLOSE_TIMEOUT_MS = 3000;
 
 /**
  * Framework-agnostic infinite canvas, shared by every product (boards, designs). Wires the
@@ -92,12 +96,14 @@ export class CanvasEngine<O extends object = object> {
   private readonly elementActions = new Set<(action: ElementAction) => void>();
   private readonly contextMenus = new Set<(request: ContextMenuRequest) => void>();
   private readonly hostActions = new Map<string, HostAction>();
+  private readonly closeTasks = new Map<string, () => Promise<void>>();
   private tool: Tool;
   private options: O;
   private container: HTMLElement | null = null;
   private textEditor: TextEditor | null = null;
   private mounted = false;
   private destroyed = false;
+  private closing = false;
   private rendererReady = false;
 
   constructor({ product, theme, document, clipboard }: CanvasEngineOptions<O>) {
@@ -132,7 +138,7 @@ export class CanvasEngine<O extends object = object> {
     const { width, height } = container.getBoundingClientRect();
 
     await Promise.all([this.renderer.init(width, height), loadFonts(this.kinds)]);
-    if (this.destroyed) {
+    if (this.destroyed || this.closing) {
       this.renderer.destroy();
       return;
     }
@@ -145,8 +151,11 @@ export class CanvasEngine<O extends object = object> {
     this.textEditor = this.createTextEditor(container);
 
     this.camera.setViewport(width, height);
-    this.camera.reset();
     this.refreshScene();
+    // Opens showing everything (at most 100%), or the origin when the canvas is empty.
+    const content = this.scene.contentBounds();
+    if (content) this.camera.fitRect(content);
+    else this.camera.reset();
     this.renderer.syncElements(this.scene.elements);
     this.renderer.setTextZoom(this.camera.zoom);
 
@@ -155,6 +164,24 @@ export class CanvasEngine<O extends object = object> {
     this.setCursor(this.tool.cursor);
     this.requestRender();
     this.emitChange();
+  }
+
+  /**
+   * Work to finish before the engine closes (e.g. a thumbnail of the canvas), keyed so setting it
+   * again replaces it. It runs in `close()`, while the engine can still draw.
+   */
+  onClose(key: string, task: () => Promise<void>): void {
+    this.closeTasks.set(key, task);
+  }
+
+  /** Stops taking input, runs the `onClose` tasks (for at most a few seconds), then destroys. */
+  async close(): Promise<void> {
+    if (this.destroyed || this.closing) return;
+    this.closing = true;
+    this.disposables.dispose();
+    const tasks = [...this.closeTasks.values()].map((task) => task());
+    await Promise.race([Promise.allSettled(tasks), delay(CLOSE_TIMEOUT_MS)]);
+    this.destroy();
   }
 
   destroy(): void {
@@ -313,6 +340,12 @@ export class CanvasEngine<O extends object = object> {
   exportElements(options: ExportOptions): Promise<Blob> {
     this.textEditor?.commit();
     return exportElements(this.exportHost, options);
+  }
+
+  /** A small JPEG of the whole canvas for file previews, or `null` when it's empty. */
+  thumbnail(options: ThumbnailOptions): Promise<Blob | null> {
+    if (!this.rendererReady) return Promise.resolve(null);
+    return renderThumbnail(this.exportHost, options);
   }
 
   /** Whether an area holds elements that export as CSV (e.g. tables). */

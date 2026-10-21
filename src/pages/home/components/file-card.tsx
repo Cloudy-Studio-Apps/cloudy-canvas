@@ -4,6 +4,7 @@ import { Badge } from "@shared/ui/components/ui/badge";
 import { cn } from "@shared/ui/lib/utils";
 import { formatRelativeTime } from "../format-relative-time";
 import { useFileActions } from "../use-file-actions";
+import { useFileThumbnail } from "../use-file-thumbnail";
 import { FileActionsMenu } from "./file-actions-menu";
 import { FileContextMenu } from "./file-context-menu";
 import { MissingFilePopover } from "./missing-file-popover";
@@ -23,6 +24,8 @@ export function FileCard({ file, missing, onOpen }: FileCardProps) {
   const actions = useFileActions({ file, missing, onOpen });
   const typeLabel = TYPE_LABEL[file.type];
   const name = displayName(file);
+  const thumbnail = useFileThumbnail(file.id);
+  const showThumbnail = thumbnail !== null && !missing;
 
   const card = (
     <button
@@ -42,15 +45,19 @@ export function FileCard({ file, missing, onOpen }: FileCardProps) {
     >
       <div
         className={cn(
-          "flex aspect-[16/10] items-center justify-center",
+          "flex aspect-[16/10] items-center justify-center overflow-hidden",
           missing ? "bg-surface-sunken" : PREVIEW_TINT[file.type],
         )}
       >
-        <FileTypeIcon
-          type={file.type}
-          size="lg"
-          className={cn("bg-surface/70", missing && "opacity-40 grayscale")}
-        />
+        {showThumbnail ? (
+          <img src={thumbnail} alt="" draggable={false} className="size-full object-cover" />
+        ) : (
+          <FileTypeIcon
+            type={file.type}
+            size="lg"
+            className={cn("bg-surface/70", missing && "opacity-40 grayscale")}
+          />
+        )}
       </div>
       <div className="flex items-center gap-3 border-t p-3.5">
         <FileTypeIcon type={file.type} size="sm" className={cn(missing && "opacity-40")} />

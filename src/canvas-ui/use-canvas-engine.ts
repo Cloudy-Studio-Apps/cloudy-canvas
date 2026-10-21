@@ -32,7 +32,8 @@ export function useCanvasEngine<O extends object>(
 
     return () => {
       active = false;
-      instance.destroy();
+      // Its close tasks (e.g. a thumbnail) still run, then it's destroyed.
+      void instance.close();
       setEngine(null);
     };
   }, [containerRef, product, document]);

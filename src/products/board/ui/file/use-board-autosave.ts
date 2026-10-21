@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 
 import type { BoardEngine } from "@board";
 import { debounce } from "@canvas";
+import { appLifecycle } from "@platform";
 
 /** Changes are saved once they stop for this long… */
 const AUTOSAVE_DELAY_MS = 1500;
@@ -9,8 +10,8 @@ const AUTOSAVE_DELAY_MS = 1500;
 const AUTOSAVE_MAX_WAIT_MS = 10_000;
 
 /**
- * Runs `autosave` shortly after the board changes, and once more when the editor closes or
- * autosave is turned off, so nothing pending is lost. `autosave` skips a board with no changes.
+ * Runs `autosave` shortly after the board changes, and once more when the editor or the window
+ * closes or autosave is turned off, so nothing pending is lost. `autosave` skips a board with no changes.
  */
 export function useBoardAutosave(
   engine: BoardEngine,
@@ -39,8 +40,16 @@ export function useBoardAutosave(
     // Changes made while autosave was off are saved now.
     schedule();
     const removeObserver = engine.doc.onChange(schedule);
+    // Closing the window waits for pending changes to be saved.
+    const removeQuitTask = appLifecycle.onBeforeQuit(() => {
+      debounced.cancel();
+      clearTimeout(maxWait);
+      maxWait = undefined;
+      return autosaveRef.current();
+    });
     return () => {
       removeObserver();
+      removeQuitTask();
       run();
     };
   }, [engine, enabled]);

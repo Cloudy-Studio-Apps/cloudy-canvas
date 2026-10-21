@@ -32,6 +32,8 @@ const CORRUPT_INDEX_FILE = "recent-files.corrupt.json";
 const MAX_RECENTS = 50;
 /** Folder in the app data where boards that were never saved are autosaved. */
 const DRAFTS_DIR = "drafts";
+/** Folder in the app data where files' preview pictures are kept, by file id. */
+const THUMBNAILS_DIR = "thumbnails";
 
 /** Desktop storage: files live wherever the user saved them; an index remembers recent ones. */
 export class TauriStorage implements Storage {
@@ -91,11 +93,33 @@ export class TauriStorage implements Storage {
     }));
     // A draft is only reachable through the recent files, so forgetting it deletes it.
     if (forgotten?.draft) await removeDraft(forgotten.path);
+    await this.saveThumbnail(id, null);
   }
 
-  clear(): Promise<void> {
+  async clear(): Promise<void> {
     // Drafts stay: the list is the only way back to them.
-    return this.mutate((files) => ({ files: files.filter((f) => f.draft), result: undefined }));
+    const removed = await this.mutate((files) => ({
+      files: files.filter((f) => f.draft),
+      result: files.filter((f) => !f.draft),
+    }));
+    for (const file of removed) await this.saveThumbnail(file.id, null);
+  }
+
+  async loadThumbnail(id: string): Promise<Uint8Array | null> {
+    if (!isTauri()) return null;
+    const path = await thumbnailPath(id);
+    return (await exists(path)) ? readFile(path) : null;
+  }
+
+  async saveThumbnail(id: string, image: Uint8Array | null): Promise<void> {
+    if (!isTauri()) return;
+    const path = await thumbnailPath(id);
+    if (!image) {
+      if (await exists(path)) await remove(path);
+      return;
+    }
+    await mkdir(await join(await appDataDir(), THUMBNAILS_DIR), { recursive: true });
+    await writeAtomic(path, image);
   }
 
   async indexLocation(): Promise<string | null> {
@@ -254,6 +278,10 @@ function uniqueFiles(files: FileInfo[]): FileInfo[] {
     paths.add(file.path);
     return true;
   });
+}
+
+async function thumbnailPath(id: string): Promise<string> {
+  return join(await appDataDir(), THUMBNAILS_DIR, `${id}.jpg`);
 }
 
 async function indexPath(name: string): Promise<string> {
