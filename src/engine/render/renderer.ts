@@ -1,35 +1,23 @@
 import { Application, Container } from "pixi.js";
 
 import type { Camera } from "../camera";
-import type { Shape } from "../document";
+import type { AnyElement } from "../elements";
 import type { CanvasTheme } from "./canvas-theme.types";
-import { DraftRelationLayer } from "./layers/draft-relation-layer";
 import { DraftStrokeLayer } from "./layers/draft-stroke-layer";
-import { ErLinkLayer } from "./layers/er-link-layer";
+import { ElementLayer } from "./layers/element-layer";
 import { GridLayer } from "./layers/grid-layer";
 import { OverlayLayer } from "./layers/overlay-layer";
-import { RelationLayer } from "./layers/relation-layer";
-import { ShapeLayer } from "./layers/shape-layer";
 import type { OverlayState } from "./overlay-state.types";
-import type { RelationState } from "./relation-state.types";
 
 /**
  * Owns the Pixi application and composes the layers, bottom to top:
- * grid (screen) → world (sections, relations, shapes, drafts; follows the camera) → overlay (screen).
+ * grid (screen) → world (elements, drafts; follows the camera) → overlay (screen).
  */
 export class Renderer {
   readonly app = new Application();
-  /**
-   * Sections (and ER aggregation boxes) live in their own layer so relation lines show above them
-   * but below other shapes.
-   */
-  private readonly sections = new ShapeLayer();
-  private readonly shapes = new ShapeLayer();
+  private readonly elements = new ElementLayer();
   readonly draftStroke = new DraftStrokeLayer();
   private readonly grid = new GridLayer();
-  private readonly relations = new RelationLayer();
-  private readonly erLinks = new ErLinkLayer();
-  private readonly draftRelation = new DraftRelationLayer();
   private readonly world = new Container();
   private readonly overlay = new OverlayLayer();
 
@@ -46,14 +34,7 @@ export class Renderer {
       autoStart: false, // render on demand only
       preference: ["webgl", "canvas"],
     });
-    this.world.addChild(
-      this.sections,
-      this.relations,
-      this.erLinks,
-      this.shapes,
-      this.draftStroke,
-      this.draftRelation,
-    );
+    this.world.addChild(this.elements, this.draftStroke);
     this.app.stage.addChild(this.grid, this.world, this.overlay);
   }
 
@@ -70,38 +51,24 @@ export class Renderer {
     this.app.renderer.background.color = theme.background;
   }
 
-  syncShapes(shapes: Iterable<Shape>, removed: Iterable<string> = []): void {
-    const sections: Shape[] = [];
-    const others: Shape[] = [];
-    for (const shape of shapes) {
-      const behind = shape.type === "section" || shape.type === "er-aggregate";
-      (behind ? sections : others).push(shape);
-    }
-    const gone = [...removed];
-    this.sections.sync(sections, gone);
-    this.shapes.sync(others, gone);
+  syncElements(elements: Iterable<AnyElement>, removed: Iterable<string> = []): void {
+    this.elements.sync(elements, removed);
   }
 
   /** Re-rasterizes text for the zoom level. */
   setTextZoom(zoom: number): void {
-    this.sections.setTextZoom(zoom);
-    this.shapes.setTextZoom(zoom);
-    this.erLinks.setTextZoom(zoom);
+    this.elements.setTextZoom(zoom);
   }
 
-  /** Hides a shape's canvas text while the DOM text editor shows it. */
+  /** Hides an element's canvas text while the DOM text editor shows it. */
   setHiddenText(id: string | null): void {
-    this.sections.setHiddenText(id);
-    this.shapes.setHiddenText(id);
+    this.elements.setHiddenText(id);
   }
 
-  render(camera: Camera, overlay: OverlayState, relations: RelationState): void {
+  render(camera: Camera, overlay: OverlayState): void {
     this.world.scale.set(camera.zoom);
     this.world.position.set(camera.x * camera.zoom, camera.y * camera.zoom);
     this.grid.draw(camera, this.theme.grid);
-    this.relations.draw(relations, camera.zoom, this.theme.relation, this.theme.selection);
-    this.erLinks.draw(relations.erLinks, relations.highlighted, this.theme.selection);
-    this.draftRelation.draw(relations.draft, camera.zoom, this.theme.selection);
     this.overlay.draw(camera, overlay, this.theme.selection);
     this.app.render();
   }

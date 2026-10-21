@@ -21,8 +21,8 @@ export const viewTools: AgentTool[] = [
     run: (host, args) => {
       const { engine } = requireBoard(host);
       const id = stringArg(args, "id");
-      if (!engine.getShape(id)) throw new Error(`No shape with id ${id}.`);
-      engine.zoomToShape(id);
+      if (!engine.getElement(id)) throw new Error(`No shape with id ${id}.`);
+      engine.zoomToElement(id);
       return "Done.";
     },
   },

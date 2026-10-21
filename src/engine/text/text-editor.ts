@@ -1,17 +1,15 @@
 import { isModKey } from "@core";
 
 import type { Camera } from "../camera";
-import type { BoardDocument, EditableShape, TextShape } from "../document";
-import { editableText, isEditableShape, isErNamed } from "../document";
+import type { BoardDocument } from "../document";
+import { kindOf, type AnyElement, type ElementText } from "../elements";
 import { Disposables } from "../utils";
-import { commitTextEdit } from "./commit-text-edit";
-import { editorFontSize, editorOrigin, textEditorStyle } from "./text-editor-style";
-import { measureText } from "./text-metrics";
+import { textEditorStyle } from "./text-editor-style";
 import type { TextEditorHooks, Session } from "./text-editor.types";
 
 /**
- * Plain DOM <textarea> laid over the canvas while editing a sticky or text shape.
- * Framework-free so the web version and any host can reuse it.
+ * Plain DOM <textarea> laid over the canvas while editing an element's text. Works for any element
+ * whose kind has a `text` spec. Framework-free so the web version and any host can reuse it.
  */
 export class TextEditor {
   private session: Session | null = null;
@@ -24,57 +22,58 @@ export class TextEditor {
   ) {}
 
   get editingId(): string | null {
-    return this.session?.shape.id ?? null;
+    return this.session?.id ?? null;
   }
 
-  /** Edits an existing sticky or text shape. */
+  /** Edits an element's text. Does nothing for elements without text. */
   start(id: string): void {
-    const shape = this.doc.get(id);
-    if (isEditableShape(shape)) this.open(shape, false);
+    const el = this.doc.get(id);
+    const text = el ? kindOf(el).text : null;
+    if (el && text) this.open(el, text);
   }
 
-  /** Types a new text shape that is added to the document on commit. */
-  startDraft(shape: TextShape): void {
-    this.open(shape, true);
-  }
-
-  /** Keeps the editor aligned with the shape while the camera moves. */
+  /** Keeps the editor aligned with the element while the camera moves. */
   reposition(): void {
     const session = this.session;
     if (!session) return;
-    const live = session.isDraft ? session.shape : this.doc.get(session.shape.id);
-    if (!live) return this.discard();
-    if (!isEditableShape(live)) return this.discard();
-    const { x, y } = this.camera.worldToScreen(editorOrigin(live));
+    const el = this.doc.get(session.id);
+    if (!el || !kindOf(el).text) return this.discard();
+    const { x, y } = this.camera.worldToScreen(el);
     session.textarea.style.transform = `translate(${x}px, ${y}px) scale(${this.camera.zoom})`;
   }
 
   commit(): void {
     const session = this.close();
     if (!session) return;
-    const { shape, isDraft, textarea } = session;
-    const created = commitTextEdit(this.doc, { shape, isDraft, text: textarea.value });
-    this.hooks.onEnd(shape.id);
-    if (created) this.hooks.onCreate(shape.id);
+    const el = this.doc.get(session.id);
+    const patch = el ? kindOf(el).text?.set(el, session.textarea.value) : null;
+    if (patch) this.doc.update(session.id, patch);
+    this.hooks.onEnd(session.id);
   }
 
   destroy(): void {
     this.close();
   }
 
-  private open(shape: EditableShape, isDraft: boolean): void {
+  private open<E extends AnyElement>(el: E, text: ElementText<E>): void {
     this.commit();
-    const textarea = createTextarea(shape);
+    const textarea = document.createElement("textarea");
+    textarea.value = text.get(el);
+    textarea.spellcheck = false;
+    textarea.setAttribute("aria-label", text.ariaLabel);
+    textarea.dataset.canvasTextEditor = "";
+    Object.assign(textarea.style, textEditorStyle(text.style(el), el));
+
     const listeners = new Disposables();
     listeners.listen(textarea, "input", () => this.resizeToContent());
     listeners.listen(textarea, "keydown", this.handleKeyDown);
     listeners.listen(textarea, "blur", () => this.commit());
     this.container.appendChild(textarea);
-    this.session = { textarea, shape, isDraft, listeners };
+    this.session = { textarea, id: el.id, listeners };
 
     this.resizeToContent();
     this.reposition();
-    this.hooks.onStart(shape.id);
+    this.hooks.onStart(el.id);
     // Wait a frame so the pointerdown that started editing doesn't steal focus back.
     requestAnimationFrame(() => {
       textarea.focus();
@@ -84,7 +83,7 @@ export class TextEditor {
 
   private discard(): void {
     const session = this.close();
-    if (session) this.hooks.onEnd(session.shape.id);
+    if (session) this.hooks.onEnd(session.id);
   }
 
   /** Removes the textarea and returns the session it belonged to. */
@@ -97,62 +96,30 @@ export class TextEditor {
     return session;
   }
 
+  /** Text centered in its element keeps its wrapped block in the middle while typing. */
   private resizeToContent(): void {
     const session = this.session;
-    if (session?.shape.type === "geo") return centerVertically(session.textarea, session.shape.h);
-    if (session && isErNamed(session.shape) && session.shape.type !== "er-aggregate") {
-      return centerVertically(session.textarea, session.shape.h);
-    }
-    if (session?.shape.type !== "text" && session?.shape.type !== "section") return;
-    const { textarea, shape } = session;
-    const fontSize = editorFontSize(shape);
-    const size = measureText(textarea.value || " ", fontSize);
-    // Sections' titles are bold, a bit wider than the regular-weight measurement.
-    textarea.style.width = `${size.w * (shape.type === "section" ? 1.1 : 1) + fontSize}px`;
-    textarea.style.height = `${size.h}px`;
+    const el = session ? this.doc.get(session.id) : undefined;
+    const text = el ? kindOf(el).text : null;
+    if (!session || !el || text?.style(el).vAlign !== "middle") return;
+    centerVertically(session.textarea, el.h);
   }
 
   private handleKeyDown = (event: KeyboardEvent) => {
     // Keep canvas shortcuts (Delete, V, H, …) from firing while typing.
     event.stopPropagation();
-    // ER names are one line, so plain Enter finishes them.
-    const oneLine = this.session ? isErNamed(this.session.shape) : false;
-    if (
-      event.key === "Escape" ||
-      (event.key === "Enter" && (isModKey(event) || (oneLine && !event.shiftKey)))
-    ) {
+    if (event.key === "Escape" || (event.key === "Enter" && isModKey(event))) {
       event.preventDefault();
       this.commit();
     }
   };
 }
 
-const TEXTAREA_LABELS: Record<EditableShape["type"], string> = {
-  sticky: "Sticky note text",
-  text: "Text",
-  geo: "Shape text",
-  section: "Section title",
-  "er-entity": "Entity name",
-  "er-relation": "Relation name",
-  "er-attribute": "Attribute name",
-  "er-aggregate": "Aggregation name",
-};
-
-/** Pads the top of a shape's textarea so its (wrapped) text sits in the middle, like on canvas. */
+/** Pads the top of the textarea so its (wrapped) text sits in the middle, like on canvas. */
 function centerVertically(textarea: HTMLTextAreaElement, height: number): void {
   textarea.style.paddingTop = "0";
   textarea.style.height = "auto";
   const content = textarea.scrollHeight;
   textarea.style.paddingTop = `${Math.max(0, (height - content) / 2)}px`;
   textarea.style.height = `${height}px`;
-}
-
-function createTextarea(shape: EditableShape): HTMLTextAreaElement {
-  const textarea = document.createElement("textarea");
-  textarea.value = editableText(shape);
-  textarea.spellcheck = false;
-  textarea.setAttribute("aria-label", TEXTAREA_LABELS[shape.type]);
-  textarea.dataset.canvasTextEditor = "";
-  Object.assign(textarea.style, textEditorStyle(shape));
-  return textarea;
 }

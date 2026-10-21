@@ -1,64 +1,64 @@
-import { createGeoShape, GEO_DEFAULT_SIZES, MIN_SHAPE_SIZE, type GeoKind } from "../document";
+import { createGeo, GEO_VARIANTS, MIN_ELEMENT_SIZE, type GeoVariantId } from "../elements";
 import { rectFromPoints } from "../geometry";
 import type { Point, Rect } from "../geometry.types";
 import type { CanvasPointer, Tool, ToolContext } from "./tool.types";
 
 const DRAG_THRESHOLD = 4; // screen px
 
-/** Click to place a shape of the chosen kind, or drag to draw it (Shift for equal sides). */
+/** Click to place a geo element of the chosen variant, or drag to draw it (Shift for equal sides). */
 export class ShapeTool implements Tool {
   readonly id = "shape" as const;
   readonly cursor = "crosshair";
   private start: CanvasPointer | null = null;
-  private shapeId: string | null = null;
+  private elementId: string | null = null;
 
   constructor(private readonly ctx: ToolContext) {}
 
   onPointerDown(p: CanvasPointer): void {
     this.ctx.setSelection([]);
     this.start = p;
-    this.shapeId = null;
+    this.elementId = null;
   }
 
   onPointerMove(p: CanvasPointer): void {
     const start = this.start;
     if (!start) return;
-    if (!this.shapeId) {
+    if (!this.elementId) {
       const distance = Math.hypot(p.screen.x - start.screen.x, p.screen.y - start.screen.y);
       if (distance < DRAG_THRESHOLD) return;
-      this.shapeId = this.add(dragRect(start.world, p.world, p.shiftKey));
+      this.elementId = this.add(dragRect(start.world, p.world, p.shiftKey));
       return;
     }
-    this.ctx.doc.update(this.shapeId, dragRect(start.world, p.world, p.shiftKey));
+    this.ctx.doc.update(this.elementId, dragRect(start.world, p.world, p.shiftKey));
   }
 
   onPointerUp(p: CanvasPointer): void {
     const start = this.start;
     if (!start) return;
-    const id = this.shapeId ?? this.add(clickRect(p.world, this.ctx.getOptions().shapeKind));
+    const id = this.elementId ?? this.add(clickRect(p.world, this.ctx.getOptions().shapeKind));
     this.start = null;
-    this.shapeId = null;
+    this.elementId = null;
     this.ctx.setSelection([id]);
     this.ctx.setTool("select");
   }
 
   onCancel(): void {
     this.start = null;
-    this.shapeId = null;
+    this.elementId = null;
   }
 
   private add(rect: Rect): string {
     const { doc } = this.ctx;
     const { shapeKind, shapeFill, shapeStroke } = this.ctx.getOptions();
-    const shape = createGeoShape(rect, shapeKind, shapeFill, shapeStroke, doc.nextIndex());
+    const geo = createGeo(rect, shapeKind, shapeFill, shapeStroke, doc.nextIndex());
     doc.checkpoint();
-    doc.add(shape);
-    return shape.id;
+    doc.add(geo);
+    return geo.id;
   }
 }
 
-function clickRect(center: Point, kind: GeoKind): Rect {
-  const { w, h } = GEO_DEFAULT_SIZES[kind];
+function clickRect(center: Point, kind: GeoVariantId): Rect {
+  const { w, h } = GEO_VARIANTS[kind].defaultSize;
   return { x: center.x - w / 2, y: center.y - h / 2, w, h };
 }
 
@@ -72,7 +72,7 @@ function dragRect(a: Point, b: Point, square: boolean): Rect {
   return {
     x: Math.round(rect.x),
     y: Math.round(rect.y),
-    w: Math.round(Math.max(MIN_SHAPE_SIZE, rect.w)),
-    h: Math.round(Math.max(MIN_SHAPE_SIZE, rect.h)),
+    w: Math.round(Math.max(MIN_ELEMENT_SIZE, rect.w)),
+    h: Math.round(Math.max(MIN_ELEMENT_SIZE, rect.h)),
   };
 }

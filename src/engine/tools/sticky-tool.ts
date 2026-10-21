@@ -1,4 +1,4 @@
-import { createStickyShape } from "../document";
+import { createSticky } from "../elements";
 import { selectAndEdit } from "./select-and-edit";
 import type { CanvasPointer, Tool, ToolContext } from "./tool.types";
 
@@ -11,9 +11,9 @@ export class StickyTool implements Tool {
 
   onPointerDown(p: CanvasPointer): void {
     const { doc } = this.ctx;
-    const shape = createStickyShape(p.world, this.ctx.getOptions().stickyColor, doc.nextIndex());
+    const sticky = createSticky(p.world, this.ctx.getOptions().stickyColor, doc.nextIndex());
     doc.checkpoint();
-    doc.add(shape);
-    selectAndEdit(this.ctx, shape.id);
+    doc.add(sticky);
+    selectAndEdit(this.ctx, sticky.id);
   }
 }

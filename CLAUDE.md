@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Cloudy Canvas (by DarkRedgm) is a desktop-first Figma + FigJam app built with Tauri 2, React 19, Vite, TypeScript (strict, `noUncheckedIndexedAccess`), Tailwind v4, shadcn/ui (Radix), Zustand and React Router. It has two file types: **Board** (`.cboard`, FigJam-style; the editor is implemented at `/board/:id`) and **Design** (`.cdesign`, Figma-style; still a placeholder at `/design/:id`). Roadmap: desktop with local files, then a web build of the same frontend, then real-time collaboration (Yjs + Hocuspocus, Laravel backend). It must build on both Windows 11 and Arch Linux.
+Cloudy Canvas (by DarkRedgm) is a desktop-first Figma + FigJam app built with Tauri 2, React 19, Vite, TypeScript (strict, `noUncheckedIndexedAccess`), Tailwind v4, shadcn/ui (Radix), Zustand and React Router. It has two file types: **Board** (`.cboard`, FigJam-style; the editor is implemented at `/board/:id` and is being rebuilt on the element architecture, see Elements) and **Design** (`.cdesign`, Figma-style; still a placeholder at `/design/:id`). Roadmap: desktop with local files, then a web build of the same frontend, then real-time collaboration (Yjs + Hocuspocus, Laravel backend). It must build on both Windows 11 and Arch Linux.
 
 ## Commands
 
@@ -35,57 +35,55 @@ Path aliases: `@app`, `@pages`, `@engine`, `@core`, `@ui`, `@platform`, `@stores
 - `CanvasEngine` (`canvas-engine.ts`) is a coordinator that wires the pieces together:
   - `BoardDocument`: the content, a Yjs doc.
   - `Camera`
-  - `Scene`: shape list, selection, hover and marquee, plus spatial queries.
+  - `Scene`: element list, selection, hover and marquee, plus spatial queries.
   - `Renderer`: PixiJS.
   - The tools.
   - Input modules: pointer, wheel and keyboard.
   - `TextEditor`: a DOM textarea overlay.
-- **Content lives only in the Yjs doc.** Each shape is a `Y.Map` inside the `"shapes"` map. Order is a fractional-index string (`index`), and lexicographic order is z-order.
+- **Content lives only in the Yjs doc.** Each element is a `Y.Map` inside the `"shapes"` map (the name is kept so existing files load). Order is a fractional-index string (`index`), and lexicographic order is z-order.
   - All edits go through `BoardDocument` methods (`add`, `update`, `updateMany`, `remove`), which transact with `LOCAL_ORIGIN` so `Y.UndoManager` tracks only local changes.
   - Call `doc.checkpoint()` before a user action to start a new undo step.
-- **Data flow is one-way.** Tools write to the document, and `doc.observe` reports `{ updated, removed }` ids. The engine then refreshes the `Scene`, syncs only the changed Pixi views (`render/layers/shape-layer.ts`) and requests a frame.
+  - `doc.get`/`doc.all` return only elements whose type is registered (`isElement`), with `kind.fillDefaults` applied. Elements of unregistered types (e.g. DB or ER shapes in older boards) stay in the doc untouched but aren't shown.
+- **Data flow is one-way.** Tools write to the document, and `doc.observe` reports `{ updated, removed }` ids. The engine then refreshes the `Scene`, syncs only the changed Pixi views (`render/layers/element-layer.ts`) and requests a frame.
   - Rendering is on demand: Pixi uses `autoStart: false`, and `FrameScheduler` renders at most once per animation frame.
 - **Tools** (`tools/`) implement `Tool` and act only through `ToolContext`, never through the engine directly.
 - **Extension points are registries:**
   - New tool: add it to `tools/tool-ids.ts`, then `tools/create-tools.ts`.
-  - New shape type: add the type in `document/shapes.types.ts`, a factory in `document/shape-factory.ts` and a drawer in `render/shapes/shape-drawers.ts`.
+  - New element type: see Elements below.
   - New shortcut or action: add it to `commands.ts` and `input/keymap.ts`.
 - **`input/keymap.ts` is the single source for shortcuts.** The UI reads labels via `shortcutLabel(commandId)`, so never hard-code shortcut strings in components. Key matching and formatting helpers live in `core/keyboard.ts` (shared with the `useHotkey` hook in `ui/hooks/`).
-- **Shapes and connectors** (`shape` and `connector` tools). `geo` shapes (`geo/` outlines) have fill, stroke and centered text that's edited with the `TextEditor`. A `connector`'s ends are free points or attached to a shape (`shapeId` plus an optional side).
-  - `Scene.refresh()` replaces each connector with a copy resolved by `connectors/resolve-connector.ts` (route, bounds, `points`). So **read shapes for geometry from the scene** (`scene.get`, `ctx.getShape`), not `doc.get`; the stored connector bounds are stale.
-  - When shapes change, the engine also redraws the connectors attached to them (`scene.connectorsAttachedTo`). Deleting goes through `remove-shapes.ts`, which frees the attached connector ends and prunes DB refs.
-  - Presses on handles (connector ends, resize, quick-connect dots, table columns) are resolved by `find-interaction.ts` before normal selection. The handle geometry lives in `handles/`.
-- **Sections** (`section` tool, `sections/`). Membership is geometric: a section's members are the shapes fully inside it, worked out when a drag starts (`withSectionMembers`). Nothing stores parent links, so dropping in, dragging out and resizing need no bookkeeping.
-  - Drawing order comes from `zOrderKey` (`document/z-order.ts`): sections first, larger ones further back, then everything else by `index`. Sections render in their own Pixi layer, under the DB relation lines.
-  - A section is hit by its title or border only; clicks inside it reach its contents or start a marquee. Deleting a section deletes its members.
-- **Database tables** (`db/`, the `db` tool): each table is a `db-table` shape whose `columns` are a plain JSON array. A relation lives on the source column (`column.ref`) and points at the target by table/column **id**, so moves and renames never break it. Tables keep `indexes` (whose parts are column ids or expressions) and a `note`, which is drawn as a bubble beside the table (`noteHidden` is view state, written with `doc.updateUntracked`). A column's `type` is the bare name (`varchar`) and its arguments live in `typeArgs` (`255`); `document/column-type.ts` splits and joins them (`splitColumnType`, `formatColumnType`), and aliases are normalized on input (`int` → `integer`, `document/type-aliases.ts`). Enums are `db-enum` cards; columns use an enum by naming it as their type. Stickies with a `noteName` are DBML sticky notes. Tables, enums and linked stickies together form the board's single schema (`schema-shapes.ts`).
-  - `DbSchema` (`engine.db`) is a facade and the only place that edits the schema. The logic lives in `table-edits.ts`, `enum-edits.ts` (an enum rename also retypes its columns) and `schema-dbml.ts`, which has `applyTableDbml` / `applyEnumDbml` (one slice), `applySchemaDbml` (the whole schema) and `importSchemaDbml` (merge).
-  - DBML is a generated view (`db/dbml/`: a hand-written parser and serializer for a subset). Parsed text goes through `reconcile.ts` and `reconcile-*.ts`, which match tables, columns, enums, values and notes by name, then by position for renames, so ids survive. Tables that refs name but nothing defines are created by `add-missing-tables.ts` on import, paste and blur (not while typing, so half-typed names don't become tables). Older boards get new fields filled by `document/fill-shape-defaults.ts`.
-  - Relations are resolved in `Scene` and drawn by `render/layers/relation-layer.ts` under the shapes. New relations are dragged from column handles by `tools/connect-gesture.ts`, with `input/edge-auto-pan.ts` panning when the pointer nears the edge.
-- **ER diagrams** (`er/`, the `er` tool). These are Chen-notation entity–relationship diagrams with the extended model. The language and the visual editor are documented in `docs/er-language.md`. There are six shape types:
-  - `er-entity`: rectangle, doubled when `weak`.
-  - `er-relation`: diamond, with `identifying` (double) and `idMark` (the "I" bar). Its `participants` point **by id** at entities or aggregations, with `(min,max)`, a role and an `arrow` flag.
-  - `er-attribute`: `ownerId` is an entity, relation, composite attribute, hierarchy (its discriminator) or aggregation. It has key/multi/derived/optional flags, a `look` (`ellipse`/`lollipop`) and an `order`.
-  - `er-isa`: hierarchy triangle, with `parentId`, children, `exclusive`/`total` and parent/child cardinalities.
-  - `er-aggregate` and `er-constraint`: their **geometry is derived**. `Scene.refresh()` runs `resolve-er.ts`, so the box follows the relation and its participants, and the constraint's `points` follow its relations. Read their geometry from the scene, not the doc. Aggregations sit behind, like sections, and are hit by their border or name only.
-  - Lines aren't shapes. `er-links.ts` derives them, including loops for self-relations (`loop-route.ts`), arrows and the total mark. `render/layers/er-link-layer.ts` draws them under the shapes.
-  - **A board holds several diagrams.** Every ER shape has `diagram` (an id) and `diagramName` (repeated on each shape of the diagram). Names, text, layout and edits are per diagram. `applyErPlan(doc, plan, scope)` stamps the diagram on every shape it writes, so creators just spread `NO_ER_DIAGRAM`. Boards saved before diagrams existed are split into diagrams by connected component on load (`migrate-er-diagrams.ts`, not an undo step).
-  - `ErModel` (`engine.er`) is the board-level facade: `diagram(id)`, `diagrams()`, `diagramOf(shapeId)`, `shape(id)`, `remove(id)` and `newDiagram(center?)` (the `er` tool always starts a new diagram). `EngineState.selectedErDiagram` is the selection's diagram.
-  - `ErDiagram` (`er-diagram.ts`) is one diagram:
-    - `text()` and `applyText(text, { createMissing })`. The text in `er/lang/` is parsed with the DBML tokenizer; its `Diagram <name> [style: …]` line carries the name. `reconcile-er.ts`/`reconcile-extended.ts` match by name then position, so ids and positions survive. `add-missing-entities.ts` creates named-but-undefined entities on paste/blur only.
-    - `textRange(shapeId)`: where the shape's block is written (`serializeErBlocks`), which the Text tab highlights.
-    - `relayout()` and `rename(name)`.
-    - `edits`: `er-edits.ts` over the pure functions in `er/edits/`. Each edit builds the next model and goes through `applyErPlan` (one undo step, new shapes auto-placed).
-  - `er/layout/` is deterministic auto-layout:
-    - `entity-grid.ts` gives entities grid cells; hierarchy children go in the row under their parent.
-    - `place-isas.ts` places triangles, and `place-relations.ts` places diamonds.
-    - `place-aggregates.ts` and `aggregate-boxes.ts` keep outside shapes out of aggregation boxes.
-    - `place-attributes.ts`/`fan-out.ts` fan attributes into free directions, avoiding boxes and lines.
-    - `resolve-overlaps.ts` cleans up leftover overlaps.
-  - `applyErPlan` lays out an all-new diagram fresh and places only new shapes around an existing one.
-  - Dragging takes attributes (and an aggregation's contents) along (`withErMembers`). `pruneEr` cleans up orphans after removals.
-  - ER names are renamed in place with the `TextEditor`: `ErNamedShape` is part of `EditableShape`, and `editableText()` reads the name.
 - **UI state** is exposed as an immutable `EngineState` snapshot (`utils/store.ts`, shallow-compared), via `engine.subscribe` / `engine.getState`.
+
+## Elements (`src/engine/elements/`)
+
+Everything on the canvas is an element. **Elements are plain data and behavior lives in kind classes.** Never branch on `el.type` outside `elements/`: ask the element's kind.
+
+- **Data:** every element extends the `CanvasElement` interface (`id`, `type`, `index`, `x`, `y`, `w`, `h`), and `AnyElement` is the union of all of them (`element.types.ts`). They're plain JSON because they live in the Yjs doc.
+- **Behavior:** each type has one `ElementKind` subclass (`element-kind.ts`), registered in `ELEMENT_KINDS` (`element-registry.ts`). `kindOf(el)` returns it. A kind can provide:
+  - `draw`, `bounds`, `hitTest`
+  - `move`, `resizable` / `resize`
+  - `text`: an `ElementText` spec (`get`, `set`, `style`) that the `TextEditor` and the drawer share, so edited text lines up with drawn text
+  - `fillDefaults` (for older boards)
+  - `describe` (agent summaries)
+  - `optionsOf` / `restyle` (the tool options panel)
+  - `build` from an `ElementSpec` (agents' `create_shapes`), plus `creatable` and `patchableFields`
+- **Shared bases** (`bases/`): `BoxKind` (hit anywhere in the bounds, resizable) and `LineKind` (hit near a polyline `points`).
+- **One folder per type**, holding `<type>.types.ts`, its defaults, `create-<type>.ts`, `draw-<type>.ts`, `<type>-kind.ts` and `index.ts`:
+  - `sticky/`: `StickyKind extends BoxKind`
+  - `stroke/`: `StrokeKind extends LineKind`; only moved, and not created by agents
+  - `geo/`: `GeoKind extends BoxKind`, which delegates the outline to the element's variant. Each variant (`kind`: rectangle, ellipse, diamond, …) is a `GeoVariant` subclass in `geo/variants/`, registered in `GEO_VARIANTS`, with its label, default size, `outline` and optional `decorate`. `PolygonVariant` covers the polygon ones.
+- **Adding a type:**
+  1. Create its folder.
+  2. Add it to `ElementType`, `AnyElement` and `ElementPatch` in `element.types.ts`.
+  3. Register its kind in `ELEMENT_KINDS`.
+
+  The mapped registry type makes the compiler require the kind.
+
+- **Rendering:** `ElementView` (`render/element-view.ts`) is the one Pixi container for every element. `sync` calls `kindOf(el).draw(view, el)`, and `view.placeText(text, style, w, h)` lays text out like the editor.
+
+### Staged rebuild (`temporal/`)
+
+The board is being rebuilt on the element architecture one type at a time. Only `sticky`, `stroke` and `geo` exist so far. The code for text, connectors, sections, DB tables/enums and ER diagrams (engine modules, tools, layers, agent tools and their panels) was moved to `temporal/`, which mirrors the `src/` paths, together with reference copies of the core files from before the rebuild. `temporal/` isn't compiled, linted or formatted. Its `README.md` keeps the old architecture notes for those features. To bring a feature back, port it into an `elements/<type>/` folder (plus its tool and panel), then delete what it replaced from `temporal/`.
 
 ## Agent (MCP) server
 
@@ -93,14 +91,14 @@ Agents (Claude Code, Cursor, …) connect to the running app at `http://127.0.0.
 
 - **Rust is only the transport** (`src-tauri/src/mcp/`): stateless Streamable HTTP (POST only). Each body is emitted to the webview as `mcp://message` and answered through the `mcp_reply` command (30 s timeout). `mcp_status` and `mcp_set_enabled` back the UI.
 - **The protocol is TypeScript.** `core/mcp/handle-mcp-message.ts` is a small hand-written JSON-RPC handler (`initialize`, `ping`, `tools/list`, `tools/call`). It reaches the platform through the `AgentChannel` interface (`core/agent-channel.types.ts`, `platform/tauri-agent-channel.ts`), and `agentChannel` is `null` outside Tauri.
-- **Tools are a registry in `engine/agent/`**: one group per file (`board-read-tools`, `shape-edit-tools`, `db-tools`, `er-tools`, `view-tools`, `file-tools`), listed in `create-agent-tools.ts`. A tool gets an `AgentHost` (the open board, recent files, opening a board). Every editing tool wraps its writes in `asUndoStep` so one call is one Ctrl+Z, and builds or validates everything before writing.
+- **Tools are a registry in `engine/agent/`**: one group per file (`board-read-tools`, `shape-edit-tools`, `view-tools`, `file-tools`), listed in `create-agent-tools.ts`. A tool gets an `AgentHost` (the open board, recent files, opening a board). Every editing tool wraps its writes in `asUndoStep` so one call is one Ctrl+Z, and builds or validates everything before writing. Element tools go through the kinds (`build-element.ts`, `element-patch.ts`, `element-summary.ts`). The MCP names still say "shapes" (`create_shapes`, …) so agents' setups keep working.
 - **The app wires it up** in `app/mcp/` (`useAgentServer`, mounted by `<AgentServer />` in the providers). The open board registers itself for agents with `useAgentBoard` (`pages/editor/board/agent/`). The on/off setting is `stores/agent-server-store.ts`, and `pages/agent-server/` is the menu in both top bars that copies the URL and setup.
 
 ## React host (`src/pages/editor/board/`)
 
 - `useCanvasEngine` creates and mounts the engine into a container div. The canvas theme is resolved from CSS tokens via `readCanvasTheme()`.
 - The engine is provided through `EngineContext`. Chrome components use `useEngine()` and `useEngineState(selector)` (from `engine/engine-context.ts`), selecting primitives or stable references so each one re-renders only for its slice.
-- **Never put canvas shapes in React state.** React only hosts the canvas and draws the UI around it. Text views of the document (DBML, ER) share `components/source-editor/`, which applies text while typing and shows errors. The ER panel (`components/er-panel/`) opens when an ER shape is selected and shows that shape's diagram (`boardPanelStore.erDiagram`; `useErDiagram()`, and `useErQuery` reads from it). Its header has the diagram switcher (name, list, New diagram). It has a Visual tab (one form per shape kind in `er-panel/forms/`, reading through `useErQuery` / `useErShape`) and a Text tab, plus an Add menu, re-layout and the attribute style toggle. The DB side panel (`components/db-panel/`) reads tables through `useDbQuery` / `useDbTable` (read-through caches keyed on `engine.db.getVersion()`).
+- **Never put canvas elements in React state.** React only hosts the canvas and draws the UI around it. The tool options panels (`components/tool-options/`) follow the active tool, or the selection's element type with the select tool.
 - **Files:** `file/` loads the board's `BoardDocument` from `Storage` (or starts an empty one for a new id) and saves it. A `.cboard` file is the `CCBD` magic, a u32 format version and a Yjs update (`core/board-file.ts`). `TauriStorage` keeps a recent-files index (id → path) in the app data folder. Ctrl+S / Ctrl+Shift+S are engine commands that call the host's `setHostActions`.
 
 ## Code conventions

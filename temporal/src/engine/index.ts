@@ -1,0 +1,89 @@
+// Framework-agnostic canvas engine: PixiJS renders, a Yjs doc (BoardDocument) holds the content.
+// React only hosts it (mount/unmount) and draws UI around it; never import React or UI code here.
+export type { CanvasEngineOptions, HostActions } from "./canvas-engine.types";
+export type { AgentBoard, AgentHost, AgentTool, ShapeSummary, ToolArgs } from "./agent";
+export type { CommandId } from "./commands.types";
+export type { EngineState } from "./engine-state.types";
+export type { CanvasTheme } from "./render";
+export type { ToolId, ToolOptions } from "./tools";
+export type {
+  ArrowHead,
+  ConnectorStyle,
+  DbColumn,
+  DbEnumShape,
+  DbEnumValue,
+  DbIndex,
+  DbIndexPart,
+  DbRef,
+  DbRefKind,
+  DbTableShape,
+  ErAggregateShape,
+  ErAttributeKey,
+  ErAttributeLook,
+  ErAttributeShape,
+  ErConstraintKind,
+  ErConstraintShape,
+  ErEntityShape,
+  ErIsaChild,
+  ErIsaShape,
+  ErParticipant,
+  ErRelationShape,
+  ErShape,
+  GeoKind,
+  SectionShape,
+  Shape,
+  ShapeType,
+} from "./document";
+export type {
+  ColumnTarget,
+  DbApplyOptions,
+  DbApplyResult,
+  DbColumnPatch,
+  DbEnumPatch,
+  DbEnumValuePatch,
+  DbIndexPatch,
+  DbmlError,
+  DbSchema,
+  DbTablePatch,
+  EnumUsage,
+  IncomingRef,
+} from "./db";
+export { COLUMN_TYPES, INDEX_TYPES, TYPE_ARGS } from "./db";
+export type {
+  ErAggregatePatch,
+  ErApplyResult,
+  ErAttributePatch,
+  ErConstraintPatch,
+  ErDiagram,
+  ErDiagramInfo,
+  ErEntityPatch,
+  ErIsaChildPatch,
+  ErIsaPatch,
+  ErModel,
+  ErParticipantPatch,
+  ErRelationPatch,
+  ErShapes,
+} from "./er";
+export { cardinalityRatio } from "./er";
+export { CanvasEngine } from "./canvas-engine";
+export { AGENT_INSTRUCTIONS, createAgentTools } from "./agent";
+export { KEYMAP, shortcutLabel } from "./input";
+export { TOOL_IDS } from "./tools";
+export {
+  BoardDocument,
+  canonicalTypeName,
+  formatColumnType,
+  splitColumnType,
+  DB_ENUM_COLOR,
+  DB_HEADER_COLORS,
+  ER_ENTITY_COLOR,
+  ER_RELATION_COLOR,
+  GEO_KINDS,
+  SECTION_COLORS,
+  SHAPE_FILLS,
+  SHAPE_STROKES,
+  MARKER_COLORS,
+  MARKER_SIZES,
+  STICKY_COLORS,
+} from "./document";
+export { MIN_ZOOM, MAX_ZOOM } from "./camera";

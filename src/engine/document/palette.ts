@@ -48,47 +48,6 @@ export const SHAPE_STROKES = [
 
 export const TRANSPARENT = "transparent";
 
-/** Section backgrounds: soft tints so the shapes inside stay readable. */
-export const SECTION_COLORS = [
-  { name: "Seal", value: "#f1f2f4" },
-  { name: "Ice", value: "#e7f1fb" },
-  { name: "Mint", value: "#e6f6ec" },
-  { name: "Sand", value: "#fbf3e2" },
-  { name: "Blush", value: "#fdeae4" },
-  { name: "Lilac", value: "#f0ecfc" },
-] as const;
-
-/** Header colors for database tables. */
-export const DB_HEADER_COLORS = [
-  { name: "Ice", value: "#cfe4f8" },
-  { name: "Sand", value: "#f3e3c3" },
-  { name: "Blush", value: "#fbd3c7" },
-  { name: "Mint", value: "#cdeed8" },
-  { name: "Lilac", value: "#e2d9fa" },
-  { name: "Seal", value: "#e6e8eb" },
-] as const;
-
-/** Outline of ER entities (rectangles), as in the classic Chen drawings. */
-export const ER_ENTITY_COLOR = "#e0484d";
-/** Outline of ER relations (diamonds). */
-export const ER_RELATION_COLOR = "#3a83c9";
-/** Outline of ER attributes (ellipses). */
-export const ER_ATTRIBUTE_COLOR = "#2a2f37";
-/** Fill of every ER shape. */
-export const ER_FILL_COLOR = "#ffffff";
-
-/** Body of a database table. */
-export const DB_BODY_COLOR = "#ffffff";
-
-/** Header color of enum cards. */
-export const DB_ENUM_COLOR = "#e2d9fa";
-
-/** Background of a table's note bubble. */
-export const NOTE_BUBBLE_COLOR = "#fff6d6";
-
-/** Muted ink for secondary text such as column types. */
-export const MUTED_INK_COLOR = "#6b7280";
-
 export const INK_COLOR = "#2a2f37";
 
 /** Tint for the soft paper shadow under sticky notes. */

@@ -1,28 +1,15 @@
 import { Camera } from "./camera";
 import { createCommands } from "./commands";
 import type { CommandHandler, CommandId } from "./commands.types";
-import { DbSchema } from "./db";
-import { ErModel, withErMembers } from "./er";
+import { BoardDocument, type DocumentChange } from "./document";
+import { kindOf, type AnyElement, type ElementPatch } from "./elements";
 import { findInteraction } from "./find-interaction";
-import { hitTestShape, shapeBounds } from "./hit-test";
-import {
-  BoardDocument,
-  isConnectable,
-  isEditableShape,
-  isErShape,
-  isSection,
-  type DocumentChange,
-  type SectionShape,
-  type Shape,
-} from "./document";
 import { DEFAULT_TOOL_OPTIONS } from "./engine-state";
 import type { EngineState } from "./engine-state.types";
 import type { Point } from "./geometry.types";
 import { bindKeyboard, bindWheel, EdgeAutoPan, PointerInput } from "./input";
 import { Renderer, type CanvasTheme } from "./render";
-import { removeShapes } from "./remove-shapes";
 import { Scene } from "./scene";
-import { withSectionMembers } from "./sections";
 import { loadFonts, TextEditor } from "./text";
 import {
   createTools,
@@ -32,8 +19,7 @@ import {
   type ToolId,
   type ToolOptions,
 } from "./tools";
-import { optionsFromShape, stylePatches } from "./tools/style-options";
-import { debounce, Disposables, Emitter, FrameScheduler, Store } from "./utils";
+import { debounce, Disposables, FrameScheduler, Store } from "./utils";
 import type { CanvasEngineOptions, HostActions } from "./canvas-engine.types";
 
 const ZOOM_STEP = 1.25;
@@ -44,14 +30,10 @@ const TEXT_ZOOM_DELAY_MS = 150;
 /**
  * Framework-agnostic infinite canvas for boards. Wires the document, camera, renderer, tools and
  * input together. Hosts call `mount(container)` and drive it through the public methods; UI state
- * is exposed via `subscribe()` / `getState()`.
+ * is exposed via `subscribe()` / `getState()`. Per-type behavior comes from each element's kind.
  */
 export class CanvasEngine {
   readonly doc: BoardDocument;
-  /** The board's database schema (all `db-table` shapes), for tools and the host's table editor. */
-  readonly db: DbSchema;
-  /** The board's ER diagram (all `er-*` shapes), for the ER tool and the host's ER text editor. */
-  readonly er: ErModel;
   readonly commands: Record<CommandId, CommandHandler>;
   private readonly ownsDocument: boolean;
   private readonly camera = new Camera();
@@ -60,8 +42,6 @@ export class CanvasEngine {
   private readonly tools: Record<ToolId, Tool>;
   private readonly store: Store<EngineState>;
   private readonly disposables = new Disposables();
-  private readonly contentEmitter = new Emitter();
-  private contentVersion = 0;
   private readonly frames = new FrameScheduler(() => this.draw());
   private readonly autoPan = new EdgeAutoPan(this.camera, (dx, dy) => {
     this.camera.panBy(dx, dy);
@@ -84,8 +64,6 @@ export class CanvasEngine {
   constructor({ theme, document }: CanvasEngineOptions) {
     this.doc = document ?? new BoardDocument();
     this.ownsDocument = !document;
-    this.db = new DbSchema(this.doc);
-    this.er = new ErModel(this.doc);
     this.renderer = new Renderer(theme);
     this.scene = new Scene(this.doc);
     this.tools = createTools(this.createToolContext());
@@ -118,7 +96,7 @@ export class CanvasEngine {
     this.camera.setViewport(width, height);
     this.camera.reset();
     this.scene.refresh();
-    this.renderer.syncShapes(this.scene.shapes);
+    this.renderer.syncElements(this.scene.elements);
     this.renderer.setTextZoom(this.camera.zoom);
 
     this.bindInput(container, canvas);
@@ -136,10 +114,7 @@ export class CanvasEngine {
     this.updateTextZoom.cancel();
     this.disposables.dispose();
     this.textEditor?.destroy();
-    this.db.destroy();
-    this.er.destroy();
     this.store.destroy();
-    this.contentEmitter.clear();
     // If mount() is still awaiting init, it destroys the renderer itself once init resolves.
     if (this.rendererReady) this.renderer.destroy();
     if (this.ownsDocument) this.doc.destroy();
@@ -149,18 +124,6 @@ export class CanvasEngine {
 
   subscribe = (listener: () => void) => this.store.subscribe(listener);
   getState = (): EngineState => this.store.get();
-
-  /** Notifies on every board content change (for host views that list content, e.g. sections). */
-  subscribeContent = (listener: () => void) => this.contentEmitter.subscribe(listener);
-  /** Increments on every content change. */
-  getContentVersion = (): number => this.contentVersion;
-
-  /** Every section, top to bottom then left to right. */
-  sections(): SectionShape[] {
-    return this.scene.shapes
-      .filter(isSection)
-      .sort((a, b) => (Math.abs(a.y - b.y) > 1 ? a.y - b.y : a.x - b.x));
-  }
 
   setTheme(theme: CanvasTheme): void {
     this.renderer.setTheme(theme);
@@ -208,28 +171,23 @@ export class CanvasEngine {
   }
 
   selectAll(): void {
-    this.setSelection(this.scene.shapes.map((shape) => shape.id));
+    this.setSelection(this.scene.elements.map((el) => el.id));
   }
 
   /** Returns `false` when nothing was selected. */
   deleteSelection(): boolean {
     if (this.scene.selection.size === 0) return false;
-    // Deleting a section deletes what's inside it, like FigJam; an ER shape takes its attributes.
-    this.deleteShapes(this.scene.selection.ids);
+    this.deleteElements(this.scene.selection.ids);
     this.setSelection([]);
     return true;
   }
 
-  /**
-   * Shapes bottom to top, as drawn: connectors are resolved (route and bounds), so read geometry
-   * here rather than from `doc`.
-   */
-  shapes(): readonly Shape[] {
-    return this.scene.shapes;
+  /** Elements bottom to top, as drawn. */
+  elements(): readonly AnyElement[] {
+    return this.scene.elements;
   }
 
-  /** One shape as drawn (see `shapes()`). */
-  getShape(id: string): Shape | undefined {
+  getElement(id: string): AnyElement | undefined {
     return this.scene.get(id);
   }
 
@@ -241,19 +199,21 @@ export class CanvasEngine {
     this.setSelection(ids);
   }
 
-  /** Deletes shapes like the Delete key (with section contents and ER attributes). Returns every removed id. */
-  deleteShapes(ids: Iterable<string>): string[] {
-    const removing = this.withMembers([...ids].filter((id) => this.doc.get(id)));
-    if (removing.size === 0) return [];
-    removeShapes(this.doc, this.scene, removing);
-    return [...removing];
+  /** Deletes elements as one undo step. Returns the removed ids. */
+  deleteElements(ids: Iterable<string>): string[] {
+    const removing = [...new Set(ids)].filter((id) => this.doc.get(id));
+    if (removing.length === 0) return [];
+    this.doc.checkpoint();
+    this.doc.remove(removing);
+    return removing;
   }
 
-  /** Opens the text editor on the selected sticky or text. Returns `false` if there is none. */
+  /** Opens the text editor on the selected element. Returns `false` if it has no text. */
   editSelection(): boolean {
     const id = this.scene.selection.single();
-    if (!id || !isEditableShape(this.doc.get(id))) return false;
-    this.textEditor?.start(id);
+    const el = id ? this.doc.get(id) : undefined;
+    if (!el || !kindOf(el).text) return false;
+    this.textEditor?.start(el.id);
     return true;
   }
 
@@ -263,20 +223,11 @@ export class CanvasEngine {
     else this.setTool("select");
   }
 
-  /** Centers the camera on a shape (e.g. a table far away on the board) and selects it. */
-  focusShape(id: string): void {
-    const shape = this.doc.get(id);
-    if (!shape) return;
-    this.camera.centerOn({ x: shape.x + shape.w / 2, y: shape.y + shape.h / 2 });
-    this.setSelection([id]);
-    this.onCameraChange();
-  }
-
-  /** Fits a shape (e.g. a section) in the view and selects it. */
-  zoomToShape(id: string): void {
-    const shape = this.scene.get(id);
-    if (!shape) return;
-    this.camera.fitRect(shapeBounds(shape));
+  /** Fits an element in the view and selects it. */
+  zoomToElement(id: string): void {
+    const el = this.scene.get(id);
+    if (!el) return;
+    this.camera.fitRect(kindOf(el).bounds(el));
     this.setSelection([id]);
     this.onCameraChange();
   }
@@ -306,17 +257,14 @@ export class CanvasEngine {
   private createToolContext(): ToolContext {
     return {
       doc: this.doc,
-      db: this.db,
-      er: this.er,
       camera: this.camera,
       getOptions: () => this.options,
       getSelection: () => this.scene.selection.ids,
       setSelection: (ids) => this.setSelection(ids),
       setTool: (id) => this.setTool(id),
-      shapeAt: (world) => this.shapeAt(world),
-      shapesInRect: (rect) => this.scene.shapesInRect(rect),
+      elementAt: (world) => this.elementAt(world),
+      elementsInRect: (rect) => this.scene.elementsInRect(rect),
       editText: (id) => this.textEditor?.start(id),
-      editNewText: (shape) => this.textEditor?.startDraft(shape),
       setCursor: (cursor) => this.setCursor(cursor),
       setHover: (id) => this.setHover(id),
       setMarquee: (rect) => {
@@ -328,16 +276,9 @@ export class CanvasEngine {
         this.renderer.draftStroke.draw(points, markerColor, markerSize);
         this.requestRender();
       },
-      getShape: (id) => this.scene.get(id),
-      withSectionMembers: (ids) => this.withMembers(ids),
-      connectableAt: (world, exclude) => this.connectableAt(world, exclude),
+      getElement: (id) => this.scene.get(id),
       getHover: () => this.scene.hoveredId,
-      interactionAt: (world) => findInteraction(this.doc, this.scene, world, this.camera.zoom),
-      setDraftRelation: (draft, target) => {
-        this.scene.draftRelation = draft;
-        this.scene.dropTarget = target;
-        this.requestRender();
-      },
+      interactionAt: (world) => findInteraction(this.scene, world, this.camera.zoom),
       autoPan: (screen, onPan) => this.autoPan.update(screen, onPan),
       panBy: (dx, dy) => {
         this.camera.panBy(dx, dy);
@@ -357,7 +298,6 @@ export class CanvasEngine {
         this.renderer.setHiddenText(null);
         this.requestRender();
       },
-      onCreate: (id) => this.setSelection([id]),
     });
   }
 
@@ -402,31 +342,20 @@ export class CanvasEngine {
 
   private handleDocumentChange(change: DocumentChange): void {
     this.scene.refresh();
-    // Connectors follow the shapes they're attached to, so they're redrawn with them.
-    const ids = new Set(change.updated);
-    for (const id of this.scene.connectorsAttachedTo([...change.updated, ...change.removed])) {
-      if (!change.removed.has(id)) ids.add(id);
-    }
-    // So do aggregation boxes and constraints, when any ER shape changes.
-    if ([...change.updated].some((id) => isErShape(this.scene.get(id))) || change.removed.size) {
-      for (const id of this.scene.erDerivedIds()) ids.add(id);
-    }
-    const changed = [...ids]
+    const changed = [...change.updated]
       .map((id) => this.scene.get(id))
-      .filter((shape): shape is Shape => shape !== undefined);
-    this.renderer.syncShapes(changed, change.removed);
+      .filter((el): el is AnyElement => el !== undefined);
+    this.renderer.syncElements(changed, change.removed);
     this.scene.selection.remove(change.removed);
     this.textEditor?.reposition();
     this.requestRender();
     this.emitChange();
-    this.contentVersion++;
-    this.contentEmitter.emit();
   }
 
   private handleDoubleClick(p: CanvasPointer): void {
     if (this.tool.id !== "select") return;
-    const hit = this.shapeAt(p.world);
-    if (!isEditableShape(hit)) return;
+    const hit = this.elementAt(p.world);
+    if (!hit || !kindOf(hit).text) return;
     this.setSelection([hit.id]);
     this.textEditor?.start(hit.id);
   }
@@ -439,10 +368,14 @@ export class CanvasEngine {
     this.emitChange();
   }
 
-  /** Applies picked options to the selected shapes they're for, as one undo step. */
-  private restyleSelection(patch: Partial<ToolOptions>): void {
-    const selected = this.scene.shapes.filter((shape) => this.scene.selection.has(shape.id));
-    const patches = stylePatches(selected, patch);
+  /** Applies picked options to the selected elements they're for, as one undo step. */
+  private restyleSelection(options: Partial<ToolOptions>): void {
+    const patches = new Map<string, ElementPatch>();
+    for (const id of this.scene.selection.ids) {
+      const el = this.scene.get(id);
+      const patch = el ? kindOf(el).restyle(el, options) : {};
+      if (Object.keys(patch).length > 0) patches.set(id, patch);
+    }
     if (patches.size === 0) return;
     this.doc.checkpoint();
     this.doc.updateMany(patches);
@@ -450,34 +383,15 @@ export class CanvasEngine {
 
   // ── State helpers ─────────────────────────────────────────────────────
 
-  /**
-   * The ids plus what moves and deletes with them: section contents and ER attributes, and (when
-   * dragging, `boxed`) what an ER aggregation box holds.
-   */
-  private withMembers(ids: Iterable<string>, boxed = true): Set<string> {
-    return withErMembers(withSectionMembers(ids, this.scene.shapes), this.scene.shapes, boxed);
-  }
-
-  private shapeAt(world: Point): Shape | undefined {
-    return this.scene.shapeAt(world, HIT_TOLERANCE_PX / this.camera.zoom);
-  }
-
-  private connectableAt(world: Point, exclude?: ReadonlySet<string>) {
-    const tolerance = HIT_TOLERANCE_PX / this.camera.zoom;
-    const shapes = this.scene.shapes;
-    for (let i = shapes.length - 1; i >= 0; i--) {
-      const shape = shapes[i]!;
-      if (!isConnectable(shape) || exclude?.has(shape.id)) continue;
-      if (hitTestShape(shape, world, tolerance)) return shape;
-    }
-    return undefined;
+  private elementAt(world: Point): AnyElement | undefined {
+    return this.scene.elementAt(world, HIT_TOLERANCE_PX / this.camera.zoom);
   }
 
   private setSelection(ids: Iterable<string>): void {
     if (!this.scene.selection.set(ids)) return;
-    // Show the selected shape's style in the options panel.
+    // Show the selected element's style in the options panel.
     const first = this.scene.get([...this.scene.selection.ids][0] ?? "");
-    if (first) this.options = { ...this.options, ...optionsFromShape(first) };
+    if (first) this.options = { ...this.options, ...kindOf(first).optionsOf(first) };
     this.requestRender();
     this.emitChange();
   }
@@ -495,7 +409,7 @@ export class CanvasEngine {
   }
 
   private draw(): void {
-    this.renderer.render(this.camera, this.scene.overlay(this.camera.zoom), this.scene.relations());
+    this.renderer.render(this.camera, this.scene.overlay());
   }
 
   private buildState(): EngineState {
@@ -504,42 +418,16 @@ export class CanvasEngine {
       options: this.options,
       zoom: this.camera.zoom,
       selectionCount: this.scene.selection.size,
-      selectedTableId: this.selectedOfType("db-table"),
-      selectedEnumId: this.selectedOfType("db-enum"),
-      erSelected: [...this.scene.selection.ids].some((id) => isErShape(this.doc.get(id))),
-      selectedErId: this.selectedErId(),
-      selectedErDiagram: this.selectedErDiagram(),
       selectionTypes: this.selectionTypes(),
       canUndo: this.doc.canUndo(),
       canRedo: this.doc.canRedo(),
     };
   }
 
-  /** Sorted, comma-separated types of the selected shapes (a primitive, so snapshots compare cheaply). */
+  /** Sorted, comma-separated types of the selected elements (a primitive, so snapshots compare cheaply). */
   private selectionTypes(): string {
     const types = new Set([...this.scene.selection.ids].map((id) => this.scene.get(id)?.type));
     return [...types].filter(Boolean).sort().join(",");
-  }
-
-  /** The diagram of the selected ER shapes, when they all belong to one. */
-  private selectedErDiagram(): string | null {
-    const diagrams = new Set<string>();
-    for (const id of this.scene.selection.ids) {
-      const shape = this.doc.get(id);
-      if (isErShape(shape)) diagrams.add(shape.diagram);
-    }
-    return diagrams.size === 1 ? ([...diagrams][0] ?? null) : null;
-  }
-
-  private selectedErId(): string | null {
-    const id = this.scene.selection.single();
-    return id && isErShape(this.doc.get(id)) ? id : null;
-  }
-
-  /** The selected shape's id when exactly one shape of `type` is selected. */
-  private selectedOfType(type: "db-table" | "db-enum"): string | null {
-    const id = this.scene.selection.single();
-    return id && this.doc.get(id)?.type === type ? id : null;
   }
 
   /** Publishes a new snapshot; the store only notifies when a field actually changed. */

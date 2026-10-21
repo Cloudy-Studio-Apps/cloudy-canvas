@@ -1,9 +1,8 @@
-import { GEO_KINDS, SHAPE_FILLS, SHAPE_STROKES } from "@engine";
+import { GEO_VARIANT_IDS, GEO_VARIANTS, SHAPE_FILLS, SHAPE_STROKES } from "@engine";
 import { useEngine, useEngineState } from "../../engine/engine-context";
 import { FloatingPanel, PanelDivider } from "../floating-panel";
 import { ColorSwatch } from "./color-swatch";
 import { GeoKindIcon } from "./geo-kind-icon";
-import { GEO_KIND_LABELS } from "./geo-kind-labels";
 import { OptionButton } from "./option-button";
 
 /** Kind, fill and outline for new shapes; also restyles the selected shapes. */
@@ -13,11 +12,11 @@ export function ShapeOptions() {
 
   return (
     <FloatingPanel role="group" aria-label="Shape options" className="gap-1 px-2">
-      {GEO_KINDS.map((kind) => (
+      {GEO_VARIANT_IDS.map((kind) => (
         <OptionButton
           key={kind}
-          aria-label={GEO_KIND_LABELS[kind]}
-          title={GEO_KIND_LABELS[kind]}
+          aria-label={GEO_VARIANTS[kind].label}
+          title={GEO_VARIANTS[kind].label}
           selected={shapeKind === kind}
           onClick={() => engine.setToolOptions({ shapeKind: kind })}
         >

@@ -1,6 +1,6 @@
-import type { GeoKind } from "@engine";
+import type { GeoVariantId } from "@engine";
 
 export interface GeoKindIconProps {
-  kind: GeoKind;
+  kind: GeoVariantId;
   className?: string;
 }

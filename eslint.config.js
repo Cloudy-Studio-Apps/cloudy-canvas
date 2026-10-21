@@ -26,7 +26,7 @@ const agnosticImportBan = {
 };
 
 export default tseslint.config(
-  { ignores: ["dist", "src-tauri/target", "src-tauri/gen"] },
+  { ignores: ["dist", "src-tauri/target", "src-tauri/gen", "temporal"] },
   {
     files: ["**/*.{ts,tsx}"],
     extends: [js.configs.recommended, ...tseslint.configs.recommended],

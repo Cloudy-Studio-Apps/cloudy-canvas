@@ -1,8 +1,8 @@
-import type { ShapePatch } from "../document";
+import type { ElementPatch } from "../elements";
 import type { AgentTool } from "./agent-tool.types";
 import { asUndoStep, requireBoard } from "./board-access";
 import { createShapesTool } from "./create-shapes-tool";
-import { shapePatch } from "./shape-patch";
+import { elementPatch } from "./element-patch";
 import { optionalBoolean, recordList, stringArg, stringList } from "./tool-args";
 
 const IDS_SCHEMA = { type: "array", items: { type: "string" } };
@@ -13,8 +13,7 @@ export const shapeEditTools: AgentTool[] = [
     name: "update_shapes",
     description:
       "Changes fields of existing shapes as one undo step, e.g. { id, patch: { x, y, text, color } }. " +
-      "Field names are the ones get_shapes returns. Tables, enums and ER shapes can only be moved " +
-      "here; edit their content with the DBML and ER tools.",
+      "Field names are the ones get_shapes returns. Marker strokes can only be moved.",
     inputSchema: {
       type: "object",
       required: ["updates"],
@@ -31,16 +30,16 @@ export const shapeEditTools: AgentTool[] = [
     },
     run: (host, args) => {
       const { engine } = requireBoard(host);
-      const patches = new Map<string, ShapePatch>();
+      const patches = new Map<string, ElementPatch>();
       for (const update of recordList(args, "updates")) {
         const id = stringArg(update, "id");
-        const shape = engine.doc.get(id);
-        if (!shape) throw new Error(`No shape with id ${id}.`);
+        const el = engine.doc.get(id);
+        if (!el) throw new Error(`No shape with id ${id}.`);
         const patch = update.patch;
         if (typeof patch !== "object" || patch === null || Array.isArray(patch)) {
           throw new Error(`"patch" for ${id} must be an object.`);
         }
-        patches.set(id, shapePatch(shape, patch as Record<string, unknown>));
+        patches.set(id, elementPatch(el, patch as Record<string, unknown>));
       }
       asUndoStep(engine, () => engine.doc.updateMany(patches));
       return { updated: [...patches.keys()] };
@@ -48,13 +47,11 @@ export const shapeEditTools: AgentTool[] = [
   },
   {
     name: "delete_shapes",
-    description:
-      "Deletes shapes as one undo step. A section takes the shapes inside it, an ER shape its " +
-      "attributes; connectors attached to deleted shapes stay with a free end.",
+    description: "Deletes shapes as one undo step.",
     inputSchema: { type: "object", required: ["ids"], properties: { ids: IDS_SCHEMA } },
     run: (host, args) => {
       const { engine } = requireBoard(host);
-      return { deleted: engine.deleteShapes(stringList(args, "ids")) };
+      return { deleted: engine.deleteElements(stringList(args, "ids")) };
     },
   },
   {
@@ -71,9 +68,9 @@ export const shapeEditTools: AgentTool[] = [
     },
     run: (host, args) => {
       const { engine } = requireBoard(host);
-      const ids = stringList(args, "ids").filter((id) => engine.getShape(id));
+      const ids = stringList(args, "ids").filter((id) => engine.getElement(id));
       const [first] = ids;
-      if (optionalBoolean(args, "zoom") && first && ids.length === 1) engine.zoomToShape(first);
+      if (optionalBoolean(args, "zoom") && first && ids.length === 1) engine.zoomToElement(first);
       else engine.select(ids);
       return { selected: engine.selectedIds() };
     },

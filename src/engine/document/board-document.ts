@@ -1,9 +1,8 @@
 import * as Y from "yjs";
 import { generateKeyBetween } from "fractional-indexing";
 
-import { fillShapeDefaults } from "./fill-shape-defaults";
-import type { Shape, ShapePatch } from "./shapes.types";
-import type { ShapeMap, DocumentChange } from "./board-document.types";
+import { isElement, kindOf, type AnyElement, type ElementPatch } from "../elements";
+import type { DocumentChange, ElementMap } from "./board-document.types";
 
 /** Origin tag for local edits, so the undo manager only tracks this client's changes. */
 export const LOCAL_ORIGIN = Symbol("local");
@@ -12,12 +11,14 @@ export const UI_ORIGIN = Symbol("ui");
 
 /**
  * The board content, backed by a Yjs doc so persistence and real-time collaboration can plug in later.
- * Each shape is a Y.Map of primitive fields (concurrent edits to different fields merge cleanly).
+ * Each element is a Y.Map of primitive fields (concurrent edits to different fields merge cleanly),
+ * kept in the `"shapes"` map. Elements of types this version doesn't register stay in the doc
+ * untouched but aren't returned.
  */
 export class BoardDocument {
   readonly doc: Y.Doc;
   private readonly undoManager: Y.UndoManager;
-  private readonly shapes: Y.Map<ShapeMap>;
+  private readonly elements: Y.Map<ElementMap>;
 
   /** A document restored from `encode()` output. Loading it isn't an undoable change. */
   static fromUpdate(update: Uint8Array): BoardDocument {
@@ -28,45 +29,49 @@ export class BoardDocument {
 
   constructor(doc = new Y.Doc()) {
     this.doc = doc;
-    this.shapes = doc.getMap<ShapeMap>("shapes");
-    this.undoManager = new Y.UndoManager(this.shapes, {
+    // The map keeps its original name so existing files load.
+    this.elements = doc.getMap<ElementMap>("shapes");
+    this.undoManager = new Y.UndoManager(this.elements, {
       trackedOrigins: new Set([LOCAL_ORIGIN]),
       captureTimeout: 400,
     });
   }
 
-  get(id: string): Shape | undefined {
-    const map = this.shapes.get(id);
-    return map ? readShape(map) : undefined;
+  get(id: string): AnyElement | undefined {
+    const map = this.elements.get(id);
+    return map ? readElement(map) : undefined;
   }
 
-  /** All shapes sorted bottom-to-top. */
-  all(): Shape[] {
-    const list: Shape[] = [];
-    this.shapes.forEach((map) => list.push(readShape(map)));
+  /** All elements sorted bottom-to-top. */
+  all(): AnyElement[] {
+    const list: AnyElement[] = [];
+    this.elements.forEach((map) => {
+      const el = readElement(map);
+      if (el) list.push(el);
+    });
     return list.sort(compareByIndex);
   }
 
-  /** Index that places a new shape above everything else. */
+  /** Index that places a new element above everything else. */
   nextIndex(): string {
     let top: string | null = null;
-    this.shapes.forEach((map) => {
+    this.elements.forEach((map) => {
       const index = map.get("index") as string;
       if (top === null || index > top) top = index;
     });
     return generateKeyBetween(top, null);
   }
 
-  add(shape: Shape): void {
+  add(el: AnyElement): void {
     this.transact(() => {
       const map = new Y.Map<unknown>();
-      for (const [key, value] of Object.entries(shape)) map.set(key, value);
-      this.shapes.set(shape.id, map);
+      for (const [key, value] of Object.entries(el)) map.set(key, value);
+      this.elements.set(el.id, map);
     });
   }
 
-  update(id: string, patch: ShapePatch): void {
-    const map = this.shapes.get(id);
+  update(id: string, patch: ElementPatch): void {
+    const map = this.elements.get(id);
     if (!map) return;
     this.transact(() => {
       for (const [key, value] of Object.entries(patch)) {
@@ -76,8 +81,8 @@ export class BoardDocument {
   }
 
   /** Like `update`, but not recorded in the undo history. */
-  updateUntracked(id: string, patch: ShapePatch): void {
-    const map = this.shapes.get(id);
+  updateUntracked(id: string, patch: ElementPatch): void {
+    const map = this.elements.get(id);
     if (!map) return;
     this.doc.transact(() => {
       for (const [key, value] of Object.entries(patch)) {
@@ -86,7 +91,7 @@ export class BoardDocument {
     }, UI_ORIGIN);
   }
 
-  updateMany(patches: Map<string, ShapePatch>): void {
+  updateMany(patches: Map<string, ElementPatch>): void {
     this.transact(() => {
       for (const [id, patch] of patches) this.update(id, patch);
     });
@@ -94,7 +99,7 @@ export class BoardDocument {
 
   remove(ids: Iterable<string>): void {
     this.transact(() => {
-      for (const id of ids) this.shapes.delete(id);
+      for (const id of ids) this.elements.delete(id);
     });
   }
 
@@ -141,13 +146,13 @@ export class BoardDocument {
     const handler = (events: Y.YEvent<Y.AbstractType<unknown>>[]) => {
       const change: DocumentChange = { updated: new Set(), removed: new Set() };
       for (const event of events) {
-        if (event.target === this.shapes) {
+        if (event.target === this.elements) {
           for (const [id, info] of event.changes.keys) {
             if (info.action === "delete") change.removed.add(id);
             else change.updated.add(id);
           }
         } else {
-          // A field changed inside a shape map: its key in the parent map is the shape id.
+          // A field changed inside an element map: its key in the parent map is the element id.
           const id = event.path[0];
           if (typeof id === "string") change.updated.add(id);
         }
@@ -155,8 +160,8 @@ export class BoardDocument {
       for (const id of change.removed) change.updated.delete(id);
       listener(change);
     };
-    this.shapes.observeDeep(handler);
-    return () => this.shapes.unobserveDeep(handler);
+    this.elements.observeDeep(handler);
+    return () => this.elements.unobserveDeep(handler);
   }
 
   /** The whole document as one Yjs update, for saving to a file. */
@@ -173,10 +178,12 @@ export class BoardDocument {
   }
 }
 
-function readShape(map: ShapeMap): Shape {
-  return fillShapeDefaults(map.toJSON() as Shape);
+/** The element in a map, with defaults filled, or `undefined` when its type isn't registered. */
+function readElement(map: ElementMap): AnyElement | undefined {
+  const data: unknown = map.toJSON();
+  return isElement(data) ? kindOf(data).fillDefaults(data) : undefined;
 }
 
-export function compareByIndex(a: Shape, b: Shape): number {
+export function compareByIndex(a: AnyElement, b: AnyElement): number {
   return a.index < b.index ? -1 : a.index > b.index ? 1 : 0;
 }

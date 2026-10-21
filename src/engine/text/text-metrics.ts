@@ -1,4 +1,4 @@
-import { FONT_FAMILY, LINE_HEIGHT } from "../document/shape-defaults";
+import { FONT_FAMILY, LINE_HEIGHT } from "../elements/element-defaults";
 
 let context: CanvasRenderingContext2D | null = null;
 

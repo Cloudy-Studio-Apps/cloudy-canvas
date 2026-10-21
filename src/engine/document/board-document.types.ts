@@ -1,6 +1,6 @@
 import type * as Y from "yjs";
 
-export type ShapeMap = Y.Map<unknown>;
+export type ElementMap = Y.Map<unknown>;
 
 export interface DocumentChange {
   /** Ids added or updated. */

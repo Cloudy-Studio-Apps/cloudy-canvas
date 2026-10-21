@@ -1,0 +1,153 @@
+import { draftPath, resolveEnumLinks, resolveRelations, type EnumLink, type Relation } from "./db";
+import { resolveConnector } from "./connectors";
+import { resolveErLinks, resolveErShapes, type ErLink } from "./er";
+import {
+  compareZOrder,
+  isConnector,
+  isDbTable,
+  isSection,
+  type BoardDocument,
+  type Shape,
+} from "./document";
+import { rectContainsRect, rectsIntersect, unionRects } from "./geometry";
+import type { Point, Rect } from "./geometry.types";
+import { shapeBounds, topmostShapeAt } from "./hit-test";
+import {
+  buildOverlayState,
+  type DropTarget,
+  type OverlayState,
+  type RelationState,
+} from "./render";
+import { Selection } from "./selection";
+import type { DraftRelation } from "./scene.types";
+
+/**
+ * What's on the board right now and what the user is pointing at: the z-ordered shape list,
+ * the selection, hover and marquee. Answers spatial queries for tools and the renderer.
+ */
+export class Scene {
+  readonly selection = new Selection();
+  private list: Shape[] = [];
+  private byId = new Map<string, Shape>();
+  /** Shape id → ids of the connectors attached to it. */
+  private attachments = new Map<string, Set<string>>();
+  private hoverId: string | null = null;
+  private relationList: Relation[] = [];
+  private enumLinkList: EnumLink[] = [];
+  private erLinkList: ErLink[] = [];
+  marquee: Rect | null = null;
+  /** Relation being dragged out of a column handle. */
+  draftRelation: DraftRelation | null = null;
+  /** Column row the dragged relation would connect to. */
+  dropTarget: DropTarget | null = null;
+
+  constructor(private readonly doc: BoardDocument) {}
+
+  /** Shapes sorted bottom-to-top. */
+  get shapes(): readonly Shape[] {
+    return this.list;
+  }
+
+  /**
+   * Re-reads the shape list from the document. Connectors are resolved against the shapes they're
+   * attached to, so the list always holds their current route and bounds.
+   */
+  refresh(): void {
+    const raw = this.doc.all();
+    const rawById = new Map(raw.map((shape) => [shape.id, shape]));
+    this.attachments.clear();
+    this.list = raw.map((shape) => {
+      if (!isConnector(shape)) return shape;
+      for (const id of [shape.start.shapeId, shape.end.shapeId]) {
+        if (id) this.attach(id, shape.id);
+      }
+      return resolveConnector(shape, (id) => rawById.get(id));
+    });
+    // Aggregations and constraints follow the ER shapes they're about.
+    this.list = resolveErShapes(this.list);
+    this.list.sort(compareZOrder);
+    this.byId = new Map(this.list.map((shape) => [shape.id, shape]));
+    this.relationList = resolveRelations(this.list);
+    this.enumLinkList = resolveEnumLinks(this.list);
+    this.erLinkList = resolveErLinks(this.list);
+  }
+
+  /** A shape as the scene sees it (connectors resolved). */
+  get(id: string): Shape | undefined {
+    return this.byId.get(id);
+  }
+
+  /** Ids of the shapes whose geometry is derived from other ER shapes (aggregations, constraints). */
+  erDerivedIds(): string[] {
+    return this.list
+      .filter((shape) => shape.type === "er-aggregate" || shape.type === "er-constraint")
+      .map((shape) => shape.id);
+  }
+
+  /** Connectors attached to any of the shapes. */
+  connectorsAttachedTo(ids: Iterable<string>): Set<string> {
+    const result = new Set<string>();
+    for (const id of ids) {
+      for (const connector of this.attachments.get(id) ?? []) result.add(connector);
+    }
+    return result;
+  }
+
+  /** Topmost shape at a world point. `tolerance` is in world units. */
+  shapeAt(world: Point, tolerance: number): Shape | undefined {
+    return topmostShapeAt(this.list, world, tolerance);
+  }
+
+  /** Shapes touching the rect. Sections and ER aggregations only count when the rect encloses them. */
+  shapesInRect(rect: Rect): Shape[] {
+    return this.list.filter((shape) =>
+      isSection(shape) || shape.type === "er-aggregate"
+        ? rectContainsRect(rect, shapeBounds(shape))
+        : rectsIntersect(shapeBounds(shape), rect),
+    );
+  }
+
+  /** Bounding box of all shapes, or `null` for an empty board. */
+  contentBounds(): Rect | null {
+    return unionRects(this.list.map(shapeBounds));
+  }
+
+  get hoveredId(): string | null {
+    return this.hoverId;
+  }
+
+  /** Returns whether the hover target changed. */
+  setHover(id: string | null): boolean {
+    if (this.hoverId === id) return false;
+    this.hoverId = id;
+    return true;
+  }
+
+  overlay(zoom: number): OverlayState {
+    return buildOverlayState({
+      selected: this.list.filter((shape) => this.selection.has(shape.id)),
+      hover: this.hoverId ? this.byId.get(this.hoverId) : undefined,
+      marquee: this.marquee,
+      dropTarget: this.dropTarget,
+      zoom,
+    });
+  }
+
+  relations(): RelationState {
+    const draft = this.draftRelation;
+    const from = draft ? this.doc.get(draft.tableId) : undefined;
+    return {
+      relations: this.relationList,
+      enumLinks: this.enumLinkList,
+      erLinks: this.erLinkList,
+      highlighted: this.selection.ids,
+      draft: draft && isDbTable(from) ? draftPath(from, draft.row, draft.end) : null,
+    };
+  }
+
+  private attach(shapeId: string, connectorId: string): void {
+    let set = this.attachments.get(shapeId);
+    if (!set) this.attachments.set(shapeId, (set = new Set()));
+    set.add(connectorId);
+  }
+}

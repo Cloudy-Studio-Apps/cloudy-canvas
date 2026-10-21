@@ -1,24 +1,20 @@
 import { useNavigate } from "react-router";
-import { ArrowLeft, Bot, Braces, Save } from "lucide-react";
+import { ArrowLeft, Bot, Save } from "lucide-react";
 
 import { shortcutLabel } from "@engine";
 
 import { AgentServerMenu } from "@pages/agent-server";
 import { useAgentServerStore } from "@stores/agent-server-store";
-import { useBoardPanelStore } from "@stores/board-panel-store";
 import { SealLogo } from "@ui/brand/seal-logo";
 import { Badge } from "@ui/components/ui/badge";
 import { useBoardFile } from "../file";
 import { FloatingPanel, PanelDivider } from "./floating-panel";
 import { HistoryControls } from "./history-controls";
-import { SectionsMenu } from "./sections-menu";
 import { ToolButton } from "./tool-button";
 
 export function BoardTopBar() {
   const navigate = useNavigate();
   const file = useBoardFile();
-  const schemaOpen = useBoardPanelStore((state) => state.schemaOpen);
-  const setSchemaOpen = useBoardPanelStore((state) => state.setSchemaOpen);
   const agentsEnabled = useAgentServerStore((state) => state.enabled);
 
   return (
@@ -56,15 +52,6 @@ export function BoardTopBar() {
         <Save />
       </ToolButton>
       <PanelDivider className="mx-1.5" />
-      <ToolButton
-        label="Database schema"
-        side="bottom"
-        active={schemaOpen}
-        onClick={() => setSchemaOpen(!schemaOpen)}
-      >
-        <Braces />
-      </ToolButton>
-      <SectionsMenu />
       <AgentServerMenu
         trigger={
           <ToolButton

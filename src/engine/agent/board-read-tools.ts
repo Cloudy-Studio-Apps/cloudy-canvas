@@ -1,7 +1,7 @@
 import type { Rect } from "../geometry.types";
 import type { AgentTool } from "./agent-tool.types";
 import { requireBoard } from "./board-access";
-import { summarizeShape } from "./shape-summary";
+import { summarizeElement } from "./element-summary";
 import { optionalRecord, optionalString, stringList } from "./tool-args";
 
 const NO_ARGS = { type: "object", properties: {} };
@@ -18,8 +18,8 @@ export const boardReadTools: AgentTool[] = [
       if (!board) return { open: false };
       const { engine } = board;
       const shapesByType: Record<string, number> = {};
-      for (const shape of engine.shapes()) {
-        shapesByType[shape.type] = (shapesByType[shape.type] ?? 0) + 1;
+      for (const el of engine.elements()) {
+        shapesByType[el.type] = (shapesByType[el.type] ?? 0) + 1;
       }
       const { canUndo, canRedo } = engine.getState();
       return {
@@ -28,7 +28,7 @@ export const boardReadTools: AgentTool[] = [
         name: board.name,
         path: board.path,
         dirty: board.dirty,
-        shapeCount: engine.shapes().length,
+        shapeCount: engine.elements().length,
         shapesByType,
         selection: engine.selectedIds(),
         canUndo,
@@ -44,7 +44,7 @@ export const boardReadTools: AgentTool[] = [
     inputSchema: {
       type: "object",
       properties: {
-        type: { type: "string", description: "Only this shape type, e.g. sticky or db-table." },
+        type: { type: "string", description: "Only this shape type, e.g. sticky or geo." },
         within: {
           type: "object",
           description: "Only shapes overlapping this area.",
@@ -63,14 +63,14 @@ export const boardReadTools: AgentTool[] = [
       const type = optionalString(args, "type");
       const within = optionalRecord(args, "within") as Rect | undefined;
       return engine
-        .shapes()
-        .filter((shape) => (!type || shape.type === type) && (!within || overlaps(shape, within)))
-        .map(summarizeShape);
+        .elements()
+        .filter((el) => (!type || el.type === type) && (!within || overlaps(el, within)))
+        .map(summarizeElement);
     },
   },
   {
     name: "get_shapes",
-    description: "Every field of the given shapes (connectors with their resolved route).",
+    description: "Every field of the given shapes.",
     inputSchema: {
       type: "object",
       required: ["ids"],
@@ -78,7 +78,7 @@ export const boardReadTools: AgentTool[] = [
     },
     run: (host, args) => {
       const { engine } = requireBoard(host);
-      return stringList(args, "ids").map((id) => engine.getShape(id) ?? { id, missing: true });
+      return stringList(args, "ids").map((id) => engine.getElement(id) ?? { id, missing: true });
     },
   },
   {
@@ -89,9 +89,9 @@ export const boardReadTools: AgentTool[] = [
       const { engine } = requireBoard(host);
       return engine
         .selectedIds()
-        .map((id) => engine.getShape(id))
-        .filter((shape) => shape !== undefined)
-        .map(summarizeShape);
+        .map((id) => engine.getElement(id))
+        .filter((el) => el !== undefined)
+        .map(summarizeElement);
     },
   },
 ];

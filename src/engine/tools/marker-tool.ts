@@ -1,4 +1,4 @@
-import { createStrokeShape } from "../document";
+import { createStroke } from "../elements";
 import type { CanvasPointer, Tool, ToolContext } from "./tool.types";
 
 /** Freehand drawing; the stroke is previewed live and added to the document on release. */
@@ -36,7 +36,7 @@ export class MarkerTool implements Tool {
     const { markerColor, markerSize } = this.ctx.getOptions();
     const { doc } = this.ctx;
     doc.checkpoint();
-    doc.add(createStrokeShape(points, markerColor, markerSize, doc.nextIndex()));
+    doc.add(createStroke(points, markerColor, markerSize, doc.nextIndex()));
   }
 
   onCancel(): void {

@@ -1,15 +1,16 @@
-import { resizeCursor, resizeRect, type ResizableShape, type ResizeHandle } from "../handles";
+import { kindOf, type AnyElement } from "../elements";
+import { resizeCursor, resizeRect, type ResizeHandle } from "../handles";
 import type { CanvasPointer, ToolContext } from "./tool.types";
 
 const DRAG_THRESHOLD = 3; // screen px
 
-/** Drags a resize handle of one shape. Shift keeps the proportions. */
+/** Drags a resize handle of one element. Shift keeps the proportions. */
 export class ResizeGesture {
   private started = false;
 
   constructor(
     private readonly ctx: ToolContext,
-    private readonly origin: ResizableShape,
+    private readonly origin: AnyElement,
     private readonly handle: ResizeHandle,
     private readonly start: CanvasPointer,
   ) {
@@ -28,6 +29,8 @@ export class ResizeGesture {
     }
     const dx = p.world.x - this.start.world.x;
     const dy = p.world.y - this.start.world.y;
-    this.ctx.doc.update(this.origin.id, resizeRect(this.origin, this.handle, dx, dy, p.shiftKey));
+    const kind = kindOf(this.origin);
+    const rect = resizeRect(kind.bounds(this.origin), this.handle, dx, dy, p.shiftKey);
+    this.ctx.doc.update(this.origin.id, kind.resize(this.origin, rect));
   }
 }

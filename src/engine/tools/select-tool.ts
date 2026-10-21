@@ -1,15 +1,11 @@
-import { moveShapePatch, type Shape, type ShapePatch } from "../document";
-import { rectFromPoints, rectContainsPoint } from "../geometry";
-import { canQuickConnect, resizeCursor, type Interaction } from "../handles";
-import { ConnectGesture } from "./connect-gesture";
-import { ConnectorDrag } from "./connector-drag";
+import { kindOf, type AnyElement, type ElementPatch } from "../elements";
+import { rectFromPoints } from "../geometry";
+import { resizeCursor, type Interaction } from "../handles";
 import { ResizeGesture } from "./resize-gesture";
 import type { CanvasPointer, Tool, ToolContext } from "./tool.types";
 import type { Gesture } from "./select-tool.types";
 
 const DRAG_THRESHOLD = 3; // screen px
-/** The hovered shape stays hovered this far outside it (screen px) so its quick-connect dots can be reached. */
-const HOVER_KEEP_PX = 28;
 
 export class SelectTool implements Tool {
   readonly id = "select" as const;
@@ -20,17 +16,13 @@ export class SelectTool implements Tool {
 
   onPointerDown(p: CanvasPointer): void {
     const interaction = this.ctx.interactionAt(p.world);
-    if (interaction?.kind === "note-toggle") {
-      this.ctx.db.setNoteHidden(interaction.tableId, !interaction.hidden);
-      return;
-    }
     if (interaction) {
       this.gesture = this.startInteraction(interaction, p);
       this.ctx.setHover(null);
       return;
     }
 
-    const hit = this.ctx.shapeAt(p.world);
+    const hit = this.ctx.elementAt(p.world);
     this.ctx.setHover(null);
 
     if (!hit) {
@@ -48,11 +40,10 @@ export class SelectTool implements Tool {
       this.ctx.setSelection([hit.id]);
     }
 
-    // Sections carry along everything inside them.
-    const origins = new Map<string, Shape>();
-    for (const id of this.ctx.withSectionMembers(this.ctx.getSelection())) {
-      const shape = this.ctx.doc.get(id);
-      if (shape) origins.set(id, shape);
+    const origins = new Map<string, AnyElement>();
+    for (const id of this.ctx.getSelection()) {
+      const el = this.ctx.doc.get(id);
+      if (el) origins.set(id, el);
     }
     this.gesture = { kind: "move", start: p, origins, started: false, toggleOnClick };
   }
@@ -61,14 +52,12 @@ export class SelectTool implements Tool {
     const g = this.gesture;
     if (!g) return;
 
-    if (g.kind === "connect") return g.connect.move(p);
     if (g.kind === "resize") return g.resize.move(p);
-    if (g.kind === "connector") return g.drag.move(p);
 
     if (g.kind === "marquee") {
       const rect = rectFromPoints(g.start.world, p.world);
       this.ctx.setMarquee(rect);
-      const hits = this.ctx.shapesInRect(rect).map((shape) => shape.id);
+      const hits = this.ctx.elementsInRect(rect).map((el) => el.id);
       this.ctx.setSelection(new Set([...g.base, ...hits]));
       return;
     }
@@ -83,8 +72,8 @@ export class SelectTool implements Tool {
 
     const dx = p.world.x - g.start.world.x;
     const dy = p.world.y - g.start.world.y;
-    const patches = new Map<string, ShapePatch>();
-    for (const [id, origin] of g.origins) patches.set(id, moveShapePatch(origin, dx, dy));
+    const patches = new Map<string, ElementPatch>();
+    for (const [id, origin] of g.origins) patches.set(id, kindOf(origin).move(origin, dx, dy));
     this.ctx.doc.updateMany(patches);
   }
 
@@ -95,8 +84,6 @@ export class SelectTool implements Tool {
       next.delete(g.toggleOnClick);
       this.ctx.setSelection(next);
     }
-    if (g?.kind === "connect") g.connect.finish();
-    if (g?.kind === "connector") g.drag.finish();
     this.gesture = null;
     this.onCancel();
   }
@@ -104,71 +91,24 @@ export class SelectTool implements Tool {
   onHover(p: CanvasPointer): void {
     const interaction = this.ctx.interactionAt(p.world);
     this.ctx.setCursor(interaction ? interactionCursor(interaction) : this.cursor);
-    if (interaction?.kind === "quick-connect" || this.keepsHover(p)) return;
-    const hit = this.ctx.shapeAt(p.world);
+    const hit = this.ctx.elementAt(p.world);
     this.ctx.setHover(hit && !this.ctx.getSelection().has(hit.id) ? hit.id : null);
   }
 
-  onCameraChange(): void {
-    if (this.gesture?.kind === "connect") this.gesture.connect.update();
-    if (this.gesture?.kind === "connector") this.gesture.drag.update();
-  }
-
   onCancel(): void {
-    if (this.gesture?.kind === "connect") this.gesture.connect.cancel();
-    if (this.gesture?.kind === "connector") this.gesture.drag.cancel();
     this.gesture = null;
     this.ctx.setMarquee(null);
     this.ctx.setCursor(this.cursor);
   }
 
-  private startInteraction(
-    interaction: Exclude<Interaction, { kind: "note-toggle" }>,
-    p: CanvasPointer,
-  ): Gesture {
-    switch (interaction.kind) {
-      case "column":
-        this.ctx.setCursor("crosshair");
-        return { kind: "connect", connect: new ConnectGesture(this.ctx, interaction.handle, p) };
-      case "resize":
-        return {
-          kind: "resize",
-          resize: new ResizeGesture(this.ctx, interaction.shape, interaction.handle, p),
-        };
-      case "endpoint":
-        return {
-          kind: "connector",
-          drag: new ConnectorDrag(
-            this.ctx,
-            { kind: "existing", id: interaction.connector.id, which: interaction.which },
-            p,
-          ),
-        };
-      case "quick-connect": {
-        const { shape, side } = interaction;
-        const start = {
-          shapeId: shape.id,
-          side,
-          x: Math.round(p.world.x),
-          y: Math.round(p.world.y),
-        };
-        return { kind: "connector", drag: new ConnectorDrag(this.ctx, { kind: "new", start }, p) };
-      }
-    }
-  }
-
-  /** Whether the pointer is still close enough to the hovered shape to reach its quick-connect dots. */
-  private keepsHover(p: CanvasPointer): boolean {
-    const id = this.ctx.getHover();
-    const shape = id ? this.ctx.getShape(id) : undefined;
-    if (!canQuickConnect(shape)) return false;
-    return rectContainsPoint(shape, p.world, HOVER_KEEP_PX / this.ctx.camera.zoom);
+  private startInteraction(interaction: Interaction, p: CanvasPointer): Gesture {
+    return {
+      kind: "resize",
+      resize: new ResizeGesture(this.ctx, interaction.element, interaction.handle, p),
+    };
   }
 }
 
 function interactionCursor(interaction: Interaction): string {
-  if (interaction.kind === "resize") return resizeCursor(interaction.handle);
-  if (interaction.kind === "endpoint") return "move";
-  if (interaction.kind === "note-toggle") return "pointer";
-  return "crosshair";
+  return resizeCursor(interaction.handle);
 }

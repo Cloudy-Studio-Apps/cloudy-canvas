@@ -1,6 +1,6 @@
 import { Graphics } from "pixi.js";
 
-import { strokeOutline } from "../stroke-outline";
+import { strokeOutline } from "../../elements/stroke/stroke-outline";
 
 /** The marker stroke being drawn, before it's committed to the document. */
 export class DraftStrokeLayer extends Graphics {

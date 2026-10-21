@@ -1,6 +1,6 @@
-import { MIN_SHAPE_SIZE, type Shape } from "../document";
+import { MIN_ELEMENT_SIZE } from "../elements/element-defaults";
 import type { Point, Rect } from "../geometry.types";
-import type { ResizableShape, ResizeHandle } from "./handles.types";
+import type { ResizeHandle } from "./handles.types";
 
 /** Corners first, so they win where they overlap the edge handles on small shapes. */
 export const RESIZE_HANDLES: readonly ResizeHandle[] = ["nw", "ne", "se", "sw", "n", "e", "s", "w"];
@@ -15,10 +15,6 @@ const CURSORS: Record<ResizeHandle, string> = {
   e: "ew-resize",
   w: "ew-resize",
 };
-
-export function isResizable(shape: Shape | undefined): shape is ResizableShape {
-  return shape?.type === "geo" || shape?.type === "sticky" || shape?.type === "section";
-}
 
 export function resizeCursor(handle: ResizeHandle): string {
   return CURSORS[handle];
@@ -42,7 +38,7 @@ export function resizeHandleAt(rect: Rect, p: Point, tolerance: number): ResizeH
 
 /**
  * The rect after dragging `handle` by (dx, dy). The opposite side stays put; with `keepRatio` the
- * proportions are kept. Never smaller than MIN_SHAPE_SIZE, and never flipped.
+ * proportions are kept. Never smaller than MIN_ELEMENT_SIZE, and never flipped.
  */
 export function resizeRect(
   origin: Rect,
@@ -57,8 +53,8 @@ export function resizeRect(
   const south = handle.includes("s");
   let w = origin.w + (east ? dx : west ? -dx : 0);
   let h = origin.h + (south ? dy : north ? -dy : 0);
-  w = Math.max(MIN_SHAPE_SIZE, w);
-  h = Math.max(MIN_SHAPE_SIZE, h);
+  w = Math.max(MIN_ELEMENT_SIZE, w);
+  h = Math.max(MIN_ELEMENT_SIZE, h);
 
   if (keepRatio && origin.w > 0 && origin.h > 0) {
     const ratio = origin.w / origin.h;

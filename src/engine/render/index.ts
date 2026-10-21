@@ -1,5 +1,6 @@
 export type * from "./canvas-theme.types";
 export type * from "./overlay-state.types";
-export type * from "./relation-state.types";
+export type * from "./text-style.types";
 export { Renderer } from "./renderer";
+export { ElementView } from "./element-view";
 export { buildOverlayState } from "./overlay-state";

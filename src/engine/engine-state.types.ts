@@ -6,17 +6,7 @@ export interface EngineState {
   options: ToolOptions;
   zoom: number;
   selectionCount: number;
-  /** The selected database table, when exactly one is selected. */
-  selectedTableId: string | null;
-  /** The selected database enum, when exactly one is selected. */
-  selectedEnumId: string | null;
-  /** Some of the selected shapes are part of the ER diagram. */
-  erSelected: boolean;
-  /** The selected ER shape, when exactly one is selected. */
-  selectedErId: string | null;
-  /** The ER diagram the selected ER shapes belong to, when it is one. */
-  selectedErDiagram: string | null;
-  /** Sorted, comma-separated types of the selected shapes, e.g. "connector,geo". */
+  /** Sorted, comma-separated types of the selected elements, e.g. "geo,sticky". */
   selectionTypes: string;
   canUndo: boolean;
   canRedo: boolean;

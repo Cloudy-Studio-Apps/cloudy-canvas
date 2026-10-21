@@ -1,8 +1,8 @@
-import type { GeoKind } from "@engine";
+import type { GeoVariantId } from "@engine";
 import type { GeoKindIconProps } from "./geo-kind-icon.types";
 
 /** SVG outline for each shape kind, drawn in the current text color. */
-const PATHS: Record<GeoKind, string> = {
+const PATHS: Record<GeoVariantId, string> = {
   rectangle: "M3 5h14v10H3z",
   rounded: "M5 5h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z",
   ellipse: "M10 3a7 7 0 1 0 0 14a7 7 0 1 0 0-14z",

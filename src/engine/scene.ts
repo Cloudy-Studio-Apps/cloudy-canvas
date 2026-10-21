@@ -1,115 +1,55 @@
-import { draftPath, resolveEnumLinks, resolveRelations, type EnumLink, type Relation } from "./db";
-import { resolveConnector } from "./connectors";
-import { resolveErLinks, resolveErShapes, type ErLink } from "./er";
-import {
-  compareZOrder,
-  isConnector,
-  isDbTable,
-  isSection,
-  type BoardDocument,
-  type Shape,
-} from "./document";
-import { rectContainsRect, rectsIntersect, unionRects } from "./geometry";
+import type { BoardDocument } from "./document";
+import { kindOf, type AnyElement } from "./elements";
+import { rectsIntersect, unionRects } from "./geometry";
 import type { Point, Rect } from "./geometry.types";
-import { shapeBounds, topmostShapeAt } from "./hit-test";
-import {
-  buildOverlayState,
-  type DropTarget,
-  type OverlayState,
-  type RelationState,
-} from "./render";
+import { buildOverlayState, type OverlayState } from "./render";
 import { Selection } from "./selection";
-import type { DraftRelation } from "./scene.types";
 
 /**
- * What's on the board right now and what the user is pointing at: the z-ordered shape list,
+ * What's on the board right now and what the user is pointing at: the z-ordered element list,
  * the selection, hover and marquee. Answers spatial queries for tools and the renderer.
  */
 export class Scene {
   readonly selection = new Selection();
-  private list: Shape[] = [];
-  private byId = new Map<string, Shape>();
-  /** Shape id → ids of the connectors attached to it. */
-  private attachments = new Map<string, Set<string>>();
+  private list: AnyElement[] = [];
+  private byId = new Map<string, AnyElement>();
   private hoverId: string | null = null;
-  private relationList: Relation[] = [];
-  private enumLinkList: EnumLink[] = [];
-  private erLinkList: ErLink[] = [];
   marquee: Rect | null = null;
-  /** Relation being dragged out of a column handle. */
-  draftRelation: DraftRelation | null = null;
-  /** Column row the dragged relation would connect to. */
-  dropTarget: DropTarget | null = null;
 
   constructor(private readonly doc: BoardDocument) {}
 
-  /** Shapes sorted bottom-to-top. */
-  get shapes(): readonly Shape[] {
+  /** Elements sorted bottom-to-top. */
+  get elements(): readonly AnyElement[] {
     return this.list;
   }
 
-  /**
-   * Re-reads the shape list from the document. Connectors are resolved against the shapes they're
-   * attached to, so the list always holds their current route and bounds.
-   */
+  /** Re-reads the element list from the document. */
   refresh(): void {
-    const raw = this.doc.all();
-    const rawById = new Map(raw.map((shape) => [shape.id, shape]));
-    this.attachments.clear();
-    this.list = raw.map((shape) => {
-      if (!isConnector(shape)) return shape;
-      for (const id of [shape.start.shapeId, shape.end.shapeId]) {
-        if (id) this.attach(id, shape.id);
-      }
-      return resolveConnector(shape, (id) => rawById.get(id));
-    });
-    // Aggregations and constraints follow the ER shapes they're about.
-    this.list = resolveErShapes(this.list);
-    this.list.sort(compareZOrder);
-    this.byId = new Map(this.list.map((shape) => [shape.id, shape]));
-    this.relationList = resolveRelations(this.list);
-    this.enumLinkList = resolveEnumLinks(this.list);
-    this.erLinkList = resolveErLinks(this.list);
+    this.list = this.doc.all();
+    this.byId = new Map(this.list.map((el) => [el.id, el]));
   }
 
-  /** A shape as the scene sees it (connectors resolved). */
-  get(id: string): Shape | undefined {
+  get(id: string): AnyElement | undefined {
     return this.byId.get(id);
   }
 
-  /** Ids of the shapes whose geometry is derived from other ER shapes (aggregations, constraints). */
-  erDerivedIds(): string[] {
-    return this.list
-      .filter((shape) => shape.type === "er-aggregate" || shape.type === "er-constraint")
-      .map((shape) => shape.id);
-  }
-
-  /** Connectors attached to any of the shapes. */
-  connectorsAttachedTo(ids: Iterable<string>): Set<string> {
-    const result = new Set<string>();
-    for (const id of ids) {
-      for (const connector of this.attachments.get(id) ?? []) result.add(connector);
+  /** Topmost element at a world point. `tolerance` is in world units. */
+  elementAt(world: Point, tolerance: number): AnyElement | undefined {
+    for (let i = this.list.length - 1; i >= 0; i--) {
+      const el = this.list[i]!;
+      if (kindOf(el).hitTest(el, world, tolerance)) return el;
     }
-    return result;
+    return undefined;
   }
 
-  /** Topmost shape at a world point. `tolerance` is in world units. */
-  shapeAt(world: Point, tolerance: number): Shape | undefined {
-    return topmostShapeAt(this.list, world, tolerance);
+  /** Elements touching the rect. */
+  elementsInRect(rect: Rect): AnyElement[] {
+    return this.list.filter((el) => rectsIntersect(kindOf(el).bounds(el), rect));
   }
 
-  /** Shapes touching the rect. Sections and ER aggregations only count when the rect encloses them. */
-  shapesInRect(rect: Rect): Shape[] {
-    return this.list.filter((shape) =>
-      isSection(shape) || shape.type === "er-aggregate"
-        ? rectContainsRect(rect, shapeBounds(shape))
-        : rectsIntersect(shapeBounds(shape), rect),
-    );
-  }
-
-  /** Bounding box of all shapes, or `null` for an empty board. */
+  /** Bounding box of all elements, or `null` for an empty board. */
   contentBounds(): Rect | null {
-    return unionRects(this.list.map(shapeBounds));
+    return unionRects(this.list.map((el) => kindOf(el).bounds(el)));
   }
 
   get hoveredId(): string | null {
@@ -123,31 +63,11 @@ export class Scene {
     return true;
   }
 
-  overlay(zoom: number): OverlayState {
+  overlay(): OverlayState {
     return buildOverlayState({
-      selected: this.list.filter((shape) => this.selection.has(shape.id)),
+      selected: this.list.filter((el) => this.selection.has(el.id)),
       hover: this.hoverId ? this.byId.get(this.hoverId) : undefined,
       marquee: this.marquee,
-      dropTarget: this.dropTarget,
-      zoom,
     });
-  }
-
-  relations(): RelationState {
-    const draft = this.draftRelation;
-    const from = draft ? this.doc.get(draft.tableId) : undefined;
-    return {
-      relations: this.relationList,
-      enumLinks: this.enumLinkList,
-      erLinks: this.erLinkList,
-      highlighted: this.selection.ids,
-      draft: draft && isDbTable(from) ? draftPath(from, draft.row, draft.end) : null,
-    };
-  }
-
-  private attach(shapeId: string, connectorId: string): void {
-    let set = this.attachments.get(shapeId);
-    if (!set) this.attachments.set(shapeId, (set = new Set()));
-    set.add(connectorId);
   }
 }
