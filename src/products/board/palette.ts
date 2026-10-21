@@ -37,6 +37,16 @@ export const SHAPE_FILLS = [
 ] as const;
 
 /** Outlines for diagram shapes. */
+/** Section backgrounds: soft tints so the elements inside stay readable. */
+export const SECTION_COLORS = [
+  { name: "Seal", value: "#f1f2f4" },
+  { name: "Ice", value: "#e7f1fb" },
+  { name: "Mint", value: "#e6f6ec" },
+  { name: "Sand", value: "#fbf3e2" },
+  { name: "Blush", value: "#fdeae4" },
+  { name: "Lilac", value: "#f0ecfc" },
+] as const;
+
 export const SHAPE_STROKES = [
   { name: "Ink", value: "#2a2f37" },
   { name: "Gray", value: "#9aa3af" },
@@ -68,6 +78,15 @@ export const NOTE_BUBBLE_COLOR = "#fff6d6";
 export const TRANSPARENT = "transparent";
 
 export const INK_COLOR = "#2a2f37";
+
+/** Outline of ER entities (rectangles), as in the classic Chen drawings. */
+export const ER_ENTITY_COLOR = "#e0484d";
+/** Outline of ER relations (diamonds). */
+export const ER_RELATION_COLOR = "#3a83c9";
+/** Outline of ER attributes (ellipses). */
+export const ER_ATTRIBUTE_COLOR = "#2a2f37";
+/** Fill of every ER element. */
+export const ER_FILL_COLOR = "#ffffff";
 
 /** Muted ink for secondary text such as column types. */
 export const MUTED_INK_COLOR = "#6b7280";

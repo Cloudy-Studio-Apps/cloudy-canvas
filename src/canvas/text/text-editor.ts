@@ -28,7 +28,7 @@ export class TextEditor {
 
   /** Edits an element's text. Does nothing for elements without text. */
   start(id: string): void {
-    const el = this.doc.get(id);
+    const el = this.hooks.getElement(id);
     const text = el ? this.kinds.kindOf(el).text : null;
     if (el && text) this.open(el, text, `${this.kinds.kindOf(el).label} text`);
   }
@@ -37,7 +37,7 @@ export class TextEditor {
   reposition(): void {
     const session = this.session;
     if (!session) return;
-    const el = this.doc.get(session.id);
+    const el = this.hooks.getElement(session.id);
     if (!el || !this.kinds.kindOf(el).text) return this.discard();
     const { x, y } = this.camera.worldToScreen(el);
     session.textarea.style.transform = `translate(${x}px, ${y}px) scale(${this.camera.zoom})`;
@@ -46,7 +46,7 @@ export class TextEditor {
   commit(): void {
     const session = this.close();
     if (!session) return;
-    const el = this.doc.get(session.id);
+    const el = this.hooks.getElement(session.id);
     const patch = el ? this.kinds.kindOf(el).text?.set(el, session.textarea.value) : null;
     if (patch) this.doc.update(session.id, patch);
     this.hooks.onEnd(session.id);
@@ -100,7 +100,7 @@ export class TextEditor {
   /** Text centered in its element keeps its wrapped block in the middle while typing. */
   private resizeToContent(): void {
     const session = this.session;
-    const el = session ? this.doc.get(session.id) : undefined;
+    const el = session ? this.hooks.getElement(session.id) : undefined;
     const text = el ? this.kinds.kindOf(el).text : null;
     if (!session || !el || text?.style(el).vAlign !== "middle") return;
     centerVertically(session.textarea, el.h);
@@ -109,11 +109,19 @@ export class TextEditor {
   private handleKeyDown = (event: KeyboardEvent) => {
     // Keep canvas shortcuts (Delete, V, H, …) from firing while typing.
     event.stopPropagation();
-    if (event.key === "Escape" || (event.key === "Enter" && isModKey(event))) {
+    if (
+      event.key === "Escape" ||
+      (event.key === "Enter" && (isModKey(event) || (this.singleLine() && !event.shiftKey)))
+    ) {
       event.preventDefault();
       this.commit();
     }
   };
+
+  private singleLine(): boolean {
+    const el = this.session ? this.hooks.getElement(this.session.id) : undefined;
+    return el ? (this.kinds.kindOf(el).text?.style(el).singleLine ?? false) : false;
+  }
 }
 
 /** Pads the top of the textarea so its (wrapped) text sits in the middle, like on canvas. */

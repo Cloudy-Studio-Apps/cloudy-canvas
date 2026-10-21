@@ -7,6 +7,7 @@ export interface BoardToolOptions {
   shapeKind: string;
   shapeFill: string;
   shapeStroke: string;
+  sectionColor: string;
   /** What the Database tool places. */
   dbKind: "table" | "enum";
 }

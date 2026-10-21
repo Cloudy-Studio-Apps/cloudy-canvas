@@ -33,6 +33,11 @@ export abstract class ElementKind<
   /** Whether agents can create it from an `ElementSpec`. */
   readonly creatable: boolean = true;
   readonly resizable: boolean = false;
+  /**
+   * Frames (e.g. sections, aggregation boxes) are drawn behind every other element, larger ones
+   * further back, and a marquee selects them only when it encloses them.
+   */
+  readonly frame: boolean = false;
   /** Fields agents may patch; `null` allows every field. */
   readonly patchableFields: ReadonlySet<string> | null = null;
   /** Set when the element has text edited in place. */

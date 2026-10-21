@@ -14,11 +14,13 @@ import type { OverlayState } from "./overlay-state.types";
 
 /**
  * Owns the Pixi application and composes the layers, bottom to top:
- * grid (screen) → world (links, elements, drafts, guides; follows the camera) → overlay (screen).
+ * grid (screen) → world (frames, links, elements, drafts, guides; follows the camera) → overlay
+ * (screen). Frames have their own layer so links show above them.
  */
 export class Renderer {
   readonly app = new Application();
   private readonly elements: ElementLayer;
+  private readonly frames: ElementLayer;
   private readonly draft: DraftLayer;
   private readonly links: LinkLayer;
   private readonly guide = new GuideLayer();
@@ -28,11 +30,12 @@ export class Renderer {
 
   constructor(
     private theme: CanvasTheme,
-    kinds: ElementKinds,
+    private readonly kinds: ElementKinds,
     links: readonly CanvasLinks[],
   ) {
     this.links = new LinkLayer(links);
     this.elements = new ElementLayer(kinds);
+    this.frames = new ElementLayer(kinds);
     this.draft = new DraftLayer(kinds);
   }
 
@@ -47,7 +50,7 @@ export class Renderer {
       autoStart: false, // render on demand only
       preference: ["webgl", "canvas"],
     });
-    this.world.addChild(this.links, this.elements, this.draft, this.guide);
+    this.world.addChild(this.frames, this.links, this.elements, this.draft, this.guide);
     this.app.stage.addChild(this.grid, this.world, this.overlay);
   }
 
@@ -65,7 +68,12 @@ export class Renderer {
   }
 
   syncElements(elements: Iterable<CanvasElement>, removed: Iterable<string> = []): void {
-    this.elements.sync(elements, removed);
+    const frames: CanvasElement[] = [];
+    const others: CanvasElement[] = [];
+    for (const el of elements) (this.kinds.kindOf(el).frame ? frames : others).push(el);
+    const gone = [...removed];
+    this.frames.sync(frames, gone);
+    this.elements.sync(others, gone);
   }
 
   /** Shows an element that isn't in the document yet, above the others; `null` clears it. */
@@ -81,11 +89,14 @@ export class Renderer {
   /** Re-rasterizes text for the zoom level. */
   setTextZoom(zoom: number): void {
     this.elements.setTextZoom(zoom);
+    this.frames.setTextZoom(zoom);
+    this.links.setTextZoom(zoom);
   }
 
   /** Hides an element's canvas text while the DOM text editor shows it. */
   setHiddenText(id: string | null): void {
     this.elements.setHiddenText(id);
+    this.frames.setHiddenText(id);
   }
 
   /** `highlighted`: the selected ids, whose links stand out. */

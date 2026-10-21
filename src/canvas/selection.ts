@@ -1,6 +1,15 @@
-/** The set of selected shape ids. */
+/** The set of selected element ids. */
 export class Selection {
   private current: ReadonlySet<string> = new Set();
+  private cached: { from: ReadonlySet<string>; list: readonly string[] } | null = null;
+
+  /** The ids as an array that stays the same object until the selection changes. */
+  list(): readonly string[] {
+    if (this.cached?.from !== this.current) {
+      this.cached = { from: this.current, list: [...this.current] };
+    }
+    return this.cached.list;
+  }
 
   get ids(): ReadonlySet<string> {
     return this.current;
@@ -14,7 +23,7 @@ export class Selection {
     return this.current.has(id);
   }
 
-  /** The selected id when exactly one shape is selected. */
+  /** The selected id when exactly one element is selected. */
   single(): string | undefined {
     if (this.current.size !== 1) return undefined;
     const [id] = this.current;

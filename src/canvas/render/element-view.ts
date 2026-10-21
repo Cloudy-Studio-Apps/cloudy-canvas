@@ -1,13 +1,18 @@
 import { Container, Graphics, Text } from "pixi.js";
 
-import type { CanvasElement, ElementKind, ElementTextStyle } from "../elements";
+import {
+  zOrderKey,
+  type CanvasElement,
+  type ElementKind,
+  type ElementTextStyle,
+} from "../elements";
 import { canvasTextStyle } from "./text-style";
 import type { CanvasTextOptions } from "./text-style.types";
 
 /** Pixi display object for one element. Redrawn in place by its kind whenever the element changes. */
 export class ElementView extends Container {
   readonly elementId: string;
-  /** Drawing order key (the element's fractional index). */
+  /** Drawing order key (see `zOrderKey`). */
   order: string;
   readonly graphics = new Graphics();
   private textNode: Text | null = null;
@@ -19,14 +24,14 @@ export class ElementView extends Container {
   constructor(el: CanvasElement, kind: ElementKind) {
     super();
     this.elementId = el.id;
-    this.order = el.index;
+    this.order = zOrderKey(el, kind);
     this.addChild(this.graphics);
     this.sync(el, kind);
   }
 
   /** Moves the view to the element and has its kind redraw it. */
   sync(el: CanvasElement, kind: ElementKind): void {
-    this.order = el.index;
+    this.order = zOrderKey(el, kind);
     this.position.set(el.x, el.y);
     kind.draw(this, el);
   }

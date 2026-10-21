@@ -1,4 +1,4 @@
-import { Emitter, type CanvasDocument, type DocumentChange } from "@canvas";
+import { DocumentFeed, type CanvasDocument } from "@canvas";
 
 import { isDbEnum, type DbEnumElement } from "../enum";
 import { isDbTable, type DbRef, type DbTableElement } from "../table";
@@ -27,46 +27,22 @@ import type {
  * undo step. The logic lives in `schema-dbml`, `table-edits` and `enum-edits`; this is the facade.
  */
 export class DbSchema {
-  private readonly emitter = new Emitter();
-  private version = 0;
-  private listeners = 0;
-  private unobserve: (() => void) | null = null;
+  private readonly feed: DocumentFeed;
 
-  constructor(private readonly doc: CanvasDocument) {}
+  constructor(private readonly doc: CanvasDocument) {
+    // Removed ids can't be checked any more, so any removal counts as a schema change.
+    this.feed = new DocumentFeed(
+      doc,
+      (change) =>
+        change.removed.size > 0 || [...change.updated].some((id) => isSchemaShape(doc.get(id))),
+    );
+  }
 
-  /**
-   * Notifies when the schema changes (works with React's `useSyncExternalStore`). The document is
-   * only observed while someone listens, so a schema needs no cleanup.
-   */
-  subscribe = (listener: () => void): (() => void) => {
-    const off = this.emitter.subscribe(listener);
-    if (this.listeners++ === 0) {
-      // Changes made while nobody listened weren't counted.
-      this.version++;
-      this.unobserve = this.doc.observe(this.onDocumentChange);
-    }
-    let subscribed = true;
-    return () => {
-      if (!subscribed) return;
-      subscribed = false;
-      off();
-      if (--this.listeners > 0) return;
-      this.unobserve?.();
-      this.unobserve = null;
-    };
-  };
+  /** Notifies when the schema changes (works with React's `useSyncExternalStore`). */
+  subscribe = (listener: () => void): (() => void) => this.feed.subscribe(listener);
 
   /** Increments on every schema change. */
-  getVersion = (): number => this.version;
-
-  private readonly onDocumentChange = (change: DocumentChange): void => {
-    // Removed ids can't be checked any more, so any removal counts as a schema change.
-    const touched =
-      change.removed.size > 0 || [...change.updated].some((id) => isSchemaShape(this.doc.get(id)));
-    if (!touched) return;
-    this.version++;
-    this.emitter.emit();
-  };
+  getVersion = (): number => this.feed.getVersion();
 
   // ── Reading ─────────────────────────────────────────────────────────
 

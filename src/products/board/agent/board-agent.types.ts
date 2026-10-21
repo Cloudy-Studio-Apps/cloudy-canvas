@@ -2,7 +2,7 @@ import type { AgentTool } from "@canvas";
 import type { FileInfo } from "@shared/core";
 
 import type { BoardEngine } from "../board-engine.types";
-import type { DbSchema } from "../elements";
+import type { DbSchema, ErModel } from "../elements";
 
 /** The board open in the window. */
 export interface AgentBoard {
@@ -14,6 +14,8 @@ export interface AgentBoard {
   engine: BoardEngine;
   /** The board's database schema, edited as DBML. */
   schema: DbSchema;
+  /** The board's ER diagrams, edited as text. */
+  er: ErModel;
   save(): Promise<void>;
 }
 

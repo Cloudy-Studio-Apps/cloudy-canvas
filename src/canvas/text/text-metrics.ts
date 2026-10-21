@@ -58,3 +58,8 @@ export function measureWrapped(
     h: Math.ceil(lines.length * fontSize * ELEMENT_DEFAULTS.lineHeight),
   };
 }
+
+/** Top offset that vertically centers one line of text in a box of `height`. */
+export function centerTextTop(height: number, fontSize: number): number {
+  return (height - fontSize * ELEMENT_DEFAULTS.lineHeight) / 2;
+}

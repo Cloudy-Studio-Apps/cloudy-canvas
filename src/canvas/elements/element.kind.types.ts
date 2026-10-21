@@ -25,6 +25,8 @@ export interface ElementTextStyle {
   /** Inner padding, in world units. */
   padX: number;
   padY: number;
+  /** One-line text (e.g. a name): Enter finishes editing instead of adding a line. */
+  singleLine?: boolean;
 }
 
 /** An element whose text is edited in place with the text editor. */
@@ -41,6 +43,8 @@ export interface ElementDescription {
   label?: string;
   /** Sub-kind, e.g. a geo element's variant. */
   kind?: string;
+  /** The group it belongs to, e.g. the id of its ER diagram. */
+  group?: string;
 }
 
 /** A new element's requested fields, as hosts and agents give them. `x`/`y` are the top-left corner. */

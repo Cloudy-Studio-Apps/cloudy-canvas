@@ -41,7 +41,7 @@ export class SelectTool implements Tool {
     }
 
     const origins = new Map<string, CanvasElement>();
-    for (const id of this.ctx.getSelection()) {
+    for (const id of this.ctx.withMembers(this.ctx.getSelection())) {
       const el = this.ctx.doc.get(id);
       if (el) origins.set(id, el);
     }

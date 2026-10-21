@@ -3,7 +3,7 @@ import type { ElementSummary } from "./element-summary.types";
 
 export function summarizeElement(kinds: ElementKinds, el: CanvasElement): ElementSummary {
   const elementKind = kinds.kindOf(el);
-  const { label, kind } = elementKind.describe(el);
+  const { label, kind, group } = elementKind.describe(el);
   const bounds = elementKind.bounds(el);
   return {
     id: el.id,
@@ -14,5 +14,6 @@ export function summarizeElement(kinds: ElementKinds, el: CanvasElement): Elemen
     h: Math.round(bounds.h),
     ...(label ? { label } : {}),
     ...(kind ? { kind } : {}),
+    ...(group ? { group } : {}),
   };
 }

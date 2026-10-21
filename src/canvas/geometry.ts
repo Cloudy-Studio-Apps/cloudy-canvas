@@ -80,3 +80,31 @@ export function boundsOfPoints(points: number[]): Rect {
 export function roundRect({ x, y, w, h }: Rect): Rect {
   return { x: Math.round(x), y: Math.round(y), w: Math.round(w), h: Math.round(h) };
 }
+
+/** The rect of anything with a position and size (e.g. an element), as a plain `Rect`. */
+export function rectOf({ x, y, w, h }: Rect): Rect {
+  return { x, y, w, h };
+}
+
+/**
+ * Whether `p` is within `radius` of a polyline given as a flat [x0, y0, x1, y1, …] list relative
+ * to `origin` (e.g. an element's `points`).
+ */
+export function nearPolyline(points: readonly number[], origin: Point, p: Point, radius: number) {
+  const local = { x: p.x - origin.x, y: p.y - origin.y };
+  const radiusSq = radius * radius;
+  if (points.length === 2) {
+    return distanceToSegmentSq(local, points[0]!, points[1]!, points[0]!, points[1]!) <= radiusSq;
+  }
+  for (let i = 0; i + 3 < points.length; i += 2) {
+    const distance = distanceToSegmentSq(
+      local,
+      points[i]!,
+      points[i + 1]!,
+      points[i + 2]!,
+      points[i + 3]!,
+    );
+    if (distance <= radiusSq) return true;
+  }
+  return false;
+}

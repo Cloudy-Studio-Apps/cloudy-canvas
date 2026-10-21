@@ -1,5 +1,12 @@
 import type { BoardToolOptions } from "./board-options.types";
-import { MARKER_COLORS, MARKER_SIZES, SHAPE_FILLS, SHAPE_STROKES, STICKY_COLORS } from "./palette";
+import {
+  MARKER_COLORS,
+  MARKER_SIZES,
+  SECTION_COLORS,
+  SHAPE_FILLS,
+  SHAPE_STROKES,
+  STICKY_COLORS,
+} from "./palette";
 
 /** The options a new board editor starts with. */
 export const DEFAULT_BOARD_OPTIONS: BoardToolOptions = {
@@ -9,5 +16,6 @@ export const DEFAULT_BOARD_OPTIONS: BoardToolOptions = {
   shapeKind: "rectangle",
   shapeFill: SHAPE_FILLS[0].value,
   shapeStroke: SHAPE_STROKES[0].value,
+  sectionColor: SECTION_COLORS[0].value,
   dbKind: "table",
 };

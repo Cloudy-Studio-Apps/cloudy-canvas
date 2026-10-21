@@ -1,7 +1,7 @@
-import type { ElementView } from "@canvas";
+import { centerTextTop, type ElementView } from "@canvas";
 
 import { INK_COLOR, MUTED_INK_COLOR } from "../../../palette";
-import { centerTextTop, DB_CARD_DEFAULTS, drawCardFrame, rowTop } from "../card";
+import { DB_CARD_DEFAULTS, drawCardFrame, rowTop } from "../card";
 import type { DbEnumElement } from "./db-enum.types";
 
 const {

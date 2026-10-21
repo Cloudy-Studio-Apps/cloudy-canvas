@@ -10,4 +10,6 @@ export interface ElementSummary {
   label?: string;
   /** Sub-kind, e.g. a geo element's variant. */
   kind?: string;
+  /** The group it belongs to, e.g. the id of its ER diagram. */
+  group?: string;
 }

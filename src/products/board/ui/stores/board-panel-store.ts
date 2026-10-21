@@ -6,6 +6,12 @@ import type { BoardPanelState } from "./board-panel-store.types";
 export const useBoardPanelStore = create<BoardPanelState>()((set) => ({
   schemaOpen: false,
   tableTab: "visual",
-  setSchemaOpen: (schemaOpen) => set({ schemaOpen }),
+  erOpen: false,
+  erTab: "visual",
+  erDiagram: null,
+  setSchemaOpen: (schemaOpen) => set(schemaOpen ? { schemaOpen, erOpen: false } : { schemaOpen }),
   setTableTab: (tableTab) => set({ tableTab }),
+  setErOpen: (erOpen) => set(erOpen ? { erOpen, schemaOpen: false } : { erOpen }),
+  setErTab: (erTab) => set({ erTab }),
+  setErDiagram: (erDiagram) => set({ erDiagram }),
 }));

@@ -4,7 +4,7 @@ import type { CanvasElement, ElementKinds } from "../../elements";
 import { ElementView } from "../element-view";
 import { textResolution } from "../text-resolution";
 
-/** Keeps one ElementView per element, in drawing order (fractional index). */
+/** Keeps one ElementView per element, in drawing order (see `zOrderKey`). */
 export class ElementLayer extends Container<ElementView> {
   private readonly views = new Map<string, ElementView>();
   private hiddenTextId: string | null = null;
@@ -23,9 +23,9 @@ export class ElementLayer extends Container<ElementView> {
     for (const el of elements) {
       const view = this.views.get(el.id);
       if (view) {
-        const orderChanged = view.order !== el.index;
+        const order = view.order;
         view.sync(el, this.kinds.kindOf(el));
-        if (orderChanged) this.place(view);
+        if (view.order !== order) this.place(view);
       } else {
         this.add(el);
       }

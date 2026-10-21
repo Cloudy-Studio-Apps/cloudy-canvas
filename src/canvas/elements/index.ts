@@ -12,3 +12,4 @@ export { ELEMENT_DEFAULTS } from "./element.defaults";
 export { BoxKind, LineKind, TextBoxKind } from "./bases";
 export { createElementBase } from "./element.factory";
 export { elementInfo } from "./element.info";
+export { zOrderKey } from "./z-order";

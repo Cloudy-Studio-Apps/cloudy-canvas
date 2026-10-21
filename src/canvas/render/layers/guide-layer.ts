@@ -1,6 +1,6 @@
 import { Graphics } from "pixi.js";
 
-import type { Guide, LinkView } from "../../links";
+import type { Guide, GuideView } from "../../links";
 
 /** A tool's gesture feedback, in world space above the elements. */
 export class GuideLayer extends Graphics {
@@ -10,7 +10,7 @@ export class GuideLayer extends Graphics {
     this.guide = guide;
   }
 
-  draw(view: Omit<LinkView, "highlighted">): void {
+  draw(view: GuideView): void {
     this.clear();
     this.guide?.(this, view);
   }

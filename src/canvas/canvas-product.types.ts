@@ -1,5 +1,5 @@
 import type { CanvasDocument } from "./document";
-import type { ElementKinds } from "./elements";
+import type { CanvasElement, ElementKinds } from "./elements";
 import type { Keybindings } from "./input";
 import type { CanvasLinks } from "./links";
 import type { Tool, ToolContext } from "./tools";
@@ -19,6 +19,21 @@ export interface CanvasProduct<O extends object = object> {
   readonly keybindings: Keybindings;
   /** Tool options a new editor starts with. */
   readonly defaultOptions: O;
+  /**
+   * Gives elements whose geometry follows others (e.g. a box around a group) their current
+   * geometry. Returns the list with those replaced by new objects and the rest as they were;
+   * the replaced ones are redrawn on every change.
+   */
+  resolveElements?(elements: CanvasElement[]): CanvasElement[];
+  /**
+   * The ids plus what goes with them when they're moved or deleted (e.g. an entity's attributes).
+   * `elements` are the scene's, with derived geometry resolved.
+   */
+  withMembers?(
+    ids: ReadonlySet<string>,
+    elements: readonly CanvasElement[],
+    purpose: "move" | "delete",
+  ): Set<string>;
   /** Lines derived from the elements, drawn under them (one set per engine). */
   createLinks?(): CanvasLinks[];
   /**

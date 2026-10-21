@@ -78,7 +78,7 @@ export class CanvasEngine<O extends object = object> {
     this.ownsDocument = !document;
     this.links = product.createLinks?.() ?? [];
     this.renderer = new Renderer(theme, this.kinds, this.links);
-    this.scene = new Scene(this.doc, this.kinds);
+    this.scene = new Scene(this.doc, this.kinds, product.resolveElements?.bind(product));
     const ctx = this.createToolContext();
     const tools = [...createBaseTools(ctx), ...product.createTools(ctx)];
     this.tools = new Map(tools.map((tool) => [tool.id, tool]));
@@ -222,9 +222,9 @@ export class CanvasEngine<O extends object = object> {
     this.setSelection(ids);
   }
 
-  /** Deletes elements as one undo step. Returns the removed ids. */
+  /** Deletes elements, with what goes with them, as one undo step. Returns the removed ids. */
   deleteElements(ids: Iterable<string>): string[] {
-    const removing = [...new Set(ids)].filter((id) => this.doc.get(id));
+    const removing = [...this.withMembers(ids, "delete")].filter((id) => this.doc.get(id));
     if (removing.length === 0) return [];
     this.doc.checkpoint();
     this.doc.batch(() => {
@@ -317,6 +317,7 @@ export class CanvasEngine<O extends object = object> {
         this.requestRender();
       },
       getElement: (id) => this.scene.get(id),
+      withMembers: (ids) => this.withMembers(ids, "move"),
       getHover: () => this.scene.hoveredId,
       interactionAt: (world) => findInteraction(this.scene, world, this.camera.zoom),
       autoPan: (screen, onPan) => this.autoPan.update(screen, onPan),
@@ -330,6 +331,7 @@ export class CanvasEngine<O extends object = object> {
 
   private createTextEditor(container: HTMLElement): TextEditor {
     return new TextEditor(container, this.doc, this.kinds, this.camera, {
+      getElement: (id) => this.scene.get(id),
       onStart: (id) => {
         this.renderer.setHiddenText(id);
         this.requestRender();
@@ -383,7 +385,8 @@ export class CanvasEngine<O extends object = object> {
 
   private handleDocumentChange(change: DocumentChange): void {
     this.refreshScene();
-    const changed = [...change.updated]
+    // Derived geometry may follow any change, so those elements are redrawn every time.
+    const changed = [...new Set([...change.updated, ...this.scene.derivedIds])]
       .map((id) => this.scene.get(id))
       .filter((el): el is CanvasElement => el !== undefined);
     this.renderer.syncElements(changed, change.removed);
@@ -423,6 +426,12 @@ export class CanvasEngine<O extends object = object> {
   }
 
   // ── State helpers ─────────────────────────────────────────────────────
+
+  /** The ids plus what the product says goes with them when moved or deleted. */
+  private withMembers(ids: Iterable<string>, purpose: "move" | "delete"): Set<string> {
+    const set = new Set(ids);
+    return this.product.withMembers?.(set, this.scene.elements, purpose) ?? set;
+  }
 
   /** Re-reads the elements, and re-resolves the links between them. */
   private refreshScene(): void {
@@ -465,6 +474,7 @@ export class CanvasEngine<O extends object = object> {
       options: this.options,
       zoom: this.camera.zoom,
       selectionCount: this.scene.selection.size,
+      selectedIds: this.scene.selection.list(),
       selectedId: this.scene.selection.single() ?? null,
       selectionTypes: this.selectionTypes(),
       canUndo: this.doc.canUndo(),

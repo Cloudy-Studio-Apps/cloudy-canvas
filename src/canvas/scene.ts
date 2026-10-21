@@ -1,6 +1,6 @@
 import type { CanvasDocument } from "./document";
-import type { CanvasElement, ElementKind, ElementKinds } from "./elements";
-import { rectsIntersect, unionRects } from "./geometry";
+import { zOrderKey, type CanvasElement, type ElementKind, type ElementKinds } from "./elements";
+import { rectContainsRect, rectsIntersect, unionRects } from "./geometry";
 import type { Point, Rect } from "./geometry.types";
 import { buildOverlayState, type OverlayState } from "./render";
 import { Selection } from "./selection";
@@ -13,12 +13,15 @@ export class Scene {
   readonly selection = new Selection();
   private list: CanvasElement[] = [];
   private byId = new Map<string, CanvasElement>();
+  private derived: string[] = [];
   private hoverId: string | null = null;
   marquee: Rect | null = null;
 
   constructor(
     private readonly doc: CanvasDocument,
     private readonly kinds: ElementKinds,
+    /** The product's `resolveElements`, if any. */
+    private readonly resolve?: (elements: CanvasElement[]) => CanvasElement[],
   ) {}
 
   /** Elements sorted bottom-to-top. */
@@ -26,10 +29,26 @@ export class Scene {
     return this.list;
   }
 
-  /** Re-reads the element list from the document. */
+  /**
+   * Re-reads the element list from the document, with derived geometry resolved, in drawing
+   * order. Read elements here, not from the document, when their geometry matters.
+   */
   refresh(): void {
-    this.list = this.doc.all();
+    const raw = this.doc.all();
+    const resolved = this.resolve ? this.resolve(raw) : raw;
+    this.derived = resolved.filter((el, i) => el !== raw[i]).map((el) => el.id);
+    const keys = new Map(resolved.map((el) => [el.id, zOrderKey(el, this.kinds.kindOf(el))]));
+    this.list = resolved.sort((a, b) => {
+      const ka = keys.get(a.id)!;
+      const kb = keys.get(b.id)!;
+      return ka < kb ? -1 : ka > kb ? 1 : 0;
+    });
     this.byId = new Map(this.list.map((el) => [el.id, el]));
+  }
+
+  /** Ids of elements whose geometry the product derives from others (see `resolveElements`). */
+  get derivedIds(): readonly string[] {
+    return this.derived;
   }
 
   get(id: string): CanvasElement | undefined {
@@ -45,9 +64,13 @@ export class Scene {
     return undefined;
   }
 
-  /** Elements touching the rect. */
+  /** Elements touching the rect. Frames only count when the rect encloses them. */
   elementsInRect(rect: Rect): CanvasElement[] {
-    return this.list.filter((el) => rectsIntersect(this.kinds.kindOf(el).bounds(el), rect));
+    return this.list.filter((el) => {
+      const kind = this.kinds.kindOf(el);
+      const bounds = kind.bounds(el);
+      return kind.frame ? rectContainsRect(rect, bounds) : rectsIntersect(bounds, rect);
+    });
   }
 
   /** Bounding box of all elements, or `null` for an empty canvas. */

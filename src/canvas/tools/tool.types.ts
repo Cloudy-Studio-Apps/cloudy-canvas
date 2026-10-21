@@ -27,6 +27,8 @@ export interface ToolContext<O extends object = object> {
   /** An element as the scene sees it. */
   getElement(id: string): CanvasElement | undefined;
   elementsInRect(rect: Rect): CanvasElement[];
+  /** The ids plus what moves with them (e.g. an entity's attributes). */
+  withMembers(ids: Iterable<string>): Set<string>;
   editText(id: string): void;
   setCursor(cursor: string): void;
   setHover(id: string | null): void;

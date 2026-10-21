@@ -7,6 +7,7 @@ import { useAgentServerStore } from "@shared/stores/agent-server-store";
 import { SealLogo } from "@shared/ui/brand/seal-logo";
 import { Badge } from "@shared/ui/components/ui/badge";
 import { useBoardFile } from "../file";
+import { SectionsMenu } from "./sections-menu";
 import { useBoardPanelStore } from "../stores/board-panel-store";
 
 export function BoardTopBar() {
@@ -52,6 +53,7 @@ export function BoardTopBar() {
         <Save />
       </ToolButton>
       <PanelDivider className="mx-1.5" />
+      <SectionsMenu />
       <ToolButton
         label="Database schema"
         side="bottom"

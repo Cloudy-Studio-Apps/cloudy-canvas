@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { boardKinds, decodeBoardFile } from "@board";
+import { boardKinds, openBoardDocument } from "@board";
 import { CanvasDocument } from "@canvas";
 import { storage } from "@platform";
 import type { BoardLoadState } from "./use-board-loader.types";
@@ -20,7 +20,7 @@ export function useBoardLoader(id: string): BoardLoadState {
       try {
         const info = await storage.get(id);
         const document = info
-          ? CanvasDocument.fromUpdate(boardKinds, decodeBoardFile(await storage.load(id)))
+          ? openBoardDocument(await storage.load(id))
           : new CanvasDocument(boardKinds);
         if (!active) return document.destroy();
         loaded = document;
