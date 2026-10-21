@@ -5,9 +5,13 @@ import type { BoardToolOptions } from "./board-options.types";
 import { BOARD_KEYBINDINGS } from "./board-keybindings";
 import {
   boardKinds,
+  createPastedText,
   DbLinks,
   detachConnectors,
   ErLinks,
+  prepareConnectorCopies,
+  prepareDbCopies,
+  prepareErCopies,
   pruneEr,
   pruneRefs,
   resolveConnectors,
@@ -60,4 +64,9 @@ export const boardProduct: CanvasProduct<BoardToolOptions> = {
     pruneRefs(doc);
     pruneEr(doc);
   },
+  // Copies get free schema names and their own ER diagrams, and connector ends attached to
+  // elements that weren't copied come loose.
+  prepareCopies: (copies, context) =>
+    prepareConnectorCopies(prepareErCopies(prepareDbCopies(copies, context), context), context),
+  pasteText: (text, at, index) => createPastedText(text, at, index),
 };

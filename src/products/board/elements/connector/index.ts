@@ -9,3 +9,4 @@ export { connectorEndpoints } from "./connector-endpoints";
 export { detachConnectors } from "./detach-connectors";
 export { isConnector } from "./is-connector";
 export { resolveConnectors } from "./resolve-connectors";
+export { prepareConnectorCopies } from "./prepare-connector-copies";

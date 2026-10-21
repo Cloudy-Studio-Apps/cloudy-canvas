@@ -12,6 +12,10 @@ export const BASE_KEYBINDINGS = {
     { key: "Delete", label: "Del" },
     { key: "Backspace", label: "⌫" },
   ],
+  copy: [{ key: "c", mod: true }],
+  cut: [{ key: "x", mod: true }],
+  paste: [{ key: "v", mod: true }],
+  duplicate: [{ key: "d", mod: true }],
   editSelection: [{ key: "Enter", label: "↵" }],
   cancel: [{ key: "Escape", label: "Esc" }],
   zoomIn: [

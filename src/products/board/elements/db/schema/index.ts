@@ -7,3 +7,4 @@ export { DbSchema } from "./db-schema";
 export { COLUMN_TYPES, INDEX_TYPES, TYPE_ARGS } from "./column-types";
 export { pruneRefs } from "./prune-refs";
 export { freeName } from "./table-edits";
+export { prepareDbCopies } from "./prepare-db-copies";

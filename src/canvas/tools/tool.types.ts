@@ -29,6 +29,11 @@ export interface ToolContext<O extends object = object> {
   elementsInRect(rect: Rect): CanvasElement[];
   /** The ids plus what moves with them (e.g. an entity's attributes). */
   withMembers(ids: Iterable<string>): Set<string>;
+  /**
+   * Adds copies of the elements (with what moves with them) in place, as a new undo step.
+   * Returns original id → copy id.
+   */
+  duplicate(ids: Iterable<string>): Map<string, string>;
   editText(id: string): void;
   /** Types the text of a new element; it's added to the document (and selected) on commit. */
   editNewText(el: CanvasElement): void;

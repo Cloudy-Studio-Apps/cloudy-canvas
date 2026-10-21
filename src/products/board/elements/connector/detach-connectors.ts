@@ -28,6 +28,7 @@ export function detachConnectors(
   }
 }
 
-function freeEnd(at: Point): ConnectorEnd {
+/** A free end at `at`. */
+export function freeEnd(at: Point): ConnectorEnd {
   return { shapeId: null, side: null, x: Math.round(at.x), y: Math.round(at.y) };
 }

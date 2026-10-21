@@ -1,4 +1,7 @@
+import type { Clipboard } from "@shared/core";
+
 import { Camera } from "./camera";
+import { ElementClipboard, MemoryClipboard, PASTE_STEP } from "./clipboard";
 import { createCommands } from "./commands";
 import type { Commands } from "./commands.types";
 import { CanvasDocument, type DocumentChange } from "./document";
@@ -47,6 +50,7 @@ export class CanvasEngine<O extends object = object> {
   private readonly camera = new Camera();
   private readonly renderer: Renderer;
   private readonly scene: Scene;
+  private readonly clipboard: ElementClipboard<O>;
   private readonly tools: Map<string, Tool>;
   private readonly store: Store<EngineState<O>>;
   private readonly disposables = new Disposables();
@@ -69,7 +73,7 @@ export class CanvasEngine<O extends object = object> {
   private destroyed = false;
   private rendererReady = false;
 
-  constructor({ product, theme, document }: CanvasEngineOptions<O>) {
+  constructor({ product, theme, document, clipboard }: CanvasEngineOptions<O>) {
     this.product = product;
     this.kinds = product.kinds;
     this.keymap = new Keymap(product.keybindings);
@@ -79,6 +83,7 @@ export class CanvasEngine<O extends object = object> {
     this.links = product.createLinks?.() ?? [];
     this.renderer = new Renderer(theme, this.kinds, this.links);
     this.scene = new Scene(this.doc, this.kinds, product.resolveElements?.bind(product));
+    this.clipboard = this.createClipboard(clipboard ?? new MemoryClipboard());
     const ctx = this.createToolContext();
     const tools = [...createBaseTools(ctx), ...product.createTools(ctx)];
     this.tools = new Map(tools.map((tool) => [tool.id, tool]));
@@ -196,6 +201,31 @@ export class CanvasEngine<O extends object = object> {
     if (this.scene.selection.size === 0) return false;
     this.deleteElements(this.scene.selection.ids);
     this.setSelection([]);
+    return true;
+  }
+
+  /** Copies the selection (with what moves with it) to the clipboard. */
+  copySelection(): boolean {
+    return this.clipboard.copy(this.scene.selection.ids);
+  }
+
+  cutSelection(): boolean {
+    if (!this.copySelection()) return false;
+    return this.deleteSelection();
+  }
+
+  /** Pastes the clipboard's elements (or its text) and selects them. */
+  paste(): void {
+    this.textEditor?.commit();
+    void this.clipboard.paste();
+  }
+
+  /** Adds a copy of the selection next to it and selects the copy. Returns `false` when nothing was selected. */
+  duplicateSelection(): boolean {
+    const selected = [...this.scene.selection.ids];
+    if (selected.length === 0) return false;
+    const ids = this.clipboard.duplicate(selected, { x: PASTE_STEP, y: PASTE_STEP });
+    this.setSelection(selected.map((id) => ids.get(id)).filter((id) => id !== undefined));
     return true;
   }
 
@@ -320,6 +350,7 @@ export class CanvasEngine<O extends object = object> {
       },
       getElement: (id) => this.scene.get(id),
       withMembers: (ids) => this.withMembers(ids, "move"),
+      duplicate: (ids) => this.clipboard.duplicate(ids, { x: 0, y: 0 }),
       getHover: () => this.scene.hoveredId,
       interactionAt: (world) => findInteraction(this.scene, world, this.camera.zoom),
       autoPan: (screen, onPan) => this.autoPan.update(screen, onPan),
@@ -329,6 +360,22 @@ export class CanvasEngine<O extends object = object> {
       },
       requestRender: () => this.requestRender(),
     };
+  }
+
+  private createClipboard(clipboard: Clipboard): ElementClipboard<O> {
+    return new ElementClipboard(
+      {
+        product: this.product,
+        doc: this.doc,
+        elements: () => this.scene.elements,
+        getElement: (id) => this.scene.get(id),
+        withMembers: (ids) => this.withMembers(ids, "move"),
+        visibleRect: () => this.camera.visibleWorldRect(),
+        getOptions: () => this.options,
+        select: (ids) => this.setSelection(ids),
+      },
+      clipboard,
+    );
   }
 
   private createTextEditor(container: HTMLElement): TextEditor {

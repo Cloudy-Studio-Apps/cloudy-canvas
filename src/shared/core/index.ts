@@ -1,4 +1,5 @@
 export type * from "./agent-channel.types";
+export type * from "./clipboard.types";
 export * from "./files";
 export type * from "./files.types";
 export * from "./ids";

@@ -1,11 +1,12 @@
 import { useEffect, useState, type RefObject } from "react";
 
 import { CanvasEngine, type CanvasDocument, type CanvasProduct } from "@canvas";
+import { clipboard } from "@platform";
 import { readCanvasTheme } from "./canvas-theme";
 
 /**
  * Creates a CanvasEngine for `product` editing `document`, mounted into the container while both
- * exist. The document stays owned by the caller.
+ * exist, with the system clipboard for copy and paste. The document stays owned by the caller.
  */
 export function useCanvasEngine<O extends object>(
   containerRef: RefObject<HTMLElement | null>,
@@ -18,7 +19,7 @@ export function useCanvasEngine<O extends object>(
     const container = containerRef.current;
     if (!container || !document) return;
 
-    const instance = new CanvasEngine({ product, theme: readCanvasTheme(), document });
+    const instance = new CanvasEngine({ product, theme: readCanvasTheme(), document, clipboard });
     let active = true;
     instance
       .mount(container)

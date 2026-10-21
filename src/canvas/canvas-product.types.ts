@@ -1,5 +1,7 @@
+import type { CopyContext } from "./clipboard";
 import type { CanvasDocument } from "./document";
 import type { CanvasElement, ElementKinds } from "./elements";
+import type { Point } from "./geometry.types";
 import type { Keybindings } from "./input";
 import type { CanvasLinks } from "./links";
 import type { Tool, ToolContext } from "./tools";
@@ -46,4 +48,15 @@ export interface CanvasProduct<O extends object = object> {
     removed: ReadonlySet<string>,
     before: readonly CanvasElement[],
   ): void;
+  /**
+   * Fixes copied elements (pasted, duplicated or Alt-dragged) before they're added: unique names,
+   * references to elements that weren't copied, … The copies already have new ids, with references
+   * between them remapped. Returns the list to add.
+   */
+  prepareCopies?(copies: CanvasElement[], context: CopyContext): CanvasElement[];
+  /**
+   * An element for text pasted from outside the app, centered on `at` at z-order `index`, or
+   * `null` to ignore it. `options` are the current tool options.
+   */
+  pasteText?(text: string, at: Point, index: string, options: O): CanvasElement | null;
 }

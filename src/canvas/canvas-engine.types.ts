@@ -1,3 +1,5 @@
+import type { Clipboard } from "@shared/core";
+
 import type { CanvasProduct } from "./canvas-product.types";
 import type { CanvasDocument } from "./document";
 import type { CanvasTheme } from "./render";
@@ -14,4 +16,6 @@ export interface CanvasEngineOptions<O extends object = object> {
   theme: CanvasTheme;
   /** Existing document to edit (read with `product.kinds`); a new empty one is created otherwise. */
   document?: CanvasDocument;
+  /** The system clipboard for copy and paste; without one, copies only paste in this engine. */
+  clipboard?: Clipboard;
 }

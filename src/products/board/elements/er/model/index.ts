@@ -8,4 +8,5 @@ export { ErModel } from "./er-model";
 export { withErMembers } from "./er-members";
 export { resolveErElements } from "./resolve-er";
 export { pruneEr } from "./prune-er";
+export { prepareErCopies } from "./prepare-er-copies";
 export { migrateErDiagrams } from "./migrate-er-diagrams";

@@ -74,6 +74,8 @@ export class SelectTool implements Tool {
       g.started = true;
       this.ctx.setCursor("move");
       this.ctx.doc.checkpoint();
+      // Alt-drag leaves the originals in place and drags out a copy.
+      if (p.altKey) this.dragCopies(g);
     }
 
     const dx = p.world.x - g.start.world.x;
@@ -116,6 +118,20 @@ export class SelectTool implements Tool {
     this.gesture = null;
     this.ctx.setMarquee(null);
     this.ctx.setCursor(this.cursor);
+  }
+
+  /** Turns a move into dragging copies of the moved elements, which become the selection. */
+  private dragCopies(g: Extract<Gesture, { kind: "move" }>): void {
+    const ids = this.ctx.duplicate(g.origins.keys());
+    const origins = new Map<string, CanvasElement>();
+    for (const id of ids.values()) {
+      const el = this.ctx.doc.get(id);
+      if (el) origins.set(id, el);
+    }
+    g.origins = origins;
+    g.toggleOnClick = null;
+    const selected = [...this.ctx.getSelection()].map((id) => ids.get(id));
+    this.ctx.setSelection(selected.filter((id) => id !== undefined));
   }
 
   /** Whether the pointer is still close enough to the hovered element to reach its handles. */

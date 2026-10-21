@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import { generateKeyBetween } from "fractional-indexing";
+import { generateKeyBetween, generateNKeysBetween } from "fractional-indexing";
 
 import type { CanvasElement, ElementKinds, ElementPatch } from "../elements";
 import type { DocumentChange, ElementMap } from "./canvas-document.types";
@@ -57,12 +57,12 @@ export class CanvasDocument {
 
   /** Index that places a new element above everything else. */
   nextIndex(): string {
-    let top: string | null = null;
-    this.elements.forEach((map) => {
-      const index = map.get("index") as string;
-      if (top === null || index > top) top = index;
-    });
-    return generateKeyBetween(top, null);
+    return generateKeyBetween(this.topIndex(), null);
+  }
+
+  /** `count` ascending indexes that place new elements above everything else. */
+  nextIndexes(count: number): string[] {
+    return generateNKeysBetween(this.topIndex(), null, count);
   }
 
   add(el: CanvasElement): void {
@@ -174,6 +174,16 @@ export class CanvasDocument {
 
   destroy(): void {
     this.undoManager.destroy();
+  }
+
+  /** The highest index in the document (every type, registered or not), or `null` when empty. */
+  private topIndex(): string | null {
+    let top: string | null = null;
+    this.elements.forEach((map) => {
+      const index = map.get("index") as string;
+      if (top === null || index > top) top = index;
+    });
+    return top;
   }
 
   private transact(fn: () => void): void {
