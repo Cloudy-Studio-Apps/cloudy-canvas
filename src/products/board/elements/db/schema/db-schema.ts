@@ -4,6 +4,7 @@ import { isDbEnum, type DbEnumElement } from "../enum";
 import { isDbTable, type DbRef, type DbTableElement } from "../table";
 import { serializeEnum, serializeSchema, serializeTable } from "./dbml";
 import * as enums from "./enum-edits";
+import { connectedGroup, schemaGraph, tidySchema } from "./layout";
 import { applyEnumText, applySchemaText, applyTableText, importSchemaText } from "./schema-dbml";
 import { columnTargets, enumUsages, incomingRefs } from "./schema-queries";
 import { isSchemaShape, schemaShapes } from "./schema-shapes";
@@ -82,6 +83,19 @@ export class DbSchema {
     const target = this.enum(enumId);
     return target ? enumUsages(target, this.tables()) : [];
   }
+
+  /** The table or enum and every card linked to it, directly or through others. */
+  connectedTo(id: string): string[] {
+    return connectedGroup(schemaGraph([...this.tables(), ...this.enums()]), id);
+  }
+
+  // ── Layout ──────────────────────────────────────────────────────────
+
+  /**
+   * Lays out the tables and enums (only `ids`, when given) so links read left to right with few
+   * crossings, keeping their top-left corner. One undo step.
+   */
+  tidy = (ids?: readonly string[]): void => tidySchema(this.doc, ids);
 
   // ── DBML ────────────────────────────────────────────────────────────
 

@@ -12,3 +12,4 @@ export { formatColumnType, normalizeTypeArgs, splitColumnType } from "./column-t
 export { canonicalTypeName } from "./type-aliases";
 export { drawRelationPath } from "./draw-relation-path";
 export { enumLinkPath, relationPath } from "./relation-path";
+export { noteBubbleLayout } from "./note-bubble.layout";

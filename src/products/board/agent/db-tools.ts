@@ -47,6 +47,20 @@ export const dbTools: BoardAgentTool[] = [
     },
   },
   {
+    name: "tidy_schema",
+    description:
+      "Lays the schema's tables and enums out again (one undo step): each group of linked cards " +
+      "in columns that read left to right with few crossings. With a table, only that table and " +
+      "the cards linked to it move.",
+    inputSchema: { type: "object", properties: { table: TABLE } },
+    run: (host, args) => {
+      const { schema } = requireBoard(host);
+      const table = typeof args.table === "string" ? findTable(schema, args.table) : null;
+      schema.tidy(table ? schema.connectedTo(table.id) : undefined);
+      return "Done.";
+    },
+  },
+  {
     name: "get_table_dbml",
     description: "One table as DBML.",
     inputSchema: { type: "object", required: ["table"], properties: { table: TABLE } },
