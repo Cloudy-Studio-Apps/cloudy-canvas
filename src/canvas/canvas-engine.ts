@@ -389,6 +389,10 @@ export class CanvasEngine<O extends object = object> {
         this.renderer.setGuide(guide);
         this.requestRender();
       },
+      animateIn: (ids) => {
+        this.renderer.animateIn(ids);
+        this.requestRender();
+      },
       getElement: (id) => this.scene.get(id),
       withMembers: (ids) => this.withMembers(ids, "move"),
       duplicate: (ids) => this.clipboard.duplicate(ids, { x: 0, y: 0 }),
@@ -578,11 +582,12 @@ export class CanvasEngine<O extends object = object> {
   }
 
   private draw(): void {
-    this.renderer.render(
+    const animating = this.renderer.render(
       this.camera,
       this.scene.overlay(this.camera.zoom),
       this.scene.selection.ids,
     );
+    if (animating) this.requestRender();
   }
 
   private buildState(): EngineState<O> {

@@ -10,3 +10,5 @@ export { storage } from "./storage";
 export { TauriAgentChannel } from "./tauri-agent-channel";
 export { TauriStorage } from "./tauri-storage";
 export { exportDbmlFile, importDbmlFile } from "./dbml-file";
+export { importStickerFiles } from "./sticker-file";
+export { stickerLibrary } from "./sticker-library";

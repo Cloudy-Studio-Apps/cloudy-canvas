@@ -2,16 +2,14 @@
 
 What's still missing for the board to feel like FigJam, roughly ordered by value.
 
-**Already on the board:** stickies, text, marker strokes, connectors, geo shapes, sections, images, embeds, DB tables and enums, ER diagrams. Tables are in progress.
+**Already on the board:** stickies, text, marker strokes, connectors, geo shapes, sections, images, embeds, stickers, DB tables and enums, ER diagrams. Tables are in progress.
 
-**Suggested next three:** stamps → highlighter/eraser → code block. Each is a small, self-contained element folder that fits an existing base. Mind maps would be the next big feature after those.
+**Suggested next two:** highlighter/eraser → code block. Each is a small, self-contained element folder that fits an existing base. Mind maps would be the next big feature after those.
 
 ## High value
 
-- [ ] **Stamps and emoji reactions**: small icons (👍, ❤️, +1, ?, ✓) dropped on or next to anything.
-  - A `BoxKind` with `keepsRatio`, drawn with `view.placeIcon`.
-  - A stamp tool with a picker.
-  - They're the basis for voting (see Widgets).
+- [x] **Stamps and emoji reactions**: the sticker tool (K) with its wheel of recent stickers and a panel of "foca watona" stickers, common stamps, emojis and the user's own pictures.
+  - Follow-ups: agents creating stickers, voting built on them (see Widgets).
 - [ ] **Code block**: a monospace box with a language label and syntax highlighting.
   - A `TextBoxKind` with a `language` field; highlighting drawn as colored text runs.
 - [ ] **Highlighter**: wide, translucent strokes drawn under the other strokes.

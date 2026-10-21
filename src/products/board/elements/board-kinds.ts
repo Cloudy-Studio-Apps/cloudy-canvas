@@ -15,6 +15,7 @@ import {
 import { GeoKind } from "./geo";
 import { ImageKind } from "./image";
 import { SectionKind } from "./section";
+import { StickerKind } from "./sticker";
 import { StickyKind } from "./sticky";
 import { StrokeKind } from "./stroke";
 import { TableKind } from "./table";
@@ -33,6 +34,7 @@ boardKinds.register(new SectionKind());
 boardKinds.register(new TableKind());
 boardKinds.register(new ImageKind());
 boardKinds.register(new EmbedKind());
+boardKinds.register(new StickerKind());
 boardKinds.register(new ConnectorKind());
 boardKinds.register(new DbTableKind());
 boardKinds.register(new DbEnumKind());

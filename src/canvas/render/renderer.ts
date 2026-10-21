@@ -7,6 +7,7 @@ import type { CanvasTheme } from "./canvas-theme.types";
 import type { HiddenText } from "./element-view.types";
 import { ImageCache } from "./image-cache";
 import type { ImageCacheHost } from "./image-cache.types";
+import { prefersReducedMotion } from "./entrance";
 import { DraftLayer } from "./layers/draft-layer";
 import { ElementLayer } from "./layers/element-layer";
 import { GridLayer } from "./layers/grid-layer";
@@ -82,6 +83,14 @@ export class Renderer {
     this.elements.sync(others, gone);
   }
 
+  /** Plays the entrance (a quick pop) of elements that were just added, unless motion is reduced. */
+  animateIn(ids: readonly string[]): void {
+    if (prefersReducedMotion()) return;
+    const now = performance.now();
+    this.elements.animateIn(ids, now);
+    this.frames.animateIn(ids, now);
+  }
+
   /** Shows an element that isn't in the document yet, above the others; `null` clears it. */
   setDraft(el: CanvasElement | null): void {
     this.draft.show(el);
@@ -105,8 +114,13 @@ export class Renderer {
     this.frames.setHiddenText(hidden);
   }
 
-  /** `highlighted`: the selected ids, whose links stand out. */
-  render(camera: Camera, overlay: OverlayState, highlighted: ReadonlySet<string>): void {
+  /**
+   * `highlighted`: the selected ids, whose links stand out. Returns whether an animation is
+   * playing, so the caller asks for another frame.
+   */
+  render(camera: Camera, overlay: OverlayState, highlighted: ReadonlySet<string>): boolean {
+    const now = performance.now();
+    const animating = [this.elements.tick(now), this.frames.tick(now)].includes(true);
     this.world.scale.set(camera.zoom);
     this.world.position.set(camera.x * camera.zoom, camera.y * camera.zoom);
     this.grid.draw(camera, this.theme.grid);
@@ -114,6 +128,7 @@ export class Renderer {
     this.guide.draw({ zoom: camera.zoom, theme: this.theme });
     this.overlay.draw(camera, overlay, this.theme.selection);
     this.app.render();
+    return animating;
   }
 
   destroy(): void {

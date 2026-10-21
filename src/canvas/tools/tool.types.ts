@@ -55,6 +55,8 @@ export interface ToolContext<O extends object = object> {
   setDraft(el: CanvasElement | null): void;
   /** Shows gesture feedback above the elements (e.g. a line being dragged); `null` clears it. */
   setGuide(guide: Guide | null): void;
+  /** Plays a quick pop on elements just added to the document (e.g. a stamped sticker). */
+  animateIn(ids: readonly string[]): void;
   /** Handle under the point (e.g. a resize handle), if any. */
   interactionAt(world: Point): Interaction | null;
   /** Pans while `screen` is near the viewport edge; `null` stops. `onPan` runs after each step. */

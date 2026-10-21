@@ -3,6 +3,7 @@ import { Container } from "pixi.js";
 import type { CanvasElement, ElementKinds } from "../../elements";
 import type { HiddenText } from "../element-view.types";
 import { ElementView } from "../element-view";
+import { entranceAt } from "../entrance";
 import type { ImageCache } from "../image-cache";
 import { textResolution } from "../text-resolution";
 
@@ -11,6 +12,8 @@ export class ElementLayer extends Container<ElementView> {
   private readonly views = new Map<string, ElementView>();
   private hiddenText: HiddenText | null = null;
   private textResolution = 1;
+  /** Elements playing their entrance, with when it started. */
+  private readonly entrances = new Map<string, number>();
 
   constructor(
     private readonly kinds: ElementKinds,
@@ -24,6 +27,7 @@ export class ElementLayer extends Container<ElementView> {
     for (const id of removed) {
       this.views.get(id)?.destroy({ children: true });
       this.views.delete(id);
+      this.entrances.delete(id);
     }
     for (const el of elements) {
       const view = this.views.get(el.id);
@@ -35,6 +39,31 @@ export class ElementLayer extends Container<ElementView> {
         this.add(el);
       }
     }
+  }
+
+  /** Starts the entrance of these elements (those this layer doesn't draw are ignored). */
+  animateIn(ids: Iterable<string>, now: number): void {
+    for (const id of ids) {
+      const view = this.views.get(id);
+      if (!view) continue;
+      this.entrances.set(id, now);
+      view.setEntrance(0, 0);
+    }
+  }
+
+  /** Advances the entrances to `now`. Returns whether some are still playing. */
+  tick(now: number): boolean {
+    for (const [id, start] of this.entrances) {
+      const view = this.views.get(id);
+      const look = view ? entranceAt(now - start) : null;
+      if (look) {
+        view?.setEntrance(look.scale, look.alpha);
+        continue;
+      }
+      view?.setEntrance(1, 1);
+      this.entrances.delete(id);
+    }
+    return this.entrances.size > 0;
   }
 
   /** Hides an element's canvas text (or one part of it) while the DOM text editor is showing it. */

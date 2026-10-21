@@ -1,4 +1,4 @@
-import type { ArrowHead, ConnectorStyle, ImageBackground } from "./elements";
+import type { ArrowHead, ConnectorStyle, ImageBackground, PickedSticker } from "./elements";
 
 /** What the board's tool options panel picks, for new elements and the selection. */
 export interface BoardToolOptions {
@@ -22,4 +22,6 @@ export interface BoardToolOptions {
   /** New and selected tables' header tint, and whether their first row is a header. */
   tableColor: string;
   tableHeader: boolean;
+  /** What the sticker tool stamps; `null` until one is picked. */
+  sticker: PickedSticker | null;
 }

@@ -12,4 +12,5 @@ export const BOARD_KEYBINDINGS = {
   "tool.connector": [{ key: "x" }],
   "tool.db": [{ key: "d" }],
   "tool.er": [{ key: "e" }],
+  "tool.sticker": [{ key: "k" }],
 } satisfies Keybindings;

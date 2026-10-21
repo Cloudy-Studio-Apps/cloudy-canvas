@@ -1,10 +1,12 @@
 import { ImageSource, Texture } from "pixi.js";
 
 import type { ImageCacheHost } from "./image-cache.types";
+import { isSvg, rasterizeSvg } from "./svg-image";
 
 /**
  * One texture per image asset, decoded on first use and shared by every view that shows it (copies
- * of an image share their asset). Images that can't be decoded are remembered as missing.
+ * of an image share their asset). SVGs are rasterized first. Images that can't be decoded are
+ * remembered as missing.
  */
 export class ImageCache {
   private readonly textures = new Map<string, Texture>();
@@ -43,7 +45,9 @@ export class ImageCache {
   private async decode(assetId: string): Promise<Texture | null> {
     const data = this.host.read(assetId)!;
     try {
-      const bitmap = await createImageBitmap(new Blob([data as Uint8Array<ArrayBuffer>]));
+      const bitmap = isSvg(data)
+        ? await rasterizeSvg(data)
+        : await createImageBitmap(new Blob([data as Uint8Array<ArrayBuffer>]));
       if (this.destroyed) {
         bitmap.close();
         return null;

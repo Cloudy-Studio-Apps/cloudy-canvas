@@ -61,6 +61,9 @@ export function AboutSection() {
           <ExternalLink />
         </Button>
       </div>
+      <p className="mt-4 border-t pt-4 text-xs text-muted-foreground">
+        Emoji stickers use Twemoji by Twitter and contributors, licensed under CC BY 4.0.
+      </p>
     </SettingsSection>
   );
 }

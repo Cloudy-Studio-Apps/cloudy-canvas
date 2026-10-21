@@ -28,4 +28,5 @@ export const DEFAULT_BOARD_OPTIONS: BoardToolOptions = {
   imagePadding: IMAGE_DEFAULTS.padding,
   tableColor: TABLE_COLORS[0].value,
   tableHeader: true,
+  sticker: null,
 };

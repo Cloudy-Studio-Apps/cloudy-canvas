@@ -37,6 +37,9 @@ export class ElementView extends Container {
   private imageFit: ImageFit = "contain";
   /** The cropped view of a texture for `cover` (its source belongs to the image cache). */
   private croppedTexture: Texture | null = null;
+  /** The element's bounds, which the entrance scales around (see `setEntrance`). */
+  private bounds: Rect = { x: 0, y: 0, w: 0, h: 0 };
+  private entranceScale = 1;
 
   constructor(
     el: CanvasElement,
@@ -53,8 +56,16 @@ export class ElementView extends Container {
   /** Moves the view to the element and has its kind redraw it. */
   sync(el: CanvasElement, kind: ElementKind): void {
     this.order = zOrderKey(el, kind);
-    this.position.set(el.x, el.y);
+    this.bounds = { x: el.x, y: el.y, w: el.w, h: el.h };
+    this.placeScaled();
     kind.draw(this, el);
+  }
+
+  /** Scales the view around its center and fades it, while it plays its entrance (1 when done). */
+  setEntrance(scale: number, alpha: number): void {
+    this.entranceScale = scale;
+    this.alpha = alpha;
+    this.placeScaled();
   }
 
   /** Creates or updates the view's text. */
@@ -201,6 +212,13 @@ export class ElementView extends Container {
     this.croppedTexture?.destroy(false);
     this.croppedTexture = null;
     super.destroy(options);
+  }
+
+  private placeScaled(): void {
+    const { x, y, w, h } = this.bounds;
+    const s = this.entranceScale;
+    this.scale.set(s);
+    this.position.set(x + (w * (1 - s)) / 2, y + (h * (1 - s)) / 2);
   }
 
   private fitImage(texture: Texture): void {

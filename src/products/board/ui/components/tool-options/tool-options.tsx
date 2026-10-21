@@ -8,6 +8,7 @@ import { MarkerOptions } from "./marker-options";
 import { SectionOptions } from "./section-options";
 import { ShapeOptions } from "./shape-options";
 import { StickyOptions } from "./sticky-options";
+import { StickerWheel } from "../sticker-picker";
 import { TableOptions } from "./table-options";
 
 /** Options panel per tool; tools without options show nothing. */
@@ -19,6 +20,7 @@ const OPTION_PANELS: Partial<Record<string, ComponentType>> = {
   table: TableOptions,
   connector: ConnectorOptions,
   db: DbOptions,
+  sticker: StickerWheel,
 };
 
 /** With the select tool, the panel for the selection's type (when it's all one restylable type). */
