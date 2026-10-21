@@ -36,6 +36,8 @@ export abstract class ElementKind<
   /** Whether agents can create it from an `ElementSpec`. */
   readonly creatable: boolean = true;
   readonly resizable: boolean = false;
+  /** Whether resizing always keeps its proportions (otherwise only with Shift), e.g. images. */
+  readonly keepsRatio: boolean = false;
   /**
    * Frames (e.g. sections, aggregation boxes) are drawn behind every other element, larger ones
    * further back, and a marquee selects them only when it encloses them.
@@ -116,6 +118,11 @@ export abstract class ElementKind<
   /** Completes an agent's patch with the fields that follow from it (e.g. a text's size). */
   completePatch(_el: E, patch: ElementPatch<E>): ElementPatch<E> {
     return patch;
+  }
+
+  /** Ids of the document assets it shows (e.g. an image's file), so copies carry them along. */
+  assets(_el: E): string[] {
+    return [];
   }
 
   /** Fills fields added after the type first shipped, so files saved by older versions load. */

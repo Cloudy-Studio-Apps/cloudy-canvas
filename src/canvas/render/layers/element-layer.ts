@@ -2,6 +2,7 @@ import { Container } from "pixi.js";
 
 import type { CanvasElement, ElementKinds } from "../../elements";
 import { ElementView } from "../element-view";
+import type { ImageCache } from "../image-cache";
 import { textResolution } from "../text-resolution";
 
 /** Keeps one ElementView per element, in drawing order (see `zOrderKey`). */
@@ -10,7 +11,10 @@ export class ElementLayer extends Container<ElementView> {
   private hiddenTextId: string | null = null;
   private textResolution = 1;
 
-  constructor(private readonly kinds: ElementKinds) {
+  constructor(
+    private readonly kinds: ElementKinds,
+    private readonly images: ImageCache,
+  ) {
     super();
   }
 
@@ -53,7 +57,7 @@ export class ElementLayer extends Container<ElementView> {
   }
 
   private add(el: CanvasElement): void {
-    const view = new ElementView(el, this.kinds.kindOf(el));
+    const view = new ElementView(el, this.kinds.kindOf(el), this.images);
     view.setTextResolution(this.textResolution);
     view.setTextVisible(el.id !== this.hiddenTextId);
     this.views.set(el.id, view);

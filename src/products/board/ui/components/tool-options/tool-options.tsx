@@ -3,6 +3,7 @@ import type { ComponentType } from "react";
 import { useEngineState } from "@canvas-ui";
 import { ConnectorOptions } from "./connector-options";
 import { DbOptions } from "./db-options";
+import { ImageOptions } from "./image-options";
 import { MarkerOptions } from "./marker-options";
 import { SectionOptions } from "./section-options";
 import { ShapeOptions } from "./shape-options";
@@ -24,6 +25,7 @@ const SELECTION_PANELS: Partial<Record<string, ComponentType>> = {
   geo: ShapeOptions,
   section: SectionOptions,
   connector: ConnectorOptions,
+  image: ImageOptions,
 };
 
 export function ToolOptions() {

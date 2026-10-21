@@ -1,4 +1,5 @@
 import type { BoardToolOptions } from "./board-options.types";
+import { IMAGE_DEFAULTS } from "./elements/image";
 import {
   MARKER_COLORS,
   MARKER_SIZES,
@@ -22,4 +23,6 @@ export const DEFAULT_BOARD_OPTIONS: BoardToolOptions = {
   connectorStartHead: "none",
   connectorEndHead: "arrow",
   dbKind: "table",
+  imageBackground: IMAGE_DEFAULTS.background,
+  imagePadding: IMAGE_DEFAULTS.padding,
 };

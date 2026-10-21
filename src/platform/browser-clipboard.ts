@@ -14,4 +14,16 @@ export class BrowserClipboard implements Clipboard {
       return null;
     }
   }
+
+  async readImage(): Promise<Blob | null> {
+    try {
+      for (const item of await navigator.clipboard.read()) {
+        const type = item.types.find((t) => t.startsWith("image/"));
+        if (type) return await item.getType(type);
+      }
+    } catch {
+      // Denied, or not supported.
+    }
+    return null;
+  }
 }

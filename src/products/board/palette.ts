@@ -93,3 +93,6 @@ export const MUTED_INK_COLOR = "#6b7280";
 
 /** Tint for the soft paper shadow under sticky notes. */
 export const PAPER_SHADOW_COLOR = "#1b2330";
+
+/** Behind images with a white background. */
+export const IMAGE_BACKGROUND_COLOR = "#ffffff";

@@ -9,4 +9,9 @@ export interface ClipboardPayload {
   elements: CanvasElement[];
   /** The ids that were selected (the rest came along with them, e.g. a section's contents). */
   selected: string[];
+  /** The assets they show (e.g. image files), base64 by asset id, so they paste into other files. */
+  assets?: Record<string, string>;
 }
+
+/** What `decodeClipboard` reads from a payload. */
+export type DecodedClipboard = Required<Pick<ClipboardPayload, "elements" | "selected" | "assets">>;

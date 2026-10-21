@@ -4,6 +4,8 @@ import type { Camera } from "../camera";
 import type { CanvasElement, ElementKinds } from "../elements";
 import type { CanvasLinks, Guide } from "../links";
 import type { CanvasTheme } from "./canvas-theme.types";
+import { ImageCache } from "./image-cache";
+import type { ImageCacheHost } from "./image-cache.types";
 import { DraftLayer } from "./layers/draft-layer";
 import { ElementLayer } from "./layers/element-layer";
 import { GridLayer } from "./layers/grid-layer";
@@ -27,16 +29,19 @@ export class Renderer {
   private readonly grid = new GridLayer();
   private readonly world = new Container();
   private readonly overlay = new OverlayLayer();
+  private readonly images: ImageCache;
 
   constructor(
     private theme: CanvasTheme,
     private readonly kinds: ElementKinds,
     links: readonly CanvasLinks[],
+    images: ImageCacheHost,
   ) {
+    this.images = new ImageCache(images);
     this.links = new LinkLayer(links);
-    this.elements = new ElementLayer(kinds);
-    this.frames = new ElementLayer(kinds);
-    this.draft = new DraftLayer(kinds);
+    this.elements = new ElementLayer(kinds, this.images);
+    this.frames = new ElementLayer(kinds, this.images);
+    this.draft = new DraftLayer(kinds, this.images);
   }
 
   async init(width: number, height: number): Promise<void> {
@@ -112,5 +117,6 @@ export class Renderer {
 
   destroy(): void {
     this.app.destroy({ removeView: true }, { children: true });
+    this.images.destroy();
   }
 }

@@ -19,6 +19,8 @@ export class CanvasDocument {
   readonly doc: Y.Doc;
   private readonly undoManager: Y.UndoManager;
   private readonly elements: Y.Map<ElementMap>;
+  /** Binary data elements show (e.g. image files), by id. Shared by copies, outside undo history. */
+  private readonly assets: Y.Map<Uint8Array>;
 
   /** A document restored from `encode()` output. Loading it isn't an undoable change. */
   static fromUpdate(kinds: ElementKinds, update: Uint8Array): CanvasDocument {
@@ -34,6 +36,7 @@ export class CanvasDocument {
     this.doc = doc;
     // The map keeps its original name so existing files load.
     this.elements = doc.getMap<ElementMap>("shapes");
+    this.assets = doc.getMap<Uint8Array>("assets");
     this.undoManager = new Y.UndoManager(this.elements, {
       trackedOrigins: new Set([LOCAL_ORIGIN]),
       captureTimeout: 400,
@@ -109,6 +112,21 @@ export class CanvasDocument {
   /** Runs several edits as one transaction (and so one undo step). */
   batch(fn: () => void): void {
     this.transact(fn);
+  }
+
+  // ── Assets ──────────────────────────────────────────────────────────
+
+  getAsset(id: string): Uint8Array | undefined {
+    return this.assets.get(id);
+  }
+
+  hasAsset(id: string): boolean {
+    return this.assets.has(id);
+  }
+
+  /** Stores binary data under an id. Not an undo step: undoing the element that shows it is enough. */
+  addAsset(id: string, data: Uint8Array): void {
+    this.doc.transact(() => this.assets.set(id, data), LOCAL_ORIGIN);
   }
 
   // ── History (local changes only) ────────────────────────────────────

@@ -1,7 +1,7 @@
-import type { CopyContext } from "./clipboard";
+import type { CopyContext, PastedImage } from "./clipboard";
 import type { CanvasDocument } from "./document";
 import type { CanvasElement, ElementKinds } from "./elements";
-import type { Point } from "./geometry.types";
+import type { Point, Rect } from "./geometry.types";
 import type { Keybindings } from "./input";
 import type { CanvasLinks } from "./links";
 import type { Tool, ToolContext } from "./tools";
@@ -59,4 +59,9 @@ export interface CanvasProduct<O extends object = object> {
    * `null` to ignore it. `options` are the current tool options.
    */
   pasteText?(text: string, at: Point, index: string, options: O): CanvasElement | null;
+  /**
+   * An element showing an image pasted from outside the app (already stored as `image.assetId`),
+   * placed in `view` (the visible world rect) at z-order `index`, or `null` to ignore it.
+   */
+  pasteImage?(image: PastedImage, view: Rect, index: string, options: O): CanvasElement | null;
 }

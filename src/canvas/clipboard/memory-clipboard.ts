@@ -12,4 +12,8 @@ export class MemoryClipboard implements Clipboard {
   readText(): Promise<string | null> {
     return Promise.resolve(this.text);
   }
+
+  readImage(): Promise<Blob | null> {
+    return Promise.resolve(null);
+  }
 }

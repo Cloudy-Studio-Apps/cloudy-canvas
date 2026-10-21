@@ -10,6 +10,10 @@ export function rectFromPoints(a: Point, b: Point): Rect {
   };
 }
 
+export function rectCenter({ x, y, w, h }: Rect): Point {
+  return { x: x + w / 2, y: y + h / 2 };
+}
+
 export function rectContainsPoint(r: Rect, p: Point, padding = 0): boolean {
   return (
     p.x >= r.x - padding &&

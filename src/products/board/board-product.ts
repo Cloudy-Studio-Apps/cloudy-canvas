@@ -5,6 +5,7 @@ import type { BoardToolOptions } from "./board-options.types";
 import { BOARD_KEYBINDINGS } from "./board-keybindings";
 import {
   boardKinds,
+  createPastedImage,
   createPastedText,
   DbLinks,
   detachConnectors,
@@ -32,7 +33,7 @@ import {
 
 /**
  * Boards (`.cboard`, FigJam-style): sticky notes, text, marker strokes, diagram shapes, connectors, sections,
- * database schemas and ER diagrams.
+ * pasted images, database schemas and ER diagrams.
  */
 export const boardProduct: CanvasProduct<BoardToolOptions> = {
   id: "board",
@@ -69,4 +70,5 @@ export const boardProduct: CanvasProduct<BoardToolOptions> = {
   prepareCopies: (copies, context) =>
     prepareConnectorCopies(prepareErCopies(prepareDbCopies(copies, context), context), context),
   pasteText: (text, at, index) => createPastedText(text, at, index),
+  pasteImage: (image, view, index) => createPastedImage(image, view, index),
 };

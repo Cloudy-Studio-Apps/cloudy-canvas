@@ -1,4 +1,4 @@
-import { Container, Graphics, Text } from "pixi.js";
+import { Container, Graphics, Sprite, Text, type Texture } from "pixi.js";
 
 import {
   zOrderKey,
@@ -6,6 +6,8 @@ import {
   type ElementKind,
   type ElementTextStyle,
 } from "../elements";
+import type { Rect } from "../geometry.types";
+import type { ImageCache } from "./image-cache";
 import { canvasTextStyle } from "./text-style";
 import type { CanvasTextOptions } from "./text-style.types";
 
@@ -20,8 +22,16 @@ export class ElementView extends Container {
   private readonly textSlots = new Map<string, Text>();
   private textVisible = true;
   private textResolution = 1;
+  private image: Sprite | null = null;
+  /** The image asset the view shows, and the box it's fitted into (local coordinates). */
+  private imageAsset: string | null = null;
+  private imageBox: Rect = { x: 0, y: 0, w: 0, h: 0 };
 
-  constructor(el: CanvasElement, kind: ElementKind) {
+  constructor(
+    el: CanvasElement,
+    kind: ElementKind,
+    private readonly images: ImageCache,
+  ) {
     super();
     this.elementId = el.id;
     this.order = zOrderKey(el, kind);
@@ -65,6 +75,25 @@ export class ElementView extends Container {
     return text;
   }
 
+  /**
+   * Shows an image asset fitted into `box` (local coordinates), keeping its proportions and
+   * centered. It appears once its texture has loaded.
+   */
+  placeImage(assetId: string, box: Rect): void {
+    if (!this.image) {
+      this.image = new Sprite();
+      this.addChildAt(this.image, this.getChildIndex(this.graphics) + 1);
+    }
+    this.imageAsset = assetId;
+    this.imageBox = box;
+    const texture = this.images.get(assetId);
+    if (texture) return this.fitImage(texture);
+    this.image.visible = false;
+    void this.images.load(assetId).then((loaded) => {
+      if (loaded && !this.destroyed && this.imageAsset === assetId) this.fitImage(loaded);
+    });
+  }
+
   /** Creates or updates the label stored under `key` (positioned by the caller). */
   setTextSlot(key: string, value: string, options: CanvasTextOptions): Text {
     const style = canvasTextStyle(options);
@@ -99,5 +128,15 @@ export class ElementView extends Container {
     for (const node of [this.textNode, ...this.textSlots.values()]) {
       if (node && node.resolution !== resolution) node.resolution = resolution;
     }
+  }
+
+  private fitImage(texture: Texture): void {
+    const image = this.image!;
+    const { x, y, w, h } = this.imageBox;
+    const scale = Math.min(w / texture.width, h / texture.height);
+    image.texture = texture;
+    image.setSize(texture.width * scale, texture.height * scale);
+    image.position.set(x + (w - image.width) / 2, y + (h - image.height) / 2);
+    image.visible = true;
   }
 }

@@ -4,7 +4,7 @@ import type { CanvasPointer, ToolContext } from "./tool.types";
 
 const DRAG_THRESHOLD = 3; // screen px
 
-/** Drags a resize handle of one element. Shift keeps the proportions. */
+/** Drags a resize handle of one element. Shift keeps the proportions (always, for some kinds). */
 export class ResizeGesture {
   private started = false;
 
@@ -30,7 +30,8 @@ export class ResizeGesture {
     const dx = p.world.x - this.start.world.x;
     const dy = p.world.y - this.start.world.y;
     const kind = this.ctx.kinds.kindOf(this.origin);
-    const rect = resizeRect(kind.bounds(this.origin), this.handle, dx, dy, p.shiftKey);
+    const keepRatio = p.shiftKey || kind.keepsRatio;
+    const rect = resizeRect(kind.bounds(this.origin), this.handle, dx, dy, keepRatio);
     this.ctx.doc.update(this.origin.id, kind.resize(this.origin, rect));
   }
 }

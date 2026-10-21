@@ -4,16 +4,18 @@ import { compareByIndex } from "../document";
 import type { CanvasElement } from "../elements";
 import { unionRects } from "../geometry";
 import type { Point } from "../geometry.types";
+import { collectAssets, restoreAssets } from "./clipboard-assets";
 import { decodeClipboard, encodeClipboard } from "./clipboard-payload";
 import type { ElementClipboardHost } from "./element-clipboard.types";
 import { insertCopies } from "./insert-copies";
 import type { CopyTarget } from "./insert-copies.types";
+import { pasteImage, pasteText } from "./paste-external";
 import { pasteOffset } from "./paste-offset";
 
 /**
  * Copy, paste and duplicate for one engine. Copied elements go to the clipboard as JSON (with
- * what moves with them), so they paste into any canvas of the same product; other text is pasted
- * through the product's `pasteText`.
+ * what moves with them and the assets they show), so they paste into any canvas of the same
+ * product; images and other text are pasted through the product's `pasteImage` and `pasteText`.
  */
 export class ElementClipboard<O extends object> {
   /** The text last copied or pasted, and how many times it was pasted in a row. */
@@ -30,7 +32,9 @@ export class ElementClipboard<O extends object> {
     const selected = [...ids];
     const elements = this.collect(selected);
     if (elements.length === 0) return false;
-    const text = encodeClipboard(this.host.product.id, elements, selected);
+    const { doc, product } = this.host;
+    const assets = collectAssets(doc, product.kinds, elements);
+    const text = encodeClipboard(product.id, elements, selected, assets);
     this.lastText = text;
     this.pastes = 0;
     this.clipboard
@@ -39,21 +43,23 @@ export class ElementClipboard<O extends object> {
     return true;
   }
 
-  /** Pastes the clipboard's elements, or its text as an element, and selects what was added. */
+  /**
+   * Pastes the clipboard's elements, or else its image or its text as an element, and selects
+   * what was added.
+   */
   async paste(): Promise<void> {
-    let text: string | null;
-    try {
-      text = await this.clipboard.readText();
-    } catch (error) {
-      console.warn("[clipboard] Couldn't paste:", error);
+    const { doc, product } = this.host;
+    const text = await readSafely(() => this.clipboard.readText());
+    const payload = text ? decodeClipboard(text, product.id, product.kinds) : null;
+    if (!payload) {
+      // An image wins over text: apps that copy an image often add its name or address as text.
+      const image = await readSafely(() => this.clipboard.readImage());
+      if (image && (await pasteImage(this.host, image))) return;
+      if (text) pasteText(this.host, text);
       return;
     }
-    if (!text) return;
 
-    const { product } = this.host;
-    const payload = decodeClipboard(text, product.id, product.kinds);
-    if (!payload) return this.pasteText(text);
-
+    restoreAssets(doc, payload.assets);
     this.pastes = text === this.lastText ? this.pastes + 1 : 1;
     this.lastText = text;
     const bounds = unionRects(payload.elements.map((el) => product.kinds.kindOf(el).bounds(el)));
@@ -75,17 +81,6 @@ export class ElementClipboard<O extends object> {
       .sort(compareByIndex);
   }
 
-  private pasteText(text: string): void {
-    const { doc, product } = this.host;
-    const visible = this.host.visibleRect();
-    const center = { x: visible.x + visible.w / 2, y: visible.y + visible.h / 2 };
-    const el = product.pasteText?.(text, center, doc.nextIndex(), this.host.getOptions());
-    if (!el) return;
-    doc.checkpoint();
-    doc.add(el);
-    this.host.select([el.id]);
-  }
-
   private target(): CopyTarget {
     const { doc, product } = this.host;
     return {
@@ -94,6 +89,15 @@ export class ElementClipboard<O extends object> {
       existing: this.host.elements(),
       prepare: product.prepareCopies?.bind(product),
     };
+  }
+}
+
+async function readSafely<T>(read: () => Promise<T | null>): Promise<T | null> {
+  try {
+    return await read();
+  } catch (error) {
+    console.warn("[clipboard] Couldn't read the clipboard:", error);
+    return null;
   }
 }
 

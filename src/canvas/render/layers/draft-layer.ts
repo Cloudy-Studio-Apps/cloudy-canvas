@@ -2,6 +2,7 @@ import { Container } from "pixi.js";
 
 import type { CanvasElement, ElementKinds } from "../../elements";
 import { ElementView } from "../element-view";
+import type { ImageCache } from "../image-cache";
 
 /**
  * An element being created that isn't in the document yet (e.g. the stroke under the marker).
@@ -10,7 +11,10 @@ import { ElementView } from "../element-view";
 export class DraftLayer extends Container {
   private view: ElementView | null = null;
 
-  constructor(private readonly kinds: ElementKinds) {
+  constructor(
+    private readonly kinds: ElementKinds,
+    private readonly images: ImageCache,
+  ) {
     super();
   }
 
@@ -24,7 +28,7 @@ export class DraftLayer extends Container {
     if (this.view) {
       this.view.sync(el, kind);
     } else {
-      this.view = this.addChild(new ElementView(el, kind));
+      this.view = this.addChild(new ElementView(el, kind, this.images));
     }
   }
 }

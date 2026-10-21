@@ -12,6 +12,7 @@ import {
   ErRelationKind,
 } from "./er";
 import { GeoKind } from "./geo";
+import { ImageKind } from "./image";
 import { SectionKind } from "./section";
 import { StickyKind } from "./sticky";
 import { StrokeKind } from "./stroke";
@@ -27,6 +28,7 @@ boardKinds.register(new StrokeKind());
 boardKinds.register(new TextKind());
 boardKinds.register(new GeoKind());
 boardKinds.register(new SectionKind());
+boardKinds.register(new ImageKind());
 boardKinds.register(new ConnectorKind());
 boardKinds.register(new DbTableKind());
 boardKinds.register(new DbEnumKind());

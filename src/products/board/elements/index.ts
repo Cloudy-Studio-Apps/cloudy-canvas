@@ -2,6 +2,7 @@
 // registered in `boardKinds`.
 export type * from "./connector";
 export type * from "./geo";
+export type * from "./image";
 export type * from "./section";
 export type * from "./sticky";
 export type * from "./stroke";
@@ -11,6 +12,7 @@ export * from "./connector";
 export * from "./db";
 export * from "./er";
 export * from "./geo";
+export * from "./image";
 export * from "./section";
 export * from "./sticky";
 export * from "./stroke";

@@ -81,7 +81,10 @@ export class CanvasEngine<O extends object = object> {
     this.doc = document ?? new CanvasDocument(this.kinds);
     this.ownsDocument = !document;
     this.links = product.createLinks?.() ?? [];
-    this.renderer = new Renderer(theme, this.kinds, this.links);
+    this.renderer = new Renderer(theme, this.kinds, this.links, {
+      read: (id) => this.doc.getAsset(id),
+      onLoad: () => this.requestRender(),
+    });
     this.scene = new Scene(this.doc, this.kinds, product.resolveElements?.bind(product));
     this.clipboard = this.createClipboard(clipboard ?? new MemoryClipboard());
     const ctx = this.createToolContext();
@@ -214,7 +217,7 @@ export class CanvasEngine<O extends object = object> {
     return this.deleteSelection();
   }
 
-  /** Pastes the clipboard's elements (or its text) and selects them. */
+  /** Pastes the clipboard's elements (or its image or text) and selects them. */
   paste(): void {
     this.textEditor?.commit();
     void this.clipboard.paste();
