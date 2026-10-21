@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cloudy Canvas</title>
+    <script>
+      // Apply the persisted theme before first paint to avoid a flash. Key and flag match stores/theme-store.ts.
+      var FORCE_LIGHT_THEME = true;
+      try {
+        var stored = JSON.parse(localStorage.getItem("cloudy-canvas:theme") || "{}");
+        var pref = FORCE_LIGHT_THEME
+          ? "light"
+          : (stored.state && stored.state.preference) || "system";
+        var dark =
+          pref === "dark" ||
+          (pref === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.classList.toggle("dark", dark);
+      } catch (_) {}
+    </script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/app/main.tsx"></script>
+  </body>
+</html>
