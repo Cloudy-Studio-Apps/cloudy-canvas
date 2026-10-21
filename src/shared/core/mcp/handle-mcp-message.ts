@@ -10,6 +10,7 @@ import {
   rpcResult,
 } from "./json-rpc";
 import type { JsonRpcRequest, JsonRpcResponse, McpServerDefinition } from "./mcp.types";
+import { ToolImage } from "./tool-image";
 
 /** Newest first; the client's version is echoed back when it's one of these. */
 const PROTOCOL_VERSIONS = ["2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"];
@@ -88,11 +89,18 @@ async function callTool(
   const args = request.params?.arguments;
   try {
     const value = await tool.run(isRecord(args) ? args : {});
-    return rpcResult(id, { content: [{ type: "text", text: toText(value) }] });
+    return rpcResult(id, { content: [toContent(value)] });
   } catch (error) {
     const text = error instanceof Error ? error.message : String(error);
     return rpcResult(id, { content: [{ type: "text", text }], isError: true });
   }
+}
+
+function toContent(value: unknown) {
+  if (value instanceof ToolImage) {
+    return { type: "image", data: value.data, mimeType: value.mimeType };
+  }
+  return { type: "text", text: toText(value) };
 }
 
 function toText(value: unknown): string {

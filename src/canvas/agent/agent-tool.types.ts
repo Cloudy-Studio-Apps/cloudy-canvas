@@ -10,6 +10,9 @@ export interface AgentTool<H = unknown> {
   name: string;
   description: string;
   inputSchema: JsonSchema;
-  /** Returns a string or a JSON value; throws with a message the agent can act on. */
+  /**
+   * Returns a string, a `ToolImage` (from `@shared/core`) or a JSON value; throws with a message
+   * the agent can act on.
+   */
   run(host: H, args: ToolArgs): unknown;
 }

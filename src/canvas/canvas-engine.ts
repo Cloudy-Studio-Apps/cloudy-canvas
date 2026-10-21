@@ -325,10 +325,12 @@ export class CanvasEngine<O extends object = object> {
    * Copies the selection (with what moves with it) to the clipboard as a PNG image. Rejects with
    * a message for the user when nothing is selected or it can't be copied.
    */
-  async copyAsPng(): Promise<void> {
-    if (this.scene.selection.size === 0) throw new Error("Select something to copy.");
+  async copyAsPng(ids?: readonly string[]): Promise<void> {
+    if ((ids?.length ?? this.scene.selection.size) === 0) {
+      throw new Error("Select something to copy.");
+    }
     this.textEditor?.commit();
-    const options = { format: "png", background: "transparent", area: "selection" } as const;
+    const options = { format: "png", background: "transparent", area: "selection", ids } as const;
     const png = await exportElements(this.exportHost, { ...options, scale: COPY_PNG_SCALE });
     await this.systemClipboard.writeImage(png);
   }
@@ -360,18 +362,27 @@ export class CanvasEngine<O extends object = object> {
    */
   reorderSelection(direction: ReorderDirection): boolean {
     if (this.scene.selection.size === 0) return false;
+    this.reorderElements(this.scene.selection.ids, direction);
+    return true;
+  }
+
+  /**
+   * Moves elements (with what moves with them) in the drawing order, as `reorderSelection` does
+   * with the selection. Returns the ids whose position changed.
+   */
+  reorderElements(ids: Iterable<string>, direction: ReorderDirection): string[] {
     const indexes = reorderIndexes({
       layer: this.scene.elements.filter((el) => !this.kinds.kindOf(el).frame),
-      moving: this.withMembers(this.scene.selection.ids, "move"),
+      moving: this.withMembers(ids, "move"),
       direction,
       bounds: (el) => this.kinds.kindOf(el).bounds(el),
       above: (count) => this.doc.nextIndexes(count),
       below: (count) => this.doc.firstIndexes(count),
     });
-    if (indexes.size === 0) return true;
+    if (indexes.size === 0) return [];
     this.doc.checkpoint();
     this.doc.updateMany(new Map([...indexes].map(([id, index]) => [id, { index }])));
-    return true;
+    return [...indexes.keys()];
   }
 
   /**
@@ -394,16 +405,20 @@ export class CanvasEngine<O extends object = object> {
     return true;
   }
 
-  /** Locks or unlocks elements, as one undo step (see `CanvasElement.locked`). */
-  setLocked(ids: Iterable<string>, locked: boolean): void {
+  /**
+   * Locks or unlocks elements, as one undo step (see `CanvasElement.locked`). Returns the ids
+   * that changed.
+   */
+  setLocked(ids: Iterable<string>, locked: boolean): string[] {
     const patches = new Map<string, ElementPatch>();
     for (const id of ids) {
       const el = this.scene.get(id);
       if (el && Boolean(el.locked) !== locked) patches.set(id, { locked });
     }
-    if (patches.size === 0) return;
+    if (patches.size === 0) return [];
     this.doc.checkpoint();
     this.doc.updateMany(patches);
+    return [...patches.keys()];
   }
 
   /** Adds a copy of the selection next to it and selects the copy. Returns `false` when nothing was selected. */
@@ -625,10 +640,10 @@ export class CanvasEngine<O extends object = object> {
   /** What exports reach of the engine. */
   private get exportHost(): ExportHost {
     return {
-      elementsOf: (area) => {
-        if (area === "board") return [...this.scene.elements];
-        const ids = this.withMembers(this.scene.selection.ids, "move");
-        return this.scene.elements.filter((el) => ids.has(el.id));
+      elementsOf: (area, ids) => {
+        if (!ids && area === "board") return [...this.scene.elements];
+        const members = this.withMembers(ids ?? this.scene.selection.ids, "move");
+        return this.scene.elements.filter((el) => members.has(el.id));
       },
       bounds: (el) => this.kinds.kindOf(el).bounds(el),
       rows: (el) => this.kinds.kindOf(el).rows(el),

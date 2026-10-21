@@ -31,6 +31,20 @@ export function optionalBoolean(args: ToolArgs, key: string): boolean | undefine
   return value;
 }
 
+/** One of `choices`, or `undefined` when absent. */
+export function optionalChoice<T extends string>(
+  args: ToolArgs,
+  key: string,
+  choices: readonly T[],
+): T | undefined {
+  const value = args[key];
+  if (value === undefined || value === null) return undefined;
+  if (!choices.includes(value as T)) {
+    throw new Error(`"${key}" must be one of: ${choices.join(", ")}.`);
+  }
+  return value as T;
+}
+
 export function stringList(args: ToolArgs, key: string): string[] {
   const value = args[key];
   if (!Array.isArray(value) || !value.every((item) => typeof item === "string")) {

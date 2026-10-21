@@ -1,7 +1,7 @@
 import { createId } from "@shared/core";
 import type { AgentBoard, AgentHost } from "@board";
 import { getActiveBoard, waitForActiveBoard } from "@board/ui";
-import { storage } from "@platform";
+import { storage, writeExportFile } from "@platform";
 import { router } from "../router";
 
 /** What agent tools reach outside the engine: the open board, recent files and navigation. */
@@ -21,6 +21,7 @@ export const agentHost: AgentHost = {
     return showBoard(id);
   },
   newBoard: () => showBoard(createId()),
+  writeFile: writeExportFile,
 };
 
 function showBoard(id: string): Promise<AgentBoard> {

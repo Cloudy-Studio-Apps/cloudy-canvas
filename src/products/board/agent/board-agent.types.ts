@@ -31,6 +31,8 @@ export interface AgentHost {
   /** Opens a board in the window and resolves once it's ready. */
   openBoard(id: string): Promise<AgentBoard>;
   newBoard(): Promise<AgentBoard>;
+  /** Writes a file to an absolute path (exports), replacing what's there. */
+  writeFile(path: string, file: Blob): Promise<void>;
 }
 
 /** A tool that acts on the open board. */

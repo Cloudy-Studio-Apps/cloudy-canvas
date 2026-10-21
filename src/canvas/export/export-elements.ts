@@ -17,7 +17,7 @@ const JPEG_QUALITY = 0.92;
  * have rows, e.g. tables). Throws with a message for the user when there's nothing to export.
  */
 export async function exportElements(host: ExportHost, options: ExportOptions): Promise<Blob> {
-  const elements = host.elementsOf(options.area);
+  const elements = host.elementsOf(options.area, options.ids);
   if (options.format === "csv") {
     const grids = elements.map((el) => host.rows(el)).filter((rows) => rows !== null);
     if (grids.length === 0) throw new Error("There are no tables to export as CSV.");
@@ -29,7 +29,8 @@ export async function exportElements(host: ExportHost, options: ExportOptions): 
   const rect = padded(area);
   const scale = Math.min(
     options.scale ?? DEFAULT_SCALE,
-    MAX_PIXELS_PER_SIDE / Math.max(rect.w, rect.h),
+    Math.min(options.maxSide ?? MAX_PIXELS_PER_SIDE, MAX_PIXELS_PER_SIDE) /
+      Math.max(rect.w, rect.h),
   );
   const transparent = options.format === "png" && options.background === "transparent";
   const background = transparent ? null : host.background;
@@ -51,8 +52,8 @@ export async function exportElements(host: ExportHost, options: ExportOptions): 
 }
 
 /** Whether exporting the area as CSV would find something (an element with rows). */
-export function hasRows(host: ExportHost, options: Pick<ExportOptions, "area">): boolean {
-  return host.elementsOf(options.area).some((el) => host.rows(el) !== null);
+export function hasRows(host: ExportHost, options: Pick<ExportOptions, "area" | "ids">): boolean {
+  return host.elementsOf(options.area, options.ids).some((el) => host.rows(el) !== null);
 }
 
 function padded({ x, y, w, h }: Rect): Rect {

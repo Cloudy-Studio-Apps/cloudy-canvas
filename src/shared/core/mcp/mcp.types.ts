@@ -5,7 +5,10 @@ export interface McpTool {
   name: string;
   description: string;
   inputSchema: JsonSchema;
-  /** Returns the result (a string, or a value sent as JSON); throwing reports a tool error. */
+  /**
+   * Returns the result (a string, a `ToolImage`, or a value sent as JSON); throwing reports a tool
+   * error.
+   */
   run(args: Record<string, unknown>): unknown;
 }
 
