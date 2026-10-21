@@ -1,22 +1,24 @@
-import {
-  type ElementDescription,
-  type ElementPatch,
-  type ElementSpec,
-  type ElementTextStyle,
-  type ElementView,
-  TextBoxKind,
+import type {
+  ElementDescription,
+  ElementPatch,
+  ElementSide,
+  ElementSpec,
+  ElementTextStyle,
+  ElementView,
+  Point,
 } from "@canvas";
 
 import { INK_COLOR, SHAPE_FILLS, SHAPE_STROKES } from "../../palette";
 import type { BoardToolOptions } from "../../board-options.types";
+import { QuickConnectKind } from "../connector/quick-connect.kind";
 import { createGeo } from "./geo.factory";
 import { GEO_DEFAULTS } from "./geo.defaults";
 import { drawGeo } from "./geo.draw";
 import type { GeoElement } from "./geo.types";
-import { geoVariants } from "./variants/variant.registry";
+import { geoVariants, variantOf } from "./variants/variant.registry";
 
 /** Diagram shapes (rectangle, ellipse, …): the outline is delegated to the element's variant. */
-export class GeoKind extends TextBoxKind<GeoElement, BoardToolOptions> {
+export class GeoKind extends QuickConnectKind<GeoElement> {
   readonly type = "geo";
   readonly label = "Shape";
   readonly description = "A rectangle, ellipse, diamond or other diagram shape, with a label.";
@@ -46,6 +48,11 @@ export class GeoKind extends TextBoxKind<GeoElement, BoardToolOptions> {
     const fill = spec.fill ?? SHAPE_FILLS[0].value;
     const stroke = spec.stroke ?? SHAPE_STROKES[0].value;
     return { ...createGeo(rect, kind, fill, stroke, index), text: spec.text ?? "" };
+  }
+
+  override anchor(el: GeoElement, side: ElementSide): Point {
+    const local = variantOf(el.kind).sideAnchor(el.w, el.h, side);
+    return { x: el.x + local.x, y: el.y + local.y };
   }
 
   override describe(el: GeoElement): ElementDescription {

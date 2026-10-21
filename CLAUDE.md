@@ -83,7 +83,7 @@ The engine is the same for every product. **A product is a `CanvasProduct`** (`c
   - Links can show text with `view.label(text, at, options)` (pooled text nodes, e.g. ER cardinalities).
   - `resolveElements(elements)` gives elements whose geometry follows others (ER aggregation boxes, constraints) their current geometry: `Scene.refresh()` runs it, and the elements it replaced are redrawn on every change. **Read geometry from the scene** (`engine.getElement`, `ctx.getElement`), not from `doc.get`; the stored bounds of derived elements are stale. The text editor places itself from the scene too.
   - `withMembers(ids, elements, purpose)` adds what goes with the ids when they're moved (`ctx.withMembers` in the select tool) or deleted (`engine.deleteElements`), e.g. an entity's attributes.
-  - `onRemove(doc, removed)` cleans up after deletions (e.g. clears refs to deleted tables), inside the same undo step.
+  - `onRemove(doc, removed, before)` cleans up after deletions (e.g. clears refs to deleted tables, frees connector ends), inside the same undo step. `before` is the scene as it was, so resolved geometry of removed elements is still readable.
 - **Frames:** a kind with `frame = true` (ER aggregation boxes, sections) is drawn in its own layer behind the links and the other elements, larger frames further back (`zOrderKey`, `elements/z-order.ts`), and a marquee selects it only when it encloses it.
 - **Feeds:** board-level facades (`DbSchema`, `ErModel`) notify React through a `DocumentFeed` (`document/document-feed.ts`), which observes the document only while someone subscribes, so they need no cleanup and can be created in a `useMemo`.
   - Kinds offer `interactionAt` and `handles` (see Elements), which the select tool and overlay use.
@@ -105,8 +105,10 @@ Everything on a canvas is an element. **Elements are plain data and behavior liv
   - `optionsOf` / `restyle` (the tool options panel, typed with the product's options `O`)
   - `text.style(el).singleLine`: a one-line text (a name), where Enter finishes editing
   - `interactionAt(el, p, query)`: part of the element a press grabs before selecting it (a handle, a button). It returns an `ElementInteraction` (`cursor`, `press(ctx, p)`); `press` runs a one-shot action or returns an `ElementGesture` (`move`, `finish`, `cancel`, `onCameraChange`) that the select tool drives. Resize handles of the single selection win over it.
-  - `handles(el)`: points the overlay draws while the element is selected or hovered
-  - `build` from an `ElementSpec` (agents' `create_shapes`), plus `creatable` and `patchableFields`
+  - `handles(el, zoom)`: `ElementHandle`s the overlay draws while the element is selected or hovered (`look: "dot"` for small actions). A hovered element with handles stays hovered a little outside its bounds, so handles drawn outside it can be reached.
+  - `boxed`: whether selection and hover outline its bounds (`false` for connectors, which show their ends)
+  - `connectable` and `anchor(el, side)`: whether connectors attach to it, and where on each `ElementSide` (`BoxKind` is connectable; geo variants give their own `sideAnchor`)
+  - `build(spec, index, context)` from an `ElementSpec` (agents' `create_shapes`), plus `creatable` and `patchableFields`. Type-specific spec fields are declared in `specProperties` (merged into the `create_shapes` schema) and read from `spec.args`; `context.lookup(ref)` finds elements by id or by a `key` given earlier in the same call.
 - **Shared bases** (`canvas/elements/bases/`). Anything several types do goes in a base, never copied into each kind:
   - `BoxKind`: hit anywhere in the bounds, resizable.
   - `TextBoxKind extends BoxKind`: in-place `text` (get, set, describe). Subclasses only give `textStyle`.
@@ -122,7 +124,8 @@ Everything on a canvas is an element. **Elements are plain data and behavior liv
   - `index.ts`: the folder's exports
 
   Extra pieces follow the same pattern (`stroke.outline.ts`, `geo/variants/<id>.variant.ts`, `variant.registry.ts`, `bases/box.kind.ts`), and one-off helpers keep plain names (`ellipse-arc.ts`). Element folders import the framework from `@canvas`. The board's types are:
-  - `sticky/`: `StickyKind extends TextBoxKind`
+  - `sticky/`: `StickyKind extends QuickConnectKind` (a `TextBoxKind`)
+  - `connector/`: `ConnectorKind extends LineKind`. Each end (`start`, `end`) is free (`x`, `y`) or attached to a connectable element (`shapeId`, optional `side`). Its route (`straight` or `elbow`, `elbow-route.ts`), bounds and `points` are derived by `resolveConnectors`, part of the board's `resolveElements` (after the ER pass), so **read connectors from the scene**. Moving one moves only its free ends; `detachConnectors` (the board's `onRemove`) frees ends whose element was deleted. Selected, it shows its ends, which drag with `ConnectorDrag` (also used by the `connector` tool). `QuickConnectKind` (the base of `StickyKind` and `GeoKind`) shows a dot beside each side that drags out a new connector.
   - `text/`: `TextKind`, a free label sized to its text (`fitContent`, `removeWhenEmpty`), not resizable. The `text` tool types a draft, or edits the text of whatever it clicks.
   - `stroke/`: `StrokeKind extends LineKind`; only moved, and not created by agents
   - `db/`: the database schema, one family in one folder:
@@ -137,7 +140,7 @@ Everything on a canvas is an element. **Elements are plain data and behavior liv
     - `model/`: `ErModel` (board-level facade: `diagram(id)`, `diagrams()`, `shape(id)`, `remove(id)`, `newDiagram(center?)`) and `ErDiagram` (`text()`, `applyText`, `textRange`, `relayout`, `rename`, `edits`). The text is parsed with the DBML tokenizer (`lang/`) and reconciled by name then position so ids and positions survive (`reconcile-er.ts`, `reconcile-extended.ts`); `applyErPlan` writes one undo step and lays out new elements (`layout/`, deterministic auto-layout). `withErMembers` is the board's `withMembers` (an element takes its attributes; dragging an aggregation takes what it holds), `pruneEr` part of its `onRemove`. Boards from before diagrams existed are split into diagrams when the file opens (`migrateErDiagrams`, called by `openBoardDocument`).
     - `links/`: `ErLinks`, the lines (participants with cardinality labels, attributes, hierarchies; loops for self-relations).
   - `section/`: `SectionKind extends TextBoxKind`, a frame (`frame = true`) with its title edited in place in the strip along its top edge. It's hit by its title or border only, so clicks inside reach its contents. Membership is geometric: the elements fully inside it move and delete with it (`withSectionMembers`, part of the board's `withMembers`), so nothing stores parent links. The top bar's Sections menu (`ui/components/sections-menu/`) zooms to one.
-  - `geo/`: `GeoKind extends TextBoxKind`, which delegates the outline to the element's variant. Each variant (`kind`: rectangle, ellipse, diamond, …) is a `GeoVariant` subclass in `geo/variants/<id>.variant.ts`, registered at runtime in `geoVariants` (`variant.registry.ts`), with its label, picker `icon` (an SVG path), default size, `outline` and optional `decorate`. `variantOf(id)` falls back to the rectangle for unknown ids. The shape picker lists `geoVariants.all()`. `PolygonVariant` covers the polygon ones.
+  - `geo/`: `GeoKind extends QuickConnectKind`, which delegates the outline (and its connector `sideAnchor`s) to the element's variant. Each variant (`kind`: rectangle, ellipse, diamond, …) is a `GeoVariant` subclass in `geo/variants/<id>.variant.ts`, registered at runtime in `geoVariants` (`variant.registry.ts`), with its label, picker `icon` (an SVG path), default size, `outline` and optional `decorate`. `variantOf(id)` falls back to the rectangle for unknown ids. The shape picker lists `geoVariants.all()`. `PolygonVariant` covers the polygon ones.
 
 - **Adding a type to a product:**
   1. Create its folder in the product's `elements/`.
@@ -150,7 +153,7 @@ Everything on a canvas is an element. **Elements are plain data and behavior liv
 
 ### Staged rebuild (`temporal/`)
 
-The board is being rebuilt on the element architecture one type at a time. Only `sticky`, `text`, `stroke`, `geo`, `section`, the database types (`db/`) and ER diagrams (`er/`) exist so far. The code for connectors (engine modules, tools, layers, agent tools and their panels) was moved to `temporal/`, together with reference copies of the core files from before the rebuild. Its paths mirror the **old** `src/` layout (`src/engine/…`); `temporal/README.md` maps them to the new one and keeps the old architecture notes for those features. `temporal/` isn't compiled, linted or formatted. To bring a feature back, port it into the board product (an `elements/<type>/` folder, its tool, agent tools and panel), then delete what it replaced from `temporal/`.
+The board is being rebuilt on the element architecture one type at a time. Every board feature is back (`sticky`, `text`, `stroke`, `geo`, `section`, `connector`, the database types in `db/` and ER diagrams in `er/`). `temporal/` only holds reference copies of the core files from before the rebuild. Its paths mirror the **old** `src/` layout (`src/engine/…`); `temporal/README.md` maps them to the new one and keeps the old architecture notes for those features. `temporal/` isn't compiled, linted or formatted. To bring a feature back, port it into the board product (an `elements/<type>/` folder, its tool, agent tools and panel), then delete what it replaced from `temporal/`.
 
 ## Agent (MCP) server
 

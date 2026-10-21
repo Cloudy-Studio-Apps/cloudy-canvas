@@ -1,6 +1,7 @@
 import { ElementKinds } from "@canvas";
 
 import type { BoardToolOptions } from "../board-options.types";
+import { ConnectorKind } from "./connector";
 import { DbEnumKind, DbTableKind } from "./db";
 import {
   ErAggregateKind,
@@ -26,6 +27,7 @@ boardKinds.register(new StrokeKind());
 boardKinds.register(new TextKind());
 boardKinds.register(new GeoKind());
 boardKinds.register(new SectionKind());
+boardKinds.register(new ConnectorKind());
 boardKinds.register(new DbTableKind());
 boardKinds.register(new DbEnumKind());
 boardKinds.register(new ErEntityKind());

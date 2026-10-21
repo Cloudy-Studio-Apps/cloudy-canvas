@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 
 import { useEngineState } from "@canvas-ui";
+import { ConnectorOptions } from "./connector-options";
 import { DbOptions } from "./db-options";
 import { MarkerOptions } from "./marker-options";
 import { SectionOptions } from "./section-options";
@@ -13,6 +14,7 @@ const OPTION_PANELS: Partial<Record<string, ComponentType>> = {
   sticky: StickyOptions,
   shape: ShapeOptions,
   section: SectionOptions,
+  connector: ConnectorOptions,
   db: DbOptions,
 };
 
@@ -21,6 +23,7 @@ const SELECTION_PANELS: Partial<Record<string, ComponentType>> = {
   sticky: StickyOptions,
   geo: ShapeOptions,
   section: SectionOptions,
+  connector: ConnectorOptions,
 };
 
 export function ToolOptions() {

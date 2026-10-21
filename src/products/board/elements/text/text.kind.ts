@@ -22,6 +22,7 @@ export class TextKind extends ElementKind<TextElement, BoardToolOptions> {
   readonly description = "Click anywhere to type a label.";
   override readonly tool = "text";
   override readonly defaults = TEXT_DEFAULTS;
+  override readonly connectable = true;
 
   override readonly text: ElementText<TextElement> = {
     get: (el) => el.text,

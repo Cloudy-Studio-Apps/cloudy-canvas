@@ -1,4 +1,4 @@
-import type { CanvasElement, ElementKinds } from "../elements";
+import type { CanvasElement, ElementHandle, ElementKinds } from "../elements";
 import type { Point, Rect } from "../geometry.types";
 
 export interface OverlayInput {
@@ -6,6 +6,7 @@ export interface OverlayInput {
   selected: CanvasElement[];
   hover: CanvasElement | undefined;
   marquee: Rect | null;
+  zoom: number;
 }
 
 /** Screen-space feedback drawn above the elements. All rects and points are in world units. */
@@ -16,7 +17,7 @@ export interface OverlayState {
   hover: Rect | null;
   marquee: Rect | null;
   /** Handles the kinds of the selected and hovered elements offer (`ElementKind.handles`). */
-  handles: Point[];
+  handles: ElementHandle[];
   /** Resize handles of a single selected element. */
   resizeHandles: Point[];
 }

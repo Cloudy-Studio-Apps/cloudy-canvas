@@ -38,7 +38,12 @@ export interface CanvasProduct<O extends object = object> {
   createLinks?(): CanvasLinks[];
   /**
    * Cleans up after elements are deleted (e.g. clears references to them). Runs inside the
-   * deletion's transaction, so it's part of the same undo step.
+   * deletion's transaction, so it's part of the same undo step. `before` are the scene's elements
+   * as they were before the deletion (derived geometry resolved).
    */
-  onRemove?(doc: CanvasDocument, removed: ReadonlySet<string>): void;
+  onRemove?(
+    doc: CanvasDocument,
+    removed: ReadonlySet<string>,
+    before: readonly CanvasElement[],
+  ): void;
 }

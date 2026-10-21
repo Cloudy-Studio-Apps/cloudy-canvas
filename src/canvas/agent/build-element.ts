@@ -1,4 +1,4 @@
-import type { CanvasElement, ElementKinds } from "../elements";
+import type { CanvasElement, ElementBuildContext, ElementKinds } from "../elements";
 import type { ToolArgs } from "./agent-tool.types";
 import { optionalNumber, optionalString, stringArg } from "./tool-args";
 
@@ -11,7 +11,12 @@ export function creatableTypes(kinds: ElementKinds): string[] {
 }
 
 /** A new element from an agent's spec. `x`/`y` are the top-left corner in world units. */
-export function buildElement(kinds: ElementKinds, spec: ToolArgs, index: string): CanvasElement {
+export function buildElement(
+  kinds: ElementKinds,
+  spec: ToolArgs,
+  index: string,
+  lookup: ElementBuildContext["lookup"] = () => undefined,
+): CanvasElement {
   const type = stringArg(spec, "type");
   const kind = kinds.get(type);
   if (!kind?.creatable) {
@@ -30,7 +35,9 @@ export function buildElement(kinds: ElementKinds, spec: ToolArgs, index: string)
       kind: optionalString(spec, "kind"),
       fill: optionalString(spec, "fill"),
       stroke: optionalString(spec, "stroke"),
+      args: spec,
     },
     index,
+    { lookup, kinds },
   );
 }

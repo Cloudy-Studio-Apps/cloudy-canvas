@@ -12,4 +12,7 @@ export interface ElementSummary {
   kind?: string;
   /** The group it belongs to, e.g. the id of its ER diagram. */
   group?: string;
+  /** The elements a line runs between (`null` for a free end). */
+  from?: string | null;
+  to?: string | null;
 }

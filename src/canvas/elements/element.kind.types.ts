@@ -1,4 +1,5 @@
-import type { Size } from "../geometry.types";
+import type { ElementKinds } from "./element.kinds";
+import type { Point, Size } from "../geometry.types";
 import type { CanvasElement, ElementPatch } from "./element.types";
 
 /**
@@ -52,6 +53,28 @@ export interface ElementDescription {
   kind?: string;
   /** The group it belongs to, e.g. the id of its ER diagram. */
   group?: string;
+  /** Ids of the elements a line runs between (`null` for a free end), e.g. a connector's. */
+  ends?: { from: string | null; to: string | null };
+}
+
+/** A side of an element, e.g. where a connector leaves it. */
+export type ElementSide = "top" | "right" | "bottom" | "left";
+
+/** A point the overlay draws while the element is selected or hovered (world units). */
+export interface ElementHandle extends Point {
+  /** `square` (the default) for grab handles, `dot` for small actions such as quick-connect. */
+  look?: "square" | "dot";
+}
+
+/** What `ElementKind.build` can look up while building from a spec. */
+export interface ElementBuildContext {
+  /**
+   * An element by id, or by the `key` an agent gave another element in the same call. Elements
+   * created in the same call have their spec's geometry.
+   */
+  lookup(ref: string): CanvasElement | undefined;
+  /** The product's kinds, e.g. to check what another element can do. */
+  readonly kinds: ElementKinds;
 }
 
 /** A new element's requested fields, as hosts and agents give them. `x`/`y` are the top-left corner. */
@@ -66,4 +89,6 @@ export interface ElementSpec {
   kind?: string;
   fill?: string;
   stroke?: string;
+  /** Every field the agent gave, for type-specific ones (see `ElementKind.specProperties`). */
+  args: Readonly<Record<string, unknown>>;
 }

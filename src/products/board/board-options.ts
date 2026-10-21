@@ -17,5 +17,9 @@ export const DEFAULT_BOARD_OPTIONS: BoardToolOptions = {
   shapeFill: SHAPE_FILLS[0].value,
   shapeStroke: SHAPE_STROKES[0].value,
   sectionColor: SECTION_COLORS[0].value,
+  connectorStyle: "elbow",
+  connectorColor: MARKER_COLORS[0].value,
+  connectorStartHead: "none",
+  connectorEndHead: "arrow",
   dbKind: "table",
 };

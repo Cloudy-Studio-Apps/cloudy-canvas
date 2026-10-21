@@ -226,10 +226,11 @@ export class CanvasEngine<O extends object = object> {
   deleteElements(ids: Iterable<string>): string[] {
     const removing = [...this.withMembers(ids, "delete")].filter((id) => this.doc.get(id));
     if (removing.length === 0) return [];
+    const before = this.scene.elements;
     this.doc.checkpoint();
     this.doc.batch(() => {
       this.doc.remove(removing);
-      this.product.onRemove?.(this.doc, new Set(removing));
+      this.product.onRemove?.(this.doc, new Set(removing), before);
     });
     return removing;
   }
@@ -468,7 +469,11 @@ export class CanvasEngine<O extends object = object> {
   }
 
   private draw(): void {
-    this.renderer.render(this.camera, this.scene.overlay(), this.scene.selection.ids);
+    this.renderer.render(
+      this.camera,
+      this.scene.overlay(this.camera.zoom),
+      this.scene.selection.ids,
+    );
   }
 
   private buildState(): EngineState<O> {

@@ -1,5 +1,5 @@
 import type { Graphics, StrokeStyle } from "pixi.js";
-import type { Size } from "@canvas";
+import type { ElementSide, Point, Size } from "@canvas";
 
 /**
  * One outline a geo element can have (rectangle, ellipse, …). Built-ins are registered in
@@ -19,6 +19,20 @@ export abstract class GeoVariant {
 
   /** Extra lines drawn over the stroked outline, e.g. a cylinder's front edge. */
   decorate(_g: Graphics, _w: number, _h: number, _stroke: StrokeStyle): void {}
+
+  /** Where a connector leaves the outline on each side, in local coordinates. */
+  sideAnchor(w: number, h: number, side: ElementSide): Point {
+    switch (side) {
+      case "top":
+        return { x: w / 2, y: 0 };
+      case "right":
+        return { x: w, y: h / 2 };
+      case "bottom":
+        return { x: w / 2, y: h };
+      case "left":
+        return { x: 0, y: h / 2 };
+    }
+  }
 }
 
 /** A variant whose outline is a polygon. */

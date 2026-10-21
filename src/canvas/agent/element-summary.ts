@@ -3,7 +3,7 @@ import type { ElementSummary } from "./element-summary.types";
 
 export function summarizeElement(kinds: ElementKinds, el: CanvasElement): ElementSummary {
   const elementKind = kinds.kindOf(el);
-  const { label, kind, group } = elementKind.describe(el);
+  const { label, kind, group, ends } = elementKind.describe(el);
   const bounds = elementKind.bounds(el);
   return {
     id: el.id,
@@ -15,5 +15,6 @@ export function summarizeElement(kinds: ElementKinds, el: CanvasElement): Elemen
     ...(label ? { label } : {}),
     ...(kind ? { kind } : {}),
     ...(group ? { group } : {}),
+    ...(ends ? { from: ends.from, to: ends.to } : {}),
   };
 }

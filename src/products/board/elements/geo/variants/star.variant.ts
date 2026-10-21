@@ -1,3 +1,5 @@
+import type { ElementSide, Point } from "@canvas";
+
 import { PolygonVariant } from "./geo.variant";
 
 /** Inner radius of the star, as a share of the outer one. */
@@ -21,5 +23,19 @@ export class Star extends PolygonVariant {
       );
     }
     return points;
+  }
+
+  override sideAnchor(w: number, h: number, side: ElementSide): Point {
+    switch (side) {
+      case "top":
+        return { x: w / 2, y: 0 };
+      // The notch between the two lower points.
+      case "bottom":
+        return { x: w / 2, y: h * 0.74 };
+      case "left":
+        return { x: w * 0.03, y: h * 0.37 };
+      case "right":
+        return { x: w * 0.97, y: h * 0.37 };
+    }
   }
 }

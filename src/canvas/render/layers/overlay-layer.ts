@@ -5,6 +5,8 @@ import type { OverlayState } from "../overlay-state.types";
 
 /** Handle size in screen px. */
 const HANDLE_PX = 8;
+/** Radius of `dot` handles in screen px. */
+const DOT_PX = 4;
 const HANDLE_FILL = 0xffffff;
 
 /** Hover, selection and marquee outlines, drawn in screen space so line widths stay constant. */
@@ -23,7 +25,13 @@ export class OverlayLayer extends Graphics {
       const r = camera.worldRectToScreen(state.selectionBounds, 6);
       this.rect(r.x, r.y, r.w, r.h).stroke({ color, width: 1, alpha: 0.7 });
     }
-    for (const point of [...state.handles, ...state.resizeHandles]) {
+    for (const handle of state.handles) {
+      if (handle.look !== "dot") continue;
+      const { x, y } = camera.worldToScreen(handle);
+      this.circle(x, y, DOT_PX).fill({ color });
+    }
+    const squares = [...state.handles.filter((h) => h.look !== "dot"), ...state.resizeHandles];
+    for (const point of squares) {
       const { x, y } = camera.worldToScreen(point);
       const half = HANDLE_PX / 2;
       this.rect(x - half, y - half, HANDLE_PX, HANDLE_PX)

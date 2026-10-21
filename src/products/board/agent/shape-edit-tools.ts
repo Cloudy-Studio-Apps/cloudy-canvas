@@ -54,7 +54,9 @@ export const shapeEditTools: BoardAgentTool[] = [
   },
   {
     name: "delete_shapes",
-    description: "Deletes shapes as one undo step. A section takes the shapes inside it.",
+    description:
+      "Deletes shapes as one undo step. A section takes the shapes inside it; connectors " +
+      "attached to deleted shapes stay with a free end.",
     inputSchema: { type: "object", required: ["ids"], properties: { ids: IDS_SCHEMA } },
     run: (host, args) => {
       const { engine } = requireBoard(host);

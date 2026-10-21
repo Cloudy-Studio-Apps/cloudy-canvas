@@ -9,6 +9,7 @@ import type { ErEntityElement } from "./entity.types";
 
 export class ErEntityKind extends ErNamedKind<ErEntityElement> {
   readonly type = "er-entity";
+  override readonly connectable = true;
   readonly label = "Entity";
   readonly description = "An entity of an ER diagram; click to start a new diagram.";
 

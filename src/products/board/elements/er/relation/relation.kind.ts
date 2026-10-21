@@ -9,6 +9,7 @@ import type { ErRelationElement } from "./relation.types";
 
 export class ErRelationKind extends ErNamedKind<ErRelationElement> {
   readonly type = "er-relation";
+  override readonly connectable = true;
   readonly label = "Relation";
   readonly description = "A relation (diamond) between entities of an ER diagram.";
 

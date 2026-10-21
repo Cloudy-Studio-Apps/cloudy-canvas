@@ -1,3 +1,5 @@
+import type { ArrowHead, ConnectorStyle } from "./elements";
+
 /** What the board's tool options panel picks, for new elements and the selection. */
 export interface BoardToolOptions {
   markerColor: string;
@@ -8,6 +10,10 @@ export interface BoardToolOptions {
   shapeFill: string;
   shapeStroke: string;
   sectionColor: string;
+  connectorStyle: ConnectorStyle;
+  connectorColor: string;
+  connectorStartHead: ArrowHead;
+  connectorEndHead: ArrowHead;
   /** What the Database tool places. */
   dbKind: "table" | "enum";
 }

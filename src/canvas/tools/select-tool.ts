@@ -1,11 +1,16 @@
 import type { CanvasElement, ElementPatch } from "../elements";
-import { rectFromPoints } from "../geometry";
+import { rectContainsPoint, rectFromPoints } from "../geometry";
 import { resizeCursor, type Interaction } from "../handles";
 import { ResizeGesture } from "./resize-gesture";
 import type { CanvasPointer, Tool, ToolContext } from "./tool.types";
 import type { Gesture } from "./select-tool.types";
 
 const DRAG_THRESHOLD = 3; // screen px
+/**
+ * A hovered element with handles stays hovered this far outside it (screen px), so handles drawn
+ * just outside it (e.g. quick-connect dots) can be reached.
+ */
+const HOVER_KEEP_PX = 28;
 
 export class SelectTool implements Tool {
   readonly id = "select" as const;
@@ -98,6 +103,7 @@ export class SelectTool implements Tool {
     const interaction = this.ctx.interactionAt(p.world);
     this.ctx.setCursor(interaction ? interactionCursor(interaction) : this.cursor);
     const hit = this.ctx.elementAt(p.world);
+    if (!hit && (interaction || this.keepsHover(p))) return;
     this.ctx.setHover(hit && !this.ctx.getSelection().has(hit.id) ? hit.id : null);
   }
 
@@ -110,6 +116,17 @@ export class SelectTool implements Tool {
     this.gesture = null;
     this.ctx.setMarquee(null);
     this.ctx.setCursor(this.cursor);
+  }
+
+  /** Whether the pointer is still close enough to the hovered element to reach its handles. */
+  private keepsHover(p: CanvasPointer): boolean {
+    const id = this.ctx.getHover();
+    const el = id ? this.ctx.getElement(id) : undefined;
+    if (!el) return false;
+    const kind = this.ctx.kinds.kindOf(el);
+    const { zoom } = this.ctx.camera;
+    if (kind.handles(el, zoom).length === 0) return false;
+    return rectContainsPoint(kind.bounds(el), p.world, HOVER_KEEP_PX / zoom);
   }
 
   /** A gesture for the grabbed handle, or `null` when the press was a one-shot action. */

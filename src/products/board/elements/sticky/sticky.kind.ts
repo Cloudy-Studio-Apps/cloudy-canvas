@@ -3,17 +3,17 @@ import {
   type ElementSpec,
   type ElementTextStyle,
   type ElementView,
-  TextBoxKind,
 } from "@canvas";
 
 import { INK_COLOR, STICKY_COLORS } from "../../palette";
 import type { BoardToolOptions } from "../../board-options.types";
+import { QuickConnectKind } from "../connector/quick-connect.kind";
 import { createSticky } from "./sticky.factory";
 import { drawSticky } from "./sticky.draw";
 import { STICKY_DEFAULTS } from "./sticky.defaults";
 import type { StickyElement } from "./sticky.types";
 
-export class StickyKind extends TextBoxKind<StickyElement, BoardToolOptions> {
+export class StickyKind extends QuickConnectKind<StickyElement> {
   readonly type = "sticky";
   readonly label = "Sticky note";
   readonly description = "A colored note for jotting down an idea.";

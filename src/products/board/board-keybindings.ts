@@ -8,6 +8,7 @@ export const BOARD_KEYBINDINGS = {
   "tool.text": [{ key: "t" }],
   "tool.shape": [{ key: "r" }],
   "tool.section": [{ key: "s", shift: true }],
+  "tool.connector": [{ key: "x" }],
   "tool.db": [{ key: "d" }],
   "tool.er": [{ key: "e" }],
 } satisfies Keybindings;

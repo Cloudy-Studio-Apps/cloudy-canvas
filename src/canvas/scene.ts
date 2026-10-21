@@ -94,12 +94,13 @@ export class Scene {
     return true;
   }
 
-  overlay(): OverlayState {
+  overlay(zoom: number): OverlayState {
     return buildOverlayState({
       kinds: this.kinds,
       selected: this.list.filter((el) => this.selection.has(el.id)),
       hover: this.hoverId ? this.byId.get(this.hoverId) : undefined,
       marquee: this.marquee,
+      zoom,
     });
   }
 }

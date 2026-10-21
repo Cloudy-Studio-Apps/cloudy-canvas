@@ -9,6 +9,7 @@ import type { ErAttributeElement } from "./attribute.types";
 
 export class ErAttributeKind extends ErNamedKind<ErAttributeElement> {
   readonly type = "er-attribute";
+  override readonly connectable = true;
   readonly label = "Attribute";
   readonly description = "An attribute of an entity, relation or aggregation in an ER diagram.";
 

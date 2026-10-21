@@ -10,6 +10,7 @@ import type { DbCardElement } from "./db-card.types";
 export abstract class DbCardKind<E extends DbCardElement> extends ElementKind<E, BoardToolOptions> {
   override readonly tool = "db";
   override readonly creatable = false;
+  override readonly connectable = true;
   /** Agents edit tables and enums as DBML, not by patching fields. */
   override readonly patchableFields: ReadonlySet<string> = new Set(["x", "y"]);
 

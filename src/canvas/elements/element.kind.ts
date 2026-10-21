@@ -4,8 +4,11 @@ import type { ElementView } from "../render/element-view";
 import type { CanvasElement, ElementPatch } from "./element.types";
 import type { ElementInteraction, InteractionQuery } from "./element.interaction.types";
 import type {
+  ElementBuildContext,
   ElementDefaults,
   ElementDescription,
+  ElementHandle,
+  ElementSide,
   ElementSpec,
   ElementText,
 } from "./element.kind.types";
@@ -38,6 +41,12 @@ export abstract class ElementKind<
    * further back, and a marquee selects them only when it encloses them.
    */
   readonly frame: boolean = false;
+  /** Whether connectors (and other lines that attach to elements) can attach to it. */
+  readonly connectable: boolean = false;
+  /** Whether selection and hover outline its bounds (lines show their handles instead). */
+  readonly boxed: boolean = true;
+  /** JSON schema of the type-specific spec fields agents may give (read from `spec.args`). */
+  readonly specProperties: Readonly<Record<string, unknown>> = {};
   /** Fields agents may patch; `null` allows every field. */
   readonly patchableFields: ReadonlySet<string> | null = null;
   /** Set when the element has text edited in place. */
@@ -47,7 +56,7 @@ export abstract class ElementKind<
   abstract draw(view: ElementView, el: E): void;
 
   /** A new element from a spec. Throws with a message agents can act on when the spec is invalid. */
-  build(_spec: ElementSpec, _index: string): E {
+  build(_spec: ElementSpec, _index: string, _context: ElementBuildContext): E {
     throw new Error(`${this.label} elements can't be created from a spec.`);
   }
 
@@ -68,9 +77,24 @@ export abstract class ElementKind<
     return null;
   }
 
-  /** Handle points (world units) the overlay draws while the element is selected or hovered. */
-  handles(_el: E): Point[] {
+  /** Handles the overlay draws while the element is selected or hovered. */
+  handles(_el: E, _zoom: number): ElementHandle[] {
     return [];
+  }
+
+  /** World point where a line attaches to a side of the element (the middle of the side). */
+  anchor(el: E, side: ElementSide): Point {
+    const { x, y, w, h } = this.bounds(el);
+    switch (side) {
+      case "top":
+        return { x: x + w / 2, y };
+      case "right":
+        return { x: x + w, y: y + h / 2 };
+      case "bottom":
+        return { x: x + w / 2, y: y + h };
+      case "left":
+        return { x, y: y + h / 2 };
+    }
   }
 
   /** Patch that moves the element by (dx, dy) from `origin`. */

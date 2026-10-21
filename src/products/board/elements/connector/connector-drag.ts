@@ -1,27 +1,27 @@
-import {
-  createConnectorShape,
-  isConnector,
-  type ConnectorEnd,
-  type ConnectorStyleOptions,
-} from "../document";
-import type { Point } from "../geometry.types";
+import type { CanvasPointer, ElementGesture, Point, ToolContext } from "@canvas";
+
+import type { BoardToolOptions } from "../../board-options.types";
+import { connectableAt } from "./connectable-at";
+import { createConnector } from "./connector.factory";
+import type { ConnectorEnd, ConnectorEndName, ConnectorLook } from "./connector.types";
 import type { ConnectorDragTarget } from "./connector-drag.types";
-import type { CanvasPointer, ToolContext } from "./tool.types";
+import { isConnector } from "./is-connector";
 
 const DRAG_THRESHOLD = 4; // screen px
 
 /**
- * Drags a connector end. Over a shape the end sticks to it (and follows it from then on);
- * elsewhere it stays free. The canvas auto-pans near the edges so far-away shapes can be reached.
+ * Drags a connector end. Over a connectable element the end sticks to it (and follows it from
+ * then on); elsewhere it stays free. The canvas auto-pans near the edges so far-away elements can
+ * be reached.
  */
-export class ConnectorDrag {
+export class ConnectorDrag implements ElementGesture {
   private id: string | null;
-  private which: "start" | "end";
+  private readonly which: ConnectorEndName;
   private started = false;
   private screen: Point;
 
   constructor(
-    private readonly ctx: ToolContext,
+    private readonly ctx: ToolContext<BoardToolOptions>,
     private readonly target: ConnectorDragTarget,
     private readonly origin: CanvasPointer,
   ) {
@@ -31,9 +31,9 @@ export class ConnectorDrag {
     ctx.setCursor("crosshair");
   }
 
-  /** Id of the connector being edited, once it exists. */
-  get connectorId(): string | null {
-    return this.id;
+  /** Whether a connector was created or changed. */
+  get changed(): boolean {
+    return this.started && this.id !== null;
   }
 
   move(p: CanvasPointer): void {
@@ -51,28 +51,13 @@ export class ConnectorDrag {
     this.ctx.autoPan(p.screen, () => this.update());
   }
 
-  /** Re-applies the end at the pointer's world position (e.g. after the camera moved). */
-  update(): void {
-    if (!this.started) return;
-    const { doc } = this.ctx;
-    const world = this.ctx.camera.screenToWorld(this.screen);
-    const end = this.endAt(world);
-
-    if (this.id === null && this.target.kind === "new") {
-      const connector = createConnectorShape(this.target.start, end, this.style(), doc.nextIndex());
-      doc.add(connector);
-      this.id = connector.id;
-      return;
-    }
-    if (this.id) doc.update(this.id, { [this.which]: end });
+  onCameraChange(): void {
+    this.update();
   }
 
-  /** Ends the drag; returns whether a connector was created or changed. */
-  finish(): boolean {
+  finish(): void {
     this.cancel();
-    if (!this.started || !this.id) return false;
-    this.ctx.setSelection([this.id]);
-    return true;
+    if (this.changed && this.id) this.ctx.setSelection([this.id]);
   }
 
   cancel(): void {
@@ -80,18 +65,29 @@ export class ConnectorDrag {
     this.ctx.setHover(null);
   }
 
+  /** Re-applies the end at the pointer's world position (e.g. after the camera moved). */
+  private update(): void {
+    if (!this.started) return;
+    const { doc } = this.ctx;
+    const end = this.endAt(this.ctx.camera.screenToWorld(this.screen));
+
+    if (this.id === null && this.target.kind === "new") {
+      const connector = createConnector(this.target.start, end, this.look(), doc.nextIndex());
+      doc.add(connector);
+      this.id = connector.id;
+      return;
+    }
+    if (this.id) doc.update(this.id, { [this.which]: end });
+  }
+
   private endAt(world: Point): ConnectorEnd {
     const exclude = new Set<string>();
     const other = this.otherEnd();
     if (other?.shapeId) exclude.add(other.shapeId);
-    const shape = this.ctx.connectableAt(world, exclude);
-    this.ctx.setHover(shape?.id ?? null);
-    return {
-      shapeId: shape?.id ?? null,
-      side: null,
-      x: Math.round(world.x),
-      y: Math.round(world.y),
-    };
+    if (this.id) exclude.add(this.id);
+    const el = connectableAt(this.ctx, world, exclude);
+    this.ctx.setHover(el?.id ?? null);
+    return { shapeId: el?.id ?? null, side: null, x: Math.round(world.x), y: Math.round(world.y) };
   }
 
   private otherEnd(): ConnectorEnd | undefined {
@@ -101,7 +97,7 @@ export class ConnectorDrag {
     return this.which === "start" ? connector.end : connector.start;
   }
 
-  private style(): ConnectorStyleOptions {
+  private look(): ConnectorLook {
     const o = this.ctx.getOptions();
     return {
       style: o.connectorStyle,
