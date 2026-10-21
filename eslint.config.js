@@ -56,7 +56,7 @@ function restrict(patterns, { react = false } = {}) {
 const PRODUCT_UI = ["src/products/*/ui/**"];
 
 export default tseslint.config(
-  { ignores: ["dist", "src-tauri/target", "src-tauri/gen", "temporal"] },
+  { ignores: ["dist", "src-tauri/target", "src-tauri/gen"] },
   {
     files: ["**/*.{ts,tsx}"],
     extends: [js.configs.recommended, ...tseslint.configs.recommended],

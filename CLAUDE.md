@@ -151,10 +151,6 @@ Everything on a canvas is an element. **Elements are plain data and behavior liv
 
 - **Rendering:** `ElementView` (`canvas/render/element-view.ts`) is the one Pixi container for every element. `sync(el, kind)` calls `kind.draw(view, el)`, and `view.placeText(text, style, w, h)` lays text out like the editor. Nothing outside the element folders knows how an element looks.
 
-### Staged rebuild (`temporal/`)
-
-The board is being rebuilt on the element architecture one type at a time. Every board feature is back (`sticky`, `text`, `stroke`, `geo`, `section`, `connector`, the database types in `db/` and ER diagrams in `er/`). `temporal/` only holds reference copies of the core files from before the rebuild. Its paths mirror the **old** `src/` layout (`src/engine/…`); `temporal/README.md` maps them to the new one and keeps the old architecture notes for those features. `temporal/` isn't compiled, linted or formatted. To bring a feature back, port it into the board product (an `elements/<type>/` folder, its tool, agent tools and panel), then delete what it replaced from `temporal/`.
-
 ## Agent (MCP) server
 
 Agents (Claude Code, Cursor, …) connect to the running app at `http://127.0.0.1:47821/mcp`. If that port is taken the server tries the next nine, and the URL is written to `mcp.json` in the app data folder. Access is on by default, with no auth: only loopback, with Host and Origin checked against DNS rebinding.
