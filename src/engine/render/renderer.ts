@@ -19,7 +19,10 @@ import type { RelationState } from "./relation-state.types";
  */
 export class Renderer {
   readonly app = new Application();
-  /** Sections live in their own layer so relation lines show above them but below other shapes. */
+  /**
+   * Sections (and ER aggregation boxes) live in their own layer so relation lines show above them
+   * but below other shapes.
+   */
   private readonly sections = new ShapeLayer();
   private readonly shapes = new ShapeLayer();
   readonly draftStroke = new DraftStrokeLayer();
@@ -70,7 +73,10 @@ export class Renderer {
   syncShapes(shapes: Iterable<Shape>, removed: Iterable<string> = []): void {
     const sections: Shape[] = [];
     const others: Shape[] = [];
-    for (const shape of shapes) (shape.type === "section" ? sections : others).push(shape);
+    for (const shape of shapes) {
+      const behind = shape.type === "section" || shape.type === "er-aggregate";
+      (behind ? sections : others).push(shape);
+    }
     const gone = [...removed];
     this.sections.sync(sections, gone);
     this.shapes.sync(others, gone);

@@ -1,6 +1,7 @@
 import type { ErShapes } from "../lang";
 import { entityNeighbors } from "./er-graph";
-import type { Cell } from "./layout.types";
+import { hierarchyCell, hierarchyOf } from "./hierarchy-cells";
+import type { Cell, Hierarchy } from "./layout.types";
 
 /** Neighbouring cells in order of preference: right, down, left, up, then the diagonals. */
 const DIRECTIONS: readonly Cell[] = [
@@ -16,22 +17,26 @@ const DIRECTIONS: readonly Cell[] = [
 const FAR_DIRECTIONS: readonly Cell[] = DIRECTIONS.map(({ c, r }) => ({ c: c * 2, r: r * 2 }));
 
 /**
- * Puts every entity in a grid cell, next to the entities it shares relations with. Each connected
- * group is walked breadth-first from its busiest entity; groups sit side by side.
+ * Puts every entity in a grid cell, next to the entities it shares relations with; hierarchy
+ * children go in the row under their parent. Each connected group is walked breadth-first from its
+ * busiest entity (a hierarchy's root first); groups sit side by side.
  */
 export function entityGrid(shapes: ErShapes): Map<string, Cell> {
   const neighbors = entityNeighbors(shapes);
+  const hierarchy = hierarchyOf(shapes);
   const degree = (id: string) => neighbors.get(id)?.length ?? 0;
+  // Roots of hierarchies start their group, so the tree grows downwards.
+  const isRoot = (id: string) => (hierarchy.parentOf.has(id) ? 0 : 1);
   const order = shapes.entities
     .map((entity, i) => ({ id: entity.id, i }))
-    .sort((a, b) => degree(b.id) - degree(a.id) || a.i - b.i)
+    .sort((a, b) => isRoot(b.id) - isRoot(a.id) || degree(b.id) - degree(a.id) || a.i - b.i)
     .map((item) => item.id);
 
   const result = new Map<string, Cell>();
   let nextCol = 0;
   for (const start of order) {
     if (result.has(start)) continue;
-    const group = placeGroup(start, neighbors, degree);
+    const group = placeGroup(start, neighbors, degree, hierarchy);
     const minCol = Math.min(...[...group.values()].map((cell) => cell.c));
     const minRow = Math.min(...[...group.values()].map((cell) => cell.r));
     let maxCol = nextCol;
@@ -49,20 +54,23 @@ function placeGroup(
   start: string,
   neighbors: ReadonlyMap<string, string[]>,
   degree: (id: string) => number,
+  hierarchy: Hierarchy,
 ): Map<string, Cell> {
   const cells = new Map<string, Cell>([[start, { c: 0, r: 0 }]]);
   const taken = new Set([key({ c: 0, r: 0 })]);
   const queue = [start];
   while (queue.length) {
     const current = queue.shift()!;
+    // Hierarchy children first, so they get the row under their parent before anything else.
+    const isChild = (id: string) => (hierarchy.parentOf.get(id) === current ? 1 : 0);
     const next = [...(neighbors.get(current) ?? [])]
       .filter((id) => !cells.has(id))
-      .sort((a, b) => degree(b) - degree(a));
+      .sort((a, b) => isChild(b) - isChild(a) || degree(b) - degree(a));
     for (const id of next) {
       const placedNeighbors = (neighbors.get(id) ?? [])
         .map((n) => cells.get(n))
         .filter((cell): cell is Cell => cell !== undefined);
-      const cell = bestCell(placedNeighbors, taken);
+      const cell = hierarchyCell(id, hierarchy, cells, taken) ?? bestCell(placedNeighbors, taken);
       cells.set(id, cell);
       taken.add(key(cell));
       queue.push(id);

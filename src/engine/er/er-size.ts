@@ -1,4 +1,4 @@
-import { ER_FONT_SIZE } from "../document";
+import { ER_FONT_SIZE, type ErAttributeLook } from "../document";
 import type { Size } from "../geometry.types";
 import { measureText } from "../text/text-metrics";
 
@@ -17,9 +17,25 @@ export function entitySize(name: string): Size {
   return { w: Math.max(ENTITY_MIN_W, Math.ceil(text.w + ENTITY_PAD_X * 2)), h: ENTITY_H };
 }
 
-/** Attribute ellipse: the name fits on its middle line. */
-export function attributeSize(name: string): Size {
+/** Diameter of a lollipop attribute's circle. */
+export const LOLLIPOP_SIZE = 12;
+/** Space between a lollipop's label and its circle. */
+export const LOLLIPOP_GAP = 3;
+/** The hierarchy triangle. */
+export const ISA_SIZE: Size = { w: 64, h: 40 };
+
+/**
+ * Attribute: an ellipse with the name on its middle line, or (lollipop look) a small circle with
+ * the name above it.
+ */
+export function attributeSize(name: string, look: ErAttributeLook = "ellipse"): Size {
   const text = measureText(name, ER_FONT_SIZE);
+  if (look === "lollipop") {
+    return {
+      w: Math.max(LOLLIPOP_SIZE, Math.ceil(text.w)),
+      h: Math.ceil(text.h) + LOLLIPOP_GAP + LOLLIPOP_SIZE,
+    };
+  }
   return { w: Math.max(ATTRIBUTE_MIN_W, Math.ceil(text.w + ATTRIBUTE_PAD_X * 2)), h: ATTRIBUTE_H };
 }
 

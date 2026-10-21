@@ -29,11 +29,24 @@ export function drawErRelation(view: ShapeView, shape: ErRelationShape): void {
   if (shape.identifying) {
     g.poly(diamond(ER_DOUBLE_GAP)).stroke({ color, width: ER_STROKE_WIDTH, join: "miter" });
   }
+  if (shape.idMark) {
+    // Dependency by identification: a bar across the top corner with an "I" above it.
+    const y = h * 0.28;
+    const half = (w / 2) * (y / (h / 2));
+    g.moveTo(w / 2 - half, y)
+      .lineTo(w / 2 + half, y)
+      .stroke({ color, width: ER_STROKE_WIDTH });
+  }
   const text = view.setText(shape.name, { fontSize: ER_FONT_SIZE, color: INK_COLOR });
   text.position.set((w - text.width) / 2, (h - text.height) / 2);
 
   const ratio = cardinalityRatio(shape);
   const keep = new Set<string>();
+  if (shape.idMark) {
+    keep.add("id");
+    const mark = view.setTextSlot("id", "I", { fontSize: 10, color: INK_COLOR, fontWeight: "600" });
+    mark.position.set((w - mark.width) / 2, h * 0.28 - mark.height);
+  }
   if (ratio) {
     keep.add("ratio");
     const label = view.setTextSlot("ratio", ratio, {

@@ -9,74 +9,83 @@ import {
   INK_COLOR,
   type ErAttributeShape,
 } from "../../document";
+import { LOLLIPOP_SIZE } from "../../er/er-size";
 import { ellipseArc } from "../../geo";
+import { dashed } from "./dashed-path";
 import type { ShapeView } from "./shape-view";
 
-const DASH = 5;
-const DASH_GAP = 4;
 const UNDERLINE_OFFSET = 1;
 
 /**
- * An attribute: an ellipse with its name. Multivalued ones are doubled, derived ones dashed; key
- * attributes are underlined (dashed for a weak entity's partial key).
+ * An attribute. In the Chen look, an ellipse with its name: doubled when multivalued, dashed when
+ * derived, the name underlined for keys (dashed for a weak entity's partial key). In the lollipop
+ * look, a small circle with the name above: filled for keys, half-filled when optional.
  */
 export function drawErAttribute(view: ShapeView, shape: ErAttributeShape): void {
+  if (shape.look === "lollipop") drawLollipop(view, shape);
+  else drawEllipse(view, shape);
+}
+
+function drawEllipse(view: ShapeView, shape: ErAttributeShape): void {
   const { w, h } = shape;
-  const color = ER_ATTRIBUTE_COLOR;
   const g = view.graphics
     .clear()
     .ellipse(w / 2, h / 2, w / 2, h / 2)
     .fill({ color: ER_FILL_COLOR });
-  const stroke = { color, width: ER_STROKE_WIDTH };
-  if (shape.derived) {
-    dashed(g, ellipseArc(w / 2, h / 2, w / 2, h / 2, 0, 2 * Math.PI));
-    g.stroke(stroke);
-  } else {
-    g.ellipse(w / 2, h / 2, w / 2, h / 2).stroke(stroke);
-  }
-  if (shape.multivalued) {
-    const d = ER_DOUBLE_GAP;
-    g.ellipse(w / 2, h / 2, w / 2 - d, h / 2 - d).stroke(stroke);
-  }
-
+  outline(g, w / 2, h / 2, w / 2, h / 2, shape);
   const text = view.setText(shape.name, { fontSize: ER_FONT_SIZE, color: INK_COLOR });
   const x = (w - text.width) / 2;
   const y = (h - text.height) / 2;
   text.position.set(x, y);
+  underline(g, shape, x, y, text.width);
+}
+
+function drawLollipop(view: ShapeView, shape: ErAttributeShape): void {
+  const { w, h } = shape;
+  const r = LOLLIPOP_SIZE / 2;
+  const cx = w / 2;
+  const cy = h - r;
+  const g = view.graphics.clear().circle(cx, cy, r).fill({ color: ER_FILL_COLOR });
+  if (shape.key === "pk") g.circle(cx, cy, r).fill({ color: INK_COLOR });
+  else if (shape.optional) {
+    g.moveTo(cx - r, cy)
+      .arc(cx, cy, r, Math.PI, 0, true)
+      .closePath()
+      .fill({ color: INK_COLOR });
+  }
+  outline(g, cx, cy, r, r, shape);
+  const text = view.setText(shape.name, { fontSize: ER_FONT_SIZE, color: INK_COLOR });
+  const x = (w - text.width) / 2;
+  text.position.set(x, 0);
+  if (shape.key === "partial") underline(g, shape, x, 0, text.width);
+}
+
+/** The ellipse or circle: dashed when derived, doubled when multivalued. */
+function outline(
+  g: Graphics,
+  cx: number,
+  cy: number,
+  rx: number,
+  ry: number,
+  shape: ErAttributeShape,
+): void {
+  const stroke = { color: ER_ATTRIBUTE_COLOR, width: ER_STROKE_WIDTH };
+  if (shape.derived) dashed(g, ellipseArc(cx, cy, rx, ry, 0, 2 * Math.PI));
+  else g.ellipse(cx, cy, rx, ry);
+  g.stroke(stroke);
+  if (shape.multivalued) {
+    const d = Math.min(ER_DOUBLE_GAP, rx / 3);
+    g.ellipse(cx, cy, rx - d, ry - d).stroke(stroke);
+  }
+}
+
+/** Key attributes are underlined; a weak entity's partial key is underlined with dashes. */
+function underline(g: Graphics, shape: ErAttributeShape, x: number, y: number, width: number) {
   if (shape.key === "none") return;
   // The text node is measured with 1px of padding on each side; underline the glyphs only.
   const lineY = y + ER_FONT_SIZE * 1.2 + UNDERLINE_OFFSET;
-  const line = [x + 1, lineY, x + text.width - 1, lineY];
+  const line = [x + 1, lineY, x + width - 1, lineY];
   if (shape.key === "partial") dashed(g, line, false);
   else g.moveTo(line[0]!, line[1]!).lineTo(line[2]!, line[3]!);
   g.stroke({ color: INK_COLOR, width: 1 });
-}
-
-/** Adds a dashed path through the points (closed unless `closed` is false). */
-function dashed(g: Graphics, points: readonly number[], closed = true): void {
-  const list = closed ? [...points, points[0]!, points[1]!] : [...points];
-  let draw = true;
-  let left = DASH;
-  for (let i = 0; i + 3 < list.length; i += 2) {
-    let ax = list[i]!;
-    let ay = list[i + 1]!;
-    const bx = list[i + 2]!;
-    const by = list[i + 3]!;
-    let segment = Math.hypot(bx - ax, by - ay);
-    while (segment > 0) {
-      const step = Math.min(left, segment);
-      const t = step / segment;
-      const nx = ax + (bx - ax) * t;
-      const ny = ay + (by - ay) * t;
-      if (draw) g.moveTo(ax, ay).lineTo(nx, ny);
-      ax = nx;
-      ay = ny;
-      segment -= step;
-      left -= step;
-      if (left <= 1e-6) {
-        draw = !draw;
-        left = draw ? DASH : DASH_GAP;
-      }
-    }
-  }
 }

@@ -1,29 +1,50 @@
-import { isErShape, type BoardDocument } from "../document";
+import { isErShape, type BoardDocument, type ErShape } from "../document";
 
 /**
- * Removes attributes whose owner is gone (with their parts) and drops participants whose entity
- * is gone. Call inside a batch, after removing shapes.
+ * Cleans up after shapes were removed: attributes whose owner is gone (with their parts),
+ * hierarchies whose parent is gone, aggregations whose relation is gone and constraints whose
+ * relations or entity are gone are removed; participants and hierarchy children that point at
+ * removed shapes are dropped. Call inside a batch, after removing shapes.
  */
 export function pruneEr(doc: BoardDocument): void {
   const shapes = doc.all().filter(isErShape);
   const alive = new Set(shapes.map((s) => s.id));
-  const orphans = new Set<string>();
+  const gone = new Set<string>();
+  const dead = (id: string) => !alive.has(id) || gone.has(id);
   let found = true;
   while (found) {
     found = false;
     for (const shape of shapes) {
-      if (shape.type !== "er-attribute" || orphans.has(shape.id)) continue;
-      if (!alive.has(shape.ownerId) || orphans.has(shape.ownerId)) {
-        orphans.add(shape.id);
-        found = true;
-      }
+      if (gone.has(shape.id) || !isOrphan(shape, dead)) continue;
+      gone.add(shape.id);
+      found = true;
     }
   }
-  if (orphans.size) doc.remove(orphans);
+  if (gone.size) doc.remove(gone);
 
   for (const shape of shapes) {
-    if (shape.type !== "er-relation") continue;
-    const participants = shape.participants.filter((p) => alive.has(p.entityId));
-    if (participants.length !== shape.participants.length) doc.update(shape.id, { participants });
+    if (gone.has(shape.id)) continue;
+    if (shape.type === "er-relation") {
+      const participants = shape.participants.filter((p) => !dead(p.entityId));
+      if (participants.length !== shape.participants.length) doc.update(shape.id, { participants });
+    } else if (shape.type === "er-isa") {
+      const children = shape.children.filter((c) => !dead(c.entityId));
+      if (children.length !== shape.children.length) doc.update(shape.id, { children });
+    }
+  }
+}
+
+function isOrphan(shape: ErShape, dead: (id: string) => boolean): boolean {
+  switch (shape.type) {
+    case "er-attribute":
+      return dead(shape.ownerId);
+    case "er-isa":
+      return dead(shape.parentId);
+    case "er-aggregate":
+      return dead(shape.relationId);
+    case "er-constraint":
+      return dead(shape.fromId) || dead(shape.toId) || (!!shape.entityId && dead(shape.entityId));
+    default:
+      return false;
   }
 }

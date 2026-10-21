@@ -2,8 +2,11 @@ import type { Shape, ShapeType } from "../../document";
 import { drawConnector } from "./draw-connector";
 import { drawDbEnum } from "./draw-db-enum";
 import { drawDbTable } from "./draw-db-table";
+import { drawErAggregate } from "./draw-er-aggregate";
 import { drawErAttribute } from "./draw-er-attribute";
+import { drawErConstraint } from "./draw-er-constraint";
 import { drawErEntity } from "./draw-er-entity";
+import { drawErIsa } from "./draw-er-isa";
 import { drawErRelation } from "./draw-er-relation";
 import { drawGeo } from "./draw-geo";
 import { drawSection } from "./draw-section";
@@ -26,6 +29,9 @@ const DRAWERS: { [K in ShapeType]: ShapeDrawer<Extract<Shape, { type: K }>> } = 
   "er-entity": drawErEntity,
   "er-relation": drawErRelation,
   "er-attribute": drawErAttribute,
+  "er-isa": drawErIsa,
+  "er-aggregate": drawErAggregate,
+  "er-constraint": drawErConstraint,
 };
 
 export function drawShape(view: ShapeView, shape: Shape): void {

@@ -1,60 +1,85 @@
 import { parseSettings, type DbmlError, type TokenCursor } from "../../db/dbml";
-import { attributeNamed, parseAttributeTail, unknownSetting } from "./parse-attributes";
+import {
+  applyAttributeSetting,
+  attributeNamed,
+  endOfItem,
+  parseAttributeBlock,
+  isPrefix,
+  parsePrefixes,
+  unknownSetting,
+} from "./parse-attributes";
+import { parseCardinality } from "./parse-cardinality";
 import type { RawRelation, RelationLine } from "./parser.types";
 
-/** `Relation name [identifying] { Entity (min,max) as role | attribute … }`. */
+/** `Relation name [identifying, id, color: #hex] { Entity (min,max) as role [arrow] | attribute … }`. */
 export function parseRelation(cursor: TokenCursor, warnings: DbmlError[]): RawRelation {
   const keyword = cursor.next();
   const name = cursor.expectName("a relation name").value;
-  let identifying = false;
+  const relation: RawRelation = {
+    name,
+    identifying: false,
+    idMark: false,
+    color: null,
+    lines: [],
+    line: keyword.line,
+  };
   if (cursor.isSymbol("[")) {
     const at = cursor.peek();
-    parseSettings(cursor, (key) => {
-      if (key === "identifying") identifying = true;
-      else warnings.push(unknownSetting(key, at));
-      return false;
+    parseSettings(cursor, (key, hasValue) => {
+      if (key === "identifying") relation.identifying = true;
+      else if (key === "id") relation.idMark = true;
+      else if (key === "color" && hasValue) relation.color = cursor.expectColor();
+      else {
+        warnings.push(unknownSetting(key, at));
+        return false;
+      }
+      return true;
     });
   }
   cursor.expectSymbol("{");
-  const lines: RelationLine[] = [];
   for (;;) {
     cursor.skipNewlines();
     if (cursor.acceptSymbol("}")) break;
     if (cursor.atEnd()) throw cursor.error('Missing closing "}"');
-    lines.push(parseLine(cursor, warnings));
-    cursor.acceptSymbol(",");
-    cursor.expectEndOfLine();
+    relation.lines.push(parseLine(cursor, warnings));
+    endOfItem(cursor);
   }
-  return { name, identifying, lines, line: keyword.line };
+  return relation;
 }
 
+/** One line: a participant or an attribute; which one is decided once every name is known. */
 function parseLine(cursor: TokenCursor, warnings: DbmlError[]): RelationLine {
+  // `attr name` forces an attribute; `attr` alone is an attribute named "attr".
+  const next = cursor.peek(1);
+  const forcedAttribute =
+    cursor.isKeyword("attr") &&
+    (next.kind === "ident" || next.kind === "string" || isPrefix(next.value));
+  if (forcedAttribute) cursor.next();
+  const flags = parsePrefixes(cursor);
   const token = cursor.expectName("an entity or attribute name");
-  const cardinality = cursor.isSymbol("(") ? parseCardinality(cursor) : null;
-  let role = "";
+  const attribute = attributeNamed(token.value, token.line);
+  flags.forEach((apply) => apply(attribute));
+
+  const line: RelationLine = {
+    attribute,
+    cardinality: null,
+    role: "",
+    arrow: false,
+    forcedAttribute,
+  };
+  if (cursor.isSymbol("(")) line.cardinality = parseCardinality(cursor);
   if (cursor.isKeyword("as")) {
     cursor.next();
-    role = cursor.expectName("a role name").value;
+    line.role = cursor.expectName("a role name").value;
   }
-  const attribute = attributeNamed(token.value, token.line);
-  if (!cardinality && !role) parseAttributeTail(cursor, attribute, warnings);
-  return { attribute, cardinality, role };
-}
-
-/** `(0,n)`, `(1,1)`, `(1:n)`. */
-function parseCardinality(cursor: TokenCursor): { min: string; max: string } {
-  cursor.expectSymbol("(");
-  const min = bound(cursor, "a minimum like 0 or 1");
-  if (!cursor.acceptSymbol(":")) cursor.expectSymbol(",");
-  const max = bound(cursor, "a maximum like 1 or n");
-  cursor.expectSymbol(")");
-  return { min, max };
-}
-
-function bound(cursor: TokenCursor, what: string): string {
-  const token = cursor.peek();
-  if (token.kind === "number") return cursor.next().value;
-  if (token.kind === "ident" && /^[nm*]$/i.test(token.value))
-    return cursor.next().value.toLowerCase();
-  throw cursor.error(`Expected ${what}`);
+  if (cursor.isSymbol("[")) {
+    const at = cursor.peek();
+    parseSettings(cursor, (key) => {
+      if (key === "arrow") line.arrow = true;
+      else if (!applyAttributeSetting(attribute, key)) warnings.push(unknownSetting(key, at));
+      return false;
+    });
+  }
+  if (cursor.acceptSymbol("{")) attribute.children = parseAttributeBlock(cursor, warnings);
+  return line;
 }

@@ -1,11 +1,16 @@
-import { DbmlSyntaxError, TokenCursor, tokenize } from "../../db/dbml";
+import { DbmlSyntaxError, parseSettings, TokenCursor, tokenize } from "../../db/dbml";
+import { isPlain, unknownSetting } from "./parse-attributes";
+import { parseAggregate } from "./parse-aggregate";
+import { parseConstraint } from "./parse-constraint";
 import { parseEntity } from "./parse-entity";
+import { parseIsa } from "./parse-isa";
 import { parseRelation } from "./parse-relation";
 import type {
   ErParseResult,
   ParsedEr,
   ParsedErEntity,
   ParsedErRelation,
+  RawEntity,
   RawRelation,
 } from "./parser.types";
 
@@ -20,51 +25,110 @@ export function parseEr(source: string): ErParseResult {
 }
 
 function parseModel(cursor: TokenCursor): ParsedEr {
-  const entities: ParsedErEntity[] = [];
-  const raw: RawRelation[] = [];
-  const warnings: ParsedEr["warnings"] = [];
+  const model: ParsedEr = {
+    style: null,
+    entities: [],
+    relations: [],
+    isas: [],
+    aggregates: [],
+    constraints: [],
+    warnings: [],
+  };
+  const entities: RawEntity[] = [];
+  const relations: RawRelation[] = [];
   for (;;) {
     cursor.skipNewlines();
     if (cursor.atEnd()) break;
-    if (cursor.isKeyword("entity")) entities.push(parseEntity(cursor, warnings));
-    else if (cursor.isKeyword("relation")) raw.push(parseRelation(cursor, warnings));
-    else throw cursor.error("Expected Entity or Relation");
+    if (cursor.isKeyword("entity")) entities.push(parseEntity(cursor, model.warnings));
+    else if (cursor.isKeyword("relation")) relations.push(parseRelation(cursor, model.warnings));
+    else if (cursor.isKeyword("isa")) model.isas.push(parseIsa(cursor, model.warnings));
+    else if (cursor.isKeyword("aggregate"))
+      model.aggregates.push(parseAggregate(cursor, model.warnings));
+    else if (cursor.isKeyword("constraint")) model.constraints.push(parseConstraint(cursor));
+    else if (cursor.isKeyword("diagram")) parseDiagram(cursor, model);
+    else throw cursor.error("Expected Entity, Relation, Isa, Aggregate, Constraint or Diagram");
   }
-  const names = new Set(entities.map((e) => e.name));
-  return { entities, relations: raw.map((r) => sortLines(r, names)), warnings };
+  model.entities = entities.map(withoutIsa);
+  mergeInlineIsa(entities, model);
+  const known = new Set([...entities, ...model.aggregates].map((item) => item.name));
+  model.relations = relations.map((relation) => sortLines(relation, known));
+  return model;
+}
+
+function withoutIsa(entity: RawEntity): ParsedErEntity {
+  const { name, weak, color, attributes, line } = entity;
+  return { name, weak, color, attributes, line };
+}
+
+/** `Diagram [style: chen|lollipop]`. */
+function parseDiagram(cursor: TokenCursor, model: ParsedEr): void {
+  cursor.next();
+  if (!cursor.isSymbol("[")) return;
+  const at = cursor.peek();
+  parseSettings(cursor, (key, hasValue) => {
+    if (key !== "style" || !hasValue) {
+      model.warnings.push(unknownSetting(key, at));
+      return false;
+    }
+    const style = cursor.expectName("chen or lollipop").value.toLowerCase();
+    if (style === "lollipop") model.style = "lollipop";
+    else if (style === "chen") model.style = "ellipse";
+    else model.warnings.push(unknownSetting(`style: ${style}`, at));
+    return true;
+  });
+}
+
+/** `Entity X [isa: Y]` adds X as a child of Y's hierarchy, creating the hierarchy if needed. */
+function mergeInlineIsa(entities: readonly RawEntity[], model: ParsedEr): void {
+  for (const entity of entities) {
+    if (!entity.isa) continue;
+    let isa = model.isas.find((item) => item.parent === entity.isa);
+    if (!isa) {
+      isa = {
+        parent: entity.isa,
+        parentMin: "",
+        parentMax: "",
+        exclusive: false,
+        total: false,
+        discriminator: null,
+        children: [],
+        line: entity.line,
+      };
+      model.isas.push(isa);
+    }
+    if (!isa.children.some((child) => child.entity === entity.name)) {
+      isa.children.push({ entity: entity.name, min: "", max: "", line: entity.line });
+    }
+  }
 }
 
 /**
- * A line is a participant when it has a cardinality or a role, or names an entity; anything else
- * is an attribute of the relation.
+ * A line is a participant when it has a cardinality, a role or an arrow, or plainly names an entity
+ * or aggregation; anything else (or anything written with `attr`) is an attribute of the relation.
+ * Participants may name entities that don't exist yet; see `add-missing-entities.ts`.
  */
-function sortLines(relation: RawRelation, entities: ReadonlySet<string>): ParsedErRelation {
+function sortLines(relation: RawRelation, known: ReadonlySet<string>): ParsedErRelation {
   const result: ParsedErRelation = {
     name: relation.name,
     identifying: relation.identifying,
+    idMark: relation.idMark,
+    color: relation.color,
     participants: [],
     attributes: [],
     line: relation.line,
   };
-  for (const { attribute, cardinality, role } of relation.lines) {
-    const plain =
-      attribute.key === "none" &&
-      !attribute.multivalued &&
-      !attribute.derived &&
-      attribute.children.length === 0;
-    const named = plain && entities.has(attribute.name);
-    if (!cardinality && !role && !named) {
+  for (const { attribute, cardinality, role, arrow, forcedAttribute } of relation.lines) {
+    const named = isPlain(attribute) && known.has(attribute.name);
+    if (forcedAttribute || (!cardinality && !role && !arrow && !named)) {
       result.attributes.push(attribute);
       continue;
-    }
-    if (!entities.has(attribute.name)) {
-      throw new DbmlSyntaxError(`Unknown entity "${attribute.name}"`, attribute.line, 1);
     }
     result.participants.push({
       entity: attribute.name,
       min: cardinality?.min ?? "",
       max: cardinality?.max ?? "",
       role,
+      arrow,
       line: attribute.line,
     });
   }

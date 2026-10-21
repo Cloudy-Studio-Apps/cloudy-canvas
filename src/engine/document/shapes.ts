@@ -4,6 +4,7 @@ import type {
   DbEnumShape,
   DbTableShape,
   EditableShape,
+  ErNamedShape,
   ErShape,
   GeoShape,
   SectionShape,
@@ -15,8 +16,24 @@ export function isEditableShape(shape: Shape | undefined): shape is EditableShap
     shape?.type === "sticky" ||
     shape?.type === "text" ||
     shape?.type === "geo" ||
-    shape?.type === "section"
+    shape?.type === "section" ||
+    isErNamed(shape)
   );
+}
+
+/** ER shapes whose name is edited in place. */
+export function isErNamed(shape: Shape | undefined): shape is ErNamedShape {
+  return (
+    shape?.type === "er-entity" ||
+    shape?.type === "er-relation" ||
+    shape?.type === "er-attribute" ||
+    shape?.type === "er-aggregate"
+  );
+}
+
+/** The text an editable shape shows: its text, or an ER shape's name. */
+export function editableText(shape: EditableShape): string {
+  return isErNamed(shape) ? shape.name : shape.text;
 }
 
 export function isDbTable(shape: Shape | undefined): shape is DbTableShape {
@@ -38,7 +55,9 @@ export function isConnectable(shape: Shape | undefined): shape is ConnectableSha
     shape?.type === "text" ||
     shape?.type === "db-table" ||
     shape?.type === "db-enum" ||
-    isErShape(shape)
+    shape?.type === "er-entity" ||
+    shape?.type === "er-relation" ||
+    shape?.type === "er-attribute"
   );
 }
 
@@ -51,7 +70,5 @@ export function isSection(shape: Shape | undefined): shape is SectionShape {
 }
 
 export function isErShape(shape: Shape | undefined): shape is ErShape {
-  return (
-    shape?.type === "er-entity" || shape?.type === "er-relation" || shape?.type === "er-attribute"
-  );
+  return shape?.type.startsWith("er-") ?? false;
 }

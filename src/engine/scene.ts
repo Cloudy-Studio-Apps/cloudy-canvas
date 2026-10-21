@@ -1,6 +1,6 @@
 import { draftPath, resolveEnumLinks, resolveRelations, type EnumLink, type Relation } from "./db";
 import { resolveConnector } from "./connectors";
-import { resolveErLinks, type ErLink } from "./er";
+import { resolveErLinks, resolveErShapes, type ErLink } from "./er";
 import {
   compareZOrder,
   isConnector,
@@ -63,6 +63,8 @@ export class Scene {
       }
       return resolveConnector(shape, (id) => rawById.get(id));
     });
+    // Aggregations and constraints follow the ER shapes they're about.
+    this.list = resolveErShapes(this.list);
     this.list.sort(compareZOrder);
     this.byId = new Map(this.list.map((shape) => [shape.id, shape]));
     this.relationList = resolveRelations(this.list);
@@ -73,6 +75,13 @@ export class Scene {
   /** A shape as the scene sees it (connectors resolved). */
   get(id: string): Shape | undefined {
     return this.byId.get(id);
+  }
+
+  /** Ids of the shapes whose geometry is derived from other ER shapes (aggregations, constraints). */
+  erDerivedIds(): string[] {
+    return this.list
+      .filter((shape) => shape.type === "er-aggregate" || shape.type === "er-constraint")
+      .map((shape) => shape.id);
   }
 
   /** Connectors attached to any of the shapes. */
@@ -89,10 +98,10 @@ export class Scene {
     return topmostShapeAt(this.list, world, tolerance);
   }
 
-  /** Shapes touching the rect. Sections only count when the rect encloses them. */
+  /** Shapes touching the rect. Sections and ER aggregations only count when the rect encloses them. */
   shapesInRect(rect: Rect): Shape[] {
     return this.list.filter((shape) =>
-      isSection(shape)
+      isSection(shape) || shape.type === "er-aggregate"
         ? rectContainsRect(rect, shapeBounds(shape))
         : rectsIntersect(shapeBounds(shape), rect),
     );

@@ -12,6 +12,16 @@ export function fillShapeDefaults(shape: Shape): Shape {
       noteHidden: shape.noteHidden ?? false,
     };
   }
+  if (shape.type === "er-attribute") {
+    return { ...shape, optional: shape.optional ?? false, look: shape.look ?? "ellipse" };
+  }
+  if (shape.type === "er-relation") {
+    return {
+      ...shape,
+      idMark: shape.idMark ?? false,
+      participants: shape.participants.map((p) => ({ ...p, arrow: p.arrow ?? false })),
+    };
+  }
   return shape;
 }
 

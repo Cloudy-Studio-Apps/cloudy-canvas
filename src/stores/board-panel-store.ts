@@ -6,7 +6,9 @@ export const useBoardPanelStore = create<BoardPanelState>()((set) => ({
   schemaOpen: false,
   tableTab: "visual",
   erOpen: false,
+  erTab: "visual",
   setSchemaOpen: (schemaOpen) => set(schemaOpen ? { schemaOpen, erOpen: false } : { schemaOpen }),
   setTableTab: (tableTab) => set({ tableTab }),
+  setErTab: (erTab) => set({ erTab }),
   setErOpen: (erOpen) => set(erOpen ? { erOpen, schemaOpen: false } : { erOpen }),
 }));

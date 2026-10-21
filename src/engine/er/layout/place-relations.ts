@@ -1,5 +1,5 @@
 import type { ErRelationShape } from "../../document";
-import type { Point } from "../../geometry.types";
+import type { Point, Size } from "../../geometry.types";
 import type { ErShapes } from "../lang";
 import { angleTo } from "./box";
 import { LINK_LENGTH } from "./layout-metrics";
@@ -7,7 +7,7 @@ import type { Centers } from "./layout.types";
 
 const SIDES = [0, Math.PI / 2, Math.PI, -Math.PI / 2];
 /** Distance between diamonds that link the same entities. */
-const PARALLEL_GAP = 28;
+const PARALLEL_GAP = 36;
 
 /**
  * Places relation diamonds that aren't in `centers` yet: between their entities, or beside the
@@ -29,7 +29,7 @@ export function placeRelations(shapes: ErShapes, centers: Centers): void {
     const pair = pairKey(ids);
     const count = samePair.get(pair) ?? 0;
     samePair.set(pair, count + 1);
-    centers.set(relation.id, offsetAcross(mid, points, count, relation.h + PARALLEL_GAP));
+    centers.set(relation.id, offsetAcross(mid, points, count, relation));
   }
 
   for (const relation of pending.filter((r) => entityIds(r).length === 1)) {
@@ -86,14 +86,18 @@ export function angleDistance(a: number, b: number): number {
   return d > Math.PI ? 2 * Math.PI - d : d;
 }
 
-/** The n-th diamond between the same entities moves sideways: 0, +1, -1, +2, … steps. */
-function offsetAcross(mid: Point, points: readonly Point[], n: number, step: number): Point {
+/**
+ * The n-th diamond between the same entities moves sideways (0, +1, -1, +2, … steps), each step
+ * the diamond's extent in that direction plus a gap.
+ */
+function offsetAcross(mid: Point, points: readonly Point[], n: number, size: Size): Point {
   if (n === 0 || points.length < 2) return mid;
   const a = points[0]!;
   const b = points[1]!;
   const len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
   const nx = -(b.y - a.y) / len;
   const ny = (b.x - a.x) / len;
+  const step = Math.abs(nx) * size.w + Math.abs(ny) * size.h + PARALLEL_GAP;
   const k = Math.ceil(n / 2) * (n % 2 === 1 ? 1 : -1);
   return { x: mid.x + nx * k * step, y: mid.y + ny * k * step };
 }

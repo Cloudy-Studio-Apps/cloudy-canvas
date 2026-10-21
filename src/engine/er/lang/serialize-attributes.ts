@@ -42,5 +42,6 @@ function attributeSettings(attribute: ErAttributeShape): string {
   if (attribute.key !== "none") settings.push(attribute.key);
   if (attribute.multivalued) settings.push("multi");
   if (attribute.derived) settings.push("derived");
+  if (attribute.optional) settings.push("optional");
   return settings.length ? ` [${settings.join(", ")}]` : "";
 }

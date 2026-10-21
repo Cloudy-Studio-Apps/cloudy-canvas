@@ -11,3 +11,8 @@ export interface ErPlan {
 export type ErReconcileResult = { ok: true; plan: ErPlan } | { ok: false; error: DbmlError };
 
 export type ErApplyResult = { ok: true; warnings: DbmlError[] } | { ok: false; error: DbmlError };
+
+export interface ErApplyOptions {
+  /** Create entities that relations or hierarchies name but nothing defines, instead of failing. */
+  createMissing?: boolean;
+}

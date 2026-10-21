@@ -2,7 +2,7 @@ import { isModKey } from "@core";
 
 import type { Camera } from "../camera";
 import type { BoardDocument, EditableShape, TextShape } from "../document";
-import { isEditableShape } from "../document";
+import { editableText, isEditableShape, isErNamed } from "../document";
 import { Disposables } from "../utils";
 import { commitTextEdit } from "./commit-text-edit";
 import { editorFontSize, editorOrigin, textEditorStyle } from "./text-editor-style";
@@ -100,6 +100,9 @@ export class TextEditor {
   private resizeToContent(): void {
     const session = this.session;
     if (session?.shape.type === "geo") return centerVertically(session.textarea, session.shape.h);
+    if (session && isErNamed(session.shape) && session.shape.type !== "er-aggregate") {
+      return centerVertically(session.textarea, session.shape.h);
+    }
     if (session?.shape.type !== "text" && session?.shape.type !== "section") return;
     const { textarea, shape } = session;
     const fontSize = editorFontSize(shape);
@@ -112,7 +115,12 @@ export class TextEditor {
   private handleKeyDown = (event: KeyboardEvent) => {
     // Keep canvas shortcuts (Delete, V, H, …) from firing while typing.
     event.stopPropagation();
-    if (event.key === "Escape" || (event.key === "Enter" && isModKey(event))) {
+    // ER names are one line, so plain Enter finishes them.
+    const oneLine = this.session ? isErNamed(this.session.shape) : false;
+    if (
+      event.key === "Escape" ||
+      (event.key === "Enter" && (isModKey(event) || (oneLine && !event.shiftKey)))
+    ) {
       event.preventDefault();
       this.commit();
     }
@@ -124,6 +132,10 @@ const TEXTAREA_LABELS: Record<EditableShape["type"], string> = {
   text: "Text",
   geo: "Shape text",
   section: "Section title",
+  "er-entity": "Entity name",
+  "er-relation": "Relation name",
+  "er-attribute": "Attribute name",
+  "er-aggregate": "Aggregation name",
 };
 
 /** Pads the top of a shape's textarea so its (wrapped) text sits in the middle, like on canvas. */
@@ -137,7 +149,7 @@ function centerVertically(textarea: HTMLTextAreaElement, height: number): void {
 
 function createTextarea(shape: EditableShape): HTMLTextAreaElement {
   const textarea = document.createElement("textarea");
-  textarea.value = shape.text;
+  textarea.value = editableText(shape);
   textarea.spellcheck = false;
   textarea.setAttribute("aria-label", TEXTAREA_LABELS[shape.type]);
   textarea.dataset.canvasTextEditor = "";

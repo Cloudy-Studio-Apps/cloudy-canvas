@@ -1,13 +1,20 @@
 import type { ErShape } from "../../document";
 import type { Size } from "../../geometry.types";
 import type { ErShapes } from "../lang";
+import { clearAggregateBoxes, clearAggregateBoxesForIsas } from "./aggregate-boxes";
 import { boxAt, overlaps } from "./box";
 import { segmentHitsRect } from "./obstacles";
 import { entityGrid } from "./entity-grid";
 import { entityNeighbors, erShapeMap } from "./er-graph";
 import { layoutMetrics } from "./layout-metrics";
 import type { Centers, LayoutMetrics } from "./layout.types";
+import {
+  placeAggregateCenters,
+  pushIsasOutOfAggregates,
+  pushOutOfAggregates,
+} from "./place-aggregates";
 import { placeAttributes } from "./place-attributes";
+import { placeIsas } from "./place-isas";
 import { placeRelations } from "./place-relations";
 import { resolveOverlaps } from "./resolve-overlaps";
 
@@ -32,11 +39,31 @@ export function layoutAll(shapes: ErShapes): Centers {
   for (const [id, cell] of entityGrid(shapes)) {
     centers.set(id, { x: cell.c * metrics.pitchX, y: cell.r * metrics.pitchY });
   }
-  placeRelations(shapes, centers);
-  placeAttributes(shapes, centers);
-  const movable = new Set([...shapes.relations, ...shapes.attributes].map((s) => s.id));
+  placeAroundEntities(shapes, centers);
+  const movable = new Set(
+    [...shapes.relations, ...shapes.attributes, ...shapes.isas].map((s) => s.id),
+  );
   resolveOverlaps(centers, sizesOf(shapes), movable);
   return centers;
+}
+
+/**
+ * With the entities placed: hierarchy triangles, then diamonds (those between entities first, so
+ * aggregation boxes can be worked out before the relations that use them), then attributes.
+ */
+function placeAroundEntities(shapes: ErShapes, centers: Centers): void {
+  placeIsas(shapes, centers);
+  const boxes = new Set(shapes.aggregates.map((a) => a.id));
+  const usesBox = (r: ErShapes["relations"][number]) =>
+    r.participants.some((p) => boxes.has(p.entityId));
+  placeRelations({ ...shapes, relations: shapes.relations.filter((r) => !usesBox(r)) }, centers);
+  const boxSizes = placeAggregateCenters(shapes, centers);
+  placeRelations(shapes, centers);
+  pushOutOfAggregates(shapes, centers, boxSizes);
+  pushIsasOutOfAggregates(shapes, centers, boxSizes);
+  placeAttributes(shapes, centers, boxSizes);
+  clearAggregateBoxes(shapes, centers);
+  clearAggregateBoxesForIsas(shapes, centers);
 }
 
 /**
@@ -56,8 +83,7 @@ export function placeNew(shapes: ErShapes, fixed: Centers, added: ReadonlySet<st
       nearFreeSpot(entity, neighbors.get(entity.id) ?? [], centers, byId, metrics),
     );
   }
-  placeRelations(shapes, centers);
-  placeAttributes(shapes, centers);
+  placeAroundEntities(shapes, centers);
   resolveOverlaps(centers, sizesOf(shapes), added);
   return centers;
 }
@@ -98,8 +124,8 @@ function nearFreeSpot(
   return { x: right + footprint.w / 2 + metrics.ringX, y: top + footprint.h / 2 };
 }
 
-function sizesOf({ entities, relations, attributes }: ErShapes): Map<string, Size> {
+function sizesOf({ entities, relations, attributes, isas }: ErShapes): Map<string, Size> {
   return new Map<string, Size>(
-    [...entities, ...relations, ...attributes].map((s) => [s.id, { w: s.w, h: s.h }]),
+    [...entities, ...relations, ...attributes, ...isas].map((s) => [s.id, { w: s.w, h: s.h }]),
   );
 }

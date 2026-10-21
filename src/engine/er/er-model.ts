@@ -1,15 +1,20 @@
-import { isErShape, type BoardDocument } from "../document";
+import { isErShape, type BoardDocument, type ErShape } from "../document";
 import { freeName } from "../db/table-edits";
 import type { Point } from "../geometry.types";
 import { Emitter } from "../utils";
 import { applyErPlan } from "./apply-er-plan";
 import { createErEntity } from "./create-er-shapes";
-import { allErShapes, erShapes } from "./er-shapes";
+import { erShapes, placedErShapes } from "./er-shapes";
 import { parseEr, serializeEr } from "./lang";
 import { layoutAll } from "./layout";
 import { placeAt } from "./position-layout";
 import { reconcileEr } from "./reconcile-er";
-import type { ErApplyResult } from "./reconcile-er.types";
+import type { ErApplyOptions, ErApplyResult } from "./reconcile-er.types";
+import { addMissingEntities } from "./add-missing-entities";
+import { ErEdits } from "./er-edits";
+import { withErMembers } from "./er-members";
+import { pruneEr } from "./prune-er";
+import type { ErShapes } from "./lang";
 
 /**
  * The board's ER diagram: every entity, relation and attribute together. Reads it as text and
@@ -17,11 +22,14 @@ import type { ErApplyResult } from "./reconcile-er.types";
  * truth and the text is a view of them.
  */
 export class ErModel {
+  /** Edits from the visual editor. */
+  readonly edits: ErEdits;
   private readonly emitter = new Emitter();
   private version = 0;
   private readonly unobserve: () => void;
 
   constructor(private readonly doc: BoardDocument) {
+    this.edits = new ErEdits(doc);
     this.unobserve = doc.observe((change) => {
       const touched =
         change.removed.size > 0 || [...change.updated].some((id) => isErShape(doc.get(id)));
@@ -43,20 +51,42 @@ export class ErModel {
 
   text = (): string => serializeEr(erShapes(this.doc));
 
-  /** Replaces the diagram with the text's content. New shapes are placed automatically. */
-  applyText = (text: string): ErApplyResult => {
+  /** Every ER shape by kind (a fresh read; cache it per version in UI hosts). */
+  shapes = (): ErShapes => erShapes(this.doc);
+
+  shape(id: string): ErShape | undefined {
+    const shape = this.doc.get(id);
+    return isErShape(shape) ? shape : undefined;
+  }
+
+  /** Removes a shape and what belongs to it (its attributes; a hierarchy's discriminator…). */
+  remove = (id: string): void => {
+    this.doc.checkpoint();
+    this.doc.batch(() => {
+      this.doc.remove(withErMembers([id], this.doc.all(), false));
+      pruneEr(this.doc);
+    });
+  };
+
+  /**
+   * Replaces the diagram with the text's content. New shapes are placed automatically. With
+   * `createMissing`, entities that relations or hierarchies name but nothing defines are created
+   * (for pasted or finished text, so half-typed names don't become entities).
+   */
+  applyText = (text: string, options: ErApplyOptions = {}): ErApplyResult => {
     const parsed = parseEr(text);
     if (!parsed.ok) return parsed;
-    const result = reconcileEr(parsed.model, erShapes(this.doc));
+    const model = options.createMissing ? addMissingEntities(parsed.model) : parsed.model;
+    const result = reconcileEr(model, erShapes(this.doc));
     if (!result.ok) return result;
     applyErPlan(this.doc, result.plan);
-    return { ok: true, warnings: parsed.model.warnings };
+    return { ok: true, warnings: model.warnings };
   };
 
   /** Lays the whole diagram out again, keeping its top-left corner where it is. One undo step. */
   relayout = (): void => {
     const shapes = erShapes(this.doc);
-    const all = allErShapes(shapes);
+    const all = placedErShapes(shapes);
     if (all.length === 0) return;
     const origin = {
       x: Math.min(...all.map((s) => s.x)),

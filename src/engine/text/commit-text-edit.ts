@@ -1,4 +1,6 @@
-import type { BoardDocument } from "../document";
+import { isErNamed, type BoardDocument, type ErNamedShape } from "../document";
+import { attributeSize, entitySize, relationSize } from "../er/er-size";
+import type { Size } from "../geometry.types";
 import { measureText } from "./text-metrics";
 import type { TextEdit } from "./commit-text-edit.types";
 
@@ -11,6 +13,10 @@ export function commitTextEdit(doc: BoardDocument, { shape, text, isDraft }: Tex
     // A section always keeps a title; clearing it keeps the previous one.
     const title = text.trim();
     if (title && title !== shape.text) doc.update(shape.id, { text: title });
+    return false;
+  }
+  if (isErNamed(shape)) {
+    renameEr(doc, shape, text.trim());
     return false;
   }
   if (shape.type === "sticky" || shape.type === "geo") {
@@ -29,4 +35,24 @@ export function commitTextEdit(doc: BoardDocument, { shape, text, isDraft }: Tex
   if (empty) doc.remove([shape.id]);
   else if (text !== shape.text) doc.update(shape.id, { text, w: size.w, h: size.h });
   return false;
+}
+
+/** ER names keep the previous one when cleared; the shape resizes round its center. */
+function renameEr(doc: BoardDocument, shape: ErNamedShape, name: string): void {
+  if (!name || name === shape.name) return;
+  const size = erNameSize(shape, name);
+  if (!size) return doc.update(shape.id, { name });
+  doc.update(shape.id, {
+    name,
+    ...size,
+    x: Math.round(shape.x + shape.w / 2 - size.w / 2),
+    y: Math.round(shape.y + shape.h / 2 - size.h / 2),
+  });
+}
+
+function erNameSize(shape: ErNamedShape, name: string): Size | null {
+  if (shape.type === "er-entity") return entitySize(name);
+  if (shape.type === "er-relation") return relationSize(name);
+  if (shape.type === "er-attribute") return attributeSize(name, shape.look);
+  return null;
 }

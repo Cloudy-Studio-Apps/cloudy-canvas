@@ -407,6 +407,10 @@ export class CanvasEngine {
     for (const id of this.scene.connectorsAttachedTo([...change.updated, ...change.removed])) {
       if (!change.removed.has(id)) ids.add(id);
     }
+    // So do aggregation boxes and constraints, when any ER shape changes.
+    if ([...change.updated].some((id) => isErShape(this.scene.get(id))) || change.removed.size) {
+      for (const id of this.scene.erDerivedIds()) ids.add(id);
+    }
     const changed = [...ids]
       .map((id) => this.scene.get(id))
       .filter((shape): shape is Shape => shape !== undefined);
@@ -446,9 +450,12 @@ export class CanvasEngine {
 
   // ── State helpers ─────────────────────────────────────────────────────
 
-  /** The ids plus what moves and deletes with them: section contents and ER attributes. */
-  private withMembers(ids: Iterable<string>): Set<string> {
-    return withErMembers(withSectionMembers(ids, this.scene.shapes), this.scene.shapes);
+  /**
+   * The ids plus what moves and deletes with them: section contents and ER attributes, and (when
+   * dragging, `boxed`) what an ER aggregation box holds.
+   */
+  private withMembers(ids: Iterable<string>, boxed = true): Set<string> {
+    return withErMembers(withSectionMembers(ids, this.scene.shapes), this.scene.shapes, boxed);
   }
 
   private shapeAt(world: Point): Shape | undefined {
@@ -500,6 +507,7 @@ export class CanvasEngine {
       selectedTableId: this.selectedOfType("db-table"),
       selectedEnumId: this.selectedOfType("db-enum"),
       erSelected: [...this.scene.selection.ids].some((id) => isErShape(this.doc.get(id))),
+      selectedErId: this.selectedErId(),
       selectionTypes: this.selectionTypes(),
       canUndo: this.doc.canUndo(),
       canRedo: this.doc.canRedo(),
@@ -510,6 +518,11 @@ export class CanvasEngine {
   private selectionTypes(): string {
     const types = new Set([...this.scene.selection.ids].map((id) => this.scene.get(id)?.type));
     return [...types].filter(Boolean).sort().join(",");
+  }
+
+  private selectedErId(): string | null {
+    const id = this.scene.selection.single();
+    return id && isErShape(this.doc.get(id)) ? id : null;
   }
 
   /** The selected shape's id when exactly one shape of `type` is selected. */

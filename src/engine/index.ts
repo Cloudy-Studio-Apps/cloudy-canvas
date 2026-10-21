@@ -17,6 +17,18 @@ export type {
   DbRef,
   DbRefKind,
   DbTableShape,
+  ErAggregateShape,
+  ErAttributeKey,
+  ErAttributeLook,
+  ErAttributeShape,
+  ErConstraintKind,
+  ErConstraintShape,
+  ErEntityShape,
+  ErIsaChild,
+  ErIsaShape,
+  ErParticipant,
+  ErRelationShape,
+  ErShape,
   GeoKind,
   SectionShape,
   Shape,
@@ -37,6 +49,20 @@ export type {
   IncomingRef,
 } from "./db";
 export { COLUMN_TYPES, INDEX_TYPES, TYPE_ARGS } from "./db";
+export type {
+  ErAggregatePatch,
+  ErApplyResult,
+  ErAttributePatch,
+  ErConstraintPatch,
+  ErEntityPatch,
+  ErIsaChildPatch,
+  ErIsaPatch,
+  ErModel,
+  ErParticipantPatch,
+  ErRelationPatch,
+  ErShapes,
+} from "./er";
+export { cardinalityRatio } from "./er";
 export { CanvasEngine } from "./canvas-engine";
 export { AGENT_INSTRUCTIONS, createAgentTools } from "./agent";
 export { KEYMAP, shortcutLabel } from "./input";
@@ -48,6 +74,8 @@ export {
   splitColumnType,
   DB_ENUM_COLOR,
   DB_HEADER_COLORS,
+  ER_ENTITY_COLOR,
+  ER_RELATION_COLOR,
   GEO_KINDS,
   SECTION_COLORS,
   SHAPE_FILLS,

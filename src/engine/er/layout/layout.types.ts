@@ -23,3 +23,9 @@ export interface Obstacles {
   rects: Rect[];
   segments: [Point, Point][];
 }
+
+/** Hierarchy links between entities: child → parent, and parent → children in text order. */
+export interface Hierarchy {
+  parentOf: Map<string, string>;
+  childrenOf: Map<string, string[]>;
+}

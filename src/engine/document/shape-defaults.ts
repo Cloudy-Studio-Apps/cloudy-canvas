@@ -30,3 +30,5 @@ export const ER_FONT_SIZE = 14;
 export const ER_STROKE_WIDTH = 1.5;
 /** Gap between the two outlines of weak entities, identifying relations and multivalued attributes. */
 export const ER_DOUBLE_GAP = 4;
+/** Height of the name strip at the top of an ER aggregation box. */
+export const ER_AGGREGATE_TITLE_H = 20;

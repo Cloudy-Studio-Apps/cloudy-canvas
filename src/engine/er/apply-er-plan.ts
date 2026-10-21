@@ -2,7 +2,7 @@ import type { BoardDocument, ErShape, ShapePatch } from "../document";
 import { unionRects } from "../geometry";
 import type { Point } from "../geometry.types";
 import { shapeBounds } from "../hit-test";
-import { allErShapes } from "./er-shapes";
+import { allErShapes, placedErShapes } from "./er-shapes";
 import { layoutAll, placeNew } from "./layout";
 import { centersOf, placeAt, topLefts } from "./position-layout";
 import type { ErPlan } from "./reconcile-er.types";
@@ -17,12 +17,14 @@ const BOARD_GAP = 160;
  */
 export function applyErPlan(doc: BoardDocument, { shapes, added, removed }: ErPlan): void {
   const all = allErShapes(shapes);
-  const kept = all.filter((s) => !added.has(s.id));
+  // Aggregations and constraints aren't placed: their geometry follows the shapes they connect.
+  const placed = placedErShapes(shapes);
+  const kept = placed.filter((s) => !added.has(s.id));
   const first = kept[0];
   const positions =
     kept.length > 1
-      ? topLefts(all, placeNew(shapes, centersOf(kept), added))
-      : placeAt(all, layoutAll(shapes), first ?? freeOrigin(doc, new Set(removed)));
+      ? topLefts(placed, placeNew(shapes, centersOf(kept), added))
+      : placeAt(placed, layoutAll(shapes), first ?? freeOrigin(doc, new Set(removed)));
 
   doc.checkpoint();
   doc.batch(() => {

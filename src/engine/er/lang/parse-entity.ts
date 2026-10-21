@@ -1,20 +1,32 @@
 import { parseSettings, type DbmlError, type TokenCursor } from "../../db/dbml";
 import { parseAttributeBlock, unknownSetting } from "./parse-attributes";
-import type { ParsedErEntity } from "./parser.types";
+import type { RawEntity } from "./parser.types";
 
-/** `Entity name [weak] { attributes }`. */
-export function parseEntity(cursor: TokenCursor, warnings: DbmlError[]): ParsedErEntity {
+/** `Entity name [weak, color: #hex, isa: Parent] { attributes }`; the block is optional. */
+export function parseEntity(cursor: TokenCursor, warnings: DbmlError[]): RawEntity {
   const keyword = cursor.next();
   const name = cursor.expectName("an entity name").value;
-  let weak = false;
+  const entity: RawEntity = {
+    name,
+    weak: false,
+    color: null,
+    isa: null,
+    attributes: [],
+    line: keyword.line,
+  };
   if (cursor.isSymbol("[")) {
     const at = cursor.peek();
-    parseSettings(cursor, (key) => {
-      if (key === "weak") weak = true;
-      else warnings.push(unknownSetting(key, at));
-      return false;
+    parseSettings(cursor, (key, hasValue) => {
+      if (key === "weak") entity.weak = true;
+      else if (key === "color" && hasValue) entity.color = cursor.expectColor();
+      else if (key === "isa" && hasValue) entity.isa = cursor.expectName("a parent entity").value;
+      else {
+        warnings.push(unknownSetting(key, at));
+        return false;
+      }
+      return true;
     });
   }
-  cursor.expectSymbol("{");
-  return { name, weak, attributes: parseAttributeBlock(cursor, warnings), line: keyword.line };
+  if (cursor.acceptSymbol("{")) entity.attributes = parseAttributeBlock(cursor, warnings);
+  return entity;
 }

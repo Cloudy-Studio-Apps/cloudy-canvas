@@ -9,7 +9,10 @@ export type ShapeType =
   | "section"
   | "er-entity"
   | "er-relation"
-  | "er-attribute";
+  | "er-attribute"
+  | "er-isa"
+  | "er-aggregate"
+  | "er-constraint";
 
 export interface ShapeBase {
   id: string;
@@ -186,29 +189,41 @@ export interface ErEntityShape extends ShapeBase {
   color: string;
 }
 
-/** One entity taking part in an ER relation, by id so renames and moves never break it. */
+/** One entity (or aggregation) taking part in an ER relation, by id so renames and moves never break it. */
 export interface ErParticipant {
   id: string;
+  /** An `er-entity` or an `er-aggregate`. */
   entityId: string;
   /** Cardinality, e.g. `0` and `n` for `(0,n)`; both empty when none was given. */
   min: string;
   max: string;
   /** Role name for unary relations (`Empleado (0,1) as jefe`), or empty. */
   role: string;
+  /** An arrowhead at the entity end. */
+  arrow: boolean;
 }
 
-/** An ER relation: a diamond (doubled when identifying) linked to its participants. */
+/** An ER relation: a diamond linked to its participants. */
 export interface ErRelationShape extends ShapeBase {
   type: "er-relation";
   name: string;
+  /** Drawn as a double diamond. */
   identifying: boolean;
+  /** Drawn with an "I" bar at the top corner (dependency by identification). */
+  idMark: boolean;
   color: string;
   participants: ErParticipant[];
 }
 
 export type ErAttributeKey = "none" | "pk" | "partial";
 
-/** An ER attribute: an ellipse linked to its owner (an entity, a relation or a composite attribute). */
+/** Chen ellipses, or small "lollipop" circles on sticks. */
+export type ErAttributeLook = "ellipse" | "lollipop";
+
+/**
+ * An ER attribute, linked to its owner: an entity, a relation, a composite attribute, a hierarchy
+ * (its discriminator) or an aggregation.
+ */
 export interface ErAttributeShape extends ShapeBase {
   type: "er-attribute";
   ownerId: string;
@@ -218,11 +233,73 @@ export interface ErAttributeShape extends ShapeBase {
   multivalued: boolean;
   /** Drawn dashed. */
   derived: boolean;
+  /** Drawn half-filled in the lollipop look. */
+  optional: boolean;
+  look: ErAttributeLook;
   /** Position among the owner's attributes, so the text keeps their order. */
   order: number;
 }
 
-export type ErShape = ErEntityShape | ErRelationShape | ErAttributeShape;
+/** One specialized entity of a hierarchy. */
+export interface ErIsaChild {
+  id: string;
+  entityId: string;
+  min: string;
+  max: string;
+}
+
+/** A generalization / specialization ("ES UN" triangle) from a parent entity to its children. */
+export interface ErIsaShape extends ShapeBase {
+  type: "er-isa";
+  parentId: string;
+  /** Cardinality shown on the parent's line, or empty. */
+  parentMin: string;
+  parentMax: string;
+  /** Exclusive (an arc under the triangle) rather than overlapping. */
+  exclusive: boolean;
+  /** Total (a small circle on the parent's line) rather than partial. */
+  total: boolean;
+  children: ErIsaChild[];
+}
+
+/**
+ * An aggregation: a box around a relation and its participants that takes part in other relations
+ * like an entity. Its bounds are derived from those shapes whenever the board changes.
+ */
+export interface ErAggregateShape extends ShapeBase {
+  type: "er-aggregate";
+  name: string;
+  relationId: string;
+}
+
+export type ErConstraintKind = "exclusive" | "inclusive" | "exclusion" | "inclusion";
+
+/**
+ * A constraint between two relations. Exclusive and inclusive ones are about how one entity takes
+ * part in both; inclusion and inclusive ones point from `fromId` (the requirement) to `toId`.
+ * Its bounds and `points` are derived from the shapes it connects.
+ */
+export interface ErConstraintShape extends ShapeBase {
+  type: "er-constraint";
+  rule: ErConstraintKind;
+  /** The entity, for exclusive and inclusive constraints; otherwise empty. */
+  entityId: string;
+  fromId: string;
+  toId: string;
+  /** Cardinality of an inclusive constraint, e.g. `(2,n)`; otherwise empty. */
+  min: string;
+  max: string;
+  /** Resolved drawing, relative to (x, y): see `er/resolve-constraint.ts`. */
+  points: number[];
+}
+
+export type ErShape =
+  | ErEntityShape
+  | ErRelationShape
+  | ErAttributeShape
+  | ErIsaShape
+  | ErAggregateShape
+  | ErConstraintShape;
 
 /** Looks of a connector, shared by the connector tool options and new connectors. */
 export interface ConnectorStyleOptions {
@@ -243,7 +320,10 @@ export type Shape =
   | SectionShape
   | ErEntityShape
   | ErRelationShape
-  | ErAttributeShape;
+  | ErAttributeShape
+  | ErIsaShape
+  | ErAggregateShape
+  | ErConstraintShape;
 
 /** Fields that can be changed after creation (id and type are immutable). */
 export type ShapePatch = Partial<Omit<StickyShape, "id" | "type">> &
@@ -256,10 +336,16 @@ export type ShapePatch = Partial<Omit<StickyShape, "id" | "type">> &
   Partial<Omit<SectionShape, "id" | "type">> &
   Partial<Omit<ErEntityShape, "id" | "type">> &
   Partial<Omit<ErRelationShape, "id" | "type">> &
-  Partial<Omit<ErAttributeShape, "id" | "type">>;
+  Partial<Omit<ErAttributeShape, "id" | "type">> &
+  Partial<Omit<ErIsaShape, "id" | "type">> &
+  Partial<Omit<ErAggregateShape, "id" | "type">> &
+  Partial<Omit<ErConstraintShape, "id" | "type">>;
 
 /** Shapes whose text can be edited in place. */
-export type EditableShape = StickyShape | TextShape | GeoShape | SectionShape;
+export type EditableShape = StickyShape | TextShape | GeoShape | SectionShape | ErNamedShape;
+
+/** ER shapes renamed in place with the text editor. */
+export type ErNamedShape = ErEntityShape | ErRelationShape | ErAttributeShape | ErAggregateShape;
 
 /** Shapes connectors can attach to. */
 export type ConnectableShape =

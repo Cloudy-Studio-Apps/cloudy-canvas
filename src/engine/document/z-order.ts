@@ -10,7 +10,8 @@ const MAX_AREA = 10 ** AREA_DIGITS - 1;
  * by its fractional index.
  */
 export function zOrderKey(shape: Shape): string {
-  if (shape.type !== "section") return `1${shape.index}`;
+  // ER aggregation boxes sit behind like sections.
+  if (shape.type !== "section" && shape.type !== "er-aggregate") return `1${shape.index}`;
   const area = Math.min(MAX_AREA, Math.max(0, Math.round(shape.w * shape.h)));
   return `0${String(MAX_AREA - area).padStart(AREA_DIGITS, "0")}${shape.index}`;
 }

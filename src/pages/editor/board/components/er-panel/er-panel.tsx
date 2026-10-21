@@ -3,24 +3,29 @@ import { LayoutGrid, X } from "lucide-react";
 
 import { useBoardPanelStore } from "@stores/board-panel-store";
 import { Button } from "@ui/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui/components/ui/tabs";
 import { useEngine, useEngineState } from "../../engine/engine-context";
-import { useErVersion } from "../../engine/use-er-version";
 import { FloatingPanel } from "../floating-panel";
-import { SourceEditor } from "../source-editor";
-import { ErSyntaxHint } from "./er-syntax-hint";
+import { ErAddMenu } from "./er-add-menu";
+import { ErStyleToggle } from "./er-style-toggle";
+import { ErTextEditor } from "./er-text-editor";
+import { ErShapeForm } from "./forms";
 
 /**
- * Right side panel for the board's ER diagram: its text, applied while typing, and a re-layout
- * button. Opens when an ER shape is selected and stays open until closed (or a table is picked).
+ * Right side panel for the board's ER diagram: a form for the selected shape (Visual) or the whole
+ * diagram as text (Text), plus Add, re-layout and the attribute style. Opens when an ER shape is
+ * selected and stays open until closed (or a database table is picked).
  */
 export function ErPanel() {
   const engine = useEngine();
-  const version = useErVersion();
   const erSelected = useEngineState((state) => state.erSelected);
+  const selectedId = useEngineState((state) => state.selectedErId);
   const dbSelected = useEngineState((state) => !!(state.selectedTableId || state.selectedEnumId));
   const schemaOpen = useBoardPanelStore((state) => state.schemaOpen);
   const open = useBoardPanelStore((state) => state.erOpen);
   const setOpen = useBoardPanelStore((state) => state.setErOpen);
+  const tab = useBoardPanelStore((state) => state.erTab);
+  const setTab = useBoardPanelStore((state) => state.setErTab);
 
   useEffect(() => {
     if (erSelected) setOpen(true);
@@ -37,11 +42,19 @@ export function ErPanel() {
       aria-label="ER diagram editor"
       className="max-h-full w-[340px] flex-col items-stretch gap-3 p-3"
     >
-      <header className="flex items-center gap-2">
+      <header className="flex items-center gap-1">
         <h2 className="flex-1 text-sm font-semibold">ER diagram</h2>
-        <Button variant="ghost" size="sm" onClick={() => engine.er.relayout()}>
+        <ErAddMenu />
+        <ErStyleToggle />
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-7"
+          aria-label="Re-layout"
+          title="Re-layout the whole diagram"
+          onClick={() => engine.er.relayout()}
+        >
           <LayoutGrid />
-          Re-layout
         </Button>
         <Button
           variant="ghost"
@@ -53,16 +66,27 @@ export function ErPanel() {
           <X />
         </Button>
       </header>
-      <div className="-mx-3 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-3">
-        <SourceEditor
-          version={version}
-          label="ER diagram text"
-          hint="Entities, relations and attributes are matched by name, so renames keep their place. New ones are placed automatically."
-          read={() => engine.er.text()}
-          apply={(text) => engine.er.applyText(text)}
-        />
-        <ErSyntaxHint />
-      </div>
+      <Tabs
+        value={selectedId ? tab : "text"}
+        onValueChange={(value) => setTab(value === "text" ? "text" : "visual")}
+        className="-mx-3 min-h-0 flex-1 overflow-y-auto px-3"
+      >
+        <TabsList className="w-full">
+          <TabsTrigger value="visual" disabled={!selectedId}>
+            Visual
+          </TabsTrigger>
+          <TabsTrigger value="text">Text</TabsTrigger>
+        </TabsList>
+        <TabsContent value="visual">{selectedId && <ErShapeForm id={selectedId} />}</TabsContent>
+        <TabsContent value="text" className="flex min-h-0 flex-col">
+          {!selectedId && (
+            <p className="mb-2 text-xs text-muted-foreground">
+              Select a shape on the board to edit it with a form, or use Add.
+            </p>
+          )}
+          <ErTextEditor />
+        </TabsContent>
+      </Tabs>
     </FloatingPanel>
   );
 }
