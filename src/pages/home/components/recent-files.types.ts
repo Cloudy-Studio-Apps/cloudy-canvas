@@ -1,4 +1,4 @@
-import type { FileInfo } from "@core";
+import type { FileInfo } from "@shared/core";
 
 export interface RecentFilesProps {
   files: FileInfo[];

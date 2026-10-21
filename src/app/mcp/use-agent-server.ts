@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 
-import { handleMcpMessage } from "@core";
+import { handleMcpMessage } from "@shared/core";
 import { agentChannel } from "@platform";
-import { useAgentServerStore } from "@stores/agent-server-store";
+import { useAgentServerStore } from "@shared/stores/agent-server-store";
 import { agentHost } from "./agent-host";
 import { createAgentServerDefinition } from "./agent-server-definition";
 

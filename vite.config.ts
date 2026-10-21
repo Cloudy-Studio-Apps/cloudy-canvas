@@ -17,11 +17,12 @@ export default defineConfig(() => ({
     alias: {
       "@app": fromSrc("app"),
       "@pages": fromSrc("pages"),
-      "@engine": fromSrc("engine"),
-      "@core": fromSrc("core"),
-      "@ui": fromSrc("ui"),
       "@platform": fromSrc("platform"),
-      "@stores": fromSrc("stores"),
+      "@shared": fromSrc("shared"),
+      "@canvas-ui": fromSrc("canvas-ui"),
+      "@canvas": fromSrc("canvas"),
+      "@board": fromSrc("products/board"),
+      "@design": fromSrc("products/design"),
     },
   },
 

@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useNavigate } from "react-router";
 
 import { openCanvasFileDialog, storage } from "@platform";
-import { useRecentFilesStore } from "@stores/recent-files-store";
+import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 
 /** Shows the native open dialog and opens the chosen file in its editor. */
 export function useOpenFile(): () => Promise<void> {

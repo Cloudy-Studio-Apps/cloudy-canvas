@@ -1,6 +1,6 @@
-import { FileTypeIcon } from "@ui/components/file-type-icon";
-import { Badge } from "@ui/components/ui/badge";
-import { Button } from "@ui/components/ui/button";
+import { FileTypeIcon } from "@shared/ui/components/file-type-icon";
+import { Badge } from "@shared/ui/components/ui/badge";
+import { Button } from "@shared/ui/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,9 +8,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@ui/components/ui/card";
-import { Input } from "@ui/components/ui/input";
-import { Kbd } from "@ui/components/ui/kbd";
+} from "@shared/ui/components/ui/card";
+import { Input } from "@shared/ui/components/ui/input";
+import { Kbd } from "@shared/ui/components/ui/kbd";
 import { Section } from "./section-layout";
 
 const BADGE_VARIANTS = [

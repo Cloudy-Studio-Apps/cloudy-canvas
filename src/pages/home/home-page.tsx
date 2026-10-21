@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 
-import { createId, type FileInfo, type FileType } from "@core";
-import { useRecentFilesStore } from "@stores/recent-files-store";
-import { useHotkey } from "@ui/hooks/use-hotkey";
-import { PageContainer } from "@ui/layout/page-container";
+import { createId, type FileInfo, type FileType } from "@shared/core";
+import { useRecentFilesStore } from "@shared/stores/recent-files-store";
+import { useHotkey } from "@shared/ui/hooks/use-hotkey";
+import { PageContainer } from "@shared/ui/layout/page-container";
 import { CreateSection } from "./components/create-section";
 import { RecentFiles } from "./components/recent-files";
 import { TopBar } from "./components/top-bar";

@@ -1,6 +1,6 @@
 import { FolderOpen } from "lucide-react";
 
-import { Button } from "@ui/components/ui/button";
+import { Button } from "@shared/ui/components/ui/button";
 import { CreateCard } from "./create-card";
 import type { CreateSectionProps } from "./create-section.types";
 

@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 
-import type { AgentChannel, AgentMessage, AgentServerStatus } from "@core";
+import type { AgentChannel, AgentMessage, AgentServerStatus } from "@shared/core";
 
 /** Messages from the local MCP endpoint in the Tauri shell (`src-tauri/src/mcp`). */
 export class TauriAgentChannel implements AgentChannel {

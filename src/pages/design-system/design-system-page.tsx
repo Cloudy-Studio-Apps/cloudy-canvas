@@ -1,10 +1,10 @@
 import { Link } from "react-router";
 import { ArrowLeft } from "lucide-react";
 
-import { Badge } from "@ui/components/ui/badge";
-import { Button } from "@ui/components/ui/button";
-import { AppHeader } from "@ui/layout/app-header";
-import { PageContainer } from "@ui/layout/page-container";
+import { Badge } from "@shared/ui/components/ui/badge";
+import { Button } from "@shared/ui/components/ui/button";
+import { AppHeader } from "@shared/ui/layout/app-header";
+import { PageContainer } from "@shared/ui/layout/page-container";
 import { ButtonsSection } from "./sections/buttons-section";
 import { ComponentsSection } from "./sections/components-section";
 import { LogoSection } from "./sections/logo-section";

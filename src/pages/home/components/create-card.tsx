@@ -1,8 +1,8 @@
 import { ArrowRight } from "lucide-react";
 
-import type { FileType } from "@core";
-import { FileTypeIcon } from "@ui/components/file-type-icon";
-import { cn } from "@ui/lib/utils";
+import type { FileType } from "@shared/core";
+import { FileTypeIcon } from "@shared/ui/components/file-type-icon";
+import { cn } from "@shared/ui/lib/utils";
 import type { CreateCardProps } from "./create-card.types";
 
 const WASH: Record<FileType, string> = {

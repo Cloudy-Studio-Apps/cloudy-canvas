@@ -1,6 +1,6 @@
-import type { FileInfo } from "@core";
-import { FileTypeIcon } from "@ui/components/file-type-icon";
-import { cn } from "@ui/lib/utils";
+import type { FileInfo } from "@shared/core";
+import { FileTypeIcon } from "@shared/ui/components/file-type-icon";
+import { cn } from "@shared/ui/lib/utils";
 import { formatRelativeTime } from "../format-relative-time";
 import type { FileCardProps } from "./file-card.types";
 

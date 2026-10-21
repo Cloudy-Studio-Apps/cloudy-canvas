@@ -1,4 +1,4 @@
-import { SealLogo } from "@ui/brand/seal-logo";
+import { SealLogo } from "@shared/ui/brand/seal-logo";
 
 export function EmptyState() {
   return (

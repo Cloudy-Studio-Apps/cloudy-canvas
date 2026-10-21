@@ -1,0 +1,27 @@
+import { isInteractiveTarget, isTypingTarget } from "@shared/core";
+
+import type { Disposables } from "../utils";
+import type { KeyboardInputHost } from "./keyboard-input.types";
+
+/** Window-level shortcuts (the host's keymap) plus Space-to-pan. Ignored while typing in any field. */
+export function bindKeyboard(disposables: Disposables, host: KeyboardInputHost): void {
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.defaultPrevented || isTypingTarget(event.target) || host.isEditingText()) return;
+
+    if (event.key === " ") {
+      if (isInteractiveTarget(event.target)) return;
+      event.preventDefault();
+      host.pointer.holdSpace();
+      return;
+    }
+
+    const command = host.keymap.commandFor(event);
+    if (command && host.runCommand(command) !== false) event.preventDefault();
+  };
+
+  disposables.listen(window, "keydown", handleKeyDown);
+  disposables.listen(window, "keyup", (event) => {
+    if (event.key === " ") host.pointer.releaseSpace();
+  });
+  disposables.listen(window, "blur", () => host.pointer.releaseSpace());
+}

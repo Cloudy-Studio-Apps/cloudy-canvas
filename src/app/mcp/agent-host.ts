@@ -1,6 +1,6 @@
-import { createId } from "@core";
-import type { AgentBoard, AgentHost } from "@engine";
-import { getActiveBoard, waitForActiveBoard } from "@pages/editor/board/agent";
+import { createId } from "@shared/core";
+import type { AgentBoard, AgentHost } from "@board";
+import { getActiveBoard, waitForActiveBoard } from "@board/ui";
 import { storage } from "@platform";
 import { router } from "../router";
 

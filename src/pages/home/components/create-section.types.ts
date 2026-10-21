@@ -1,4 +1,4 @@
-import type { FileType } from "@core";
+import type { FileType } from "@shared/core";
 
 export interface CreateSectionProps {
   onCreate: (type: FileType) => void;

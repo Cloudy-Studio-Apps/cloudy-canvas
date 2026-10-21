@@ -5,25 +5,55 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import prettier from "eslint-config-prettier";
 
-// engine/ and core/ must stay framework- and platform-agnostic so they can be
-// reused by the future web version and extracted into a shared package.
-const agnosticImportBan = {
-  paths: [
-    { name: "react", message: "engine/ and core/ must not depend on React." },
-    { name: "react-dom", message: "engine/ and core/ must not depend on React." },
-  ],
+// Layering (see CLAUDE.md). Each group of folders lists what it may not import. A file gets one
+// `no-restricted-imports` rule, so the groups below don't overlap.
+const REACT = {
+  paths: ["react", "react-dom"].map((name) => ({
+    name,
+    message: "Engine code must not depend on React.",
+  })),
   patterns: [
-    { group: ["react/*", "react-dom/*"], message: "engine/ and core/ must not depend on React." },
-    {
-      group: ["@ui", "@ui/*", "@pages", "@pages/*", "@app", "@app/*", "@stores", "@stores/*"],
-      message: "engine/ and core/ must not import UI layers.",
-    },
-    {
-      group: ["@platform", "@platform/*", "@tauri-apps/*"],
-      message: "engine/ and core/ must not import platform code; depend on interfaces in core/.",
-    },
+    { group: ["react/*", "react-dom/*"], message: "Engine code must not depend on React." },
   ],
 };
+const UI_LAYERS = {
+  group: [
+    "@shared/ui/*",
+    "@shared/stores/*",
+    "@shared/agent-server",
+    "@canvas-ui",
+    "@canvas-ui/*",
+    "@pages/*",
+    "@app/*",
+  ],
+  message: "Engine code must not import UI layers.",
+};
+const PLATFORM = {
+  group: ["@platform", "@platform/*", "@tauri-apps/*"],
+  message: "Engine code must not import platform code; depend on interfaces in shared/core.",
+};
+const CANVAS = {
+  group: ["@canvas", "@canvas/*", "@canvas-ui", "@canvas-ui/*"],
+  message: "shared/ is below the canvas and must not import it.",
+};
+const PRODUCTS = {
+  group: ["@board", "@board/*", "@design", "@design/*"],
+  message: "Shared and canvas code must not know about products.",
+};
+const BOARD = { group: ["@board", "@board/*"], message: "Products must not import each other." };
+const DESIGN = { group: ["@design", "@design/*"], message: "Products must not import each other." };
+
+/** A `no-restricted-imports` rule from pattern groups, optionally banning React too. */
+function restrict(patterns, { react = false } = {}) {
+  return {
+    "no-restricted-imports": [
+      "error",
+      react ? { paths: REACT.paths, patterns: [...REACT.patterns, ...patterns] } : { patterns },
+    ],
+  };
+}
+
+const PRODUCT_UI = ["src/products/*/ui/**"];
 
 export default tseslint.config(
   { ignores: ["dist", "src-tauri/target", "src-tauri/gen", "temporal"] },
@@ -46,12 +76,43 @@ export default tseslint.config(
     },
   },
   {
-    files: ["src/ui/components/ui/**/*.tsx"],
+    files: ["src/shared/ui/components/ui/**/*.tsx"],
     rules: { "react-refresh/only-export-components": "off" },
   },
   {
-    files: ["src/engine/**/*.ts", "src/core/**/*.ts"],
-    rules: { "no-restricted-imports": ["error", agnosticImportBan] },
+    files: ["src/shared/core/**/*.ts"],
+    rules: restrict([UI_LAYERS, PLATFORM, CANVAS, PRODUCTS], { react: true }),
+  },
+  {
+    files: ["src/shared/**/*.{ts,tsx}"],
+    ignores: ["src/shared/core/**"],
+    rules: restrict([CANVAS, PRODUCTS]),
+  },
+  {
+    files: ["src/canvas/**/*.ts"],
+    rules: restrict([UI_LAYERS, PLATFORM, PRODUCTS], { react: true }),
+  },
+  {
+    files: ["src/canvas-ui/**/*.{ts,tsx}"],
+    rules: restrict([PRODUCTS]),
+  },
+  {
+    files: ["src/products/board/**/*.ts"],
+    ignores: PRODUCT_UI,
+    rules: restrict([UI_LAYERS, PLATFORM, DESIGN], { react: true }),
+  },
+  {
+    files: ["src/products/board/ui/**/*.{ts,tsx}"],
+    rules: restrict([DESIGN]),
+  },
+  {
+    files: ["src/products/design/**/*.ts"],
+    ignores: PRODUCT_UI,
+    rules: restrict([UI_LAYERS, PLATFORM, BOARD], { react: true }),
+  },
+  {
+    files: ["src/products/design/ui/**/*.{ts,tsx}"],
+    rules: restrict([BOARD]),
   },
   {
     files: ["vite.config.ts", "eslint.config.js"],

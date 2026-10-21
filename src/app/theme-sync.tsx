@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { FORCE_LIGHT_THEME, useThemeStore } from "@stores/theme-store";
+import { FORCE_LIGHT_THEME, useThemeStore } from "@shared/stores/theme-store";
 
 const DARK_QUERY = "(prefers-color-scheme: dark)";
 

@@ -1,6 +1,6 @@
-import { SealLogo } from "@ui/brand/seal-logo";
-import { Wordmark } from "@ui/brand/wordmark";
-import { Separator } from "@ui/components/ui/separator";
+import { SealLogo } from "@shared/ui/brand/seal-logo";
+import { Wordmark } from "@shared/ui/brand/wordmark";
+import { Separator } from "@shared/ui/components/ui/separator";
 import { Labeled, Section } from "./section-layout";
 
 export function LogoSection() {

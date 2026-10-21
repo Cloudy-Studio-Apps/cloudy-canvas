@@ -1,10 +1,10 @@
 import { Link } from "react-router";
 import { Bot, Palette } from "lucide-react";
 
-import { AgentServerMenu } from "@pages/agent-server";
-import { Wordmark } from "@ui/brand/wordmark";
-import { Button } from "@ui/components/ui/button";
-import { AppHeader } from "@ui/layout/app-header";
+import { AgentServerMenu } from "@shared/agent-server";
+import { Wordmark } from "@shared/ui/brand/wordmark";
+import { Button } from "@shared/ui/components/ui/button";
+import { AppHeader } from "@shared/ui/layout/app-header";
 
 export function TopBar() {
   return (

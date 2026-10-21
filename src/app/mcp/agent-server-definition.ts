@@ -1,5 +1,5 @@
-import type { McpServerDefinition } from "@core";
-import { AGENT_INSTRUCTIONS, createAgentTools, type AgentHost } from "@engine";
+import type { McpServerDefinition } from "@shared/core";
+import { AGENT_INSTRUCTIONS, createAgentTools, type AgentHost } from "@board";
 
 const SERVER_NAME = "cloudy-canvas";
 const SERVER_VERSION = "0.1.0";

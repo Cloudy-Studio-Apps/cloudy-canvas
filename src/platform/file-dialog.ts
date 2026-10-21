@@ -1,6 +1,11 @@
 import { isTauri } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
-import { ALL_FILE_EXTENSIONS, FILE_EXTENSIONS, withFileExtension, type FileType } from "@core";
+import {
+  ALL_FILE_EXTENSIONS,
+  FILE_EXTENSIONS,
+  withFileExtension,
+  type FileType,
+} from "@shared/core";
 
 /** Shows the native "open file" dialog filtered to Cloudy Canvas files. Returns the selected path, or `null`. */
 export async function openCanvasFileDialog(): Promise<string | null> {

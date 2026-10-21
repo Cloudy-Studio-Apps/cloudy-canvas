@@ -16,7 +16,7 @@ import {
   fileTypeFromPath,
   type FileInfo,
   type Storage,
-} from "@core";
+} from "@shared/core";
 
 /** Recent files index, kept in the app data folder. */
 const INDEX_FILE = "recent-files.json";

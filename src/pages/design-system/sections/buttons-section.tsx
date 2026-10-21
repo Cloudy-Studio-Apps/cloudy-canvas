@@ -1,7 +1,7 @@
 import { Plus, Search, Trash2 } from "lucide-react";
 
-import { Button } from "@ui/components/ui/button";
-import { Separator } from "@ui/components/ui/separator";
+import { Button } from "@shared/ui/components/ui/button";
+import { Separator } from "@shared/ui/components/ui/separator";
 import { Section } from "./section-layout";
 import type { RowLabelProps } from "./buttons-section.types";
 

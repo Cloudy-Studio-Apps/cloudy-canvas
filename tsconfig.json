@@ -26,14 +26,19 @@
     "paths": {
       "@app/*": ["./src/app/*"],
       "@pages/*": ["./src/pages/*"],
-      "@engine": ["./src/engine/index.ts"],
-      "@engine/*": ["./src/engine/*"],
-      "@core": ["./src/core/index.ts"],
-      "@core/*": ["./src/core/*"],
-      "@ui/*": ["./src/ui/*"],
       "@platform": ["./src/platform/index.ts"],
       "@platform/*": ["./src/platform/*"],
-      "@stores/*": ["./src/stores/*"]
+      "@shared/core": ["./src/shared/core/index.ts"],
+      "@shared/agent-server": ["./src/shared/agent-server/index.ts"],
+      "@shared/*": ["./src/shared/*"],
+      "@canvas": ["./src/canvas/index.ts"],
+      "@canvas/*": ["./src/canvas/*"],
+      "@canvas-ui": ["./src/canvas-ui/index.ts"],
+      "@canvas-ui/*": ["./src/canvas-ui/*"],
+      "@board": ["./src/products/board/index.ts"],
+      "@board/*": ["./src/products/board/*"],
+      "@design": ["./src/products/design/index.ts"],
+      "@design/*": ["./src/products/design/*"]
     }
   },
   "include": ["src"]

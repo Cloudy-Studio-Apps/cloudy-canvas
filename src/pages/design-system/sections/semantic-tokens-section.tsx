@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@ui/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@shared/ui/components/ui/card";
 import { SEMANTIC_GROUPS } from "../tokens";
 import { Section } from "./section-layout";
 
