@@ -50,7 +50,10 @@ export interface DbRef {
 export interface DbColumn {
   id: string;
   name: string;
+  /** Type name without its arguments, e.g. `varchar` (see `formatColumnType`). */
   type: string;
+  /** Type arguments, e.g. `255` or `10, 2`; `""` for none. */
+  typeArgs: string;
   pk: boolean;
   increment: boolean;
   notNull: boolean;

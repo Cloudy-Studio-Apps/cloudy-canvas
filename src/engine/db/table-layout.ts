@@ -4,6 +4,7 @@ import {
   DB_MIN_W,
   DB_PADDING_X,
   DB_ROW_H,
+  formatColumnType,
   type DbColumn,
   type DbTableShape,
 } from "../document";
@@ -26,7 +27,7 @@ export function tableSize(name: string, columns: readonly DbColumn[]): Size {
   let w = measureText(name, DB_FONT_SIZE + 1).w * BOLD_FACTOR + DB_PADDING_X * 2;
   for (const column of columns) {
     const nameW = measureText(column.name, DB_FONT_SIZE).w;
-    const typeW = measureText(column.type, DB_FONT_SIZE).w;
+    const typeW = measureText(formatColumnType(column), DB_FONT_SIZE).w;
     w = Math.max(w, nameW + NAME_TYPE_GAP + typeW + BADGE_W + DB_PADDING_X * 2);
   }
   return {

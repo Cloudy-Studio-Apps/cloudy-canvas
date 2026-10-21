@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 
+import { formatColumnType } from "@engine";
 import { Button } from "@ui/components/ui/button";
 import { Input } from "@ui/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/components/ui/popover";
@@ -47,7 +48,9 @@ export function IndexPartPicker({ table, parts, onAdd }: IndexPartPickerProps) {
                 onClick={() => add({ kind: "column", columnId: column.id })}
               >
                 <span className="min-w-0 flex-1 truncate">{column.name}</span>
-                <span className="font-mono text-xs text-muted-foreground">{column.type}</span>
+                <span className="font-mono text-xs text-muted-foreground">
+                  {formatColumnType(column)}
+                </span>
               </button>
             </li>
           ))}

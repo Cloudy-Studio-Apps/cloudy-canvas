@@ -22,6 +22,7 @@ export interface ParsedRef {
 export interface ParsedColumn {
   name: string;
   type: string;
+  typeArgs: string;
   pk: boolean;
   increment: boolean;
   notNull: boolean;

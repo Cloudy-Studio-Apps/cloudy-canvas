@@ -1,4 +1,4 @@
-import type { DbEnumShape, DbTableShape } from "../document";
+import { formatColumnType, type DbEnumShape, type DbTableShape } from "../document";
 import type { ColumnTarget, EnumUsage, IncomingRef } from "./db-schema.types";
 
 /** Columns of any table that point at `target`. */
@@ -22,7 +22,7 @@ export function columnTargets(tables: readonly DbTableShape[]): ColumnTarget[] {
       tableName: table.name,
       columnId: column.id,
       columnName: column.name,
-      type: column.type,
+      type: formatColumnType(column),
       pk: column.pk,
     })),
   );

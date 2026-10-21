@@ -1,7 +1,7 @@
-import type { DbTableShape } from "../document";
+import type { ColumnType, DbTableShape } from "../document";
 import type { ParsedColumn, ParsedEndpoint, ParsedSchema, ParsedTable } from "./dbml";
 
-const DEFAULT_TYPE = "integer";
+const DEFAULT_TYPE: ColumnType = { type: "integer", typeArgs: "" };
 
 /**
  * Adds a table for every ref end that names a table neither the text nor `others` defines. It gets
@@ -37,10 +37,10 @@ export function addMissingTables(
     if (table.columns.some((column) => column.name === endpoint.column)) return;
     table.columns.push(stubColumn(endpoint.column, typeOf(other) ?? DEFAULT_TYPE));
   };
-  const typeOf = (endpoint: ParsedEndpoint): string | undefined =>
+  const typeOf = (endpoint: ParsedEndpoint): ColumnType | undefined =>
     (known.get(endpoint.table) ?? created.get(endpoint.table))?.columns.find(
       (column) => column.name === endpoint.column,
-    )?.type;
+    );
 
   for (const ref of schema.refs) {
     addColumn(ref.from, ref.to, ref.line);
@@ -63,10 +63,11 @@ export function addMissingTables(
   };
 }
 
-function stubColumn(name: string, type: string): ParsedColumn {
+function stubColumn(name: string, { type, typeArgs }: ColumnType): ParsedColumn {
   return {
     name,
     type,
+    typeArgs,
     pk: name === "id",
     increment: false,
     notNull: false,

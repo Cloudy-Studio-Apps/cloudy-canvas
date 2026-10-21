@@ -35,12 +35,15 @@ export type {
   EnumUsage,
   IncomingRef,
 } from "./db";
-export { COLUMN_TYPES, INDEX_TYPES } from "./db";
+export { COLUMN_TYPES, INDEX_TYPES, TYPE_ARGS } from "./db";
 export { CanvasEngine } from "./canvas-engine";
 export { KEYMAP, shortcutLabel } from "./input";
 export { TOOL_IDS } from "./tools";
 export {
   BoardDocument,
+  canonicalTypeName,
+  formatColumnType,
+  splitColumnType,
   DB_ENUM_COLOR,
   DB_HEADER_COLORS,
   GEO_KINDS,

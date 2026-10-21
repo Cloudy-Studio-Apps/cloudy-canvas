@@ -4,6 +4,7 @@ import {
   DB_HEADER_H,
   DB_PADDING_X,
   DB_ROW_H,
+  formatColumnType,
   INK_COLOR,
   MUTED_INK_COLOR,
   PAPER_SHADOW_COLOR,
@@ -81,7 +82,7 @@ export function drawDbTable(view: ShapeView, shape: DbTableShape): void {
         fontWeight: column.pk ? "600" : "400",
       })
       .position.set(DB_PADDING_X, top);
-    const type = view.setTextSlot(typeKey, column.type, {
+    const type = view.setTextSlot(typeKey, formatColumnType(column), {
       fontSize: DB_FONT_SIZE,
       color: MUTED_INK_COLOR,
     });

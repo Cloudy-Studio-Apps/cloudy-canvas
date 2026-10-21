@@ -1,4 +1,10 @@
-import { DB_HEADER_COLORS, type DbColumn, type DbIndex, type DbTableShape } from "../../document";
+import {
+  DB_HEADER_COLORS,
+  formatColumnType,
+  type DbColumn,
+  type DbIndex,
+  type DbTableShape,
+} from "../../document";
 import { formatName, formatString, formatType } from "./dbml-format";
 
 const INDENT = "  ";
@@ -44,7 +50,7 @@ function serializeColumn(column: DbColumn, tablesById: ReadonlyMap<string, DbTab
     );
   }
 
-  const head = `${formatName(column.name)} ${formatType(column.type)}`;
+  const head = `${formatName(column.name)} ${formatType(formatColumnType(column))}`;
   return settings.length ? `${head} [${settings.join(", ")}]` : head;
 }
 

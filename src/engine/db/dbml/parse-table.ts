@@ -1,3 +1,4 @@
+import { splitColumnType } from "../../document";
 import { unsupported } from "./dbml-error";
 import type { TokenCursor } from "./token-cursor";
 import { parseIndexes } from "./parse-indexes";
@@ -67,7 +68,7 @@ function parseColumn(
   const nameToken = cursor.expectName("a column name");
   const column: ParsedColumn = {
     name: nameToken.value,
-    type: parseType(cursor),
+    ...splitColumnType(parseType(cursor)),
     pk: false,
     increment: false,
     notNull: false,
@@ -125,7 +126,7 @@ function parseType(cursor: TokenCursor): string {
         throw cursor.error('Missing ")"', token);
       args.push(token.raw);
     }
-    type += `(${args.join("")})`;
+    type += `(${args.join(" ")})`;
   }
   if (cursor.isSymbol("[") && cursor.isSymbol("]", 1)) {
     cursor.next();

@@ -2,6 +2,8 @@ import { createId } from "@core";
 
 import {
   isDbTable,
+  normalizeTypeArgs,
+  splitColumnType,
   type BoardDocument,
   type DbColumn,
   type DbIndex,
@@ -59,7 +61,14 @@ export function updateColumn(
       return `"${name}" is already used`;
     patch = { ...patch, name };
   }
-  if (patch.type !== undefined && !patch.type.trim()) return "A column needs a type";
+  if (patch.type !== undefined) {
+    // `varchar(255)` typed as the type sets the arguments too.
+    const { type, typeArgs } = splitColumnType(patch.type);
+    if (!type) return "A column needs a type";
+    patch = { ...patch, type, ...(typeArgs && { typeArgs }) };
+  }
+  if (patch.typeArgs !== undefined)
+    patch = { ...patch, typeArgs: normalizeTypeArgs(patch.typeArgs) };
   writeColumns(
     doc,
     table,

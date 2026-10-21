@@ -1,9 +1,26 @@
-import type { Shape } from "./shapes.types";
+import { splitColumnType } from "./column-type";
+import { canonicalTypeName } from "./type-aliases";
+import type { DbColumn, Shape } from "./shapes.types";
 
 /** Fills fields added after a shape type first shipped, so boards saved by older versions load. */
 export function fillShapeDefaults(shape: Shape): Shape {
   if (shape.type === "db-table") {
-    return { ...shape, indexes: shape.indexes ?? [], noteHidden: shape.noteHidden ?? false };
+    return {
+      ...shape,
+      columns: shape.columns.map(fillColumnDefaults),
+      indexes: shape.indexes ?? [],
+      noteHidden: shape.noteHidden ?? false,
+    };
   }
   return shape;
+}
+
+/**
+ * Columns saved before `typeArgs` existed kept the arguments in the type (`varchar(255)`), and
+ * older types may use an alias (`int`).
+ */
+function fillColumnDefaults(column: DbColumn): DbColumn {
+  if (column.typeArgs === undefined) return { ...column, ...splitColumnType(column.type) };
+  const type = canonicalTypeName(column.type);
+  return type === column.type ? column : { ...column, type };
 }

@@ -1,5 +1,6 @@
 export type * from "./shapes.types";
 export type * from "./board-document.types";
+export type * from "./column-type.types";
 export * from "./shapes";
 export * from "./shape-defaults";
 export * from "./geo-defaults";
@@ -7,4 +8,6 @@ export * from "./shape-factory";
 export * from "./move-shape";
 export * from "./z-order";
 export * from "./palette";
+export { formatColumnType, normalizeTypeArgs, splitColumnType } from "./column-type";
+export { canonicalTypeName } from "./type-aliases";
 export { BoardDocument, LOCAL_ORIGIN, compareByIndex } from "./board-document";

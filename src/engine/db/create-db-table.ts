@@ -19,6 +19,7 @@ export function createDbColumn(
     id: createId(),
     name,
     type,
+    typeArgs: "",
     pk: false,
     increment: false,
     notNull: false,
