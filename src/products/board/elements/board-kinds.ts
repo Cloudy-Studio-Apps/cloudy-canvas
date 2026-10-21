@@ -14,6 +14,7 @@ import { GeoKind } from "./geo";
 import { SectionKind } from "./section";
 import { StickyKind } from "./sticky";
 import { StrokeKind } from "./stroke";
+import { TextKind } from "./text";
 
 /**
  * Every element type a board can hold. The built-ins are registered here; plugins call
@@ -22,6 +23,7 @@ import { StrokeKind } from "./stroke";
 export const boardKinds = new ElementKinds<BoardToolOptions>();
 boardKinds.register(new StickyKind());
 boardKinds.register(new StrokeKind());
+boardKinds.register(new TextKind());
 boardKinds.register(new GeoKind());
 boardKinds.register(new SectionKind());
 boardKinds.register(new DbTableKind());

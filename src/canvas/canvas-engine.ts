@@ -302,6 +302,7 @@ export class CanvasEngine<O extends object = object> {
       elementAt: (world) => this.elementAt(world),
       elementsInRect: (rect) => this.scene.elementsInRect(rect),
       editText: (id) => this.textEditor?.start(id),
+      editNewText: (el) => this.textEditor?.startDraft(el),
       setCursor: (cursor) => this.setCursor(cursor),
       setHover: (id) => this.setHover(id),
       setMarquee: (rect) => {
@@ -340,6 +341,8 @@ export class CanvasEngine<O extends object = object> {
         this.renderer.setHiddenText(null);
         this.requestRender();
       },
+      onCreate: (id) => this.setSelection([id]),
+      remove: (id) => this.deleteElements([id]),
     });
   }
 

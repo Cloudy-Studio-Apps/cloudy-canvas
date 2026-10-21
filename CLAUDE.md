@@ -66,7 +66,7 @@ The engine is the same for every product. **A product is a `CanvasProduct`** (`c
   - `Renderer`: PixiJS.
   - The tools.
   - Input modules: pointer, wheel and keyboard.
-  - `TextEditor`: a DOM textarea overlay.
+  - `TextEditor`: a DOM textarea overlay. Tools type a new element's text with `ctx.editNewText(draft)`: the draft is added to the document (and selected) only when the edit is committed with some text.
 
   It exposes `kinds`, `keymap`, `commands` and `elementInfo(type)` to hosts.
 
@@ -99,9 +99,9 @@ Everything on a canvas is an element. **Elements are plain data and behavior liv
 - **Behavior:** each type has one `ElementKind<E, O>` subclass (`element.kind.ts`), registered in its product's `ElementKinds` (`element.kinds.ts`, a `Registry` from `utils/registry.ts` that throws on duplicate keys; the board's is `boardKinds` in `products/board/elements/board-kinds.ts`). `kinds.kindOf(el)` returns it, and `kinds.isElement(data)` is true only for registered types. Every kind declares its metadata: `label`, `description` (tooltips, listings) and `tool`, the id of the tool that creates it. The hotkey isn't stored on the kind: `engine.elementInfo(type)` reads it from the keymap through `tool`. The toolbar takes element tools' label and description from `elementInfo`. A kind can provide:
   - `draw`, `bounds`, `hitTest`
   - `move`, `resizable` / `resize`
-  - `text`: an `ElementText` spec (`get`, `set`, `style`) that the `TextEditor` and the drawer share, so edited text lines up with drawn text
+  - `text`: an `ElementText` spec (`get`, `set`, `style`) that the `TextEditor` and the drawer share, so edited text lines up with drawn text. `fitContent` sizes the element to its unwrapped text (the editor grows while typing), and `removeWhenEmpty` deletes it when its text is emptied
   - `fillDefaults` (for older files)
-  - `describe` (agent summaries)
+  - `describe` (agent summaries), `completePatch` (fields that follow from an agent's patch, e.g. a text's size)
   - `optionsOf` / `restyle` (the tool options panel, typed with the product's options `O`)
   - `text.style(el).singleLine`: a one-line text (a name), where Enter finishes editing
   - `interactionAt(el, p, query)`: part of the element a press grabs before selecting it (a handle, a button). It returns an `ElementInteraction` (`cursor`, `press(ctx, p)`); `press` runs a one-shot action or returns an `ElementGesture` (`move`, `finish`, `cancel`, `onCameraChange`) that the select tool drives. Resize handles of the single selection win over it.
@@ -123,6 +123,7 @@ Everything on a canvas is an element. **Elements are plain data and behavior liv
 
   Extra pieces follow the same pattern (`stroke.outline.ts`, `geo/variants/<id>.variant.ts`, `variant.registry.ts`, `bases/box.kind.ts`), and one-off helpers keep plain names (`ellipse-arc.ts`). Element folders import the framework from `@canvas`. The board's types are:
   - `sticky/`: `StickyKind extends TextBoxKind`
+  - `text/`: `TextKind`, a free label sized to its text (`fitContent`, `removeWhenEmpty`), not resizable. The `text` tool types a draft, or edits the text of whatever it clicks.
   - `stroke/`: `StrokeKind extends LineKind`; only moved, and not created by agents
   - `db/`: the database schema, one family in one folder:
     - `card/`: `DbCardKind`, the base of tables and enums (sized by content, not resizable, created by the `db` tool or DBML, never from an agent's spec; agents may only move them) and the card frame drawer and row layout.
@@ -149,7 +150,7 @@ Everything on a canvas is an element. **Elements are plain data and behavior liv
 
 ### Staged rebuild (`temporal/`)
 
-The board is being rebuilt on the element architecture one type at a time. Only `sticky`, `stroke`, `geo`, `section`, the database types (`db/`) and ER diagrams (`er/`) exist so far. The code for text and connectors (engine modules, tools, layers, agent tools and their panels) was moved to `temporal/`, together with reference copies of the core files from before the rebuild. Its paths mirror the **old** `src/` layout (`src/engine/…`); `temporal/README.md` maps them to the new one and keeps the old architecture notes for those features. `temporal/` isn't compiled, linted or formatted. To bring a feature back, port it into the board product (an `elements/<type>/` folder, its tool, agent tools and panel), then delete what it replaced from `temporal/`.
+The board is being rebuilt on the element architecture one type at a time. Only `sticky`, `text`, `stroke`, `geo`, `section`, the database types (`db/`) and ER diagrams (`er/`) exist so far. The code for connectors (engine modules, tools, layers, agent tools and their panels) was moved to `temporal/`, together with reference copies of the core files from before the rebuild. Its paths mirror the **old** `src/` layout (`src/engine/…`); `temporal/README.md` maps them to the new one and keeps the old architecture notes for those features. `temporal/` isn't compiled, linted or formatted. To bring a feature back, port it into the board product (an `elements/<type>/` folder, its tool, agent tools and panel), then delete what it replaced from `temporal/`.
 
 ## Agent (MCP) server
 

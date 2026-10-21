@@ -5,6 +5,7 @@ export const BOARD_KEYBINDINGS = {
   ...BASE_KEYBINDINGS,
   "tool.marker": [{ key: "m" }],
   "tool.sticky": [{ key: "s" }],
+  "tool.text": [{ key: "t" }],
   "tool.shape": [{ key: "r" }],
   "tool.section": [{ key: "s", shift: true }],
   "tool.db": [{ key: "d" }],

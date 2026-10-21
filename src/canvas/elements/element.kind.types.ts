@@ -35,6 +35,13 @@ export interface ElementText<E extends CanvasElement> {
   /** The patch that writes edited text, or `null` when nothing changes. */
   set(el: E, text: string): ElementPatch<E> | null;
   style(el: E): ElementTextStyle;
+  /**
+   * The element is sized to its text (e.g. a free text label): lines don't wrap and the editor
+   * grows while typing. `set` returns the new size with the text.
+   */
+  fitContent?: boolean;
+  /** The element is only its text, so emptying it deletes the element (and a new one isn't added). */
+  removeWhenEmpty?: boolean;
 }
 
 /** Type-specific details shown in compact listings (agent summaries). */

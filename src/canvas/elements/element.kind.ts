@@ -89,6 +89,11 @@ export abstract class ElementKind<
     return { x: spec.x, y: spec.y, w: spec.w ?? size.w, h: spec.h ?? size.h };
   }
 
+  /** Completes an agent's patch with the fields that follow from it (e.g. a text's size). */
+  completePatch(_el: E, patch: ElementPatch<E>): ElementPatch<E> {
+    return patch;
+  }
+
   /** Fills fields added after the type first shipped, so files saved by older versions load. */
   fillDefaults(el: E): E {
     return el;

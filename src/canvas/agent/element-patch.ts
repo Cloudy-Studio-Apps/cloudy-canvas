@@ -22,5 +22,5 @@ export function elementPatch(
       throw new Error(`"${key}" must be a ${typeof current}.`);
     }
   }
-  return patch as ElementPatch;
+  return kind.completePatch(el, patch as ElementPatch);
 }

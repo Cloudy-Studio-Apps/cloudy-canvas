@@ -5,6 +5,7 @@ import type { CanvasDocument } from "../document";
 import type { CanvasElement, ElementKinds, ElementText } from "../elements";
 import { Disposables } from "../utils";
 import { textEditorStyle } from "./text-editor-style";
+import { measureText } from "./text-metrics";
 import type { TextEditorHooks, Session } from "./text-editor.types";
 
 /**
@@ -30,14 +31,20 @@ export class TextEditor {
   start(id: string): void {
     const el = this.hooks.getElement(id);
     const text = el ? this.kinds.kindOf(el).text : null;
-    if (el && text) this.open(el, text, `${this.kinds.kindOf(el).label} text`);
+    if (el && text) this.open(el, text, null);
+  }
+
+  /** Types the text of a new element, which is added to the document on commit. */
+  startDraft(el: CanvasElement): void {
+    const text = this.kinds.kindOf(el).text;
+    if (text) this.open(el, text, el);
   }
 
   /** Keeps the editor aligned with the element while the camera moves. */
   reposition(): void {
     const session = this.session;
     if (!session) return;
-    const el = this.hooks.getElement(session.id);
+    const el = this.elementOf(session);
     if (!el || !this.kinds.kindOf(el).text) return this.discard();
     const { x, y } = this.camera.worldToScreen(el);
     session.textarea.style.transform = `translate(${x}px, ${y}px) scale(${this.camera.zoom})`;
@@ -46,31 +53,44 @@ export class TextEditor {
   commit(): void {
     const session = this.close();
     if (!session) return;
-    const el = this.hooks.getElement(session.id);
-    const patch = el ? this.kinds.kindOf(el).text?.set(el, session.textarea.value) : null;
-    if (patch) this.doc.update(session.id, patch);
+    const el = this.elementOf(session);
+    const text = el ? this.kinds.kindOf(el).text : null;
     this.hooks.onEnd(session.id);
+    if (!el || !text) return;
+    const value = session.textarea.value;
+    if (text.removeWhenEmpty && value.trim() === "") {
+      if (!session.draft) this.hooks.remove(el.id);
+      return;
+    }
+    const patch = text.set(el, value);
+    if (session.draft) {
+      this.doc.checkpoint();
+      this.doc.add({ ...el, ...patch, index: this.doc.nextIndex() });
+      this.hooks.onCreate(el.id);
+    } else if (patch) {
+      this.doc.update(el.id, patch);
+    }
   }
 
   destroy(): void {
     this.close();
   }
 
-  private open<E extends CanvasElement>(el: E, text: ElementText<E>, ariaLabel: string): void {
+  private open<E extends CanvasElement>(el: E, text: ElementText<E>, draft: E | null): void {
     this.commit();
     const textarea = document.createElement("textarea");
     textarea.value = text.get(el);
     textarea.spellcheck = false;
-    textarea.setAttribute("aria-label", ariaLabel);
+    textarea.setAttribute("aria-label", `${this.kinds.kindOf(el).label} text`);
     textarea.dataset.canvasTextEditor = "";
-    Object.assign(textarea.style, textEditorStyle(text.style(el), el));
+    Object.assign(textarea.style, textEditorStyle(text.style(el), el, !text.fitContent));
 
     const listeners = new Disposables();
     listeners.listen(textarea, "input", () => this.resizeToContent());
     listeners.listen(textarea, "keydown", this.handleKeyDown);
     listeners.listen(textarea, "blur", () => this.commit());
     this.container.appendChild(textarea);
-    this.session = { textarea, id: el.id, listeners };
+    this.session = { textarea, id: el.id, draft, listeners };
 
     this.resizeToContent();
     this.reposition();
@@ -97,13 +117,23 @@ export class TextEditor {
     return session;
   }
 
-  /** Text centered in its element keeps its wrapped block in the middle while typing. */
+  /**
+   * Text sized to its element grows with what's typed; text centered in its element keeps its
+   * wrapped block in the middle.
+   */
   private resizeToContent(): void {
     const session = this.session;
-    const el = session ? this.hooks.getElement(session.id) : undefined;
+    const el = session ? this.elementOf(session) : undefined;
     const text = el ? this.kinds.kindOf(el).text : null;
-    if (!session || !el || text?.style(el).vAlign !== "middle") return;
-    centerVertically(session.textarea, el.h);
+    if (!session || !el || !text) return;
+    const style = text.style(el);
+    if (text.fitContent) fitToContent(session.textarea, style.fontSize);
+    else if (style.vAlign === "middle") centerVertically(session.textarea, el.h);
+  }
+
+  /** The element being edited: the draft, or the element as the scene sees it. */
+  private elementOf(session: Session): CanvasElement | undefined {
+    return session.draft ?? this.hooks.getElement(session.id);
   }
 
   private handleKeyDown = (event: KeyboardEvent) => {
@@ -119,7 +149,7 @@ export class TextEditor {
   };
 
   private singleLine(): boolean {
-    const el = this.session ? this.hooks.getElement(this.session.id) : undefined;
+    const el = this.session ? this.elementOf(this.session) : undefined;
     return el ? (this.kinds.kindOf(el).text?.style(el).singleLine ?? false) : false;
   }
 }
@@ -131,4 +161,11 @@ function centerVertically(textarea: HTMLTextAreaElement, height: number): void {
   const content = textarea.scrollHeight;
   textarea.style.paddingTop = `${Math.max(0, (height - content) / 2)}px`;
   textarea.style.height = `${height}px`;
+}
+
+/** Sizes the textarea to its unwrapped text, with room for the caret. */
+function fitToContent(textarea: HTMLTextAreaElement, fontSize: number): void {
+  const size = measureText(textarea.value || " ", fontSize);
+  textarea.style.width = `${size.w + fontSize}px`;
+  textarea.style.height = `${size.h}px`;
 }

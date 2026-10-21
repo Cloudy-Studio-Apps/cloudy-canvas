@@ -3,7 +3,7 @@
 Code moved out of `src/` while the board is rebuilt on the element architecture (see "Elements" in
 `CLAUDE.md`). Nothing here is compiled, linted or formatted. Paths mirror `src/`.
 
-- Features waiting to be ported: text and connectors (DB tables/enums and DBML are back
+- Features waiting to be ported: connectors (DB tables/enums and DBML are back
   in `src/products/board/elements/db/`, ER diagrams in `src/products/board/elements/er/`). That covers their engine modules, tools, layers, agent tools and React panels.
 - Reference copies of core files from before the rebuild: `shapes.types.ts`, `canvas-engine.ts`,
   `scene.ts`, `hit-test.ts`, the old drawers and so on.

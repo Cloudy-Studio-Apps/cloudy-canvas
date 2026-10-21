@@ -5,6 +5,7 @@ import type { Size } from "../geometry.types";
 export function textEditorStyle(
   style: ElementTextStyle,
   { w, h }: Size,
+  wraps: boolean,
 ): Partial<CSSStyleDeclaration> {
   const { fontSize } = style;
   const padTop = style.vAlign === "top" ? style.padY : 0;
@@ -26,8 +27,8 @@ export function textEditorStyle(
     lineHeight: `${fontSize * ELEMENT_DEFAULTS.lineHeight}px`,
     color: style.color,
     caretColor: style.color,
-    whiteSpace: "pre-wrap",
-    overflowWrap: "break-word",
+    whiteSpace: wraps ? "pre-wrap" : "pre",
+    overflowWrap: wraps ? "break-word" : "normal",
     textAlign: style.align,
     padding: `${padTop}px ${style.padX}px`,
     width: `${w}px`,

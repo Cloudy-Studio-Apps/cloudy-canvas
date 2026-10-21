@@ -13,10 +13,10 @@ import {
   withErMembers,
   withSectionMembers,
 } from "./elements";
-import { DbTool, ErTool, MarkerTool, SectionTool, ShapeTool, StickyTool } from "./tools";
+import { DbTool, ErTool, MarkerTool, SectionTool, ShapeTool, StickyTool, TextTool } from "./tools";
 
 /**
- * Boards (`.cboard`, FigJam-style): sticky notes, marker strokes, diagram shapes, sections,
+ * Boards (`.cboard`, FigJam-style): sticky notes, text, marker strokes, diagram shapes, sections,
  * database schemas and ER diagrams.
  */
 export const boardProduct: CanvasProduct<BoardToolOptions> = {
@@ -25,6 +25,7 @@ export const boardProduct: CanvasProduct<BoardToolOptions> = {
   createTools: (ctx) => [
     new MarkerTool(ctx),
     new StickyTool(ctx),
+    new TextTool(ctx),
     new ShapeTool(ctx),
     new SectionTool(ctx),
     new DbTool(ctx),

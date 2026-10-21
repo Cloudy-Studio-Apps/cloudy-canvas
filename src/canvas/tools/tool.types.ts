@@ -30,6 +30,8 @@ export interface ToolContext<O extends object = object> {
   /** The ids plus what moves with them (e.g. an entity's attributes). */
   withMembers(ids: Iterable<string>): Set<string>;
   editText(id: string): void;
+  /** Types the text of a new element; it's added to the document (and selected) on commit. */
+  editNewText(el: CanvasElement): void;
   setCursor(cursor: string): void;
   setHover(id: string | null): void;
   getHover(): string | null;
