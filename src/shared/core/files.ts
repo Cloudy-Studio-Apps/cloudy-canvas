@@ -1,4 +1,4 @@
-import type { FileType } from "./files.types";
+import type { FileInfo, FileType } from "./files.types";
 
 /** Bump when the on-disk format changes in a non-backwards-compatible way. */
 export const CURRENT_FORMAT_VERSION = 1;
@@ -34,4 +34,20 @@ export function fileTypeFromPath(path: string): FileType | null {
     if (fileExt === ext) return type as FileType;
   }
   return null;
+}
+
+/** Whether a value read from disk (e.g. the recent files index) is a well-formed `FileInfo`. */
+export function isFileInfo(value: unknown): value is FileInfo {
+  if (typeof value !== "object" || value === null) return false;
+  const file = value as Record<string, unknown>;
+  return (
+    typeof file.id === "string" &&
+    typeof file.name === "string" &&
+    typeof file.type === "string" &&
+    isFileType(file.type) &&
+    typeof file.path === "string" &&
+    typeof file.createdAt === "string" &&
+    typeof file.updatedAt === "string" &&
+    typeof file.formatVersion === "number"
+  );
 }

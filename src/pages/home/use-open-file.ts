@@ -1,8 +1,9 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router";
 
-import { openCanvasFileDialog, storage } from "@platform";
+import { openCanvasFileDialog } from "@platform";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
+import { notifyError } from "@shared/stores/toast-store";
 
 /** Shows the native open dialog and opens the chosen file in its editor. */
 export function useOpenFile(): () => Promise<void> {
@@ -12,11 +13,10 @@ export function useOpenFile(): () => Promise<void> {
     try {
       const path = await openCanvasFileDialog();
       if (!path) return;
-      const file = await storage.register(path);
-      useRecentFilesStore.getState().upsert(file);
+      const file = await useRecentFilesStore.getState().open(path);
       await navigate(`/${file.type}/${file.id}`);
     } catch (error) {
-      console.error("[home] Failed to open file:", error);
+      notifyError("The file couldn't be opened", error);
     }
   }, [navigate]);
 }

@@ -20,9 +20,14 @@ export interface AgentBoard {
 }
 
 /** What board tools can reach beyond the engine, implemented by the app. */
+export interface AgentRecentFile extends FileInfo {
+  /** Moved or deleted since it was last seen. */
+  missing: boolean;
+}
+
 export interface AgentHost {
   board(): AgentBoard | null;
-  recentFiles(): Promise<FileInfo[]>;
+  recentFiles(): Promise<AgentRecentFile[]>;
   /** Opens a board in the window and resolves once it's ready. */
   openBoard(id: string): Promise<AgentBoard>;
   newBoard(): Promise<AgentBoard>;

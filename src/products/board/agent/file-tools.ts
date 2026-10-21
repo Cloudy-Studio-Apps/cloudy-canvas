@@ -8,13 +8,21 @@ const NO_ARGS = { type: "object", properties: {} };
 export const fileTools: BoardAgentTool[] = [
   {
     name: "list_recent_boards",
-    description: "Boards recently opened or saved in Cloudy Canvas, newest first.",
+    description:
+      "Boards recently opened or saved in Cloudy Canvas, newest first. Boards marked missing " +
+      "were moved or deleted and can't be opened.",
     inputSchema: NO_ARGS,
     run: async (host) => {
       const files = await host.recentFiles();
       return files
         .filter((file) => file.type === "board")
-        .map(({ id, name, path, updatedAt }) => ({ id, name, path, updatedAt }));
+        .map(({ id, name, path, updatedAt, missing }) => ({
+          id,
+          name,
+          path,
+          updatedAt,
+          ...(missing && { missing: true }),
+        }));
     },
   },
   {

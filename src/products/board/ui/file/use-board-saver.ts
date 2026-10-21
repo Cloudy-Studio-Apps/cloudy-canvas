@@ -4,6 +4,8 @@ import { encodeBoardFile, type BoardEngine } from "@board";
 import type { FileInfo } from "@shared/core";
 import { saveCanvasFileDialog, storage } from "@platform";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
+import { notifyError } from "@shared/stores/toast-store";
+import { useUnsavedChangesStore } from "@shared/stores/unsaved-changes-store";
 import type { BoardFileContextValue, SaveStatus } from "./board-file-context.types";
 
 const UNTITLED = "Untitled board";
@@ -20,6 +22,12 @@ export function useBoardSaver(
 
   useEffect(() => engine.doc.observe(() => setDirty(true)), [engine]);
 
+  useEffect(() => {
+    const { setDirty: setAppDirty } = useUnsavedChangesStore.getState();
+    setAppDirty(dirty);
+    return () => setAppDirty(false);
+  }, [dirty]);
+
   const save = useCallback(
     async (asNew: boolean) => {
       const path =
@@ -33,7 +41,7 @@ export function useBoardSaver(
         setStatus("idle");
         useRecentFilesStore.getState().upsert(saved);
       } catch (error) {
-        console.error("[board] Failed to save:", error);
+        notifyError("The board couldn't be saved", error);
         setStatus("error");
       }
     },

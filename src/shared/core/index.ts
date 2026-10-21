@@ -2,6 +2,7 @@ export type * from "./agent-channel.types";
 export type * from "./clipboard.types";
 export * from "./files";
 export type * from "./files.types";
+export type * from "./file-open-requests.types";
 export * from "./ids";
 export * from "./keyboard";
 export type * from "./keyboard.types";
