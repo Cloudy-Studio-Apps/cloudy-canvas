@@ -118,7 +118,12 @@ function resolve(
   line: number,
 ): { table: DbTableShape; column: DbColumn } {
   const table = lookup.get(endpoint.table);
-  if (!table) throw new ReconcileError(`Unknown table "${endpoint.table}"`, line);
+  if (!table) {
+    throw new ReconcileError(
+      `Unknown table "${endpoint.table}". It's created when you leave the editor`,
+      line,
+    );
+  }
   const column = table.columns.find((c) => c.name === endpoint.column);
   if (!column)
     throw new ReconcileError(`Unknown column "${endpoint.table}.${endpoint.column}"`, line);

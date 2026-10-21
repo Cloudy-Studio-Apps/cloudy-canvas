@@ -23,6 +23,7 @@ export type {
 } from "./document";
 export type {
   ColumnTarget,
+  DbApplyOptions,
   DbApplyResult,
   DbColumnPatch,
   DbEnumPatch,

@@ -1,35 +1,40 @@
 import type { BoardDocument } from "../document";
 import { parseDbml } from "./dbml";
+import { addMissingTables } from "./add-missing-tables";
 import { applyPlan } from "./apply-plan";
 import { renameEnumType } from "./enum-edits";
 import { reconcile } from "./reconcile";
 import { EMPTY_SCHEMA, schemaShapes, splitByNames } from "./schema-shapes";
-import type { DbApplyResult } from "./db-schema.types";
+import type { DbApplyOptions, DbApplyResult } from "./db-schema.types";
 
 /** Replaces the whole schema: shapes are updated, created (placed next to the content) or removed. */
-export function applySchemaText(doc: BoardDocument, text: string): DbApplyResult {
+export function applySchemaText(
+  doc: BoardDocument,
+  text: string,
+  options: DbApplyOptions = {},
+): DbApplyResult {
   const parsed = parseDbml(text);
   if (!parsed.ok) return parsed;
-  const result = reconcile({
-    schema: parsed.schema,
-    replaced: schemaShapes(doc),
-    others: EMPTY_SCHEMA,
-  });
+  const schema = options.createMissingTables ? addMissingTables(parsed.schema, []) : parsed.schema;
+  const result = reconcile({ schema, replaced: schemaShapes(doc), others: EMPTY_SCHEMA });
   if (!result.ok) return result;
   applyPlan(doc, result.plan);
-  return { ok: true, warnings: parsed.schema.warnings };
+  return { ok: true, warnings: schema.warnings };
 }
 
-/** Merges DBML into the board: anything with the same name is updated, the rest is added. */
+/**
+ * Merges DBML into the board: anything with the same name is updated, the rest is added. Tables
+ * that refs name but nothing defines are created.
+ */
 export function importSchemaText(doc: BoardDocument, text: string): DbApplyResult {
   const parsed = parseDbml(text);
   if (!parsed.ok) return parsed;
-  const { schema } = parsed;
   const { picked, rest } = splitByNames(schemaShapes(doc), {
-    tables: new Set(schema.tables.map((t) => t.name)),
-    enums: new Set(schema.enums.map((e) => e.name)),
-    notes: new Set(schema.notes.map((n) => n.name)),
+    tables: new Set(parsed.schema.tables.map((t) => t.name)),
+    enums: new Set(parsed.schema.enums.map((e) => e.name)),
+    notes: new Set(parsed.schema.notes.map((n) => n.name)),
   });
+  const schema = addMissingTables(parsed.schema, [...picked.tables, ...rest.tables]);
   const result = reconcile({ schema, replaced: picked, others: rest });
   if (!result.ok) return result;
   applyPlan(doc, result.plan);
@@ -37,23 +42,28 @@ export function importSchemaText(doc: BoardDocument, text: string): DbApplyResul
 }
 
 /** Replaces one table from its DBML slice, which must define exactly that table. */
-export function applyTableText(doc: BoardDocument, id: string, text: string): DbApplyResult {
+export function applyTableText(
+  doc: BoardDocument,
+  id: string,
+  text: string,
+  options: DbApplyOptions = {},
+): DbApplyResult {
   const shapes = schemaShapes(doc);
   const table = shapes.tables.find((t) => t.id === id);
   if (!table) return failure("This table no longer exists");
   const parsed = parseDbml(text);
   if (!parsed.ok) return parsed;
-  const { schema } = parsed;
-  if (schema.tables.length !== 1 || schema.enums.length > 0 || schema.notes.length > 0) {
+  const { tables, enums, notes } = parsed.schema;
+  if (tables.length !== 1 || enums.length > 0 || notes.length > 0) {
     return failure(
       "Write exactly one Table here. Use the Schema view to add tables, enums or notes",
     );
   }
-  const result = reconcile({
-    schema,
-    replaced: { ...EMPTY_SCHEMA, tables: [table] },
-    others: { ...shapes, tables: shapes.tables.filter((t) => t.id !== id) },
-  });
+  const others = { ...shapes, tables: shapes.tables.filter((t) => t.id !== id) };
+  const schema = options.createMissingTables
+    ? addMissingTables(parsed.schema, others.tables)
+    : parsed.schema;
+  const result = reconcile({ schema, replaced: { ...EMPTY_SCHEMA, tables: [table] }, others });
   if (!result.ok) return result;
   applyPlan(doc, result.plan);
   return { ok: true, warnings: schema.warnings };

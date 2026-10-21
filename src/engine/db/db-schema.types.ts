@@ -3,6 +3,11 @@ import type { DbmlError } from "./dbml";
 
 export type DbApplyResult = { ok: true; warnings: DbmlError[] } | { ok: false; error: DbmlError };
 
+export interface DbApplyOptions {
+  /** Create the tables that refs name but nothing defines, instead of failing. */
+  createMissingTables?: boolean;
+}
+
 export type DbTablePatch = Partial<Pick<DbTableShape, "name" | "headerColor" | "note">>;
 
 export type DbColumnPatch = Partial<Omit<DbColumn, "id" | "ref">>;

@@ -33,7 +33,7 @@ export function TableEditor({ tableId }: TableEditorProps) {
           label={`DBML for ${table.name}`}
           hint="Only this table. Refer to other tables by name, e.g. [ref: > users.id]."
           read={() => engine.db.tableDbml(tableId)}
-          apply={(text) => engine.db.applyTableDbml(tableId, text)}
+          apply={(text, options) => engine.db.applyTableDbml(tableId, text, options)}
         />
       </TabsContent>
     </Tabs>

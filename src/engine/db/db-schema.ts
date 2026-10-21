@@ -15,6 +15,7 @@ import { isSchemaShape, schemaShapes } from "./schema-shapes";
 import * as tables from "./table-edits";
 import type {
   ColumnTarget,
+  DbApplyOptions,
   DbApplyResult,
   DbColumnPatch,
   DbEnumPatch,
@@ -112,9 +113,11 @@ export class DbSchema {
     return target ? serializeEnum(target) : "";
   }
 
-  applySchemaDbml = (text: string): DbApplyResult => applySchemaText(this.doc, text);
+  applySchemaDbml = (text: string, options?: DbApplyOptions): DbApplyResult =>
+    applySchemaText(this.doc, text, options);
   importSchemaDbml = (text: string): DbApplyResult => importSchemaText(this.doc, text);
-  applyTableDbml = (id: string, text: string): DbApplyResult => applyTableText(this.doc, id, text);
+  applyTableDbml = (id: string, text: string, options?: DbApplyOptions): DbApplyResult =>
+    applyTableText(this.doc, id, text, options);
   applyEnumDbml = (id: string, text: string): DbApplyResult => applyEnumText(this.doc, id, text);
 
   // ── Visual edits ──────────────────────────────────────────────────────

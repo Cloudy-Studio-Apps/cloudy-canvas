@@ -11,6 +11,8 @@ const INDENT = "  ";
 /**
  * DBML text view of the document. Valid text is applied while typing; invalid text shows the
  * error and leaves the board as it was. While focused, outside changes don't overwrite the text.
+ * Tables that refs name but nothing defines are only created for pasted text and on blur, so
+ * half-typed names don't turn into tables.
  */
 export function DbmlEditor({ read, apply, label, hint }: DbmlEditorProps) {
   const version = useDbVersion();
@@ -19,6 +21,7 @@ export function DbmlEditor({ read, apply, label, hint }: DbmlEditorProps) {
   const [focused, setFocused] = useState(false);
   const [status, setStatus] = useState<DbmlStatus>({ warnings: [] });
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const pasted = useRef(false);
 
   if (!focused && syncedVersion !== version) {
     setSyncedVersion(version);
@@ -27,9 +30,9 @@ export function DbmlEditor({ read, apply, label, hint }: DbmlEditorProps) {
 
   useEffect(() => () => clearTimeout(timer.current), []);
 
-  const applyNow = (value: string): boolean => {
+  const applyNow = (value: string, commit: boolean): boolean => {
     clearTimeout(timer.current);
-    const result = apply(value);
+    const result = apply(value, { createMissingTables: commit });
     setStatus(
       result.ok
         ? { warnings: result.warnings.map((w) => `Line ${w.line}: ${w.message}`) }
@@ -38,10 +41,10 @@ export function DbmlEditor({ read, apply, label, hint }: DbmlEditorProps) {
     return result.ok;
   };
 
-  const change = (value: string) => {
+  const change = (value: string, commit = false) => {
     setText(value);
     clearTimeout(timer.current);
-    timer.current = setTimeout(() => applyNow(value), APPLY_DELAY_MS);
+    timer.current = setTimeout(() => applyNow(value, commit), APPLY_DELAY_MS);
   };
 
   return (
@@ -52,12 +55,18 @@ export function DbmlEditor({ read, apply, label, hint }: DbmlEditorProps) {
         value={text}
         aria-invalid={"error" in status ? true : undefined}
         className="min-h-72 flex-1 resize-none font-mono text-xs leading-relaxed"
-        onChange={(event) => change(event.target.value)}
+        onPaste={() => {
+          pasted.current = true;
+        }}
+        onChange={(event) => {
+          change(event.target.value, pasted.current);
+          pasted.current = false;
+        }}
         onFocus={() => setFocused(true)}
         onBlur={() => {
           setFocused(false);
           // Show the canonical text again once it's valid.
-          if (applyNow(text)) {
+          if (applyNow(text, true)) {
             setSyncedVersion(version);
             setText(read());
           }

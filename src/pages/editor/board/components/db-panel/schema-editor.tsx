@@ -48,7 +48,7 @@ export function SchemaEditor() {
         label="Board schema DBML"
         hint="Every table, enum and DBML sticky note on the board. Paste a full schema here to replace it; Import merges a file in."
         read={() => engine.db.schemaDbml()}
-        apply={(text) => engine.db.applySchemaDbml(text)}
+        apply={(text, options) => engine.db.applySchemaDbml(text, options)}
       />
     </div>
   );
