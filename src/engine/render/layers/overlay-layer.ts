@@ -3,6 +3,9 @@ import { Graphics } from "pixi.js";
 import type { Camera } from "../../camera";
 import type { OverlayState } from "../overlay-state.types";
 
+/** Column handle size in screen px. */
+const HANDLE_PX = 8;
+
 /** Hover, selection and marquee outlines, drawn in screen space so line widths stay constant. */
 export class OverlayLayer extends Graphics {
   draw(camera: Camera, state: OverlayState, color: number): void {
@@ -18,6 +21,17 @@ export class OverlayLayer extends Graphics {
     if (state.selectionBounds) {
       const r = camera.worldRectToScreen(state.selectionBounds, 6);
       this.rect(r.x, r.y, r.w, r.h).stroke({ color, width: 1, alpha: 0.7 });
+    }
+    if (state.dropTarget) {
+      const r = camera.worldRectToScreen(state.dropTarget);
+      this.rect(r.x, r.y, r.w, r.h).fill({ color, alpha: 0.14 }).stroke({ color, width: 1.5 });
+    }
+    for (const point of state.handles) {
+      const { x, y } = camera.worldToScreen(point);
+      const half = HANDLE_PX / 2;
+      this.rect(x - half, y - half, HANDLE_PX, HANDLE_PX)
+        .fill({ color: 0xffffff })
+        .stroke({ color, width: 1.5 });
     }
     if (state.marquee) {
       const r = camera.worldRectToScreen(state.marquee);

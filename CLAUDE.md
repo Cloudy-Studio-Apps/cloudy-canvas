@@ -51,13 +51,18 @@ Path aliases: `@app`, `@pages`, `@engine`, `@core`, `@ui`, `@platform`, `@stores
   - New shape type: add the type in `document/shapes.types.ts`, a factory in `document/shape-factory.ts` and a drawer in `render/shapes/shape-drawers.ts`.
   - New shortcut or action: add it to `commands.ts` and `input/keymap.ts`.
 - **`input/keymap.ts` is the single source for shortcuts.** The UI reads labels via `shortcutLabel(commandId)`, so never hard-code shortcut strings in components. Key matching and formatting helpers live in `core/keyboard.ts` (shared with the `useHotkey` hook in `ui/hooks/`).
+- **Database tables** (`db/`, the `db` tool): each table is a `db-table` shape whose `columns` are a plain JSON array. A relation lives on the source column (`column.ref`) and points at the target by table/column **id**, so moves and renames never break it. All tables together form the board's single schema.
+  - `DbSchema` (`engine.db`) is the only place that edits tables. It covers visual edits, `applyTableDbml` (one table's slice), `applySchemaDbml` (the whole schema) and `importSchemaDbml` (merge).
+  - DBML is a generated view (`db/dbml/`: a hand-written parser and serializer for a subset). Parsed text goes through `reconcile.ts`, which matches tables and columns by name, then by position for renames, so ids survive.
+  - Relations are resolved in `Scene` and drawn by `render/layers/relation-layer.ts` under the shapes. New relations are dragged from column handles by `tools/connect-gesture.ts`, with `input/edge-auto-pan.ts` panning when the pointer nears the edge.
 - **UI state** is exposed as an immutable `EngineState` snapshot (`utils/store.ts`, shallow-compared), via `engine.subscribe` / `engine.getState`.
 
 ## React host (`src/pages/editor/board/`)
 
 - `useCanvasEngine` creates and mounts the engine into a container div. The canvas theme is resolved from CSS tokens via `readCanvasTheme()`.
 - The engine is provided through `EngineContext`. Chrome components use `useEngine()` and `useEngineState(selector)` (from `engine/engine-context.ts`), selecting primitives or stable references so each one re-renders only for its slice.
-- **Never put canvas shapes in React state.** React only hosts the canvas and draws the UI around it.
+- **Never put canvas shapes in React state.** React only hosts the canvas and draws the UI around it. The DB side panel (`components/db-panel/`) reads tables through `useDbQuery` / `useDbTable` (read-through caches keyed on `engine.db.getVersion()`).
+- **Files:** `file/` loads the board's `BoardDocument` from `Storage` (or starts an empty one for a new id) and saves it. A `.cboard` file is the `CCBD` magic, a u32 format version and a Yjs update (`core/board-file.ts`). `TauriStorage` keeps a recent-files index (id → path) in the app data folder. Ctrl+S / Ctrl+Shift+S are engine commands that call the host's `setHostActions`.
 
 ## Code conventions
 

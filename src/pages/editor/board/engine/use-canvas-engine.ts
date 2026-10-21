@@ -1,17 +1,23 @@
 import { useEffect, useState, type RefObject } from "react";
 
-import { CanvasEngine } from "@engine";
+import { CanvasEngine, type BoardDocument } from "@engine";
 import { readCanvasTheme } from "./canvas-theme";
 
-/** Creates a CanvasEngine mounted into the container for the component's lifetime. */
-export function useCanvasEngine(containerRef: RefObject<HTMLElement | null>): CanvasEngine | null {
+/**
+ * Creates a CanvasEngine editing `document`, mounted into the container while both exist.
+ * The document stays owned by the caller.
+ */
+export function useCanvasEngine(
+  containerRef: RefObject<HTMLElement | null>,
+  document: BoardDocument | null,
+): CanvasEngine | null {
   const [engine, setEngine] = useState<CanvasEngine | null>(null);
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
+    if (!container || !document) return;
 
-    const instance = new CanvasEngine({ theme: readCanvasTheme() });
+    const instance = new CanvasEngine({ theme: readCanvasTheme(), document });
     let active = true;
     instance
       .mount(container)
@@ -27,7 +33,7 @@ export function useCanvasEngine(containerRef: RefObject<HTMLElement | null>): Ca
       instance.destroy();
       setEngine(null);
     };
-  }, [containerRef]);
+  }, [containerRef, document]);
 
   return engine;
 }

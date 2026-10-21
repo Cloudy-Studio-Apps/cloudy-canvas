@@ -1,11 +1,18 @@
 import { Camera } from "./camera";
 import { createCommands } from "./commands";
 import type { CommandHandler, CommandId } from "./commands.types";
-import { BoardDocument, isEditableShape, type DocumentChange, type Shape } from "./document";
+import { DbSchema, handleAt } from "./db";
+import {
+  BoardDocument,
+  isDbTable,
+  isEditableShape,
+  type DocumentChange,
+  type Shape,
+} from "./document";
 import { DEFAULT_TOOL_OPTIONS } from "./engine-state";
 import type { EngineState } from "./engine-state.types";
 import type { Point } from "./geometry.types";
-import { bindKeyboard, bindWheel, PointerInput } from "./input";
+import { bindKeyboard, bindWheel, EdgeAutoPan, PointerInput } from "./input";
 import { Renderer, type CanvasTheme } from "./render";
 import { Scene } from "./scene";
 import { loadFonts, TextEditor } from "./text";
@@ -15,10 +22,11 @@ import {
   type Tool,
   type ToolContext,
   type ToolId,
+  type TableHandle,
   type ToolOptions,
 } from "./tools";
 import { debounce, Disposables, FrameScheduler, Store } from "./utils";
-import type { CanvasEngineOptions } from "./canvas-engine.types";
+import type { CanvasEngineOptions, HostActions } from "./canvas-engine.types";
 
 const ZOOM_STEP = 1.25;
 const HIT_TOLERANCE_PX = 4;
@@ -32,6 +40,8 @@ const TEXT_ZOOM_DELAY_MS = 150;
  */
 export class CanvasEngine {
   readonly doc: BoardDocument;
+  /** The board's database schema (all `db-table` shapes), for tools and the host's table editor. */
+  readonly db: DbSchema;
   readonly commands: Record<CommandId, CommandHandler>;
   private readonly ownsDocument: boolean;
   private readonly camera = new Camera();
@@ -41,11 +51,16 @@ export class CanvasEngine {
   private readonly store: Store<EngineState>;
   private readonly disposables = new Disposables();
   private readonly frames = new FrameScheduler(() => this.draw());
+  private readonly autoPan = new EdgeAutoPan(this.camera, (dx, dy) => {
+    this.camera.panBy(dx, dy);
+    this.onCameraChange();
+  });
   private readonly updateTextZoom = debounce(() => {
     this.renderer.shapes.setTextZoom(this.camera.zoom);
     this.requestRender();
   }, TEXT_ZOOM_DELAY_MS);
 
+  private hostActions: HostActions = {};
   private tool: Tool;
   private options: ToolOptions = DEFAULT_TOOL_OPTIONS;
   private container: HTMLElement | null = null;
@@ -57,6 +72,7 @@ export class CanvasEngine {
   constructor({ theme, document }: CanvasEngineOptions) {
     this.doc = document ?? new BoardDocument();
     this.ownsDocument = !document;
+    this.db = new DbSchema(this.doc);
     this.renderer = new Renderer(theme);
     this.scene = new Scene(this.doc);
     this.tools = createTools(this.createToolContext());
@@ -103,9 +119,11 @@ export class CanvasEngine {
     if (this.destroyed) return;
     this.destroyed = true;
     this.frames.stop();
+    this.autoPan.stop();
     this.updateTextZoom.cancel();
     this.disposables.dispose();
     this.textEditor?.destroy();
+    this.db.destroy();
     this.store.destroy();
     // If mount() is still awaiting init, it destroys the renderer itself once init resolves.
     if (this.rendererReady) this.renderer.destroy();
@@ -120,6 +138,20 @@ export class CanvasEngine {
   setTheme(theme: CanvasTheme): void {
     this.renderer.setTheme(theme);
     this.requestRender();
+  }
+
+  /** Lets the host handle shortcuts like Save that need app-level UI. */
+  setHostActions(actions: HostActions): void {
+    this.hostActions = actions;
+  }
+
+  /** Returns `false` when the host doesn't handle the action, so the key event isn't consumed. */
+  runHostAction(action: keyof HostActions): boolean {
+    const handler = this.hostActions[action];
+    if (!handler) return false;
+    this.textEditor?.commit();
+    handler();
+    return true;
   }
 
   setTool(id: ToolId): void {
@@ -155,8 +187,7 @@ export class CanvasEngine {
   /** Returns `false` when nothing was selected. */
   deleteSelection(): boolean {
     if (this.scene.selection.size === 0) return false;
-    this.doc.checkpoint();
-    this.doc.remove(this.scene.selection.ids);
+    this.db.removeShapes(this.scene.selection.ids);
     this.setSelection([]);
     return true;
   }
@@ -173,6 +204,15 @@ export class CanvasEngine {
   cancel(): void {
     if (this.scene.selection.size > 0) this.setSelection([]);
     else this.setTool("select");
+  }
+
+  /** Centers the camera on a shape (e.g. a table far away on the board) and selects it. */
+  focusShape(id: string): void {
+    const shape = this.doc.get(id);
+    if (!shape) return;
+    this.camera.centerOn({ x: shape.x + shape.w / 2, y: shape.y + shape.h / 2 });
+    this.setSelection([id]);
+    this.onCameraChange();
   }
 
   zoomIn(): void {
@@ -200,6 +240,7 @@ export class CanvasEngine {
   private createToolContext(): ToolContext {
     return {
       doc: this.doc,
+      db: this.db,
       camera: this.camera,
       getOptions: () => this.options,
       getSelection: () => this.scene.selection.ids,
@@ -220,6 +261,13 @@ export class CanvasEngine {
         this.renderer.draftStroke.draw(points, markerColor, markerSize);
         this.requestRender();
       },
+      handleAt: (world) => this.handleAt(world),
+      setDraftRelation: (draft, target) => {
+        this.scene.draftRelation = draft;
+        this.scene.dropTarget = target;
+        this.requestRender();
+      },
+      autoPan: (screen, onPan) => this.autoPan.update(screen, onPan),
       panBy: (dx, dy) => {
         this.camera.panBy(dx, dy);
         this.onCameraChange();
@@ -302,6 +350,7 @@ export class CanvasEngine {
   }
 
   private onCameraChange(): void {
+    this.tool.onCameraChange?.();
     this.textEditor?.reposition();
     this.updateTextZoom();
     this.requestRender();
@@ -324,6 +373,21 @@ export class CanvasEngine {
     return this.scene.shapeAt(world, HIT_TOLERANCE_PX / this.camera.zoom);
   }
 
+  /** Column handles only exist on hovered or selected tables, topmost first. */
+  private handleAt(world: Point): TableHandle | null {
+    const candidates = new Set(this.scene.selection.ids);
+    if (this.scene.hoveredId) candidates.add(this.scene.hoveredId);
+    const tolerance = HIT_TOLERANCE_PX / this.camera.zoom;
+    const shapes = this.scene.shapes;
+    for (let i = shapes.length - 1; i >= 0; i--) {
+      const shape = shapes[i]!;
+      if (!isDbTable(shape) || !candidates.has(shape.id)) continue;
+      const hit = handleAt(shape, world, tolerance);
+      if (hit) return { table: shape, ...hit };
+    }
+    return null;
+  }
+
   private setSelection(ids: Iterable<string>): void {
     if (!this.scene.selection.set(ids)) return;
     this.requestRender();
@@ -343,7 +407,7 @@ export class CanvasEngine {
   }
 
   private draw(): void {
-    this.renderer.render(this.camera, this.scene.overlay());
+    this.renderer.render(this.camera, this.scene.overlay(), this.scene.relations());
   }
 
   private buildState(): EngineState {
@@ -352,9 +416,15 @@ export class CanvasEngine {
       options: this.options,
       zoom: this.camera.zoom,
       selectionCount: this.scene.selection.size,
+      selectedTableId: this.selectedTableId(),
       canUndo: this.doc.canUndo(),
       canRedo: this.doc.canRedo(),
     };
+  }
+
+  private selectedTableId(): string | null {
+    const id = this.scene.selection.single();
+    return id && isDbTable(this.doc.get(id)) ? id : null;
   }
 
   /** Publishes a new snapshot; the store only notifies when a field actually changed. */

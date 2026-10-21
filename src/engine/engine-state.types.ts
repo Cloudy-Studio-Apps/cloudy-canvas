@@ -6,6 +6,8 @@ export interface EngineState {
   options: ToolOptions;
   zoom: number;
   selectionCount: number;
+  /** The selected database table, when exactly one is selected. */
+  selectedTableId: string | null;
   canUndo: boolean;
   canRedo: boolean;
 }

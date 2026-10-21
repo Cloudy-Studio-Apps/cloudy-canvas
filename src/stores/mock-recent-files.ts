@@ -7,6 +7,7 @@ const mock = (name: string, type: FileInfo["type"], updatedHoursAgo: number): Fi
   id: crypto.randomUUID(),
   name,
   type,
+  path: `/mock/${name}.${type === "board" ? "cboard" : "cdesign"}`,
   createdAt: hoursAgo(updatedHoursAgo + 72),
   updatedAt: hoursAgo(updatedHoursAgo),
   formatVersion: CURRENT_FORMAT_VERSION,

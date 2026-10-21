@@ -1,6 +1,7 @@
 import type { ShapePatch } from "../document";
 import { rectFromPoints } from "../geometry";
 import type { Point } from "../geometry.types";
+import { ConnectGesture } from "./connect-gesture";
 import type { CanvasPointer, Tool, ToolContext } from "./tool.types";
 import type { Gesture } from "./select-tool.types";
 
@@ -14,6 +15,13 @@ export class SelectTool implements Tool {
   constructor(private readonly ctx: ToolContext) {}
 
   onPointerDown(p: CanvasPointer): void {
+    const handle = this.ctx.handleAt(p.world);
+    if (handle) {
+      this.ctx.setCursor("crosshair");
+      this.gesture = { kind: "connect", connect: new ConnectGesture(this.ctx, handle, p) };
+      return;
+    }
+
     const hit = this.ctx.shapeAt(p.world);
     this.ctx.setHover(null);
 
@@ -43,6 +51,11 @@ export class SelectTool implements Tool {
   onPointerMove(p: CanvasPointer): void {
     const g = this.gesture;
     if (!g) return;
+
+    if (g.kind === "connect") {
+      g.connect.move(p);
+      return;
+    }
 
     if (g.kind === "marquee") {
       const rect = rectFromPoints(g.start.world, p.world);
@@ -76,15 +89,25 @@ export class SelectTool implements Tool {
       next.delete(g.toggleOnClick);
       this.ctx.setSelection(next);
     }
+    if (g?.kind === "connect") {
+      g.connect.finish();
+      this.gesture = null;
+    }
     this.onCancel();
   }
 
   onHover(p: CanvasPointer): void {
+    this.ctx.setCursor(this.ctx.handleAt(p.world) ? "crosshair" : this.cursor);
     const hit = this.ctx.shapeAt(p.world);
     this.ctx.setHover(hit && !this.ctx.getSelection().has(hit.id) ? hit.id : null);
   }
 
+  onCameraChange(): void {
+    if (this.gesture?.kind === "connect") this.gesture.connect.update();
+  }
+
   onCancel(): void {
+    if (this.gesture?.kind === "connect") this.gesture.connect.cancel();
     this.gesture = null;
     this.ctx.setMarquee(null);
     this.ctx.setCursor(this.cursor);

@@ -1,4 +1,5 @@
 import type { Shape, ShapeType } from "../../document";
+import { drawDbTable } from "./draw-db-table";
 import { drawSticky } from "./draw-sticky";
 import { drawStroke } from "./draw-stroke";
 import { drawText } from "./draw-text";
@@ -10,6 +11,7 @@ const DRAWERS: { [K in ShapeType]: ShapeDrawer<Extract<Shape, { type: K }>> } = 
   sticky: drawSticky,
   text: drawText,
   stroke: drawStroke,
+  "db-table": drawDbTable,
 };
 
 export function drawShape(view: ShapeView, shape: Shape): void {

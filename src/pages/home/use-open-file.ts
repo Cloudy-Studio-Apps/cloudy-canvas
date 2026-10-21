@@ -1,16 +1,22 @@
 import { useCallback } from "react";
+import { useNavigate } from "react-router";
 
-import { openCanvasFileDialog } from "@platform";
+import { openCanvasFileDialog, storage } from "@platform";
+import { useRecentFilesStore } from "@stores/recent-files-store";
 
-/** Shows the native open dialog. */
+/** Shows the native open dialog and opens the chosen file in its editor. */
 export function useOpenFile(): () => Promise<void> {
+  const navigate = useNavigate();
+
   return useCallback(async () => {
     try {
       const path = await openCanvasFileDialog();
-      // TODO: Load the file through Storage once real loading exists.
-      if (path) console.log("[home] Selected file:", path);
+      if (!path) return;
+      const file = await storage.register(path);
+      useRecentFilesStore.getState().upsert(file);
+      await navigate(`/${file.type}/${file.id}`);
     } catch (error) {
-      console.error("[home] Failed to open file dialog:", error);
+      console.error("[home] Failed to open file:", error);
     }
-  }, []);
+  }, [navigate]);
 }

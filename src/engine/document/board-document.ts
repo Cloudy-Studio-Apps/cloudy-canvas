@@ -16,6 +16,13 @@ export class BoardDocument {
   private readonly undoManager: Y.UndoManager;
   private readonly shapes: Y.Map<ShapeMap>;
 
+  /** A document restored from `encode()` output. Loading it isn't an undoable change. */
+  static fromUpdate(update: Uint8Array): BoardDocument {
+    const doc = new Y.Doc();
+    Y.applyUpdate(doc, update);
+    return new BoardDocument(doc);
+  }
+
   constructor(doc = new Y.Doc()) {
     this.doc = doc;
     this.shapes = doc.getMap<ShapeMap>("shapes");
@@ -77,6 +84,11 @@ export class BoardDocument {
     });
   }
 
+  /** Runs several edits as one transaction (and so one undo step). */
+  batch(fn: () => void): void {
+    this.transact(fn);
+  }
+
   // ── History (local changes only) ────────────────────────────────────
 
   /** Ends the current undo step so the next change starts a new one. */
@@ -131,6 +143,11 @@ export class BoardDocument {
     };
     this.shapes.observeDeep(handler);
     return () => this.shapes.unobserveDeep(handler);
+  }
+
+  /** The whole document as one Yjs update, for saving to a file. */
+  encode(): Uint8Array {
+    return Y.encodeStateAsUpdate(this.doc);
   }
 
   destroy(): void {

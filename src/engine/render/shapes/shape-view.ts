@@ -11,6 +11,8 @@ export class ShapeView extends Container {
   index: string;
   readonly graphics = new Graphics();
   private textNode: Text | null = null;
+  /** Extra keyed text nodes, for shapes that show several labels (e.g. database tables). */
+  private readonly textSlots = new Map<string, Text>();
   private textVisible = true;
   private textResolution = 1;
 
@@ -42,6 +44,30 @@ export class ShapeView extends Container {
     return this.textNode;
   }
 
+  /** Creates or updates the text node stored under `key`. */
+  setTextSlot(key: string, value: string, options: ShapeTextOptions): Text {
+    const style = shapeTextStyle(options);
+    let node = this.textSlots.get(key);
+    if (!node) {
+      node = new Text({ text: value, style, resolution: this.textResolution });
+      this.textSlots.set(key, node);
+      this.addChild(node);
+    } else {
+      node.text = value;
+      Object.assign(node.style, style);
+    }
+    return node;
+  }
+
+  /** Destroys the text slots that aren't in `keep`. */
+  pruneTextSlots(keep: ReadonlySet<string>): void {
+    for (const [key, node] of this.textSlots) {
+      if (keep.has(key)) continue;
+      node.destroy();
+      this.textSlots.delete(key);
+    }
+  }
+
   setTextVisible(visible: boolean): void {
     this.textVisible = visible;
     if (this.textNode) this.textNode.visible = visible;
@@ -51,5 +77,8 @@ export class ShapeView extends Container {
     this.textResolution = resolution;
     if (this.textNode && this.textNode.resolution !== resolution)
       this.textNode.resolution = resolution;
+    for (const node of this.textSlots.values()) {
+      if (node.resolution !== resolution) node.resolution = resolution;
+    }
   }
 }

@@ -11,6 +11,8 @@ export type CommandId =
   | "zoomOut"
   | "zoomReset"
   | "zoomToFit"
+  | "save"
+  | "saveAs"
   | `tool.${ToolId}`;
 
 /** Runs a command. Returns `false` when there was nothing to do, so the key event isn't consumed. */

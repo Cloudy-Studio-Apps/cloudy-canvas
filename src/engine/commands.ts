@@ -19,6 +19,8 @@ export function createCommands(engine: CanvasEngine): Record<CommandId, CommandH
     zoomOut: () => engine.zoomOut(),
     zoomReset: () => engine.zoomTo(1),
     zoomToFit: () => engine.zoomToFit(),
+    save: () => engine.runHostAction("save"),
+    saveAs: () => engine.runHostAction("saveAs"),
     ...toolCommands,
   };
 }

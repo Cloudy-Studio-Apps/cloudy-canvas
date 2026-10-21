@@ -3,21 +3,26 @@ import { Application, Container } from "pixi.js";
 import type { Camera } from "../camera";
 import type { Shape } from "../document";
 import type { CanvasTheme } from "./canvas-theme.types";
+import { DraftRelationLayer } from "./layers/draft-relation-layer";
 import { DraftStrokeLayer } from "./layers/draft-stroke-layer";
 import { GridLayer } from "./layers/grid-layer";
 import { OverlayLayer } from "./layers/overlay-layer";
+import { RelationLayer } from "./layers/relation-layer";
 import { ShapeLayer } from "./layers/shape-layer";
 import type { OverlayState } from "./overlay-state.types";
+import type { RelationState } from "./relation-state.types";
 
 /**
  * Owns the Pixi application and composes the layers, bottom to top:
- * grid (screen) → world (shapes + draft stroke, follows the camera) → overlay (screen).
+ * grid (screen) → world (relations, shapes, drafts; follows the camera) → overlay (screen).
  */
 export class Renderer {
   readonly app = new Application();
   readonly shapes = new ShapeLayer();
   readonly draftStroke = new DraftStrokeLayer();
   private readonly grid = new GridLayer();
+  private readonly relations = new RelationLayer();
+  private readonly draftRelation = new DraftRelationLayer();
   private readonly world = new Container();
   private readonly overlay = new OverlayLayer();
 
@@ -34,7 +39,7 @@ export class Renderer {
       autoStart: false, // render on demand only
       preference: ["webgl", "canvas"],
     });
-    this.world.addChild(this.shapes, this.draftStroke);
+    this.world.addChild(this.relations, this.shapes, this.draftStroke, this.draftRelation);
     this.app.stage.addChild(this.grid, this.world, this.overlay);
   }
 
@@ -55,10 +60,12 @@ export class Renderer {
     this.shapes.sync(shapes, removed);
   }
 
-  render(camera: Camera, overlay: OverlayState): void {
+  render(camera: Camera, overlay: OverlayState, relations: RelationState): void {
     this.world.scale.set(camera.zoom);
     this.world.position.set(camera.x * camera.zoom, camera.y * camera.zoom);
     this.grid.draw(camera, this.theme.grid);
+    this.relations.draw(relations, camera.zoom, this.theme.relation, this.theme.selection);
+    this.draftRelation.draw(relations.draft, camera.zoom, this.theme.selection);
     this.overlay.draw(camera, overlay, this.theme.selection);
     this.app.render();
   }

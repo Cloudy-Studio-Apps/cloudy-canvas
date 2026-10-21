@@ -3,4 +3,6 @@ export interface CanvasTheme {
   background: number;
   grid: number;
   selection: number;
+  /** Lines between database tables. */
+  relation: number;
 }

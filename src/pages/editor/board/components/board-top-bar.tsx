@@ -1,14 +1,21 @@
 import { useNavigate } from "react-router";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Braces, Save } from "lucide-react";
 
+import { shortcutLabel } from "@engine";
+
+import { useBoardPanelStore } from "@stores/board-panel-store";
 import { SealLogo } from "@ui/brand/seal-logo";
 import { Badge } from "@ui/components/ui/badge";
+import { useBoardFile } from "../file";
 import { FloatingPanel, PanelDivider } from "./floating-panel";
 import { HistoryControls } from "./history-controls";
 import { ToolButton } from "./tool-button";
 
 export function BoardTopBar() {
   const navigate = useNavigate();
+  const file = useBoardFile();
+  const schemaOpen = useBoardPanelStore((state) => state.schemaOpen);
+  const setSchemaOpen = useBoardPanelStore((state) => state.setSchemaOpen);
 
   return (
     <FloatingPanel className="gap-1 pr-2">
@@ -17,12 +24,42 @@ export function BoardTopBar() {
       </ToolButton>
       <PanelDivider />
       <SealLogo size={22} variant="mark" />
-      <h1 className="ml-1 text-sm font-medium">Untitled board</h1>
+      <h1 className="ml-1 max-w-56 truncate text-sm font-medium" title={file.name}>
+        {file.name}
+      </h1>
+      {file.dirty && (
+        <span
+          className="text-muted-foreground"
+          title="Unsaved changes"
+          aria-label="Unsaved changes"
+        >
+          •
+        </span>
+      )}
       <Badge variant="board" className="ml-1">
         Board
       </Badge>
       <PanelDivider className="mx-1.5" />
       <HistoryControls />
+      <ToolButton
+        label={file.status === "error" ? "Couldn't save. Try again" : "Save"}
+        shortcut={shortcutLabel("save")}
+        side="bottom"
+        disabled={file.status === "saving"}
+        className={file.status === "error" ? "text-destructive" : undefined}
+        onClick={() => void file.save()}
+      >
+        <Save />
+      </ToolButton>
+      <PanelDivider className="mx-1.5" />
+      <ToolButton
+        label="Database schema"
+        side="bottom"
+        active={schemaOpen}
+        onClick={() => setSchemaOpen(!schemaOpen)}
+      >
+        <Braces />
+      </ToolButton>
     </FloatingPanel>
   );
 }

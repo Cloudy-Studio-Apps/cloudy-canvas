@@ -1,3 +1,4 @@
+import { DbTool } from "./db-tool";
 import { HandTool } from "./hand-tool";
 import { MarkerTool } from "./marker-tool";
 import { SelectTool } from "./select-tool";
@@ -13,5 +14,6 @@ export function createTools(ctx: ToolContext): Record<ToolId, Tool> {
     marker: new MarkerTool(ctx),
     sticky: new StickyTool(ctx),
     text: new TextTool(ctx),
+    db: new DbTool(ctx),
   };
 }

@@ -24,11 +24,14 @@ export const KEYMAP: Record<CommandId, readonly Shortcut[]> = {
   zoomOut: [{ key: "-", mod: true, label: "−" }],
   zoomReset: [{ key: "0", mod: true }],
   zoomToFit: [{ code: "Digit1", shift: true, label: "1" }],
+  save: [{ key: "s", mod: true }],
+  saveAs: [{ key: "s", mod: true, shift: true }],
   "tool.select": [{ key: "v" }],
   "tool.hand": [{ key: "h" }],
   "tool.marker": [{ key: "m" }],
   "tool.sticky": [{ key: "s" }],
   "tool.text": [{ key: "t" }],
+  "tool.db": [{ key: "d" }],
 };
 
 const ENTRIES = Object.entries(KEYMAP) as [CommandId, readonly Shortcut[]][];

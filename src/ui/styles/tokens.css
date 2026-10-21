@@ -93,6 +93,7 @@
   --canvas-background: var(--seal-50);
   --canvas-grid: var(--seal-300);
   --canvas-selection: var(--ice-500);
+  --canvas-relation: var(--seal-500);
 
   /* ── Semantic: lines ─────────────────────────────────────────────────── */
   --border: var(--seal-200);
@@ -194,6 +195,7 @@
   --canvas-background: var(--seal-950);
   --canvas-grid: var(--seal-800);
   --canvas-selection: var(--ice-400);
+  --canvas-relation: var(--seal-400);
   --shadow-color: 256 40% 3%;
 
   color-scheme: dark;

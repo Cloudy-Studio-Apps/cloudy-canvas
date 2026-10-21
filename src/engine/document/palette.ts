@@ -24,6 +24,22 @@ export const MARKER_SIZES = [
   { name: "Bold", value: 12 },
 ] as const;
 
+/** Header colors for database tables. */
+export const DB_HEADER_COLORS = [
+  { name: "Ice", value: "#cfe4f8" },
+  { name: "Sand", value: "#f3e3c3" },
+  { name: "Blush", value: "#fbd3c7" },
+  { name: "Mint", value: "#cdeed8" },
+  { name: "Lilac", value: "#e2d9fa" },
+  { name: "Seal", value: "#e6e8eb" },
+] as const;
+
+/** Body of a database table. */
+export const DB_BODY_COLOR = "#ffffff";
+
+/** Muted ink for secondary text such as column types. */
+export const MUTED_INK_COLOR = "#6b7280";
+
 export const INK_COLOR = "#2a2f37";
 
 /** Tint for the soft paper shadow under sticky notes. */
