@@ -1,8 +1,7 @@
-import { createId } from "@core";
-
-import { boundsOfPoints } from "../geometry";
+import { createStrokeShape } from "../document";
 import type { CanvasPointer, Tool, ToolContext } from "./types";
 
+/** Freehand drawing; the stroke is previewed live and added to the document on release. */
 export class MarkerTool implements Tool {
   readonly id = "marker" as const;
   readonly cursor = "crosshair";
@@ -34,26 +33,10 @@ export class MarkerTool implements Tool {
     this.ctx.drawDraftStroke(null);
     if (!points) return;
 
-    const { markerColor: color, markerSize: size } = this.ctx.getOptions();
-    const bounds = boundsOfPoints(points);
-    const pad = size / 2;
-    const x = bounds.x - pad;
-    const y = bounds.y - pad;
-    const relative = points.map((value, i) => (i % 2 === 0 ? value - x : value - y));
-
-    this.ctx.doc.checkpoint();
-    this.ctx.doc.add({
-      id: createId(),
-      type: "stroke",
-      index: this.ctx.doc.nextIndex(),
-      x,
-      y,
-      w: bounds.w + size,
-      h: bounds.h + size,
-      color,
-      size,
-      points: relative,
-    });
+    const { markerColor, markerSize } = this.ctx.getOptions();
+    const { doc } = this.ctx;
+    doc.checkpoint();
+    doc.add(createStrokeShape(points, markerColor, markerSize, doc.nextIndex()));
   }
 
   onCancel(): void {

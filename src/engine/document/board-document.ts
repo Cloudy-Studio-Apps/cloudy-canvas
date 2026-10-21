@@ -20,7 +20,7 @@ export interface DocumentChange {
  */
 export class BoardDocument {
   readonly doc: Y.Doc;
-  readonly undoManager: Y.UndoManager;
+  private readonly undoManager: Y.UndoManager;
   private readonly shapes: Y.Map<ShapeMap>;
 
   constructor(doc = new Y.Doc()) {
@@ -84,10 +84,39 @@ export class BoardDocument {
     });
   }
 
+  // ── History (local changes only) ────────────────────────────────────
+
   /** Ends the current undo step so the next change starts a new one. */
   checkpoint(): void {
     this.undoManager.stopCapturing();
   }
+
+  undo(): void {
+    this.undoManager.undo();
+  }
+
+  redo(): void {
+    this.undoManager.redo();
+  }
+
+  canUndo(): boolean {
+    return this.undoManager.canUndo();
+  }
+
+  canRedo(): boolean {
+    return this.undoManager.canRedo();
+  }
+
+  /** Fires when the undo/redo stacks change (after document observers have run). */
+  onHistoryChange(listener: () => void): () => void {
+    const events = ["stack-item-added", "stack-item-popped", "stack-cleared"] as const;
+    for (const event of events) this.undoManager.on(event, listener);
+    return () => {
+      for (const event of events) this.undoManager.off(event, listener);
+    };
+  }
+
+  // ── Changes ─────────────────────────────────────────────────────────
 
   observe(listener: (change: DocumentChange) => void): () => void {
     const handler = (events: Y.YEvent<Y.AbstractType<unknown>>[]) => {

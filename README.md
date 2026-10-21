@@ -17,15 +17,21 @@ Built with Tauri 2, React 19, TypeScript (strict), Vite, Tailwind CSS v4, shadcn
 src/
 ├── app/        # React shell: main.tsx, App.tsx, router, providers, global styles
 ├── pages/
-│   ├── home/   # Home page and its components
-│   └── editor/ # Editor pages (placeholder for now)
+│   ├── home/           # Home page, its sections and hooks
+│   ├── editor/board/   # Board editor: page, chrome, engine hooks/context, toolbar & panels
+│   └── design-system/  # Dev-only token/component preview, one file per section
 ├── engine/     # Framework-agnostic canvas engine (plain TS, no React)
-│   ├── document/ # Board content as a Yjs doc (shapes, palette, z-order, undo)
-│   ├── render/   # PixiJS renderer: dot grid, shape views, selection overlay
-│   ├── tools/    # Select, hand, marker, sticky, text
-│   └── text/     # DOM text editor overlay + text measuring
-├── core/       # Shared types/utils: Storage interface, file types, ids (plain TS, no React)
-├── ui/         # Design system: theme tokens (CSS variables), shared + shadcn components
+│   ├── canvas-engine.ts # Coordinator: wires document, camera, scene, renderer, tools, input
+│   ├── commands.ts      # Named actions (undo, zoomIn, tool.select…) shared by keys and UI
+│   ├── scene.ts         # Shape list, selection, hover, marquee + spatial queries
+│   ├── document/ # Board content as a Yjs doc: shape types, defaults, factory, palette, history
+│   ├── input/    # Pointer, wheel and keyboard handling; KEYMAP (single source for shortcuts)
+│   ├── render/   # PixiJS renderer, layers (grid, shapes, draft, overlay), one drawer per shape
+│   ├── tools/    # One file per tool + registry (create-tools.ts)
+│   ├── text/     # DOM text editor overlay, its style, commit logic, measuring, fonts
+│   └── utils/    # Small generic helpers: Store, Emitter, Disposables, FrameScheduler, debounce, math
+├── core/       # Shared types/utils: Storage interface, file types, ids, keyboard shortcuts
+├── ui/         # Design system: tokens, shadcn + shared components, layout, hooks, brand
 ├── platform/   # Tauri-specific implementations (storage, file dialog)
 └── stores/     # Zustand stores (UI state only)
 src-tauri/      # Rust shell: window config, plugins, capabilities
@@ -40,6 +46,9 @@ Path aliases: `@app`, `@pages`, `@engine`, `@core`, `@ui`, `@platform`, `@stores
 - **Business logic lives in TypeScript**, not in Rust commands, so the web version can reuse it. Rust handles desktop-only concerns.
 - **Platform access goes through interfaces in `core/`** (for example `Storage`), implemented in `platform/`.
 - **Ids come from `crypto.randomUUID()`**, never auto-increment.
+- **Small, single-purpose files.** One component, tool, layer or helper per file, re-exported through a folder `index.ts`. Split a file once it mixes concerns or grows past ~200 lines.
+- **Extend through registries, not branches.** New tools go in `tools/create-tools.ts`, new shape types get a drawer in `render/shapes/shape-drawers.ts`, new shortcuts go in `input/keymap.ts` (the UI reads labels from there too), new option panels go in `tool-options.tsx`.
+- **UI reads engine state through selectors.** Board components call `useEngine()` / `useEngineState(s => s.zoom)` from `engine-context.ts`, so each one re-renders only when its slice changes.
 - **Colors are theme tokens** (CSS variables in `src/ui/styles/tokens.css`) and are never hard-coded in components.
 
 ## Board controls

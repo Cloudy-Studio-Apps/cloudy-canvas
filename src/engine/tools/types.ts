@@ -2,7 +2,8 @@ import type { Camera } from "../camera";
 import type { BoardDocument, Shape, TextShape } from "../document";
 import type { Point, Rect } from "../geometry";
 
-export type ToolId = "select" | "hand" | "marker" | "sticky" | "text";
+export const TOOL_IDS = ["select", "hand", "marker", "sticky", "text"] as const;
+export type ToolId = (typeof TOOL_IDS)[number];
 
 export interface CanvasPointer {
   screen: Point;
@@ -44,8 +45,8 @@ export interface Tool {
   readonly id: ToolId;
   readonly cursor: string;
   onPointerDown(p: CanvasPointer): void;
-  onPointerMove(p: CanvasPointer): void;
-  onPointerUp(p: CanvasPointer): void;
+  onPointerMove?(p: CanvasPointer): void;
+  onPointerUp?(p: CanvasPointer): void;
   /** Pointer moved without a button pressed. */
   onHover?(p: CanvasPointer): void;
   /** Tool switched away or the gesture was cancelled. */

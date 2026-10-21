@@ -1,10 +1,12 @@
-import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { ArrowLeft } from "lucide-react";
 
 import type { FileType } from "@core";
 import { FileTypeIcon } from "@ui/components/file-type-icon";
 import { Button } from "@ui/components/ui/button";
+import { useHotkey } from "@ui/hooks/use-hotkey";
+
+const ESCAPE = { key: "Escape" };
 
 const TITLES: Record<FileType, string> = {
   board: "Board",
@@ -16,13 +18,7 @@ export function EditorPlaceholderPage({ type }: { type: FileType }) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") void navigate("/");
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [navigate]);
+  useHotkey(ESCAPE, () => void navigate("/"));
 
   return (
     <div className="flex min-h-full flex-col">

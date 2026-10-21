@@ -1,15 +1,7 @@
-import { useEffect, useState, useSyncExternalStore, type RefObject } from "react";
+import { useEffect, useState, type RefObject } from "react";
 
-import { CanvasEngine, type CanvasTheme, type EngineState } from "@engine";
-import { resolveCssColor } from "@ui/lib/css-color";
-
-function readCanvasTheme(): CanvasTheme {
-  return {
-    background: resolveCssColor("--canvas-background", 0xfafafa),
-    grid: resolveCssColor("--canvas-grid", 0xd4d7dc),
-    selection: resolveCssColor("--canvas-selection", 0x4c9be0),
-  };
-}
+import { CanvasEngine } from "@engine";
+import { readCanvasTheme } from "./canvas-theme";
 
 /** Creates a CanvasEngine mounted into the container for the component's lifetime. */
 export function useCanvasEngine(containerRef: RefObject<HTMLElement | null>): CanvasEngine | null {
@@ -38,8 +30,4 @@ export function useCanvasEngine(containerRef: RefObject<HTMLElement | null>): Ca
   }, [containerRef]);
 
   return engine;
-}
-
-export function useEngineState(engine: CanvasEngine): EngineState {
-  return useSyncExternalStore(engine.subscribe, engine.getState);
 }
