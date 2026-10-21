@@ -15,9 +15,9 @@ export function shapeBounds(shape: Shape): Rect {
 export function hitTestShape(shape: Shape, p: Point, tolerance: number): boolean {
   if (shape.type === "section") return hitTestSection(shape, p, tolerance);
   if (shape.type === "db-table") {
-    // A table's note bubble belongs to it: clicking the bubble selects (and drags) the table.
-    const bubble = noteBubbleLayout(shape)?.bubble;
-    if (bubble && rectContainsPoint(bubble, p, tolerance)) return true;
+    // A table's note bubbles belong to it: clicking one selects (and drags) the table.
+    const bubbles = noteBubbleLayout(shape)?.bubbles ?? [];
+    if (bubbles.some((bubble) => rectContainsPoint(bubble.rect, p, tolerance))) return true;
   }
   if (!rectContainsPoint(shapeBounds(shape), p, tolerance)) return false;
   if (shape.type !== "stroke" && shape.type !== "connector") return true;
