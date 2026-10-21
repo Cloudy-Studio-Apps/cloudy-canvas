@@ -14,14 +14,14 @@ import {
 } from "./elements";
 import { findInteraction } from "./find-interaction";
 import type { EngineState } from "./engine-state.types";
-import type { Point } from "./geometry.types";
+import type { Point, Rect } from "./geometry.types";
 import { bindKeyboard, bindWheel, EdgeAutoPan, Keymap, PointerInput } from "./input";
 import { Renderer, type CanvasTheme } from "./render";
 import { Scene } from "./scene";
 import { loadFonts, TextEditor } from "./text";
 import { createBaseTools, type CanvasPointer, type Tool, type ToolContext } from "./tools";
-import { debounce, Disposables, FrameScheduler, Store } from "./utils";
-import type { CanvasEngineOptions, HostActions } from "./canvas-engine.types";
+import { debounce, Disposables, Emitter, FrameScheduler, Store } from "./utils";
+import type { CanvasEngineOptions, ElementAction, HostActions } from "./canvas-engine.types";
 import type { CanvasProduct } from "./canvas-product.types";
 import type { CanvasLinks } from "./links";
 
@@ -64,6 +64,8 @@ export class CanvasEngine<O extends object = object> {
     this.requestRender();
   }, TEXT_ZOOM_DELAY_MS);
 
+  private readonly viewChanges = new Emitter();
+  private readonly elementActions = new Set<(action: ElementAction) => void>();
   private hostActions: HostActions = {};
   private tool: Tool;
   private options: O;
@@ -138,6 +140,8 @@ export class CanvasEngine<O extends object = object> {
     this.disposables.dispose();
     this.textEditor?.destroy();
     this.store.destroy();
+    this.viewChanges.clear();
+    this.elementActions.clear();
     // If mount() is still awaiting init, it destroys the renderer itself once init resolves.
     if (this.rendererReady) this.renderer.destroy();
     if (this.ownsDocument) this.doc.destroy();
@@ -245,6 +249,25 @@ export class CanvasEngine<O extends object = object> {
 
   getElement(id: string): CanvasElement | undefined {
     return this.scene.get(id);
+  }
+
+  /** A world rect in screen pixels, relative to the canvas container (for DOM overlays). */
+  worldRectToScreen(rect: Rect): Rect {
+    return this.camera.worldRectToScreen(rect);
+  }
+
+  /**
+   * Runs after anything that can move an element on screen: the camera, a resize or a document
+   * change. DOM overlays use it to follow an element. Returns an unsubscribe function.
+   */
+  onViewChange(listener: () => void): () => void {
+    return this.viewChanges.subscribe(listener);
+  }
+
+  /** Element actions (e.g. a press on a video's play button). Returns an unsubscribe function. */
+  onElementAction(listener: (action: ElementAction) => void): () => void {
+    this.elementActions.add(listener);
+    return () => this.elementActions.delete(listener);
   }
 
   selectedIds(): string[] {
@@ -361,6 +384,9 @@ export class CanvasEngine<O extends object = object> {
         this.camera.panBy(dx, dy);
         this.onCameraChange();
       },
+      activate: (elementId, action) => {
+        for (const listener of this.elementActions) listener({ elementId, action });
+      },
       requestRender: () => this.requestRender(),
     };
   }
@@ -430,6 +456,7 @@ export class CanvasEngine<O extends object = object> {
       this.camera.setViewport(width, height);
       this.renderer.resize(width, height);
       this.requestRender();
+      this.viewChanges.emit();
     });
     resizeObserver.observe(container);
     this.disposables.add(() => resizeObserver.disconnect());
@@ -448,6 +475,7 @@ export class CanvasEngine<O extends object = object> {
     this.textEditor?.reposition();
     this.requestRender();
     this.emitChange();
+    this.viewChanges.emit();
   }
 
   private handleDoubleClick(p: CanvasPointer): void {
@@ -464,6 +492,7 @@ export class CanvasEngine<O extends object = object> {
     this.updateTextZoom();
     this.requestRender();
     this.emitChange();
+    this.viewChanges.emit();
   }
 
   /** Applies picked options to the selected elements they're for, as one undo step. */

@@ -3,6 +3,7 @@ export { appInfo } from "./app-info";
 export { clipboard } from "./clipboard";
 export { openCanvasFileDialog, saveCanvasFileDialog } from "./file-dialog";
 export { fileOpenRequests } from "./file-open-requests";
+export { http } from "./http";
 export { openExternal } from "./open-external";
 export { revealFile } from "./reveal-file";
 export { storage } from "./storage";

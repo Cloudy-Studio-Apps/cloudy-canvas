@@ -5,6 +5,7 @@ import type { BoardToolOptions } from "./board-options.types";
 import { BOARD_KEYBINDINGS } from "./board-keybindings";
 import {
   boardKinds,
+  createPastedEmbed,
   createPastedImage,
   createPastedText,
   DbLinks,
@@ -69,6 +70,8 @@ export const boardProduct: CanvasProduct<BoardToolOptions> = {
   // elements that weren't copied come loose.
   prepareCopies: (copies, context) =>
     prepareConnectorCopies(prepareErCopies(prepareDbCopies(copies, context), context), context),
-  pasteText: (text, at, index) => createPastedText(text, at, index),
+  // A pasted link becomes a card (a video or a page); any other text a text element.
+  pasteText: (text, at, index) =>
+    createPastedEmbed(text, at, index) ?? createPastedText(text, at, index),
   pasteImage: (image, view, index) => createPastedImage(image, view, index),
 };

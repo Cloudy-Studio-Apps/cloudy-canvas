@@ -53,6 +53,8 @@ export interface ToolContext<O extends object = object> {
   /** Pans while `screen` is near the viewport edge; `null` stops. `onPan` runs after each step. */
   autoPan(screen: Point | null, onPan?: () => void): void;
   panBy(dx: number, dy: number): void;
+  /** Hands an element's action (e.g. "play") to the host, which decides what it does. */
+  activate(elementId: string, action: string): void;
   requestRender(): void;
 }
 

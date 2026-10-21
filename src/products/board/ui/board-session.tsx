@@ -2,6 +2,7 @@ import { EngineContext } from "@canvas-ui";
 
 import { useAgentBoard } from "./agent";
 import { BoardChrome } from "./board-chrome";
+import { EmbedPlayer, useEmbedPreviews } from "./embed";
 import { ErModelContext, useErModelOf } from "./er";
 import { BoardFileContext, useBoardSaver } from "./file";
 import { BoardSchemaContext, useDbSchema } from "./schema";
@@ -16,12 +17,14 @@ export function BoardSession({ id, engine, info }: BoardSessionProps) {
   const schema = useDbSchema(engine);
   const er = useErModelOf(engine);
   useAgentBoard(id, { engine, schema, er }, file);
+  useEmbedPreviews(engine);
 
   return (
     <EngineContext value={engine}>
       <BoardFileContext value={file}>
         <BoardSchemaContext value={schema}>
           <ErModelContext value={er}>
+            <EmbedPlayer />
             <BoardChrome />
           </ErModelContext>
         </BoardSchemaContext>

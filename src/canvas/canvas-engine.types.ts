@@ -10,6 +10,15 @@ export interface HostActions {
   saveAs?: () => void;
 }
 
+/**
+ * An element asked the host to do something the engine doesn't know about (e.g. play a video, open
+ * a link), from a press on one of its buttons. The product decides the action names.
+ */
+export interface ElementAction {
+  elementId: string;
+  action: string;
+}
+
 export interface CanvasEngineOptions<O extends object = object> {
   /** The product being edited: its element kinds, tools, keymap and tool options. */
   product: CanvasProduct<O>;

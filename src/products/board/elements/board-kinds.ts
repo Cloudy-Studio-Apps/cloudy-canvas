@@ -3,6 +3,7 @@ import { ElementKinds } from "@canvas";
 import type { BoardToolOptions } from "../board-options.types";
 import { ConnectorKind } from "./connector";
 import { DbEnumKind, DbTableKind } from "./db";
+import { EmbedKind } from "./embed";
 import {
   ErAggregateKind,
   ErAttributeKind,
@@ -29,6 +30,7 @@ boardKinds.register(new TextKind());
 boardKinds.register(new GeoKind());
 boardKinds.register(new SectionKind());
 boardKinds.register(new ImageKind());
+boardKinds.register(new EmbedKind());
 boardKinds.register(new ConnectorKind());
 boardKinds.register(new DbTableKind());
 boardKinds.register(new DbEnumKind());

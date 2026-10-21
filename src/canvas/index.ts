@@ -2,7 +2,7 @@
 // content. A product (board, design, …) brings its element kinds, tools and keymap as a
 // `CanvasProduct`. React only hosts it (mount/unmount) and draws UI around it; never import React,
 // UI or product code here.
-export type { CanvasEngineOptions, HostActions } from "./canvas-engine.types";
+export type { CanvasEngineOptions, ElementAction, HostActions } from "./canvas-engine.types";
 export type { CanvasProduct } from "./canvas-product.types";
 export type { CopyContext, PastedImage } from "./clipboard";
 export type { CommandHandler, Commands } from "./commands.types";
@@ -11,7 +11,7 @@ export type { EngineState } from "./engine-state.types";
 export type { Point, Rect, Size } from "./geometry.types";
 export type { Keybindings } from "./input";
 export type { CanvasLinks, Guide, GuideView, LinkView } from "./links";
-export type { CanvasTextOptions, CanvasTheme } from "./render";
+export type { CanvasTextOptions, CanvasTheme, ImageFit } from "./render";
 export type { CanvasPointer, Tool, ToolContext } from "./tools";
 export { CanvasEngine } from "./canvas-engine";
 export { MIN_ZOOM, MAX_ZOOM } from "./camera";

@@ -96,3 +96,10 @@ export const PAPER_SHADOW_COLOR = "#1b2330";
 
 /** Behind images with a white background. */
 export const IMAGE_BACKGROUND_COLOR = "#ffffff";
+
+/** Link and video cards. */
+export const EMBED_CARD_COLOR = "#ffffff";
+/** Behind a card's picture while it loads (and around letterboxed ones). */
+export const EMBED_PREVIEW_COLOR = "#1b2330";
+/** YouTube's red, for the site mark on video cards. */
+export const YOUTUBE_RED = "#ff0000";
