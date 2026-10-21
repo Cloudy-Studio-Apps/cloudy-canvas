@@ -26,7 +26,7 @@ Path aliases: `@app`, `@pages`, `@engine`, `@core`, `@ui`, `@platform`, `@stores
 
 - `src/engine/` and `src/core/` are plain TypeScript and framework/platform-agnostic, so the future web version can reuse them. ESLint `no-restricted-imports` bans `react`, `@ui`, `@pages`, `@app`, `@stores`, `@platform` and `@tauri-apps/*` there.
 - Platform access goes through interfaces in `core/` (e.g. `Storage` in `storage.types.ts`), implemented in `platform/` (Tauri).
-- Business logic lives in TypeScript, not Rust. `src-tauri/` only registers plugins (currently `tauri_plugin_dialog`) and holds window config/capabilities.
+- Business logic lives in TypeScript, not Rust. `src-tauri/` registers plugins (dialog, fs), holds window config/capabilities and runs the agent server's HTTP transport (`src/mcp/`, which carries no MCP logic).
 - Ids come from `createId()` (`crypto.randomUUID()`), never auto-increment.
 - Zustand stores (`src/stores/`) hold app UI state only, never canvas content.
 
@@ -76,6 +76,15 @@ Path aliases: `@app`, `@pages`, `@engine`, `@core`, `@ui`, `@platform`, `@stores
   - `applyErPlan` lays out an all-new diagram fresh and places only the new shapes around an existing one. `relayout()` redoes everything as one undo step.
   - Dragging or deleting an ER shape takes its attributes along (`withErMembers`), and `pruneEr` removes orphaned attributes and participants.
 - **UI state** is exposed as an immutable `EngineState` snapshot (`utils/store.ts`, shallow-compared), via `engine.subscribe` / `engine.getState`.
+
+## Agent (MCP) server
+
+Agents (Claude Code, Cursor, …) connect to the running app at `http://127.0.0.1:47821/mcp`. If that port is taken the server tries the next nine, and the URL is written to `mcp.json` in the app data folder. Access is on by default, with no auth: only loopback, with Host and Origin checked against DNS rebinding.
+
+- **Rust is only the transport** (`src-tauri/src/mcp/`): stateless Streamable HTTP (POST only). Each body is emitted to the webview as `mcp://message` and answered through the `mcp_reply` command (30 s timeout). `mcp_status` and `mcp_set_enabled` back the UI.
+- **The protocol is TypeScript.** `core/mcp/handle-mcp-message.ts` is a small hand-written JSON-RPC handler (`initialize`, `ping`, `tools/list`, `tools/call`). It reaches the platform through the `AgentChannel` interface (`core/agent-channel.types.ts`, `platform/tauri-agent-channel.ts`), and `agentChannel` is `null` outside Tauri.
+- **Tools are a registry in `engine/agent/`**: one group per file (`board-read-tools`, `shape-edit-tools`, `db-tools`, `er-tools`, `view-tools`, `file-tools`), listed in `create-agent-tools.ts`. A tool gets an `AgentHost` (the open board, recent files, opening a board). Every editing tool wraps its writes in `asUndoStep` so one call is one Ctrl+Z, and builds or validates everything before writing.
+- **The app wires it up** in `app/mcp/` (`useAgentServer`, mounted by `<AgentServer />` in the providers). The open board registers itself for agents with `useAgentBoard` (`pages/editor/board/agent/`). The on/off setting is `stores/agent-server-store.ts`, and `pages/agent-server/` is the menu in both top bars that copies the URL and setup.
 
 ## React host (`src/pages/editor/board/`)
 

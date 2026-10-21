@@ -1,3 +1,4 @@
+import { useAgentBoard } from "./agent";
 import { BoardChrome } from "./board-chrome";
 import { EngineContext } from "./engine/engine-context";
 import { BoardFileContext, useBoardSaver } from "./file";
@@ -6,6 +7,7 @@ import type { BoardSessionProps } from "./board-session.types";
 /** A loaded board: provides the engine and its file to the chrome around the canvas. */
 export function BoardSession({ id, engine, info }: BoardSessionProps) {
   const file = useBoardSaver(id, engine, info);
+  useAgentBoard(id, engine, file);
 
   return (
     <EngineContext value={engine}>

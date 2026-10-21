@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router";
-import { ArrowLeft, Braces, Save } from "lucide-react";
+import { ArrowLeft, Bot, Braces, Save } from "lucide-react";
 
 import { shortcutLabel } from "@engine";
 
+import { AgentServerMenu } from "@pages/agent-server";
+import { useAgentServerStore } from "@stores/agent-server-store";
 import { useBoardPanelStore } from "@stores/board-panel-store";
 import { SealLogo } from "@ui/brand/seal-logo";
 import { Badge } from "@ui/components/ui/badge";
@@ -17,6 +19,7 @@ export function BoardTopBar() {
   const file = useBoardFile();
   const schemaOpen = useBoardPanelStore((state) => state.schemaOpen);
   const setSchemaOpen = useBoardPanelStore((state) => state.setSchemaOpen);
+  const agentsEnabled = useAgentServerStore((state) => state.enabled);
 
   return (
     <FloatingPanel className="gap-1 pr-2">
@@ -62,6 +65,17 @@ export function BoardTopBar() {
         <Braces />
       </ToolButton>
       <SectionsMenu />
+      <AgentServerMenu
+        trigger={
+          <ToolButton
+            label={agentsEnabled ? "Agents: on" : "Agents: off"}
+            side="bottom"
+            className={agentsEnabled ? undefined : "text-muted-foreground"}
+          >
+            <Bot />
+          </ToolButton>
+        }
+      />
     </FloatingPanel>
   );
 }

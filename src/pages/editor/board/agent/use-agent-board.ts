@@ -1,0 +1,21 @@
+import { useEffect } from "react";
+
+import type { CanvasEngine } from "@engine";
+import type { BoardFileContextValue } from "../file";
+import { getActiveBoard, setActiveBoard } from "./active-board";
+
+/** Makes this board the one agents act on while it's open. */
+export function useAgentBoard(id: string, engine: CanvasEngine, file: BoardFileContextValue): void {
+  const { name, path, dirty, save } = file;
+
+  useEffect(() => {
+    setActiveBoard({ id, engine, name, path, dirty, save });
+  }, [id, engine, name, path, dirty, save]);
+
+  useEffect(
+    () => () => {
+      if (getActiveBoard()?.engine === engine) setActiveBoard(null);
+    },
+    [engine],
+  );
+}

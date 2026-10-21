@@ -40,6 +40,9 @@ export function useBoardSaver(
     [engine, id, info],
   );
 
+  const saveFile = useCallback(() => save(false), [save]);
+  const saveFileAs = useCallback(() => save(true), [save]);
+
   useEffect(() => {
     engine.setHostActions({ save: () => void save(false), saveAs: () => void save(true) });
     return () => engine.setHostActions({});
@@ -47,9 +50,10 @@ export function useBoardSaver(
 
   return {
     name: info?.name ?? UNTITLED,
+    path: info?.path ?? null,
     dirty,
     status,
-    save: () => save(false),
-    saveAs: () => save(true),
+    save: saveFile,
+    saveAs: saveFileAs,
   };
 }

@@ -215,10 +215,38 @@ export class CanvasEngine {
   deleteSelection(): boolean {
     if (this.scene.selection.size === 0) return false;
     // Deleting a section deletes what's inside it, like FigJam; an ER shape takes its attributes.
-    const ids = this.withMembers(this.scene.selection.ids);
-    removeShapes(this.doc, this.scene, ids);
+    this.deleteShapes(this.scene.selection.ids);
     this.setSelection([]);
     return true;
+  }
+
+  /**
+   * Shapes bottom to top, as drawn: connectors are resolved (route and bounds), so read geometry
+   * here rather than from `doc`.
+   */
+  shapes(): readonly Shape[] {
+    return this.scene.shapes;
+  }
+
+  /** One shape as drawn (see `shapes()`). */
+  getShape(id: string): Shape | undefined {
+    return this.scene.get(id);
+  }
+
+  selectedIds(): string[] {
+    return [...this.scene.selection.ids];
+  }
+
+  select(ids: Iterable<string>): void {
+    this.setSelection(ids);
+  }
+
+  /** Deletes shapes like the Delete key (with section contents and ER attributes). Returns every removed id. */
+  deleteShapes(ids: Iterable<string>): string[] {
+    const removing = this.withMembers([...ids].filter((id) => this.doc.get(id)));
+    if (removing.size === 0) return [];
+    removeShapes(this.doc, this.scene, removing);
+    return [...removing];
   }
 
   /** Opens the text editor on the selected sticky or text. Returns `false` if there is none. */

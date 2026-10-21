@@ -1,0 +1,53 @@
+import type { AgentBoard, AgentTool } from "./agent-tool.types";
+import { requireBoard } from "./board-access";
+import { stringArg } from "./tool-args";
+
+const NO_ARGS = { type: "object", properties: {} };
+
+export const fileTools: AgentTool[] = [
+  {
+    name: "list_recent_boards",
+    description: "Boards recently opened or saved in Cloudy Canvas, newest first.",
+    inputSchema: NO_ARGS,
+    run: async (host) => {
+      const files = await host.recentFiles();
+      return files
+        .filter((file) => file.type === "board")
+        .map(({ id, name, path, updatedAt }) => ({ id, name, path, updatedAt }));
+    },
+  },
+  {
+    name: "open_board",
+    description:
+      "Opens a board from list_recent_boards in the app window. Unsaved changes on the current " +
+      "board stay unsaved, so call save_board first if needed.",
+    inputSchema: { type: "object", required: ["id"], properties: { id: { type: "string" } } },
+    run: async (host, args) => boardInfo(await host.openBoard(stringArg(args, "id"))),
+  },
+  {
+    name: "new_board",
+    description: "Opens a new empty board in the app window. It's saved with save_board.",
+    inputSchema: NO_ARGS,
+    run: async (host) => boardInfo(await host.newBoard()),
+  },
+  {
+    name: "save_board",
+    description:
+      "Saves the open board to its .cboard file. A board that was never saved asks the user " +
+      "where to save it, so the call returns before the file is written.",
+    inputSchema: NO_ARGS,
+    run: async (host) => {
+      const board = requireBoard(host);
+      if (!board.path) {
+        void board.save();
+        return "Asked the user where to save the board.";
+      }
+      await board.save();
+      return `Saved to ${board.path}.`;
+    },
+  },
+];
+
+function boardInfo({ id, name, path }: AgentBoard) {
+  return { id, name, path };
+}
