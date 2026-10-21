@@ -1,15 +1,8 @@
 import type { Shape } from "../document";
-import { unionRects, type Rect } from "../geometry";
+import { unionRects } from "../geometry";
+import type { Rect } from "../geometry.types";
 import { shapeBounds } from "../hit-test";
-
-/** Screen-space feedback drawn above the shapes. All rects are in world units. */
-export interface OverlayState {
-  selection: Rect[];
-  /** Bounding box around a multi-selection. */
-  selectionBounds: Rect | null;
-  hover: Rect | null;
-  marquee: Rect | null;
-}
+import type { OverlayState } from "./overlay-state.types";
 
 export function buildOverlayState(
   selected: Shape[],

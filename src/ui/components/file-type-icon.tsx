@@ -2,22 +2,15 @@ import { PenTool, StickyNote } from "lucide-react";
 
 import type { FileType } from "@core";
 import { cn } from "@ui/lib/utils";
+import type { FileTypeIconProps, FileTypeStyle } from "./file-type-icon.types";
 
-const STYLES: Record<FileType, { icon: typeof StickyNote; className: string }> = {
+const STYLES: Record<FileType, FileTypeStyle> = {
   board: { icon: StickyNote, className: "bg-board-soft text-board-foreground" },
   design: { icon: PenTool, className: "bg-design-soft text-design-foreground" },
 };
 
 /** Accent-tinted icon chip for a file type. */
-export function FileTypeIcon({
-  type,
-  size = "md",
-  className,
-}: {
-  type: FileType;
-  size?: "sm" | "md" | "lg";
-  className?: string;
-}) {
+export function FileTypeIcon({ type, size = "md", className }: FileTypeIconProps) {
   const { icon: Icon, className: tint } = STYLES[type];
   return (
     <span

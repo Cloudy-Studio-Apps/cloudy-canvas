@@ -1,10 +1,10 @@
 import { createId } from "@core";
 
-import type { Point } from "../geometry";
+import type { Point } from "../geometry.types";
 import { boundsOfPoints } from "../geometry";
 import { INK_COLOR } from "./palette";
 import { LINE_HEIGHT, STICKY_SIZE, TEXT_FONT_SIZE } from "./shape-defaults";
-import type { StickyShape, StrokeShape, TextShape } from "./shapes";
+import type { StickyShape, StrokeShape, TextShape } from "./shapes.types";
 
 /** Sticky note centered on `center`. */
 export function createStickyShape(center: Point, color: string, index: string): StickyShape {

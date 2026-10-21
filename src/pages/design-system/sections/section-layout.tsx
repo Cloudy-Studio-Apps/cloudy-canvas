@@ -1,10 +1,4 @@
-import type { ReactNode } from "react";
-
-interface SectionProps {
-  title: string;
-  description?: string;
-  children: ReactNode;
-}
+import type { LabeledProps, SectionProps } from "./section-layout.types";
 
 export function Section({ title, description, children }: SectionProps) {
   return (
@@ -19,7 +13,7 @@ export function Section({ title, description, children }: SectionProps) {
 }
 
 /** A sample with a small monospace caption under it. */
-export function Labeled({ label, children }: { label: string; children: ReactNode }) {
+export function Labeled({ label, children }: LabeledProps) {
   return (
     <div className="flex flex-col items-start gap-2">
       {children}

@@ -1,10 +1,9 @@
-import type { ComponentProps } from "react";
-
 import { Separator } from "@ui/components/ui/separator";
 import { cn } from "@ui/lib/utils";
+import type { FloatingPanelProps, PanelDividerProps } from "./floating-panel.types";
 
 /** Surface for chrome that floats over the canvas. */
-export function FloatingPanel({ className, ...props }: ComponentProps<"div">) {
+export function FloatingPanel({ className, ...props }: FloatingPanelProps) {
   return (
     <div
       className={cn(
@@ -17,6 +16,6 @@ export function FloatingPanel({ className, ...props }: ComponentProps<"div">) {
 }
 
 /** Vertical divider between groups inside a FloatingPanel. */
-export function PanelDivider({ className }: { className?: string }) {
+export function PanelDivider({ className }: PanelDividerProps) {
   return <Separator orientation="vertical" className={cn("mx-1 h-6!", className)} />;
 }

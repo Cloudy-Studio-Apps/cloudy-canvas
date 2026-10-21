@@ -1,7 +1,7 @@
 import { Graphics } from "pixi.js";
 
 import type { Camera } from "../../camera";
-import type { OverlayState } from "../overlay-state";
+import type { OverlayState } from "../overlay-state.types";
 
 /** Hover, selection and marquee outlines, drawn in screen space so line widths stay constant. */
 export class OverlayLayer extends Graphics {

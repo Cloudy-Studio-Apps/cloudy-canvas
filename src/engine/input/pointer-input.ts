@@ -1,25 +1,12 @@
-import type { Camera } from "../camera";
-import type { CanvasPointer, Tool } from "../tools";
+import type { CanvasPointer } from "../tools";
 import type { Disposables } from "../utils";
 import { toCanvasPointer } from "./canvas-pointer";
-
-export interface PointerInputHost {
-  readonly canvas: HTMLCanvasElement;
-  readonly camera: Camera;
-  activeTool(): Tool;
-  /** Tool used for temporary panning (middle button or held Space). */
-  panTool(): Tool;
-  setCursor(cursor: string): void;
-  setHover(id: string | null): void;
-  /** A press is about to start a gesture (e.g. commit text editing first). */
-  onGestureStart(): void;
-  onDoubleClick(pointer: CanvasPointer): void;
-}
+import type { ActivePointer, PointerInputHost } from "./pointer-input.types";
 
 /** Routes pointer events to the active tool, with Space / middle-button panning from any tool. */
 export class PointerInput {
   private spaceHeld = false;
-  private active: { pointerId: number; tool: Tool } | null = null;
+  private active: ActivePointer | null = null;
 
   constructor(private readonly host: PointerInputHost) {}
 

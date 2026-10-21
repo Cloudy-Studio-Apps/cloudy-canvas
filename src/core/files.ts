@@ -1,15 +1,4 @@
-export type FileType = "board" | "design";
-
-export interface FileInfo {
-  id: string;
-  name: string;
-  type: FileType;
-  /** ISO 8601 timestamp */
-  createdAt: string;
-  /** ISO 8601 timestamp */
-  updatedAt: string;
-  formatVersion: number;
-}
+import type { FileType } from "./files.types";
 
 /** Bump when the on-disk format changes in a non-backwards-compatible way. */
 export const CURRENT_FORMAT_VERSION = 1;

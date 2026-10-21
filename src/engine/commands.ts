@@ -1,21 +1,6 @@
 import type { CanvasEngine } from "./canvas-engine";
 import { TOOL_IDS, type ToolId } from "./tools";
-
-export type CommandId =
-  | "undo"
-  | "redo"
-  | "selectAll"
-  | "deleteSelection"
-  | "editSelection"
-  | "cancel"
-  | "zoomIn"
-  | "zoomOut"
-  | "zoomReset"
-  | "zoomToFit"
-  | `tool.${ToolId}`;
-
-/** Runs a command. Returns `false` when there was nothing to do, so the key event isn't consumed. */
-export type CommandHandler = () => boolean | void;
+import type { CommandId, CommandHandler } from "./commands.types";
 
 /** Named engine actions, shared by keyboard shortcuts and any host UI that wants to trigger them. */
 export function createCommands(engine: CanvasEngine): Record<CommandId, CommandHandler> {

@@ -1,6 +1,6 @@
 import { createTextDraft, isEditableShape } from "../document";
 import { selectAndEdit } from "./select-and-edit";
-import type { CanvasPointer, Tool, ToolContext } from "./types";
+import type { CanvasPointer, Tool, ToolContext } from "./tool.types";
 
 /** Click to start typing; clicking existing text or a sticky edits it. */
 export class TextTool implements Tool {

@@ -1,7 +1,8 @@
 import { cn } from "@ui/lib/utils";
 import { SealLogo } from "./seal-logo";
+import type { WordmarkProps } from "./wordmark.types";
 
-export function Wordmark({ className }: { className?: string }) {
+export function Wordmark({ className }: WordmarkProps) {
   return (
     <span className={cn("inline-flex items-center gap-2", className)}>
       <SealLogo size={30} />

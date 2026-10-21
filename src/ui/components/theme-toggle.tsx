@@ -1,6 +1,7 @@
 import { Monitor, Moon, Sun } from "lucide-react";
 
-import { useThemeStore, type ThemePreference } from "@stores/theme-store";
+import { useThemeStore } from "@stores/theme-store";
+import type { ThemePreference } from "@stores/theme-store.types";
 import { Button } from "@ui/components/ui/button";
 import {
   DropdownMenu,
@@ -10,8 +11,9 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@ui/components/ui/dropdown-menu";
+import type { ThemeOption } from "./theme-toggle.types";
 
-const OPTIONS: { value: ThemePreference; label: string; icon: typeof Sun }[] = [
+const OPTIONS: ThemeOption[] = [
   { value: "light", label: "Light", icon: Sun },
   { value: "dark", label: "Dark", icon: Moon },
   { value: "system", label: "System", icon: Monitor },

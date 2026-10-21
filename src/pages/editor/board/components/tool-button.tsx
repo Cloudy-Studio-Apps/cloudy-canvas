@@ -1,17 +1,8 @@
-import type { ComponentProps, ReactNode } from "react";
-
 import { Button } from "@ui/components/ui/button";
 import { Kbd } from "@ui/components/ui/kbd";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ui/components/ui/tooltip";
 import { cn } from "@ui/lib/utils";
-
-interface ToolButtonProps extends Omit<ComponentProps<typeof Button>, "children"> {
-  label: string;
-  shortcut?: string;
-  active?: boolean;
-  children: ReactNode;
-  side?: "top" | "bottom";
-}
+import type { ToolButtonProps } from "./tool-button.types";
 
 /** Icon button with a tooltip showing its label and shortcut. */
 export function ToolButton({

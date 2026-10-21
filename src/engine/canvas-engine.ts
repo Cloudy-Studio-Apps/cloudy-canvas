@@ -1,8 +1,10 @@
 import { Camera } from "./camera";
-import { createCommands, type CommandHandler, type CommandId } from "./commands";
+import { createCommands } from "./commands";
+import type { CommandHandler, CommandId } from "./commands.types";
 import { BoardDocument, isEditableShape, type DocumentChange, type Shape } from "./document";
-import { DEFAULT_TOOL_OPTIONS, type EngineState } from "./engine-state";
-import type { Point } from "./geometry";
+import { DEFAULT_TOOL_OPTIONS } from "./engine-state";
+import type { EngineState } from "./engine-state.types";
+import type { Point } from "./geometry.types";
 import { bindKeyboard, bindWheel, PointerInput } from "./input";
 import { Renderer, type CanvasTheme } from "./render";
 import { Scene } from "./scene";
@@ -16,12 +18,7 @@ import {
   type ToolOptions,
 } from "./tools";
 import { debounce, Disposables, FrameScheduler, Store } from "./utils";
-
-export interface CanvasEngineOptions {
-  theme: CanvasTheme;
-  /** Existing document to edit; a new empty one is created otherwise. */
-  document?: BoardDocument;
-}
+import type { CanvasEngineOptions } from "./canvas-engine.types";
 
 const ZOOM_STEP = 1.25;
 const HIT_TOLERANCE_PX = 4;

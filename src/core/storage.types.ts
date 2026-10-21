@@ -1,4 +1,4 @@
-import type { FileInfo } from "./files";
+import type { FileInfo } from "./files.types";
 
 /**
  * Platform-agnostic persistence. Implemented per platform in `platform/`

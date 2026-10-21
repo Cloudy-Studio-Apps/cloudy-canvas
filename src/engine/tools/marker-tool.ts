@@ -1,5 +1,5 @@
 import { createStrokeShape } from "../document";
-import type { CanvasPointer, Tool, ToolContext } from "./types";
+import type { CanvasPointer, Tool, ToolContext } from "./tool.types";
 
 /** Freehand drawing; the stroke is previewed live and added to the document on release. */
 export class MarkerTool implements Tool {

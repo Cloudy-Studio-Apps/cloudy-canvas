@@ -3,6 +3,7 @@ import { Plus, Search, Trash2 } from "lucide-react";
 import { Button } from "@ui/components/ui/button";
 import { Separator } from "@ui/components/ui/separator";
 import { Section } from "./section-layout";
+import type { RowLabelProps } from "./buttons-section.types";
 
 const VARIANTS = [
   "default",
@@ -15,7 +16,7 @@ const VARIANTS = [
 ] as const;
 const SIZES = ["sm", "default", "lg"] as const;
 
-function RowLabel({ children }: { children: string }) {
+function RowLabel({ children }: RowLabelProps) {
   return <span className="w-16 font-mono text-xs text-muted-foreground">{children}</span>;
 }
 

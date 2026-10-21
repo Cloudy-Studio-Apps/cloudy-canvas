@@ -1,16 +1,5 @@
 import { clamp } from "./utils";
-
-export interface Point {
-  x: number;
-  y: number;
-}
-
-export interface Size {
-  w: number;
-  h: number;
-}
-
-export interface Rect extends Point, Size {}
+import type { Point, Rect } from "./geometry.types";
 
 export function rectFromPoints(a: Point, b: Point): Rect {
   return {

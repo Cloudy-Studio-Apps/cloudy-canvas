@@ -47,6 +47,7 @@ Path aliases: `@app`, `@pages`, `@engine`, `@core`, `@ui`, `@platform`, `@stores
 - **Platform access goes through interfaces in `core/`** (for example `Storage`), implemented in `platform/`.
 - **Ids come from `crypto.randomUUID()`**, never auto-increment.
 - **Small, single-purpose files.** One component, tool, layer or helper per file, re-exported through a folder `index.ts`. Split a file once it mixes concerns or grows past ~200 lines.
+- **Types live in `.types.ts` files.** Every `interface` and `type` (including component props) goes in a sibling `<file>.types.ts` (`camera.ts` → `camera.types.ts`) and is imported with `import type`. Folder `index.ts` files re-export them with `export type`. Only exception: vendored shadcn primitives in `ui/components/ui/` stay as generated.
 - **Extend through registries, not branches.** New tools go in `tools/create-tools.ts`, new shape types get a drawer in `render/shapes/shape-drawers.ts`, new shortcuts go in `input/keymap.ts` (the UI reads labels from there too), new option panels go in `tool-options.tsx`.
 - **UI reads engine state through selectors.** Board components call `useEngine()` / `useEngineState(s => s.zoom)` from `engine-context.ts`, so each one re-renders only when its slice changes.
 - **Colors are theme tokens** (CSS variables in `src/ui/styles/tokens.css`) and are never hard-coded in components.

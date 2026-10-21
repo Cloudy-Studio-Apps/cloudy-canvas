@@ -1,8 +1,8 @@
 import type { Camera } from "../camera";
 import type { BoardDocument, Shape, TextShape } from "../document";
-import type { Point, Rect } from "../geometry";
+import type { Point, Rect } from "../geometry.types";
+import type { TOOL_IDS } from "./tool-ids";
 
-export const TOOL_IDS = ["select", "hand", "marker", "sticky", "text"] as const;
 export type ToolId = (typeof TOOL_IDS)[number];
 
 export interface CanvasPointer {

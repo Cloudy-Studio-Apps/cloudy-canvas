@@ -1,4 +1,4 @@
-import type { CanvasPointer, Tool, ToolContext } from "./types";
+import type { CanvasPointer, Tool, ToolContext } from "./tool.types";
 
 export class HandTool implements Tool {
   readonly id = "hand" as const;

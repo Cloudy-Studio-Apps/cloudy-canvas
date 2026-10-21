@@ -2,7 +2,8 @@ import { Container, Graphics, Text } from "pixi.js";
 
 import type { Shape } from "../../document";
 import { drawShape } from "./shape-drawers";
-import { shapeTextStyle, type ShapeTextOptions } from "./text-style";
+import { shapeTextStyle } from "./text-style";
+import type { ShapeTextOptions } from "./text-style.types";
 
 /** Pixi display object for one shape. Redrawn in place by its type's drawer when the shape changes. */
 export class ShapeView extends Container {

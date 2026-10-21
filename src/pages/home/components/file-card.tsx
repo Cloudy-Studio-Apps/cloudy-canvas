@@ -2,6 +2,7 @@ import type { FileInfo } from "@core";
 import { FileTypeIcon } from "@ui/components/file-type-icon";
 import { cn } from "@ui/lib/utils";
 import { formatRelativeTime } from "../format-relative-time";
+import type { FileCardProps } from "./file-card.types";
 
 const PREVIEW_TINT: Record<FileInfo["type"], string> = {
   board: "bg-board-soft/60",
@@ -13,7 +14,7 @@ const TYPE_LABEL: Record<FileInfo["type"], string> = {
   design: "Design",
 };
 
-export function FileCard({ file, onOpen }: { file: FileInfo; onOpen: (file: FileInfo) => void }) {
+export function FileCard({ file, onOpen }: FileCardProps) {
   return (
     <button
       type="button"

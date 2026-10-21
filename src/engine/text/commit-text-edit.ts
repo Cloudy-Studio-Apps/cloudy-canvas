@@ -1,12 +1,6 @@
-import type { BoardDocument, EditableShape } from "../document";
+import type { BoardDocument } from "../document";
 import { measureText } from "./text-metrics";
-
-export interface TextEdit {
-  shape: EditableShape;
-  text: string;
-  /** The shape isn't in the document yet (a new text box). */
-  isDraft: boolean;
-}
+import type { TextEdit } from "./commit-text-edit.types";
 
 /**
  * Writes an edit to the document. Text shapes resize to their content, empty drafts are dropped

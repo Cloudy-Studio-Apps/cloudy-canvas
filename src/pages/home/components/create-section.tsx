@@ -1,13 +1,8 @@
 import { FolderOpen } from "lucide-react";
 
-import type { FileType } from "@core";
 import { Button } from "@ui/components/ui/button";
 import { CreateCard } from "./create-card";
-
-interface CreateSectionProps {
-  onCreate: (type: FileType) => void;
-  onOpenFile: () => void;
-}
+import type { CreateSectionProps } from "./create-section.types";
 
 export function CreateSection({ onCreate, onOpenFile }: CreateSectionProps) {
   return (

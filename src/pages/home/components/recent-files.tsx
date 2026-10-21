@@ -1,14 +1,8 @@
-import type { FileInfo } from "@core";
 import { EmptyState } from "./empty-state";
 import { FileCard } from "./file-card";
+import type { RecentFilesProps } from "./recent-files.types";
 
-export function RecentFiles({
-  files,
-  onOpen,
-}: {
-  files: FileInfo[];
-  onOpen: (file: FileInfo) => void;
-}) {
+export function RecentFiles({ files, onOpen }: RecentFilesProps) {
   return (
     <section aria-labelledby="recent-files-heading" className="space-y-4">
       <h2

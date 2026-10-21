@@ -1,10 +1,5 @@
-import type { ComponentProps } from "react";
-
 import { cn } from "@ui/lib/utils";
-
-interface OptionButtonProps extends ComponentProps<"button"> {
-  selected: boolean;
-}
+import type { OptionButtonProps } from "./option-button.types";
 
 /** Square toggle used for every choice in the tool options panel. */
 export function OptionButton({ selected, className, ...props }: OptionButtonProps) {

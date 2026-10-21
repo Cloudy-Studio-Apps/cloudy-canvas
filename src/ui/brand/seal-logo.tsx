@@ -1,6 +1,7 @@
 import { useId } from "react";
 
 import { cn } from "@ui/lib/utils";
+import type { SealLogoProps } from "./seal-logo.types";
 
 // The mascot — a "foca watona" (chubby spotted seal) peeking over a canvas.
 // Brand art may use palette scales directly; UI components must use semantic tokens.
@@ -15,16 +16,6 @@ const SPOTS_FULL: [cx: number, cy: number, rx: number, ry: number][] = [
   [42, 17, 0.8, 0.6],
 ];
 const SPOTS_MARK = SPOTS_FULL.slice(0, 4);
-
-interface SealLogoProps {
-  /** Rendered width/height in px. */
-  size?: number;
-  /** `mark` is simplified (fewer details, thicker lines) for sizes ≤ 24px. */
-  variant?: "full" | "mark";
-  className?: string;
-  /** Accessible label. Omit when the logo is decorative (e.g. next to the wordmark). */
-  title?: string;
-}
 
 export function SealLogo({ size = 32, variant = "full", className, title }: SealLogoProps) {
   const id = useId();

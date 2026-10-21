@@ -1,10 +1,5 @@
-import type { ComponentProps } from "react";
-
 import { cn } from "@ui/lib/utils";
-
-interface PageContainerProps extends ComponentProps<"div"> {
-  as?: "div" | "main" | "header" | "section";
-}
+import type { PageContainerProps } from "./page-container.types";
 
 /** Centered max-width column with the app's page gutters. */
 export function PageContainer({ as: Tag = "div", className, ...props }: PageContainerProps) {

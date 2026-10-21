@@ -1,7 +1,4 @@
-export interface Debounced {
-  (): void;
-  cancel(): void;
-}
+import type { Debounced } from "./debounce.types";
 
 /** Calls `fn` once `delay` ms have passed without another call. */
 export function debounce(fn: () => void, delay: number): Debounced {

@@ -1,4 +1,4 @@
-type Target = Pick<EventTarget, "addEventListener" | "removeEventListener">;
+import type { ListenerTarget } from "./disposables.types";
 
 /** Collects teardown callbacks so a component can release everything in one call. */
 export class Disposables {
@@ -10,7 +10,7 @@ export class Disposables {
 
   /** Adds an event listener that is removed on `dispose()`. */
   listen<K extends keyof HTMLElementEventMap>(
-    target: Target,
+    target: ListenerTarget,
     type: K,
     handler: (event: HTMLElementEventMap[K]) => void,
     options?: AddEventListenerOptions,

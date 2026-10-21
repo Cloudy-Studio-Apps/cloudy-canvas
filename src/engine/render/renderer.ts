@@ -2,12 +2,12 @@ import { Application, Container } from "pixi.js";
 
 import type { Camera } from "../camera";
 import type { Shape } from "../document";
-import type { CanvasTheme } from "./canvas-theme";
+import type { CanvasTheme } from "./canvas-theme.types";
 import { DraftStrokeLayer } from "./layers/draft-stroke-layer";
 import { GridLayer } from "./layers/grid-layer";
 import { OverlayLayer } from "./layers/overlay-layer";
 import { ShapeLayer } from "./layers/shape-layer";
-import type { OverlayState } from "./overlay-state";
+import type { OverlayState } from "./overlay-state.types";
 
 /**
  * Owns the Pixi application and composes the layers, bottom to top:

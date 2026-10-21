@@ -1,18 +1,11 @@
 import * as Y from "yjs";
 import { generateKeyBetween } from "fractional-indexing";
 
-import type { Shape, ShapePatch } from "./shapes";
-
-type ShapeMap = Y.Map<unknown>;
+import type { Shape, ShapePatch } from "./shapes.types";
+import type { ShapeMap, DocumentChange } from "./board-document.types";
 
 /** Origin tag for local edits, so the undo manager only tracks this client's changes. */
 export const LOCAL_ORIGIN = Symbol("local");
-
-export interface DocumentChange {
-  /** Ids added or updated. */
-  updated: Set<string>;
-  removed: Set<string>;
-}
 
 /**
  * The board content, backed by a Yjs doc so persistence and real-time collaboration can plug in later.

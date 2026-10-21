@@ -1,4 +1,4 @@
-import type { Point, Rect, Size } from "./geometry";
+import type { Point, Rect, Size } from "./geometry.types";
 import { clamp } from "./utils";
 
 export const MIN_ZOOM = 0.1;

@@ -1,6 +1,6 @@
 import { createStickyShape } from "../document";
 import { selectAndEdit } from "./select-and-edit";
-import type { CanvasPointer, Tool, ToolContext } from "./types";
+import type { CanvasPointer, Tool, ToolContext } from "./tool.types";
 
 /** Click to drop a sticky note centered on the pointer, then type into it. */
 export class StickyTool implements Tool {

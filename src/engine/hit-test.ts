@@ -1,5 +1,6 @@
-import type { Shape } from "./document/shapes";
-import { distanceToSegmentSq, rectContainsPoint, type Point, type Rect } from "./geometry";
+import type { Shape } from "./document/shapes.types";
+import { distanceToSegmentSq, rectContainsPoint } from "./geometry";
+import type { Point, Rect } from "./geometry.types";
 
 export function shapeBounds(shape: Shape): Rect {
   return { x: shape.x, y: shape.y, w: shape.w, h: shape.h };

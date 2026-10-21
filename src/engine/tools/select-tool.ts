@@ -1,19 +1,10 @@
 import type { ShapePatch } from "../document";
-import { rectFromPoints, type Point } from "../geometry";
-import type { CanvasPointer, Tool, ToolContext } from "./types";
+import { rectFromPoints } from "../geometry";
+import type { Point } from "../geometry.types";
+import type { CanvasPointer, Tool, ToolContext } from "./tool.types";
+import type { Gesture } from "./select-tool.types";
 
 const DRAG_THRESHOLD = 3; // screen px
-
-type Gesture =
-  | {
-      kind: "move";
-      start: CanvasPointer;
-      origins: Map<string, Point>;
-      started: boolean;
-      /** Shift-click on an already selected shape deselects it — unless it turns into a drag. */
-      toggleOnClick: string | null;
-    }
-  | { kind: "marquee"; start: CanvasPointer; base: Set<string> };
 
 export class SelectTool implements Tool {
   readonly id = "select" as const;

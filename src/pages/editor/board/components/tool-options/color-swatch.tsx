@@ -1,14 +1,6 @@
 import { cn } from "@ui/lib/utils";
 import { OptionButton } from "./option-button";
-
-interface ColorSwatchProps {
-  label: string;
-  /** Document content color (not a theme token). */
-  color: string;
-  selected: boolean;
-  onSelect: () => void;
-  shape?: "square" | "circle";
-}
+import type { ColorSwatchProps } from "./color-swatch.types";
 
 export function ColorSwatch({
   label,

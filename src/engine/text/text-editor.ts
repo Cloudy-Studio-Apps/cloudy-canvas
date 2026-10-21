@@ -7,21 +7,7 @@ import { Disposables } from "../utils";
 import { commitTextEdit } from "./commit-text-edit";
 import { textEditorStyle } from "./text-editor-style";
 import { measureText } from "./text-metrics";
-
-export interface TextEditorHooks {
-  onStart(id: string): void;
-  onEnd(id: string): void;
-  /** A draft (new) shape was committed with content and added to the document. */
-  onCreate(id: string): void;
-}
-
-interface Session {
-  textarea: HTMLTextAreaElement;
-  shape: EditableShape;
-  /** New text that isn't in the document yet; only added on commit if non-empty (keeps undo clean). */
-  isDraft: boolean;
-  listeners: Disposables;
-}
+import type { TextEditorHooks, Session } from "./text-editor.types";
 
 /**
  * Plain DOM <textarea> laid over the canvas while editing a sticky or text shape.

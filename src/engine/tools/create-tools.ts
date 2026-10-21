@@ -3,7 +3,7 @@ import { MarkerTool } from "./marker-tool";
 import { SelectTool } from "./select-tool";
 import { StickyTool } from "./sticky-tool";
 import { TextTool } from "./text-tool";
-import type { Tool, ToolContext, ToolId } from "./types";
+import type { Tool, ToolContext, ToolId } from "./tool.types";
 
 /** Tool registry. Adding a tool means adding its id to TOOL_IDS and its constructor here. */
 export function createTools(ctx: ToolContext): Record<ToolId, Tool> {

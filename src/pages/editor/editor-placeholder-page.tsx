@@ -5,6 +5,7 @@ import type { FileType } from "@core";
 import { FileTypeIcon } from "@ui/components/file-type-icon";
 import { Button } from "@ui/components/ui/button";
 import { useHotkey } from "@ui/hooks/use-hotkey";
+import type { EditorPlaceholderPageProps } from "./editor-placeholder-page.types";
 
 const ESCAPE = { key: "Escape" };
 
@@ -14,7 +15,7 @@ const TITLES: Record<FileType, string> = {
 };
 
 // Placeholder until the canvas engine exists. The real editor will mount `CanvasEngine` from @engine here.
-export function EditorPlaceholderPage({ type }: { type: FileType }) {
+export function EditorPlaceholderPage({ type }: EditorPlaceholderPageProps) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 

@@ -1,3 +1,4 @@
+export type * from "./canvas-theme.types";
+export type * from "./overlay-state.types";
 export { Renderer } from "./renderer";
-export type { CanvasTheme } from "./canvas-theme";
-export { buildOverlayState, type OverlayState } from "./overlay-state";
+export { buildOverlayState } from "./overlay-state";

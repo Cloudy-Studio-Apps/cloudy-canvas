@@ -1,5 +1,6 @@
 import type { BoardDocument, Shape } from "./document";
-import { rectsIntersect, unionRects, type Point, type Rect } from "./geometry";
+import { rectsIntersect, unionRects } from "./geometry";
+import type { Point, Rect } from "./geometry.types";
 import { shapeBounds, topmostShapeAt } from "./hit-test";
 import { buildOverlayState, type OverlayState } from "./render";
 import { Selection } from "./selection";

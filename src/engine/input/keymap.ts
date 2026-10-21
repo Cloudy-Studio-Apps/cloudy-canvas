@@ -1,6 +1,6 @@
 import { formatShortcut, matchesShortcut, type Shortcut } from "@core";
 
-import type { CommandId } from "../commands";
+import type { CommandId } from "../commands.types";
 
 /** Default key bindings. The first shortcut of each command is the one shown in the UI. */
 export const KEYMAP: Record<CommandId, readonly Shortcut[]> = {
