@@ -1,6 +1,16 @@
 import type { Camera } from "../camera";
 import type { DbSchema, HandleHit } from "../db";
-import type { BoardDocument, DbTableShape, Shape, TextShape } from "../document";
+import type {
+  ArrowHead,
+  BoardDocument,
+  ConnectableShape,
+  ConnectorStyle,
+  DbTableShape,
+  GeoKind,
+  Shape,
+  TextShape,
+} from "../document";
+import type { Interaction } from "../handles";
 import type { Point, Rect } from "../geometry.types";
 import type { DropTarget } from "../render";
 import type { DraftRelation } from "../scene.types";
@@ -21,6 +31,13 @@ export interface ToolOptions {
   markerColor: string;
   markerSize: number;
   stickyColor: string;
+  shapeKind: GeoKind;
+  shapeFill: string;
+  shapeStroke: string;
+  connectorStyle: ConnectorStyle;
+  connectorColor: string;
+  connectorStartHead: ArrowHead;
+  connectorEndHead: ArrowHead;
 }
 
 /** What tools can do to the engine. */
@@ -33,16 +50,21 @@ export interface ToolContext {
   setSelection(ids: Iterable<string>): void;
   setTool(tool: ToolId): void;
   shapeAt(world: Point): Shape | undefined;
+  /** A shape as the scene sees it (connectors resolved). */
+  getShape(id: string): Shape | undefined;
+  /** Topmost shape a connector can attach to (ignores connectors and strokes). */
+  connectableAt(world: Point, exclude?: ReadonlySet<string>): ConnectableShape | undefined;
   shapesInRect(rect: Rect): Shape[];
   editText(id: string): void;
   /** Opens the editor for a new, not-yet-added text shape. */
   editNewText(shape: TextShape): void;
   setCursor(cursor: string): void;
   setHover(id: string | null): void;
+  getHover(): string | null;
   setMarquee(rect: Rect | null): void;
   drawDraftStroke(points: number[] | null): void;
-  /** Column handle of a hovered or selected database table under the point. */
-  handleAt(world: Point): TableHandle | null;
+  /** Handle under the point (connector end, resize, quick-connect, table column), if any. */
+  interactionAt(world: Point): Interaction | null;
   /** Shows (or clears) the relation being dragged and the row it would connect to. */
   setDraftRelation(draft: DraftRelation | null, target: DropTarget | null): void;
   /** Pans while `screen` is near the viewport edge; `null` stops. `onPan` runs after each step. */

@@ -1,4 +1,13 @@
-import { Database, Hand, Highlighter, MousePointer2, StickyNote, Type } from "lucide-react";
+import {
+  Database,
+  Hand,
+  Highlighter,
+  MousePointer2,
+  Shapes,
+  Spline,
+  StickyNote,
+  Type,
+} from "lucide-react";
 
 import type { BoardToolItem } from "./board-tools.types";
 
@@ -12,6 +21,8 @@ export const BOARD_TOOL_GROUPS: BoardToolItem[][] = [
     { id: "marker", label: "Marker", icon: Highlighter },
     { id: "sticky", label: "Sticky note", icon: StickyNote },
     { id: "text", label: "Text", icon: Type },
+    { id: "shape", label: "Shape", icon: Shapes },
+    { id: "connector", label: "Connector", icon: Spline },
   ],
   [{ id: "db", label: "Database table", icon: Database }],
 ];

@@ -5,7 +5,17 @@ export type { CommandId } from "./commands.types";
 export type { EngineState } from "./engine-state.types";
 export type { CanvasTheme } from "./render";
 export type { ToolId, ToolOptions } from "./tools";
-export type { DbColumn, DbRef, DbRefKind, DbTableShape, Shape, ShapeType } from "./document";
+export type {
+  ArrowHead,
+  ConnectorStyle,
+  DbColumn,
+  DbRef,
+  DbRefKind,
+  DbTableShape,
+  GeoKind,
+  Shape,
+  ShapeType,
+} from "./document";
 export type {
   ColumnTarget,
   DbApplyResult,
@@ -21,6 +31,9 @@ export { TOOL_IDS } from "./tools";
 export {
   BoardDocument,
   DB_HEADER_COLORS,
+  GEO_KINDS,
+  SHAPE_FILLS,
+  SHAPE_STROKES,
   MARKER_COLORS,
   MARKER_SIZES,
   STICKY_COLORS,

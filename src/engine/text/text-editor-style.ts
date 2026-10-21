@@ -1,5 +1,6 @@
 import {
   FONT_FAMILY,
+  GEO_PADDING,
   INK_COLOR,
   LINE_HEIGHT,
   STICKY_FONT_SIZE,
@@ -10,6 +11,8 @@ import {
 /** Inline styles that make the textarea overlay match how the shape's text is drawn on canvas. */
 export function textEditorStyle(shape: EditableShape): Partial<CSSStyleDeclaration> {
   const isSticky = shape.type === "sticky";
+  const isGeo = shape.type === "geo";
+  const wraps = isSticky || isGeo;
   const fontSize = isSticky ? STICKY_FONT_SIZE : shape.fontSize;
   return {
     position: "absolute",
@@ -26,11 +29,12 @@ export function textEditorStyle(shape: EditableShape): Partial<CSSStyleDeclarati
     fontFamily: FONT_FAMILY,
     fontSize: `${fontSize}px`,
     lineHeight: `${fontSize * LINE_HEIGHT}px`,
-    color: isSticky ? INK_COLOR : shape.color,
+    color: shape.type === "text" ? shape.color : INK_COLOR,
     caretColor: INK_COLOR,
-    whiteSpace: isSticky ? "pre-wrap" : "pre",
-    overflowWrap: isSticky ? "break-word" : "normal",
-    padding: isSticky ? `${STICKY_PADDING}px` : "0",
+    whiteSpace: wraps ? "pre-wrap" : "pre",
+    overflowWrap: wraps ? "break-word" : "normal",
+    textAlign: isGeo ? "center" : "left",
+    padding: isSticky ? `${STICKY_PADDING}px` : isGeo ? `0 ${GEO_PADDING}px` : "0",
     width: `${shape.w}px`,
     height: `${shape.h}px`,
     zIndex: "1",

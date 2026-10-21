@@ -1,5 +1,6 @@
 import { draftPath, resolveRelations, type Relation } from "./db";
-import { isDbTable, type BoardDocument, type Shape } from "./document";
+import { resolveConnector } from "./connectors";
+import { isConnector, isDbTable, type BoardDocument, type Shape } from "./document";
 import { rectsIntersect, unionRects } from "./geometry";
 import type { Point, Rect } from "./geometry.types";
 import { shapeBounds, topmostShapeAt } from "./hit-test";
@@ -19,6 +20,9 @@ import type { DraftRelation } from "./scene.types";
 export class Scene {
   readonly selection = new Selection();
   private list: Shape[] = [];
+  private byId = new Map<string, Shape>();
+  /** Shape id → ids of the connectors attached to it. */
+  private attachments = new Map<string, Set<string>>();
   private hoverId: string | null = null;
   private relationList: Relation[] = [];
   marquee: Rect | null = null;
@@ -34,10 +38,37 @@ export class Scene {
     return this.list;
   }
 
-  /** Re-reads the shape list from the document. */
+  /**
+   * Re-reads the shape list from the document. Connectors are resolved against the shapes they're
+   * attached to, so the list always holds their current route and bounds.
+   */
   refresh(): void {
-    this.list = this.doc.all();
+    const raw = this.doc.all();
+    const rawById = new Map(raw.map((shape) => [shape.id, shape]));
+    this.attachments.clear();
+    this.list = raw.map((shape) => {
+      if (!isConnector(shape)) return shape;
+      for (const id of [shape.start.shapeId, shape.end.shapeId]) {
+        if (id) this.attach(id, shape.id);
+      }
+      return resolveConnector(shape, (id) => rawById.get(id));
+    });
+    this.byId = new Map(this.list.map((shape) => [shape.id, shape]));
     this.relationList = resolveRelations(this.list);
+  }
+
+  /** A shape as the scene sees it (connectors resolved). */
+  get(id: string): Shape | undefined {
+    return this.byId.get(id);
+  }
+
+  /** Connectors attached to any of the shapes. */
+  connectorsAttachedTo(ids: Iterable<string>): Set<string> {
+    const result = new Set<string>();
+    for (const id of ids) {
+      for (const connector of this.attachments.get(id) ?? []) result.add(connector);
+    }
+    return result;
   }
 
   /** Topmost shape at a world point. `tolerance` is in world units. */
@@ -65,10 +96,14 @@ export class Scene {
     return true;
   }
 
-  overlay(): OverlayState {
-    const selected = this.list.filter((shape) => this.selection.has(shape.id));
-    const hover = this.hoverId ? this.doc.get(this.hoverId) : undefined;
-    return buildOverlayState(selected, hover, this.marquee, this.dropTarget);
+  overlay(zoom: number): OverlayState {
+    return buildOverlayState({
+      selected: this.list.filter((shape) => this.selection.has(shape.id)),
+      hover: this.hoverId ? this.byId.get(this.hoverId) : undefined,
+      marquee: this.marquee,
+      dropTarget: this.dropTarget,
+      zoom,
+    });
   }
 
   relations(): RelationState {
@@ -79,5 +114,11 @@ export class Scene {
       highlighted: this.selection.ids,
       draft: draft && isDbTable(from) ? draftPath(from, draft.row, draft.end) : null,
     };
+  }
+
+  private attach(shapeId: string, connectorId: string): void {
+    let set = this.attachments.get(shapeId);
+    if (!set) this.attachments.set(shapeId, (set = new Set()));
+    set.add(connectorId);
   }
 }

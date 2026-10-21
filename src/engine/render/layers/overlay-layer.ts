@@ -3,8 +3,11 @@ import { Graphics } from "pixi.js";
 import type { Camera } from "../../camera";
 import type { OverlayState } from "../overlay-state.types";
 
-/** Column handle size in screen px. */
+/** Handle sizes in screen px. */
 const HANDLE_PX = 8;
+const HANDLE_FILL = 0xffffff;
+const ENDPOINT_RADIUS_PX = 5;
+const QUICK_CONNECT_RADIUS_PX = 4;
 
 /** Hover, selection and marquee outlines, drawn in screen space so line widths stay constant. */
 export class OverlayLayer extends Graphics {
@@ -26,12 +29,22 @@ export class OverlayLayer extends Graphics {
       const r = camera.worldRectToScreen(state.dropTarget);
       this.rect(r.x, r.y, r.w, r.h).fill({ color, alpha: 0.14 }).stroke({ color, width: 1.5 });
     }
-    for (const point of state.handles) {
+    for (const point of [...state.handles, ...state.resizeHandles]) {
       const { x, y } = camera.worldToScreen(point);
       const half = HANDLE_PX / 2;
       this.rect(x - half, y - half, HANDLE_PX, HANDLE_PX)
-        .fill({ color: 0xffffff })
+        .fill({ color: HANDLE_FILL })
         .stroke({ color, width: 1.5 });
+    }
+    for (const point of state.endpoints) {
+      const { x, y } = camera.worldToScreen(point);
+      this.circle(x, y, ENDPOINT_RADIUS_PX)
+        .fill({ color: HANDLE_FILL })
+        .stroke({ color, width: 1.5 });
+    }
+    for (const point of state.quickConnect) {
+      const { x, y } = camera.worldToScreen(point);
+      this.circle(x, y, QUICK_CONNECT_RADIUS_PX).fill({ color });
     }
     if (state.marquee) {
       const r = camera.worldRectToScreen(state.marquee);

@@ -7,7 +7,7 @@ import type { TextEdit } from "./commit-text-edit.types";
  * and existing text emptied by the user is removed. Returns whether a new shape was added.
  */
 export function commitTextEdit(doc: BoardDocument, { shape, text, isDraft }: TextEdit): boolean {
-  if (shape.type === "sticky") {
+  if (shape.type === "sticky" || shape.type === "geo") {
     if (text !== shape.text) doc.update(shape.id, { text });
     return false;
   }

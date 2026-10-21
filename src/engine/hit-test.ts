@@ -2,6 +2,8 @@ import type { Shape } from "./document/shapes.types";
 import { distanceToSegmentSq, rectContainsPoint } from "./geometry";
 import type { Point, Rect } from "./geometry.types";
 
+const CONNECTOR_REACH = 4;
+
 export function shapeBounds(shape: Shape): Rect {
   return { x: shape.x, y: shape.y, w: shape.w, h: shape.h };
 }
@@ -9,11 +11,13 @@ export function shapeBounds(shape: Shape): Rect {
 /** Whether a world point hits the shape. `tolerance` is in world units. */
 export function hitTestShape(shape: Shape, p: Point, tolerance: number): boolean {
   if (!rectContainsPoint(shapeBounds(shape), p, tolerance)) return false;
-  if (shape.type !== "stroke") return true;
+  if (shape.type !== "stroke" && shape.type !== "connector") return true;
 
   const { points } = shape;
   const local = { x: p.x - shape.x, y: p.y - shape.y };
-  const radius = shape.size / 2 + tolerance;
+  // Thin connectors get extra reach so they're easy to click.
+  const reach = shape.type === "connector" ? CONNECTOR_REACH : 0;
+  const radius = shape.size / 2 + tolerance + reach;
   const radiusSq = radius * radius;
   if (points.length === 2) {
     return distanceToSegmentSq(local, points[0]!, points[1]!, points[0]!, points[1]!) <= radiusSq;

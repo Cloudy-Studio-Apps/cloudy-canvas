@@ -1,9 +1,12 @@
 import { Camera } from "./camera";
 import { createCommands } from "./commands";
 import type { CommandHandler, CommandId } from "./commands.types";
-import { DbSchema, handleAt } from "./db";
+import { DbSchema } from "./db";
+import { findInteraction } from "./find-interaction";
+import { hitTestShape } from "./hit-test";
 import {
   BoardDocument,
+  isConnectable,
   isDbTable,
   isEditableShape,
   type DocumentChange,
@@ -14,6 +17,7 @@ import type { EngineState } from "./engine-state.types";
 import type { Point } from "./geometry.types";
 import { bindKeyboard, bindWheel, EdgeAutoPan, PointerInput } from "./input";
 import { Renderer, type CanvasTheme } from "./render";
+import { removeShapes } from "./remove-shapes";
 import { Scene } from "./scene";
 import { loadFonts, TextEditor } from "./text";
 import {
@@ -22,9 +26,9 @@ import {
   type Tool,
   type ToolContext,
   type ToolId,
-  type TableHandle,
   type ToolOptions,
 } from "./tools";
+import { optionsFromShape, stylePatches } from "./tools/style-options";
 import { debounce, Disposables, FrameScheduler, Store } from "./utils";
 import type { CanvasEngineOptions, HostActions } from "./canvas-engine.types";
 
@@ -166,7 +170,7 @@ export class CanvasEngine {
 
   setToolOptions(patch: Partial<ToolOptions>): void {
     this.options = { ...this.options, ...patch };
-    if (patch.stickyColor) this.recolorSelectedStickies(patch.stickyColor);
+    this.restyleSelection(patch);
     this.emitChange();
   }
 
@@ -187,7 +191,7 @@ export class CanvasEngine {
   /** Returns `false` when nothing was selected. */
   deleteSelection(): boolean {
     if (this.scene.selection.size === 0) return false;
-    this.db.removeShapes(this.scene.selection.ids);
+    removeShapes(this.doc, this.scene, this.scene.selection.ids);
     this.setSelection([]);
     return true;
   }
@@ -261,7 +265,10 @@ export class CanvasEngine {
         this.renderer.draftStroke.draw(points, markerColor, markerSize);
         this.requestRender();
       },
-      handleAt: (world) => this.handleAt(world),
+      getShape: (id) => this.scene.get(id),
+      connectableAt: (world, exclude) => this.connectableAt(world, exclude),
+      getHover: () => this.scene.hoveredId,
+      interactionAt: (world) => findInteraction(this.doc, this.scene, world, this.camera.zoom),
       setDraftRelation: (draft, target) => {
         this.scene.draftRelation = draft;
         this.scene.dropTarget = target;
@@ -331,8 +338,13 @@ export class CanvasEngine {
 
   private handleDocumentChange(change: DocumentChange): void {
     this.scene.refresh();
-    const changed = [...change.updated]
-      .map((id) => this.doc.get(id))
+    // Connectors follow the shapes they're attached to, so they're redrawn with them.
+    const ids = new Set(change.updated);
+    for (const id of this.scene.connectorsAttachedTo([...change.updated, ...change.removed])) {
+      if (!change.removed.has(id)) ids.add(id);
+    }
+    const changed = [...ids]
+      .map((id) => this.scene.get(id))
       .filter((shape): shape is Shape => shape !== undefined);
     this.renderer.syncShapes(changed, change.removed);
     this.scene.selection.remove(change.removed);
@@ -357,14 +369,13 @@ export class CanvasEngine {
     this.emitChange();
   }
 
-  /** Recolors selected sticky notes when a sticky color is picked, like FigJam. */
-  private recolorSelectedStickies(color: string): void {
-    const stickies = [...this.scene.selection.ids].filter(
-      (id) => this.doc.get(id)?.type === "sticky",
-    );
-    if (stickies.length === 0) return;
+  /** Applies picked options to the selected shapes they're for, as one undo step. */
+  private restyleSelection(patch: Partial<ToolOptions>): void {
+    const selected = this.scene.shapes.filter((shape) => this.scene.selection.has(shape.id));
+    const patches = stylePatches(selected, patch);
+    if (patches.size === 0) return;
     this.doc.checkpoint();
-    this.doc.updateMany(new Map(stickies.map((id) => [id, { color }])));
+    this.doc.updateMany(patches);
   }
 
   // ── State helpers ─────────────────────────────────────────────────────
@@ -373,23 +384,22 @@ export class CanvasEngine {
     return this.scene.shapeAt(world, HIT_TOLERANCE_PX / this.camera.zoom);
   }
 
-  /** Column handles only exist on hovered or selected tables, topmost first. */
-  private handleAt(world: Point): TableHandle | null {
-    const candidates = new Set(this.scene.selection.ids);
-    if (this.scene.hoveredId) candidates.add(this.scene.hoveredId);
+  private connectableAt(world: Point, exclude?: ReadonlySet<string>) {
     const tolerance = HIT_TOLERANCE_PX / this.camera.zoom;
     const shapes = this.scene.shapes;
     for (let i = shapes.length - 1; i >= 0; i--) {
       const shape = shapes[i]!;
-      if (!isDbTable(shape) || !candidates.has(shape.id)) continue;
-      const hit = handleAt(shape, world, tolerance);
-      if (hit) return { table: shape, ...hit };
+      if (!isConnectable(shape) || exclude?.has(shape.id)) continue;
+      if (hitTestShape(shape, world, tolerance)) return shape;
     }
-    return null;
+    return undefined;
   }
 
   private setSelection(ids: Iterable<string>): void {
     if (!this.scene.selection.set(ids)) return;
+    // Show the selected shape's style in the options panel.
+    const first = this.scene.get([...this.scene.selection.ids][0] ?? "");
+    if (first) this.options = { ...this.options, ...optionsFromShape(first) };
     this.requestRender();
     this.emitChange();
   }
@@ -407,7 +417,7 @@ export class CanvasEngine {
   }
 
   private draw(): void {
-    this.renderer.render(this.camera, this.scene.overlay(), this.scene.relations());
+    this.renderer.render(this.camera, this.scene.overlay(this.camera.zoom), this.scene.relations());
   }
 
   private buildState(): EngineState {
@@ -417,9 +427,16 @@ export class CanvasEngine {
       zoom: this.camera.zoom,
       selectionCount: this.scene.selection.size,
       selectedTableId: this.selectedTableId(),
+      selectionTypes: this.selectionTypes(),
       canUndo: this.doc.canUndo(),
       canRedo: this.doc.canRedo(),
     };
+  }
+
+  /** Sorted, comma-separated types of the selected shapes (a primitive, so snapshots compare cheaply). */
+  private selectionTypes(): string {
+    const types = new Set([...this.scene.selection.ids].map((id) => this.scene.get(id)?.type));
+    return [...types].filter(Boolean).sort().join(",");
   }
 
   private selectedTableId(): string | null {

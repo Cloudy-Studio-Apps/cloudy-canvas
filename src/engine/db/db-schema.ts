@@ -207,16 +207,6 @@ export class DbSchema {
     );
   }
 
-  /** Removes shapes, plus the relations that pointed at removed tables, as one undo step. */
-  removeShapes(ids: Iterable<string>): void {
-    const list = [...ids];
-    this.doc.checkpoint();
-    this.doc.batch(() => {
-      this.doc.remove(list);
-      pruneRefs(this.doc);
-    });
-  }
-
   // ── Queries ─────────────────────────────────────────────────────────
 
   incomingRefs(tableId: string): IncomingRef[] {

@@ -9,11 +9,13 @@ export function shapeTextStyle({
   color,
   wrapWidth,
   fontWeight = "400",
+  align = "left",
 }: ShapeTextOptions): TextStyleOptions {
   return {
     fontFamily: FONT_FAMILY,
     fontSize,
     fontWeight,
+    align,
     lineHeight: fontSize * LINE_HEIGHT,
     fill: color,
     wordWrap: wrapWidth !== undefined,

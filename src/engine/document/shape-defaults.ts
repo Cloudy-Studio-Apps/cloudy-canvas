@@ -12,3 +12,10 @@ export const DB_HEADER_H = 36;
 export const DB_ROW_H = 28;
 export const DB_MIN_W = 220;
 export const DB_PADDING_X = 12;
+
+export const GEO_FONT_SIZE = 16;
+export const GEO_PADDING = 12;
+export const GEO_STROKE_WIDTH = 2;
+/** Shapes smaller than this (in either direction) aren't created or resized further. */
+export const MIN_SHAPE_SIZE = 16;
+export const CONNECTOR_SIZE = 2;

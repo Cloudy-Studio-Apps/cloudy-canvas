@@ -98,6 +98,7 @@ export class TextEditor {
 
   private resizeToContent(): void {
     const session = this.session;
+    if (session?.shape.type === "geo") return centerVertically(session.textarea, session.shape.h);
     if (session?.shape.type !== "text") return;
     const { textarea, shape } = session;
     const size = measureText(textarea.value || " ", shape.fontSize);
@@ -115,11 +116,26 @@ export class TextEditor {
   };
 }
 
+const TEXTAREA_LABELS: Record<EditableShape["type"], string> = {
+  sticky: "Sticky note text",
+  text: "Text",
+  geo: "Shape text",
+};
+
+/** Pads the top of a shape's textarea so its (wrapped) text sits in the middle, like on canvas. */
+function centerVertically(textarea: HTMLTextAreaElement, height: number): void {
+  textarea.style.paddingTop = "0";
+  textarea.style.height = "auto";
+  const content = textarea.scrollHeight;
+  textarea.style.paddingTop = `${Math.max(0, (height - content) / 2)}px`;
+  textarea.style.height = `${height}px`;
+}
+
 function createTextarea(shape: EditableShape): HTMLTextAreaElement {
   const textarea = document.createElement("textarea");
   textarea.value = shape.text;
   textarea.spellcheck = false;
-  textarea.setAttribute("aria-label", shape.type === "sticky" ? "Sticky note text" : "Text");
+  textarea.setAttribute("aria-label", TEXTAREA_LABELS[shape.type]);
   textarea.dataset.canvasTextEditor = "";
   Object.assign(textarea.style, textEditorStyle(shape));
   return textarea;
