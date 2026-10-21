@@ -14,11 +14,40 @@ export function isFileType(value: string | undefined): value is FileType {
   return value === "board" || value === "design";
 }
 
+/** Image files the app can show, by extension, with their media type. */
+export const IMAGE_FILE_TYPES: Record<string, string> = {
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  webp: "image/webp",
+  gif: "image/gif",
+  bmp: "image/bmp",
+  avif: "image/avif",
+  svg: "image/svg+xml",
+};
+
+/** File name without folders, e.g. "/home/me/Plan.cboard" → "Plan.cboard". */
+export function baseNameFromPath(path: string): string {
+  return path.split(/[\\/]/).pop() ?? path;
+}
+
 /** File name without folders or extension, e.g. "/home/me/Plan.cboard" → "Plan". */
 export function fileNameFromPath(path: string): string {
-  const base = path.split(/[\\/]/).pop() ?? path;
+  const base = baseNameFromPath(path);
   const dot = base.lastIndexOf(".");
   return dot > 0 ? base.slice(0, dot) : base;
+}
+
+/** The lowercase extension of a file name or path, without the dot; `""` when it has none. */
+export function extensionOf(path: string): string {
+  const base = baseNameFromPath(path);
+  const dot = base.lastIndexOf(".");
+  return dot > 0 ? base.slice(dot + 1).toLowerCase() : "";
+}
+
+/** The media type of an image file by its extension, or `null` when it isn't one. */
+export function imageTypeFromName(name: string): string | null {
+  return IMAGE_FILE_TYPES[extensionOf(name)] ?? null;
 }
 
 /** Appends the file type's extension when the path doesn't already end with it. */

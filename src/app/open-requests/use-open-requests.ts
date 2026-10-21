@@ -1,13 +1,17 @@
 import { useEffect } from "react";
 
-import { fileNameFromPath, fileTypeFromPath } from "@shared/core";
+import { fileNameFromPath, fileTypeFromPath, type FileDrop } from "@shared/core";
 import { fileOpenRequests } from "@platform";
+import { useFileDropStore } from "@shared/stores/file-drop-store";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import { useUnsavedChangesStore } from "@shared/stores/unsaved-changes-store";
 import { router } from "../router";
 
-/** Opens the first Cloudy Canvas file among launch paths, drops and forwarded launches. */
+/**
+ * Opens the first Cloudy Canvas file among launch paths, drops and forwarded launches. A drop
+ * without one goes to the open editor, which adds the files to its canvas.
+ */
 export function useOpenRequests(): void {
   useEffect(() => {
     void fileOpenRequests
@@ -15,8 +19,23 @@ export function useOpenRequests(): void {
       .then(openPaths, (error: unknown) =>
         console.error("[app] Couldn't read the launch files:", error),
       );
-    return fileOpenRequests.onOpen(openPaths);
+    const unlistenOpen = fileOpenRequests.onOpen(openPaths);
+    const unlistenDrop = fileOpenRequests.onDrop(dropFiles);
+    return () => {
+      unlistenOpen();
+      unlistenDrop();
+    };
   }, []);
+}
+
+function dropFiles(drop: FileDrop): void {
+  const paths = drop.files.map((file) => file.path).filter((path) => path !== null);
+  const target = useFileDropStore.getState().target;
+  if (paths.some((path) => fileTypeFromPath(path) !== null) || !target) {
+    openPaths(paths);
+    return;
+  }
+  target(drop);
 }
 
 function openPaths(paths: string[]): void {

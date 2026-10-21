@@ -3,6 +3,7 @@ export type * from "./app-info.types";
 export type * from "./clipboard.types";
 export * from "./files";
 export type * from "./files.types";
+export type * from "./file-drop.types";
 export type * from "./file-open-requests.types";
 export * from "./ids";
 export * from "./keyboard";

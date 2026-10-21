@@ -10,7 +10,7 @@ import { DropOverlay } from "./components/drop-overlay";
 import { RecentFiles } from "./components/recent-files";
 import { TopBar } from "./components/top-bar";
 import { OPEN_FILE_SHORTCUT, SETTINGS_SHORTCUT } from "./home-shortcuts";
-import { useFileDragOver } from "./use-file-drag-over";
+import { useFileDragOver } from "@shared/ui/hooks/use-file-drag-over";
 import { useOpenFile } from "./use-open-file";
 
 export function HomePage() {

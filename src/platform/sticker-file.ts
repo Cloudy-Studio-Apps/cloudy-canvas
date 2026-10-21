@@ -2,17 +2,7 @@ import { isTauri } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 import { readFile } from "@tauri-apps/plugin-fs";
 
-import { fileNameFromPath, type StickerImage } from "@shared/core";
-
-/** Image types a sticker can be, by file extension. */
-const IMAGE_TYPES: Record<string, string> = {
-  png: "image/png",
-  jpg: "image/jpeg",
-  jpeg: "image/jpeg",
-  webp: "image/webp",
-  gif: "image/gif",
-  svg: "image/svg+xml",
-};
+import { extensionOf, fileNameFromPath, IMAGE_FILE_TYPES, type StickerImage } from "@shared/core";
 
 /** Asks for image files to import as stickers; empty when cancelled. */
 export async function importStickerFiles(): Promise<StickerImage[]> {
@@ -21,13 +11,13 @@ export async function importStickerFiles(): Promise<StickerImage[]> {
     title: "Import stickers",
     multiple: true,
     directory: false,
-    filters: [{ name: "Images", extensions: Object.keys(IMAGE_TYPES) }],
+    filters: [{ name: "Images", extensions: Object.keys(IMAGE_FILE_TYPES) }],
   });
   if (!picked) return [];
   return Promise.all(
     picked.map(async (path) => ({
       name: fileNameFromPath(path),
-      type: IMAGE_TYPES[extensionOf(path)] ?? "application/octet-stream",
+      type: IMAGE_FILE_TYPES[extensionOf(path)] ?? "application/octet-stream",
       data: await readFile(path),
     })),
   );
@@ -39,13 +29,14 @@ function pickInBrowser(): Promise<StickerImage[]> {
     const input = document.createElement("input");
     input.type = "file";
     input.multiple = true;
-    input.accept = Object.values(IMAGE_TYPES).join(",");
+    input.accept = Object.values(IMAGE_FILE_TYPES).join(",");
     input.addEventListener("change", () => {
       const files = [...(input.files ?? [])];
       void Promise.all(
         files.map(async (file) => ({
           name: stickerName(file.name),
-          type: file.type || (IMAGE_TYPES[extensionOf(file.name)] ?? "application/octet-stream"),
+          type:
+            file.type || (IMAGE_FILE_TYPES[extensionOf(file.name)] ?? "application/octet-stream"),
           data: new Uint8Array(await file.arrayBuffer()),
         })),
       ).then(resolve);
@@ -53,10 +44,6 @@ function pickInBrowser(): Promise<StickerImage[]> {
     input.addEventListener("cancel", () => resolve([]));
     input.click();
   });
-}
-
-function extensionOf(path: string): string {
-  return path.slice(path.lastIndexOf(".") + 1).toLowerCase();
 }
 
 /** A file name without its extension. */

@@ -1,7 +1,14 @@
-import type { Clipboard } from "@shared/core";
+import type { Clipboard, DroppedFile } from "@shared/core";
 
 import { Camera } from "./camera";
-import { ElementClipboard, MemoryClipboard, PASTE_STEP } from "./clipboard";
+import {
+  dropFiles,
+  ElementClipboard,
+  MemoryClipboard,
+  PASTE_STEP,
+  type DropResult,
+  type ElementClipboardHost,
+} from "./clipboard";
 import { createCommands } from "./commands";
 import type { Commands } from "./commands.types";
 import { CanvasDocument, type DocumentChange } from "./document";
@@ -235,6 +242,25 @@ export class CanvasEngine<O extends object = object> {
     void this.clipboard.paste();
   }
 
+  /**
+   * Adds files dropped on the canvas at `client` (client pixels): images and SVGs as pasted
+   * images, `.txt` files as pasted text, as one undo step, and selects them. Nothing is added
+   * outside the canvas.
+   */
+  async dropFiles(files: readonly DroppedFile[], client: Point): Promise<DropResult> {
+    if (!this.container) return { added: [], skipped: [] };
+    const box = this.container.getBoundingClientRect();
+    const inside =
+      client.x >= box.left &&
+      client.x <= box.right &&
+      client.y >= box.top &&
+      client.y <= box.bottom;
+    if (!inside) return { added: [], skipped: [] };
+    this.textEditor?.commit();
+    const at = this.camera.screenToWorld({ x: client.x - box.left, y: client.y - box.top });
+    return dropFiles(this.clipboardHost, files, at);
+  }
+
   /** Adds a copy of the selection next to it and selects the copy. Returns `false` when nothing was selected. */
   duplicateSelection(): boolean {
     const selected = [...this.scene.selection.ids];
@@ -433,19 +459,21 @@ export class CanvasEngine<O extends object = object> {
   }
 
   private createClipboard(clipboard: Clipboard): ElementClipboard<O> {
-    return new ElementClipboard(
-      {
-        product: this.product,
-        doc: this.doc,
-        elements: () => this.scene.elements,
-        getElement: (id) => this.scene.get(id),
-        withMembers: (ids) => this.withMembers(ids, "move"),
-        visibleRect: () => this.camera.visibleWorldRect(),
-        getOptions: () => this.options,
-        select: (ids) => this.setSelection(ids),
-      },
-      clipboard,
-    );
+    return new ElementClipboard(this.clipboardHost, clipboard);
+  }
+
+  /** What copy, paste and drops reach of the engine. */
+  private get clipboardHost(): ElementClipboardHost<O> {
+    return {
+      product: this.product,
+      doc: this.doc,
+      elements: () => this.scene.elements,
+      getElement: (id) => this.scene.get(id),
+      withMembers: (ids) => this.withMembers(ids, "move"),
+      visibleRect: () => this.camera.visibleWorldRect(),
+      getOptions: () => this.options,
+      select: (ids) => this.setSelection(ids),
+    };
   }
 
   private createTextEditor(container: HTMLElement): TextEditor {

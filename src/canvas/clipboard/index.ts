@@ -1,11 +1,13 @@
 export type * from "./clipboard-payload.types";
 export type * from "./clone-elements.types";
+export type * from "./drop-files.types";
 export type * from "./element-clipboard.types";
 export type * from "./insert-copies.types";
 export type * from "./paste-external.types";
 export { collectAssets, restoreAssets } from "./clipboard-assets";
 export { cloneElements } from "./clone-elements";
 export { decodeClipboard, encodeClipboard } from "./clipboard-payload";
+export { dropFiles } from "./drop-files";
 export { ElementClipboard } from "./element-clipboard";
 export { insertCopies } from "./insert-copies";
 export { MemoryClipboard } from "./memory-clipboard";

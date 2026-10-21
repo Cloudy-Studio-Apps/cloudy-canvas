@@ -3,8 +3,9 @@ import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
 
 import { boardProduct } from "@board";
-import { useCanvasEngine } from "@canvas-ui";
+import { useCanvasEngine, useCanvasFileDrop } from "@canvas-ui";
 import { Button } from "@shared/ui/components/ui/button";
+import { useFileDragOver } from "@shared/ui/hooks/use-file-drag-over";
 import { BoardSession } from "./board-session";
 import { useBoardLoader } from "./file";
 import type { BoardEditorProps } from "./board-editor.types";
@@ -15,6 +16,8 @@ export function BoardEditor({ id }: BoardEditorProps) {
   const load = useBoardLoader(id);
   const document = load.status === "ready" ? load.document : null;
   const engine = useCanvasEngine(containerRef, boardProduct, document);
+  const draggingFiles = useFileDragOver();
+  useCanvasFileDrop(engine);
 
   return (
     <div className="relative h-full overflow-hidden bg-background select-none">
@@ -26,6 +29,12 @@ export function BoardEditor({ id }: BoardEditorProps) {
       />
       {engine && load.status === "ready" && (
         <BoardSession id={id} engine={engine} info={load.info} />
+      )}
+      {engine && draggingFiles && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-40 border-2 border-primary"
+        />
       )}
       {load.status === "error" && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">

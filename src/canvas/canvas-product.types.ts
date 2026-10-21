@@ -65,8 +65,9 @@ export interface CanvasProduct<O extends object = object> {
    */
   pasteText?(text: string, at: Point, index: string, options: O): CanvasElement | null;
   /**
-   * An element showing an image pasted from outside the app (already stored as `image.assetId`),
-   * placed in `view` (the visible world rect) at z-order `index`, or `null` to ignore it.
+   * An element showing an image pasted or dropped from outside the app (stored as `image.assetId`),
+   * fit and centered in `view` (the visible world rect, centered on the drop point for a drop) at
+   * z-order `index`, or `null` to ignore it.
    */
   pasteImage?(image: PastedImage, view: Rect, index: string, options: O): CanvasElement | null;
 }

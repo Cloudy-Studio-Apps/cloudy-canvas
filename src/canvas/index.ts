@@ -4,7 +4,7 @@
 // UI or product code here.
 export type { CanvasEngineOptions, ElementAction, HostAction } from "./canvas-engine.types";
 export type { CanvasProduct } from "./canvas-product.types";
-export type { CopyContext, PastedImage } from "./clipboard";
+export type { CopyContext, DropResult, PastedImage } from "./clipboard";
 export type { CommandHandler, Commands } from "./commands.types";
 export type { DocumentChange } from "./document";
 export type { EngineState } from "./engine-state.types";
