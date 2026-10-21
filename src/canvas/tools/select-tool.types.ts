@@ -1,4 +1,4 @@
-import type { CanvasElement } from "../elements";
+import type { CanvasElement, ElementGesture } from "../elements";
 import type { ResizeGesture } from "./resize-gesture";
 import type { CanvasPointer } from "./tool.types";
 
@@ -13,4 +13,6 @@ export type Gesture =
       toggleOnClick: string | null;
     }
   | { kind: "marquee"; start: CanvasPointer; base: Set<string> }
-  | { kind: "resize"; resize: ResizeGesture };
+  | { kind: "resize"; resize: ResizeGesture }
+  /** A drag started on part of an element its kind offers (e.g. a handle). */
+  | { kind: "element"; gesture: ElementGesture };

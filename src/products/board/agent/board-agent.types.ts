@@ -2,6 +2,7 @@ import type { AgentTool } from "@canvas";
 import type { FileInfo } from "@shared/core";
 
 import type { BoardEngine } from "../board-engine.types";
+import type { DbSchema } from "../elements";
 
 /** The board open in the window. */
 export interface AgentBoard {
@@ -11,6 +12,8 @@ export interface AgentBoard {
   path: string | null;
   dirty: boolean;
   engine: BoardEngine;
+  /** The board's database schema, edited as DBML. */
+  schema: DbSchema;
   save(): Promise<void>;
 }
 

@@ -1,5 +1,7 @@
+import type { CanvasDocument } from "./document";
 import type { ElementKinds } from "./elements";
 import type { Keybindings } from "./input";
+import type { CanvasLinks } from "./links";
 import type { Tool, ToolContext } from "./tools";
 
 /**
@@ -17,4 +19,11 @@ export interface CanvasProduct<O extends object = object> {
   readonly keybindings: Keybindings;
   /** Tool options a new editor starts with. */
   readonly defaultOptions: O;
+  /** Lines derived from the elements, drawn under them (one set per engine). */
+  createLinks?(): CanvasLinks[];
+  /**
+   * Cleans up after elements are deleted (e.g. clears references to them). Runs inside the
+   * deletion's transaction, so it's part of the same undo step.
+   */
+  onRemove?(doc: CanvasDocument, removed: ReadonlySet<string>): void;
 }

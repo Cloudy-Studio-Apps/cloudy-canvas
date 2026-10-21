@@ -2,6 +2,7 @@ import { rectContainsPoint } from "../geometry";
 import type { Point, Rect, Size } from "../geometry.types";
 import type { ElementView } from "../render/element-view";
 import type { CanvasElement, ElementPatch } from "./element.types";
+import type { ElementInteraction, InteractionQuery } from "./element.interaction.types";
 import type {
   ElementDefaults,
   ElementDescription,
@@ -52,6 +53,19 @@ export abstract class ElementKind<
   /** Whether a world point hits the element. `tolerance` is in world units. */
   hitTest(el: E, p: Point, tolerance: number): boolean {
     return rectContainsPoint(this.bounds(el), p, tolerance);
+  }
+
+  /**
+   * Part of the element a press at `p` would grab (a handle, a button), checked before the
+   * element is selected. `null` lets the press select and move the element as usual.
+   */
+  interactionAt(_el: E, _p: Point, _query: InteractionQuery): ElementInteraction<O> | null {
+    return null;
+  }
+
+  /** Handle points (world units) the overlay draws while the element is selected or hovered. */
+  handles(_el: E): Point[] {
+    return [];
   }
 
   /** Patch that moves the element by (dx, dy) from `origin`. */

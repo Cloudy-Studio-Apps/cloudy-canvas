@@ -4,6 +4,7 @@
 export type * from "./element.types";
 export type * from "./element.kind.types";
 export type * from "./element.info.types";
+export type * from "./element.interaction.types";
 export type * from "./bases";
 export { ElementKind } from "./element.kind";
 export { ElementKinds } from "./element.kinds";

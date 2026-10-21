@@ -1,6 +1,7 @@
 import { ElementKinds } from "@canvas";
 
 import type { BoardToolOptions } from "../board-options.types";
+import { DbEnumKind, DbTableKind } from "./db";
 import { GeoKind } from "./geo";
 import { StickyKind } from "./sticky";
 import { StrokeKind } from "./stroke";
@@ -13,3 +14,5 @@ export const boardKinds = new ElementKinds<BoardToolOptions>();
 boardKinds.register(new StickyKind());
 boardKinds.register(new StrokeKind());
 boardKinds.register(new GeoKind());
+boardKinds.register(new DbTableKind());
+boardKinds.register(new DbEnumKind());

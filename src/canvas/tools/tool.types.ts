@@ -2,6 +2,7 @@ import type { Camera } from "../camera";
 import type { CanvasDocument } from "../document";
 import type { CanvasElement, ElementKinds } from "../elements";
 import type { Interaction } from "../handles";
+import type { Guide } from "../links";
 import type { Point, Rect } from "../geometry.types";
 
 export interface CanvasPointer {
@@ -36,6 +37,8 @@ export interface ToolContext<O extends object = object> {
    * kind like any other element. `null` clears it.
    */
   setDraft(el: CanvasElement | null): void;
+  /** Shows gesture feedback above the elements (e.g. a line being dragged); `null` clears it. */
+  setGuide(guide: Guide | null): void;
   /** Handle under the point (e.g. a resize handle), if any. */
   interactionAt(world: Point): Interaction | null;
   /** Pans while `screen` is near the viewport edge; `null` stops. `onPan` runs after each step. */

@@ -4,6 +4,7 @@ export type * from "./geo";
 export type * from "./sticky";
 export type * from "./stroke";
 export { boardKinds } from "./board-kinds";
+export * from "./db";
 export * from "./geo";
 export * from "./sticky";
 export * from "./stroke";

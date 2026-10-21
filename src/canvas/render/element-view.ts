@@ -11,6 +11,8 @@ export class ElementView extends Container {
   order: string;
   readonly graphics = new Graphics();
   private textNode: Text | null = null;
+  /** Extra keyed labels, for elements that show several (e.g. a table's column names). */
+  private readonly textSlots = new Map<string, Text>();
   private textVisible = true;
   private textResolution = 1;
 
@@ -58,6 +60,30 @@ export class ElementView extends Container {
     return text;
   }
 
+  /** Creates or updates the label stored under `key` (positioned by the caller). */
+  setTextSlot(key: string, value: string, options: CanvasTextOptions): Text {
+    const style = canvasTextStyle(options);
+    let node = this.textSlots.get(key);
+    if (!node) {
+      node = new Text({ text: value, style, resolution: this.textResolution });
+      this.textSlots.set(key, node);
+      this.addChild(node);
+    } else {
+      node.text = value;
+      Object.assign(node.style, style);
+    }
+    return node;
+  }
+
+  /** Destroys the labels whose keys aren't in `keep`. */
+  pruneTextSlots(keep: ReadonlySet<string>): void {
+    for (const [key, node] of this.textSlots) {
+      if (keep.has(key)) continue;
+      node.destroy();
+      this.textSlots.delete(key);
+    }
+  }
+
   setTextVisible(visible: boolean): void {
     this.textVisible = visible;
     if (this.textNode) this.textNode.visible = visible;
@@ -65,8 +91,8 @@ export class ElementView extends Container {
 
   setTextResolution(resolution: number): void {
     this.textResolution = resolution;
-    if (this.textNode && this.textNode.resolution !== resolution) {
-      this.textNode.resolution = resolution;
+    for (const node of [this.textNode, ...this.textSlots.values()]) {
+      if (node && node.resolution !== resolution) node.resolution = resolution;
     }
   }
 }

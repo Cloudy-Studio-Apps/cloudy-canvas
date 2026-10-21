@@ -2,21 +2,26 @@ import { Application, Container } from "pixi.js";
 
 import type { Camera } from "../camera";
 import type { CanvasElement, ElementKinds } from "../elements";
+import type { CanvasLinks, Guide } from "../links";
 import type { CanvasTheme } from "./canvas-theme.types";
 import { DraftLayer } from "./layers/draft-layer";
 import { ElementLayer } from "./layers/element-layer";
 import { GridLayer } from "./layers/grid-layer";
+import { GuideLayer } from "./layers/guide-layer";
+import { LinkLayer } from "./layers/link-layer";
 import { OverlayLayer } from "./layers/overlay-layer";
 import type { OverlayState } from "./overlay-state.types";
 
 /**
  * Owns the Pixi application and composes the layers, bottom to top:
- * grid (screen) → world (elements, drafts; follows the camera) → overlay (screen).
+ * grid (screen) → world (links, elements, drafts, guides; follows the camera) → overlay (screen).
  */
 export class Renderer {
   readonly app = new Application();
   private readonly elements: ElementLayer;
   private readonly draft: DraftLayer;
+  private readonly links: LinkLayer;
+  private readonly guide = new GuideLayer();
   private readonly grid = new GridLayer();
   private readonly world = new Container();
   private readonly overlay = new OverlayLayer();
@@ -24,7 +29,9 @@ export class Renderer {
   constructor(
     private theme: CanvasTheme,
     kinds: ElementKinds,
+    links: readonly CanvasLinks[],
   ) {
+    this.links = new LinkLayer(links);
     this.elements = new ElementLayer(kinds);
     this.draft = new DraftLayer(kinds);
   }
@@ -40,7 +47,7 @@ export class Renderer {
       autoStart: false, // render on demand only
       preference: ["webgl", "canvas"],
     });
-    this.world.addChild(this.elements, this.draft);
+    this.world.addChild(this.links, this.elements, this.draft, this.guide);
     this.app.stage.addChild(this.grid, this.world, this.overlay);
   }
 
@@ -66,6 +73,11 @@ export class Renderer {
     this.draft.show(el);
   }
 
+  /** Shows a tool's gesture feedback above the elements; `null` clears it. */
+  setGuide(guide: Guide | null): void {
+    this.guide.set(guide);
+  }
+
   /** Re-rasterizes text for the zoom level. */
   setTextZoom(zoom: number): void {
     this.elements.setTextZoom(zoom);
@@ -76,10 +88,13 @@ export class Renderer {
     this.elements.setHiddenText(id);
   }
 
-  render(camera: Camera, overlay: OverlayState): void {
+  /** `highlighted`: the selected ids, whose links stand out. */
+  render(camera: Camera, overlay: OverlayState, highlighted: ReadonlySet<string>): void {
     this.world.scale.set(camera.zoom);
     this.world.position.set(camera.x * camera.zoom, camera.y * camera.zoom);
     this.grid.draw(camera, this.theme.grid);
+    this.links.draw({ zoom: camera.zoom, theme: this.theme, highlighted });
+    this.guide.draw({ zoom: camera.zoom, theme: this.theme });
     this.overlay.draw(camera, overlay, this.theme.selection);
     this.app.render();
   }

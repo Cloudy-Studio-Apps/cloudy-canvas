@@ -19,6 +19,8 @@ import { loadFonts, TextEditor } from "./text";
 import { createBaseTools, type CanvasPointer, type Tool, type ToolContext } from "./tools";
 import { debounce, Disposables, FrameScheduler, Store } from "./utils";
 import type { CanvasEngineOptions, HostActions } from "./canvas-engine.types";
+import type { CanvasProduct } from "./canvas-product.types";
+import type { CanvasLinks } from "./links";
 
 const ZOOM_STEP = 1.25;
 const HIT_TOLERANCE_PX = 4;
@@ -40,6 +42,8 @@ export class CanvasEngine<O extends object = object> {
   readonly keymap: Keymap;
   readonly commands: Commands;
   private readonly ownsDocument: boolean;
+  private readonly product: CanvasProduct<O>;
+  private readonly links: CanvasLinks[];
   private readonly camera = new Camera();
   private readonly renderer: Renderer;
   private readonly scene: Scene;
@@ -66,12 +70,14 @@ export class CanvasEngine<O extends object = object> {
   private rendererReady = false;
 
   constructor({ product, theme, document }: CanvasEngineOptions<O>) {
+    this.product = product;
     this.kinds = product.kinds;
     this.keymap = new Keymap(product.keybindings);
     this.options = product.defaultOptions;
     this.doc = document ?? new CanvasDocument(this.kinds);
     this.ownsDocument = !document;
-    this.renderer = new Renderer(theme, this.kinds);
+    this.links = product.createLinks?.() ?? [];
+    this.renderer = new Renderer(theme, this.kinds, this.links);
     this.scene = new Scene(this.doc, this.kinds);
     const ctx = this.createToolContext();
     const tools = [...createBaseTools(ctx), ...product.createTools(ctx)];
@@ -104,7 +110,7 @@ export class CanvasEngine<O extends object = object> {
 
     this.camera.setViewport(width, height);
     this.camera.reset();
-    this.scene.refresh();
+    this.refreshScene();
     this.renderer.syncElements(this.scene.elements);
     this.renderer.setTextZoom(this.camera.zoom);
 
@@ -221,7 +227,10 @@ export class CanvasEngine<O extends object = object> {
     const removing = [...new Set(ids)].filter((id) => this.doc.get(id));
     if (removing.length === 0) return [];
     this.doc.checkpoint();
-    this.doc.remove(removing);
+    this.doc.batch(() => {
+      this.doc.remove(removing);
+      this.product.onRemove?.(this.doc, new Set(removing));
+    });
     return removing;
   }
 
@@ -238,6 +247,16 @@ export class CanvasEngine<O extends object = object> {
   cancel(): void {
     if (this.scene.selection.size > 0) this.setSelection([]);
     else this.setTool("select");
+  }
+
+  /** Centers the view on an element (keeping the zoom) and selects it. */
+  focusElement(id: string): void {
+    const el = this.scene.get(id);
+    if (!el) return;
+    const { x, y, w, h } = this.kinds.kindOf(el).bounds(el);
+    this.camera.centerOn({ x: x + w / 2, y: y + h / 2 });
+    this.setSelection([id]);
+    this.onCameraChange();
   }
 
   /** Fits an element in the view and selects it. */
@@ -291,6 +310,10 @@ export class CanvasEngine<O extends object = object> {
       },
       setDraft: (el) => {
         this.renderer.setDraft(el);
+        this.requestRender();
+      },
+      setGuide: (guide) => {
+        this.renderer.setGuide(guide);
         this.requestRender();
       },
       getElement: (id) => this.scene.get(id),
@@ -359,7 +382,7 @@ export class CanvasEngine<O extends object = object> {
   // ── Reactions ─────────────────────────────────────────────────────────
 
   private handleDocumentChange(change: DocumentChange): void {
-    this.scene.refresh();
+    this.refreshScene();
     const changed = [...change.updated]
       .map((id) => this.scene.get(id))
       .filter((el): el is CanvasElement => el !== undefined);
@@ -401,6 +424,12 @@ export class CanvasEngine<O extends object = object> {
 
   // ── State helpers ─────────────────────────────────────────────────────
 
+  /** Re-reads the elements, and re-resolves the links between them. */
+  private refreshScene(): void {
+    this.scene.refresh();
+    for (const links of this.links) links.update(this.scene.elements);
+  }
+
   private elementAt(world: Point): CanvasElement | undefined {
     return this.scene.elementAt(world, HIT_TOLERANCE_PX / this.camera.zoom);
   }
@@ -427,7 +456,7 @@ export class CanvasEngine<O extends object = object> {
   }
 
   private draw(): void {
-    this.renderer.render(this.camera, this.scene.overlay());
+    this.renderer.render(this.camera, this.scene.overlay(), this.scene.selection.ids);
   }
 
   private buildState(): EngineState<O> {
@@ -436,6 +465,7 @@ export class CanvasEngine<O extends object = object> {
       options: this.options,
       zoom: this.camera.zoom,
       selectionCount: this.scene.selection.size,
+      selectedId: this.scene.selection.single() ?? null,
       selectionTypes: this.selectionTypes(),
       canUndo: this.doc.canUndo(),
       canRedo: this.doc.canRedo(),

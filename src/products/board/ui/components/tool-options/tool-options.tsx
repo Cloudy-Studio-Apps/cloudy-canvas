@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 
 import { useEngineState } from "@canvas-ui";
+import { DbOptions } from "./db-options";
 import { MarkerOptions } from "./marker-options";
 import { ShapeOptions } from "./shape-options";
 import { StickyOptions } from "./sticky-options";
@@ -10,6 +11,7 @@ const OPTION_PANELS: Partial<Record<string, ComponentType>> = {
   marker: MarkerOptions,
   sticky: StickyOptions,
   shape: ShapeOptions,
+  db: DbOptions,
 };
 
 /** With the select tool, the panel for the selection's type (when it's all one restylable type). */

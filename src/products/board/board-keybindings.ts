@@ -6,4 +6,5 @@ export const BOARD_KEYBINDINGS = {
   "tool.marker": [{ key: "m" }],
   "tool.sticky": [{ key: "s" }],
   "tool.shape": [{ key: "r" }],
+  "tool.db": [{ key: "d" }],
 } satisfies Keybindings;

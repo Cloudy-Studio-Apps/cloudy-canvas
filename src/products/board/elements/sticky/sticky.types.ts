@@ -4,6 +4,8 @@ export interface StickyElement extends CanvasElement {
   type: "sticky";
   color: string;
   text: string;
+  /** Set when the sticky is a DBML sticky note (`Note name { … }`), which makes it part of the schema. */
+  noteName?: string;
 }
 
 export interface StickyDefaults extends ElementDefaults {

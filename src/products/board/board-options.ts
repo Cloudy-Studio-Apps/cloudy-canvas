@@ -9,4 +9,5 @@ export const DEFAULT_BOARD_OPTIONS: BoardToolOptions = {
   shapeKind: "rectangle",
   shapeFill: SHAPE_FILLS[0].value,
   shapeStroke: SHAPE_STROKES[0].value,
+  dbKind: "table",
 };

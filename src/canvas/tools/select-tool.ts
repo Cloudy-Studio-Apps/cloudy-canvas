@@ -53,6 +53,7 @@ export class SelectTool implements Tool {
     if (!g) return;
 
     if (g.kind === "resize") return g.resize.move(p);
+    if (g.kind === "element") return g.gesture.move(p);
 
     if (g.kind === "marquee") {
       const rect = rectFromPoints(g.start.world, p.world);
@@ -78,14 +79,18 @@ export class SelectTool implements Tool {
     this.ctx.doc.updateMany(patches);
   }
 
-  onPointerUp(): void {
+  onPointerUp(p: CanvasPointer): void {
     const g = this.gesture;
     if (g?.kind === "move" && !g.started && g.toggleOnClick) {
       const next = new Set(this.ctx.getSelection());
       next.delete(g.toggleOnClick);
       this.ctx.setSelection(next);
     }
-    this.gesture = null;
+    if (g?.kind === "element") {
+      // Finished gestures don't get cancelled too.
+      this.gesture = null;
+      g.gesture.finish(p);
+    }
     this.onCancel();
   }
 
@@ -96,20 +101,33 @@ export class SelectTool implements Tool {
     this.ctx.setHover(hit && !this.ctx.getSelection().has(hit.id) ? hit.id : null);
   }
 
+  onCameraChange(): void {
+    if (this.gesture?.kind === "element") this.gesture.gesture.onCameraChange?.();
+  }
+
   onCancel(): void {
+    if (this.gesture?.kind === "element") this.gesture.gesture.cancel();
     this.gesture = null;
     this.ctx.setMarquee(null);
     this.ctx.setCursor(this.cursor);
   }
 
-  private startInteraction(interaction: Interaction, p: CanvasPointer): Gesture {
-    return {
-      kind: "resize",
-      resize: new ResizeGesture(this.ctx, interaction.element, interaction.handle, p),
-    };
+  /** A gesture for the grabbed handle, or `null` when the press was a one-shot action. */
+  private startInteraction(interaction: Interaction, p: CanvasPointer): Gesture | null {
+    if (interaction.kind === "resize") {
+      return {
+        kind: "resize",
+        resize: new ResizeGesture(this.ctx, interaction.element, interaction.handle, p),
+      };
+    }
+    this.ctx.setCursor(interaction.interaction.cursor);
+    const gesture = interaction.interaction.press(this.ctx, p);
+    return gesture && { kind: "element", gesture };
   }
 }
 
 function interactionCursor(interaction: Interaction): string {
-  return resizeCursor(interaction.handle);
+  return interaction.kind === "resize"
+    ? resizeCursor(interaction.handle)
+    : interaction.interaction.cursor;
 }

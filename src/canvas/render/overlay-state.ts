@@ -12,11 +12,15 @@ export function buildOverlayState({ kinds, selected, hover, marquee }: OverlayIn
         )
       : [];
 
+  const withHandles = hover && !selected.includes(hover) ? [...selected, hover] : selected;
+  const handles = withHandles.flatMap((el) => kinds.kindOf(el).handles(el));
+
   return {
     selection,
     selectionBounds: selection.length > 1 ? unionRects(selection) : null,
     hover: hover ? kinds.kindOf(hover).bounds(hover) : null,
     marquee,
+    handles,
     resizeHandles,
   };
 }

@@ -6,15 +6,30 @@ import type { Scene } from "./scene";
 const HANDLE_REACH_PX = 6;
 
 /**
- * What a press at `world` would grab: a resize handle of the single selected element. Handles
- * only exist where the overlay draws them.
+ * What a press at `world` would grab, in priority order: a resize handle of the single selected
+ * element, then whatever an element's kind offers there (topmost first). Handles only exist where
+ * the overlay draws them.
  */
 export function findInteraction(scene: Scene, world: Point, zoom: number): Interaction | null {
   const reach = HANDLE_REACH_PX / zoom;
   const id = scene.selection.single();
-  const element = id ? scene.get(id) : undefined;
-  const kind = element ? scene.kindOf(element) : undefined;
-  if (!element || !kind?.resizable) return null;
-  const handle = resizeHandleAt(kind.bounds(element), world, reach);
-  return handle ? { kind: "resize", element, handle } : null;
+  const single = id ? scene.get(id) : undefined;
+  const singleKind = single ? scene.kindOf(single) : undefined;
+  if (single && singleKind?.resizable) {
+    const handle = resizeHandleAt(singleKind.bounds(single), world, reach);
+    if (handle) return { kind: "resize", element: single, handle };
+  }
+
+  const elements = scene.elements;
+  for (let i = elements.length - 1; i >= 0; i--) {
+    const element = elements[i]!;
+    const interaction = scene.kindOf(element).interactionAt(element, world, {
+      reach,
+      zoom,
+      selected: scene.selection.has(element.id),
+      hovered: scene.hoveredId === element.id,
+    });
+    if (interaction) return { kind: "element", element, interaction };
+  }
+  return null;
 }

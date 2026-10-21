@@ -15,6 +15,8 @@ export interface OverlayState {
   selectionBounds: Rect | null;
   hover: Rect | null;
   marquee: Rect | null;
+  /** Handles the kinds of the selected and hovered elements offer (`ElementKind.handles`). */
+  handles: Point[];
   /** Resize handles of a single selected element. */
   resizeHandles: Point[];
 }

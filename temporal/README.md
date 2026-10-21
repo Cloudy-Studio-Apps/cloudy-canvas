@@ -3,8 +3,8 @@
 Code moved out of `src/` while the board is rebuilt on the element architecture (see "Elements" in
 `CLAUDE.md`). Nothing here is compiled, linted or formatted. Paths mirror `src/`.
 
-- Features waiting to be ported: text, connectors, sections, DB tables/enums (DBML) and ER
-  diagrams. That covers their engine modules, tools, layers, agent tools and React panels.
+- Features waiting to be ported: text, connectors, sections and ER diagrams (DB tables/enums and
+  DBML are back, in `src/products/board/elements/db/`). That covers their engine modules, tools, layers, agent tools and React panels.
 - Reference copies of core files from before the rebuild: `shapes.types.ts`, `canvas-engine.ts`,
   `scene.ts`, `hit-test.ts`, the old drawers and so on.
 
@@ -35,10 +35,6 @@ Paths are relative to the old `src/engine/`. "Shape" is the old name for an elem
 - **Sections** (`section` tool, `sections/`). Membership is geometric: a section's members are the shapes fully inside it, worked out when a drag starts (`withSectionMembers`). Nothing stores parent links, so dropping in, dragging out and resizing need no bookkeeping.
   - Drawing order comes from `zOrderKey` (`document/z-order.ts`): sections first, larger ones further back, then everything else by `index`. Sections render in their own Pixi layer, under the DB relation lines.
   - A section is hit by its title or border only; clicks inside it reach its contents or start a marquee. Deleting a section deletes its members.
-- **Database tables** (`db/`, the `db` tool): each table is a `db-table` shape whose `columns` are a plain JSON array. A relation lives on the source column (`column.ref`) and points at the target by table/column **id**, so moves and renames never break it. Tables keep `indexes` (whose parts are column ids or expressions) and a `note`, which is drawn as a bubble beside the table (`noteHidden` is view state, written with `doc.updateUntracked`). A column's `type` is the bare name (`varchar`) and its arguments live in `typeArgs` (`255`); `document/column-type.ts` splits and joins them (`splitColumnType`, `formatColumnType`), and aliases are normalized on input (`int` → `integer`, `document/type-aliases.ts`). Enums are `db-enum` cards; columns use an enum by naming it as their type. Stickies with a `noteName` are DBML sticky notes. Tables, enums and linked stickies together form the board's single schema (`schema-shapes.ts`).
-  - `DbSchema` (`engine.db`) is a facade and the only place that edits the schema. The logic lives in `table-edits.ts`, `enum-edits.ts` (an enum rename also retypes its columns) and `schema-dbml.ts`, which has `applyTableDbml` / `applyEnumDbml` (one slice), `applySchemaDbml` (the whole schema) and `importSchemaDbml` (merge).
-  - DBML is a generated view (`db/dbml/`: a hand-written parser and serializer for a subset). Parsed text goes through `reconcile.ts` and `reconcile-*.ts`, which match tables, columns, enums, values and notes by name, then by position for renames, so ids survive. Tables that refs name but nothing defines are created by `add-missing-tables.ts` on import, paste and blur (not while typing, so half-typed names don't become tables). Older boards get new fields filled by `document/fill-shape-defaults.ts`.
-  - Relations are resolved in `Scene` and drawn by `render/layers/relation-layer.ts` under the shapes. New relations are dragged from column handles by `tools/connect-gesture.ts`, with `input/edge-auto-pan.ts` panning when the pointer nears the edge.
 - **ER diagrams** (`er/`, the `er` tool). These are Chen-notation entity–relationship diagrams with the extended model. The language and the visual editor are documented in `docs/er-language.md`. There are six shape types:
   - `er-entity`: rectangle, doubled when `weak`.
   - `er-relation`: diamond, with `identifying` (double) and `idMark` (the "I" bar). Its `participants` point **by id** at entities or aggregations, with `(min,max)`, a role and an `arrow` flag.

@@ -23,7 +23,7 @@ export class OverlayLayer extends Graphics {
       const r = camera.worldRectToScreen(state.selectionBounds, 6);
       this.rect(r.x, r.y, r.w, r.h).stroke({ color, width: 1, alpha: 0.7 });
     }
-    for (const point of state.resizeHandles) {
+    for (const point of [...state.handles, ...state.resizeHandles]) {
       const { x, y } = camera.worldToScreen(point);
       const half = HANDLE_PX / 2;
       this.rect(x - half, y - half, HANDLE_PX, HANDLE_PX)
