@@ -18,6 +18,7 @@
     "clipboard-manager:allow-read-text",
     "clipboard-manager:allow-read-image",
     "clipboard-manager:allow-write-text",
+    "clipboard-manager:allow-write-image",
     "opener:allow-reveal-item-in-dir",
     {
       "identifier": "opener:allow-open-url",

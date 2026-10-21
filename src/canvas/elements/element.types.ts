@@ -15,6 +15,11 @@ export interface CanvasElement {
   y: number;
   w: number;
   h: number;
+  /**
+   * Locked elements stay where they are: clicks, hover and marquees pass through them, so they
+   * can only be selected from the context menu (to unlock them).
+   */
+  locked?: boolean;
 }
 
 /**

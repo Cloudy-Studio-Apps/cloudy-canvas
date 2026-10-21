@@ -1,15 +1,20 @@
-import { ZoomControls } from "@canvas-ui";
+import { CanvasContextMenu, ExportDialog, useCopyAsPng, ZoomControls } from "@canvas-ui";
 
 import { BoardToolbar } from "./components/board-toolbar";
 import { BoardTopBar } from "./components/board-top-bar";
 import { DbPanel } from "./components/db-panel";
 import { ErPanel } from "./components/er-panel";
 import { ToolOptions } from "./components/tool-options/tool-options";
+import { useBoardFile } from "./file";
 
 /** UI around the canvas. Never holds canvas content — it only reflects engine UI state. */
 export function BoardChrome() {
+  const { name } = useBoardFile();
+  useCopyAsPng();
   return (
     <div className="pointer-events-none absolute inset-0">
+      <CanvasContextMenu />
+      <ExportDialog name={name} />
       <div className="absolute top-3 left-3">
         <BoardTopBar />
       </div>

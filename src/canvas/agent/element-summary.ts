@@ -16,5 +16,6 @@ export function summarizeElement(kinds: ElementKinds, el: CanvasElement): Elemen
     ...(kind ? { kind } : {}),
     ...(group ? { group } : {}),
     ...(ends ? { from: ends.from, to: ends.to } : {}),
+    ...(el.locked ? { locked: true } : {}),
   };
 }

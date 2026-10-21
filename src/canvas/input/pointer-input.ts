@@ -18,7 +18,10 @@ export class PointerInput {
     disposables.listen(canvas, "pointercancel", this.handleCancel);
     disposables.listen(canvas, "pointerleave", () => this.host.setHover(null));
     disposables.listen(canvas, "dblclick", (event) => this.host.onDoubleClick(this.pointer(event)));
-    disposables.listen(canvas, "contextmenu", (event) => event.preventDefault());
+    disposables.listen(canvas, "contextmenu", (event) => {
+      event.preventDefault();
+      if (!this.active) this.host.onContextMenu(this.pointer(event));
+    });
   }
 
   holdSpace(): void {

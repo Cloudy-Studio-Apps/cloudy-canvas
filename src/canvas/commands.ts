@@ -23,7 +23,15 @@ export function createCommands(
     copy: () => engine.copySelection(),
     cut: () => engine.cutSelection(),
     paste: () => engine.paste(),
+    pasteToReplace: () => engine.pasteToReplace(),
+    copyAsPng: () => engine.runHostAction("copyAsPng"),
     duplicate: () => engine.duplicateSelection(),
+    bringToFront: () => engine.reorderSelection("front"),
+    bringForward: () => engine.reorderSelection("forward"),
+    sendBackward: () => engine.reorderSelection("backward"),
+    sendToBack: () => engine.reorderSelection("back"),
+    toggleLock: () => engine.toggleLockSelection(),
+    unlockAll: () => engine.unlockAll(),
     editSelection: () => engine.editSelection(),
     cancel: () => engine.cancel(),
     zoomIn: () => engine.zoomIn(),
@@ -32,6 +40,7 @@ export function createCommands(
     zoomToFit: () => engine.zoomToFit(),
     save: () => engine.runHostAction("save"),
     saveAs: () => engine.runHostAction("saveAs"),
+    export: () => engine.runHostAction("export"),
     ...toolCommands,
   };
 }

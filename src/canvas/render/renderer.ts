@@ -15,6 +15,8 @@ import { GuideLayer } from "./layers/guide-layer";
 import { LinkLayer } from "./layers/link-layer";
 import { OverlayLayer } from "./layers/overlay-layer";
 import type { OverlayState } from "./overlay-state.types";
+import { drawSnapshot } from "./snapshot";
+import type { SnapshotOptions } from "./snapshot.types";
 
 /**
  * Owns the Pixi application and composes the layers, bottom to top:
@@ -59,6 +61,11 @@ export class Renderer {
     });
     this.world.addChild(this.frames, this.links, this.elements, this.draft, this.guide);
     this.app.stage.addChild(this.grid, this.world, this.overlay);
+  }
+
+  /** The canvas background color (0xRRGGBB). */
+  get background(): number {
+    return this.theme.background;
   }
 
   get canvas(): HTMLCanvasElement {
@@ -136,6 +143,14 @@ export class Renderer {
     this.overlay.draw(camera, overlay, this.theme.selection);
     this.app.render();
     return animating;
+  }
+
+  /** Draws elements off screen into a new canvas (for exports); the view isn't touched. */
+  snapshot(
+    elements: readonly CanvasElement[],
+    options: SnapshotOptions,
+  ): Promise<HTMLCanvasElement> {
+    return drawSnapshot(this.app.renderer, this.kinds, this.images, this.theme, elements, options);
   }
 
   destroy(): void {

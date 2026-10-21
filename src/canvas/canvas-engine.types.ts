@@ -2,6 +2,7 @@ import type { Clipboard } from "@shared/core";
 
 import type { CanvasProduct } from "./canvas-product.types";
 import type { CanvasDocument } from "./document";
+import type { Point } from "./geometry.types";
 import type { CanvasTheme } from "./render";
 
 /**
@@ -27,4 +28,15 @@ export interface CanvasEngineOptions<O extends object = object> {
   document?: CanvasDocument;
   /** The system clipboard for copy and paste; without one, copies only paste in this engine. */
   clipboard?: Clipboard;
+}
+
+/**
+ * A right-click on the canvas, after the engine picked what it's about: the element under the
+ * pointer (selected if it wasn't, locked ones included) or the empty canvas (selection cleared).
+ */
+export interface ContextMenuRequest {
+  /** Where it happened, in pixels relative to the canvas container. */
+  screen: Point;
+  world: Point;
+  target: "selection" | "canvas";
 }

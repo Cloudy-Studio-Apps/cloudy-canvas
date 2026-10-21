@@ -68,6 +68,11 @@ export class CanvasDocument {
     return generateNKeysBetween(this.topIndex(), null, count);
   }
 
+  /** `count` ascending indexes that place elements below everything else. */
+  firstIndexes(count: number): string[] {
+    return generateNKeysBetween(null, this.bottomIndex(), count);
+  }
+
   add(el: CanvasElement): void {
     this.transact(() => {
       const map = new Y.Map<unknown>();
@@ -202,6 +207,16 @@ export class CanvasDocument {
       if (top === null || index > top) top = index;
     });
     return top;
+  }
+
+  /** The lowest index in the document (every type, registered or not), or `null` when empty. */
+  private bottomIndex(): string | null {
+    let bottom: string | null = null;
+    this.elements.forEach((map) => {
+      const index = map.get("index") as string;
+      if (bottom === null || index < bottom) bottom = index;
+    });
+    return bottom;
   }
 
   private transact(fn: () => void): void {

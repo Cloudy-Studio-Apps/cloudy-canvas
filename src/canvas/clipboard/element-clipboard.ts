@@ -2,15 +2,15 @@ import type { Clipboard } from "@shared/core";
 
 import { compareByIndex } from "../document";
 import type { CanvasElement } from "../elements";
-import { unionRects } from "../geometry";
-import type { Point } from "../geometry.types";
+import { rectCenter, unionRects } from "../geometry";
+import type { Point, Rect } from "../geometry.types";
 import { collectAssets, restoreAssets } from "./clipboard-assets";
 import { decodeClipboard, encodeClipboard } from "./clipboard-payload";
-import type { ElementClipboardHost } from "./element-clipboard.types";
+import type { ElementClipboardHost, PasteOptions } from "./element-clipboard.types";
 import { insertCopies } from "./insert-copies";
 import type { CopyTarget } from "./insert-copies.types";
 import { pasteImage, pasteText } from "./paste-external";
-import { pasteOffset } from "./paste-offset";
+import { centerOffset, pasteOffset } from "./paste-offset";
 
 /**
  * Copy, paste and duplicate for one engine. Copied elements go to the clipboard as JSON (with
@@ -45,17 +45,22 @@ export class ElementClipboard<O extends object> {
 
   /**
    * Pastes the clipboard's elements, or else its image or its text as an element, and selects
-   * what was added.
+   * what was added. With `replace`, what's pasted is centered on those elements, which are
+   * removed in the same undo step.
    */
-  async paste(): Promise<void> {
+  async paste({ replace }: PasteOptions = {}): Promise<void> {
     const { doc, product } = this.host;
+    const replaced = replace ? this.boundsOf(replace) : null;
+    const at = replaced ? rectCenter(replaced) : undefined;
     const text = await readSafely(() => this.clipboard.readText());
     const payload = text ? decodeClipboard(text, product.id, product.kinds) : null;
     if (!payload) {
       // An image wins over text: apps that copy an image often add its name or address as text.
       const image = await readSafely(() => this.clipboard.readImage());
-      if (image && (await pasteImage(this.host, image))) return;
-      if (text) pasteText(this.host, text);
+      const pasted =
+        (image !== null && (await pasteImage(this.host, image, at))) ||
+        (!!text && pasteText(this.host, text, at));
+      if (pasted && replace) this.host.remove(replace);
       return;
     }
 
@@ -63,8 +68,12 @@ export class ElementClipboard<O extends object> {
     this.pastes = text === this.lastText ? this.pastes + 1 : 1;
     this.lastText = text;
     const bounds = unionRects(payload.elements.map((el) => product.kinds.kindOf(el).bounds(el)));
-    const offset = pasteOffset(bounds, this.host.visibleRect(), this.pastes);
+    const offset = at
+      ? centerOffset(bounds, at)
+      : pasteOffset(bounds, this.host.visibleRect(), this.pastes);
     const ids = insertCopies(this.target(), payload.elements, offset);
+    // Removed right after the copies are added, so both are one undo step.
+    if (replace && ids.size > 0) this.host.remove(replace);
     this.host.select(mapIds(payload.selected, ids));
   }
 
@@ -79,6 +88,14 @@ export class ElementClipboard<O extends object> {
       .map((id) => this.host.getElement(id))
       .filter((el): el is CanvasElement => el !== undefined)
       .sort(compareByIndex);
+  }
+
+  /** Bounds of the elements on the canvas, or `null` when none of them is. */
+  private boundsOf(ids: readonly string[]): Rect | null {
+    const elements = ids
+      .map((id) => this.host.getElement(id))
+      .filter((el): el is CanvasElement => el !== undefined);
+    return unionRects(elements.map((el) => this.host.product.kinds.kindOf(el).bounds(el)));
   }
 
   private target(): CopyTarget {

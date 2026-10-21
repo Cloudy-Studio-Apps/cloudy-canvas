@@ -55,18 +55,23 @@ export class Scene {
     return this.byId.get(id);
   }
 
-  /** Topmost element at a world point. `tolerance` is in world units. */
-  elementAt(world: Point, tolerance: number): CanvasElement | undefined {
+  /**
+   * Topmost element at a world point. `tolerance` is in world units. Locked elements are skipped
+   * unless `includeLocked` is set.
+   */
+  elementAt(world: Point, tolerance: number, includeLocked = false): CanvasElement | undefined {
     for (let i = this.list.length - 1; i >= 0; i--) {
       const el = this.list[i]!;
+      if (el.locked && !includeLocked) continue;
       if (this.kinds.kindOf(el).hitTest(el, world, tolerance)) return el;
     }
     return undefined;
   }
 
-  /** Elements touching the rect. Frames only count when the rect encloses them. */
+  /** Unlocked elements touching the rect. Frames only count when the rect encloses them. */
   elementsInRect(rect: Rect): CanvasElement[] {
     return this.list.filter((el) => {
+      if (el.locked) return false;
       const kind = this.kinds.kindOf(el);
       const bounds = kind.bounds(el);
       return kind.frame ? rectContainsRect(rect, bounds) : rectsIntersect(bounds, rect);

@@ -13,3 +13,21 @@ export function rgbaToPng(
   context.putImageData(new ImageData(pixels, width, height), 0, 0);
   return new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
 }
+
+/** Decodes an image file (e.g. a PNG) into raw RGBA pixels, for Tauri's clipboard image. */
+export async function pngToRgba(
+  file: Blob,
+): Promise<{ rgba: Uint8Array; width: number; height: number }> {
+  const bitmap = await createImageBitmap(file);
+  try {
+    const { width, height } = bitmap;
+    const canvas = new OffscreenCanvas(width, height);
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Couldn't read the image.");
+    context.drawImage(bitmap, 0, 0);
+    const { data } = context.getImageData(0, 0, width, height);
+    return { rgba: new Uint8Array(data.buffer), width, height };
+  } finally {
+    bitmap.close();
+  }
+}

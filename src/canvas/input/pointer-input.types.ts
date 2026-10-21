@@ -18,4 +18,6 @@ export interface PointerInputHost {
   /** A press is about to start a gesture (e.g. commit text editing first). */
   onGestureStart(): void;
   onDoubleClick(pointer: CanvasPointer): void;
+  /** A right-click (the browser's own menu is suppressed). */
+  onContextMenu(pointer: CanvasPointer): void;
 }

@@ -16,3 +16,12 @@ export function pasteOffset(bounds: Rect | null, visible: Rect, count: number): 
     y: Math.round(visible.y + visible.h / 2 - (bounds.y + bounds.h / 2)),
   };
 }
+
+/** The offset that centers `bounds` on `at`. */
+export function centerOffset(bounds: Rect | null, at: Point): Point {
+  if (!bounds) return { x: 0, y: 0 };
+  return {
+    x: Math.round(at.x - (bounds.x + bounds.w / 2)),
+    y: Math.round(at.y - (bounds.y + bounds.h / 2)),
+  };
+}

@@ -159,6 +159,11 @@ export abstract class ElementKind<
     return [];
   }
 
+  /** The element's grid of texts, one array per row (e.g. a table's cells), for CSV exports. */
+  rows(_el: E): string[][] | null {
+    return null;
+  }
+
   /** Fills fields added after the type first shipped, so files saved by older versions load. */
   fillDefaults(el: E): E {
     return el;

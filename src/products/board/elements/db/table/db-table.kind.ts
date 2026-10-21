@@ -2,7 +2,7 @@ import { rectContainsPoint, type ElementView, type InteractionQuery, type Point 
 
 import { DB_CARD_DEFAULTS, DbCardKind } from "../card";
 import { canonicalTypeName } from "./type-aliases";
-import { splitColumnType } from "./column-type";
+import { formatColumnType, splitColumnType } from "./column-type";
 import { columnAnchor } from "./db-table.layout";
 import { drawDbTable } from "./db-table.draw";
 import { tableInteractionAt } from "./db-table.interactions";
@@ -41,6 +41,23 @@ export class DbTableKind extends DbCardKind<DbTableElement> {
     ]);
   }
 
+  /** The table's name over a header and one row per column. */
+  override rows(el: DbTableElement): string[][] {
+    return [
+      [el.name],
+      ["Column", "Type", "Primary key", "Not null", "Unique", "Default", "Note"],
+      ...el.columns.map((column) => [
+        column.name,
+        formatColumnType(column),
+        yesNo(column.pk),
+        yesNo(column.notNull),
+        yesNo(column.unique),
+        column.default ?? "",
+        column.note,
+      ]),
+    ];
+  }
+
   override fillDefaults(el: DbTableElement): DbTableElement {
     return {
       ...el,
@@ -59,4 +76,8 @@ function fillColumnDefaults(column: DbColumn): DbColumn {
   if (column.typeArgs === undefined) return { ...column, ...splitColumnType(column.type) };
   const type = canonicalTypeName(column.type);
   return type === column.type ? column : { ...column, type };
+}
+
+function yesNo(value: boolean): string {
+  return value ? "yes" : "no";
 }

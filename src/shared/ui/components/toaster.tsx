@@ -1,4 +1,4 @@
-import { CircleAlert } from "lucide-react";
+import { CircleAlert, LoaderCircle } from "lucide-react";
 
 import { useToastStore } from "@shared/stores/toast-store";
 import {
@@ -12,7 +12,7 @@ import {
 } from "@shared/ui/components/ui/toast";
 
 /** Errors stay a little longer than notices, so there's time to read them. */
-const DURATION = { info: 4000, error: 8000 } as const;
+const DURATION = { info: 4000, error: 8000, loading: Infinity } as const;
 
 /** Shows the toasts of the toast store in the bottom-right corner. Mounted once by the app. */
 export function Toaster() {
@@ -30,6 +30,9 @@ export function Toaster() {
           }}
         >
           {tone === "error" && <CircleAlert className="mt-0.5 size-4 shrink-0 text-destructive" />}
+          {tone === "loading" && (
+            <LoaderCircle className="mt-0.5 size-4 shrink-0 animate-spin text-primary" />
+          )}
           <div className="min-w-0 flex-1 space-y-0.5">
             <ToastTitle>{title}</ToastTitle>
             {description && <ToastDescription>{description}</ToastDescription>}

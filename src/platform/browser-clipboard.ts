@@ -26,4 +26,8 @@ export class BrowserClipboard implements Clipboard {
     }
     return null;
   }
+
+  writeImage(png: Blob): Promise<void> {
+    return navigator.clipboard.write([new ClipboardItem({ "image/png": png })]);
+  }
 }

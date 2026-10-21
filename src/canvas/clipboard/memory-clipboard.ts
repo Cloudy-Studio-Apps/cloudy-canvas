@@ -3,6 +3,7 @@ import type { Clipboard } from "@shared/core";
 /** A clipboard that only lives in this engine, for hosts without a system clipboard. */
 export class MemoryClipboard implements Clipboard {
   private text: string | null = null;
+  private image: Blob | null = null;
 
   writeText(text: string): Promise<void> {
     this.text = text;
@@ -14,6 +15,11 @@ export class MemoryClipboard implements Clipboard {
   }
 
   readImage(): Promise<Blob | null> {
-    return Promise.resolve(null);
+    return Promise.resolve(this.image);
+  }
+
+  writeImage(png: Blob): Promise<void> {
+    this.image = png;
+    return Promise.resolve();
   }
 }

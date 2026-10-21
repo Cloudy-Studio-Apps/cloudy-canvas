@@ -15,14 +15,16 @@ export function buildOverlayState({
     .map((el) => kinds.kindOf(el).bounds(el));
   const single = selected.length === 1 ? selected[0] : undefined;
   const resizeHandles =
-    single && kinds.kindOf(single).resizable
+    single && !single.locked && kinds.kindOf(single).resizable
       ? RESIZE_HANDLES.map((handle) =>
           resizeHandlePoint(kinds.kindOf(single).bounds(single), handle),
         )
       : [];
 
   const withHandles = hover && !selected.includes(hover) ? [...selected, hover] : selected;
-  const handles = withHandles.flatMap((el) => kinds.kindOf(el).handles(el, zoom));
+  const handles = withHandles
+    .filter((el) => !el.locked)
+    .flatMap((el) => kinds.kindOf(el).handles(el, zoom));
 
   return {
     selection,

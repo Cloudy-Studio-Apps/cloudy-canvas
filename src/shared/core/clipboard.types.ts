@@ -8,4 +8,6 @@ export interface Clipboard {
   readText(): Promise<string | null>;
   /** The clipboard's image as an encoded file (e.g. PNG), or `null` when it holds none. */
   readImage(): Promise<Blob | null>;
+  /** Puts a PNG file on the clipboard as an image. */
+  writeImage(png: Blob): Promise<void>;
 }

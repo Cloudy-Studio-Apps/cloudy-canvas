@@ -15,7 +15,15 @@ export const BASE_KEYBINDINGS = {
   copy: [{ key: "c", mod: true }],
   cut: [{ key: "x", mod: true }],
   paste: [{ key: "v", mod: true }],
+  pasteToReplace: [{ key: "r", mod: true, shift: true }],
+  copyAsPng: [{ key: "c", mod: true, shift: true }],
   duplicate: [{ key: "d", mod: true }],
+  bringToFront: [{ key: "]" }],
+  bringForward: [{ key: "]", mod: true }],
+  sendBackward: [{ key: "[", mod: true }],
+  sendToBack: [{ key: "[" }],
+  toggleLock: [{ key: "l", mod: true, shift: true }],
+  unlockAll: [{ key: "l", mod: true, alt: true, shift: true }],
   editSelection: [{ key: "Enter", label: "↵" }],
   cancel: [{ key: "Escape", label: "Esc" }],
   zoomIn: [
@@ -28,6 +36,7 @@ export const BASE_KEYBINDINGS = {
   zoomToFit: [{ code: "Digit1", shift: true, label: "1" }],
   save: [{ key: "s", mod: true }],
   saveAs: [{ key: "s", mod: true, shift: true }],
+  export: [{ key: "e", mod: true, shift: true }],
   "tool.select": [{ key: "v" }],
   "tool.hand": [{ key: "h" }],
 } satisfies Keybindings;

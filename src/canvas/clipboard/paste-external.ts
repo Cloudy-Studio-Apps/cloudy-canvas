@@ -9,24 +9,35 @@ import type { ExternalElement, PastedImage } from "./paste-external.types";
 
 /**
  * Pastes an image file from outside the app through the product's `pasteImage`: the file becomes
- * a document asset and the element showing it is selected. Returns `false` when the product
- * doesn't take images or the file isn't an image it can decode.
+ * a document asset and the element showing it is selected. It's centered in the view, or on `at`.
+ * Returns `false` when the product doesn't take images or the file isn't an image it can decode.
  */
 export async function pasteImage<O extends object>(
   host: ElementClipboardHost<O>,
   file: Blob,
+  at?: Point,
 ): Promise<boolean> {
   const data = new Uint8Array(await file.arrayBuffer());
-  const built = await buildImage(host, data, host.visibleRect(), host.doc.nextIndex());
+  const visible = host.visibleRect();
+  const view = at ? { ...visible, x: at.x - visible.w / 2, y: at.y - visible.h / 2 } : visible;
+  const built = await buildImage(host, data, view, host.doc.nextIndex());
   if (!built) return false;
   addExternal(host, [built]);
   return true;
 }
 
-/** Pastes text from outside the app through the product's `pasteText`, centered in the view. */
-export function pasteText<O extends object>(host: ElementClipboardHost<O>, text: string): void {
-  const el = buildText(host, text, rectCenter(host.visibleRect()), host.doc.nextIndex());
+/**
+ * Pastes text from outside the app through the product's `pasteText`, centered in the view or on
+ * `at`. Returns `false` when the product doesn't take it.
+ */
+export function pasteText<O extends object>(
+  host: ElementClipboardHost<O>,
+  text: string,
+  at?: Point,
+): boolean {
+  const el = buildText(host, text, at ?? rectCenter(host.visibleRect()), host.doc.nextIndex());
   if (el) addExternal(host, [{ el }]);
+  return el !== null;
 }
 
 /**

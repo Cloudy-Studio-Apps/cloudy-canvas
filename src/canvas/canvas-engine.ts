@@ -14,11 +14,20 @@ import type { Commands } from "./commands.types";
 import { CanvasDocument, type DocumentChange } from "./document";
 import {
   elementInfo,
+  reorderIndexes,
   type CanvasElement,
   type ElementInfo,
   type ElementKinds,
   type ElementPatch,
+  type ReorderDirection,
 } from "./elements";
+import {
+  exportElements,
+  hasRows,
+  type ExportArea,
+  type ExportHost,
+  type ExportOptions,
+} from "./export";
 import { findInteraction } from "./find-interaction";
 import type { EngineState } from "./engine-state.types";
 import type { Point, Rect } from "./geometry.types";
@@ -28,7 +37,12 @@ import { Scene } from "./scene";
 import { loadFonts, TextEditor } from "./text";
 import { createBaseTools, type CanvasPointer, type Tool, type ToolContext } from "./tools";
 import { debounce, Disposables, Emitter, FrameScheduler, Store } from "./utils";
-import type { CanvasEngineOptions, ElementAction, HostAction } from "./canvas-engine.types";
+import type {
+  CanvasEngineOptions,
+  ContextMenuRequest,
+  ElementAction,
+  HostAction,
+} from "./canvas-engine.types";
 import type { CanvasProduct } from "./canvas-product.types";
 import type { CanvasLinks } from "./links";
 
@@ -36,6 +50,8 @@ const ZOOM_STEP = 1.25;
 const HIT_TOLERANCE_PX = 4;
 /** Text is re-rasterized for the new zoom once zooming settles. */
 const TEXT_ZOOM_DELAY_MS = 150;
+/** Pixels per world unit of "Copy as PNG". */
+const COPY_PNG_SCALE = 2;
 
 /**
  * Framework-agnostic infinite canvas, shared by every product (boards, designs). Wires the
@@ -58,6 +74,7 @@ export class CanvasEngine<O extends object = object> {
   private readonly renderer: Renderer;
   private readonly scene: Scene;
   private readonly clipboard: ElementClipboard<O>;
+  private readonly systemClipboard: Clipboard;
   private readonly tools: Map<string, Tool>;
   private readonly store: Store<EngineState<O>>;
   private readonly disposables = new Disposables();
@@ -73,6 +90,7 @@ export class CanvasEngine<O extends object = object> {
 
   private readonly viewChanges = new Emitter();
   private readonly elementActions = new Set<(action: ElementAction) => void>();
+  private readonly contextMenus = new Set<(request: ContextMenuRequest) => void>();
   private readonly hostActions = new Map<string, HostAction>();
   private tool: Tool;
   private options: O;
@@ -95,7 +113,8 @@ export class CanvasEngine<O extends object = object> {
       onLoad: () => this.requestRender(),
     });
     this.scene = new Scene(this.doc, this.kinds, product.resolveElements?.bind(product));
-    this.clipboard = this.createClipboard(clipboard ?? new MemoryClipboard());
+    this.systemClipboard = clipboard ?? new MemoryClipboard();
+    this.clipboard = this.createClipboard(this.systemClipboard);
     const ctx = this.createToolContext();
     const tools = [...createBaseTools(ctx), ...product.createTools(ctx)];
     this.tools = new Map(tools.map((tool) => [tool.id, tool]));
@@ -149,6 +168,7 @@ export class CanvasEngine<O extends object = object> {
     this.store.destroy();
     this.viewChanges.clear();
     this.elementActions.clear();
+    this.contextMenus.clear();
     // If mount() is still awaiting init, it destroys the renderer itself once init resolves.
     if (this.rendererReady) this.renderer.destroy();
     if (this.ownsDocument) this.doc.destroy();
@@ -213,8 +233,9 @@ export class CanvasEngine<O extends object = object> {
     this.doc.redo();
   }
 
+  /** Selects every element that isn't locked. */
   selectAll(): void {
-    this.setSelection(this.scene.elements.map((el) => el.id));
+    this.setSelection(this.scene.elements.filter((el) => !el.locked).map((el) => el.id));
   }
 
   /** Returns `false` when nothing was selected. A selected part is deleted instead of its element. */
@@ -261,6 +282,97 @@ export class CanvasEngine<O extends object = object> {
     return dropFiles(this.clipboardHost, files, at);
   }
 
+  /**
+   * Pastes the clipboard in place of the selection (centered on it), as one undo step. Returns
+   * `false` when nothing was selected.
+   */
+  pasteToReplace(): boolean {
+    if (this.scene.selection.size === 0) return false;
+    this.textEditor?.commit();
+    const replace = [...this.withMembers(this.scene.selection.ids, "delete")];
+    void this.clipboard.paste({ replace });
+    return true;
+  }
+
+  /**
+   * Copies the selection (with what moves with it) to the clipboard as a PNG image. Rejects with
+   * a message for the user when nothing is selected or it can't be copied.
+   */
+  async copyAsPng(): Promise<void> {
+    if (this.scene.selection.size === 0) throw new Error("Select something to copy.");
+    this.textEditor?.commit();
+    const options = { format: "png", background: "transparent", area: "selection" } as const;
+    const png = await exportElements(this.exportHost, { ...options, scale: COPY_PNG_SCALE });
+    await this.systemClipboard.writeImage(png);
+  }
+
+  /**
+   * Exports the selection (with what moves with it) or the whole canvas as an image, a PDF page
+   * or CSV. Rejects with a message for the user when there's nothing to export.
+   */
+  exportElements(options: ExportOptions): Promise<Blob> {
+    this.textEditor?.commit();
+    return exportElements(this.exportHost, options);
+  }
+
+  /** Whether an area holds elements that export as CSV (e.g. tables). */
+  canExportCsv(area: ExportArea): boolean {
+    return hasRows(this.exportHost, { area });
+  }
+
+  /**
+   * Moves the selection (with what moves with it) in the drawing order, as one undo step: to the
+   * front or back, or one step past the nearest element it overlaps. Frames keep their order
+   * (larger behind smaller). Returns `false` when nothing was selected.
+   */
+  reorderSelection(direction: ReorderDirection): boolean {
+    if (this.scene.selection.size === 0) return false;
+    const indexes = reorderIndexes({
+      layer: this.scene.elements.filter((el) => !this.kinds.kindOf(el).frame),
+      moving: this.withMembers(this.scene.selection.ids, "move"),
+      direction,
+      bounds: (el) => this.kinds.kindOf(el).bounds(el),
+      above: (count) => this.doc.nextIndexes(count),
+      below: (count) => this.doc.firstIndexes(count),
+    });
+    if (indexes.size === 0) return true;
+    this.doc.checkpoint();
+    this.doc.updateMany(new Map([...indexes].map(([id, index]) => [id, { index }])));
+    return true;
+  }
+
+  /**
+   * Locks the selection (with what moves with it), or unlocks it when it's all locked, as one
+   * undo step. Returns `false` when nothing was selected.
+   */
+  toggleLockSelection(): boolean {
+    if (this.scene.selection.size === 0) return false;
+    const ids = this.withMembers(this.scene.selection.ids, "move");
+    const locked = [...this.scene.selection.ids].every((id) => this.scene.get(id)?.locked);
+    this.setLocked(ids, !locked);
+    return true;
+  }
+
+  /** Unlocks every locked element, as one undo step. Returns `false` when none was locked. */
+  unlockAll(): boolean {
+    const locked = this.scene.elements.filter((el) => el.locked).map((el) => el.id);
+    if (locked.length === 0) return false;
+    this.setLocked(locked, false);
+    return true;
+  }
+
+  /** Locks or unlocks elements, as one undo step (see `CanvasElement.locked`). */
+  setLocked(ids: Iterable<string>, locked: boolean): void {
+    const patches = new Map<string, ElementPatch>();
+    for (const id of ids) {
+      const el = this.scene.get(id);
+      if (el && Boolean(el.locked) !== locked) patches.set(id, { locked });
+    }
+    if (patches.size === 0) return;
+    this.doc.checkpoint();
+    this.doc.updateMany(patches);
+  }
+
   /** Adds a copy of the selection next to it and selects the copy. Returns `false` when nothing was selected. */
   duplicateSelection(): boolean {
     const selected = [...this.scene.selection.ids];
@@ -285,6 +397,12 @@ export class CanvasEngine<O extends object = object> {
   elementInfo(type: string): ElementInfo | undefined {
     const kind = this.kinds.get(type);
     return kind ? elementInfo(kind, this.keymap) : undefined;
+  }
+
+  /** Right-clicks on the canvas (see `ContextMenuRequest`). Returns an unsubscribe function. */
+  onContextMenu(listener: (request: ContextMenuRequest) => void): () => void {
+    this.contextMenus.add(listener);
+    return () => this.contextMenus.delete(listener);
   }
 
   /** Elements bottom to top, as drawn. */
@@ -325,15 +443,9 @@ export class CanvasEngine<O extends object = object> {
 
   /** Deletes elements, with what goes with them, as one undo step. Returns the removed ids. */
   deleteElements(ids: Iterable<string>): string[] {
-    const removing = [...this.withMembers(ids, "delete")].filter((id) => this.doc.get(id));
-    if (removing.length === 0) return [];
-    const before = this.scene.elements;
+    const removing = [...this.withMembers(ids, "delete")];
     this.doc.checkpoint();
-    this.doc.batch(() => {
-      this.doc.remove(removing);
-      this.product.onRemove?.(this.doc, new Set(removing), before);
-    });
-    return removing;
+    return this.removeElements(removing);
   }
 
   /** Selects a part of the single selected element (see `ToolContext.setPart`); `null` clears it. */
@@ -473,6 +585,23 @@ export class CanvasEngine<O extends object = object> {
       visibleRect: () => this.camera.visibleWorldRect(),
       getOptions: () => this.options,
       select: (ids) => this.setSelection(ids),
+      remove: (ids) => void this.removeElements(ids),
+    };
+  }
+
+  /** What exports reach of the engine. */
+  private get exportHost(): ExportHost {
+    return {
+      elementsOf: (area) => {
+        if (area === "board") return [...this.scene.elements];
+        const ids = this.withMembers(this.scene.selection.ids, "move");
+        return this.scene.elements.filter((el) => ids.has(el.id));
+      },
+      bounds: (el) => this.kinds.kindOf(el).bounds(el),
+      rows: (el) => this.kinds.kindOf(el).rows(el),
+      createLinks: () => this.product.createLinks?.() ?? [],
+      background: this.renderer.background,
+      snapshot: (elements, options) => this.renderer.snapshot(elements, options),
     };
   }
 
@@ -506,6 +635,7 @@ export class CanvasEngine<O extends object = object> {
         (document.activeElement as HTMLElement | null)?.blur?.();
       },
       onDoubleClick: (p) => this.handleDoubleClick(p),
+      onContextMenu: (p) => this.handleContextMenu(p),
     });
     pointer.bind(this.disposables);
     bindWheel(this.disposables, canvas, this.camera, () => this.onCameraChange());
@@ -556,6 +686,22 @@ export class CanvasEngine<O extends object = object> {
     this.textEditor?.start(hit.id, text.partAt?.(hit, p.world));
   }
 
+  /** Selects what was right-clicked (locked elements too) and asks the host for its menu. */
+  private handleContextMenu(p: CanvasPointer): void {
+    this.textEditor?.commit();
+    const tolerance = HIT_TOLERANCE_PX / this.camera.zoom;
+    const hit = this.scene.elementAt(p.world, tolerance, true);
+    if (!hit) this.setSelection([]);
+    else if (!this.scene.selection.has(hit.id)) this.setSelection([hit.id]);
+    this.setHover(null);
+    const request: ContextMenuRequest = {
+      screen: p.screen,
+      world: p.world,
+      target: hit ? "selection" : "canvas",
+    };
+    for (const listener of this.contextMenus) listener(request);
+  }
+
   private onCameraChange(): void {
     this.tool.onCameraChange?.();
     this.textEditor?.reposition();
@@ -598,6 +744,21 @@ export class CanvasEngine<O extends object = object> {
   withMembers(ids: Iterable<string>, purpose: "move" | "delete"): Set<string> {
     const set = new Set(ids);
     return this.product.withMembers?.(set, this.scene.elements, purpose) ?? set;
+  }
+
+  /**
+   * Removes exactly these elements (in the current undo step) and lets the product clean up
+   * after them. Returns the removed ids.
+   */
+  private removeElements(ids: readonly string[]): string[] {
+    const removing = ids.filter((id) => this.doc.get(id));
+    if (removing.length === 0) return [];
+    const before = this.scene.elements;
+    this.doc.batch(() => {
+      this.doc.remove(removing);
+      this.product.onRemove?.(this.doc, new Set(removing), before);
+    });
+    return removing;
   }
 
   /** Re-reads the elements, and re-resolves the links between them. */

@@ -15,4 +15,6 @@ export interface ElementSummary {
   /** The elements a line runs between (`null` for a free end). */
   from?: string | null;
   to?: string | null;
+  /** Set when the user locked it in place. */
+  locked?: boolean;
 }

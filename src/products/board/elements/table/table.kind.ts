@@ -186,6 +186,10 @@ export class TableKind extends BoxKind<TableElement, BoardToolOptions> {
     return { ...el, fills: gridFills(el, requireRows(readFills, value, "fills")) };
   }
 
+  override rows(el: TableElement): string[][] {
+    return el.cells;
+  }
+
   override fillDefaults(el: TableElement): TableElement {
     return {
       ...el,
