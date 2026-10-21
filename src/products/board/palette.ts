@@ -103,3 +103,20 @@ export const EMBED_CARD_COLOR = "#ffffff";
 export const EMBED_PREVIEW_COLOR = "#1b2330";
 /** YouTube's red, for the site mark on video cards. */
 export const YOUTUBE_RED = "#ff0000";
+
+/** Header row tints for tables. */
+export const TABLE_COLORS = [
+  { name: "Seal", value: "#e6e8eb" },
+  { name: "Ice", value: "#cfe4f8" },
+  { name: "Mint", value: "#cdeed8" },
+  { name: "Sand", value: "#f6e7c4" },
+  { name: "Blush", value: "#fbd3c7" },
+  { name: "Lilac", value: "#e2d9fa" },
+] as const;
+
+/** Table cells and grid lines. */
+export const TABLE_CELL_COLOR = "#ffffff";
+export const TABLE_LINE_COLOR = "#c9ced6";
+
+/** Cell fills for tables; "transparent" clears a cell's own fill. */
+export const TABLE_FILLS = [{ name: "None", value: TRANSPARENT }, ...TABLE_COLORS] as const;

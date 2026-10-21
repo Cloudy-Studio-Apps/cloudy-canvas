@@ -98,6 +98,7 @@ export class Scene {
     return buildOverlayState({
       kinds: this.kinds,
       selected: this.list.filter((el) => this.selection.has(el.id)),
+      part: this.selection.part,
       hover: this.hoverId ? this.byId.get(this.hoverId) : undefined,
       marquee: this.marquee,
       zoom,

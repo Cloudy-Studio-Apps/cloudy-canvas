@@ -6,3 +6,4 @@ export { TextTool } from "./text-tool";
 export { DbTool } from "./db-tool";
 export { ErTool } from "./er-tool";
 export { SectionTool } from "./section-tool";
+export { TableTool } from "./table-tool";

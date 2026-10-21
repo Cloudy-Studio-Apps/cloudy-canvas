@@ -1,6 +1,11 @@
-/** The set of selected element ids. */
+/** The set of selected element ids, and the selected part of a single selected element. */
 export class Selection {
   private current: ReadonlySet<string> = new Set();
+  /**
+   * A part of the single selected element (e.g. a table's row), picked with one of its handles.
+   * Cleared whenever the selection changes.
+   */
+  part: string | null = null;
   private cached: { from: ReadonlySet<string>; list: readonly string[] } | null = null;
 
   /** The ids as an array that stays the same object until the selection changes. */
@@ -37,6 +42,7 @@ export class Selection {
       return false;
     }
     this.current = next;
+    this.part = null;
     return true;
   }
 

@@ -17,6 +17,7 @@ import { ImageKind } from "./image";
 import { SectionKind } from "./section";
 import { StickyKind } from "./sticky";
 import { StrokeKind } from "./stroke";
+import { TableKind } from "./table";
 import { TextKind } from "./text";
 
 /**
@@ -29,6 +30,7 @@ boardKinds.register(new StrokeKind());
 boardKinds.register(new TextKind());
 boardKinds.register(new GeoKind());
 boardKinds.register(new SectionKind());
+boardKinds.register(new TableKind());
 boardKinds.register(new ImageKind());
 boardKinds.register(new EmbedKind());
 boardKinds.register(new ConnectorKind());

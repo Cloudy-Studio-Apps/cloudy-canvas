@@ -4,6 +4,7 @@ import type { Camera } from "../camera";
 import type { CanvasElement, ElementKinds } from "../elements";
 import type { CanvasLinks, Guide } from "../links";
 import type { CanvasTheme } from "./canvas-theme.types";
+import type { HiddenText } from "./element-view.types";
 import { ImageCache } from "./image-cache";
 import type { ImageCacheHost } from "./image-cache.types";
 import { DraftLayer } from "./layers/draft-layer";
@@ -98,10 +99,10 @@ export class Renderer {
     this.links.setTextZoom(zoom);
   }
 
-  /** Hides an element's canvas text while the DOM text editor shows it. */
-  setHiddenText(id: string | null): void {
-    this.elements.setHiddenText(id);
-    this.frames.setHiddenText(id);
+  /** Hides an element's canvas text (or one part of it) while the DOM text editor shows it. */
+  setHiddenText(hidden: HiddenText | null): void {
+    this.elements.setHiddenText(hidden);
+    this.frames.setHiddenText(hidden);
   }
 
   /** `highlighted`: the selected ids, whose links stand out. */

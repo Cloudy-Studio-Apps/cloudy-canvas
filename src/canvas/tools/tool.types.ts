@@ -34,9 +34,16 @@ export interface ToolContext<O extends object = object> {
    * Returns original id → copy id.
    */
   duplicate(ids: Iterable<string>): Map<string, string>;
-  editText(id: string): void;
+  /** Edits an element's text, or one text part of it (e.g. a table cell). */
+  editText(id: string, part?: string): void;
   /** Types the text of a new element; it's added to the document (and selected) on commit. */
   editNewText(el: CanvasElement): void;
+  /**
+   * Selects a part of the single selected element (e.g. a table row), which the overlay outlines
+   * and Delete removes; `null` clears it.
+   */
+  setPart(part: string | null): void;
+  getPart(): string | null;
   setCursor(cursor: string): void;
   setHover(id: string | null): void;
   getHover(): string | null;

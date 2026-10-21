@@ -14,4 +14,5 @@ export { ToolButton } from "./components/tool-button";
 export { ZoomControls } from "./components/zoom-controls";
 export { ZoomMenu } from "./components/zoom-menu";
 export { EngineContext, useEngine, useEngineState } from "./engine-context";
+export { useEngineElement } from "./use-engine-element";
 export { useCanvasEngine } from "./use-canvas-engine";

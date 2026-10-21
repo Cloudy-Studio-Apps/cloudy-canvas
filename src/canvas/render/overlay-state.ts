@@ -5,6 +5,7 @@ import type { OverlayInput, OverlayState } from "./overlay-state.types";
 export function buildOverlayState({
   kinds,
   selected,
+  part,
   hover,
   marquee,
   zoom,
@@ -30,5 +31,6 @@ export function buildOverlayState({
     marquee,
     handles,
     resizeHandles,
+    part: single && part ? kinds.kindOf(single).partBounds(single, part) : [],
   };
 }

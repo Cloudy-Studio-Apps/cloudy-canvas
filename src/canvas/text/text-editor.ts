@@ -3,6 +3,7 @@ import { isModKey } from "@shared/core";
 import type { Camera } from "../camera";
 import type { CanvasDocument } from "../document";
 import type { CanvasElement, ElementKinds, ElementText } from "../elements";
+import type { Rect } from "../geometry.types";
 import { Disposables } from "../utils";
 import { textEditorStyle } from "./text-editor-style";
 import { measureText } from "./text-metrics";
@@ -27,17 +28,21 @@ export class TextEditor {
     return this.session?.id ?? null;
   }
 
-  /** Edits an element's text. Does nothing for elements without text. */
-  start(id: string): void {
+  /**
+   * Edits an element's text, or one text `part` of it (e.g. a table cell; the kind's first part
+   * when none is given). Does nothing for elements without text.
+   */
+  start(id: string, part?: string | null): void {
     const el = this.hooks.getElement(id);
     const text = el ? this.kinds.kindOf(el).text : null;
-    if (el && text) this.open(el, text, null);
+    if (el && text)
+      this.open(el, text, null, text.firstPart?.(el, part ?? undefined) ?? part ?? null);
   }
 
   /** Types the text of a new element, which is added to the document on commit. */
   startDraft(el: CanvasElement): void {
     const text = this.kinds.kindOf(el).text;
-    if (text) this.open(el, text, el);
+    if (text) this.open(el, text, el, null);
   }
 
   /** Keeps the editor aligned with the element while the camera moves. */
@@ -45,8 +50,10 @@ export class TextEditor {
     const session = this.session;
     if (!session) return;
     const el = this.elementOf(session);
-    if (!el || !this.kinds.kindOf(el).text) return this.discard();
-    const { x, y } = this.camera.worldToScreen(el);
+    const text = el ? this.kinds.kindOf(el).text : null;
+    if (!el || !text) return this.discard();
+    const box = partBox(el, text, session.part);
+    const { x, y } = this.camera.worldToScreen({ x: el.x + box.x, y: el.y + box.y });
     session.textarea.style.transform = `translate(${x}px, ${y}px) scale(${this.camera.zoom})`;
   }
 
@@ -62,7 +69,7 @@ export class TextEditor {
       if (!session.draft) this.hooks.remove(el.id);
       return;
     }
-    const patch = text.set(el, value);
+    const patch = text.set(el, value, session.part ?? undefined);
     if (session.draft) {
       this.doc.checkpoint();
       this.doc.add({ ...el, ...patch, index: this.doc.nextIndex() });
@@ -76,25 +83,32 @@ export class TextEditor {
     this.close();
   }
 
-  private open<E extends CanvasElement>(el: E, text: ElementText<E>, draft: E | null): void {
+  private open<E extends CanvasElement>(
+    el: E,
+    text: ElementText<E>,
+    draft: E | null,
+    part: string | null,
+  ): void {
     this.commit();
+    const at = part ?? undefined;
+    const box = partBox(el, text, part);
     const textarea = document.createElement("textarea");
-    textarea.value = text.get(el);
+    textarea.value = text.get(el, at);
     textarea.spellcheck = false;
     textarea.setAttribute("aria-label", `${this.kinds.kindOf(el).label} text`);
     textarea.dataset.canvasTextEditor = "";
-    Object.assign(textarea.style, textEditorStyle(text.style(el), el, !text.fitContent));
+    Object.assign(textarea.style, textEditorStyle(text.style(el, at), box, !text.fitContent));
 
     const listeners = new Disposables();
     listeners.listen(textarea, "input", () => this.resizeToContent());
     listeners.listen(textarea, "keydown", this.handleKeyDown);
     listeners.listen(textarea, "blur", () => this.commit());
     this.container.appendChild(textarea);
-    this.session = { textarea, id: el.id, draft, listeners };
+    this.session = { textarea, id: el.id, part, draft, listeners };
 
     this.resizeToContent();
     this.reposition();
-    this.hooks.onStart(el.id);
+    this.hooks.onStart(el.id, part);
     // Wait a frame so the pointerdown that started editing doesn't steal focus back.
     requestAnimationFrame(() => {
       textarea.focus();
@@ -126,9 +140,10 @@ export class TextEditor {
     const el = session ? this.elementOf(session) : undefined;
     const text = el ? this.kinds.kindOf(el).text : null;
     if (!session || !el || !text) return;
-    const style = text.style(el);
+    const style = text.style(el, session.part ?? undefined);
     if (text.fitContent) fitToContent(session.textarea, style.fontSize);
-    else if (style.vAlign === "middle") centerVertically(session.textarea, el.h);
+    else if (style.vAlign === "middle")
+      centerVertically(session.textarea, partBox(el, text, session.part).h);
   }
 
   /** The element being edited: the draft, or the element as the scene sees it. */
@@ -139,6 +154,10 @@ export class TextEditor {
   private handleKeyDown = (event: KeyboardEvent) => {
     // Keep canvas shortcuts (Delete, V, H, …) from firing while typing.
     event.stopPropagation();
+    if (event.key === "Tab" && this.moveToNextPart(event.shiftKey)) {
+      event.preventDefault();
+      return;
+    }
     if (
       event.key === "Escape" ||
       (event.key === "Enter" && (isModKey(event) || (this.singleLine() && !event.shiftKey)))
@@ -149,9 +168,30 @@ export class TextEditor {
   };
 
   private singleLine(): boolean {
-    const el = this.session ? this.elementOf(this.session) : undefined;
-    return el ? (this.kinds.kindOf(el).text?.style(el).singleLine ?? false) : false;
+    const session = this.session;
+    const el = session ? this.elementOf(session) : undefined;
+    const text = el ? this.kinds.kindOf(el).text : null;
+    return el && text ? (text.style(el, session?.part ?? undefined).singleLine ?? false) : false;
   }
+
+  /** Commits and edits the next (or previous) part. Returns `false` when there's none. */
+  private moveToNextPart(back: boolean): boolean {
+    const session = this.session;
+    if (!session?.part || session.draft) return false;
+    const el = this.elementOf(session);
+    const next = el ? this.kinds.kindOf(el).text?.nextPart?.(el, session.part, back) : null;
+    if (!next) return false;
+    const id = session.id;
+    this.commit();
+    this.start(id, next);
+    return true;
+  }
+}
+
+/** The box the editor covers for a part, relative to the element (the whole element by default). */
+function partBox<E extends CanvasElement>(el: E, text: ElementText<E>, part: string | null): Rect {
+  if (part && text.partBox) return text.partBox(el, part);
+  return { x: 0, y: 0, w: el.w, h: el.h };
 }
 
 /** Pads the top of the textarea so its (wrapped) text sits in the middle, like on canvas. */

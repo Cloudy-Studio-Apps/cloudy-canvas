@@ -11,6 +11,12 @@ export type Gesture =
       started: boolean;
       /** Shift-click on an already selected element deselects it — unless it turns into a drag. */
       toggleOnClick: string | null;
+      /**
+       * A click (not a drag) on this already selected element selects its part there (a table
+       * cell), or extends `partBefore` with Shift or Ctrl/Cmd.
+       */
+      partOnClick: string | null;
+      partBefore: string | null;
     }
   | { kind: "marquee"; start: CanvasPointer; base: Set<string> }
   | { kind: "resize"; resize: ResizeGesture }

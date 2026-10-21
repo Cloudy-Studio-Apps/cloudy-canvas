@@ -1,6 +1,7 @@
 import { Container } from "pixi.js";
 
 import type { CanvasElement, ElementKinds } from "../../elements";
+import type { HiddenText } from "../element-view.types";
 import { ElementView } from "../element-view";
 import type { ImageCache } from "../image-cache";
 import { textResolution } from "../text-resolution";
@@ -8,7 +9,7 @@ import { textResolution } from "../text-resolution";
 /** Keeps one ElementView per element, in drawing order (see `zOrderKey`). */
 export class ElementLayer extends Container<ElementView> {
   private readonly views = new Map<string, ElementView>();
-  private hiddenTextId: string | null = null;
+  private hiddenText: HiddenText | null = null;
   private textResolution = 1;
 
   constructor(
@@ -36,11 +37,11 @@ export class ElementLayer extends Container<ElementView> {
     }
   }
 
-  /** Hides an element's canvas text while the DOM text editor is showing it. */
-  setHiddenText(id: string | null): void {
-    if (this.hiddenTextId) this.views.get(this.hiddenTextId)?.setTextVisible(true);
-    this.hiddenTextId = id;
-    if (id) this.views.get(id)?.setTextVisible(false);
+  /** Hides an element's canvas text (or one part of it) while the DOM text editor is showing it. */
+  setHiddenText(hidden: HiddenText | null): void {
+    if (this.hiddenText) this.showText(this.views.get(this.hiddenText.id), null);
+    this.hiddenText = hidden;
+    if (hidden) this.showText(this.views.get(hidden.id), hidden);
   }
 
   /** Re-rasterizes text for the current zoom so it stays crisp. */
@@ -59,9 +60,15 @@ export class ElementLayer extends Container<ElementView> {
   private add(el: CanvasElement): void {
     const view = new ElementView(el, this.kinds.kindOf(el), this.images);
     view.setTextResolution(this.textResolution);
-    view.setTextVisible(el.id !== this.hiddenTextId);
+    if (this.hiddenText?.id === el.id) this.showText(view, this.hiddenText);
     this.views.set(el.id, view);
     this.place(view);
+  }
+
+  /** Shows all of a view's text except what `hidden` names (all of it when it has no part). */
+  private showText(view: ElementView | undefined, hidden: HiddenText | null): void {
+    view?.setTextVisible(!hidden || hidden.part !== null);
+    view?.setHiddenSlot(hidden?.part ?? null);
   }
 
   /** Inserts the view at its z-order position (binary search over sorted children). */

@@ -27,6 +27,10 @@ export class SelectTool implements Tool {
       return;
     }
 
+    // A press anywhere but an element's handles drops the selected part (e.g. a table row); a
+    // click on the same element may pick a new one, or extend it with Shift or Ctrl/Cmd.
+    const partBefore = this.ctx.getPart();
+    this.ctx.setPart(null);
     const hit = this.ctx.elementAt(p.world);
     this.ctx.setHover(null);
 
@@ -38,7 +42,12 @@ export class SelectTool implements Tool {
     }
 
     let toggleOnClick: string | null = null;
-    if (p.shiftKey) {
+    const onlySelected = this.ctx.getSelection().size === 1 && this.ctx.getSelection().has(hit.id);
+    // Shift-clicking the selected element extends its part when one is selected; otherwise Shift
+    // adds or removes elements as usual.
+    const extendsPart = (p.shiftKey || p.modKey) && partBefore !== null;
+    const partOnClick = onlySelected && (extendsPart || !p.shiftKey) ? hit.id : null;
+    if (p.shiftKey && !(onlySelected && extendsPart)) {
       if (this.ctx.getSelection().has(hit.id)) toggleOnClick = hit.id;
       else this.ctx.setSelection([...this.ctx.getSelection(), hit.id]);
     } else if (!this.ctx.getSelection().has(hit.id)) {
@@ -50,7 +59,15 @@ export class SelectTool implements Tool {
       const el = this.ctx.doc.get(id);
       if (el) origins.set(id, el);
     }
-    this.gesture = { kind: "move", start: p, origins, started: false, toggleOnClick };
+    this.gesture = {
+      kind: "move",
+      start: p,
+      origins,
+      started: false,
+      toggleOnClick,
+      partOnClick,
+      partBefore,
+    };
   }
 
   onPointerMove(p: CanvasPointer): void {
@@ -93,6 +110,11 @@ export class SelectTool implements Tool {
       next.delete(g.toggleOnClick);
       this.ctx.setSelection(next);
     }
+    if (g?.kind === "move" && !g.started && g.partOnClick) {
+      const el = this.ctx.getElement(g.partOnClick);
+      const click = { current: g.partBefore, shiftKey: p.shiftKey, modKey: p.modKey };
+      if (el) this.ctx.setPart(this.ctx.kinds.kindOf(el).partAt(el, p.world, click));
+    }
     if (g?.kind === "element") {
       // Finished gestures don't get cancelled too.
       this.gesture = null;
@@ -130,6 +152,7 @@ export class SelectTool implements Tool {
     }
     g.origins = origins;
     g.toggleOnClick = null;
+    g.partOnClick = null;
     const selected = [...this.ctx.getSelection()].map((id) => ids.get(id));
     this.ctx.setSelection(selected.filter((id) => id !== undefined));
   }

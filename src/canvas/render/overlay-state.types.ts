@@ -4,6 +4,8 @@ import type { Point, Rect } from "../geometry.types";
 export interface OverlayInput {
   kinds: ElementKinds;
   selected: CanvasElement[];
+  /** The selected part of the single selected element, if any. */
+  part: string | null;
   hover: CanvasElement | undefined;
   marquee: Rect | null;
   zoom: number;
@@ -20,4 +22,6 @@ export interface OverlayState {
   handles: ElementHandle[];
   /** Resize handles of a single selected element. */
   resizeHandles: Point[];
+  /** Rects of the selected part of the single selected element (e.g. a table row, some cells). */
+  part: Rect[];
 }

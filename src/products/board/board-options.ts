@@ -7,6 +7,7 @@ import {
   SHAPE_FILLS,
   SHAPE_STROKES,
   STICKY_COLORS,
+  TABLE_COLORS,
 } from "./palette";
 
 /** The options a new board editor starts with. */
@@ -25,4 +26,6 @@ export const DEFAULT_BOARD_OPTIONS: BoardToolOptions = {
   dbKind: "table",
   imageBackground: IMAGE_DEFAULTS.background,
   imagePadding: IMAGE_DEFAULTS.padding,
+  tableColor: TABLE_COLORS[0].value,
+  tableHeader: true,
 };

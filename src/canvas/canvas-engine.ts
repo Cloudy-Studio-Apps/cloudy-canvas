@@ -203,8 +203,9 @@ export class CanvasEngine<O extends object = object> {
     this.setSelection(this.scene.elements.map((el) => el.id));
   }
 
-  /** Returns `false` when nothing was selected. */
+  /** Returns `false` when nothing was selected. A selected part is deleted instead of its element. */
   deleteSelection(): boolean {
+    if (this.deleteSelectedPart()) return true;
     if (this.scene.selection.size === 0) return false;
     this.deleteElements(this.scene.selection.ids);
     this.setSelection([]);
@@ -291,18 +292,30 @@ export class CanvasEngine<O extends object = object> {
     return removing;
   }
 
+  /** Selects a part of the single selected element (see `ToolContext.setPart`); `null` clears it. */
+  setSelectedPart(part: string | null): void {
+    const selection = this.scene.selection;
+    const next = selection.single() ? part : null;
+    if (selection.part === next) return;
+    selection.part = next;
+    this.requestRender();
+    this.emitChange();
+  }
+
   /** Opens the text editor on the selected element. Returns `false` if it has no text. */
   editSelection(): boolean {
     const id = this.scene.selection.single();
     const el = id ? this.doc.get(id) : undefined;
     if (!el || !this.kinds.kindOf(el).text) return false;
-    this.textEditor?.start(el.id);
+    // A selected part (e.g. a table cell) is edited rather than the element's first text.
+    this.textEditor?.start(el.id, this.scene.selection.part);
     return true;
   }
 
   /** Clears the selection, or returns to the select tool when nothing is selected. */
   cancel(): void {
-    if (this.scene.selection.size > 0) this.setSelection([]);
+    if (this.scene.selection.part) this.setSelectedPart(null);
+    else if (this.scene.selection.size > 0) this.setSelection([]);
     else this.setTool("select");
   }
 
@@ -358,8 +371,10 @@ export class CanvasEngine<O extends object = object> {
       setTool: (id) => this.setTool(id),
       elementAt: (world) => this.elementAt(world),
       elementsInRect: (rect) => this.scene.elementsInRect(rect),
-      editText: (id) => this.textEditor?.start(id),
+      editText: (id, part) => this.textEditor?.start(id, part),
       editNewText: (el) => this.textEditor?.startDraft(el),
+      setPart: (part) => this.setSelectedPart(part),
+      getPart: () => this.scene.selection.part,
       setCursor: (cursor) => this.setCursor(cursor),
       setHover: (id) => this.setHover(id),
       setMarquee: (rect) => {
@@ -410,8 +425,8 @@ export class CanvasEngine<O extends object = object> {
   private createTextEditor(container: HTMLElement): TextEditor {
     return new TextEditor(container, this.doc, this.kinds, this.camera, {
       getElement: (id) => this.scene.get(id),
-      onStart: (id) => {
-        this.renderer.setHiddenText(id);
+      onStart: (id, part) => {
+        this.renderer.setHiddenText({ id, part });
         this.requestRender();
       },
       onEnd: () => {
@@ -481,9 +496,10 @@ export class CanvasEngine<O extends object = object> {
   private handleDoubleClick(p: CanvasPointer): void {
     if (this.tool.id !== "select") return;
     const hit = this.elementAt(p.world);
-    if (!hit || !this.kinds.kindOf(hit).text) return;
+    const text = hit ? this.kinds.kindOf(hit).text : null;
+    if (!hit || !text) return;
     this.setSelection([hit.id]);
-    this.textEditor?.start(hit.id);
+    this.textEditor?.start(hit.id, text.partAt?.(hit, p.world));
   }
 
   private onCameraChange(): void {
@@ -506,6 +522,20 @@ export class CanvasEngine<O extends object = object> {
     if (patches.size === 0) return;
     this.doc.checkpoint();
     this.doc.updateMany(patches);
+  }
+
+  /** Deletes the selected part of the single selected element, as one undo step. */
+  private deleteSelectedPart(): boolean {
+    const { part } = this.scene.selection;
+    const id = this.scene.selection.single();
+    const el = id ? this.scene.get(id) : undefined;
+    if (!el || !part) return false;
+    const patch = this.kinds.kindOf(el).removePart(el, part);
+    this.setSelectedPart(null);
+    if (!patch) return true;
+    this.doc.checkpoint();
+    this.doc.update(el.id, patch);
+    return true;
   }
 
   // ── State helpers ─────────────────────────────────────────────────────
@@ -564,6 +594,7 @@ export class CanvasEngine<O extends object = object> {
       selectedIds: this.scene.selection.list(),
       selectedId: this.scene.selection.single() ?? null,
       selectionTypes: this.selectionTypes(),
+      selectedPart: this.scene.selection.part,
       canUndo: this.doc.canUndo(),
       canRedo: this.doc.canRedo(),
     };

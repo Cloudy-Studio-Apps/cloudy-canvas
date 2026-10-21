@@ -11,6 +11,7 @@ import type {
   ElementSide,
   ElementSpec,
   ElementText,
+  PartClick,
 } from "./element.kind.types";
 
 /**
@@ -82,6 +83,28 @@ export abstract class ElementKind<
   /** Handles the overlay draws while the element is selected or hovered. */
   handles(_el: E, _zoom: number): ElementHandle[] {
     return [];
+  }
+
+  /**
+   * The part a click on the already selected element selects there (e.g. a table cell), or `null`.
+   * With Shift or Ctrl/Cmd (`click`), the kind may extend `click.current` instead (a range of
+   * cells, or one more). Kinds whose parts are picked otherwise (handles) leave it `null`.
+   */
+  partAt(_el: E, _p: Point, _click: PartClick): string | null {
+    return null;
+  }
+
+  /**
+   * World rects of a selected part of the element (e.g. a table's row, or several cells), outlined
+   * by the overlay; empty when the element has no such part.
+   */
+  partBounds(_el: E, _part: string): Rect[] {
+    return [];
+  }
+
+  /** The patch that deletes a selected part (Delete key), or `null` when it can't be removed. */
+  removePart(_el: E, _part: string): ElementPatch<E> | null {
+    return null;
   }
 
   /** World point where a line attaches to a side of the element (the middle of the side). */

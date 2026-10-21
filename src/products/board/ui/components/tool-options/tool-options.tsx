@@ -8,6 +8,7 @@ import { MarkerOptions } from "./marker-options";
 import { SectionOptions } from "./section-options";
 import { ShapeOptions } from "./shape-options";
 import { StickyOptions } from "./sticky-options";
+import { TableOptions } from "./table-options";
 
 /** Options panel per tool; tools without options show nothing. */
 const OPTION_PANELS: Partial<Record<string, ComponentType>> = {
@@ -15,6 +16,7 @@ const OPTION_PANELS: Partial<Record<string, ComponentType>> = {
   sticky: StickyOptions,
   shape: ShapeOptions,
   section: SectionOptions,
+  table: TableOptions,
   connector: ConnectorOptions,
   db: DbOptions,
 };
@@ -24,6 +26,7 @@ const SELECTION_PANELS: Partial<Record<string, ComponentType>> = {
   sticky: StickyOptions,
   geo: ShapeOptions,
   section: SectionOptions,
+  table: TableOptions,
   connector: ConnectorOptions,
   image: ImageOptions,
 };

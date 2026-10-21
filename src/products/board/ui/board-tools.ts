@@ -8,6 +8,7 @@ import {
   Network,
   Shapes,
   StickyNote,
+  Table,
   Type,
 } from "lucide-react";
 
@@ -31,6 +32,7 @@ export const BOARD_TOOL_GROUPS: BoardToolItem[][] = [
     { id: "shape", element: "geo", icon: Shapes },
     { id: "connector", element: "connector", icon: Spline },
     { id: "section", element: "section", icon: Frame },
+    { id: "table", element: "table", icon: Table },
     { id: "db", element: "db-table", icon: Database },
     { id: "er", element: "er-entity", icon: Network },
   ],

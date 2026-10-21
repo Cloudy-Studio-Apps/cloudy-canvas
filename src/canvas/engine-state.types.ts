@@ -11,6 +11,8 @@ export interface EngineState<O extends object = object> {
   selectedId: string | null;
   /** Sorted, comma-separated types of the selected elements, e.g. "geo,sticky". */
   selectionTypes: string;
+  /** The selected part of the single selected element (e.g. a table's `row:2`), if any. */
+  selectedPart: string | null;
   canUndo: boolean;
   canRedo: boolean;
 }

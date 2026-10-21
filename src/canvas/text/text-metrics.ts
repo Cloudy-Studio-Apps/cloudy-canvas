@@ -33,9 +33,10 @@ export function measureWrapped(
   text: string,
   fontSize: number,
   maxWidth: number,
+  weight = 400,
 ): { lines: string[]; w: number; h: number } {
   const ctx = getContext();
-  if (ctx) ctx.font = fontString(fontSize);
+  if (ctx) ctx.font = fontString(fontSize, weight);
   const width = (s: string) => (ctx ? ctx.measureText(s).width : s.length * fontSize * 0.55);
   const lines: string[] = [];
   for (const paragraph of text.split("\n")) {

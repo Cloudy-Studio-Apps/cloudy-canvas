@@ -27,6 +27,8 @@ export class ElementView extends Container {
   /** Extra keyed graphics drawn above the image (e.g. a play button over a thumbnail). */
   private readonly layers = new Map<string, Graphics>();
   private textVisible = true;
+  /** The text slot the text editor is showing instead (e.g. a table cell being edited). */
+  private hiddenSlot: string | null = null;
   private textResolution = 1;
   private image: Sprite | null = null;
   /** The image asset the view shows, and the box it's fitted into (local coordinates). */
@@ -111,6 +113,7 @@ export class ElementView extends Container {
     let node = this.textSlots.get(key);
     if (!node) {
       node = new Text({ text: value, style, resolution: this.textResolution });
+      node.visible = key !== this.hiddenSlot;
       this.textSlots.set(key, node);
       this.addChild(node);
     } else {
@@ -170,6 +173,15 @@ export class ElementView extends Container {
   setTextVisible(visible: boolean): void {
     this.textVisible = visible;
     if (this.textNode) this.textNode.visible = visible;
+  }
+
+  /** Hides only the text slot `key` (`null` shows them all), e.g. the table cell being edited. */
+  setHiddenSlot(key: string | null): void {
+    const shown = this.hiddenSlot ? this.textSlots.get(this.hiddenSlot) : undefined;
+    if (shown) shown.visible = true;
+    this.hiddenSlot = key;
+    const hidden = key ? this.textSlots.get(key) : undefined;
+    if (hidden) hidden.visible = false;
   }
 
   setTextResolution(resolution: number): void {

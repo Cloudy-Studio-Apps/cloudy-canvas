@@ -19,4 +19,7 @@ export interface BoardToolOptions {
   /** The selected images' look (pasted images start from `IMAGE_DEFAULTS`). */
   imageBackground: ImageBackground;
   imagePadding: number;
+  /** New and selected tables' header tint, and whether their first row is a header. */
+  tableColor: string;
+  tableHeader: boolean;
 }

@@ -29,11 +29,12 @@ import {
   SectionTool,
   ShapeTool,
   StickyTool,
+  TableTool,
   TextTool,
 } from "./tools";
 
 /**
- * Boards (`.cboard`, FigJam-style): sticky notes, text, marker strokes, diagram shapes, connectors, sections,
+ * Boards (`.cboard`, FigJam-style): sticky notes, text, marker strokes, diagram shapes, connectors, sections, tables,
  * pasted images, database schemas and ER diagrams.
  */
 export const boardProduct: CanvasProduct<BoardToolOptions> = {
@@ -45,6 +46,7 @@ export const boardProduct: CanvasProduct<BoardToolOptions> = {
     new TextTool(ctx),
     new ShapeTool(ctx),
     new SectionTool(ctx),
+    new TableTool(ctx),
     new ConnectorTool(ctx),
     new DbTool(ctx),
     new ErTool(ctx),
