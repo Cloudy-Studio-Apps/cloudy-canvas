@@ -40,7 +40,7 @@ src/
       ui/       the board editor (React)
     design/     skeleton: empty product definition and kinds
       ui/       placeholder page
-  pages/        app pages that aren't a product: home, design-system
+  pages/        app pages that aren't a product: home, settings, design-system
 ```
 
 ### Layering (enforced by ESLint `no-restricted-imports`)
@@ -174,6 +174,8 @@ Agents (Claude Code, Cursor, …) connect to the running app at `http://127.0.0.
   - The index is validated on read (`isFileInfo`), written atomically (temp file + rename) and edited one change at a time (`mutate`); an unreadable one is set aside as `recent-files.corrupt.json` (`storage.takeIndexReset()`). Saves are atomic too.
   - `useRecentFilesStore` holds the recents and the ids of `missing` files (re-checked on window focus), plus `open(path)`, `relocate(id)` and `forget(id)`. Home's cards show missing files with Locate… / Remove, and every card has a ⋯ and right-click menu (`use-file-actions.ts`).
   - Files dropped on the window, picked with "Open with" or passed on the command line arrive through `FileOpenRequests` (`shared/core`, `platform/tauri-file-open-requests.ts`) and are opened by `app/open-requests/`, which asks first when the open editor is dirty (`unsaved-changes-store`, set by `useBoardSaver`).
+- **Settings (`/settings`, `pages/settings/`):** opened from Home's top bar or Ctrl+,. It has About (version from `appInfo()` in `@platform`, `__APP_VERSION__` outside Tauri; the DarkRedgm link opens through `openExternal`, whose URLs are allowed in the capabilities), the Cloudy Studio dedication card (`dedication-card.tsx`), the agents panel (`AgentServerPanel` in `@shared/agent-server`), files & storage, and the board's shortcuts (`BoardShortcutsList` from `@board/ui`, named with `BASE_COMMAND_LABELS` and the toolbar's tool labels).
+- **App icon:** the source is `src-tauri/icons/source/app-icon.svg`; regenerate every size with `pnpm tauri icon src-tauri/icons/source/app-icon.svg`.
 - **Toasts:** report failures with `notifyError(title, error)` or `toast({...})` (`shared/stores/toast-store.ts`), never only `console.error`. The `<Toaster />` is mounted in the providers.
 - **Adding a product** (the design editor): fill in its `CanvasProduct` (kinds, tools, keybindings, options) and build its `ui/` editor from `canvas-ui` like the board's.
 

@@ -2,3 +2,4 @@
 // saving, and registering the open board for agents.
 export { getActiveBoard, setActiveBoard, waitForActiveBoard } from "./agent";
 export { BoardEditorPage } from "./board-editor-page";
+export { BoardShortcutsList } from "./components/shortcuts-list";

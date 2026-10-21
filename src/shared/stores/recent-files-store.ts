@@ -63,6 +63,14 @@ export const useRecentFilesStore = create<RecentFilesState>()((set, get) => ({
       notifyError("The file couldn't be removed from recents", error);
     }
   },
+  clear: async () => {
+    try {
+      await storage.clear();
+      set({ files: [], missing: NONE });
+    } catch (error) {
+      notifyError("Recent files couldn't be cleared", error);
+    }
+  },
 }));
 
 function withoutId(ids: ReadonlySet<string>, id: string): ReadonlySet<string> {

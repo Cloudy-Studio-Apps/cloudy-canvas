@@ -17,6 +17,10 @@ export interface Storage {
   relocate(id: string, path: string): Promise<FileInfo>;
   /** Removes a file from the recent files. The file itself is left alone. */
   forget(id: string): Promise<void>;
+  /** Empties the recent files. The files themselves are left alone. */
+  clear(): Promise<void>;
+  /** Where the recent files list is kept, or `null` where it isn't a file (browser). */
+  indexLocation(): Promise<string | null>;
   load(id: string): Promise<Uint8Array>;
   /** Writes `data` to `path` and records the file under `id`. */
   save(id: string, path: string, data: Uint8Array): Promise<FileInfo>;

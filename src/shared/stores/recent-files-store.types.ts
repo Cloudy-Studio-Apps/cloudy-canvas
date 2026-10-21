@@ -14,4 +14,6 @@ export interface RecentFilesState {
   relocate: (id: string) => Promise<FileInfo | null>;
   /** Removes a file from the recent files (the file itself stays on disk). */
   forget: (id: string) => Promise<void>;
+  /** Empties the recent files (the files themselves stay on disk). */
+  clear: () => Promise<void>;
 }

@@ -1,7 +1,9 @@
 export { agentChannel } from "./agent-channel";
+export { appInfo } from "./app-info";
 export { clipboard } from "./clipboard";
 export { openCanvasFileDialog, saveCanvasFileDialog } from "./file-dialog";
 export { fileOpenRequests } from "./file-open-requests";
+export { openExternal } from "./open-external";
 export { revealFile } from "./reveal-file";
 export { storage } from "./storage";
 export { TauriAgentChannel } from "./tauri-agent-channel";

@@ -83,6 +83,14 @@ export class TauriStorage implements Storage {
     return this.mutate((files) => ({ files: files.filter((f) => f.id !== id), result: undefined }));
   }
 
+  clear(): Promise<void> {
+    return this.mutate(() => ({ files: [], result: undefined }));
+  }
+
+  async indexLocation(): Promise<string | null> {
+    return isTauri() ? indexPath(INDEX_FILE) : null;
+  }
+
   async load(id: string): Promise<Uint8Array> {
     const file = await this.get(id);
     if (!file) throw new Error(`Unknown file id: ${id}`);

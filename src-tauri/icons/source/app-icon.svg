@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Cloudy Canvas app icon: the "foca watona" (spotted seal) peeking over a canvas.
+       Colors from src/shared/ui/styles/tokens.css (oklch converted to sRGB hex):
+       ice-500 #4799d9, ice-600 #2479bc, seal-50 #f9fafc, seal-100 #f0f3f6, seal-300 #cfd5db,
+       seal-400 #a4acb4, seal-900 #202730, blush-300 #ffbaa8. -->
+  <defs>
+    <linearGradient id="fur" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#cfd5db"/>
+      <stop offset="0.75" stop-color="#f0f3f6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Tile: sharp square, 56px radius (5.5%), 48px padding -->
+  <rect x="48" y="48" width="928" height="928" rx="56" fill="#4799d9"/>
+
+  <!-- Artwork drawn in the logo's 64-unit space, scaled 13.5x -->
+  <g transform="translate(80 54) scale(13.5)" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Body -->
+    <ellipse cx="32" cy="28" rx="20" ry="16.5" fill="url(#fur)" stroke="#202730" stroke-width="2.6"/>
+    <!-- Spots: few and large -->
+    <ellipse cx="24" cy="16" rx="2.2" ry="1.5" fill="#a4acb4"/>
+    <ellipse cx="38.5" cy="14.5" rx="2.4" ry="1.6" fill="#a4acb4"/>
+    <ellipse cx="45" cy="20" rx="1.7" ry="1.3" fill="#a4acb4"/>
+    <!-- Blush cheeks -->
+    <ellipse cx="19" cy="26.3" rx="3.4" ry="2.1" fill="#ffbaa8"/>
+    <ellipse cx="45" cy="26.3" rx="3.4" ry="2.1" fill="#ffbaa8"/>
+    <!-- Closed eyes -->
+    <path d="M20.8 23q3.4-3.6 6.8 0M36.4 23q3.4-3.6 6.8 0" fill="none" stroke="#202730" stroke-width="2.6"/>
+    <!-- Muzzle and nose -->
+    <path d="M32 26.2c-1-1.6-5.6-1.6-6 1.4-.3 2.4 2.6 3.4 4.4 2.6.8-.3 1.3-.8 1.6-1.3.3.5.8 1 1.6 1.3 1.8.8 4.7-.2 4.4-2.6-.4-3-5-3-6-1.4z" fill="#f9fafc" stroke="#202730" stroke-width="2"/>
+    <ellipse cx="32" cy="25.9" rx="2" ry="1.35" fill="#202730"/>
+    <!-- Canvas -->
+    <rect x="8" y="33" width="48" height="25" rx="1.2" fill="#ffffff" stroke="#202730" stroke-width="2.6"/>
+    <path d="M15 51c4-6 8-6 11-2s7 4 11-1" fill="none" stroke="#2479bc" stroke-width="2.8"/>
+    <circle cx="45.5" cy="45" r="3.4" fill="#ffbaa8"/>
+    <!-- Flippers on the canvas edge -->
+    <ellipse cx="17.5" cy="34.5" rx="4.8" ry="2.8" transform="rotate(-18 17.5 34.5)" fill="#cfd5db" stroke="#202730" stroke-width="2.6"/>
+    <ellipse cx="46.5" cy="34.5" rx="4.8" ry="2.8" transform="rotate(18 46.5 34.5)" fill="#cfd5db" stroke="#202730" stroke-width="2.6"/>
+  </g>
+</svg>

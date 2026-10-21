@@ -19,7 +19,7 @@ export { CanvasDocument, DocumentFeed, LOCAL_ORIGIN } from "./document";
 export * from "./agent";
 export * from "./elements";
 export * from "./geometry";
-export { BASE_KEYBINDINGS, Keymap } from "./input";
+export { BASE_COMMAND_LABELS, BASE_KEYBINDINGS, Keymap } from "./input";
 export { ElementView } from "./render";
 export { centerTextTop, measureText, measureWrapped } from "./text";
 export { createBaseTools, selectAndEdit } from "./tools";

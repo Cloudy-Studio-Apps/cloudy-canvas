@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@shared/ui/components/ui/dropdown-menu";
 import { claudeCodeCommand, mcpJsonConfig } from "./agent-server-config";
+import { agentServerStatusText } from "./agent-server-status-text";
 import { useAgentServerStatus } from "./use-agent-server-status";
 import type { AgentServerMenuProps } from "./agent-server-menu.types";
 
@@ -24,7 +25,7 @@ export function AgentServerMenu({ trigger, align = "start" }: AgentServerMenuPro
       <DropdownMenuContent align={align} className="w-72">
         <DropdownMenuLabel>Agents (MCP)</DropdownMenuLabel>
         <p className="px-2 pb-2 text-xs break-all text-muted-foreground">
-          {statusText(status.available, status.enabled, status.url)}
+          {agentServerStatusText(status.available, status.enabled, status.url)}
         </p>
         {status.available && (
           <>
@@ -50,11 +51,4 @@ export function AgentServerMenu({ trigger, align = "start" }: AgentServerMenuPro
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
-
-function statusText(available: boolean, enabled: boolean, url: string | null): string {
-  if (!available) return "Agents can connect to the desktop app only.";
-  if (!enabled) return "Off. Agents can't reach your boards.";
-  if (!url) return "Starting…";
-  return `Agents connect at ${url}`;
 }

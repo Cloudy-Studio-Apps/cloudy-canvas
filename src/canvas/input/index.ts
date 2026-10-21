@@ -1,6 +1,7 @@
 export type { KeyboardInputHost } from "./keyboard-input.types";
 export type { Keybindings } from "./keymap.types";
 export type { PointerInputHost } from "./pointer-input.types";
+export { BASE_COMMAND_LABELS } from "./base-command-labels";
 export { BASE_KEYBINDINGS } from "./base-keybindings";
 export { bindKeyboard } from "./keyboard-input";
 export { Keymap } from "./keymap";

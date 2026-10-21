@@ -4,6 +4,7 @@ import { DesignSystemPage } from "@pages/design-system/design-system-page";
 import { BoardEditorPage } from "@board/ui";
 import { DesignEditorPage } from "@design/ui";
 import { HomePage } from "@pages/home/home-page";
+import { SettingsPage } from "@pages/settings/settings-page";
 
 // Dev-only tooling routes; tree-shaken from production builds.
 const devRoutes: RouteObject[] = import.meta.env.DEV
@@ -14,6 +15,7 @@ export const router = createBrowserRouter([
   { path: "/", element: <HomePage /> },
   { path: "/board/:id", element: <BoardEditorPage /> },
   { path: "/design/:id", element: <DesignEditorPage /> },
+  { path: "/settings", element: <SettingsPage /> },
   ...devRoutes,
   { path: "*", element: <Navigate to="/" replace /> },
 ]);

@@ -9,10 +9,9 @@ import { CreateSection } from "./components/create-section";
 import { DropOverlay } from "./components/drop-overlay";
 import { RecentFiles } from "./components/recent-files";
 import { TopBar } from "./components/top-bar";
+import { OPEN_FILE_SHORTCUT, SETTINGS_SHORTCUT } from "./home-shortcuts";
 import { useFileDragOver } from "./use-file-drag-over";
 import { useOpenFile } from "./use-open-file";
-
-const OPEN_FILE_SHORTCUT = { key: "o", mod: true };
 
 export function HomePage() {
   const navigate = useNavigate();
@@ -33,8 +32,8 @@ export function HomePage() {
     return () => window.removeEventListener("focus", onFocus);
   }, [refreshRecents]);
 
-  // Ctrl/Cmd+O opens a file, like other desktop apps.
   useHotkey(OPEN_FILE_SHORTCUT, () => void openFile());
+  useHotkey(SETTINGS_SHORTCUT, () => void navigate("/settings"));
 
   return (
     <div className="flex min-h-full flex-col">
