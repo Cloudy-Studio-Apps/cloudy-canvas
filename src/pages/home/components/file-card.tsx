@@ -1,4 +1,4 @@
-import type { FileInfo } from "@shared/core";
+import { displayName, type FileInfo } from "@shared/core";
 import { FileTypeIcon } from "@shared/ui/components/file-type-icon";
 import { Badge } from "@shared/ui/components/ui/badge";
 import { cn } from "@shared/ui/lib/utils";
@@ -22,6 +22,7 @@ const TYPE_LABEL: Record<FileInfo["type"], string> = {
 export function FileCard({ file, missing, onOpen }: FileCardProps) {
   const actions = useFileActions({ file, missing, onOpen });
   const typeLabel = TYPE_LABEL[file.type];
+  const name = displayName(file);
 
   const card = (
     <button
@@ -29,8 +30,8 @@ export function FileCard({ file, missing, onOpen }: FileCardProps) {
       onClick={missing ? undefined : () => onOpen(file)}
       aria-label={
         missing
-          ? `${typeLabel} ${file.name} is missing. Show options`
-          : `Open ${typeLabel.toLowerCase()} ${file.name}`
+          ? `${typeLabel} ${name} is missing. Show options`
+          : `Open ${typeLabel.toLowerCase()} ${name}`
       }
       className={cn(
         "flex w-full cursor-pointer flex-col overflow-hidden rounded-card border bg-surface text-left shadow-soft",
@@ -55,8 +56,13 @@ export function FileCard({ file, missing, onOpen }: FileCardProps) {
         <FileTypeIcon type={file.type} size="sm" className={cn(missing && "opacity-40")} />
         <div className="min-w-0 flex-1">
           <p className={cn("truncate text-sm font-medium", missing && "text-muted-foreground")}>
-            {file.name}
+            {name}
           </p>
+          {file.description && (
+            <p className="truncate text-xs text-muted-foreground" title={file.description}>
+              {file.description}
+            </p>
+          )}
           <p className="text-xs text-muted-foreground">
             {typeLabel} · Edited{" "}
             <time dateTime={file.updatedAt}>{formatRelativeTime(file.updatedAt)}</time>
@@ -82,7 +88,7 @@ export function FileCard({ file, missing, onOpen }: FileCardProps) {
           card
         )}
         <div className="absolute top-2 right-2">
-          <FileActionsMenu actions={actions} label={`More actions for ${file.name}`} />
+          <FileActionsMenu actions={actions} label={`More actions for ${name}`} />
         </div>
       </div>
     </FileContextMenu>

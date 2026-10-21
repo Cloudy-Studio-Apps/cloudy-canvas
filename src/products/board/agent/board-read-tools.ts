@@ -9,8 +9,10 @@ export const boardReadTools: BoardAgentTool[] = [
   {
     name: "get_board",
     description:
-      "The board open in Cloudy Canvas: id, name, file path, unsaved changes, shape counts by " +
-      "type, selection and undo state. Returns { open: false } when no board is open.",
+      "The board open in Cloudy Canvas: id, name (its title, or its file name), title and " +
+      "description (set with set_board_info; read the description for what the board is " +
+      "about), file path, unsaved changes, shape counts by type, selection and undo state. " +
+      "Returns { open: false } when no board is open.",
     inputSchema: NO_ARGS,
     run: (host) => {
       const board = host.board();
@@ -21,10 +23,13 @@ export const boardReadTools: BoardAgentTool[] = [
         shapesByType[el.type] = (shapesByType[el.type] ?? 0) + 1;
       }
       const { canUndo, canRedo } = engine.getState();
+      const { title, description } = engine.doc.meta();
       return {
         open: true,
         id: board.id,
-        name: board.name,
+        name: title || board.name,
+        title,
+        description,
         path: board.path,
         dirty: board.dirty,
         shapeCount: engine.elements().length,

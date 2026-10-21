@@ -78,6 +78,13 @@ export function isFileInfo(value: unknown): value is FileInfo {
     typeof file.createdAt === "string" &&
     typeof file.updatedAt === "string" &&
     typeof file.formatVersion === "number" &&
-    (file.draft === undefined || typeof file.draft === "boolean")
+    (file.draft === undefined || typeof file.draft === "boolean") &&
+    (file.title === undefined || typeof file.title === "string") &&
+    (file.description === undefined || typeof file.description === "string")
   );
+}
+
+/** The name to show for a file: its title, or its file name when it has none. */
+export function displayName(file: Pick<FileInfo, "name" | "title">): string {
+  return file.title || file.name;
 }

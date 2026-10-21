@@ -1,4 +1,4 @@
-import type { FileInfo } from "@shared/core";
+import { displayName, type FileInfo } from "@shared/core";
 import type { RecentFilesFilter } from "./filter-recent-files.types";
 
 export const DEFAULT_RECENT_FILES_FILTER: RecentFilesFilter = {
@@ -15,7 +15,7 @@ export function filterRecentFiles(files: FileInfo[], filter: RecentFilesFilter):
   const matching = files.filter(
     (file) =>
       (filter.type === "all" || file.type === filter.type) &&
-      (!query || file.name.toLowerCase().includes(query)),
+      (!query || searchText(file).includes(query)),
   );
   switch (filter.sort) {
     case "recent":
@@ -23,6 +23,11 @@ export function filterRecentFiles(files: FileInfo[], filter: RecentFilesFilter):
     case "edited":
       return [...matching].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
     case "name":
-      return [...matching].sort((a, b) => byName.compare(a.name, b.name));
+      return [...matching].sort((a, b) => byName.compare(displayName(a), displayName(b)));
   }
+}
+
+/** What a search matches: the file name, title and description. */
+function searchText(file: FileInfo): string {
+  return [file.name, file.title, file.description].filter(Boolean).join("\n").toLowerCase();
 }

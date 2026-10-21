@@ -1,6 +1,13 @@
 export type FileType = "board" | "design";
 
-export interface FileInfo {
+/** What a file says about itself (saved inside it), mirrored in the recent files. */
+export interface FileMeta {
+  /** Shown instead of the file name when set. */
+  title?: string;
+  description?: string;
+}
+
+export interface FileInfo extends FileMeta {
   id: string;
   name: string;
   type: FileType;

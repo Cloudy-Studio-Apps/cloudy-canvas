@@ -11,7 +11,7 @@ export type {
 export type { CanvasProduct } from "./canvas-product.types";
 export type { CopyContext, DropResult, PastedImage } from "./clipboard";
 export type { CommandHandler, Commands } from "./commands.types";
-export type { DocumentChange } from "./document";
+export type { DocumentChange, DocumentMeta, DocumentMetaPatch } from "./document";
 export type { EngineState } from "./engine-state.types";
 export type { ExportArea, ExportBackground, ExportFormat, ExportOptions } from "./export";
 export type { Point, Rect, Size } from "./geometry.types";

@@ -19,6 +19,7 @@ import {
   fileTypeFromPath,
   isFileInfo,
   type FileInfo,
+  type FileMeta,
   type FileType,
   type Storage,
 } from "@shared/core";
@@ -110,12 +111,12 @@ export class TauriStorage implements Storage {
     return readFile(file.path);
   }
 
-  async save(id: string, path: string, data: Uint8Array): Promise<FileInfo> {
+  async save(id: string, path: string, data: Uint8Array, meta?: FileMeta): Promise<FileInfo> {
     const type = requireFileType(path);
     await writeAtomic(path, data);
     const { file, draft } = await this.mutate((files) => {
       const previous = files.find((f) => f.id === id);
-      const file = fileEntry(id, fileNameFromPath(path), type, path, previous);
+      const file = fileEntry(id, fileNameFromPath(path), type, path, previous, meta);
       // Saving over another recent file's path replaces that entry.
       const rest = files.filter((f) => f.id !== id && f.path !== path);
       const draft = previous?.draft && previous.path !== path ? previous.path : null;
@@ -126,14 +127,20 @@ export class TauriStorage implements Storage {
     return file;
   }
 
-  async saveDraft(id: string, name: string, type: FileType, data: Uint8Array): Promise<FileInfo> {
+  async saveDraft(
+    id: string,
+    name: string,
+    type: FileType,
+    data: Uint8Array,
+    meta?: FileMeta,
+  ): Promise<FileInfo> {
     const folder = await join(await appDataDir(), DRAFTS_DIR);
     await mkdir(folder, { recursive: true });
     const path = await join(folder, `${id}.${FILE_EXTENSIONS[type]}`);
     await writeAtomic(path, data);
     return this.mutate((files) => {
       const previous = files.find((f) => f.id === id);
-      const file: FileInfo = { ...fileEntry(id, name, type, path, previous), draft: true };
+      const file: FileInfo = { ...fileEntry(id, name, type, path, previous, meta), draft: true };
       const rest = files.filter((f) => f.id !== id && f.path !== path);
       return { files: [file, ...rest], result: file };
     });
@@ -189,16 +196,23 @@ export class TauriStorage implements Storage {
   }
 }
 
-/** The index entry for a file just written, keeping when it was first recorded. */
+/**
+ * The index entry for a file just written, keeping when it was first recorded. Its title and
+ * description come from `meta`, or are kept from `previous` when the save didn't say.
+ */
 function fileEntry(
   id: string,
   name: string,
   type: FileType,
   path: string,
   previous: FileInfo | undefined,
+  meta: FileMeta | undefined,
 ): FileInfo {
   const now = new Date().toISOString();
+  const { title, description } = meta ?? previous ?? {};
   return {
+    ...(title && { title }),
+    ...(description && { description }),
     id,
     name,
     type,

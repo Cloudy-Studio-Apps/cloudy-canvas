@@ -1,4 +1,5 @@
 import type { BoardAgentTool } from "./board-agent.types";
+import { boardInfoTools } from "./board-info-tools";
 import { boardReadTools } from "./board-read-tools";
 import { dbTools } from "./db-tools";
 import { erTools } from "./er-tools";
@@ -11,6 +12,7 @@ import { viewTools } from "./view-tools";
 export function createAgentTools(): BoardAgentTool[] {
   return [
     ...boardReadTools,
+    ...boardInfoTools,
     ...shapeEditTools,
     ...stickerTools,
     ...dbTools,

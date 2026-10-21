@@ -7,6 +7,7 @@ import { useAgentServerStore } from "@shared/stores/agent-server-store";
 import { SealLogo } from "@shared/ui/brand/seal-logo";
 import { Badge } from "@shared/ui/components/ui/badge";
 import { useBoardFile } from "../file";
+import { DocumentInfoPopover } from "./document-info";
 import { SaveIndicator } from "./save-indicator";
 import { SectionsMenu } from "./sections-menu";
 import { useBoardPanelStore } from "../stores/board-panel-store";
@@ -26,9 +27,7 @@ export function BoardTopBar() {
       </ToolButton>
       <PanelDivider />
       <SealLogo size={22} variant="mark" />
-      <h1 className="ml-1 max-w-56 truncate text-sm font-medium" title={file.name}>
-        {file.name}
-      </h1>
+      <DocumentInfoPopover />
       <SaveIndicator />
       <Badge variant="board" className="ml-1">
         Board

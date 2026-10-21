@@ -9,16 +9,19 @@ export const fileTools: BoardAgentTool[] = [
   {
     name: "list_recent_boards",
     description:
-      "Boards recently opened or saved in Cloudy Canvas, newest first. Boards marked missing " +
-      "were moved or deleted and can't be opened.",
+      "Boards recently opened or saved in Cloudy Canvas, newest first, with their title and " +
+      "description when they have one. Boards marked missing were moved or deleted and can't " +
+      "be opened.",
     inputSchema: NO_ARGS,
     run: async (host) => {
       const files = await host.recentFiles();
       return files
         .filter((file) => file.type === "board")
-        .map(({ id, name, path, updatedAt, missing }) => ({
+        .map(({ id, name, title, description, path, updatedAt, missing }) => ({
           id,
           name,
+          ...(title && { title }),
+          ...(description && { description }),
           path,
           updatedAt,
           ...(missing && { missing: true }),
@@ -58,6 +61,7 @@ export const fileTools: BoardAgentTool[] = [
   },
 ];
 
-function boardInfo({ id, name, path }: AgentBoard) {
-  return { id, name, path };
+function boardInfo({ id, name, path, engine }: AgentBoard) {
+  const { title, description } = engine.doc.meta();
+  return { id, name: title || name, title, description, path };
 }

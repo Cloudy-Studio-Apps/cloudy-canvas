@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { encodeBoardFile, type BoardEngine } from "@board";
+import { useDocumentMeta } from "@canvas-ui";
 import type { FileInfo } from "@shared/core";
 import { saveCanvasFileDialog, storage } from "@platform";
 import { useAutosaveStore } from "@shared/stores/autosave-store";
@@ -28,6 +29,7 @@ export function useBoardSaver(
   const [status, setStatus] = useState<SaveStatus>("idle");
   const [saved, setSaved] = useState<SaveKind | null>(null);
   const autosaveEnabled = useAutosaveStore((state) => state.enabled);
+  const meta = useDocumentMeta(engine.doc);
 
   const infoRef = useRef(info);
   /** Counts document changes, so a change made while saving keeps the board dirty. */
@@ -41,7 +43,8 @@ export function useBoardSaver(
 
   useEffect(
     () =>
-      engine.doc.observe(() => {
+      // Any change, metadata included, needs saving.
+      engine.doc.onChange(() => {
         revision.current += 1;
         setDirty(true);
       }),
@@ -62,13 +65,14 @@ export function useBoardSaver(
     (path: string | null, kind: SaveKind): Promise<void> => {
       // Encoded now, so a save queued as the editor closes still has the document.
       const data = encodeBoardFile(engine.doc.encode());
+      const fileMeta = engine.doc.meta();
       const at = revision.current;
       const run = queue.current.then(async () => {
         setStatus("saving");
         try {
           const file = path
-            ? await storage.save(id, path, data)
-            : await storage.saveDraft(id, UNTITLED, "board", data);
+            ? await storage.save(id, path, data, fileMeta)
+            : await storage.saveDraft(id, fileMeta.title || UNTITLED, "board", data, fileMeta);
           infoRef.current = file;
           setInfo(file);
           savedRevision.current = Math.max(savedRevision.current, at);
@@ -99,10 +103,13 @@ export function useBoardSaver(
       const path =
         !asNew && current && !current.draft
           ? current.path
-          : await saveCanvasFileDialog("board", current?.name ?? UNTITLED);
+          : await saveCanvasFileDialog(
+              "board",
+              engine.doc.meta().title || (current?.name ?? UNTITLED),
+            );
       if (path) await write(path, "manual");
     },
-    [write],
+    [engine, write],
   );
 
   const autosave = useCallback(async () => {
@@ -127,7 +134,10 @@ export function useBoardSaver(
 
   const draft = info?.draft === true;
   return {
-    name: info?.name ?? UNTITLED,
+    name: meta.title || (info?.name ?? UNTITLED),
+    fileName: info?.name ?? UNTITLED,
+    title: meta.title,
+    description: meta.description,
     path: info && !draft ? info.path : null,
     draft,
     dirty,

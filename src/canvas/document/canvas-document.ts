@@ -2,7 +2,12 @@ import * as Y from "yjs";
 import { generateKeyBetween, generateNKeysBetween } from "fractional-indexing";
 
 import type { CanvasElement, ElementKinds, ElementPatch } from "../elements";
-import type { DocumentChange, ElementMap } from "./canvas-document.types";
+import type {
+  DocumentChange,
+  DocumentMeta,
+  DocumentMetaPatch,
+  ElementMap,
+} from "./canvas-document.types";
 
 /** Origin tag for local edits, so the undo manager only tracks this client's changes. */
 export const LOCAL_ORIGIN = Symbol("local");
@@ -21,6 +26,8 @@ export class CanvasDocument {
   private readonly elements: Y.Map<ElementMap>;
   /** Binary data elements show (e.g. image files), by id. Shared by copies, outside undo history. */
   private readonly assets: Y.Map<Uint8Array>;
+  /** The document's own title and description (`DocumentMeta`), undoable like elements. */
+  private readonly metaMap: Y.Map<string>;
 
   /** A document restored from `encode()` output. Loading it isn't an undoable change. */
   static fromUpdate(kinds: ElementKinds, update: Uint8Array): CanvasDocument {
@@ -37,7 +44,8 @@ export class CanvasDocument {
     // The map keeps its original name so existing files load.
     this.elements = doc.getMap<ElementMap>("shapes");
     this.assets = doc.getMap<Uint8Array>("assets");
-    this.undoManager = new Y.UndoManager(this.elements, {
+    this.metaMap = doc.getMap<string>("meta");
+    this.undoManager = new Y.UndoManager([this.elements, this.metaMap], {
       trackedOrigins: new Set([LOCAL_ORIGIN]),
       captureTimeout: 400,
     });
@@ -134,6 +142,32 @@ export class CanvasDocument {
     this.doc.transact(() => this.assets.set(id, data), LOCAL_ORIGIN);
   }
 
+  // ── Metadata ────────────────────────────────────────────────────────
+
+  meta(): DocumentMeta {
+    return { title: this.metaText("title"), description: this.metaText("description") };
+  }
+
+  /** Sets the title and/or description (trimmed; `""` clears one). An undo step like any edit. */
+  setMeta(patch: DocumentMetaPatch): void {
+    this.transact(() => {
+      for (const [key, value] of Object.entries(patch)) {
+        if (value === undefined) continue;
+        const text = value.trim();
+        if (this.metaText(key) === text) continue;
+        if (text) this.metaMap.set(key, text);
+        else this.metaMap.delete(key);
+      }
+    });
+  }
+
+  /** Fires when the title or description changes. */
+  observeMeta(listener: () => void): () => void {
+    const handler = () => listener();
+    this.metaMap.observe(handler);
+    return () => this.metaMap.unobserve(handler);
+  }
+
   // ── History (local changes only) ────────────────────────────────────
 
   /** Ends the current undo step so the next change starts a new one. */
@@ -190,6 +224,16 @@ export class CanvasDocument {
     return () => this.elements.unobserveDeep(handler);
   }
 
+  /**
+   * Fires after any change to the document (elements, view state, assets, metadata): whatever
+   * makes the file need saving.
+   */
+  onChange(listener: () => void): () => void {
+    const handler = () => listener();
+    this.doc.on("update", handler);
+    return () => this.doc.off("update", handler);
+  }
+
   /** The whole document as one Yjs update, for saving to a file. */
   encode(): Uint8Array {
     return Y.encodeStateAsUpdate(this.doc);
@@ -217,6 +261,11 @@ export class CanvasDocument {
       if (bottom === null || index < bottom) bottom = index;
     });
     return bottom;
+  }
+
+  private metaText(key: string): string {
+    const value = this.metaMap.get(key);
+    return typeof value === "string" ? value : "";
   }
 
   private transact(fn: () => void): void {

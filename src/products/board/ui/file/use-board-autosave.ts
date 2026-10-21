@@ -38,7 +38,7 @@ export function useBoardAutosave(
     };
     // Changes made while autosave was off are saved now.
     schedule();
-    const removeObserver = engine.doc.observe(schedule);
+    const removeObserver = engine.doc.onChange(schedule);
     return () => {
       removeObserver();
       run();
