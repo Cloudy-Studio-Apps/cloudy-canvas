@@ -13,6 +13,7 @@ export type {
   DbRefKind,
   DbTableShape,
   GeoKind,
+  SectionShape,
   Shape,
   ShapeType,
 } from "./document";
@@ -32,6 +33,7 @@ export {
   BoardDocument,
   DB_HEADER_COLORS,
   GEO_KINDS,
+  SECTION_COLORS,
   SHAPE_FILLS,
   SHAPE_STROKES,
   MARKER_COLORS,

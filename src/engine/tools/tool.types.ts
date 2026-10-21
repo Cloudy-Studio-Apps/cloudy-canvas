@@ -38,6 +38,7 @@ export interface ToolOptions {
   connectorColor: string;
   connectorStartHead: ArrowHead;
   connectorEndHead: ArrowHead;
+  sectionColor: string;
 }
 
 /** What tools can do to the engine. */
@@ -50,6 +51,8 @@ export interface ToolContext {
   setSelection(ids: Iterable<string>): void;
   setTool(tool: ToolId): void;
   shapeAt(world: Point): Shape | undefined;
+  /** The ids plus everything inside any of them that is a section (nested sections included). */
+  withSectionMembers(ids: Iterable<string>): Set<string>;
   /** A shape as the scene sees it (connectors resolved). */
   getShape(id: string): Shape | undefined;
   /** Topmost shape a connector can attach to (ignores connectors and strokes). */

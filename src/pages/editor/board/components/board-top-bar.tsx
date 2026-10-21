@@ -9,6 +9,7 @@ import { Badge } from "@ui/components/ui/badge";
 import { useBoardFile } from "../file";
 import { FloatingPanel, PanelDivider } from "./floating-panel";
 import { HistoryControls } from "./history-controls";
+import { SectionsMenu } from "./sections-menu";
 import { ToolButton } from "./tool-button";
 
 export function BoardTopBar() {
@@ -60,6 +61,7 @@ export function BoardTopBar() {
       >
         <Braces />
       </ToolButton>
+      <SectionsMenu />
     </FloatingPanel>
   );
 }

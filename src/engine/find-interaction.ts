@@ -2,7 +2,13 @@ import { connectorEndpoints } from "./connectors";
 import { handleAt } from "./db";
 import { isConnector, isDbTable, type BoardDocument } from "./document";
 import type { Point } from "./geometry.types";
-import { isResizable, quickConnectAt, resizeHandleAt, type Interaction } from "./handles";
+import {
+  canQuickConnect,
+  isResizable,
+  quickConnectAt,
+  resizeHandleAt,
+  type Interaction,
+} from "./handles";
 import type { Scene } from "./scene";
 
 /** Handle grab radius, in screen px. */
@@ -43,7 +49,7 @@ export function findInteraction(
 
   const hovered = scene.hoveredId ? scene.get(scene.hoveredId) : undefined;
   for (const shape of [singleShape, hovered]) {
-    if (!isResizable(shape)) continue;
+    if (!canQuickConnect(shape)) continue;
     const side = quickConnectAt(shape, world, zoom);
     if (side) return { kind: "quick-connect", shape, side };
   }

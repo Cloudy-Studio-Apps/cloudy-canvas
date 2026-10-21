@@ -7,6 +7,12 @@ import type { TextEdit } from "./commit-text-edit.types";
  * and existing text emptied by the user is removed. Returns whether a new shape was added.
  */
 export function commitTextEdit(doc: BoardDocument, { shape, text, isDraft }: TextEdit): boolean {
+  if (shape.type === "section") {
+    // A section always keeps a title; clearing it keeps the previous one.
+    const title = text.trim();
+    if (title && title !== shape.text) doc.update(shape.id, { text: title });
+    return false;
+  }
   if (shape.type === "sticky" || shape.type === "geo") {
     if (text !== shape.text) doc.update(shape.id, { text });
     return false;

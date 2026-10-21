@@ -3,6 +3,7 @@ import { DbTool } from "./db-tool";
 import { HandTool } from "./hand-tool";
 import { MarkerTool } from "./marker-tool";
 import { SelectTool } from "./select-tool";
+import { SectionTool } from "./section-tool";
 import { ShapeTool } from "./shape-tool";
 import { StickyTool } from "./sticky-tool";
 import { TextTool } from "./text-tool";
@@ -18,6 +19,7 @@ export function createTools(ctx: ToolContext): Record<ToolId, Tool> {
     text: new TextTool(ctx),
     shape: new ShapeTool(ctx),
     connector: new ConnectorTool(ctx),
+    section: new SectionTool(ctx),
     db: new DbTool(ctx),
   };
 }

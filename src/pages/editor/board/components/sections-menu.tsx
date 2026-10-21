@@ -1,0 +1,25 @@
+import { Frame } from "lucide-react";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@ui/components/ui/dropdown-menu";
+import { SectionsMenuItems } from "./sections-menu-items";
+import { ToolButton } from "./tool-button";
+
+/** Lists the board's sections; picking one zooms to it. */
+export function SectionsMenu() {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <ToolButton label="Sections" side="bottom">
+          <Frame />
+        </ToolButton>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="max-h-80 w-60 overflow-y-auto">
+        <SectionsMenuItems />
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}

@@ -1,4 +1,4 @@
-export type ShapeType = "sticky" | "text" | "stroke" | "db-table" | "geo" | "connector";
+export type ShapeType = "sticky" | "text" | "stroke" | "db-table" | "geo" | "connector" | "section";
 
 export interface ShapeBase {
   id: string;
@@ -120,6 +120,17 @@ export interface ConnectorShape extends ShapeBase {
   points: number[];
 }
 
+/**
+ * A titled area that groups the shapes fully inside it (they move with it). Drawn behind other
+ * shapes; nested sections are drawn above the sections around them.
+ */
+export interface SectionShape extends ShapeBase {
+  type: "section";
+  /** The section's title. */
+  text: string;
+  color: string;
+}
+
 /** Looks of a connector, shared by the connector tool options and new connectors. */
 export interface ConnectorStyleOptions {
   style: ConnectorStyle;
@@ -129,7 +140,7 @@ export interface ConnectorStyleOptions {
 }
 
 export type Shape =
-  StickyShape | TextShape | StrokeShape | DbTableShape | GeoShape | ConnectorShape;
+  StickyShape | TextShape | StrokeShape | DbTableShape | GeoShape | ConnectorShape | SectionShape;
 
 /** Fields that can be changed after creation (id and type are immutable). */
 export type ShapePatch = Partial<Omit<StickyShape, "id" | "type">> &
@@ -137,10 +148,11 @@ export type ShapePatch = Partial<Omit<StickyShape, "id" | "type">> &
   Partial<Omit<StrokeShape, "id" | "type">> &
   Partial<Omit<DbTableShape, "id" | "type">> &
   Partial<Omit<GeoShape, "id" | "type">> &
-  Partial<Omit<ConnectorShape, "id" | "type">>;
+  Partial<Omit<ConnectorShape, "id" | "type">> &
+  Partial<Omit<SectionShape, "id" | "type">>;
 
 /** Shapes whose text can be edited in place. */
-export type EditableShape = StickyShape | TextShape | GeoShape;
+export type EditableShape = StickyShape | TextShape | GeoShape | SectionShape;
 
 /** Shapes connectors can attach to. */
 export type ConnectableShape = StickyShape | TextShape | DbTableShape | GeoShape;

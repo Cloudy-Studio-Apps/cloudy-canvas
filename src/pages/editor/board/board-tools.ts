@@ -1,5 +1,6 @@
 import {
   Database,
+  Frame,
   Hand,
   Highlighter,
   MousePointer2,
@@ -23,6 +24,7 @@ export const BOARD_TOOL_GROUPS: BoardToolItem[][] = [
     { id: "text", label: "Text", icon: Type },
     { id: "shape", label: "Shape", icon: Shapes },
     { id: "connector", label: "Connector", icon: Spline },
+    { id: "section", label: "Section", icon: Frame },
   ],
   [{ id: "db", label: "Database table", icon: Database }],
 ];

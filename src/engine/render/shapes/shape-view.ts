@@ -1,6 +1,6 @@
 import { Container, Graphics, Text } from "pixi.js";
 
-import type { Shape } from "../../document";
+import { zOrderKey, type Shape } from "../../document";
 import { drawShape } from "./shape-drawers";
 import { shapeTextStyle } from "./text-style";
 import type { ShapeTextOptions } from "./text-style.types";
@@ -8,7 +8,8 @@ import type { ShapeTextOptions } from "./text-style.types";
 /** Pixi display object for one shape. Redrawn in place by its type's drawer when the shape changes. */
 export class ShapeView extends Container {
   readonly shapeId: string;
-  index: string;
+  /** Drawing order key (see `zOrderKey`). */
+  order: string;
   readonly graphics = new Graphics();
   private textNode: Text | null = null;
   /** Extra keyed text nodes, for shapes that show several labels (e.g. database tables). */
@@ -19,13 +20,13 @@ export class ShapeView extends Container {
   constructor(shape: Shape) {
     super();
     this.shapeId = shape.id;
-    this.index = shape.index;
+    this.order = zOrderKey(shape);
     this.addChild(this.graphics);
     this.sync(shape);
   }
 
   sync(shape: Shape): void {
-    this.index = shape.index;
+    this.order = zOrderKey(shape);
     this.position.set(shape.x, shape.y);
     drawShape(this, shape);
   }

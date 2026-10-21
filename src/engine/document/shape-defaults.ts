@@ -19,3 +19,9 @@ export const GEO_STROKE_WIDTH = 2;
 /** Shapes smaller than this (in either direction) aren't created or resized further. */
 export const MIN_SHAPE_SIZE = 16;
 export const CONNECTOR_SIZE = 2;
+
+export const SECTION_FONT_SIZE = 14;
+/** Height of the title strip above a section. */
+export const SECTION_TITLE_H = 28;
+export const SECTION_DEFAULT_W = 640;
+export const SECTION_DEFAULT_H = 400;

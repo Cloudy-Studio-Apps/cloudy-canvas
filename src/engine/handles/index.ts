@@ -1,5 +1,5 @@
 export type * from "./handles.types";
-export { quickConnectAt, quickConnectPoint } from "./quick-connect";
+export { canQuickConnect, quickConnectAt, quickConnectPoint } from "./quick-connect";
 export {
   isResizable,
   RESIZE_HANDLES,

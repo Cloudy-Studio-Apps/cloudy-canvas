@@ -1,11 +1,11 @@
 import { Container } from "pixi.js";
 
-import type { Shape } from "../../document";
+import { zOrderKey, type Shape } from "../../document";
 import { ShapeView } from "../shapes/shape-view";
 
 const MAX_TEXT_RESOLUTION = 8;
 
-/** Keeps one ShapeView per shape, ordered by fractional index (z-order). */
+/** Keeps one ShapeView per shape, in drawing order (sections behind, then fractional index). */
 export class ShapeLayer extends Container<ShapeView> {
   private readonly views = new Map<string, ShapeView>();
   private hiddenTextId: string | null = null;
@@ -20,9 +20,9 @@ export class ShapeLayer extends Container<ShapeView> {
     for (const shape of shapes) {
       const view = this.views.get(shape.id);
       if (view) {
-        const indexChanged = view.index !== shape.index;
+        const orderChanged = view.order !== zOrderKey(shape);
         view.sync(shape);
-        if (indexChanged) this.place(view);
+        if (orderChanged) this.place(view);
       } else {
         this.add(shape);
       }
@@ -65,7 +65,7 @@ export class ShapeLayer extends Container<ShapeView> {
     let hi = this.children.length;
     while (lo < hi) {
       const mid = (lo + hi) >> 1;
-      if (this.children[mid]!.index <= view.index) lo = mid + 1;
+      if (this.children[mid]!.order <= view.order) lo = mid + 1;
       else hi = mid;
     }
     this.addChildAt(view, lo);

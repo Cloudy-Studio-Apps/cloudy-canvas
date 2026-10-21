@@ -5,7 +5,7 @@ import type { BoardDocument, EditableShape, TextShape } from "../document";
 import { isEditableShape } from "../document";
 import { Disposables } from "../utils";
 import { commitTextEdit } from "./commit-text-edit";
-import { textEditorStyle } from "./text-editor-style";
+import { editorFontSize, editorOrigin, textEditorStyle } from "./text-editor-style";
 import { measureText } from "./text-metrics";
 import type { TextEditorHooks, Session } from "./text-editor.types";
 
@@ -44,7 +44,8 @@ export class TextEditor {
     if (!session) return;
     const live = session.isDraft ? session.shape : this.doc.get(session.shape.id);
     if (!live) return this.discard();
-    const { x, y } = this.camera.worldToScreen(live);
+    if (!isEditableShape(live)) return this.discard();
+    const { x, y } = this.camera.worldToScreen(editorOrigin(live));
     session.textarea.style.transform = `translate(${x}px, ${y}px) scale(${this.camera.zoom})`;
   }
 
@@ -99,10 +100,12 @@ export class TextEditor {
   private resizeToContent(): void {
     const session = this.session;
     if (session?.shape.type === "geo") return centerVertically(session.textarea, session.shape.h);
-    if (session?.shape.type !== "text") return;
+    if (session?.shape.type !== "text" && session?.shape.type !== "section") return;
     const { textarea, shape } = session;
-    const size = measureText(textarea.value || " ", shape.fontSize);
-    textarea.style.width = `${size.w + shape.fontSize}px`;
+    const fontSize = editorFontSize(shape);
+    const size = measureText(textarea.value || " ", fontSize);
+    // Sections' titles are bold, a bit wider than the regular-weight measurement.
+    textarea.style.width = `${size.w * (shape.type === "section" ? 1.1 : 1) + fontSize}px`;
     textarea.style.height = `${size.h}px`;
   }
 
@@ -120,6 +123,7 @@ const TEXTAREA_LABELS: Record<EditableShape["type"], string> = {
   sticky: "Sticky note text",
   text: "Text",
   geo: "Shape text",
+  section: "Section title",
 };
 
 /** Pads the top of a shape's textarea so its (wrapped) text sits in the middle, like on canvas. */

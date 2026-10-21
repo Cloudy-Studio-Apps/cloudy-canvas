@@ -5,5 +5,6 @@ export * from "./shape-defaults";
 export * from "./geo-defaults";
 export * from "./shape-factory";
 export * from "./move-shape";
+export * from "./z-order";
 export * from "./palette";
 export { BoardDocument, LOCAL_ORIGIN, compareByIndex } from "./board-document";

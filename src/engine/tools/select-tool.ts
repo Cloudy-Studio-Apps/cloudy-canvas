@@ -1,6 +1,6 @@
 import { moveShapePatch, type Shape, type ShapePatch } from "../document";
 import { rectFromPoints, rectContainsPoint } from "../geometry";
-import { isResizable, resizeCursor, type Interaction } from "../handles";
+import { canQuickConnect, resizeCursor, type Interaction } from "../handles";
 import { ConnectGesture } from "./connect-gesture";
 import { ConnectorDrag } from "./connector-drag";
 import { ResizeGesture } from "./resize-gesture";
@@ -44,8 +44,9 @@ export class SelectTool implements Tool {
       this.ctx.setSelection([hit.id]);
     }
 
+    // Sections carry along everything inside them.
     const origins = new Map<string, Shape>();
-    for (const id of this.ctx.getSelection()) {
+    for (const id of this.ctx.withSectionMembers(this.ctx.getSelection())) {
       const shape = this.ctx.doc.get(id);
       if (shape) origins.set(id, shape);
     }
@@ -153,7 +154,7 @@ export class SelectTool implements Tool {
   private keepsHover(p: CanvasPointer): boolean {
     const id = this.ctx.getHover();
     const shape = id ? this.ctx.getShape(id) : undefined;
-    if (!isResizable(shape)) return false;
+    if (!canQuickConnect(shape)) return false;
     return rectContainsPoint(shape, p.world, HOVER_KEEP_PX / this.ctx.camera.zoom);
   }
 }

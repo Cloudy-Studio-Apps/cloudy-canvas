@@ -16,6 +16,7 @@ import type {
   ConnectorStyleOptions,
   GeoKind,
   GeoShape,
+  SectionShape,
   StickyShape,
   StrokeShape,
   TextShape,
@@ -127,5 +128,24 @@ export function createConnectorShape(
     startHead,
     endHead,
     points: [],
+  };
+}
+
+export function createSectionShape(
+  rect: Rect,
+  text: string,
+  color: string,
+  index: string,
+): SectionShape {
+  return {
+    id: createId(),
+    type: "section",
+    index,
+    x: Math.round(rect.x),
+    y: Math.round(rect.y),
+    w: Math.round(rect.w),
+    h: Math.round(rect.h),
+    text,
+    color,
   };
 }

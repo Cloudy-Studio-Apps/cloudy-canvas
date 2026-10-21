@@ -14,11 +14,13 @@ import type { RelationState } from "./relation-state.types";
 
 /**
  * Owns the Pixi application and composes the layers, bottom to top:
- * grid (screen) → world (relations, shapes, drafts; follows the camera) → overlay (screen).
+ * grid (screen) → world (sections, relations, shapes, drafts; follows the camera) → overlay (screen).
  */
 export class Renderer {
   readonly app = new Application();
-  readonly shapes = new ShapeLayer();
+  /** Sections live in their own layer so relation lines show above them but below other shapes. */
+  private readonly sections = new ShapeLayer();
+  private readonly shapes = new ShapeLayer();
   readonly draftStroke = new DraftStrokeLayer();
   private readonly grid = new GridLayer();
   private readonly relations = new RelationLayer();
@@ -39,7 +41,13 @@ export class Renderer {
       autoStart: false, // render on demand only
       preference: ["webgl", "canvas"],
     });
-    this.world.addChild(this.relations, this.shapes, this.draftStroke, this.draftRelation);
+    this.world.addChild(
+      this.sections,
+      this.relations,
+      this.shapes,
+      this.draftStroke,
+      this.draftRelation,
+    );
     this.app.stage.addChild(this.grid, this.world, this.overlay);
   }
 
@@ -56,8 +64,25 @@ export class Renderer {
     this.app.renderer.background.color = theme.background;
   }
 
-  syncShapes(shapes: Iterable<Shape>, removed?: Iterable<string>): void {
-    this.shapes.sync(shapes, removed);
+  syncShapes(shapes: Iterable<Shape>, removed: Iterable<string> = []): void {
+    const sections: Shape[] = [];
+    const others: Shape[] = [];
+    for (const shape of shapes) (shape.type === "section" ? sections : others).push(shape);
+    const gone = [...removed];
+    this.sections.sync(sections, gone);
+    this.shapes.sync(others, gone);
+  }
+
+  /** Re-rasterizes text for the zoom level. */
+  setTextZoom(zoom: number): void {
+    this.sections.setTextZoom(zoom);
+    this.shapes.setTextZoom(zoom);
+  }
+
+  /** Hides a shape's canvas text while the DOM text editor shows it. */
+  setHiddenText(id: string | null): void {
+    this.sections.setHiddenText(id);
+    this.shapes.setHiddenText(id);
   }
 
   render(camera: Camera, overlay: OverlayState, relations: RelationState): void {

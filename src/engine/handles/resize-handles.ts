@@ -17,7 +17,7 @@ const CURSORS: Record<ResizeHandle, string> = {
 };
 
 export function isResizable(shape: Shape | undefined): shape is ResizableShape {
-  return shape?.type === "geo" || shape?.type === "sticky";
+  return shape?.type === "geo" || shape?.type === "sticky" || shape?.type === "section";
 }
 
 export function resizeCursor(handle: ResizeHandle): string {

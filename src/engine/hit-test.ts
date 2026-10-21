@@ -1,8 +1,10 @@
-import type { Shape } from "./document/shapes.types";
+import type { SectionShape, Shape } from "./document/shapes.types";
+import { sectionTitleRect } from "./sections/section-title";
 import { distanceToSegmentSq, rectContainsPoint } from "./geometry";
 import type { Point, Rect } from "./geometry.types";
 
 const CONNECTOR_REACH = 4;
+const SECTION_BORDER_REACH = 2;
 
 export function shapeBounds(shape: Shape): Rect {
   return { x: shape.x, y: shape.y, w: shape.w, h: shape.h };
@@ -10,6 +12,7 @@ export function shapeBounds(shape: Shape): Rect {
 
 /** Whether a world point hits the shape. `tolerance` is in world units. */
 export function hitTestShape(shape: Shape, p: Point, tolerance: number): boolean {
+  if (shape.type === "section") return hitTestSection(shape, p, tolerance);
   if (!rectContainsPoint(shapeBounds(shape), p, tolerance)) return false;
   if (shape.type !== "stroke" && shape.type !== "connector") return true;
 
@@ -40,4 +43,17 @@ export function topmostShapeAt(shapes: Shape[], p: Point, tolerance: number): Sh
     if (hitTestShape(shape, p, tolerance)) return shape;
   }
   return undefined;
+}
+
+/** Sections are grabbed by their title or their border; clicks inside go to what's in them. */
+function hitTestSection(section: SectionShape, p: Point, tolerance: number): boolean {
+  if (rectContainsPoint(sectionTitleRect(section), p, tolerance)) return true;
+  const band = tolerance + SECTION_BORDER_REACH;
+  const outer = rectContainsPoint(shapeBounds(section), p, band);
+  const inner =
+    p.x > section.x + band &&
+    p.x < section.x + section.w - band &&
+    p.y > section.y + band &&
+    p.y < section.y + section.h - band;
+  return outer && !inner;
 }

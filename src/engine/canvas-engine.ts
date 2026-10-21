@@ -3,13 +3,15 @@ import { createCommands } from "./commands";
 import type { CommandHandler, CommandId } from "./commands.types";
 import { DbSchema } from "./db";
 import { findInteraction } from "./find-interaction";
-import { hitTestShape } from "./hit-test";
+import { hitTestShape, shapeBounds } from "./hit-test";
 import {
   BoardDocument,
   isConnectable,
   isDbTable,
   isEditableShape,
+  isSection,
   type DocumentChange,
+  type SectionShape,
   type Shape,
 } from "./document";
 import { DEFAULT_TOOL_OPTIONS } from "./engine-state";
@@ -19,6 +21,7 @@ import { bindKeyboard, bindWheel, EdgeAutoPan, PointerInput } from "./input";
 import { Renderer, type CanvasTheme } from "./render";
 import { removeShapes } from "./remove-shapes";
 import { Scene } from "./scene";
+import { withSectionMembers } from "./sections";
 import { loadFonts, TextEditor } from "./text";
 import {
   createTools,
@@ -29,7 +32,7 @@ import {
   type ToolOptions,
 } from "./tools";
 import { optionsFromShape, stylePatches } from "./tools/style-options";
-import { debounce, Disposables, FrameScheduler, Store } from "./utils";
+import { debounce, Disposables, Emitter, FrameScheduler, Store } from "./utils";
 import type { CanvasEngineOptions, HostActions } from "./canvas-engine.types";
 
 const ZOOM_STEP = 1.25;
@@ -54,13 +57,15 @@ export class CanvasEngine {
   private readonly tools: Record<ToolId, Tool>;
   private readonly store: Store<EngineState>;
   private readonly disposables = new Disposables();
+  private readonly contentEmitter = new Emitter();
+  private contentVersion = 0;
   private readonly frames = new FrameScheduler(() => this.draw());
   private readonly autoPan = new EdgeAutoPan(this.camera, (dx, dy) => {
     this.camera.panBy(dx, dy);
     this.onCameraChange();
   });
   private readonly updateTextZoom = debounce(() => {
-    this.renderer.shapes.setTextZoom(this.camera.zoom);
+    this.renderer.setTextZoom(this.camera.zoom);
     this.requestRender();
   }, TEXT_ZOOM_DELAY_MS);
 
@@ -110,7 +115,7 @@ export class CanvasEngine {
     this.camera.reset();
     this.scene.refresh();
     this.renderer.syncShapes(this.scene.shapes);
-    this.renderer.shapes.setTextZoom(this.camera.zoom);
+    this.renderer.setTextZoom(this.camera.zoom);
 
     this.bindInput(container, canvas);
     this.frames.start();
@@ -129,6 +134,7 @@ export class CanvasEngine {
     this.textEditor?.destroy();
     this.db.destroy();
     this.store.destroy();
+    this.contentEmitter.clear();
     // If mount() is still awaiting init, it destroys the renderer itself once init resolves.
     if (this.rendererReady) this.renderer.destroy();
     if (this.ownsDocument) this.doc.destroy();
@@ -138,6 +144,18 @@ export class CanvasEngine {
 
   subscribe = (listener: () => void) => this.store.subscribe(listener);
   getState = (): EngineState => this.store.get();
+
+  /** Notifies on every board content change (for host views that list content, e.g. sections). */
+  subscribeContent = (listener: () => void) => this.contentEmitter.subscribe(listener);
+  /** Increments on every content change. */
+  getContentVersion = (): number => this.contentVersion;
+
+  /** Every section, top to bottom then left to right. */
+  sections(): SectionShape[] {
+    return this.scene.shapes
+      .filter(isSection)
+      .sort((a, b) => (Math.abs(a.y - b.y) > 1 ? a.y - b.y : a.x - b.x));
+  }
 
   setTheme(theme: CanvasTheme): void {
     this.renderer.setTheme(theme);
@@ -191,7 +209,9 @@ export class CanvasEngine {
   /** Returns `false` when nothing was selected. */
   deleteSelection(): boolean {
     if (this.scene.selection.size === 0) return false;
-    removeShapes(this.doc, this.scene, this.scene.selection.ids);
+    // Deleting a section deletes what's inside it, like FigJam.
+    const ids = withSectionMembers(this.scene.selection.ids, this.scene.shapes);
+    removeShapes(this.doc, this.scene, ids);
     this.setSelection([]);
     return true;
   }
@@ -215,6 +235,15 @@ export class CanvasEngine {
     const shape = this.doc.get(id);
     if (!shape) return;
     this.camera.centerOn({ x: shape.x + shape.w / 2, y: shape.y + shape.h / 2 });
+    this.setSelection([id]);
+    this.onCameraChange();
+  }
+
+  /** Fits a shape (e.g. a section) in the view and selects it. */
+  zoomToShape(id: string): void {
+    const shape = this.scene.get(id);
+    if (!shape) return;
+    this.camera.fitRect(shapeBounds(shape));
     this.setSelection([id]);
     this.onCameraChange();
   }
@@ -266,6 +295,7 @@ export class CanvasEngine {
         this.requestRender();
       },
       getShape: (id) => this.scene.get(id),
+      withSectionMembers: (ids) => withSectionMembers(ids, this.scene.shapes),
       connectableAt: (world, exclude) => this.connectableAt(world, exclude),
       getHover: () => this.scene.hoveredId,
       interactionAt: (world) => findInteraction(this.doc, this.scene, world, this.camera.zoom),
@@ -286,11 +316,11 @@ export class CanvasEngine {
   private createTextEditor(container: HTMLElement): TextEditor {
     return new TextEditor(container, this.doc, this.camera, {
       onStart: (id) => {
-        this.renderer.shapes.setHiddenText(id);
+        this.renderer.setHiddenText(id);
         this.requestRender();
       },
       onEnd: () => {
-        this.renderer.shapes.setHiddenText(null);
+        this.renderer.setHiddenText(null);
         this.requestRender();
       },
       onCreate: (id) => this.setSelection([id]),
@@ -351,6 +381,8 @@ export class CanvasEngine {
     this.textEditor?.reposition();
     this.requestRender();
     this.emitChange();
+    this.contentVersion++;
+    this.contentEmitter.emit();
   }
 
   private handleDoubleClick(p: CanvasPointer): void {

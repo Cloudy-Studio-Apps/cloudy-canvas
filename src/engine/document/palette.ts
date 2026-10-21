@@ -48,6 +48,16 @@ export const SHAPE_STROKES = [
 
 export const TRANSPARENT = "transparent";
 
+/** Section backgrounds: soft tints so the shapes inside stay readable. */
+export const SECTION_COLORS = [
+  { name: "Seal", value: "#f1f2f4" },
+  { name: "Ice", value: "#e7f1fb" },
+  { name: "Mint", value: "#e6f6ec" },
+  { name: "Sand", value: "#fbf3e2" },
+  { name: "Blush", value: "#fdeae4" },
+  { name: "Lilac", value: "#f0ecfc" },
+] as const;
+
 /** Header colors for database tables. */
 export const DB_HEADER_COLORS = [
   { name: "Ice", value: "#cfe4f8" },

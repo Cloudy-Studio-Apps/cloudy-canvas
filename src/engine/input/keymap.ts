@@ -33,6 +33,7 @@ export const KEYMAP: Record<CommandId, readonly Shortcut[]> = {
   "tool.text": [{ key: "t" }],
   "tool.shape": [{ key: "r" }],
   "tool.connector": [{ key: "x" }],
+  "tool.section": [{ key: "s", shift: true }],
   "tool.db": [{ key: "d" }],
 };
 

@@ -3,7 +3,13 @@ import { columnAnchor, rowTop } from "../db";
 import { DB_ROW_H, isConnector, isDbTable } from "../document";
 import { unionRects } from "../geometry";
 import type { Point } from "../geometry.types";
-import { isResizable, quickConnectPoint, RESIZE_HANDLES, resizeHandlePoint } from "../handles";
+import {
+  canQuickConnect,
+  isResizable,
+  quickConnectPoint,
+  RESIZE_HANDLES,
+  resizeHandlePoint,
+} from "../handles";
 import { shapeBounds } from "../hit-test";
 import type { OverlayInput, OverlayState } from "./overlay-state.types";
 
@@ -40,7 +46,7 @@ export function buildOverlayState({
 
   const quickConnect: Point[] = [];
   for (const shape of [single, hover]) {
-    if (!isResizable(shape) || (shape === hover && shape.id === single?.id)) continue;
+    if (!canQuickConnect(shape) || (shape === hover && shape.id === single?.id)) continue;
     for (const side of SIDES) quickConnect.push(quickConnectPoint(shape, side, zoom));
   }
 

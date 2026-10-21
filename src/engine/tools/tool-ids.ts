@@ -7,5 +7,6 @@ export const TOOL_IDS = [
   "text",
   "shape",
   "connector",
+  "section",
   "db",
 ] as const;

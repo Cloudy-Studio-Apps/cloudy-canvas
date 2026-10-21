@@ -30,6 +30,8 @@ function stylePatch(shape: Shape, o: Partial<ToolOptions>): ShapePatch {
         startHead: o.connectorStartHead,
         endHead: o.connectorEndHead,
       });
+    case "section":
+      return o.sectionColor ? { color: o.sectionColor } : {};
     default:
       return {};
   }
@@ -49,6 +51,8 @@ export function optionsFromShape(shape: Shape): Partial<ToolOptions> {
         connectorStartHead: shape.startHead,
         connectorEndHead: shape.endHead,
       };
+    case "section":
+      return { sectionColor: shape.color };
     default:
       return {};
   }

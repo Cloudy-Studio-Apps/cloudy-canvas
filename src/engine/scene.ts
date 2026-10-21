@@ -1,7 +1,14 @@
 import { draftPath, resolveRelations, type Relation } from "./db";
 import { resolveConnector } from "./connectors";
-import { isConnector, isDbTable, type BoardDocument, type Shape } from "./document";
-import { rectsIntersect, unionRects } from "./geometry";
+import {
+  compareZOrder,
+  isConnector,
+  isDbTable,
+  isSection,
+  type BoardDocument,
+  type Shape,
+} from "./document";
+import { rectContainsRect, rectsIntersect, unionRects } from "./geometry";
 import type { Point, Rect } from "./geometry.types";
 import { shapeBounds, topmostShapeAt } from "./hit-test";
 import {
@@ -53,6 +60,7 @@ export class Scene {
       }
       return resolveConnector(shape, (id) => rawById.get(id));
     });
+    this.list.sort(compareZOrder);
     this.byId = new Map(this.list.map((shape) => [shape.id, shape]));
     this.relationList = resolveRelations(this.list);
   }
@@ -76,8 +84,13 @@ export class Scene {
     return topmostShapeAt(this.list, world, tolerance);
   }
 
+  /** Shapes touching the rect. Sections only count when the rect encloses them. */
   shapesInRect(rect: Rect): Shape[] {
-    return this.list.filter((shape) => rectsIntersect(shapeBounds(shape), rect));
+    return this.list.filter((shape) =>
+      isSection(shape)
+        ? rectContainsRect(rect, shapeBounds(shape))
+        : rectsIntersect(shapeBounds(shape), rect),
+    );
   }
 
   /** Bounding box of all shapes, or `null` for an empty board. */
