@@ -24,6 +24,7 @@ import {
 import {
   ConnectorTool,
   DbTool,
+  EraserTool,
   ErTool,
   MarkerTool,
   SectionTool,
@@ -43,6 +44,7 @@ export const boardProduct: CanvasProduct<BoardToolOptions> = {
   kinds: boardKinds,
   createTools: (ctx) => [
     new MarkerTool(ctx),
+    new EraserTool(ctx),
     new StickyTool(ctx),
     new TextTool(ctx),
     new ShapeTool(ctx),

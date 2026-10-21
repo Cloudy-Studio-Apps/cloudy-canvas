@@ -11,6 +11,7 @@ import { textResolution } from "../text-resolution";
 export class ElementLayer extends Container<ElementView> {
   private readonly views = new Map<string, ElementView>();
   private hiddenText: HiddenText | null = null;
+  private faded = new Set<string>();
   private textResolution = 1;
   /** Elements playing their entrance, with when it started. */
   private readonly entrances = new Map<string, number>();
@@ -66,6 +67,14 @@ export class ElementLayer extends Container<ElementView> {
     return this.entrances.size > 0;
   }
 
+  /** Dims these elements (those this layer doesn't draw are ignored); an empty list clears it. */
+  setFaded(ids: Iterable<string>): void {
+    const next = new Set(ids);
+    for (const id of this.faded) if (!next.has(id)) this.views.get(id)?.setFaded(false);
+    for (const id of next) this.views.get(id)?.setFaded(true);
+    this.faded = next;
+  }
+
   /** Hides an element's canvas text (or one part of it) while the DOM text editor is showing it. */
   setHiddenText(hidden: HiddenText | null): void {
     if (this.hiddenText) this.showText(this.views.get(this.hiddenText.id), null);
@@ -90,6 +99,7 @@ export class ElementLayer extends Container<ElementView> {
     const view = new ElementView(el, this.kinds.kindOf(el), this.images);
     view.setTextResolution(this.textResolution);
     if (this.hiddenText?.id === el.id) this.showText(view, this.hiddenText);
+    if (this.faded.has(el.id)) view.setFaded(true);
     this.views.set(el.id, view);
     this.place(view);
   }

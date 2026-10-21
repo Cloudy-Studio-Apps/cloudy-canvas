@@ -1,9 +1,12 @@
 import type { CanvasPointer, Tool, ToolContext } from "@canvas";
 
 import type { BoardToolOptions } from "../board-options.types";
-import { createStroke } from "../elements";
+import { createStroke, smoothPoints, STROKE_DEFAULTS, type StrokeElement } from "../elements";
 
-/** Freehand drawing; the stroke is previewed as a draft and added to the document on release. */
+/**
+ * Freehand drawing with the picked pen (pen or highlighter). The stroke is previewed as a draft
+ * and added to the document on release, smoothed first when smoothing is on.
+ */
 export class MarkerTool implements Tool {
   readonly id = "marker" as const;
   readonly cursor = "crosshair";
@@ -14,7 +17,7 @@ export class MarkerTool implements Tool {
   onPointerDown(p: CanvasPointer): void {
     this.ctx.setSelection([]);
     this.points = [p.world.x, p.world.y];
-    this.showDraft(this.points);
+    this.ctx.setDraft(this.stroke(this.points, ""));
   }
 
   onPointerMove(p: CanvasPointer): void {
@@ -26,7 +29,7 @@ export class MarkerTool implements Tool {
     const minDistance = 1 / this.ctx.camera.zoom;
     if (Math.hypot(p.world.x - lastX, p.world.y - lastY) < minDistance) return;
     points.push(p.world.x, p.world.y);
-    this.showDraft(points);
+    this.ctx.setDraft(this.stroke(points, ""));
   }
 
   onPointerUp(): void {
@@ -35,10 +38,15 @@ export class MarkerTool implements Tool {
     this.ctx.setDraft(null);
     if (!points) return;
 
-    const { markerColor, markerSize } = this.ctx.getOptions();
-    const { doc } = this.ctx;
+    const { doc, camera } = this.ctx;
+    const smooth = this.ctx.getOptions().drawSmooth;
+    // The tolerance is in screen pixels, so smoothing feels the same at every zoom.
+    const final = smooth
+      ? smoothPoints(points, STROKE_DEFAULTS.smoothTolerance / camera.zoom)
+      : points;
+    const stroke = this.stroke(final, doc.nextIndex());
     doc.checkpoint();
-    doc.add(createStroke(points, markerColor, markerSize, doc.nextIndex()));
+    doc.add(stroke);
   }
 
   onCancel(): void {
@@ -46,8 +54,17 @@ export class MarkerTool implements Tool {
     this.ctx.setDraft(null);
   }
 
-  private showDraft(points: number[]): void {
-    const { markerColor, markerSize } = this.ctx.getOptions();
-    this.ctx.setDraft(createStroke(points, markerColor, markerSize, ""));
+  /** A stroke with the picked pen's color and thickness. */
+  private stroke(points: number[], index: string): StrokeElement {
+    const options = this.ctx.getOptions();
+    return options.drawPen === "highlighter"
+      ? createStroke(
+          points,
+          "highlighter",
+          options.highlighterColor,
+          options.highlighterSize,
+          index,
+        )
+      : createStroke(points, "pen", options.markerColor, options.markerSize, index);
   }
 }

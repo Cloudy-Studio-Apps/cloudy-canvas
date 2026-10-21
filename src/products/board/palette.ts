@@ -9,19 +9,50 @@ export const STICKY_COLORS = [
   { name: "Seal", value: "#e6e8eb" },
 ] as const;
 
+/** Pen colors (the last one is white, for drawing on dark elements). */
 export const MARKER_COLORS = [
+  { name: "Ink", value: "#2a2f37" },
+  { name: "Red", value: "#e0484d" },
+  { name: "Orange", value: "#ee8a36" },
+  { name: "Yellow", value: "#f2c230" },
+  { name: "Green", value: "#2f9a62" },
+  { name: "Blue", value: "#3a83c9" },
+  { name: "Violet", value: "#8761cf" },
+  { name: "White", value: "#ffffff" },
+] as const;
+
+/** Pen thicknesses in world units. */
+export const MARKER_SIZES = [
+  { name: "Fine", value: 2 },
+  { name: "Medium", value: 4 },
+  { name: "Bold", value: 8 },
+  { name: "Heavy", value: 14 },
+] as const;
+
+/** Highlighter colors: bright tints that stay readable once drawn translucent. */
+export const HIGHLIGHTER_COLORS = [
+  { name: "Yellow", value: "#ffd84a" },
+  { name: "Green", value: "#7ee08c" },
+  { name: "Pink", value: "#ff8fc0" },
+  { name: "Blue", value: "#7cc3ff" },
+  { name: "Orange", value: "#ffad5c" },
+] as const;
+
+/** Highlighter thicknesses in world units. */
+export const HIGHLIGHTER_SIZES = [
+  { name: "Thin", value: 12 },
+  { name: "Medium", value: 20 },
+  { name: "Wide", value: 32 },
+] as const;
+
+/** Connector line colors. */
+export const LINE_COLORS = [
   { name: "Ink", value: "#2a2f37" },
   { name: "Blue", value: "#3a83c9" },
   { name: "Red", value: "#e0484d" },
   { name: "Green", value: "#2f9a62" },
   { name: "Orange", value: "#ee8a36" },
   { name: "Violet", value: "#8761cf" },
-] as const;
-
-export const MARKER_SIZES = [
-  { name: "Fine", value: 3 },
-  { name: "Medium", value: 6 },
-  { name: "Bold", value: 12 },
 ] as const;
 
 /** Fills for diagram shapes. "transparent" draws no fill. */

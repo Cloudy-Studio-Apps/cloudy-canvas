@@ -53,6 +53,8 @@ export interface ToolContext<O extends object = object> {
    * kind like any other element. `null` clears it.
    */
   setDraft(el: CanvasElement | null): void;
+  /** Dims elements, e.g. those a gesture will remove when it ends; `null` clears it. */
+  setFaded(ids: Iterable<string> | null): void;
   /** Shows gesture feedback above the elements (e.g. a line being dragged); `null` clears it. */
   setGuide(guide: Guide | null): void;
   /** Plays a quick pop on elements just added to the document (e.g. a stamped sticker). */

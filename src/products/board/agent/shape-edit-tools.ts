@@ -20,7 +20,7 @@ export const shapeEditTools: BoardAgentTool[] = [
     name: "update_shapes",
     description:
       "Changes fields of existing shapes as one undo step, e.g. { id, patch: { x, y, text, color } }. " +
-      "Field names are the ones get_shapes returns. Marker strokes can only be moved.",
+      "Field names are the ones get_shapes returns. Freehand strokes can only be moved.",
     inputSchema: {
       type: "object",
       required: ["updates"],

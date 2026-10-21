@@ -11,7 +11,15 @@ export function boardShortcutGroups(): ShortcutGroup[] {
     const command = `${TOOL_PREFIX}${item.id}`;
     const shortcuts = bindingsOf(command);
     const label = "label" in item ? item.label : boardKinds.get(item.element)?.label;
-    return shortcuts && label ? [{ command, label, shortcuts }] : [];
+    const own: ShortcutRow[] = shortcuts && label ? [{ command, label, shortcuts }] : [];
+    const subTools = (item.subTools ?? []).flatMap((sub): ShortcutRow[] => {
+      const subCommand = `${TOOL_PREFIX}${sub.id}`;
+      const subShortcuts = bindingsOf(subCommand);
+      return subShortcuts
+        ? [{ command: subCommand, label: sub.label, shortcuts: subShortcuts }]
+        : [];
+    });
+    return [...own, ...subTools];
   });
 
   const editing = Object.entries(BASE_COMMAND_LABELS)

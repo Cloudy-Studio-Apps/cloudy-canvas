@@ -12,6 +12,9 @@ import { canvasTextStyle } from "./text-style";
 import type { CanvasTextOptions } from "./text-style.types";
 import type { ImageFit } from "./element-view.types";
 
+/** Opacity of a faded element (see `setFaded`). */
+const FADED_ALPHA = 0.25;
+
 /** Parsed icons, shared by every view that shows them (keyed by their SVG markup). */
 const iconContexts = new Map<string, GraphicsContext>();
 
@@ -40,6 +43,8 @@ export class ElementView extends Container {
   /** The element's bounds, which the entrance scales around (see `setEntrance`). */
   private bounds: Rect = { x: 0, y: 0, w: 0, h: 0 };
   private entranceScale = 1;
+  private entranceAlpha = 1;
+  private faded = false;
 
   constructor(
     el: CanvasElement,
@@ -64,8 +69,15 @@ export class ElementView extends Container {
   /** Scales the view around its center and fades it, while it plays its entrance (1 when done). */
   setEntrance(scale: number, alpha: number): void {
     this.entranceScale = scale;
-    this.alpha = alpha;
+    this.entranceAlpha = alpha;
+    this.applyAlpha();
     this.placeScaled();
+  }
+
+  /** Dims the element, e.g. while a tool is about to remove it. */
+  setFaded(faded: boolean): void {
+    this.faded = faded;
+    this.applyAlpha();
   }
 
   /** Creates or updates the view's text. */
@@ -212,6 +224,10 @@ export class ElementView extends Container {
     this.croppedTexture?.destroy(false);
     this.croppedTexture = null;
     super.destroy(options);
+  }
+
+  private applyAlpha(): void {
+    this.alpha = this.entranceAlpha * (this.faded ? FADED_ALPHA : 1);
   }
 
   private placeScaled(): void {

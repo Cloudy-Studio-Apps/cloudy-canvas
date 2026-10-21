@@ -1,9 +1,21 @@
-import type { ArrowHead, ConnectorStyle, ImageBackground, PickedSticker } from "./elements";
+import type {
+  ArrowHead,
+  ConnectorStyle,
+  ImageBackground,
+  PickedSticker,
+  StrokePen,
+} from "./elements";
 
 /** What the board's tool options panel picks, for new elements and the selection. */
 export interface BoardToolOptions {
+  /** What the marker tool draws with. Each pen keeps its own color and thickness. */
+  drawPen: StrokePen;
+  /** Whether new strokes are smoothed when they're finished. */
+  drawSmooth: boolean;
   markerColor: string;
   markerSize: number;
+  highlighterColor: string;
+  highlighterSize: number;
   stickyColor: string;
   /** Geo variant id. */
   shapeKind: string;

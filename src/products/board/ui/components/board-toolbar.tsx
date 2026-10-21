@@ -26,7 +26,7 @@ export function BoardToolbar() {
                 label={label}
                 description={description}
                 shortcut={engine.keymap.label(`tool.${id}`)}
-                active={activeTool === id}
+                active={activeTool === id || !!item.subTools?.some((sub) => sub.id === activeTool)}
                 onClick={() => engine.setTool(id)}
               >
                 <Icon />

@@ -96,6 +96,13 @@ export class Renderer {
     this.draft.show(el);
   }
 
+  /** Dims these elements, e.g. the strokes an eraser is about to remove; an empty list clears it. */
+  setFaded(ids: Iterable<string>): void {
+    const list = [...ids];
+    this.elements.setFaded(list);
+    this.frames.setFaded(list);
+  }
+
   /** Shows a tool's gesture feedback above the elements; `null` clears it. */
   setGuide(guide: Guide | null): void {
     this.guide.set(guide);

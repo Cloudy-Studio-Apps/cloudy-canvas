@@ -176,6 +176,7 @@ export class CanvasEngine<O extends object = object> {
     const next = this.tools.get(id);
     if (!next || this.tool === next) return;
     this.tool.onCancel?.();
+    this.renderer.setFaded([]);
     this.tool = next;
     this.scene.setHover(null);
     this.setCursor(this.tool.cursor);
@@ -387,6 +388,10 @@ export class CanvasEngine<O extends object = object> {
       },
       setGuide: (guide) => {
         this.renderer.setGuide(guide);
+        this.requestRender();
+      },
+      setFaded: (ids) => {
+        this.renderer.setFaded(ids ?? []);
         this.requestRender();
       },
       animateIn: (ids) => {

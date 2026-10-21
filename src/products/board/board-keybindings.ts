@@ -4,6 +4,7 @@ import { BASE_KEYBINDINGS, type Keybindings } from "@canvas";
 export const BOARD_KEYBINDINGS = {
   ...BASE_KEYBINDINGS,
   "tool.marker": [{ key: "m" }],
+  "tool.eraser": [{ key: "e", shift: true }],
   "tool.sticky": [{ key: "s" }],
   "tool.text": [{ key: "t" }],
   "tool.shape": [{ key: "r" }],
