@@ -2,15 +2,14 @@ import { Plus } from "lucide-react";
 
 import type { ErAttributeShape } from "@engine";
 import { Button } from "@ui/components/ui/button";
-import { useEngine } from "../../../engine/engine-context";
-import { useErShapes } from "../../../engine/use-er-query";
+import { useErDiagram, useErShapes } from "../../../engine/use-er-query";
 import { AttributeRow } from "./attribute-row";
 import { FormSection } from "./form-section";
 import type { AttributeListProps } from "./attribute-row.types";
 
 /** The attributes of an entity, relation or aggregation, with their parts nested under them. */
 export function AttributeList({ ownerId, title = "Attributes" }: AttributeListProps) {
-  const { er } = useEngine();
+  const er = useErDiagram();
   const { attributes } = useErShapes();
   const partsOf = new Map<string, ErAttributeShape[]>();
   for (const attribute of [...attributes].sort((a, b) => a.order - b.order)) {

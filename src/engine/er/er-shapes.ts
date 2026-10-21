@@ -1,13 +1,47 @@
-import { isErShape, type BoardDocument, type ErShape } from "../document";
+import {
+  isErShape,
+  type BoardDocument,
+  type ErDiagramFields,
+  type ErEntityShape,
+  type ErShape,
+} from "../document";
+import type { ErDiagramInfo } from "./er-shapes.types";
 import type { ErShapes } from "./lang";
+
+/** Entity names an unnamed diagram is labeled with. */
+const LABEL_NAMES = 2;
 
 export function emptyErShapes(): ErShapes {
   return { entities: [], relations: [], attributes: [], isas: [], aggregates: [], constraints: [] };
 }
 
-/** Every ER shape on the board, by kind, in board order. */
-export function erShapes(doc: BoardDocument): ErShapes {
-  return groupErShapes(doc.all().filter(isErShape));
+/** The ER shapes of one diagram (or of the whole board), by kind, in board order. */
+export function erShapes(doc: BoardDocument, diagram?: string): ErShapes {
+  const shapes = doc.all().filter(isErShape);
+  return groupErShapes(
+    diagram === undefined ? shapes : shapes.filter((shape) => shape.diagram === diagram),
+  );
+}
+
+/** The board's ER diagrams, in the board order of their first shape. */
+export function erDiagrams(doc: BoardDocument): ErDiagramInfo[] {
+  const byId = new Map<string, ErShape[]>();
+  for (const shape of doc.all().filter(isErShape)) {
+    const list = byId.get(shape.diagram);
+    if (list) list.push(shape);
+    else byId.set(shape.diagram, [shape]);
+  }
+  return [...byId].map(([id, shapes]) => {
+    const name = shapes[0]?.diagramName ?? "";
+    const { entities } = groupErShapes(shapes);
+    return { id, name, label: name || diagramLabel(entities), entityCount: entities.length };
+  });
+}
+
+function diagramLabel(entities: readonly ErEntityShape[]): string {
+  const names = entities.slice(0, LABEL_NAMES).map((entity) => entity.name);
+  if (names.length === 0) return "Untitled diagram";
+  return entities.length > LABEL_NAMES ? `${names.join(", ")}…` : names.join(", ");
 }
 
 export function groupErShapes(shapes: readonly ErShape[]): ErShapes {
@@ -31,4 +65,10 @@ export function allErShapes(shapes: ErShapes): ErShape[] {
 /** Shapes the layout places: everything but aggregations and constraints, whose geometry is derived. */
 export function placedErShapes({ entities, relations, attributes, isas }: ErShapes): ErShape[] {
   return [...entities, ...relations, ...attributes, ...isas];
+}
+
+/** The diagram fields to write on a diagram's shapes: its id and current name. */
+export function diagramScope(shapes: ErShapes, diagram: string): ErDiagramFields {
+  const diagramName = allErShapes(shapes).find((s) => s.diagramName)?.diagramName ?? "";
+  return { diagram, diagramName };
 }

@@ -1,5 +1,4 @@
-import { useEngine } from "../../../engine/engine-context";
-import { useErShapes } from "../../../engine/use-er-query";
+import { useErDiagram, useErShapes } from "../../../engine/use-er-query";
 import { CommitInput } from "../../db-panel/commit-input";
 import { AttributeList } from "./attribute-list";
 import { relationOptions } from "./entity-options";
@@ -9,7 +8,7 @@ import type { AggregateFormProps } from "./entity-form.types";
 
 /** An aggregation: its name, the relation it boxes, and its own attributes. */
 export function AggregateForm({ aggregate }: AggregateFormProps) {
-  const { er } = useEngine();
+  const er = useErDiagram();
   const shapes = useErShapes();
 
   return (

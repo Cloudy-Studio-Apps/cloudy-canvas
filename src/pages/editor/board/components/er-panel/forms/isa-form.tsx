@@ -1,8 +1,7 @@
 import { Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@ui/components/ui/button";
-import { useEngine } from "../../../engine/engine-context";
-import { useErShapes } from "../../../engine/use-er-query";
+import { useErDiagram, useErShapes } from "../../../engine/use-er-query";
 import { CommitInput } from "../../db-panel/commit-input";
 import { CardinalityPicker } from "./cardinality-picker";
 import { entityOptions } from "./entity-options";
@@ -15,7 +14,7 @@ import type { IsaFormProps } from "./entity-form.types";
 
 /** A hierarchy (ES UN triangle): parent, kind, discriminator and children. */
 export function IsaForm({ isa }: IsaFormProps) {
-  const { er } = useEngine();
+  const er = useErDiagram();
   const shapes = useErShapes();
   const options = entityOptions(shapes);
   const discriminator = shapes.attributes.find((a) => a.ownerId === isa.id)?.name ?? "";

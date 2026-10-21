@@ -1,25 +1,32 @@
 import { useEffect } from "react";
-import { LayoutGrid, X } from "lucide-react";
+import { BoxSelect, LayoutGrid, X } from "lucide-react";
 
+import type { ErShapes } from "@engine";
 import { useBoardPanelStore } from "@stores/board-panel-store";
 import { Button } from "@ui/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui/components/ui/tabs";
 import { useEngine, useEngineState } from "../../engine/engine-context";
+import { useErDiagram } from "../../engine/use-er-query";
 import { FloatingPanel } from "../floating-panel";
 import { ErAddMenu } from "./er-add-menu";
+import { ErDiagramSwitcher } from "./er-diagram-switcher";
 import { ErStyleToggle } from "./er-style-toggle";
 import { ErTextEditor } from "./er-text-editor";
 import { ErShapeForm } from "./forms";
 
 /**
- * Right side panel for the board's ER diagram: a form for the selected shape (Visual) or the whole
- * diagram as text (Text), plus Add, re-layout and the attribute style. Opens when an ER shape is
- * selected and stays open until closed (or a database table is picked).
+ * Right side panel for one of the board's ER diagrams: a form for the selected shape (Visual) or
+ * the whole diagram as text (Text), plus the diagram switcher, Add, re-layout and the attribute
+ * style. Opens when an ER shape is selected and shows that shape's diagram; stays open until
+ * closed (or a database table is picked).
  */
 export function ErPanel() {
   const engine = useEngine();
   const erSelected = useEngineState((state) => state.erSelected);
   const selectedId = useEngineState((state) => state.selectedErId);
+  const selectedDiagram = useEngineState((state) => state.selectedErDiagram);
+  const diagram = useErDiagram();
+  const setDiagram = useBoardPanelStore((state) => state.setErDiagram);
   const dbSelected = useEngineState((state) => !!(state.selectedTableId || state.selectedEnumId));
   const schemaOpen = useBoardPanelStore((state) => state.schemaOpen);
   const open = useBoardPanelStore((state) => state.erOpen);
@@ -33,6 +40,9 @@ export function ErPanel() {
   useEffect(() => {
     if (dbSelected) setOpen(false);
   }, [dbSelected, setOpen]);
+  useEffect(() => {
+    if (selectedDiagram) setDiagram(selectedDiagram);
+  }, [selectedDiagram, setDiagram]);
 
   if (!open || dbSelected || schemaOpen) return null;
 
@@ -43,16 +53,27 @@ export function ErPanel() {
       className="max-h-full w-[340px] flex-col items-stretch gap-3 p-3"
     >
       <header className="flex items-center gap-1">
-        <h2 className="flex-1 text-sm font-semibold">ER diagram</h2>
+        <h2 className="sr-only">ER diagram</h2>
+        <ErDiagramSwitcher />
         <ErAddMenu />
         <ErStyleToggle />
         <Button
           variant="ghost"
           size="icon"
           className="size-7"
+          aria-label="Select diagram"
+          title="Select the whole diagram, to move it"
+          onClick={() => engine.select(diagramShapeIds(diagram.shapes()))}
+        >
+          <BoxSelect />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-7"
           aria-label="Re-layout"
-          title="Re-layout the whole diagram"
-          onClick={() => engine.er.relayout()}
+          title="Re-layout this diagram"
+          onClick={() => diagram.relayout()}
         >
           <LayoutGrid />
         </Button>
@@ -89,4 +110,9 @@ export function ErPanel() {
       </Tabs>
     </FloatingPanel>
   );
+}
+
+/** Everything that moves with the diagram; aggregations and constraints follow on their own. */
+function diagramShapeIds({ entities, relations, attributes, isas }: ErShapes): string[] {
+  return [...entities, ...relations, ...attributes, ...isas].map((shape) => shape.id);
 }

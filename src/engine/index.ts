@@ -54,6 +54,8 @@ export type {
   ErApplyResult,
   ErAttributePatch,
   ErConstraintPatch,
+  ErDiagram,
+  ErDiagramInfo,
   ErEntityPatch,
   ErIsaChildPatch,
   ErIsaPatch,

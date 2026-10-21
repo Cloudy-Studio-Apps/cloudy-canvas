@@ -1,35 +1,31 @@
+import { createId } from "@core";
+
 import { isErShape, type BoardDocument, type ErShape } from "../document";
 import { freeName } from "../db/table-edits";
 import type { Point } from "../geometry.types";
 import { Emitter } from "../utils";
-import { applyErPlan } from "./apply-er-plan";
+import { freeOrigin } from "./apply-er-plan";
 import { createErEntity } from "./create-er-shapes";
-import { erShapes, placedErShapes } from "./er-shapes";
-import { parseEr, serializeEr } from "./lang";
-import { layoutAll } from "./layout";
-import { placeAt } from "./position-layout";
-import { reconcileEr } from "./reconcile-er";
-import type { ErApplyOptions, ErApplyResult } from "./reconcile-er.types";
-import { addMissingEntities } from "./add-missing-entities";
-import { ErEdits } from "./er-edits";
+import { ErDiagram } from "./er-diagram";
+import { entitySize } from "./er-size";
+import { erDiagrams, erShapes } from "./er-shapes";
+import type { ErDiagramInfo } from "./er-shapes.types";
 import { withErMembers } from "./er-members";
+import { migrateErDiagrams } from "./migrate-er-diagrams";
 import { pruneEr } from "./prune-er";
-import type { ErShapes } from "./lang";
 
 /**
- * The board's ER diagram: every entity, relation and attribute together. Reads it as text and
- * applies edited text back to the document (one undo step each); the shapes are the source of
- * truth and the text is a view of them.
+ * The board's ER diagrams. A board can hold several, each with its own text, layout and names;
+ * `diagram(id)` reads and edits one. Notifies when any ER shape changes.
  */
 export class ErModel {
-  /** Edits from the visual editor. */
-  readonly edits: ErEdits;
   private readonly emitter = new Emitter();
+  private readonly cache = new Map<string, ErDiagram>();
   private version = 0;
   private readonly unobserve: () => void;
 
   constructor(private readonly doc: BoardDocument) {
-    this.edits = new ErEdits(doc);
+    migrateErDiagrams(doc);
     this.unobserve = doc.observe((change) => {
       const touched =
         change.removed.size > 0 || [...change.updated].some((id) => isErShape(doc.get(id)));
@@ -39,7 +35,7 @@ export class ErModel {
     });
   }
 
-  /** Notifies when the diagram changes (works with React's `useSyncExternalStore`). */
+  /** Notifies when a diagram changes (works with React's `useSyncExternalStore`). */
   subscribe = (listener: () => void): (() => void) => this.emitter.subscribe(listener);
 
   getVersion = (): number => this.version;
@@ -49,10 +45,21 @@ export class ErModel {
     this.emitter.clear();
   }
 
-  text = (): string => serializeEr(erShapes(this.doc));
+  /** One diagram by id (an empty one when nothing on the board belongs to it yet). */
+  diagram = (id: string): ErDiagram => {
+    let diagram = this.cache.get(id);
+    if (!diagram) {
+      diagram = new ErDiagram(this.doc, id);
+      this.cache.set(id, diagram);
+    }
+    return diagram;
+  };
 
-  /** Every ER shape by kind (a fresh read; cache it per version in UI hosts). */
-  shapes = (): ErShapes => erShapes(this.doc);
+  /** The board's diagrams, in board order. */
+  diagrams = (): ErDiagramInfo[] => erDiagrams(this.doc);
+
+  /** The diagram an ER shape belongs to. */
+  diagramOf = (shapeId: string): string | null => this.shape(shapeId)?.diagram ?? null;
 
   shape(id: string): ErShape | undefined {
     const shape = this.doc.get(id);
@@ -69,48 +76,26 @@ export class ErModel {
   };
 
   /**
-   * Replaces the diagram with the text's content. New shapes are placed automatically. With
-   * `createMissing`, entities that relations or hierarchies name but nothing defines are created
-   * (for pasted or finished text, so half-typed names don't become entities).
+   * Starts a new diagram with one entity centered on `center` (by default right of everything on
+   * the board); returns the entity's id.
    */
-  applyText = (text: string, options: ErApplyOptions = {}): ErApplyResult => {
-    const parsed = parseEr(text);
-    if (!parsed.ok) return parsed;
-    const model = options.createMissing ? addMissingEntities(parsed.model) : parsed.model;
-    const result = reconcileEr(model, erShapes(this.doc));
-    if (!result.ok) return result;
-    applyErPlan(this.doc, result.plan);
-    return { ok: true, warnings: model.warnings };
-  };
-
-  /** Lays the whole diagram out again, keeping its top-left corner where it is. One undo step. */
-  relayout = (): void => {
-    const shapes = erShapes(this.doc);
-    const all = placedErShapes(shapes);
-    if (all.length === 0) return;
-    const origin = {
-      x: Math.min(...all.map((s) => s.x)),
-      y: Math.min(...all.map((s) => s.y)),
-    };
-    const positions = placeAt(all, layoutAll(shapes), origin);
-    const byId = new Map(all.map((s) => [s.id, s]));
-    const patches = new Map(
-      [...positions].filter(([id, p]) => {
-        const shape = byId.get(id);
-        return shape !== undefined && (shape.x !== p.x || shape.y !== p.y);
-      }),
-    );
-    if (patches.size === 0) return;
-    this.doc.checkpoint();
-    this.doc.updateMany(patches);
-  };
-
-  /** Adds an entity with a free name centered on `center`; returns its id. */
-  addEntity(center: Point): string {
+  newDiagram(center?: Point): string {
     const name = freeName(erShapes(this.doc).entities, "entity");
-    const shape = createErEntity(center, name, this.doc.nextIndex());
+    const at = center ?? besideBoard(this.doc);
+    const shape = {
+      ...createErEntity(at, name, this.doc.nextIndex()),
+      diagram: createId(),
+      diagramName: "",
+    };
     this.doc.checkpoint();
     this.doc.add(shape);
     return shape.id;
   }
+}
+
+/** Where a new diagram's first entity goes when no point is given. */
+function besideBoard(doc: BoardDocument): Point {
+  const origin = freeOrigin(doc, new Set());
+  const size = entitySize("entity");
+  return { x: origin.x + size.w / 2, y: origin.y + size.h / 2 };
 }

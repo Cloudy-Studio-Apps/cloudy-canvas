@@ -181,8 +181,17 @@ export interface SectionShape extends ShapeBase {
   color: string;
 }
 
+/**
+ * The ER diagram a shape belongs to. A board can hold several; each has its own text, layout and
+ * names. The name is repeated on every shape of the diagram (and kept in step by `applyErPlan`).
+ */
+export interface ErDiagramFields {
+  diagram: string;
+  diagramName: string;
+}
+
 /** An ER (Chen notation) entity: a rectangle, doubled when weak. Its size comes from the name. */
-export interface ErEntityShape extends ShapeBase {
+export interface ErEntityShape extends ShapeBase, ErDiagramFields {
   type: "er-entity";
   name: string;
   weak: boolean;
@@ -204,7 +213,7 @@ export interface ErParticipant {
 }
 
 /** An ER relation: a diamond linked to its participants. */
-export interface ErRelationShape extends ShapeBase {
+export interface ErRelationShape extends ShapeBase, ErDiagramFields {
   type: "er-relation";
   name: string;
   /** Drawn as a double diamond. */
@@ -224,7 +233,7 @@ export type ErAttributeLook = "ellipse" | "lollipop";
  * An ER attribute, linked to its owner: an entity, a relation, a composite attribute, a hierarchy
  * (its discriminator) or an aggregation.
  */
-export interface ErAttributeShape extends ShapeBase {
+export interface ErAttributeShape extends ShapeBase, ErDiagramFields {
   type: "er-attribute";
   ownerId: string;
   name: string;
@@ -249,7 +258,7 @@ export interface ErIsaChild {
 }
 
 /** A generalization / specialization ("ES UN" triangle) from a parent entity to its children. */
-export interface ErIsaShape extends ShapeBase {
+export interface ErIsaShape extends ShapeBase, ErDiagramFields {
   type: "er-isa";
   parentId: string;
   /** Cardinality shown on the parent's line, or empty. */
@@ -266,7 +275,7 @@ export interface ErIsaShape extends ShapeBase {
  * An aggregation: a box around a relation and its participants that takes part in other relations
  * like an entity. Its bounds are derived from those shapes whenever the board changes.
  */
-export interface ErAggregateShape extends ShapeBase {
+export interface ErAggregateShape extends ShapeBase, ErDiagramFields {
   type: "er-aggregate";
   name: string;
   relationId: string;
@@ -279,7 +288,7 @@ export type ErConstraintKind = "exclusive" | "inclusive" | "exclusion" | "inclus
  * part in both; inclusion and inclusive ones point from `fromId` (the requirement) to `toId`.
  * Its bounds and `points` are derived from the shapes it connects.
  */
-export interface ErConstraintShape extends ShapeBase {
+export interface ErConstraintShape extends ShapeBase, ErDiagramFields {
   type: "er-constraint";
   rule: ErConstraintKind;
   /** The entity, for exclusive and inclusive constraints; otherwise empty. */

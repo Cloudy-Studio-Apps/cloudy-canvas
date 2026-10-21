@@ -1,15 +1,15 @@
 import { ArrowDown, ArrowUp, ListTree, Trash2 } from "lucide-react";
 
 import type { ErAttributePatch, ErAttributeShape } from "@engine";
-import { useEngine } from "../../../engine/engine-context";
 import { CommitInput } from "../../db-panel/commit-input";
 import { FlagToggle } from "../../db-panel/flag-toggle";
 import { IconAction } from "./icon-action";
 import type { AttributeRowProps } from "./attribute-row.types";
+import { useErDiagram } from "../../../engine/use-er-query";
 
 /** One attribute: name, flags, order and delete; a composite one lists its parts under it. */
 export function AttributeRow({ attribute, partsOf, first, last, depth }: AttributeRowProps) {
-  const { er } = useEngine();
+  const er = useErDiagram();
   const parts = partsOf.get(attribute.id) ?? [];
   const update = (patch: ErAttributePatch) => er.edits.updateAttribute(attribute.id, patch);
   const flags: { label: string; title: string; on: boolean; patch: () => ErAttributePatch }[] = [

@@ -15,6 +15,14 @@ export interface SourceEditorProps {
   apply: (text: string, commit: boolean) => SourceApplyResult;
   label: string;
   hint: string;
+  /** Part of the text to point out (e.g. the selected shape's block): scrolled to and highlighted. */
+  highlight?: SourceRange | null;
+}
+
+/** A span of the text, as character offsets (`to` is exclusive). */
+export interface SourceRange {
+  from: number;
+  to: number;
 }
 
 export type SourceStatus = { error: DbmlError } | { warnings: string[] };

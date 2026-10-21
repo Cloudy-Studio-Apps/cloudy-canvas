@@ -69,10 +69,12 @@ Path aliases: `@app`, `@pages`, `@engine`, `@core`, `@ui`, `@platform`, `@stores
   - `er-isa`: hierarchy triangle, with `parentId`, children, `exclusive`/`total` and parent/child cardinalities.
   - `er-aggregate` and `er-constraint`: their **geometry is derived**. `Scene.refresh()` runs `resolve-er.ts`, so the box follows the relation and its participants, and the constraint's `points` follow its relations. Read their geometry from the scene, not the doc. Aggregations sit behind, like sections, and are hit by their border or name only.
   - Lines aren't shapes. `er-links.ts` derives them, including loops for self-relations (`loop-route.ts`), arrows and the total mark. `render/layers/er-link-layer.ts` draws them under the shapes.
-  - `ErModel` (`engine.er`) is the facade:
-    - `text()` and `applyText(text, { createMissing })`. The text in `er/lang/` is parsed with the DBML tokenizer. `reconcile-er.ts`/`reconcile-extended.ts` match by name then position, so ids and positions survive. `add-missing-entities.ts` creates named-but-undefined entities on paste/blur only.
-    - `relayout()`.
-    - `remove(id)`.
+  - **A board holds several diagrams.** Every ER shape has `diagram` (an id) and `diagramName` (repeated on each shape of the diagram). Names, text, layout and edits are per diagram. `applyErPlan(doc, plan, scope)` stamps the diagram on every shape it writes, so creators just spread `NO_ER_DIAGRAM`. Boards saved before diagrams existed are split into diagrams by connected component on load (`migrate-er-diagrams.ts`, not an undo step).
+  - `ErModel` (`engine.er`) is the board-level facade: `diagram(id)`, `diagrams()`, `diagramOf(shapeId)`, `shape(id)`, `remove(id)` and `newDiagram(center?)` (the `er` tool always starts a new diagram). `EngineState.selectedErDiagram` is the selection's diagram.
+  - `ErDiagram` (`er-diagram.ts`) is one diagram:
+    - `text()` and `applyText(text, { createMissing })`. The text in `er/lang/` is parsed with the DBML tokenizer; its `Diagram <name> [style: …]` line carries the name. `reconcile-er.ts`/`reconcile-extended.ts` match by name then position, so ids and positions survive. `add-missing-entities.ts` creates named-but-undefined entities on paste/blur only.
+    - `textRange(shapeId)`: where the shape's block is written (`serializeErBlocks`), which the Text tab highlights.
+    - `relayout()` and `rename(name)`.
     - `edits`: `er-edits.ts` over the pure functions in `er/edits/`. Each edit builds the next model and goes through `applyErPlan` (one undo step, new shapes auto-placed).
   - `er/layout/` is deterministic auto-layout:
     - `entity-grid.ts` gives entities grid cells; hierarchy children go in the row under their parent.
@@ -98,7 +100,7 @@ Agents (Claude Code, Cursor, …) connect to the running app at `http://127.0.0.
 
 - `useCanvasEngine` creates and mounts the engine into a container div. The canvas theme is resolved from CSS tokens via `readCanvasTheme()`.
 - The engine is provided through `EngineContext`. Chrome components use `useEngine()` and `useEngineState(selector)` (from `engine/engine-context.ts`), selecting primitives or stable references so each one re-renders only for its slice.
-- **Never put canvas shapes in React state.** React only hosts the canvas and draws the UI around it. Text views of the document (DBML, ER) share `components/source-editor/`, which applies text while typing and shows errors. The ER panel (`components/er-panel/`) opens when an ER shape is selected. It has a Visual tab (one form per shape kind in `er-panel/forms/`, reading through `useErQuery` / `useErShape`) and a Text tab, plus an Add menu, re-layout and the attribute style toggle. The DB side panel (`components/db-panel/`) reads tables through `useDbQuery` / `useDbTable` (read-through caches keyed on `engine.db.getVersion()`).
+- **Never put canvas shapes in React state.** React only hosts the canvas and draws the UI around it. Text views of the document (DBML, ER) share `components/source-editor/`, which applies text while typing and shows errors. The ER panel (`components/er-panel/`) opens when an ER shape is selected and shows that shape's diagram (`boardPanelStore.erDiagram`; `useErDiagram()`, and `useErQuery` reads from it). Its header has the diagram switcher (name, list, New diagram). It has a Visual tab (one form per shape kind in `er-panel/forms/`, reading through `useErQuery` / `useErShape`) and a Text tab, plus an Add menu, re-layout and the attribute style toggle. The DB side panel (`components/db-panel/`) reads tables through `useDbQuery` / `useDbTable` (read-through caches keyed on `engine.db.getVersion()`).
 - **Files:** `file/` loads the board's `BoardDocument` from `Storage` (or starts an empty one for a new id) and saves it. A `.cboard` file is the `CCBD` magic, a u32 format version and a Yjs update (`core/board-file.ts`). `TauriStorage` keeps a recent-files index (id → path) in the app data folder. Ctrl+S / Ctrl+Shift+S are engine commands that call the host's `setHostActions`.
 
 ## Code conventions

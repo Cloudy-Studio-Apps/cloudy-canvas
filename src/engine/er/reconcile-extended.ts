@@ -1,7 +1,12 @@
 import { createId } from "@core";
 
 import { pairByName } from "../db/pair-by-name";
-import type { ErAggregateShape, ErConstraintShape, ErIsaShape } from "../document";
+import {
+  NO_ER_DIAGRAM,
+  type ErAggregateShape,
+  type ErConstraintShape,
+  type ErIsaShape,
+} from "../document";
 import { ISA_SIZE } from "./er-size";
 import { keepCenter } from "./keep-center";
 import type { ParsedErAggregate, ParsedErConstraint, ParsedErIsa } from "./lang";
@@ -35,6 +40,7 @@ export function buildIsas(parsed: readonly ParsedErIsa[], ctx: ReconcileContext)
     return {
       id,
       type: "er-isa",
+      ...NO_ER_DIAGRAM,
       index: match?.index ?? "",
       ...keepCenter(match, ISA_SIZE),
       ...ISA_SIZE,
@@ -73,6 +79,7 @@ export function buildAggregates(
     return {
       id,
       type: "er-aggregate",
+      ...NO_ER_DIAGRAM,
       index: match?.index ?? "",
       // The bounds are derived from the boxed shapes when the scene refreshes.
       x: match?.x ?? 0,
@@ -111,6 +118,7 @@ export function buildConstraints(
     return {
       id,
       type: "er-constraint",
+      ...NO_ER_DIAGRAM,
       index: match?.index ?? "",
       x: match?.x ?? 0,
       y: match?.y ?? 0,

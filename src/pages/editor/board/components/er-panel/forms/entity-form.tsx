@@ -3,7 +3,7 @@ import { GitFork, LocateFixed } from "lucide-react";
 import { ER_ENTITY_COLOR, SHAPE_STROKES } from "@engine";
 import { Button } from "@ui/components/ui/button";
 import { useEngine } from "../../../engine/engine-context";
-import { useErShapes } from "../../../engine/use-er-query";
+import { useErDiagram, useErShapes } from "../../../engine/use-er-query";
 import { CommitInput } from "../../db-panel/commit-input";
 import { FlagToggle } from "../../db-panel/flag-toggle";
 import { ColorSwatch } from "../../tool-options/color-swatch";
@@ -20,7 +20,7 @@ const COLORS = [
 /** An entity: name, weak, outline color, attributes, and where it's used. */
 export function EntityForm({ entity }: EntityFormProps) {
   const engine = useEngine();
-  const { er } = engine;
+  const er = useErDiagram();
   const shapes = useErShapes();
   const usedIn = [
     ...shapes.relations

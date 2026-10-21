@@ -1,6 +1,7 @@
 import { createId } from "@core";
 
 import {
+  NO_ER_DIAGRAM,
   ER_ENTITY_COLOR,
   type ErAggregateShape,
   type ErConstraintKind,
@@ -21,6 +22,7 @@ export function createErEntity(center: Point, name: string, index: string): ErEn
   return {
     id: createId(),
     type: "er-entity",
+    ...NO_ER_DIAGRAM,
     index,
     x: Math.round(center.x - size.w / 2),
     y: Math.round(center.y - size.h / 2),
@@ -36,6 +38,7 @@ export function createErRelation(center: Point, name: string, index: string): Er
   return {
     id: createId(),
     type: "er-relation",
+    ...NO_ER_DIAGRAM,
     index,
     x: Math.round(center.x - size.w / 2),
     y: Math.round(center.y - size.h / 2),
@@ -59,6 +62,7 @@ export function createErAttribute(
   return {
     id: createId(),
     type: "er-attribute",
+    ...NO_ER_DIAGRAM,
     index,
     x: Math.round(center.x - size.w / 2),
     y: Math.round(center.y - size.h / 2),
@@ -78,6 +82,7 @@ export function createErIsa(center: Point, parentId: string, index: string): ErI
   return {
     id: createId(),
     type: "er-isa",
+    ...NO_ER_DIAGRAM,
     index,
     x: Math.round(center.x - ISA_SIZE.w / 2),
     y: Math.round(center.y - ISA_SIZE.h / 2),
@@ -97,7 +102,18 @@ export function createErAggregate(
   relationId: string,
   index: string,
 ): ErAggregateShape {
-  return { id: createId(), type: "er-aggregate", index, x: 0, y: 0, w: 0, h: 0, name, relationId };
+  return {
+    id: createId(),
+    type: "er-aggregate",
+    ...NO_ER_DIAGRAM,
+    index,
+    x: 0,
+    y: 0,
+    w: 0,
+    h: 0,
+    name,
+    relationId,
+  };
 }
 
 export function createErConstraint(
@@ -110,6 +126,7 @@ export function createErConstraint(
   return {
     id: createId(),
     type: "er-constraint",
+    ...NO_ER_DIAGRAM,
     index,
     x: 0,
     y: 0,

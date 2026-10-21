@@ -508,6 +508,7 @@ export class CanvasEngine {
       selectedEnumId: this.selectedOfType("db-enum"),
       erSelected: [...this.scene.selection.ids].some((id) => isErShape(this.doc.get(id))),
       selectedErId: this.selectedErId(),
+      selectedErDiagram: this.selectedErDiagram(),
       selectionTypes: this.selectionTypes(),
       canUndo: this.doc.canUndo(),
       canRedo: this.doc.canRedo(),
@@ -518,6 +519,16 @@ export class CanvasEngine {
   private selectionTypes(): string {
     const types = new Set([...this.scene.selection.ids].map((id) => this.scene.get(id)?.type));
     return [...types].filter(Boolean).sort().join(",");
+  }
+
+  /** The diagram of the selected ER shapes, when they all belong to one. */
+  private selectedErDiagram(): string | null {
+    const diagrams = new Set<string>();
+    for (const id of this.scene.selection.ids) {
+      const shape = this.doc.get(id);
+      if (isErShape(shape)) diagrams.add(shape.diagram);
+    }
+    return diagrams.size === 1 ? ([...diagrams][0] ?? null) : null;
   }
 
   private selectedErId(): string | null {

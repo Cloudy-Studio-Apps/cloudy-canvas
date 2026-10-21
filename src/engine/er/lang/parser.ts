@@ -26,6 +26,7 @@ export function parseEr(source: string): ErParseResult {
 
 function parseModel(cursor: TokenCursor): ParsedEr {
   const model: ParsedEr = {
+    name: null,
     style: null,
     entities: [],
     relations: [],
@@ -60,9 +61,11 @@ function withoutIsa(entity: RawEntity): ParsedErEntity {
   return { name, weak, color, attributes, line };
 }
 
-/** `Diagram [style: chen|lollipop]`. */
+/** `Diagram [name] [style: chen|lollipop]`. */
 function parseDiagram(cursor: TokenCursor, model: ParsedEr): void {
   cursor.next();
+  const named = cursor.peek();
+  if (named.kind === "ident" || named.kind === "string") model.name = cursor.next().value;
   if (!cursor.isSymbol("[")) return;
   const at = cursor.peek();
   parseSettings(cursor, (key, hasValue) => {

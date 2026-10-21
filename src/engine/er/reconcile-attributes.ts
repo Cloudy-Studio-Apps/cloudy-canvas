@@ -1,7 +1,7 @@
 import { createId } from "@core";
 
 import { pairByName } from "../db/pair-by-name";
-import type { ErAttributeLook, ErAttributeShape } from "../document";
+import { NO_ER_DIAGRAM, type ErAttributeLook, type ErAttributeShape } from "../document";
 import { attributeSize } from "./er-size";
 import { keepCenter } from "./keep-center";
 import type { ParsedErAttribute } from "./lang";
@@ -29,6 +29,7 @@ export function buildAttributes(
     const shape: ErAttributeShape = {
       id: match?.id ?? createId(),
       type: "er-attribute",
+      ...NO_ER_DIAGRAM,
       index: match?.index ?? "",
       ...keepCenter(match, size),
       ...size,

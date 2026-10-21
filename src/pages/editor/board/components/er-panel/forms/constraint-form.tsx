@@ -2,8 +2,7 @@ import { ArrowLeftRight } from "lucide-react";
 
 import type { ErConstraintKind } from "@engine";
 import { Button } from "@ui/components/ui/button";
-import { useEngine } from "../../../engine/engine-context";
-import { useErShapes } from "../../../engine/use-er-query";
+import { useErDiagram, useErShapes } from "../../../engine/use-er-query";
 import { CardinalityPicker } from "./cardinality-picker";
 import { entityOptions, relationOptions } from "./entity-options";
 import { FormField } from "./form-field";
@@ -35,7 +34,7 @@ const RULES: { value: ErConstraintKind; label: string; hint: string }[] = [
 
 /** A constraint between two relations (and, for exclusive / inclusive, the entity in both). */
 export function ConstraintForm({ constraint }: ConstraintFormProps) {
-  const { er } = useEngine();
+  const er = useErDiagram();
   const shapes = useErShapes();
   const relations = relationOptions(shapes);
   const rule = RULES.find((r) => r.value === constraint.rule);

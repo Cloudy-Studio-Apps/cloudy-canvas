@@ -78,6 +78,8 @@ export interface ParsedErConstraint extends Cardinality {
 }
 
 export interface ParsedEr {
+  /** From a `Diagram <name>` line, or null when the text doesn't name the diagram. */
+  name: string | null;
   /** From a `Diagram [style: …]` line, or null when the text doesn't say. */
   style: ErAttributeLook | null;
   entities: ParsedErEntity[];

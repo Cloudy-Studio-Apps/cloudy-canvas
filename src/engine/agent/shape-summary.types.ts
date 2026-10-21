@@ -10,6 +10,8 @@ export interface ShapeSummary {
   h: number;
   /** Text, title or name, when the shape has one. */
   label?: string;
+  /** The ER diagram an ER shape belongs to. */
+  diagram?: string;
   /** Geo kind. */
   kind?: string;
   /** Connector ends attached to shapes. */

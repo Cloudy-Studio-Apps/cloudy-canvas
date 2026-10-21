@@ -14,6 +14,8 @@ export interface EngineState {
   erSelected: boolean;
   /** The selected ER shape, when exactly one is selected. */
   selectedErId: string | null;
+  /** The ER diagram the selected ER shapes belong to, when it is one. */
+  selectedErDiagram: string | null;
   /** Sorted, comma-separated types of the selected shapes, e.g. "connector,geo". */
   selectionTypes: string;
   canUndo: boolean;

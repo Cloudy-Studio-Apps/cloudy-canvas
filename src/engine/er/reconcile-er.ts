@@ -3,6 +3,7 @@ import { createId } from "@core";
 import { pairByName } from "../db/pair-by-name";
 import { checkNames, ReconcileError } from "../db/reconcile-error";
 import {
+  NO_ER_DIAGRAM,
   ER_ENTITY_COLOR,
   ER_RELATION_COLOR,
   type ErEntityShape,
@@ -56,6 +57,7 @@ export function reconcileEr(model: ParsedEr, existing: ErShapes): ErReconcileRes
       return {
         id,
         type: "er-entity",
+        ...NO_ER_DIAGRAM,
         index: match?.index ?? "",
         ...keepCenter(match, size),
         ...size,
@@ -82,6 +84,7 @@ export function reconcileEr(model: ParsedEr, existing: ErShapes): ErReconcileRes
       return {
         id,
         type: "er-relation",
+        ...NO_ER_DIAGRAM,
         index: match?.index ?? "",
         ...keepCenter(match, size),
         ...size,

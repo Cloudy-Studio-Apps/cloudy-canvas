@@ -8,8 +8,11 @@ export interface BoardPanelState {
   /** Whether the ER diagram editor is open. It stays open while its text empties the diagram. */
   erOpen: boolean;
   erTab: ErEditorTab;
+  /** The ER diagram the editor shows: the selected shapes' one, or the last one picked. */
+  erDiagram: string | null;
   setSchemaOpen: (open: boolean) => void;
   setTableTab: (tab: TableEditorTab) => void;
   setErOpen: (open: boolean) => void;
   setErTab: (tab: ErEditorTab) => void;
+  setErDiagram: (diagram: string | null) => void;
 }

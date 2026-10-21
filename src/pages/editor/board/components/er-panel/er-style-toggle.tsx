@@ -1,13 +1,12 @@
 import { Circle, Egg } from "lucide-react";
 
 import { Button } from "@ui/components/ui/button";
-import { useEngine } from "../../engine/engine-context";
-import { useErQuery } from "../../engine/use-er-query";
+import { useErDiagram, useErQuery } from "../../engine/use-er-query";
 
-/** Switches attributes between Chen ellipses and lollipop circles. */
+/** Switches the diagram's attributes between Chen ellipses and lollipop circles. */
 export function ErStyleToggle() {
-  const { er } = useEngine();
-  const lollipop = useErQuery((model) => model.shapes().attributes[0]?.look === "lollipop");
+  const er = useErDiagram();
+  const lollipop = useErQuery((diagram) => diagram.shapes().attributes[0]?.look === "lollipop");
   return (
     <Button
       variant="ghost"

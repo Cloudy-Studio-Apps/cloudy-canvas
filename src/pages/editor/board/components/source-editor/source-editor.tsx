@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
 import { Textarea } from "@ui/components/ui/textarea";
+import { LineHighlight } from "./line-highlight";
 import type { SourceEditorProps, SourceStatus } from "./source-editor.types";
+import { useLineHighlight } from "./use-line-highlight";
 
 /** Typing pauses this long before the text is applied to the board. */
 const APPLY_DELAY_MS = 400;
@@ -10,19 +12,23 @@ const INDENT = "  ";
 /**
  * Text view of part of the document (DBML, ER). Valid text is applied while typing; invalid text
  * shows the error and leaves the board as it was. While focused, outside changes don't overwrite
- * the text.
+ * the text. `highlight` points out part of the text until it's edited.
  */
-export function SourceEditor({ version, read, apply, label, hint }: SourceEditorProps) {
+export function SourceEditor({ version, read, apply, label, hint, highlight }: SourceEditorProps) {
   const [text, setText] = useState(read);
   const [syncedVersion, setSyncedVersion] = useState(version);
   const [focused, setFocused] = useState(false);
   const [status, setStatus] = useState<SourceStatus>({ warnings: [] });
+  /** Typed into since the text was last read from the document. */
+  const [edited, setEdited] = useState(false);
+  const { ref, onScroll, band } = useLineHighlight(text, edited ? null : (highlight ?? null));
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const pasted = useRef(false);
 
   if (!focused && syncedVersion !== version) {
     setSyncedVersion(version);
     setText(read());
+    setEdited(false);
   }
 
   useEffect(() => () => clearTimeout(timer.current), []);
@@ -40,46 +46,54 @@ export function SourceEditor({ version, read, apply, label, hint }: SourceEditor
 
   const change = (value: string, commit = false) => {
     setText(value);
+    setEdited(true);
     clearTimeout(timer.current);
     timer.current = setTimeout(() => applyNow(value, commit), APPLY_DELAY_MS);
   };
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2">
-      <Textarea
-        aria-label={label}
-        spellCheck={false}
-        value={text}
-        aria-invalid={"error" in status ? true : undefined}
-        className="min-h-72 flex-1 resize-none font-mono text-xs leading-relaxed"
-        onPaste={() => {
-          pasted.current = true;
-        }}
-        onChange={(event) => {
-          change(event.target.value, pasted.current);
-          pasted.current = false;
-        }}
-        onFocus={() => setFocused(true)}
-        onBlur={() => {
-          setFocused(false);
-          // Show the canonical text again once it's valid.
-          if (applyNow(text, true)) {
-            setSyncedVersion(version);
-            setText(read());
-          }
-        }}
-        onKeyDown={(event) => {
-          if (event.key !== "Tab" || event.shiftKey) return;
-          event.preventDefault();
-          const el = event.currentTarget;
-          const { selectionStart: start, selectionEnd: end } = el;
-          const next = text.slice(0, start) + INDENT + text.slice(end);
-          change(next);
-          requestAnimationFrame(() =>
-            el.setSelectionRange(start + INDENT.length, start + INDENT.length),
-          );
-        }}
-      />
+      <div className="relative flex min-h-72 flex-1 flex-col overflow-hidden rounded-md">
+        <Textarea
+          ref={ref}
+          onScroll={onScroll}
+          aria-label={label}
+          spellCheck={false}
+          wrap="off"
+          value={text}
+          aria-invalid={"error" in status ? true : undefined}
+          className="flex-1 resize-none font-mono text-xs leading-relaxed"
+          onPaste={() => {
+            pasted.current = true;
+          }}
+          onChange={(event) => {
+            change(event.target.value, pasted.current);
+            pasted.current = false;
+          }}
+          onFocus={() => setFocused(true)}
+          onBlur={() => {
+            setFocused(false);
+            // Show the canonical text again once it's valid.
+            if (applyNow(text, true)) {
+              setSyncedVersion(version);
+              setText(read());
+              setEdited(false);
+            }
+          }}
+          onKeyDown={(event) => {
+            if (event.key !== "Tab" || event.shiftKey) return;
+            event.preventDefault();
+            const el = event.currentTarget;
+            const { selectionStart: start, selectionEnd: end } = el;
+            const next = text.slice(0, start) + INDENT + text.slice(end);
+            change(next);
+            requestAnimationFrame(() =>
+              el.setSelectionRange(start + INDENT.length, start + INDENT.length),
+            );
+          }}
+        />
+        {band && <LineHighlight {...band} />}
+      </div>
       {"error" in status ? (
         <p role="alert" className="text-xs text-destructive">
           Line {status.error.line}: {status.error.message}

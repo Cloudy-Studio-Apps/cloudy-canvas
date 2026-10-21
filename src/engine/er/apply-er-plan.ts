@@ -1,4 +1,4 @@
-import type { BoardDocument, ErShape, ShapePatch } from "../document";
+import type { BoardDocument, ErDiagramFields, ErShape, ShapePatch } from "../document";
 import { unionRects } from "../geometry";
 import type { Point } from "../geometry.types";
 import { shapeBounds } from "../hit-test";
@@ -11,12 +11,16 @@ import type { ErPlan } from "./reconcile-er.types";
 const BOARD_GAP = 160;
 
 /**
- * Writes an ER plan as one undo step. When the diagram is (almost) all new, such as text pasted
+ * Writes an ER plan as one undo step, stamping `scope` (the diagram) on every shape. When the diagram is (almost) all new, such as text pasted
  * over the entity the ER tool placed, the whole diagram is laid out fresh, starting where that
  * entity was or beside the other content. Otherwise only the new shapes are placed, around the rest.
  */
-export function applyErPlan(doc: BoardDocument, { shapes, added, removed }: ErPlan): void {
-  const all = allErShapes(shapes);
+export function applyErPlan(
+  doc: BoardDocument,
+  { shapes, added, removed }: ErPlan,
+  scope: ErDiagramFields,
+): void {
+  const all = allErShapes(shapes).map((shape) => ({ ...shape, ...scope }));
   // Aggregations and constraints aren't placed: their geometry follows the shapes they connect.
   const placed = placedErShapes(shapes);
   const kept = placed.filter((s) => !added.has(s.id));

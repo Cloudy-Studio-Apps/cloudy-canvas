@@ -3,7 +3,7 @@ import { Group, Plus } from "lucide-react";
 import { cardinalityRatio } from "@engine";
 import { Button } from "@ui/components/ui/button";
 import { useEngine } from "../../../engine/engine-context";
-import { useErShapes } from "../../../engine/use-er-query";
+import { useErDiagram, useErShapes } from "../../../engine/use-er-query";
 import { CommitInput } from "../../db-panel/commit-input";
 import { FlagToggle } from "../../db-panel/flag-toggle";
 import { AttributeList } from "./attribute-list";
@@ -16,7 +16,7 @@ import type { RelationFormProps } from "./entity-form.types";
 /** A relation: name, identifying marks, participants with cardinalities, and its attributes. */
 export function RelationForm({ relation }: RelationFormProps) {
   const engine = useEngine();
-  const { er } = engine;
+  const er = useErDiagram();
   const shapes = useErShapes();
   const options = entityOptions(shapes, true);
   const ratio = cardinalityRatio(relation);

@@ -1,17 +1,17 @@
 import { Trash2 } from "lucide-react";
 
 import type { ErParticipantPatch } from "@engine";
-import { useEngine } from "../../../engine/engine-context";
 import { CommitInput } from "../../db-panel/commit-input";
 import { FlagToggle } from "../../db-panel/flag-toggle";
 import { CardinalityPicker } from "./cardinality-picker";
 import { IconAction } from "./icon-action";
 import { ShapeSelect } from "./shape-select";
 import type { ParticipantRowProps } from "./participant-row.types";
+import { useErDiagram } from "../../../engine/use-er-query";
 
 /** One entity taking part in a relation: which, its cardinality, role and arrow. */
 export function ParticipantRow({ relation, participant, options }: ParticipantRowProps) {
-  const { er } = useEngine();
+  const er = useErDiagram();
   const update = (patch: ErParticipantPatch) =>
     er.edits.updateParticipant(relation.id, participant.id, patch);
 

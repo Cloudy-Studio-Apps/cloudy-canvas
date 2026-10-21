@@ -1,9 +1,17 @@
 import { splitColumnType } from "./column-type";
 import { canonicalTypeName } from "./type-aliases";
+import { NO_ER_DIAGRAM } from "./er-diagram-fields";
+import { isErShape } from "./shapes";
 import type { DbColumn, Shape } from "./shapes.types";
 
 /** Fills fields added after a shape type first shipped, so boards saved by older versions load. */
 export function fillShapeDefaults(shape: Shape): Shape {
+  return isErShape(shape) && shape.diagram === undefined
+    ? fillTypeDefaults({ ...shape, ...NO_ER_DIAGRAM })
+    : fillTypeDefaults(shape);
+}
+
+function fillTypeDefaults(shape: Shape): Shape {
   if (shape.type === "db-table") {
     return {
       ...shape,

@@ -1,4 +1,4 @@
-import type { Shape } from "../document";
+import { isErShape, type Shape } from "../document";
 import type { ShapeSummary } from "./shape-summary.types";
 
 export function summarizeShape(shape: Shape): ShapeSummary {
@@ -13,6 +13,7 @@ export function summarizeShape(shape: Shape): ShapeSummary {
   const label = shapeLabel(shape);
   if (label) summary.label = label;
   if (shape.type === "geo") summary.kind = shape.kind;
+  if (isErShape(shape)) summary.diagram = shape.diagram;
   if (shape.type === "connector") {
     summary.from = shape.start.shapeId;
     summary.to = shape.end.shapeId;

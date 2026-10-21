@@ -9,16 +9,16 @@ import {
   DropdownMenuTrigger,
 } from "@ui/components/ui/dropdown-menu";
 import { useEngine, useEngineState } from "../../engine/engine-context";
-import { useErShape, useErShapes } from "../../engine/use-er-query";
+import { useErDiagram, useErShape, useErShapes } from "../../engine/use-er-query";
 
 /**
- * Adds ER shapes without typing: each starts from the selection where it makes sense (a relation
+ * Adds ER shapes to the shown diagram without typing: each starts from the selection where it makes sense (a relation
  * from the selected entity, a hierarchy under it, an aggregation round the selected relation), is
  * placed automatically and then selected so its form opens.
  */
 export function ErAddMenu() {
   const engine = useEngine();
-  const { edits } = engine.er;
+  const { edits } = useErDiagram();
   const selectedId = useEngineState((state) => state.selectedErId);
   const selected = useErShape(selectedId ?? "");
   const shapes = useErShapes();

@@ -12,16 +12,20 @@ import type {
   ErParticipantPatch,
   ErRelationPatch,
 } from "./edits";
-import { allErShapes, erShapes } from "./er-shapes";
+import { allErShapes, diagramScope, erShapes } from "./er-shapes";
 import { attributeSize } from "./er-size";
 import type { ErShapes } from "./lang";
 
 /**
- * Edits from the visual editor. Each one builds the next model and writes it like applied text:
- * one undo step, with new shapes placed automatically. Methods that create a shape return its id.
+ * Edits from the visual editor to one diagram. Each one builds the next model and writes it like
+ * applied text: one undo step, with new shapes placed automatically. Methods that create a shape
+ * return its id.
  */
 export class ErEdits {
-  constructor(private readonly doc: BoardDocument) {}
+  constructor(
+    private readonly doc: BoardDocument,
+    private readonly diagram: string,
+  ) {}
 
   addEntity = (name?: string) => this.run((s) => edit.addEntity(s, name));
   updateEntity = (id: string, patch: ErEntityPatch) =>
@@ -82,17 +86,21 @@ export class ErEdits {
     }));
 
   private run(fn: (shapes: ErShapes) => ErEditResult | ErShapes): string | undefined {
-    const current = erShapes(this.doc);
+    const current = erShapes(this.doc, this.diagram);
     const result = fn(current);
     const next = "shapes" in result ? result.shapes : result;
     const before = new Set(allErShapes(current).map((s) => s.id));
     const after = allErShapes(next);
     const kept = new Set(after.map((s) => s.id));
-    applyErPlan(this.doc, {
-      shapes: next,
-      added: new Set(after.filter((s) => !before.has(s.id)).map((s) => s.id)),
-      removed: [...before].filter((id) => !kept.has(id)),
-    });
+    applyErPlan(
+      this.doc,
+      {
+        shapes: next,
+        added: new Set(after.filter((s) => !before.has(s.id)).map((s) => s.id)),
+        removed: [...before].filter((id) => !kept.has(id)),
+      },
+      diagramScope(current, this.diagram),
+    );
     return "shapes" in result ? result.id : undefined;
   }
 }

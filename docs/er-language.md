@@ -7,23 +7,27 @@ Cloudy Canvas draws **Entity–Relationship diagrams** in Chen notation, includi
 
 The shapes are the source of truth, and the text is a view of them. Everything is matched **by name** (then by position, for renames), so renaming something in the text keeps its place on the board. New shapes are laid out automatically. You can drag anything you like, and **Re-layout** tidies the whole diagram again.
 
+A board can hold **several ER diagrams**. Each one has its own text, layout and names, so two diagrams side by side can both have a `Cliente` entity. Selecting any shape shows its diagram in the panel.
+
 The rule ids (**S1**…) match the syntax review, so you can refer to them ("S18: rename `Isa` to …").
 
 ---
 
 ## Getting started
 
-1. Press **E** (or use the ER button in the toolbar) and click the board. An entity appears and the panel opens.
+1. Press **E** (or use the ER button in the toolbar) and click the board. A new diagram starts with one entity, and the panel opens.
 2. Either fill in the form, or open **Text** and paste a whole model. Pasting over the first entity lays the diagram out fresh where that entity was.
 3. **Double-click** any entity, relation, attribute or aggregation on the board to rename it in place.
 
-The panel header has four controls:
+The panel header has six controls:
 
 | Control                 | What it does                                                                                                                                               |
 | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Diagram name and ⌄**  | Renames the shown diagram, lists the board's diagrams (picking one takes you to it) and starts a **New diagram**.                                          |
 | **+ Add**               | Adds an entity, relation, hierarchy, aggregation or constraint. It starts from the selection when that makes sense (for example, "Relation from Cliente"). |
 | **Egg / circle button** | Switches attributes between Chen ellipses and lollipop circles (S21).                                                                                      |
-| **Grid button**         | Re-layout. One undo reverts it.                                                                                                                            |
+| **Select button**       | Selects the whole shown diagram, so you can drag it as one.                                                                                                |
+| **Grid button**         | Re-layout of the shown diagram. One undo reverts it.                                                                                                       |
 | **×**                   | Closes the panel.                                                                                                                                          |
 
 ---
@@ -200,6 +204,14 @@ Constraint inclusion: se_casa -> se_divorcia              // inclusión: se_divo
 ```
 Diagram [style: lollipop]
 ```
+
+**S26. Diagram name.** The same line can name the diagram; the name shows in the panel header and its list of diagrams:
+
+```
+Diagram Ventas [style: lollipop]
+```
+
+When a shape is selected, the Text tab scrolls to its block and highlights it (an attribute highlights its owner's block).
 
 ---
 
