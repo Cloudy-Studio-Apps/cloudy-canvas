@@ -110,6 +110,35 @@ pnpm format         # Prettier (format:check to verify)
 pnpm tauri build    # production bundle
 ```
 
+## Releases
+
+| Command                   | Builds                                                     | Output                                                         |
+| ------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------- |
+| `pnpm release:linux`      | An AppImage (runs on Arch, CachyOS and most other distros) | `src-tauri/target/release/bundle/appimage/`                    |
+| `pnpm release:win`        | A Windows installer (`…-setup.exe`), cross-built on Linux  | `src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/` |
+| `pnpm release`            | Both of the above                                          |                                                                |
+| `pnpm release:win:native` | NSIS and MSI installers, run **on Windows**                | `src-tauri/target/release/bundle/`                             |
+
+### Building the Windows installer on Linux (Arch / CachyOS)
+
+`pnpm release:win` cross-compiles with [`cargo-xwin`](https://github.com/rust-cross/cargo-xwin) and packs the installer with NSIS, so it needs a few extra tools besides the Linux prerequisites above:
+
+```sh
+# LLVM toolchain (clang, the lld linker, llvm-rc for the Windows resources)
+sudo pacman -S --needed clang lld llvm
+
+# NSIS (makensis): not in the official repos, install it from the AUR
+paru -S nsis              # or: yay -S nsis
+
+# Rust: the Windows target and the cross-compiling runner
+rustup target add x86_64-pc-windows-msvc
+cargo install --locked cargo-xwin
+```
+
+The first run downloads the Windows SDK and CRT files `cargo-xwin` needs, so it takes a while; later builds reuse them. Cross-building Windows apps is experimental in Tauri and only makes the NSIS installer: for an `.msi`, build on Windows with `pnpm release:win:native`.
+
+On other distros, install the same tools with your package manager (for example on Debian/Ubuntu: `sudo apt install nsis lld llvm clang`).
+
 ### Preview Recent files with mock data
 
 ```sh

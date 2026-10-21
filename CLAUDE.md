@@ -14,6 +14,11 @@ pnpm lint           # ESLint (flat config, eslint.config.js)
 pnpm typecheck      # tsc for app + vite config (noEmit)
 pnpm format         # Prettier (with tailwind plugin); format:check to verify
 pnpm tauri build    # production bundle
+pnpm release:linux  # AppImage (src-tauri/target/release/bundle/appimage/)
+pnpm release:win    # Windows installer cross-built from Linux (cargo-xwin, NSIS):
+                    # src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/
+pnpm release        # both
+pnpm release:win:native  # on Windows itself: NSIS and MSI installers
 ```
 
 There is no test framework. **Verification is `pnpm lint` and `pnpm typecheck` only** (plus `pnpm format:check`). Do not run `tauri dev`, cargo, builds or browser checks to verify changes unless asked.
