@@ -89,6 +89,11 @@
   --popover: oklch(1 0 0);
   --popover-foreground: var(--seal-900);
 
+  /* ── Semantic: canvas (read by the editor host and passed to the engine) ── */
+  --canvas-background: var(--seal-50);
+  --canvas-grid: var(--seal-300);
+  --canvas-selection: var(--ice-500);
+
   /* ── Semantic: lines ─────────────────────────────────────────────────── */
   --border: var(--seal-200);
   --border-strong: var(--seal-300);
@@ -186,6 +191,9 @@
   --board-soft: var(--sand-900);
   --design-foreground: var(--lilac-300);
   --design-soft: var(--lilac-900);
+  --canvas-background: var(--seal-950);
+  --canvas-grid: var(--seal-800);
+  --canvas-selection: var(--ice-400);
   --shadow-color: 256 40% 3%;
 
   color-scheme: dark;

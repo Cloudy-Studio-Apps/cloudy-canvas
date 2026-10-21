@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate, type RouteObject } from "react-router";
 
 import { DesignSystemPage } from "@pages/design-system/design-system-page";
+import { BoardEditorPage } from "@pages/editor/board/board-editor-page";
 import { EditorPlaceholderPage } from "@pages/editor/editor-placeholder-page";
 import { HomePage } from "@pages/home/home-page";
 
@@ -11,7 +12,7 @@ const devRoutes: RouteObject[] = import.meta.env.DEV
 
 export const router = createBrowserRouter([
   { path: "/", element: <HomePage /> },
-  { path: "/board/:id", element: <EditorPlaceholderPage type="board" /> },
+  { path: "/board/:id", element: <BoardEditorPage /> },
   { path: "/design/:id", element: <EditorPlaceholderPage type="design" /> },
   ...devRoutes,
   { path: "*", element: <Navigate to="/" replace /> },

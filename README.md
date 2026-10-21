@@ -20,6 +20,10 @@ src/
 │   ├── home/   # Home page and its components
 │   └── editor/ # Editor pages (placeholder for now)
 ├── engine/     # Framework-agnostic canvas engine (plain TS, no React)
+│   ├── document/ # Board content as a Yjs doc (shapes, palette, z-order, undo)
+│   ├── render/   # PixiJS renderer: dot grid, shape views, selection overlay
+│   ├── tools/    # Select, hand, marker, sticky, text
+│   └── text/     # DOM text editor overlay + text measuring
 ├── core/       # Shared types/utils: Storage interface, file types, ids (plain TS, no React)
 ├── ui/         # Design system: theme tokens (CSS variables), shared + shadcn components
 ├── platform/   # Tauri-specific implementations (storage, file dialog)
@@ -37,6 +41,21 @@ Path aliases: `@app`, `@pages`, `@engine`, `@core`, `@ui`, `@platform`, `@stores
 - **Platform access goes through interfaces in `core/`** (for example `Storage`), implemented in `platform/`.
 - **Ids come from `crypto.randomUUID()`**, never auto-increment.
 - **Colors are theme tokens** (CSS variables in `src/ui/styles/tokens.css`) and are never hard-coded in components.
+
+## Board controls
+
+| Action                     | Shortcut                                          |
+| -------------------------- | ------------------------------------------------- |
+| Select / move / marquee    | `V` (Shift adds to the selection)                 |
+| Hand (pan)                 | `H`, hold `Space`, or middle mouse button         |
+| Marker                     | `M`                                               |
+| Sticky note                | `S` (click to place, then type)                   |
+| Text                       | `T` (click to type)                               |
+| Edit text                  | Double-click or `Enter` on a selected sticky/text |
+| Pan / zoom                 | Scroll / `Ctrl` + scroll or pinch                 |
+| Zoom in / out / 100% / fit | `Ctrl +` / `Ctrl −` / `Ctrl 0` / `Shift 1`        |
+| Undo / redo                | `Ctrl Z` / `Ctrl Shift Z` (or `Ctrl Y`)           |
+| Delete / select all        | `Delete` or `Backspace` / `Ctrl A`                |
 
 ## Design system
 
