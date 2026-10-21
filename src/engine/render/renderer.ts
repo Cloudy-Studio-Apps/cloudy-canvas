@@ -1,7 +1,7 @@
 import { Application, Container } from "pixi.js";
 
 import type { Camera } from "../camera";
-import type { AnyElement } from "../elements";
+import type { CanvasElement } from "../elements";
 import type { CanvasTheme } from "./canvas-theme.types";
 import { DraftStrokeLayer } from "./layers/draft-stroke-layer";
 import { ElementLayer } from "./layers/element-layer";
@@ -51,7 +51,7 @@ export class Renderer {
     this.app.renderer.background.color = theme.background;
   }
 
-  syncElements(elements: Iterable<AnyElement>, removed: Iterable<string> = []): void {
+  syncElements(elements: Iterable<CanvasElement>, removed: Iterable<string> = []): void {
     this.elements.sync(elements, removed);
   }
 

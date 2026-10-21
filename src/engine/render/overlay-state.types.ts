@@ -1,9 +1,9 @@
-import type { AnyElement } from "../elements";
+import type { CanvasElement } from "../elements";
 import type { Point, Rect } from "../geometry.types";
 
 export interface OverlayInput {
-  selected: AnyElement[];
-  hover: AnyElement | undefined;
+  selected: CanvasElement[];
+  hover: CanvasElement | undefined;
   marquee: Rect | null;
 }
 

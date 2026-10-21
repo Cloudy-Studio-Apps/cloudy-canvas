@@ -1,6 +1,6 @@
 import type { Camera } from "../camera";
 import type { BoardDocument } from "../document";
-import type { AnyElement, GeoVariantId } from "../elements";
+import type { CanvasElement } from "../elements";
 import type { Interaction } from "../handles";
 import type { Point, Rect } from "../geometry.types";
 import type { TOOL_IDS } from "./tool-ids";
@@ -20,7 +20,8 @@ export interface ToolOptions {
   markerColor: string;
   markerSize: number;
   stickyColor: string;
-  shapeKind: GeoVariantId;
+  /** Geo variant id. */
+  shapeKind: string;
   shapeFill: string;
   shapeStroke: string;
 }
@@ -33,10 +34,10 @@ export interface ToolContext {
   getSelection(): ReadonlySet<string>;
   setSelection(ids: Iterable<string>): void;
   setTool(tool: ToolId): void;
-  elementAt(world: Point): AnyElement | undefined;
+  elementAt(world: Point): CanvasElement | undefined;
   /** An element as the scene sees it. */
-  getElement(id: string): AnyElement | undefined;
-  elementsInRect(rect: Rect): AnyElement[];
+  getElement(id: string): CanvasElement | undefined;
+  elementsInRect(rect: Rect): CanvasElement[];
   editText(id: string): void;
   setCursor(cursor: string): void;
   setHover(id: string | null): void;

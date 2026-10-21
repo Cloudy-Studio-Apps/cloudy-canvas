@@ -1,5 +1,5 @@
 import { INK_COLOR } from "../document/palette";
-import { FONT_FAMILY, LINE_HEIGHT, type ElementTextStyle } from "../elements";
+import { ELEMENT_DEFAULTS, type ElementTextStyle } from "../elements";
 import type { Size } from "../geometry.types";
 
 /** Inline styles that make the textarea overlay match how the element's text is drawn on canvas. */
@@ -21,10 +21,10 @@ export function textEditorStyle(
     overflow: "hidden",
     background: "transparent",
     boxSizing: "border-box",
-    fontFamily: FONT_FAMILY,
+    fontFamily: ELEMENT_DEFAULTS.fontFamily,
     fontSize: `${fontSize}px`,
     fontWeight: style.fontWeight ?? "400",
-    lineHeight: `${fontSize * LINE_HEIGHT}px`,
+    lineHeight: `${fontSize * ELEMENT_DEFAULTS.lineHeight}px`,
     color: style.color,
     caretColor: INK_COLOR,
     whiteSpace: "pre-wrap",

@@ -4,6 +4,8 @@ import type { Button } from "@ui/components/ui/button";
 
 export interface ToolButtonProps extends Omit<ComponentProps<typeof Button>, "children"> {
   label: string;
+  /** A second, muted line in the tooltip. */
+  description?: string;
   shortcut?: string;
   active?: boolean;
   children: ReactNode;

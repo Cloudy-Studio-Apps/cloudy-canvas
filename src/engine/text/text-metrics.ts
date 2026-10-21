@@ -1,4 +1,4 @@
-import { FONT_FAMILY, LINE_HEIGHT } from "../elements/element-defaults";
+import { ELEMENT_DEFAULTS } from "../elements/element.defaults";
 
 let context: CanvasRenderingContext2D | null = null;
 
@@ -8,7 +8,7 @@ function getContext(): CanvasRenderingContext2D | null {
 }
 
 export function fontString(fontSize: number, weight = 400): string {
-  return `${weight} ${fontSize}px ${FONT_FAMILY}`;
+  return `${weight} ${fontSize}px ${ELEMENT_DEFAULTS.fontFamily}`;
 }
 
 /** Size of unwrapped multi-line text, in the same units as `fontSize`. */
@@ -22,7 +22,10 @@ export function measureText(text: string, fontSize: number): { w: number; h: num
   } else {
     width = Math.max(...lines.map((line) => line.length)) * fontSize * 0.55;
   }
-  return { w: Math.ceil(width) + 2, h: Math.ceil(lines.length * fontSize * LINE_HEIGHT) };
+  return {
+    w: Math.ceil(width) + 2,
+    h: Math.ceil(lines.length * fontSize * ELEMENT_DEFAULTS.lineHeight),
+  };
 }
 
 /** Greedy word-wrap of `text` to `maxWidth`, with the resulting lines and size. */
@@ -49,5 +52,9 @@ export function measureWrapped(
     lines.push(line);
   }
   const w = Math.max(0, ...lines.map(width));
-  return { lines, w: Math.ceil(w) + 2, h: Math.ceil(lines.length * fontSize * LINE_HEIGHT) };
+  return {
+    lines,
+    w: Math.ceil(w) + 2,
+    h: Math.ceil(lines.length * fontSize * ELEMENT_DEFAULTS.lineHeight),
+  };
 }

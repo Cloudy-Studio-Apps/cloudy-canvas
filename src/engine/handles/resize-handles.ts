@@ -1,4 +1,4 @@
-import { MIN_ELEMENT_SIZE } from "../elements/element-defaults";
+import { ELEMENT_DEFAULTS } from "../elements/element.defaults";
 import type { Point, Rect } from "../geometry.types";
 import type { ResizeHandle } from "./handles.types";
 
@@ -38,7 +38,7 @@ export function resizeHandleAt(rect: Rect, p: Point, tolerance: number): ResizeH
 
 /**
  * The rect after dragging `handle` by (dx, dy). The opposite side stays put; with `keepRatio` the
- * proportions are kept. Never smaller than MIN_ELEMENT_SIZE, and never flipped.
+ * proportions are kept. Never smaller than `ELEMENT_DEFAULTS.minSize`, and never flipped.
  */
 export function resizeRect(
   origin: Rect,
@@ -53,8 +53,8 @@ export function resizeRect(
   const south = handle.includes("s");
   let w = origin.w + (east ? dx : west ? -dx : 0);
   let h = origin.h + (south ? dy : north ? -dy : 0);
-  w = Math.max(MIN_ELEMENT_SIZE, w);
-  h = Math.max(MIN_ELEMENT_SIZE, h);
+  w = Math.max(ELEMENT_DEFAULTS.minSize, w);
+  h = Math.max(ELEMENT_DEFAULTS.minSize, h);
 
   if (keepRatio && origin.w > 0 && origin.h > 0) {
     const ratio = origin.w / origin.h;

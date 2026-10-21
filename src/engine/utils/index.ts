@@ -6,3 +6,4 @@ export { FrameScheduler } from "./frame-scheduler";
 export { clamp, mod } from "./math";
 export { shallowEqual } from "./shallow-equal";
 export { Store } from "./store";
+export { Registry } from "./registry";

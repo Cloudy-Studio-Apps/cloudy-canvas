@@ -2,7 +2,7 @@ import { isModKey } from "@core";
 
 import type { Camera } from "../camera";
 import type { BoardDocument } from "../document";
-import { kindOf, type AnyElement, type ElementText } from "../elements";
+import { kindOf, type CanvasElement, type ElementText } from "../elements";
 import { Disposables } from "../utils";
 import { textEditorStyle } from "./text-editor-style";
 import type { TextEditorHooks, Session } from "./text-editor.types";
@@ -29,7 +29,7 @@ export class TextEditor {
   start(id: string): void {
     const el = this.doc.get(id);
     const text = el ? kindOf(el).text : null;
-    if (el && text) this.open(el, text);
+    if (el && text) this.open(el, text, `${kindOf(el).label} text`);
   }
 
   /** Keeps the editor aligned with the element while the camera moves. */
@@ -55,12 +55,12 @@ export class TextEditor {
     this.close();
   }
 
-  private open<E extends AnyElement>(el: E, text: ElementText<E>): void {
+  private open<E extends CanvasElement>(el: E, text: ElementText<E>, ariaLabel: string): void {
     this.commit();
     const textarea = document.createElement("textarea");
     textarea.value = text.get(el);
     textarea.spellcheck = false;
-    textarea.setAttribute("aria-label", text.ariaLabel);
+    textarea.setAttribute("aria-label", ariaLabel);
     textarea.dataset.canvasTextEditor = "";
     Object.assign(textarea.style, textEditorStyle(text.style(el), el));
 

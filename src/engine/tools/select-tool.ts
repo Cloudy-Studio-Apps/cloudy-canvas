@@ -1,4 +1,4 @@
-import { kindOf, type AnyElement, type ElementPatch } from "../elements";
+import { kindOf, type CanvasElement, type ElementPatch } from "../elements";
 import { rectFromPoints } from "../geometry";
 import { resizeCursor, type Interaction } from "../handles";
 import { ResizeGesture } from "./resize-gesture";
@@ -40,7 +40,7 @@ export class SelectTool implements Tool {
       this.ctx.setSelection([hit.id]);
     }
 
-    const origins = new Map<string, AnyElement>();
+    const origins = new Map<string, CanvasElement>();
     for (const id of this.ctx.getSelection()) {
       const el = this.ctx.doc.get(id);
       if (el) origins.set(id, el);

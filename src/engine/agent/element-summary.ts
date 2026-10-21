@@ -1,7 +1,7 @@
-import { kindOf, type AnyElement } from "../elements";
+import { kindOf, type CanvasElement } from "../elements";
 import type { ElementSummary } from "./element-summary.types";
 
-export function summarizeElement(el: AnyElement): ElementSummary {
+export function summarizeElement(el: CanvasElement): ElementSummary {
   const { label, kind } = kindOf(el).describe(el);
   const bounds = kindOf(el).bounds(el);
   return {

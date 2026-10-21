@@ -1,9 +1,7 @@
-import type { ElementType } from "../elements";
-
 /** A compact view of an element for listings; `get_shapes` returns the full fields. */
 export interface ElementSummary {
   id: string;
-  type: ElementType;
+  type: string;
   x: number;
   y: number;
   w: number;

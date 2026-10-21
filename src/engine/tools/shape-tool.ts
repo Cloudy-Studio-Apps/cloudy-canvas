@@ -1,4 +1,4 @@
-import { createGeo, GEO_VARIANTS, MIN_ELEMENT_SIZE, type GeoVariantId } from "../elements";
+import { createGeo, ELEMENT_DEFAULTS, variantOf } from "../elements";
 import { rectFromPoints } from "../geometry";
 import type { Point, Rect } from "../geometry.types";
 import type { CanvasPointer, Tool, ToolContext } from "./tool.types";
@@ -57,8 +57,8 @@ export class ShapeTool implements Tool {
   }
 }
 
-function clickRect(center: Point, kind: GeoVariantId): Rect {
-  const { w, h } = GEO_VARIANTS[kind].defaultSize;
+function clickRect(center: Point, kind: string): Rect {
+  const { w, h } = variantOf(kind).defaultSize;
   return { x: center.x - w / 2, y: center.y - h / 2, w, h };
 }
 
@@ -72,7 +72,7 @@ function dragRect(a: Point, b: Point, square: boolean): Rect {
   return {
     x: Math.round(rect.x),
     y: Math.round(rect.y),
-    w: Math.round(Math.max(MIN_ELEMENT_SIZE, rect.w)),
-    h: Math.round(Math.max(MIN_ELEMENT_SIZE, rect.h)),
+    w: Math.round(Math.max(ELEMENT_DEFAULTS.minSize, rect.w)),
+    h: Math.round(Math.max(ELEMENT_DEFAULTS.minSize, rect.h)),
   };
 }

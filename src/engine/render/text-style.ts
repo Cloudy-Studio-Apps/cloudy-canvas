@@ -1,6 +1,6 @@
 import type { TextStyleOptions } from "pixi.js";
 
-import { FONT_FAMILY, LINE_HEIGHT } from "../elements/element-defaults";
+import { ELEMENT_DEFAULTS } from "../elements/element.defaults";
 import type { CanvasTextOptions } from "./text-style.types";
 
 /** Pixi text style matching the DOM text editor, so text doesn't jump when editing starts. */
@@ -12,11 +12,11 @@ export function canvasTextStyle({
   align = "left",
 }: CanvasTextOptions): TextStyleOptions {
   return {
-    fontFamily: FONT_FAMILY,
+    fontFamily: ELEMENT_DEFAULTS.fontFamily,
     fontSize,
     fontWeight,
     align,
-    lineHeight: fontSize * LINE_HEIGHT,
+    lineHeight: fontSize * ELEMENT_DEFAULTS.lineHeight,
     fill: color,
     wordWrap: wrapWidth !== undefined,
     wordWrapWidth: wrapWidth ?? 0,

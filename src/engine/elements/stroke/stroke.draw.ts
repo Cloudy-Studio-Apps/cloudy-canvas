@@ -1,5 +1,5 @@
 import type { ElementView } from "../../render/element-view";
-import { strokeOutline } from "./stroke-outline";
+import { strokeOutline } from "./stroke.outline";
 import type { StrokeElement } from "./stroke.types";
 
 export function drawStroke(view: ElementView, el: StrokeElement): void {

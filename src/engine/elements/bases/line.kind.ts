@@ -1,7 +1,7 @@
 import { distanceToSegmentSq } from "../../geometry";
 import type { Point } from "../../geometry.types";
-import { ElementKind } from "../element-kind";
-import type { LineElement } from "./line-kind.types";
+import { ElementKind } from "../element.kind";
+import type { LineElement } from "./line.kind.types";
 
 /** Elements drawn along a polyline: they're hit near the line, not anywhere in their bounds. */
 export abstract class LineKind<E extends LineElement> extends ElementKind<E> {

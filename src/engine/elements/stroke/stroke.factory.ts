@@ -1,6 +1,5 @@
-import { createId } from "@core";
-
 import { boundsOfPoints } from "../../geometry";
+import { createElementBase } from "../element.factory";
 import type { StrokeElement } from "./stroke.types";
 
 /** Marker stroke from absolute world points; stored relative to its padded bounding box. */
@@ -14,14 +13,9 @@ export function createStroke(
   const pad = size / 2;
   const x = bounds.x - pad;
   const y = bounds.y - pad;
+  const rect = { x, y, w: bounds.w + size, h: bounds.h + size };
   return {
-    id: createId(),
-    type: "stroke",
-    index,
-    x,
-    y,
-    w: bounds.w + size,
-    h: bounds.h + size,
+    ...createElementBase("stroke", rect, index),
     color,
     size,
     points: points.map((value, i) => (i % 2 === 0 ? value - x : value - y)),

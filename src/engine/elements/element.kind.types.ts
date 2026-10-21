@@ -1,4 +1,16 @@
-import type { ElementPatch } from "./element.types";
+import type { Size } from "../geometry.types";
+import type { CanvasElement, ElementPatch } from "./element.types";
+
+/**
+ * Default values every element type may have. Each type's `<type>.defaults.ts` object satisfies
+ * this and adds its own (padding, stroke width, …); generic code reads it through `kind.defaults`.
+ */
+export interface ElementDefaults {
+  /** Size when placed with a click. */
+  size?: Size;
+  /** Font size of new elements' text. */
+  fontSize?: number;
+}
 
 /** How an element's text is laid out, shared by its drawer and the DOM text editor. */
 export interface ElementTextStyle {
@@ -16,12 +28,10 @@ export interface ElementTextStyle {
 }
 
 /** An element whose text is edited in place with the text editor. */
-export interface ElementText<E> {
-  /** Accessible name of the editor's textarea. */
-  ariaLabel: string;
+export interface ElementText<E extends CanvasElement> {
   get(el: E): string;
   /** The patch that writes edited text, or `null` when nothing changes. */
-  set(el: E, text: string): ElementPatch | null;
+  set(el: E, text: string): ElementPatch<E> | null;
   style(el: E): ElementTextStyle;
 }
 

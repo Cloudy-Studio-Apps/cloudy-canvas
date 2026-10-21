@@ -1,12 +1,17 @@
 import type { Graphics, StrokeStyle } from "pixi.js";
 
 import type { Size } from "../../../geometry.types";
-import type { GeoVariantId } from "../geo.types";
 
-/** One outline a geo element can have (rectangle, ellipse, …). Registered in `geo-variants.ts`. */
+/**
+ * One outline a geo element can have (rectangle, ellipse, …). Built-ins are registered in
+ * `variant.registry.ts`; plugins can register more.
+ */
 export abstract class GeoVariant {
-  abstract readonly id: GeoVariantId;
+  /** Stored in the element's `kind`. */
+  abstract readonly id: string;
   abstract readonly label: string;
+  /** SVG path in a 20×20 box, drawn as an outline in the shape picker. */
+  abstract readonly icon: string;
   /** Size of an element placed with a click. */
   abstract readonly defaultSize: Size;
 

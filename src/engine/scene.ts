@@ -1,5 +1,5 @@
 import type { BoardDocument } from "./document";
-import { kindOf, type AnyElement } from "./elements";
+import { kindOf, type CanvasElement } from "./elements";
 import { rectsIntersect, unionRects } from "./geometry";
 import type { Point, Rect } from "./geometry.types";
 import { buildOverlayState, type OverlayState } from "./render";
@@ -11,15 +11,15 @@ import { Selection } from "./selection";
  */
 export class Scene {
   readonly selection = new Selection();
-  private list: AnyElement[] = [];
-  private byId = new Map<string, AnyElement>();
+  private list: CanvasElement[] = [];
+  private byId = new Map<string, CanvasElement>();
   private hoverId: string | null = null;
   marquee: Rect | null = null;
 
   constructor(private readonly doc: BoardDocument) {}
 
   /** Elements sorted bottom-to-top. */
-  get elements(): readonly AnyElement[] {
+  get elements(): readonly CanvasElement[] {
     return this.list;
   }
 
@@ -29,12 +29,12 @@ export class Scene {
     this.byId = new Map(this.list.map((el) => [el.id, el]));
   }
 
-  get(id: string): AnyElement | undefined {
+  get(id: string): CanvasElement | undefined {
     return this.byId.get(id);
   }
 
   /** Topmost element at a world point. `tolerance` is in world units. */
-  elementAt(world: Point, tolerance: number): AnyElement | undefined {
+  elementAt(world: Point, tolerance: number): CanvasElement | undefined {
     for (let i = this.list.length - 1; i >= 0; i--) {
       const el = this.list[i]!;
       if (kindOf(el).hitTest(el, world, tolerance)) return el;
@@ -43,7 +43,7 @@ export class Scene {
   }
 
   /** Elements touching the rect. */
-  elementsInRect(rect: Rect): AnyElement[] {
+  elementsInRect(rect: Rect): CanvasElement[] {
     return this.list.filter((el) => rectsIntersect(kindOf(el).bounds(el), rect));
   }
 

@@ -1,8 +1,9 @@
-import { PolygonVariant } from "./geo-variant";
+import { PolygonVariant } from "./geo.variant";
 
 export class Triangle extends PolygonVariant {
   readonly id = "triangle";
   readonly label = "Triangle";
+  readonly icon = "M10 3l7.5 13.5h-15z";
   readonly defaultSize = { w: 130, h: 120 };
 
   protected polygon(w: number, h: number): number[] {

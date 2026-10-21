@@ -1,4 +1,4 @@
-import { PolygonVariant } from "./geo-variant";
+import { PolygonVariant } from "./geo.variant";
 
 /** Slant, as a share of the width. */
 const SKEW = 0.2;
@@ -6,6 +6,7 @@ const SKEW = 0.2;
 export class Parallelogram extends PolygonVariant {
   readonly id = "parallelogram";
   readonly label = "Parallelogram";
+  readonly icon = "M6 5h12l-4 10H2z";
   readonly defaultSize = { w: 170, h: 100 };
 
   protected polygon(w: number, h: number): number[] {

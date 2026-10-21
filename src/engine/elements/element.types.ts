@@ -1,17 +1,13 @@
-import type { GeoElement } from "./geo/geo.types";
-import type { StickyElement } from "./sticky/sticky.types";
-import type { StrokeElement } from "./stroke/stroke.types";
-
-/** Every element type the board knows. Each has a folder in `elements/` and a kind in the registry. */
-export type ElementType = "sticky" | "stroke" | "geo";
-
 /**
  * What every element on the canvas is. Elements are plain data (they live in the Yjs doc); their
- * behavior lives in the `ElementKind` registered for their `type`.
+ * behavior lives in the `ElementKind` registered for their `type`. The set of types is open:
+ * built-ins and plugins register kinds at runtime, so code outside an element's folder never
+ * assumes which types exist.
  */
 export interface CanvasElement {
   id: string;
-  type: ElementType;
+  /** Key of the element's kind in the registry, e.g. `"sticky"`. */
+  type: string;
   /** Fractional index (fractional-indexing): lexicographic order is z-order. */
   index: string;
   /** Top-left corner in world coordinates. */
@@ -21,12 +17,8 @@ export interface CanvasElement {
   h: number;
 }
 
-export type AnyElement = StickyElement | StrokeElement | GeoElement;
-
-/** The element interface for one type, e.g. `ElementOf<"geo">` is `GeoElement`. */
-export type ElementOf<K extends ElementType> = Extract<AnyElement, { type: K }>;
-
-/** Fields that can be changed after creation (id and type are immutable). */
-export type ElementPatch = Partial<Omit<StickyElement, "id" | "type">> &
-  Partial<Omit<StrokeElement, "id" | "type">> &
-  Partial<Omit<GeoElement, "id" | "type">>;
+/**
+ * Changes to an element's fields (id and type are immutable). Kinds type them for their element
+ * (`ElementPatch<StickyElement>`); the document takes any of them as the base `ElementPatch`.
+ */
+export type ElementPatch<E extends CanvasElement = CanvasElement> = Partial<Omit<E, "id" | "type">>;

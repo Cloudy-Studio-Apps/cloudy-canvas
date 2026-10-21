@@ -1,6 +1,6 @@
 import { Container, Graphics, Text } from "pixi.js";
 
-import { kindOf, type AnyElement, type ElementTextStyle } from "../elements";
+import { kindOf, type CanvasElement, type ElementTextStyle } from "../elements";
 import { canvasTextStyle } from "./text-style";
 import type { CanvasTextOptions } from "./text-style.types";
 
@@ -14,7 +14,7 @@ export class ElementView extends Container {
   private textVisible = true;
   private textResolution = 1;
 
-  constructor(el: AnyElement) {
+  constructor(el: CanvasElement) {
     super();
     this.elementId = el.id;
     this.order = el.index;
@@ -22,7 +22,7 @@ export class ElementView extends Container {
     this.sync(el);
   }
 
-  sync(el: AnyElement): void {
+  sync(el: CanvasElement): void {
     this.order = el.index;
     this.position.set(el.x, el.y);
     kindOf(el).draw(this, el);

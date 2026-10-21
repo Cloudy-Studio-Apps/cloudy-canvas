@@ -1,10 +1,10 @@
-import { kindOf, type AnyElement, type ElementPatch } from "../elements";
+import { kindOf, type CanvasElement, type ElementPatch } from "../elements";
 import type { ToolArgs } from "./agent-tool.types";
 
 const IMMUTABLE_FIELDS = new Set(["id", "type", "index"]);
 
 /** Checks an agent's patch against the element it's for. */
-export function elementPatch(el: AnyElement, patch: ToolArgs): ElementPatch {
+export function elementPatch(el: CanvasElement, patch: ToolArgs): ElementPatch {
   const kind = kindOf(el);
   for (const [key, value] of Object.entries(patch)) {
     if (IMMUTABLE_FIELDS.has(key)) throw new Error(`"${key}" can't be changed.`);

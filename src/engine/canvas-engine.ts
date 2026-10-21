@@ -2,7 +2,7 @@ import { Camera } from "./camera";
 import { createCommands } from "./commands";
 import type { CommandHandler, CommandId } from "./commands.types";
 import { BoardDocument, type DocumentChange } from "./document";
-import { kindOf, type AnyElement, type ElementPatch } from "./elements";
+import { kindOf, type CanvasElement, type ElementPatch } from "./elements";
 import { findInteraction } from "./find-interaction";
 import { DEFAULT_TOOL_OPTIONS } from "./engine-state";
 import type { EngineState } from "./engine-state.types";
@@ -183,11 +183,11 @@ export class CanvasEngine {
   }
 
   /** Elements bottom to top, as drawn. */
-  elements(): readonly AnyElement[] {
+  elements(): readonly CanvasElement[] {
     return this.scene.elements;
   }
 
-  getElement(id: string): AnyElement | undefined {
+  getElement(id: string): CanvasElement | undefined {
     return this.scene.get(id);
   }
 
@@ -344,7 +344,7 @@ export class CanvasEngine {
     this.scene.refresh();
     const changed = [...change.updated]
       .map((id) => this.scene.get(id))
-      .filter((el): el is AnyElement => el !== undefined);
+      .filter((el): el is CanvasElement => el !== undefined);
     this.renderer.syncElements(changed, change.removed);
     this.scene.selection.remove(change.removed);
     this.textEditor?.reposition();
@@ -383,7 +383,7 @@ export class CanvasEngine {
 
   // ── State helpers ─────────────────────────────────────────────────────
 
-  private elementAt(world: Point): AnyElement | undefined {
+  private elementAt(world: Point): CanvasElement | undefined {
     return this.scene.elementAt(world, HIT_TOLERANCE_PX / this.camera.zoom);
   }
 

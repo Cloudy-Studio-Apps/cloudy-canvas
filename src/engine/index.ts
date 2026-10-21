@@ -7,11 +7,9 @@ export type { EngineState } from "./engine-state.types";
 export type { CanvasTheme } from "./render";
 export type { ToolId, ToolOptions } from "./tools";
 export type {
-  AnyElement,
   CanvasElement,
-  ElementType,
+  ElementInfo,
   GeoElement,
-  GeoVariantId,
   StickyElement,
   StrokeElement,
 } from "./elements";
@@ -19,7 +17,7 @@ export { CanvasEngine } from "./canvas-engine";
 export { AGENT_INSTRUCTIONS, createAgentTools } from "./agent";
 export { KEYMAP, shortcutLabel } from "./input";
 export { TOOL_IDS } from "./tools";
-export { GEO_VARIANT_IDS, GEO_VARIANTS } from "./elements";
+export { elementInfo, elementKinds, geoVariants } from "./elements";
 export {
   BoardDocument,
   SHAPE_FILLS,

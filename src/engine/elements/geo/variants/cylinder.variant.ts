@@ -1,7 +1,7 @@
 import type { Graphics, StrokeStyle } from "pixi.js";
 
 import { ellipseArc } from "./ellipse-arc";
-import { PolygonVariant } from "./geo-variant";
+import { PolygonVariant } from "./geo.variant";
 
 /** Height of the top and bottom ellipses, as a share of the height (capped). */
 const CAP = 0.12;
@@ -10,6 +10,8 @@ const CAP_MAX = 24;
 export class Cylinder extends PolygonVariant {
   readonly id = "cylinder";
   readonly label = "Cylinder";
+  readonly icon =
+    "M3 5.5c0-1.4 3.1-2.5 7-2.5s7 1.1 7 2.5v9c0 1.4-3.1 2.5-7 2.5s-7-1.1-7-2.5zM3 5.5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5";
   readonly defaultSize = { w: 120, h: 140 };
 
   protected polygon(w: number, h: number): number[] {

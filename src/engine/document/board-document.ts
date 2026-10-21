@@ -1,7 +1,7 @@
 import * as Y from "yjs";
 import { generateKeyBetween } from "fractional-indexing";
 
-import { isElement, kindOf, type AnyElement, type ElementPatch } from "../elements";
+import { isElement, kindOf, type CanvasElement, type ElementPatch } from "../elements";
 import type { DocumentChange, ElementMap } from "./board-document.types";
 
 /** Origin tag for local edits, so the undo manager only tracks this client's changes. */
@@ -37,14 +37,14 @@ export class BoardDocument {
     });
   }
 
-  get(id: string): AnyElement | undefined {
+  get(id: string): CanvasElement | undefined {
     const map = this.elements.get(id);
     return map ? readElement(map) : undefined;
   }
 
   /** All elements sorted bottom-to-top. */
-  all(): AnyElement[] {
-    const list: AnyElement[] = [];
+  all(): CanvasElement[] {
+    const list: CanvasElement[] = [];
     this.elements.forEach((map) => {
       const el = readElement(map);
       if (el) list.push(el);
@@ -62,7 +62,7 @@ export class BoardDocument {
     return generateKeyBetween(top, null);
   }
 
-  add(el: AnyElement): void {
+  add(el: CanvasElement): void {
     this.transact(() => {
       const map = new Y.Map<unknown>();
       for (const [key, value] of Object.entries(el)) map.set(key, value);
@@ -179,11 +179,11 @@ export class BoardDocument {
 }
 
 /** The element in a map, with defaults filled, or `undefined` when its type isn't registered. */
-function readElement(map: ElementMap): AnyElement | undefined {
+function readElement(map: ElementMap): CanvasElement | undefined {
   const data: unknown = map.toJSON();
   return isElement(data) ? kindOf(data).fillDefaults(data) : undefined;
 }
 
-export function compareByIndex(a: AnyElement, b: AnyElement): number {
+export function compareByIndex(a: CanvasElement, b: CanvasElement): number {
   return a.index < b.index ? -1 : a.index > b.index ? 1 : 0;
 }

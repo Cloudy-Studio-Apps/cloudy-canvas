@@ -1,6 +1,6 @@
 import { Container } from "pixi.js";
 
-import type { AnyElement } from "../../elements";
+import type { CanvasElement } from "../../elements";
 import { ElementView } from "../element-view";
 import { textResolution } from "../text-resolution";
 
@@ -11,7 +11,7 @@ export class ElementLayer extends Container<ElementView> {
   private textResolution = 1;
 
   /** Creates or updates views for `elements` and destroys the views for `removed` ids. */
-  sync(elements: Iterable<AnyElement>, removed: Iterable<string> = []): void {
+  sync(elements: Iterable<CanvasElement>, removed: Iterable<string> = []): void {
     for (const id of removed) {
       this.views.get(id)?.destroy({ children: true });
       this.views.delete(id);
@@ -48,7 +48,7 @@ export class ElementLayer extends Container<ElementView> {
     super.destroy({ children: true });
   }
 
-  private add(el: AnyElement): void {
+  private add(el: CanvasElement): void {
     const view = new ElementView(el);
     view.setTextResolution(this.textResolution);
     view.setTextVisible(el.id !== this.hiddenTextId);

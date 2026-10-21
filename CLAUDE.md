@@ -58,8 +58,8 @@ Path aliases: `@app`, `@pages`, `@engine`, `@core`, `@ui`, `@platform`, `@stores
 
 Everything on the canvas is an element. **Elements are plain data and behavior lives in kind classes.** Never branch on `el.type` outside `elements/`: ask the element's kind.
 
-- **Data:** every element extends the `CanvasElement` interface (`id`, `type`, `index`, `x`, `y`, `w`, `h`), and `AnyElement` is the union of all of them (`element.types.ts`). They're plain JSON because they live in the Yjs doc.
-- **Behavior:** each type has one `ElementKind` subclass (`element-kind.ts`), registered in `ELEMENT_KINDS` (`element-registry.ts`). `kindOf(el)` returns it. A kind can provide:
+- **Data:** every element extends the `CanvasElement` interface (`id`, `type: string`, `index`, `x`, `y`, `w`, `h`) in `element.types.ts`. They're plain JSON because they live in the Yjs doc. **The set of types is open:** there's no closed union of types, so plugins can add types the engine has never heard of. Code outside an element's folder only sees `CanvasElement` and asks `kindOf(el)`. Patches are `ElementPatch<E>` (typed by the kind for its element), and the document takes the base `ElementPatch`.
+- **Behavior:** each type has one `ElementKind` subclass (`element.kind.ts`), registered at runtime in `elementKinds` (`element.registry.ts`, a `Registry` from `utils/registry.ts` that throws on duplicate keys). `kindOf(el)` returns it. `isElement(data)` is true only for registered types, so the document hides, but keeps, elements whose kind isn't installed. Every kind declares its metadata: `label`, `description` (tooltips, listings) and `tool`, the tool that creates it. The hotkey isn't stored on the kind: `elementInfo(type)` reads it from the keymap through `tool`, so `input/keymap.ts` stays the single source. The toolbar takes element tools' label and description from `elementInfo`. A kind can provide:
   - `draw`, `bounds`, `hitTest`
   - `move`, `resizable` / `resize`
   - `text`: an `ElementText` spec (`get`, `set`, `style`) that the `TextEditor` and the drawer share, so edited text lines up with drawn text
@@ -67,17 +67,30 @@ Everything on the canvas is an element. **Elements are plain data and behavior l
   - `describe` (agent summaries)
   - `optionsOf` / `restyle` (the tool options panel)
   - `build` from an `ElementSpec` (agents' `create_shapes`), plus `creatable` and `patchableFields`
-- **Shared bases** (`bases/`): `BoxKind` (hit anywhere in the bounds, resizable) and `LineKind` (hit near a polyline `points`).
-- **One folder per type**, holding `<type>.types.ts`, its defaults, `create-<type>.ts`, `draw-<type>.ts`, `<type>-kind.ts` and `index.ts`:
-  - `sticky/`: `StickyKind extends BoxKind`
+- **Shared bases** (`bases/`). Anything several types do goes in a base, never copied into each kind:
+  - `BoxKind`: hit anywhere in the bounds, resizable.
+  - `TextBoxKind extends BoxKind`: in-place `text` (get, set, describe). Subclasses only give `textStyle`.
+  - `LineKind`: hit near a polyline `points`.
+  - `ElementKind.specRect` turns a spec into bounds for `build`.
+  - Factories start from `createElementBase(type, rect, index)` (`element.factory.ts`: id, type, index, bounds) and spread their own fields on top. The editor's aria label is `${kind.label} text`.
+- **One folder per type.** Files are named `<name>.<role>.ts` so the role shows in the name:
+  - `<type>.types.ts`: the data interface
+  - `<type>.factory.ts`: `create<Type>()`, pure data with no rendering
+  - `<type>.draw.ts`: the Pixi drawer
+  - `<type>.kind.ts`: the `ElementKind` subclass
+  - `<type>.defaults.ts`: one typed object (`STICKY_DEFAULTS`, `GEO_DEFAULTS`) that satisfies its `<Type>Defaults` interface, which extends `ElementDefaults` (`size?`, `fontSize?`). The kind exposes it as `kind.defaults`, so generic code (e.g. `loadFonts`) reads defaults through the kinds and never names a type's constants. Values every element shares (font family, line height, minimum size) are in `ELEMENT_DEFAULTS` (`element.defaults.ts`). No loose constants.
+  - `index.ts`: the folder's exports
+
+  Extra pieces follow the same pattern (`stroke.outline.ts`, `geo/variants/<id>.variant.ts`, `variant.registry.ts`, `bases/box.kind.ts`), and one-off helpers keep plain names (`ellipse-arc.ts`). The types are:
+  - `sticky/`: `StickyKind extends TextBoxKind`
   - `stroke/`: `StrokeKind extends LineKind`; only moved, and not created by agents
-  - `geo/`: `GeoKind extends BoxKind`, which delegates the outline to the element's variant. Each variant (`kind`: rectangle, ellipse, diamond, …) is a `GeoVariant` subclass in `geo/variants/`, registered in `GEO_VARIANTS`, with its label, default size, `outline` and optional `decorate`. `PolygonVariant` covers the polygon ones.
+  - `geo/`: `GeoKind extends TextBoxKind`, which delegates the outline to the element's variant. Each variant (`kind`: rectangle, ellipse, diamond, …) is a `GeoVariant` subclass in `geo/variants/<id>.variant.ts`, registered at runtime in `geoVariants` (`variant.registry.ts`), with its label, picker `icon` (an SVG path), default size, `outline` and optional `decorate`. `variantOf(id)` falls back to the rectangle for unknown ids. The shape picker lists `geoVariants.all()`. `PolygonVariant` covers the polygon ones.
+
 - **Adding a type:**
   1. Create its folder.
-  2. Add it to `ElementType`, `AnyElement` and `ElementPatch` in `element.types.ts`.
-  3. Register its kind in `ELEMENT_KINDS`.
+  2. Call `elementKinds.register(new MyKind())`: built-ins in `element.registry.ts`, plugins before the board opens.
 
-  The mapped registry type makes the compiler require the kind.
+  Nothing else changes. Agents' `create_shapes` schema, `loadFonts` and `elementInfo` read the registry live. A geo variant is the same: `geoVariants.register(new MyVariant())`.
 
 - **Rendering:** `ElementView` (`render/element-view.ts`) is the one Pixi container for every element. `sync` calls `kindOf(el).draw(view, el)`, and `view.placeText(text, style, w, h)` lays text out like the editor.
 

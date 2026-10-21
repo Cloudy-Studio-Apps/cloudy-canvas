@@ -1,10 +1,11 @@
 import type { Graphics } from "pixi.js";
 
-import { GeoVariant } from "./geo-variant";
+import { GeoVariant } from "./geo.variant";
 
 export class Rectangle extends GeoVariant {
   readonly id = "rectangle";
   readonly label = "Rectangle";
+  readonly icon = "M3 5h14v10H3z";
   readonly defaultSize = { w: 160, h: 100 };
 
   outline(g: Graphics, w: number, h: number): void {

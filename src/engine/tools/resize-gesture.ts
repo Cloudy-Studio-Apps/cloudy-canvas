@@ -1,4 +1,4 @@
-import { kindOf, type AnyElement } from "../elements";
+import { kindOf, type CanvasElement } from "../elements";
 import { resizeCursor, resizeRect, type ResizeHandle } from "../handles";
 import type { CanvasPointer, ToolContext } from "./tool.types";
 
@@ -10,7 +10,7 @@ export class ResizeGesture {
 
   constructor(
     private readonly ctx: ToolContext,
-    private readonly origin: AnyElement,
+    private readonly origin: CanvasElement,
     private readonly handle: ResizeHandle,
     private readonly start: CanvasPointer,
   ) {

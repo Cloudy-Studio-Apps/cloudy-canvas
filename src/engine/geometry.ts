@@ -75,3 +75,8 @@ export function boundsOfPoints(points: number[]): Rect {
   }
   return { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
 }
+
+/** The rect with every field rounded to whole world units. */
+export function roundRect({ x, y, w, h }: Rect): Rect {
+  return { x: Math.round(x), y: Math.round(y), w: Math.round(w), h: Math.round(h) };
+}

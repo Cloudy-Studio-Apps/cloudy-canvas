@@ -1,4 +1,4 @@
-import { GEO_VARIANT_IDS, GEO_VARIANTS, SHAPE_FILLS, SHAPE_STROKES } from "@engine";
+import { geoVariants, SHAPE_FILLS, SHAPE_STROKES } from "@engine";
 import { useEngine, useEngineState } from "../../engine/engine-context";
 import { FloatingPanel, PanelDivider } from "../floating-panel";
 import { ColorSwatch } from "./color-swatch";
@@ -12,15 +12,15 @@ export function ShapeOptions() {
 
   return (
     <FloatingPanel role="group" aria-label="Shape options" className="gap-1 px-2">
-      {GEO_VARIANT_IDS.map((kind) => (
+      {geoVariants.all().map((variant) => (
         <OptionButton
-          key={kind}
-          aria-label={GEO_VARIANTS[kind].label}
-          title={GEO_VARIANTS[kind].label}
-          selected={shapeKind === kind}
-          onClick={() => engine.setToolOptions({ shapeKind: kind })}
+          key={variant.id}
+          aria-label={variant.label}
+          title={variant.label}
+          selected={shapeKind === variant.id}
+          onClick={() => engine.setToolOptions({ shapeKind: variant.id })}
         >
-          <GeoKindIcon kind={kind} />
+          <GeoKindIcon path={variant.icon} />
         </OptionButton>
       ))}
       <PanelDivider />

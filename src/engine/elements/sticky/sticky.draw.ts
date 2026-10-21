@@ -1,6 +1,6 @@
 import { PAPER_SHADOW_COLOR } from "../../document/palette";
 import type { ElementView } from "../../render/element-view";
-import type { ElementTextStyle } from "../element-kind.types";
+import type { ElementTextStyle } from "../element.kind.types";
 import type { StickyElement } from "./sticky.types";
 
 export function drawSticky(

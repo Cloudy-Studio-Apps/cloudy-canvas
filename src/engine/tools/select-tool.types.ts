@@ -1,4 +1,4 @@
-import type { AnyElement } from "../elements";
+import type { CanvasElement } from "../elements";
 import type { ResizeGesture } from "./resize-gesture";
 import type { CanvasPointer } from "./tool.types";
 
@@ -7,7 +7,7 @@ export type Gesture =
       kind: "move";
       start: CanvasPointer;
       /** Each moved element as it was when the drag started. */
-      origins: Map<string, AnyElement>;
+      origins: Map<string, CanvasElement>;
       started: boolean;
       /** Shift-click on an already selected element deselects it — unless it turns into a drag. */
       toggleOnClick: string | null;
