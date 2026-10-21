@@ -4,11 +4,12 @@ import { Button } from "@ui/components/ui/button";
 import { useEngine } from "../../engine/engine-context";
 import { ColumnDetails } from "./column-details";
 import { ColumnFlags } from "./column-flags";
+import { ColumnTypePicker } from "./column-type-picker";
 import { CommitInput } from "./commit-input";
 import { RefPicker } from "./ref-picker";
 import type { ColumnRowProps } from "./column-row.types";
 
-export function ColumnRow({ table, column, index, typeListId }: ColumnRowProps) {
+export function ColumnRow({ table, column, index }: ColumnRowProps) {
   const engine = useEngine();
 
   return (
@@ -20,13 +21,7 @@ export function ColumnRow({ table, column, index, typeListId }: ColumnRowProps) 
           className="h-7 min-w-0 flex-1 text-sm"
           onCommit={(name) => engine.db.updateColumn(table.id, column.id, { name })}
         />
-        <CommitInput
-          value={column.type}
-          aria-label="Column type"
-          list={typeListId}
-          className="h-7 w-28 font-mono text-xs"
-          onCommit={(type) => engine.db.updateColumn(table.id, column.id, { type: type.trim() })}
-        />
+        <ColumnTypePicker table={table} column={column} />
         <RefPicker table={table} column={column} />
         <ColumnDetails table={table} column={column} index={index} />
         <Button

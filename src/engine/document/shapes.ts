@@ -1,6 +1,7 @@
 import type {
   ConnectableShape,
   ConnectorShape,
+  DbEnumShape,
   DbTableShape,
   EditableShape,
   GeoShape,
@@ -34,8 +35,13 @@ export function isConnectable(shape: Shape | undefined): shape is ConnectableSha
     shape?.type === "geo" ||
     shape?.type === "sticky" ||
     shape?.type === "text" ||
-    shape?.type === "db-table"
+    shape?.type === "db-table" ||
+    shape?.type === "db-enum"
   );
+}
+
+export function isDbEnum(shape: Shape | undefined): shape is DbEnumShape {
+  return shape?.type === "db-enum";
 }
 
 export function isSection(shape: Shape | undefined): shape is SectionShape {

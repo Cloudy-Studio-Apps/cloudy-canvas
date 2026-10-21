@@ -19,4 +19,6 @@ export type Interaction =
   | { kind: "endpoint"; connector: ConnectorShape; which: "start" | "end" }
   | { kind: "resize"; shape: ResizableShape; handle: ResizeHandle }
   | { kind: "quick-connect"; shape: QuickConnectShape; side: ConnectorSide }
-  | { kind: "column"; handle: TableHandle };
+  | { kind: "column"; handle: TableHandle }
+  /** The × on a table's note bubble, or the icon that shows it again. */
+  | { kind: "note-toggle"; tableId: string; hidden: boolean };

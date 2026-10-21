@@ -7,7 +7,6 @@ import { hitTestShape, shapeBounds } from "./hit-test";
 import {
   BoardDocument,
   isConnectable,
-  isDbTable,
   isEditableShape,
   isSection,
   type DocumentChange,
@@ -458,7 +457,8 @@ export class CanvasEngine {
       options: this.options,
       zoom: this.camera.zoom,
       selectionCount: this.scene.selection.size,
-      selectedTableId: this.selectedTableId(),
+      selectedTableId: this.selectedOfType("db-table"),
+      selectedEnumId: this.selectedOfType("db-enum"),
       selectionTypes: this.selectionTypes(),
       canUndo: this.doc.canUndo(),
       canRedo: this.doc.canRedo(),
@@ -471,9 +471,10 @@ export class CanvasEngine {
     return [...types].filter(Boolean).sort().join(",");
   }
 
-  private selectedTableId(): string | null {
+  /** The selected shape's id when exactly one shape of `type` is selected. */
+  private selectedOfType(type: "db-table" | "db-enum"): string | null {
     const id = this.scene.selection.single();
-    return id && isDbTable(this.doc.get(id)) ? id : null;
+    return id && this.doc.get(id)?.type === type ? id : null;
   }
 
   /** Publishes a new snapshot; the store only notifies when a field actually changed. */

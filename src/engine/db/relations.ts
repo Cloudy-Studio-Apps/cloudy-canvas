@@ -1,5 +1,5 @@
-import { isDbTable, type Shape } from "../document";
-import type { Relation } from "./relations.types";
+import { isDbEnum, isDbTable, type Shape } from "../document";
+import type { EnumLink, Relation } from "./relations.types";
 
 /** Every column ref whose target still exists. Dangling refs are skipped. */
 export function resolveRelations(shapes: readonly Shape[]): Relation[] {
@@ -14,4 +14,18 @@ export function resolveRelations(shapes: readonly Shape[]): Relation[] {
     });
   }
   return relations;
+}
+
+/** Every column whose type names an enum on the board. */
+export function resolveEnumLinks(shapes: readonly Shape[]): EnumLink[] {
+  const enums = new Map(shapes.filter(isDbEnum).map((target) => [target.name, target]));
+  if (enums.size === 0) return [];
+  const links: EnumLink[] = [];
+  for (const table of shapes.filter(isDbTable)) {
+    table.columns.forEach((column, row) => {
+      const target = enums.get(column.type);
+      if (target) links.push({ table, row, target });
+    });
+  }
+  return links;
 }

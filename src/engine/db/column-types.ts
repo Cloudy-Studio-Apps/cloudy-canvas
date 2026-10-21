@@ -1,4 +1,4 @@
-/** Suggestions for the column type field; any other type can still be typed. */
+/** Built-in column types offered by the type picker; any other type can still be typed. */
 export const COLUMN_TYPES = [
   "integer",
   "bigint",
@@ -20,3 +20,6 @@ export const COLUMN_TYPES = [
   "jsonb",
   "blob",
 ] as const;
+
+/** Index methods offered by the index editor. */
+export const INDEX_TYPES = ["btree", "hash", "gin", "gist", "brin"] as const;

@@ -20,4 +20,5 @@ export const DEFAULT_TOOL_OPTIONS: ToolOptions = {
   connectorStartHead: "none",
   connectorEndHead: "arrow",
   sectionColor: SECTION_COLORS[0].value,
+  dbKind: "table",
 };

@@ -20,6 +20,10 @@ export class SelectTool implements Tool {
 
   onPointerDown(p: CanvasPointer): void {
     const interaction = this.ctx.interactionAt(p.world);
+    if (interaction?.kind === "note-toggle") {
+      this.ctx.db.setNoteHidden(interaction.tableId, !interaction.hidden);
+      return;
+    }
     if (interaction) {
       this.gesture = this.startInteraction(interaction, p);
       this.ctx.setHover(null);
@@ -118,7 +122,10 @@ export class SelectTool implements Tool {
     this.ctx.setCursor(this.cursor);
   }
 
-  private startInteraction(interaction: Interaction, p: CanvasPointer): Gesture {
+  private startInteraction(
+    interaction: Exclude<Interaction, { kind: "note-toggle" }>,
+    p: CanvasPointer,
+  ): Gesture {
     switch (interaction.kind) {
       case "column":
         this.ctx.setCursor("crosshair");
@@ -162,5 +169,6 @@ export class SelectTool implements Tool {
 function interactionCursor(interaction: Interaction): string {
   if (interaction.kind === "resize") return resizeCursor(interaction.handle);
   if (interaction.kind === "endpoint") return "move";
+  if (interaction.kind === "note-toggle") return "pointer";
   return "crosshair";
 }

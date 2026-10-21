@@ -1,5 +1,7 @@
 import { unsupported } from "./dbml-error";
 import type { TokenCursor } from "./token-cursor";
+import { parseIndexes } from "./parse-indexes";
+import { parseQualifiedName } from "./parse-name";
 import { parseEndpoint, parseRefKind, parseSettings, parseValue } from "./parse-settings";
 import type { DbmlError, ParsedColumn, ParsedRef, ParsedTable } from "./parser.types";
 
@@ -16,6 +18,7 @@ export function parseTable(
     headerColor: null,
     note: "",
     columns: [],
+    indexes: [],
     line: keyword.line,
   };
   if (cursor.isKeyword("as")) {
@@ -25,9 +28,7 @@ export function parseTable(
   if (cursor.isSymbol("[")) {
     parseSettings(cursor, (key, hasValue) => {
       if (key === "headercolor" && hasValue) {
-        const token = cursor.peek();
-        if (token.kind !== "color") throw cursor.error("Expected a color like #cfe4f8");
-        table.headerColor = cursor.next().value;
+        table.headerColor = cursor.expectColor();
         return true;
       }
       if (key === "note" && hasValue) {
@@ -48,12 +49,11 @@ export function parseTable(
     if (cursor.isKeyword("note") && (cursor.isSymbol(":", 1) || cursor.isSymbol("{", 1))) {
       table.note = parseNote(cursor);
     } else if (cursor.isKeyword("indexes") && cursor.isSymbol("{", 1)) {
-      warnings.push(unsupported("Indexes", cursor.next()));
-      cursor.skipBlock();
+      table.indexes.push(...parseIndexes(cursor, warnings));
     } else {
       table.columns.push(parseColumn(cursor, table.name, refs, warnings));
     }
-    endOfLine(cursor);
+    cursor.expectEndOfLine();
   }
   return table;
 }
@@ -145,16 +145,4 @@ export function parseNote(cursor: TokenCursor): string {
   cursor.skipNewlines();
   cursor.expectSymbol("}");
   return note;
-}
-
-/** `name` or `schema.name`. */
-export function parseQualifiedName(cursor: TokenCursor): string {
-  let name = cursor.expectName("a name").value;
-  while (cursor.acceptSymbol(".")) name += `.${cursor.expectName("a name").value}`;
-  return name;
-}
-
-function endOfLine(cursor: TokenCursor): void {
-  if (cursor.peek().kind === "newline" || cursor.isSymbol("}")) return;
-  throw cursor.error("Expected the end of the line");
 }

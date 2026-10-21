@@ -1,6 +1,7 @@
 import { connectorEndpoints } from "./connectors";
-import { handleAt } from "./db";
+import { handleAt, noteBubbleLayout } from "./db";
 import { isConnector, isDbTable, type BoardDocument } from "./document";
+import { rectContainsPoint } from "./geometry";
 import type { Point } from "./geometry.types";
 import {
   canQuickConnect,
@@ -15,7 +16,7 @@ import type { Scene } from "./scene";
 const HANDLE_REACH_PX = 6;
 
 /**
- * What a press at `world` would grab, in priority order: a selected connector's end, a resize
+ * What a press at `world` would grab, in priority order: a table note's ×/icon, a selected connector's end, a resize
  * handle, a quick-connect dot, a database column handle. Handles only exist on the selected or
  * hovered shapes, matching what the overlay draws.
  */
@@ -26,6 +27,16 @@ export function findInteraction(
   zoom: number,
 ): Interaction | null {
   const reach = HANDLE_REACH_PX / zoom;
+  const shapes = scene.shapes;
+
+  for (let i = shapes.length - 1; i >= 0; i--) {
+    const shape = shapes[i]!;
+    const layout = isDbTable(shape) ? noteBubbleLayout(shape) : null;
+    const button = layout ? (layout.hidden ? layout.icon : layout.close) : null;
+    if (layout && button && rectContainsPoint(button, world)) {
+      return { kind: "note-toggle", tableId: shape.id, hidden: layout.hidden };
+    }
+  }
   const selected = [...scene.selection.ids];
 
   for (const id of selected) {
@@ -56,7 +67,6 @@ export function findInteraction(
 
   const candidates = new Set(selected);
   if (scene.hoveredId) candidates.add(scene.hoveredId);
-  const shapes = scene.shapes;
   for (let i = shapes.length - 1; i >= 0; i--) {
     const shape = shapes[i]!;
     if (!isDbTable(shape) || !candidates.has(shape.id)) continue;

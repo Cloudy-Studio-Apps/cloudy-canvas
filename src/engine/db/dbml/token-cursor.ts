@@ -56,6 +56,18 @@ export class TokenCursor {
     return this.next().value;
   }
 
+  /** A hex color like #cfe4f8. */
+  expectColor(): string {
+    if (this.peek().kind !== "color") throw this.error("Expected a color like #cfe4f8");
+    return this.next().value;
+  }
+
+  /** Each column, index or value is one line; it may also end at the block's closing brace. */
+  expectEndOfLine(): void {
+    if (this.peek().kind === "newline" || this.isSymbol("}")) return;
+    throw this.error("Expected the end of the line");
+  }
+
   skipNewlines(): void {
     while (this.peek().kind === "newline") this.pos++;
   }

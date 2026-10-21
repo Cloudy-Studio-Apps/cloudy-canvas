@@ -1,16 +1,17 @@
 import { DbmlSyntaxError, unsupported } from "./dbml-error";
 import { parseEndpoint, parseRefKind, parseSettings } from "./parse-settings";
-import { parseQualifiedName, parseTable } from "./parse-table";
+import { parseEnum } from "./parse-enum";
+import { parseQualifiedName } from "./parse-name";
+import { parseStickyNote } from "./parse-sticky-note";
+import { parseTable } from "./parse-table";
 import { TokenCursor } from "./token-cursor";
 import { tokenize } from "./tokenizer";
 import type { DbmlError, ParseResult, ParsedRef, ParsedSchema } from "./parser.types";
 
 /** Blocks that are valid DBML but not supported on the board yet; they're skipped with a warning. */
 const UNSUPPORTED_BLOCKS: Record<string, string> = {
-  enum: "Enum",
   tablegroup: "TableGroup",
   project: "Project",
-  note: "Sticky Note",
   tablepartial: "TablePartial",
   records: "Records",
 };
@@ -26,7 +27,7 @@ export function parseDbml(source: string): ParseResult {
 }
 
 function parseSchema(cursor: TokenCursor): ParsedSchema {
-  const schema: ParsedSchema = { tables: [], refs: [], warnings: [] };
+  const schema: ParsedSchema = { tables: [], enums: [], notes: [], refs: [], warnings: [] };
   for (;;) {
     cursor.skipNewlines();
     if (cursor.atEnd()) return schema;
@@ -35,6 +36,10 @@ function parseSchema(cursor: TokenCursor): ParsedSchema {
 
     if (keyword === "table") {
       schema.tables.push(parseTable(cursor, schema.refs, schema.warnings));
+    } else if (keyword === "enum") {
+      schema.enums.push(parseEnum(cursor, schema.warnings));
+    } else if (keyword === "note") {
+      schema.notes.push(parseStickyNote(cursor));
     } else if (keyword === "ref") {
       parseRef(cursor, schema.refs, schema.warnings);
     } else if (keyword in UNSUPPORTED_BLOCKS) {
@@ -46,7 +51,7 @@ function parseSchema(cursor: TokenCursor): ParsedSchema {
       }
       cursor.skipBlock();
     } else {
-      throw cursor.error("Expected Table or Ref");
+      throw cursor.error("Expected Table, Enum, Ref or Note");
     }
   }
 }

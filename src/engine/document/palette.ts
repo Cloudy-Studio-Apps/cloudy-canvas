@@ -71,6 +71,12 @@ export const DB_HEADER_COLORS = [
 /** Body of a database table. */
 export const DB_BODY_COLOR = "#ffffff";
 
+/** Header color of enum cards. */
+export const DB_ENUM_COLOR = "#e2d9fa";
+
+/** Background of a table's note bubble. */
+export const NOTE_BUBBLE_COLOR = "#fff6d6";
+
 /** Muted ink for secondary text such as column types. */
 export const MUTED_INK_COLOR = "#6b7280";
 

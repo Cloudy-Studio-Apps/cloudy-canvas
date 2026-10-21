@@ -1,4 +1,5 @@
-export type ShapeType = "sticky" | "text" | "stroke" | "db-table" | "geo" | "connector" | "section";
+export type ShapeType =
+  "sticky" | "text" | "stroke" | "db-table" | "db-enum" | "geo" | "connector" | "section";
 
 export interface ShapeBase {
   id: string;
@@ -16,6 +17,8 @@ export interface StickyShape extends ShapeBase {
   type: "sticky";
   color: string;
   text: string;
+  /** Set when the sticky is a DBML sticky note (`Note name { … }`), which makes it part of the schema. */
+  noteName?: string;
 }
 
 export interface TextShape extends ShapeBase {
@@ -58,13 +61,44 @@ export interface DbColumn {
   ref: DbRef | null;
 }
 
+/** A column (by id, so renames survive) or a raw expression such as `` `lower(email)` ``. */
+export type DbIndexPart = { kind: "column"; columnId: string } | { kind: "expr"; expr: string };
+
+export interface DbIndex {
+  id: string;
+  parts: DbIndexPart[];
+  pk: boolean;
+  unique: boolean;
+  name: string;
+  /** Index method (`btree`, `hash`, …), or empty for the database default. */
+  type: string;
+  note: string;
+}
+
 /** One table of the board's database schema. Its size is derived from the columns. */
 export interface DbTableShape extends ShapeBase {
   type: "db-table";
   name: string;
   headerColor: string;
   note: string;
+  /** The note bubble is collapsed to its icon. */
+  noteHidden: boolean;
   columns: DbColumn[];
+  indexes: DbIndex[];
+}
+
+export interface DbEnumValue {
+  id: string;
+  name: string;
+  note: string;
+}
+
+/** A DBML enum, shown as a card; columns use it by naming it as their type. */
+export interface DbEnumShape extends ShapeBase {
+  type: "db-enum";
+  name: string;
+  headerColor: string;
+  values: DbEnumValue[];
 }
 
 export type GeoKind =
@@ -140,13 +174,21 @@ export interface ConnectorStyleOptions {
 }
 
 export type Shape =
-  StickyShape | TextShape | StrokeShape | DbTableShape | GeoShape | ConnectorShape | SectionShape;
+  | StickyShape
+  | TextShape
+  | StrokeShape
+  | DbTableShape
+  | DbEnumShape
+  | GeoShape
+  | ConnectorShape
+  | SectionShape;
 
 /** Fields that can be changed after creation (id and type are immutable). */
 export type ShapePatch = Partial<Omit<StickyShape, "id" | "type">> &
   Partial<Omit<TextShape, "id" | "type">> &
   Partial<Omit<StrokeShape, "id" | "type">> &
   Partial<Omit<DbTableShape, "id" | "type">> &
+  Partial<Omit<DbEnumShape, "id" | "type">> &
   Partial<Omit<GeoShape, "id" | "type">> &
   Partial<Omit<ConnectorShape, "id" | "type">> &
   Partial<Omit<SectionShape, "id" | "type">>;
@@ -155,4 +197,4 @@ export type ShapePatch = Partial<Omit<StickyShape, "id" | "type">> &
 export type EditableShape = StickyShape | TextShape | GeoShape | SectionShape;
 
 /** Shapes connectors can attach to. */
-export type ConnectableShape = StickyShape | TextShape | DbTableShape | GeoShape;
+export type ConnectableShape = StickyShape | TextShape | DbTableShape | DbEnumShape | GeoShape;

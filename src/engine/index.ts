@@ -9,6 +9,10 @@ export type {
   ArrowHead,
   ConnectorStyle,
   DbColumn,
+  DbEnumShape,
+  DbEnumValue,
+  DbIndex,
+  DbIndexPart,
   DbRef,
   DbRefKind,
   DbTableShape,
@@ -21,16 +25,22 @@ export type {
   ColumnTarget,
   DbApplyResult,
   DbColumnPatch,
+  DbEnumPatch,
+  DbEnumValuePatch,
+  DbIndexPatch,
   DbmlError,
   DbSchema,
   DbTablePatch,
+  EnumUsage,
   IncomingRef,
 } from "./db";
+export { COLUMN_TYPES, INDEX_TYPES } from "./db";
 export { CanvasEngine } from "./canvas-engine";
 export { KEYMAP, shortcutLabel } from "./input";
 export { TOOL_IDS } from "./tools";
 export {
   BoardDocument,
+  DB_ENUM_COLOR,
   DB_HEADER_COLORS,
   GEO_KINDS,
   SECTION_COLORS,

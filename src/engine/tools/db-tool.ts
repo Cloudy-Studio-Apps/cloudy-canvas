@@ -1,7 +1,7 @@
-import { createDbTable } from "../db";
+import { createDbEnum, createDbTable } from "../db";
 import type { CanvasPointer, Tool, ToolContext } from "./tool.types";
 
-/** Click to place a database table centered on the pointer; it's selected so the editor opens. */
+/** Click to place a database table (or enum) centered on the pointer; it's selected so its editor opens. */
 export class DbTool implements Tool {
   readonly id = "db" as const;
   readonly cursor = "crosshair";
@@ -10,10 +10,13 @@ export class DbTool implements Tool {
 
   onPointerDown(p: CanvasPointer): void {
     const { doc, db } = this.ctx;
-    const table = createDbTable(p.world, db.uniqueName(), doc.nextIndex());
+    const shape =
+      this.ctx.getOptions().dbKind === "enum"
+        ? createDbEnum(p.world, db.uniqueName("status", "enum"), doc.nextIndex())
+        : createDbTable(p.world, db.uniqueName(), doc.nextIndex());
     doc.checkpoint();
-    doc.add(table);
-    this.ctx.setSelection([table.id]);
+    doc.add(shape);
+    this.ctx.setSelection([shape.id]);
     this.ctx.setTool("select");
   }
 }

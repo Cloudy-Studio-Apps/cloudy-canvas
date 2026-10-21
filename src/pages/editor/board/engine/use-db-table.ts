@@ -1,6 +1,6 @@
 import { useState, useSyncExternalStore } from "react";
 
-import type { DbSchema, DbTableShape } from "@engine";
+import type { DbEnumShape, DbSchema, DbTableShape } from "@engine";
 import { useEngine } from "./engine-context";
 
 /** Changes whenever any database table on the board changes. */
@@ -27,4 +27,8 @@ export function useDbQuery<T>(query: (db: DbSchema) => T, key = ""): T {
 
 export function useDbTable(id: string): DbTableShape | undefined {
   return useDbQuery((db) => db.table(id), id);
+}
+
+export function useDbEnum(id: string): DbEnumShape | undefined {
+  return useDbQuery((db) => db.enum(id), id);
 }

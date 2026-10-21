@@ -5,13 +5,14 @@ import {
   DB_PADDING_X,
   DB_ROW_H,
   INK_COLOR,
-  LINE_HEIGHT,
   MUTED_INK_COLOR,
   PAPER_SHADOW_COLOR,
   type DbColumn,
   type DbTableShape,
 } from "../../document";
 import { rowTop } from "../../db";
+import { drawNoteBubble } from "./draw-note-bubble";
+import { centerTextTop } from "./center-text";
 import type { ShapeView } from "./shape-view";
 
 const BADGE_FONT_SIZE = 10;
@@ -41,7 +42,22 @@ export function drawDbTable(view: ShapeView, shape: DbTableShape): void {
     color: INK_COLOR,
     fontWeight: "600",
   });
-  name.position.set(DB_PADDING_X, centered(DB_HEADER_H, DB_FONT_SIZE + 1));
+  name.position.set(DB_PADDING_X, centerTextTop(DB_HEADER_H, DB_FONT_SIZE + 1));
+
+  if (shape.indexes.length > 0) {
+    keep.add("indexes");
+    const label = view.setTextSlot("indexes", `${shape.indexes.length} idx`, {
+      fontSize: BADGE_FONT_SIZE,
+      color: MUTED_INK_COLOR,
+      fontWeight: "600",
+    });
+    label.position.set(w - DB_PADDING_X - label.width, centerTextTop(DB_HEADER_H, BADGE_FONT_SIZE));
+  }
+  const indexed = new Set(
+    shape.indexes.flatMap((index) =>
+      index.parts.flatMap((part) => (part.kind === "column" ? [part.columnId] : [])),
+    ),
+  );
 
   if (columns.length === 0) {
     keep.add("empty");
@@ -49,11 +65,11 @@ export function drawDbTable(view: ShapeView, shape: DbTableShape): void {
       fontSize: DB_FONT_SIZE,
       color: MUTED_INK_COLOR,
     });
-    empty.position.set(DB_PADDING_X, rowTop(0) + centered(DB_ROW_H, DB_FONT_SIZE));
+    empty.position.set(DB_PADDING_X, rowTop(0) + centerTextTop(DB_ROW_H, DB_FONT_SIZE));
   }
 
   columns.forEach((column, row) => {
-    const top = rowTop(row) + centered(DB_ROW_H, DB_FONT_SIZE);
+    const top = rowTop(row) + centerTextTop(DB_ROW_H, DB_FONT_SIZE);
     const nameKey = `${row}:name`;
     const typeKey = `${row}:type`;
     keep.add(nameKey).add(typeKey);
@@ -71,7 +87,12 @@ export function drawDbTable(view: ShapeView, shape: DbTableShape): void {
     });
     type.position.set(w - DB_PADDING_X - BADGE_W - type.width, top);
 
-    const badge = badgeFor(column);
+    if (column.note) {
+      // A dot marks columns that have a note.
+      g.circle(DB_PADDING_X / 2, rowTop(row) + DB_ROW_H / 2, 2).fill({ color: MUTED_INK_COLOR });
+    }
+
+    const badge = badgeFor(column, indexed.has(column.id));
     if (!badge) return;
     const badgeKey = `${row}:badge`;
     keep.add(badgeKey);
@@ -83,23 +104,20 @@ export function drawDbTable(view: ShapeView, shape: DbTableShape): void {
       })
       .position.set(
         w - DB_PADDING_X - BADGE_W + 4,
-        rowTop(row) + centered(DB_ROW_H, BADGE_FONT_SIZE),
+        rowTop(row) + centerTextTop(DB_ROW_H, BADGE_FONT_SIZE),
       );
   });
 
+  for (const key of drawNoteBubble(view, shape)) keep.add(key);
   view.pruneTextSlots(keep);
 }
 
 /** The most important constraint, shown at the end of the row. */
-function badgeFor(column: DbColumn): string | null {
+function badgeFor(column: DbColumn, indexed: boolean): string | null {
   if (column.pk) return "PK";
   if (column.ref) return "FK";
   if (column.unique) return "UQ";
+  if (indexed) return "IX";
   if (column.notNull) return "NN";
   return null;
-}
-
-/** Top offset that vertically centers one line of text in a box of `height`. */
-function centered(height: number, fontSize: number): number {
-  return (height - fontSize * LINE_HEIGHT) / 2;
 }

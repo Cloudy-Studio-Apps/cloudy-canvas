@@ -1,6 +1,6 @@
 import { Graphics } from "pixi.js";
 
-import { relationPath } from "../../db";
+import { enumLinkPath, relationPath } from "../../db";
 import type { DbRefKind } from "../../document";
 import type { Point } from "../../geometry.types";
 import type { RelationState } from "../relation-state.types";
@@ -25,6 +25,18 @@ export class RelationLayer extends Graphics {
       drawEnd(this, path.start, path.startDir, isMany(relation.kind, "from"));
       drawEnd(this, path.end, path.endDir, isMany(relation.kind, "to"));
       this.stroke({ color: active ? highlight : color, width });
+    }
+    // Enum links are quieter: a thin line ending in a small dot on the enum's header.
+    for (const link of state.enumLinks) {
+      const path = enumLinkPath(link.table, link.row, link.target);
+      const active = state.highlighted.has(link.table.id) || state.highlighted.has(link.target.id);
+      drawRelationPath(this, path);
+      this.stroke({
+        color: active ? highlight : color,
+        width: width * 0.75,
+        alpha: active ? 1 : 0.45,
+      });
+      this.circle(path.end.x, path.end.y, 2.5 / zoom).fill({ color: active ? highlight : color });
     }
   }
 }

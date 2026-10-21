@@ -24,3 +24,30 @@ export function measureText(text: string, fontSize: number): { w: number; h: num
   }
   return { w: Math.ceil(width) + 2, h: Math.ceil(lines.length * fontSize * LINE_HEIGHT) };
 }
+
+/** Greedy word-wrap of `text` to `maxWidth`, with the resulting lines and size. */
+export function measureWrapped(
+  text: string,
+  fontSize: number,
+  maxWidth: number,
+): { lines: string[]; w: number; h: number } {
+  const ctx = getContext();
+  if (ctx) ctx.font = fontString(fontSize);
+  const width = (s: string) => (ctx ? ctx.measureText(s).width : s.length * fontSize * 0.55);
+  const lines: string[] = [];
+  for (const paragraph of text.split("\n")) {
+    let line = "";
+    for (const word of paragraph.split(/\s+/).filter(Boolean)) {
+      const next = line ? `${line} ${word}` : word;
+      if (line && width(next) > maxWidth) {
+        lines.push(line);
+        line = word;
+      } else {
+        line = next;
+      }
+    }
+    lines.push(line);
+  }
+  const w = Math.max(0, ...lines.map(width));
+  return { lines, w: Math.ceil(w) + 2, h: Math.ceil(lines.length * fontSize * LINE_HEIGHT) };
+}

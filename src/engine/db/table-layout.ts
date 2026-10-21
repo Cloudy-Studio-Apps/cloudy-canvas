@@ -19,6 +19,7 @@ const BADGE_W = 30;
 const BOLD_FACTOR = 1.08;
 /** Column handles stick out of the table edge by this much (world units at 100%). */
 export const HANDLE_SIZE = 8;
+const ENUM_MIN_W = 140;
 
 /** Width and height a table needs to show its name and columns. */
 export function tableSize(name: string, columns: readonly DbColumn[]): Size {
@@ -31,6 +32,17 @@ export function tableSize(name: string, columns: readonly DbColumn[]): Size {
   return {
     w: Math.max(DB_MIN_W, Math.ceil(w / 4) * 4),
     h: DB_HEADER_H + Math.max(columns.length, 1) * DB_ROW_H,
+  };
+}
+
+/** Width and height of an enum card. */
+export function enumSize(name: string, values: readonly { name: string }[]): Size {
+  let w = measureText(`enum ${name}`, DB_FONT_SIZE + 1).w * BOLD_FACTOR + DB_PADDING_X * 2;
+  for (const value of values)
+    w = Math.max(w, measureText(value.name, DB_FONT_SIZE).w + DB_PADDING_X * 2);
+  return {
+    w: Math.max(ENUM_MIN_W, Math.ceil(w / 4) * 4),
+    h: DB_HEADER_H + Math.max(values.length, 1) * DB_ROW_H,
   };
 }
 

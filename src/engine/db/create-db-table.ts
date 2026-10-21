@@ -1,8 +1,14 @@
 import { createId } from "@core";
 
-import { DB_HEADER_COLORS, type DbColumn, type DbTableShape } from "../document";
+import {
+  DB_ENUM_COLOR,
+  DB_HEADER_COLORS,
+  type DbColumn,
+  type DbEnumShape,
+  type DbTableShape,
+} from "../document";
 import type { Point } from "../geometry.types";
-import { tableSize } from "./table-layout";
+import { enumSize, tableSize } from "./table-layout";
 
 export function createDbColumn(
   name: string,
@@ -38,6 +44,25 @@ export function createDbTable(center: Point, name: string, index: string): DbTab
     name,
     headerColor: DB_HEADER_COLORS[0].value,
     note: "",
+    noteHidden: false,
     columns,
+    indexes: [],
+  };
+}
+
+/** A new enum with two example values, centered on `center`. */
+export function createDbEnum(center: Point, name: string, index: string): DbEnumShape {
+  const values = ["active", "inactive"].map((value) => ({ id: createId(), name: value, note: "" }));
+  const size = enumSize(name, values);
+  return {
+    id: createId(),
+    type: "db-enum",
+    index,
+    x: Math.round(center.x - size.w / 2),
+    y: Math.round(center.y - size.h / 2),
+    ...size,
+    name,
+    headerColor: DB_ENUM_COLOR,
+    values,
   };
 }

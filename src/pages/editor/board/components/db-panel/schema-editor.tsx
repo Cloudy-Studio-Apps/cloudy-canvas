@@ -46,7 +46,7 @@ export function SchemaEditor() {
       )}
       <DbmlEditor
         label="Board schema DBML"
-        hint="Every table on the board. Paste a full DBML schema here to import it."
+        hint="Every table, enum and DBML sticky note on the board. Paste a full schema here to replace it; Import merges a file in."
         read={() => engine.db.schemaDbml()}
         apply={(text) => engine.db.applySchemaDbml(text)}
       />

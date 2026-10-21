@@ -30,17 +30,47 @@ export interface ParsedColumn {
   note: string;
 }
 
+export type ParsedIndexPart = { kind: "column"; column: string } | { kind: "expr"; expr: string };
+
+export interface ParsedIndex {
+  parts: ParsedIndexPart[];
+  pk: boolean;
+  unique: boolean;
+  name: string;
+  type: string;
+  note: string;
+  line: number;
+}
+
 export interface ParsedTable {
   name: string;
   alias: string | null;
   headerColor: string | null;
   note: string;
   columns: ParsedColumn[];
+  indexes: ParsedIndex[];
+  line: number;
+}
+
+export interface ParsedEnum {
+  name: string;
+  headerColor: string | null;
+  values: { name: string; note: string }[];
+  line: number;
+}
+
+/** A top-level sticky note: `Note name { '…' }`. */
+export interface ParsedNote {
+  name: string;
+  text: string;
+  headerColor: string | null;
   line: number;
 }
 
 export interface ParsedSchema {
   tables: ParsedTable[];
+  enums: ParsedEnum[];
+  notes: ParsedNote[];
   /** Inline column refs and top-level `Ref:` lines, in source order. */
   refs: ParsedRef[];
   /** Constructs that were recognized but aren't supported yet, and were skipped. */

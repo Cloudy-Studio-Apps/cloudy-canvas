@@ -1,5 +1,5 @@
-import type { DbTableShape } from "../document";
-import type { Point } from "../geometry.types";
+import { DB_HEADER_H, type DbEnumShape, type DbTableShape } from "../document";
+import type { Point, Rect } from "../geometry.types";
 import { columnAnchor } from "./table-layout";
 import type { TableSide } from "./table-layout.types";
 import type { RelationPath } from "./relation-path.types";
@@ -14,20 +14,7 @@ export function relationPath(
   to: DbTableShape,
   toRow: number,
 ): RelationPath {
-  let fromSide: TableSide;
-  let toSide: TableSide;
-  if (from.id === to.id) {
-    fromSide = toSide = "right";
-  } else if (from.x + from.w <= to.x) {
-    fromSide = "right";
-    toSide = "left";
-  } else if (to.x + to.w <= from.x) {
-    fromSide = "left";
-    toSide = "right";
-  } else {
-    // Overlapping horizontally: loop out on the side both tables are closest to.
-    fromSide = toSide = from.x + from.w / 2 <= to.x + to.w / 2 ? "left" : "right";
-  }
+  const [fromSide, toSide] = facingSides(from, to, from.id === to.id);
   return pathBetween(
     columnAnchor(from, fromRow, fromSide),
     fromSide,
@@ -62,4 +49,24 @@ function pathBetween(
     startDir,
     endDir,
   };
+}
+
+/** Path from a column row to the header of the enum it's typed with. */
+export function enumLinkPath(table: DbTableShape, row: number, target: DbEnumShape): RelationPath {
+  const [fromSide, toSide] = facingSides(table, target, false);
+  const end = {
+    x: toSide === "left" ? target.x : target.x + target.w,
+    y: target.y + DB_HEADER_H / 2,
+  };
+  return pathBetween(columnAnchor(table, row, fromSide), fromSide, end, toSide, false);
+}
+
+/** The sides of two boxes that face each other (both right for a box linked to itself). */
+function facingSides(from: Rect, to: Rect, self: boolean): [TableSide, TableSide] {
+  if (self) return ["right", "right"];
+  if (from.x + from.w <= to.x) return ["right", "left"];
+  if (to.x + to.w <= from.x) return ["left", "right"];
+  // Overlapping horizontally: loop out on the side both boxes are closest to.
+  const side: TableSide = from.x + from.w / 2 <= to.x + to.w / 2 ? "left" : "right";
+  return [side, side];
 }

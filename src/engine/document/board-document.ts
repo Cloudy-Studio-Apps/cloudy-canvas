@@ -1,11 +1,14 @@
 import * as Y from "yjs";
 import { generateKeyBetween } from "fractional-indexing";
 
+import { fillShapeDefaults } from "./fill-shape-defaults";
 import type { Shape, ShapePatch } from "./shapes.types";
 import type { ShapeMap, DocumentChange } from "./board-document.types";
 
 /** Origin tag for local edits, so the undo manager only tracks this client's changes. */
 export const LOCAL_ORIGIN = Symbol("local");
+/** Origin for view-state edits (e.g. hiding a note) that shouldn't be undo steps. */
+export const UI_ORIGIN = Symbol("ui");
 
 /**
  * The board content, backed by a Yjs doc so persistence and real-time collaboration can plug in later.
@@ -70,6 +73,17 @@ export class BoardDocument {
         if (value !== undefined && map.get(key) !== value) map.set(key, value);
       }
     });
+  }
+
+  /** Like `update`, but not recorded in the undo history. */
+  updateUntracked(id: string, patch: ShapePatch): void {
+    const map = this.shapes.get(id);
+    if (!map) return;
+    this.doc.transact(() => {
+      for (const [key, value] of Object.entries(patch)) {
+        if (value !== undefined && map.get(key) !== value) map.set(key, value);
+      }
+    }, UI_ORIGIN);
   }
 
   updateMany(patches: Map<string, ShapePatch>): void {
@@ -160,7 +174,7 @@ export class BoardDocument {
 }
 
 function readShape(map: ShapeMap): Shape {
-  return map.toJSON() as Shape;
+  return fillShapeDefaults(map.toJSON() as Shape);
 }
 
 export function compareByIndex(a: Shape, b: Shape): number {

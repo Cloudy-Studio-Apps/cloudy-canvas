@@ -39,6 +39,8 @@ export interface ToolOptions {
   connectorStartHead: ArrowHead;
   connectorEndHead: ArrowHead;
   sectionColor: string;
+  /** What the DB tool places. */
+  dbKind: "table" | "enum";
 }
 
 /** What tools can do to the engine. */

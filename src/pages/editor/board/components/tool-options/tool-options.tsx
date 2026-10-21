@@ -3,6 +3,7 @@ import type { ComponentType } from "react";
 import type { ShapeType, ToolId } from "@engine";
 import { useEngineState } from "../../engine/engine-context";
 import { ConnectorOptions } from "./connector-options";
+import { DbOptions } from "./db-options";
 import { MarkerOptions } from "./marker-options";
 import { SectionOptions } from "./section-options";
 import { ShapeOptions } from "./shape-options";
@@ -15,6 +16,7 @@ const OPTION_PANELS: Partial<Record<ToolId, ComponentType>> = {
   shape: ShapeOptions,
   connector: ConnectorOptions,
   section: SectionOptions,
+  db: DbOptions,
 };
 
 /** With the select tool, the panel for the selection's type (when it's all one restylable type). */

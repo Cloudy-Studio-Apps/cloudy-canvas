@@ -1,4 +1,5 @@
 import type { SectionShape, Shape } from "./document/shapes.types";
+import { noteBubbleLayout } from "./db/note-bubble";
 import { sectionTitleRect } from "./sections/section-title";
 import { distanceToSegmentSq, rectContainsPoint } from "./geometry";
 import type { Point, Rect } from "./geometry.types";
@@ -13,6 +14,11 @@ export function shapeBounds(shape: Shape): Rect {
 /** Whether a world point hits the shape. `tolerance` is in world units. */
 export function hitTestShape(shape: Shape, p: Point, tolerance: number): boolean {
   if (shape.type === "section") return hitTestSection(shape, p, tolerance);
+  if (shape.type === "db-table") {
+    // A table's note bubble belongs to it: clicking the bubble selects (and drags) the table.
+    const bubble = noteBubbleLayout(shape)?.bubble;
+    if (bubble && rectContainsPoint(bubble, p, tolerance)) return true;
+  }
   if (!rectContainsPoint(shapeBounds(shape), p, tolerance)) return false;
   if (shape.type !== "stroke" && shape.type !== "connector") return true;
 

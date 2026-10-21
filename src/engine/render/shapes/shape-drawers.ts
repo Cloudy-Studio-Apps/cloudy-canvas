@@ -1,5 +1,6 @@
 import type { Shape, ShapeType } from "../../document";
 import { drawConnector } from "./draw-connector";
+import { drawDbEnum } from "./draw-db-enum";
 import { drawDbTable } from "./draw-db-table";
 import { drawGeo } from "./draw-geo";
 import { drawSection } from "./draw-section";
@@ -15,6 +16,7 @@ const DRAWERS: { [K in ShapeType]: ShapeDrawer<Extract<Shape, { type: K }>> } = 
   text: drawText,
   stroke: drawStroke,
   "db-table": drawDbTable,
+  "db-enum": drawDbEnum,
   geo: drawGeo,
   connector: drawConnector,
   section: drawSection,
