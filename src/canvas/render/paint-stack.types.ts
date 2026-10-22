@@ -1,12 +1,26 @@
-import type { Graphics } from "pixi.js";
+import type { FillStyle, Graphics } from "pixi.js";
+
+import type { Gradient } from "../gradient";
 
 import type { Rect } from "../geometry.types";
 import type { ImageFit } from "./element-view.types";
 
-/** A vector paint (a fill or a stroke): `draw` traces and paints it into `g` (already cleared). */
+/** What a vector paint can paint with besides flat colors. */
+export interface PaintTools {
+  /**
+   * A fill (or, spread into a stroke, a stroke) of `gradient` laid on `box` (local coordinates),
+   * at `alpha`. Its texture is kept while the layer shows it.
+   */
+  gradient(gradient: Gradient, box: Rect, alpha: number): FillStyle;
+}
+
+/**
+ * A vector paint (a fill or a stroke): `draw` traces and paints it into `g` (already cleared),
+ * with `tools` for gradients.
+ */
 export interface ShapePaintLayer {
   kind: "shape";
-  draw(g: Graphics): void;
+  draw(g: Graphics, tools: PaintTools): void;
 }
 
 /** An image asset fitted into `box` (local coordinates) and clipped to the outline `mask` traces. */

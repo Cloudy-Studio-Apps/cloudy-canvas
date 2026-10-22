@@ -47,6 +47,8 @@ export interface FigPaint {
   opacity?: number;
   visible?: boolean;
   stops?: { color?: FigColor; position?: number }[];
+  /** A gradient's placement: Figma's `gradientTransform`, from the layer's 0–1 box. */
+  transform?: FigMatrix;
   image?: { hash?: Uint8Array };
   imageThumbnail?: { hash?: Uint8Array };
   imageScaleMode?: string;

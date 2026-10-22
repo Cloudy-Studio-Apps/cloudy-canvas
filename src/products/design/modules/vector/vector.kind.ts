@@ -11,6 +11,7 @@ import {
 import {
   DesignNodeKind,
   drawPaints,
+  flipPaints,
   flipPlacement,
   hitSegment,
   insideRegion,
@@ -124,7 +125,7 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
         across ? { x: v.x + el.w, y: v.y } : { x: v.x, y: v.y + el.h },
       ),
     };
-    return { ...flipPlacement(el, axis, at), network };
+    return { ...flipPlacement(el, axis, at), network, ...flipPaints(el, axis) };
   }
 
   override completePatch(

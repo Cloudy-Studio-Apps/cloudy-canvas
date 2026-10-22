@@ -17,6 +17,7 @@ import { applyNodeSpec } from "./apply-node-spec";
 import { checkNodePatch } from "./check-node-patch";
 import type { DesignNode } from "./design-node.types";
 import type { NodeBuildContext } from "./node-build.types";
+import { flipPaints } from "./flip-paints";
 import { flipPlacement } from "./flip-placement";
 import type { FlipAxis } from "./flip.types";
 import { NODE_DEFAULTS } from "./node.defaults";
@@ -95,7 +96,9 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
    */
   flip(el: E, axis: FlipAxis, at: number): ElementPatch<E> {
     const placement = flipPlacement(el, axis, at);
-    if (axis === "x" || this.symmetricVertically) return placement as ElementPatch<E>;
+    if (axis === "x" || this.symmetricVertically) {
+      return { ...placement, ...flipPaints(el, axis) } as ElementPatch<E>;
+    }
     // Upside down: half a turn round its middle mirrors a shape symmetric left to right.
     const placed = { ...el, ...placement };
     const middle = rotatePoint(
@@ -103,7 +106,12 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
       placed,
       placed.rotation ?? 0,
     );
-    return { ...placement, ...this.rotate(placed, 180, middle) } as ElementPatch<E>;
+    // Turned half round, its box is mirrored left to right where the shape looks mirrored.
+    return {
+      ...placement,
+      ...this.rotate(placed, 180, middle),
+      ...flipPaints(el, "x"),
+    } as ElementPatch<E>;
   }
 
   /** Scaled (the Scale tool): its geometry as the kind scales it, and its stroke weight. */

@@ -23,13 +23,14 @@ export function checkNodePatch<E extends DesignNode>(
   if ("strokeWeight" in patch && !((patch.strokeWeight ?? -1) >= 0)) {
     throw new Error('"strokeWeight" must be a number of at least 0.');
   }
+  const size = { w: patch.w ?? el.w, h: patch.h ?? el.h };
   if ("fills" in patch) {
     if (!kind.fillable) throw new Error(`A ${kind.label} has no fill: change its strokes.`);
-    next.fills = readPaints(patch.fills, "fills", kind.imageFills);
+    next.fills = readPaints(patch.fills, "fills", kind.imageFills, size);
   }
   if ("strokes" in patch) {
     if (!kind.strokable) throw new Error(`A ${kind.label} can't have strokes.`);
-    next.strokes = readPaints(patch.strokes, "strokes", false);
+    next.strokes = readPaints(patch.strokes, "strokes", false, size);
   }
   if ("parentId" in patch) next.parentId = checkParent(el, kind, patch.parentId, context);
   if ("rotation" in patch) {

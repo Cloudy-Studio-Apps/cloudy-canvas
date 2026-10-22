@@ -1,3 +1,5 @@
+import type { Gradient } from "@canvas";
+
 /** A flat color. */
 export interface SolidPaint {
   type: "solid";
@@ -22,5 +24,15 @@ export interface ImagePaint {
   visible: boolean;
 }
 
-/** How a node's fill or stroke is painted. Gradients come later. */
-export type Paint = SolidPaint | ImagePaint;
+/** A gradient (linear, radial, angular or diamond) laid on the node's box. */
+export interface GradientPaint extends Gradient {
+  /** 0–1. */
+  opacity: number;
+  visible: boolean;
+}
+
+/** How a node's fill or stroke is painted. */
+export type Paint = SolidPaint | ImagePaint | GradientPaint;
+
+/** The kinds of paint (`Paint["type"]`). */
+export type PaintType = Paint["type"];

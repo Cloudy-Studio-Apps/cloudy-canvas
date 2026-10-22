@@ -1,8 +1,10 @@
 import { CHECKERBOARD } from "@canvas-ui";
+import { isGradientPaint } from "@design";
+import { gradientPreviewCss } from "../paint-picker/gradient-preview";
 import { useAssetUrl } from "../../hooks";
 import type { PaintSwatchProps } from "./paint-field.types";
 
-/** A paint's small preview: its color, or its image cropped to the square. */
+/** A paint's small preview: its color, its gradient, or its image cropped to the square. */
 export function PaintSwatch({ paint }: PaintSwatchProps) {
   const url = useAssetUrl(paint.type === "image" ? paint.assetId : null);
   return (
@@ -15,7 +17,9 @@ export function PaintSwatch({ paint }: PaintSwatchProps) {
         style={
           paint.type === "solid"
             ? { backgroundColor: paint.color, opacity: paint.opacity }
-            : { backgroundImage: url ? `url("${url}")` : undefined, opacity: paint.opacity }
+            : isGradientPaint(paint)
+              ? { backgroundImage: gradientPreviewCss(paint), opacity: paint.opacity }
+              : { backgroundImage: url ? `url("${url}")` : undefined, opacity: paint.opacity }
         }
       />
     </span>

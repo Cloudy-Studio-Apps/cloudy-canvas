@@ -57,6 +57,8 @@ export function PaintListSection({
               paint={paint}
               label={label}
               allowImage={allowImage}
+              target={{ field, index: i }}
+              size={nodes.length === 1 && nodes[0] ? { w: nodes[0].w, h: nodes[0].h } : undefined}
               onChange={(next, info) =>
                 setPaints((current) => current.map((p, j) => (j === i ? next : p)), info)
               }

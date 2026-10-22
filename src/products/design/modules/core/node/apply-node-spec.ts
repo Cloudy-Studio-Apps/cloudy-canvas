@@ -13,7 +13,7 @@ import { colorPaints, readPaints } from "./paint-args";
 
 /**
  * A new node with what every node takes from an agent's spec: `name`, `visible`, `opacity`,
- * `fills` (or a `fill` color), `strokes` (or a `stroke` color), `strokeWeight` and `rotation`
+ * `fills` (or a `fill` color or CSS gradient), `strokes` (or a `stroke` one), `strokeWeight` and `rotation`
  * (degrees counterclockwise round its top-left corner; a line's ends turn instead).
  */
 export function applyNodeSpec<E extends DesignNode>(
@@ -28,11 +28,12 @@ export function applyNodeSpec<E extends DesignNode>(
   const visible = optionalBoolean(args, "visible");
   if (visible !== undefined) next.visible = visible;
   if (args.opacity !== undefined) next.opacity = fraction(args.opacity, "opacity");
+  const size = { w: node.w, h: node.h };
   const fills =
     args.fills !== undefined
-      ? readPaints(args.fills, "fills", kind.imageFills)
+      ? readPaints(args.fills, "fills", kind.imageFills, size)
       : spec.fill !== undefined
-        ? colorPaints(spec.fill, "fill")
+        ? colorPaints(spec.fill, "fill", size)
         : undefined;
   if (fills) {
     if (!kind.fillable) throw new Error(`A ${kind.label} has no fill: give it strokes.`);
@@ -40,9 +41,9 @@ export function applyNodeSpec<E extends DesignNode>(
   }
   const strokes =
     args.strokes !== undefined
-      ? readPaints(args.strokes, "strokes", false)
+      ? readPaints(args.strokes, "strokes", false, size)
       : spec.stroke !== undefined
-        ? colorPaints(spec.stroke, "stroke")
+        ? colorPaints(spec.stroke, "stroke", size)
         : undefined;
   if (strokes) {
     if (!kind.strokable) throw new Error(`A ${kind.label} can't have strokes.`);

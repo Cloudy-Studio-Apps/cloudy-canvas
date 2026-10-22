@@ -40,6 +40,7 @@ export type {
   ImagePaintLayer,
   PaintLayer,
   PaintStackOptions,
+  PaintTools,
   ShapePaintLayer,
 } from "./render";
 export type { CanvasPointer, Tool, ToolContext } from "./tools";
@@ -54,6 +55,7 @@ export { decodeCanvasFile, encodeCanvasFile } from "./file";
 export * from "./agent";
 export * from "./elements";
 export * from "./geometry";
+export * from "./gradient";
 export * from "./rotation";
 export { smoothPoints } from "./smooth-points";
 export { BASE_COMMAND_LABELS, BASE_KEYBINDINGS, Keymap } from "./input";

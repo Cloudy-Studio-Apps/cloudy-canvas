@@ -13,6 +13,8 @@ export { NODE_DEFAULTS } from "./node.defaults";
 export { solidPaint } from "./solid-paint";
 export { traceBox } from "./trace-box";
 export { imagePaint } from "./image-paint";
+export { gradientPaint, isGradientPaint } from "./gradient-paint";
+export { flipPaints } from "./flip-paints";
 export { distanceToOutline, pointInPolygon, pointsInBox } from "./shape-points";
 export { BoxShapeKind } from "./box-shape.kind";
 export { PointsShapeKind } from "./points-shape.kind";

@@ -20,6 +20,7 @@ import {
 import type { DesignToolOptions } from "../../design-options.types";
 import {
   DesignNodeKind,
+  flipPaints,
   mirrorPoint,
   pointArg,
   type FlipAxis,
@@ -94,6 +95,7 @@ export class LineKind extends DesignNodeKind<LineNodeElement> {
     return {
       ...lineFromEnds(mirrorPoint(start, axis, at), mirrorPoint(end, axis, at)),
       rotation: 0,
+      ...flipPaints(el, axis),
     };
   }
 

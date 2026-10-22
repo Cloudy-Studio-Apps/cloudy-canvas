@@ -35,6 +35,7 @@ import { containerAlignTarget } from "./tree/align-target";
 import { selectionRulerFrame } from "./tree/ruler-frame";
 import { useFlipCommands } from "./ui/use-flip-commands";
 import { useViewCommands } from "./ui/use-view-commands";
+import { GradientHandles } from "./ui/gradient-handles";
 import { ScaleSidebar } from "./ui/scale-sidebar";
 import { withDescendants } from "./tree/tree-members";
 import {
@@ -165,6 +166,10 @@ export const coreModule = defineModule({
     );
 
     host.contribute(designEditor.toolSidebars, { tool: "scale", component: ScaleSidebar });
+    host.contribute(designEditor.overlays, {
+      id: "core.gradient-handles",
+      component: GradientHandles,
+    });
     host.contribute(
       designEditor.sessionHooks,
       { id: "flip-commands", use: useFlipCommands },

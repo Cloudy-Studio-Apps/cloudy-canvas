@@ -1,8 +1,15 @@
 import { Container, Graphics, Sprite, type Texture } from "pixi.js";
 
 import { fitImage } from "./fit-image";
+import { acquireGradient, gradientFillStyle, releaseGradient } from "./gradient-texture";
 import type { ImageCache } from "./image-cache";
-import type { ImagePaintLayer, PaintLayer, PaintStackOptions } from "./paint-stack.types";
+import type {
+  ImagePaintLayer,
+  PaintLayer,
+  PaintStackOptions,
+  PaintTools,
+  ShapePaintLayer,
+} from "./paint-stack.types";
 
 /** A drawn image paint: its sprite, the mask clipping it and the crop it shows. */
 class ImageSlot extends Container {
@@ -43,9 +50,31 @@ class ImageSlot extends Container {
   }
 }
 
-/** A drawn vector paint. */
+/** A drawn vector paint, holding the gradient textures it paints with. */
 class ShapeSlot extends Graphics {
   readonly kind = "shape";
+  private gradients: string[] = [];
+
+  drawLayer(layer: ShapePaintLayer): void {
+    const previous = this.gradients;
+    this.gradients = [];
+    const tools: PaintTools = {
+      gradient: (gradient, box, alpha) => {
+        const { key, texture } = acquireGradient(gradient);
+        this.gradients.push(key);
+        return gradientFillStyle(texture, box, alpha);
+      },
+    };
+    layer.draw(this.clear(), tools);
+    // Released after drawing, so a gradient drawn again isn't freed and drawn anew in between.
+    previous.forEach(releaseGradient);
+  }
+
+  override destroy(options?: Parameters<Graphics["destroy"]>[0]): void {
+    this.gradients.forEach(releaseGradient);
+    this.gradients = [];
+    super.destroy(options);
+  }
 }
 
 /**
@@ -68,7 +97,7 @@ export class PaintStack extends Container<ImageSlot | ShapeSlot> {
         this.addChildAt(slot, i);
       }
       if (layer.kind === "image") (slot as ImageSlot).draw(layer);
-      else layer.draw((slot as ShapeSlot).clear());
+      else (slot as ShapeSlot).drawLayer(layer);
     });
     for (const extra of this.children.slice(layers.length)) extra.destroy({ children: true });
   }
