@@ -4,6 +4,7 @@ import type { CanvasDocument } from "./document";
 import type { CanvasElement, ElementKinds } from "./elements";
 import type { Point, Rect } from "./geometry.types";
 import type { Keybindings } from "./input";
+import type { ElementClip } from "./render";
 import type { CanvasLinks } from "./links";
 import type { Tool, ToolContext } from "./tools";
 
@@ -35,6 +36,12 @@ export interface CanvasProduct<O extends object = object> {
    * `zOrderKey`. `elements` are the scene's, with derived geometry resolved.
    */
   orderKeys?(elements: readonly CanvasElement[]): Map<string, string>;
+  /**
+   * The world area each clipped element shows in (e.g. children of a frame that clips its
+   * content); elements left out aren't clipped. What's clipped away isn't drawn or hit.
+   * `elements` are the scene's, with derived geometry resolved.
+   */
+  clips?(elements: readonly CanvasElement[]): Map<string, ElementClip>;
   /**
    * Runs when the select tool finishes dragging elements (with their members) to a new place,
    * inside the drag's undo step: e.g. puts them into the frame they were dropped on. `elements`

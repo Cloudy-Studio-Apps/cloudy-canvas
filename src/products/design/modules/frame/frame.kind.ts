@@ -1,4 +1,11 @@
-import { rectContainsPoint, type ElementView, type Point, type Rect, type Size } from "@canvas";
+import {
+  rectContainsPoint,
+  type ElementClip,
+  type ElementView,
+  type Point,
+  type Rect,
+  type Size,
+} from "@canvas";
 
 import type { DesignToolOptions } from "../../design-options.types";
 import { BoxShapeKind } from "../core";
@@ -25,6 +32,12 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
   /** A click places a frame of the preset picked in the frame tool's panel. */
   override clickSize(options: DesignToolOptions): Size {
     return presetSize(options.framePreset);
+  }
+
+  /** With "Clip content", its children only show inside it, round corners included. */
+  override contentClip(el: FrameElement): ElementClip | null {
+    if (!el.clipsContent) return null;
+    return { rect: { x: el.x, y: el.y, w: el.w, h: el.h }, radius: el.cornerRadius };
   }
 
   draw(view: ElementView, el: FrameElement): void {

@@ -16,6 +16,7 @@ import { designEditor } from "@design/ui/modules/design-editor-points";
 import { allKinds, noNodes, someNodes } from "@design/ui/modules/section-filters";
 import { designCanvas } from "../../design-points";
 import { treeOrderKeys } from "./tree/order-keys";
+import { treeClips } from "./tree/tree-clips";
 import { prepareTreeCopies } from "./tree/prepare-tree-copies";
 import { reparentMoved } from "./tree/reparent";
 import { withDescendants } from "./tree/tree-members";
@@ -32,7 +33,7 @@ import {
 
 /**
  * What every design has whatever its modules: the canvas view (plain, pixel grid, 2%–25600%), the
- * layer tree's hooks (drawing order, members, dropping into frames, copies), the select and hand
+ * layer tree's hooks (drawing order, clipping, members, dropping into frames, copies), the select and hand
  * buttons, the properties panel's shared sections and the main menu.
  */
 export const coreModule = defineModule({
@@ -40,6 +41,7 @@ export const coreModule = defineModule({
   register(host) {
     host.contribute(designCanvas.view, { minZoom: 0.02, maxZoom: 256, grid: "pixels" });
     host.contribute(designCanvas.drawOrder, treeOrderKeys);
+    host.contribute(designCanvas.clips, treeClips);
     host.contribute(designCanvas.withMembers, (ids, elements) => withDescendants(ids, elements));
     host.contribute(designCanvas.onMoved, reparentMoved);
     host.contribute(designCanvas.prepareCopies, prepareTreeCopies);

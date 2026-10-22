@@ -6,6 +6,7 @@ export { containerAt } from "./container-at";
 export { parentFor } from "./parent-for";
 export { DESIGN_TREE, DesignTree } from "./design-tree";
 export { treeOrderKeys } from "./order-keys";
+export { treeClips } from "./tree-clips";
 export { prepareTreeCopies } from "./prepare-tree-copies";
 export { reparentMoved } from "./reparent";
 export { childrenByParent, withDescendants } from "./tree-members";

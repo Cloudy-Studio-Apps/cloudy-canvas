@@ -4,6 +4,7 @@ import { type CanvasElement, type ElementKind, type ElementTextStyle } from "../
 import type { Rect } from "../geometry.types";
 import { fitImage } from "./fit-image";
 import type { ImageCache } from "./image-cache";
+import type { ElementClip } from "./layer-placement.types";
 import { PaintStack } from "./paint-stack";
 import type { PaintLayer, PaintStackOptions } from "./paint-stack.types";
 import { canvasTextStyle } from "./text-style";
@@ -19,7 +20,7 @@ const iconContexts = new Map<string, GraphicsContext>();
 /** Pixi display object for one element. Redrawn in place by its kind whenever the element changes. */
 export class ElementView extends Container {
   readonly elementId: string;
-  /** Drawing order key (see `OrderKeyOf`). */
+  /** Drawing order key (see `LayerPlacement`). */
   order: string;
   readonly graphics = new Graphics();
   private textNode: Text | null = null;
@@ -33,6 +34,8 @@ export class ElementView extends Container {
   private textResolution = 1;
   private image: Sprite | null = null;
   private paintStack: PaintStack | null = null;
+  /** The mask of the area the element is clipped to (see `setClip`). */
+  private clipMask: Graphics | null = null;
   /** The image asset the view shows, and the box it's fitted into (local coordinates). */
   private imageAsset: string | null = null;
   private imageBox: Rect = { x: 0, y: 0, w: 0, h: 0 };
@@ -141,6 +144,32 @@ export class ElementView extends Container {
       this.addChildAt(this.paintStack, this.getChildIndex(this.graphics) + 1);
     }
     this.paintStack.set(layers, options);
+  }
+
+  /**
+   * Clips the element to a world area (e.g. the frame holding it, when that frame clips its
+   * content); `null` shows all of it. Call it after `sync`, which places the view.
+   */
+  setClip(clip: ElementClip | null): void {
+    if (!clip) {
+      if (!this.clipMask) return;
+      this.mask = null;
+      this.clipMask.destroy();
+      this.clipMask = null;
+      return;
+    }
+    if (!this.clipMask) {
+      this.clipMask = new Graphics();
+      this.addChild(this.clipMask);
+      this.mask = this.clipMask;
+    }
+    const { x, y, w, h } = clip.rect;
+    const local = { x: x - this.bounds.x, y: y - this.bounds.y };
+    const radius = Math.min(clip.radius, w / 2, h / 2);
+    const g = this.clipMask.clear();
+    if (radius > 0) g.roundRect(local.x, local.y, w, h, radius);
+    else g.rect(local.x, local.y, w, h);
+    g.fill({ color: 0xffffff });
   }
 
   /** Creates or updates the label stored under `key` (positioned by the caller). */

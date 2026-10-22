@@ -8,6 +8,6 @@ export { ElementView } from "./element-view";
 export { buildOverlayState } from "./overlay-state";
 export type * from "./image-cache.types";
 export { ImageCache } from "./image-cache";
-export type * from "./order-key.types";
+export type * from "./layer-placement.types";
 export type * from "./renderer.types";
 export type * from "./paint-stack.types";

@@ -3,7 +3,7 @@ import { Container, Rectangle, type Renderer as PixiRenderer } from "pixi.js";
 import type { CanvasElement, ElementKinds } from "../elements";
 import type { CanvasTheme } from "./canvas-theme.types";
 import type { ImageCache } from "./image-cache";
-import type { OrderKeyOf } from "./order-key.types";
+import type { LayerPlacement } from "./layer-placement.types";
 import { ElementLayer } from "./layers/element-layer";
 import { LinkLayer } from "./layers/link-layer";
 import type { SnapshotOptions } from "./snapshot.types";
@@ -19,14 +19,14 @@ export async function drawSnapshot(
   images: ImageCache,
   theme: CanvasTheme,
   elements: readonly CanvasElement[],
-  orderOf: OrderKeyOf,
+  placement: LayerPlacement,
   { rect, scale, background, links }: SnapshotOptions,
 ): Promise<HTMLCanvasElement> {
   const assets = elements.flatMap((el) => kinds.kindOf(el).assets(el));
   await Promise.all(assets.map((id) => images.load(id)));
 
-  const frames = new ElementLayer(kinds, images, orderOf);
-  const others = new ElementLayer(kinds, images, orderOf);
+  const frames = new ElementLayer(kinds, images, placement);
+  const others = new ElementLayer(kinds, images, placement);
   const lines = new LinkLayer(links);
   const root = new Container();
   root.addChild(frames, lines, others);

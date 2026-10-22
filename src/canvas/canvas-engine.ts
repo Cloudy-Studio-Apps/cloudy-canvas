@@ -125,14 +125,19 @@ export class CanvasEngine<O extends object = object> {
       this.kinds,
       this.links,
       { read: (id) => this.doc.getAsset(id), onLoad: () => this.requestRender() },
-      { grid: view.grid, orderOf: (el, kind) => this.scene.orderKey(el, kind) },
+      {
+        grid: view.grid,
+        placement: {
+          orderOf: (el, kind) => this.scene.orderKey(el, kind),
+          clipOf: (el) => this.scene.clipOf(el),
+        },
+      },
     );
-    this.scene = new Scene(
-      this.doc,
-      this.kinds,
-      product.resolveElements?.bind(product),
-      product.orderKeys?.bind(product),
-    );
+    this.scene = new Scene(this.doc, this.kinds, {
+      resolve: product.resolveElements?.bind(product),
+      orderKeys: product.orderKeys?.bind(product),
+      clips: product.clips?.bind(product),
+    });
     this.systemClipboard = clipboard ?? new MemoryClipboard();
     this.clipboard = this.createClipboard(this.systemClipboard);
     const ctx = this.createToolContext();
@@ -734,10 +739,10 @@ export class CanvasEngine<O extends object = object> {
 
   private handleDocumentChange(change: DocumentChange): void {
     this.refreshScene();
-    // Derived geometry may follow any change, so those elements are redrawn every time; restacked
-    // ones only moved in the drawing order.
+    // Derived geometry may follow any change, so those elements are redrawn every time; replaced
+    // ones only moved in the drawing order or got a new clip.
     const changed = [
-      ...new Set([...change.updated, ...this.scene.derivedIds, ...this.scene.restackedIds]),
+      ...new Set([...change.updated, ...this.scene.derivedIds, ...this.scene.replacedIds]),
     ]
       .map((id) => this.scene.get(id))
       .filter((el): el is CanvasElement => el !== undefined);

@@ -129,3 +129,17 @@ export function fitInView(size: Size, view: Rect, fraction: number): Rect {
   const center = rectCenter(view);
   return roundRect({ x: center.x - w / 2, y: center.y - h / 2, w, h });
 }
+
+/** Where two rects overlap (empty, 0×0, when they don't meet). */
+export function intersectRects(a: Rect, b: Rect): Rect {
+  const x = Math.max(a.x, b.x);
+  const y = Math.max(a.y, b.y);
+  const w = Math.max(0, Math.min(a.x + a.w, b.x + b.w) - x);
+  const h = Math.max(0, Math.min(a.y + a.h, b.y + b.h) - y);
+  return { x, y, w, h };
+}
+
+/** Whether two rects are the same. */
+export function rectsEqual(a: Rect, b: Rect): boolean {
+  return a.x === b.x && a.y === b.y && a.w === b.w && a.h === b.h;
+}

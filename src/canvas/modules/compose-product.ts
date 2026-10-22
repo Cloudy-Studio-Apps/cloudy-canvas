@@ -28,10 +28,9 @@ export function composeProduct<O extends object>(
   const textPasters = host.get(points.pasteText);
   const imagePasters = host.get(points.pasteImage);
   const links = host.get(points.links);
-  const orders = host.get(points.drawOrder);
   const movers = host.get(points.onMoved);
-  if (orders.length > 1) throw new Error(`Only one module can give the ${id}'s drawing order.`);
-  const order = orders[0];
+  const order = single(host.get(points.drawOrder), `the ${id}'s drawing order`);
+  const clips = single(host.get(points.clips), `the ${id}'s clips`);
 
   return {
     id,
@@ -47,6 +46,7 @@ export function composeProduct<O extends object>(
     defaultOptions: mergeOptions<O>(host.get(points.options), "tool option"),
     view: mergeOptions<Partial<CanvasViewOptions>>(host.get(points.view), "view option"),
     ...(order ? { orderKeys: (elements) => order(elements, kinds) } : {}),
+    ...(clips ? { clips: (elements) => clips(elements, kinds) } : {}),
     ...(movers.length > 0
       ? {
           onMoved: (doc, moved, elements) => {
@@ -129,4 +129,10 @@ function mergeOptions<O extends object>(all: readonly Partial<O>[], what: string
   }
   // Each module gives the values it owns; together they're the whole set.
   return merged as O;
+}
+
+/** The one contribution to a point only one module may fill (`what` names it in the error). */
+function single<T>(items: readonly T[], what: string): T | undefined {
+  if (items.length > 1) throw new Error(`Only one module can give ${what}.`);
+  return items[0];
 }

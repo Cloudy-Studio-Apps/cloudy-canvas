@@ -1,4 +1,10 @@
-import { BoxKind, type ElementDescription, type ElementView, type Point } from "@canvas";
+import {
+  BoxKind,
+  type ElementClip,
+  type ElementDescription,
+  type ElementView,
+  type Point,
+} from "@canvas";
 
 import type { DesignToolOptions } from "../../../design-options.types";
 import type { DesignNode } from "./design-node.types";
@@ -21,6 +27,14 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
    * topmost one under them; moving or deleting it takes its children along.
    */
   readonly container: boolean = false;
+  /**
+   * The area its children show in, when it clips them (a frame with "Clip content"), in world
+   * units; `null` lets them overflow.
+   */
+  contentClip(_el: E): ElementClip | null {
+    return null;
+  }
+
   /** Whether it has an inside to fill (lines don't: they only show strokes). */
   readonly fillable: boolean = true;
 

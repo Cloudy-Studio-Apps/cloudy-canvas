@@ -29,6 +29,7 @@ export type { CanvasLinks, Guide, GuideView, LinkView } from "./links";
 export type {
   CanvasTextOptions,
   CanvasTheme,
+  ElementClip,
   ImageFit,
   ImagePaintLayer,
   PaintLayer,

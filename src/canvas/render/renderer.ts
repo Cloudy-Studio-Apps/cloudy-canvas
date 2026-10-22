@@ -48,8 +48,8 @@ export class Renderer {
     this.images = new ImageCache(images);
     this.links = new LinkLayer(links);
     this.grid = createGridLayer(options.grid);
-    this.elements = new ElementLayer(kinds, this.images, options.orderOf);
-    this.frames = new ElementLayer(kinds, this.images, options.orderOf);
+    this.elements = new ElementLayer(kinds, this.images, options.placement);
+    this.frames = new ElementLayer(kinds, this.images, options.placement);
     this.draft = new DraftLayer(kinds, this.images);
   }
 
@@ -164,7 +164,7 @@ export class Renderer {
       this.images,
       this.theme,
       elements,
-      this.options.orderOf,
+      this.options.placement,
       options,
     );
   }

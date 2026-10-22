@@ -5,6 +5,7 @@ import type { CanvasViewOptions } from "../canvas-view.types";
 import type { CanvasDocument } from "../document";
 import type { CanvasElement, ElementKind, ElementKinds } from "../elements";
 import type { Keybindings } from "../input";
+import type { ElementClip } from "../render";
 import type { CanvasLinks } from "../links";
 import type { Tool, ToolContext } from "../tools";
 
@@ -43,6 +44,12 @@ export type DrawOrderHook<O extends object> = (
   kinds: ElementKinds<O>,
 ) => Map<string, string>;
 
+/** See `CanvasProduct.clips`; only one module may give the clips. */
+export type ClipsHook<O extends object> = (
+  elements: readonly CanvasElement[],
+  kinds: ElementKinds<O>,
+) => Map<string, ElementClip>;
+
 /** See `CanvasProduct.onMoved`; hooks run one after another in module order. */
 export type OnMovedHook<O extends object> = (
   doc: CanvasDocument,
@@ -73,6 +80,8 @@ export interface CanvasPoints<O extends object> {
   view: ExtensionPoint<Partial<CanvasViewOptions>>;
   /** The drawing order (one module at most; two throw). */
   drawOrder: ExtensionPoint<DrawOrderHook<O>>;
+  /** What clips each element (one module at most; two throw). */
+  clips: ExtensionPoint<ClipsHook<O>>;
   onMoved: ExtensionPoint<OnMovedHook<O>>;
   links: ExtensionPoint<() => CanvasLinks>;
   resolveElements: ExtensionPoint<ResolveElementsHook<O>>;

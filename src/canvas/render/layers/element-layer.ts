@@ -1,14 +1,15 @@
 import { Container } from "pixi.js";
 
-import { zOrderKey, type CanvasElement, type ElementKinds } from "../../elements";
+import type { CanvasElement, ElementKinds } from "../../elements";
 import type { HiddenText } from "../element-view.types";
 import { ElementView } from "../element-view";
 import { entranceAt } from "../entrance";
 import type { ImageCache } from "../image-cache";
-import type { OrderKeyOf } from "../order-key.types";
+import { DEFAULT_PLACEMENT } from "../layer-placement";
+import type { LayerPlacement } from "../layer-placement.types";
 import { textResolution } from "../text-resolution";
 
-/** Keeps one ElementView per element, in drawing order (see `OrderKeyOf`). */
+/** Keeps one ElementView per element, in drawing order and clipped (see `LayerPlacement`). */
 export class ElementLayer extends Container<ElementView> {
   private readonly views = new Map<string, ElementView>();
   private hiddenText: HiddenText | null = null;
@@ -20,7 +21,7 @@ export class ElementLayer extends Container<ElementView> {
   constructor(
     private readonly kinds: ElementKinds,
     private readonly images: ImageCache,
-    private readonly orderOf: OrderKeyOf = zOrderKey,
+    private readonly placement: LayerPlacement = DEFAULT_PLACEMENT,
   ) {
     super();
   }
@@ -37,7 +38,8 @@ export class ElementLayer extends Container<ElementView> {
       if (view) {
         const order = view.order;
         const kind = this.kinds.kindOf(el);
-        view.sync(el, kind, this.orderOf(el, kind));
+        view.sync(el, kind, this.placement.orderOf(el, kind));
+        view.setClip(this.placement.clipOf(el));
         if (view.order !== order) this.place(view);
       } else {
         this.add(el);
@@ -100,7 +102,8 @@ export class ElementLayer extends Container<ElementView> {
 
   private add(el: CanvasElement): void {
     const kind = this.kinds.kindOf(el);
-    const view = new ElementView(el, kind, this.images, this.orderOf(el, kind));
+    const view = new ElementView(el, kind, this.images, this.placement.orderOf(el, kind));
+    view.setClip(this.placement.clipOf(el));
     view.setTextResolution(this.textResolution);
     if (this.hiddenText?.id === el.id) this.showText(view, this.hiddenText);
     if (this.faded.has(el.id)) view.setFaded(true);

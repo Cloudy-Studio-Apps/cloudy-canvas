@@ -1,8 +1,15 @@
 import type { CanvasDocument } from "./document";
 import { zOrderKey, type CanvasElement, type ElementKind, type ElementKinds } from "./elements";
-import { rectContainsRect, rectsIntersect, unionRects } from "./geometry";
+import {
+  rectContainsPoint,
+  rectContainsRect,
+  rectsEqual,
+  rectsIntersect,
+  unionRects,
+} from "./geometry";
 import type { Point, Rect } from "./geometry.types";
-import { buildOverlayState, type OverlayState } from "./render";
+import { buildOverlayState, type ElementClip, type OverlayState } from "./render";
+import type { SceneHooks } from "./scene.types";
 import { Selection } from "./selection";
 
 /**
@@ -15,17 +22,15 @@ export class Scene {
   private byId = new Map<string, CanvasElement>();
   private derived: string[] = [];
   private keys = new Map<string, string>();
-  private restacked: string[] = [];
+  private clips = new Map<string, ElementClip>();
+  private replaced: string[] = [];
   private hoverId: string | null = null;
   marquee: Rect | null = null;
 
   constructor(
     private readonly doc: CanvasDocument,
     private readonly kinds: ElementKinds,
-    /** The product's `resolveElements`, if any. */
-    private readonly resolve?: (elements: CanvasElement[]) => CanvasElement[],
-    /** The product's `orderKeys`, if any (otherwise `zOrderKey`). */
-    private readonly orderKeys?: (elements: readonly CanvasElement[]) => Map<string, string>,
+    private readonly hooks: SceneHooks = {},
   ) {}
 
   /** Elements sorted bottom-to-top. */
@@ -39,17 +44,22 @@ export class Scene {
    */
   refresh(): void {
     const raw = this.doc.all();
-    const resolved = this.resolve ? this.resolve(raw) : raw;
+    const resolved = this.hooks.resolve ? this.hooks.resolve(raw) : raw;
     this.derived = resolved.filter((el, i) => el !== raw[i]).map((el) => el.id);
-    const custom = this.orderKeys?.(resolved);
+    const custom = this.hooks.orderKeys?.(resolved);
     const keys = new Map(
       resolved.map((el) => [el.id, custom?.get(el.id) ?? zOrderKey(el, this.kinds.kindOf(el))]),
     );
-    // Without a custom order, a key only changes with its own element, which is redrawn anyway.
-    this.restacked = custom
-      ? [...keys].filter(([id, key]) => this.keys.get(id) !== key).map(([id]) => id)
-      : [];
+    const clips = this.hooks.clips?.(resolved) ?? new Map<string, ElementClip>();
+    // Without these hooks, a key only changes with its own element, which is redrawn anyway.
+    const replaced = new Set<string>();
+    if (custom) for (const [id, key] of keys) if (this.keys.get(id) !== key) replaced.add(id);
+    for (const id of new Set([...clips.keys(), ...this.clips.keys()])) {
+      if (!sameClip(clips.get(id), this.clips.get(id))) replaced.add(id);
+    }
+    this.replaced = [...replaced];
     this.keys = keys;
+    this.clips = clips;
     this.list = resolved.sort((a, b) => {
       const ka = keys.get(a.id)!;
       const kb = keys.get(b.id)!;
@@ -64,11 +74,17 @@ export class Scene {
   }
 
   /**
-   * Ids whose drawing order changed in the last refresh although the element itself may not have
-   * (e.g. a node whose parent moved in the product's `orderKeys`), so their views are restacked.
+   * Ids whose drawing order or clip changed in the last refresh although the element itself may
+   * not have (e.g. a node whose frame moved in the order, or was resized), so their views are
+   * placed again.
    */
-  get restackedIds(): readonly string[] {
-    return this.restacked;
+  get replacedIds(): readonly string[] {
+    return this.replaced;
+  }
+
+  /** What clips an element (the product's `clips`), or `null`. */
+  clipOf(el: CanvasElement): ElementClip | null {
+    return this.clips.get(el.id) ?? null;
   }
 
   /** An element's drawing order key (elements not in the scene, like drafts, get `zOrderKey`). */
@@ -88,6 +104,9 @@ export class Scene {
     for (let i = this.list.length - 1; i >= 0; i--) {
       const el = this.list[i]!;
       if (el.locked && !includeLocked) continue;
+      // What's clipped away can't be clicked.
+      const clip = this.clips.get(el.id);
+      if (clip && !rectContainsPoint(clip.rect, world, tolerance)) continue;
       if (this.kinds.kindOf(el).hitTest(el, world, tolerance)) return el;
     }
     return undefined;
@@ -134,4 +153,9 @@ export class Scene {
       zoom,
     });
   }
+}
+
+function sameClip(a: ElementClip | undefined, b: ElementClip | undefined): boolean {
+  if (!a || !b) return a === b;
+  return a.radius === b.radius && rectsEqual(a.rect, b.rect);
 }
