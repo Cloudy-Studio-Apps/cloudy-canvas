@@ -1,11 +1,42 @@
+import { BASE_COMMAND_LABELS } from "@canvas";
+
 import type {
+  ContextMenuAction,
   ContextMenuContext,
   ContextMenuGroup,
   ContextMenuItem,
+  ContextMenuSubmenu,
 } from "./context-menu-items.types";
 
 const hasSelection = ({ selectionCount }: ContextMenuContext) => selectionCount > 0;
 const unlockAll: ContextMenuItem = { command: "unlockAll", enabled: ({ anyLocked }) => anyLocked };
+
+const ALIGN_COMMANDS = [
+  "alignLeft",
+  "alignCenterX",
+  "alignRight",
+  "alignTop",
+  "alignCenterY",
+  "alignBottom",
+] as const;
+
+/** Align (one element with what holds it, or several), distribute and tidy up the selection. */
+const arrangeSubmenu: ContextMenuSubmenu = {
+  id: "arrange",
+  label: "Align",
+  actions: (engine, { selectionCount }) => {
+    const ids = engine.selectedIds();
+    const run = (command: keyof typeof BASE_COMMAND_LABELS): ContextMenuAction => ({
+      label: BASE_COMMAND_LABELS[command],
+      run: () => engine.commands[command]?.(),
+    });
+    return [
+      ...(engine.canAlign(ids) ? ALIGN_COMMANDS.map(run) : []),
+      ...(selectionCount >= 3 ? [run("distributeHorizontal"), run("distributeVertical")] : []),
+      ...(selectionCount >= 2 ? [run("tidyUp")] : []),
+    ];
+  },
+};
 
 /** The menu of a right-click on elements (they're selected first). */
 export const SELECTION_MENU: readonly ContextMenuGroup[] = [
@@ -21,6 +52,7 @@ export const SELECTION_MENU: readonly ContextMenuGroup[] = [
     { command: "copyAsPng", enabled: hasSelection },
     { command: "export", label: "Export selection…", enabled: hasSelection },
   ],
+  [arrangeSubmenu],
   [
     { command: "bringToFront", enabled: hasSelection },
     { command: "bringForward", enabled: hasSelection },

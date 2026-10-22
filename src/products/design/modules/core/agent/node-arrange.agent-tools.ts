@@ -1,6 +1,17 @@
-import { optionalBoolean, optionalChoice, stringList, type ReorderDirection } from "@canvas";
+import {
+  arrangeTools,
+  optionalBoolean,
+  optionalChoice,
+  stringList,
+  type ReorderDirection,
+} from "@canvas";
 
-import { requireDesign, requireNodes, type DesignAgentTool } from "../../../agent";
+import {
+  requireDesign,
+  requireNodes,
+  type DesignAgentHost,
+  type DesignAgentTool,
+} from "../../../agent";
 
 const DIRECTIONS: readonly ReorderDirection[] = ["front", "forward", "backward", "back"];
 const IDS_SCHEMA = { type: "array", items: { type: "string" } };
@@ -46,4 +57,13 @@ export const nodeArrangeTools: DesignAgentTool[] = [
       return { changed: engine.setLocked(engine.withMembers(ids, "move"), locked) };
     },
   },
+  ...arrangeTools<DesignAgentHost>({
+    noun: "nodes",
+    things: "layers",
+    holder: "the frame or section it's in",
+    resolve: (host, ids) => {
+      const { engine } = requireDesign(host);
+      return { engine, ids: requireNodes(engine, ids) };
+    },
+  }),
 ];

@@ -1,7 +1,16 @@
 import { fontKey, type Clipboard, type DroppedFile } from "@shared/core";
 
 import { Camera } from "./camera";
-import { nudgeCheckpoint } from "./arrange";
+import {
+  alignOffset,
+  arrangeItems,
+  distributeOffsets,
+  nudgeCheckpoint,
+  tidyUpOffsets,
+  type Alignment,
+  type ArrangeItem,
+  type DistributeAxis,
+} from "./arrange";
 import { DEFAULT_VIEW_OPTIONS } from "./canvas-view";
 import {
   dropFiles,
@@ -35,7 +44,7 @@ import {
 import { findInteraction } from "./find-interaction";
 import type { EngineLoading } from "./engine-loading.types";
 import type { EngineState } from "./engine-state.types";
-import { intersectRects, rectsIntersect } from "./geometry";
+import { intersectRects, rectsIntersect, unionRects } from "./geometry";
 import type { Point, Rect } from "./geometry.types";
 import { bindKeyboard, bindWheel, EdgeAutoPan, Keymap, PointerInput } from "./input";
 import { Renderer, type CanvasTheme } from "./render";
@@ -578,13 +587,80 @@ export class CanvasEngine<O extends object = object> {
    * moved ids. The caller starts the undo step.
    */
   moveElements(ids: Iterable<string>, dx: number, dy: number): string[] {
+    return this.moveElementsBy(new Map([...ids].map((id) => [id, { x: dx, y: dy }])));
+  }
+
+  /**
+   * Moves each element, with what moves with it (locked ones stay put), by its own offset.
+   * Returns the moved ids. The caller starts the undo step.
+   */
+  moveElementsBy(offsets: ReadonlyMap<string, Point>): string[] {
     const patches = new Map<string, ElementPatch>();
-    for (const id of this.withMembers(ids, "move")) {
-      const el = this.doc.get(id);
-      if (el && !el.locked) patches.set(id, this.kinds.kindOf(el).move(el, dx, dy));
+    for (const [id, { x, y }] of offsets) {
+      if (x === 0 && y === 0) continue;
+      for (const member of this.withMembers([id], "move")) {
+        const el = this.doc.get(member);
+        if (el && !el.locked) patches.set(member, this.kinds.kindOf(el).move(el, x, y));
+      }
     }
     if (patches.size > 0) this.doc.updateMany(patches);
     return [...patches.keys()];
+  }
+
+  /**
+   * Lines the selection up on an edge or center, as one undo step: elements with each other,
+   * or one element with what holds it (`CanvasProduct.alignTarget`). Returns `false` when
+   * nothing was selected.
+   */
+  alignSelection(alignment: Alignment): boolean {
+    if (this.scene.selection.size === 0) return false;
+    this.alignElements(this.scene.selection.ids, alignment);
+    return true;
+  }
+
+  /**
+   * Lines elements up as `alignSelection` does, with what moves with them. Nothing changes
+   * parent. Returns the moved ids.
+   */
+  alignElements(ids: Iterable<string>, alignment: Alignment): string[] {
+    const items = this.arrangeItems(ids);
+    const target = this.alignTargetOf(items);
+    if (!target) return [];
+    return this.arrange(
+      new Map(items.map((item) => [item.id, alignOffset(item.rect, target, alignment)])),
+    );
+  }
+
+  /** Whether these elements can be aligned: several of them, or one inside something. */
+  canAlign(ids: Iterable<string>): boolean {
+    return this.alignTargetOf(this.arrangeItems(ids)) !== null;
+  }
+
+  /** Spaces the selection out evenly on `axis` (three elements or more), as one undo step. */
+  distributeSelection(axis: DistributeAxis): boolean {
+    if (this.scene.selection.size === 0) return false;
+    this.distributeElements(this.scene.selection.ids, axis);
+    return true;
+  }
+
+  /**
+   * Spaces elements out evenly on `axis`, the first and last staying put, with what moves with
+   * them. Returns the moved ids.
+   */
+  distributeElements(ids: Iterable<string>, axis: DistributeAxis): string[] {
+    return this.arrange(distributeOffsets(this.arrangeItems(ids), axis));
+  }
+
+  /** Tidies the selection into a grid with even spacing, as one undo step. */
+  tidyUpSelection(): boolean {
+    if (this.scene.selection.size === 0) return false;
+    this.tidyUpElements(this.scene.selection.ids);
+    return true;
+  }
+
+  /** Tidies elements into rows and columns, with what moves with them. Returns the moved ids. */
+  tidyUpElements(ids: Iterable<string>): string[] {
+    return this.arrange(tidyUpOffsets(this.arrangeItems(ids)));
   }
 
   /** Adds a copy of the selection next to it and selects the copy. Returns `false` when nothing was selected. */
@@ -1159,6 +1235,29 @@ export class CanvasEngine<O extends object = object> {
 
   private setCursor(cursor: string): void {
     if (this.container) this.container.style.cursor = cursor;
+  }
+
+  private arrangeItems(ids: Iterable<string>): ArrangeItem[] {
+    return arrangeItems(ids, {
+      get: (id) => this.scene.get(id),
+      kinds: this.kinds,
+      withMembers: (members) => this.withMembers(members, "move"),
+    });
+  }
+
+  /** What items line up with: their bounds when there are several, or what holds the one. */
+  private alignTargetOf(items: readonly ArrangeItem[]): Rect | null {
+    if (items.length > 1) return unionRects(items.map((item) => item.rect));
+    const [only] = items;
+    const el = only && this.scene.get(only.id);
+    return (el && this.product.alignTarget?.(el, this.scene.elements)) ?? null;
+  }
+
+  /** Moves by these offsets as a new undo step (none when nothing moves). */
+  private arrange(offsets: ReadonlyMap<string, Point>): string[] {
+    if (![...offsets.values()].some(({ x, y }) => x !== 0 || y !== 0)) return [];
+    this.doc.checkpoint();
+    return this.moveElementsBy(offsets);
   }
 
   private setSnapFeedback(feedback: SnapFeedback | null): void {

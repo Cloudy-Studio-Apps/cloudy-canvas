@@ -63,6 +63,11 @@ export interface CanvasProduct<O extends object = object> {
     elements: readonly CanvasElement[],
   ): string;
   /**
+   * What a single element is aligned with (the align commands): the box that holds it (e.g. a
+   * design's parent frame, a board's section), or `null` when nothing does.
+   */
+  alignTarget?(el: CanvasElement, elements: readonly CanvasElement[]): Rect | null;
+  /**
    * Runs when the select tool finishes dragging elements (with their members) to a new place,
    * inside the drag's undo step: e.g. puts them into the frame they were dropped on. `elements`
    * are the scene's, after the move.

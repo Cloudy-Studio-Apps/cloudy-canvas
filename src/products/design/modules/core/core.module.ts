@@ -29,6 +29,7 @@ import { treeOrderKeys } from "./tree/order-keys";
 import { treeClips } from "./tree/tree-clips";
 import { prepareTreeCopies } from "./tree/prepare-tree-copies";
 import { reparentMoved } from "./tree/reparent";
+import { containerAlignTarget } from "./tree/align-target";
 import { withDescendants } from "./tree/tree-members";
 import {
   AppearanceSection,
@@ -60,6 +61,7 @@ export const coreModule = defineModule({
     host.contribute(designCanvas.clips, treeClips);
     host.contribute(designCanvas.withMembers, (ids, elements) => withDescendants(ids, elements));
     host.contribute(designCanvas.onMoved, reparentMoved);
+    host.contribute(designCanvas.alignTarget, containerAlignTarget);
     host.contribute(designCanvas.prepareCopies, prepareTreeCopies);
 
     host.contribute(

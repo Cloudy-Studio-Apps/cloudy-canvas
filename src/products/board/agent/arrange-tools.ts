@@ -1,7 +1,13 @@
-import { optionalBoolean, optionalChoice, stringList, type ReorderDirection } from "@canvas";
+import {
+  arrangeTools as canvasArrangeTools,
+  optionalBoolean,
+  optionalChoice,
+  stringList,
+  type ReorderDirection,
+} from "@canvas";
 
 import { requireBoard, requireShapes } from "./board-access";
-import type { BoardAgentTool } from "./board-agent.types";
+import type { AgentHost, BoardAgentTool } from "./board-agent.types";
 
 const DIRECTIONS: readonly ReorderDirection[] = ["front", "forward", "backward", "back"];
 const IDS_SCHEMA = { type: "array", items: { type: "string" } };
@@ -49,4 +55,13 @@ export const arrangeTools: BoardAgentTool[] = [
       return { changed: engine.setLocked(engine.withMembers(ids, "move"), locked) };
     },
   },
+  ...canvasArrangeTools<AgentHost>({
+    noun: "shapes",
+    things: "shapes",
+    holder: "the section it's in",
+    resolve: (host, ids) => {
+      const { engine } = requireBoard(host);
+      return { engine, ids: requireShapes(engine, ids) };
+    },
+  }),
 ];

@@ -103,7 +103,12 @@ menu; the pen tool doesn't snap yet; "Snap to guides" comes with the ruler guide
 - Design main menu → View: "Snap to objects", "Snap to pixel grid", "Snap to guides" (checkbox items;
   the `mainMenu` point needs a `checked(engine)` field). Board: "Snap to objects" in the zoom menu.
 
-## Phase 2: Align, distribute and tidy up
+## Phase 2: Align, distribute and tidy up — done
+
+As built: aligning doesn't run `onMoved` (nothing changes parent, like a nudge, as in Figma); tidy
+up is Alt+Shift+T (Ctrl+Alt+T opens a terminal on many Linux desktops); the board gets the
+context menu's Align submenu and the agent tools, not a panel; tidy up also has agent tools
+(`tidy_up_nodes`, `tidy_up_shapes`); no "spacing" field.
 
 - Move the math to the engine: `canvas/arrange/align.ts` (from `modules/core/ui/sections/align.ts`),
   plus `distribute.ts` (equal **spacing** horizontally/vertically, keeping the outermost two in place,

@@ -6,6 +6,7 @@ import type { CanvasDocument } from "../document";
 import type { CanvasElement, ElementKind, ElementKinds } from "../elements";
 import type { Keybindings } from "../input";
 import type { ElementClip } from "../render";
+import type { Rect } from "../geometry.types";
 import type { CanvasLinks } from "../links";
 import type { Tool, ToolContext } from "../tools";
 
@@ -58,6 +59,13 @@ export type SelectTargetHook<O extends object> = (
   kinds: ElementKinds<O>,
 ) => string;
 
+/** See `CanvasProduct.alignTarget`; only one module may decide it. */
+export type AlignTargetHook<O extends object> = (
+  el: CanvasElement,
+  elements: readonly CanvasElement[],
+  kinds: ElementKinds<O>,
+) => Rect | null;
+
 /** See `CanvasProduct.editElement`; only one module may give it. */
 export type EditElementHook<O extends object> = (el: CanvasElement, ctx: ToolContext<O>) => boolean;
 
@@ -97,6 +105,8 @@ export interface CanvasPoints<O extends object> {
   clips: ExtensionPoint<ClipsHook<O>>;
   /** What a click selects (one module at most; two throw). */
   selectTarget: ExtensionPoint<SelectTargetHook<O>>;
+  /** What a single element aligns with (one module at most; two throw). */
+  alignTarget: ExtensionPoint<AlignTargetHook<O>>;
   /** What double-click or Enter edits (one module at most; two throw). */
   editElement: ExtensionPoint<EditElementHook<O>>;
   onMoved: ExtensionPoint<OnMovedHook<O>>;

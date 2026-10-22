@@ -1,6 +1,16 @@
-import { NUDGE_STEPS } from "./arrange";
+import { NUDGE_STEPS, type Alignment } from "./arrange";
 import type { CanvasEngine } from "./canvas-engine";
 import type { CommandHandler, Commands } from "./commands.types";
+
+/** The align commands and the line each one lines the selection up on. */
+const ALIGN_COMMANDS: Record<string, Alignment> = {
+  alignLeft: "left",
+  alignCenterX: "centerX",
+  alignRight: "right",
+  alignTop: "top",
+  alignCenterY: "centerY",
+  alignBottom: "bottom",
+};
 
 /**
  * Named engine actions, shared by keyboard shortcuts and any host UI that wants to trigger them.
@@ -18,6 +28,8 @@ export function createCommands(
   for (const id of hostCommands) toolCommands[id] = () => engine.runHostAction(id);
   for (const [id, step] of Object.entries(NUDGE_STEPS))
     toolCommands[id] = () => engine.nudgeSelection(step.x, step.y);
+  for (const [id, alignment] of Object.entries(ALIGN_COMMANDS))
+    toolCommands[id] = () => engine.alignSelection(alignment);
 
   const commands: Record<string, CommandHandler> = {
     undo: () => engine.undo(),
@@ -34,6 +46,9 @@ export function createCommands(
     bringForward: () => engine.reorderSelection("forward"),
     sendBackward: () => engine.reorderSelection("backward"),
     sendToBack: () => engine.reorderSelection("back"),
+    distributeHorizontal: () => engine.distributeSelection("x"),
+    distributeVertical: () => engine.distributeSelection("y"),
+    tidyUp: () => engine.tidyUpSelection(),
     toggleLock: () => engine.toggleLockSelection(),
     unlockAll: () => engine.unlockAll(),
     editSelection: () => engine.editSelection(),
