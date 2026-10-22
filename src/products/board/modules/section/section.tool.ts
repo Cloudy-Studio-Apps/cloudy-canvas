@@ -4,14 +4,14 @@ import {
   type Rect,
   type Tool,
   type ToolContext,
+  DRAW_THRESHOLD_PX,
+  pastThreshold,
 } from "@canvas";
 
 import type { BoardToolOptions } from "../../board-options.types";
 import { isSection } from "./is-section";
 import { SECTION_DEFAULTS } from "./section.defaults";
 import { createSection } from "./section.factory";
-
-const DRAG_THRESHOLD = 4; // screen px
 
 /** Drag to draw a section around elements (they join it), or click to place an empty one. */
 export class SectionTool implements Tool {
@@ -36,8 +36,7 @@ export class SectionTool implements Tool {
       this.ctx.doc.update(this.elementId, rect);
       return;
     }
-    const distance = Math.hypot(p.screen.x - start.screen.x, p.screen.y - start.screen.y);
-    if (distance >= DRAG_THRESHOLD) this.elementId = this.add(rect);
+    if (pastThreshold(start, p, DRAW_THRESHOLD_PX)) this.elementId = this.add(rect);
   }
 
   onPointerUp(p: CanvasPointer): void {

@@ -1,9 +1,8 @@
 import { useRef, type PointerEvent } from "react";
 
+import { clamp } from "@canvas";
 import type { ColorChangeInfo } from "./color.types";
 import type { DragPosition, PointerDragHandlers } from "./use-pointer-drag.types";
-
-const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
 
 /**
  * Reports the pointer's position inside an element while it's pressed and dragged (captured, so
@@ -17,8 +16,8 @@ export function usePointerDrag(
     const box = event.currentTarget.getBoundingClientRect();
     onDrag(
       {
-        x: clamp01((event.clientX - box.left) / Math.max(1, box.width)),
-        y: clamp01((event.clientY - box.top) / Math.max(1, box.height)),
+        x: clamp((event.clientX - box.left) / Math.max(1, box.width), 0, 1),
+        y: clamp((event.clientY - box.top) / Math.max(1, box.height), 0, 1),
       },
       { done },
     );

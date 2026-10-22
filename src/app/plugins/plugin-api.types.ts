@@ -9,6 +9,7 @@ import type { boardLibrary } from "@board/ui/components/library";
 import type { boardEditor } from "@board/ui";
 import type * as design from "@design";
 import type { designEditor } from "@design/ui";
+import type * as designModules from "@design/ui/modules";
 import type * as designPanel from "@design/ui/components/panel";
 import type * as designHooks from "@design/ui/hooks";
 import type { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
@@ -53,6 +54,12 @@ export interface PluginApi {
     | "stringList"
     | "optionalRecord"
     | "recordList"
+    | "clamp"
+    | "roundPoint"
+    | "fitInView"
+    | "pastThreshold"
+    | "DRAW_THRESHOLD_PX"
+    | "MOVE_THRESHOLD_PX"
   >;
   ui: {
     React: typeof React;
@@ -111,8 +118,12 @@ export interface DesignPluginApi {
     | "drawPaints"
     | "traceBox"
     | "NODE_DEFAULTS"
+    | "BoxShapeKind"
+    | "PointsShapeKind"
+    | "NodeDrawTool"
     | "BoxDrawTool"
     | "containerAt"
+    | "parentFor"
     | "pointsInBox"
     | "pointInPolygon"
     | "distanceToOutline"
@@ -124,9 +135,18 @@ export interface DesignPluginApi {
     | "PanelIconButton"
     | "PanelAddButton"
     | "NumberField"
+    | "NodeNumberField"
+    | "NodeSelectField"
+    | "NodeCheckbox"
+    | "FieldBox"
+    | "HexInput"
+    | "PercentInput"
     | "PaintField"
     | "PropertyGrid"
+    | "sharedValue"
   >;
+  /** Filters for `propertySections` entries' `when`. */
+  sections: Pick<typeof designModules, "ofType" | "allKinds" | "someNodes" | "noNodes">;
   hooks: Pick<typeof designHooks, "useSelectedNodes" | "useEditNodes" | "useMoveNodes"> & {
     useDesignEngine: typeof useDesignEngine;
     useDesignState: typeof useDesignState;

@@ -1,6 +1,6 @@
 import type { Rect } from "@canvas";
 
-import { createNodeBase, solidPaint } from "../core";
+import { createNodeBase, type Paint } from "../core";
 import { RECTANGLE_DEFAULTS } from "./rectangle.defaults";
 import type { RectangleElement } from "./rectangle.types";
 
@@ -9,10 +9,10 @@ export function createRectangle(
   name: string,
   index: string,
   parentId: string | null,
-  fill: string,
+  fills: Paint[],
 ): RectangleElement {
   return {
-    ...createNodeBase("rectangle", rect, index, { name, parentId, fills: [solidPaint(fill)] }),
+    ...createNodeBase("rectangle", rect, index, { name, parentId, fills }),
     cornerRadius: RECTANGLE_DEFAULTS.cornerRadius,
   };
 }

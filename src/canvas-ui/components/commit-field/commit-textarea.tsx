@@ -1,25 +1,11 @@
 import { Textarea } from "@shared/ui/components/ui/textarea";
+import { commitFieldProps } from "./commit-field-props";
 import { useCommitField } from "./use-commit-field";
 import type { CommitTextareaProps } from "./commit-input.types";
 
 /** Textarea that commits on blur or Ctrl/Cmd+Enter and reverts on Escape. */
-export function CommitTextarea({ value, onCommit, ...props }: CommitTextareaProps) {
+export function CommitTextarea({ value, onCommit, title, ...props }: CommitTextareaProps) {
   const field = useCommitField(value, onCommit);
-
-  return (
-    <Textarea
-      {...props}
-      value={field.draft}
-      onChange={(event) => field.setDraft(event.target.value)}
-      onFocus={field.onFocus}
-      onBlur={field.onBlur}
-      onKeyDown={(event) => {
-        if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) event.currentTarget.blur();
-        if (event.key === "Escape") {
-          field.revert();
-          event.currentTarget.blur();
-        }
-      }}
-    />
-  );
+  const bindings = commitFieldProps<HTMLTextAreaElement>(field, { commitOn: "mod-enter" });
+  return <Textarea {...props} {...bindings} title={bindings.title ?? title} />;
 }

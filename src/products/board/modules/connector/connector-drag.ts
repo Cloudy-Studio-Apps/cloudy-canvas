@@ -1,3 +1,4 @@
+import { DRAW_THRESHOLD_PX, pastThreshold } from "@canvas";
 import type { CanvasPointer, ElementGesture, Point, ToolContext } from "@canvas";
 
 import type { BoardToolOptions } from "../../board-options.types";
@@ -6,8 +7,6 @@ import { createConnector } from "./connector.factory";
 import type { ConnectorEnd, ConnectorEndName, ConnectorLook } from "./connector.types";
 import type { ConnectorDragTarget } from "./connector-drag.types";
 import { isConnector } from "./is-connector";
-
-const DRAG_THRESHOLD = 4; // screen px
 
 /**
  * Drags a connector end. Over a connectable element the end sticks to it (and follows it from
@@ -39,11 +38,7 @@ export class ConnectorDrag implements ElementGesture {
   move(p: CanvasPointer): void {
     this.screen = p.screen;
     if (!this.started) {
-      const distance = Math.hypot(
-        p.screen.x - this.origin.screen.x,
-        p.screen.y - this.origin.screen.y,
-      );
-      if (distance < DRAG_THRESHOLD) return;
+      if (!pastThreshold(this.origin, p, DRAW_THRESHOLD_PX)) return;
       this.started = true;
       this.ctx.doc.checkpoint();
     }

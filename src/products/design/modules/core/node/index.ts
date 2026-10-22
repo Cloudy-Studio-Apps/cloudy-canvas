@@ -11,3 +11,5 @@ export { solidPaint } from "./solid-paint";
 export { traceBox } from "./trace-box";
 export { imagePaint } from "./image-paint";
 export { distanceToOutline, pointInPolygon, pointsInBox } from "./shape-points";
+export { BoxShapeKind } from "./box-shape.kind";
+export { PointsShapeKind } from "./points-shape.kind";

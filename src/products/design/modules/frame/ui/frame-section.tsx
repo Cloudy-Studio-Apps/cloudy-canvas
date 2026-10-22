@@ -1,8 +1,8 @@
 import { ChevronDown, Frame } from "lucide-react";
 
 import type { ElementPatch } from "@canvas";
-import type { FrameElement } from "@design";
-import { PanelSection } from "@design/ui/components/panel";
+import type { DesignNode, FrameElement } from "@design";
+import { NodeCheckbox, PanelSection } from "@design/ui/components/panel";
 import { useEditNodes } from "@design/ui/hooks";
 import type { PropertySectionProps } from "@design/ui/modules";
 import { FramePresetMenu } from "./frame-preset-menu";
@@ -11,7 +11,6 @@ import { FramePresetMenu } from "./frame-preset-menu";
 export function FrameSection({ selection: { nodes } }: PropertySectionProps) {
   const edit = useEditNodes();
   const frames = nodes as readonly FrameElement[];
-  const clips = frames.every((frame) => frame.clipsContent);
 
   return (
     <PanelSection
@@ -32,17 +31,12 @@ export function FrameSection({ selection: { nodes } }: PropertySectionProps) {
         />
       }
     >
-      <label className="flex items-center gap-2 text-xs text-muted-foreground">
-        <input
-          type="checkbox"
-          checked={clips}
-          onChange={() =>
-            edit(frames, () => ({ clipsContent: !clips }) as ElementPatch<FrameElement>)
-          }
-          className="accent-primary"
-        />
-        Clip content
-      </label>
+      <NodeCheckbox
+        nodes={frames}
+        label="Clip content"
+        read={(frame) => frame.clipsContent}
+        patch={(clipsContent) => ({ clipsContent }) as ElementPatch<DesignNode>}
+      />
     </PanelSection>
   );
 }

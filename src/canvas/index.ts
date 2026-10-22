@@ -49,5 +49,11 @@ export { composeProduct, createCanvasPoints } from "./modules";
 export { ElementView } from "./render";
 export { defineService } from "./services";
 export { centerTextTop, measureText, measureWrapped } from "./text";
-export { createBaseTools, selectAndEdit } from "./tools";
-export { bytesToBase64, debounce, Emitter, Registry } from "./utils";
+export {
+  createBaseTools,
+  DRAW_THRESHOLD_PX,
+  MOVE_THRESHOLD_PX,
+  pastThreshold,
+  selectAndEdit,
+} from "./tools";
+export { bytesToBase64, clamp, debounce, Emitter, Registry } from "./utils";

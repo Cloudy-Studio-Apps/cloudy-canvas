@@ -1,9 +1,20 @@
 // Building blocks of the design editor's side panels, shared by the modules' sections and tabs.
+export type * from "./color-inputs.types";
+export type * from "./field-box.types";
+export type * from "./node-fields.types";
 export type * from "./number-field.types";
 export type * from "./paint-field.types";
 export type * from "./panel-section.types";
 export type * from "./property-grid.types";
+export { FieldBox } from "./field-box";
+export { HexInput } from "./hex-input";
+export { NodeCheckbox } from "./node-checkbox";
+export { NodeNumberField } from "./node-number-field";
+export { NodeSelectField } from "./node-select-field";
 export { NumberField } from "./number-field";
 export { PaintField } from "./paint-field";
 export { PanelAddButton, PanelIconButton, PanelSection } from "./panel-section";
+export { parseNumber } from "./parse-number";
+export { PercentInput } from "./percent-input";
 export { PropertyGrid } from "./property-grid";
+export { sharedValue } from "./shared-value";

@@ -12,7 +12,7 @@ import {
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useEditNodes } from "@design/ui/hooks";
 import type { PropertySectionProps } from "@design/ui/modules";
-import { sharedValue } from "./shared-value";
+import { sharedValue } from "@design/ui/components/panel";
 
 /** Smallest width or height typed in the panel. */
 const MIN_SIDE = 1;

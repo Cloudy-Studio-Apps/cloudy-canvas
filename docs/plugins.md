@@ -72,14 +72,14 @@ So a plugin that adds an element always shows it in the library, with the icon, 
 
 ## The API
 
-| `api.…`  | What it holds                                                                                                                                                                                                                                                                                                                                |
-| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `plugin` | `id`, `manifest`, `readAsset(path)`, `readText(path)` (files in the plugin's folder)                                                                                                                                                                                                                                                         |
-| `core`   | `defineModule`, `definePoint` (points other plugins can extend), `createId`                                                                                                                                                                                                                                                                  |
-| `canvas` | the kind bases `ElementKind`, `BoxKind`, `TextBoxKind`, `LineKind`; `ELEMENT_DEFAULTS`, `createElementBase`, `defineService`, `selectAndEdit`; for agent tools `asUndoStep`, `buildElement`, `summarizeElement` and the argument readers (`stringArg`, `optionalNumber`, …)                                                                  |
-| `ui`     | `React` (the app's own), `toast`, `notifyError`, `FloatingPanel`, `PanelDivider`, `ToolButton`, `OptionButton`, `ColorSwatch`, `ColorPalette`, `ExtensionIconView`, `useEngine`, `useEngineState`, `useService`, `useEngineElement`                                                                                                          |
-| `design` | see [Design plugins](#design-plugins)                                                                                                                                                                                                                                                                                                        |
-| `board`  | the points: `canvas` (kinds, tools, hostCommands, keybindings, options, links, resolveElements, withMembers, onRemove, prepareCopies, pasteText, pasteImage), `editor` (tools, toolPanels, selectionPanels, sidePanels, topBar, overlays, sessionHooks, contextMenu), `agentTools`, `library`; plus `toolItem`, `requireBoard` and `palette` |
+| `api.…`  | What it holds                                                                                                                                                                                                                                                                                                                                                                         |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plugin` | `id`, `manifest`, `readAsset(path)`, `readText(path)` (files in the plugin's folder)                                                                                                                                                                                                                                                                                                  |
+| `core`   | `defineModule`, `definePoint` (points other plugins can extend), `createId`                                                                                                                                                                                                                                                                                                           |
+| `canvas` | the kind bases `ElementKind`, `BoxKind`, `TextBoxKind`, `LineKind`; `ELEMENT_DEFAULTS`, `createElementBase`, `defineService`, `selectAndEdit`; helpers `clamp`, `roundPoint`, `fitInView`, `pastThreshold` with `DRAW_THRESHOLD_PX`/`MOVE_THRESHOLD_PX`; for agent tools `asUndoStep`, `buildElement`, `summarizeElement` and the argument readers (`stringArg`, `optionalNumber`, …) |
+| `ui`     | `React` (the app's own), `toast`, `notifyError`, `FloatingPanel`, `PanelDivider`, `ToolButton`, `OptionButton`, `ColorSwatch`, `ColorPalette`, `ExtensionIconView`, `useEngine`, `useEngineState`, `useService`, `useEngineElement`                                                                                                                                                   |
+| `design` | see [Design plugins](#design-plugins)                                                                                                                                                                                                                                                                                                                                                 |
+| `board`  | the points: `canvas` (kinds, tools, hostCommands, keybindings, options, links, resolveElements, withMembers, onRemove, prepareCopies, pasteText, pasteImage), `editor` (tools, toolPanels, selectionPanels, sidePanels, topBar, overlays, sessionHooks, contextMenu), `agentTools`, `library`; plus `toolItem`, `requireBoard` and `palette`                                          |
 
 What each point takes is described in CLAUDE.md (Modules, Canvas engine, Elements) and in the types in `src/canvas/modules/canvas-points.types.ts` and `src/canvas-ui/modules/editor-points.types.ts`.
 
@@ -89,62 +89,65 @@ Agent tools are groups contributed to `api.board.agentTools`: `{ id, tools: ({ k
 
 Designs are built from modules the same way, on their own points (`api.design`):
 
-| `api.design.…` | What it holds                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `canvas`       | the design's canvas points (same as the board's, plus `view`, `drawOrder`, `onMoved`)                                                                                                                                                                                                                                                                                                                                                   |
-| `editor`       | the editor points shared with the board (`tools`, `toolPanels`, `overlays`, `sessionHooks`, `contextMenu`, …) plus `leftTabs` (a tab of the left panel, with its rail button), `propertySections` (a section of the properties panel, shown `when` the selection fits) and `mainMenu` (groups in the logo's menu: engine commands or `run({ engine, navigate })`)                                                                       |
-| `nodes`        | `DesignNodeKind` (the base of every design element: name, parent, visibility, opacity, fills, strokes), `createNodeBase`, `isDesignNode`, `solidPaint`, `imagePaint`, `drawPaints` (fills, image fills clipped to the outline, then strokes), `traceBox`, `NODE_DEFAULTS`, `BoxDrawTool` (drag-to-draw tools, parented into the frame under them), `containerAt`, and for outlines `pointsInBox`, `pointInPolygon`, `distanceToOutline` |
-| `tree`         | `DESIGN_TREE`, the layer tree service (`api.ui.useService(api.design.tree).layers()`)                                                                                                                                                                                                                                                                                                                                                   |
-| `panel`        | `PanelSection`, `PanelIconButton`, `PanelAddButton`, `NumberField`, `PaintField`, `PropertyGrid`                                                                                                                                                                                                                                                                                                                                        |
-| `hooks`        | `useSelectedNodes`, `useEditNodes` (patches as one undo step), `useMoveNodes`, `useDesignEngine`, `useDesignState`                                                                                                                                                                                                                                                                                                                      |
+| `api.design.…` | What it holds                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `canvas`       | the design's canvas points (same as the board's, plus `view`, `drawOrder`, `onMoved`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `editor`       | the editor points shared with the board (`tools`, `toolPanels`, `overlays`, `sessionHooks`, `contextMenu`, …) plus `leftTabs` (a tab of the left panel, with its rail button), `propertySections` (a section of the properties panel, shown `when` the selection fits) and `mainMenu` (groups in the logo's menu: engine commands or `run({ engine, navigate })`)                                                                                                                                                                                                                                                        |
+| `nodes`        | the kind bases: `DesignNodeKind` (every design element: name, parent, visibility, opacity, fills, strokes), `BoxShapeKind` (a box-drawn shape: `createNode`, `clickSize`) and `PointsShapeKind` (a shape outlined by `points(el)`: drawing and hit testing come with it); the tools: `NodeDrawTool` (the drawing gesture, template method) and `BoxDrawTool` (draws any `BoxShapeKind`: `new BoxDrawTool(ctx, kind)`); helpers `createNodeBase`, `isDesignNode`, `solidPaint`, `imagePaint`, `drawPaints`, `traceBox`, `NODE_DEFAULTS`, `containerAt`, `parentFor`, `pointsInBox`, `pointInPolygon`, `distanceToOutline` |
+| `tree`         | `DESIGN_TREE`, the layer tree service (`api.ui.useService(api.design.tree).layers()`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `panel`        | `PanelSection`, `PanelIconButton`, `PanelAddButton`, `PropertyGrid`, `FieldBox`, `NumberField`, `HexInput`, `PercentInput`, `PaintField`, and fields bound to the selection: `NodeNumberField`, `NodeSelectField`, `NodeCheckbox` (`read(node)` and `patch(value)`, "Mixed" when nodes differ, one undo step), `sharedValue`                                                                                                                                                                                                                                                                                             |
+| `sections`     | filters for `propertySections`' `when`: `ofType(...types)`, `allKinds((kind) => …)`, `someNodes`, `noNodes`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `hooks`        | `useSelectedNodes`, `useEditNodes` (patches as one undo step), `useMoveNodes`, `useDesignEngine`, `useDesignState`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
-Every design element extends `DesignNodeKind`, so the built-in sections (Position, Layout, Appearance, Fills, Strokes, Export) and the Layers tab work with it without extra code. A star, for example:
+Every design element extends `DesignNodeKind`, so the built-in sections (Position, Layout, Appearance, Fills, Strokes, Export) and the Layers tab work with it without extra code. A shape outlined by corners only gives its points; `BoxDrawTool` draws it from the kind, so there's no tool to write. A star, for example:
 
 ```js
 export default function activate(api) {
-  const { DesignNodeKind, BoxDrawTool, createNodeBase, solidPaint, drawPaints } = api.design.nodes;
+  const { PointsShapeKind, BoxDrawTool, createNodeBase, solidPaint, pointsInBox } =
+    api.design.nodes;
 
-  class StarKind extends DesignNodeKind {
+  class StarKind extends PointsShapeKind {
     type = "my-star.star";
-    label = "Star";
+    label = "Star"; // also the base of its layers' names: "Star 1", "Star 2", …
     description = "A five-pointed star.";
     tool = "my-star.star";
-    draw(view, el) {
-      drawPaints(view, el, (g) => g.star(el.w / 2, el.h / 2, 5, Math.min(el.w, el.h) / 2));
-    }
-  }
+    defaults = { size: { w: 100, h: 100 } }; // what a click places
 
-  class StarTool extends BoxDrawTool {
-    id = "my-star.star";
-    layerName = "Star";
-    clickSize = () => ({ w: 100, h: 100 });
-    createNode = (rect, name, index, parentId) =>
-      createNodeBase("my-star.star", rect, index, {
+    createNode(rect, name, index, parentId) {
+      return createNodeBase(this.type, rect, index, {
         name,
         parentId,
         fills: [solidPaint("#FFC83D")],
       });
+    }
+
+    points(el) {
+      return pointsInBox(10, (i) => (i % 2 ? 0.4 : 1), el.w, el.h);
+    }
   }
 
   return api.core.defineModule({
     id: "my-star",
     register(host) {
-      host.contribute(api.design.canvas.kinds, new StarKind());
+      const kind = new StarKind();
+      host.contribute(api.design.canvas.kinds, kind);
       host.contribute(api.design.canvas.tools, {
-        id: "my-star.star",
-        create: (ctx) => new StarTool(ctx),
+        id: kind.tool,
+        create: (ctx) => new BoxDrawTool(ctx, kind),
         keys: [{ key: "s", shift: true }],
       });
       host.contribute(api.design.editor.tools, {
-        tool: "my-star.star",
-        element: "my-star.star",
+        tool: kind.tool,
+        element: kind.type,
         icon: { svg: "<svg …>" },
-        toolbar: { group: 1, order: 110 },
+        toolbar: { group: 1, order: 110, menu: "shapes" }, // in the shapes menu
       });
     },
   });
 }
 ```
+
+Tools that don't draw a box (like the line tool, which draws between two ends) extend `NodeDrawTool` and describe their shape: `dragShape`, `clickShape`, `createNode`, `shapePatch`.
 
 ## Rules
 

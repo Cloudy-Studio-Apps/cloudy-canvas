@@ -2,6 +2,7 @@ import { MoveUpRight, Slash } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
+import { ofType } from "@design/ui/modules/section-filters";
 import { designCanvas } from "../../design-points";
 import { LineKind } from "./line.kind";
 import { LineTool } from "./line.tool";
@@ -46,7 +47,7 @@ export const lineModule = defineModule({
       id: "line",
       tab: "design",
       order: 16,
-      when: ({ nodes }) => nodes.length > 0 && nodes.every((node) => node.type === "line"),
+      when: ofType("line"),
       component: LineSection,
     });
   },

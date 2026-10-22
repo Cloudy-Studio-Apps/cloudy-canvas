@@ -1,8 +1,7 @@
 import type { CanvasElement } from "../elements";
 import { resizeCursor, resizeRect, type ResizeHandle } from "../handles";
+import { MOVE_THRESHOLD_PX, pastThreshold } from "./drag-threshold";
 import type { CanvasPointer, ToolContext } from "./tool.types";
-
-const DRAG_THRESHOLD = 3; // screen px
 
 /** Drags a resize handle of one element. Shift keeps the proportions (always, for some kinds). */
 export class ResizeGesture {
@@ -19,11 +18,7 @@ export class ResizeGesture {
 
   move(p: CanvasPointer): void {
     if (!this.started) {
-      const distance = Math.hypot(
-        p.screen.x - this.start.screen.x,
-        p.screen.y - this.start.screen.y,
-      );
-      if (distance < DRAG_THRESHOLD) return;
+      if (!pastThreshold(this.start, p, MOVE_THRESHOLD_PX)) return;
       this.started = true;
       this.ctx.doc.checkpoint();
     }

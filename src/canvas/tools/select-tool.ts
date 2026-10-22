@@ -2,10 +2,10 @@ import type { CanvasElement, ElementPatch } from "../elements";
 import { rectContainsPoint, rectFromPoints } from "../geometry";
 import { resizeCursor, type Interaction } from "../handles";
 import { ResizeGesture } from "./resize-gesture";
+import { MOVE_THRESHOLD_PX, pastThreshold } from "./drag-threshold";
 import type { CanvasPointer, Tool, ToolContext } from "./tool.types";
 import type { Gesture } from "./select-tool.types";
 
-const DRAG_THRESHOLD = 3; // screen px
 /**
  * A hovered element with handles stays hovered this far outside it (screen px), so handles drawn
  * just outside it (e.g. quick-connect dots) can be reached.
@@ -87,8 +87,7 @@ export class SelectTool implements Tool {
     }
 
     if (!g.started) {
-      const distance = Math.hypot(p.screen.x - g.start.screen.x, p.screen.y - g.start.screen.y);
-      if (distance < DRAG_THRESHOLD) return;
+      if (!pastThreshold(g.start, p, MOVE_THRESHOLD_PX)) return;
       g.started = true;
       this.ctx.setCursor("move");
       this.ctx.doc.checkpoint();

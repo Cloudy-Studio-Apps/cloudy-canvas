@@ -1,5 +1,5 @@
 import { clamp } from "./utils";
-import type { Point, Rect } from "./geometry.types";
+import type { Point, Rect, Size } from "./geometry.types";
 
 export function rectFromPoints(a: Point, b: Point): Rect {
   return {
@@ -111,4 +111,21 @@ export function nearPolyline(points: readonly number[], origin: Point, p: Point,
     if (distance <= radiusSq) return true;
   }
   return false;
+}
+
+/** A point with whole coordinates. */
+export function roundPoint({ x, y }: Point): Point {
+  return { x: Math.round(x), y: Math.round(y) };
+}
+
+/**
+ * A `size` box centered in `view`, at its own size or shrunk (keeping proportions) to cover at
+ * most `fraction` of the view; whole numbers, at least 1×1. E.g. a pasted image.
+ */
+export function fitInView(size: Size, view: Rect, fraction: number): Rect {
+  const scale = Math.min(1, (view.w * fraction) / size.w, (view.h * fraction) / size.h);
+  const w = Math.max(1, size.w * scale);
+  const h = Math.max(1, size.h * scale);
+  const center = rectCenter(view);
+  return roundRect({ x: center.x - w / 2, y: center.y - h / 2, w, h });
 }

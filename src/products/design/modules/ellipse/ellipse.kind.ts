@@ -1,16 +1,21 @@
-import type { ElementView, Point } from "@canvas";
+import type { ElementView, Point, Rect } from "@canvas";
 
-import { DesignNodeKind, drawPaints } from "../core";
+import { BoxShapeKind, drawPaints } from "../core";
 import { ELLIPSE_DEFAULTS } from "./ellipse.defaults";
+import { createEllipse } from "./ellipse.factory";
 import type { EllipseElement } from "./ellipse.types";
 
 /** Ellipses and circles, hit inside their outline only. */
-export class EllipseKind extends DesignNodeKind<EllipseElement> {
+export class EllipseKind extends BoxShapeKind<EllipseElement> {
   readonly type = "ellipse";
   readonly label = "Ellipse";
   readonly description = "An ellipse or, with Shift, a circle.";
   override readonly tool = "ellipse";
   override readonly defaults = ELLIPSE_DEFAULTS;
+
+  createNode(rect: Rect, name: string, index: string, parentId: string | null): EllipseElement {
+    return createEllipse(rect, name, index, parentId);
+  }
 
   draw(view: ElementView, el: EllipseElement): void {
     drawPaints(view, el, (g) => g.ellipse(el.w / 2, el.h / 2, el.w / 2, el.h / 2));

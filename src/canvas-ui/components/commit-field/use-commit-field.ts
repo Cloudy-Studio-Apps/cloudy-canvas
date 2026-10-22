@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import type { CommitField, CommitHandler } from "./use-commit-field.types";
 
@@ -11,6 +11,9 @@ export function useCommitField(value: string, onCommit: CommitHandler): CommitFi
   const [synced, setSynced] = useState(value);
   const [focused, setFocused] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Escape reverts and then blurs in the same event, before the reverted draft renders; the blur
+  // must not commit the draft it still sees.
+  const reverted = useRef(false);
 
   if (!focused && synced !== value) {
     setSynced(value);
@@ -22,16 +25,25 @@ export function useCommitField(value: string, onCommit: CommitHandler): CommitFi
     draft,
     error,
     setDraft: (next) => {
+      reverted.current = false;
       setDraft(next);
       setError(null);
     },
-    onFocus: () => setFocused(true),
+    onFocus: () => {
+      reverted.current = false;
+      setFocused(true);
+    },
     onBlur: () => {
       setFocused(false);
+      if (reverted.current) {
+        reverted.current = false;
+        return;
+      }
       if (draft === value) return;
       setError(onCommit(draft) ?? null);
     },
     revert: () => {
+      reverted.current = true;
       setDraft(value);
       setError(null);
     },

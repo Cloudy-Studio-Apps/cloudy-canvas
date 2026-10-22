@@ -6,13 +6,14 @@ import {
   hexToHsv,
   hsvToHex,
   HUE_TRACK,
-  normalizeHex,
   SaturationArea,
-  useCommitField,
   type ColorChangeInfo,
   type Hsv,
 } from "@canvas-ui";
 import { useDesignEngine } from "../../design-engine-context";
+import { FieldBox } from "../panel/field-box";
+import { HexInput } from "../panel/hex-input";
+import { PercentInput } from "../panel/percent-input";
 import { usePaintRecentsStore } from "../../stores/paint-recents-store";
 import { ColorSwatches } from "./color-swatches";
 import { pageColors } from "./page-colors";
@@ -46,17 +47,6 @@ export function SolidEditor({ paint, onChange }: SolidEditorProps) {
   const setOpacity = (opacity: number, info: ColorChangeInfo) =>
     onChange({ ...paint, opacity: Math.round(opacity * 100) / 100 }, info);
 
-  const hex = useCommitField(paint.color.replace("#", "").toUpperCase(), (draft) => {
-    const color = normalizeHex(draft);
-    if (!color) return "Enter a hex color, like FF8800";
-    pick(color);
-  });
-  const opacity = useCommitField(String(Math.round(paint.opacity * 100)), (draft) => {
-    const value = Number(draft.trim());
-    if (draft.trim() === "" || !Number.isFinite(value)) return "Enter a percentage";
-    setOpacity(Math.min(100, Math.max(0, value)) / 100, { done: true });
-  });
-
   return (
     <div className="space-y-3">
       <SaturationArea hsv={hsv} onChange={setColor} />
@@ -78,43 +68,18 @@ export function SolidEditor({ paint, onChange }: SolidEditorProps) {
           />
         </div>
       </div>
-      <div className="flex gap-1.5 text-xs">
-        <label className="flex h-7 min-w-0 flex-1 items-center gap-1.5 rounded-sm border border-transparent bg-muted px-2 focus-within:border-ring focus-within:bg-surface hover:border-border">
+      <div className="flex gap-1.5">
+        <FieldBox className="flex-1">
           <span className="text-subtle-foreground">Hex</span>
-          <input
-            aria-label="Hex color"
-            aria-invalid={hex.error ? true : undefined}
-            title={hex.error ?? undefined}
-            value={hex.draft}
-            spellCheck={false}
-            onChange={(event) => hex.setDraft(event.target.value)}
-            onFocus={hex.onFocus}
-            onBlur={hex.onBlur}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") event.currentTarget.blur();
-              if (event.key === "Escape") hex.revert();
-            }}
-            className="min-w-0 flex-1 bg-transparent font-mono text-foreground uppercase outline-none"
+          <HexInput color={paint.color} label="Hex color" onCommit={pick} />
+        </FieldBox>
+        <FieldBox className="w-16 gap-0.5">
+          <PercentInput
+            value={paint.opacity}
+            label="Opacity"
+            onCommit={(value) => setOpacity(value, { done: true })}
           />
-        </label>
-        <label className="flex h-7 w-16 items-center gap-0.5 rounded-sm border border-transparent bg-muted px-2 tabular-nums focus-within:border-ring focus-within:bg-surface hover:border-border">
-          <input
-            aria-label="Opacity"
-            aria-invalid={opacity.error ? true : undefined}
-            title={opacity.error ?? undefined}
-            inputMode="decimal"
-            value={opacity.draft}
-            onChange={(event) => opacity.setDraft(event.target.value)}
-            onFocus={opacity.onFocus}
-            onBlur={opacity.onBlur}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") event.currentTarget.blur();
-              if (event.key === "Escape") opacity.revert();
-            }}
-            className="w-full min-w-0 bg-transparent text-foreground outline-none"
-          />
-          <span className="text-subtle-foreground">%</span>
-        </label>
+        </FieldBox>
       </div>
       <ColorSwatches title="On this page" colors={onPage} onPick={pick} />
       <ColorSwatches title="Recent" colors={recents} onPick={pick} />

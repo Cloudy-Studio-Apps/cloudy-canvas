@@ -1,19 +1,31 @@
-import { rectContainsPoint, type ElementView, type Point } from "@canvas";
+import { rectContainsPoint, type ElementView, type Point, type Rect, type Size } from "@canvas";
 
-import { DesignNodeKind } from "../core";
+import type { DesignToolOptions } from "../../design-options.types";
+import { BoxShapeKind } from "../core";
+import { createFrame } from "./frame.factory";
+import { presetSize } from "./frame-presets";
 import { FRAME_DEFAULTS } from "./frame.defaults";
 import { drawFrame } from "./frame.draw";
 import { labelRect, showsLabel } from "./frame-label";
 import type { FrameElement } from "./frame.types";
 
 /** Frames hold other nodes; at the top of the page they show their name and are hit by it too. */
-export class FrameKind extends DesignNodeKind<FrameElement> {
+export class FrameKind extends BoxShapeKind<FrameElement> {
   readonly type = "frame";
   readonly label = "Frame";
   readonly description = "A container for layers, like a screen or an artboard.";
   override readonly tool = "frame";
   override readonly defaults = FRAME_DEFAULTS;
   override readonly container = true;
+
+  createNode(rect: Rect, name: string, index: string, parentId: string | null): FrameElement {
+    return createFrame(rect, name, index, parentId);
+  }
+
+  /** A click places a frame of the preset picked in the frame tool's panel. */
+  override clickSize(options: DesignToolOptions): Size {
+    return presetSize(options.framePreset);
+  }
 
   draw(view: ElementView, el: FrameElement): void {
     drawFrame(view, el);

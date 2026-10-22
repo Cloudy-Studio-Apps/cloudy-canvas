@@ -1,4 +1,11 @@
-import type { CanvasPointer, ElementGesture, ElementPatch, Point, ToolContext } from "@canvas";
+import {
+  roundPoint,
+  type CanvasPointer,
+  type ElementGesture,
+  type ElementPatch,
+  type Point,
+  type ToolContext,
+} from "@canvas";
 
 import { lineEnds, lineFromEnds, snapTo45 } from "./line-geometry";
 import type { LineNodeElement } from "./line.types";
@@ -40,8 +47,4 @@ export class LineEndDrag implements ElementGesture {
   private set(start: Point, end: Point): void {
     this.ctx.doc.update(this.origin.id, lineFromEnds(start, end) as ElementPatch);
   }
-}
-
-function roundPoint({ x, y }: Point): Point {
-  return { x: Math.round(x), y: Math.round(y) };
 }

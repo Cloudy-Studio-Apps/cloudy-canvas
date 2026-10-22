@@ -1,83 +1,51 @@
-import type { CanvasPointer, Point, Tool, ToolContext } from "@canvas";
+import {
+  roundPoint,
+  type CanvasPointer,
+  type ElementPatch,
+  type Point,
+  type ToolContext,
+} from "@canvas";
 
 import type { DesignToolOptions } from "../../design-options.types";
-import { containerAt, nextLayerName } from "../core";
+import { NodeDrawTool } from "../core";
 import { createLine } from "./line.factory";
 import { LINE_DEFAULTS } from "./line.defaults";
 import { lineFromEnds, snapTo45 } from "./line-geometry";
-import type { LineCap } from "./line.types";
-
-const DRAG_THRESHOLD = 4; // screen px
+import type { LineCap, LineEnds, LineNodeElement } from "./line.types";
 
 /**
- * Draws a line (or an arrow, with an `arrow` end cap): drag from start to end, Shift for 45°
- * steps, or click for a horizontal one. It goes into the frame under its middle, is selected, and
- * the select tool comes back.
+ * Draws a line, or an arrow with an `arrow` end cap: drag from start to end (Shift for 45° steps),
+ * or click for a horizontal one.
  */
-export class LineTool implements Tool {
-  readonly cursor = "crosshair";
-  private start: CanvasPointer | null = null;
-  private lineId: string | null = null;
-
+export class LineTool extends NodeDrawTool<LineNodeElement, LineEnds> {
   constructor(
-    private readonly ctx: ToolContext<DesignToolOptions>,
+    ctx: ToolContext<DesignToolOptions>,
     readonly id: string,
     private readonly endCap: LineCap,
-    private readonly layerName: string,
-  ) {}
-
-  onPointerDown(p: CanvasPointer): void {
-    this.ctx.setSelection([]);
-    this.start = p;
-    this.lineId = null;
+    private readonly name: string,
+  ) {
+    super(ctx);
   }
 
-  onPointerMove(p: CanvasPointer): void {
-    const start = this.start;
-    if (!start) return;
-    const from = roundPoint(start.world);
-    const to = p.shiftKey ? snapTo45(from, p.world) : roundPoint(p.world);
-    if (this.lineId) return this.ctx.doc.update(this.lineId, lineFromEnds(from, to));
-    const distance = Math.hypot(p.screen.x - start.screen.x, p.screen.y - start.screen.y);
-    if (distance >= DRAG_THRESHOLD) this.lineId = this.add(from, to);
+  protected layerName(): string {
+    return this.name;
   }
 
-  onPointerUp(p: CanvasPointer): void {
-    if (!this.start) return;
-    const from = roundPoint(p.world);
-    const id = this.lineId ?? this.add(from, { x: from.x + LINE_DEFAULTS.size.w, y: from.y });
-    this.start = null;
-    this.lineId = null;
-    this.placeInContainer(id);
-    this.ctx.setSelection([id]);
-    this.ctx.setTool("select");
+  protected dragShape(from: Point, to: CanvasPointer): LineEnds {
+    const start = roundPoint(from);
+    return { start, end: to.shiftKey ? snapTo45(start, to.world) : roundPoint(to.world) };
   }
 
-  onCancel(): void {
-    this.start = null;
-    this.lineId = null;
+  protected clickShape(at: Point): LineEnds {
+    const start = roundPoint(at);
+    return { start, end: { x: start.x + LINE_DEFAULTS.size.w, y: start.y } };
   }
 
-  private add(from: Point, to: Point): string {
-    const { doc } = this.ctx;
-    const name = nextLayerName(doc.all(), this.layerName);
-    const line = createLine(from, to, name, doc.nextIndex(), null, this.endCap);
-    doc.checkpoint();
-    doc.add(line);
-    return line.id;
+  protected createNode({ start, end }: LineEnds, name: string, index: string): LineNodeElement {
+    return createLine(start, end, name, index, null, this.endCap);
   }
 
-  /** Puts the finished line into the frame under its middle (in the same undo step). */
-  private placeInContainer(id: string): void {
-    const line = this.ctx.getElement(id);
-    if (!line) return;
-    const probe = { x: line.x + line.w / 2, y: line.y + line.h / 2, w: 0, h: 0 };
-    const under = this.ctx.elementsInRect(probe);
-    const parentId = containerAt(line, under, this.ctx.kinds, new Set([id]))?.id ?? null;
-    if (parentId) this.ctx.doc.update(id, { parentId } as Partial<typeof line>);
+  protected shapePatch({ start, end }: LineEnds): ElementPatch<LineNodeElement> {
+    return lineFromEnds(start, end);
   }
-}
-
-function roundPoint({ x, y }: Point): Point {
-  return { x: Math.round(x), y: Math.round(y) };
 }

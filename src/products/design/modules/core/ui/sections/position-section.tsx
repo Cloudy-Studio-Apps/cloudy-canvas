@@ -19,7 +19,7 @@ import { useMoveNodes } from "@design/ui/hooks";
 import type { PropertySectionProps } from "@design/ui/modules";
 import { alignOffset, alignTarget } from "./align";
 import type { Alignment } from "./align.types";
-import { sharedValue } from "./shared-value";
+import { sharedValue } from "@design/ui/components/panel";
 
 const ALIGNMENTS: { id: Alignment; label: string; icon: typeof AlignStartVertical }[] = [
   { id: "left", label: "Align left", icon: AlignStartVertical },

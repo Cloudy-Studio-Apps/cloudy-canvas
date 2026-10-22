@@ -1,4 +1,4 @@
-import { rectCenter, roundRect, type PastedImage, type Rect } from "@canvas";
+import { fitInView, type PastedImage, type Rect } from "@canvas";
 
 import { imagePaint } from "../core";
 import { createRectangle, type RectangleElement } from "../rectangle";
@@ -15,17 +15,6 @@ export function createImageRectangle(
   view: Rect,
   index: string,
 ): RectangleElement {
-  const scale = Math.min(
-    1,
-    (view.w * FIT_IN_VIEW) / image.width,
-    (view.h * FIT_IN_VIEW) / image.height,
-  );
-  const w = Math.max(1, image.width * scale);
-  const h = Math.max(1, image.height * scale);
-  const center = rectCenter(view);
-  const rect = roundRect({ x: center.x - w / 2, y: center.y - h / 2, w, h });
-  return {
-    ...createRectangle(rect, "Image", index, null, "#000000"),
-    fills: [imagePaint(image.assetId)],
-  };
+  const rect = fitInView({ w: image.width, h: image.height }, view, FIT_IN_VIEW);
+  return createRectangle(rect, "Image", index, null, [imagePaint(image.assetId)]);
 }

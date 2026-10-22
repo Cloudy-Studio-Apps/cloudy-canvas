@@ -16,7 +16,12 @@ export type { ToolButtonProps } from "./components/tool-button.types";
 export type { ZoomMenuProps } from "./components/zoom-menu.types";
 export type * from "./modules";
 export { readCanvasTheme } from "./canvas-theme";
-export { CommitInput, CommitTextarea, useCommitField } from "./components/commit-field";
+export {
+  commitFieldProps,
+  CommitInput,
+  CommitTextarea,
+  useCommitField,
+} from "./components/commit-field";
 export { CANVAS_MENU, CanvasContextMenu, SELECTION_MENU } from "./components/context-menu";
 export { ExportDialog } from "./components/export-dialog";
 export { ColorPalette } from "./components/color-palette";

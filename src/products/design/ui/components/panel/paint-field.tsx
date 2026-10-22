@@ -1,13 +1,15 @@
-import { useState, type KeyboardEvent } from "react";
+import { useState } from "react";
 import { Eye, EyeOff, Minus } from "lucide-react";
 
-import { normalizeHex, useCommitField, type CommitField } from "@canvas-ui";
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
 import { cn } from "@shared/ui/lib/utils";
 import { PaintPicker } from "../paint-picker";
+import { FieldBox } from "./field-box";
+import { HexInput } from "./hex-input";
 import { PanelIconButton } from "./panel-section";
 import type { PaintFieldProps } from "./paint-field.types";
 import { PaintSwatch } from "./paint-swatch";
+import { PercentInput } from "./percent-input";
 
 /**
  * One fill or stroke: its swatch (opens the paint picker), its hex (or "Image") and opacity,
@@ -15,31 +17,11 @@ import { PaintSwatch } from "./paint-swatch";
  */
 export function PaintField({ paint, label, onChange, onRemove, allowImage }: PaintFieldProps) {
   const [open, setOpen] = useState(false);
-  const hex = useCommitField(
-    paint.type === "solid" ? paint.color.replace("#", "").toUpperCase() : "",
-    (draft) => {
-      const color = normalizeHex(draft);
-      if (!color) return "Enter a hex color, like FF8800";
-      if (paint.type === "solid") onChange({ ...paint, color }, { done: true });
-    },
-  );
-  const opacity = useCommitField(String(Math.round(paint.opacity * 100)), (draft) => {
-    const value = Number(draft.trim());
-    if (draft.trim() === "" || !Number.isFinite(value)) return "Enter a percentage";
-    onChange({ ...paint, opacity: Math.min(100, Math.max(0, value)) / 100 }, { done: true });
-  });
-
-  const keys = (field: CommitField) => (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") event.currentTarget.blur();
-    if (event.key === "Escape") {
-      field.revert();
-      event.currentTarget.blur();
-    }
-  };
+  const done = { done: true };
 
   return (
     <div className={cn("flex items-center gap-1", !paint.visible && "opacity-50")}>
-      <div className="flex h-7 min-w-0 flex-1 items-center rounded-sm border border-transparent bg-muted text-xs focus-within:border-ring focus-within:bg-surface hover:border-border">
+      <FieldBox className="flex-1 gap-0 px-0">
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <button
@@ -60,16 +42,11 @@ export function PaintField({ paint, label, onChange, onRemove, allowImage }: Pai
           </PopoverContent>
         </Popover>
         {paint.type === "solid" ? (
-          <input
-            aria-label={`${label} hex`}
-            aria-invalid={hex.error ? true : undefined}
-            title={hex.error ?? undefined}
-            value={hex.draft}
-            onChange={(event) => hex.setDraft(event.target.value)}
-            onFocus={hex.onFocus}
-            onBlur={hex.onBlur}
-            onKeyDown={keys(hex)}
-            className="min-w-0 flex-1 bg-transparent px-2 font-mono text-foreground uppercase outline-none"
+          <HexInput
+            color={paint.color}
+            label={`${label} hex`}
+            className="px-2"
+            onCommit={(color) => onChange({ ...paint, color }, done)}
           />
         ) : (
           <button
@@ -80,25 +57,17 @@ export function PaintField({ paint, label, onChange, onRemove, allowImage }: Pai
             Image
           </button>
         )}
-        <span className="flex h-full w-14 items-center gap-0.5 border-l border-surface px-2 tabular-nums">
-          <input
-            aria-label={`${label} opacity`}
-            aria-invalid={opacity.error ? true : undefined}
-            title={opacity.error ?? undefined}
-            inputMode="decimal"
-            value={opacity.draft}
-            onChange={(event) => opacity.setDraft(event.target.value)}
-            onFocus={opacity.onFocus}
-            onBlur={opacity.onBlur}
-            onKeyDown={keys(opacity)}
-            className="w-full min-w-0 bg-transparent text-foreground outline-none"
+        <span className="flex h-full w-14 items-center gap-0.5 border-l border-surface px-2">
+          <PercentInput
+            value={paint.opacity}
+            label={`${label} opacity`}
+            onCommit={(opacity) => onChange({ ...paint, opacity }, done)}
           />
-          <span className="text-subtle-foreground">%</span>
         </span>
-      </div>
+      </FieldBox>
       <PanelIconButton
         label={paint.visible ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`}
-        onClick={() => onChange({ ...paint, visible: !paint.visible }, { done: true })}
+        onClick={() => onChange({ ...paint, visible: !paint.visible }, done)}
       >
         {paint.visible ? <Eye /> : <EyeOff />}
       </PanelIconButton>

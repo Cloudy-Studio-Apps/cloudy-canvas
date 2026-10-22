@@ -1,9 +1,9 @@
+import { clamp } from "@canvas";
+
 import { hueColor } from "./color-math";
+import { COLOR_KEY_STEP } from "./color-constants";
 import type { SaturationAreaProps } from "./color.types";
 import { usePointerDrag } from "./use-pointer-drag";
-
-/** Arrow keys move by this much (Shift: ten times more). */
-const KEY_STEP = 0.01;
 
 /** The square where saturation (left to right) and brightness (bottom to top) are picked. */
 export function SaturationArea({ hsv, onChange }: SaturationAreaProps) {
@@ -17,7 +17,7 @@ export function SaturationArea({ hsv, onChange }: SaturationAreaProps) {
       aria-valuetext={`Saturation ${Math.round(hsv.s * 100)}%, brightness ${Math.round(hsv.v * 100)}%`}
       {...drag}
       onKeyDown={(event) => {
-        const step = event.shiftKey ? KEY_STEP * 10 : KEY_STEP;
+        const step = (event.shiftKey ? 10 : 1) * COLOR_KEY_STEP;
         const moves: Record<string, [number, number]> = {
           ArrowLeft: [-step, 0],
           ArrowRight: [step, 0],
@@ -27,8 +27,10 @@ export function SaturationArea({ hsv, onChange }: SaturationAreaProps) {
         const move = moves[event.key];
         if (!move) return;
         event.preventDefault();
-        const clamp = (n: number) => Math.min(1, Math.max(0, n));
-        onChange({ ...hsv, s: clamp(hsv.s + move[0]), v: clamp(hsv.v + move[1]) }, { done: true });
+        onChange(
+          { ...hsv, s: clamp(hsv.s + move[0], 0, 1), v: clamp(hsv.v + move[1], 0, 1) },
+          { done: true },
+        );
       }}
       className="relative aspect-square w-full cursor-crosshair touch-none rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
       style={{

@@ -3,6 +3,7 @@
 // tree service the layers panel reads.
 export type * from "./design-tree.types";
 export { containerAt } from "./container-at";
+export { parentFor } from "./parent-for";
 export { DESIGN_TREE, DesignTree } from "./design-tree";
 export { treeOrderKeys } from "./order-keys";
 export { prepareTreeCopies } from "./prepare-tree-copies";

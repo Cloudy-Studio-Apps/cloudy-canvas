@@ -6,13 +6,13 @@ import {
   type Rect,
   type Tool,
   type ToolContext,
+  DRAW_THRESHOLD_PX,
+  pastThreshold,
 } from "@canvas";
 
 import type { BoardToolOptions } from "../../board-options.types";
 import { createGeo } from "./geo.factory";
 import { variantOf } from "./variants";
-
-const DRAG_THRESHOLD = 4; // screen px
 
 /** Click to place a geo element of the chosen variant, or drag to draw it (Shift for equal sides). */
 export class ShapeTool implements Tool {
@@ -33,8 +33,7 @@ export class ShapeTool implements Tool {
     const start = this.start;
     if (!start) return;
     if (!this.elementId) {
-      const distance = Math.hypot(p.screen.x - start.screen.x, p.screen.y - start.screen.y);
-      if (distance < DRAG_THRESHOLD) return;
+      if (!pastThreshold(start, p, DRAW_THRESHOLD_PX)) return;
       this.elementId = this.add(dragRect(start.world, p.world, p.shiftKey));
       return;
     }

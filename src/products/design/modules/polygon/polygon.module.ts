@@ -2,9 +2,10 @@ import { Triangle } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
+import { ofType } from "@design/ui/modules/section-filters";
 import { designCanvas } from "../../design-points";
+import { BoxDrawTool } from "../core";
 import { PolygonKind } from "./polygon.kind";
-import { PolygonTool } from "./polygon.tool";
 import { PolygonSection } from "./ui/polygon-section";
 
 /** Polygons: the kind and the tool, in the shapes menu, and the sides section. */
@@ -12,8 +13,12 @@ export const polygonModule = defineModule({
   id: "polygon",
   requires: ["core"],
   register(host) {
-    host.contribute(designCanvas.kinds, new PolygonKind());
-    host.contribute(designCanvas.tools, { id: "polygon", create: (ctx) => new PolygonTool(ctx) });
+    const kind = new PolygonKind();
+    host.contribute(designCanvas.kinds, kind);
+    host.contribute(designCanvas.tools, {
+      id: "polygon",
+      create: (ctx) => new BoxDrawTool(ctx, kind),
+    });
     host.contribute(designEditor.tools, {
       tool: "polygon",
       element: "polygon",
@@ -24,7 +29,7 @@ export const polygonModule = defineModule({
       id: "polygon",
       tab: "design",
       order: 16,
-      when: ({ nodes }) => nodes.length > 0 && nodes.every((node) => node.type === "polygon"),
+      when: ofType("polygon"),
       component: PolygonSection,
     });
   },

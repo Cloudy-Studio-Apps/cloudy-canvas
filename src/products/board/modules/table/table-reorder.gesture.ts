@@ -1,3 +1,4 @@
+import { MOVE_THRESHOLD_PX, pastThreshold } from "@canvas";
 import type { CanvasPointer, ElementGesture, Guide, ToolContext } from "@canvas";
 
 import { isTable } from "./is-table";
@@ -6,7 +7,6 @@ import { moveLine } from "./table-edits";
 import { linePart } from "./table-parts";
 import type { TableAxis, TableElement } from "./table.types";
 
-const DRAG_THRESHOLD = 3; // screen px
 const GUIDE_WIDTH_PX = 3;
 
 /**
@@ -29,11 +29,7 @@ export class TableReorderGesture implements ElementGesture {
 
   move(p: CanvasPointer): void {
     if (!this.started) {
-      const distance = Math.hypot(
-        p.screen.x - this.start.screen.x,
-        p.screen.y - this.start.screen.y,
-      );
-      if (distance < DRAG_THRESHOLD) return;
+      if (!pastThreshold(this.start, p, MOVE_THRESHOLD_PX)) return;
       this.started = true;
       this.ctx.setCursor("grabbing");
     }

@@ -1,4 +1,4 @@
-import type { Point } from "@canvas";
+import { roundPoint, type Point } from "@canvas";
 
 import type { LineEnds, LineNodeElement } from "./line.types";
 
@@ -30,8 +30,8 @@ export function snapTo45(from: Point, to: Point): Point {
   const dy = to.y - from.y;
   const angle = Math.round(Math.atan2(dy, dx) / (Math.PI / 4)) * (Math.PI / 4);
   const length = Math.hypot(dx, dy);
-  return {
-    x: Math.round(from.x + Math.cos(angle) * length),
-    y: Math.round(from.y + Math.sin(angle) * length),
-  };
+  return roundPoint({
+    x: from.x + Math.cos(angle) * length,
+    y: from.y + Math.sin(angle) * length,
+  });
 }
