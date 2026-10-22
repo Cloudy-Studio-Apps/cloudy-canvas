@@ -36,6 +36,7 @@ import type { Point, Rect } from "./geometry.types";
 import { bindKeyboard, bindWheel, EdgeAutoPan, Keymap, PointerInput } from "./input";
 import { Renderer, type CanvasTheme } from "./render";
 import { Scene } from "./scene";
+import { ServiceCache, type ServiceDef } from "./services";
 import { loadFonts, TextEditor } from "./text";
 import { createBaseTools, type CanvasPointer, type Tool, type ToolContext } from "./tools";
 import { debounce, delay, Disposables, Emitter, FrameScheduler, Store } from "./utils";
@@ -77,6 +78,7 @@ export class CanvasEngine<O extends object = object> {
   private readonly camera = new Camera();
   private readonly renderer: Renderer;
   private readonly scene: Scene;
+  private readonly services: ServiceCache;
   private readonly clipboard: ElementClipboard<O>;
   private readonly systemClipboard: Clipboard;
   private readonly tools: Map<string, Tool>;
@@ -113,6 +115,7 @@ export class CanvasEngine<O extends object = object> {
     this.options = product.defaultOptions;
     this.doc = document ?? new CanvasDocument(this.kinds);
     this.ownsDocument = !document;
+    this.services = new ServiceCache(this.doc);
     this.links = product.createLinks?.() ?? [];
     this.renderer = new Renderer(theme, this.kinds, this.links, {
       read: (id) => this.doc.getAsset(id),
@@ -205,6 +208,11 @@ export class CanvasEngine<O extends object = object> {
 
   subscribe = (listener: () => void) => this.store.subscribe(listener);
   getState = (): EngineState<O> => this.store.get();
+
+  /** A service of this engine (e.g. a board's database schema), created on first use. */
+  service<T>(def: ServiceDef<T>): T {
+    return this.services.get(def);
+  }
 
   setTheme(theme: CanvasTheme): void {
     this.renderer.setTheme(theme);
@@ -569,6 +577,7 @@ export class CanvasEngine<O extends object = object> {
       doc: this.doc,
       camera: this.camera,
       kinds: this.kinds,
+      service: (def) => this.services.get(def),
       getOptions: () => this.options,
       getSelection: () => this.scene.selection.ids,
       setSelection: (ids) => this.setSelection(ids),

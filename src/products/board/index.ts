@@ -1,19 +1,15 @@
 // Boards (`.cboard`, FigJam-style). Everything here is engine-side and framework-free: the
-// product definition the engine is created with, its element types, tools, palette, agent tools
-// and file format. The React editor is in `ui/`.
+// points the board's modules plug into, its element types and modules (engine side), tools,
+// palette, agent tools and file format. The React editor is in `ui/`, which also composes the
+// product from the modules (`getBoardProduct`).
 export type * from "./agent";
 export type { BoardEngine, BoardEngineState } from "./board-engine.types";
 export type { BoardToolOptions } from "./board-options.types";
 export type * from "./stickers";
-export { AGENT_INSTRUCTIONS, createAgentTools } from "./agent";
-export {
-  BOARD_HOST_COMMAND_LABELS,
-  BOARD_HOST_COMMANDS,
-  BOARD_KEYBINDINGS,
-} from "./board-keybindings";
-export { DEFAULT_BOARD_OPTIONS } from "./board-options";
-export { boardProduct } from "./board-product";
+export * from "./agent";
+export { boardAgentTools, boardCanvas } from "./board-points";
 export * from "./elements";
+export * from "./modules";
 export * from "./file";
 export * from "./palette";
 export * from "./stickers";

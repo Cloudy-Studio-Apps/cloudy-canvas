@@ -1,5 +1,6 @@
 import { asUndoStep, stringArg } from "@canvas";
 
+import { ER_MODEL } from "../elements";
 import { reportApplied } from "./apply-result";
 import { requireBoard } from "./board-access";
 import type { BoardAgentTool } from "./board-agent.types";
@@ -16,7 +17,7 @@ export const erTools: BoardAgentTool[] = [
       "names (two diagrams may both have a `Cliente` entity).",
     inputSchema: { type: "object", properties: {} },
     run: (host) => {
-      const diagrams = requireBoard(host).er.diagrams();
+      const diagrams = requireBoard(host).engine.service(ER_MODEL).diagrams();
       return diagrams.map(({ id, name, label, entityCount }) => ({ id, name, label, entityCount }));
     },
   },
@@ -27,7 +28,8 @@ export const erTools: BoardAgentTool[] = [
       "`Entity Name [weak] { attribute [pk, multi, derived, partial] … }` and " +
       "`Relation name [identifying] { Entity (0,n) as role … }`.",
     inputSchema: DIAGRAM_ONLY,
-    run: (host, args) => diagramArg(requireBoard(host).er, args, false).text(),
+    run: (host, args) =>
+      diagramArg(requireBoard(host).engine.service(ER_MODEL), args, false).text(),
   },
   {
     name: "apply_er_text",
@@ -47,7 +49,8 @@ export const erTools: BoardAgentTool[] = [
       },
     },
     run: (host, args) => {
-      const { engine, er } = requireBoard(host);
+      const { engine } = requireBoard(host);
+      const er = engine.service(ER_MODEL);
       const text = stringArg(args, "text");
       const diagram = diagramArg(er, args, true);
       return reportApplied(
@@ -60,7 +63,8 @@ export const erTools: BoardAgentTool[] = [
     description: "Lays one ER diagram out again (one undo step).",
     inputSchema: DIAGRAM_ONLY,
     run: (host, args) => {
-      const { engine, er } = requireBoard(host);
+      const { engine } = requireBoard(host);
+      const er = engine.service(ER_MODEL);
       const diagram = diagramArg(er, args, false);
       asUndoStep(engine.doc, () => diagram.relayout());
       return "Done.";

@@ -1,6 +1,6 @@
 import { createId } from "@shared/core";
 
-import { freeName } from "../../../db";
+import { freeName } from "../../../../modules/db";
 import type { ErConstraintRule } from "../../constraint/constraint.types";
 import { createErAggregate } from "../../aggregate/aggregate.factory";
 import { createErAttribute } from "../../attribute/attribute.factory";

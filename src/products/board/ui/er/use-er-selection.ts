@@ -1,5 +1,5 @@
 import { useEngineState } from "@canvas-ui";
-import { useErModel } from "./er-model-context";
+import { useErModel } from "./use-er-model";
 import { useErVersion } from "./use-er-version";
 import type { ErSelection } from "./use-er-selection.types";
 

@@ -3,7 +3,7 @@ import { DocumentFeed, type CanvasDocument, type Point } from "@canvas";
 
 import { isErElement } from "../base/is-er-element";
 import type { ErElement } from "../base/er.types";
-import { freeName } from "../../db";
+import { freeName } from "../../../modules/db";
 import { createErEntity } from "../entity/entity.factory";
 import { entitySize } from "../base/er-size";
 import { freeOrigin } from "./apply-er-plan";

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 
-import { boardKinds, openBoardDocument } from "@board";
+import { openBoardDocument } from "@board";
 import { CanvasDocument } from "@canvas";
 import { storage } from "@platform";
+import { getBoardProduct } from "../modules";
 import type { BoardLoadState } from "./use-board-loader.types";
 
 /**
@@ -19,9 +20,10 @@ export function useBoardLoader(id: string): BoardLoadState {
     void (async () => {
       try {
         const info = await storage.get(id);
+        const { kinds } = getBoardProduct();
         const document = info
-          ? openBoardDocument(await storage.load(id))
-          : new CanvasDocument(boardKinds);
+          ? openBoardDocument(await storage.load(id), kinds)
+          : new CanvasDocument(kinds);
         if (!active) return document.destroy();
         loaded = document;
         setState({ status: "ready", document, info });

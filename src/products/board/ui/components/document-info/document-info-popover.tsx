@@ -2,8 +2,8 @@ import type { DocumentMetaPatch } from "@canvas";
 import { useEngine } from "@canvas-ui";
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
 import { useBoardFile } from "../../file";
-import { CommitInput } from "../db-panel/commit-input";
-import { CommitTextarea } from "../db-panel/commit-textarea";
+import { CommitInput } from "../../../modules/db/ui/db-panel/commit-input";
+import { CommitTextarea } from "../../../modules/db/ui/db-panel/commit-textarea";
 
 /** The board's name in the top bar, which opens its title and description. */
 export function DocumentInfoPopover() {

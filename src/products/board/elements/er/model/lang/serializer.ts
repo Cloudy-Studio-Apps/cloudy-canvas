@@ -1,4 +1,4 @@
-import { formatName } from "../../../db/schema/dbml";
+import { formatName } from "../../../../modules/db/schema/dbml";
 import { attributesByOwner } from "./serialize-attributes";
 import {
   serializeAggregate,

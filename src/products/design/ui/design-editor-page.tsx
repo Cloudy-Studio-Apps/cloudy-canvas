@@ -9,7 +9,7 @@ const ESCAPE = { key: "Escape" };
 
 /**
  * `/design/:id`. Placeholder until the design editor exists; it will mount a `CanvasEngine` with
- * `designProduct`, like the board editor does with `boardProduct`.
+ * `designProduct`, like the board editor does with `getBoardProduct()`.
  */
 export function DesignEditorPage() {
   const { id } = useParams<{ id: string }>();

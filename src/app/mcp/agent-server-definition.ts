@@ -1,5 +1,6 @@
 import type { McpServerDefinition } from "@shared/core";
 import { AGENT_INSTRUCTIONS, createAgentTools, type AgentHost } from "@board";
+import { getBoardModules, getBoardProduct } from "@board/ui";
 
 const SERVER_NAME = "cloudy-canvas";
 const SERVER_VERSION = "0.1.0";
@@ -10,7 +11,7 @@ export function createAgentServerDefinition(host: AgentHost): McpServerDefinitio
     name: SERVER_NAME,
     version: SERVER_VERSION,
     instructions: AGENT_INSTRUCTIONS,
-    tools: createAgentTools().map((tool) => ({
+    tools: createAgentTools(getBoardModules(), getBoardProduct().kinds).map((tool) => ({
       name: tool.name,
       description: tool.description,
       inputSchema: tool.inputSchema,

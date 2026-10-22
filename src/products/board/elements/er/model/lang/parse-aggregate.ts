@@ -1,4 +1,4 @@
-import type { DbmlError, TokenCursor } from "../../../db/schema/dbml";
+import type { DbmlError, TokenCursor } from "../../../../modules/db/schema/dbml";
 import { endOfItem, parseAttribute } from "./parse-attributes";
 import type { ParsedErAggregate } from "./parser.types";
 

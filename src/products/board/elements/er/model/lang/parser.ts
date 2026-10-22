@@ -1,4 +1,9 @@
-import { DbmlSyntaxError, parseSettings, TokenCursor, tokenize } from "../../../db/schema/dbml";
+import {
+  DbmlSyntaxError,
+  parseSettings,
+  TokenCursor,
+  tokenize,
+} from "../../../../modules/db/schema/dbml";
 import { isPlain, unknownSetting } from "./parse-attributes";
 import { parseAggregate } from "./parse-aggregate";
 import { parseConstraint } from "./parse-constraint";

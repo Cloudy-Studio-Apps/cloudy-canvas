@@ -1,8 +1,8 @@
-import type { AgentTool } from "@canvas";
+import type { AgentTool, ElementKinds } from "@canvas";
 import type { FileInfo } from "@shared/core";
 
 import type { BoardEngine } from "../board-engine.types";
-import type { DbSchema, ErModel } from "../elements";
+import type { BoardToolOptions } from "../board-options.types";
 
 /** The board open in the window. */
 export interface AgentBoard {
@@ -11,11 +11,8 @@ export interface AgentBoard {
   /** `null` until the board is saved for the first time. */
   path: string | null;
   dirty: boolean;
+  /** Its services (`DB_SCHEMA`, `ER_MODEL`, …) are `engine.service(…)`. */
   engine: BoardEngine;
-  /** The board's database schema, edited as DBML. */
-  schema: DbSchema;
-  /** The board's ER diagrams, edited as text. */
-  er: ErModel;
   save(): Promise<void>;
 }
 
@@ -37,3 +34,17 @@ export interface AgentHost {
 
 /** A tool that acts on the open board. */
 export type BoardAgentTool = AgentTool<AgentHost>;
+
+/** What a group of agent tools is made with: the board's composed element kinds. */
+export interface BoardAgentContext {
+  kinds: ElementKinds<BoardToolOptions>;
+}
+
+/**
+ * Agent tools a module adds (see `boardAgentTools`), made when the agent server starts. Most
+ * groups ignore the context.
+ */
+export interface BoardAgentToolGroup {
+  id: string;
+  tools(context: BoardAgentContext): BoardAgentTool[];
+}

@@ -1,4 +1,4 @@
-import { freeName } from "../../../db";
+import { freeName } from "../../../../modules/db";
 import { createErAttribute } from "../../attribute/attribute.factory";
 import { attributeSize } from "../../base/er-size";
 import type { ErShapes } from "../lang";

@@ -1,5 +1,5 @@
 import { useErDiagram, useErShapes } from "../../../er";
-import { CommitInput } from "../../db-panel/commit-input";
+import { CommitInput } from "../../../../modules/db/ui/db-panel/commit-input";
 import { AttributeList } from "./attribute-list";
 import { relationOptions } from "./entity-options";
 import { FormField } from "./form-field";

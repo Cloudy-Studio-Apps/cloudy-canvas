@@ -1,11 +1,11 @@
 import { Blocks } from "lucide-react";
 import { useEffect } from "react";
 
-import { BOARD_HOST_COMMAND_LABELS, BOARD_HOST_COMMANDS } from "@board";
 import { ToolButton } from "@canvas-ui";
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
 import { useBoardEngine } from "../../board-engine-context";
 import { useBoardPanelStore } from "../../stores/board-panel-store";
+import { OPEN_LIBRARY } from "./library-command";
 import { LibraryPanel } from "./library-panel";
 
 /** The toolbar's last button: opens the library above the toolbar (also with its shortcut). */
@@ -16,7 +16,7 @@ export function LibraryButton() {
 
   useEffect(
     () =>
-      engine.handleHostAction(BOARD_HOST_COMMANDS.openLibrary, () => {
+      engine.handleHostAction(OPEN_LIBRARY.id, () => {
         const { libraryOpen, setLibraryOpen } = useBoardPanelStore.getState();
         setLibraryOpen(!libraryOpen);
       }),
@@ -27,9 +27,9 @@ export function LibraryButton() {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <ToolButton
-          label={BOARD_HOST_COMMAND_LABELS.openLibrary}
+          label={OPEN_LIBRARY.label}
           description="Templates, lists, widgets and board tools."
-          shortcut={engine.keymap.label(BOARD_HOST_COMMANDS.openLibrary)}
+          shortcut={engine.keymap.label(OPEN_LIBRARY.id)}
           active={open}
         >
           <Blocks />

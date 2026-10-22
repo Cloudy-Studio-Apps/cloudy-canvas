@@ -4,6 +4,7 @@ import type { CanvasElement, ElementKinds } from "../elements";
 import type { Interaction } from "../handles";
 import type { Guide } from "../links";
 import type { Point, Rect } from "../geometry.types";
+import type { ServiceDef } from "../services";
 
 export interface CanvasPointer {
   screen: Point;
@@ -19,6 +20,8 @@ export interface ToolContext<O extends object = object> {
   readonly doc: CanvasDocument;
   readonly camera: Camera;
   readonly kinds: ElementKinds<O>;
+  /** A service of the engine (e.g. a board's ER diagrams), created on first use. */
+  service<T>(def: ServiceDef<T>): T;
   getOptions(): O;
   getSelection(): ReadonlySet<string>;
   setSelection(ids: Iterable<string>): void;

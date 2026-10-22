@@ -1,8 +1,8 @@
 import { Trash2 } from "lucide-react";
 
 import type { ErParticipantPatch } from "@board";
-import { CommitInput } from "../../db-panel/commit-input";
-import { FlagToggle } from "../../db-panel/flag-toggle";
+import { CommitInput } from "../../../../modules/db/ui/db-panel/commit-input";
+import { FlagToggle } from "../../../../modules/db/ui/db-panel/flag-toggle";
 import { useErDiagram } from "../../../er";
 import { CardinalityPicker } from "./cardinality-picker";
 import { IconAction } from "./icon-action";

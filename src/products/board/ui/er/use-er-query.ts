@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import type { ErDiagram, ErElement, ErModel, ErShapes } from "@board";
 import { useBoardPanelStore } from "../stores/board-panel-store";
-import { useErModel } from "./er-model-context";
+import { useErModel } from "./use-er-model";
 import { useErVersion } from "./use-er-version";
 
 /** The ER diagram the editor shows (an empty one until a diagram is picked). */

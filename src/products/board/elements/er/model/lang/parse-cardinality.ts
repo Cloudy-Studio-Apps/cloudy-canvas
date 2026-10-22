@@ -1,4 +1,4 @@
-import type { TokenCursor } from "../../../db/schema/dbml";
+import type { TokenCursor } from "../../../../modules/db/schema/dbml";
 import type { Cardinality } from "./parser.types";
 
 /** `(0,n)`, `(1,1)`, `(1:n)`, `(0,*)`. */

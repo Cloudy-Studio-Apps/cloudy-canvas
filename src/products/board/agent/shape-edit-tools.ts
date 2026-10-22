@@ -10,12 +10,11 @@ import {
 
 import { requireBoard } from "./board-access";
 import type { BoardAgentTool } from "./board-agent.types";
-import { createShapesTool } from "./create-shapes-tool";
 
 const IDS_SCHEMA = { type: "array", items: { type: "string" } };
 
+/** Editing shapes (`create_shapes` is in `create-shapes-tool.ts`, as it needs the kinds). */
 export const shapeEditTools: BoardAgentTool[] = [
-  createShapesTool,
   {
     name: "update_shapes",
     description:

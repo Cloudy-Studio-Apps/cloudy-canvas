@@ -1,4 +1,8 @@
-import { parseSettings, type DbmlError, type TokenCursor } from "../../../db/schema/dbml";
+import {
+  parseSettings,
+  type DbmlError,
+  type TokenCursor,
+} from "../../../../modules/db/schema/dbml";
 import { endOfItem, unknownSetting } from "./parse-attributes";
 import { optionalCardinality } from "./parse-cardinality";
 import type { ParsedErIsa } from "./parser.types";

@@ -5,6 +5,7 @@ export type { ErShapes, TextRange } from "./lang";
 export type { ErEdits } from "./er-edits";
 export type { ErDiagram } from "./er-diagram";
 export { ErModel } from "./er-model";
+export { ER_MODEL } from "./er-model.service";
 export { withErMembers } from "./er-members";
 export { resolveErElements } from "./resolve-er";
 export { pruneEr } from "./prune-er";

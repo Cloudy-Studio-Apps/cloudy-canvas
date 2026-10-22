@@ -1,4 +1,4 @@
-import { formatName } from "../../../db/schema/dbml";
+import { formatName } from "../../../../modules/db/schema/dbml";
 import { ER_ENTITY_COLOR, ER_RELATION_COLOR } from "../../../../palette";
 import type { ErAggregateElement } from "../../aggregate/aggregate.types";
 import type { ErAttributeElement } from "../../attribute/attribute.types";

@@ -1,35 +1,28 @@
-import { EngineContext } from "@canvas-ui";
+import { EditorModulesContext, EngineContext, ModuleSession } from "@canvas-ui";
 
 import { useAgentBoard } from "./agent";
 import { BoardChrome } from "./board-chrome";
-import { EmbedPlayer, useEmbedPreviews } from "./embed";
-import { ErModelContext, useErModelOf } from "./er";
 import { BoardFileContext, useBoardSaver, useBoardThumbnail } from "./file";
-import { BoardSchemaContext, useDbSchema } from "./schema";
+import { getBoardEditorModules } from "./modules";
 import type { BoardSessionProps } from "./board-session.types";
 
 /**
- * A loaded board: provides the engine, its file, its database schema and its ER diagrams to the
- * chrome around the canvas.
+ * A loaded board: provides the engine, its file and the board's modules to the chrome around the
+ * canvas, and runs the modules' session hooks and overlays.
  */
 export function BoardSession({ id, engine, info }: BoardSessionProps) {
   const file = useBoardSaver(id, engine, info);
-  const schema = useDbSchema(engine);
-  const er = useErModelOf(engine);
-  useAgentBoard(id, { engine, schema, er }, file);
-  useEmbedPreviews(engine);
+  useAgentBoard(id, engine, file);
   useBoardThumbnail(id, engine);
 
   return (
     <EngineContext value={engine}>
-      <BoardFileContext value={file}>
-        <BoardSchemaContext value={schema}>
-          <ErModelContext value={er}>
-            <EmbedPlayer />
-            <BoardChrome />
-          </ErModelContext>
-        </BoardSchemaContext>
-      </BoardFileContext>
+      <EditorModulesContext value={getBoardEditorModules()}>
+        <BoardFileContext value={file}>
+          <ModuleSession />
+          <BoardChrome />
+        </BoardFileContext>
+      </EditorModulesContext>
     </EngineContext>
   );
 }

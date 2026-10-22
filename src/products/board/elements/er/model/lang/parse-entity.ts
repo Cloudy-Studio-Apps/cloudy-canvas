@@ -1,4 +1,8 @@
-import { parseSettings, type DbmlError, type TokenCursor } from "../../../db/schema/dbml";
+import {
+  parseSettings,
+  type DbmlError,
+  type TokenCursor,
+} from "../../../../modules/db/schema/dbml";
 import { parseAttributeBlock, unknownSetting } from "./parse-attributes";
 import type { RawEntity } from "./parser.types";
 

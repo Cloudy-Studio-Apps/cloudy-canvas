@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from "react";
 
-import { useErModel } from "./er-model-context";
+import { useErModel } from "./use-er-model";
 
 /** Changes whenever any ER element on the board changes. */
 export function useErVersion(): number {

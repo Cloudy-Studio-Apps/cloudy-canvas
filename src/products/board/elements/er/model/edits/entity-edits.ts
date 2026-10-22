@@ -1,4 +1,4 @@
-import { freeName } from "../../../db";
+import { freeName } from "../../../../modules/db";
 import { createErEntity } from "../../entity/entity.factory";
 import { entitySize } from "../../base/er-size";
 import type { ErShapes } from "../lang";

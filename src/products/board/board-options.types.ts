@@ -5,9 +5,14 @@ import type {
   PickedSticker,
   StrokePen,
 } from "./elements";
+import type { DbToolOptions, StickyToolOptions } from "./modules";
 
-/** What the board's tool options panel picks, for new elements and the selection. */
-export interface BoardToolOptions {
+/**
+ * What the board's tool options panel picks, for new elements and the selection. Each module
+ * declares the options it owns and their defaults; plugins add theirs by augmenting this
+ * interface (`declare module "@board" { interface BoardToolOptions extends MyOptions {} }`).
+ */
+export interface BoardToolOptions extends StickyToolOptions, DbToolOptions {
   /** What the marker tool draws with. Each pen keeps its own color and thickness. */
   drawPen: StrokePen;
   /** Whether new strokes are smoothed when they're finished. */
@@ -16,7 +21,6 @@ export interface BoardToolOptions {
   markerSize: number;
   highlighterColor: string;
   highlighterSize: number;
-  stickyColor: string;
   /** Geo variant id. */
   shapeKind: string;
   shapeFill: string;
@@ -26,8 +30,6 @@ export interface BoardToolOptions {
   connectorColor: string;
   connectorStartHead: ArrowHead;
   connectorEndHead: ArrowHead;
-  /** What the Database tool places. */
-  dbKind: "table" | "enum";
   /** The selected images' look (pasted images start from `IMAGE_DEFAULTS`). */
   imageBackground: ImageBackground;
   imagePadding: number;

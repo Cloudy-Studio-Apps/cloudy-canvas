@@ -22,6 +22,8 @@ export type {
 } from "./export";
 export type { Point, Rect, Size } from "./geometry.types";
 export type { Keybindings } from "./input";
+export type * from "./modules";
+export type { ServiceDef } from "./services";
 export type { CanvasLinks, Guide, GuideView, LinkView } from "./links";
 export type { CanvasTextOptions, CanvasTheme, ImageFit } from "./render";
 export type { CanvasPointer, Tool, ToolContext } from "./tools";
@@ -32,7 +34,9 @@ export * from "./agent";
 export * from "./elements";
 export * from "./geometry";
 export { BASE_COMMAND_LABELS, BASE_KEYBINDINGS, Keymap } from "./input";
+export { composeProduct, createCanvasPoints } from "./modules";
 export { ElementView } from "./render";
+export { defineService } from "./services";
 export { centerTextTop, measureText, measureWrapped } from "./text";
 export { createBaseTools, selectAndEdit } from "./tools";
 export { bytesToBase64, debounce, Emitter, Registry } from "./utils";

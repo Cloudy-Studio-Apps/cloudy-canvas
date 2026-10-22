@@ -41,6 +41,20 @@ const PRODUCTS = {
   message: "Shared and canvas code must not know about products.",
 };
 const BOARD = { group: ["@board", "@board/*"], message: "Products must not import each other." };
+/** A product's React side: its editor (`ui/`), its modules' `ui/` and their `.module` files. */
+const PRODUCT_UI_IMPORTS = {
+  group: [
+    "@board/ui",
+    "@board/ui/*",
+    "@board/modules/*/ui/*",
+    "@board/modules/*/*.module",
+    "@design/ui",
+    "@design/ui/*",
+    "@design/modules/*/ui/*",
+    "@design/modules/*/*.module",
+  ],
+  message: "Engine code must not import a product's UI (its ui/ folders and .module files).",
+};
 const DESIGN = { group: ["@design", "@design/*"], message: "Products must not import each other." };
 
 /** A `no-restricted-imports` rule from pattern groups, optionally banning React too. */
@@ -53,7 +67,16 @@ function restrict(patterns, { react = false } = {}) {
   };
 }
 
-const PRODUCT_UI = ["src/products/*/ui/**"];
+// A module folder (`products/*/modules/<name>/`) is engine code except its `ui/` and its
+// `<name>.module.ts`, which plugs it into the UI too.
+const PRODUCT_UI = [
+  "src/products/*/ui/**/*.{ts,tsx}",
+  "src/products/*/modules/*/ui/**/*.{ts,tsx}",
+  "src/products/*/modules/*/*.module.ts",
+];
+/** `PRODUCT_UI` of one product. */
+const uiOf = (product) =>
+  PRODUCT_UI.map((glob) => glob.replace("products/*", `products/${product}`));
 
 export default tseslint.config(
   { ignores: ["dist", "src-tauri/target", "src-tauri/gen"] },
@@ -99,19 +122,19 @@ export default tseslint.config(
   {
     files: ["src/products/board/**/*.ts"],
     ignores: PRODUCT_UI,
-    rules: restrict([UI_LAYERS, PLATFORM, DESIGN], { react: true }),
+    rules: restrict([UI_LAYERS, PRODUCT_UI_IMPORTS, PLATFORM, DESIGN], { react: true }),
   },
   {
-    files: ["src/products/board/ui/**/*.{ts,tsx}"],
+    files: uiOf("board"),
     rules: restrict([DESIGN]),
   },
   {
     files: ["src/products/design/**/*.ts"],
     ignores: PRODUCT_UI,
-    rules: restrict([UI_LAYERS, PLATFORM, BOARD], { react: true }),
+    rules: restrict([UI_LAYERS, PRODUCT_UI_IMPORTS, PLATFORM, BOARD], { react: true }),
   },
   {
-    files: ["src/products/design/ui/**/*.{ts,tsx}"],
+    files: uiOf("design"),
     rules: restrict([BOARD]),
   },
   {

@@ -1,4 +1,5 @@
-import type { DbApplyResult, DbmlError, ErApplyResult } from "../elements";
+import type { ErApplyResult } from "../elements";
+import type { DbApplyResult, DbmlError } from "../modules";
 
 /** A text apply result for the agent: warnings on success, a thrown error (a tool error) otherwise. */
 export function reportApplied(result: DbApplyResult | ErApplyResult) {

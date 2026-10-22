@@ -3,3 +3,10 @@
 export { getActiveBoard, setActiveBoard, waitForActiveBoard } from "./agent";
 export { BoardEditorPage } from "./board-editor-page";
 export { BoardShortcutsList } from "./components/shortcuts-list";
+export {
+  boardEditor,
+  getBoardEditorModules,
+  getBoardModules,
+  getBoardProduct,
+  registerBoardModule,
+} from "./modules";

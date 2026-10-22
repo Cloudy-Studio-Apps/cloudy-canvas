@@ -17,6 +17,8 @@ export interface LibrarySection {
   description: string;
   /** The tab it's listed under besides "All"; without one, it's shown only under "All". */
   tab?: LibraryTab;
+  /** Position in the library, lowest first. */
+  order: number;
 }
 
 /** Something the library inserts or starts: a tool, a template, a widget, … */
@@ -24,6 +26,8 @@ export interface LibraryItem {
   id: string;
   /** The id of its section. */
   section: string;
+  /** Position within its section, lowest first. */
+  order: number;
   label: string;
   description?: string;
   icon: LucideIcon;

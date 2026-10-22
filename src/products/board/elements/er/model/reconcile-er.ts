@@ -1,7 +1,7 @@
 import { createId } from "@shared/core";
 
-import { pairByName } from "../../db/schema/pair-by-name";
-import { checkNames, ReconcileError } from "../../db/schema/reconcile-error";
+import { pairByName } from "../../../modules/db/schema/pair-by-name";
+import { checkNames, ReconcileError } from "../../../modules/db/schema/reconcile-error";
 import { NO_ER_DIAGRAM } from "../base/no-er-diagram";
 import { ER_ENTITY_COLOR, ER_RELATION_COLOR } from "../../../palette";
 import type { ErEntityElement } from "../entity/entity.types";

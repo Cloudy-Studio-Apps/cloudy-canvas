@@ -1,27 +1,14 @@
-import { arrangeTools } from "./arrange-tools";
-import type { BoardAgentTool } from "./board-agent.types";
-import { boardInfoTools } from "./board-info-tools";
-import { boardReadTools } from "./board-read-tools";
-import { dbTools } from "./db-tools";
-import { erTools } from "./er-tools";
-import { exportTools } from "./export-tools";
-import { fileTools } from "./file-tools";
-import { shapeEditTools } from "./shape-edit-tools";
-import { stickerTools } from "./sticker-tools";
-import { viewTools } from "./view-tools";
+import type { ElementKinds } from "@canvas";
+import type { ModuleHost } from "@shared/core";
 
-/** Every tool agents can call. New tools: add them to a group file (or a new group) and list it here. */
-export function createAgentTools(): BoardAgentTool[] {
-  return [
-    ...boardReadTools,
-    ...boardInfoTools,
-    ...shapeEditTools,
-    ...arrangeTools,
-    ...stickerTools,
-    ...dbTools,
-    ...erTools,
-    ...viewTools,
-    ...exportTools,
-    ...fileTools,
-  ];
+import type { BoardToolOptions } from "../board-options.types";
+import { boardAgentTools } from "../board-points";
+import type { BoardAgentTool } from "./board-agent.types";
+
+/** Every tool agents can call: the groups the board's modules contribute to `boardAgentTools`. */
+export function createAgentTools(
+  modules: ModuleHost,
+  kinds: ElementKinds<BoardToolOptions>,
+): BoardAgentTool[] {
+  return modules.get(boardAgentTools).flatMap((group) => group.tools({ kinds }));
 }

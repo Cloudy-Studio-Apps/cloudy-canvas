@@ -1,6 +1,6 @@
 import { createId } from "@shared/core";
 
-import { pairByName } from "../../db/schema/pair-by-name";
+import { pairByName } from "../../../modules/db/schema/pair-by-name";
 import { NO_ER_DIAGRAM } from "../base/no-er-diagram";
 import type { ErAggregateElement } from "../aggregate/aggregate.types";
 import type { ErConstraintElement } from "../constraint/constraint.types";

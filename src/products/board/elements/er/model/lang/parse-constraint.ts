@@ -1,4 +1,4 @@
-import type { TokenCursor } from "../../../db/schema/dbml";
+import type { TokenCursor } from "../../../../modules/db/schema/dbml";
 import type { ErConstraintRule } from "../../constraint/constraint.types";
 import { optionalCardinality } from "./parse-cardinality";
 import type { ParsedErConstraint } from "./parser.types";

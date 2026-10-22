@@ -10,6 +10,7 @@ export type { CustomColorSwatchProps } from "./components/custom-color-swatch.ty
 export type { FloatingPanelProps, PanelDividerProps } from "./components/floating-panel.types";
 export type { OptionButtonProps } from "./components/option-button.types";
 export type { ToolButtonProps } from "./components/tool-button.types";
+export type * from "./modules";
 export { readCanvasTheme } from "./canvas-theme";
 export { CANVAS_MENU, CanvasContextMenu, SELECTION_MENU } from "./components/context-menu";
 export { ExportDialog } from "./components/export-dialog";
@@ -29,3 +30,5 @@ export { useCanvasEngine } from "./use-canvas-engine";
 export { useCanvasFileDrop } from "./use-canvas-file-drop";
 export { useCopyAsPng } from "./use-copy-as-png";
 export { useDocumentMeta } from "./use-document-meta";
+export * from "./modules";
+export { useService } from "./use-service";

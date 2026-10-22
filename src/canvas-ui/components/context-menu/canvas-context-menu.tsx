@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@shared/ui/components/ui/dropdown-menu";
 import { useEngine } from "../../engine-context";
+import { useOptionalEditorPoint } from "../../modules/editor-modules-context";
 import type { OpenContextMenu } from "./canvas-context-menu.types";
 import { ContextMenuEntry } from "./context-menu-entry";
 import { CANVAS_MENU, SELECTION_MENU } from "./context-menu-items";
@@ -20,17 +21,22 @@ import type { ContextMenuContext } from "./context-menu-items.types";
 export function CanvasContextMenu() {
   const engine = useEngine();
   const [menu, setMenu] = useState<OpenContextMenu | null>(null);
+  const moduleGroups = useOptionalEditorPoint((points) => points.contextMenu);
 
   useEffect(
     () =>
-      engine.onContextMenu((request: ContextMenuRequest) =>
+      engine.onContextMenu((request: ContextMenuRequest) => {
+        const { target } = request;
         setMenu({
           at: request.screen,
-          groups: request.target === "selection" ? SELECTION_MENU : CANVAS_MENU,
+          groups: [
+            ...(target === "selection" ? SELECTION_MENU : CANVAS_MENU),
+            ...moduleGroups.filter((group) => group.menu === target).map((group) => group.items),
+          ],
           context: menuContext(engine),
-        }),
-      ),
-    [engine],
+        });
+      }),
+    [engine, moduleGroups],
   );
 
   return (

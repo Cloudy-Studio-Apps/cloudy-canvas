@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Button } from "@shared/ui/components/ui/button";
 import { Input } from "@shared/ui/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@shared/ui/components/ui/tabs";
+import { useEditorModules } from "@canvas-ui";
 import { useBoardEngine } from "../../board-engine-context";
 import { LIBRARY_TABS } from "./library-catalog";
 import { shownSections } from "./library-filter";
@@ -13,9 +14,10 @@ import type { LibraryItem, LibraryPanelProps, LibraryTabInfo } from "./library.t
 /** Widgets, templates, lists and more, in tabs with one search for all of them. */
 export function LibraryPanel({ onClose }: LibraryPanelProps) {
   const engine = useBoardEngine();
+  const { host } = useEditorModules();
   const [query, setQuery] = useState("");
   const [tab, setTab] = useState<LibraryTabInfo["id"]>("all");
-  const sections = useMemo(() => shownSections(tab, query.trim()), [tab, query]);
+  const sections = useMemo(() => shownSections(host, tab, query.trim()), [host, tab, query]);
 
   const pick = (item: LibraryItem) => {
     if (!item.run) return;

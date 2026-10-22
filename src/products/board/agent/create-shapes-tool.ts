@@ -9,11 +9,12 @@ import {
   type CanvasElement,
 } from "@canvas";
 
-import { boardKinds, geoVariants } from "../elements";
+import { geoVariants } from "../elements";
 import { requireBoard } from "./board-access";
-import type { BoardAgentTool } from "./board-agent.types";
+import type { BoardAgentContext, BoardAgentTool } from "./board-agent.types";
 
-export const createShapesTool: BoardAgentTool = {
+/** `create_shapes`, listing the board's creatable types. */
+export const createShapesTool = ({ kinds }: BoardAgentContext): BoardAgentTool => ({
   name: "create_shapes",
   description:
     "Adds shapes to the open board as one undo step and returns their ids. Coordinates are world " +
@@ -32,7 +33,7 @@ export const createShapesTool: BoardAgentTool = {
             type: "object",
             required: ["type"],
             properties: {
-              type: { enum: creatableTypes(boardKinds) },
+              type: { enum: creatableTypes(kinds) },
               key: {
                 type: "string",
                 description:
@@ -51,7 +52,7 @@ export const createShapesTool: BoardAgentTool = {
               fill: { type: "string", description: 'Geo fill, or "transparent".' },
               stroke: { type: "string", description: 'Geo outline, or "transparent".' },
               // Type-specific fields (e.g. a connector's ends).
-              ...Object.assign({}, ...boardKinds.all().map((kind) => kind.specProperties)),
+              ...Object.assign({}, ...kinds.all().map((kind) => kind.specProperties)),
             },
           },
         },
@@ -81,4 +82,4 @@ export const createShapesTool: BoardAgentTool = {
     });
     return { created };
   },
-};
+});

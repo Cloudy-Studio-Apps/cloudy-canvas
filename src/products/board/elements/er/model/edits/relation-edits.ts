@@ -1,6 +1,6 @@
 import { createId } from "@shared/core";
 
-import { freeName } from "../../../db";
+import { freeName } from "../../../../modules/db";
 import type { ErParticipant } from "../../relation/relation.types";
 import { createErRelation } from "../../relation/relation.factory";
 import { relationSize } from "../../base/er-size";
