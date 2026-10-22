@@ -42,6 +42,7 @@ export { normalizeHex } from "./components/normalize-hex";
 export { ColorSwatch } from "./components/color-swatch";
 export { CustomColorSwatch } from "./components/custom-color-swatch";
 export { FloatingPanel, PanelDivider } from "./components/floating-panel";
+export { CanvasLoadingOverlay } from "./components/canvas-loading-overlay";
 export { HistoryControls } from "./components/history-controls";
 export { OptionButton } from "./components/option-button";
 export { ToolButton } from "./components/tool-button";
@@ -59,6 +60,7 @@ export {
 export { EngineContext, useEngine, useEngineState } from "./engine-context";
 export { useEngineElement } from "./use-engine-element";
 export { useCanvasEngine } from "./use-canvas-engine";
+export type { CanvasEngineHost } from "./use-canvas-engine.types";
 export { useCanvasFileDrop } from "./use-canvas-file-drop";
 export { useCopyAsPng } from "./use-copy-as-png";
 export { useDocumentMeta } from "./use-document-meta";

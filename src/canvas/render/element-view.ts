@@ -1,12 +1,15 @@
 import { Container, Graphics, GraphicsContext, Sprite, Text, type Texture } from "pixi.js";
 
 import { type CanvasElement, type ElementKind, type ElementTextStyle } from "../elements";
+import { rectsIntersect } from "../geometry";
 import type { Rect } from "../geometry.types";
+import { clipCovers } from "./clip-covers";
 import { fitImage } from "./fit-image";
 import type { ImageCache } from "./image-cache";
 import type { ElementClip } from "./layer-placement.types";
 import { PaintStack } from "./paint-stack";
 import type { PaintLayer, PaintStackOptions } from "./paint-stack.types";
+import { cappedTextResolution } from "./text-resolution";
 import { canvasTextStyle } from "./text-style";
 import type { CanvasTextOptions } from "./text-style.types";
 import type { ImageFit } from "./element-view.types";
@@ -44,6 +47,8 @@ export class ElementView extends Container {
   private croppedTexture: Texture | null = null;
   /** The element's bounds, which the entrance scales around (see `setEntrance`). */
   private bounds: Rect = { x: 0, y: 0, w: 0, h: 0 };
+  /** What the view draws, in world units, worked out when first needed (see `extent`). */
+  private drawn: Rect | null = null;
   private entranceScale = 1;
   private entranceAlpha = 1;
   private faded = false;
@@ -65,7 +70,9 @@ export class ElementView extends Container {
   sync(el: CanvasElement, kind: ElementKind, order = this.order): void {
     this.order = order;
     this.bounds = { x: el.x, y: el.y, w: el.w, h: el.h };
+    this.drawn = null;
     this.placeScaled();
+    this.setTextResolution(this.textResolution);
     kind.draw(this, el);
   }
 
@@ -86,8 +93,9 @@ export class ElementView extends Container {
   /** Creates or updates the view's text. */
   setText(value: string, options: CanvasTextOptions): Text {
     const style = canvasTextStyle(options);
+    this.drawn = null;
     if (!this.textNode) {
-      this.textNode = new Text({ text: value, style, resolution: this.textResolution });
+      this.textNode = new Text({ text: value, style, resolution: this.nodeResolution() });
       this.textNode.visible = this.textVisible;
       this.addChild(this.textNode);
     } else {
@@ -127,6 +135,7 @@ export class ElementView extends Container {
       this.image = new Sprite();
       this.addChildAt(this.image, this.getChildIndex(this.graphics) + 1);
     }
+    this.drawn = null;
     this.imageAsset = assetId;
     this.imageBox = box;
     this.imageFit = fit;
@@ -148,41 +157,58 @@ export class ElementView extends Container {
       this.paintStack = new PaintStack(this.images);
       this.addChildAt(this.paintStack, this.getChildIndex(this.graphics) + 1);
     }
+    this.drawn = null;
     this.paintStack.set(layers, options);
   }
 
   /**
    * Clips the element to a world area (e.g. the frame holding it, when that frame clips its
-   * content); `null` shows all of it. Call it after `sync`, which places the view.
+   * content); `null` shows all of it. Call it after `sync`, which places the view. A view that lies
+   * inside the area gets no mask, since masks are costly to draw.
    */
   setClip(clip: ElementClip | null): void {
-    if (!clip) {
-      if (!this.clipMask) return;
+    if (this.clipMask) {
       this.mask = null;
       this.clipMask.destroy();
       this.clipMask = null;
-      return;
+      this.drawn = null;
     }
-    if (!this.clipMask) {
-      this.clipMask = new Graphics();
-      this.addChild(this.clipMask);
-      this.mask = this.clipMask;
-    }
+    if (!clip || clipCovers(clip, this.extent())) return;
+    this.clipMask = new Graphics();
+    this.addChild(this.clipMask);
+    this.mask = this.clipMask;
+    this.drawn = null;
     const { x, y, w, h } = clip.rect;
     const local = { x: x - this.bounds.x, y: y - this.bounds.y };
     const radius = Math.min(clip.radius, w / 2, h / 2);
-    const g = this.clipMask.clear();
+    const g = this.clipMask;
     if (radius > 0) g.roundRect(local.x, local.y, w, h, radius);
     else g.rect(local.x, local.y, w, h);
     g.fill({ color: 0xffffff });
   }
 
+  /** The world area the view draws in (its masked area when it's clipped). */
+  extent(): Rect {
+    if (!this.drawn) {
+      const { minX, minY, width, height } = this.getLocalBounds();
+      this.drawn = { x: this.bounds.x + minX, y: this.bounds.y + minY, w: width, h: height };
+    }
+    return this.drawn;
+  }
+
+  /** Skips drawing the view while it's outside `visible` (a world rect), unless it's popping in. */
+  cull(visible: Rect): void {
+    const shown = this.entranceScale !== 1 || rectsIntersect(this.extent(), visible);
+    if (this.culled === shown) this.culled = !shown;
+  }
+
   /** Creates or updates the label stored under `key` (positioned by the caller). */
   setTextSlot(key: string, value: string, options: CanvasTextOptions): Text {
     const style = canvasTextStyle(options);
+    this.drawn = null;
     let node = this.textSlots.get(key);
     if (!node) {
-      node = new Text({ text: value, style, resolution: this.textResolution });
+      node = new Text({ text: value, style, resolution: this.nodeResolution() });
       node.visible = key !== this.hiddenSlot;
       this.textSlots.set(key, node);
       this.addChild(node);
@@ -195,6 +221,7 @@ export class ElementView extends Container {
 
   /** The graphics stored under `key`, drawn above the image and the base graphics. */
   layer(key: string): Graphics {
+    this.drawn = null;
     let layer = this.layers.get(key);
     if (!layer) {
       layer = new Graphics();
@@ -227,6 +254,7 @@ export class ElementView extends Container {
 
   /** Hides the icon shown under `key`. */
   clearIcon(key: string): void {
+    this.drawn = null;
     const layer = this.layers.get(`icon:${key}`);
     if (layer) layer.visible = false;
   }
@@ -242,6 +270,7 @@ export class ElementView extends Container {
 
   setTextVisible(visible: boolean): void {
     this.textVisible = visible;
+    this.drawn = null;
     if (this.textNode) this.textNode.visible = visible;
   }
 
@@ -250,25 +279,30 @@ export class ElementView extends Container {
     const shown = this.hiddenSlot ? this.textSlots.get(this.hiddenSlot) : undefined;
     if (shown) shown.visible = true;
     this.hiddenSlot = key;
+    this.drawn = null;
     const hidden = key ? this.textSlots.get(key) : undefined;
     if (hidden) hidden.visible = false;
   }
 
+  /** The resolution its texts are drawn at, capped by its size (see `cappedTextResolution`). */
   setTextResolution(resolution: number): void {
     this.textResolution = resolution;
+    const capped = this.nodeResolution();
     for (const node of [this.textNode, ...this.textSlots.values()]) {
-      if (node && node.resolution !== resolution) node.resolution = resolution;
+      if (node && node.resolution !== capped) node.resolution = capped;
     }
   }
 
   /** Lays its texts out again (a font they use has just loaded, so they measure differently). */
   refreshText(): void {
+    this.drawn = null;
     for (const node of [this.textNode, ...this.textSlots.values()]) node?.style.update();
   }
 
   /** Hides the image shown with `placeImage`, if any. */
   clearImage(): void {
     this.imageAsset = null;
+    this.drawn = null;
     if (this.image) this.image.visible = false;
   }
 
@@ -276,6 +310,10 @@ export class ElementView extends Container {
     this.croppedTexture?.destroy(false);
     this.croppedTexture = null;
     super.destroy(options);
+  }
+
+  private nodeResolution(): number {
+    return cappedTextResolution(this.textResolution, Math.max(this.bounds.w, this.bounds.h));
   }
 
   private applyAlpha(): void {
@@ -290,6 +328,7 @@ export class ElementView extends Container {
   }
 
   private fitImage(texture: Texture): void {
+    this.drawn = null;
     this.croppedTexture = fitImage(
       this.image!,
       texture,

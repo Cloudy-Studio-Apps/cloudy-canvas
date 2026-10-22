@@ -1,4 +1,4 @@
-import { importFigmaFile } from "@design/ui";
+import { importFigmaWithLoading } from "@design/ui";
 import { fileNameFromPath, isFigmaPath, isOpenablePath } from "@shared/core";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 import { notifyError, toast } from "@shared/stores/toast-store";
@@ -23,7 +23,7 @@ export function openPaths(paths: string[]): void {
 async function openPath(path: string): Promise<void> {
   try {
     const recents = useRecentFilesStore.getState();
-    const file = isFigmaPath(path) ? await importFigmaFile(path) : await recents.open(path);
+    const file = isFigmaPath(path) ? await importFigmaWithLoading(path) : await recents.open(path);
     recents.upsert(file);
     await router.navigate(`/${file.type}/${file.id}`);
   } catch (error) {

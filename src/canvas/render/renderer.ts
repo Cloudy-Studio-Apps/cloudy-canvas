@@ -19,7 +19,14 @@ import { SizeLabelLayer } from "./layers/size-label-layer";
 import type { OverlayState } from "./overlay-state.types";
 import { drawSnapshot } from "./snapshot";
 import type { SnapshotOptions } from "./snapshot.types";
-import type { RendererOptions } from "./renderer.types";
+import type { ChunkedSyncOptions, RendererOptions } from "./renderer.types";
+
+/** How long `syncElementsChunked` builds views before it lets the window draw a frame. */
+const SLICE_MS = 12;
+
+function nextFrame(): Promise<void> {
+  return new Promise((resolve) => requestAnimationFrame(() => resolve()));
+}
 
 /**
  * Owns the Pixi application and composes the layers, bottom to top:
@@ -91,6 +98,46 @@ export class Renderer {
     this.app.renderer.background.color = theme.background;
   }
 
+  /**
+   * Creates the views of `elements` a few at a time, yielding a frame after each slice of
+   * `SLICE_MS`, so a large document doesn't freeze the window while it opens. Stops early when
+   * `cancelled` turns true.
+   */
+  async syncElementsChunked(
+    elements: readonly CanvasElement[],
+    { onProgress, cancelled }: ChunkedSyncOptions,
+  ): Promise<void> {
+    const total = elements.length;
+    let done = 0;
+    while (done < total) {
+      if (cancelled()) return;
+      const start = performance.now();
+      while (done < total && performance.now() - start < SLICE_MS) {
+        const el = elements[done++]!;
+        (this.kinds.kindOf(el).frame ? this.frames : this.elements).sync([el]);
+      }
+      onProgress(done, total);
+      await nextFrame();
+    }
+  }
+
+  /** Destroys the views of elements not in `ids`. */
+  retainElements(ids: ReadonlySet<string>): void {
+    this.elements.retain(ids);
+    this.frames.retain(ids);
+  }
+
+  /** Decodes these image assets ahead of drawing them; `onProgress` hears each one finish. */
+  async preloadImages(
+    assetIds: readonly string[],
+    onProgress: (done: number, total: number) => void,
+  ): Promise<void> {
+    let done = 0;
+    await Promise.all(
+      assetIds.map((id) => this.images.load(id).finally(() => onProgress(++done, assetIds.length))),
+    );
+  }
+
   syncElements(elements: Iterable<CanvasElement>, removed: Iterable<string> = []): void {
     const frames: CanvasElement[] = [];
     const others: CanvasElement[] = [];
@@ -153,6 +200,9 @@ export class Renderer {
     const animating = [this.elements.tick(now), this.frames.tick(now)].includes(true);
     this.world.scale.set(camera.zoom);
     this.world.position.set(camera.x * camera.zoom, camera.y * camera.zoom);
+    const visible = camera.visibleWorldRect();
+    this.elements.cull(visible);
+    this.frames.cull(visible);
     this.grid.draw(camera, this.theme.grid);
     this.links.draw({ zoom: camera.zoom, theme: this.theme, highlighted });
     this.guide.draw({ zoom: camera.zoom, theme: this.theme });

@@ -34,6 +34,47 @@
 
   --tracking-tight: -0.015em;
   --tracking-tighter: -0.025em;
+
+  /* A progress bar that can't count its steps: a segment sliding across the track. */
+  --animate-indeterminate: indeterminate 1.2s ease-in-out infinite;
+  @keyframes indeterminate {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(300%);
+    }
+  }
+
+  /* The loading screen's seal: squash on landing, stretch on take-off, a float at the top. */
+  --animate-seal-hop: seal-hop 0.9s ease-in-out infinite;
+  --animate-seal-shadow: seal-shadow 0.9s ease-in-out infinite;
+  @keyframes seal-hop {
+    0%,
+    100% {
+      transform: translateY(0) scale(1.12, 0.86);
+    }
+    15% {
+      transform: translateY(0) scale(0.92, 1.1);
+    }
+    50% {
+      transform: translateY(-14px) scale(1, 1) rotate(-4deg);
+    }
+    80% {
+      transform: translateY(-2px) scale(0.96, 1.05);
+    }
+  }
+  @keyframes seal-shadow {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 0.22;
+    }
+    50% {
+      transform: scale(0.55);
+      opacity: 0.1;
+    }
+  }
 }
 
 /* Token-backed values (resolved at runtime from tokens.css). */

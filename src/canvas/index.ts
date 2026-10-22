@@ -13,6 +13,7 @@ export type { CanvasGrid, CanvasViewOptions } from "./canvas-view.types";
 export type { CopyContext, DropResult, PastedImage } from "./clipboard";
 export type { CommandHandler, Commands } from "./commands.types";
 export type { DocumentChange, DocumentMeta, DocumentMetaPatch } from "./document";
+export type { EngineLoading } from "./engine-loading.types";
 export type { EngineState } from "./engine-state.types";
 export type {
   ExportArea,

@@ -33,16 +33,21 @@ const BOX_SHAPES = new Set([
 /** Figma's star inner radius when the file doesn't say. */
 const STAR_INNER_SCALE = 0.382;
 
-/** Converts siblings (bottom to top) into `out`, each with its descendants. */
+/**
+ * Converts siblings (bottom to top) into `out`, each with its descendants. `onEach` runs after
+ * each sibling (the import's progress).
+ */
 export function convertChildren(
   children: readonly ResolvedFigNode[],
   parent: Omit<NodePlacement, "index">,
   ctx: ImportContext,
+  onEach?: () => void,
 ): void {
   const keys = generateNKeysBetween(null, null, children.length);
   children.forEach((child, i) => {
     const index = keys[i];
     if (index) convertNode(child, { ...parent, index }, ctx);
+    onEach?.();
   });
 }
 

@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
 
-import { useCanvasEngine, useCanvasFileDrop } from "@canvas-ui";
+import { CanvasLoadingOverlay, useCanvasEngine, useCanvasFileDrop } from "@canvas-ui";
 import { Button } from "@shared/ui/components/ui/button";
 import { useFileDragOver } from "@shared/ui/hooks/use-file-drag-over";
 import { CANVAS_INSET } from "./design-layout";
@@ -20,7 +20,7 @@ export function DesignEditor({ id }: DesignEditorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const load = useDesignLoader(id);
   const document = load.status === "ready" ? load.document : null;
-  const engine = useCanvasEngine(containerRef, getDesignProduct(), document);
+  const { engine, loading } = useCanvasEngine(containerRef, getDesignProduct(), document);
   const draggingFiles = useFileDragOver();
   useCanvasFileDrop(engine);
 
@@ -43,6 +43,9 @@ export function DesignEditor({ id }: DesignEditorProps) {
           className="pointer-events-none absolute inset-y-0 z-40 border-2 border-primary"
           style={CANVAS_INSET}
         />
+      )}
+      {!engine && load.status !== "error" && (
+        <CanvasLoadingOverlay title="Opening design" loading={loading} />
       )}
       {load.status === "error" && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">

@@ -7,6 +7,8 @@ import { fontKey, type FontLoader, type FontRequest } from "@shared/core";
  */
 export class FontTracker {
   private readonly requested = new Set<string>();
+  /** Loads still running, so a host can wait for them (`settled`). */
+  private readonly pending = new Set<Promise<unknown>>();
   private destroyed = false;
 
   constructor(
@@ -20,13 +22,20 @@ export class FontTracker {
       const key = fontKey(font);
       if (this.requested.has(key)) continue;
       this.requested.add(key);
-      void this.loader
+      const load = this.loader
         .load(font)
         .then((loaded) => {
           if (loaded && !this.destroyed) this.onLoad(key);
         })
-        .catch(() => undefined);
+        .catch(() => undefined)
+        .finally(() => this.pending.delete(load));
+      this.pending.add(load);
     }
+  }
+
+  /** Resolves once the fonts requested so far have loaded or failed. */
+  async settled(): Promise<void> {
+    while (this.pending.size > 0) await Promise.allSettled([...this.pending]);
   }
 
   destroy(): void {

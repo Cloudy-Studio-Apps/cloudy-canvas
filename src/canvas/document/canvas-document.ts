@@ -100,6 +100,13 @@ export class CanvasDocument {
     this.doc.transact(() => this.write(el), UI_ORIGIN);
   }
 
+  /** `addUntracked` for many elements in one transaction (e.g. a whole imported file). */
+  addAllUntracked(elements: Iterable<CanvasElement>): void {
+    this.doc.transact(() => {
+      for (const el of elements) this.write(el);
+    }, UI_ORIGIN);
+  }
+
   update(id: string, patch: ElementPatch): void {
     const map = this.elements.get(id);
     if (!map) return;

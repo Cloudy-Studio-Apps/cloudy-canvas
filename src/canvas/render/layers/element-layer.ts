@@ -1,6 +1,7 @@
 import { Container } from "pixi.js";
 
 import type { CanvasElement, ElementKinds } from "../../elements";
+import type { Rect } from "../../geometry.types";
 import type { HiddenText } from "../element-view.types";
 import { ElementView } from "../element-view";
 import { entranceAt } from "../entrance";
@@ -45,6 +46,21 @@ export class ElementLayer extends Container<ElementView> {
         this.add(el);
       }
     }
+  }
+
+  /** Destroys the views of elements not in `ids` (e.g. removed while the views were built). */
+  retain(ids: ReadonlySet<string>): void {
+    for (const [id, view] of this.views) {
+      if (ids.has(id)) continue;
+      view.destroy({ children: true });
+      this.views.delete(id);
+      this.entrances.delete(id);
+    }
+  }
+
+  /** Skips drawing the views outside `visible` (a world rect): large documents draw only what shows. */
+  cull(visible: Rect): void {
+    for (const view of this.views.values()) view.cull(visible);
   }
 
   /** Starts the entrance of these elements (those this layer doesn't draw are ignored). */

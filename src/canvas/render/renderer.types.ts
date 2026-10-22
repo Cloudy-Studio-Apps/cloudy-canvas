@@ -8,3 +8,10 @@ export interface RendererOptions {
   /** Each element's drawing order and clip (the scene's; see `Scene.orderKey`, `Scene.clipOf`). */
   placement: LayerPlacement;
 }
+
+export interface ChunkedSyncOptions {
+  /** How many views exist so far, out of how many. */
+  onProgress: (done: number, total: number) => void;
+  /** Whether to stop (the engine is closing). */
+  cancelled: () => boolean;
+}

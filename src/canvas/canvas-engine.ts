@@ -33,6 +33,7 @@ import {
   type ThumbnailOptions,
 } from "./export";
 import { findInteraction } from "./find-interaction";
+import type { EngineLoading } from "./engine-loading.types";
 import type { EngineState } from "./engine-state.types";
 import type { Point, Rect } from "./geometry.types";
 import { bindKeyboard, bindWheel, EdgeAutoPan, Keymap, PointerInput } from "./input";
@@ -60,6 +61,8 @@ const TEXT_ZOOM_DELAY_MS = 150;
 const COPY_PNG_SCALE = 2;
 /** How long `close()` waits for its tasks before destroying the engine anyway. */
 const CLOSE_TIMEOUT_MS = 3000;
+/** Longest `mount` waits for images and fonts; whatever is still loading pops in later. */
+const CONTENT_TIMEOUT_MS = 8000;
 
 /**
  * Framework-agnostic infinite canvas, shared by every product (boards, designs). Wires the
@@ -177,12 +180,21 @@ export class CanvasEngine<O extends object = object> {
 
   // ── Lifecycle ─────────────────────────────────────────────────────────
 
-  async mount(container: HTMLElement): Promise<void> {
+  /**
+   * Starts the renderer in `container` and builds the views a slice at a time, then waits (at most
+   * `CONTENT_TIMEOUT_MS`) for the images and fonts on screen, so the canvas shows up complete.
+   * `onLoading` hears each step, for a loading screen; input starts once it resolves.
+   */
+  async mount(
+    container: HTMLElement,
+    onLoading: (loading: EngineLoading) => void = () => undefined,
+  ): Promise<void> {
     if (this.mounted || this.destroyed) return;
     this.mounted = true;
     this.container = container;
     const { width, height } = container.getBoundingClientRect();
 
+    onLoading({ stage: "Starting canvas", progress: null });
     await Promise.all([this.renderer.init(width, height), loadFonts(this.kinds)]);
     if (this.destroyed || this.closing) {
       this.renderer.destroy();
@@ -202,8 +214,28 @@ export class CanvasEngine<O extends object = object> {
     const content = this.scene.contentBounds();
     if (content) this.camera.fitRect(content);
     else this.camera.reset();
-    this.renderer.syncElements(this.scene.elements);
     this.renderer.setTextZoom(this.camera.zoom);
+
+    // The document isn't observed until input starts: a change meanwhile redraws everything.
+    let changed = false;
+    const stopWatching = this.doc.onChange(() => (changed = true));
+    try {
+      await this.renderer.syncElementsChunked(this.scene.elements, {
+        onProgress: (done, total) =>
+          onLoading({ stage: "Drawing layers", progress: { done, total } }),
+        cancelled: () => this.destroyed || this.closing,
+      });
+      if (this.destroyed || this.closing) return;
+      await this.loadContent(onLoading);
+      if (this.destroyed || this.closing) return;
+    } finally {
+      stopWatching();
+    }
+    if (changed) {
+      this.refreshScene();
+      this.renderer.syncElements(this.scene.elements);
+      this.renderer.retainElements(new Set(this.scene.elements.map((el) => el.id)));
+    }
 
     this.bindInput(container, canvas);
     this.frames.start();
@@ -1046,6 +1078,25 @@ export class CanvasEngine<O extends object = object> {
       this.product.onRemove?.(this.doc, new Set(removing), before);
     });
     return removing;
+  }
+
+  /** Waits for the images and fonts of the elements on screen, for at most `CONTENT_TIMEOUT_MS`. */
+  private async loadContent(onLoading: (loading: EngineLoading) => void): Promise<void> {
+    const elements = this.scene.elements;
+    const assets = [...new Set(elements.flatMap((el) => this.kinds.kindOf(el).assets(el)))];
+    const loadingFonts = () => onLoading({ stage: "Loading fonts", progress: null });
+    const images =
+      assets.length === 0
+        ? Promise.resolve(loadingFonts())
+        : this.renderer
+            .preloadImages(assets, (done, total) =>
+              onLoading({ stage: "Loading images", progress: { done, total } }),
+            )
+            .then(loadingFonts);
+    await Promise.race([
+      Promise.all([images, this.fontTracker.settled()]),
+      delay(CONTENT_TIMEOUT_MS),
+    ]);
   }
 
   /** Re-reads the elements, and re-resolves the links between them. */

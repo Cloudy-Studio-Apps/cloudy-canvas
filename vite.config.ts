@@ -21,6 +21,9 @@ export default defineConfig(() => ({
 
   define: { __APP_VERSION__: JSON.stringify(version) },
 
+  // Workers (the Figma importer) are ES modules, so they can share chunks with the app.
+  worker: { format: "es" as const },
+
   // Keep in sync with `paths` in tsconfig.json
   resolve: {
     alias: {

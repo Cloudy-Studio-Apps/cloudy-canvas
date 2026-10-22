@@ -1,3 +1,4 @@
+import { GlobalLoader } from "@shared/ui/components/loading-screen";
 import { Toaster } from "@shared/ui/components/toaster";
 import { TooltipProvider } from "@shared/ui/components/ui/tooltip";
 import { AgentServer } from "./agent-server";
@@ -12,6 +13,7 @@ export function Providers({ children }: ProvidersProps) {
       <AgentServer />
       <OpenRequests />
       {children}
+      <GlobalLoader />
       <Toaster />
     </TooltipProvider>
   );
