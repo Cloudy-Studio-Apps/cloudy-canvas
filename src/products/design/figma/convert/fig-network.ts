@@ -1,8 +1,7 @@
 import type { Point } from "@canvas";
+import { applyLinear, applyMatrix, type FigMatrix } from "@canvas/figma";
 
 import type { VectorNetwork, VectorRegion, VectorSegment } from "../../modules";
-import { applyLinear, applyMatrix } from "./fig-matrix";
-import type { FigMatrix } from "./fig-node.types";
 
 /**
  * A vector network blob (little-endian u32 counts and indices, f32 coordinates): vertices,

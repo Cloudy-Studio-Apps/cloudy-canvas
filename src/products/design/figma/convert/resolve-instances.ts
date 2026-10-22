@@ -1,7 +1,12 @@
-import type { FigNode, FigOverride, ResolvedFigNode } from "./fig-node.types";
-import { guidKey } from "./fig-tree";
-import type { FigTree } from "./fig-tree.types";
-import type { ImportWarnings } from "./import-warnings";
+import {
+  guidKey,
+  type FigNode,
+  type FigOverride,
+  type FigTree,
+  type ImportWarnings,
+  type ResolvedFigNode,
+} from "@canvas/figma";
+
 import type { InstanceScope } from "./resolve-instances.types";
 
 /** Deepest nesting of instances followed (a component can't contain itself, but files lie). */

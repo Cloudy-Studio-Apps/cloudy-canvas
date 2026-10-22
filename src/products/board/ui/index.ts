@@ -3,6 +3,7 @@
 export { getActiveBoard, setActiveBoard, waitForActiveBoard } from "./agent";
 export { BoardEditorPage } from "./board-editor-page";
 export { BoardShortcutsList } from "./components/shortcuts-list";
+export { importFigJamFile, importFigJamWithLoading } from "./file";
 export {
   boardEditor,
   getBoardEditorModules,

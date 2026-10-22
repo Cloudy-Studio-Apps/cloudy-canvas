@@ -1,4 +1,4 @@
-import type { Point, Rect } from "@canvas";
+import type { Point, Rect } from "../../geometry.types";
 
 import type { FigMatrix } from "./fig-node.types";
 

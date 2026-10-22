@@ -51,7 +51,9 @@ export { ZoomMenu } from "./components/zoom-menu";
 export {
   CanvasFileContext,
   DocumentInfoPopover,
+  importStep,
   SaveIndicator,
+  toastImportWarnings,
   useCanvasFile,
   useCanvasFileLoader,
   useCanvasFileSaver,

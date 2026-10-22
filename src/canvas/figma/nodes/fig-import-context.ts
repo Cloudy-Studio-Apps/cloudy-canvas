@@ -4,7 +4,7 @@ import type { FigContainer } from "../container";
 import { ImportWarnings } from "./import-warnings";
 
 /** What converting a file's nodes shares: its blobs and images, and what it has collected. */
-export class ImportContext {
+export class FigImportContext {
   readonly warnings = new ImportWarnings();
   /** Document assets to add: image files by their new asset id. */
   readonly assets = new Map<string, Uint8Array>();

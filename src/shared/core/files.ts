@@ -13,6 +13,15 @@ export const ALL_FILE_EXTENSIONS: string[] = Object.values(FILE_EXTENSIONS);
 /** Figma design files ("Save local copy…"), imported as new designs. */
 export const FIGMA_FILE_EXTENSION = "fig";
 
+/** FigJam files ("Save local copy…"), imported as new boards. */
+export const FIGJAM_FILE_EXTENSION = "jam";
+
+/** Figma's files the app imports, and what each becomes. */
+export const FIGMA_IMPORTS: Record<string, FileType> = {
+  [FIGMA_FILE_EXTENSION]: "design",
+  [FIGJAM_FILE_EXTENSION]: "board",
+};
+
 export function isFileType(value: string | undefined): value is FileType {
   return value === "board" || value === "design";
 }
@@ -68,14 +77,18 @@ export function fileTypeFromPath(path: string): FileType | null {
   return null;
 }
 
-/** Whether the path is a Figma file, which opens as a new design imported from it. */
-export function isFigmaPath(path: string): boolean {
-  return extensionOf(path) === FIGMA_FILE_EXTENSION;
+/**
+ * What a Figma file at this path is imported as (a `.fig` as a design, a FigJam `.jam` as a
+ * board), or `null` when it isn't one.
+ */
+export function figmaImportOf(path: string): FileType | null {
+  const ext = extensionOf(path);
+  return Object.hasOwn(FIGMA_IMPORTS, ext) ? (FIGMA_IMPORTS[ext] ?? null) : null;
 }
 
-/** Whether the app opens this path: one of its own files, or a Figma file to import. */
+/** Whether the app opens this path: one of its own files, or a Figma or FigJam file to import. */
 export function isOpenablePath(path: string): boolean {
-  return fileTypeFromPath(path) !== null || isFigmaPath(path);
+  return fileTypeFromPath(path) !== null || figmaImportOf(path) !== null;
 }
 
 /** Whether a value read from disk (e.g. the recent files index) is a well-formed `FileInfo`. */

@@ -2,7 +2,7 @@ import { isTauri } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import {
   ALL_FILE_EXTENSIONS,
-  FIGMA_FILE_EXTENSION,
+  FIGMA_IMPORTS,
   FILE_EXTENSIONS,
   withFileExtension,
   type FileType,
@@ -10,7 +10,8 @@ import {
 
 /**
  * Shows the native "open file" dialog filtered to Cloudy Canvas files, and Figma files too with
- * `figma` (imported as designs). Returns the selected path, or `null`.
+ * `figma` (Figma files imported as designs, FigJam files as boards). Returns the selected path,
+ * or `null`.
  */
 export async function openCanvasFileDialog({ figma = false } = {}): Promise<string | null> {
   if (!isTauri()) {
@@ -24,11 +25,11 @@ export async function openCanvasFileDialog({ figma = false } = {}): Promise<stri
     filters: figma
       ? [
           {
-            name: "Cloudy Canvas and Figma files",
-            extensions: [...ALL_FILE_EXTENSIONS, FIGMA_FILE_EXTENSION],
+            name: "Cloudy Canvas, Figma and FigJam files",
+            extensions: [...ALL_FILE_EXTENSIONS, ...Object.keys(FIGMA_IMPORTS)],
           },
           { name: "Cloudy Canvas files", extensions: ALL_FILE_EXTENSIONS },
-          { name: "Figma files", extensions: [FIGMA_FILE_EXTENSION] },
+          { name: "Figma and FigJam files", extensions: Object.keys(FIGMA_IMPORTS) },
         ]
       : [{ name: "Cloudy Canvas files", extensions: ALL_FILE_EXTENSIONS }],
   });

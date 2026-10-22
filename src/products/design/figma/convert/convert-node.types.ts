@@ -1,8 +1,7 @@
 import type { CanvasElement } from "@canvas";
+import type { FigMatrix } from "@canvas/figma";
 
 import type { Paint } from "../../modules";
-
-import type { FigMatrix } from "./fig-node.types";
 
 /** Where converted nodes go: their parent (world transform, id), page and drawing order. */
 export interface NodePlacement {

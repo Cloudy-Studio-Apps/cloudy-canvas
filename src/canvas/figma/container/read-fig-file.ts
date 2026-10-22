@@ -1,29 +1,30 @@
 import { unzipSync } from "fflate";
 
-import type { FigmaImportProgress } from "../figma-import.types";
+import type { FigmaImportProgress } from "../figma-progress.types";
 import { decodeKiwi, decodeKiwiSchema } from "../kiwi";
 import { decompressChunk } from "./decompress-chunk";
-import type { FigContainer } from "./fig-container.types";
+import type { FigContainer, FigFileKind } from "./fig-container.types";
 
 const latin1 = new TextDecoder("latin1");
 const utf8 = new TextDecoder();
 
-/** The canvas prelude of Figma design files; FigJam and Slides files use other ones. */
-const DESIGN_PRELUDE = "fig-kiwi";
-const OTHER_PRELUDES: Record<string, string> = {
-  "fig-jam.": "a FigJam board",
-  "fig-deck": "a Figma Slides deck",
+/** The canvas preludes of the files it reads; Slides files use another one. */
+const PRELUDES: Record<string, FigFileKind> = {
+  "fig-kiwi": "design",
+  "fig-jam.": "figjam",
 };
+const SLIDES_PRELUDE = "fig-deck";
 const CANVAS_ENTRY = "canvas.fig";
 const IMAGES_FOLDER = "images/";
 
 /** Whether `bytes` look like a Figma file: a zip (newer files) or a bare canvas (older ones). */
 export function isFigmaFile(bytes: Uint8Array): boolean {
-  return isZip(bytes) || latin1.decode(bytes.subarray(0, 8)) === DESIGN_PRELUDE;
+  return isZip(bytes) || kindOf(latin1.decode(bytes.subarray(0, 8))) !== null;
 }
 
 /**
- * Unpacks a `.fig` file ("Save local copy…") and decodes its canvas. Throws for other files.
+ * Unpacks a `.fig` or `.jam` file ("Save local copy…") and decodes its canvas; `kind` says which
+ * it is. Throws for other files (Figma Slides decks too).
  * `onProgress` hears when it starts unpacking and decoding.
  */
 export function readFigFile(bytes: Uint8Array, onProgress?: FigmaImportProgress): FigContainer {
@@ -45,11 +46,15 @@ export function readFigFile(bytes: Uint8Array, onProgress?: FigmaImportProgress)
 function readCanvas(
   bytes: Uint8Array,
   onProgress?: FigmaImportProgress,
-): Pick<FigContainer, "version" | "message"> {
+): Pick<FigContainer, "kind" | "version" | "message"> {
   const prelude = latin1.decode(bytes.subarray(0, 8));
-  if (prelude !== DESIGN_PRELUDE) {
-    const other = OTHER_PRELUDES[prelude];
-    throw new Error(other ? `This is ${other}, not a design.` : "This isn't a Figma file.");
+  const kind = kindOf(prelude);
+  if (!kind) {
+    throw new Error(
+      prelude === SLIDES_PRELUDE
+        ? "This is a Figma Slides deck, which can't be imported."
+        : "This isn't a Figma file.",
+    );
   }
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   const version = view.getUint32(8, true);
@@ -63,7 +68,7 @@ function readCanvas(
   if (!schemaChunk || !dataChunk) throw new Error("The Figma file is incomplete.");
   onProgress?.("Decoding");
   const schema = decodeKiwiSchema(decompressChunk(schemaChunk));
-  return { version, message: decodeKiwi(schema, "Message", decompressChunk(dataChunk)) };
+  return { kind, version, message: decodeKiwi(schema, "Message", decompressChunk(dataChunk)) };
 }
 
 function metaName(meta: Uint8Array | undefined): string | null {
@@ -75,6 +80,10 @@ function metaName(meta: Uint8Array | undefined): string | null {
   } catch {
     return null;
   }
+}
+
+function kindOf(prelude: string): FigFileKind | null {
+  return Object.hasOwn(PRELUDES, prelude) ? (PRELUDES[prelude] ?? null) : null;
 }
 
 function isZip(bytes: Uint8Array): boolean {

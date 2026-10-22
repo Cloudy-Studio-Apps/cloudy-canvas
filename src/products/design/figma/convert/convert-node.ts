@@ -1,6 +1,16 @@
 import { generateNKeysBetween } from "fractional-indexing";
 
 import type { CanvasElement } from "@canvas";
+import {
+  boxOf,
+  IDENTITY,
+  isAxisAligned,
+  multiply,
+  type FigImportContext,
+  type FigMatrix,
+  type FigNode,
+  type ResolvedFigNode,
+} from "@canvas/figma";
 
 import type {
   EllipseElement,
@@ -13,12 +23,9 @@ import type {
   TextNodeElement,
 } from "../../modules";
 import { convertLine, convertVector, vectorFromGeometry } from "./convert-geometry";
-import { boxOf, IDENTITY, isAxisAligned, multiply } from "./fig-matrix";
 import { figNodeBase } from "./fig-node-base";
-import type { FigMatrix, FigNode, ResolvedFigNode } from "./fig-node.types";
 import { textFields } from "./fig-text";
 import type { NodePlacement } from "./convert-node.types";
-import type { ImportContext } from "./import-context";
 
 /** Nodes that hold others and become frames (components and instances too). */
 const FRAMES = new Set(["FRAME", "SYMBOL", "INSTANCE", "COMPONENT_SET"]);
@@ -40,7 +47,7 @@ const STAR_INNER_SCALE = 0.382;
 export function convertChildren(
   children: readonly ResolvedFigNode[],
   parent: Omit<NodePlacement, "index">,
-  ctx: ImportContext,
+  ctx: FigImportContext,
   onEach?: () => void,
 ): void {
   const keys = generateNKeysBetween(null, null, children.length);
@@ -54,7 +61,7 @@ export function convertChildren(
 function convertNode(
   resolved: ResolvedFigNode,
   placement: NodePlacement,
-  ctx: ImportContext,
+  ctx: FigImportContext,
 ): void {
   const { node } = resolved;
   const world = multiply(placement.world, node.transform ?? IDENTITY);
@@ -71,7 +78,7 @@ function convertOwn(
   node: FigNode,
   world: FigMatrix,
   placement: NodePlacement,
-  ctx: ImportContext,
+  ctx: FigImportContext,
 ): CanvasElement | null {
   const type = node.type ?? "";
   const size = node.size ?? { x: 0, y: 0 };
@@ -136,7 +143,7 @@ function convertText(
   aligned: boolean,
   rect: { x: number; y: number; w: number; h: number },
   placement: NodePlacement,
-  ctx: ImportContext,
+  ctx: FigImportContext,
 ): TextNodeElement {
   if (!aligned) ctx.warnings.add("rotated texts were straightened");
   const base = figNodeBase("text", node, rect, placement, ctx, { allowImages: false, strokes: [] });
@@ -145,7 +152,7 @@ function convertText(
 }
 
 /** The corner radius; corners with their own radii take the largest (one radius for now). */
-function cornerRadiusOf(node: FigNode, ctx: ImportContext): number {
+function cornerRadiusOf(node: FigNode, ctx: FigImportContext): number {
   const radius = node.cornerRadius ?? 0;
   if (!node.rectangleCornerRadiiIndependent) return radius;
   const corners = [

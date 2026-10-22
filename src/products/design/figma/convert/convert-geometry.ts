@@ -1,4 +1,12 @@
 import {
+  applyMatrix,
+  type FigImportContext,
+  type FigMatrix,
+  type FigNode,
+  type FigPath,
+} from "@canvas/figma";
+
+import {
   lineFromEnds,
   placeNetwork,
   type LineNodeElement,
@@ -6,20 +14,17 @@ import {
   type VectorNetwork,
 } from "../../modules";
 import { decodeNetworkBlob } from "./fig-network";
-import { applyMatrix } from "./fig-matrix";
 import { figNodeBase } from "./fig-node-base";
-import type { FigMatrix, FigNode, FigPath } from "./fig-node.types";
 import { convertPaints } from "./fig-paints";
 import { pathToNetwork } from "./fig-path";
 import type { NodePaints, NodePlacement } from "./convert-node.types";
-import type { ImportContext } from "./import-context";
 
 /** A Figma vector from its network, placed in the world (rotation and flips included). */
 export function convertVector(
   node: FigNode,
   world: FigMatrix,
   placement: NodePlacement,
-  ctx: ImportContext,
+  ctx: FigImportContext,
 ): VectorElement | null {
   const blob = ctx.blob(node.vectorData?.vectorNetworkBlob);
   if (!blob) return vectorFromGeometry(node, world, placement, ctx);
@@ -40,7 +45,7 @@ export function vectorFromGeometry(
   node: FigNode,
   world: FigMatrix,
   placement: NodePlacement,
-  ctx: ImportContext,
+  ctx: FigImportContext,
 ): VectorElement | null {
   const fill = networkOf(node.fillGeometry, world, ctx);
   if (fill) return vectorElement(node, fill, placement, ctx);
@@ -57,7 +62,7 @@ export function convertLine(
   node: FigNode,
   world: FigMatrix,
   placement: NodePlacement,
-  ctx: ImportContext,
+  ctx: FigImportContext,
 ): LineNodeElement {
   const start = applyMatrix(world, { x: 0, y: 0 });
   const end = applyMatrix(world, { x: node.size?.x ?? 0, y: 0 });
@@ -74,7 +79,7 @@ export function convertLine(
 function networkOf(
   paths: readonly FigPath[] | undefined,
   world: FigMatrix,
-  ctx: ImportContext,
+  ctx: FigImportContext,
 ): VectorNetwork | null {
   let network: VectorNetwork | null = null;
   for (const path of paths ?? []) {
@@ -90,7 +95,7 @@ function vectorElement(
   node: FigNode,
   network: VectorNetwork,
   placement: NodePlacement,
-  ctx: ImportContext,
+  ctx: FigImportContext,
   paints?: NodePaints,
 ): VectorElement {
   const { network: placed, ...rect } = placeNetwork({ x: 0, y: 0 }, network);

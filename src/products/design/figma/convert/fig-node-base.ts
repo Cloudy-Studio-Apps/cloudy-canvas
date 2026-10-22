@@ -1,10 +1,9 @@
 import type { Rect } from "@canvas";
+import type { FigImportContext, FigNode } from "@canvas/figma";
 
 import { createNodeBase, type DesignNode } from "../../modules";
 import { convertPaints } from "./fig-paints";
-import type { FigNode } from "./fig-node.types";
 import type { NodePaints, NodePlacement } from "./convert-node.types";
-import type { ImportContext } from "./import-context";
 
 /**
  * The design node fields of a Figma node: its name, place in the tree and page, visibility,
@@ -15,7 +14,7 @@ export function figNodeBase<K extends string>(
   node: FigNode,
   rect: Rect,
   placement: NodePlacement,
-  ctx: ImportContext,
+  ctx: FigImportContext,
   paints: NodePaints = {},
 ): DesignNode & { type: K } {
   if (node.effects?.length) ctx.warnings.add("shadows and blurs were left out");

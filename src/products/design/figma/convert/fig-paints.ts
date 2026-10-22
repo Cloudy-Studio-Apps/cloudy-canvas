@@ -1,7 +1,6 @@
+import { hexBytes, hexOf, type FigImportContext, type FigPaint } from "@canvas/figma";
+
 import { imagePaint, solidPaint, type Paint } from "../../modules";
-import { hexBytes, hexOf } from "./fig-color";
-import type { FigPaint } from "./fig-node.types";
-import type { ImportContext } from "./import-context";
 
 /**
  * Figma paints as ours: solid colors and images; a gradient becomes its first color (gradients
@@ -9,7 +8,7 @@ import type { ImportContext } from "./import-context";
  */
 export function convertPaints(
   paints: readonly FigPaint[] | undefined,
-  ctx: ImportContext,
+  ctx: FigImportContext,
   allowImages = true,
 ): Paint[] {
   const result: Paint[] = [];
@@ -20,7 +19,7 @@ export function convertPaints(
   return result;
 }
 
-function convertPaint(paint: FigPaint, ctx: ImportContext, allowImages: boolean): Paint | null {
+function convertPaint(paint: FigPaint, ctx: FigImportContext, allowImages: boolean): Paint | null {
   const visible = paint.visible ?? true;
   const opacity = paint.opacity ?? 1;
   const type = paint.type ?? "SOLID";

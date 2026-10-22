@@ -80,6 +80,19 @@ export interface FigSymbolData {
   symbolOverrides?: FigOverride[];
 }
 
+/** One end of a FigJam connector: on a node (`position` in its coordinates) or free. */
+export interface FigConnectorEnd {
+  endpointNodeID?: FigGuid;
+  position?: FigVector;
+  /** The side it's stuck to: `TOP`, `BOTTOM`, `LEFT`, `RIGHT`, or `EDGE`/`CENTER`/`NONE`. */
+  magnet?: string;
+}
+
+/** A wrapped text's laid-out lines: where each starts in its characters. */
+export interface FigTextLayout {
+  baselines?: { firstCharacter?: number; endCharacter?: number }[];
+}
+
 export interface FigNode {
   guid?: FigGuid;
   phase?: string;
@@ -96,6 +109,8 @@ export interface FigNode {
   fillPaints?: FigPaint[];
   strokePaints?: FigPaint[];
   strokeWeight?: number;
+  /** `INSIDE`, `CENTER` or `OUTSIDE`. */
+  strokeAlign?: string;
   strokeCap?: string;
   effects?: unknown[];
   fillGeometry?: FigPath[];
@@ -126,6 +141,22 @@ export interface FigNode {
   overriddenSymbolID?: FigGuid;
   componentPropRefs?: FigPropRef[];
   componentPropAssignments?: FigPropAssignment[];
+  // FigJam
+  /** A sticky's, shape's or connector's generated parts (its body, its text) and their looks. */
+  nodeGenerationData?: { overrides?: FigOverride[] };
+  derivedTextData?: FigTextLayout;
+  /** A FigJam shape's outline: `SQUARE`, `ELLIPSE`, `DIAMOND`, `TRIANGLE_UP`, … */
+  shapeWithTextType?: string;
+  connectorStart?: FigConnectorEnd;
+  connectorEnd?: FigConnectorEnd;
+  /** `STRAIGHT`, `ELBOWED` or `CURVED`. */
+  connectorLineStyle?: string;
+  /** `NONE`, `ROUND`, `ARROW_LINES`, `ARROW_EQUILATERAL`, `TRIANGLE_FILLED`, … */
+  connectorStartCap?: string;
+  connectorEndCap?: string;
+  /** A link preview widget's link (its fields are URL-encoded). */
+  linkPreviewData?: { url?: string; title?: string };
+  widgetMetadata?: { pluginID?: string; widgetName?: string };
 }
 
 /** A node with its children, instances expanded into their component's (overridden) nodes. */

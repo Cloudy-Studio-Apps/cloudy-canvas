@@ -1,15 +1,18 @@
 import { generateNKeysBetween } from "fractional-indexing";
 
 import type { CanvasElement } from "@canvas";
+import {
+  buildFigTree,
+  FigImportContext,
+  IDENTITY,
+  type FigContainer,
+  type FigmaImportProgress,
+  type FigNode,
+} from "@canvas/figma";
 
 import { createPage } from "../../modules";
-import type { FigContainer } from "../container";
-import type { FigmaImport, FigmaImportProgress } from "../figma-import.types";
+import type { FigmaImport } from "../figma-import.types";
 import { convertChildren } from "./convert-node";
-import { IDENTITY } from "./fig-matrix";
-import type { FigNode } from "./fig-node.types";
-import { buildFigTree } from "./fig-tree";
-import { ImportContext } from "./import-context";
 import { resolveFigNode } from "./resolve-instances";
 
 /**
@@ -21,7 +24,8 @@ export function convertFigma(
   container: FigContainer,
   onProgress?: FigmaImportProgress,
 ): FigmaImport {
-  const ctx = new ImportContext(container);
+  if (container.kind !== "design") throw new Error("This is a FigJam board, not a design.");
+  const ctx = new FigImportContext(container);
   const nodeChanges = container.message.nodeChanges;
   const tree = buildFigTree(Array.isArray(nodeChanges) ? (nodeChanges as FigNode[]) : []);
   const pages = tree

@@ -1,8 +1,7 @@
 import type { FontStyle, FontWeight, TextAlign } from "@canvas";
+import type { FigImportContext, FigNode } from "@canvas/figma";
 
 import { TEXT_DEFAULTS, type DesignNode, type TextNodeElement } from "../../modules";
-import type { FigNode } from "./fig-node.types";
-import type { ImportContext } from "./import-context";
 
 /** Weights by the words of a face's style name ("Semi Bold Italic"), checked in order. */
 const WEIGHT_WORDS: readonly [RegExp, FontWeight][] = [
@@ -29,7 +28,7 @@ const AUTO_LINE_HEIGHT = 100;
 /** The text fields of a text layer (its node base is built by the caller). */
 export function textFields(
   node: FigNode,
-  ctx: ImportContext,
+  ctx: FigImportContext,
 ): Omit<TextNodeElement, keyof DesignNode> {
   const typography = TEXT_DEFAULTS.typography;
   const fontSize = node.fontSize ?? typography.fontSize;

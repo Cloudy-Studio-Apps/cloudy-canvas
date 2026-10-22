@@ -1,4 +1,4 @@
-import type { FigOverride, FigPropAssignment } from "./fig-node.types";
+import type { FigOverride, FigPropAssignment } from "@canvas/figma";
 
 /** What an instance changes on the nodes of its component, by their path inside it. */
 export interface InstanceScope {

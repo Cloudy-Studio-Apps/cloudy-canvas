@@ -1,8 +1,7 @@
 import type { Point } from "@canvas";
+import { applyMatrix, type FigMatrix } from "@canvas/figma";
 
 import type { VectorNetwork, WindingRule } from "../../modules";
-import { applyMatrix } from "./fig-matrix";
-import type { FigMatrix } from "./fig-node.types";
 
 const CLOSE = 0;
 const MOVE = 1;
