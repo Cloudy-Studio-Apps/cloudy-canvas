@@ -1,8 +1,11 @@
-import { Container, Graphics, GraphicsContext, Rectangle, Sprite, Text, Texture } from "pixi.js";
+import { Container, Graphics, GraphicsContext, Sprite, Text, type Texture } from "pixi.js";
 
 import { type CanvasElement, type ElementKind, type ElementTextStyle } from "../elements";
 import type { Rect } from "../geometry.types";
+import { fitImage } from "./fit-image";
 import type { ImageCache } from "./image-cache";
+import { PaintStack } from "./paint-stack";
+import type { PaintLayer, PaintStackOptions } from "./paint-stack.types";
 import { canvasTextStyle } from "./text-style";
 import type { CanvasTextOptions } from "./text-style.types";
 import type { ImageFit } from "./element-view.types";
@@ -29,6 +32,7 @@ export class ElementView extends Container {
   private hiddenSlot: string | null = null;
   private textResolution = 1;
   private image: Sprite | null = null;
+  private paintStack: PaintStack | null = null;
   /** The image asset the view shows, and the box it's fitted into (local coordinates). */
   private imageAsset: string | null = null;
   private imageBox: Rect = { x: 0, y: 0, w: 0, h: 0 };
@@ -124,6 +128,19 @@ export class ElementView extends Container {
     void this.images.load(assetId).then((loaded) => {
       if (loaded && !this.destroyed && this.imageAsset === assetId) this.fitImage(loaded);
     });
+  }
+
+  /**
+   * Draws the element's paints, bottom to top, just above its base graphics: vector shapes (fills,
+   * strokes) and images clipped to an outline (e.g. a design node's image fill). Replaces what the
+   * previous call drew; `alpha` and `visible` apply to all of them.
+   */
+  setPaints(layers: readonly PaintLayer[], options: PaintStackOptions): void {
+    if (!this.paintStack) {
+      this.paintStack = new PaintStack(this.images);
+      this.addChildAt(this.paintStack, this.getChildIndex(this.graphics) + 1);
+    }
+    this.paintStack.set(layers, options);
   }
 
   /** Creates or updates the label stored under `key` (positioned by the caller). */
@@ -234,34 +251,12 @@ export class ElementView extends Container {
   }
 
   private fitImage(texture: Texture): void {
-    if (this.imageFit === "cover") return this.coverImage(texture);
-    const image = this.image!;
-    const { x, y, w, h } = this.imageBox;
-    const scale = Math.min(w / texture.width, h / texture.height);
-    image.texture = texture;
-    image.setSize(texture.width * scale, texture.height * scale);
-    image.position.set(x + (w - image.width) / 2, y + (h - image.height) / 2);
-    image.visible = true;
-  }
-
-  /** Fills the box with the middle of the texture, cropped to the box's proportions. */
-  private coverImage(texture: Texture): void {
-    const image = this.image!;
-    const { x, y, w, h } = this.imageBox;
-    const scale = Math.max(w / texture.width, h / texture.height);
-    const cropW = Math.min(texture.width, w / scale);
-    const cropH = Math.min(texture.height, h / scale);
-    const frame = new Rectangle(
-      texture.frame.x + (texture.width - cropW) / 2,
-      texture.frame.y + (texture.height - cropH) / 2,
-      cropW,
-      cropH,
+    this.croppedTexture = fitImage(
+      this.image!,
+      texture,
+      this.imageBox,
+      this.imageFit,
+      this.croppedTexture,
     );
-    this.croppedTexture?.destroy(false);
-    this.croppedTexture = new Texture({ source: texture.source, frame });
-    image.texture = this.croppedTexture;
-    image.setSize(w, h);
-    image.position.set(x, y);
-    image.visible = true;
   }
 }

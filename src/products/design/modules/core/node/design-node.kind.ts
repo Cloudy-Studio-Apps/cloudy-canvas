@@ -1,5 +1,4 @@
 import { BoxKind, type ElementDescription, type ElementView, type Point } from "@canvas";
-import type { Graphics } from "pixi.js";
 
 import type { DesignToolOptions } from "../../../design-options.types";
 import type { DesignNode } from "./design-node.types";
@@ -7,8 +6,8 @@ import { NODE_DEFAULTS } from "./node.defaults";
 
 /**
  * The base of every design element type. It handles what all nodes share (name, place in the
- * tree, visibility, opacity, fills and strokes); a subclass gives its `type`, `label`,
- * `description` and draws its body in `drawNode`. Plugins extend it the same way.
+ * tree, visibility, opacity, fills and strokes, the images they show); a subclass gives its
+ * `type`, `label`, `description` and `draw` (with `drawPaints`). Plugins extend it the same way.
  */
 export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends BoxKind<
   E,
@@ -23,15 +22,11 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
    */
   readonly container: boolean = false;
 
-  /** Draws the node's body into `g` (its view's graphics, already cleared), in local coordinates. */
-  protected abstract drawNode(view: ElementView, el: E, g: Graphics): void;
-
-  draw(view: ElementView, el: E): void {
-    const g = view.graphics.clear();
-    g.visible = el.visible;
-    g.alpha = el.opacity;
-    this.drawNode(view, el, g);
-  }
+  /**
+   * Draws the node in local coordinates, usually with `drawPaints(view, el, outline)`, which also
+   * applies its opacity and visibility.
+   */
+  abstract override draw(view: ElementView, el: E): void;
 
   override hitTest(el: E, p: Point, tolerance: number): boolean {
     return el.visible && super.hitTest(el, p, tolerance);
@@ -48,6 +43,13 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
       strokes: el.strokes ?? [],
       strokeWeight: el.strokeWeight ?? NODE_DEFAULTS.strokeWeight,
     };
+  }
+
+  /** The images its paints show, so copies, exports and previews carry them. */
+  override assets(el: E): string[] {
+    return [...el.fills, ...el.strokes].flatMap((paint) =>
+      paint.type === "image" ? [paint.assetId] : [],
+    );
   }
 
   override describe(el: E): ElementDescription {

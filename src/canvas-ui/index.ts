@@ -1,6 +1,7 @@
 // React pieces every canvas editor shares: hosting a CanvasEngine (`useCanvasEngine`, the engine
 // context and hooks, the canvas theme) and the chrome around it (panels, buttons, zoom and history
 // controls). Products build their editors from these; nothing here knows a product.
+export type * from "./components/color";
 export type * from "./components/commit-field";
 export type * from "./components/context-menu";
 export type * from "./file";
@@ -19,6 +20,16 @@ export { CommitInput, CommitTextarea, useCommitField } from "./components/commit
 export { CANVAS_MENU, CanvasContextMenu, SELECTION_MENU } from "./components/context-menu";
 export { ExportDialog } from "./components/export-dialog";
 export { ColorPalette } from "./components/color-palette";
+export {
+  CHECKERBOARD,
+  ColorSlider,
+  EyedropperButton,
+  HUE_TRACK,
+  hexToHsv,
+  hsvToHex,
+  hueColor,
+  SaturationArea,
+} from "./components/color";
 export { ColorPicker } from "./components/color-picker";
 export { normalizeHex } from "./components/normalize-hex";
 export { ColorSwatch } from "./components/color-swatch";

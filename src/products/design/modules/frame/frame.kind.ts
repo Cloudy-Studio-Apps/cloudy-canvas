@@ -1,5 +1,4 @@
 import { rectContainsPoint, type ElementView, type Point } from "@canvas";
-import type { Graphics } from "pixi.js";
 
 import { DesignNodeKind } from "../core";
 import { FRAME_DEFAULTS } from "./frame.defaults";
@@ -16,8 +15,8 @@ export class FrameKind extends DesignNodeKind<FrameElement> {
   override readonly defaults = FRAME_DEFAULTS;
   override readonly container = true;
 
-  protected drawNode(view: ElementView, el: FrameElement, g: Graphics): void {
-    drawFrame(view, el, g);
+  draw(view: ElementView, el: FrameElement): void {
+    drawFrame(view, el);
   }
 
   override hitTest(el: FrameElement, p: Point, tolerance: number): boolean {

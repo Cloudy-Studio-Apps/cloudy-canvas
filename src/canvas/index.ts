@@ -26,7 +26,15 @@ export type { Keybindings } from "./input";
 export type * from "./modules";
 export type { ServiceDef } from "./services";
 export type { CanvasLinks, Guide, GuideView, LinkView } from "./links";
-export type { CanvasTextOptions, CanvasTheme, ImageFit } from "./render";
+export type {
+  CanvasTextOptions,
+  CanvasTheme,
+  ImageFit,
+  ImagePaintLayer,
+  PaintLayer,
+  PaintStackOptions,
+  ShapePaintLayer,
+} from "./render";
 export type { CanvasPointer, Tool, ToolContext } from "./tools";
 export { CanvasEngine } from "./canvas-engine";
 export { MIN_ZOOM, MAX_ZOOM } from "./camera";

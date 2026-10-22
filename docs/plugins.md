@@ -93,7 +93,7 @@ Designs are built from modules the same way, on their own points (`api.design`):
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `canvas`       | the design's canvas points (same as the board's, plus `view`, `drawOrder`, `onMoved`)                                                                                                                                                                                                                                                                             |
 | `editor`       | the editor points shared with the board (`tools`, `toolPanels`, `overlays`, `sessionHooks`, `contextMenu`, …) plus `leftTabs` (a tab of the left panel, with its rail button), `propertySections` (a section of the properties panel, shown `when` the selection fits) and `mainMenu` (groups in the logo's menu: engine commands or `run({ engine, navigate })`) |
-| `nodes`        | `DesignNodeKind` (the base of every design element: name, parent, visibility, opacity, fills, strokes), `createNodeBase`, `isDesignNode`, `solidPaint`, `drawPaints`, `traceBox`, `NODE_DEFAULTS`, `BoxDrawTool` (drag-to-draw tools, parented into the frame under them), `containerAt`                                                                          |
+| `nodes`        | `DesignNodeKind` (the base of every design element: name, parent, visibility, opacity, fills, strokes), `createNodeBase`, `isDesignNode`, `solidPaint`, `imagePaint`, `drawPaints` (fills, image fills clipped to the outline, then strokes), `traceBox`, `NODE_DEFAULTS`, `BoxDrawTool` (drag-to-draw tools, parented into the frame under them), `containerAt`  |
 | `tree`         | `DESIGN_TREE`, the layer tree service (`api.ui.useService(api.design.tree).layers()`)                                                                                                                                                                                                                                                                             |
 | `panel`        | `PanelSection`, `PanelIconButton`, `PanelAddButton`, `NumberField`, `PaintField`, `PropertyGrid`                                                                                                                                                                                                                                                                  |
 | `hooks`        | `useSelectedNodes`, `useEditNodes` (patches as one undo step), `useMoveNodes`, `useDesignEngine`, `useDesignState`                                                                                                                                                                                                                                                |
@@ -109,8 +109,8 @@ export default function activate(api) {
     label = "Star";
     description = "A five-pointed star.";
     tool = "my-star.star";
-    drawNode(view, el, g) {
-      drawPaints(g, el, (path) => path.star(el.w / 2, el.h / 2, 5, Math.min(el.w, el.h) / 2));
+    draw(view, el) {
+      drawPaints(view, el, (g) => g.star(el.w / 2, el.h / 2, 5, Math.min(el.w, el.h) / 2));
     }
   }
 

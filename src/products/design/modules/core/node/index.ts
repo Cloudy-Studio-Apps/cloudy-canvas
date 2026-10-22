@@ -9,3 +9,4 @@ export { isDesignNode } from "./is-design-node";
 export { NODE_DEFAULTS } from "./node.defaults";
 export { solidPaint } from "./solid-paint";
 export { traceBox } from "./trace-box";
+export { imagePaint } from "./image-paint";

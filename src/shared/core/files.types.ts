@@ -21,3 +21,10 @@ export interface FileInfo extends FileMeta {
   /** Autosaved in the app data folder because no location was chosen yet (a board never saved). */
   draft?: boolean;
 }
+
+/** An image file the user picked: its name without the extension, MIME type and bytes. */
+export interface ImageFile {
+  name: string;
+  type: string;
+  data: Uint8Array;
+}

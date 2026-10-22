@@ -107,6 +107,7 @@ export interface DesignPluginApi {
     | "createNodeBase"
     | "isDesignNode"
     | "solidPaint"
+    | "imagePaint"
     | "drawPaints"
     | "traceBox"
     | "NODE_DEFAULTS"

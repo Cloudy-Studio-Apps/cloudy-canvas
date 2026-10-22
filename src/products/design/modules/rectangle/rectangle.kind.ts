@@ -1,5 +1,4 @@
 import type { ElementView } from "@canvas";
-import type { Graphics } from "pixi.js";
 
 import { DesignNodeKind } from "../core";
 import { RECTANGLE_DEFAULTS } from "./rectangle.defaults";
@@ -13,8 +12,8 @@ export class RectangleKind extends DesignNodeKind<RectangleElement> {
   override readonly tool = "rectangle";
   override readonly defaults = RECTANGLE_DEFAULTS;
 
-  protected drawNode(_view: ElementView, el: RectangleElement, g: Graphics): void {
-    drawRectangle(g, el);
+  draw(view: ElementView, el: RectangleElement): void {
+    drawRectangle(view, el);
   }
 
   override fillDefaults(el: RectangleElement): RectangleElement {

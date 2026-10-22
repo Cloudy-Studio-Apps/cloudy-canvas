@@ -3,4 +3,5 @@
 // React and are listed by `ui/modules/design-modules.ts`.
 export * from "./core";
 export * from "./frame";
+export * from "./image";
 export * from "./rectangle";

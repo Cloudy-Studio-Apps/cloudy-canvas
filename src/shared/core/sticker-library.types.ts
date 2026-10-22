@@ -1,3 +1,5 @@
+import type { ImageFile } from "./files.types";
+
 /** A picture the user imported to stamp as a sticker. */
 export interface CustomSticker {
   id: string;
@@ -8,11 +10,7 @@ export interface CustomSticker {
 }
 
 /** An image file picked to import as a sticker. */
-export interface StickerImage {
-  name: string;
-  type: string;
-  data: Uint8Array;
-}
+export type StickerImage = ImageFile;
 
 /**
  * The user's own stickers, kept by the app (not in any board: stamping one copies its picture into

@@ -6,6 +6,7 @@ import { usePluginsStore } from "@shared/stores/plugins-store";
 import { assetsModule } from "@design/modules/assets/assets.module";
 import { coreModule } from "@design/modules/core/core.module";
 import { frameModule } from "@design/modules/frame/frame.module";
+import { imageModule } from "@design/modules/image/image.module";
 import { layersModule } from "@design/modules/layers/layers.module";
 import { pluginsTabModule } from "@design/modules/plugins-tab/plugins-tab.module";
 import { rectangleModule } from "@design/modules/rectangle/rectangle.module";
@@ -17,6 +18,7 @@ let modules: AppModule[] = [
   coreModule,
   frameModule,
   rectangleModule,
+  imageModule,
   layersModule,
   assetsModule,
   pluginsTabModule,
