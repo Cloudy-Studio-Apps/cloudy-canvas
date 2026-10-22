@@ -1,5 +1,6 @@
 export { agentChannel } from "./agent-channel";
 export { appInfo } from "./app-info";
+export { appLinks } from "./app-links";
 export { appLifecycle } from "./app-lifecycle";
 export { clipboard } from "./clipboard";
 export { openCanvasFileDialog, saveCanvasFileDialog } from "./file-dialog";

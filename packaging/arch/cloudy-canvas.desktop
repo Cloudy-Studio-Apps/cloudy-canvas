@@ -6,5 +6,5 @@ Exec=cloudy-canvas %F
 Icon=cloudy-canvas
 StartupWMClass=cloudy-canvas
 Categories=Graphics;Office;
-MimeType=application/x-cloudy-canvas-board;application/x-cloudy-canvas-design;
+MimeType=application/x-cloudy-canvas-board;application/x-cloudy-canvas-design;x-scheme-handler/cloudy-canvas;
 Terminal=false

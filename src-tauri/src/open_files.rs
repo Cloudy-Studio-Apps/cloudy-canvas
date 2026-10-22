@@ -7,6 +7,8 @@ use std::sync::Mutex;
 
 use tauri::{AppHandle, Emitter, Manager, State};
 
+use crate::app_links;
+
 /// Emitted with the paths a later launch asked to open.
 const OPEN_FILES_EVENT: &str = "app://open-files";
 
@@ -38,11 +40,12 @@ pub fn on_second_instance(app: &AppHandle, argv: Vec<String>, cwd: String) {
     }
 }
 
-/// The arguments after the program name that aren't flags, made absolute against `cwd`.
+/// The arguments after the program name that aren't flags or links (`app_links`), made absolute
+/// against `cwd`.
 fn paths_from_args(args: impl IntoIterator<Item = String>, cwd: &Path) -> Vec<String> {
     args.into_iter()
         .skip(1)
-        .filter(|arg| !arg.starts_with('-'))
+        .filter(|arg| !arg.starts_with('-') && !app_links::is_link(arg))
         .map(|arg| cwd.join(arg).to_string_lossy().into_owned())
         .collect()
 }
