@@ -1,4 +1,8 @@
+import type { CompletionSource } from "@codemirror/autocomplete";
+import type { Extension } from "@codemirror/state";
+
 import type { DbmlError } from "@board";
+import type { CodeRange } from "@shared/ui/components/code-editor";
 
 export type SourceApplyResult =
   { ok: true; warnings: DbmlError[] } | { ok: false; error: DbmlError };
@@ -17,12 +21,13 @@ export interface SourceEditorProps {
   hint: string;
   /** Part of the text to point out (e.g. the selected shape's block): scrolled to and highlighted. */
   highlight?: SourceRange | null;
+  /** Syntax colors (`dbmlLanguage`, `erLanguage`). */
+  language: Extension;
+  /** Suggestions while typing (`dbmlCompletions`, `erCompletions`). */
+  completions?: CompletionSource;
 }
 
 /** A span of the text, as character offsets (`to` is exclusive). */
-export interface SourceRange {
-  from: number;
-  to: number;
-}
+export type SourceRange = CodeRange;
 
 export type SourceStatus = { error: DbmlError } | { warnings: string[] };

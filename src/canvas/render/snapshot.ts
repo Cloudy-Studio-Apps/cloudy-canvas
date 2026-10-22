@@ -34,6 +34,7 @@ export async function drawSnapshot(
     lines.setTextZoom(scale);
     frames.sync(elements.filter((el) => kinds.kindOf(el).frame));
     others.sync(elements.filter((el) => !kinds.kindOf(el).frame));
+    for (const link of links) link.update(elements);
     lines.draw({ zoom: 1, theme, highlighted: new Set() });
     const canvas = renderer.extract.canvas({
       target: root,

@@ -1,0 +1,79 @@
+import { snippetCompletion } from "@codemirror/autocomplete";
+import type { Completion, CompletionContext, CompletionSource } from "@codemirror/autocomplete";
+
+import { completionResult, nameOptions, startingWith } from "./completion-result";
+import { definedNames } from "./defined-names";
+import { readSourceContext } from "./source-context";
+import type { SourceContext } from "./source-context.types";
+
+const TOP_LEVEL: Completion[] = [
+  snippetCompletion("Entity ${name} {\n\t${}\n}", { label: "Entity", type: "keyword" }),
+  snippetCompletion("Relation ${name} {\n\t${}\n}", { label: "Relation", type: "keyword" }),
+  snippetCompletion("Isa ${parent} {\n\t${}\n}", {
+    label: "Isa",
+    type: "keyword",
+    detail: "hierarchy",
+  }),
+  snippetCompletion("Aggregate ${name} { ${} }", { label: "Aggregate", type: "keyword" }),
+  snippetCompletion("Constraint ${}", { label: "Constraint", type: "keyword" }),
+  snippetCompletion("Diagram ${name}", { label: "Diagram", type: "keyword" }),
+];
+
+const CONSTRAINT_KINDS: Completion[] = ["exclusive", "inclusive", "exclusion", "inclusion"].map(
+  (label) => ({ label, type: "keyword", detail: "constraint" }),
+);
+
+const SETTINGS: Completion[] = [
+  ...["pk", "weak", "multi", "derived", "optional", "partial", "identifying", "id"].map(
+    (label) => ({ label, type: "constant" }),
+  ),
+  ...["exclusive", "overlapping", "total", "arrow"].map((label) => ({ label, type: "constant" })),
+  snippetCompletion("by: ${}", { label: "by", type: "constant", detail: "discriminator" }),
+  snippetCompletion("color: #${}", { label: "color", type: "constant" }),
+  snippetCompletion("style: ${}", { label: "style", type: "constant" }),
+];
+
+const STYLES: Completion[] = ["chen", "lollipop"].map((label) => ({ label, type: "constant" }));
+
+/**
+ * Completions for the ER text: block keywords, settings, and the diagram's entities, relations and
+ * aggregations where a line names one. Names come from the text itself, which holds the diagram.
+ */
+export const erCompletions: CompletionSource = (context: CompletionContext) => {
+  const at = readSourceContext(context);
+  const options = optionsAt(at, context);
+  return options ? completionResult(at, options) : null;
+};
+
+function optionsAt(at: SourceContext, context: CompletionContext): Completion[] | null {
+  const block = at.blocks.at(-1);
+  const wantsList = at.typed !== "" || context.explicit;
+  const text = () => context.state.doc.toString();
+  const entities = () =>
+    nameOptions(definedNames(text(), ["entity", "aggregate"]), "class", "entity");
+  const relations = () => nameOptions(definedNames(text(), ["relation"]), "function", "relation");
+
+  if (at.inSettings) {
+    const current = at.settings.split(",").at(-1) ?? "";
+    if (/^\s*style\s*:/i.test(current)) return STYLES;
+    return current.includes(":") ? null : SETTINGS;
+  }
+  if (block === undefined) {
+    const [first, ...rest] = at.wordsBefore.map((word) => word.toLowerCase());
+    if (first === undefined) return wantsList ? TOP_LEVEL : null;
+    if (first === "isa" && rest.length === 0) return entities();
+    if (first === "constraint") {
+      if (at.before.includes(":")) return relations();
+      return rest.length === 0 ? CONSTRAINT_KINDS : entities();
+    }
+    return null;
+  }
+  if (at.wordsBefore.length > 0 || !wantsList) return null;
+  // A relation's lines are participants or its own attributes, so a typed name isn't taken over.
+  if (block === "relation") {
+    return startingWith([...entities(), { label: "attr", type: "keyword" }], at.typed);
+  }
+  if (block === "isa") return entities();
+  if (block === "aggregate") return relations();
+  return null;
+}

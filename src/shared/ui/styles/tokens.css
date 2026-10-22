@@ -95,6 +95,19 @@
   --canvas-selection: var(--ice-500);
   --canvas-relation: var(--seal-500);
 
+  /* ── Semantic: code (syntax colors in the DBML and ER text editors) ───── */
+  --syntax-keyword: var(--ice-700);
+  --syntax-definition: var(--seal-950);
+  --syntax-property: var(--seal-800);
+  --syntax-type: var(--lilac-600);
+  --syntax-setting: var(--blush-700);
+  --syntax-string: var(--sand-700);
+  --syntax-number: var(--blush-600);
+  --syntax-operator: var(--ice-600);
+  --syntax-punctuation: var(--seal-500);
+  --syntax-comment: var(--seal-500);
+  --syntax-error: var(--destructive);
+
   /* ── Semantic: lines ─────────────────────────────────────────────────── */
   --border: var(--seal-200);
   --border-strong: var(--seal-300);
@@ -196,6 +209,16 @@
   --canvas-grid: var(--seal-800);
   --canvas-selection: var(--ice-400);
   --canvas-relation: var(--seal-400);
+  --syntax-keyword: var(--ice-300);
+  --syntax-definition: var(--seal-50);
+  --syntax-property: var(--seal-200);
+  --syntax-type: var(--lilac-300);
+  --syntax-setting: var(--blush-300);
+  --syntax-string: var(--sand-300);
+  --syntax-number: var(--blush-400);
+  --syntax-operator: var(--ice-400);
+  --syntax-punctuation: var(--seal-400);
+  --syntax-comment: var(--seal-500);
   --shadow-color: 256 40% 3%;
 
   color-scheme: dark;

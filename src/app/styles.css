@@ -137,6 +137,17 @@
   --color-destructive-hover: var(--destructive-hover);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-destructive-soft: var(--destructive-soft);
+  --color-syntax-keyword: var(--syntax-keyword);
+  --color-syntax-definition: var(--syntax-definition);
+  --color-syntax-property: var(--syntax-property);
+  --color-syntax-type: var(--syntax-type);
+  --color-syntax-setting: var(--syntax-setting);
+  --color-syntax-string: var(--syntax-string);
+  --color-syntax-number: var(--syntax-number);
+  --color-syntax-operator: var(--syntax-operator);
+  --color-syntax-punctuation: var(--syntax-punctuation);
+  --color-syntax-comment: var(--syntax-comment);
+  --color-syntax-error: var(--syntax-error);
 
   /* Sharp corners: every rounded-* utility stays at or below 8px. */
   --radius-*: initial;
