@@ -43,6 +43,11 @@ export interface CanvasProduct<O extends object = object> {
    */
   clips?(elements: readonly CanvasElement[]): Map<string, ElementClip>;
   /**
+   * Starts editing an element in a way of its own (e.g. a design vector's points), on
+   * double-click or Enter. Returns `false` to fall back to editing its text, if it has any.
+   */
+  editElement?(el: CanvasElement, ctx: ToolContext<O>): boolean;
+  /**
    * What a click on the element `hitId` selects (e.g. the group holding it, as in Figma), given
    * the current selection: `deep` (Ctrl/Cmd+click) asks for the element itself, `enter`
    * (double-click) for one level further into a group. Without it, clicks select what they hit.

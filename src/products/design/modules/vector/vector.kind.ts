@@ -1,44 +1,59 @@
-import { nearPolyline, type ElementPatch, type ElementView, type Point, type Rect } from "@canvas";
+import type { ElementPatch, ElementView, Point, Rect } from "@canvas";
 
-import { DesignNodeKind, drawPaints } from "../core";
+import {
+  DesignNodeKind,
+  drawPaints,
+  hitSegment,
+  insideRegion,
+  polylineNetwork,
+  scaleNetwork,
+  traceRegions,
+  traceStrokes,
+} from "../core";
 import { VECTOR_DEFAULTS } from "./vector.defaults";
 import type { VectorElement } from "./vector.types";
 
-/** Freehand vectors: strokes along their points, hit near the line, scaled when resized. */
+/**
+ * Vectors: their regions are filled and their segments stroked; hit inside a filled region or
+ * near a segment; stretched when resized. Double-click edits their points (`editElement`).
+ */
 export class VectorKind extends DesignNodeKind<VectorElement> {
   readonly type = "vector";
   readonly label = "Vector";
-  readonly description = "A freehand line drawn with the pencil.";
-  override readonly tool = "pencil";
+  readonly description = "A path of points and curves, drawn with the pen or the pencil.";
+  override readonly tool = "pen";
   override readonly defaults = VECTOR_DEFAULTS;
-  override readonly fillable = false;
 
   draw(view: ElementView, el: VectorElement): void {
-    const { points } = el;
     drawPaints(
       view,
       el,
-      (g) => {
-        g.moveTo(points[0] ?? 0, points[1] ?? 0);
-        for (let i = 2; i + 1 < points.length; i += 2) g.lineTo(points[i]!, points[i + 1]!);
-      },
+      { fill: (g) => traceRegions(g, el.network), stroke: (g) => traceStrokes(g, el.network) },
       { cap: "round", join: "round" },
     );
   }
 
   override hitTest(el: VectorElement, p: Point, tolerance: number): boolean {
-    if (!super.hitTest(el, p, tolerance + el.strokeWeight)) return false;
-    return nearPolyline(el.points, el, p, el.strokeWeight / 2 + tolerance + VECTOR_DEFAULTS.reach);
+    if (!super.hitTest(el, p, tolerance + el.strokeWeight + VECTOR_DEFAULTS.reach)) return false;
+    const local = { x: p.x - el.x, y: p.y - el.y };
+    const reach = el.strokeWeight / 2 + tolerance + VECTOR_DEFAULTS.reach;
+    const filled = el.fills.some((paint) => paint.visible);
+    return (
+      hitSegment(el.network, local, reach) !== null || (filled && insideRegion(el.network, local))
+    );
   }
 
-  /** Its points stretch with its box. */
+  /** Its points and curves stretch with its box. */
   override resize(el: VectorElement, rect: Rect): ElementPatch<VectorElement> {
     const sx = el.w > 0 ? rect.w / el.w : 1;
     const sy = el.h > 0 ? rect.h / el.h : 1;
-    return { ...rect, points: el.points.map((value, i) => value * (i % 2 === 0 ? sx : sy)) };
+    return { ...rect, network: scaleNetwork(el.network, sx, sy) };
   }
 
+  /** Pencil lines from before networks stored `points`: they become an open chain. */
   override fillDefaults(el: VectorElement): VectorElement {
-    return { ...super.fillDefaults(el), points: el.points ?? [] };
+    const old = el as VectorElement & { points?: number[] };
+    const network = el.network ?? polylineNetwork(old.points ?? []);
+    return { ...super.fillDefaults(el), network };
   }
 }

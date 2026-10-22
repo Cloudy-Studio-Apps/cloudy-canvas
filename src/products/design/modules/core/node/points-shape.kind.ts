@@ -1,5 +1,7 @@
 import type { ElementView, Point } from "@canvas";
 
+import { polygonNetwork } from "../network/network-shapes";
+import type { VectorNetwork } from "../network/network.types";
 import { BoxShapeKind } from "./box-shape.kind";
 import type { DesignNode } from "./design-node.types";
 import { drawPaints } from "./draw-paints";
@@ -12,6 +14,10 @@ import { distanceToOutline, pointInPolygon } from "./shape-points";
 export abstract class PointsShapeKind<E extends DesignNode = DesignNode> extends BoxShapeKind<E> {
   /** The corners in local coordinates, in order around the shape. */
   abstract points(el: E): Point[];
+
+  override vectorNetwork(el: E): VectorNetwork {
+    return polygonNetwork(this.points(el));
+  }
 
   draw(view: ElementView, el: E): void {
     const points = this.points(el);

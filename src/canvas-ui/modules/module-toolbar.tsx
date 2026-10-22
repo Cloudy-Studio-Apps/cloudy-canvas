@@ -7,11 +7,19 @@ import { ExtensionIconView } from "./extension-icon-view";
 import { ToolMenuButton } from "./tool-menu-button";
 import { toolbarGroups, toolbarItems, toolInfo } from "./tool-entries";
 
-/** The tools the modules place on the toolbar, in their groups (tools sharing a menu as one). */
+/**
+ * The tools the modules place on the toolbar, in their groups (tools sharing a menu as one), or a
+ * mode's own toolbar while one of its tools is on (`toolbars`).
+ */
 export function ModuleToolbar({ children }: ModuleToolbarProps) {
   const engine = useEngine();
   const activeTool = useEngineState((state) => state.tool);
   const groups = toolbarGroups(useEditorPoint((points) => points.tools));
+  // A mode's toolbar (e.g. vector editing) stands in while one of its tools is on.
+  const Mode = useEditorPoint((points) => points.toolbars).find((mode) =>
+    mode.tools.includes(activeTool),
+  )?.component;
+  if (Mode) return <Mode />;
 
   return (
     <FloatingPanel role="toolbar" aria-label="Tools" aria-orientation="horizontal">

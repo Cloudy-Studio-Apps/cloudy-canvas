@@ -1,21 +1,40 @@
-import { boundsOfPoints } from "@canvas";
-
-import { createNodeBase, solidPaint } from "../core";
+import {
+  createNodeBase,
+  placeNetwork,
+  polylineNetwork,
+  solidPaint,
+  type Paint,
+  type VectorNetwork,
+} from "../core";
 import { VECTOR_DEFAULTS } from "./vector.defaults";
 import type { VectorElement } from "./vector.types";
 
-/** A vector through these world points (a flat [x0, y0, …] list). */
+/**
+ * A vector drawing `network` (its coordinates in world units: the node is placed around it), with
+ * the default black stroke unless `paints` are given.
+ */
 export function createVector(
+  network: VectorNetwork,
+  name: string,
+  index: string,
+  parentId: string | null,
+  paints: { fills?: Paint[]; strokes?: Paint[]; strokeWeight?: number } = {},
+): VectorElement {
+  const { network: placed, ...rect } = placeNetwork({ x: 0, y: 0 }, network);
+  return {
+    ...createNodeBase("vector", rect, index, { name, parentId, fills: paints.fills ?? [] }),
+    strokes: paints.strokes ?? [solidPaint(VECTOR_DEFAULTS.stroke)],
+    strokeWeight: paints.strokeWeight ?? VECTOR_DEFAULTS.strokeWeight,
+    network: placed,
+  };
+}
+
+/** A vector through a flat list of world points (a pencil line). */
+export function createVectorLine(
   points: readonly number[],
   name: string,
   index: string,
   parentId: string | null,
 ): VectorElement {
-  const { x, y, w, h } = boundsOfPoints([...points]);
-  return {
-    ...createNodeBase("vector", { x, y, w, h }, index, { name, parentId }),
-    strokes: [solidPaint(VECTOR_DEFAULTS.stroke)],
-    strokeWeight: VECTOR_DEFAULTS.strokeWeight,
-    points: points.map((value, i) => value - (i % 2 === 0 ? x : y)),
-  };
+  return createVector(polylineNetwork(points), name, index, parentId);
 }

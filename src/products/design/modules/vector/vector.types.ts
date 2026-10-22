@@ -1,11 +1,15 @@
 import type { ElementDefaults } from "@canvas";
 
-import type { DesignNode } from "../core";
+import type { DesignNode, VectorNetwork } from "../core";
 
-/** A freehand line (drawn with the pencil): `points` is a flat list relative to (x, y). */
+/**
+ * A vector: a network of vertices and bezier segments (local coordinates, starting at 0, 0),
+ * whose closed regions are filled and whose segments are stroked. Drawn with the pencil or the
+ * pen, or converted from a shape when its points are edited.
+ */
 export interface VectorElement extends DesignNode {
   type: "vector";
-  points: number[];
+  network: VectorNetwork;
 }
 
 export interface VectorDefaults extends ElementDefaults {

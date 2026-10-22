@@ -1,24 +1,27 @@
 import type { ElementView, PaintLayer } from "@canvas";
 import type { Graphics } from "pixi.js";
 
-import type { DesignNode, StrokeShape } from "./design-node.types";
+import type { DesignNode, PaintOutline, StrokeShape } from "./design-node.types";
 import type { Paint } from "./paint.types";
 
 /**
  * Draws a node's visible fills, bottom to top, then its visible strokes, over the shape `outline`
- * traces (in local coordinates): solid paints are filled or stroked, image paints are clipped to
- * the outline. The node's opacity and visibility apply to all of them; `strokeShape` rounds the
+ * traces (in local coordinates; or `{ fill, stroke }` when what's filled differs from what's
+ * stroked, e.g. a vector's regions and its segments): solid paints are filled or stroked, image
+ * paints are clipped to the fill outline. The node's opacity and visibility apply to all of them; `strokeShape` rounds the
  * strokes' ends and corners (e.g. a pencil line).
  */
 export function drawPaints(
   view: ElementView,
   node: DesignNode,
-  outline: (g: Graphics) => void,
+  outline: PaintOutline,
   strokeShape: StrokeShape = {},
 ): void {
+  const fillOutline = typeof outline === "function" ? outline : outline.fill;
+  const strokeOutline = typeof outline === "function" ? outline : outline.stroke;
   const layers: PaintLayer[] = [];
   for (const paint of node.fills) {
-    if (paint.visible) layers.push(fillLayer(paint, node, outline));
+    if (paint.visible) layers.push(fillLayer(paint, node, fillOutline));
   }
   if (node.strokeWeight > 0) {
     for (const paint of node.strokes) {
@@ -27,7 +30,7 @@ export function drawPaints(
       layers.push({
         kind: "shape",
         draw: (g) => {
-          outline(g);
+          strokeOutline(g);
           g.stroke({
             color: paint.color,
             alpha: paint.opacity,

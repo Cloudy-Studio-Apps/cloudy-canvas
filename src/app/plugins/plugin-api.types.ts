@@ -134,6 +134,37 @@ export interface DesignPluginApi {
     | "pointInPolygon"
     | "distanceToOutline"
   >;
+  /**
+   * Vector networks (vertices, bezier segments, filled regions): building them (from shapes too),
+   * placing, hit testing, tracing, editing, and the edit mode's base tool and session.
+   */
+  network: Pick<
+    typeof design,
+    | "polylineNetwork"
+    | "polygonNetwork"
+    | "rectNetwork"
+    | "ellipseNetwork"
+    | "placeNetwork"
+    | "scaleNetwork"
+    | "networkBounds"
+    | "hitSegment"
+    | "vertexAt"
+    | "insideRegion"
+    | "traceStrokes"
+    | "traceRegions"
+    | "splitSegment"
+    | "connect"
+    | "addVertex"
+    | "moveVertices"
+    | "setTangent"
+    | "removeParts"
+    | "cutSegment"
+    | "bendSegment"
+    | "toggleSmooth"
+    | "VectorEditTool"
+    | "VECTOR_EDIT"
+    | "VECTOR_TOOLS"
+  >;
   /** Building blocks of the side panels, for tabs and property sections. */
   panel: Pick<
     typeof designPanel,

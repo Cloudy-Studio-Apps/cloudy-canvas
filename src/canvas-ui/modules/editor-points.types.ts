@@ -107,6 +107,16 @@ export interface ContextMenuEntryGroup {
   items: ContextMenuGroup;
 }
 
+/**
+ * A toolbar that replaces the main one while one of its tools is on (e.g. a vector edit mode's
+ * tools and its Done button).
+ */
+export interface ToolbarModeEntry {
+  id: string;
+  tools: readonly string[];
+  component: ComponentType;
+}
+
 /** The points an editor's UI is assembled from. Each product has its own set. */
 export interface EditorPoints {
   /** Every tool the editor shows, on the toolbar and/or in the library. */
@@ -120,6 +130,8 @@ export interface EditorPoints {
   overlays: ExtensionPoint<OverlayEntry>;
   sessionHooks: ExtensionPoint<SessionHookEntry>;
   contextMenu: ExtensionPoint<ContextMenuEntryGroup>;
+  /** Toolbars shown instead of the main one while their tools are on. */
+  toolbars: ExtensionPoint<ToolbarModeEntry>;
 }
 
 /** The loaded modules of the editor that's open, and its points. */

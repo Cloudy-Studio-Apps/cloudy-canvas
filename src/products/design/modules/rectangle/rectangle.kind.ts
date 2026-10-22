@@ -1,7 +1,7 @@
 import type { ElementView, Rect } from "@canvas";
 
 import type { DesignToolOptions } from "../../design-options.types";
-import { BoxShapeKind, solidPaint } from "../core";
+import { BoxShapeKind, rectNetwork, solidPaint, type VectorNetwork } from "../core";
 import { RECTANGLE_DEFAULTS } from "./rectangle.defaults";
 import { drawRectangle } from "./rectangle.draw";
 import { createRectangle } from "./rectangle.factory";
@@ -22,6 +22,10 @@ export class RectangleKind extends BoxShapeKind<RectangleElement> {
     options: DesignToolOptions,
   ): RectangleElement {
     return createRectangle(rect, name, index, parentId, [solidPaint(options.rectangleFill)]);
+  }
+
+  override vectorNetwork(el: RectangleElement): VectorNetwork {
+    return rectNetwork(el.w, el.h, el.cornerRadius);
   }
 
   draw(view: ElementView, el: RectangleElement): void {

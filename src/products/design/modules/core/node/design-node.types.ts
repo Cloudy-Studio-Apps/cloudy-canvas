@@ -1,4 +1,5 @@
 import type { CanvasElement, ElementDefaults } from "@canvas";
+import type { Graphics } from "pixi.js";
 
 import type { Paint } from "./paint.types";
 
@@ -40,3 +41,7 @@ export interface StrokeShape {
   cap?: "butt" | "round" | "square";
   join?: "miter" | "round" | "bevel";
 }
+
+/** What a node's paints follow: one outline, or separate ones for its fills and its strokes. */
+export type PaintOutline =
+  ((g: Graphics) => void) | { fill: (g: Graphics) => void; stroke: (g: Graphics) => void };

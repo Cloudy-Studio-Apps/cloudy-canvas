@@ -80,6 +80,8 @@ export class CanvasEngine<O extends object = object> {
   private readonly renderer: Renderer;
   private readonly scene: Scene;
   private readonly fontTracker: FontTracker;
+  /** What tools (and the product's `editElement`) reach of the engine. */
+  private readonly toolContext: ToolContext<O>;
   private readonly services: ServiceCache;
   private readonly clipboard: ElementClipboard<O>;
   private readonly systemClipboard: Clipboard;
@@ -143,6 +145,7 @@ export class CanvasEngine<O extends object = object> {
     this.systemClipboard = clipboard ?? new MemoryClipboard();
     this.clipboard = this.createClipboard(this.systemClipboard);
     const ctx = this.createToolContext();
+    this.toolContext = ctx;
     const tools = [...createBaseTools(ctx), ...product.createTools(ctx)];
     this.tools = new Map(tools.map((tool) => [tool.id, tool]));
     this.tool = tools[0]!;
@@ -267,8 +270,14 @@ export class CanvasEngine<O extends object = object> {
     this.tool = next;
     this.scene.setHover(null);
     this.setCursor(this.tool.cursor);
+    this.tool.onActivate?.();
     this.requestRender();
     this.emitChange();
+  }
+
+  /** Whether the active tool handles this command itself (see `Tool.onCommand`). */
+  toolTakes(command: string): boolean {
+    return this.tool.onCommand?.(command) ?? false;
   }
 
   setToolOptions(patch: Partial<O>): void {
@@ -536,7 +545,8 @@ export class CanvasEngine<O extends object = object> {
   /** Opens the text editor on the selected element. Returns `false` if it has no text. */
   editSelection(): boolean {
     const id = this.scene.selection.single();
-    const el = id ? this.doc.get(id) : undefined;
+    const el = id ? this.scene.get(id) : undefined;
+    if (el && this.product.editElement?.(el, this.toolContext)) return true;
     if (!el || !this.kinds.kindOf(el).text) return false;
     // A selected part (e.g. a table cell) is edited rather than the element's first text.
     this.textEditor?.start(el.id, this.scene.selection.part);
@@ -607,6 +617,7 @@ export class CanvasEngine<O extends object = object> {
         return hit && this.scene.get(this.targetOf(hit.id, { deep }));
       },
       targetOf: (id) => this.targetOf(id),
+      getTool: () => this.tool.id,
       elementsInRect: (rect) => this.scene.elementsInRect(rect),
       editText: (id, part) => this.textEditor?.start(id, part),
       editNewText: (el) => this.textEditor?.startDraft(el),
@@ -784,7 +795,10 @@ export class CanvasEngine<O extends object = object> {
     return this.product.selectTarget?.(id, request, this.scene.elements) ?? id;
   }
 
-  /** Double-click enters a group (one level further in), or edits the text of what's hit. */
+  /**
+   * Double-click enters a group (one level further in), lets the product edit what's hit (e.g. a
+   * design vector's points), or edits its text.
+   */
   private handleDoubleClick(p: CanvasPointer): void {
     if (this.tool.id !== "select") return;
     const hit = this.elementAt(p.world);
@@ -794,6 +808,7 @@ export class CanvasEngine<O extends object = object> {
       this.setSelection([entered]);
       return;
     }
+    if (this.product.editElement?.(hit, this.toolContext)) return;
     const text = this.kinds.kindOf(hit).text;
     if (!text) return;
     this.setSelection([hit.id]);

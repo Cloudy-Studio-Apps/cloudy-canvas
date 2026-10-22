@@ -26,6 +26,8 @@ export interface ToolContext<O extends object = object> {
   getSelection(): ReadonlySet<string>;
   setSelection(ids: Iterable<string>): void;
   setTool(tool: string): void;
+  /** The active tool's id. */
+  getTool(): string;
   elementAt(world: Point): CanvasElement | undefined;
   /**
    * What a click at `world` selects (the product's `selectTarget`, e.g. the group around what's
@@ -98,4 +100,11 @@ export interface Tool {
   onCameraChange?(): void;
   /** Tool switched away or the gesture was cancelled. */
   onCancel?(): void;
+  /** The tool was just switched to (e.g. to show feedback that stays while it's on). */
+  onActivate?(): void;
+  /**
+   * A command (`deleteSelection`, `cancel`, …) while the tool is on: returns `true` when the tool
+   * handled it, so the engine's own handler doesn't run (e.g. an edit mode's Delete).
+   */
+  onCommand?(command: string): boolean;
 }

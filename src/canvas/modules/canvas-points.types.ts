@@ -58,6 +58,9 @@ export type SelectTargetHook<O extends object> = (
   kinds: ElementKinds<O>,
 ) => string;
 
+/** See `CanvasProduct.editElement`; only one module may give it. */
+export type EditElementHook<O extends object> = (el: CanvasElement, ctx: ToolContext<O>) => boolean;
+
 /** See `CanvasProduct.onMoved`; hooks run one after another in module order. */
 export type OnMovedHook<O extends object> = (
   doc: CanvasDocument,
@@ -92,6 +95,8 @@ export interface CanvasPoints<O extends object> {
   clips: ExtensionPoint<ClipsHook<O>>;
   /** What a click selects (one module at most; two throw). */
   selectTarget: ExtensionPoint<SelectTargetHook<O>>;
+  /** What double-click or Enter edits (one module at most; two throw). */
+  editElement: ExtensionPoint<EditElementHook<O>>;
   onMoved: ExtensionPoint<OnMovedHook<O>>;
   links: ExtensionPoint<() => CanvasLinks>;
   resolveElements: ExtensionPoint<ResolveElementsHook<O>>;

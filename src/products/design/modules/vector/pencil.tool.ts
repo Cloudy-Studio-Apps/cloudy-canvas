@@ -3,7 +3,7 @@ import { FreehandTool } from "@canvas";
 import type { DesignToolOptions } from "../../design-options.types";
 import { nextLayerName, parentFor } from "../core";
 import { VECTOR_DEFAULTS } from "./vector.defaults";
-import { createVector } from "./vector.factory";
+import { createVectorLine } from "./vector.factory";
 import type { VectorElement } from "./vector.types";
 
 /**
@@ -18,7 +18,7 @@ export class PencilTool extends FreehandTool<DesignToolOptions, VectorElement> {
   }
 
   protected elementFor(points: number[], index: string): VectorElement {
-    return createVector(points, "", index, null);
+    return createVectorLine(points, "", index, null);
   }
 
   protected override add(vector: VectorElement): void {

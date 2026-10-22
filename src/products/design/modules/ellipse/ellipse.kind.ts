@@ -1,6 +1,6 @@
 import type { ElementView, Point, Rect } from "@canvas";
 
-import { BoxShapeKind, drawPaints } from "../core";
+import { BoxShapeKind, drawPaints, ellipseNetwork, type VectorNetwork } from "../core";
 import { ELLIPSE_DEFAULTS } from "./ellipse.defaults";
 import { createEllipse } from "./ellipse.factory";
 import type { EllipseElement } from "./ellipse.types";
@@ -15,6 +15,10 @@ export class EllipseKind extends BoxShapeKind<EllipseElement> {
 
   createNode(rect: Rect, name: string, index: string, parentId: string | null): EllipseElement {
     return createEllipse(rect, name, index, parentId);
+  }
+
+  override vectorNetwork(el: EllipseElement): VectorNetwork {
+    return ellipseNetwork(el.w, el.h);
   }
 
   draw(view: ElementView, el: EllipseElement): void {
