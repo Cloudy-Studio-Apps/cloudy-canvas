@@ -15,6 +15,9 @@ pnpm typecheck      # tsc for app + vite config (noEmit)
 pnpm format         # Prettier (with tailwind plugin); format:check to verify
 pnpm tauri build    # production bundle
 pnpm release:linux  # AppImage (src-tauri/target/release/bundle/appimage/)
+pnpm release:arch   # pacman package (packaging/arch/PKGBUILD, needs makepkg):
+                    # packaging/arch/cloudy-canvas-<ver>-1-x86_64.pkg.tar.zst, with the
+                    # desktop entry, icons and the .cboard/.cdesign mime types
 pnpm release:win    # Windows installer cross-built from Linux (cargo-xwin, NSIS):
                     # src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/
 pnpm release        # both

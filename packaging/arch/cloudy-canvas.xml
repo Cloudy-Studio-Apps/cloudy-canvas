@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/x-cloudy-canvas-board">
+    <comment>Cloudy Canvas board</comment>
+    <icon name="application-x-cloudy-canvas-board"/>
+    <magic priority="60">
+      <match type="string" offset="0" value="CCBD"/>
+    </magic>
+    <glob pattern="*.cboard"/>
+  </mime-type>
+  <mime-type type="application/x-cloudy-canvas-design">
+    <comment>Cloudy Canvas design</comment>
+    <icon name="application-x-cloudy-canvas-design"/>
+    <glob pattern="*.cdesign"/>
+  </mime-type>
+</mime-info>

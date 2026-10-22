@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Cloudy Canvas
+Comment=Boards and designs on one canvas
+Exec=cloudy-canvas %F
+Icon=cloudy-canvas
+StartupWMClass=cloudy-canvas
+Categories=Graphics;Office;
+MimeType=application/x-cloudy-canvas-board;application/x-cloudy-canvas-design;
+Terminal=false

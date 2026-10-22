@@ -1,0 +1,40 @@
+# Local pacman package for Arch-based systems (Arch, CachyOS, …).
+# Packages the binary built by `tauri build --no-bundle`; run `pnpm release:arch`
+# from the repo root, then `sudo pacman -U packaging/arch/cloudy-canvas-*.pkg.tar.zst`.
+
+_root="$startdir/../.."
+_tauri="$_root/src-tauri"
+
+pkgname=cloudy-canvas
+pkgver=$(sed -n 's/^  "version": "\(.*\)",$/\1/p' "$_tauri/tauri.conf.json")
+pkgrel=1
+pkgdesc="Cloudy Canvas — boards and designs on one canvas"
+arch=('x86_64')
+url="https://github.com/MCris112"
+license=('custom')
+depends=('webkit2gtk-4.1' 'gtk3' 'libsoup3' 'hicolor-icon-theme')
+options=('!strip' '!debug')
+
+package() {
+  install -Dm755 "$_tauri/target/release/cloudy-canvas" "$pkgdir/usr/bin/cloudy-canvas"
+
+  install -Dm644 "$startdir/cloudy-canvas.desktop" "$pkgdir/usr/share/applications/cloudy-canvas.desktop"
+  install -Dm644 "$startdir/cloudy-canvas.xml" "$pkgdir/usr/share/mime/packages/cloudy-canvas.xml"
+
+  local icons="$_tauri/icons" share="$pkgdir/usr/share/icons/hicolor"
+  install -Dm644 "$icons/32x32.png" "$share/32x32/apps/cloudy-canvas.png"
+  install -Dm644 "$icons/64x64.png" "$share/64x64/apps/cloudy-canvas.png"
+  install -Dm644 "$icons/128x128.png" "$share/128x128/apps/cloudy-canvas.png"
+  install -Dm644 "$icons/128x128@2x.png" "$share/256x256/apps/cloudy-canvas.png"
+  install -Dm644 "$icons/icon.png" "$share/512x512/apps/cloudy-canvas.png"
+  install -Dm644 "$icons/source/app-icon.svg" "$share/scalable/apps/cloudy-canvas.svg"
+
+  # The board and design files use the app icon too.
+  local size type
+  for size in 32x32 64x64 128x128 256x256 512x512; do
+    install -d "$share/$size/mimetypes"
+    for type in board design; do
+      ln -s ../apps/cloudy-canvas.png "$share/$size/mimetypes/application-x-cloudy-canvas-$type.png"
+    done
+  done
+}
