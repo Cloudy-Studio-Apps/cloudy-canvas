@@ -143,3 +143,18 @@ export function intersectRects(a: Rect, b: Rect): Rect {
 export function rectsEqual(a: Rect, b: Rect): boolean {
   return a.x === b.x && a.y === b.y && a.w === b.w && a.h === b.h;
 }
+
+/**
+ * `rect` placed in `to` where it sat in `from`: its position and size scale with the box, as when
+ * a multi-selection is resized. Rounded to whole units.
+ */
+export function scaleRectInBox(rect: Rect, from: Rect, to: Rect): Rect {
+  const sx = from.w > 0 ? to.w / from.w : 1;
+  const sy = from.h > 0 ? to.h / from.h : 1;
+  return roundRect({
+    x: to.x + (rect.x - from.x) * sx,
+    y: to.y + (rect.y - from.y) * sy,
+    w: rect.w * sx,
+    h: rect.h * sy,
+  });
+}

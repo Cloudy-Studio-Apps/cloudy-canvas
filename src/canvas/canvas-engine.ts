@@ -1,6 +1,7 @@
 import { fontKey, type Clipboard, type DroppedFile } from "@shared/core";
 
 import { Camera } from "./camera";
+import { nudgeCheckpoint } from "./arrange";
 import { DEFAULT_VIEW_OPTIONS } from "./canvas-view";
 import {
   dropFiles,
@@ -138,6 +139,7 @@ export class CanvasEngine<O extends object = object> {
       { read: (id) => this.doc.getAsset(id), onLoad: () => this.requestRender() },
       {
         grid: view.grid,
+        sizeLabel: view.sizeLabel,
         placement: {
           orderOf: (el, kind) => this.scene.orderKey(el, kind),
           clipOf: (el) => this.scene.clipOf(el),
@@ -500,6 +502,32 @@ export class CanvasEngine<O extends object = object> {
     if (patches.size === 0) return [];
     this.doc.checkpoint();
     this.doc.updateMany(patches);
+    return [...patches.keys()];
+  }
+
+  /**
+   * Moves the selection (with what moves with it) by (dx, dy), as the arrow keys do; a burst of
+   * presses is one undo step. Unlike a drag, nothing changes parent. Returns `false` when nothing
+   * was selected.
+   */
+  nudgeSelection(dx: number, dy: number): boolean {
+    if (this.scene.selection.size === 0) return false;
+    nudgeCheckpoint(this.doc);
+    this.moveElements(this.scene.selection.ids, dx, dy);
+    return true;
+  }
+
+  /**
+   * Moves elements, with what moves with them (locked ones stay put), by (dx, dy). Returns the
+   * moved ids. The caller starts the undo step.
+   */
+  moveElements(ids: Iterable<string>, dx: number, dy: number): string[] {
+    const patches = new Map<string, ElementPatch>();
+    for (const id of this.withMembers(ids, "move")) {
+      const el = this.doc.get(id);
+      if (el && !el.locked) patches.set(id, this.kinds.kindOf(el).move(el, dx, dy));
+    }
+    if (patches.size > 0) this.doc.updateMany(patches);
     return [...patches.keys()];
   }
 

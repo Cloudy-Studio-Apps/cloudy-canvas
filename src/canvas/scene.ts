@@ -32,7 +32,7 @@ export class Scene {
 
   constructor(
     private readonly doc: CanvasDocument,
-    private readonly kinds: ElementKinds,
+    readonly kinds: ElementKinds,
     private readonly hooks: SceneHooks = {},
   ) {}
 

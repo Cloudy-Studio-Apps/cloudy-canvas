@@ -1,5 +1,5 @@
 import { unionRects } from "../geometry";
-import { RESIZE_HANDLES, resizeHandlePoint } from "../handles";
+import { RESIZE_HANDLES, resizeHandlePoint, resizeTarget } from "../handles";
 import type { OverlayInput, OverlayState } from "./overlay-state.types";
 
 export function buildOverlayState({
@@ -14,12 +14,11 @@ export function buildOverlayState({
     .filter((el) => kinds.kindOf(el).boxed)
     .map((el) => kinds.kindOf(el).bounds(el));
   const single = selected.length === 1 ? selected[0] : undefined;
-  const resizeHandles =
-    single && !single.locked && kinds.kindOf(single).resizable
-      ? RESIZE_HANDLES.map((handle) =>
-          resizeHandlePoint(kinds.kindOf(single).bounds(single), handle),
-        )
-      : [];
+  const target = resizeTarget(selected, kinds);
+  const resizeHandles = target
+    ? RESIZE_HANDLES.map((handle) => resizeHandlePoint(target.box, handle))
+    : [];
+  const selectionBounds = selection.length > 1 ? unionRects(selection) : null;
 
   const withHandles = hover && !selected.includes(hover) ? [...selected, hover] : selected;
   const handles = withHandles
@@ -28,7 +27,8 @@ export function buildOverlayState({
 
   return {
     selection,
-    selectionBounds: selection.length > 1 ? unionRects(selection) : null,
+    selectionBounds,
+    size: selectionBounds ?? selection[0] ?? null,
     hover: hover && kinds.kindOf(hover).boxed ? kinds.kindOf(hover).bounds(hover) : null,
     marquee,
     handles,

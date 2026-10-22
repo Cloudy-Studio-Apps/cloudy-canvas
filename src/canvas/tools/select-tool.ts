@@ -174,7 +174,7 @@ export class SelectTool implements Tool {
     if (interaction.kind === "resize") {
       return {
         kind: "resize",
-        resize: new ResizeGesture(this.ctx, interaction.element, interaction.handle, p),
+        resize: new ResizeGesture(this.ctx, interaction.target, interaction.handle, p),
       };
     }
     this.ctx.setCursor(interaction.interaction.cursor);

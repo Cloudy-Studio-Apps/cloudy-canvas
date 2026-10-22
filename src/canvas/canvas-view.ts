@@ -6,4 +6,5 @@ export const DEFAULT_VIEW_OPTIONS: CanvasViewOptions = {
   minZoom: MIN_ZOOM,
   maxZoom: MAX_ZOOM,
   grid: "dots",
+  sizeLabel: false,
 };

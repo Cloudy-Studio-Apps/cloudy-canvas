@@ -1,3 +1,4 @@
+import { NUDGE_STEPS } from "./arrange";
 import type { CanvasEngine } from "./canvas-engine";
 import type { CommandHandler, Commands } from "./commands.types";
 
@@ -15,6 +16,8 @@ export function createCommands(
   const toolCommands: Record<string, CommandHandler> = {};
   for (const id of toolIds) toolCommands[`tool.${id}`] = () => engine.setTool(id);
   for (const id of hostCommands) toolCommands[id] = () => engine.runHostAction(id);
+  for (const [id, step] of Object.entries(NUDGE_STEPS))
+    toolCommands[id] = () => engine.nudgeSelection(step.x, step.y);
 
   const commands: Record<string, CommandHandler> = {
     undo: () => engine.undo(),

@@ -1,15 +1,20 @@
-import type { CanvasElement } from "../elements";
-import { resizeCursor, resizeRect, type ResizeHandle } from "../handles";
+import type { ElementPatch } from "../elements";
+import { scaleRectInBox } from "../geometry";
+import { resizeCursor, resizeRect, type ResizeHandle, type ResizeTarget } from "../handles";
 import { MOVE_THRESHOLD_PX, pastThreshold } from "./drag-threshold";
 import type { CanvasPointer, ToolContext } from "./tool.types";
 
-/** Drags a resize handle of one element. Shift keeps the proportions (always, for some kinds). */
+/**
+ * Drags a resize handle of one element, or of the box around a multi-selection, which scales
+ * every element in it (ones that can't be resized move with their center). Shift keeps the
+ * proportions (always, when a kind keeps them), Alt resizes round the center.
+ */
 export class ResizeGesture {
   private started = false;
 
   constructor(
     private readonly ctx: ToolContext,
-    private readonly origin: CanvasElement,
+    private readonly target: ResizeTarget,
     private readonly handle: ResizeHandle,
     private readonly start: CanvasPointer,
   ) {
@@ -22,11 +27,40 @@ export class ResizeGesture {
       this.started = true;
       this.ctx.doc.checkpoint();
     }
-    const dx = p.world.x - this.start.world.x;
-    const dy = p.world.y - this.start.world.y;
-    const kind = this.ctx.kinds.kindOf(this.origin);
-    const keepRatio = p.shiftKey || kind.keepsRatio;
-    const rect = resizeRect(kind.bounds(this.origin), this.handle, dx, dy, keepRatio);
-    this.ctx.doc.update(this.origin.id, kind.resize(this.origin, rect));
+    const { kinds } = this.ctx;
+    const { elements, box } = this.target;
+    const rect = resizeRect(
+      box,
+      this.handle,
+      p.world.x - this.start.world.x,
+      p.world.y - this.start.world.y,
+      {
+        keepRatio: p.shiftKey || elements.some((el) => kinds.kindOf(el).keepsRatio),
+        fromCenter: p.altKey,
+      },
+    );
+
+    const [single] = elements;
+    if (single && elements.length === 1) {
+      this.ctx.doc.update(single.id, kinds.kindOf(single).resize(single, rect));
+      return;
+    }
+    const patches = new Map<string, ElementPatch>();
+    for (const el of elements) {
+      const kind = kinds.kindOf(el);
+      const from = kind.bounds(el);
+      const to = scaleRectInBox(from, box, rect);
+      patches.set(
+        el.id,
+        kind.resizable
+          ? kind.resize(el, to)
+          : kind.move(
+              el,
+              Math.round(to.x + (to.w - from.w) / 2 - from.x),
+              Math.round(to.y + (to.h - from.h) / 2 - from.y),
+            ),
+      );
+    }
+    this.ctx.doc.updateMany(patches);
   }
 }

@@ -1,8 +1,16 @@
-import type { CanvasPointer, Point, Tool, ToolContext } from "@canvas";
+import {
+  nudgeCheckpoint,
+  nudgeStep,
+  type CanvasPointer,
+  type Point,
+  type Tool,
+  type ToolContext,
+} from "@canvas";
 
 import type { DesignToolOptions } from "../../../design-options.types";
 import {
   hitSegment,
+  moveVertices,
   placeNetwork,
   removeParts,
   segmentsAt,
@@ -27,7 +35,8 @@ const EDIT_TOOLS: ReadonlySet<string> = new Set(Object.values(VECTOR_TOOLS));
  * The base of the vector edit tools (template method): it shows the overlay while it's on, finds
  * what a press lands on, writes network edits (re-placing the node around its curves), and takes
  * the mode's commands: Enter (Done) leaves it, Esc lets go of the selected points, V is Move
- * points, Delete removes the selected points and segments, Ctrl+A selects every point. Subclasses handle the pointer.
+ * points, Delete removes the selected points and segments, Ctrl+A selects every point, the
+ * arrow keys nudge the selected points. Subclasses handle the pointer.
  */
 export abstract class VectorEditTool implements Tool {
   abstract readonly id: string;
@@ -151,8 +160,20 @@ export abstract class VectorEditTool implements Tool {
         this.select(el.network.vertices.keys());
         return true;
       default:
-        return false;
+        return this.nudge(el, command);
     }
+  }
+
+  /** The arrow keys move the selected points (and the ends of the selected segments). */
+  private nudge(el: VectorElement, command: string): boolean {
+    const step = nudgeStep(command);
+    if (!step) return false;
+    const vertices = activeVertices(el, this.session.selection);
+    if (vertices.size > 0) {
+      nudgeCheckpoint(this.ctx.doc);
+      this.write(el, moveVertices(el.network, vertices, step.x, step.y));
+    }
+    return true;
   }
 
   abstract onPointerDown(p: CanvasPointer): void;

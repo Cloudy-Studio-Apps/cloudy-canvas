@@ -37,6 +37,7 @@ export type {
   ShapePaintLayer,
 } from "./render";
 export type { CanvasPointer, Tool, ToolContext } from "./tools";
+export { nudgeCheckpoint, nudgeStep, NUDGE_STEPS } from "./arrange";
 export { CanvasEngine } from "./canvas-engine";
 export { MIN_ZOOM, MAX_ZOOM } from "./camera";
 export { DEFAULT_VIEW_OPTIONS } from "./canvas-view";

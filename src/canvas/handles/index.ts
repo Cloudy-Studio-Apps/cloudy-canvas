@@ -6,3 +6,4 @@ export {
   resizeHandlePoint,
   resizeRect,
 } from "./resize-handles";
+export { resizeTarget } from "./resize-target";

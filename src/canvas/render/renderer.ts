@@ -15,6 +15,7 @@ import type { GridLayer } from "./layers/grid-layer.types";
 import { GuideLayer } from "./layers/guide-layer";
 import { LinkLayer } from "./layers/link-layer";
 import { OverlayLayer } from "./layers/overlay-layer";
+import { SizeLabelLayer } from "./layers/size-label-layer";
 import type { OverlayState } from "./overlay-state.types";
 import { drawSnapshot } from "./snapshot";
 import type { SnapshotOptions } from "./snapshot.types";
@@ -23,7 +24,7 @@ import type { RendererOptions } from "./renderer.types";
 /**
  * Owns the Pixi application and composes the layers, bottom to top:
  * grid (screen) → world (frames, links, elements, drafts, guides; follows the camera) → overlay
- * (screen), with a pixel grid above the world instead. Frames have their own layer so links show
+ * and the size label (screen), with a pixel grid above the world instead. Frames have their own layer so links show
  * above them.
  */
 export class Renderer {
@@ -36,6 +37,7 @@ export class Renderer {
   private readonly grid: GridLayer;
   private readonly world = new Container();
   private readonly overlay = new OverlayLayer();
+  private readonly sizeLabel = new SizeLabelLayer();
   private readonly images: ImageCache;
 
   constructor(
@@ -67,8 +69,8 @@ export class Renderer {
     this.world.addChild(this.frames, this.links, this.elements, this.draft, this.guide);
     // The pixel grid lies over the content it measures; dots stay behind it.
     if (this.options.grid === "pixels")
-      this.app.stage.addChild(this.world, this.grid, this.overlay);
-    else this.app.stage.addChild(this.grid, this.world, this.overlay);
+      this.app.stage.addChild(this.world, this.grid, this.overlay, this.sizeLabel);
+    else this.app.stage.addChild(this.grid, this.world, this.overlay, this.sizeLabel);
   }
 
   /** The canvas background color (0xRRGGBB). */
@@ -155,6 +157,7 @@ export class Renderer {
     this.links.draw({ zoom: camera.zoom, theme: this.theme, highlighted });
     this.guide.draw({ zoom: camera.zoom, theme: this.theme });
     this.overlay.draw(camera, overlay, this.theme.selection);
+    this.sizeLabel.draw(camera, this.options.sizeLabel ? overlay.size : null, this.theme.selection);
     this.app.render();
     return animating;
   }

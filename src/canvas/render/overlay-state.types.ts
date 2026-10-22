@@ -20,7 +20,9 @@ export interface OverlayState {
   marquee: Rect | null;
   /** Handles the kinds of the selected and hovered elements offer (`ElementKind.handles`). */
   handles: ElementHandle[];
-  /** Resize handles of a single selected element. */
+  /** The box the size label measures: the selection's bounds (outlined elements only). */
+  size: Rect | null;
+  /** Resize handles of the selection (one element, or the box round several). */
   resizeHandles: Point[];
   /** Rects of the selected part of the single selected element (e.g. a table row, some cells). */
   part: Rect[];
