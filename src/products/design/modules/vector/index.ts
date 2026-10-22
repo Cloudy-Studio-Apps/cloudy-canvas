@@ -5,4 +5,5 @@ export { createVector, createVectorLine } from "./vector.factory";
 export { VECTOR_DEFAULTS } from "./vector.defaults";
 export { VectorKind } from "./vector.kind";
 export { PencilTool } from "./pencil.tool";
+export { shapeToVector } from "./shape-to-vector";
 export * from "./edit";

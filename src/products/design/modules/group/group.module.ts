@@ -2,7 +2,8 @@ import { Group } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
-import { designCanvas } from "../../design-points";
+import { designAgentTools, designCanvas } from "../../design-points";
+import { groupTools } from "./group.agent-tools";
 import { GroupKind } from "./group.kind";
 import { pruneEmptyGroups } from "./group-nodes";
 import { groupSelectTarget } from "./group-select-target";
@@ -11,8 +12,8 @@ import { useGroupCommands } from "./ui/use-group-commands";
 
 /**
  * Groups: the kind, bounds that follow the children, selecting the group before what's in it,
- * removing groups left empty, the group (Ctrl+G) and ungroup (Ctrl+Shift+G) commands and their
- * context menu items.
+ * removing groups left empty, the group (Ctrl+G) and ungroup (Ctrl+Shift+G) commands, their
+ * context menu items and agent tools.
  */
 export const groupModule = defineModule({
   id: "group",
@@ -29,6 +30,7 @@ export const groupModule = defineModule({
       { id: "group", label: "Group selection", keys: [{ key: "g", mod: true }] },
       { id: "ungroup", label: "Ungroup", keys: [{ key: "g", mod: true, shift: true }] },
     );
+    host.contribute(designAgentTools, { id: "group", tools: () => groupTools });
 
     host.contribute(designEditor.sessionHooks, { id: "group-commands", use: useGroupCommands });
     host.contribute(designEditor.layerIcons, { type: "group", icon: Group });

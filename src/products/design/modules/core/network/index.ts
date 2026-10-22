@@ -12,9 +12,12 @@ export {
   removeParts,
   setTangent,
   splitSegment,
+  toggleRegion,
   toggleSmooth,
 } from "./network-edits";
+export { faceAt, networkFaces } from "./network-faces";
 export { hitSegment, insideRegion, networkBounds, vertexAt } from "./network-geometry";
 export { placeNetwork, scaleNetwork } from "./network-placement";
 export { ellipseNetwork, polygonNetwork, polylineNetwork, rectNetwork } from "./network-shapes";
 export { traceRegions, traceStrokes } from "./network-trace";
+export { NETWORK_SCHEMA, readNetwork } from "./network-args";

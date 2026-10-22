@@ -2,12 +2,17 @@ import { Layers } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
+import { designAgentTools } from "../../design-points";
+import { layersTools } from "./layers.agent-tools";
 import { LayersTab } from "./ui/layers-tab";
 
-/** The Layers tab: the layer tree (select, rename, hide, lock) and the pages. */
+/**
+ * The Layers tab: the pages (the pages module's list) and the page's layer tree (select, rename,
+ * hide, lock), and the tree for agents (`get_layer_tree`).
+ */
 export const layersModule = defineModule({
   id: "layers",
-  requires: ["core"],
+  requires: ["core", "pages"],
   register(host) {
     host.contribute(designEditor.leftTabs, {
       id: "layers",
@@ -16,5 +21,6 @@ export const layersModule = defineModule({
       order: 10,
       component: LayersTab,
     });
+    host.contribute(designAgentTools, { id: "layers", tools: () => layersTools });
   },
 });

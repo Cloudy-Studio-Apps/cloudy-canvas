@@ -11,6 +11,7 @@ import { useEngine } from "../../engine-context";
 import { useOptionalEditorPoint } from "../../modules/editor-modules-context";
 import type { OpenContextMenu } from "./canvas-context-menu.types";
 import { ContextMenuEntry } from "./context-menu-entry";
+import { ContextMenuSubmenuEntry } from "./context-menu-submenu-entry";
 import { CANVAS_MENU, SELECTION_MENU } from "./context-menu-items";
 import type { ContextMenuContext } from "./context-menu-items.types";
 
@@ -64,9 +65,13 @@ export function CanvasContextMenu() {
         {menu?.groups.map((group, i) => (
           <Fragment key={i}>
             {i > 0 && <DropdownMenuSeparator />}
-            {group.map((item) => (
-              <ContextMenuEntry key={item.command} item={item} context={menu.context} />
-            ))}
+            {group.map((item) =>
+              "actions" in item ? (
+                <ContextMenuSubmenuEntry key={item.id} item={item} context={menu.context} />
+              ) : (
+                <ContextMenuEntry key={item.command} item={item} context={menu.context} />
+              ),
+            )}
           </Fragment>
         ))}
       </DropdownMenuContent>

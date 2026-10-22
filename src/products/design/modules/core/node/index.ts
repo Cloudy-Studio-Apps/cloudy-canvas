@@ -1,6 +1,7 @@
 // The base every design element extends: the `DesignNode` data and `DesignNodeKind` behavior.
 export type * from "./create-node-base.types";
 export type * from "./design-node.types";
+export type * from "./node-build.types";
 export type * from "./paint.types";
 export { createNodeBase } from "./create-node-base";
 export { DesignNodeKind } from "./design-node.kind";
@@ -14,3 +15,6 @@ export { distanceToOutline, pointInPolygon, pointsInBox } from "./shape-points";
 export { BoxShapeKind } from "./box-shape.kind";
 export { PointsShapeKind } from "./points-shape.kind";
 export { layerNameOf } from "./layer-name-of";
+export { checkParent, isNodeKind } from "./node-parent";
+export { fraction, nonNegative, pointArg, wholeNumber } from "./number-args";
+export { colorPaints, hexColor, readPaints } from "./paint-args";

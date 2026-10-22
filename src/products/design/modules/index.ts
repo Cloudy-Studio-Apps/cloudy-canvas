@@ -7,6 +7,7 @@ export * from "./frame";
 export * from "./group";
 export * from "./image";
 export * from "./line";
+export * from "./pages";
 export * from "./polygon";
 export * from "./rectangle";
 export * from "./section";

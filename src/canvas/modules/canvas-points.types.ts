@@ -1,6 +1,6 @@
 import type { ExtensionPoint, Shortcut } from "@shared/core";
 
-import type { CanvasProduct, SelectTargetRequest } from "../canvas-product.types";
+import type { CanvasProduct, CanvasScopes, SelectTargetRequest } from "../canvas-product.types";
 import type { CanvasViewOptions } from "../canvas-view.types";
 import type { CanvasDocument } from "../document";
 import type { CanvasElement, ElementKind, ElementKinds } from "../elements";
@@ -89,6 +89,8 @@ export interface CanvasPoints<O extends object> {
   options: ExtensionPoint<Partial<O>>;
   /** The canvas's zoom range and grid. A value given twice throws. */
   view: ExtensionPoint<Partial<CanvasViewOptions>>;
+  /** The scopes the canvas is split into (one module at most; two throw). */
+  scopes: ExtensionPoint<CanvasScopes>;
   /** The drawing order (one module at most; two throw). */
   drawOrder: ExtensionPoint<DrawOrderHook<O>>;
   /** What clips each element (one module at most; two throw). */

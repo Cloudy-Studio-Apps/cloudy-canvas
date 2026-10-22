@@ -31,6 +31,11 @@ export interface CanvasProduct<O extends object = object> {
   /** Zoom range and background grid; unset values are `DEFAULT_VIEW_OPTIONS`'. */
   readonly view?: Partial<CanvasViewOptions>;
   /**
+   * Splits the document into scopes shown one at a time (a design's pages). Without it, the
+   * canvas shows every element.
+   */
+  readonly scopes?: CanvasScopes;
+  /**
    * Drawing order keys (compared as strings, bottom to top) for elements whose order isn't their
    * own `index` alone, e.g. nodes of a tree drawn after their parent. Elements left out get
    * `zOrderKey`. `elements` are the scene's, with derived geometry resolved.
@@ -121,4 +126,18 @@ export interface SelectTargetRequest {
   deep: boolean;
   /** Go one level further in (double-click). */
   enter: boolean;
+}
+
+/**
+ * A document split into scopes the canvas shows one at a time (a design's pages). The scene holds
+ * only the current scope's elements, so everything that reads it (hits, selection, exports,
+ * agents) stays in that scope. New elements are placed in the current one when they're added.
+ */
+export interface CanvasScopes {
+  /** The scope ids, in order; the canvas opens on the first. */
+  list(doc: CanvasDocument): string[];
+  /** The scope an element is shown in; `null` for elements never shown (e.g. the page records). */
+  of(el: CanvasElement): string | null;
+  /** An element being added, placed in `scope` unless it's already in one. */
+  place(el: CanvasElement, scope: string): CanvasElement;
 }

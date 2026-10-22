@@ -13,8 +13,18 @@ import {
 
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
-import { allKinds, noNodes, someNodes } from "@design/ui/modules/section-filters";
-import { designCanvas } from "../../design-points";
+import { allKinds, someNodes } from "@design/ui/modules/section-filters";
+import { designAgentTools, designCanvas } from "../../design-points";
+import {
+  createNodesTool,
+  designExportTools,
+  designFileTools,
+  designInfoTools,
+  designReadTools,
+  designViewTools,
+  nodeArrangeTools,
+  nodeEditTools,
+} from "./agent";
 import { treeOrderKeys } from "./tree/order-keys";
 import { treeClips } from "./tree/tree-clips";
 import { prepareTreeCopies } from "./tree/prepare-tree-copies";
@@ -25,7 +35,6 @@ import {
   ExportSection,
   FillSection,
   LayoutSection,
-  PageSection,
   PositionSection,
   PrototypeSection,
   StrokeSection,
@@ -34,7 +43,8 @@ import {
 /**
  * What every design has whatever its modules: the canvas view (plain, pixel grid, 2%–25600%), the
  * layer tree's hooks (drawing order, clipping, members, dropping into frames, copies), the select and hand
- * buttons, the properties panel's shared sections and the main menu.
+ * buttons, the properties panel's shared sections, the main menu and the agent tools that work on
+ * any layer (reading, creating and editing through the kinds, arranging, viewing, exporting, files).
  */
 export const coreModule = defineModule({
   id: "core",
@@ -45,6 +55,17 @@ export const coreModule = defineModule({
     host.contribute(designCanvas.withMembers, (ids, elements) => withDescendants(ids, elements));
     host.contribute(designCanvas.onMoved, reparentMoved);
     host.contribute(designCanvas.prepareCopies, prepareTreeCopies);
+
+    host.contribute(
+      designAgentTools,
+      { id: "read", tools: () => designReadTools },
+      { id: "info", tools: () => designInfoTools },
+      { id: "nodes", tools: (context) => [createNodesTool(context), ...nodeEditTools] },
+      { id: "arrange", tools: () => nodeArrangeTools },
+      { id: "view", tools: () => designViewTools },
+      { id: "export", tools: () => designExportTools },
+      { id: "files", tools: () => designFileTools },
+    );
 
     host.contribute(
       designEditor.tools,
@@ -66,13 +87,6 @@ export const coreModule = defineModule({
 
     host.contribute(
       designEditor.propertySections,
-      {
-        id: "page",
-        tab: "design",
-        order: 10,
-        when: noNodes,
-        component: PageSection,
-      },
       { id: "position", tab: "design", order: 20, when: someNodes, component: PositionSection },
       {
         id: "layout",

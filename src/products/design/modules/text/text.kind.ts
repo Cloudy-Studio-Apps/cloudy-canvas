@@ -1,9 +1,18 @@
-import type { ElementPatch, ElementText, ElementView, Rect } from "@canvas";
+import type {
+  ElementBuildContext,
+  ElementPatch,
+  ElementSpec,
+  ElementText,
+  ElementView,
+  Rect,
+} from "@canvas";
 import type { FontRequest } from "@shared/core";
 
-import { DesignNodeKind } from "../core";
+import { colorPaints, DesignNodeKind, type NodeBuildContext } from "../core";
 import { TEXT_DEFAULTS } from "./text.defaults";
 import { retypeset } from "./retypeset";
+import { TEXT_SPEC_PROPERTIES, textFields } from "./text-args";
+import { createText } from "./text.factory";
 import { textSize, textStyleOf } from "./text-layout";
 import type { TextNodeElement } from "./text.types";
 
@@ -22,6 +31,8 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
   override readonly defaults = TEXT_DEFAULTS;
   override readonly imageFills = false;
   override readonly strokable = false;
+  override readonly creatable = true;
+  override readonly specProperties = TEXT_SPEC_PROPERTIES;
 
   override readonly text: ElementText<TextNodeElement> = {
     get: (el) => el.text,
@@ -55,6 +66,38 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
           ? "height"
           : el.autoResize;
     return retypeset(el, { ...rect, autoResize });
+  }
+
+  /**
+   * An agent's text, in the typography new texts use unless the spec says otherwise: auto width,
+   * or wrapped at `w` (auto height), or a fixed `w`×`h`. `color` is its fill.
+   */
+  protected override nodeFromSpec(
+    spec: ElementSpec,
+    index: string,
+    context: NodeBuildContext,
+  ): TextNodeElement {
+    const fields = textFields(spec.args);
+    if (fields.text === undefined) throw new Error('A text needs "text".');
+    const base = createText(spec, index, null, context.options.textTypography, spec.w);
+    const fixed = spec.w !== undefined && spec.h !== undefined;
+    const el: TextNodeElement = {
+      ...base,
+      ...(spec.color !== undefined ? { fills: colorPaints(spec.color, "color") } : {}),
+      ...(fixed ? { w: spec.w!, h: spec.h!, autoResize: "none" } : {}),
+    };
+    return { ...el, ...retypeset(el, fields) };
+  }
+
+  /** Changes to its text or typography lay it out again. */
+  override completePatch(
+    el: TextNodeElement,
+    patch: ElementPatch<TextNodeElement>,
+    context: ElementBuildContext,
+  ): ElementPatch<TextNodeElement> {
+    const fields = textFields(patch);
+    const next = Object.keys(fields).length > 0 ? retypeset({ ...el, ...patch }, fields) : {};
+    return super.completePatch(el, { ...patch, ...next }, context);
   }
 
   override fonts(el: TextNodeElement): FontRequest[] {

@@ -1,5 +1,6 @@
 import {
   bytesToBase64,
+  exportPath,
   optionalChoice,
   optionalNumber,
   optionalString,
@@ -12,7 +13,6 @@ import { ToolImage } from "@shared/core";
 import type { BoardEngine } from "../board-engine.types";
 import { requireBoard, requireShapes } from "./board-access";
 import type { BoardAgentTool } from "./board-agent.types";
-import { exportPath } from "./export-path";
 
 const FORMATS: readonly ExportFormat[] = ["png", "jpg", "pdf", "csv"];
 const BACKGROUNDS = ["solid", "transparent"] as const;
@@ -51,7 +51,7 @@ export const exportTools: BoardAgentTool[] = [
       const format = optionalChoice(args, "format", FORMATS);
       if (!format) throw new Error(`"format" must be one of: ${FORMATS.join(", ")}.`);
       const ids = optionalIds(board.engine, args);
-      const path = exportPath(board, format, optionalString(args, "path"));
+      const path = exportPath(board, format, optionalString(args, "path"), "board");
       const file = await board.engine.exportElements({
         format,
         background: optionalChoice(args, "background", BACKGROUNDS) ?? "solid",

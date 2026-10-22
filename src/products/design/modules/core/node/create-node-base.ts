@@ -18,6 +18,8 @@ export function createNodeBase<K extends string>(
     ...createElementBase(type, rect, index),
     name,
     parentId,
+    // Set when it's added: the page on screen (see `DesignNode.pageId`).
+    pageId: "",
     visible: true,
     opacity: NODE_DEFAULTS.opacity,
     fills,

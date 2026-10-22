@@ -3,19 +3,19 @@ import { Search } from "lucide-react";
 
 import type { LayerTree } from "@design";
 import { PanelIconButton } from "@design/ui/components/panel";
+import { PagesSection } from "@design/modules/pages/ui/pages-section";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
 import { LayerRow } from "./layer-row";
 import { LayersSearch } from "./layers-search";
 import { matchingLayers } from "./matching-layers";
-import { PagesSection } from "./pages-section";
 import { revealedLayers } from "./revealed-layers";
 import { useLayerTree } from "./use-layer-tree";
 
 /** Search results show without their children. */
 const FLAT: LayerTree = new Map();
 
-/** The left panel's Layers tab: the page's layer tree (topmost first), searchable by name, then
- * the pages. */
+/** The left panel's Layers tab: the layer tree of the page on screen (topmost first), searchable
+ * by name, then the pages. */
 export function LayersTab() {
   const engine = useDesignEngine();
   const tree = useLayerTree();

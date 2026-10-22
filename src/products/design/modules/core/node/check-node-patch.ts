@@ -1,0 +1,35 @@
+import type { ElementBuildContext, ElementPatch } from "@canvas";
+
+import type { DesignNodeKind } from "./design-node.kind";
+import type { DesignNode } from "./design-node.types";
+import { checkParent } from "./node-parent";
+import { fraction } from "./number-args";
+import { readPaints } from "./paint-args";
+
+/**
+ * An agent's patch of the fields every node has, checked and normalized: `opacity` (0–1),
+ * `strokeWeight`, full `fills`/`strokes` paint arrays (as the node's kind allows) and `parentId`
+ * (a container it may go into).
+ */
+export function checkNodePatch<E extends DesignNode>(
+  kind: DesignNodeKind<E>,
+  el: E,
+  patch: ElementPatch<E>,
+  context: ElementBuildContext,
+): ElementPatch<E> {
+  const next: Record<string, unknown> = { ...patch };
+  if ("opacity" in patch) next.opacity = fraction(patch.opacity, "opacity");
+  if ("strokeWeight" in patch && !((patch.strokeWeight ?? -1) >= 0)) {
+    throw new Error('"strokeWeight" must be a number of at least 0.');
+  }
+  if ("fills" in patch) {
+    if (!kind.fillable) throw new Error(`A ${kind.label} has no fill: change its strokes.`);
+    next.fills = readPaints(patch.fills, "fills", kind.imageFills);
+  }
+  if ("strokes" in patch) {
+    if (!kind.strokable) throw new Error(`A ${kind.label} can't have strokes.`);
+    next.strokes = readPaints(patch.strokes, "strokes", false);
+  }
+  if ("parentId" in patch) next.parentId = checkParent(el, kind, patch.parentId, context);
+  return next as ElementPatch<E>;
+}

@@ -1,37 +1,10 @@
 import type { AgentBoard } from "@board";
-
-const OPEN_TIMEOUT_MS = 15_000;
-
-let current: AgentBoard | null = null;
-const listeners = new Set<() => void>();
+import { createActiveFile } from "@canvas-ui";
 
 /** The board open in the window, for agents (see `app/mcp`). */
-export function getActiveBoard(): AgentBoard | null {
-  return current;
-}
+export const activeBoard = createActiveFile<AgentBoard>("board");
 
-export function setActiveBoard(board: AgentBoard | null): void {
-  current = board;
-  for (const listener of listeners) listener();
-}
-
+export const getActiveBoard = (): AgentBoard | null => activeBoard.get();
+export const setActiveBoard = (board: AgentBoard | null): void => activeBoard.set(board);
 /** Resolves once board `id` is open and ready; rejects if it isn't within the timeout. */
-export function waitForActiveBoard(id: string): Promise<AgentBoard> {
-  if (current?.id === id) return Promise.resolve(current);
-  return new Promise((resolve, reject) => {
-    const done = () => {
-      clearTimeout(timer);
-      listeners.delete(check);
-    };
-    const check = () => {
-      if (current?.id !== id) return;
-      done();
-      resolve(current);
-    };
-    const timer = setTimeout(() => {
-      done();
-      reject(new Error(`The board ${id} couldn't be opened.`));
-    }, OPEN_TIMEOUT_MS);
-    listeners.add(check);
-  });
-}
+export const waitForActiveBoard = (id: string): Promise<AgentBoard> => activeBoard.waitFor(id);

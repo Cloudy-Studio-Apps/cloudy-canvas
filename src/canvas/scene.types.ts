@@ -3,6 +3,8 @@ import type { ElementClip } from "./render";
 
 /** The product hooks the scene runs on every refresh (see `CanvasProduct`). */
 export interface SceneHooks {
+  /** `scopes.of`: the scope each element shows in (without it, every element is shown). */
+  scopeOf?: (el: CanvasElement) => string | null;
   /** `resolveElements`: derived geometry. */
   resolve?: (elements: CanvasElement[]) => CanvasElement[];
   /** `orderKeys`: the drawing order (otherwise `zOrderKey`). */

@@ -84,7 +84,10 @@ export function addExternal<O extends object>(
   host.select(added.map(({ el }) => el.id));
 }
 
-async function imageSize(data: Uint8Array): Promise<Pick<PastedImage, "width" | "height"> | null> {
+/** An image file's size in pixels (raster or SVG), or `null` when it can't be decoded. */
+export async function imageSize(
+  data: Uint8Array,
+): Promise<Pick<PastedImage, "width" | "height"> | null> {
   if (isSvg(data)) return svgSize(data);
   try {
     const bitmap = await createImageBitmap(new Blob([data as Uint8Array<ArrayBuffer>]));

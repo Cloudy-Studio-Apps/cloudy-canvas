@@ -17,3 +17,13 @@ export function openDesignDocument(
   for (const migration of migrations) migration.migrate(doc);
   return doc;
 }
+
+/** A new, empty design, set up by the modules' migrations as an opened file is (e.g. its page). */
+export function newDesignDocument(
+  kinds: ElementKinds<DesignToolOptions>,
+  migrations: readonly DesignMigration[],
+): CanvasDocument {
+  const doc = new CanvasDocument(kinds);
+  for (const migration of migrations) migration.migrate(doc);
+  return doc;
+}

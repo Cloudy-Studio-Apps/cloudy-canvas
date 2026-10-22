@@ -11,6 +11,7 @@ import { groupModule } from "@design/modules/group/group.module";
 import { imageModule } from "@design/modules/image/image.module";
 import { layersModule } from "@design/modules/layers/layers.module";
 import { lineModule } from "@design/modules/line/line.module";
+import { pagesModule } from "@design/modules/pages/pages.module";
 import { pluginsTabModule } from "@design/modules/plugins-tab/plugins-tab.module";
 import { polygonModule } from "@design/modules/polygon/polygon.module";
 import { rectangleModule } from "@design/modules/rectangle/rectangle.module";
@@ -24,6 +25,7 @@ import type { DesignModuleOptions } from "./design-modules.types";
 /** The design's built-in modules. Their order is the default order of chained hooks. */
 let modules: AppModule[] = [
   coreModule,
+  pagesModule,
   frameModule,
   sectionModule,
   groupModule,

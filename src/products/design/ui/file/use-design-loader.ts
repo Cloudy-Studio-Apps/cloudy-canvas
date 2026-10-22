@@ -1,6 +1,5 @@
-import { CanvasDocument } from "@canvas";
 import { useCanvasFileLoader, type CanvasFileLoadState } from "@canvas-ui";
-import { designMigrations, openDesignDocument } from "@design";
+import { designMigrations, newDesignDocument, openDesignDocument } from "@design";
 import { getDesignModules, getDesignProduct } from "../modules";
 
 /**
@@ -12,6 +11,7 @@ export function useDesignLoader(id: string): CanvasFileLoadState {
     noun: "design",
     open: (bytes) =>
       openDesignDocument(bytes, getDesignProduct().kinds, getDesignModules().get(designMigrations)),
-    create: () => new CanvasDocument(getDesignProduct().kinds),
+    create: () =>
+      newDesignDocument(getDesignProduct().kinds, getDesignModules().get(designMigrations)),
   });
 }

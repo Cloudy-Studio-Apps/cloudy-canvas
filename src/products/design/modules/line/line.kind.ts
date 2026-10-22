@@ -1,19 +1,27 @@
 import {
   distanceToSegmentSq,
+  optionalChoice,
+  type ElementBuildContext,
   type ElementHandle,
   type ElementInteraction,
+  type ElementPatch,
+  type ElementSpec,
   type ElementView,
   type InteractionQuery,
   type Point,
 } from "@canvas";
 
 import type { DesignToolOptions } from "../../design-options.types";
-import { DesignNodeKind } from "../core";
+import { DesignNodeKind, pointArg, type NodeBuildContext } from "../core";
 import { LINE_DEFAULTS } from "./line.defaults";
 import { drawLine } from "./line.draw";
 import { LineEndDrag } from "./line-end-drag";
-import { lineEnds } from "./line-geometry";
-import type { LineNodeElement } from "./line.types";
+import { createLine } from "./line.factory";
+import { lineEnds, lineFromEnds } from "./line-geometry";
+import type { LineCap, LineNodeElement } from "./line.types";
+
+const CAPS: readonly LineCap[] = ["none", "arrow"];
+const POINT = { type: "object", properties: { x: { type: "number" }, y: { type: "number" } } };
 
 /**
  * Lines and arrows: hit near the line, selected by their two ends (dragged to change them) rather
@@ -28,6 +36,13 @@ export class LineKind extends DesignNodeKind<LineNodeElement> {
   override readonly boxed = false;
   override readonly resizable = false;
   override readonly fillable = false;
+  override readonly creatable = true;
+  override readonly specProperties = {
+    start: { ...POINT, description: "Line: its start (default: x, y)." },
+    end: { ...POINT, description: "Line: its end (default: x + w, y + h; w is 100, h 0)." },
+    startCap: { enum: CAPS, description: "Line: how its start looks (none)." },
+    endCap: { enum: CAPS, description: 'Line: how its end looks ("arrow" makes an arrow).' },
+  };
 
   draw(view: ElementView, el: LineNodeElement): void {
     drawLine(view, el);
@@ -57,6 +72,53 @@ export class LineKind extends DesignNodeKind<LineNodeElement> {
       return { cursor: "move", press: (ctx) => new LineEndDrag(ctx, el, which) };
     }
     return null;
+  }
+
+  protected override nodeFromSpec(
+    spec: ElementSpec,
+    index: string,
+    context: NodeBuildContext,
+  ): LineNodeElement {
+    const { args } = spec;
+    const start =
+      args.start === undefined ? { x: spec.x, y: spec.y } : pointArg(args.start, "start");
+    const end =
+      args.end === undefined
+        ? { x: start.x + (spec.w ?? LINE_DEFAULTS.size.w), y: start.y + (spec.h ?? 0) }
+        : pointArg(args.end, "end");
+    const endCap = optionalChoice(args, "endCap", CAPS) ?? "none";
+    const name = context.nameFor(endCap === "arrow" ? "Arrow" : this.label);
+    const line = createLine(start, end, name, index, null, endCap);
+    return { ...line, startCap: optionalChoice(args, "startCap", CAPS) ?? line.startCap };
+  }
+
+  /** New `points` (relative to x, y) re-wrap the line's bounds around its ends. */
+  override completePatch(
+    el: LineNodeElement,
+    patch: ElementPatch<LineNodeElement>,
+    context: ElementBuildContext,
+  ): ElementPatch<LineNodeElement> {
+    optionalChoice(patch, "startCap", CAPS);
+    optionalChoice(patch, "endCap", CAPS);
+    let next = patch;
+    if ("points" in patch) {
+      const points = patch.points as unknown;
+      if (
+        !Array.isArray(points) ||
+        points.length !== 4 ||
+        !points.every((n) => typeof n === "number" && Number.isFinite(n))
+      ) {
+        throw new Error('"points" must be [x0, y0, x1, y1], relative to the line\'s x, y.');
+      }
+      const [x0, y0, x1, y1] = points as number[];
+      const x = patch.x ?? el.x;
+      const y = patch.y ?? el.y;
+      next = {
+        ...patch,
+        ...lineFromEnds({ x: x + x0!, y: y + y0! }, { x: x + x1!, y: y + y1! }),
+      };
+    }
+    return super.completePatch(el, next, context);
   }
 
   override fillDefaults(el: LineNodeElement): LineNodeElement {

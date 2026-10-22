@@ -3,15 +3,16 @@ import { Frame } from "lucide-react";
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import { ofType } from "@design/ui/modules/section-filters";
-import { designCanvas } from "../../design-points";
+import { designAgentTools, designCanvas } from "../../design-points";
 import { BoxDrawTool } from "../core";
+import { frameTools } from "./frame.agent-tools";
 import { FrameKind } from "./frame.kind";
 import { FrameSection } from "./ui/frame-section";
 import { FramePresetsSidebar } from "./ui/frame-presets-sidebar";
 
 /**
  * Frames: the kind, the tool (F, A) with its presets sidebar (shown in the properties panel while
- * the tool is on), and the frame section.
+ * the tool is on), the frame section and the presets' agent tools.
  */
 export const frameModule = defineModule({
   id: "frame",
@@ -25,6 +26,7 @@ export const frameModule = defineModule({
       keys: [{ key: "f" }, { key: "a" }],
     });
     host.contribute(designCanvas.options, { framePreset: "desktop" });
+    host.contribute(designAgentTools, { id: "frame", tools: () => frameTools });
 
     host.contribute(designEditor.tools, {
       tool: "frame",

@@ -1,4 +1,4 @@
-import { MousePointer2, PenTool, Scissors, Spline } from "lucide-react";
+import { MousePointer2, PaintBucket, PenTool, Scissors, Spline } from "lucide-react";
 
 import { FloatingPanel, PanelDivider, ToolButton, useEngineState } from "@canvas-ui";
 import { VECTOR_TOOLS } from "@design";
@@ -23,6 +23,12 @@ const TOOLS = [
     label: "Bend",
     description: "Drag a segment to curve it; click a point to smooth it.",
     icon: Spline,
+  },
+  {
+    id: VECTOR_TOOLS.bucket,
+    label: "Paint bucket",
+    description: "Click an enclosed area to fill it, or a filled one to unfill it.",
+    icon: PaintBucket,
   },
   { id: VECTOR_TOOLS.cut, label: "Cut", description: "Click a segment to cut it.", icon: Scissors },
 ] as const;

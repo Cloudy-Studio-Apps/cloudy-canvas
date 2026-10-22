@@ -1,16 +1,31 @@
-import type { ElementPatch, ElementView, Point, Rect } from "@canvas";
+import {
+  optionalBoolean,
+  type ElementBuildContext,
+  type ElementPatch,
+  type ElementSpec,
+  type ElementView,
+  type Point,
+  type Rect,
+} from "@canvas";
 
 import {
   DesignNodeKind,
   drawPaints,
   hitSegment,
   insideRegion,
+  NETWORK_SCHEMA,
+  placeNetwork,
+  polygonNetwork,
   polylineNetwork,
+  readNetwork,
   scaleNetwork,
   traceRegions,
   traceStrokes,
+  type NodeBuildContext,
+  type VectorNetwork,
 } from "../core";
 import { VECTOR_DEFAULTS } from "./vector.defaults";
+import { createVector } from "./vector.factory";
 import type { VectorElement } from "./vector.types";
 
 /**
@@ -23,6 +38,19 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
   readonly description = "A path of points and curves, drawn with the pen or the pencil.";
   override readonly tool = "pen";
   override readonly defaults = VECTOR_DEFAULTS;
+  override readonly creatable = true;
+  override readonly specProperties = {
+    points: {
+      type: "array",
+      items: { type: "number" },
+      description: "Vector: a path through world points as a flat list [x0, y0, x1, y1, …].",
+    },
+    closed: {
+      type: "boolean",
+      description: "Vector from points: join the last point to the first.",
+    },
+    network: NETWORK_SCHEMA,
+  };
 
   draw(view: ElementView, el: VectorElement): void {
     drawPaints(
@@ -48,6 +76,58 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
     const sx = el.w > 0 ? rect.w / el.w : 1;
     const sy = el.h > 0 ? rect.h / el.h : 1;
     return { ...rect, network: scaleNetwork(el.network, sx, sy) };
+  }
+
+  /** An agent's vector: a path through `points` (world), or a `network` relative to x, y. */
+  protected override nodeFromSpec(
+    spec: ElementSpec,
+    index: string,
+    context: NodeBuildContext,
+  ): VectorElement {
+    return createVector(this.specNetwork(spec), context.nameFor(this.label), index, null);
+  }
+
+  /** The spec's network in world coordinates. */
+  private specNetwork({ x, y, args }: ElementSpec): VectorNetwork {
+    if (args.network !== undefined) {
+      const net = readNetwork(args.network, "network");
+      return { ...net, vertices: net.vertices.map((v) => ({ x: v.x + x, y: v.y + y })) };
+    }
+    const flat = args.points;
+    if (
+      !Array.isArray(flat) ||
+      flat.length < 4 ||
+      flat.length % 2 !== 0 ||
+      !flat.every((n) => typeof n === "number" && Number.isFinite(n))
+    ) {
+      throw new Error(
+        'A vector needs "points" ([x0, y0, x1, y1, …], at least 2 points) or "network".',
+      );
+    }
+    const points = flat as number[];
+    if (!optionalBoolean(args, "closed")) return polylineNetwork(points);
+    const corners: Point[] = [];
+    for (let i = 0; i < points.length; i += 2) corners.push({ x: points[i]!, y: points[i + 1]! });
+    return polygonNetwork(corners);
+  }
+
+  /** A new `network` (relative to x, y) re-wraps the vector's box around what it draws. */
+  override completePatch(
+    el: VectorElement,
+    patch: ElementPatch<VectorElement>,
+    context: ElementBuildContext,
+  ): ElementPatch<VectorElement> {
+    const next =
+      "network" in patch
+        ? {
+            ...patch,
+            ...placeNetwork(
+              { x: patch.x ?? el.x, y: patch.y ?? el.y },
+              readNetwork(patch.network, "network"),
+            ),
+          }
+        : patch;
+    return super.completePatch(el, next, context);
   }
 
   /** Pencil lines from before networks stored `points`: they become an open chain. */

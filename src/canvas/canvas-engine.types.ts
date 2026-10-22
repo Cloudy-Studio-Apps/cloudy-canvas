@@ -42,3 +42,10 @@ export interface ContextMenuRequest {
   world: Point;
   target: "selection" | "canvas";
 }
+
+/** Where the camera was in a scope (see `CanvasScopes`), restored when it's shown again. */
+export interface ScopeView {
+  x: number;
+  y: number;
+  zoom: number;
+}

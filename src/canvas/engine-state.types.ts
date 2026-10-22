@@ -13,6 +13,8 @@ export interface EngineState<O extends object = object> {
   selectionTypes: string;
   /** The selected part of the single selected element (e.g. a table's `row:2`), if any. */
   selectedPart: string | null;
+  /** The scope on screen (a design's page), `null` when the product has none. */
+  scope: string | null;
   canUndo: boolean;
   canRedo: boolean;
 }

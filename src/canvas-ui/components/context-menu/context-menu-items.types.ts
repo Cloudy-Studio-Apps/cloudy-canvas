@@ -1,3 +1,5 @@
+import type { CanvasEngine } from "@canvas";
+
 /** What the menu's items are enabled and labelled by, read when it opens. */
 export interface ContextMenuContext {
   selectionCount: number;
@@ -16,5 +18,19 @@ export interface ContextMenuItem {
   destructive?: boolean;
 }
 
+/** An entry of a submenu, listed when the menu opens. */
+export interface ContextMenuAction {
+  label: string;
+  run(): void;
+}
+
+/** An entry that opens a submenu of actions (e.g. the design's "Move to page"). */
+export interface ContextMenuSubmenu {
+  id: string;
+  label: string;
+  /** Its entries, read when the menu opens; with none, the entry is disabled. */
+  actions(engine: CanvasEngine, context: ContextMenuContext): readonly ContextMenuAction[];
+}
+
 /** Items between separators. */
-export type ContextMenuGroup = readonly ContextMenuItem[];
+export type ContextMenuGroup = readonly (ContextMenuItem | ContextMenuSubmenu)[];

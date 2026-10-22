@@ -1,27 +1,14 @@
-import type { AgentTool, ElementKinds } from "@canvas";
-import type { FileInfo } from "@shared/core";
+import type { AgentFile, AgentRecentFile, AgentTool, AgentToolGroup, ElementKinds } from "@canvas";
 
 import type { BoardEngine } from "../board-engine.types";
 import type { BoardToolOptions } from "../board-options.types";
 
-/** The board open in the window. */
-export interface AgentBoard {
-  id: string;
-  name: string;
-  /** `null` until the board is saved for the first time. */
-  path: string | null;
-  dirty: boolean;
-  /** Its services (`DB_SCHEMA`, `ER_MODEL`, …) are `engine.service(…)`. */
-  engine: BoardEngine;
-  save(): Promise<void>;
-}
+export type { AgentRecentFile } from "@canvas";
+
+/** The board open in the window. Its services (`DB_SCHEMA`, `ER_MODEL`, …) are `engine.service(…)`. */
+export type AgentBoard = AgentFile<BoardEngine>;
 
 /** What board tools can reach beyond the engine, implemented by the app. */
-export interface AgentRecentFile extends FileInfo {
-  /** Moved or deleted since it was last seen. */
-  missing: boolean;
-}
-
 export interface AgentHost {
   board(): AgentBoard | null;
   recentFiles(): Promise<AgentRecentFile[]>;
@@ -46,10 +33,7 @@ export interface BoardAgentContext {
  * Agent tools a module adds (see `boardAgentTools`), made when the agent server starts. Most
  * groups ignore the context.
  */
-export interface BoardAgentToolGroup {
-  id: string;
-  tools(context: BoardAgentContext): BoardAgentTool[];
-}
+export type BoardAgentToolGroup = AgentToolGroup<AgentHost, BoardAgentContext>;
 
 /** An installed plugin, as agents see it. */
 export interface AgentPlugin {

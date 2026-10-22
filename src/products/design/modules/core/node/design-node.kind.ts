@@ -1,13 +1,19 @@
 import {
   BoxKind,
+  type ElementBuildContext,
   type ElementClip,
   type ElementDescription,
+  type ElementPatch,
+  type ElementSpec,
   type ElementView,
   type Point,
 } from "@canvas";
 
 import type { DesignToolOptions } from "../../../design-options.types";
+import { applyNodeSpec } from "./apply-node-spec";
+import { checkNodePatch } from "./check-node-patch";
 import type { DesignNode } from "./design-node.types";
+import type { NodeBuildContext } from "./node-build.types";
 import { NODE_DEFAULTS } from "./node.defaults";
 
 /**
@@ -20,7 +26,7 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
   DesignToolOptions
 > {
   override readonly connectable: boolean = false;
-  /** Agents can't create design nodes yet. */
+  /** Whether agents can create it (`create_nodes`); kinds that can give `nodeFromSpec`. */
   override readonly creatable: boolean = false;
   /**
    * Whether it holds other nodes (a frame). Nodes drawn or dropped inside a container go into the
@@ -70,6 +76,7 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
       ...el,
       name: el.name ?? this.label,
       parentId: el.parentId ?? null,
+      pageId: el.pageId ?? "",
       visible: el.visible ?? true,
       opacity: el.opacity ?? NODE_DEFAULTS.opacity,
       fills: el.fills ?? [],
@@ -87,5 +94,28 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
 
   override describe(el: E): ElementDescription {
     return { label: this.layerName(el) };
+  }
+
+  /**
+   * A new node from an agent's spec (`create_nodes`): the kind's own fields (`nodeFromSpec`),
+   * then what every node takes (name, visibility, opacity, paints). The tool places it in a
+   * container afterwards. Throws with a message the agent can act on.
+   */
+  buildNode(spec: ElementSpec, index: string, context: NodeBuildContext): E {
+    return applyNodeSpec(this, this.nodeFromSpec(spec, index, context), spec);
+  }
+
+  /** The node a spec makes, at the top of the page; creatable kinds override it. */
+  protected nodeFromSpec(_spec: ElementSpec, _index: string, _context: NodeBuildContext): E {
+    throw new Error(`${this.label} layers can't be created by agents.`);
+  }
+
+  /** Checks an agent's patch of the shared fields; subclasses check their own, then call this. */
+  override completePatch(
+    el: E,
+    patch: ElementPatch<E>,
+    context: ElementBuildContext,
+  ): ElementPatch<E> {
+    return checkNodePatch(this, el, patch, context);
   }
 }

@@ -39,3 +39,17 @@ export interface SegmentHit {
   t: number;
   distance: number;
 }
+
+/** An area the segments enclose: its loop of segments (in order) and its flattened outline. */
+export interface NetworkFace {
+  loop: number[];
+  polygon: Point[];
+  /** Its area (positive). */
+  area: number;
+}
+
+/** A segment walked one way: `forward` from its start to its end (finding faces). */
+export interface HalfEdge {
+  segment: number;
+  forward: boolean;
+}

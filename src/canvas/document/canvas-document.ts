@@ -28,6 +28,8 @@ export class CanvasDocument {
   private readonly assets: Y.Map<Uint8Array>;
   /** The document's own title and description (`DocumentMeta`), undoable like elements. */
   private readonly metaMap: Y.Map<string>;
+  /** What `add` does to new elements first (see `setPlacement`). */
+  private placement: ((el: CanvasElement) => CanvasElement) | null = null;
 
   /** A document restored from `encode()` output. Loading it isn't an undoable change. */
   static fromUpdate(kinds: ElementKinds, update: Uint8Array): CanvasDocument {
@@ -81,12 +83,21 @@ export class CanvasDocument {
     return generateNKeysBetween(null, this.bottomIndex(), count);
   }
 
+  /**
+   * Sets what `add` does to every new element before storing it (the engine places it in the
+   * scope it shows, see `CanvasScopes`); `null` stores elements as they're given.
+   */
+  setPlacement(placement: ((el: CanvasElement) => CanvasElement) | null): void {
+    this.placement = placement;
+  }
+
   add(el: CanvasElement): void {
-    this.transact(() => {
-      const map = new Y.Map<unknown>();
-      for (const [key, value] of Object.entries(el)) map.set(key, value);
-      this.elements.set(el.id, map);
-    });
+    this.transact(() => this.write(el));
+  }
+
+  /** Like `add`, but not recorded in the undo history (e.g. what a file needs when it opens). */
+  addUntracked(el: CanvasElement): void {
+    this.doc.transact(() => this.write(el), UI_ORIGIN);
   }
 
   update(id: string, patch: ElementPatch): void {
@@ -266,6 +277,14 @@ export class CanvasDocument {
   private metaText(key: string): string {
     const value = this.metaMap.get(key);
     return typeof value === "string" ? value : "";
+  }
+
+  /** Stores a new element, placed first (see `setPlacement`). */
+  private write(el: CanvasElement): void {
+    const placed = this.placement ? this.placement(el) : el;
+    const map = new Y.Map<unknown>();
+    for (const [key, value] of Object.entries(placed)) map.set(key, value);
+    this.elements.set(placed.id, map);
   }
 
   private transact(fn: () => void): void {

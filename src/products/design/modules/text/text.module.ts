@@ -3,13 +3,17 @@ import { Type } from "lucide-react";
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import { ofType } from "@design/ui/modules/section-filters";
-import { designCanvas } from "../../design-points";
+import { designAgentTools, designCanvas } from "../../design-points";
+import { textTools } from "./text.agent-tools";
 import { TEXT_DEFAULTS } from "./text.defaults";
 import { TextKind } from "./text.kind";
 import { TextTool } from "./text.tool";
 import { TypographySection } from "./ui/typography-section";
 
-/** Text: the kind, the tool (T) and the Typography section (with the font picker). */
+/**
+ * Text: the kind, the tool (T), the Typography section (with the font picker) and the fonts for
+ * agents (`list_fonts`).
+ */
 export const textModule = defineModule({
   id: "text",
   requires: ["core"],
@@ -21,6 +25,7 @@ export const textModule = defineModule({
       keys: [{ key: "t" }],
     });
     host.contribute(designCanvas.options, { textTypography: TEXT_DEFAULTS.typography });
+    host.contribute(designAgentTools, { id: "text", tools: () => textTools });
 
     host.contribute(designEditor.tools, {
       tool: "text",

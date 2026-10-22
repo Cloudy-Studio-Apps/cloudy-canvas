@@ -53,7 +53,12 @@ export const FRAME_PRESET_GROUPS: readonly FramePresetGroup[] = [
   ...new Set(FRAME_PRESETS.map((item) => item.group)),
 ].map((group) => ({ group, presets: FRAME_PRESETS.filter((item) => item.group === group) }));
 
+/** The preset with this id, if there's one. */
+export function findPreset(id: string): FramePreset | undefined {
+  return FRAME_PRESETS.find((item) => item.id === id);
+}
+
 /** The size a click with the frame tool places for a preset id (a small square for unknown ids). */
 export function presetSize(id: string): Size {
-  return FRAME_PRESETS.find((item) => item.id === id)?.size ?? FRAME_DEFAULTS.size;
+  return findPreset(id)?.size ?? FRAME_DEFAULTS.size;
 }

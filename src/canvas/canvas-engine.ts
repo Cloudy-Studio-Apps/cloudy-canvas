@@ -46,8 +46,9 @@ import type {
   ContextMenuRequest,
   ElementAction,
   HostAction,
+  ScopeView,
 } from "./canvas-engine.types";
-import type { CanvasProduct } from "./canvas-product.types";
+import type { CanvasProduct, CanvasScopes } from "./canvas-product.types";
 import type { CanvasLinks } from "./links";
 
 const ZOOM_STEP = 1.25;
@@ -103,6 +104,13 @@ export class CanvasEngine<O extends object = object> {
   private readonly contextMenus = new Set<(request: ContextMenuRequest) => void>();
   private readonly hostActions = new Map<string, HostAction>();
   private readonly closeTasks = new Map<string, () => Promise<void>>();
+  private readonly scopes: CanvasScopes | undefined;
+  /** The scopes as of the last document change, to find the next one when the shown one goes. */
+  private scopeList: string[] = [];
+  /** Each scope's camera when it was last left, restored when it's shown again. */
+  private readonly scopeViews = new Map<string, ScopeView>();
+  /** Set while undoing or redoing, so the canvas follows the change to its scope. */
+  private followHistory = false;
   private tool: Tool;
   private options: O;
   private container: HTMLElement | null = null;
@@ -136,11 +144,23 @@ export class CanvasEngine<O extends object = object> {
         },
       },
     );
+    const scopes = product.scopes;
+    this.scopes = scopes;
     this.scene = new Scene(this.doc, this.kinds, {
+      scopeOf: scopes ? (el) => scopes.of(el) : undefined,
       resolve: product.resolveElements?.bind(product),
       orderKeys: product.orderKeys?.bind(product),
       clips: product.clips?.bind(product),
     });
+    if (scopes) {
+      this.scopeList = scopes.list(this.doc);
+      this.scene.scope = this.scopeList[0] ?? null;
+      // New elements land in the scope on screen.
+      this.doc.setPlacement((el) => {
+        const scope = this.scene.scope;
+        return scope === null ? el : scopes.place(el, scope);
+      });
+    }
     this.fontTracker = new FontTracker(fonts, (key) => this.handleFontLoad(key));
     this.systemClipboard = clipboard ?? new MemoryClipboard();
     this.clipboard = this.createClipboard(this.systemClipboard);
@@ -221,6 +241,7 @@ export class CanvasEngine<O extends object = object> {
     this.viewChanges.clear();
     this.elementActions.clear();
     this.contextMenus.clear();
+    if (this.scopes) this.doc.setPlacement(null);
     // If mount() is still awaiting init, it destroys the renderer itself once init resolves.
     if (this.rendererReady) this.renderer.destroy();
     if (this.ownsDocument) this.doc.destroy();
@@ -288,12 +309,37 @@ export class CanvasEngine<O extends object = object> {
 
   undo(): void {
     this.textEditor?.commit();
-    this.doc.undo();
+    this.followHistory = true;
+    try {
+      this.doc.undo();
+    } finally {
+      this.followHistory = false;
+    }
   }
 
   redo(): void {
     this.textEditor?.commit();
-    this.doc.redo();
+    this.followHistory = true;
+    try {
+      this.doc.redo();
+    } finally {
+      this.followHistory = false;
+    }
+  }
+
+  /** The scope on screen (a design's page, see `CanvasScopes`), or `null` without scopes. */
+  get scope(): string | null {
+    return this.scene.scope;
+  }
+
+  /**
+   * Shows another scope: the selection is cleared and the camera goes back to where it was when
+   * that scope was last shown (or fits its content). Unknown ids are ignored.
+   */
+  setScope(id: string): void {
+    if (id === this.scene.scope || !this.scopes?.list(this.doc).includes(id)) return;
+    this.textEditor?.commit();
+    this.showScope(id);
   }
 
   /** Selects every element that isn't locked. */
@@ -757,6 +803,11 @@ export class CanvasEngine<O extends object = object> {
   // ── Reactions ─────────────────────────────────────────────────────────
 
   private handleDocumentChange(change: DocumentChange): void {
+    const scope = this.nextScope(change);
+    if (scope !== this.scene.scope) {
+      this.showScope(scope);
+      return;
+    }
     this.refreshScene();
     // Derived geometry may follow any change, so those elements are redrawn every time; replaced
     // ones only moved in the drawing order or got a new clip.
@@ -765,12 +816,90 @@ export class CanvasEngine<O extends object = object> {
     ]
       .map((id) => this.scene.get(id))
       .filter((el): el is CanvasElement => el !== undefined);
-    this.renderer.syncElements(changed, change.removed);
-    this.scene.selection.remove(change.removed);
+    // Elements that moved to another scope leave the canvas like removed ones.
+    const gone = new Set([
+      ...change.removed,
+      ...[...change.updated].filter((id) => !this.scene.get(id)),
+    ]);
+    this.renderer.syncElements(changed, gone);
+    this.scene.selection.remove(gone);
     this.textEditor?.reposition();
     this.requestRender();
     this.emitChange();
     this.viewChanges.emit();
+  }
+
+  /**
+   * The scope to show after a document change: the one an undo or redo changed when it didn't
+   * touch the one on screen, else the one on screen while it exists, else the one now in its
+   * place in the order.
+   */
+  private nextScope(change: DocumentChange): string | null {
+    const current = this.scene.scope;
+    if (!this.scopes) return current;
+    const previous = this.scopeList;
+    const list = this.scopes.list(this.doc);
+    this.scopeList = list;
+    if (this.followHistory) {
+      const touched = this.touchedScopes(change, new Set(list));
+      if (touched.size > 0 && (current === null || !touched.has(current))) {
+        const first = list.find((id) => touched.has(id));
+        if (first) return first;
+      }
+    }
+    if (current !== null && list.includes(current)) return current;
+    const at = current === null ? 0 : Math.max(previous.indexOf(current), 0);
+    return list[Math.min(at, list.length - 1)] ?? null;
+  }
+
+  /** The scopes a change touched: its elements' (removed ones' as they were) and scopes' own. */
+  private touchedScopes(change: DocumentChange, scopes: ReadonlySet<string>): Set<string> {
+    const touched = new Set<string>();
+    const add = (scope: string | null | undefined) => {
+      if (scope) touched.add(scope);
+    };
+    for (const id of change.updated) {
+      const el = this.doc.get(id);
+      add(scopes.has(id) ? id : el && this.scopes?.of(el));
+    }
+    for (const id of change.removed) add(this.scene.scopeIds.get(id));
+    return touched;
+  }
+
+  /** Puts another scope on screen (see `setScope`); `null` shows nothing. */
+  private showScope(scope: string | null): void {
+    const left = this.scene.scope;
+    if (left !== null) {
+      const { x, y, zoom } = this.camera;
+      this.scopeViews.set(left, { x, y, zoom });
+    }
+    const shown = this.scene.elements.map((el) => el.id);
+    this.setTool("select");
+    this.scene.scope = scope;
+    this.scene.selection.set([]);
+    this.scene.setHover(null);
+    this.refreshScene();
+    if (!this.rendererReady) {
+      this.emitChange();
+      return;
+    }
+    const now = new Set(this.scene.elements.map((el) => el.id));
+    this.renderer.syncElements(
+      this.scene.elements,
+      shown.filter((id) => !now.has(id)),
+    );
+    const view = scope === null ? undefined : this.scopeViews.get(scope);
+    if (view) {
+      this.camera.zoom = view.zoom;
+      this.camera.x = view.x;
+      this.camera.y = view.y;
+    } else {
+      const content = this.scene.contentBounds();
+      if (content) this.camera.fitRect(content);
+      else this.camera.reset();
+    }
+    this.textEditor?.reposition();
+    this.onCameraChange();
   }
 
   /** A font some elements use has loaded: they're measured (`fontsLoaded`) and drawn again. */
@@ -942,6 +1071,7 @@ export class CanvasEngine<O extends object = object> {
       selectedId: this.scene.selection.single() ?? null,
       selectionTypes: this.selectionTypes(),
       selectedPart: this.scene.selection.part,
+      scope: this.scene.scope,
       canUndo: this.doc.canUndo(),
       canRedo: this.doc.canRedo(),
     };

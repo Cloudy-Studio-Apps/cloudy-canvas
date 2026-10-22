@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { createFrame, nextLayerName, presetFrameRect, type FramePreset } from "@design";
+import { createPresetFrame, type FramePreset } from "@design";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 
 /**
@@ -13,13 +13,7 @@ export function useAddPresetFrame(): (preset: FramePreset) => void {
   return useCallback(
     (preset) => {
       const { doc } = engine;
-      const rect = presetFrameRect(preset.size, engine.elements());
-      const frame = createFrame(
-        rect,
-        nextLayerName(doc.all(), preset.label),
-        doc.nextIndex(),
-        null,
-      );
+      const frame = createPresetFrame(preset, doc, engine.elements());
       doc.checkpoint();
       doc.add(frame);
       engine.setToolOptions({ framePreset: preset.id });

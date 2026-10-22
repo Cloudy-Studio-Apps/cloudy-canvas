@@ -26,8 +26,8 @@ const EDIT_TOOLS: ReadonlySet<string> = new Set(Object.values(VECTOR_TOOLS));
 /**
  * The base of the vector edit tools (template method): it shows the overlay while it's on, finds
  * what a press lands on, writes network edits (re-placing the node around its curves), and takes
- * the mode's commands: Esc and Enter leave it, Delete removes the selected points and segments,
- * Ctrl+A selects every point. Subclasses handle the pointer.
+ * the mode's commands: Enter (Done) leaves it, Esc lets go of the selected points, V is Move
+ * points, Delete removes the selected points and segments, Ctrl+A selects every point. Subclasses handle the pointer.
  */
 export abstract class VectorEditTool implements Tool {
   abstract readonly id: string;
@@ -121,13 +121,24 @@ export abstract class VectorEditTool implements Tool {
     });
   }
 
+  /**
+   * The mode's commands. Only Enter (or Done, which runs it) leaves; Esc lets go of the selected
+   * points. V is Move points here, and other tool shortcuts wait until the mode is left.
+   */
   onCommand(command: string): boolean {
     const el = this.vector();
     if (!el) return false;
+    if (command === "tool.select") {
+      this.ctx.setTool(VECTOR_TOOLS.move);
+      return true;
+    }
+    if (command.startsWith("tool.")) return !EDIT_TOOLS.has(command.slice("tool.".length));
     switch (command) {
-      case "cancel":
       case "editSelection":
         this.leave();
+        return true;
+      case "cancel":
+        this.select([]);
         return true;
       case "deleteSelection": {
         const { vertices, segments } = this.session.selection;

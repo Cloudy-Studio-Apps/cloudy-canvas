@@ -15,8 +15,7 @@ import { VECTOR_TOOLS } from "./vector-tools";
 
 /**
  * Picks and drags points (Shift adds or removes), segments (their two points) and tangent handles
- * (Alt breaks a smooth point's mirror), or marquee-selects points. A click away from the vector
- * leaves the edit mode.
+ * (Alt breaks a smooth point's mirror), or marquee-selects points (a click away lets go of them).
  */
 export class VectorMoveTool extends VectorEditTool {
   readonly id = VECTOR_TOOLS.move;
@@ -85,16 +84,9 @@ export class VectorMoveTool extends VectorEditTool {
     this.write(g.origin, this.dragged(g, p));
   }
 
-  onPointerUp(p: CanvasPointer): void {
-    const g = this.gesture;
+  onPointerUp(): void {
     this.gesture = null;
     this.ctx.setMarquee(null);
-    // A plain click away from the vector leaves the edit mode, as in Figma.
-    if (g?.kind === "marquee" && !pastThreshold(g.start, p, MOVE_THRESHOLD_PX)) {
-      const { x, y, w, h } = g.origin;
-      const margin = 8 / this.ctx.camera.zoom;
-      if (!rectContainsPoint({ x, y, w, h }, p.world, margin)) this.leave();
-    }
   }
 
   override onCancel(): void {

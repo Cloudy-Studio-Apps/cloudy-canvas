@@ -1,6 +1,7 @@
 // React pieces every canvas editor shares: hosting a CanvasEngine (`useCanvasEngine`, the engine
 // context and hooks, the canvas theme) and the chrome around it (panels, buttons, zoom and history
 // controls). Products build their editors from these; nothing here knows a product.
+export type * from "./agent";
 export type * from "./components/color";
 export type * from "./components/commit-field";
 export type * from "./components/context-menu";
@@ -15,6 +16,7 @@ export type { OptionButtonProps } from "./components/option-button.types";
 export type { ToolButtonProps } from "./components/tool-button.types";
 export type { ZoomMenuProps } from "./components/zoom-menu.types";
 export type * from "./modules";
+export { createActiveFile, useAgentFile } from "./agent";
 export { readCanvasTheme } from "./canvas-theme";
 export {
   commitFieldProps,

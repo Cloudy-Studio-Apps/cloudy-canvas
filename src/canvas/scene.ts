@@ -24,8 +24,11 @@ export class Scene {
   private keys = new Map<string, string>();
   private clips = new Map<string, ElementClip>();
   private replaced: string[] = [];
+  private scopes = new Map<string, string | null>();
   private hoverId: string | null = null;
   marquee: Rect | null = null;
+  /** The scope shown (see `SceneHooks.scopeOf`); `refresh` reads it. */
+  scope: string | null = null;
 
   constructor(
     private readonly doc: CanvasDocument,
@@ -43,7 +46,10 @@ export class Scene {
    * order. Read elements here, not from the document, when their geometry matters.
    */
   refresh(): void {
-    const raw = this.doc.all();
+    const all = this.doc.all();
+    const { scopeOf } = this.hooks;
+    this.scopes = scopeOf ? new Map(all.map((el) => [el.id, scopeOf(el)])) : new Map();
+    const raw = scopeOf ? all.filter((el) => this.scopes.get(el.id) === this.scope) : all;
     const resolved = this.hooks.resolve ? this.hooks.resolve(raw) : raw;
     this.derived = resolved.filter((el, i) => el !== raw[i]).map((el) => el.id);
     const custom = this.hooks.orderKeys?.(resolved);
@@ -66,6 +72,14 @@ export class Scene {
       return ka < kb ? -1 : ka > kb ? 1 : 0;
     });
     this.byId = new Map(this.list.map((el) => [el.id, el]));
+  }
+
+  /**
+   * The scope of every element in the document at the last refresh (empty without scopes), so
+   * elements outside the scene, and ones just removed, can be placed.
+   */
+  get scopeIds(): ReadonlyMap<string, string | null> {
+    return this.scopes;
   }
 
   /** Ids of elements whose geometry the product derives from others (see `resolveElements`). */

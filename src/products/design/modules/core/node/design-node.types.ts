@@ -17,6 +17,11 @@ export interface DesignNode extends CanvasElement {
    * ordered by `index`; a parent draws before its children.
    */
   parentId: string | null;
+  /**
+   * The page it's on (see the pages module). A node added without one (`""`) goes on the page on
+   * screen; a node and everything it holds are always on the same page.
+   */
+  pageId: string;
   /** Hidden layers aren't drawn or hit, but stay in the layers panel. */
   visible: boolean;
   /** 0–1. */

@@ -274,3 +274,18 @@ export function toggleSmooth(net: VectorNetwork, vertex: number): VectorNetwork 
   next = setTangent(next, around[0]!, vertex, toward(a, -1), false);
   return setTangent(next, around[1]!, vertex, toward(b, 1), false);
 }
+
+/**
+ * Fills the area `loop` encloses, or unfills it when it's already a region (the paint bucket).
+ */
+export function toggleRegion(net: VectorNetwork, loop: readonly number[]): VectorNetwork {
+  const next = copy(net);
+  const same = (other: readonly number[]) =>
+    other.length === loop.length && other.every((segment) => loop.includes(segment));
+  const index = next.regions.findIndex(
+    (region) => region.loops.length === 1 && same(region.loops[0]!),
+  );
+  if (index >= 0) next.regions.splice(index, 1);
+  else next.regions.push({ loops: [[...loop]], windingRule: "nonzero" });
+  return next;
+}

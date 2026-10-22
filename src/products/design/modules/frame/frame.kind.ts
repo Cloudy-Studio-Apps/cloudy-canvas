@@ -1,6 +1,11 @@
 import {
+  optionalBoolean,
+  optionalString,
   rectContainsPoint,
+  type ElementBuildContext,
   type ElementClip,
+  type ElementPatch,
+  type ElementSpec,
   type ElementView,
   type Point,
   type Rect,
@@ -8,9 +13,9 @@ import {
 } from "@canvas";
 
 import type { DesignToolOptions } from "../../design-options.types";
-import { BoxShapeKind } from "../core";
+import { BoxShapeKind, nonNegative, type NodeBuildContext } from "../core";
 import { createFrame } from "./frame.factory";
-import { presetSize } from "./frame-presets";
+import { FRAME_PRESETS, findPreset, presetSize } from "./frame-presets";
 import { FRAME_DEFAULTS } from "./frame.defaults";
 import { drawFrame } from "./frame.draw";
 import { labelRect, showsLabel } from "./frame-label";
@@ -24,6 +29,17 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
   override readonly tool = "frame";
   override readonly defaults = FRAME_DEFAULTS;
   override readonly container = true;
+  override readonly specProperties = {
+    preset: {
+      type: "string",
+      description: "Frame: a preset size when w/h aren't given (list_frame_presets).",
+    },
+    cornerRadius: { type: "number", description: "Frame or rectangle: corner radius." },
+    clipsContent: {
+      type: "boolean",
+      description: "Frame: hide what its layers draw outside it (true by default).",
+    },
+  };
 
   createNode(rect: Rect, name: string, index: string, parentId: string | null): FrameElement {
     return createFrame(rect, name, index, parentId);
@@ -38,6 +54,47 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
   override contentClip(el: FrameElement): ElementClip | null {
     if (!el.clipsContent) return null;
     return { rect: { x: el.x, y: el.y, w: el.w, h: el.h }, radius: el.cornerRadius };
+  }
+
+  protected override nodeFromSpec(
+    spec: ElementSpec,
+    index: string,
+    context: NodeBuildContext,
+  ): FrameElement {
+    const frame = super.nodeFromSpec(spec, index, context);
+    const { args } = spec;
+    const preset = optionalString(args, "preset");
+    return {
+      ...frame,
+      ...(preset && spec.w === undefined && spec.h === undefined
+        ? { name: context.nameFor(findPreset(preset)!.label) }
+        : {}),
+      ...(args.cornerRadius !== undefined
+        ? { cornerRadius: nonNegative(args.cornerRadius, "cornerRadius") }
+        : {}),
+      clipsContent: optionalBoolean(args, "clipsContent") ?? frame.clipsContent,
+    };
+  }
+
+  /** A preset's size (`preset`), or the frame tool's. */
+  protected override specSize(spec: ElementSpec, options: DesignToolOptions): Size {
+    const preset = optionalString(spec.args, "preset");
+    if (preset === undefined) return super.specSize(spec, options);
+    const found = findPreset(preset);
+    if (!found) {
+      const ids = FRAME_PRESETS.map((item) => item.id).join(", ");
+      throw new Error(`No frame preset "${preset}". Use one of: ${ids}.`);
+    }
+    return found.size;
+  }
+
+  override completePatch(
+    el: FrameElement,
+    patch: ElementPatch<FrameElement>,
+    context: ElementBuildContext,
+  ): ElementPatch<FrameElement> {
+    if ("cornerRadius" in patch) nonNegative(patch.cornerRadius, "cornerRadius");
+    return super.completePatch(el, patch, context);
   }
 
   draw(view: ElementView, el: FrameElement): void {

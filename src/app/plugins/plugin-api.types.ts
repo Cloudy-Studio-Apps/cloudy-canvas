@@ -110,8 +110,13 @@ export interface DesignPluginApi {
    */
   editor: typeof designEditor;
   migrations: typeof design.designMigrations;
+  /** Agent tools on the open design, one group per module (`requireDesign` gets the design). */
+  agentTools: typeof design.designAgentTools;
+  requireDesign: typeof design.requireDesign;
   /** The layer tree service (`useService(DESIGN_TREE)`). */
   tree: typeof design.DESIGN_TREE;
+  /** The pages service (`useService(DESIGN_PAGES)`); the page on screen is `engine.scope`. */
+  pages: typeof design.DESIGN_PAGES;
   /** The node base every design element extends, and its helpers. */
   nodes: Pick<
     typeof design,
@@ -161,6 +166,9 @@ export interface DesignPluginApi {
     | "cutSegment"
     | "bendSegment"
     | "toggleSmooth"
+    | "toggleRegion"
+    | "networkFaces"
+    | "faceAt"
     | "VectorEditTool"
     | "VECTOR_EDIT"
     | "VECTOR_TOOLS"

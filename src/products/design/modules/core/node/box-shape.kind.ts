@@ -1,9 +1,10 @@
-import type { Rect, Size } from "@canvas";
+import type { ElementSpec, Rect, Size } from "@canvas";
 
 import type { DesignToolOptions } from "../../../design-options.types";
 import type { VectorNetwork } from "../network/network.types";
 import { DesignNodeKind } from "./design-node.kind";
 import type { DesignNode } from "./design-node.types";
+import type { NodeBuildContext } from "./node-build.types";
 
 /** Size of a clicked shape when the kind's defaults give none. */
 const FALLBACK_SIZE: Size = { w: 100, h: 100 };
@@ -13,6 +14,8 @@ const FALLBACK_SIZE: Size = { w: 100, h: 100 };
  * the node and says how big a click makes it, so one `BoxDrawTool` draws any of them.
  */
 export abstract class BoxShapeKind<E extends DesignNode = DesignNode> extends DesignNodeKind<E> {
+  override readonly creatable: boolean = true;
+
   /** A new node with these bounds, name, z-order index and parent, styled by the tool options. */
   abstract createNode(
     rect: Rect,
@@ -33,5 +36,16 @@ export abstract class BoxShapeKind<E extends DesignNode = DesignNode> extends De
   /** Size of a node placed with a click (its defaults' `size` unless the options decide). */
   clickSize(_options: DesignToolOptions): Size {
     return this.defaults.size ?? FALLBACK_SIZE;
+  }
+
+  /** An agent's node: its `w`/`h`, or what a click places; subclasses add their own fields. */
+  protected override nodeFromSpec(spec: ElementSpec, index: string, context: NodeBuildContext): E {
+    const rect = this.specRect(spec, this.specSize(spec, context.options));
+    return this.createNode(rect, context.nameFor(this.label), index, null, context.options);
+  }
+
+  /** The size of an agent's node when its spec gives no `w`/`h`. */
+  protected specSize(_spec: ElementSpec, options: DesignToolOptions): Size {
+    return this.clickSize(options);
   }
 }

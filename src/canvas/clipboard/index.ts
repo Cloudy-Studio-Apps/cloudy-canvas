@@ -10,6 +10,7 @@ export { decodeClipboard, encodeClipboard } from "./clipboard-payload";
 export { dropFiles } from "./drop-files";
 export { ElementClipboard } from "./element-clipboard";
 export { insertCopies } from "./insert-copies";
+export { imageSize } from "./paste-external";
 export { MemoryClipboard } from "./memory-clipboard";
 export { PASTE_STEP, pasteOffset } from "./paste-offset";
 export { remapIds } from "./remap-ids";

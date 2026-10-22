@@ -25,7 +25,7 @@ import { VECTOR_TOOLS } from "./vector-tools";
  * The pen (P), on the main toolbar and in the edit mode: outside it, a click starts a new vector
  * and edits it. Then a click adds a point joined to the selected end (dragging pulls out its
  * handles), a click on a segment adds a point there, and a click on another point joins them
- * (closing a loop fills it). Esc lets go of the end; a second Esc leaves.
+ * (closing a loop fills it). Esc lets go of the end.
  */
 export class PenTool extends VectorEditTool {
   readonly id = VECTOR_TOOLS.pen;
@@ -96,13 +96,9 @@ export class PenTool extends VectorEditTool {
     super.onCancel();
   }
 
-  /** Esc first lets go of the selected end (to start elsewhere), then leaves. */
+  /** Esc lets go of the selected end (to start elsewhere), with the handle pulled from it. */
   override onCommand(command: string): boolean {
-    if (command === "cancel" && this.vector() && this.session.selection.vertices.size > 0) {
-      this.outgoing = null;
-      this.select([]);
-      return true;
-    }
+    if (command === "cancel") this.outgoing = null;
     return super.onCommand(command);
   }
 

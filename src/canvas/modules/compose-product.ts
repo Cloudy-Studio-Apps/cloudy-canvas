@@ -29,6 +29,7 @@ export function composeProduct<O extends object>(
   const imagePasters = host.get(points.pasteImage);
   const links = host.get(points.links);
   const movers = host.get(points.onMoved);
+  const scopes = single(host.get(points.scopes), `the ${id}'s scopes`);
   const order = single(host.get(points.drawOrder), `the ${id}'s drawing order`);
   const clips = single(host.get(points.clips), `the ${id}'s clips`);
   const target = single(host.get(points.selectTarget), `what a click selects in the ${id}`);
@@ -47,6 +48,7 @@ export function composeProduct<O extends object>(
     hostCommands: hostCommands.map((command) => command.id),
     defaultOptions: mergeOptions<O>(host.get(points.options), "tool option"),
     view: mergeOptions<Partial<CanvasViewOptions>>(host.get(points.view), "view option"),
+    ...(scopes ? { scopes } : {}),
     ...(order ? { orderKeys: (elements) => order(elements, kinds) } : {}),
     ...(clips ? { clips: (elements) => clips(elements, kinds) } : {}),
     ...(editor ? { editElement: editor } : {}),

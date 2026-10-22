@@ -19,6 +19,7 @@ export { importStickerFiles } from "./sticker-file";
 export { stickerLibrary } from "./sticker-library";
 export type * from "./export-file.types";
 export { exportFile } from "./export-file";
+export { readLocalFile } from "./read-local-file";
 export { writeExportFile } from "./write-export-file";
 export { pickPluginFolder } from "./plugin-folder-dialog";
 export { pluginStorage } from "./plugin-storage";

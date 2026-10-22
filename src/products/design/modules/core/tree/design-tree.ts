@@ -20,9 +20,14 @@ export class DesignTree {
 
   getVersion = (): number => this.feed.getVersion();
 
-  /** Every parent's children (`null`: the top of the page), topmost first. */
-  layers(): LayerTree {
-    const nodes = this.doc.all().filter(isDesignNode);
+  /**
+   * Every parent's children (`null`: the top of the page), topmost first: the nodes on `page`
+   * (the one on screen, `engine.scope`), or on every page when it's `null`.
+   */
+  layers(page: string | null): LayerTree {
+    const nodes = this.doc
+      .all()
+      .filter((el): el is DesignNode => isDesignNode(el) && (page === null || el.pageId === page));
     const ids = new Set(nodes.map((node) => node.id));
     const children = new Map<string | null, DesignNode[]>();
     for (const node of nodes) {

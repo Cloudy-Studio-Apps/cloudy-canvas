@@ -3,7 +3,6 @@ export { AppearanceSection } from "./appearance-section";
 export { ExportSection } from "./export-section";
 export { FillSection } from "./fill-section";
 export { LayoutSection } from "./layout-section";
-export { PageSection } from "./page-section";
 export { PositionSection } from "./position-section";
 export { PrototypeSection } from "./prototype-section";
 export { StrokeSection } from "./stroke-section";
