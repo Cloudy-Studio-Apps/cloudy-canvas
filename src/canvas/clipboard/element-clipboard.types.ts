@@ -15,6 +15,8 @@ export interface ElementClipboardHost<O extends object> {
   visibleRect(): Rect;
   getOptions(): O;
   select(ids: Iterable<string>): void;
+  /** The selected ids. */
+  selected(): readonly string[];
   /** Removes exactly these elements (without what goes with them), in the current undo step. */
   remove(ids: readonly string[]): void;
 }

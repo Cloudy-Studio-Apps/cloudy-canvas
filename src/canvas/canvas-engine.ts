@@ -1114,6 +1114,7 @@ export class CanvasEngine<O extends object = object> {
       visibleRect: () => this.camera.visibleWorldRect(),
       getOptions: () => this.options,
       select: (ids) => this.setSelection(ids),
+      selected: () => [...this.scene.selection.ids],
       remove: (ids) => void this.removeElements(ids),
     };
   }

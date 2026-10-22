@@ -3,7 +3,7 @@ import type { ExtensionPoint, Shortcut } from "@shared/core";
 import type { CanvasProduct, CanvasScopes, SelectTargetRequest } from "../canvas-product.types";
 import type { CanvasViewOptions } from "../canvas-view.types";
 import type { CanvasDocument } from "../document";
-import type { CanvasElement, ElementKind, ElementKinds } from "../elements";
+import type { CanvasElement, ElementKind, ElementKinds, ElementPatch } from "../elements";
 import type { Keybindings } from "../input";
 import type { ElementClip } from "../render";
 import type { CanvasGuides } from "../ruler-guides";
@@ -88,6 +88,12 @@ export type OnRemoveHook = NonNullable<CanvasProduct["onRemove"]>;
 export type PrepareCopiesHook = NonNullable<CanvasProduct["prepareCopies"]>;
 /** See `CanvasProduct.pasteText`; the first hook that returns an element wins. */
 export type PasteTextHook<O extends object> = NonNullable<CanvasProduct<O>["pasteText"]>;
+/** See `CanvasProduct.pasteOnto`; the first hook that returns patches wins. */
+export type PasteOntoHook<O extends object> = (
+  text: string,
+  selected: readonly CanvasElement[],
+  kinds: ElementKinds<O>,
+) => Map<string, ElementPatch> | null;
 /** See `CanvasProduct.pasteImage`; the first hook that returns an element wins. */
 export type PasteImageHook<O extends object> = NonNullable<CanvasProduct<O>["pasteImage"]>;
 
@@ -128,5 +134,6 @@ export interface CanvasPoints<O extends object> {
   onRemove: ExtensionPoint<OnRemoveHook>;
   prepareCopies: ExtensionPoint<PrepareCopiesHook>;
   pasteText: ExtensionPoint<PasteTextHook<O>>;
+  pasteOnto: ExtensionPoint<PasteOntoHook<O>>;
   pasteImage: ExtensionPoint<PasteImageHook<O>>;
 }

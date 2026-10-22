@@ -27,6 +27,7 @@ import {
   nodeTransformTools,
   nodeEditTools,
 } from "./agent";
+import { pasteGradientOnto } from "./node/paste-gradient";
 import { treeOrderKeys } from "./tree/order-keys";
 import { treeClips } from "./tree/tree-clips";
 import { prepareTreeCopies } from "./tree/prepare-tree-copies";
@@ -78,6 +79,7 @@ export const coreModule = defineModule({
     host.contribute(designCanvas.withMembers, (ids, elements) => withDescendants(ids, elements));
     host.contribute(designCanvas.onMoved, reparentMoved);
     host.contribute(designCanvas.alignTarget, containerAlignTarget);
+    host.contribute(designCanvas.pasteOnto, pasteGradientOnto);
     host.contribute(designCanvas.rulerFrame, selectionRulerFrame);
     host.contribute(
       designCanvas.hostCommands,

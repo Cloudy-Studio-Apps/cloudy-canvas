@@ -54,6 +54,7 @@ export class ElementClipboard<O extends object> {
     const at = replaced ? rectCenter(replaced) : undefined;
     const text = await readSafely(() => this.clipboard.readText());
     const payload = text ? decodeClipboard(text, product.id, product.kinds) : null;
+    if (!payload && text && !replace && this.pasteOnto(text)) return;
     if (!payload) {
       // An image wins over text: apps that copy an image often add its name or address as text.
       const image = await readSafely(() => this.clipboard.readImage());
@@ -77,6 +78,22 @@ export class ElementClipboard<O extends object> {
     // Removed right after the copies are added, so both are one undo step.
     if (replace && ids.size > 0) this.host.remove(replace);
     this.host.select(mapIds(payload.selected, ids));
+  }
+
+  /** Applies the text to the selection through the product's `pasteOnto`, as one undo step. */
+  private pasteOnto(text: string): boolean {
+    const { doc, product } = this.host;
+    if (!product.pasteOnto) return false;
+    const selected = this.host
+      .selected()
+      .map((id) => this.host.getElement(id))
+      .filter((el): el is CanvasElement => el !== undefined);
+    if (selected.length === 0) return false;
+    const patches = product.pasteOnto(text, selected);
+    if (!patches || patches.size === 0) return false;
+    doc.checkpoint();
+    doc.updateMany(patches);
+    return true;
   }
 
   /** Adds copies of the elements (with what moves with them) moved by `offset`; old id → copy id. */

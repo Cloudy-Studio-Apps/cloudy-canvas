@@ -26,6 +26,7 @@ export function composeProduct<O extends object>(
   const removers = host.get(points.onRemove);
   const preparers = host.get(points.prepareCopies);
   const textPasters = host.get(points.pasteText);
+  const ontoPasters = host.get(points.pasteOnto);
   const imagePasters = host.get(points.pasteImage);
   const links = host.get(points.links);
   const movers = host.get(points.onMoved);
@@ -105,6 +106,17 @@ export function composeProduct<O extends object>(
             for (const paste of textPasters) {
               const el = paste(text, at, index, options);
               if (el) return el;
+            }
+            return null;
+          },
+        }
+      : {}),
+    ...(ontoPasters.length > 0
+      ? {
+          pasteOnto: (text, selected) => {
+            for (const paste of ontoPasters) {
+              const patches = paste(text, selected, kinds);
+              if (patches) return patches;
             }
             return null;
           },

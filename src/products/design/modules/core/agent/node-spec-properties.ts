@@ -1,8 +1,15 @@
 const PAINTS = {
   type: "array",
   description:
-    'Paints bottom to top: { type: "solid", color: "#RRGGBB", opacity?: 0–1, visible? } or ' +
-    '{ type: "image", assetId, scaleMode?: "fill" | "fit", opacity?, visible? }.',
+    'Paints bottom to top: { type: "solid", color: "#RRGGBB", opacity?: 0–1, visible? }; a ' +
+    'gradient { type: "linear" | "radial" | "angular" | "diamond", stops: [{ position: 0–1, ' +
+    'color, opacity?, ease?: "linear" | "ease-in" | "ease-out" | "ease-in-out" }] (two or more), ' +
+    "angle? (linear only, CSS degrees: 0 up, 90 right; default top to bottom), or from?/to?/width? " +
+    "handles as points of the layer's box (0–1 each axis; radial/angular/diamond: from is the " +
+    'center, to the radius end), interpolation?: "srgb" | "oklab" (smoother middles), opacity?, ' +
+    'visible? }; a CSS gradient string ("linear-gradient(90deg, #FF5F6D, #FFC371)", ' +
+    'radial-gradient, conic-gradient); or { type: "image", assetId, scaleMode?: "fill" | "fit", ' +
+    "opacity?, visible? } (fills only).",
   items: { type: "object" },
 };
 
@@ -27,9 +34,15 @@ export const NODE_SPEC_PROPERTIES = {
       "Frame or section to put it in (id, or key from this call); null for the top of the page. " +
       "Default: the one under its center.",
   },
-  fill: { type: "string", description: 'One solid fill color, or "transparent" for none.' },
+  fill: {
+    type: "string",
+    description: 'One fill: a color, a CSS gradient ("linear-gradient(…)"), or "transparent".',
+  },
   fills: PAINTS,
-  stroke: { type: "string", description: 'One solid stroke color, or "transparent" for none.' },
+  stroke: {
+    type: "string",
+    description: 'One stroke: a color, a CSS gradient, or "transparent" for none.',
+  },
   strokes: PAINTS,
   strokeWeight: { type: "number" },
   opacity: { type: "number", description: "0–1." },
@@ -40,5 +53,5 @@ export const NODE_SPEC_PROPERTIES = {
       "Degrees counterclockwise, round its top-left corner (x, y), as in Figma; a line's ends turn.",
   },
   text: { type: "string", description: "Text: its content." },
-  color: { type: "string", description: "Text: its color." },
+  color: { type: "string", description: "Text: its color, or a CSS gradient." },
 };

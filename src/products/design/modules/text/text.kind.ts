@@ -11,7 +11,7 @@ import {
 } from "@canvas";
 import type { FontRequest } from "@shared/core";
 
-import { colorPaints, DesignNodeKind, type NodeBuildContext } from "../core";
+import { colorPaints, DesignNodeKind, drawPaints, type NodeBuildContext } from "../core";
 import { TEXT_DEFAULTS } from "./text.defaults";
 import { retypeset } from "./retypeset";
 import { TEXT_SPEC_PROPERTIES, textFields } from "./text-args";
@@ -26,13 +26,15 @@ const NAME_LENGTH = 60;
  * Text layers: typed in place, in any installed or Google font, sized to their text (auto width
  * or height) or fixed. Named after their first line until renamed.
  */
+/** What a text masking its fills is drawn in (the mask reads its red channel). */
+const MASK_COLOR = "#FFFFFF";
+
 export class TextKind extends DesignNodeKind<TextNodeElement> {
   readonly type = "text";
   readonly label = "Text";
   readonly description = "Text in any font: click to type, or drag for a fixed width.";
   override readonly tool = "text";
   override readonly defaults = TEXT_DEFAULTS;
-  override readonly imageFills = false;
   override readonly strokable = false;
   override readonly creatable = true;
   override readonly specProperties = TEXT_SPEC_PROPERTIES;
@@ -46,11 +48,32 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
     removeWhenEmpty: true,
   };
 
+  /**
+   * One solid fill colors the text; any other fills (gradients, images, several paints) are drawn
+   * in its box and show through its glyphs, as in Figma.
+   */
   draw(view: ElementView, el: TextNodeElement): void {
-    const fill = el.fills.find((paint) => paint.visible && paint.type === "solid");
-    const text = view.placeText(el.text, textStyleOf(el), el.w, el.h);
-    text.visible = el.visible && fill !== undefined;
-    text.alpha = el.opacity * (fill?.opacity ?? 1);
+    const fills = el.fills.filter((paint) => paint.visible);
+    const [fill] = fills;
+    const plain = fills.length === 0 || (fills.length === 1 && fill?.type === "solid");
+    const style = textStyleOf(el);
+    const text = view.placeText(
+      el.text,
+      plain ? style : { ...style, color: MASK_COLOR },
+      el.w,
+      el.h,
+    );
+    if (plain) {
+      text.visible = el.visible && fill !== undefined;
+      text.alpha = el.opacity * (fill?.opacity ?? 1);
+      view.setPaints([], { alpha: 1, visible: false });
+      view.setPaintTextMask(false);
+      return;
+    }
+    text.visible = true;
+    text.alpha = 1;
+    drawPaints(view, { ...el, strokes: [] }, (g) => g.rect(0, 0, el.w, el.h));
+    view.setPaintTextMask(true);
   }
 
   override layerName(el: TextNodeElement): string {

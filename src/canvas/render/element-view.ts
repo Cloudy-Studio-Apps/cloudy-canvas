@@ -10,6 +10,7 @@ import type { ImageCache } from "./image-cache";
 import type { ElementClip } from "./layer-placement.types";
 import { PaintStack } from "./paint-stack";
 import type { PaintLayer, PaintStackOptions } from "./paint-stack.types";
+import { textMaskTexture } from "./text-mask";
 import { cappedTextResolution } from "./text-resolution";
 import { canvasTextStyle } from "./text-style";
 import type { CanvasTextOptions } from "./text-style.types";
@@ -38,6 +39,8 @@ export class ElementView extends Container {
   private textResolution = 1;
   private image: Sprite | null = null;
   private paintStack: PaintStack | null = null;
+  /** The text's glyphs the paints show through, instead of the text (see `setPaintTextMask`). */
+  private textMask: Sprite | null = null;
   /** The mask of the area the element is clipped to (see `setClip`). */
   private clipMask: Graphics | null = null;
   /** The image asset the view shows, and the box it's fitted into (local coordinates). */
@@ -157,12 +160,43 @@ export class ElementView extends Container {
    * previous call drew; `alpha` and `visible` apply to all of them.
    */
   setPaints(layers: readonly PaintLayer[], options: PaintStackOptions): void {
+    if (!this.paintStack && layers.length === 0) return;
     if (!this.paintStack) {
       this.paintStack = new PaintStack(this.images);
       this.addChildAt(this.paintStack, this.getChildIndex(this.graphics) + 1);
     }
     this.drawn = null;
     this.paintStack.set(layers, options);
+  }
+
+  /**
+   * Shows the paints (`setPaints`) only through the glyphs of the view's text, instead of the
+   * text itself: a text filled with a gradient, an image or several paints. Draw the text white
+   * first (`placeText`), then the paints; call it after each redraw. `false` draws the text again.
+   */
+  setPaintTextMask(masked: boolean): void {
+    this.drawn = null;
+    const text = this.textNode;
+    if (!masked || !text || !this.paintStack) {
+      if (this.textMask) {
+        if (this.paintStack) this.paintStack.mask = null;
+        this.textMask.destroy({ texture: true, textureSource: true });
+        this.textMask = null;
+      }
+      if (text) text.renderable = true;
+      if (this.paintStack) this.paintStack.renderable = true;
+      return;
+    }
+    const { texture, padding } = textMaskTexture(text);
+    if (!this.textMask) {
+      this.textMask = new Sprite();
+      this.addChild(this.textMask);
+    } else this.textMask.texture.destroy(true);
+    this.textMask.texture = texture;
+    this.textMask.position.set(text.x - padding, text.y - padding);
+    this.paintStack.mask = this.textMask;
+    this.paintStack.renderable = this.textVisible;
+    text.renderable = false;
   }
 
   /**
@@ -290,6 +324,8 @@ export class ElementView extends Container {
     this.textVisible = visible;
     this.drawn = null;
     if (this.textNode) this.textNode.visible = visible;
+    // Paints shown through the text hide with it (while it's edited).
+    if (this.textMask && this.paintStack) this.paintStack.renderable = visible;
   }
 
   /** Hides only the text slot `key` (`null` shows them all), e.g. the table cell being edited. */
@@ -315,6 +351,8 @@ export class ElementView extends Container {
   refreshText(): void {
     this.drawn = null;
     for (const node of [this.textNode, ...this.textSlots.values()]) node?.style.update();
+    // Glyphs the paints show through are drawn again in the loaded font.
+    if (this.textMask) this.setPaintTextMask(true);
   }
 
   /** Hides the image shown with `placeImage`, if any. */

@@ -22,3 +22,5 @@ export { layerNameOf } from "./layer-name-of";
 export { checkParent, isNodeKind } from "./node-parent";
 export { fraction, nonNegative, pointArg, wholeNumber } from "./number-args";
 export { colorPaints, hexColor, readPaints } from "./paint-args";
+export { cssGradientPaint, isCssGradient } from "./gradient-args";
+export { pasteGradientOnto } from "./paste-gradient";

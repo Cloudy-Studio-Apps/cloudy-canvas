@@ -1,7 +1,7 @@
 import type { CanvasViewOptions } from "./canvas-view.types";
 import type { CopyContext, PastedImage } from "./clipboard";
 import type { CanvasDocument } from "./document";
-import type { CanvasElement, ElementKinds } from "./elements";
+import type { CanvasElement, ElementKinds, ElementPatch } from "./elements";
 import type { Point, Rect } from "./geometry.types";
 import type { Keybindings } from "./input";
 import type { ElementClip } from "./render";
@@ -128,6 +128,12 @@ export interface CanvasProduct<O extends object = object> {
    * `null` to ignore it. `options` are the current tool options.
    */
   pasteText?(text: string, at: Point, index: string, options: O): CanvasElement | null;
+  /**
+   * Text pasted from outside the app while elements are selected, applied to them instead of
+   * becoming an element (e.g. a CSS gradient as their fill): each element's patch, or `null` to
+   * paste it as usual. Asked before `pasteText`.
+   */
+  pasteOnto?(text: string, selected: readonly CanvasElement[]): Map<string, ElementPatch> | null;
   /**
    * An element showing an image pasted or dropped from outside the app (stored as `image.assetId`),
    * fit and centered in `view` (the visible world rect, centered on the drop point for a drop) at
