@@ -31,6 +31,7 @@ export function composeProduct<O extends object>(
   const movers = host.get(points.onMoved);
   const order = single(host.get(points.drawOrder), `the ${id}'s drawing order`);
   const clips = single(host.get(points.clips), `the ${id}'s clips`);
+  const target = single(host.get(points.selectTarget), `what a click selects in the ${id}`);
 
   return {
     id,
@@ -47,6 +48,9 @@ export function composeProduct<O extends object>(
     view: mergeOptions<Partial<CanvasViewOptions>>(host.get(points.view), "view option"),
     ...(order ? { orderKeys: (elements) => order(elements, kinds) } : {}),
     ...(clips ? { clips: (elements) => clips(elements, kinds) } : {}),
+    ...(target
+      ? { selectTarget: (hitId, request, elements) => target(hitId, request, elements, kinds) }
+      : {}),
     ...(movers.length > 0
       ? {
           onMoved: (doc, moved, elements) => {

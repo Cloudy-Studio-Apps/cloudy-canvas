@@ -7,13 +7,17 @@ import { assetsModule } from "@design/modules/assets/assets.module";
 import { coreModule } from "@design/modules/core/core.module";
 import { ellipseModule } from "@design/modules/ellipse/ellipse.module";
 import { frameModule } from "@design/modules/frame/frame.module";
+import { groupModule } from "@design/modules/group/group.module";
 import { imageModule } from "@design/modules/image/image.module";
 import { layersModule } from "@design/modules/layers/layers.module";
 import { lineModule } from "@design/modules/line/line.module";
 import { pluginsTabModule } from "@design/modules/plugins-tab/plugins-tab.module";
 import { polygonModule } from "@design/modules/polygon/polygon.module";
 import { rectangleModule } from "@design/modules/rectangle/rectangle.module";
+import { sectionModule } from "@design/modules/section/section.module";
 import { starModule } from "@design/modules/star/star.module";
+import { textModule } from "@design/modules/text/text.module";
+import { vectorModule } from "@design/modules/vector/vector.module";
 import { designEditor } from "./design-editor-points";
 import type { DesignModuleOptions } from "./design-modules.types";
 
@@ -21,11 +25,15 @@ import type { DesignModuleOptions } from "./design-modules.types";
 let modules: AppModule[] = [
   coreModule,
   frameModule,
+  sectionModule,
+  groupModule,
   rectangleModule,
   lineModule,
   ellipseModule,
   polygonModule,
   starModule,
+  textModule,
+  vectorModule,
   imageModule,
   layersModule,
   assetsModule,

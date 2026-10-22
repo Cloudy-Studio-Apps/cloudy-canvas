@@ -8,7 +8,7 @@ export type {
   ElementAction,
   HostAction,
 } from "./canvas-engine.types";
-export type { CanvasProduct } from "./canvas-product.types";
+export type { CanvasProduct, SelectTargetRequest } from "./canvas-product.types";
 export type { CanvasGrid, CanvasViewOptions } from "./canvas-view.types";
 export type { CopyContext, DropResult, PastedImage } from "./clipboard";
 export type { CommandHandler, Commands } from "./commands.types";
@@ -45,14 +45,25 @@ export { decodeCanvasFile, encodeCanvasFile } from "./file";
 export * from "./agent";
 export * from "./elements";
 export * from "./geometry";
+export { smoothPoints } from "./smooth-points";
 export { BASE_COMMAND_LABELS, BASE_KEYBINDINGS, Keymap } from "./input";
 export { composeProduct, createCanvasPoints } from "./modules";
 export { ElementView } from "./render";
 export { defineService } from "./services";
-export { centerTextTop, measureText, measureWrapped } from "./text";
+export type { FontStyle, FontWeight, TextAlign, TextFont, TextFontOptions } from "./text";
+export {
+  centerTextTop,
+  cssFont,
+  fontFamilyList,
+  measureText,
+  measureTextBlock,
+  measureWrapped,
+  textFont,
+} from "./text";
 export {
   createBaseTools,
   DRAW_THRESHOLD_PX,
+  FreehandTool,
   MOVE_THRESHOLD_PX,
   pastThreshold,
   selectAndEdit,

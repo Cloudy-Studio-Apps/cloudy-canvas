@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronRight, Eye, EyeOff, Lock, Unlock } from "lucide-react";
 
 import type { ElementPatch } from "@canvas";
+import { layerNameOf } from "@design";
 import { cn } from "@shared/ui/lib/utils";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { LayerIcon } from "./layer-icon";
@@ -65,7 +66,7 @@ export function LayerRow({ node, tree, depth, selected, revealed }: LayerRowProp
           <LayerIcon type={node.type} />
         </span>
         <LayerName
-          name={node.name}
+          name={layerNameOf(node, engine.kinds)}
           editing={renaming}
           onRename={(name) => update({ name } as ElementPatch)}
           onDone={() => setRenaming(false)}

@@ -34,3 +34,9 @@ export interface NodeDefaults extends ElementDefaults {
   /** The stroke a node gets when one is added in the panel. */
   stroke: Paint;
 }
+
+/** How strokes end and turn corners (`drawPaints`). */
+export interface StrokeShape {
+  cap?: "butt" | "round" | "square";
+  join?: "miter" | "round" | "bevel";
+}

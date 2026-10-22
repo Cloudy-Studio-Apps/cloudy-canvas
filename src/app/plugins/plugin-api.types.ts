@@ -60,6 +60,11 @@ export interface PluginApi {
     | "pastThreshold"
     | "DRAW_THRESHOLD_PX"
     | "MOVE_THRESHOLD_PX"
+    | "FreehandTool"
+    | "smoothPoints"
+    | "measureTextBlock"
+    | "textFont"
+    | "fontFamilyList"
   >;
   ui: {
     React: typeof React;
@@ -124,6 +129,7 @@ export interface DesignPluginApi {
     | "BoxDrawTool"
     | "containerAt"
     | "parentFor"
+    | "layerNameOf"
     | "pointsInBox"
     | "pointInPolygon"
     | "distanceToOutline"
@@ -138,6 +144,7 @@ export interface DesignPluginApi {
     | "NodeNumberField"
     | "NodeSelectField"
     | "NodeCheckbox"
+    | "NodeOptionButtons"
     | "FieldBox"
     | "HexInput"
     | "PercentInput"

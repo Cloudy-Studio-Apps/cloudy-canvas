@@ -87,6 +87,11 @@ export class ElementLayer extends Container<ElementView> {
     if (hidden) this.showText(this.views.get(hidden.id), hidden);
   }
 
+  /** Lays out again the texts of these elements (those this layer doesn't draw are ignored). */
+  refreshText(ids: Iterable<string>): void {
+    for (const id of ids) this.views.get(id)?.refreshText();
+  }
+
   /** Re-rasterizes text for the current zoom so it stays crisp. */
   setTextZoom(zoom: number): void {
     const resolution = textResolution(zoom);

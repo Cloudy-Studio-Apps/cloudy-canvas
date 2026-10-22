@@ -12,6 +12,7 @@ export function StrokeSection({ selection: { nodes } }: PropertySectionProps) {
       title="Strokes"
       field="strokes"
       nodes={nodes}
+      allowImage={false}
       newPaint={() => ({ ...NODE_DEFAULTS.stroke })}
     >
       <NodeNumberField

@@ -13,3 +13,4 @@ export { imagePaint } from "./image-paint";
 export { distanceToOutline, pointInPolygon, pointsInBox } from "./shape-points";
 export { BoxShapeKind } from "./box-shape.kind";
 export { PointsShapeKind } from "./points-shape.kind";
+export { layerNameOf } from "./layer-name-of";

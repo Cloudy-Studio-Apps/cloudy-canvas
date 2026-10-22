@@ -1,4 +1,4 @@
-import { solidPaint } from "@design";
+import { DesignNodeKind, solidPaint } from "@design";
 import type { PropertySectionProps } from "@design/ui/modules";
 import { PaintListSection } from "./paint-list-section";
 
@@ -6,12 +6,18 @@ import { PaintListSection } from "./paint-list-section";
 const NEW_FILL = "#D9D9D9";
 
 /** The selection's fills. */
-export function FillSection({ selection: { nodes } }: PropertySectionProps) {
+export function FillSection({ selection: { nodes, kinds } }: PropertySectionProps) {
+  // Image fills only when every selected node can show one (text can't).
+  const allowImage = nodes.every((node) => {
+    const kind = kinds.kindOf(node);
+    return !(kind instanceof DesignNodeKind) || kind.imageFills;
+  });
   return (
     <PaintListSection
       title="Fills"
       field="fills"
       nodes={nodes}
+      allowImage={allowImage}
       newPaint={() => solidPaint(NEW_FILL)}
     />
   );

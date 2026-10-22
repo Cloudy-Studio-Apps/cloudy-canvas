@@ -27,6 +27,13 @@ export interface ToolContext<O extends object = object> {
   setSelection(ids: Iterable<string>): void;
   setTool(tool: string): void;
   elementAt(world: Point): CanvasElement | undefined;
+  /**
+   * What a click at `world` selects (the product's `selectTarget`, e.g. the group around what's
+   * hit); `deep` (Ctrl/Cmd) selects what's hit itself.
+   */
+  targetAt(world: Point, deep: boolean): CanvasElement | undefined;
+  /** What selecting this element selects instead (e.g. its group), as `targetAt` does. */
+  targetOf(id: string): string;
   /** An element as the scene sees it. */
   getElement(id: string): CanvasElement | undefined;
   elementsInRect(rect: Rect): CanvasElement[];

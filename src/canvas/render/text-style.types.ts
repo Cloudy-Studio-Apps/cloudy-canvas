@@ -1,10 +1,10 @@
-export interface CanvasTextOptions {
+import type { TextAlign, TextFontOptions } from "../text/text-font.types";
+
+export interface CanvasTextOptions extends TextFontOptions {
   fontSize: number;
   color: string;
-  /** Defaults to regular (400). */
-  fontWeight?: "400" | "600";
   /** Horizontal alignment of wrapped lines. Defaults to left. */
-  align?: "left" | "center";
+  align?: TextAlign;
   /** Wrap width in world units; omit for unwrapped text. */
   wrapWidth?: number;
 }

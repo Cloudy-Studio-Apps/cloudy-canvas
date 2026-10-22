@@ -14,6 +14,7 @@ export { TauriStorage } from "./tauri-storage";
 export { exportDbmlFile, importDbmlFile } from "./dbml-file";
 export type * from "./image-file.types";
 export { pickImageFiles } from "./image-file";
+export { fontLibrary } from "./fonts";
 export { importStickerFiles } from "./sticker-file";
 export { stickerLibrary } from "./sticker-library";
 export type * from "./export-file.types";

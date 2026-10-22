@@ -1,9 +1,8 @@
-import type { ElementSpec } from "@canvas";
+import { smoothPoints, type ElementSpec } from "@canvas";
 
 import { HIGHLIGHTER_COLORS, HIGHLIGHTER_SIZES, MARKER_COLORS, MARKER_SIZES } from "../../palette";
 import { createStroke } from "./stroke.factory";
 import { STROKE_DEFAULTS } from "./stroke.defaults";
-import { smoothPoints } from "./stroke.smooth";
 import type { StrokeElement, StrokePen } from "./stroke.types";
 
 const PENS: readonly StrokePen[] = ["pen", "highlighter"];
@@ -37,7 +36,9 @@ export function buildStroke(spec: ElementSpec, index: string): StrokeElement {
   const color = spec.color ?? (highlighter ? HIGHLIGHTER_COLORS : MARKER_COLORS)[0].value;
   const points = pointsFrom(args.points);
   const final =
-    args.smooth === true ? smoothPoints(points, STROKE_DEFAULTS.smoothTolerance) : points;
+    args.smooth === true
+      ? smoothPoints(points, STROKE_DEFAULTS.smoothTolerance, STROKE_DEFAULTS.smoothPasses)
+      : points;
   return createStroke(final, pen as StrokePen, color, size, index);
 }
 

@@ -1,6 +1,7 @@
 import type { ElementKinds } from "./element.kinds";
 import type { Point, Rect, Size } from "../geometry.types";
 import type { CanvasElement, ElementPatch } from "./element.types";
+import type { TextAlign, TextFontOptions } from "../text/text-font.types";
 
 /**
  * Default values every element type may have. Each type's `<type>.defaults.ts` object satisfies
@@ -13,16 +14,17 @@ export interface ElementDefaults {
   fontSize?: number;
 }
 
-/** How an element's text is laid out, shared by its drawer and the DOM text editor. */
-export interface ElementTextStyle {
+/**
+ * How an element's text is laid out, shared by its drawer and the DOM text editor. The font
+ * options it leaves out are the app's (Inter, regular, 1.35 line height).
+ */
+export interface ElementTextStyle extends TextFontOptions {
   fontSize: number;
   color: string;
-  /** Defaults to regular (400). */
-  fontWeight?: "400" | "600";
   /** Horizontal alignment of the wrapped lines. */
-  align: "left" | "center";
-  /** `top` starts at the padding; `middle` centers the text block in the element. */
-  vAlign: "top" | "middle";
+  align: TextAlign;
+  /** `top` starts at the padding; `middle` centers the text block; `bottom` ends at the padding. */
+  vAlign: "top" | "middle" | "bottom";
   /** Inner padding, in world units. */
   padX: number;
   padY: number;
@@ -56,9 +58,19 @@ export interface ElementText<E extends CanvasElement> {
    * grows while typing. `set` returns the new size with the text.
    */
   fitContent?: boolean;
+  /** The element keeps its width and grows down with its wrapped text (the editor does too). */
+  fitHeight?: boolean;
+  /**
+   * How this element sizes to its text, when it's decided per element (e.g. a design text's
+   * auto width / auto height / fixed setting); overrides `fitContent` and `fitHeight`.
+   */
+  sizing?(el: E): TextSizing;
   /** The element is only its text, so emptying it deletes the element (and a new one isn't added). */
   removeWhenEmpty?: boolean;
 }
+
+/** How an element follows its text: `content` (both ways), `height` (down) or `fixed`. */
+export type TextSizing = "content" | "height" | "fixed";
 
 /** A click on the selected element that picks a part of it (see `ElementKind.partAt`). */
 export interface PartClick {

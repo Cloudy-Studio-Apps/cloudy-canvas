@@ -43,6 +43,16 @@ export interface CanvasProduct<O extends object = object> {
    */
   clips?(elements: readonly CanvasElement[]): Map<string, ElementClip>;
   /**
+   * What a click on the element `hitId` selects (e.g. the group holding it, as in Figma), given
+   * the current selection: `deep` (Ctrl/Cmd+click) asks for the element itself, `enter`
+   * (double-click) for one level further into a group. Without it, clicks select what they hit.
+   */
+  selectTarget?(
+    hitId: string,
+    request: SelectTargetRequest,
+    elements: readonly CanvasElement[],
+  ): string;
+  /**
    * Runs when the select tool finishes dragging elements (with their members) to a new place,
    * inside the drag's undo step: e.g. puts them into the frame they were dropped on. `elements`
    * are the scene's, after the move.
@@ -96,4 +106,14 @@ export interface CanvasProduct<O extends object = object> {
    * z-order `index`, or `null` to ignore it.
    */
   pasteImage?(image: PastedImage, view: Rect, index: string, options: O): CanvasElement | null;
+}
+
+/** What `CanvasProduct.selectTarget` is asked with. */
+export interface SelectTargetRequest {
+  /** The current selection. */
+  selection: ReadonlySet<string>;
+  /** Select the hit element itself (Ctrl/Cmd+click). */
+  deep: boolean;
+  /** Go one level further in (double-click). */
+  enter: boolean;
 }

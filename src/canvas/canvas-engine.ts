@@ -1,4 +1,4 @@
-import type { Clipboard, DroppedFile } from "@shared/core";
+import { fontKey, type Clipboard, type DroppedFile } from "@shared/core";
 
 import { Camera } from "./camera";
 import { DEFAULT_VIEW_OPTIONS } from "./canvas-view";
@@ -38,7 +38,7 @@ import { bindKeyboard, bindWheel, EdgeAutoPan, Keymap, PointerInput } from "./in
 import { Renderer, type CanvasTheme } from "./render";
 import { Scene } from "./scene";
 import { ServiceCache, type ServiceDef } from "./services";
-import { loadFonts, TextEditor } from "./text";
+import { FontTracker, loadFonts, TextEditor } from "./text";
 import { createBaseTools, type CanvasPointer, type Tool, type ToolContext } from "./tools";
 import { debounce, delay, Disposables, Emitter, FrameScheduler, Store } from "./utils";
 import type {
@@ -79,6 +79,7 @@ export class CanvasEngine<O extends object = object> {
   private readonly camera = new Camera();
   private readonly renderer: Renderer;
   private readonly scene: Scene;
+  private readonly fontTracker: FontTracker;
   private readonly services: ServiceCache;
   private readonly clipboard: ElementClipboard<O>;
   private readonly systemClipboard: Clipboard;
@@ -109,7 +110,7 @@ export class CanvasEngine<O extends object = object> {
   private closing = false;
   private rendererReady = false;
 
-  constructor({ product, theme, document, clipboard }: CanvasEngineOptions<O>) {
+  constructor({ product, theme, document, clipboard, fonts }: CanvasEngineOptions<O>) {
     this.product = product;
     this.kinds = product.kinds;
     this.keymap = new Keymap(product.keybindings);
@@ -138,6 +139,7 @@ export class CanvasEngine<O extends object = object> {
       orderKeys: product.orderKeys?.bind(product),
       clips: product.clips?.bind(product),
     });
+    this.fontTracker = new FontTracker(fonts, (key) => this.handleFontLoad(key));
     this.systemClipboard = clipboard ?? new MemoryClipboard();
     this.clipboard = this.createClipboard(this.systemClipboard);
     const ctx = this.createToolContext();
@@ -209,6 +211,7 @@ export class CanvasEngine<O extends object = object> {
     this.frames.stop();
     this.autoPan.stop();
     this.updateTextZoom.cancel();
+    this.fontTracker.destroy();
     this.disposables.dispose();
     this.textEditor?.destroy();
     this.store.destroy();
@@ -599,6 +602,11 @@ export class CanvasEngine<O extends object = object> {
       setSelection: (ids) => this.setSelection(ids),
       setTool: (id) => this.setTool(id),
       elementAt: (world) => this.elementAt(world),
+      targetAt: (world, deep) => {
+        const hit = this.elementAt(world);
+        return hit && this.scene.get(this.targetOf(hit.id, { deep }));
+      },
+      targetOf: (id) => this.targetOf(id),
       elementsInRect: (rect) => this.scene.elementsInRect(rect),
       editText: (id, part) => this.textEditor?.start(id, part),
       editNewText: (el) => this.textEditor?.startDraft(el),
@@ -754,11 +762,40 @@ export class CanvasEngine<O extends object = object> {
     this.viewChanges.emit();
   }
 
+  /** A font some elements use has loaded: they're measured (`fontsLoaded`) and drawn again. */
+  private handleFontLoad(key: string): void {
+    const using = this.scene.elements.filter((el) =>
+      this.kinds
+        .kindOf(el)
+        .fonts(el)
+        .some((font) => fontKey(font) === key),
+    );
+    for (const el of using) {
+      const patch = this.kinds.kindOf(el).fontsLoaded(el);
+      if (patch) this.doc.updateUntracked(el.id, patch);
+    }
+    if (this.rendererReady) this.renderer.refreshText(using.map((el) => el.id));
+    this.requestRender();
+  }
+
+  /** What selecting `id` selects (see `CanvasProduct.selectTarget`). */
+  private targetOf(id: string, { deep = false, enter = false } = {}): string {
+    const request = { selection: this.scene.selection.ids, deep, enter };
+    return this.product.selectTarget?.(id, request, this.scene.elements) ?? id;
+  }
+
+  /** Double-click enters a group (one level further in), or edits the text of what's hit. */
   private handleDoubleClick(p: CanvasPointer): void {
     if (this.tool.id !== "select") return;
     const hit = this.elementAt(p.world);
-    const text = hit ? this.kinds.kindOf(hit).text : null;
-    if (!hit || !text) return;
+    if (!hit) return;
+    const entered = this.targetOf(hit.id, { enter: true });
+    if (entered !== this.targetOf(hit.id)) {
+      this.setSelection([entered]);
+      return;
+    }
+    const text = this.kinds.kindOf(hit).text;
+    if (!text) return;
     this.setSelection([hit.id]);
     this.textEditor?.start(hit.id, text.partAt?.(hit, p.world));
   }
@@ -768,8 +805,9 @@ export class CanvasEngine<O extends object = object> {
     this.textEditor?.commit();
     const tolerance = HIT_TOLERANCE_PX / this.camera.zoom;
     const hit = this.scene.elementAt(p.world, tolerance, true);
-    if (!hit) this.setSelection([]);
-    else if (!this.scene.selection.has(hit.id)) this.setSelection([hit.id]);
+    const target = hit && this.targetOf(hit.id);
+    if (!target) this.setSelection([]);
+    else if (!this.scene.selection.has(target)) this.setSelection([target]);
     this.setHover(null);
     const request: ContextMenuRequest = {
       screen: p.screen,
@@ -841,6 +879,7 @@ export class CanvasEngine<O extends object = object> {
   /** Re-reads the elements, and re-resolves the links between them. */
   private refreshScene(): void {
     this.scene.refresh();
+    this.fontTracker.request(this.scene.elements.flatMap((el) => this.kinds.kindOf(el).fonts(el)));
     for (const links of this.links) links.update(this.scene.elements);
   }
 

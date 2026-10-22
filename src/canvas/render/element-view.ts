@@ -99,15 +99,20 @@ export class ElementView extends Container {
 
   /** Lays the text out in a `w`×`h` box as the style says, the same way the text editor does. */
   placeText(value: string, style: ElementTextStyle, w: number, h: number): Text {
-    const text = this.setText(value, {
-      fontSize: style.fontSize,
-      color: style.color,
-      fontWeight: style.fontWeight,
-      align: style.align,
-      wrapWidth: Math.max(1, w - style.padX * 2),
-    });
-    const x = style.align === "center" ? (w - text.width) / 2 : style.padX;
-    const y = style.vAlign === "middle" ? (h - text.height) / 2 : style.padY;
+    const wrapWidth = Math.max(1, w - style.padX * 2);
+    const text = this.setText(value, { ...style, wrapWidth });
+    const x =
+      style.align === "center"
+        ? (w - text.width) / 2
+        : style.align === "right"
+          ? w - style.padX - text.width
+          : style.padX;
+    const y =
+      style.vAlign === "middle"
+        ? (h - text.height) / 2
+        : style.vAlign === "bottom"
+          ? h - style.padY - text.height
+          : style.padY;
     text.position.set(x, y);
     return text;
   }
@@ -254,6 +259,11 @@ export class ElementView extends Container {
     for (const node of [this.textNode, ...this.textSlots.values()]) {
       if (node && node.resolution !== resolution) node.resolution = resolution;
     }
+  }
+
+  /** Lays its texts out again (a font they use has just loaded, so they measure differently). */
+  refreshText(): void {
+    for (const node of [this.textNode, ...this.textSlots.values()]) node?.style.update();
   }
 
   /** Hides the image shown with `placeImage`, if any. */

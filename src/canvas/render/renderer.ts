@@ -130,6 +130,12 @@ export class Renderer {
     this.links.setTextZoom(zoom);
   }
 
+  /** Lays out these elements' texts again, e.g. once a font they use has loaded. */
+  refreshText(ids: readonly string[]): void {
+    this.elements.refreshText(ids);
+    this.frames.refreshText(ids);
+  }
+
   /** Hides an element's canvas text (or one part of it) while the DOM text editor shows it. */
   setHiddenText(hidden: HiddenText | null): void {
     this.elements.setHiddenText(hidden);

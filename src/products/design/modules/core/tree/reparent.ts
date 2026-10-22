@@ -1,12 +1,13 @@
 import type { CanvasDocument, CanvasElement, ElementKinds, ElementPatch } from "@canvas";
 
-import { isDesignNode } from "../node";
+import { DesignNodeKind, isDesignNode } from "../node";
 import { containerAt } from "./container-at";
 import { withDescendants } from "./tree-members";
 
 /**
  * After a drag (`onMoved`): each moved node whose parent didn't move with it goes into the
- * container now under its center (or to the top of the page), on top of its new siblings.
+ * container now under its center (or to the top of the page), on top of its new siblings. Nodes
+ * in a group stay in it.
  */
 export function reparentMoved(
   doc: CanvasDocument,
@@ -22,8 +23,12 @@ export function reparentMoved(
 
   for (const el of roots) {
     if (!el || !isDesignNode(el)) continue;
+    // Children of a node that isn't a container (a group) stay in it; the group follows them.
+    const parent = el.parentId ? byId.get(el.parentId) : undefined;
+    const parentKind = parent && kinds.kindOf(parent);
+    if (parentKind instanceof DesignNodeKind && !parentKind.container) continue;
     const exclude = withDescendants(new Set([el.id]), elements);
-    const parentId = containerAt(kinds.kindOf(el).bounds(el), elements, kinds, exclude)?.id ?? null;
+    const parentId = containerAt(el, elements, kinds, exclude)?.id ?? null;
     if (parentId === el.parentId) continue;
     patches.set(el.id, { parentId } as ElementPatch);
   }

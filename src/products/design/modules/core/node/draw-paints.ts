@@ -1,18 +1,20 @@
 import type { ElementView, PaintLayer } from "@canvas";
 import type { Graphics } from "pixi.js";
 
-import type { DesignNode } from "./design-node.types";
+import type { DesignNode, StrokeShape } from "./design-node.types";
 import type { Paint } from "./paint.types";
 
 /**
  * Draws a node's visible fills, bottom to top, then its visible strokes, over the shape `outline`
  * traces (in local coordinates): solid paints are filled or stroked, image paints are clipped to
- * the outline. The node's opacity and visibility apply to all of them.
+ * the outline. The node's opacity and visibility apply to all of them; `strokeShape` rounds the
+ * strokes' ends and corners (e.g. a pencil line).
  */
 export function drawPaints(
   view: ElementView,
   node: DesignNode,
   outline: (g: Graphics) => void,
+  strokeShape: StrokeShape = {},
 ): void {
   const layers: PaintLayer[] = [];
   for (const paint of node.fills) {
@@ -26,7 +28,12 @@ export function drawPaints(
         kind: "shape",
         draw: (g) => {
           outline(g);
-          g.stroke({ color: paint.color, alpha: paint.opacity, width: node.strokeWeight });
+          g.stroke({
+            color: paint.color,
+            alpha: paint.opacity,
+            width: node.strokeWeight,
+            ...strokeShape,
+          });
         },
       });
     }

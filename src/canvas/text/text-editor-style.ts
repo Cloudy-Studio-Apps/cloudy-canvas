@@ -1,5 +1,6 @@
-import { ELEMENT_DEFAULTS, type ElementTextStyle } from "../elements";
+import type { ElementTextStyle } from "../elements";
 import type { Size } from "../geometry.types";
+import { textFont } from "./text-font";
 
 /** Inline styles that make the textarea overlay match how the element's text is drawn on canvas. */
 export function textEditorStyle(
@@ -7,7 +8,7 @@ export function textEditorStyle(
   { w, h }: Size,
   wraps: boolean,
 ): Partial<CSSStyleDeclaration> {
-  const { fontSize } = style;
+  const font = textFont(style.fontSize, style);
   const padTop = style.vAlign === "top" ? style.padY : 0;
   return {
     position: "absolute",
@@ -21,10 +22,12 @@ export function textEditorStyle(
     overflow: "hidden",
     background: "transparent",
     boxSizing: "border-box",
-    fontFamily: ELEMENT_DEFAULTS.fontFamily,
-    fontSize: `${fontSize}px`,
-    fontWeight: style.fontWeight ?? "400",
-    lineHeight: `${fontSize * ELEMENT_DEFAULTS.lineHeight}px`,
+    fontFamily: font.family,
+    fontSize: `${font.size}px`,
+    fontWeight: font.weight,
+    fontStyle: font.style,
+    letterSpacing: `${font.letterSpacing}px`,
+    lineHeight: `${font.size * font.lineHeight}px`,
     color: style.color,
     caretColor: style.color,
     whiteSpace: wraps ? "pre-wrap" : "pre",

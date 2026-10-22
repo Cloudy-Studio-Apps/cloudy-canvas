@@ -27,3 +27,14 @@ export interface NodeSelectFieldProps<N extends DesignNode> extends NodeFieldPro
 }
 
 export type NodeCheckboxProps<N extends DesignNode> = NodeFieldProps<N, boolean>;
+
+/** One choice of `NodeOptionButtons`. */
+export interface NodeOption {
+  value: string;
+  label: string;
+  icon: ReactNode;
+}
+
+export interface NodeOptionButtonsProps<N extends DesignNode> extends NodeFieldProps<N, string> {
+  options: readonly NodeOption[];
+}

@@ -11,7 +11,8 @@ import { DesignNodeKind, isDesignNode } from "../node";
 /**
  * The design's clips (`CanvasProduct.clips`): a node inside frames that clip their content shows
  * only where all of them overlap. The nearest clipping frame gives the corner radius when its area
- * is the whole clip; a clip narrowed by an outer frame keeps square corners.
+ * is the whole clip; a clip narrowed by an outer frame keeps square corners. A node inside a
+ * hidden frame or group gets an empty clip, so it's hidden too.
  */
 export function treeClips(
   elements: readonly CanvasElement[],
@@ -27,7 +28,10 @@ export function treeClips(
     if (cached !== undefined) return cached;
     const parent = byId.get(parentId);
     let clip: ElementClip | null = null;
-    if (parent && isDesignNode(parent)) {
+    if (parent && isDesignNode(parent) && !parent.visible) {
+      // A hidden frame or group hides what it holds: nothing of it is drawn or hit.
+      clip = { rect: { x: parent.x, y: parent.y, w: 0, h: 0 }, radius: 0 };
+    } else if (parent && isDesignNode(parent)) {
       const kind = kinds.kindOf(parent);
       const own = kind instanceof DesignNodeKind ? kind.contentClip(parent) : null;
       const outer = clipInside(parent.parentId, depth + 1);

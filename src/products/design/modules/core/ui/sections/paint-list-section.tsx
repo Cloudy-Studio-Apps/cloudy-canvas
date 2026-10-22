@@ -17,6 +17,7 @@ export function PaintListSection({
   nodes,
   newPaint,
   children,
+  allowImage,
 }: PaintListSectionProps) {
   const edit = useEditNodes();
   const first = nodes[0]?.[field] ?? [];
@@ -55,7 +56,7 @@ export function PaintListSection({
               key={i}
               paint={paint}
               label={label}
-              allowImage={field === "fills"}
+              allowImage={allowImage}
               onChange={(next, info) =>
                 setPaints((current) => current.map((p, j) => (j === i ? next : p)), info)
               }

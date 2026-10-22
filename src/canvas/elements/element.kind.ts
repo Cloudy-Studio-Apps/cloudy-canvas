@@ -1,3 +1,5 @@
+import type { FontRequest } from "@shared/core";
+
 import { rectContainsPoint } from "../geometry";
 import type { Point, Rect, Size } from "../geometry.types";
 import type { ElementView } from "../render/element-view";
@@ -152,6 +154,20 @@ export abstract class ElementKind<
    */
   completePatch(_el: E, patch: ElementPatch<E>, _context: ElementBuildContext): ElementPatch<E> {
     return patch;
+  }
+
+  /** The font faces its text uses beyond the app's own (e.g. a design text's chosen font). */
+  fonts(_el: E): FontRequest[] {
+    return [];
+  }
+
+  /**
+   * Called when one of its fonts has loaded, after which its text is drawn again: returns what
+   * changes now that the text measures differently (e.g. an auto-sized text's size), or `null`.
+   * Written outside the undo history.
+   */
+  fontsLoaded(_el: E): ElementPatch<E> | null {
+    return null;
   }
 
   /** Ids of the document assets it shows (e.g. an image's file), so copies carry them along. */

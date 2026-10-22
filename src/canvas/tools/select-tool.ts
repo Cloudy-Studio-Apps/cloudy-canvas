@@ -31,7 +31,7 @@ export class SelectTool implements Tool {
     // click on the same element may pick a new one, or extend it with Shift or Ctrl/Cmd.
     const partBefore = this.ctx.getPart();
     this.ctx.setPart(null);
-    const hit = this.ctx.elementAt(p.world);
+    const hit = this.ctx.targetAt(p.world, p.modKey);
     this.ctx.setHover(null);
 
     if (!hit) {
@@ -81,7 +81,7 @@ export class SelectTool implements Tool {
     if (g.kind === "marquee") {
       const rect = rectFromPoints(g.start.world, p.world);
       this.ctx.setMarquee(rect);
-      const hits = this.ctx.elementsInRect(rect).map((el) => el.id);
+      const hits = this.ctx.elementsInRect(rect).map((el) => this.ctx.targetOf(el.id));
       this.ctx.setSelection(new Set([...g.base, ...hits]));
       return;
     }
@@ -127,7 +127,7 @@ export class SelectTool implements Tool {
   onHover(p: CanvasPointer): void {
     const interaction = this.ctx.interactionAt(p.world);
     this.ctx.setCursor(interaction ? interactionCursor(interaction) : this.cursor);
-    const hit = this.ctx.elementAt(p.world);
+    const hit = this.ctx.targetAt(p.world, p.modKey);
     if (!hit && (interaction || this.keepsHover(p))) return;
     this.ctx.setHover(hit && !this.ctx.getSelection().has(hit.id) ? hit.id : null);
   }

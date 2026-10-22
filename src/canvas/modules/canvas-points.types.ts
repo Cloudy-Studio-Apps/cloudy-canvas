@@ -1,6 +1,6 @@
 import type { ExtensionPoint, Shortcut } from "@shared/core";
 
-import type { CanvasProduct } from "../canvas-product.types";
+import type { CanvasProduct, SelectTargetRequest } from "../canvas-product.types";
 import type { CanvasViewOptions } from "../canvas-view.types";
 import type { CanvasDocument } from "../document";
 import type { CanvasElement, ElementKind, ElementKinds } from "../elements";
@@ -50,6 +50,14 @@ export type ClipsHook<O extends object> = (
   kinds: ElementKinds<O>,
 ) => Map<string, ElementClip>;
 
+/** See `CanvasProduct.selectTarget`; only one module may decide it. */
+export type SelectTargetHook<O extends object> = (
+  hitId: string,
+  request: SelectTargetRequest,
+  elements: readonly CanvasElement[],
+  kinds: ElementKinds<O>,
+) => string;
+
 /** See `CanvasProduct.onMoved`; hooks run one after another in module order. */
 export type OnMovedHook<O extends object> = (
   doc: CanvasDocument,
@@ -82,6 +90,8 @@ export interface CanvasPoints<O extends object> {
   drawOrder: ExtensionPoint<DrawOrderHook<O>>;
   /** What clips each element (one module at most; two throw). */
   clips: ExtensionPoint<ClipsHook<O>>;
+  /** What a click selects (one module at most; two throw). */
+  selectTarget: ExtensionPoint<SelectTargetHook<O>>;
   onMoved: ExtensionPoint<OnMovedHook<O>>;
   links: ExtensionPoint<() => CanvasLinks>;
   resolveElements: ExtensionPoint<ResolveElementsHook<O>>;

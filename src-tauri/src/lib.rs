@@ -3,6 +3,7 @@
 mod app_links;
 mod mcp;
 mod open_files;
+mod system_fonts;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -27,7 +28,8 @@ pub fn run() {
             mcp::commands::mcp_status,
             mcp::commands::mcp_set_enabled,
             open_files::launch_files,
-            app_links::launch_links
+            app_links::launch_links,
+            system_fonts::system_fonts
         ])
         .setup(|app| {
             mcp::start(app.handle());

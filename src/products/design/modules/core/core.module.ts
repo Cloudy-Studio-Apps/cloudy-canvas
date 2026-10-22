@@ -89,7 +89,13 @@ export const coreModule = defineModule({
         when: allKinds((kind) => kind.fillable),
         component: FillSection,
       },
-      { id: "strokes", tab: "design", order: 70, when: someNodes, component: StrokeSection },
+      {
+        id: "strokes",
+        tab: "design",
+        order: 70,
+        when: allKinds((kind) => kind.strokable),
+        component: StrokeSection,
+      },
       { id: "export", tab: "design", order: 90, when: () => true, component: ExportSection },
       {
         id: "prototype",

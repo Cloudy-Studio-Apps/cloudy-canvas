@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 
 import type { LayerTree } from "@design";
 import { PanelIconButton } from "@design/ui/components/panel";
-import { useDesignState } from "@design/ui/design-engine-context";
+import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
 import { LayerRow } from "./layer-row";
 import { LayersSearch } from "./layers-search";
 import { matchingLayers } from "./matching-layers";
@@ -17,6 +17,7 @@ const FLAT: LayerTree = new Map();
 /** The left panel's Layers tab: the page's layer tree (topmost first), searchable by name, then
  * the pages. */
 export function LayersTab() {
+  const engine = useDesignEngine();
   const tree = useLayerTree();
   const selectedIds = useDesignState((state) => state.selectedIds);
   const selected = useMemo(() => new Set(selectedIds), [selectedIds]);
@@ -25,7 +26,7 @@ export function LayersTab() {
   const [search, setSearch] = useState<string | null>(null);
   const searching = search !== null && search.trim() !== "";
   // While searching, the matches show as a flat list.
-  const roots = searching ? matchingLayers(tree, search) : (tree.get(null) ?? []);
+  const roots = searching ? matchingLayers(tree, search, engine.kinds) : (tree.get(null) ?? []);
 
   return (
     <>
@@ -50,7 +51,7 @@ export function LayersTab() {
           <p className="px-3 text-xs text-muted-foreground">
             {searching
               ? "No layer has that name."
-              : "Draw a frame (F) or a rectangle (R) to add a layer."}
+              : "Draw a frame (F), a shape (R) or text (T) to add a layer."}
           </p>
         ) : (
           <ul

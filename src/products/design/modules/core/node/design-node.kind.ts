@@ -35,8 +35,25 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
     return null;
   }
 
+  /**
+   * Whether it may go into this container when drawn or dropped there (sections only go into
+   * sections; everything else into any container).
+   */
+  canGoInto(_parent: DesignNode, _parentKind: DesignNodeKind): boolean {
+    return true;
+  }
+
   /** Whether it has an inside to fill (lines don't: they only show strokes). */
   readonly fillable: boolean = true;
+  /** Whether it shows strokes (text doesn't yet). */
+  readonly strokable: boolean = true;
+  /** Whether its fills can be images (text can't: its fill is its color). */
+  readonly imageFills: boolean = true;
+
+  /** Its name in the layers panel: the one it was given, or one it derives (e.g. a text's). */
+  layerName(el: E): string {
+    return el.name || this.label;
+  }
 
   /**
    * Draws the node in local coordinates, usually with `drawPaints(view, el, outline)`, which also
@@ -69,6 +86,6 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
   }
 
   override describe(el: E): ElementDescription {
-    return { label: el.name };
+    return { label: this.layerName(el) };
   }
 }

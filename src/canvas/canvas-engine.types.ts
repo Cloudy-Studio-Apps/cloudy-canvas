@@ -1,4 +1,4 @@
-import type { Clipboard } from "@shared/core";
+import type { Clipboard, FontLoader } from "@shared/core";
 
 import type { CanvasProduct } from "./canvas-product.types";
 import type { CanvasDocument } from "./document";
@@ -28,6 +28,8 @@ export interface CanvasEngineOptions<O extends object = object> {
   document?: CanvasDocument;
   /** The system clipboard for copy and paste; without one, copies only paste in this engine. */
   clipboard?: Clipboard;
+  /** Loads the fonts elements use (`ElementKind.fonts`); without one, text uses what's there. */
+  fonts?: FontLoader;
 }
 
 /**

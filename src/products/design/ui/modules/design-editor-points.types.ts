@@ -49,6 +49,15 @@ export interface ToolSidebarEntry {
   component: ComponentType;
 }
 
+/**
+ * A layer type's icon in the layers panel, for types no tool creates (e.g. groups); the others
+ * show their tool's icon.
+ */
+export interface LayerIconEntry {
+  type: string;
+  icon: ExtensionIcon;
+}
+
 /** What a main menu item can reach when it's picked. */
 export interface MainMenuContext {
   engine: DesignEngine;
@@ -76,4 +85,5 @@ export interface DesignEditorPoints extends EditorPoints {
   propertySections: ExtensionPoint<PropertySectionEntry>;
   mainMenu: ExtensionPoint<MainMenuGroup>;
   toolSidebars: ExtensionPoint<ToolSidebarEntry>;
+  layerIcons: ExtensionPoint<LayerIconEntry>;
 }

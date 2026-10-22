@@ -2,11 +2,13 @@ import { isModKey } from "@shared/core";
 
 import type { Camera } from "../camera";
 import type { CanvasDocument } from "../document";
-import type { CanvasElement, ElementKinds, ElementText } from "../elements";
+import type { CanvasElement, ElementKinds, ElementText, TextSizing } from "../elements";
 import type { Rect } from "../geometry.types";
 import { Disposables } from "../utils";
 import { textEditorStyle } from "./text-editor-style";
-import { measureText } from "./text-metrics";
+import { textFont } from "./text-font";
+import type { TextFont } from "./text-font.types";
+import { measureTextBlock } from "./text-metrics";
 import type { TextEditorHooks, Session } from "./text-editor.types";
 
 /**
@@ -97,7 +99,10 @@ export class TextEditor {
     textarea.spellcheck = false;
     textarea.setAttribute("aria-label", `${this.kinds.kindOf(el).label} text`);
     textarea.dataset.canvasTextEditor = "";
-    Object.assign(textarea.style, textEditorStyle(text.style(el, at), box, !text.fitContent));
+    Object.assign(
+      textarea.style,
+      textEditorStyle(text.style(el, at), box, sizingOf(text, el) !== "content"),
+    );
 
     const listeners = new Disposables();
     listeners.listen(textarea, "input", () => this.resizeToContent());
@@ -132,8 +137,8 @@ export class TextEditor {
   }
 
   /**
-   * Text sized to its element grows with what's typed; text centered in its element keeps its
-   * wrapped block in the middle.
+   * Text sized to its element grows with what's typed (both ways, or only down with
+   * `fitHeight`); text centered or at the bottom of its element keeps its wrapped block there.
    */
   private resizeToContent(): void {
     const session = this.session;
@@ -141,9 +146,11 @@ export class TextEditor {
     const text = el ? this.kinds.kindOf(el).text : null;
     if (!session || !el || !text) return;
     const style = text.style(el, session.part ?? undefined);
-    if (text.fitContent) fitToContent(session.textarea, style.fontSize);
-    else if (style.vAlign === "middle")
-      centerVertically(session.textarea, partBox(el, text, session.part).h);
+    const sizing = sizingOf(text, el);
+    if (sizing === "content") fitToContent(session.textarea, textFont(style.fontSize, style));
+    else if (sizing === "height") fitHeight(session.textarea);
+    else if (style.vAlign !== "top")
+      alignVertically(session.textarea, partBox(el, text, session.part).h, style.vAlign);
   }
 
   /** The element being edited: the draft, or the element as the scene sees it. */
@@ -194,18 +201,34 @@ function partBox<E extends CanvasElement>(el: E, text: ElementText<E>, part: str
   return { x: 0, y: 0, w: el.w, h: el.h };
 }
 
-/** Pads the top of the textarea so its (wrapped) text sits in the middle, like on canvas. */
-function centerVertically(textarea: HTMLTextAreaElement, height: number): void {
+/** Pads the top of the textarea so its (wrapped) text sits in the middle or at the bottom. */
+function alignVertically(
+  textarea: HTMLTextAreaElement,
+  height: number,
+  vAlign: "middle" | "bottom",
+): void {
   textarea.style.paddingTop = "0";
   textarea.style.height = "auto";
-  const content = textarea.scrollHeight;
-  textarea.style.paddingTop = `${Math.max(0, (height - content) / 2)}px`;
+  const free = Math.max(0, height - textarea.scrollHeight);
+  textarea.style.paddingTop = `${vAlign === "middle" ? free / 2 : free}px`;
   textarea.style.height = `${height}px`;
 }
 
+/** Grows the textarea down to its wrapped text (its width stays). */
+function fitHeight(textarea: HTMLTextAreaElement): void {
+  textarea.style.height = "auto";
+  textarea.style.height = `${textarea.scrollHeight}px`;
+}
+
 /** Sizes the textarea to its unwrapped text, with room for the caret. */
-function fitToContent(textarea: HTMLTextAreaElement, fontSize: number): void {
-  const size = measureText(textarea.value || " ", fontSize);
-  textarea.style.width = `${size.w + fontSize}px`;
+function fitToContent(textarea: HTMLTextAreaElement, font: TextFont): void {
+  const size = measureTextBlock(textarea.value || " ", font);
+  textarea.style.width = `${size.w + font.size}px`;
   textarea.style.height = `${size.h}px`;
+}
+
+/** How the edited element sizes to its text (see `ElementText.sizing`). */
+function sizingOf<E extends CanvasElement>(text: ElementText<E>, el: E): TextSizing {
+  if (text.sizing) return text.sizing(el);
+  return text.fitContent ? "content" : text.fitHeight ? "height" : "fixed";
 }

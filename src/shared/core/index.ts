@@ -16,3 +16,4 @@ export type * from "./storage.types";
 export * from "./links";
 export * from "./modules";
 export * from "./plugins";
+export * from "./fonts";

@@ -30,7 +30,7 @@ export const frameModule = defineModule({
       tool: "frame",
       element: "frame",
       icon: Frame,
-      toolbar: { group: 1, order: 10 },
+      toolbar: { group: 1, order: 10, menu: "frames" },
     });
     host.contribute(designEditor.toolSidebars, { tool: "frame", component: FramePresetsSidebar });
     host.contribute(designEditor.propertySections, {

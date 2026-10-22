@@ -1,13 +1,14 @@
-import { STROKE_DEFAULTS } from "./stroke.defaults";
+import { distanceToSegmentSq } from "./geometry";
 
 /**
- * Cleans up a hand-drawn stroke: drops points that stray less than `tolerance` from the line
- * (Ramer–Douglas–Peucker), then rounds the corners left (Chaikin). The ends stay where they are.
+ * Cleans up a hand-drawn line (a flat [x0, y0, x1, y1, …] list): drops points that stray less
+ * than `tolerance` from the line (Ramer–Douglas–Peucker), then rounds the corners left (`passes`
+ * of Chaikin). The ends stay where they are.
  */
-export function smoothPoints(points: number[], tolerance: number): number[] {
+export function smoothPoints(points: number[], tolerance: number, passes = 2): number[] {
   if (points.length < 6) return points;
   let smoothed = simplify(points, tolerance);
-  for (let pass = 0; pass < STROKE_DEFAULTS.smoothPasses; pass++) smoothed = cutCorners(smoothed);
+  for (let pass = 0; pass < passes; pass++) smoothed = cutCorners(smoothed);
   return smoothed;
 }
 
@@ -17,12 +18,15 @@ function simplify(points: number[], tolerance: number): number[] {
   keep[0] = 1;
   keep[count - 1] = 1;
   const stack: [number, number][] = [[0, count - 1]];
+  const at = (i: number) => ({ x: points[i * 2]!, y: points[i * 2 + 1]! });
   while (stack.length > 0) {
     const [first, last] = stack.pop()!;
+    const a = at(first);
+    const b = at(last);
     let farthest = -1;
-    let max = tolerance;
+    let max = tolerance * tolerance;
     for (let i = first + 1; i < last; i++) {
-      const d = distanceToSegment(points, i, first, last);
+      const d = distanceToSegmentSq(at(i), a.x, a.y, b.x, b.y);
       if (d > max) {
         max = d;
         farthest = i;
@@ -35,18 +39,6 @@ function simplify(points: number[], tolerance: number): number[] {
   const out: number[] = [];
   for (let i = 0; i < count; i++) if (keep[i]) out.push(points[i * 2]!, points[i * 2 + 1]!);
   return out;
-}
-
-function distanceToSegment(points: number[], i: number, a: number, b: number): number {
-  const px = points[i * 2]!;
-  const py = points[i * 2 + 1]!;
-  const ax = points[a * 2]!;
-  const ay = points[a * 2 + 1]!;
-  const dx = points[b * 2]! - ax;
-  const dy = points[b * 2 + 1]! - ay;
-  const length = dx * dx + dy * dy;
-  const t = length === 0 ? 0 : Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / length));
-  return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
 }
 
 /** One Chaikin pass: each inner corner is replaced by two points a quarter along its sides. */

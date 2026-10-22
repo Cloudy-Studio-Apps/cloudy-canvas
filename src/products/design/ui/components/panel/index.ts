@@ -10,6 +10,7 @@ export { FieldBox } from "./field-box";
 export { HexInput } from "./hex-input";
 export { NodeCheckbox } from "./node-checkbox";
 export { NodeNumberField } from "./node-number-field";
+export { NodeOptionButtons } from "./node-option-buttons";
 export { NodeSelectField } from "./node-select-field";
 export { NumberField } from "./number-field";
 export { PaintField } from "./paint-field";
