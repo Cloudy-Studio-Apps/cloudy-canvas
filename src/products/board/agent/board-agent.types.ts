@@ -28,6 +28,8 @@ export interface AgentHost {
   /** Opens a board in the window and resolves once it's ready. */
   openBoard(id: string): Promise<AgentBoard>;
   newBoard(): Promise<AgentBoard>;
+  /** The installed plugins and what happened to them when the app started. */
+  plugins(): AgentPlugin[];
   /** Writes a file to an absolute path (exports), replacing what's there. */
   writeFile(path: string, file: Blob): Promise<void>;
 }
@@ -47,4 +49,16 @@ export interface BoardAgentContext {
 export interface BoardAgentToolGroup {
   id: string;
   tools(context: BoardAgentContext): BoardAgentTool[];
+}
+
+/** An installed plugin, as agents see it. */
+export interface AgentPlugin {
+  id: string;
+  name: string;
+  version: string;
+  description?: string;
+  state: "enabled" | "disabled" | "failed";
+  error?: string;
+  /** The agent tools it adds (when enabled). */
+  tools: string[];
 }

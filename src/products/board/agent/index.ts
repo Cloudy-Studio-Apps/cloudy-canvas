@@ -16,3 +16,4 @@ export { fileTools } from "./file-tools";
 export { shapeEditTools } from "./shape-edit-tools";
 export { stickerTools } from "./sticker-tools";
 export { viewTools } from "./view-tools";
+export { pluginTools } from "./plugin-tools";

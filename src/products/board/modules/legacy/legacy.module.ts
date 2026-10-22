@@ -37,6 +37,7 @@ import {
   erTools,
   exportTools,
   fileTools,
+  pluginTools,
   shapeEditTools,
   stickerTools,
   viewTools,
@@ -200,6 +201,7 @@ export const legacyModule = defineModule({
       { id: "view", tools: () => viewTools },
       { id: "export", tools: () => exportTools },
       { id: "files", tools: () => fileTools },
+      { id: "plugins", tools: () => pluginTools },
     );
 
     host.contribute(

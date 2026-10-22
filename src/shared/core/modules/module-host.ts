@@ -1,47 +1,48 @@
-import type { AppModule, ExtensionPoint, ModuleHost } from "./modules.types";
+import type { AppModule, ExtensionPoint, ModuleHost, ModuleLoadOptions } from "./modules.types";
 import { sortModules } from "./sort-modules";
 
 interface PointItems {
   items: unknown[];
-  /** Key → id of the module that contributed it. */
+  /** Key → the item and the id of the module that contributed it. */
   keys: Map<string, { item: unknown; module: string }>;
 }
 
+type Points = Map<ExtensionPoint<unknown>, PointItems>;
+
 /**
  * Loads modules: sorts them by their dependencies and runs each `register`. Afterwards the host
- * is read-only, so what the points hold never changes while an editor uses them.
+ * is read-only, so what the points hold never changes while an editor uses them. An optional
+ * module's contributions only count once its `register` finished without throwing; if it fails,
+ * it's left out (with the modules that require it) and reported through `onError`.
  */
-export function createModuleHost(modules: readonly AppModule[]): ModuleHost {
-  const sorted = sortModules(modules);
-  const ids = new Set(sorted.map((module) => module.id));
-  const points = new Map<ExtensionPoint<unknown>, PointItems>();
-  let registering: string | null = null;
-
-  const itemsOf = (point: ExtensionPoint<unknown>): PointItems => {
-    let entry = points.get(point);
-    if (!entry) {
-      entry = { items: [], keys: new Map() };
-      points.set(point, entry);
-    }
-    return entry;
-  };
+export function createModuleHost(
+  modules: readonly AppModule[],
+  options: ModuleLoadOptions = {},
+): ModuleHost {
+  const { isOptional = () => false, onError } = options;
+  const sorted = sortModules(modules, options);
+  const loaded = new Set<string>();
+  const points: Points = new Map();
+  /** Where the module that's registering contributes: the points, or its own staging area. */
+  let target: { module: string; points: Points } | null = null;
 
   const host: ModuleHost = {
     contribute<T>(point: ExtensionPoint<T>, ...items: T[]) {
-      if (!registering) {
+      if (!target) {
         throw new Error(`"${point.id}" can only be contributed to while modules register.`);
       }
-      const entry = itemsOf(point as ExtensionPoint<unknown>);
+      const entry = itemsOf(target.points, point as ExtensionPoint<unknown>);
       for (const item of items) {
         if (point.keyOf) {
           const key = point.keyOf(item);
-          const taken = entry.keys.get(key);
+          const taken =
+            points.get(point as ExtensionPoint<unknown>)?.keys.get(key) ?? entry.keys.get(key);
           if (taken) {
             throw new Error(
-              `The module "${registering}" contributes "${key}" to "${point.id}", which the module "${taken.module}" already did.`,
+              `The module "${target.module}" contributes "${key}" to "${point.id}", which the module "${taken.module}" already did.`,
             );
           }
-          entry.keys.set(key, { item, module: registering });
+          entry.keys.set(key, { item, module: target.module });
         }
         entry.items.push(item);
       }
@@ -50,16 +51,60 @@ export function createModuleHost(modules: readonly AppModule[]): ModuleHost {
       (points.get(point as ExtensionPoint<unknown>)?.items ?? []) as readonly T[],
     find: <T>(point: ExtensionPoint<T>, key: string) =>
       points.get(point as ExtensionPoint<unknown>)?.keys.get(key)?.item as T | undefined,
-    has: (moduleId) => ids.has(moduleId),
+    ownerOf: <T>(point: ExtensionPoint<T>, key: string) =>
+      points.get(point as ExtensionPoint<unknown>)?.keys.get(key)?.module,
+    has: (moduleId) => loaded.has(moduleId),
   };
 
   for (const module of sorted) {
-    registering = module.id;
+    if (!isOptional(module)) {
+      target = { module: module.id, points };
+      try {
+        module.register(host);
+      } finally {
+        target = null;
+      }
+      loaded.add(module.id);
+      continue;
+    }
+
+    const missing = module.requires?.find((id) => !loaded.has(id));
+    if (missing) {
+      onError?.(
+        module,
+        new Error(`The module "${module.id}" requires "${missing}", which failed.`),
+      );
+      continue;
+    }
+    const staged: Points = new Map();
+    target = { module: module.id, points: staged };
     try {
       module.register(host);
+    } catch (error) {
+      onError?.(module, error instanceof Error ? error : new Error(String(error)));
+      continue;
     } finally {
-      registering = null;
+      target = null;
     }
+    commit(points, staged);
+    loaded.add(module.id);
   }
   return host;
+}
+
+function itemsOf(points: Points, point: ExtensionPoint<unknown>): PointItems {
+  let entry = points.get(point);
+  if (!entry) {
+    entry = { items: [], keys: new Map() };
+    points.set(point, entry);
+  }
+  return entry;
+}
+
+function commit(points: Points, staged: Points): void {
+  for (const [point, { items, keys }] of staged) {
+    const entry = itemsOf(points, point);
+    entry.items.push(...items);
+    for (const [key, value] of keys) entry.keys.set(key, value);
+  }
 }

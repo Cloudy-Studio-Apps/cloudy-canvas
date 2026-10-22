@@ -8,6 +8,7 @@ import { AboutSection } from "./sections/about-section";
 import { AgentsSection } from "./sections/agents-section";
 import { DedicationCard } from "./sections/dedication-card";
 import { FilesSection } from "./sections/files-section";
+import { PluginsSection } from "./sections/plugins";
 import { ShortcutsSection } from "./sections/shortcuts-section";
 
 export function SettingsPage() {
@@ -27,6 +28,7 @@ export function SettingsPage() {
         <DedicationCard />
         <AgentsSection />
         <FilesSection />
+        <PluginsSection />
         <ShortcutsSection />
       </PageContainer>
     </div>

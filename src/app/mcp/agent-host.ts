@@ -3,6 +3,7 @@ import type { AgentBoard, AgentHost } from "@board";
 import { getActiveBoard, waitForActiveBoard } from "@board/ui";
 import { storage, writeExportFile } from "@platform";
 import { router } from "../router";
+import { agentPlugins } from "./agent-plugins";
 
 /** What agent tools reach outside the engine: the open board, recent files and navigation. */
 export const agentHost: AgentHost = {
@@ -21,6 +22,7 @@ export const agentHost: AgentHost = {
     return showBoard(id);
   },
   newBoard: () => showBoard(createId()),
+  plugins: agentPlugins,
   writeFile: writeExportFile,
 };
 

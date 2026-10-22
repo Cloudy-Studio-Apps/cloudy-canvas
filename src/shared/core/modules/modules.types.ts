@@ -25,6 +25,8 @@ export interface ModuleHost {
   get<T>(point: ExtensionPoint<T>): readonly T[];
   /** The item with this key on a keyed point. */
   find<T>(point: ExtensionPoint<T>, key: string): T | undefined;
+  /** The id of the module that contributed the item with this key on a keyed point. */
+  ownerOf<T>(point: ExtensionPoint<T>, key: string): string | undefined;
   /** Whether a module with this id is loaded. */
   has(moduleId: string): boolean;
 }
@@ -41,4 +43,16 @@ export interface AppModule {
   /** Modules this one registers after when they're loaded (e.g. to chain hooks in order). */
   readonly after?: readonly string[];
   register(host: ModuleHost): void;
+}
+
+/** How `createModuleHost` treats modules that may fail without stopping the others (plugins). */
+export interface ModuleLoadOptions {
+  /**
+   * Modules that are left out when they fail (their `register` throws, a module they require is
+   * missing or left out, they collide with another module or depend on themselves in a loop).
+   * The others still throw.
+   */
+  isOptional?: (module: AppModule) => boolean;
+  /** Told about each optional module that was left out, and why. */
+  onError?: (module: AppModule, error: Error) => void;
 }
