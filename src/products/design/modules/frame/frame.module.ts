@@ -7,9 +7,12 @@ import { designCanvas } from "../../design-points";
 import { BoxDrawTool } from "../core";
 import { FrameKind } from "./frame.kind";
 import { FrameSection } from "./ui/frame-section";
-import { FrameToolOptions } from "./ui/frame-tool-options";
+import { FramePresetsSidebar } from "./ui/frame-presets-sidebar";
 
-/** Frames: the kind, the tool (F, A) with its size presets, and the frame section. */
+/**
+ * Frames: the kind, the tool (F, A) with its presets sidebar (shown in the properties panel while
+ * the tool is on), and the frame section.
+ */
 export const frameModule = defineModule({
   id: "frame",
   requires: ["core"],
@@ -29,7 +32,7 @@ export const frameModule = defineModule({
       icon: Frame,
       toolbar: { group: 1, order: 10 },
     });
-    host.contribute(designEditor.toolPanels, { tool: "frame", component: FrameToolOptions });
+    host.contribute(designEditor.toolSidebars, { tool: "frame", component: FramePresetsSidebar });
     host.contribute(designEditor.propertySections, {
       id: "frame",
       tab: "design",

@@ -26,3 +26,9 @@ export interface FramePreset {
   group: string;
   size: Size;
 }
+
+/** The presets of one group (Phone, Tablet, …), as the sidebar lists them. */
+export interface FramePresetGroup {
+  group: string;
+  presets: readonly FramePreset[];
+}

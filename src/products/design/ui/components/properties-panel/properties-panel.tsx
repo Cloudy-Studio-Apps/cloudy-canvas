@@ -1,21 +1,35 @@
 import { Bot, Download } from "lucide-react";
 
-import { HistoryControls, ToolButton, ZoomMenu } from "@canvas-ui";
+import {
+  HistoryControls,
+  ToolButton,
+  useEditorModules,
+  useEngineState,
+  ZoomMenu,
+} from "@canvas-ui";
 import { AgentServerMenu } from "@shared/agent-server";
 import { useAgentServerStore } from "@shared/stores/agent-server-store";
 import { Button } from "@shared/ui/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@shared/ui/components/ui/tabs";
 import { useDesignEngine } from "../../design-engine-context";
 import { DESIGN_LAYOUT } from "../../design-layout";
+import { designEditor } from "../../modules";
 import { useDesignPanelStore } from "../../stores/design-panel-store";
 import { PropertySections } from "./property-sections";
 
-/** The right panel: history, agents and export, then the Design/Prototype tabs and the zoom. */
+/**
+ * The right panel: history, agents and export, then the Design/Prototype tabs and the zoom, or
+ * the active tool's sidebar (`toolSidebars`).
+ */
 export function PropertiesPanel() {
   const engine = useDesignEngine();
   const agentsEnabled = useAgentServerStore((state) => state.enabled);
   const tab = useDesignPanelStore((state) => state.propertiesTab);
   const setTab = useDesignPanelStore((state) => state.setPropertiesTab);
+  const { host } = useEditorModules();
+  const tool = useEngineState((state) => state.tool);
+  // The active tool's sidebar (e.g. the frame presets) replaces the sections while it's on.
+  const ToolSidebar = host.find(designEditor.toolSidebars, tool)?.component;
 
   return (
     <aside
@@ -43,29 +57,35 @@ export function PropertiesPanel() {
         </Button>
       </header>
 
-      <Tabs
-        value={tab}
-        onValueChange={(value) => setTab(value === "prototype" ? "prototype" : "design")}
-        className="min-h-0 flex-1 gap-0"
-      >
-        <div className="flex h-11 shrink-0 items-center justify-between border-b px-2">
-          <TabsList className="h-7">
-            <TabsTrigger value="design" className="px-2.5 text-xs">
-              Design
-            </TabsTrigger>
-            <TabsTrigger value="prototype" className="px-2.5 text-xs">
-              Prototype
-            </TabsTrigger>
-          </TabsList>
-          <ZoomMenu side="bottom" />
+      {ToolSidebar ? (
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <ToolSidebar />
         </div>
-        <TabsContent value="design" className="min-h-0 overflow-y-auto">
-          <PropertySections tab="design" />
-        </TabsContent>
-        <TabsContent value="prototype" className="min-h-0 overflow-y-auto">
-          <PropertySections tab="prototype" />
-        </TabsContent>
-      </Tabs>
+      ) : (
+        <Tabs
+          value={tab}
+          onValueChange={(value) => setTab(value === "prototype" ? "prototype" : "design")}
+          className="min-h-0 flex-1 gap-0"
+        >
+          <div className="flex h-11 shrink-0 items-center justify-between border-b px-2">
+            <TabsList className="h-7">
+              <TabsTrigger value="design" className="px-2.5 text-xs">
+                Design
+              </TabsTrigger>
+              <TabsTrigger value="prototype" className="px-2.5 text-xs">
+                Prototype
+              </TabsTrigger>
+            </TabsList>
+            <ZoomMenu side="bottom" />
+          </div>
+          <TabsContent value="design" className="min-h-0 overflow-y-auto">
+            <PropertySections tab="design" />
+          </TabsContent>
+          <TabsContent value="prototype" className="min-h-0 overflow-y-auto">
+            <PropertySections tab="prototype" />
+          </TabsContent>
+        </Tabs>
+      )}
     </aside>
   );
 }

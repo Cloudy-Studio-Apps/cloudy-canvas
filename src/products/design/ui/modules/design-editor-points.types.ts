@@ -40,6 +40,15 @@ export interface PropertySectionEntry {
   component: ComponentType<PropertySectionProps>;
 }
 
+/**
+ * What the properties panel shows instead of the selection's sections while a tool is on (e.g.
+ * the frame tool's presets, as in Figma).
+ */
+export interface ToolSidebarEntry {
+  tool: string;
+  component: ComponentType;
+}
+
 /** What a main menu item can reach when it's picked. */
 export interface MainMenuContext {
   engine: DesignEngine;
@@ -66,4 +75,5 @@ export interface DesignEditorPoints extends EditorPoints {
   leftTabs: ExtensionPoint<LeftTabEntry>;
   propertySections: ExtensionPoint<PropertySectionEntry>;
   mainMenu: ExtensionPoint<MainMenuGroup>;
+  toolSidebars: ExtensionPoint<ToolSidebarEntry>;
 }
