@@ -2,11 +2,9 @@ import { Plus } from "lucide-react";
 
 import { DB_HEADER_COLORS } from "@board";
 import { Button } from "@shared/ui/components/ui/button";
-import { ColorSwatch } from "@canvas-ui";
+import { ColorSwatch, CommitInput, CommitTextarea } from "@canvas-ui";
 import { useBoardSchema } from "../schema";
 import { ColumnRow } from "./column-row";
-import { CommitInput } from "./commit-input";
-import { CommitTextarea } from "./commit-textarea";
 import { IncomingRefs } from "./incoming-refs";
 import { IndexList } from "./index-list";
 import type { TableVisualEditorProps } from "./table-visual-editor.types";

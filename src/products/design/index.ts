@@ -1,5 +1,9 @@
-// Designs (`.cdesign`, Figma-style). Engine-side and framework-free, like `products/board`: the
-// product definition and its element types. The React editor is in `ui/`. Just a skeleton so far.
+// Designs (`.cdesign`, Figma-style). Everything here is engine-side and framework-free: the points
+// the design's modules plug into, the node base every element extends, the layer tree, the
+// modules' engine side and the file format. The React editor is in `ui/`, which also composes the
+// product from the modules (`getDesignProduct`).
+export type { DesignEngine, DesignEngineState } from "./design-engine.types";
 export type { DesignToolOptions } from "./design-options.types";
-export { designProduct } from "./design-product";
-export * from "./elements";
+export { designCanvas, designMigrations } from "./design-points";
+export * from "./file";
+export * from "./modules";

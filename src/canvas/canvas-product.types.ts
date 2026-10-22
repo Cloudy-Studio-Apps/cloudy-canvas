@@ -1,3 +1,4 @@
+import type { CanvasViewOptions } from "./canvas-view.types";
 import type { CopyContext, PastedImage } from "./clipboard";
 import type { CanvasDocument } from "./document";
 import type { CanvasElement, ElementKinds } from "./elements";
@@ -26,6 +27,24 @@ export interface CanvasProduct<O extends object = object> {
   readonly hostCommands?: readonly string[];
   /** Tool options a new editor starts with. */
   readonly defaultOptions: O;
+  /** Zoom range and background grid; unset values are `DEFAULT_VIEW_OPTIONS`'. */
+  readonly view?: Partial<CanvasViewOptions>;
+  /**
+   * Drawing order keys (compared as strings, bottom to top) for elements whose order isn't their
+   * own `index` alone, e.g. nodes of a tree drawn after their parent. Elements left out get
+   * `zOrderKey`. `elements` are the scene's, with derived geometry resolved.
+   */
+  orderKeys?(elements: readonly CanvasElement[]): Map<string, string>;
+  /**
+   * Runs when the select tool finishes dragging elements (with their members) to a new place,
+   * inside the drag's undo step: e.g. puts them into the frame they were dropped on. `elements`
+   * are the scene's, after the move.
+   */
+  onMoved?(
+    doc: CanvasDocument,
+    moved: ReadonlySet<string>,
+    elements: readonly CanvasElement[],
+  ): void;
   /**
    * Gives elements whose geometry follows others (e.g. a box around a group) their current
    * geometry. Returns the list with those replaced by new objects and the rest as they were;

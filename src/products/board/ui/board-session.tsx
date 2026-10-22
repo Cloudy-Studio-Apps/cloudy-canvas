@@ -1,8 +1,14 @@
-import { EditorModulesContext, EngineContext, ModuleSession } from "@canvas-ui";
+import {
+  CanvasFileContext,
+  EditorModulesContext,
+  EngineContext,
+  ModuleSession,
+  useCanvasThumbnail,
+} from "@canvas-ui";
 
 import { useAgentBoard } from "./agent";
 import { BoardChrome } from "./board-chrome";
-import { BoardFileContext, useBoardSaver, useBoardThumbnail } from "./file";
+import { useBoardSaver } from "./file";
 import { getBoardEditorModules } from "./modules";
 import type { BoardSessionProps } from "./board-session.types";
 
@@ -13,15 +19,15 @@ import type { BoardSessionProps } from "./board-session.types";
 export function BoardSession({ id, engine, info }: BoardSessionProps) {
   const file = useBoardSaver(id, engine, info);
   useAgentBoard(id, engine, file);
-  useBoardThumbnail(id, engine);
+  useCanvasThumbnail(id, engine);
 
   return (
     <EngineContext value={engine}>
       <EditorModulesContext value={getBoardEditorModules()}>
-        <BoardFileContext value={file}>
+        <CanvasFileContext value={file}>
           <ModuleSession />
           <BoardChrome />
-        </BoardFileContext>
+        </CanvasFileContext>
       </EditorModulesContext>
     </EngineContext>
   );

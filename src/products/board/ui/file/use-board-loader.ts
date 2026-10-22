@@ -1,48 +1,17 @@
-import { useEffect, useState } from "react";
-
 import { boardMigrations, openBoardDocument } from "@board";
 import { CanvasDocument } from "@canvas";
-import { storage } from "@platform";
+import { useCanvasFileLoader, type CanvasFileLoadState } from "@canvas-ui";
 import { getBoardModules, getBoardProduct } from "../modules";
-import type { BoardLoadState } from "./use-board-loader.types";
 
 /**
- * Loads the board with this id from storage, or starts an empty one when the id isn't a saved file
- * (a board just created from Home). The document is destroyed on unmount.
+ * Loads the board with this id (brought up to date by the modules' migrations), or starts an
+ * empty one when the id isn't a saved file (a board just created from Home).
  */
-export function useBoardLoader(id: string): BoardLoadState {
-  const [state, setState] = useState<BoardLoadState>({ status: "loading" });
-
-  useEffect(() => {
-    let active = true;
-    let loaded: CanvasDocument | null = null;
-
-    void (async () => {
-      try {
-        const info = await storage.get(id);
-        const { kinds } = getBoardProduct();
-        const document = info
-          ? openBoardDocument(await storage.load(id), kinds, getBoardModules().get(boardMigrations))
-          : new CanvasDocument(kinds);
-        if (!active) return document.destroy();
-        loaded = document;
-        setState({ status: "ready", document, info });
-      } catch (error) {
-        console.error("[board] Failed to open the board:", error);
-        if (active) {
-          setState({
-            status: "error",
-            message: error instanceof Error ? error.message : "The board couldn't be opened.",
-          });
-        }
-      }
-    })();
-
-    return () => {
-      active = false;
-      loaded?.destroy();
-    };
-  }, [id]);
-
-  return state;
+export function useBoardLoader(id: string): CanvasFileLoadState {
+  return useCanvasFileLoader(id, {
+    noun: "board",
+    open: (bytes) =>
+      openBoardDocument(bytes, getBoardProduct().kinds, getBoardModules().get(boardMigrations)),
+    create: () => new CanvasDocument(getBoardProduct().kinds),
+  });
 }

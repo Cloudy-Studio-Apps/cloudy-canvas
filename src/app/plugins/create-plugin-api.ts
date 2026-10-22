@@ -46,6 +46,31 @@ import {
 } from "@board";
 import { boardEditor } from "@board/ui";
 import { boardLibrary } from "@board/ui/components/library";
+import {
+  BoxDrawTool,
+  containerAt,
+  createNodeBase,
+  DESIGN_TREE,
+  designCanvas,
+  designMigrations,
+  DesignNodeKind,
+  drawPaints,
+  isDesignNode,
+  NODE_DEFAULTS,
+  solidPaint,
+  traceBox,
+} from "@design";
+import { designEditor } from "@design/ui";
+import {
+  NumberField,
+  PaintField,
+  PanelAddButton,
+  PanelIconButton,
+  PanelSection,
+  PropertyGrid,
+} from "@design/ui/components/panel";
+import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
+import { useEditNodes, useMoveNodes, useSelectedNodes } from "@design/ui/hooks";
 import { pluginStorage } from "@platform";
 import {
   createId,
@@ -115,6 +140,38 @@ export function createPluginApi(plugin: InstalledPlugin): PluginApi {
         library: boardLibrary,
         requireBoard,
         palette: { STICKY_COLORS, SHAPE_FILLS, SHAPE_STROKES, LINE_COLORS, INK_COLOR },
+      },
+      design: {
+        canvas: designCanvas,
+        editor: designEditor,
+        migrations: designMigrations,
+        tree: DESIGN_TREE,
+        nodes: {
+          DesignNodeKind,
+          createNodeBase,
+          isDesignNode,
+          solidPaint,
+          drawPaints,
+          traceBox,
+          NODE_DEFAULTS,
+          BoxDrawTool,
+          containerAt,
+        },
+        panel: {
+          PanelSection,
+          PanelIconButton,
+          PanelAddButton,
+          NumberField,
+          PaintField,
+          PropertyGrid,
+        },
+        hooks: {
+          useSelectedNodes,
+          useEditNodes,
+          useMoveNodes,
+          useDesignEngine,
+          useDesignState,
+        },
       },
     },
     "api",

@@ -1,6 +1,7 @@
 import type { ModuleHost } from "@shared/core";
 
 import type { CanvasProduct } from "../canvas-product.types";
+import type { CanvasViewOptions } from "../canvas-view.types";
 import { ElementKinds } from "../elements";
 import { BASE_KEYBINDINGS, type Keybindings } from "../input";
 import type { CanvasPoints } from "./canvas-points.types";
@@ -27,6 +28,10 @@ export function composeProduct<O extends object>(
   const textPasters = host.get(points.pasteText);
   const imagePasters = host.get(points.pasteImage);
   const links = host.get(points.links);
+  const orders = host.get(points.drawOrder);
+  const movers = host.get(points.onMoved);
+  if (orders.length > 1) throw new Error(`Only one module can give the ${id}'s drawing order.`);
+  const order = orders[0];
 
   return {
     id,
@@ -39,7 +44,16 @@ export function composeProduct<O extends object>(
       ...host.get(points.keybindings),
     ]),
     hostCommands: hostCommands.map((command) => command.id),
-    defaultOptions: mergeOptions(host.get(points.options)),
+    defaultOptions: mergeOptions<O>(host.get(points.options), "tool option"),
+    view: mergeOptions<Partial<CanvasViewOptions>>(host.get(points.view), "view option"),
+    ...(order ? { orderKeys: (elements) => order(elements, kinds) } : {}),
+    ...(movers.length > 0
+      ? {
+          onMoved: (doc, moved, elements) => {
+            for (const onMoved of movers) onMoved(doc, moved, elements, kinds);
+          },
+        }
+      : {}),
     ...(links.length > 0 ? { createLinks: () => links.map((create) => create()) } : {}),
     ...(resolvers.length > 0
       ? {
@@ -105,14 +119,14 @@ function mergeKeybindings(all: readonly Keybindings[]): Keybindings {
   return merged;
 }
 
-function mergeOptions<O extends object>(all: readonly Partial<O>[]): O {
+function mergeOptions<O extends object>(all: readonly Partial<O>[], what: string): O {
   const merged: Record<string, unknown> = {};
   for (const options of all) {
     for (const [key, value] of Object.entries(options)) {
-      if (key in merged) throw new Error(`The tool option "${key}" is given twice.`);
+      if (key in merged) throw new Error(`The ${what} "${key}" is given twice.`);
       merged[key] = value;
     }
   }
-  // Each module gives the defaults of the options it owns; together they're the whole set.
+  // Each module gives the values it owns; together they're the whole set.
   return merged as O;
 }

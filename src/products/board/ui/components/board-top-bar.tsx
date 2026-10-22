@@ -2,25 +2,25 @@ import { useNavigate } from "react-router";
 import { ArrowLeft, Bot, Save } from "lucide-react";
 
 import {
+  DocumentInfoPopover,
   FloatingPanel,
   HistoryControls,
   ModuleSlot,
   PanelDivider,
+  SaveIndicator,
   ToolButton,
+  useCanvasFile,
   useEngine,
 } from "@canvas-ui";
 import { AgentServerMenu } from "@shared/agent-server";
 import { useAgentServerStore } from "@shared/stores/agent-server-store";
 import { SealLogo } from "@shared/ui/brand/seal-logo";
 import { Badge } from "@shared/ui/components/ui/badge";
-import { useBoardFile } from "../file";
-import { DocumentInfoPopover } from "./document-info";
-import { SaveIndicator } from "./save-indicator";
 
 export function BoardTopBar() {
   const navigate = useNavigate();
   const engine = useEngine();
-  const file = useBoardFile();
+  const file = useCanvasFile();
   const agentsEnabled = useAgentServerStore((state) => state.enabled);
 
   return (

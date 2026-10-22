@@ -1,8 +1,8 @@
 import { Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@shared/ui/components/ui/button";
+import { CommitInput } from "@canvas-ui";
 import { useErDiagram, useErShapes } from "../../model";
-import { CommitInput } from "../../../../db/ui/db-panel/commit-input";
 import { CardinalityPicker } from "./cardinality-picker";
 import { entityOptions } from "./entity-options";
 import { FormField } from "./form-field";

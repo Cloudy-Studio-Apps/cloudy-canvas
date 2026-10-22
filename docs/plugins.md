@@ -33,7 +33,9 @@ my-plugin/
 - `id`: lowercase letters, digits and dashes. Module ids must be the plugin id or start with `<id>.`.
 - `main`: **one ES module with no imports.** Everything comes from `api`. If you write it in TypeScript or JSX, bundle it into one file and use `api.ui.React.createElement` as the JSX factory. Never bundle your own React.
 
-`main.js` exports `activate(api)` by default, returning one module or a list of them:
+- `products`: `["board"]`, `["design"]` or both.
+
+`main.js` exports `activate(api)` by default, returning one module or a list of them (for the one product in `products`), or `{ board: [...], design: [...] }` for a plugin of both:
 
 ```js
 export default function activate(api) {
@@ -76,11 +78,73 @@ So a plugin that adds an element always shows it in the library, with the icon, 
 | `core`   | `defineModule`, `definePoint` (points other plugins can extend), `createId`                                                                                                                                                                                                                                                                  |
 | `canvas` | the kind bases `ElementKind`, `BoxKind`, `TextBoxKind`, `LineKind`; `ELEMENT_DEFAULTS`, `createElementBase`, `defineService`, `selectAndEdit`; for agent tools `asUndoStep`, `buildElement`, `summarizeElement` and the argument readers (`stringArg`, `optionalNumber`, …)                                                                  |
 | `ui`     | `React` (the app's own), `toast`, `notifyError`, `FloatingPanel`, `PanelDivider`, `ToolButton`, `OptionButton`, `ColorSwatch`, `ColorPalette`, `ExtensionIconView`, `useEngine`, `useEngineState`, `useService`, `useEngineElement`                                                                                                          |
+| `design` | see [Design plugins](#design-plugins)                                                                                                                                                                                                                                                                                                        |
 | `board`  | the points: `canvas` (kinds, tools, hostCommands, keybindings, options, links, resolveElements, withMembers, onRemove, prepareCopies, pasteText, pasteImage), `editor` (tools, toolPanels, selectionPanels, sidePanels, topBar, overlays, sessionHooks, contextMenu), `agentTools`, `library`; plus `toolItem`, `requireBoard` and `palette` |
 
 What each point takes is described in CLAUDE.md (Modules, Canvas engine, Elements) and in the types in `src/canvas/modules/canvas-points.types.ts` and `src/canvas-ui/modules/editor-points.types.ts`.
 
 Agent tools are groups contributed to `api.board.agentTools`: `{ id, tools: ({ kinds }) => [{ name, description, inputSchema, run(host, args) }] }`. They're listed by the app's MCP server like the built-in ones, and `list_plugins` tells agents which plugin adds what. Tool names must be unique; a tool whose name is taken is left out.
+
+## Design plugins
+
+Designs are built from modules the same way, on their own points (`api.design`):
+
+| `api.design.…` | What it holds                                                                                                                                                                                                                                                                                                                                                     |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `canvas`       | the design's canvas points (same as the board's, plus `view`, `drawOrder`, `onMoved`)                                                                                                                                                                                                                                                                             |
+| `editor`       | the editor points shared with the board (`tools`, `toolPanels`, `overlays`, `sessionHooks`, `contextMenu`, …) plus `leftTabs` (a tab of the left panel, with its rail button), `propertySections` (a section of the properties panel, shown `when` the selection fits) and `mainMenu` (groups in the logo's menu: engine commands or `run({ engine, navigate })`) |
+| `nodes`        | `DesignNodeKind` (the base of every design element: name, parent, visibility, opacity, fills, strokes), `createNodeBase`, `isDesignNode`, `solidPaint`, `drawPaints`, `traceBox`, `NODE_DEFAULTS`, `BoxDrawTool` (drag-to-draw tools, parented into the frame under them), `containerAt`                                                                          |
+| `tree`         | `DESIGN_TREE`, the layer tree service (`api.ui.useService(api.design.tree).layers()`)                                                                                                                                                                                                                                                                             |
+| `panel`        | `PanelSection`, `PanelIconButton`, `PanelAddButton`, `NumberField`, `PaintField`, `PropertyGrid`                                                                                                                                                                                                                                                                  |
+| `hooks`        | `useSelectedNodes`, `useEditNodes` (patches as one undo step), `useMoveNodes`, `useDesignEngine`, `useDesignState`                                                                                                                                                                                                                                                |
+
+Every design element extends `DesignNodeKind`, so the built-in sections (Position, Layout, Appearance, Fills, Strokes, Export) and the Layers tab work with it without extra code. A star, for example:
+
+```js
+export default function activate(api) {
+  const { DesignNodeKind, BoxDrawTool, createNodeBase, solidPaint, drawPaints } = api.design.nodes;
+
+  class StarKind extends DesignNodeKind {
+    type = "my-star.star";
+    label = "Star";
+    description = "A five-pointed star.";
+    tool = "my-star.star";
+    drawNode(view, el, g) {
+      drawPaints(g, el, (path) => path.star(el.w / 2, el.h / 2, 5, Math.min(el.w, el.h) / 2));
+    }
+  }
+
+  class StarTool extends BoxDrawTool {
+    id = "my-star.star";
+    layerName = "Star";
+    clickSize = () => ({ w: 100, h: 100 });
+    createNode = (rect, name, index, parentId) =>
+      createNodeBase("my-star.star", rect, index, {
+        name,
+        parentId,
+        fills: [solidPaint("#FFC83D")],
+      });
+  }
+
+  return api.core.defineModule({
+    id: "my-star",
+    register(host) {
+      host.contribute(api.design.canvas.kinds, new StarKind());
+      host.contribute(api.design.canvas.tools, {
+        id: "my-star.star",
+        create: (ctx) => new StarTool(ctx),
+        keys: [{ key: "s", shift: true }],
+      });
+      host.contribute(api.design.editor.tools, {
+        tool: "my-star.star",
+        element: "my-star.star",
+        icon: { svg: "<svg …>" },
+        toolbar: { group: 1, order: 110 },
+      });
+    },
+  });
+}
+```
 
 ## Rules
 

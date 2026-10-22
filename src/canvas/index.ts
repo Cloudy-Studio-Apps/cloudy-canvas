@@ -9,6 +9,7 @@ export type {
   HostAction,
 } from "./canvas-engine.types";
 export type { CanvasProduct } from "./canvas-product.types";
+export type { CanvasGrid, CanvasViewOptions } from "./canvas-view.types";
 export type { CopyContext, DropResult, PastedImage } from "./clipboard";
 export type { CommandHandler, Commands } from "./commands.types";
 export type { DocumentChange, DocumentMeta, DocumentMetaPatch } from "./document";
@@ -29,7 +30,9 @@ export type { CanvasTextOptions, CanvasTheme, ImageFit } from "./render";
 export type { CanvasPointer, Tool, ToolContext } from "./tools";
 export { CanvasEngine } from "./canvas-engine";
 export { MIN_ZOOM, MAX_ZOOM } from "./camera";
+export { DEFAULT_VIEW_OPTIONS } from "./canvas-view";
 export { CanvasDocument, DocumentFeed, LOCAL_ORIGIN } from "./document";
+export { decodeCanvasFile, encodeCanvasFile } from "./file";
 export * from "./agent";
 export * from "./elements";
 export * from "./geometry";

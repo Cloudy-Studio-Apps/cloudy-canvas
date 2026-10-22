@@ -10,18 +10,21 @@ import type { ImageCacheHost } from "./image-cache.types";
 import { prefersReducedMotion } from "./entrance";
 import { DraftLayer } from "./layers/draft-layer";
 import { ElementLayer } from "./layers/element-layer";
-import { GridLayer } from "./layers/grid-layer";
+import { createGridLayer } from "./layers/create-grid-layer";
+import type { GridLayer } from "./layers/grid-layer.types";
 import { GuideLayer } from "./layers/guide-layer";
 import { LinkLayer } from "./layers/link-layer";
 import { OverlayLayer } from "./layers/overlay-layer";
 import type { OverlayState } from "./overlay-state.types";
 import { drawSnapshot } from "./snapshot";
 import type { SnapshotOptions } from "./snapshot.types";
+import type { RendererOptions } from "./renderer.types";
 
 /**
  * Owns the Pixi application and composes the layers, bottom to top:
  * grid (screen) → world (frames, links, elements, drafts, guides; follows the camera) → overlay
- * (screen). Frames have their own layer so links show above them.
+ * (screen), with a pixel grid above the world instead. Frames have their own layer so links show
+ * above them.
  */
 export class Renderer {
   readonly app = new Application();
@@ -30,7 +33,7 @@ export class Renderer {
   private readonly draft: DraftLayer;
   private readonly links: LinkLayer;
   private readonly guide = new GuideLayer();
-  private readonly grid = new GridLayer();
+  private readonly grid: GridLayer;
   private readonly world = new Container();
   private readonly overlay = new OverlayLayer();
   private readonly images: ImageCache;
@@ -40,11 +43,13 @@ export class Renderer {
     private readonly kinds: ElementKinds,
     links: readonly CanvasLinks[],
     images: ImageCacheHost,
+    private readonly options: RendererOptions,
   ) {
     this.images = new ImageCache(images);
     this.links = new LinkLayer(links);
-    this.elements = new ElementLayer(kinds, this.images);
-    this.frames = new ElementLayer(kinds, this.images);
+    this.grid = createGridLayer(options.grid);
+    this.elements = new ElementLayer(kinds, this.images, options.orderOf);
+    this.frames = new ElementLayer(kinds, this.images, options.orderOf);
     this.draft = new DraftLayer(kinds, this.images);
   }
 
@@ -60,7 +65,10 @@ export class Renderer {
       preference: ["webgl", "canvas"],
     });
     this.world.addChild(this.frames, this.links, this.elements, this.draft, this.guide);
-    this.app.stage.addChild(this.grid, this.world, this.overlay);
+    // The pixel grid lies over the content it measures; dots stay behind it.
+    if (this.options.grid === "pixels")
+      this.app.stage.addChild(this.world, this.grid, this.overlay);
+    else this.app.stage.addChild(this.grid, this.world, this.overlay);
   }
 
   /** The canvas background color (0xRRGGBB). */
@@ -150,7 +158,15 @@ export class Renderer {
     elements: readonly CanvasElement[],
     options: SnapshotOptions,
   ): Promise<HTMLCanvasElement> {
-    return drawSnapshot(this.app.renderer, this.kinds, this.images, this.theme, elements, options);
+    return drawSnapshot(
+      this.app.renderer,
+      this.kinds,
+      this.images,
+      this.theme,
+      elements,
+      this.options.orderOf,
+      options,
+    );
   }
 
   destroy(): void {

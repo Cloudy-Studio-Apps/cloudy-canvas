@@ -7,6 +7,11 @@ import type { createId, defineModule, definePoint, PluginManifest } from "@share
 import type { notifyError, toast } from "@shared/stores/toast-store";
 import type { boardLibrary } from "@board/ui/components/library";
 import type { boardEditor } from "@board/ui";
+import type * as design from "@design";
+import type { designEditor } from "@design/ui";
+import type * as designPanel from "@design/ui/components/panel";
+import type * as designHooks from "@design/ui/hooks";
+import type { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
 
 /**
  * What a plugin's `activate(api)` gets: the app's own building blocks, so a plugin needs no
@@ -79,6 +84,48 @@ export interface PluginApi {
       typeof board,
       "STICKY_COLORS" | "SHAPE_FILLS" | "SHAPE_STROKES" | "LINE_COLORS" | "INK_COLOR"
     >;
+  };
+  design: DesignPluginApi;
+}
+
+/** What design plugins build on (`api.design`). */
+export interface DesignPluginApi {
+  /** The design's canvas points (kinds, tools, options, view, hooks, …). */
+  canvas: typeof design.designCanvas;
+  /**
+   * The design editor's points: the shared ones (tools, toolPanels, overlays, …) plus
+   * `leftTabs`, `propertySections` and `mainMenu`.
+   */
+  editor: typeof designEditor;
+  migrations: typeof design.designMigrations;
+  /** The layer tree service (`useService(DESIGN_TREE)`). */
+  tree: typeof design.DESIGN_TREE;
+  /** The node base every design element extends, and its helpers. */
+  nodes: Pick<
+    typeof design,
+    | "DesignNodeKind"
+    | "createNodeBase"
+    | "isDesignNode"
+    | "solidPaint"
+    | "drawPaints"
+    | "traceBox"
+    | "NODE_DEFAULTS"
+    | "BoxDrawTool"
+    | "containerAt"
+  >;
+  /** Building blocks of the side panels, for tabs and property sections. */
+  panel: Pick<
+    typeof designPanel,
+    | "PanelSection"
+    | "PanelIconButton"
+    | "PanelAddButton"
+    | "NumberField"
+    | "PaintField"
+    | "PropertyGrid"
+  >;
+  hooks: Pick<typeof designHooks, "useSelectedNodes" | "useEditNodes" | "useMoveNodes"> & {
+    useDesignEngine: typeof useDesignEngine;
+    useDesignState: typeof useDesignState;
   };
 }
 

@@ -5,8 +5,6 @@ export const MIN_ZOOM = 0.1;
 export const MAX_ZOOM = 8;
 const FIT_PADDING = 80;
 
-const clampZoom = (zoom: number) => clamp(zoom, MIN_ZOOM, MAX_ZOOM);
-
 /**
  * Maps world coordinates to screen (viewport) pixels: screen = (world + offset) * zoom.
  * `x`/`y` are the world coordinates shown at the viewport's top-left corner, negated.
@@ -17,6 +15,15 @@ export class Camera {
   zoom = 1;
   /** Viewport size in screen pixels. */
   viewport: Size = { w: 0, h: 0 };
+  private minZoom = MIN_ZOOM;
+  private maxZoom = MAX_ZOOM;
+
+  /** The zoom range (the product's, see `CanvasViewOptions`). */
+  setZoomLimits(min: number, max: number): void {
+    this.minZoom = min;
+    this.maxZoom = max;
+    this.zoom = this.clampZoom(this.zoom);
+  }
 
   setViewport(w: number, h: number): void {
     this.viewport = { w, h };
@@ -50,7 +57,7 @@ export class Camera {
   /** Zooms keeping the world point under `screenPoint` fixed. */
   zoomAt(screenPoint: Point, nextZoom: number): void {
     const before = this.screenToWorld(screenPoint);
-    this.zoom = clampZoom(nextZoom);
+    this.zoom = this.clampZoom(nextZoom);
     const after = this.screenToWorld(screenPoint);
     this.x += after.x - before.x;
     this.y += after.y - before.y;
@@ -70,7 +77,7 @@ export class Camera {
   fitRect(rect: Rect, padding = FIT_PADDING): void {
     const zx = (this.viewport.w - padding * 2) / Math.max(rect.w, 1);
     const zy = (this.viewport.h - padding * 2) / Math.max(rect.h, 1);
-    this.zoom = clampZoom(Math.min(zx, zy, 1));
+    this.zoom = this.clampZoom(Math.min(zx, zy, 1));
     this.centerOn({ x: rect.x + rect.w / 2, y: rect.y + rect.h / 2 });
   }
 
@@ -78,6 +85,10 @@ export class Camera {
   reset(): void {
     this.zoom = 1;
     this.centerOn({ x: 0, y: 0 });
+  }
+
+  private clampZoom(zoom: number): number {
+    return clamp(zoom, this.minZoom, this.maxZoom);
   }
 
   visibleWorldRect(): Rect {

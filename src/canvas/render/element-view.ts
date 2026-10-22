@@ -1,11 +1,6 @@
 import { Container, Graphics, GraphicsContext, Rectangle, Sprite, Text, Texture } from "pixi.js";
 
-import {
-  zOrderKey,
-  type CanvasElement,
-  type ElementKind,
-  type ElementTextStyle,
-} from "../elements";
+import { type CanvasElement, type ElementKind, type ElementTextStyle } from "../elements";
 import type { Rect } from "../geometry.types";
 import type { ImageCache } from "./image-cache";
 import { canvasTextStyle } from "./text-style";
@@ -21,7 +16,7 @@ const iconContexts = new Map<string, GraphicsContext>();
 /** Pixi display object for one element. Redrawn in place by its kind whenever the element changes. */
 export class ElementView extends Container {
   readonly elementId: string;
-  /** Drawing order key (see `zOrderKey`). */
+  /** Drawing order key (see `OrderKeyOf`). */
   order: string;
   readonly graphics = new Graphics();
   private textNode: Text | null = null;
@@ -50,17 +45,18 @@ export class ElementView extends Container {
     el: CanvasElement,
     kind: ElementKind,
     private readonly images: ImageCache,
+    order = "",
   ) {
     super();
     this.elementId = el.id;
-    this.order = zOrderKey(el, kind);
+    this.order = order;
     this.addChild(this.graphics);
-    this.sync(el, kind);
+    this.sync(el, kind, order);
   }
 
   /** Moves the view to the element and has its kind redraw it. */
-  sync(el: CanvasElement, kind: ElementKind): void {
-    this.order = zOrderKey(el, kind);
+  sync(el: CanvasElement, kind: ElementKind, order = this.order): void {
+    this.order = order;
     this.bounds = { x: el.x, y: el.y, w: el.w, h: el.h };
     this.placeScaled();
     kind.draw(this, el);

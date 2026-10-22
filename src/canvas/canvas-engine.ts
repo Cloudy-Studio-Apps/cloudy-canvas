@@ -1,6 +1,7 @@
 import type { Clipboard, DroppedFile } from "@shared/core";
 
 import { Camera } from "./camera";
+import { DEFAULT_VIEW_OPTIONS } from "./canvas-view";
 import {
   dropFiles,
   ElementClipboard,
@@ -117,11 +118,21 @@ export class CanvasEngine<O extends object = object> {
     this.ownsDocument = !document;
     this.services = new ServiceCache(this.doc);
     this.links = product.createLinks?.() ?? [];
-    this.renderer = new Renderer(theme, this.kinds, this.links, {
-      read: (id) => this.doc.getAsset(id),
-      onLoad: () => this.requestRender(),
-    });
-    this.scene = new Scene(this.doc, this.kinds, product.resolveElements?.bind(product));
+    const view = { ...DEFAULT_VIEW_OPTIONS, ...product.view };
+    this.camera.setZoomLimits(view.minZoom, view.maxZoom);
+    this.renderer = new Renderer(
+      theme,
+      this.kinds,
+      this.links,
+      { read: (id) => this.doc.getAsset(id), onLoad: () => this.requestRender() },
+      { grid: view.grid, orderOf: (el, kind) => this.scene.orderKey(el, kind) },
+    );
+    this.scene = new Scene(
+      this.doc,
+      this.kinds,
+      product.resolveElements?.bind(product),
+      product.orderKeys?.bind(product),
+    );
     this.systemClipboard = clipboard ?? new MemoryClipboard();
     this.clipboard = this.createClipboard(this.systemClipboard);
     const ctx = this.createToolContext();
@@ -612,6 +623,7 @@ export class CanvasEngine<O extends object = object> {
       },
       getElement: (id) => this.scene.get(id),
       withMembers: (ids) => this.withMembers(ids, "move"),
+      moved: (ids) => this.product.onMoved?.(this.doc, new Set(ids), this.scene.elements),
       duplicate: (ids) => this.clipboard.duplicate(ids, { x: 0, y: 0 }),
       getHover: () => this.scene.hoveredId,
       interactionAt: (world) => findInteraction(this.scene, world, this.camera.zoom),
@@ -722,8 +734,11 @@ export class CanvasEngine<O extends object = object> {
 
   private handleDocumentChange(change: DocumentChange): void {
     this.refreshScene();
-    // Derived geometry may follow any change, so those elements are redrawn every time.
-    const changed = [...new Set([...change.updated, ...this.scene.derivedIds])]
+    // Derived geometry may follow any change, so those elements are redrawn every time; restacked
+    // ones only moved in the drawing order.
+    const changed = [
+      ...new Set([...change.updated, ...this.scene.derivedIds, ...this.scene.restackedIds]),
+    ]
       .map((id) => this.scene.get(id))
       .filter((el): el is CanvasElement => el !== undefined);
     this.renderer.syncElements(changed, change.removed);

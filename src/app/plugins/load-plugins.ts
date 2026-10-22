@@ -1,4 +1,5 @@
 import { registerBoardModule } from "@board/ui";
+import { registerDesignModule } from "@design/ui";
 import { pluginStorage } from "@platform";
 import type { InstalledPlugin, PluginStatus } from "@shared/core";
 import { usePluginsStore } from "@shared/stores/plugins-store";
@@ -10,7 +11,8 @@ const LOAD_TIMEOUT_MS = 5000;
 
 /**
  * Finds the installed plugins and loads the enabled (and trusted) ones, registering their
- * modules. Runs once, before the app renders, so the board's modules include them. Never throws:
+ * modules. Runs once, before the app renders, so the board's and design's modules include them.
+ * Never throws:
  * a plugin that fails is marked as failed and the others still load.
  */
 export async function loadPlugins(): Promise<void> {
@@ -34,15 +36,14 @@ async function loadPlugin(
   plugin: InstalledPlugin,
   { enabled, trusted }: { enabled: string[]; trusted: string[] },
 ): Promise<PluginStatus> {
-  const { id, products } = plugin.manifest;
+  const { id } = plugin.manifest;
   if (!enabled.includes(id) || !trusted.includes(id)) return { id, state: "disabled", modules: [] };
-  if (!products.includes("board")) {
-    return { id, state: "failed", error: "Only board plugins can be loaded so far.", modules: [] };
-  }
   try {
-    const modules = await withTimeout(importPlugin(plugin), LOAD_TIMEOUT_MS);
-    for (const module of modules) registerBoardModule(module, { plugin: id });
-    return { id, state: "enabled", modules: modules.map((module) => module.id) };
+    const { board, design } = await withTimeout(importPlugin(plugin), LOAD_TIMEOUT_MS);
+    for (const module of board) registerBoardModule(module, { plugin: id });
+    for (const module of design) registerDesignModule(module, { plugin: id });
+    const modules = [...new Set([...board, ...design].map((module) => module.id))];
+    return { id, state: "enabled", modules };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error(`[plugins] "${id}" couldn't be loaded:`, error);

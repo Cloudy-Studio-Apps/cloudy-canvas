@@ -33,6 +33,11 @@ export interface ToolContext<O extends object = object> {
   /** The ids plus what moves with them (e.g. an entity's attributes). */
   withMembers(ids: Iterable<string>): Set<string>;
   /**
+   * Tells the product elements were just dragged to a new place (`CanvasProduct.onMoved`, e.g.
+   * dropped into a frame), in the current undo step.
+   */
+  moved(ids: Iterable<string>): void;
+  /**
    * Adds copies of the elements (with what moves with them) in place, as a new undo step.
    * Returns original id → copy id.
    */

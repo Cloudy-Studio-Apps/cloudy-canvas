@@ -1,0 +1,26 @@
+import { Download } from "lucide-react";
+
+import { Button } from "@shared/ui/components/ui/button";
+import { PanelSection } from "@design/ui/components/panel";
+import { useDesignEngine } from "@design/ui/design-engine-context";
+
+/** Opens the export dialog for the selection (or the page when nothing is selected). */
+export function ExportSection() {
+  const engine = useDesignEngine();
+  return (
+    <PanelSection title="Export">
+      <Button
+        variant="outline"
+        size="sm"
+        className="w-full"
+        onClick={() => engine.commands.export?.()}
+      >
+        <Download />
+        Export…
+        <span className="ml-auto text-xs text-muted-foreground">
+          {engine.keymap.label("export")}
+        </span>
+      </Button>
+    </PanelSection>
+  );
+}

@@ -173,6 +173,12 @@
   color-scheme: light;
 }
 
+/* The design editor's canvas: a darker gray than the board, so white frames stand out. */
+[data-product="design"] {
+  --canvas-background: var(--seal-200);
+  --canvas-grid: var(--seal-300);
+}
+
 /* TODO: Dark theme is disabled for now (see FORCE_LIGHT_THEME in stores/theme-store.ts).
    These values are a rough derivation and need a proper pass before re-enabling. */
 .dark {

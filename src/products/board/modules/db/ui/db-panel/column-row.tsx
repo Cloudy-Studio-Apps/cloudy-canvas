@@ -1,11 +1,11 @@
 import { Trash2 } from "lucide-react";
 
 import { Button } from "@shared/ui/components/ui/button";
+import { CommitInput } from "@canvas-ui";
 import { useBoardSchema } from "../schema";
 import { ColumnDetails } from "./column-details";
 import { ColumnFlags } from "./column-flags";
 import { ColumnTypePicker } from "./column-type-picker";
-import { CommitInput } from "./commit-input";
 import { RefPicker } from "./ref-picker";
 import type { ColumnRowProps } from "./column-row.types";
 

@@ -14,6 +14,8 @@ export class Scene {
   private list: CanvasElement[] = [];
   private byId = new Map<string, CanvasElement>();
   private derived: string[] = [];
+  private keys = new Map<string, string>();
+  private restacked: string[] = [];
   private hoverId: string | null = null;
   marquee: Rect | null = null;
 
@@ -22,6 +24,8 @@ export class Scene {
     private readonly kinds: ElementKinds,
     /** The product's `resolveElements`, if any. */
     private readonly resolve?: (elements: CanvasElement[]) => CanvasElement[],
+    /** The product's `orderKeys`, if any (otherwise `zOrderKey`). */
+    private readonly orderKeys?: (elements: readonly CanvasElement[]) => Map<string, string>,
   ) {}
 
   /** Elements sorted bottom-to-top. */
@@ -37,7 +41,15 @@ export class Scene {
     const raw = this.doc.all();
     const resolved = this.resolve ? this.resolve(raw) : raw;
     this.derived = resolved.filter((el, i) => el !== raw[i]).map((el) => el.id);
-    const keys = new Map(resolved.map((el) => [el.id, zOrderKey(el, this.kinds.kindOf(el))]));
+    const custom = this.orderKeys?.(resolved);
+    const keys = new Map(
+      resolved.map((el) => [el.id, custom?.get(el.id) ?? zOrderKey(el, this.kinds.kindOf(el))]),
+    );
+    // Without a custom order, a key only changes with its own element, which is redrawn anyway.
+    this.restacked = custom
+      ? [...keys].filter(([id, key]) => this.keys.get(id) !== key).map(([id]) => id)
+      : [];
+    this.keys = keys;
     this.list = resolved.sort((a, b) => {
       const ka = keys.get(a.id)!;
       const kb = keys.get(b.id)!;
@@ -49,6 +61,19 @@ export class Scene {
   /** Ids of elements whose geometry the product derives from others (see `resolveElements`). */
   get derivedIds(): readonly string[] {
     return this.derived;
+  }
+
+  /**
+   * Ids whose drawing order changed in the last refresh although the element itself may not have
+   * (e.g. a node whose parent moved in the product's `orderKeys`), so their views are restacked.
+   */
+  get restackedIds(): readonly string[] {
+    return this.restacked;
+  }
+
+  /** An element's drawing order key (elements not in the scene, like drafts, get `zOrderKey`). */
+  orderKey(el: CanvasElement, kind: ElementKind): string {
+    return this.keys.get(el.id) ?? zOrderKey(el, kind);
   }
 
   get(id: string): CanvasElement | undefined {

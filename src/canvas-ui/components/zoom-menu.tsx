@@ -8,11 +8,12 @@ import {
   DropdownMenuTrigger,
 } from "@shared/ui/components/ui/dropdown-menu";
 import { useEngine, useEngineState } from "../engine-context";
+import type { ZoomMenuProps } from "./zoom-menu.types";
 
 const ZOOM_PRESETS = [0.5, 1, 2];
 
 /** Current zoom percentage; opens zoom-to-fit and preset levels. */
-export function ZoomMenu() {
+export function ZoomMenu({ side = "top" }: ZoomMenuProps) {
   const engine = useEngine();
   const zoom = useEngineState((state) => state.zoom);
   const percent = `${Math.round(zoom * 100)}%`;
@@ -29,7 +30,7 @@ export function ZoomMenu() {
           {percent}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" side="top" className="min-w-44">
+      <DropdownMenuContent align="end" side={side} className="min-w-44">
         <DropdownMenuItem onSelect={() => engine.zoomToFit()}>
           Zoom to fit
           <DropdownMenuShortcut>{engine.keymap.label("zoomToFit")}</DropdownMenuShortcut>

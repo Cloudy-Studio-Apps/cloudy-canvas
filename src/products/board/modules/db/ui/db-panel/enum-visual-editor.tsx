@@ -2,9 +2,8 @@ import { Plus } from "lucide-react";
 
 import { DB_HEADER_COLORS } from "@board";
 import { Button } from "@shared/ui/components/ui/button";
-import { ColorSwatch } from "@canvas-ui";
+import { ColorSwatch, CommitInput } from "@canvas-ui";
 import { useBoardSchema } from "../schema";
-import { CommitInput } from "./commit-input";
 import { EnumUsages } from "./enum-usages";
 import { EnumValueRow } from "./enum-value-row";
 import type { EnumVisualEditorProps } from "./enum-visual-editor.types";

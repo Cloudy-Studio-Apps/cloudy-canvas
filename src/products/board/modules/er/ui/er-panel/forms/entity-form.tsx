@@ -2,9 +2,8 @@ import { GitFork, LocateFixed } from "lucide-react";
 
 import { ER_ENTITY_COLOR, SHAPE_STROKES } from "@board";
 import { Button } from "@shared/ui/components/ui/button";
-import { useEngine, ColorSwatch } from "@canvas-ui";
+import { ColorSwatch, CommitInput, useEngine } from "@canvas-ui";
 import { useErDiagram, useErShapes } from "../../model";
-import { CommitInput } from "../../../../db/ui/db-panel/commit-input";
 import { FlagToggle } from "../../../../db/ui/db-panel/flag-toggle";
 import { AttributeList } from "./attribute-list";
 import { FormField } from "./form-field";

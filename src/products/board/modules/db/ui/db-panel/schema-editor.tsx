@@ -2,16 +2,16 @@ import { useState } from "react";
 import { FileDown, FileUp } from "lucide-react";
 
 import type { DbmlError } from "@board";
+import { useCanvasFile } from "@canvas-ui";
 import { exportDbmlFile, importDbmlFile } from "@platform";
 import { Button } from "@shared/ui/components/ui/button";
 import { useBoardSchema } from "../schema";
-import { useBoardFile } from "@board/ui/file";
 import { DbmlEditor } from "./dbml-editor";
 
 /** The whole board schema as DBML. New tables appear next to the content; removed ones are deleted. */
 export function SchemaEditor() {
   const schema = useBoardSchema();
-  const file = useBoardFile();
+  const file = useCanvasFile();
   const [importError, setImportError] = useState<DbmlError | null>(null);
 
   const importFile = async () => {

@@ -1,5 +1,5 @@
+import { CommitInput } from "@canvas-ui";
 import { useErDiagram, useErShapes } from "../../model";
-import { CommitInput } from "../../../../db/ui/db-panel/commit-input";
 import { AttributeList } from "./attribute-list";
 import { relationOptions } from "./entity-options";
 import { FormField } from "./form-field";

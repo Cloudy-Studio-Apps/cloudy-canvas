@@ -1,6 +1,8 @@
 import type { ExtensionPoint, Shortcut } from "@shared/core";
 
 import type { CanvasProduct } from "../canvas-product.types";
+import type { CanvasViewOptions } from "../canvas-view.types";
+import type { CanvasDocument } from "../document";
 import type { CanvasElement, ElementKind, ElementKinds } from "../elements";
 import type { Keybindings } from "../input";
 import type { CanvasLinks } from "../links";
@@ -35,6 +37,19 @@ export type WithMembersHook<O extends object> = (
   kinds: ElementKinds<O>,
 ) => Set<string>;
 
+/** See `CanvasProduct.orderKeys`; only one module may give the drawing order. */
+export type DrawOrderHook<O extends object> = (
+  elements: readonly CanvasElement[],
+  kinds: ElementKinds<O>,
+) => Map<string, string>;
+
+/** See `CanvasProduct.onMoved`; hooks run one after another in module order. */
+export type OnMovedHook<O extends object> = (
+  doc: CanvasDocument,
+  moved: ReadonlySet<string>,
+  elements: readonly CanvasElement[],
+  kinds: ElementKinds<O>,
+) => void;
 export type OnRemoveHook = NonNullable<CanvasProduct["onRemove"]>;
 export type PrepareCopiesHook = NonNullable<CanvasProduct["prepareCopies"]>;
 /** See `CanvasProduct.pasteText`; the first hook that returns an element wins. */
@@ -54,6 +69,11 @@ export interface CanvasPoints<O extends object> {
   keybindings: ExtensionPoint<Keybindings>;
   /** Default values of the tool options a module owns. An option given twice throws. */
   options: ExtensionPoint<Partial<O>>;
+  /** The canvas's zoom range and grid. A value given twice throws. */
+  view: ExtensionPoint<Partial<CanvasViewOptions>>;
+  /** The drawing order (one module at most; two throw). */
+  drawOrder: ExtensionPoint<DrawOrderHook<O>>;
+  onMoved: ExtensionPoint<OnMovedHook<O>>;
   links: ExtensionPoint<() => CanvasLinks>;
   resolveElements: ExtensionPoint<ResolveElementsHook<O>>;
   withMembers: ExtensionPoint<WithMembersHook<O>>;

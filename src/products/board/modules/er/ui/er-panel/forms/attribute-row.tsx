@@ -1,7 +1,7 @@
 import { ArrowDown, ArrowUp, ListTree, Trash2 } from "lucide-react";
 
 import type { ErAttributePatch, ErAttributeElement } from "@board";
-import { CommitInput } from "../../../../db/ui/db-panel/commit-input";
+import { CommitInput } from "@canvas-ui";
 import { FlagToggle } from "../../../../db/ui/db-panel/flag-toggle";
 import { useErDiagram } from "../../model";
 import { IconAction } from "./icon-action";

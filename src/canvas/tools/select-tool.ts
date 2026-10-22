@@ -116,6 +116,7 @@ export class SelectTool implements Tool {
       const click = { current: g.partBefore, shiftKey: p.shiftKey, modKey: p.modKey };
       if (el) this.ctx.setPart(this.ctx.kinds.kindOf(el).partAt(el, p.world, click));
     }
+    if (g?.kind === "move" && g.started) this.ctx.moved(g.origins.keys());
     if (g?.kind === "element") {
       // Finished gestures don't get cancelled too.
       this.gesture = null;

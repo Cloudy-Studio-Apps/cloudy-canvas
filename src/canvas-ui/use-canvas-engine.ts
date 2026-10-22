@@ -19,7 +19,12 @@ export function useCanvasEngine<O extends object>(
     const container = containerRef.current;
     if (!container || !document) return;
 
-    const instance = new CanvasEngine({ product, theme: readCanvasTheme(), document, clipboard });
+    const instance = new CanvasEngine({
+      product,
+      theme: readCanvasTheme(container),
+      document,
+      clipboard,
+    });
     let active = true;
     instance
       .mount(container)

@@ -1,13 +1,17 @@
 import { pluginStorage } from "@platform";
 import type { AppModule, InstalledPlugin } from "@shared/core";
 import { createPluginApi } from "./create-plugin-api";
+import type { PluginModules, PluginProduct } from "./plugin-modules.types";
+
+const PRODUCTS: readonly PluginProduct[] = ["board", "design"];
 
 /**
- * Runs a plugin's code and returns its modules. The code is one ES module, imported from a
- * `blob:` URL; its default export is `activate(api)`, which returns a module or a list of them.
- * Throws with a message for the user when the plugin doesn't follow the format.
+ * Runs a plugin's code and returns its modules for each product. The code is one ES module,
+ * imported from a `blob:` URL; its default export is `activate(api)`, which returns a module or a
+ * list of them (for the one product in its manifest's `products`), or `{ board, design }` with a
+ * list for each. Throws with a message for the user when the plugin doesn't follow the format.
  */
-export async function importPlugin(plugin: InstalledPlugin): Promise<AppModule[]> {
+export async function importPlugin(plugin: InstalledPlugin): Promise<PluginModules> {
   const code = await pluginStorage.readMain(plugin);
   const url = URL.createObjectURL(new Blob([code], { type: "text/javascript" }));
   let exports: { default?: unknown };
@@ -22,8 +26,37 @@ export async function importPlugin(plugin: InstalledPlugin): Promise<AppModule[]
   const result: unknown = await (exports.default as (api: unknown) => unknown)(
     createPluginApi(plugin),
   );
-  const modules = Array.isArray(result) ? (result as unknown[]) : [result];
-  return modules.map((module) => checkModule(plugin.manifest.id, module));
+  return splitByProduct(plugin, result);
+}
+
+function splitByProduct(plugin: InstalledPlugin, result: unknown): PluginModules {
+  const { id, products } = plugin.manifest;
+  const list = (value: unknown) =>
+    (Array.isArray(value) ? (value as unknown[]) : value === undefined ? [] : [value]).map(
+      (module) => checkModule(id, module),
+    );
+  const byProduct = result as Partial<Record<PluginProduct, unknown>> | null;
+  const split =
+    byProduct && !Array.isArray(result) && PRODUCTS.some((product) => product in byProduct);
+  if (split) {
+    const modules = { board: list(byProduct.board), design: list(byProduct.design) };
+    for (const product of PRODUCTS) {
+      if (modules[product].length > 0 && !products.includes(product)) {
+        throw new Error(`It has ${product} modules, but "${product}" isn't in its products.`);
+      }
+    }
+    return modules;
+  }
+  const targets = PRODUCTS.filter((product) => products.includes(product));
+  const [target] = targets;
+  if (!target || targets.length > 1) {
+    throw new Error(
+      targets.length > 1
+        ? "activate(api) must return { board: [...], design: [...] } for a plugin of both products."
+        : `Its products must include "board" or "design".`,
+    );
+  }
+  return { board: [], design: [], [target]: list(result) };
 }
 
 function checkModule(pluginId: string, value: unknown): AppModule {

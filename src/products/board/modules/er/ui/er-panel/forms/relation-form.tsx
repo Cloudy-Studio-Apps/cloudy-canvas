@@ -2,9 +2,8 @@ import { Group, Plus } from "lucide-react";
 
 import { cardinalityRatio } from "@board";
 import { Button } from "@shared/ui/components/ui/button";
-import { useEngine } from "@canvas-ui";
+import { CommitInput, useEngine } from "@canvas-ui";
 import { useErDiagram, useErShapes } from "../../model";
-import { CommitInput } from "../../../../db/ui/db-panel/commit-input";
 import { FlagToggle } from "../../../../db/ui/db-panel/flag-toggle";
 import { AttributeList } from "./attribute-list";
 import { entityOptions } from "./entity-options";

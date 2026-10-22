@@ -3,17 +3,17 @@ import {
   ExportDialog,
   ModuleSlot,
   ModuleToolOptions,
+  useCanvasFile,
   useCopyAsPng,
   ZoomControls,
 } from "@canvas-ui";
 
 import { BoardToolbar } from "./components/board-toolbar";
 import { BoardTopBar } from "./components/board-top-bar";
-import { useBoardFile } from "./file";
 
 /** UI around the canvas. Never holds canvas content — it only reflects engine UI state. */
 export function BoardChrome() {
-  const { name } = useBoardFile();
+  const { name } = useCanvasFile();
   useCopyAsPng();
   return (
     <div className="pointer-events-none absolute inset-0">

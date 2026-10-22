@@ -1,13 +1,14 @@
 import { Container } from "pixi.js";
 
-import type { CanvasElement, ElementKinds } from "../../elements";
+import { zOrderKey, type CanvasElement, type ElementKinds } from "../../elements";
 import type { HiddenText } from "../element-view.types";
 import { ElementView } from "../element-view";
 import { entranceAt } from "../entrance";
 import type { ImageCache } from "../image-cache";
+import type { OrderKeyOf } from "../order-key.types";
 import { textResolution } from "../text-resolution";
 
-/** Keeps one ElementView per element, in drawing order (see `zOrderKey`). */
+/** Keeps one ElementView per element, in drawing order (see `OrderKeyOf`). */
 export class ElementLayer extends Container<ElementView> {
   private readonly views = new Map<string, ElementView>();
   private hiddenText: HiddenText | null = null;
@@ -19,6 +20,7 @@ export class ElementLayer extends Container<ElementView> {
   constructor(
     private readonly kinds: ElementKinds,
     private readonly images: ImageCache,
+    private readonly orderOf: OrderKeyOf = zOrderKey,
   ) {
     super();
   }
@@ -34,7 +36,8 @@ export class ElementLayer extends Container<ElementView> {
       const view = this.views.get(el.id);
       if (view) {
         const order = view.order;
-        view.sync(el, this.kinds.kindOf(el));
+        const kind = this.kinds.kindOf(el);
+        view.sync(el, kind, this.orderOf(el, kind));
         if (view.order !== order) this.place(view);
       } else {
         this.add(el);
@@ -96,7 +99,8 @@ export class ElementLayer extends Container<ElementView> {
   }
 
   private add(el: CanvasElement): void {
-    const view = new ElementView(el, this.kinds.kindOf(el), this.images);
+    const kind = this.kinds.kindOf(el);
+    const view = new ElementView(el, kind, this.images, this.orderOf(el, kind));
     view.setTextResolution(this.textResolution);
     if (this.hiddenText?.id === el.id) this.showText(view, this.hiddenText);
     if (this.faded.has(el.id)) view.setFaded(true);

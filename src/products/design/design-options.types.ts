@@ -1,2 +1,8 @@
-/** What the design editor's options panel will pick. Empty until design tools exist. */
-export type DesignToolOptions = Record<never, never>;
+import type { FrameToolOptions, RectangleToolOptions } from "./modules";
+
+/**
+ * What the design's tool options pick for new elements. Each module declares the options it owns
+ * and their defaults; plugins add theirs by augmenting this interface
+ * (`declare module "@design" { interface DesignToolOptions extends MyOptions {} }`).
+ */
+export interface DesignToolOptions extends FrameToolOptions, RectangleToolOptions {}
