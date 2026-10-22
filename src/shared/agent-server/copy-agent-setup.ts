@@ -10,11 +10,6 @@ export function copyText(text: string, title: string, description?: string): voi
   );
 }
 
-/** Copies an agent app's setup, saying where it goes. */
-export function copyAgentSetup(client: AgentClient, url: string): void {
-  copyText(client.snippet(url), `${client.label} setup copied`, client.where);
-}
-
 /** Opens the agent app's one-click install link. */
 export function installInAgent(client: AgentClient, url: string): void {
   if (!client.installLink) return;

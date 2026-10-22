@@ -1,8 +1,17 @@
+import type { LucideIcon } from "lucide-react";
+import type { SimpleIcon } from "simple-icons";
+
+/** An app's logo: a brand icon (drawn in its color) or a Lucide icon for apps without one. */
+export type AgentClientIcon = SimpleIcon | LucideIcon;
+
 /** An agent app (MCP client) and how to point it at the agent server. */
 export interface AgentClient {
   id: string;
   /** The app's name, e.g. "Cursor". */
   label: string;
+  icon: AgentClientIcon;
+  /** Listed under "Other AI tools" instead of the main grid. */
+  more?: boolean;
   /** What the snippet is, e.g. "Terminal command" or "mcp.json". */
   snippetLabel: string;
   /** Where the snippet goes, shown under it and in the copied toast. */
