@@ -14,4 +14,9 @@ export interface CanvasViewOptions {
   sizeLabel: boolean;
   /** What snaps when the canvas opens (the user's choice, kept per product, wins). */
   snapping: SnapSettings;
+  /**
+   * Whether the host draws rulers over the canvas's top and left edges (`RULER_SIZE` thick; the
+   * design's): a ruler guide dropped on its ruler is removed.
+   */
+  rulers: boolean;
 }

@@ -8,6 +8,8 @@ export interface SnapSettings {
   objects: boolean;
   /** Whole units, where nothing else snapped. */
   pixelGrid: boolean;
+  /** The ruler guides on screen (the products that keep them). */
+  guides: boolean;
 }
 
 export type SnapAxis = "x" | "y";
@@ -19,7 +21,10 @@ export interface SnapEdge {
   marks: readonly number[];
 }
 
-/** What a gesture snaps to, collected once when it starts: the edges sorted by value. */
+/**
+ * What a gesture snaps to, collected once when it starts: the edges sorted by value, and the boxes
+ * equal spacing reads (ruler guides are edges without a box).
+ */
 export interface SnapTargets {
   x: SnapEdge[];
   y: SnapEdge[];
@@ -72,6 +77,8 @@ export interface Snapper {
   resize(box: Rect, handle: ResizeHandle, p: CanvasPointer): Point;
   /** A point (a corner being drawn, a line end) snapped. */
   point(world: Point, p: CanvasPointer): Point;
+  /** A value on one axis (e.g. a ruler guide being dragged) snapped. */
+  line(axis: SnapAxis, value: number, p: CanvasPointer): number;
   /** Hides the guides (the gesture ended). */
   clear(): void;
 }

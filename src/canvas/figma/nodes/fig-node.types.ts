@@ -153,6 +153,8 @@ export interface FigNode {
   overriddenSymbolID?: FigGuid;
   componentPropRefs?: FigPropRef[];
   componentPropAssignments?: FigPropAssignment[];
+  /** A page's ruler guides: `axis` `X` is a vertical line at x = `offset`. */
+  guides?: { axis?: string; offset?: number }[];
   // FigJam
   /** A sticky's, shape's or connector's generated parts (its body, its text) and their looks. */
   nodeGenerationData?: { overrides?: FigOverride[] };

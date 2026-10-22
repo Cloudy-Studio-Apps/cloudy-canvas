@@ -5,6 +5,7 @@ import type { CanvasElement, ElementKinds } from "./elements";
 import type { Point, Rect } from "./geometry.types";
 import type { Keybindings } from "./input";
 import type { ElementClip } from "./render";
+import type { CanvasGuides } from "./ruler-guides";
 import type { CanvasLinks } from "./links";
 import type { Tool, ToolContext } from "./tools";
 
@@ -35,6 +36,8 @@ export interface CanvasProduct<O extends object = object> {
    * canvas shows every element.
    */
   readonly scopes?: CanvasScopes;
+  /** Where the ruler guides are kept (per scope). Without it, the canvas has none. */
+  readonly guides?: CanvasGuides;
   /**
    * Drawing order keys (compared as strings, bottom to top) for elements whose order isn't their
    * own `index` alone, e.g. nodes of a tree drawn after their parent. Elements left out get
@@ -67,6 +70,14 @@ export interface CanvasProduct<O extends object = object> {
    * design's parent frame, a board's section), or `null` when nothing does.
    */
   alignTarget?(el: CanvasElement, elements: readonly CanvasElement[]): Rect | null;
+  /**
+   * Where the rulers count from for this selection (e.g. the corner of the design frame it's in,
+   * as in Figma); `null`, or without it, the world's origin.
+   */
+  rulerOrigin?(
+    selected: readonly CanvasElement[],
+    elements: readonly CanvasElement[],
+  ): Point | null;
   /**
    * Runs when the select tool finishes dragging elements (with their members) to a new place,
    * inside the drag's undo step: e.g. puts them into the frame they were dropped on. `elements`

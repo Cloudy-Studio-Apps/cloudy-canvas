@@ -24,12 +24,23 @@ export function boxEdges(rect: Rect, axis: SnapAxis): SnapEdge[] {
   ];
 }
 
-/** The edges of these boxes, sorted for `nearestOffset` and `edgesAt`. */
-export function snapTargets(boxes: Rect[]): SnapTargets {
+/**
+ * The edges of these boxes, plus lines that aren't part of a box (ruler guides, without marks),
+ * sorted for `nearestOffset` and `edgesAt`.
+ */
+export function snapTargets(
+  boxes: Rect[],
+  lines: Record<SnapAxis, number[]> = NO_LINES,
+): SnapTargets {
   const sorted = (axis: SnapAxis) =>
-    boxes.flatMap((box) => boxEdges(box, axis)).sort((a, b) => a.value - b.value);
+    [
+      ...boxes.flatMap((box) => boxEdges(box, axis)),
+      ...lines[axis].map((value) => ({ value, marks: [] })),
+    ].sort((a, b) => a.value - b.value);
   return { x: sorted("x"), y: sorted("y"), boxes };
 }
+
+const NO_LINES: Record<SnapAxis, number[]> = { x: [], y: [] };
 
 /** Index of the first edge at or after `value` (binary search). */
 function firstFrom(edges: readonly SnapEdge[], value: number): number {

@@ -19,6 +19,10 @@ export interface EngineState<O extends object = object> {
   scope: string | null;
   /** What snaps (the same object until it changes). */
   snapping: SnapSettings;
+  /** Whether the ruler guides show (see `CanvasEngine.setGuidesShown`). */
+  guidesShown: boolean;
+  /** Whether the host shows its rulers (see `CanvasEngine.setRulersShown`). */
+  rulersShown: boolean;
   canUndo: boolean;
   canRedo: boolean;
 }

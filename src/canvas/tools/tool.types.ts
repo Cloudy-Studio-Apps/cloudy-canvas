@@ -4,8 +4,9 @@ import type { CanvasElement, ElementKinds } from "../elements";
 import type { Interaction, ResizeMode } from "../handles";
 import type { Guide } from "../links";
 import type { Point, Rect } from "../geometry.types";
+import type { RulerGuide } from "../ruler-guides";
 import type { ServiceDef } from "../services";
-import type { SnapFeedback, Snapper } from "../snapping";
+import type { SnapAxis, SnapFeedback, Snapper } from "../snapping";
 
 export interface CanvasPointer {
   screen: Point;
@@ -84,6 +85,17 @@ export interface ToolContext<O extends object = object> {
   setSnapFeedback(feedback: SnapFeedback | null): void;
   /** Plays a quick pop on elements just added to the document (e.g. a stamped sticker). */
   animateIn(ids: readonly string[]): void;
+  /** The ruler guides of the scope on screen (see `CanvasGuides`); empty when there are none. */
+  guides(): readonly RulerGuide[];
+  /**
+   * Replaces the scope's ruler guides, in the current undo step (`doc.checkpoint()` first for a new
+   * one). Ignored when the product keeps none.
+   */
+  setGuides(guides: readonly RulerGuide[]): void;
+  /** Shows the value of the guide at this index while it's dragged; `null` hides it. */
+  setActiveGuide(index: number | null): void;
+  /** Whether a screen point is over the shown ruler guides of `axis` come out of (see `overRuler`). */
+  overRuler(axis: SnapAxis, screen: Point): boolean;
   /** Handle under the point (e.g. a resize handle), if any. */
   interactionAt(world: Point): Interaction | null;
   /** Pans while `screen` is near the viewport edge; `null` stops. `onPan` runs after each step. */

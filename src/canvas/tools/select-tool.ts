@@ -2,6 +2,7 @@ import { elementBounds, type CanvasElement, type ElementPatch } from "../element
 import { rectContainsPoint, rectFromPoints, unionRects } from "../geometry";
 import { measureGaps } from "../snapping";
 import { cornerRotateCursor, resizeCursor, type Interaction, type ResizeMode } from "../handles";
+import { GuideDrag, guideCursor } from "./guide-drag";
 import { ResizeGesture } from "./resize-gesture";
 import { RotateGesture } from "./rotate-gesture";
 import { MOVE_THRESHOLD_PX, pastThreshold } from "./drag-threshold";
@@ -87,6 +88,7 @@ export class SelectTool implements Tool {
 
     if (g.kind === "resize") return g.resize.move(p);
     if (g.kind === "rotate") return g.rotate.move(p);
+    if (g.kind === "guide") return g.drag.move(p);
     if (g.kind === "element") return g.gesture.move(p);
 
     if (g.kind === "marquee") {
@@ -160,6 +162,7 @@ export class SelectTool implements Tool {
     if (this.gesture?.kind === "move") this.gesture.snapper?.clear();
     if (this.gesture?.kind === "resize") this.gesture.resize.end();
     if (this.gesture?.kind === "rotate") this.gesture.rotate.end();
+    if (this.gesture?.kind === "guide") this.gesture.drag.end();
     this.measure(undefined);
     this.gesture = null;
     this.ctx.setMarquee(null);
@@ -229,6 +232,10 @@ export class SelectTool implements Tool {
       const { target, corner } = interaction;
       return { kind: "rotate", rotate: new RotateGesture(this.ctx, target, corner, p) };
     }
+    if (interaction.kind === "guide") {
+      const { axis, index } = interaction;
+      return { kind: "guide", drag: new GuideDrag(this.ctx, axis, index, p) };
+    }
     if (interaction.kind === "resize") {
       return {
         kind: "resize",
@@ -253,6 +260,8 @@ function interactionCursor(interaction: Interaction): string {
       return resizeCursor(interaction.handle, interaction.target.rotation);
     case "rotate":
       return cornerRotateCursor(interaction.corner, interaction.target.rotation);
+    case "guide":
+      return guideCursor(interaction.axis);
     case "element":
       return interaction.interaction.cursor;
   }

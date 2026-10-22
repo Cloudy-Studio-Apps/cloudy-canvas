@@ -8,3 +8,4 @@ export { Keymap } from "./keymap";
 export { PointerInput } from "./pointer-input";
 export { bindWheel } from "./wheel-input";
 export { EdgeAutoPan } from "./edge-auto-pan";
+export { toCanvasPointer } from "./canvas-pointer";

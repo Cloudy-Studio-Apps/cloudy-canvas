@@ -66,9 +66,11 @@ export interface MainMenuContext {
 }
 
 /** An item of the main menu: an engine command (named and bound by the keymap) or an action. */
-export type MainMenuItem = { icon?: ExtensionIcon } & (
-  { command: string; label?: string } | { label: string; run(context: MainMenuContext): void }
-);
+export type MainMenuItem = {
+  icon?: ExtensionIcon;
+  /** Shows the item as a checkbox, ticked while this is true (e.g. whether the rulers show). */
+  checked?: (engine: DesignEngine) => boolean;
+} & ({ command: string; label?: string } | { label: string; run(context: MainMenuContext): void });
 
 /** Items of the main menu (the logo's) between separators, with an optional heading. */
 export interface MainMenuGroup {

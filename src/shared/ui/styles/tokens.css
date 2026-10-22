@@ -95,6 +95,9 @@
   --canvas-selection: var(--ice-500);
   --canvas-snap: oklch(0.6 0.21 22);
   --canvas-relation: var(--seal-500);
+  --canvas-ruler: oklch(1 0 0);
+  --canvas-ruler-foreground: var(--seal-500);
+  --canvas-ruler-border: var(--seal-200);
 
   /* ── Semantic: code (syntax colors in the DBML and ER text editors) ───── */
   --syntax-keyword: var(--ice-700);
@@ -217,6 +220,9 @@
   --canvas-selection: var(--ice-400);
   --canvas-snap: oklch(0.7 0.18 22);
   --canvas-relation: var(--seal-400);
+  --canvas-ruler: var(--seal-900);
+  --canvas-ruler-foreground: var(--seal-400);
+  --canvas-ruler-border: var(--seal-800);
   --syntax-keyword: var(--ice-300);
   --syntax-definition: var(--seal-50);
   --syntax-property: var(--seal-200);

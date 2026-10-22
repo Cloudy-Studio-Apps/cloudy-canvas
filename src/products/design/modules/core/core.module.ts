@@ -32,7 +32,9 @@ import { treeClips } from "./tree/tree-clips";
 import { prepareTreeCopies } from "./tree/prepare-tree-copies";
 import { reparentMoved } from "./tree/reparent";
 import { containerAlignTarget } from "./tree/align-target";
+import { selectionRulerOrigin } from "./tree/ruler-origin";
 import { useFlipCommands } from "./ui/use-flip-commands";
+import { useViewCommands } from "./ui/use-view-commands";
 import { ScaleSidebar } from "./ui/scale-sidebar";
 import { withDescendants } from "./tree/tree-members";
 import {
@@ -67,17 +69,26 @@ export const coreModule = defineModule({
       maxZoom: 256,
       grid: "pixels",
       sizeLabel: true,
-      snapping: { objects: true, pixelGrid: true },
+      snapping: { objects: true, pixelGrid: true, guides: true },
+      rulers: true,
     });
     host.contribute(designCanvas.drawOrder, treeOrderKeys);
     host.contribute(designCanvas.clips, treeClips);
     host.contribute(designCanvas.withMembers, (ids, elements) => withDescendants(ids, elements));
     host.contribute(designCanvas.onMoved, reparentMoved);
     host.contribute(designCanvas.alignTarget, containerAlignTarget);
+    host.contribute(designCanvas.rulerOrigin, selectionRulerOrigin);
     host.contribute(
       designCanvas.hostCommands,
       { id: "flipHorizontal", label: "Flip horizontal", keys: [{ key: "h", shift: true }] },
       { id: "flipVertical", label: "Flip vertical", keys: [{ key: "v", shift: true }] },
+      { id: "toggleRulers", label: "Rulers", keys: [{ key: "r", shift: true }] },
+      {
+        id: "toggleGuides",
+        label: "Ruler guides",
+        keys: [{ code: "Semicolon", shift: true, label: ";" }],
+      },
+      { id: "clearGuides", label: "Remove all guides" },
     );
     host.contribute(designCanvas.prepareCopies, prepareTreeCopies);
     host.contribute(designCanvas.keybindings, { "tool.scale": [{ key: "k" }] });
@@ -154,7 +165,11 @@ export const coreModule = defineModule({
     );
 
     host.contribute(designEditor.toolSidebars, { tool: "scale", component: ScaleSidebar });
-    host.contribute(designEditor.sessionHooks, { id: "flip-commands", use: useFlipCommands });
+    host.contribute(
+      designEditor.sessionHooks,
+      { id: "flip-commands", use: useFlipCommands },
+      { id: "view-commands", use: useViewCommands },
+    );
     host.contribute(designEditor.contextMenu, {
       id: "transform",
       menu: "selection",
@@ -205,6 +220,23 @@ export const coreModule = defineModule({
           { command: "zoomOut" },
           { command: "zoomReset" },
           { command: "zoomToFit" },
+        ],
+      },
+      {
+        id: "show",
+        order: 41,
+        items: [
+          {
+            command: "toggleRulers",
+            label: "Rulers",
+            checked: (engine) => engine.getState().rulersShown,
+          },
+          {
+            command: "toggleGuides",
+            label: "Ruler guides",
+            checked: (engine) => engine.getState().guidesShown,
+          },
+          { command: "clearGuides", label: "Remove all guides" },
         ],
       },
       {

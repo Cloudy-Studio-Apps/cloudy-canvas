@@ -30,10 +30,12 @@ export function composeProduct<O extends object>(
   const links = host.get(points.links);
   const movers = host.get(points.onMoved);
   const scopes = single(host.get(points.scopes), `the ${id}'s scopes`);
+  const guides = single(host.get(points.guides), `where the ${id}'s ruler guides are kept`);
   const order = single(host.get(points.drawOrder), `the ${id}'s drawing order`);
   const clips = single(host.get(points.clips), `the ${id}'s clips`);
   const target = single(host.get(points.selectTarget), `what a click selects in the ${id}`);
   const aligner = single(host.get(points.alignTarget), `what one element aligns with in the ${id}`);
+  const origin = single(host.get(points.rulerOrigin), `where the ${id}'s rulers count from`);
   const editor = single(host.get(points.editElement), `what double-click edits in the ${id}`);
 
   return {
@@ -50,9 +52,11 @@ export function composeProduct<O extends object>(
     defaultOptions: mergeOptions<O>(host.get(points.options), "tool option"),
     view: mergeOptions<Partial<CanvasViewOptions>>(host.get(points.view), "view option"),
     ...(scopes ? { scopes } : {}),
+    ...(guides ? { guides } : {}),
     ...(order ? { orderKeys: (elements) => order(elements, kinds) } : {}),
     ...(clips ? { clips: (elements) => clips(elements, kinds) } : {}),
     ...(editor ? { editElement: editor } : {}),
+    ...(origin ? { rulerOrigin: (selected, elements) => origin(selected, elements, kinds) } : {}),
     ...(aligner ? { alignTarget: (el, elements) => aligner(el, elements, kinds) } : {}),
     ...(target
       ? { selectTarget: (hitId, request, elements) => target(hitId, request, elements, kinds) }

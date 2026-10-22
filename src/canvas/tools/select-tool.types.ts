@@ -1,6 +1,7 @@
 import type { CanvasElement, ElementGesture } from "../elements";
 import type { Rect } from "../geometry.types";
 import type { Snapper } from "../snapping";
+import type { GuideDrag } from "./guide-drag";
 import type { ResizeGesture } from "./resize-gesture";
 import type { RotateGesture } from "./rotate-gesture";
 import type { CanvasPointer } from "./tool.types";
@@ -27,5 +28,6 @@ export type Gesture =
   | { kind: "marquee"; start: CanvasPointer; base: Set<string> }
   | { kind: "resize"; resize: ResizeGesture }
   | { kind: "rotate"; rotate: RotateGesture }
+  | { kind: "guide"; drag: GuideDrag }
   /** A drag started on part of an element its kind offers (e.g. a handle). */
   | { kind: "element"; gesture: ElementGesture };

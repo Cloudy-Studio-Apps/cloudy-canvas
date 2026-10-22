@@ -2,6 +2,7 @@
 export interface SnapPreference {
   objects?: boolean;
   pixelGrid?: boolean;
+  guides?: boolean;
 }
 
 export interface SnappingState {

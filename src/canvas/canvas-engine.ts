@@ -53,24 +53,35 @@ import type { EngineLoading } from "./engine-loading.types";
 import type { EngineState } from "./engine-state.types";
 import { intersectRects, rectCenter, rectsIntersect, unionRects } from "./geometry";
 import type { Point, Rect } from "./geometry.types";
-import { bindKeyboard, bindWheel, EdgeAutoPan, Keymap, PointerInput } from "./input";
+import {
+  bindKeyboard,
+  bindWheel,
+  EdgeAutoPan,
+  Keymap,
+  PointerInput,
+  toCanvasPointer,
+} from "./input";
 import { clipBounds, Renderer, type CanvasTheme } from "./render";
+import { overRuler, rulerGuideKey, RULER_SIZE, ScopeGuides, type RulerGuide } from "./ruler-guides";
 import { Scene } from "./scene";
 import { ServiceCache, type ServiceDef } from "./services";
 import {
   GestureSnapper,
   snapTargets,
+  type SnapAxis,
   type SnapFeedback,
   type SnapSettings,
   type SnapTargets,
 } from "./snapping";
 import { FontTracker, loadFonts, TextEditor } from "./text";
 import { createBaseTools, type CanvasPointer, type Tool, type ToolContext } from "./tools";
+import { GuideDrag } from "./tools/guide-drag";
 import { debounce, delay, Disposables, Emitter, FrameScheduler, Store } from "./utils";
 import type {
   CanvasEngineOptions,
   ContextMenuRequest,
   ElementAction,
+  GuideDragHandle,
   HostAction,
   ScopeView,
 } from "./canvas-engine.types";
@@ -144,6 +155,13 @@ export class CanvasEngine<O extends object = object> {
   private readonly scopeViews = new Map<string, ScopeView>();
   /** Set while undoing or redoing, so the canvas follows the change to its scope. */
   private followHistory = false;
+  private readonly scopeGuides: ScopeGuides;
+  /** Whether the ruler guides are drawn (and grabbed, and snapped to). */
+  private guidesShown = true;
+  /** Whether the host shows its rulers (see `CanvasViewOptions.rulers`). */
+  private rulersShown: boolean;
+  /** The guide whose value shows while it's dragged. */
+  private activeGuide: number | null = null;
   private tool: Tool;
   private options: O;
   private snapping: SnapSettings;
@@ -167,6 +185,7 @@ export class CanvasEngine<O extends object = object> {
     const view = { ...DEFAULT_VIEW_OPTIONS, ...product.view };
     this.view = view;
     this.snapping = view.snapping;
+    this.rulersShown = view.rulers;
     this.camera.setZoomLimits(view.minZoom, view.maxZoom);
     this.renderer = new Renderer(
       theme,
@@ -199,6 +218,7 @@ export class CanvasEngine<O extends object = object> {
         return scope === null ? el : scopes.place(el, scope);
       });
     }
+    this.scopeGuides = new ScopeGuides(this.doc, product.guides);
     this.fontTracker = new FontTracker(fonts, (key) => this.handleFontLoad(key));
     this.systemClipboard = clipboard ?? new MemoryClipboard();
     this.clipboard = this.createClipboard(this.systemClipboard);
@@ -415,6 +435,72 @@ export class CanvasEngine<O extends object = object> {
     if (id === this.scene.scope || !this.scopes?.list(this.doc).includes(id)) return;
     this.textEditor?.commit();
     this.showScope(id);
+  }
+
+  // ── Ruler guides ──────────────────────────────────────────────────────
+
+  /** Whether the product keeps ruler guides (see `CanvasGuides`). */
+  get hasGuides(): boolean {
+    return this.scopeGuides.kept;
+  }
+
+  /** The ruler guides of the scope on screen. */
+  guides(): readonly RulerGuide[] {
+    return this.scopeGuides.list(this.scene.scope);
+  }
+
+  /** Replaces the scope's ruler guides as one undo step. */
+  setGuides(guides: readonly RulerGuide[]): void {
+    if (!this.hasGuides) return;
+    this.doc.checkpoint();
+    this.scopeGuides.write(this.scene.scope, guides);
+  }
+
+  addGuides(guides: readonly RulerGuide[]): void {
+    this.setGuides([...this.guides(), ...guides]);
+  }
+
+  /** Removes the guides at these indexes (all of them without any) as one undo step. */
+  removeGuides(indexes?: Iterable<number>): void {
+    const gone = indexes ? new Set(indexes) : null;
+    const kept = gone ? this.guides().filter((_, i) => !gone.has(i)) : [];
+    if (kept.length !== this.guides().length) this.setGuides(kept);
+  }
+
+  /** Shows or hides the ruler guides (hidden ones aren't grabbed or snapped to). */
+  setGuidesShown(shown: boolean): void {
+    if (this.guidesShown === shown) return;
+    this.guidesShown = shown;
+    this.requestRender();
+    this.emitChange();
+  }
+
+  /** Tells the engine whether the host shows its rulers, where a guide dropped is removed. */
+  setRulersShown(shown: boolean): void {
+    if (this.rulersShown === shown) return;
+    this.rulersShown = shown;
+    this.requestRender();
+    this.emitChange();
+  }
+
+  /**
+   * Starts dragging a new ruler guide out of a ruler the host draws (on `x` a vertical one, out of
+   * the left ruler), from a pointer press there. `null` when the canvas keeps no guides.
+   */
+  beginGuideDrag(axis: SnapAxis, event: PointerEvent): GuideDragHandle | null {
+    const canvas = this.rendererReady ? this.renderer.canvas : null;
+    if (!canvas || !this.hasGuides) return null;
+    this.textEditor?.commit();
+    this.setGuidesShown(true);
+    const pointer = (e: PointerEvent) => toCanvasPointer(e, canvas, this.camera);
+    const drag = new GuideDrag(this.toolContext, axis, null, pointer(event));
+    return {
+      move: (e) => drag.move(pointer(e)),
+      end: () => {
+        drag.end();
+        this.setCursor(this.tool.cursor);
+      },
+    };
   }
 
   /** Selects every element that isn't locked. */
@@ -782,6 +868,29 @@ export class CanvasEngine<O extends object = object> {
     return this.camera.worldRectToScreen(rect);
   }
 
+  /** The world area on screen (for rulers and other DOM drawn along the view). */
+  visibleWorldRect(): Rect {
+    return this.camera.visibleWorldRect();
+  }
+
+  /** Where the rulers count from for the selection (see `CanvasProduct.rulerOrigin`). */
+  rulerOrigin(): Point {
+    const selected = [...this.scene.selection.ids].map((id) => this.scene.get(id));
+    const elements = selected.filter((el) => el !== undefined);
+    if (elements.length === 0) return { x: 0, y: 0 };
+    return this.product.rulerOrigin?.(elements, this.scene.elements) ?? { x: 0, y: 0 };
+  }
+
+  /** The box round where the selected elements show, or `null` with nothing selected. */
+  selectionBounds(): Rect | null {
+    const rects: Rect[] = [];
+    for (const id of this.scene.selection.ids) {
+      const el = this.scene.get(id);
+      if (el) rects.push(elementBounds(this.kinds.kindOf(el), el));
+    }
+    return unionRects(rects);
+  }
+
   /**
    * Runs after anything that can move an element on screen: the camera, a resize or a document
    * change. DOM overlays use it to follow an element. Returns an unsubscribe function.
@@ -939,7 +1048,15 @@ export class CanvasEngine<O extends object = object> {
       moved: (ids) => this.product.onMoved?.(this.doc, new Set(ids), this.scene.elements),
       duplicate: (ids) => this.clipboard.duplicate(ids, { x: 0, y: 0 }),
       getHover: () => this.scene.hoveredId,
-      interactionAt: (world) => findInteraction(this.scene, world, this.camera.zoom),
+      interactionAt: (world) =>
+        findInteraction(this.scene, world, this.camera.zoom, this.shownGuides()),
+      guides: () => this.guides(),
+      setGuides: (guides) => this.scopeGuides.write(this.scene.scope, guides),
+      setActiveGuide: (index) => {
+        this.activeGuide = index;
+        this.requestRender();
+      },
+      overRuler: (axis, screen) => this.rulersShown && overRuler(axis, screen),
       autoPan: (screen, onPan) => this.autoPan.update(screen, onPan),
       panBy: (dx, dy) => {
         this.camera.panBy(dx, dy);
@@ -1046,6 +1163,7 @@ export class CanvasEngine<O extends object = object> {
   // ── Reactions ─────────────────────────────────────────────────────────
 
   private handleDocumentChange(change: DocumentChange): void {
+    this.scopeGuides.invalidate();
     const scope = this.nextScope(change);
     if (scope !== this.scene.scope) {
       this.showScope(scope);
@@ -1349,7 +1467,13 @@ export class CanvasEngine<O extends object = object> {
   private snapTargets(exclude: ReadonlySet<string>): SnapTargets {
     const view = this.camera.visibleWorldRect();
     const area = { x: view.x - view.w, y: view.y - view.h, w: view.w * 3, h: view.h * 3 };
+    const lines: Record<SnapAxis, number[]> = { x: [], y: [] };
+    if (this.snapping.guides)
+      this.shownGuides().forEach(({ axis, value }, i) => {
+        if (!exclude.has(rulerGuideKey(i))) lines[axis].push(value);
+      });
     const boxes: Rect[] = [];
+    if (!this.snapping.objects) return snapTargets(boxes, lines);
     for (const el of this.scene.elements) {
       const kind = this.kinds.kindOf(el);
       if (exclude.has(el.id) || !kind.snapTarget(el)) continue;
@@ -1358,7 +1482,12 @@ export class CanvasEngine<O extends object = object> {
       const box = clip ? intersectRects(shown, clipBounds(clip)) : shown;
       if ((box.w > 0 || box.h > 0) && rectsIntersect(box, area)) boxes.push(box);
     }
-    return snapTargets(boxes);
+    return snapTargets(boxes, lines);
+  }
+
+  /** The ruler guides on screen: none while they're hidden. */
+  private shownGuides(): readonly RulerGuide[] {
+    return this.guidesShown ? this.guides() : [];
   }
 
   private requestRender(): void {
@@ -1366,6 +1495,11 @@ export class CanvasEngine<O extends object = object> {
   }
 
   private draw(): void {
+    this.renderer.setRulerGuides({
+      guides: this.shownGuides(),
+      active: this.activeGuide,
+      inset: this.rulersShown ? RULER_SIZE : 0,
+    });
     const animating = this.renderer.render(
       this.camera,
       this.scene.overlay(this.camera.zoom),
@@ -1385,6 +1519,8 @@ export class CanvasEngine<O extends object = object> {
       selectionTypes: this.selectionTypes(),
       selectedPart: this.scene.selection.part,
       snapping: this.snapping,
+      guidesShown: this.guidesShown,
+      rulersShown: this.rulersShown,
       scope: this.scene.scope,
       canUndo: this.doc.canUndo(),
       canRedo: this.doc.canRedo(),

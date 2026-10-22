@@ -12,7 +12,8 @@ export const designReadTools: DesignAgentTool[] = [
     description:
       "The design open in Cloudy Canvas: id, name (its title, or its file name), title and " +
       "description (set with set_design_info), file path, unsaved changes, the page on screen " +
-      "(`currentPage`, see list_pages), layer counts by type on it, selection and undo state. " +
+      "(`currentPage`, see list_pages), layer counts by type on it, how many ruler guides it has " +
+      "(`guides`, see list_guides), selection and undo state. " +
       "Returns { open: false } when no design is open.",
     inputSchema: NO_ARGS,
     run: (host) => {
@@ -34,6 +35,7 @@ export const designReadTools: DesignAgentTool[] = [
         currentPage: engine.scope,
         nodeCount: engine.elements().length,
         nodesByType,
+        guides: engine.guides().length,
         selection: engine.selectedIds(),
         canUndo,
         canRedo,

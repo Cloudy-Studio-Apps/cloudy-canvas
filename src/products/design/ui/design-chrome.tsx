@@ -4,6 +4,7 @@ import {
   ModuleSession,
   ModuleToolbar,
   ModuleToolOptions,
+  Rulers,
   useCanvasFile,
   useCopyAsPng,
 } from "@canvas-ui";
@@ -14,7 +15,7 @@ import { CANVAS_INSET } from "./design-layout";
 
 /**
  * The UI around the canvas: the rail and left panel, the properties panel, and over the canvas
- * the toolbar, the context menu and the modules' overlays. Everything in it comes from the
+ * the rulers, the toolbar, the context menu and the modules' overlays. Everything in it comes from the
  * modules' points; it never holds canvas content.
  */
 export function DesignChrome() {
@@ -33,6 +34,7 @@ export function DesignChrome() {
       </div>
       {/* Laid over the canvas exactly, so screen positions from the engine line up. */}
       <div className="absolute inset-y-0" style={CANVAS_INSET}>
+        <Rulers />
         <CanvasContextMenu />
         <ModuleSession />
         <div className="absolute inset-x-0 bottom-4 flex flex-col items-center gap-2">

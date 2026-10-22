@@ -3,6 +3,8 @@
 export * from "./page";
 export { DESIGN_PAGES, DesignPages } from "./design-pages";
 export { ensurePages } from "./ensure-pages";
+export { PAGE_GUIDES } from "./page-guides";
 export { PAGE_SCOPES } from "./page-scopes";
 export { pagesOf } from "./pages-of";
+export { guidesTools } from "./guides.agent-tools";
 export { pagesTools } from "./pages.agent-tools";

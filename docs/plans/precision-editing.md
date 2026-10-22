@@ -169,7 +169,18 @@ still straightened or vectorized.
 - Agents: `rotation` in `create_nodes`/`update_nodes` (patchable field, checked number).
 - Figma import: `fig-matrix.ts` reads rotation from the transform matrix instead of flattening.
 
-## Phase 4: Rulers and ruler guides (Design)
+## Phase 4: Rulers and ruler guides (Design) — done
+
+As built: rulers count from the corner of the frame the selection is in (or of a selected
+top-level frame), like Figma, and mark the selection's extent with its two values; the Position
+section's X/Y count from the layer's frame too (agents keep world coordinates). A guide's value
+shows in world units. Guides go through a product hook, `guides` (`CanvasGuides`; the
+design keeps them on each page's record), so the engine stays product-agnostic. The guide toggle
+is Shift+;, "Remove all guides" has no key; the snap toggle lives in the zoom menu, the main menu
+has Rulers, Ruler guides and Remove all guides as checkbox items. Guides snap to elements and to
+other guides while dragged (Ctrl turns it off). Agents: `list_guides`, `add_guides`,
+`remove_guides`. Figma pages' guides are kept on import. Not done: frame-local guides, locking
+guides, rulers on the board.
 
 - `CanvasViewOptions.rulers` (Design on); rulers are DOM (`canvas-ui/components/rulers/`): a top and a
   left strip 20 px wide drawn on a `<canvas>`, ticks and numbers chosen by zoom (1/2/5 × 10ⁿ steps),

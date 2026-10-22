@@ -103,14 +103,27 @@ export class GestureSnapper implements Snapper {
     return at;
   }
 
+  line(axis: SnapAxis, value: number, p: CanvasPointer): number {
+    let offset = 0;
+    if (this.snapsToObjects(p))
+      offset = nearestOffset([value], this.targets()[axis], this.threshold()) ?? 0;
+    if (offset === 0 && this.host.settings().pixelGrid) offset = Math.round(value) - value;
+    const at = value + offset;
+    const moving = AXES.map((a) => (a === axis ? [{ value: at, marks: [] }] : []));
+    this.showFor(moving, [], p);
+    return at;
+  }
+
   clear(): void {
     if (!this.shown) return;
     this.shown = false;
     this.host.show(null);
   }
 
+  /** Whether anything snaps (elements or ruler guides): Ctrl/Cmd turns it off. */
   private snapsToObjects(p: CanvasPointer): boolean {
-    return this.host.settings().objects && !p.modKey;
+    const { objects, guides } = this.host.settings();
+    return (objects || guides) && !p.modKey;
   }
 
   private threshold(): number {

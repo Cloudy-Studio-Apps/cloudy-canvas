@@ -49,3 +49,13 @@ export interface ScopeView {
   y: number;
   zoom: number;
 }
+
+/**
+ * A ruler guide being dragged out of a ruler the host draws (`CanvasEngine.beginGuideDrag`): the
+ * host forwards the pointer's moves and release.
+ */
+export interface GuideDragHandle {
+  move(event: PointerEvent): void;
+  /** Ends the drag: the guide stays where it is, or isn't added when dropped on its ruler. */
+  end(): void;
+}

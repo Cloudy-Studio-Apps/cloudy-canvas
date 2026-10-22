@@ -67,6 +67,15 @@ export function ZoomMenu({ side = "top" }: ZoomMenuProps) {
             Snap to pixel grid
           </DropdownMenuCheckboxItem>
         )}
+        {engine.hasGuides && (
+          <DropdownMenuCheckboxItem
+            checked={snapping.guides}
+            onCheckedChange={(guides) => setSnapping({ guides })}
+            onSelect={(event) => event.preventDefault()}
+          >
+            Snap to guides
+          </DropdownMenuCheckboxItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

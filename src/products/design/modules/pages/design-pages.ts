@@ -66,7 +66,10 @@ export class DesignPages {
   /** Adds a copy of a page and everything on it right after it, named "<name> copy". */
   duplicate(id: string): PageElement {
     const source = this.requirePage(id);
-    const copy = createPage(`${source.name} copy`, this.indexAfter(id));
+    const copy = {
+      ...createPage(`${source.name} copy`, this.indexAfter(id)),
+      ...(source.guides ? { guides: source.guides } : {}),
+    };
     const nodes = this.nodes(id);
     const { copies } = cloneElements(nodes, this.doc.nextIndexes(nodes.length));
     this.doc.checkpoint();

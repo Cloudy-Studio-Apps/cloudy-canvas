@@ -6,6 +6,7 @@ export type {
   CanvasEngineOptions,
   ContextMenuRequest,
   ElementAction,
+  GuideDragHandle,
   HostAction,
 } from "./canvas-engine.types";
 export type { Alignment, DistributeAxis, RotatePivot, ScaleAnchor } from "./arrange";
@@ -27,6 +28,8 @@ export type { Point, Rect, Size } from "./geometry.types";
 export type { ResizeMode } from "./handles";
 export type { Keybindings } from "./input";
 export type * from "./modules";
+export type { CanvasGuides, RulerGuide } from "./ruler-guides";
+export { overRuler, RULER_SIZE } from "./ruler-guides";
 export type { ServiceDef } from "./services";
 export type { CanvasLinks, Guide, GuideView, LinkView } from "./links";
 export type {
@@ -40,7 +43,7 @@ export type {
   ShapePaintLayer,
 } from "./render";
 export type { CanvasPointer, Tool, ToolContext } from "./tools";
-export type { SnapFeedback, SnapGap, SnapLine, Snapper, SnapSettings } from "./snapping";
+export type { SnapAxis, SnapFeedback, SnapGap, SnapLine, Snapper, SnapSettings } from "./snapping";
 export { anchorPoint, nudgeCheckpoint, nudgeStep, NUDGE_STEPS, SCALE_ANCHORS } from "./arrange";
 export { CanvasEngine } from "./canvas-engine";
 export { MIN_ZOOM, MAX_ZOOM } from "./camera";

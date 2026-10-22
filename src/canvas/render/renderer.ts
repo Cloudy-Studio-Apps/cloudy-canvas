@@ -16,6 +16,8 @@ import type { GridLayer } from "./layers/grid-layer.types";
 import { GuideLayer } from "./layers/guide-layer";
 import { LinkLayer } from "./layers/link-layer";
 import { OverlayLayer } from "./layers/overlay-layer";
+import { RulerGuideLayer } from "./layers/ruler-guide-layer";
+import type { RulerGuidesView } from "./layers/ruler-guide-layer.types";
 import { SizeLabelLayer } from "./layers/size-label-layer";
 import { SnapLayer } from "./layers/snap-layer";
 import type { OverlayState } from "./overlay-state.types";
@@ -32,9 +34,9 @@ function nextFrame(): Promise<void> {
 
 /**
  * Owns the Pixi application and composes the layers, bottom to top:
- * grid (screen) → world (frames, links, elements, drafts, guides; follows the camera) → overlay,
- * size label and smart guides (screen), with a pixel grid above the world instead. Frames have
- * their own layer so links show above them.
+ * grid (screen) → world (frames, links, elements, drafts, guides; follows the camera) → ruler
+ * guides, overlay, size label and smart guides (screen), with a pixel grid above the world instead.
+ * Frames have their own layer so links show above them.
  */
 export class Renderer {
   readonly app = new Application();
@@ -45,6 +47,8 @@ export class Renderer {
   private readonly guide = new GuideLayer();
   private readonly grid: GridLayer;
   private readonly world = new Container();
+  private readonly rulerGuides = new RulerGuideLayer();
+  private rulerGuidesView: RulerGuidesView | null = null;
   private readonly overlay = new OverlayLayer();
   private readonly sizeLabel = new SizeLabelLayer();
   private readonly snap = new SnapLayer();
@@ -80,8 +84,9 @@ export class Renderer {
     this.world.addChild(this.frames, this.links, this.elements, this.draft, this.guide);
     // The pixel grid lies over the content it measures; dots stay behind it.
     if (this.options.grid === "pixels")
-      this.app.stage.addChild(this.world, this.grid, this.overlay, this.sizeLabel, this.snap);
-    else this.app.stage.addChild(this.grid, this.world, this.overlay, this.sizeLabel, this.snap);
+      this.app.stage.addChild(this.world, this.grid, this.rulerGuides);
+    else this.app.stage.addChild(this.grid, this.world, this.rulerGuides);
+    this.app.stage.addChild(this.overlay, this.sizeLabel, this.snap);
   }
 
   /** The canvas background color (0xRRGGBB). */
@@ -181,6 +186,11 @@ export class Renderer {
     this.snapFeedback = feedback;
   }
 
+  /** Shows the ruler guides (see `CanvasGuides`); `null` hides them. */
+  setRulerGuides(view: RulerGuidesView | null): void {
+    this.rulerGuidesView = view;
+  }
+
   /** Re-rasterizes text for the zoom level. */
   setTextZoom(zoom: number): void {
     this.elements.setTextZoom(zoom);
@@ -215,6 +225,7 @@ export class Renderer {
     this.grid.draw(camera, this.theme.grid);
     this.links.draw({ zoom: camera.zoom, theme: this.theme, highlighted });
     this.guide.draw({ zoom: camera.zoom, theme: this.theme });
+    this.rulerGuides.draw(camera, this.rulerGuidesView, this.theme.snap);
     this.overlay.draw(camera, overlay, this.theme.selection);
     this.sizeLabel.draw(camera, this.options.sizeLabel ? overlay.size : null, this.theme.selection);
     this.snap.draw(camera, this.snapFeedback, this.theme.snap);

@@ -48,6 +48,7 @@ export { OptionButton } from "./components/option-button";
 export { ToolButton } from "./components/tool-button";
 export { ZoomControls } from "./components/zoom-controls";
 export { ZoomMenu } from "./components/zoom-menu";
+export { Rulers } from "./components/rulers";
 export {
   CanvasFileContext,
   DocumentInfoPopover,

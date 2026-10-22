@@ -6,6 +6,7 @@ import { ExtensionIconView, useEditorModules } from "@canvas-ui";
 import { SealLogo } from "@shared/ui/brand/seal-logo";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -49,15 +50,27 @@ export function DesignMainMenu() {
           <Fragment key={group.id}>
             {i > 0 && <DropdownMenuSeparator />}
             {group.label && <DropdownMenuLabel>{group.label}</DropdownMenuLabel>}
-            {group.items.map((item) => (
-              <DropdownMenuItem key={labelOf(item)} onSelect={() => pick(item)}>
-                {item.icon ? <ExtensionIconView icon={item.icon} /> : <span className="size-4" />}
-                {labelOf(item)}
-                {"command" in item && (
-                  <DropdownMenuShortcut>{engine.keymap.label(item.command)}</DropdownMenuShortcut>
-                )}
-              </DropdownMenuItem>
-            ))}
+            {group.items.map((item) => {
+              const shortcut = "command" in item && (
+                <DropdownMenuShortcut>{engine.keymap.label(item.command)}</DropdownMenuShortcut>
+              );
+              return item.checked ? (
+                <DropdownMenuCheckboxItem
+                  key={labelOf(item)}
+                  checked={item.checked(engine)}
+                  onSelect={() => pick(item)}
+                >
+                  {labelOf(item)}
+                  {shortcut}
+                </DropdownMenuCheckboxItem>
+              ) : (
+                <DropdownMenuItem key={labelOf(item)} onSelect={() => pick(item)}>
+                  {item.icon ? <ExtensionIconView icon={item.icon} /> : <span className="size-4" />}
+                  {labelOf(item)}
+                  {shortcut}
+                </DropdownMenuItem>
+              );
+            })}
           </Fragment>
         ))}
       </DropdownMenuContent>

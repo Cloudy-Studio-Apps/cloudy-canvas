@@ -7,5 +7,6 @@ export const DEFAULT_VIEW_OPTIONS: CanvasViewOptions = {
   maxZoom: MAX_ZOOM,
   grid: "dots",
   sizeLabel: false,
-  snapping: { objects: false, pixelGrid: false },
+  snapping: { objects: false, pixelGrid: false, guides: false },
+  rulers: false,
 };

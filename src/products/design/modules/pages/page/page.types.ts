@@ -1,4 +1,4 @@
-import type { CanvasElement } from "@canvas";
+import type { CanvasElement, RulerGuide } from "@canvas";
 
 /**
  * A page of a design: a record in the document (never drawn or hit) whose `index` orders the
@@ -7,4 +7,6 @@ import type { CanvasElement } from "@canvas";
 export interface PageElement extends CanvasElement {
   type: "page";
   name: string;
+  /** The page's ruler guides (see `PAGE_GUIDES`); unset is none. */
+  guides?: RulerGuide[];
 }

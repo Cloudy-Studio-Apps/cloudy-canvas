@@ -13,6 +13,7 @@ import {
 import { createPage } from "../../modules";
 import type { FigmaImport } from "../figma-import.types";
 import { convertChildren } from "./convert-node";
+import { figPageGuides } from "./page-guides";
 import { resolveFigNode } from "./resolve-instances";
 
 /**
@@ -37,8 +38,9 @@ export function convertFigma(
   let done = 0;
   const elements: CanvasElement[] = [];
   pages.forEach((figPage, i) => {
+    const guides = figPageGuides(figPage);
     const page = createPage(figPage.name || `Page ${i + 1}`, keys[i] ?? "a0");
-    elements.push(page);
+    elements.push(guides.length > 0 ? { ...page, guides } : page);
     const layers = (topLayers[i] ?? []).map((node) => resolveFigNode(tree, node, ctx.warnings));
     convertChildren(
       layers,
