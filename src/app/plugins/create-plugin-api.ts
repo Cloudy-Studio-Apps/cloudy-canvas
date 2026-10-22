@@ -54,10 +54,13 @@ import {
   designCanvas,
   designMigrations,
   DesignNodeKind,
+  distanceToOutline,
   drawPaints,
   imagePaint,
   isDesignNode,
   NODE_DEFAULTS,
+  pointInPolygon,
+  pointsInBox,
   solidPaint,
   traceBox,
 } from "@design";
@@ -158,6 +161,9 @@ export function createPluginApi(plugin: InstalledPlugin): PluginApi {
           NODE_DEFAULTS,
           BoxDrawTool,
           containerAt,
+          pointsInBox,
+          pointInPolygon,
+          distanceToOutline,
         },
         panel: {
           PanelSection,

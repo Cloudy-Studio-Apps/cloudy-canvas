@@ -10,3 +10,4 @@ export { NODE_DEFAULTS } from "./node.defaults";
 export { solidPaint } from "./solid-paint";
 export { traceBox } from "./trace-box";
 export { imagePaint } from "./image-paint";
+export { distanceToOutline, pointInPolygon, pointsInBox } from "./shape-points";

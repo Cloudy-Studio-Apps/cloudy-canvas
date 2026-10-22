@@ -13,7 +13,9 @@ import {
 
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
+import type { PropertySelection } from "@design/ui/modules";
 import { designCanvas } from "../../design-points";
+import { DesignNodeKind } from "./node";
 import { treeOrderKeys } from "./tree/order-keys";
 import { prepareTreeCopies } from "./tree/prepare-tree-copies";
 import { reparentMoved } from "./tree/reparent";
@@ -61,7 +63,16 @@ export const coreModule = defineModule({
       },
     );
 
-    const any = ({ nodes }: { nodes: readonly unknown[] }) => nodes.length > 0;
+    const any = ({ nodes }: PropertySelection) => nodes.length > 0;
+    /** Every selected node can do it (nodes of other kinds don't count against it). */
+    const all =
+      (can: (kind: DesignNodeKind) => boolean) =>
+      ({ nodes, kinds }: PropertySelection) =>
+        nodes.length > 0 &&
+        nodes.every((node) => {
+          const kind = kinds.kindOf(node);
+          return !(kind instanceof DesignNodeKind) || can(kind);
+        });
     host.contribute(
       designEditor.propertySections,
       {
@@ -72,9 +83,21 @@ export const coreModule = defineModule({
         component: PageSection,
       },
       { id: "position", tab: "design", order: 20, when: any, component: PositionSection },
-      { id: "layout", tab: "design", order: 30, when: any, component: LayoutSection },
+      {
+        id: "layout",
+        tab: "design",
+        order: 30,
+        when: all((kind) => kind.resizable),
+        component: LayoutSection,
+      },
       { id: "appearance", tab: "design", order: 40, when: any, component: AppearanceSection },
-      { id: "fills", tab: "design", order: 60, when: any, component: FillSection },
+      {
+        id: "fills",
+        tab: "design",
+        order: 60,
+        when: all((kind) => kind.fillable),
+        component: FillSection,
+      },
       { id: "strokes", tab: "design", order: 70, when: any, component: StrokeSection },
       { id: "export", tab: "design", order: 90, when: () => true, component: ExportSection },
       {

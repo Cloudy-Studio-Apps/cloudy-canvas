@@ -22,6 +22,11 @@ export interface ToolbarPlacement {
   group: number;
   /** Position within the group, lowest first. Built-ins are spaced by 10 to leave room. */
   order: number;
+  /**
+   * Tools with the same `menu` share one button, placed where the first of them goes: it shows
+   * the tool picked last (or the active one), and its chevron lists them all (e.g. the shapes).
+   */
+  menu?: string;
 }
 
 /** How a tool is listed in the product's library (the widgets panel). */
@@ -121,6 +126,13 @@ export interface EditorPoints {
 export interface EditorModules {
   host: ModuleHost;
   points: EditorPoints;
+}
+
+/** One button of the toolbar: a tool, or a menu of tools (see `ToolbarPlacement.menu`). */
+export type ToolbarItem = PlacedToolEntry | { menu: string; entries: PlacedToolEntry[] };
+
+export interface ToolMenuButtonProps {
+  entries: readonly PlacedToolEntry[];
 }
 
 export interface ModuleToolbarProps {

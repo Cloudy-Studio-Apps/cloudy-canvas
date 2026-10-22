@@ -4,9 +4,10 @@ import { useEngine, useEngineState } from "../engine-context";
 import { useEditorPoint } from "./editor-modules-context";
 import type { ModuleToolbarProps } from "./editor-points.types";
 import { ExtensionIconView } from "./extension-icon-view";
-import { toolbarGroups, toolInfo } from "./tool-entries";
+import { ToolMenuButton } from "./tool-menu-button";
+import { toolbarGroups, toolbarItems, toolInfo } from "./tool-entries";
 
-/** The tools the modules place on the toolbar, in their groups. */
+/** The tools the modules place on the toolbar, in their groups (tools sharing a menu as one). */
 export function ModuleToolbar({ children }: ModuleToolbarProps) {
   const engine = useEngine();
   const activeTool = useEngineState((state) => state.tool);
@@ -17,7 +18,9 @@ export function ModuleToolbar({ children }: ModuleToolbarProps) {
       {groups.map((group, i) => (
         <div key={group[0]?.toolbar.group ?? i} className="flex items-center gap-0.5">
           {i > 0 && <PanelDivider />}
-          {group.map((entry) => {
+          {toolbarItems(group).map((item) => {
+            if ("entries" in item) return <ToolMenuButton key={item.menu} entries={item.entries} />;
+            const entry = item;
             const { label, description } = toolInfo(entry, engine);
             return (
               <ToolButton

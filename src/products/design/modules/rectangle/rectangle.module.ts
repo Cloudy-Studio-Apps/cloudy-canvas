@@ -27,7 +27,7 @@ export const rectangleModule = defineModule({
       tool: "rectangle",
       element: "rectangle",
       icon: Square,
-      toolbar: { group: 1, order: 20 },
+      toolbar: { group: 1, order: 20, menu: "shapes" },
     });
   },
 });

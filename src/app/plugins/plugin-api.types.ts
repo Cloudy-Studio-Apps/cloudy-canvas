@@ -113,6 +113,9 @@ export interface DesignPluginApi {
     | "NODE_DEFAULTS"
     | "BoxDrawTool"
     | "containerAt"
+    | "pointsInBox"
+    | "pointInPolygon"
+    | "distanceToOutline"
   >;
   /** Building blocks of the side panels, for tabs and property sections. */
   panel: Pick<

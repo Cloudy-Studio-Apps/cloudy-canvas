@@ -21,6 +21,8 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
    * topmost one under them; moving or deleting it takes its children along.
    */
   readonly container: boolean = false;
+  /** Whether it has an inside to fill (lines don't: they only show strokes). */
+  readonly fillable: boolean = true;
 
   /**
    * Draws the node in local coordinates, usually with `drawPaints(view, el, outline)`, which also

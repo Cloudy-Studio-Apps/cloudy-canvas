@@ -1,6 +1,6 @@
 import type { CanvasEngine } from "@canvas";
 
-import type { PlacedToolEntry, ToolEntry, ToolInfo } from "./editor-points.types";
+import type { PlacedToolEntry, ToolbarItem, ToolEntry, ToolInfo } from "./editor-points.types";
 
 /** The tools on the toolbar, in their groups, each sorted, lowest group first. */
 export function toolbarGroups(entries: readonly ToolEntry[]): PlacedToolEntry[][] {
@@ -15,6 +15,27 @@ export function toolbarGroups(entries: readonly ToolEntry[]): PlacedToolEntry[][
   return [...groups.entries()]
     .sort(([a], [b]) => a - b)
     .map(([, group]) => group.sort((a, b) => a.toolbar.order - b.toolbar.order));
+}
+
+/** A toolbar group's buttons: tools sharing a `menu` become one item where the first one is. */
+export function toolbarItems(group: readonly PlacedToolEntry[]): ToolbarItem[] {
+  const items: ToolbarItem[] = [];
+  const menus = new Map<string, PlacedToolEntry[]>();
+  for (const entry of group) {
+    const menu = entry.toolbar.menu;
+    if (!menu) {
+      items.push(entry);
+      continue;
+    }
+    const entries = menus.get(menu);
+    if (entries) entries.push(entry);
+    else {
+      const list = [entry];
+      menus.set(menu, list);
+      items.push({ menu, entries: list });
+    }
+  }
+  return items;
 }
 
 /** Every tool in the order lists show them: the toolbar's first, then the others. */
