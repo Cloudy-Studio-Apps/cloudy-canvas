@@ -10,6 +10,9 @@ export const FILE_EXTENSIONS: Record<FileType, string> = {
 
 export const ALL_FILE_EXTENSIONS: string[] = Object.values(FILE_EXTENSIONS);
 
+/** Figma design files ("Save local copy…"), imported as new designs. */
+export const FIGMA_FILE_EXTENSION = "fig";
+
 export function isFileType(value: string | undefined): value is FileType {
   return value === "board" || value === "design";
 }
@@ -63,6 +66,16 @@ export function fileTypeFromPath(path: string): FileType | null {
     if (fileExt === ext) return type as FileType;
   }
   return null;
+}
+
+/** Whether the path is a Figma file, which opens as a new design imported from it. */
+export function isFigmaPath(path: string): boolean {
+  return extensionOf(path) === FIGMA_FILE_EXTENSION;
+}
+
+/** Whether the app opens this path: one of its own files, or a Figma file to import. */
+export function isOpenablePath(path: string): boolean {
+  return fileTypeFromPath(path) !== null || isFigmaPath(path);
 }
 
 /** Whether a value read from disk (e.g. the recent files index) is a well-formed `FileInfo`. */

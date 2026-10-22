@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 
-import { fileTypeFromPath, type FileDrop } from "@shared/core";
+import { isOpenablePath, type FileDrop } from "@shared/core";
 import { appLinks, fileOpenRequests } from "@platform";
 import { useFileDropStore } from "@shared/stores/file-drop-store";
 import { openAppLinks } from "./open-app-links";
 import { openPaths } from "./open-paths";
 
 /**
- * Opens the first Cloudy Canvas file among launch paths, drops and forwarded launches, and
+ * Opens the first Cloudy Canvas (or Figma) file among launch paths, drops and forwarded launches, and
  * follows `cloudy-canvas://` links. A drop without a file goes to the open editor, which adds
  * the files to its canvas.
  */
@@ -37,7 +37,7 @@ export function useOpenRequests(): void {
 function dropFiles(drop: FileDrop): void {
   const paths = drop.files.map((file) => file.path).filter((path) => path !== null);
   const target = useFileDropStore.getState().target;
-  if (paths.some((path) => fileTypeFromPath(path) !== null) || !target) {
+  if (paths.some(isOpenablePath) || !target) {
     openPaths(paths);
     return;
   }

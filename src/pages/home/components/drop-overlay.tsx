@@ -10,7 +10,9 @@ export function DropOverlay() {
       <div className="flex h-full w-full flex-col items-center justify-center gap-3 rounded-card border-2 border-dashed border-primary text-center">
         <FileDown className="size-10 text-primary" />
         <p className="text-lg font-semibold">Drop to open</p>
-        <p className="text-sm text-muted-foreground">Boards (.cboard) and designs (.cdesign)</p>
+        <p className="text-sm text-muted-foreground">
+          Boards (.cboard), designs (.cdesign) and Figma files (.fig)
+        </p>
       </div>
     </div>
   );

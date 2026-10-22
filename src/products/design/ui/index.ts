@@ -3,6 +3,7 @@
 export type * from "./modules";
 export { getActiveDesign, waitForActiveDesign } from "./agent";
 export { DesignEditorPage } from "./design-editor-page";
+export { importFigmaFile } from "./file";
 export {
   designEditor,
   getDesignEditorModules,
