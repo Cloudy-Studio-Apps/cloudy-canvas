@@ -6,7 +6,8 @@ import { nearestContainer } from "./nearest-container";
 /**
  * The frame the rulers measure, as in Figma: the container the selected layers share (a selected
  * container at the top of the page measures itself), or `null` (the whole page) when they don't
- * share one or it's turned. Guides dragged out of the rulers meanwhile belong to it.
+ * share one. Guides dragged out of the rulers meanwhile belong to it (the engine measures the
+ * page while it's turned).
  */
 export function selectionRulerFrame(
   selected: readonly CanvasElement[],
@@ -23,5 +24,5 @@ export function selectionRulerFrame(
     if (shared !== undefined && container?.id !== shared?.id) return null;
     shared = container;
   }
-  return shared && !shared.rotation ? shared : null;
+  return shared ?? null;
 }

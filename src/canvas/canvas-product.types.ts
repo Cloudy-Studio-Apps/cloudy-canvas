@@ -72,8 +72,9 @@ export interface CanvasProduct<O extends object = object> {
   alignTarget?(el: CanvasElement, elements: readonly CanvasElement[]): Rect | null;
   /**
    * The frame the rulers measure for this selection (e.g. the design frame it's in, as in Figma):
-   * they count from its top-left corner and number only its span, and a guide dragged out of them
-   * while it's set belongs to it. `null`, or without it, the whole canvas from the world's origin.
+   * they count from its top-left corner and number only its span (the page's while it's turned),
+   * and a guide dragged out of them while it's set belongs to it. `null`, or without it, the whole
+   * canvas from the world's origin.
    */
   rulerFrame?(
     selected: readonly CanvasElement[],

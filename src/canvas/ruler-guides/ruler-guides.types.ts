@@ -14,17 +14,23 @@ export interface RulerGuide {
   frame?: string;
 }
 
-/** A guide where it shows: its world `value` and, for a frame's guide, the area it's drawn in. */
+/**
+ * A guide where it shows: its world `value` and, for a frame's guide, the area it's drawn in. A
+ * turned frame's guide turns with it: `value` and `within` are then in the frame's unturned
+ * frame, turned by `rotation` round `within`'s corner.
+ */
 export interface PlacedGuide {
   /** Its index in the scope's list. */
   index: number;
   axis: SnapAxis;
-  /** World units. */
+  /** World units (in the frame's unturned frame when it's turned). */
   value: number;
   /** The frame it belongs to, if any. */
   frame: string | null;
-  /** Where it shows: the frame's bounds, or `null` across the whole canvas. */
+  /** Where it shows: the frame's (unturned) bounds, or `null` across the whole canvas. */
   within: Rect | null;
+  /** The frame's turn (degrees counterclockwise round `within`'s corner); 0 for page guides. */
+  rotation: number;
 }
 
 /**

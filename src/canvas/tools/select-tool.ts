@@ -234,7 +234,10 @@ export class SelectTool implements Tool {
     }
     if (interaction.kind === "guide") {
       const { guide } = interaction;
-      const frame = guide.frame && guide.within ? { id: guide.frame, bounds: guide.within } : null;
+      const frame =
+        guide.frame && guide.within
+          ? { id: guide.frame, bounds: guide.within, rotation: guide.rotation }
+          : null;
       return { kind: "guide", drag: new GuideDrag(this.ctx, guide.axis, guide, frame, p) };
     }
     if (interaction.kind === "resize") {

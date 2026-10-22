@@ -177,7 +177,9 @@ values, hiding numbers under them; the Position section's X/Y count from the lay
 (agents keep world coordinates). Guides are the page's (across the whole page) or a frame's: one
 dragged out of the rulers while they measure a frame belongs to it (its value from the frame's
 corner, shown only inside it, moving with it, dropped with it; dragged past its edges it becomes
-a page guide). Guides go through a product hook, `guides` (`CanvasGuides`; the design keeps them
+a page guide; a turned frame's guides turn with it and are dragged along its axes, but aren't
+snapped to; the rulers measure the page while the frame is turned, but a guide dragged out of
+them into it still becomes its guide, along its axis closest to the ruler's). Guides go through a product hook, `guides` (`CanvasGuides`; the design keeps them
 on each page's record), so the engine stays product-agnostic. The guide toggle is Shift+;,
 "Remove all guides" has no key; the snap toggle lives in the zoom menu, the main menu has Rulers,
 Ruler guides and Remove all guides as checkbox items. Guides snap to elements and to other guides

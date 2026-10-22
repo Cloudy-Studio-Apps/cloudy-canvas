@@ -68,6 +68,7 @@ import {
   placeGuides,
   rulerGuideKey,
   RULER_SIZE,
+  screenAxis,
   ScopeGuides,
   type PlacedGuide,
   type RulerGuide,
@@ -507,8 +508,14 @@ export class CanvasEngine<O extends object = object> {
     this.setGuidesShown(true);
     const pointer = (e: PointerEvent) => toCanvasPointer(e, canvas, this.camera);
     const frame = this.rulersShown ? this.rulerFrameElement() : null;
-    const owner = frame && { id: frame.id, bounds: this.kinds.kindOf(frame).bounds(frame) };
-    const drag = new GuideDrag(this.toolContext, axis, null, owner, pointer(event));
+    const owner = frame && {
+      id: frame.id,
+      bounds: this.kinds.kindOf(frame).bounds(frame),
+      rotation: frame.rotation ?? 0,
+    };
+    // In a turned frame, the guide runs along the frame's axis closest to the ruler's.
+    const along = owner ? screenAxis(axis, owner.rotation) : axis;
+    const drag = new GuideDrag(this.toolContext, along, null, owner, pointer(event));
     return {
       move: (e) => drag.move(pointer(e)),
       end: () => {
@@ -894,7 +901,8 @@ export class CanvasEngine<O extends object = object> {
    */
   rulerFrame(): Rect | null {
     const frame = this.rulerFrameElement();
-    return frame && this.kinds.kindOf(frame).bounds(frame);
+    // A turned frame's axes aren't the rulers': they measure the page then.
+    return frame && !frame.rotation ? this.kinds.kindOf(frame).bounds(frame) : null;
   }
 
   /** Where the scope's ruler guides show (a frame's inside it), as the canvas draws them. */
@@ -1497,7 +1505,8 @@ export class CanvasEngine<O extends object = object> {
     const lines: Record<SnapAxis, number[]> = { x: [], y: [] };
     if (this.snapping.guides)
       for (const guide of this.shownGuides())
-        if (!exclude.has(rulerGuideKey(guide.index)) && guideInside(guide))
+        // A turned frame's guides don't run along the axes things snap on.
+        if (!guide.rotation && !exclude.has(rulerGuideKey(guide.index)) && guideInside(guide))
           lines[guide.axis].push(guide.value);
     const boxes: Rect[] = [];
     if (!this.snapping.objects) return snapTargets(boxes, lines);

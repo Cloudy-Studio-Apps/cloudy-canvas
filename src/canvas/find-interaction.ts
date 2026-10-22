@@ -1,7 +1,7 @@
 import type { Point } from "./geometry.types";
 import { resizeHandleAt, resizeTarget, rotateZoneAt, type Interaction } from "./handles";
 import { rectContainsPoint } from "./geometry";
-import { guideInside, type PlacedGuide } from "./ruler-guides";
+import { guideInside, inGuideFrame, type PlacedGuide } from "./ruler-guides";
 import { toUnrotated } from "./rotation";
 import type { Scene } from "./scene";
 
@@ -60,8 +60,10 @@ function guideAt(guides: readonly PlacedGuide[], world: Point, reach: number): I
   for (let i = guides.length - 1; i >= 0; i--) {
     const guide = guides[i]!;
     if (!guideInside(guide)) continue;
-    if (guide.within && !rectContainsPoint(guide.within, world, reach)) continue;
-    if (Math.abs(world[guide.axis] - guide.value) <= reach) return { kind: "guide", guide };
+    // A turned frame's guide is hit in the frame's own axes.
+    const p = inGuideFrame(world, guide);
+    if (guide.within && !rectContainsPoint(guide.within, p, reach)) continue;
+    if (Math.abs(p[guide.axis] - guide.value) <= reach) return { kind: "guide", guide };
   }
   return null;
 }
