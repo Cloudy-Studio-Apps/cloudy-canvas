@@ -3,15 +3,40 @@ import type { EditorModules } from "@canvas-ui";
 import { boardCanvas, type BoardToolOptions } from "@board";
 import { createModuleHost, type AppModule, type ModuleHost } from "@shared/core";
 import { usePluginsStore } from "@shared/stores/plugins-store";
+import { connectorModule } from "@board/modules/connector/connector.module";
+import { coreModule } from "@board/modules/core/core.module";
 import { dbModule } from "@board/modules/db/db.module";
+import { drawModule } from "@board/modules/draw/draw.module";
 import { embedModule } from "@board/modules/embed/embed.module";
-import { legacyModule } from "@board/modules/legacy/legacy.module";
+import { erModule } from "@board/modules/er/er.module";
+import { geoModule } from "@board/modules/geo/geo.module";
+import { imageModule } from "@board/modules/image/image.module";
+import { libraryModule } from "@board/modules/library/library.module";
+import { sectionModule } from "@board/modules/section/section.module";
+import { stickerModule } from "@board/modules/sticker/sticker.module";
 import { stickyModule } from "@board/modules/sticky/sticky.module";
+import { tableModule } from "@board/modules/table/table.module";
+import { textModule } from "@board/modules/text/text.module";
 import { boardEditor } from "./board-editor-points";
 import type { BoardModuleOptions } from "./board-modules.types";
 
 /** The board's built-in modules. Their order is the default order of chained hooks. */
-let modules: AppModule[] = [stickyModule, embedModule, dbModule, legacyModule];
+let modules: AppModule[] = [
+  coreModule,
+  drawModule,
+  stickyModule,
+  stickerModule,
+  textModule,
+  geoModule,
+  connectorModule,
+  sectionModule,
+  tableModule,
+  imageModule,
+  embedModule,
+  dbModule,
+  erModule,
+  libraryModule,
+];
 /** Module id → the plugin it comes from (installed plugins, which may fail on their own). */
 const pluginOf = new Map<string, string>();
 

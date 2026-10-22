@@ -1,4 +1,4 @@
-import type { ErApplyResult } from "../elements";
+import type { ErApplyResult } from "../modules/er";
 import type { DbApplyResult, DbmlError } from "../modules";
 
 /** A text apply result for the agent: warnings on success, a thrown error (a tool error) otherwise. */

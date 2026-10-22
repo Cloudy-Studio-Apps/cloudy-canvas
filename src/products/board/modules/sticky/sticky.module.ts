@@ -11,6 +11,8 @@ import { StickyOptions } from "./ui/sticky-options";
 /** Sticky notes: the kind, the tool (S) and its color panel. */
 export const stickyModule = defineModule({
   id: "sticky",
+  // Notes drag connectors out of their sides.
+  requires: ["connector"],
   register(host) {
     host.contribute(boardCanvas.kinds, new StickyKind());
     host.contribute(boardCanvas.tools, {

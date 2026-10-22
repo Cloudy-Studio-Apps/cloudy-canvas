@@ -7,7 +7,7 @@ import {
 
 import { INK_COLOR, STICKY_COLORS } from "../../palette";
 import type { BoardToolOptions } from "../../board-options.types";
-import { QuickConnectKind } from "../../elements/connector/quick-connect.kind";
+import { QuickConnectKind } from "../connector/quick-connect.kind";
 import { createSticky } from "./sticky.factory";
 import { drawSticky } from "./sticky.draw";
 import { STICKY_DEFAULTS } from "./sticky.defaults";

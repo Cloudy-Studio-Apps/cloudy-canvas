@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 
-import { openBoardDocument } from "@board";
+import { boardMigrations, openBoardDocument } from "@board";
 import { CanvasDocument } from "@canvas";
 import { storage } from "@platform";
-import { getBoardProduct } from "../modules";
+import { getBoardModules, getBoardProduct } from "../modules";
 import type { BoardLoadState } from "./use-board-loader.types";
 
 /**
@@ -22,7 +22,7 @@ export function useBoardLoader(id: string): BoardLoadState {
         const info = await storage.get(id);
         const { kinds } = getBoardProduct();
         const document = info
-          ? openBoardDocument(await storage.load(id), kinds)
+          ? openBoardDocument(await storage.load(id), kinds, getBoardModules().get(boardMigrations))
           : new CanvasDocument(kinds);
         if (!active) return document.destroy();
         loaded = document;

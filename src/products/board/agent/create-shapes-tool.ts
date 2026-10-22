@@ -9,7 +9,7 @@ import {
   type CanvasElement,
 } from "@canvas";
 
-import { geoVariants } from "../elements";
+import { geoVariants } from "../modules/geo";
 import { requireBoard } from "./board-access";
 import type { BoardAgentContext, BoardAgentTool } from "./board-agent.types";
 
