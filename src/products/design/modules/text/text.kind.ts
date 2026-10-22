@@ -1,10 +1,13 @@
-import type {
-  ElementBuildContext,
-  ElementPatch,
-  ElementSpec,
-  ElementText,
-  ElementView,
-  Rect,
+import {
+  scaleLength,
+  scaleRect,
+  type ElementBuildContext,
+  type ElementPatch,
+  type ElementSpec,
+  type ElementText,
+  type ElementView,
+  type Rect,
+  type ScaleTransform,
 } from "@canvas";
 import type { FontRequest } from "@shared/core";
 
@@ -66,6 +69,16 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
           ? "height"
           : el.autoResize;
     return retypeset(el, { ...rect, autoResize });
+  }
+
+  /**
+   * Scaled (the Scale tool), its font size and letter spacing grow with it (the line height is a
+   * multiple of the size) and the text is laid out again in its scaled box.
+   */
+  override scale(el: TextNodeElement, t: ScaleTransform): ElementPatch<TextNodeElement> {
+    const { x, y, w, h } = scaleRect(t, el);
+    const fontSize = scaleLength(t, el.fontSize);
+    return retypeset(el, { x, y, w, h, fontSize, letterSpacing: scaleLength(t, el.letterSpacing) });
   }
 
   /**

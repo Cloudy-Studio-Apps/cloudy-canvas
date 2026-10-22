@@ -1,5 +1,7 @@
 import {
   LineKind,
+  scaleLength,
+  scalePoint,
   type ElementBuildContext,
   type ElementDescription,
   type ElementHandle,
@@ -9,6 +11,7 @@ import {
   type ElementView,
   type InteractionQuery,
   type Point,
+  type ScaleTransform,
 } from "@canvas";
 
 import type { BoardToolOptions } from "../../board-options.types";
@@ -68,6 +71,15 @@ export class ConnectorKind extends LineKind<ConnectorElement, BoardToolOptions> 
   /** Only free ends move; attached ones follow their elements. */
   override move(origin: ConnectorElement, dx: number, dy: number): ElementPatch<ConnectorElement> {
     return { start: moveEnd(origin.start, dx, dy), end: moveEnd(origin.end, dx, dy) };
+  }
+
+  /**
+   * Scaled (the Scale tool), its free ends scale and its line grows thicker; attached ends follow
+   * their (scaled) elements.
+   */
+  override scale(el: ConnectorElement, t: ScaleTransform): ElementPatch<ConnectorElement> {
+    const scaleEnd = (end: ConnectorEnd) => (end.shapeId ? end : { ...end, ...scalePoint(t, end) });
+    return { start: scaleEnd(el.start), end: scaleEnd(el.end), size: scaleLength(t, el.size) };
   }
 
   override handles(el: ConnectorElement): ElementHandle[] {

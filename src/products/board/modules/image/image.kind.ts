@@ -1,4 +1,13 @@
-import { BoxKind, ELEMENT_DEFAULTS, type ElementPatch, type ElementView, type Rect } from "@canvas";
+import {
+  BoxKind,
+  ELEMENT_DEFAULTS,
+  scaleLength,
+  scaleRect,
+  type ElementPatch,
+  type ElementView,
+  type Rect,
+  type ScaleTransform,
+} from "@canvas";
 
 import type { BoardToolOptions } from "../../board-options.types";
 import { drawImage } from "./image.draw";
@@ -38,6 +47,12 @@ export class ImageKind extends BoxKind<ImageElement, BoardToolOptions> {
     // The image itself never gets smaller than the minimum size.
     const min = ELEMENT_DEFAULTS.minSize + el.padding * 2;
     return { x: rect.x, y: rect.y, w: Math.max(min, rect.w), h: Math.max(min, rect.h) };
+  }
+
+  /** Scaled (the Scale tool), its padding grows with it. */
+  override scale(el: ImageElement, t: ScaleTransform): ElementPatch<ImageElement> {
+    const padding = scaleLength(t, el.padding);
+    return { ...this.resize({ ...el, padding }, scaleRect(t, el)), padding };
   }
 
   override completePatch(

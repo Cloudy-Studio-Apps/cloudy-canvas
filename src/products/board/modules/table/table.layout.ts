@@ -1,6 +1,6 @@
 import { measureWrapped, type Point, type Rect } from "@canvas";
 
-import { TABLE_DEFAULTS } from "./table.defaults";
+import { tableTypography } from "./table-typography";
 import type { TableCell, TableLine } from "./table.layout.types";
 import type { TableAxis, TableElement } from "./table.types";
 
@@ -57,10 +57,10 @@ export function cellFontWeight(el: Pick<TableElement, "header">, row: number): 4
 
 /** The height a row needs for its text at the current column widths. */
 export function rowTextHeight(
-  el: Pick<TableElement, "cells" | "columns" | "header">,
+  el: Pick<TableElement, "cells" | "columns" | "header" | "textScale">,
   row: number,
 ): number {
-  const { fontSize, padX, padY, minRowHeight } = TABLE_DEFAULTS;
+  const { fontSize, padX, padY, minRowHeight } = tableTypography(el);
   const weight = cellFontWeight(el, row);
   let height: number = minRowHeight;
   el.columns.forEach((width, column) => {
@@ -73,7 +73,9 @@ export function rowTextHeight(
 }
 
 /** Row heights grown to fit their text (never shrunk below what they were). */
-export function fitRows(el: Pick<TableElement, "cells" | "columns" | "header" | "rows">): number[] {
+export function fitRows(
+  el: Pick<TableElement, "cells" | "columns" | "header" | "rows" | "textScale">,
+): number[] {
   return el.rows.map((height, row) => Math.max(height, rowTextHeight(el, row)));
 }
 

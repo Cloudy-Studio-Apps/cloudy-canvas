@@ -8,6 +8,7 @@ import {
 } from "./elements";
 import { rectContainsRect, rectsEqual, rectsIntersect, unionRects } from "./geometry";
 import type { Point, Rect } from "./geometry.types";
+import type { ResizeMode } from "./handles";
 import { pointInRotatedRect, toUnrotated } from "./rotation";
 import { buildOverlayState, type ElementClip, type OverlayState } from "./render";
 import type { SceneHooks } from "./scene.types";
@@ -28,6 +29,8 @@ export class Scene {
   private scopes = new Map<string, string | null>();
   private hoverId: string | null = null;
   marquee: Rect | null = null;
+  /** What the selection's handles do, set from the active tool (the Scale tool's `scale`). */
+  resizeMode: ResizeMode = "resize";
   /** The scope shown (see `SceneHooks.scopeOf`); `refresh` reads it. */
   scope: string | null = null;
 
@@ -167,6 +170,7 @@ export class Scene {
       hover: this.hoverId ? this.byId.get(this.hoverId) : undefined,
       marquee: this.marquee,
       zoom,
+      resizeMode: this.resizeMode,
     });
   }
 }

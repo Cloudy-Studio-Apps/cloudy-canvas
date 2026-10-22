@@ -1,7 +1,7 @@
 import { elementBounds, type CanvasElement, type ElementPatch } from "../elements";
 import { rectContainsPoint, rectFromPoints, unionRects } from "../geometry";
 import { measureGaps } from "../snapping";
-import { cornerRotateCursor, resizeCursor, type Interaction } from "../handles";
+import { cornerRotateCursor, resizeCursor, type Interaction, type ResizeMode } from "../handles";
 import { ResizeGesture } from "./resize-gesture";
 import { RotateGesture } from "./rotate-gesture";
 import { MOVE_THRESHOLD_PX, pastThreshold } from "./drag-threshold";
@@ -16,8 +16,10 @@ import type { Gesture } from "./select-tool.types";
 const HOVER_KEEP_PX = 28;
 
 export class SelectTool implements Tool {
-  readonly id = "select" as const;
-  readonly cursor = "default";
+  readonly id: string = "select";
+  readonly cursor: string = "default";
+  /** What dragging a resize handle does (the Scale tool scales instead). */
+  readonly resizeMode: ResizeMode = "resize";
   private gesture: Gesture | null = null;
   /** Whether Alt + hover distances are on screen. */
   private measuring = false;
@@ -230,7 +232,13 @@ export class SelectTool implements Tool {
     if (interaction.kind === "resize") {
       return {
         kind: "resize",
-        resize: new ResizeGesture(this.ctx, interaction.target, interaction.handle, p),
+        resize: new ResizeGesture(
+          this.ctx,
+          interaction.target,
+          interaction.handle,
+          p,
+          this.resizeMode,
+        ),
       };
     }
     this.ctx.setCursor(interaction.interaction.cursor);

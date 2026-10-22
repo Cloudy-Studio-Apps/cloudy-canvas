@@ -59,6 +59,8 @@ export interface PluginApi {
     | "fitInView"
     | "elementBounds"
     | "rotatePoint"
+    | "scaleRect"
+    | "scaleLength"
     | "toUnrotated"
     | "pastThreshold"
     | "DRAW_THRESHOLD_PX"

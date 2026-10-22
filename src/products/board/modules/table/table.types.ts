@@ -20,6 +20,10 @@ export interface TableElement extends CanvasElement {
   header: boolean;
   /** The header row's tint. */
   color: string;
+  /**
+   * How much its text and cell insets are grown or shrunk (the Scale tool); unset is 1.
+   */
+  textScale?: number;
 }
 
 export interface TableDefaults extends ElementDefaults {

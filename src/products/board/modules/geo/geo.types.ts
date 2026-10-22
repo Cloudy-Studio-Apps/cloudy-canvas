@@ -9,6 +9,8 @@ export interface GeoElement extends CanvasElement {
   stroke: string;
   text: string;
   fontSize: number;
+  /** Outline width; unset is `GEO_DEFAULTS.strokeWidth` (the Scale tool sets it). */
+  strokeWidth?: number;
 }
 
 export interface GeoDefaults extends ElementDefaults {

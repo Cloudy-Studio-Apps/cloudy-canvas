@@ -20,6 +20,7 @@ export function findInteraction(scene: Scene, world: Point, zoom: number): Inter
   const target = resizeTarget(
     selected.filter((el) => el !== undefined),
     scene.kinds,
+    scene.resizeMode,
   );
   if (target?.resizable) {
     const handle = resizeHandleAt(target.box, world, reach, target.rotation);

@@ -38,6 +38,11 @@ export class GroupKind extends DesignNodeKind<GroupElement> {
     return super.completePatch(el, patch, context);
   }
 
+  /** Scaling a group scales its children (its members); it stays the box round them. */
+  override scale(): ElementPatch<GroupElement> {
+    return {};
+  }
+
   /** Flipping a group flips its children (its members). */
   override flip(): ElementPatch<GroupElement> {
     return {};

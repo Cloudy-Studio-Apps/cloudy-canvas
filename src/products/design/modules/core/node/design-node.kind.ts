@@ -8,6 +8,8 @@ import {
   type ElementView,
   type Point,
   rotatePoint,
+  scaleLength,
+  type ScaleTransform,
 } from "@canvas";
 
 import type { DesignToolOptions } from "../../../design-options.types";
@@ -102,6 +104,11 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
       placed.rotation ?? 0,
     );
     return { ...placement, ...this.rotate(placed, 180, middle) } as ElementPatch<E>;
+  }
+
+  /** Scaled (the Scale tool): its geometry as the kind scales it, and its stroke weight. */
+  override scale(el: E, t: ScaleTransform): ElementPatch<E> {
+    return { ...super.scale(el, t), strokeWeight: scaleLength(t, el.strokeWeight) };
   }
 
   /** Hidden layers aren't snapped to. */

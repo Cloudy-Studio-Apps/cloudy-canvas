@@ -1,11 +1,14 @@
 import {
   ElementKind,
   measureText,
+  scaleLength,
+  scalePoint,
   type ElementDescription,
   type ElementPatch,
   type ElementSpec,
   type ElementText,
   type ElementView,
+  type ScaleTransform,
 } from "@canvas";
 
 import type { BoardToolOptions } from "../../board-options.types";
@@ -15,7 +18,10 @@ import { drawText } from "./text.draw";
 import { TEXT_DEFAULTS } from "./text.defaults";
 import type { TextElement } from "./text.types";
 
-/** Free text. It's sized to its text, so it isn't resized, and emptying it deletes it. */
+/**
+ * Free text. It's sized to its text, so it isn't resized (the Scale tool grows its font), and
+ * emptying it deletes it.
+ */
 export class TextKind extends ElementKind<TextElement, BoardToolOptions> {
   readonly type = "text";
   readonly label = "Text";
@@ -23,6 +29,7 @@ export class TextKind extends ElementKind<TextElement, BoardToolOptions> {
   override readonly tool = "text";
   override readonly defaults = TEXT_DEFAULTS;
   override readonly connectable = true;
+  override readonly scalable = true;
   override readonly patchableFields: ReadonlySet<string> = new Set([
     "x",
     "y",
@@ -55,6 +62,12 @@ export class TextKind extends ElementKind<TextElement, BoardToolOptions> {
     if (!text.trim()) throw new Error("A text element needs some text.");
     const draft = createTextDraft({ x: 0, y: 0 }, spec.color ?? INK_COLOR, TEXT_DEFAULTS.fontSize);
     return { ...draft, index, x: spec.x, y: spec.y, text, ...measureText(text, draft.fontSize) };
+  }
+
+  /** Scaled (the Scale tool), its font grows and it's sized to its text again. */
+  override scale(el: TextElement, t: ScaleTransform): ElementPatch<TextElement> {
+    const fontSize = scaleLength(t, el.fontSize);
+    return { ...scalePoint(t, el), fontSize, ...measureText(el.text, fontSize) };
   }
 
   override completePatch(

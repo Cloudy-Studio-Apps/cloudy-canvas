@@ -5,6 +5,8 @@ import { normalizeAngle, rotatePoint } from "../rotation";
 import type { Point, Rect, Size } from "../geometry.types";
 import type { ElementView } from "../render/element-view";
 import { ELEMENT_DEFAULTS } from "./element.defaults";
+import { scaleRect } from "./element-scale";
+import type { ScaleTransform } from "./element-scale.types";
 import type { CanvasElement, ElementPatch } from "./element.types";
 import type { ElementInteraction, InteractionQuery } from "./element.interaction.types";
 import type {
@@ -43,6 +45,11 @@ export abstract class ElementKind<
   readonly resizable: boolean = false;
   /** Whether resizing always keeps its proportions (otherwise only with Shift), e.g. images. */
   readonly keepsRatio: boolean = false;
+  /**
+   * Whether the Scale tool (K) can scale it on its own (it gets handles); others scaled with a
+   * selection only follow it (see `scale`).
+   */
+  readonly scalable: boolean = false;
   /**
    * Frames (e.g. sections, aggregation boxes) are drawn behind every other element, larger ones
    * further back, and a marquee selects them only when it encloses them.
@@ -158,6 +165,18 @@ export abstract class ElementKind<
   /** Patch that gives a resizable element new bounds. */
   resize(_el: E, rect: Rect): ElementPatch<E> {
     return { x: rect.x, y: rect.y, w: rect.w, h: rect.h } as ElementPatch<E>;
+  }
+
+  /**
+   * Patch that scales the element and its content (font sizes, stroke weights, radii, points) by
+   * `t`, as if it were a picture: the Scale tool (K). By default a resizable element is resized
+   * to its scaled bounds and others only move with their corner; kinds override it to scale what
+   * they draw. What moves with it (e.g. a frame's children) is scaled on its own.
+   */
+  scale(el: E, t: ScaleTransform): ElementPatch<E> {
+    const from = this.bounds(el);
+    const to = scaleRect(t, from);
+    return this.resizable ? this.resize(el, to) : this.move(el, to.x - from.x, to.y - from.y);
   }
 
   /** Bounds for a new element from a spec: its position, and its size or the type's default. */

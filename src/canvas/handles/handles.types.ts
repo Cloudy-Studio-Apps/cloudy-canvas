@@ -3,6 +3,13 @@ import type { Rect } from "../geometry.types";
 
 export type ResizeHandle = "nw" | "n" | "ne" | "e" | "se" | "s" | "sw" | "w";
 
+/**
+ * What dragging a resize handle does: `resize` changes the bounds (text rewraps, strokes keep
+ * their weight), `scale` scales the selection and everything in it like a picture (the Scale
+ * tool, K; always proportional).
+ */
+export type ResizeMode = "resize" | "scale";
+
 /** How a resize handle drag shapes the rect (see `resizeRect`). */
 export interface ResizeOptions {
   /** Keep the proportions (Shift, or always for some kinds). */

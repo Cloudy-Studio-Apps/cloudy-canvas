@@ -1,11 +1,14 @@
-import type {
-  ElementDescription,
-  ElementPatch,
-  ElementSide,
-  ElementSpec,
-  ElementTextStyle,
-  ElementView,
-  Point,
+import {
+  scaleLength,
+  scaleRect,
+  type ElementDescription,
+  type ElementPatch,
+  type ElementSide,
+  type ElementSpec,
+  type ElementTextStyle,
+  type ElementView,
+  type Point,
+  type ScaleTransform,
 } from "@canvas";
 
 import { INK_COLOR, SHAPE_FILLS, SHAPE_STROKES } from "../../palette";
@@ -45,8 +48,18 @@ export class GeoKind extends QuickConnectKind<GeoElement> {
       color: INK_COLOR,
       align: "center",
       vAlign: "middle",
-      padX: GEO_DEFAULTS.padding,
+      // The padding follows the label's size (the Scale tool grows both).
+      padX: (GEO_DEFAULTS.padding * el.fontSize) / GEO_DEFAULTS.fontSize,
       padY: 0,
+    };
+  }
+
+  /** Scaled (the Scale tool), its label and outline grow with it. */
+  override scale(el: GeoElement, t: ScaleTransform): ElementPatch<GeoElement> {
+    return {
+      ...this.resize(el, scaleRect(t, el)),
+      fontSize: scaleLength(t, el.fontSize),
+      strokeWidth: scaleLength(t, el.strokeWidth ?? GEO_DEFAULTS.strokeWidth),
     };
   }
 

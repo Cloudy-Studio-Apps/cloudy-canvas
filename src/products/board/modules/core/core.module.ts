@@ -1,4 +1,4 @@
-import { Hand, MousePointer2 } from "lucide-react";
+import { Hand, MousePointer2, Scaling } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
@@ -13,16 +13,17 @@ import {
   shapeEditTools,
   viewTools,
 } from "../../agent";
-import { boardAgentTools } from "../../board-points";
+import { boardAgentTools, boardCanvas } from "../../board-points";
 
 /**
- * What every board has whatever its modules: the select and hand tools' buttons (the tools are
- * built into the engine) and the agent tools that work on any element (reading, creating and
+ * What every board has whatever its modules: the select, scale (Shift+K; K is the sticker tool) and
+ * hand tools' buttons (the tools are built into the engine) and the agent tools that work on any element (reading, creating and
  * editing through the kinds, arranging, viewing, exporting, files and plugins).
  */
 export const coreModule = defineModule({
   id: "core",
   register(host) {
+    host.contribute(boardCanvas.keybindings, { "tool.scale": [{ key: "k", shift: true }] });
     host.contribute(
       boardAgentTools,
       { id: "read", tools: () => boardReadTools },
@@ -42,7 +43,14 @@ export const coreModule = defineModule({
         label: "Select",
         description: "Select, move and resize. Double-click to edit text.",
         icon: MousePointer2,
-        toolbar: { group: 0, order: 10 },
+        toolbar: { group: 0, order: 10, menu: "move" },
+      },
+      {
+        tool: "scale",
+        label: "Scale",
+        description: "Scale with the content: text, strokes and what's inside grow together.",
+        icon: Scaling,
+        toolbar: { group: 0, order: 15, menu: "move" },
       },
       {
         tool: "hand",

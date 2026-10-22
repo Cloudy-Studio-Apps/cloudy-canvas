@@ -64,6 +64,22 @@ export function resizeHandleAt(
 }
 
 /**
+ * The point of `rect` that stays put while `handle` is dragged with the proportions kept: the
+ * opposite corner, the middle of the opposite side, or the center with `fromCenter`.
+ */
+export function resizeAnchor(rect: Rect, handle: ResizeHandle, fromCenter: boolean): Point {
+  const { x, y, w, h } = rect;
+  const west = handle.includes("w");
+  const east = handle.includes("e");
+  const north = handle.includes("n");
+  const south = handle.includes("s");
+  return {
+    x: fromCenter || !(west || east) ? x + w / 2 : west ? x + w : x,
+    y: fromCenter || !(north || south) ? y + h / 2 : north ? y + h : y,
+  };
+}
+
+/**
  * The rect after dragging `handle` by (dx, dy). The opposite side stays put, or the center with
  * `fromCenter`; with `keepRatio` the proportions are kept. Never smaller than
  * `ELEMENT_DEFAULTS.minSize`, and never flipped.

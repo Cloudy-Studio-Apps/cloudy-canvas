@@ -1,4 +1,12 @@
-import type { ElementBuildContext, ElementPatch, ElementSpec, ElementView, Rect } from "@canvas";
+import {
+  scaleLength,
+  type ElementBuildContext,
+  type ElementPatch,
+  type ElementSpec,
+  type ElementView,
+  type Rect,
+  type ScaleTransform,
+} from "@canvas";
 
 import type { DesignToolOptions } from "../../design-options.types";
 import {
@@ -61,6 +69,11 @@ export class RectangleKind extends BoxShapeKind<RectangleElement> {
 
   draw(view: ElementView, el: RectangleElement): void {
     drawRectangle(view, el);
+  }
+
+  /** Its corners round in proportion. */
+  override scale(el: RectangleElement, t: ScaleTransform): ElementPatch<RectangleElement> {
+    return { ...super.scale(el, t), cornerRadius: scaleLength(t, el.cornerRadius) };
   }
 
   override fillDefaults(el: RectangleElement): RectangleElement {

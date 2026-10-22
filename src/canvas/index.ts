@@ -8,7 +8,7 @@ export type {
   ElementAction,
   HostAction,
 } from "./canvas-engine.types";
-export type { Alignment, DistributeAxis, RotatePivot } from "./arrange";
+export type { Alignment, DistributeAxis, RotatePivot, ScaleAnchor } from "./arrange";
 export type { CanvasProduct, CanvasScopes, SelectTargetRequest } from "./canvas-product.types";
 export type { CanvasGrid, CanvasViewOptions } from "./canvas-view.types";
 export type { CopyContext, DropResult, PastedImage } from "./clipboard";
@@ -24,6 +24,7 @@ export type {
   ThumbnailOptions,
 } from "./export";
 export type { Point, Rect, Size } from "./geometry.types";
+export type { ResizeMode } from "./handles";
 export type { Keybindings } from "./input";
 export type * from "./modules";
 export type { ServiceDef } from "./services";
@@ -40,7 +41,7 @@ export type {
 } from "./render";
 export type { CanvasPointer, Tool, ToolContext } from "./tools";
 export type { SnapFeedback, SnapGap, SnapLine, Snapper, SnapSettings } from "./snapping";
-export { nudgeCheckpoint, nudgeStep, NUDGE_STEPS } from "./arrange";
+export { anchorPoint, nudgeCheckpoint, nudgeStep, NUDGE_STEPS, SCALE_ANCHORS } from "./arrange";
 export { CanvasEngine } from "./canvas-engine";
 export { MIN_ZOOM, MAX_ZOOM } from "./camera";
 export { DEFAULT_VIEW_OPTIONS } from "./canvas-view";

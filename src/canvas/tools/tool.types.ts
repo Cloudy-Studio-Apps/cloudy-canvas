@@ -1,7 +1,7 @@
 import type { Camera } from "../camera";
 import type { CanvasDocument } from "../document";
 import type { CanvasElement, ElementKinds } from "../elements";
-import type { Interaction } from "../handles";
+import type { Interaction, ResizeMode } from "../handles";
 import type { Guide } from "../links";
 import type { Point, Rect } from "../geometry.types";
 import type { ServiceDef } from "../services";
@@ -99,6 +99,11 @@ export interface Tool {
   /** Unique per product; its keymap command is `tool.<id>`. */
   readonly id: string;
   readonly cursor: string;
+  /**
+   * What the selection's resize handles do while it's on (and whether a selection that only
+   * scales gets them): the Scale tool's `scale`. Unset is `resize`.
+   */
+  readonly resizeMode?: ResizeMode;
   onPointerDown(p: CanvasPointer): void;
   onPointerMove?(p: CanvasPointer): void;
   onPointerUp?(p: CanvasPointer): void;

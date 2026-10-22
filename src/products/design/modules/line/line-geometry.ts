@@ -9,12 +9,14 @@ export function lineFromEnds(
 ): Pick<LineNodeElement, "x" | "y" | "w" | "h" | "points"> {
   const x = Math.min(start.x, end.x);
   const y = Math.min(start.y, end.y);
+  // To 1/100 of a unit: turned ends land between pixels, but not on float noise.
+  const round = (value: number) => Math.round(value * 100) / 100;
   return {
     x,
     y,
-    w: Math.abs(end.x - start.x),
-    h: Math.abs(end.y - start.y),
-    points: [start.x - x, start.y - y, end.x - x, end.y - y],
+    w: round(Math.abs(end.x - start.x)),
+    h: round(Math.abs(end.y - start.y)),
+    points: [round(start.x - x), round(start.y - y), round(end.x - x), round(end.y - y)],
   };
 }
 

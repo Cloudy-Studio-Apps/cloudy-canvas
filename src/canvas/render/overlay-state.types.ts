@@ -1,5 +1,6 @@
 import type { CanvasElement, ElementHandle, ElementKinds } from "../elements";
 import type { Point, Rect } from "../geometry.types";
+import type { ResizeMode } from "../handles";
 
 export interface OverlayInput {
   kinds: ElementKinds;
@@ -9,6 +10,8 @@ export interface OverlayInput {
   hover: CanvasElement | undefined;
   marquee: Rect | null;
   zoom: number;
+  /** What the resize handles do (the Scale tool gives handles to what only scales). */
+  resizeMode: ResizeMode;
 }
 
 /** An element's outline: its rect, turned by `rotation` degrees around its top-left corner. */

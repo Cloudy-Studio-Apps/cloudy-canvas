@@ -3,16 +3,19 @@ import { fontKey, type Clipboard, type DroppedFile } from "@shared/core";
 import { Camera } from "./camera";
 import {
   alignOffset,
+  anchorPoint,
   arrangeItems,
   arrangeRoots,
   distributeOffsets,
   nudgeCheckpoint,
+  scalePatches,
   tidyUpOffsets,
   type Alignment,
   type ArrangeHost,
   type ArrangeItem,
   type DistributeAxis,
   type RotatePivot,
+  type ScaleAnchor,
 } from "./arrange";
 import { DEFAULT_VIEW_OPTIONS } from "./canvas-view";
 import {
@@ -354,6 +357,7 @@ export class CanvasEngine<O extends object = object> {
     this.renderer.setFaded([]);
     this.renderer.setSnapFeedback(null);
     this.tool = next;
+    this.scene.resizeMode = next.resizeMode ?? "resize";
     this.scene.setHover(null);
     this.setCursor(this.tool.cursor);
     this.tool.onActivate?.();
@@ -675,6 +679,30 @@ export class CanvasEngine<O extends object = object> {
         if (el && kind?.rotatable && !el.locked) patches.set(id, kind.rotate(el, turn, pivot));
       }
     }
+    if (patches.size === 0) return [];
+    this.doc.checkpoint();
+    this.doc.updateMany(patches);
+    return [...patches.keys()];
+  }
+
+  /**
+   * Scales elements and their content (fonts, strokes, radii, what moves with them) by `factor`
+   * round `anchor` of the box round them, as the Scale tool does, in one undo step. Locked ones
+   * stay. Returns the scaled ids.
+   */
+  scaleElements(ids: Iterable<string>, factor: number, anchor: ScaleAnchor = "top-left"): string[] {
+    if (!(factor > 0) || factor === 1) return [];
+    const unlocked = (el: CanvasElement | undefined): el is CanvasElement => !!el && !el.locked;
+    const roots = [...ids].map((id) => this.scene.get(id)).filter(unlocked);
+    const box = unionRects(roots.map((el) => elementBounds(this.kinds.kindOf(el), el)));
+    if (!box) return [];
+    const members = this.withMembers(
+      roots.map((el) => el.id),
+      "move",
+    );
+    const scaled = [...members].map((id) => this.scene.get(id)).filter(unlocked);
+    const t = { origin: anchorPoint(box, anchor), factor };
+    const patches = scalePatches(scaled, this.kinds, t);
     if (patches.size === 0) return [];
     this.doc.checkpoint();
     this.doc.updateMany(patches);

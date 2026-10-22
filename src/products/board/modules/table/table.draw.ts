@@ -1,7 +1,7 @@
 import type { ElementView } from "@canvas";
 
 import { INK_COLOR, TABLE_CELL_COLOR, TABLE_LINE_COLOR } from "../../palette";
-import { TABLE_DEFAULTS } from "./table.defaults";
+import { tableTypography } from "./table-typography";
 import { cellFontWeight, offsets } from "./table.layout";
 import { cellPart } from "./table-parts";
 import type { TableElement } from "./table.types";
@@ -28,7 +28,7 @@ export function drawTable(view: ElementView, el: TableElement): void {
   for (const y of ys.slice(1, -1)) g.moveTo(0, y).lineTo(el.w, y);
   g.rect(0, 0, el.w, el.h).stroke({ color: TABLE_LINE_COLOR, width: 1 });
 
-  const { fontSize, padX } = TABLE_DEFAULTS;
+  const { fontSize, padX } = tableTypography(el);
   const keep = new Set<string>();
   el.cells.forEach((cells, row) => {
     cells.forEach((text, column) => {

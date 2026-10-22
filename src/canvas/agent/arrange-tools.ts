@@ -1,6 +1,7 @@
 import type { Alignment } from "../arrange";
 import type { AgentTool } from "./agent-tool.types";
 import type { ArrangeToolsOptions } from "./arrange-tools.types";
+import { scaleTool } from "./scale-tool";
 import { optionalChoice, stringList } from "./tool-args";
 
 const ALIGNMENTS: readonly Alignment[] = ["left", "centerX", "right", "top", "centerY", "bottom"];
@@ -8,15 +9,12 @@ const AXES = ["horizontal", "vertical"] as const;
 const IDS_SCHEMA = { type: "array", items: { type: "string" } };
 
 /**
- * The tools that align, distribute and tidy up elements as the context menu does, each one undo
- * step, with what moves with them; they take ids and leave the selection alone.
+ * The tools that align, distribute and tidy up elements as the context menu does, and scale them
+ * as the Scale tool does, each one undo step, with what moves with them; they take ids and leave
+ * the selection alone.
  */
-export function arrangeTools<H>({
-  noun,
-  things,
-  holder,
-  resolve,
-}: ArrangeToolsOptions<H>): AgentTool<H>[] {
+export function arrangeTools<H>(options: ArrangeToolsOptions<H>): AgentTool<H>[] {
+  const { noun, things, holder, resolve } = options;
   return [
     {
       name: `align_${noun}`,
@@ -71,5 +69,6 @@ export function arrangeTools<H>({
         return { moved: engine.tidyUpElements(ids) };
       },
     },
+    scaleTool(options),
   ];
 }

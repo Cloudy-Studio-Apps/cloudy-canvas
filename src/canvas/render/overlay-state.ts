@@ -10,11 +10,12 @@ export function buildOverlayState({
   hover,
   marquee,
   zoom,
+  resizeMode,
 }: OverlayInput): OverlayState {
   const outlined = selected.filter((el) => kinds.kindOf(el).boxed);
   const selection = outlined.map((el) => outlineOf(el, kinds));
   const single = selected.length === 1 ? selected[0] : undefined;
-  const target = resizeTarget(selected, kinds);
+  const target = resizeTarget(selected, kinds, resizeMode);
   const resizeHandles = target?.resizable
     ? RESIZE_HANDLES.map((handle) => resizeHandlePoint(target.box, handle, target.rotation))
     : [];

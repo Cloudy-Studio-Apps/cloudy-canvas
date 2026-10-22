@@ -12,6 +12,9 @@ import {
   angleOf,
   normalizeAngle,
   rotatePoint,
+  scaleLength,
+  scalePoint,
+  type ScaleTransform,
 } from "@canvas";
 
 import type { DesignToolOptions } from "../../design-options.types";
@@ -44,6 +47,7 @@ export class LineKind extends DesignNodeKind<LineNodeElement> {
   override readonly defaults = LINE_DEFAULTS;
   override readonly boxed = false;
   override readonly resizable = false;
+  override readonly scalable = true;
   override readonly fillable = false;
   override readonly creatable = true;
   override readonly specProperties = {
@@ -90,6 +94,15 @@ export class LineKind extends DesignNodeKind<LineNodeElement> {
     return {
       ...lineFromEnds(mirrorPoint(start, axis, at), mirrorPoint(end, axis, at)),
       rotation: 0,
+    };
+  }
+
+  /** Its ends scale (the Scale tool), and its stroke weight. */
+  override scale(el: LineNodeElement, t: ScaleTransform): ElementPatch<LineNodeElement> {
+    const { start, end } = lineEnds(el);
+    return {
+      ...lineFromEnds(scalePoint(t, start), scalePoint(t, end)),
+      strokeWeight: scaleLength(t, el.strokeWeight),
     };
   }
 

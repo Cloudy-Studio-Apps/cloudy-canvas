@@ -18,7 +18,7 @@ export function drawGeo(view: ElementView, el: GeoElement, textStyle: ElementTex
   if (stroke !== TRANSPARENT) {
     const style = {
       color: stroke,
-      width: GEO_DEFAULTS.strokeWidth,
+      width: el.strokeWidth ?? GEO_DEFAULTS.strokeWidth,
       alignment: 0.5,
       join: "round",
     } as const;

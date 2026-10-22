@@ -3,12 +3,14 @@
 // The element types themselves live in the products (e.g. `products/board/elements`).
 export type * from "./element.types";
 export type * from "./element.kind.types";
+export type * from "./element-scale.types";
 export type * from "./element.info.types";
 export type * from "./element.interaction.types";
 export type * from "./bases";
 export type * from "./reorder.types";
 export { ElementKind } from "./element.kind";
 export { elementBounds } from "./element-bounds";
+export { scaleLength, scaleOffsets, scalePoint, scaleRect } from "./element-scale";
 export { ElementKinds } from "./element.kinds";
 export { ELEMENT_DEFAULTS } from "./element.defaults";
 export { BoxKind, LineKind, TextBoxKind } from "./bases";

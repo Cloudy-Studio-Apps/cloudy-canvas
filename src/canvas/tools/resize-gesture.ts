@@ -4,12 +4,16 @@ import {
   type ElementKind,
   type ElementPatch,
 } from "../elements";
+import { scalePatches } from "../arrange/scale";
+import type { Point, Rect } from "../geometry.types";
 import { rotatePoint } from "../rotation";
 import { scaleRectInBox } from "../geometry";
 import {
+  resizeAnchor,
   resizeCursor,
   resizeRect,
   type ResizeHandle,
+  type ResizeMode,
   type ResizeOptions,
   type ResizeTarget,
 } from "../handles";
@@ -22,23 +26,34 @@ import type { CanvasPointer, ToolContext } from "./tool.types";
  * every element in it (ones that can't be resized move by their center, with their members). Shift keeps the
  * proportions (always, when a kind keeps them), Alt resizes round the center. A turned element
  * resizes in its own frame, its opposite side staying put. The dragged sides of unturned ones snap
- * to other elements.
+ * to other elements. In `scale` mode (the Scale tool) the proportions are always kept and every
+ * element, with what moves with it, is scaled through its kind (`ElementKind.scale`): fonts,
+ * strokes and radii grow with it.
  */
 export class ResizeGesture {
   private started = false;
   private readonly snapper: Snapper;
   /** What moves with each element that can't be resized (e.g. a group's children), as it was. */
   private readonly followers = new Map<string, CanvasElement[]>();
+  /** In `scale` mode, everything that scales (members included), as it was. */
+  private readonly scaled: CanvasElement[] = [];
 
   constructor(
     private readonly ctx: ToolContext,
     private readonly target: ResizeTarget,
     private readonly handle: ResizeHandle,
     private readonly start: CanvasPointer,
+    private readonly mode: ResizeMode = "resize",
   ) {
     ctx.setCursor(resizeCursor(handle, target.rotation));
     const moving = new Set(target.elements.map((el) => el.id));
-    if (target.elements.length > 1) {
+    if (mode === "scale") {
+      for (const id of ctx.withMembers(moving)) {
+        const el = ctx.getElement(id);
+        if (el && !el.locked) this.scaled.push(el);
+        moving.add(id);
+      }
+    } else if (target.elements.length > 1) {
       for (const el of target.elements) {
         if (scales(el, ctx.kinds.kindOf(el))) continue;
         const members: CanvasElement[] = [];
@@ -75,7 +90,8 @@ export class ResizeGesture {
     let dx = delta.x;
     let dy = delta.y;
     const options = {
-      keepRatio: p.shiftKey || elements.some((el) => kinds.kindOf(el).keepsRatio),
+      keepRatio:
+        this.mode === "scale" || p.shiftKey || elements.some((el) => kinds.kindOf(el).keepsRatio),
       fromCenter: p.altKey,
     };
     if (rotation) return this.resizeTurned(dx, dy, options);
@@ -88,6 +104,7 @@ export class ResizeGesture {
       dy += snap.y;
       rect = resizeRect(box, this.handle, dx, dy, options);
     }
+    if (this.mode === "scale") return this.scaleTo(rect, resizeAnchor(box, this.handle, p.altKey));
 
     const [single] = elements;
     if (single && elements.length === 1) {
@@ -121,10 +138,33 @@ export class ResizeGesture {
     const [el] = elements;
     if (!el) return;
     const local = resizeRect({ ...box, x: 0, y: 0 }, this.handle, dx, dy, options);
+    if (this.mode === "scale") {
+      const anchor = resizeAnchor(box, this.handle, options.fromCenter);
+      return this.scaleTo(local, rotatePoint(anchor, box, rotation));
+    }
     const corner = rotatePoint({ x: box.x + local.x, y: box.y + local.y }, box, rotation);
     const rect = { ...local, x: hundredth(corner.x), y: hundredth(corner.y) };
     this.ctx.doc.update(el.id, this.ctx.kinds.kindOf(el).resize(el, rect));
   }
+
+  /**
+   * Scales everything by what the box became (`rect`, its proportions kept) round `anchor`, the
+   * world point that stays put.
+   */
+  private scaleTo(rect: Rect, anchor: Point): void {
+    const factor = scaleFactor(this.target.box, rect, this.handle);
+    this.ctx.doc.updateMany(scalePatches(this.scaled, this.ctx.kinds, { origin: anchor, factor }));
+  }
+}
+
+/**
+ * How much a box scaled to `rect` grew: by the side the handle drags (a flat box, e.g. a
+ * horizontal line, by the side it has).
+ */
+function scaleFactor(box: Rect, rect: Rect, handle: ResizeHandle): number {
+  const horizontal = handle.includes("e") || handle.includes("w");
+  if (box.w > 0 && (horizontal || box.h <= 0)) return rect.w / box.w;
+  return box.h > 0 ? rect.h / box.h : 1;
 }
 
 /** Whether a multi-selection's resize scales the element (unturned resizable ones), or moves it. */

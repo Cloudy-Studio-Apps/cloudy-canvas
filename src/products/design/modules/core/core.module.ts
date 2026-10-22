@@ -7,6 +7,7 @@ import {
   MousePointer2,
   Redo2,
   Save,
+  Scaling,
   Settings,
   Undo2,
 } from "lucide-react";
@@ -32,6 +33,7 @@ import { prepareTreeCopies } from "./tree/prepare-tree-copies";
 import { reparentMoved } from "./tree/reparent";
 import { containerAlignTarget } from "./tree/align-target";
 import { useFlipCommands } from "./ui/use-flip-commands";
+import { ScaleSidebar } from "./ui/scale-sidebar";
 import { withDescendants } from "./tree/tree-members";
 import {
   AppearanceSection,
@@ -54,7 +56,7 @@ const TRANSFORM_ITEMS = [
 /**
  * What every design has whatever its modules: the canvas view (plain, pixel grid, 2%–25600%, size
  * label, snapping), the layer tree's hooks (drawing order, clipping, members, dropping into frames, copies),
- * the select and hand buttons, the properties panel's shared sections, the main menu and the agent tools that work on
+ * the move, scale (K) and hand buttons, the properties panel's shared sections, the main menu and the agent tools that work on
  * any layer (reading, creating and editing through the kinds, arranging, viewing, exporting, files).
  */
 export const coreModule = defineModule({
@@ -78,6 +80,7 @@ export const coreModule = defineModule({
       { id: "flipVertical", label: "Flip vertical", keys: [{ key: "v", shift: true }] },
     );
     host.contribute(designCanvas.prepareCopies, prepareTreeCopies);
+    host.contribute(designCanvas.keybindings, { "tool.scale": [{ key: "k" }] });
 
     host.contribute(
       designAgentTools,
@@ -97,7 +100,14 @@ export const coreModule = defineModule({
         label: "Move",
         description: "Select, move and resize layers.",
         icon: MousePointer2,
-        toolbar: { group: 0, order: 10 },
+        toolbar: { group: 0, order: 10, menu: "move" },
+      },
+      {
+        tool: "scale",
+        label: "Scale",
+        description: "Scale layers with their content: text, strokes, corners and children.",
+        icon: Scaling,
+        toolbar: { group: 0, order: 15, menu: "move" },
       },
       {
         tool: "hand",
@@ -143,6 +153,7 @@ export const coreModule = defineModule({
       },
     );
 
+    host.contribute(designEditor.toolSidebars, { tool: "scale", component: ScaleSidebar });
     host.contribute(designEditor.sessionHooks, { id: "flip-commands", use: useFlipCommands });
     host.contribute(designEditor.contextMenu, {
       id: "transform",

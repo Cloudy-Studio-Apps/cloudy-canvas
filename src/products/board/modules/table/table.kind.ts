@@ -1,5 +1,6 @@
 import {
   BoxKind,
+  scaleRect,
   type ElementDescription,
   type ElementHandle,
   type ElementInteraction,
@@ -12,6 +13,7 @@ import {
   type PartClick,
   type Point,
   type Rect,
+  type ScaleTransform,
 } from "@canvas";
 
 import type { BoardToolOptions } from "../../board-options.types";
@@ -19,6 +21,7 @@ import { INK_COLOR, TABLE_COLORS } from "../../palette";
 import { createTable } from "./table.factory";
 import { drawTable } from "./table.draw";
 import { TABLE_DEFAULTS } from "./table.defaults";
+import { tableTypography } from "./table-typography";
 import { readCells, readFills, requireRows } from "./table-args";
 import {
   clearCells,
@@ -108,6 +111,12 @@ export class TableKind extends BoxKind<TableElement, BoardToolOptions> {
 
   override resize(el: TableElement, rect: Rect): ElementPatch<TableElement> {
     return scaleTable(el, rect);
+  }
+
+  /** Scaled (the Scale tool), its text and cell insets grow with the grid. */
+  override scale(el: TableElement, t: ScaleTransform): ElementPatch<TableElement> {
+    const textScale = Math.round((el.textScale ?? 1) * t.factor * 1000) / 1000;
+    return { ...scaleTable({ ...el, textScale }, scaleRect(t, el)), textScale };
   }
 
   /** A click on a selected table selects the cell under it (to color it, or Enter to edit it). */
@@ -240,7 +249,7 @@ export class TableKind extends BoxKind<TableElement, BoardToolOptions> {
   }
 
   private cellStyle(el: TableElement, row: number): ElementTextStyle {
-    const { fontSize, padX, padY } = TABLE_DEFAULTS;
+    const { fontSize, padX, padY } = tableTypography(el);
     return {
       fontSize,
       color: INK_COLOR,

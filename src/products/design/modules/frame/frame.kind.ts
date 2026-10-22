@@ -2,6 +2,7 @@ import {
   optionalBoolean,
   optionalString,
   rectContainsPoint,
+  scaleLength,
   type ElementBuildContext,
   type ElementClip,
   type ElementPatch,
@@ -9,6 +10,7 @@ import {
   type ElementView,
   type Point,
   type Rect,
+  type ScaleTransform,
   type Size,
 } from "@canvas";
 
@@ -105,6 +107,11 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
   override hitTest(el: FrameElement, p: Point, tolerance: number): boolean {
     if (super.hitTest(el, p, tolerance)) return true;
     return showsLabel(el) && rectContainsPoint(labelRect(el), p, tolerance);
+  }
+
+  /** Its corners round in proportion; its children are scaled as its members. */
+  override scale(el: FrameElement, t: ScaleTransform): ElementPatch<FrameElement> {
+    return { ...super.scale(el, t), cornerRadius: scaleLength(t, el.cornerRadius) };
   }
 
   override fillDefaults(el: FrameElement): FrameElement {

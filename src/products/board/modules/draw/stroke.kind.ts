@@ -1,4 +1,11 @@
-import { type ElementPatch, type ElementSpec, type ElementView, LineKind } from "@canvas";
+import {
+  LineKind,
+  scaleLength,
+  type ElementPatch,
+  type ElementSpec,
+  type ElementView,
+  type ScaleTransform,
+} from "@canvas";
 import type { BoardToolOptions } from "../../board-options.types";
 
 import { drawStroke } from "./stroke.draw";
@@ -9,7 +16,7 @@ import type { StrokeDefaults, StrokeElement } from "./stroke.types";
 
 /**
  * Freehand strokes, drawn with the pen or the highlighter. Their points are the content: they're
- * only moved, and restyled (color and thickness) from the options panel. Agents draw them from a
+ * only moved, scaled, and restyled (color and thickness) from the options panel. Agents draw them from a
  * list of points.
  */
 export class StrokeKind extends LineKind<StrokeElement, BoardToolOptions> {
@@ -27,6 +34,11 @@ export class StrokeKind extends LineKind<StrokeElement, BoardToolOptions> {
 
   protected lineWidth(el: StrokeElement): number {
     return el.size;
+  }
+
+  /** Scaled (the Scale tool), its line grows thicker with it, the padded bounds along. */
+  override scale(el: StrokeElement, t: ScaleTransform): ElementPatch<StrokeElement> {
+    return { ...super.scale(el, t), size: scaleLength(t, el.size) };
   }
 
   override build(spec: ElementSpec, index: string): StrokeElement {

@@ -1,6 +1,7 @@
 export type * from "./handles.types";
 export {
   RESIZE_HANDLES,
+  resizeAnchor,
   resizeCursor,
   resizeHandleAt,
   resizeHandlePoint,

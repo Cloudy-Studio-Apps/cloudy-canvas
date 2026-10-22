@@ -1,8 +1,10 @@
 import {
+  scaleRect,
   type ElementPatch,
   type ElementSpec,
   type ElementTextStyle,
   type ElementView,
+  type ScaleTransform,
 } from "@canvas";
 
 import { INK_COLOR, STICKY_COLORS } from "../../palette";
@@ -29,18 +31,25 @@ export class StickyKind extends QuickConnectKind<StickyElement> {
   ]);
 
   draw(view: ElementView, el: StickyElement): void {
-    drawSticky(view, el, this.textStyle());
+    drawSticky(view, el, this.textStyle(el));
   }
 
-  protected textStyle(): ElementTextStyle {
+  protected textStyle(el: StickyElement): ElementTextStyle {
+    const scale = el.textScale ?? 1;
     return {
-      fontSize: STICKY_DEFAULTS.fontSize,
+      fontSize: STICKY_DEFAULTS.fontSize * scale,
       color: INK_COLOR,
       align: "left",
       vAlign: "top",
-      padX: STICKY_DEFAULTS.padding,
-      padY: STICKY_DEFAULTS.padding,
+      padX: STICKY_DEFAULTS.padding * scale,
+      padY: STICKY_DEFAULTS.padding * scale,
     };
+  }
+
+  /** Scaled (the Scale tool), its text and padding grow with the note. */
+  override scale(el: StickyElement, t: ScaleTransform): ElementPatch<StickyElement> {
+    const textScale = Math.round((el.textScale ?? 1) * t.factor * 1000) / 1000;
+    return { ...this.resize(el, scaleRect(t, el)), textScale };
   }
 
   override build(spec: ElementSpec, index: string): StickyElement {
