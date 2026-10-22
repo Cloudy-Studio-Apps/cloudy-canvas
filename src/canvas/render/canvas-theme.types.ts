@@ -3,6 +3,8 @@ export interface CanvasTheme {
   background: number;
   grid: number;
   selection: number;
+  /** Smart guides and measurements. */
+  snap: number;
   /** Links between elements (see `CanvasLinks`), e.g. database relations. */
   relation: number;
 }

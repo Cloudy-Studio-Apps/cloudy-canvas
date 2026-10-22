@@ -5,6 +5,7 @@ import type { Interaction } from "../handles";
 import type { Guide } from "../links";
 import type { Point, Rect } from "../geometry.types";
 import type { ServiceDef } from "../services";
+import type { SnapFeedback, Snapper } from "../snapping";
 
 export interface CanvasPointer {
   screen: Point;
@@ -74,6 +75,13 @@ export interface ToolContext<O extends object = object> {
   setFaded(ids: Iterable<string> | null): void;
   /** Shows gesture feedback above the elements (e.g. a line being dragged); `null` clears it. */
   setGuide(guide: Guide | null): void;
+  /**
+   * Snapping for one gesture: to the elements on screen but these ids (what's being moved, with
+   * its members), following the user's snap settings. Clear it when the gesture ends.
+   */
+  createSnapper(exclude: Iterable<string>): Snapper;
+  /** Shows smart guides or measurements (e.g. Alt + hover distances); `null` clears them. */
+  setSnapFeedback(feedback: SnapFeedback | null): void;
   /** Plays a quick pop on elements just added to the document (e.g. a stamped sticker). */
   animateIn(ids: readonly string[]): void;
   /** Handle under the point (e.g. a resize handle), if any. */

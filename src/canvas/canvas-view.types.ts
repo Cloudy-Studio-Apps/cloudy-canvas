@@ -1,3 +1,5 @@
+import type { SnapSettings } from "./snapping";
+
 /** What's drawn behind the elements: dots, a pixel grid when zoomed in, or nothing. */
 export type CanvasGrid = "dots" | "pixels" | "none";
 
@@ -10,4 +12,6 @@ export interface CanvasViewOptions {
   grid: CanvasGrid;
   /** Show the selection's width × height in a tag under it (the design's). */
   sizeLabel: boolean;
+  /** What snaps when the canvas opens (the user's choice, kept per product, wins). */
+  snapping: SnapSettings;
 }

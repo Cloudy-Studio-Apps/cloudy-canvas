@@ -1,3 +1,5 @@
+import type { SnapSettings } from "./snapping";
+
 /** Snapshot for UI hosts (immutable; replaced on every change). `O` is the product's tool options. */
 export interface EngineState<O extends object = object> {
   /** The active tool's id. */
@@ -15,6 +17,8 @@ export interface EngineState<O extends object = object> {
   selectedPart: string | null;
   /** The scope on screen (a design's page), `null` when the product has none. */
   scope: string | null;
+  /** What snaps (the same object until it changes). */
+  snapping: SnapSettings;
   canUndo: boolean;
   canRedo: boolean;
 }

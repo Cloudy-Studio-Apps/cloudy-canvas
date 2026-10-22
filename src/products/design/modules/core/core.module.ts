@@ -42,7 +42,7 @@ import {
 
 /**
  * What every design has whatever its modules: the canvas view (plain, pixel grid, 2%–25600%, size
- * label), the layer tree's hooks (drawing order, clipping, members, dropping into frames, copies),
+ * label, snapping), the layer tree's hooks (drawing order, clipping, members, dropping into frames, copies),
  * the select and hand buttons, the properties panel's shared sections, the main menu and the agent tools that work on
  * any layer (reading, creating and editing through the kinds, arranging, viewing, exporting, files).
  */
@@ -54,6 +54,7 @@ export const coreModule = defineModule({
       maxZoom: 256,
       grid: "pixels",
       sizeLabel: true,
+      snapping: { objects: true, pixelGrid: true },
     });
     host.contribute(designCanvas.drawOrder, treeOrderKeys);
     host.contribute(designCanvas.clips, treeClips);

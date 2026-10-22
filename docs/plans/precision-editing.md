@@ -51,7 +51,12 @@ Files: `canvas/tools/select-tool.ts`, `canvas/tools/resize-gesture.ts`, `canvas/
 `canvas/render/layers/overlay-layer.ts`, `canvas/commands.ts`, `canvas/input/base-keybindings.ts`,
 `canvas/geometry.ts`.
 
-## Phase 1: Snapping and smart guides
+## Phase 1: Snapping and smart guides — done
+
+As built (differences from the plan below): targets are chosen by `ElementKind.snapTarget(el)`
+instead of a product hook (hidden design layers and groups aren't targets); the defaults come from
+`CanvasViewOptions.snapping`; the toggles are in the shared `ZoomMenu` (both editors), not the main
+menu; the pen tool doesn't snap yet; "Snap to guides" comes with the ruler guides (Phase 4).
 
 ### Engine (`canvas/snapping/`, new folder)
 

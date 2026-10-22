@@ -3,6 +3,7 @@ import { Application, Container } from "pixi.js";
 import type { Camera } from "../camera";
 import type { CanvasElement, ElementKinds } from "../elements";
 import type { CanvasLinks, Guide } from "../links";
+import type { SnapFeedback } from "../snapping";
 import type { CanvasTheme } from "./canvas-theme.types";
 import type { HiddenText } from "./element-view.types";
 import { ImageCache } from "./image-cache";
@@ -16,6 +17,7 @@ import { GuideLayer } from "./layers/guide-layer";
 import { LinkLayer } from "./layers/link-layer";
 import { OverlayLayer } from "./layers/overlay-layer";
 import { SizeLabelLayer } from "./layers/size-label-layer";
+import { SnapLayer } from "./layers/snap-layer";
 import type { OverlayState } from "./overlay-state.types";
 import { drawSnapshot } from "./snapshot";
 import type { SnapshotOptions } from "./snapshot.types";
@@ -30,9 +32,9 @@ function nextFrame(): Promise<void> {
 
 /**
  * Owns the Pixi application and composes the layers, bottom to top:
- * grid (screen) → world (frames, links, elements, drafts, guides; follows the camera) → overlay
- * and the size label (screen), with a pixel grid above the world instead. Frames have their own layer so links show
- * above them.
+ * grid (screen) → world (frames, links, elements, drafts, guides; follows the camera) → overlay,
+ * size label and smart guides (screen), with a pixel grid above the world instead. Frames have
+ * their own layer so links show above them.
  */
 export class Renderer {
   readonly app = new Application();
@@ -45,6 +47,8 @@ export class Renderer {
   private readonly world = new Container();
   private readonly overlay = new OverlayLayer();
   private readonly sizeLabel = new SizeLabelLayer();
+  private readonly snap = new SnapLayer();
+  private snapFeedback: SnapFeedback | null = null;
   private readonly images: ImageCache;
 
   constructor(
@@ -76,8 +80,8 @@ export class Renderer {
     this.world.addChild(this.frames, this.links, this.elements, this.draft, this.guide);
     // The pixel grid lies over the content it measures; dots stay behind it.
     if (this.options.grid === "pixels")
-      this.app.stage.addChild(this.world, this.grid, this.overlay, this.sizeLabel);
-    else this.app.stage.addChild(this.grid, this.world, this.overlay, this.sizeLabel);
+      this.app.stage.addChild(this.world, this.grid, this.overlay, this.sizeLabel, this.snap);
+    else this.app.stage.addChild(this.grid, this.world, this.overlay, this.sizeLabel, this.snap);
   }
 
   /** The canvas background color (0xRRGGBB). */
@@ -172,6 +176,11 @@ export class Renderer {
     this.guide.set(guide);
   }
 
+  /** Shows smart guides and measurements (see `Snapper`); `null` clears them. */
+  setSnapFeedback(feedback: SnapFeedback | null): void {
+    this.snapFeedback = feedback;
+  }
+
   /** Re-rasterizes text for the zoom level. */
   setTextZoom(zoom: number): void {
     this.elements.setTextZoom(zoom);
@@ -208,6 +217,7 @@ export class Renderer {
     this.guide.draw({ zoom: camera.zoom, theme: this.theme });
     this.overlay.draw(camera, overlay, this.theme.selection);
     this.sizeLabel.draw(camera, this.options.sizeLabel ? overlay.size : null, this.theme.selection);
+    this.snap.draw(camera, this.snapFeedback, this.theme.snap);
     this.app.render();
     return animating;
   }

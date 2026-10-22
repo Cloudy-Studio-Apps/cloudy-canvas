@@ -71,6 +71,11 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
     return el.visible && super.hitTest(el, p, tolerance);
   }
 
+  /** Hidden layers aren't snapped to. */
+  override snapTarget(el: E): boolean {
+    return el.visible && super.snapTarget(el);
+  }
+
   override fillDefaults(el: E): E {
     return {
       ...el,

@@ -4,6 +4,7 @@ import {
   type CanvasPointer,
   type ElementPatch,
   type Point,
+  type Snapper,
   type Tool,
   type ToolContext,
 } from "@canvas";
@@ -15,7 +16,7 @@ import { nextLayerName } from "./next-layer-name";
 
 /**
  * The base of tools that draw a node (template method): press and drag draws it live, a click
- * places a default one; then it goes into the frame under it, is selected, and the select tool
+ * places a default one (its points snap to the other layers); then it goes into the frame under it, is selected, and the select tool
  * comes back, all in one undo step. Subclasses describe the shape `S` a gesture makes (a box, a
  * line's two ends) and how it becomes a node.
  */
@@ -24,6 +25,7 @@ export abstract class NodeDrawTool<E extends DesignNode, S> implements Tool {
   readonly cursor: string = "crosshair";
   private start: CanvasPointer | null = null;
   private nodeId: string | null = null;
+  private snapper: Snapper | null = null;
 
   constructor(protected readonly ctx: ToolContext<DesignToolOptions>) {}
 
@@ -40,23 +42,23 @@ export abstract class NodeDrawTool<E extends DesignNode, S> implements Tool {
 
   onPointerDown(p: CanvasPointer): void {
     this.ctx.setSelection([]);
-    this.start = p;
+    this.snapper = this.ctx.createSnapper([]);
+    this.start = this.snapped(p);
     this.nodeId = null;
   }
 
   onPointerMove(p: CanvasPointer): void {
     const start = this.start;
     if (!start) return;
-    const shape = this.dragShape(start.world, p);
+    const shape = this.dragShape(start.world, this.snapped(p));
     if (this.nodeId) this.ctx.doc.update(this.nodeId, this.shapePatch(shape));
     else if (pastThreshold(start, p, DRAW_THRESHOLD_PX)) this.nodeId = this.add(shape);
   }
 
   onPointerUp(p: CanvasPointer): void {
     if (!this.start) return;
-    const id = this.nodeId ?? this.add(this.clickShape(p.world));
-    this.start = null;
-    this.nodeId = null;
+    const id = this.nodeId ?? this.add(this.clickShape(this.snapped(p).world));
+    this.onCancel();
     this.placeInContainer(id);
     this.ctx.setSelection([id]);
     this.ctx.setTool("select");
@@ -65,6 +67,13 @@ export abstract class NodeDrawTool<E extends DesignNode, S> implements Tool {
   onCancel(): void {
     this.start = null;
     this.nodeId = null;
+    this.snapper?.clear();
+    this.snapper = null;
+  }
+
+  /** The pointer with its point snapped to the other layers (and whole units). */
+  private snapped(p: CanvasPointer): CanvasPointer {
+    return this.snapper ? { ...p, world: this.snapper.point(p.world, p) } : p;
   }
 
   private add(shape: S): string {

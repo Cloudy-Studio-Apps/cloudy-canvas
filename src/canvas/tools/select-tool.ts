@@ -1,8 +1,10 @@
 import type { CanvasElement, ElementPatch } from "../elements";
-import { rectContainsPoint, rectFromPoints } from "../geometry";
+import { rectContainsPoint, rectFromPoints, unionRects } from "../geometry";
+import { measureGaps } from "../snapping";
 import { resizeCursor, type Interaction } from "../handles";
 import { ResizeGesture } from "./resize-gesture";
 import { MOVE_THRESHOLD_PX, pastThreshold } from "./drag-threshold";
+import type { Rect } from "../geometry.types";
 import type { CanvasPointer, Tool, ToolContext } from "./tool.types";
 import type { Gesture } from "./select-tool.types";
 
@@ -16,10 +18,13 @@ export class SelectTool implements Tool {
   readonly id = "select" as const;
   readonly cursor = "default";
   private gesture: Gesture | null = null;
+  /** Whether Alt + hover distances are on screen. */
+  private measuring = false;
 
   constructor(private readonly ctx: ToolContext) {}
 
   onPointerDown(p: CanvasPointer): void {
+    this.measure(undefined);
     const interaction = this.ctx.interactionAt(p.world);
     if (interaction) {
       this.gesture = this.startInteraction(interaction, p);
@@ -65,6 +70,8 @@ export class SelectTool implements Tool {
       start: p,
       origins,
       started: false,
+      box: null,
+      snapper: null,
       toggleOnClick,
       partOnClick,
       partBefore,
@@ -93,10 +100,17 @@ export class SelectTool implements Tool {
       this.ctx.doc.checkpoint();
       // Alt-drag leaves the originals in place and drags out a copy.
       if (p.altKey) this.dragCopies(g);
+      g.box = this.boxOf(g.origins.values());
+      g.snapper = this.ctx.createSnapper(g.origins.keys());
     }
 
-    const dx = p.world.x - g.start.world.x;
-    const dy = p.world.y - g.start.world.y;
+    let dx = p.world.x - g.start.world.x;
+    let dy = p.world.y - g.start.world.y;
+    if (g.box && g.snapper) {
+      const snap = g.snapper.move({ ...g.box, x: g.box.x + dx, y: g.box.y + dy }, p);
+      dx += snap.x;
+      dy += snap.y;
+    }
     const patches = new Map<string, ElementPatch>();
     for (const [id, origin] of g.origins)
       patches.set(id, this.ctx.kinds.kindOf(origin).move(origin, dx, dy));
@@ -128,6 +142,7 @@ export class SelectTool implements Tool {
     const interaction = this.ctx.interactionAt(p.world);
     this.ctx.setCursor(interaction ? interactionCursor(interaction) : this.cursor);
     const hit = this.ctx.targetAt(p.world, p.modKey);
+    this.measure(p.altKey ? hit : undefined);
     if (!hit && (interaction || this.keepsHover(p))) return;
     this.ctx.setHover(hit && !this.ctx.getSelection().has(hit.id) ? hit.id : null);
   }
@@ -138,6 +153,9 @@ export class SelectTool implements Tool {
 
   onCancel(): void {
     if (this.gesture?.kind === "element") this.gesture.gesture.cancel();
+    if (this.gesture?.kind === "move") this.gesture.snapper?.clear();
+    if (this.gesture?.kind === "resize") this.gesture.resize.end();
+    this.measure(undefined);
     this.gesture = null;
     this.ctx.setMarquee(null);
     this.ctx.setCursor(this.cursor);
@@ -156,6 +174,34 @@ export class SelectTool implements Tool {
     g.partOnClick = null;
     const selected = [...this.ctx.getSelection()].map((id) => ids.get(id));
     this.ctx.setSelection(selected.filter((id) => id !== undefined));
+  }
+
+  /** The box round these elements' outlines, or `null` when none is outlined. */
+  private boxOf(elements: Iterable<CanvasElement>): Rect | null {
+    const rects: Rect[] = [];
+    for (const el of elements) {
+      const kind = this.ctx.kinds.kindOf(el);
+      if (kind.boxed) rects.push(kind.bounds(el));
+    }
+    return unionRects(rects);
+  }
+
+  /**
+   * Shows the distances between the selection and the element under the pointer (Alt + hover),
+   * or hides them (`undefined`).
+   */
+  private measure(other: CanvasElement | undefined): void {
+    if (!other && !this.measuring) return;
+    const selected = [...this.ctx.getSelection()].map((id) => this.ctx.getElement(id));
+    const box = this.boxOf(selected.filter((el) => el !== undefined));
+    const otherKind = other && this.ctx.kinds.kindOf(other);
+    if (box && other && otherKind?.boxed && !this.ctx.getSelection().has(other.id)) {
+      this.measuring = true;
+      this.ctx.setSnapFeedback({ lines: [], gaps: measureGaps(box, otherKind.bounds(other)) });
+    } else if (this.measuring) {
+      this.measuring = false;
+      this.ctx.setSnapFeedback(null);
+    }
   }
 
   /** Whether the pointer is still close enough to the hovered element to reach its handles. */

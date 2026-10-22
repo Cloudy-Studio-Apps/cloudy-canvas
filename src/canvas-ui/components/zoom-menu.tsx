@@ -1,6 +1,7 @@
 import { Button } from "@shared/ui/components/ui/button";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
@@ -8,14 +9,19 @@ import {
   DropdownMenuTrigger,
 } from "@shared/ui/components/ui/dropdown-menu";
 import { useEngine, useEngineState } from "../engine-context";
+import { useSnapping } from "../use-snapping";
 import type { ZoomMenuProps } from "./zoom-menu.types";
 
 const ZOOM_PRESETS = [0.5, 1, 2];
 
-/** Current zoom percentage; opens zoom-to-fit and preset levels. */
+/**
+ * Current zoom percentage; opens zoom-to-fit, preset levels and what snaps (whole units only on
+ * canvases with a pixel grid).
+ */
 export function ZoomMenu({ side = "top" }: ZoomMenuProps) {
   const engine = useEngine();
   const zoom = useEngineState((state) => state.zoom);
+  const [snapping, setSnapping] = useSnapping();
   const percent = `${Math.round(zoom * 100)}%`;
 
   return (
@@ -44,6 +50,23 @@ export function ZoomMenu({ side = "top" }: ZoomMenuProps) {
             )}
           </DropdownMenuItem>
         ))}
+        <DropdownMenuSeparator />
+        <DropdownMenuCheckboxItem
+          checked={snapping.objects}
+          onCheckedChange={(objects) => setSnapping({ objects })}
+          onSelect={(event) => event.preventDefault()}
+        >
+          Snap to objects
+        </DropdownMenuCheckboxItem>
+        {engine.view.grid === "pixels" && (
+          <DropdownMenuCheckboxItem
+            checked={snapping.pixelGrid}
+            onCheckedChange={(pixelGrid) => setSnapping({ pixelGrid })}
+            onSelect={(event) => event.preventDefault()}
+          >
+            Snap to pixel grid
+          </DropdownMenuCheckboxItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

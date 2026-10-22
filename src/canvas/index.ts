@@ -38,6 +38,7 @@ export type {
   ShapePaintLayer,
 } from "./render";
 export type { CanvasPointer, Tool, ToolContext } from "./tools";
+export type { SnapFeedback, SnapGap, SnapLine, Snapper, SnapSettings } from "./snapping";
 export { nudgeCheckpoint, nudgeStep, NUDGE_STEPS } from "./arrange";
 export { CanvasEngine } from "./canvas-engine";
 export { MIN_ZOOM, MAX_ZOOM } from "./camera";

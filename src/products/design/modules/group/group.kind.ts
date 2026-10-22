@@ -19,4 +19,9 @@ export class GroupKind extends DesignNodeKind<GroupElement> {
   override hitTest(): boolean {
     return false;
   }
+
+  /** Its outline is its children's, which a moved child would drag along: they're the targets. */
+  override snapTarget(): boolean {
+    return false;
+  }
 }

@@ -2,12 +2,13 @@ import { useEffect, useState, type RefObject } from "react";
 
 import { CanvasEngine, type CanvasDocument, type CanvasProduct, type EngineLoading } from "@canvas";
 import { clipboard, fontLibrary } from "@platform";
+import { useSnappingStore } from "@shared/stores/snapping-store";
 import { readCanvasTheme } from "./canvas-theme";
 import type { CanvasEngineHost } from "./use-canvas-engine.types";
 
 /**
  * Creates a CanvasEngine for `product` editing `document`, mounted into the container while both
- * exist, with the system clipboard for copy and paste and the app's fonts. The document stays owned
+ * exist, with the system clipboard for copy and paste, the app's fonts and the user's snapping. The document stays owned
  * by the caller. The engine is handed out once it has mounted; until then `loading` says what it's
  * doing (for `CanvasLoadingOverlay`).
  */
@@ -30,6 +31,7 @@ export function useCanvasEngine<O extends object>(
       clipboard,
       fonts: fontLibrary,
     });
+    instance.setSnapping(useSnappingStore.getState().byProduct[product.id] ?? {});
     let active = true;
     instance
       .mount(container, (next) => {

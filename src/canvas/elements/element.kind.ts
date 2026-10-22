@@ -70,6 +70,11 @@ export abstract class ElementKind<
     return { x: el.x, y: el.y, w: el.w, h: el.h };
   }
 
+  /** Whether moved, resized and drawn elements snap to its edges and center (outlined ones do). */
+  snapTarget(_el: E): boolean {
+    return this.boxed;
+  }
+
   /** Whether a world point hits the element. `tolerance` is in world units. */
   hitTest(el: E, p: Point, tolerance: number): boolean {
     return rectContainsPoint(this.bounds(el), p, tolerance);

@@ -93,6 +93,7 @@
   --canvas-background: var(--seal-50);
   --canvas-grid: var(--seal-300);
   --canvas-selection: var(--ice-500);
+  --canvas-snap: oklch(0.6 0.21 22);
   --canvas-relation: var(--seal-500);
 
   /* ── Semantic: code (syntax colors in the DBML and ER text editors) ───── */
@@ -214,6 +215,7 @@
   --canvas-background: var(--seal-950);
   --canvas-grid: var(--seal-800);
   --canvas-selection: var(--ice-400);
+  --canvas-snap: oklch(0.7 0.18 22);
   --canvas-relation: var(--seal-400);
   --syntax-keyword: var(--ice-300);
   --syntax-definition: var(--seal-50);

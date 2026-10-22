@@ -35,11 +35,19 @@ import {
 import { findInteraction } from "./find-interaction";
 import type { EngineLoading } from "./engine-loading.types";
 import type { EngineState } from "./engine-state.types";
+import { intersectRects, rectsIntersect } from "./geometry";
 import type { Point, Rect } from "./geometry.types";
 import { bindKeyboard, bindWheel, EdgeAutoPan, Keymap, PointerInput } from "./input";
 import { Renderer, type CanvasTheme } from "./render";
 import { Scene } from "./scene";
 import { ServiceCache, type ServiceDef } from "./services";
+import {
+  GestureSnapper,
+  snapTargets,
+  type SnapFeedback,
+  type SnapSettings,
+  type SnapTargets,
+} from "./snapping";
 import { FontTracker, loadFonts, TextEditor } from "./text";
 import { createBaseTools, type CanvasPointer, type Tool, type ToolContext } from "./tools";
 import { debounce, delay, Disposables, Emitter, FrameScheduler, Store } from "./utils";
@@ -51,6 +59,7 @@ import type {
   ScopeView,
 } from "./canvas-engine.types";
 import type { CanvasProduct, CanvasScopes } from "./canvas-product.types";
+import type { CanvasViewOptions } from "./canvas-view.types";
 import type { CanvasLinks } from "./links";
 
 const ZOOM_STEP = 1.25;
@@ -78,6 +87,10 @@ export class CanvasEngine<O extends object = object> {
   /** The product's shortcuts; hosts read labels with `keymap.label(command)`. */
   readonly keymap: Keymap;
   readonly commands: Commands;
+  /** The product's id (e.g. "board"). */
+  readonly productId: string;
+  /** The product's view: zoom range, grid, selection chrome and default snapping. */
+  readonly view: CanvasViewOptions;
   private readonly ownsDocument: boolean;
   private readonly product: CanvasProduct<O>;
   private readonly links: CanvasLinks[];
@@ -117,6 +130,7 @@ export class CanvasEngine<O extends object = object> {
   private followHistory = false;
   private tool: Tool;
   private options: O;
+  private snapping: SnapSettings;
   private container: HTMLElement | null = null;
   private textEditor: TextEditor | null = null;
   private mounted = false;
@@ -126,6 +140,7 @@ export class CanvasEngine<O extends object = object> {
 
   constructor({ product, theme, document, clipboard, fonts }: CanvasEngineOptions<O>) {
     this.product = product;
+    this.productId = product.id;
     this.kinds = product.kinds;
     this.keymap = new Keymap(product.keybindings);
     this.options = product.defaultOptions;
@@ -134,6 +149,8 @@ export class CanvasEngine<O extends object = object> {
     this.services = new ServiceCache(this.doc);
     this.links = product.createLinks?.() ?? [];
     const view = { ...DEFAULT_VIEW_OPTIONS, ...product.view };
+    this.view = view;
+    this.snapping = view.snapping;
     this.camera.setZoomLimits(view.minZoom, view.maxZoom);
     this.renderer = new Renderer(
       theme,
@@ -322,11 +339,18 @@ export class CanvasEngine<O extends object = object> {
     if (!next || this.tool === next) return;
     this.tool.onCancel?.();
     this.renderer.setFaded([]);
+    this.renderer.setSnapFeedback(null);
     this.tool = next;
     this.scene.setHover(null);
     this.setCursor(this.tool.cursor);
     this.tool.onActivate?.();
     this.requestRender();
+    this.emitChange();
+  }
+
+  /** Changes what snaps (the host keeps the user's choice). */
+  setSnapping(patch: Partial<SnapSettings>): void {
+    this.snapping = { ...this.snapping, ...patch };
     this.emitChange();
   }
 
@@ -735,6 +759,16 @@ export class CanvasEngine<O extends object = object> {
         this.scene.marquee = rect;
         this.requestRender();
       },
+      createSnapper: (exclude) => {
+        const ids = new Set(exclude);
+        return new GestureSnapper({
+          targets: () => this.snapTargets(ids),
+          zoom: () => this.camera.zoom,
+          settings: () => this.snapping,
+          show: (feedback) => this.setSnapFeedback(feedback),
+        });
+      },
+      setSnapFeedback: (feedback) => this.setSnapFeedback(feedback),
       setDraft: (el) => {
         this.renderer.setDraft(el);
         this.requestRender();
@@ -1127,6 +1161,29 @@ export class CanvasEngine<O extends object = object> {
     if (this.container) this.container.style.cursor = cursor;
   }
 
+  private setSnapFeedback(feedback: SnapFeedback | null): void {
+    this.renderer.setSnapFeedback(feedback);
+    this.requestRender();
+  }
+
+  /**
+   * What gestures snap to: the outlines (clipped like they're drawn) of the snap targets on and
+   * around the screen, but the excluded ids.
+   */
+  private snapTargets(exclude: ReadonlySet<string>): SnapTargets {
+    const view = this.camera.visibleWorldRect();
+    const area = { x: view.x - view.w, y: view.y - view.h, w: view.w * 3, h: view.h * 3 };
+    const boxes: Rect[] = [];
+    for (const el of this.scene.elements) {
+      const kind = this.kinds.kindOf(el);
+      if (exclude.has(el.id) || !kind.snapTarget(el)) continue;
+      const clip = this.scene.clipOf(el);
+      const box = clip ? intersectRects(kind.bounds(el), clip.rect) : kind.bounds(el);
+      if ((box.w > 0 || box.h > 0) && rectsIntersect(box, area)) boxes.push(box);
+    }
+    return snapTargets(boxes);
+  }
+
   private requestRender(): void {
     this.frames.request();
   }
@@ -1150,6 +1207,7 @@ export class CanvasEngine<O extends object = object> {
       selectedId: this.scene.selection.single() ?? null,
       selectionTypes: this.selectionTypes(),
       selectedPart: this.scene.selection.part,
+      snapping: this.snapping,
       scope: this.scene.scope,
       canUndo: this.doc.canUndo(),
       canRedo: this.doc.canRedo(),

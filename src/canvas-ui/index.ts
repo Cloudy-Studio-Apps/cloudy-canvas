@@ -66,3 +66,4 @@ export { useCopyAsPng } from "./use-copy-as-png";
 export { useDocumentMeta } from "./use-document-meta";
 export * from "./modules";
 export { useService } from "./use-service";
+export { useSnapping } from "./use-snapping";
