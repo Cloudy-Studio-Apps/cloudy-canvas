@@ -1,24 +1,22 @@
 import { Copy } from "lucide-react";
 
-import { clipboard } from "@platform";
-import { notifyError, toast } from "@shared/stores/toast-store";
 import { Button } from "@shared/ui/components/ui/button";
 import { cn } from "@shared/ui/lib/utils";
+import { copyText } from "./copy-agent-setup";
 import type { CopyRowProps } from "./copy-row.types";
 
 /** A labeled value in monospace with a Copy button. */
-export function CopyRow({ label, value, disabled = false }: CopyRowProps) {
-  const copy = () =>
-    void clipboard.writeText(value).then(
-      () => toast({ title: `${label} copied` }),
-      (error: unknown) => notifyError("Couldn't copy to the clipboard", error),
-    );
-
+export function CopyRow({ label, value, hint, disabled = false }: CopyRowProps) {
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between gap-3">
         <span className="text-sm font-medium">{label}</span>
-        <Button variant="ghost" size="sm" disabled={disabled} onClick={copy}>
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled={disabled}
+          onClick={() => copyText(value, `${label} copied`, hint)}
+        >
           <Copy />
           Copy
         </Button>
@@ -31,6 +29,7 @@ export function CopyRow({ label, value, disabled = false }: CopyRowProps) {
       >
         {value}
       </pre>
+      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
     </div>
   );
 }

@@ -1,0 +1,14 @@
+/** An agent app (MCP client) and how to point it at the agent server. */
+export interface AgentClient {
+  id: string;
+  /** The app's name, e.g. "Cursor". */
+  label: string;
+  /** What the snippet is, e.g. "Terminal command" or "mcp.json". */
+  snippetLabel: string;
+  /** Where the snippet goes, shown under it and in the copied toast. */
+  where: string;
+  /** The setup for the server at `url`. */
+  snippet(url: string): string;
+  /** A link that installs the server in the app in one click, when the app has one. */
+  installLink?(url: string): string;
+}

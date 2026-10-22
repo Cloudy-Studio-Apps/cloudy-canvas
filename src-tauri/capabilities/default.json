@@ -24,7 +24,12 @@
     "opener:allow-reveal-item-in-dir",
     {
       "identifier": "opener:allow-open-url",
-      "allow": [{ "url": "https://*" }, { "url": "http://*" }]
+      "allow": [
+        { "url": "https://*" },
+        { "url": "http://*" },
+        { "url": "cursor://*" },
+        { "url": "vscode:*" }
+      ]
     },
     {
       "identifier": "http:default",
