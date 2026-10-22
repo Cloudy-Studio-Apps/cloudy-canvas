@@ -17,7 +17,10 @@ export function LibraryPanel({ onClose }: LibraryPanelProps) {
   const { host } = useEditorModules();
   const [query, setQuery] = useState("");
   const [tab, setTab] = useState<LibraryTabInfo["id"]>("all");
-  const sections = useMemo(() => shownSections(host, tab, query.trim()), [host, tab, query]);
+  const sections = useMemo(
+    () => shownSections(host, engine, tab, query.trim()),
+    [host, engine, tab, query],
+  );
 
   const pick = (item: LibraryItem) => {
     if (!item.run) return;

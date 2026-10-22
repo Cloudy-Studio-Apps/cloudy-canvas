@@ -148,12 +148,14 @@ export default function activate(api) {
       host.contribute(board.canvas.options, { calloutColor: COLORS[0].value });
       host.contribute(board.agentTools, { id: "callout", tools: () => [createCalloutTool] });
 
-      host.contribute(board.editor.toolbar, {
+      // Its button goes on the toolbar after the built-in tools; as it adds an element, it's
+      // listed in the library too (name and description from the kind).
+      host.contribute(board.editor.tools, {
         tool: "callout",
         element: "callout",
         icon: { svg: ICON },
-        group: 1,
-        order: 110,
+        toolbar: { group: 1, order: 110 },
+        library: { keywords: ["note", "highlight"] },
       });
       host.contribute(board.editor.toolPanels, { tool: "callout", component: CalloutOptions });
       host.contribute(board.editor.selectionPanels, { type: "callout", component: CalloutOptions });

@@ -2,7 +2,7 @@ import { cn } from "@shared/ui/lib/utils";
 import type { ExtensionIconViewProps } from "./editor-points.types";
 
 /** Draws a module's icon, whether it's a Lucide icon or an SVG document. */
-export function ExtensionIconView({ icon, className }: ExtensionIconViewProps) {
+export function ExtensionIconView({ icon, className, strokeWidth }: ExtensionIconViewProps) {
   if ("svg" in icon) {
     return (
       <span
@@ -13,5 +13,5 @@ export function ExtensionIconView({ icon, className }: ExtensionIconViewProps) {
     );
   }
   const Icon = icon;
-  return <Icon className={className} />;
+  return <Icon className={className} strokeWidth={strokeWidth} />;
 }

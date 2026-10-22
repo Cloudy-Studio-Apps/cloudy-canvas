@@ -41,27 +41,42 @@ export default function activate(api) {
     id: "my-plugin",
     register(host) {
       host.contribute(api.board.canvas.kinds, new MyKind());
-      host.contribute(api.board.editor.toolbar, {
+      host.contribute(api.board.editor.tools, {
         tool: "my-tool",
-        element: "my-type",
+        element: "my-type", // named and described by the element's kind
         icon: { svg: "<svg…>" },
-        group: 1,
-        order: 200,
+        toolbar: { group: 1, order: 200 }, // leave it out to keep the tool off the toolbar
       });
     },
   });
 }
 ```
 
+## Tools: icon, name, description and placement
+
+Each tool is one entry on `api.board.editor.tools`:
+
+| Field                  | What it does                                                                                                                                                                                                                           |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tool`                 | The tool's id (the one given to `api.board.canvas.tools`).                                                                                                                                                                             |
+| `icon`                 | A Lucide icon or `{ svg: "<svg…>" }` (drawn at the text's color with `currentColor`).                                                                                                                                                  |
+| `element`              | For a tool that adds an element: its type. The name and description come from the element kind's `label` and `description`.                                                                                                            |
+| `label`, `description` | For other tools, instead of `element`.                                                                                                                                                                                                 |
+| `toolbar`              | `{ group, order }`: its button on the main toolbar. Group 0 holds select and hand, group 1 the tools that add elements (built-ins use orders 10 to 100, so 110 and up come after them). Leave it out to keep the tool off the toolbar. |
+| `library`              | Its card in the library (Shift+I). Tools with an `element` are listed by default; `{ section, order, keywords }` changes where and how, and `false` keeps one out. Other tools are only listed with a placement.                       |
+| `subTools`             | `[{ id, label }]`: tools picked from this tool's panel, which keep its button active.                                                                                                                                                  |
+
+So a plugin that adds an element always shows it in the library, with the icon, name and description it gave. Whether it also gets a toolbar button is its choice.
+
 ## The API
 
-| `api.…`  | What it holds                                                                                                                                                                                                                                                                                                                                  |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `plugin` | `id`, `manifest`, `readAsset(path)`, `readText(path)` (files in the plugin's folder)                                                                                                                                                                                                                                                           |
-| `core`   | `defineModule`, `definePoint` (points other plugins can extend), `createId`                                                                                                                                                                                                                                                                    |
-| `canvas` | the kind bases `ElementKind`, `BoxKind`, `TextBoxKind`, `LineKind`; `ELEMENT_DEFAULTS`, `createElementBase`, `defineService`, `selectAndEdit`; for agent tools `asUndoStep`, `buildElement`, `summarizeElement` and the argument readers (`stringArg`, `optionalNumber`, …)                                                                    |
-| `ui`     | `React` (the app's own), `toast`, `notifyError`, `FloatingPanel`, `PanelDivider`, `ToolButton`, `OptionButton`, `ColorSwatch`, `ColorPalette`, `ExtensionIconView`, `useEngine`, `useEngineState`, `useService`, `useEngineElement`                                                                                                            |
-| `board`  | the points: `canvas` (kinds, tools, hostCommands, keybindings, options, links, resolveElements, withMembers, onRemove, prepareCopies, pasteText, pasteImage), `editor` (toolbar, toolPanels, selectionPanels, sidePanels, topBar, overlays, sessionHooks, contextMenu), `agentTools`, `library`; plus `toolItem`, `requireBoard` and `palette` |
+| `api.…`  | What it holds                                                                                                                                                                                                                                                                                                                                |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plugin` | `id`, `manifest`, `readAsset(path)`, `readText(path)` (files in the plugin's folder)                                                                                                                                                                                                                                                         |
+| `core`   | `defineModule`, `definePoint` (points other plugins can extend), `createId`                                                                                                                                                                                                                                                                  |
+| `canvas` | the kind bases `ElementKind`, `BoxKind`, `TextBoxKind`, `LineKind`; `ELEMENT_DEFAULTS`, `createElementBase`, `defineService`, `selectAndEdit`; for agent tools `asUndoStep`, `buildElement`, `summarizeElement` and the argument readers (`stringArg`, `optionalNumber`, …)                                                                  |
+| `ui`     | `React` (the app's own), `toast`, `notifyError`, `FloatingPanel`, `PanelDivider`, `ToolButton`, `OptionButton`, `ColorSwatch`, `ColorPalette`, `ExtensionIconView`, `useEngine`, `useEngineState`, `useService`, `useEngineElement`                                                                                                          |
+| `board`  | the points: `canvas` (kinds, tools, hostCommands, keybindings, options, links, resolveElements, withMembers, onRemove, prepareCopies, pasteText, pasteImage), `editor` (tools, toolPanels, selectionPanels, sidePanels, topBar, overlays, sessionHooks, contextMenu), `agentTools`, `library`; plus `toolItem`, `requireBoard` and `palette` |
 
 What each point takes is described in CLAUDE.md (Modules, Canvas engine, Elements) and in the types in `src/canvas/modules/canvas-points.types.ts` and `src/canvas-ui/modules/editor-points.types.ts`.
 
@@ -72,6 +87,8 @@ Agent tools are groups contributed to `api.board.agentTools`: `{ id, tools: ({ k
 - **Name everything after the plugin:** element types, tool ids, option keys and agent tool names, so they don't collide with the app or other plugins. When a plugin collides (a type, tool or command that's already taken, an option given twice), it's turned off with the reason shown in Settings › Plugins, and the board opens without it.
 - Elements of a plugin that's off or uninstalled stay in the file untouched; they're just not shown until it's back.
 - Plugins load once, when the app starts. Changes apply after a reload.
+- Reading something that isn't in the API (a typo, or a name from another version, e.g. `api.board.editor.toolbar`) throws right away, naming it, and the plugin is marked as failed with that message.
+- An installed (copied) plugin doesn't change when its source folder does: install it again to update it, or add the folder for development while you work on it.
 
 ## Trying one
 

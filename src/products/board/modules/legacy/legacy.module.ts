@@ -12,11 +12,7 @@ import {
 } from "lucide-react";
 
 import { defineModule } from "@shared/core";
-import {
-  BUILT_IN_ITEMS,
-  BUILT_IN_SECTIONS,
-  toolItem,
-} from "@board/ui/components/library/library-catalog";
+import { BUILT_IN_ITEMS, BUILT_IN_SECTIONS } from "@board/ui/components/library/library-catalog";
 import { OPEN_LIBRARY } from "@board/ui/components/library/library-command";
 import { boardLibrary } from "@board/ui/components/library/library-points";
 import { ErPanel } from "@board/ui/components/er-panel";
@@ -106,20 +102,17 @@ export const legacyModule = defineModule({
   // diagrams and loose connector ends.
   after: ["embed", "db"],
   register(host) {
-    const sticker = new StickerKind();
-    const table = new TableKind();
-    const entity = new ErEntityKind();
     host.contribute(
       boardCanvas.kinds,
       new StrokeKind(),
       new TextKind(),
       new GeoKind(),
       new SectionKind(),
-      table,
+      new TableKind(),
       new ImageKind(),
-      sticker,
+      new StickerKind(),
       new ConnectorKind(),
-      entity,
+      new ErEntityKind(),
       new ErRelationKind(),
       new ErAttributeKind(),
       new ErIsaKind(),
@@ -205,38 +198,41 @@ export const legacyModule = defineModule({
     );
 
     host.contribute(
-      boardEditor.toolbar,
+      boardEditor.tools,
       {
         tool: "select",
         label: "Select",
         description: "Select, move and resize. Double-click to edit text.",
         icon: MousePointer2,
-        group: 0,
-        order: 10,
+        toolbar: { group: 0, order: 10 },
       },
       {
         tool: "hand",
         label: "Hand",
         description: "Pan around the board.",
         icon: Hand,
-        group: 0,
-        order: 20,
+        toolbar: { group: 0, order: 20 },
       },
       {
         tool: "marker",
         element: "stroke",
         icon: PenLine,
-        group: 1,
-        order: 10,
+        toolbar: { group: 1, order: 10 },
         subTools: [{ id: "eraser", label: "Eraser" }],
       },
-      { tool: "sticker", element: "sticker", icon: Sticker, group: 1, order: 30 },
-      { tool: "text", element: "text", icon: Type, group: 1, order: 40 },
-      { tool: "shape", element: "geo", icon: Shapes, group: 1, order: 50 },
-      { tool: "connector", element: "connector", icon: Spline, group: 1, order: 60 },
-      { tool: "section", element: "section", icon: Frame, group: 1, order: 70 },
-      { tool: "table", element: "table", icon: Table, group: 1, order: 80 },
-      { tool: "er", element: "er-entity", icon: Network, group: 1, order: 100 },
+      { tool: "sticker", element: "sticker", icon: Sticker, toolbar: { group: 1, order: 30 } },
+      { tool: "text", element: "text", icon: Type, toolbar: { group: 1, order: 40 } },
+      { tool: "shape", element: "geo", icon: Shapes, toolbar: { group: 1, order: 50 } },
+      { tool: "connector", element: "connector", icon: Spline, toolbar: { group: 1, order: 60 } },
+      { tool: "section", element: "section", icon: Frame, toolbar: { group: 1, order: 70 } },
+      { tool: "table", element: "table", icon: Table, toolbar: { group: 1, order: 80 } },
+      {
+        tool: "er",
+        element: "er-entity",
+        icon: Network,
+        toolbar: { group: 1, order: 100 },
+        library: { keywords: ["entity", "relation", "chen"] },
+      },
     );
     host.contribute(
       boardEditor.toolPanels,
@@ -264,12 +260,6 @@ export const legacyModule = defineModule({
       component: SectionsMenu,
     });
     host.contribute(boardLibrary.sections, ...BUILT_IN_SECTIONS);
-    host.contribute(
-      boardLibrary.items,
-      toolItem("sticker", sticker, Sticker, 10),
-      toolItem("table", table, Table, 20),
-      toolItem("er", entity, Network, 40, ["entity", "relation", "chen"]),
-      ...BUILT_IN_ITEMS,
-    );
+    host.contribute(boardLibrary.items, ...BUILT_IN_ITEMS);
   },
 });

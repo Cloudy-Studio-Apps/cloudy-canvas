@@ -10,8 +10,10 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import type { ElementKind } from "@canvas";
 import type { LibraryItem, LibrarySection, LibraryTabInfo } from "./library.types";
+
+/** The section tools are listed in when their `library` placement names none. */
+export const LIBRARY_TOOLS_SECTION = "tools";
 
 export const LIBRARY_TABS: readonly LibraryTabInfo[] = [
   { id: "all", label: "All" },
@@ -23,7 +25,7 @@ export const LIBRARY_TABS: readonly LibraryTabInfo[] = [
 /** The built-in sections, in the order they're listed. */
 export const BUILT_IN_SECTIONS: readonly LibrarySection[] = [
   {
-    id: "tools",
+    id: LIBRARY_TOOLS_SECTION,
     title: "Board tools",
     description: "Stickers, tables and diagrams, one click away.",
     order: 10,
@@ -51,7 +53,7 @@ export const BUILT_IN_SECTIONS: readonly LibrarySection[] = [
   },
 ];
 
-/** What's coming next (the board's tools are added by their modules with `toolItem`). */
+/** What's coming next (the board's tools are listed from their tool entries, `toolLibraryItems`). */
 export const BUILT_IN_ITEMS: readonly LibraryItem[] = [
   soon("templates", "brainstorm", "Brainstorm", Lightbulb, "Collect and vote on ideas.", 10),
   soon("templates", "retro", "Retrospective", RotateCcw, "What went well, what to change.", 20),
@@ -62,29 +64,6 @@ export const BUILT_IN_ITEMS: readonly LibraryItem[] = [
   soon("widgets", "timer", "Timer", Timer, "A countdown everyone sees.", 10),
   soon("widgets", "voting", "Voting", Vote, "Let everyone pick their favorites.", 20),
 ];
-
-/**
- * An item of the "Board tools" section that switches to a tool, named by the element kind it
- * creates.
- */
-export function toolItem(
-  tool: string,
-  kind: Pick<ElementKind, "label" | "description">,
-  icon: LucideIcon,
-  order: number,
-  keywords?: readonly string[],
-): LibraryItem {
-  return {
-    id: `tool.${tool}`,
-    section: "tools",
-    order,
-    label: kind.label,
-    description: kind.description,
-    icon,
-    keywords,
-    run: (engine) => engine.setTool(tool),
-  };
-}
 
 function soon(
   section: string,

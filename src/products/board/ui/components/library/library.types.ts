@@ -1,6 +1,5 @@
-import type { LucideIcon } from "lucide-react";
-
 import type { BoardEngine } from "@board";
+import type { ExtensionIcon } from "@canvas-ui";
 
 /** A tab of the library besides "All", which shows every section. */
 export type LibraryTab = "templates" | "lists" | "widgets";
@@ -30,7 +29,7 @@ export interface LibraryItem {
   order: number;
   label: string;
   description?: string;
-  icon: LucideIcon;
+  icon: ExtensionIcon;
   /** More words the search matches. */
   keywords?: readonly string[];
   /** Shown but not usable yet. */

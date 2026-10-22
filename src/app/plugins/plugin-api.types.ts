@@ -5,7 +5,7 @@ import type * as canvasUi from "@canvas-ui";
 import type * as board from "@board";
 import type { createId, defineModule, definePoint, PluginManifest } from "@shared/core";
 import type { notifyError, toast } from "@shared/stores/toast-store";
-import type { boardLibrary, toolItem } from "@board/ui/components/library";
+import type { boardLibrary } from "@board/ui/components/library";
 import type { boardEditor } from "@board/ui";
 
 /**
@@ -70,11 +70,10 @@ export interface PluginApi {
   board: {
     /** The board's canvas points (kinds, tools, options, hooks, …). */
     canvas: typeof board.boardCanvas;
-    /** The board editor's points (toolbar, panels, top bar, overlays, …). */
+    /** The board editor's points (tools, panels, top bar, overlays, …). */
     editor: typeof boardEditor;
     agentTools: typeof board.boardAgentTools;
     library: typeof boardLibrary;
-    toolItem: typeof toolItem;
     requireBoard: typeof board.requireBoard;
     palette: Pick<
       typeof board,

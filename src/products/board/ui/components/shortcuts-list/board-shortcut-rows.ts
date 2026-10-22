@@ -1,5 +1,5 @@
 import { BASE_COMMAND_LABELS } from "@canvas";
-import { sortedToolbar } from "@canvas-ui";
+import { sortedTools } from "@canvas-ui";
 import { boardCanvas } from "@board";
 import { boardEditor, getBoardModules, getBoardProduct } from "../../modules";
 import type { ShortcutGroup, ShortcutRow } from "./board-shortcut-rows.types";
@@ -12,7 +12,7 @@ export function boardShortcutGroups(): ShortcutGroup[] {
   const { kinds, keybindings } = getBoardProduct();
   const bindingsOf = (command: string) => keybindings[command];
 
-  const tools = sortedToolbar(modules.get(boardEditor.toolbar)).flatMap((entry): ShortcutRow[] => {
+  const tools = sortedTools(modules.get(boardEditor.tools)).flatMap((entry): ShortcutRow[] => {
     const command = `${TOOL_PREFIX}${entry.tool}`;
     const shortcuts = bindingsOf(command);
     const label = "label" in entry ? entry.label : kinds.get(entry.element)?.label;

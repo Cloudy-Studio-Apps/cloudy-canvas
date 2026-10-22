@@ -13,19 +13,53 @@ export interface ToolbarSubTool {
   label: string;
 }
 
+/** Where a tool's button sits on the editor's main toolbar. */
+export interface ToolbarPlacement {
+  /**
+   * Buttons are grouped by this number, lowest first, with a divider between groups. The
+   * built-ins use 0 (select, hand) and 1 (the tools that add elements).
+   */
+  group: number;
+  /** Position within the group, lowest first. Built-ins are spaced by 10 to leave room. */
+  order: number;
+}
+
+/** How a tool is listed in the product's library (the widgets panel). */
+export interface LibraryPlacement {
+  /** The library section (default: the product's tools section). */
+  section?: string;
+  /** Position in the section, lowest first (default: its toolbar position). */
+  order?: number;
+  /** More words the library's search matches. */
+  keywords?: readonly string[];
+}
+
 /**
- * A toolbar button that switches to a tool. Tools that create an element take their label and
- * description from the element's kind; the others give their own.
+ * A tool as the editor shows it: its icon, its name and description, and where it's placed.
+ * A tool that creates an element is named by the element's kind (`element`); the others give
+ * their own `label` and `description`.
  */
-export type ToolbarEntry = {
+export type ToolEntry = {
   tool: string;
   icon: ExtensionIcon;
-  /** Buttons are grouped by this number (groups are separated by a divider), lowest first. */
-  group: number;
-  /** Position within the group, lowest first. */
-  order: number;
+  /** Its button on the main toolbar; without one, it isn't on the toolbar. */
+  toolbar?: ToolbarPlacement;
+  /**
+   * Its card in the library. Tools that create an element are listed by default (`false` keeps
+   * one out); other tools only with a placement.
+   */
+  library?: LibraryPlacement | false;
   subTools?: readonly ToolbarSubTool[];
 } & ({ element: string } | { label: string; description: string });
+
+/** A tool that's on the toolbar. */
+export type PlacedToolEntry = ToolEntry & { toolbar: ToolbarPlacement };
+
+/** A tool's name and description, as shown in tooltips, the library and shortcut lists. */
+export interface ToolInfo {
+  label: string;
+  description: string | undefined;
+}
 
 /** The options panel shown while a tool is active. */
 export interface ToolPanelEntry {
@@ -70,7 +104,8 @@ export interface ContextMenuEntryGroup {
 
 /** The points an editor's UI is assembled from. Each product has its own set. */
 export interface EditorPoints {
-  toolbar: ExtensionPoint<ToolbarEntry>;
+  /** Every tool the editor shows, on the toolbar and/or in the library. */
+  tools: ExtensionPoint<ToolEntry>;
   toolPanels: ExtensionPoint<ToolPanelEntry>;
   selectionPanels: ExtensionPoint<SelectionPanelEntry>;
   /** The dock along the right edge (e.g. the database panel). */
@@ -96,6 +131,8 @@ export interface ModuleToolbarProps {
 export interface ExtensionIconViewProps {
   icon: ExtensionIcon;
   className?: string;
+  /** Line width of a Lucide icon. */
+  strokeWidth?: number;
 }
 
 export interface ModuleSlotProps {

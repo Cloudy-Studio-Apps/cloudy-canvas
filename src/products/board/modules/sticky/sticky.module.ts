@@ -20,12 +20,11 @@ export const stickyModule = defineModule({
     });
     host.contribute(boardCanvas.options, { stickyColor: STICKY_COLORS[0].value });
 
-    host.contribute(boardEditor.toolbar, {
+    host.contribute(boardEditor.tools, {
       tool: "sticky",
       element: "sticky",
       icon: StickyNote,
-      group: 1,
-      order: 20,
+      toolbar: { group: 1, order: 20 },
     });
     host.contribute(boardEditor.toolPanels, { tool: "sticky", component: StickyOptions });
     host.contribute(boardEditor.selectionPanels, { type: "sticky", component: StickyOptions });

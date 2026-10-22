@@ -6,7 +6,7 @@ import type { EditorPoints } from "./editor-points.types";
 export function createEditorPoints(product: string): EditorPoints {
   const id = (name: string) => `${product}.editor.${name}`;
   return {
-    toolbar: definePoint(id("toolbar"), { keyOf: (entry) => entry.tool }),
+    tools: definePoint(id("tools"), { keyOf: (entry) => entry.tool }),
     toolPanels: definePoint(id("toolPanels"), { keyOf: (entry) => entry.tool }),
     selectionPanels: definePoint(id("selectionPanels"), { keyOf: (entry) => entry.type }),
     sidePanels: definePoint(id("sidePanels"), { keyOf: (entry) => entry.id }),

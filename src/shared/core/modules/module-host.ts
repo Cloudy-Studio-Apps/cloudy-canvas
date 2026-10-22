@@ -28,6 +28,12 @@ export function createModuleHost(
 
   const host: ModuleHost = {
     contribute<T>(point: ExtensionPoint<T>, ...items: T[]) {
+      // Plugins are plain JavaScript: a misspelled point reaches here as `undefined`.
+      if (!point || typeof point.id !== "string") {
+        throw new Error(
+          `The module "${target?.module ?? "?"}" contributes to a point that doesn't exist (${String(point)}).`,
+        );
+      }
       if (!target) {
         throw new Error(`"${point.id}" can only be contributed to while modules register.`);
       }
