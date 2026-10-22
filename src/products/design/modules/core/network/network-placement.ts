@@ -1,4 +1,4 @@
-import type { Rect } from "@canvas";
+import { rotatePoint, type Rect } from "@canvas";
 
 import { networkBounds } from "./network-geometry";
 import type { VectorNetwork } from "./network.types";
@@ -8,7 +8,7 @@ import type { VectorNetwork } from "./network.types";
  * `origin` whose network changed moves and resizes to wrap it.
  */
 export function placeNetwork(
-  origin: { x: number; y: number },
+  origin: { x: number; y: number; rotation?: number },
   net: VectorNetwork,
 ): Rect & { network: VectorNetwork } {
   const bounds = networkBounds(net);
@@ -16,7 +16,13 @@ export function placeNetwork(
     ...net,
     vertices: net.vertices.map((v) => ({ x: v.x - bounds.x, y: v.y - bounds.y })),
   };
-  return { x: origin.x + bounds.x, y: origin.y + bounds.y, w: bounds.w, h: bounds.h, network };
+  // A turned node's new corner is the old one moved along its own (turned) axes.
+  const corner = rotatePoint(
+    { x: origin.x + bounds.x, y: origin.y + bounds.y },
+    origin,
+    origin.rotation ?? 0,
+  );
+  return { x: corner.x, y: corner.y, w: bounds.w, h: bounds.h, network };
 }
 
 /** The network stretched by `sx`, `sy` (a resized node), tangents included. */

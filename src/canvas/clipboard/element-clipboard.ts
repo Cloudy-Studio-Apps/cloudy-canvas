@@ -1,7 +1,7 @@
 import type { Clipboard } from "@shared/core";
 
 import { compareByIndex } from "../document";
-import type { CanvasElement } from "../elements";
+import { elementBounds, type CanvasElement } from "../elements";
 import { rectCenter, unionRects } from "../geometry";
 import type { Point, Rect } from "../geometry.types";
 import { collectAssets, restoreAssets } from "./clipboard-assets";
@@ -67,7 +67,9 @@ export class ElementClipboard<O extends object> {
     restoreAssets(doc, payload.assets);
     this.pastes = text === this.lastText ? this.pastes + 1 : 1;
     this.lastText = text;
-    const bounds = unionRects(payload.elements.map((el) => product.kinds.kindOf(el).bounds(el)));
+    const bounds = unionRects(
+      payload.elements.map((el) => elementBounds(product.kinds.kindOf(el), el)),
+    );
     const offset = at
       ? centerOffset(bounds, at)
       : pasteOffset(bounds, this.host.visibleRect(), this.pastes);
@@ -95,7 +97,7 @@ export class ElementClipboard<O extends object> {
     const elements = ids
       .map((id) => this.host.getElement(id))
       .filter((el): el is CanvasElement => el !== undefined);
-    return unionRects(elements.map((el) => this.host.product.kinds.kindOf(el).bounds(el)));
+    return unionRects(elements.map((el) => elementBounds(this.host.product.kinds.kindOf(el), el)));
   }
 
   private target(): CopyTarget {

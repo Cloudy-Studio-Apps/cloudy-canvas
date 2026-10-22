@@ -18,10 +18,16 @@ export interface ResizeOptions {
 export interface ResizeTarget {
   elements: CanvasElement[];
   box: Rect;
+  /** Degrees `box` is turned by around its top-left corner (one turned element's). */
+  rotation: number;
+  /** Whether it has resize handles; without, it only turns (e.g. a group). */
+  resizable: boolean;
 }
 
 /** What a press at a point grabs, before falling back to the element under it. */
 export type Interaction =
   | { kind: "resize"; target: ResizeTarget; handle: ResizeHandle }
+  /** Just outside a corner of the selection's box: turns it (`corner` is nw, ne, se or sw). */
+  | { kind: "rotate"; target: ResizeTarget; corner: ResizeHandle }
   /** Something the element's kind offers (see `ElementKind.interactionAt`). */
   | { kind: "element"; element: CanvasElement; interaction: ElementInteraction };

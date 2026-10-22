@@ -49,6 +49,8 @@ export function createCommands(
     distributeHorizontal: () => engine.distributeSelection("x"),
     distributeVertical: () => engine.distributeSelection("y"),
     tidyUp: () => engine.tidyUpSelection(),
+    rotateLeft: () => engine.rotateSelection(90),
+    rotateRight: () => engine.rotateSelection(-90),
     toggleLock: () => engine.toggleLockSelection(),
     unlockAll: () => engine.unlockAll(),
     editSelection: () => engine.editSelection(),

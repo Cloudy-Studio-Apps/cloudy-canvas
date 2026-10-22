@@ -1,4 +1,4 @@
-import type { ElementBuildContext, ElementPatch } from "@canvas";
+import { normalizeAngle, type ElementBuildContext, type ElementPatch } from "@canvas";
 
 import type { DesignNodeKind } from "./design-node.kind";
 import type { DesignNode } from "./design-node.types";
@@ -8,8 +8,9 @@ import { readPaints } from "./paint-args";
 
 /**
  * An agent's patch of the fields every node has, checked and normalized: `opacity` (0–1),
- * `strokeWeight`, full `fills`/`strokes` paint arrays (as the node's kind allows) and `parentId`
- * (a container it may go into).
+ * `strokeWeight`, full `fills`/`strokes` paint arrays (as the node's kind allows), `parentId`
+ * (a container it may go into) and `rotation` (the angle to turn to round its top-left corner,
+ * which a kind may hold in its geometry, as a line does).
  */
 export function checkNodePatch<E extends DesignNode>(
   kind: DesignNodeKind<E>,
@@ -31,5 +32,13 @@ export function checkNodePatch<E extends DesignNode>(
     next.strokes = readPaints(patch.strokes, "strokes", false);
   }
   if ("parentId" in patch) next.parentId = checkParent(el, kind, patch.parentId, context);
+  if ("rotation" in patch) {
+    const angle = patch.rotation;
+    if (typeof angle !== "number" || !Number.isFinite(angle))
+      throw new Error('"rotation" must be a number of degrees.');
+    delete next.rotation;
+    const placed = { ...el, ...(next as ElementPatch<E>) };
+    Object.assign(next, kind.rotate(placed, normalizeAngle(angle - kind.turnOf(el)), placed));
+  }
   return next as ElementPatch<E>;
 }

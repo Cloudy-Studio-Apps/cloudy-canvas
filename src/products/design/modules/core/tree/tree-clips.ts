@@ -12,7 +12,8 @@ import { DesignNodeKind, isDesignNode } from "../node";
  * The design's clips (`CanvasProduct.clips`): a node inside frames that clip their content shows
  * only where all of them overlap. The nearest clipping frame gives the corner radius when its area
  * is the whole clip; a clip narrowed by an outer frame keeps square corners. A node inside a
- * hidden frame or group gets an empty clip, so it's hidden too.
+ * hidden frame or group gets an empty clip, so it's hidden too. Where a turned frame is one of
+ * them, the nearest clipping frame's area alone clips (turned areas don't overlap into a rect).
  */
 export function treeClips(
   elements: readonly CanvasElement[],
@@ -51,6 +52,8 @@ export function treeClips(
 }
 
 function intersect(inner: ElementClip, outer: ElementClip): ElementClip {
+  // Turned areas don't overlap into a rect: the nearer frame's area is the clip.
+  if (inner.rotation || outer.rotation) return inner;
   const rect = intersectRects(inner.rect, outer.rect);
   const radius = rectsEqual(rect, inner.rect)
     ? inner.radius

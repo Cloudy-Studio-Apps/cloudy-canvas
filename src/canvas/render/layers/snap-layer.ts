@@ -13,6 +13,8 @@ const LABEL_PADDING_X = 4;
 const LABEL_PADDING_Y = 1;
 const LABEL_FONT_SIZE = 10;
 const LABEL_COLOR = 0xffffff;
+/** How far below and right of the pointer a pointer tag sits, in screen px. */
+const POINTER_OFFSET_PX = 14;
 
 /** Smart guides (lines things lined up on, equal gaps) and measurements, in screen space. */
 export class SnapLayer extends Container {
@@ -34,6 +36,10 @@ export class SnapLayer extends Container {
       for (const gap of feedback.gaps) {
         this.drawGap(camera, gap);
         this.placeLabel(camera, gap, used++, color);
+      }
+      for (const { at, text } of feedback.labels ?? []) {
+        const p = camera.worldToScreen(at);
+        this.placeTag(text, p.x + POINTER_OFFSET_PX, p.y + POINTER_OFFSET_PX, used++, color);
       }
       this.lines.stroke({ color, width: 1 });
     }
@@ -74,10 +80,21 @@ export class SnapLayer extends Container {
     const [a, b] = gapEnds(camera, gap);
     const w = label.width + LABEL_PADDING_X * 2;
     const h = label.height + LABEL_PADDING_Y * 2;
-    const x = Math.round(gap.axis === "x" ? (a.x + b.x) / 2 - w / 2 : a.x + TICK_PX);
-    const y = Math.round(gap.axis === "x" ? a.y + TICK_PX : (a.y + b.y) / 2 - h / 2);
-    this.tags.roundRect(x, y, w, h, 2).fill({ color });
-    label.position.set(x + LABEL_PADDING_X, y + LABEL_PADDING_Y);
+    const x = gap.axis === "x" ? (a.x + b.x) / 2 - w / 2 : a.x + TICK_PX;
+    const y = gap.axis === "x" ? a.y + TICK_PX : (a.y + b.y) / 2 - h / 2;
+    this.placeTag(label.text, x, y, i, color);
+  }
+
+  /** A tag with `text` whose top-left corner is at (x, y), screen px. */
+  private placeTag(text: string, x: number, y: number, i: number, color: number): void {
+    const label = this.labelAt(i);
+    label.text = text;
+    const w = label.width + LABEL_PADDING_X * 2;
+    const h = label.height + LABEL_PADDING_Y * 2;
+    const left = Math.round(x);
+    const top = Math.round(y);
+    this.tags.roundRect(left, top, w, h, 2).fill({ color });
+    label.position.set(left + LABEL_PADDING_X, top + LABEL_PADDING_Y);
   }
 
   private labelAt(i: number): Text {

@@ -1,9 +1,18 @@
-import { unionRects, type CanvasElement, type ElementKinds, type Rect } from "@canvas";
+import {
+  elementBounds,
+  unionRects,
+  type CanvasElement,
+  type ElementKinds,
+  type Rect,
+} from "@canvas";
 
 import { childrenByParent } from "../core";
 import { isGroup } from "./group-tree";
 
-/** Groups' bounds wrap their children (`resolveElements`), nested groups included. */
+/**
+ * Groups' bounds wrap their children as they show (`resolveElements`, turned ones by the box
+ * round them), nested groups included. A group itself never turns: its children do.
+ */
 export function resolveGroups(elements: CanvasElement[], kinds: ElementKinds): CanvasElement[] {
   if (!elements.some(isGroup)) return elements;
   const byId = new Map(elements.map((el) => [el.id, el]));
@@ -11,7 +20,7 @@ export function resolveGroups(elements: CanvasElement[], kinds: ElementKinds): C
   const resolved = new Map<string, Rect | null>();
 
   const boundsOf = (el: CanvasElement, depth: number): Rect | null => {
-    if (!isGroup(el)) return kinds.kindOf(el).bounds(el);
+    if (!isGroup(el)) return elementBounds(kinds.kindOf(el), el);
     const known = resolved.get(el.id);
     if (known !== undefined) return known;
     resolved.set(el.id, null); // A loop resolves to nothing.
@@ -27,6 +36,6 @@ export function resolveGroups(elements: CanvasElement[], kinds: ElementKinds): C
 
   return elements.map((el) => {
     const rect = isGroup(el) ? boundsOf(el, 0) : null;
-    return rect ? { ...el, ...rect } : el;
+    return rect ? { ...el, ...rect, rotation: 0 } : el;
   });
 }

@@ -1,10 +1,12 @@
 import type { Point, Rect } from "../../geometry.types";
 
-import type { FigMatrix } from "./fig-node.types";
+import type { FigMatrix, FigPlacement } from "./fig-node.types";
 
 export const IDENTITY: FigMatrix = { m00: 1, m01: 0, m02: 0, m10: 0, m11: 1, m12: 0 };
 
 const EPSILON = 1e-6;
+/** Axes this close to square count as unskewed (files store float32 matrices). */
+const SKEW_TOLERANCE = 1e-4;
 
 /** `a` then `b` applied inside it: a parent's world transform times a child's local one. */
 export function multiply(a: FigMatrix, b: FigMatrix): FigMatrix {
@@ -30,6 +32,22 @@ export function applyLinear(m: FigMatrix, p: Point): Point {
 /** Whether the matrix only moves and scales up (no rotation, skew or flip). */
 export function isAxisAligned(m: FigMatrix): boolean {
   return Math.abs(m.m01) < EPSILON && Math.abs(m.m10) < EPSILON && m.m00 > 0 && m.m11 > 0;
+}
+
+/**
+ * A `w`×`h` node placed by `m` as a turned box (see `FigPlacement`), or `null` when `m` mirrors or
+ * skews it, which a turned box can't show.
+ */
+export function placementOf(m: FigMatrix, w: number, h: number): FigPlacement | null {
+  const sx = Math.hypot(m.m00, m.m10);
+  const sy = Math.hypot(m.m01, m.m11);
+  const det = m.m00 * m.m11 - m.m01 * m.m10;
+  const skew = m.m00 * m.m01 + m.m10 * m.m11;
+  if (sx < EPSILON || sy < EPSILON || det <= 0 || Math.abs(skew) > SKEW_TOLERANCE * sx * sy)
+    return null;
+  const degrees = (Math.atan2(-m.m10, m.m00) * 180) / Math.PI;
+  const rotation = Math.round(degrees * 100) / 100 || 0;
+  return { x: m.m02, y: m.m12, w: w * sx, h: h * sy, rotation };
 }
 
 /** The world box around a `w`×`h` node placed by `m`. */

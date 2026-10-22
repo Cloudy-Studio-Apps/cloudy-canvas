@@ -1,5 +1,6 @@
 import { ELEMENT_DEFAULTS } from "../elements/element.defaults";
 import type { Point, Rect } from "../geometry.types";
+import { rotatePoint } from "../rotation";
 import type { ResizeHandle, ResizeOptions } from "./handles.types";
 
 /** Corners first, so they win where they overlap the edge handles on small shapes. */
@@ -16,22 +17,48 @@ const CURSORS: Record<ResizeHandle, string> = {
   w: "ew-resize",
 };
 
-export function resizeCursor(handle: ResizeHandle): string {
-  return CURSORS[handle];
+/** Each handle's direction from the box's center, in degrees (counterclockwise from east). */
+const ANGLES: Record<ResizeHandle, number> = {
+  e: 0,
+  ne: 45,
+  n: 90,
+  nw: 135,
+  w: 180,
+  sw: 225,
+  s: 270,
+  se: 315,
+};
+
+/** The four resize cursors by direction (mod 180°, in 45° steps from east). */
+const CURSORS_BY_ANGLE = ["ew-resize", "nesw-resize", "ns-resize", "nwse-resize"];
+
+/** The cursor for dragging `handle` of a box turned by `rotation` degrees. */
+export function resizeCursor(handle: ResizeHandle, rotation = 0): string {
+  if (!rotation) return CURSORS[handle];
+  const step = Math.round((ANGLES[handle] + rotation) / 45);
+  return CURSORS_BY_ANGLE[((step % 4) + 4) % 4]!;
 }
 
-export function resizeHandlePoint({ x, y, w, h }: Rect, handle: ResizeHandle): Point {
+/** Where `handle` sits on `rect` turned by `rotation` degrees around its top-left corner. */
+export function resizeHandlePoint(rect: Rect, handle: ResizeHandle, rotation = 0): Point {
+  const { x, y, w, h } = rect;
   const hx = handle.includes("w") ? x : handle.includes("e") ? x + w : x + w / 2;
   const hy = handle.includes("n") ? y : handle.includes("s") ? y + h : y + h / 2;
-  return { x: hx, y: hy };
+  return rotatePoint({ x: hx, y: hy }, rect, rotation);
 }
 
-/** The handle within `tolerance` (world units) of the point. */
-export function resizeHandleAt(rect: Rect, p: Point, tolerance: number): ResizeHandle | null {
+/** The handle within `tolerance` (world units) of the point, on `rect` turned by `rotation`. */
+export function resizeHandleAt(
+  rect: Rect,
+  p: Point,
+  tolerance: number,
+  rotation = 0,
+): ResizeHandle | null {
+  const q = rotatePoint(p, rect, -rotation);
   return (
     RESIZE_HANDLES.find((handle) => {
-      const q = resizeHandlePoint(rect, handle);
-      return Math.abs(p.x - q.x) <= tolerance && Math.abs(p.y - q.y) <= tolerance;
+      const at = resizeHandlePoint(rect, handle);
+      return Math.abs(q.x - at.x) <= tolerance && Math.abs(q.y - at.y) <= tolerance;
     }) ?? null
   );
 }

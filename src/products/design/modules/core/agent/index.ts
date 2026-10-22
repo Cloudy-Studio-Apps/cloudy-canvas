@@ -9,5 +9,6 @@ export { designReadTools } from "./design-read.agent-tools";
 export { designViewTools } from "./design-view.agent-tools";
 export { nodeArrangeTools } from "./node-arrange.agent-tools";
 export { nodeEditTools } from "./node-edit.agent-tools";
+export { nodeTransformTools } from "./node-transform.agent-tools";
 export { NODE_SPEC_PROPERTIES } from "./node-spec-properties";
 export { summarizeNode } from "./summarize-node";

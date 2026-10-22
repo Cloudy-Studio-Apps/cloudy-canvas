@@ -12,6 +12,9 @@ import { distanceToOutline, pointInPolygon } from "./shape-points";
  * gives `points`; drawing and hit testing (inside, or near the outline) follow from them.
  */
 export abstract class PointsShapeKind<E extends DesignNode = DesignNode> extends BoxShapeKind<E> {
+  /** Its corners point one way (a triangle's up): flipped top to bottom it turns half round. */
+  override readonly symmetricVertically: boolean = false;
+
   /** The corners in local coordinates, in order around the shape. */
   abstract points(el: E): Point[];
 

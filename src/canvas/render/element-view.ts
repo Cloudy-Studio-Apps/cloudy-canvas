@@ -2,6 +2,7 @@ import { Container, Graphics, GraphicsContext, Sprite, Text, type Texture } from
 
 import { type CanvasElement, type ElementKind, type ElementTextStyle } from "../elements";
 import { rectsIntersect } from "../geometry";
+import { rotatedBoundsAround, rotatePoint } from "../rotation";
 import type { Rect } from "../geometry.types";
 import { clipCovers } from "./clip-covers";
 import { fitImage } from "./fit-image";
@@ -49,6 +50,8 @@ export class ElementView extends Container {
   private bounds: Rect = { x: 0, y: 0, w: 0, h: 0 };
   /** What the view draws, in world units, worked out when first needed (see `extent`). */
   private drawn: Rect | null = null;
+  /** Degrees the element is turned by around its top-left corner (`CanvasElement.rotation`). */
+  private turn = 0;
   private entranceScale = 1;
   private entranceAlpha = 1;
   private faded = false;
@@ -70,6 +73,7 @@ export class ElementView extends Container {
   sync(el: CanvasElement, kind: ElementKind, order = this.order): void {
     this.order = order;
     this.bounds = { x: el.x, y: el.y, w: el.w, h: el.h };
+    this.turn = kind.rotatable ? (el.rotation ?? 0) : 0;
     this.drawn = null;
     this.placeScaled();
     this.setTextResolution(this.textResolution);
@@ -179,11 +183,23 @@ export class ElementView extends Container {
     this.mask = this.clipMask;
     this.drawn = null;
     const { x, y, w, h } = clip.rect;
-    const local = { x: x - this.bounds.x, y: y - this.bounds.y };
-    const radius = Math.min(clip.radius, w / 2, h / 2);
     const g = this.clipMask;
-    if (radius > 0) g.roundRect(local.x, local.y, w, h, radius);
-    else g.rect(local.x, local.y, w, h);
+    const turn = clip.rotation ?? 0;
+    if (turn === this.turn) {
+      // Turned with the element (or neither is): a (rounded) rect in its frame.
+      const local = this.worldToView(clip.rect);
+      const radius = Math.min(clip.radius, w / 2, h / 2);
+      if (radius > 0) g.roundRect(local.x, local.y, w, h, radius);
+      else g.rect(local.x, local.y, w, h);
+    } else {
+      const corners = [
+        { x, y },
+        { x: x + w, y },
+        { x: x + w, y: y + h },
+        { x, y: y + h },
+      ].map((p) => this.worldToView(rotatePoint(p, clip.rect, turn)));
+      g.poly(corners.flatMap((p) => [p.x, p.y]));
+    }
     g.fill({ color: 0xffffff });
   }
 
@@ -191,7 +207,9 @@ export class ElementView extends Container {
   extent(): Rect {
     if (!this.drawn) {
       const { minX, minY, width, height } = this.getLocalBounds();
-      this.drawn = { x: this.bounds.x + minX, y: this.bounds.y + minY, w: width, h: height };
+      const { x, y } = this.bounds;
+      const local = { x: x + minX, y: y + minY, w: width, h: height };
+      this.drawn = rotatedBoundsAround(local, this.bounds, this.turn);
     }
     return this.drawn;
   }
@@ -320,11 +338,23 @@ export class ElementView extends Container {
     this.alpha = this.entranceAlpha * (this.faded ? FADED_ALPHA : 1);
   }
 
+  /** Places the view: at the element's corner, turned, and scaled round its center (entrance). */
   private placeScaled(): void {
     const { x, y, w, h } = this.bounds;
     const s = this.entranceScale;
     this.scale.set(s);
-    this.position.set(x + (w * (1 - s)) / 2, y + (h * (1 - s)) / 2);
+    this.rotation = (-this.turn * Math.PI) / 180;
+    // The scaled center lands on the element's (turned) center.
+    const origin = { x: 0, y: 0 };
+    const center = rotatePoint({ x: w / 2, y: h / 2 }, origin, this.turn);
+    const scaled = rotatePoint({ x: (w * s) / 2, y: (h * s) / 2 }, origin, this.turn);
+    this.position.set(x + center.x - scaled.x, y + center.y - scaled.y);
+  }
+
+  /** A world point in the view's own (unturned, unscaled) coordinates. */
+  private worldToView(p: { x: number; y: number }): { x: number; y: number } {
+    const q = rotatePoint(p, this.bounds, -this.turn);
+    return { x: q.x - this.bounds.x, y: q.y - this.bounds.y };
   }
 
   private fitImage(texture: Texture): void {

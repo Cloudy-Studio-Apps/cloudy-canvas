@@ -11,6 +11,7 @@ import {
 import {
   DesignNodeKind,
   drawPaints,
+  flipPlacement,
   hitSegment,
   insideRegion,
   NETWORK_SCHEMA,
@@ -21,6 +22,7 @@ import {
   scaleNetwork,
   traceRegions,
   traceStrokes,
+  type FlipAxis,
   type NodeBuildContext,
   type VectorNetwork,
 } from "../core";
@@ -112,6 +114,19 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
   }
 
   /** A new `network` (relative to x, y) re-wraps the vector's box around what it draws. */
+  /** Flipping mirrors its points (and their handles) within its box too. */
+  override flip(el: VectorElement, axis: FlipAxis, at: number): ElementPatch<VectorElement> {
+    const across = axis === "x";
+    const mirrored = scaleNetwork(el.network, across ? -1 : 1, across ? 1 : -1);
+    const network: VectorNetwork = {
+      ...mirrored,
+      vertices: mirrored.vertices.map((v) =>
+        across ? { x: v.x + el.w, y: v.y } : { x: v.x, y: v.y + el.h },
+      ),
+    };
+    return { ...flipPlacement(el, axis, at), network };
+  }
+
   override completePatch(
     el: VectorElement,
     patch: ElementPatch<VectorElement>,
@@ -122,7 +137,11 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
         ? {
             ...patch,
             ...placeNetwork(
-              { x: patch.x ?? el.x, y: patch.y ?? el.y },
+              {
+                x: patch.x ?? el.x,
+                y: patch.y ?? el.y,
+                rotation: patch.rotation ?? el.rotation ?? 0,
+              },
               readNetwork(patch.network, "network"),
             ),
           }

@@ -22,7 +22,9 @@ export const nodeEditTools: DesignAgentTool[] = [
       "moves what it holds. A new w/h resizes as the handles do (texts lay out again, vectors " +
       "stretch). fills/strokes are full paint arrays (see create_nodes); parentId moves a layer " +
       "into a frame or section (null: the top of the page); a text's text and typography relayout " +
-      "it; a line takes points [x0, y0, x1, y1] relative to its x, y; a vector takes a network.",
+      "it; a line takes points [x0, y0, x1, y1] relative to its x, y; a vector takes a network; " +
+      "rotation turns it to that angle round its top-left corner (to turn layers round their " +
+      "middle, use rotate_nodes).",
     inputSchema: {
       type: "object",
       required: ["updates"],

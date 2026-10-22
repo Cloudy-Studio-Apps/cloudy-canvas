@@ -17,4 +17,6 @@ export interface ElementSummary {
   to?: string | null;
   /** Set when the user locked it in place. */
   locked?: boolean;
+  /** Degrees it's turned by (counterclockwise, round its top-left corner `x`, `y`), when it is. */
+  rotation?: number;
 }

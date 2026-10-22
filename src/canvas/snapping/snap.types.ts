@@ -45,6 +45,14 @@ export interface SnapGap {
 export interface SnapFeedback {
   lines: SnapLine[];
   gaps: SnapGap[];
+  /** Tags at world points (e.g. a rotation's angle by the pointer). */
+  labels?: SnapLabel[];
+}
+
+/** A tag showing `text` just below and right of `at` (world units). */
+export interface SnapLabel {
+  at: Point;
+  text: string;
 }
 
 /** One axis's snap: the offset to add, and the gap length it repeats (equal spacing), if any. */

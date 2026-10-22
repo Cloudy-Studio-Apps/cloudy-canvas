@@ -1,4 +1,4 @@
-import { rectCenter, type CanvasElement, type ToolContext } from "@canvas";
+import { elementBounds, rectCenter, type CanvasElement, type ToolContext } from "@canvas";
 
 import { containerAt } from "./container-at";
 
@@ -11,7 +11,7 @@ export function parentFor(
   node: CanvasElement,
   exclude: ReadonlySet<string> = new Set(),
 ): string | null {
-  const center = rectCenter(ctx.kinds.kindOf(node).bounds(node));
+  const center = rectCenter(elementBounds(ctx.kinds.kindOf(node), node));
   const under = ctx.elementsInRect({ ...center, w: 0, h: 0 });
   return containerAt(node, under, ctx.kinds, exclude)?.id ?? null;
 }

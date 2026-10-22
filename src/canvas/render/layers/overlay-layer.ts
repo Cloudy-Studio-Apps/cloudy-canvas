@@ -2,7 +2,8 @@ import { Graphics } from "pixi.js";
 
 import type { Camera } from "../../camera";
 import type { ElementHandle } from "../../elements";
-import type { OverlayState } from "../overlay-state.types";
+import { rotatedCorners } from "../../rotation";
+import type { Outline, OverlayState } from "../overlay-state.types";
 
 /** Handle size in screen px. */
 const HANDLE_PX = 8;
@@ -17,12 +18,10 @@ export class OverlayLayer extends Graphics {
   draw(camera: Camera, state: OverlayState, color: number): void {
     this.clear();
     if (state.hover) {
-      const r = camera.worldRectToScreen(state.hover, 2);
-      this.rect(r.x, r.y, r.w, r.h).stroke({ color, width: 1.5, alpha: 0.6 });
+      this.outline(camera, state.hover).stroke({ color, width: 1.5, alpha: 0.6 });
     }
-    for (const rect of state.selection) {
-      const r = camera.worldRectToScreen(rect, 2);
-      this.rect(r.x, r.y, r.w, r.h).stroke({ color, width: 1.5 });
+    for (const outline of state.selection) {
+      this.outline(camera, outline).stroke({ color, width: 1.5 });
     }
     for (const rect of state.part) {
       const r = camera.worldRectToScreen(rect);
@@ -55,6 +54,16 @@ export class OverlayLayer extends Graphics {
       const r = camera.worldRectToScreen(state.marquee);
       this.rect(r.x, r.y, r.w, r.h).fill({ color, alpha: 0.08 }).stroke({ color, width: 1 });
     }
+  }
+
+  /** Traces an element's outline: a rect padded 2px, or the turned rect's corners. */
+  private outline(camera: Camera, { rect, rotation }: Outline): this {
+    if (!rotation) {
+      const r = camera.worldRectToScreen(rect, 2);
+      return this.rect(r.x, r.y, r.w, r.h);
+    }
+    const corners = rotatedCorners(rect, rotation).map((p) => camera.worldToScreen(p));
+    return this.poly(corners.flatMap((p) => [p.x, p.y]));
   }
 
   /** A `bar` (filled pill) or `add` (light strip with a "+") handle covering its rect. */

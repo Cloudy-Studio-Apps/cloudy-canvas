@@ -4,11 +4,9 @@ import {
   rectContainsPoint,
   rectFromPoints,
   type CanvasPointer,
-  type Point,
 } from "@canvas";
 
 import { moveVertices, segmentsAt, setTangent, type VectorNetwork } from "../../core";
-import type { VectorElement } from "../vector.types";
 import type { MoveGesture } from "./vector-edit.types";
 import { VectorEditTool } from "./vector-edit.tool";
 import { VECTOR_TOOLS } from "./vector-tools";
@@ -98,9 +96,12 @@ export class VectorMoveTool extends VectorEditTool {
   private dragged(g: Exclude<MoveGesture, { kind: "marquee" }>, p: CanvasPointer): VectorNetwork {
     const { network } = g.origin;
     if (g.kind === "points") {
-      const dx = Math.round(p.world.x - g.start.world.x);
-      const dy = Math.round(p.world.y - g.start.world.y);
-      return moveVertices(network, g.vertices, dx, dy);
+      const d = this.localOffset(
+        g.origin,
+        Math.round(p.world.x - g.start.world.x),
+        Math.round(p.world.y - g.start.world.y),
+      );
+      return moveVertices(network, g.vertices, d.x, d.y);
     }
     const at = network.vertices[g.vertex]!;
     const local = this.local(g.origin, p.world);
@@ -111,9 +112,5 @@ export class VectorMoveTool extends VectorEditTool {
       { x: local.x - at.x, y: local.y - at.y },
       g.mirror,
     );
-  }
-
-  private world(el: VectorElement, p: Point): Point {
-    return { x: el.x + p.x, y: el.y + p.y };
   }
 }

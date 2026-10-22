@@ -8,6 +8,7 @@ export type * from "./element.interaction.types";
 export type * from "./bases";
 export type * from "./reorder.types";
 export { ElementKind } from "./element.kind";
+export { elementBounds } from "./element-bounds";
 export { ElementKinds } from "./element.kinds";
 export { ELEMENT_DEFAULTS } from "./element.defaults";
 export { BoxKind, LineKind, TextBoxKind } from "./bases";

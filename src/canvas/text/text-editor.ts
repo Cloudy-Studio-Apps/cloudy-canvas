@@ -1,6 +1,7 @@
 import { isModKey } from "@shared/core";
 
 import type { Camera } from "../camera";
+import { rotatePoint } from "../rotation";
 import type { CanvasDocument } from "../document";
 import type { CanvasElement, ElementKinds, ElementText, TextSizing } from "../elements";
 import type { Rect } from "../geometry.types";
@@ -55,8 +56,12 @@ export class TextEditor {
     const text = el ? this.kinds.kindOf(el).text : null;
     if (!el || !text) return this.discard();
     const box = partBox(el, text, session.part);
-    const { x, y } = this.camera.worldToScreen({ x: el.x + box.x, y: el.y + box.y });
-    session.textarea.style.transform = `translate(${x}px, ${y}px) scale(${this.camera.zoom})`;
+    // A turned element's text turns with it, round its corner.
+    const turn = this.kinds.kindOf(el).rotatable ? (el.rotation ?? 0) : 0;
+    const corner = rotatePoint({ x: el.x + box.x, y: el.y + box.y }, el, turn);
+    const { x, y } = this.camera.worldToScreen(corner);
+    const rotate = turn ? ` rotate(${-turn}deg)` : "";
+    session.textarea.style.transform = `translate(${x}px, ${y}px)${rotate} scale(${this.camera.zoom})`;
   }
 
   commit(): void {

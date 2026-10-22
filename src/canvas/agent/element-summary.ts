@@ -17,5 +17,6 @@ export function summarizeElement(kinds: ElementKinds, el: CanvasElement): Elemen
     ...(group ? { group } : {}),
     ...(ends ? { from: ends.from, to: ends.to } : {}),
     ...(el.locked ? { locked: true } : {}),
+    ...(el.rotation ? { rotation: el.rotation } : {}),
   };
 }

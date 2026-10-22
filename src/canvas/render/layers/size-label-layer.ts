@@ -2,7 +2,7 @@ import { Container, Graphics, Text } from "pixi.js";
 
 import type { Camera } from "../../camera";
 import { ELEMENT_DEFAULTS } from "../../elements/element.defaults";
-import type { Rect } from "../../geometry.types";
+import type { SizeLabel } from "../overlay-state.types";
 
 /** Gap between the selection and the label, in screen px. */
 const GAP_PX = 8;
@@ -26,11 +26,11 @@ export class SizeLabelLayer extends Container {
     this.visible = false;
   }
 
-  draw(camera: Camera, rect: Rect | null, color: number): void {
-    this.visible = rect !== null;
-    if (!rect) return;
-    this.text.text = `${formatSize(rect.w)} × ${formatSize(rect.h)}`;
-    const r = camera.worldRectToScreen(rect);
+  draw(camera: Camera, size: SizeLabel | null, color: number): void {
+    this.visible = size !== null;
+    if (!size) return;
+    this.text.text = `${formatSize(size.w)} × ${formatSize(size.h)}`;
+    const r = camera.worldRectToScreen(size.under);
     const w = this.text.width + PADDING_X * 2;
     const h = this.text.height + PADDING_Y * 2;
     const x = Math.round(r.x + r.w / 2 - w / 2);

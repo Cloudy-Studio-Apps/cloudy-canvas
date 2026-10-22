@@ -8,7 +8,7 @@ export type {
   ElementAction,
   HostAction,
 } from "./canvas-engine.types";
-export type { Alignment, DistributeAxis } from "./arrange";
+export type { Alignment, DistributeAxis, RotatePivot } from "./arrange";
 export type { CanvasProduct, CanvasScopes, SelectTargetRequest } from "./canvas-product.types";
 export type { CanvasGrid, CanvasViewOptions } from "./canvas-view.types";
 export type { CopyContext, DropResult, PastedImage } from "./clipboard";
@@ -50,6 +50,7 @@ export { decodeCanvasFile, encodeCanvasFile } from "./file";
 export * from "./agent";
 export * from "./elements";
 export * from "./geometry";
+export * from "./rotation";
 export { smoothPoints } from "./smooth-points";
 export { BASE_COMMAND_LABELS, BASE_KEYBINDINGS, Keymap } from "./input";
 export { composeProduct, createCanvasPoints } from "./modules";

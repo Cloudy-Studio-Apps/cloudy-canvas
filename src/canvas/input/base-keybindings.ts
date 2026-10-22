@@ -31,6 +31,9 @@ export const BASE_KEYBINDINGS = {
   distributeHorizontal: [{ code: "KeyH", alt: true, shift: true, label: "H" }],
   distributeVertical: [{ code: "KeyV", alt: true, shift: true, label: "V" }],
   tidyUp: [{ code: "KeyT", alt: true, shift: true, label: "T" }],
+  // No keys, as in Figma; listed so menus and shortcut lists name them.
+  rotateLeft: [],
+  rotateRight: [],
   toggleLock: [{ key: "l", mod: true, shift: true }],
   unlockAll: [{ key: "l", mod: true, alt: true, shift: true }],
   nudgeLeft: [{ key: "ArrowLeft", label: "←" }],

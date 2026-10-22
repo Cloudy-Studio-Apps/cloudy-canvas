@@ -1,6 +1,7 @@
 import type { FontRequest } from "@shared/core";
 
 import { rectContainsPoint } from "../geometry";
+import { normalizeAngle, rotatePoint } from "../rotation";
 import type { Point, Rect, Size } from "../geometry.types";
 import type { ElementView } from "../render/element-view";
 import { ELEMENT_DEFAULTS } from "./element.defaults";
@@ -51,6 +52,11 @@ export abstract class ElementKind<
   readonly connectable: boolean = false;
   /** Whether selection and hover outline its bounds (lines show their handles instead). */
   readonly boxed: boolean = true;
+  /**
+   * Whether it can be turned (`CanvasElement.rotation`): the select tool's rotate zones, the
+   * rotate commands. The engine draws, hits and outlines it turned; the kind works unturned.
+   */
+  readonly rotatable: boolean = false;
   /** JSON schema of the type-specific spec fields agents may give (read from `spec.args`). */
   readonly specProperties: Readonly<Record<string, unknown>> = {};
   /** Fields agents may patch; `null` allows every field. */
@@ -136,6 +142,19 @@ export abstract class ElementKind<
     return { x: Math.round(origin.x + dx), y: Math.round(origin.y + dy) } as ElementPatch<E>;
   }
 
+  /**
+   * Patch that turns the element by `degrees` around `pivot` (world): its corner orbits the pivot
+   * and its `rotation` adds up. Kinds whose geometry holds their angle (a line's ends) override it.
+   */
+  rotate(el: E, degrees: number, pivot: Point): ElementPatch<E> {
+    const origin = rotatePoint(el, pivot, degrees);
+    return {
+      x: roundHundredth(origin.x),
+      y: roundHundredth(origin.y),
+      rotation: normalizeAngle((el.rotation ?? 0) + degrees),
+    } as ElementPatch<E>;
+  }
+
   /** Patch that gives a resizable element new bounds. */
   resize(_el: E, rect: Rect): ElementPatch<E> {
     return { x: rect.x, y: rect.y, w: rect.w, h: rect.h } as ElementPatch<E>;
@@ -203,4 +222,9 @@ export abstract class ElementKind<
   restyle(_el: E, _options: Partial<O>): ElementPatch<E> {
     return {};
   }
+}
+
+/** To 1/100 of a unit: turned corners land between pixels, but not on float noise. */
+function roundHundredth(value: number): number {
+  return Math.round(value * 100) / 100;
 }

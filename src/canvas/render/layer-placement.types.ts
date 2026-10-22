@@ -6,11 +6,13 @@ export type OrderKeyOf = (el: CanvasElement, kind: ElementKind) => string;
 
 /**
  * The world area an element is drawn and hit in, when something clips it (e.g. a frame that
- * clips its content): a rect, with rounded corners of `radius`.
+ * clips its content): a rect, with rounded corners of `radius`, turned by `rotation` degrees
+ * around its top-left corner (a turned frame's).
  */
 export interface ElementClip {
   rect: Rect;
   radius: number;
+  rotation?: number;
 }
 
 /** An element's clip, or `null` when nothing clips it. */

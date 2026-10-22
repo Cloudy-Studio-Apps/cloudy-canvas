@@ -1,5 +1,7 @@
 import {
   nudgeCheckpoint,
+  rotatePoint,
+  toUnrotated,
   nudgeStep,
   type CanvasPointer,
   type Point,
@@ -55,9 +57,20 @@ export abstract class VectorEditTool implements Tool {
     return isVector(el) ? el : null;
   }
 
-  /** A world point in the vector's local coordinates. */
+  /** A world point in the vector's local (unturned) coordinates. */
   protected local(el: VectorElement, world: Point): Point {
-    return { x: world.x - el.x, y: world.y - el.y };
+    const p = toUnrotated(world, el);
+    return { x: p.x - el.x, y: p.y - el.y };
+  }
+
+  /** A world offset along the vector's own (unturned) axes. */
+  protected localOffset(el: VectorElement, dx: number, dy: number): Point {
+    return rotatePoint({ x: dx, y: dy }, { x: 0, y: 0 }, -(el.rotation ?? 0));
+  }
+
+  /** A point in the vector's local coordinates, in the world. */
+  protected world(el: VectorElement, p: Point): Point {
+    return rotatePoint({ x: el.x + p.x, y: el.y + p.y }, el, el.rotation ?? 0);
   }
 
   /** What's under the pointer: a handle of an active vertex, a vertex, a segment, or nothing. */
@@ -171,7 +184,8 @@ export abstract class VectorEditTool implements Tool {
     const vertices = activeVertices(el, this.session.selection);
     if (vertices.size > 0) {
       nudgeCheckpoint(this.ctx.doc);
-      this.write(el, moveVertices(el.network, vertices, step.x, step.y));
+      const d = this.localOffset(el, step.x, step.y);
+      this.write(el, moveVertices(el.network, vertices, d.x, d.y));
     }
     return true;
   }

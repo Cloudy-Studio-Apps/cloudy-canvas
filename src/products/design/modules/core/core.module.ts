@@ -23,6 +23,7 @@ import {
   designReadTools,
   designViewTools,
   nodeArrangeTools,
+  nodeTransformTools,
   nodeEditTools,
 } from "./agent";
 import { treeOrderKeys } from "./tree/order-keys";
@@ -30,6 +31,7 @@ import { treeClips } from "./tree/tree-clips";
 import { prepareTreeCopies } from "./tree/prepare-tree-copies";
 import { reparentMoved } from "./tree/reparent";
 import { containerAlignTarget } from "./tree/align-target";
+import { useFlipCommands } from "./ui/use-flip-commands";
 import { withDescendants } from "./tree/tree-members";
 import {
   AppearanceSection,
@@ -40,6 +42,14 @@ import {
   PrototypeSection,
   StrokeSection,
 } from "./ui/sections";
+
+/** Turning and mirroring the selection, in the main menu and the context menu. */
+const TRANSFORM_ITEMS = [
+  { command: "rotateLeft", label: "Rotate 90° left" },
+  { command: "rotateRight", label: "Rotate 90° right" },
+  { command: "flipHorizontal", label: "Flip horizontal" },
+  { command: "flipVertical", label: "Flip vertical" },
+];
 
 /**
  * What every design has whatever its modules: the canvas view (plain, pixel grid, 2%–25600%, size
@@ -62,6 +72,11 @@ export const coreModule = defineModule({
     host.contribute(designCanvas.withMembers, (ids, elements) => withDescendants(ids, elements));
     host.contribute(designCanvas.onMoved, reparentMoved);
     host.contribute(designCanvas.alignTarget, containerAlignTarget);
+    host.contribute(
+      designCanvas.hostCommands,
+      { id: "flipHorizontal", label: "Flip horizontal", keys: [{ key: "h", shift: true }] },
+      { id: "flipVertical", label: "Flip vertical", keys: [{ key: "v", shift: true }] },
+    );
     host.contribute(designCanvas.prepareCopies, prepareTreeCopies);
 
     host.contribute(
@@ -69,7 +84,7 @@ export const coreModule = defineModule({
       { id: "read", tools: () => designReadTools },
       { id: "info", tools: () => designInfoTools },
       { id: "nodes", tools: (context) => [createNodesTool(context), ...nodeEditTools] },
-      { id: "arrange", tools: () => nodeArrangeTools },
+      { id: "arrange", tools: () => [...nodeArrangeTools, ...nodeTransformTools] },
       { id: "view", tools: () => designViewTools },
       { id: "export", tools: () => designExportTools },
       { id: "files", tools: () => designFileTools },
@@ -128,6 +143,12 @@ export const coreModule = defineModule({
       },
     );
 
+    host.contribute(designEditor.sessionHooks, { id: "flip-commands", use: useFlipCommands });
+    host.contribute(designEditor.contextMenu, {
+      id: "transform",
+      menu: "selection",
+      items: TRANSFORM_ITEMS,
+    });
     host.contribute(
       designEditor.mainMenu,
       {
@@ -157,6 +178,12 @@ export const coreModule = defineModule({
           { command: "duplicate" },
           { command: "selectAll" },
         ],
+      },
+      {
+        id: "transform",
+        order: 36,
+        label: "Transform",
+        items: TRANSFORM_ITEMS,
       },
       {
         id: "view",

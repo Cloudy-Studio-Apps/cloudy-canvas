@@ -4,12 +4,15 @@ import { Camera } from "./camera";
 import {
   alignOffset,
   arrangeItems,
+  arrangeRoots,
   distributeOffsets,
   nudgeCheckpoint,
   tidyUpOffsets,
   type Alignment,
+  type ArrangeHost,
   type ArrangeItem,
   type DistributeAxis,
+  type RotatePivot,
 } from "./arrange";
 import { DEFAULT_VIEW_OPTIONS } from "./canvas-view";
 import {
@@ -24,6 +27,7 @@ import { createCommands } from "./commands";
 import type { Commands } from "./commands.types";
 import { CanvasDocument, type DocumentChange } from "./document";
 import {
+  elementBounds,
   elementInfo,
   reorderIndexes,
   type CanvasElement,
@@ -44,10 +48,10 @@ import {
 import { findInteraction } from "./find-interaction";
 import type { EngineLoading } from "./engine-loading.types";
 import type { EngineState } from "./engine-state.types";
-import { intersectRects, rectsIntersect, unionRects } from "./geometry";
+import { intersectRects, rectCenter, rectsIntersect, unionRects } from "./geometry";
 import type { Point, Rect } from "./geometry.types";
 import { bindKeyboard, bindWheel, EdgeAutoPan, Keymap, PointerInput } from "./input";
-import { Renderer, type CanvasTheme } from "./render";
+import { clipBounds, Renderer, type CanvasTheme } from "./render";
 import { Scene } from "./scene";
 import { ServiceCache, type ServiceDef } from "./services";
 import {
@@ -524,7 +528,7 @@ export class CanvasEngine<O extends object = object> {
       layer: this.scene.elements.filter((el) => !this.kinds.kindOf(el).frame),
       moving: this.withMembers(ids, "move"),
       direction,
-      bounds: (el) => this.kinds.kindOf(el).bounds(el),
+      bounds: (el) => elementBounds(this.kinds.kindOf(el), el),
       above: (count) => this.doc.nextIndexes(count),
       below: (count) => this.doc.firstIndexes(count),
     });
@@ -634,6 +638,47 @@ export class CanvasEngine<O extends object = object> {
   /** Whether these elements can be aligned: several of them, or one inside something. */
   canAlign(ids: Iterable<string>): boolean {
     return this.alignTargetOf(this.arrangeItems(ids)) !== null;
+  }
+
+  /**
+   * Turns the selection by `degrees` (counterclockwise) round its middle, as one undo step.
+   * Returns `false` when nothing in it can turn.
+   */
+  rotateSelection(degrees: number): boolean {
+    return this.rotateElements(this.scene.selection.ids, degrees).length > 0;
+  }
+
+  /**
+   * Turns elements that can turn (`ElementKind.rotatable`), with what moves with them, by
+   * `degrees` (or each one's own, from a function) round the middle of them all, or each round its
+   * own middle, as one undo step. Returns the turned ids.
+   */
+  rotateElements(
+    ids: Iterable<string>,
+    degrees: number | ((el: CanvasElement) => number),
+    around: RotatePivot = "selection",
+  ): string[] {
+    const roots = arrangeRoots(ids, this.arrangeHost).filter(
+      (el) => this.kinds.kindOf(el).rotatable,
+    );
+    const shown = (el: CanvasElement) => elementBounds(this.kinds.kindOf(el), el);
+    const all = unionRects(roots.map(shown));
+    if (!all) return [];
+    const patches = new Map<string, ElementPatch>();
+    for (const root of roots) {
+      const turn = typeof degrees === "number" ? degrees : degrees(root);
+      if (!turn) continue;
+      const pivot = rectCenter(around === "each" ? shown(root) : all);
+      for (const id of this.withMembers([root.id], "move")) {
+        const el = this.scene.get(id);
+        const kind = el && this.kinds.kindOf(el);
+        if (el && kind?.rotatable && !el.locked) patches.set(id, kind.rotate(el, turn, pivot));
+      }
+    }
+    if (patches.size === 0) return [];
+    this.doc.checkpoint();
+    this.doc.updateMany(patches);
+    return [...patches.keys()];
   }
 
   /** Spaces the selection out evenly on `axis` (three elements or more), as one undo step. */
@@ -770,7 +815,7 @@ export class CanvasEngine<O extends object = object> {
   focusElement(id: string): void {
     const el = this.scene.get(id);
     if (!el) return;
-    const { x, y, w, h } = this.kinds.kindOf(el).bounds(el);
+    const { x, y, w, h } = elementBounds(this.kinds.kindOf(el), el);
     this.camera.centerOn({ x: x + w / 2, y: y + h / 2 });
     this.setSelection([id]);
     this.onCameraChange();
@@ -780,7 +825,7 @@ export class CanvasEngine<O extends object = object> {
   zoomToElement(id: string): void {
     const el = this.scene.get(id);
     if (!el) return;
-    this.camera.fitRect(this.kinds.kindOf(el).bounds(el));
+    this.camera.fitRect(elementBounds(this.kinds.kindOf(el), el));
     this.setSelection([id]);
     this.onCameraChange();
   }
@@ -906,7 +951,7 @@ export class CanvasEngine<O extends object = object> {
         const members = this.withMembers(ids ?? this.scene.selection.ids, "move");
         return this.scene.elements.filter((el) => members.has(el.id));
       },
-      bounds: (el) => this.kinds.kindOf(el).bounds(el),
+      bounds: (el) => elementBounds(this.kinds.kindOf(el), el),
       rows: (el) => this.kinds.kindOf(el).rows(el),
       createLinks: () => this.product.createLinks?.() ?? [],
       background: this.renderer.background,
@@ -1238,11 +1283,15 @@ export class CanvasEngine<O extends object = object> {
   }
 
   private arrangeItems(ids: Iterable<string>): ArrangeItem[] {
-    return arrangeItems(ids, {
+    return arrangeItems(ids, this.arrangeHost);
+  }
+
+  private get arrangeHost(): ArrangeHost {
+    return {
       get: (id) => this.scene.get(id),
       kinds: this.kinds,
       withMembers: (members) => this.withMembers(members, "move"),
-    });
+    };
   }
 
   /** What items line up with: their bounds when there are several, or what holds the one. */
@@ -1277,7 +1326,8 @@ export class CanvasEngine<O extends object = object> {
       const kind = this.kinds.kindOf(el);
       if (exclude.has(el.id) || !kind.snapTarget(el)) continue;
       const clip = this.scene.clipOf(el);
-      const box = clip ? intersectRects(kind.bounds(el), clip.rect) : kind.bounds(el);
+      const shown = elementBounds(kind, el);
+      const box = clip ? intersectRects(shown, clipBounds(clip)) : shown;
       if ((box.w > 0 || box.h > 0) && rectsIntersect(box, area)) boxes.push(box);
     }
     return snapTargets(boxes);

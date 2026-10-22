@@ -126,7 +126,16 @@ context menu's Align submenu and the agent tools, not a panel; tidy up also has 
 - Agent tools: `align_nodes`/`distribute_nodes` (design) and `align_shapes`/`distribute_shapes` (board),
   taking ids and leaving the selection alone, like `reorder_shapes`.
 
-## Phase 3: Rotation (Design)
+## Phase 3: Rotation (Design) — done
+
+As built: Figma's model, `rotation` round the layer's **top-left corner** (not its center, as first
+planned below), counterclockwise. The engine turns any `rotatable` kind (`ElementKind.rotatable`,
+`rotate`); kinds draw and hit-test unturned. Lines hold their angle in their ends; groups never
+turn themselves. Flips mirror vectors and lines; other shapes land mirrored and turned the other
+way (polygons and stars turn half round top to bottom); text and image fills aren't mirrored. A
+turned frame inside another clipping frame clips by its own area only. Agents: `rotation` field,
+`rotate_nodes`, `flip_nodes`. The Figma import keeps rotations; mirrored or skewed layers are
+still straightened or vectorized.
 
 ### Data model
 

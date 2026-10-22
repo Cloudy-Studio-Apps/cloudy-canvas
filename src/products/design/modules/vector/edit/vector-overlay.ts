@@ -1,5 +1,5 @@
 import type { Graphics } from "pixi.js";
-import type { GuideView, Point } from "@canvas";
+import { rotatePoint, type GuideView, type Point } from "@canvas";
 
 import { segmentCurve, segmentsAt, tangentAt } from "../../core";
 import type { VectorElement } from "../vector.types";
@@ -30,7 +30,7 @@ export function drawVectorOverlay(
 ): void {
   const unit = 1 / view.zoom;
   const color = view.theme.selection;
-  const world = (p: Point) => ({ x: el.x + p.x, y: el.y + p.y });
+  const world = (p: Point) => rotatePoint({ x: el.x + p.x, y: el.y + p.y }, el, el.rotation ?? 0);
   const { network } = el;
 
   network.segments.forEach((_, i) => {

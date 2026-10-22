@@ -53,7 +53,8 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
   /** With "Clip content", its children only show inside it, round corners included. */
   override contentClip(el: FrameElement): ElementClip | null {
     if (!el.clipsContent) return null;
-    return { rect: { x: el.x, y: el.y, w: el.w, h: el.h }, radius: el.cornerRadius };
+    const rect = { x: el.x, y: el.y, w: el.w, h: el.h };
+    return { rect, radius: el.cornerRadius, rotation: el.rotation ?? 0 };
   }
 
   protected override nodeFromSpec(

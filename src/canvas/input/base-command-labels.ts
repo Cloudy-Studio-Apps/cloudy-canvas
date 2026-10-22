@@ -25,6 +25,8 @@ export const BASE_COMMAND_LABELS: Record<keyof typeof BASE_KEYBINDINGS, string> 
   distributeHorizontal: "Distribute horizontal spacing",
   distributeVertical: "Distribute vertical spacing",
   tidyUp: "Tidy up",
+  rotateLeft: "Rotate 90° left",
+  rotateRight: "Rotate 90° right",
   toggleLock: "Lock/Unlock",
   unlockAll: "Unlock all",
   nudgeLeft: "Nudge left",

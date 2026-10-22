@@ -9,10 +9,19 @@ import {
   type ElementView,
   type InteractionQuery,
   type Point,
+  angleOf,
+  normalizeAngle,
+  rotatePoint,
 } from "@canvas";
 
 import type { DesignToolOptions } from "../../design-options.types";
-import { DesignNodeKind, pointArg, type NodeBuildContext } from "../core";
+import {
+  DesignNodeKind,
+  mirrorPoint,
+  pointArg,
+  type FlipAxis,
+  type NodeBuildContext,
+} from "../core";
 import { LINE_DEFAULTS } from "./line.defaults";
 import { drawLine } from "./line.draw";
 import { LineEndDrag } from "./line-end-drag";
@@ -25,7 +34,7 @@ const POINT = { type: "object", properties: { x: { type: "number" }, y: { type: 
 
 /**
  * Lines and arrows: hit near the line, selected by their two ends (dragged to change them) rather
- * than a box, and painted with strokes only.
+ * than a box, turned by moving their ends, and painted with strokes only.
  */
 export class LineKind extends DesignNodeKind<LineNodeElement> {
   readonly type = "line";
@@ -53,6 +62,35 @@ export class LineKind extends DesignNodeKind<LineNodeElement> {
     const { start, end } = lineEnds(el);
     const radius = el.strokeWeight / 2 + tolerance + LINE_DEFAULTS.reach;
     return distanceToSegmentSq(p, start.x, start.y, end.x, end.y) <= radius * radius;
+  }
+
+  /** A line's ends hold its angle: turning moves them, and its `rotation` stays 0. */
+  override rotate(
+    el: LineNodeElement,
+    degrees: number,
+    pivot: Point,
+  ): ElementPatch<LineNodeElement> {
+    const { start, end } = lineEnds(el);
+    const turn = (p: Point) => {
+      const q = rotatePoint(p, pivot, degrees);
+      return { x: Math.round(q.x * 100) / 100, y: Math.round(q.y * 100) / 100 };
+    };
+    return { ...lineFromEnds(turn(start), turn(end)), rotation: 0 };
+  }
+
+  /** The angle it runs at, from its start to its end. */
+  override turnOf(el: LineNodeElement): number {
+    const { start, end } = lineEnds(el);
+    return normalizeAngle(angleOf(end, start));
+  }
+
+  /** Flipping mirrors its ends. */
+  override flip(el: LineNodeElement, axis: FlipAxis, at: number): ElementPatch<LineNodeElement> {
+    const { start, end } = lineEnds(el);
+    return {
+      ...lineFromEnds(mirrorPoint(start, axis, at), mirrorPoint(end, axis, at)),
+      rotation: 0,
+    };
   }
 
   override handles(el: LineNodeElement): ElementHandle[] {

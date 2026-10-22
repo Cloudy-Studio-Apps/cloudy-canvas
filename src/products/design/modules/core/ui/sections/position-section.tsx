@@ -2,9 +2,13 @@ import { NumberField, PanelSection, PropertyGrid } from "@design/ui/components/p
 import { useMoveNodes } from "@design/ui/hooks";
 import type { PropertySectionProps } from "@design/ui/modules";
 import { ArrangeButtons } from "./arrange-buttons";
+import { RotationRow } from "./rotation-row";
 import { sharedValue } from "@design/ui/components/panel";
 
-/** Align, distribute and tidy up, and X/Y of the selection (a moved frame takes its children). */
+/**
+ * Align, distribute and tidy up, X/Y (a moved frame takes its children) and the angle of the
+ * selection.
+ */
 export function PositionSection({ selection: { nodes } }: PropertySectionProps) {
   const move = useMoveNodes();
 
@@ -25,6 +29,7 @@ export function PositionSection({ selection: { nodes } }: PropertySectionProps) 
           onCommit={(y) => move(nodes, (node) => ({ dx: 0, dy: Math.round(y) - node.y }))}
         />
       </PropertyGrid>
+      <RotationRow nodes={nodes} />
     </PanelSection>
   );
 }

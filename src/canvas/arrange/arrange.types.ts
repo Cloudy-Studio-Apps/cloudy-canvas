@@ -21,3 +21,6 @@ export interface ArrangeHost {
   /** The ids plus what moves with them. */
   withMembers(ids: Iterable<string>): Set<string>;
 }
+
+/** What a turn goes round: the middle of everything turned, or each element's own middle. */
+export type RotatePivot = "selection" | "each";

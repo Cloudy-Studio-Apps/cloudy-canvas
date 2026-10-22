@@ -34,7 +34,7 @@ export function boardShortcutGroups(): ShortcutGroup[] {
     .filter(([command]) => !command.startsWith(TOOL_PREFIX))
     .flatMap(([command, label]): ShortcutRow[] => {
       const shortcuts = bindingsOf(command);
-      return shortcuts ? [{ command, label, shortcuts }] : [];
+      return shortcuts?.length ? [{ command, label, shortcuts }] : [];
     });
 
   return [

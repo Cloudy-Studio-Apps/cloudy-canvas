@@ -7,6 +7,7 @@ import {
   type ElementSpec,
   type ElementView,
   type Point,
+  rotatePoint,
 } from "@canvas";
 
 import type { DesignToolOptions } from "../../../design-options.types";
@@ -14,6 +15,8 @@ import { applyNodeSpec } from "./apply-node-spec";
 import { checkNodePatch } from "./check-node-patch";
 import type { DesignNode } from "./design-node.types";
 import type { NodeBuildContext } from "./node-build.types";
+import { flipPlacement } from "./flip-placement";
+import type { FlipAxis } from "./flip.types";
 import { NODE_DEFAULTS } from "./node.defaults";
 
 /**
@@ -26,6 +29,8 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
   DesignToolOptions
 > {
   override readonly connectable: boolean = false;
+  /** Layers turn (`rotation`, round their top-left corner); the engine draws and hits them turned. */
+  override readonly rotatable: boolean = true;
   /** Whether agents can create it (`create_nodes`); kinds that can give `nodeFromSpec`. */
   override readonly creatable: boolean = false;
   /**
@@ -71,6 +76,34 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
     return el.visible && super.hitTest(el, p, tolerance);
   }
 
+  /**
+   * Whether it looks the same upside down (rectangles, ellipses, frames). Ones that don't (a
+   * polygon's point) turn half round when flipped top to bottom, which draws them mirrored.
+   */
+  readonly symmetricVertically: boolean = true;
+
+  /** Its angle as the panel shows it: its `rotation` (a line's runs along its ends). */
+  turnOf(el: E): number {
+    return el.rotation ?? 0;
+  }
+
+  /**
+   * Patch that mirrors it across the line `at` on `axis` (flip horizontal or vertical): the same
+   * shape in the mirrored place, turned the other way.
+   */
+  flip(el: E, axis: FlipAxis, at: number): ElementPatch<E> {
+    const placement = flipPlacement(el, axis, at);
+    if (axis === "x" || this.symmetricVertically) return placement as ElementPatch<E>;
+    // Upside down: half a turn round its middle mirrors a shape symmetric left to right.
+    const placed = { ...el, ...placement };
+    const middle = rotatePoint(
+      { x: placed.x + el.w / 2, y: placed.y + el.h / 2 },
+      placed,
+      placed.rotation ?? 0,
+    );
+    return { ...placement, ...this.rotate(placed, 180, middle) } as ElementPatch<E>;
+  }
+
   /** Hidden layers aren't snapped to. */
   override snapTarget(el: E): boolean {
     return el.visible && super.snapTarget(el);
@@ -87,6 +120,7 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
       fills: el.fills ?? [],
       strokes: el.strokes ?? [],
       strokeWeight: el.strokeWeight ?? NODE_DEFAULTS.strokeWeight,
+      rotation: el.rotation ?? 0,
     };
   }
 

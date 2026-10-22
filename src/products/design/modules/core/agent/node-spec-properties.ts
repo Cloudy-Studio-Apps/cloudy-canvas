@@ -34,6 +34,11 @@ export const NODE_SPEC_PROPERTIES = {
   strokeWeight: { type: "number" },
   opacity: { type: "number", description: "0–1." },
   visible: { type: "boolean" },
+  rotation: {
+    type: "number",
+    description:
+      "Degrees counterclockwise, round its top-left corner (x, y), as in Figma; a line's ends turn.",
+  },
   text: { type: "string", description: "Text: its content." },
   color: { type: "string", description: "Text: its color." },
 };

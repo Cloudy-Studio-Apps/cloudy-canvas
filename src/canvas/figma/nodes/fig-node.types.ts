@@ -22,6 +22,18 @@ export interface FigMatrix {
   m12: number;
 }
 
+/**
+ * Where a node placed by a matrix lands as a box turned round its corner: `x`, `y` its corner,
+ * `w`×`h` its scaled size, `rotation` degrees counterclockwise (a design layer's fields).
+ */
+export interface FigPlacement {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  rotation: number;
+}
+
 export interface FigColor {
   r: number;
   g: number;

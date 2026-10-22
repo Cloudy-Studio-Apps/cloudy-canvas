@@ -1,4 +1,5 @@
 import {
+  elementBounds,
   unionRects,
   type CanvasDocument,
   type CanvasElement,
@@ -38,7 +39,7 @@ export function groupNodes(
   const topmost = nodes[nodes.length - 1];
   if (!topmost) return null;
 
-  const rect = unionRects(nodes.map((node) => kinds.kindOf(node).bounds(node)))!;
+  const rect = unionRects(nodes.map((node) => elementBounds(kinds.kindOf(node), node)))!;
   const name = nextLayerName(doc.all(), "Group");
   const group = createGroup(rect, name, topmost.index, topmost.parentId);
   doc.checkpoint();

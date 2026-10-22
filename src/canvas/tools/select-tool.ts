@@ -1,8 +1,9 @@
-import type { CanvasElement, ElementPatch } from "../elements";
+import { elementBounds, type CanvasElement, type ElementPatch } from "../elements";
 import { rectContainsPoint, rectFromPoints, unionRects } from "../geometry";
 import { measureGaps } from "../snapping";
-import { resizeCursor, type Interaction } from "../handles";
+import { cornerRotateCursor, resizeCursor, type Interaction } from "../handles";
 import { ResizeGesture } from "./resize-gesture";
+import { RotateGesture } from "./rotate-gesture";
 import { MOVE_THRESHOLD_PX, pastThreshold } from "./drag-threshold";
 import type { Rect } from "../geometry.types";
 import type { CanvasPointer, Tool, ToolContext } from "./tool.types";
@@ -83,6 +84,7 @@ export class SelectTool implements Tool {
     if (!g) return;
 
     if (g.kind === "resize") return g.resize.move(p);
+    if (g.kind === "rotate") return g.rotate.move(p);
     if (g.kind === "element") return g.gesture.move(p);
 
     if (g.kind === "marquee") {
@@ -155,6 +157,7 @@ export class SelectTool implements Tool {
     if (this.gesture?.kind === "element") this.gesture.gesture.cancel();
     if (this.gesture?.kind === "move") this.gesture.snapper?.clear();
     if (this.gesture?.kind === "resize") this.gesture.resize.end();
+    if (this.gesture?.kind === "rotate") this.gesture.rotate.end();
     this.measure(undefined);
     this.gesture = null;
     this.ctx.setMarquee(null);
@@ -181,7 +184,7 @@ export class SelectTool implements Tool {
     const rects: Rect[] = [];
     for (const el of elements) {
       const kind = this.ctx.kinds.kindOf(el);
-      if (kind.boxed) rects.push(kind.bounds(el));
+      if (kind.boxed) rects.push(elementBounds(kind, el));
     }
     return unionRects(rects);
   }
@@ -197,7 +200,10 @@ export class SelectTool implements Tool {
     const otherKind = other && this.ctx.kinds.kindOf(other);
     if (box && other && otherKind?.boxed && !this.ctx.getSelection().has(other.id)) {
       this.measuring = true;
-      this.ctx.setSnapFeedback({ lines: [], gaps: measureGaps(box, otherKind.bounds(other)) });
+      this.ctx.setSnapFeedback({
+        lines: [],
+        gaps: measureGaps(box, elementBounds(otherKind, other)),
+      });
     } else if (this.measuring) {
       this.measuring = false;
       this.ctx.setSnapFeedback(null);
@@ -212,11 +218,15 @@ export class SelectTool implements Tool {
     const kind = this.ctx.kinds.kindOf(el);
     const { zoom } = this.ctx.camera;
     if (kind.handles(el, zoom).length === 0) return false;
-    return rectContainsPoint(kind.bounds(el), p.world, HOVER_KEEP_PX / zoom);
+    return rectContainsPoint(elementBounds(kind, el), p.world, HOVER_KEEP_PX / zoom);
   }
 
   /** A gesture for the grabbed handle, or `null` when the press was a one-shot action. */
   private startInteraction(interaction: Interaction, p: CanvasPointer): Gesture | null {
+    if (interaction.kind === "rotate") {
+      const { target, corner } = interaction;
+      return { kind: "rotate", rotate: new RotateGesture(this.ctx, target, corner, p) };
+    }
     if (interaction.kind === "resize") {
       return {
         kind: "resize",
@@ -230,7 +240,12 @@ export class SelectTool implements Tool {
 }
 
 function interactionCursor(interaction: Interaction): string {
-  return interaction.kind === "resize"
-    ? resizeCursor(interaction.handle)
-    : interaction.interaction.cursor;
+  switch (interaction.kind) {
+    case "resize":
+      return resizeCursor(interaction.handle, interaction.target.rotation);
+    case "rotate":
+      return cornerRotateCursor(interaction.corner, interaction.target.rotation);
+    case "element":
+      return interaction.interaction.cursor;
+  }
 }

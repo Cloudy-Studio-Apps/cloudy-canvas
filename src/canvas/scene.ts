@@ -1,13 +1,14 @@
 import type { CanvasDocument } from "./document";
-import { zOrderKey, type CanvasElement, type ElementKind, type ElementKinds } from "./elements";
 import {
-  rectContainsPoint,
-  rectContainsRect,
-  rectsEqual,
-  rectsIntersect,
-  unionRects,
-} from "./geometry";
+  elementBounds,
+  zOrderKey,
+  type CanvasElement,
+  type ElementKind,
+  type ElementKinds,
+} from "./elements";
+import { rectContainsRect, rectsEqual, rectsIntersect, unionRects } from "./geometry";
 import type { Point, Rect } from "./geometry.types";
+import { pointInRotatedRect, toUnrotated } from "./rotation";
 import { buildOverlayState, type ElementClip, type OverlayState } from "./render";
 import type { SceneHooks } from "./scene.types";
 import { Selection } from "./selection";
@@ -120,8 +121,9 @@ export class Scene {
       if (el.locked && !includeLocked) continue;
       // What's clipped away can't be clicked.
       const clip = this.clips.get(el.id);
-      if (clip && !rectContainsPoint(clip.rect, world, tolerance)) continue;
-      if (this.kinds.kindOf(el).hitTest(el, world, tolerance)) return el;
+      if (clip && !pointInRotatedRect(world, clip.rect, clip.rotation ?? 0, tolerance)) continue;
+      // Kinds hit-test unturned: the point goes into the element's unturned frame.
+      if (this.kinds.kindOf(el).hitTest(el, toUnrotated(world, el), tolerance)) return el;
     }
     return undefined;
   }
@@ -131,14 +133,14 @@ export class Scene {
     return this.list.filter((el) => {
       if (el.locked) return false;
       const kind = this.kinds.kindOf(el);
-      const bounds = kind.bounds(el);
+      const bounds = elementBounds(kind, el);
       return kind.frame ? rectContainsRect(rect, bounds) : rectsIntersect(bounds, rect);
     });
   }
 
   /** Bounding box of all elements, or `null` for an empty canvas. */
   contentBounds(): Rect | null {
-    return unionRects(this.list.map((el) => this.kinds.kindOf(el).bounds(el)));
+    return unionRects(this.list.map((el) => elementBounds(this.kinds.kindOf(el), el)));
   }
 
   /** The kind of an element on the canvas. */
@@ -171,5 +173,7 @@ export class Scene {
 
 function sameClip(a: ElementClip | undefined, b: ElementClip | undefined): boolean {
   if (!a || !b) return a === b;
-  return a.radius === b.radius && rectsEqual(a.rect, b.rect);
+  return (
+    a.radius === b.radius && (a.rotation ?? 0) === (b.rotation ?? 0) && rectsEqual(a.rect, b.rect)
+  );
 }

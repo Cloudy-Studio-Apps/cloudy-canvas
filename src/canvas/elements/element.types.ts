@@ -20,6 +20,11 @@ export interface CanvasElement {
    * can only be selected from the context menu (to unlock them).
    */
   locked?: boolean;
+  /**
+   * Degrees the element is turned by (counterclockwise, Figma's way) around its top-left corner
+   * (x, y); `w`×`h` is its size unturned. Only kinds that are `rotatable` set it.
+   */
+  rotation?: number;
 }
 
 /**
