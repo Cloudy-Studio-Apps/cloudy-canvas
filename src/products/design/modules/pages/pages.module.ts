@@ -5,6 +5,7 @@ import { designAgentTools, designCanvas, designMigrations } from "../../design-p
 import { ensurePages } from "./ensure-pages";
 import { PageKind } from "./page";
 import { PAGE_GUIDES } from "./page-guides";
+import { pruneFrameGuides } from "./prune-frame-guides";
 import { PAGE_SCOPES } from "./page-scopes";
 import { guidesTools } from "./guides.agent-tools";
 import { pagesTools } from "./pages.agent-tools";
@@ -25,6 +26,7 @@ export const pagesModule = defineModule({
     host.contribute(designCanvas.kinds, new PageKind());
     host.contribute(designCanvas.scopes, PAGE_SCOPES);
     host.contribute(designCanvas.guides, PAGE_GUIDES);
+    host.contribute(designCanvas.onRemove, (doc, removed) => pruneFrameGuides(doc, removed));
     host.contribute(designMigrations, { id: "pages", migrate: ensurePages });
     host.contribute(
       designCanvas.hostCommands,

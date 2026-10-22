@@ -1,6 +1,7 @@
 import type { Point } from "./geometry.types";
 import { resizeHandleAt, resizeTarget, rotateZoneAt, type Interaction } from "./handles";
-import type { RulerGuide } from "./ruler-guides";
+import { rectContainsPoint } from "./geometry";
+import { guideInside, type PlacedGuide } from "./ruler-guides";
 import { toUnrotated } from "./rotation";
 import type { Scene } from "./scene";
 
@@ -15,14 +16,14 @@ const GUIDE_REACH_PX = 3;
  * What a press at `world` would grab, in priority order: a resize handle of the selection (one
  * element, or the box round several), then whatever an element's kind offers there (topmost
  * first), then the rotate zone just outside a corner of the selection (when it can turn), then a
- * ruler guide (`guides`: the ones shown, topmost last). Handles only exist where the overlay draws
- * them. Locked elements offer nothing.
+ * ruler guide (`guides`: the ones shown, topmost last; a frame's only inside it). Handles only
+ * exist where the overlay draws them. Locked elements offer nothing.
  */
 export function findInteraction(
   scene: Scene,
   world: Point,
   zoom: number,
-  guides: readonly RulerGuide[] = [],
+  guides: readonly PlacedGuide[] = [],
 ): Interaction | null {
   const reach = HANDLE_REACH_PX / zoom;
   const selected = [...scene.selection.ids].map((id) => scene.get(id));
@@ -55,10 +56,12 @@ export function findInteraction(
 }
 
 /** The ruler guide within `reach` of `world` (the last one drawn first), if any. */
-function guideAt(guides: readonly RulerGuide[], world: Point, reach: number): Interaction | null {
-  for (let index = guides.length - 1; index >= 0; index--) {
-    const { axis, value } = guides[index]!;
-    if (Math.abs(world[axis] - value) <= reach) return { kind: "guide", index, axis };
+function guideAt(guides: readonly PlacedGuide[], world: Point, reach: number): Interaction | null {
+  for (let i = guides.length - 1; i >= 0; i--) {
+    const guide = guides[i]!;
+    if (!guideInside(guide)) continue;
+    if (guide.within && !rectContainsPoint(guide.within, world, reach)) continue;
+    if (Math.abs(world[guide.axis] - guide.value) <= reach) return { kind: "guide", guide };
   }
   return null;
 }

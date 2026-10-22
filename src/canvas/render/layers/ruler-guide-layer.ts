@@ -2,6 +2,7 @@ import { Container, Graphics, Text } from "pixi.js";
 
 import type { Camera } from "../../camera";
 import { ELEMENT_DEFAULTS } from "../../elements/element.defaults";
+import { guideInside, type PlacedGuide } from "../../ruler-guides";
 import type { RulerGuidesView } from "./ruler-guide-layer.types";
 
 /** Gap between the canvas edge (or the ruler) and the value's tag, and the tag and its guide. */
@@ -12,8 +13,9 @@ const FONT_SIZE = 10;
 const TEXT_COLOR = 0xffffff;
 
 /**
- * Ruler guides as 1px lines across the whole view, in screen space; the one being dragged shows
- * its value in a tag by its ruler.
+ * Ruler guides as 1px lines in screen space: page guides across the whole view, a frame's guides
+ * across that frame only. The one being dragged shows its value (a frame's from its corner) in a
+ * tag by its ruler.
  */
 export class RulerGuideLayer extends Container {
   private readonly lines = new Graphics();
@@ -33,35 +35,39 @@ export class RulerGuideLayer extends Container {
     this.lines.clear();
     this.tag.clear();
     this.text.visible = false;
-    if (!view || view.guides.length === 0) return;
+    if (!view) return;
     const { w, h } = camera.viewport;
-    for (const { axis, value } of view.guides) {
-      const at = crisp(screenAt(camera, axis, value));
-      if (axis === "x") this.lines.moveTo(at, 0).lineTo(at, h);
-      else this.lines.moveTo(0, at).lineTo(w, at);
+    for (const guide of view.guides) {
+      // The dragged one shows wherever it is.
+      if (guide.index !== view.active && !guideInside(guide)) continue;
+      const area = guide.within ? camera.worldRectToScreen(guide.within) : { x: 0, y: 0, w, h };
+      const at = Math.round(screenAt(camera, guide));
+      // Filled 1px rects: one stroked path of many lines doesn't keep its color everywhere.
+      if (guide.axis === "x") this.lines.rect(at, Math.round(area.y), 1, Math.round(area.h));
+      else this.lines.rect(Math.round(area.x), at, Math.round(area.w), 1);
     }
-    this.lines.stroke({ color, width: 1 });
+    this.lines.fill({ color });
 
-    const active = view.active === null ? undefined : view.guides[view.active];
-    if (!active) return;
-    this.text.text = String(active.value);
+    const active = view.guides.find((guide) => guide.index === view.active);
+    if (active) this.drawTag(camera, active, view.inset, color);
+  }
+
+  /** The dragged guide's value by its ruler. */
+  private drawTag(camera: Camera, guide: PlacedGuide, inset: number, color: number): void {
+    const origin = guide.within ? guide.within[guide.axis] : 0;
+    this.text.text = String(Math.round((guide.value - origin) * 100) / 100);
     this.text.visible = true;
     const tagW = this.text.width + PADDING_X * 2;
     const tagH = this.text.height + PADDING_Y * 2;
-    const at = Math.round(screenAt(camera, active.axis, active.value));
-    const x = active.axis === "x" ? at + GAP_PX : view.inset + GAP_PX;
-    const y = active.axis === "x" ? view.inset + GAP_PX : at - GAP_PX - tagH;
+    const at = Math.round(screenAt(camera, guide));
+    const x = guide.axis === "x" ? at + GAP_PX : inset + GAP_PX;
+    const y = guide.axis === "x" ? inset + GAP_PX : at - GAP_PX - tagH;
     this.tag.roundRect(x, y, tagW, tagH, 2).fill({ color });
     this.text.position.set(x + PADDING_X, y + PADDING_Y);
   }
 }
 
 /** Where a guide's line sits on screen, along its axis. */
-function screenAt(camera: Camera, axis: "x" | "y", value: number): number {
+function screenAt(camera: Camera, { axis, value }: PlacedGuide): number {
   return (value + camera[axis]) * camera.zoom;
-}
-
-/** On the middle of a pixel, so the line stays sharp. */
-function crisp(v: number): number {
-  return Math.round(v) + 0.5;
 }

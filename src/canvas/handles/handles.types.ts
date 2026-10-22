@@ -1,6 +1,6 @@
 import type { CanvasElement, ElementInteraction } from "../elements";
 import type { Rect } from "../geometry.types";
-import type { SnapAxis } from "../snapping";
+import type { PlacedGuide } from "../ruler-guides";
 
 export type ResizeHandle = "nw" | "n" | "ne" | "e" | "se" | "s" | "sw" | "w";
 
@@ -37,7 +37,7 @@ export type Interaction =
   | { kind: "resize"; target: ResizeTarget; handle: ResizeHandle }
   /** Just outside a corner of the selection's box: turns it (`corner` is nw, ne, se or sw). */
   | { kind: "rotate"; target: ResizeTarget; corner: ResizeHandle }
-  /** A ruler guide of the scope on screen, by its index (see `CanvasGuides`). */
-  | { kind: "guide"; index: number; axis: SnapAxis }
+  /** A ruler guide of the scope on screen (see `CanvasGuides`). */
+  | { kind: "guide"; guide: PlacedGuide }
   /** Something the element's kind offers (see `ElementKind.interactionAt`). */
   | { kind: "element"; element: CanvasElement; interaction: ElementInteraction };

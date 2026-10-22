@@ -62,7 +62,16 @@ import {
   toCanvasPointer,
 } from "./input";
 import { clipBounds, Renderer, type CanvasTheme } from "./render";
-import { overRuler, rulerGuideKey, RULER_SIZE, ScopeGuides, type RulerGuide } from "./ruler-guides";
+import {
+  guideInside,
+  overRuler,
+  placeGuides,
+  rulerGuideKey,
+  RULER_SIZE,
+  ScopeGuides,
+  type PlacedGuide,
+  type RulerGuide,
+} from "./ruler-guides";
 import { Scene } from "./scene";
 import { ServiceCache, type ServiceDef } from "./services";
 import {
@@ -160,6 +169,10 @@ export class CanvasEngine<O extends object = object> {
   private guidesShown = true;
   /** Whether the host shows its rulers (see `CanvasViewOptions.rulers`). */
   private rulersShown: boolean;
+  /** The frame the rulers measure, until the selection or the document changes. */
+  private rulerFrameCache: { frame: CanvasElement | null } | null = null;
+  /** Where the scope's guides show, until the document or the scope changes. */
+  private placedCache: PlacedGuide[] | null = null;
   /** The guide whose value shows while it's dragged. */
   private activeGuide: number | null = null;
   private tool: Tool;
@@ -493,7 +506,9 @@ export class CanvasEngine<O extends object = object> {
     this.textEditor?.commit();
     this.setGuidesShown(true);
     const pointer = (e: PointerEvent) => toCanvasPointer(e, canvas, this.camera);
-    const drag = new GuideDrag(this.toolContext, axis, null, pointer(event));
+    const frame = this.rulersShown ? this.rulerFrameElement() : null;
+    const owner = frame && { id: frame.id, bounds: this.kinds.kindOf(frame).bounds(frame) };
+    const drag = new GuideDrag(this.toolContext, axis, null, owner, pointer(event));
     return {
       move: (e) => drag.move(pointer(e)),
       end: () => {
@@ -873,12 +888,19 @@ export class CanvasEngine<O extends object = object> {
     return this.camera.visibleWorldRect();
   }
 
-  /** Where the rulers count from for the selection (see `CanvasProduct.rulerOrigin`). */
-  rulerOrigin(): Point {
-    const selected = [...this.scene.selection.ids].map((id) => this.scene.get(id));
-    const elements = selected.filter((el) => el !== undefined);
-    if (elements.length === 0) return { x: 0, y: 0 };
-    return this.product.rulerOrigin?.(elements, this.scene.elements) ?? { x: 0, y: 0 };
+  /**
+   * The frame the rulers measure for the selection (see `CanvasProduct.rulerFrame`), or `null`
+   * for the whole canvas. Worked out again after selection and document changes.
+   */
+  rulerFrame(): Rect | null {
+    const frame = this.rulerFrameElement();
+    return frame && this.kinds.kindOf(frame).bounds(frame);
+  }
+
+  /** Where the scope's ruler guides show (a frame's inside it), as the canvas draws them. */
+  placedGuides(): readonly PlacedGuide[] {
+    this.placedCache ??= placeGuides(this.guides(), (id) => this.scene.get(id), this.kinds);
+    return this.placedCache;
   }
 
   /** The box round where the selected elements show, or `null` with nothing selected. */
@@ -1164,6 +1186,8 @@ export class CanvasEngine<O extends object = object> {
 
   private handleDocumentChange(change: DocumentChange): void {
     this.scopeGuides.invalidate();
+    this.rulerFrameCache = null;
+    this.placedCache = null;
     const scope = this.nextScope(change);
     if (scope !== this.scene.scope) {
       this.showScope(scope);
@@ -1238,6 +1262,8 @@ export class CanvasEngine<O extends object = object> {
     this.setTool("select");
     this.scene.scope = scope;
     this.scene.selection.set([]);
+    this.rulerFrameCache = null;
+    this.placedCache = null;
     this.scene.setHover(null);
     this.refreshScene();
     if (!this.rendererReady) {
@@ -1413,6 +1439,7 @@ export class CanvasEngine<O extends object = object> {
 
   private setSelection(ids: Iterable<string>): void {
     if (!this.scene.selection.set(ids)) return;
+    this.rulerFrameCache = null;
     // Show the selected element's style in the options panel.
     const first = this.scene.get([...this.scene.selection.ids][0] ?? "");
     if (first) this.options = { ...this.options, ...this.kinds.kindOf(first).optionsOf(first) };
@@ -1469,9 +1496,9 @@ export class CanvasEngine<O extends object = object> {
     const area = { x: view.x - view.w, y: view.y - view.h, w: view.w * 3, h: view.h * 3 };
     const lines: Record<SnapAxis, number[]> = { x: [], y: [] };
     if (this.snapping.guides)
-      this.shownGuides().forEach(({ axis, value }, i) => {
-        if (!exclude.has(rulerGuideKey(i))) lines[axis].push(value);
-      });
+      for (const guide of this.shownGuides())
+        if (!exclude.has(rulerGuideKey(guide.index)) && guideInside(guide))
+          lines[guide.axis].push(guide.value);
     const boxes: Rect[] = [];
     if (!this.snapping.objects) return snapTargets(boxes, lines);
     for (const el of this.scene.elements) {
@@ -1486,8 +1513,21 @@ export class CanvasEngine<O extends object = object> {
   }
 
   /** The ruler guides on screen: none while they're hidden. */
-  private shownGuides(): readonly RulerGuide[] {
-    return this.guidesShown ? this.guides() : [];
+  private shownGuides(): readonly PlacedGuide[] {
+    return this.guidesShown ? this.placedGuides() : [];
+  }
+
+  /** The element the rulers measure for the selection (see `CanvasProduct.rulerFrame`). */
+  private rulerFrameElement(): CanvasElement | null {
+    if (this.rulerFrameCache) return this.rulerFrameCache.frame;
+    const selected = [...this.scene.selection.ids].map((id) => this.scene.get(id));
+    const elements = selected.filter((el) => el !== undefined);
+    const frame =
+      elements.length > 0 && this.product.rulerFrame
+        ? this.product.rulerFrame(elements, this.scene.elements)
+        : null;
+    this.rulerFrameCache = { frame };
+    return frame;
   }
 
   private requestRender(): void {

@@ -7,7 +7,7 @@ import type { CanvasElement, ElementKind, ElementKinds } from "../elements";
 import type { Keybindings } from "../input";
 import type { ElementClip } from "../render";
 import type { CanvasGuides } from "../ruler-guides";
-import type { Point, Rect } from "../geometry.types";
+import type { Rect } from "../geometry.types";
 import type { CanvasLinks } from "../links";
 import type { Tool, ToolContext } from "../tools";
 
@@ -67,12 +67,12 @@ export type AlignTargetHook<O extends object> = (
   kinds: ElementKinds<O>,
 ) => Rect | null;
 
-/** See `CanvasProduct.rulerOrigin`; only one module may decide it. */
-export type RulerOriginHook<O extends object> = (
+/** See `CanvasProduct.rulerFrame`; only one module may decide it. */
+export type RulerFrameHook<O extends object> = (
   selected: readonly CanvasElement[],
   elements: readonly CanvasElement[],
   kinds: ElementKinds<O>,
-) => Point | null;
+) => CanvasElement | null;
 
 /** See `CanvasProduct.editElement`; only one module may give it. */
 export type EditElementHook<O extends object> = (el: CanvasElement, ctx: ToolContext<O>) => boolean;
@@ -117,8 +117,8 @@ export interface CanvasPoints<O extends object> {
   selectTarget: ExtensionPoint<SelectTargetHook<O>>;
   /** What a single element aligns with (one module at most; two throw). */
   alignTarget: ExtensionPoint<AlignTargetHook<O>>;
-  /** Where the rulers count from (one module at most; two throw). */
-  rulerOrigin: ExtensionPoint<RulerOriginHook<O>>;
+  /** What the rulers measure (one module at most; two throw). */
+  rulerFrame: ExtensionPoint<RulerFrameHook<O>>;
   /** What double-click or Enter edits (one module at most; two throw). */
   editElement: ExtensionPoint<EditElementHook<O>>;
   onMoved: ExtensionPoint<OnMovedHook<O>>;

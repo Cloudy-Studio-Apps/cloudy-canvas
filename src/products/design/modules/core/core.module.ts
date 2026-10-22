@@ -32,7 +32,7 @@ import { treeClips } from "./tree/tree-clips";
 import { prepareTreeCopies } from "./tree/prepare-tree-copies";
 import { reparentMoved } from "./tree/reparent";
 import { containerAlignTarget } from "./tree/align-target";
-import { selectionRulerOrigin } from "./tree/ruler-origin";
+import { selectionRulerFrame } from "./tree/ruler-frame";
 import { useFlipCommands } from "./ui/use-flip-commands";
 import { useViewCommands } from "./ui/use-view-commands";
 import { ScaleSidebar } from "./ui/scale-sidebar";
@@ -77,7 +77,7 @@ export const coreModule = defineModule({
     host.contribute(designCanvas.withMembers, (ids, elements) => withDescendants(ids, elements));
     host.contribute(designCanvas.onMoved, reparentMoved);
     host.contribute(designCanvas.alignTarget, containerAlignTarget);
-    host.contribute(designCanvas.rulerOrigin, selectionRulerOrigin);
+    host.contribute(designCanvas.rulerFrame, selectionRulerFrame);
     host.contribute(
       designCanvas.hostCommands,
       { id: "flipHorizontal", label: "Flip horizontal", keys: [{ key: "h", shift: true }] },

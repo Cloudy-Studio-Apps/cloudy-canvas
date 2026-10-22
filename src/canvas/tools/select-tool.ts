@@ -233,8 +233,9 @@ export class SelectTool implements Tool {
       return { kind: "rotate", rotate: new RotateGesture(this.ctx, target, corner, p) };
     }
     if (interaction.kind === "guide") {
-      const { axis, index } = interaction;
-      return { kind: "guide", drag: new GuideDrag(this.ctx, axis, index, p) };
+      const { guide } = interaction;
+      const frame = guide.frame && guide.within ? { id: guide.frame, bounds: guide.within } : null;
+      return { kind: "guide", drag: new GuideDrag(this.ctx, guide.axis, guide, frame, p) };
     }
     if (interaction.kind === "resize") {
       return {
@@ -261,7 +262,7 @@ function interactionCursor(interaction: Interaction): string {
     case "rotate":
       return cornerRotateCursor(interaction.corner, interaction.target.rotation);
     case "guide":
-      return guideCursor(interaction.axis);
+      return guideCursor(interaction.guide.axis);
     case "element":
       return interaction.interaction.cursor;
   }

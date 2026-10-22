@@ -35,7 +35,7 @@ export function composeProduct<O extends object>(
   const clips = single(host.get(points.clips), `the ${id}'s clips`);
   const target = single(host.get(points.selectTarget), `what a click selects in the ${id}`);
   const aligner = single(host.get(points.alignTarget), `what one element aligns with in the ${id}`);
-  const origin = single(host.get(points.rulerOrigin), `where the ${id}'s rulers count from`);
+  const rulerFrame = single(host.get(points.rulerFrame), `what the ${id}'s rulers measure`);
   const editor = single(host.get(points.editElement), `what double-click edits in the ${id}`);
 
   return {
@@ -56,7 +56,9 @@ export function composeProduct<O extends object>(
     ...(order ? { orderKeys: (elements) => order(elements, kinds) } : {}),
     ...(clips ? { clips: (elements) => clips(elements, kinds) } : {}),
     ...(editor ? { editElement: editor } : {}),
-    ...(origin ? { rulerOrigin: (selected, elements) => origin(selected, elements, kinds) } : {}),
+    ...(rulerFrame
+      ? { rulerFrame: (selected, elements) => rulerFrame(selected, elements, kinds) }
+      : {}),
     ...(aligner ? { alignTarget: (el, elements) => aligner(el, elements, kinds) } : {}),
     ...(target
       ? { selectTarget: (hitId, request, elements) => target(hitId, request, elements, kinds) }

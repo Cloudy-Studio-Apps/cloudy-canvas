@@ -38,8 +38,11 @@ export function RulerStrip({ axis, version, colors }: RulerStripProps) {
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    // Values count from the ruler origin (e.g. the selected layers' frame).
-    const origin = engine.rulerOrigin()[axis];
+    // Values count from the frame the rulers measure (e.g. the selected layers'), numbered
+    // only along it.
+    const frame = engine.rulerFrame();
+    const origin = frame ? frame[axis] : 0;
+    const span = frame ? ([0, axis === "x" ? frame.w : frame.h] as const) : null;
     const view = engine.visibleWorldRect();
     const bounds = engine.selectionBounds();
     const selection = bounds
@@ -49,7 +52,7 @@ export function RulerStrip({ axis, version, colors }: RulerStripProps) {
       : null;
     const start = (axis === "x" ? view.x : view.y) - origin;
     const zoom = engine.getState().zoom;
-    drawRuler(g, { axis, length, start, zoom, selection, colors });
+    drawRuler(g, { axis, length, start, zoom, span, selection, colors });
   }, [engine, axis, length, version, colors]);
 
   return (

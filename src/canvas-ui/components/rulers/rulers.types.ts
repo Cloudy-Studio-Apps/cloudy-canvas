@@ -25,6 +25,8 @@ export interface RulerView {
   /** The world value at the ruler's start (screen 0). */
   start: number;
   zoom: number;
+  /** The only values numbered (the measured frame's, from its corner); `null`: all of them. */
+  span: readonly [number, number] | null;
   /** The selection's extent along the ruler, in world units, if anything is selected. */
   selection: readonly [number, number] | null;
   colors: RulerColors;

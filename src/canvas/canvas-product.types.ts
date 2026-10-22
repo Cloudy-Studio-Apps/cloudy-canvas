@@ -71,13 +71,14 @@ export interface CanvasProduct<O extends object = object> {
    */
   alignTarget?(el: CanvasElement, elements: readonly CanvasElement[]): Rect | null;
   /**
-   * Where the rulers count from for this selection (e.g. the corner of the design frame it's in,
-   * as in Figma); `null`, or without it, the world's origin.
+   * The frame the rulers measure for this selection (e.g. the design frame it's in, as in Figma):
+   * they count from its top-left corner and number only its span, and a guide dragged out of them
+   * while it's set belongs to it. `null`, or without it, the whole canvas from the world's origin.
    */
-  rulerOrigin?(
+  rulerFrame?(
     selected: readonly CanvasElement[],
     elements: readonly CanvasElement[],
-  ): Point | null;
+  ): CanvasElement | null;
   /**
    * Runs when the select tool finishes dragging elements (with their members) to a new place,
    * inside the drag's undo step: e.g. puts them into the frame they were dropped on. `elements`

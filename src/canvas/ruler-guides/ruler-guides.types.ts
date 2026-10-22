@@ -1,13 +1,30 @@
 import type { CanvasDocument } from "../document";
+import type { Rect } from "../geometry.types";
 import type { SnapAxis } from "../snapping";
 
 /**
- * A line across the canvas dragged out of a ruler, that things snap to. On `x` it's a vertical line
- * at x = `value` (dragged out of the left ruler); on `y` a horizontal one (out of the top ruler).
+ * A line dragged out of a ruler, that things snap to. On `x` it's a vertical line (dragged out of
+ * the left ruler), on `y` a horizontal one (out of the top ruler). A page guide crosses the whole
+ * canvas at `value`; a frame's guide (`frame`, the element it belongs to) shows only inside that
+ * element, `value` from its top-left corner, and moves with it.
  */
 export interface RulerGuide {
   axis: SnapAxis;
   value: number;
+  frame?: string;
+}
+
+/** A guide where it shows: its world `value` and, for a frame's guide, the area it's drawn in. */
+export interface PlacedGuide {
+  /** Its index in the scope's list. */
+  index: number;
+  axis: SnapAxis;
+  /** World units. */
+  value: number;
+  /** The frame it belongs to, if any. */
+  frame: string | null;
+  /** Where it shows: the frame's bounds, or `null` across the whole canvas. */
+  within: Rect | null;
 }
 
 /**

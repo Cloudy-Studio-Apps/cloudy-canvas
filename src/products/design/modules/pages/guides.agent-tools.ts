@@ -1,14 +1,22 @@
 import { optionalBoolean, recordList, type RulerGuide, type ToolArgs } from "@canvas";
 
 import { requireDesign, type DesignAgentTool } from "../../agent";
+import type { DesignEngine } from "../../design-engine.types";
+import { DesignNodeKind } from "../core";
 
-/** A guide an agent gave, checked. */
-function readGuide(args: ToolArgs): RulerGuide {
-  const { axis, value } = args;
+/** A guide an agent gave, checked (its frame must be a frame or section on the page). */
+function readGuide(engine: DesignEngine, args: ToolArgs): RulerGuide {
+  const { axis, value, frame } = args;
   if (axis !== "x" && axis !== "y") throw new Error('A guide\'s `axis` is "x" or "y".');
   if (typeof value !== "number" || !Number.isFinite(value))
     throw new Error("A guide's `value` must be a number.");
-  return { axis, value: Math.round(value * 100) / 100 };
+  const guide: RulerGuide = { axis, value: Math.round(value * 100) / 100 };
+  if (frame === undefined || frame === null) return guide;
+  const el = typeof frame === "string" ? engine.getElement(frame) : undefined;
+  const kind = el && engine.kinds.kindOf(el);
+  if (!el || !(kind instanceof DesignNodeKind && kind.container))
+    throw new Error(`No frame or section with id ${String(frame)} on this page.`);
+  return { ...guide, frame: el.id };
 }
 
 /** Indexes an agent gave, checked against the page's guides. */
@@ -29,7 +37,9 @@ export const guidesTools: DesignAgentTool[] = [
     name: "list_guides",
     description:
       "Lists the ruler guides of the page on screen, by index: `axis` x is a vertical line at " +
-      "x = `value`, y a horizontal one at y = `value` (world units). Layers snap to them when " +
+      "x = `value`, y a horizontal one at y = `value`. A page guide's value is in world units " +
+      "and it crosses the whole page; a frame's guide (`frame`) counts from that frame's " +
+      "top-left corner, shows only inside it and moves with it. Layers snap to them when " +
       "they're moved, resized or drawn.",
     inputSchema: { type: "object", properties: {} },
     run: (host) => {
@@ -39,7 +49,9 @@ export const guidesTools: DesignAgentTool[] = [
   },
   {
     name: "add_guides",
-    description: "Adds ruler guides to the page on screen, in one undo step.",
+    description:
+      "Adds ruler guides to the page on screen, in one undo step: page guides, or a frame's " +
+      "(give `frame`, a frame or section id; `value` then counts from its top-left corner).",
     inputSchema: {
       type: "object",
       required: ["guides"],
@@ -56,6 +68,7 @@ export const guidesTools: DesignAgentTool[] = [
                 description: "x: vertical, y: horizontal.",
               },
               value: { type: "number" },
+              frame: { type: "string", description: "A frame or section the guide belongs to." },
             },
           },
         },
@@ -63,7 +76,7 @@ export const guidesTools: DesignAgentTool[] = [
     },
     run: (host, args) => {
       const { engine } = requireDesign(host);
-      const guides = recordList(args, "guides").map(readGuide);
+      const guides = recordList(args, "guides").map((guide) => readGuide(engine, guide));
       engine.addGuides(guides);
       return { guides: engine.guides().length };
     },
