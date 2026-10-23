@@ -5,7 +5,7 @@ import { EffectShader, FILTER_HEADER } from "@canvas";
  * blurred by the glass's depth, so it rises from the edge inward; its slope is the surface's
  * normal. Near the edge, what's behind is read from further out (`uBend` CSS pixels at most),
  * each channel a little apart (`uDispersion`), and the rim facing `uLight` (a screen direction)
- * is lit (`uIntensity`, spread by `uSplay`). Laid under the input inside the content's shape.
+ * is lit along a thin rim (`uIntensity`, widened by `uSplay`), the far side faintly. Laid under the input inside the content's shape.
  */
 export const glassShader = new EffectShader(
   "glass",
@@ -18,6 +18,11 @@ uniform float uDispersion;
 uniform vec2 uLight;
 uniform float uIntensity;
 uniform float uSplay;
+
+/** What's behind, held to the texture's frame (past it the pool holds leftovers). */
+vec4 behindAt(vec2 uv) {
+  return texture(uBehind, clamp(uv, uInputClamp.xy, uInputClamp.zw));
+}
 
 void main() {
   vec4 top = texture(uTexture, vTextureCoord);
@@ -35,17 +40,22 @@ void main() {
   );
   // Inward; flat in the middle, where the slope vanishes.
   vec2 inward = length(slope) > 1e-5 ? normalize(slope) : vec2(0.0);
-  float edge = 1.0 - smoothstep(0.5, 1.0, field);
+  // 0 at the edge, 1 where the glass is flat.
+  float inside = clamp((field - 0.5) * 2.0, 0.0, 1.0);
+  float edge = 1.0 - smoothstep(0.0, 1.0, inside);
   vec2 bend = -inward * edge * edge * uBend;
   float spread = 1.0 + uDispersion * 0.6;
   vec3 behind = vec3(
-    texture(uBehind, vTextureCoord + px(bend * spread)).r,
-    texture(uBehind, vTextureCoord + px(bend)).g,
-    texture(uBehind, vTextureCoord + px(bend / spread)).b
+    behindAt(vTextureCoord + px(bend * spread)).r,
+    behindAt(vTextureCoord + px(bend)).g,
+    behindAt(vTextureCoord + px(bend / spread)).b
   );
-  float facing = max(dot(-inward, uLight), 0.0);
-  float rim = pow(edge, mix(6.0, 1.0, clamp(uSplay, 0.0, 1.0))) * facing * uIntensity;
-  vec4 glass = vec4(min(behind + rim, vec3(1.0)), 1.0) * shape;
+  // A thin rim of light along the edge facing the light, fainter on the far side.
+  float rim = exp(-inside * mix(28.0, 6.0, clamp(uSplay, 0.0, 1.0)));
+  float facing = dot(-inward, uLight);
+  float light = rim * (max(facing, 0.0) + 0.35 * max(-facing, 0.0)) * uIntensity;
+  behind = mix(behind, vec3(1.0), clamp(light, 0.0, 1.0));
+  vec4 glass = vec4(behind, 1.0) * shape;
   finalColor = top + glass * (1.0 - top.a);
 }`,
   {
