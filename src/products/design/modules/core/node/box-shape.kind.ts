@@ -3,7 +3,8 @@ import type { ElementSpec, Rect, Size } from "@canvas";
 import type { DesignToolOptions } from "../../../design-options.types";
 import type { VectorNetwork } from "../network/network.types";
 import { DesignNodeKind } from "./design-node.kind";
-import type { DesignNode } from "./design-node.types";
+import type { DesignNode, NodeGeometry } from "./design-node.types";
+import { networkGeometry } from "./node-geometry";
 import type { NodeBuildContext } from "./node-build.types";
 
 /** Size of a clicked shape when the kind's defaults give none. */
@@ -31,6 +32,12 @@ export abstract class BoxShapeKind<E extends DesignNode = DesignNode> extends De
    */
   vectorNetwork(_el: E): VectorNetwork | null {
     return null;
+  }
+
+  /** Its outline's geometry (a simple outline: nothing to normalize). */
+  protected override buildGeometry(el: E): NodeGeometry | null {
+    const net = this.vectorNetwork(el);
+    return net ? networkGeometry(net, false) : null;
   }
 
   /** Size of a node placed with a click (its defaults' `size` unless the options decide). */

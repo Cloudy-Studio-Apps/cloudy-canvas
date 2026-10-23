@@ -5,6 +5,4 @@ export { GROUP_TYPE } from "./group.constants";
 export { createGroup } from "./group.factory";
 export { GroupKind } from "./group.kind";
 export { groupNodes, pruneEmptyGroups, ungroupNodes } from "./group-nodes";
-export { groupSelectTarget } from "./group-select-target";
-export { enclosingGroups, isGroup } from "./group-tree";
-export { resolveGroups } from "./resolve-groups";
+export { isGroup } from "./group-tree";

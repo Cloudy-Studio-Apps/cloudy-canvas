@@ -13,4 +13,6 @@ export interface SceneHooks {
   clips?: (elements: readonly CanvasElement[]) => Map<string, ElementClip>;
   /** `masks`: what masks each element. */
   masks?: (elements: readonly CanvasElement[]) => ElementMasks;
+  /** `undrawn`: elements not drawn on their own. */
+  undrawn?: (elements: readonly CanvasElement[]) => ReadonlySet<string>;
 }

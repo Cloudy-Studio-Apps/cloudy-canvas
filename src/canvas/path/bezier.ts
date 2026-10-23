@@ -1,6 +1,5 @@
-import type { Point } from "@canvas";
-
-import type { CubicCurve } from "./network.types";
+import type { Point } from "../geometry.types";
+import type { CubicCurve } from "./path.types";
 
 /** Samples used to find the nearest point of a curve before refining it. */
 const SAMPLES = 24;
@@ -86,4 +85,31 @@ export function bendThrough(curve: CubicCurve, t: number, target: Point): [Point
     { x: curve[1].x + dx, y: curve[1].y + dy },
     { x: curve[2].x + dx, y: curve[2].y + dy },
   ];
+}
+
+/** The same curve walked the other way. */
+export function reverseCurve([p0, p1, p2, p3]: CubicCurve): CubicCurve {
+  return [p3, p2, p1, p0];
+}
+
+/** The part of the curve between `t0` and `t1` (walked backwards when `t1` < `t0`). */
+export function subCurve(curve: CubicCurve, t0: number, t1: number): CubicCurve {
+  if (t1 < t0) return reverseCurve(subCurve(curve, t1, t0));
+  if (t0 <= 0 && t1 >= 1) return curve;
+  const [left] = t1 >= 1 ? [curve] : splitAt(curve, t1);
+  if (t0 <= 0) return left;
+  return splitAt(left, t0 / t1)[1];
+}
+
+/** How far the inner control points stray from the chord: 0 for a straight curve. */
+export function flatness([p0, p1, p2, p3]: CubicCurve): number {
+  return Math.max(distanceToLine(p1, p0, p3), distanceToLine(p2, p0, p3));
+}
+
+function distanceToLine(p: Point, a: Point, b: Point): number {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const length = Math.hypot(dx, dy);
+  if (length < 1e-12) return Math.hypot(p.x - a.x, p.y - a.y);
+  return Math.abs((p.x - a.x) * dy - (p.y - a.y) * dx) / length;
 }

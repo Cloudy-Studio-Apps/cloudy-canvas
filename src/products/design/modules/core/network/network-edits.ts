@@ -1,6 +1,6 @@
 import type { Point } from "@canvas";
 
-import { bendThrough, splitAt } from "./bezier";
+import { bendThrough, splitAt } from "@canvas";
 import { otherEnd, segmentCurve, segmentsAt, tangentAt } from "./network-curves";
 import type { CubicCurve, VectorNetwork, VectorSegment } from "./network.types";
 

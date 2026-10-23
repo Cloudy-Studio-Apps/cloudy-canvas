@@ -58,6 +58,7 @@ export class ElementLayer extends Container {
         moved.add(view);
       }
       view.setClip(this.placement.clipOf(el));
+      view.setDrawn(this.placement.drawn(el));
       synced.push(view);
     }
     const rehome = this.syncMasks();

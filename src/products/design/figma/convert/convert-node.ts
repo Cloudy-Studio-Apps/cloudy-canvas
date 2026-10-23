@@ -13,6 +13,8 @@ import {
 } from "@canvas/figma";
 
 import type {
+  BooleanElement,
+  BooleanOperation,
   EllipseElement,
   FrameElement,
   GroupElement,
@@ -92,6 +94,15 @@ function convertOwn(
     rotation,
   });
 
+  if (type === "BOOLEAN_OPERATION") {
+    // A live boolean: its operands are converted as its children, and it's worked out from them.
+    const boolean: BooleanElement = {
+      ...figNodeBase("boolean", node, rect, placement, ctx),
+      rotation: 0,
+      operation: booleanOperationOf(node, ctx),
+    };
+    return boolean;
+  }
   if (type === "GROUP" || (type === "FRAME" && node.resizeToFit)) {
     // A group is the box round its children, who carry their own turns.
     const group: GroupElement = {
@@ -143,8 +154,7 @@ function convertOwn(
   }
   // Boolean operations and anything else with an outline keep their look as a vector.
   const vector = vectorFromGeometry(node, world, placement, ctx);
-  if (vector && type === "BOOLEAN_OPERATION") ctx.warnings.add("boolean operations became vectors");
-  else if (vector) ctx.warnings.add(`${type.toLowerCase()} layers became vectors`);
+  if (vector) ctx.warnings.add(`${type.toLowerCase()} layers became vectors`);
   else ctx.warnings.add(`${type.toLowerCase()} layers were left out`);
   return vector;
 }
@@ -185,5 +195,25 @@ function cornerRadiusOf(node: FigNode, ctx: FigImportContext): number {
 
 /** Whether the converted element takes the node's children (not a vector of its outline). */
 function holdsChildren(el: CanvasElement): boolean {
-  return el.type === "frame" || el.type === "group" || el.type === "section";
+  return (
+    el.type === "frame" || el.type === "group" || el.type === "section" || el.type === "boolean"
+  );
+}
+
+/** A Figma boolean's operation (union when Figma's is unknown, with a warning). */
+function booleanOperationOf(node: FigNode, ctx: FigImportContext): BooleanOperation {
+  switch (node.booleanOperation) {
+    case "SUBTRACT":
+      return "subtract";
+    case "INTERSECT":
+      return "intersect";
+    case "XOR":
+      return "exclude";
+    case "UNION":
+    case undefined:
+      return "union";
+    default:
+      ctx.warnings.add("unknown boolean operations became unions");
+      return "union";
+  }
 }

@@ -58,6 +58,9 @@ export class ElementView extends Container {
   private entranceScale = 1;
   private entranceAlpha = 1;
   private faded = false;
+  /** Clipped to nothing (what a hidden parent holds), or drawn by another element. */
+  private clippedAway = false;
+  private undrawn = false;
 
   constructor(
     el: CanvasElement,
@@ -202,16 +205,20 @@ export class ElementView extends Container {
   /**
    * Clips the element to a world area (e.g. the frame holding it, when that frame clips its
    * content); `null` shows all of it. Call it after `sync`, which places the view. A view that lies
-   * inside the area gets no mask, since masks are costly to draw.
+   * inside the area gets no mask, since masks are costly to draw; an empty area (what a hidden
+   * parent holds) isn't drawn at all.
    */
   setClip(clip: ElementClip | null): void {
+    const hidden = !!clip && clip.rect.w <= 0 && clip.rect.h <= 0;
+    this.clippedAway = hidden;
+    this.applyVisible();
     if (this.clipMask) {
       this.mask = null;
       this.clipMask.destroy();
       this.clipMask = null;
       this.drawn = null;
     }
-    if (!clip || clipCovers(clip, this.extent())) return;
+    if (!clip || hidden || clipCovers(clip, this.extent())) return;
     this.clipMask = new Graphics();
     this.addChild(this.clipMask);
     this.mask = this.clipMask;
@@ -235,6 +242,20 @@ export class ElementView extends Container {
       g.poly(corners.flatMap((p) => [p.x, p.y]));
     }
     g.fill({ color: 0xffffff });
+  }
+
+  /**
+   * Whether the view is drawn: not when another element draws it (e.g. a boolean draws its
+   * operands combined). It's still placed, so it's ready when it's drawn again.
+   */
+  setDrawn(drawn: boolean): void {
+    this.undrawn = !drawn;
+    this.applyVisible();
+  }
+
+  private applyVisible(): void {
+    const visible = !this.clippedAway && !this.undrawn;
+    if (this.visible !== visible) this.visible = visible;
   }
 
   /** The world area the view draws in (its masked area when it's clipped). */

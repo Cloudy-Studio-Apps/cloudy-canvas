@@ -4,6 +4,7 @@ import { designAgentTools, designCanvas } from "../../design-points";
 import { designMasks } from "./design-masks";
 import { maskTools } from "./mask.agent-tools";
 import { MaskSection } from "./ui/mask-section";
+import { MaskToolbarButton } from "./ui/mask-toolbar-button";
 import { maskSectionShown, selectionIsMasks } from "./ui/mask-selection";
 import { useMaskCommands } from "./ui/use-mask-commands";
 
@@ -32,6 +33,11 @@ export const maskModule = defineModule({
     host.contribute(designAgentTools, { id: "mask", tools: () => maskTools });
 
     host.contribute(designEditor.sessionHooks, { id: "mask-commands", use: useMaskCommands });
+    host.contribute(designEditor.selectionActions, {
+      id: "mask",
+      order: 10,
+      component: MaskToolbarButton,
+    });
     host.contribute(designEditor.propertySections, {
       id: "mask",
       tab: "design",

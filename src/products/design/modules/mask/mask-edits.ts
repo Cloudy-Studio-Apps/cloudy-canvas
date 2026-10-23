@@ -4,6 +4,7 @@ import {
   childrenByParent,
   isDesignNode,
   nextLayerName,
+  selectionRoots,
   siblingMasks,
   type DesignNode,
 } from "../core";
@@ -95,23 +96,4 @@ export function maskedByMask(maskId: string, elements: readonly CanvasElement[])
 
 function setMasks(doc: CanvasDocument, nodes: readonly DesignNode[], isMask: boolean): void {
   doc.updateMany(new Map(nodes.map((node) => [node.id, { isMask } as ElementPatch])));
-}
-
-/** The selected nodes whose ancestors aren't selected, bottom to top. */
-function selectionRoots(
-  ids: ReadonlySet<string>,
-  elements: readonly CanvasElement[],
-): DesignNode[] {
-  const byId = new Map(elements.map((el) => [el.id, el]));
-  const selectedAbove = (node: DesignNode): boolean => {
-    for (let id = node.parentId, depth = 0; id && depth <= elements.length; depth++) {
-      if (ids.has(id)) return true;
-      const parent = byId.get(id);
-      id = parent && isDesignNode(parent) ? parent.parentId : null;
-    }
-    return false;
-  };
-  return elements.filter(
-    (el): el is DesignNode => ids.has(el.id) && isDesignNode(el) && !selectedAbove(el),
-  );
 }

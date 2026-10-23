@@ -58,6 +58,12 @@ export type MasksHook<O extends object> = (
   kinds: ElementKinds<O>,
 ) => ElementMasks;
 
+/** See `CanvasProduct.undrawn`; only one module may give it. */
+export type UndrawnHook<O extends object> = (
+  elements: readonly CanvasElement[],
+  kinds: ElementKinds<O>,
+) => ReadonlySet<string>;
+
 /** See `CanvasProduct.selectTarget`; only one module may decide it. */
 export type SelectTargetHook<O extends object> = (
   hitId: string,
@@ -133,6 +139,8 @@ export interface CanvasPoints<O extends object> {
   clips: ExtensionPoint<ClipsHook<O>>;
   /** What masks each element (one module at most; two throw). */
   masks: ExtensionPoint<MasksHook<O>>;
+  /** What isn't drawn on its own (one module at most; two throw). */
+  undrawn: ExtensionPoint<UndrawnHook<O>>;
   /** What a click selects (one module at most; two throw). */
   selectTarget: ExtensionPoint<SelectTargetHook<O>>;
   /** What a single element aligns with (one module at most; two throw). */

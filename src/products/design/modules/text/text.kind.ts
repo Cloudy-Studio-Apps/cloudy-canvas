@@ -1,4 +1,5 @@
 import {
+  normalizePath,
   scaleLength,
   scaleRect,
   type ElementBuildContext,
@@ -10,7 +11,7 @@ import {
   type Rect,
   type ScaleTransform,
 } from "@canvas";
-import type { FontRequest } from "@shared/core";
+import type { FontRequest, GlyphOutliner } from "@shared/core";
 
 import {
   colorPaints,
@@ -18,12 +19,14 @@ import {
   drawPaints,
   NODE_STYLE_FIELDS,
   type NodeBuildContext,
+  type NodeGeometry,
 } from "../core";
 import { TEXT_DEFAULTS } from "./text.defaults";
 import { retypeset } from "./retypeset";
 import { TEXT_SPEC_PROPERTIES, textFields } from "./text-args";
 import { createText } from "./text.factory";
 import { textSize, textStyleOf } from "./text-layout";
+import { textOutline } from "./text-outline";
 import type { TextNodeElement } from "./text.types";
 
 /** Longest layer name a text takes from its content. */
@@ -56,6 +59,43 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
     "textAlign",
     "verticalAlign",
   ];
+
+  /**
+   * `outliner` gives its glyphs' outlines (flattening it, booleans and vector masks made of it);
+   * without one, a text has no shape.
+   */
+  constructor(private readonly outliner: GlyphOutliner | null = null) {
+    super();
+  }
+
+  /** Its glyphs, laid out as drawn; worked out again once its face can be outlined. */
+  override geometryKey(el: TextNodeElement): string {
+    const ready = this.outliner?.ready(this.fonts(el)[0]!) ?? false;
+    return [
+      el.text,
+      el.fontFamily,
+      el.fontWeight,
+      el.fontStyle,
+      el.fontSize,
+      el.lineHeight,
+      el.letterSpacing,
+      el.textAlign,
+      el.verticalAlign,
+      el.autoResize,
+      el.w,
+      el.h,
+      ready,
+    ].join("|");
+  }
+
+  /** Its glyphs' outlines (holes open), `null` while its face is being read. */
+  protected override buildGeometry(el: TextNodeElement): NodeGeometry | null {
+    if (!this.outliner) return null;
+    const glyphs = textOutline(el, this.outliner);
+    if (!glyphs) return null;
+    const fill = normalizePath(glyphs, "nonzero");
+    return { fill, stroke: fill };
+  }
 
   override readonly text: ElementText<TextNodeElement> = {
     get: (el) => el.text,

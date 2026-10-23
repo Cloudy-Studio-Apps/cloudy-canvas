@@ -13,14 +13,22 @@ import {
   type ScaleTransform,
   type Size,
 } from "@canvas";
-import type { Graphics } from "pixi.js";
 
 import type { DesignToolOptions } from "../../design-options.types";
-import { BoxShapeKind, NODE_STYLE_FIELDS, nonNegative, type NodeBuildContext } from "../core";
+import {
+  BoxShapeKind,
+  EMPTY_GEOMETRY,
+  networkGeometry,
+  NODE_STYLE_FIELDS,
+  nonNegative,
+  rectNetwork,
+  type NodeBuildContext,
+  type NodeGeometry,
+} from "../core";
 import { createFrame } from "./frame.factory";
 import { FRAME_PRESETS, findPreset, presetSize } from "./frame-presets";
 import { FRAME_DEFAULTS } from "./frame.defaults";
-import { drawFrame, frameOutline } from "./frame.draw";
+import { drawFrame } from "./frame.draw";
 import { labelRect, showsLabel } from "./frame-label";
 import type { FrameElement } from "./frame.types";
 
@@ -102,12 +110,17 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
     return super.completePatch(el, patch, context);
   }
 
-  override fillOutline(el: FrameElement): (g: Graphics) => void {
-    return frameOutline(el);
+  override geometryKey(el: FrameElement): string {
+    return `${el.w},${el.h},${el.cornerRadius}`;
+  }
+
+  /** Its (rounded) box; frames don't become vectors, so it isn't their `vectorNetwork`. */
+  protected override buildGeometry(el: FrameElement): NodeGeometry {
+    return networkGeometry(rectNetwork(el.w, el.h, el.cornerRadius), false);
   }
 
   draw(view: ElementView, el: FrameElement): void {
-    drawFrame(view, el);
+    drawFrame(view, el, this.geometry(el) ?? EMPTY_GEOMETRY);
   }
 
   override hitTest(el: FrameElement, p: Point, tolerance: number): boolean {

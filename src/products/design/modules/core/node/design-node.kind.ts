@@ -11,14 +11,14 @@ import {
   rotatePoint,
   scaleLength,
   type ScaleTransform,
+  type StrokeOutlineOptions,
 } from "@canvas";
-
-import type { Graphics } from "pixi.js";
 
 import type { DesignToolOptions } from "../../../design-options.types";
 import { applyNodeSpec } from "./apply-node-spec";
 import { checkNodePatch } from "./check-node-patch";
-import type { DesignNode } from "./design-node.types";
+import type { DesignNode, NodeGeometry } from "./design-node.types";
+import { GEOMETRY_CACHE } from "./node-geometry";
 import type { NodeBuildContext } from "./node-build.types";
 import { flipPaints } from "./flip-paints";
 import { flipPlacement } from "./flip-placement";
@@ -77,10 +77,51 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
   readonly imageFills: boolean = true;
 
   /**
-   * The outline its fills follow, in local coordinates (the caller fills it): what it masks with
-   * as a vector mask. `null` when it has none (a text), so it masks by its pixels made opaque.
+   * Its shape in local coordinates (see `NodeGeometry`): what it draws, is hit by, masks with as a
+   * vector mask and takes part in booleans with. `null` when it has none (a text whose font isn't
+   * loaded yet), so it masks by its pixels. Cached by `geometryKey`; kinds give `buildGeometry`.
    */
-  fillOutline(_el: E): ((g: Graphics) => void) | null {
+  geometry(el: E): NodeGeometry | null {
+    const key = `${this.type}|${this.geometryKey(el)}`;
+    return GEOMETRY_CACHE.getOrSet(key, () => this.buildGeometry(el));
+  }
+
+  /**
+   * Whether it's made of its children (a group, a boolean; see `ChildHostKind`): a click on a
+   * child selects it until it's entered.
+   */
+  readonly childHost: boolean = false;
+
+  /**
+   * Whether what it holds is drawn on its own (a boolean's operands aren't: it draws their
+   * result). What isn't drawn can still be clicked (selecting the boolean) and entered.
+   */
+  readonly drawsChildren: boolean = true;
+
+  /**
+   * Whether it has a shape of its own (a group's is its children's): masks and booleans made of
+   * it take its geometry, else only its children's.
+   */
+  readonly ownsShape: boolean = true;
+
+  /**
+   * What its geometry depends on, as a string (its size by default; kinds add their shape's
+   * fields). Two nodes with the same key share one geometry.
+   */
+  geometryKey(el: E): string {
+    return `${el.w},${el.h}`;
+  }
+
+  /**
+   * How its strokes are turned into an area (a boolean's operand that has no fill, Outline
+   * stroke): square ends and corners by default.
+   */
+  strokeOutline(el: E): StrokeOutlineOptions {
+    return { width: el.strokeWeight, cap: "butt", join: "miter" };
+  }
+
+  /** Works out its geometry (`geometry` caches it); none by default. */
+  protected buildGeometry(_el: E): NodeGeometry | null {
     return null;
   }
 

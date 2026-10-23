@@ -58,6 +58,8 @@ export interface ToolSidebarEntry {
 export interface LayerIconEntry {
   type: string;
   icon: ExtensionIcon;
+  /** A node's own icon when it depends on its fields (a boolean's operation). */
+  iconOf?: (node: DesignNode) => ExtensionIcon;
 }
 
 /** What a main menu item can reach when it's picked. */

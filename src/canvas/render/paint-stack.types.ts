@@ -23,7 +23,7 @@ export interface ShapePaintLayer {
   draw(g: Graphics, tools: PaintTools): void;
 }
 
-/** An image asset fitted into `box` (local coordinates) and clipped to the outline `mask` traces. */
+/** An image asset fitted into `box` (local coordinates) and clipped to the area `mask` fills. */
 export interface ImagePaintLayer {
   kind: "image";
   assetId: string;
@@ -31,7 +31,7 @@ export interface ImagePaintLayer {
   fit: ImageFit;
   /** 0–1. */
   alpha: number;
-  /** Traces the clip outline into `g` (filled by the stack). */
+  /** Fills the clip area into `g` (any color; holes cut out stay out). */
   mask(g: Graphics): void;
 }
 

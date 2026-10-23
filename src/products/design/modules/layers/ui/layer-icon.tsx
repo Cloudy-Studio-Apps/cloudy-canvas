@@ -19,7 +19,8 @@ export function LayerIcon({ node }: LayerIconProps) {
       </span>
     );
   }
-  const own = host.find(designEditor.layerIcons, type)?.icon;
+  const entry = host.find(designEditor.layerIcons, type);
+  const own = entry?.iconOf?.(node) ?? entry?.icon;
   const tool = host
     .get(designEditor.tools)
     .find((entry) => "element" in entry && entry.element === type)?.icon;

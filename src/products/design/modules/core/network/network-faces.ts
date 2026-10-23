@@ -1,7 +1,7 @@
 import type { Point } from "@canvas";
 
 import { pointInPolygon } from "../node/shape-points";
-import { flatten } from "./bezier";
+import { flatten } from "@canvas";
 import { reverseCurve, segmentCurve } from "./network-curves";
 import type { HalfEdge, NetworkFace, VectorNetwork } from "./network.types";
 

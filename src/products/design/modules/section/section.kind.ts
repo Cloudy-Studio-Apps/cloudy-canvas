@@ -1,7 +1,15 @@
 import type { ElementView, Rect } from "@canvas";
-import type { Graphics } from "pixi.js";
 
-import { BoxShapeKind, drawPaints, traceBox, type DesignNode, type DesignNodeKind } from "../core";
+import {
+  BoxShapeKind,
+  drawPaints,
+  EMPTY_GEOMETRY,
+  networkGeometry,
+  rectNetwork,
+  type DesignNode,
+  type DesignNodeKind,
+  type NodeGeometry,
+} from "../core";
 import { createSection } from "./section.factory";
 import { SECTION_DEFAULTS } from "./section.defaults";
 import { sectionTitleBox } from "./section-title";
@@ -27,12 +35,13 @@ export class SectionKind extends BoxShapeKind<SectionElement> {
     return parentKind instanceof SectionKind;
   }
 
-  override fillOutline(el: SectionElement): (g: Graphics) => void {
-    return (g) => traceBox(g, el.w, el.h, SECTION_DEFAULTS.radius);
+  /** Its rounded box; sections don't become vectors, so it isn't their `vectorNetwork`. */
+  protected override buildGeometry(el: SectionElement): NodeGeometry {
+    return networkGeometry(rectNetwork(el.w, el.h, SECTION_DEFAULTS.radius), false);
   }
 
   draw(view: ElementView, el: SectionElement): void {
-    drawPaints(view, el, this.fillOutline(el));
+    drawPaints(view, el, this.geometry(el) ?? EMPTY_GEOMETRY);
     const name = this.layerName(el);
     const box = sectionTitleBox(el, name);
     const { fontSize, color, background, border, padX, padY, radius } = SECTION_DEFAULTS.title;

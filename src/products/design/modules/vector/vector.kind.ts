@@ -1,31 +1,33 @@
 import {
+  identityKey,
   optionalBoolean,
+  pointInPath,
   type ElementBuildContext,
   type ElementPatch,
   type ElementSpec,
   type ElementView,
   type Point,
   type Rect,
+  type StrokeOutlineOptions,
 } from "@canvas";
-import type { Graphics } from "pixi.js";
 
 import {
   DesignNodeKind,
   drawPaints,
   flipPaints,
   flipPlacement,
+  EMPTY_GEOMETRY,
   hitSegment,
-  insideRegion,
+  networkGeometry,
   NETWORK_SCHEMA,
   placeNetwork,
   polygonNetwork,
   polylineNetwork,
   readNetwork,
   scaleNetwork,
-  traceRegions,
-  traceStrokes,
   type FlipAxis,
   type NodeBuildContext,
+  type NodeGeometry,
   type VectorNetwork,
 } from "../core";
 import { VECTOR_DEFAULTS } from "./vector.defaults";
@@ -56,17 +58,23 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
     network: NETWORK_SCHEMA,
   };
 
-  override fillOutline(el: VectorElement): (g: Graphics) => void {
-    return (g) => traceRegions(g, el.network);
+  /** Its network, which is replaced (not changed) when edited: the same object, the same shape. */
+  override geometryKey(el: VectorElement): string {
+    return String(identityKey(el.network));
+  }
+
+  /** Its regions filled by their winding rules (holes open) and its segments stroked. */
+  protected override buildGeometry(el: VectorElement): NodeGeometry {
+    return networkGeometry(el.network, true);
+  }
+
+  /** Its strokes have round ends and corners, as drawn. */
+  override strokeOutline(el: VectorElement): StrokeOutlineOptions {
+    return { width: el.strokeWeight, cap: "round", join: "round" };
   }
 
   draw(view: ElementView, el: VectorElement): void {
-    drawPaints(
-      view,
-      el,
-      { fill: (g) => traceRegions(g, el.network), stroke: (g) => traceStrokes(g, el.network) },
-      { cap: "round", join: "round" },
-    );
+    drawPaints(view, el, this.geometry(el) ?? EMPTY_GEOMETRY, { cap: "round", join: "round" });
   }
 
   override hitTest(el: VectorElement, p: Point, tolerance: number): boolean {
@@ -74,9 +82,8 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
     const local = { x: p.x - el.x, y: p.y - el.y };
     const reach = el.strokeWeight / 2 + tolerance + VECTOR_DEFAULTS.reach;
     const filled = el.fills.some((paint) => paint.visible);
-    return (
-      hitSegment(el.network, local, reach) !== null || (filled && insideRegion(el.network, local))
-    );
+    const inside = () => pointInPath((this.geometry(el) ?? EMPTY_GEOMETRY).fill, local);
+    return hitSegment(el.network, local, reach) !== null || (filled && inside());
   }
 
   /** Its points and curves stretch with its box. */

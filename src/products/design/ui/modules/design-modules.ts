@@ -4,6 +4,7 @@ import { designCanvas, type DesignToolOptions } from "@design";
 import { createModuleHost, type AppModule, type ModuleHost } from "@shared/core";
 import { usePluginsStore } from "@shared/stores/plugins-store";
 import { assetsModule } from "@design/modules/assets/assets.module";
+import { booleanModule } from "@design/modules/boolean/boolean.module";
 import { coreModule } from "@design/modules/core/core.module";
 import { ellipseModule } from "@design/modules/ellipse/ellipse.module";
 import { frameModule } from "@design/modules/frame/frame.module";
@@ -38,6 +39,7 @@ let modules: AppModule[] = [
   starModule,
   textModule,
   vectorModule,
+  booleanModule,
   imageModule,
   layersModule,
   assetsModule,

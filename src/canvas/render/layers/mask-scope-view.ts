@@ -1,6 +1,7 @@
 import { ColorMatrixFilter, Container, Graphics, Matrix, Rectangle } from "pixi.js";
 
 import { intersectRects, rectsIntersect } from "../../geometry";
+import { fillPath } from "../../path";
 import type { Rect } from "../../geometry.types";
 import type { ElementMask, MaskShape } from "../layer-placement.types";
 import { MaskSource } from "./mask-source";
@@ -113,8 +114,7 @@ function traceShapes(g: Graphics, shapes: readonly MaskShape[]): void {
   for (const shape of shapes) {
     const turn = (-shape.rotation * Math.PI) / 180;
     g.setTransform(new Matrix().rotate(turn).translate(shape.x, shape.y));
-    shape.trace(g);
-    g.fill({ color: 0xffffff });
+    fillPath(g, shape.path, { color: 0xffffff });
   }
   g.resetTransform();
 }

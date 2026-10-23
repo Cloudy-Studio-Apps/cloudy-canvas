@@ -57,6 +57,12 @@ export interface CanvasProduct<O extends object = object> {
    */
   masks?(elements: readonly CanvasElement[]): ElementMasks;
   /**
+   * Elements that are on the canvas (hit, selected, snapped to their parents' results) but not
+   * drawn on their own, e.g. a boolean's operands, which it draws combined. `elements` are the
+   * scene's, with derived geometry resolved.
+   */
+  undrawn?(elements: readonly CanvasElement[]): ReadonlySet<string>;
+  /**
    * Starts editing an element in a way of its own (e.g. a design vector's points), on
    * double-click or Enter. Returns `false` to fall back to editing its text, if it has any.
    */

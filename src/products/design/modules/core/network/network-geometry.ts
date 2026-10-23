@@ -1,7 +1,7 @@
 import { boundsOfPoints, type Point, type Rect } from "@canvas";
 
 import { pointInPolygon } from "../node/shape-points";
-import { flatten, nearestT } from "./bezier";
+import { flatten, nearestT } from "@canvas";
 import { loopCurves, segmentCurve } from "./network-curves";
 import type { SegmentHit, VectorNetwork } from "./network.types";
 

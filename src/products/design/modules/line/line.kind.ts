@@ -1,5 +1,6 @@
 import {
   distanceToSegmentSq,
+  lineTo,
   optionalChoice,
   type ElementBuildContext,
   type ElementHandle,
@@ -26,6 +27,7 @@ import {
   pointArg,
   type FlipAxis,
   type NodeBuildContext,
+  type NodeGeometry,
 } from "../core";
 import { LINE_DEFAULTS } from "./line.defaults";
 import { drawLine } from "./line.draw";
@@ -59,6 +61,21 @@ export class LineKind extends DesignNodeKind<LineNodeElement> {
     startCap: { enum: CAPS, description: "Line: how its start looks (none)." },
     endCap: { enum: CAPS, description: 'Line: how its end looks ("arrow" makes an arrow).' },
   };
+
+  override geometryKey(el: LineNodeElement): string {
+    return el.points.join(",");
+  }
+
+  /** Nothing filled; its strokes follow it from start to end. */
+  protected override buildGeometry(el: LineNodeElement): NodeGeometry {
+    const [x0, y0, x1, y1] = el.points;
+    const start = { x: x0, y: y0 };
+    const segment = lineTo(start, { x: x1, y: y1 });
+    return {
+      fill: { contours: [] },
+      stroke: { contours: [{ start, segments: [segment], closed: false }] },
+    };
+  }
 
   draw(view: ElementView, el: LineNodeElement): void {
     drawLine(view, el);

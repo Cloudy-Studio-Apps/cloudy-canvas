@@ -1,21 +1,22 @@
-import type { CanvasElement, SelectTargetRequest } from "@canvas";
+import type { CanvasElement, ElementKinds, SelectTargetRequest } from "@canvas";
 
-import { isDesignNode } from "../core";
-import { enclosingGroups } from "./group-tree";
+import { isDesignNode } from "../node";
+import { enclosingHosts } from "./host-tree";
 
 /**
- * What a click selects (`selectTarget`), as in Figma: the outermost group around what's hit that
- * hasn't been entered, where a group is entered while something inside it is selected; a
+ * What a click selects (`selectTarget`), as in Figma: the outermost group or boolean round what's
+ * hit that hasn't been entered, where one is entered while something inside it is selected; a
  * double-click (`enter`) goes one level further in, Ctrl/Cmd+click (`deep`) to what's hit.
  */
-export function groupSelectTarget(
+export function hostSelectTarget(
   hitId: string,
   { selection, deep, enter }: SelectTargetRequest,
   elements: readonly CanvasElement[],
+  kinds: ElementKinds,
 ): string {
   if (deep) return hitId;
   const byId = new Map(elements.map((el) => [el.id, el]));
-  const levels = [...enclosingGroups(hitId, byId), hitId];
+  const levels = [...enclosingHosts(hitId, byId, kinds), hitId];
   if (levels.length === 1) return hitId;
 
   const entered = new Set<string>();

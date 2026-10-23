@@ -12,6 +12,7 @@ export function createEditorPoints(product: string): EditorPoints {
     sidePanels: definePoint(id("sidePanels"), { keyOf: (entry) => entry.id }),
     topBar: definePoint(id("topBar"), { keyOf: (entry) => entry.id }),
     overlays: definePoint(id("overlays"), { keyOf: (entry) => entry.id }),
+    selectionActions: definePoint(id("selectionActions"), { keyOf: (entry) => entry.id }),
     sessionHooks: definePoint(id("sessionHooks"), { keyOf: (entry) => entry.id }),
     contextMenu: definePoint(id("contextMenu"), { keyOf: (entry) => entry.id }),
     toolbars: definePoint(id("toolbars"), { keyOf: (entry) => entry.id }),

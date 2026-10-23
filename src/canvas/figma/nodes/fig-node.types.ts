@@ -142,6 +142,8 @@ export interface FigNode {
   maskType?: string;
   /** Older files' vector masks, before `maskType`. */
   maskIsOutline?: boolean;
+  /** A boolean's operation: `"UNION"`, `"INTERSECT"`, `"SUBTRACT"` or `"XOR"`. */
+  booleanOperation?: string;
   resizeToFit?: boolean;
   count?: number;
   starInnerScale?: number;

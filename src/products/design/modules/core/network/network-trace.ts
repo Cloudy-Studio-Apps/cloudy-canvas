@@ -1,6 +1,7 @@
 import type { Graphics } from "pixi.js";
 
-import { loopCurves, otherEnd, segmentCurve, segmentsAt, reverseCurve } from "./network-curves";
+import { strokeChains } from "./network-chains";
+import { loopCurves } from "./network-curves";
 import type { CubicCurve, VectorNetwork } from "./network.types";
 
 /** Adds curves that follow each other to the path (the first one starts it). */
@@ -17,32 +18,7 @@ function traceCurves(g: Graphics, curves: readonly CubicCurve[], close: boolean)
  * so strokes turn there instead of ending (closed chains are closed).
  */
 export function traceStrokes(g: Graphics, net: VectorNetwork): void {
-  const used = new Set<number>();
-  const degree = (vertex: number) => segmentsAt(net, vertex).length;
-
-  const walk = (from: number, firstSegment: number): void => {
-    const curves: CubicCurve[] = [];
-    let at = from;
-    let segment: number | undefined = firstSegment;
-    while (segment !== undefined && !used.has(segment)) {
-      used.add(segment);
-      const seg = net.segments[segment]!;
-      const curve = segmentCurve(net, segment);
-      curves.push(seg.start === at ? curve : reverseCurve(curve));
-      at = otherEnd(seg, at);
-      segment = degree(at) === 2 ? segmentsAt(net, at).find((next) => !used.has(next)) : undefined;
-    }
-    traceCurves(g, curves, at === from && curves.length > 1);
-  };
-
-  // Open chains start at ends and branch points; what's left are closed loops.
-  net.vertices.forEach((_, vertex) => {
-    if (degree(vertex) === 2) return;
-    for (const segment of segmentsAt(net, vertex)) if (!used.has(segment)) walk(vertex, segment);
-  });
-  net.segments.forEach((seg, segment) => {
-    if (!used.has(segment)) walk(seg.start, segment);
-  });
+  for (const { curves, closed } of strokeChains(net)) traceCurves(g, curves, closed);
 }
 
 /** Traces the filled regions' loops (each closed). */

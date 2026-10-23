@@ -9,3 +9,5 @@ export { shallowEqual } from "./shallow-equal";
 export { Store } from "./store";
 export { Registry } from "./registry";
 export { base64ToBytes, bytesToBase64 } from "./base64";
+export { LruCache } from "./lru-cache";
+export { identityKey } from "./identity-key";

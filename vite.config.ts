@@ -24,6 +24,10 @@ export default defineConfig(() => ({
   // Workers (the Figma importer) are ES modules, so they can share chunks with the app.
   worker: { format: "es" as const },
 
+  // HarfBuzz finds its WASM next to its script (`new URL(…, import.meta.url)`), which pre-bundling
+  // would move away from it.
+  optimizeDeps: { exclude: ["harfbuzzjs"] },
+
   // Keep in sync with `paths` in tsconfig.json
   resolve: {
     alias: {

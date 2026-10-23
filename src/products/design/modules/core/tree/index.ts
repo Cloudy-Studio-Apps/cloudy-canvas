@@ -15,3 +15,8 @@ export { prepareTreeCopies } from "./prepare-tree-copies";
 export { reparentMoved } from "./reparent";
 export { childrenByParent, withDescendants } from "./tree-members";
 export { isActiveMask, siblingMasks } from "./sibling-masks";
+export { enclosingHosts, isChildHost, pruneEmptyHosts } from "./host-tree";
+export { hostSelectTarget } from "./host-select-target";
+export { resolveTree } from "./resolve-tree";
+export { treeUndrawn } from "./tree-undrawn";
+export { selectionRoots, wrapNodes } from "./wrap-nodes";

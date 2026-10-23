@@ -1,4 +1,6 @@
-import type { Point } from "@canvas";
+import type { CubicCurve, Point } from "@canvas";
+
+export type { CubicCurve };
 
 /**
  * A curve between two vertices: a cubic bezier whose control points are the vertices plus their
@@ -30,9 +32,6 @@ export interface VectorNetwork {
   regions: VectorRegion[];
 }
 
-/** A cubic bezier's four control points. */
-export type CubicCurve = readonly [Point, Point, Point, Point];
-
 /** Where a point lies near a segment: its index, the curve parameter and the distance. */
 export interface SegmentHit {
   segment: number;
@@ -52,4 +51,10 @@ export interface NetworkFace {
 export interface HalfEdge {
   segment: number;
   forward: boolean;
+}
+
+/** Curves that follow each other, as strokes trace them (`strokeChains`). */
+export interface NetworkChain {
+  curves: CubicCurve[];
+  closed: boolean;
 }

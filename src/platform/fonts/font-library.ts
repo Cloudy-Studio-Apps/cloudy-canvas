@@ -1,6 +1,6 @@
 import { fontKey, type FontFamily, type FontLibrary, type FontRequest } from "@shared/core";
-import { googleFonts, loadGoogleFont } from "./google-fonts";
-import { installedFonts } from "./installed-fonts";
+import { googleFontFile, googleFonts, loadGoogleFont } from "./google-fonts";
+import { installedFontData, installedFonts } from "./installed-fonts";
 
 let families: Promise<FontFamily[]> | null = null;
 const loads = new Map<string, Promise<boolean>>();
@@ -20,6 +20,15 @@ export const fontLibrary: FontLibrary = {
       return [...installed, ...google.filter((family) => !names.has(family.family))];
     });
     return families;
+  },
+  async fontData(request) {
+    const family = (await fontLibrary.families()).find((item) => item.family === request.family);
+    if (family?.source !== "google") {
+      const installed = await installedFontData(request).catch(() => null);
+      if (installed) return installed;
+    }
+    const bytes = await googleFontFile(request).catch(() => null);
+    return bytes ? { bytes, index: 0 } : null;
   },
   load(request) {
     const key = fontKey(request);

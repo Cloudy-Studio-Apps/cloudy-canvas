@@ -216,6 +216,7 @@ export class CanvasEngine<O extends object = object> {
           orderOf: (el, kind) => this.scene.orderKey(el, kind),
           clipOf: (el) => this.scene.clipOf(el),
           masks: () => this.scene.masks,
+          drawn: (el) => this.scene.drawn(el),
         },
       },
     );
@@ -227,6 +228,7 @@ export class CanvasEngine<O extends object = object> {
       orderKeys: product.orderKeys?.bind(product),
       clips: product.clips?.bind(product),
       masks: product.masks?.bind(product),
+      undrawn: product.undrawn?.bind(product),
     });
     if (scopes) {
       this.scopeList = scopes.list(this.doc);
@@ -1052,6 +1054,15 @@ export class CanvasEngine<O extends object = object> {
     this.onCameraChange();
   }
 
+  /**
+   * Reads these elements again, with what derives from them, and redraws them, though the
+   * document didn't change: e.g. a text's glyph outlines arrived, so the booleans and masks made
+   * of it are worked out again.
+   */
+  refreshElements(ids: Iterable<string>): void {
+    this.handleDocumentChange({ updated: new Set(ids), removed: new Set() });
+  }
+
   zoomToFit(): void {
     const bounds = this.scene.contentBounds();
     if (bounds) this.camera.fitRect(bounds);
@@ -1598,7 +1609,7 @@ export class CanvasEngine<O extends object = object> {
     if (!this.snapping.objects) return snapTargets(boxes, lines);
     for (const el of this.scene.elements) {
       const kind = this.kinds.kindOf(el);
-      if (exclude.has(el.id) || !kind.snapTarget(el)) continue;
+      if (exclude.has(el.id) || !kind.snapTarget(el) || !this.scene.drawn(el)) continue;
       const box = this.scene.shownBounds(el);
       if ((box.w > 0 || box.h > 0) && rectsIntersect(box, area)) boxes.push(box);
     }

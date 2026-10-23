@@ -1,11 +1,11 @@
 import type { ElementView, Point } from "@canvas";
-import type { Graphics } from "pixi.js";
 
 import { polygonNetwork } from "../network/network-shapes";
 import type { VectorNetwork } from "../network/network.types";
 import { BoxShapeKind } from "./box-shape.kind";
 import type { DesignNode } from "./design-node.types";
 import { drawPaints } from "./draw-paints";
+import { EMPTY_GEOMETRY } from "./node-geometry";
 import { distanceToOutline, pointInPolygon } from "./shape-points";
 
 /**
@@ -23,13 +23,14 @@ export abstract class PointsShapeKind<E extends DesignNode = DesignNode> extends
     return polygonNetwork(this.points(el));
   }
 
-  override fillOutline(el: E): (g: Graphics) => void {
-    const points = this.points(el);
-    return (g) => g.poly(points);
+  override geometryKey(el: E): string {
+    return this.points(el)
+      .map((p) => `${p.x},${p.y}`)
+      .join(" ");
   }
 
   draw(view: ElementView, el: E): void {
-    drawPaints(view, el, this.fillOutline(el));
+    drawPaints(view, el, this.geometry(el) ?? EMPTY_GEOMETRY);
   }
 
   override hitTest(el: E, p: Point, tolerance: number): boolean {

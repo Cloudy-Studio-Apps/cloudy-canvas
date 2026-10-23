@@ -59,7 +59,7 @@ export function designMasks(elements: readonly CanvasElement[], kinds: ElementKi
     const slot = slotOf(el, 0);
     if (slot) homes.set(el.id, slot);
     if (!isActiveMask(el)) continue;
-    const parts = maskParts(el, byId, children);
+    const parts = maskParts(el, byId, children, kinds);
     masks.set(el.id, {
       id: el.id,
       mode: el.maskType,
@@ -74,15 +74,22 @@ export function designMasks(elements: readonly CanvasElement[], kinds: ElementKi
   return { masks, homes };
 }
 
-/** The mask and the visible nodes it holds: what the mask is made of. */
+/**
+ * The mask and the visible nodes it holds: what the mask is made of (not what a boolean holds,
+ * whose result stands for it).
+ */
 function maskParts(
   mask: DesignNode,
   byId: ReadonlyMap<string, CanvasElement>,
   children: ReadonlyMap<string, string[]>,
+  kinds: ElementKinds,
 ): DesignNode[] {
   const parts: DesignNode[] = [mask];
   for (let i = 0; i < parts.length && i <= byId.size; i++) {
-    for (const id of children.get(parts[i]!.id) ?? []) {
+    const part = parts[i]!;
+    const kind = kinds.kindOf(part);
+    if (kind instanceof DesignNodeKind && !kind.drawsChildren) continue;
+    for (const id of children.get(part.id) ?? []) {
       const child = byId.get(id);
       if (child && isDesignNode(child) && child.visible) parts.push(child);
     }
@@ -90,14 +97,19 @@ function maskParts(
   return parts;
 }
 
-/** The outlines a vector mask is made of; `null` when a part has none (it masks by pixels). */
+/**
+ * The shapes a vector mask is made of: what each part's fills cover. `null` when a part has no
+ * such shape (a text not outlined yet, a line), so the mask goes by its pixels.
+ */
 function maskShapes(parts: readonly DesignNode[], kinds: ElementKinds): MaskShape[] | null {
   const shapes: MaskShape[] = [];
   for (const part of parts) {
     const kind = kinds.kindOf(part);
-    const trace = kind instanceof DesignNodeKind ? kind.fillOutline(part) : null;
-    if (!trace) return null;
-    shapes.push({ x: part.x, y: part.y, rotation: part.rotation ?? 0, trace });
+    if (!(kind instanceof DesignNodeKind)) return null;
+    if (!kind.ownsShape) continue;
+    const geometry = kind.geometry(part);
+    if (!geometry || geometry.fill.contours.length === 0) return null;
+    shapes.push({ x: part.x, y: part.y, rotation: part.rotation ?? 0, path: geometry.fill });
   }
   return shapes;
 }

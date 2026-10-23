@@ -17,6 +17,7 @@ export function createCanvasPoints<O extends object>(product: string): CanvasPoi
     drawOrder: definePoint(id("drawOrder")),
     clips: definePoint(id("clips")),
     masks: definePoint(id("masks")),
+    undrawn: definePoint(id("undrawn")),
     selectTarget: definePoint(id("selectTarget")),
     alignTarget: definePoint(id("alignTarget")),
     editElement: definePoint(id("editElement")),

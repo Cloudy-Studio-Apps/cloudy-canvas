@@ -1,4 +1,5 @@
 export type * from "./font.types";
+export type * from "./glyph-outliner.types";
 export {
   closestVariant,
   FONT_WEIGHT_NAMES,

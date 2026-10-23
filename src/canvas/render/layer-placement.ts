@@ -9,4 +9,5 @@ export const DEFAULT_PLACEMENT: LayerPlacement = {
   orderOf: zOrderKey,
   clipOf: () => null,
   masks: () => NO_MASKS,
+  drawn: () => true,
 };

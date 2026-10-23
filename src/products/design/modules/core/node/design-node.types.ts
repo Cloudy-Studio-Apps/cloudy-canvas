@@ -1,4 +1,4 @@
-import type { CanvasElement, ElementDefaults, MaskMode } from "@canvas";
+import type { CanvasElement, ElementDefaults, MaskMode, PathShape } from "@canvas";
 import type { Graphics } from "pixi.js";
 
 import type { Paint } from "./paint.types";
@@ -64,6 +64,18 @@ export interface StrokeShape {
   join?: "miter" | "round" | "bevel";
 }
 
-/** What a node's paints follow: one outline, or separate ones for its fills and its strokes. */
+/**
+ * A node's shape in local coordinates: what its fills cover (normalized: outers and their holes)
+ * and what its strokes follow. Drawing, hit tests, masks and booleans all read it.
+ */
+export interface NodeGeometry {
+  fill: PathShape;
+  stroke: PathShape;
+}
+
+/**
+ * What a node's paints follow, traced by hand (plugins' kinds): one outline, or separate ones for
+ * its fills and its strokes. Built-in kinds give a `NodeGeometry` instead.
+ */
 export type PaintOutline =
   ((g: Graphics) => void) | { fill: (g: Graphics) => void; stroke: (g: Graphics) => void };

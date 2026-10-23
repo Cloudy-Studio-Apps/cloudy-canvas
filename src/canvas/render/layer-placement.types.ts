@@ -1,7 +1,6 @@
-import type { Graphics } from "pixi.js";
-
 import type { CanvasElement, ElementKind } from "../elements";
 import type { Point, Rect } from "../geometry.types";
+import type { PathShape } from "../path";
 
 /** An element's drawing order key: views are stacked by these, compared as strings. */
 export type OrderKeyOf = (el: CanvasElement, kind: ElementKind) => string;
@@ -32,15 +31,15 @@ export interface MaskSlot {
   role: "source" | "masked";
 }
 
-/** One outline of a vector mask, traced in its element's own frame (see `ElementMask.shape`). */
+/** One outline of a vector mask, in its element's own frame (see `ElementMask.shape`). */
 export interface MaskShape {
   /** The element's top-left corner, in world units. */
   x: number;
   y: number;
   /** Degrees counterclockwise round (x, y). */
   rotation: number;
-  /** Traces the outline (the caller fills it). */
-  trace(g: Graphics): void;
+  /** What it covers, in local coordinates (holes stay open). */
+  path: PathShape;
 }
 
 /**
@@ -77,4 +76,6 @@ export interface LayerPlacement {
   orderOf: OrderKeyOf;
   clipOf: ClipOf;
   masks: () => ElementMasks;
+  /** Whether a view is drawn (not when its element is drawn by another, e.g. a boolean's). */
+  drawn: (el: CanvasElement) => boolean;
 }

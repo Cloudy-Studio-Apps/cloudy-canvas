@@ -28,7 +28,6 @@ class ImageSlot extends Container {
   draw(layer: ImagePaintLayer): void {
     this.clip.clear();
     layer.mask(this.clip);
-    this.clip.fill({ color: 0xffffff });
     this.sprite.alpha = layer.alpha;
     this.assetId = layer.assetId;
     const texture = this.images.get(layer.assetId);

@@ -29,7 +29,8 @@ pub fn run() {
             mcp::commands::mcp_set_enabled,
             open_files::launch_files,
             app_links::launch_links,
-            system_fonts::system_fonts
+            system_fonts::system_fonts,
+            system_fonts::system_font_data
         ])
         .setup(|app| {
             mcp::start(app.handle());

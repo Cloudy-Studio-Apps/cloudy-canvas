@@ -1,3 +1,5 @@
+import type { FontData } from "./glyph-outliner.types";
+
 /** A CSS font weight, from thin (100) to black (900). */
 export type FontWeight = "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800" | "900";
 
@@ -39,6 +41,11 @@ export interface FontLoader {
 export interface FontLibrary extends FontLoader {
   /** Every family, installed first, then Google's; cached after the first call. */
   families(): Promise<FontFamily[]>;
+  /**
+   * A face's font file (TrueType or OpenType), for outlining its glyphs; `null` when it can't be
+   * had (offline and not cached, or in the browser).
+   */
+  fontData(request: FontRequest): Promise<FontData | null>;
 }
 
 /** One face file of a Google font, read from Google's CSS. */

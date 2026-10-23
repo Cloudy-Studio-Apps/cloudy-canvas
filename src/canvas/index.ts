@@ -69,6 +69,7 @@ export * from "./elements";
 export * from "./geometry";
 export * from "./gradient";
 export * from "./rotation";
+export * from "./path";
 export { smoothPoints } from "./smooth-points";
 export { BASE_COMMAND_LABELS, BASE_KEYBINDINGS, Keymap } from "./input";
 export { composeProduct, createCanvasPoints } from "./modules";
@@ -92,4 +93,4 @@ export {
   pastThreshold,
   selectAndEdit,
 } from "./tools";
-export { bytesToBase64, clamp, debounce, Emitter, Registry } from "./utils";
+export { bytesToBase64, clamp, debounce, Emitter, identityKey, LruCache, Registry } from "./utils";

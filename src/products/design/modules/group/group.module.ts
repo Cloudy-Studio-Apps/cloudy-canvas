@@ -6,8 +6,6 @@ import { designAgentTools, designCanvas } from "../../design-points";
 import { groupTools } from "./group.agent-tools";
 import { GroupKind } from "./group.kind";
 import { pruneEmptyGroups } from "./group-nodes";
-import { groupSelectTarget } from "./group-select-target";
-import { resolveGroups } from "./resolve-groups";
 import { useGroupCommands } from "./ui/use-group-commands";
 
 /**
@@ -21,8 +19,6 @@ export const groupModule = defineModule({
   requires: ["core"],
   register(host) {
     host.contribute(designCanvas.kinds, new GroupKind());
-    host.contribute(designCanvas.resolveElements, resolveGroups);
-    host.contribute(designCanvas.selectTarget, groupSelectTarget);
     host.contribute(designCanvas.onRemove, (doc) => pruneEmptyGroups(doc));
     host.contribute(designCanvas.onMoved, (doc) => pruneEmptyGroups(doc));
     host.contribute(

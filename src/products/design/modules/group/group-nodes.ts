@@ -1,13 +1,19 @@
 import {
-  elementBounds,
-  unionRects,
   type CanvasDocument,
   type CanvasElement,
   type ElementKinds,
   type ElementPatch,
 } from "@canvas";
 
-import { childrenByParent, isDesignNode, nextLayerName, type DesignNode } from "../core";
+import {
+  childrenByParent,
+  nextLayerName,
+  pruneEmptyHosts,
+  selectionRoots,
+  wrapNodes,
+  type DesignNode,
+} from "../core";
+import { GROUP_TYPE } from "./group.constants";
 import { createGroup } from "./group.factory";
 import { isGroup } from "./group-tree";
 
@@ -22,30 +28,13 @@ export function groupNodes(
   elements: readonly CanvasElement[],
   kinds: ElementKinds,
 ): string | null {
-  const byId = new Map(elements.map((el) => [el.id, el]));
-  const hasSelectedAncestor = (node: DesignNode) => {
-    for (
-      let id = node.parentId;
-      id;
-      id = (byId.get(id) as DesignNode | undefined)?.parentId ?? null
-    ) {
-      if (ids.has(id)) return true;
-    }
-    return false;
-  };
-  const nodes = elements.filter(
-    (el): el is DesignNode => ids.has(el.id) && isDesignNode(el) && !hasSelectedAncestor(el),
-  );
-  const topmost = nodes[nodes.length - 1];
-  if (!topmost) return null;
-
-  const rect = unionRects(nodes.map((node) => elementBounds(kinds.kindOf(node), node)))!;
+  const nodes = selectionRoots(ids, elements);
+  if (nodes.length === 0) return null;
   const name = nextLayerName(doc.all(), "Group");
-  const group = createGroup(rect, name, topmost.index, topmost.parentId);
   doc.checkpoint();
-  doc.add(group);
-  doc.updateMany(new Map(nodes.map((node) => [node.id, { parentId: group.id } as ElementPatch])));
-  return group.id;
+  return wrapNodes(doc, nodes, kinds, (rect, index, parentId) =>
+    createGroup(rect, name, index, parentId),
+  );
 }
 
 /**
@@ -72,13 +61,9 @@ export function ungroupNodes(
   return [...patches.keys()];
 }
 
+const GROUP_TYPES: ReadonlySet<string> = new Set([GROUP_TYPE]);
+
 /** Removes groups left empty (their children deleted or moved out), in the current undo step. */
 export function pruneEmptyGroups(doc: CanvasDocument): void {
-  for (;;) {
-    const all = doc.all();
-    const parents = new Set(all.map((el) => (isDesignNode(el) ? el.parentId : null)));
-    const empty = all.filter((el) => isGroup(el) && !parents.has(el.id)).map((el) => el.id);
-    if (empty.length === 0) return;
-    doc.remove(empty);
-  }
+  pruneEmptyHosts(doc, GROUP_TYPES);
 }

@@ -29,11 +29,11 @@ export function treeClips(
     if (cached !== undefined) return cached;
     const parent = byId.get(parentId);
     let clip: ElementClip | null = null;
+    const kind = parent ? kinds.kindOf(parent) : null;
     if (parent && isDesignNode(parent) && !parent.visible) {
       // A hidden frame or group hides what it holds: nothing of it is drawn or hit.
       clip = { rect: { x: parent.x, y: parent.y, w: 0, h: 0 }, radius: 0 };
     } else if (parent && isDesignNode(parent)) {
-      const kind = kinds.kindOf(parent);
       const own = kind instanceof DesignNodeKind ? kind.contentClip(parent) : null;
       const outer = clipInside(parent.parentId, depth + 1);
       clip = own && outer ? intersect(own, outer) : (own ?? outer);

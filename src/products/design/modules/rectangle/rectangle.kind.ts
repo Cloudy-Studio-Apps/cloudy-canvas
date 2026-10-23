@@ -7,11 +7,11 @@ import {
   type Rect,
   type ScaleTransform,
 } from "@canvas";
-import type { Graphics } from "pixi.js";
 
 import type { DesignToolOptions } from "../../design-options.types";
 import {
   BoxShapeKind,
+  EMPTY_GEOMETRY,
   NODE_STYLE_FIELDS,
   nonNegative,
   rectNetwork,
@@ -20,7 +20,7 @@ import {
   type VectorNetwork,
 } from "../core";
 import { RECTANGLE_DEFAULTS } from "./rectangle.defaults";
-import { drawRectangle, rectangleOutline } from "./rectangle.draw";
+import { drawRectangle } from "./rectangle.draw";
 import { createRectangle } from "./rectangle.factory";
 import type { RectangleElement } from "./rectangle.types";
 
@@ -70,12 +70,12 @@ export class RectangleKind extends BoxShapeKind<RectangleElement> {
     return rectNetwork(el.w, el.h, el.cornerRadius);
   }
 
-  override fillOutline(el: RectangleElement): (g: Graphics) => void {
-    return rectangleOutline(el);
+  override geometryKey(el: RectangleElement): string {
+    return `${el.w},${el.h},${el.cornerRadius}`;
   }
 
   draw(view: ElementView, el: RectangleElement): void {
-    drawRectangle(view, el);
+    drawRectangle(view, el, this.geometry(el) ?? EMPTY_GEOMETRY);
   }
 
   /** Its corners round in proportion. */

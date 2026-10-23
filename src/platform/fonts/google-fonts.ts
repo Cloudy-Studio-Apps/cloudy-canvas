@@ -1,3 +1,6 @@
+import { isTauri } from "@tauri-apps/api/core";
+import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
+
 import {
   GOOGLE_CATALOG_URL,
   GOOGLE_FALLBACK_FAMILIES,
@@ -9,6 +12,9 @@ import {
 } from "@shared/core";
 import { http } from "../http";
 import { fontCache } from "./font-cache";
+
+/** A user agent Google's CSS answers with TrueType files. */
+const TTF_USER_AGENT = "Mozilla/4.0";
 
 /** The catalog is read again after this long. */
 const CATALOG_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
@@ -38,7 +44,7 @@ export async function googleFonts(): Promise<FontFamily[]> {
  * the first time and reading them from the cache afterwards. Resolves when it can be drawn.
  */
 export async function loadGoogleFont(request: FontRequest): Promise<boolean> {
-  const folder = `google/${slug(request.family)}/${request.weight}${request.style === "italic" ? "i" : ""}`;
+  const folder = faceFolder(request);
   const css =
     (await fontCache.readText(`${folder}/face.css`)) ??
     (await download(`${folder}/face.css`, () =>
@@ -65,6 +71,24 @@ export async function loadGoogleFont(request: FontRequest): Promise<boolean> {
   return faces.some((face) => face !== null);
 }
 
+/**
+ * One face of a Google family as a TrueType file, for outlining its glyphs (HarfBuzz reads TTF,
+ * not the WOFF2 the browser gets): Google's CSS lists TTF for an old user agent. Downloaded once
+ * and cached; `null` offline before that, or in the browser (which can't set the user agent).
+ */
+export async function googleFontFile(request: FontRequest): Promise<Uint8Array | null> {
+  const name = `${faceFolder(request)}/face.ttf`;
+  const cached = await fontCache.readBytes(name);
+  if (cached || !isTauri()) return cached;
+  const response = await tauriFetch(googleFontCssUrl(request.family, request), {
+    headers: { "User-Agent": TTF_USER_AGENT },
+  });
+  if (!response.ok) return null;
+  const [source] = parseFontFaceCss(await response.text());
+  if (!source) return null;
+  return download(name, () => http.getBytes(source.url), true);
+}
+
 async function readCatalog(): Promise<{ savedAt: number; families: FontFamily[] } | null> {
   try {
     const text = await fontCache.readText(CATALOG_FILE);
@@ -86,6 +110,11 @@ async function download<T extends string | Uint8Array | null>(
     else await fontCache.writeText(name, data as string);
   }
   return data;
+}
+
+/** Where a face's files are cached. */
+function faceFolder(request: FontRequest): string {
+  return `google/${slug(request.family)}/${request.weight}${request.style === "italic" ? "i" : ""}`;
 }
 
 /** A family name as a folder name. */

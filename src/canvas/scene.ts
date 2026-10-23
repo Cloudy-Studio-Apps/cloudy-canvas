@@ -41,6 +41,7 @@ export class Scene {
   private keys = new Map<string, string>();
   private clips = new Map<string, ElementClip>();
   private maskData: ElementMasks = NO_MASKS;
+  private undrawnIds: ReadonlySet<string> = new Set();
   private replaced: string[] = [];
   private scopes = new Map<string, string | null>();
   private hoverId: string | null = null;
@@ -87,6 +88,10 @@ export class Scene {
     for (const id of new Set([...masks.homes.keys(), ...this.maskData.homes.keys()])) {
       if (!sameSlot(masks.homes.get(id), this.maskData.homes.get(id))) replaced.add(id);
     }
+    const undrawn = this.hooks.undrawn?.(resolved) ?? new Set<string>();
+    for (const id of undrawn) if (!this.undrawnIds.has(id)) replaced.add(id);
+    for (const id of this.undrawnIds) if (!undrawn.has(id)) replaced.add(id);
+    this.undrawnIds = undrawn;
     this.replaced = [...replaced];
     this.keys = keys;
     this.clips = clips;
@@ -124,6 +129,11 @@ export class Scene {
   /** What clips an element (the product's `clips`), or `null`. */
   clipOf(el: CanvasElement): ElementClip | null {
     return this.clips.get(el.id) ?? null;
+  }
+
+  /** Whether an element is drawn on its own (see `CanvasProduct.undrawn`). */
+  drawn(el: CanvasElement): boolean {
+    return !this.undrawnIds.has(el.id);
   }
 
   /** The masks on the canvas (the product's `masks`), and where each masked element is drawn. */

@@ -108,6 +108,17 @@ export interface ContextMenuEntryGroup {
 }
 
 /**
+ * Buttons on the toolbar for what's selected (e.g. Use as mask, the boolean operations), after
+ * the tools, while the select tool is on and something is selected; lowest `order` first. A
+ * component returns `null` when the selection isn't for it.
+ */
+export interface SelectionActionEntry {
+  id: string;
+  order: number;
+  component: ComponentType;
+}
+
+/**
  * A toolbar that replaces the main one while one of its tools is on (e.g. a vector edit mode's
  * tools and its Done button).
  */
@@ -128,6 +139,8 @@ export interface EditorPoints {
   /** The top bar, between the built-in buttons and the agents menu. */
   topBar: ExtensionPoint<SlotEntry>;
   overlays: ExtensionPoint<OverlayEntry>;
+  /** Buttons for the selection on the toolbar (see `SelectionActionEntry`). */
+  selectionActions: ExtensionPoint<SelectionActionEntry>;
   sessionHooks: ExtensionPoint<SessionHookEntry>;
   contextMenu: ExtensionPoint<ContextMenuEntryGroup>;
   /** Toolbars shown instead of the main one while their tools are on. */

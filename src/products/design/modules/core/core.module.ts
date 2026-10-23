@@ -29,7 +29,10 @@ import {
 } from "./agent";
 import { pasteGradientOnto } from "./node/paste-gradient";
 import { treeOrderKeys } from "./tree/order-keys";
+import { hostSelectTarget } from "./tree/host-select-target";
+import { resolveTree } from "./tree/resolve-tree";
 import { treeClips } from "./tree/tree-clips";
+import { treeUndrawn } from "./tree/tree-undrawn";
 import { prepareTreeCopies } from "./tree/prepare-tree-copies";
 import { reparentMoved } from "./tree/reparent";
 import { containerAlignTarget } from "./tree/align-target";
@@ -77,6 +80,9 @@ export const coreModule = defineModule({
     });
     host.contribute(designCanvas.drawOrder, treeOrderKeys);
     host.contribute(designCanvas.clips, treeClips);
+    host.contribute(designCanvas.resolveElements, resolveTree);
+    host.contribute(designCanvas.undrawn, treeUndrawn);
+    host.contribute(designCanvas.selectTarget, hostSelectTarget);
     host.contribute(designCanvas.withMembers, (ids, elements) => withDescendants(ids, elements));
     host.contribute(designCanvas.onMoved, reparentMoved);
     host.contribute(designCanvas.alignTarget, containerAlignTarget);
