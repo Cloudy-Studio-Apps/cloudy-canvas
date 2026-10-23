@@ -32,6 +32,8 @@ export interface FigPlacement {
   w: number;
   h: number;
   rotation: number;
+  /** Drawn mirrored left to right inside its box, before the turn (`CanvasElement.mirrored`). */
+  mirrored: boolean;
 }
 
 /**

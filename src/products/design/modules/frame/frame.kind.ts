@@ -169,7 +169,9 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
 
   protected override hitsShape(el: FrameElement, p: Point, tolerance: number): boolean {
     if (super.hitsShape(el, p, tolerance)) return true;
-    return showsLabel(el) && rectContainsPoint(labelRect(el), p, tolerance);
+    // `p` comes mirrored for a mirrored frame; its name isn't drawn mirrored.
+    const at = el.mirrored ? { x: 2 * el.x + el.w - p.x, y: p.y } : p;
+    return showsLabel(el) && rectContainsPoint(labelRect(el), at, tolerance);
   }
 
   /** Its corners round in proportion; its children are scaled as its members. */

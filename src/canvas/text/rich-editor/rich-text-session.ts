@@ -2,7 +2,7 @@ import { isModKey } from "@shared/core";
 
 import type { CanvasElement, ElementPatch, RichTextSpec, TextStyleShortcut } from "../../elements";
 import type { Point } from "../../geometry.types";
-import { rotatePoint } from "../../rotation";
+import { toUnrotated } from "../../rotation";
 import { Disposables } from "../../utils";
 import { caretRect, indexAt, indexOnLine, lineIndexAt } from "../rich/rich-caret";
 import type { RichTextLayout } from "../rich/rich-text.types";
@@ -104,8 +104,10 @@ export class RichTextSession<E extends CanvasElement> {
     const turn = this.host.turnOf(el);
     const { x, y } = this.host.camera.worldToScreen({ x: el.x, y: el.y });
     const rotate = turn ? ` rotate(${-turn}deg)` : "";
+    // A mirrored text is edited mirrored, as it's drawn.
+    const mirror = el.mirrored ? ` translate(${el.w}px, 0) scaleX(-1)` : "";
     this.overlay.place(
-      `translate(${x}px, ${y}px)${rotate} scale(${this.host.camera.zoom})`,
+      `translate(${x}px, ${y}px)${rotate} scale(${this.host.camera.zoom})${mirror}`,
       el.w,
       el.h,
     );
@@ -321,7 +323,7 @@ export class RichTextSession<E extends CanvasElement> {
       x: event.clientX - box.left,
       y: event.clientY - box.top,
     });
-    const local = rotatePoint(world, el, -this.host.turnOf(el));
+    const local = toUnrotated(world, { ...el, rotation: this.host.turnOf(el) });
     return { x: local.x - el.x, y: local.y - el.y };
   }
 }

@@ -70,6 +70,8 @@ export function applyNodeSpec<E extends DesignNode>(
   const inverted = optionalBoolean(args, "maskInverted");
   if (inverted !== undefined) next.maskInverted = inverted;
   Object.assign(next, readNodeLayoutFields(kind as DesignNodeKind, next, args));
+  const mirrored = optionalBoolean(args, "mirrored");
+  if (mirrored !== undefined) next.mirrored = mirrored;
   const rotation = optionalNumber(args, "rotation");
   if (rotation !== undefined && Number.isFinite(rotation) && normalizeAngle(rotation) !== 0)
     return { ...next, ...kind.rotate(next, normalizeAngle(rotation), next) };

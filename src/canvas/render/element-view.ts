@@ -62,6 +62,8 @@ export class ElementView extends Container {
   private drawn: Rect | null = null;
   /** Degrees the element is turned by around its top-left corner (`CanvasElement.rotation`). */
   private turn = 0;
+  /** Drawn mirrored left to right inside its box (`CanvasElement.mirrored`). */
+  private mirrored = false;
   private entranceScale = 1;
   private entranceAlpha = 1;
   private faded = false;
@@ -87,6 +89,7 @@ export class ElementView extends Container {
     this.order = order;
     this.bounds = { x: el.x, y: el.y, w: el.w, h: el.h };
     this.turn = kind.rotatable ? (el.rotation ?? 0) : 0;
+    this.mirrored = el.mirrored === true;
     this.drawn = null;
     this.placeScaled();
     this.setTextResolution(this.textResolution);
@@ -264,7 +267,9 @@ export class ElementView extends Container {
     const turn = clip.rotation ?? 0;
     if (turn === this.turn) {
       // Turned with the element (or neither is): a (rounded) rect in its frame.
-      const local = this.worldToView(clip.rect);
+      const corner = this.worldToView(clip.rect);
+      // Mirrored, the rect's left edge lands on its right.
+      const local = this.mirrored ? { x: corner.x - w, y: corner.y } : corner;
       const radius = Math.min(clip.radius, w / 2, h / 2);
       if (radius > 0) g.roundRect(local.x, local.y, w, h, radius);
       else g.rect(local.x, local.y, w, h);
@@ -303,8 +308,9 @@ export class ElementView extends Container {
   extent(): Rect {
     if (!this.drawn) {
       const { minX, minY, width, height } = this.getLocalBounds();
-      const { x, y } = this.bounds;
-      const local = { x: x + minX, y: y + minY, w: width, h: height };
+      const { x, y, w } = this.bounds;
+      const left = this.mirrored ? w - minX - width : minX;
+      const local = { x: x + left, y: y + minY, w: width, h: height };
       this.drawn = rotatedBoundsAround(local, this.bounds, this.turn);
     }
     return this.drawn;
@@ -445,19 +451,22 @@ export class ElementView extends Container {
   private placeScaled(): void {
     const { x, y, w, h } = this.bounds;
     const s = this.entranceScale;
-    this.scale.set(s);
+    this.scale.set(this.mirrored ? -s : s, s);
     this.rotation = (-this.turn * Math.PI) / 180;
-    // The scaled center lands on the element's (turned) center.
+    // The scaled center lands on the element's (turned) center; mirrored, the view's origin is
+    // its box's right edge.
     const origin = { x: 0, y: 0 };
     const center = rotatePoint({ x: w / 2, y: h / 2 }, origin, this.turn);
     const scaled = rotatePoint({ x: (w * s) / 2, y: (h * s) / 2 }, origin, this.turn);
-    this.position.set(x + center.x - scaled.x, y + center.y - scaled.y);
+    const edge = this.mirrored ? rotatePoint({ x: w * s, y: 0 }, origin, this.turn) : origin;
+    this.position.set(x + center.x - scaled.x + edge.x, y + center.y - scaled.y + edge.y);
   }
 
   /** A world point in the view's own (unturned, unscaled) coordinates. */
   private worldToView(p: { x: number; y: number }): { x: number; y: number } {
     const q = rotatePoint(p, this.bounds, -this.turn);
-    return { x: q.x - this.bounds.x, y: q.y - this.bounds.y };
+    const x = q.x - this.bounds.x;
+    return { x: this.mirrored ? this.bounds.w - x : x, y: q.y - this.bounds.y };
   }
 
   private fitImage(texture: Texture): void {

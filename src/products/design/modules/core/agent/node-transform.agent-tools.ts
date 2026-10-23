@@ -41,7 +41,8 @@ export const nodeTransformTools: DesignAgentTool[] = [
     description:
       "Mirrors layers (with what they hold) across the middle of them all, as Shift+H and " +
       "Shift+V do, as one undo step: vectors and lines mirror their points, shapes land mirrored " +
-      "and turned the other way (texts and image fills aren't mirrored). Returns the flipped ids.",
+      "and turned the other way; texts and layers showing pictures are drawn mirrored (`mirrored`). " +
+      "Returns the flipped ids.",
     inputSchema: {
       type: "object",
       required: ["ids", "direction"],

@@ -255,8 +255,10 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
    */
   flip(el: E, axis: FlipAxis, at: number): ElementPatch<E> {
     const placement = flipPlacement(el, axis, at);
-    if (axis === "x" || this.symmetricVertically) {
-      return { ...placement, ...flipPaints(el, axis) } as ElementPatch<E>;
+    // What paints can't show mirrored (a text, a picture) is drawn mirrored instead.
+    const mirror = this.mirrorsOnFlip(el) ? { mirrored: !el.mirrored } : null;
+    if (axis === "x" || (this.symmetricVertically && !mirror)) {
+      return { ...placement, ...(mirror ?? flipPaints(el, axis)) } as ElementPatch<E>;
     }
     // Upside down: half a turn round its middle mirrors a shape symmetric left to right.
     const placed = { ...el, ...placement };
@@ -269,8 +271,17 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
     return {
       ...placement,
       ...this.rotate(placed, 180, middle),
-      ...flipPaints(el, "x"),
+      ...(mirror ?? flipPaints(el, "x")),
     } as ElementPatch<E>;
+  }
+
+  /**
+   * Whether a flip draws it mirrored (`mirrored`) rather than only mirroring its place and its
+   * gradients: when it shows a picture, which only a mirrored drawing can show flipped (texts
+   * always do).
+   */
+  mirrorsOnFlip(el: E): boolean {
+    return [...el.fills, ...el.strokes].some((paint) => paint.type === "image");
   }
 
   /**
@@ -373,6 +384,7 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
       sizing: el.sizing ?? FIXED_SIZING,
       layoutAbsolute: el.layoutAbsolute ?? false,
       sizeLimits: el.sizeLimits ?? null,
+      mirrored: el.mirrored ?? false,
     };
   }
 

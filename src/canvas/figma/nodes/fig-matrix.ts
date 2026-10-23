@@ -35,19 +35,24 @@ export function isAxisAligned(m: FigMatrix): boolean {
 }
 
 /**
- * A `w`×`h` node placed by `m` as a turned box (see `FigPlacement`), or `null` when `m` mirrors or
- * skews it, which a turned box can't show.
+ * A `w`×`h` node placed by `m` as a turned box (see `FigPlacement`), mirrored when `m` mirrors it
+ * (any mirror is one left to right then a turn), or `null` when it skews it, which a turned box
+ * can't show.
  */
 export function placementOf(m: FigMatrix, w: number, h: number): FigPlacement | null {
   const sx = Math.hypot(m.m00, m.m10);
   const sy = Math.hypot(m.m01, m.m11);
   const det = m.m00 * m.m11 - m.m01 * m.m10;
   const skew = m.m00 * m.m01 + m.m10 * m.m11;
-  if (sx < EPSILON || sy < EPSILON || det <= 0 || Math.abs(skew) > SKEW_TOLERANCE * sx * sy)
-    return null;
-  const degrees = (Math.atan2(-m.m10, m.m00) * 180) / Math.PI;
+  if (sx < EPSILON || sy < EPSILON || Math.abs(det) < EPSILON) return null;
+  if (Math.abs(skew) > SKEW_TOLERANCE * sx * sy) return null;
+  const mirrored = det < 0;
+  // Mirrored, the box's corner is where the file's far corner lands, and its x axis turns back.
+  const xAxis = mirrored ? { x: -m.m00, y: -m.m10 } : { x: m.m00, y: m.m10 };
+  const degrees = (Math.atan2(-xAxis.y, xAxis.x) * 180) / Math.PI;
   const rotation = Math.round(degrees * 100) / 100 || 0;
-  return { x: m.m02, y: m.m12, w: w * sx, h: h * sy, rotation };
+  const corner = mirrored ? applyMatrix(m, { x: w, y: 0 }) : { x: m.m02, y: m.m12 };
+  return { ...corner, w: w * sx, h: h * sy, rotation, mirrored };
 }
 
 /** The world box around a `w`×`h` node placed by `m`. */

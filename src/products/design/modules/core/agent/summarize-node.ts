@@ -36,6 +36,7 @@ export function summarizeNode(
       ? { sizing: node.sizing }
       : {}),
     ...(node?.layoutAbsolute ? { layoutAbsolute: true as const } : {}),
+    ...(node?.mirrored ? { mirrored: true as const } : {}),
     ...(node?.effects.some((effect) => effect.visible)
       ? { effects: node.effects.filter((effect) => effect.visible).map((effect) => effect.type) }
       : {}),

@@ -75,6 +75,9 @@ export interface PathPlacement {
   x: number;
   y: number;
   rotation?: number;
+  /** Mirrored left to right inside a box `w` wide, before the turn (`CanvasElement.mirrored`). */
+  mirrored?: boolean;
+  w?: number;
 }
 
 /** An axis-aligned box as its edges. */

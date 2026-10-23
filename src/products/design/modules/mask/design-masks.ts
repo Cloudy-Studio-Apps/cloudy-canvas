@@ -1,5 +1,6 @@
 import {
   elementBounds,
+  mirrorPath,
   toUnrotated,
   type CanvasElement,
   type ElementKinds,
@@ -86,7 +87,8 @@ function maskShapes(parts: readonly DesignNode[], kinds: ElementKinds): MaskShap
     if (!kind.ownsShape) continue;
     const geometry = kind.geometry(part);
     if (!geometry || geometry.fill.contours.length === 0) return null;
-    shapes.push({ x: part.x, y: part.y, rotation: part.rotation ?? 0, path: geometry.fill });
+    const path = part.mirrored ? mirrorPath(geometry.fill, part.w) : geometry.fill;
+    shapes.push({ x: part.x, y: part.y, rotation: part.rotation ?? 0, path });
   }
   return shapes;
 }

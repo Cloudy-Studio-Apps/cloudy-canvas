@@ -25,6 +25,12 @@ export interface CanvasElement {
    * (x, y); `w`×`h` is its size unturned. Only kinds that are `rotatable` set it.
    */
   rotation?: number;
+  /**
+   * Whether it's drawn mirrored left to right inside its box, before its turn (a mirrored text or
+   * picture, Figma's flip of them). Its box, bounds and handles stay where they are; hits see it
+   * mirrored too (`toUnrotated`).
+   */
+  mirrored?: boolean;
 }
 
 /**

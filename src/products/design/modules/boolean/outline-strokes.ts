@@ -1,4 +1,5 @@
 import {
+  mirrorPath,
   rotatePoint,
   type CanvasDocument,
   type CanvasElement,
@@ -60,8 +61,9 @@ function strokeVector(node: DesignNode, kinds: ElementKinds): VectorElement | nu
   if (!(kind instanceof DesignNodeKind) || !kind.ownsShape || node.strokeWeight <= 0) return null;
   const paints: Paint[] = node.strokes.filter((paint) => paint.visible);
   if (paints.length === 0) return null;
-  const area = kind.strokeArea(node);
-  if (area.contours.length === 0) return null;
+  const stroke = kind.strokeArea(node);
+  if (stroke.contours.length === 0) return null;
+  const area = node.mirrored ? mirrorPath(stroke, node.w) : stroke;
   const vector = createVector(
     pathToNetwork(area),
     `${node.name} stroke`,

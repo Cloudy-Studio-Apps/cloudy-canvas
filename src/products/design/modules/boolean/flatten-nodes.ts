@@ -1,4 +1,5 @@
 import {
+  mirrorPath,
   placePath,
   rotatePoint,
   type CanvasDocument,
@@ -41,7 +42,7 @@ export function flattenNodes(
 
   const single = roots.length === 1 ? ownShape(base, kinds) : null;
   const vector = single
-    ? turnedVector(base, single)
+    ? turnedVector(base, base.mirrored ? mirrorPath(single, base.w) : single)
     : worldVector(
         roots,
         roots.flatMap((root) => worldContours(root, kinds, childrenOf)),

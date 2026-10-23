@@ -140,6 +140,11 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
     return el.autoResize === "width" || (axis === "v" && el.autoResize === "height");
   }
 
+  /** Flipped, its glyphs are drawn mirrored, as in Figma. */
+  override mirrorsOnFlip(): boolean {
+    return true;
+  }
+
   /** A text hugs through its auto size, whatever it is now. */
   override canHug(): boolean {
     return true;

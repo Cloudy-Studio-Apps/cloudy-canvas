@@ -9,6 +9,7 @@ import {
   type FigImportContext,
   type FigMatrix,
   type FigNode,
+  type FigPlacement,
   type ResolvedFigNode,
 } from "@canvas/figma";
 
@@ -33,7 +34,7 @@ import type { NodePlacement } from "./convert-node.types";
 
 /** Nodes that hold others and become frames (components and instances too). */
 const FRAMES = new Set(["FRAME", "SYMBOL", "INSTANCE", "COMPONENT_SET"]);
-/** Shapes drawn from their box; mirrored or skewed, they become vectors of their outline. */
+/** Shapes drawn from their box; skewed, they become vectors of their outline. */
 const BOX_SHAPES = new Set([
   "RECTANGLE",
   "ROUNDED_RECTANGLE",
@@ -92,14 +93,16 @@ function convertOwn(
 ): CanvasElement | null {
   const type = node.type ?? "";
   const size = node.size ?? { x: 0, y: 0 };
-  // Turned layers keep their turn; mirrored or skewed ones can't, and are straightened (frames,
-  // texts) or become vectors (shapes).
+  // Turned and mirrored layers keep their turn and mirror; skewed ones can't, and are straightened
+  // (frames, texts) or become vectors (shapes).
   const placed = placementOf(world, size.x, size.y);
   const rect = placed ?? boxOf(world, size.x, size.y);
   const rotation = placed?.rotation ?? 0;
+  const mirrored = placed?.mirrored ?? false;
   const base = <K extends string>(kind: K) => ({
     ...figNodeBase(kind, node, rect, placement, ctx),
     rotation,
+    mirrored,
   });
 
   if (type === "BOOLEAN_OPERATION") {
@@ -120,7 +123,7 @@ function convertOwn(
     return group;
   }
   if (FRAMES.has(type) || type === "SECTION") {
-    if (!placed) ctx.warnings.add("mirrored or skewed frames were straightened");
+    if (!placed) ctx.warnings.add("skewed frames were straightened");
     if (type === "SECTION") return base("section") satisfies SectionElement;
     const frame: FrameElement = {
       ...base("frame"),
@@ -159,7 +162,7 @@ function convertOwn(
     case "VECTOR":
       return convertVector(node, world, placement, ctx);
     case "TEXT":
-      return convertText(node, placed !== null, rotation, rect, placement, ctx);
+      return convertText(node, placed, rect, placement, ctx);
   }
   // Boolean operations and anything else with an outline keep their look as a vector.
   const vector = vectorFromGeometry(node, world, placement, ctx);
@@ -170,16 +173,16 @@ function convertOwn(
 
 function convertText(
   node: FigNode,
-  placed: boolean,
-  rotation: number,
+  placed: FigPlacement | null,
   rect: { x: number; y: number; w: number; h: number },
   placement: NodePlacement,
   ctx: FigImportContext,
 ): TextNodeElement {
-  if (!placed) ctx.warnings.add("mirrored or skewed texts were straightened");
+  if (!placed) ctx.warnings.add("skewed texts were straightened");
   const base = {
     ...figNodeBase("text", node, rect, placement, ctx, { allowImages: false, strokes: [] }),
-    rotation,
+    rotation: placed?.rotation ?? 0,
+    mirrored: placed?.mirrored ?? false,
   };
   // An auto-named text follows its content, as ours do when their name is empty.
   return { ...base, name: node.autoRename ? "" : base.name, ...textFields(node, ctx) };

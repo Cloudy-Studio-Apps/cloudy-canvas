@@ -22,6 +22,6 @@ export { rectPath } from "./rect-path";
 export { boxSidesStroke } from "./box-sides-stroke";
 export { pathBounds } from "./path-bounds";
 export { distanceToPath, pointInPath } from "./path-hit";
-export { localPath, mapPath, placePath } from "./transform-path";
+export { localPath, mapPath, mirrorPath, placePath } from "./transform-path";
 export { fillPath, strokePath, traceContour } from "./trace-path";
 export { FLATTEN_TOLERANCE } from "./path-precision";

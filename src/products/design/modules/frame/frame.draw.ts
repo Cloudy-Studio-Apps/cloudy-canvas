@@ -23,5 +23,7 @@ export function drawFrame(
   const { fontSize, color } = FRAME_DEFAULTS.label;
   const rect = labelRect(el);
   const label = view.setTextSlot(LABEL_SLOT, el.name, { fontSize, color });
-  label.position.set(0, rect.y - el.y);
+  // A mirrored frame's name still reads left to right from its corner.
+  label.scale.x = el.mirrored ? -1 : 1;
+  label.position.set(el.mirrored ? el.w : 0, rect.y - el.y);
 }

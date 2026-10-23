@@ -18,6 +18,8 @@ export interface NodeSummary extends ElementSummary {
   layout?: AutoLayout;
   /** Set when a side hugs or fills. */
   sizing?: NodeSizing;
+  /** Set when it's drawn mirrored inside its box. */
+  mirrored?: true;
   /** Set when its auto layout parent leaves it where it is. */
   layoutAbsolute?: true;
   /** The types of its visible effects, bottom to top (left out when it has none). */

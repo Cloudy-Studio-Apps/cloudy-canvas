@@ -139,6 +139,12 @@ export const NODE_SPEC_PROPERTIES = {
     },
     description: "The smallest and largest an auto layout may make it.",
   },
+  mirrored: {
+    type: "boolean",
+    description:
+      "Drawn mirrored left to right inside its box (before its rotation), e.g. a flipped text " +
+      "or picture; its x, y, w, h don't change. flip_nodes sets it where a flip needs it.",
+  },
   rotation: {
     type: "number",
     description:

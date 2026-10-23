@@ -38,7 +38,13 @@ export function operandShape(
   }
   const geometry = kind.geometry(el);
   if (!geometry) return null;
-  const placement = { x: el.x - base.x, y: el.y - base.y, rotation: el.rotation ?? 0 };
+  const placement = {
+    x: el.x - base.x,
+    y: el.y - base.y,
+    rotation: el.rotation ?? 0,
+    mirrored: el.mirrored ?? false,
+    w: el.w,
+  };
   if (geometry.fill.contours.length > 0) return placePath(geometry.fill, placement);
   if (!hasVisibleStroke(el)) return { contours: [] };
   return placePath(kind.strokeArea(el), placement);
@@ -64,7 +70,7 @@ export function operandKey(
       .map((child) => operandKey(child, context, base, depth + 1));
     return `(${parts.join(";")})`;
   }
-  const place = `${el.x - base.x},${el.y - base.y},${el.rotation ?? 0}`;
+  const place = `${el.x - base.x},${el.y - base.y},${el.rotation ?? 0},${el.mirrored ? "m" : ""}`;
   const stroke = `${strokeKey(el)},${hasVisibleStroke(el)}`;
   return `${kind.type}:${kind.geometryKey(el)}@${place}/${stroke}`;
 }

@@ -18,10 +18,14 @@ export function rotatePoint(p: Point, origin: Point, degrees: number): Point {
 
 /**
  * A world point in the unrotated frame of an element turned by `rotation` around its top-left
- * corner (x, y): where it would be if the element weren't rotated.
+ * corner (x, y): where it would be if the element weren't rotated (nor `mirrored` inside its box).
  */
-export function toUnrotated(p: Point, el: { x: number; y: number; rotation?: number }): Point {
-  return el.rotation ? rotatePoint(p, el, -el.rotation) : p;
+export function toUnrotated(
+  p: Point,
+  el: { x: number; y: number; w?: number; rotation?: number; mirrored?: boolean },
+): Point {
+  const q = el.rotation ? rotatePoint(p, el, -el.rotation) : p;
+  return el.mirrored ? { x: 2 * el.x + (el.w ?? 0) - q.x, y: q.y } : q;
 }
 
 /** The corners of `rect` turned by `degrees` around its top-left corner, clockwise from it. */
