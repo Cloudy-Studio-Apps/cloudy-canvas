@@ -1,17 +1,15 @@
 import type { CanvasElement, ElementBuildContext, ElementKind } from "@canvas";
 
+import { moveIntoProblem } from "../tree/move/move-into";
 import type { DesignNodeKind } from "./design-node.kind";
-import type { DesignNode } from "./design-node.types";
 import { isDesignNode } from "./is-design-node";
 
 /**
- * The id of the container an agent puts `node` into (`ref`: an id, or a key given earlier in the
- * same call; `null`: the top of the page), after checking it's a container the node may go into
- * and not the node itself or something inside it.
+ * The id of the layer an agent puts `node` into (`ref`: an id, or a key given earlier in the same
+ * call; `null`: the top of the page), after checking it may go there (`moveIntoProblem`).
  */
 export function checkParent(
   node: CanvasElement,
-  nodeKind: DesignNodeKind,
   ref: unknown,
   context: ElementBuildContext,
 ): string | null {
@@ -21,23 +19,14 @@ export function checkParent(
   }
   const parent = context.lookup(ref);
   if (!parent || !isDesignNode(parent)) throw new Error(`No layer with id ${ref}.`);
-  const parentKind = context.kinds.kindOf(parent);
-  if (!isNodeKind(parentKind) || !parentKind.container) {
-    throw new Error(
-      `A ${parentKind.label} can't hold layers: put them in a frame or a section (or group them).`,
-    );
+  // Ancestors are looked up as the tree goes (keys given earlier in the call included).
+  const byId = new Map<string, CanvasElement>();
+  for (let at: CanvasElement | undefined = parent; at && !byId.has(at.id);) {
+    byId.set(at.id, at);
+    at = isDesignNode(at) && at.parentId ? context.lookup(at.parentId) : undefined;
   }
-  if (!nodeKind.canGoInto(parent, parentKind)) {
-    throw new Error(`A ${nodeKind.label} can't go into a ${parentKind.label}.`);
-  }
-  const seen = new Set<string>();
-  for (let at: DesignNode | undefined = parent; at;) {
-    if (at.id === node.id) throw new Error(`A layer can't go into itself or what it holds.`);
-    seen.add(at.id);
-    const up: CanvasElement | undefined =
-      at.parentId && !seen.has(at.parentId) ? context.lookup(at.parentId) : undefined;
-    at = up && isDesignNode(up) ? up : undefined;
-  }
+  const problem = moveIntoProblem(node, parent, context.kinds, byId);
+  if (problem) throw new Error(problem);
   return parent.id;
 }
 

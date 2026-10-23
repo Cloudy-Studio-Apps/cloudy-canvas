@@ -35,7 +35,7 @@ export function checkNodePatch<E extends DesignNode>(
     next.strokes = readPaints(patch.strokes, "strokes", false, size);
   }
   if ("maskType" in patch) next.maskType = maskType(patch.maskType);
-  if ("parentId" in patch) next.parentId = checkParent(el, kind, patch.parentId, context);
+  if ("parentId" in patch) next.parentId = checkParent(el, patch.parentId, context);
   if ("rotation" in patch) {
     const angle = patch.rotation;
     if (typeof angle !== "number" || !Number.isFinite(angle))

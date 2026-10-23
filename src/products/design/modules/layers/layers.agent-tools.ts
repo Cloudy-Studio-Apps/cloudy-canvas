@@ -3,8 +3,9 @@ import { optionalString } from "@canvas";
 import { requireDesign, requireNodes, type DesignAgentTool } from "../../agent";
 import { DESIGN_TREE, layerNameOf } from "../core";
 import { layerTreeOf } from "./layer-tree-of";
+import { moveLayersTool } from "./move-layers.agent-tool";
 
-/** The layer tree as the Layers tab shows it. */
+/** The layer tree as the Layers tab shows it, and moving layers in it. */
 export const layersTools: DesignAgentTool[] = [
   {
     name: "get_layer_tree",
@@ -27,4 +28,5 @@ export const layersTools: DesignAgentTool[] = [
       return node ? toNode(node) : (layers.get(null) ?? []).map(toNode);
     },
   },
+  moveLayersTool,
 ];

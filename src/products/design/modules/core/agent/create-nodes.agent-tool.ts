@@ -78,7 +78,7 @@ export const createNodesTool = ({ kinds }: DesignAgentContext): DesignAgentTool 
       const node = kind.buildNode(elementSpec(spec), index, context);
       const parentId =
         "parent" in spec
-          ? checkParent(node, kind, spec.parent, context)
+          ? checkParent(node, spec.parent, context)
           : (containerAt(node, [...engine.elements(), ...built], engine.kinds)?.id ?? null);
       index = generateKeyBetween(index, null);
       built.push({ ...node, parentId });

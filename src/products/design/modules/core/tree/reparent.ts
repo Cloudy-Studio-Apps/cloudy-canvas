@@ -1,7 +1,9 @@
 import type { CanvasDocument, CanvasElement, ElementKinds, ElementPatch } from "@canvas";
 
-import { DesignNodeKind, isDesignNode } from "../node";
+import { DesignNodeKind, isDesignNode, type DesignNode } from "../node";
 import { containerAt } from "./container-at";
+import { placeLayers } from "./move/move-layers";
+import { treeOrderKeys } from "./order-keys";
 import { withDescendants } from "./tree-members";
 
 /**
@@ -16,13 +18,16 @@ export function reparentMoved(
   kinds: ElementKinds,
 ): void {
   const byId = new Map(elements.map((el) => [el.id, el]));
-  const patches = new Map<string, ElementPatch>();
+  const keys = treeOrderKeys(elements);
   const roots = [...moved]
     .map((id) => byId.get(id))
-    .filter((el) => el && isDesignNode(el) && !(el.parentId && moved.has(el.parentId)));
+    .filter((el): el is DesignNode => !!el && isDesignNode(el))
+    .filter((el) => !(el.parentId && moved.has(el.parentId)))
+    .sort((a, b) => ((keys.get(a.id) ?? "") < (keys.get(b.id) ?? "") ? -1 : 1));
 
+  // Each moved root by the parent it goes into, bottom to top.
+  const into = new Map<string | null, DesignNode[]>();
   for (const el of roots) {
-    if (!el || !isDesignNode(el)) continue;
     // Children of a node that isn't a container (a group) stay in it; the group follows them.
     const parent = el.parentId ? byId.get(el.parentId) : undefined;
     const parentKind = parent && kinds.kindOf(parent);
@@ -30,11 +35,16 @@ export function reparentMoved(
     const exclude = withDescendants(new Set([el.id]), elements);
     const parentId = containerAt(el, elements, kinds, exclude)?.id ?? null;
     if (parentId === el.parentId) continue;
-    patches.set(el.id, { parentId } as ElementPatch);
+    into.set(parentId, [...(into.get(parentId) ?? []), el]);
   }
-  if (patches.size === 0) return;
+  if (into.size === 0) return;
 
-  const indexes = doc.nextIndexes(patches.size);
-  [...patches.values()].forEach((patch, i) => (patch.index = indexes[i]));
+  // On top of their new siblings.
+  const patches = new Map<string, ElementPatch>();
+  for (const [parentId, nodes] of into) {
+    for (const [id, patch] of placeLayers(elements, nodes, { parentId, position: 0 })) {
+      patches.set(id, patch);
+    }
+  }
   doc.updateMany(patches);
 }

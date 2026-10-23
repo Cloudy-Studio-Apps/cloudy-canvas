@@ -63,7 +63,7 @@ export const imageTools: DesignAgentTool[] = [
       const context = { kinds: engine.kinds, lookup: (ref: string) => engine.getElement(ref) };
       const parentId =
         "parent" in args && isNodeKind(kind)
-          ? checkParent(node, kind, args.parent, context)
+          ? checkParent(node, args.parent, context)
           : (containerAt(node, engine.elements(), engine.kinds)?.id ?? null);
       // Assets are outside the undo history, as when pasting.
       engine.doc.addAsset(assetId, data);

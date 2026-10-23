@@ -1,21 +1,21 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 
-import { siblingMasks, type LayerTree } from "@design";
+import { siblingMasks } from "@design";
 import { PanelIconButton } from "@design/ui/components/panel";
 import { PagesSection } from "@design/modules/pages/ui/pages-section";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
-import { LayerRow } from "./layer-row";
+import { LayersList } from "./layers-list";
 import { LayersSearch } from "./layers-search";
 import { matchingLayers } from "./matching-layers";
 import { revealedLayers } from "./revealed-layers";
 import { useLayerTree } from "./use-layer-tree";
+import { visibleRows } from "./visible-rows";
 
-/** Search results show without their children. */
-const FLAT: LayerTree = new Map();
-
-/** The left panel's Layers tab: the layer tree of the page on screen (topmost first), searchable
- * by name, then the pages. */
+/**
+ * The left panel's Layers tab: the layer tree of the page on screen (topmost first), searchable
+ * by name, its rows dragged to rearrange it, then the pages.
+ */
 export function LayersTab() {
   const engine = useDesignEngine();
   const tree = useLayerTree();
@@ -27,7 +27,31 @@ export function LayersTab() {
   const [search, setSearch] = useState<string | null>(null);
   const searching = search !== null && search.trim() !== "";
   // While searching, the matches show as a flat list.
-  const roots = searching ? matchingLayers(tree, search, engine.kinds) : (tree.get(null) ?? []);
+  const roots = useMemo(
+    () => (searching ? matchingLayers(tree, search, engine.kinds) : (tree.get(null) ?? [])),
+    [searching, tree, search, engine],
+  );
+  // Layers opened by hand, plus the selection's ancestors.
+  const [opened, setOpened] = useState<ReadonlySet<string>>(() => new Set());
+  const expanded = useMemo(() => new Set([...opened, ...revealed]), [opened, revealed]);
+  const rows = useMemo(
+    () => visibleRows(roots, tree, expanded, searching),
+    [roots, tree, expanded, searching],
+  );
+  const toggle = useCallback(
+    (id: string) =>
+      setOpened((current) => {
+        const next = new Set(current);
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+        return next;
+      }),
+    [],
+  );
+  const expand = useCallback(
+    (id: string) => setOpened((current) => (current.has(id) ? current : new Set([...current, id]))),
+    [],
+  );
 
   return (
     <>
@@ -55,23 +79,15 @@ export function LayersTab() {
               : "Draw a frame (F), a shape (R) or text (T) to add a layer."}
           </p>
         ) : (
-          <ul
-            role="tree"
-            aria-label="Layers"
-            className="min-h-0 flex-1 overflow-y-auto px-1.5 pb-3"
-          >
-            {roots.map((node) => (
-              <LayerRow
-                key={node.id}
-                node={node}
-                tree={searching ? FLAT : tree}
-                depth={0}
-                selected={selected}
-                revealed={revealed}
-                masked={masked}
-              />
-            ))}
-          </ul>
+          <LayersList
+            rows={rows}
+            tree={tree}
+            selected={selected}
+            masked={masked}
+            onToggle={toggle}
+            onExpand={expand}
+            draggable={!searching}
+          />
         )}
       </div>
       <PagesSection />

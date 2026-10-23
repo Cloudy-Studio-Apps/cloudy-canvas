@@ -20,3 +20,4 @@ export { hostSelectTarget } from "./host-select-target";
 export { resolveTree } from "./resolve-tree";
 export { treeUndrawn } from "./tree-undrawn";
 export { selectionRoots, wrapNodes } from "./wrap-nodes";
+export * from "./move";
