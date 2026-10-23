@@ -1,4 +1,5 @@
 import type { ElementView, Rect } from "@canvas";
+import type { Graphics } from "pixi.js";
 
 import { BoxShapeKind, drawPaints, traceBox, type DesignNode, type DesignNodeKind } from "../core";
 import { createSection } from "./section.factory";
@@ -26,8 +27,12 @@ export class SectionKind extends BoxShapeKind<SectionElement> {
     return parentKind instanceof SectionKind;
   }
 
+  override fillOutline(el: SectionElement): (g: Graphics) => void {
+    return (g) => traceBox(g, el.w, el.h, SECTION_DEFAULTS.radius);
+  }
+
   draw(view: ElementView, el: SectionElement): void {
-    drawPaints(view, el, (g) => traceBox(g, el.w, el.h, SECTION_DEFAULTS.radius));
+    drawPaints(view, el, this.fillOutline(el));
     const name = this.layerName(el);
     const box = sectionTitleBox(el, name);
     const { fontSize, color, background, border, padX, padY, radius } = SECTION_DEFAULTS.title;

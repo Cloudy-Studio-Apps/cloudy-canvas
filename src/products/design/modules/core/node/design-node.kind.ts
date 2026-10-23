@@ -13,6 +13,8 @@ import {
   type ScaleTransform,
 } from "@canvas";
 
+import type { Graphics } from "pixi.js";
+
 import type { DesignToolOptions } from "../../../design-options.types";
 import { applyNodeSpec } from "./apply-node-spec";
 import { checkNodePatch } from "./check-node-patch";
@@ -73,6 +75,14 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
   readonly strokable: boolean = true;
   /** Whether its fills can be images (text can't: its fill is its color). */
   readonly imageFills: boolean = true;
+
+  /**
+   * The outline its fills follow, in local coordinates (the caller fills it): what it masks with
+   * as a vector mask. `null` when it has none (a text), so it masks by its pixels made opaque.
+   */
+  fillOutline(_el: E): ((g: Graphics) => void) | null {
+    return null;
+  }
 
   /** Its name in the layers panel: the one it was given, or one it derives (e.g. a text's). */
   layerName(el: E): string {
@@ -146,6 +156,9 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
       strokes: el.strokes ?? [],
       strokeWeight: el.strokeWeight ?? NODE_DEFAULTS.strokeWeight,
       rotation: el.rotation ?? 0,
+      isMask: el.isMask ?? false,
+      maskType: el.maskType ?? NODE_DEFAULTS.maskType,
+      maskInverted: el.maskInverted ?? false,
     };
   }
 

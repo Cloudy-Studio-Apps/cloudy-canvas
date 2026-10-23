@@ -1,4 +1,5 @@
 import type { ElementView, Point } from "@canvas";
+import type { Graphics } from "pixi.js";
 
 import { polygonNetwork } from "../network/network-shapes";
 import type { VectorNetwork } from "../network/network.types";
@@ -22,9 +23,13 @@ export abstract class PointsShapeKind<E extends DesignNode = DesignNode> extends
     return polygonNetwork(this.points(el));
   }
 
-  draw(view: ElementView, el: E): void {
+  override fillOutline(el: E): (g: Graphics) => void {
     const points = this.points(el);
-    drawPaints(view, el, (g) => g.poly(points));
+    return (g) => g.poly(points);
+  }
+
+  draw(view: ElementView, el: E): void {
+    drawPaints(view, el, this.fillOutline(el));
   }
 
   override hitTest(el: E, p: Point, tolerance: number): boolean {

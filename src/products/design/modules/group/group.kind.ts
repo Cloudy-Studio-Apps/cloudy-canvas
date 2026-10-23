@@ -1,4 +1,5 @@
 import type { ElementBuildContext, ElementPatch } from "@canvas";
+import type { Graphics } from "pixi.js";
 
 import { DesignNodeKind } from "../core";
 import { GROUP_TYPE } from "./group.constants";
@@ -19,6 +20,11 @@ export class GroupKind extends DesignNodeKind<GroupElement> {
   override readonly styleFields: readonly string[] = [];
 
   draw(): void {}
+
+  /** Nothing of its own: as a mask, its children's outlines make the shape. */
+  override fillOutline(): (g: Graphics) => void {
+    return () => undefined;
+  }
 
   override hitTest(): boolean {
     return false;

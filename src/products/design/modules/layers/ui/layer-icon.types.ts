@@ -1,4 +1,5 @@
+import type { DesignNode } from "@design";
+
 export interface LayerIconProps {
-  /** The node's element type. */
-  type: string;
+  node: DesignNode;
 }

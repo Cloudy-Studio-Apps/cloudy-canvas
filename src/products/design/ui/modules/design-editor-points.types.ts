@@ -1,6 +1,6 @@
 import type { ComponentType } from "react";
 
-import type { ElementKinds } from "@canvas";
+import type { CanvasElement, ElementKinds } from "@canvas";
 import type { EditorPoints, ExtensionIcon } from "@canvas-ui";
 import type { DesignEngine, DesignNode, DesignToolOptions } from "@design";
 import type { ExtensionPoint } from "@shared/core";
@@ -20,6 +20,8 @@ export interface PropertySelection {
   /** The selected design nodes (as the scene has them); empty when nothing is selected. */
   nodes: readonly DesignNode[];
   kinds: ElementKinds<DesignToolOptions>;
+  /** Everything on the page on screen, bottom to top (e.g. what masks the selection). */
+  elements: readonly CanvasElement[];
 }
 
 export interface PropertySectionProps {

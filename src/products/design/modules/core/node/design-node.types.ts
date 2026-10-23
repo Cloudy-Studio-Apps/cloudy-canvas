@@ -1,4 +1,4 @@
-import type { CanvasElement, ElementDefaults } from "@canvas";
+import type { CanvasElement, ElementDefaults, MaskMode } from "@canvas";
 import type { Graphics } from "pixi.js";
 
 import type { Paint } from "./paint.types";
@@ -31,7 +31,22 @@ export interface DesignNode extends CanvasElement {
   strokes: Paint[];
   /** Stroke width in world units. */
   strokeWeight: number;
+  /**
+   * Whether it's a mask: it isn't drawn, and the siblings above it (up to the next mask) show
+   * only through it, as in Figma.
+   */
+  isMask: boolean;
+  /** How it masks (see `MaskType`). */
+  maskType: MaskType;
+  /** Whether what it masks shows only outside it (a cut-out) instead of inside it. */
+  maskInverted: boolean;
 }
+
+/**
+ * How a mask shapes what it masks: by its opacity (`alpha`), by its outline alone (`vector`) or
+ * by its brightness (`luminance`).
+ */
+export type MaskType = MaskMode;
 
 /** Values every design node starts with (`NODE_DEFAULTS`). */
 export interface NodeDefaults extends ElementDefaults {
@@ -39,6 +54,8 @@ export interface NodeDefaults extends ElementDefaults {
   strokeWeight: number;
   /** The stroke a node gets when one is added in the panel. */
   stroke: Paint;
+  /** How a layer made a mask masks. */
+  maskType: MaskType;
 }
 
 /** How strokes end and turn corners (`drawPaints`). */

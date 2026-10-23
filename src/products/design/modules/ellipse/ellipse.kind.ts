@@ -1,4 +1,5 @@
 import type { ElementView, Point, Rect } from "@canvas";
+import type { Graphics } from "pixi.js";
 
 import { BoxShapeKind, drawPaints, ellipseNetwork, type VectorNetwork } from "../core";
 import { ELLIPSE_DEFAULTS } from "./ellipse.defaults";
@@ -21,8 +22,12 @@ export class EllipseKind extends BoxShapeKind<EllipseElement> {
     return ellipseNetwork(el.w, el.h);
   }
 
+  override fillOutline(el: EllipseElement): (g: Graphics) => void {
+    return (g) => g.ellipse(el.w / 2, el.h / 2, el.w / 2, el.h / 2);
+  }
+
   draw(view: ElementView, el: EllipseElement): void {
-    drawPaints(view, el, (g) => g.ellipse(el.w / 2, el.h / 2, el.w / 2, el.h / 2));
+    drawPaints(view, el, this.fillOutline(el));
   }
 
   override hitTest(el: EllipseElement, p: Point, tolerance: number): boolean {

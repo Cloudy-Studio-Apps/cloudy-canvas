@@ -5,7 +5,7 @@ import type { CanvasViewOptions } from "../canvas-view.types";
 import type { CanvasDocument } from "../document";
 import type { CanvasElement, ElementKind, ElementKinds, ElementPatch } from "../elements";
 import type { Keybindings } from "../input";
-import type { ElementClip } from "../render";
+import type { ElementClip, ElementMasks } from "../render";
 import type { CanvasGuides } from "../ruler-guides";
 import type { Rect } from "../geometry.types";
 import type { CanvasLinks } from "../links";
@@ -51,6 +51,12 @@ export type ClipsHook<O extends object> = (
   elements: readonly CanvasElement[],
   kinds: ElementKinds<O>,
 ) => Map<string, ElementClip>;
+
+/** See `CanvasProduct.masks`; only one module may give the masks. */
+export type MasksHook<O extends object> = (
+  elements: readonly CanvasElement[],
+  kinds: ElementKinds<O>,
+) => ElementMasks;
 
 /** See `CanvasProduct.selectTarget`; only one module may decide it. */
 export type SelectTargetHook<O extends object> = (
@@ -125,6 +131,8 @@ export interface CanvasPoints<O extends object> {
   drawOrder: ExtensionPoint<DrawOrderHook<O>>;
   /** What clips each element (one module at most; two throw). */
   clips: ExtensionPoint<ClipsHook<O>>;
+  /** What masks each element (one module at most; two throw). */
+  masks: ExtensionPoint<MasksHook<O>>;
   /** What a click selects (one module at most; two throw). */
   selectTarget: ExtensionPoint<SelectTargetHook<O>>;
   /** What a single element aligns with (one module at most; two throw). */

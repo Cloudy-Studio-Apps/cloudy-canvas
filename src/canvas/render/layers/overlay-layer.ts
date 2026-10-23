@@ -2,6 +2,7 @@ import { Graphics } from "pixi.js";
 
 import type { Camera } from "../../camera";
 import type { ElementHandle } from "../../elements";
+import type { Point } from "../../geometry.types";
 import { rotatedCorners } from "../../rotation";
 import type { Outline, OverlayState } from "../overlay-state.types";
 
@@ -12,11 +13,17 @@ const DOT_PX = 4;
 const HANDLE_FILL = 0xffffff;
 /** Half the length of the "+" on `add` handles, in screen px. */
 const PLUS_PX = 5;
+/** Dashes of mask outlines, in screen px. */
+const DASH_PX = 4;
+const GAP_PX = 3;
 
 /** Hover, selection and marquee outlines, drawn in screen space so line widths stay constant. */
 export class OverlayLayer extends Graphics {
   draw(camera: Camera, state: OverlayState, color: number): void {
     this.clear();
+    for (const outline of state.masks) {
+      this.dashed(this.corners(camera, outline)).stroke({ color, width: 1, alpha: 0.9 });
+    }
     if (state.hover) {
       this.outline(camera, state.hover).stroke({ color, width: 1.5, alpha: 0.6 });
     }
@@ -64,6 +71,36 @@ export class OverlayLayer extends Graphics {
     }
     const corners = rotatedCorners(rect, rotation).map((p) => camera.worldToScreen(p));
     return this.poly(corners.flatMap((p) => [p.x, p.y]));
+  }
+
+  /** An outline's corners on screen, padded 2px when it isn't turned (as `outline` draws it). */
+  private corners(camera: Camera, { rect, rotation }: Outline): Point[] {
+    if (!rotation) {
+      const r = camera.worldRectToScreen(rect, 2);
+      return [
+        { x: r.x, y: r.y },
+        { x: r.x + r.w, y: r.y },
+        { x: r.x + r.w, y: r.y + r.h },
+        { x: r.x, y: r.y + r.h },
+      ];
+    }
+    return rotatedCorners(rect, rotation).map((p) => camera.worldToScreen(p));
+  }
+
+  /** Traces a closed polygon as dashes (the caller strokes them). */
+  private dashed(points: readonly Point[]): this {
+    points.forEach((from, i) => {
+      const to = points[(i + 1) % points.length]!;
+      const length = Math.hypot(to.x - from.x, to.y - from.y);
+      if (length === 0) return;
+      const ux = (to.x - from.x) / length;
+      const uy = (to.y - from.y) / length;
+      for (let d = 0; d < length; d += DASH_PX + GAP_PX) {
+        const end = Math.min(d + DASH_PX, length);
+        this.moveTo(from.x + ux * d, from.y + uy * d).lineTo(from.x + ux * end, from.y + uy * end);
+      }
+    });
+    return this;
   }
 
   /** A `bar` (filled pill) or `add` (light strip with a "+") handle covering its rect. */

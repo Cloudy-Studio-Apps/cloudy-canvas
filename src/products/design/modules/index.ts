@@ -14,3 +14,4 @@ export * from "./section";
 export * from "./star";
 export * from "./text";
 export * from "./vector";
+export * from "./mask";

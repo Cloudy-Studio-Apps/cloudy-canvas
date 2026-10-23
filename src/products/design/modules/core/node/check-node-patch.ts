@@ -3,6 +3,7 @@ import { normalizeAngle, type ElementBuildContext, type ElementPatch } from "@ca
 import type { DesignNodeKind } from "./design-node.kind";
 import type { DesignNode } from "./design-node.types";
 import { checkParent } from "./node-parent";
+import { maskType } from "./mask-args";
 import { fraction } from "./number-args";
 import { readPaints } from "./paint-args";
 
@@ -10,7 +11,8 @@ import { readPaints } from "./paint-args";
  * An agent's patch of the fields every node has, checked and normalized: `opacity` (0–1),
  * `strokeWeight`, full `fills`/`strokes` paint arrays (as the node's kind allows), `parentId`
  * (a container it may go into) and `rotation` (the angle to turn to round its top-left corner,
- * which a kind may hold in its geometry, as a line does).
+ * which a kind may hold in its geometry, as a line does) and `maskType` (alpha, vector or
+ * luminance).
  */
 export function checkNodePatch<E extends DesignNode>(
   kind: DesignNodeKind<E>,
@@ -32,6 +34,7 @@ export function checkNodePatch<E extends DesignNode>(
     if (!kind.strokable) throw new Error(`A ${kind.label} can't have strokes.`);
     next.strokes = readPaints(patch.strokes, "strokes", false, size);
   }
+  if ("maskType" in patch) next.maskType = maskType(patch.maskType);
   if ("parentId" in patch) next.parentId = checkParent(el, kind, patch.parentId, context);
   if ("rotation" in patch) {
     const angle = patch.rotation;

@@ -47,6 +47,23 @@ export const NODE_SPEC_PROPERTIES = {
   strokeWeight: { type: "number" },
   opacity: { type: "number", description: "0–1." },
   visible: { type: "boolean" },
+  isMask: {
+    type: "boolean",
+    description:
+      "Makes it a mask: it isn't drawn, and the layers above it in the same parent (up to the " +
+      "next mask) show only through it. Prefer mask_nodes, which also groups them.",
+  },
+  maskType: {
+    type: "string",
+    enum: ["alpha", "vector", "luminance"],
+    description:
+      "How a mask masks: by its opacity (alpha, default), its outline alone (vector) or its " +
+      "brightness (luminance).",
+  },
+  maskInverted: {
+    type: "boolean",
+    description: "A mask that shows what's outside it instead (a cut-out).",
+  },
   rotation: {
     type: "number",
     description:

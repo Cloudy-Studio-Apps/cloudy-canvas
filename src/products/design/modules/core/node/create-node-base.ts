@@ -25,5 +25,8 @@ export function createNodeBase<K extends string>(
     fills,
     strokes: [],
     strokeWeight: NODE_DEFAULTS.strokeWeight,
+    isMask: false,
+    maskType: NODE_DEFAULTS.maskType,
+    maskInverted: false,
   };
 }

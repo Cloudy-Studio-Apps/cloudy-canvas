@@ -14,3 +14,4 @@ export { treeClips } from "./tree-clips";
 export { prepareTreeCopies } from "./prepare-tree-copies";
 export { reparentMoved } from "./reparent";
 export { childrenByParent, withDescendants } from "./tree-members";
+export { isActiveMask, siblingMasks } from "./sibling-masks";

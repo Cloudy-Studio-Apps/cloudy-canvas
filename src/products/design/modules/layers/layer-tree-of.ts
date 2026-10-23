@@ -14,6 +14,14 @@ export function layerTreeOf(
       name: nameOf(node),
       ...(node.visible ? {} : { hidden: true as const }),
       ...(node.locked ? { locked: true as const } : {}),
+      ...(node.isMask
+        ? {
+            mask: {
+              type: node.maskType,
+              ...(node.maskInverted ? { inverted: true as const } : {}),
+            },
+          }
+        : {}),
       ...(children.length > 0 ? { children: children.map(toNode) } : {}),
     };
   };

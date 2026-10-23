@@ -8,6 +8,8 @@ export interface OverlayInput {
   /** The selected part of the single selected element, if any. */
   part: string | null;
   hover: CanvasElement | undefined;
+  /** Masks to outline: the ones the hovered (or single selected) element shows through, or is. */
+  masks: CanvasElement[];
   marquee: Rect | null;
   zoom: number;
   /** What the resize handles do (the Scale tool gives handles to what only scales). */
@@ -33,6 +35,8 @@ export interface OverlayState {
   /** Bounding box around a multi-selection. */
   selectionBounds: Rect | null;
   hover: Outline | null;
+  /** Outlines of masks, drawn dashed (see `OverlayInput.masks`). */
+  masks: Outline[];
   marquee: Rect | null;
   /** Handles the kinds of the selected and hovered elements offer (`ElementKind.handles`). */
   handles: ElementHandle[];

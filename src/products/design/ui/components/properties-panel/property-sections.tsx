@@ -1,6 +1,6 @@
 import { useEditorModules } from "@canvas-ui";
 import { useDesignEngine } from "../../design-engine-context";
-import { useSelectedNodes } from "../../hooks";
+import { useSceneElements, useSelectedNodes } from "../../hooks";
 import { designEditor, type PropertySelection } from "../../modules";
 import type { PropertySectionsProps } from "./property-sections.types";
 
@@ -9,7 +9,8 @@ export function PropertySections({ tab }: PropertySectionsProps) {
   const engine = useDesignEngine();
   const { host } = useEditorModules();
   const nodes = useSelectedNodes();
-  const selection: PropertySelection = { nodes, kinds: engine.kinds };
+  const elements = useSceneElements();
+  const selection: PropertySelection = { nodes, kinds: engine.kinds, elements };
   const sections = host
     .get(designEditor.propertySections)
     .filter((section) => section.tab === tab && section.when(selection))

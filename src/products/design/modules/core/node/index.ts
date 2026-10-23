@@ -25,3 +25,4 @@ export { fraction, nonNegative, pointArg, wholeNumber } from "./number-args";
 export { colorPaints, hexColor, readPaints } from "./paint-args";
 export { cssGradientPaint, isCssGradient } from "./gradient-args";
 export { pasteGradientOnto } from "./paste-gradient";
+export { MASK_TYPES, maskType } from "./mask-args";

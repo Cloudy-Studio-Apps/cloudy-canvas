@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 
-import type { LayerTree } from "@design";
+import { siblingMasks, type LayerTree } from "@design";
 import { PanelIconButton } from "@design/ui/components/panel";
 import { PagesSection } from "@design/modules/pages/ui/pages-section";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
@@ -23,6 +23,7 @@ export function LayersTab() {
   const selected = useMemo(() => new Set(selectedIds), [selectedIds]);
   // The selection's ancestors open, so a layer picked on the canvas shows in the tree.
   const revealed = useMemo(() => revealedLayers(tree, selectedIds), [tree, selectedIds]);
+  const masked = useMemo(() => siblingMasks([...tree.values()].flat()), [tree]);
   const [search, setSearch] = useState<string | null>(null);
   const searching = search !== null && search.trim() !== "";
   // While searching, the matches show as a flat list.
@@ -67,6 +68,7 @@ export function LayersTab() {
                 depth={0}
                 selected={selected}
                 revealed={revealed}
+                masked={masked}
               />
             ))}
           </ul>

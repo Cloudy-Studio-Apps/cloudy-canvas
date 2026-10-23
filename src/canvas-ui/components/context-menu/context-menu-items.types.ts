@@ -11,12 +11,15 @@ export interface ContextMenuContext {
   styleCopied: boolean;
 }
 
-/** One entry of the canvas context menu: an engine command. */
+/**
+ * One entry of the canvas context menu: an engine command. A dynamic label or `enabled` gets the
+ * engine too, for what the context doesn't say (e.g. whether the selection is a mask).
+ */
 export interface ContextMenuItem {
   command: string;
   /** Defaults to the command's name in `BASE_COMMAND_LABELS`. */
-  label?: string | ((context: ContextMenuContext) => string);
-  enabled?: (context: ContextMenuContext) => boolean;
+  label?: string | ((context: ContextMenuContext, engine: CanvasEngine) => string);
+  enabled?: (context: ContextMenuContext, engine: CanvasEngine) => boolean;
   destructive?: boolean;
 }
 

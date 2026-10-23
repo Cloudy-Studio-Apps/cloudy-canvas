@@ -34,6 +34,7 @@ export function composeProduct<O extends object>(
   const guides = single(host.get(points.guides), `where the ${id}'s ruler guides are kept`);
   const order = single(host.get(points.drawOrder), `the ${id}'s drawing order`);
   const clips = single(host.get(points.clips), `the ${id}'s clips`);
+  const masks = single(host.get(points.masks), `the ${id}'s masks`);
   const target = single(host.get(points.selectTarget), `what a click selects in the ${id}`);
   const aligner = single(host.get(points.alignTarget), `what one element aligns with in the ${id}`);
   const rulerFrame = single(host.get(points.rulerFrame), `what the ${id}'s rulers measure`);
@@ -57,6 +58,7 @@ export function composeProduct<O extends object>(
     ...(guides ? { guides } : {}),
     ...(order ? { orderKeys: (elements) => order(elements, kinds) } : {}),
     ...(clips ? { clips: (elements) => clips(elements, kinds) } : {}),
+    ...(masks ? { masks: (elements) => masks(elements, kinds) } : {}),
     ...(editor ? { editElement: editor } : {}),
     ...(rulerFrame
       ? { rulerFrame: (selected, elements) => rulerFrame(selected, elements, kinds) }

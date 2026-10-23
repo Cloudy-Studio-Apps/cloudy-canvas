@@ -10,11 +10,11 @@ export function ContextMenuEntry({ item, context }: ContextMenuEntryProps) {
   const engine = useEngine();
   const label =
     typeof item.label === "function"
-      ? item.label(context)
+      ? item.label(context, engine)
       : (item.label ?? COMMAND_LABELS[item.command] ?? item.command);
   return (
     <DropdownMenuItem
-      disabled={item.enabled ? !item.enabled(context) : false}
+      disabled={item.enabled ? !item.enabled(context, engine) : false}
       onSelect={() => engine.commands[item.command]?.()}
       className={item.destructive ? "text-destructive" : undefined}
     >

@@ -11,6 +11,7 @@ import { groupModule } from "@design/modules/group/group.module";
 import { imageModule } from "@design/modules/image/image.module";
 import { layersModule } from "@design/modules/layers/layers.module";
 import { lineModule } from "@design/modules/line/line.module";
+import { maskModule } from "@design/modules/mask/mask.module";
 import { pagesModule } from "@design/modules/pages/pages.module";
 import { pluginsTabModule } from "@design/modules/plugins-tab/plugins-tab.module";
 import { polygonModule } from "@design/modules/polygon/polygon.module";
@@ -29,6 +30,7 @@ let modules: AppModule[] = [
   frameModule,
   sectionModule,
   groupModule,
+  maskModule,
   rectangleModule,
   lineModule,
   ellipseModule,

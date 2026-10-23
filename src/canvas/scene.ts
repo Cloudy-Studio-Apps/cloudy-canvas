@@ -6,11 +6,26 @@ import {
   type ElementKind,
   type ElementKinds,
 } from "./elements";
-import { rectContainsRect, rectsEqual, rectsIntersect, unionRects } from "./geometry";
+import {
+  intersectRects,
+  rectContainsRect,
+  rectsEqual,
+  rectsIntersect,
+  unionRects,
+} from "./geometry";
 import type { Point, Rect } from "./geometry.types";
 import type { ResizeMode } from "./handles";
 import { pointInRotatedRect, toUnrotated } from "./rotation";
-import { buildOverlayState, type ElementClip, type OverlayState } from "./render";
+import {
+  buildOverlayState,
+  clipBounds,
+  NO_MASKS,
+  type ElementClip,
+  type ElementMask,
+  type ElementMasks,
+  type MaskSlot,
+  type OverlayState,
+} from "./render";
 import type { SceneHooks } from "./scene.types";
 import { Selection } from "./selection";
 
@@ -25,6 +40,7 @@ export class Scene {
   private derived: string[] = [];
   private keys = new Map<string, string>();
   private clips = new Map<string, ElementClip>();
+  private maskData: ElementMasks = NO_MASKS;
   private replaced: string[] = [];
   private scopes = new Map<string, string | null>();
   private hoverId: string | null = null;
@@ -67,9 +83,14 @@ export class Scene {
     for (const id of new Set([...clips.keys(), ...this.clips.keys()])) {
       if (!sameClip(clips.get(id), this.clips.get(id))) replaced.add(id);
     }
+    const masks = this.hooks.masks?.(resolved) ?? NO_MASKS;
+    for (const id of new Set([...masks.homes.keys(), ...this.maskData.homes.keys()])) {
+      if (!sameSlot(masks.homes.get(id), this.maskData.homes.get(id))) replaced.add(id);
+    }
     this.replaced = [...replaced];
     this.keys = keys;
     this.clips = clips;
+    this.maskData = masks;
     this.list = resolved.sort((a, b) => {
       const ka = keys.get(a.id)!;
       const kb = keys.get(b.id)!;
@@ -105,6 +126,37 @@ export class Scene {
     return this.clips.get(el.id) ?? null;
   }
 
+  /** The masks on the canvas (the product's `masks`), and where each masked element is drawn. */
+  get masks(): ElementMasks {
+    return this.maskData;
+  }
+
+  /** The masks an element shows through, innermost first (the ones it's part of left out). */
+  masksOf(el: CanvasElement): ElementMask[] {
+    const masks: ElementMask[] = [];
+    let slot: MaskSlot | null = this.maskData.homes.get(el.id) ?? null;
+    for (let depth = 0; slot && depth <= this.maskData.masks.size; depth++) {
+      const mask = this.maskData.masks.get(slot.mask);
+      if (!mask) break;
+      if (slot.role === "masked") masks.push(mask);
+      slot = mask.home;
+    }
+    return masks;
+  }
+
+  /**
+   * Where an element shows: its bounds narrowed to its clip and to the masks it shows through
+   * (an inverted mask doesn't narrow it). Empty (0×0) when nothing of it shows.
+   */
+  shownBounds(el: CanvasElement): Rect {
+    let rect = elementBounds(this.kinds.kindOf(el), el);
+    const clip = this.clips.get(el.id);
+    if (clip) rect = intersectRects(rect, clipBounds(clip));
+    for (const mask of this.masksOf(el))
+      if (!mask.inverted) rect = intersectRects(rect, mask.bounds);
+    return rect;
+  }
+
   /** An element's drawing order key (elements not in the scene, like drafts, get `zOrderKey`). */
   orderKey(el: CanvasElement, kind: ElementKind): string {
     return this.keys.get(el.id) ?? zOrderKey(el, kind);
@@ -125,19 +177,28 @@ export class Scene {
       // What's clipped away can't be clicked.
       const clip = this.clips.get(el.id);
       if (clip && !pointInRotatedRect(world, clip.rect, clip.rotation ?? 0, tolerance)) continue;
+      // Nor can what a mask hides.
+      if (this.masksOf(el).some((mask) => mask.contains(world) === mask.inverted)) continue;
       // Kinds hit-test unturned: the point goes into the element's unturned frame.
       if (this.kinds.kindOf(el).hitTest(el, toUnrotated(world, el), tolerance)) return el;
     }
     return undefined;
   }
 
-  /** Unlocked elements touching the rect. Frames only count when the rect encloses them. */
+  /**
+   * Unlocked elements touching the rect where they show (clipped and masked). Frames only count
+   * when the rect encloses them.
+   */
   elementsInRect(rect: Rect): CanvasElement[] {
     return this.list.filter((el) => {
       if (el.locked) return false;
       const kind = this.kinds.kindOf(el);
       const bounds = elementBounds(kind, el);
-      return kind.frame ? rectContainsRect(rect, bounds) : rectsIntersect(bounds, rect);
+      if (kind.frame) return rectContainsRect(rect, bounds);
+      const shown = this.shownBounds(el);
+      // Clipped or masked away entirely (a line's bounds may be flat, but not a point).
+      if (shown.w === 0 && shown.h === 0 && (bounds.w > 0 || bounds.h > 0)) return false;
+      return rectsIntersect(shown, rect);
     });
   }
 
@@ -162,17 +223,37 @@ export class Scene {
     return true;
   }
 
+  /**
+   * The masks the hovered element (or else the single selected one) shows through, and the
+   * element itself when it's a mask, so the overlay outlines what's masking it.
+   */
+  private outlinedMasks(): CanvasElement[] {
+    if (this.maskData.masks.size === 0) return [];
+    const [only] = this.selection.ids;
+    const id = this.hoverId ?? (this.selection.ids.size === 1 ? only : undefined);
+    const el = id ? this.byId.get(id) : undefined;
+    if (!el) return [];
+    const ids = this.masksOf(el).map((mask) => mask.id);
+    if (this.maskData.masks.has(el.id)) ids.push(el.id);
+    return ids.map((maskId) => this.byId.get(maskId)).filter((mask) => mask !== undefined);
+  }
+
   overlay(zoom: number): OverlayState {
     return buildOverlayState({
       kinds: this.kinds,
       selected: this.list.filter((el) => this.selection.has(el.id)),
       part: this.selection.part,
       hover: this.hoverId ? this.byId.get(this.hoverId) : undefined,
+      masks: this.outlinedMasks(),
       marquee: this.marquee,
       zoom,
       resizeMode: this.resizeMode,
     });
   }
+}
+
+function sameSlot(a: MaskSlot | undefined, b: MaskSlot | undefined): boolean {
+  return a?.mask === b?.mask && a?.role === b?.role;
 }
 
 function sameClip(a: ElementClip | undefined, b: ElementClip | undefined): boolean {

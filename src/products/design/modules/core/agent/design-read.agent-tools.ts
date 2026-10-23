@@ -2,6 +2,7 @@ import { optionalRecord, optionalString, rectsIntersect, stringList, type Rect }
 
 import { requireDesign, type DesignAgentTool } from "../../../agent";
 import { isDesignNode } from "../node";
+import { siblingMasks } from "../tree";
 import { summarizeNode } from "./summarize-node";
 
 const NO_ARGS = { type: "object", properties: {} };
@@ -74,6 +75,7 @@ export const designReadTools: DesignAgentTool[] = [
       const type = optionalString(args, "type");
       const parent = args.parent === null ? null : optionalString(args, "parent");
       const within = optionalRecord(args, "within") as Rect | undefined;
+      const masked = siblingMasks(engine.elements());
       return engine
         .elements()
         .filter(
@@ -82,7 +84,7 @@ export const designReadTools: DesignAgentTool[] = [
             (parent === undefined || (isDesignNode(el) && el.parentId === parent)) &&
             (!within || rectsIntersect(el, within)),
         )
-        .map((el) => summarizeNode(engine.kinds, el));
+        .map((el) => summarizeNode(engine.kinds, el, masked));
     },
   },
   {
@@ -106,11 +108,12 @@ export const designReadTools: DesignAgentTool[] = [
     inputSchema: NO_ARGS,
     run: (host) => {
       const { engine } = requireDesign(host);
+      const masked = siblingMasks(engine.elements());
       return engine
         .selectedIds()
         .map((id) => engine.getElement(id))
         .filter((el) => el !== undefined)
-        .map((el) => summarizeNode(engine.kinds, el));
+        .map((el) => summarizeNode(engine.kinds, el, masked));
     },
   },
 ];

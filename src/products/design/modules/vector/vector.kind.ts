@@ -7,6 +7,7 @@ import {
   type Point,
   type Rect,
 } from "@canvas";
+import type { Graphics } from "pixi.js";
 
 import {
   DesignNodeKind,
@@ -54,6 +55,10 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
     },
     network: NETWORK_SCHEMA,
   };
+
+  override fillOutline(el: VectorElement): (g: Graphics) => void {
+    return (g) => traceRegions(g, el.network);
+  }
 
   draw(view: ElementView, el: VectorElement): void {
     drawPaints(

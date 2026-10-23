@@ -8,13 +8,15 @@ import {
 
 import type { DesignNodeKind } from "./design-node.kind";
 import type { DesignNode } from "./design-node.types";
+import { maskType } from "./mask-args";
 import { fraction } from "./number-args";
 import { colorPaints, readPaints } from "./paint-args";
 
 /**
  * A new node with what every node takes from an agent's spec: `name`, `visible`, `opacity`,
- * `fills` (or a `fill` color or CSS gradient), `strokes` (or a `stroke` one), `strokeWeight` and `rotation`
- * (degrees counterclockwise round its top-left corner; a line's ends turn instead).
+ * `fills` (or a `fill` color or CSS gradient), `strokes` (or a `stroke` one), `strokeWeight`, the
+ * mask fields (`isMask`, `maskType`, `maskInverted`) and `rotation` (degrees counterclockwise round
+ * its top-left corner; a line's ends turn instead).
  */
 export function applyNodeSpec<E extends DesignNode>(
   kind: DesignNodeKind<E>,
@@ -54,6 +56,11 @@ export function applyNodeSpec<E extends DesignNode>(
     if (strokeWeight < 0) throw new Error('"strokeWeight" can\'t be negative.');
     next.strokeWeight = strokeWeight;
   }
+  const isMask = optionalBoolean(args, "isMask");
+  if (isMask !== undefined) next.isMask = isMask;
+  if (args.maskType !== undefined) next.maskType = maskType(args.maskType);
+  const inverted = optionalBoolean(args, "maskInverted");
+  if (inverted !== undefined) next.maskInverted = inverted;
   const rotation = optionalNumber(args, "rotation");
   if (rotation !== undefined && Number.isFinite(rotation) && normalizeAngle(rotation) !== 0)
     return { ...next, ...kind.rotate(next, normalizeAngle(rotation), next) };

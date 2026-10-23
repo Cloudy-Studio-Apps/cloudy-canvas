@@ -136,6 +136,12 @@ export interface FigNode {
   rectangleBottomLeftCornerRadius?: number;
   rectangleBottomRightCornerRadius?: number;
   frameMaskDisabled?: boolean;
+  /** Whether the layer is a mask of the siblings above it. */
+  mask?: boolean;
+  /** How it masks: `"ALPHA"`, `"OUTLINE"` (Figma's vector mask) or `"LUMINANCE"`. */
+  maskType?: string;
+  /** Older files' vector masks, before `maskType`. */
+  maskIsOutline?: boolean;
   resizeToFit?: boolean;
   count?: number;
   starInnerScale?: number;

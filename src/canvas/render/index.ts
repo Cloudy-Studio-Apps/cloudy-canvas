@@ -7,6 +7,7 @@ export { Renderer } from "./renderer";
 export { ElementView } from "./element-view";
 export { buildOverlayState } from "./overlay-state";
 export { clipBounds } from "./clip-bounds";
+export { NO_MASKS } from "./layer-placement";
 export type * from "./image-cache.types";
 export { ImageCache } from "./image-cache";
 export type * from "./layer-placement.types";

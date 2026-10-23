@@ -4,7 +4,7 @@ import type { CanvasDocument } from "./document";
 import type { CanvasElement, ElementKinds, ElementPatch } from "./elements";
 import type { Point, Rect } from "./geometry.types";
 import type { Keybindings } from "./input";
-import type { ElementClip } from "./render";
+import type { ElementClip, ElementMasks } from "./render";
 import type { CanvasGuides } from "./ruler-guides";
 import type { CanvasLinks } from "./links";
 import type { Tool, ToolContext } from "./tools";
@@ -50,6 +50,12 @@ export interface CanvasProduct<O extends object = object> {
    * `elements` are the scene's, with derived geometry resolved.
    */
   clips?(elements: readonly CanvasElement[]): Map<string, ElementClip>;
+  /**
+   * The masks: elements that others show through (only where the mask shows, or where it doesn't
+   * when inverted), and where each element under one is drawn (see `ElementMasks`). What's masked
+   * away isn't drawn or hit. `elements` are the scene's, with derived geometry resolved.
+   */
+  masks?(elements: readonly CanvasElement[]): ElementMasks;
   /**
    * Starts editing an element in a way of its own (e.g. a design vector's points), on
    * double-click or Enter. Returns `false` to fall back to editing its text, if it has any.

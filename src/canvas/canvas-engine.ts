@@ -54,7 +54,7 @@ import {
 import { findInteraction } from "./find-interaction";
 import type { EngineLoading } from "./engine-loading.types";
 import type { EngineState } from "./engine-state.types";
-import { intersectRects, rectCenter, rectsIntersect, unionRects } from "./geometry";
+import { rectCenter, rectsIntersect, unionRects } from "./geometry";
 import type { Point, Rect } from "./geometry.types";
 import {
   bindKeyboard,
@@ -64,7 +64,7 @@ import {
   PointerInput,
   toCanvasPointer,
 } from "./input";
-import { clipBounds, Renderer, type CanvasTheme } from "./render";
+import { Renderer, type CanvasTheme } from "./render";
 import {
   guideInside,
   overRuler,
@@ -215,6 +215,7 @@ export class CanvasEngine<O extends object = object> {
         placement: {
           orderOf: (el, kind) => this.scene.orderKey(el, kind),
           clipOf: (el) => this.scene.clipOf(el),
+          masks: () => this.scene.masks,
         },
       },
     );
@@ -225,6 +226,7 @@ export class CanvasEngine<O extends object = object> {
       resolve: product.resolveElements?.bind(product),
       orderKeys: product.orderKeys?.bind(product),
       clips: product.clips?.bind(product),
+      masks: product.masks?.bind(product),
     });
     if (scopes) {
       this.scopeList = scopes.list(this.doc);
@@ -1195,7 +1197,7 @@ export class CanvasEngine<O extends object = object> {
         const members = this.withMembers(ids ?? this.scene.selection.ids, "move");
         return this.scene.elements.filter((el) => members.has(el.id));
       },
-      bounds: (el) => elementBounds(this.kinds.kindOf(el), el),
+      bounds: (el) => this.scene.shownBounds(el),
       rows: (el) => this.kinds.kindOf(el).rows(el),
       createLinks: () => this.product.createLinks?.() ?? [],
       background: this.renderer.background,
@@ -1597,9 +1599,7 @@ export class CanvasEngine<O extends object = object> {
     for (const el of this.scene.elements) {
       const kind = this.kinds.kindOf(el);
       if (exclude.has(el.id) || !kind.snapTarget(el)) continue;
-      const clip = this.scene.clipOf(el);
-      const shown = elementBounds(kind, el);
-      const box = clip ? intersectRects(shown, clipBounds(clip)) : shown;
+      const box = this.scene.shownBounds(el);
       if ((box.w > 0 || box.h > 0) && rectsIntersect(box, area)) boxes.push(box);
     }
     return snapTargets(boxes, lines);

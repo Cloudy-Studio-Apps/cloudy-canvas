@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronRight, Eye, EyeOff, Lock, Unlock } from "lucide-react";
+import { ChevronRight, CornerLeftDown, Eye, EyeOff, Lock, Unlock } from "lucide-react";
 
 import type { ElementPatch } from "@canvas";
 import { layerNameOf } from "@design";
@@ -16,7 +16,7 @@ const INDENT = 14;
  * One layer and, when open, its children. Click selects it (Shift or Ctrl/Cmd adds), double-click
  * renames it; the eye and lock show on hover, or stay while hidden or locked.
  */
-export function LayerRow({ node, tree, depth, selected, revealed }: LayerRowProps) {
+export function LayerRow({ node, tree, depth, selected, revealed, masked }: LayerRowProps) {
   const engine = useDesignEngine();
   const [open, setOpen] = useState(false);
   const [renaming, setRenaming] = useState(false);
@@ -62,8 +62,17 @@ export function LayerRow({ node, tree, depth, selected, revealed }: LayerRowProp
         >
           <ChevronRight className={cn("size-3 transition-transform", expanded && "rotate-90")} />
         </button>
+        {masked.has(node.id) && (
+          <span
+            title="Masked"
+            className="flex shrink-0 text-subtle-foreground [&_svg]:size-3"
+            aria-label="Masked"
+          >
+            <CornerLeftDown />
+          </span>
+        )}
         <span className="flex shrink-0 text-muted-foreground [&_svg]:size-3.5">
-          <LayerIcon type={node.type} />
+          <LayerIcon node={node} />
         </span>
         <LayerName
           name={layerNameOf(node, engine.kinds)}
@@ -114,6 +123,7 @@ export function LayerRow({ node, tree, depth, selected, revealed }: LayerRowProp
               depth={depth + 1}
               selected={selected}
               revealed={revealed}
+              masked={masked}
             />
           ))}
         </ul>

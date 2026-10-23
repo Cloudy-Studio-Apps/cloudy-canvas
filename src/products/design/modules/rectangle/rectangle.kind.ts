@@ -7,6 +7,7 @@ import {
   type Rect,
   type ScaleTransform,
 } from "@canvas";
+import type { Graphics } from "pixi.js";
 
 import type { DesignToolOptions } from "../../design-options.types";
 import {
@@ -19,7 +20,7 @@ import {
   type VectorNetwork,
 } from "../core";
 import { RECTANGLE_DEFAULTS } from "./rectangle.defaults";
-import { drawRectangle } from "./rectangle.draw";
+import { drawRectangle, rectangleOutline } from "./rectangle.draw";
 import { createRectangle } from "./rectangle.factory";
 import type { RectangleElement } from "./rectangle.types";
 
@@ -67,6 +68,10 @@ export class RectangleKind extends BoxShapeKind<RectangleElement> {
 
   override vectorNetwork(el: RectangleElement): VectorNetwork {
     return rectNetwork(el.w, el.h, el.cornerRadius);
+  }
+
+  override fillOutline(el: RectangleElement): (g: Graphics) => void {
+    return rectangleOutline(el);
   }
 
   draw(view: ElementView, el: RectangleElement): void {

@@ -6,13 +6,22 @@ import type { HiddenText } from "../element-view.types";
 import { ElementView } from "../element-view";
 import { entranceAt } from "../entrance";
 import type { ImageCache } from "../image-cache";
-import { DEFAULT_PLACEMENT } from "../layer-placement";
-import type { LayerPlacement } from "../layer-placement.types";
+import { DEFAULT_PLACEMENT, NO_MASKS } from "../layer-placement";
+import type { ElementMasks, LayerPlacement, MaskSlot } from "../layer-placement.types";
 import { textResolution } from "../text-resolution";
+import { insertOrdered } from "./insert-ordered";
+import { MaskScopeView } from "./mask-scope-view";
+import { MaskSource } from "./mask-source";
 
-/** Keeps one ElementView per element, in drawing order and clipped (see `LayerPlacement`). */
-export class ElementLayer extends Container<ElementView> {
+/**
+ * Keeps one ElementView per element, in drawing order, clipped and masked (see `LayerPlacement`).
+ * Views under a mask sit in its `MaskScopeView`, nested as the masks are; the others sit here.
+ */
+export class ElementLayer extends Container {
   private readonly views = new Map<string, ElementView>();
+  /** Mask id → its scope, for the masks whose element this layer draws. */
+  private readonly scopes = new Map<string, MaskScopeView>();
+  private masks: ElementMasks = NO_MASKS;
   private hiddenText: HiddenText | null = null;
   private faded = new Set<string>();
   private textResolution = 1;
@@ -34,33 +43,53 @@ export class ElementLayer extends Container<ElementView> {
       this.views.delete(id);
       this.entrances.delete(id);
     }
+    /** Views that are new or moved in the drawing order. */
+    const moved = new Set<ElementView>();
+    const synced: ElementView[] = [];
     for (const el of elements) {
-      const view = this.views.get(el.id);
+      let view = this.views.get(el.id);
+      const kind = this.kinds.kindOf(el);
       if (view) {
         const order = view.order;
-        const kind = this.kinds.kindOf(el);
         view.sync(el, kind, this.placement.orderOf(el, kind));
-        view.setClip(this.placement.clipOf(el));
-        if (view.order !== order) this.place(view);
+        if (view.order !== order) moved.add(view);
       } else {
-        this.add(el);
+        view = this.create(el);
+        moved.add(view);
       }
+      view.setClip(this.placement.clipOf(el));
+      synced.push(view);
     }
+    const rehome = this.syncMasks();
+    for (const view of rehome ? this.views.values() : synced) this.place(view, moved.has(view));
   }
 
   /** Destroys the views of elements not in `ids` (e.g. removed while the views were built). */
   retain(ids: ReadonlySet<string>): void {
+    let removed = false;
     for (const [id, view] of this.views) {
       if (ids.has(id)) continue;
       view.destroy({ children: true });
       this.views.delete(id);
       this.entrances.delete(id);
+      removed = true;
     }
+    if (removed && this.syncMasks()) for (const view of this.views.values()) this.place(view);
   }
 
-  /** Skips drawing the views outside `visible` (a world rect): large documents draw only what shows. */
+  /**
+   * Skips drawing the views outside `visible` (a world rect): large documents draw only what shows.
+   * What makes up a mask is always drawn (into its mask), unless the whole mask is off screen.
+   */
   cull(visible: Rect): void {
-    for (const view of this.views.values()) view.cull(visible);
+    for (const scope of this.scopes.values()) scope.cull(visible);
+    for (const view of this.views.values()) {
+      if (inMaskSource(view, this)) {
+        if (view.culled) view.culled = false;
+      } else {
+        view.cull(visible);
+      }
+    }
   }
 
   /** Starts the entrance of these elements (those this layer doesn't draw are ignored). */
@@ -118,18 +147,73 @@ export class ElementLayer extends Container<ElementView> {
 
   override destroy(): void {
     this.views.clear();
+    this.scopes.clear();
     super.destroy({ children: true });
   }
 
-  private add(el: CanvasElement): void {
+  private create(el: CanvasElement): ElementView {
     const kind = this.kinds.kindOf(el);
     const view = new ElementView(el, kind, this.images, this.placement.orderOf(el, kind));
-    view.setClip(this.placement.clipOf(el));
     view.setTextResolution(this.textResolution);
     if (this.hiddenText?.id === el.id) this.showText(view, this.hiddenText);
     if (this.faded.has(el.id)) view.setFaded(true);
     this.views.set(el.id, view);
-    this.place(view);
+    return view;
+  }
+
+  /**
+   * Brings the scopes in line with the placement's masks: one for each mask whose element this
+   * layer draws, nested and stacked where the mask is, masking as it says. Returns whether a
+   * scope was added or removed, so every view has to be placed again.
+   */
+  private syncMasks(): boolean {
+    this.masks = this.placement.masks();
+    if (this.masks.masks.size === 0 && this.scopes.size === 0) return false;
+    let changed = false;
+    const reordered = new Set<MaskScopeView>();
+    for (const [id, scope] of this.scopes) {
+      if (this.masks.masks.has(id) && this.views.has(id)) continue;
+      // Its views are placed again by the caller; nested scopes below.
+      for (const child of [...scope.children, ...scope.source.children]) {
+        if (child instanceof ElementView || child instanceof MaskScopeView)
+          child.removeFromParent();
+      }
+      scope.destroy({ children: true });
+      this.scopes.delete(id);
+      changed = true;
+    }
+    for (const [id, mask] of this.masks.masks) {
+      const view = this.views.get(id);
+      if (!view) continue;
+      let scope = this.scopes.get(id);
+      if (!scope) {
+        scope = new MaskScopeView(id);
+        this.scopes.set(id, scope);
+        reordered.add(scope);
+        changed = true;
+      }
+      if (scope.order !== view.order) {
+        scope.order = view.order;
+        reordered.add(scope);
+      }
+      scope.apply(mask);
+    }
+    for (const [id, scope] of this.scopes) {
+      const home = this.containerOf(this.masks.masks.get(id)?.home ?? null);
+      if (reordered.has(scope) || scope.parent !== home) insertOrdered(home, scope);
+    }
+    return changed;
+  }
+
+  /** The container a slot's views go in: the mask's scope or source, else the slot round it. */
+  private containerOf(slot: MaskSlot | null): Container {
+    for (let depth = 0; slot && depth <= this.scopes.size + 1; depth++) {
+      const scope = this.scopes.get(slot.mask);
+      if (scope) return slot.role === "source" ? scope.source : scope;
+      // This layer doesn't draw the mask (e.g. a snapshot of what it masks only).
+      slot = this.masks.masks.get(slot.mask)?.home ?? null;
+    }
+    return this;
   }
 
   /** Shows all of a view's text except what `hidden` names (all of it when it has no part). */
@@ -138,16 +222,20 @@ export class ElementLayer extends Container<ElementView> {
     view?.setHiddenSlot(hidden?.part ?? null);
   }
 
-  /** Inserts the view at its z-order position (binary search over sorted children). */
-  private place(view: ElementView): void {
-    if (view.parent === this) this.removeChild(view);
-    let lo = 0;
-    let hi = this.children.length;
-    while (lo < hi) {
-      const mid = (lo + hi) >> 1;
-      if (this.children[mid]!.order <= view.order) lo = mid + 1;
-      else hi = mid;
-    }
-    this.addChildAt(view, lo);
+  /**
+   * Puts the view in the container of its mask slot, at its z-order position, when it isn't
+   * there yet or `moved` in the order.
+   */
+  private place(view: ElementView, moved = false): void {
+    const container = this.containerOf(this.masks.homes.get(view.elementId) ?? null);
+    if (moved || view.parent !== container) insertOrdered(container, view);
   }
+}
+
+/** Whether the view is drawn as part of a mask (in a mask's source, at any depth). */
+function inMaskSource(view: ElementView, layer: ElementLayer): boolean {
+  for (let parent = view.parent; parent && parent !== layer; parent = parent.parent) {
+    if (parent instanceof MaskSource) return true;
+  }
+  return false;
 }

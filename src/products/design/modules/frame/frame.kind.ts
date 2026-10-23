@@ -13,13 +13,14 @@ import {
   type ScaleTransform,
   type Size,
 } from "@canvas";
+import type { Graphics } from "pixi.js";
 
 import type { DesignToolOptions } from "../../design-options.types";
 import { BoxShapeKind, NODE_STYLE_FIELDS, nonNegative, type NodeBuildContext } from "../core";
 import { createFrame } from "./frame.factory";
 import { FRAME_PRESETS, findPreset, presetSize } from "./frame-presets";
 import { FRAME_DEFAULTS } from "./frame.defaults";
-import { drawFrame } from "./frame.draw";
+import { drawFrame, frameOutline } from "./frame.draw";
 import { labelRect, showsLabel } from "./frame-label";
 import type { FrameElement } from "./frame.types";
 
@@ -99,6 +100,10 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
   ): ElementPatch<FrameElement> {
     if ("cornerRadius" in patch) nonNegative(patch.cornerRadius, "cornerRadius");
     return super.completePatch(el, patch, context);
+  }
+
+  override fillOutline(el: FrameElement): (g: Graphics) => void {
+    return frameOutline(el);
   }
 
   draw(view: ElementView, el: FrameElement): void {
