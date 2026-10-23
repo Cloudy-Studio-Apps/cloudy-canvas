@@ -2,6 +2,7 @@ import { BASE_COMMAND_LABELS } from "@canvas";
 
 import type {
   ContextMenuAction,
+  ContextMenuCategory,
   ContextMenuContext,
   ContextMenuGroup,
   ContextMenuItem,
@@ -38,7 +39,40 @@ const arrangeSubmenu: ContextMenuSubmenu = {
   },
 };
 
-/** The menu of a right-click on elements (they're selected first). */
+/** Copy and paste properties, and the selection as a picture. */
+const copyPasteAs: ContextMenuCategory = {
+  id: "copy-paste-as",
+  label: "Copy/Paste as",
+  groups: [
+    [
+      { command: "copyProperties", enabled: hasSelection },
+      {
+        command: "pasteProperties",
+        enabled: (context) => hasSelection(context) && context.styleCopied,
+      },
+    ],
+    [{ command: "copyAsPng", enabled: hasSelection }],
+  ],
+};
+
+/** The drawing order. */
+const order: ContextMenuCategory = {
+  id: "order",
+  label: "Order",
+  groups: [
+    [
+      { command: "bringToFront", enabled: hasSelection },
+      { command: "bringForward", enabled: hasSelection },
+      { command: "sendBackward", enabled: hasSelection },
+      { command: "sendToBack", enabled: hasSelection },
+    ],
+  ],
+};
+
+/**
+ * The menu of a right-click on elements (they're selected first). The everyday commands are
+ * listed; the rest are in submenus, so it fits on screen with what the modules add.
+ */
 export const SELECTION_MENU: readonly ContextMenuGroup[] = [
   [
     { command: "cut", enabled: hasSelection },
@@ -46,26 +80,10 @@ export const SELECTION_MENU: readonly ContextMenuGroup[] = [
     { command: "paste" },
     { command: "pasteToReplace", enabled: hasSelection },
     { command: "duplicate", enabled: hasSelection },
+    { command: "deleteSelection", enabled: hasSelection, destructive: true },
   ],
-  [
-    { command: "copyProperties", enabled: hasSelection },
-    {
-      command: "pasteProperties",
-      enabled: (context) => hasSelection(context) && context.styleCopied,
-    },
-  ],
-  [{ command: "deleteSelection", enabled: hasSelection, destructive: true }],
-  [
-    { command: "copyAsPng", enabled: hasSelection },
-    { command: "export", label: "Export selection…", enabled: hasSelection },
-  ],
-  [arrangeSubmenu, { command: "zoomToSelection", enabled: hasSelection }],
-  [
-    { command: "bringToFront", enabled: hasSelection },
-    { command: "bringForward", enabled: hasSelection },
-    { command: "sendBackward", enabled: hasSelection },
-    { command: "sendToBack", enabled: hasSelection },
-  ],
+  [copyPasteAs, { command: "export", label: "Export selection…", enabled: hasSelection }],
+  [arrangeSubmenu, order, { command: "zoomToSelection", enabled: hasSelection }],
   [
     {
       command: "toggleLock",

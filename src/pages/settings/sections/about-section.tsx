@@ -1,38 +1,22 @@
-import { Copy, ExternalLink } from "lucide-react";
+import { Copy, Scale } from "lucide-react";
 
-import { clipboard, openExternal } from "@platform";
-import type { AppInfo } from "@shared/core";
-import { notifyError, toast } from "@shared/stores/toast-store";
+import {
+  AUTHOR,
+  copyVersionDetails,
+  LinkButton,
+  openAbout,
+  useAppInfo,
+  versionDetails,
+  WEBSITE_URL,
+} from "@shared/about";
+import { CheckUpdatesButton } from "@shared/app-updates";
 import { SealLogo } from "@shared/ui/brand/seal-logo";
 import { Button } from "@shared/ui/components/ui/button";
 import { SettingsSection } from "../components/settings-section";
-import { useAppInfo } from "../use-app-info";
-
-const WEBSITE = "https://darkredgm.com/";
-const BUILD_LABEL: Record<AppInfo["build"], string> = {
-  development: "Development build",
-  production: "Production build",
-};
 
 export function AboutSection() {
   const info = useAppInfo();
-  const details = info
-    ? [
-        `Version ${info.version}`,
-        info.tauriVersion && `Tauri ${info.tauriVersion}`,
-        BUILD_LABEL[info.build],
-      ].filter(Boolean)
-    : [];
-
-  const copyDetails = () =>
-    void clipboard.writeText(`Cloudy Canvas · ${details.join(" · ")}`).then(
-      () => toast({ title: "Version info copied" }),
-      (error: unknown) => notifyError("Couldn't copy to the clipboard", error),
-    );
-  const openWebsite = () =>
-    void openExternal(WEBSITE).catch((error: unknown) =>
-      notifyError("The website couldn't be opened", error),
-    );
+  const details = versionDetails(info);
 
   return (
     <SettingsSection id="about" title="About">
@@ -47,23 +31,29 @@ export function AboutSection() {
             {details.length > 0 ? details.join(" · ") : "Reading version…"}
           </p>
         </div>
-        <Button variant="outline" size="sm" disabled={!info} onClick={copyDetails}>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={!info}
+          onClick={() => copyVersionDetails(details)}
+        >
           <Copy />
           Copy version info
         </Button>
       </div>
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t pt-4">
-        <p className="text-sm">
-          Made by <span className="font-semibold">DarkRedgm</span>
-        </p>
-        <Button variant="ghost" size="sm" onClick={openWebsite}>
-          darkredgm.com
-          <ExternalLink />
+        <CheckUpdatesButton />
+        <Button variant="ghost" size="sm" onClick={openAbout}>
+          <Scale />
+          License & disclaimer
         </Button>
       </div>
-      <p className="mt-4 border-t pt-4 text-xs text-muted-foreground">
-        Emoji stickers use Twemoji by Twitter and contributors, licensed under CC BY 4.0.
-      </p>
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t pt-4">
+        <p className="text-sm">
+          Made by <span className="font-semibold">{AUTHOR}</span>
+        </p>
+        <LinkButton href={WEBSITE_URL}>darkredgm.com</LinkButton>
+      </div>
     </SettingsSection>
   );
 }

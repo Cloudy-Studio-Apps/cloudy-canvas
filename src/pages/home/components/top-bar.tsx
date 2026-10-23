@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { Bot, Palette, Settings } from "lucide-react";
 
 import { formatShortcut } from "@shared/core";
+import { openAbout } from "@shared/about";
 import { AgentServerMenu } from "@shared/agent-server";
 import { Wordmark } from "@shared/ui/brand/wordmark";
 import { Button } from "@shared/ui/components/ui/button";
@@ -46,7 +47,14 @@ export function TopBar() {
         </>
       }
     >
-      <Wordmark />
+      <button
+        type="button"
+        aria-label="About Cloudy Canvas"
+        className="-mx-1.5 cursor-pointer rounded-md px-1.5 py-1 hover:bg-hover"
+        onClick={openAbout}
+      >
+        <Wordmark />
+      </button>
     </AppHeader>
   );
 }

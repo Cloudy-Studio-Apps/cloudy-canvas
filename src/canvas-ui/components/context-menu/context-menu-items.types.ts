@@ -37,5 +37,17 @@ export interface ContextMenuSubmenu {
   actions(engine: CanvasEngine, context: ContextMenuContext): readonly ContextMenuAction[];
 }
 
+/**
+ * An entry that opens a submenu of commands, so the menu stays short (e.g. "Order", the design's
+ * "Boolean"). Disabled when nothing in it is enabled.
+ */
+export interface ContextMenuCategory {
+  id: string;
+  label: string;
+  groups: readonly ContextMenuGroup[];
+}
+
+export type ContextMenuEntryItem = ContextMenuItem | ContextMenuSubmenu | ContextMenuCategory;
+
 /** Items between separators. */
-export type ContextMenuGroup = readonly (ContextMenuItem | ContextMenuSubmenu)[];
+export type ContextMenuGroup = readonly ContextMenuEntryItem[];

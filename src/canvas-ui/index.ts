@@ -26,7 +26,12 @@ export {
   CommitTextarea,
   useCommitField,
 } from "./components/commit-field";
-export { CANVAS_MENU, CanvasContextMenu, SELECTION_MENU } from "./components/context-menu";
+export {
+  CANVAS_MENU,
+  CanvasContextMenu,
+  MENU_FITS_SCREEN,
+  SELECTION_MENU,
+} from "./components/context-menu";
 export { ExportDialog } from "./components/export-dialog";
 export { ImageCropOverlay } from "./components/image-crop";
 export { ColorPalette } from "./components/color-palette";

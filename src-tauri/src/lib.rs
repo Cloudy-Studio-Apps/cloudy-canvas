@@ -1,6 +1,7 @@
 // Rust is only for desktop-specific integration. Business logic lives in TypeScript (src/core, src/engine)
 // so the future web version can reuse it.
 mod app_links;
+mod install_kind;
 mod mcp;
 mod open_files;
 mod system_fonts;
@@ -13,6 +14,10 @@ pub fn run() {
     let builder = builder.plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
         open_files::on_second_instance(app, argv, cwd);
     }));
+    #[cfg(desktop)]
+    let builder = builder
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init());
 
     builder
         .plugin(tauri_plugin_deep_link::init())
@@ -29,6 +34,7 @@ pub fn run() {
             mcp::commands::mcp_set_enabled,
             open_files::launch_files,
             app_links::launch_links,
+            install_kind::install_kind,
             system_fonts::system_fonts,
             system_fonts::system_font_data
         ])

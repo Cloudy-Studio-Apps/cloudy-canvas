@@ -11,7 +11,7 @@ export function useAppInfo(): AppInfo | null {
     let active = true;
     appInfo().then(
       (value) => active && setInfo(value),
-      (error: unknown) => console.error("[settings] Couldn't read the app version:", error),
+      (error: unknown) => console.error("[about] Couldn't read the app version:", error),
     );
     return () => {
       active = false;

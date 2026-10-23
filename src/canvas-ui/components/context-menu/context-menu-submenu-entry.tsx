@@ -6,6 +6,7 @@ import {
 } from "@shared/ui/components/ui/dropdown-menu";
 import { useEngine } from "../../engine-context";
 import type { ContextMenuSubmenuEntryProps } from "./context-menu-entry.types";
+import { MENU_FITS_SCREEN } from "./menu-fits-screen";
 
 /** An entry of the context menu that opens a submenu of actions (disabled when it has none). */
 export function ContextMenuSubmenuEntry({ item, context }: ContextMenuSubmenuEntryProps) {
@@ -14,7 +15,7 @@ export function ContextMenuSubmenuEntry({ item, context }: ContextMenuSubmenuEnt
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger disabled={actions.length === 0}>{item.label}</DropdownMenuSubTrigger>
-      <DropdownMenuSubContent className="max-h-80 overflow-y-auto">
+      <DropdownMenuSubContent collisionPadding={8} className={MENU_FITS_SCREEN}>
         {actions.map((action, i) => (
           <DropdownMenuItem key={i} onSelect={() => action.run()}>
             {action.label}

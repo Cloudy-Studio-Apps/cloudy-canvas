@@ -4,6 +4,7 @@ import {
   Download,
   Hand,
   House,
+  Info,
   MousePointer2,
   Redo2,
   Save,
@@ -12,6 +13,7 @@ import {
   Undo2,
 } from "lucide-react";
 
+import { openAbout } from "@shared/about";
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import { allKinds, someNodes } from "@design/ui/modules/section-filters";
@@ -188,6 +190,7 @@ export const coreModule = defineModule({
     host.contribute(designEditor.contextMenu, {
       id: "transform",
       menu: "selection",
+      label: "Transform",
       items: TRANSFORM_ITEMS,
     });
     host.contribute(
@@ -264,6 +267,7 @@ export const coreModule = defineModule({
         order: 90,
         items: [
           { label: "Settings", icon: Settings, run: ({ navigate }) => navigate("/settings") },
+          { label: "About Cloudy Canvas", icon: Info, run: openAbout },
         ],
       },
     );

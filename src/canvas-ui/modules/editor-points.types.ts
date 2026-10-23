@@ -104,6 +104,8 @@ export interface SessionHookEntry {
 export interface ContextMenuEntryGroup {
   id: string;
   menu: "selection" | "canvas";
+  /** Shows the items in a submenu of this name instead of in the menu itself. */
+  label?: string;
   items: ContextMenuGroup;
 }
 

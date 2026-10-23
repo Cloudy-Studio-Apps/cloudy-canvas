@@ -14,6 +14,7 @@ import {
 } from "@canvas-ui";
 import { AgentServerMenu } from "@shared/agent-server";
 import { useAgentServerStore } from "@shared/stores/agent-server-store";
+import { openAbout } from "@shared/about";
 import { SealLogo } from "@shared/ui/brand/seal-logo";
 import { Badge } from "@shared/ui/components/ui/badge";
 
@@ -29,7 +30,9 @@ export function BoardTopBar() {
         <ArrowLeft />
       </ToolButton>
       <PanelDivider />
-      <SealLogo size={22} variant="mark" />
+      <ToolButton label="About Cloudy Canvas" side="bottom" onClick={openAbout}>
+        <SealLogo size={22} variant="mark" />
+      </ToolButton>
       <DocumentInfoPopover />
       <SaveIndicator />
       <Badge variant="board" className="ml-1">

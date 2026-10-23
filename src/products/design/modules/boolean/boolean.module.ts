@@ -73,6 +73,11 @@ export const booleanModule = defineModule({
       { command: "outlineStroke", label: "Outline stroke" },
     ];
     host.contribute(designEditor.mainMenu, { id: "boolean", order: 35.7, label: "Boolean", items });
-    host.contribute(designEditor.contextMenu, { id: "boolean", menu: "selection", items });
+    host.contribute(designEditor.contextMenu, {
+      id: "boolean",
+      menu: "selection",
+      label: "Boolean",
+      items,
+    });
   },
 });

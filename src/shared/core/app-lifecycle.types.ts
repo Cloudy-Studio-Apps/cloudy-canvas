@@ -5,4 +5,9 @@ export interface AppLifecycle {
    * pending saves can finish. Returns an unsubscribe function.
    */
   onBeforeQuit(task: () => Promise<void>): () => void;
+  /**
+   * Runs the `onBeforeQuit` tasks now (a few seconds at most), for when the app is about to close
+   * on its own, e.g. to install an update.
+   */
+  runQuitTasks(): Promise<void>;
 }

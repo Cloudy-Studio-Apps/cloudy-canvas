@@ -39,10 +39,14 @@ Also:
 
 Get the latest build from [Releases](https://github.com/Cloudy-Studio-Apps/cloudy-canvas/releases/latest):
 
-| Platform             | File                                                                       |
-| -------------------- | -------------------------------------------------------------------------- |
-| Windows 10/11        | `Cloudy Canvas_<version>_x64-setup.exe`                                    |
-| Linux (most distros) | `Cloudy Canvas_<version>_amd64.AppImage` (make it executable, then run it) |
+| Platform             | File                                           | Install                                      |
+| -------------------- | ---------------------------------------------- | -------------------------------------------- |
+| Windows 10/11        | `Cloudy Canvas_<version>_x64-setup.exe`        | Run it                                       |
+| Ubuntu / Debian      | `Cloudy Canvas_<version>_amd64.deb`            | `sudo apt install ./Cloudy*.deb`             |
+| Arch Linux / CachyOS | `cloudy-canvas-<version>-1-x86_64.pkg.tar.zst` | `sudo pacman -U cloudy-canvas-*.pkg.tar.zst` |
+| Linux (any distro)   | `Cloudy Canvas_<version>_amd64.AppImage`       | `chmod +x` it, then run it                   |
+
+The Windows and AppImage versions update themselves: when a new version is out, the app offers to install it. The `.deb` and Arch packages tell you about it and open the download page. Click the logo, or open **Settings › About**, to check by hand.
 
 Windows SmartScreen may warn about an unknown publisher because the installer isn't code-signed yet. Choose **More info › Run anyway**.
 
@@ -119,6 +123,18 @@ src-tauri/    the Rust desktop shell
 ```
 
 Every feature is a module that plugs into extension points, the same API plugins use. [`CLAUDE.md`](CLAUDE.md) documents the architecture and conventions in detail.
+
+### Publishing a release
+
+Releases are built by GitHub Actions ([`.github/workflows/release.yml`](.github/workflows/release.yml)) when a version tag is pushed:
+
+```sh
+pnpm release:tag 0.2.0   # writes the version, commits "Release v0.2.0", tags v0.2.0 and pushes
+```
+
+The workflow builds the Windows installer, the `.deb`, the AppImage and the Arch package into a **draft** release, with the updater's signatures and `latest.json`. Review the notes and press **Publish**: installed apps then see the update.
+
+One-time setup: create the updater's signing key with `pnpm tauri signer generate -w ~/.tauri/cloudy-canvas.key`, put the public key in `src-tauri/tauri.conf.json` (`plugins.updater.pubkey`), and add the private key and its password to the repository's Actions secrets as `TAURI_SIGNING_PRIVATE_KEY` and `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`. Keep a backup of the private key: without it, installed copies can't verify new updates.
 
 ## Contributing
 

@@ -59,6 +59,7 @@ export const maskModule = defineModule({
     host.contribute(designEditor.contextMenu, {
       id: "mask",
       menu: "selection",
+      label: "Mask",
       items: [
         {
           command: "useAsMask",

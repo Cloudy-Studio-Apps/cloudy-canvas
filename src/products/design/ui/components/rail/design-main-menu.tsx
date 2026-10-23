@@ -1,33 +1,30 @@
 import { Fragment } from "react";
 import { useNavigate } from "react-router";
 
-import { BASE_COMMAND_LABELS } from "@canvas";
-import { ExtensionIconView, useEditorModules } from "@canvas-ui";
+import { MENU_FITS_SCREEN, useEditorModules } from "@canvas-ui";
 import { SealLogo } from "@shared/ui/brand/seal-logo";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@shared/ui/components/ui/dropdown-menu";
 import { useDesignEngine } from "../../design-engine-context";
 import { designEditor, type MainMenuItem } from "../../modules";
+import { MainMenuEntry } from "./main-menu-entry";
+import { mainMenuLabel } from "./main-menu-label";
+import { mainMenuSections } from "./main-menu-sections";
+import { MainMenuSubmenu } from "./main-menu-submenu";
 
-const COMMAND_LABELS: Readonly<Record<string, string | undefined>> = BASE_COMMAND_LABELS;
-
-/** The logo at the top of the rail: opens the main menu the modules fill (`mainMenu`). */
+/**
+ * The logo at the top of the rail: opens the main menu the modules fill (`mainMenu`). Groups
+ * without a label are listed in it; labelled ones (File, Edit, …) open as submenus.
+ */
 export function DesignMainMenu() {
   const engine = useDesignEngine();
   const navigate = useNavigate();
   const { host } = useEditorModules();
   const groups = [...host.get(designEditor.mainMenu)].sort((a, b) => a.order - b.order);
-
-  const labelOf = (item: MainMenuItem) =>
-    "command" in item ? (item.label ?? COMMAND_LABELS[item.command] ?? item.command) : item.label;
 
   const pick = (item: MainMenuItem) => {
     if ("command" in item) engine.commands[item.command]?.();
@@ -45,32 +42,22 @@ export function DesignMainMenu() {
           <SealLogo size={22} variant="mark" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent side="right" align="start" className="w-56">
-        {groups.map((group, i) => (
-          <Fragment key={group.id}>
+      <DropdownMenuContent
+        side="right"
+        align="start"
+        collisionPadding={8}
+        className={`w-56 ${MENU_FITS_SCREEN}`}
+      >
+        {mainMenuSections(groups).map((section, i) => (
+          <Fragment key={section.id}>
             {i > 0 && <DropdownMenuSeparator />}
-            {group.label && <DropdownMenuLabel>{group.label}</DropdownMenuLabel>}
-            {group.items.map((item) => {
-              const shortcut = "command" in item && (
-                <DropdownMenuShortcut>{engine.keymap.label(item.command)}</DropdownMenuShortcut>
-              );
-              return item.checked ? (
-                <DropdownMenuCheckboxItem
-                  key={labelOf(item)}
-                  checked={item.checked(engine)}
-                  onSelect={() => pick(item)}
-                >
-                  {labelOf(item)}
-                  {shortcut}
-                </DropdownMenuCheckboxItem>
-              ) : (
-                <DropdownMenuItem key={labelOf(item)} onSelect={() => pick(item)}>
-                  {item.icon ? <ExtensionIconView icon={item.icon} /> : <span className="size-4" />}
-                  {labelOf(item)}
-                  {shortcut}
-                </DropdownMenuItem>
-              );
-            })}
+            {section.kind === "items"
+              ? section.items.map((item) => (
+                  <MainMenuEntry key={mainMenuLabel(item)} item={item} onPick={pick} />
+                ))
+              : section.groups.map((group) => (
+                  <MainMenuSubmenu key={group.id} group={group} onPick={pick} />
+                ))}
           </Fragment>
         ))}
       </DropdownMenuContent>

@@ -21,13 +21,15 @@ export class TauriAppLifecycle implements AppLifecycle {
     return () => this.tasks.delete(task);
   }
 
+  async runQuitTasks(): Promise<void> {
+    const running = [...this.tasks].map((task) => task());
+    const timeout = new Promise((resolve) => setTimeout(resolve, QUIT_TIMEOUT_MS));
+    await Promise.race([Promise.allSettled(running), timeout]);
+  }
+
   private listen(): void {
     if (this.listening) return;
     this.listening = true;
-    void getCurrentWindow().onCloseRequested(async () => {
-      const running = [...this.tasks].map((task) => task());
-      const timeout = new Promise((resolve) => setTimeout(resolve, QUIT_TIMEOUT_MS));
-      await Promise.race([Promise.allSettled(running), timeout]);
-    });
+    void getCurrentWindow().onCloseRequested(() => this.runQuitTasks());
   }
 }

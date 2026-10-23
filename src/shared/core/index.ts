@@ -1,6 +1,8 @@
 export type * from "./agent-channel.types";
 export type * from "./app-info.types";
 export * from "./app-links";
+export * from "./app-repository";
+export type * from "./app-updates";
 export type * from "./app-lifecycle.types";
 export type * from "./clipboard.types";
 export * from "./files";
