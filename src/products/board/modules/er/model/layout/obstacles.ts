@@ -21,6 +21,22 @@ export function isFree(
   );
 }
 
+/** How many boxes and lines a box here (and its line from the owner) would touch; 0 is free. */
+export function conflictCount(
+  box: Rect,
+  line: [Point, Point],
+  obstacles: Obstacles,
+  ownerBox: Rect,
+): number {
+  let count = obstacles.rects.filter((rect) => overlaps(rect, box)).length;
+  count += obstacles.segments.filter(([a, b]) => segmentHitsRect(a, b, box)).length;
+  count += obstacles.segments.filter(([a, b]) => segmentsCross(line[0], line[1], a, b)).length;
+  count += obstacles.rects.filter(
+    (rect) => !sameRect(rect, ownerBox) && segmentHitsRect(line[0], line[1], rect),
+  ).length;
+  return count;
+}
+
 /** Whether two segments cross at a point inside both (touching at an end doesn't count). */
 export function segmentsCross(a: Point, b: Point, c: Point, d: Point): boolean {
   const d1 = cross(c, d, a);

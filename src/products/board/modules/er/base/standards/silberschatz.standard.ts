@@ -17,6 +17,7 @@ export const SILBERSCHATZ_STANDARD = defineErStandard({
     crowFeet: false,
     dependency: "marks",
     arrows: "cardinality",
+    joins: "hidden",
   },
   supports: { hierarchies: true, aggregations: true, constraints: false, unions: false },
 });

@@ -57,6 +57,7 @@ const SETTINGS: Completion[] = [
     "crowfeet",
     "dependency",
     "arrows",
+    "joins",
   ].map((label) =>
     snippetCompletion(`${label}: \${}`, { label, type: "constant", detail: "notation" }),
   ),

@@ -8,11 +8,13 @@ import { outlinePoint, shapeCenter } from "../base/er-outline";
 import { erNotation } from "../base/er-notation";
 import type { ErUnionElement } from "../union/union.types";
 import type { CrowFoot, ErLink } from "./er-links.types";
+import { LINK_LABEL_FONT_SIZE } from "./link-label";
 import { loopPoints } from "./loop-route";
 
-/** Where the cardinality label sits: this far along the line from the entity, and off to its side. */
-const LABEL_ALONG = 30;
-const LABEL_ACROSS = 12;
+/** How far from the entity a label starts: past the crow's-foot marks (they reach 22). */
+const LABEL_CLEAR = 26;
+/** The gap between a label and its line. */
+const LABEL_GAP = 4;
 
 /**
  * Every line of the ER diagram: relation ↔ entity (with cardinality), attribute ↔ owner,
@@ -47,7 +49,7 @@ function participantLinks(
     const entity = byId.get(participant.entityId);
     if (!entity) return [];
     const via = participant.via ? byId.get(participant.via) : undefined;
-    const viaName = via && "name" in via ? via.name : "";
+    const viaName = notation.joins === "shown" && via && "name" in via ? via.name : "";
     const card =
       notation.cardinality === "ratio"
         ? chenLetter(relation, i)
@@ -164,7 +166,7 @@ function polyLink(
     toId,
     points,
     label,
-    labelAt: label ? labelPoint(before, end) : null,
+    labelAt: label ? labelPoint(before, end, label) : null,
     arrow,
     totalMark: false,
     double: false,
@@ -176,8 +178,12 @@ function cardinalityLabel(min: string, max: string): string {
   return min || max ? `(${min || "0"},${max || "n"})` : "";
 }
 
-/** Beside the last segment near its end, on the side above (or left of) the line. */
-function labelPoint(before: Point, end: Point): Point {
+/**
+ * Where a label is centered: beside the last segment, on the side above (or left of) the line, its
+ * whole box past the marks at the entity and clear of the line, however long it is. The size is
+ * estimated from the text (`LINK_LABEL_FONT_SIZE`, about 0.58 em per character).
+ */
+function labelPoint(before: Point, end: Point, text: string): Point {
   const len = Math.hypot(end.x - before.x, end.y - before.y) || 1;
   const ux = (end.x - before.x) / len;
   const uy = (end.y - before.y) / len;
@@ -187,9 +193,15 @@ function labelPoint(before: Point, end: Point): Point {
     nx = -nx;
     ny = -ny;
   }
-  const along = Math.min(LABEL_ALONG, len / 2);
+  const halfW = (text.length * LINK_LABEL_FONT_SIZE * 0.58) / 2;
+  const halfH = (LINK_LABEL_FONT_SIZE * 1.25) / 2;
+  // How far the box reaches along the line, and across it.
+  const alongReach = Math.abs(ux) * halfW + Math.abs(uy) * halfH;
+  const acrossReach = Math.abs(nx) * halfW + Math.abs(ny) * halfH;
+  const along = Math.min(LABEL_CLEAR + alongReach, len / 2);
+  const across = LABEL_GAP + acrossReach;
   return {
-    x: end.x - ux * along + nx * LABEL_ACROSS,
-    y: end.y - uy * along + ny * LABEL_ACROSS,
+    x: end.x - ux * along + nx * across,
+    y: end.y - uy * along + ny * across,
   };
 }

@@ -59,6 +59,15 @@ export const ER_SETTING_CHOICES: readonly ErSettingChoice[] = [
     ],
   },
   {
+    key: "joins",
+    label: "Join attributes",
+    hint: "The attribute a relation joins through, after the cardinality.",
+    options: [
+      { value: "shown", label: "Shown" },
+      { value: "hidden", label: "Hidden" },
+    ],
+  },
+  {
     key: "dependency",
     label: "Dependency marks",
     hint: "The I (identification) and E (existence) marks on relations.",

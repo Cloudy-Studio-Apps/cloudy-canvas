@@ -8,6 +8,7 @@ const VALUES = {
   participation: ["numbers", "lines", "both"],
   isa: ["arc", "circle", "arrow"],
   arrows: ["manual", "cardinality"],
+  joins: ["shown", "hidden"],
   dependency: ["marks", "none"],
 } as const satisfies Partial<Record<keyof ErNotationSettings, readonly string[]>>;
 
@@ -44,6 +45,7 @@ export function notationSettings(notation: ErNotation): string[] {
     ...(notation.isa ? [`isa: ${notation.isa}`] : []),
     ...(notation.dependency ? [`dependency: ${notation.dependency}`] : []),
     ...(notation.arrows ? [`arrows: ${notation.arrows}`] : []),
+    ...(notation.joins ? [`joins: ${notation.joins}`] : []),
     ...(notation.crowFeet !== undefined ? [`crowfeet: ${notation.crowFeet ? "on" : "off"}`] : []),
   ];
 }

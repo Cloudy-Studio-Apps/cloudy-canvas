@@ -18,6 +18,7 @@ export const PIATTINI_STANDARD = defineErStandard({
     crowFeet: false,
     dependency: "marks",
     arrows: "manual",
+    joins: "hidden",
   },
   supports: { hierarchies: true, aggregations: true, constraints: true, unions: false },
 });

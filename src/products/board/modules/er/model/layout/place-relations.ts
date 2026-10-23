@@ -1,14 +1,23 @@
-import type { Point, Size } from "@canvas";
+import type { Point, Rect, Size } from "@canvas";
 
+import type { ErElement } from "../../base/er.types";
 import type { ErRelationElement } from "../../relation/relation.types";
 import type { ErShapes } from "../lang";
-import { angleTo } from "./box";
+import { angleTo, boxAt, overlaps } from "./box";
+import { erShapeMap } from "./er-graph";
+import { segmentHitsRect } from "./obstacles";
 import { LINK_LENGTH } from "./layout-metrics";
 import type { Centers } from "./layout.types";
 
 const SIDES = [0, Math.PI / 2, Math.PI, -Math.PI / 2];
 /** Distance between diamonds that link the same entities. */
 const PARALLEL_GAP = 36;
+/** How many steps to each side a diamond tries before keeping the midpoint. */
+const MAX_SIDESTEPS = 8;
+/** Room kept round a diamond when looking for a clear spot. */
+const CLEARANCE = 8;
+/** An aggregation box's room round its entities, roughly (attributes included). */
+const AGGREGATE_MARGIN = 40;
 
 /**
  * Places relation diamonds that aren't in `centers` yet: between their entities, or beside the
@@ -23,6 +32,8 @@ export function placeRelations(shapes: ErShapes, centers: Centers): void {
     if (centers.has(relation.id)) samePair.set(pairKey(entityIds(relation)), 1);
   }
 
+  const sizes = erShapeMap(shapes);
+  const boxes = aggregateAreas(shapes, centers);
   for (const relation of pending.filter((r) => entityIds(r).length >= 2)) {
     const ids = entityIds(relation);
     const points = ids.map((id) => centers.get(id)!);
@@ -30,7 +41,30 @@ export function placeRelations(shapes: ErShapes, centers: Centers): void {
     const pair = pairKey(ids);
     const count = samePair.get(pair) ?? 0;
     samePair.set(pair, count + 1);
-    centers.set(relation.id, offsetAcross(mid, points, count, relation));
+    // Off to the side of the midpoint when the diamond or its lines would cross other shapes.
+    // Nor inside an aggregation box it isn't part of (its own relation, or a side of it).
+    const foreign = boxes.filter(
+      (b) =>
+        b.relationId !== relation.id && !relation.participants.some((p) => p.entityId === b.id),
+    );
+    const conflicts = (at: Point) =>
+      conflictsAt(at, relation, ids, centers, sizes) +
+      foreign.filter((b) => overlaps(b.rect, boxAt(at, relation))).length;
+    // The first clear spot from the midpoint outwards, else the one with the fewest conflicts.
+    const tries = Array.from({ length: MAX_SIDESTEPS * 2 + 1 }, (_, k) =>
+      offsetAcross(mid, points, count + k * 2, relation),
+    );
+    let best = tries[0]!;
+    let fewest = Infinity;
+    for (const at of tries) {
+      const n = conflicts(at);
+      if (n < fewest) {
+        fewest = n;
+        best = at;
+      }
+      if (n === 0) break;
+    }
+    centers.set(relation.id, best);
   }
 
   for (const relation of pending.filter((r) => entityIds(r).length === 1)) {
@@ -55,6 +89,58 @@ export function placeRelations(shapes: ErShapes, centers: Centers): void {
   const bottom = Math.max(0, ...[...centers.values()].map((p) => p.y)) + LINK_LENGTH * 3;
   loose.forEach((relation, i) => {
     centers.set(relation.id, { x: i * (relation.w + LINK_LENGTH), y: bottom });
+  });
+}
+
+/**
+ * How many placed shapes a diamond at `at` touches and its lines to `ids` pass through (other
+ * entities and diamonds); 0 is clear.
+ */
+function conflictsAt(
+  at: Point,
+  relation: Size & { id: string },
+  ids: readonly string[],
+  centers: Centers,
+  shapes: ReadonlyMap<string, ErElement>,
+): number {
+  const box = boxAt(at, relation, CLEARANCE);
+  let count = 0;
+  for (const [id, center] of centers) {
+    const shape = shapes.get(id);
+    if (
+      !shape ||
+      id === relation.id ||
+      (shape.type !== "er-entity" && shape.type !== "er-relation")
+    ) {
+      continue;
+    }
+    const rect = boxAt(center, shape);
+    if (overlaps(rect, box)) count++;
+    if (ids.includes(id)) continue;
+    count += ids.filter((target) => segmentHitsRect(at, centers.get(target)!, rect)).length;
+  }
+  return count;
+}
+
+/** Where each aggregation's box will roughly be: round its relation's placed entities. */
+function aggregateAreas(
+  shapes: ErShapes,
+  centers: Centers,
+): { id: string; relationId: string; rect: Rect }[] {
+  const byId = erShapeMap(shapes);
+  return shapes.aggregates.flatMap((aggregate) => {
+    const relation = shapes.relations.find((r) => r.id === aggregate.relationId);
+    const rects = (relation?.participants ?? []).flatMap((p) => {
+      const at = centers.get(p.entityId);
+      const shape = byId.get(p.entityId);
+      return at && shape ? [boxAt(at, shape, AGGREGATE_MARGIN)] : [];
+    });
+    if (rects.length < 2) return [];
+    const x = Math.min(...rects.map((r) => r.x));
+    const y = Math.min(...rects.map((r) => r.y));
+    const w = Math.max(...rects.map((r) => r.x + r.w)) - x;
+    const h = Math.max(...rects.map((r) => r.y + r.h)) - y;
+    return [{ id: aggregate.id, relationId: aggregate.relationId, rect: { x, y, w, h } }];
   });
 }
 

@@ -18,6 +18,7 @@ export const CHEN_STANDARD = defineErStandard({
     crowFeet: false,
     dependency: "marks",
     arrows: "manual",
+    joins: "hidden",
   },
   supports: { hierarchies: false, aggregations: false, constraints: false, unions: false },
 });

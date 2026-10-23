@@ -2,7 +2,11 @@ import type { Size } from "@canvas";
 
 import type { ErElement } from "../../base/er.types";
 import type { ErShapes } from "../lang";
-import { clearAggregateBoxes, clearAggregateBoxesForIsas } from "./aggregate-boxes";
+import {
+  clearAggregateBoxes,
+  clearAggregateBoxesForIsas,
+  clearForeignDiamonds,
+} from "./aggregate-boxes";
 import { boxAt, overlaps } from "./box";
 import { segmentHitsRect } from "./obstacles";
 import { entityGrid } from "./entity-grid";
@@ -14,6 +18,7 @@ import {
   pushIsasOutOfAggregates,
   pushOutOfAggregates,
 } from "./place-aggregates";
+import { placeAggregateAttributes } from "./place-aggregate-attributes";
 import { placeAttributes } from "./place-attributes";
 import { placeIsas } from "./place-isas";
 import { placeUnions } from "./place-unions";
@@ -67,6 +72,9 @@ function placeAroundEntities(shapes: ErShapes, centers: Centers): void {
   placeAttributes(shapes, centers, boxSizes);
   clearAggregateBoxes(shapes, centers);
   clearAggregateBoxesForIsas(shapes, centers);
+  clearForeignDiamonds(shapes, centers);
+  placeAggregateAttributes(shapes, centers);
+  placeAttributes(shapes, centers, boxSizes);
 }
 
 /**

@@ -9,9 +9,10 @@ import { fanOut } from "./fan-out";
 import type { Centers, Obstacles } from "./layout.types";
 
 /**
- * Places the attributes that aren't in `centers` yet, fanned around their owners: entities,
- * relations, hierarchies and aggregations first, then the parts of composite attributes around
- * their (by then placed) parent. `boxSizes` gives aggregations their estimated box.
+ * Places the attributes that aren't in `centers` yet, fanned around their owners: hierarchies,
+ * entities and relations first, then the parts of composite attributes around their (by then
+ * placed) parent. An aggregation's own attributes are left for `placeAggregateAttributes`, once its
+ * box is known; their parts are placed when this runs again after it.
  */
 export function placeAttributes(
   shapes: ErShapes,
@@ -39,10 +40,11 @@ export function placeAttributes(
     }
   }
 
+  // Discriminators first, so they sit by their triangle before the parent's attributes crowd it.
   const queue: ErElement[] = [
+    ...shapes.isas,
     ...shapes.entities,
     ...shapes.relations,
-    ...shapes.isas,
     ...shapes.aggregates,
   ];
   while (queue.length) {
@@ -51,7 +53,8 @@ export function placeAttributes(
     const own = children.get(owner.id) ?? [];
     if (!center || own.length === 0) continue;
     const pending = own.filter((a) => !centers.has(a.id));
-    if (pending.length) {
+    // An aggregation's own attributes wait for its box (`placeAggregateAttributes`).
+    if (pending.length && owner.type !== "er-aggregate") {
       // Lines to what the owner links to, and to attributes already placed, stay clear.
       const blocked = [
         ...linkedIds(owner, shapes),

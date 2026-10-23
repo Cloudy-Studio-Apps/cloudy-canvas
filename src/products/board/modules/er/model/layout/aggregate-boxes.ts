@@ -58,6 +58,35 @@ export function clearAggregateBoxes(shapes: ErShapes, centers: Centers): void {
 }
 
 /**
+ * Diamonds that have nothing to do with an aggregation but landed on its real box move out of it,
+ * away from its middle, with their attributes (their lines stretch).
+ */
+export function clearForeignDiamonds(shapes: ErShapes, centers: Centers): void {
+  const byId = erShapeMap(shapes);
+  const owned = attributeTrees(shapes);
+  for (const aggregate of shapes.aggregates) {
+    const box = exactBox(aggregate.id, shapes, centers, owned);
+    if (!box) continue;
+    const inside = new Set([aggregate.relationId, ...boxMembers(aggregate.id, shapes)]);
+    const boxCenter = { x: box.x + box.w / 2, y: box.y + box.h / 2 };
+    for (const relation of shapes.relations) {
+      const center = centers.get(relation.id);
+      if (!center || inside.has(relation.id)) continue;
+      if (relation.participants.some((p) => p.entityId === aggregate.id)) continue;
+      // Out through the nearer side: across the box's shorter half-extent.
+      const horizontal =
+        Math.abs(center.x - boxCenter.x) / box.w >= Math.abs(center.y - boxCenter.y) / box.h;
+      const step = horizontal
+        ? { x: Math.sign(center.x - boxCenter.x || 1) * PUSH_STEP, y: 0 }
+        : { x: 0, y: Math.sign(center.y - boxCenter.y || 1) * PUSH_STEP };
+      const group = [relation.id, ...(owned.get(relation.id) ?? [])];
+      const hits = () => overlaps(box, boxAt(centers.get(relation.id)!, byId.get(relation.id)!));
+      for (let pushes = 0; pushes < MAX_PUSHES && hits(); pushes++) move(centers, group, step, 1);
+    }
+  }
+}
+
+/**
  * Hierarchy triangles under an entity inside an aggregation move out of the real box, away from
  * the parent, taking the discriminator and the children (with their attributes) along.
  */
@@ -109,7 +138,7 @@ function boxMembers(id: string, shapes: ErShapes): string[] {
 }
 
 /** The box an aggregation will get: its relation, participants and their attributes. */
-function exactBox(
+export function exactBox(
   id: string,
   shapes: ErShapes,
   centers: Centers,
@@ -135,7 +164,7 @@ function exactBox(
 }
 
 /** Owner id → every attribute under it (composite parts included). */
-function attributeTrees({ attributes }: ErShapes): Map<string, string[]> {
+export function attributeTrees({ attributes }: ErShapes): Map<string, string[]> {
   const direct = new Map<string, string[]>();
   for (const a of attributes) direct.set(a.ownerId, [...(direct.get(a.ownerId) ?? []), a.id]);
   const all = new Map<string, string[]>();

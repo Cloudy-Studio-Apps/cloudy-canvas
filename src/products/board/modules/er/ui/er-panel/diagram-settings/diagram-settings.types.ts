@@ -9,7 +9,8 @@ export type ErSettingKey =
   | "isa"
   | "crowFeet"
   | "dependency"
-  | "arrows";
+  | "arrows"
+  | "joins";
 
 /** One setting with its choices (values as the text writes them; crow's feet `on`/`off`). */
 export interface ErSettingChoice {

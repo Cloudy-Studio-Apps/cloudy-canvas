@@ -258,6 +258,7 @@ Diagram Ventas [standard: elmasri, participation: both, crowfeet: off]
 | `crowfeet`      | `on`, `off`                | Crow's-foot marks on two-way relations.                                                                                                                                                                                |
 | `dependency`    | `marks`, `none`            | The "I" and "E" dependency marks on relations, or neither.                                                                                                                                                             |
 | `arrows`        | `manual`, `cardinality`    | Arrowheads only where `[arrow]` asks, or also, on two-way relations, at an entity the other side takes part with at most once (Silberschatz).                                                                          |
+| `joins`         | `shown`, `hidden`          | The join attribute after the cardinality on the lines (`(0,n) · dni`, S25), or only the cardinality. Cloudy Canvas shows it; the textbook standards hide it.                                                           |
 
 - Each standard sets every setting; the line only names what the diagram changes from it. Picking another standard drops those changes.
 - `notation:` (the setting's first name) still reads as `standard:`.

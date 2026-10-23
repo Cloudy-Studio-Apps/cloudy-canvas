@@ -24,9 +24,12 @@ const FAR_DIRECTIONS: readonly Cell[] = DIRECTIONS.map(({ c, r }) => ({ c: c * 2
 export function entityGrid(shapes: ErShapes): Map<string, Cell> {
   const neighbors = entityNeighbors(shapes);
   const hierarchy = hierarchyOf(shapes);
+  const partners = closePartners(shapes);
   const degree = (id: string) => neighbors.get(id)?.length ?? 0;
-  // Roots of hierarchies start their group, so the tree grows downwards.
-  const isRoot = (id: string) => (hierarchy.parentOf.has(id) ? 0 : 1);
+  // A hierarchy's root starts its group, so its children get the row under it; then the other
+  // entities that aren't a child.
+  const isRoot = (id: string) =>
+    hierarchy.parentOf.has(id) ? 0 : hierarchy.childrenOf.has(id) ? 2 : 1;
   const order = shapes.entities
     .map((entity, i) => ({ id: entity.id, i }))
     .sort((a, b) => isRoot(b.id) - isRoot(a.id) || degree(b.id) - degree(a.id) || a.i - b.i)
@@ -36,7 +39,7 @@ export function entityGrid(shapes: ErShapes): Map<string, Cell> {
   let nextCol = 0;
   for (const start of order) {
     if (result.has(start)) continue;
-    const group = placeGroup(start, neighbors, degree, hierarchy);
+    const group = placeGroup(start, neighbors, degree, hierarchy, partners);
     const minCol = Math.min(...[...group.values()].map((cell) => cell.c));
     const minRow = Math.min(...[...group.values()].map((cell) => cell.r));
     let maxCol = nextCol;
@@ -55,21 +58,34 @@ function placeGroup(
   neighbors: ReadonlyMap<string, string[]>,
   degree: (id: string) => number,
   hierarchy: Hierarchy,
+  partners: ReadonlyMap<string, ReadonlySet<string>>,
 ): Map<string, Cell> {
   const cells = new Map<string, Cell>([[start, { c: 0, r: 0 }]]);
   const taken = new Set([key({ c: 0, r: 0 })]);
   const queue = [start];
   while (queue.length) {
     const current = queue.shift()!;
-    // Hierarchy children first, so they get the row under their parent before anything else.
+    // Hierarchy children first, so they get the row under their parent before anything else;
+    // then close partners (a weak entity and its owner, an aggregation's members), next to it.
     const isChild = (id: string) => (hierarchy.parentOf.get(id) === current ? 1 : 0);
+    const isPartner = (id: string) => (partners.get(current)?.has(id) ? 1 : 0);
     const next = [...(neighbors.get(current) ?? [])]
       .filter((id) => !cells.has(id))
-      .sort((a, b) => isChild(b) - isChild(a) || degree(b) - degree(a));
+      .sort(
+        (a, b) => isChild(b) - isChild(a) || isPartner(b) - isPartner(a) || degree(b) - degree(a),
+      );
     for (const id of next) {
-      const placedNeighbors = (neighbors.get(id) ?? [])
+      // Next to its placed partners if it has any (whichever way it was reached), else near all
+      // its placed neighbours.
+      const placedPartners = [...(partners.get(id) ?? [])]
         .map((n) => cells.get(n))
         .filter((cell): cell is Cell => cell !== undefined);
+      const placedNeighbors =
+        placedPartners.length > 0
+          ? placedPartners
+          : (neighbors.get(id) ?? [])
+              .map((n) => cells.get(n))
+              .filter((cell): cell is Cell => cell !== undefined);
       const cell = hierarchyCell(id, hierarchy, cells, taken) ?? bestCell(placedNeighbors, taken);
       cells.set(id, cell);
       taken.add(key(cell));
@@ -116,4 +132,29 @@ function scoreCell(cell: Cell, placed: readonly Cell[], taken: ReadonlySet<strin
 
 function key({ c, r }: Cell): string {
   return `${c},${r}`;
+}
+
+/**
+ * Entities that read as one and so go in neighbouring cells: a weak entity and its owner (their
+ * identifying relation), and the entities an aggregation holds.
+ */
+function closePartners({ relations, aggregates }: ErShapes): Map<string, Set<string>> {
+  const result = new Map<string, Set<string>>();
+  const pair = (ids: readonly string[]) => {
+    for (const a of ids) {
+      for (const b of ids) {
+        if (a === b) continue;
+        const set = result.get(a) ?? new Set<string>();
+        set.add(b);
+        result.set(a, set);
+      }
+    }
+  };
+  const aggregated = new Set(aggregates.map((a) => a.relationId));
+  for (const relation of relations) {
+    if (relation.identifying || relation.idMark || aggregated.has(relation.id)) {
+      pair(relation.participants.map((p) => p.entityId));
+    }
+  }
+  return result;
 }

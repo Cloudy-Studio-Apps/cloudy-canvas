@@ -190,7 +190,24 @@ function dependency(marks: boolean): ReactNode {
   );
 }
 
+/** The cardinality on a line, with or without the join attribute after it. */
+function joins(shown: boolean): ReactNode {
+  return (
+    <>
+      {box(13, "C")}
+      <path d="M24 22 H37 M59 22 H72" />
+      {diamond(48)}
+      {box(83, "P")}
+      <text x={shown ? 33 : 30} y={15} {...TEXT}>
+        {shown ? "(0,n) \u00b7 dni" : "(0,n)"}
+      </text>
+    </>
+  );
+}
+
 const PREVIEWS: Record<string, ReactNode> = {
+  "joins:shown": joins(true),
+  "joins:hidden": joins(false),
   "dependency:marks": dependency(true),
   "dependency:none": dependency(false),
   "cardinality:minmax": lineLabels("(0,n)", "(1,1)"),

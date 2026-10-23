@@ -17,6 +17,7 @@ export const ELMASRI_STANDARD = defineErStandard({
     crowFeet: false,
     dependency: "marks",
     arrows: "manual",
+    joins: "hidden",
   },
   supports: { hierarchies: true, aggregations: false, constraints: false, unions: true },
 });

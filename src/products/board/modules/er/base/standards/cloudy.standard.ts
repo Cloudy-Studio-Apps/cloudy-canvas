@@ -17,6 +17,7 @@ export const CLOUDY_STANDARD = defineErStandard({
     crowFeet: true,
     dependency: "marks",
     arrows: "manual",
+    joins: "shown",
   },
   supports: { hierarchies: true, aggregations: true, constraints: true, unions: true },
 });

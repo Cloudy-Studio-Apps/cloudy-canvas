@@ -47,6 +47,8 @@ export interface ErNotationSettings {
    * at an entity the other side takes part with at most once.
    */
   arrows: "manual" | "cardinality";
+  /** The join attribute after the cardinality on the lines (`(0,n) · dni`), or not. */
+  joins: "shown" | "hidden";
   /** Crow's-foot marks on two-way relations. */
   crowFeet: boolean;
   /** The "I" (identification) and "E" (existence) dependency marks on relations, or none. */

@@ -6,9 +6,9 @@ import { drawArrowHead } from "../base/arrow-head";
 import { ER_DEFAULTS } from "../base/er.defaults";
 import { drawCrowFoot } from "./crow-foot";
 import { resolveErLinks } from "./er-links";
+import { LINK_LABEL_FONT_SIZE } from "./link-label";
 import type { ErLink } from "./er-links.types";
 
-const LABEL_FONT_SIZE = 11;
 /** The circle on a total hierarchy's parent line. */
 const TOTAL_MARK_RADIUS = 5;
 
@@ -29,7 +29,10 @@ export class ErLinks implements CanvasLinks {
       const active = view.highlighted.has(link.fromId) || view.highlighted.has(link.toId);
       drawLink(g, link, active ? view.theme.selection : INK_COLOR);
       if (link.label && link.labelAt) {
-        view.label(link.label, link.labelAt, { fontSize: LABEL_FONT_SIZE, color: MUTED_INK_COLOR });
+        view.label(link.label, link.labelAt, {
+          fontSize: LINK_LABEL_FONT_SIZE,
+          color: MUTED_INK_COLOR,
+        });
       }
     }
   }

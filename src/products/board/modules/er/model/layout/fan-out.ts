@@ -4,7 +4,7 @@ import { boxAt } from "./box";
 import { fanAngles } from "./fan-angles";
 import { RING_GAP } from "./layout-metrics";
 import type { Obstacles } from "./layout.types";
-import { isFree } from "./obstacles";
+import { conflictCount } from "./obstacles";
 
 const PUSH_STEP = 12;
 const MAX_PUSHES = 14;
@@ -21,8 +21,9 @@ const CLEARANCE = 6;
 /**
  * Places items (attributes) around an owner box, fanned out over the free directions between the
  * `blocked` angles (its lines). Each item sits just outside the owner; when that spot is taken it
- * turns a little, then moves further out, until it touches no box or line in `obstacles`, which
- * grows as items are placed.
+ * turns a little, then tries every direction round the owner at that distance, and only then
+ * moves further out, until it touches no box or line in `obstacles`, which grows as items are
+ * placed.
  */
 export function fanOut(
   owner: Point & Size,
@@ -36,19 +37,28 @@ export function fanOut(
   items.forEach((item, i) => {
     const base = angles[i] ?? 0;
     let chosen: Point | null = null;
+    // With no free spot, the one that touches the fewest shapes and lines, nearest first.
+    let fallback: { at: Point; conflicts: number } | null = null;
     const tryAt = (angle: number, push: number) => {
       const center = ringPoint(owner, item, angle, push * PUSH_STEP);
-      const free = isFree(boxAt(center, item, CLEARANCE), [owner, center], obstacles, ownerBox);
-      if (free) chosen = center;
-      return free;
+      const conflicts = conflictCount(
+        boxAt(center, item, CLEARANCE),
+        [owner, center],
+        obstacles,
+        ownerBox,
+      );
+      if (conflicts === 0) chosen = center;
+      else if (!fallback || conflicts < fallback.conflicts) fallback = { at: center, conflicts };
+      return conflicts === 0;
     };
+    // Close to the owner first: its fan direction, then every direction round it, before moving
+    // a step further out (an attribute far from its owner reads as someone else's).
     for (let push = 0; push <= MAX_PUSHES && !chosen; push++) {
-      TURNS.some((turn) => tryAt(base + turn, push));
+      if (TURNS.some((turn) => tryAt(base + turn, push))) break;
+      if (push <= SWEEP_PUSHES) SWEEP.some((turn) => tryAt(base + turn, push));
     }
-    for (let push = 0; push <= SWEEP_PUSHES && !chosen; push++) {
-      SWEEP.some((turn) => tryAt(base + turn, push));
-    }
-    const center = chosen ?? ringPoint(owner, item, base, MAX_PUSHES * PUSH_STEP);
+    const center: Point =
+      chosen ?? (fallback as { at: Point } | null)?.at ?? ringPoint(owner, item, base, 0);
     result.set(item.id, center);
     obstacles.rects.push(boxAt(center, item));
     obstacles.segments.push([owner, center]);
