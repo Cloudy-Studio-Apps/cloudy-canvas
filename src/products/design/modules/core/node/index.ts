@@ -4,6 +4,9 @@ export type * from "./design-node.types";
 export type * from "./flip.types";
 export type * from "./node-build.types";
 export type * from "./paint.types";
+export type * from "./node-layout.types";
+export { FIXED_SIZING, layoutOf } from "./node-layout";
+export { DEFAULT_AUTO_LAYOUT, readAutoLayout, readSizeLimits, readSizing } from "./layout-args";
 export { createNodeBase } from "./create-node-base";
 export { DesignNodeKind } from "./design-node.kind";
 export { ChildHostKind } from "./child-host.kind";
@@ -26,6 +29,7 @@ export {
   STROKE_CACHE,
   strokeAreaOptions,
   strokeKey,
+  strokeReach,
   strokeShapeOf,
 } from "./node-stroke";
 export { solidPaint } from "./solid-paint";

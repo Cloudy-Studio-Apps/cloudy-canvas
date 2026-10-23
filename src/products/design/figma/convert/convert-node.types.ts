@@ -1,7 +1,7 @@
 import type { CanvasElement } from "@canvas";
 import type { FigMatrix } from "@canvas/figma";
 
-import type { Paint } from "../../modules";
+import type { AutoLayout, Paint } from "../../modules";
 
 /** Where converted nodes go: their parent (world transform, id), page and drawing order. */
 export interface NodePlacement {
@@ -9,6 +9,8 @@ export interface NodePlacement {
   world: FigMatrix;
   parentId: string | null;
   pageId: string;
+  /** The parent's auto layout, which decides whether the node fills it. */
+  parentLayout?: AutoLayout | null;
   /** The node's fractional index among its siblings. */
   index: string;
   /** Where every converted element is collected. */

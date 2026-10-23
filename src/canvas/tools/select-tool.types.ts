@@ -16,6 +16,11 @@ export type Gesture =
       /** The box round the moved elements when the drag started (what snaps), if any is outlined. */
       box: Rect | null;
       snapper: Snapper | null;
+      /**
+       * Lets the document's `AfterEdit` hook run again: it's held while the elements move freely
+       * (a design's auto layout would put them back), and runs once the drag is dropped.
+       */
+      release: (() => void) | null;
       /** Shift-click on an already selected element deselects it — unless it turns into a drag. */
       toggleOnClick: string | null;
       /**

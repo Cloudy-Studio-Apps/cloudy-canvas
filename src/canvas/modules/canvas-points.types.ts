@@ -2,7 +2,7 @@ import type { ExtensionPoint, Shortcut } from "@shared/core";
 
 import type { CanvasProduct, CanvasScopes, SelectTargetRequest } from "../canvas-product.types";
 import type { CanvasViewOptions } from "../canvas-view.types";
-import type { CanvasDocument } from "../document";
+import type { CanvasDocument, EditedChange } from "../document";
 import type { CanvasElement, ElementKind, ElementKinds, ElementPatch } from "../elements";
 import type { Keybindings } from "../input";
 import type { EffectRenderer, ElementClip, ElementEffects, ElementMasks } from "../render";
@@ -101,6 +101,13 @@ export type FramesHook<O extends object> = (
 /** See `CanvasProduct.editElement`; only one module may give it. */
 export type EditElementHook<O extends object> = (el: CanvasElement, ctx: ToolContext<O>) => boolean;
 
+/** See `CanvasProduct.afterEdit`; only one module may give it. */
+export type AfterEditHook<O extends object> = (
+  doc: CanvasDocument,
+  change: EditedChange,
+  kinds: ElementKinds<O>,
+) => void;
+
 /** See `CanvasProduct.onMoved`; hooks run one after another in module order. */
 export type OnMovedHook<O extends object> = (
   doc: CanvasDocument,
@@ -162,6 +169,8 @@ export interface CanvasPoints<O extends object> {
   /** What double-click or Enter edits (one module at most; two throw). */
   editElement: ExtensionPoint<EditElementHook<O>>;
   onMoved: ExtensionPoint<OnMovedHook<O>>;
+  /** What follows from every edit (one module at most; two throw). */
+  afterEdit: ExtensionPoint<AfterEditHook<O>>;
   links: ExtensionPoint<() => CanvasLinks>;
   resolveElements: ExtensionPoint<ResolveElementsHook<O>>;
   withMembers: ExtensionPoint<WithMembersHook<O>>;

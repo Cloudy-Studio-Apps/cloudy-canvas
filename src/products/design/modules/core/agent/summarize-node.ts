@@ -1,6 +1,6 @@
 import { summarizeElement, type CanvasElement, type ElementKinds } from "@canvas";
 
-import { isDesignNode } from "../node";
+import { isDesignNode, layoutOf } from "../node";
 import type { NodeSummary } from "./summarize-node.types";
 
 /**
@@ -14,6 +14,7 @@ export function summarizeNode(
 ): NodeSummary {
   const node = isDesignNode(el) ? el : null;
   const mask = maskedBy.get(el.id);
+  const layout = layoutOf(el);
   return {
     ...summarizeElement(kinds, el),
     parentId: node?.parentId ?? null,
@@ -30,6 +31,11 @@ export function summarizeNode(
         }
       : {}),
     ...(mask ? { maskedBy: mask } : {}),
+    ...(layout ? { layout } : {}),
+    ...(node && (node.sizing.h !== "fixed" || node.sizing.v !== "fixed")
+      ? { sizing: node.sizing }
+      : {}),
+    ...(node?.layoutAbsolute ? { layoutAbsolute: true as const } : {}),
     ...(node?.effects.some((effect) => effect.visible)
       ? { effects: node.effects.filter((effect) => effect.visible).map((effect) => effect.type) }
       : {}),

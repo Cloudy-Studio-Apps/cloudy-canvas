@@ -1,6 +1,6 @@
 import type { ElementSummary } from "@canvas";
 
-import type { LayerBlendMode, MaskType } from "../node";
+import type { AutoLayout, LayerBlendMode, MaskType, NodeSizing } from "../node";
 
 /** A layer in listings: the element summary (its `label` is the layer's name) and its place. */
 export interface NodeSummary extends ElementSummary {
@@ -14,6 +14,12 @@ export interface NodeSummary extends ElementSummary {
   mask?: { type: MaskType; inverted?: true };
   /** The mask the layer shows through, directly (set on the layers a mask masks). */
   maskedBy?: string;
+  /** A frame's auto layout (its layers' x/y follow it). */
+  layout?: AutoLayout;
+  /** Set when a side hugs or fills. */
+  sizing?: NodeSizing;
+  /** Set when its auto layout parent leaves it where it is. */
+  layoutAbsolute?: true;
   /** The types of its visible effects, bottom to top (left out when it has none). */
   effects?: string[];
 }

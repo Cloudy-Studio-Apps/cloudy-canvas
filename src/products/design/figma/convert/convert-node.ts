@@ -12,19 +12,21 @@ import {
   type ResolvedFigNode,
 } from "@canvas/figma";
 
-import type {
-  BooleanElement,
-  BooleanOperation,
-  EllipseElement,
-  FrameElement,
-  GroupElement,
-  PolygonElement,
-  RectangleElement,
-  SectionElement,
-  StarElement,
-  TextNodeElement,
+import {
+  layoutOf,
+  type BooleanElement,
+  type BooleanOperation,
+  type EllipseElement,
+  type FrameElement,
+  type GroupElement,
+  type PolygonElement,
+  type RectangleElement,
+  type SectionElement,
+  type StarElement,
+  type TextNodeElement,
 } from "../../modules";
 import { convertLine, convertVector, vectorFromGeometry } from "./convert-geometry";
+import { figAutoLayout } from "./fig-auto-layout";
 import { figNodeBase } from "./fig-node-base";
 import { textFields } from "./fig-text";
 import type { NodePlacement } from "./convert-node.types";
@@ -71,7 +73,13 @@ function convertNode(
   if (!el) return;
   placement.out.push(el);
   if (!holdsChildren(el)) return;
-  const parent = { world, parentId: el.id, pageId: placement.pageId, out: placement.out };
+  const parent = {
+    world,
+    parentId: el.id,
+    pageId: placement.pageId,
+    parentLayout: layoutOf(el),
+    out: placement.out,
+  };
   convertChildren(resolved.children, parent, ctx);
 }
 
@@ -118,6 +126,7 @@ function convertOwn(
       ...base("frame"),
       cornerRadius: cornerRadiusOf(node, ctx),
       clipsContent: node.frameMaskDisabled !== true,
+      layout: figAutoLayout(node),
     };
     return frame;
   }

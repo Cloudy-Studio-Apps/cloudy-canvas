@@ -2,6 +2,7 @@ import { createElementBase, type Rect } from "@canvas";
 
 import type { NodeBaseOptions } from "./create-node-base.types";
 import type { DesignNode } from "./design-node.types";
+import { FIXED_SIZING } from "./node-layout";
 import { NODE_DEFAULTS } from "./node.defaults";
 
 /**
@@ -36,5 +37,8 @@ export function createNodeBase<K extends string>(
     maskType: NODE_DEFAULTS.maskType,
     maskInverted: false,
     effects: [],
+    sizing: FIXED_SIZING,
+    layoutAbsolute: false,
+    sizeLimits: null,
   };
 }

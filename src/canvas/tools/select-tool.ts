@@ -76,6 +76,7 @@ export class SelectTool implements Tool {
       started: false,
       box: null,
       snapper: null,
+      release: null,
       toggleOnClick,
       partOnClick,
       partBefore,
@@ -104,6 +105,7 @@ export class SelectTool implements Tool {
       g.started = true;
       this.ctx.setCursor("move");
       this.ctx.doc.checkpoint();
+      g.release = this.ctx.doc.deferAfterEdit();
       // Alt-drag leaves the originals in place and drags out a copy.
       if (p.altKey) this.dragCopies(g);
       g.box = this.boxOf(g.origins.values());
@@ -159,7 +161,10 @@ export class SelectTool implements Tool {
 
   onCancel(): void {
     if (this.gesture?.kind === "element") this.gesture.gesture.cancel();
-    if (this.gesture?.kind === "move") this.gesture.snapper?.clear();
+    if (this.gesture?.kind === "move") {
+      this.gesture.snapper?.clear();
+      this.gesture.release?.();
+    }
     if (this.gesture?.kind === "resize") this.gesture.resize.end();
     if (this.gesture?.kind === "rotate") this.gesture.rotate.end();
     if (this.gesture?.kind === "guide") this.gesture.drag.end();

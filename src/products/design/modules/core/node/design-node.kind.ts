@@ -8,6 +8,7 @@ import {
   type ElementStyle,
   type ElementView,
   type Point,
+  type Rect,
   rotatePoint,
   scaleLength,
   type ScaleTransform,
@@ -38,6 +39,8 @@ import { scaleTiles } from "./scale-tiles";
 import { flipPlacement } from "./flip-placement";
 import type { FlipAxis } from "./flip.types";
 import { NODE_DEFAULTS } from "./node.defaults";
+import { FIXED_SIZING } from "./node-layout";
+import type { LayoutAxis, LayoutSizing } from "./node-layout.types";
 import { NODE_STYLE_FIELDS, nodeStylePatch } from "./node-style";
 
 /**
@@ -289,6 +292,55 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
     };
   }
 
+  /**
+   * Resized by hand (or by an agent): the sides that change stop hugging or filling, as in Figma.
+   * Kinds resize their shape in `resizeShape`; auto layout keeps the sizing it resizes with.
+   */
+  override resize(el: E, rect: Rect): ElementPatch<E> {
+    const patch = this.resizeShape(el, rect);
+    const h = el.sizing.h !== "fixed" && rect.w !== el.w ? "fixed" : el.sizing.h;
+    const v = el.sizing.v !== "fixed" && rect.h !== el.h ? "fixed" : el.sizing.v;
+    if (h === el.sizing.h && v === el.sizing.v) return patch;
+    return { ...patch, sizing: { h, v } } as ElementPatch<E>;
+  }
+
+  /** Its patch for a new box (stretched by default). */
+  protected resizeShape(el: E, rect: Rect): ElementPatch<E> {
+    return super.resize(el, rect);
+  }
+
+  /**
+   * Whether its size on `axis` is what it holds (an auto layout frame's hug, a text's auto size),
+   * so an auto layout parent takes it as it is and only its own layout changes it.
+   */
+  hugs(_el: E, _axis: LayoutAxis): boolean {
+    return false;
+  }
+
+  /** Whether it can hug what it holds on `axis` (an auto layout frame; a text, by its size). */
+  canHug(el: E, axis: LayoutAxis): boolean {
+    return this.hugs({ ...el, sizing: { h: "hug", v: "hug" } }, axis);
+  }
+
+  /** How it's sized on `axis` now: `fill` when it fills, `hug` when it hugs, else `fixed`. */
+  sizingOf(el: E, axis: LayoutAxis): LayoutSizing {
+    if (el.sizing[axis] === "fill") return "fill";
+    return this.hugs(el, axis) ? "hug" : "fixed";
+  }
+
+  /** The patch that sizes it `sizing` on `axis` (the panel's W/H menus). */
+  sizingPatch(el: E, axis: LayoutAxis, sizing: LayoutSizing): ElementPatch<E> {
+    return { sizing: { ...el.sizing, [axis]: sizing } } as ElementPatch<E>;
+  }
+
+  /**
+   * Its first baseline from its top, which auto layouts aligning by baseline line up (a text's
+   * first line), or `null` (its bottom is used).
+   */
+  baseline(_el: E): number | null {
+    return null;
+  }
+
   /** Hidden layers aren't snapped to. */
   override snapTarget(el: E): boolean {
     return el.visible && super.snapTarget(el);
@@ -318,6 +370,9 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
       maskType: el.maskType ?? NODE_DEFAULTS.maskType,
       maskInverted: el.maskInverted ?? false,
       effects: el.effects ?? [],
+      sizing: el.sizing ?? FIXED_SIZING,
+      layoutAbsolute: el.layoutAbsolute ?? false,
+      sizeLimits: el.sizeLimits ?? null,
     };
   }
 

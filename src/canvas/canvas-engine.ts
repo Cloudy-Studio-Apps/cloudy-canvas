@@ -254,6 +254,7 @@ export class CanvasEngine<O extends object = object> {
         return scope === null ? el : scopes.place(el, scope);
       });
     }
+    if (product.afterEdit) this.doc.setAfterEdit(product.afterEdit.bind(product));
     this.scopeGuides = new ScopeGuides(this.doc, product.guides);
     this.fontTracker = new FontTracker(fonts, (key) => this.handleFontLoad(key));
     this.systemClipboard = clipboard ?? new MemoryClipboard();
@@ -365,6 +366,7 @@ export class CanvasEngine<O extends object = object> {
     this.elementActions.clear();
     this.contextMenus.clear();
     if (this.scopes) this.doc.setPlacement(null);
+    if (this.product.afterEdit) this.doc.setAfterEdit(null);
     // If mount() is still awaiting init, it destroys the renderer itself once init resolves.
     if (this.rendererReady) this.renderer.destroy();
     if (this.ownsDocument) this.doc.destroy();

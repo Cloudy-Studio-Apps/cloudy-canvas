@@ -14,11 +14,13 @@ import { fraction } from "./number-args";
 import { colorPaints, readPaints } from "./paint-args";
 import { readStrokeFields } from "./stroke-args";
 import { readNodeEffects } from "./effect-args";
+import { readNodeLayoutFields } from "./node-layout-args";
 
 /**
  * A new node with what every node takes from an agent's spec: `name`, `visible`, `opacity`,
  * `blendMode`, `fills` (or a `fill` color or CSS gradient), `strokes` (or a `stroke` one), `strokeWeight`, the stroke
- * settings (`readStrokeFields`), the mask fields (`isMask`, `maskType`, `maskInverted`) and `rotation` (degrees counterclockwise round
+ * settings (`readStrokeFields`), the mask fields (`isMask`, `maskType`, `maskInverted`), how it sizes in an auto layout
+ * (`sizing`, `layoutAbsolute`, `sizeLimits`) and `rotation` (degrees counterclockwise round
  * its top-left corner; a line's ends turn instead).
  */
 export function applyNodeSpec<E extends DesignNode>(
@@ -67,6 +69,7 @@ export function applyNodeSpec<E extends DesignNode>(
   if (args.maskType !== undefined) next.maskType = maskType(args.maskType);
   const inverted = optionalBoolean(args, "maskInverted");
   if (inverted !== undefined) next.maskInverted = inverted;
+  Object.assign(next, readNodeLayoutFields(kind as DesignNodeKind, next, args));
   const rotation = optionalNumber(args, "rotation");
   if (rotation !== undefined && Number.isFinite(rotation) && normalizeAngle(rotation) !== 0)
     return { ...next, ...kind.rotate(next, normalizeAngle(rotation), next) };

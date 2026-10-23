@@ -18,5 +18,6 @@ export function createFrame(
     }),
     cornerRadius: FRAME_DEFAULTS.cornerRadius,
     clipsContent: FRAME_DEFAULTS.clipsContent,
+    layout: null,
   };
 }

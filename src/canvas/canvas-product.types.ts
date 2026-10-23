@@ -1,6 +1,6 @@
 import type { CanvasViewOptions } from "./canvas-view.types";
 import type { CopyContext, PastedImage } from "./clipboard";
-import type { CanvasDocument } from "./document";
+import type { CanvasDocument, EditedChange } from "./document";
 import type { CanvasElement, ElementKinds, ElementPatch } from "./elements";
 import type { Point, Rect } from "./geometry.types";
 import type { Keybindings } from "./input";
@@ -115,6 +115,12 @@ export interface CanvasProduct<O extends object = object> {
     moved: ReadonlySet<string>,
     elements: readonly CanvasElement[],
   ): void;
+  /**
+   * Runs after every edit, inside its transaction and undo step (`CanvasDocument.setAfterEdit`):
+   * writes what follows from the change (e.g. a design's auto layout), which runs it again with
+   * what that changed. Elements a file opens with don't run it.
+   */
+  afterEdit?(doc: CanvasDocument, change: EditedChange): void;
   /**
    * Gives elements whose geometry follows others (e.g. a box around a group) their current
    * geometry. Returns the list with those replaced by new objects and the rest as they were;

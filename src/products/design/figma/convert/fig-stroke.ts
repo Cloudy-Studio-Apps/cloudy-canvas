@@ -28,12 +28,13 @@ export function figStroke(
     strokeJoin: JOINS[node.strokeJoin ?? ""] ?? "miter",
     strokeMiterAngle: Math.round(((2 * Math.asin(1 / limit) * 180) / Math.PI) * 100) / 100,
     strokeDashes: (node.dashPattern ?? []).filter((n) => Number.isFinite(n) && n >= 0),
+    // A side the file leaves out has no stroke (a card with only a top border).
     strokeWeights: node.borderStrokeWeightsIndependent
       ? {
-          top: node.borderTopWeight ?? node.strokeWeight ?? 0,
-          right: node.borderRightWeight ?? node.strokeWeight ?? 0,
-          bottom: node.borderBottomWeight ?? node.strokeWeight ?? 0,
-          left: node.borderLeftWeight ?? node.strokeWeight ?? 0,
+          top: node.borderTopWeight ?? 0,
+          right: node.borderRightWeight ?? 0,
+          bottom: node.borderBottomWeight ?? 0,
+          left: node.borderLeftWeight ?? 0,
         }
       : null,
   };

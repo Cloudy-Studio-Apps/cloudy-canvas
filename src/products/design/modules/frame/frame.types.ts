@@ -1,6 +1,6 @@
 import type { ElementDefaults, Size } from "@canvas";
 
-import type { DesignNode } from "../core";
+import type { AutoLayout, DesignNode } from "../core";
 
 /** A frame: a container for other nodes, like an artboard or a screen. */
 export interface FrameElement extends DesignNode {
@@ -8,6 +8,8 @@ export interface FrameElement extends DesignNode {
   cornerRadius: number;
   /** Hides what its children draw outside it (stored now; drawn in a later step). */
   clipsContent: boolean;
+  /** Its auto layout, or `null` when its layers stay where they're put. */
+  layout: AutoLayout | null;
 }
 
 export interface FrameDefaults extends ElementDefaults {

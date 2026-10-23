@@ -82,7 +82,7 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
   }
 
   /** Its points and curves stretch with its box. */
-  override resize(el: VectorElement, rect: Rect): ElementPatch<VectorElement> {
+  protected override resizeShape(el: VectorElement, rect: Rect): ElementPatch<VectorElement> {
     const sx = el.w > 0 ? rect.w / el.w : 1;
     const sy = el.h > 0 ? rect.h / el.h : 1;
     return { ...rect, network: scaleNetwork(el.network, sx, sy) };

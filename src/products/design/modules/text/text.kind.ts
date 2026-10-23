@@ -20,6 +20,8 @@ import {
   DesignNodeKind,
   drawPaints,
   NODE_STYLE_FIELDS,
+  type LayoutAxis,
+  type LayoutSizing,
   type NodeBuildContext,
   type NodeGeometry,
 } from "../core";
@@ -31,6 +33,7 @@ import { textLayout, textSize, textStyleOf } from "./text-layout";
 import { textContentPatch, TEXT_RICH } from "./text-rich-spec";
 import { readRuns, runsPatch } from "./text-run-args";
 import { textOutline } from "./text-outline";
+import { autoResizeFor } from "./text-auto-resize";
 import type { TextNodeElement } from "./text.types";
 
 /** Longest layer name a text takes from its content. */
@@ -132,6 +135,34 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
     view.setPaintTextMask(true);
   }
 
+  /** Auto width hugs both ways, auto height its height. */
+  override hugs(el: TextNodeElement, axis: LayoutAxis): boolean {
+    return el.autoResize === "width" || (axis === "v" && el.autoResize === "height");
+  }
+
+  /** A text hugs through its auto size, whatever it is now. */
+  override canHug(): boolean {
+    return true;
+  }
+
+  /**
+   * Hugging is its `autoResize` (auto width hugs both ways, auto height its height); fixing a side
+   * stops it, and filling across makes it wrap (auto height).
+   */
+  override sizingPatch(
+    el: TextNodeElement,
+    axis: LayoutAxis,
+    sizing: LayoutSizing,
+  ): ElementPatch<TextNodeElement> {
+    const stored = { ...el.sizing, [axis]: sizing === "fill" ? "fill" : "fixed" };
+    const autoResize = autoResizeFor(el.autoResize, axis, sizing);
+    return retypeset(el, { sizing: stored, autoResize });
+  }
+
+  override baseline(el: TextNodeElement): number | null {
+    return textLayout(el).lines[0]?.baseline ?? null;
+  }
+
   override layerName(el: TextNodeElement): string {
     return el.name || el.text.split("\n")[0]?.trim().slice(0, NAME_LENGTH) || this.label;
   }
@@ -140,7 +171,7 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
    * Dragging a side fixes the width (auto width becomes auto height), and dragging the height
    * fixes the size; the text is laid out again for the new box.
    */
-  override resize(el: TextNodeElement, rect: Rect): ElementPatch<TextNodeElement> {
+  protected override resizeShape(el: TextNodeElement, rect: Rect): ElementPatch<TextNodeElement> {
     const autoResize =
       rect.h !== el.h
         ? "none"

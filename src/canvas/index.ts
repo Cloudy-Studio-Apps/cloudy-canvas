@@ -14,7 +14,13 @@ export type { CanvasProduct, CanvasScopes, SelectTargetRequest } from "./canvas-
 export type { CanvasGrid, CanvasViewOptions } from "./canvas-view.types";
 export type { CopyContext, DropResult, PastedImage } from "./clipboard";
 export type { CommandHandler, Commands } from "./commands.types";
-export type { DocumentChange, DocumentMeta, DocumentMetaPatch } from "./document";
+export type {
+  AfterEdit,
+  DocumentChange,
+  DocumentMeta,
+  DocumentMetaPatch,
+  EditedChange,
+} from "./document";
 export type { EngineLoading } from "./engine-loading.types";
 export type { EngineState } from "./engine-state.types";
 export type {
@@ -72,7 +78,7 @@ export { CanvasEngine } from "./canvas-engine";
 export { MIN_ZOOM, MAX_ZOOM } from "./camera";
 export { DEFAULT_VIEW_OPTIONS } from "./canvas-view";
 export { cloneElements, imageSize } from "./clipboard";
-export { CanvasDocument, DocumentFeed, LOCAL_ORIGIN } from "./document";
+export { CanvasDocument, compareByIndex, DocumentFeed, LOCAL_ORIGIN } from "./document";
 export { decodeCanvasFile, encodeCanvasFile } from "./file";
 export * from "./agent";
 export * from "./elements";

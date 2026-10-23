@@ -4,6 +4,7 @@ import type { FigImportContext, FigNode } from "@canvas/figma";
 import { createNodeBase, type DesignNode, type MaskType } from "../../modules";
 import { convertPaints } from "./fig-paints";
 import { figLayerBlendMode } from "./fig-blend-mode";
+import { figSizing } from "./fig-auto-layout";
 import { figEffects } from "./fig-effects";
 import { figStroke } from "./fig-stroke";
 import type { NodePaints, NodePlacement } from "./convert-node.types";
@@ -21,7 +22,6 @@ export function figNodeBase<K extends string>(
   ctx: FigImportContext,
   paints: NodePaints = {},
 ): DesignNode & { type: K } {
-  warnUnsupported(node, ctx);
   const base = createNodeBase(type, rect, placement.index, {
     name: node.name ?? "",
     parentId: placement.parentId,
@@ -37,16 +37,11 @@ export function figNodeBase<K extends string>(
     strokeWeight: node.strokeWeight ?? 0,
     ...figStroke(node),
     effects: figEffects(node, ctx),
+    sizing: figSizing(node, placement.parentLayout ?? null),
+    layoutAbsolute: !!placement.parentLayout && node.stackPositioning === "ABSOLUTE",
     ...(node.locked ? { locked: true } : {}),
     ...(node.mask ? { isMask: true, maskType: figMaskType(node, ctx) } : {}),
   };
-}
-
-/** Counts what the node has that isn't brought over yet: auto layout. */
-function warnUnsupported(node: FigNode, ctx: FigImportContext): void {
-  if (node.stackMode && node.stackMode !== "NONE") {
-    ctx.warnings.add("auto layout frames kept their layout as fixed positions");
-  }
 }
 
 /** How a Figma mask masks (alpha when Figma's type is unknown, with a warning). */

@@ -114,6 +114,31 @@ export const NODE_SPEC_PROPERTIES = {
     type: "boolean",
     description: "A mask that shows what's outside it instead (a cut-out).",
   },
+  sizing: {
+    type: "object",
+    properties: {
+      h: { type: "string", enum: ["fixed", "hug", "fill"] },
+      v: { type: "string", enum: ["fixed", "hug", "fill"] },
+    },
+    description:
+      "How its width (h) and height (v) are decided, as in Figma: fixed, hug (an auto layout " +
+      "frame takes its layers' size; texts hug through autoResize) or fill (the room its auto " +
+      "layout parent leaves, shared with the other fill layers; across the direction: stretched).",
+  },
+  layoutAbsolute: {
+    type: "boolean",
+    description: "In an auto layout frame: stays where it is (Figma's Ignore auto layout).",
+  },
+  sizeLimits: {
+    type: ["object", "null"],
+    properties: {
+      minW: { type: "number" },
+      maxW: { type: "number" },
+      minH: { type: "number" },
+      maxH: { type: "number" },
+    },
+    description: "The smallest and largest an auto layout may make it.",
+  },
   rotation: {
     type: "number",
     description:

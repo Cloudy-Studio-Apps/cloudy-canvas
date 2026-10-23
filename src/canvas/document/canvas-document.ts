@@ -3,6 +3,7 @@ import { generateKeyBetween, generateNKeysBetween } from "fractional-indexing";
 
 import type { CanvasElement, ElementKinds, ElementPatch } from "../elements";
 import type {
+  AfterEdit,
   DocumentChange,
   DocumentMeta,
   DocumentMetaPatch,
@@ -13,6 +14,8 @@ import type {
 export const LOCAL_ORIGIN = Symbol("local");
 /** Origin for view-state edits (e.g. hiding a note) that shouldn't be undo steps. */
 export const UI_ORIGIN = Symbol("ui");
+/** How many times an edit's `AfterEdit` hook may run on its own writes before it's stopped. */
+const AFTER_EDIT_PASSES = 32;
 
 /**
  * A file's content, backed by a Yjs doc so persistence and real-time collaboration can plug in
@@ -30,6 +33,16 @@ export class CanvasDocument {
   private readonly metaMap: Y.Map<string>;
   /** What `add` does to new elements first (see `setPlacement`). */
   private placement: ((el: CanvasElement) => CanvasElement) | null = null;
+  /** What runs after each edit (see `setAfterEdit`). */
+  private afterEdit: AfterEdit | null = null;
+  /** How deep the edits running now are nested (the hook runs when the outermost ends). */
+  private depth = 0;
+  /** How many `deferAfterEdit` holds are open. */
+  private deferred = 0;
+  /** What edits changed since the hook last ran. */
+  private edited = new Set<string>();
+  private removedSince: CanvasElement[] = [];
+  private beforeSince = new Map<string, Record<string, unknown>>();
 
   /** A document restored from `encode()` output. Loading it isn't an undoable change. */
   static fromUpdate(kinds: ElementKinds, update: Uint8Array): CanvasDocument {
@@ -91,41 +104,65 @@ export class CanvasDocument {
     this.placement = placement;
   }
 
+  /**
+   * Sets what runs after every edit, inside it (`AfterEdit`), or `null` for nothing. Elements a
+   * file opens with (`addUntracked`, `addAllUntracked`) don't run it: they're kept as they are.
+   */
+  setAfterEdit(afterEdit: AfterEdit | null): void {
+    this.afterEdit = afterEdit;
+    this.edited.clear();
+    this.removedSince = [];
+    this.beforeSince.clear();
+  }
+
+  /**
+   * Holds the `AfterEdit` hook back (e.g. while a drag moves elements freely) until the returned
+   * function is called, which runs it once with everything changed meanwhile.
+   */
+  deferAfterEdit(): () => void {
+    this.deferred++;
+    let released = false;
+    return () => {
+      if (released) return;
+      released = true;
+      this.deferred--;
+      if (this.deferred === 0) this.transact(() => {});
+    };
+  }
+
+  /** Every element's id (every type, registered or not). */
+  ids(): string[] {
+    return [...this.elements.keys()];
+  }
+
+  /** One stored field of an element, read without reading the whole element. */
+  field(id: string, key: string): unknown {
+    return this.elements.get(id)?.get(key);
+  }
+
   add(el: CanvasElement): void {
     this.transact(() => this.write(el));
   }
 
   /** Like `add`, but not recorded in the undo history (e.g. what a file needs when it opens). */
   addUntracked(el: CanvasElement): void {
-    this.doc.transact(() => this.write(el), UI_ORIGIN);
+    this.doc.transact(() => this.write(el, false), UI_ORIGIN);
   }
 
   /** `addUntracked` for many elements in one transaction (e.g. a whole imported file). */
   addAllUntracked(elements: Iterable<CanvasElement>): void {
     this.doc.transact(() => {
-      for (const el of elements) this.write(el);
+      for (const el of elements) this.write(el, false);
     }, UI_ORIGIN);
   }
 
   update(id: string, patch: ElementPatch): void {
-    const map = this.elements.get(id);
-    if (!map) return;
-    this.transact(() => {
-      for (const [key, value] of Object.entries(patch)) {
-        if (value !== undefined && map.get(key) !== value) map.set(key, value);
-      }
-    });
+    this.transact(() => this.set(id, patch));
   }
 
   /** Like `update`, but not recorded in the undo history. */
   updateUntracked(id: string, patch: ElementPatch): void {
-    const map = this.elements.get(id);
-    if (!map) return;
-    this.doc.transact(() => {
-      for (const [key, value] of Object.entries(patch)) {
-        if (value !== undefined && map.get(key) !== value) map.set(key, value);
-      }
-    }, UI_ORIGIN);
+    this.run(() => this.set(id, patch), UI_ORIGIN);
   }
 
   updateMany(patches: Map<string, ElementPatch>): void {
@@ -136,7 +173,13 @@ export class CanvasDocument {
 
   remove(ids: Iterable<string>): void {
     this.transact(() => {
-      for (const id of ids) this.elements.delete(id);
+      for (const id of ids) {
+        if (this.afterEdit) {
+          const el = this.get(id);
+          if (el) this.removedSince.push(el);
+        }
+        this.elements.delete(id);
+      }
     });
   }
 
@@ -286,16 +329,68 @@ export class CanvasDocument {
     return typeof value === "string" ? value : "";
   }
 
-  /** Stores a new element, placed first (see `setPlacement`). */
-  private write(el: CanvasElement): void {
+  /** Stores a new element, placed first (see `setPlacement`); `edit` runs the `AfterEdit` hook. */
+  private write(el: CanvasElement, edit = true): void {
     const placed = this.placement ? this.placement(el) : el;
     const map = new Y.Map<unknown>();
     for (const [key, value] of Object.entries(placed)) map.set(key, value);
     this.elements.set(placed.id, map);
+    if (edit && this.afterEdit) this.edited.add(placed.id);
+  }
+
+  /** Writes the fields of `patch` that change. */
+  private set(id: string, patch: ElementPatch): void {
+    const map = this.elements.get(id);
+    if (!map) return;
+    for (const [key, value] of Object.entries(patch)) {
+      if (value === undefined || map.get(key) === value) continue;
+      if (this.afterEdit) {
+        this.edited.add(id);
+        const before = this.beforeSince.get(id) ?? {};
+        if (!(key in before)) before[key] = map.get(key);
+        this.beforeSince.set(id, before);
+      }
+      map.set(key, value);
+    }
   }
 
   private transact(fn: () => void): void {
-    this.doc.transact(fn, LOCAL_ORIGIN);
+    this.run(fn, LOCAL_ORIGIN);
+  }
+
+  /** Runs an edit in a transaction; when the outermost one ends, the `AfterEdit` hook runs. */
+  private run(fn: () => void, origin: symbol): void {
+    this.doc.transact(() => {
+      this.depth++;
+      try {
+        fn();
+      } finally {
+        this.depth--;
+      }
+      if (this.depth === 0) this.settle();
+    }, origin);
+  }
+
+  /** Runs the `AfterEdit` hook on what changed, then on what it changed, until nothing does. */
+  private settle(): void {
+    const afterEdit = this.afterEdit;
+    if (!afterEdit || this.deferred > 0) return;
+    for (let pass = 0; pass < AFTER_EDIT_PASSES; pass++) {
+      if (this.edited.size === 0 && this.removedSince.length === 0) return;
+      const change = { updated: this.edited, removed: this.removedSince, before: this.beforeSince };
+      this.edited = new Set();
+      this.removedSince = [];
+      this.beforeSince = new Map();
+      this.depth++;
+      try {
+        afterEdit(this, change);
+      } finally {
+        this.depth--;
+      }
+    }
+    this.edited.clear();
+    this.removedSince = [];
+    this.beforeSince.clear();
   }
 
   /** The element in a map, with defaults filled, or `undefined` when its type isn't registered. */

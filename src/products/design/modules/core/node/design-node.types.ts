@@ -10,6 +10,7 @@ import type {
 } from "@canvas";
 import type { Graphics } from "pixi.js";
 
+import type { NodeSizing, SizeLimits } from "./node-layout.types";
 import type { Paint } from "./paint.types";
 
 /**
@@ -74,6 +75,15 @@ export interface DesignNode extends CanvasElement {
    * drawn over it and what it holds, together.
    */
   effects: NodeEffect[];
+  /**
+   * How its width and height are decided in an auto layout (see `NodeSizing`). A text's hugging
+   * follows its `autoResize`, so it stores only `fill` or `fixed`.
+   */
+  sizing: NodeSizing;
+  /** Whether its auto layout parent leaves it where it is (Figma's "Ignore auto layout"). */
+  layoutAbsolute: boolean;
+  /** How small and large an auto layout may make it, or `null` without limits. */
+  sizeLimits: SizeLimits | null;
 }
 
 /**

@@ -40,11 +40,16 @@ jobs:
         id: draft
         env:
           GH_TOKEN: ${{ github.token }}
+        # Created through the API, which answers with the id: listing releases right after
+        # creating one may not show the new draft yet, and the builds would then upload nothing.
         run: |
-          gh release create "$GITHUB_REF_NAME" --draft --generate-notes \
-            --title "Cloudy Canvas $GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY"
           id=$(gh api "repos/$GITHUB_REPOSITORY/releases" \
-            --jq "map(select(.tag_name == \"$GITHUB_REF_NAME\" and .draft)) | first | .id")
+            -f tag_name="$GITHUB_REF_NAME" -f name="Cloudy Canvas $GITHUB_REF_NAME" \
+            -F draft=true -F generate_release_notes=true --jq .id)
+          if [ -z "$id" ]; then
+            echo "::error::Couldn't create the draft release"
+            exit 1
+          fi
           echo "id=$id" >> "$GITHUB_OUTPUT"
 
   build:

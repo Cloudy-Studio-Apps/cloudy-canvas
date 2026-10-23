@@ -185,6 +185,33 @@ export interface FigNode {
   blendMode?: string;
   /** Auto layout: `HORIZONTAL` or `VERTICAL` (`NONE` or missing without one). */
   stackMode?: string;
+  /** Auto layout: `WRAP` when layers go on to new lines. */
+  stackWrap?: string;
+  /** The gap between layers, and between wrapped lines. */
+  stackSpacing?: number;
+  stackCounterSpacing?: number;
+  /** Left and top padding (`stackPaddingRight`, `stackPaddingBottom` the others). */
+  stackHorizontalPadding?: number;
+  stackVerticalPadding?: number;
+  stackPaddingRight?: number;
+  stackPaddingBottom?: number;
+  /** `MIN`, `CENTER`, `MAX` or `SPACE_BETWEEN` along the direction (`MIN` when missing). */
+  stackPrimaryAlignItems?: string;
+  /** `MIN`, `CENTER`, `MAX` or `BASELINE` across it. */
+  stackCounterAlignItems?: string;
+  /** `FIXED`, or `RESIZE_TO_FIT…` (hug); missing along the direction is hug, across it fixed. */
+  stackPrimarySizing?: string;
+  stackCounterSizing?: string;
+  /** Whether layers' strokes take space in the layout. */
+  bordersTakeSpace?: boolean;
+  /** Whether the first layer is drawn on top. */
+  stackReverseZIndex?: boolean;
+  /** A layer in an auto layout: 1 when it fills along the direction. */
+  stackChildPrimaryGrow?: number;
+  /** `STRETCH` when it fills across the direction. */
+  stackChildAlignSelf?: string;
+  /** `ABSOLUTE` when the auto layout leaves it where it is. */
+  stackPositioning?: string;
   internalOnly?: boolean;
   isPageDivider?: boolean;
   size?: FigVector;

@@ -4,6 +4,7 @@ import { designCanvas, type DesignToolOptions } from "@design";
 import { createModuleHost, type AppModule, type ModuleHost } from "@shared/core";
 import { usePluginsStore } from "@shared/stores/plugins-store";
 import { assetsModule } from "@design/modules/assets/assets.module";
+import { autoLayoutModule } from "@design/modules/auto-layout/auto-layout.module";
 import { booleanModule } from "@design/modules/boolean/boolean.module";
 import { coreModule } from "@design/modules/core/core.module";
 import { effectsModule } from "@design/modules/effects/effects.module";
@@ -31,6 +32,7 @@ let modules: AppModule[] = [
   coreModule,
   pagesModule,
   frameModule,
+  autoLayoutModule,
   sectionModule,
   groupModule,
   maskModule,

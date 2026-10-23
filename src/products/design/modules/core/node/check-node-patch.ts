@@ -9,6 +9,7 @@ import { fraction } from "./number-args";
 import { readPaints } from "./paint-args";
 import { readStrokeFields } from "./stroke-args";
 import { readNodeEffects } from "./effect-args";
+import { readNodeLayoutFields } from "./node-layout-args";
 
 /**
  * An agent's patch of the fields every node has, checked and normalized: `opacity` (0–1),
@@ -42,6 +43,15 @@ export function checkNodePatch<E extends DesignNode>(
   Object.assign(next, readStrokeFields(kind as DesignNodeKind, patch as Record<string, unknown>));
   if ("effects" in patch) next.effects = readNodeEffects(patch.effects, "effects");
   if ("maskType" in patch) next.maskType = maskType(patch.maskType);
+  Object.assign(
+    next,
+    // Read over what it stores now, with the rest of the patch (a new layout lets a frame hug).
+    readNodeLayoutFields(
+      kind as DesignNodeKind,
+      { ...el, ...patch, sizing: el.sizing },
+      patch as Record<string, unknown>,
+    ),
+  );
   if ("parentId" in patch) next.parentId = checkParent(el, patch.parentId, context);
   if ("rotation" in patch) {
     const angle = patch.rotation;

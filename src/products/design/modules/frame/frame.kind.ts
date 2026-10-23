@@ -24,7 +24,9 @@ import {
   networkGeometry,
   NODE_STYLE_FIELDS,
   nonNegative,
+  readAutoLayout,
   rectNetwork,
+  type LayoutAxis,
   type NodeBuildContext,
   type NodeGeometry,
 } from "../core";
@@ -66,6 +68,17 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
       type: "boolean",
       description: "Frame: hide what its layers draw outside it (true by default).",
     },
+    layout: {
+      type: ["object", "null"],
+      description:
+        "Frame: auto layout, as in Figma: its layers placed one after another in layer order " +
+        '(bottom first). { direction: "horizontal" | "vertical", gap, padding (number, [v, h], ' +
+        '[top, right, bottom, left] or { top, right, bottom, left }), align: "start" | "center" | ' +
+        '"end" | "space-between", counterAlign: "start" | "center" | "end" | "baseline", wrap, ' +
+        "counterGap (between wrapped lines), strokesIncluded, reverseStacking }; missing fields " +
+        "keep their value (new: a row, gap 10, padding 10). null removes it. With sizing " +
+        '{ h: "hug" } the frame takes its layers\' width.',
+    },
   };
 
   createNode(rect: Rect, name: string, index: string, parentId: string | null): FrameElement {
@@ -101,6 +114,7 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
         ? { cornerRadius: nonNegative(args.cornerRadius, "cornerRadius") }
         : {}),
       clipsContent: optionalBoolean(args, "clipsContent") ?? frame.clipsContent,
+      ...(args.layout !== undefined ? { layout: readAutoLayout(args.layout, null) } : {}),
     };
   }
 
@@ -122,7 +136,22 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
     context: ElementBuildContext,
   ): ElementPatch<FrameElement> {
     if ("cornerRadius" in patch) nonNegative(patch.cornerRadius, "cornerRadius");
-    return super.completePatch(el, patch, context);
+    if (!("layout" in patch)) return super.completePatch(el, patch, context);
+    const layout = readAutoLayout(patch.layout, el.layout);
+    // Without a layout, nothing is left to hug.
+    const sizing = patch.sizing ?? el.sizing;
+    const fixed = (axis: "h" | "v") => (sizing[axis] === "hug" ? "fixed" : sizing[axis]);
+    const next = {
+      ...patch,
+      layout,
+      ...(layout ? {} : { sizing: { h: fixed("h"), v: fixed("v") } }),
+    };
+    return super.completePatch(el, next, context);
+  }
+
+  /** An auto layout frame may hug its layers. */
+  override hugs(el: FrameElement, axis: LayoutAxis): boolean {
+    return el.layout !== null && el.sizing[axis] === "hug";
   }
 
   override geometryKey(el: FrameElement): string {
@@ -153,6 +182,7 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
       ...super.fillDefaults(el),
       cornerRadius: el.cornerRadius ?? FRAME_DEFAULTS.cornerRadius,
       clipsContent: el.clipsContent ?? FRAME_DEFAULTS.clipsContent,
+      layout: el.layout ?? null,
     };
   }
 }
