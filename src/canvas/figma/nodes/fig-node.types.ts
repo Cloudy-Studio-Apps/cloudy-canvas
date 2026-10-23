@@ -115,10 +115,26 @@ export interface FigTextLayout {
   baselines?: { firstCharacter?: number; endCharacter?: number }[];
 }
 
+/** A shared style a node uses: a style in the file (`guid`) or from a library (`assetRef.key`). */
+export interface FigStyleRef {
+  guid?: FigGuid;
+  assetRef?: { key?: string };
+}
+
 export interface FigNode {
   guid?: FigGuid;
   phase?: string;
   type?: string;
+  /** A style's or component's library key. */
+  key?: string;
+  /** Set on style nodes: `TEXT`, `FILL`, `EFFECT` or `GRID`. */
+  styleType?: string;
+  /** The text style it uses, whose typography wins over its own fields. */
+  styleIdForText?: FigStyleRef;
+  /** The color style of its fills, whose paints win over its own. */
+  styleIdForFill?: FigStyleRef;
+  /** The color style of its strokes. */
+  styleIdForStrokeFill?: FigStyleRef;
   name?: string;
   parentIndex?: { guid?: FigGuid; position?: string };
   visible?: boolean;
@@ -165,6 +181,8 @@ export interface FigNode {
   textAlignVertical?: string;
   textAutoResize?: string;
   textCase?: string;
+  textDecoration?: string;
+  paragraphSpacing?: number;
   autoRename?: boolean;
   symbolData?: FigSymbolData;
   derivedSymbolData?: FigOverride[];

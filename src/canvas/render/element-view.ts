@@ -10,6 +10,7 @@ import type { ImageCache } from "./image-cache";
 import type { ElementClip } from "./layer-placement.types";
 import { PaintStack } from "./paint-stack";
 import type { PaintLayer, PaintStackOptions } from "./paint-stack.types";
+import { negativeHalfLeading } from "./text-leading";
 import { textMaskTexture } from "./text-mask";
 import { cappedTextResolution } from "./text-resolution";
 import { canvasTextStyle } from "./text-style";
@@ -120,6 +121,9 @@ export class ElementView extends Container {
   placeText(value: string, style: ElementTextStyle, w: number, h: number): Text {
     const wrapWidth = Math.max(1, w - style.padX * 2);
     const text = this.setText(value, { ...style, wrapWidth });
+    // Lines tighter than the font sit higher, as in the editor; the block is its lines' height.
+    const shift = negativeHalfLeading(text);
+    const height = text.height + shift * 2;
     const x =
       style.align === "center"
         ? (w - text.width) / 2
@@ -128,11 +132,11 @@ export class ElementView extends Container {
           : style.padX;
     const y =
       style.vAlign === "middle"
-        ? (h - text.height) / 2
+        ? (h - height) / 2
         : style.vAlign === "bottom"
-          ? h - style.padY - text.height
+          ? h - style.padY - height
           : style.padY;
-    text.position.set(x, y);
+    text.position.set(x, y + shift);
     return text;
   }
 

@@ -5,6 +5,7 @@ import {
   type FigTree,
   type ImportWarnings,
   type ResolvedFigNode,
+  withFigStyles,
 } from "@canvas/figma";
 
 import type { InstanceScope } from "./resolve-instances.types";
@@ -16,7 +17,7 @@ const MAX_DEPTH = 40;
  * `node` with its children, every instance expanded: an instance stores only what it changes
  * on its component (overrides by guid path, its resolved layout, its text and visibility
  * properties), so its children are the component's, changed by it and by the instances around
- * it.
+ * it. Every node also gets the shared styles it uses (`withFigStyles`).
  */
 export function resolveFigNode(
   tree: FigTree,
@@ -34,7 +35,8 @@ function resolve(
   warnings: ImportWarnings,
   depth: number,
 ): ResolvedFigNode {
-  const node = scope ? applyScope(raw, scope, path) : raw;
+  // Overrides can swap a style, so styles apply after them.
+  const node = withFigStyles(tree, scope ? applyScope(raw, scope, path) : raw);
   if (node.type !== "INSTANCE") {
     const children = tree
       .childrenOf(raw)

@@ -47,9 +47,10 @@ export function textOutline(el: TextNodeElement, outliner: GlyphOutliner): PathS
         : el.textAlign === "right"
           ? blockW - width
           : 0;
-    // As the canvas draws a line: its ascent down from the top, centered in the line's height.
+    // As the canvas and the editor draw a line: centered in the line's height, reaching past it
+    // when the line is tighter than the font (as in CSS and Figma).
     const extent = run.ascent + run.descent;
-    const shift = Math.max(0, (lineHeight - extent) / 2);
+    const shift = (lineHeight - extent) / 2;
     const baseline = blockY + j * lineHeight + run.ascent + shift;
     let pen = blockX + offset;
     for (const glyph of run.glyphs) {

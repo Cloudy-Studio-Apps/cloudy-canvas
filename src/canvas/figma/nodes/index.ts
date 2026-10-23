@@ -11,5 +11,6 @@ export {
   placementOf,
 } from "./fig-matrix";
 export { buildFigTree, guidKey } from "./fig-tree";
+export { withFigStyles } from "./fig-styles";
 export { FigImportContext } from "./fig-import-context";
 export { ImportWarnings } from "./import-warnings";

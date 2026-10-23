@@ -13,10 +13,12 @@ export function guidKey(guid: FigGuid | undefined): string {
 export function buildFigTree(nodeChanges: readonly FigNode[]): FigTree {
   const nodes = new Map<string, FigNode>();
   const children = new Map<string, FigNode[]>();
+  const styles = new Map<string, FigNode>();
   let root: FigNode | null = null;
   for (const node of nodeChanges) {
     if (node.phase === "REMOVED") continue;
     nodes.set(guidKey(node.guid), node);
+    if (node.styleType && node.key) styles.set(node.key, node);
     if (node.type === "DOCUMENT") root = node;
     const parent = node.parentIndex?.guid;
     if (!parent) continue;
@@ -31,6 +33,11 @@ export function buildFigTree(nodeChanges: readonly FigNode[]): FigTree {
     root,
     node: (guid) => nodes.get(guidKey(guid)),
     childrenOf: (node) => children.get(guidKey(node.guid)) ?? [],
+    style: (ref) => {
+      const byGuid = ref?.guid ? nodes.get(guidKey(ref.guid)) : undefined;
+      if (byGuid?.styleType) return byGuid;
+      return ref?.assetRef?.key ? styles.get(ref.assetRef.key) : undefined;
+    },
   };
 }
 
