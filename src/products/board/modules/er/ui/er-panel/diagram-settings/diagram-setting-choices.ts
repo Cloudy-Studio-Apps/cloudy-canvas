@@ -12,6 +12,15 @@ export const ER_SETTING_CHOICES: readonly ErSettingChoice[] = [
     ],
   },
   {
+    key: "cardinality",
+    label: "Cardinality on the lines",
+    hint: "What each line says about its side.",
+    options: [
+      { value: "minmax", label: "(min,max)" },
+      { value: "ratio", label: "1 / N" },
+    ],
+  },
+  {
     key: "ratio",
     label: "Ratio on the diamond",
     hint: "For Cliente (0,n) and Pedido (1,1).",

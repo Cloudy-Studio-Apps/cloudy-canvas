@@ -4,7 +4,7 @@ import type { BoardToolOptions } from "../../../board-options.types";
 import { ER_DEFAULTS } from "./er.defaults";
 import { LEGACY_ER_NOTATION } from "./er-notation";
 import { NO_ER_DIAGRAM } from "./no-er-diagram";
-import type { ErElement } from "./er.types";
+import type { ErElement, ErNotation } from "./er.types";
 
 /**
  * Every ER element: part of one diagram on the board, created with the ER tool or from the ER
@@ -24,7 +24,14 @@ export abstract class ErKind<E extends ErElement> extends ElementKind<E, BoardTo
   override fillDefaults(el: E): E {
     if (el.diagram === undefined) return { ...el, ...NO_ER_DIAGRAM, notation: LEGACY_ER_NOTATION };
     // Diagrams from before notations keep reading the ratio label the first way.
-    return el.notation === undefined ? { ...el, notation: LEGACY_ER_NOTATION } : el;
+    if (el.notation === undefined) return { ...el, notation: LEGACY_ER_NOTATION };
+    // The notation's preset was its standard's first name (`chen` then was today's default).
+    if ("preset" in el.notation) {
+      const notation: ErNotation & { preset?: unknown } = { ...el.notation };
+      delete notation.preset;
+      return { ...el, notation };
+    }
+    return el;
   }
 
   override describe(el: E): ElementDescription {

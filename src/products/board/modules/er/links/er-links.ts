@@ -47,7 +47,11 @@ function participantLinks(
     const via = participant.via ? byId.get(participant.via) : undefined;
     const viaName = via && "name" in via ? via.name : "";
     const card =
-      notation.participation === "lines" ? "" : cardinalityLabel(participant.min, participant.max);
+      notation.cardinality === "ratio"
+        ? chenLetter(relation, i)
+        : notation.participation === "lines"
+          ? ""
+          : cardinalityLabel(participant.min, participant.max);
     const label = viaName ? (card ? `${card} · ${viaName}` : viaName) : card;
     const n = seen.get(entity.id) ?? 0;
     seen.set(entity.id, n + 1);
@@ -63,6 +67,23 @@ function participantLinks(
     }
     return [{ ...straightLink(relation, entity, label, participant.arrow), ...marks }];
   });
+}
+
+/**
+ * Chen's 1 / N / M beside a participant: in a two-way relation, how many of it one of the other
+ * has (the other side's maximum; M and N when both are many); in a larger one, its own maximum.
+ */
+function chenLetter(relation: ErRelationElement, i: number): string {
+  const { participants } = relation;
+  const many = (max: string) => max !== "1";
+  if (participants.length === 2) {
+    const other = participants[1 - i];
+    if (!other?.max || !participants[i]?.max) return "";
+    if (many(other.max) && many(participants[i].max)) return i === 0 ? "M" : "N";
+    return many(other.max) ? "N" : "1";
+  }
+  const max = participants[i]?.max;
+  return max ? (many(max) ? "N" : "1") : "";
 }
 
 /** A minimum of at least one: total participation. */

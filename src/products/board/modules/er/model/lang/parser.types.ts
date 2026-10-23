@@ -86,7 +86,7 @@ export interface ParsedEr {
   name: string | null;
   /** From a `Diagram [style: …]` line, or null when the text doesn't say. */
   style: ErAttributeLook | null;
-  /** From the `Diagram` line's notation settings; empty (the `chen` preset) when it has none. */
+  /** From the `Diagram` line's notation settings; empty (the `cloudy` standard) when it has none. */
   notation: ErNotation;
   entities: ParsedErEntity[];
   relations: ParsedErRelation[];

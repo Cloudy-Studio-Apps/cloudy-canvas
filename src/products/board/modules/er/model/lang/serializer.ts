@@ -58,7 +58,7 @@ export function serializeErBlocks(shapes: ErShapes): ErText {
 }
 
 /**
- * `Diagram Name [style: lollipop, notation: …]`, or null for an unnamed diagram in the Chen look
+ * `Diagram Name [style: lollipop, standard: …]`, or null for an unnamed diagram in the Chen look
  * and the default notation.
  */
 function diagramLine({ entities, relations, attributes }: ErShapes): string | null {

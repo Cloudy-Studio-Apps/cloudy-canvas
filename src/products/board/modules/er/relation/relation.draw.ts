@@ -4,6 +4,7 @@ import { ER_DEFAULTS } from "../base/er.defaults";
 import { ER_FILL_COLOR, INK_COLOR, MUTED_INK_COLOR } from "../../../palette";
 import type { ErRelationElement } from "./relation.types";
 import { cardinalityRatio } from "./cardinality-ratio";
+import { erNotation } from "../base/er-notation";
 
 const RATIO_FONT_SIZE = 12;
 
@@ -42,7 +43,8 @@ export function drawErRelation(
   }
   view.placeText(shape.name, textStyle, w, h);
 
-  const ratio = cardinalityRatio(shape);
+  // With Chen's letters on the lines the diamond doesn't repeat them.
+  const ratio = erNotation(shape.notation).cardinality === "ratio" ? "" : cardinalityRatio(shape);
   const keep = new Set<string>();
   if (shape.idMark) {
     keep.add("id");

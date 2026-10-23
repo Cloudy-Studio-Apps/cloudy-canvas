@@ -233,23 +233,51 @@ Diagram Ventas [style: lollipop]
 
 When a shape is selected, the Text tab scrolls to its block and highlights it (an attribute highlights its owner's block).
 
-**S27. Notation.** The same line says how the diagram is drawn. The model doesn't change, only its look. With no shape selected, the panel's **Visual** tab shows the same settings as pictures to pick from:
+**S27. Standard and notation.** The same line says which standard (textbook or paper) the diagram follows and how it's drawn. The model doesn't change, only its look and what the check expects. With no shape selected, the panel's **Visual** tab shows all of it: the standard (with its citation and a link to read it), the check, and each drawing setting as pictures to pick from.
 
 ```
-Diagram Ventas [notation: chen, ratio: across, participation: both, isa: circle, crowfeet: off]
+Diagram Ventas [standard: elmasri, participation: both, crowfeet: off]
 ```
 
-| Setting         | Values                               | What it draws                                                                                                                                  |
-| --------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `notation`      | `chen` (the default)                 | The preset the other settings start from.                                                                                                      |
-| `ratio`         | `across` (default), `own`            | The diamond's `1:N`: read across like the crow's feet (`Cliente (0,n)`, `Pedido (1,1)` is `1:N`), or from each side's own maximum (`N:1`).     |
-| `participation` | `numbers` (default), `lines`, `both` | `(min,max)` labels, a double line where the minimum is at least 1, or both.                                                                    |
-| `isa`           | `arc` (default), `circle`            | Hierarchies as the triangle with an arc, or a circle with **d** (exclusive) or **o** (overlapping); a total one's parent line is then doubled. |
-| `crowfeet`      | `on` (default), `off`                | Crow's-foot marks on two-way relations.                                                                                                        |
+| Standard                     | Reference                                                                                                                                             | Draws                                                                                 |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `cloudy` (default)           | The board's own mix                                                                                                                                   | `(min,max)`, the ratio on the diamond, triangle hierarchies, crow's feet              |
+| `chen`                       | [Chen, 1976, ACM TODS](https://www.comp.nus.edu.sg/~lingtw/papers/tods76.chen.pdf)                                                                    | 1 / N / M on the lines; no hierarchies, aggregations or constraints                   |
+| `elmasri` (approximate)      | [Elmasri & Navathe, Fundamentals of Database Systems](https://www.pearson.com/en-us/subject-catalog/p/fundamentals-of-database-systems/P200000003546) | 1 / N, double lines for total participation, the d / o circle; no aggregations        |
+| `silberschatz` (approximate) | [Silberschatz, Korth & Sudarshan, Database System Concepts](https://db-book.com/)                                                                     | Cardinality limits and double lines, aggregation                                      |
+| `piattini` (approximate)     | [de Miguel, Piattini & Marcos, Diseño de bases de datos relacionales](https://biblioteca.cun.edu.co/bib/4716)                                         | `(min,max)`, the ratio on the diamond, triangle hierarchies, aggregation, constraints |
 
-- Only what differs from the preset is written back.
-- Diagrams made before notations existed keep their first look: the text shows `ratio: own` on them. Change it to `across` (or pick it in the menu) to read the diamond like the crow's feet.
-- Joining two diagrams keeps the notation of the one you dragged from.
+"Approximate" standards were drawn from secondary sources; check the book for its exact symbols and override what differs.
+
+| Setting         | Values                     | What it draws                                                                                                                                  |
+| --------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cardinality`   | `minmax`, `ratio`          | `(min,max)` on the lines, or Chen's 1 / N / M (the diamond's ratio is left out then).                                                          |
+| `ratio`         | `across`, `own`            | The diamond's `1:N`: read across like the crow's feet (`Cliente (0,n)`, `Pedido (1,1)` is `1:N`), or from each side's own maximum (`N:1`).     |
+| `participation` | `numbers`, `lines`, `both` | `(min,max)` labels, a double line where the minimum is at least 1, or both.                                                                    |
+| `isa`           | `arc`, `circle`            | Hierarchies as the triangle with an arc, or a circle with **d** (exclusive) or **o** (overlapping); a total one's parent line is then doubled. |
+| `crowfeet`      | `on`, `off`                | Crow's-foot marks on two-way relations.                                                                                                        |
+
+- Each standard sets every setting; the line only names what the diagram changes from it. Picking another standard drops those changes.
+- `notation:` (the setting's first name) still reads as `standard:`.
+- Diagrams made before notations existed keep their first look: the text shows `ratio: own` on them.
+- Joining two diagrams keeps the standard and settings of the one you dragged from.
+
+**S28. Check diagram.** The Visual tab (with nothing selected), the ER mode's **Check** button and the `check_er_diagram` agent tool list what breaks the model's rules or the standard's, errors first; clicking one selects its shape:
+
+| Finding                                                      | Level   |
+| ------------------------------------------------------------ | ------- |
+| A weak entity without an identifying relation                | error   |
+| A relation with fewer than two participants                  | error   |
+| A strong entity without a key (subtypes inherit theirs)      | warning |
+| A weak entity without a partial key                          | warning |
+| A weak entity that isn't `(1,1)` in its identifying relation | warning |
+| A partial key on a strong entity                             | warning |
+| A key that's derived or multivalued                          | warning |
+| An entity related to itself without roles                    | warning |
+| A relation of three or more that's at most one everywhere    | warning |
+| A hierarchy with fewer than two children                     | warning |
+| A participant without a cardinality                          | info    |
+| A hierarchy, aggregation or constraint the standard lacks    | info    |
 
 ---
 

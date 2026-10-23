@@ -64,8 +64,9 @@ function withoutIsa(entity: RawEntity): ParsedErEntity {
 }
 
 /**
- * `Diagram [name] [style: chen|lollipop, notation: chen, ratio: own|across, participation:
- * numbers|lines|both, isa: arc|circle, crowfeet: on|off]`.
+ * `Diagram [name] [style: chen|lollipop, standard: cloudy|chen|elmasri|silberschatz|piattini,
+ * cardinality: minmax|ratio, ratio: own|across, participation: numbers|lines|both, isa:
+ * arc|circle, crowfeet: on|off]`.
  */
 function parseDiagram(cursor: TokenCursor, model: ParsedEr): void {
   cursor.next();

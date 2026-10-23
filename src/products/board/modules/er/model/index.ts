@@ -14,5 +14,7 @@ export { prepareErCopies } from "./prepare-er-copies";
 export { migrateErDiagrams } from "./migrate-er-diagrams";
 export type * from "./er-drop.types";
 export { erDropPlan } from "./er-drop";
+export type * from "./check";
+export { NOTATION_VALUES } from "./lang/notation-settings";
 export type * from "./er-add-actions.types";
 export { erAddActions } from "./er-add-actions";

@@ -6,6 +6,7 @@ import { definedNames } from "./defined-names";
 import { entityAttributeNames } from "./entity-attribute-names";
 import { readSourceContext } from "./source-context";
 import type { SourceContext } from "./source-context.types";
+import { NOTATION_VALUES } from "@board";
 
 const TOP_LEVEL: Completion[] = [
   snippetCompletion("Entity ${name} {\n\t${}\n}", { label: "Entity", type: "keyword" }),
@@ -32,7 +33,7 @@ const SETTINGS: Completion[] = [
   snippetCompletion("by: ${}", { label: "by", type: "constant", detail: "discriminator" }),
   snippetCompletion("color: #${}", { label: "color", type: "constant" }),
   snippetCompletion("style: ${}", { label: "style", type: "constant" }),
-  ...["notation", "ratio", "participation", "isa", "crowfeet"].map((label) =>
+  ...Object.keys(NOTATION_VALUES).map((label) =>
     snippetCompletion(`${label}: \${}`, { label, type: "constant", detail: "notation" }),
   ),
 ];
@@ -41,15 +42,6 @@ const SETTINGS: Completion[] = [
 const DOTTED = /("[^"\n]*"|[\p{L}_][\p{L}\p{N}_]*)\.$/u;
 
 const STYLES: Completion[] = ["chen", "lollipop"].map((label) => ({ label, type: "constant" }));
-
-/** The values of the `Diagram` line's notation settings. */
-const NOTATION_VALUES: Record<string, readonly string[]> = {
-  notation: ["chen"],
-  ratio: ["own", "across"],
-  participation: ["numbers", "lines", "both"],
-  isa: ["arc", "circle"],
-  crowfeet: ["on", "off"],
-};
 
 /**
  * Completions for the ER text: block keywords, settings, and the diagram's entities, relations and

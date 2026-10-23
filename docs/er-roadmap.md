@@ -31,8 +31,7 @@ These exist but are incomplete or have a known flaw.
 
 Ordered by value. Each is a separate piece of work.
 
-1. **Check diagram.** A list of warnings in the ER panel, each selecting its shape: entity without a key, weak entity without an identifying relation, identifying relation whose weak side isn't `(1,1)`, partial key on a strong entity, hierarchy with a single child, relation with one participant, unused aggregation, three-way relation with every max `1`. Reuses `erComponents` and the reconcile names. Agents get it as a tool.
-2. **ER to tables.** Turn a diagram into DBML tables on the same board with the standard rules:
+1. **ER to tables.** Turn a diagram into DBML tables on the same board with the standard rules:
    - entity → table, key → primary key, composite → its parts, multivalued → its own table, derived → left out;
    - weak entity → table whose key includes the owner's key;
    - 1:N → foreign key on the N side to the join attribute (or the key);
@@ -41,15 +40,15 @@ Ordered by value. Each is a separate piece of work.
    - hierarchy → one table per entity with the parent's key, or one table with a discriminator (ask);
    - aggregation → its relation's table.
      One undo step; re-running updates the same tables by name.
-3. **Associative entity.** A rectangle with a diamond inside: a relation that is also an entity (takes part in other relations, has a key). Plus **Convert to entity** on a relation: replaces it with an associative entity and one two-way relation per participant, which then get crow's feet.
-4. **Notation presets** for the textbooks: `notation: piattini`, `elmasri`, `silberschatz`, each a set of the settings below, once the course's textbook is known. The settings themselves are done (see below); still missing among them: `cardinality: ratio` (Chen's original 1/N/M labels only) and `dependency: marks` (needs item 7).
-5. **Alternate keys.** `[ak]` for candidate keys that aren't the primary key; hollow lollipop, plain underline variant.
-6. **Union types (categories).** `Union Propietario { Persona, Banco, Empresa }`, a "U" circle. Elmasri advises against them; low priority.
-7. **Existence dependency mark.** `[existence]`, an "E" next to the "I", once the notation is confirmed.
+2. **Associative entity.** A rectangle with a diamond inside: a relation that is also an entity (takes part in other relations, has a key). Plus **Convert to entity** on a relation: replaces it with an associative entity and one two-way relation per participant, which then get crow's feet.
+3. **Confirm the approximate standards** (`elmasri`, `silberschatz`, `piattini`) against the books, and add what they draw that the board can't yet: Silberschatz's arrows and specialization arrow, Elmasri's categories, the "E" existence mark (`dependency: marks`, needs item 6).
+4. **Alternate keys.** `[ak]` for candidate keys that aren't the primary key; hollow lollipop, plain underline variant.
+5. **Union types (categories).** `Union Propietario { Persona, Banco, Empresa }`, a "U" circle. Elmasri advises against them; low priority.
+6. **Existence dependency mark.** `[existence]`, an "E" next to the "I", once the notation is confirmed.
 
-## Notation (done)
+## Standards, notation and Check diagram (done)
 
-The `Diagram [ … ]` line (and the ER panel's Visual tab with nothing selected, as pictures) says how a diagram is drawn (S27 in `er-language.md`): `notation: chen`, `ratio: across|own`, `participation: numbers|lines|both`, `isa: arc|circle`, `crowfeet: on|off`. New diagrams read the diamond's ratio across, like the crow's feet; diagrams saved before keep `ratio: own`, so no board changes under its owner.
+The `Diagram [ … ]` line (and the ER panel's Visual tab with nothing selected) names the standard a diagram follows (`cloudy`, `chen`, `elmasri`, `silberschatz`, `piattini`, each with its citation and a link) and its drawing settings (`cardinality`, `ratio`, `participation`, `isa`, `crowfeet`; S27 in `er-language.md`). New diagrams read the diamond's ratio across, like the crow's feet; diagrams saved before keep `ratio: own`. The Check diagram (S28) lists what breaks the model's rules or the standard's, in the panel, from the ER mode's Check button and as the `check_er_diagram` agent tool.
 
 ## ER mode (done)
 
@@ -65,11 +64,11 @@ Double-click an ER shape (or press Enter on one), click the ER panel's **Edit di
 Still to do for the mode:
 
 - Keys that create ER shapes (for example A for an attribute of the selection, R for a relation).
-- Showing the Check diagram warnings on the shapes while the mode is on (needs item 1).
+- Showing the Check diagram's findings on the shapes themselves while the mode is on.
 
 ## Open questions
 
-- Which textbook's notation is the reference (de Miguel & Piattini, Elmasri & Navathe, Silberschatz)? It decides the presets (item 4) and the existence mark (item 7).
+- Which textbook does the course follow? Its standard can then be checked against the book first (item 3), and it decides the existence mark (item 6).
 - In ER to tables, which hierarchy strategy is the default?
 
 ## Sources

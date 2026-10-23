@@ -70,4 +70,19 @@ export const erTools: BoardAgentTool[] = [
       return "Done.";
     },
   },
+  {
+    name: "check_er_diagram",
+    description:
+      "Checks one ER diagram against the rules of the ER model and of the standard it follows " +
+      "(its `Diagram [standard: …]`): missing keys, weak entities without an identifying " +
+      "relation or partial key, relations with one side, hierarchies with one child, and " +
+      "constructs the standard doesn't have. Errors come first; each names the shape to fix.",
+    inputSchema: DIAGRAM_ONLY,
+    run: (host, args) => {
+      const er = requireBoard(host).engine.service(ER_MODEL);
+      return diagramArg(er, args, false)
+        .check()
+        .map(({ severity, rule, message, shapeId }) => ({ severity, rule, message, shapeId }));
+    },
+  },
 ];

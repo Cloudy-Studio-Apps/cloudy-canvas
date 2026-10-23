@@ -19,11 +19,16 @@ export interface ErDiagramFields {
   notation: ErNotation;
 }
 
-/** Named sets of notation settings; `chen` is the default. */
-export type ErNotationPreset = "chen";
+/**
+ * The standards (textbooks or papers) a diagram can follow; each sets the notation's drawing
+ * choices and the constructs it has. `cloudy` (the board's own mix) is the default.
+ */
+export type ErStandard = "cloudy" | "chen" | "elmasri" | "silberschatz" | "piattini";
 
 /** Every drawing choice a diagram's notation makes. */
 export interface ErNotationSettings {
+  /** The lines' labels: `(min,max)`, or Chen's 1 / N / M (the diamond's ratio is left out then). */
+  cardinality: "minmax" | "ratio";
   /**
    * How the diamond's `1:N` is read: `across` from the other side's maximum, like the crow's feet
    * (two-way relations only), or `own` from each side's own (the board's first reading).
@@ -37,9 +42,32 @@ export interface ErNotationSettings {
   crowFeet: boolean;
 }
 
-/** A diagram's notation as written: a preset (default `chen`) and the settings it overrides. */
+/** A diagram's notation as written: a standard (default `cloudy`) and the settings it overrides. */
 export interface ErNotation extends Partial<ErNotationSettings> {
-  preset?: ErNotationPreset;
+  standard?: ErStandard;
+}
+
+/** The constructs of the extended model a standard has (the Check diagram reports others). */
+export interface ErStandardSupports {
+  hierarchies: boolean;
+  aggregations: boolean;
+  constraints: boolean;
+}
+
+/** A standard: where it comes from and how it draws. */
+export interface ErStandardInfo {
+  id: ErStandard;
+  label: string;
+  /** The book or paper, as cited. */
+  citation: string;
+  /** Where to read it (a publisher's page, a library record or the paper), or `null`. */
+  url: string | null;
+  /** Its drawing settings were taken from secondary sources and may differ in details. */
+  approximate: boolean;
+  /** What it's known for, in a sentence. */
+  summary: string;
+  settings: ErNotationSettings;
+  supports: ErStandardSupports;
 }
 
 /** What every ER element has: its place on the board and its diagram. */

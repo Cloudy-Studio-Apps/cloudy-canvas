@@ -1,7 +1,7 @@
-import type { ErNotation } from "@board";
+import type { ErIssue, ErNotation, ErStandard } from "@board";
 
 /** A diagram setting the settings page shows: the attribute look or one of the notation's. */
-export type ErSettingKey = "style" | "ratio" | "participation" | "isa" | "crowFeet";
+export type ErSettingKey = "style" | "cardinality" | "ratio" | "participation" | "isa" | "crowFeet";
 
 /** One setting with its choices (values as the text writes them; crow's feet `on`/`off`). */
 export interface ErSettingChoice {
@@ -29,4 +29,14 @@ export interface ErSettingOptionProps {
 export interface ErSettingPreviewProps {
   setting: ErSettingKey;
   value: string;
+}
+
+export interface ErStandardPickerProps {
+  standard: ErStandard;
+  /** Picks a standard: the diagram follows it, its own overrides dropped. */
+  onPick: (standard: ErStandard) => void;
+}
+
+export interface ErCheckListProps {
+  issues: readonly ErIssue[];
 }

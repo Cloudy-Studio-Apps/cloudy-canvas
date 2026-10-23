@@ -11,6 +11,8 @@ import { layoutAll } from "./layout";
 import { placeAt } from "./position-layout";
 import { reconcileEr } from "./reconcile-er";
 import type { ErApplyOptions, ErApplyResult } from "./reconcile-er.types";
+import { erStandard } from "../base/er-notation";
+import { checkErDiagram, type ErIssue } from "./check";
 
 /**
  * One ER diagram of the board: its entities, relations, attributes and the rest. Reads it as text
@@ -66,6 +68,16 @@ export class ErDiagram {
     this.doc.checkpoint();
     const patch: ElementPatch<ErElementBase> = { diagramName };
     this.doc.updateMany(new Map(shapes.map((shape) => [shape.id, patch])));
+  };
+
+  /** What breaks the rules of the ER model and of the standard the diagram follows (errors first). */
+  check = (): ErIssue[] => {
+    const shapes = this.shapes();
+    const { entities, relations, attributes } = shapes;
+    return checkErDiagram(
+      shapes,
+      erStandard([...entities, ...relations, ...attributes][0]?.notation),
+    );
   };
 
   /** Changes how the diagram is drawn (`undefined` drops a setting back to the preset's). One undo step. */

@@ -123,7 +123,27 @@ function crowFeet(on: boolean): ReactNode {
   );
 }
 
+/** Two entities and a relation, with (min,max) or Chen's letters on the lines. */
+function lineLabels(left: string, right: string): ReactNode {
+  return (
+    <>
+      {box(13, "C")}
+      <path d="M24 22 H37 M59 22 H72" />
+      {diamond(48)}
+      {box(83, "P")}
+      <text x={30} y={17} {...TEXT}>
+        {left}
+      </text>
+      <text x={66} y={17} {...TEXT}>
+        {right}
+      </text>
+    </>
+  );
+}
+
 const PREVIEWS: Record<string, ReactNode> = {
+  "cardinality:minmax": lineLabels("(0,n)", "(1,1)"),
+  "cardinality:ratio": lineLabels("1", "N"),
   "style:ellipse": (
     <>
       {box(24)}
