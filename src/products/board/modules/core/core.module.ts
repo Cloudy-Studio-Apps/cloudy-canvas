@@ -1,5 +1,6 @@
-import { Hand, MousePointer2, Scaling } from "lucide-react";
+import { Hand, MousePointer2, PencilLine, Scaling } from "lucide-react";
 
+import { DEFAULT_MODE } from "@canvas";
 import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
 import {
@@ -24,6 +25,14 @@ export const coreModule = defineModule({
   id: "core",
   register(host) {
     host.contribute(boardCanvas.keybindings, { "tool.scale": [{ key: "k", shift: true }] });
+    // The board's usual way of working, first in the mode switcher.
+    host.contribute(boardEditor.modes, {
+      id: DEFAULT_MODE.id,
+      label: "Board",
+      description: "Every tool and every element.",
+      icon: PencilLine,
+      order: 0,
+    });
     host.contribute(
       boardAgentTools,
       { id: "read", tools: () => boardReadTools },

@@ -4,15 +4,28 @@ import { useEngine, useEngineState } from "../engine-context";
 import { useEditorPoint } from "./editor-modules-context";
 import type { ModuleToolbarProps } from "./editor-points.types";
 import { ExtensionIconView } from "./extension-icon-view";
+import { ModeSwitcher } from "./mode-switcher";
 import { ToolMenuButton } from "./tool-menu-button";
+import { useEditorMode } from "./use-editor-mode";
 import { toolbarGroups, toolbarItems, toolInfo } from "./tool-entries";
 
 /**
  * The tools the modules place on the toolbar, in their groups (tools sharing a menu as one), then
- * the buttons for the selection (`selectionActions`, with the select tool), or a mode's own
- * toolbar while one of its tools is on (`toolbars`).
+ * the buttons for the selection (`selectionActions`, with the select tool); or a tool mode's own
+ * toolbar while one of its tools is on (`toolbars`), or the current mode's (`modes`). The mode
+ * switcher sits beside it when there's more than one mode.
  */
 export function ModuleToolbar({ children }: ModuleToolbarProps) {
+  return (
+    <div className="pointer-events-none flex items-center gap-2">
+      <ToolbarForMode>{children}</ToolbarForMode>
+      <ModeSwitcher />
+    </div>
+  );
+}
+
+/** The toolbar the active tool or the current mode calls for, else the main one. */
+function ToolbarForMode({ children }: ModuleToolbarProps) {
   const engine = useEngine();
   const activeTool = useEngineState((state) => state.tool);
   const groups = toolbarGroups(useEditorPoint((points) => points.tools));
@@ -25,7 +38,10 @@ export function ModuleToolbar({ children }: ModuleToolbarProps) {
   const Mode = useEditorPoint((points) => points.toolbars).find((mode) =>
     mode.tools.includes(activeTool),
   )?.component;
+  const modeToolbar = useEditorMode().entry?.toolbar;
   if (Mode) return <Mode />;
+  const ModeToolbar = modeToolbar;
+  if (ModeToolbar) return <ModeToolbar />;
 
   return (
     <FloatingPanel role="toolbar" aria-label="Tools" aria-orientation="horizontal">

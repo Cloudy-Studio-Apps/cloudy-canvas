@@ -17,4 +17,4 @@ export { erDropPlan } from "./er-drop";
 export type * from "./check";
 export { NOTATION_VALUES } from "./lang/notation-settings";
 export type * from "./er-add-actions.types";
-export { erAddActions } from "./er-add-actions";
+export { erAddActions, erAddActionsWithoutDiagram } from "./er-add-actions";

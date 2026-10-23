@@ -9,6 +9,7 @@ export function createCanvasPoints<O extends object>(product: string): CanvasPoi
     kinds: definePoint(id("kinds"), { keyOf: (kind) => kind.type }),
     tools: definePoint(id("tools"), { keyOf: (tool) => tool.id }),
     hostCommands: definePoint(id("hostCommands"), { keyOf: (command) => command.id }),
+    modes: definePoint(id("modes"), { keyOf: (mode) => mode.id }),
     keybindings: definePoint(id("keybindings")),
     options: definePoint(id("options")),
     view: definePoint(id("view")),

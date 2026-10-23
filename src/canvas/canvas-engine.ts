@@ -103,6 +103,7 @@ import type {
 import type { CanvasProduct, CanvasScopes } from "./canvas-product.types";
 import type { CanvasViewOptions } from "./canvas-view.types";
 import type { CanvasLinks } from "./links";
+import { DEFAULT_MODE, modeAllows, type CanvasMode } from "./modes";
 
 const ZOOM_STEP = 1.25;
 const HIT_TOLERANCE_PX = 4;
@@ -137,8 +138,9 @@ export class CanvasEngine<O extends object = object> {
   private readonly product: CanvasProduct<O>;
   private readonly links: CanvasLinks[];
   private readonly camera = new Camera();
-  /** What the active tool fades (`ToolContext.setFaded`), on top of what its isolation dims. */
+  /** What the active tool fades (`ToolContext.setFaded`), on top of what the mode isolates. */
   private toolFaded: string[] = [];
+  private mode: CanvasMode = DEFAULT_MODE;
   private readonly renderer: Renderer;
   private readonly scene: Scene;
   private readonly fontTracker: FontTracker;
@@ -412,10 +414,10 @@ export class CanvasEngine<O extends object = object> {
   /** Switches to a tool by id. Unknown ids are ignored. */
   setTool(id: string): void {
     const next = this.tools.get(id);
-    if (!next || this.tool === next) return;
+    // A mode's other tools wait (their shortcuts too) until it's left.
+    if (!next || this.tool === next || !modeAllows(this.mode, id)) return;
     this.tool.onCancel?.();
     this.toolFaded = [];
-    this.scene.isolation = null;
     this.applyFaded();
     this.renderer.setSnapFeedback(null);
     this.tool = next;
@@ -423,6 +425,36 @@ export class CanvasEngine<O extends object = object> {
     this.scene.setHover(null);
     this.setCursor(this.tool.cursor);
     this.tool.onActivate?.();
+    this.requestRender();
+    this.emitChange();
+  }
+
+  /** The current mode's id (`DEFAULT_MODE`'s when none of the product's is on). */
+  get modeId(): string {
+    return this.mode.id;
+  }
+
+  /**
+   * Switches to a mode by id (see `CanvasMode`): its tool comes on and only what it isolates can
+   * be reached. Unknown ids are ignored; `DEFAULT_MODE.id` leaves any mode.
+   */
+  setMode(id: string): void {
+    const next =
+      id === DEFAULT_MODE.id ? DEFAULT_MODE : this.product.modes?.find((mode) => mode.id === id);
+    if (!next || next === this.mode) return;
+    this.textEditor?.commit();
+    // Leave the old mode's tool first, so the new mode's tool may be any.
+    this.mode = DEFAULT_MODE;
+    this.setTool(next.tool);
+    this.mode = next;
+    this.scene.isolation = next.isolate ?? null;
+    const kept = [...this.scene.selection.ids].filter((selected) => {
+      const el = this.scene.get(selected);
+      return el !== undefined && this.scene.reachable(el, true);
+    });
+    if (kept.length !== this.scene.selection.ids.size) this.setSelection(kept);
+    this.scene.setHover(null);
+    this.applyFaded();
     this.requestRender();
     this.emitChange();
   }
@@ -1061,10 +1093,12 @@ export class CanvasEngine<O extends object = object> {
   }
 
   /** Clears the selection, or returns to the select tool when nothing is selected. */
+  /** Esc: drops the selected part, then the selection, then goes back to the mode's tool, then leaves the mode. */
   cancel(): void {
     if (this.scene.selection.part) this.setSelectedPart(null);
     else if (this.scene.selection.size > 0) this.setSelection([]);
-    else this.setTool("select");
+    else if (this.tool.id !== this.mode.tool) this.setTool(this.mode.tool);
+    else this.setMode(DEFAULT_MODE.id);
   }
 
   /** Centers the view on an element (keeping the zoom) and selects it. */
@@ -1196,18 +1230,8 @@ export class CanvasEngine<O extends object = object> {
         this.applyFaded();
         this.requestRender();
       },
-      setIsolation: (accepts) => {
-        this.scene.isolation = accepts;
-        const kept = [...this.scene.selection.ids].filter((id) => {
-          const el = this.scene.get(id);
-          return el !== undefined && this.scene.reachable(el, true);
-        });
-        if (kept.length !== this.scene.selection.ids.size) this.setSelection(kept);
-        this.scene.setHover(null);
-        this.applyFaded();
-        this.requestRender();
-        this.emitChange();
-      },
+      getMode: () => this.mode.id,
+      setMode: (id) => this.setMode(id),
       animateIn: (ids) => {
         this.renderer.animateIn(ids);
         this.requestRender();
@@ -1602,7 +1626,7 @@ export class CanvasEngine<O extends object = object> {
   }
 
   /** Re-reads the elements, and re-resolves the links between them. */
-  /** Dims what the tool fades (`setFaded`) and what its isolation leaves out. */
+  /** Dims what the tool fades (`setFaded`) and what the mode's isolation leaves out. */
   private applyFaded(): void {
     const { isolation } = this.scene;
     const away = isolation ? this.scene.elements.filter((el) => !isolation(el)) : [];
@@ -1776,6 +1800,7 @@ export class CanvasEngine<O extends object = object> {
   private buildState(): EngineState<O> {
     return {
       tool: this.tool.id,
+      mode: this.mode.id,
       options: this.options,
       zoom: this.camera.zoom,
       selectionCount: this.scene.selection.size,

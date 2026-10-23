@@ -1,20 +1,21 @@
 import { BoxSelect, FileCode, LayoutGrid, ListChecks, Network, Plus } from "lucide-react";
 
 import { rectCenter } from "@canvas";
-import { FloatingPanel, PanelDivider, ToolButton, useEngine } from "@canvas-ui";
+import { FloatingPanel, PanelDivider, ToolButton, useEditorMode, useEngine } from "@canvas-ui";
 import { Button } from "@shared/ui/components/ui/button";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { useErDiagram, useErModel, useErQuery } from "../model";
 import { diagramShapeIds } from "../er-panel/diagram-shape-ids";
 
 /**
- * The toolbar while the ER mode is on (in place of the main one): what the mode is, a new
+ * The ER mode's toolbar (its `modes` entry's, in place of the main one): what the mode is, a new
  * diagram, selecting and re-laying out the shown one, its text, its check (with the number of
  * errors and warnings), and Done. The element types are in
  * the palette at the left edge.
  */
 export function ErModeToolbar() {
   const engine = useEngine();
+  const mode = useEditorMode();
   const er = useErModel();
   const diagram = useErDiagram();
   const setOpen = useBoardPanelStore((state) => state.setErOpen);
@@ -81,7 +82,7 @@ export function ErModeToolbar() {
         </span>
       </ToolButton>
       <PanelDivider />
-      <Button size="sm" className="mx-1" onClick={() => engine.setTool("select")}>
+      <Button size="sm" className="mx-1" onClick={mode.leave}>
         Done
       </Button>
     </FloatingPanel>

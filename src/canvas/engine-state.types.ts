@@ -5,6 +5,8 @@ import type { SnapSettings } from "./snapping";
 export interface EngineState<O extends object = object> {
   /** The active tool's id. */
   tool: string;
+  /** The current mode's id (see `CanvasMode`; `DEFAULT_MODE.id` when none is on). */
+  mode: string;
   options: O;
   zoom: number;
   selectionCount: number;

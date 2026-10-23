@@ -74,12 +74,10 @@ export interface ToolContext<O extends object = object> {
   setDraft(el: CanvasElement | null): void;
   /** Dims elements, e.g. those a gesture will remove when it ends; `null` clears it. */
   setFaded(ids: Iterable<string> | null): void;
-  /**
-   * Only what `accepts` takes can be pointed at, selected or marqueed while this tool is on; the
-   * rest is dimmed and dropped from the selection (an edit mode, e.g. the board's ER mode).
-   * Switching tools ends it; `null` ends it now.
-   */
-  setIsolation(accepts: ((el: CanvasElement) => boolean) | null): void;
+  /** The current mode's id (see `CanvasMode`; `DEFAULT_MODE.id` when none is on). */
+  getMode(): string;
+  /** Switches mode (e.g. double-clicking an ER shape enters the ER mode). */
+  setMode(id: string): void;
   /** Shows gesture feedback above the elements (e.g. a line being dragged); `null` clears it. */
   setGuide(guide: Guide | null): void;
   /**

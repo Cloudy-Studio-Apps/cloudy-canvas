@@ -10,7 +10,8 @@ export interface ErPaletteItem {
 
 export interface ErPaletteButtonProps {
   item: ErPaletteItem;
-  diagram: ErDiagram;
+  /** The shown diagram, or `undefined` when none is (an entity then starts one). */
+  diagram: ErDiagram | undefined;
   /** What a click adds right now ("Attribute of Customer"), or why it can't. */
   clickLabel: string;
   clickDisabled: boolean;
@@ -36,7 +37,7 @@ export interface ErDragGhostProps {
 
 export interface PaletteDragOptions {
   item: ErPaletteItemId;
-  diagram: ErDiagram;
+  diagram: ErDiagram | undefined;
   /** A press released without dragging. */
   onClick: () => void;
 }

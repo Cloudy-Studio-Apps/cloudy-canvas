@@ -23,7 +23,7 @@ export function usePaletteDrag({ item, diagram, onClick }: PaletteDragOptions): 
     const world = engine.clientToWorld(client);
     if (!world) return { drop: { ok: false, label: "Drop on the board" }, world };
     const hit = engine.elementAt(world);
-    return { drop: erDropPlan(item, hit && er.shape(hit.id), diagram.id), world };
+    return { drop: erDropPlan(item, hit && er.shape(hit.id), diagram?.id ?? ""), world };
   };
 
   const onPointerDown: PaletteDrag["onPointerDown"] = (event) => {
@@ -49,7 +49,7 @@ export function usePaletteDrag({ item, diagram, onClick }: PaletteDragOptions): 
       }
       const { drop, world } = planAt({ x: e.clientX, y: e.clientY });
       if (!drop.ok || !world) return;
-      const id = drop.run(er.diagram(drop.diagram).edits, world);
+      const id = drop.run(er, world);
       if (id) engine.select([id]);
     };
     const key = (e: KeyboardEvent) => {

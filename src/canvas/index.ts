@@ -83,6 +83,7 @@ export { decodeCanvasFile, encodeCanvasFile } from "./file";
 export * from "./agent";
 export * from "./elements";
 export * from "./geometry";
+export * from "./modes";
 export * from "./gradient";
 export * from "./image";
 export * from "./rotation";

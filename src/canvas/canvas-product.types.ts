@@ -8,6 +8,7 @@ import type { EffectRenderers, ElementClip, ElementEffects, ElementMasks } from 
 import type { CanvasGuides } from "./ruler-guides";
 import type { CanvasLinks } from "./links";
 import type { Tool, ToolContext } from "./tools";
+import type { CanvasMode } from "./modes";
 
 /**
  * What makes a canvas a board or a design file: its element types, its tools, its shortcuts and
@@ -27,6 +28,8 @@ export interface CanvasProduct<O extends object = object> {
    * The host handles each with `engine.handleHostAction(id, handler)`.
    */
   readonly hostCommands?: readonly string[];
+  /** Modes besides the default one (`DEFAULT_MODE`), switched with `engine.setMode`. */
+  readonly modes?: readonly CanvasMode[];
   /** Tool options a new editor starts with. */
   readonly defaultOptions: O;
   /** Zoom range and background grid; unset values are `DEFAULT_VIEW_OPTIONS`'. */

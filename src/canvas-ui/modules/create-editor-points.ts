@@ -16,5 +16,6 @@ export function createEditorPoints(product: string): EditorPoints {
     sessionHooks: definePoint(id("sessionHooks"), { keyOf: (entry) => entry.id }),
     contextMenu: definePoint(id("contextMenu"), { keyOf: (entry) => entry.id }),
     toolbars: definePoint(id("toolbars"), { keyOf: (entry) => entry.id }),
+    modes: definePoint(id("modes"), { keyOf: (entry) => entry.id }),
   };
 }

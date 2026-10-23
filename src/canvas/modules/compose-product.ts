@@ -21,6 +21,7 @@ export function composeProduct<O extends object>(
 
   const tools = host.get(points.tools);
   const hostCommands = host.get(points.hostCommands);
+  const modes = host.get(points.modes);
   const resolvers = host.get(points.resolveElements);
   const members = host.get(points.withMembers);
   const removers = host.get(points.onRemove);
@@ -58,6 +59,7 @@ export function composeProduct<O extends object>(
       ...host.get(points.keybindings),
     ]),
     hostCommands: hostCommands.map((command) => command.id),
+    ...(modes.length > 0 ? { modes } : {}),
     defaultOptions: mergeOptions<O>(host.get(points.options), "tool option"),
     view: mergeOptions<Partial<CanvasViewOptions>>(host.get(points.view), "view option"),
     ...(scopes ? { scopes } : {}),

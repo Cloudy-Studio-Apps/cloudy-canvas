@@ -9,6 +9,7 @@ import type { EffectRenderer, ElementClip, ElementEffects, ElementMasks } from "
 import type { CanvasGuides } from "../ruler-guides";
 import type { Rect } from "../geometry.types";
 import type { CanvasLinks } from "../links";
+import type { CanvasMode } from "../modes";
 import type { Tool, ToolContext } from "../tools";
 
 /** A tool a module adds, with its shortcuts (bound to `tool.<id>`). */
@@ -139,6 +140,8 @@ export interface CanvasPoints<O extends object> {
   kinds: ExtensionPoint<ElementKind<CanvasElement, O>>;
   tools: ExtensionPoint<ProductTool<O>>;
   hostCommands: ExtensionPoint<HostCommand>;
+  /** Modes besides the default one, keyed by id (see `CanvasMode`). */
+  modes: ExtensionPoint<CanvasMode>;
   /** Shortcuts of other commands. A command bound twice throws. */
   keybindings: ExtensionPoint<Keybindings>;
   /** Default values of the tool options a module owns. An option given twice throws. */

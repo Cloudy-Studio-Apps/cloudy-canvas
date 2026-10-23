@@ -1,2 +1,2 @@
 export { enterErMode } from "./enter-er-mode";
-export { ER_MODE_TOOL, ErModeTool } from "./er-mode.tool";
+export { ER_MODE, ER_MODE_ID } from "./er-mode";

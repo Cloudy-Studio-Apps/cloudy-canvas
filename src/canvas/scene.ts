@@ -58,7 +58,7 @@ export class Scene {
   scope: string | null = null;
   /**
    * While set, only the elements it accepts can be pointed at, selected or marqueed; the rest are
-   * shown dimmed (an edit mode's isolation, `ToolContext.setIsolation`).
+   * shown dimmed (the current mode's, `CanvasMode.isolate`).
    */
   isolation: ((el: CanvasElement) => boolean) | null = null;
 

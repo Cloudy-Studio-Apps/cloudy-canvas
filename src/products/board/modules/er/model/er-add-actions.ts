@@ -1,7 +1,10 @@
+import type { Point } from "@canvas";
+
 import type { ErElement } from "../base/er.types";
 import type { ErAddAction } from "./er-add-actions.types";
 import type { ErPaletteItemId } from "./er-drop.types";
 import type { ErEdits } from "./er-edits";
+import type { ErModel } from "./er-model";
 import type { ErShapes } from "./lang";
 
 /**
@@ -85,4 +88,28 @@ function relationEnds(shapes: ErShapes, entity: ErElement | undefined): string[]
   if (!entity) return [];
   const other = shapes.entities.find((e) => e.id !== entity.id);
   return other ? [entity.id, other.id] : [entity.id];
+}
+
+/**
+ * What a click adds while no diagram is shown (an ER mode entered on a board without one): an
+ * entity, or a weak one, starts a new diagram at `center()`; the rest wait for an entity.
+ */
+export function erAddActionsWithoutDiagram(
+  er: ErModel,
+  center: () => Point,
+): Record<ErPaletteItemId, ErAddAction> {
+  const waiting = (id: ErPaletteItemId, label: string) =>
+    action(id, `${label} (add an entity first)`, false, () => undefined);
+  return {
+    entity: action("entity", "Entity (a new diagram)", true, () => er.newDiagram(center())),
+    "weak-entity": action("weak-entity", "Weak entity (a new diagram)", true, () =>
+      er.newDiagram(center(), { weak: true }),
+    ),
+    relation: waiting("relation", "Relation"),
+    attribute: waiting("attribute", "Attribute"),
+    "key-attribute": waiting("key-attribute", "Key attribute"),
+    isa: waiting("isa", "Hierarchy"),
+    aggregate: waiting("aggregate", "Aggregation"),
+    constraint: waiting("constraint", "Constraint"),
+  };
 }

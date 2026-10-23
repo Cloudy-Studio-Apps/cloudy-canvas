@@ -14,6 +14,7 @@ import { withErMembers } from "./er-members";
 import { mergeErDiagrams } from "./merge-er-diagrams";
 import { pruneEr } from "./prune-er";
 import { splitErDiagrams } from "./split-er-diagrams";
+import type { ErEntityAddOptions } from "./edits";
 
 /**
  * The board's ER diagrams. A board can hold several, each with its own text, layout and names;
@@ -84,14 +85,15 @@ export class ErModel {
   };
 
   /**
-   * Starts a new diagram with one entity centered on `center` (by default right of everything on
-   * the board); returns the entity's id.
+   * Starts a new diagram with one entity (weak with `weak`) centered on `center` (by default right
+   * of everything on the board); returns the entity's id.
    */
-  newDiagram(center?: Point): string {
+  newDiagram(center?: Point, { weak = false }: Pick<ErEntityAddOptions, "weak"> = {}): string {
     const name = freeName(erShapes(this.doc).entities, "entity");
     const at = center ?? besideBoard(this.doc);
     const shape = {
       ...createErEntity(at, name, this.doc.nextIndex()),
+      weak,
       diagram: createId(),
       diagramName: "",
     };

@@ -130,6 +130,35 @@ export interface ToolbarModeEntry {
   component: ComponentType;
 }
 
+/**
+ * How the editor shows a mode (a `CanvasMode` the product's modules registered with the same
+ * `id`, or `DEFAULT_MODE`'s): its button in the mode switcher and the toolbar it shows instead of
+ * the main one. The default mode's entry names the editor's usual way of working ("Board").
+ */
+export interface EditorModeEntry {
+  id: string;
+  label: string;
+  description?: string;
+  icon: ExtensionIcon;
+  /** Place in the switcher, lowest first; the default mode's is 0. */
+  order: number;
+  /** Shown instead of the main toolbar while the mode is on (it reads `useEditorMode()`). */
+  toolbar?: ComponentType;
+}
+
+/** What a mode's UI knows of the mode it's in (`useEditorMode()`). */
+export interface EditorModeContext {
+  /** The current mode's id. */
+  id: string;
+  /** Its entry, when the editor shows it. */
+  entry: EditorModeEntry | undefined;
+  /** Whether the default mode is on. */
+  isDefault: boolean;
+  setMode: (id: string) => void;
+  /** Back to the default mode. */
+  leave: () => void;
+}
+
 /** The points an editor's UI is assembled from. Each product has its own set. */
 export interface EditorPoints {
   /** Every tool the editor shows, on the toolbar and/or in the library. */
@@ -147,6 +176,8 @@ export interface EditorPoints {
   contextMenu: ExtensionPoint<ContextMenuEntryGroup>;
   /** Toolbars shown instead of the main one while their tools are on. */
   toolbars: ExtensionPoint<ToolbarModeEntry>;
+  /** The modes the switcher lists, keyed by mode id (see `EditorModeEntry`). */
+  modes: ExtensionPoint<EditorModeEntry>;
 }
 
 /** The loaded modules of the editor that's open, and its points. */

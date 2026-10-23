@@ -1,7 +1,7 @@
 import type { CanvasPointer, Tool, ToolContext } from "@canvas";
 
 import type { BoardToolOptions } from "../../board-options.types";
-import { ER_MODE_TOOL } from "./mode";
+import { ER_MODE_ID } from "./mode";
 import { ER_MODEL } from "./model";
 
 /**
@@ -16,7 +16,8 @@ export class ErTool implements Tool {
 
   onPointerDown(p: CanvasPointer): void {
     const id = this.ctx.service(ER_MODEL).newDiagram(p.world);
-    this.ctx.setTool(ER_MODE_TOOL);
+    this.ctx.setMode(ER_MODE_ID);
+    this.ctx.setTool("select");
     this.ctx.setSelection([id]);
   }
 }
