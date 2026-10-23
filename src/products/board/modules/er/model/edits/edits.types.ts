@@ -1,15 +1,33 @@
+import type { Point } from "@canvas";
+
 import type { ErAggregateElement } from "../../aggregate/aggregate.types";
-import type { ErAttributeElement } from "../../attribute/attribute.types";
+import type { ErAttributeElement, ErAttributeKey } from "../../attribute/attribute.types";
 import type { ErConstraintElement } from "../../constraint/constraint.types";
 import type { ErEntityElement } from "../../entity/entity.types";
 import type { ErIsaChild, ErIsaElement } from "../../isa/isa.types";
 import type { ErParticipant, ErRelationElement } from "../../relation/relation.types";
 import type { ErShapes } from "../lang";
+import type { Centers } from "../layout";
+
+/** Where a new shape goes: centered on `at` (where it was dropped), or placed automatically. */
+export interface ErAddOptions {
+  at?: Point;
+}
+
+export interface ErEntityAddOptions extends ErAddOptions {
+  weak?: boolean;
+}
+
+export interface ErAttributeAddOptions extends ErAddOptions {
+  key?: ErAttributeKey;
+}
 
 /** The next model after an edit, and the id of the shape it created (if any). */
 export interface ErEditResult {
   shapes: ErShapes;
   id?: string;
+  /** Centers for new shapes besides `id`'s (which the edit's `at` places). */
+  pinned?: Centers;
 }
 
 export type ErEntityPatch = Partial<Pick<ErEntityElement, "name" | "weak" | "color">>;

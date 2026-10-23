@@ -585,17 +585,23 @@ export class CanvasEngine<O extends object = object> {
    * outside the canvas.
    */
   async dropFiles(files: readonly DroppedFile[], client: Point): Promise<DropResult> {
-    if (!this.container) return { added: [], skipped: [] };
+    const at = this.clientToWorld(client);
+    if (!at) return { added: [], skipped: [] };
+    this.textEditor?.commit();
+    return dropFiles(this.clipboardHost, files, at);
+  }
+
+  /** The world point under `client` (client pixels), or `null` outside the canvas. */
+  clientToWorld(client: Point): Point | null {
+    if (!this.container) return null;
     const box = this.container.getBoundingClientRect();
     const inside =
       client.x >= box.left &&
       client.x <= box.right &&
       client.y >= box.top &&
       client.y <= box.bottom;
-    if (!inside) return { added: [], skipped: [] };
-    this.textEditor?.commit();
-    const at = this.camera.screenToWorld({ x: client.x - box.left, y: client.y - box.top });
-    return dropFiles(this.clipboardHost, files, at);
+    if (!inside) return null;
+    return this.camera.screenToWorld({ x: client.x - box.left, y: client.y - box.top });
   }
 
   /**
@@ -1583,7 +1589,8 @@ export class CanvasEngine<O extends object = object> {
     for (const links of this.links) links.update(this.scene.elements);
   }
 
-  private elementAt(world: Point): CanvasElement | undefined {
+  /** The topmost element a press at `world` would hit (locked ones are skipped). */
+  elementAt(world: Point): CanvasElement | undefined {
     return this.scene.elementAt(world, HIT_TOLERANCE_PX / this.camera.zoom);
   }
 

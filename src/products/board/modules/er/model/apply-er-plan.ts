@@ -2,7 +2,7 @@ import { rectOf, unionRects, type CanvasDocument, type ElementPatch, type Point 
 
 import type { ErDiagramFields, ErElement } from "../base/er.types";
 import { allErShapes, placedErShapes } from "./er-shapes";
-import { layoutAll, placeNew } from "./layout";
+import { layoutAll, placeNew, type Centers } from "./layout";
 import { centersOf, placeAt, topLefts } from "./position-layout";
 import type { ErPlan } from "./reconcile-er.types";
 
@@ -13,20 +13,23 @@ const BOARD_GAP = 160;
  * Writes an ER plan as one undo step, stamping `scope` (the diagram) on every shape. When the diagram is (almost) all new, such as text pasted
  * over the entity the ER tool placed, the whole diagram is laid out fresh, starting where that
  * entity was or beside the other content. Otherwise only the new shapes are placed, around the rest.
+ * New shapes in `pinned` are centered where it says (dropped there) and the rest go round them.
  */
 export function applyErPlan(
   doc: CanvasDocument,
   { shapes, added, removed }: ErPlan,
   scope: ErDiagramFields,
+  pinned: Centers = new Map(),
 ): void {
   const all = allErShapes(shapes).map((shape) => ({ ...shape, ...scope }));
   // Aggregations and constraints aren't placed: their geometry follows the shapes they connect.
   const placed = placedErShapes(shapes);
   const kept = placed.filter((s) => !added.has(s.id));
   const first = kept[0];
+  const free = new Set([...added].filter((id) => !pinned.has(id)));
   const positions =
-    kept.length > 1
-      ? topLefts(placed, placeNew(shapes, centersOf(kept), added))
+    kept.length > 1 || pinned.size > 0
+      ? topLefts(placed, placeNew(shapes, new Map([...centersOf(kept), ...pinned]), free))
       : placeAt(placed, layoutAll(shapes), first ?? freeOrigin(doc, new Set(removed)));
 
   doc.checkpoint();

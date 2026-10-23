@@ -11,7 +11,9 @@ import { ErDiagram } from "./er-diagram";
 import { erDiagrams, erShapes } from "./er-shapes";
 import type { ErDiagramInfo } from "./er-shapes.types";
 import { withErMembers } from "./er-members";
+import { mergeErDiagrams } from "./merge-er-diagrams";
 import { pruneEr } from "./prune-er";
+import { splitErDiagrams } from "./split-er-diagrams";
 
 /**
  * The board's ER diagrams. A board can hold several, each with its own text, layout and names;
@@ -58,11 +60,27 @@ export class ErModel {
 
   /** Removes a shape and what belongs to it (its attributes; a hierarchy's discriminator…). */
   remove = (id: string): void => {
+    const before = this.doc.all();
     this.doc.checkpoint();
     this.doc.batch(() => {
-      this.doc.remove(withErMembers([id], this.doc.all(), false));
+      this.doc.remove(withErMembers([id], before, false));
       pruneEr(this.doc);
+      splitErDiagrams(this.doc, before);
     });
+  };
+
+  /**
+   * Runs `edit` (an edit of diagram `into` that links it to a shape of diagram `from`) after
+   * moving `from`'s shapes into `into`, as one undo step.
+   */
+  join = <T>(into: string, from: string, edit: () => T): T => {
+    this.doc.checkpoint();
+    let result: T | undefined;
+    this.doc.batch(() => {
+      mergeErDiagrams(this.doc, into, from);
+      result = edit();
+    });
+    return result as T;
   };
 
   /**

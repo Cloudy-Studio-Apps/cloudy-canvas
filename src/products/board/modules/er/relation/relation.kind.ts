@@ -1,7 +1,17 @@
-import type { ElementTextStyle, ElementView, Size } from "@canvas";
+import type {
+  ElementHandle,
+  ElementInteraction,
+  ElementTextStyle,
+  ElementView,
+  InteractionQuery,
+  Point,
+  Size,
+} from "@canvas";
 
+import type { BoardToolOptions } from "../../../board-options.types";
 import { INK_COLOR } from "../../../palette";
 import { ER_DEFAULTS } from "../base/er.defaults";
+import { erConnectHandles, erConnectInteraction } from "../connect";
 import { ErNamedKind } from "../base/er-named.kind";
 import { relationSize } from "../base/er-size";
 import { drawErRelation } from "./relation.draw";
@@ -12,6 +22,19 @@ export class ErRelationKind extends ErNamedKind<ErRelationElement> {
   override readonly connectable = true;
   readonly label = "Relation";
   readonly description = "A relation (diamond) between entities of an ER diagram.";
+
+  /** Connect dots: drag one to link this to another element, or to add an attribute. */
+  override handles(el: ErRelationElement, zoom: number): ElementHandle[] {
+    return erConnectHandles(zoom, (side) => this.anchor(el, side));
+  }
+
+  override interactionAt(
+    el: ErRelationElement,
+    p: Point,
+    query: InteractionQuery,
+  ): ElementInteraction<BoardToolOptions> | null {
+    return erConnectInteraction(el, p, query, (side) => this.anchor(el, side));
+  }
 
   draw(view: ElementView, el: ErRelationElement): void {
     drawErRelation(view, el, this.textStyle());

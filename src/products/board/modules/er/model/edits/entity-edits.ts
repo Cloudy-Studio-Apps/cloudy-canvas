@@ -5,8 +5,11 @@ import type { ErShapes } from "../lang";
 import { replaceIn, resized } from "./edit-helpers";
 import type { ErEditResult, ErEntityPatch } from "./edits.types";
 
-export function addEntity(shapes: ErShapes, name?: string): ErEditResult {
-  const entity = createErEntity({ x: 0, y: 0 }, name ?? freeName(shapes.entities, "entity"), "");
+export function addEntity(shapes: ErShapes, name?: string, weak = false): ErEditResult {
+  const entity = {
+    ...createErEntity({ x: 0, y: 0 }, name ?? freeName(shapes.entities, "entity"), ""),
+    weak,
+  };
   return { shapes: { ...shapes, entities: [...shapes.entities, entity] }, id: entity.id };
 }
 

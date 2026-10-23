@@ -1,0 +1,180 @@
+import {
+  MOVE_THRESHOLD_PX,
+  type CanvasPointer,
+  type ElementGesture,
+  type Guide,
+  type Point,
+  type Rect,
+  type ToolContext,
+} from "@canvas";
+
+import type { BoardToolOptions } from "../../../board-options.types";
+import type { ErElement } from "../base/er.types";
+import type { ErIsaElement } from "../isa/isa.types";
+import { ER_MODEL, type ErEdits } from "../model";
+import type { ErConnectOutcome, ErConnectSource, ErParticipantTarget } from "./er-connect.types";
+import { ER_QUICK_ADD } from "./er-quick-add";
+
+const LINE_WIDTH_PX = 1.5;
+
+/**
+ * Drags a line out of an entity's, relation's or hierarchy's connect dot. Dropped on another
+ * entity (or an aggregation) it makes a relation between them, or, from a relation, adds it as a
+ * participant; an entity dropped on a relation joins it. A hierarchy and an entity linked either
+ * way make the entity one of its children. Dropped on empty board it opens the quick-add menu
+ * there, to pick what to create (`ErQuickAdd`). Linking a shape of another diagram joins the two diagrams.
+ * The end follows the pointer's screen position, so auto-panning keeps it under the cursor.
+ */
+export class ErConnectGesture implements ElementGesture {
+  private screen: Point;
+  private readonly start: Point;
+
+  constructor(
+    private readonly ctx: ToolContext<BoardToolOptions>,
+    private readonly source: ErConnectSource,
+    private readonly from: Point,
+    pointer: CanvasPointer,
+  ) {
+    this.screen = pointer.screen;
+    this.start = pointer.screen;
+    ctx.setSelection([]);
+    this.update();
+  }
+
+  move(p: CanvasPointer): void {
+    this.screen = p.screen;
+    this.update();
+    this.ctx.autoPan(p.screen, () => this.update());
+  }
+
+  finish(): void {
+    const moved =
+      Math.hypot(this.screen.x - this.start.x, this.screen.y - this.start.y) >= MOVE_THRESHOLD_PX;
+    const end = this.world();
+    const hit = this.hitAt(end);
+    this.cancel();
+    if (moved && hit === undefined) {
+      // Empty board: the quick-add menu asks what to create there.
+      this.ctx.setSelection([this.source.id]);
+      this.ctx.service(ER_QUICK_ADD).open({ sourceId: this.source.id, at: end });
+      return;
+    }
+    const outcome = moved ? this.outcome(hit, end) : null;
+    const id = outcome?.run();
+    this.ctx.setSelection([id ?? this.source.id]);
+  }
+
+  cancel(): void {
+    this.ctx.autoPan(null);
+    this.ctx.setGuide(null);
+  }
+
+  onCameraChange(): void {
+    this.update();
+  }
+
+  private update(): void {
+    const end = this.world();
+    const hit = this.hitAt(end);
+    const ok = this.outcome(hit, end) !== null;
+    const target = ok && hit ? this.ctx.getElement(hit.id) : undefined;
+    this.ctx.setGuide(this.guide(end, ok, target));
+  }
+
+  private guide(end: Point, ok: boolean, target: Rect | undefined): Guide {
+    const { from } = this;
+    return (g, { zoom, theme }) => {
+      const width = LINE_WIDTH_PX / zoom;
+      if (target) {
+        g.rect(target.x, target.y, target.w, target.h)
+          .fill({ color: theme.selection, alpha: 0.12 })
+          .stroke({ color: theme.selection, width });
+      }
+      g.moveTo(from.x, from.y)
+        .lineTo(end.x, end.y)
+        .stroke({ color: theme.selection, width, alpha: ok ? 1 : 0.4 });
+    };
+  }
+
+  /**
+   * What dropping at `at` does, or `null` when nothing would happen (on the source itself, on an
+   * element that can't be linked). `undefined` is empty board. Linking a shape of another diagram
+   * first joins that diagram to the source's, in the same undo step.
+   */
+  private outcome(hit: ErElement | null | undefined, at: Point): ErConnectOutcome | null {
+    const outcome = this.link(hit, at);
+    const other = hit?.diagram;
+    if (!outcome || !other || other === this.source.diagram) return outcome;
+    const er = this.ctx.service(ER_MODEL);
+    return { run: () => er.join(this.source.diagram, other, outcome.run) };
+  }
+
+  /** The edit, written to the source's diagram (which by then holds `hit` too). */
+  private link(hit: ErElement | null | undefined, at: Point): ErConnectOutcome | null {
+    const { source } = this;
+    const edits = this.ctx.service(ER_MODEL).diagram(source.diagram).edits;
+    if (source.type === "er-isa") {
+      if (hit === undefined) return { run: () => edits.addIsaChildEntity(source.id, { at }) };
+      return hit?.type === "er-entity" ? childLink(edits, source, hit.id) : null;
+    }
+    if (hit === undefined) return { run: () => edits.addAttribute(source.id, { at }) };
+    if (hit === null || hit.id === source.id) return null;
+    if (source.type === "er-entity") {
+      if (hit.type === "er-isa") return childLink(edits, hit, source.id);
+      if (isParticipant(hit)) {
+        const target = this.ctx.getElement(hit.id) ?? hit;
+        return {
+          run: () => edits.addRelation([source.id, hit.id], { at: midpoint(source, target) }),
+        };
+      }
+      if (hit.type === "er-relation") {
+        return {
+          run: () => {
+            edits.addParticipant(hit.id, source.id);
+            return hit.id;
+          },
+        };
+      }
+      return null;
+    }
+    if (isParticipant(hit)) {
+      return {
+        run: () => {
+          edits.addParticipant(source.id, hit.id);
+          return source.id;
+        },
+      };
+    }
+    return null;
+  }
+
+  /** The ER element under `world`; `null` for anything else there, `undefined` for nothing. */
+  private hitAt(world: Point): ErElement | null | undefined {
+    const el = this.ctx.elementAt(world);
+    if (!el) return undefined;
+    return this.ctx.service(ER_MODEL).shape(el.id) ?? null;
+  }
+
+  private world(): Point {
+    return this.ctx.camera.screenToWorld(this.screen);
+  }
+}
+
+/** Makes the entity a child of the hierarchy, unless it's its parent or a child already. */
+function childLink(edits: ErEdits, isa: ErIsaElement, entityId: string): ErConnectOutcome | null {
+  if (isa.parentId === entityId || isa.children.some((c) => c.entityId === entityId)) return null;
+  return {
+    run: () => {
+      edits.addIsaChild(isa.id, entityId);
+      return isa.id;
+    },
+  };
+}
+
+function isParticipant(el: ErElement): el is ErParticipantTarget {
+  return el.type === "er-entity" || el.type === "er-aggregate";
+}
+
+function midpoint(a: Rect, b: Rect): Point {
+  return { x: (a.x + a.w / 2 + b.x + b.w / 2) / 2, y: (a.y + a.h / 2 + b.y + b.h / 2) / 2 };
+}

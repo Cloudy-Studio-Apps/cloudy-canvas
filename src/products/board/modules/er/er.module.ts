@@ -16,10 +16,13 @@ import {
   prepareErCopies,
   pruneEr,
   resolveErElements,
+  splitErDiagrams,
   withErMembers,
 } from "./model";
 import { ErRelationKind } from "./relation";
 import { ErPanel } from "./ui/er-panel";
+import { ErPalette } from "./ui/er-palette";
+import { ErQuickAddMenu } from "./ui/er-quick-add";
 
 /**
  * ER diagrams: the element kinds, the lines between them, the tool (E), the ER panel and the agent
@@ -51,8 +54,12 @@ export const erModule = defineModule({
     host.contribute(boardCanvas.withMembers, (ids, elements, purpose) =>
       withErMembers(ids, elements, purpose === "move"),
     );
-    // ER elements that belonged to deleted ones go with them.
-    host.contribute(boardCanvas.onRemove, (doc) => pruneEr(doc));
+    // ER elements that belonged to deleted ones go with them, and parts of a diagram the deletion
+    // cut off from the rest become diagrams of their own.
+    host.contribute(boardCanvas.onRemove, (doc, _removed, before) => {
+      pruneEr(doc);
+      splitErDiagrams(doc, before);
+    });
     // Copies get their own diagrams.
     host.contribute(boardCanvas.prepareCopies, prepareErCopies);
     host.contribute(boardMigrations, { id: "er.diagrams", migrate: migrateErDiagrams });
@@ -66,5 +73,9 @@ export const erModule = defineModule({
       library: { keywords: ["entity", "relation", "chen"] },
     });
     host.contribute(boardEditor.sidePanels, { id: "er.panel", order: 20, component: ErPanel });
+    // The element types, to click or drag onto the board while a diagram is being edited.
+    host.contribute(boardEditor.overlays, { id: "er.palette", component: ErPalette });
+    // What to create where a connect dot was dropped on empty board.
+    host.contribute(boardEditor.overlays, { id: "er.quickAdd", component: ErQuickAddMenu });
   },
 });

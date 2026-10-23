@@ -1,16 +1,22 @@
 import { freeName } from "../../../db";
 import { createErAttribute } from "../../attribute/attribute.factory";
+import type { ErAttributeKey } from "../../attribute/attribute.types";
 import { attributeSize } from "../../base/er-size";
 import type { ErShapes } from "../lang";
 import { replaceIn, resized } from "./edit-helpers";
 import type { ErAttributePatch, ErEditResult } from "./edits.types";
 
 /** Adds an attribute (or, with an attribute as owner, a part of a composite one) at the end. */
-export function addAttribute(shapes: ErShapes, ownerId: string): ErEditResult {
+export function addAttribute(
+  shapes: ErShapes,
+  ownerId: string,
+  key: ErAttributeKey = "none",
+): ErEditResult {
   const siblings = shapes.attributes.filter((a) => a.ownerId === ownerId);
   const look = shapes.attributes[0]?.look ?? "ellipse";
   const attribute = {
     ...createErAttribute({ x: 0, y: 0 }, ownerId, freeName(siblings, "attribute"), "", look),
+    key,
     order: Math.max(-1, ...siblings.map((a) => a.order)) + 1,
   };
   return { shapes: { ...shapes, attributes: [...shapes.attributes, attribute] }, id: attribute.id };

@@ -9,5 +9,5 @@ export interface ToolButtonProps extends Omit<ComponentProps<typeof Button>, "ch
   shortcut?: string;
   active?: boolean;
   children: ReactNode;
-  side?: "top" | "bottom";
+  side?: "top" | "right" | "bottom" | "left";
 }
