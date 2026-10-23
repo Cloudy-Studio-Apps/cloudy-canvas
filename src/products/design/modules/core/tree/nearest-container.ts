@@ -1,4 +1,4 @@
-import type { CanvasElement, ElementKinds, Point } from "@canvas";
+import { rotatePoint, type CanvasElement, type ElementKinds, type Point } from "@canvas";
 
 import { DesignNodeKind, isDesignNode, type DesignNode } from "../node";
 
@@ -20,15 +20,44 @@ export function nearestContainer(
 }
 
 /**
- * Where a layer's X and Y count from, as in Figma: the top-left corner of the container it's in,
- * or the page's origin at the top of the page or in a turned container (whose axes aren't the
- * page's).
+ * A layer's X and Y, as in Figma: from the top-left corner of the container it's in, or from the
+ * page's origin at the top of the page or in a turned container (whose axes aren't the page's).
+ * In a mirrored container they're in its mirrored space: X counts from its right edge to the
+ * corner the layer's box shows there (its far side's).
  */
-export function positionOrigin(
+export function layerPosition(
   el: CanvasElement,
   get: (id: string) => CanvasElement | undefined,
   kinds: ElementKinds,
 ): Point {
   const container = nearestContainer(el, get, kinds);
-  return container && !container.rotation ? { x: container.x, y: container.y } : { x: 0, y: 0 };
+  if (!container || container.rotation) return { x: el.x, y: el.y };
+  if (!container.mirrored) return { x: el.x - container.x, y: el.y - container.y };
+  const far = farCorner(el);
+  return { x: container.x + container.w - far.x, y: far.y - container.y };
+}
+
+/** The move that puts a layer at `value` on `axis` of its `layerPosition`, on whole units. */
+export function positionMove(
+  el: CanvasElement,
+  axis: "x" | "y",
+  value: number,
+  get: (id: string) => CanvasElement | undefined,
+  kinds: ElementKinds,
+): { dx: number; dy: number } {
+  const container = nearestContainer(el, get, kinds);
+  const turned = !container || Boolean(container.rotation);
+  const origin = turned ? { x: 0, y: 0 } : { x: container.x, y: container.y };
+  if (turned || !container.mirrored) {
+    const d = Math.round(value + origin[axis]) - el[axis];
+    return axis === "x" ? { dx: d, dy: 0 } : { dx: 0, dy: d };
+  }
+  const far = farCorner(el);
+  if (axis === "y") return { dx: 0, dy: Math.round(value + origin.y) - far.y };
+  return { dx: Math.round(origin.x + container.w - value) - far.x, dy: 0 };
+}
+
+/** The corner at the far end of a layer's top side (its right one, unturned). */
+function farCorner(el: CanvasElement): Point {
+  return rotatePoint({ x: el.x + el.w, y: el.y }, el, el.rotation ?? 0);
 }

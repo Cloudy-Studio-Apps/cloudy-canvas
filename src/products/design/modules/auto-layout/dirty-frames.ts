@@ -9,6 +9,7 @@ const LAYOUT_FIELDS = new Set([
   "w",
   "h",
   "rotation",
+  "mirrored",
   "visible",
   "parentId",
   "index",

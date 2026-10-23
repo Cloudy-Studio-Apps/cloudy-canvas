@@ -5,14 +5,14 @@ import {
   type ElementKinds,
   type ElementPatch,
   type Point,
-  type Rect,
 } from "@canvas";
 
 import { DesignNodeKind, type DesignNode } from "../core";
 import { dirtyFrames } from "./dirty-frames";
 import { DocumentTree } from "./document-tree";
 import { layoutFrame } from "./layout-frame";
-import { frameLayoutInput } from "./layout-items";
+import { fromFrameOffset } from "./frame-space";
+import { frameLayoutInput, localBox } from "./layout-items";
 
 /** Differences smaller than this are left alone (no write, so the hook settles). */
 const EPSILON = 1e-3;
@@ -47,7 +47,7 @@ function relayoutFrame(
   const result = layoutFrame(data.input, data.items);
   const w = data.input.hugW ? result.w : frame.w;
   const h = data.input.hugH ? result.h : frame.h;
-  resizeTo(doc, kinds, frame, { x: frame.x, y: frame.y, w, h });
+  resizeTo(doc, kinds, frame, w, h);
 
   for (const [childId, rect] of result.items) {
     const placed = data.placed.get(childId);
@@ -55,27 +55,35 @@ function relayoutFrame(
     let { box } = placed;
     if (!placed.moveOnly && !near(rect.w, box.w, rect.h, box.h)) {
       const { node } = placed;
-      resizeTo(doc, kinds, node, { x: node.x, y: node.y, w: rect.w, h: rect.h });
-      const resized = tree.get(childId) ?? node;
-      box = { ...box, w: resized.w, h: resized.h };
+      resizeTo(doc, kinds, node, rect.w, rect.h);
+      // Read again: in a mirrored frame, growing from its corner moves its left edge there.
+      box = localBox(tree.get(childId) ?? node, frame);
     }
     if (near(rect.x, box.x, rect.y, box.y)) continue;
-    const offset = rotatePoint(
-      { x: rect.x - box.x, y: rect.y - box.y },
-      ORIGIN,
-      frame.rotation ?? 0,
-    );
+    const offset = fromFrameOffset({ x: rect.x - box.x, y: rect.y - box.y }, frame);
     moveWithDescendants(doc, tree, kinds, childId, offset);
   }
 }
 
-const ORIGIN: Point = { x: 0, y: 0 };
-
-/** Resizes a node as its kind does (a text wraps again), keeping how it's sized. */
-function resizeTo(doc: CanvasDocument, kinds: ElementKinds, node: DesignNode, rect: Rect): void {
-  if (near(rect.w, node.w, rect.h, node.h)) return;
+/**
+ * Resizes a node as its kind does (a text wraps again), keeping how it's sized and its own origin,
+ * as Figma does: its corner, or for a mirrored node the right edge of its unturned box (a mirrored
+ * frame that hugs grows to the left on screen, so its layers keep their place in its space).
+ */
+function resizeTo(
+  doc: CanvasDocument,
+  kinds: ElementKinds,
+  node: DesignNode,
+  w: number,
+  h: number,
+): void {
+  if (near(w, node.w, h, node.h)) return;
   const kind = kinds.kindOf(node);
   if (!(kind instanceof DesignNodeKind)) return;
+  const corner = node.mirrored
+    ? rotatePoint({ x: node.x + node.w - w, y: node.y }, node, node.rotation ?? 0)
+    : node;
+  const rect = { x: corner.x, y: corner.y, w, h };
   const patch: ElementPatch<DesignNode> = { ...kind.resize(node, rect), sizing: node.sizing };
   doc.update(node.id, patch);
 }

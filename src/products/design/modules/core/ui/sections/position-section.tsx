@@ -6,17 +6,20 @@ import type { DesignNode } from "../../node";
 import { ArrangeButtons } from "./arrange-buttons";
 import { RotationRow } from "./rotation-row";
 import { sharedValue } from "@design/ui/components/panel";
-import { positionOrigin } from "../../tree";
+import { layerPosition, positionMove } from "../../tree";
 
 /**
- * Align, distribute and tidy up, X/Y (from the top-left corner of the frame each layer is in, as
- * in Figma; a moved frame takes its children) and the angle of the selection.
+ * Align, distribute and tidy up, X/Y (from the top-left corner of the frame each layer is in, in
+ * its mirrored space for a mirrored one, as in Figma; a moved frame takes its children) and the
+ * angle of the selection.
  */
 export function PositionSection({ selection: { nodes } }: PropertySectionProps) {
   const engine = useDesignEngine();
   const move = useMoveNodes();
-  const origin = (node: DesignNode) =>
-    positionOrigin(node, (id) => engine.getElement(id), engine.kinds);
+  const get = (id: string) => engine.getElement(id);
+  const position = (node: DesignNode) => layerPosition(node, get, engine.kinds);
+  const moveTo = (axis: "x" | "y", value: number) =>
+    move(nodes, (node) => positionMove(node, axis, value, get, engine.kinds));
 
   return (
     <PanelSection title="Position">
@@ -25,18 +28,14 @@ export function PositionSection({ selection: { nodes } }: PropertySectionProps) 
         <NumberField
           prefix="X"
           label="X"
-          value={sharedValue(nodes, (node) => node.x - origin(node).x)}
-          onCommit={(x) =>
-            move(nodes, (node) => ({ dx: Math.round(x + origin(node).x) - node.x, dy: 0 }))
-          }
+          value={sharedValue(nodes, (node) => position(node).x)}
+          onCommit={(x) => moveTo("x", x)}
         />
         <NumberField
           prefix="Y"
           label="Y"
-          value={sharedValue(nodes, (node) => node.y - origin(node).y)}
-          onCommit={(y) =>
-            move(nodes, (node) => ({ dx: 0, dy: Math.round(y + origin(node).y) - node.y }))
-          }
+          value={sharedValue(nodes, (node) => position(node).y)}
+          onCommit={(y) => moveTo("y", y)}
         />
       </PropertyGrid>
       <RotationRow nodes={nodes} />

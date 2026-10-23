@@ -3,7 +3,6 @@ import { generateNKeysBetween } from "fractional-indexing";
 import {
   elementBounds,
   rectCenter,
-  rotatePoint,
   type CanvasDocument,
   type ElementKinds,
   type ElementPatch,
@@ -12,6 +11,7 @@ import {
 
 import { layoutOf, type AutoLayout, type DesignNode } from "../core";
 import { DocumentTree } from "./document-tree";
+import { toFrameSpace } from "./frame-space";
 
 /**
  * After a drag (`onMoved`, once the moved layers have their new parents): each moved layer in an
@@ -66,11 +66,9 @@ export function reorderDropped(
   if (patches.size > 0) doc.updateMany(patches);
 }
 
-/** Its middle from the frame's corner, in the frame's unturned frame. */
+/** Its middle in the frame's own space (`toFrameSpace`). */
 function localCenter(node: DesignNode, frame: DesignNode, kinds: ElementKinds): Point {
-  const center = rectCenter(elementBounds(kinds.kindOf(node), node));
-  const local = rotatePoint(center, frame, -(frame.rotation ?? 0));
-  return { x: local.x - frame.x, y: local.y - frame.y };
+  return toFrameSpace(rectCenter(elementBounds(kinds.kindOf(node), node)), frame);
 }
 
 /** Whether a layer at `a` comes before one at `b` (wrapped: by line, then along it). */

@@ -5,7 +5,7 @@ export type * from "./design-tree.types";
 export type * from "./tree-slots.types";
 export { containerAlignTarget } from "./align-target";
 export { containerAt } from "./container-at";
-export { nearestContainer, positionOrigin } from "./nearest-container";
+export { layerPosition, nearestContainer, positionMove } from "./nearest-container";
 export { selectionRulerFrame } from "./ruler-frame";
 export { topFrames } from "./top-frames";
 export { parentFor } from "./parent-for";

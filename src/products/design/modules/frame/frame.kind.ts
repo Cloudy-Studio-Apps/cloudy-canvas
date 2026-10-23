@@ -154,6 +154,14 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
     return el.layout !== null && el.sizing[axis] === "hug";
   }
 
+  /**
+   * An auto layout frame is drawn mirrored when flipped, as in Figma: its layout runs in its own
+   * space, so the layers flipped with it keep their places in it and show reversed.
+   */
+  override mirrorsOnFlip(el: FrameElement): boolean {
+    return el.layout !== null || super.mirrorsOnFlip(el);
+  }
+
   override geometryKey(el: FrameElement): string {
     return `${el.w},${el.h},${el.cornerRadius}`;
   }

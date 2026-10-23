@@ -1,7 +1,7 @@
 import {
+  boundsOfPoints,
   type BoxSides,
-  rotatedBounds,
-  rotatePoint,
+  rotatedCorners,
   type CanvasElement,
   type ElementKinds,
   type Rect,
@@ -15,6 +15,7 @@ import {
   type AutoLayout,
   type DesignNode,
 } from "../core";
+import { toFrameSpace } from "./frame-space";
 import type { LayoutFrameInput, LayoutItem } from "./layout-frame.types";
 import type { LayoutTree, PlacedChild } from "./layout-tree.types";
 
@@ -39,7 +40,7 @@ export function frameLayoutInput(
     if (!(childKind instanceof DesignNodeKind)) continue;
     const shown = childKind.childHost ? resolved(child, tree, kinds) : child;
     const turn = (shown.rotation ?? 0) - (frame.rotation ?? 0);
-    const box = localBox(shown, frame, turn);
+    const box = localBox(shown, frame);
     const moveOnly = childKind.childHost || Math.abs(turn) > 1e-6;
     placed.set(child.id, { node: child, box, moveOnly });
     const fills = (axis: "h" | "v") => !moveOnly && child.sizing[axis] === "fill";
@@ -76,11 +77,10 @@ function resolved(node: DesignNode, tree: LayoutTree, kinds: ElementKinds): Desi
   return (found as DesignNode | undefined) ?? node;
 }
 
-/** Its box round its turn, from the frame's corner, in the frame's unturned frame. */
-function localBox(node: DesignNode, frame: DesignNode, turn: number): Rect {
-  const corner = rotatePoint({ x: node.x, y: node.y }, frame, -(frame.rotation ?? 0));
-  const rect = { x: corner.x - frame.x, y: corner.y - frame.y, w: node.w, h: node.h };
-  return rotatedBounds(rect, turn);
+/** Its box round its turn, in the frame's own space (`toFrameSpace`). */
+export function localBox(node: DesignNode, frame: DesignNode): Rect {
+  const corners = rotatedCorners(node, node.rotation ?? 0).map((p) => toFrameSpace(p, frame));
+  return boundsOfPoints(corners.flatMap((p) => [p.x, p.y]));
 }
 
 /**
