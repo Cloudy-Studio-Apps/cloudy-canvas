@@ -77,6 +77,13 @@ export class ElementLayer extends Container {
     for (const view of rehome ? this.views.values() : synced) this.place(view, moved.has(view));
   }
 
+  /** Redraws an element's view as `el` has it (the text editor's live preview), if it has one. */
+  preview(el: CanvasElement): void {
+    const view = this.views.get(el.id);
+    if (!view) return;
+    view.sync(el, this.kinds.kindOf(el), view.order);
+  }
+
   /** Destroys the views of elements not in `ids` (e.g. removed while the views were built). */
   retain(ids: ReadonlySet<string>): void {
     let removed = false;

@@ -3,7 +3,13 @@ import { isModKey } from "@shared/core";
 import type { Camera } from "../camera";
 import { rotatePoint } from "../rotation";
 import type { CanvasDocument } from "../document";
-import type { CanvasElement, ElementKinds, ElementText, TextSizing } from "../elements";
+import type {
+  CanvasElement,
+  ElementKinds,
+  ElementText,
+  RichTextSpec,
+  TextSizing,
+} from "../elements";
 import type { Rect } from "../geometry.types";
 import { Disposables } from "../utils";
 import { textEditorStyle } from "./text-editor-style";
@@ -11,13 +17,18 @@ import { textFont } from "./text-font";
 import type { TextFont } from "./text-font.types";
 import { measureTextBlock } from "./text-metrics";
 import type { TextEditorHooks, Session } from "./text-editor.types";
+import type { TextSelection } from "./rich-editor/rich-editor.types";
+import { RichTextSession } from "./rich-editor/rich-text-session";
+import type { TextRun } from "./rich/text-run.types";
 
 /**
  * Plain DOM <textarea> laid over the canvas while editing an element's text. Works for any element
- * whose kind has a `text` spec. Framework-free so the web version and any host can reuse it.
+ * whose kind has a `text` spec; a rich text (`ElementText.rich`) is edited by a `RichTextSession`
+ * instead. Framework-free so the web version and any host can reuse it.
  */
 export class TextEditor {
   private session: Session | null = null;
+  private rich: RichTextSession<CanvasElement> | null = null;
 
   constructor(
     private readonly container: HTMLElement,
@@ -28,7 +39,21 @@ export class TextEditor {
   ) {}
 
   get editingId(): string | null {
-    return this.session?.id ?? null;
+    return this.rich?.id ?? this.session?.id ?? null;
+  }
+
+  /** The rich text being edited: its text and runs so far, and the selection. */
+  richContent(): (TextSelection & { text: string; runs: readonly TextRun<object>[] }) | null {
+    const rich = this.rich;
+    if (!rich) return null;
+    return { id: rich.id, ...rich.content(), ...rich.selection() };
+  }
+
+  /** Styles the selection of the rich text being edited (see `RichTextSession.applyStyle`). */
+  applyRichStyle(patch: object): boolean {
+    if (!this.rich) return false;
+    this.rich.applyStyle(patch);
+    return true;
   }
 
   /**
@@ -50,6 +75,7 @@ export class TextEditor {
 
   /** Keeps the editor aligned with the element while the camera moves. */
   reposition(): void {
+    this.rich?.reposition();
     const session = this.session;
     if (!session) return;
     const el = this.elementOf(session);
@@ -65,6 +91,7 @@ export class TextEditor {
   }
 
   commit(): void {
+    if (this.rich) return this.commitRich();
     const session = this.close();
     if (!session) return;
     const el = this.elementOf(session);
@@ -72,22 +99,50 @@ export class TextEditor {
     this.hooks.onEnd(session.id);
     if (!el || !text) return;
     const value = session.textarea.value;
-    if (text.removeWhenEmpty && value.trim() === "") {
-      if (!session.draft) this.hooks.remove(el.id);
-      return;
-    }
-    const patch = text.set(el, value, session.part ?? undefined);
-    if (session.draft) {
-      this.doc.checkpoint();
-      this.doc.add({ ...el, ...patch, index: this.doc.nextIndex() });
-      this.hooks.onCreate(el.id);
-    } else if (patch) {
-      this.doc.update(el.id, patch);
-    }
+    this.write(el, value, text.removeWhenEmpty ?? false, session.draft !== null, () =>
+      text.set(el, value, session.part ?? undefined),
+    );
   }
 
   destroy(): void {
     this.close();
+    this.rich?.destroy();
+    this.rich = null;
+  }
+
+  private commitRich(): void {
+    const rich = this.rich;
+    if (!rich) return;
+    this.rich = null;
+    const result = rich.result();
+    rich.destroy();
+    this.hooks.onEnd(rich.id);
+    if (!result) return;
+    const removeWhenEmpty = this.kinds.kindOf(result.el).text?.removeWhenEmpty ?? false;
+    this.write(result.el, result.text, removeWhenEmpty, rich.draft !== null, () => result.patch);
+  }
+
+  /** Writes edited text: removes an emptied element, adds a typed draft or updates the element. */
+  private write(
+    el: CanvasElement,
+    value: string,
+    removeWhenEmpty: boolean,
+    draft: boolean,
+    patchOf: () => Partial<CanvasElement> | null,
+  ): void {
+    if (removeWhenEmpty && value.trim() === "") {
+      if (!draft) this.hooks.remove(el.id);
+      return;
+    }
+    const patch = patchOf();
+    if (draft) {
+      this.doc.checkpoint();
+      this.doc.add({ ...el, ...patch, index: this.doc.nextIndex() });
+      this.hooks.onCreate(el.id);
+    } else if (patch) {
+      this.doc.checkpoint();
+      this.doc.update(el.id, patch);
+    }
   }
 
   private open<E extends CanvasElement>(
@@ -98,6 +153,27 @@ export class TextEditor {
   ): void {
     this.commit();
     const at = part ?? undefined;
+    if (text.rich) {
+      this.rich = new RichTextSession(
+        {
+          container: this.container,
+          camera: this.camera,
+          getElement: (id) => this.hooks.getElement(id),
+          turnOf: (target) => (this.kinds.kindOf(target).rotatable ? (target.rotation ?? 0) : 0),
+          preview: (edited, isDraft) => this.hooks.preview(edited, isDraft),
+          onSelection: (selection) => this.hooks.onSelection(selection),
+          commit: () => this.commit(),
+        },
+        el.id,
+        text.rich as RichTextSpec<CanvasElement>,
+        el,
+        text.get(el, at),
+        draft,
+        `${this.kinds.kindOf(el).label} text`,
+      );
+      this.hooks.onStart(el.id, part, true);
+      return;
+    }
     const box = partBox(el, text, part);
     const textarea = document.createElement("textarea");
     textarea.value = text.get(el, at);
@@ -118,7 +194,7 @@ export class TextEditor {
 
     this.resizeToContent();
     this.reposition();
-    this.hooks.onStart(el.id, part);
+    this.hooks.onStart(el.id, part, false);
     // Wait a frame so the pointerdown that started editing doesn't steal focus back.
     requestAnimationFrame(() => {
       textarea.focus();

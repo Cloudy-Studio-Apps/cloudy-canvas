@@ -1,3 +1,4 @@
+import type { TextSelection } from "./text/rich-editor/rich-editor.types";
 import type { SnapSettings } from "./snapping";
 
 /** Snapshot for UI hosts (immutable; replaced on every change). `O` is the product's tool options. */
@@ -15,6 +16,8 @@ export interface EngineState<O extends object = object> {
   selectionTypes: string;
   /** The selected part of the single selected element (e.g. a table's `row:2`), if any. */
   selectedPart: string | null;
+  /** The selection in the rich text being edited, `null` when none is (see `editingText`). */
+  textSelection: TextSelection | null;
   /** The scope on screen (a design's page), `null` when the product has none. */
   scope: string | null;
   /** What snaps (the same object until it changes). */

@@ -173,6 +173,12 @@ export class Renderer {
     this.draft.show(el);
   }
 
+  /** Redraws an element's view as `el` has it, though the document doesn't (yet). */
+  previewElement(el: CanvasElement): void {
+    this.elements.preview(el);
+    this.frames.preview(el);
+  }
+
   /** Dims these elements, e.g. the strokes an eraser is about to remove; an empty list clears it. */
   setFaded(ids: Iterable<string>): void {
     const list = [...ids];

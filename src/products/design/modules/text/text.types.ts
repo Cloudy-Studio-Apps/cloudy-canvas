@@ -1,6 +1,15 @@
-import type { ElementDefaults, FontStyle, FontWeight, TextAlign } from "@canvas";
+import type {
+  ElementDefaults,
+  FontStyle,
+  FontWeight,
+  TextAlign,
+  TextDecoration,
+  TextRun,
+} from "@canvas";
 
-import type { DesignNode } from "../core";
+import type { DesignNode, Paint } from "../core";
+
+export type { TextDecoration };
 
 /**
  * How a text box follows its text: `width` grows both ways and never wraps, `height` keeps its
@@ -11,7 +20,29 @@ export type TextAutoResize = "width" | "height" | "none";
 /** Where the text block sits in a box taller than it. */
 export type TextVerticalAlign = "top" | "middle" | "bottom";
 
-/** A text layer. Its color is its first visible solid fill. */
+/**
+ * What a range of a text sets over the text's own typography and look (Figma's mixed styles):
+ * fields left out are the text's.
+ */
+export interface TextRunStyle {
+  fontFamily?: string;
+  fontSize?: number;
+  fontWeight?: FontWeight;
+  fontStyle?: FontStyle;
+  lineHeight?: number;
+  letterSpacing?: number;
+  /** Its paints; the first visible solid one colors its characters. */
+  fills?: Paint[];
+  textDecoration?: TextDecoration;
+}
+
+/** A styled range of a text. */
+export type TextNodeRun = TextRun<TextRunStyle>;
+
+/**
+ * A text layer. Its color is its first visible solid fill; `runs` style ranges of it their own
+ * way (mixed fonts, sizes, colors, decorations).
+ */
 export interface TextNodeElement extends DesignNode {
   type: "text";
   text: string;
@@ -27,6 +58,10 @@ export interface TextNodeElement extends DesignNode {
   textAlign: TextAlign;
   verticalAlign: TextVerticalAlign;
   autoResize: TextAutoResize;
+  /** Underline or strikethrough for all of it (runs may set their own). */
+  textDecoration: TextDecoration;
+  /** Ranges styled their own way, sorted, without overlaps (`normalizeRuns`). */
+  runs: TextNodeRun[];
 }
 
 /** The typography fields of a text, what the Typography section edits. */

@@ -2,6 +2,8 @@ import type { ElementKinds } from "./element.kinds";
 import type { Point, Rect, Size } from "../geometry.types";
 import type { CanvasElement, ElementPatch } from "./element.types";
 import type { TextAlign, TextFontOptions } from "../text/text-font.types";
+import type { RichTextLayout } from "../text/rich/rich-text.types";
+import type { TextRun } from "../text/rich/text-run.types";
 
 /**
  * Default values every element type may have. Each type's `<type>.defaults.ts` object satisfies
@@ -67,6 +69,29 @@ export interface ElementText<E extends CanvasElement> {
   sizing?(el: E): TextSizing;
   /** The element is only its text, so emptying it deletes the element (and a new one isn't added). */
   removeWhenEmpty?: boolean;
+  /**
+   * Its text has styled ranges (`TextRun`s) and is laid out by the engine's rich layout: it's
+   * edited with the rich editor (caret and selection drawn from the layout, ranges restyled
+   * while typing) instead of a plain textarea.
+   */
+  rich?: RichTextSpec<E>;
+}
+
+/** The style shortcuts the rich editor knows (Ctrl+B, Ctrl+I, Ctrl+U, Ctrl+Shift+X). */
+export type TextStyleShortcut = "bold" | "italic" | "underline" | "strikethrough";
+
+/**
+ * How an element's rich text is read, laid out and written (see `ElementText.rich`). Run
+ * styles are the kind's own (`S`); the editor only moves and splits them.
+ */
+export interface RichTextSpec<E extends CanvasElement, S extends object = object> {
+  runs(el: E): readonly TextRun<S>[];
+  /** Its text laid out as drawn, with `text` and `runs` in place of its own. */
+  layout(el: E, text: string, runs: readonly TextRun<S>[]): RichTextLayout;
+  /** What writes this text and these runs (the size following them), or `null` for no change. */
+  apply(el: E, text: string, runs: readonly TextRun<S>[]): ElementPatch<E> | null;
+  /** The style a shortcut sets over a range starting with style `at`, or `null` to ignore it. */
+  shortcut?(el: E, shortcut: TextStyleShortcut, at: Partial<S>): Partial<S> | null;
 }
 
 /** How an element follows its text: `content` (both ways), `height` (down) or `fixed`. */

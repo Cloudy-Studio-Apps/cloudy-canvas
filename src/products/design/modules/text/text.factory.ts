@@ -28,6 +28,8 @@ export function createText(
     textAlign: "left",
     verticalAlign: "top",
     autoResize,
+    textDecoration: "none",
+    runs: [],
   };
   return { ...el, ...textSize(el) };
 }

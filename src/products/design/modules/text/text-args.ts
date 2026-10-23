@@ -1,7 +1,12 @@
 import type { FontStyle, FontWeight, TextAlign } from "@canvas";
 
 import { nonNegative } from "../core";
-import type { TextAutoResize, TextNodeElement, TextVerticalAlign } from "./text.types";
+import type {
+  TextAutoResize,
+  TextDecoration,
+  TextNodeElement,
+  TextVerticalAlign,
+} from "./text.types";
 
 const WEIGHTS: readonly FontWeight[] = [
   "100",
@@ -18,6 +23,7 @@ const STYLES: readonly FontStyle[] = ["normal", "italic"];
 const ALIGNS: readonly TextAlign[] = ["left", "center", "right", "justify"];
 const VERTICAL_ALIGNS: readonly TextVerticalAlign[] = ["top", "middle", "bottom"];
 const AUTO_RESIZES: readonly TextAutoResize[] = ["width", "height", "none"];
+const DECORATIONS: readonly TextDecoration[] = ["none", "underline", "strikethrough"];
 
 /** The text fields agents may give or patch, in the `create_nodes` schema. */
 export const TEXT_SPEC_PROPERTIES = {
@@ -32,6 +38,18 @@ export const TEXT_SPEC_PROPERTIES = {
   letterSpacing: { type: "number", description: "Text: extra space between characters." },
   textAlign: { enum: ALIGNS },
   verticalAlign: { enum: VERTICAL_ALIGNS },
+  textDecoration: {
+    enum: ["none", "underline", "strikethrough"],
+    description: "Text: an underline or strikethrough for all of it.",
+  },
+  runs: {
+    type: "array",
+    items: { type: "object" },
+    description:
+      "Text: ranges styled their own way (mixed styles), each { start, end (excluded), and any " +
+      "of fontFamily, fontSize, fontWeight, fontStyle, lineHeight, letterSpacing, color or " +
+      "fills, textDecoration }. Indexes count UTF-16 characters. [] makes it one style.",
+  },
   autoResize: {
     enum: AUTO_RESIZES,
     description:
@@ -78,6 +96,9 @@ export function textFields(fields: Readonly<Record<string, unknown>>): Partial<T
   }
   if (fields.autoResize !== undefined) {
     out.autoResize = choice(fields.autoResize, "autoResize", AUTO_RESIZES);
+  }
+  if (fields.textDecoration !== undefined) {
+    out.textDecoration = choice(fields.textDecoration, "textDecoration", DECORATIONS);
   }
   return out;
 }

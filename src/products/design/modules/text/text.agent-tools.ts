@@ -1,12 +1,22 @@
-import { optionalChoice, optionalNumber, optionalString } from "@canvas";
+import {
+  asUndoStep,
+  optionalChoice,
+  optionalNumber,
+  optionalString,
+  stringArg,
+  styleRuns,
+} from "@canvas";
 import type { FontSource } from "@shared/core";
 
-import type { DesignAgentTool } from "../../agent";
+import { requireDesign, requireNodes, type DesignAgentTool } from "../../agent";
+import { readRange, readRunStyle, RUN_STYLE_PROPERTIES } from "./text-run-args";
+import { textContentPatch } from "./text-rich-spec";
+import type { TextNodeElement } from "./text.types";
 
 const SOURCES: readonly FontSource[] = ["installed", "google"];
 const DEFAULT_LIMIT = 50;
 
-/** The fonts texts can use, as the font picker lists them. */
+/** The fonts texts can use, as the font picker lists them, and styling part of a text. */
 export const textTools: DesignAgentTool[] = [
   {
     name: "list_fonts",
@@ -41,6 +51,38 @@ export const textTools: DesignAgentTool[] = [
           faces: font.variants.map((v) => (v.style === "italic" ? `${v.weight} italic` : v.weight)),
         })),
       };
+    },
+  },
+  {
+    name: "style_text_range",
+    description:
+      "Styles part of a text layer as one undo step, as selecting characters in Figma does " +
+      "(mixed styles): characters start to end (end excluded, UTF-16 indexes into its text) take " +
+      "the style's fields; the rest of the text keeps its own. A text's ranges are its `runs` in " +
+      "get_nodes; setting a field for the whole text (update_nodes) clears it from them.",
+    inputSchema: {
+      type: "object",
+      required: ["id", "start", "end", "style"],
+      properties: {
+        id: { type: "string" },
+        start: { type: "integer" },
+        end: { type: "integer" },
+        style: { type: "object", properties: RUN_STYLE_PROPERTIES },
+      },
+    },
+    run: (host, args) => {
+      const { engine } = requireDesign(host);
+      const [id] = requireNodes(engine, [stringArg(args, "id")]);
+      const el = engine.getElement(id!);
+      if (el?.type !== "text") throw new Error(`Layer ${id} isn't a text.`);
+      const text = el as TextNodeElement;
+      const length = text.text.length;
+      const range = readRange(args.start, args.end, length, "range");
+      const style = readRunStyle(args.style, "style");
+      const runs = styleRuns(text.runs, range.start, range.end, style, length);
+      const patch = textContentPatch(text, text.text, runs);
+      if (patch) asUndoStep(engine.doc, () => engine.doc.update(text.id, patch));
+      return { id: text.id, runs: patch?.runs ?? text.runs };
     },
   },
 ];

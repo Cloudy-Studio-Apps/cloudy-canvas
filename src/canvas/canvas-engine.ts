@@ -87,6 +87,8 @@ import {
   type SnapTargets,
 } from "./snapping";
 import { FontTracker, loadFonts, TextEditor } from "./text";
+import { fontsChanged } from "./text/rich/font-metrics";
+import type { TextSelection } from "./text/rich-editor/rich-editor.types";
 import { createBaseTools, type CanvasPointer, type Tool, type ToolContext } from "./tools";
 import { GuideDrag } from "./tools/guide-drag";
 import { debounce, delay, Disposables, Emitter, FrameScheduler, Store } from "./utils";
@@ -184,6 +186,10 @@ export class CanvasEngine<O extends object = object> {
   private snapping: SnapSettings;
   private container: HTMLElement | null = null;
   private textEditor: TextEditor | null = null;
+  /** The rich text editor's selection, while a rich text is edited. */
+  private textSelection: TextSelection | null = null;
+  /** The element the rich editor draws as edited (see `previewEdited`). */
+  private previewedId: string | null = null;
   private mounted = false;
   private destroyed = false;
   private closing = false;
@@ -1013,6 +1019,22 @@ export class CanvasEngine<O extends object = object> {
     this.emitChange();
   }
 
+  /**
+   * The rich text being edited (`ElementText.rich`): its text and runs so far and the selection,
+   * or `null`. Panels read it to show and restyle the selected range.
+   */
+  editingText(): ReturnType<TextEditor["richContent"]> {
+    return this.textEditor?.richContent() ?? null;
+  }
+
+  /**
+   * Sets a style over the selection of the rich text being edited (with only a caret, on what's
+   * typed next). Returns `false` when no rich text is being edited.
+   */
+  styleTextRange(patch: object): boolean {
+    return this.textEditor?.applyRichStyle(patch) ?? false;
+  }
+
   /** Opens the text editor on the selected element. Returns `false` if it has no text. */
   editSelection(): boolean {
     const id = this.scene.selection.single();
@@ -1229,13 +1251,18 @@ export class CanvasEngine<O extends object = object> {
   private createTextEditor(container: HTMLElement): TextEditor {
     return new TextEditor(container, this.doc, this.kinds, this.camera, {
       getElement: (id) => this.scene.get(id),
-      onStart: (id, part) => {
-        this.renderer.setHiddenText({ id, part });
+      onStart: (id, part, rich) => {
+        if (!rich) this.renderer.setHiddenText({ id, part });
         this.requestRender();
       },
       onEnd: () => {
         this.renderer.setHiddenText(null);
         this.requestRender();
+      },
+      preview: (el, draft) => this.previewEdited(el, draft),
+      onSelection: (selection) => {
+        this.textSelection = selection;
+        this.emitChange();
       },
       onCreate: (id) => this.setSelection([id]),
       remove: (id) => this.deleteElements([id]),
@@ -1397,11 +1424,17 @@ export class CanvasEngine<O extends object = object> {
         .fonts(el)
         .some((font) => fontKey(font) === key),
     );
+    fontsChanged();
     for (const el of using) {
       const patch = this.kinds.kindOf(el).fontsLoaded(el);
       if (patch) this.doc.updateUntracked(el.id, patch);
     }
-    if (this.rendererReady) this.renderer.refreshText(using.map((el) => el.id));
+    if (this.rendererReady) {
+      const ids = using.map((el) => el.id);
+      this.renderer.refreshText(ids);
+      // Texts laid out by the engine (rich texts) are laid out and drawn again.
+      this.refreshElements(ids);
+    }
     this.requestRender();
   }
 
@@ -1553,13 +1586,32 @@ export class CanvasEngine<O extends object = object> {
   }
 
   private setSelection(ids: Iterable<string>): void {
-    if (!this.scene.selection.set(ids)) return;
+    const next = [...ids];
+    // Selecting something else ends editing the text being edited.
+    const editing = this.textEditor?.editingId;
+    if (editing && !next.includes(editing)) this.textEditor?.commit();
+    if (!this.scene.selection.set(next)) return;
     this.rulerFrameCache = null;
     // Show the selected element's style in the options panel.
     const first = this.scene.get([...this.scene.selection.ids][0] ?? "");
     if (first) this.options = { ...this.options, ...this.kinds.kindOf(first).optionsOf(first) };
     this.requestRender();
     this.emitChange();
+  }
+
+  /** Draws an element as the rich editor has it, or as the document has it again (`null`). */
+  private previewEdited(el: CanvasElement | null, draft: boolean): void {
+    if (draft) {
+      this.renderer.setDraft(el);
+    } else if (el) {
+      this.previewedId = el.id;
+      this.renderer.previewElement(el);
+    } else if (this.previewedId) {
+      const real = this.scene.get(this.previewedId);
+      this.previewedId = null;
+      if (real) this.renderer.previewElement(real);
+    }
+    this.requestRender();
   }
 
   private setHover(id: string | null): void {
@@ -1695,6 +1747,7 @@ export class CanvasEngine<O extends object = object> {
       selectedId: this.scene.selection.single() ?? null,
       selectionTypes: this.selectionTypes(),
       selectedPart: this.scene.selection.part,
+      textSelection: this.textSelection,
       snapping: this.snapping,
       guidesShown: this.guidesShown,
       rulersShown: this.rulersShown,

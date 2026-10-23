@@ -1,74 +1,57 @@
-import { measureTextBlock, type PathContour, type PathShape } from "@canvas";
-import type { FontRequest, GlyphOutliner, ShapedLine } from "@shared/core";
+import { decorationRect, rectPath, runStyleAt, type PathContour, type PathShape } from "@canvas";
+import type { FontRequest, GlyphOutliner } from "@shared/core";
 
-import { fontOf } from "./text-layout";
+import { textLayout } from "./text-layout";
+import { baseRunStyle } from "./text-spans";
 import type { TextNodeElement } from "./text.types";
 
 /**
- * A text's glyphs as outlines in its own frame, laid out as it's drawn: its lines (wrapped to its
- * width), aligned in its box, each on its baseline, with its letter spacing. `null` while its
- * face is still being read (or can't be).
+ * A text's glyphs as outlines in its own frame, laid out as it's drawn (`textLayout`): each
+ * fragment shaped in its run's face at its place on its line's baseline, with its letter
+ * spacing, and its underline or strikethrough. `null` while a face it uses is still being read
+ * (or can't be).
  */
 export function textOutline(el: TextNodeElement, outliner: GlyphOutliner): PathShape | null {
-  const font = fontOf(el);
-  const request: FontRequest = {
-    family: el.fontFamily,
-    weight: el.fontWeight,
-    style: el.fontStyle,
-  };
-  const { lines } = measureTextBlock(el.text, font, el.autoResize === "width" ? undefined : el.w);
-  const shaped: ShapedLine[] = [];
-  for (const line of lines) {
-    const run = outliner.shape(request, line, el.fontSize);
-    if (!run) return null;
-    shaped.push(run);
-  }
-  const widths = shaped.map(
-    (run) => run.glyphs.reduce((w, g) => w + g.advance, 0) + el.letterSpacing * run.glyphs.length,
-  );
-  const blockW = Math.max(0, ...widths);
-  const lineHeight = el.fontSize * el.lineHeight;
-  const blockH = lines.length * lineHeight;
-  const blockX =
-    el.textAlign === "center" ? (el.w - blockW) / 2 : el.textAlign === "right" ? el.w - blockW : 0;
-  const blockY =
-    el.verticalAlign === "middle"
-      ? (el.h - blockH) / 2
-      : el.verticalAlign === "bottom"
-        ? el.h - blockH
-        : 0;
-
+  const layout = textLayout(el);
+  const base = baseRunStyle(el);
   const contours: PathContour[] = [];
-  shaped.forEach((run, j) => {
-    const width = widths[j]!;
-    const offset =
-      el.textAlign === "center"
-        ? (blockW - width) / 2
-        : el.textAlign === "right"
-          ? blockW - width
-          : 0;
-    // As the canvas and the editor draw a line: centered in the line's height, reaching past it
-    // when the line is tighter than the font (as in CSS and Figma).
-    const extent = run.ascent + run.descent;
-    const shift = (lineHeight - extent) / 2;
-    const baseline = blockY + j * lineHeight + run.ascent + shift;
-    let pen = blockX + offset;
-    for (const glyph of run.glyphs) {
-      const dx = pen;
-      for (const contour of glyph.contours) {
-        const move = (p: { x: number; y: number }) => ({ x: p.x + dx, y: p.y + baseline });
-        contours.push({
-          start: move(contour.start),
-          segments: contour.segments.map(({ c1, c2, to }) => ({
-            c1: move(c1),
-            c2: move(c2),
-            to: move(to),
-          })),
-          closed: contour.closed,
-        });
+  // Every face is asked for (each starts loading), though one missing leaves the text shapeless.
+  let missing = false;
+  for (const line of layout.lines) {
+    for (const fragment of line.fragments) {
+      const decoration = decorationRect(layout, line, fragment);
+      if (decoration) contours.push(...rectPath(decoration, 0).contours);
+      if (fragment.space) continue;
+      const style = { ...base, ...runStyleAt(el.runs, fragment.start) };
+      const request: FontRequest = {
+        family: style.fontFamily,
+        weight: style.fontWeight,
+        style: style.fontStyle,
+      };
+      const text = layout.text.slice(fragment.start, fragment.end);
+      const run = outliner.shape(request, text, style.fontSize);
+      if (!run) {
+        missing = true;
+        continue;
       }
-      pen += glyph.advance + el.letterSpacing;
+      let pen = fragment.x;
+      for (const glyph of run.glyphs) {
+        const dx = pen;
+        for (const contour of glyph.contours) {
+          const move = (p: { x: number; y: number }) => ({ x: p.x + dx, y: p.y + line.baseline });
+          contours.push({
+            start: move(contour.start),
+            segments: contour.segments.map(({ c1, c2, to }) => ({
+              c1: move(c1),
+              c2: move(c2),
+              to: move(to),
+            })),
+            closed: contour.closed,
+          });
+        }
+        pen += glyph.advance + style.letterSpacing;
+      }
     }
-  });
-  return { contours };
+  }
+  return missing ? null : { contours };
 }

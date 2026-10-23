@@ -9,6 +9,8 @@ import { fitImage } from "./fit-image";
 import type { ImageCache } from "./image-cache";
 import type { ElementClip } from "./layer-placement.types";
 import { PaintStack } from "./paint-stack";
+import { RichTextSprite } from "./rich-text-sprite";
+import type { RichTextLayout } from "../text/rich/rich-text.types";
 import type { PaintLayer, PaintStackOptions } from "./paint-stack.types";
 import { negativeHalfLeading } from "./text-leading";
 import { textMaskTexture } from "./text-mask";
@@ -31,6 +33,8 @@ export class ElementView extends Container {
   order: string;
   readonly graphics = new Graphics();
   private textNode: Text | null = null;
+  /** A text laid out by the engine's rich layout (see `placeRichText`). */
+  private richText: RichTextSprite | null = null;
   /** Extra keyed labels, for elements that show several (e.g. a table's column names). */
   private readonly textSlots = new Map<string, Text>();
   /** Extra keyed graphics drawn above the image (e.g. a play button over a thumbnail). */
@@ -142,6 +146,21 @@ export class ElementView extends Container {
   }
 
   /**
+   * Shows a laid-out text (spans in their own fonts and colors, `layoutRichText`) in the
+   * element's frame, at `alpha`. Its glyphs are what `setPaintTextMask` shows paints through.
+   */
+  placeRichText(layout: RichTextLayout, alpha = 1): void {
+    if (!this.richText) {
+      this.richText = new RichTextSprite();
+      this.richText.visible = this.textVisible;
+      this.addChild(this.richText);
+    }
+    this.drawn = null;
+    this.richText.alpha = alpha;
+    this.richText.show(layout, this.nodeResolution());
+  }
+
+  /**
    * Shows an image asset in `box` (local coordinates), keeping its proportions: `contain` fits it
    * inside, centered; `cover` fills the box and crops what's outside; an `ImageCrop` fills the box
    * with that part of the picture. It appears once its texture has loaded.
@@ -185,7 +204,7 @@ export class ElementView extends Container {
    */
   setPaintTextMask(masked: boolean): void {
     this.drawn = null;
-    const text = this.textNode;
+    const text = this.richText ?? this.textNode;
     if (!masked || !text || !this.paintStack) {
       if (this.textMask) {
         if (this.paintStack) this.paintStack.mask = null;
@@ -196,16 +215,26 @@ export class ElementView extends Container {
       if (this.paintStack) this.paintStack.renderable = true;
       return;
     }
-    const { texture, padding } = textMaskTexture(text);
+    const glyphs = this.textGlyphs(text);
+    if (!glyphs) return;
     if (!this.textMask) {
       this.textMask = new Sprite();
       this.addChild(this.textMask);
     } else this.textMask.texture.destroy(true);
-    this.textMask.texture = texture;
-    this.textMask.position.set(text.x - padding, text.y - padding);
+    this.textMask.texture = glyphs.texture;
+    this.textMask.position.set(glyphs.x, glyphs.y);
     this.paintStack.mask = this.textMask;
     this.paintStack.renderable = this.textVisible;
     text.renderable = false;
+  }
+
+  /** The text's glyphs drawn white, and where they're placed. */
+  private textGlyphs(
+    text: Text | RichTextSprite,
+  ): { texture: Texture; x: number; y: number } | null {
+    if (text instanceof RichTextSprite) return text.maskTexture();
+    const { texture, padding } = textMaskTexture(text);
+    return { texture, x: text.x - padding, y: text.y - padding };
   }
 
   /**
@@ -357,6 +386,7 @@ export class ElementView extends Container {
     this.textVisible = visible;
     this.drawn = null;
     if (this.textNode) this.textNode.visible = visible;
+    if (this.richText) this.richText.visible = visible;
     // Paints shown through the text hide with it (while it's edited).
     if (this.textMask && this.paintStack) this.paintStack.renderable = visible;
   }
@@ -378,12 +408,14 @@ export class ElementView extends Container {
     for (const node of [this.textNode, ...this.textSlots.values()]) {
       if (node && node.resolution !== capped) node.resolution = capped;
     }
+    this.richText?.setResolution(capped);
   }
 
   /** Lays its texts out again (a font they use has just loaded, so they measure differently). */
   refreshText(): void {
     this.drawn = null;
     for (const node of [this.textNode, ...this.textSlots.values()]) node?.style.update();
+    this.richText?.redraw();
     // Glyphs the paints show through are drawn again in the loaded font.
     if (this.textMask) this.setPaintTextMask(true);
   }

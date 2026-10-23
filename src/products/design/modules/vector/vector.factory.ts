@@ -18,17 +18,20 @@ export function createVector(
   name: string,
   index: string,
   parentId: string | null,
-  { fills = [], strokes, strokeWeight, ...stroke }: VectorLook = {},
+  look: VectorLook = {},
 ): VectorElement {
   const { network: placed, ...rect } = placeNetwork({ x: 0, y: 0 }, network);
+  // Only the look's fields: callers pass whole nodes, whose type, id and place aren't the vector's.
+  const { fills = [], strokes, strokeWeight } = look;
   return {
     ...createNodeBase("vector", rect, index, { name, parentId, fills }),
     strokes: strokes ?? [solidPaint(VECTOR_DEFAULTS.stroke)],
     strokeWeight: strokeWeight ?? VECTOR_DEFAULTS.strokeWeight,
-    strokeAlign: "center",
-    strokeCap: VECTOR_DEFAULTS.strokeCap,
-    strokeJoin: VECTOR_DEFAULTS.strokeJoin,
-    ...stroke,
+    strokeAlign: look.strokeAlign ?? "center",
+    strokeCap: look.strokeCap ?? VECTOR_DEFAULTS.strokeCap,
+    strokeJoin: look.strokeJoin ?? VECTOR_DEFAULTS.strokeJoin,
+    ...(look.strokeMiterAngle !== undefined ? { strokeMiterAngle: look.strokeMiterAngle } : {}),
+    ...(look.strokeDashes !== undefined ? { strokeDashes: look.strokeDashes } : {}),
     network: placed,
   };
 }

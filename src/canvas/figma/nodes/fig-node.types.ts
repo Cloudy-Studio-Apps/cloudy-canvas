@@ -109,8 +109,14 @@ export interface FigNumber {
 
 export interface FigTextData {
   characters?: string;
-  styleOverrideTable?: unknown[];
+  /** Each character's style id (0: the node's own); missing at the end means 0. */
+  characterStyleIDs?: number[];
+  /** What each style id sets over the node's own fields. */
+  styleOverrideTable?: FigTextOverride[];
 }
+
+/** One mixed style of a text: the node fields it sets for the characters with its `styleID`. */
+export type FigTextOverride = Partial<FigNode> & { styleID?: number };
 
 /** A node in an instance's component, by the guids leading to it (nested instances first). */
 export interface FigGuidPath {

@@ -98,14 +98,40 @@ export {
 export type * from "./effects";
 export { BLEND_MODES, isBlendMode } from "./effects";
 export { defineService } from "./services";
-export type { FontStyle, FontWeight, TextAlign, TextFont, TextFontOptions } from "./text";
+export type {
+  FontStyle,
+  FontWeight,
+  RichFragment,
+  RichLine,
+  RichSpan,
+  RichTextFrame,
+  RichTextLayout,
+  TextAlign,
+  TextDecoration,
+  TextFont,
+  TextFontOptions,
+  TextRun,
+  TextSelection,
+} from "./text";
 export {
   centerTextTop,
+  clearRunFields,
   cssFont,
+  decorationRect,
   fontFamilyList,
+  fontsVersion,
+  fragmentOffsets,
+  layoutRichText,
   measureText,
   measureTextBlock,
   measureWrapped,
+  normalizeRuns,
+  richTextInk,
+  runsForText,
+  runStyleAt,
+  sameRunStyle,
+  spliceRuns,
+  styleRuns,
   textFont,
 } from "./text";
 export {
