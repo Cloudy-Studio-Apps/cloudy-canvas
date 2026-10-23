@@ -3,12 +3,14 @@ import type { FigImportContext, FigNode } from "@canvas/figma";
 
 import { createNodeBase, type DesignNode, type MaskType } from "../../modules";
 import { convertPaints } from "./fig-paints";
+import { figEffects } from "./fig-effects";
+import { figStroke } from "./fig-stroke";
 import type { NodePaints, NodePlacement } from "./convert-node.types";
 
 /**
  * The design node fields of a Figma node: its name, place in the tree and page, visibility,
- * lock, opacity, fills and strokes (`fills` replaces its fills, e.g. a stroke outline's) and
- * whether it's a mask.
+ * lock, opacity, fills and strokes (`fills` replaces its fills, e.g. a stroke outline's), its
+ * effects and whether it's a mask.
  */
 export function figNodeBase<K extends string>(
   type: K,
@@ -18,7 +20,6 @@ export function figNodeBase<K extends string>(
   ctx: FigImportContext,
   paints: NodePaints = {},
 ): DesignNode & { type: K } {
-  if (node.effects?.length) ctx.warnings.add("shadows and blurs were left out");
   const base = createNodeBase(type, rect, placement.index, {
     name: node.name ?? "",
     parentId: placement.parentId,
@@ -31,6 +32,8 @@ export function figNodeBase<K extends string>(
     opacity: node.opacity ?? 1,
     strokes: paints.strokes ?? convertPaints(node.strokePaints, ctx, false),
     strokeWeight: node.strokeWeight ?? 0,
+    ...figStroke(node),
+    effects: figEffects(node, ctx),
     ...(node.locked ? { locked: true } : {}),
     ...(node.mask ? { isMask: true, maskType: figMaskType(node, ctx) } : {}),
   };

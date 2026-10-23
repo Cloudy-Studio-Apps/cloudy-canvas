@@ -1,13 +1,12 @@
-import {
-  booleanPaths,
-  outlineStroke,
-  placePath,
-  type CanvasElement,
-  type PathShape,
-  type Point,
-} from "@canvas";
+import { booleanPaths, placePath, type CanvasElement, type PathShape, type Point } from "@canvas";
 
-import { DesignNodeKind, isDesignNode, type ChildResolveContext } from "../core";
+import {
+  DesignNodeKind,
+  hasVisibleStroke,
+  isDesignNode,
+  strokeKey,
+  type ChildResolveContext,
+} from "../core";
 
 /**
  * What a layer adds to a boolean, in coordinates relative to `base` (so the same layers moved
@@ -41,9 +40,8 @@ export function operandShape(
   if (!geometry) return null;
   const placement = { x: el.x - base.x, y: el.y - base.y, rotation: el.rotation ?? 0 };
   if (geometry.fill.contours.length > 0) return placePath(geometry.fill, placement);
-  const stroked = el.strokeWeight > 0 && el.strokes.some((paint) => paint.visible);
-  if (!stroked) return { contours: [] };
-  return placePath(outlineStroke(geometry.stroke, kind.strokeOutline(el)), placement);
+  if (!hasVisibleStroke(el)) return { contours: [] };
+  return placePath(kind.strokeArea(el), placement);
 }
 
 /**
@@ -67,6 +65,6 @@ export function operandKey(
     return `(${parts.join(";")})`;
   }
   const place = `${el.x - base.x},${el.y - base.y},${el.rotation ?? 0}`;
-  const stroke = `${el.strokeWeight},${el.strokes.some((paint) => paint.visible)}`;
+  const stroke = `${strokeKey(el)},${hasVisibleStroke(el)}`;
   return `${kind.type}:${kind.geometryKey(el)}@${place}/${stroke}`;
 }

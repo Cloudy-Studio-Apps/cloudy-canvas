@@ -35,6 +35,8 @@ export function composeProduct<O extends object>(
   const order = single(host.get(points.drawOrder), `the ${id}'s drawing order`);
   const clips = single(host.get(points.clips), `the ${id}'s clips`);
   const masks = single(host.get(points.masks), `the ${id}'s masks`);
+  const effects = single(host.get(points.effects), `the ${id}'s effects`);
+  const effectRenderers = host.get(points.effectRenderers);
   const undrawn = single(host.get(points.undrawn), `what the ${id} doesn't draw on its own`);
   const target = single(host.get(points.selectTarget), `what a click selects in the ${id}`);
   const aligner = single(host.get(points.alignTarget), `what one element aligns with in the ${id}`);
@@ -60,6 +62,10 @@ export function composeProduct<O extends object>(
     ...(order ? { orderKeys: (elements) => order(elements, kinds) } : {}),
     ...(clips ? { clips: (elements) => clips(elements, kinds) } : {}),
     ...(masks ? { masks: (elements) => masks(elements, kinds) } : {}),
+    ...(effects ? { effects: (elements) => effects(elements, kinds) } : {}),
+    ...(effectRenderers.length > 0
+      ? { effectRenderers: new Map(effectRenderers.map((renderer) => [renderer.type, renderer])) }
+      : {}),
     ...(undrawn ? { undrawn: (elements) => undrawn(elements, kinds) } : {}),
     ...(editor ? { editElement: editor } : {}),
     ...(rulerFrame

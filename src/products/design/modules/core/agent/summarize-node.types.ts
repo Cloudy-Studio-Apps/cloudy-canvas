@@ -12,4 +12,6 @@ export interface NodeSummary extends ElementSummary {
   mask?: { type: MaskType; inverted?: true };
   /** The mask the layer shows through, directly (set on the layers a mask masks). */
   maskedBy?: string;
+  /** The types of its visible effects, bottom to top (left out when it has none). */
+  effects?: string[];
 }

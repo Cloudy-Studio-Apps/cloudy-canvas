@@ -1,5 +1,6 @@
 import type { CanvasElement } from "./elements";
-import type { ElementClip, ElementMasks } from "./render";
+import type { CanvasEffect } from "./effects";
+import type { ElementClip, ElementEffects, ElementMasks } from "./render";
 
 /** The product hooks the scene runs on every refresh (see `CanvasProduct`). */
 export interface SceneHooks {
@@ -13,6 +14,10 @@ export interface SceneHooks {
   clips?: (elements: readonly CanvasElement[]) => Map<string, ElementClip>;
   /** `masks`: what masks each element. */
   masks?: (elements: readonly CanvasElement[]) => ElementMasks;
+  /** `effects`: each element's effects, and what they're drawn over. */
+  effects?: (elements: readonly CanvasElement[]) => ElementEffects;
+  /** How far a list of effects shows past what it's applied to, in world units. */
+  effectsOutset?: (effects: readonly CanvasEffect[]) => number;
   /** `undrawn`: elements not drawn on their own. */
   undrawn?: (elements: readonly CanvasElement[]) => ReadonlySet<string>;
 }

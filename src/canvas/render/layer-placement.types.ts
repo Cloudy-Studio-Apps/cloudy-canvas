@@ -1,6 +1,8 @@
+import type { CanvasEffect } from "../effects";
 import type { CanvasElement, ElementKind } from "../elements";
 import type { Point, Rect } from "../geometry.types";
 import type { PathShape } from "../path";
+import type { EffectRenderers } from "./effects/effect-renderer.types";
 
 /** An element's drawing order key: views are stacked by these, compared as strings. */
 export type OrderKeyOf = (el: CanvasElement, kind: ElementKind) => string;
@@ -31,6 +33,18 @@ export interface MaskSlot {
   role: "source" | "masked";
 }
 
+/** Where an element is drawn inside an element's effects (it, or something it holds). */
+export interface EffectSlot {
+  /** The element whose effects the scope applies. */
+  effect: string;
+}
+
+/**
+ * The innermost container an element is drawn in: a mask's scope or an effect scope. Scopes nest
+ * (a masked group with a shadow, a shadowed layer under a mask), each with its own `home`.
+ */
+export type ScopeSlot = MaskSlot | EffectSlot;
+
 /** One outline of a vector mask, in its element's own frame (see `ElementMask.shape`). */
 export interface MaskShape {
   /** The element's top-left corner, in world units. */
@@ -51,8 +65,8 @@ export interface ElementMask {
   id: string;
   mode: MaskMode;
   inverted: boolean;
-  /** Where the mask and what it masks are drawn: inside another mask, or `null` at the top. */
-  home: MaskSlot | null;
+  /** Where the mask and what it masks are drawn: inside another scope, or `null` at the top. */
+  home: ScopeSlot | null;
   /** The world area the mask covers (where what it masks can show). */
   bounds: Rect;
   /**
@@ -68,14 +82,45 @@ export interface ElementMask {
 export interface ElementMasks {
   masks: ReadonlyMap<string, ElementMask>;
   /** Elements under a mask → their innermost slot; elements left out are under none. */
-  homes: ReadonlyMap<string, MaskSlot>;
+  homes: ReadonlyMap<string, ScopeSlot>;
 }
 
-/** Where an element layer puts each view: its place in the stack, its clip and its masks. */
+/**
+ * An element's effects and where they're drawn: over the element's view and the views of what it
+ * holds, composited together (a group's shadow is its layers' shadow, as in Figma).
+ */
+export interface EffectScope {
+  /** The element. */
+  id: string;
+  /** Its visible effects, bottom to top. */
+  effects: readonly CanvasEffect[];
+  /** Where the scope is drawn: inside another scope, or `null` at the top. */
+  home: ScopeSlot | null;
+  /** The element's own box (unturned; x, y its top-left corner): effects laid on it use it. */
+  box: Rect;
+  /** Degrees the element is turned by (counterclockwise round its corner): offsets turn with it. */
+  rotation: number;
+  /** The world area of what the scope holds, effects left out. */
+  bounds: Rect;
+}
+
+/**
+ * The effect scopes of a canvas, and the elements whose innermost slot is one. An element's
+ * slot is `homes`' here, else the masks' (a product gives both consistently).
+ */
+export interface ElementEffects {
+  scopes: ReadonlyMap<string, EffectScope>;
+  homes: ReadonlyMap<string, EffectSlot>;
+}
+
+/** Where an element layer puts each view: its place in the stack, its clip, masks and effects. */
 export interface LayerPlacement {
   orderOf: OrderKeyOf;
   clipOf: ClipOf;
   masks: () => ElementMasks;
+  effects: () => ElementEffects;
+  /** The product's effect renderers by type (effects of other types aren't drawn). */
+  effectRenderers: EffectRenderers;
   /** Whether a view is drawn (not when its element is drawn by another, e.g. a boolean's). */
   drawn: (el: CanvasElement) => boolean;
 }

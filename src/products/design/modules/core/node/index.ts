@@ -13,6 +13,14 @@ export { flipPlacement, mirrorPoint } from "./flip-placement";
 export { isDesignNode } from "./is-design-node";
 export { NODE_DEFAULTS } from "./node.defaults";
 export { NODE_STYLE_FIELDS } from "./node-style";
+export {
+  hasVisibleStroke,
+  miterLimit,
+  STROKE_CACHE,
+  strokeAreaOptions,
+  strokeKey,
+  strokeShapeOf,
+} from "./node-stroke";
 export { solidPaint } from "./solid-paint";
 export { traceBox } from "./trace-box";
 export {
@@ -35,4 +43,6 @@ export { colorPaints, hexColor, readPaints } from "./paint-args";
 export { cssGradientPaint, isCssGradient } from "./gradient-args";
 export { pasteGradientOnto } from "./paste-gradient";
 export { MASK_TYPES, maskType } from "./mask-args";
+export type * from "./effect-args.types";
+export { effectTypes, readNodeEffects, setEffectReader } from "./effect-args";
 export { EMPTY_GEOMETRY, GEOMETRY_CACHE, networkGeometry } from "./node-geometry";

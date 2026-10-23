@@ -4,7 +4,7 @@ import type { CanvasDocument } from "./document";
 import type { CanvasElement, ElementKinds, ElementPatch } from "./elements";
 import type { Point, Rect } from "./geometry.types";
 import type { Keybindings } from "./input";
-import type { ElementClip, ElementMasks } from "./render";
+import type { EffectRenderers, ElementClip, ElementEffects, ElementMasks } from "./render";
 import type { CanvasGuides } from "./ruler-guides";
 import type { CanvasLinks } from "./links";
 import type { Tool, ToolContext } from "./tools";
@@ -56,6 +56,14 @@ export interface CanvasProduct<O extends object = object> {
    * away isn't drawn or hit. `elements` are the scene's, with derived geometry resolved.
    */
   masks?(elements: readonly CanvasElement[]): ElementMasks;
+  /**
+   * Each element's effects (shadows, blurs, shaders) and what they're drawn over: the element and
+   * what it holds (see `ElementEffects`). Its slots nest with the masks'. `elements` are the
+   * scene's, with derived geometry resolved.
+   */
+  effects?(elements: readonly CanvasElement[]): ElementEffects;
+  /** How each type of effect is drawn, by type (effects without one aren't drawn). */
+  effectRenderers?: EffectRenderers;
   /**
    * Elements that are on the canvas (hit, selected, snapped to their parents' results) but not
    * drawn on their own, e.g. a boolean's operands, which it draws combined. `elements` are the

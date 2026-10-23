@@ -6,7 +6,7 @@ import {
   type ElementMask,
   type ElementMasks,
   type MaskShape,
-  type MaskSlot,
+  type ScopeSlot,
 } from "@canvas";
 
 import {
@@ -14,49 +14,26 @@ import {
   DesignNodeKind,
   isActiveMask,
   isDesignNode,
-  siblingMasks,
+  treeSlots,
   type DesignNode,
 } from "../core";
 
 /**
  * The design's masks (`CanvasProduct.masks`), as in Figma: each visible mask masks the siblings
  * above it up to the next mask (`siblingMasks`), with everything they hold, and isn't drawn
- * itself; with what it holds, it makes the mask. Masks nest: a mask inside a masked layer, or
- * inside another mask, sits in that one's slot.
+ * itself; with what it holds, it makes the mask. Masks nest with each other and with effects as
+ * the layer tree does (`treeSlots`).
  */
 export function designMasks(elements: readonly CanvasElement[], kinds: ElementKinds): ElementMasks {
-  const masked = siblingMasks(elements);
-  const homes = new Map<string, MaskSlot>();
+  const slots = treeSlots(elements);
+  const homes = new Map<string, ScopeSlot>();
   const masks = new Map<string, ElementMask>();
-  if (masked.size === 0 && !elements.some(isActiveMask)) return { masks, homes };
+  if (slots.masked.size === 0 && !elements.some(isActiveMask)) return { masks, homes };
 
   const byId = new Map(elements.map((el) => [el.id, el]));
   const children = childrenByParent(elements);
-  const slots = new Map<string, MaskSlot | null>();
-
-  /** The slot a node's parent draws in (where a mask's scope sits). */
-  const parentSlot = (node: DesignNode, depth: number): MaskSlot | null => {
-    const parent = node.parentId ? byId.get(node.parentId) : undefined;
-    return parent && depth <= elements.length ? slotOf(parent, depth + 1) : null;
-  };
-  /** The innermost slot a node draws in: its own mask, the mask over it, or its parent's. */
-  const slotOf = (el: CanvasElement, depth: number): MaskSlot | null => {
-    if (!isDesignNode(el)) return null;
-    const known = slots.get(el.id);
-    if (known !== undefined) return known;
-    slots.set(el.id, null); // A loop draws at the top.
-    const mask = masked.get(el.id);
-    const slot: MaskSlot | null = isActiveMask(el)
-      ? { mask: el.id, role: "source" }
-      : mask
-        ? { mask, role: "masked" }
-        : parentSlot(el, depth);
-    slots.set(el.id, slot);
-    return slot;
-  };
-
   for (const el of elements) {
-    const slot = slotOf(el, 0);
+    const slot = slots.homeOf(el.id);
     if (slot) homes.set(el.id, slot);
     if (!isActiveMask(el)) continue;
     const parts = maskParts(el, byId, children, kinds);
@@ -64,7 +41,7 @@ export function designMasks(elements: readonly CanvasElement[], kinds: ElementKi
       id: el.id,
       mode: el.maskType,
       inverted: el.maskInverted,
-      home: parentSlot(el, 0),
+      home: slots.maskHome(el.id),
       bounds: elementBounds(kinds.kindOf(el), el),
       shape: el.maskType === "vector" ? maskShapes(parts, kinds) : null,
       contains: (p) =>

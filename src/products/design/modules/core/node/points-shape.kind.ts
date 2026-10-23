@@ -30,11 +30,11 @@ export abstract class PointsShapeKind<E extends DesignNode = DesignNode> extends
   }
 
   draw(view: ElementView, el: E): void {
-    drawPaints(view, el, this.geometry(el) ?? EMPTY_GEOMETRY);
+    drawPaints(view, el, this.geometry(el) ?? EMPTY_GEOMETRY, this.strokeOf(el));
   }
 
-  override hitTest(el: E, p: Point, tolerance: number): boolean {
-    if (!super.hitTest(el, p, tolerance)) return false;
+  protected override hitsShape(el: E, p: Point, tolerance: number): boolean {
+    if (!super.hitsShape(el, p, tolerance)) return false;
     const local = { x: p.x - el.x, y: p.y - el.y };
     const points = this.points(el);
     return pointInPolygon(points, local) || distanceToOutline(points, local) <= tolerance;

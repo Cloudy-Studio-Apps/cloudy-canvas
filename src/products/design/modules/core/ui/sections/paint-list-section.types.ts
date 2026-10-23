@@ -9,7 +9,7 @@ export interface PaintListSectionProps {
   nodes: readonly DesignNode[];
   /** The paint "+" adds. */
   newPaint: () => Paint;
-  /** Whether its paints can be images (fills of nodes that allow them; never strokes). */
+  /** Whether its paints can be images (strokes, and fills of nodes that allow them). */
   allowImage: boolean;
   /** Shown under the paints (e.g. the stroke weight). */
   children?: ReactNode;

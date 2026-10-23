@@ -47,6 +47,44 @@ export const NODE_SPEC_PROPERTIES = {
   },
   strokes: PAINTS,
   strokeWeight: { type: "number" },
+  strokeAlign: {
+    type: "string",
+    enum: ["inside", "center", "outside"],
+    description: "Where strokes sit on a closed outline (new shapes: inside; lines: center).",
+  },
+  strokeCap: { type: "string", enum: ["none", "round", "square"], description: "Ends and dashes." },
+  strokeJoin: { type: "string", enum: ["miter", "bevel", "round"], description: "Corners." },
+  strokeMiterAngle: {
+    type: "number",
+    description: "Corners sharper than this many degrees are beveled (default 28.96).",
+  },
+  strokeDashes: {
+    type: "array",
+    items: { type: "number" },
+    description: "Dash, gap, … lengths, e.g. [8, 4]; [] for a solid stroke.",
+  },
+  strokeWeights: {
+    type: ["object", "null"],
+    properties: {
+      top: { type: "number" },
+      right: { type: "number" },
+      bottom: { type: "number" },
+      left: { type: "number" },
+    },
+    description: "Rectangles and frames: a stroke weight per side; null for one weight.",
+  },
+  effects: {
+    type: "array",
+    items: { type: "object" },
+    description:
+      "Effects, bottom to top; each { type, visible?, …fields }, missing fields take defaults. " +
+      'Types: "drop-shadow" / "inner-shadow" { color, opacity, x, y, blur, spread, showBehind? }, ' +
+      '"layer-blur" { radius, progressive?, start?, end?, startRadius? }, "background-blur" ' +
+      '{ radius } (shows through translucent fills), "noise" { noiseType: mono|duo|multi, color, ' +
+      'secondColor, opacity, size, density }, "texture" { size, radius, clipToShape }, "glass" ' +
+      "{ lightAngle, lightIntensity, refraction, depth, dispersion, frost, splay }, " +
+      '"shader" { code, params }. Lengths are world units; [] removes them all.',
+  },
   opacity: { type: "number", description: "0–1." },
   visible: { type: "boolean" },
   isMask: {

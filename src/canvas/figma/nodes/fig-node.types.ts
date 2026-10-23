@@ -34,6 +34,25 @@ export interface FigPlacement {
   rotation: number;
 }
 
+/**
+ * One of a node's effects as the file has it (shadows and blurs; newer files may carry others,
+ * read field by field since their names aren't fixed).
+ */
+export interface FigEffect {
+  type?: string;
+  visible?: boolean;
+  color?: FigColor;
+  offset?: FigVector;
+  radius?: number;
+  spread?: number;
+  showShadowBehindNode?: boolean;
+  /** `PROGRESSIVE` for a progressive blur. */
+  blurOpType?: string;
+  startRadius?: number;
+  startOffset?: FigVector;
+  endOffset?: FigVector;
+}
+
 export interface FigColor {
   r: number;
   g: number;
@@ -150,7 +169,18 @@ export interface FigNode {
   /** `INSIDE`, `CENTER` or `OUTSIDE`. */
   strokeAlign?: string;
   strokeCap?: string;
-  effects?: unknown[];
+  strokeJoin?: string;
+  /** The longest miter, in stroke widths, before a corner is beveled. */
+  miterLimit?: number;
+  /** Dash, gap… lengths; empty or missing for a solid stroke. */
+  dashPattern?: number[];
+  /** Whether each side of a box has its own stroke weight (`border*Weight`). */
+  borderStrokeWeightsIndependent?: boolean;
+  borderTopWeight?: number;
+  borderRightWeight?: number;
+  borderBottomWeight?: number;
+  borderLeftWeight?: number;
+  effects?: FigEffect[];
   fillGeometry?: FigPath[];
   strokeGeometry?: FigPath[];
   cornerRadius?: number;

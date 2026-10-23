@@ -80,6 +80,8 @@ export class Renderer {
       resolution: window.devicePixelRatio || 1,
       autoStart: false, // render on demand only
       preference: ["webgl", "canvas"],
+      // Effects that show what's behind them (background blur, glass) read the back buffer.
+      useBackBuffer: this.options.backdrop,
     });
     this.world.addChild(this.frames, this.links, this.elements, this.draft, this.guide);
     // The pixel grid lies over the content it measures; dots stay behind it.
@@ -220,6 +222,8 @@ export class Renderer {
     this.world.scale.set(camera.zoom);
     this.world.position.set(camera.x * camera.zoom, camera.y * camera.zoom);
     const visible = camera.visibleWorldRect();
+    this.elements.setEffectScale(camera.zoom);
+    this.frames.setEffectScale(camera.zoom);
     this.elements.cull(visible);
     this.frames.cull(visible);
     this.grid.draw(camera, this.theme.grid);

@@ -1,5 +1,5 @@
 import { memo, useState } from "react";
-import { ChevronRight, CornerLeftDown, Eye, EyeOff, Lock, Unlock } from "lucide-react";
+import { ChevronRight, CornerLeftDown, Eye, EyeOff, Lock, Sparkles, Unlock } from "lucide-react";
 
 import type { ElementPatch } from "@canvas";
 import { layerNameOf } from "@design";
@@ -90,6 +90,15 @@ export const LayerRow = memo(function LayerRow({
         onRename={(name) => update({ name } as ElementPatch)}
         onDone={() => setRenaming(false)}
       />
+      {node.effects.some((effect) => effect.visible) && (
+        <span
+          title="Has effects"
+          aria-label="Has effects"
+          className="flex shrink-0 text-subtle-foreground [&_svg]:size-3"
+        >
+          <Sparkles />
+        </span>
+      )}
       <span className="flex items-center gap-0.5 text-muted-foreground [&_svg]:size-3.5">
         <button
           type="button"

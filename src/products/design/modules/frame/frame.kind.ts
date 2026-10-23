@@ -1,4 +1,7 @@
 import {
+  boxSidesStroke,
+  type BoxSides,
+  type PathShape,
   optionalBoolean,
   optionalString,
   rectContainsPoint,
@@ -41,6 +44,18 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
   override readonly defaults = FRAME_DEFAULTS;
   override readonly container = true;
   override readonly styleFields = [...NODE_STYLE_FIELDS, "cornerRadius"];
+  override readonly sidedStrokes = true;
+
+  /** Each side's own weight round its (rounded) box. */
+  protected override sidedStrokeArea(el: FrameElement, sides: BoxSides): PathShape {
+    return boxSidesStroke(el.w, el.h, el.cornerRadius, sides, el.strokeAlign);
+  }
+
+  /** Undashed, and its corners round or mitered (inside, joins don't show). */
+  protected override boxStroke(el: FrameElement): boolean {
+    if (el.strokeDashes.length > 0) return false;
+    return el.strokeAlign === "inside" || el.strokeJoin === "miter" || el.cornerRadius > 0;
+  }
   override readonly specProperties = {
     preset: {
       type: "string",
@@ -120,11 +135,11 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
   }
 
   draw(view: ElementView, el: FrameElement): void {
-    drawFrame(view, el, this.geometry(el) ?? EMPTY_GEOMETRY);
+    drawFrame(view, el, this.geometry(el) ?? EMPTY_GEOMETRY, this.strokeOf(el));
   }
 
-  override hitTest(el: FrameElement, p: Point, tolerance: number): boolean {
-    if (super.hitTest(el, p, tolerance)) return true;
+  protected override hitsShape(el: FrameElement, p: Point, tolerance: number): boolean {
+    if (super.hitsShape(el, p, tolerance)) return true;
     return showsLabel(el) && rectContainsPoint(labelRect(el), p, tolerance);
   }
 

@@ -41,6 +41,15 @@ export type {
   MaskMode,
   MaskShape,
   MaskSlot,
+  EffectSlot,
+  ScopeSlot,
+  EffectScope,
+  ElementEffects,
+  EffectPass,
+  EffectRenderer,
+  EffectRenderers,
+  EffectStage,
+  EffectUniforms,
   ImageFit,
   ImagePaintLayer,
   PaintLayer,
@@ -74,7 +83,18 @@ export * from "./path";
 export { smoothPoints } from "./smooth-points";
 export { BASE_COMMAND_LABELS, BASE_KEYBINDINGS, Keymap } from "./input";
 export { composeProduct, createCanvasPoints } from "./modules";
-export { ElementView } from "./render";
+export {
+  atopShader,
+  EffectShader,
+  effectsOutset,
+  ElementView,
+  FILTER_HEADER,
+  SAMPLING_GLSL,
+  shapeUnderShader,
+  silhouetteShader,
+  underShader,
+} from "./render";
+export type * from "./effects";
 export { defineService } from "./services";
 export type { FontStyle, FontWeight, TextAlign, TextFont, TextFontOptions } from "./text";
 export {

@@ -45,6 +45,7 @@ export class ElementView extends Container {
   private textMask: Sprite | null = null;
   /** The mask of the area the element is clipped to (see `setClip`). */
   private clipMask: Graphics | null = null;
+  private clipArea: ElementClip | null = null;
   /** The image asset the view shows, and the box it's fitted into (local coordinates). */
   private imageAsset: string | null = null;
   private imageBox: Rect = { x: 0, y: 0, w: 0, h: 0 };
@@ -214,6 +215,7 @@ export class ElementView extends Container {
    * parent holds) isn't drawn at all.
    */
   setClip(clip: ElementClip | null): void {
+    this.clipArea = clip;
     const hidden = !!clip && clip.rect.w <= 0 && clip.rect.h <= 0;
     this.clippedAway = hidden;
     this.applyVisible();
@@ -247,6 +249,11 @@ export class ElementView extends Container {
       g.poly(corners.flatMap((p) => [p.x, p.y]));
     }
     g.fill({ color: 0xffffff });
+  }
+
+  /** The world area the element is clipped to, as last set (`null`: not clipped). */
+  get clip(): ElementClip | null {
+    return this.clipArea;
   }
 
   /**

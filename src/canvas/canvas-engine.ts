@@ -64,7 +64,7 @@ import {
   PointerInput,
   toCanvasPointer,
 } from "./input";
-import { Renderer, type CanvasTheme } from "./render";
+import { effectsOutset, Renderer, type CanvasTheme, type EffectRenderer } from "./render";
 import {
   guideInside,
   overRuler,
@@ -204,6 +204,7 @@ export class CanvasEngine<O extends object = object> {
     this.snapping = view.snapping;
     this.rulersShown = view.rulers;
     this.camera.setZoomLimits(view.minZoom, view.maxZoom);
+    const effectRenderers = product.effectRenderers ?? new Map<string, EffectRenderer>();
     this.renderer = new Renderer(
       theme,
       this.kinds,
@@ -216,8 +217,11 @@ export class CanvasEngine<O extends object = object> {
           orderOf: (el, kind) => this.scene.orderKey(el, kind),
           clipOf: (el) => this.scene.clipOf(el),
           masks: () => this.scene.masks,
+          effects: () => this.scene.effects,
+          effectRenderers,
           drawn: (el) => this.scene.drawn(el),
         },
+        backdrop: [...effectRenderers.values()].some((renderer) => !!renderer.backdrop),
       },
     );
     const scopes = product.scopes;
@@ -228,6 +232,8 @@ export class CanvasEngine<O extends object = object> {
       orderKeys: product.orderKeys?.bind(product),
       clips: product.clips?.bind(product),
       masks: product.masks?.bind(product),
+      effects: product.effects?.bind(product),
+      effectsOutset: (effects) => effectsOutset(effects, effectRenderers),
       undrawn: product.undrawn?.bind(product),
     });
     if (scopes) {
@@ -1208,7 +1214,8 @@ export class CanvasEngine<O extends object = object> {
         const members = this.withMembers(ids ?? this.scene.selection.ids, "move");
         return this.scene.elements.filter((el) => members.has(el.id));
       },
-      bounds: (el) => this.scene.shownBounds(el),
+      // Exports take what effects draw past the content too (shadows, blurs), as Figma does.
+      bounds: (el) => this.scene.visualBounds(el),
       rows: (el) => this.kinds.kindOf(el).rows(el),
       createLinks: () => this.product.createLinks?.() ?? [],
       background: this.renderer.background,

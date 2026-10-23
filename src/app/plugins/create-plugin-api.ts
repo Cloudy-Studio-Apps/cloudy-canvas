@@ -1,6 +1,13 @@
 import * as React from "react";
 
 import {
+  atopShader,
+  EffectShader,
+  FILTER_HEADER,
+  SAMPLING_GLSL,
+  shapeUnderShader,
+  silhouetteShader,
+  underShader,
   asUndoStep,
   BoxKind,
   buildElement,
@@ -119,8 +126,26 @@ import {
   requireDesign,
   solidPaint,
   traceBox,
+  setEffectReader,
+  localUniforms,
+  LOCAL_GLSL,
+  LOCAL_UNIFORMS,
+  NOISE_GLSL,
 } from "@design";
-import { allKinds, designEditor, noNodes, ofType, someNodes } from "@design/ui/modules";
+import {
+  allKinds,
+  defineEffectType,
+  designEditor,
+  noNodes,
+  ofType,
+  someNodes,
+} from "@design/ui/modules";
+import {
+  EffectChoice,
+  EffectColorField,
+  EffectToggle,
+  ScrubField,
+} from "@design/modules/effects/ui/fields";
 import {
   FieldBox,
   HexInput,
@@ -304,6 +329,25 @@ export function createPluginApi(plugin: InstalledPlugin): PluginApi {
           sharedValue,
         },
         sections: { ofType, allKinds, someNodes, noNodes },
+        effects: {
+          defineEffectType,
+          setEffectReader,
+          localUniforms,
+          LOCAL_GLSL,
+          LOCAL_UNIFORMS,
+          NOISE_GLSL,
+          EffectShader,
+          FILTER_HEADER,
+          SAMPLING_GLSL,
+          silhouetteShader,
+          underShader,
+          atopShader,
+          shapeUnderShader,
+          ScrubField,
+          EffectColorField,
+          EffectToggle,
+          EffectChoice,
+        },
         hooks: {
           useSelectedNodes,
           useEditNodes,

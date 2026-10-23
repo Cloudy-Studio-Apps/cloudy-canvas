@@ -8,7 +8,6 @@ import {
   type ElementView,
   type Point,
   type Rect,
-  type StrokeOutlineOptions,
 } from "@canvas";
 
 import {
@@ -68,17 +67,13 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
     return networkGeometry(el.network, true);
   }
 
-  /** Its strokes have round ends and corners, as drawn. */
-  override strokeOutline(el: VectorElement): StrokeOutlineOptions {
-    return { width: el.strokeWeight, cap: "round", join: "round" };
-  }
-
   draw(view: ElementView, el: VectorElement): void {
-    drawPaints(view, el, this.geometry(el) ?? EMPTY_GEOMETRY, { cap: "round", join: "round" });
+    drawPaints(view, el, this.geometry(el) ?? EMPTY_GEOMETRY, this.strokeOf(el));
   }
 
-  override hitTest(el: VectorElement, p: Point, tolerance: number): boolean {
-    if (!super.hitTest(el, p, tolerance + el.strokeWeight + VECTOR_DEFAULTS.reach)) return false;
+  protected override hitsShape(el: VectorElement, p: Point, tolerance: number): boolean {
+    const reachOut = tolerance + el.strokeWeight + VECTOR_DEFAULTS.reach;
+    if (!super.hitsShape(el, p, reachOut)) return false;
     const local = { x: p.x - el.x, y: p.y - el.y };
     const reach = el.strokeWeight / 2 + tolerance + VECTOR_DEFAULTS.reach;
     const filled = el.fills.some((paint) => paint.visible);
@@ -166,6 +161,12 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
   override fillDefaults(el: VectorElement): VectorElement {
     const old = el as VectorElement & { points?: number[] };
     const network = el.network ?? polylineNetwork(old.points ?? []);
-    return { ...super.fillDefaults(el), network };
+    return {
+      ...super.fillDefaults(el),
+      network,
+      // Vectors from before stroke settings were drawn with round ends and corners.
+      strokeCap: el.strokeCap ?? "round",
+      strokeJoin: el.strokeJoin ?? "round",
+    };
   }
 }

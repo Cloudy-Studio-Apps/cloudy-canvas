@@ -18,6 +18,7 @@ export function createLine(
     ...createNodeBase("line", rect, index, { name, parentId }),
     strokes: [solidPaint(LINE_DEFAULTS.stroke)],
     strokeWeight: NODE_DEFAULTS.strokeWeight,
+    strokeAlign: "center",
     points,
     startCap: "none",
     endCap,

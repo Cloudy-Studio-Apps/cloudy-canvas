@@ -7,7 +7,9 @@ import type { createId, defineModule, definePoint, PluginManifest } from "@share
 import type { notifyError, toast } from "@shared/stores/toast-store";
 import type { boardLibrary } from "@board/ui/components/library";
 import type { boardEditor } from "@board/ui";
+import type * as canvasApi from "@canvas";
 import type * as design from "@design";
+import type * as effectFields from "@design/modules/effects/ui/fields";
 import type { designEditor } from "@design/ui";
 import type * as designModules from "@design/ui/modules";
 import type * as designPanel from "@design/ui/components/panel";
@@ -203,6 +205,27 @@ export interface DesignPluginApi {
   >;
   /** Filters for `propertySections` entries' `when`. */
   sections: Pick<typeof designModules, "ofType" | "allKinds" | "someNodes" | "noNodes">;
+  /**
+   * Effects of a plugin's own: a renderer on `canvas.effectRenderers` (drawn on the GPU with
+   * these shaders and helpers), an entry on `editor.effectTypes` (`defineEffectType`, with these
+   * fields) and how agents give it (`setEffectReader`).
+   */
+  effects: Pick<typeof designModules, "defineEffectType"> &
+    Pick<
+      typeof design,
+      "setEffectReader" | "localUniforms" | "LOCAL_GLSL" | "LOCAL_UNIFORMS" | "NOISE_GLSL"
+    > &
+    Pick<
+      typeof canvasApi,
+      | "EffectShader"
+      | "FILTER_HEADER"
+      | "SAMPLING_GLSL"
+      | "silhouetteShader"
+      | "underShader"
+      | "atopShader"
+      | "shapeUnderShader"
+    > &
+    typeof effectFields;
   hooks: Pick<typeof designHooks, "useSelectedNodes" | "useEditNodes" | "useMoveNodes"> & {
     useDesignEngine: typeof useDesignEngine;
     useDesignState: typeof useDesignState;

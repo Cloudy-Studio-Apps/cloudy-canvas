@@ -1,0 +1,68 @@
+import { ArrowDown, ArrowRight, Droplet, Maximize2 } from "lucide-react";
+
+import { PropertyGrid } from "@design/ui/components/panel";
+import type { EffectEditorProps } from "@design/ui/modules";
+import { SHADOW_PRESETS } from "../../effect-presets";
+import type { DropShadowEffect, InnerShadowEffect } from "../../effect.types";
+import { EffectColorField, EffectToggle, ScrubField } from "../fields";
+import { PresetRow } from "./preset-row";
+
+/** A drop or inner shadow: elevation presets, its color, offset, blur and spread. */
+export function ShadowEditor<E extends DropShadowEffect | InnerShadowEffect>({
+  effect,
+  onChange,
+}: EffectEditorProps<E>) {
+  const set = (patch: Partial<DropShadowEffect>, info?: { done: boolean }) =>
+    onChange({ ...effect, ...patch }, info);
+  return (
+    <div className="flex flex-col gap-2">
+      {effect.type === "drop-shadow" && (
+        <PresetRow
+          label="Elevation"
+          presets={SHADOW_PRESETS}
+          onPick={(i) => set({ ...SHADOW_PRESETS[i]!.look })}
+        />
+      )}
+      <EffectColorField
+        label="Shadow color"
+        color={effect.color}
+        opacity={effect.opacity}
+        onChange={(next, info) => set(next, info)}
+      />
+      <PropertyGrid>
+        <ScrubField
+          prefix={<ArrowRight />}
+          label="X offset"
+          value={effect.x}
+          onChange={(x, info) => set({ x }, info)}
+        />
+        <ScrubField
+          prefix={<ArrowDown />}
+          label="Y offset"
+          value={effect.y}
+          onChange={(y, info) => set({ y }, info)}
+        />
+        <ScrubField
+          prefix={<Droplet />}
+          label="Blur"
+          min={0}
+          value={effect.blur}
+          onChange={(blur, info) => set({ blur }, info)}
+        />
+        <ScrubField
+          prefix={<Maximize2 />}
+          label="Spread"
+          value={effect.spread}
+          onChange={(spread, info) => set({ spread }, info)}
+        />
+      </PropertyGrid>
+      {effect.type === "drop-shadow" && (
+        <EffectToggle
+          label="Show behind transparent areas"
+          checked={effect.showBehind}
+          onChange={(showBehind) => set({ showBehind })}
+        />
+      )}
+    </div>
+  );
+}

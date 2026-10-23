@@ -1,4 +1,12 @@
-import type { CanvasElement, ElementDefaults, MaskMode, PathShape } from "@canvas";
+import type {
+  BoxSides,
+  CanvasEffect,
+  CanvasElement,
+  ElementDefaults,
+  MaskMode,
+  PathShape,
+  StrokeAlign,
+} from "@canvas";
 import type { Graphics } from "pixi.js";
 
 import type { Paint } from "./paint.types";
@@ -29,8 +37,26 @@ export interface DesignNode extends CanvasElement {
   /** Painted bottom to top. */
   fills: Paint[];
   strokes: Paint[];
-  /** Stroke width in world units. */
+  /**
+   * Stroke width in world units (with `strokeWeights`, the widest side's, so "has a stroke" checks
+   * still read it).
+   */
   strokeWeight: number;
+  /** Where its strokes sit on a closed outline (open paths are always centered). */
+  strokeAlign: StrokeAlign;
+  /** How open ends and dashes end. */
+  strokeCap: StrokeCap;
+  /** How corners are joined. */
+  strokeJoin: StrokeJoin;
+  /** Corners sharper than this (degrees) are beveled instead of mitered, as in Figma. */
+  strokeMiterAngle: number;
+  /** Dash, gap, dash, gap… lengths in world units; empty for a solid stroke. */
+  strokeDashes: number[];
+  /**
+   * Each side's own weight (Figma's individual strokes), on kinds with `sidedStrokes`; `null`
+   * when every side has `strokeWeight`.
+   */
+  strokeWeights: BoxSides | null;
   /**
    * Whether it's a mask: it isn't drawn, and the siblings above it (up to the next mask) show
    * only through it, as in Figma.
@@ -40,7 +66,18 @@ export interface DesignNode extends CanvasElement {
   maskType: MaskType;
   /** Whether what it masks shows only outside it (a cut-out) instead of inside it. */
   maskInverted: boolean;
+  /**
+   * Its effects, bottom to top (shadows, blurs, noise, glass, shaders; see the effects module):
+   * drawn over it and what it holds, together.
+   */
+  effects: NodeEffect[];
 }
+
+/**
+ * One effect of a node: a `CanvasEffect` (its `type` names the renderer that draws it) with the
+ * type's own fields. The effects module defines the built-in types; plugins add their own.
+ */
+export type NodeEffect = CanvasEffect & Record<string, unknown>;
 
 /**
  * How a mask shapes what it masks: by its opacity (`alpha`), by its outline alone (`vector`) or
@@ -52,17 +89,39 @@ export type MaskType = MaskMode;
 export interface NodeDefaults extends ElementDefaults {
   opacity: number;
   strokeWeight: number;
+  /** Where new nodes' strokes sit (lines and vectors center theirs). */
+  strokeAlign: StrokeAlign;
+  strokeCap: StrokeCap;
+  strokeJoin: StrokeJoin;
+  /** Figma's default miter angle (a miter limit of 4). */
+  strokeMiterAngle: number;
   /** The stroke a node gets when one is added in the panel. */
   stroke: Paint;
   /** How a layer made a mask masks. */
   maskType: MaskType;
 }
 
-/** How strokes end and turn corners (`drawPaints`). */
+/** How a stroke's open ends and dashes end (Figma's names: `none` is a flat end at the point). */
+export type StrokeCap = "none" | "round" | "square";
+
+/** How a stroke turns corners. */
+export type StrokeJoin = "miter" | "bevel" | "round";
+
+/** How Pixi strokes a path (`drawPaints`): its ends, corners and miter limit (a ratio). */
 export interface StrokeShape {
   cap?: "butt" | "round" | "square";
   join?: "miter" | "round" | "bevel";
+  miterLimit?: number;
 }
+
+/**
+ * How a node's strokes are drawn (`DesignNodeKind.strokeOf`): Pixi strokes along `path` (a
+ * centered stroke, the fast way) or the stroke's `area` filled (aligned, dashed inside or
+ * outside, or with sides of their own).
+ */
+export type NodeStroke =
+  | { kind: "path"; path: PathShape; width: number; shape: StrokeShape }
+  | { kind: "area"; area: PathShape };
 
 /**
  * A node's shape in local coordinates: what its fills cover (normalized: outers and their holes)

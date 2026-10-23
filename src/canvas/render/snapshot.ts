@@ -33,6 +33,9 @@ export async function drawSnapshot(
   try {
     frames.setTextZoom(scale);
     others.setTextZoom(scale);
+    // The snapshot draws world units as CSS pixels, at `scale` pixels each.
+    frames.setEffectScale(1);
+    others.setEffectScale(1);
     lines.setTextZoom(scale);
     frames.sync(elements.filter((el) => kinds.kindOf(el).frame));
     others.sync(elements.filter((el) => !kinds.kindOf(el).frame));

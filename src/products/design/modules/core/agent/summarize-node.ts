@@ -27,5 +27,8 @@ export function summarizeNode(
         }
       : {}),
     ...(mask ? { maskedBy: mask } : {}),
+    ...(node?.effects.some((effect) => effect.visible)
+      ? { effects: node.effects.filter((effect) => effect.visible).map((effect) => effect.type) }
+      : {}),
   };
 }

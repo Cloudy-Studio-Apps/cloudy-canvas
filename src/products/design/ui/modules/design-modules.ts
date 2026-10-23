@@ -6,6 +6,7 @@ import { usePluginsStore } from "@shared/stores/plugins-store";
 import { assetsModule } from "@design/modules/assets/assets.module";
 import { booleanModule } from "@design/modules/boolean/boolean.module";
 import { coreModule } from "@design/modules/core/core.module";
+import { effectsModule } from "@design/modules/effects/effects.module";
 import { ellipseModule } from "@design/modules/ellipse/ellipse.module";
 import { frameModule } from "@design/modules/frame/frame.module";
 import { groupModule } from "@design/modules/group/group.module";
@@ -18,6 +19,7 @@ import { pluginsTabModule } from "@design/modules/plugins-tab/plugins-tab.module
 import { polygonModule } from "@design/modules/polygon/polygon.module";
 import { rectangleModule } from "@design/modules/rectangle/rectangle.module";
 import { sectionModule } from "@design/modules/section/section.module";
+import { shaderEffectModule } from "@design/modules/shader-effect/shader-effect.module";
 import { starModule } from "@design/modules/star/star.module";
 import { textModule } from "@design/modules/text/text.module";
 import { vectorModule } from "@design/modules/vector/vector.module";
@@ -32,6 +34,8 @@ let modules: AppModule[] = [
   sectionModule,
   groupModule,
   maskModule,
+  effectsModule,
+  shaderEffectModule,
   rectangleModule,
   lineModule,
   ellipseModule,

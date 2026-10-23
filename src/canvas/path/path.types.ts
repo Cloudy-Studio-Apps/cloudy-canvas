@@ -49,6 +49,27 @@ export interface StrokeOutlineOptions {
   miterLimit?: number;
 }
 
+/** Where a stroke sits on a closed outline: within it, centered on it or around it. */
+export type StrokeAlign = "inside" | "center" | "outside";
+
+/** How a stroke's area is worked out (`strokeArea`): its outline, alignment and dashes. */
+export interface StrokeAreaOptions extends StrokeOutlineOptions {
+  /** Default: centered. */
+  align?: StrokeAlign;
+  /** Dash, gap, dash, gap… lengths (see `dashPath`); empty for a solid stroke. */
+  dashes?: readonly number[];
+  /** How far along each contour the pattern starts. */
+  dashOffset?: number;
+}
+
+/** A value per side of a box (e.g. individual stroke weights). */
+export interface BoxSides {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}
+
 /** A shape's placement: its top-left corner and its turn (degrees counterclockwise round it). */
 export interface PathPlacement {
   x: number;

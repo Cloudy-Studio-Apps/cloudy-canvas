@@ -5,7 +5,7 @@ import type { CanvasViewOptions } from "../canvas-view.types";
 import type { CanvasDocument } from "../document";
 import type { CanvasElement, ElementKind, ElementKinds, ElementPatch } from "../elements";
 import type { Keybindings } from "../input";
-import type { ElementClip, ElementMasks } from "../render";
+import type { EffectRenderer, ElementClip, ElementEffects, ElementMasks } from "../render";
 import type { CanvasGuides } from "../ruler-guides";
 import type { Rect } from "../geometry.types";
 import type { CanvasLinks } from "../links";
@@ -57,6 +57,12 @@ export type MasksHook<O extends object> = (
   elements: readonly CanvasElement[],
   kinds: ElementKinds<O>,
 ) => ElementMasks;
+
+/** See `CanvasProduct.effects`; only one module may give the effects. */
+export type EffectsHook<O extends object> = (
+  elements: readonly CanvasElement[],
+  kinds: ElementKinds<O>,
+) => ElementEffects;
 
 /** See `CanvasProduct.undrawn`; only one module may give it. */
 export type UndrawnHook<O extends object> = (
@@ -139,6 +145,10 @@ export interface CanvasPoints<O extends object> {
   clips: ExtensionPoint<ClipsHook<O>>;
   /** What masks each element (one module at most; two throw). */
   masks: ExtensionPoint<MasksHook<O>>;
+  /** Each element's effects (one module at most; two throw). */
+  effects: ExtensionPoint<EffectsHook<O>>;
+  /** How each type of effect is drawn (keyed by type: two renderers of one type throw). */
+  effectRenderers: ExtensionPoint<EffectRenderer>;
   /** What isn't drawn on its own (one module at most; two throw). */
   undrawn: ExtensionPoint<UndrawnHook<O>>;
   /** What a click selects (one module at most; two throw). */

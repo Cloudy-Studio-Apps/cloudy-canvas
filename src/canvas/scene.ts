@@ -19,12 +19,17 @@ import { pointInRotatedRect, toUnrotated } from "./rotation";
 import {
   buildOverlayState,
   clipBounds,
+  homeOf,
+  NO_EFFECTS,
   NO_MASKS,
+  sameSlot,
+  scopeHome,
   type ElementClip,
+  type ElementEffects,
   type ElementMask,
   type ElementMasks,
-  type MaskSlot,
   type OverlayState,
+  type ScopeSlot,
 } from "./render";
 import type { SceneHooks } from "./scene.types";
 import { Selection } from "./selection";
@@ -41,6 +46,7 @@ export class Scene {
   private keys = new Map<string, string>();
   private clips = new Map<string, ElementClip>();
   private maskData: ElementMasks = NO_MASKS;
+  private effectData: ElementEffects = NO_EFFECTS;
   private undrawnIds: ReadonlySet<string> = new Set();
   private replaced: string[] = [];
   private scopes = new Map<string, string | null>();
@@ -85,9 +91,20 @@ export class Scene {
       if (!sameClip(clips.get(id), this.clips.get(id))) replaced.add(id);
     }
     const masks = this.hooks.masks?.(resolved) ?? NO_MASKS;
-    for (const id of new Set([...masks.homes.keys(), ...this.maskData.homes.keys()])) {
-      if (!sameSlot(masks.homes.get(id), this.maskData.homes.get(id))) replaced.add(id);
+    const effects = this.hooks.effects?.(resolved) ?? NO_EFFECTS;
+    const homed = new Set([
+      ...masks.homes.keys(),
+      ...this.maskData.homes.keys(),
+      ...effects.homes.keys(),
+      ...this.effectData.homes.keys(),
+    ]);
+    for (const id of homed) {
+      const now = homeOf(id, masks, effects);
+      if (!sameSlot(now, homeOf(id, this.maskData, this.effectData))) replaced.add(id);
     }
+    // An element that gains or loses effects is placed again (its view moves into its scope).
+    for (const id of effects.scopes.keys()) if (!this.effectData.scopes.has(id)) replaced.add(id);
+    for (const id of this.effectData.scopes.keys()) if (!effects.scopes.has(id)) replaced.add(id);
     const undrawn = this.hooks.undrawn?.(resolved) ?? new Set<string>();
     for (const id of undrawn) if (!this.undrawnIds.has(id)) replaced.add(id);
     for (const id of this.undrawnIds) if (!undrawn.has(id)) replaced.add(id);
@@ -96,6 +113,7 @@ export class Scene {
     this.keys = keys;
     this.clips = clips;
     this.maskData = masks;
+    this.effectData = effects;
     this.list = resolved.sort((a, b) => {
       const ka = keys.get(a.id)!;
       const kb = keys.get(b.id)!;
@@ -141,17 +159,42 @@ export class Scene {
     return this.maskData;
   }
 
+  /** The effect scopes on the canvas (the product's `effects`), and what each is drawn over. */
+  get effects(): ElementEffects {
+    return this.effectData;
+  }
+
   /** The masks an element shows through, innermost first (the ones it's part of left out). */
   masksOf(el: CanvasElement): ElementMask[] {
     const masks: ElementMask[] = [];
-    let slot: MaskSlot | null = this.maskData.homes.get(el.id) ?? null;
-    for (let depth = 0; slot && depth <= this.maskData.masks.size; depth++) {
-      const mask = this.maskData.masks.get(slot.mask);
-      if (!mask) break;
-      if (slot.role === "masked") masks.push(mask);
-      slot = mask.home;
+    const limit = this.maskData.masks.size + this.effectData.scopes.size;
+    let slot: ScopeSlot | null = homeOf(el.id, this.maskData, this.effectData);
+    for (let depth = 0; slot && depth <= limit; depth++) {
+      if ("mask" in slot) {
+        const mask = this.maskData.masks.get(slot.mask);
+        if (!mask) break;
+        if (slot.role === "masked") masks.push(mask);
+      }
+      slot = scopeHome(slot, this.maskData, this.effectData);
     }
     return masks;
+  }
+
+  /**
+   * Where an element and its own effects show (exports, previews): `shownBounds` grown by how far
+   * its effects reach (a drop shadow, a blur).
+   */
+  visualBounds(el: CanvasElement): Rect {
+    const shown = this.shownBounds(el);
+    const scope = this.effectData.scopes.get(el.id);
+    const reach = scope && this.hooks.effectsOutset ? this.hooks.effectsOutset(scope.effects) : 0;
+    if (reach <= 0 || (shown.w === 0 && shown.h === 0)) return shown;
+    return {
+      x: shown.x - reach,
+      y: shown.y - reach,
+      w: shown.w + reach * 2,
+      h: shown.h + reach * 2,
+    };
   }
 
   /**
@@ -260,10 +303,6 @@ export class Scene {
       resizeMode: this.resizeMode,
     });
   }
-}
-
-function sameSlot(a: MaskSlot | undefined, b: MaskSlot | undefined): boolean {
-  return a?.mask === b?.mask && a?.role === b?.role;
 }
 
 function sameClip(a: ElementClip | undefined, b: ElementClip | undefined): boolean {

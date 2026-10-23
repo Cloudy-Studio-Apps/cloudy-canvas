@@ -1,4 +1,7 @@
 import {
+  boxSidesStroke,
+  type BoxSides,
+  type PathShape,
   scaleLength,
   type ElementBuildContext,
   type ElementPatch,
@@ -31,6 +34,18 @@ export class RectangleKind extends BoxShapeKind<RectangleElement> {
   override readonly tool = "rectangle";
   override readonly defaults = RECTANGLE_DEFAULTS;
   override readonly styleFields = [...NODE_STYLE_FIELDS, "cornerRadius"];
+  override readonly sidedStrokes = true;
+
+  /** Each side's own weight round its (rounded) box. */
+  protected override sidedStrokeArea(el: RectangleElement, sides: BoxSides): PathShape {
+    return boxSidesStroke(el.w, el.h, el.cornerRadius, sides, el.strokeAlign);
+  }
+
+  /** Undashed, and its corners round or mitered (inside, joins don't show). */
+  protected override boxStroke(el: RectangleElement): boolean {
+    if (el.strokeDashes.length > 0) return false;
+    return el.strokeAlign === "inside" || el.strokeJoin === "miter" || el.cornerRadius > 0;
+  }
   override readonly specProperties = {
     cornerRadius: { type: "number", description: "Frame or rectangle: corner radius." },
   };
@@ -75,7 +90,7 @@ export class RectangleKind extends BoxShapeKind<RectangleElement> {
   }
 
   draw(view: ElementView, el: RectangleElement): void {
-    drawRectangle(view, el, this.geometry(el) ?? EMPTY_GEOMETRY);
+    drawRectangle(view, el, this.geometry(el) ?? EMPTY_GEOMETRY, this.strokeOf(el));
   }
 
   /** Its corners round in proportion. */

@@ -28,11 +28,11 @@ export class EllipseKind extends BoxShapeKind<EllipseElement> {
   }
 
   draw(view: ElementView, el: EllipseElement): void {
-    drawPaints(view, el, this.geometry(el) ?? EMPTY_GEOMETRY);
+    drawPaints(view, el, this.geometry(el) ?? EMPTY_GEOMETRY, this.strokeOf(el));
   }
 
-  override hitTest(el: EllipseElement, p: Point, tolerance: number): boolean {
-    if (!super.hitTest(el, p, tolerance)) return false;
+  protected override hitsShape(el: EllipseElement, p: Point, tolerance: number): boolean {
+    if (!super.hitsShape(el, p, tolerance)) return false;
     const rx = el.w / 2 + tolerance;
     const ry = el.h / 2 + tolerance;
     const dx = (p.x - (el.x + el.w / 2)) / Math.max(rx, 1);

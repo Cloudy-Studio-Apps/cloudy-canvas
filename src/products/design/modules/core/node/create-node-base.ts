@@ -25,8 +25,15 @@ export function createNodeBase<K extends string>(
     fills,
     strokes: [],
     strokeWeight: NODE_DEFAULTS.strokeWeight,
+    strokeAlign: NODE_DEFAULTS.strokeAlign,
+    strokeCap: NODE_DEFAULTS.strokeCap,
+    strokeJoin: NODE_DEFAULTS.strokeJoin,
+    strokeMiterAngle: NODE_DEFAULTS.strokeMiterAngle,
+    strokeDashes: [],
+    strokeWeights: null,
     isMask: false,
     maskType: NODE_DEFAULTS.maskType,
     maskInverted: false,
+    effects: [],
   };
 }

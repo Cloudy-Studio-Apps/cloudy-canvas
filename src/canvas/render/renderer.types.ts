@@ -7,6 +7,8 @@ export interface RendererOptions {
   sizeLabel: boolean;
   /** Each element's drawing order and clip (the scene's; see `Scene.orderKey`, `Scene.clipOf`). */
   placement: LayerPlacement;
+  /** Whether some effect reads what's behind it, so the canvas keeps a back buffer. */
+  backdrop: boolean;
 }
 
 export interface ChunkedSyncOptions {

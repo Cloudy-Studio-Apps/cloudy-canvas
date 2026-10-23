@@ -1,5 +1,4 @@
 import {
-  outlineStroke,
   rotatePoint,
   type CanvasDocument,
   type CanvasElement,
@@ -59,10 +58,9 @@ export function outlineStrokes(
 function strokeVector(node: DesignNode, kinds: ElementKinds): VectorElement | null {
   const kind = kinds.kindOf(node);
   if (!(kind instanceof DesignNodeKind) || !kind.ownsShape || node.strokeWeight <= 0) return null;
-  const paints: Paint[] = node.strokes.filter((paint) => paint.visible && paint.type !== "image");
-  const geometry = kind.geometry(node);
-  if (paints.length === 0 || !geometry) return null;
-  const area = outlineStroke(geometry.stroke, kind.strokeOutline(node));
+  const paints: Paint[] = node.strokes.filter((paint) => paint.visible);
+  if (paints.length === 0) return null;
+  const area = kind.strokeArea(node);
   if (area.contours.length === 0) return null;
   const vector = createVector(
     pathToNetwork(area),

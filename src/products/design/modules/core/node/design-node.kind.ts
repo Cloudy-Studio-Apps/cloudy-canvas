@@ -11,13 +11,26 @@ import {
   rotatePoint,
   scaleLength,
   type ScaleTransform,
-  type StrokeOutlineOptions,
+  type BoxSides,
+  dashPath,
+  distanceToPath,
+  type PathShape,
+  pointInPath,
+  strokeArea,
 } from "@canvas";
 
 import type { DesignToolOptions } from "../../../design-options.types";
 import { applyNodeSpec } from "./apply-node-spec";
 import { checkNodePatch } from "./check-node-patch";
-import type { DesignNode, NodeGeometry } from "./design-node.types";
+import type { DesignNode, NodeGeometry, NodeStroke } from "./design-node.types";
+import {
+  hasVisibleStroke,
+  STROKE_CACHE,
+  strokeAreaOptions,
+  strokeKey,
+  strokeReach,
+  strokeShapeOf,
+} from "./node-stroke";
 import { GEOMETRY_CACHE } from "./node-geometry";
 import type { NodeBuildContext } from "./node-build.types";
 import { flipPaints } from "./flip-paints";
@@ -114,11 +127,69 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
   }
 
   /**
-   * How its strokes are turned into an area (a boolean's operand that has no fill, Outline
-   * stroke): square ends and corners by default.
+   * Whether each side of its box can have its own stroke weight (`strokeWeights`; rectangles and
+   * frames). Kinds that say so give `sidedStrokeArea`.
    */
-  strokeOutline(el: E): StrokeOutlineOptions {
-    return { width: el.strokeWeight, cap: "butt", join: "miter" };
+  readonly sidedStrokes: boolean = false;
+
+  /** The area its stroke covers with a weight per side; `null` when the kind has no sides. */
+  protected sidedStrokeArea(_el: E, _sides: BoxSides): PathShape | null {
+    return null;
+  }
+
+  /**
+   * Whether its one-weight stroke is the same band `sidedStrokeArea` makes (a box's undashed
+   * stroke whose corners its joins don't change), worked out exactly from the box instead of
+   * outlined.
+   */
+  protected boxStroke(_el: E): boolean {
+    return false;
+  }
+
+  /**
+   * The area its stroke covers (local coordinates; aligned, dashed, sided): what Outline stroke
+   * makes and what a boolean takes from an operand that fills nothing. Empty without a weight.
+   * Cached by its shape and stroke keys.
+   */
+  strokeArea(el: E): PathShape {
+    const geometry = this.geometry(el);
+    if (!geometry || el.strokeWeight <= 0) return { contours: [] };
+    const key = `${this.type}|${this.geometryKey(el)}|${strokeKey(el)}`;
+    return STROKE_CACHE.getOrSet(key, () => {
+      const weight = el.strokeWeight;
+      const sides = !this.sidedStrokes
+        ? null
+        : (el.strokeWeights ??
+          (this.boxStroke(el)
+            ? { top: weight, right: weight, bottom: weight, left: weight }
+            : null));
+      const sided = sides ? this.sidedStrokeArea(el, sides) : null;
+      return sided ?? strokeArea(geometry.stroke, strokeAreaOptions(el));
+    });
+  }
+
+  /**
+   * How its visible strokes are drawn (`drawPaints`), or `null` when it shows none: centered
+   * strokes (solid or dashed) and open paths are Pixi strokes along the path, which stay smooth
+   * at any zoom and need no outlining; aligned and sided ones fill their `strokeArea`.
+   */
+  strokeOf(el: E): NodeStroke | null {
+    if (!hasVisibleStroke(el)) return null;
+    const geometry = this.geometry(el);
+    if (!geometry) return null;
+    const sided = this.sidedStrokes && el.strokeWeights !== null;
+    const closed = geometry.stroke.contours.some((contour) => contour.closed);
+    if (!sided && (el.strokeAlign === "center" || !closed)) {
+      const path =
+        el.strokeDashes.length === 0
+          ? geometry.stroke
+          : STROKE_CACHE.getOrSet(
+              `dash|${this.type}|${this.geometryKey(el)}|${el.strokeDashes.join(" ")}`,
+              () => dashPath(geometry.stroke, el.strokeDashes),
+            );
+      return { kind: "path", path, width: el.strokeWeight, shape: strokeShapeOf(el) };
+    }
+    return { kind: "area", area: this.strokeArea(el) };
   }
 
   /** Works out its geometry (`geometry` caches it); none by default. */
@@ -137,8 +208,31 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
    */
   abstract override draw(view: ElementView, el: E): void;
 
+  /** Visible nodes are hit by their shape (`hitsShape`) or by their stroke where it reaches out. */
   override hitTest(el: E, p: Point, tolerance: number): boolean {
-    return el.visible && super.hitTest(el, p, tolerance);
+    if (!el.visible) return false;
+    return this.hitsShape(el, p, tolerance) || this.hitsStroke(el, p, tolerance);
+  }
+
+  /** Whether `p` (world, unturned) is on its shape: anywhere in its bounds by default. */
+  protected hitsShape(el: E, p: Point, tolerance: number): boolean {
+    return super.hitTest(el, p, tolerance);
+  }
+
+  /** Whether `p` (world, unturned) is on its visible stroke (an outside stroke reaches past it). */
+  protected hitsStroke(el: E, p: Point, tolerance: number): boolean {
+    if (!hasVisibleStroke(el)) return false;
+    const local = { x: p.x - el.x, y: p.y - el.y };
+    const reach = strokeReach(el) + tolerance;
+    if (local.x < -reach || local.y < -reach) return false;
+    if (local.x > el.w + reach || local.y > el.h + reach) return false;
+    const stroke = this.strokeOf(el);
+    if (!stroke) return false;
+    if (stroke.kind === "path") {
+      return distanceToPath(stroke.path, local) <= stroke.width / 2 + tolerance;
+    }
+    if (pointInPath(stroke.area, local)) return true;
+    return tolerance > 0 && distanceToPath(stroke.area, local) <= tolerance;
   }
 
   /**
@@ -184,6 +278,13 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
     return {
       ...super.scale(el, t),
       strokeWeight: scaleLength(t, el.strokeWeight),
+      strokeDashes: el.strokeDashes.map((n) => scaleLength(t, n)),
+      strokeWeights: el.strokeWeights && {
+        top: scaleLength(t, el.strokeWeights.top),
+        right: scaleLength(t, el.strokeWeights.right),
+        bottom: scaleLength(t, el.strokeWeights.bottom),
+        left: scaleLength(t, el.strokeWeights.left),
+      },
       ...scaleTiles(el, t),
     };
   }
@@ -204,10 +305,18 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
       fills: el.fills ?? [],
       strokes: el.strokes ?? [],
       strokeWeight: el.strokeWeight ?? NODE_DEFAULTS.strokeWeight,
+      // Files from before stroke alignment drew centered strokes.
+      strokeAlign: el.strokeAlign ?? "center",
+      strokeCap: el.strokeCap ?? NODE_DEFAULTS.strokeCap,
+      strokeJoin: el.strokeJoin ?? NODE_DEFAULTS.strokeJoin,
+      strokeMiterAngle: el.strokeMiterAngle ?? NODE_DEFAULTS.strokeMiterAngle,
+      strokeDashes: el.strokeDashes ?? [],
+      strokeWeights: el.strokeWeights ?? null,
       rotation: el.rotation ?? 0,
       isMask: el.isMask ?? false,
       maskType: el.maskType ?? NODE_DEFAULTS.maskType,
       maskInverted: el.maskInverted ?? false,
+      effects: el.effects ?? [],
     };
   }
 

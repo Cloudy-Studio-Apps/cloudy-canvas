@@ -41,7 +41,7 @@ export class SectionKind extends BoxShapeKind<SectionElement> {
   }
 
   draw(view: ElementView, el: SectionElement): void {
-    drawPaints(view, el, this.geometry(el) ?? EMPTY_GEOMETRY);
+    drawPaints(view, el, this.geometry(el) ?? EMPTY_GEOMETRY, this.strokeOf(el));
     const name = this.layerName(el);
     const box = sectionTitleBox(el, name);
     const { fontSize, color, background, border, padX, padY, radius } = SECTION_DEFAULTS.title;

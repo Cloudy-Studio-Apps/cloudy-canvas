@@ -1,5 +1,4 @@
 import {
-  distanceToPath,
   pointInPath,
   type CanvasElement,
   type ElementBuildContext,
@@ -45,17 +44,13 @@ export class BooleanKind extends ChildHostKind<BooleanElement> {
   }
 
   draw(view: ElementView, el: BooleanElement): void {
-    drawPaints(view, el, this.geometry(el));
+    drawPaints(view, el, this.geometry(el), this.strokeOf(el));
   }
 
-  /** Inside the result (holes are out), or on its stroke. */
-  override hitTest(el: BooleanElement, p: Point, tolerance: number): boolean {
-    if (!el.visible) return false;
+  /** Inside the result where it's filled (holes are out); its stroke is hit by `hitsStroke`. */
+  protected override hitsShape(el: BooleanElement, p: Point): boolean {
     const local = { x: p.x - el.x, y: p.y - el.y };
-    const { fill } = this.geometry(el);
-    if (el.fills.some((paint) => paint.visible) && pointInPath(fill, local)) return true;
-    const reach = el.strokeWeight / 2 + tolerance;
-    return el.strokeWeight > 0 && distanceToPath(fill, local) <= reach;
+    return el.fills.some((paint) => paint.visible) && pointInPath(this.geometry(el).fill, local);
   }
 
   override describe(el: BooleanElement): ElementDescription {
