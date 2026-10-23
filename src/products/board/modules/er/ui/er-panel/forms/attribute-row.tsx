@@ -26,6 +26,12 @@ export function AttributeRow({ attribute, partsOf, first, last, depth }: Attribu
       patch: () => ({ key: attribute.key === "partial" ? "none" : "partial" }),
     },
     {
+      label: "AK",
+      title: "Alternate (candidate) key (dotted underline)",
+      on: attribute.key === "alternate",
+      patch: () => ({ key: attribute.key === "alternate" ? "none" : "alternate" }),
+    },
+    {
       label: "Multi",
       title: "Multivalued (double ellipse)",
       on: attribute.multivalued,

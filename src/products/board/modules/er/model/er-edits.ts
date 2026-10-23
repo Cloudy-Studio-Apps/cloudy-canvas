@@ -17,10 +17,12 @@ import type {
   ErIsaChildPatch,
   ErIsaPatch,
   ErParticipantPatch,
+  ErRelationAddOptions,
   ErRelationEnd,
   ErRelationPatch,
 } from "./edits";
 import { allErShapes, diagramScope, erShapes } from "./er-shapes";
+import { splitErDiagrams } from "./split-er-diagrams";
 import type { ErShapes } from "./lang";
 import type { Centers } from "./layout";
 
@@ -47,19 +49,48 @@ export class ErEdits {
   removeAttribute = (id: string) => this.run((s) => edit.removeAttribute(s, id));
   moveAttribute = (id: string, by: -1 | 1) => this.run((s) => edit.moveAttribute(s, id, by));
 
-  addRelation = (entityIds: readonly string[], { at }: ErAddOptions = {}) =>
-    this.run((s) => edit.addRelation(s, entityIds), at);
+  addRelation = (entityIds: readonly string[], { at, associative }: ErRelationAddOptions = {}) =>
+    this.run((s) => edit.addRelation(s, entityIds, associative), at);
   updateRelation = (id: string, patch: ErRelationPatch) =>
     this.run((s) => edit.updateRelation(s, id, patch));
   /** A relation between the ends with their cardinalities and join attributes; returns its id. */
   addLinkedRelation = (ends: readonly ErRelationEnd[], { at }: ErAddOptions = {}) =>
     this.run((s) => edit.addLinkedRelation(s, ends), at);
+  /**
+   * Turns a relation into an entity with a two-way relation per side, in its place, one undo
+   * step (see `convertRelationToEntity`); returns the entity's id.
+   */
+  convertToEntity = (relationId: string) => {
+    const relation = erShapes(this.doc, this.diagram).relations.find((r) => r.id === relationId);
+    const at = relation
+      ? { x: relation.x + relation.w / 2, y: relation.y + relation.h / 2 }
+      : undefined;
+    return this.run((s) => edit.convertRelationToEntity(s, relationId), at);
+  };
+  /** A union type for the category entity; returns its id. */
+  addUnion = (categoryId: string, { at }: ErAddOptions = {}) =>
+    this.run((s) => edit.addUnion(s, categoryId), at);
+  setUnionCategory = (id: string, categoryId: string) =>
+    this.run((s) => edit.setUnionCategory(s, id, categoryId), undefined, true);
+  addUnionSuperclass = (id: string, entityId: string) =>
+    this.run((s) => edit.addUnionSuperclass(s, id, entityId));
+  removeUnionSuperclass = (id: string, entityId: string) =>
+    this.run((s) => edit.removeUnionSuperclass(s, id, entityId), undefined, true);
+  /** A new entity at `at` as a superclass of the union, in one undo step; returns its id. */
+  addUnionSuperclassEntity = (id: string, { at }: ErAddOptions = {}) =>
+    this.run((s) => {
+      const added = edit.addEntity(s);
+      return {
+        shapes: edit.addUnionSuperclass(added.shapes, id, added.id ?? ""),
+        id: added.id,
+      };
+    }, at);
   addParticipant = (id: string, entityId: string) =>
     this.run((s) => edit.addParticipant(s, id, entityId));
   updateParticipant = (id: string, participantId: string, patch: ErParticipantPatch) =>
-    this.run((s) => edit.updateParticipant(s, id, participantId, patch));
+    this.run((s) => edit.updateParticipant(s, id, participantId, patch), undefined, true);
   removeParticipant = (id: string, participantId: string) =>
-    this.run((s) => edit.removeParticipant(s, id, participantId));
+    this.run((s) => edit.removeParticipant(s, id, participantId), undefined, true);
 
   addIsa = (parentId: string, { at }: ErAddOptions = {}) =>
     this.run((s) => edit.addIsa(s, parentId), at);
@@ -101,24 +132,25 @@ export class ErEdits {
       const shapes = edit.addIsaChild(added.shapes, isa.id ?? "", added.id ?? "");
       return { shapes, id: added.id, pinned: halfway(s, parentId, at, isa.id) };
     }, at);
-  updateIsa = (id: string, patch: ErIsaPatch) => this.run((s) => edit.updateIsa(s, id, patch));
+  updateIsa = (id: string, patch: ErIsaPatch) =>
+    this.run((s) => edit.updateIsa(s, id, patch), undefined, true);
   addIsaChild = (id: string, entityId: string) =>
     this.run((s) => edit.addIsaChild(s, id, entityId));
   updateIsaChild = (id: string, childId: string, patch: ErIsaChildPatch) =>
-    this.run((s) => edit.updateIsaChild(s, id, childId, patch));
+    this.run((s) => edit.updateIsaChild(s, id, childId, patch), undefined, true);
   removeIsaChild = (id: string, childId: string) =>
-    this.run((s) => edit.removeIsaChild(s, id, childId));
+    this.run((s) => edit.removeIsaChild(s, id, childId), undefined, true);
   setDiscriminator = (id: string, name: string) =>
     this.run((s) => edit.setDiscriminator(s, id, name));
 
   addAggregate = (relationId: string) => this.run((s) => edit.addAggregate(s, relationId));
   updateAggregate = (id: string, patch: ErAggregatePatch) =>
-    this.run((s) => edit.updateAggregate(s, id, patch));
+    this.run((s) => edit.updateAggregate(s, id, patch), undefined, true);
 
   addConstraint = (rule: ErConstraintRule, fromId: string, toId: string, entityId = "") =>
     this.run((s) => edit.addConstraint(s, rule, fromId, toId, entityId));
   updateConstraint = (id: string, patch: ErConstraintPatch) =>
-    this.run((s) => edit.updateConstraint(s, id, patch));
+    this.run((s) => edit.updateConstraint(s, id, patch), undefined, true);
 
   /** Switches every attribute to the Chen (ellipse) or lollipop look. */
   setStyle = (look: ErAttributeLook) =>
@@ -138,8 +170,17 @@ export class ErEdits {
       }),
     }));
 
-  /** `at` centers the shape the edit creates there instead of placing it automatically. */
-  private run(fn: (shapes: ErShapes) => ErEditResult | ErShapes, at?: Point): string | undefined {
+  /**
+   * `at` centers the shape the edit creates there instead of placing it automatically; `unlinks`
+   * (edits that can cut a link: removing a participant, changing a hierarchy's parent) splits off
+   * what's no longer linked to the rest, in the same undo step (`splitErDiagrams`).
+   */
+  private run(
+    fn: (shapes: ErShapes) => ErEditResult | ErShapes,
+    at?: Point,
+    unlinks = false,
+  ): string | undefined {
+    const elementsBefore = unlinks ? this.doc.all() : [];
     const current = erShapes(this.doc, this.diagram);
     const result = fn(current);
     const next = "shapes" in result ? result.shapes : result;
@@ -158,6 +199,7 @@ export class ErEdits {
       },
       diagramScope(current, this.diagram),
       pinned,
+      unlinks ? () => splitErDiagrams(this.doc, elementsBefore, [this.diagram]) : undefined,
     );
     return id;
   }

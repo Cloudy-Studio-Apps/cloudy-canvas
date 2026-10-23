@@ -3,6 +3,7 @@ import type { ElementPatch } from "@canvas";
 import type { ErElement } from "../base/er.types";
 import type { ErIsaElement } from "../isa/isa.types";
 import type { ErRelationElement } from "../relation/relation.types";
+import type { ErUnionElement } from "../union/union.types";
 
 /**
  * ER elements that can't exist without one that's `dead`: attributes whose owner is gone (with
@@ -34,7 +35,11 @@ export function erOrphans(
 export function withoutDeadLinks(
   shape: ErElement,
   dead: (id: string) => boolean,
-): ElementPatch<ErRelationElement> | ElementPatch<ErIsaElement> | null {
+):
+  | ElementPatch<ErRelationElement>
+  | ElementPatch<ErIsaElement>
+  | ElementPatch<ErUnionElement>
+  | null {
   if (shape.type === "er-relation") {
     const alive = shape.participants.filter((p) => !dead(p.entityId));
     const participants = alive.map((p) => (p.via && dead(p.via) ? { ...p, via: "" } : p));
@@ -46,6 +51,10 @@ export function withoutDeadLinks(
     const children = shape.children.filter((c) => !dead(c.entityId));
     return children.length === shape.children.length ? null : { children };
   }
+  if (shape.type === "er-union") {
+    const superclassIds = shape.superclassIds.filter((id) => !dead(id));
+    return superclassIds.length === shape.superclassIds.length ? null : { superclassIds };
+  }
   return null;
 }
 
@@ -55,6 +64,8 @@ function isOrphan(shape: ErElement, dead: (id: string) => boolean): boolean {
       return dead(shape.ownerId);
     case "er-isa":
       return dead(shape.parentId);
+    case "er-union":
+      return dead(shape.categoryId);
     case "er-aggregate":
       return dead(shape.relationId);
     case "er-constraint":

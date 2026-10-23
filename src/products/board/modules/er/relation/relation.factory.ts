@@ -18,7 +18,9 @@ export function createErRelation(center: Point, name: string, index: string): Er
     name,
     identifying: false,
     idMark: false,
+    existenceMark: false,
     color: ER_RELATION_COLOR,
     participants: [],
+    associative: false,
   };
 }

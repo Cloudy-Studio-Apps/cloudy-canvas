@@ -6,6 +6,7 @@ import type { ErConstraintElement } from "../../constraint/constraint.types";
 import type { ErEntityElement } from "../../entity/entity.types";
 import type { ErIsaElement } from "../../isa/isa.types";
 import type { ErRelationElement } from "../../relation/relation.types";
+import type { ErUnionElement } from "../../union/union.types";
 import { serializeAttributes } from "./serialize-attributes";
 
 const INDENT = "  ";
@@ -32,6 +33,8 @@ export function serializeRelation(
   const settings = [
     ...(relation.identifying ? ["identifying"] : []),
     ...(relation.idMark ? ["id"] : []),
+    ...(relation.existenceMark ? ["existence"] : []),
+    ...(relation.associative ? ["associative"] : []),
     ...(relation.color !== ER_RELATION_COLOR ? [`color: ${relation.color}`] : []),
   ];
   const participants = relation.participants.flatMap((p) => {
@@ -79,6 +82,17 @@ export function serializeAggregate(
     `${INDENT}${formatName(relation)}`,
     ...serializeAttributes(aggregate.id, byOwner, 1),
   ]);
+}
+
+/** `Union Category { Superclass … }`, or null when the category is gone. */
+export function serializeUnion(union: ErUnionElement, names: Names): string | null {
+  const category = names.get(union.categoryId);
+  if (category === undefined) return null;
+  const lines = union.superclassIds.flatMap((id) => {
+    const name = names.get(id);
+    return name === undefined ? [] : [`${INDENT}${formatName(name)}`];
+  });
+  return block(`Union ${formatName(category)}`, lines);
 }
 
 export function serializeConstraint(constraint: ErConstraintElement, names: Names): string | null {

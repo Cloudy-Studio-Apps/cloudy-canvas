@@ -18,6 +18,10 @@ export interface ErEntityAddOptions extends ErAddOptions {
   weak?: boolean;
 }
 
+export interface ErRelationAddOptions extends ErAddOptions {
+  associative?: boolean;
+}
+
 export interface ErAttributeAddOptions extends ErAddOptions {
   key?: ErAttributeKey;
 }
@@ -44,7 +48,10 @@ export interface ErEditResult {
 
 export type ErEntityPatch = Partial<Pick<ErEntityElement, "name" | "weak" | "color">>;
 export type ErRelationPatch = Partial<
-  Pick<ErRelationElement, "name" | "identifying" | "idMark" | "color">
+  Pick<
+    ErRelationElement,
+    "name" | "identifying" | "idMark" | "existenceMark" | "color" | "associative"
+  >
 >;
 export type ErParticipantPatch = Partial<Omit<ErParticipant, "id">>;
 export type ErAttributePatch = Partial<

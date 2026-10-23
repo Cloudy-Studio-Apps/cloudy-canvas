@@ -15,36 +15,26 @@ Where the board's Chen ER diagrams (modelo entidad-relación, extended model) st
 | Editing         | Text with highlighting and completions; forms; Add menu; palette (click or drag); connect dots; quick-add menu on empty board; relation prompt (1:1, 1:N, N:1, N:M with pictures, then the join attribute) |
 | Diagrams        | Several per board; joined when linked across, split when a deletion cuts one apart; auto layout; agent tools                                                                                               |
 
-## Almost covered
+## Done since the roadmap was written
 
-These exist but are incomplete or have a known flaw.
+| Item                                                                                                                            | Where                                                             |
+| ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Standards as a registry, one file each, plugins can add theirs                                                                  | `base/standards/`, `docs/plugins.md` (ER standards)               |
+| Form edits that unlink shapes split the diagram, as deletions do                                                                | `ErEdits` (`unlinks`), `splitErDiagrams`                          |
+| Join attributes on aggregations are created on commit                                                                           | `addMissingVias`                                                  |
+| Weak entities are checked (identifying relation, `(1,1)`, partial key)                                                          | Check diagram (S28)                                               |
+| ER to tables                                                                                                                    | S33, `model/to-tables/`, the Create tables dialog, `er_to_tables` |
+| Associative entity, Convert to entity                                                                                           | S29, `convert_relation_to_entity`                                 |
+| Alternate keys                                                                                                                  | S30                                                               |
+| Existence dependency mark, `dependency` setting                                                                                 | S31                                                               |
+| Union types (categories)                                                                                                        | S32                                                               |
+| Silberschatz's arrows and specialization arrow (`arrows`, `isa: arrow`)                                                         | S27                                                               |
+| The ER mode's keys (N entity, A attribute, Shift+A key attribute, R relation, I hierarchy) and the findings drawn on the shapes | `ER_MODE_COMMANDS`, `ErCheckBadges`                               |
 
-| Item                                    | What's missing                                                                                                                                           |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Weak entities**                       | Drawn, but nothing checks that they have an identifying relation, total `(1,1)` participation in it, and a partial key.                                  |
-| **Identifying vs existence dependency** | `[id]` draws the "I" mark; there's no existence ("E") mark. Needs the exact notation of the course's textbook (de Miguel & Piattini?) before drawing it. |
-| **Three-way and larger relations**      | Fully drawn, but no crow's feet (none exist in the notation) and no way to turn one into an associative entity.                                          |
-| **Removing a participant in the form**  | Doesn't split a diagram it disconnects (canvas deletions do).                                                                                            |
-| **Join attribute on aggregations**      | Parsed and stored, but missing attributes are only auto-created for entities.                                                                            |
+## Still open
 
-## To implement
-
-Ordered by value. Each is a separate piece of work.
-
-1. **ER to tables.** Turn a diagram into DBML tables on the same board with the standard rules:
-   - entity → table, key → primary key, composite → its parts, multivalued → its own table, derived → left out;
-   - weak entity → table whose key includes the owner's key;
-   - 1:N → foreign key on the N side to the join attribute (or the key);
-   - 1:1 → foreign key on one side, unique;
-   - N:M and three-way → a link table;
-   - hierarchy → one table per entity with the parent's key, or one table with a discriminator (ask);
-   - aggregation → its relation's table.
-     One undo step; re-running updates the same tables by name.
-2. **Associative entity.** A rectangle with a diamond inside: a relation that is also an entity (takes part in other relations, has a key). Plus **Convert to entity** on a relation: replaces it with an associative entity and one two-way relation per participant, which then get crow's feet.
-3. **Confirm the approximate standards** (`elmasri`, `silberschatz`, `piattini`) against the books, and add what they draw that the board can't yet: Silberschatz's arrows and specialization arrow, Elmasri's categories, the "E" existence mark (`dependency: marks`, needs item 6).
-4. **Alternate keys.** `[ak]` for candidate keys that aren't the primary key; hollow lollipop, plain underline variant.
-5. **Union types (categories).** `Union Propietario { Persona, Banco, Empresa }`, a "U" circle. Elmasri advises against them; low priority.
-6. **Existence dependency mark.** `[existence]`, an "E" next to the "I", once the notation is confirmed.
+- **Confirm the approximate standards** (`elmasri`, `silberschatz`, `piattini`) against the books, and adjust their settings or add rules (`check`) where they differ.
+- The "E" mark is drawn like the "I" mark until a textbook says otherwise.
 
 ## Standards, notation and Check diagram (done)
 
@@ -61,15 +51,11 @@ Pick **ER diagrams** in the mode switcher beside the toolbar, double-click an ER
 - Esc steps back: the selected part, then the selection, then the select tool, then out of the mode. **Done** (or **Board** in the switcher) leaves at once.
 - It doesn't lock the board: leaving the mode makes stickies, text and sections next to a diagram usable again.
 
-Still to do for the mode:
-
-- Keys that create ER shapes (for example A for an attribute of the selection, R for a relation).
-- Showing the Check diagram's findings on the shapes themselves while the mode is on.
+Its keys add ER shapes (N entity, A attribute, Shift+A key attribute, R relation, I hierarchy, each like its palette item), and the Check diagram's errors and warnings are badges on the shapes.
 
 ## Open questions
 
-- Which textbook does the course follow? Its standard can then be checked against the book first (item 3), and it decides the existence mark (item 6).
-- In ER to tables, which hierarchy strategy is the default?
+- Which textbook does the course follow? Its standard can then be checked against the book first, and it decides how the existence mark is drawn.
 
 ## Sources
 

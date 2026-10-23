@@ -13,7 +13,7 @@ import type { ErShapes, ParsedEr, ParsedErAttribute, ParsedErRelation } from "./
 import { buildAttributes } from "./reconcile-attributes";
 import type { ReconcileContext } from "./reconcile-context.types";
 import type { ErReconcileResult } from "./reconcile-er.types";
-import { buildAggregates, buildConstraints, buildIsas } from "./reconcile-extended";
+import { buildAggregates, buildConstraints, buildIsas, buildUnions } from "./reconcile-extended";
 import { entityId } from "./reconcile-names";
 
 /**
@@ -25,6 +25,12 @@ export function reconcileEr(model: ParsedEr, existing: ErShapes): ErReconcileRes
     checkNames(model.entities, new Set(), "Entity");
     checkNames(model.aggregates, new Set(model.entities.map((e) => e.name)), "Aggregation");
     checkNames(model.relations, new Set(), "Relation");
+    // An associative entity is named among the entities too.
+    checkNames(
+      model.relations.filter((r) => r.associative),
+      new Set([...model.entities, ...model.aggregates].map((e) => e.name)),
+      "Associative entity",
+    );
 
     const ctx: ReconcileContext = {
       existing,
@@ -72,11 +78,17 @@ export function reconcileEr(model: ParsedEr, existing: ErShapes): ErReconcileRes
     });
 
     const relationPairs = pairByName(model.relations, existing.relations);
+    // Every relation's id first: an associative entity takes part in relations defined before it.
+    const relationIds = model.relations.map((parsed, i) => {
+      const id = track(relationPairs.get(i)?.id);
+      ctx.relationIds.set(parsed.name, id);
+      if (parsed.associative) ctx.entityIds.set(parsed.name, id);
+      return id;
+    });
     const relations = model.relations.map((parsed, i): ErRelationElement => {
       const match = relationPairs.get(i);
       const size = relationSize(parsed.name);
-      const id = track(match?.id);
-      ctx.relationIds.set(parsed.name, id);
+      const id = relationIds[i] ?? track(match?.id);
       build(parsed.attributes, id, match?.id);
       return {
         id,
@@ -88,6 +100,8 @@ export function reconcileEr(model: ParsedEr, existing: ErShapes): ErReconcileRes
         name: parsed.name,
         identifying: parsed.identifying,
         idMark: parsed.idMark,
+        existenceMark: parsed.existenceMark,
+        associative: parsed.associative,
         color: parsed.color ?? match?.color ?? ER_RELATION_COLOR,
         participants: parsed.participants.map((p, k) => ({
           id: match?.participants[k]?.id ?? createId(),
@@ -109,6 +123,7 @@ export function reconcileEr(model: ParsedEr, existing: ErShapes): ErReconcileRes
       isas: buildIsas(model.isas, ctx),
       aggregates: buildAggregates(model.aggregates, aggregateIds, ctx),
       constraints: buildConstraints(model.constraints, ctx),
+      unions: buildUnions(model.unions, ctx),
     };
     const kept = new Set(allErShapes(shapes).map((s) => s.id));
     const removed = allErShapes(existing)

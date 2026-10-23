@@ -6,7 +6,7 @@ import { definedNames } from "./defined-names";
 import { entityAttributeNames } from "./entity-attribute-names";
 import { readSourceContext } from "./source-context";
 import type { SourceContext } from "./source-context.types";
-import { NOTATION_VALUES } from "@board";
+import { notationValues } from "@board";
 
 const TOP_LEVEL: Completion[] = [
   snippetCompletion("Entity ${name} {\n\t${}\n}", { label: "Entity", type: "keyword" }),
@@ -15,6 +15,11 @@ const TOP_LEVEL: Completion[] = [
     label: "Isa",
     type: "keyword",
     detail: "hierarchy",
+  }),
+  snippetCompletion("Union ${category} {\n\t${}\n}", {
+    label: "Union",
+    type: "keyword",
+    detail: "category",
   }),
   snippetCompletion("Aggregate ${name} { ${} }", { label: "Aggregate", type: "keyword" }),
   snippetCompletion("Constraint ${}", { label: "Constraint", type: "keyword" }),
@@ -26,14 +31,33 @@ const CONSTRAINT_KINDS: Completion[] = ["exclusive", "inclusive", "exclusion", "
 );
 
 const SETTINGS: Completion[] = [
-  ...["pk", "weak", "multi", "derived", "optional", "partial", "identifying", "id"].map(
-    (label) => ({ label, type: "constant" }),
-  ),
+  ...[
+    "pk",
+    "weak",
+    "multi",
+    "derived",
+    "optional",
+    "partial",
+    "identifying",
+    "id",
+    "associative",
+    "existence",
+    "ak",
+  ].map((label) => ({ label, type: "constant" })),
   ...["exclusive", "overlapping", "total", "arrow"].map((label) => ({ label, type: "constant" })),
   snippetCompletion("by: ${}", { label: "by", type: "constant", detail: "discriminator" }),
   snippetCompletion("color: #${}", { label: "color", type: "constant" }),
   snippetCompletion("style: ${}", { label: "style", type: "constant" }),
-  ...Object.keys(NOTATION_VALUES).map((label) =>
+  ...[
+    "standard",
+    "cardinality",
+    "ratio",
+    "participation",
+    "isa",
+    "crowfeet",
+    "dependency",
+    "arrows",
+  ].map((label) =>
     snippetCompletion(`${label}: \${}`, { label, type: "constant", detail: "notation" }),
   ),
 ];
@@ -65,14 +89,14 @@ function optionsAt(at: SourceContext, context: CompletionContext): Completion[] 
     const current = at.settings.split(",").at(-1) ?? "";
     if (/^\s*style\s*:/i.test(current)) return STYLES;
     const key = /^\s*(\w+)\s*:/.exec(current)?.[1]?.toLowerCase();
-    const values = key ? NOTATION_VALUES[key] : undefined;
+    const values = key ? notationValues()[key] : undefined;
     if (values) return values.map((label) => ({ label, type: "constant" }));
     return current.includes(":") ? null : SETTINGS;
   }
   if (block === undefined) {
     const [first, ...rest] = at.wordsBefore.map((word) => word.toLowerCase());
     if (first === undefined) return wantsList ? TOP_LEVEL : null;
-    if (first === "isa" && rest.length === 0) return entities();
+    if ((first === "isa" || first === "union") && rest.length === 0) return entities();
     if (first === "constraint") {
       if (at.before.includes(":")) return relations();
       return rest.length === 0 ? CONSTRAINT_KINDS : entities();
@@ -93,7 +117,7 @@ function optionsAt(at: SourceContext, context: CompletionContext): Completion[] 
   if (block === "relation") {
     return startingWith([...entities(), { label: "attr", type: "keyword" }], at.typed);
   }
-  if (block === "isa") return entities();
+  if (block === "isa" || block === "union") return entities();
   if (block === "aggregate") return relations();
   return null;
 }

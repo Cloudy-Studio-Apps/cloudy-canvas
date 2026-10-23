@@ -1,7 +1,15 @@
 import type { ErIssue, ErNotation, ErStandard } from "@board";
 
 /** A diagram setting the settings page shows: the attribute look or one of the notation's. */
-export type ErSettingKey = "style" | "cardinality" | "ratio" | "participation" | "isa" | "crowFeet";
+export type ErSettingKey =
+  | "style"
+  | "cardinality"
+  | "ratio"
+  | "participation"
+  | "isa"
+  | "crowFeet"
+  | "dependency"
+  | "arrows";
 
 /** One setting with its choices (values as the text writes them; crow's feet `on`/`off`). */
 export interface ErSettingChoice {

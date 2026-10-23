@@ -7,7 +7,11 @@ import { attributeNamed } from "./lang/parse-attributes";
  * the join attributes participants name. A warning reports each one.
  */
 export function addMissingEntities(model: ParsedEr): ParsedEr {
-  const known = new Set([...model.entities, ...model.aggregates].map((item) => item.name));
+  const known = new Set(
+    [...model.entities, ...model.aggregates, ...model.relations.filter((r) => r.associative)].map(
+      (item) => item.name,
+    ),
+  );
   const created = new Map<string, ParsedErEntity>();
   const need = (name: string, line: number) => {
     if (known.has(name) || created.has(name)) return;
@@ -15,6 +19,10 @@ export function addMissingEntities(model: ParsedEr): ParsedEr {
   };
   for (const relation of model.relations) {
     for (const participant of relation.participants) need(participant.entity, participant.line);
+  }
+  for (const union of model.unions) {
+    need(union.category, union.line);
+    for (const superclass of union.superclasses) need(superclass.entity, superclass.line);
   }
   for (const isa of model.isas) {
     need(isa.parent, isa.line);
@@ -37,15 +45,18 @@ export function addMissingEntities(model: ParsedEr): ParsedEr {
 }
 
 /**
- * Adds the join attributes participants name (`Cliente.id`) that their entity doesn't have: a key
- * when the entity has no key yet, otherwise a plain attribute. A warning reports each one.
+ * Adds the join attributes participants name (`Cliente.id`) that their entity (or aggregation)
+ * doesn't have: a key when it has no key yet, otherwise a plain attribute. A warning reports each.
  */
 function addMissingVias(model: ParsedEr): ParsedEr {
   const added = new Map<string, ParsedErAttribute[]>();
   const warnings: DbmlError[] = [];
   for (const relation of model.relations) {
     for (const { entity: name, via, line } of relation.participants) {
-      const entity = model.entities.find((e) => e.name === name);
+      // An aggregation takes part like an entity, with attributes of its own.
+      const entity =
+        model.entities.find((e) => e.name === name) ??
+        model.aggregates.find((a) => a.name === name);
       if (!via || !entity) continue;
       const extra = added.get(name) ?? [];
       const attributes = [...entity.attributes, ...extra];
@@ -60,6 +71,9 @@ function addMissingVias(model: ParsedEr): ParsedEr {
     ...model,
     entities: model.entities.map((e) =>
       added.has(e.name) ? { ...e, attributes: [...e.attributes, ...(added.get(e.name) ?? [])] } : e,
+    ),
+    aggregates: model.aggregates.map((a) =>
+      added.has(a.name) ? { ...a, attributes: [...a.attributes, ...(added.get(a.name) ?? [])] } : a,
     ),
     warnings: [...model.warnings, ...warnings],
   };

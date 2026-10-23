@@ -85,6 +85,44 @@ What each point takes is described in CLAUDE.md (Modules, Canvas engine, Element
 
 Agent tools are groups contributed to `api.board.agentTools`: `{ id, tools: ({ kinds }) => [{ name, description, inputSchema, run(host, args) }] }`. They're listed by the app's MCP server like the built-in ones, and `list_plugins` tells agents which plugin adds what. Tool names must be unique; a tool whose name is taken is left out.
 
+## ER standards
+
+A standard is the textbook or paper an ER diagram follows (`Diagram [standard: …]`): how it's drawn, which constructs it has and its own Check diagram rules. The board's five (Cloudy Canvas, Chen, Elmasri & Navathe, Silberschatz, de Miguel & Piattini) are written the same way a plugin writes one:
+
+```js
+host.contribute(
+  api.board.erStandards,
+  api.board.defineErStandard({
+    id: "myschool",
+    label: "My school's notation",
+    citation: "Course notes, Databases I, 2026.",
+    url: "https://example.edu/notes.pdf", // or null
+    approximate: false,
+    summary: "(min,max) on the lines, the d / o circle, no crow's feet.",
+    settings: {
+      cardinality: "minmax",
+      ratio: "across",
+      participation: "numbers",
+      isa: "circle",
+      crowFeet: false,
+    },
+    supports: { hierarchies: true, aggregations: true, constraints: false },
+    // Optional: findings of its own, after the shared rules.
+    check: (shapes) =>
+      shapes.entities
+        .filter((e) => e.name !== e.name.toUpperCase())
+        .map((e) => ({
+          rule: "myschool-upper",
+          severity: "info",
+          shapeId: e.id,
+          message: `${e.name} should be in capitals.`,
+        })),
+  }),
+);
+```
+
+It then shows in the ER panel's Standard picker, in the text's completions, and in drawing and the Check diagram, with nothing else to register. An id that's taken throws, naming both modules. A board that names a standard that isn't installed keeps the id, is drawn with the default and gets a "not installed" finding, so installing the plugin again brings it back.
+
 ## Design plugins
 
 Designs are built from modules the same way, on their own points (`api.design`):

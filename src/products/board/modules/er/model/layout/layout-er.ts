@@ -16,6 +16,7 @@ import {
 } from "./place-aggregates";
 import { placeAttributes } from "./place-attributes";
 import { placeIsas } from "./place-isas";
+import { placeUnions } from "./place-unions";
 import { placeRelations } from "./place-relations";
 import { resolveOverlaps } from "./resolve-overlaps";
 
@@ -42,7 +43,7 @@ export function layoutAll(shapes: ErShapes): Centers {
   }
   placeAroundEntities(shapes, centers);
   const movable = new Set(
-    [...shapes.relations, ...shapes.attributes, ...shapes.isas].map((s) => s.id),
+    [...shapes.relations, ...shapes.attributes, ...shapes.isas, ...shapes.unions].map((s) => s.id),
   );
   resolveOverlaps(centers, sizesOf(shapes), movable);
   return centers;
@@ -54,6 +55,7 @@ export function layoutAll(shapes: ErShapes): Centers {
  */
 function placeAroundEntities(shapes: ErShapes, centers: Centers): void {
   placeIsas(shapes, centers);
+  placeUnions(shapes, centers);
   const boxes = new Set(shapes.aggregates.map((a) => a.id));
   const usesBox = (r: ErShapes["relations"][number]) =>
     r.participants.some((p) => boxes.has(p.entityId));
@@ -125,8 +127,11 @@ function nearFreeSpot(
   return { x: right + footprint.w / 2 + metrics.ringX, y: top + footprint.h / 2 };
 }
 
-function sizesOf({ entities, relations, attributes, isas }: ErShapes): Map<string, Size> {
+function sizesOf({ entities, relations, attributes, isas, unions }: ErShapes): Map<string, Size> {
   return new Map<string, Size>(
-    [...entities, ...relations, ...attributes, ...isas].map((s) => [s.id, { w: s.w, h: s.h }]),
+    [...entities, ...relations, ...attributes, ...isas, ...unions].map((s) => [
+      s.id,
+      { w: s.w, h: s.h },
+    ]),
   );
 }

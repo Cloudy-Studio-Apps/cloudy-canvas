@@ -24,6 +24,7 @@ export const LOLLIPOP_SIZE = 12;
 export const LOLLIPOP_GAP = 3;
 /** The hierarchy triangle. */
 export const ISA_SIZE: Size = { w: 64, h: 40 };
+export const UNION_SIZE: Size = { w: 32, h: 32 };
 
 /**
  * Attribute: an ellipse with the name on its middle line, or (lollipop look) a small circle with

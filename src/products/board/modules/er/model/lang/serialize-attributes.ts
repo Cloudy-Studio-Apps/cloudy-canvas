@@ -39,7 +39,8 @@ export function serializeAttributes(
 
 function attributeSettings(attribute: ErAttributeElement): string {
   const settings: string[] = [];
-  if (attribute.key !== "none") settings.push(attribute.key);
+  if (attribute.key === "alternate") settings.push("ak");
+  else if (attribute.key !== "none") settings.push(attribute.key);
   if (attribute.multivalued) settings.push("multi");
   if (attribute.derived) settings.push("derived");
   if (attribute.optional) settings.push("optional");

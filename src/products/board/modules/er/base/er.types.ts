@@ -6,6 +6,7 @@ import type { ErConstraintElement } from "../constraint/constraint.types";
 import type { ErEntityElement } from "../entity/entity.types";
 import type { ErIsaElement } from "../isa/isa.types";
 import type { ErRelationElement } from "../relation/relation.types";
+import type { ErUnionElement } from "../union/union.types";
 
 /**
  * The ER diagram an element belongs to. A board can hold several; each has its own text, layout
@@ -20,10 +21,10 @@ export interface ErDiagramFields {
 }
 
 /**
- * The standards (textbooks or papers) a diagram can follow; each sets the notation's drawing
- * choices and the constructs it has. `cloudy` (the board's own mix) is the default.
+ * A standard's id (a textbook or paper a diagram follows; see `ErStandardDefinition`). Built-ins
+ * are `cloudy` (the default), `chen`, `elmasri`, `silberschatz` and `piattini`; plugins add more.
  */
-export type ErStandard = "cloudy" | "chen" | "elmasri" | "silberschatz" | "piattini";
+export type ErStandard = string;
 
 /** Every drawing choice a diagram's notation makes. */
 export interface ErNotationSettings {
@@ -36,38 +37,25 @@ export interface ErNotationSettings {
   ratio: "own" | "across";
   /** `(min,max)` labels, a double line where the minimum is at least 1, or both. */
   participation: "numbers" | "lines" | "both";
-  /** A hierarchy as a triangle with an arc when exclusive, or a circle with "d" or "o". */
-  isa: "arc" | "circle";
+  /**
+   * A hierarchy as a triangle with an arc when exclusive, a circle with "d" or "o", or a hollow
+   * arrow up to the parent ("disjoint" beside it when exclusive).
+   */
+  isa: "arc" | "circle" | "arrow";
+  /**
+   * Arrowheads: only where a participant asks for one (`[arrow]`), or also, on two-way relations,
+   * at an entity the other side takes part with at most once.
+   */
+  arrows: "manual" | "cardinality";
   /** Crow's-foot marks on two-way relations. */
   crowFeet: boolean;
+  /** The "I" (identification) and "E" (existence) dependency marks on relations, or none. */
+  dependency: "marks" | "none";
 }
 
 /** A diagram's notation as written: a standard (default `cloudy`) and the settings it overrides. */
 export interface ErNotation extends Partial<ErNotationSettings> {
   standard?: ErStandard;
-}
-
-/** The constructs of the extended model a standard has (the Check diagram reports others). */
-export interface ErStandardSupports {
-  hierarchies: boolean;
-  aggregations: boolean;
-  constraints: boolean;
-}
-
-/** A standard: where it comes from and how it draws. */
-export interface ErStandardInfo {
-  id: ErStandard;
-  label: string;
-  /** The book or paper, as cited. */
-  citation: string;
-  /** Where to read it (a publisher's page, a library record or the paper), or `null`. */
-  url: string | null;
-  /** Its drawing settings were taken from secondary sources and may differ in details. */
-  approximate: boolean;
-  /** What it's known for, in a sentence. */
-  summary: string;
-  settings: ErNotationSettings;
-  supports: ErStandardSupports;
 }
 
 /** What every ER element has: its place on the board and its diagram. */
@@ -79,7 +67,11 @@ export type ErElement =
   | ErAttributeElement
   | ErIsaElement
   | ErAggregateElement
-  | ErConstraintElement;
+  | ErConstraintElement
+  | ErUnionElement;
+
+/** What takes part in a relation (see `isErParticipant`; only associative relations). */
+export type ErParticipantElement = ErEntityElement | ErAggregateElement | ErRelationElement;
 
 /** ER elements whose name is edited in place. */
 export type ErNamedElement =

@@ -56,6 +56,8 @@ export class ErRelationKind extends ErNamedKind<ErRelationElement> {
     return {
       ...filled,
       idMark: filled.idMark ?? false,
+      existenceMark: filled.existenceMark ?? false,
+      associative: filled.associative ?? false,
       participants: filled.participants.map((p) => ({
         ...p,
         arrow: p.arrow ?? false,

@@ -12,7 +12,13 @@ import { placeAt } from "./position-layout";
 import { reconcileEr } from "./reconcile-er";
 import type { ErApplyOptions, ErApplyResult } from "./reconcile-er.types";
 import { erStandard } from "../base/er-notation";
+import { erStandards } from "../base/standards";
 import { checkErDiagram, type ErIssue } from "./check";
+import { importSchemaText } from "../../db/schema/schema-dbml";
+import { schemaShapes } from "../../db/schema/schema-shapes";
+import type { DbApplyResult } from "../../db/schema/db-schema.types";
+import { formatColumnType } from "../../db/table/column-type";
+import { erToTables, type ErTableOptions, type ErTablesResult } from "./to-tables";
 
 /**
  * One ER diagram of the board: its entities, relations, attributes and the rest. Reads it as text
@@ -74,10 +80,34 @@ export class ErDiagram {
   check = (): ErIssue[] => {
     const shapes = this.shapes();
     const { entities, relations, attributes } = shapes;
-    return checkErDiagram(
-      shapes,
-      erStandard([...entities, ...relations, ...attributes][0]?.notation),
-    );
+    const first = [...entities, ...relations, ...attributes][0];
+    const issues = checkErDiagram(shapes, erStandard(first?.notation));
+    const named = first?.notation.standard;
+    if (first && named && !erStandards.get(named)) {
+      issues.push({
+        rule: "standard-missing",
+        severity: "info",
+        shapeId: first.id,
+        message: `The standard "${named}" isn't installed; the diagram is drawn with the default.`,
+      });
+    }
+    return issues;
+  };
+
+  /**
+   * The diagram as tables (see `erToTables`), keeping the column types of tables that already
+   * exist; nothing is written.
+   */
+  tablesPreview = (options: ErTableOptions = {}): ErTablesResult =>
+    erToTables(this.shapes(), { existingType: existingColumnType(this.doc), ...options });
+
+  /**
+   * Writes the diagram's tables into the board's database schema, one undo step: tables with the
+   * same names are updated, the rest added.
+   */
+  createTables = (options: ErTableOptions = {}): ErTablesResult & { applied: DbApplyResult } => {
+    const result = this.tablesPreview(options);
+    return { ...result, applied: importSchemaText(this.doc, result.dbml) };
   };
 
   /** Changes how the diagram is drawn (`undefined` drops a setting back to the preset's). One undo step. */
@@ -113,5 +143,14 @@ export class ErDiagram {
     if (patches.size === 0) return;
     this.doc.checkpoint();
     this.doc.updateMany(patches);
+  };
+}
+
+/** The type a column of an existing table has, to keep it when the tables are made again. */
+function existingColumnType(doc: CanvasDocument): ErTableOptions["existingType"] {
+  const tables = schemaShapes(doc).tables;
+  return (table, column) => {
+    const found = tables.find((t) => t.name === table)?.columns.find((c) => c.name === column);
+    return found ? formatColumnType(found) : undefined;
   };
 }

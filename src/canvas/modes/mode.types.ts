@@ -1,4 +1,5 @@
 import type { CanvasElement } from "../elements";
+import type { Keybindings } from "../input";
 
 /**
  * A way of working on the canvas that a product's module registers (the board's ER mode): the
@@ -16,4 +17,9 @@ export interface CanvasMode {
    * and leaves the selection. Unset: everything.
    */
   isolate?: (el: CanvasElement) => boolean;
+  /**
+   * Shortcuts that only exist while it's on, matched before the product's (e.g. the ER mode's N
+   * for an entity). Their commands are host commands without keys of their own.
+   */
+  keybindings?: Keybindings;
 }

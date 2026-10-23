@@ -1,6 +1,6 @@
-import { Group, Plus } from "lucide-react";
+import { Group, Plus, RectangleHorizontal } from "lucide-react";
 
-import { cardinalityRatio } from "@board";
+import { canConvert, cardinalityRatio } from "@board";
 import { Button } from "@shared/ui/components/ui/button";
 import { CommitInput, useEngine } from "@canvas-ui";
 import { useErDiagram, useErShapes } from "../../model";
@@ -43,10 +43,26 @@ export function RelationForm({ relation }: RelationFormProps) {
           }
         />
         <FlagToggle
+          label="Associative"
+          title="An associative entity: a relation that is also an entity, with a key of its own, taking part in other relations"
+          on={relation.associative}
+          onToggle={() =>
+            er.edits.updateRelation(relation.id, { associative: !relation.associative })
+          }
+        />
+        <FlagToggle
           label="I mark"
           title="Dependency by identification (an I at the top of the diamond)"
           on={relation.idMark}
           onToggle={() => er.edits.updateRelation(relation.id, { idMark: !relation.idMark })}
+        />
+        <FlagToggle
+          label="E mark"
+          title="Dependency by existence (an E at the top of the diamond)"
+          on={relation.existenceMark}
+          onToggle={() =>
+            er.edits.updateRelation(relation.id, { existenceMark: !relation.existenceMark })
+          }
         />
         {ratio && (
           <span
@@ -57,6 +73,21 @@ export function RelationForm({ relation }: RelationFormProps) {
           </span>
         )}
       </div>
+      {canConvert(relation, engine) && (
+        <Button
+          variant="secondary"
+          size="sm"
+          className="w-full"
+          title="Replace the relation with an entity and a two-way relation per side"
+          onClick={() => {
+            const entity = er.edits.convertToEntity(relation.id);
+            if (entity) engine.focusElement(entity);
+          }}
+        >
+          <RectangleHorizontal />
+          Convert to entity
+        </Button>
+      )}
       <FormSection
         title="Participants"
         actions={

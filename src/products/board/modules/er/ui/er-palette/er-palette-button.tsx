@@ -10,6 +10,7 @@ export function ErPaletteButton({
   diagram,
   clickLabel,
   clickDisabled,
+  shortcut,
   onClick,
 }: ErPaletteButtonProps) {
   const { onPointerDown, ghost } = usePaletteDrag({
@@ -26,6 +27,7 @@ export function ErPaletteButton({
         label={item.label}
         description={`${item.description} Click: ${clickLabel}.`}
         side="right"
+        {...(shortcut ? { shortcut } : {})}
         active={ghost !== null}
         className={clickDisabled ? "text-muted-foreground" : undefined}
         onPointerDown={onPointerDown}

@@ -46,6 +46,25 @@ export const ER_SETTING_CHOICES: readonly ErSettingChoice[] = [
     options: [
       { value: "arc", label: "Triangle" },
       { value: "circle", label: "Circle d / o" },
+      { value: "arrow", label: "Arrow" },
+    ],
+  },
+  {
+    key: "arrows",
+    label: "Arrowheads",
+    hint: "On two-way relations, at an entity the other side takes part with at most once.",
+    options: [
+      { value: "manual", label: "Only [arrow]" },
+      { value: "cardinality", label: "From cardinality" },
+    ],
+  },
+  {
+    key: "dependency",
+    label: "Dependency marks",
+    hint: "The I (identification) and E (existence) marks on relations.",
+    options: [
+      { value: "marks", label: "Shown" },
+      { value: "none", label: "Hidden" },
     ],
   },
   {

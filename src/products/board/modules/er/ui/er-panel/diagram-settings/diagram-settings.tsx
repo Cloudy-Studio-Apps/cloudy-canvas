@@ -1,5 +1,9 @@
+import { Table2 } from "lucide-react";
+
 import { erNotation, erStandard } from "@board";
+import { Button } from "@shared/ui/components/ui/button";
 import { useErDiagram, useErQuery } from "../../model";
+import { useErToTablesStore } from "../../er-to-tables";
 import { FormSection } from "../forms/form-section";
 import { ER_SETTING_CHOICES } from "./diagram-setting-choices";
 import { ErSettingOption } from "./diagram-setting-option";
@@ -57,7 +61,7 @@ export function ErDiagramSettings() {
       </p>
       <FormSection title="Standard">
         <ErStandardPicker
-          standard={standard.id}
+          standard={notation.standard ?? "cloudy"}
           onPick={(id) =>
             diagram.setNotation({
               standard: id === "cloudy" ? undefined : id,
@@ -72,6 +76,17 @@ export function ErDiagramSettings() {
       </FormSection>
       <FormSection title={checkTitle(issues.length)}>
         <ErCheckList issues={issues} />
+      </FormSection>
+      <FormSection title="Tables">
+        <Button
+          variant="secondary"
+          size="sm"
+          className="w-full"
+          onClick={() => useErToTablesStore.getState().open(diagram.id)}
+        >
+          <Table2 />
+          Create tables…
+        </Button>
       </FormSection>
       {ER_SETTING_CHOICES.map((choice) => (
         <FormSection key={choice.key} title={choice.label}>

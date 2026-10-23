@@ -2,7 +2,13 @@ import { Network } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
-import { boardAgentTools, boardCanvas, boardMigrations } from "../../board-points";
+import {
+  boardAgentTools,
+  boardCanvas,
+  boardErStandards,
+  boardMigrations,
+} from "../../board-points";
+import { BUILT_IN_ER_STANDARDS, erStandards, isErElement } from "./base";
 import { ErAggregateKind } from "./aggregate";
 import { ErAttributeKind } from "./attribute";
 import { ErConstraintKind } from "./constraint";
@@ -11,7 +17,7 @@ import { erTools } from "./er.agent-tools";
 import { ErTool } from "./er.tool";
 import { ErIsaKind } from "./isa";
 import { ErLinks } from "./links";
-import { enterErMode, ER_MODE, ER_MODE_ID } from "./mode";
+import { enterErMode, ER_MODE, ER_MODE_COMMANDS, ER_MODE_ID } from "./mode";
 import {
   migrateErDiagrams,
   prepareErCopies,
@@ -20,9 +26,12 @@ import {
   splitErDiagrams,
   withErMembers,
 } from "./model";
-import { ErRelationKind } from "./relation";
+import { canConvert, ErRelationKind, type ErRelationElement } from "./relation";
+import { ErUnionKind } from "./union";
 import { ErPanel } from "./ui/er-panel";
-import { ErModeToolbar } from "./ui/er-mode";
+import { ErCheckBadges, ErModeToolbar, useErModeCommands } from "./ui/er-mode";
+import { CONVERT_TO_ENTITY_COMMAND, useConvertCommand } from "./ui/er-convert";
+import { CREATE_TABLES_COMMAND, ErToTablesDialog, useCreateTablesCommand } from "./ui/er-to-tables";
 import { ErPalette } from "./ui/er-palette";
 import { ErQuickAddMenu } from "./ui/er-quick-add";
 import { ErRelationPrompt } from "./ui/er-relation-prompt";
@@ -36,6 +45,10 @@ export const erModule = defineModule({
   // A section takes its contents first; then each ER element takes its attributes along.
   after: ["section"],
   register(host) {
+    // The standards diagrams follow: the built-ins here, plugins' next to them. Read once the
+    // modules have loaded, so every module's count.
+    host.contribute(boardErStandards, ...BUILT_IN_ER_STANDARDS);
+    erStandards.useSource(() => host.get(boardErStandards));
     host.contribute(
       boardCanvas.kinds,
       new ErEntityKind(),
@@ -44,6 +57,7 @@ export const erModule = defineModule({
       new ErIsaKind(),
       new ErAggregateKind(),
       new ErConstraintKind(),
+      new ErUnionKind(),
     );
     host.contribute(boardCanvas.tools, {
       id: "er",
@@ -53,6 +67,47 @@ export const erModule = defineModule({
     // The ER mode; entered from the mode switcher, by double-clicking an ER shape or with the
     // panel's Edit diagram.
     host.contribute(boardCanvas.modes, ER_MODE);
+    // The ER mode's keys: host commands with no keys of their own (the mode binds them).
+    host.contribute(
+      boardCanvas.hostCommands,
+      ...ER_MODE_COMMANDS.map(({ command, label }) => ({ id: command, label })),
+    );
+    host.contribute(boardEditor.sessionHooks, { id: "er.modeCommands", use: useErModeCommands });
+    // The Check diagram's findings on the shapes, while the ER mode is on.
+    host.contribute(boardEditor.overlays, { id: "er.checkBadges", component: ErCheckBadges });
+    // ER to tables: the dialog, its command (context menu) and the panel and toolbar buttons.
+    host.contribute(
+      boardCanvas.hostCommands,
+      { id: CREATE_TABLES_COMMAND, label: "Create tables from the diagram" },
+      { id: CONVERT_TO_ENTITY_COMMAND, label: "Convert the relation to an entity" },
+    );
+    host.contribute(boardEditor.sessionHooks, { id: "er.convert", use: useConvertCommand });
+    host.contribute(boardEditor.overlays, { id: "er.toTables", component: ErToTablesDialog });
+    host.contribute(boardEditor.sessionHooks, {
+      id: "er.createTables",
+      use: useCreateTablesCommand,
+    });
+    host.contribute(boardEditor.contextMenu, {
+      id: "er",
+      menu: "selection",
+      items: [
+        {
+          command: CONVERT_TO_ENTITY_COMMAND,
+          label: "Convert to entity",
+          enabled: (_context, engine) => {
+            const [id, ...others] = engine.selectedIds();
+            const el = id && others.length === 0 ? engine.getElement(id) : undefined;
+            return el?.type === "er-relation" && canConvert(el as ErRelationElement, engine);
+          },
+        },
+        {
+          command: CREATE_TABLES_COMMAND,
+          label: "Create tables…",
+          enabled: (_context, engine) =>
+            engine.selectedIds().some((id) => isErElement(engine.getElement(id))),
+        },
+      ],
+    });
     host.contribute(boardCanvas.editElement, enterErMode);
     host.contribute(boardCanvas.links, () => new ErLinks());
     // Aggregation boxes and constraints follow the ER elements they're about.

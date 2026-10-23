@@ -1,4 +1,5 @@
 import type { ErElement } from "../base/er.types";
+import { isErParticipant } from "../base/is-er-element";
 import type { ErDrop, ErPaletteItemId } from "./er-drop.types";
 
 /** Element types an attribute can belong to. */
@@ -50,19 +51,23 @@ export function erDropPlan(
       };
     }
     case "relation":
-      if (target?.type === "er-entity" || target?.type === "er-aggregate") {
+    case "associative": {
+      const associative = item === "associative";
+      const noun = associative ? "Associative entity" : "Relation";
+      if (target && isErParticipant(target) && "name" in target) {
         return {
           ok: true,
-          label: `Relation from ${target.name}`,
-          run: (er, at) => er.diagram(own).edits.addRelation([target.id], { at }),
+          label: `${noun} from ${target.name}`,
+          run: (er, at) => er.diagram(own).edits.addRelation([target.id], { at, associative }),
         };
       }
       if (!diagram) return { ok: false, label: "Drop on an entity, or add an entity first" };
       return {
         ok: true,
-        label: "Relation",
-        run: (er, at) => er.diagram(diagram).edits.addRelation([], { at }),
+        label: noun,
+        run: (er, at) => er.diagram(diagram).edits.addRelation([], { at, associative }),
       };
+    }
     case "attribute":
     case "key-attribute": {
       const key = item === "key-attribute" ? "pk" : "none";
@@ -87,6 +92,15 @@ export function erDropPlan(
         ok: true,
         label: `Hierarchy under ${target.name}`,
         run: (er, at) => er.diagram(own).edits.addIsa(target.id, { at }),
+      };
+    case "union":
+      if (target?.type !== "er-entity") {
+        return { ok: false, label: "Drop on the category entity to add a union type for it" };
+      }
+      return {
+        ok: true,
+        label: `Union type of ${target.name}`,
+        run: (er, at) => er.diagram(own).edits.addUnion(target.id, { at }),
       };
     case "aggregate":
       if (target?.type !== "er-relation") {

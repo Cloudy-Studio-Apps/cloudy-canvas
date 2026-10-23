@@ -10,7 +10,9 @@ export function shapeCenter(shape: ErElement): Point {
     return { x: shape.x + shape.w / 2, y: shape.y + shape.h - LOLLIPOP_SIZE / 2 };
   }
   if (shape.type === "er-isa" && !isaCircle(shape)) {
-    return { x: shape.x + shape.w / 2, y: shape.y + shape.h / 3 };
+    // The triangle's centroid: a third of the way from its base (at the top, or pointing up).
+    const third = isaArrow(shape) ? (shape.h * 2) / 3 : shape.h / 3;
+    return { x: shape.x + shape.w / 2, y: shape.y + third };
   }
   return { x: shape.x + shape.w / 2, y: shape.y + shape.h / 2 };
 }
@@ -28,9 +30,9 @@ export function outlinePoint(shape: ErElement, toward: Point): Point {
     t = LOLLIPOP_SIZE / 2 / Math.hypot(dx, dy);
   } else if (shape.type === "er-attribute") {
     t = 1 / Math.hypot(dx / hw, dy / hh);
-  } else if (shape.type === "er-relation") {
+  } else if (shape.type === "er-relation" && !shape.associative) {
     t = 1 / (Math.abs(dx) / hw + Math.abs(dy) / hh);
-  } else if (shape.type === "er-isa" && isaCircle(shape)) {
+  } else if (shape.type === "er-union" || (shape.type === "er-isa" && isaCircle(shape))) {
     t = Math.min(hw, hh) / Math.hypot(dx, dy);
   } else if (shape.type === "er-isa") {
     t = rayToPolygon(c, dx, dy, trianglePoints(shape));
@@ -40,8 +42,15 @@ export function outlinePoint(shape: ErElement, toward: Point): Point {
   return { x: c.x + dx * t, y: c.y + dy * t };
 }
 
-/** A hierarchy's triangle, pointing down, in world coordinates. */
+/** A hierarchy's triangle in world coordinates: pointing down, or up in the arrow look. */
 export function trianglePoints(shape: ErElement): Point[] {
+  if (isaArrow(shape)) {
+    return [
+      { x: shape.x + shape.w / 2, y: shape.y },
+      { x: shape.x + shape.w, y: shape.y + shape.h },
+      { x: shape.x, y: shape.y + shape.h },
+    ];
+  }
   return [
     { x: shape.x, y: shape.y },
     { x: shape.x + shape.w, y: shape.y },
@@ -63,6 +72,11 @@ function rayToPolygon(origin: Point, dx: number, dy: number, polygon: readonly P
     if (t > 0 && u >= 0 && u <= 1) best = Math.min(best, t);
   });
   return Number.isFinite(best) ? best : 0;
+}
+
+/** A hierarchy drawn as Silberschatz's arrow (its notation's `isa: arrow`), pointing up. */
+function isaArrow(shape: ErElement): boolean {
+  return shape.type === "er-isa" && erNotation(shape.notation).isa === "arrow";
 }
 
 /** A hierarchy drawn as the d/o circle (its notation's `isa: circle`). */

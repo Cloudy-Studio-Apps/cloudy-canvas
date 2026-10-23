@@ -447,6 +447,7 @@ export class CanvasEngine<O extends object = object> {
     this.mode = DEFAULT_MODE;
     this.setTool(next.tool);
     this.mode = next;
+    this.keymap.setLayer(next.keybindings ?? null);
     this.scene.isolation = next.isolate ?? null;
     const kept = [...this.scene.selection.ids].filter((selected) => {
       const el = this.scene.get(selected);

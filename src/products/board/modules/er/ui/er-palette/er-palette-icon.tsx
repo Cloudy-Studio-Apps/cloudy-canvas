@@ -28,6 +28,12 @@ const SYMBOLS: Record<ErPaletteIconProps["id"], ReactNode> = {
     </>
   ),
   relation: <path d="M12 5 L21 12 L12 19 L3 12 Z" />,
+  associative: (
+    <>
+      <rect x="2.5" y="5" width="19" height="14" />
+      <path d="M12 6.5 L19.5 12 L12 17.5 L4.5 12 Z" />
+    </>
+  ),
   attribute: <ellipse cx="12" cy="12" rx="9" ry="5.5" />,
   "key-attribute": (
     <>
@@ -39,6 +45,12 @@ const SYMBOLS: Record<ErPaletteIconProps["id"], ReactNode> = {
     <>
       <path d="M12 4 V8" />
       <path d="M12 8 L19 18 H5 Z" />
+    </>
+  ),
+  union: (
+    <>
+      <circle cx="12" cy="12" r="7" />
+      <path d="M9.5 9 V13 A2.5 2.5 0 0 0 14.5 13 V9" />
     </>
   ),
   aggregate: (

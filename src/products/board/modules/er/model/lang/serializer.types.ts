@@ -4,6 +4,7 @@ import type { ErConstraintElement } from "../../constraint/constraint.types";
 import type { ErEntityElement } from "../../entity/entity.types";
 import type { ErIsaElement } from "../../isa/isa.types";
 import type { ErRelationElement } from "../../relation/relation.types";
+import type { ErUnionElement } from "../../union/union.types";
 
 /** Every ER shape on the board, by kind. */
 export interface ErShapes {
@@ -13,6 +14,7 @@ export interface ErShapes {
   isas: ErIsaElement[];
   aggregates: ErAggregateElement[];
   constraints: ErConstraintElement[];
+  unions: ErUnionElement[];
 }
 
 /** A span of text, as character offsets (`to` is exclusive). */

@@ -50,5 +50,10 @@ function dotPoint(side: ElementSide, zoom: number, anchor: ErAnchorOf): Point {
 
 /** Whether the ER element has connect dots (entities, relations, hierarchies). */
 export function isErConnectSource(el: ErElement | undefined): el is ErConnectSource {
-  return el?.type === "er-entity" || el?.type === "er-relation" || el?.type === "er-isa";
+  return (
+    el?.type === "er-entity" ||
+    el?.type === "er-relation" ||
+    el?.type === "er-isa" ||
+    el?.type === "er-union"
+  );
 }

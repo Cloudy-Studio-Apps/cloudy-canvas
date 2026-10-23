@@ -5,6 +5,7 @@ import {
   serializeConstraint,
   serializeEntity,
   serializeIsa,
+  serializeUnion,
   serializeRelation,
 } from "./serialize-blocks";
 import type { ErShapes, ErText, TextRange } from "./serializer.types";
@@ -20,7 +21,7 @@ export function serializeEr(shapes: ErShapes): string {
 
 /** The text plus where each entity, hierarchy, relation, aggregation and constraint is written. */
 export function serializeErBlocks(shapes: ErShapes): ErText {
-  const { entities, relations, attributes, isas, aggregates, constraints } = shapes;
+  const { entities, relations, attributes, isas, aggregates, constraints, unions } = shapes;
   const byOwner = attributesByOwner(attributes);
   const names = new Map<string, string>(
     [...entities, ...relations, ...aggregates].map((shape) => [shape.id, shape.name]),
@@ -29,6 +30,7 @@ export function serializeErBlocks(shapes: ErShapes): ErText {
     [null, diagramLine(shapes)],
     ...entities.map((entity) => [entity.id, serializeEntity(entity, byOwner)] as const),
     ...isas.map((isa) => [isa.id, serializeIsa(isa, byOwner, names)] as const),
+    ...unions.map((union) => [union.id, serializeUnion(union, names)] as const),
     ...relations.map(
       (relation) => [relation.id, serializeRelation(relation, byOwner, names)] as const,
     ),

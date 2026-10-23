@@ -3,14 +3,15 @@ import type { ElementSide, Point } from "@canvas";
 import type { ErAggregateElement } from "../aggregate/aggregate.types";
 import type { ErEntityElement } from "../entity/entity.types";
 import type { ErIsaElement } from "../isa/isa.types";
+import type { ErUnionElement } from "../union/union.types";
 import type { ErEdits } from "../model/er-edits";
 import type { ErRelationElement } from "../relation/relation.types";
 
-/** ER elements with connect dots: entities, relations and hierarchies. */
-export type ErConnectSource = ErEntityElement | ErRelationElement | ErIsaElement;
+/** ER elements with connect dots: entities, relations, hierarchies and union types. */
+export type ErConnectSource = ErEntityElement | ErRelationElement | ErIsaElement | ErUnionElement;
 
-/** What a relation can take part with: an entity or an aggregation. */
-export type ErParticipantTarget = ErEntityElement | ErAggregateElement;
+/** What can take part in a relation: an entity, an aggregation or an associative entity. */
+export type ErParticipantTarget = ErEntityElement | ErAggregateElement | ErRelationElement;
 
 /** Where the element's side is, for its dot. */
 export type ErAnchorOf = (side: ElementSide) => Point;

@@ -1,6 +1,6 @@
 import { ExternalLink } from "lucide-react";
 
-import { ER_STANDARD_LIST, ER_STANDARDS, type ErStandard } from "@board";
+import { erStandards } from "@board";
 import { openExternal } from "@platform";
 import { Button } from "@shared/ui/components/ui/button";
 import { notifyError } from "@shared/stores/toast-store";
@@ -12,17 +12,28 @@ import type { ErStandardPickerProps } from "./diagram-settings.types";
  * diagram reports what it doesn't have. Shows where it comes from, with a link to read it.
  */
 export function ErStandardPicker({ standard, onPick }: ErStandardPickerProps) {
-  const info = ER_STANDARDS[standard];
+  const info = erStandards.resolve(standard);
+  const installed = erStandards.list();
+  const missing = !installed.some((s) => s.id === standard);
   return (
     <div className="space-y-1.5">
       <ShapeSelect
         aria-label="Standard"
         value={standard}
-        options={ER_STANDARD_LIST.map((s) => ({ value: s.id, label: s.label }))}
+        options={[
+          ...installed.map((s) => ({ value: s.id, label: s.label })),
+          ...(missing ? [{ value: standard, label: `${standard} (not installed)` }] : []),
+        ]}
         className="w-full"
-        onChange={(value) => onPick(value as ErStandard)}
+        onChange={onPick}
       />
       <div className="space-y-1 rounded-md border border-border bg-surface-sunken p-2 text-xs">
+        {missing && (
+          <p className="text-muted-foreground">
+            This standard isn&apos;t installed (a plugin that was removed?), so the diagram is drawn
+            with the default.
+          </p>
+        )}
         <p>{info.summary}</p>
         <p className="text-muted-foreground">{info.citation}</p>
         {info.approximate && (

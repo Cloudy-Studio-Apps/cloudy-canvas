@@ -1,4 +1,4 @@
-import { BoxSelect, FileCode, LayoutGrid, ListChecks, Network, Plus } from "lucide-react";
+import { BoxSelect, FileCode, LayoutGrid, ListChecks, Network, Plus, Table2 } from "lucide-react";
 
 import { rectCenter } from "@canvas";
 import { FloatingPanel, PanelDivider, ToolButton, useEditorMode, useEngine } from "@canvas-ui";
@@ -6,6 +6,7 @@ import { Button } from "@shared/ui/components/ui/button";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { useErDiagram, useErModel, useErQuery } from "../model";
 import { diagramShapeIds } from "../er-panel/diagram-shape-ids";
+import { useErToTablesStore } from "../er-to-tables";
 
 /**
  * The ER mode's toolbar (its `modes` entry's, in place of the main one): what the mode is, a new
@@ -80,6 +81,14 @@ export function ErModeToolbar() {
             </span>
           )}
         </span>
+      </ToolButton>
+      <ToolButton
+        label="Create tables"
+        description="Turn the shown diagram into database tables."
+        disabled={!diagram.id}
+        onClick={() => useErToTablesStore.getState().open(diagram.id)}
+      >
+        <Table2 />
       </ToolButton>
       <PanelDivider />
       <Button size="sm" className="mx-1" onClick={mode.leave}>

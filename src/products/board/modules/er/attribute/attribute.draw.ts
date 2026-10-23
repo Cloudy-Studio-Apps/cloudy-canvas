@@ -8,6 +8,9 @@ import { ellipseArc } from "../../geo";
 import { dashed } from "../base/dashed-path";
 import type { ErAttributeElement } from "./attribute.types";
 
+/** Spacing of an alternate key's dotted underline. */
+const DOT_STEP = 3;
+
 const UNDERLINE_OFFSET = 1;
 
 /**
@@ -42,7 +45,10 @@ function drawLollipop(view: ElementView, shape: ErAttributeElement, style: Eleme
   const cy = h - r;
   const g = view.graphics.clear().circle(cx, cy, r).fill({ color: ER_FILL_COLOR });
   if (shape.key === "pk") g.circle(cx, cy, r).fill({ color: INK_COLOR });
-  else if (shape.optional) {
+  else if (shape.key === "alternate") {
+    // An alternate key: a ring inside the circle (the key's is filled).
+    g.circle(cx, cy, r / 2).stroke({ color: INK_COLOR, width: ER_DEFAULTS.strokeWidth });
+  } else if (shape.optional) {
     g.moveTo(cx - r, cy)
       .arc(cx, cy, r, Math.PI, 0, true)
       .closePath()
@@ -72,13 +78,20 @@ function outline(
   }
 }
 
-/** Key attributes are underlined; a weak entity's partial key is underlined with dashes. */
+/**
+ * Key attributes are underlined; a weak entity's partial key with dashes, an alternate key with
+ * dots.
+ */
 function underline(g: Graphics, shape: ErAttributeElement, x: number, y: number, width: number) {
   if (shape.key === "none") return;
   // The text node is measured with 1px of padding on each side; underline the glyphs only.
   const lineY = y + ER_DEFAULTS.fontSize * 1.2 + UNDERLINE_OFFSET;
   const line = [x + 1, lineY, x + width - 1, lineY];
   if (shape.key === "partial") dashed(g, line, false);
-  else g.moveTo(line[0]!, line[1]!).lineTo(line[2]!, line[3]!);
+  else if (shape.key === "alternate") {
+    for (let x = line[0]!; x < line[2]!; x += DOT_STEP) {
+      g.moveTo(x, lineY).lineTo(Math.min(x + DOT_STEP / 2, line[2]!), lineY);
+    }
+  } else g.moveTo(line[0]!, line[1]!).lineTo(line[2]!, line[3]!);
   g.stroke({ color: INK_COLOR, width: 1 });
 }

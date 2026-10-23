@@ -41,6 +41,14 @@ export function erQuickAddOptions(source: ErConnectSource): ErQuickAddOption[] {
           run: (e, at) => e.addParticipantEntity(id, { at }),
         },
       ];
+    case "er-union":
+      return [
+        {
+          id: "superclass",
+          label: "Superclass entity",
+          run: (e, at) => e.addUnionSuperclassEntity(id, { at }),
+        },
+      ];
     case "er-isa":
       return [
         {

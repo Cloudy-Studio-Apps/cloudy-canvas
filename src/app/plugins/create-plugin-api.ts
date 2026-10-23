@@ -63,6 +63,8 @@ import {
 import {
   boardAgentTools,
   boardCanvas,
+  boardErStandards,
+  defineErStandard,
   INK_COLOR,
   LINE_COLORS,
   requireBoard,
@@ -250,6 +252,8 @@ export function createPluginApi(plugin: InstalledPlugin): PluginApi {
         editor: boardEditor,
         agentTools: boardAgentTools,
         library: boardLibrary,
+        erStandards: boardErStandards,
+        defineErStandard,
         requireBoard,
         palette: { STICKY_COLORS, SHAPE_FILLS, SHAPE_STROKES, LINE_COLORS, INK_COLOR },
       },

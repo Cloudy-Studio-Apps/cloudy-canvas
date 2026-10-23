@@ -22,6 +22,8 @@ export function parseRelation(cursor: TokenCursor, warnings: DbmlError[]): RawRe
     name,
     identifying: false,
     idMark: false,
+    existenceMark: false,
+    associative: false,
     color: null,
     lines: [],
     line: keyword.line,
@@ -31,6 +33,8 @@ export function parseRelation(cursor: TokenCursor, warnings: DbmlError[]): RawRe
     parseSettings(cursor, (key, hasValue) => {
       if (key === "identifying") relation.identifying = true;
       else if (key === "id") relation.idMark = true;
+      else if (key === "associative") relation.associative = true;
+      else if (key === "existence") relation.existenceMark = true;
       else if (key === "color" && hasValue) relation.color = cursor.expectColor();
       else {
         warnings.push(unknownSetting(key, at));

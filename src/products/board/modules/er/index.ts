@@ -10,6 +10,7 @@ export * from "./attribute";
 export * from "./isa";
 export * from "./aggregate";
 export * from "./constraint";
+export * from "./union";
 export * from "./model";
 export { ErLinks } from "./links";
 export type * from "./links";

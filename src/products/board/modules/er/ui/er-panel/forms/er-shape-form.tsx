@@ -5,6 +5,7 @@ import { ConstraintForm } from "./constraint-form";
 import { EntityForm } from "./entity-form";
 import { IsaForm } from "./isa-form";
 import { RelationForm } from "./relation-form";
+import { UnionForm } from "./union-form";
 import type { ErShapeFormProps } from "./er-shape-form.types";
 
 /** The form for the selected ER shape. */
@@ -23,6 +24,8 @@ export function ErShapeForm({ id }: ErShapeFormProps) {
       return <AggregateForm aggregate={shape} />;
     case "er-constraint":
       return <ConstraintForm constraint={shape} />;
+    case "er-union":
+      return <UnionForm union={shape} />;
     default:
       return null;
   }

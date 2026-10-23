@@ -1,4 +1,4 @@
-import { ER_MODE_ID, erAddActions, erAddActionsWithoutDiagram } from "@board";
+import { ER_MODE_COMMANDS, ER_MODE_ID, erClickActions } from "@board";
 import { rectCenter } from "@canvas";
 import { FloatingPanel, useEngine, useEngineState } from "@canvas-ui";
 import { useErDiagram, useErModel, useErSelection, useErShape, useErShapes } from "../model";
@@ -22,11 +22,16 @@ export function ErPalette() {
   const selected = useErShape(selection.id ?? "");
 
   if (!inMode && !((selection.any || erTool) && diagram.id)) return null;
+  // The ER mode's keys, shown in the tooltips while it's on.
+  const shortcutOf = (item: string) => {
+    const command = inMode ? ER_MODE_COMMANDS.find((c) => c.item === item)?.command : undefined;
+    return command ? engine.keymap.label(command) : undefined;
+  };
   // A diagram that was shown and is gone (all its shapes deleted) counts as none.
   const shown = diagram.id && shapes.entities.length + shapes.relations.length > 0;
-  const actions = shown
-    ? erAddActions(diagram.edits, shapes, selected)
-    : erAddActionsWithoutDiagram(er, () => rectCenter(engine.visibleWorldRect()));
+  const actions = erClickActions(er, diagram.id || null, selected?.id ?? null, () =>
+    rectCenter(engine.visibleWorldRect()),
+  );
 
   return (
     <div className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2">
@@ -39,6 +44,7 @@ export function ErPalette() {
               item={item}
               diagram={shown ? diagram : undefined}
               clickLabel={action.label}
+              shortcut={shortcutOf(item.id)}
               clickDisabled={action.disabled}
               onClick={() => {
                 const id = action.run();

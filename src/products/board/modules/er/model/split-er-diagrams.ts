@@ -10,13 +10,21 @@ import { erComponents } from "./er-components";
  * diagram of its own (deleting the relation that joined two diagrams splits them again). Only
  * parts that were linked `before` are split, so shapes that were already on their own (an entity
  * just added) stay in their diagram; the largest part keeps the diagram and its name. Call inside
- * the deletion's batch, after `pruneEr`.
+ * the deletion's batch, after `pruneEr`, or with `diagrams` after an edit that unlinks shapes
+ * (removing a participant).
  */
-export function splitErDiagrams(doc: CanvasDocument, before: readonly CanvasElement[]): void {
+export function splitErDiagrams(
+  doc: CanvasDocument,
+  before: readonly CanvasElement[],
+  diagrams?: Iterable<string>,
+): void {
   const was = before.filter(isErElement);
   const now = doc.all().filter(isErElement);
   const alive = new Set(now.map((shape) => shape.id));
-  const touched = new Set(was.filter((shape) => !alive.has(shape.id)).map((s) => s.diagram));
+  // By default the diagrams that lost a shape; edits that only unlink name theirs.
+  const touched = new Set(
+    diagrams ?? was.filter((shape) => !alive.has(shape.id)).map((s) => s.diagram),
+  );
   const patches = new Map<string, ElementPatch<ErElementBase>>();
   for (const diagram of touched) {
     for (const parts of cutParts(inDiagram(was, diagram), inDiagram(now, diagram))) {

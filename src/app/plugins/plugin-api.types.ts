@@ -101,6 +101,9 @@ export interface PluginApi {
     editor: typeof boardEditor;
     agentTools: typeof board.boardAgentTools;
     library: typeof boardLibrary;
+    /** The standards ER diagrams can follow; contribute ones written with `defineErStandard`. */
+    erStandards: typeof board.boardErStandards;
+    defineErStandard: typeof board.defineErStandard;
     requireBoard: typeof board.requireBoard;
     palette: Pick<
       typeof board,

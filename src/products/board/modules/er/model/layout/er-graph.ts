@@ -6,7 +6,7 @@ import type { ErShapes } from "../lang";
  * hierarchy with. An aggregation taking part in a relation stands for the entities it holds.
  */
 export function entityNeighbors(shapes: ErShapes): Map<string, string[]> {
-  const { entities, relations, isas } = shapes;
+  const { entities, relations, isas, unions } = shapes;
   const result = new Map(entities.map((e) => [e.id, [] as string[]]));
   const link = (ids: readonly string[]) => {
     for (const a of ids) {
@@ -25,6 +25,9 @@ export function entityNeighbors(shapes: ErShapes): Map<string, string[]> {
   for (const isa of isas) {
     for (const child of isa.children) link([isa.parentId, child.entityId]);
   }
+  for (const union of unions) {
+    for (const superclass of union.superclassIds) link([union.categoryId, superclass]);
+  }
   return result;
 }
 
@@ -39,10 +42,11 @@ export function aggregateEntities({ aggregates, relations }: ErShapes): Map<stri
 }
 
 /** Ids of the shapes a shape has lines to, not counting its own attributes. */
-export function linkedIds(shape: ErElement, { relations, isas }: ErShapes): string[] {
+export function linkedIds(shape: ErElement, { relations, isas, unions }: ErShapes): string[] {
   if (shape.type === "er-attribute") return [shape.ownerId];
   if (shape.type === "er-relation") return [...new Set(shape.participants.map((p) => p.entityId))];
   if (shape.type === "er-isa") return [shape.parentId, ...shape.children.map((c) => c.entityId)];
+  if (shape.type === "er-union") return [shape.categoryId, ...shape.superclassIds];
   if (shape.type !== "er-entity") return [];
   return [
     ...relations
@@ -53,15 +57,24 @@ export function linkedIds(shape: ErElement, { relations, isas }: ErShapes): stri
         (isa) => isa.parentId === shape.id || isa.children.some((c) => c.entityId === shape.id),
       )
       .map((isa) => isa.id),
+    ...unions
+      .filter((u) => u.categoryId === shape.id || u.superclassIds.includes(shape.id))
+      .map((u) => u.id),
   ];
 }
 
 /** Every ER shape by id. */
 export function erShapeMap(shapes: ErShapes): Map<string, ErElement> {
-  const { entities, relations, attributes, isas, aggregates, constraints } = shapes;
+  const { entities, relations, attributes, isas, aggregates, constraints, unions } = shapes;
   return new Map<string, ErElement>(
-    [...entities, ...relations, ...attributes, ...isas, ...aggregates, ...constraints].map(
-      (shape) => [shape.id, shape],
-    ),
+    [
+      ...entities,
+      ...relations,
+      ...attributes,
+      ...isas,
+      ...aggregates,
+      ...constraints,
+      ...unions,
+    ].map((shape) => [shape.id, shape]),
   );
 }

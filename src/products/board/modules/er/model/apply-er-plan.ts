@@ -20,6 +20,8 @@ export function applyErPlan(
   { shapes, added, removed }: ErPlan,
   scope: ErDiagramFields,
   pinned: Centers = new Map(),
+  /** Runs after the writes, in the same batch and undo step (e.g. splitting the diagram). */
+  after?: () => void,
 ): void {
   const all = allErShapes(shapes).map((shape) => ({ ...shape, ...scope }));
   // Aggregations and constraints aren't placed: their geometry follows the shapes they connect.
@@ -42,6 +44,7 @@ export function applyErPlan(
         doc.update(shape.id, contentPatch(shape));
       }
     }
+    after?.();
   });
 }
 

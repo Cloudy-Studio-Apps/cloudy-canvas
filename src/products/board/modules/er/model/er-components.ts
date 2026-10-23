@@ -37,6 +37,8 @@ function linkedIds(shape: ErElement): string[] {
       return shape.participants.map((p) => p.entityId);
     case "er-isa":
       return [shape.parentId, ...shape.children.map((c) => c.entityId)];
+    case "er-union":
+      return [shape.categoryId, ...shape.superclassIds];
     case "er-aggregate":
       return [shape.relationId];
     case "er-constraint":

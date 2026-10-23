@@ -42,6 +42,8 @@ export interface ParsedErRelation {
   name: string;
   identifying: boolean;
   idMark: boolean;
+  existenceMark: boolean;
+  associative: boolean;
   color: string | null;
   participants: ParsedErParticipant[];
   attributes: ParsedErAttribute[];
@@ -81,6 +83,13 @@ export interface ParsedErConstraint extends Cardinality {
   line: number;
 }
 
+/** A union type as written: its category and superclasses, by name. */
+export interface ParsedErUnion {
+  category: string;
+  superclasses: { entity: string; line: number }[];
+  line: number;
+}
+
 export interface ParsedEr {
   /** From a `Diagram <name>` line, or null when the text doesn't name the diagram. */
   name: string | null;
@@ -93,6 +102,7 @@ export interface ParsedEr {
   isas: ParsedErIsa[];
   aggregates: ParsedErAggregate[];
   constraints: ParsedErConstraint[];
+  unions: ParsedErUnion[];
   warnings: DbmlError[];
 }
 
@@ -115,6 +125,8 @@ export interface RawRelation {
   name: string;
   identifying: boolean;
   idMark: boolean;
+  existenceMark: boolean;
+  associative: boolean;
   color: string | null;
   lines: RelationLine[];
   line: number;

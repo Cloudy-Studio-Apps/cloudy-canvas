@@ -11,11 +11,17 @@ const ARC_REACH = 10;
 /**
  * A hierarchy: a triangle pointing down from the parent to the children, with an arc under it when
  * the specialization is exclusive, or, in a notation with `isa: circle`, a circle with "d"
- * (disjoint) or "o" (overlapping). (The total mark sits on the parent's line, drawn with the lines.)
+ * (disjoint) or "o" (overlapping), or Silberschatz's hollow arrow up to the parent. (The total
+ * mark sits on the parent's line, drawn with the lines.)
  */
 export function drawErIsa(view: ElementView, shape: ErIsaElement): void {
-  if (erNotation(shape.notation).isa === "circle") {
+  const look = erNotation(shape.notation).isa;
+  if (look === "circle") {
     drawCircle(view, shape);
+    return;
+  }
+  if (look === "arrow") {
+    drawArrow(view, shape);
     return;
   }
   view.pruneTextSlots(new Set());
@@ -53,5 +59,24 @@ function drawCircle(view: ElementView, shape: ErIsaElement): void {
     fontWeight: "600",
   });
   letter.position.set((w - letter.width) / 2, (h - letter.height) / 2);
+  view.pruneTextSlots(new Set(["kind"]));
+}
+
+/** Silberschatz's specialization: a hollow arrowhead up to the parent, "disjoint" when exclusive. */
+function drawArrow(view: ElementView, shape: ErIsaElement): void {
+  const { w, h } = shape;
+  const points = [w / 2, 0, w, h, 0, h];
+  view.graphics
+    .clear()
+    .poly(points)
+    .fill({ color: ER_FILL_COLOR })
+    .poly(points)
+    .stroke({ color: INK_COLOR, width: ER_DEFAULTS.strokeWidth, join: "miter" });
+  if (!shape.exclusive) {
+    view.pruneTextSlots(new Set());
+    return;
+  }
+  const label = view.setTextSlot("kind", "disjoint", { fontSize: 11, color: INK_COLOR });
+  label.position.set(w + 6, (h - label.height) / 2);
   view.pruneTextSlots(new Set(["kind"]));
 }

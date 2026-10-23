@@ -4,7 +4,8 @@ import { parseAggregate } from "./parse-aggregate";
 import { parseConstraint } from "./parse-constraint";
 import { parseEntity } from "./parse-entity";
 import { parseIsa } from "./parse-isa";
-import { isNotationSetting, readNotationSetting } from "./notation-settings";
+import { parseUnion } from "./parse-union";
+import { isInstalledStandard, isNotationSetting, readNotationSetting } from "./notation-settings";
 import { parseRelation } from "./parse-relation";
 import type {
   ErParseResult,
@@ -33,6 +34,7 @@ function parseModel(cursor: TokenCursor): ParsedEr {
     entities: [],
     relations: [],
     isas: [],
+    unions: [],
     aggregates: [],
     constraints: [],
     warnings: [],
@@ -45,15 +47,22 @@ function parseModel(cursor: TokenCursor): ParsedEr {
     if (cursor.isKeyword("entity")) entities.push(parseEntity(cursor, model.warnings));
     else if (cursor.isKeyword("relation")) relations.push(parseRelation(cursor, model.warnings));
     else if (cursor.isKeyword("isa")) model.isas.push(parseIsa(cursor, model.warnings));
+    else if (cursor.isKeyword("union")) model.unions.push(parseUnion(cursor));
     else if (cursor.isKeyword("aggregate"))
       model.aggregates.push(parseAggregate(cursor, model.warnings));
     else if (cursor.isKeyword("constraint")) model.constraints.push(parseConstraint(cursor));
     else if (cursor.isKeyword("diagram")) parseDiagram(cursor, model);
-    else throw cursor.error("Expected Entity, Relation, Isa, Aggregate, Constraint or Diagram");
+    else
+      throw cursor.error("Expected Entity, Relation, Isa, Union, Aggregate, Constraint or Diagram");
   }
   model.entities = entities.map(withoutIsa);
   mergeInlineIsa(entities, model);
-  const known = new Set([...entities, ...model.aggregates].map((item) => item.name));
+  // Associative entities take part in relations like entities.
+  const known = new Set(
+    [...entities, ...model.aggregates, ...relations.filter((r) => r.associative)].map(
+      (item) => item.name,
+    ),
+  );
   model.relations = relations.map((relation) => sortLines(relation, known));
   return model;
 }
@@ -80,6 +89,13 @@ function parseDiagram(cursor: TokenCursor, model: ParsedEr): void {
       const setting = readNotationSetting(key, value);
       if (setting) model.notation = { ...model.notation, ...setting };
       else model.warnings.push(unknownSetting(`${key}: ${value}`, at));
+      if (setting?.standard !== undefined && !isInstalledStandard(setting.standard)) {
+        model.warnings.push({
+          message: `The standard "${value}" isn't installed; drawn with the default`,
+          line: at.line,
+          column: at.column,
+        });
+      }
       return true;
     }
     if (key !== "style" || !hasValue) {
@@ -128,6 +144,8 @@ function sortLines(relation: RawRelation, known: ReadonlySet<string>): ParsedErR
     name: relation.name,
     identifying: relation.identifying,
     idMark: relation.idMark,
+    existenceMark: relation.existenceMark,
+    associative: relation.associative,
     color: relation.color,
     participants: [],
     attributes: [],

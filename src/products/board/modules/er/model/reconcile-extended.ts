@@ -5,9 +5,10 @@ import { NO_ER_DIAGRAM } from "../base/no-er-diagram";
 import type { ErAggregateElement } from "../aggregate/aggregate.types";
 import type { ErConstraintElement } from "../constraint/constraint.types";
 import type { ErIsaElement } from "../isa/isa.types";
-import { ISA_SIZE } from "../base/er-size";
+import type { ErUnionElement } from "../union/union.types";
+import { ISA_SIZE, UNION_SIZE } from "../base/er-size";
 import { keepCenter } from "../base/keep-center";
-import type { ParsedErAggregate, ParsedErConstraint, ParsedErIsa } from "./lang";
+import type { ParsedErAggregate, ParsedErConstraint, ParsedErIsa, ParsedErUnion } from "./lang";
 import { attributeNamed } from "./lang/parse-attributes";
 import { buildAttributes } from "./reconcile-attributes";
 import type { ReconcileContext } from "./reconcile-context.types";
@@ -124,6 +125,37 @@ export function buildConstraints(
       h: match?.h ?? 0,
       ...item,
       points: match?.points ?? [],
+    };
+  });
+}
+
+/** Union types, matched by their category's name. */
+export function buildUnions(
+  parsed: readonly ParsedErUnion[],
+  ctx: ReconcileContext,
+): ErUnionElement[] {
+  const names = new Map(ctx.existing.entities.map((e) => [e.id, e.name]));
+  const existing = ctx.existing.unions.map((union) => ({
+    union,
+    name: names.get(union.categoryId) ?? "",
+  }));
+  const pairs = pairByName(
+    parsed.map((p) => ({ name: p.category })),
+    existing,
+  );
+  return parsed.map((item, i): ErUnionElement => {
+    const match = pairs.get(i)?.union;
+    const id = match?.id ?? createId();
+    if (!match) ctx.added.add(id);
+    return {
+      id,
+      type: "er-union",
+      ...NO_ER_DIAGRAM,
+      index: match?.index ?? "",
+      ...keepCenter(match, UNION_SIZE),
+      ...UNION_SIZE,
+      categoryId: entityId(ctx, item.category, item.line),
+      superclassIds: item.superclasses.map((s) => entityId(ctx, s.entity, s.line)),
     };
   });
 }

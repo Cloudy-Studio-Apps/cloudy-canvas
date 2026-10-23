@@ -10,7 +10,15 @@ import type { ErShapes } from "./lang";
 const LABEL_NAMES = 2;
 
 export function emptyErShapes(): ErShapes {
-  return { entities: [], relations: [], attributes: [], isas: [], aggregates: [], constraints: [] };
+  return {
+    entities: [],
+    relations: [],
+    attributes: [],
+    isas: [],
+    aggregates: [],
+    constraints: [],
+    unions: [],
+  };
 }
 
 /** The ER shapes of one diagram (or of the whole board), by kind, in board order. */
@@ -50,19 +58,34 @@ export function groupErShapes(shapes: readonly ErElement[]): ErShapes {
     else if (shape.type === "er-attribute") result.attributes.push(shape);
     else if (shape.type === "er-isa") result.isas.push(shape);
     else if (shape.type === "er-aggregate") result.aggregates.push(shape);
+    else if (shape.type === "er-union") result.unions.push(shape);
     else result.constraints.push(shape);
   }
   return result;
 }
 
 export function allErShapes(shapes: ErShapes): ErElement[] {
-  const { entities, relations, attributes, isas, aggregates, constraints } = shapes;
-  return [...entities, ...relations, ...attributes, ...isas, ...aggregates, ...constraints];
+  const { entities, relations, attributes, isas, aggregates, constraints, unions } = shapes;
+  return [
+    ...entities,
+    ...relations,
+    ...attributes,
+    ...isas,
+    ...aggregates,
+    ...constraints,
+    ...unions,
+  ];
 }
 
 /** Shapes the layout places: everything but aggregations and constraints, whose geometry is derived. */
-export function placedErShapes({ entities, relations, attributes, isas }: ErShapes): ErElement[] {
-  return [...entities, ...relations, ...attributes, ...isas];
+export function placedErShapes({
+  entities,
+  relations,
+  attributes,
+  isas,
+  unions,
+}: ErShapes): ErElement[] {
+  return [...entities, ...relations, ...attributes, ...isas, ...unions];
 }
 
 /** The diagram fields to write on a diagram's shapes: its id and current name. */

@@ -15,10 +15,15 @@ import type {
 } from "./edits.types";
 
 /** A new relation between the entities (or aggregations), each with a `(0,n)` cardinality. */
-export function addRelation(shapes: ErShapes, entityIds: readonly string[]): ErEditResult {
+export function addRelation(
+  shapes: ErShapes,
+  entityIds: readonly string[],
+  associative = false,
+): ErEditResult {
   const relation = {
     ...createErRelation({ x: 0, y: 0 }, freeName(shapes.relations, "relation"), ""),
     participants: entityIds.map(participant),
+    associative,
   };
   return { shapes: { ...shapes, relations: [...shapes.relations, relation] }, id: relation.id };
 }

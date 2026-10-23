@@ -3,7 +3,16 @@ import { createSourceLanguage } from "./stream-language";
 /** Syntax colors for the ER diagram text (`docs/er-language.md`). */
 export const erLanguage = createSourceLanguage({
   name: "er",
-  blockKeywords: ["entity", "relation", "isa", "aggregate", "constraint", "diagram", "attr"],
+  blockKeywords: [
+    "entity",
+    "relation",
+    "isa",
+    "union",
+    "aggregate",
+    "constraint",
+    "diagram",
+    "attr",
+  ],
   // Inside a block a line names an entity or attribute (`entity` is a fine name); only `attr` and
   // `as` are keywords there, and the name after a keyword is always the defined one.
   nestedKeywords: ["attr", "as"],
@@ -18,6 +27,15 @@ export const erLanguage = createSourceLanguage({
     "derived",
     "optional",
     "identifying",
+    "associative",
+    "existence",
+    "ak",
+    "alternate",
+    "dependency",
+    "arrows",
+    "manual",
+    "marks",
+    "none",
     "id",
     "total",
     "partial",

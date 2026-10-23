@@ -6,7 +6,7 @@ export type * from "./agent";
 export type { BoardEngine, BoardEngineState } from "./board-engine.types";
 export type { BoardToolOptions } from "./board-options.types";
 export * from "./agent";
-export { boardAgentTools, boardCanvas, boardMigrations } from "./board-points";
+export { boardAgentTools, boardCanvas, boardErStandards, boardMigrations } from "./board-points";
 export * from "./modules";
 export * from "./file";
 export * from "./palette";

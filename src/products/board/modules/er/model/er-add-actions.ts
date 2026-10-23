@@ -31,6 +31,12 @@ export function erAddActions(
     relation: action("relation", `Relation${entity ? ` from ${entity.name}` : ""}`, true, () =>
       edits.addRelation(relationEnds(shapes, entity)),
     ),
+    associative: action(
+      "associative",
+      `Associative entity${entity ? ` from ${entity.name}` : ""}`,
+      true,
+      () => edits.addRelation(relationEnds(shapes, entity), { associative: true }),
+    ),
     attribute: action(
       "attribute",
       owner ? `Attribute of ${ownerName}` : "Attribute (add an entity first)",
@@ -48,6 +54,12 @@ export function erAddActions(
       entity ? `Hierarchy under ${entity.name}` : "Hierarchy (add an entity first)",
       !!entity,
       () => entity && edits.addIsa(entity.id),
+    ),
+    union: action(
+      "union",
+      entity ? `Union type of ${entity.name}` : "Union type (add an entity first)",
+      !!entity,
+      () => entity && edits.addUnion(entity.id),
     ),
     aggregate: action(
       "aggregate",
@@ -106,10 +118,31 @@ export function erAddActionsWithoutDiagram(
       er.newDiagram(center(), { weak: true }),
     ),
     relation: waiting("relation", "Relation"),
+    associative: waiting("associative", "Associative entity"),
     attribute: waiting("attribute", "Attribute"),
     "key-attribute": waiting("key-attribute", "Key attribute"),
     isa: waiting("isa", "Hierarchy"),
+    union: waiting("union", "Union type"),
     aggregate: waiting("aggregate", "Aggregation"),
     constraint: waiting("constraint", "Constraint"),
   };
+}
+
+/**
+ * What a click (or the ER mode's key) adds now: from the diagram `diagramId` shown and the
+ * selected shape, or, with no diagram shown (none yet, or all its shapes deleted), an entity that
+ * starts one at `center()`.
+ */
+export function erClickActions(
+  er: ErModel,
+  diagramId: string | null,
+  selectedId: string | null,
+  center: () => Point,
+): Record<ErPaletteItemId, ErAddAction> {
+  const diagram = diagramId ? er.diagram(diagramId) : undefined;
+  const shapes = diagram?.shapes();
+  if (!diagram || !shapes || shapes.entities.length + shapes.relations.length === 0) {
+    return erAddActionsWithoutDiagram(er, center);
+  }
+  return erAddActions(diagram.edits, shapes, selectedId ? er.shape(selectedId) : undefined);
 }

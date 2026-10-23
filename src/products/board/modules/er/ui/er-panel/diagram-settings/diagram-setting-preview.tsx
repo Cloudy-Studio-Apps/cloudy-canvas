@@ -76,6 +76,35 @@ function participation(numbers: boolean, double: boolean): ReactNode {
   );
 }
 
+/** A parent with two children through Silberschatz's hollow arrow. */
+function arrowHierarchy(): ReactNode {
+  return (
+    <>
+      <rect x={38} y={1} width={20} height={9} />
+      <path d="M48 10 L54 18 H42 Z" />
+      <path d="M48 18 V26 M24 26 H72 M24 26 V34 M72 26 V34" />
+      <rect x={14} y={34} width={20} height={9} />
+      <rect x={62} y={34} width={20} height={9} />
+    </>
+  );
+}
+
+/** A relation's arrowhead at the "one" side, or none. */
+function arrows(cardinality: boolean): ReactNode {
+  return (
+    <>
+      {box(13, "C")}
+      <path d="M24 22 H37 M59 22 H72" />
+      {diamond(48)}
+      {box(83, "P")}
+      {cardinality && <path d="M24 22 L29 19 L29 25 Z" fill="currentColor" />}
+      <text x={66} y={36} {...TEXT}>
+        (1,1)
+      </text>
+    </>
+  );
+}
+
 /** A parent with two children through a triangle and an arc, or a d circle. */
 function hierarchy(circle: boolean): ReactNode {
   return (
@@ -141,7 +170,29 @@ function lineLabels(left: string, right: string): ReactNode {
   );
 }
 
+/** A diamond with, or without, the I mark on its top corner. */
+function dependency(marks: boolean): ReactNode {
+  return (
+    <>
+      {box(14)}
+      <path d="M25 22 H37 M59 22 H71" />
+      {diamond(48)}
+      {box(82)}
+      {marks && (
+        <>
+          <path d="M44 16 H52" />
+          <text x={48} y={10} {...TEXT} fontWeight={600}>
+            I
+          </text>
+        </>
+      )}
+    </>
+  );
+}
+
 const PREVIEWS: Record<string, ReactNode> = {
+  "dependency:marks": dependency(true),
+  "dependency:none": dependency(false),
   "cardinality:minmax": lineLabels("(0,n)", "(1,1)"),
   "cardinality:ratio": lineLabels("1", "N"),
   "style:ellipse": (
@@ -171,6 +222,9 @@ const PREVIEWS: Record<string, ReactNode> = {
   "participation:both": participation(true, true),
   "isa:arc": hierarchy(false),
   "isa:circle": hierarchy(true),
+  "isa:arrow": arrowHierarchy(),
+  "arrows:manual": arrows(false),
+  "arrows:cardinality": arrows(true),
   "crowFeet:on": crowFeet(true),
   "crowFeet:off": crowFeet(false),
 };

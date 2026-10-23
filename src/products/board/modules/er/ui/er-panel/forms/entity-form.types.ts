@@ -1,4 +1,5 @@
 import type {
+  ErUnionElement,
   ErAggregateElement,
   ErConstraintElement,
   ErEntityElement,
@@ -16,6 +17,10 @@ export interface RelationFormProps {
 
 export interface IsaFormProps {
   isa: ErIsaElement;
+}
+
+export interface UnionFormProps {
+  union: ErUnionElement;
 }
 
 export interface AggregateFormProps {

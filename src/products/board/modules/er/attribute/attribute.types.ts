@@ -1,6 +1,7 @@
 import type { ErElementBase } from "../base/er.types";
 
-export type ErAttributeKey = "none" | "pk" | "partial";
+/** Not a key, the key, a weak entity's partial key, or an alternate (candidate) key. */
+export type ErAttributeKey = "none" | "pk" | "partial" | "alternate";
 
 /** Chen ellipses, or small "lollipop" circles on sticks. */
 export type ErAttributeLook = "ellipse" | "lollipop";

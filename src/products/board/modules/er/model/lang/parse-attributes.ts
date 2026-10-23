@@ -81,6 +81,7 @@ export function parseAttributeTail(
 export function applyAttributeSetting(attribute: ParsedErAttribute, key: string): boolean {
   if (key === "pk" || key === "key") attribute.key = "pk";
   else if (key === "partial") attribute.key = "partial";
+  else if (key === "ak" || key === "alternate") attribute.key = "alternate";
   else if (key === "multi" || key === "multivalued") attribute.multivalued = true;
   else if (key === "derived") attribute.derived = true;
   else if (key === "optional") attribute.optional = true;

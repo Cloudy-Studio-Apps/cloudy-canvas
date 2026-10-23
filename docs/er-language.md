@@ -249,13 +249,15 @@ Diagram Ventas [standard: elmasri, participation: both, crowfeet: off]
 
 "Approximate" standards were drawn from secondary sources; check the book for its exact symbols and override what differs.
 
-| Setting         | Values                     | What it draws                                                                                                                                  |
-| --------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `cardinality`   | `minmax`, `ratio`          | `(min,max)` on the lines, or Chen's 1 / N / M (the diamond's ratio is left out then).                                                          |
-| `ratio`         | `across`, `own`            | The diamond's `1:N`: read across like the crow's feet (`Cliente (0,n)`, `Pedido (1,1)` is `1:N`), or from each side's own maximum (`N:1`).     |
-| `participation` | `numbers`, `lines`, `both` | `(min,max)` labels, a double line where the minimum is at least 1, or both.                                                                    |
-| `isa`           | `arc`, `circle`            | Hierarchies as the triangle with an arc, or a circle with **d** (exclusive) or **o** (overlapping); a total one's parent line is then doubled. |
-| `crowfeet`      | `on`, `off`                | Crow's-foot marks on two-way relations.                                                                                                        |
+| Setting         | Values                     | What it draws                                                                                                                                                                                                          |
+| --------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cardinality`   | `minmax`, `ratio`          | `(min,max)` on the lines, or Chen's 1 / N / M (the diamond's ratio is left out then).                                                                                                                                  |
+| `ratio`         | `across`, `own`            | The diamond's `1:N`: read across like the crow's feet (`Cliente (0,n)`, `Pedido (1,1)` is `1:N`), or from each side's own maximum (`N:1`).                                                                             |
+| `participation` | `numbers`, `lines`, `both` | `(min,max)` labels, a double line where the minimum is at least 1, or both.                                                                                                                                            |
+| `isa`           | `arc`, `circle`, `arrow`   | Hierarchies as the triangle with an arc, a circle with **d** (exclusive) or **o** (overlapping), its total parent line doubled, or Silberschatz's hollow arrow up to the parent ("disjoint" beside it when exclusive). |
+| `crowfeet`      | `on`, `off`                | Crow's-foot marks on two-way relations.                                                                                                                                                                                |
+| `dependency`    | `marks`, `none`            | The "I" and "E" dependency marks on relations, or neither.                                                                                                                                                             |
+| `arrows`        | `manual`, `cardinality`    | Arrowheads only where `[arrow]` asks, or also, on two-way relations, at an entity the other side takes part with at most once (Silberschatz).                                                                          |
 
 - Each standard sets every setting; the line only names what the diagram changes from it. Picking another standard drops those changes.
 - `notation:` (the setting's first name) still reads as `standard:`.
@@ -278,6 +280,41 @@ Diagram Ventas [standard: elmasri, participation: both, crowfeet: off]
 | A hierarchy with fewer than two children                     | warning |
 | A participant without a cardinality                          | info    |
 | A hierarchy, aggregation or constraint the standard lacks    | info    |
+
+**S29. Associative entity.** A relation that is also an entity: drawn as a diamond inside a rectangle, with attributes and a key of its own, and other relations name it as a side, like an entity:
+
+```
+Relation Matricula [associative] {
+  Alumno (0,n)
+  Curso (0,n)
+  *num_matricula
+  nota
+}
+
+Relation evalua {
+  Matricula (0,n)
+  Profesor (1,1)
+}
+```
+
+Its name must not be an entity's. **Convert to entity** (the relation form, the context menu, the `convert_relation_to_entity` agent tool) goes further: it replaces a relation of two sides or more with an entity named after it and one two-way relation per side (each side keeps its cardinality, the new entity's is `(1,1)`, and the relation's attributes move to the entity), one undo step. A relation an aggregation holds can't be converted.
+
+**S30. Alternate keys.** `[ak]` (or `[alternate]`) marks a candidate key that isn't the primary key: a dotted underline (a ring in the lollipop look). In tables it's a unique column (or a unique index when composite).
+
+**S31. Existence dependency.** `[existence]` on a relation draws an "E" where `[id]` draws its "I": the entity depends on the other for its existence, not its identity. A relation can't have both.
+
+**S32. Union types (categories).** A category entity whose every instance is one of its superclasses', a circle with "U" between them (Elmasri & Navathe):
+
+```
+Union Propietario {
+  Persona
+  Banco
+}
+```
+
+Missing entities are created on commit. Dragging a union's connect dot onto an entity adds it as a superclass; dropped on empty board it offers a new superclass entity. In tables, the category gets a surrogate key (`Propietario_id`) and each superclass a unique foreign key to it.
+
+**S33. ER to tables.** **Create tables** (the ER mode's toolbar, the Visual tab with nothing selected, the context menu, the `er_to_tables` agent tool) writes the diagram as tables into the board's database schema, one undo step: entities become tables keyed by their keys (an `id` is added when there's none), composite attributes their parts, multivalued ones their own tables; weak entities are keyed by their owner's key and their partial key; a two-way relation with a side that takes part at most once becomes a foreign key on that side (to the join attribute when one is named; unique when both sides do), the others link tables; aggregations and associative entities are tables others point at. The dialog asks how each hierarchy becomes tables (one per entity, or one for all with a discriminator column) and shows the DBML first. Converting again updates the same tables by name and keeps column types edited in the database panel; foreign keys follow their target's type.
 
 ---
 

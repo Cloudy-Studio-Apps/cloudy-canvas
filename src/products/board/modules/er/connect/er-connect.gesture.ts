@@ -10,9 +10,11 @@ import {
 
 import type { BoardToolOptions } from "../../../board-options.types";
 import type { ErElement } from "../base/er.types";
+import { isErParticipant } from "../base/is-er-element";
 import type { ErIsaElement } from "../isa/isa.types";
+import type { ErUnionElement } from "../union/union.types";
 import { ER_MODEL, type ErEdits } from "../model";
-import type { ErConnectOutcome, ErConnectSource, ErParticipantTarget } from "./er-connect.types";
+import type { ErConnectOutcome, ErConnectSource } from "./er-connect.types";
 import { ER_QUICK_ADD } from "./er-quick-add";
 import { ER_RELATION_PROMPT } from "./er-relation-ratios";
 
@@ -119,10 +121,16 @@ export class ErConnectGesture implements ElementGesture {
       if (hit === undefined) return { run: () => edits.addIsaChildEntity(source.id, { at }) };
       return hit?.type === "er-entity" ? childLink(edits, source, hit.id) : null;
     }
+    if (source.type === "er-union") {
+      if (hit === undefined)
+        return { run: () => edits.addUnionSuperclassEntity(source.id, { at }) };
+      return hit?.type === "er-entity" ? superclassLink(edits, source, hit.id) : null;
+    }
     if (hit === undefined) return { run: () => edits.addAttribute(source.id, { at }) };
     if (hit === null || hit.id === source.id) return null;
     if (source.type === "er-entity") {
       if (hit.type === "er-isa") return childLink(edits, hit, source.id);
+      if (hit.type === "er-union") return superclassLink(edits, hit, source.id);
       if (isParticipant(hit)) {
         // The relation prompt asks what kind of relation it is (and joins the diagrams).
         const target = this.ctx.getElement(hit.id) ?? hit;
@@ -180,9 +188,23 @@ function childLink(edits: ErEdits, isa: ErIsaElement, entityId: string): ErConne
   };
 }
 
-function isParticipant(el: ErElement): el is ErParticipantTarget {
-  return el.type === "er-entity" || el.type === "er-aggregate";
+/** Makes the entity a superclass of the union, unless it's its category or one already. */
+function superclassLink(
+  edits: ErEdits,
+  union: ErUnionElement,
+  entityId: string,
+): ErConnectOutcome | null {
+  if (union.categoryId === entityId || union.superclassIds.includes(entityId)) return null;
+  return {
+    run: () => {
+      edits.addUnionSuperclass(union.id, entityId);
+      return union.id;
+    },
+  };
 }
+
+/** Whether it can take part in a relation (not a type guard: a plain relation stays a relation). */
+const isParticipant = (el: ErElement): boolean => isErParticipant(el);
 
 function midpoint(a: Rect, b: Rect): Point {
   return { x: (a.x + a.w / 2 + b.x + b.w / 2) / 2, y: (a.y + a.h / 2 + b.y + b.h / 2) / 2 };

@@ -27,6 +27,13 @@ export interface ErRelationElement extends ErElementBase {
   identifying: boolean;
   /** Drawn with an "I" bar at the top corner (dependency by identification). */
   idMark: boolean;
+  /** Drawn with an "E" bar at the top corner (dependency by existence). */
+  existenceMark: boolean;
   color: string;
   participants: ErParticipant[];
+  /**
+   * An associative entity: a relation that is also an entity (a rectangle round the diamond). It
+   * has attributes and a key of its own and takes part in other relations like an entity.
+   */
+  associative: boolean;
 }

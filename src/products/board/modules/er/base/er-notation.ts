@@ -1,12 +1,12 @@
-import { ER_STANDARDS } from "./er-standards";
-import type { ErNotation, ErNotationSettings, ErStandardInfo } from "./er.types";
+import { erStandards, type ErStandardDefinition } from "./standards";
+import type { ErNotation, ErNotationSettings } from "./er.types";
 
 /** What diagrams saved before notations existed draw with: their ratio read the first way. */
 export const LEGACY_ER_NOTATION: ErNotation = { ratio: "own" };
 
-/** The standard a diagram follows (`cloudy` when it names none). */
-export function erStandard(notation: ErNotation | undefined): ErStandardInfo {
-  return ER_STANDARDS[notation?.standard ?? "cloudy"];
+/** The standard a diagram follows (the default when it names none, or one that isn't installed). */
+export function erStandard(notation: ErNotation | undefined): ErStandardDefinition {
+  return erStandards.resolve(notation?.standard);
 }
 
 /** The settings a diagram draws with: its standard's, with what it overrides. */

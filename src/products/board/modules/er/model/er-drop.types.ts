@@ -7,9 +7,11 @@ export type ErPaletteItemId =
   | "entity"
   | "weak-entity"
   | "relation"
+  | "associative"
   | "attribute"
   | "key-attribute"
   | "isa"
+  | "union"
   | "aggregate"
   | "constraint";
 

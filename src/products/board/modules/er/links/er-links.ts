@@ -6,6 +6,7 @@ import type { ErRelationElement } from "../relation/relation.types";
 import type { ErElement } from "../base/er.types";
 import { outlinePoint, shapeCenter } from "../base/er-outline";
 import { erNotation } from "../base/er-notation";
+import type { ErUnionElement } from "../union/union.types";
 import type { CrowFoot, ErLink } from "./er-links.types";
 import { loopPoints } from "./loop-route";
 
@@ -14,8 +15,8 @@ const LABEL_ALONG = 30;
 const LABEL_ACROSS = 12;
 
 /**
- * Every line of the ER diagram: relation ↔ entity (with cardinality), attribute ↔ owner and
- * hierarchy ↔ parent / children. Expects aggregations already resolved (their bounds current).
+ * Every line of the ER diagram: relation ↔ entity (with cardinality), attribute ↔ owner,
+ * hierarchy ↔ parent / children and union type ↔ superclasses / category. Expects aggregations already resolved (their bounds current).
  */
 export function resolveErLinks(shapes: readonly CanvasElement[]): ErLink[] {
   const byId = new Map<string, ErElement>();
@@ -24,6 +25,7 @@ export function resolveErLinks(shapes: readonly CanvasElement[]): ErLink[] {
   for (const shape of byId.values()) {
     if (shape.type === "er-relation") links.push(...participantLinks(shape, byId));
     else if (shape.type === "er-isa") links.push(...isaLinks(shape, byId));
+    else if (shape.type === "er-union") links.push(...unionLinks(shape, byId));
     else if (shape.type === "er-attribute") {
       const owner = byId.get(shape.ownerId);
       if (owner) links.push(straightLink(shape, owner, "", false));
@@ -55,7 +57,10 @@ function participantLinks(
     const label = viaName ? (card ? `${card} · ${viaName}` : viaName) : card;
     const n = seen.get(entity.id) ?? 0;
     seen.set(entity.id, n + 1);
-    const other = binary && notation.crowFeet ? relation.participants[1 - i] : undefined;
+    const opposite = binary ? relation.participants[1 - i] : undefined;
+    const other = notation.crowFeet ? opposite : undefined;
+    // Silberschatz's arrows: at an entity the other side takes part with at most once.
+    const arrow = participant.arrow || (notation.arrows === "cardinality" && opposite?.max === "1");
     const marks = {
       crowFoot: other ? crowFootOf(other.min, other.max) : null,
       double: notation.participation !== "numbers" && isMandatory(participant.min),
@@ -63,9 +68,9 @@ function participantLinks(
     // An entity related to itself gets loops that leave from different sides.
     if ((counts.get(entity.id) ?? 1) > 1) {
       const points = loopPoints(relation, entity, n);
-      return [{ ...polyLink(relation.id, entity.id, points, label, participant.arrow), ...marks }];
+      return [{ ...polyLink(relation.id, entity.id, points, label, arrow), ...marks }];
     }
-    return [{ ...straightLink(relation, entity, label, participant.arrow), ...marks }];
+    return [{ ...straightLink(relation, entity, label, arrow), ...marks }];
   });
 }
 
@@ -100,6 +105,18 @@ function crowFootOf(min: string, max: string): CrowFoot | null {
   };
 }
 
+/** A union type: a line from each superclass to the circle, and one to the category marked ⊂. */
+function unionLinks(union: ErUnionElement, byId: ReadonlyMap<string, ErElement>): ErLink[] {
+  const links: ErLink[] = [];
+  for (const id of union.superclassIds) {
+    const superclass = byId.get(id);
+    if (superclass) links.push(straightLink(union, superclass, "", false));
+  }
+  const category = byId.get(union.categoryId);
+  if (category) links.push(straightLink(union, category, "\u2282", false));
+  return links;
+}
+
 function isaLinks(isa: ErIsaElement, byId: ReadonlyMap<string, ErElement>): ErLink[] {
   const links: ErLink[] = [];
   const parent = byId.get(isa.parentId);
@@ -115,7 +132,7 @@ function isaLinks(isa: ErIsaElement, byId: ReadonlyMap<string, ErElement>): ErLi
         false,
       ),
       // With the d/o circle a total hierarchy's parent line is doubled instead of marked.
-      totalMark: isa.total && erNotation(isa.notation).isa === "arc",
+      totalMark: isa.total && erNotation(isa.notation).isa !== "circle",
       double: isa.total && erNotation(isa.notation).isa === "circle",
     });
   }
