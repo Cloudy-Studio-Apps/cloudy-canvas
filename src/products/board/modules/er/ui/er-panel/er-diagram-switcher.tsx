@@ -1,4 +1,4 @@
-import { Check, ChevronDown, Plus } from "lucide-react";
+import { Check, ChevronDown, List, Plus } from "lucide-react";
 
 import { Button } from "@shared/ui/components/ui/button";
 import {
@@ -13,10 +13,12 @@ import { useEngine } from "@canvas-ui";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { useErModel, useErDiagram, useErQuery } from "../model";
 import { ErDiagramName } from "./er-diagram-name";
+import { useShowAllDiagrams } from "./use-show-all-diagrams";
 
 /**
  * The shown diagram's name (editable) and a menu of the board's diagrams: picking one takes the
- * view to it and selects its first entity; "New diagram" starts one beside the board's content.
+ * view to it and selects its first entity; "All diagrams" goes back to the list of them (nothing
+ * shown or selected); "New diagram" starts one beside the board's content.
  */
 export function ErDiagramSwitcher() {
   const engine = useEngine();
@@ -24,6 +26,7 @@ export function ErDiagramSwitcher() {
   const diagram = useErDiagram();
   const setErDiagram = useBoardPanelStore((state) => state.setErDiagram);
   const diagrams = useErQuery((_, er) => er.diagrams());
+  const showAll = useShowAllDiagrams();
   const name = diagrams.find((d) => d.id === diagram.id)?.name ?? "";
 
   const show = (id: string) => {
@@ -42,6 +45,11 @@ export function ErDiagramSwitcher() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="max-w-64 min-w-52">
+          <DropdownMenuItem onSelect={showAll}>
+            <List />
+            All diagrams
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuLabel>Diagrams on this board</DropdownMenuLabel>
           {diagrams.map((item) => (
             <DropdownMenuItem key={item.id} onSelect={() => show(item.id)}>

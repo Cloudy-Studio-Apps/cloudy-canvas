@@ -1,4 +1,4 @@
-import { Table2 } from "lucide-react";
+import { ChevronLeft, Table2 } from "lucide-react";
 
 import { erNotation, erStandard } from "@board";
 import { Button } from "@shared/ui/components/ui/button";
@@ -8,11 +8,14 @@ import { FormSection } from "../forms/form-section";
 import { ER_SETTING_CHOICES } from "./diagram-setting-choices";
 import { ErSettingOption } from "./diagram-setting-option";
 import { ErCheckList } from "./check-list";
+import { ErDiagramList } from "./diagram-list";
+import { useShowAllDiagrams } from "../use-show-all-diagrams";
 import { ErStandardPicker } from "./standard-picker";
 import type { ErDiagramLook, ErSettingKey } from "./diagram-settings.types";
 
 /**
- * The shown diagram's settings, for when no shape is selected: the standard it follows (with its
+ * The shown diagram's settings, for when no shape is selected (the board's diagrams to pick from
+ * while none is shown, `ErDiagramList`): the standard it follows (with its
  * reference), the Check diagram's findings, then the attribute style and the notation (`Diagram
  * [ … ]` in the text), each choice drawn as it shows. A choice equal to the standard's drops the
  * override, so the text only names what differs.
@@ -32,6 +35,11 @@ export function ErDiagramSettings() {
   const standard = erStandard(notation);
   const preset = standard.settings;
   const issues = useErQuery((d) => d.check());
+  const showAll = useShowAllDiagrams();
+  const empty = useErQuery((d) => {
+    const { entities, relations } = d.shapes();
+    return entities.length + relations.length === 0;
+  });
 
   const current = (key: ErSettingKey): string => {
     if (key === "style") return style;
@@ -47,15 +55,18 @@ export function ErDiagramSettings() {
     diagram.setNotation({ [key]: next === preset[key] ? undefined : next });
   };
 
-  if (!diagram.id) {
-    return (
-      <p className="text-xs text-muted-foreground">
-        Select a shape of a diagram to see its settings.
-      </p>
-    );
-  }
+  // No diagram shown (none picked yet, or the shown one was deleted): the board's diagrams.
+  if (!diagram.id || empty) return <ErDiagramList />;
   return (
     <div className="space-y-3">
+      <button
+        type="button"
+        className="-ml-1 flex items-center gap-1 rounded-md px-1 py-0.5 text-xs text-muted-foreground outline-none hover:bg-hover hover:text-foreground focus-visible:bg-hover"
+        onClick={showAll}
+      >
+        <ChevronLeft className="size-3.5" />
+        All diagrams
+      </button>
       <p className="text-xs text-muted-foreground">
         The diagram's standard, its check and how it's drawn. Select a shape to edit it instead.
       </p>

@@ -24,6 +24,7 @@ export function ErModeToolbar() {
   const findings = useErQuery((d) => d.check().filter((issue) => issue.severity !== "info").length);
   const openPanel = (tab: "visual" | "text") => {
     setOpen(true);
+    useBoardPanelStore.getState().setErCollapsed(false);
     setTab(tab);
   };
 

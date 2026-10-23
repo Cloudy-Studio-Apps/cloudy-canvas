@@ -45,7 +45,7 @@ The `Diagram [ … ]` line (and the ER panel's Visual tab with nothing selected)
 Pick **ER diagrams** in the mode switcher beside the toolbar, double-click an ER shape (or press Enter on one), click the ER panel's **Edit diagram** button, or place a new diagram with the ER tool (E). Modes are an API (`CanvasMode` in the engine, `EditorModeEntry` in the editor), so other features (a database mode, plugins) can register their own.
 
 - The main toolbar becomes the ER toolbar: New diagram, Select diagram, Re-layout, Diagram text, Check and **Done**.
-- The palette and the ER panel stay open for the whole mode.
+- The palette and the ER panel stay open for the whole mode: the panel's × folds it to a small bar (the diagram's name and its count of findings) that a click opens again, and it goes when the mode ends.
 - Only ER shapes (of any diagram, so linking two still joins them) can be hovered, selected, marqueed or Ctrl+A'd. Everything else is dimmed, and other tools' shortcuts are held back.
 - Inside the mode, double-click renames a shape as before.
 - Esc steps back: the selected part, then the selection, then the select tool, then out of the mode. **Done** (or **Board** in the switcher) leaves at once.

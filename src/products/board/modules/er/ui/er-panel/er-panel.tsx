@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { BoxSelect, LayoutGrid, PencilRuler, X } from "lucide-react";
+import { BoxSelect, ChevronsRight, LayoutGrid, PencilRuler, X } from "lucide-react";
 
 import { ER_MODE_ID } from "@board";
 import { Button } from "@shared/ui/components/ui/button";
@@ -10,6 +10,7 @@ import { useErDiagram, useErSelection } from "../model";
 import { diagramShapeIds } from "./diagram-shape-ids";
 import { ErAddMenu } from "./er-add-menu";
 import { ErDiagramSwitcher } from "./er-diagram-switcher";
+import { ErPanelCollapsed } from "./er-panel-collapsed";
 import { ErStyleToggle } from "./er-style-toggle";
 import { ErTextEditor } from "./er-text-editor";
 import { ErDiagramSettings } from "./diagram-settings";
@@ -20,7 +21,8 @@ import { ErShapeForm } from "./forms";
  * the whole diagram as text (Text), plus the diagram switcher, Add, re-layout and the attribute
  * style, and Edit diagram (the ER mode). Opens when an ER shape is selected or the ER mode starts
  * and shows that shape's diagram; stays open until closed, a database table is picked or the ER
- * mode is left with no ER shape selected.
+ * mode is left with no ER shape selected. In the ER mode it can't be closed: its × folds it to a
+ * bar (`ErPanelCollapsed`) that a click opens again, and it goes when the mode does.
  */
 export function ErPanel() {
   const engine = useEngine();
@@ -34,6 +36,8 @@ export function ErPanel() {
   const inMode = useEngineState((state) => state.mode === ER_MODE_ID);
   const open = useBoardPanelStore((state) => state.erOpen);
   const setOpen = useBoardPanelStore((state) => state.setErOpen);
+  const collapsed = useBoardPanelStore((state) => state.erCollapsed);
+  const setCollapsed = useBoardPanelStore((state) => state.setErCollapsed);
   const tab = useBoardPanelStore((state) => state.erTab);
   const setTab = useBoardPanelStore((state) => state.setErTab);
 
@@ -43,9 +47,13 @@ export function ErPanel() {
   // Leaving the ER mode closes what it opened, unless an ER shape is still selected.
   const wasInMode = useRef(inMode);
   useEffect(() => {
-    if (wasInMode.current && !inMode && !erSelected) setOpen(false);
+    if (wasInMode.current && !inMode) {
+      // Outside the mode the panel is closed with ×, never folded.
+      setCollapsed(false);
+      if (!erSelected) setOpen(false);
+    }
     wasInMode.current = inMode;
-  }, [inMode, erSelected, setOpen]);
+  }, [inMode, erSelected, setOpen, setCollapsed]);
   useEffect(() => {
     if (dbSelected) setOpen(false);
   }, [dbSelected, setOpen]);
@@ -54,6 +62,7 @@ export function ErPanel() {
   }, [selectedDiagram, setDiagram]);
 
   if (!open || dbSelected || schemaOpen) return null;
+  if (inMode && collapsed) return <ErPanelCollapsed onExpand={() => setCollapsed(false)} />;
 
   return (
     <FloatingPanel
@@ -98,15 +107,29 @@ export function ErPanel() {
         >
           <LayoutGrid />
         </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-7"
-          aria-label="Close panel"
-          onClick={() => setOpen(false)}
-        >
-          <X />
-        </Button>
+        {inMode ? (
+          // In the ER mode the panel stays: × folds it to a bar instead of closing it.
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-7"
+            aria-label="Collapse panel"
+            title="Collapse the panel (it stays while the ER mode is on)"
+            onClick={() => setCollapsed(true)}
+          >
+            <ChevronsRight />
+          </Button>
+        ) : (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-7"
+            aria-label="Close panel"
+            onClick={() => setOpen(false)}
+          >
+            <X />
+          </Button>
+        )}
       </header>
       <Tabs
         value={tab}
