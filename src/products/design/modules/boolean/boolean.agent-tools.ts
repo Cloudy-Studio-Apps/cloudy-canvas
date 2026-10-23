@@ -17,7 +17,8 @@ export const booleanTools: DesignAgentTool[] = [
       "(all of them), subtract (the bottom one minus the others), intersect (where all overlap) " +
       "or exclude (where an odd number overlap). The layers become its operands (not drawn on " +
       "their own, still editable; lines add the area their strokes cover) and it's painted like " +
-      "the bottom one. Given booleans, changes their operation instead. Returns the boolean(s).",
+      "the bottom one. Booleans among them nest in the new one; given one boolean alone, changes " +
+      "its operation instead. Returns the boolean.",
     inputSchema: {
       type: "object",
       required: ["ids", "operation"],

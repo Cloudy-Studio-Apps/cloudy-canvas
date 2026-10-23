@@ -1,7 +1,7 @@
 import type { CanvasElement, ElementKinds } from "@canvas";
 
 import { DesignNodeKind } from "../node";
-import { withDescendants } from "./tree-members";
+import { childrenByParent, withDescendants } from "./tree-members";
 
 /**
  * What the design doesn't draw on its own (`CanvasProduct.undrawn`): everything inside a node
@@ -17,7 +17,8 @@ export function treeUndrawn(
     if (kind instanceof DesignNodeKind && !kind.drawsChildren) drawers.add(el.id);
   }
   if (drawers.size === 0) return drawers;
-  const inside = withDescendants(drawers, elements);
-  for (const id of drawers) inside.delete(id);
-  return inside;
+  // What they hold, at any depth: a boolean nested in another is one of its operands.
+  const children = childrenByParent(elements);
+  const held = new Set([...drawers].flatMap((id) => children.get(id) ?? []));
+  return withDescendants(held, elements);
 }

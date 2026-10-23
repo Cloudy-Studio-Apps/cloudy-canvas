@@ -14,7 +14,9 @@ import { BOOLEAN_COMMANDS, BOOLEAN_ICONS } from "./boolean-icons";
  */
 export function BooleanSection({ selection: { nodes } }: PropertySectionProps) {
   const engine = useDesignEngine();
-  const booleans = nodes.every((node) => node.type === BOOLEAN_TYPE);
+  // One boolean: its operation. Several layers (booleans too): combine them into a new one.
+  const [only] = nodes;
+  const booleans = nodes.length === 1 && only?.type === BOOLEAN_TYPE;
   const shortcut = (command: string) => {
     const keys = engine.keymap.label(command);
     return keys ? ` (${keys})` : "";

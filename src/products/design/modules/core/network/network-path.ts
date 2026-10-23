@@ -1,8 +1,19 @@
-import { isLine, type CubicCurve, type PathContour, type PathShape, type Point } from "@canvas";
+import {
+  curveOf,
+  flatness,
+  isLine,
+  type CubicCurve,
+  type PathContour,
+  type PathShape,
+  type Point,
+} from "@canvas";
 
 import { strokeChains } from "./network-chains";
 import { loopCurves } from "./network-curves";
 import type { VectorNetwork, VectorRegion, VectorSegment } from "./network.types";
+
+/** How far a piece's handles may stray from its chord and still count as straight, in units. */
+const STRAIGHT = 1e-6;
 
 /** Curves that follow each other as a contour. */
 export function curvesContour(curves: readonly CubicCurve[], closed: boolean): PathContour | null {
@@ -50,7 +61,9 @@ export function pathToNetwork(shape: PathShape): VectorNetwork {
       const last = i === contour.segments.length - 1;
       const start = vertices.length - 1;
       const end = contour.closed && last ? first : vertices.push(segment.to) - 1;
-      const curved = !isLine(from, segment);
+      // Straight pieces (control points on their chord, as booleans rebuild a box's edges) keep
+      // no handles.
+      const curved = !isLine(from, segment) && flatness(curveOf(from, segment)) > STRAIGHT;
       loop.push(segments.length);
       segments.push({
         start,
