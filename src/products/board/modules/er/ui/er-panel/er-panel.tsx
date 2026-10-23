@@ -12,6 +12,7 @@ import { ErAddMenu } from "./er-add-menu";
 import { ErDiagramSwitcher } from "./er-diagram-switcher";
 import { ErStyleToggle } from "./er-style-toggle";
 import { ErTextEditor } from "./er-text-editor";
+import { ErDiagramSettings } from "./diagram-settings";
 import { ErShapeForm } from "./forms";
 
 /**
@@ -101,21 +102,22 @@ export function ErPanel() {
         </Button>
       </header>
       <Tabs
-        value={selectedId ? tab : "text"}
+        value={tab}
         onValueChange={(value) => setTab(value === "text" ? "text" : "visual")}
         className="-mx-3 min-h-0 flex-1 overflow-y-auto px-3"
       >
         <TabsList className="w-full">
-          <TabsTrigger value="visual" disabled={!selectedId}>
-            Visual
-          </TabsTrigger>
+          <TabsTrigger value="visual">Visual</TabsTrigger>
           <TabsTrigger value="text">Text</TabsTrigger>
         </TabsList>
-        <TabsContent value="visual">{selectedId && <ErShapeForm id={selectedId} />}</TabsContent>
+        <TabsContent value="visual">
+          {selectedId ? <ErShapeForm id={selectedId} /> : <ErDiagramSettings />}
+        </TabsContent>
         <TabsContent value="text" className="flex min-h-0 flex-col">
           {!selectedId && (
             <p className="mb-2 text-xs text-muted-foreground">
-              Select a shape on the board to edit it with a form, or use Add.
+              Select a shape on the board to edit it with a form, or use Add. The Visual tab shows
+              the diagram's settings.
             </p>
           )}
           <ErTextEditor />

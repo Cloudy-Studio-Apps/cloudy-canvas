@@ -1,6 +1,7 @@
 import type { Point } from "@canvas";
 
 import type { ErElement } from "./er.types";
+import { erNotation } from "./er-notation";
 import { LOLLIPOP_SIZE } from "./er-size";
 
 /** The point lines aim at: the middle of the shape, a lollipop's circle, a triangle's centroid. */
@@ -8,7 +9,9 @@ export function shapeCenter(shape: ErElement): Point {
   if (shape.type === "er-attribute" && shape.look === "lollipop") {
     return { x: shape.x + shape.w / 2, y: shape.y + shape.h - LOLLIPOP_SIZE / 2 };
   }
-  if (shape.type === "er-isa") return { x: shape.x + shape.w / 2, y: shape.y + shape.h / 3 };
+  if (shape.type === "er-isa" && !isaCircle(shape)) {
+    return { x: shape.x + shape.w / 2, y: shape.y + shape.h / 3 };
+  }
   return { x: shape.x + shape.w / 2, y: shape.y + shape.h / 2 };
 }
 
@@ -27,6 +30,8 @@ export function outlinePoint(shape: ErElement, toward: Point): Point {
     t = 1 / Math.hypot(dx / hw, dy / hh);
   } else if (shape.type === "er-relation") {
     t = 1 / (Math.abs(dx) / hw + Math.abs(dy) / hh);
+  } else if (shape.type === "er-isa" && isaCircle(shape)) {
+    t = Math.min(hw, hh) / Math.hypot(dx, dy);
   } else if (shape.type === "er-isa") {
     t = rayToPolygon(c, dx, dy, trianglePoints(shape));
   } else {
@@ -58,4 +63,9 @@ function rayToPolygon(origin: Point, dx: number, dy: number, polygon: readonly P
     if (t > 0 && u >= 0 && u <= 1) best = Math.min(best, t);
   });
   return Number.isFinite(best) ? best : 0;
+}
+
+/** A hierarchy drawn as the d/o circle (its notation's `isa: circle`). */
+function isaCircle(shape: ErElement): boolean {
+  return erNotation(shape.notation).isa === "circle";
 }

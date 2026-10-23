@@ -1,5 +1,6 @@
 import type { DbmlError } from "../../../db/schema/dbml";
 import type { ErAttributeKey, ErAttributeLook } from "../../attribute/attribute.types";
+import type { ErNotation } from "../../base/er.types";
 import type { ErConstraintRule } from "../../constraint/constraint.types";
 
 export interface ParsedErAttribute {
@@ -85,6 +86,8 @@ export interface ParsedEr {
   name: string | null;
   /** From a `Diagram [style: …]` line, or null when the text doesn't say. */
   style: ErAttributeLook | null;
+  /** From the `Diagram` line's notation settings; empty (the `chen` preset) when it has none. */
+  notation: ErNotation;
   entities: ParsedErEntity[];
   relations: ParsedErRelation[];
   isas: ParsedErIsa[];

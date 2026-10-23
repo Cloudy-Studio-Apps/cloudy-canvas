@@ -8,6 +8,7 @@ import {
   serializeRelation,
 } from "./serialize-blocks";
 import type { ErShapes, ErText, TextRange } from "./serializer.types";
+import { notationSettings } from "./notation-settings";
 
 /**
  * The ER model as text: the diagram line (its name and the lollipop look), then entities,
@@ -56,14 +57,22 @@ export function serializeErBlocks(shapes: ErShapes): ErText {
   return { text, ranges };
 }
 
-/** `Diagram Name [style: lollipop]`, or null for an unnamed diagram in the Chen look. */
+/**
+ * `Diagram Name [style: lollipop, notation: …]`, or null for an unnamed diagram in the Chen look
+ * and the default notation.
+ */
 function diagramLine({ entities, relations, attributes }: ErShapes): string | null {
-  const name = [...entities, ...relations, ...attributes].find((s) => s.diagramName)?.diagramName;
+  const shapes = [...entities, ...relations, ...attributes];
+  const name = shapes.find((s) => s.diagramName)?.diagramName;
   const lollipop = attributes.length > 0 && attributes.every((a) => a.look === "lollipop");
-  if (!name && !lollipop) return null;
+  const settings = [
+    ...(lollipop ? ["style: lollipop"] : []),
+    ...notationSettings(shapes[0]?.notation ?? {}),
+  ];
+  if (!name && settings.length === 0) return null;
   return [
     "Diagram",
     ...(name ? [formatName(name)] : []),
-    ...(lollipop ? ["[style: lollipop]"] : []),
+    ...(settings.length ? [`[${settings.join(", ")}]`] : []),
   ].join(" ");
 }

@@ -67,6 +67,7 @@ export function placedErShapes({ entities, relations, attributes, isas }: ErShap
 
 /** The diagram fields to write on a diagram's shapes: its id and current name. */
 export function diagramScope(shapes: ErShapes, diagram: string): ErDiagramFields {
-  const diagramName = allErShapes(shapes).find((s) => s.diagramName)?.diagramName ?? "";
-  return { diagram, diagramName };
+  const all = allErShapes(shapes);
+  const diagramName = all.find((s) => s.diagramName)?.diagramName ?? "";
+  return { diagram, diagramName, notation: all[0]?.notation ?? {} };
 }

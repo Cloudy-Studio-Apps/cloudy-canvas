@@ -2,6 +2,7 @@ import { ElementKind, type ElementDescription } from "@canvas";
 
 import type { BoardToolOptions } from "../../../board-options.types";
 import { ER_DEFAULTS } from "./er.defaults";
+import { LEGACY_ER_NOTATION } from "./er-notation";
 import { NO_ER_DIAGRAM } from "./no-er-diagram";
 import type { ErElement } from "./er.types";
 
@@ -16,9 +17,14 @@ export abstract class ErKind<E extends ErElement> extends ElementKind<E, BoardTo
   override readonly creatable = false;
   override readonly patchableFields: ReadonlySet<string> = new Set(["x", "y"]);
 
-  /** Elements saved before boards held several diagrams have none (see `migrateErDiagrams`). */
+  /**
+   * Elements saved before boards held several diagrams have none (see `migrateErDiagrams`), and
+   * ones saved before notations have none either.
+   */
   override fillDefaults(el: E): E {
-    return el.diagram === undefined ? { ...el, ...NO_ER_DIAGRAM } : el;
+    if (el.diagram === undefined) return { ...el, ...NO_ER_DIAGRAM, notation: LEGACY_ER_NOTATION };
+    // Diagrams from before notations keep reading the ratio label the first way.
+    return el.notation === undefined ? { ...el, notation: LEGACY_ER_NOTATION } : el;
   }
 
   override describe(el: E): ElementDescription {

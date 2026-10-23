@@ -19,14 +19,13 @@ Where the board's Chen ER diagrams (modelo entidad-relación, extended model) st
 
 These exist but are incomplete or have a known flaw.
 
-| Item                                    | What's missing                                                                                                                                                                                                                                                              |
-| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Ratio label on the diamond**          | It's computed from each side's own max, so `Cliente (0,n)`, `Pedido (1,1)` reads `N:1`, the opposite of the crow's feet and of the "One to many" choice. Fix: read it across, like the crow's feet (`relation/cardinality-ratio.ts`). Changes the label on existing boards. |
-| **Weak entities**                       | Drawn, but nothing checks that they have an identifying relation, total `(1,1)` participation in it, and a partial key.                                                                                                                                                     |
-| **Identifying vs existence dependency** | `[id]` draws the "I" mark; there's no existence ("E") mark. Needs the exact notation of the course's textbook (de Miguel & Piattini?) before drawing it.                                                                                                                    |
-| **Three-way and larger relations**      | Fully drawn, but no crow's feet (none exist in the notation) and no way to turn one into an associative entity.                                                                                                                                                             |
-| **Removing a participant in the form**  | Doesn't split a diagram it disconnects (canvas deletions do).                                                                                                                                                                                                               |
-| **Join attribute on aggregations**      | Parsed and stored, but missing attributes are only auto-created for entities.                                                                                                                                                                                               |
+| Item                                    | What's missing                                                                                                                                           |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Weak entities**                       | Drawn, but nothing checks that they have an identifying relation, total `(1,1)` participation in it, and a partial key.                                  |
+| **Identifying vs existence dependency** | `[id]` draws the "I" mark; there's no existence ("E") mark. Needs the exact notation of the course's textbook (de Miguel & Piattini?) before drawing it. |
+| **Three-way and larger relations**      | Fully drawn, but no crow's feet (none exist in the notation) and no way to turn one into an associative entity.                                          |
+| **Removing a participant in the form**  | Doesn't split a diagram it disconnects (canvas deletions do).                                                                                            |
+| **Join attribute on aggregations**      | Parsed and stored, but missing attributes are only auto-created for entities.                                                                            |
 
 ## To implement
 
@@ -42,16 +41,15 @@ Ordered by value. Each is a separate piece of work.
    - hierarchy → one table per entity with the parent's key, or one table with a discriminator (ask);
    - aggregation → its relation's table.
      One undo step; re-running updates the same tables by name.
-3. **Fix the ratio label** (see above), behind a confirmation in the release notes.
-4. **Associative entity.** A rectangle with a diamond inside: a relation that is also an entity (takes part in other relations, has a key). Plus **Convert to entity** on a relation: replaces it with an associative entity and one two-way relation per participant, which then get crow's feet.
-5. **Notation choices per diagram** (same data, different drawing), in the `Diagram [ … ]` line and the panel:
-   - `participation: lines`: double line where min ≥ 1 (Elmasri/Navathe, Silberschatz), with or without the `(min,max)` label;
-   - `cardinality: ratio`: Chen's original 1/N/M labels only;
-   - `isa: circle`: the d/o circle of English textbooks instead of the arc;
-   - `crowfeet: off`.
-6. **Alternate keys.** `[ak]` for candidate keys that aren't the primary key; hollow lollipop, plain underline variant.
-7. **Union types (categories).** `Union Propietario { Persona, Banco, Empresa }`, a "U" circle. Elmasri advises against them; low priority.
-8. **Existence dependency mark.** `[existence]`, an "E" next to the "I", once the notation is confirmed.
+3. **Associative entity.** A rectangle with a diamond inside: a relation that is also an entity (takes part in other relations, has a key). Plus **Convert to entity** on a relation: replaces it with an associative entity and one two-way relation per participant, which then get crow's feet.
+4. **Notation presets** for the textbooks: `notation: piattini`, `elmasri`, `silberschatz`, each a set of the settings below, once the course's textbook is known. The settings themselves are done (see below); still missing among them: `cardinality: ratio` (Chen's original 1/N/M labels only) and `dependency: marks` (needs item 7).
+5. **Alternate keys.** `[ak]` for candidate keys that aren't the primary key; hollow lollipop, plain underline variant.
+6. **Union types (categories).** `Union Propietario { Persona, Banco, Empresa }`, a "U" circle. Elmasri advises against them; low priority.
+7. **Existence dependency mark.** `[existence]`, an "E" next to the "I", once the notation is confirmed.
+
+## Notation (done)
+
+The `Diagram [ … ]` line (and the ER panel's Visual tab with nothing selected, as pictures) says how a diagram is drawn (S27 in `er-language.md`): `notation: chen`, `ratio: across|own`, `participation: numbers|lines|both`, `isa: arc|circle`, `crowfeet: on|off`. New diagrams read the diamond's ratio across, like the crow's feet; diagrams saved before keep `ratio: own`, so no board changes under its owner.
 
 ## ER mode (done)
 
@@ -71,8 +69,7 @@ Still to do for the mode:
 
 ## Open questions
 
-- Which textbook's notation is the reference (de Miguel & Piattini, Elmasri & Navathe, Silberschatz)? It decides items 5 and 8.
-- Should the ratio label fix apply to existing boards, or only to new diagrams?
+- Which textbook's notation is the reference (de Miguel & Piattini, Elmasri & Navathe, Silberschatz)? It decides the presets (item 4) and the existence mark (item 7).
 - In ER to tables, which hierarchy strategy is the default?
 
 ## Sources

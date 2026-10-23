@@ -15,6 +15,31 @@ import type { ErRelationElement } from "../relation/relation.types";
 export interface ErDiagramFields {
   diagram: string;
   diagramName: string;
+  /** How the diagram is drawn (the `Diagram [notation: …]` line); repeated like the name. */
+  notation: ErNotation;
+}
+
+/** Named sets of notation settings; `chen` is the default. */
+export type ErNotationPreset = "chen";
+
+/** Every drawing choice a diagram's notation makes. */
+export interface ErNotationSettings {
+  /**
+   * How the diamond's `1:N` is read: `across` from the other side's maximum, like the crow's feet
+   * (two-way relations only), or `own` from each side's own (the board's first reading).
+   */
+  ratio: "own" | "across";
+  /** `(min,max)` labels, a double line where the minimum is at least 1, or both. */
+  participation: "numbers" | "lines" | "both";
+  /** A hierarchy as a triangle with an arc when exclusive, or a circle with "d" or "o". */
+  isa: "arc" | "circle";
+  /** Crow's-foot marks on two-way relations. */
+  crowFeet: boolean;
+}
+
+/** A diagram's notation as written: a preset (default `chen`) and the settings it overrides. */
+export interface ErNotation extends Partial<ErNotationSettings> {
+  preset?: ErNotationPreset;
 }
 
 /** What every ER element has: its place on the board and its diagram. */

@@ -233,6 +233,24 @@ Diagram Ventas [style: lollipop]
 
 When a shape is selected, the Text tab scrolls to its block and highlights it (an attribute highlights its owner's block).
 
+**S27. Notation.** The same line says how the diagram is drawn. The model doesn't change, only its look. With no shape selected, the panel's **Visual** tab shows the same settings as pictures to pick from:
+
+```
+Diagram Ventas [notation: chen, ratio: across, participation: both, isa: circle, crowfeet: off]
+```
+
+| Setting         | Values                               | What it draws                                                                                                                                  |
+| --------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `notation`      | `chen` (the default)                 | The preset the other settings start from.                                                                                                      |
+| `ratio`         | `across` (default), `own`            | The diamond's `1:N`: read across like the crow's feet (`Cliente (0,n)`, `Pedido (1,1)` is `1:N`), or from each side's own maximum (`N:1`).     |
+| `participation` | `numbers` (default), `lines`, `both` | `(min,max)` labels, a double line where the minimum is at least 1, or both.                                                                    |
+| `isa`           | `arc` (default), `circle`            | Hierarchies as the triangle with an arc, or a circle with **d** (exclusive) or **o** (overlapping); a total one's parent line is then doubled. |
+| `crowfeet`      | `on` (default), `off`                | Crow's-foot marks on two-way relations.                                                                                                        |
+
+- Only what differs from the preset is written back.
+- Diagrams made before notations existed keep their first look: the text shows `ratio: own` on them. Change it to `across` (or pick it in the menu) to read the diamond like the crow's feet.
+- Joining two diagrams keeps the notation of the one you dragged from.
+
 ---
 
 ## Part F: Full examples

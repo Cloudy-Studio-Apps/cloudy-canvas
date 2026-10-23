@@ -1,5 +1,5 @@
 import type { Graphics } from "pixi.js";
-import type { CanvasElement, CanvasLinks, LinkView } from "@canvas";
+import type { CanvasElement, CanvasLinks, LinkView, Point } from "@canvas";
 
 import { ER_FILL_COLOR, INK_COLOR, MUTED_INK_COLOR } from "../../../palette";
 import { drawArrowHead } from "../base/arrow-head";
@@ -36,11 +36,16 @@ export class ErLinks implements CanvasLinks {
 }
 
 function drawLink(g: Graphics, link: ErLink, color: number | string): void {
-  const [first, ...rest] = link.points;
+  const [first] = link.points;
   if (!first) return;
-  g.moveTo(first.x, first.y);
-  for (const p of rest) g.lineTo(p.x, p.y);
-  g.stroke({ color, width: ER_DEFAULTS.strokeWidth });
+  const gap = link.double ? ER_DEFAULTS.doubleGap / 2 : 0;
+  for (const offset of link.double ? [gap, -gap] : [0]) {
+    const [start, ...rest] = offsetPolyline(link.points, offset);
+    if (!start) continue;
+    g.moveTo(start.x, start.y);
+    for (const p of rest) g.lineTo(p.x, p.y);
+    g.stroke({ color, width: ER_DEFAULTS.strokeWidth });
+  }
   const end = link.points[link.points.length - 1]!;
   const before = link.points[link.points.length - 2] ?? first;
   if (link.arrow) {
@@ -60,4 +65,23 @@ function drawLink(g: Graphics, link: ErLink, color: number | string): void {
       .fill({ color: ER_FILL_COLOR })
       .stroke({ color, width: ER_DEFAULTS.strokeWidth });
   }
+}
+
+/** The polyline moved `offset` to its left, segment by segment (corners meet halfway). */
+function offsetPolyline(points: readonly Point[], offset: number): Point[] {
+  if (offset === 0 || points.length < 2) return [...points];
+  const normals = points.slice(1).map((p, i) => {
+    const a = points[i]!;
+    const len = Math.hypot(p.x - a.x, p.y - a.y) || 1;
+    return { x: -(p.y - a.y) / len, y: (p.x - a.x) / len };
+  });
+  return points.map((p, i) => {
+    const before = normals[i - 1];
+    const after = normals[i];
+    const n =
+      before && after
+        ? { x: (before.x + after.x) / 2, y: (before.y + after.y) / 2 }
+        : (before ?? after)!;
+    return { x: p.x + n.x * offset, y: p.y + n.y * offset };
+  });
 }

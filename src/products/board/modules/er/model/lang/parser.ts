@@ -4,6 +4,7 @@ import { parseAggregate } from "./parse-aggregate";
 import { parseConstraint } from "./parse-constraint";
 import { parseEntity } from "./parse-entity";
 import { parseIsa } from "./parse-isa";
+import { isNotationSetting, readNotationSetting } from "./notation-settings";
 import { parseRelation } from "./parse-relation";
 import type {
   ErParseResult,
@@ -28,6 +29,7 @@ function parseModel(cursor: TokenCursor): ParsedEr {
   const model: ParsedEr = {
     name: null,
     style: null,
+    notation: {},
     entities: [],
     relations: [],
     isas: [],
@@ -61,7 +63,10 @@ function withoutIsa(entity: RawEntity): ParsedErEntity {
   return { name, weak, color, attributes, line };
 }
 
-/** `Diagram [name] [style: chen|lollipop]`. */
+/**
+ * `Diagram [name] [style: chen|lollipop, notation: chen, ratio: own|across, participation:
+ * numbers|lines|both, isa: arc|circle, crowfeet: on|off]`.
+ */
 function parseDiagram(cursor: TokenCursor, model: ParsedEr): void {
   cursor.next();
   const named = cursor.peek();
@@ -69,6 +74,13 @@ function parseDiagram(cursor: TokenCursor, model: ParsedEr): void {
   if (!cursor.isSymbol("[")) return;
   const at = cursor.peek();
   parseSettings(cursor, (key, hasValue) => {
+    if (hasValue && isNotationSetting(key)) {
+      const value = cursor.expectName(`a ${key}`).value.toLowerCase();
+      const setting = readNotationSetting(key, value);
+      if (setting) model.notation = { ...model.notation, ...setting };
+      else model.warnings.push(unknownSetting(`${key}: ${value}`, at));
+      return true;
+    }
     if (key !== "style" || !hasValue) {
       model.warnings.push(unknownSetting(key, at));
       return false;

@@ -5,6 +5,7 @@ import type { ErIsaElement } from "../isa/isa.types";
 import type { ErRelationElement } from "../relation/relation.types";
 import type { ErElement } from "../base/er.types";
 import { outlinePoint, shapeCenter } from "../base/er-outline";
+import { erNotation } from "../base/er-notation";
 import type { CrowFoot, ErLink } from "./er-links.types";
 import { loopPoints } from "./loop-route";
 
@@ -35,6 +36,7 @@ function participantLinks(
   relation: ErRelationElement,
   byId: ReadonlyMap<string, ErElement>,
 ): ErLink[] {
+  const notation = erNotation(relation.notation);
   const counts = new Map<string, number>();
   for (const p of relation.participants) counts.set(p.entityId, (counts.get(p.entityId) ?? 0) + 1);
   const seen = new Map<string, number>();
@@ -43,20 +45,29 @@ function participantLinks(
     const entity = byId.get(participant.entityId);
     if (!entity) return [];
     const via = participant.via ? byId.get(participant.via) : undefined;
-    const card = cardinalityLabel(participant.min, participant.max);
     const viaName = via && "name" in via ? via.name : "";
+    const card =
+      notation.participation === "lines" ? "" : cardinalityLabel(participant.min, participant.max);
     const label = viaName ? (card ? `${card} · ${viaName}` : viaName) : card;
     const n = seen.get(entity.id) ?? 0;
     seen.set(entity.id, n + 1);
+    const other = binary && notation.crowFeet ? relation.participants[1 - i] : undefined;
+    const marks = {
+      crowFoot: other ? crowFootOf(other.min, other.max) : null,
+      double: notation.participation !== "numbers" && isMandatory(participant.min),
+    };
     // An entity related to itself gets loops that leave from different sides.
-    const other = binary ? relation.participants[1 - i] : undefined;
-    const crowFoot = other ? crowFootOf(other.min, other.max) : null;
     if ((counts.get(entity.id) ?? 1) > 1) {
       const points = loopPoints(relation, entity, n);
-      return [{ ...polyLink(relation.id, entity.id, points, label, participant.arrow), crowFoot }];
+      return [{ ...polyLink(relation.id, entity.id, points, label, participant.arrow), ...marks }];
     }
-    return [{ ...straightLink(relation, entity, label, participant.arrow), crowFoot }];
+    return [{ ...straightLink(relation, entity, label, participant.arrow), ...marks }];
   });
+}
+
+/** A minimum of at least one: total participation. */
+function isMandatory(min: string): boolean {
+  return min !== "" && min !== "0";
 }
 
 /** The marks for the other participant's `(min,max)`; `null` when it has no maximum. */
@@ -82,7 +93,9 @@ function isaLinks(isa: ErIsaElement, byId: ReadonlyMap<string, ErElement>): ErLi
         cardinalityLabel(isa.parentMin, isa.parentMax),
         false,
       ),
-      totalMark: isa.total,
+      // With the d/o circle a total hierarchy's parent line is doubled instead of marked.
+      totalMark: isa.total && erNotation(isa.notation).isa === "arc",
+      double: isa.total && erNotation(isa.notation).isa === "circle",
     });
   }
   for (const child of isa.children) {
@@ -116,6 +129,7 @@ function polyLink(
     labelAt: label ? labelPoint(before, end) : null,
     arrow,
     totalMark: false,
+    double: false,
     crowFoot: null,
   };
 }

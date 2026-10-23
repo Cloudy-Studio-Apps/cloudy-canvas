@@ -15,6 +15,8 @@ export interface ErLink {
   arrow: boolean;
   /** A small circle halfway along (a total hierarchy). */
   totalMark: boolean;
+  /** Drawn as a double line (total participation, in a notation that shows it with lines). */
+  double: boolean;
   /** Crow's-foot marks at the `to` end (a binary relation's line), or `null`. */
   crowFoot: CrowFoot | null;
 }

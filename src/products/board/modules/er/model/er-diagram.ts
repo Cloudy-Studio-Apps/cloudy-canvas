@@ -1,6 +1,6 @@
 import type { CanvasDocument, ElementPatch } from "@canvas";
 
-import type { ErElementBase } from "../base/er.types";
+import type { ErElementBase, ErNotation } from "../base/er.types";
 import { addMissingEntities } from "./add-missing-entities";
 import { applyErPlan } from "./apply-er-plan";
 import { blockRange } from "./block-range";
@@ -50,7 +50,11 @@ export class ErDiagram {
     const model = options.createMissing ? addMissingEntities(parsed.model) : parsed.model;
     const result = reconcileEr(model, this.shapes());
     if (!result.ok) return result;
-    applyErPlan(this.doc, result.plan, { diagram: this.id, diagramName: model.name ?? "" });
+    applyErPlan(this.doc, result.plan, {
+      diagram: this.id,
+      diagramName: model.name ?? "",
+      notation: model.notation,
+    });
     return { ok: true, warnings: model.warnings };
   };
 
@@ -62,6 +66,19 @@ export class ErDiagram {
     this.doc.checkpoint();
     const patch: ElementPatch<ErElementBase> = { diagramName };
     this.doc.updateMany(new Map(shapes.map((shape) => [shape.id, patch])));
+  };
+
+  /** Changes how the diagram is drawn (`undefined` drops a setting back to the preset's). One undo step. */
+  setNotation = (patch: ErNotation): void => {
+    const shapes = allErShapes(this.shapes());
+    const current = shapes[0]?.notation ?? {};
+    const notation: ErNotation = Object.fromEntries(
+      Object.entries({ ...current, ...patch }).filter(([, value]) => value !== undefined),
+    );
+    if (JSON.stringify(notation) === JSON.stringify(current)) return;
+    this.doc.checkpoint();
+    const update: ElementPatch<ErElementBase> = { notation };
+    this.doc.updateMany(new Map(shapes.map((shape) => [shape.id, update])));
   };
 
   /** Lays the diagram out again, keeping its top-left corner where it is. One undo step. */

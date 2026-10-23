@@ -32,12 +32,24 @@ const SETTINGS: Completion[] = [
   snippetCompletion("by: ${}", { label: "by", type: "constant", detail: "discriminator" }),
   snippetCompletion("color: #${}", { label: "color", type: "constant" }),
   snippetCompletion("style: ${}", { label: "style", type: "constant" }),
+  ...["notation", "ratio", "participation", "isa", "crowfeet"].map((label) =>
+    snippetCompletion(`${label}: \${}`, { label, type: "constant", detail: "notation" }),
+  ),
 ];
 
 /** A participant's name right before a `.`. */
 const DOTTED = /("[^"\n]*"|[\p{L}_][\p{L}\p{N}_]*)\.$/u;
 
 const STYLES: Completion[] = ["chen", "lollipop"].map((label) => ({ label, type: "constant" }));
+
+/** The values of the `Diagram` line's notation settings. */
+const NOTATION_VALUES: Record<string, readonly string[]> = {
+  notation: ["chen"],
+  ratio: ["own", "across"],
+  participation: ["numbers", "lines", "both"],
+  isa: ["arc", "circle"],
+  crowfeet: ["on", "off"],
+};
 
 /**
  * Completions for the ER text: block keywords, settings, and the diagram's entities, relations and
@@ -60,6 +72,9 @@ function optionsAt(at: SourceContext, context: CompletionContext): Completion[] 
   if (at.inSettings) {
     const current = at.settings.split(",").at(-1) ?? "";
     if (/^\s*style\s*:/i.test(current)) return STYLES;
+    const key = /^\s*(\w+)\s*:/.exec(current)?.[1]?.toLowerCase();
+    const values = key ? NOTATION_VALUES[key] : undefined;
+    if (values) return values.map((label) => ({ label, type: "constant" }));
     return current.includes(":") ? null : SETTINGS;
   }
   if (block === undefined) {
