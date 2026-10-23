@@ -3,6 +3,7 @@ import { normalizeAngle, type ElementBuildContext, type ElementPatch } from "@ca
 import type { DesignNodeKind } from "./design-node.kind";
 import type { DesignNode } from "./design-node.types";
 import { checkParent } from "./node-parent";
+import { layerBlendMode } from "./blend-mode-args";
 import { maskType } from "./mask-args";
 import { fraction } from "./number-args";
 import { readPaints } from "./paint-args";
@@ -11,6 +12,7 @@ import { readNodeEffects } from "./effect-args";
 
 /**
  * An agent's patch of the fields every node has, checked and normalized: `opacity` (0–1),
+ * `blendMode`,
  * `strokeWeight`, full `fills`/`strokes` paint arrays, the stroke settings (`readStrokeFields`) (as the node's kind allows), `parentId`
  * (a container it may go into) and `rotation` (the angle to turn to round its top-left corner,
  * which a kind may hold in its geometry, as a line does) and `maskType` (alpha, vector or
@@ -24,6 +26,7 @@ export function checkNodePatch<E extends DesignNode>(
 ): ElementPatch<E> {
   const next: Record<string, unknown> = { ...patch };
   if ("opacity" in patch) next.opacity = fraction(patch.opacity, "opacity");
+  if ("blendMode" in patch) next.blendMode = layerBlendMode(patch.blendMode);
   if ("strokeWeight" in patch && !((patch.strokeWeight ?? -1) >= 0)) {
     throw new Error('"strokeWeight" must be a number of at least 0.');
   }

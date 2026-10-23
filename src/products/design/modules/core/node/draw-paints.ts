@@ -2,6 +2,7 @@ import {
   fillPath,
   pathBounds,
   strokePath,
+  type BlendMode,
   type ElementView,
   type PaintLayer,
   type Rect,
@@ -18,7 +19,7 @@ import type { Paint } from "./paint.types";
  * local coordinates; holes stay open): solid paints are filled or stroked, gradients are laid on
  * the node's box, image paints are clipped to what they cover. Paints next to each other share
  * one drawing (fewer objects for the GPU). The node's opacity and visibility apply to all of
- * them. `stroke` is how its strokes are drawn (`DesignNodeKind.strokeOf`); without it they follow
+ * them, and each paint's blend mode to its drawing. `stroke` is how its strokes are drawn (`DesignNodeKind.strokeOf`); without it they follow
  * the geometry's stroke path (or the hand-traced outline of plugins' kinds) centered.
  */
 export function drawPaints(
@@ -55,6 +56,7 @@ function addPaints(
     run = [];
     layers.push({
       kind: "shape",
+      blendMode: blendOf(painted[0]),
       draw: (g, tools) => {
         for (const paint of painted) {
           trace(
@@ -70,6 +72,8 @@ function addPaints(
   for (const paint of paints) {
     if (!paint.visible) continue;
     if (paint.type !== "image") {
+      // A paint that blends differently from the run starts a drawing of its own.
+      if (run[0] && blendOf(run[0]) !== blendOf(paint)) flush();
       run.push(paint);
       continue;
     }
@@ -81,9 +85,14 @@ function addPaints(
       placement: imagePlacement(paint),
       alpha: paint.opacity,
       mask: (g) => trace(g, { color: 0xffffff }),
+      blendMode: blendOf(paint),
     });
   }
   flush();
+}
+
+function blendOf(paint: Paint | undefined): BlendMode {
+  return paint?.blendMode ?? "normal";
 }
 
 function fillTrace(shape: NodeGeometry | PaintOutline): Trace {

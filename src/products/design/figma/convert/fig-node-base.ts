@@ -3,14 +3,15 @@ import type { FigImportContext, FigNode } from "@canvas/figma";
 
 import { createNodeBase, type DesignNode, type MaskType } from "../../modules";
 import { convertPaints } from "./fig-paints";
+import { figLayerBlendMode } from "./fig-blend-mode";
 import { figEffects } from "./fig-effects";
 import { figStroke } from "./fig-stroke";
 import type { NodePaints, NodePlacement } from "./convert-node.types";
 
 /**
  * The design node fields of a Figma node: its name, place in the tree and page, visibility,
- * lock, opacity, fills and strokes (`fills` replaces its fills, e.g. a stroke outline's), its
- * effects and whether it's a mask.
+ * lock, opacity, blend mode, fills and strokes (`fills` replaces its fills, e.g. a stroke
+ * outline's), its effects and whether it's a mask.
  */
 export function figNodeBase<K extends string>(
   type: K,
@@ -31,6 +32,7 @@ export function figNodeBase<K extends string>(
     pageId: placement.pageId,
     visible: node.visible ?? true,
     opacity: node.opacity ?? 1,
+    blendMode: figLayerBlendMode(node.blendMode, ctx),
     strokes: paints.strokes ?? convertPaints(node.strokePaints, ctx, false),
     strokeWeight: node.strokeWeight ?? 0,
     ...figStroke(node),
@@ -40,15 +42,8 @@ export function figNodeBase<K extends string>(
   };
 }
 
-/** Counts what the node has that isn't brought over yet: blend modes and auto layout. */
+/** Counts what the node has that isn't brought over yet: auto layout. */
 function warnUnsupported(node: FigNode, ctx: FigImportContext): void {
-  if (node.blendMode && node.blendMode !== "NORMAL" && node.blendMode !== "PASS_THROUGH") {
-    ctx.warnings.add("layers' blend modes were left out");
-  }
-  const paints = [...(node.fillPaints ?? []), ...(node.strokePaints ?? [])];
-  if (paints.some((paint) => paint.blendMode && paint.blendMode !== "NORMAL")) {
-    ctx.warnings.add("paints' blend modes were left out");
-  }
   if (node.stackMode && node.stackMode !== "NONE") {
     ctx.warnings.add("auto layout frames kept their layout as fixed positions");
   }

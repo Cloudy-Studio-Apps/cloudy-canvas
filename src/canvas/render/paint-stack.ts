@@ -4,6 +4,7 @@ import { fitTransform } from "../image";
 import { acquireGradient, gradientFillStyle, releaseGradient } from "./gradient-texture";
 import type { ImageCache } from "./image-cache";
 import { imageMatrix } from "./image-matrix";
+import { pixiBlendMode } from "./pixi-blend-mode";
 import type {
   ImagePaintLayer,
   PaintLayer,
@@ -126,6 +127,7 @@ export class PaintStack extends Container<ImageSlot | ShapeSlot> {
       }
       if (layer.kind === "image") (slot as ImageSlot).draw(layer);
       else (slot as ShapeSlot).drawLayer(layer);
+      slot.blendMode = pixiBlendMode(layer.blendMode);
     });
     for (const extra of this.children.slice(layers.length)) extra.destroy({ children: true });
   }

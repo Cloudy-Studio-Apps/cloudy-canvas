@@ -6,8 +6,12 @@ import {
   isGradientPaint,
   type GradientPaint,
   type ImagePaint,
+  withBlendMode,
+  type LayerBlendMode,
+  type Paint,
   type SolidPaint,
 } from "@design";
+import { BlendModeSelect } from "../panel";
 import { GradientEditor } from "./gradient-editor";
 import { ImageEditor } from "./image-editor";
 import type { PaintPickerProps, PaintTab } from "./paint-picker.types";
@@ -27,7 +31,8 @@ function isGradientTab(tab: PaintTab["id"]): tab is GradientTab {
 /**
  * Edits one fill or stroke, like Figma's paint picker: a tab per kind of paint (solid, the four
  * gradients and image), then that paint's editor. Switching tabs brings back the paint last used
- * there; a new gradient starts from the paint's color, as Figma's does.
+ * there; a new gradient starts from the paint's color, as Figma's does. The header's menu sets the
+ * paint's blend mode, which stays when the tab changes.
  */
 export function PaintPicker({ paint, onChange, onClose, allowImage, size }: PaintPickerProps) {
   const [tab, setTab] = useState<PaintTab["id"]>(paint.type);
@@ -40,20 +45,34 @@ export function PaintPicker({ paint, onChange, onClose, allowImage, size }: Pain
     paint.type === "image" ? paint : null,
   );
 
+  /** A paint of another tab, blending as this one does. */
+  const blended = <P extends Paint>(next: P): P => withBlendMode(next, paint.blendMode);
+
   const pickTab = (next: PaintTab["id"]) => {
     setTab(next);
     if (next === paint.type) return;
-    if (next === "solid") onChange(lastSolid, { done: true });
-    if (next === "image" && lastImage) onChange(lastImage, { done: true });
-    if (isGradientTab(next)) onChange(gradientPaint(next, paint), { done: true });
+    if (next === "solid") onChange(blended(lastSolid), { done: true });
+    if (next === "image" && lastImage) onChange(blended(lastImage), { done: true });
+    if (isGradientTab(next)) onChange(blended(gradientPaint(next, paint)), { done: true });
   };
+
+  const setBlendMode = (mode: LayerBlendMode) =>
+    onChange(withBlendMode(paint, mode === "pass-through" ? undefined : mode), { done: true });
 
   const title = PAINT_TABS.find((t) => t.id === tab)?.label ?? "Paint";
 
   return (
     <div className="w-60 space-y-3 p-3">
-      <header className="flex items-center justify-between">
+      <header className="flex items-center gap-1">
         <h2 className="text-sm font-semibold">{title}</h2>
+        <div className="ml-auto w-28">
+          <BlendModeSelect
+            value={paint.blendMode ?? "normal"}
+            onChange={setBlendMode}
+            passThrough={false}
+            label="Paint blend mode"
+          />
+        </div>
         <button
           type="button"
           aria-label="Close"

@@ -1,4 +1,5 @@
 import type {
+  BlendMode,
   BoxSides,
   CanvasEffect,
   CanvasElement,
@@ -32,8 +33,10 @@ export interface DesignNode extends CanvasElement {
   pageId: string;
   /** Hidden layers aren't drawn or hit, but stay in the layers panel. */
   visible: boolean;
-  /** 0–1. */
+  /** 0–1. On a frame or group it covers what it holds too, drawn together first. */
   opacity: number;
+  /** How it blends with what's under it (see `LayerBlendMode`). */
+  blendMode: LayerBlendMode;
   /** Painted bottom to top. */
   fills: Paint[];
   strokes: Paint[];
@@ -78,6 +81,13 @@ export interface DesignNode extends CanvasElement {
  * type's own fields. The effects module defines the built-in types; plugins add their own.
  */
 export type NodeEffect = CanvasEffect & Record<string, unknown>;
+
+/**
+ * A layer's blend mode, Figma's: one of the canvas's `BlendMode`s, or `pass-through` (the
+ * default), where a frame's or group's layers blend with what's behind it as if it weren't
+ * there. On a layer that holds nothing, pass-through is normal.
+ */
+export type LayerBlendMode = "pass-through" | BlendMode;
 
 /**
  * How a mask shapes what it masks: by its opacity (`alpha`), by its outline alone (`vector`) or

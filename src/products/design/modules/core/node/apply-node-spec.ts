@@ -8,6 +8,7 @@ import {
 
 import type { DesignNodeKind } from "./design-node.kind";
 import type { DesignNode } from "./design-node.types";
+import { layerBlendMode } from "./blend-mode-args";
 import { maskType } from "./mask-args";
 import { fraction } from "./number-args";
 import { colorPaints, readPaints } from "./paint-args";
@@ -16,7 +17,7 @@ import { readNodeEffects } from "./effect-args";
 
 /**
  * A new node with what every node takes from an agent's spec: `name`, `visible`, `opacity`,
- * `fills` (or a `fill` color or CSS gradient), `strokes` (or a `stroke` one), `strokeWeight`, the stroke
+ * `blendMode`, `fills` (or a `fill` color or CSS gradient), `strokes` (or a `stroke` one), `strokeWeight`, the stroke
  * settings (`readStrokeFields`), the mask fields (`isMask`, `maskType`, `maskInverted`) and `rotation` (degrees counterclockwise round
  * its top-left corner; a line's ends turn instead).
  */
@@ -32,6 +33,7 @@ export function applyNodeSpec<E extends DesignNode>(
   const visible = optionalBoolean(args, "visible");
   if (visible !== undefined) next.visible = visible;
   if (args.opacity !== undefined) next.opacity = fraction(args.opacity, "opacity");
+  if (args.blendMode !== undefined) next.blendMode = layerBlendMode(args.blendMode);
   const size = { w: node.w, h: node.h };
   const fills =
     args.fills !== undefined

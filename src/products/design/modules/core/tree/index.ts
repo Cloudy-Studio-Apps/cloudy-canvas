@@ -2,6 +2,7 @@
 // hooks the core module gives the canvas (drawing order, members, reparenting, copies) and the
 // tree service the layers panel reads.
 export type * from "./design-tree.types";
+export type * from "./tree-slots.types";
 export { containerAlignTarget } from "./align-target";
 export { containerAt } from "./container-at";
 export { nearestContainer, positionOrigin } from "./nearest-container";
@@ -15,7 +16,8 @@ export { prepareTreeCopies } from "./prepare-tree-copies";
 export { reparentMoved } from "./reparent";
 export { childrenByParent, withDescendants } from "./tree-members";
 export { isActiveMask, siblingMasks } from "./sibling-masks";
-export { hasEffects, treeSlots } from "./tree-slots";
+export { hasEffects, hasScope, treeSlots } from "./tree-slots";
+export { layerComposite } from "./layer-composite";
 export { enclosingHosts, isChildHost, pruneEmptyHosts } from "./host-tree";
 export { hostSelectTarget } from "./host-select-target";
 export { resolveTree } from "./resolve-tree";

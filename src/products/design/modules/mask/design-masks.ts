@@ -25,7 +25,7 @@ import {
  * the layer tree does (`treeSlots`).
  */
 export function designMasks(elements: readonly CanvasElement[], kinds: ElementKinds): ElementMasks {
-  const slots = treeSlots(elements);
+  const slots = treeSlots(elements, kinds);
   const homes = new Map<string, ScopeSlot>();
   const masks = new Map<string, ElementMask>();
   if (slots.masked.size === 0 && !elements.some(isActiveMask)) return { masks, homes };

@@ -221,7 +221,10 @@ export class CanvasEngine<O extends object = object> {
           effectRenderers,
           drawn: (el) => this.scene.drawn(el),
         },
-        backdrop: [...effectRenderers.values()].some((renderer) => !!renderer.backdrop),
+        // Effects that read what's behind, and scopes that blend with it, need the back buffer.
+        backdrop:
+          product.effects !== undefined ||
+          [...effectRenderers.values()].some((renderer) => !!renderer.backdrop),
       },
     );
     const scopes = product.scopes;

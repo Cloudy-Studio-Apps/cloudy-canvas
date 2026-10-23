@@ -15,8 +15,10 @@ class ClipGraphics extends Graphics {
 
 /**
  * One element's effects on the canvas: a container holding the element's view and the views (and
- * nested scopes) of what it holds, drawn through one `EffectStackFilter`. It sits where the
- * element is in the drawing order, in the layer or an enclosing scope.
+ * nested scopes) of what it holds, drawn through one `EffectStackFilter`, then composited with its
+ * opacity and blend mode. A scope with only an opacity whose parts don't overlap needs no filter:
+ * its opacity is the container's alpha. It sits where the element is in the drawing order, in the
+ * layer or an enclosing scope.
  */
 export class EffectScopeView extends Container {
   /** The element's drawing order key. */
@@ -41,11 +43,18 @@ export class EffectScopeView extends Container {
 
   apply(scope: EffectScope, renderers: EffectRenderers): void {
     this.bounds = scope.bounds;
-    const { box, rotation } = scope;
-    const look = `${rotation}|${box.x},${box.y},${box.w},${box.h}|${JSON.stringify(scope.effects)}`;
+    const { box, rotation, composite } = scope;
+    const look = `${rotation}|${box.x},${box.y},${box.w},${box.h}|${JSON.stringify(scope.effects)}|${JSON.stringify(composite ?? null)}`;
     if (look === this.applied) return;
     this.applied = look;
-    this.stack.setEffects(scope.effects, renderers, box, rotation);
+    // Opacity alone over parts that don't overlap is the same handed down as alpha.
+    const handedDown =
+      !!composite &&
+      !composite.isolated &&
+      composite.blendMode === "normal" &&
+      !scope.effects.some((effect) => effect.visible && renderers.has(effect.type));
+    this.alpha = handedDown ? composite.opacity : 1;
+    this.stack.setEffects(scope.effects, renderers, box, rotation, handedDown ? null : composite);
   }
 
   /**

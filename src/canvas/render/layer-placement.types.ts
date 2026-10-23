@@ -1,4 +1,4 @@
-import type { CanvasEffect } from "../effects";
+import type { BlendMode, CanvasEffect } from "../effects";
 import type { CanvasElement, ElementKind } from "../elements";
 import type { Point, Rect } from "../geometry.types";
 import type { PathShape } from "../path";
@@ -102,6 +102,22 @@ export interface EffectScope {
   rotation: number;
   /** The world area of what the scope holds, effects left out. */
   bounds: Rect;
+  /**
+   * How the scope's result is laid on what's behind it: a group's opacity, a layer's blend mode.
+   * Left out, it's drawn as it is.
+   */
+  composite?: ScopeComposite;
+}
+
+/**
+ * The opacity and blend mode a scope's result is composited with (after its effects). An
+ * `isolated` scope is drawn on its own first, then composited (what it holds overlaps, or it
+ * blends); otherwise its opacity is just handed down to what it holds, which looks the same.
+ */
+export interface ScopeComposite {
+  opacity: number;
+  blendMode: BlendMode;
+  isolated: boolean;
 }
 
 /**

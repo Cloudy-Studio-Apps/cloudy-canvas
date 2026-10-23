@@ -1,3 +1,5 @@
+import { LAYER_BLEND_MODES } from "../node";
+
 const PAINTS = {
   type: "array",
   description:
@@ -11,7 +13,8 @@ const PAINTS = {
     'radial-gradient, conic-gradient); or { type: "image", assetId, scaleMode?: "fill" | "fit" | ' +
     '"crop" | "tile", crop?: { x, y, w, h } (crop: the part of the picture shown, fractions of it), ' +
     "scalingFactor? (tile: a tile's size as a share of the picture's pixels, default 0.5), " +
-    "rotation?: 0 | 90 | 180 | 270 (fill, fit, tile: clockwise), opacity?, visible? } (fills only).",
+    "rotation?: 0 | 90 | 180 | 270 (fill, fit, tile: clockwise), opacity?, visible? } (fills only). " +
+    'Any paint may give blendMode ("multiply", "screen", "overlay"…; default "normal").',
   items: { type: "object" },
 };
 
@@ -85,7 +88,14 @@ export const NODE_SPEC_PROPERTIES = {
       "{ lightAngle, lightIntensity, refraction, depth, dispersion, frost, splay }, " +
       '"shader" { code, params }. Lengths are world units; [] removes them all.',
   },
-  opacity: { type: "number", description: "0–1." },
+  opacity: { type: "number", description: "0–1; a frame's or group's covers what it holds." },
+  blendMode: {
+    type: "string",
+    enum: [...LAYER_BLEND_MODES],
+    description:
+      "How the layer blends with what's under it, as in Figma (default pass-through: a frame's " +
+      "or group's layers blend through it; normal for a single layer).",
+  },
   visible: { type: "boolean" },
   isMask: {
     type: "boolean",

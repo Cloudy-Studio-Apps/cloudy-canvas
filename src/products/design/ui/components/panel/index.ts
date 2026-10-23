@@ -1,4 +1,5 @@
 // Building blocks of the design editor's side panels, shared by the modules' sections and tabs.
+export type * from "./blend-mode-select.types";
 export type * from "./color-inputs.types";
 export type * from "./field-box.types";
 export type * from "./node-fields.types";
@@ -6,6 +7,7 @@ export type * from "./number-field.types";
 export type * from "./paint-field.types";
 export type * from "./panel-section.types";
 export type * from "./property-grid.types";
+export { BlendModeSelect } from "./blend-mode-select";
 export { FieldBox } from "./field-box";
 export { HexInput } from "./hex-input";
 export { NodeCheckbox } from "./node-checkbox";

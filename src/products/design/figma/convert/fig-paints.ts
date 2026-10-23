@@ -13,6 +13,7 @@ import {
 } from "@canvas/figma";
 
 import { solidPaint, type GradientPaint, type Paint } from "../../modules";
+import { figPaintBlendMode } from "./fig-blend-mode";
 import { convertImagePaint } from "./fig-image-paint";
 
 const GRADIENTS: Record<string, GradientType> = {
@@ -23,8 +24,8 @@ const GRADIENTS: Record<string, GradientType> = {
 };
 
 /**
- * Figma paints as ours: solid colors, gradients and images; other paints (video, emoji) are left
- * out.
+ * Figma paints as ours: solid colors, gradients and images, with their blend modes; other paints
+ * (video, emoji) are left out.
  */
 export function convertPaints(
   paints: readonly FigPaint[] | undefined,
@@ -40,6 +41,15 @@ export function convertPaints(
 }
 
 function convertPaint(paint: FigPaint, ctx: FigImportContext, allowImages: boolean): Paint | null {
+  const converted = convertPaintLook(paint, ctx, allowImages);
+  return converted && { ...converted, ...figPaintBlendMode(paint.blendMode, ctx) };
+}
+
+function convertPaintLook(
+  paint: FigPaint,
+  ctx: FigImportContext,
+  allowImages: boolean,
+): Paint | null {
   const visible = paint.visible ?? true;
   const opacity = paint.opacity ?? 1;
   const type = paint.type ?? "SOLID";

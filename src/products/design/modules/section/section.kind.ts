@@ -3,6 +3,7 @@ import type { ElementView, Rect } from "@canvas";
 import {
   BoxShapeKind,
   drawPaints,
+  withoutLayerOpacity,
   EMPTY_GEOMETRY,
   networkGeometry,
   rectNetwork,
@@ -41,7 +42,13 @@ export class SectionKind extends BoxShapeKind<SectionElement> {
   }
 
   draw(view: ElementView, el: SectionElement): void {
-    drawPaints(view, el, this.geometry(el) ?? EMPTY_GEOMETRY, this.strokeOf(el));
+    // Its opacity covers what it holds, so its scope applies it.
+    drawPaints(
+      view,
+      withoutLayerOpacity(el),
+      this.geometry(el) ?? EMPTY_GEOMETRY,
+      this.strokeOf(el),
+    );
     const name = this.layerName(el);
     const box = sectionTitleBox(el, name);
     const { fontSize, color, background, border, padX, padY, radius } = SECTION_DEFAULTS.title;

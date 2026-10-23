@@ -302,6 +302,7 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
       pageId: el.pageId ?? "",
       visible: el.visible ?? true,
       opacity: el.opacity ?? NODE_DEFAULTS.opacity,
+      blendMode: el.blendMode ?? "pass-through",
       fills: el.fills ?? [],
       strokes: el.strokes ?? [],
       strokeWeight: el.strokeWeight ?? NODE_DEFAULTS.strokeWeight,

@@ -1,4 +1,4 @@
-import type { Gradient, ImageRotation, ImageTransform } from "@canvas";
+import type { BlendMode, Gradient, ImageRotation, ImageTransform } from "@canvas";
 
 /** A flat color. */
 export interface SolidPaint {
@@ -8,6 +8,8 @@ export interface SolidPaint {
   /** 0–1. */
   opacity: number;
   visible: boolean;
+  /** How it blends with the paints under it and what's behind (normal when missing). */
+  blendMode?: BlendMode;
 }
 
 /**
@@ -31,6 +33,8 @@ export interface ImagePaint {
   /** 0–1. */
   opacity: number;
   visible: boolean;
+  /** How it blends with the paints under it and what's behind (normal when missing). */
+  blendMode?: BlendMode;
 }
 
 /** A gradient (linear, radial, angular or diamond) laid on the node's box. */
@@ -38,6 +42,8 @@ export interface GradientPaint extends Gradient {
   /** 0–1. */
   opacity: number;
   visible: boolean;
+  /** How it blends with the paints under it and what's behind (normal when missing). */
+  blendMode?: BlendMode;
 }
 
 /** How a node's fill or stroke is painted. */

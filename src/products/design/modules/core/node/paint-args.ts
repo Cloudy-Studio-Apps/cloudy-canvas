@@ -6,6 +6,7 @@ import {
   isCssGradient,
   readGradientPaint,
 } from "./gradient-args";
+import { paintBlendMode } from "./blend-mode-args";
 import { readImagePaint } from "./image-paint-args";
 import { fraction } from "./number-args";
 import { hexColor } from "./paint-args-color";
@@ -29,7 +30,7 @@ export function colorPaints(value: string, key: string, size?: Size): Paint[] {
  * Paints given in full, bottom to top: `{ type: "solid", color, opacity?, visible? }`, a gradient
  * `{ type: "linear" | "radial" | "angular" | "diamond", stops, transform? | from?/to?/width? |
  * angle?, interpolation?, opacity?, visible? }` or a CSS gradient string (both laid on a box of
- * `size`), or an image (only when `images`, see `readImagePaint`).
+ * `size`), or an image (only when `images`, see `readImagePaint`); each may give a `blendMode`.
  */
 export function readPaints(value: unknown, key: string, images: boolean, size?: Size): Paint[] {
   if (!Array.isArray(value)) throw new Error(`"${key}" must be an array of paints.`);
@@ -40,6 +41,18 @@ function readPaint(item: unknown, key: string, images: boolean, size?: Size): Pa
   if (isCssGradient(item)) return cssGradientPaint(item, key, size);
   if (typeof item !== "object" || item === null) throw new Error(`"${key}" must be a paint.`);
   const paint = item as Record<string, unknown>;
+  return {
+    ...readPaintLook(paint, key, images, size),
+    ...paintBlendMode(paint.blendMode, `${key}.blendMode`),
+  };
+}
+
+function readPaintLook(
+  paint: Record<string, unknown>,
+  key: string,
+  images: boolean,
+  size?: Size,
+): Paint {
   const opacity = paint.opacity === undefined ? 1 : fraction(paint.opacity, `${key}.opacity`);
   if (paint.visible !== undefined && typeof paint.visible !== "boolean") {
     throw new Error(`"${key}.visible" must be true or false.`);

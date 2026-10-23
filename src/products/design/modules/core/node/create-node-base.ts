@@ -22,6 +22,7 @@ export function createNodeBase<K extends string>(
     pageId: "",
     visible: true,
     opacity: NODE_DEFAULTS.opacity,
+    blendMode: "pass-through",
     fills,
     strokes: [],
     strokeWeight: NODE_DEFAULTS.strokeWeight,

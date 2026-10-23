@@ -1,4 +1,6 @@
 import { Application, Container } from "pixi.js";
+// Paints' blend modes past Pixi's native ones (overlay, color dodge…).
+import "pixi.js/advanced-blend-modes";
 
 import type { Camera } from "../camera";
 import type { CanvasElement, ElementKinds } from "../elements";

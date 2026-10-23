@@ -44,6 +44,7 @@ export type {
   EffectSlot,
   ScopeSlot,
   EffectScope,
+  ScopeComposite,
   ElementEffects,
   EffectPass,
   EffectRenderer,
@@ -95,6 +96,7 @@ export {
   underShader,
 } from "./render";
 export type * from "./effects";
+export { BLEND_MODES, isBlendMode } from "./effects";
 export { defineService } from "./services";
 export type { FontStyle, FontWeight, TextAlign, TextFont, TextFontOptions } from "./text";
 export {

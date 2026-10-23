@@ -1,5 +1,6 @@
 import type { FillStyle, Graphics } from "pixi.js";
 
+import type { BlendMode } from "../effects";
 import type { Gradient } from "../gradient";
 
 import type { Rect } from "../geometry.types";
@@ -21,6 +22,8 @@ export interface PaintTools {
 export interface ShapePaintLayer {
   kind: "shape";
   draw(g: Graphics, tools: PaintTools): void;
+  /** How it blends with the layers under it and what's behind (normal when left out). */
+  blendMode?: BlendMode;
 }
 
 /** An image asset fitted into `box` (local coordinates) and clipped to the area `mask` fills. */
@@ -34,6 +37,8 @@ export interface ImagePaintLayer {
   alpha: number;
   /** Fills the clip area into `g` (any color; holes cut out stay out). */
   mask(g: Graphics): void;
+  /** How it blends with the layers under it and what's behind (normal when left out). */
+  blendMode?: BlendMode;
 }
 
 /** One paint of an element, drawn by `ElementView.setPaints`. */

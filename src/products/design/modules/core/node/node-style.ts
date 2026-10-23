@@ -7,6 +7,7 @@ import type { DesignNodeKind } from "./design-node.kind";
 /** What Copy properties takes from every layer; kinds add their own (`styleFields`). */
 export const NODE_STYLE_FIELDS: readonly string[] = [
   "opacity",
+  "blendMode",
   "fills",
   "strokes",
   "strokeWeight",

@@ -9,12 +9,15 @@ import {
   type Rect,
 } from "@canvas";
 
-import { childrenByParent, hasEffects, isDesignNode, treeSlots } from "../core";
+import { childrenByParent, hasScope, isDesignNode, layerComposite, treeSlots } from "../core";
+import { isolatesComposite } from "./composite-isolation";
 
 /**
  * The design's effects (`CanvasProduct.effects`): a visible node with visible effects gets a
  * scope that draws them over it and everything it holds, together (a group's shadow is its
- * layers' shadow, as in Figma), nested with the masks along the tree (`treeSlots`).
+ * layers' shadow, as in Figma), nested with the masks along the tree (`treeSlots`). So does a
+ * frame or group with an opacity below 1 and a layer with a blend mode (`layerComposite`): the
+ * scope composites what it holds with them.
  */
 export function designEffects(
   elements: readonly CanvasElement[],
@@ -22,9 +25,9 @@ export function designEffects(
 ): ElementEffects {
   const scopes = new Map<string, EffectScope>();
   const homes = new Map<string, EffectSlot>();
-  if (!elements.some(hasEffects)) return { scopes, homes };
+  if (!elements.some((el) => hasScope(el, kinds))) return { scopes, homes };
 
-  const slots = treeSlots(elements);
+  const slots = treeSlots(elements, kinds);
   const byId = new Map(elements.map((el) => [el.id, el]));
   const children = childrenByParent(elements);
   const reach = new Map<string, Rect | null>();
@@ -47,7 +50,8 @@ export function designEffects(
   for (const el of elements) {
     const home = slots.homeOf(el.id);
     if (home && "effect" in home) homes.set(el.id, home);
-    if (!hasEffects(el) || !isDesignNode(el)) continue;
+    if (!hasScope(el, kinds) || !isDesignNode(el)) continue;
+    const composite = layerComposite(el, kinds);
     scopes.set(el.id, {
       id: el.id,
       effects: el.effects.filter((effect) => effect.visible),
@@ -55,6 +59,9 @@ export function designEffects(
       box: { x: el.x, y: el.y, w: el.w, h: el.h },
       rotation: el.rotation ?? 0,
       bounds: extent(el, 0) ?? elementBounds(kinds.kindOf(el), el),
+      ...(composite
+        ? { composite: { ...composite, isolated: isolatesComposite(el, kinds, byId, children) } }
+        : {}),
     });
   }
   return { scopes, homes };

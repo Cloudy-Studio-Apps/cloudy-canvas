@@ -1,4 +1,4 @@
-import type { ScopeSlot } from "@canvas";
+import type { ScopeComposite, ScopeSlot } from "@canvas";
 
 /** Where a scene's nodes and scopes are drawn (see `treeSlots`). */
 export interface TreeSlots {
@@ -11,3 +11,6 @@ export interface TreeSlots {
   /** Masked node id → the mask masking it (`siblingMasks`). */
   masked: ReadonlyMap<string, string>;
 }
+
+/** A node's opacity and blend mode as its scope composites them (see `layerComposite`). */
+export type LayerComposite = Omit<ScopeComposite, "isolated">;

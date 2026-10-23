@@ -2,7 +2,14 @@ import { Blend, Scan } from "lucide-react";
 
 import type { ElementPatch } from "@canvas";
 import type { DesignNode } from "@design";
-import { NodeNumberField, PanelSection, PropertyGrid } from "@design/ui/components/panel";
+import {
+  BlendModeSelect,
+  NodeNumberField,
+  PanelSection,
+  PropertyGrid,
+  sharedValue,
+} from "@design/ui/components/panel";
+import { useEditNodes } from "@design/ui/hooks";
 import type { PropertySectionProps } from "@design/ui/modules";
 
 /** Nodes with rounded corners (frames, rectangles, and any type that stores `cornerRadius`). */
@@ -10,9 +17,12 @@ function hasCorners(node: DesignNode): node is DesignNode & { cornerRadius: numb
   return typeof (node as { cornerRadius?: unknown }).cornerRadius === "number";
 }
 
-/** Opacity of the selection, and its corner radius when every node has corners. */
+/**
+ * Opacity and blend mode of the selection, and its corner radius when every node has corners.
+ */
 export function AppearanceSection({ selection: { nodes } }: PropertySectionProps) {
   const cornered = nodes.filter(hasCorners);
+  const edit = useEditNodes();
 
   return (
     <PanelSection title="Appearance">
@@ -26,6 +36,10 @@ export function AppearanceSection({ selection: { nodes } }: PropertySectionProps
           max={100}
           read={(node) => Math.round(node.opacity * 100)}
           patch={(percent) => ({ opacity: percent / 100 })}
+        />
+        <BlendModeSelect
+          value={sharedValue(nodes, (node) => node.blendMode)}
+          onChange={(blendMode) => edit(nodes, () => ({ blendMode }))}
         />
         {cornered.length === nodes.length && (
           <NodeNumberField

@@ -18,6 +18,9 @@ export function summarizeNode(
     ...summarizeElement(kinds, el),
     parentId: node?.parentId ?? null,
     ...(node && !node.visible ? { hidden: true as const } : {}),
+    ...(node && node.blendMode !== "pass-through" && node.blendMode !== "normal"
+      ? { blendMode: node.blendMode }
+      : {}),
     ...(node?.isMask
       ? {
           mask: {

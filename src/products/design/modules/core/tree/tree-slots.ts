@@ -1,6 +1,7 @@
-import type { CanvasElement, ScopeSlot } from "@canvas";
+import type { CanvasElement, ElementKinds, ScopeSlot } from "@canvas";
 
 import { isDesignNode, type DesignNode } from "../node";
+import { layerComposite } from "./layer-composite";
 import type { TreeSlots } from "./tree-slots.types";
 import { isActiveMask, siblingMasks } from "./sibling-masks";
 
@@ -13,13 +14,21 @@ export function hasEffects(el: CanvasElement): el is DesignNode {
 }
 
 /**
+ * Whether a node is drawn in a scope of its own: it has effects, or its opacity or blend mode
+ * is composited over what it holds (`layerComposite`).
+ */
+export function hasScope(el: CanvasElement, kinds: ElementKinds): el is DesignNode {
+  return hasEffects(el) || layerComposite(el, kinds) !== null;
+}
+
+/**
  * Where each node is drawn among the masks and effects, nested along the layer tree: a node with
- * effects is drawn in its own effect scope; that scope (or a node without effects) sits in its
+ * effects (or an opacity or blend mode to composite, `hasScope`) is drawn in its own effect scope; that scope (or a node without effects) sits in its
  * mask's slot (a mask makes its own; the siblings it masks are masked by it), else where its
  * parent is drawn. So a shadowed group's mask, a masked layer's shadow and a blurred mask (a
  * feathered one) all nest as the tree does.
  */
-export function treeSlots(elements: readonly CanvasElement[]): TreeSlots {
+export function treeSlots(elements: readonly CanvasElement[], kinds: ElementKinds): TreeSlots {
   const cached = known.get(elements);
   if (cached) return cached;
   const masked = siblingMasks(elements);
@@ -42,7 +51,7 @@ export function treeSlots(elements: readonly CanvasElement[]): TreeSlots {
     const memo = inner.get(el.id);
     if (memo !== undefined) return memo;
     inner.set(el.id, null); // A loop draws at the top.
-    const slot = hasEffects(el) ? { effect: el.id } : level(el, depth);
+    const slot = hasScope(el, kinds) ? { effect: el.id } : level(el, depth);
     inner.set(el.id, slot);
     return slot;
   };

@@ -9,6 +9,13 @@ export { DesignNodeKind } from "./design-node.kind";
 export { ChildHostKind } from "./child-host.kind";
 export type * from "./child-host.types";
 export { drawPaints } from "./draw-paints";
+export {
+  LAYER_BLEND_MODES,
+  layerBlendMode,
+  paintBlendMode,
+  withBlendMode,
+} from "./blend-mode-args";
+export { opacityCoversChildren, withoutLayerOpacity } from "./layer-opacity";
 export { flipPlacement, mirrorPoint } from "./flip-placement";
 export { isDesignNode } from "./is-design-node";
 export { NODE_DEFAULTS } from "./node.defaults";

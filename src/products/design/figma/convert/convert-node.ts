@@ -71,9 +71,6 @@ function convertNode(
   if (!el) return;
   placement.out.push(el);
   if (!holdsChildren(el)) return;
-  if ((node.opacity ?? 1) < 1 && resolved.children.length > 0) {
-    ctx.warnings.add("groups' and frames' opacity left out what they hold");
-  }
   const parent = { world, parentId: el.id, pageId: placement.pageId, out: placement.out };
   convertChildren(resolved.children, parent, ctx);
 }
