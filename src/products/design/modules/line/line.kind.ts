@@ -22,6 +22,7 @@ import {
   DesignNodeKind,
   flipPaints,
   mirrorPoint,
+  NODE_STYLE_FIELDS,
   pointArg,
   type FlipAxis,
   type NodeBuildContext,
@@ -51,6 +52,7 @@ export class LineKind extends DesignNodeKind<LineNodeElement> {
   override readonly scalable = true;
   override readonly fillable = false;
   override readonly creatable = true;
+  override readonly styleFields = [...NODE_STYLE_FIELDS, "startCap", "endCap"];
   override readonly specProperties = {
     start: { ...POINT, description: "Line: its start (default: x, y)." },
     end: { ...POINT, description: "Line: its end (default: x + w, y + h; w is 100, h 0)." },

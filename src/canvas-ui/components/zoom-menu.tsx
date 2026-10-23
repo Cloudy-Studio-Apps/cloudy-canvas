@@ -15,12 +15,13 @@ import type { ZoomMenuProps } from "./zoom-menu.types";
 const ZOOM_PRESETS = [0.5, 1, 2];
 
 /**
- * Current zoom percentage; opens zoom-to-fit, preset levels and what snaps (whole units only on
+ * Current zoom percentage; opens zoom-to-fit, zoom-to-selection, preset levels and what snaps (whole units only on
  * canvases with a pixel grid).
  */
 export function ZoomMenu({ side = "top" }: ZoomMenuProps) {
   const engine = useEngine();
   const zoom = useEngineState((state) => state.zoom);
+  const selected = useEngineState((state) => state.selectionCount > 0);
   const [snapping, setSnapping] = useSnapping();
   const percent = `${Math.round(zoom * 100)}%`;
 
@@ -40,6 +41,10 @@ export function ZoomMenu({ side = "top" }: ZoomMenuProps) {
         <DropdownMenuItem onSelect={() => engine.zoomToFit()}>
           Zoom to fit
           <DropdownMenuShortcut>{engine.keymap.label("zoomToFit")}</DropdownMenuShortcut>
+        </DropdownMenuItem>
+        <DropdownMenuItem disabled={!selected} onSelect={() => engine.zoomToSelection()}>
+          Zoom to selection
+          <DropdownMenuShortcut>{engine.keymap.label("zoomToSelection")}</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         {ZOOM_PRESETS.map((preset) => (

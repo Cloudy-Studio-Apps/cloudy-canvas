@@ -11,6 +11,7 @@ import {
 import type { DesignToolOptions } from "../../design-options.types";
 import {
   BoxShapeKind,
+  NODE_STYLE_FIELDS,
   nonNegative,
   rectNetwork,
   solidPaint,
@@ -28,6 +29,7 @@ export class RectangleKind extends BoxShapeKind<RectangleElement> {
   readonly description = "A box with fills, strokes and rounded corners.";
   override readonly tool = "rectangle";
   override readonly defaults = RECTANGLE_DEFAULTS;
+  override readonly styleFields = [...NODE_STYLE_FIELDS, "cornerRadius"];
   override readonly specProperties = {
     cornerRadius: { type: "number", description: "Frame or rectangle: corner radius." },
   };

@@ -15,7 +15,7 @@ import {
 } from "@canvas";
 
 import type { DesignToolOptions } from "../../design-options.types";
-import { BoxShapeKind, nonNegative, type NodeBuildContext } from "../core";
+import { BoxShapeKind, NODE_STYLE_FIELDS, nonNegative, type NodeBuildContext } from "../core";
 import { createFrame } from "./frame.factory";
 import { FRAME_PRESETS, findPreset, presetSize } from "./frame-presets";
 import { FRAME_DEFAULTS } from "./frame.defaults";
@@ -31,6 +31,7 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
   override readonly tool = "frame";
   override readonly defaults = FRAME_DEFAULTS;
   override readonly container = true;
+  override readonly styleFields = [...NODE_STYLE_FIELDS, "cornerRadius"];
   override readonly specProperties = {
     preset: {
       type: "string",

@@ -32,3 +32,9 @@ export interface CanvasElement {
  * (`ElementPatch<StickyElement>`); the document takes any of them as the base `ElementPatch`.
  */
 export type ElementPatch<E extends CanvasElement = CanvasElement> = Partial<Omit<E, "id" | "type">>;
+
+/**
+ * An element's look, as Copy properties takes it (`ElementKind.styleOf`): stored fields by name,
+ * plain JSON, pasted onto any element whose kind has fields of the same names.
+ */
+export type ElementStyle = Readonly<Record<string, unknown>>;

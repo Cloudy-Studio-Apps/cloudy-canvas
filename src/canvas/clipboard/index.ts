@@ -14,3 +14,4 @@ export { imageSize } from "./paste-external";
 export { MemoryClipboard } from "./memory-clipboard";
 export { PASTE_STEP, pasteOffset } from "./paste-offset";
 export { remapIds } from "./remap-ids";
+export { copiedStyle, setCopiedStyle } from "./style-clipboard";

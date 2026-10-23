@@ -81,6 +81,11 @@ export interface CanvasProduct<O extends object = object> {
     elements: readonly CanvasElement[],
   ): CanvasElement | null;
   /**
+   * The frames N and Shift+N step through (`nextFrame`, `previousFrame`), in order (e.g. a
+   * design's top-level frames, a board's sections, in reading order). Without it, none.
+   */
+  frames?(elements: readonly CanvasElement[]): readonly CanvasElement[];
+  /**
    * Runs when the select tool finishes dragging elements (with their members) to a new place,
    * inside the drag's undo step: e.g. puts them into the frame they were dropped on. `elements`
    * are the scene's, after the move.

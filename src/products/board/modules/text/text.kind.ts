@@ -1,4 +1,5 @@
 import {
+  clamp,
   ElementKind,
   measureText,
   scaleLength,
@@ -6,6 +7,7 @@ import {
   type ElementDescription,
   type ElementPatch,
   type ElementSpec,
+  type ElementStyle,
   type ElementText,
   type ElementView,
   type ScaleTransform,
@@ -28,6 +30,7 @@ export class TextKind extends ElementKind<TextElement, BoardToolOptions> {
   readonly description = "Click anywhere to type a label.";
   override readonly tool = "text";
   override readonly defaults = TEXT_DEFAULTS;
+  override readonly styleFields = ["color", "fontSize"];
   override readonly connectable = true;
   override readonly scalable = true;
   override readonly patchableFields: ReadonlySet<string> = new Set([
@@ -68,6 +71,14 @@ export class TextKind extends ElementKind<TextElement, BoardToolOptions> {
   override scale(el: TextElement, t: ScaleTransform): ElementPatch<TextElement> {
     const fontSize = scaleLength(t, el.fontSize);
     return { ...scalePoint(t, el), fontSize, ...measureText(el.text, fontSize) };
+  }
+
+  /** A pasted font size (within its limits) sizes it to its text again. */
+  override applyStyle(el: TextElement, style: ElementStyle): ElementPatch<TextElement> {
+    const patch = super.applyStyle(el, style);
+    if (patch.fontSize === undefined) return patch;
+    const fontSize = clamp(patch.fontSize, TEXT_DEFAULTS.minFontSize, TEXT_DEFAULTS.maxFontSize);
+    return { ...patch, fontSize, ...measureText(el.text, fontSize) };
   }
 
   override completePatch(

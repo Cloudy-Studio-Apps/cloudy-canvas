@@ -19,10 +19,12 @@ import {
 } from "./arrange";
 import { DEFAULT_VIEW_OPTIONS } from "./canvas-view";
 import {
+  copiedStyle,
   dropFiles,
   ElementClipboard,
   MemoryClipboard,
   PASTE_STEP,
+  setCopiedStyle,
   type DropResult,
   type ElementClipboardHost,
 } from "./clipboard";
@@ -37,6 +39,7 @@ import {
   type ElementInfo,
   type ElementKinds,
   type ElementPatch,
+  type ElementStyle,
   type ReorderDirection,
 } from "./elements";
 import {
@@ -864,6 +867,43 @@ export class CanvasEngine<O extends object = object> {
     return this.clipboard.duplicate([...ids], offset);
   }
 
+  /**
+   * Takes the look of the selected element (the first of several) for Paste properties (see
+   * `ElementKind.styleFields`). Returns `false` when there's nothing to take.
+   */
+  copyStyle(): boolean {
+    const first = this.scene.selection.ids.values().next().value;
+    const el = first === undefined ? undefined : this.scene.get(first);
+    if (!el) return false;
+    const style = this.kinds.kindOf(el).styleOf(el);
+    if (Object.keys(style).length === 0) return false;
+    setCopiedStyle(this.productId, style);
+    return true;
+  }
+
+  /** Whether Copy properties took a look Paste properties can apply (in any file of the product). */
+  hasCopiedStyle(): boolean {
+    return copiedStyle(this.productId) !== null;
+  }
+
+  /**
+   * Applies the copied look to the selection (or `ids`), locked elements left out, as one undo
+   * step. Returns the ids that changed.
+   */
+  pasteStyle(ids: Iterable<string> = this.scene.selection.ids): string[] {
+    const style = copiedStyle(this.productId);
+    return style ? this.applyStyle(style, ids) : [];
+  }
+
+  /**
+   * Applies the look of `fromId` to `ids` as Paste properties does, without touching what Copy
+   * properties took (agents). Returns the ids that changed.
+   */
+  applyStyleOf(fromId: string, ids: Iterable<string>): string[] {
+    const from = this.scene.get(fromId);
+    return from ? this.applyStyle(this.kinds.kindOf(from).styleOf(from), ids) : [];
+  }
+
   /** Label, description and hotkey of an element type, or `undefined` if it isn't registered. */
   elementInfo(type: string): ElementInfo | undefined {
     const kind = this.kinds.get(type);
@@ -1015,6 +1055,34 @@ export class CanvasEngine<O extends object = object> {
     if (bounds) this.camera.fitRect(bounds);
     else this.camera.reset();
     this.onCameraChange();
+  }
+
+  /** Fits the selection in the view, zooming past 100% if it's small (Figma's Shift+2). */
+  zoomToSelection(): void {
+    const bounds = this.selectionBounds();
+    if (!bounds) return this.zoomToFit();
+    this.camera.fitRect(bounds, { maxZoom: Infinity });
+    this.onCameraChange();
+  }
+
+  /**
+   * Fits and selects the next (`1`) or previous (`-1`) of the product's frames (see
+   * `CanvasProduct.frames`), after the selected one or the one holding the selection; with
+   * neither, the one nearest the middle of the view. Returns `false` when there are none.
+   */
+  zoomToFrame(step: 1 | -1): boolean {
+    const frames = this.product.frames?.(this.scene.elements) ?? [];
+    if (frames.length === 0) return false;
+    const current = this.currentFrameIndex(frames);
+    const index =
+      current === null
+        ? this.nearestFrameIndex(frames)
+        : (current + step + frames.length) % frames.length;
+    const frame = frames[index]!;
+    this.camera.fitRect(elementBounds(this.kinds.kindOf(frame), frame), { maxZoom: Infinity });
+    this.setSelection([frame.id]);
+    this.onCameraChange();
+    return true;
   }
 
   // ── Wiring ────────────────────────────────────────────────────────────
@@ -1379,6 +1447,21 @@ export class CanvasEngine<O extends object = object> {
     this.doc.updateMany(patches);
   }
 
+  /** Restyles the unlocked elements among `ids` with `style`, as one undo step. */
+  private applyStyle(style: ElementStyle, ids: Iterable<string>): string[] {
+    const patches = new Map<string, ElementPatch>();
+    for (const id of ids) {
+      const el = this.scene.get(id);
+      if (!el || el.locked) continue;
+      const patch = this.kinds.kindOf(el).applyStyle(el, style);
+      if (Object.keys(patch).length > 0) patches.set(id, patch);
+    }
+    if (patches.size === 0) return [];
+    this.doc.checkpoint();
+    this.doc.updateMany(patches);
+    return [...patches.keys()];
+  }
+
   /** Deletes the selected part of the single selected element, as one undo step. */
   private deleteSelectedPart(): boolean {
     const { part } = this.scene.selection;
@@ -1525,6 +1608,29 @@ export class CanvasEngine<O extends object = object> {
   /** The ruler guides on screen: none while they're hidden. */
   private shownGuides(): readonly PlacedGuide[] {
     return this.guidesShown ? this.placedGuides() : [];
+  }
+
+  /** The frame that's selected or holds the selection (its first element), or `null`. */
+  private currentFrameIndex(frames: readonly CanvasElement[]): number | null {
+    const first = this.scene.selection.ids.values().next().value;
+    if (first === undefined) return null;
+    const selected = frames.findIndex((frame) => frame.id === first);
+    if (selected >= 0) return selected;
+    const holding = frames.findIndex((frame) => this.withMembers([frame.id], "move").has(first));
+    return holding >= 0 ? holding : null;
+  }
+
+  /** The frame whose middle is nearest the middle of the view. */
+  private nearestFrameIndex(frames: readonly CanvasElement[]): number {
+    const view = rectCenter(this.camera.visibleWorldRect());
+    let nearest = 0;
+    let best = Infinity;
+    frames.forEach((frame, index) => {
+      const center = rectCenter(elementBounds(this.kinds.kindOf(frame), frame));
+      const distance = Math.hypot(center.x - view.x, center.y - view.y);
+      if (distance < best) [nearest, best] = [index, distance];
+    });
+    return nearest;
   }
 
   /** The element the rulers measure for the selection (see `CanvasProduct.rulerFrame`). */

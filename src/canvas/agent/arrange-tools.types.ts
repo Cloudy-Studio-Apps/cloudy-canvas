@@ -1,6 +1,9 @@
 import type { CanvasEngine } from "../canvas-engine";
 
-/** How a product names and reaches the align, distribute, tidy up and scale tools (`arrangeTools`). */
+/**
+ * How a product names and reaches the align, distribute, tidy up, scale and copy properties tools
+ * (`arrangeTools`).
+ */
 export interface ArrangeToolsOptions<H> {
   /** The tools' name suffix: `align_<noun>`, `distribute_<noun>`, `tidy_up_<noun>`, `scale_<noun>`. */
   noun: string;

@@ -27,6 +27,7 @@ export class GeoKind extends QuickConnectKind<GeoElement> {
   readonly description = "A rectangle, ellipse, diamond or other diagram shape, with a label.";
   override readonly tool = "shape";
   override readonly defaults = GEO_DEFAULTS;
+  override readonly styleFields = ["fill", "stroke", "strokeWidth", "fontSize"];
   override readonly patchableFields: ReadonlySet<string> = new Set([
     "x",
     "y",

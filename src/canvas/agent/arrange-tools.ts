@@ -2,6 +2,7 @@ import type { Alignment } from "../arrange";
 import type { AgentTool } from "./agent-tool.types";
 import type { ArrangeToolsOptions } from "./arrange-tools.types";
 import { scaleTool } from "./scale-tool";
+import { copyPropertiesTool } from "./style-tool";
 import { optionalChoice, stringList } from "./tool-args";
 
 const ALIGNMENTS: readonly Alignment[] = ["left", "centerX", "right", "top", "centerY", "bottom"];
@@ -10,7 +11,7 @@ const IDS_SCHEMA = { type: "array", items: { type: "string" } };
 
 /**
  * The tools that align, distribute and tidy up elements as the context menu does, and scale them
- * as the Scale tool does, each one undo step, with what moves with them; they take ids and leave
+ * as the Scale tool does (and copy one's look onto others), each one undo step, with what moves with them; they take ids and leave
  * the selection alone.
  */
 export function arrangeTools<H>(options: ArrangeToolsOptions<H>): AgentTool<H>[] {
@@ -70,5 +71,6 @@ export function arrangeTools<H>(options: ArrangeToolsOptions<H>): AgentTool<H>[]
       },
     },
     scaleTool(options),
+    copyPropertiesTool(options),
   ];
 }

@@ -1,6 +1,7 @@
 import { unionRects } from "../geometry";
 import type { Point, Rect } from "../geometry.types";
 import type { ArrangeItem } from "./arrange.types";
+import { readingRows } from "./reading-order";
 
 /** The spacing used when the items don't suggest one. */
 const DEFAULT_GAP = 20;
@@ -15,7 +16,7 @@ export function tidyUpOffsets(items: readonly ArrangeItem[]): Map<string, Point>
   const origin = unionRects(items.map((item) => item.rect));
   if (!origin || items.length < 2) return offsets;
 
-  const rows = rowsOf(items);
+  const rows = readingRows(items);
   const gapX = median(
     rows.flatMap((row) =>
       gapsBetween(
@@ -49,25 +50,6 @@ export function tidyUpOffsets(items: readonly ArrangeItem[]): Map<string, Point>
     y += Math.max(...row.map((item) => item.rect.h)) + spaceY;
   }
   return offsets;
-}
-
-/** Items grouped into rows, top to bottom, each sorted left to right. */
-function rowsOf(items: readonly ArrangeItem[]): ArrangeItem[][] {
-  const sorted = [...items].sort((a, b) => a.rect.y - b.rect.y);
-  const rows: ArrangeItem[][] = [];
-  let bottom = -Infinity;
-  for (const item of sorted) {
-    const middle = item.rect.y + item.rect.h / 2;
-    const row = rows[rows.length - 1];
-    if (row && middle < bottom) {
-      row.push(item);
-      bottom = Math.max(bottom, item.rect.y + item.rect.h);
-    } else {
-      rows.push([item]);
-      bottom = item.rect.y + item.rect.h;
-    }
-  }
-  return rows.map((row) => row.sort((a, b) => a.rect.x - b.rect.x));
 }
 
 /** The positive spaces between consecutive rects on `axis` (they're in order on it). */

@@ -27,6 +27,7 @@ export class SectionKind extends TextBoxKind<SectionElement, BoardToolOptions> {
   readonly description = "A titled area that groups and moves what's inside it.";
   override readonly tool = "section";
   override readonly defaults = SECTION_DEFAULTS;
+  override readonly styleFields = ["color"];
   override readonly frame = true;
   override readonly connectable = false;
   override readonly patchableFields: ReadonlySet<string> = new Set([

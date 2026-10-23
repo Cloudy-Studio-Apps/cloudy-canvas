@@ -37,6 +37,7 @@ export function composeProduct<O extends object>(
   const target = single(host.get(points.selectTarget), `what a click selects in the ${id}`);
   const aligner = single(host.get(points.alignTarget), `what one element aligns with in the ${id}`);
   const rulerFrame = single(host.get(points.rulerFrame), `what the ${id}'s rulers measure`);
+  const frames = single(host.get(points.frames), `the frames N steps through in the ${id}`);
   const editor = single(host.get(points.editElement), `what double-click edits in the ${id}`);
 
   return {
@@ -60,6 +61,7 @@ export function composeProduct<O extends object>(
     ...(rulerFrame
       ? { rulerFrame: (selected, elements) => rulerFrame(selected, elements, kinds) }
       : {}),
+    ...(frames ? { frames: (elements) => frames(elements, kinds) } : {}),
     ...(aligner ? { alignTarget: (el, elements) => aligner(el, elements, kinds) } : {}),
     ...(target
       ? { selectTarget: (hitId, request, elements) => target(hitId, request, elements, kinds) }

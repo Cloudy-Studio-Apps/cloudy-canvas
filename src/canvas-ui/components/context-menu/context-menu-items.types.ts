@@ -7,6 +7,8 @@ export interface ContextMenuContext {
   selectionLocked: boolean;
   /** Some element on the canvas is locked. */
   anyLocked: boolean;
+  /** Copy properties took a look Paste properties can apply. */
+  styleCopied: boolean;
 }
 
 /** One entry of the canvas context menu: an engine command. */

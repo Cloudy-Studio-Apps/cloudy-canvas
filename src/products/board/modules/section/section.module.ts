@@ -4,6 +4,7 @@ import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
 import { boardCanvas } from "../../board-points";
 import { SECTION_COLORS } from "../../palette";
+import { boardSections } from "./board-sections";
 import { sectionAlignTarget, withSectionMembers } from "./section-members";
 import { SectionKind } from "./section.kind";
 import { SectionTool } from "./section.tool";
@@ -29,6 +30,7 @@ export const sectionModule = defineModule({
       withSectionMembers(ids, elements, kinds),
     );
     host.contribute(boardCanvas.alignTarget, sectionAlignTarget);
+    host.contribute(boardCanvas.frames, boardSections);
 
     host.contribute(boardEditor.tools, {
       tool: "section",

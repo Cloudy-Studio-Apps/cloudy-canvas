@@ -4,6 +4,7 @@ import {
   scaleLength,
   scaleRect,
   type ElementPatch,
+  type ElementStyle,
   type ElementView,
   type Rect,
   type ScaleTransform,
@@ -24,6 +25,7 @@ export class ImageKind extends BoxKind<ImageElement, BoardToolOptions> {
   readonly label = "Image";
   readonly description = "A picture pasted onto the board.";
   override readonly defaults: ImageDefaults = IMAGE_DEFAULTS;
+  override readonly styleFields = ["background", "padding"];
   override readonly creatable = false;
   override readonly keepsRatio = true;
   override readonly patchableFields: ReadonlySet<string> = new Set([
@@ -34,6 +36,12 @@ export class ImageKind extends BoxKind<ImageElement, BoardToolOptions> {
     "background",
     "padding",
   ]);
+
+  /** A pasted padding grows or shrinks the bounds round the picture. */
+  override applyStyle(el: ImageElement, style: ElementStyle): ElementPatch<ImageElement> {
+    const { padding, ...patch } = super.applyStyle(el, style);
+    return padding === undefined ? patch : { ...patch, ...imagePaddingPatch(el, padding) };
+  }
 
   draw(view: ElementView, el: ImageElement): void {
     drawImage(view, el);

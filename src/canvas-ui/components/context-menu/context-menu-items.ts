@@ -47,12 +47,19 @@ export const SELECTION_MENU: readonly ContextMenuGroup[] = [
     { command: "pasteToReplace", enabled: hasSelection },
     { command: "duplicate", enabled: hasSelection },
   ],
+  [
+    { command: "copyProperties", enabled: hasSelection },
+    {
+      command: "pasteProperties",
+      enabled: (context) => hasSelection(context) && context.styleCopied,
+    },
+  ],
   [{ command: "deleteSelection", enabled: hasSelection, destructive: true }],
   [
     { command: "copyAsPng", enabled: hasSelection },
     { command: "export", label: "Export selection…", enabled: hasSelection },
   ],
-  [arrangeSubmenu],
+  [arrangeSubmenu, { command: "zoomToSelection", enabled: hasSelection }],
   [
     { command: "bringToFront", enabled: hasSelection },
     { command: "bringForward", enabled: hasSelection },

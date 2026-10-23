@@ -45,7 +45,14 @@ export type {
 } from "./render";
 export type { CanvasPointer, Tool, ToolContext } from "./tools";
 export type { SnapAxis, SnapFeedback, SnapGap, SnapLine, Snapper, SnapSettings } from "./snapping";
-export { anchorPoint, nudgeCheckpoint, nudgeStep, NUDGE_STEPS, SCALE_ANCHORS } from "./arrange";
+export {
+  anchorPoint,
+  nudgeCheckpoint,
+  nudgeStep,
+  NUDGE_STEPS,
+  readingOrder,
+  SCALE_ANCHORS,
+} from "./arrange";
 export { CanvasEngine } from "./canvas-engine";
 export { MIN_ZOOM, MAX_ZOOM } from "./camera";
 export { DEFAULT_VIEW_OPTIONS } from "./canvas-view";

@@ -34,6 +34,7 @@ import { prepareTreeCopies } from "./tree/prepare-tree-copies";
 import { reparentMoved } from "./tree/reparent";
 import { containerAlignTarget } from "./tree/align-target";
 import { selectionRulerFrame } from "./tree/ruler-frame";
+import { topFrames } from "./tree/top-frames";
 import { useFlipCommands } from "./ui/use-flip-commands";
 import { useViewCommands } from "./ui/use-view-commands";
 import { GradientHandles } from "./ui/gradient-handles";
@@ -81,6 +82,7 @@ export const coreModule = defineModule({
     host.contribute(designCanvas.alignTarget, containerAlignTarget);
     host.contribute(designCanvas.pasteOnto, pasteGradientOnto);
     host.contribute(designCanvas.rulerFrame, selectionRulerFrame);
+    host.contribute(designCanvas.frames, topFrames);
     host.contribute(
       designCanvas.hostCommands,
       { id: "flipHorizontal", label: "Flip horizontal", keys: [{ key: "h", shift: true }] },
@@ -209,6 +211,8 @@ export const coreModule = defineModule({
           { command: "copy", icon: Copy },
           { command: "paste", icon: ClipboardPaste },
           { command: "duplicate" },
+          { command: "copyProperties" },
+          { command: "pasteProperties" },
           { command: "selectAll" },
         ],
       },
@@ -227,6 +231,9 @@ export const coreModule = defineModule({
           { command: "zoomOut" },
           { command: "zoomReset" },
           { command: "zoomToFit" },
+          { command: "zoomToSelection" },
+          { command: "previousFrame" },
+          { command: "nextFrame" },
         ],
       },
       {

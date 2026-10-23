@@ -47,6 +47,7 @@ export class ConnectorKind extends LineKind<ConnectorElement, BoardToolOptions> 
   readonly description = "Drag from one shape to another to connect them.";
   override readonly tool = "connector";
   override readonly defaults: ConnectorDefaults = CONNECTOR_DEFAULTS;
+  override readonly styleFields = ["color", "size", "style", "startHead", "endHead"];
   override readonly boxed = false;
   override readonly specProperties = CONNECTOR_SPEC_PROPERTIES;
   override readonly patchableFields: ReadonlySet<string> = new Set([

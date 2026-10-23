@@ -203,7 +203,16 @@ its guides, locking guides, rulers on the board.
 Ordered by value for the effort:
 
 1. **Zoom to selection** (Shift+2) and **zoom to previous/next frame** (N / Shift+N), engine commands.
+   — done. As built: both zoom past 100% like Figma; the frames come from a product hook,
+   `frames` (the design's top-level visible frames and sections, the board's sections), in
+   reading order; N starts from the selected frame or the one holding the selection, else the one
+   nearest the middle of the view. In the zoom menu, the selection's context menu and the design's
+   View menu.
 2. **Copy/paste properties** (Ctrl+Alt+C / Ctrl+Alt+V: fills, strokes, opacity, radius, text style).
+   — done. As built: kinds list their `styleFields` (`styleOf`, `applyStyle`), matched by name
+   across types; the copied look is kept per product for the app session, not on the system
+   clipboard; both products (board colors, sizes and fonts too); agents use
+   `copy_properties_to_nodes` / `copy_properties_to_shapes`.
 3. **Select matching layers** (same type and fills) and **select inverse**, in the context menu.
 4. **Pixel preview** at high zoom: the pixel grid already exists; add "Snap to pixel grid" rounding to
    rotation-free nodes only.

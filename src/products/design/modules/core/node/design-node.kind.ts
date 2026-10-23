@@ -5,6 +5,7 @@ import {
   type ElementDescription,
   type ElementPatch,
   type ElementSpec,
+  type ElementStyle,
   type ElementView,
   type Point,
   rotatePoint,
@@ -21,6 +22,7 @@ import { flipPaints } from "./flip-paints";
 import { flipPlacement } from "./flip-placement";
 import type { FlipAxis } from "./flip.types";
 import { NODE_DEFAULTS } from "./node.defaults";
+import { NODE_STYLE_FIELDS, nodeStylePatch } from "./node-style";
 
 /**
  * The base of every design element type. It handles what all nodes share (name, place in the
@@ -55,6 +57,14 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
    */
   canGoInto(_parent: DesignNode, _parentKind: DesignNodeKind): boolean {
     return true;
+  }
+
+  /** Opacity, fills and strokes; kinds add their own (a corner radius, a font). */
+  override readonly styleFields: readonly string[] = NODE_STYLE_FIELDS;
+
+  /** The pasted look as it can show it (no fills on a line, no strokes on a text). */
+  override applyStyle(el: E, style: ElementStyle): ElementPatch<E> {
+    return nodeStylePatch(this, super.applyStyle(el, style));
   }
 
   /** Whether it has an inside to fill (lines don't: they only show strokes). */

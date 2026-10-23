@@ -10,6 +10,7 @@ export { drawPaints } from "./draw-paints";
 export { flipPlacement, mirrorPoint } from "./flip-placement";
 export { isDesignNode } from "./is-design-node";
 export { NODE_DEFAULTS } from "./node.defaults";
+export { NODE_STYLE_FIELDS } from "./node-style";
 export { solidPaint } from "./solid-paint";
 export { traceBox } from "./trace-box";
 export { imagePaint } from "./image-paint";

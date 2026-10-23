@@ -6,6 +6,7 @@ export { containerAlignTarget } from "./align-target";
 export { containerAt } from "./container-at";
 export { nearestContainer, positionOrigin } from "./nearest-container";
 export { selectionRulerFrame } from "./ruler-frame";
+export { topFrames } from "./top-frames";
 export { parentFor } from "./parent-for";
 export { DESIGN_TREE, DesignTree } from "./design-tree";
 export { treeOrderKeys } from "./order-keys";

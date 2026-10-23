@@ -25,6 +25,7 @@ export class StrokeKind extends LineKind<StrokeElement, BoardToolOptions> {
   readonly description = "Pen, highlighter and eraser.";
   override readonly tool = "marker";
   override readonly defaults: StrokeDefaults = STROKE_DEFAULTS;
+  override readonly styleFields = ["color", "size", "pen"];
   override readonly specProperties = STROKE_SPEC_PROPERTIES;
   override readonly patchableFields: ReadonlySet<string> = new Set(["x", "y", "color", "size"]);
 

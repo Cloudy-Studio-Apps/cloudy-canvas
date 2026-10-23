@@ -4,6 +4,7 @@ import {
   type ElementBuildContext,
   type ElementPatch,
   type ElementSpec,
+  type ElementStyle,
   type ElementText,
   type ElementView,
   type Rect,
@@ -11,7 +12,13 @@ import {
 } from "@canvas";
 import type { FontRequest } from "@shared/core";
 
-import { colorPaints, DesignNodeKind, drawPaints, type NodeBuildContext } from "../core";
+import {
+  colorPaints,
+  DesignNodeKind,
+  drawPaints,
+  NODE_STYLE_FIELDS,
+  type NodeBuildContext,
+} from "../core";
 import { TEXT_DEFAULTS } from "./text.defaults";
 import { retypeset } from "./retypeset";
 import { TEXT_SPEC_PROPERTIES, textFields } from "./text-args";
@@ -38,6 +45,17 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
   override readonly strokable = false;
   override readonly creatable = true;
   override readonly specProperties = TEXT_SPEC_PROPERTIES;
+  override readonly styleFields = [
+    ...NODE_STYLE_FIELDS,
+    "fontFamily",
+    "fontSize",
+    "fontWeight",
+    "fontStyle",
+    "lineHeight",
+    "letterSpacing",
+    "textAlign",
+    "verticalAlign",
+  ];
 
   override readonly text: ElementText<TextNodeElement> = {
     get: (el) => el.text,
@@ -134,6 +152,12 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
     const fields = textFields(patch);
     const next = Object.keys(fields).length > 0 ? retypeset({ ...el, ...patch }, fields) : {};
     return super.completePatch(el, { ...patch, ...next }, context);
+  }
+
+  /** A pasted look sets its type again: an auto-sized text takes its new size. */
+  override applyStyle(el: TextNodeElement, style: ElementStyle): ElementPatch<TextNodeElement> {
+    const patch = super.applyStyle(el, style);
+    return Object.keys(patch).length > 0 ? retypeset(el, patch) : patch;
   }
 
   override fonts(el: TextNodeElement): FontRequest[] {

@@ -15,6 +15,8 @@ export class GroupKind extends DesignNodeKind<GroupElement> {
   override readonly resizable = false;
   override readonly fillable = false;
   override readonly strokable = false;
+  /** Nothing to copy or paste: a group draws nothing of its own. */
+  override readonly styleFields: readonly string[] = [];
 
   draw(): void {}
 

@@ -21,6 +21,7 @@ export class StickyKind extends QuickConnectKind<StickyElement> {
   readonly description = "A colored note for jotting down an idea.";
   override readonly tool = "sticky";
   override readonly defaults = STICKY_DEFAULTS;
+  override readonly styleFields = ["color"];
   override readonly patchableFields: ReadonlySet<string> = new Set([
     "x",
     "y",

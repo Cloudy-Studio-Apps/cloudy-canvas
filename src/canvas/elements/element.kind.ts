@@ -7,7 +7,7 @@ import type { ElementView } from "../render/element-view";
 import { ELEMENT_DEFAULTS } from "./element.defaults";
 import { scaleRect } from "./element-scale";
 import type { ScaleTransform } from "./element-scale.types";
-import type { CanvasElement, ElementPatch } from "./element.types";
+import type { CanvasElement, ElementPatch, ElementStyle } from "./element.types";
 import type { ElementInteraction, InteractionQuery } from "./element.interaction.types";
 import type {
   ElementBuildContext,
@@ -68,6 +68,11 @@ export abstract class ElementKind<
   readonly specProperties: Readonly<Record<string, unknown>> = {};
   /** Fields agents may patch; `null` allows every field. */
   readonly patchableFields: ReadonlySet<string> | null = null;
+  /**
+   * The stored fields that make up its look (fills, colors, font…), which Copy and Paste
+   * properties carry (`styleOf`, `applyStyle`). Fields match by name across types.
+   */
+  readonly styleFields: readonly string[] = [];
   /** Set when the element has text edited in place. */
   readonly text: ElementText<E> | null = null;
 
@@ -230,6 +235,29 @@ export abstract class ElementKind<
 
   describe(_el: E): ElementDescription {
     return {};
+  }
+
+  /** Its look, for Copy properties: its `styleFields`. Empty when it has none. */
+  styleOf(el: E): ElementStyle {
+    const style: Record<string, unknown> = {};
+    const fields = el as unknown as Record<string, unknown>;
+    for (const field of this.styleFields) {
+      if (fields[field] !== undefined) style[field] = structuredClone(fields[field]);
+    }
+    return style;
+  }
+
+  /**
+   * How Paste properties restyles it: the copied fields it has among its `styleFields`. Kinds
+   * whose layout follows their look add what follows (e.g. a text's new size); empty when nothing
+   * applies.
+   */
+  applyStyle(_el: E, style: ElementStyle): ElementPatch<E> {
+    const patch: Record<string, unknown> = {};
+    for (const field of this.styleFields) {
+      if (style[field] !== undefined) patch[field] = structuredClone(style[field]);
+    }
+    return patch as ElementPatch<E>;
   }
 
   /** The tool options the element was styled with, so the options panel shows its look. */

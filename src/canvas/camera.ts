@@ -1,3 +1,4 @@
+import type { FitOptions } from "./camera.types";
 import type { Point, Rect, Size } from "./geometry.types";
 import { clamp } from "./utils";
 
@@ -73,11 +74,11 @@ export class Camera {
     this.y = this.viewport.h / 2 / this.zoom - worldPoint.y;
   }
 
-  /** Fits `rect` in the viewport without zooming past 100%. */
-  fitRect(rect: Rect, padding = FIT_PADDING): void {
+  /** Fits `rect` in the viewport, without zooming past 100% unless `maxZoom` says otherwise. */
+  fitRect(rect: Rect, { padding = FIT_PADDING, maxZoom = 1 }: FitOptions = {}): void {
     const zx = (this.viewport.w - padding * 2) / Math.max(rect.w, 1);
     const zy = (this.viewport.h - padding * 2) / Math.max(rect.h, 1);
-    this.zoom = this.clampZoom(Math.min(zx, zy, 1));
+    this.zoom = this.clampZoom(Math.min(zx, zy, maxZoom));
     this.centerOn({ x: rect.x + rect.w / 2, y: rect.y + rect.h / 2 });
   }
 

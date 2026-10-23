@@ -74,6 +74,12 @@ export type RulerFrameHook<O extends object> = (
   kinds: ElementKinds<O>,
 ) => CanvasElement | null;
 
+/** See `CanvasProduct.frames`; only one module may give them. */
+export type FramesHook<O extends object> = (
+  elements: readonly CanvasElement[],
+  kinds: ElementKinds<O>,
+) => readonly CanvasElement[];
+
 /** See `CanvasProduct.editElement`; only one module may give it. */
 export type EditElementHook<O extends object> = (el: CanvasElement, ctx: ToolContext<O>) => boolean;
 
@@ -125,6 +131,8 @@ export interface CanvasPoints<O extends object> {
   alignTarget: ExtensionPoint<AlignTargetHook<O>>;
   /** What the rulers measure (one module at most; two throw). */
   rulerFrame: ExtensionPoint<RulerFrameHook<O>>;
+  /** The frames N and Shift+N step through (one module at most; two throw). */
+  frames: ExtensionPoint<FramesHook<O>>;
   /** What double-click or Enter edits (one module at most; two throw). */
   editElement: ExtensionPoint<EditElementHook<O>>;
   onMoved: ExtensionPoint<OnMovedHook<O>>;

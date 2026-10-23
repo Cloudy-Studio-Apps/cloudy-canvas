@@ -85,5 +85,6 @@ function menuContext(engine: CanvasEngine): ContextMenuContext {
     selectionCount: selected.length,
     selectionLocked: selected.length > 0 && selected.every((el) => el?.locked),
     anyLocked: engine.elements().some((el) => el.locked),
+    styleCopied: engine.hasCopiedStyle(),
   };
 }

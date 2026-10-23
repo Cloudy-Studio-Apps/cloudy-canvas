@@ -50,6 +50,7 @@ export class TableKind extends BoxKind<TableElement, BoardToolOptions> {
   readonly description = "A grid of cells for lists, comparisons and plans.";
   override readonly tool = "table";
   override readonly defaults = TABLE_DEFAULTS;
+  override readonly styleFields = ["color"];
   override readonly patchableFields: ReadonlySet<string> = new Set([
     "x",
     "y",
