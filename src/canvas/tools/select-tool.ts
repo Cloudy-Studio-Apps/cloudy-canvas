@@ -21,6 +21,7 @@ export class SelectTool implements Tool {
   readonly cursor: string = "default";
   /** What dragging a resize handle does (the Scale tool scales instead). */
   readonly resizeMode: ResizeMode = "resize";
+  readonly editsOnDoubleClick: boolean = true;
   private gesture: Gesture | null = null;
   /** Whether Alt + hover distances are on screen. */
   private measuring = false;

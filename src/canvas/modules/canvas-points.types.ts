@@ -98,7 +98,10 @@ export type FramesHook<O extends object> = (
   kinds: ElementKinds<O>,
 ) => readonly CanvasElement[];
 
-/** See `CanvasProduct.editElement`; only one module may give it. */
+/**
+ * See `CanvasProduct.editElement`. Several modules may give one (each for its own elements); the
+ * first that returns `true` handles the element, in module order.
+ */
 export type EditElementHook<O extends object> = (el: CanvasElement, ctx: ToolContext<O>) => boolean;
 
 /** See `CanvasProduct.afterEdit`; only one module may give it. */

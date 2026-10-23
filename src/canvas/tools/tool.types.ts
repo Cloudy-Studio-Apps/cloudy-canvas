@@ -74,6 +74,12 @@ export interface ToolContext<O extends object = object> {
   setDraft(el: CanvasElement | null): void;
   /** Dims elements, e.g. those a gesture will remove when it ends; `null` clears it. */
   setFaded(ids: Iterable<string> | null): void;
+  /**
+   * Only what `accepts` takes can be pointed at, selected or marqueed while this tool is on; the
+   * rest is dimmed and dropped from the selection (an edit mode, e.g. the board's ER mode).
+   * Switching tools ends it; `null` ends it now.
+   */
+  setIsolation(accepts: ((el: CanvasElement) => boolean) | null): void;
   /** Shows gesture feedback above the elements (e.g. a line being dragged); `null` clears it. */
   setGuide(guide: Guide | null): void;
   /**
@@ -116,6 +122,8 @@ export interface Tool {
    * scales gets them): the Scale tool's `scale`. Unset is `resize`.
    */
   readonly resizeMode?: ResizeMode;
+  /** Double-click edits what it hits (enters groups, edits text) while it's on: the select tool. */
+  readonly editsOnDoubleClick?: boolean;
   onPointerDown(p: CanvasPointer): void;
   onPointerMove?(p: CanvasPointer): void;
   onPointerUp?(p: CanvasPointer): void;

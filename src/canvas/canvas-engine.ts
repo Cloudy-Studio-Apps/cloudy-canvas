@@ -137,6 +137,8 @@ export class CanvasEngine<O extends object = object> {
   private readonly product: CanvasProduct<O>;
   private readonly links: CanvasLinks[];
   private readonly camera = new Camera();
+  /** What the active tool fades (`ToolContext.setFaded`), on top of what its isolation dims. */
+  private toolFaded: string[] = [];
   private readonly renderer: Renderer;
   private readonly scene: Scene;
   private readonly fontTracker: FontTracker;
@@ -412,7 +414,9 @@ export class CanvasEngine<O extends object = object> {
     const next = this.tools.get(id);
     if (!next || this.tool === next) return;
     this.tool.onCancel?.();
-    this.renderer.setFaded([]);
+    this.toolFaded = [];
+    this.scene.isolation = null;
+    this.applyFaded();
     this.renderer.setSnapFeedback(null);
     this.tool = next;
     this.scene.resizeMode = next.resizeMode ?? "resize";
@@ -549,9 +553,11 @@ export class CanvasEngine<O extends object = object> {
     };
   }
 
-  /** Selects every element that isn't locked. */
+  /** Selects every element that isn't locked (nor isolated away). */
   selectAll(): void {
-    this.setSelection(this.scene.elements.filter((el) => !el.locked).map((el) => el.id));
+    this.setSelection(
+      this.scene.elements.filter((el) => this.scene.reachable(el)).map((el) => el.id),
+    );
   }
 
   /** Returns `false` when nothing was selected. A selected part is deleted instead of its element. */
@@ -1186,8 +1192,21 @@ export class CanvasEngine<O extends object = object> {
         this.requestRender();
       },
       setFaded: (ids) => {
-        this.renderer.setFaded(ids ?? []);
+        this.toolFaded = [...(ids ?? [])];
+        this.applyFaded();
         this.requestRender();
+      },
+      setIsolation: (accepts) => {
+        this.scene.isolation = accepts;
+        const kept = [...this.scene.selection.ids].filter((id) => {
+          const el = this.scene.get(id);
+          return el !== undefined && this.scene.reachable(el, true);
+        });
+        if (kept.length !== this.scene.selection.ids.size) this.setSelection(kept);
+        this.scene.setHover(null);
+        this.applyFaded();
+        this.requestRender();
+        this.emitChange();
       },
       animateIn: (ids) => {
         this.renderer.animateIn(ids);
@@ -1457,7 +1476,7 @@ export class CanvasEngine<O extends object = object> {
    * design vector's points), or edits its text.
    */
   private handleDoubleClick(p: CanvasPointer): void {
-    if (this.tool.id !== "select") return;
+    if (!this.tool.editsOnDoubleClick) return;
     const hit = this.elementAt(p.world);
     if (!hit) return;
     const entered = this.targetOf(hit.id, { enter: true });
@@ -1583,8 +1602,16 @@ export class CanvasEngine<O extends object = object> {
   }
 
   /** Re-reads the elements, and re-resolves the links between them. */
+  /** Dims what the tool fades (`setFaded`) and what its isolation leaves out. */
+  private applyFaded(): void {
+    const { isolation } = this.scene;
+    const away = isolation ? this.scene.elements.filter((el) => !isolation(el)) : [];
+    this.renderer.setFaded([...this.toolFaded, ...away.map((el) => el.id)]);
+  }
+
   private refreshScene(): void {
     this.scene.refresh();
+    if (this.scene.isolation) this.applyFaded();
     this.fontTracker.request(this.scene.elements.flatMap((el) => this.kinds.kindOf(el).fonts(el)));
     for (const links of this.links) links.update(this.scene.elements);
   }

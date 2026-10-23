@@ -11,6 +11,7 @@ import { erTools } from "./er.agent-tools";
 import { ErTool } from "./er.tool";
 import { ErIsaKind } from "./isa";
 import { ErLinks } from "./links";
+import { enterErMode, ER_MODE_TOOL, ErModeTool } from "./mode";
 import {
   migrateErDiagrams,
   prepareErCopies,
@@ -21,6 +22,7 @@ import {
 } from "./model";
 import { ErRelationKind } from "./relation";
 import { ErPanel } from "./ui/er-panel";
+import { ErModeToolbar } from "./ui/er-mode";
 import { ErPalette } from "./ui/er-palette";
 import { ErQuickAddMenu } from "./ui/er-quick-add";
 import { ErRelationPrompt } from "./ui/er-relation-prompt";
@@ -43,11 +45,13 @@ export const erModule = defineModule({
       new ErAggregateKind(),
       new ErConstraintKind(),
     );
-    host.contribute(boardCanvas.tools, {
-      id: "er",
-      create: (ctx) => new ErTool(ctx),
-      keys: [{ key: "e" }],
-    });
+    host.contribute(
+      boardCanvas.tools,
+      { id: "er", create: (ctx) => new ErTool(ctx), keys: [{ key: "e" }] },
+      // The ER mode; entered by double-clicking an ER shape (or the panel's Edit diagram).
+      { id: ER_MODE_TOOL, create: (ctx) => new ErModeTool(ctx) },
+    );
+    host.contribute(boardCanvas.editElement, enterErMode);
     host.contribute(boardCanvas.links, () => new ErLinks());
     // Aggregation boxes and constraints follow the ER elements they're about.
     host.contribute(boardCanvas.resolveElements, (elements) => resolveErElements(elements));
@@ -76,6 +80,12 @@ export const erModule = defineModule({
     host.contribute(boardEditor.sidePanels, { id: "er.panel", order: 20, component: ErPanel });
     // The element types, to click or drag onto the board while a diagram is being edited.
     host.contribute(boardEditor.overlays, { id: "er.palette", component: ErPalette });
+    // The ER mode's toolbar, in place of the main one.
+    host.contribute(boardEditor.toolbars, {
+      id: "er.mode",
+      tools: [ER_MODE_TOOL],
+      component: ErModeToolbar,
+    });
     // What to create where a connect dot was dropped on empty board.
     host.contribute(boardEditor.overlays, { id: "er.quickAdd", component: ErQuickAddMenu });
     // What kind of relation a connect dot dropped on another entity makes.

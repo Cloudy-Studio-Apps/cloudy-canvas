@@ -16,3 +16,4 @@ export type * from "./links";
 export { ErTool } from "./er.tool";
 export { erTools } from "./er.agent-tools";
 export * from "./connect";
+export * from "./mode";

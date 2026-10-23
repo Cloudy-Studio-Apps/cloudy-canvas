@@ -1,18 +1,18 @@
-import { erAddActions } from "@board";
+import { ER_MODE_TOOL, erAddActions } from "@board";
 import { FloatingPanel, useEngine, useEngineState } from "@canvas-ui";
 import { useErDiagram, useErSelection, useErShape, useErShapes } from "../model";
 import { ErPaletteButton } from "./er-palette-button";
 import { ER_PALETTE_ITEMS } from "./er-palette-items";
 
 /**
- * The ER element types along the canvas's left edge, shown while an ER element is selected or the
- * ER tool is on. Each one is clicked to add it to the shown diagram (placed next to what it
+ * The ER element types along the canvas's left edge, shown while an ER element is selected, the ER
+ * tool is on or the ER mode is (always, then). Each one is clicked to add it to the shown diagram (placed next to what it
  * belongs to) or dragged onto the board, where it lands and attaches to what it's dropped on.
  */
 export function ErPalette() {
   const engine = useEngine();
   const selection = useErSelection();
-  const erTool = useEngineState((state) => state.tool === "er");
+  const erTool = useEngineState((state) => state.tool === "er" || state.tool === ER_MODE_TOOL);
   const diagram = useErDiagram();
   const shapes = useErShapes();
   const selected = useErShape(selection.id ?? "");

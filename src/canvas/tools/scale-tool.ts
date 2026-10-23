@@ -8,4 +8,5 @@ import { SelectTool } from "./select-tool";
 export class ScaleTool extends SelectTool {
   override readonly id = "scale";
   override readonly resizeMode: ResizeMode = "scale";
+  override readonly editsOnDoubleClick = false;
 }

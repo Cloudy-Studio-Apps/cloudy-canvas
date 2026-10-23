@@ -40,7 +40,7 @@ export function findInteraction(
   const elements = scene.elements;
   for (let i = elements.length - 1; i >= 0; i--) {
     const element = elements[i]!;
-    if (element.locked) continue;
+    if (!scene.reachable(element)) continue;
     const interaction = scene.kindOf(element).interactionAt(element, toUnrotated(world, element), {
       reach,
       zoom,

@@ -53,17 +53,21 @@ Ordered by value. Each is a separate piece of work.
 7. **Union types (categories).** `Union Propietario { Persona, Banco, Empresa }`, a "U" circle. Elmasri advises against them; low priority.
 8. **Existence dependency mark.** `[existence]`, an "E" next to the "I", once the notation is confirmed.
 
-## Chen ER mode
+## ER mode (done)
 
-An editing mode for one diagram, entered by double-clicking an ER shape, the panel's **Edit diagram** button or E on a selected ER shape; Esc or **Done** leaves it.
+Double-click an ER shape (or press Enter on one), click the ER panel's **Edit diagram** button, or place a new diagram with the ER tool (E).
 
-- The main toolbar is replaced by an ER toolbar (select, hand, entity, relation, attribute, hierarchy, aggregation, constraint, Check, Re-layout, Done) through the editor's `toolbars` point.
+- The main toolbar becomes the ER toolbar: New diagram, Select diagram, Re-layout, Diagram text and **Done**.
 - The palette and the ER panel stay open for the whole mode.
-- Everything outside the diagram is dimmed and can't be selected or moved, like a group being edited; the board's other tools are hidden.
-- Keys inside the mode create ER shapes (for example A for an attribute of the selection, R for a relation), listed in the toolbar's tooltips.
-- Check diagram warnings show on the shapes themselves while the mode is on.
+- Only ER shapes (of any diagram, so linking two still joins them) can be hovered, selected, marqueed or Ctrl+A'd. Everything else is dimmed, and other tools' shortcuts are held back.
+- Inside the mode, double-click renames a shape as before.
+- Esc steps back: the selected part, then the selection, then out of the mode. **Done** leaves at once.
+- It doesn't lock the board: leaving the mode makes stickies, text and sections next to a diagram usable again.
 
-What it doesn't do: lock the board. Stickies, text and sections next to a diagram stay usable outside the mode, since notes beside a model are a normal part of a whiteboard.
+Still to do for the mode:
+
+- Keys that create ER shapes (for example A for an attribute of the selection, R for a relation).
+- Showing the Check diagram warnings on the shapes while the mode is on (needs item 1).
 
 ## Open questions
 

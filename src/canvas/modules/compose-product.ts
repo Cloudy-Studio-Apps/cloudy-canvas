@@ -4,7 +4,7 @@ import type { CanvasProduct } from "../canvas-product.types";
 import type { CanvasViewOptions } from "../canvas-view.types";
 import { ElementKinds } from "../elements";
 import { BASE_KEYBINDINGS, type Keybindings } from "../input";
-import type { CanvasPoints } from "./canvas-points.types";
+import type { CanvasPoints, EditElementHook } from "./canvas-points.types";
 
 /**
  * The product the modules on `host` make up: their element kinds, tools, shortcuts, options and
@@ -43,7 +43,9 @@ export function composeProduct<O extends object>(
   const rulerFrame = single(host.get(points.rulerFrame), `what the ${id}'s rulers measure`);
   const frames = single(host.get(points.frames), `the frames N steps through in the ${id}`);
   const afterEdit = single(host.get(points.afterEdit), `what follows from edits in the ${id}`);
-  const editor = single(host.get(points.editElement), `what double-click edits in the ${id}`);
+  const editors = host.get(points.editElement);
+  const editor: EditElementHook<O> | undefined =
+    editors.length > 0 ? (el, ctx) => editors.some((edit) => edit(el, ctx)) : undefined;
 
   return {
     id,

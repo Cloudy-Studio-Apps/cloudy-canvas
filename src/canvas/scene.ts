@@ -56,6 +56,11 @@ export class Scene {
   resizeMode: ResizeMode = "resize";
   /** The scope shown (see `SceneHooks.scopeOf`); `refresh` reads it. */
   scope: string | null = null;
+  /**
+   * While set, only the elements it accepts can be pointed at, selected or marqueed; the rest are
+   * shown dimmed (an edit mode's isolation, `ToolContext.setIsolation`).
+   */
+  isolation: ((el: CanvasElement) => boolean) | null = null;
 
   constructor(
     private readonly doc: CanvasDocument,
@@ -219,14 +224,20 @@ export class Scene {
     return this.byId.get(id);
   }
 
+  /** Whether the element can be pointed at and selected: inside the isolation and, unless asked, unlocked. */
+  reachable(el: CanvasElement, includeLocked = false): boolean {
+    if (this.isolation && !this.isolation(el)) return false;
+    return includeLocked || !el.locked;
+  }
+
   /**
    * Topmost element at a world point. `tolerance` is in world units. Locked elements are skipped
-   * unless `includeLocked` is set.
+   * unless `includeLocked` is set; isolated-away ones always are.
    */
   elementAt(world: Point, tolerance: number, includeLocked = false): CanvasElement | undefined {
     for (let i = this.list.length - 1; i >= 0; i--) {
       const el = this.list[i]!;
-      if (el.locked && !includeLocked) continue;
+      if (!this.reachable(el, includeLocked)) continue;
       // What's clipped away can't be clicked.
       const clip = this.clips.get(el.id);
       if (clip && !pointInRotatedRect(world, clip.rect, clip.rotation ?? 0, tolerance)) continue;
@@ -244,7 +255,7 @@ export class Scene {
    */
   elementsInRect(rect: Rect): CanvasElement[] {
     return this.list.filter((el) => {
-      if (el.locked) return false;
+      if (!this.reachable(el)) return false;
       const kind = this.kinds.kindOf(el);
       const bounds = elementBounds(kind, el);
       if (kind.frame) return rectContainsRect(rect, bounds);
