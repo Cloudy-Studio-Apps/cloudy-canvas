@@ -14,7 +14,7 @@ const TEXT_STYLE_FIELDS = [
 
 /**
  * `node` with the shared styles it uses applied: a text style's typography, a color style's fill
- * and stroke paints. A styled node can keep stale values of its own (files written by plugins
+ * and stroke paints, an effect style's effects. A styled node can keep stale values of its own (files written by plugins
  * do), so the style wins, as when Figma draws it. Styles missing from the file change nothing.
  */
 export function withFigStyles(tree: FigTree, node: FigNode): FigNode {
@@ -31,5 +31,7 @@ export function withFigStyles(tree: FigTree, node: FigNode): FigNode {
   if (fill?.fillPaints) styled = { ...styled, fillPaints: fill.fillPaints };
   const stroke = tree.style(node.styleIdForStrokeFill);
   if (stroke?.fillPaints) styled = { ...styled, strokePaints: stroke.fillPaints };
+  const effect = tree.style(node.styleIdForEffect);
+  if (effect?.effects) styled = { ...styled, effects: effect.effects };
   return styled;
 }

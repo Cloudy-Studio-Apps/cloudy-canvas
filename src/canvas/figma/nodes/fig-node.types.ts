@@ -51,6 +51,18 @@ export interface FigEffect {
   startRadius?: number;
   startOffset?: FigVector;
   endOffset?: FigVector;
+  /** Noise: `MONOTONE`, `DUOTONE` or `MULTITONE`. */
+  noiseType?: string;
+  /** Noise and texture grain size (the file keeps it as a vector). */
+  noiseSize?: FigVector;
+  /** How much of the layer noise covers (0–1). */
+  density?: number;
+  /** The second color of duotone noise. */
+  secondaryColor?: FigColor;
+  /** Whether a texture's roughness stays inside the layer's shape. */
+  clipToShape?: boolean;
+  /** How the effect blends with what's under it; `NORMAL` when left out. */
+  blendMode?: string;
 }
 
 export interface FigColor {
@@ -75,6 +87,8 @@ export interface FigPaint {
   imageThumbnail?: { hash?: Uint8Array };
   /** FILL, FIT, STRETCH (a crop) or TILE. */
   imageScaleMode?: string;
+  /** How the paint blends with the paints under it; `NORMAL` when left out. */
+  blendMode?: string;
   /** A tiled image's tile size, as a share of its pixel size (`scalingFactor`). */
   scale?: number;
   /** An image's quarter turns, in degrees. */
@@ -154,11 +168,17 @@ export interface FigNode {
   styleIdForFill?: FigStyleRef;
   /** The color style of its strokes. */
   styleIdForStrokeFill?: FigStyleRef;
+  /** The effect style it uses, whose effects win over its own. */
+  styleIdForEffect?: FigStyleRef;
   name?: string;
   parentIndex?: { guid?: FigGuid; position?: string };
   visible?: boolean;
   locked?: boolean;
   opacity?: number;
+  /** How the layer blends with what's under it: `PASS_THROUGH` (groups), `NORMAL`, `MULTIPLY`… */
+  blendMode?: string;
+  /** Auto layout: `HORIZONTAL` or `VERTICAL` (`NONE` or missing without one). */
+  stackMode?: string;
   internalOnly?: boolean;
   isPageDivider?: boolean;
   size?: FigVector;

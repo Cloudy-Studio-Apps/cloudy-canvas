@@ -20,6 +20,7 @@ export function figNodeBase<K extends string>(
   ctx: FigImportContext,
   paints: NodePaints = {},
 ): DesignNode & { type: K } {
+  warnUnsupported(node, ctx);
   const base = createNodeBase(type, rect, placement.index, {
     name: node.name ?? "",
     parentId: placement.parentId,
@@ -37,6 +38,20 @@ export function figNodeBase<K extends string>(
     ...(node.locked ? { locked: true } : {}),
     ...(node.mask ? { isMask: true, maskType: figMaskType(node, ctx) } : {}),
   };
+}
+
+/** Counts what the node has that isn't brought over yet: blend modes and auto layout. */
+function warnUnsupported(node: FigNode, ctx: FigImportContext): void {
+  if (node.blendMode && node.blendMode !== "NORMAL" && node.blendMode !== "PASS_THROUGH") {
+    ctx.warnings.add("layers' blend modes were left out");
+  }
+  const paints = [...(node.fillPaints ?? []), ...(node.strokePaints ?? [])];
+  if (paints.some((paint) => paint.blendMode && paint.blendMode !== "NORMAL")) {
+    ctx.warnings.add("paints' blend modes were left out");
+  }
+  if (node.stackMode && node.stackMode !== "NONE") {
+    ctx.warnings.add("auto layout frames kept their layout as fixed positions");
+  }
 }
 
 /** How a Figma mask masks (alpha when Figma's type is unknown, with a warning). */
