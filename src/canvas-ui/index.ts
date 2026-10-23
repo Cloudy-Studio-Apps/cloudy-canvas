@@ -7,6 +7,7 @@ export type * from "./components/commit-field";
 export type * from "./components/context-menu";
 export type * from "./file";
 export type * from "./components/export-dialog";
+export type * from "./components/image-crop";
 export type { ColorPaletteProps } from "./components/color-palette.types";
 export type { ColorPickerProps } from "./components/color-picker.types";
 export type { ColorSwatchProps } from "./components/color-swatch.types";
@@ -16,6 +17,7 @@ export type { OptionButtonProps } from "./components/option-button.types";
 export type { ToolButtonProps } from "./components/tool-button.types";
 export type { ZoomMenuProps } from "./components/zoom-menu.types";
 export type * from "./modules";
+export type * from "./overlay";
 export { createActiveFile, useAgentFile } from "./agent";
 export { readCanvasTheme } from "./canvas-theme";
 export {
@@ -26,6 +28,7 @@ export {
 } from "./components/commit-field";
 export { CANVAS_MENU, CanvasContextMenu, SELECTION_MENU } from "./components/context-menu";
 export { ExportDialog } from "./components/export-dialog";
+export { ImageCropOverlay } from "./components/image-crop";
 export { ColorPalette } from "./components/color-palette";
 export {
   CHECKERBOARD,
@@ -68,5 +71,7 @@ export { useCanvasFileDrop } from "./use-canvas-file-drop";
 export { useCopyAsPng } from "./use-copy-as-png";
 export { useDocumentMeta } from "./use-document-meta";
 export * from "./modules";
+export { normalizedToScreen, screenToLocal, screenToNormalized, useViewMapping } from "./overlay";
+export { useAssetUrl } from "./use-asset-url";
 export { useService } from "./use-service";
 export { useSnapping } from "./use-snapping";

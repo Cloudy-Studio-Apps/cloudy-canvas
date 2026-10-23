@@ -3,6 +3,7 @@ import { fillPath, strokePath, type ElementView, type PaintLayer, type PaintTool
 import type { DesignNode, NodeGeometry, PaintOutline, StrokeShape } from "./design-node.types";
 import type { PaintTracer } from "./draw-paints.types";
 import { isGradientPaint } from "./gradient-paint";
+import { imagePlacement } from "./image-paint";
 import type { Paint } from "./paint.types";
 
 /**
@@ -44,7 +45,7 @@ export function drawPaints(
       kind: "image",
       assetId: paint.assetId,
       box: { x: 0, y: 0, w: node.w, h: node.h },
-      fit: paint.scaleMode === "fit" ? "contain" : "cover",
+      placement: imagePlacement(paint),
       alpha: paint.opacity,
       mask: (g) => tracer.fill(g, { color: 0xffffff }),
     });

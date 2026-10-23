@@ -1,4 +1,4 @@
-import type { CanvasElement, ElementDefaults } from "@canvas";
+import type { CanvasElement, ElementDefaults, ImageCrop } from "@canvas";
 
 /** What's drawn behind the image and its padding. */
 export type ImageBackground = "none" | "white";
@@ -10,6 +10,8 @@ export interface ImageElement extends CanvasElement {
   background: ImageBackground;
   /** Space between the image and the element's bounds, in world units (the bounds include it). */
   padding: number;
+  /** The part of the picture shown (fractions of it), or `null` for all of it. */
+  crop: ImageCrop | null;
 }
 
 export interface ImagePaddingOption {

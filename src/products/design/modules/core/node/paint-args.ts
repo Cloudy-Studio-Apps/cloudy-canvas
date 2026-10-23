@@ -6,14 +6,14 @@ import {
   isCssGradient,
   readGradientPaint,
 } from "./gradient-args";
+import { readImagePaint } from "./image-paint-args";
 import { fraction } from "./number-args";
 import { hexColor } from "./paint-args-color";
-import type { GradientPaint, ImagePaint, Paint, SolidPaint } from "./paint.types";
+import type { GradientPaint, Paint, SolidPaint } from "./paint.types";
 
 export { hexColor };
 
 const NO_PAINT = new Set(["transparent", "none"]);
-const SCALE_MODES: readonly ImagePaint["scaleMode"][] = ["fill", "fit"];
 
 /**
  * The paints of a shorthand color: one solid paint, one gradient for a CSS gradient (laid on a
@@ -29,7 +29,7 @@ export function colorPaints(value: string, key: string, size?: Size): Paint[] {
  * Paints given in full, bottom to top: `{ type: "solid", color, opacity?, visible? }`, a gradient
  * `{ type: "linear" | "radial" | "angular" | "diamond", stops, transform? | from?/to?/width? |
  * angle?, interpolation?, opacity?, visible? }` or a CSS gradient string (both laid on a box of
- * `size`), or `{ type: "image", assetId, scaleMode?, opacity?, visible? }` (only when `images`).
+ * `size`), or an image (only when `images`, see `readImagePaint`).
  */
 export function readPaints(value: unknown, key: string, images: boolean, size?: Size): Paint[] {
   if (!Array.isArray(value)) throw new Error(`"${key}" must be an array of paints.`);
@@ -54,20 +54,7 @@ function readPaint(item: unknown, key: string, images: boolean, size?: Size): Pa
   }
   if (paint.type === "image") {
     if (!images) throw new Error(`"${key}" can't be an image here.`);
-    if (typeof paint.assetId !== "string" || paint.assetId === "") {
-      throw new Error(`"${key}.assetId" must be the asset id of an image (see add_image).`);
-    }
-    const scaleMode = paint.scaleMode ?? "fill";
-    if (!SCALE_MODES.includes(scaleMode as ImagePaint["scaleMode"])) {
-      throw new Error(`"${key}.scaleMode" must be one of: ${SCALE_MODES.join(", ")}.`);
-    }
-    return {
-      type: "image",
-      assetId: paint.assetId,
-      scaleMode: scaleMode as ImagePaint["scaleMode"],
-      opacity,
-      visible,
-    };
+    return readImagePaint(paint, key, { opacity, visible });
   }
   const types = ["solid", ...GRADIENT_PAINT_TYPES, ...(images ? ["image"] : [])];
   throw new Error(`"${key}.type" must be one of: ${types.join(", ")}.`);

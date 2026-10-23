@@ -13,12 +13,14 @@ import {
 import type { BoardToolOptions } from "../../board-options.types";
 import { drawImage } from "./image.draw";
 import { IMAGE_DEFAULTS } from "./image.defaults";
+import { checkCrop, imageCropPatch } from "./image-crop";
 import { imagePaddingPatch } from "./image-padding";
 import type { ImageDefaults, ImageElement } from "./image.types";
 
 /**
  * A picture pasted onto the board. It keeps its proportions when resized; its background and
  * padding are picked in the options panel, and the padding grows the bounds around the image.
+ * It can show part of the picture (`crop`, cropped on the canvas with a double-click).
  */
 export class ImageKind extends BoxKind<ImageElement, BoardToolOptions> {
   readonly type = "image";
@@ -35,6 +37,7 @@ export class ImageKind extends BoxKind<ImageElement, BoardToolOptions> {
     "h",
     "background",
     "padding",
+    "crop",
   ]);
 
   /** A pasted padding grows or shrinks the bounds round the picture. */
@@ -67,6 +70,13 @@ export class ImageKind extends BoxKind<ImageElement, BoardToolOptions> {
     el: ImageElement,
     patch: ElementPatch<ImageElement>,
   ): ElementPatch<ImageElement> {
+    if (patch.crop !== undefined) {
+      // The bounds follow the crop, round the part shown (unless given too).
+      const cropped = imageCropPatch(el, checkCrop(patch.crop));
+      const rest = { ...patch };
+      delete rest.crop;
+      return { ...cropped, ...this.completePatch({ ...el, ...cropped }, rest) };
+    }
     const { backgrounds, maxPadding } = IMAGE_DEFAULTS;
     if (patch.background !== undefined && !backgrounds.includes(patch.background)) {
       throw new Error(`"background" must be one of: ${backgrounds.join(", ")}.`);
@@ -87,6 +97,7 @@ export class ImageKind extends BoxKind<ImageElement, BoardToolOptions> {
       ...el,
       background: el.background ?? IMAGE_DEFAULTS.background,
       padding: el.padding ?? IMAGE_DEFAULTS.padding,
+      crop: el.crop ?? null,
     };
   }
 

@@ -21,6 +21,7 @@ import type { DesignNode, NodeGeometry } from "./design-node.types";
 import { GEOMETRY_CACHE } from "./node-geometry";
 import type { NodeBuildContext } from "./node-build.types";
 import { flipPaints } from "./flip-paints";
+import { scaleTiles } from "./scale-tiles";
 import { flipPlacement } from "./flip-placement";
 import type { FlipAxis } from "./flip.types";
 import { NODE_DEFAULTS } from "./node.defaults";
@@ -175,9 +176,16 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
     } as ElementPatch<E>;
   }
 
-  /** Scaled (the Scale tool): its geometry as the kind scales it, and its stroke weight. */
+  /**
+   * Scaled (the Scale tool): its geometry as the kind scales it, its stroke weight and its tiled
+   * images' tiles.
+   */
   override scale(el: E, t: ScaleTransform): ElementPatch<E> {
-    return { ...super.scale(el, t), strokeWeight: scaleLength(t, el.strokeWeight) };
+    return {
+      ...super.scale(el, t),
+      strokeWeight: scaleLength(t, el.strokeWeight),
+      ...scaleTiles(el, t),
+    };
   }
 
   /** Hidden layers aren't snapped to. */

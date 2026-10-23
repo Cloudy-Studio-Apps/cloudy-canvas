@@ -1,5 +1,7 @@
 import { ImageSource, Texture } from "pixi.js";
 
+import type { Size } from "../geometry.types";
+
 import type { ImageCacheHost } from "./image-cache.types";
 import { isSvg, rasterizeSvg } from "./svg-image";
 
@@ -30,6 +32,8 @@ async function limitSize(bitmap: ImageBitmap): Promise<ImageBitmap> {
 export class ImageCache {
   private readonly textures = new Map<string, Texture>();
   private readonly loading = new Map<string, Promise<Texture | null>>();
+  /** Each decoded picture's own size in pixels, before it was scaled down for its texture. */
+  private readonly sizes = new Map<string, Size>();
   private destroyed = false;
 
   constructor(private readonly host: ImageCacheHost) {}
@@ -37,6 +41,11 @@ export class ImageCache {
   /** The asset's texture if it's loaded, otherwise `null`. */
   get(assetId: string): Texture | null {
     return this.textures.get(assetId) ?? null;
+  }
+
+  /** The picture's own size in pixels (its texture may be smaller), once it's loaded. */
+  naturalSize(assetId: string): Size | null {
+    return this.sizes.get(assetId) ?? null;
   }
 
   /**
@@ -64,11 +73,11 @@ export class ImageCache {
   private async decode(assetId: string): Promise<Texture | null> {
     const data = this.host.read(assetId)!;
     try {
-      const bitmap = await limitSize(
-        isSvg(data)
-          ? await rasterizeSvg(data)
-          : await createImageBitmap(new Blob([data as Uint8Array<ArrayBuffer>])),
-      );
+      const decoded = isSvg(data)
+        ? await rasterizeSvg(data)
+        : await createImageBitmap(new Blob([data as Uint8Array<ArrayBuffer>]));
+      const natural = { w: decoded.width, h: decoded.height };
+      const bitmap = await limitSize(decoded);
       if (this.destroyed) {
         bitmap.close();
         return null;
@@ -77,6 +86,7 @@ export class ImageCache {
       const source = new ImageSource({ resource: bitmap, autoGenerateMipmaps: true });
       const texture = new Texture({ source });
       this.textures.set(assetId, texture);
+      this.sizes.set(assetId, natural);
       this.host.onLoad();
       return texture;
     } catch (error) {

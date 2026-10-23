@@ -14,6 +14,7 @@ import { textMaskTexture } from "./text-mask";
 import { cappedTextResolution } from "./text-resolution";
 import { canvasTextStyle } from "./text-style";
 import type { CanvasTextOptions } from "./text-style.types";
+import type { ImageCrop } from "../image";
 import type { ImageFit } from "./element-view.types";
 
 /** Opacity of a faded element (see `setFaded`). */
@@ -46,8 +47,8 @@ export class ElementView extends Container {
   /** The image asset the view shows, and the box it's fitted into (local coordinates). */
   private imageAsset: string | null = null;
   private imageBox: Rect = { x: 0, y: 0, w: 0, h: 0 };
-  private imageFit: ImageFit = "contain";
-  /** The cropped view of a texture for `cover` (its source belongs to the image cache). */
+  private imageFit: ImageFit | ImageCrop = "contain";
+  /** The cropped view of a texture for `cover` or a crop (its source belongs to the image cache). */
   private croppedTexture: Texture | null = null;
   /** The element's bounds, which the entrance scales around (see `setEntrance`). */
   private bounds: Rect = { x: 0, y: 0, w: 0, h: 0 };
@@ -137,10 +138,10 @@ export class ElementView extends Container {
 
   /**
    * Shows an image asset in `box` (local coordinates), keeping its proportions: `contain` fits it
-   * inside, centered; `cover` fills the box and crops what's outside. It appears once its texture
-   * has loaded.
+   * inside, centered; `cover` fills the box and crops what's outside; an `ImageCrop` fills the box
+   * with that part of the picture. It appears once its texture has loaded.
    */
-  placeImage(assetId: string, box: Rect, fit: ImageFit = "contain"): void {
+  placeImage(assetId: string, box: Rect, fit: ImageFit | ImageCrop = "contain"): void {
     if (!this.image) {
       this.image = new Sprite();
       this.addChildAt(this.image, this.getChildIndex(this.graphics) + 1);

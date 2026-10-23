@@ -13,7 +13,7 @@ import { requireDesign, type DesignAgentTool } from "../../agent";
 import { checkParent, containerAt, imagePaint, isNodeKind, type ImageScaleMode } from "../core";
 import { createRectangle, type RectangleElement } from "../rectangle";
 
-const SCALE_MODES: readonly ImageScaleMode[] = ["fill", "fit"];
+const SCALE_MODES: readonly ImageScaleMode[] = ["fill", "fit", "tile"];
 
 /** Placing picture files, as dropping them on the canvas does. */
 export const imageTools: DesignAgentTool[] = [
@@ -41,7 +41,9 @@ export const imageTools: DesignAgentTool[] = [
         },
         scaleMode: {
           enum: SCALE_MODES,
-          description: "fill crops to cover (default), fit shows it all.",
+          description:
+            "fill crops to cover (default), fit shows it all, tile repeats it at half its pixel " +
+            "size; to crop it, give the fill a crop with update_nodes.",
         },
       },
     },

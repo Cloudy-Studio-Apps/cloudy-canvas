@@ -8,8 +8,10 @@ const PAINTS = {
     "handles as points of the layer's box (0–1 each axis; radial/angular/diamond: from is the " +
     'center, to the radius end), interpolation?: "srgb" | "oklab" (smoother middles), opacity?, ' +
     'visible? }; a CSS gradient string ("linear-gradient(90deg, #FF5F6D, #FFC371)", ' +
-    'radial-gradient, conic-gradient); or { type: "image", assetId, scaleMode?: "fill" | "fit", ' +
-    "opacity?, visible? } (fills only).",
+    'radial-gradient, conic-gradient); or { type: "image", assetId, scaleMode?: "fill" | "fit" | ' +
+    '"crop" | "tile", crop?: { x, y, w, h } (crop: the part of the picture shown, fractions of it), ' +
+    "scalingFactor? (tile: a tile's size as a share of the picture's pixels, default 0.5), " +
+    "rotation?: 0 | 90 | 180 | 270 (fill, fit, tile: clockwise), opacity?, visible? } (fills only).",
   items: { type: "object" },
 };
 

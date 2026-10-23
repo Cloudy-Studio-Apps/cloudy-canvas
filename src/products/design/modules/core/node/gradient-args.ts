@@ -75,7 +75,8 @@ function readStops(value: unknown, key: string): ColorStop[] {
   });
 }
 
-function readTransform(value: unknown, key: string): GradientTransform {
+/** A 2×3 matrix `[[a, c, e], [b, d, f]]` with an inverse (a gradient's or an image's placement). */
+export function readTransform(value: unknown, key: string): GradientTransform {
   const rows = value as unknown[][];
   const valid =
     Array.isArray(rows) &&

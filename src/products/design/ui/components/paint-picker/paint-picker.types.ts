@@ -34,6 +34,8 @@ export interface ImageEditorProps {
   /** `null` until an image is chosen. */
   paint: ImagePaint | null;
   onChange: (paint: ImagePaint) => void;
+  /** The edited layer's size, for starting and turning crops (a square when unknown). */
+  size?: Size;
 }
 
 export interface GradientEditorProps {

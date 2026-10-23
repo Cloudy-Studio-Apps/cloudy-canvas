@@ -12,7 +12,8 @@ import {
   type FigPaint,
 } from "@canvas/figma";
 
-import { imagePaint, solidPaint, type GradientPaint, type Paint } from "../../modules";
+import { solidPaint, type GradientPaint, type Paint } from "../../modules";
+import { convertImagePaint } from "./fig-image-paint";
 
 const GRADIENTS: Record<string, GradientType> = {
   GRADIENT_LINEAR: "linear",
@@ -54,9 +55,7 @@ function convertPaint(paint: FigPaint, ctx: FigImportContext, allowImages: boole
       ctx.warnings.add("images missing from the file were left out");
       return null;
     }
-    if (paint.imageScaleMode === "TILE") ctx.warnings.add("tiled images fill their layer");
-    const scaleMode = paint.imageScaleMode === "FIT" ? "fit" : "fill";
-    return { ...imagePaint(assetId, scaleMode), opacity, visible };
+    return { ...convertImagePaint(paint, assetId), opacity, visible };
   }
   ctx.warnings.add(`${type.toLowerCase()} paints were left out`);
   return null;

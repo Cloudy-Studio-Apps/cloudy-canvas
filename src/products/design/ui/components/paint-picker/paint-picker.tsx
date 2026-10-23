@@ -71,6 +71,7 @@ export function PaintPicker({ paint, onChange, onClose, allowImage, size }: Pain
             setLastImage(next);
             onChange(next, { done: true });
           }}
+          size={size}
         />
       ) : isGradientTab(tab) ? (
         <GradientEditor

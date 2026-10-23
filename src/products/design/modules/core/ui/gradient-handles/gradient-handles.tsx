@@ -1,29 +1,18 @@
-import {
-  useCallback,
-  useRef,
-  useSyncExternalStore,
-  type PointerEvent as ReactPointerEvent,
-} from "react";
+import { useRef, type PointerEvent as ReactPointerEvent } from "react";
 
 import { gradientHandles, pointAlong, type GradientHandles, type Point } from "@canvas";
+import {
+  normalizedToScreen,
+  screenToNormalized,
+  useViewMapping,
+  type OverlayFrame,
+} from "@canvas-ui";
 import { isGradientPaint, type GradientPaint } from "@design";
-import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useEditNodes, useSelectedNodes } from "@design/ui/hooks";
 import { useGradientEditStore } from "@design/ui/stores/gradient-edit-store";
 import { dragGrip } from "./drag-grip";
 import { EndHandle } from "./end-handle";
-import type { GradientGrip, NodeFrame, ViewMapping } from "./gradient-handles.types";
-import { normalizedToScreen, screenToNormalized } from "./handle-space";
-
-/** The view as a string that changes when the camera does (re-renders the handles). */
-function useViewKey(): string {
-  const engine = useDesignEngine();
-  const subscribe = useCallback((listener: () => void) => engine.onViewChange(listener), [engine]);
-  return useSyncExternalStore(subscribe, () => {
-    const unit = engine.worldRectToScreen({ x: 0, y: 0, w: 1, h: 1 });
-    return `${unit.x},${unit.y},${unit.w}`;
-  });
-}
+import type { GradientGrip } from "./gradient-handles.types";
 
 /**
  * The handles of the gradient the paint picker edits, over its layer like Figma's: its ends (a
@@ -36,16 +25,14 @@ export function GradientHandles() {
   const selectStop = useGradientEditStore((state) => state.setStop);
   const nodes = useSelectedNodes();
   const edit = useEditNodes();
-  const viewKey = useViewKey();
+  const view = useViewMapping();
   const svg = useRef<SVGSVGElement>(null);
 
   const node = nodes.length === 1 ? nodes[0] : undefined;
   const paint = target && node ? node[target.field][target.index] : undefined;
   if (!target || !node || !paint || !isGradientPaint(paint) || !paint.visible) return null;
 
-  const [ox = 0, oy = 0, zoom = 1] = viewKey.split(",").map(Number);
-  const view: ViewMapping = { origin: { x: ox, y: oy }, zoom };
-  const frame: NodeFrame = {
+  const frame: OverlayFrame = {
     x: node.x,
     y: node.y,
     w: node.w,

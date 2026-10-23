@@ -1,8 +1,9 @@
-import { Container, Graphics, Sprite, type Texture } from "pixi.js";
+import { Container, Graphics, Sprite, TilingSprite, type Texture } from "pixi.js";
 
-import { fitImage } from "./fit-image";
+import { fitTransform } from "../image";
 import { acquireGradient, gradientFillStyle, releaseGradient } from "./gradient-texture";
 import type { ImageCache } from "./image-cache";
+import { imageMatrix } from "./image-matrix";
 import type {
   ImagePaintLayer,
   PaintLayer,
@@ -11,41 +12,69 @@ import type {
   ShapePaintLayer,
 } from "./paint-stack.types";
 
-/** A drawn image paint: its sprite, the mask clipping it and the crop it shows. */
+/** A drawn image paint: its picture (a sprite, or a tiling sprite when tiled) and its clip. */
 class ImageSlot extends Container {
   readonly kind = "image";
-  private readonly sprite = new Sprite();
+  private picture: Sprite | TilingSprite | null = null;
   private readonly clip = new Graphics();
-  private cropped: Texture | null = null;
   private assetId: string | null = null;
 
   constructor(private readonly images: ImageCache) {
     super();
-    this.sprite.mask = this.clip;
-    this.addChild(this.clip, this.sprite);
+    this.addChild(this.clip);
   }
 
   draw(layer: ImagePaintLayer): void {
     this.clip.clear();
     layer.mask(this.clip);
-    this.sprite.alpha = layer.alpha;
     this.assetId = layer.assetId;
     const texture = this.images.get(layer.assetId);
-    if (texture) return this.fit(texture, layer);
-    this.sprite.visible = false;
+    if (texture) return this.show(texture, layer);
+    if (this.picture) this.picture.visible = false;
     void this.images.load(layer.assetId).then((loaded) => {
-      if (loaded && !this.destroyed && this.assetId === layer.assetId) this.fit(loaded, layer);
+      if (loaded && !this.destroyed && this.assetId === layer.assetId) this.show(loaded, layer);
     });
   }
 
-  override destroy(options?: Parameters<Container["destroy"]>[0]): void {
-    this.cropped?.destroy(false);
-    this.cropped = null;
-    super.destroy(options);
+  private show(texture: Texture, layer: ImagePaintLayer): void {
+    const { placement, box } = layer;
+    const size = { w: texture.width, h: texture.height };
+    if (placement.mode === "tile") {
+      const tiles = this.pictureOf(TilingSprite);
+      tiles.texture = texture;
+      tiles.position.set(box.x, box.y);
+      tiles.setSize(box.w, box.h);
+      // A tile is the picture's own pixel size times the scale (its texture may be smaller).
+      const natural = this.images.naturalSize(layer.assetId) ?? size;
+      tiles.tileScale.set(
+        (placement.scale * natural.w) / size.w,
+        (placement.scale * natural.h) / size.h,
+      );
+      tiles.tileRotation = ((placement.rotation ?? 0) * Math.PI) / 180;
+      tiles.alpha = layer.alpha;
+      tiles.visible = true;
+      return;
+    }
+    const sprite = this.pictureOf(Sprite);
+    sprite.texture = texture;
+    const transform =
+      placement.mode === "transform"
+        ? placement.transform
+        : fitTransform(placement.mode, box, size, placement.rotation);
+    sprite.setFromMatrix(imageMatrix(transform, box, size));
+    sprite.alpha = layer.alpha;
+    sprite.visible = true;
   }
 
-  private fit(texture: Texture, layer: ImagePaintLayer): void {
-    this.cropped = fitImage(this.sprite, texture, layer.box, layer.fit, this.cropped);
+  /** The picture as a `type`, made anew (and masked) when it was the other kind. */
+  private pictureOf<T extends Sprite | TilingSprite>(type: new () => T): T {
+    if (this.picture instanceof type) return this.picture;
+    this.picture?.destroy();
+    const picture = new type();
+    picture.mask = this.clip;
+    this.addChild(picture);
+    this.picture = picture;
+    return picture;
   }
 }
 

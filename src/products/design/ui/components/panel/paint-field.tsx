@@ -5,7 +5,9 @@ import { isGradientPaint } from "@design";
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
 import { cn } from "@shared/ui/lib/utils";
 import { PaintPicker } from "../paint-picker";
+import { useSelectedNodes } from "../../hooks";
 import { useGradientEditStore } from "../../stores/gradient-edit-store";
+import { useImageCropStore } from "../../stores/image-crop-store";
 import { FieldBox } from "./field-box";
 import { HexInput } from "./hex-input";
 import { PanelIconButton } from "./panel-section";
@@ -24,7 +26,8 @@ const PAINT_NAMES = {
 
 /**
  * One fill or stroke: its swatch (opens the paint picker), its hex (or the kind of paint) and
- * opacity, show/hide and remove. While the picker edits a gradient, its handles show on the canvas.
+ * opacity, show/hide and remove. While the picker edits a gradient, its handles show on the canvas;
+ * while it edits a cropped image, its crop box does.
  */
 export function PaintField({
   paint,
@@ -46,6 +49,18 @@ export function PaintField({
     setEditTarget({ field, index });
     return () => setEditTarget(null);
   }, [editing, field, index, setEditTarget]);
+
+  // A crop being edited in the picker shows its crop box on the canvas (one layer selected).
+  const nodes = useSelectedNodes();
+  const nodeId = nodes.length === 1 ? nodes[0]?.id : undefined;
+  const cropping = open && paint.type === "image" && paint.scaleMode === "crop";
+  const startCrop = useImageCropStore((state) => state.start);
+  const stopCrop = useImageCropStore((state) => state.stop);
+  useEffect(() => {
+    if (!cropping || field !== "fills" || index === undefined || !nodeId) return;
+    startCrop({ nodeId, index });
+    return () => stopCrop();
+  }, [cropping, field, index, nodeId, startCrop, stopCrop]);
 
   return (
     <div className={cn("flex items-center gap-1", !paint.visible && "opacity-50")}>

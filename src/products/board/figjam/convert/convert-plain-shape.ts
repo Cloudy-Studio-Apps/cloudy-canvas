@@ -3,7 +3,7 @@ import type { FigNode } from "@canvas/figma";
 import { createGeo, createImage, type ImageElement } from "../../modules";
 import { INK_COLOR, TRANSPARENT } from "../../palette";
 import type { FigJamNodeConverter } from "./convert-figjam-node.types";
-import { imageHash, solidColor } from "./fig-paint-values";
+import { imageCrop, imageHash, solidColor } from "./fig-paint-values";
 import { nodeRect } from "./node-rect";
 
 const WHITE = "#ffffff";
@@ -19,7 +19,8 @@ export const convertPlainShape: FigJamNodeConverter = (node, placement) => {
   if (hash) {
     const assetId = ctx.imageAsset(hash);
     if (!assetId) return ctx.warnings.add("images missing from the file were left out");
-    const image = framedImage(node, createImage(assetId, rect, ""));
+    const picture = { ...createImage(assetId, rect, ""), crop: imageCrop(node.fillPaints) };
+    const image = framedImage(node, picture);
     ctx.place(node, image.id);
     return out.add(image);
   }

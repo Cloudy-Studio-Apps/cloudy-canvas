@@ -47,11 +47,19 @@ export interface FigPaint {
   opacity?: number;
   visible?: boolean;
   stops?: { color?: FigColor; position?: number }[];
-  /** A gradient's placement: Figma's `gradientTransform`, from the layer's 0–1 box. */
+  /**
+   * A gradient's placement (Figma's `gradientTransform`) or a cropped image's (`imageTransform`,
+   * `imageScaleMode` STRETCH), from the layer's 0–1 box.
+   */
   transform?: FigMatrix;
   image?: { hash?: Uint8Array };
   imageThumbnail?: { hash?: Uint8Array };
+  /** FILL, FIT, STRETCH (a crop) or TILE. */
   imageScaleMode?: string;
+  /** A tiled image's tile size, as a share of its pixel size (`scalingFactor`). */
+  scale?: number;
+  /** An image's quarter turns, in degrees. */
+  rotation?: number;
 }
 
 /** A path of `fillGeometry`/`strokeGeometry`: its commands live in a blob. */

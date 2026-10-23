@@ -68,6 +68,7 @@ export * from "./agent";
 export * from "./elements";
 export * from "./geometry";
 export * from "./gradient";
+export * from "./image";
 export * from "./rotation";
 export * from "./path";
 export { smoothPoints } from "./smooth-points";

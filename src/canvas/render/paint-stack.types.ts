@@ -3,7 +3,7 @@ import type { FillStyle, Graphics } from "pixi.js";
 import type { Gradient } from "../gradient";
 
 import type { Rect } from "../geometry.types";
-import type { ImageFit } from "./element-view.types";
+import type { ImagePlacement } from "../image";
 
 /** What a vector paint can paint with besides flat colors. */
 export interface PaintTools {
@@ -28,7 +28,8 @@ export interface ImagePaintLayer {
   kind: "image";
   assetId: string;
   box: Rect;
-  fit: ImageFit;
+  /** How the picture fills `box`: fitted, placed by a transform (a crop) or tiled. */
+  placement: ImagePlacement;
   /** 0–1. */
   alpha: number;
   /** Fills the clip area into `g` (any color; holes cut out stay out). */

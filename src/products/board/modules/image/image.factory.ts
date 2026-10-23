@@ -10,5 +10,6 @@ export function createImage(assetId: string, rect: Rect, index: string): ImageEl
     assetId,
     background: IMAGE_DEFAULTS.background,
     padding: IMAGE_DEFAULTS.padding,
+    crop: null,
   };
 }

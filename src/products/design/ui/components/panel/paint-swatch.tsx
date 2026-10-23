@@ -1,7 +1,6 @@
-import { CHECKERBOARD } from "@canvas-ui";
+import { CHECKERBOARD, useAssetUrl } from "@canvas-ui";
 import { isGradientPaint } from "@design";
 import { gradientPreviewCss } from "../paint-picker/gradient-preview";
-import { useAssetUrl } from "../../hooks";
 import type { PaintSwatchProps } from "./paint-field.types";
 
 /** A paint's small preview: its color, its gradient, or its image cropped to the square. */

@@ -1,10 +1,10 @@
 import { useEffect, useMemo } from "react";
 
-import { useDesignEngine } from "../design-engine-context";
+import { useEngine } from "./engine-context";
 
 /** A URL showing a document asset (an image) in the DOM, or `null` without one. */
 export function useAssetUrl(assetId: string | null): string | null {
-  const engine = useDesignEngine();
+  const engine = useEngine();
   const url = useMemo(() => {
     const data = assetId ? engine.doc.getAsset(assetId) : undefined;
     if (!data) return null;

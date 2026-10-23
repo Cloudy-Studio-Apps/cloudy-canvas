@@ -1,19 +1,21 @@
 import { Rectangle, Texture, type Sprite } from "pixi.js";
 
 import type { Rect } from "../geometry.types";
+import { clampCrop, coverCrop, type ImageCrop } from "../image";
 import type { ImageFit } from "./element-view.types";
 
 /**
- * Shows `texture` on `sprite` in `box`, keeping its proportions: `contain` fits it inside,
- * centered; `cover` fills the box with the middle of the texture, cropped to the box's
- * proportions. Destroys `cropped` (the crop shown before, if any) and returns the new crop, which
- * the caller destroys in turn (`null` for `contain`).
+ * Shows `texture` on `sprite` in `box`: `contain` fits it inside, centered, keeping its
+ * proportions; `cover` fills the box with the middle of the texture, cropped to the box's
+ * proportions; an `ImageCrop` fills the box with that part of the picture (kept inside it).
+ * Destroys `cropped` (the crop shown before, if any) and returns the new crop, which the caller
+ * destroys in turn (`null` for `contain`).
  */
 export function fitImage(
   sprite: Sprite,
   texture: Texture,
   box: Rect,
-  fit: ImageFit,
+  fit: ImageFit | ImageCrop,
   cropped: Texture | null,
 ): Texture | null {
   const { x, y, w, h } = box;
@@ -26,14 +28,13 @@ export function fitImage(
     sprite.position.set(x + (w - sprite.width) / 2, y + (h - sprite.height) / 2);
     return null;
   }
-  const scale = Math.max(w / texture.width, h / texture.height);
-  const cropW = Math.min(texture.width, w / scale);
-  const cropH = Math.min(texture.height, h / scale);
+  const part =
+    fit === "cover" ? coverCrop(box, { w: texture.width, h: texture.height }) : clampCrop(fit);
   const frame = new Rectangle(
-    texture.frame.x + (texture.width - cropW) / 2,
-    texture.frame.y + (texture.height - cropH) / 2,
-    cropW,
-    cropH,
+    texture.frame.x + part.x * texture.width,
+    texture.frame.y + part.y * texture.height,
+    Math.max(1, part.w * texture.width),
+    Math.max(1, part.h * texture.height),
   );
   const crop = new Texture({ source: texture.source, frame });
   sprite.texture = crop;

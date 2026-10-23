@@ -11,5 +11,9 @@ export function drawImage(view: ElementView, el: ImageElement): void {
       .stroke({ color: PAPER_SHADOW_COLOR, alpha: 0.08, width: 1, alignment: 1 });
   }
   const p = el.padding;
-  view.placeImage(el.assetId, { x: p, y: p, w: el.w - p * 2, h: el.h - p * 2 });
+  view.placeImage(
+    el.assetId,
+    { x: p, y: p, w: el.w - p * 2, h: el.h - p * 2 },
+    el.crop ?? "contain",
+  );
 }
