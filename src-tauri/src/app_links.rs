@@ -52,7 +52,8 @@ fn emit_links(app: &AppHandle, links: Vec<String>) {
 fn register_scheme(app: &App) {
     #[cfg(any(windows, target_os = "linux"))]
     {
-        let unpackaged = cfg!(debug_assertions) || app.env().appimage.is_some();
+        // `Env::appimage` exists only on Linux builds; the variable is the same check everywhere.
+        let unpackaged = cfg!(debug_assertions) || std::env::var_os("APPIMAGE").is_some();
         if unpackaged {
             if let Err(error) = app.deep_link().register_all() {
                 eprintln!("[app-links] couldn't register the link scheme: {error}");
