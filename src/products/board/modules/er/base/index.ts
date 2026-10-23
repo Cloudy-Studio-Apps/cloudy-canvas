@@ -5,6 +5,7 @@ export { ER_DEFAULTS } from "./er.defaults";
 export { NO_ER_DIAGRAM } from "./no-er-diagram";
 export { erNotation, erStandard, LEGACY_ER_NOTATION } from "./er-notation";
 export * from "./standards";
+export * from "./constructs";
 export { isErElement, isErNamed, isErParticipant } from "./is-er-element";
 export { attributeSize, entitySize, ISA_SIZE, relationSize } from "./er-size";
 export { outlinePoint, shapeCenter, trianglePoints } from "./er-outline";

@@ -6,6 +6,9 @@ import type { ErPaletteItemId } from "./er-drop.types";
 import type { ErEdits } from "./er-edits";
 import type { ErModel } from "./er-model";
 import type { ErShapes } from "./lang";
+import { OPEN_GATE, type ErConstructGate } from "../base/constructs";
+import { PALETTE_CONSTRUCTS } from "./palette-constructs";
+import { gateOf } from "./standard-of";
 
 /**
  * What a click adds for each ER element type, starting from the selected element where it makes
@@ -14,6 +17,21 @@ import type { ErShapes } from "./lang";
  * Shared by the ER panel's Add menu and the palette.
  */
 export function erAddActions(
+  edits: ErEdits,
+  shapes: ErShapes,
+  selected: ErElement | undefined,
+  gate: ErConstructGate = OPEN_GATE,
+): Record<ErPaletteItemId, ErAddAction> {
+  return gated(choices(edits, shapes, selected), gate, (id) =>
+    // An attribute of a relation is a relation attribute.
+    (id === "attribute" || id === "key-attribute") &&
+    attributeOwner(shapes, selected)?.type === "er-relation"
+      ? "relation-attributes"
+      : PALETTE_CONSTRUCTS[id],
+  );
+}
+
+function choices(
   edits: ErEdits,
   shapes: ErShapes,
   selected: ErElement | undefined,
@@ -109,7 +127,12 @@ function relationEnds(shapes: ErShapes, entity: ErElement | undefined): string[]
 export function erAddActionsWithoutDiagram(
   er: ErModel,
   center: () => Point,
+  gate: ErConstructGate = OPEN_GATE,
 ): Record<ErPaletteItemId, ErAddAction> {
+  return gated(newDiagramChoices(er, center), gate, (id) => PALETTE_CONSTRUCTS[id]);
+}
+
+function newDiagramChoices(er: ErModel, center: () => Point): Record<ErPaletteItemId, ErAddAction> {
   const waiting = (id: ErPaletteItemId, label: string) =>
     action(id, `${label} (add an entity first)`, false, () => undefined);
   return {
@@ -144,5 +167,27 @@ export function erClickActions(
   if (!diagram || !shapes || shapes.entities.length + shapes.relations.length === 0) {
     return erAddActionsWithoutDiagram(er, center);
   }
-  return erAddActions(diagram.edits, shapes, selectedId ? er.shape(selectedId) : undefined);
+  const selected = selectedId ? er.shape(selectedId) : undefined;
+  return erAddActions(diagram.edits, shapes, selected, gateOf(shapes));
+}
+
+/** The actions with what the standard forbids disabled, the reason as their label. */
+function gated(
+  actions: Record<ErPaletteItemId, ErAddAction>,
+  gate: ErConstructGate,
+  constructOf: (id: ErPaletteItemId) => string | undefined,
+): Record<ErPaletteItemId, ErAddAction> {
+  const result = { ...actions };
+  for (const id of Object.keys(actions) as ErPaletteItemId[]) {
+    const construct = constructOf(id);
+    if (construct && !gate.allows(construct)) {
+      result[id] = { ...actions[id], disabled: true, blocked: true, label: gate.reason(construct) };
+    }
+  }
+  return result;
+}
+
+/** Who an attribute clicked in goes to: the selection unless it's a constraint, else the first entity. */
+function attributeOwner(shapes: ErShapes, selected: ErElement | undefined): ErElement | undefined {
+  return selected && selected.type !== "er-constraint" ? selected : shapes.entities[0];
 }

@@ -2,7 +2,7 @@ import { Plus } from "lucide-react";
 
 import type { ErAttributeElement } from "@board";
 import { Button } from "@shared/ui/components/ui/button";
-import { useErDiagram, useErShapes } from "../../model";
+import { useErDiagram, useErGate, useErShapes } from "../../model";
 import { AttributeRow } from "./attribute-row";
 import { FormSection } from "./form-section";
 import type { AttributeListProps } from "./attribute-row.types";
@@ -10,7 +10,10 @@ import type { AttributeListProps } from "./attribute-row.types";
 /** The attributes of an entity, relation or aggregation, with their parts nested under them. */
 export function AttributeList({ ownerId, title = "Attributes" }: AttributeListProps) {
   const er = useErDiagram();
-  const { attributes } = useErShapes();
+  const { attributes, relations } = useErShapes();
+  // A relation's attributes are a construct a standard may forbid.
+  const gate = useErGate();
+  const blocked = relations.some((r) => r.id === ownerId) ? gate.reason("relation-attributes") : "";
   const partsOf = new Map<string, ErAttributeElement[]>();
   for (const attribute of [...attributes].sort((a, b) => a.order - b.order)) {
     partsOf.set(attribute.ownerId, [...(partsOf.get(attribute.ownerId) ?? []), attribute]);
@@ -21,7 +24,13 @@ export function AttributeList({ ownerId, title = "Attributes" }: AttributeListPr
     <FormSection
       title={title}
       actions={
-        <Button variant="ghost" size="sm" onClick={() => er.edits.addAttribute(ownerId)}>
+        <Button
+          variant="ghost"
+          size="sm"
+          title={blocked || undefined}
+          disabled={blocked !== ""}
+          onClick={() => er.edits.addAttribute(ownerId)}
+        >
           <Plus />
           Add attribute
         </Button>

@@ -265,6 +265,21 @@ Diagram Ventas [standard: elmasri, participation: both, crowfeet: off]
 - Diagrams made before notations existed keep their first look: the text shows `ratio: own` on them.
 - Joining two diagrams keeps the standard and settings of the one you dragged from.
 
+**What each standard allows.** A standard can leave constructs out (its `forbids`, by construct id). The editor then won't add them (the palette item, Add menu entry, quick-add choice, connect-dot link and form toggle are disabled, with "… aren't part of …" as the reason), and what the diagram already uses is an **error** in the Check diagram, one per shape, until it's removed or the standard changes. Text that uses them is still applied, and each one is listed under the editor on its line. Turning a flag off always works, so errors can be fixed from the form.
+
+| Construct (id)                                | `cloudy` | `chen` | `elmasri` | `silberschatz` | `piattini` |
+| --------------------------------------------- | -------- | ------ | --------- | -------------- | ---------- |
+| Hierarchies (`hierarchies`)                   | ✓        | ✗      | ✓         | ✓              | ✓          |
+| Aggregations (`aggregations`)                 | ✓        | ✗      | ✗         | ✓              | ✓          |
+| Constraints between relations (`constraints`) | ✓        | ✗      | ✗         | ✗              | ✓          |
+| Union types (`unions`)                        | ✓        | ✗      | ✓         | ✗              | ✗          |
+| Associative entities (`associative-entities`) | ✓        | ✗      | ✗         | ✗              | ✗          |
+| Dependency marks I / E (`dependency-marks`)   | ✓        | ✓      | ✗         | ✗              | ✓          |
+| Alternate keys (`alternate-keys`)             | ✓        | ✗      | ✓         | ✓              | ✓          |
+| Join attributes (`join-attributes`)           | ✓        | ✗      | ✗         | ✗              | ✗          |
+
+Every standard allows the other constructs: weak entities (`weak-entities`), identifying relations (`identifying-relations`), relations of three or more sides (`nary-relations`), relations of an entity with itself (`self-relations`), attributes of relations (`relation-attributes`), multivalued, derived, composite and optional attributes (`multivalued-attributes`, `derived-attributes`, `composite-attributes`, `optional-attributes`). Plugins can add constructs and standards that forbid them (`docs/plugins.md`).
+
 **S28. Check diagram.** The Visual tab (with nothing selected), the ER mode's **Check** button and the `check_er_diagram` agent tool list what breaks the model's rules or the standard's, errors first; clicking one selects its shape:
 
 | Finding                                                      | Level   |
@@ -279,8 +294,8 @@ Diagram Ventas [standard: elmasri, participation: both, crowfeet: off]
 | An entity related to itself without roles                    | warning |
 | A relation of three or more that's at most one everywhere    | warning |
 | A hierarchy with fewer than two children                     | warning |
+| A construct the standard doesn't allow (one per shape)       | error   |
 | A participant without a cardinality                          | info    |
-| A hierarchy, aggregation or constraint the standard lacks    | info    |
 
 **S29. Associative entity.** A relation that is also an entity: drawn as a diamond inside a rectangle, with attributes and a key of its own, and other relations name it as a side, like an entity:
 

@@ -104,6 +104,9 @@ export interface PluginApi {
     /** The standards ER diagrams can follow; contribute ones written with `defineErStandard`. */
     erStandards: typeof board.boardErStandards;
     defineErStandard: typeof board.defineErStandard;
+    /** What standards may forbid; contribute ones written with `defineErConstruct`. */
+    erConstructs: typeof board.boardErConstructs;
+    defineErConstruct: typeof board.defineErConstruct;
     requireBoard: typeof board.requireBoard;
     palette: Pick<
       typeof board,

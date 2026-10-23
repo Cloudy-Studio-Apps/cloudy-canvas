@@ -19,5 +19,11 @@ export const ELMASRI_STANDARD = defineErStandard({
     arrows: "manual",
     joins: "hidden",
   },
-  supports: { hierarchies: true, aggregations: false, constraints: false, unions: true },
+  forbids: [
+    "aggregations",
+    "constraints",
+    "associative-entities",
+    "dependency-marks",
+    "join-attributes",
+  ],
 });

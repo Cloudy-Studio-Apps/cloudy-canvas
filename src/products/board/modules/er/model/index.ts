@@ -14,6 +14,8 @@ export { prepareErCopies } from "./prepare-er-copies";
 export { migrateErDiagrams } from "./migrate-er-diagrams";
 export type * from "./er-drop.types";
 export { erDropPlan } from "./er-drop";
+export { gateOf, standardOf } from "./standard-of";
+export { PALETTE_CONSTRUCTS } from "./palette-constructs";
 export type * from "./check";
 export type * from "./to-tables";
 export { erToTables } from "./to-tables";

@@ -5,10 +5,17 @@ import { boardEditor } from "@board/ui/modules/board-editor-points";
 import {
   boardAgentTools,
   boardCanvas,
+  boardErConstructs,
   boardErStandards,
   boardMigrations,
 } from "../../board-points";
-import { BUILT_IN_ER_STANDARDS, erStandards, isErElement } from "./base";
+import {
+  BUILT_IN_ER_CONSTRUCTS,
+  BUILT_IN_ER_STANDARDS,
+  erConstructs,
+  erStandards,
+  isErElement,
+} from "./base";
 import { ErAggregateKind } from "./aggregate";
 import { ErAttributeKind } from "./attribute";
 import { ErConstraintKind } from "./constraint";
@@ -49,6 +56,9 @@ export const erModule = defineModule({
     // modules have loaded, so every module's count.
     host.contribute(boardErStandards, ...BUILT_IN_ER_STANDARDS);
     erStandards.useSource(() => host.get(boardErStandards));
+    // What standards may forbid: the built-ins here, plugins' next to them.
+    host.contribute(boardErConstructs, ...BUILT_IN_ER_CONSTRUCTS);
+    erConstructs.useSource(() => host.get(boardErConstructs));
     host.contribute(
       boardCanvas.kinds,
       new ErEntityKind(),

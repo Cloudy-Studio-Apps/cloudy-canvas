@@ -2,15 +2,6 @@ import type { ErIssue } from "../../model/check/check-er.types";
 import type { ErShapes } from "../../model/lang";
 import type { ErNotationSettings, ErStandard } from "../er.types";
 
-/** The constructs of the extended model a standard has (the Check diagram reports others). */
-export interface ErStandardSupports {
-  hierarchies: boolean;
-  aggregations: boolean;
-  constraints: boolean;
-  /** Union types (categories). */
-  unions: boolean;
-}
-
 /**
  * A standard a diagram can follow (a textbook or paper): where it comes from, how it draws, what
  * it has, and its own rules. Every standard, built-in or a plugin's, is one of these, written with
@@ -28,7 +19,12 @@ export interface ErStandardDefinition {
   /** What it's known for, in a sentence. */
   summary: string;
   settings: ErNotationSettings;
-  supports: ErStandardSupports;
+  /**
+   * The constructs (`ErConstructDefinition` ids) it doesn't have: the editor won't add them and
+   * the Check diagram reports them as errors. Unset: everything is allowed, constructs added later
+   * included.
+   */
+  forbids?: readonly string[];
   /** Its own findings for the Check diagram, after the shared rules'. */
   check?: (shapes: ErShapes) => ErIssue[];
 }

@@ -14,6 +14,8 @@ import type { ErApplyOptions, ErApplyResult } from "./reconcile-er.types";
 import { erStandard } from "../base/er-notation";
 import { erStandards } from "../base/standards";
 import { checkErDiagram, type ErIssue } from "./check";
+import { standardTextWarnings } from "./check/standard-text-warnings";
+import { standardOf } from "./standard-of";
 import { importSchemaText } from "../../db/schema/schema-dbml";
 import { schemaShapes } from "../../db/schema/schema-shapes";
 import type { DbApplyResult } from "../../db/schema/db-schema.types";
@@ -63,7 +65,10 @@ export class ErDiagram {
       diagramName: model.name ?? "",
       notation: model.notation,
     });
-    return { ok: true, warnings: model.warnings };
+    // What the standard forbids is applied all the same, and reported on its lines.
+    const shapes = this.shapes();
+    const forbidden = standardTextWarnings(text, shapes, standardOf(shapes));
+    return { ok: true, warnings: [...model.warnings, ...forbidden] };
   };
 
   /** Names the diagram (as the text's `Diagram <name>` line does). One undo step. */

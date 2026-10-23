@@ -21,6 +21,8 @@ export interface ErConnectOutcome {
   run: () => string | undefined;
   /** It opens a prompt rather than editing (whatever joining it needs happens when answered). */
   prompts?: boolean;
+  /** The construct it would add, when it's one a standard may forbid. */
+  construct?: string;
 }
 
 /** A connect dot dropped on empty board, waiting for the user to pick what to create there. */
@@ -34,6 +36,8 @@ export interface ErQuickAddRequest {
 export interface ErQuickAddOption {
   id: string;
   label: string;
+  /** The construct it adds, when it's one a standard may forbid. */
+  construct?: string;
   /** Makes the edit (one undo step) and returns the new shape's id. */
   run: (edits: ErEdits, at: Point) => string | undefined;
 }

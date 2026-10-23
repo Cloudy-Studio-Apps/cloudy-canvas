@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useSyncExternalStore } from "react";
 
-import { ER_QUICK_ADD, erQuickAddOptions, isErConnectSource } from "@board";
+import { ER_QUICK_ADD, erQuickAddOptions, gateOf, isErConnectSource } from "@board";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +28,7 @@ export function ErQuickAddMenu() {
   const source = request ? er.shape(request.sourceId) : undefined;
   if (!request || !isErConnectSource(source)) return null;
   const point = engine.worldRectToScreen({ ...request.at, w: 0, h: 0 });
+  const gate = gateOf(er.diagram(source.diagram).shapes());
 
   return (
     <DropdownMenu open modal={false} onOpenChange={(open) => !open && quickAdd.close()}>
@@ -42,18 +43,27 @@ export function ErQuickAddMenu() {
         <DropdownMenuLabel>
           Add from {"name" in source ? source.name : "the hierarchy"}
         </DropdownMenuLabel>
-        {erQuickAddOptions(source).map((option) => (
-          <DropdownMenuItem
-            key={option.id}
-            onSelect={() => {
-              quickAdd.close();
-              const id = option.run(er.diagram(source.diagram).edits, request.at);
-              if (id) engine.focusElement(id);
-            }}
-          >
-            {option.label}
-          </DropdownMenuItem>
-        ))}
+        {erQuickAddOptions(source).map((option) => {
+          // What the diagram's standard forbids is listed, disabled, with the reason.
+          const reason = option.construct ? gate.reason(option.construct) : "";
+          return (
+            <DropdownMenuItem
+              key={option.id}
+              disabled={reason !== ""}
+              title={reason || undefined}
+              onSelect={() => {
+                quickAdd.close();
+                const id = option.run(er.diagram(source.diagram).edits, request.at);
+                if (id) engine.focusElement(id);
+              }}
+            >
+              <span className="flex flex-col">
+                {option.label}
+                {reason && <span className="text-xs text-muted-foreground">{reason}</span>}
+              </span>
+            </DropdownMenuItem>
+          );
+        })}
       </DropdownMenuContent>
     </DropdownMenu>
   );

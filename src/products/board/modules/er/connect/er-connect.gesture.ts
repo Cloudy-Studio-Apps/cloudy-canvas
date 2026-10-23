@@ -13,7 +13,8 @@ import type { ErElement } from "../base/er.types";
 import { isErParticipant } from "../base/is-er-element";
 import type { ErIsaElement } from "../isa/isa.types";
 import type { ErUnionElement } from "../union/union.types";
-import { ER_MODEL, type ErEdits } from "../model";
+import { ER_MODEL, gateOf, type ErEdits } from "../model";
+import type { ErRelationElement } from "../relation/relation.types";
 import type { ErConnectOutcome, ErConnectSource } from "./er-connect.types";
 import { ER_QUICK_ADD } from "./er-quick-add";
 import { ER_RELATION_PROMPT } from "./er-relation-ratios";
@@ -115,9 +116,18 @@ export class ErConnectGesture implements ElementGesture {
 
   /** The edit, written to the source's diagram (which by then holds `hit` too). */
   private link(hit: ErElement | null | undefined, at: Point): ErConnectOutcome | null {
+    const outcome = this.linkAnyStandard(hit, at);
+    if (!outcome?.construct) return outcome;
+    // What the diagram's standard forbids isn't linked: the line stays faded.
+    const shapes = this.ctx.service(ER_MODEL).diagram(this.source.diagram).shapes();
+    return gateOf(shapes).allows(outcome.construct) ? outcome : null;
+  }
+
+  private linkAnyStandard(hit: ErElement | null | undefined, at: Point): ErConnectOutcome | null {
     const { source } = this;
     const edits = this.ctx.service(ER_MODEL).diagram(source.diagram).edits;
     if (source.type === "er-isa") {
+      // Empty board opens the quick-add menu (gated there); an entity becomes a child.
       if (hit === undefined) return { run: () => edits.addIsaChildEntity(source.id, { at }) };
       return hit?.type === "er-entity" ? childLink(edits, source, hit.id) : null;
     }
@@ -146,6 +156,7 @@ export class ErConnectGesture implements ElementGesture {
       }
       if (hit.type === "er-relation") {
         return {
+          ...joinConstruct(hit, source.id),
           run: () => {
             edits.addParticipant(hit.id, source.id);
             return hit.id;
@@ -154,8 +165,9 @@ export class ErConnectGesture implements ElementGesture {
       }
       return null;
     }
-    if (isParticipant(hit)) {
+    if (isParticipant(hit) && source.type === "er-relation") {
       return {
+        ...joinConstruct(source, hit.id),
         run: () => {
           edits.addParticipant(source.id, hit.id);
           return source.id;
@@ -181,6 +193,7 @@ export class ErConnectGesture implements ElementGesture {
 function childLink(edits: ErEdits, isa: ErIsaElement, entityId: string): ErConnectOutcome | null {
   if (isa.parentId === entityId || isa.children.some((c) => c.entityId === entityId)) return null;
   return {
+    construct: "hierarchies",
     run: () => {
       edits.addIsaChild(isa.id, entityId);
       return isa.id;
@@ -196,11 +209,23 @@ function superclassLink(
 ): ErConnectOutcome | null {
   if (union.categoryId === entityId || union.superclassIds.includes(entityId)) return null;
   return {
+    construct: "unions",
     run: () => {
       edits.addUnionSuperclass(union.id, entityId);
       return union.id;
     },
   };
+}
+
+/**
+ * What adding `entityId` to the relation would make a standard may forbid: an entity on both
+ * sides (a self-relation), or a third side.
+ */
+function joinConstruct(relation: ErRelationElement, entityId: string): { construct?: string } {
+  if (relation.participants.some((p) => p.entityId === entityId)) {
+    return { construct: "self-relations" };
+  }
+  return relation.participants.length >= 2 ? { construct: "nary-relations" } : {};
 }
 
 /** Whether it can take part in a relation (not a type guard: a plain relation stays a relation). */

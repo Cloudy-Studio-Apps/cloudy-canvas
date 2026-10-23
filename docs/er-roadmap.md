@@ -19,6 +19,7 @@ Where the board's Chen ER diagrams (modelo entidad-relación, extended model) st
 
 | Item                                                                                                                            | Where                                                             |
 | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Constructs as a registry; each standard forbids some (blocked in the editor, errors in the check, warnings on text lines)       | `base/constructs/`, S27, `docs/plugins.md` (ER constructs)        |
 | Standards as a registry, one file each, plugins can add theirs                                                                  | `base/standards/`, `docs/plugins.md` (ER standards)               |
 | Form edits that unlink shapes split the diagram, as deletions do                                                                | `ErEdits` (`unlinks`), `splitErDiagrams`                          |
 | Join attributes on aggregations are created on commit                                                                           | `addMissingVias`                                                  |

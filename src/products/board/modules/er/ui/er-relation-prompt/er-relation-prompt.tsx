@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useRef, useState, useSyncExternalStore } from "react";
 
-import { ER_RELATION_PROMPT, ER_RELATION_RATIOS, type ErRelationEnd } from "@board";
+import { ER_RELATION_PROMPT, ER_RELATION_RATIOS, gateOf, type ErRelationEnd } from "@board";
 import { FloatingPanel, useEngine, useService } from "@canvas-ui";
 import { useErModel } from "../model";
 import { ErJoinStep } from "./er-join-step";
@@ -53,7 +53,12 @@ export function ErRelationPrompt() {
   const point = engine.worldRectToScreen({ ...request.at, w: 0, h: 0 });
   const name = (el: typeof from) => ("name" in el ? el.name : "");
 
-  const create = (joins: ReadonlyMap<"from" | "to", ErJoinValue>) => {
+  // A standard without join attributes skips the step that asks for them.
+  const joinsAllowed = gateOf(er.diagram(from.diagram).shapes()).allows("join-attributes");
+  const create = (
+    joins: ReadonlyMap<"from" | "to", ErJoinValue>,
+    ratio = ER_RELATION_RATIOS.find((r) => r.id === ratioId),
+  ) => {
     if (!ratio) return;
     const end = (side: "from" | "to"): ErRelationEnd => {
       const el = side === "from" ? from : to;
@@ -95,7 +100,11 @@ export function ErRelationPrompt() {
           <ErRatioPicker
             from={name(from)}
             to={name(to)}
-            onPick={(id) => setPicked({ request, id })}
+            onPick={(id) => {
+              const picked = ER_RELATION_RATIOS.find((r) => r.id === id);
+              if (!joinsAllowed) create(new Map(), picked);
+              else setPicked({ request, id });
+            }}
           />
         )}
       </FloatingPanel>

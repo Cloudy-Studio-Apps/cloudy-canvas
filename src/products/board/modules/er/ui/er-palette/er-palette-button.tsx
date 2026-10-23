@@ -10,6 +10,7 @@ export function ErPaletteButton({
   diagram,
   clickLabel,
   clickDisabled,
+  blocked,
   shortcut,
   onClick,
 }: ErPaletteButtonProps) {
@@ -25,14 +26,22 @@ export function ErPaletteButton({
     <>
       <ToolButton
         label={item.label}
-        description={`${item.description} Click: ${clickLabel}.`}
+        description={blocked ? `${clickLabel}.` : `${item.description} Click: ${clickLabel}.`}
         side="right"
         {...(shortcut ? { shortcut } : {})}
         active={ghost !== null}
-        className={clickDisabled ? "text-muted-foreground" : undefined}
-        onPointerDown={onPointerDown}
+        className={
+          blocked
+            ? "cursor-not-allowed opacity-40"
+            : clickDisabled
+              ? "text-muted-foreground"
+              : undefined
+        }
+        // Not `disabled`: a disabled button shows no tooltip, and the tooltip gives the reason.
+        aria-disabled={blocked}
+        onPointerDown={blocked ? undefined : onPointerDown}
         onKeyDown={(event) => {
-          if ((event.key === "Enter" || event.key === " ") && !clickDisabled) {
+          if ((event.key === "Enter" || event.key === " ") && !clickDisabled && !blocked) {
             event.preventDefault();
             onClick();
           }

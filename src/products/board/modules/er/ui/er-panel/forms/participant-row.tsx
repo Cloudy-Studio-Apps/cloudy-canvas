@@ -3,7 +3,7 @@ import { Trash2 } from "lucide-react";
 import type { ErParticipantPatch } from "@board";
 import { CommitInput } from "@canvas-ui";
 import { FlagToggle } from "../../../../db/ui/db-panel/flag-toggle";
-import { useErDiagram, useErShapes } from "../../model";
+import { useErDiagram, useErGate, useErShapes } from "../../model";
 import { CardinalityPicker } from "./cardinality-picker";
 import { IconAction } from "./icon-action";
 import { ShapeSelect } from "./shape-select";
@@ -12,6 +12,7 @@ import type { ParticipantRowProps } from "./participant-row.types";
 /** One entity taking part in a relation: which, its cardinality, join attribute, role and arrow. */
 export function ParticipantRow({ relation, participant, options }: ParticipantRowProps) {
   const er = useErDiagram();
+  const gate = useErGate();
   const joinOptions = useErShapes()
     .attributes.filter((a) => a.ownerId === participant.entityId)
     .map((a) => ({ value: a.id, label: a.key === "pk" ? `${a.name} (key)` : a.name }));
@@ -47,6 +48,9 @@ export function ParticipantRow({ relation, participant, options }: ParticipantRo
         options={joinOptions}
         placeholder="Joins by: no attribute"
         className="w-full text-xs"
+        // Choosing one is blocked when the standard has no join attributes; one set can be cleared.
+        disabled={!participant.via && !gate.allows("join-attributes")}
+        title={participant.via ? undefined : gate.reason("join-attributes") || undefined}
         onChange={(via) => update({ via })}
       />
       <div className="flex items-center gap-1">

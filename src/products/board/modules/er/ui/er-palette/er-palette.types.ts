@@ -15,6 +15,8 @@ export interface ErPaletteButtonProps {
   /** What a click adds right now ("Attribute of Customer"), or why it can't. */
   clickLabel: string;
   clickDisabled: boolean;
+  /** The diagram's standard forbids it: disabled, `clickLabel` says why. */
+  blocked?: boolean;
   /** Its key in the ER mode, shown in the tooltip. */
   shortcut?: string | undefined;
   onClick: () => void;

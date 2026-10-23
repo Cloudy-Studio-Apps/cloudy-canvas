@@ -1,6 +1,8 @@
 import type { ErElement } from "../base/er.types";
 import { isErParticipant } from "../base/is-er-element";
 import type { ErDrop, ErPaletteItemId } from "./er-drop.types";
+import { OPEN_GATE, type ErConstructGate } from "../base/constructs";
+import { PALETTE_CONSTRUCTS } from "./palette-constructs";
 
 /** Element types an attribute can belong to. */
 const ATTRIBUTE_OWNERS: ReadonlySet<string> = new Set([
@@ -22,7 +24,17 @@ export function erDropPlan(
   item: ErPaletteItemId,
   hit: ErElement | undefined,
   diagram: string,
+  gate: ErConstructGate = OPEN_GATE,
 ): ErDrop {
+  // What the standard forbids isn't dropped (an attribute on a relation is a relation attribute).
+  const onRelation =
+    hit?.type === "er-relation" && (item === "attribute" || item === "key-attribute");
+  const construct = onRelation ? "relation-attributes" : PALETTE_CONSTRUCTS[item];
+  if (construct && !gate.allows(construct)) return { ok: false, label: gate.reason(construct) };
+  return plan(item, hit, diagram);
+}
+
+function plan(item: ErPaletteItemId, hit: ErElement | undefined, diagram: string): ErDrop {
   const target = hit;
   const own = hit?.diagram ?? diagram;
   switch (item) {

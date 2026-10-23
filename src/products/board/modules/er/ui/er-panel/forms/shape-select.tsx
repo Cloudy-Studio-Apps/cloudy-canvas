@@ -8,6 +8,8 @@ export function ShapeSelect({
   onChange,
   placeholder,
   className,
+  disabled,
+  title,
   ...props
 }: ShapeSelectProps) {
   // Keep a value the list doesn't know (e.g. a custom cardinality) selectable.
@@ -16,9 +18,12 @@ export function ShapeSelect({
     <select
       aria-label={props["aria-label"]}
       value={value}
+      disabled={disabled}
+      title={title}
       className={cn(
         "h-7 min-w-0 cursor-pointer rounded-md border border-input bg-surface px-1.5 text-sm text-foreground outline-none",
         "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/25",
+        "disabled:cursor-not-allowed disabled:opacity-50",
         className,
       )}
       onChange={(event) => onChange(event.target.value)}

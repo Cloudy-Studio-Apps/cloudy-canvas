@@ -46,6 +46,7 @@ export function ErPalette() {
               clickLabel={action.label}
               shortcut={shortcutOf(item.id)}
               clickDisabled={action.disabled}
+              blocked={action.blocked === true}
               onClick={() => {
                 const id = action.run();
                 if (id) engine.focusElement(id);

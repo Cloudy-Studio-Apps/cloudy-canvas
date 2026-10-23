@@ -19,5 +19,5 @@ export const SILBERSCHATZ_STANDARD = defineErStandard({
     arrows: "cardinality",
     joins: "hidden",
   },
-  supports: { hierarchies: true, aggregations: true, constraints: false, unions: false },
+  forbids: ["constraints", "unions", "associative-entities", "dependency-marks", "join-attributes"],
 });

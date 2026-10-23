@@ -1,3 +1,4 @@
+import { forbiddenConstructs } from "../../base/constructs";
 import type { ErStandardDefinition } from "../../base/standards";
 import type { ErShapes } from "../lang";
 import type { ErIssue, ErIssueSeverity } from "./check-er.types";
@@ -6,8 +7,9 @@ const ORDER: Record<ErIssueSeverity, number> = { error: 0, warning: 1, info: 2 }
 
 /**
  * Checks a diagram against the rules of the ER model and of the standard it follows: keys, weak
- * entities and their identifying relations, relations, hierarchies, constructs the standard
- * doesn't have, then the standard's own rules (`ErStandardDefinition.check`). Errors first.
+ * entities and their identifying relations, relations, hierarchies, the constructs the standard
+ * forbids (errors, one per shape using them: `ErStandardDefinition.forbids`), then the standard's
+ * own rules (`ErStandardDefinition.check`). Errors first.
  */
 export function checkErDiagram(shapes: ErShapes, standard: ErStandardDefinition): ErIssue[] {
   const issues: ErIssue[] = [];
@@ -172,9 +174,6 @@ export function checkErDiagram(shapes: ErShapes, standard: ErStandardDefinition)
         `The hierarchy under ${parent} has ${isa.children.length === 0 ? "no children" : "one child"}; it usually has two or more.`,
       );
     }
-    if (!standard.supports.hierarchies) {
-      add("standard-hierarchies", "info", isa.id, `Hierarchies aren't part of ${standard.label}.`);
-    }
   }
   for (const union of shapes.unions) {
     const category = names.get(union.categoryId) ?? "its category";
@@ -186,31 +185,19 @@ export function checkErDiagram(shapes: ErShapes, standard: ErStandardDefinition)
         `The union type of ${category} has ${union.superclassIds.length === 0 ? "no superclasses" : "one superclass"}; it unites two or more.`,
       );
     }
-    if (!standard.supports.unions) {
-      add("standard-unions", "info", union.id, `Union types aren't part of ${standard.label}.`);
-    }
-  }
-  if (!standard.supports.aggregations) {
-    for (const aggregate of shapes.aggregates) {
-      add(
-        "standard-aggregations",
-        "info",
-        aggregate.id,
-        `Aggregations aren't part of ${standard.label}.`,
-      );
-    }
-  }
-  if (!standard.supports.constraints) {
-    for (const constraint of shapes.constraints) {
-      add(
-        "standard-constraints",
-        "info",
-        constraint.id,
-        `Constraints between relations aren't part of ${standard.label}.`,
-      );
-    }
   }
 
+  // What the standard doesn't have: each shape using it is an error to fix.
+  for (const construct of forbiddenConstructs(standard)) {
+    for (const shapeId of new Set(construct.detect(shapes))) {
+      add(
+        "standard-construct",
+        "error",
+        shapeId,
+        `${construct.label} aren't part of ${standard.label}.`,
+      );
+    }
+  }
   // The standard's own rules come after the shared ones.
   issues.push(...(standard.check?.(shapes) ?? []));
   return issues.sort((a, b) => ORDER[a.severity] - ORDER[b.severity]);

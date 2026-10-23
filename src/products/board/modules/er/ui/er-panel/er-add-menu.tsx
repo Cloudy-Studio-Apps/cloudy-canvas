@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react";
 
-import { erAddActions, type ErPaletteItemId } from "@board";
+import { erAddActions, gateOf, type ErPaletteItemId } from "@board";
 import { Button } from "@shared/ui/components/ui/button";
 import {
   DropdownMenu,
@@ -27,7 +27,8 @@ export function ErAddMenu() {
   const engine = useEngine();
   const { edits } = useErDiagram();
   const selected = useErShape(useErSelection().id ?? "");
-  const actions = erAddActions(edits, useErShapes(), selected);
+  const shapes = useErShapes();
+  const actions = erAddActions(edits, shapes, selected, gateOf(shapes));
   const focus = (id: string | undefined) => id && engine.focusElement(id);
 
   return (

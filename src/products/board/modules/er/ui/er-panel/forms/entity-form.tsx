@@ -3,7 +3,7 @@ import { GitFork, LocateFixed } from "lucide-react";
 import { ER_ENTITY_COLOR, SHAPE_STROKES } from "@board";
 import { Button } from "@shared/ui/components/ui/button";
 import { ColorSwatch, CommitInput, useEngine } from "@canvas-ui";
-import { useErDiagram, useErShapes } from "../../model";
+import { lockedOn, useErDiagram, useErGate, useErShapes } from "../../model";
 import { FlagToggle } from "../../../../db/ui/db-panel/flag-toggle";
 import { AttributeList } from "./attribute-list";
 import { FormField } from "./form-field";
@@ -18,6 +18,8 @@ const COLORS = [
 /** An entity: name, weak, outline color, attributes, and where it's used. */
 export function EntityForm({ entity }: EntityFormProps) {
   const engine = useEngine();
+  const gate = useErGate();
+  const lock = (construct: string, on: boolean) => lockedOn(gate, construct, on);
   const er = useErDiagram();
   const shapes = useErShapes();
   const usedIn = [
@@ -45,8 +47,9 @@ export function EntityForm({ entity }: EntityFormProps) {
       <div className="flex items-center justify-between gap-2">
         <FlagToggle
           label="Weak"
-          title="Weak entity (double rectangle)"
+          title={lock("weak-entities", entity.weak).reason || "Weak entity (double rectangle)"}
           on={entity.weak}
+          disabled={lock("weak-entities", entity.weak).disabled}
           onToggle={() => er.edits.updateEntity(entity.id, { weak: !entity.weak })}
         />
         <div className="flex gap-0.5">
@@ -68,7 +71,10 @@ export function EntityForm({ entity }: EntityFormProps) {
           <Button
             variant="ghost"
             size="sm"
-            title="Specialize this entity into child entities (ES UN)"
+            title={
+              gate.reason("hierarchies") || "Specialize this entity into child entities (ES UN)"
+            }
+            disabled={!gate.allows("hierarchies")}
             onClick={() => {
               const id = er.edits.addIsa(entity.id);
               if (id) engine.focusElement(id);

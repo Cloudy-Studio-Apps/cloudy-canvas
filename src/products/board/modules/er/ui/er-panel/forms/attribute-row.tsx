@@ -3,7 +3,7 @@ import { ArrowDown, ArrowUp, ListTree, Trash2 } from "lucide-react";
 import type { ErAttributePatch, ErAttributeElement } from "@board";
 import { CommitInput } from "@canvas-ui";
 import { FlagToggle } from "../../../../db/ui/db-panel/flag-toggle";
-import { useErDiagram } from "../../model";
+import { lockedOn, useErDiagram, useErGate } from "../../model";
 import { IconAction } from "./icon-action";
 import type { AttributeRowProps } from "./attribute-row.types";
 
@@ -12,7 +12,14 @@ export function AttributeRow({ attribute, partsOf, first, last, depth }: Attribu
   const er = useErDiagram();
   const parts = partsOf.get(attribute.id) ?? [];
   const update = (patch: ErAttributePatch) => er.edits.updateAttribute(attribute.id, patch);
-  const flags: { label: string; title: string; on: boolean; patch: () => ErAttributePatch }[] = [
+  const gate = useErGate();
+  const flags: {
+    label: string;
+    title: string;
+    on: boolean;
+    construct?: string;
+    patch: () => ErAttributePatch;
+  }[] = [
     {
       label: "PK",
       title: "Key attribute (underlined)",
@@ -28,24 +35,28 @@ export function AttributeRow({ attribute, partsOf, first, last, depth }: Attribu
     {
       label: "AK",
       title: "Alternate (candidate) key (dotted underline)",
+      construct: "alternate-keys",
       on: attribute.key === "alternate",
       patch: () => ({ key: attribute.key === "alternate" ? "none" : "alternate" }),
     },
     {
       label: "Multi",
       title: "Multivalued (double ellipse)",
+      construct: "multivalued-attributes",
       on: attribute.multivalued,
       patch: () => ({ multivalued: !attribute.multivalued }),
     },
     {
       label: "Derived",
       title: "Derived (dashed ellipse)",
+      construct: "derived-attributes",
       on: attribute.derived,
       patch: () => ({ derived: !attribute.derived }),
     },
     {
       label: "Opt",
       title: "Optional (half-filled circle in the lollipop style)",
+      construct: "optional-attributes",
       on: attribute.optional,
       patch: () => ({ optional: !attribute.optional }),
     },
@@ -75,7 +86,8 @@ export function AttributeRow({ attribute, partsOf, first, last, depth }: Attribu
           <ArrowDown />
         </IconAction>
         <IconAction
-          label="Add a part (composite attribute)"
+          label={gate.reason("composite-attributes") || "Add a part (composite attribute)"}
+          disabled={!gate.allows("composite-attributes")}
           onClick={() => er.edits.addAttribute(attribute.id)}
         >
           <ListTree />
@@ -89,15 +101,19 @@ export function AttributeRow({ attribute, partsOf, first, last, depth }: Attribu
         </IconAction>
       </div>
       <div className="flex flex-wrap gap-1">
-        {flags.map((flag) => (
-          <FlagToggle
-            key={flag.label}
-            label={flag.label}
-            title={flag.title}
-            on={flag.on}
-            onToggle={() => update(flag.patch())}
-          />
-        ))}
+        {flags.map((flag) => {
+          const locked = flag.construct ? lockedOn(gate, flag.construct, flag.on) : undefined;
+          return (
+            <FlagToggle
+              key={flag.label}
+              label={flag.label}
+              title={locked?.reason || flag.title}
+              on={flag.on}
+              disabled={locked?.disabled}
+              onToggle={() => update(flag.patch())}
+            />
+          );
+        })}
       </div>
       {parts.length > 0 && (
         <ul>

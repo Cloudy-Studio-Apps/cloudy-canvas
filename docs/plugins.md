@@ -106,7 +106,8 @@ host.contribute(
       isa: "circle",
       crowFeet: false,
     },
-    supports: { hierarchies: true, aggregations: true, constraints: false },
+    // Construct ids it leaves out (see ER constructs below); unset allows everything.
+    forbids: ["constraints", "unions", "associative-entities"],
     // Optional: findings of its own, after the shared rules.
     check: (shapes) =>
       shapes.entities
@@ -122,6 +123,20 @@ host.contribute(
 ```
 
 It then shows in the ER panel's Standard picker, in the text's completions, and in drawing and the Check diagram, with nothing else to register. An id that's taken throws, naming both modules. A board that names a standard that isn't installed keeps the id, is drawn with the default and gets a "not installed" finding, so installing the plugin again brings it back.
+
+### ER constructs
+
+A construct is something a diagram can use that a standard may leave out. The built-ins are `hierarchies`, `aggregations`, `constraints`, `unions`, `weak-entities`, `associative-entities`, `identifying-relations`, `dependency-marks`, `nary-relations`, `self-relations`, `relation-attributes`, `multivalued-attributes`, `derived-attributes`, `composite-attributes`, `alternate-keys`, `optional-attributes` and `join-attributes`. A plugin adds one with `detect`, which returns the ids of the shapes that use it:
+
+```js
+api.board.defineErConstruct({
+  id: "long-names",
+  label: "Names longer than 30 characters",
+  detect: (shapes) => shapes.entities.filter((e) => e.name.length > 30).map((e) => e.id),
+});
+```
+
+Contribute it to `api.board.erConstructs`; any standard that lists its id in `forbids` then reports each shape it detects as an error ("Names longer than 30 characters aren't part of My school's notation."). Ids in `forbids` that aren't installed are ignored, and a construct no standard forbids changes nothing.
 
 ## Design plugins
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { erDropPlan, type ErDrop } from "@board";
+import { erDropPlan, gateOf, type ErDrop } from "@board";
 import { MOVE_THRESHOLD_PX, type Point } from "@canvas";
 import { useEngine } from "@canvas-ui";
 import { useErModel } from "../model";
@@ -23,7 +23,11 @@ export function usePaletteDrag({ item, diagram, onClick }: PaletteDragOptions): 
     const world = engine.clientToWorld(client);
     if (!world) return { drop: { ok: false, label: "Drop on the board" }, world };
     const hit = engine.elementAt(world);
-    return { drop: erDropPlan(item, hit && er.shape(hit.id), diagram?.id ?? ""), world };
+    const shape = hit && er.shape(hit.id);
+    // The standard of the diagram it would go into: what it's dropped on, else the shown one.
+    const target = shape?.diagram ?? diagram?.id ?? "";
+    const gate = gateOf(er.diagram(target).shapes());
+    return { drop: erDropPlan(item, shape, diagram?.id ?? "", gate), world };
   };
 
   const onPointerDown: PaletteDrag["onPointerDown"] = (event) => {

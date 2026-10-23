@@ -20,5 +20,13 @@ export const CHEN_STANDARD = defineErStandard({
     arrows: "manual",
     joins: "hidden",
   },
-  supports: { hierarchies: false, aggregations: false, constraints: false, unions: false },
+  forbids: [
+    "hierarchies",
+    "aggregations",
+    "constraints",
+    "unions",
+    "associative-entities",
+    "alternate-keys",
+    "join-attributes",
+  ],
 });

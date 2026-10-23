@@ -11,4 +11,6 @@ export interface ShapeSelectProps {
   /** Shown (and selectable as "") when nothing is chosen. */
   placeholder?: string;
   className?: string;
+  disabled?: boolean;
+  title?: string;
 }

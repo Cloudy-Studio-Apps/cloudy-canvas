@@ -20,5 +20,5 @@ export const PIATTINI_STANDARD = defineErStandard({
     arrows: "manual",
     joins: "hidden",
   },
-  supports: { hierarchies: true, aggregations: true, constraints: true, unions: false },
+  forbids: ["unions", "associative-entities", "join-attributes"],
 });

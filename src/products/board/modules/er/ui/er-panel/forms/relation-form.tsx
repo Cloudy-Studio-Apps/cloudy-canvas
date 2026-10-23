@@ -3,7 +3,7 @@ import { Group, Plus, RectangleHorizontal } from "lucide-react";
 import { canConvert, cardinalityRatio } from "@board";
 import { Button } from "@shared/ui/components/ui/button";
 import { CommitInput, useEngine } from "@canvas-ui";
-import { useErDiagram, useErShapes } from "../../model";
+import { useErDiagram, useErShapes, lockedOn, useErGate } from "../../model";
 import { FlagToggle } from "../../../../db/ui/db-panel/flag-toggle";
 import { AttributeList } from "./attribute-list";
 import { entityOptions } from "./entity-options";
@@ -20,6 +20,8 @@ export function RelationForm({ relation }: RelationFormProps) {
   const options = entityOptions(shapes, true);
   const ratio = cardinalityRatio(relation);
   const firstEntity = options[0]?.value;
+  const gate = useErGate();
+  const lock = (construct: string, on: boolean) => lockedOn(gate, construct, on);
 
   return (
     <div className="space-y-4">
@@ -36,30 +38,46 @@ export function RelationForm({ relation }: RelationFormProps) {
       <div className="flex items-center gap-1">
         <FlagToggle
           label="Identifying"
-          title="Identifying relation of a weak entity (double diamond)"
+          title={
+            lock("identifying-relations", relation.identifying).reason ||
+            "Identifying relation of a weak entity (double diamond)"
+          }
           on={relation.identifying}
+          disabled={lock("identifying-relations", relation.identifying).disabled}
           onToggle={() =>
             er.edits.updateRelation(relation.id, { identifying: !relation.identifying })
           }
         />
         <FlagToggle
           label="Associative"
-          title="An associative entity: a relation that is also an entity, with a key of its own, taking part in other relations"
+          title={
+            lock("associative-entities", relation.associative).reason ||
+            "An associative entity: a relation that is also an entity, with a key of its own, taking part in other relations"
+          }
           on={relation.associative}
+          disabled={lock("associative-entities", relation.associative).disabled}
           onToggle={() =>
             er.edits.updateRelation(relation.id, { associative: !relation.associative })
           }
         />
         <FlagToggle
           label="I mark"
-          title="Dependency by identification (an I at the top of the diamond)"
+          title={
+            lock("dependency-marks", relation.idMark).reason ||
+            "Dependency by identification (an I at the top of the diamond)"
+          }
           on={relation.idMark}
+          disabled={lock("dependency-marks", relation.idMark).disabled}
           onToggle={() => er.edits.updateRelation(relation.id, { idMark: !relation.idMark })}
         />
         <FlagToggle
           label="E mark"
-          title="Dependency by existence (an E at the top of the diamond)"
+          title={
+            lock("dependency-marks", relation.existenceMark).reason ||
+            "Dependency by existence (an E at the top of the diamond)"
+          }
           on={relation.existenceMark}
+          disabled={lock("dependency-marks", relation.existenceMark).disabled}
           onToggle={() =>
             er.edits.updateRelation(relation.id, { existenceMark: !relation.existenceMark })
           }
@@ -94,7 +112,15 @@ export function RelationForm({ relation }: RelationFormProps) {
           <Button
             variant="ghost"
             size="sm"
-            disabled={!firstEntity}
+            // A third side makes a relation of three or more, which a standard may forbid.
+            title={
+              relation.participants.length >= 2
+                ? gate.reason("nary-relations") || undefined
+                : undefined
+            }
+            disabled={
+              !firstEntity || (relation.participants.length >= 2 && !gate.allows("nary-relations"))
+            }
             onClick={() => firstEntity && er.edits.addParticipant(relation.id, firstEntity)}
           >
             <Plus />

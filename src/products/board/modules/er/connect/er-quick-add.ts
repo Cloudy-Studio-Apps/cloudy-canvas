@@ -30,14 +30,26 @@ export function erQuickAddOptions(source: ErConnectSource): ErQuickAddOption[] {
           run: (e, at) => e.addRelatedEntity(id, { at }),
         },
         { id: "relation", label: "Relation", run: (e, at) => e.addRelation([id], { at }) },
-        { id: "subtype", label: "Subtype (hierarchy)", run: (e, at) => e.addSubtype(id, { at }) },
+        {
+          id: "subtype",
+          label: "Subtype (hierarchy)",
+          construct: "hierarchies",
+          run: (e, at) => e.addSubtype(id, { at }),
+        },
       ];
     case "er-relation":
       return [
-        { id: "attribute", label: "Attribute", run: (e, at) => e.addAttribute(id, { at }) },
+        {
+          id: "attribute",
+          label: "Attribute",
+          construct: "relation-attributes",
+          run: (e, at) => e.addAttribute(id, { at }),
+        },
         {
           id: "participant",
           label: "Participating entity",
+          // A third side makes a relation of three or more.
+          ...(source.participants.length >= 2 ? { construct: "nary-relations" } : {}),
           run: (e, at) => e.addParticipantEntity(id, { at }),
         },
       ];
@@ -46,6 +58,7 @@ export function erQuickAddOptions(source: ErConnectSource): ErQuickAddOption[] {
         {
           id: "superclass",
           label: "Superclass entity",
+          construct: "unions",
           run: (e, at) => e.addUnionSuperclassEntity(id, { at }),
         },
       ];
@@ -54,11 +67,13 @@ export function erQuickAddOptions(source: ErConnectSource): ErQuickAddOption[] {
         {
           id: "child",
           label: "Child entity",
+          construct: "hierarchies",
           run: (e, at) => e.addIsaChildEntity(id, { at }),
         },
         {
           id: "attribute",
           label: "Discriminator attribute",
+          construct: "hierarchies",
           run: (e, at) => e.addAttribute(id, { at }),
         },
       ];
