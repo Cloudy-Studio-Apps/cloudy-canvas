@@ -120,14 +120,15 @@ function sortLines(relation: RawRelation, known: ReadonlySet<string>): ParsedErR
     attributes: [],
     line: relation.line,
   };
-  for (const { attribute, cardinality, role, arrow, forcedAttribute } of relation.lines) {
+  for (const { attribute, cardinality, role, arrow, via, forcedAttribute } of relation.lines) {
     const named = isPlain(attribute) && known.has(attribute.name);
-    if (forcedAttribute || (!cardinality && !role && !arrow && !named)) {
+    if (forcedAttribute || (!cardinality && !role && !arrow && !via && !named)) {
       result.attributes.push(attribute);
       continue;
     }
     result.participants.push({
       entity: attribute.name,
+      via,
       min: cardinality?.min ?? "",
       max: cardinality?.max ?? "",
       role,

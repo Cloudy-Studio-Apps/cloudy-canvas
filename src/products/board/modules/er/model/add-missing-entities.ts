@@ -1,8 +1,10 @@
-import type { ParsedEr, ParsedErEntity } from "./lang";
+import type { DbmlError } from "../../db/schema/dbml";
+import type { ParsedEr, ParsedErAttribute, ParsedErEntity } from "./lang";
+import { attributeNamed } from "./lang/parse-attributes";
 
 /**
- * Adds an empty entity for every name that relations or hierarchies use but nothing defines.
- * A warning reports each one.
+ * Adds an empty entity for every name that relations or hierarchies use but nothing defines, and
+ * the join attributes participants name. A warning reports each one.
  */
 export function addMissingEntities(model: ParsedEr): ParsedEr {
   const known = new Set([...model.entities, ...model.aggregates].map((item) => item.name));
@@ -18,9 +20,8 @@ export function addMissingEntities(model: ParsedEr): ParsedEr {
     need(isa.parent, isa.line);
     for (const child of isa.children) need(child.entity, child.line);
   }
-  if (created.size === 0) return model;
   const entities = [...created.values()];
-  return {
+  const withEntities: ParsedEr = {
     ...model,
     entities: [...model.entities, ...entities],
     warnings: [
@@ -31,5 +32,35 @@ export function addMissingEntities(model: ParsedEr): ParsedEr {
         column: 1,
       })),
     ],
+  };
+  return addMissingVias(created.size ? withEntities : model);
+}
+
+/**
+ * Adds the join attributes participants name (`Cliente.id`) that their entity doesn't have: a key
+ * when the entity has no key yet, otherwise a plain attribute. A warning reports each one.
+ */
+function addMissingVias(model: ParsedEr): ParsedEr {
+  const added = new Map<string, ParsedErAttribute[]>();
+  const warnings: DbmlError[] = [];
+  for (const relation of model.relations) {
+    for (const { entity: name, via, line } of relation.participants) {
+      const entity = model.entities.find((e) => e.name === name);
+      if (!via || !entity) continue;
+      const extra = added.get(name) ?? [];
+      const attributes = [...entity.attributes, ...extra];
+      if (attributes.some((a) => a.name === via)) continue;
+      const hasKey = attributes.some((a) => a.key === "pk");
+      added.set(name, [...extra, { ...attributeNamed(via, line), key: hasKey ? "none" : "pk" }]);
+      warnings.push({ message: `Added the attribute "${via}" to "${name}"`, line, column: 1 });
+    }
+  }
+  if (added.size === 0) return model;
+  return {
+    ...model,
+    entities: model.entities.map((e) =>
+      added.has(e.name) ? { ...e, attributes: [...e.attributes, ...(added.get(e.name) ?? [])] } : e,
+    ),
+    warnings: [...model.warnings, ...warnings],
   };
 }

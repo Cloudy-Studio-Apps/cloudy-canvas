@@ -22,6 +22,18 @@ export interface ErAttributeAddOptions extends ErAddOptions {
   key?: ErAttributeKey;
 }
 
+/** What a new relation's participant joins through: nothing, an attribute, or a new key. */
+export type ErJoin =
+  { kind: "none" } | { kind: "attribute"; id: string } | { kind: "new-key"; name: string };
+
+/** One participant of a relation made in one go (`addLinkedRelation`). */
+export interface ErRelationEnd {
+  entityId: string;
+  min: string;
+  max: string;
+  join: ErJoin;
+}
+
 /** The next model after an edit, and the id of the shape it created (if any). */
 export interface ErEditResult {
   shapes: ErShapes;

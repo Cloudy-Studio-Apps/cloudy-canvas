@@ -9,7 +9,7 @@ import type { ErRelationElement } from "../relation/relation.types";
 import { entitySize, relationSize } from "../base/er-size";
 import { keepCenter } from "../base/keep-center";
 import { allErShapes } from "./er-shapes";
-import type { ErShapes, ParsedEr, ParsedErAttribute } from "./lang";
+import type { ErShapes, ParsedEr, ParsedErAttribute, ParsedErRelation } from "./lang";
 import { buildAttributes } from "./reconcile-attributes";
 import type { ReconcileContext } from "./reconcile-context.types";
 import type { ErReconcileResult } from "./reconcile-er.types";
@@ -96,13 +96,15 @@ export function reconcileEr(model: ParsedEr, existing: ErShapes): ErReconcileRes
           max: p.max,
           role: p.role,
           arrow: p.arrow,
+          // The attribute is found once every owner's attributes are built (`joinVias`).
+          via: "",
         })),
       };
     });
 
     const shapes: ErShapes = {
       entities,
-      relations,
+      relations: joinVias(relations, model.relations, ctx),
       attributes: ctx.attributes,
       isas: buildIsas(model.isas, ctx),
       aggregates: buildAggregates(model.aggregates, aggregateIds, ctx),
@@ -117,4 +119,29 @@ export function reconcileEr(model: ParsedEr, existing: ErShapes): ErReconcileRes
     if (error instanceof ReconcileError) return { ok: false, error: error.toDbmlError() };
     throw error;
   }
+}
+
+/** Points each participant written `Entity.attribute` at that attribute of its entity. */
+function joinVias(
+  relations: ErRelationElement[],
+  parsed: readonly ParsedErRelation[],
+  ctx: ReconcileContext,
+): ErRelationElement[] {
+  return relations.map((relation, i) => ({
+    ...relation,
+    participants: relation.participants.map((participant, k) => {
+      const written = parsed[i]?.participants[k];
+      if (!written?.via) return participant;
+      const attribute = ctx.attributes.find(
+        (a) => a.ownerId === participant.entityId && a.name === written.via,
+      );
+      if (!attribute) {
+        throw new ReconcileError(
+          `"${written.entity}" has no attribute "${written.via}" (it's created when you leave the editor)`,
+          written.line,
+        );
+      }
+      return { ...participant, via: attribute.id };
+    }),
+  }));
 }

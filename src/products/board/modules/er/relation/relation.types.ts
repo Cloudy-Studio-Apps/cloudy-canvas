@@ -12,6 +12,11 @@ export interface ErParticipant {
   role: string;
   /** An arrowhead at the entity end. */
   arrow: boolean;
+  /**
+   * The attribute of the entity the relation joins through (`Cliente.id (0,n)`, usually its key),
+   * by id; empty when none is named.
+   */
+  via: string;
 }
 
 /** An ER relation: a diamond linked to its participants. */

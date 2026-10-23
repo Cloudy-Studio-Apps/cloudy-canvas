@@ -17,6 +17,7 @@ import type {
   ErIsaChildPatch,
   ErIsaPatch,
   ErParticipantPatch,
+  ErRelationEnd,
   ErRelationPatch,
 } from "./edits";
 import { allErShapes, diagramScope, erShapes } from "./er-shapes";
@@ -50,6 +51,9 @@ export class ErEdits {
     this.run((s) => edit.addRelation(s, entityIds), at);
   updateRelation = (id: string, patch: ErRelationPatch) =>
     this.run((s) => edit.updateRelation(s, id, patch));
+  /** A relation between the ends with their cardinalities and join attributes; returns its id. */
+  addLinkedRelation = (ends: readonly ErRelationEnd[], { at }: ErAddOptions = {}) =>
+    this.run((s) => edit.addLinkedRelation(s, ends), at);
   addParticipant = (id: string, entityId: string) =>
     this.run((s) => edit.addParticipant(s, id, entityId));
   updateParticipant = (id: string, participantId: string, patch: ErParticipantPatch) =>

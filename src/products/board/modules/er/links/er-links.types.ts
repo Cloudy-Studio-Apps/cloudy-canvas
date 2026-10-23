@@ -15,4 +15,24 @@ export interface ErLink {
   arrow: boolean;
   /** A small circle halfway along (a total hierarchy). */
   totalMark: boolean;
+  /** Crow's-foot marks at the `to` end (a binary relation's line), or `null`. */
+  crowFoot: CrowFoot | null;
+}
+
+/**
+ * How many of the entity at this end one of the other end has: read across the relation from the
+ * other participant's (min,max) (`Cliente (0,n)` puts a fork at the other entity's end).
+ */
+export interface CrowFoot {
+  /** The mark next to the entity: a bar for one, a fork for many. */
+  max: "one" | "many";
+  /** The mark further out: a circle for none, a bar for at least one; `null` when not given. */
+  min: "zero" | "one" | null;
+}
+
+export interface CrowFootStyle {
+  color: number | string;
+  width: number;
+  /** Inside the min circle. */
+  fill: number | string;
 }

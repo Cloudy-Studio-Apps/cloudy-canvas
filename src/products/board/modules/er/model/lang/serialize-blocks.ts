@@ -39,7 +39,9 @@ export function serializeRelation(
     if (name === undefined) return [];
     const role = p.role ? ` as ${formatName(p.role)}` : "";
     const arrow = p.arrow ? " [arrow]" : "";
-    return [`${INDENT}${formatName(name)}${cardinality(p.min, p.max)}${role}${arrow}`];
+    const viaName = p.via ? byOwner.get(p.entityId)?.find((a) => a.id === p.via)?.name : undefined;
+    const via = viaName ? `.${formatName(viaName)}` : "";
+    return [`${INDENT}${formatName(name)}${via}${cardinality(p.min, p.max)}${role}${arrow}`];
   });
   return block(`Relation ${formatName(relation.name)}${list(settings)}`, [
     ...participants,

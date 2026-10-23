@@ -5,11 +5,11 @@ import type { ErIsaElement } from "../isa/isa.types";
 import type { ErRelationElement } from "../relation/relation.types";
 import type { ErElement } from "../base/er.types";
 import { outlinePoint, shapeCenter } from "../base/er-outline";
-import type { ErLink } from "./er-links.types";
+import type { CrowFoot, ErLink } from "./er-links.types";
 import { loopPoints } from "./loop-route";
 
 /** Where the cardinality label sits: this far along the line from the entity, and off to its side. */
-const LABEL_ALONG = 22;
+const LABEL_ALONG = 30;
 const LABEL_ACROSS = 12;
 
 /**
@@ -38,19 +38,34 @@ function participantLinks(
   const counts = new Map<string, number>();
   for (const p of relation.participants) counts.set(p.entityId, (counts.get(p.entityId) ?? 0) + 1);
   const seen = new Map<string, number>();
-  return relation.participants.flatMap((participant) => {
+  const binary = relation.participants.length === 2;
+  return relation.participants.flatMap((participant, i) => {
     const entity = byId.get(participant.entityId);
     if (!entity) return [];
-    const label = cardinalityLabel(participant.min, participant.max);
+    const via = participant.via ? byId.get(participant.via) : undefined;
+    const card = cardinalityLabel(participant.min, participant.max);
+    const viaName = via && "name" in via ? via.name : "";
+    const label = viaName ? (card ? `${card} · ${viaName}` : viaName) : card;
     const n = seen.get(entity.id) ?? 0;
     seen.set(entity.id, n + 1);
     // An entity related to itself gets loops that leave from different sides.
+    const other = binary ? relation.participants[1 - i] : undefined;
+    const crowFoot = other ? crowFootOf(other.min, other.max) : null;
     if ((counts.get(entity.id) ?? 1) > 1) {
       const points = loopPoints(relation, entity, n);
-      return [polyLink(relation.id, entity.id, points, label, participant.arrow)];
+      return [{ ...polyLink(relation.id, entity.id, points, label, participant.arrow), crowFoot }];
     }
-    return [straightLink(relation, entity, label, participant.arrow)];
+    return [{ ...straightLink(relation, entity, label, participant.arrow), crowFoot }];
   });
+}
+
+/** The marks for the other participant's `(min,max)`; `null` when it has no maximum. */
+function crowFootOf(min: string, max: string): CrowFoot | null {
+  if (!max) return null;
+  return {
+    max: max === "1" ? "one" : "many",
+    min: min === "" ? null : min === "0" ? "zero" : "one",
+  };
 }
 
 function isaLinks(isa: ErIsaElement, byId: ReadonlyMap<string, ErElement>): ErLink[] {
@@ -101,6 +116,7 @@ function polyLink(
     labelAt: label ? labelPoint(before, end) : null,
     arrow,
     totalMark: false,
+    crowFoot: null,
   };
 }
 

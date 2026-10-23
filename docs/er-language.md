@@ -133,6 +133,26 @@ Relation supervisa {
 
 **S24. Arrows.** `Alumnos (1,n) [arrow]` draws an arrowhead at the entity end.
 
+**S25. Join attribute.** `Entity.attribute` names the attribute a participant joins through, usually its key:
+
+```
+Relation pide {
+  Cliente.id (0,n)
+  Pedido (1,1)
+}
+```
+
+- A line written this way is always a participant.
+- The attribute must belong to that entity. While you type, a missing one is an error. When you leave the editor (or paste), it's added: as a key if the entity has none yet, otherwise as a plain attribute.
+- The board shows it next to the cardinality: `(0,n) · id`.
+
+**S26. Crow's feet.** A relation with two participants also draws crow's-foot marks where its lines meet the entities, read across from the other side's cardinality. For `Cliente (0,n)` and `Pedido (1,1)`: a fork and a circle at `Pedido` (a Cliente has zero or many Pedido), and two bars at `Cliente` (a Pedido has exactly one Cliente). You never type them.
+
+- Deleting the attribute removes the join and keeps the participant.
+- In the form, each participant has a **Joins by** select.
+
+**Building relations by dragging.** Drag a connect dot from an entity onto another entity (or an aggregation). A prompt asks what kind of relation it is (one to one, one to many, many to one or many to many), each with a picture and a sentence using the two names. It then asks which attribute the join goes through: the entity's key by default, a new key attribute `id`, or none. Many to many asks for both sides. Only then is the relation created, as one undo step. Esc or a click elsewhere cancels.
+
 **S17. Missing entities.** If a relation or hierarchy names an entity that doesn't exist, it's **created** (empty) when you paste or leave the editor, with a note such as "Created the missing entity Factura". While you type, it shows as an error instead, so half-typed names don't turn into entities.
 
 ---

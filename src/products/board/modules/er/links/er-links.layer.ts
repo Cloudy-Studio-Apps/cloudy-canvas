@@ -4,6 +4,7 @@ import type { CanvasElement, CanvasLinks, LinkView } from "@canvas";
 import { ER_FILL_COLOR, INK_COLOR, MUTED_INK_COLOR } from "../../../palette";
 import { drawArrowHead } from "../base/arrow-head";
 import { ER_DEFAULTS } from "../base/er.defaults";
+import { drawCrowFoot } from "./crow-foot";
 import { resolveErLinks } from "./er-links";
 import type { ErLink } from "./er-links.types";
 
@@ -13,7 +14,8 @@ const TOTAL_MARK_RADIUS = 5;
 
 /**
  * Lines of the board's ER diagrams (relation ↔ participant, attribute ↔ owner, hierarchy ↔ parent
- * and children) with their cardinality labels, arrows and total marks.
+ * and children) with their cardinality labels, arrows, total marks and, on a binary relation's
+ * lines, crow's-foot marks read from the cardinalities.
  */
 export class ErLinks implements CanvasLinks {
   private links: ErLink[] = [];
@@ -44,6 +46,13 @@ function drawLink(g: Graphics, link: ErLink, color: number | string): void {
   if (link.arrow) {
     drawArrowHead(g, before, end);
     g.fill({ color });
+  }
+  if (link.crowFoot) {
+    drawCrowFoot(g, before, end, link.crowFoot, {
+      color,
+      width: ER_DEFAULTS.strokeWidth,
+      fill: ER_FILL_COLOR,
+    });
   }
   if (link.totalMark) {
     const mid = { x: (first.x + end.x) / 2, y: (first.y + end.y) / 2 };

@@ -1,33 +1,16 @@
-import { defineService, Emitter } from "@canvas";
+import { defineService } from "@canvas";
 
 import type { ErConnectSource, ErQuickAddOption, ErQuickAddRequest } from "./er-connect.types";
+import { ErPrompt } from "./er-prompt";
 
 /**
- * The connect drop waiting for a choice (a dot dropped on empty board): the gesture opens it and
- * the quick-add menu (an editor overlay) shows it until something is picked or it's dismissed.
+ * A connect dot dropped on empty board, waiting for what to create there (the quick-add menu).
+ * One per engine: `ctx.service(ER_QUICK_ADD)`, `useService(ER_QUICK_ADD)`.
  */
-export class ErQuickAdd {
-  private request: ErQuickAddRequest | null = null;
-  private readonly emitter = new Emitter();
-
-  subscribe = this.emitter.subscribe;
-
-  current = (): ErQuickAddRequest | null => this.request;
-
-  open(request: ErQuickAddRequest): void {
-    this.request = request;
-    this.emitter.emit();
-  }
-
-  close = (): void => {
-    if (!this.request) return;
-    this.request = null;
-    this.emitter.emit();
-  };
-}
-
-/** One per engine: `ctx.service(ER_QUICK_ADD)`, `useService(ER_QUICK_ADD)`. */
-export const ER_QUICK_ADD = defineService("board.erQuickAdd", () => new ErQuickAdd());
+export const ER_QUICK_ADD = defineService(
+  "board.erQuickAdd",
+  () => new ErPrompt<ErQuickAddRequest>(),
+);
 
 /** What a dot of `source` dropped on empty board can create there. */
 export function erQuickAddOptions(source: ErConnectSource): ErQuickAddOption[] {

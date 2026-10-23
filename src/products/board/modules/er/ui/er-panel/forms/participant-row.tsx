@@ -3,15 +3,18 @@ import { Trash2 } from "lucide-react";
 import type { ErParticipantPatch } from "@board";
 import { CommitInput } from "@canvas-ui";
 import { FlagToggle } from "../../../../db/ui/db-panel/flag-toggle";
-import { useErDiagram } from "../../model";
+import { useErDiagram, useErShapes } from "../../model";
 import { CardinalityPicker } from "./cardinality-picker";
 import { IconAction } from "./icon-action";
 import { ShapeSelect } from "./shape-select";
 import type { ParticipantRowProps } from "./participant-row.types";
 
-/** One entity taking part in a relation: which, its cardinality, role and arrow. */
+/** One entity taking part in a relation: which, its cardinality, join attribute, role and arrow. */
 export function ParticipantRow({ relation, participant, options }: ParticipantRowProps) {
   const er = useErDiagram();
+  const joinOptions = useErShapes()
+    .attributes.filter((a) => a.ownerId === participant.entityId)
+    .map((a) => ({ value: a.id, label: a.key === "pk" ? `${a.name} (key)` : a.name }));
   const update = (patch: ErParticipantPatch) =>
     er.edits.updateParticipant(relation.id, participant.id, patch);
 
@@ -38,6 +41,14 @@ export function ParticipantRow({ relation, participant, options }: ParticipantRo
           <Trash2 />
         </IconAction>
       </div>
+      <ShapeSelect
+        aria-label="Join attribute"
+        value={participant.via}
+        options={joinOptions}
+        placeholder="Joins by: no attribute"
+        className="w-full text-xs"
+        onChange={(via) => update({ via })}
+      />
       <div className="flex items-center gap-1">
         <CommitInput
           value={participant.role}

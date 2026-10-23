@@ -14,12 +14,14 @@ import type { ErIsaElement } from "../isa/isa.types";
 import { ER_MODEL, type ErEdits } from "../model";
 import type { ErConnectOutcome, ErConnectSource, ErParticipantTarget } from "./er-connect.types";
 import { ER_QUICK_ADD } from "./er-quick-add";
+import { ER_RELATION_PROMPT } from "./er-relation-ratios";
 
 const LINE_WIDTH_PX = 1.5;
 
 /**
  * Drags a line out of an entity's, relation's or hierarchy's connect dot. Dropped on another
- * entity (or an aggregation) it makes a relation between them, or, from a relation, adds it as a
+ * entity (or an aggregation) it asks what kind of relation to make between them (the relation
+ * prompt, `ER_RELATION_PROMPT`), or, from a relation, adds it as a
  * participant; an entity dropped on a relation joins it. A hierarchy and an entity linked either
  * way make the entity one of its children. Dropped on empty board it opens the quick-add menu
  * there, to pick what to create (`ErQuickAdd`). Linking a shape of another diagram joins the two diagrams.
@@ -104,7 +106,7 @@ export class ErConnectGesture implements ElementGesture {
   private outcome(hit: ErElement | null | undefined, at: Point): ErConnectOutcome | null {
     const outcome = this.link(hit, at);
     const other = hit?.diagram;
-    if (!outcome || !other || other === this.source.diagram) return outcome;
+    if (!outcome || outcome.prompts || !other || other === this.source.diagram) return outcome;
     const er = this.ctx.service(ER_MODEL);
     return { run: () => er.join(this.source.diagram, other, outcome.run) };
   }
@@ -122,9 +124,16 @@ export class ErConnectGesture implements ElementGesture {
     if (source.type === "er-entity") {
       if (hit.type === "er-isa") return childLink(edits, hit, source.id);
       if (isParticipant(hit)) {
+        // The relation prompt asks what kind of relation it is (and joins the diagrams).
         const target = this.ctx.getElement(hit.id) ?? hit;
+        const prompt = this.ctx.service(ER_RELATION_PROMPT);
+        const request = { fromId: source.id, toId: hit.id, at: midpoint(source, target) };
         return {
-          run: () => edits.addRelation([source.id, hit.id], { at: midpoint(source, target) }),
+          prompts: true,
+          run: () => {
+            prompt.open(request);
+            return undefined;
+          },
         };
       }
       if (hit.type === "er-relation") {

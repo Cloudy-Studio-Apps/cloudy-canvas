@@ -30,6 +30,8 @@ export interface Cardinality {
 export interface ParsedErParticipant extends Cardinality {
   /** Name of the entity (or aggregation) taking part. */
   entity: string;
+  /** Name of the attribute it joins through (`Cliente.id`), or empty. */
+  via: string;
   role: string;
   arrow: boolean;
   line: number;
@@ -99,6 +101,8 @@ export interface RelationLine {
   cardinality: Cardinality | null;
   role: string;
   arrow: boolean;
+  /** `Entity.attribute`: the attribute the participant joins through, or empty. */
+  via: string;
   /** Written with the `attr` prefix, so it's an attribute whatever its name. */
   forcedAttribute: boolean;
 }

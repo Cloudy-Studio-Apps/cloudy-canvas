@@ -11,7 +11,10 @@ import {
 import { parseCardinality } from "./parse-cardinality";
 import type { RawRelation, RelationLine } from "./parser.types";
 
-/** `Relation name [identifying, id, color: #hex] { Entity (min,max) as role [arrow] | attribute … }`. */
+/**
+ * `Relation name [identifying, id, color: #hex] { Entity.attribute (min,max) as role [arrow] |
+ * attribute … }` (`.attribute`, the attribute the entity joins through, is optional).
+ */
 export function parseRelation(cursor: TokenCursor, warnings: DbmlError[]): RawRelation {
   const keyword = cursor.next();
   const name = cursor.expectName("a relation name").value;
@@ -59,12 +62,14 @@ function parseLine(cursor: TokenCursor, warnings: DbmlError[]): RelationLine {
   const token = cursor.expectName("an entity or attribute name");
   const attribute = attributeNamed(token.value, token.line);
   flags.forEach((apply) => apply(attribute));
+  const via = cursor.acceptSymbol(".") ? cursor.expectName("an attribute name").value : "";
 
   const line: RelationLine = {
     attribute,
     cardinality: null,
     role: "",
     arrow: false,
+    via,
     forcedAttribute,
   };
   if (cursor.isSymbol("(")) line.cardinality = parseCardinality(cursor);

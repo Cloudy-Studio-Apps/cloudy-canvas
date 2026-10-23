@@ -32,17 +32,24 @@ const TOKEN_TAGS = {
  */
 export function createSourceLanguage(spec: SourceLanguageSpec) {
   const blockKeywords = new Set(spec.blockKeywords);
+  const nestedKeywords = new Set(spec.nestedKeywords ?? spec.blockKeywords);
   const settings = new Set(spec.settings);
+  const chain = spec.chainKeywords ?? true;
 
   const word = (state: SourceLanguageState, text: string): string => {
     const lower = text.toLowerCase();
     if (state.inSettings) return settings.has(lower) ? "modifier" : "variableName";
+    if (state.afterDot) {
+      state.afterDot = false;
+      return "typeName";
+    }
     const index = state.words++;
     if (state.afterKeyword) {
-      state.afterKeyword = blockKeywords.has(lower);
+      state.afterKeyword = chain && blockKeywords.has(lower);
       return state.afterKeyword ? "keyword" : "definition";
     }
-    if (blockKeywords.has(lower) && (index === 0 || lower === "as")) {
+    const keywords = state.depth > 0 ? nestedKeywords : blockKeywords;
+    if (keywords.has(lower) && (index === 0 || lower === "as")) {
       state.afterKeyword = true;
       return "keyword";
     }
@@ -59,12 +66,14 @@ export function createSourceLanguage(spec: SourceLanguageSpec) {
       inSettings: false,
       words: 0,
       afterKeyword: false,
+      afterDot: false,
     }),
     copyState: (state) => ({ ...state }),
     token(stream, state) {
       if (stream.sol()) {
         state.words = 0;
         state.afterKeyword = false;
+        state.afterDot = false;
       }
       if (state.open === "comment") return closeAt(stream, state, "*/", "comment");
       if (state.open === "string") return closeAt(stream, state, "'''", "string");
@@ -100,6 +109,8 @@ export function createSourceLanguage(spec: SourceLanguageSpec) {
       if (text && typeof text !== "boolean") return word(state, text[0]);
 
       const ch = stream.next() ?? "";
+      state.afterDot =
+        !!spec.dottedParts && ch === "." && WORD.test(stream.string.slice(stream.pos));
       if (ch === "{") {
         state.depth++;
         state.afterKeyword = false;

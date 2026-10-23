@@ -27,14 +27,20 @@ export function erOrphans(
   return gone;
 }
 
-/** Drops participants and hierarchy children that point at `dead` elements; `null` when none do. */
+/**
+ * Drops participants and hierarchy children that point at `dead` elements (and the join attribute
+ * of a participant when it's dead); `null` when none do.
+ */
 export function withoutDeadLinks(
   shape: ErElement,
   dead: (id: string) => boolean,
 ): ElementPatch<ErRelationElement> | ElementPatch<ErIsaElement> | null {
   if (shape.type === "er-relation") {
-    const participants = shape.participants.filter((p) => !dead(p.entityId));
-    return participants.length === shape.participants.length ? null : { participants };
+    const alive = shape.participants.filter((p) => !dead(p.entityId));
+    const participants = alive.map((p) => (p.via && dead(p.via) ? { ...p, via: "" } : p));
+    const changed =
+      alive.length !== shape.participants.length || participants.some((p, i) => p !== alive[i]);
+    return changed ? { participants } : null;
   }
   if (shape.type === "er-isa") {
     const children = shape.children.filter((c) => !dead(c.entityId));

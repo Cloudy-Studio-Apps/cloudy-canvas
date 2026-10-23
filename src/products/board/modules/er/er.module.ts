@@ -23,6 +23,7 @@ import { ErRelationKind } from "./relation";
 import { ErPanel } from "./ui/er-panel";
 import { ErPalette } from "./ui/er-palette";
 import { ErQuickAddMenu } from "./ui/er-quick-add";
+import { ErRelationPrompt } from "./ui/er-relation-prompt";
 
 /**
  * ER diagrams: the element kinds, the lines between them, the tool (E), the ER panel and the agent
@@ -77,5 +78,7 @@ export const erModule = defineModule({
     host.contribute(boardEditor.overlays, { id: "er.palette", component: ErPalette });
     // What to create where a connect dot was dropped on empty board.
     host.contribute(boardEditor.overlays, { id: "er.quickAdd", component: ErQuickAddMenu });
+    // What kind of relation a connect dot dropped on another entity makes.
+    host.contribute(boardEditor.overlays, { id: "er.relationPrompt", component: ErRelationPrompt });
   },
 });

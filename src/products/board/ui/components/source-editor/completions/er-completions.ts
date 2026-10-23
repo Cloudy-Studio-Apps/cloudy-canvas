@@ -3,6 +3,7 @@ import type { Completion, CompletionContext, CompletionSource } from "@codemirro
 
 import { completionResult, nameOptions, startingWith } from "./completion-result";
 import { definedNames } from "./defined-names";
+import { entityAttributeNames } from "./entity-attribute-names";
 import { readSourceContext } from "./source-context";
 import type { SourceContext } from "./source-context.types";
 
@@ -32,6 +33,9 @@ const SETTINGS: Completion[] = [
   snippetCompletion("color: #${}", { label: "color", type: "constant" }),
   snippetCompletion("style: ${}", { label: "style", type: "constant" }),
 ];
+
+/** A participant's name right before a `.`. */
+const DOTTED = /("[^"\n]*"|[\p{L}_][\p{L}\p{N}_]*)\.$/u;
 
 const STYLES: Completion[] = ["chen", "lollipop"].map((label) => ({ label, type: "constant" }));
 
@@ -67,6 +71,15 @@ function optionsAt(at: SourceContext, context: CompletionContext): Completion[] 
       return rest.length === 0 ? CONSTRAINT_KINDS : entities();
     }
     return null;
+  }
+  // `Cliente.` in a relation: the attribute it joins through.
+  const dotted =
+    block === "relation"
+      ? DOTTED.exec(at.before.slice(0, at.before.length - at.typed.length))
+      : null;
+  if (dotted?.[1]) {
+    const entity = dotted[1].startsWith('"') ? dotted[1].slice(1, -1) : dotted[1];
+    return nameOptions(entityAttributeNames(text(), entity), "property", "attribute");
   }
   if (at.wordsBefore.length > 0 || !wantsList) return null;
   // A relation's lines are participants or its own attributes, so a typed name isn't taken over.

@@ -4,6 +4,11 @@ import { createSourceLanguage } from "./stream-language";
 export const erLanguage = createSourceLanguage({
   name: "er",
   blockKeywords: ["entity", "relation", "isa", "aggregate", "constraint", "diagram", "attr"],
+  // Inside a block a line names an entity or attribute (`entity` is a fine name); only `attr` and
+  // `as` are keywords there, and the name after a keyword is always the defined one.
+  nestedKeywords: ["attr", "as"],
+  chainKeywords: false,
+  dottedParts: true,
   settings: [
     "pk",
     "key",
