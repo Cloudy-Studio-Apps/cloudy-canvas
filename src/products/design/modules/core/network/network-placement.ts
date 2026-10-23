@@ -5,10 +5,11 @@ import type { VectorNetwork } from "./network.types";
 
 /**
  * A network re-based so what it draws starts at (0, 0), with the node's new box: a node at
- * `origin` whose network changed moves and resizes to wrap it.
+ * `origin` whose network changed moves and resizes to wrap it (a mirrored one, `w` wide, keeps
+ * drawing it where it was).
  */
 export function placeNetwork(
-  origin: { x: number; y: number; rotation?: number },
+  origin: { x: number; y: number; rotation?: number; w?: number; mirrored?: boolean },
   net: VectorNetwork,
 ): Rect & { network: VectorNetwork } {
   const bounds = networkBounds(net);
@@ -17,8 +18,10 @@ export function placeNetwork(
     vertices: net.vertices.map((v) => ({ x: v.x - bounds.x, y: v.y - bounds.y })),
   };
   // A turned node's new corner is the old one moved along its own (turned) axes.
+  // Mirrored, the box's corner is on the right of what it draws.
+  const left = origin.mirrored ? (origin.w ?? 0) - bounds.x - bounds.w : bounds.x;
   const corner = rotatePoint(
-    { x: origin.x + bounds.x, y: origin.y + bounds.y },
+    { x: origin.x + left, y: origin.y + bounds.y },
     origin,
     origin.rotation ?? 0,
   );

@@ -13,4 +13,6 @@ export interface OverlayFrame {
   w: number;
   h: number;
   rotation: number;
+  /** Drawn mirrored left to right inside its box (`CanvasElement.mirrored`). */
+  mirrored?: boolean;
 }

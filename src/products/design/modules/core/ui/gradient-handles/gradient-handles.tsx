@@ -38,6 +38,7 @@ export function GradientHandles() {
     w: node.w,
     h: node.h,
     rotation: node.rotation ?? 0,
+    mirrored: node.mirrored ?? false,
   };
   const size = { w: node.w, h: node.h };
   const handles = gradientHandles(paint.type, paint.transform);

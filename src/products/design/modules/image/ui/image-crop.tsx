@@ -54,7 +54,14 @@ export function ImageCrop() {
 
   return (
     <ImageCropOverlay
-      frame={{ x: node.x, y: node.y, w: node.w, h: node.h, rotation: node.rotation ?? 0 }}
+      frame={{
+        x: node.x,
+        y: node.y,
+        w: node.w,
+        h: node.h,
+        rotation: node.rotation ?? 0,
+        mirrored: node.mirrored ?? false,
+      }}
       transform={paint.transform ?? IDENTITY_TRANSFORM}
       url={url}
       resizable={kind.resizable}

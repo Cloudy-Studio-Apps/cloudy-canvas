@@ -9,6 +9,12 @@ import type { CropGrip, ImageCropOverlayProps, ImageCropValue } from "./image-cr
 
 const GRIP = 8;
 
+/** A diagonal resize cursor as it points on a mirrored box. */
+function mirroredCursor(cursor: string): string {
+  if (cursor === "nwse-resize") return "nesw-resize";
+  return cursor === "nesw-resize" ? "nwse-resize" : cursor;
+}
+
 function polygon(points: readonly Point[]): string {
   return points.map((p) => `${p.x},${p.y}`).join(" ");
 }
@@ -152,7 +158,7 @@ export function ImageCropOverlay({
               y={at.y - GRIP / 2}
               width={GRIP}
               height={GRIP}
-              style={{ cursor }}
+              style={{ cursor: frame.mirrored ? mirroredCursor(cursor) : cursor }}
               className="pointer-events-auto fill-surface stroke-primary"
               strokeWidth={1.5}
               onPointerDown={(e) => startDrag(e, { kind: "edge", edge })}

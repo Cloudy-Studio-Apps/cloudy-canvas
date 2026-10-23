@@ -71,7 +71,9 @@ function resizeBox({ x: ex, y: ey }: CropEdge, drag: CropDrag): ImageCropValue |
     else bottom = top + height;
   }
   const after: Rect = { x: left, y: top, w: right - left, h: bottom - top };
-  const corner = rotatePoint({ x: frame.x + after.x, y: frame.y + after.y }, frame, frame.rotation);
+  // Mirrored, the box's corner is on the right of what it draws.
+  const boxX = frame.mirrored ? frame.w - right : left;
+  const corner = rotatePoint({ x: frame.x + boxX, y: frame.y + after.y }, frame, frame.rotation);
   const value: ImageCropValue = {
     frame: { ...frame, x: corner.x, y: corner.y, w: after.w, h: after.h },
     transform: reframeTransform(start.transform, before, after),

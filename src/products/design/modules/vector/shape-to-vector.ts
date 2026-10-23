@@ -16,12 +16,16 @@ export function shapeToVector(el: CanvasElement, kinds: ElementKinds): VectorEle
   // Placed in the shape's own frame, then its corner turned like the shape's.
   const vector = createVector(network, el.name, el.index, el.parentId, el);
   const rotation = el.rotation ?? 0;
-  const corner = rotatePoint({ x: el.x + vector.x, y: el.y + vector.y }, el, rotation);
+  // A mirrored shape stays mirrored: its corner is on the right of what it draws.
+  const mirrored = el.mirrored ?? false;
+  const left = mirrored ? el.w - vector.x - vector.w : vector.x;
+  const corner = rotatePoint({ x: el.x + left, y: el.y + vector.y }, el, rotation);
   return {
     ...vector,
     x: corner.x,
     y: corner.y,
     rotation,
+    mirrored,
     id: el.id,
     visible: el.visible,
     opacity: el.opacity,

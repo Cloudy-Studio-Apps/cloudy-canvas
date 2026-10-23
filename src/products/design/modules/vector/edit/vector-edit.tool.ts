@@ -26,6 +26,7 @@ import { VECTOR_EDIT, type VectorEditSession } from "./vector-edit-session";
 import { VECTOR_TOOLS } from "./vector-tools";
 import type { VectorElement } from "../vector.types";
 import type { VectorPart } from "./vector-edit.types";
+import { vectorWorldPoint } from "./vector-world-point";
 
 /** Grab distance around points and segments, in screen pixels. */
 const REACH_PX = 6;
@@ -63,14 +64,15 @@ export abstract class VectorEditTool implements Tool {
     return { x: p.x - el.x, y: p.y - el.y };
   }
 
-  /** A world offset along the vector's own (unturned) axes. */
+  /** A world offset along the vector's own (unturned, un-mirrored) axes. */
   protected localOffset(el: VectorElement, dx: number, dy: number): Point {
-    return rotatePoint({ x: dx, y: dy }, { x: 0, y: 0 }, -(el.rotation ?? 0));
+    const p = rotatePoint({ x: dx, y: dy }, { x: 0, y: 0 }, -(el.rotation ?? 0));
+    return el.mirrored ? { x: -p.x, y: p.y } : p;
   }
 
   /** A point in the vector's local coordinates, in the world. */
   protected world(el: VectorElement, p: Point): Point {
-    return rotatePoint({ x: el.x + p.x, y: el.y + p.y }, el, el.rotation ?? 0);
+    return vectorWorldPoint(el, p);
   }
 
   /** What's under the pointer: a handle of an active vertex, a vertex, a segment, or nothing. */

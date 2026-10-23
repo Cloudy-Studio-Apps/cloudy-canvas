@@ -122,8 +122,12 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
   }
 
   /** A new `network` (relative to x, y) re-wraps the vector's box around what it draws. */
-  /** Flipping mirrors its points (and their handles) within its box too. */
+  /**
+   * Flipping mirrors its points (and their handles) within its box too; a vector showing a
+   * picture is drawn mirrored instead, so the picture flips with it.
+   */
   override flip(el: VectorElement, axis: FlipAxis, at: number): ElementPatch<VectorElement> {
+    if (this.mirrorsOnFlip(el)) return super.flip(el, axis, at);
     const across = axis === "x";
     const mirrored = scaleNetwork(el.network, across ? -1 : 1, across ? 1 : -1);
     const network: VectorNetwork = {
@@ -149,6 +153,8 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
                 x: patch.x ?? el.x,
                 y: patch.y ?? el.y,
                 rotation: patch.rotation ?? el.rotation ?? 0,
+                w: el.w,
+                mirrored: patch.mirrored ?? el.mirrored ?? false,
               },
               readNetwork(patch.network, "network"),
             ),
