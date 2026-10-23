@@ -2,9 +2,14 @@ import { useEffect } from "react";
 
 import { handleMcpMessage, type McpServerDefinition } from "@shared/core";
 import { agentChannel } from "@platform";
+import { setAgentToolCatalog } from "@shared/agent-server";
 import { useAgentServerStore } from "@shared/stores/agent-server-store";
 import { agentHost } from "./agent-host";
 import { createAgentServerDefinition } from "./agent-server-definition";
+import { agentToolCatalog } from "./agent-tool-catalog";
+
+// The agent menu lists the tools agents see.
+setAgentToolCatalog(agentToolCatalog);
 
 let server: McpServerDefinition | null = null;
 

@@ -1,4 +1,4 @@
-import { Bot, Copy, Power } from "lucide-react";
+import { Bot, Copy, Power, Wrench } from "lucide-react";
 import { useState } from "react";
 
 import {
@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@shared/ui/components/ui/dropdown-menu";
 import { agentServerStatusText } from "./agent-server-status-text";
+import { AgentToolsDialog } from "./agent-tools-dialog";
 import { ConnectAgentDialog } from "./connect-agent-dialog";
 import { copyText } from "./copy-agent-setup";
 import { useAgentServerStatus } from "./use-agent-server-status";
@@ -19,6 +20,7 @@ import type { AgentServerMenuProps } from "./agent-server-menu.types";
 export function AgentServerMenu({ trigger, align = "start" }: AgentServerMenuProps) {
   const status = useAgentServerStatus();
   const [connectOpen, setConnectOpen] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
   const url = status.enabled ? status.url : null;
 
   return (
@@ -33,6 +35,10 @@ export function AgentServerMenu({ trigger, align = "start" }: AgentServerMenuPro
           <DropdownMenuItem onSelect={() => setConnectOpen(true)}>
             <Bot />
             Connect an agent…
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => setToolsOpen(true)}>
+            <Wrench />
+            Available tools…
           </DropdownMenuItem>
           {status.available && (
             <>
@@ -50,6 +56,7 @@ export function AgentServerMenu({ trigger, align = "start" }: AgentServerMenuPro
         </DropdownMenuContent>
       </DropdownMenu>
       <ConnectAgentDialog open={connectOpen} onOpenChange={setConnectOpen} />
+      <AgentToolsDialog open={toolsOpen} onOpenChange={setToolsOpen} />
     </>
   );
 }

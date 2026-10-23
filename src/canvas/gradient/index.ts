@@ -7,6 +7,7 @@ export {
   IDENTITY_TRANSFORM,
   invertAffine,
   multiplyAffine,
+  roundAffine,
 } from "./affine";
 export { cssColor, parseCssColor } from "./css-color";
 export { hexToRgba, oklabToSrgb, rgbaToHex, srgbToOklab } from "./gradient-color";

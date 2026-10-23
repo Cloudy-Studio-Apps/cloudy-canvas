@@ -5,6 +5,7 @@ import {
   IDENTITY_TRANSFORM,
   invertAffine,
   multiplyAffine,
+  roundAffine,
 } from "./affine";
 import type { GradientHandles, GradientTransform, GradientType } from "./gradient.types";
 
@@ -59,7 +60,8 @@ export function transformFromHandles(
 ): GradientTransform {
   const width =
     type === "linear" ? squareWidth(handles.start, handles.end, size, 0.5) : handles.width;
-  return affineFromPoints([handles.start, handles.end, width], anchors(type)) ?? fallback;
+  const t = affineFromPoints([handles.start, handles.end, width], anchors(type));
+  return t ? roundAffine(t) : fallback;
 }
 
 /**
@@ -87,7 +89,7 @@ const QUARTER_TURN: GradientTransform = [
 
 /** The gradient turned a quarter clockwise round the box's middle. */
 export function rotateGradient90(t: GradientTransform): GradientTransform {
-  return multiplyAffine(t, QUARTER_TURN);
+  return roundAffine(multiplyAffine(t, QUARTER_TURN));
 }
 
 /** The gradient mirrored in the box: `x` left to right, `y` top to bottom. */
@@ -102,7 +104,7 @@ export function flipGradient(t: GradientTransform, axis: "x" | "y"): GradientTra
           [1, 0, 0],
           [0, -1, 1],
         ];
-  return multiplyAffine(t, mirror);
+  return roundAffine(multiplyAffine(t, mirror));
 }
 
 /** Where `t` (0–1 along the gradient) lies between a linear gradient's handles. */

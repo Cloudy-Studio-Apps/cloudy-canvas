@@ -46,3 +46,13 @@ export function affineFromPoints(
   const fromInverse = invertAffine(basis(from));
   return fromInverse ? multiplyAffine(basis(to), fromInverse) : null;
 }
+
+/** `t` with its numbers rounded to 6 decimals (no float noise like 1e-17 stored in files). */
+export function roundAffine(t: GradientTransform): GradientTransform {
+  const round = (v: number) => Math.round(v * 1e6) / 1e6 + 0;
+  const [[a, c, e], [b, d, f]] = t;
+  return [
+    [round(a), round(c), round(e)],
+    [round(b), round(d), round(f)],
+  ];
+}

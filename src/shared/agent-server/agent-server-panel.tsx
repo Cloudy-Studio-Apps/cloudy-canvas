@@ -1,9 +1,10 @@
-import { Bot } from "lucide-react";
+import { Bot, Wrench } from "lucide-react";
 import { useEffect, useId, useState } from "react";
 
 import { Button } from "@shared/ui/components/ui/button";
 import { Switch } from "@shared/ui/components/ui/switch";
 import { agentServerStatusText } from "./agent-server-status-text";
+import { AgentToolsDialog } from "./agent-tools-dialog";
 import { ConnectAgentDialog } from "./connect-agent-dialog";
 import { NO_URL } from "./connect-agent-dialog/no-url";
 import { CopyRow } from "./copy-row";
@@ -15,6 +16,7 @@ export function AgentServerPanel() {
   const { refresh } = status;
   const switchId = useId();
   const [connectOpen, setConnectOpen] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
   const url = status.enabled ? status.url : null;
 
   useEffect(refresh, [refresh, status.enabled]);
@@ -40,13 +42,20 @@ export function AgentServerPanel() {
       {status.available && (
         <div className="space-y-4">
           <CopyRow label="URL" value={url ?? NO_URL} disabled={!url} />
-          <Button variant="outline" size="sm" onClick={() => setConnectOpen(true)}>
-            <Bot />
-            Connect an agent…
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => setConnectOpen(true)}>
+              <Bot />
+              Connect an agent…
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setToolsOpen(true)}>
+              <Wrench />
+              Available tools…
+            </Button>
+          </div>
         </div>
       )}
       <ConnectAgentDialog open={connectOpen} onOpenChange={setConnectOpen} />
+      <AgentToolsDialog open={toolsOpen} onOpenChange={setToolsOpen} />
     </div>
   );
 }
