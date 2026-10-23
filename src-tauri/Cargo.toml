@@ -3,6 +3,8 @@ name = "cloudy-canvas"
 version = "0.1.0"
 description = "Cloudy Canvas — boards and designs on one canvas"
 authors = ["DarkRedgm"]
+license = "AGPL-3.0-only"
+repository = "https://github.com/Cloudy-Studio-Apps/cloudy-canvas"
 edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

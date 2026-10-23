@@ -1,147 +1,140 @@
-# Cloudy Canvas
+<p align="center">
+  <img src="src-tauri/icons/source/app-icon.png" alt="Cloudy Canvas" width="112">
+</p>
 
-A desktop-first canvas app by **DarkRedgm** — think Figma and FigJam in one program. It works with two file types:
+<h1 align="center">Cloudy Canvas</h1>
 
-- **Board** (`.cboard`): a FigJam-style whiteboard with sticky notes, shapes, connectors and text.
-- **Design** (`.cdesign`): a Figma-style design file with frames, shapes, text and images (auto-layout and components later).
+<p align="center">
+  Whiteboards and designs in one desktop app, with your files kept on your own disk.
+  <br>
+  by <strong>DarkRedgm</strong> · part of <strong>Cloudy Studio</strong>
+</p>
 
-Cloudy Canvas is part of the **Cloudy** family of separate apps (Cloudy Paper, Cloudy Sync, …) living in `CloudyStudio/`.
+<p align="center">
+  <a href="https://github.com/Cloudy-Studio-Apps/cloudy-canvas/releases/latest">Download</a> ·
+  <a href="docs/plugins.md">Plugins</a> ·
+  <a href="#building-from-source">Build from source</a>
+</p>
 
-**Roadmap:** desktop app with local files only, then a web version of the same frontend, then real-time collaboration (Yjs + Hocuspocus, Laravel backend).
+> **Early demo.** Cloudy Canvas is under heavy development. Expect missing features and rough edges, and keep copies of files that matter to you.
 
-Built with Tauri 2, React 19, TypeScript (strict), Vite, Tailwind CSS v4, shadcn/ui (Radix), Zustand and React Router.
+## What it is
 
-## Folder structure
+One app with two kinds of files on a shared canvas engine:
 
-```
-src/
-├── app/        # React shell: main.tsx, App.tsx, router, providers, global styles
-├── pages/
-│   ├── home/           # Home page, its sections and hooks
-│   ├── editor/board/   # Board editor: page, chrome, engine hooks/context, toolbar & panels
-│   └── design-system/  # Dev-only token/component preview, one file per section
-├── engine/     # Framework-agnostic canvas engine (plain TS, no React)
-│   ├── canvas-engine.ts # Coordinator: wires document, camera, scene, renderer, tools, input
-│   ├── commands.ts      # Named actions (undo, zoomIn, tool.select…) shared by keys and UI
-│   ├── scene.ts         # Shape list, selection, hover, marquee + spatial queries
-│   ├── document/ # Board content as a Yjs doc: shape types, defaults, factory, palette, history
-│   ├── input/    # Pointer, wheel and keyboard handling; KEYMAP (single source for shortcuts)
-│   ├── render/   # PixiJS renderer, layers (grid, shapes, draft, overlay), one drawer per shape
-│   ├── tools/    # One file per tool + registry (create-tools.ts)
-│   ├── text/     # DOM text editor overlay, its style, commit logic, measuring, fonts
-│   └── utils/    # Small generic helpers: Store, Emitter, Disposables, FrameScheduler, debounce, math
-├── core/       # Shared types/utils: Storage interface, file types, ids, keyboard shortcuts
-├── ui/         # Design system: tokens, shadcn + shared components, layout, hooks, brand
-├── platform/   # Tauri-specific implementations (storage, file dialog)
-└── stores/     # Zustand stores (UI state only)
-src-tauri/      # Rust shell: window config, plugins, capabilities
-```
+- **Boards** (`.cboard`), FigJam-style whiteboards with sticky notes, shapes, connectors, text, sections, tables, freehand drawing, stickers, images, link cards, database schemas (DBML) and ER diagrams.
+- **Designs** (`.cdesign`), Figma-style design files with pages, frames, a layer tree, rectangles, ellipses, polygons, stars, lines, vectors with a pen tool, text with system and Google fonts, gradients, image fills with cropping, boolean operations, masks, strokes, and effects (shadows, blurs, noise, glass, custom shaders).
 
-Path aliases: `@app`, `@pages`, `@engine`, `@core`, `@ui`, `@platform`, `@stores` (defined in both `tsconfig.json` and `vite.config.ts`).
+Also:
 
-## Architecture rules
+- **Local-first.** Files are plain files on your disk, autosaved as you work. No account is needed.
+- **Figma and FigJam import.** Open a `.fig` or `.jam` file ("Save local copy…" in Figma) and it becomes an editable design or board.
+- **AI agents.** The app runs a local MCP server, so Claude Code, Cursor, Codex, VS Code and other agents can read and edit the open board or design while you watch. Every agent edit is one undo step. Open the **Agents** menu in the top bar to connect one.
+- **Plugins.** New element types, tools, panels and agent tools can be added as plugins. See [docs/plugins.md](docs/plugins.md) and [examples/plugins](examples/plugins).
+- **Exports.** PNG, JPG, PDF and CSV.
 
-- **`engine/` and `core/` stay framework- and platform-agnostic.** ESLint blocks imports of `react`, `@ui`, `@pages`, `@app`, `@stores`, `@platform` and `@tauri-apps/*` there.
-- **Canvas content never goes in React state.** The engine will render to a `<canvas>` with PixiJS and read/write a Yjs doc; React only hosts it and draws the UI around it.
-- **Business logic lives in TypeScript**, not in Rust commands, so the web version can reuse it. Rust handles desktop-only concerns.
-- **Platform access goes through interfaces in `core/`** (for example `Storage`), implemented in `platform/`.
-- **Ids come from `crypto.randomUUID()`**, never auto-increment.
-- **Small, single-purpose files.** One component, tool, layer or helper per file, re-exported through a folder `index.ts`. Split a file once it mixes concerns or grows past ~200 lines.
-- **Types live in `.types.ts` files.** Every `interface` and `type` (including component props) goes in a sibling `<file>.types.ts` (`camera.ts` → `camera.types.ts`) and is imported with `import type`. Folder `index.ts` files re-export them with `export type`. Only exception: vendored shadcn primitives in `ui/components/ui/` stay as generated.
-- **Extend through registries, not branches.** New tools go in `tools/create-tools.ts`, new shape types get a drawer in `render/shapes/shape-drawers.ts`, new shortcuts go in `input/keymap.ts` (the UI reads labels from there too), new option panels go in `tool-options.tsx`.
-- **UI reads engine state through selectors.** Board components call `useEngine()` / `useEngineState(s => s.zoom)` from `engine-context.ts`, so each one re-renders only when its slice changes.
-- **Colors are theme tokens** (CSS variables in `src/ui/styles/tokens.css`) and are never hard-coded in components.
+**Roadmap:** the desktop app with local files, then a web version of the same app, then real-time collaboration.
 
-## Board controls
+## Download
 
-| Action                     | Shortcut                                          |
-| -------------------------- | ------------------------------------------------- |
-| Select / move / marquee    | `V` (Shift adds to the selection)                 |
-| Hand (pan)                 | `H`, hold `Space`, or middle mouse button         |
-| Marker                     | `M`                                               |
-| Sticky note                | `S` (click to place, then type)                   |
-| Text                       | `T` (click to type)                               |
-| Edit text                  | Double-click or `Enter` on a selected sticky/text |
-| Pan / zoom                 | Scroll / `Ctrl` + scroll or pinch                 |
-| Zoom in / out / 100% / fit | `Ctrl +` / `Ctrl −` / `Ctrl 0` / `Shift 1`        |
-| Undo / redo                | `Ctrl Z` / `Ctrl Shift Z` (or `Ctrl Y`)           |
-| Delete / select all        | `Delete` or `Backspace` / `Ctrl A`                |
+Get the latest build from [Releases](https://github.com/Cloudy-Studio-Apps/cloudy-canvas/releases/latest):
 
-## Design system
+| Platform             | File                                                                       |
+| -------------------- | -------------------------------------------------------------------------- |
+| Windows 10/11        | `Cloudy Canvas_<version>_x64-setup.exe`                                    |
+| Linux (most distros) | `Cloudy Canvas_<version>_amd64.AppImage` (make it executable, then run it) |
 
-The mascot is a **foca watona** (a chubby spotted seal). The logo shows it peeking over a canvas (`src/ui/brand/`), and the palette comes from it.
+Windows SmartScreen may warn about an unknown publisher because the installer isn't code-signed yet. Choose **More info › Run anyway**.
 
-- **Tokens** live in `src/ui/styles/tokens.css` and are mapped to Tailwind in `src/app/styles.css`. Tailwind's default colors and radii are reset, so only design-system values exist.
-- **Two layers:** palette scales (`ice`, `seal`, `blush`, `sand`, `lilac`, 50–950) and semantic tokens (`background`, `surface`, `foreground`, `muted-foreground`, `border`, `primary`, `secondary`, `accent`, `board`, `design`, `destructive`, …). Components use **semantic tokens only**; scales are for brand art and the preview page.
-- **Roles:** primary = ice blue, secondary = seal gray, accent = blush peach (use sparingly).
-- **Sharp shapes:** 4px for controls (`rounded-md`), 6px for cards and menus (`rounded-card`), 8px maximum. No pills.
-- **Light only for now:** dark mode is switched off with `FORCE_LIGHT_THEME` in `src/stores/theme-store.ts` (the code is kept for later).
-- **Preview:** in dev builds, open `/design-system` (there's a link in the Home top bar) to see the logo, scales, tokens, type, radii, shadows and components.
+## Building from source
 
-## Prerequisites
+Built with Tauri 2, React 19, TypeScript, Vite, PixiJS, Yjs, Tailwind CSS v4 and Zustand.
 
-You need the following on every OS:
+### Prerequisites
 
-- [Rust](https://rustup.rs) (stable, via `rustup`)
-- Node.js 20+ and pnpm (`corepack enable`, or install pnpm separately)
+On every OS you need [Rust](https://rustup.rs) (stable) and Node.js 20+ with pnpm (`corepack enable`).
 
-### Windows 11
+**Windows 11:** the [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) with the _Desktop development with C++_ workload, and the MSVC toolchain (`rustup default stable-msvc`). WebView2 is already installed on Windows 11.
 
-- [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) with the **Desktop development with C++** workload
-- WebView2 (comes preinstalled on Windows 11)
-- Rust MSVC toolchain: `rustup default stable-msvc`
-
-### Arch Linux / CachyOS
+**Arch Linux / CachyOS:**
 
 ```sh
 sudo pacman -S --needed webkit2gtk-4.1 base-devel curl wget file openssl \
   appmenu-gtk-module libappindicator-gtk3 librsvg xdotool
 ```
 
-## Development
+For other systems, see [Tauri's prerequisites](https://v2.tauri.app/start/prerequisites/).
+
+### Development
 
 ```sh
 pnpm install
-pnpm tauri dev      # run the desktop app
-pnpm dev            # frontend only, in the browser (native dialogs are unavailable)
+pnpm tauri dev      # the desktop app
+pnpm dev            # the frontend alone in a browser (native dialogs unavailable)
 pnpm lint           # ESLint
-pnpm typecheck      # TypeScript (app + vite config)
+pnpm typecheck      # TypeScript
 pnpm format         # Prettier (format:check to verify)
-pnpm tauri build    # production bundle
 ```
 
-## Releases
+### Release builds
 
-| Command                   | Builds                                                     | Output                                                         |
-| ------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------- |
-| `pnpm release:linux`      | An AppImage (runs on Arch, CachyOS and most other distros) | `src-tauri/target/release/bundle/appimage/`                    |
-| `pnpm release:win`        | A Windows installer (`…-setup.exe`), cross-built on Linux  | `src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/` |
-| `pnpm release`            | Both of the above                                          |                                                                |
-| `pnpm release:win:native` | NSIS and MSI installers, run **on Windows**                | `src-tauri/target/release/bundle/`                             |
+| Command                   | Builds                                                 | Output                                                         |
+| ------------------------- | ------------------------------------------------------ | -------------------------------------------------------------- |
+| `pnpm release:linux`      | An AppImage                                            | `src-tauri/target/release/bundle/appimage/`                    |
+| `pnpm release:arch`       | A pacman package with the desktop entry and file types | `packaging/arch/`                                              |
+| `pnpm release:win`        | A Windows installer, cross-built on Linux              | `src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/` |
+| `pnpm release`            | The AppImage and the Windows installer                 |                                                                |
+| `pnpm release:win:native` | NSIS and MSI installers, run **on Windows**            | `src-tauri/target/release/bundle/`                             |
 
-### Building the Windows installer on Linux (Arch / CachyOS)
+<details>
+<summary>Cross-building the Windows installer on Linux</summary>
 
-`pnpm release:win` cross-compiles with [`cargo-xwin`](https://github.com/rust-cross/cargo-xwin) and packs the installer with NSIS, so it needs a few extra tools besides the Linux prerequisites above:
+`pnpm release:win` uses [`cargo-xwin`](https://github.com/rust-cross/cargo-xwin) and NSIS:
 
 ```sh
-# LLVM toolchain (clang, the lld linker, llvm-rc for the Windows resources)
 sudo pacman -S --needed clang lld llvm
-
-# NSIS (makensis): not in the official repos, install it from the AUR
-paru -S nsis              # or: yay -S nsis
-
-# Rust: the Windows target and the cross-compiling runner
+paru -S nsis                                # from the AUR (or yay -S nsis)
 rustup target add x86_64-pc-windows-msvc
 cargo install --locked cargo-xwin
 ```
 
-The first run downloads the Windows SDK and CRT files `cargo-xwin` needs, so it takes a while; later builds reuse them. Cross-building Windows apps is experimental in Tauri and only makes the NSIS installer: for an `.msi`, build on Windows with `pnpm release:win:native`.
+The first run downloads the Windows SDK, so it takes a while. Cross-building only makes the NSIS installer; build on Windows for an `.msi`.
 
-On other distros, install the same tools with your package manager (for example on Debian/Ubuntu: `sudo apt install nsis lld llvm clang`).
+</details>
 
-### Preview Recent files with mock data
+### Project layout
 
-```sh
-cp .env.example .env.local   # sets VITE_MOCK_RECENTS=true (dev builds only)
-pnpm tauri dev
 ```
+src/
+  app/        app shell: entry, router, providers, MCP server wiring, plugin loading
+  platform/   Tauri implementations of the shared interfaces (storage, dialogs, fonts, …)
+  shared/     product-agnostic code: core types and helpers, design system, app stores
+  canvas/     the canvas engine every product shares (plain TypeScript, no React)
+  canvas-ui/  React pieces every editor shares
+  products/
+    board/    the board: engine side, modules (one folder per feature) and its editor
+    design/   the design: engine side, modules and its editor
+  pages/      home, settings, design-system preview
+src-tauri/    the Rust desktop shell
+```
+
+Every feature is a module that plugs into extension points, the same API plugins use. [`CLAUDE.md`](CLAUDE.md) documents the architecture and conventions in detail.
+
+## Contributing
+
+Issues and pull requests are welcome. Before opening a PR, run `pnpm lint`, `pnpm typecheck` and `pnpm format:check`, and follow the conventions in [`CLAUDE.md`](CLAUDE.md).
+
+## License
+
+Copyright © 2026 DarkRedgm.
+
+Cloudy Canvas is free software, licensed under the [GNU Affero General Public License v3.0](LICENSE). You may use, study, change and share it. If you distribute a modified version, or run one as a service others use over a network, you must publish its source under the same license.
+
+### Third-party content
+
+- Emoji graphics: [Twemoji](https://github.com/jdecked/twemoji), © Twitter, Inc. and other contributors, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+- The [Inter](https://rsms.me/inter/) typeface by Rasmus Andersson, licensed under the [SIL Open Font License 1.1](https://openfontlicense.org).
+- Icons from [Lucide](https://lucide.dev) (ISC) and [Simple Icons](https://simpleicons.org) (CC0). Brand logos are trademarks of their owners.
+- Other dependencies keep their own licenses, listed in `package.json` and `src-tauri/Cargo.toml`.
+
+Figma and FigJam are trademarks of Figma, Inc. Cloudy Canvas is not affiliated with or endorsed by Figma.
