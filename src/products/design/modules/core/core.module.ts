@@ -13,9 +13,11 @@ import {
   Undo2,
 } from "lucide-react";
 
+import { useHideUiCommand } from "@canvas-ui";
 import { openAbout } from "@shared/about";
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
+import { useDesignPanelStore } from "@design/ui/stores/design-panel-store";
 import { allKinds, someNodes } from "@design/ui/modules/section-filters";
 import { designAgentTools, designCanvas } from "../../design-points";
 import {
@@ -41,6 +43,7 @@ import { containerAlignTarget } from "./tree/align-target";
 import { selectionRulerFrame } from "./tree/ruler-frame";
 import { topFrames } from "./tree/top-frames";
 import { useFlipCommands } from "./ui/use-flip-commands";
+import { usePanelCommands } from "./ui/use-panel-commands";
 import { useViewCommands } from "./ui/use-view-commands";
 import { GradientHandles } from "./ui/gradient-handles";
 import { ScaleSidebar } from "./ui/scale-sidebar";
@@ -102,6 +105,9 @@ export const coreModule = defineModule({
         keys: [{ code: "Semicolon", shift: true, label: ";" }],
       },
       { id: "clearGuides", label: "Remove all guides" },
+      { id: "toggleUi", label: "Hide UI", keys: [{ code: "Backslash", mod: true, label: "\\" }] },
+      { id: "toggleLeftPanel", label: "Left panel" },
+      { id: "toggleRightPanel", label: "Properties panel" },
     );
     host.contribute(designCanvas.prepareCopies, prepareTreeCopies);
     host.contribute(designCanvas.keybindings, { "tool.scale": [{ key: "k" }] });
@@ -186,6 +192,8 @@ export const coreModule = defineModule({
       designEditor.sessionHooks,
       { id: "flip-commands", use: useFlipCommands },
       { id: "view-commands", use: useViewCommands },
+      { id: "panel-commands", use: usePanelCommands },
+      { id: "hide-ui", use: useHideUiCommand },
     );
     host.contribute(designEditor.contextMenu, {
       id: "transform",
@@ -260,6 +268,17 @@ export const coreModule = defineModule({
             checked: (engine) => engine.getState().guidesShown,
           },
           { command: "clearGuides", label: "Remove all guides" },
+          {
+            command: "toggleLeftPanel",
+            label: "Left panel",
+            checked: () => useDesignPanelStore.getState().leftOpen,
+          },
+          {
+            command: "toggleRightPanel",
+            label: "Properties panel",
+            checked: () => useDesignPanelStore.getState().rightOpen,
+          },
+          { command: "toggleUi", label: "Hide UI" },
         ],
       },
       {

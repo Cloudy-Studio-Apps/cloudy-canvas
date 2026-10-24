@@ -1,4 +1,4 @@
-import { Bot, Download } from "lucide-react";
+import { Bot, Download, PanelRightClose } from "lucide-react";
 
 import {
   CollaboratorUndoButton,
@@ -20,14 +20,15 @@ import { useDesignPanelStore } from "../../stores/design-panel-store";
 import { PropertySections } from "./property-sections";
 
 /**
- * The right panel: history, agents and export, then the Design/Prototype tabs and the zoom, or
- * the active tool's sidebar (`toolSidebars`).
+ * The right panel: history, agents, export and the button that hides it, then the Design/Prototype
+ * tabs and the zoom, or the active tool's sidebar (`toolSidebars`).
  */
 export function PropertiesPanel() {
   const engine = useDesignEngine();
   const agentsEnabled = useAgentServerStore((state) => state.enabled);
   const tab = useDesignPanelStore((state) => state.propertiesTab);
   const setTab = useDesignPanelStore((state) => state.setPropertiesTab);
+  const setOpen = useDesignPanelStore((state) => state.setRightOpen);
   const { host } = useEditorModules();
   const tool = useEngineState((state) => state.tool);
   // The active tool's sidebar (e.g. the frame presets) replaces the sections while it's on.
@@ -60,6 +61,9 @@ export function PropertiesPanel() {
           <Download />
           Export
         </Button>
+        <ToolButton label="Hide properties panel" side="bottom" onClick={() => setOpen(false)}>
+          <PanelRightClose />
+        </ToolButton>
       </header>
 
       {ToolSidebar ? (

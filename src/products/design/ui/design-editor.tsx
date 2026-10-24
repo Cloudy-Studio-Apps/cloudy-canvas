@@ -5,10 +5,10 @@ import { ArrowLeft } from "lucide-react";
 import { CanvasLoadingOverlay, useCanvasEngine, useCanvasFileDrop } from "@canvas-ui";
 import { Button } from "@shared/ui/components/ui/button";
 import { useFileDragOver } from "@shared/ui/hooks/use-file-drag-over";
-import { CANVAS_INSET } from "./design-layout";
 import type { DesignEditorProps } from "./design-editor.types";
 import { DesignSession } from "./design-session";
 import { useDesignLoader } from "./file";
+import { useCanvasInset, useKeepCanvasInPlace } from "./hooks";
 import { getDesignProduct } from "./modules";
 
 /**
@@ -23,6 +23,8 @@ export function DesignEditor({ id }: DesignEditorProps) {
   const { engine, loading } = useCanvasEngine(containerRef, getDesignProduct(), document);
   const draggingFiles = useFileDragOver();
   useCanvasFileDrop(engine);
+  const inset = useCanvasInset();
+  useKeepCanvasInPlace(engine, inset.left);
 
   return (
     <div className="relative h-full overflow-hidden bg-surface select-none">
@@ -32,7 +34,7 @@ export function DesignEditor({ id }: DesignEditorProps) {
         aria-label="Design canvas"
         data-product="design"
         className="absolute inset-y-0"
-        style={CANVAS_INSET}
+        style={inset}
       />
       {engine && load.status === "ready" && (
         <DesignSession id={id} engine={engine} info={load.info} />
@@ -41,7 +43,7 @@ export function DesignEditor({ id }: DesignEditorProps) {
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-y-0 z-40 border-2 border-primary"
-          style={CANVAS_INSET}
+          style={inset}
         />
       )}
       {!engine && load.status !== "error" && (

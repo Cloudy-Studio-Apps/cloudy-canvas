@@ -1160,6 +1160,15 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   }
 
   /**
+   * Pans by a screen-space delta: e.g. what keeps the content still on screen when the canvas's
+   * edge moves because a panel beside it opened or closed.
+   */
+  panBy(dx: number, dy: number): void {
+    this.camera.panBy(dx, dy);
+    this.onCameraChange();
+  }
+
+  /**
    * Reads these elements again, with what derives from them, and redraws them, though the
    * document didn't change: e.g. a text's glyph outlines arrived, so the booleans and masks made
    * of it are worked out again.

@@ -58,6 +58,7 @@ export { ToolButton } from "./components/tool-button";
 export { ZoomControls } from "./components/zoom-controls";
 export { ZoomMenu } from "./components/zoom-menu";
 export { Rulers } from "./components/rulers";
+export { useHideUiCommand, useUiHidden } from "./chrome";
 export {
   CollaboratorLayer,
   CollaboratorUndoButton,

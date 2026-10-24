@@ -1,6 +1,7 @@
 import { Hand, MousePointer2, PencilLine, Scaling } from "lucide-react";
 
 import { DEFAULT_MODE } from "@canvas";
+import { useHideUiCommand } from "@canvas-ui";
 import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
 import {
@@ -18,13 +19,20 @@ import { boardAgentTools, boardCanvas } from "../../board-points";
 
 /**
  * What every board has whatever its modules: the select, scale (Shift+K; K is the sticker tool) and
- * hand tools' buttons (the tools are built into the engine) and the agent tools that work on any element (reading, creating and
- * editing through the kinds, arranging, viewing, exporting, files and plugins).
+ * hand tools' buttons (the tools are built into the engine), Hide UI (Ctrl+\) and the agent tools
+ * that work on any element (reading, creating and editing through the kinds, arranging, viewing,
+ * exporting, files and plugins).
  */
 export const coreModule = defineModule({
   id: "core",
   register(host) {
     host.contribute(boardCanvas.keybindings, { "tool.scale": [{ key: "k", shift: true }] });
+    host.contribute(boardCanvas.hostCommands, {
+      id: "toggleUi",
+      label: "Hide UI",
+      keys: [{ code: "Backslash", mod: true, label: "\\" }],
+    });
+    host.contribute(boardEditor.sessionHooks, { id: "hide-ui", use: useHideUiCommand });
     // The board's usual way of working, first in the mode switcher.
     host.contribute(boardEditor.modes, {
       id: DEFAULT_MODE.id,
