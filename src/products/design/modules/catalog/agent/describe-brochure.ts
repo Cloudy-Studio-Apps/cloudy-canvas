@@ -25,7 +25,8 @@ export async function describeBrochure(engine: DesignWorkspace) {
     spreads: layout.spreadNumbers,
     settings: brochure.settings(),
     paper: size ? paperSize(size) : null,
-    issues: (await checkBrochure(engine)).map(({ page, nodeId, message }) => ({
+    issues: (await checkBrochure(engine)).map(({ kind, page, nodeId, message }) => ({
+      kind,
       page,
       node: nodeId,
       message,

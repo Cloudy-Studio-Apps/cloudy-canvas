@@ -4,7 +4,7 @@ import type { BrochureSettings } from "../brochure";
 import type { BookLayout, BrochurePage } from "../model";
 
 export type BrochureIssueKind =
-  "low-resolution" | "text-in-margin" | "hidden-page" | "blank-page" | "odd-size";
+  "placeholder" | "low-resolution" | "text-in-margin" | "hidden-page" | "blank-page" | "odd-size";
 
 /** Something that would print badly, on one page. */
 export interface BrochureIssue {

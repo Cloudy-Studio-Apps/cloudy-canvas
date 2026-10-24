@@ -36,6 +36,8 @@ export interface ImageEditorProps {
   onChange: (paint: ImagePaint) => void;
   /** The edited layer's size, for starting and turning crops (a square when unknown). */
   size?: Size;
+  /** The background of a placeholder added here (the layer's color; the default when unset). */
+  placeholderColor?: string;
 }
 
 export interface GradientEditorProps {

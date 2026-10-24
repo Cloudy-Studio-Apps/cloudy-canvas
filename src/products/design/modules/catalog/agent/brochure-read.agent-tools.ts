@@ -2,6 +2,7 @@ import { bytesToBase64, optionalNumber } from "@canvas";
 import { ToolImage } from "@shared/core";
 
 import { requireDesign, type DesignAgentTool } from "../../../agent";
+import { isPlaceholderPaint } from "../../image";
 import { checkBrochure, effectiveDpi, LOW_DPI, pictureSize } from "../checks";
 import { drawBrochureSheet } from "../export";
 import { brochurePageSize, DESIGN_BROCHURE, pagePictures, spanOf } from "../model";
@@ -21,8 +22,9 @@ export const brochureReadTools: DesignAgentTool[] = [
       'page numbers (`number`, "6–7" for a spread frame: `span` 2, twice the page\'s width) ' +
       "and the design page it's on; the blank pages the layout adds, the printed page count, the " +
       "spreads as they're read (printed page numbers), the print settings (layout, covers, " +
-      "splitSpreads, margin in mm, dpi), the page size, and the print issues (low-resolution " +
-      "pictures, text in the margin, hidden pages, blank pages added, frames of another size).",
+      "splitSpreads, margin in mm, dpi), the page size, and the print issues by `kind` " +
+      "(placeholder: an image placeholder still to replace, low-resolution pictures, text in " +
+      "the margin, hidden pages, blank pages added, frames of another size).",
     inputSchema: { type: "object", properties: {} },
     run: async (host) => describeBrochure(requireDesign(host).engine),
   },
@@ -31,8 +33,9 @@ export const brochureReadTools: DesignAgentTool[] = [
     description:
       "One brochure page (by `position`, from 1): its printed frame, page numbers, span, design " +
       "page and options, every picture on it (the layer, which of its fills, the assetId, the " +
-      "picture's pixel size, its dpi at print size and whether that's low; replace_image swaps " +
-      "one) and its print issues.",
+      "picture's pixel size, its dpi at print size and whether that's low, or `placeholder: true` " +
+      "for an image placeholder waiting for its picture; replace_image swaps one) and its print " +
+      "issues.",
     inputSchema: {
       type: "object",
       required: ["position"],
@@ -47,6 +50,15 @@ export const brochureReadTools: DesignAgentTool[] = [
       const { frame } = page;
       const pictures = await Promise.all(
         pagePictures(engine.doc.all(), frame.id).map(async ({ node, fill, paint }) => {
+          if (isPlaceholderPaint(paint)) {
+            return {
+              node: node.id,
+              name: node.name,
+              fill,
+              assetId: paint.assetId,
+              placeholder: true,
+            };
+          }
           const pixels = await pictureSize(engine.doc, paint.assetId);
           const dpi = pixels && Math.round(effectiveDpi(paint, node, pixels));
           return {
@@ -63,7 +75,7 @@ export const brochureReadTools: DesignAgentTool[] = [
       );
       const issues = (await checkBrochure(engine))
         .filter((issue) => issue.frameId === frame.id)
-        .map(({ nodeId, message }) => ({ node: nodeId, message }));
+        .map(({ kind, nodeId, message }) => ({ kind, node: nodeId, message }));
       return {
         position: pages.indexOf(page) + 1,
         number: brochure.layout().labels.get(page.slot.id) ?? String(page.number),

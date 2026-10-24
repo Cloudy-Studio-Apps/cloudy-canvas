@@ -1,12 +1,16 @@
-import { ImagePlus, RotateCw } from "lucide-react";
+import { CircleHelp, ImagePlus, RotateCw } from "lucide-react";
 
 import { imageSize, rotateTransform90, type Size } from "@canvas";
 import { CHECKERBOARD, useAssetUrl } from "@canvas-ui";
 import {
+  addPlaceholderPaint,
+  DEFAULT_PLACEHOLDER_COLOR,
   DEFAULT_TILE_SCALE,
   imagePaint,
+  isPlaceholderPaint,
   nextRotation,
   toCropPaint,
+  withBlendMode,
   type ImagePaint,
   type ImageScaleMode,
 } from "@design";
@@ -39,9 +43,15 @@ const SQUARE: Size = { w: 100, h: 100 };
 
 /**
  * An image paint: how it covers the shape (Fill, Fit, Crop, whose box shows on the canvas, Tile
- * and its scale), a quarter turn, its preview and choosing the file.
+ * and its scale), a quarter turn, its preview and choosing the file, or a placeholder (the layer's
+ * color with the foca watona and a "?") for a picture to choose later, which the Catalog lists.
  */
-export function ImageEditor({ paint, onChange, size = SQUARE }: ImageEditorProps) {
+export function ImageEditor({
+  paint,
+  onChange,
+  size = SQUARE,
+  placeholderColor = DEFAULT_PLACEHOLDER_COLOR,
+}: ImageEditorProps) {
   const engine = useDesignEngine();
   const url = useAssetUrl(paint?.assetId ?? null);
 
@@ -55,6 +65,13 @@ export function ImageEditor({ paint, onChange, size = SQUARE }: ImageEditorProps
     } catch (error) {
       notifyError("The image couldn't be opened", error);
     }
+  };
+
+  const placeholder = paint !== null && isPlaceholderPaint(paint);
+
+  const addPlaceholder = () => {
+    const next = addPlaceholderPaint(engine.doc, placeholderColor, size);
+    onChange(paint ? withBlendMode({ ...next, opacity: paint.opacity }, paint.blendMode) : next);
   };
 
   const pickMode = async (current: ImagePaint, mode: ImageScaleMode) => {
@@ -133,7 +150,18 @@ export function ImageEditor({ paint, onChange, size = SQUARE }: ImageEditorProps
           <ImagePlus />
           {url ? "Replace image…" : "Choose image…"}
         </Button>
+        {placeholder && (
+          <span className="absolute top-1.5 left-1.5 rounded-xs bg-surface px-1.5 py-0.5 text-xs text-muted-foreground shadow-sm">
+            Placeholder
+          </span>
+        )}
       </div>
+      {!placeholder && (
+        <Button variant="outline" size="sm" className="w-full" onClick={addPlaceholder}>
+          <CircleHelp />
+          Add placeholder
+        </Button>
+      )}
       {paint?.scaleMode === "crop" && (
         <p className="text-xs text-muted-foreground">
           Drag the picture on the canvas to move it, its corners to scale it and the box to crop.

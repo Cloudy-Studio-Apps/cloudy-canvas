@@ -1,6 +1,7 @@
 import { rectContainsRect, rectsIntersect, type CanvasElement, type Rect } from "@canvas";
 
 import { isDesignNode, withDescendants, type DesignNode, type ImagePaint } from "../../core";
+import { isPlaceholderPaint } from "../../image";
 import { isText } from "../../text";
 import { mmToUnits, type BrochurePage } from "../model";
 import { effectiveDpi } from "./effective-dpi";
@@ -12,14 +13,14 @@ export const LOW_DPI = 150;
 
 /**
  * What would print badly in the brochure: blank pages the layout added and frames of another size
- * (`layoutIssues`), then page by page hidden pages (they print blank), pictures under `LOW_DPI` at
- * their printed size, and text reaching into the margin.
+ * (`layoutIssues`), then page by page hidden pages (they print blank), image placeholders still to
+ * replace, pictures under `LOW_DPI` at their printed size, and text reaching into the margin.
  */
 export function brochureIssues(input: BrochureCheckInput): BrochureIssue[] {
   return [...layoutIssues(input), ...input.pages.flatMap((page) => pageIssues(page, input))];
 }
 
-/** What would print badly on one page: hidden, soft pictures, text in the margin. */
+/** What would print badly on one page: hidden, placeholders, soft pictures, text in the margin. */
 function pageIssues(page: BrochurePage, input: BrochureCheckInput): BrochureIssue[] {
   const { frame } = page;
   const at = {
@@ -33,7 +34,13 @@ function pageIssues(page: BrochurePage, input: BrochureCheckInput): BrochureIssu
   const safe = inset(frame, mmToUnits(input.settings.margin));
   return shownNodes(frame.id, input.elements).flatMap((node): BrochureIssue[] => {
     const issues: BrochureIssue[] = [];
-    for (const paint of imagePaints(node)) {
+    const paints = imagePaints(node);
+    if (paints.some(isPlaceholderPaint)) {
+      const message = `“${node.name}” is a placeholder: replace it with the picture.`;
+      issues.push({ ...at, kind: "placeholder", nodeId: node.id, message });
+    }
+    for (const paint of paints) {
+      if (isPlaceholderPaint(paint)) continue;
       const size = input.imageSize(paint.assetId);
       const dpi = size && effectiveDpi(paint, node, size);
       if (dpi !== null && dpi < LOW_DPI) {

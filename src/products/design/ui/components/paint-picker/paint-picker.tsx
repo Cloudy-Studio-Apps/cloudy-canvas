@@ -41,6 +41,10 @@ export function PaintPicker({ paint, onChange, onClose, allowImage, size }: Pain
       ? paint
       : { type: "solid", color: DEFAULT_SOLID, opacity: 1, visible: paint.visible },
   );
+  // A placeholder takes the color the layer had (or was given here) before it became an image.
+  const [solidColor, setSolidColor] = useState(() =>
+    paint.type === "solid" ? paint.color : undefined,
+  );
   const [lastImage, setLastImage] = useState<ImagePaint | null>(() =>
     paint.type === "image" ? paint : null,
   );
@@ -91,6 +95,7 @@ export function PaintPicker({ paint, onChange, onClose, allowImage, size }: Pain
             onChange(next, { done: true });
           }}
           size={size}
+          placeholderColor={solidColor}
         />
       ) : isGradientTab(tab) ? (
         <GradientEditor
@@ -103,6 +108,7 @@ export function PaintPicker({ paint, onChange, onClose, allowImage, size }: Pain
           paint={paint.type === "solid" ? paint : lastSolid}
           onChange={(next, info) => {
             setLastSolid(next);
+            setSolidColor(next.color);
             onChange(next, info);
           }}
         />

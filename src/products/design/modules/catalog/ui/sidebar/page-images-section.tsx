@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { pagePictures } from "@design";
+import { isPlaceholderPaint, pagePictures } from "@design";
 import { PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useBrochure } from "../hooks/use-brochure";
@@ -18,8 +18,14 @@ export function PageImagesSection({ frame }: PageImagesSectionProps) {
     [engine, frame.id, version],
   );
 
+  const placeholders = images.filter(({ paint }) => isPlaceholderPaint(paint)).length;
+  const count =
+    images.length === 0
+      ? ""
+      : ` (${images.length}${placeholders > 0 ? ` · ${placeholders} to replace` : ""})`;
+
   return (
-    <PanelSection title={`Images${images.length > 0 ? ` (${images.length})` : ""}`}>
+    <PanelSection title={`Images${count}`}>
       {images.length === 0 ? (
         <p className="text-xs text-muted-foreground">No pictures on this page.</p>
       ) : (

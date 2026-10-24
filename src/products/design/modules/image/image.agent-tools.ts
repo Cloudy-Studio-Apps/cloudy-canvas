@@ -12,11 +12,15 @@ import { createId } from "@shared/core";
 import { requireDesign, type DesignAgentTool } from "../../agent";
 import { checkParent, containerAt, imagePaint, isNodeKind, type ImageScaleMode } from "../core";
 import { createRectangle, type RectangleElement } from "../rectangle";
+import { imagePlaceholderTool } from "./placeholder.agent-tool";
 import { replaceImageTool } from "./replace-image.agent-tool";
 
 const SCALE_MODES: readonly ImageScaleMode[] = ["fill", "fit", "tile"];
 
-/** Placing picture files, as dropping them on the canvas does, and swapping a layer's picture. */
+/**
+ * Placing picture files, as dropping them on the canvas does, swapping a layer's picture and
+ * marking where one goes.
+ */
 export const imageTools: DesignAgentTool[] = [
   {
     name: "add_image",
@@ -25,7 +29,8 @@ export const imageTools: DesignAgentTool[] = [
       "with it, as dropping the file does, in one undo step. It's at its pixel size unless w " +
       "and/or h are given (one keeps the proportions), and goes into the frame under its center " +
       "unless `parent` says where. Returns the layer's id and the image's assetId, which other " +
-      'layers can use in an image paint ({ type: "image", assetId }).',
+      'layers can use in an image paint ({ type: "image", assetId }). Without a picture yet, ' +
+      "use add_image_placeholder instead.",
     inputSchema: {
       type: "object",
       required: ["path"],
@@ -74,6 +79,7 @@ export const imageTools: DesignAgentTool[] = [
     },
   },
   replaceImageTool,
+  imagePlaceholderTool,
 ];
 
 /** The picture's bounds: its pixel size, or `w`/`h` with the other side in proportion. */
