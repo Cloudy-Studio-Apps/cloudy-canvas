@@ -1,16 +1,10 @@
 import type { Size } from "@canvas";
-import type { BookSide, FrameElement } from "@design";
+import { sideWidth, type BookSide, type FrameElement } from "@design";
 import type { StageSize } from "./preview.types";
 
 /** How much of the window the shown spread may take. */
 const FILL_WIDTH = 0.86;
 const FILL_HEIGHT = 0.68;
-
-/** A side's width in world units: its frame, half a spread frame, or a blank page's. */
-export function sideWidth(side: BookSide | null, page: Size): number {
-  if (!side || side.kind === "blank") return page.w;
-  return side.part === "whole" ? side.page.frame.w : side.page.frame.w / 2;
-}
 
 /**
  * How big the preview draws so the widest spread fits the window: two pages across the spine in

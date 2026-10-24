@@ -1,11 +1,11 @@
-import { DEFAULT_MODE, type ElementPatch, type Size } from "@canvas";
+import { DEFAULT_MODE, type Size } from "@canvas";
 import {
   createPresetFrame,
   DESIGN_BROCHURE,
   type DesignEngine,
   type DesignNode,
   type FrameElement,
-  type ImagePaint,
+  replaceImageFill,
 } from "@design";
 import { pickImageFiles } from "@platform";
 import { createId } from "@shared/core";
@@ -36,23 +36,21 @@ export function addBlankPage(engine: DesignEngine, size: Size, label: string): v
 }
 
 /**
- * Asks for a picture and puts it in place of a layer's image fill, keeping how the fill places
- * it (fit, crop, …), in one undo step.
+ * Asks for a picture and puts it in a layer's image fill `fill` instead, keeping how the fill
+ * places it (fit, crop, …), in one undo step.
  */
 export async function replaceImage(
   engine: DesignEngine,
   node: DesignNode,
-  paint: ImagePaint,
+  fill: number,
 ): Promise<void> {
   try {
     const [file] = await pickImageFiles({ title: "Replace the image", multiple: false });
     if (!file) return;
     const assetId = createId();
     engine.doc.addAsset(assetId, file.data);
-    const fills = node.fills.map((fill) => (fill === paint ? { ...paint, assetId } : fill));
-    const patch: ElementPatch<DesignNode> = { fills };
     engine.doc.checkpoint();
-    engine.doc.update(node.id, patch);
+    engine.doc.update(node.id, replaceImageFill(node, fill, assetId));
   } catch (error) {
     notifyError("The image couldn't be replaced", error);
   }

@@ -4,7 +4,7 @@ import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import { designAgentTools, designCanvas } from "../../design-points";
 import { BrochureKind } from "./brochure";
-import { catalogTools } from "./catalog.agent-tools";
+import { catalogTools } from "./agent";
 import {
   CATALOG_COMMANDS,
   CATALOG_MODE,

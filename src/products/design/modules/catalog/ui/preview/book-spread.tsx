@@ -1,7 +1,6 @@
-import type { BookSide } from "@design";
+import { sideWidth, type BookSide } from "@design";
 import { BookPage } from "./book-page";
 import type { BookSpreadProps } from "./preview.types";
-import { sideWidth } from "./preview-size";
 import { TurningSheet } from "./turning-sheet";
 
 /** How far the eye is from the booklet, in CSS pixels (closer: stronger perspective). */

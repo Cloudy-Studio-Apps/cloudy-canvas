@@ -1,5 +1,6 @@
 import type { Size } from "@canvas";
 
+import type { BookSide } from "./book-layout.types";
 import type { BrochurePage } from "./brochure-pages.types";
 
 /** How far a frame may be off one or two pages' size and still count as them (a fraction). */
@@ -38,6 +39,12 @@ export function spanOf(frame: Size, page: Size): 1 | 2 {
 /** Whether a frame is one page or two of this size (else it prints at another size). */
 export function fitsPage(frame: Size, page: Size): boolean {
   return near(frame.h, page.h) && (near(frame.w, page.w) || near(frame.w, page.w * 2));
+}
+
+/** A side's width in world units: its frame, half a spread frame, or a blank page's (`page`). */
+export function sideWidth(side: BookSide | null, page: Size): number {
+  if (!side || side.kind === "blank") return page.w;
+  return side.part === "whole" ? side.page.frame.w : side.page.frame.w / 2;
 }
 
 function near(a: number, b: number): boolean {

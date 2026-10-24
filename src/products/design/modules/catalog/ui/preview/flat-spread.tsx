@@ -1,5 +1,6 @@
+import { sideWidth } from "@design";
 import type { FlatSpreadProps } from "./preview.types";
-import { flatScale, sideWidth } from "./preview-size";
+import { flatScale } from "./preview-size";
 import { SidePicture } from "./side-picture";
 
 /** The spread as it is, its sides side by side and flat (the preview with 3D off). */

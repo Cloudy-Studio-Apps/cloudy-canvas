@@ -36,6 +36,27 @@ export function addOption(
   );
 }
 
+/**
+ * Gives a slot these options, in order, printing `chosen` (default: the first): frames taken from
+ * other slots leave them, and slots left empty go. Throws without any frame.
+ */
+export function setOptions(
+  slots: readonly BrochureSlot[],
+  slotId: string,
+  frames: readonly string[],
+  chosen?: string,
+): BrochureSlot[] {
+  const options = [...new Set(frames)];
+  const [first] = options;
+  if (first === undefined) throw new Error("A page needs at least one frame.");
+  const printed = chosen !== undefined && options.includes(chosen) ? chosen : first;
+  return slots.flatMap((slot) =>
+    slot.id === slotId
+      ? [{ ...slot, frames: options, chosen: printed }]
+      : removeFrames([slot], options),
+  );
+}
+
 /** Picks which of a slot's options is printed. */
 export function chooseOption(
   slots: readonly BrochureSlot[],

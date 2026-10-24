@@ -12,23 +12,26 @@ or other automated processes.
 
 <file_format>
 The content is organized as follows:
+
 1. This summary section
 2. Repository information
 3. Directory structure
 4. Repository files (if enabled)
 5. Multiple file entries, each consisting of:
-  - File path as an attribute
-  - Full contents of the file
-</file_format>
+
+- File path as an attribute
+- Full contents of the file
+  </file_format>
 
 <usage_guidelines>
+
 - This file should be treated as read-only. Any changes should be made to the
   original repository files, not this packed version.
 - When processing this file, use the file path to distinguish
   between different files in the repository.
 - Be aware that this file may contain sensitive information. Handle it with
   the same level of security as you would the original repository.
-</usage_guidelines>
+  </usage_guidelines>
 
 <notes>
 - Some files may have been excluded based on .gitignore rules and Repomix's configuration
@@ -43,2747 +46,2747 @@ The content is organized as follows:
 
 <directory_structure>
 .claude/
-  settings.local.json
+settings.local.json
 .github/
-  workflows/
-    release.yml
+workflows/
+release.yml
 docs/
-  plans/
-    precision-editing.md
-  board-roadmap.md
-  collaboration.md
-  er-language.md
-  plugins.md
+plans/
+precision-editing.md
+board-roadmap.md
+collaboration.md
+er-language.md
+plugins.md
 examples/
-  plugins/
-    callout/
-      main.js
-      plugin.json
+plugins/
+callout/
+main.js
+plugin.json
 packaging/
-  arch/
-    .gitignore
-    cloudy-canvas.desktop
-    cloudy-canvas.xml
-    PKGBUILD
+arch/
+.gitignore
+cloudy-canvas.desktop
+cloudy-canvas.xml
+PKGBUILD
 public/
-  favicon.svg
+favicon.svg
 scripts/
-  release-tag.mjs
+release-tag.mjs
 src/
-  app/
-    mcp/
-      agent-call-host.ts
-      agent-call-label.ts
-      agent-host.ts
-      agent-plugins.ts
-      agent-presence-key.ts
-      agent-presence-source.ts
-      agent-presence-source.types.ts
-      agent-server-definition.ts
-      agent-tool-catalog.ts
-      agent-undo-notes.ts
-      agent-undo-notes.types.ts
-      collaborator-state.ts
-      index.ts
-      presence-file.types.ts
-      track-agent-call.ts
-      track-agent-call.types.ts
-      use-agent-server.ts
-    open-requests/
-      confirm-leave.ts
-      index.ts
-      open-app-links.ts
-      open-paths.ts
-      open-paths.types.ts
-      open-requests.tsx
-      use-open-requests.ts
-    plugins/
-      create-plugin-api.ts
-      import-plugin.ts
-      index.ts
-      load-plugins.ts
-      plugin-api.types.ts
-      plugin-modules.types.ts
-      strict-api.ts
-    agent-server.tsx
-    App.tsx
-    main.tsx
-    providers.tsx
-    providers.types.ts
-    router.tsx
-    styles.css
-    theme-sync.tsx
-  canvas/
-    agent/
-      agent-file.types.ts
-      agent-patches.ts
-      agent-patches.types.ts
-      agent-tool-group.types.ts
-      agent-tool.types.ts
-      arrange-tools.ts
-      arrange-tools.types.ts
-      as-undo-step.ts
-      build-element.ts
-      collect-agent-tools.ts
-      element-patch.ts
-      element-summary.ts
-      element-summary.types.ts
-      export-path.ts
-      index.ts
-      resize-patch.ts
-      scale-tool.ts
-      style-tool.ts
-      tool-args.ts
-    arrange/
-      align.ts
-      arrange-items.ts
-      arrange.types.ts
-      distribute.ts
-      index.ts
-      nudge.ts
-      reading-order.ts
-      scale.ts
-      scale.types.ts
-      tidy-up.ts
-    clipboard/
-      clipboard-assets.ts
-      clipboard-payload.ts
-      clipboard-payload.types.ts
-      clone-elements.ts
-      clone-elements.types.ts
-      drop-files.ts
-      drop-files.types.ts
-      element-clipboard.ts
-      element-clipboard.types.ts
-      index.ts
-      insert-copies.ts
-      insert-copies.types.ts
-      memory-clipboard.ts
-      paste-external.ts
-      paste-external.types.ts
-      paste-offset.ts
-      remap-ids.ts
-      style-clipboard.ts
-    document/
-      actor-document.ts
-      actor-document.types.ts
-      canvas-document.ts
-      canvas-document.types.ts
-      document-feed.ts
-      document-history.ts
-      document-history.types.ts
-      index.ts
-    effects/
-      blend-mode.types.ts
-      blend-modes.ts
-      effect.types.ts
-      index.ts
-    elements/
-      bases/
-        box.kind.ts
-        index.ts
-        line.kind.ts
-        line.kind.types.ts
-        text-box.kind.ts
-        text-box.kind.types.ts
-      element-bounds.ts
-      element-scale.ts
-      element-scale.types.ts
-      element.defaults.ts
-      element.factory.ts
-      element.info.ts
-      element.info.types.ts
-      element.interaction.types.ts
-      element.kind.ts
-      element.kind.types.ts
-      element.kinds.ts
-      element.types.ts
-      index.ts
-      reorder.ts
-      reorder.types.ts
-      z-order.ts
-    export/
-      canvas-blob.ts
-      encode-csv.ts
-      encode-pdf.ts
-      encode-pdf.types.ts
-      export-elements.ts
-      export.types.ts
-      index.ts
-      thumbnail.ts
-      thumbnail.types.ts
-    figma/
-      container/
-        decompress-chunk.ts
-        fig-container.types.ts
-        index.ts
-        read-fig-file.ts
-      kiwi/
-        byte-reader.ts
-        index.ts
-        kiwi-decode.ts
-        kiwi-schema.ts
-        kiwi.types.ts
-      nodes/
-        fig-color.ts
-        fig-import-context.ts
-        fig-matrix.ts
-        fig-node.types.ts
-        fig-styles.ts
-        fig-tree.ts
-        fig-tree.types.ts
-        import-warnings.ts
-        index.ts
-      worker/
-        figma-worker.types.ts
-        index.ts
-        run-figma-worker.ts
-        serve-figma-worker.ts
-      figma-progress.types.ts
-      index.ts
-    file/
-      canvas-file.ts
-      index.ts
-    gradient/
-      affine.ts
-      css-color.ts
-      gradient-color.ts
-      gradient-color.types.ts
-      gradient-css.ts
-      gradient-key.ts
-      gradient-options.ts
-      gradient-param.ts
-      gradient-ramp.ts
-      gradient-stops.ts
-      gradient-transforms.ts
-      gradient.types.ts
-      index.ts
-      parse-css-gradient.ts
-    handles/
-      handles.types.ts
-      index.ts
-      resize-handles.ts
-      resize-target.ts
-      rotate-cursor.ts
-      rotate-zone.ts
-    image/
-      image-transform.ts
-      image-transform.types.ts
-      index.ts
-    input/
-      base-command-labels.ts
-      base-keybindings.ts
-      canvas-pointer.ts
-      edge-auto-pan.ts
-      index.ts
-      keyboard-input.ts
-      keyboard-input.types.ts
-      keymap.ts
-      keymap.types.ts
-      pointer-input.ts
-      pointer-input.types.ts
-      wheel-input.ts
-    links/
-      canvas-links.types.ts
-      index.ts
-    modes/
-      default-mode.ts
-      index.ts
-      mode.types.ts
-    modules/
-      canvas-points.types.ts
-      compose-product.ts
-      create-canvas-points.ts
-      index.ts
-    path/
-      bezier.ts
-      boolean-paths.ts
-      box-sides-stroke.ts
-      curve-extent.ts
-      dash-path.ts
-      flatten-path.ts
-      index.ts
-      outline-stroke.ts
-      path-bounds.ts
-      path-hit.ts
-      path-precision.ts
-      path-segments.ts
-      path.types.ts
-      rebuild-contour.ts
-      rect-path.ts
-      source-tags.ts
-      stroke-area.ts
-      trace-path.ts
-      transform-path.ts
-      tree-to-shape.ts
-    render/
-      effects/
-        composite-shader.ts
-        effect-glsl.ts
-        effect-pass.ts
-        effect-pass.types.ts
-        effect-renderer.types.ts
-        effect-shader.ts
-        effect-shader.types.ts
-        effect-shaders.ts
-        effect-stack-filter.ts
-        effect-stack-filter.types.ts
-        effects-outset.ts
-        index.ts
-      layers/
-        create-grid-layer.ts
-        dot-grid-layer.ts
-        draft-layer.ts
-        effect-scope-view.ts
-        element-layer.ts
-        grid-layer.types.ts
-        guide-layer.ts
-        insert-ordered.ts
-        link-layer.ts
-        mask-scope-view.ts
-        mask-source.ts
-        ordered-child.types.ts
-        overlay-layer.ts
-        pixel-grid-layer.ts
-        ruler-guide-layer.ts
-        ruler-guide-layer.types.ts
-        size-label-layer.ts
-        snap-layer.ts
-      canvas-theme.types.ts
-      clip-bounds.ts
-      clip-covers.ts
-      element-view.ts
-      element-view.types.ts
-      entrance.ts
-      fit-image.ts
-      gradient-texture.ts
-      image-cache.ts
-      image-cache.types.ts
-      image-matrix.ts
-      index.ts
-      layer-placement.ts
-      layer-placement.types.ts
-      overlay-state.ts
-      overlay-state.types.ts
-      paint-stack.ts
-      paint-stack.types.ts
-      pixi-blend-mode.ts
-      renderer.ts
-      renderer.types.ts
-      rich-text-sprite.ts
-      snapshot.ts
-      snapshot.types.ts
-      svg-image.ts
-      text-leading.ts
-      text-mask.ts
-      text-resolution.ts
-      text-style.ts
-      text-style.types.ts
-    ruler-guides/
-      index.ts
-      place-guides.ts
-      ruler-band.ts
-      ruler-guide-key.ts
-      ruler-guides.types.ts
-      scope-guides.ts
-      screen-axis.ts
-    services/
-      define-service.ts
-      index.ts
-      service-cache.ts
-      service.types.ts
-    share/
-      host-peers.ts
-      host-peers.types.ts
-      index.ts
-      share-guest.ts
-      share-guest.types.ts
-      share-host.ts
-      share-host.types.ts
-      share-origins.ts
-      sync-messages.ts
-    snapping/
-      equal-spacing.ts
-      index.ts
-      measure.ts
-      snap-edges.ts
-      snap-lines.ts
-      snap.types.ts
-      snapper.ts
-    text/
-      rich/
-        draw-rich-text.ts
-        font-metrics.ts
-        layout-rich-text.ts
-        measure-span.ts
-        rich-caret.ts
-        rich-text-ink.ts
-        rich-text.types.ts
-        text-run.types.ts
-        text-runs.ts
-      rich-editor/
-        pointer-select.ts
-        pointer-select.types.ts
-        rich-editor-overlay.ts
-        rich-editor.types.ts
-        rich-text-session.ts
-        session-history.ts
-        style-shortcut.ts
-        textarea-selection.ts
-      font-tracker.ts
-      index.ts
-      load-fonts.ts
-      text-editor-style.ts
-      text-editor.ts
-      text-editor.types.ts
-      text-font.ts
-      text-font.types.ts
-      text-metrics.ts
-    tools/
-      create-tools.ts
-      drag-threshold.ts
-      freehand-tool.ts
-      guide-drag.ts
-      guide-drag.types.ts
-      hand-tool.ts
-      index.ts
-      resize-gesture.ts
-      rotate-gesture.ts
-      scale-tool.ts
-      select-and-edit.ts
-      select-tool.ts
-      select-tool.types.ts
-      tool.types.ts
-    utils/
-      base64.ts
-      debounce.ts
-      debounce.types.ts
-      delay.ts
-      disposables.ts
-      disposables.types.ts
-      emitter.ts
-      frame-scheduler.ts
-      identity-key.ts
-      index.ts
-      lru-cache.ts
-      math.ts
-      reduced-motion.ts
-      registry.ts
-      shallow-equal.ts
-      store.ts
-    workspace/
-      operations/
-        arrange-elements.ts
-        delete-elements.ts
-        elements-bounds.ts
-        export-host.ts
-        export-host.types.ts
-        index.ts
-        lock-elements.ts
-        members.ts
-        move-elements.ts
-        reorder-elements.ts
-        style-elements.ts
-        transform-elements.ts
-        workspace-parts.types.ts
-      actor-viewport.ts
-      actor-workspace.ts
-      actor-workspace.types.ts
-      index.ts
-      scene-hooks.ts
-      workspace.types.ts
-    camera-glide.ts
-    camera-glide.types.ts
-    camera.ts
-    camera.types.ts
-    canvas-engine.ts
-    canvas-engine.types.ts
-    canvas-product.types.ts
-    canvas-view.ts
-    canvas-view.types.ts
-    commands.ts
-    commands.types.ts
-    engine-loading.types.ts
-    engine-state.types.ts
-    find-interaction.ts
-    geometry.ts
-    geometry.types.ts
-    index.ts
-    rotation.ts
-    scene.ts
-    scene.types.ts
-    selection.ts
-    smooth-points.ts
-  canvas-ui/
-    agent/
-      active-file.ts
-      active-file.types.ts
-      index.ts
-      use-agent-file.ts
-    chrome/
-      index.ts
-      use-hide-ui-command.ts
-      use-ui-hidden.ts
-    components/
-      canvas-loading-overlay/
-        canvas-loading-overlay.tsx
-        canvas-loading-overlay.types.ts
-        index.ts
-      collaborators/
-        collaborator-cursor.tsx
-        collaborator-cursor.types.ts
-        collaborator-cursors.tsx
-        collaborator-follow.tsx
-        collaborator-layer.tsx
-        collaborator-selections.tsx
-        collaborator-undo-button.tsx
-        collaborator-undo-button.types.ts
-        follow-bar.tsx
-        follow-bar.types.ts
-        follow-frame.tsx
-        follow-frame.types.ts
-        index.ts
-        to-screen.ts
-        use-collaborator-history.ts
-        use-collaborator-history.types.ts
-        use-collaborators-here.ts
-        use-eased-point.ts
-        use-follow-collaborator.ts
-        use-follow-collaborator.types.ts
-        use-view-version.ts
-      color/
-        color-constants.ts
-        color-math.ts
-        color-slider.tsx
-        color.types.ts
-        eyedropper-button.tsx
-        index.ts
-        saturation-area.tsx
-        use-pointer-drag.ts
-        use-pointer-drag.types.ts
-      commit-field/
-        commit-field-props.ts
-        commit-field-props.types.ts
-        commit-input.tsx
-        commit-input.types.ts
-        commit-textarea.tsx
-        index.ts
-        use-commit-field.ts
-        use-commit-field.types.ts
-      context-menu/
-        canvas-context-menu.tsx
-        canvas-context-menu.types.ts
-        context-menu-allowed.ts
-        context-menu-category-entry.tsx
-        context-menu-enabled.ts
-        context-menu-entry.tsx
-        context-menu-entry.types.ts
-        context-menu-groups.tsx
-        context-menu-items.ts
-        context-menu-items.types.ts
-        context-menu-submenu-entry.tsx
-        index.ts
-        menu-fits-screen.ts
-      export-dialog/
-        export-dialog.tsx
-        export-dialog.types.ts
-        export-field.tsx
-        export-formats.ts
-        index.ts
-      image-crop/
-        crop-drag.ts
-        crop-edges.ts
-        image-crop-overlay.tsx
-        image-crop-overlay.types.ts
-        index.ts
-      rulers/
-        draw-ruler.ts
-        index.ts
-        read-ruler-colors.ts
-        ruler-step.ts
-        ruler-strip.tsx
-        rulers.tsx
-        rulers.types.ts
-        use-ruler-version.ts
-      color-palette.tsx
-      color-palette.types.ts
-      color-picker.tsx
-      color-picker.types.ts
-      color-swatch.tsx
-      color-swatch.types.ts
-      custom-color-swatch.tsx
-      custom-color-swatch.types.ts
-      floating-panel.tsx
-      floating-panel.types.ts
-      history-controls.tsx
-      normalize-hex.ts
-      option-button.tsx
-      option-button.types.ts
-      tool-button.tsx
-      tool-button.types.ts
-      zoom-controls.tsx
-      zoom-menu.tsx
-      zoom-menu.types.ts
-    file/
-      canvas-file-context.ts
-      canvas-file.types.ts
-      document-info-popover.tsx
-      document-info-popover.types.ts
-      import-steps.ts
-      index.ts
-      save-indicator.tsx
-      use-canvas-autosave.ts
-      use-canvas-file-loader.ts
-      use-canvas-file-saver.ts
-      use-canvas-thumbnail.ts
-    modules/
-      create-editor-points.ts
-      editor-modules-context.ts
-      editor-points.types.ts
-      extension-icon-view.tsx
-      index.ts
-      mode-switcher.tsx
-      module-session.tsx
-      module-slot.tsx
-      module-tool-options.tsx
-      module-toolbar.tsx
-      tool-entries.ts
-      tool-menu-button.tsx
-      use-editor-mode.ts
-    overlay/
-      box-space.ts
-      index.ts
-      overlay.types.ts
-      use-view-mapping.ts
-    share/
-      share-dialog/
-        guest-row.tsx
-        hosting-panel.tsx
-        index.ts
-        knock-card.tsx
-        live-badge.tsx
-        live-session-layer.tsx
-        peer-path-label.tsx
-        person-badge.tsx
-        relay-note.tsx
-        share-button.tsx
-        share-dialog.tsx
-        share-dialog.types.ts
-        share-knocks.tsx
-        start-sharing.tsx
-        use-peer-path.ts
-      hold-guest.ts
-      hold-guest.types.ts
-      host-session.ts
-      host-session.types.ts
-      index.ts
-      room-presence.ts
-      room-presence.types.ts
-      start-host.ts
-      use-hosted-file.ts
-      use-live-guest-file.ts
-      use-room-presence.ts
-      use-store-state.ts
-      use-store-state.types.ts
-    canvas-theme.ts
-    engine-context.ts
-    index.ts
-    use-asset-url.ts
-    use-canvas-engine.ts
-    use-canvas-engine.types.ts
-    use-canvas-file-drop.ts
-    use-copy-as-png.ts
-    use-document-meta.ts
-    use-engine-element.ts
-    use-service.ts
-    use-snapping.ts
-  pages/
-    design-system/
-      sections/
-        buttons-section.tsx
-        buttons-section.types.ts
-        components-section.tsx
-        logo-section.tsx
-        palette-section.tsx
-        section-layout.tsx
-        section-layout.types.ts
-        semantic-tokens-section.tsx
-        shape-section.tsx
-        typography-section.tsx
-      design-system-page.tsx
-      tokens.ts
-    home/
-      components/
-        create-card.tsx
-        create-card.types.ts
-        create-section.tsx
-        create-section.types.ts
-        drop-overlay.tsx
-        empty-state.tsx
-        file-actions-menu.tsx
-        file-actions-menu.types.ts
-        file-card.tsx
-        file-card.types.ts
-        file-context-menu.tsx
-        file-context-menu.types.ts
-        join-session-button.tsx
-        missing-file-popover.tsx
-        missing-file-popover.types.ts
-        recent-files-toolbar.tsx
-        recent-files-toolbar.types.ts
-        recent-files.tsx
-        recent-files.types.ts
-        top-bar.tsx
-      filter-recent-files.ts
-      filter-recent-files.types.ts
-      format-relative-time.ts
-      home-page.tsx
-      home-shortcuts.ts
-      use-file-actions.ts
-      use-file-actions.types.ts
-      use-file-thumbnail.ts
-      use-open-file.ts
-    join/
-      join-message.tsx
-      join-name-form.tsx
-      join-page.tsx
-      join-page.types.ts
-      join-session.tsx
-      reconnecting-banner.tsx
-      use-missing-plugins-notice.ts
-    settings/
-      components/
-        settings-section.tsx
-        settings-section.types.ts
-      sections/
-        collaboration/
-          collaboration-section.tsx
-          index.ts
-          relay-down-note.tsx
-          relay-server-settings.tsx
-          relay-status.tsx
-          relay-test-row.tsx
-          relay-test.types.ts
-          use-relay-test.ts
-        plugins/
-          index.ts
-          plugin-row.tsx
-          plugin-trust-dialog.tsx
-          plugins-section.tsx
-          plugins.types.ts
-          use-plugin-actions.ts
-        about-section.tsx
-        agents-section.tsx
-        dedication-card.tsx
-        files-section.tsx
-        shortcuts-section.tsx
-      settings-page.tsx
-  platform/
-    fonts/
-      font-cache.ts
-      font-cache.types.ts
-      font-library.ts
-      glyph-outliner.ts
-      glyph-outliner.types.ts
-      google-fonts.ts
-      index.ts
-      installed-fonts.ts
-    agent-channel.ts
-    app-info.ts
-    app-lifecycle.ts
-    app-links.ts
-    app-updater.ts
-    browser-clipboard.ts
-    clipboard.ts
-    copy-folder.ts
-    dbml-file.ts
-    export-file.ts
-    export-file.types.ts
-    file-dialog.ts
-    file-open-requests.ts
-    http.ts
-    image-file.ts
-    image-file.types.ts
-    index.ts
-    open-external.ts
-    plugin-folder-dialog.ts
-    plugin-storage.ts
-    read-local-file.ts
-    reveal-file.ts
-    rgba-to-png.ts
-    share-transport.ts
-    sticker-file.ts
-    sticker-library.ts
-    storage.ts
-    tauri-agent-channel.ts
-    tauri-app-lifecycle.ts
-    tauri-app-links.ts
-    tauri-app-updater.ts
-    tauri-clipboard.ts
-    tauri-file-open-requests.ts
-    tauri-plugin-storage.ts
-    tauri-plugin-storage.types.ts
-    tauri-share-transport.ts
-    tauri-share-transport.types.ts
-    tauri-sticker-library.ts
-    tauri-sticker-library.types.ts
-    tauri-storage.ts
-    tauri-storage.types.ts
-    write-export-file.ts
-  products/
-    board/
-      agent/
-        agent-instructions.ts
-        apply-result.ts
-        arrange-tools.ts
-        board-access.ts
-        board-agent.types.ts
-        board-info-tools.ts
-        board-read-tools.ts
-        create-agent-tools.ts
-        create-shapes-tool.ts
-        export-tools.ts
-        file-tools.ts
-        index.ts
-        plugin-tools.ts
-        shape-edit-tools.ts
-        view-tools.ts
-      figjam/
-        convert/
-          convert-connector.ts
-          convert-figjam-node.ts
-          convert-figjam-node.types.ts
-          convert-figjam.ts
-          convert-plain-shape.ts
-          convert-section.ts
-          convert-shape.ts
-          convert-sticky.ts
-          convert-stroke.ts
-          convert-text.ts
-          convert-widget.ts
-          fig-paint-values.ts
-          figjam-context.ts
-          figjam-output.ts
-          generated-parts.ts
-          node-rect.ts
-          wrapped-text.ts
-        convert-figjam-file.ts
-        figjam-board-document.ts
-        figjam-import.types.ts
-        figjam-import.worker.ts
-        index.ts
-        read-and-convert-figjam.ts
-      file/
-        board-file.ts
-        board-migration.types.ts
-        index.ts
-        open-board-document.ts
-      modules/
-        connector/
-          ui/
-            connector-option-items.ts
-            connector-option-items.types.ts
-            connector-options.tsx
-          connectable-at.ts
-          connector-drag.ts
-          connector-drag.types.ts
-          connector-endpoints.ts
-          connector-options.types.ts
-          connector-spec.ts
-          connector.defaults.ts
-          connector.draw.ts
-          connector.factory.ts
-          connector.kind.ts
-          connector.module.ts
-          connector.tool.ts
-          connector.types.ts
-          detach-connectors.ts
-          elbow-route.ts
-          index.ts
-          is-connector.ts
-          prepare-connector-copies.ts
-          quick-connect.kind.ts
-          resolve-connectors.ts
-          sides.ts
-        core/
-          core.module.ts
-        db/
-          card/
-            db-card.defaults.ts
-            db-card.draw.ts
-            db-card.kind.ts
-            db-card.layout.ts
-            db-card.types.ts
-            index.ts
-          enum/
-            db-enum.draw.ts
-            db-enum.factory.ts
-            db-enum.kind.ts
-            db-enum.layout.ts
-            db-enum.types.ts
-            index.ts
-            is-db-enum.ts
-          links/
-            db-links.ts
-            index.ts
-            relations.ts
-            relations.types.ts
-          schema/
-            dbml/
-              dbml-error.ts
-              dbml-format.ts
-              index.ts
-              parse-enum.ts
-              parse-indexes.ts
-              parse-name.ts
-              parse-settings.ts
-              parse-sticky-note.ts
-              parse-table.ts
-              parser.ts
-              parser.types.ts
-              serialize-enum.ts
-              serialize-note.ts
-              serialize-table.ts
-              serializer.ts
-              serializer.types.ts
-              token-cursor.ts
-              tokenizer.ts
-              tokenizer.types.ts
-            layout/
-              assign-layers.ts
-              card-footprint.ts
-              index.ts
-              layout-group.ts
-              order-layers.ts
-              place-layers.ts
-              schema-graph.ts
-              schema-graph.types.ts
-              tidy-schema.ts
-            add-missing-tables.ts
-            apply-plan.ts
-            column-types.ts
-            column-types.types.ts
-            db-schema.service.ts
-            db-schema.ts
-            db-schema.types.ts
-            enum-edits.ts
-            index.ts
-            pair-by-name.ts
-            patch-db-element.ts
-            place-new-shapes.ts
-            prepare-db-copies.ts
-            prune-refs.ts
-            reconcile-enums.ts
-            reconcile-error.ts
-            reconcile-notes.ts
-            reconcile-tables.ts
-            reconcile.ts
-            reconcile.types.ts
-            schema-dbml.ts
-            schema-queries.ts
-            schema-shapes.ts
-            table-edits.ts
-          table/
-            column-connect.gesture.ts
-            column-connect.gesture.types.ts
-            column-type.ts
-            column-type.types.ts
-            db-table.draw.ts
-            db-table.factory.ts
-            db-table.interactions.ts
-            db-table.kind.ts
-            db-table.layout.ts
-            db-table.layout.types.ts
-            db-table.types.ts
-            draw-relation-path.ts
-            index.ts
-            is-db-table.ts
-            note-bubble.draw.ts
-            note-bubble.layout.ts
-            note-bubble.layout.types.ts
-            relation-path.ts
-            relation-path.types.ts
-            type-aliases.ts
-          ui/
-            db-panel/
-              column-details.tsx
-              column-details.types.ts
-              column-flags.tsx
-              column-flags.types.ts
-              column-row.tsx
-              column-row.types.ts
-              column-type-picker.tsx
-              column-type-picker.types.ts
-              db-panel.tsx
-              dbml-editor.tsx
-              dbml-editor.types.ts
-              enum-editor.tsx
-              enum-editor.types.ts
-              enum-usages.tsx
-              enum-usages.types.ts
-              enum-value-row.tsx
-              enum-value-row.types.ts
-              enum-visual-editor.tsx
-              enum-visual-editor.types.ts
-              flag-toggle.tsx
-              flag-toggle.types.ts
-              incoming-refs.tsx
-              incoming-refs.types.ts
-              index-list.tsx
-              index-list.types.ts
-              index-part-picker.tsx
-              index-part-picker.types.ts
-              index-row.tsx
-              index-row.types.ts
-              index.ts
-              ref-kinds.ts
-              ref-picker.tsx
-              ref-picker.types.ts
-              schema-editor.tsx
-              table-editor.tsx
-              table-editor.types.ts
-              table-visual-editor.tsx
-              table-visual-editor.types.ts
-              type-option-list.tsx
-              type-option-list.types.ts
-            schema/
-              index.ts
-              use-board-schema.ts
-              use-db-query.ts
-            db-options.tsx
-            schema-button.tsx
-          db-options.types.ts
-          db.agent-tools.ts
-          db.module.ts
-          db.tool.ts
-          index.ts
-        draw/
-          ui/
-            draw-colors.tsx
-            draw-mode-buttons.tsx
-            draw-options.tsx
-            draw-pen-buttons.tsx
-            draw-size-buttons.tsx
-          draw-options.types.ts
-          draw.module.ts
-          eraser.tool.ts
-          index.ts
-          marker.tool.ts
-          stroke-size.ts
-          stroke-spec.ts
-          stroke.defaults.ts
-          stroke.draw.ts
-          stroke.factory.ts
-          stroke.kind.ts
-          stroke.outline.ts
-          stroke.types.ts
-        embed/
-          ui/
-            embed-player-frame.tsx
-            embed-player-frame.types.ts
-            embed-player.tsx
-            index.ts
-            use-embed-previews.ts
-          embed-icons.ts
-          embed-preview.ts
-          embed.actions.ts
-          embed.defaults.ts
-          embed.draw.ts
-          embed.factory.ts
-          embed.interactions.ts
-          embed.kind.ts
-          embed.layout.ts
-          embed.module.ts
-          embed.types.ts
-          index.ts
-          pasted-embed.ts
-          truncate-text.ts
-        er/
-          aggregate/
-            aggregate.draw.ts
-            aggregate.factory.ts
-            aggregate.kind.ts
-            aggregate.types.ts
-            index.ts
-          attribute/
-            attribute.draw.ts
-            attribute.factory.ts
-            attribute.kind.ts
-            attribute.types.ts
-            index.ts
-          base/
-            constructs/
-              aggregations.construct.ts
-              alternate-keys.construct.ts
-              associative-entities.construct.ts
-              built-in-constructs.ts
-              composite-attributes.construct.ts
-              constraints.construct.ts
-              construct-gate.ts
-              define-er-construct.ts
-              dependency-marks.construct.ts
-              derived-attributes.construct.ts
-              er-construct-registry.ts
-              er-construct.types.ts
-              hierarchies.construct.ts
-              identifying-relations.construct.ts
-              index.ts
-              join-attributes.construct.ts
-              multivalued-attributes.construct.ts
-              nary-relations.construct.ts
-              optional-attributes.construct.ts
-              relation-attributes.construct.ts
-              self-relations.construct.ts
-              unions.construct.ts
-              weak-entities.construct.ts
-            standards/
-              built-in-standards.ts
-              chen.standard.ts
-              cloudy.standard.ts
-              define-er-standard.ts
-              elmasri.standard.ts
-              er-standard-registry.ts
-              er-standard.types.ts
-              index.ts
-              piattini.standard.ts
-              silberschatz.standard.ts
-            arrow-head.ts
-            dashed-path.ts
-            er-named.kind.ts
-            er-notation.ts
-            er-outline.ts
-            er-size.ts
-            er.defaults.ts
-            er.kind.ts
-            er.types.ts
-            index.ts
-            is-er-element.ts
-            keep-center.ts
-            no-er-diagram.ts
-          connect/
-            er-connect.gesture.ts
-            er-connect.ts
-            er-connect.types.ts
-            er-prompt.ts
-            er-quick-add.ts
-            er-relation-ratios.ts
-            index.ts
-          constraint/
-            constraint.draw.ts
-            constraint.factory.ts
-            constraint.kind.ts
-            constraint.types.ts
-            index.ts
-          entity/
-            entity.draw.ts
-            entity.factory.ts
-            entity.kind.ts
-            entity.types.ts
-            index.ts
-          isa/
-            index.ts
-            isa.draw.ts
-            isa.factory.ts
-            isa.kind.ts
-            isa.types.ts
-          links/
-            crow-foot.ts
-            er-links.layer.ts
-            er-links.ts
-            er-links.types.ts
-            index.ts
-            link-label.ts
-            loop-route.ts
-          mode/
-            enter-er-mode.ts
-            er-mode-commands.ts
-            er-mode.ts
-            er-mode.types.ts
-            index.ts
-          model/
-            check/
-              check-er.ts
-              check-er.types.ts
-              index.ts
-              standard-text-warnings.ts
-            edits/
-              attribute-edits.ts
-              convert-relation.ts
-              edit-helpers.ts
-              edits.types.ts
-              entity-edits.ts
-              extended-edits.ts
-              index.ts
-              relation-edits.ts
-              union-edits.ts
-            lang/
-              index.ts
-              notation-settings.ts
-              parse-aggregate.ts
-              parse-attributes.ts
-              parse-cardinality.ts
-              parse-constraint.ts
-              parse-entity.ts
-              parse-isa.ts
-              parse-relation.ts
-              parse-union.ts
-              parser.ts
-              parser.types.ts
-              serialize-attributes.ts
-              serialize-blocks.ts
-              serializer.ts
-              serializer.types.ts
-            layout/
-              aggregate-boxes.ts
-              box.ts
-              entity-grid.ts
-              er-graph.ts
-              escape-fixed.ts
-              fan-angles.ts
-              fan-out.ts
-              hierarchy-cells.ts
-              index.ts
-              layout-er.ts
-              layout-metrics.ts
-              layout.types.ts
-              obstacles.ts
-              place-aggregate-attributes.ts
-              place-aggregates.ts
-              place-attributes.ts
-              place-isas.ts
-              place-relations.ts
-              place-unions.ts
-              resolve-overlaps.ts
-            to-tables/
-              attribute-columns.ts
-              entity-tables.ts
-              er-to-tables.ts
-              guess-column-type.ts
-              index.ts
-              multivalued-tables.ts
-              relation-tables.ts
-              table-set.ts
-              tables-context.types.ts
-              to-tables.types.ts
-              union-tables.ts
-              write-dbml.ts
-            add-missing-entities.ts
-            apply-er-plan.ts
-            block-range.ts
-            constraint-points.ts
-            er-add-actions.ts
-            er-add-actions.types.ts
-            er-components.ts
-            er-diagram.ts
-            er-drop.ts
-            er-drop.types.ts
-            er-edits.ts
-            er-members.ts
-            er-model.service.ts
-            er-model.ts
-            er-orphans.ts
-            er-shapes.ts
-            er-shapes.types.ts
-            index.ts
-            merge-er-diagrams.ts
-            migrate-er-diagrams.ts
-            palette-constructs.ts
-            patch-er-element.ts
-            position-layout.ts
-            prepare-er-copies.ts
-            prune-er.ts
-            reconcile-attributes.ts
-            reconcile-context.types.ts
-            reconcile-er.ts
-            reconcile-er.types.ts
-            reconcile-extended.ts
-            reconcile-names.ts
-            resolve-er.ts
-            split-er-diagrams.ts
-            standard-of.ts
-          relation/
-            can-convert.ts
-            cardinality-ratio.ts
-            index.ts
-            relation.draw.ts
-            relation.factory.ts
-            relation.kind.ts
-            relation.types.ts
-          ui/
-            er-convert/
-              index.ts
-              use-convert-command.ts
-            er-mode/
-              er-check-badges.tsx
-              er-check-badges.types.ts
-              er-mode-toolbar.tsx
-              index.ts
-              use-er-mode-commands.ts
-            er-palette/
-              er-drag-ghost.tsx
-              er-palette-button.tsx
-              er-palette-icon.tsx
-              er-palette-items.ts
-              er-palette.tsx
-              er-palette.types.ts
-              index.ts
-              use-palette-drag.ts
-            er-panel/
-              diagram-settings/
-                check-list.tsx
-                diagram-list.tsx
-                diagram-setting-choices.ts
-                diagram-setting-option.tsx
-                diagram-setting-preview.tsx
-                diagram-settings.tsx
-                diagram-settings.types.ts
-                index.ts
-                standard-picker.tsx
-              forms/
-                aggregate-form.tsx
-                attribute-form.tsx
-                attribute-form.types.ts
-                attribute-list.tsx
-                attribute-row.tsx
-                attribute-row.types.ts
-                cardinality-picker.tsx
-                cardinality-picker.types.ts
-                constraint-form.tsx
-                entity-form.tsx
-                entity-form.types.ts
-                entity-options.ts
-                er-shape-form.tsx
-                er-shape-form.types.ts
-                form-field.tsx
-                form-field.types.ts
-                form-section.tsx
-                icon-action.tsx
-                icon-action.types.ts
-                index.ts
-                isa-form.tsx
-                participant-row.tsx
-                participant-row.types.ts
-                relation-form.tsx
-                segmented.tsx
-                segmented.types.ts
-                shape-issues.tsx
-                shape-select.tsx
-                shape-select.types.ts
-                union-form.tsx
-              diagram-shape-ids.ts
-              er-add-menu.tsx
-              er-diagram-name.tsx
-              er-diagram-name.types.ts
-              er-diagram-switcher.tsx
-              er-panel-collapsed.tsx
-              er-panel-collapsed.types.ts
-              er-panel.tsx
-              er-style-toggle.tsx
-              er-syntax-hint.tsx
-              er-text-editor.tsx
-              index.ts
-              use-show-all-diagrams.ts
-            er-quick-add/
-              er-quick-add-menu.tsx
-              index.ts
-            er-relation-prompt/
-              er-join-step.tsx
-              er-ratio-picker.tsx
-              er-relation-glyph.tsx
-              er-relation-prompt.tsx
-              er-relation-prompt.types.ts
-              index.ts
-              join-options.ts
-            er-to-tables/
-              er-to-tables-dialog.tsx
-              er-to-tables-store.ts
-              er-to-tables.types.ts
-              hierarchy-choice.tsx
-              index.ts
-              strategy-picture.tsx
-              use-create-tables-command.ts
-            model/
-              index.ts
-              use-er-gate.ts
-              use-er-model.ts
-              use-er-query.ts
-              use-er-selection.ts
-              use-er-selection.types.ts
-              use-er-version.ts
-          union/
-            index.ts
-            union.draw.ts
-            union.factory.ts
-            union.kind.ts
-            union.types.ts
-          er-diagram-arg.ts
-          er.agent-tools.ts
-          er.module.ts
-          er.tool.ts
-          index.ts
-        geo/
-          ui/
-            geo-kind-icon.tsx
-            geo-kind-icon.types.ts
-            shape-options.tsx
-          variants/
-            cylinder.variant.ts
-            diamond.variant.ts
-            ellipse-arc.ts
-            ellipse.variant.ts
-            geo.variant.ts
-            index.ts
-            parallelogram.variant.ts
-            rectangle.variant.ts
-            rounded.variant.ts
-            star.variant.ts
-            triangle.variant.ts
-            variant.registry.ts
-          geo-options.types.ts
-          geo.defaults.ts
-          geo.draw.ts
-          geo.factory.ts
-          geo.kind.ts
-          geo.module.ts
-          geo.types.ts
-          index.ts
-          shape.tool.ts
-        image/
-          ui/
-            image-crop-store.ts
-            image-crop-store.types.ts
-            image-crop.tsx
-            image-options.tsx
-          image-crop.ts
-          image-options.types.ts
-          image-padding.ts
-          image.defaults.ts
-          image.draw.ts
-          image.factory.ts
-          image.kind.ts
-          image.module.ts
-          image.types.ts
-          index.ts
-          pasted-image.ts
-        library/
-          library.module.ts
-        section/
-          ui/
-            sections-menu/
-              index.ts
-              sections-menu-items.tsx
-              sections-menu.tsx
-            section-options.tsx
-          board-sections.ts
-          index.ts
-          is-section.ts
-          section-members.ts
-          section-options.types.ts
-          section-title.ts
-          section.defaults.ts
-          section.draw.ts
-          section.factory.ts
-          section.kind.ts
-          section.module.ts
-          section.tool.ts
-          section.types.ts
-        sticker/
-          catalog/
-            common/
-              common-art.ts
-              common-stickers.ts
-              index.ts
-            emoji/
-              emoji-catalog.ts
-              emoji-catalog.types.ts
-              index.ts
-            seal/
-              index.ts
-              seal-face.ts
-              seal-face.types.ts
-              seal-parts.ts
-              seal-props.ts
-              seal-stickers.ts
-            index.ts
-            load-sticker.ts
-            sticker-art.ts
-            sticker-catalog.ts
-            sticker-catalog.types.ts
-            sticker-shapes.ts
-            sticker-svg.ts
-          ui/
-            sticker-picker/
-              custom-tab.tsx
-              emoji-tab.tsx
-              index.ts
-              sticker-cell.tsx
-              sticker-grid.tsx
-              sticker-panel.tsx
-              sticker-picker.types.ts
-              sticker-wheel.tsx
-              stickers-tab.tsx
-              use-emoji-sections.ts
-              use-pick-sticker.ts
-              use-sticker-lookup.ts
-              wheel-geometry.ts
-              wheel-motion.ts
-              wheel-slot.tsx
-              wheel-slots.ts
-            stores/
-              custom-stickers-store.ts
-              custom-stickers-store.types.ts
-              sticker-recents-store.ts
-              sticker-recents-store.types.ts
-          agent-stickers.ts
-          index.ts
-          sticker-asset.ts
-          sticker-options.types.ts
-          sticker.agent-tools.ts
-          sticker.defaults.ts
-          sticker.draw.ts
-          sticker.factory.ts
-          sticker.kind.ts
-          sticker.module.ts
-          sticker.tool.ts
-          sticker.types.ts
-        sticky/
-          ui/
-            sticky-options.tsx
-          index.ts
-          sticky-options.types.ts
-          sticky.defaults.ts
-          sticky.draw.ts
-          sticky.factory.ts
-          sticky.kind.ts
-          sticky.module.ts
-          sticky.tool.ts
-          sticky.types.ts
-        table/
-          ui/
-            table-cell-fills.tsx
-            table-line-actions.tsx
-            table-options.tsx
-          index.ts
-          is-table.ts
-          table-args.ts
-          table-edits.ts
-          table-line.gesture.ts
-          table-options.types.ts
-          table-parts.ts
-          table-reorder.gesture.ts
-          table-typography.ts
-          table-typography.types.ts
-          table.defaults.ts
-          table.draw.ts
-          table.factory.ts
-          table.handles.ts
-          table.handles.types.ts
-          table.interactions.ts
-          table.kind.ts
-          table.layout.ts
-          table.layout.types.ts
-          table.module.ts
-          table.tool.ts
-          table.types.ts
-        text/
-          index.ts
-          pasted-text.ts
-          text.defaults.ts
-          text.draw.ts
-          text.factory.ts
-          text.kind.ts
-          text.module.ts
-          text.tool.ts
-          text.types.ts
-        index.ts
-      ui/
-        agent/
-          active-board.ts
-          index.ts
-          use-agent-board.ts
-        components/
-          library/
-            index.ts
-            library-button.tsx
-            library-card.tsx
-            library-catalog.ts
-            library-command.ts
-            library-filter.ts
-            library-panel.tsx
-            library-points.ts
-            library-section.tsx
-            library-tool-items.ts
-            library.types.ts
-          shortcuts-list/
-            board-shortcut-rows.ts
-            board-shortcut-rows.types.ts
-            board-shortcuts-list.tsx
-            index.ts
-          source-editor/
-            completions/
-              completion-result.ts
-              dbml-completions.ts
-              dbml-completions.types.ts
-              defined-names.ts
-              entity-attribute-names.ts
-              er-completions.ts
-              index.ts
-              source-context.ts
-              source-context.types.ts
-            languages/
-              dbml-language.ts
-              er-language.ts
-              index.ts
-              stream-language.ts
-              stream-language.types.ts
-            index.ts
-            source-editor.tsx
-            source-editor.types.ts
-          board-toolbar.tsx
-          board-top-bar.tsx
-        file/
-          board-file-format.ts
-          import-figjam-file.ts
-          index.ts
-          use-board-loader.ts
-          use-board-saver.ts
-        modules/
-          board-editor-points.ts
-          board-modules.ts
-          board-modules.types.ts
-          index.ts
-        stores/
-          board-panel-store.ts
-          board-panel-store.types.ts
-        board-chrome.tsx
-        board-editor-page.tsx
-        board-editor.tsx
-        board-editor.types.ts
-        board-engine-context.ts
-        board-session.tsx
-        board-session.types.ts
-        index.ts
-      board-engine.types.ts
-      board-options.types.ts
-      board-points.ts
-      index.ts
-      palette.ts
-    design/
-      agent/
-        create-design-agent-tools.ts
-        design-access.ts
-        design-agent-instructions.ts
-        design-agent.types.ts
-        index.ts
-      figma/
-        convert/
-          convert-figma.ts
-          convert-geometry.ts
-          convert-node.ts
-          convert-node.types.ts
-          fig-auto-layout.ts
-          fig-blend-mode.ts
-          fig-effects.ts
-          fig-image-paint.ts
-          fig-network.ts
-          fig-node-base.ts
-          fig-paints.ts
-          fig-path.ts
-          fig-stroke.ts
-          fig-text-runs.ts
-          fig-text.ts
-          fig-typography.ts
-          page-guides.ts
-          resolve-instances.ts
-          resolve-instances.types.ts
-        convert-figma-file.ts
-        figma-design-document.ts
-        figma-import.types.ts
-        figma-import.worker.ts
-        index.ts
-        read-and-convert-figma.ts
-      file/
-        design-file.ts
-        design-migration.types.ts
-        index.ts
-        open-design-document.ts
-      modules/
-        assets/
-          ui/
-            assets-tab.tsx
-          assets.module.ts
-        auto-layout/
-          ui/
-            alignment-grid.tsx
-            alignment-grid.types.ts
-            auto-layout-fields.tsx
-            auto-layout-fields.types.ts
-            auto-layout-section.tsx
-            in-auto-layout.ts
-            sizing-section.tsx
-            use-auto-layout-commands.ts
-          add-auto-layout.ts
-          auto-layout.agent-tools.ts
-          auto-layout.module.ts
-          axis-items.ts
-          dirty-frames.ts
-          document-tree.ts
-          frame-space.ts
-          guess-layout.ts
-          index.ts
-          layout-drop.ts
-          layout-frame.ts
-          layout-frame.types.ts
-          layout-items.ts
-          layout-patch.ts
-          layout-tree.types.ts
-          relayout.ts
-        boolean/
-          ui/
-            boolean-icons.ts
-            boolean-section.tsx
-            boolean-toolbar-menu.tsx
-            use-boolean-commands.ts
-          boolean-nodes.ts
-          boolean-result.ts
-          boolean-result.types.ts
-          boolean.agent-tools.ts
-          boolean.constants.ts
-          boolean.factory.ts
-          boolean.kind.ts
-          boolean.module.ts
-          boolean.types.ts
-          flatten-nodes.ts
-          index.ts
-          operand-shape.ts
-          outline-strokes.ts
-        catalog/
-          brochure/
-            brochure.constants.ts
-            brochure.defaults.ts
-            brochure.factory.ts
-            brochure.kind.ts
-            brochure.types.ts
-            index.ts
-            is-brochure.ts
-          checks/
-            brochure-checks.ts
-            brochure-checks.types.ts
-            check-brochure.ts
-            effective-dpi.ts
-            index.ts
-            layout-issues.ts
-            picture-size.ts
-          export/
-            draw-frame.ts
-            draw-frame.types.ts
-            export-brochure.ts
-            export-brochure.types.ts
-            index.ts
-            printed-pages.ts
-            printed-pages.types.ts
-          mode/
-            apply-pick.ts
-            catalog-allowed-commands.ts
-            catalog-faded.ts
-            catalog-mode.constants.ts
-            catalog-mode.ts
-            catalog-pick.tool.ts
-            catalog.tool.ts
-            edit-catalog-page.ts
-            index.ts
-          model/
-            book-layout.ts
-            book-layout.types.ts
-            brochure-of.ts
-            brochure-pages.ts
-            brochure-pages.types.ts
-            design-brochure.ts
-            index.ts
-            page-frame.ts
-            page-span.ts
-            paper-size.ts
-            paper-size.types.ts
-            prune-brochure.ts
-            slot-edits.ts
-          ui/
-            brochure-tab/
-              blank-page-row.tsx
-              brochure-empty.tsx
-              brochure-options-list.tsx
-              brochure-page-row.tsx
-              brochure-page-row.types.ts
-              brochure-tab.tsx
-              page-thumbnail.tsx
-              spread-label.ts
-            canvas/
-              add-frame-bar.tsx
-              brochure-canvas-layer.tsx
-              brochure-overlay.tsx
-              canvas.types.ts
-              margin-guide.tsx
-              page-badge.tsx
-              pick-banner.tsx
-              pick-checkbox.tsx
-            hooks/
-              use-brochure-issues.ts
-              use-brochure.ts
-              use-brochure.types.ts
-              use-catalog-commands.ts
-              use-catalog-selection.ts
-              use-catalog-selection.types.ts
-              use-export-brochure.ts
-              use-frame-image.ts
-              use-frame-thumbnail.ts
-              use-hovered-frame.ts
-              use-picture-size.ts
-            preview/
-              book-page.tsx
-              book-spread.tsx
-              brochure-preview.tsx
-              flat-spread.tsx
-              page-turn.ts
-              preview-3d-toggle.tsx
-              preview-images.ts
-              preview-images.types.ts
-              preview-page.tsx
-              preview-size.ts
-              preview-stage.tsx
-              preview-strip.tsx
-              preview.types.ts
-              sheet-face.tsx
-              side-picture.tsx
-              turning-sheet.tsx
-              use-page-turn.ts
-              use-prefetch-pages.ts
-              use-preview-keys.ts
-            sidebar/
-              brochure-checks-section.tsx
-              brochure-settings-section.tsx
-              catalog-sidebar.tsx
-              frames-section.tsx
-              layout-fields.tsx
-              loose-frame-section.tsx
-              page-image-row.tsx
-              page-images-section.tsx
-              page-section.tsx
-              pick-section.tsx
-              setting-select.tsx
-              sidebar.types.ts
-              toggle.tsx
-            stores/
-              catalog-view-store.ts
-              catalog-view-store.types.ts
-              preview-store.ts
-              preview-store.types.ts
-            thumbnails/
-              frame-thumbnails.ts
-            toolbar/
-              catalog-mode-toolbar.tsx
-            option-letter.ts
-            page-actions.ts
-          catalog.agent-tools.ts
-          catalog.module.ts
-          index.ts
-        core/
-          agent/
-            create-nodes.agent-tool.ts
-            design-export.agent-tools.ts
-            design-file.agent-tools.ts
-            design-info.agent-tools.ts
-            design-read.agent-tools.ts
-            design-view.agent-tools.ts
-            index.ts
-            node-arrange.agent-tools.ts
-            node-edit.agent-tools.ts
-            node-spec-properties.ts
-            node-transform.agent-tools.ts
-            summarize-node.ts
-            summarize-node.types.ts
-          network/
-            index.ts
-            network-args.ts
-            network-chains.ts
-            network-curves.ts
-            network-edits.ts
-            network-faces.ts
-            network-geometry.ts
-            network-path.ts
-            network-placement.ts
-            network-shapes.ts
-            network-trace.ts
-            network.types.ts
-          node/
-            apply-node-spec.ts
-            blend-mode-args.ts
-            box-shape.kind.ts
-            check-node-patch.ts
-            child-host.kind.ts
-            child-host.types.ts
-            create-node-base.ts
-            create-node-base.types.ts
-            design-node.kind.ts
-            design-node.types.ts
-            draw-paints.ts
-            draw-paints.types.ts
-            effect-args.ts
-            effect-args.types.ts
-            flip-paints.ts
-            flip-placement.ts
-            flip.types.ts
-            gradient-args.ts
-            gradient-paint.ts
-            image-paint-args.ts
-            image-paint.ts
-            index.ts
-            is-design-node.ts
-            layer-name-of.ts
-            layer-opacity.ts
-            layout-args.ts
-            mask-args.ts
-            node-build.types.ts
-            node-geometry.ts
-            node-layout-args.ts
-            node-layout.ts
-            node-layout.types.ts
-            node-parent.ts
-            node-stroke.ts
-            node-style.ts
-            node.defaults.ts
-            number-args.ts
-            paint-args-color.ts
-            paint-args.ts
-            paint.types.ts
-            paste-gradient.ts
-            points-shape.kind.ts
-            scale-tiles.ts
-            shape-points.ts
-            solid-paint.ts
-            stroke-args.ts
-            stroke-args.types.ts
-            trace-box.ts
-          tools/
-            box-draw.tool.ts
-            index.ts
-            next-layer-name.ts
-            node-draw.tool.ts
-          transform/
-            flip-nodes.ts
-            index.ts
-          tree/
-            move/
-              index.ts
-              layer-move.types.ts
-              move-into.ts
-              move-layers.ts
-            align-target.ts
-            container-at.ts
-            design-tree.ts
-            design-tree.types.ts
-            host-select-target.ts
-            host-tree.ts
-            index.ts
-            layer-composite.ts
-            nearest-container.ts
-            order-keys.ts
-            parent-for.ts
-            prepare-tree-copies.ts
-            reparent.ts
-            resolve-tree.ts
-            ruler-frame.ts
-            sibling-masks.ts
-            top-frames.ts
-            tree-clips.ts
-            tree-members.ts
-            tree-slots.ts
-            tree-slots.types.ts
-            tree-undrawn.ts
-            wrap-nodes.ts
-          ui/
-            gradient-handles/
-              drag-grip.ts
-              end-handle.tsx
-              gradient-handles.tsx
-              gradient-handles.types.ts
-              index.ts
-            scale-sidebar/
-              anchor-picker.tsx
-              anchor-picker.types.ts
-              index.ts
-              scale-sidebar.tsx
-            sections/
-              stroke/
-                dash-pattern-field.tsx
-                dash-pattern-field.types.ts
-                index.ts
-                settings-row.tsx
-                settings-row.types.ts
-                stroke-dashes.ts
-                stroke-dashes.types.ts
-                stroke-icons.tsx
-                stroke-icons.types.ts
-                stroke-preview.tsx
-                stroke-preview.types.ts
-                stroke-section.tsx
-                stroke-settings.tsx
-                stroke-settings.types.ts
-                stroke-sides-menu.tsx
-                stroke-sides-menu.types.ts
-                stroke-sides.ts
-                stroke-sides.types.ts
-              appearance-section.tsx
-              arrange-buttons.tsx
-              arrange-buttons.types.ts
-              export-section.tsx
-              fill-section.tsx
-              index.ts
-              layout-section.tsx
-              paint-list-section.tsx
-              paint-list-section.types.ts
-              position-section.tsx
-              prototype-section.tsx
-              rotation-row.tsx
-              rotation-row.types.ts
-            use-flip-commands.ts
-            use-panel-commands.ts
-            use-start-mode.ts
-            use-view-commands.ts
-          core.module.ts
-          index.ts
-        effects/
-          renderers/
-            background-blur.renderer.ts
-            drop-shadow.renderer.ts
-            glass.renderer.ts
-            glass.shader.ts
-            index.ts
-            inner-shadow.renderer.ts
-            layer-blur.renderer.ts
-            local-uniforms.ts
-            noise-glsl.ts
-            noise.renderer.ts
-            noise.shader.ts
-            progressive-blur.shader.ts
-            texture.renderer.ts
-            texture.shader.ts
-          ui/
-            editors/
-              background-blur-editor.tsx
-              glass-editor.tsx
-              index.ts
-              layer-blur-editor.tsx
-              noise-editor.tsx
-              preset-row.tsx
-              preset-row.types.ts
-              shadow-editor.tsx
-              texture-editor.tsx
-            fields/
-              effect-choice.tsx
-              effect-color-field.tsx
-              effect-toggle.tsx
-              fields.types.ts
-              index.ts
-              scrub-field.tsx
-            handles/
-              blur-handles.tsx
-              effect-handles.tsx
-              glass-handles.tsx
-              handle-dot.tsx
-              handles.types.ts
-              index.ts
-              shadow-handles.tsx
-            add-effect-menu.tsx
-            effect-catalog.ts
-            effect-edit-store.ts
-            effect-edit-store.types.ts
-            effect-row.tsx
-            effects-section.tsx
-            effects-ui.types.ts
-            index.ts
-          composite-isolation.ts
-          create-effect.ts
-          design-effects.ts
-          effect-args.ts
-          effect-args.types.ts
-          effect-color.ts
-          effect-presets.ts
-          effect.defaults.ts
-          effect.types.ts
-          effects.module.ts
-          index.ts
-        ellipse/
-          ellipse.defaults.ts
-          ellipse.factory.ts
-          ellipse.kind.ts
-          ellipse.module.ts
-          ellipse.types.ts
-          index.ts
-        frame/
-          ui/
-            frame-preset-group.tsx
-            frame-preset-group.types.ts
-            frame-preset-menu.tsx
-            frame-preset-menu.types.ts
-            frame-presets-sidebar.tsx
-            frame-section.tsx
-            use-add-preset-frame.ts
-          create-preset-frame.ts
-          frame-label.ts
-          frame-options.types.ts
-          frame-presets.ts
-          frame.agent-tools.ts
-          frame.defaults.ts
-          frame.draw.ts
-          frame.factory.ts
-          frame.kind.ts
-          frame.module.ts
-          frame.types.ts
-          index.ts
-          is-frame.ts
-          preset-frame-rect.ts
-        group/
-          ui/
-            use-group-commands.ts
-          group-nodes.ts
-          group-tree.ts
-          group.agent-tools.ts
-          group.constants.ts
-          group.factory.ts
-          group.kind.ts
-          group.module.ts
-          group.types.ts
-          index.ts
-        image/
-          ui/
-            crop-toolbar-button.tsx
-            image-crop.tsx
-            image-fill-index.ts
-            use-crop-image-command.ts
-          image-rectangle.ts
-          image.agent-tools.ts
-          image.module.ts
-          index.ts
-        layers/
-          ui/
-            drag/
-              drop-indicator.tsx
-              drop-indicator.types.ts
-              layer-drop.ts
-              layer-drop.types.ts
-              use-layer-drag.ts
-            layer-icon.tsx
-            layer-icon.types.ts
-            layer-metrics.ts
-            layer-name.tsx
-            layer-name.types.ts
-            layer-row.tsx
-            layer-row.types.ts
-            layers-list.tsx
-            layers-list.types.ts
-            layers-search.tsx
-            layers-search.types.ts
-            layers-tab.tsx
-            matching-layers.ts
-            revealed-layers.ts
-            use-layer-tree.ts
-            visible-rows.ts
-            visible-rows.types.ts
-          layer-tree-of.ts
-          layer-tree-of.types.ts
-          layers.agent-tools.ts
-          layers.module.ts
-          move-layers.agent-tool.ts
-        line/
-          ui/
-            line-section.tsx
-          index.ts
-          line-end-drag.ts
-          line-geometry.ts
-          line.defaults.ts
-          line.draw.ts
-          line.factory.ts
-          line.kind.ts
-          line.module.ts
-          line.tool.ts
-          line.types.ts
-        mask/
-          ui/
-            mask-section-button.tsx
-            mask-section-button.types.ts
-            mask-section.tsx
-            mask-selection.ts
-            mask-toolbar-button.tsx
-            mask-type-options.ts
-            use-mask-commands.ts
-          design-masks.ts
-          index.ts
-          mask-edits.ts
-          mask-edits.types.ts
-          mask.agent-tools.ts
-          mask.module.ts
-        pages/
-          page/
-            index.ts
-            is-page.ts
-            page.constants.ts
-            page.factory.ts
-            page.kind.ts
-            page.types.ts
-          ui/
-            move-to-page.ts
-            page-actions.ts
-            page-menu.tsx
-            page-row.tsx
-            page-row.types.ts
-            page-section.tsx
-            pages-section.tsx
-            use-page-commands.ts
-            use-pages.ts
-          design-pages.ts
-          ensure-pages.ts
-          guides.agent-tools.ts
-          index.ts
-          page-guides.ts
-          page-scopes.ts
-          pages-of.ts
-          pages.agent-tools.ts
-          pages.module.ts
-          prune-frame-guides.ts
-        plugins-tab/
-          ui/
-            plugins-tab.tsx
-          plugins-tab.module.ts
-        polygon/
-          ui/
-            polygon-section.tsx
-          index.ts
-          polygon.defaults.ts
-          polygon.factory.ts
-          polygon.kind.ts
-          polygon.module.ts
-          polygon.types.ts
-        rectangle/
-          index.ts
-          rectangle-options.types.ts
-          rectangle.defaults.ts
-          rectangle.draw.ts
-          rectangle.factory.ts
-          rectangle.kind.ts
-          rectangle.module.ts
-          rectangle.types.ts
-        section/
-          index.ts
-          section-title.ts
-          section.defaults.ts
-          section.factory.ts
-          section.kind.ts
-          section.module.ts
-          section.types.ts
-        shader-effect/
-          ui/
-            glsl-language.ts
-            shader-editor.tsx
-            shader-param-field.tsx
-            shader-ui.types.ts
-          shader-compile.ts
-          shader-compile.types.ts
-          shader-effect.module.ts
-          shader-params.ts
-          shader-params.types.ts
-          shader-presets.ts
-          shader-template.ts
-          shader.renderer.ts
-        star/
-          ui/
-            star-section.tsx
-          index.ts
-          star.defaults.ts
-          star.factory.ts
-          star.kind.ts
-          star.module.ts
-          star.types.ts
-        text/
-          ui/
-            decoration-buttons.tsx
-            face-select.tsx
-            font-list.tsx
-            font-picker.tsx
-            font-picker.types.ts
-            range-color-field.tsx
-            typography-controls.types.ts
-            typography-section.tsx
-            typography-target.types.ts
-            use-font-families.ts
-            use-text-outlines.ts
-            use-typography-target.ts
-          index.ts
-          is-text.ts
-          retypeset.ts
-          text-args.ts
-          text-auto-resize.ts
-          text-layout.ts
-          text-options.types.ts
-          text-outline.ts
-          text-range-style.ts
-          text-rich-spec.ts
-          text-run-args.ts
-          text-spans.ts
-          text.agent-tools.ts
-          text.defaults.ts
-          text.factory.ts
-          text.kind.ts
-          text.module.ts
-          text.tool.ts
-          text.types.ts
-        vector/
-          edit/
-            edit-vector.ts
-            index.ts
-            pen.tool.ts
-            vector-bend.tool.ts
-            vector-bucket.tool.ts
-            vector-cut.tool.ts
-            vector-edit-session.ts
-            vector-edit.tool.ts
-            vector-edit.types.ts
-            vector-move.tool.ts
-            vector-overlay.ts
-            vector-tools.ts
-            vector-world-point.ts
-          ui/
-            vector-edit-toolbar.tsx
-          index.ts
-          pencil.tool.ts
-          shape-to-vector.ts
-          vector.agent-tools.ts
-          vector.defaults.ts
-          vector.factory.ts
-          vector.kind.ts
-          vector.module.ts
-          vector.types.ts
-        index.ts
-      ui/
-        agent/
-          active-design.ts
-          index.ts
-          use-agent-design.ts
-        components/
-          left-panel/
-            index.ts
-            left-panel.tsx
-            use-left-tabs.ts
-            use-left-tabs.types.ts
-          paint-picker/
-            color-controls.tsx
-            color-swatches.tsx
-            gradient-editor.tsx
-            gradient-preview.ts
-            gradient-stop-bar.tsx
-            gradient-stop-row.tsx
-            gradient-swatches.tsx
-            gradient-toolbar.tsx
-            gradient-toolbar.types.ts
-            image-editor.tsx
-            image-preview-style.ts
-            index.ts
-            page-colors.ts
-            page-gradients.ts
-            paint-picker.tsx
-            paint-picker.types.ts
-            paint-tabs-data.ts
-            paint-tabs.tsx
-            solid-editor.tsx
-            stop-ease-select.tsx
-            stop-ease-select.types.ts
-            stop-ramp.ts
-          panel/
-            blend-mode-labels.ts
-            blend-mode-select.tsx
-            blend-mode-select.types.ts
-            color-inputs.types.ts
-            field-box.tsx
-            field-box.types.ts
-            hex-input.tsx
-            index.ts
-            node-checkbox.tsx
-            node-fields.types.ts
-            node-number-field.tsx
-            node-option-buttons.tsx
-            node-select-field.tsx
-            number-field.tsx
-            number-field.types.ts
-            paint-field.tsx
-            paint-field.types.ts
-            paint-swatch.tsx
-            panel-section.tsx
-            panel-section.types.ts
-            parse-number.ts
-            percent-input.tsx
-            property-grid.tsx
-            property-grid.types.ts
-            shared-value.ts
-          properties-panel/
-            index.ts
-            properties-panel.tsx
-            property-sections.tsx
-            property-sections.types.ts
-            show-properties-button.tsx
-          rail/
-            design-main-menu.tsx
-            design-rail.tsx
-            index.ts
-            main-menu-entry.tsx
-            main-menu-label.ts
-            main-menu-sections.ts
-            main-menu-submenu.tsx
-            main-menu.types.ts
-        file/
-          design-file-format.ts
-          import-figma-file.ts
-          index.ts
-          use-design-loader.ts
-        hooks/
-          index.ts
-          use-canvas-inset.ts
-          use-edit-nodes.ts
-          use-edit-nodes.types.ts
-          use-keep-canvas-in-place.ts
-          use-keep-canvas-in-place.types.ts
-          use-move-nodes.ts
-          use-scene-elements.ts
-          use-selected-nodes.ts
-        modules/
-          define-effect-type.ts
-          design-editor-points.ts
-          design-editor-points.types.ts
-          design-modules.ts
-          design-modules.types.ts
-          index.ts
-          section-filters.ts
-          tabs-for-mode.ts
-        stores/
-          design-mode-store.ts
-          design-mode-store.types.ts
-          design-panel-store.ts
-          design-panel-store.types.ts
-          design-view-store.ts
-          design-view-store.types.ts
-          gradient-edit-store.ts
-          gradient-edit-store.types.ts
-          image-crop-store.ts
-          image-crop-store.types.ts
-          paint-recents-store.ts
-          paint-recents-store.types.ts
-        design-chrome.tsx
-        design-editor-page.tsx
-        design-editor.tsx
-        design-editor.types.ts
-        design-engine-context.ts
-        design-layout.ts
-        design-layout.types.ts
-        design-session.tsx
-        design-session.types.ts
-        index.ts
-      design-engine.types.ts
-      design-options.types.ts
-      design-points.ts
-      index.ts
-  shared/
-    about/
-      about-block.tsx
-      about-content.ts
-      about-content.types.ts
-      about-dialog.tsx
-      about-dialog.types.ts
-      about-store.ts
-      about-store.types.ts
-      index.ts
-      link-button.tsx
-      open-link.ts
-      use-app-info.ts
-      version-details.ts
-    agent-server/
-      agent-tools-dialog/
-        agent-tool-row.tsx
-        agent-tool-section.tsx
-        agent-tools-dialog.tsx
-        agent-tools-dialog.types.ts
-        agent-tools-list.tsx
-        index.ts
-      connect-agent-dialog/
-        agent-access-notice.tsx
-        agent-access-notice.types.ts
-        agent-client-card.tsx
-        agent-client-grid.tsx
-        agent-client-setup.tsx
-        back-button.tsx
-        connect-agent-body.tsx
-        connect-agent-dialog.tsx
-        connect-agent-dialog.types.ts
-        index.ts
-        manual-setup.tsx
-        no-url.ts
-      agent-client-icon.tsx
-      agent-client-icon.types.ts
-      agent-clients.ts
-      agent-clients.types.ts
-      agent-server-menu.tsx
-      agent-server-menu.types.ts
-      agent-server-panel.tsx
-      agent-server-status-text.ts
-      agent-tool-catalog.ts
-      agent-tool-catalog.types.ts
-      copy-agent-setup.ts
-      copy-row.tsx
-      copy-row.types.ts
-      identify-agent.ts
-      identify-agent.types.ts
-      index.ts
-      use-agent-server-status.ts
-      use-agent-server-status.types.ts
-    app-updates/
-      app-updates.tsx
-      check-updates-button.tsx
-      check-updates-button.types.ts
-      index.ts
-      release-notes.ts
-      update-notice.tsx
-    collaborators/
-      collaborator-avatar.tsx
-      collaborator-avatar.types.ts
-      collaborator-list.tsx
-      collaborator-list.types.ts
-      collaborator-stack.tsx
-      collaborator-stack.types.ts
-      collaborator-status-text.ts
-      index.ts
-      use-collaborators.ts
-      use-follow-toggle.ts
-      use-follow-toggle.types.ts
-    core/
-      app-links/
-        app-links.types.ts
-        index.ts
-        parse-app-link.ts
-      app-updates/
-        app-updater.types.ts
-        index.ts
-      fonts/
-        font-variants.ts
-        font.types.ts
-        glyph-outliner.types.ts
-        google-fonts.ts
-        index.ts
-      links/
-        fetch-link-preview.ts
-        html-meta.ts
-        index.ts
-        links.types.ts
-        web-url.ts
-        youtube.ts
-      mcp/
-        handle-mcp-message.ts
-        handle-mcp-message.types.ts
-        index.ts
-        json-rpc.ts
-        mcp.types.ts
-        tool-image.ts
-      modules/
-        define-module.ts
-        define-point.ts
-        index.ts
-        module-host.ts
-        modules.types.ts
-        sort-modules.ts
-      plugins/
-        index.ts
-        plugin-api-version.ts
-        plugin-storage.types.ts
-        plugin.types.ts
-        read-plugin-manifest.ts
-        safe-relative-path.ts
-      presence/
-        empty-state.ts
-        index.ts
-        permissions.ts
-        presence.types.ts
-        random-name.ts
-      share/
-        protocol/
-          index.ts
-          share-protocol.ts
-          share-protocol.types.ts
-        index.ts
-        share-link.ts
-        share-link.types.ts
-        share-transport.types.ts
-      agent-channel.types.ts
-      app-info.types.ts
-      app-lifecycle.types.ts
-      app-repository.ts
-      clipboard.types.ts
-      file-drop.types.ts
-      file-open-requests.types.ts
-      files.ts
-      files.types.ts
-      ids.ts
-      index.ts
-      keyboard.ts
-      keyboard.types.ts
-      sticker-library.types.ts
-      storage.types.ts
-    profile/
-      index.ts
-      name-prompt.tsx
-    stores/
-      agent-presence-store.ts
-      agent-presence-store.types.ts
-      agent-server-store.ts
-      agent-server-store.types.ts
-      autosave-store.ts
-      autosave-store.types.ts
-      built-in-relay.ts
-      chrome-store.ts
-      chrome-store.types.ts
-      collaboration-store.ts
-      collaboration-store.types.ts
-      collaborators-store.ts
-      collaborators-store.types.ts
-      file-drop-store.ts
-      file-drop-store.types.ts
-      loading-store.ts
-      loading-store.types.ts
-      mock-recent-files.ts
-      plugins-store.ts
-      plugins-store.types.ts
-      recent-files-store.ts
-      recent-files-store.types.ts
-      relay-status-store.ts
-      relay-status-store.types.ts
-      snapping-store.ts
-      snapping-store.types.ts
-      theme-store.ts
-      theme-store.types.ts
-      thumbnail-store.ts
-      thumbnail-store.types.ts
-      toast-store.ts
-      toast-store.types.ts
-      unsaved-changes-store.ts
-      unsaved-changes-store.types.ts
-      update-store.ts
-      update-store.types.ts
-    ui/
-      brand/
-        hopping-seal.tsx
-        hopping-seal.types.ts
-        patting-seal.tsx
-        patting-seal.types.ts
-        seal-logo.tsx
-        seal-logo.types.ts
-        wordmark.tsx
-        wordmark.types.ts
-      components/
-        code-editor/
-          code-editor-theme.ts
-          code-editor.tsx
-          code-editor.types.ts
-          editor-basics.ts
-          error-line.ts
-          index.ts
-          range-highlight.ts
-        loading-screen/
-          global-loader.tsx
-          index.ts
-          loading-screen.tsx
-          loading-screen.types.ts
-        ui/
-          badge.tsx
-          button.tsx
-          card.tsx
-          context-menu.tsx
-          dialog.tsx
-          dropdown-menu.tsx
-          input.tsx
-          kbd.tsx
-          popover.tsx
-          radio-group.tsx
-          select.tsx
-          separator.tsx
-          switch.tsx
-          tabs.tsx
-          textarea.tsx
-          toast.tsx
-          tooltip.tsx
-        file-type-icon.tsx
-        file-type-icon.types.ts
-        theme-toggle.tsx
-        theme-toggle.types.ts
-        toaster.tsx
-      hooks/
-        use-file-drag-over.ts
-        use-hotkey.ts
-        use-now.ts
-        use-virtual-list.ts
-        use-virtual-list.types.ts
-      layout/
-        app-header.tsx
-        app-header.types.ts
-        page-container.tsx
-        page-container.types.ts
-      lib/
-        css-color.ts
-        utils.ts
-      styles/
-        tokens.css
-  vite-env.d.ts
+app/
+mcp/
+agent-call-host.ts
+agent-call-label.ts
+agent-host.ts
+agent-plugins.ts
+agent-presence-key.ts
+agent-presence-source.ts
+agent-presence-source.types.ts
+agent-server-definition.ts
+agent-tool-catalog.ts
+agent-undo-notes.ts
+agent-undo-notes.types.ts
+collaborator-state.ts
+index.ts
+presence-file.types.ts
+track-agent-call.ts
+track-agent-call.types.ts
+use-agent-server.ts
+open-requests/
+confirm-leave.ts
+index.ts
+open-app-links.ts
+open-paths.ts
+open-paths.types.ts
+open-requests.tsx
+use-open-requests.ts
+plugins/
+create-plugin-api.ts
+import-plugin.ts
+index.ts
+load-plugins.ts
+plugin-api.types.ts
+plugin-modules.types.ts
+strict-api.ts
+agent-server.tsx
+App.tsx
+main.tsx
+providers.tsx
+providers.types.ts
+router.tsx
+styles.css
+theme-sync.tsx
+canvas/
+agent/
+agent-file.types.ts
+agent-patches.ts
+agent-patches.types.ts
+agent-tool-group.types.ts
+agent-tool.types.ts
+arrange-tools.ts
+arrange-tools.types.ts
+as-undo-step.ts
+build-element.ts
+collect-agent-tools.ts
+element-patch.ts
+element-summary.ts
+element-summary.types.ts
+export-path.ts
+index.ts
+resize-patch.ts
+scale-tool.ts
+style-tool.ts
+tool-args.ts
+arrange/
+align.ts
+arrange-items.ts
+arrange.types.ts
+distribute.ts
+index.ts
+nudge.ts
+reading-order.ts
+scale.ts
+scale.types.ts
+tidy-up.ts
+clipboard/
+clipboard-assets.ts
+clipboard-payload.ts
+clipboard-payload.types.ts
+clone-elements.ts
+clone-elements.types.ts
+drop-files.ts
+drop-files.types.ts
+element-clipboard.ts
+element-clipboard.types.ts
+index.ts
+insert-copies.ts
+insert-copies.types.ts
+memory-clipboard.ts
+paste-external.ts
+paste-external.types.ts
+paste-offset.ts
+remap-ids.ts
+style-clipboard.ts
+document/
+actor-document.ts
+actor-document.types.ts
+canvas-document.ts
+canvas-document.types.ts
+document-feed.ts
+document-history.ts
+document-history.types.ts
+index.ts
+effects/
+blend-mode.types.ts
+blend-modes.ts
+effect.types.ts
+index.ts
+elements/
+bases/
+box.kind.ts
+index.ts
+line.kind.ts
+line.kind.types.ts
+text-box.kind.ts
+text-box.kind.types.ts
+element-bounds.ts
+element-scale.ts
+element-scale.types.ts
+element.defaults.ts
+element.factory.ts
+element.info.ts
+element.info.types.ts
+element.interaction.types.ts
+element.kind.ts
+element.kind.types.ts
+element.kinds.ts
+element.types.ts
+index.ts
+reorder.ts
+reorder.types.ts
+z-order.ts
+export/
+canvas-blob.ts
+encode-csv.ts
+encode-pdf.ts
+encode-pdf.types.ts
+export-elements.ts
+export.types.ts
+index.ts
+thumbnail.ts
+thumbnail.types.ts
+figma/
+container/
+decompress-chunk.ts
+fig-container.types.ts
+index.ts
+read-fig-file.ts
+kiwi/
+byte-reader.ts
+index.ts
+kiwi-decode.ts
+kiwi-schema.ts
+kiwi.types.ts
+nodes/
+fig-color.ts
+fig-import-context.ts
+fig-matrix.ts
+fig-node.types.ts
+fig-styles.ts
+fig-tree.ts
+fig-tree.types.ts
+import-warnings.ts
+index.ts
+worker/
+figma-worker.types.ts
+index.ts
+run-figma-worker.ts
+serve-figma-worker.ts
+figma-progress.types.ts
+index.ts
+file/
+canvas-file.ts
+index.ts
+gradient/
+affine.ts
+css-color.ts
+gradient-color.ts
+gradient-color.types.ts
+gradient-css.ts
+gradient-key.ts
+gradient-options.ts
+gradient-param.ts
+gradient-ramp.ts
+gradient-stops.ts
+gradient-transforms.ts
+gradient.types.ts
+index.ts
+parse-css-gradient.ts
+handles/
+handles.types.ts
+index.ts
+resize-handles.ts
+resize-target.ts
+rotate-cursor.ts
+rotate-zone.ts
+image/
+image-transform.ts
+image-transform.types.ts
+index.ts
+input/
+base-command-labels.ts
+base-keybindings.ts
+canvas-pointer.ts
+edge-auto-pan.ts
+index.ts
+keyboard-input.ts
+keyboard-input.types.ts
+keymap.ts
+keymap.types.ts
+pointer-input.ts
+pointer-input.types.ts
+wheel-input.ts
+links/
+canvas-links.types.ts
+index.ts
+modes/
+default-mode.ts
+index.ts
+mode.types.ts
+modules/
+canvas-points.types.ts
+compose-product.ts
+create-canvas-points.ts
+index.ts
+path/
+bezier.ts
+boolean-paths.ts
+box-sides-stroke.ts
+curve-extent.ts
+dash-path.ts
+flatten-path.ts
+index.ts
+outline-stroke.ts
+path-bounds.ts
+path-hit.ts
+path-precision.ts
+path-segments.ts
+path.types.ts
+rebuild-contour.ts
+rect-path.ts
+source-tags.ts
+stroke-area.ts
+trace-path.ts
+transform-path.ts
+tree-to-shape.ts
+render/
+effects/
+composite-shader.ts
+effect-glsl.ts
+effect-pass.ts
+effect-pass.types.ts
+effect-renderer.types.ts
+effect-shader.ts
+effect-shader.types.ts
+effect-shaders.ts
+effect-stack-filter.ts
+effect-stack-filter.types.ts
+effects-outset.ts
+index.ts
+layers/
+create-grid-layer.ts
+dot-grid-layer.ts
+draft-layer.ts
+effect-scope-view.ts
+element-layer.ts
+grid-layer.types.ts
+guide-layer.ts
+insert-ordered.ts
+link-layer.ts
+mask-scope-view.ts
+mask-source.ts
+ordered-child.types.ts
+overlay-layer.ts
+pixel-grid-layer.ts
+ruler-guide-layer.ts
+ruler-guide-layer.types.ts
+size-label-layer.ts
+snap-layer.ts
+canvas-theme.types.ts
+clip-bounds.ts
+clip-covers.ts
+element-view.ts
+element-view.types.ts
+entrance.ts
+fit-image.ts
+gradient-texture.ts
+image-cache.ts
+image-cache.types.ts
+image-matrix.ts
+index.ts
+layer-placement.ts
+layer-placement.types.ts
+overlay-state.ts
+overlay-state.types.ts
+paint-stack.ts
+paint-stack.types.ts
+pixi-blend-mode.ts
+renderer.ts
+renderer.types.ts
+rich-text-sprite.ts
+snapshot.ts
+snapshot.types.ts
+svg-image.ts
+text-leading.ts
+text-mask.ts
+text-resolution.ts
+text-style.ts
+text-style.types.ts
+ruler-guides/
+index.ts
+place-guides.ts
+ruler-band.ts
+ruler-guide-key.ts
+ruler-guides.types.ts
+scope-guides.ts
+screen-axis.ts
+services/
+define-service.ts
+index.ts
+service-cache.ts
+service.types.ts
+share/
+host-peers.ts
+host-peers.types.ts
+index.ts
+share-guest.ts
+share-guest.types.ts
+share-host.ts
+share-host.types.ts
+share-origins.ts
+sync-messages.ts
+snapping/
+equal-spacing.ts
+index.ts
+measure.ts
+snap-edges.ts
+snap-lines.ts
+snap.types.ts
+snapper.ts
+text/
+rich/
+draw-rich-text.ts
+font-metrics.ts
+layout-rich-text.ts
+measure-span.ts
+rich-caret.ts
+rich-text-ink.ts
+rich-text.types.ts
+text-run.types.ts
+text-runs.ts
+rich-editor/
+pointer-select.ts
+pointer-select.types.ts
+rich-editor-overlay.ts
+rich-editor.types.ts
+rich-text-session.ts
+session-history.ts
+style-shortcut.ts
+textarea-selection.ts
+font-tracker.ts
+index.ts
+load-fonts.ts
+text-editor-style.ts
+text-editor.ts
+text-editor.types.ts
+text-font.ts
+text-font.types.ts
+text-metrics.ts
+tools/
+create-tools.ts
+drag-threshold.ts
+freehand-tool.ts
+guide-drag.ts
+guide-drag.types.ts
+hand-tool.ts
+index.ts
+resize-gesture.ts
+rotate-gesture.ts
+scale-tool.ts
+select-and-edit.ts
+select-tool.ts
+select-tool.types.ts
+tool.types.ts
+utils/
+base64.ts
+debounce.ts
+debounce.types.ts
+delay.ts
+disposables.ts
+disposables.types.ts
+emitter.ts
+frame-scheduler.ts
+identity-key.ts
+index.ts
+lru-cache.ts
+math.ts
+reduced-motion.ts
+registry.ts
+shallow-equal.ts
+store.ts
+workspace/
+operations/
+arrange-elements.ts
+delete-elements.ts
+elements-bounds.ts
+export-host.ts
+export-host.types.ts
+index.ts
+lock-elements.ts
+members.ts
+move-elements.ts
+reorder-elements.ts
+style-elements.ts
+transform-elements.ts
+workspace-parts.types.ts
+actor-viewport.ts
+actor-workspace.ts
+actor-workspace.types.ts
+index.ts
+scene-hooks.ts
+workspace.types.ts
+camera-glide.ts
+camera-glide.types.ts
+camera.ts
+camera.types.ts
+canvas-engine.ts
+canvas-engine.types.ts
+canvas-product.types.ts
+canvas-view.ts
+canvas-view.types.ts
+commands.ts
+commands.types.ts
+engine-loading.types.ts
+engine-state.types.ts
+find-interaction.ts
+geometry.ts
+geometry.types.ts
+index.ts
+rotation.ts
+scene.ts
+scene.types.ts
+selection.ts
+smooth-points.ts
+canvas-ui/
+agent/
+active-file.ts
+active-file.types.ts
+index.ts
+use-agent-file.ts
+chrome/
+index.ts
+use-hide-ui-command.ts
+use-ui-hidden.ts
+components/
+canvas-loading-overlay/
+canvas-loading-overlay.tsx
+canvas-loading-overlay.types.ts
+index.ts
+collaborators/
+collaborator-cursor.tsx
+collaborator-cursor.types.ts
+collaborator-cursors.tsx
+collaborator-follow.tsx
+collaborator-layer.tsx
+collaborator-selections.tsx
+collaborator-undo-button.tsx
+collaborator-undo-button.types.ts
+follow-bar.tsx
+follow-bar.types.ts
+follow-frame.tsx
+follow-frame.types.ts
+index.ts
+to-screen.ts
+use-collaborator-history.ts
+use-collaborator-history.types.ts
+use-collaborators-here.ts
+use-eased-point.ts
+use-follow-collaborator.ts
+use-follow-collaborator.types.ts
+use-view-version.ts
+color/
+color-constants.ts
+color-math.ts
+color-slider.tsx
+color.types.ts
+eyedropper-button.tsx
+index.ts
+saturation-area.tsx
+use-pointer-drag.ts
+use-pointer-drag.types.ts
+commit-field/
+commit-field-props.ts
+commit-field-props.types.ts
+commit-input.tsx
+commit-input.types.ts
+commit-textarea.tsx
+index.ts
+use-commit-field.ts
+use-commit-field.types.ts
+context-menu/
+canvas-context-menu.tsx
+canvas-context-menu.types.ts
+context-menu-allowed.ts
+context-menu-category-entry.tsx
+context-menu-enabled.ts
+context-menu-entry.tsx
+context-menu-entry.types.ts
+context-menu-groups.tsx
+context-menu-items.ts
+context-menu-items.types.ts
+context-menu-submenu-entry.tsx
+index.ts
+menu-fits-screen.ts
+export-dialog/
+export-dialog.tsx
+export-dialog.types.ts
+export-field.tsx
+export-formats.ts
+index.ts
+image-crop/
+crop-drag.ts
+crop-edges.ts
+image-crop-overlay.tsx
+image-crop-overlay.types.ts
+index.ts
+rulers/
+draw-ruler.ts
+index.ts
+read-ruler-colors.ts
+ruler-step.ts
+ruler-strip.tsx
+rulers.tsx
+rulers.types.ts
+use-ruler-version.ts
+color-palette.tsx
+color-palette.types.ts
+color-picker.tsx
+color-picker.types.ts
+color-swatch.tsx
+color-swatch.types.ts
+custom-color-swatch.tsx
+custom-color-swatch.types.ts
+floating-panel.tsx
+floating-panel.types.ts
+history-controls.tsx
+normalize-hex.ts
+option-button.tsx
+option-button.types.ts
+tool-button.tsx
+tool-button.types.ts
+zoom-controls.tsx
+zoom-menu.tsx
+zoom-menu.types.ts
+file/
+canvas-file-context.ts
+canvas-file.types.ts
+document-info-popover.tsx
+document-info-popover.types.ts
+import-steps.ts
+index.ts
+save-indicator.tsx
+use-canvas-autosave.ts
+use-canvas-file-loader.ts
+use-canvas-file-saver.ts
+use-canvas-thumbnail.ts
+modules/
+create-editor-points.ts
+editor-modules-context.ts
+editor-points.types.ts
+extension-icon-view.tsx
+index.ts
+mode-switcher.tsx
+module-session.tsx
+module-slot.tsx
+module-tool-options.tsx
+module-toolbar.tsx
+tool-entries.ts
+tool-menu-button.tsx
+use-editor-mode.ts
+overlay/
+box-space.ts
+index.ts
+overlay.types.ts
+use-view-mapping.ts
+share/
+share-dialog/
+guest-row.tsx
+hosting-panel.tsx
+index.ts
+knock-card.tsx
+live-badge.tsx
+live-session-layer.tsx
+peer-path-label.tsx
+person-badge.tsx
+relay-note.tsx
+share-button.tsx
+share-dialog.tsx
+share-dialog.types.ts
+share-knocks.tsx
+start-sharing.tsx
+use-peer-path.ts
+hold-guest.ts
+hold-guest.types.ts
+host-session.ts
+host-session.types.ts
+index.ts
+room-presence.ts
+room-presence.types.ts
+start-host.ts
+use-hosted-file.ts
+use-live-guest-file.ts
+use-room-presence.ts
+use-store-state.ts
+use-store-state.types.ts
+canvas-theme.ts
+engine-context.ts
+index.ts
+use-asset-url.ts
+use-canvas-engine.ts
+use-canvas-engine.types.ts
+use-canvas-file-drop.ts
+use-copy-as-png.ts
+use-document-meta.ts
+use-engine-element.ts
+use-service.ts
+use-snapping.ts
+pages/
+design-system/
+sections/
+buttons-section.tsx
+buttons-section.types.ts
+components-section.tsx
+logo-section.tsx
+palette-section.tsx
+section-layout.tsx
+section-layout.types.ts
+semantic-tokens-section.tsx
+shape-section.tsx
+typography-section.tsx
+design-system-page.tsx
+tokens.ts
+home/
+components/
+create-card.tsx
+create-card.types.ts
+create-section.tsx
+create-section.types.ts
+drop-overlay.tsx
+empty-state.tsx
+file-actions-menu.tsx
+file-actions-menu.types.ts
+file-card.tsx
+file-card.types.ts
+file-context-menu.tsx
+file-context-menu.types.ts
+join-session-button.tsx
+missing-file-popover.tsx
+missing-file-popover.types.ts
+recent-files-toolbar.tsx
+recent-files-toolbar.types.ts
+recent-files.tsx
+recent-files.types.ts
+top-bar.tsx
+filter-recent-files.ts
+filter-recent-files.types.ts
+format-relative-time.ts
+home-page.tsx
+home-shortcuts.ts
+use-file-actions.ts
+use-file-actions.types.ts
+use-file-thumbnail.ts
+use-open-file.ts
+join/
+join-message.tsx
+join-name-form.tsx
+join-page.tsx
+join-page.types.ts
+join-session.tsx
+reconnecting-banner.tsx
+use-missing-plugins-notice.ts
+settings/
+components/
+settings-section.tsx
+settings-section.types.ts
+sections/
+collaboration/
+collaboration-section.tsx
+index.ts
+relay-down-note.tsx
+relay-server-settings.tsx
+relay-status.tsx
+relay-test-row.tsx
+relay-test.types.ts
+use-relay-test.ts
+plugins/
+index.ts
+plugin-row.tsx
+plugin-trust-dialog.tsx
+plugins-section.tsx
+plugins.types.ts
+use-plugin-actions.ts
+about-section.tsx
+agents-section.tsx
+dedication-card.tsx
+files-section.tsx
+shortcuts-section.tsx
+settings-page.tsx
+platform/
+fonts/
+font-cache.ts
+font-cache.types.ts
+font-library.ts
+glyph-outliner.ts
+glyph-outliner.types.ts
+google-fonts.ts
+index.ts
+installed-fonts.ts
+agent-channel.ts
+app-info.ts
+app-lifecycle.ts
+app-links.ts
+app-updater.ts
+browser-clipboard.ts
+clipboard.ts
+copy-folder.ts
+dbml-file.ts
+export-file.ts
+export-file.types.ts
+file-dialog.ts
+file-open-requests.ts
+http.ts
+image-file.ts
+image-file.types.ts
+index.ts
+open-external.ts
+plugin-folder-dialog.ts
+plugin-storage.ts
+read-local-file.ts
+reveal-file.ts
+rgba-to-png.ts
+share-transport.ts
+sticker-file.ts
+sticker-library.ts
+storage.ts
+tauri-agent-channel.ts
+tauri-app-lifecycle.ts
+tauri-app-links.ts
+tauri-app-updater.ts
+tauri-clipboard.ts
+tauri-file-open-requests.ts
+tauri-plugin-storage.ts
+tauri-plugin-storage.types.ts
+tauri-share-transport.ts
+tauri-share-transport.types.ts
+tauri-sticker-library.ts
+tauri-sticker-library.types.ts
+tauri-storage.ts
+tauri-storage.types.ts
+write-export-file.ts
+products/
+board/
+agent/
+agent-instructions.ts
+apply-result.ts
+arrange-tools.ts
+board-access.ts
+board-agent.types.ts
+board-info-tools.ts
+board-read-tools.ts
+create-agent-tools.ts
+create-shapes-tool.ts
+export-tools.ts
+file-tools.ts
+index.ts
+plugin-tools.ts
+shape-edit-tools.ts
+view-tools.ts
+figjam/
+convert/
+convert-connector.ts
+convert-figjam-node.ts
+convert-figjam-node.types.ts
+convert-figjam.ts
+convert-plain-shape.ts
+convert-section.ts
+convert-shape.ts
+convert-sticky.ts
+convert-stroke.ts
+convert-text.ts
+convert-widget.ts
+fig-paint-values.ts
+figjam-context.ts
+figjam-output.ts
+generated-parts.ts
+node-rect.ts
+wrapped-text.ts
+convert-figjam-file.ts
+figjam-board-document.ts
+figjam-import.types.ts
+figjam-import.worker.ts
+index.ts
+read-and-convert-figjam.ts
+file/
+board-file.ts
+board-migration.types.ts
+index.ts
+open-board-document.ts
+modules/
+connector/
+ui/
+connector-option-items.ts
+connector-option-items.types.ts
+connector-options.tsx
+connectable-at.ts
+connector-drag.ts
+connector-drag.types.ts
+connector-endpoints.ts
+connector-options.types.ts
+connector-spec.ts
+connector.defaults.ts
+connector.draw.ts
+connector.factory.ts
+connector.kind.ts
+connector.module.ts
+connector.tool.ts
+connector.types.ts
+detach-connectors.ts
+elbow-route.ts
+index.ts
+is-connector.ts
+prepare-connector-copies.ts
+quick-connect.kind.ts
+resolve-connectors.ts
+sides.ts
+core/
+core.module.ts
+db/
+card/
+db-card.defaults.ts
+db-card.draw.ts
+db-card.kind.ts
+db-card.layout.ts
+db-card.types.ts
+index.ts
+enum/
+db-enum.draw.ts
+db-enum.factory.ts
+db-enum.kind.ts
+db-enum.layout.ts
+db-enum.types.ts
+index.ts
+is-db-enum.ts
+links/
+db-links.ts
+index.ts
+relations.ts
+relations.types.ts
+schema/
+dbml/
+dbml-error.ts
+dbml-format.ts
+index.ts
+parse-enum.ts
+parse-indexes.ts
+parse-name.ts
+parse-settings.ts
+parse-sticky-note.ts
+parse-table.ts
+parser.ts
+parser.types.ts
+serialize-enum.ts
+serialize-note.ts
+serialize-table.ts
+serializer.ts
+serializer.types.ts
+token-cursor.ts
+tokenizer.ts
+tokenizer.types.ts
+layout/
+assign-layers.ts
+card-footprint.ts
+index.ts
+layout-group.ts
+order-layers.ts
+place-layers.ts
+schema-graph.ts
+schema-graph.types.ts
+tidy-schema.ts
+add-missing-tables.ts
+apply-plan.ts
+column-types.ts
+column-types.types.ts
+db-schema.service.ts
+db-schema.ts
+db-schema.types.ts
+enum-edits.ts
+index.ts
+pair-by-name.ts
+patch-db-element.ts
+place-new-shapes.ts
+prepare-db-copies.ts
+prune-refs.ts
+reconcile-enums.ts
+reconcile-error.ts
+reconcile-notes.ts
+reconcile-tables.ts
+reconcile.ts
+reconcile.types.ts
+schema-dbml.ts
+schema-queries.ts
+schema-shapes.ts
+table-edits.ts
+table/
+column-connect.gesture.ts
+column-connect.gesture.types.ts
+column-type.ts
+column-type.types.ts
+db-table.draw.ts
+db-table.factory.ts
+db-table.interactions.ts
+db-table.kind.ts
+db-table.layout.ts
+db-table.layout.types.ts
+db-table.types.ts
+draw-relation-path.ts
+index.ts
+is-db-table.ts
+note-bubble.draw.ts
+note-bubble.layout.ts
+note-bubble.layout.types.ts
+relation-path.ts
+relation-path.types.ts
+type-aliases.ts
+ui/
+db-panel/
+column-details.tsx
+column-details.types.ts
+column-flags.tsx
+column-flags.types.ts
+column-row.tsx
+column-row.types.ts
+column-type-picker.tsx
+column-type-picker.types.ts
+db-panel.tsx
+dbml-editor.tsx
+dbml-editor.types.ts
+enum-editor.tsx
+enum-editor.types.ts
+enum-usages.tsx
+enum-usages.types.ts
+enum-value-row.tsx
+enum-value-row.types.ts
+enum-visual-editor.tsx
+enum-visual-editor.types.ts
+flag-toggle.tsx
+flag-toggle.types.ts
+incoming-refs.tsx
+incoming-refs.types.ts
+index-list.tsx
+index-list.types.ts
+index-part-picker.tsx
+index-part-picker.types.ts
+index-row.tsx
+index-row.types.ts
+index.ts
+ref-kinds.ts
+ref-picker.tsx
+ref-picker.types.ts
+schema-editor.tsx
+table-editor.tsx
+table-editor.types.ts
+table-visual-editor.tsx
+table-visual-editor.types.ts
+type-option-list.tsx
+type-option-list.types.ts
+schema/
+index.ts
+use-board-schema.ts
+use-db-query.ts
+db-options.tsx
+schema-button.tsx
+db-options.types.ts
+db.agent-tools.ts
+db.module.ts
+db.tool.ts
+index.ts
+draw/
+ui/
+draw-colors.tsx
+draw-mode-buttons.tsx
+draw-options.tsx
+draw-pen-buttons.tsx
+draw-size-buttons.tsx
+draw-options.types.ts
+draw.module.ts
+eraser.tool.ts
+index.ts
+marker.tool.ts
+stroke-size.ts
+stroke-spec.ts
+stroke.defaults.ts
+stroke.draw.ts
+stroke.factory.ts
+stroke.kind.ts
+stroke.outline.ts
+stroke.types.ts
+embed/
+ui/
+embed-player-frame.tsx
+embed-player-frame.types.ts
+embed-player.tsx
+index.ts
+use-embed-previews.ts
+embed-icons.ts
+embed-preview.ts
+embed.actions.ts
+embed.defaults.ts
+embed.draw.ts
+embed.factory.ts
+embed.interactions.ts
+embed.kind.ts
+embed.layout.ts
+embed.module.ts
+embed.types.ts
+index.ts
+pasted-embed.ts
+truncate-text.ts
+er/
+aggregate/
+aggregate.draw.ts
+aggregate.factory.ts
+aggregate.kind.ts
+aggregate.types.ts
+index.ts
+attribute/
+attribute.draw.ts
+attribute.factory.ts
+attribute.kind.ts
+attribute.types.ts
+index.ts
+base/
+constructs/
+aggregations.construct.ts
+alternate-keys.construct.ts
+associative-entities.construct.ts
+built-in-constructs.ts
+composite-attributes.construct.ts
+constraints.construct.ts
+construct-gate.ts
+define-er-construct.ts
+dependency-marks.construct.ts
+derived-attributes.construct.ts
+er-construct-registry.ts
+er-construct.types.ts
+hierarchies.construct.ts
+identifying-relations.construct.ts
+index.ts
+join-attributes.construct.ts
+multivalued-attributes.construct.ts
+nary-relations.construct.ts
+optional-attributes.construct.ts
+relation-attributes.construct.ts
+self-relations.construct.ts
+unions.construct.ts
+weak-entities.construct.ts
+standards/
+built-in-standards.ts
+chen.standard.ts
+cloudy.standard.ts
+define-er-standard.ts
+elmasri.standard.ts
+er-standard-registry.ts
+er-standard.types.ts
+index.ts
+piattini.standard.ts
+silberschatz.standard.ts
+arrow-head.ts
+dashed-path.ts
+er-named.kind.ts
+er-notation.ts
+er-outline.ts
+er-size.ts
+er.defaults.ts
+er.kind.ts
+er.types.ts
+index.ts
+is-er-element.ts
+keep-center.ts
+no-er-diagram.ts
+connect/
+er-connect.gesture.ts
+er-connect.ts
+er-connect.types.ts
+er-prompt.ts
+er-quick-add.ts
+er-relation-ratios.ts
+index.ts
+constraint/
+constraint.draw.ts
+constraint.factory.ts
+constraint.kind.ts
+constraint.types.ts
+index.ts
+entity/
+entity.draw.ts
+entity.factory.ts
+entity.kind.ts
+entity.types.ts
+index.ts
+isa/
+index.ts
+isa.draw.ts
+isa.factory.ts
+isa.kind.ts
+isa.types.ts
+links/
+crow-foot.ts
+er-links.layer.ts
+er-links.ts
+er-links.types.ts
+index.ts
+link-label.ts
+loop-route.ts
+mode/
+enter-er-mode.ts
+er-mode-commands.ts
+er-mode.ts
+er-mode.types.ts
+index.ts
+model/
+check/
+check-er.ts
+check-er.types.ts
+index.ts
+standard-text-warnings.ts
+edits/
+attribute-edits.ts
+convert-relation.ts
+edit-helpers.ts
+edits.types.ts
+entity-edits.ts
+extended-edits.ts
+index.ts
+relation-edits.ts
+union-edits.ts
+lang/
+index.ts
+notation-settings.ts
+parse-aggregate.ts
+parse-attributes.ts
+parse-cardinality.ts
+parse-constraint.ts
+parse-entity.ts
+parse-isa.ts
+parse-relation.ts
+parse-union.ts
+parser.ts
+parser.types.ts
+serialize-attributes.ts
+serialize-blocks.ts
+serializer.ts
+serializer.types.ts
+layout/
+aggregate-boxes.ts
+box.ts
+entity-grid.ts
+er-graph.ts
+escape-fixed.ts
+fan-angles.ts
+fan-out.ts
+hierarchy-cells.ts
+index.ts
+layout-er.ts
+layout-metrics.ts
+layout.types.ts
+obstacles.ts
+place-aggregate-attributes.ts
+place-aggregates.ts
+place-attributes.ts
+place-isas.ts
+place-relations.ts
+place-unions.ts
+resolve-overlaps.ts
+to-tables/
+attribute-columns.ts
+entity-tables.ts
+er-to-tables.ts
+guess-column-type.ts
+index.ts
+multivalued-tables.ts
+relation-tables.ts
+table-set.ts
+tables-context.types.ts
+to-tables.types.ts
+union-tables.ts
+write-dbml.ts
+add-missing-entities.ts
+apply-er-plan.ts
+block-range.ts
+constraint-points.ts
+er-add-actions.ts
+er-add-actions.types.ts
+er-components.ts
+er-diagram.ts
+er-drop.ts
+er-drop.types.ts
+er-edits.ts
+er-members.ts
+er-model.service.ts
+er-model.ts
+er-orphans.ts
+er-shapes.ts
+er-shapes.types.ts
+index.ts
+merge-er-diagrams.ts
+migrate-er-diagrams.ts
+palette-constructs.ts
+patch-er-element.ts
+position-layout.ts
+prepare-er-copies.ts
+prune-er.ts
+reconcile-attributes.ts
+reconcile-context.types.ts
+reconcile-er.ts
+reconcile-er.types.ts
+reconcile-extended.ts
+reconcile-names.ts
+resolve-er.ts
+split-er-diagrams.ts
+standard-of.ts
+relation/
+can-convert.ts
+cardinality-ratio.ts
+index.ts
+relation.draw.ts
+relation.factory.ts
+relation.kind.ts
+relation.types.ts
+ui/
+er-convert/
+index.ts
+use-convert-command.ts
+er-mode/
+er-check-badges.tsx
+er-check-badges.types.ts
+er-mode-toolbar.tsx
+index.ts
+use-er-mode-commands.ts
+er-palette/
+er-drag-ghost.tsx
+er-palette-button.tsx
+er-palette-icon.tsx
+er-palette-items.ts
+er-palette.tsx
+er-palette.types.ts
+index.ts
+use-palette-drag.ts
+er-panel/
+diagram-settings/
+check-list.tsx
+diagram-list.tsx
+diagram-setting-choices.ts
+diagram-setting-option.tsx
+diagram-setting-preview.tsx
+diagram-settings.tsx
+diagram-settings.types.ts
+index.ts
+standard-picker.tsx
+forms/
+aggregate-form.tsx
+attribute-form.tsx
+attribute-form.types.ts
+attribute-list.tsx
+attribute-row.tsx
+attribute-row.types.ts
+cardinality-picker.tsx
+cardinality-picker.types.ts
+constraint-form.tsx
+entity-form.tsx
+entity-form.types.ts
+entity-options.ts
+er-shape-form.tsx
+er-shape-form.types.ts
+form-field.tsx
+form-field.types.ts
+form-section.tsx
+icon-action.tsx
+icon-action.types.ts
+index.ts
+isa-form.tsx
+participant-row.tsx
+participant-row.types.ts
+relation-form.tsx
+segmented.tsx
+segmented.types.ts
+shape-issues.tsx
+shape-select.tsx
+shape-select.types.ts
+union-form.tsx
+diagram-shape-ids.ts
+er-add-menu.tsx
+er-diagram-name.tsx
+er-diagram-name.types.ts
+er-diagram-switcher.tsx
+er-panel-collapsed.tsx
+er-panel-collapsed.types.ts
+er-panel.tsx
+er-style-toggle.tsx
+er-syntax-hint.tsx
+er-text-editor.tsx
+index.ts
+use-show-all-diagrams.ts
+er-quick-add/
+er-quick-add-menu.tsx
+index.ts
+er-relation-prompt/
+er-join-step.tsx
+er-ratio-picker.tsx
+er-relation-glyph.tsx
+er-relation-prompt.tsx
+er-relation-prompt.types.ts
+index.ts
+join-options.ts
+er-to-tables/
+er-to-tables-dialog.tsx
+er-to-tables-store.ts
+er-to-tables.types.ts
+hierarchy-choice.tsx
+index.ts
+strategy-picture.tsx
+use-create-tables-command.ts
+model/
+index.ts
+use-er-gate.ts
+use-er-model.ts
+use-er-query.ts
+use-er-selection.ts
+use-er-selection.types.ts
+use-er-version.ts
+union/
+index.ts
+union.draw.ts
+union.factory.ts
+union.kind.ts
+union.types.ts
+er-diagram-arg.ts
+er.agent-tools.ts
+er.module.ts
+er.tool.ts
+index.ts
+geo/
+ui/
+geo-kind-icon.tsx
+geo-kind-icon.types.ts
+shape-options.tsx
+variants/
+cylinder.variant.ts
+diamond.variant.ts
+ellipse-arc.ts
+ellipse.variant.ts
+geo.variant.ts
+index.ts
+parallelogram.variant.ts
+rectangle.variant.ts
+rounded.variant.ts
+star.variant.ts
+triangle.variant.ts
+variant.registry.ts
+geo-options.types.ts
+geo.defaults.ts
+geo.draw.ts
+geo.factory.ts
+geo.kind.ts
+geo.module.ts
+geo.types.ts
+index.ts
+shape.tool.ts
+image/
+ui/
+image-crop-store.ts
+image-crop-store.types.ts
+image-crop.tsx
+image-options.tsx
+image-crop.ts
+image-options.types.ts
+image-padding.ts
+image.defaults.ts
+image.draw.ts
+image.factory.ts
+image.kind.ts
+image.module.ts
+image.types.ts
+index.ts
+pasted-image.ts
+library/
+library.module.ts
+section/
+ui/
+sections-menu/
+index.ts
+sections-menu-items.tsx
+sections-menu.tsx
+section-options.tsx
+board-sections.ts
+index.ts
+is-section.ts
+section-members.ts
+section-options.types.ts
+section-title.ts
+section.defaults.ts
+section.draw.ts
+section.factory.ts
+section.kind.ts
+section.module.ts
+section.tool.ts
+section.types.ts
+sticker/
+catalog/
+common/
+common-art.ts
+common-stickers.ts
+index.ts
+emoji/
+emoji-catalog.ts
+emoji-catalog.types.ts
+index.ts
+seal/
+index.ts
+seal-face.ts
+seal-face.types.ts
+seal-parts.ts
+seal-props.ts
+seal-stickers.ts
+index.ts
+load-sticker.ts
+sticker-art.ts
+sticker-catalog.ts
+sticker-catalog.types.ts
+sticker-shapes.ts
+sticker-svg.ts
+ui/
+sticker-picker/
+custom-tab.tsx
+emoji-tab.tsx
+index.ts
+sticker-cell.tsx
+sticker-grid.tsx
+sticker-panel.tsx
+sticker-picker.types.ts
+sticker-wheel.tsx
+stickers-tab.tsx
+use-emoji-sections.ts
+use-pick-sticker.ts
+use-sticker-lookup.ts
+wheel-geometry.ts
+wheel-motion.ts
+wheel-slot.tsx
+wheel-slots.ts
+stores/
+custom-stickers-store.ts
+custom-stickers-store.types.ts
+sticker-recents-store.ts
+sticker-recents-store.types.ts
+agent-stickers.ts
+index.ts
+sticker-asset.ts
+sticker-options.types.ts
+sticker.agent-tools.ts
+sticker.defaults.ts
+sticker.draw.ts
+sticker.factory.ts
+sticker.kind.ts
+sticker.module.ts
+sticker.tool.ts
+sticker.types.ts
+sticky/
+ui/
+sticky-options.tsx
+index.ts
+sticky-options.types.ts
+sticky.defaults.ts
+sticky.draw.ts
+sticky.factory.ts
+sticky.kind.ts
+sticky.module.ts
+sticky.tool.ts
+sticky.types.ts
+table/
+ui/
+table-cell-fills.tsx
+table-line-actions.tsx
+table-options.tsx
+index.ts
+is-table.ts
+table-args.ts
+table-edits.ts
+table-line.gesture.ts
+table-options.types.ts
+table-parts.ts
+table-reorder.gesture.ts
+table-typography.ts
+table-typography.types.ts
+table.defaults.ts
+table.draw.ts
+table.factory.ts
+table.handles.ts
+table.handles.types.ts
+table.interactions.ts
+table.kind.ts
+table.layout.ts
+table.layout.types.ts
+table.module.ts
+table.tool.ts
+table.types.ts
+text/
+index.ts
+pasted-text.ts
+text.defaults.ts
+text.draw.ts
+text.factory.ts
+text.kind.ts
+text.module.ts
+text.tool.ts
+text.types.ts
+index.ts
+ui/
+agent/
+active-board.ts
+index.ts
+use-agent-board.ts
+components/
+library/
+index.ts
+library-button.tsx
+library-card.tsx
+library-catalog.ts
+library-command.ts
+library-filter.ts
+library-panel.tsx
+library-points.ts
+library-section.tsx
+library-tool-items.ts
+library.types.ts
+shortcuts-list/
+board-shortcut-rows.ts
+board-shortcut-rows.types.ts
+board-shortcuts-list.tsx
+index.ts
+source-editor/
+completions/
+completion-result.ts
+dbml-completions.ts
+dbml-completions.types.ts
+defined-names.ts
+entity-attribute-names.ts
+er-completions.ts
+index.ts
+source-context.ts
+source-context.types.ts
+languages/
+dbml-language.ts
+er-language.ts
+index.ts
+stream-language.ts
+stream-language.types.ts
+index.ts
+source-editor.tsx
+source-editor.types.ts
+board-toolbar.tsx
+board-top-bar.tsx
+file/
+board-file-format.ts
+import-figjam-file.ts
+index.ts
+use-board-loader.ts
+use-board-saver.ts
+modules/
+board-editor-points.ts
+board-modules.ts
+board-modules.types.ts
+index.ts
+stores/
+board-panel-store.ts
+board-panel-store.types.ts
+board-chrome.tsx
+board-editor-page.tsx
+board-editor.tsx
+board-editor.types.ts
+board-engine-context.ts
+board-session.tsx
+board-session.types.ts
+index.ts
+board-engine.types.ts
+board-options.types.ts
+board-points.ts
+index.ts
+palette.ts
+design/
+agent/
+create-design-agent-tools.ts
+design-access.ts
+design-agent-instructions.ts
+design-agent.types.ts
+index.ts
+figma/
+convert/
+convert-figma.ts
+convert-geometry.ts
+convert-node.ts
+convert-node.types.ts
+fig-auto-layout.ts
+fig-blend-mode.ts
+fig-effects.ts
+fig-image-paint.ts
+fig-network.ts
+fig-node-base.ts
+fig-paints.ts
+fig-path.ts
+fig-stroke.ts
+fig-text-runs.ts
+fig-text.ts
+fig-typography.ts
+page-guides.ts
+resolve-instances.ts
+resolve-instances.types.ts
+convert-figma-file.ts
+figma-design-document.ts
+figma-import.types.ts
+figma-import.worker.ts
+index.ts
+read-and-convert-figma.ts
+file/
+design-file.ts
+design-migration.types.ts
+index.ts
+open-design-document.ts
+modules/
+assets/
+ui/
+assets-tab.tsx
+assets.module.ts
+auto-layout/
+ui/
+alignment-grid.tsx
+alignment-grid.types.ts
+auto-layout-fields.tsx
+auto-layout-fields.types.ts
+auto-layout-section.tsx
+in-auto-layout.ts
+sizing-section.tsx
+use-auto-layout-commands.ts
+add-auto-layout.ts
+auto-layout.agent-tools.ts
+auto-layout.module.ts
+axis-items.ts
+dirty-frames.ts
+document-tree.ts
+frame-space.ts
+guess-layout.ts
+index.ts
+layout-drop.ts
+layout-frame.ts
+layout-frame.types.ts
+layout-items.ts
+layout-patch.ts
+layout-tree.types.ts
+relayout.ts
+boolean/
+ui/
+boolean-icons.ts
+boolean-section.tsx
+boolean-toolbar-menu.tsx
+use-boolean-commands.ts
+boolean-nodes.ts
+boolean-result.ts
+boolean-result.types.ts
+boolean.agent-tools.ts
+boolean.constants.ts
+boolean.factory.ts
+boolean.kind.ts
+boolean.module.ts
+boolean.types.ts
+flatten-nodes.ts
+index.ts
+operand-shape.ts
+outline-strokes.ts
+catalog/
+brochure/
+brochure.constants.ts
+brochure.defaults.ts
+brochure.factory.ts
+brochure.kind.ts
+brochure.types.ts
+index.ts
+is-brochure.ts
+checks/
+brochure-checks.ts
+brochure-checks.types.ts
+check-brochure.ts
+effective-dpi.ts
+index.ts
+layout-issues.ts
+picture-size.ts
+export/
+draw-frame.ts
+draw-frame.types.ts
+export-brochure.ts
+export-brochure.types.ts
+index.ts
+printed-pages.ts
+printed-pages.types.ts
+mode/
+apply-pick.ts
+catalog-allowed-commands.ts
+catalog-faded.ts
+catalog-mode.constants.ts
+catalog-mode.ts
+catalog-pick.tool.ts
+catalog.tool.ts
+edit-catalog-page.ts
+index.ts
+model/
+book-layout.ts
+book-layout.types.ts
+brochure-of.ts
+brochure-pages.ts
+brochure-pages.types.ts
+design-brochure.ts
+index.ts
+page-frame.ts
+page-span.ts
+paper-size.ts
+paper-size.types.ts
+prune-brochure.ts
+slot-edits.ts
+ui/
+brochure-tab/
+blank-page-row.tsx
+brochure-empty.tsx
+brochure-options-list.tsx
+brochure-page-row.tsx
+brochure-page-row.types.ts
+brochure-tab.tsx
+page-thumbnail.tsx
+spread-label.ts
+canvas/
+add-frame-bar.tsx
+brochure-canvas-layer.tsx
+brochure-overlay.tsx
+canvas.types.ts
+margin-guide.tsx
+page-badge.tsx
+pick-banner.tsx
+pick-checkbox.tsx
+hooks/
+use-brochure-issues.ts
+use-brochure.ts
+use-brochure.types.ts
+use-catalog-commands.ts
+use-catalog-selection.ts
+use-catalog-selection.types.ts
+use-export-brochure.ts
+use-frame-image.ts
+use-frame-thumbnail.ts
+use-hovered-frame.ts
+use-picture-size.ts
+preview/
+book-page.tsx
+book-spread.tsx
+brochure-preview.tsx
+flat-spread.tsx
+page-turn.ts
+preview-3d-toggle.tsx
+preview-images.ts
+preview-images.types.ts
+preview-page.tsx
+preview-size.ts
+preview-stage.tsx
+preview-strip.tsx
+preview.types.ts
+sheet-face.tsx
+side-picture.tsx
+turning-sheet.tsx
+use-page-turn.ts
+use-prefetch-pages.ts
+use-preview-keys.ts
+sidebar/
+brochure-checks-section.tsx
+brochure-settings-section.tsx
+catalog-sidebar.tsx
+frames-section.tsx
+layout-fields.tsx
+loose-frame-section.tsx
+page-image-row.tsx
+page-images-section.tsx
+page-section.tsx
+pick-section.tsx
+setting-select.tsx
+sidebar.types.ts
+toggle.tsx
+stores/
+catalog-view-store.ts
+catalog-view-store.types.ts
+preview-store.ts
+preview-store.types.ts
+thumbnails/
+frame-thumbnails.ts
+toolbar/
+catalog-mode-toolbar.tsx
+option-letter.ts
+page-actions.ts
+catalog.agent-tools.ts
+catalog.module.ts
+index.ts
+core/
+agent/
+create-nodes.agent-tool.ts
+design-export.agent-tools.ts
+design-file.agent-tools.ts
+design-info.agent-tools.ts
+design-read.agent-tools.ts
+design-view.agent-tools.ts
+index.ts
+node-arrange.agent-tools.ts
+node-edit.agent-tools.ts
+node-spec-properties.ts
+node-transform.agent-tools.ts
+summarize-node.ts
+summarize-node.types.ts
+network/
+index.ts
+network-args.ts
+network-chains.ts
+network-curves.ts
+network-edits.ts
+network-faces.ts
+network-geometry.ts
+network-path.ts
+network-placement.ts
+network-shapes.ts
+network-trace.ts
+network.types.ts
+node/
+apply-node-spec.ts
+blend-mode-args.ts
+box-shape.kind.ts
+check-node-patch.ts
+child-host.kind.ts
+child-host.types.ts
+create-node-base.ts
+create-node-base.types.ts
+design-node.kind.ts
+design-node.types.ts
+draw-paints.ts
+draw-paints.types.ts
+effect-args.ts
+effect-args.types.ts
+flip-paints.ts
+flip-placement.ts
+flip.types.ts
+gradient-args.ts
+gradient-paint.ts
+image-paint-args.ts
+image-paint.ts
+index.ts
+is-design-node.ts
+layer-name-of.ts
+layer-opacity.ts
+layout-args.ts
+mask-args.ts
+node-build.types.ts
+node-geometry.ts
+node-layout-args.ts
+node-layout.ts
+node-layout.types.ts
+node-parent.ts
+node-stroke.ts
+node-style.ts
+node.defaults.ts
+number-args.ts
+paint-args-color.ts
+paint-args.ts
+paint.types.ts
+paste-gradient.ts
+points-shape.kind.ts
+scale-tiles.ts
+shape-points.ts
+solid-paint.ts
+stroke-args.ts
+stroke-args.types.ts
+trace-box.ts
+tools/
+box-draw.tool.ts
+index.ts
+next-layer-name.ts
+node-draw.tool.ts
+transform/
+flip-nodes.ts
+index.ts
+tree/
+move/
+index.ts
+layer-move.types.ts
+move-into.ts
+move-layers.ts
+align-target.ts
+container-at.ts
+design-tree.ts
+design-tree.types.ts
+host-select-target.ts
+host-tree.ts
+index.ts
+layer-composite.ts
+nearest-container.ts
+order-keys.ts
+parent-for.ts
+prepare-tree-copies.ts
+reparent.ts
+resolve-tree.ts
+ruler-frame.ts
+sibling-masks.ts
+top-frames.ts
+tree-clips.ts
+tree-members.ts
+tree-slots.ts
+tree-slots.types.ts
+tree-undrawn.ts
+wrap-nodes.ts
+ui/
+gradient-handles/
+drag-grip.ts
+end-handle.tsx
+gradient-handles.tsx
+gradient-handles.types.ts
+index.ts
+scale-sidebar/
+anchor-picker.tsx
+anchor-picker.types.ts
+index.ts
+scale-sidebar.tsx
+sections/
+stroke/
+dash-pattern-field.tsx
+dash-pattern-field.types.ts
+index.ts
+settings-row.tsx
+settings-row.types.ts
+stroke-dashes.ts
+stroke-dashes.types.ts
+stroke-icons.tsx
+stroke-icons.types.ts
+stroke-preview.tsx
+stroke-preview.types.ts
+stroke-section.tsx
+stroke-settings.tsx
+stroke-settings.types.ts
+stroke-sides-menu.tsx
+stroke-sides-menu.types.ts
+stroke-sides.ts
+stroke-sides.types.ts
+appearance-section.tsx
+arrange-buttons.tsx
+arrange-buttons.types.ts
+export-section.tsx
+fill-section.tsx
+index.ts
+layout-section.tsx
+paint-list-section.tsx
+paint-list-section.types.ts
+position-section.tsx
+prototype-section.tsx
+rotation-row.tsx
+rotation-row.types.ts
+use-flip-commands.ts
+use-panel-commands.ts
+use-start-mode.ts
+use-view-commands.ts
+core.module.ts
+index.ts
+effects/
+renderers/
+background-blur.renderer.ts
+drop-shadow.renderer.ts
+glass.renderer.ts
+glass.shader.ts
+index.ts
+inner-shadow.renderer.ts
+layer-blur.renderer.ts
+local-uniforms.ts
+noise-glsl.ts
+noise.renderer.ts
+noise.shader.ts
+progressive-blur.shader.ts
+texture.renderer.ts
+texture.shader.ts
+ui/
+editors/
+background-blur-editor.tsx
+glass-editor.tsx
+index.ts
+layer-blur-editor.tsx
+noise-editor.tsx
+preset-row.tsx
+preset-row.types.ts
+shadow-editor.tsx
+texture-editor.tsx
+fields/
+effect-choice.tsx
+effect-color-field.tsx
+effect-toggle.tsx
+fields.types.ts
+index.ts
+scrub-field.tsx
+handles/
+blur-handles.tsx
+effect-handles.tsx
+glass-handles.tsx
+handle-dot.tsx
+handles.types.ts
+index.ts
+shadow-handles.tsx
+add-effect-menu.tsx
+effect-catalog.ts
+effect-edit-store.ts
+effect-edit-store.types.ts
+effect-row.tsx
+effects-section.tsx
+effects-ui.types.ts
+index.ts
+composite-isolation.ts
+create-effect.ts
+design-effects.ts
+effect-args.ts
+effect-args.types.ts
+effect-color.ts
+effect-presets.ts
+effect.defaults.ts
+effect.types.ts
+effects.module.ts
+index.ts
+ellipse/
+ellipse.defaults.ts
+ellipse.factory.ts
+ellipse.kind.ts
+ellipse.module.ts
+ellipse.types.ts
+index.ts
+frame/
+ui/
+frame-preset-group.tsx
+frame-preset-group.types.ts
+frame-preset-menu.tsx
+frame-preset-menu.types.ts
+frame-presets-sidebar.tsx
+frame-section.tsx
+use-add-preset-frame.ts
+create-preset-frame.ts
+frame-label.ts
+frame-options.types.ts
+frame-presets.ts
+frame.agent-tools.ts
+frame.defaults.ts
+frame.draw.ts
+frame.factory.ts
+frame.kind.ts
+frame.module.ts
+frame.types.ts
+index.ts
+is-frame.ts
+preset-frame-rect.ts
+group/
+ui/
+use-group-commands.ts
+group-nodes.ts
+group-tree.ts
+group.agent-tools.ts
+group.constants.ts
+group.factory.ts
+group.kind.ts
+group.module.ts
+group.types.ts
+index.ts
+image/
+ui/
+crop-toolbar-button.tsx
+image-crop.tsx
+image-fill-index.ts
+use-crop-image-command.ts
+image-rectangle.ts
+image.agent-tools.ts
+image.module.ts
+index.ts
+layers/
+ui/
+drag/
+drop-indicator.tsx
+drop-indicator.types.ts
+layer-drop.ts
+layer-drop.types.ts
+use-layer-drag.ts
+layer-icon.tsx
+layer-icon.types.ts
+layer-metrics.ts
+layer-name.tsx
+layer-name.types.ts
+layer-row.tsx
+layer-row.types.ts
+layers-list.tsx
+layers-list.types.ts
+layers-search.tsx
+layers-search.types.ts
+layers-tab.tsx
+matching-layers.ts
+revealed-layers.ts
+use-layer-tree.ts
+visible-rows.ts
+visible-rows.types.ts
+layer-tree-of.ts
+layer-tree-of.types.ts
+layers.agent-tools.ts
+layers.module.ts
+move-layers.agent-tool.ts
+line/
+ui/
+line-section.tsx
+index.ts
+line-end-drag.ts
+line-geometry.ts
+line.defaults.ts
+line.draw.ts
+line.factory.ts
+line.kind.ts
+line.module.ts
+line.tool.ts
+line.types.ts
+mask/
+ui/
+mask-section-button.tsx
+mask-section-button.types.ts
+mask-section.tsx
+mask-selection.ts
+mask-toolbar-button.tsx
+mask-type-options.ts
+use-mask-commands.ts
+design-masks.ts
+index.ts
+mask-edits.ts
+mask-edits.types.ts
+mask.agent-tools.ts
+mask.module.ts
+pages/
+page/
+index.ts
+is-page.ts
+page.constants.ts
+page.factory.ts
+page.kind.ts
+page.types.ts
+ui/
+move-to-page.ts
+page-actions.ts
+page-menu.tsx
+page-row.tsx
+page-row.types.ts
+page-section.tsx
+pages-section.tsx
+use-page-commands.ts
+use-pages.ts
+design-pages.ts
+ensure-pages.ts
+guides.agent-tools.ts
+index.ts
+page-guides.ts
+page-scopes.ts
+pages-of.ts
+pages.agent-tools.ts
+pages.module.ts
+prune-frame-guides.ts
+plugins-tab/
+ui/
+plugins-tab.tsx
+plugins-tab.module.ts
+polygon/
+ui/
+polygon-section.tsx
+index.ts
+polygon.defaults.ts
+polygon.factory.ts
+polygon.kind.ts
+polygon.module.ts
+polygon.types.ts
+rectangle/
+index.ts
+rectangle-options.types.ts
+rectangle.defaults.ts
+rectangle.draw.ts
+rectangle.factory.ts
+rectangle.kind.ts
+rectangle.module.ts
+rectangle.types.ts
+section/
+index.ts
+section-title.ts
+section.defaults.ts
+section.factory.ts
+section.kind.ts
+section.module.ts
+section.types.ts
+shader-effect/
+ui/
+glsl-language.ts
+shader-editor.tsx
+shader-param-field.tsx
+shader-ui.types.ts
+shader-compile.ts
+shader-compile.types.ts
+shader-effect.module.ts
+shader-params.ts
+shader-params.types.ts
+shader-presets.ts
+shader-template.ts
+shader.renderer.ts
+star/
+ui/
+star-section.tsx
+index.ts
+star.defaults.ts
+star.factory.ts
+star.kind.ts
+star.module.ts
+star.types.ts
+text/
+ui/
+decoration-buttons.tsx
+face-select.tsx
+font-list.tsx
+font-picker.tsx
+font-picker.types.ts
+range-color-field.tsx
+typography-controls.types.ts
+typography-section.tsx
+typography-target.types.ts
+use-font-families.ts
+use-text-outlines.ts
+use-typography-target.ts
+index.ts
+is-text.ts
+retypeset.ts
+text-args.ts
+text-auto-resize.ts
+text-layout.ts
+text-options.types.ts
+text-outline.ts
+text-range-style.ts
+text-rich-spec.ts
+text-run-args.ts
+text-spans.ts
+text.agent-tools.ts
+text.defaults.ts
+text.factory.ts
+text.kind.ts
+text.module.ts
+text.tool.ts
+text.types.ts
+vector/
+edit/
+edit-vector.ts
+index.ts
+pen.tool.ts
+vector-bend.tool.ts
+vector-bucket.tool.ts
+vector-cut.tool.ts
+vector-edit-session.ts
+vector-edit.tool.ts
+vector-edit.types.ts
+vector-move.tool.ts
+vector-overlay.ts
+vector-tools.ts
+vector-world-point.ts
+ui/
+vector-edit-toolbar.tsx
+index.ts
+pencil.tool.ts
+shape-to-vector.ts
+vector.agent-tools.ts
+vector.defaults.ts
+vector.factory.ts
+vector.kind.ts
+vector.module.ts
+vector.types.ts
+index.ts
+ui/
+agent/
+active-design.ts
+index.ts
+use-agent-design.ts
+components/
+left-panel/
+index.ts
+left-panel.tsx
+use-left-tabs.ts
+use-left-tabs.types.ts
+paint-picker/
+color-controls.tsx
+color-swatches.tsx
+gradient-editor.tsx
+gradient-preview.ts
+gradient-stop-bar.tsx
+gradient-stop-row.tsx
+gradient-swatches.tsx
+gradient-toolbar.tsx
+gradient-toolbar.types.ts
+image-editor.tsx
+image-preview-style.ts
+index.ts
+page-colors.ts
+page-gradients.ts
+paint-picker.tsx
+paint-picker.types.ts
+paint-tabs-data.ts
+paint-tabs.tsx
+solid-editor.tsx
+stop-ease-select.tsx
+stop-ease-select.types.ts
+stop-ramp.ts
+panel/
+blend-mode-labels.ts
+blend-mode-select.tsx
+blend-mode-select.types.ts
+color-inputs.types.ts
+field-box.tsx
+field-box.types.ts
+hex-input.tsx
+index.ts
+node-checkbox.tsx
+node-fields.types.ts
+node-number-field.tsx
+node-option-buttons.tsx
+node-select-field.tsx
+number-field.tsx
+number-field.types.ts
+paint-field.tsx
+paint-field.types.ts
+paint-swatch.tsx
+panel-section.tsx
+panel-section.types.ts
+parse-number.ts
+percent-input.tsx
+property-grid.tsx
+property-grid.types.ts
+shared-value.ts
+properties-panel/
+index.ts
+properties-panel.tsx
+property-sections.tsx
+property-sections.types.ts
+show-properties-button.tsx
+rail/
+design-main-menu.tsx
+design-rail.tsx
+index.ts
+main-menu-entry.tsx
+main-menu-label.ts
+main-menu-sections.ts
+main-menu-submenu.tsx
+main-menu.types.ts
+file/
+design-file-format.ts
+import-figma-file.ts
+index.ts
+use-design-loader.ts
+hooks/
+index.ts
+use-canvas-inset.ts
+use-edit-nodes.ts
+use-edit-nodes.types.ts
+use-keep-canvas-in-place.ts
+use-keep-canvas-in-place.types.ts
+use-move-nodes.ts
+use-scene-elements.ts
+use-selected-nodes.ts
+modules/
+define-effect-type.ts
+design-editor-points.ts
+design-editor-points.types.ts
+design-modules.ts
+design-modules.types.ts
+index.ts
+section-filters.ts
+tabs-for-mode.ts
+stores/
+design-mode-store.ts
+design-mode-store.types.ts
+design-panel-store.ts
+design-panel-store.types.ts
+design-view-store.ts
+design-view-store.types.ts
+gradient-edit-store.ts
+gradient-edit-store.types.ts
+image-crop-store.ts
+image-crop-store.types.ts
+paint-recents-store.ts
+paint-recents-store.types.ts
+design-chrome.tsx
+design-editor-page.tsx
+design-editor.tsx
+design-editor.types.ts
+design-engine-context.ts
+design-layout.ts
+design-layout.types.ts
+design-session.tsx
+design-session.types.ts
+index.ts
+design-engine.types.ts
+design-options.types.ts
+design-points.ts
+index.ts
+shared/
+about/
+about-block.tsx
+about-content.ts
+about-content.types.ts
+about-dialog.tsx
+about-dialog.types.ts
+about-store.ts
+about-store.types.ts
+index.ts
+link-button.tsx
+open-link.ts
+use-app-info.ts
+version-details.ts
+agent-server/
+agent-tools-dialog/
+agent-tool-row.tsx
+agent-tool-section.tsx
+agent-tools-dialog.tsx
+agent-tools-dialog.types.ts
+agent-tools-list.tsx
+index.ts
+connect-agent-dialog/
+agent-access-notice.tsx
+agent-access-notice.types.ts
+agent-client-card.tsx
+agent-client-grid.tsx
+agent-client-setup.tsx
+back-button.tsx
+connect-agent-body.tsx
+connect-agent-dialog.tsx
+connect-agent-dialog.types.ts
+index.ts
+manual-setup.tsx
+no-url.ts
+agent-client-icon.tsx
+agent-client-icon.types.ts
+agent-clients.ts
+agent-clients.types.ts
+agent-server-menu.tsx
+agent-server-menu.types.ts
+agent-server-panel.tsx
+agent-server-status-text.ts
+agent-tool-catalog.ts
+agent-tool-catalog.types.ts
+copy-agent-setup.ts
+copy-row.tsx
+copy-row.types.ts
+identify-agent.ts
+identify-agent.types.ts
+index.ts
+use-agent-server-status.ts
+use-agent-server-status.types.ts
+app-updates/
+app-updates.tsx
+check-updates-button.tsx
+check-updates-button.types.ts
+index.ts
+release-notes.ts
+update-notice.tsx
+collaborators/
+collaborator-avatar.tsx
+collaborator-avatar.types.ts
+collaborator-list.tsx
+collaborator-list.types.ts
+collaborator-stack.tsx
+collaborator-stack.types.ts
+collaborator-status-text.ts
+index.ts
+use-collaborators.ts
+use-follow-toggle.ts
+use-follow-toggle.types.ts
+core/
+app-links/
+app-links.types.ts
+index.ts
+parse-app-link.ts
+app-updates/
+app-updater.types.ts
+index.ts
+fonts/
+font-variants.ts
+font.types.ts
+glyph-outliner.types.ts
+google-fonts.ts
+index.ts
+links/
+fetch-link-preview.ts
+html-meta.ts
+index.ts
+links.types.ts
+web-url.ts
+youtube.ts
+mcp/
+handle-mcp-message.ts
+handle-mcp-message.types.ts
+index.ts
+json-rpc.ts
+mcp.types.ts
+tool-image.ts
+modules/
+define-module.ts
+define-point.ts
+index.ts
+module-host.ts
+modules.types.ts
+sort-modules.ts
+plugins/
+index.ts
+plugin-api-version.ts
+plugin-storage.types.ts
+plugin.types.ts
+read-plugin-manifest.ts
+safe-relative-path.ts
+presence/
+empty-state.ts
+index.ts
+permissions.ts
+presence.types.ts
+random-name.ts
+share/
+protocol/
+index.ts
+share-protocol.ts
+share-protocol.types.ts
+index.ts
+share-link.ts
+share-link.types.ts
+share-transport.types.ts
+agent-channel.types.ts
+app-info.types.ts
+app-lifecycle.types.ts
+app-repository.ts
+clipboard.types.ts
+file-drop.types.ts
+file-open-requests.types.ts
+files.ts
+files.types.ts
+ids.ts
+index.ts
+keyboard.ts
+keyboard.types.ts
+sticker-library.types.ts
+storage.types.ts
+profile/
+index.ts
+name-prompt.tsx
+stores/
+agent-presence-store.ts
+agent-presence-store.types.ts
+agent-server-store.ts
+agent-server-store.types.ts
+autosave-store.ts
+autosave-store.types.ts
+built-in-relay.ts
+chrome-store.ts
+chrome-store.types.ts
+collaboration-store.ts
+collaboration-store.types.ts
+collaborators-store.ts
+collaborators-store.types.ts
+file-drop-store.ts
+file-drop-store.types.ts
+loading-store.ts
+loading-store.types.ts
+mock-recent-files.ts
+plugins-store.ts
+plugins-store.types.ts
+recent-files-store.ts
+recent-files-store.types.ts
+relay-status-store.ts
+relay-status-store.types.ts
+snapping-store.ts
+snapping-store.types.ts
+theme-store.ts
+theme-store.types.ts
+thumbnail-store.ts
+thumbnail-store.types.ts
+toast-store.ts
+toast-store.types.ts
+unsaved-changes-store.ts
+unsaved-changes-store.types.ts
+update-store.ts
+update-store.types.ts
+ui/
+brand/
+hopping-seal.tsx
+hopping-seal.types.ts
+patting-seal.tsx
+patting-seal.types.ts
+seal-logo.tsx
+seal-logo.types.ts
+wordmark.tsx
+wordmark.types.ts
+components/
+code-editor/
+code-editor-theme.ts
+code-editor.tsx
+code-editor.types.ts
+editor-basics.ts
+error-line.ts
+index.ts
+range-highlight.ts
+loading-screen/
+global-loader.tsx
+index.ts
+loading-screen.tsx
+loading-screen.types.ts
+ui/
+badge.tsx
+button.tsx
+card.tsx
+context-menu.tsx
+dialog.tsx
+dropdown-menu.tsx
+input.tsx
+kbd.tsx
+popover.tsx
+radio-group.tsx
+select.tsx
+separator.tsx
+switch.tsx
+tabs.tsx
+textarea.tsx
+toast.tsx
+tooltip.tsx
+file-type-icon.tsx
+file-type-icon.types.ts
+theme-toggle.tsx
+theme-toggle.types.ts
+toaster.tsx
+hooks/
+use-file-drag-over.ts
+use-hotkey.ts
+use-now.ts
+use-virtual-list.ts
+use-virtual-list.types.ts
+layout/
+app-header.tsx
+app-header.types.ts
+page-container.tsx
+page-container.types.ts
+lib/
+css-color.ts
+utils.ts
+styles/
+tokens.css
+vite-env.d.ts
 src-tauri/
-  capabilities/
-    default.json
-  icons/
-    source/
-      app-icon.png
-      app-icon.svg
-    128x128.png
-    128x128@2x.png
-    32x32.png
-    64x64.png
-    icon.icns
-    icon.ico
-    icon.png
-    Square107x107Logo.png
-    Square142x142Logo.png
-    Square150x150Logo.png
-    Square284x284Logo.png
-    Square30x30Logo.png
-    Square310x310Logo.png
-    Square44x44Logo.png
-    Square71x71Logo.png
-    Square89x89Logo.png
-    StoreLogo.png
-  src/
-    mcp/
-      commands.rs
-      mod.rs
-      routes.rs
-      state.rs
-    share/
-      commands.rs
-      framing.rs
-      mod.rs
-      relay.rs
-      session.rs
-      state.rs
-    app_links.rs
-    install_kind.rs
-    lib.rs
-    main.rs
-    open_files.rs
-    system_fonts.rs
-  .gitignore
-  build.rs
-  Cargo.toml
-  tauri.conf.json
-  tauri.release.conf.json
+capabilities/
+default.json
+icons/
+source/
+app-icon.png
+app-icon.svg
+128x128.png
+128x128@2x.png
+32x32.png
+64x64.png
+icon.icns
+icon.ico
+icon.png
+Square107x107Logo.png
+Square142x142Logo.png
+Square150x150Logo.png
+Square284x284Logo.png
+Square30x30Logo.png
+Square310x310Logo.png
+Square44x44Logo.png
+Square71x71Logo.png
+Square89x89Logo.png
+StoreLogo.png
+src/
+mcp/
+commands.rs
+mod.rs
+routes.rs
+state.rs
+share/
+commands.rs
+framing.rs
+mod.rs
+relay.rs
+session.rs
+state.rs
+app_links.rs
+install_kind.rs
+lib.rs
+main.rs
+open_files.rs
+system_fonts.rs
+.gitignore
+build.rs
+Cargo.toml
+tauri.conf.json
+tauri.release.conf.json
 .editorconfig
 .env.example
 .gitattributes
@@ -3152,7 +3155,9 @@ fn main() {
 /target/
 
 # Generated by Tauri
+
 # will have schema files for capabilities auto-completion
+
 /gen/schemas
 </file>
 
@@ -8477,61 +8482,61 @@ export interface CanvasWorkspace<O extends object = object> {
   /** The product's tool options (what new elements look like). */
   options(): O;
 
-  // Elements of the workspace's scope, with derived geometry resolved.
-  elements(): readonly CanvasElement[];
-  getElement(id: string): CanvasElement | undefined;
-  elementsBounds(ids: Iterable<string>): Rect | null;
-  contentBounds(): Rect | null;
-  withMembers(ids: Iterable<string>, purpose: "move" | "delete"): Set<string>;
+// Elements of the workspace's scope, with derived geometry resolved.
+elements(): readonly CanvasElement[];
+getElement(id: string): CanvasElement | undefined;
+elementsBounds(ids: Iterable<string>): Rect | null;
+contentBounds(): Rect | null;
+withMembers(ids: Iterable<string>, purpose: "move" | "delete"): Set<string>;
 
-  // Scope and selection.
-  readonly scope: string | null;
-  setScope(id: string): void;
-  selectedIds(): string[];
-  select(ids: Iterable<string>): void;
-  /** What the local user has selected, whoever's workspace this is. */
-  userSelection(): string[];
+// Scope and selection.
+readonly scope: string | null;
+setScope(id: string): void;
+selectedIds(): string[];
+select(ids: Iterable<string>): void;
+/** What the local user has selected, whoever's workspace this is. */
+userSelection(): string[];
 
-  // Ruler guides of the scope.
-  guides(): readonly RulerGuide[];
-  addGuides(guides: readonly RulerGuide[]): void;
-  removeGuides(indexes?: Iterable<number>): void;
+// Ruler guides of the scope.
+guides(): readonly RulerGuide[];
+addGuides(guides: readonly RulerGuide[]): void;
+removeGuides(indexes?: Iterable<number>): void;
 
-  // Edits, each one undo step in this workspace's history.
-  deleteElements(ids: Iterable<string>): string[];
-  duplicateElements(ids: Iterable<string>, offset?: Point): Map<string, string>;
-  reorderElements(ids: Iterable<string>, direction: ReorderDirection): string[];
-  setLocked(ids: Iterable<string>, locked: boolean): string[];
-  alignElements(ids: Iterable<string>, alignment: Alignment): string[];
-  distributeElements(ids: Iterable<string>, axis: DistributeAxis): string[];
-  tidyUpElements(ids: Iterable<string>): string[];
-  canAlign(ids: Iterable<string>): boolean;
-  scaleElements(ids: Iterable<string>, factor: number, anchor?: ScaleAnchor): string[];
-  rotateElements(
-    ids: Iterable<string>,
-    degrees: number | ((el: CanvasElement) => number),
-    around?: RotatePivot,
-  ): string[];
-  applyStyleOf(fromId: string, ids: Iterable<string>): string[];
+// Edits, each one undo step in this workspace's history.
+deleteElements(ids: Iterable<string>): string[];
+duplicateElements(ids: Iterable<string>, offset?: Point): Map<string, string>;
+reorderElements(ids: Iterable<string>, direction: ReorderDirection): string[];
+setLocked(ids: Iterable<string>, locked: boolean): string[];
+alignElements(ids: Iterable<string>, alignment: Alignment): string[];
+distributeElements(ids: Iterable<string>, axis: DistributeAxis): string[];
+tidyUpElements(ids: Iterable<string>): string[];
+canAlign(ids: Iterable<string>): boolean;
+scaleElements(ids: Iterable<string>, factor: number, anchor?: ScaleAnchor): string[];
+rotateElements(
+ids: Iterable<string>,
+degrees: number | ((el: CanvasElement) => number),
+around?: RotatePivot,
+): string[];
+applyStyleOf(fromId: string, ids: Iterable<string>): string[];
 
-  // View.
-  exportElements(options: ExportOptions): Promise<Blob>;
-  copyAsPng(ids?: readonly string[]): Promise<void>;
-  zoomToFit(): void;
-  zoomToElement(id: string): void;
+// View.
+exportElements(options: ExportOptions): Promise<Blob>;
+copyAsPng(ids?: readonly string[]): Promise<void>;
+zoomToFit(): void;
+zoomToElement(id: string): void;
 
-  // History.
-  undo(): void;
-  redo(): void;
-  canUndo(): boolean;
-  canRedo(): boolean;
+// History.
+undo(): void;
+redo(): void;
+canUndo(): boolean;
+canRedo(): boolean;
 }
 ⋮----
-/** The document as this collaborator writes it (its edits go to its own history). */
+/** The document as this collaborator writes it (its edits go to its own history). _/
 ⋮----
-/** A document facade (see `defineService`), made once per workspace on its document. */
+/_* A document facade (see `defineService`), made once per workspace on its document. _/
 service<T>(def: ServiceDef<T>): T;
-/** The product's tool options (what new elements look like). */
+/_* The product's tool options (what new elements look like). _/
 options(): O;
 ⋮----
 // Elements of the workspace's scope, with derived geometry resolved.
@@ -8546,7 +8551,7 @@ withMembers(ids: Iterable<string>, purpose: "move" | "delete"): Set<string>;
 setScope(id: string): void;
 selectedIds(): string[];
 select(ids: Iterable<string>): void;
-/** What the local user has selected, whoever's workspace this is. */
+/_* What the local user has selected, whoever's workspace this is. _/
 userSelection(): string[];
 ⋮----
 // Ruler guides of the scope.
@@ -8565,10 +8570,10 @@ tidyUpElements(ids: Iterable<string>): string[];
 canAlign(ids: Iterable<string>): boolean;
 scaleElements(ids: Iterable<string>, factor: number, anchor?: ScaleAnchor): string[];
 rotateElements(
-    ids: Iterable<string>,
-    degrees: number | ((el: CanvasElement) => number),
-    around?: RotatePivot,
-  ): string[];
+ids: Iterable<string>,
+degrees: number | ((el: CanvasElement) => number),
+around?: RotatePivot,
+): string[];
 applyStyleOf(fromId: string, ids: Iterable<string>): string[];
 ⋮----
 // View.
@@ -8583,20 +8588,20 @@ redo(): void;
 canUndo(): boolean;
 canRedo(): boolean;
 ⋮----
-/** What an `ActorWorkspace` starts with: the scope and view it opens on. */
+/_* What an `ActorWorkspace` starts with: the scope and view it opens on. _/
 export interface WorkspaceInit {
-  scope: string | null;
-  viewport: Rect;
+scope: string | null;
+viewport: Rect;
 }
 ⋮----
-/** An undo history someone else may step through, and whose it is (`CanvasEngine.setHistoryTarget`). */
+/_* An undo history someone else may step through, and whose it is (`CanvasEngine.setHistoryTarget`). _/
 export interface HistoryTarget {
-  /** Whose history it is, for labels ("Undo Claude Code's change"). */
-  owner: string;
-  history: UndoHistory;
+/_* Whose history it is, for labels ("Undo Claude Code's change"). _/
+owner: string;
+history: UndoHistory;
 }
 ⋮----
-/** Whose history it is, for labels ("Undo Claude Code's change"). */
+/_* Whose history it is, for labels ("Undo Claude Code's change"). */
 </file>
 
 <file path="src/canvas/camera-glide.ts">
@@ -32278,7 +32283,9 @@ if cfg!(windows) {
 VITE_MOCK_RECENTS=true
 
 # The relay live sessions use by default ("Cloudy Canvas relay" in Settings › Collaboration).
+
 # Builds without it default to n0's public relays. Releases get it from the repository's secrets.
+
 VITE_CLOUDY_RELAY_URL=
 VITE_CLOUDY_RELAY_TOKEN=
 </file>
@@ -32299,17 +32306,19 @@ dist-ssr
 *.local
 
 # Editor directories and files
+
 .vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
 *.suo
-*.ntvs*
+_.ntvs_
 *.njsproj
 *.sln
 *.sw?
 
 # Live sessions relay: the server's real token
+
 server/relay/.env
 server/*
 </file>
@@ -32373,178 +32382,178 @@ server/*
 GNU AFFERO GENERAL PUBLIC LICENSE
                        Version 3, 19 November 2007
 
- Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
- Everyone is permitted to copy and distribute verbatim copies
- of this license document, but changing it is not allowed.
+Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+Everyone is permitted to copy and distribute verbatim copies
+of this license document, but changing it is not allowed.
 
                             Preamble
 
-  The GNU Affero General Public License is a free, copyleft license for
+The GNU Affero General Public License is a free, copyleft license for
 software and other kinds of works, specifically designed to ensure
 cooperation with the community in the case of network server software.
 
-  The licenses for most software and other practical works are designed
-to take away your freedom to share and change the works.  By contrast,
+The licenses for most software and other practical works are designed
+to take away your freedom to share and change the works. By contrast,
 our General Public Licenses are intended to guarantee your freedom to
 share and change all versions of a program--to make sure it remains free
 software for all its users.
 
-  When we speak of free software, we are referring to freedom, not
-price.  Our General Public Licenses are designed to make sure that you
+When we speak of free software, we are referring to freedom, not
+price. Our General Public Licenses are designed to make sure that you
 have the freedom to distribute copies of free software (and charge for
 them if you wish), that you receive source code or can get it if you
 want it, that you can change the software or use pieces of it in new
 free programs, and that you know you can do these things.
 
-  Developers that use our General Public Licenses protect your rights
+Developers that use our General Public Licenses protect your rights
 with two steps: (1) assert copyright on the software, and (2) offer
 you this License which gives you legal permission to copy, distribute
 and/or modify the software.
 
-  A secondary benefit of defending all users' freedom is that
+A secondary benefit of defending all users' freedom is that
 improvements made in alternate versions of the program, if they
 receive widespread use, become available for other developers to
-incorporate.  Many developers of free software are heartened and
-encouraged by the resulting cooperation.  However, in the case of
+incorporate. Many developers of free software are heartened and
+encouraged by the resulting cooperation. However, in the case of
 software used on network servers, this result may fail to come about.
 The GNU General Public License permits making a modified version and
 letting the public access it on a server without ever releasing its
 source code to the public.
 
-  The GNU Affero General Public License is designed specifically to
+The GNU Affero General Public License is designed specifically to
 ensure that, in such cases, the modified source code becomes available
-to the community.  It requires the operator of a network server to
+to the community. It requires the operator of a network server to
 provide the source code of the modified version running there to the
-users of that server.  Therefore, public use of a modified version, on
+users of that server. Therefore, public use of a modified version, on
 a publicly accessible server, gives the public access to the source
 code of the modified version.
 
-  An older license, called the Affero General Public License and
-published by Affero, was designed to accomplish similar goals.  This is
+An older license, called the Affero General Public License and
+published by Affero, was designed to accomplish similar goals. This is
 a different license, not a version of the Affero GPL, but Affero has
 released a new version of the Affero GPL which permits relicensing under
 this license.
 
-  The precise terms and conditions for copying, distribution and
+The precise terms and conditions for copying, distribution and
 modification follow.
 
                        TERMS AND CONDITIONS
 
-  0. Definitions.
+0. Definitions.
 
-  "This License" refers to version 3 of the GNU Affero General Public License.
+"This License" refers to version 3 of the GNU Affero General Public License.
 
-  "Copyright" also means copyright-like laws that apply to other kinds of
+"Copyright" also means copyright-like laws that apply to other kinds of
 works, such as semiconductor masks.
 
-  "The Program" refers to any copyrightable work licensed under this
-License.  Each licensee is addressed as "you".  "Licensees" and
+"The Program" refers to any copyrightable work licensed under this
+License. Each licensee is addressed as "you". "Licensees" and
 "recipients" may be individuals or organizations.
 
-  To "modify" a work means to copy from or adapt all or part of the work
+To "modify" a work means to copy from or adapt all or part of the work
 in a fashion requiring copyright permission, other than the making of an
-exact copy.  The resulting work is called a "modified version" of the
+exact copy. The resulting work is called a "modified version" of the
 earlier work or a work "based on" the earlier work.
 
-  A "covered work" means either the unmodified Program or a work based
+A "covered work" means either the unmodified Program or a work based
 on the Program.
 
-  To "propagate" a work means to do anything with it that, without
+To "propagate" a work means to do anything with it that, without
 permission, would make you directly or secondarily liable for
 infringement under applicable copyright law, except executing it on a
-computer or modifying a private copy.  Propagation includes copying,
+computer or modifying a private copy. Propagation includes copying,
 distribution (with or without modification), making available to the
 public, and in some countries other activities as well.
 
-  To "convey" a work means any kind of propagation that enables other
-parties to make or receive copies.  Mere interaction with a user through
+To "convey" a work means any kind of propagation that enables other
+parties to make or receive copies. Mere interaction with a user through
 a computer network, with no transfer of a copy, is not conveying.
 
-  An interactive user interface displays "Appropriate Legal Notices"
+An interactive user interface displays "Appropriate Legal Notices"
 to the extent that it includes a convenient and prominently visible
 feature that (1) displays an appropriate copyright notice, and (2)
 tells the user that there is no warranty for the work (except to the
 extent that warranties are provided), that licensees may convey the
-work under this License, and how to view a copy of this License.  If
+work under this License, and how to view a copy of this License. If
 the interface presents a list of user commands or options, such as a
 menu, a prominent item in the list meets this criterion.
 
-  1. Source Code.
+1. Source Code.
 
-  The "source code" for a work means the preferred form of the work
-for making modifications to it.  "Object code" means any non-source
+The "source code" for a work means the preferred form of the work
+for making modifications to it. "Object code" means any non-source
 form of a work.
 
-  A "Standard Interface" means an interface that either is an official
+A "Standard Interface" means an interface that either is an official
 standard defined by a recognized standards body, or, in the case of
 interfaces specified for a particular programming language, one that
 is widely used among developers working in that language.
 
-  The "System Libraries" of an executable work include anything, other
+The "System Libraries" of an executable work include anything, other
 than the work as a whole, that (a) is included in the normal form of
 packaging a Major Component, but which is not part of that Major
 Component, and (b) serves only to enable use of the work with that
 Major Component, or to implement a Standard Interface for which an
-implementation is available to the public in source code form.  A
+implementation is available to the public in source code form. A
 "Major Component", in this context, means a major essential component
 (kernel, window system, and so on) of the specific operating system
 (if any) on which the executable work runs, or a compiler used to
 produce the work, or an object code interpreter used to run it.
 
-  The "Corresponding Source" for a work in object code form means all
+The "Corresponding Source" for a work in object code form means all
 the source code needed to generate, install, and (for an executable
 work) run the object code and to modify the work, including scripts to
-control those activities.  However, it does not include the work's
+control those activities. However, it does not include the work's
 System Libraries, or general-purpose tools or generally available free
 programs which are used unmodified in performing those activities but
-which are not part of the work.  For example, Corresponding Source
+which are not part of the work. For example, Corresponding Source
 includes interface definition files associated with source files for
 the work, and the source code for shared libraries and dynamically
 linked subprograms that the work is specifically designed to require,
 such as by intimate data communication or control flow between those
 subprograms and other parts of the work.
 
-  The Corresponding Source need not include anything that users
+The Corresponding Source need not include anything that users
 can regenerate automatically from other parts of the Corresponding
 Source.
 
-  The Corresponding Source for a work in source code form is that
+The Corresponding Source for a work in source code form is that
 same work.
 
-  2. Basic Permissions.
+2. Basic Permissions.
 
-  All rights granted under this License are granted for the term of
+All rights granted under this License are granted for the term of
 copyright on the Program, and are irrevocable provided the stated
-conditions are met.  This License explicitly affirms your unlimited
-permission to run the unmodified Program.  The output from running a
+conditions are met. This License explicitly affirms your unlimited
+permission to run the unmodified Program. The output from running a
 covered work is covered by this License only if the output, given its
-content, constitutes a covered work.  This License acknowledges your
+content, constitutes a covered work. This License acknowledges your
 rights of fair use or other equivalent, as provided by copyright law.
 
-  You may make, run and propagate covered works that you do not
+You may make, run and propagate covered works that you do not
 convey, without conditions so long as your license otherwise remains
-in force.  You may convey covered works to others for the sole purpose
+in force. You may convey covered works to others for the sole purpose
 of having them make modifications exclusively for you, or provide you
 with facilities for running those works, provided that you comply with
 the terms of this License in conveying all material for which you do
-not control copyright.  Those thus making or running the covered works
+not control copyright. Those thus making or running the covered works
 for you must do so exclusively on your behalf, under your direction
 and control, on terms that prohibit them from making any copies of
 your copyrighted material outside their relationship with you.
 
-  Conveying under any other circumstances is permitted solely under
-the conditions stated below.  Sublicensing is not allowed; section 10
+Conveying under any other circumstances is permitted solely under
+the conditions stated below. Sublicensing is not allowed; section 10
 makes it unnecessary.
 
-  3. Protecting Users' Legal Rights From Anti-Circumvention Law.
+3. Protecting Users' Legal Rights From Anti-Circumvention Law.
 
-  No covered work shall be deemed part of an effective technological
+No covered work shall be deemed part of an effective technological
 measure under any applicable law fulfilling obligations under article
 11 of the WIPO copyright treaty adopted on 20 December 1996, or
 similar laws prohibiting or restricting circumvention of such
 measures.
 
-  When you convey a covered work, you waive any legal power to forbid
+When you convey a covered work, you waive any legal power to forbid
 circumvention of technological measures to the extent such circumvention
 is effected by exercising rights under this License with respect to
 the covered work, and you disclaim any intention to limit operation or
@@ -32552,9 +32561,9 @@ modification of the work as a means of enforcing, against the work's
 users, your or third parties' legal rights to forbid circumvention of
 technological measures.
 
-  4. Conveying Verbatim Copies.
+4. Conveying Verbatim Copies.
 
-  You may convey verbatim copies of the Program's source code as you
+You may convey verbatim copies of the Program's source code as you
 receive it, in any medium, provided that you conspicuously and
 appropriately publish on each copy an appropriate copyright notice;
 keep intact all notices stating that this License and any
@@ -32562,12 +32571,12 @@ non-permissive terms added in accord with section 7 apply to the code;
 keep intact all notices of the absence of any warranty; and give all
 recipients a copy of this License along with the Program.
 
-  You may charge any price or no price for each copy that you convey,
+You may charge any price or no price for each copy that you convey,
 and you may offer support or warranty protection for a fee.
 
-  5. Conveying Modified Source Versions.
+5. Conveying Modified Source Versions.
 
-  You may convey a work based on the Program, or the modifications to
+You may convey a work based on the Program, or the modifications to
 produce it from the Program, in the form of source code under the
 terms of section 4, provided that you also meet all of these conditions:
 
@@ -32592,19 +32601,19 @@ terms of section 4, provided that you also meet all of these conditions:
     interfaces that do not display Appropriate Legal Notices, your
     work need not make them do so.
 
-  A compilation of a covered work with other separate and independent
+A compilation of a covered work with other separate and independent
 works, which are not by their nature extensions of the covered work,
 and which are not combined with it such as to form a larger program,
 in or on a volume of a storage or distribution medium, is called an
 "aggregate" if the compilation and its resulting copyright are not
 used to limit the access or legal rights of the compilation's users
-beyond what the individual works permit.  Inclusion of a covered work
+beyond what the individual works permit. Inclusion of a covered work
 in an aggregate does not cause this License to apply to the other
 parts of the aggregate.
 
-  6. Conveying Non-Source Forms.
+6. Conveying Non-Source Forms.
 
-  You may convey a covered work in object code form under the terms
+You may convey a covered work in object code form under the terms
 of sections 4 and 5, provided that you also convey the
 machine-readable Corresponding Source under the terms of this License,
 in one of these ways:
@@ -32650,75 +32659,75 @@ in one of these ways:
     Source of the work are being offered to the general public at no
     charge under subsection 6d.
 
-  A separable portion of the object code, whose source code is excluded
+A separable portion of the object code, whose source code is excluded
 from the Corresponding Source as a System Library, need not be
 included in conveying the object code work.
 
-  A "User Product" is either (1) a "consumer product", which means any
+A "User Product" is either (1) a "consumer product", which means any
 tangible personal property which is normally used for personal, family,
 or household purposes, or (2) anything designed or sold for incorporation
-into a dwelling.  In determining whether a product is a consumer product,
-doubtful cases shall be resolved in favor of coverage.  For a particular
+into a dwelling. In determining whether a product is a consumer product,
+doubtful cases shall be resolved in favor of coverage. For a particular
 product received by a particular user, "normally used" refers to a
 typical or common use of that class of product, regardless of the status
 of the particular user or of the way in which the particular user
-actually uses, or expects or is expected to use, the product.  A product
+actually uses, or expects or is expected to use, the product. A product
 is a consumer product regardless of whether the product has substantial
 commercial, industrial or non-consumer uses, unless such uses represent
 the only significant mode of use of the product.
 
-  "Installation Information" for a User Product means any methods,
+"Installation Information" for a User Product means any methods,
 procedures, authorization keys, or other information required to install
 and execute modified versions of a covered work in that User Product from
-a modified version of its Corresponding Source.  The information must
+a modified version of its Corresponding Source. The information must
 suffice to ensure that the continued functioning of the modified object
 code is in no case prevented or interfered with solely because
 modification has been made.
 
-  If you convey an object code work under this section in, or with, or
+If you convey an object code work under this section in, or with, or
 specifically for use in, a User Product, and the conveying occurs as
 part of a transaction in which the right of possession and use of the
 User Product is transferred to the recipient in perpetuity or for a
 fixed term (regardless of how the transaction is characterized), the
 Corresponding Source conveyed under this section must be accompanied
-by the Installation Information.  But this requirement does not apply
+by the Installation Information. But this requirement does not apply
 if neither you nor any third party retains the ability to install
 modified object code on the User Product (for example, the work has
 been installed in ROM).
 
-  The requirement to provide Installation Information does not include a
+The requirement to provide Installation Information does not include a
 requirement to continue to provide support service, warranty, or updates
 for a work that has been modified or installed by the recipient, or for
-the User Product in which it has been modified or installed.  Access to a
+the User Product in which it has been modified or installed. Access to a
 network may be denied when the modification itself materially and
 adversely affects the operation of the network or violates the rules and
 protocols for communication across the network.
 
-  Corresponding Source conveyed, and Installation Information provided,
+Corresponding Source conveyed, and Installation Information provided,
 in accord with this section must be in a format that is publicly
 documented (and with an implementation available to the public in
 source code form), and must require no special password or key for
 unpacking, reading or copying.
 
-  7. Additional Terms.
+7. Additional Terms.
 
-  "Additional permissions" are terms that supplement the terms of this
+"Additional permissions" are terms that supplement the terms of this
 License by making exceptions from one or more of its conditions.
 Additional permissions that are applicable to the entire Program shall
 be treated as though they were included in this License, to the extent
-that they are valid under applicable law.  If additional permissions
+that they are valid under applicable law. If additional permissions
 apply only to part of the Program, that part may be used separately
 under those permissions, but the entire Program remains governed by
 this License without regard to the additional permissions.
 
-  When you convey a copy of a covered work, you may at your option
+When you convey a copy of a covered work, you may at your option
 remove any additional permissions from that copy, or from any part of
-it.  (Additional permissions may be written to require their own
-removal in certain cases when you modify the work.)  You may place
+it. (Additional permissions may be written to require their own
+removal in certain cases when you modify the work.) You may place
 additional permissions on material, added by you to a covered work,
 for which you have or can give appropriate copyright permission.
 
-  Notwithstanding any other provision of this License, for material you
+Notwithstanding any other provision of this License, for material you
 add to a covered work, you may (if authorized by the copyright holders of
 that material) supplement the terms of this License with terms:
 
@@ -32745,74 +32754,74 @@ that material) supplement the terms of this License with terms:
     any liability that these contractual assumptions directly impose on
     those licensors and authors.
 
-  All other non-permissive additional terms are considered "further
-restrictions" within the meaning of section 10.  If the Program as you
+All other non-permissive additional terms are considered "further
+restrictions" within the meaning of section 10. If the Program as you
 received it, or any part of it, contains a notice stating that it is
 governed by this License along with a term that is a further
-restriction, you may remove that term.  If a license document contains
+restriction, you may remove that term. If a license document contains
 a further restriction but permits relicensing or conveying under this
 License, you may add to a covered work material governed by the terms
 of that license document, provided that the further restriction does
 not survive such relicensing or conveying.
 
-  If you add terms to a covered work in accord with this section, you
+If you add terms to a covered work in accord with this section, you
 must place, in the relevant source files, a statement of the
 additional terms that apply to those files, or a notice indicating
 where to find the applicable terms.
 
-  Additional terms, permissive or non-permissive, may be stated in the
+Additional terms, permissive or non-permissive, may be stated in the
 form of a separately written license, or stated as exceptions;
 the above requirements apply either way.
 
-  8. Termination.
+8. Termination.
 
-  You may not propagate or modify a covered work except as expressly
-provided under this License.  Any attempt otherwise to propagate or
+You may not propagate or modify a covered work except as expressly
+provided under this License. Any attempt otherwise to propagate or
 modify it is void, and will automatically terminate your rights under
 this License (including any patent licenses granted under the third
 paragraph of section 11).
 
-  However, if you cease all violation of this License, then your
+However, if you cease all violation of this License, then your
 license from a particular copyright holder is reinstated (a)
 provisionally, unless and until the copyright holder explicitly and
 finally terminates your license, and (b) permanently, if the copyright
 holder fails to notify you of the violation by some reasonable means
 prior to 60 days after the cessation.
 
-  Moreover, your license from a particular copyright holder is
+Moreover, your license from a particular copyright holder is
 reinstated permanently if the copyright holder notifies you of the
 violation by some reasonable means, this is the first time you have
 received notice of violation of this License (for any work) from that
 copyright holder, and you cure the violation prior to 30 days after
 your receipt of the notice.
 
-  Termination of your rights under this section does not terminate the
+Termination of your rights under this section does not terminate the
 licenses of parties who have received copies or rights from you under
-this License.  If your rights have been terminated and not permanently
+this License. If your rights have been terminated and not permanently
 reinstated, you do not qualify to receive new licenses for the same
 material under section 10.
 
-  9. Acceptance Not Required for Having Copies.
+9. Acceptance Not Required for Having Copies.
 
-  You are not required to accept this License in order to receive or
-run a copy of the Program.  Ancillary propagation of a covered work
+You are not required to accept this License in order to receive or
+run a copy of the Program. Ancillary propagation of a covered work
 occurring solely as a consequence of using peer-to-peer transmission
-to receive a copy likewise does not require acceptance.  However,
+to receive a copy likewise does not require acceptance. However,
 nothing other than this License grants you permission to propagate or
-modify any covered work.  These actions infringe copyright if you do
-not accept this License.  Therefore, by modifying or propagating a
+modify any covered work. These actions infringe copyright if you do
+not accept this License. Therefore, by modifying or propagating a
 covered work, you indicate your acceptance of this License to do so.
 
-  10. Automatic Licensing of Downstream Recipients.
+10. Automatic Licensing of Downstream Recipients.
 
-  Each time you convey a covered work, the recipient automatically
+Each time you convey a covered work, the recipient automatically
 receives a license from the original licensors, to run, modify and
-propagate that work, subject to this License.  You are not responsible
+propagate that work, subject to this License. You are not responsible
 for enforcing compliance by third parties with this License.
 
-  An "entity transaction" is a transaction transferring control of an
+An "entity transaction" is a transaction transferring control of an
 organization, or substantially all assets of one, or subdividing an
-organization, or merging organizations.  If propagation of a covered
+organization, or merging organizations. If propagation of a covered
 work results from an entity transaction, each party to that
 transaction who receives a copy of the work also receives whatever
 licenses to the work the party's predecessor in interest had or could
@@ -32820,43 +32829,43 @@ give under the previous paragraph, plus a right to possession of the
 Corresponding Source of the work from the predecessor in interest, if
 the predecessor has it or can get it with reasonable efforts.
 
-  You may not impose any further restrictions on the exercise of the
-rights granted or affirmed under this License.  For example, you may
+You may not impose any further restrictions on the exercise of the
+rights granted or affirmed under this License. For example, you may
 not impose a license fee, royalty, or other charge for exercise of
 rights granted under this License, and you may not initiate litigation
 (including a cross-claim or counterclaim in a lawsuit) alleging that
 any patent claim is infringed by making, using, selling, offering for
 sale, or importing the Program or any portion of it.
 
-  11. Patents.
+11. Patents.
 
-  A "contributor" is a copyright holder who authorizes use under this
-License of the Program or a work on which the Program is based.  The
+A "contributor" is a copyright holder who authorizes use under this
+License of the Program or a work on which the Program is based. The
 work thus licensed is called the contributor's "contributor version".
 
-  A contributor's "essential patent claims" are all patent claims
+A contributor's "essential patent claims" are all patent claims
 owned or controlled by the contributor, whether already acquired or
 hereafter acquired, that would be infringed by some manner, permitted
 by this License, of making, using, or selling its contributor version,
 but do not include claims that would be infringed only as a
-consequence of further modification of the contributor version.  For
+consequence of further modification of the contributor version. For
 purposes of this definition, "control" includes the right to grant
 patent sublicenses in a manner consistent with the requirements of
 this License.
 
-  Each contributor grants you a non-exclusive, worldwide, royalty-free
+Each contributor grants you a non-exclusive, worldwide, royalty-free
 patent license under the contributor's essential patent claims, to
 make, use, sell, offer for sale, import and otherwise run, modify and
 propagate the contents of its contributor version.
 
-  In the following three paragraphs, a "patent license" is any express
+In the following three paragraphs, a "patent license" is any express
 agreement or commitment, however denominated, not to enforce a patent
 (such as an express permission to practice a patent or covenant not to
-sue for patent infringement).  To "grant" such a patent license to a
+sue for patent infringement). To "grant" such a patent license to a
 party means to make such an agreement or commitment not to enforce a
 patent against the party.
 
-  If you convey a covered work, knowingly relying on a patent license,
+If you convey a covered work, knowingly relying on a patent license,
 and the Corresponding Source of the work is not available for anyone
 to copy, free of charge and under the terms of this License, through a
 publicly available network server or other readily accessible means,
@@ -32864,13 +32873,13 @@ then you must either (1) cause the Corresponding Source to be so
 available, or (2) arrange to deprive yourself of the benefit of the
 patent license for this particular work, or (3) arrange, in a manner
 consistent with the requirements of this License, to extend the patent
-license to downstream recipients.  "Knowingly relying" means you have
+license to downstream recipients. "Knowingly relying" means you have
 actual knowledge that, but for the patent license, your conveying the
 covered work in a country, or your recipient's use of the covered work
 in a country, would infringe one or more identifiable patents in that
 country that you have reason to believe are valid.
 
-  If, pursuant to or in connection with a single transaction or
+If, pursuant to or in connection with a single transaction or
 arrangement, you convey, or propagate by procuring conveyance of, a
 covered work, and grant a patent license to some of the parties
 receiving the covered work authorizing them to use, propagate, modify
@@ -32878,10 +32887,10 @@ or convey a specific copy of the covered work, then the patent license
 you grant is automatically extended to all recipients of the covered
 work and works based on it.
 
-  A patent license is "discriminatory" if it does not include within
+A patent license is "discriminatory" if it does not include within
 the scope of its coverage, prohibits the exercise of, or is
 conditioned on the non-exercise of one or more of the rights that are
-specifically granted under this License.  You may not convey a covered
+specifically granted under this License. You may not convey a covered
 work if you are a party to an arrangement with a third party that is
 in the business of distributing software, under which you make payment
 to the third party based on the extent of your activity of conveying
@@ -32893,83 +32902,83 @@ for and in connection with specific products or compilations that
 contain the covered work, unless you entered into that arrangement,
 or that patent license was granted, prior to 28 March 2007.
 
-  Nothing in this License shall be construed as excluding or limiting
+Nothing in this License shall be construed as excluding or limiting
 any implied license or other defenses to infringement that may
 otherwise be available to you under applicable patent law.
 
-  12. No Surrender of Others' Freedom.
+12. No Surrender of Others' Freedom.
 
-  If conditions are imposed on you (whether by court order, agreement or
+If conditions are imposed on you (whether by court order, agreement or
 otherwise) that contradict the conditions of this License, they do not
-excuse you from the conditions of this License.  If you cannot convey a
+excuse you from the conditions of this License. If you cannot convey a
 covered work so as to satisfy simultaneously your obligations under this
 License and any other pertinent obligations, then as a consequence you may
-not convey it at all.  For example, if you agree to terms that obligate you
+not convey it at all. For example, if you agree to terms that obligate you
 to collect a royalty for further conveying from those to whom you convey
 the Program, the only way you could satisfy both those terms and this
 License would be to refrain entirely from conveying the Program.
 
-  13. Remote Network Interaction; Use with the GNU General Public License.
+13. Remote Network Interaction; Use with the GNU General Public License.
 
-  Notwithstanding any other provision of this License, if you modify the
+Notwithstanding any other provision of this License, if you modify the
 Program, your modified version must prominently offer all users
 interacting with it remotely through a computer network (if your version
 supports such interaction) an opportunity to receive the Corresponding
 Source of your version by providing access to the Corresponding Source
 from a network server at no charge, through some standard or customary
-means of facilitating copying of software.  This Corresponding Source
+means of facilitating copying of software. This Corresponding Source
 shall include the Corresponding Source for any work covered by version 3
 of the GNU General Public License that is incorporated pursuant to the
 following paragraph.
 
-  Notwithstanding any other provision of this License, you have
+Notwithstanding any other provision of this License, you have
 permission to link or combine any covered work with a work licensed
 under version 3 of the GNU General Public License into a single
-combined work, and to convey the resulting work.  The terms of this
+combined work, and to convey the resulting work. The terms of this
 License will continue to apply to the part which is the covered work,
 but the work with which it is combined will remain governed by version
 3 of the GNU General Public License.
 
-  14. Revised Versions of this License.
+14. Revised Versions of this License.
 
-  The Free Software Foundation may publish revised and/or new versions of
-the GNU Affero General Public License from time to time.  Such new versions
+The Free Software Foundation may publish revised and/or new versions of
+the GNU Affero General Public License from time to time. Such new versions
 will be similar in spirit to the present version, but may differ in detail to
 address new problems or concerns.
 
-  Each version is given a distinguishing version number.  If the
+Each version is given a distinguishing version number. If the
 Program specifies that a certain numbered version of the GNU Affero General
 Public License "or any later version" applies to it, you have the
 option of following the terms and conditions either of that numbered
 version or of any later version published by the Free Software
-Foundation.  If the Program does not specify a version number of the
+Foundation. If the Program does not specify a version number of the
 GNU Affero General Public License, you may choose any version ever published
 by the Free Software Foundation.
 
-  If the Program specifies that a proxy can decide which future
+If the Program specifies that a proxy can decide which future
 versions of the GNU Affero General Public License can be used, that proxy's
 public statement of acceptance of a version permanently authorizes you
 to choose that version for the Program.
 
-  Later license versions may give you additional or different
-permissions.  However, no additional obligations are imposed on any
+Later license versions may give you additional or different
+permissions. However, no additional obligations are imposed on any
 author or copyright holder as a result of your choosing to follow a
 later version.
 
-  15. Disclaimer of Warranty.
+15. Disclaimer of Warranty.
 
-  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
-APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
+THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
+APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
 HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY
 OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM
-IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF
+PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM
+IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF
 ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
 
-  16. Limitation of Liability.
+16. Limitation of Liability.
 
-  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
 WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS
 THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY
 GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE
@@ -32979,9 +32988,9 @@ PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),
 EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGES.
 
-  17. Interpretation of Sections 15 and 16.
+17. Interpretation of Sections 15 and 16.
 
-  If the disclaimer of warranty and limitation of liability provided
+If the disclaimer of warranty and limitation of liability provided
 above cannot be given local legal effect according to their terms,
 reviewing courts shall apply local law that most closely approximates
 an absolute waiver of all civil liability in connection with the
@@ -32992,11 +33001,11 @@ copy of the Program in return for a fee.
 
             How to Apply These Terms to Your New Programs
 
-  If you develop a new program, and you want it to be of the greatest
+If you develop a new program, and you want it to be of the greatest
 possible use to the public, the best way to achieve this is to make it
 free software which everyone can redistribute and change under these terms.
 
-  To do so, attach the following notices to the program.  It is safest
+To do so, attach the following notices to the program. It is safest
 to attach them to the start of each source file to most effectively
 state the exclusion of warranty; and each file should have at least
 the "copyright" line and a pointer to where the full notice is found.
@@ -33019,15 +33028,15 @@ the "copyright" line and a pointer to where the full notice is found.
 
 Also add information on how to contact you by electronic and paper mail.
 
-  If your software can interact with users remotely through a computer
+If your software can interact with users remotely through a computer
 network, you should also make sure that it provides a way for users to
-get its source.  For example, if your program is a web application, its
+get its source. For example, if your program is a web application, its
 interface could display a "Source" link that leads users to an archive
-of the code.  There are many ways you could offer source, and different
+of the code. There are many ways you could offer source, and different
 solutions will be better for different programs; see section 13 for the
 specific requirements.
 
-  You should also get your employer (if you work as a programmer) or school,
+You should also get your employer (if you work as a programmer) or school,
 if any, to sign a "copyright disclaimer" for the program, if necessary.
 For more information on this, and how to apply and follow the GNU AGPL, see
 <https://www.gnu.org/licenses/>.
@@ -33102,7 +33111,7 @@ _root="$startdir/../.."
 _tauri="$_root/src-tauri"
 
 pkgname=cloudy-canvas
-pkgver=$(sed -n 's/^  "version": "\(.*\)",$/\1/p' "$_tauri/tauri.conf.json")
+pkgver=$(sed -n 's/^ "version": "\(.*\)",$/\1/p' "$_tauri/tauri.conf.json")
 pkgrel=1
 pkgdesc="Cloudy Canvas — boards and designs on one canvas"
 arch=('x86_64')
@@ -33112,27 +33121,28 @@ depends=('webkit2gtk-4.1' 'gtk3' 'libsoup3' 'hicolor-icon-theme')
 options=('!strip' '!debug')
 
 package() {
-  install -Dm755 "$_tauri/target/release/cloudy-canvas" "$pkgdir/usr/bin/cloudy-canvas"
+install -Dm755 "$_tauri/target/release/cloudy-canvas" "$pkgdir/usr/bin/cloudy-canvas"
 
-  install -Dm644 "$startdir/cloudy-canvas.desktop" "$pkgdir/usr/share/applications/cloudy-canvas.desktop"
-  install -Dm644 "$startdir/cloudy-canvas.xml" "$pkgdir/usr/share/mime/packages/cloudy-canvas.xml"
+install -Dm644 "$startdir/cloudy-canvas.desktop" "$pkgdir/usr/share/applications/cloudy-canvas.desktop"
+install -Dm644 "$startdir/cloudy-canvas.xml" "$pkgdir/usr/share/mime/packages/cloudy-canvas.xml"
 
-  local icons="$_tauri/icons" share="$pkgdir/usr/share/icons/hicolor"
-  install -Dm644 "$icons/32x32.png" "$share/32x32/apps/cloudy-canvas.png"
-  install -Dm644 "$icons/64x64.png" "$share/64x64/apps/cloudy-canvas.png"
-  install -Dm644 "$icons/128x128.png" "$share/128x128/apps/cloudy-canvas.png"
-  install -Dm644 "$icons/128x128@2x.png" "$share/256x256/apps/cloudy-canvas.png"
-  install -Dm644 "$icons/icon.png" "$share/512x512/apps/cloudy-canvas.png"
-  install -Dm644 "$icons/source/app-icon.svg" "$share/scalable/apps/cloudy-canvas.svg"
+local icons="$_tauri/icons" share="$pkgdir/usr/share/icons/hicolor"
+install -Dm644 "$icons/32x32.png" "$share/32x32/apps/cloudy-canvas.png"
+install -Dm644 "$icons/64x64.png" "$share/64x64/apps/cloudy-canvas.png"
+install -Dm644 "$icons/128x128.png" "$share/128x128/apps/cloudy-canvas.png"
+install -Dm644 "$icons/128x128@2x.png" "$share/256x256/apps/cloudy-canvas.png"
+install -Dm644 "$icons/icon.png" "$share/512x512/apps/cloudy-canvas.png"
+install -Dm644 "$icons/source/app-icon.svg" "$share/scalable/apps/cloudy-canvas.svg"
 
-  # The board and design files use the app icon too.
-  local size type
-  for size in 32x32 64x64 128x128 256x256 512x512; do
-    install -d "$share/$size/mimetypes"
-    for type in board design; do
-      ln -s ../apps/cloudy-canvas.png "$share/$size/mimetypes/application-x-cloudy-canvas-$type.png"
-    done
-  done
+# The board and design files use the app icon too.
+
+local size type
+for size in 32x32 64x64 128x128 256x256 512x512; do
+install -d "$share/$size/mimetypes"
+for type in board design; do
+ln -s ../apps/cloudy-canvas.png "$share/$size/mimetypes/application-x-cloudy-canvas-$type.png"
+done
+done
 }
 </file>
 
@@ -41725,8 +41735,9 @@ src-tauri/gen
       "@design": ["./src/products/design/index.ts"],
       "@design/*": ["./src/products/design/*"]
     }
-  },
-  "include": ["src"]
+
+},
+"include": ["src"]
 }
 </file>
 
@@ -41742,24 +41753,23 @@ src-tauri/gen
 name: Release
 
 on:
-  push:
-    tags: ["v*"]
+push:
+tags: ["v*"]
 
 permissions:
-  contents: write
+contents: write
 
 concurrency:
-  group: release-${{ github.ref_name }}
-  cancel-in-progress: false
+group: release-${{ github.ref_name }}
+cancel-in-progress: false
 
 jobs:
-  create-release:
-    name: Create the draft release
-    runs-on: ubuntu-latest
-    outputs:
-      release-id: ${{ steps.draft.outputs.id }}
-    steps:
-      - uses: actions/checkout@v4
+create-release:
+name: Create the draft release
+runs-on: ubuntu-latest
+outputs:
+release-id: ${{ steps.draft.outputs.id }}
+steps: - uses: actions/checkout@v4
 
       - name: Check the tag matches the app's version
         run: |
@@ -41785,23 +41795,19 @@ jobs:
           fi
           echo "id=$id" >> "$GITHUB_OUTPUT"
 
-  build:
-    name: Build (${{ matrix.name }})
-    needs: create-release
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: Windows
-            os: windows-latest
-            bundles: nsis
-          # The oldest supported Ubuntu, so the AppImage runs on more distros.
-          - name: Linux
-            os: ubuntu-22.04
-            bundles: deb,appimage
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
+build:
+name: Build (${{ matrix.name }})
+needs: create-release
+strategy:
+fail-fast: false
+matrix:
+include: - name: Windows
+os: windows-latest
+bundles: nsis # The oldest supported Ubuntu, so the AppImage runs on more distros. - name: Linux
+os: ubuntu-22.04
+bundles: deb,appimage
+runs-on: ${{ matrix.os }}
+steps: - uses: actions/checkout@v4
 
       - name: Install Linux dependencies
         if: runner.os == 'Linux'
@@ -41842,16 +41848,15 @@ jobs:
           updaterJsonPreferNsis: true
           args: --config src-tauri/tauri.release.conf.json --bundles ${{ matrix.bundles }}
 
-  arch:
-    name: Build (Arch Linux)
-    needs: [create-release, build]
-    runs-on: ubuntu-latest
-    container: archlinux:latest
-    steps:
-      - name: Install build tools
-        run: |
-          pacman -Syu --noconfirm --needed base-devel git github-cli nodejs pnpm rustup \
-            webkit2gtk-4.1 gtk3 libsoup3 librsvg openssl
+arch:
+name: Build (Arch Linux)
+needs: [create-release, build]
+runs-on: ubuntu-latest
+container: archlinux:latest
+steps: - name: Install build tools
+run: |
+pacman -Syu --noconfirm --needed base-devel git github-cli nodejs pnpm rustup \
+webkit2gtk-4.1 gtk3 libsoup3 librsvg openssl
 
       - uses: actions/checkout@v4
 
@@ -41879,6 +41884,7 @@ jobs:
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           gh release upload "$GITHUB_REF_NAME" packaging/arch/*.pkg.tar.zst --clobber \
             --repo "$GITHUB_REPOSITORY"
+
 </file>
 
 <file path="docs/collaboration.md">
@@ -48419,21 +48425,21 @@ function diamond(x: number)
 ⋮----
 
 ⋮----
-/** An entity's mandatory side of a relation, as numbers, a double line or both. */
+/** An entity's mandatory side of a relation, as numbers, a double line or both. _/
 ⋮----
-/** A parent with two children through Silberschatz's hollow arrow. */
+/_* A parent with two children through Silberschatz's hollow arrow. _/
 ⋮----
-/** A relation's arrowhead at the "one" side, or none. */
+/_* A relation's arrowhead at the "one" side, or none. _/
 ⋮----
-/** A parent with two children through a triangle and an arc, or a d circle. */
+/_* A parent with two children through a triangle and an arc, or a d circle. _/
 ⋮----
-/** A relation's line meeting an entity, with or without the crow's foot. */
+/_* A relation's line meeting an entity, with or without the crow's foot. _/
 ⋮----
-/** Two entities and a relation, with (min,max) or Chen's letters on the lines. */
+/_* Two entities and a relation, with (min,max) or Chen's letters on the lines. _/
 ⋮----
-/** A diamond with, or without, the I mark on its top corner. */
+/_* A diamond with, or without, the I mark on its top corner. _/
 ⋮----
-/** The cardinality on a line, with or without the join attribute after it. */
+/_* The cardinality on a line, with or without the join attribute after it. */
 </file>
 
 <file path="src/products/board/modules/er/ui/er-panel/diagram-settings/diagram-settings.tsx">
@@ -54040,7 +54046,7 @@ sections + Design section), plus `docs/plugins.md` when a new hook or point is e
   rotate with Shift snapping to 15° and resize a rotated node from a corner; drag a guide out of the
   ruler, snap to it, save, reopen and find it on the same page.
 - Optional (recommended): add Vitest for `canvas/snapping/` and `canvas/arrange/`, which are pure
-  functions and easy to test.
+functions and easy to test.
 </file>
 
 <file path="src/canvas/handles/handles.types.ts">
@@ -56046,9 +56052,13 @@ edition = "2024"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
+
 # The `_lib` suffix may seem redundant but it is necessary
+
 # to make the lib name unique and wouldn't conflict with the bin name.
+
 # This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+
 name = "cloudy_canvas_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
@@ -56068,7 +56078,9 @@ axum = { version = "0.8", default-features = false, features = ["http1", "tokio"
 tokio = { version = "1", features = ["net", "sync", "time"] }
 tauri-plugin-deep-link = "2"
 fontdb = "0.23"
+
 # Live sessions' peer-to-peer transport (src/share). Keep server/relay's image on the same 1.x.
+
 iroh = { version = "1.4", default-features = false, features = ["portmapper", "tls-ring"] }
 
 [target.'cfg(any(target_os = "macos", windows, target_os = "linux"))'.dependencies]
@@ -56076,8 +56088,8 @@ tauri-plugin-process = "2"
 tauri-plugin-single-instance = { version = "2", features = ["deep-link"] }
 tauri-plugin-updater = "2"
 
-
 # Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration
+
 [profile.release]
 codegen-units = 1
 lto = true

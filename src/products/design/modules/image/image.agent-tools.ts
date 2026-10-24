@@ -12,10 +12,11 @@ import { createId } from "@shared/core";
 import { requireDesign, type DesignAgentTool } from "../../agent";
 import { checkParent, containerAt, imagePaint, isNodeKind, type ImageScaleMode } from "../core";
 import { createRectangle, type RectangleElement } from "../rectangle";
+import { replaceImageTool } from "./replace-image.agent-tool";
 
 const SCALE_MODES: readonly ImageScaleMode[] = ["fill", "fit", "tile"];
 
-/** Placing picture files, as dropping them on the canvas does. */
+/** Placing picture files, as dropping them on the canvas does, and swapping a layer's picture. */
 export const imageTools: DesignAgentTool[] = [
   {
     name: "add_image",
@@ -72,6 +73,7 @@ export const imageTools: DesignAgentTool[] = [
       return { id: node.id, assetId, parentId, ...rect };
     },
   },
+  replaceImageTool,
 ];
 
 /** The picture's bounds: its pixel size, or `w`/`h` with the other side in proportion. */

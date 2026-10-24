@@ -22,6 +22,7 @@ import {
   removeFrames,
   removeSlots,
   sameSlots,
+  setOptions,
 } from "./slot-edits";
 
 /**
@@ -67,14 +68,19 @@ export class DesignBrochure {
     this.writeSlots((slots) => addPages(slots, frames, at));
   }
 
-  /** Adds a new frame to the design as the brochure's last page, in one undo step. */
-  addNewPage(frame: FrameElement): void {
+  /** Adds a new frame to the design as a page at `at` (default: the end), in one undo step. */
+  addNewPage(frame: FrameElement, at?: number): void {
     this.doc.checkpoint();
     // One transaction: the frame and its page are one step.
     this.doc.batch(() => {
       this.doc.add(frame);
-      this.addPages([frame.id]);
+      this.addPages([frame.id], at);
     });
+  }
+
+  /** Gives a page these options, in order, printing `chosen` (see `setOptions`). */
+  setOptions(slotId: string, frames: readonly string[], chosen?: string): void {
+    this.writeSlots((slots) => setOptions(slots, slotId, frames, chosen));
   }
 
   /** Makes a frame an option of a page (taking it off another). */

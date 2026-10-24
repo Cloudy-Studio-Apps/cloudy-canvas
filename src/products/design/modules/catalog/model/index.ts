@@ -1,12 +1,14 @@
 export type * from "./book-layout.types";
 export type * from "./brochure-pages.types";
+export type * from "./page-pictures.types";
 export type * from "./paper-size.types";
 export { brochureOf } from "./brochure-of";
 export { brochurePages } from "./brochure-pages";
 export { bookLayout } from "./book-layout";
 export { DESIGN_BROCHURE, DesignBrochure } from "./design-brochure";
 export { isPageFrame } from "./page-frame";
-export { brochurePageSize, fitsPage, spanOf } from "./page-span";
+export { pagePictures } from "./page-pictures";
+export { brochurePageSize, fitsPage, sideWidth, spanOf } from "./page-span";
 export { mmToUnits, paperSize, unitsToMm } from "./paper-size";
 export { pruneBrochure } from "./prune-brochure";
 export { newSlot } from "./slot-edits";

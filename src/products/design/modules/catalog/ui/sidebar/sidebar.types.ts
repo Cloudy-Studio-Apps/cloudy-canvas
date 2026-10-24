@@ -1,4 +1,4 @@
-import type { BrochurePage, DesignNode, FrameElement, ImagePaint } from "@design";
+import type { BrochurePage, FrameElement, PagePicture } from "@design";
 
 export interface PageSectionProps {
   page: BrochurePage;
@@ -9,8 +9,7 @@ export interface PageImagesSectionProps {
 }
 
 export interface PageImageRowProps {
-  node: DesignNode;
-  paint: ImagePaint;
+  picture: PagePicture;
 }
 
 export interface LooseFrameSectionProps {

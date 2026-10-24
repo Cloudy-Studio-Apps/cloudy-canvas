@@ -6,4 +6,4 @@ export * from "./checks";
 export * from "./export";
 export * from "./mode";
 export * from "./model";
-export { catalogTools } from "./catalog.agent-tools";
+export { catalogTools } from "./agent";

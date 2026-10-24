@@ -8,7 +8,8 @@ import { replaceImage } from "../page-actions";
 import type { PageImageRowProps } from "./sidebar.types";
 
 /** One picture of a page: what it shows, its size and printed dpi, and Replace. */
-export function PageImageRow({ node, paint }: PageImageRowProps) {
+export function PageImageRow({ picture }: PageImageRowProps) {
+  const { node, paint, fill } = picture;
   const engine = useDesignEngine();
   const url = useAssetUrl(paint.assetId);
   const size = usePictureSize(paint.assetId);
@@ -29,7 +30,7 @@ export function PageImageRow({ node, paint }: PageImageRowProps) {
           </span>
         )}
       </span>
-      <Button size="sm" variant="outline" onClick={() => void replaceImage(engine, node, paint)}>
+      <Button size="sm" variant="outline" onClick={() => void replaceImage(engine, node, fill)}>
         Replace
       </Button>
     </li>
