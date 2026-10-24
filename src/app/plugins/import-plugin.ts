@@ -1,7 +1,8 @@
 import { pluginStorage } from "@platform";
 import type { AppModule, InstalledPlugin } from "@shared/core";
 import { createPluginApi } from "./create-plugin-api";
-import type { PluginModules, PluginProduct } from "./plugin-modules.types";
+import { createPluginStickers } from "./plugin-stickers";
+import type { ImportedPlugin, PluginModules, PluginProduct } from "./plugin-modules.types";
 
 const PRODUCTS: readonly PluginProduct[] = ["board", "design"];
 
@@ -9,9 +10,10 @@ const PRODUCTS: readonly PluginProduct[] = ["board", "design"];
  * Runs a plugin's code and returns its modules for each product. The code is one ES module,
  * imported from a `blob:` URL; its default export is `activate(api)`, which returns a module or a
  * list of them (for the one product in its manifest's `products`), or `{ board, design }` with a
- * list for each. Throws with a message for the user when the plugin doesn't follow the format.
+ * list for each. What it gave `api.stickers` comes back staged, to commit once it's loaded. Throws
+ * with a message for the user when the plugin doesn't follow the format.
  */
-export async function importPlugin(plugin: InstalledPlugin): Promise<PluginModules> {
+export async function importPlugin(plugin: InstalledPlugin): Promise<ImportedPlugin> {
   const code = await pluginStorage.readMain(plugin);
   const url = URL.createObjectURL(new Blob([code], { type: "text/javascript" }));
   let exports: { default?: unknown };
@@ -23,10 +25,11 @@ export async function importPlugin(plugin: InstalledPlugin): Promise<PluginModul
   if (typeof exports.default !== "function") {
     throw new Error(`${plugin.manifest.main} has no default export activate(api).`);
   }
+  const stickers = createPluginStickers(plugin.manifest.id);
   const result: unknown = await (exports.default as (api: unknown) => unknown)(
-    createPluginApi(plugin),
+    createPluginApi(plugin, stickers.api),
   );
-  return splitByProduct(plugin, result);
+  return { modules: splitByProduct(plugin, result), stickers };
 }
 
 function splitByProduct(plugin: InstalledPlugin, result: unknown): PluginModules {

@@ -1,7 +1,7 @@
 import { registerBoardModule } from "@board/ui";
 import { registerDesignModule } from "@design/ui";
 import { pluginStorage } from "@platform";
-import type { InstalledPlugin, PluginStatus } from "@shared/core";
+import { stickerCatalog, type InstalledPlugin, type PluginStatus } from "@shared/core";
 import { usePluginsStore } from "@shared/stores/plugins-store";
 import { notifyError } from "@shared/stores/toast-store";
 import { importPlugin } from "./import-plugin";
@@ -39,11 +39,18 @@ async function loadPlugin(
   const { id } = plugin.manifest;
   if (!enabled.includes(id) || !trusted.includes(id)) return { id, state: "disabled", modules: [] };
   try {
-    const { board, design } = await withTimeout(importPlugin(plugin), LOAD_TIMEOUT_MS);
-    for (const module of board) registerBoardModule(module, { plugin: id });
-    for (const module of design) registerDesignModule(module, { plugin: id });
+    const imported = await withTimeout(importPlugin(plugin), LOAD_TIMEOUT_MS);
+    const { board, design } = imported.modules;
+    const stickers = imported.stickers.commit();
+    try {
+      for (const module of board) registerBoardModule(module, { plugin: id });
+      for (const module of design) registerDesignModule(module, { plugin: id });
+    } catch (error) {
+      stickerCatalog.drop(id);
+      throw error;
+    }
     const modules = [...new Set([...board, ...design].map((module) => module.id))];
-    return { id, state: "enabled", modules };
+    return { id, state: "enabled", modules, stickers };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error(`[plugins] "${id}" couldn't be loaded:`, error);

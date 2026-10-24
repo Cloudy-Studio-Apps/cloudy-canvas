@@ -36,5 +36,6 @@ export function createCanvasPoints<O extends object>(product: string): CanvasPoi
     pasteText: definePoint(id("pasteText")),
     pasteOnto: definePoint(id("pasteOnto")),
     pasteImage: definePoint(id("pasteImage")),
+    pasteForeign: definePoint(id("pasteForeign")),
   };
 }

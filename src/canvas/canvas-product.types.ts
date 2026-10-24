@@ -174,6 +174,12 @@ export interface CanvasProduct<O extends object = object> {
    * z-order `index`, or `null` to ignore it.
    */
   pasteImage?(image: PastedImage, view: Rect, index: string, options: O): CanvasElement | null;
+  /**
+   * An element copied from another product (`from`, e.g. a board's sticker pasted into a
+   * design) as one of this product's, keeping its id, or `null` to leave it out. The assets it
+   * shows are pasted with it.
+   */
+  pasteForeign?(el: CanvasElement, from: string): CanvasElement | null;
 }
 
 /** What `CanvasProduct.selectTarget` is asked with. */

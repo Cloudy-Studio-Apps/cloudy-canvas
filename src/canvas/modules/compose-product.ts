@@ -29,6 +29,7 @@ export function composeProduct<O extends object>(
   const textPasters = host.get(points.pasteText);
   const ontoPasters = host.get(points.pasteOnto);
   const imagePasters = host.get(points.pasteImage);
+  const foreignPasters = host.get(points.pasteForeign);
   const links = host.get(points.links);
   const movers = host.get(points.onMoved);
   const scopes = single(host.get(points.scopes), `the ${id}'s scopes`);
@@ -146,6 +147,17 @@ export function composeProduct<O extends object>(
             for (const paste of imagePasters) {
               const el = paste(image, view, index, options);
               if (el) return el;
+            }
+            return null;
+          },
+        }
+      : {}),
+    ...(foreignPasters.length > 0
+      ? {
+          pasteForeign: (el, from) => {
+            for (const paste of foreignPasters) {
+              const translated = paste(el, from);
+              if (translated) return translated;
             }
             return null;
           },

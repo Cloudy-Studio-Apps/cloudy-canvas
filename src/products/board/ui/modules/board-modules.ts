@@ -1,7 +1,7 @@
 import { composeProduct, type CanvasProduct } from "@canvas";
 import type { EditorModules } from "@canvas-ui";
 import { boardCanvas, type BoardToolOptions } from "@board";
-import { createModuleHost, type AppModule, type ModuleHost } from "@shared/core";
+import { createModuleHost, stickerCatalog, type AppModule, type ModuleHost } from "@shared/core";
 import { usePluginsStore } from "@shared/stores/plugins-store";
 import { connectorModule } from "@board/modules/connector/connector.module";
 import { coreModule } from "@board/modules/core/core.module";
@@ -103,5 +103,6 @@ export function getBoardEditorModules(): EditorModules {
 
 function failPlugin(plugin: string | undefined, error: string): void {
   if (!plugin) return;
+  stickerCatalog.drop(plugin);
   usePluginsStore.getState().setStatus({ id: plugin, state: "failed", error, modules: [] });
 }

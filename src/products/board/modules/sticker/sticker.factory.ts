@@ -1,7 +1,9 @@
 import { createElementBase, type Point } from "@canvas";
 
 import { STICKER_DEFAULTS } from "./sticker.defaults";
-import type { StickerElement, StickerSource } from "./sticker.types";
+import type { StickerSource } from "@shared/core";
+
+import type { StickerElement } from "./sticker.types";
 
 /** A sticker of the default size, centered on `center`. */
 export function createSticker(source: StickerSource, center: Point, index: string): StickerElement {

@@ -29,7 +29,7 @@ export function isolatesComposite(
     const part = byId.get(id);
     if (!part || !isDesignNode(part) || !part.visible) continue;
     const blend = layerComposite(part, kinds)?.blendMode ?? "normal";
-    if (hasEffects(part) || blend !== "normal") return true;
+    if (hasEffects(part, kinds) || blend !== "normal") return true;
     if (drawsItself(part, kinds)) {
       if (parts.length >= MAX_PARTS) return true;
       const box = elementBounds(kinds.kindOf(part), part);

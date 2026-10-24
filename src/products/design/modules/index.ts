@@ -19,3 +19,4 @@ export * from "./boolean";
 export * from "./effects";
 export * from "./auto-layout";
 export * from "./catalog";
+export * from "./sticker";

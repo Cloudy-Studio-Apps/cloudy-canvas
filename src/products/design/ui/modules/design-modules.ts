@@ -1,7 +1,7 @@
 import { composeProduct, type CanvasProduct } from "@canvas";
 import type { EditorModules } from "@canvas-ui";
 import { designCanvas, type DesignToolOptions } from "@design";
-import { createModuleHost, type AppModule, type ModuleHost } from "@shared/core";
+import { createModuleHost, stickerCatalog, type AppModule, type ModuleHost } from "@shared/core";
 import { usePluginsStore } from "@shared/stores/plugins-store";
 import { assetsModule } from "@design/modules/assets/assets.module";
 import { autoLayoutModule } from "@design/modules/auto-layout/auto-layout.module";
@@ -23,6 +23,7 @@ import { rectangleModule } from "@design/modules/rectangle/rectangle.module";
 import { sectionModule } from "@design/modules/section/section.module";
 import { shaderEffectModule } from "@design/modules/shader-effect/shader-effect.module";
 import { starModule } from "@design/modules/star/star.module";
+import { stickerModule } from "@design/modules/sticker/sticker.module";
 import { textModule } from "@design/modules/text/text.module";
 import { vectorModule } from "@design/modules/vector/vector.module";
 import { designEditor } from "./design-editor-points";
@@ -51,6 +52,7 @@ let modules: AppModule[] = [
   vectorModule,
   booleanModule,
   imageModule,
+  stickerModule,
   layersModule,
   assetsModule,
   pluginsTabModule,
@@ -121,5 +123,6 @@ export function getDesignEditorModules(): EditorModules {
 
 function failPlugin(plugin: string | undefined, error: string): void {
   if (!plugin) return;
+  stickerCatalog.drop(plugin);
   usePluginsStore.getState().setStatus({ id: plugin, state: "failed", error, modules: [] });
 }

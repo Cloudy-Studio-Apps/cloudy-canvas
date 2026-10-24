@@ -15,6 +15,7 @@ import type * as designModules from "@design/ui/modules";
 import type * as designPanel from "@design/ui/components/panel";
 import type * as designHooks from "@design/ui/hooks";
 import type { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
+import type { PluginStickersApi } from "./plugin-stickers.types";
 
 /**
  * What a plugin's `activate(api)` gets: the app's own building blocks, so a plugin needs no
@@ -114,6 +115,11 @@ export interface PluginApi {
     >;
   };
   design: DesignPluginApi;
+  /**
+   * Stickers for both products' pickers and agents, whatever the plugin's `products`: groups
+   * (`registerGroup`) and stickers added to them or to the built-in ones (`registerSet`).
+   */
+  stickers: PluginStickersApi;
 }
 
 /** What design plugins build on (`api.design`). */

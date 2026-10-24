@@ -23,7 +23,7 @@ import {
 import type { DesignToolOptions } from "../../../design-options.types";
 import { applyNodeSpec } from "./apply-node-spec";
 import { checkNodePatch } from "./check-node-patch";
-import type { DesignNode, NodeGeometry, NodeStroke } from "./design-node.types";
+import type { DesignNode, NodeEffect, NodeGeometry, NodeStroke } from "./design-node.types";
 import {
   hasVisibleStroke,
   STROKE_CACHE,
@@ -42,6 +42,8 @@ import { NODE_DEFAULTS } from "./node.defaults";
 import { FIXED_SIZING } from "./node-layout";
 import type { LayoutAxis, LayoutSizing } from "./node-layout.types";
 import { NODE_STYLE_FIELDS, nodeStylePatch } from "./node-style";
+
+const NO_EFFECTS: readonly NodeEffect[] = [];
 
 /**
  * The base of every design element type. It handles what all nodes share (name, place in the
@@ -84,6 +86,15 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
   /** The pasted look as it can show it (no fills on a line, no strokes on a text). */
   override applyStyle(el: E, style: ElementStyle): ElementPatch<E> {
     return nodeStylePatch(this, super.applyStyle(el, style));
+  }
+
+  /**
+   * Effects its kind draws under the node's own (`effects`), not stored and not in the Effects
+   * section: a sticker's outline. Drawn like the node's effects, bottom first; keep the returned
+   * array the same while the node doesn't change.
+   */
+  ownEffects(_el: E): readonly NodeEffect[] {
+    return NO_EFFECTS;
   }
 
   /** Whether it has an inside to fill (lines don't: they only show strokes). */

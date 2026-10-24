@@ -178,10 +178,11 @@ import {
 } from "@shared/core";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import type { PluginApi } from "./plugin-api.types";
+import type { PluginStickersApi } from "./plugin-stickers.types";
 import { strictApi } from "./strict-api";
 
-/** The API handed to one plugin's `activate`. */
-export function createPluginApi(plugin: InstalledPlugin): PluginApi {
+/** The API handed to one plugin's `activate` (`stickers`: its staged `api.stickers`). */
+export function createPluginApi(plugin: InstalledPlugin, stickers: PluginStickersApi): PluginApi {
   return strictApi<PluginApi>(
     {
       apiVersion: PLUGIN_API_VERSION,
@@ -364,6 +365,7 @@ export function createPluginApi(plugin: InstalledPlugin): PluginApi {
           useDesignState,
         },
       },
+      stickers,
     },
     "api",
   );

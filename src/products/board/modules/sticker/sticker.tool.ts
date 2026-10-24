@@ -2,7 +2,9 @@ import type { CanvasPointer, Point, Tool, ToolContext } from "@canvas";
 
 import type { BoardToolOptions } from "../../board-options.types";
 import { createSticker } from "./sticker.factory";
-import type { PickedSticker, StickerElement } from "./sticker.types";
+import type { PickedSticker } from "@shared/core";
+
+import type { StickerElement } from "./sticker.types";
 
 /**
  * Click to stamp the picked sticker centered on the pointer. The tool stays on, so several can be

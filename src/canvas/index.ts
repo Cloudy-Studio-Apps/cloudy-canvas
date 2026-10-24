@@ -111,6 +111,7 @@ export * from "./gradient";
 export * from "./image";
 export * from "./rotation";
 export * from "./path";
+export * from "./svg";
 export { smoothPoints } from "./smooth-points";
 export { BASE_COMMAND_LABELS, BASE_KEYBINDINGS, Keymap } from "./input";
 export { composeProduct, createCanvasPoints } from "./modules";

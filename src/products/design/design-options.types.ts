@@ -1,4 +1,9 @@
-import type { FrameToolOptions, RectangleToolOptions, TextToolOptions } from "./modules";
+import type {
+  FrameToolOptions,
+  RectangleToolOptions,
+  StickerToolOptions,
+  TextToolOptions,
+} from "./modules";
 
 /**
  * What the design's tool options pick for new elements. Each module declares the options it owns
@@ -6,4 +11,4 @@ import type { FrameToolOptions, RectangleToolOptions, TextToolOptions } from "./
  * (`declare module "@design" { interface DesignToolOptions extends MyOptions {} }`).
  */
 export interface DesignToolOptions
-  extends FrameToolOptions, RectangleToolOptions, TextToolOptions {}
+  extends FrameToolOptions, RectangleToolOptions, StickerToolOptions, TextToolOptions {}

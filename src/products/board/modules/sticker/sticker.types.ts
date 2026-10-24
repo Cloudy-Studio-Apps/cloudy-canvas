@@ -1,5 +1,7 @@
 import type { CanvasElement, ElementDefaults, Size } from "@canvas";
 
+export type { PickedSticker, StickerSource } from "@shared/core";
+
 export interface StickerElement extends CanvasElement {
   type: "sticker";
   /** The document asset holding its picture (shared by every placement of the same sticker). */
@@ -13,16 +15,4 @@ export interface StickerElement extends CanvasElement {
 export interface StickerDefaults extends ElementDefaults {
   /** A placed sticker's size, in world units. */
   size: Size;
-}
-
-/** What's placed: the picked sticker and where its picture is stored. */
-export interface StickerSource {
-  sticker: string;
-  label: string;
-  assetId: string;
-}
-
-/** The sticker the sticker tool stamps, with its picture's file (stored on first use). */
-export interface PickedSticker extends StickerSource {
-  data: Uint8Array;
 }

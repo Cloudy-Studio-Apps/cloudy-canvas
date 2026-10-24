@@ -37,6 +37,11 @@ export function PluginRow({
           {manifest.description && (
             <p className="text-sm text-muted-foreground">{manifest.description}</p>
           )}
+          {status?.state === "enabled" && !!status.stickers && (
+            <p className="text-xs text-muted-foreground">
+              Adds {status.stickers} {status.stickers === 1 ? "sticker" : "stickers"}
+            </p>
+          )}
           {status?.state === "failed" && status.error && (
             <p className="text-sm break-words text-destructive">{status.error}</p>
           )}

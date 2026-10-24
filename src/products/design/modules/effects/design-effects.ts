@@ -9,7 +9,14 @@ import {
   type Rect,
 } from "@canvas";
 
-import { childrenByParent, hasScope, isDesignNode, layerComposite, treeSlots } from "../core";
+import {
+  childrenByParent,
+  hasScope,
+  isDesignNode,
+  layerComposite,
+  nodeEffects,
+  treeSlots,
+} from "../core";
 import { isolatesComposite } from "./composite-isolation";
 
 /**
@@ -54,7 +61,7 @@ export function designEffects(
     const composite = layerComposite(el, kinds);
     scopes.set(el.id, {
       id: el.id,
-      effects: el.effects.filter((effect) => effect.visible),
+      effects: nodeEffects(el, kinds),
       home: slots.effectHome(el.id),
       box: { x: el.x, y: el.y, w: el.w, h: el.h },
       rotation: el.rotation ?? 0,

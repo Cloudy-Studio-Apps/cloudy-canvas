@@ -23,12 +23,15 @@ export function encodeClipboard(
 
 /**
  * The elements in clipboard text, keeping only types the product registers (with their defaults
- * filled), or `null` when the text isn't elements copied from this product.
+ * filled), or `null` when the text isn't elements copied from this product. Elements copied from
+ * another product go through `foreign` (the product's `pasteForeign`) first; without it, or when
+ * it takes none of them, it's `null` too.
  */
 export function decodeClipboard(
   text: string,
   product: string,
   kinds: ElementKinds,
+  foreign?: (el: CanvasElement, from: string) => CanvasElement | null,
 ): DecodedClipboard | null {
   if (!text.startsWith("{")) return null;
   let data: unknown;
@@ -37,8 +40,14 @@ export function decodeClipboard(
   } catch {
     return null;
   }
-  if (!isPayload(data) || data.product !== product) return null;
-  const elements = data.elements
+  if (!isPayload(data)) return null;
+  const from = data.product;
+  if (from !== product && !foreign) return null;
+  const own =
+    from === product
+      ? data.elements
+      : data.elements.flatMap((el) => (isElementLike(el) ? (foreign?.(el, from) ?? []) : []));
+  const elements = own
     .filter((el) => kinds.isElement(el))
     .map((el) => kinds.kindOf(el).fillDefaults(el));
   if (elements.length === 0) return null;
@@ -48,6 +57,16 @@ export function decodeClipboard(
     selected: data.selected.filter((id) => ids.has(id)),
     assets: validAssets(data.assets),
   };
+}
+
+/** Whether clipboard text is elements copied from any product (pasted as elements or not at all). */
+export function isCanvasClipboard(text: string): boolean {
+  if (!text.startsWith("{")) return false;
+  try {
+    return isPayload(JSON.parse(text));
+  } catch {
+    return false;
+  }
 }
 
 function validAssets(assets: unknown): Record<string, string> {
@@ -68,4 +87,8 @@ function isPayload(data: unknown): data is ClipboardPayload {
     Array.isArray(payload.elements) &&
     Array.isArray(payload.selected)
   );
+}
+
+function isElementLike(el: unknown): el is CanvasElement {
+  return typeof el === "object" && el !== null && typeof (el as CanvasElement).id === "string";
 }

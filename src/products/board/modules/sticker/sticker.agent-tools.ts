@@ -6,14 +6,19 @@ import {
   stringArg,
   type ToolArgs,
 } from "@canvas";
+import {
+  findStampableSticker,
+  matchesSticker,
+  stickerAssetId,
+  stickerPicture,
+  type StickerDef,
+} from "@shared/core";
 
-import { stickerAssetId } from "./sticker-asset";
 import { STICKER_DEFAULTS } from "./sticker.defaults";
 import { createSticker } from "./sticker.factory";
-import { fetchStickerBytes, matchesSticker, type StickerDef } from "./catalog";
 import { requireBoard } from "../../agent/board-access";
 import type { BoardAgentTool } from "../../agent/board-agent.types";
-import { findSticker, stickerSections } from "./agent-stickers";
+import { stickerSections } from "./agent-stickers";
 
 const MAX_RESULTS = 60;
 
@@ -22,9 +27,10 @@ export const stickerTools: BoardAgentTool[] = [
   {
     name: "list_stickers",
     description:
-      "Stickers agents can stamp with stamp_stickers: the foca watona seal moods (set seal), " +
-      "common stamps (common) and emojis (smileys, people, nature, food, travel, activities, " +
-      `objects, symbols, flags). Search by words in the name; at most ${MAX_RESULTS} results.`,
+      "Stickers agents can stamp with stamp_stickers (boards) and stamp_design_stickers " +
+      "(designs): the foca watona seal moods (set seal), common stamps (common), the sets " +
+      "plugins add and emojis (smileys, people, nature, food, travel, activities, objects, " +
+      `symbols, flags). Search by words in the name; at most ${MAX_RESULTS} results.`,
     inputSchema: {
       type: "object",
       properties: {
@@ -76,10 +82,10 @@ export const stickerTools: BoardAgentTool[] = [
     run: async (host, args) => {
       const stamps = recordList(args, "stickers").map(readStamp);
       // Load every picture before writing, so a bad id or a failed load changes nothing.
-      const defs = await Promise.all(stamps.map((stamp) => findSticker(stamp.sticker)));
+      const defs = await Promise.all(stamps.map((stamp) => findStampableSticker(stamp.sticker)));
       const pictures = new Map<string, Uint8Array>();
       for (const def of new Map(defs.map((def) => [def.id, def])).values()) {
-        pictures.set(def.id, await fetchStickerBytes(def.url));
+        pictures.set(def.id, await stickerPicture(def));
       }
       const { engine } = requireBoard(host);
       const { doc } = engine;

@@ -5,7 +5,7 @@ import { elementBounds, type CanvasElement } from "../elements";
 import { rectCenter, unionRects } from "../geometry";
 import type { Point, Rect } from "../geometry.types";
 import { collectAssets, restoreAssets } from "./clipboard-assets";
-import { decodeClipboard, encodeClipboard } from "./clipboard-payload";
+import { decodeClipboard, encodeClipboard, isCanvasClipboard } from "./clipboard-payload";
 import type { ElementClipboardHost, PasteOptions } from "./element-clipboard.types";
 import { insertCopies } from "./insert-copies";
 import type { CopyTarget } from "./insert-copies.types";
@@ -53,14 +53,16 @@ export class ElementClipboard<O extends object> {
     const replaced = replace ? this.boundsOf(replace) : null;
     const at = replaced ? rectCenter(replaced) : undefined;
     const text = await readSafely(() => this.clipboard.readText());
-    const payload = text ? decodeClipboard(text, product.id, product.kinds) : null;
+    const foreign = product.pasteForeign?.bind(product);
+    const payload = text ? decodeClipboard(text, product.id, product.kinds, foreign) : null;
     if (!payload && text && !replace && this.pasteOnto(text)) return;
     if (!payload) {
       // An image wins over text: apps that copy an image often add its name or address as text.
       const image = await readSafely(() => this.clipboard.readImage());
       const pasted =
         (image !== null && (await pasteImage(this.host, image, at))) ||
-        (!!text && pasteText(this.host, text, at));
+        // Elements of another product that this one can't take aren't pasted as their JSON.
+        (!!text && !isCanvasClipboard(text) && pasteText(this.host, text, at));
       if (pasted && replace) this.host.remove(replace);
       return;
     }

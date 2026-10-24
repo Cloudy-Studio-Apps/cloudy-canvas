@@ -21,8 +21,10 @@ export type { ZoomMenuProps } from "./components/zoom-menu.types";
 export type * from "./modules";
 export type * from "./overlay";
 export type * from "./share";
+export type * from "./stickers";
 export { createActiveFile, useAgentFile } from "./agent";
 export { readCanvasTheme } from "./canvas-theme";
+export { StickerWheel } from "./stickers";
 export {
   commitFieldProps,
   CommitInput,

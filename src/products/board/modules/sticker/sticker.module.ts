@@ -5,8 +5,9 @@ import { boardEditor } from "@board/ui/modules/board-editor-points";
 import { boardAgentTools, boardCanvas } from "../../board-points";
 import { stickerTools } from "./sticker.agent-tools";
 import { StickerKind } from "./sticker.kind";
+import { pasteForeignSticker } from "./sticker-paste";
 import { StickerTool } from "./sticker.tool";
-import { StickerWheel } from "./ui/sticker-picker";
+import { BoardStickerWheel } from "./ui/board-sticker-wheel";
 
 /** Stickers: the kind, the tool (K) with its picker wheel, and stamping them from agents. */
 export const stickerModule = defineModule({
@@ -19,6 +20,7 @@ export const stickerModule = defineModule({
       keys: [{ key: "k" }],
     });
     host.contribute(boardCanvas.options, { sticker: null });
+    host.contribute(boardCanvas.pasteForeign, pasteForeignSticker);
     host.contribute(boardAgentTools, { id: "stickers", tools: () => stickerTools });
 
     host.contribute(boardEditor.tools, {
@@ -27,6 +29,6 @@ export const stickerModule = defineModule({
       icon: Sticker,
       toolbar: { group: 1, order: 30 },
     });
-    host.contribute(boardEditor.toolPanels, { tool: "sticker", component: StickerWheel });
+    host.contribute(boardEditor.toolPanels, { tool: "sticker", component: BoardStickerWheel });
   },
 });

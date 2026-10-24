@@ -131,6 +131,8 @@ export type PasteOntoHook<O extends object> = (
 ) => Map<string, ElementPatch> | null;
 /** See `CanvasProduct.pasteImage`; the first hook that returns an element wins. */
 export type PasteImageHook<O extends object> = NonNullable<CanvasProduct<O>["pasteImage"]>;
+/** See `CanvasProduct.pasteForeign`; the first hook that returns an element wins. */
+export type PasteForeignHook = NonNullable<CanvasProduct["pasteForeign"]>;
 
 /**
  * The points a product's canvas is assembled from (`composeProduct`). Each product has its own
@@ -185,4 +187,5 @@ export interface CanvasPoints<O extends object> {
   pasteText: ExtensionPoint<PasteTextHook<O>>;
   pasteOnto: ExtensionPoint<PasteOntoHook<O>>;
   pasteImage: ExtensionPoint<PasteImageHook<O>>;
+  pasteForeign: ExtensionPoint<PasteForeignHook>;
 }

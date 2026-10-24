@@ -16,6 +16,7 @@ export * from "./mcp";
 export * from "./presence";
 export * from "./share";
 export type * from "./sticker-library.types";
+export * from "./stickers";
 export type * from "./storage.types";
 export * from "./links";
 export * from "./modules";

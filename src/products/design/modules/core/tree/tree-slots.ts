@@ -1,6 +1,6 @@
 import type { CanvasElement, ElementKinds, ScopeSlot } from "@canvas";
 
-import { isDesignNode, type DesignNode } from "../node";
+import { DesignNodeKind, isDesignNode, type DesignNode, type NodeEffect } from "../node";
 import { layerComposite } from "./layer-composite";
 import type { TreeSlots } from "./tree-slots.types";
 import { isActiveMask, siblingMasks } from "./sibling-masks";
@@ -8,9 +8,16 @@ import { isActiveMask, siblingMasks } from "./sibling-masks";
 /** Slots worked out per scene refresh (the masks and effects hooks get the same list). */
 const known = new WeakMap<readonly CanvasElement[], TreeSlots>();
 
+/** The effects drawn on a node: its kind's own (`ownEffects`), then its visible ones. */
+export function nodeEffects(el: DesignNode, kinds: ElementKinds): NodeEffect[] {
+  const kind = kinds.kindOf(el);
+  const own = kind instanceof DesignNodeKind ? kind.ownEffects(el) : [];
+  return [...own, ...el.effects].filter((effect) => effect.visible);
+}
+
 /** Whether a node's effects are drawn: it shows, and some effect does. */
-export function hasEffects(el: CanvasElement): el is DesignNode {
-  return isDesignNode(el) && el.visible && el.effects.some((effect) => effect.visible);
+export function hasEffects(el: CanvasElement, kinds: ElementKinds): el is DesignNode {
+  return isDesignNode(el) && el.visible && nodeEffects(el, kinds).length > 0;
 }
 
 /**
@@ -18,7 +25,7 @@ export function hasEffects(el: CanvasElement): el is DesignNode {
  * is composited over what it holds (`layerComposite`).
  */
 export function hasScope(el: CanvasElement, kinds: ElementKinds): el is DesignNode {
-  return hasEffects(el) || layerComposite(el, kinds) !== null;
+  return hasEffects(el, kinds) || layerComposite(el, kinds) !== null;
 }
 
 /**
