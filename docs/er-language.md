@@ -552,3 +552,17 @@ The **Visual** tab shows a form for the selected shape. Every change is one undo
 | Hierarchy   | Parent and its cardinality, Overlapping/Exclusive, Partial/Total, discriminator, children (pick existing or **New entity**)                                    |
 | Aggregation | Name, the relation it groups, its attributes                                                                                                                   |
 | Constraint  | Kind, entity (for exclusividad/inclusividad), the two relations (with a swap button), how many times (inclusividad)                                            |
+
+## Sources
+
+- [Saiedian 1997, ER model extensions (Spanish)](https://people.eecs.ku.edu/~saiedian/Pub/Journal/1997-Saiedian-IST-ER-spanish.pdf)
+- [CHP00: cardinalities in Chen, Merise and Teorey](https://cedric.cnam.fr/index2.php/publis/article/CHP00)
+- [OpenDSA: ERD notations](https://opendsa-server.cs.vt.edu/ODSA/RST/en/Database/ERDNotations.rst)
+- [Software Ideas: Chen ER diagram](https://www.softwareideas.net/chen-er-diagram-erd)
+- [LMU: ERD notations, Chen](https://bjohnson.lmu.build/private/ERD-NotationsPart2-ChenNotation.pdf)
+- [UC3M: modelo relacional](https://ocw.uc3m.es/pluginfile.php/368/mod_page/content/23/modelo_relacional.pdf)
+- [Universidad Veracruzana: ER extendido](https://www.uv.mx/personal/ermeneses/files/2020/09/Clase5-ModelosDeDatos_parteII_ER-Extendido-1.pdf)
+- [Goucher: EER notes](https://phoenix.goucher.edu/~kelliher/s2025/cs417/n03.pdf)
+- [Purdue: EER modeling, ch. 4](<https://www.cs.purdue.edu/homes/bb/cs448_Spring2014/lecture-files/pdf/ch04-Enhanced%20Entity-Relationship%20(EER)%20Modeling.pdf>)
+- [KFUPM: EER lecture](https://faculty.kfupm.edu.sa/ics/adam/ICS324/L21_22_EER.pdf)
+- [Miro: weak entities](https://miro.com/diagramming/weak-entity-in-er-diagrams/)
