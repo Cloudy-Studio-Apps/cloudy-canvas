@@ -14,7 +14,16 @@ export function useAgentFile<Engine>(
   const { name, path, dirty, save } = file;
 
   useEffect(() => {
-    active.set({ id, engine, name, path, dirty, save });
+    active.set({
+      id,
+      engine,
+      name,
+      path,
+      dirty,
+      save: async () => {
+        await save();
+      },
+    });
   }, [active, id, engine, name, path, dirty, save]);
 
   useEffect(

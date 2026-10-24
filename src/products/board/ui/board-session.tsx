@@ -1,5 +1,6 @@
 import {
   CanvasFileContext,
+  CloseFileGuard,
   EditorModulesContext,
   EngineContext,
   ModuleSession,
@@ -34,8 +35,8 @@ export function BoardSession({ id, engine, info, live }: BoardSessionProps) {
 
 function FileBoardSession({ id, engine, info }: FileBoardSessionProps) {
   const file = useHostedFile(useBoardSaver(id, engine, info), engine);
-  useCanvasThumbnail(id, engine);
-  return <BoardSessionView engine={engine} file={file} />;
+  const capture = useCanvasThumbnail(id, engine, file.saved);
+  return <BoardSessionView engine={engine} file={file} capture={capture} />;
 }
 
 function LiveBoardSession({ engine, live }: LiveBoardSessionProps) {
@@ -43,12 +44,13 @@ function LiveBoardSession({ engine, live }: LiveBoardSessionProps) {
   return <BoardSessionView engine={engine} file={file} />;
 }
 
-function BoardSessionView({ engine, file }: BoardSessionViewProps) {
+function BoardSessionView({ engine, file, capture }: BoardSessionViewProps) {
   useAgentBoard(file.id, engine, file);
   return (
     <EngineContext value={engine}>
       <EditorModulesContext value={getBoardEditorModules()}>
         <CanvasFileContext value={file}>
+          {capture && <CloseFileGuard capture={capture} />}
           <ModuleSession />
           <BoardChrome />
         </CanvasFileContext>

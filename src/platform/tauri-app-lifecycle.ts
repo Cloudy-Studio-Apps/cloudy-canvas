@@ -7,12 +7,22 @@ import type { AppLifecycle } from "@shared/core";
 const QUIT_TIMEOUT_MS = 5000;
 
 /**
- * Runs the tasks when the window's close is requested. Tauri awaits the handler and then closes
- * the window, unless the handler prevents it.
+ * Asks before the window closes and runs the tasks when it does. Tauri awaits the handler and then
+ * closes the window, unless the handler prevents it.
  */
 export class TauriAppLifecycle implements AppLifecycle {
   private readonly tasks = new Set<() => Promise<void>>();
+  private confirm: (() => Promise<boolean>) | null = null;
   private listening = false;
+
+  onCloseRequest(confirm: () => Promise<boolean>): () => void {
+    if (!isTauri()) return () => {};
+    this.confirm = confirm;
+    this.listen();
+    return () => {
+      if (this.confirm === confirm) this.confirm = null;
+    };
+  }
 
   onBeforeQuit(task: () => Promise<void>): () => void {
     if (!isTauri()) return () => {};
@@ -30,6 +40,12 @@ export class TauriAppLifecycle implements AppLifecycle {
   private listen(): void {
     if (this.listening) return;
     this.listening = true;
-    void getCurrentWindow().onCloseRequested(() => this.runQuitTasks());
+    void getCurrentWindow().onCloseRequested(async (event) => {
+      if (this.confirm && !(await this.confirm())) {
+        event.preventDefault();
+        return;
+      }
+      await this.runQuitTasks();
+    });
   }
 }

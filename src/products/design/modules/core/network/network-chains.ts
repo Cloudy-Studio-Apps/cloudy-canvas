@@ -1,6 +1,6 @@
 import { reverseCurve, type CubicCurve } from "@canvas";
 
-import { otherEnd, segmentCurve, segmentsAt } from "./network-curves";
+import { otherEnd, segmentCurve } from "./network-curves";
 import type { NetworkChain, VectorNetwork } from "./network.types";
 
 /**
@@ -10,7 +10,14 @@ import type { NetworkChain, VectorNetwork } from "./network.types";
  */
 export function strokeChains(net: VectorNetwork): NetworkChain[] {
   const used = new Set<number>();
-  const degree = (vertex: number) => segmentsAt(net, vertex).length;
+  // The segments at each vertex, found once: large imported vectors have thousands of each.
+  const around: number[][] = net.vertices.map(() => []);
+  net.segments.forEach((seg, i) => {
+    around[seg.start]?.push(i);
+    if (seg.end !== seg.start) around[seg.end]?.push(i);
+  });
+  const segmentsAt = (vertex: number): readonly number[] => around[vertex] ?? [];
+  const degree = (vertex: number) => segmentsAt(vertex).length;
   const chains: NetworkChain[] = [];
 
   const walk = (from: number, firstSegment: number): void => {
@@ -23,14 +30,14 @@ export function strokeChains(net: VectorNetwork): NetworkChain[] {
       const curve = segmentCurve(net, segment);
       curves.push(seg.start === at ? curve : reverseCurve(curve));
       at = otherEnd(seg, at);
-      segment = degree(at) === 2 ? segmentsAt(net, at).find((next) => !used.has(next)) : undefined;
+      segment = degree(at) === 2 ? segmentsAt(at).find((next) => !used.has(next)) : undefined;
     }
     if (curves.length > 0) chains.push({ curves, closed: at === from && curves.length > 1 });
   };
 
   net.vertices.forEach((_, vertex) => {
     if (degree(vertex) === 2) return;
-    for (const segment of segmentsAt(net, vertex)) if (!used.has(segment)) walk(vertex, segment);
+    for (const segment of segmentsAt(vertex)) if (!used.has(segment)) walk(vertex, segment);
   });
   net.segments.forEach((seg, segment) => {
     if (!used.has(segment)) walk(seg.start, segment);

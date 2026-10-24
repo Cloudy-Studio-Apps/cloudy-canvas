@@ -17,3 +17,11 @@ export interface ChunkedSyncOptions {
   /** Whether to stop (the engine is closing). */
   cancelled: () => boolean;
 }
+
+/** How `Renderer.captureView` draws. */
+export interface CaptureOptions {
+  /** Pixels per world unit. */
+  scale: number;
+  /** A 0xRRGGBB fill. */
+  background: number;
+}

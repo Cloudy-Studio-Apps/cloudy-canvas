@@ -1,9 +1,10 @@
-import { Application, Container } from "pixi.js";
+import { Application, Container, Rectangle } from "pixi.js";
 // Paints' blend modes past Pixi's native ones (overlay, color dodge…).
 import "pixi.js/advanced-blend-modes";
 
 import type { Camera } from "../camera";
 import type { CanvasElement, ElementKinds } from "../elements";
+import type { Rect } from "../geometry.types";
 import type { CanvasLinks, Guide } from "../links";
 import type { SnapFeedback } from "../snapping";
 import { prefersReducedMotion } from "../utils";
@@ -25,10 +26,19 @@ import { SnapLayer } from "./layers/snap-layer";
 import type { OverlayState } from "./overlay-state.types";
 import { drawSnapshot } from "./snapshot";
 import type { SnapshotOptions } from "./snapshot.types";
-import type { ChunkedSyncOptions, RendererOptions } from "./renderer.types";
+import type { CaptureOptions, ChunkedSyncOptions, RendererOptions } from "./renderer.types";
 
-/** How long `syncElementsChunked` builds views before it lets the window draw a frame. */
-const SLICE_MS = 12;
+/**
+ * How long `syncElementsChunked` builds views before it lets the window draw a frame: long enough
+ * that waiting for frames stays a small part of opening a large file.
+ */
+const SLICE_MS = 32;
+
+/**
+ * How many views `syncElementsChunked` builds per layer sync. A sync brings the layer's mask and
+ * effect scopes in line once, so building one view at a time would do that for every element.
+ */
+const SYNC_BATCH = 64;
 
 function nextFrame(): Promise<void> {
   return new Promise((resolve) => requestAnimationFrame(() => resolve()));
@@ -126,8 +136,9 @@ export class Renderer {
       if (cancelled()) return;
       const start = performance.now();
       while (done < total && performance.now() - start < SLICE_MS) {
-        const el = elements[done++]!;
-        (this.kinds.kindOf(el).frame ? this.frames : this.elements).sync([el]);
+        const next = Math.min(done + SYNC_BATCH, total);
+        this.syncElements(elements.slice(done, next));
+        done = next;
       }
       onProgress(done, total);
       await nextFrame();
@@ -243,6 +254,38 @@ export class Renderer {
     this.snap.draw(camera, this.snapFeedback, this.theme.snap);
     this.app.render();
     return animating;
+  }
+
+  /**
+   * Draws `rect` of the views already built into a new canvas (file previews): no views are made
+   * and no images loaded, so it costs about a frame. Text keeps the resolution of the current
+   * zoom. The next `render` puts the camera, culling and effect scale back.
+   */
+  captureView(rect: Rect, { scale, background }: CaptureOptions): HTMLCanvasElement {
+    const { x, y } = this.world.position;
+    const zoom = this.world.scale.x;
+    this.world.position.set(0, 0);
+    this.world.scale.set(1);
+    this.draft.visible = false;
+    this.guide.visible = false;
+    this.elements.setEffectScale(1);
+    this.frames.setEffectScale(1);
+    this.elements.cull(rect);
+    this.frames.cull(rect);
+    try {
+      return this.app.renderer.extract.canvas({
+        target: this.world,
+        frame: new Rectangle(rect.x, rect.y, rect.w, rect.h),
+        resolution: scale,
+        clearColor: background,
+        antialias: true,
+      }) as HTMLCanvasElement;
+    } finally {
+      this.world.position.set(x, y);
+      this.world.scale.set(zoom);
+      this.draft.visible = true;
+      this.guide.visible = true;
+    }
   }
 
   /** Draws elements off screen into a new canvas (for exports); the view isn't touched. */

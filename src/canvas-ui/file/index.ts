@@ -1,6 +1,8 @@
 export type * from "./canvas-file.types";
+export type * from "./close-dialog";
 export type * from "./document-info-popover.types";
 export { CanvasFileContext, useCanvasFile } from "./canvas-file-context";
+export { CloseFileGuard } from "./close-dialog";
 export { DocumentInfoPopover } from "./document-info-popover";
 export { importStep, toastImportWarnings } from "./import-steps";
 export { SaveIndicator } from "./save-indicator";

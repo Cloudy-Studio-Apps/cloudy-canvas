@@ -1,5 +1,6 @@
 import {
   CanvasFileContext,
+  CloseFileGuard,
   EditorModulesContext,
   EngineContext,
   useCanvasFileSaver,
@@ -33,8 +34,8 @@ export function DesignSession({ id, engine, info, live }: DesignSessionProps) {
 
 function FileDesignSession({ id, engine, info }: FileDesignSessionProps) {
   const file = useHostedFile(useCanvasFileSaver(id, engine, info, DESIGN_FILE_FORMAT), engine);
-  useCanvasThumbnail(id, engine);
-  return <DesignSessionView engine={engine} file={file} />;
+  const capture = useCanvasThumbnail(id, engine, file.saved);
+  return <DesignSessionView engine={engine} file={file} capture={capture} />;
 }
 
 function LiveDesignSession({ engine, live }: LiveDesignSessionProps) {
@@ -42,12 +43,13 @@ function LiveDesignSession({ engine, live }: LiveDesignSessionProps) {
   return <DesignSessionView engine={engine} file={file} />;
 }
 
-function DesignSessionView({ engine, file }: DesignSessionViewProps) {
+function DesignSessionView({ engine, file, capture }: DesignSessionViewProps) {
   useAgentDesign(file.id, engine, file);
   return (
     <EngineContext value={engine}>
       <EditorModulesContext value={getDesignEditorModules()}>
         <CanvasFileContext value={file}>
+          {capture && <CloseFileGuard capture={capture} />}
           <DesignChrome />
         </CanvasFileContext>
       </EditorModulesContext>

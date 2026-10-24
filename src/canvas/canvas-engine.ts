@@ -765,7 +765,20 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   /** A small JPEG of the whole canvas for file previews, or `null` when it's empty. */
   thumbnail(options: ThumbnailOptions): Promise<Blob | null> {
     if (!this.rendererReady) return Promise.resolve(null);
-    return renderThumbnail(this.exportHost, options);
+    const host = this.exportHost;
+    return renderThumbnail(
+      {
+        elementsOf: host.elementsOf,
+        bounds: host.bounds,
+        background: host.background,
+        capture: (rect, scale) => {
+          const canvas = this.renderer.captureView(rect, { scale, background: host.background });
+          this.requestRender();
+          return canvas;
+        },
+      },
+      options,
+    );
   }
 
   /** Whether an area holds elements that export as CSV (e.g. tables). */

@@ -67,6 +67,7 @@ export {
 } from "./components/collaborators";
 export {
   CanvasFileContext,
+  CloseFileGuard,
   DocumentInfoPopover,
   importStep,
   SaveIndicator,

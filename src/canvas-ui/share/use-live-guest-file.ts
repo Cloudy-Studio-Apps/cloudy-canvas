@@ -45,7 +45,7 @@ export function useLiveGuestFile<O extends object>(
 
   return useMemo(() => {
     const fileName = file?.fileName ?? `Shared ${noun}`;
-    const nothing = () => Promise.resolve();
+    const nothing = () => Promise.resolve(false);
     return {
       id: file?.fileId ?? "",
       name: meta.title || fileName,

@@ -62,8 +62,9 @@ export interface CanvasFileContextValue {
   saved: SaveKind | null;
   /** Whether autosave is on. */
   autosave: boolean;
-  save: () => Promise<void>;
-  saveAs: () => Promise<void>;
+  /** Saves the file (asking where the first time); `false` when cancelled or failed. */
+  save: () => Promise<boolean>;
+  saveAs: () => Promise<boolean>;
   /** The live session the file is in, `null` when it isn't shared. */
   live: LiveFile | null;
 }

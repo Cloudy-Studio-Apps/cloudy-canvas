@@ -1,8 +1,7 @@
 import { unionRects } from "../geometry";
 import type { Rect } from "../geometry.types";
 import { canvasBlob } from "./canvas-blob";
-import type { ExportHost } from "./export.types";
-import type { ThumbnailOptions } from "./thumbnail.types";
+import type { ThumbnailHost, ThumbnailOptions } from "./thumbnail.types";
 
 /** Space around the content, as a share of the picture. */
 const THUMBNAIL_MARGIN = 0.08;
@@ -12,10 +11,11 @@ const JPEG_QUALITY = 0.85;
 
 /**
  * A small JPEG of the whole canvas for file previews: everything, centered, on the canvas
- * background and framed to the picture's proportion. `null` when the canvas is empty.
+ * background and framed to the picture's proportion. `null` when the canvas is empty. It's drawn
+ * from the views on screen (`ThumbnailHost.capture`), never rebuilt, so large files stay cheap.
  */
 export async function renderThumbnail(
-  host: ExportHost,
+  host: ThumbnailHost,
   { width, height }: ThumbnailOptions,
 ): Promise<Blob | null> {
   const elements = host.elementsOf("board");
@@ -24,12 +24,7 @@ export async function renderThumbnail(
 
   const room = 1 - THUMBNAIL_MARGIN * 2;
   const scale = Math.min((width * room) / content.w, (height * room) / content.h, MAX_SCALE);
-  const canvas = await host.snapshot(elements, {
-    rect: framed(content, width / scale, height / scale),
-    scale,
-    background: host.background,
-    links: host.createLinks(),
-  });
+  const canvas = host.capture(framed(content, width / scale, height / scale), scale);
   return canvasBlob(canvas, "image/jpeg", JPEG_QUALITY);
 }
 

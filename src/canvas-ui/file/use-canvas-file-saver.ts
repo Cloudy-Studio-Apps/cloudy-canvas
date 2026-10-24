@@ -68,7 +68,7 @@ export function useCanvasFileSaver<O extends object>(
 
   /** Writes the file to `path`, or to its draft when `path` is `null`. */
   const write = useCallback(
-    (path: string | null, kind: SaveKind): Promise<void> => {
+    (path: string | null, kind: SaveKind): Promise<boolean> => {
       // Encoded now, so a save queued as the editor closes still has the document.
       const data = encode(engine.doc);
       const fileMeta = engine.doc.meta();
@@ -89,12 +89,14 @@ export function useCanvasFileSaver<O extends object>(
           setSaved(kind);
           clearTimeout(savedTimer.current);
           savedTimer.current = setTimeout(() => setSaved(null), SAVED_NOTICE_MS);
+          return true;
         } catch (error) {
           if (kind === "manual" || !autosaveFailed.current) {
             notifyError(`The ${noun} couldn't be saved`, error);
           }
           if (kind === "auto") autosaveFailed.current = true;
           setStatus("error");
+          return false;
         }
       });
       queue.current = run;
@@ -104,7 +106,7 @@ export function useCanvasFileSaver<O extends object>(
   );
 
   const save = useCallback(
-    async (asNew: boolean) => {
+    async (asNew: boolean): Promise<boolean> => {
       const current = infoRef.current;
       const path =
         !asNew && current && !current.draft
@@ -113,7 +115,7 @@ export function useCanvasFileSaver<O extends object>(
               type,
               engine.doc.meta().title || (current?.name ?? untitled),
             );
-      if (path) await write(path, "manual");
+      return path ? write(path, "manual") : false;
     },
     [engine, write, type, untitled],
   );
