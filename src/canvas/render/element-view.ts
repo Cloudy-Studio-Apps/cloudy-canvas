@@ -10,6 +10,7 @@ import type { ImageCache } from "./image-cache";
 import type { ElementClip } from "./layer-placement.types";
 import { PaintStack } from "./paint-stack";
 import { RichTextSprite } from "./rich-text-sprite";
+import { viewChange } from "./view-change";
 import type { RichTextLayout } from "../text/rich/rich-text.types";
 import type { PaintLayer, PaintStackOptions } from "./paint-stack.types";
 import { negativeHalfLeading } from "./text-leading";
@@ -58,6 +59,10 @@ export class ElementView extends Container {
   private croppedTexture: Texture | null = null;
   /** The element's bounds, which the entrance scales around (see `setEntrance`). */
   private bounds: Rect = { x: 0, y: 0, w: 0, h: 0 };
+  /** The element as the view last drew it, and its kind (see `sync`). */
+  private source: CanvasElement | null = null;
+  private sourceKind: ElementKind | null = null;
+  private sourceInputs: unknown = null;
   /** What the view draws, in world units, worked out when first needed (see `extent`). */
   private drawn: Rect | null = null;
   /** Degrees the element is turned by around its top-left corner (`CanvasElement.rotation`). */
@@ -84,9 +89,23 @@ export class ElementView extends Container {
     this.sync(el, kind, order);
   }
 
-  /** Moves the view to the element and has its kind redraw it. */
-  sync(el: CanvasElement, kind: ElementKind, order = this.order): void {
+  /**
+   * Shows the element: moves the view to it and has its kind draw it again, unless it only moved
+   * since it was drawn (`viewChange`). `redraw` draws it again anyway (what it shows changed
+   * outside the element, e.g. its text's glyph outlines arrived).
+   */
+  sync(el: CanvasElement, kind: ElementKind, order = this.order, redraw = false): void {
     this.order = order;
+    const inputs = kind.drawnFrom(el);
+    const change =
+      redraw || !this.source || kind !== this.sourceKind || inputs !== this.sourceInputs
+        ? "redraw"
+        : viewChange(this.source, el);
+    this.source = el;
+    this.sourceKind = kind;
+    this.sourceInputs = inputs;
+    if (change === "same") return;
+    if (change === "moved") return this.moveTo(el.x, el.y);
     this.bounds = { x: el.x, y: el.y, w: el.w, h: el.h };
     this.turn = kind.rotatable ? (el.rotation ?? 0) : 0;
     this.mirrored = el.mirrored === true;
@@ -94,6 +113,15 @@ export class ElementView extends Container {
     this.placeScaled();
     this.setTextResolution(this.textResolution);
     kind.draw(this, el);
+  }
+
+  /** Moves the view, as drawn, so its box's corner is at (`x`, `y`). */
+  private moveTo(x: number, y: number): void {
+    const dx = x - this.bounds.x;
+    const dy = y - this.bounds.y;
+    this.bounds = { ...this.bounds, x, y };
+    if (this.drawn) this.drawn = { ...this.drawn, x: this.drawn.x + dx, y: this.drawn.y + dy };
+    this.placeScaled();
   }
 
   /** Scales the view around its center and fades it, while it plays its entrance (1 when done). */

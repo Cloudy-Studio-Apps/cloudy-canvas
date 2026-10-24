@@ -1,9 +1,11 @@
 import { generateKeyBetween } from "fractional-indexing";
 
 import {
+  changesOnly,
   cloneElements,
   defineService,
   DocumentFeed,
+  GEOMETRY_FIELDS,
   type CanvasDocument,
   type ElementPatch,
 } from "@canvas";
@@ -22,7 +24,8 @@ export class DesignPages {
   private readonly feed: DocumentFeed;
 
   constructor(private readonly doc: CanvasDocument) {
-    this.feed = new DocumentFeed(doc, () => true);
+    // Moving and resizing layers changes nothing they list.
+    this.feed = new DocumentFeed(doc, (change) => !changesOnly(change, GEOMETRY_FIELDS));
   }
 
   subscribe = (listener: () => void): (() => void) => this.feed.subscribe(listener);

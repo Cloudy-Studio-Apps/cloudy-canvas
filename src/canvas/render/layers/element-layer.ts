@@ -19,6 +19,8 @@ import { insertOrdered } from "./insert-ordered";
 import { MaskScopeView } from "./mask-scope-view";
 import { MaskSource } from "./mask-source";
 
+const NO_IDS: ReadonlySet<string> = new Set();
+
 /**
  * Keeps one ElementView per element, in drawing order, clipped, masked and with their effects (see
  * `LayerPlacement`). Views under a mask sit in its `MaskScopeView`, views inside an element's
@@ -48,8 +50,15 @@ export class ElementLayer extends Container {
     super();
   }
 
-  /** Creates or updates views for `elements` and destroys the views for `removed` ids. */
-  sync(elements: Iterable<CanvasElement>, removed: Iterable<string> = []): void {
+  /**
+   * Creates or updates views for `elements` and destroys the views for `removed` ids. Views of
+   * elements that only moved are only moved, unless their id is in `redraw` (see `ElementView.sync`).
+   */
+  sync(
+    elements: Iterable<CanvasElement>,
+    removed: Iterable<string> = [],
+    redraw: ReadonlySet<string> = NO_IDS,
+  ): void {
     for (const id of removed) {
       this.views.get(id)?.destroy({ children: true });
       this.views.delete(id);
@@ -63,7 +72,7 @@ export class ElementLayer extends Container {
       const kind = this.kinds.kindOf(el);
       if (view) {
         const order = view.order;
-        view.sync(el, kind, this.placement.orderOf(el, kind));
+        view.sync(el, kind, this.placement.orderOf(el, kind), redraw.has(el.id));
         if (view.order !== order) moved.add(view);
       } else {
         view = this.create(el);
@@ -81,7 +90,7 @@ export class ElementLayer extends Container {
   preview(el: CanvasElement): void {
     const view = this.views.get(el.id);
     if (!view) return;
-    view.sync(el, this.kinds.kindOf(el), view.order);
+    view.sync(el, this.kinds.kindOf(el), view.order, true);
   }
 
   /** Destroys the views of elements not in `ids` (e.g. removed while the views were built). */

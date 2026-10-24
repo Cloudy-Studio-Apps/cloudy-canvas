@@ -89,8 +89,10 @@ export { cloneElements, imageSize } from "./clipboard";
 export {
   actorDocument,
   CanvasDocument,
+  changesOnly,
   compareByIndex,
   DocumentFeed,
+  GEOMETRY_FIELDS,
   DocumentHistory,
   LOCAL_ORIGIN,
   ReadOnlyDocumentError,

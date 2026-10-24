@@ -1193,7 +1193,8 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
    * of it are worked out again.
    */
   refreshElements(ids: Iterable<string>): void {
-    this.handleDocumentChange({ updated: new Set(ids), removed: new Set() });
+    const updated = new Set(ids);
+    this.handleDocumentChange({ updated, removed: new Set() }, updated);
   }
 
   zoomToFit(): void {
@@ -1418,7 +1419,8 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
 
   // ── Reactions ─────────────────────────────────────────────────────────
 
-  private handleDocumentChange(change: DocumentChange): void {
+  /** Redraws what a change touched; `redraw` ids are drawn again even if they only moved. */
+  private handleDocumentChange(change: DocumentChange, redraw?: ReadonlySet<string>): void {
     this.scopeGuides.invalidate();
     this.rulerFrameCache = null;
     this.placedCache = null;
@@ -1427,9 +1429,9 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
       this.showScope(scope);
       return;
     }
-    this.refreshScene();
-    // Derived geometry may follow any change, so those elements are redrawn every time; replaced
-    // ones only moved in the drawing order or got a new clip.
+    this.refreshScene(change.updated);
+    // Derived geometry may follow any change, so derived elements that resolved differently are
+    // synced too; replaced ones only moved in the drawing order or got a new clip.
     const changed = [
       ...new Set([...change.updated, ...this.scene.derivedIds, ...this.scene.replacedIds]),
     ]
@@ -1440,7 +1442,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
       ...change.removed,
       ...[...change.updated].filter((id) => !this.scene.get(id)),
     ]);
-    this.renderer.syncElements(changed, gone);
+    this.renderer.syncElements(changed, gone, redraw);
     this.scene.selection.remove(gone);
     this.textEditor?.reposition();
     this.requestRender();
@@ -1683,10 +1685,14 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     return isolation ? elements.filter((el) => !isolation(el)).map((el) => el.id) : [];
   }
 
-  private refreshScene(): void {
+  /** Reads the scene again; `changed` limits the fonts asked for to those elements' (a change). */
+  private refreshScene(changed?: ReadonlySet<string>): void {
     this.scene.refresh();
     if (this.scene.isolation || this.mode.faded) this.applyFaded();
-    this.fontTracker.request(this.scene.elements.flatMap((el) => this.kinds.kindOf(el).fonts(el)));
+    const elements = changed
+      ? [...changed].map((id) => this.scene.get(id)).filter((el) => el !== undefined)
+      : this.scene.elements;
+    this.fontTracker.request(elements.flatMap((el) => this.kinds.kindOf(el).fonts(el)));
     for (const links of this.links) links.update(this.scene.elements);
   }
 

@@ -76,8 +76,19 @@ export abstract class ElementKind<
   /** Set when the element has text edited in place. */
   readonly text: ElementText<E> | null = null;
 
-  /** Draws the element into its view (local coordinates). Runs on create and on every change. */
+  /**
+   * Draws the element into its view (local coordinates). Runs on create and on every change but a
+   * move: a view whose element only changed `x`/`y` is moved, not drawn again.
+   */
   abstract draw(view: ElementView, el: E): void;
+
+  /**
+   * What the drawing depends on besides the element's own fields (e.g. a shape worked out from
+   * other elements), compared by identity: the view is drawn again when it changes.
+   */
+  drawnFrom(_el: E): unknown {
+    return null;
+  }
 
   /** A new element from a spec. Throws with a message agents can act on when the spec is invalid. */
   build(_spec: ElementSpec, _index: string, _context: ElementBuildContext): E {

@@ -1,4 +1,10 @@
-import { defineService, DocumentFeed, type CanvasDocument } from "@canvas";
+import {
+  changesOnly,
+  defineService,
+  DocumentFeed,
+  GEOMETRY_FIELDS,
+  type CanvasDocument,
+} from "@canvas";
 
 import { isDesignNode, type DesignNode } from "../node";
 import type { LayerTree } from "./design-tree.types";
@@ -13,7 +19,8 @@ export class DesignTree {
   private readonly feed: DocumentFeed;
 
   constructor(private readonly doc: CanvasDocument) {
-    this.feed = new DocumentFeed(doc, () => true);
+    // Moving and resizing layers changes nothing they list.
+    this.feed = new DocumentFeed(doc, (change) => !changesOnly(change, GEOMETRY_FIELDS));
   }
 
   subscribe = (listener: () => void): (() => void) => this.feed.subscribe(listener);

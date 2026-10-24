@@ -43,6 +43,11 @@ export class BooleanKind extends ChildHostKind<BooleanElement> {
     return booleanGeometryKey(el);
   }
 
+  /** Its result is kept apart from the element, so a new shape with the same bounds redraws it. */
+  override drawnFrom(el: BooleanElement): unknown {
+    return this.geometry(el);
+  }
+
   draw(view: ElementView, el: BooleanElement): void {
     drawPaints(view, el, this.geometry(el), this.strokeOf(el));
   }

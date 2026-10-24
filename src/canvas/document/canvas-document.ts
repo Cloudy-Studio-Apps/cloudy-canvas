@@ -52,6 +52,14 @@ export class CanvasDocument {
   private edited = new Set<string>();
   private removedSince: CanvasElement[] = [];
   private beforeSince = new Map<string, Record<string, unknown>>();
+  /**
+   * Elements as last read, by id (`null`: a type that isn't registered), dropped when they change,
+   * so a change to a few elements doesn't read the whole document again. Shared by every reader:
+   * never mutate one (they're frozen in development).
+   */
+  private readonly cache = new Map<string, CanvasElement | null>();
+  /** Every element bottom to top, while no element changed since it was built. */
+  private sorted: CanvasElement[] | null = null;
 
   /** A document restored from `encode()` output. Loading it isn't an undoable change. */
   static fromUpdate(kinds: ElementKinds, update: Uint8Array): CanvasDocument {
@@ -70,21 +78,25 @@ export class CanvasDocument {
     this.assets = doc.getMap<Uint8Array>("assets");
     this.metaMap = doc.getMap<string>("meta");
     this.history = this.createHistory(LOCAL_ORIGIN);
+    // Undo, redo and remote updates change maps without going through this class's writes.
+    doc.on("beforeObserverCalls", this.forgetChanged);
   }
 
   get(id: string): CanvasElement | undefined {
-    const map = this.elements.get(id);
-    return map ? this.read(map) : undefined;
+    return this.cached(id) ?? undefined;
   }
 
-  /** All elements sorted bottom-to-top. */
+  /** All elements sorted bottom-to-top (a new array; the elements are shared, see `cache`). */
   all(): CanvasElement[] {
-    const list: CanvasElement[] = [];
-    this.elements.forEach((map) => {
-      const el = this.read(map);
-      if (el) list.push(el);
-    });
-    return list.sort(compareByIndex);
+    if (!this.sorted) {
+      const list: CanvasElement[] = [];
+      for (const id of this.elements.keys()) {
+        const el = this.cached(id);
+        if (el) list.push(el);
+      }
+      this.sorted = list.sort(compareByIndex);
+    }
+    return [...this.sorted];
   }
 
   /** Index that places a new element above everything else. */
@@ -220,6 +232,7 @@ export class CanvasDocument {
           if (el) this.removedSince.push(el);
         }
         this.elements.delete(id);
+        this.forget(id);
       }
     });
   }
@@ -303,20 +316,32 @@ export class CanvasDocument {
 
   observe(listener: (change: DocumentChange) => void): () => void {
     const handler = (events: Y.YEvent<Y.AbstractType<unknown>>[]) => {
-      const change: DocumentChange = { updated: new Set(), removed: new Set() };
+      const fields = new Map<string, Set<string> | "all">();
+      const change: DocumentChange = { updated: new Set(), removed: new Set(), fields };
       for (const event of events) {
         if (event.target === this.elements) {
           for (const [id, info] of event.changes.keys) {
             if (info.action === "delete") change.removed.add(id);
-            else change.updated.add(id);
+            else {
+              change.updated.add(id);
+              fields.set(id, "all");
+            }
           }
         } else {
           // A field changed inside an element map: its key in the parent map is the element id.
           const id = event.path[0];
-          if (typeof id === "string") change.updated.add(id);
+          if (typeof id !== "string") continue;
+          change.updated.add(id);
+          const known = fields.get(id) ?? new Set<string>();
+          if (known === "all") continue;
+          for (const key of event.changes.keys.keys()) known.add(key);
+          fields.set(id, known);
         }
       }
-      for (const id of change.removed) change.updated.delete(id);
+      for (const id of change.removed) {
+        change.updated.delete(id);
+        fields.delete(id);
+      }
       listener(change);
     };
     this.elements.observeDeep(handler);
@@ -339,6 +364,7 @@ export class CanvasDocument {
   }
 
   destroy(): void {
+    this.doc.off("beforeObserverCalls", this.forgetChanged);
     this.history.destroy();
   }
 
@@ -374,6 +400,7 @@ export class CanvasDocument {
     const map = new Y.Map<unknown>();
     for (const [key, value] of Object.entries(placed)) map.set(key, value);
     this.elements.set(placed.id, map);
+    this.forget(placed.id);
     if (edit && this.afterEdit) this.edited.add(placed.id);
   }
 
@@ -390,6 +417,7 @@ export class CanvasDocument {
         this.beforeSince.set(id, before);
       }
       map.set(key, value);
+      this.forget(id);
     }
   }
 
@@ -433,10 +461,44 @@ export class CanvasDocument {
     this.beforeSince.clear();
   }
 
-  /** The element in a map, with defaults filled, or `undefined` when its type isn't registered. */
-  private read(map: ElementMap): CanvasElement | undefined {
+  /** The element with this id as last read (`null`: none, or a type that isn't registered). */
+  private cached(id: string): CanvasElement | null {
+    const known = this.cache.get(id);
+    if (known !== undefined) return known;
+    const map = this.elements.get(id);
+    if (!map) return null;
+    const el = this.read(map);
+    this.cache.set(id, el);
+    return el;
+  }
+
+  /** Drops an element's cached read (it changed, or is gone). */
+  private forget(id: string): void {
+    this.cache.delete(id);
+    this.sorted = null;
+  }
+
+  /** Drops the cached reads of the elements a transaction changed. */
+  private readonly forgetChanged = (transaction: Y.Transaction): void => {
+    const elements: unknown = this.elements;
+    for (const [type, keys] of transaction.changed) {
+      if (type === elements) {
+        for (const id of keys) if (id !== null) this.forget(id);
+      } else if (type.parent === elements) {
+        // A field changed inside an element map: its key in the parent map is the element id.
+        const id = type._item?.parentSub;
+        if (id) this.forget(id);
+      }
+    }
+  };
+
+  /** The element in a map, with defaults filled, or `null` when its type isn't registered. */
+  private read(map: ElementMap): CanvasElement | null {
     const data: unknown = map.toJSON();
-    return this.kinds.isElement(data) ? this.kinds.kindOf(data).fillDefaults(data) : undefined;
+    if (!this.kinds.isElement(data)) return null;
+    const el = this.kinds.kindOf(data).fillDefaults(data);
+    // Reads are shared: a reader changing one would change everyone's.
+    return import.meta.env.DEV ? Object.freeze(el) : el;
   }
 }
 

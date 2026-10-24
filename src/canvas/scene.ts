@@ -33,6 +33,7 @@ import {
 } from "./render";
 import type { SceneHooks } from "./scene.types";
 import { Selection } from "./selection";
+import { deepEqual } from "./utils";
 
 /**
  * What's on the canvas right now and what the user is pointing at: the z-ordered element list,
@@ -82,8 +83,11 @@ export class Scene {
     const { scopeOf } = this.hooks;
     this.scopes = scopeOf ? new Map(all.map((el) => [el.id, scopeOf(el)])) : new Map();
     const raw = scopeOf ? all.filter((el) => this.scopes.get(el.id) === this.scope) : all;
-    const resolved = this.hooks.resolve ? this.hooks.resolve(raw) : raw;
-    this.derived = resolved.filter((el, i) => el !== raw[i]).map((el) => el.id);
+    const previous = this.byId;
+    const resolved = this.hooks.resolve ? this.keepResolved(raw, this.hooks.resolve(raw)) : raw;
+    this.derived = resolved
+      .filter((el, i) => el !== raw[i] && previous.get(el.id) !== el)
+      .map((el) => el.id);
     const custom = this.hooks.orderKeys?.(resolved);
     const keys = new Map(
       resolved.map((el) => [el.id, custom?.get(el.id) ?? zOrderKey(el, this.kinds.kindOf(el))]),
@@ -128,6 +132,27 @@ export class Scene {
   }
 
   /**
+   * `resolved` with each derived element that resolved as it did last time replaced by last
+   * time's object, so only what really changed counts as changed (and is drawn again).
+   */
+  private keepResolved(raw: CanvasElement[], resolved: CanvasElement[]): CanvasElement[] {
+    let derived = 0;
+    const kept = resolved.map((el, i) => {
+      if (el === raw[i]) return el;
+      derived++;
+      const before = this.byId.get(el.id);
+      if (!before || before === raw[i]) return el;
+      const kind = this.kinds.kindOf(el);
+      const same =
+        kind === this.kinds.kindOf(before) &&
+        kind.drawnFrom(el) === kind.drawnFrom(before) &&
+        deepEqual(el, before);
+      return same ? before : el;
+    });
+    return derived > 0 ? kept : resolved;
+  }
+
+  /**
    * The scope of every element in the document at the last refresh (empty without scopes), so
    * elements outside the scene, and ones just removed, can be placed.
    */
@@ -135,7 +160,10 @@ export class Scene {
     return this.scopes;
   }
 
-  /** Ids of elements whose geometry the product derives from others (see `resolveElements`). */
+  /**
+   * Ids of elements whose geometry the product derives from others (see `resolveElements`) and
+   * that resolved differently in the last refresh.
+   */
   get derivedIds(): readonly string[] {
     return this.derived;
   }

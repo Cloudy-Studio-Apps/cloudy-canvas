@@ -162,13 +162,21 @@ export class Renderer {
     );
   }
 
-  syncElements(elements: Iterable<CanvasElement>, removed: Iterable<string> = []): void {
+  /**
+   * Shows `elements` as they are now and drops the views of `removed`. Elements that only moved
+   * aren't drawn again, unless their id is in `redraw` (what they show changed outside them).
+   */
+  syncElements(
+    elements: Iterable<CanvasElement>,
+    removed: Iterable<string> = [],
+    redraw?: ReadonlySet<string>,
+  ): void {
     const frames: CanvasElement[] = [];
     const others: CanvasElement[] = [];
     for (const el of elements) (this.kinds.kindOf(el).frame ? frames : others).push(el);
     const gone = [...removed];
-    this.frames.sync(frames, gone);
-    this.elements.sync(others, gone);
+    this.frames.sync(frames, gone, redraw);
+    this.elements.sync(others, gone, redraw);
   }
 
   /** Plays the entrance (a quick pop) of elements that were just added, unless motion is reduced. */

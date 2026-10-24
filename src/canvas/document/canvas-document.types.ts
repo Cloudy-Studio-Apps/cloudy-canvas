@@ -9,6 +9,11 @@ export interface DocumentChange {
   /** Ids added or updated. */
   updated: Set<string>;
   removed: Set<string>;
+  /**
+   * The fields each updated element changed, `"all"` for an added (or replaced) one. Missing when
+   * the change didn't come from the document (e.g. `engine.refreshElements`): treat it as all.
+   */
+  fields?: ReadonlyMap<string, ReadonlySet<string> | "all">;
 }
 
 /** What a document says about itself, saved with it: shown instead of the file name when set. */
