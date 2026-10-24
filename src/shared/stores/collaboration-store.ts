@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 import type { RelaySettings, ShareIdentity } from "@shared/core";
-import { BUILT_IN_RELAY } from "./built-in-relay";
+import { BUILT_IN_RELAY, RELAY_CHOICE_IN_SETTINGS } from "./built-in-relay";
 import type { CollaborationState } from "./collaboration-store.types";
 
 /** Colours people get in live sessions (like agents' fallback colours). */
@@ -25,10 +25,11 @@ export const useCollaborationStore = create<CollaborationState>()(
 );
 
 /**
- * The relay a hosted session goes through: the built-in or the user's own when chosen (and there),
- * otherwise `null`, n0's public ones.
+ * The relay a hosted session goes through: the built-in one in release builds; in development the
+ * built-in or the user's own when chosen (and there). `null` is n0's public ones.
  */
 export function hostingRelay(state: CollaborationState): RelaySettings | null {
+  if (!RELAY_CHOICE_IN_SETTINGS) return BUILT_IN_RELAY;
   const { relayChoice, customRelay } = state;
   if (relayChoice === "builtin") return BUILT_IN_RELAY;
   return relayChoice === "custom" && customRelay.url.trim() ? customRelay : null;

@@ -13,7 +13,7 @@ Everyone sees the others' cursors, selections and pages, and can follow them (th
 
 The apps connect peer to peer with [iroh](https://iroh.computer): QUIC connections, end-to-end encrypted, dialed by the host's public key. Routers and NATs are crossed by hole punching. When that fails (strict NATs, some corporate and mobile networks), a **relay** forwards the encrypted traffic. The Share dialog shows each guest as **Direct** or **Via relay**.
 
-Which relay is used is chosen in **Settings › Collaboration**: the **Cloudy Canvas relay** the app was built with, n0's public ones, or your own server (see [`server/relay/README.md`](../server/relay/README.md) for setting one up on a small VPS). Only the host needs it set: the link carries the relay, so guests use it too.
+Sessions use the **Cloudy Canvas relay** the app was built with. When it can't be reached, the session is started again through n0's public relays, and **Settings › Collaboration** shows a note saying so; the Cloudy Canvas relay is tried again after five minutes. The link carries the relay the session uses, so guests use it too. Development builds also let Settings pick n0's relays or your own server (see [`server/relay/README.md`](../server/relay/README.md) for setting one up on a small VPS).
 
 The built-in relay comes from `VITE_CLOUDY_RELAY_URL` and `VITE_CLOUDY_RELAY_TOKEN` at build time: `.env.local` for your own builds (see `.env.example`), and the repository secrets `CLOUDY_RELAY_URL` and `CLOUDY_RELAY_TOKEN` for releases. A build without them offers n0's public relays by default. The token ends up in every copy of the app and in every link, so it only keeps the relay from being used casually; the relay's limits cap the rest, and documents are end-to-end encrypted either way.
 

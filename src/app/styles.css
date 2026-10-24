@@ -75,6 +75,63 @@
       opacity: 0.1;
     }
   }
+
+  /* The name prompt's seal patting its belly: one flipper, then the other half a beat later. */
+  --animate-seal-pat: seal-pat 1.2s ease-in-out infinite;
+  --animate-seal-belly: seal-belly 0.6s ease-out infinite;
+  --animate-seal-sway: seal-sway 1.2s ease-in-out infinite;
+  --animate-seal-pat-marks: seal-pat-marks 1.2s ease-out infinite;
+  @keyframes seal-pat {
+    0%,
+    100% {
+      transform: rotate(var(--seal-swing));
+    }
+    35% {
+      transform: rotate(0deg);
+    }
+    45% {
+      transform: rotate(calc(var(--seal-swing) * 0.3));
+    }
+    55% {
+      transform: rotate(var(--seal-swing));
+    }
+  }
+  @keyframes seal-belly {
+    0%,
+    60%,
+    100% {
+      transform: scale(1);
+    }
+    70% {
+      transform: scale(1.07, 0.93);
+    }
+    82% {
+      transform: scale(0.98, 1.02);
+    }
+  }
+  @keyframes seal-sway {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    35% {
+      transform: rotate(-2.5deg);
+    }
+    85% {
+      transform: rotate(2.5deg);
+    }
+  }
+  @keyframes seal-pat-marks {
+    0%,
+    30%,
+    60%,
+    100% {
+      opacity: 0;
+    }
+    38% {
+      opacity: 1;
+    }
+  }
 }
 
 /* Token-backed values (resolved at runtime from tokens.css). */

@@ -5,3 +5,4 @@
 export type * from "./presence.types";
 export { canUndoFor } from "./permissions";
 export { EMPTY_COLLABORATOR_STATE } from "./empty-state";
+export { randomPersonName } from "./random-name";

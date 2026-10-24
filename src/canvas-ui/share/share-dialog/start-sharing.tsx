@@ -10,6 +10,7 @@ import { Input } from "@shared/ui/components/ui/input";
 import { useEngine } from "../../engine-context";
 import { useCanvasFile } from "../../file";
 import { startSharing } from "../host-session";
+import { RelayNote } from "./relay-note";
 import type { StartSharingProps } from "./share-dialog.types";
 
 /** Before sharing: what it means, the user's name (asked once), and Start sharing. */
@@ -18,7 +19,6 @@ export function StartSharing({ product }: StartSharingProps) {
   const file = useCanvasFile();
   const name = useCollaborationStore((s) => s.name);
   const setName = useCollaborationStore((s) => s.setName);
-  const relayChoice = useCollaborationStore((s) => s.relayChoice);
   const [draft, setDraft] = useState("");
   const [busy, setBusy] = useState(false);
   const nameId = useId();
@@ -72,10 +72,7 @@ export function StartSharing({ product }: StartSharingProps) {
           />
         </div>
       )}
-      <p className="text-xs text-muted-foreground">
-        Connections go through {relayChoice === "custom" ? "your relay" : "public relays"} when a
-        direct one can&apos;t be made (Settings › Collaboration).
-      </p>
+      <RelayNote />
       <div className="flex justify-end">
         <Button disabled={busy || !chosenName} onClick={() => void start()}>
           {busy ? <LoaderCircle className="animate-spin" /> : <Radio />}

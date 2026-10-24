@@ -1,9 +1,11 @@
 import { useId } from "react";
 
 import { CommitInput } from "@canvas-ui";
+import { RELAY_CHOICE_IN_SETTINGS } from "@shared/stores/built-in-relay";
 import { useCollaborationStore } from "@shared/stores/collaboration-store";
 import { SettingsSection } from "../../components/settings-section";
 import { RelayServerSettings } from "./relay-server-settings";
+import { RelayStatus } from "./relay-status";
 
 export function CollaborationSection() {
   const name = useCollaborationStore((s) => s.name);
@@ -32,7 +34,7 @@ export function CollaborationSection() {
           />
         </div>
         <div className="border-t pt-4">
-          <RelayServerSettings />
+          {RELAY_CHOICE_IN_SETTINGS ? <RelayServerSettings /> : <RelayStatus />}
         </div>
       </div>
     </SettingsSection>

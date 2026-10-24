@@ -1,20 +1,22 @@
 import { useCallback, useSyncExternalStore } from "react";
 
-import { ShareHost, type ShareHostOptions } from "@canvas";
+import type { ShareHost, ShareHostOptions } from "@canvas";
 import { appLifecycle } from "@platform";
 import type { HostedSession } from "./host-session.types";
+import { startHost } from "./start-host";
 
 /** The one file this app shares at a time. */
 let current: HostedSession | null = null;
 const listeners = new Set<() => void>();
 
 /**
- * Starts sharing a file (ending any other session first). Closing the window tells the guests the
- * session ended before it goes.
+ * Starts sharing a file (ending any other session first), through n0's public relays when the
+ * built-in one can't be reached (`startHost`). Closing the window tells the guests the session
+ * ended before it goes.
  */
 export async function startSharing(fileId: string, options: ShareHostOptions): Promise<ShareHost> {
   await stopSharing();
-  const host = await ShareHost.start(options);
+  const host = await startHost(options);
   const releaseQuit = appLifecycle.onBeforeQuit(() => host.stop());
   current = { fileId, host, releaseQuit };
   notify();

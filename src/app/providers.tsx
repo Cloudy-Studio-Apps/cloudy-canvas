@@ -1,5 +1,6 @@
 import { AboutDialog } from "@shared/about";
 import { AppUpdates } from "@shared/app-updates";
+import { NamePrompt } from "@shared/profile";
 import { GlobalLoader } from "@shared/ui/components/loading-screen";
 import { Toaster } from "@shared/ui/components/toaster";
 import { TooltipProvider } from "@shared/ui/components/ui/tooltip";
@@ -17,6 +18,7 @@ export function Providers({ children }: ProvidersProps) {
       {children}
       <GlobalLoader />
       <AboutDialog />
+      <NamePrompt />
       <AppUpdates />
       <Toaster />
     </TooltipProvider>

@@ -5,6 +5,7 @@ import { BUILT_IN_RELAY } from "@shared/stores/built-in-relay";
 import { useCollaborationStore } from "@shared/stores/collaboration-store";
 import type { RelayChoice } from "@shared/stores/collaboration-store.types";
 import { RadioGroup, RadioGroupItem } from "@shared/ui/components/ui/radio-group";
+import { RelayDownNote } from "./relay-down-note";
 import { RelayTestRow } from "./relay-test-row";
 import { useRelayTest } from "./use-relay-test";
 
@@ -68,6 +69,7 @@ export function RelayServerSettings() {
       </RadioGroup>
       {choice === "builtin" && (
         <div className="space-y-3 border-l-2 pl-4">
+          <RelayDownNote />
           <RelayTestRow relay={BUILT_IN_RELAY} state={state} onTest={(r) => void test(r)} />
         </div>
       )}
