@@ -1,9 +1,9 @@
 import { DEFAULT_MODE, type Size } from "@canvas";
 import {
   createPresetFrame,
-  DESIGN_BROCHURE,
   type DesignEngine,
   type DesignNode,
+  ensureBrochure,
   type FrameElement,
   replaceImageFill,
 } from "@design";
@@ -26,12 +26,13 @@ export function editInDesign(engine: DesignEngine, frame: FrameElement): void {
 
 /**
  * Adds a blank frame of `size` (named `label` and numbered) right of the page's content, as the
- * brochure's last page, in one undo step, and shows it.
+ * last page of the page's open brochure (made when there's none), in one undo step, and shows
+ * it.
  */
 export function addBlankPage(engine: DesignEngine, size: Size, label: string): void {
   const preset = { id: "brochure-page", group: "Paper", label, size };
   const frame = createPresetFrame(preset, engine.doc, engine.elements());
-  engine.service(DESIGN_BROCHURE).addNewPage(frame);
+  ensureBrochure(engine).addNewPage(frame);
   engine.focusElement(frame.id);
 }
 

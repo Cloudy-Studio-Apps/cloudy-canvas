@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import { ListChecks } from "lucide-react";
 
-import { CATALOG_PICK_TOOL, DESIGN_BROCHURE, paperSize, type BookSide } from "@design";
+import { CATALOG_PICK_TOOL, paperSize, type BookSide } from "@design";
 import { PanelAddButton, PanelIconButton } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useBrochure } from "../hooks/use-brochure";
@@ -10,16 +10,19 @@ import { addBlankPage } from "../page-actions";
 import { BlankPageRow } from "./blank-page-row";
 import { BrochureEmpty } from "./brochure-empty";
 import { BrochurePageRow } from "./brochure-page-row";
+import { BrochureSwitcher } from "./brochure-switcher";
+import { NoBrochure } from "./no-brochure";
 import { spreadLabel } from "./spread-label";
 
 /**
- * The Catalog mode's left tab: the brochure's pages in order, to drag into place. In the book
+ * The Catalog mode's left tab: the design page's open brochure (`BrochureSwitcher` picks, makes,
+ * renames and deletes the page's brochures) and its pages in order, to drag into place. In the book
  * layout they're grouped as they're read (covers, spreads) with the blank pages the layout adds;
  * "Pick frames" ticks frames on the canvas and "+" adds a blank page the size of the last one.
  */
 export function BrochureTab() {
   const engine = useDesignEngine();
-  const { pages, settings, layout, label } = useBrochure();
+  const { brochure, pages, settings, layout, label } = useBrochure();
   const selection = useCatalogSelection();
   const selectedSlot = selection.kind === "page" ? selection.page.slot.id : null;
   const last = pages.at(-1)?.frame;
@@ -41,14 +44,23 @@ export function BrochureTab() {
         onDropPage={(slotId, to) => {
           // Dropped after itself or below: the slot shifts once it leaves its place.
           const from = pages.findIndex((other) => other.slot.id === slotId);
-          engine.service(DESIGN_BROCHURE).move(slotId, from < to ? to - 1 : to);
+          brochure?.move(slotId, from < to ? to - 1 : to);
         }}
       />
     );
   };
 
+  if (!brochure) {
+    return (
+      <div className="flex min-h-0 flex-1 flex-col">
+        <NoBrochure />
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
+      <BrochureSwitcher />
       <header className="flex h-10 shrink-0 items-center justify-between px-3">
         <h2 className="text-xs font-semibold text-foreground">
           Pages <span className="font-normal text-muted-foreground">{layout.pageCount}</span>

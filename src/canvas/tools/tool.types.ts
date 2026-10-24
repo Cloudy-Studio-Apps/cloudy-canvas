@@ -78,6 +78,8 @@ export interface ToolContext<O extends object = object> {
   getMode(): string;
   /** Switches mode (e.g. double-clicking an ER shape enters the ER mode). */
   setMode(id: string): void;
+  /** The scope on screen (see `CanvasScopes`; a design's page), `null` without scopes. */
+  getScope(): string | null;
   /** Shows gesture feedback above the elements (e.g. a line being dragged); `null` clears it. */
   setGuide(guide: Guide | null): void;
   /**

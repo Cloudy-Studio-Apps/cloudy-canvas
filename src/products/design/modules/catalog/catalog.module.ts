@@ -2,7 +2,7 @@ import { BookOpen } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
-import { designAgentTools, designCanvas } from "../../design-points";
+import { designAgentTools, designCanvas, designMigrations } from "../../design-points";
 import { BrochureKind } from "./brochure";
 import { catalogTools } from "./agent";
 import {
@@ -15,7 +15,7 @@ import {
   CatalogTool,
   editCatalogPage,
 } from "./mode";
-import { pruneBrochure } from "./model";
+import { pruneBrochure, splitLegacyBrochure } from "./model";
 import { BrochureTab } from "./ui/brochure-tab/brochure-tab";
 import { BrochureOverlay } from "./ui/canvas/brochure-overlay";
 import { useCatalogCommands } from "./ui/hooks/use-catalog-commands";
@@ -24,8 +24,9 @@ import { CatalogSidebar } from "./ui/sidebar/catalog-sidebar";
 import { CatalogModeToolbar } from "./ui/toolbar/catalog-mode-toolbar";
 
 /**
- * Catalog: a design's top-level frames as a print brochure's pages (the Catalog mode). The
- * brochure record and its pruning when frames are deleted, the mode with its select-only and pick
+ * Catalog: a design page's top-level frames as a print brochure's pages (the Catalog mode; a page
+ * can hold several brochures). The brochure records, their pruning when frames or pages are
+ * deleted and the migration of older files' single brochure, the mode with its select-only and pick
  * tools, double-click to design a page, the agent tools, and while the mode is on: the Brochure
  * tab, the sidebar (settings, checks, the page's options and pictures), the page badges over the
  * canvas, the toolbar, the preview and the PDF export.
@@ -47,8 +48,10 @@ export const catalogModule = defineModule({
       { id: CATALOG_COMMANDS.preview, label: "Preview the brochure" },
       { id: CATALOG_COMMANDS.exportPdf, label: "Export the brochure as PDF" },
     );
-    // Deleted frames leave the brochure in the same undo step.
+    // Deleted frames leave the brochures, and a deleted page's brochures go, in the same undo step.
     host.contribute(designCanvas.onRemove, (doc, removed) => pruneBrochure(doc, removed));
+    // One brochure per design, from before brochures belonged to a page, is split by page.
+    host.contribute(designMigrations, { id: "catalog.brochures", migrate: splitLegacyBrochure });
     host.contribute(designCanvas.editElement, editCatalogPage);
     host.contribute(designAgentTools, { id: "catalog", tools: () => catalogTools });
 

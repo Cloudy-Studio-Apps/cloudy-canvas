@@ -22,7 +22,7 @@ export function CatalogSidebar() {
   const engine = useDesignEngine();
   const picking = useDesignState((state) => state.tool === CATALOG_PICK_TOOL);
   const selection = useCatalogSelection();
-  const { pages } = useBrochure();
+  const { brochure, pages } = useBrochure();
 
   if (picking) return <PickSection />;
   if (selection.kind === "page") {
@@ -35,6 +35,13 @@ export function CatalogSidebar() {
   }
   if (selection.kind === "loose") return <LooseFrameSection frame={selection.frame} />;
   if (selection.kind === "several") return <FramesSection frames={selection.frames} />;
+  if (!brochure) {
+    return (
+      <p className="px-3 py-2.5 text-xs text-muted-foreground">
+        This page has no brochure yet. Create one in the Brochure tab, or pick frames.
+      </p>
+    );
+  }
   return (
     <>
       <BrochureSettingsSection />

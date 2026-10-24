@@ -1,4 +1,4 @@
-import { DESIGN_BROCHURE } from "@design";
+import { ensureBrochure } from "@design";
 import { PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button } from "@shared/ui/components/ui/button";
@@ -9,7 +9,6 @@ import type { LooseFrameSectionProps } from "./sidebar.types";
 export function LooseFrameSection({ frame }: LooseFrameSectionProps) {
   const engine = useDesignEngine();
   const { pages, layout, label } = useBrochure();
-  const brochure = engine.service(DESIGN_BROCHURE);
   const last = pages.at(-1);
 
   return (
@@ -19,14 +18,14 @@ export function LooseFrameSection({ frame }: LooseFrameSectionProps) {
         Greyed frames stay in the design; they just aren't printed.
       </p>
       <div className="mt-2.5 flex flex-col gap-1.5">
-        <Button size="sm" onClick={() => brochure.addPages([frame.id])}>
+        <Button size="sm" onClick={() => ensureBrochure(engine).addPages([frame.id])}>
           Add as page {layout.pageCount + 1}
         </Button>
         {last && (
           <Button
             size="sm"
             variant="outline"
-            onClick={() => brochure.addOption(last.slot.id, frame.id)}
+            onClick={() => ensureBrochure(engine).addOption(last.slot.id, frame.id)}
           >
             Add as an option of page {label(last)}
           </Button>

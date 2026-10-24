@@ -1,5 +1,4 @@
-import { DESIGN_BROCHURE, type BrochureCovers, type BrochureLayout } from "@design";
-import { useDesignEngine } from "@design/ui/design-engine-context";
+import type { BrochureCovers, BrochureLayout } from "@design";
 import { useBrochure } from "../hooks/use-brochure";
 import { SettingSelect } from "./setting-select";
 import type { SettingChoice } from "./sidebar.types";
@@ -22,9 +21,7 @@ const COVERS: readonly SettingChoice<BrochureCovers>[] = [
  * whether spread frames print as two pages.
  */
 export function LayoutFields() {
-  const engine = useDesignEngine();
-  const { settings } = useBrochure();
-  const brochure = engine.service(DESIGN_BROCHURE);
+  const { brochure, settings } = useBrochure();
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -32,20 +29,20 @@ export function LayoutFields() {
         label="Layout"
         value={settings.layout}
         choices={LAYOUTS}
-        onChange={(layout) => brochure.setSettings({ layout })}
+        onChange={(layout) => brochure?.setSettings({ layout })}
       />
       {settings.layout === "book" && (
         <SettingSelect
           label="Covers"
           value={settings.covers}
           choices={COVERS}
-          onChange={(covers) => brochure.setSettings({ covers })}
+          onChange={(covers) => brochure?.setSettings({ covers })}
         />
       )}
       <Toggle
         label="Split spreads into pages in the PDF"
         checked={settings.splitSpreads}
-        onChange={(splitSpreads) => brochure.setSettings({ splitSpreads })}
+        onChange={(splitSpreads) => brochure?.setSettings({ splitSpreads })}
       />
     </div>
   );

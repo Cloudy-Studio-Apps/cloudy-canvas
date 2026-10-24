@@ -7,6 +7,8 @@ export interface ModeFadeContext {
   elements: readonly CanvasElement[];
   doc: CanvasDocument;
   tool: string;
+  /** The scope on screen (a design's page), `null` without scopes. */
+  scope: string | null;
 }
 
 /**

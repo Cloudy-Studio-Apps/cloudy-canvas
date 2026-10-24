@@ -1,18 +1,20 @@
 import { elementBounds } from "@canvas";
 
 import type { DesignWorkspace } from "../../../design-engine.types";
-import { DESIGN_BROCHURE } from "../model";
+import type { DesignBrochure } from "../model";
 import { brochureIssues } from "./brochure-checks";
 import type { BrochureIssue } from "./brochure-checks.types";
 import { knownPictureSize, pictureSize } from "./picture-size";
 
 /**
- * The brochure's print issues (see `brochureIssues`), reading the pictures' sizes from their
+ * A brochure's print issues (see `brochureIssues`), reading the pictures' sizes from their
  * files the first time each is needed.
  */
-export async function checkBrochure(workspace: DesignWorkspace): Promise<BrochureIssue[]> {
+export async function checkBrochure(
+  workspace: DesignWorkspace,
+  brochure: DesignBrochure,
+): Promise<BrochureIssue[]> {
   const { doc, kinds } = workspace;
-  const brochure = workspace.service(DESIGN_BROCHURE);
   const missing = new Set<string>();
   const check = () =>
     brochureIssues({

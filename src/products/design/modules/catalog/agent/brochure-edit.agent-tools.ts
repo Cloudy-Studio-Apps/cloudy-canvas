@@ -9,10 +9,12 @@ import {
 import { requireDesign, type DesignAgentTool } from "../../../agent";
 import type { DesignWorkspace } from "../../../design-engine.types";
 import { createPresetFrame, FRAME_PRESETS, findPreset, type FrameElement } from "../../frame";
-import { DESIGN_BROCHURE } from "../model";
+import type { DesignBrochure } from "../model";
 import {
+  BROCHURE_SCHEMA,
   optionalPlace,
   POSITION_SCHEMA,
+  readBrochure,
   readPageFrames,
   readSlots,
   requirePagePosition,
@@ -24,15 +26,15 @@ const PAPER_PRESETS = FRAME_PRESETS.filter((preset) => preset.group === "Paper")
   (preset) => preset.id,
 );
 
-/** Changing the brochure's pages, page by page or all at once, each one undo step. */
+/** Changing a brochure's pages, page by page or all at once, each one undo step. */
 export const brochureEditTools: DesignAgentTool[] = [
   {
     name: "set_brochure_pages",
     description:
       "Replaces the brochure's pages, in order, in one undo step. Each page lists the top-level " +
       "frames that could be it (`frames`, its options) and the one printed (`chosen`, the first " +
-      "by default). Frames may be on any design page; a frame can be in one page only. The frames " +
-      "themselves don't change.",
+      "by default). Frames must be on the brochure's design page; a frame can be in one page only. " +
+      "The frames themselves don't change.",
     inputSchema: {
       type: "object",
       required: ["pages"],
@@ -48,12 +50,14 @@ export const brochureEditTools: DesignAgentTool[] = [
             },
           },
         },
+        brochure: BROCHURE_SCHEMA,
       },
     },
     run: async (host, args) => {
       const { engine } = requireDesign(host);
-      engine.service(DESIGN_BROCHURE).setSlots(readSlots(engine, args));
-      return describeBrochure(engine);
+      const brochure = readBrochure(engine, args);
+      brochure.setSlots(readSlots(engine, brochure, args));
+      return describeBrochure(engine, brochure);
     },
   },
   {
@@ -63,7 +67,8 @@ export const brochureEditTools: DesignAgentTool[] = [
       "undo step: `frames` (top-level frames not in it yet, in the order given; frames already " +
       "in it are skipped), or `blank`, a new empty frame of a paper size (`preset`, " +
       "`landscape`; by default the last page's size) placed right of your page's content, as " +
-      "the page list's + does. Returns the brochure.",
+      "the page list's + does. Without `brochure`, a design page without one gets one. Returns " +
+      "the brochure.",
     inputSchema: {
       type: "object",
       properties: {
@@ -76,21 +81,22 @@ export const brochureEditTools: DesignAgentTool[] = [
           },
         },
         at: POSITION_SCHEMA,
+        brochure: BROCHURE_SCHEMA,
       },
     },
     run: async (host, args) => {
       const { engine } = requireDesign(host);
-      const brochure = engine.service(DESIGN_BROCHURE);
+      const brochure = readBrochure(engine, args, { create: true });
       const at = optionalPlace(args, "at", brochure.pages().length);
       const blank = optionalRecord(args, "blank");
       if (blank) {
-        brochure.addNewPage(blankFrame(engine, blank), at);
+        brochure.addNewPage(blankFrame(engine, brochure, blank), at);
       } else {
-        const frames = readPageFrames(engine, args, "frames");
+        const frames = readPageFrames(engine, brochure, args, "frames");
         if (frames.length === 0) throw new Error('Give "frames" or "blank".');
         brochure.addPages(frames, at);
       }
-      return describeBrochure(engine);
+      return describeBrochure(engine, brochure);
     },
   },
   {
@@ -101,14 +107,15 @@ export const brochureEditTools: DesignAgentTool[] = [
     inputSchema: {
       type: "object",
       required: ["position", "to"],
-      properties: { position: POSITION_SCHEMA, to: POSITION_SCHEMA },
+      properties: { position: POSITION_SCHEMA, to: POSITION_SCHEMA, brochure: BROCHURE_SCHEMA },
     },
     run: async (host, args) => {
       const { engine } = requireDesign(host);
-      const page = requirePagePosition(engine, args);
-      const to = requirePagePosition(engine, args, "to");
-      engine.service(DESIGN_BROCHURE).move(page.slot.id, to.number - 1);
-      return describeBrochure(engine);
+      const brochure = readBrochure(engine, args);
+      const page = requirePagePosition(brochure, args);
+      const to = requirePagePosition(brochure, args, "to");
+      brochure.move(page.slot.id, to.number - 1);
+      return describeBrochure(engine, brochure);
     },
   },
   {
@@ -119,18 +126,22 @@ export const brochureEditTools: DesignAgentTool[] = [
     inputSchema: {
       type: "object",
       required: ["positions"],
-      properties: { positions: { type: "array", items: POSITION_SCHEMA } },
+      properties: {
+        positions: { type: "array", items: POSITION_SCHEMA },
+        brochure: BROCHURE_SCHEMA,
+      },
     },
     run: async (host, args) => {
       const { engine } = requireDesign(host);
+      const brochure = readBrochure(engine, args);
       const positions = Array.isArray(args.positions) ? args.positions : [];
       if (positions.length === 0) throw new Error('"positions" is empty.');
       const slots = positions.map((position, i) => {
         const key = `positions[${i}]`;
-        return requirePagePosition(engine, { [key]: position }, key).slot.id;
+        return requirePagePosition(brochure, { [key]: position }, key).slot.id;
       });
-      engine.service(DESIGN_BROCHURE).removePages(slots);
-      return describeBrochure(engine);
+      brochure.removePages(slots);
+      return describeBrochure(engine, brochure);
     },
   },
   {
@@ -147,28 +158,37 @@ export const brochureEditTools: DesignAgentTool[] = [
         position: POSITION_SCHEMA,
         frames: { type: "array", items: { type: "string" } },
         chosen: { type: "string" },
+        brochure: BROCHURE_SCHEMA,
       },
     },
     run: async (host, args) => {
       const { engine } = requireDesign(host);
-      const page = requirePagePosition(engine, args);
-      const frames = readPageFrames(engine, args, "frames");
+      const brochure = readBrochure(engine, args);
+      const page = requirePagePosition(brochure, args);
+      const frames = readPageFrames(engine, brochure, args, "frames");
       if (frames.length === 0) throw new Error('"frames" is empty.');
       const chosen = optionalString(args, "chosen");
       if (chosen !== undefined && !frames.includes(chosen)) {
         throw new Error(`"chosen" isn't one of "frames".`);
       }
-      engine.service(DESIGN_BROCHURE).setOptions(page.slot.id, frames, chosen);
-      return describeBrochure(engine);
+      brochure.setOptions(page.slot.id, frames, chosen);
+      return describeBrochure(engine, brochure);
     },
   },
 ];
 
 /** A new empty page frame for `add_brochure_pages`: a paper preset, or the last page's size. */
-function blankFrame(engine: DesignWorkspace, blank: ToolArgs): FrameElement {
+function blankFrame(
+  engine: DesignWorkspace,
+  brochure: DesignBrochure,
+  blank: ToolArgs,
+): FrameElement {
+  if (engine.scope !== brochure.page) {
+    throw new Error("Blank pages are added on your design page: switch_page to the brochure's.");
+  }
   const presetId = optionalChoice(blank, "preset", PAPER_PRESETS);
   const preset = presetId === undefined ? undefined : findPreset(presetId);
-  const last = engine.service(DESIGN_BROCHURE).pages().at(-1)?.frame;
+  const last = brochure.pages().at(-1)?.frame;
   const size = preset?.size ?? (last ? { w: last.w, h: last.h } : findPreset("a4")?.size);
   if (!size) throw new Error('Give "blank.preset".');
   const landscape = preset !== undefined && optionalBoolean(blank, "landscape") === true;

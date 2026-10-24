@@ -8,11 +8,11 @@ import {
 } from "@canvas";
 
 import type { DesignToolOptions } from "../../../design-options.types";
-import { DESIGN_BROCHURE } from "../model";
+import { DESIGN_BROCHURES } from "../model";
 import { CATALOG_PICK_TOOL, CATALOG_TOOL } from "./catalog-mode.constants";
 
 /**
- * Ticks the frames the brochure uses, as the selection: it starts with the pages already in it, a
+ * Ticks the frames the page's open brochure uses, as the selection: it starts with the pages already in it, a
  * click ticks or unticks a frame and a marquee ticks what it touches. The banner applies the ticks
  * (`applyPick`); Esc goes back to the Catalog tool without them.
  */
@@ -25,10 +25,8 @@ export class CatalogPickTool implements Tool {
   constructor(private readonly ctx: ToolContext<DesignToolOptions>) {}
 
   onActivate(): void {
-    const printed = this.ctx
-      .service(DESIGN_BROCHURE)
-      .pages()
-      .map((page) => page.frame.id);
+    const brochure = this.ctx.service(DESIGN_BROCHURES).current(this.ctx.getScope());
+    const printed = brochure ? brochure.pages().map((page) => page.frame.id) : [];
     this.ctx.setSelection(printed.filter((id) => this.ctx.getElement(id)));
   }
 

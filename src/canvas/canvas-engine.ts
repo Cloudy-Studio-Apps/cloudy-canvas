@@ -1286,6 +1286,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
         this.requestRender();
       },
       getMode: () => this.mode.id,
+      getScope: () => this.scope,
       setMode: (id) => this.setMode(id),
       animateIn: (ids) => {
         this.renderer.animateIn(ids);
@@ -1681,7 +1682,9 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
 
   private modeFaded(): Iterable<string> {
     const { elements, isolation } = this.scene;
-    if (this.mode.faded) return this.mode.faded({ elements, doc: this.doc, tool: this.tool.id });
+    if (this.mode.faded) {
+      return this.mode.faded({ elements, doc: this.doc, tool: this.tool.id, scope: this.scope });
+    }
     return isolation ? elements.filter((el) => !isolation(el)).map((el) => el.id) : [];
   }
 

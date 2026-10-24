@@ -1,8 +1,7 @@
 import { Ruler } from "lucide-react";
 
-import { brochurePageSize, DESIGN_BROCHURE, paperSize } from "@design";
+import { brochurePageSize, paperSize } from "@design";
 import { NumberField, PanelSection, PropertyGrid } from "@design/ui/components/panel";
-import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useBrochure } from "../hooks/use-brochure";
 import { useCatalogViewStore } from "../stores/catalog-view-store";
 import { LayoutFields } from "./layout-fields";
@@ -21,17 +20,15 @@ const DPI_CHOICES = [
  * and resolution, and whether the margins show on the canvas.
  */
 export function BrochureSettingsSection() {
-  const engine = useDesignEngine();
-  const { pages, layout, settings } = useBrochure();
+  const { brochure, pages, layout, settings } = useBrochure();
   const margins = useCatalogViewStore((state) => state.margins);
   const setMargins = useCatalogViewStore((state) => state.setMargins);
-  const brochure = engine.service(DESIGN_BROCHURE);
   const size = brochurePageSize(pages);
   const paper = size && paperSize(size);
   const count = layout.pageCount;
 
   return (
-    <PanelSection title="Brochure">
+    <PanelSection title={brochure?.name ?? "Brochure"}>
       <p className="text-sm text-foreground">
         {count} {count === 1 ? "page" : "pages"}
         {paper && (
@@ -50,13 +47,13 @@ export function BrochureSettingsSection() {
             value={settings.margin}
             suffix="mm"
             min={0}
-            onCommit={(margin) => brochure.setSettings({ margin })}
+            onCommit={(margin) => brochure?.setSettings({ margin })}
           />
           <SettingSelect
             label="Quality"
             value={dpiChoice(settings.dpi)}
             choices={DPI_CHOICES}
-            onChange={(dpi) => brochure.setSettings({ dpi: Number(dpi) })}
+            onChange={(dpi) => brochure?.setSettings({ dpi: Number(dpi) })}
           />
         </PropertyGrid>
         <Toggle label="Show margins on the canvas" checked={margins} onChange={setMargins} />

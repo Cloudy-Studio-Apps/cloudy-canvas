@@ -3,13 +3,54 @@ import { createId } from "@shared/core";
 
 import type { DesignWorkspace } from "../../../design-engine.types";
 import type { BrochureSlot } from "../brochure";
-import { DESIGN_BROCHURE, isPageFrame, type BrochurePage } from "../model";
+import {
+  currentBrochure,
+  DESIGN_BROCHURES,
+  ensureBrochure,
+  isPageFrame,
+  type BrochurePage,
+  type DesignBrochure,
+} from "../model";
 
-/** The pages an agent gave, checked: top-level frames, each in one page only. */
-export function readSlots(engine: DesignWorkspace, args: ToolArgs): BrochureSlot[] {
+/**
+ * The brochure an agent named (`brochure`, an id), else the open brochure of its design page; with
+ * `create`, a page without one gets one. Throws when there's none.
+ */
+export function readBrochure(
+  engine: DesignWorkspace,
+  args: ToolArgs,
+  { create = false } = {},
+): DesignBrochure {
+  const id = optionalString(args, "brochure");
+  if (id !== undefined) {
+    const named = engine.service(DESIGN_BROCHURES).get(id);
+    if (!named) throw new Error(`There's no brochure with the id "${id}" (see list_brochures).`);
+    return named;
+  }
+  if (create) return ensureBrochure(engine);
+  const current = currentBrochure(engine);
+  if (!current) {
+    throw new Error("This design page has no brochure yet (create_brochure, or list_brochures).");
+  }
+  return current;
+}
+
+/** The JSON schema of the `brochure` argument every brochure tool takes. */
+export const BROCHURE_SCHEMA = {
+  type: "string",
+  description:
+    "The brochure's id (list_brochures). Default: the open brochure of your design page.",
+};
+
+/** The pages an agent gave, checked: top-level frames of the brochure's page, each in one page. */
+export function readSlots(
+  engine: DesignWorkspace,
+  brochure: DesignBrochure,
+  args: ToolArgs,
+): BrochureSlot[] {
   const used = new Set<string>();
   return recordList(args, "pages").map((page, i) => {
-    const frames = readPageFrames(engine, page, "frames");
+    const frames = readPageFrames(engine, brochure, page, "frames");
     const [first] = frames;
     if (first === undefined) throw new Error(`pages[${i}].frames is empty.`);
     for (const frame of frames) {
@@ -22,12 +63,24 @@ export function readSlots(engine: DesignWorkspace, args: ToolArgs): BrochureSlot
   });
 }
 
-/** Frame ids an agent gave under `key`, checked to be frames at the top of a page. */
-export function readPageFrames(engine: DesignWorkspace, args: ToolArgs, key: string): string[] {
+/**
+ * Frame ids an agent gave under `key`, checked to be frames at the top of the brochure's design
+ * page.
+ */
+export function readPageFrames(
+  engine: DesignWorkspace,
+  brochure: DesignBrochure,
+  args: ToolArgs,
+  key: string,
+): string[] {
   const frames = stringList(args, key);
   for (const frame of frames) {
-    if (!isPageFrame(engine.doc.get(frame))) {
+    const el = engine.doc.get(frame);
+    if (!isPageFrame(el)) {
       throw new Error(`${frame} isn't a frame at the top of a page (see list_nodes).`);
+    }
+    if (el.pageId !== brochure.page) {
+      throw new Error(`${frame} is on another design page than the brochure "${brochure.name}".`);
     }
   }
   return frames;
@@ -35,11 +88,11 @@ export function readPageFrames(engine: DesignWorkspace, args: ToolArgs, key: str
 
 /** The brochure page at a 1-based `position` an agent gave under `key` (see get_brochure). */
 export function requirePagePosition(
-  engine: DesignWorkspace,
+  brochure: DesignBrochure,
   args: ToolArgs,
   key = "position",
 ): BrochurePage {
-  const pages = engine.service(DESIGN_BROCHURE).pages();
+  const pages = brochure.pages();
   const position = args[key];
   const page = typeof position === "number" ? pages[Math.round(position) - 1] : undefined;
   if (!page) {

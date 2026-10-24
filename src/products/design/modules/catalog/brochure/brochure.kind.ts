@@ -6,13 +6,13 @@ import { BROCHURE_DEFAULTS } from "./brochure.defaults";
 import type { BrochureDefaults, BrochureElement, BrochureSettings } from "./brochure.types";
 
 /**
- * The brochure is a record, not a layer: never on a page (`PAGE_SCOPES` shows only nodes), drawn
- * or hit. It's edited through `DESIGN_BROCHURE`.
+ * A brochure is a record, not a layer: never on a page's canvas (`PAGE_SCOPES` shows only nodes),
+ * drawn or hit. It's edited through `DESIGN_BROCHURES`.
  */
 export class BrochureKind extends ElementKind<BrochureElement, DesignToolOptions> {
   readonly type = BROCHURE_TYPE;
   readonly label = "Brochure";
-  readonly description = "The design's brochure: its pages in order and how it prints.";
+  readonly description = "A brochure of a design page: its pages in order and how it prints.";
   override readonly defaults: BrochureDefaults = BROCHURE_DEFAULTS;
   override readonly creatable = false;
   override readonly boxed = false;
@@ -32,6 +32,9 @@ export class BrochureKind extends ElementKind<BrochureElement, DesignToolOptions
       settings.layout ?? (facing === false ? "single" : BROCHURE_DEFAULTS.settings.layout);
     return {
       ...el,
+      name: el.name || BROCHURE_DEFAULTS.name,
+      // Brochures from before pages had one (`splitLegacyBrochure` gives them theirs on open).
+      page: el.page ?? "",
       slots: el.slots ?? [],
       settings: { ...BROCHURE_DEFAULTS.settings, ...settings, layout },
     };

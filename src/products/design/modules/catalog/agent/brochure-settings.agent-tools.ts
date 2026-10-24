@@ -9,7 +9,7 @@ import {
 import { requireDesign, type DesignAgentTool } from "../../../agent";
 import { BROCHURE_COVERS, BROCHURE_LAYOUTS, type BrochureSettings } from "../brochure";
 import { exportBrochure } from "../export";
-import { DESIGN_BROCHURE } from "../model";
+import { BROCHURE_SCHEMA, readBrochure } from "./brochure-args";
 
 /** How the brochure prints, and its PDF. */
 export const brochureSettingsTools: DesignAgentTool[] = [
@@ -31,10 +31,12 @@ export const brochureSettingsTools: DesignAgentTool[] = [
         splitSpreads: { type: "boolean" },
         margin: { type: "number", minimum: 0 },
         dpi: { type: "number", minimum: 36, maximum: 600 },
+        brochure: BROCHURE_SCHEMA,
       },
     },
     run: (host, args) => {
       const { engine } = requireDesign(host);
+      const brochure = readBrochure(engine, args);
       const layout = optionalChoice(args, "layout", BROCHURE_LAYOUTS);
       const covers = optionalChoice(args, "covers", BROCHURE_COVERS);
       const splitSpreads = optionalBoolean(args, "splitSpreads");
@@ -48,7 +50,6 @@ export const brochureSettingsTools: DesignAgentTool[] = [
       if (splitSpreads !== undefined) patch.splitSpreads = splitSpreads;
       if (margin !== undefined) patch.margin = margin;
       if (dpi !== undefined) patch.dpi = dpi;
-      const brochure = engine.service(DESIGN_BROCHURE);
       brochure.setSettings(patch);
       return { settings: brochure.settings() };
     },
@@ -64,17 +65,19 @@ export const brochureSettingsTools: DesignAgentTool[] = [
       type: "object",
       properties: {
         path: { type: "string", description: "Absolute path of the file to write." },
+        brochure: BROCHURE_SCHEMA,
       },
     },
     run: async (host, args) => {
       const design = requireDesign(host);
+      const brochure = readBrochure(design.engine, args);
       const path = exportPath(design, "pdf", optionalString(args, "path"), "design");
-      const file = await exportBrochure(design.engine);
+      const file = await exportBrochure(design.engine, brochure);
       await host.writeFile(path, file);
       return {
         path,
         bytes: file.size,
-        pages: design.engine.service(DESIGN_BROCHURE).pages().length,
+        pages: brochure.pages().length,
       };
     },
   },

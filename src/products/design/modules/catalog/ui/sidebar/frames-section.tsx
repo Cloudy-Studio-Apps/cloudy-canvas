@@ -1,15 +1,16 @@
 import { readingOrder } from "@canvas";
-import { DESIGN_BROCHURE } from "@design";
+import { ensureBrochure } from "@design";
 import { PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button } from "@shared/ui/components/ui/button";
+import { useBrochure } from "../hooks/use-brochure";
 import type { FramesSectionProps } from "./sidebar.types";
 
 /** Several frames selected: add the ones not in the brochure as pages, in reading order. */
 export function FramesSection({ frames }: FramesSectionProps) {
   const engine = useDesignEngine();
-  const brochure = engine.service(DESIGN_BROCHURE);
-  const loose = frames.filter((frame) => !brochure.pageOf(frame.id));
+  const { brochure } = useBrochure();
+  const loose = frames.filter((frame) => !brochure?.pageOf(frame.id));
   const ordered = readingOrder(loose.map((frame) => ({ id: frame.id, rect: frame })));
 
   return (
@@ -20,7 +21,7 @@ export function FramesSection({ frames }: FramesSectionProps) {
         <Button
           size="sm"
           className="w-full"
-          onClick={() => brochure.addPages(ordered.map((item) => item.id))}
+          onClick={() => ensureBrochure(engine).addPages(ordered.map((item) => item.id))}
         >
           Add {loose.length} as pages
         </Button>

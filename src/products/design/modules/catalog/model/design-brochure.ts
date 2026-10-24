@@ -1,8 +1,8 @@
-import { defineService, DocumentFeed, type CanvasDocument, type ElementPatch } from "@canvas";
+import type { CanvasDocument, ElementPatch } from "@canvas";
 
 import {
   BROCHURE_DEFAULTS,
-  createBrochure,
+  isBrochure,
   type BrochureElement,
   type BrochureSettings,
   type BrochureSlot,
@@ -10,7 +10,6 @@ import {
 import type { FrameElement } from "../../frame";
 import { bookLayout } from "./book-layout";
 import type { BookLayout } from "./book-layout.types";
-import { brochureOf } from "./brochure-of";
 import { brochurePages } from "./brochure-pages";
 import type { BrochurePage } from "./brochure-pages.types";
 import {
@@ -26,26 +25,35 @@ import {
 } from "./slot-edits";
 
 /**
- * The design's brochure (the Catalog mode's pages), and the only place that edits it: each edit
- * is one undo step, and the record is made by the first one. Observes the document only while
- * something subscribes (`subscribe`/`getVersion` for `useSyncExternalStore`), so it needs no
- * cleanup. Frames are kept by id; deleted ones are pruned with their deletion (`pruneBrochure`).
+ * One brochure (a record of `DESIGN_BROCHURES`, which hands these out) and the only place that
+ * edits its pages and settings: each edit is one undo step. Frames are kept by id; deleted ones
+ * are pruned with their deletion (`pruneBrochure`). Reads go to the document each time, so a
+ * handle never holds stale data; once its record is gone it reads as empty and writes nothing.
  */
 export class DesignBrochure {
-  private readonly feed: DocumentFeed;
+  constructor(
+    private readonly doc: CanvasDocument,
+    readonly id: string,
+  ) {}
 
-  constructor(private readonly doc: CanvasDocument) {
-    // Renamed or redrawn frames change what the pages show, so every change counts.
-    this.feed = new DocumentFeed(doc, () => true);
+  /** The record, or `undefined` once it's deleted. */
+  record(): BrochureElement | undefined {
+    const el = this.doc.get(this.id);
+    return el && isBrochure(el) ? el : undefined;
   }
 
-  subscribe = (listener: () => void): (() => void) => this.feed.subscribe(listener);
+  get name(): string {
+    return this.record()?.name ?? BROCHURE_DEFAULTS.name;
+  }
 
-  getVersion = (): number => this.feed.getVersion();
+  /** The design page it belongs to. */
+  get page(): string {
+    return this.record()?.page ?? "";
+  }
 
-  /** The pages, in order, with the frames that still exist. */
+  /** The pages, in order, with the frames that still exist on its design page. */
   pages(): BrochurePage[] {
-    const brochure = brochureOf(this.doc);
+    const brochure = this.record();
     return brochure ? brochurePages(this.doc, brochure) : [];
   }
 
@@ -60,7 +68,7 @@ export class DesignBrochure {
   }
 
   settings(): BrochureSettings {
-    return brochureOf(this.doc)?.settings ?? { ...BROCHURE_DEFAULTS.settings };
+    return this.record()?.settings ?? { ...BROCHURE_DEFAULTS.settings };
   }
 
   /** Adds a page per frame not in the brochure yet, at `at` (default: the end). */
@@ -107,7 +115,7 @@ export class DesignBrochure {
     this.writeSlots((slots) => removeFrames(slots, frames));
   }
 
-  /** What the pick tool's ticks on one design page make of the brochure (see `pickPages`). */
+  /** What the pick tool's ticks on its design page make of the brochure (see `pickPages`). */
   pick(ticked: readonly string[], onPage: ReadonlySet<string>): void {
     this.writeSlots((slots) => pickPages(slots, ticked, onPage));
   }
@@ -124,18 +132,15 @@ export class DesignBrochure {
   }
 
   private writeSlots(edit: (slots: readonly BrochureSlot[]) => BrochureSlot[]): void {
-    const current = brochureOf(this.doc)?.slots ?? [];
+    const current = this.record()?.slots ?? [];
     const slots = edit(current);
     if (!sameSlots(slots, current)) this.write({ slots });
   }
 
-  /** One undo step: patches the record, or adds it with the patch. */
+  /** One undo step patching the record (nothing once it's deleted). */
   private write(patch: ElementPatch<BrochureElement>): void {
-    const brochure = brochureOf(this.doc);
+    if (!this.record()) return;
     this.doc.checkpoint();
-    if (brochure) this.doc.update(brochure.id, patch);
-    else this.doc.add({ ...createBrochure(this.doc.nextIndex()), ...patch });
+    this.doc.update(this.id, patch);
   }
 }
-
-export const DESIGN_BROCHURE = defineService("design.brochure", (doc) => new DesignBrochure(doc));

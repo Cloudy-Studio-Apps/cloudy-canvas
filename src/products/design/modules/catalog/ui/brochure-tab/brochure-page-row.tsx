@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 
-import { DESIGN_BROCHURE, paperSize } from "@design";
+import { paperSize } from "@design";
 import { PanelIconButton } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { cn } from "@shared/ui/lib/utils";
+import { useBrochure } from "../hooks/use-brochure";
 import { optionLetter } from "../option-letter";
 import { showPage } from "../page-actions";
 import { BrochureOptionsList } from "./brochure-options-list";
@@ -27,6 +28,7 @@ export function BrochurePageRow({
   onDropPage,
 }: BrochurePageRowProps) {
   const engine = useDesignEngine();
+  const { brochure } = useBrochure();
   const [drop, setDrop] = useState<"before" | "after" | null>(null);
   const chosen = page.options.findIndex((option) => option.id === page.frame.id);
   const paper = paperSize(page.frame);
@@ -88,7 +90,7 @@ export function BrochurePageRow({
         >
           <PanelIconButton
             label="Take out of the brochure"
-            onClick={() => engine.service(DESIGN_BROCHURE).removePages([page.slot.id])}
+            onClick={() => brochure?.removePages([page.slot.id])}
           >
             <X />
           </PanelIconButton>

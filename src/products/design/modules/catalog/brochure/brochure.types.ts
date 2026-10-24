@@ -35,15 +35,26 @@ export interface BrochureSettings {
 }
 
 /**
- * A design's brochure (the Catalog mode's): a record in the document, never drawn or hit, holding
- * its pages in order and how it prints. A design has at most one.
+ * A brochure (the Catalog mode's): a record in the document, never drawn or hit, holding its pages
+ * in order and how it prints. It belongs to one design page and uses only that page's frames; a
+ * page can hold several.
  */
 export interface BrochureElement extends CanvasElement {
   type: "brochure";
+  name: string;
+  /** The design page it belongs to (named `page`, not `pageId`, so it's never taken for a node). */
+  page: string;
+  /**
+   * When it was last opened (ms): the page's open brochure is the one opened last (else its
+   * first). View state, written outside the undo history.
+   */
+  openedAt?: number;
   slots: BrochureSlot[];
   settings: BrochureSettings;
 }
 
 export interface BrochureDefaults extends ElementDefaults {
+  /** What a new brochure is called (numbered: "Brochure 2"). */
+  name: string;
   settings: BrochureSettings;
 }

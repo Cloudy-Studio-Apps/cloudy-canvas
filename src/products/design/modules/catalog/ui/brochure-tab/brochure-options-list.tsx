@@ -1,4 +1,3 @@
-import { DESIGN_BROCHURE } from "@design";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { cn } from "@shared/ui/lib/utils";
 import { useBrochure } from "../hooks/use-brochure";
@@ -10,7 +9,7 @@ import { PageThumbnail } from "./page-thumbnail";
 /** A page's options under its row: picking one prints it instead. */
 export function BrochureOptionsList({ page }: BrochureOptionsListProps) {
   const engine = useDesignEngine();
-  const { label } = useBrochure();
+  const { brochure, label } = useBrochure();
   return (
     <ul
       aria-label={`Options of page ${label(page)}`}
@@ -24,7 +23,7 @@ export function BrochureOptionsList({ page }: BrochureOptionsListProps) {
               type="button"
               aria-pressed={chosen}
               onClick={() => {
-                engine.service(DESIGN_BROCHURE).choose(page.slot.id, option.id);
+                brochure?.choose(page.slot.id, option.id);
                 showPage(engine, option);
               }}
               className={cn(

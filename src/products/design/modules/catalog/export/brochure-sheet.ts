@@ -3,10 +3,10 @@ import { canvasBlob, type Size } from "@canvas";
 import type { DesignWorkspace } from "../../../design-engine.types";
 import {
   brochurePageSize,
-  DESIGN_BROCHURE,
   sideWidth,
   type BookLayout,
   type BookSide,
+  type DesignBrochure,
 } from "../model";
 import { drawFrame } from "./draw-frame";
 import type { BrochureSheetOptions, SheetCell } from "./brochure-sheet.types";
@@ -29,13 +29,13 @@ const MAX_SCALE = 2;
  * A PNG of spreads as the brochure is read: each spread's sides as they lie across the spine
  * (covers alone on their side, a spread frame's halves meeting, blank pages as paper), or one at a
  * time in the single layout, in rows with each spread's page numbers under it. Frames are drawn on
- * their design pages one at a time; the workspace is left on the page it was on.
+ * the brochure's design page one at a time; the workspace is left on the page it was on.
  */
 export async function drawBrochureSheet(
   workspace: DesignWorkspace,
+  brochure: DesignBrochure,
   { spreads, maxSide }: BrochureSheetOptions,
 ): Promise<Blob> {
-  const brochure = workspace.service(DESIGN_BROCHURE);
   const pages = brochure.pages();
   const page = brochurePageSize(pages);
   if (!page || spreads.length === 0) throw new Error("The brochure has no pages yet.");

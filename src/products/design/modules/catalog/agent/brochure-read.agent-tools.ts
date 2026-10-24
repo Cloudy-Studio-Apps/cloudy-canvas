@@ -5,46 +5,55 @@ import { requireDesign, type DesignAgentTool } from "../../../agent";
 import { isPlaceholderPaint } from "../../image";
 import { checkBrochure, effectiveDpi, LOW_DPI, pictureSize } from "../checks";
 import { drawBrochureSheet } from "../export";
-import { brochurePageSize, DESIGN_BROCHURE, pagePictures, spanOf } from "../model";
-import { POSITION_SCHEMA, requirePagePosition } from "./brochure-args";
+import { brochurePageSize, pagePictures, spanOf } from "../model";
+import {
+  BROCHURE_SCHEMA,
+  POSITION_SCHEMA,
+  readBrochure,
+  requirePagePosition,
+} from "./brochure-args";
 import { describeBrochure } from "./describe-brochure";
 
 /** Keeps pictures sent to agents small enough to read. */
 const VIEW_MAX_SIDE = 2000;
 
-/** Reading the brochure: all of it, one page with its pictures, or how it looks as it's read. */
+/** Reading a brochure: all of it, one page with its pictures, or how it looks as it's read. */
 export const brochureReadTools: DesignAgentTool[] = [
   {
     name: "get_brochure",
     description:
-      "The design's brochure (the Catalog mode): its pages in order, each printing one top-level " +
-      "frame (`frame`) chosen among its options (other frames kept as alternatives), with its " +
-      'page numbers (`number`, "6–7" for a spread frame: `span` 2, twice the page\'s width) ' +
-      "and the design page it's on; the blank pages the layout adds, the printed page count, the " +
+      "A brochure (the Catalog mode; each belongs to one design page, which can hold several: " +
+      "list_brochures): its id, name, design page and the page's other brochures; its pages in " +
+      "order, each printing one top-level frame (`frame`) chosen among its options (other frames " +
+      'kept as alternatives), with its page numbers (`number`, "6–7" for a spread frame: `span` ' +
+      "2, twice the page's width); the blank pages the layout adds, the printed page count, the " +
       "spreads as they're read (printed page numbers), the print settings (layout, covers, " +
       "splitSpreads, margin in mm, dpi), the page size, and the print issues by `kind` " +
       "(placeholder: an image placeholder still to replace, low-resolution pictures, text in " +
       "the margin, hidden pages, blank pages added, frames of another size).",
-    inputSchema: { type: "object", properties: {} },
-    run: async (host) => describeBrochure(requireDesign(host).engine),
+    inputSchema: { type: "object", properties: { brochure: BROCHURE_SCHEMA } },
+    run: async (host, args) => {
+      const { engine } = requireDesign(host);
+      return describeBrochure(engine, readBrochure(engine, args));
+    },
   },
   {
     name: "get_brochure_page",
     description:
-      "One brochure page (by `position`, from 1): its printed frame, page numbers, span, design " +
-      "page and options, every picture on it (the layer, which of its fills, the assetId, the " +
+      "One brochure page (by `position`, from 1): its printed frame, page numbers, span and " +
+      "options, every picture on it (the layer, which of its fills, the assetId, the " +
       "picture's pixel size, its dpi at print size and whether that's low, or `placeholder: true` " +
       "for an image placeholder waiting for its picture; replace_image swaps one) and its print " +
       "issues.",
     inputSchema: {
       type: "object",
       required: ["position"],
-      properties: { position: POSITION_SCHEMA },
+      properties: { position: POSITION_SCHEMA, brochure: BROCHURE_SCHEMA },
     },
     run: async (host, args) => {
       const { engine } = requireDesign(host);
-      const page = requirePagePosition(engine, args);
-      const brochure = engine.service(DESIGN_BROCHURE);
+      const brochure = readBrochure(engine, args);
+      const page = requirePagePosition(brochure, args);
       const pages = brochure.pages();
       const size = brochurePageSize(pages);
       const { frame } = page;
@@ -73,7 +82,7 @@ export const brochureReadTools: DesignAgentTool[] = [
           };
         }),
       );
-      const issues = (await checkBrochure(engine))
+      const issues = (await checkBrochure(engine, brochure))
         .filter((issue) => issue.frameId === frame.id)
         .map(({ kind, nodeId, message }) => ({ kind, node: nodeId, message }));
       return {
@@ -81,7 +90,6 @@ export const brochureReadTools: DesignAgentTool[] = [
         number: brochure.layout().labels.get(page.slot.id) ?? String(page.number),
         frame: frame.id,
         name: frame.name,
-        designPage: frame.pageId,
         span: size ? spanOf(frame, size) : 1,
         options: page.options.map((option) => ({ id: option.id, name: option.name })),
         pictures,
@@ -100,6 +108,7 @@ export const brochureReadTools: DesignAgentTool[] = [
       type: "object",
       properties: {
         position: POSITION_SCHEMA,
+        brochure: BROCHURE_SCHEMA,
         maxSide: {
           type: "number",
           description: `Longest side in pixels (${VIEW_MAX_SIDE} at most).`,
@@ -108,10 +117,11 @@ export const brochureReadTools: DesignAgentTool[] = [
     },
     run: async (host, args) => {
       const { engine } = requireDesign(host);
-      const layout = engine.service(DESIGN_BROCHURE).layout();
+      const brochure = readBrochure(engine, args);
+      const layout = brochure.layout();
       let spreads = layout.spreads.map((_, i) => i);
       if (args.position !== undefined) {
-        const slot = requirePagePosition(engine, args).slot.id;
+        const slot = requirePagePosition(brochure, args).slot.id;
         spreads = spreads.filter((spread) =>
           (layout.spreads[spread] ?? []).some((index) => {
             const side = layout.sides[index];
@@ -120,7 +130,7 @@ export const brochureReadTools: DesignAgentTool[] = [
         );
       }
       const maxSide = Math.min(optionalNumber(args, "maxSide") ?? VIEW_MAX_SIDE, VIEW_MAX_SIDE);
-      const png = await drawBrochureSheet(engine, { spreads, maxSide });
+      const png = await drawBrochureSheet(engine, brochure, { spreads, maxSide });
       return new ToolImage(bytesToBase64(new Uint8Array(await png.arrayBuffer())), "image/png");
     },
   },

@@ -1,8 +1,22 @@
-import type { BookLayout, BrochurePage, BrochureSettings, DesignBrochure } from "@design";
+import type {
+  BookLayout,
+  BrochurePage,
+  BrochureSettings,
+  DesignBrochure,
+  DesignBrochures,
+} from "@design";
 
-/** The brochure as the Catalog mode's UI reads it. */
+/** The open brochure of the design page on screen, as the Catalog mode's UI reads it. */
 export interface BrochureView {
-  brochure: DesignBrochure;
+  /** The design's brochures (to make, open, rename and delete them). */
+  brochures: DesignBrochures;
+  /** The page's brochures, in order. */
+  list: readonly DesignBrochure[];
+  /** The page's open brochure, `null` when the page has none. */
+  brochure: DesignBrochure | null;
+  /** The design page on screen. */
+  scope: string | null;
+  /** Its pages (none without a brochure). */
   pages: readonly BrochurePage[];
   settings: BrochureSettings;
   /** How the pages print and are read (sides, spreads, numbers). */

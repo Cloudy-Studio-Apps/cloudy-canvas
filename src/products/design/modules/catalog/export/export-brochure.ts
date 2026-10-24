@@ -1,7 +1,7 @@
 import { encodePdfPages, imageSize, type PdfPage } from "@canvas";
 
 import type { DesignWorkspace } from "../../../design-engine.types";
-import { DESIGN_BROCHURE } from "../model";
+import type { DesignBrochure } from "../model";
 import { drawFrame, partRect } from "./draw-frame";
 import type { BrochureExportOptions } from "./export-brochure.types";
 import { printedPages } from "./printed-pages";
@@ -11,16 +11,16 @@ import type { PrintedPage } from "./printed-pages.types";
 const UNITS_PER_INCH = 72;
 
 /**
- * The brochure as one PDF, its pages as the layout prints them (`printedPages`: blanks added,
+ * A brochure as one PDF, its pages as the layout prints them (`printedPages`: blanks added,
  * spread frames split or whole), each frame drawn exactly at the brochure's dpi, a world unit to a
- * point (an A4 frame is an A4 page). Pages on other design pages are drawn there; the workspace is
+ * point (an A4 frame is an A4 page). Frames are drawn on the brochure's design page; the workspace is
  * left on the page it was on.
  */
 export async function exportBrochure(
   workspace: DesignWorkspace,
+  brochure: DesignBrochure,
   { onProgress }: BrochureExportOptions = {},
 ): Promise<Blob> {
-  const brochure = workspace.service(DESIGN_BROCHURE);
   const pages = brochure.pages();
   if (pages.length === 0) throw new Error("The brochure has no pages yet.");
   const settings = brochure.settings();

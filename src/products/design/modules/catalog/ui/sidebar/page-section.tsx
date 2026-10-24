@@ -1,6 +1,6 @@
 import { PenLine } from "lucide-react";
 
-import { DESIGN_BROCHURE, paperSize } from "@design";
+import { paperSize } from "@design";
 import { PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button } from "@shared/ui/components/ui/button";
@@ -17,8 +17,7 @@ import type { PageSectionProps } from "./sidebar.types";
  */
 export function PageSection({ page }: PageSectionProps) {
   const engine = useDesignEngine();
-  const brochure = engine.service(DESIGN_BROCHURE);
-  const { label } = useBrochure();
+  const { brochure, label } = useBrochure();
   const paper = paperSize(page.frame);
 
   return (
@@ -41,7 +40,7 @@ export function PageSection({ page }: PageSectionProps) {
                     type="button"
                     aria-pressed={chosen}
                     onClick={() => {
-                      brochure.choose(page.slot.id, option.id);
+                      brochure?.choose(page.slot.id, option.id);
                       showPage(engine, option);
                     }}
                     className={cn(
@@ -73,7 +72,7 @@ export function PageSection({ page }: PageSectionProps) {
           <PenLine />
           Edit this page in Design
         </Button>
-        <Button size="sm" variant="ghost" onClick={() => brochure.removePages([page.slot.id])}>
+        <Button size="sm" variant="ghost" onClick={() => brochure?.removePages([page.slot.id])}>
           Take out of the brochure
         </Button>
       </div>
