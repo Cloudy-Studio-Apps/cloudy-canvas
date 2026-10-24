@@ -10,7 +10,7 @@ import {
 } from "@canvas";
 import { ToolImage } from "@shared/core";
 
-import type { BoardEngine } from "../board-engine.types";
+import type { BoardWorkspace } from "../board-engine.types";
 import { requireBoard, requireShapes } from "./board-access";
 import type { BoardAgentTool } from "./board-agent.types";
 
@@ -110,7 +110,7 @@ export const exportTools: BoardAgentTool[] = [
 ];
 
 /** The ids given (each checked), or `undefined` for the whole board. */
-function optionalIds(engine: BoardEngine, args: ToolArgs): string[] | undefined {
+function optionalIds(engine: BoardWorkspace, args: ToolArgs): string[] | undefined {
   if (args.ids === undefined || args.ids === null) return undefined;
   const ids = requireShapes(engine, stringList(args, "ids"));
   if (ids.length === 0) throw new Error('"ids" is empty: omit it for the whole board.');

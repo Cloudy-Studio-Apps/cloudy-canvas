@@ -140,6 +140,7 @@ export function useCanvasFileSaver<O extends object>(
 
   const draft = info?.draft === true;
   return {
+    id,
     name: meta.title || (info?.name ?? untitled),
     fileName: info?.name ?? untitled,
     title: meta.title,

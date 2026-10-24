@@ -1,14 +1,17 @@
-import { Bot, Copy, Power, Wrench } from "lucide-react";
+import { Bot, Copy, MousePointer2, Power, Wrench } from "lucide-react";
 import { useState } from "react";
 
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@shared/ui/components/ui/dropdown-menu";
+import { useAgentServerStore } from "@shared/stores/agent-server-store";
+import { CollaboratorList } from "@shared/collaborators";
 import { agentServerStatusText } from "./agent-server-status-text";
 import { AgentToolsDialog } from "./agent-tools-dialog";
 import { ConnectAgentDialog } from "./connect-agent-dialog";
@@ -17,11 +20,18 @@ import { useAgentServerStatus } from "./use-agent-server-status";
 import type { AgentServerMenuProps } from "./agent-server-menu.types";
 
 /** Shows where agents connect (MCP) and opens the dialog that sets them up. */
-export function AgentServerMenu({ trigger, align = "start" }: AgentServerMenuProps) {
+export function AgentServerMenu({
+  trigger,
+  align = "start",
+  followable = false,
+  agentActions,
+}: AgentServerMenuProps) {
   const status = useAgentServerStatus();
   const [connectOpen, setConnectOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
   const url = status.enabled ? status.url : null;
+  const showCollaborators = useAgentServerStore((state) => state.showCollaborators);
+  const setShowCollaborators = useAgentServerStore((state) => state.setShowCollaborators);
 
   return (
     <>
@@ -40,6 +50,21 @@ export function AgentServerMenu({ trigger, align = "start" }: AgentServerMenuPro
             <Wrench />
             Available tools…
           </DropdownMenuItem>
+          {status.available && status.enabled && (
+            <>
+              <DropdownMenuSeparator />
+              <CollaboratorList kind="agent" followable={followable} actions={agentActions} />
+              <DropdownMenuCheckboxItem
+                checked={showCollaborators}
+                onCheckedChange={setShowCollaborators}
+                onSelect={(event) => event.preventDefault()}
+              >
+                <MousePointer2 />
+                Show agents' cursors and selections
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuSeparator />
+            </>
+          )}
           {status.available && (
             <>
               <DropdownMenuItem disabled={!url} onSelect={() => url && copyText(url, "URL copied")}>

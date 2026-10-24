@@ -4,6 +4,7 @@ import { Bot, Palette, Settings } from "lucide-react";
 import { formatShortcut } from "@shared/core";
 import { openAbout } from "@shared/about";
 import { AgentServerMenu } from "@shared/agent-server";
+import { CollaboratorStack } from "@shared/collaborators";
 import { Wordmark } from "@shared/ui/brand/wordmark";
 import { Button } from "@shared/ui/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@shared/ui/components/ui/tooltip";
@@ -16,6 +17,7 @@ export function TopBar() {
       actions={
         // <ThemeToggle /> returns here with dark mode (see FORCE_LIGHT_THEME).
         <>
+          <CollaboratorStack className="mr-1" />
           <AgentServerMenu
             align="end"
             trigger={

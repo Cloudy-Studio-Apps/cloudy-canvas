@@ -1,4 +1,4 @@
-import type { CanvasEngine } from "../canvas-engine";
+import type { CanvasWorkspace } from "../workspace";
 
 /**
  * How a product names and reaches the align, distribute, tidy up, scale and copy properties tools
@@ -12,5 +12,5 @@ export interface ArrangeToolsOptions<H> {
   /** What one element aligns with, for the description ("the section it's in"). */
   holder: string;
   /** The open canvas, and the ids after checking they exist. Throws when either is missing. */
-  resolve(host: H, ids: string[]): { engine: CanvasEngine; ids: string[] };
+  resolve(host: H, ids: string[]): { engine: CanvasWorkspace; ids: string[] };
 }

@@ -2,6 +2,7 @@ import { useNavigate } from "react-router";
 import { ArrowLeft, Bot, Save } from "lucide-react";
 
 import {
+  CollaboratorUndoButton,
   DocumentInfoPopover,
   FloatingPanel,
   HistoryControls,
@@ -13,6 +14,7 @@ import {
   useEngine,
 } from "@canvas-ui";
 import { AgentServerMenu } from "@shared/agent-server";
+import { CollaboratorStack } from "@shared/collaborators";
 import { useAgentServerStore } from "@shared/stores/agent-server-store";
 import { openAbout } from "@shared/about";
 import { SealLogo } from "@shared/ui/brand/seal-logo";
@@ -59,6 +61,8 @@ export function BoardTopBar() {
       <PanelDivider className="mx-1.5" />
       <ModuleSlot slot="topBar" />
       <AgentServerMenu
+        followable
+        agentActions={(agent) => <CollaboratorUndoButton collaborator={agent} />}
         trigger={
           <ToolButton
             label={agentsEnabled ? "Agents: on" : "Agents: off"}
@@ -69,6 +73,7 @@ export function BoardTopBar() {
           </ToolButton>
         }
       />
+      <CollaboratorStack followable className="ml-1" />
     </FloatingPanel>
   );
 }

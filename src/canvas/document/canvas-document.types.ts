@@ -36,3 +36,15 @@ export interface EditedChange {
  * changed, until nothing does.
  */
 export type AfterEdit = (doc: CanvasDocument, change: EditedChange) => void;
+
+/** What `add` does to a new element before storing it (e.g. places it in a scope). */
+export type Placement = (el: CanvasElement) => CanvasElement;
+
+/**
+ * Who an edit is by, for the duration of `CanvasDocument.runAs`: its transaction origin (which
+ * undo history records it) and where new elements go (`null`: the document's own placement).
+ */
+export interface DocumentActor {
+  origin: symbol;
+  placement: Placement | null;
+}

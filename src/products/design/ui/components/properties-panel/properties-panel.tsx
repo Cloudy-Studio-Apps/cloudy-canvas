@@ -1,6 +1,7 @@
 import { Bot, Download } from "lucide-react";
 
 import {
+  CollaboratorUndoButton,
   HistoryControls,
   ToolButton,
   useEditorModules,
@@ -8,6 +9,7 @@ import {
   ZoomMenu,
 } from "@canvas-ui";
 import { AgentServerMenu } from "@shared/agent-server";
+import { CollaboratorStack } from "@shared/collaborators";
 import { useAgentServerStore } from "@shared/stores/agent-server-store";
 import { Button } from "@shared/ui/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@shared/ui/components/ui/tabs";
@@ -40,6 +42,8 @@ export function PropertiesPanel() {
       <header className="flex h-12 items-center gap-0.5 border-b px-2">
         <HistoryControls />
         <AgentServerMenu
+          followable
+          agentActions={(agent) => <CollaboratorUndoButton collaborator={agent} />}
           trigger={
             <ToolButton
               label={agentsEnabled ? "Agents: on" : "Agents: off"}
@@ -50,6 +54,7 @@ export function PropertiesPanel() {
             </ToolButton>
           }
         />
+        <CollaboratorStack followable className="ml-0.5" />
         <div className="flex-1" />
         <Button size="sm" onClick={() => engine.commands.export?.()}>
           <Download />

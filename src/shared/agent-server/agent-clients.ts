@@ -25,6 +25,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
   {
     id: "claude-code",
     label: "Claude Code",
+    match: /claude[- ]?code/i,
     icon: siClaudecode,
     snippetLabel: "Terminal command",
     where: "Run it in a terminal.",
@@ -33,6 +34,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
   {
     id: "codex",
     label: "Codex",
+    match: /codex/i,
     icon: SquareTerminal,
     snippetLabel: "config.toml",
     where: "Paste into ~/.codex/config.toml.",
@@ -41,6 +43,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
   {
     id: "cursor",
     label: "Cursor",
+    match: /cursor/i,
     icon: siCursor,
     snippetLabel: "mcp.json",
     where: "Paste into ~/.cursor/mcp.json, or .cursor/mcp.json in a project.",
@@ -51,6 +54,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
   {
     id: "vscode",
     label: "VS Code",
+    match: /visual studio code|vscode|copilot/i,
     icon: siGithubcopilot,
     snippetLabel: "mcp.json",
     where: "Paste into .vscode/mcp.json in a project, for Copilot's agent mode.",
@@ -61,6 +65,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
   {
     id: "antigravity",
     label: "Antigravity",
+    match: /antigravity/i,
     icon: Orbit,
     snippetLabel: "mcp_config.json",
     where:
@@ -70,6 +75,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
   {
     id: "gemini",
     label: "Gemini CLI",
+    match: /gemini/i,
     icon: siGooglegemini,
     snippetLabel: "Terminal command",
     where: "Run it in a terminal.",
@@ -78,6 +84,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
   {
     id: "claude-desktop",
     label: "Claude Desktop",
+    match: /claude[- ]?(ai|desktop)|mcp-remote/i,
     icon: siClaude,
     snippetLabel: "claude_desktop_config.json",
     where: "Paste into Settings › Developer › Edit Config, then restart Claude. Needs Node.js.",
@@ -89,6 +96,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
   {
     id: "windsurf",
     label: "Windsurf",
+    match: /windsurf|codeium/i,
     icon: siWindsurf,
     snippetLabel: "mcp_config.json",
     where: "Paste into ~/.codeium/windsurf/mcp_config.json.",
@@ -97,6 +105,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
   {
     id: "zed",
     label: "Zed",
+    match: /\bzed\b/i,
     icon: siZedindustries,
     more: true,
     snippetLabel: "settings.json",
@@ -106,6 +115,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
   {
     id: "opencode",
     label: "opencode",
+    match: /opencode/i,
     icon: siOpencode,
     more: true,
     snippetLabel: "opencode.json",

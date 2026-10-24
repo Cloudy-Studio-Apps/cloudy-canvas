@@ -8,7 +8,7 @@ mod state;
 
 use tauri::{AppHandle, Manager};
 
-pub use state::McpState;
+pub use state::{McpState, Reply};
 
 /// Agents are configured with this port, so it's fixed; the next ones are tried if it's taken.
 const PREFERRED_PORT: u16 = 47821;

@@ -1,4 +1,5 @@
 import {
+  CollaboratorLayer,
   CanvasContextMenu,
   ExportDialog,
   ModuleSession,
@@ -35,6 +36,7 @@ export function DesignChrome() {
       {/* Laid over the canvas exactly, so screen positions from the engine line up. */}
       <div className="absolute inset-y-0" style={CANVAS_INSET}>
         <Rulers />
+        <CollaboratorLayer />
         <CanvasContextMenu />
         <ModuleSession />
         <div className="absolute inset-x-0 bottom-4 flex flex-col items-center gap-2">

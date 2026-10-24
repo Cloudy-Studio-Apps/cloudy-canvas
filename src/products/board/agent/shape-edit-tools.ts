@@ -92,13 +92,16 @@ export const shapeEditTools: BoardAgentTool[] = [
   {
     name: "select_shapes",
     description:
-      "Selects shapes in the editor, e.g. to show the user what changed. Empty clears it.",
+      "Sets your selection (the user sees it outlined in your colour), e.g. to show what changed. Empty clears it. It doesn't change the user's selection.",
     inputSchema: {
       type: "object",
       required: ["ids"],
       properties: {
         ids: IDS_SCHEMA,
-        zoom: { type: "boolean", description: "Fit the view to the shape when selecting one." },
+        zoom: {
+          type: "boolean",
+          description: "Also show the shape in your view when selecting one.",
+        },
       },
     },
     run: (host, args) => {

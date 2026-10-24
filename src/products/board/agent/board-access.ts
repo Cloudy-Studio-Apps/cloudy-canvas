@@ -1,4 +1,4 @@
-import type { BoardEngine } from "../board-engine.types";
+import type { BoardWorkspace } from "../board-engine.types";
 import type { AgentBoard, AgentHost } from "./board-agent.types";
 
 export function requireBoard(host: AgentHost): AgentBoard {
@@ -8,7 +8,7 @@ export function requireBoard(host: AgentHost): AgentBoard {
 }
 
 /** The ids, after checking each is a shape on the board. */
-export function requireShapes(engine: BoardEngine, ids: string[]): string[] {
+export function requireShapes(engine: BoardWorkspace, ids: string[]): string[] {
   const missing = ids.find((id) => !engine.getElement(id));
   if (missing) throw new Error(`No shape with id ${missing}.`);
   return ids;

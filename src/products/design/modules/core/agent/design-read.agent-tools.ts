@@ -12,9 +12,10 @@ export const designReadTools: DesignAgentTool[] = [
     name: "get_design",
     description:
       "The design open in Cloudy Canvas: id, name (its title, or its file name), title and " +
-      "description (set with set_design_info), file path, unsaved changes, the page on screen " +
-      "(`currentPage`, see list_pages), layer counts by type on it, how many ruler guides it has " +
-      "(`guides`, see list_guides), selection and undo state. " +
+      "description (set with set_design_info), file path, unsaved changes, the page you work on " +
+      "(`currentPage`, yours: the user may be on another one; see list_pages), layer counts by " +
+      "type on it, how many ruler guides it has (`guides`, see list_guides), the user's " +
+      "selection (`selection`) and yours (`yourSelection`), and your undo state. " +
       "Returns { open: false } when no design is open.",
     inputSchema: NO_ARGS,
     run: (host) => {
@@ -23,7 +24,6 @@ export const designReadTools: DesignAgentTool[] = [
       const { engine } = design;
       const nodesByType: Record<string, number> = {};
       for (const el of engine.elements()) nodesByType[el.type] = (nodesByType[el.type] ?? 0) + 1;
-      const { canUndo, canRedo } = engine.getState();
       const { title, description } = engine.doc.meta();
       return {
         open: true,
@@ -37,9 +37,10 @@ export const designReadTools: DesignAgentTool[] = [
         nodeCount: engine.elements().length,
         nodesByType,
         guides: engine.guides().length,
-        selection: engine.selectedIds(),
-        canUndo,
-        canRedo,
+        selection: engine.userSelection(),
+        yourSelection: engine.selectedIds(),
+        canUndo: engine.canUndo(),
+        canRedo: engine.canRedo(),
       };
     },
   },
@@ -104,14 +105,16 @@ export const designReadTools: DesignAgentTool[] = [
   },
   {
     name: "get_design_selection",
-    description: "The layers the user has selected in the design, as summaries.",
+    description:
+      "The layers the user has selected in the design, as summaries (not yours: select_nodes " +
+      "sets yours). They may be on another page than yours.",
     inputSchema: NO_ARGS,
     run: (host) => {
       const { engine } = requireDesign(host);
       const masked = siblingMasks(engine.elements());
       return engine
-        .selectedIds()
-        .map((id) => engine.getElement(id))
+        .userSelection()
+        .map((id) => engine.getElement(id) ?? engine.doc.get(id))
         .filter((el) => el !== undefined)
         .map((el) => summarizeNode(engine.kinds, el, masked));
     },

@@ -4,11 +4,15 @@ import { generateKeyBetween, generateNKeysBetween } from "fractional-indexing";
 import type { CanvasElement, ElementKinds, ElementPatch } from "../elements";
 import type {
   AfterEdit,
+  DocumentActor,
   DocumentChange,
   DocumentMeta,
   DocumentMetaPatch,
   ElementMap,
+  Placement,
 } from "./canvas-document.types";
+import { DocumentHistory } from "./document-history";
+import type { HistoryChange } from "./document-history.types";
 
 /** Origin tag for local edits, so the undo manager only tracks this client's changes. */
 export const LOCAL_ORIGIN = Symbol("local");
@@ -25,14 +29,17 @@ const AFTER_EDIT_PASSES = 32;
  */
 export class CanvasDocument {
   readonly doc: Y.Doc;
-  private readonly undoManager: Y.UndoManager;
+  /** The local user's undo history (edits made with `LOCAL_ORIGIN`). */
+  readonly history: DocumentHistory;
   private readonly elements: Y.Map<ElementMap>;
   /** Binary data elements show (e.g. image files), by id. Shared by copies, outside undo history. */
   private readonly assets: Y.Map<Uint8Array>;
   /** The document's own title and description (`DocumentMeta`), undoable like elements. */
   private readonly metaMap: Y.Map<string>;
   /** What `add` does to new elements first (see `setPlacement`). */
-  private placement: ((el: CanvasElement) => CanvasElement) | null = null;
+  private placement: Placement | null = null;
+  /** Who the edits running now are by (see `runAs`): the local user unless an actor is set. */
+  private actor: DocumentActor = { origin: LOCAL_ORIGIN, placement: null };
   /** What runs after each edit (see `setAfterEdit`). */
   private afterEdit: AfterEdit | null = null;
   /** How deep the edits running now are nested (the hook runs when the outermost ends). */
@@ -60,10 +67,7 @@ export class CanvasDocument {
     this.elements = doc.getMap<ElementMap>("shapes");
     this.assets = doc.getMap<Uint8Array>("assets");
     this.metaMap = doc.getMap<string>("meta");
-    this.undoManager = new Y.UndoManager([this.elements, this.metaMap], {
-      trackedOrigins: new Set([LOCAL_ORIGIN]),
-      captureTimeout: 400,
-    });
+    this.history = this.createHistory(LOCAL_ORIGIN);
   }
 
   get(id: string): CanvasElement | undefined {
@@ -100,8 +104,28 @@ export class CanvasDocument {
    * Sets what `add` does to every new element before storing it (the engine places it in the
    * scope it shows, see `CanvasScopes`); `null` stores elements as they're given.
    */
-  setPlacement(placement: ((el: CanvasElement) => CanvasElement) | null): void {
+  setPlacement(placement: Placement | null): void {
     this.placement = placement;
+  }
+
+  /**
+   * Runs `fn` with its edits made by `actor`: with its transaction origin (so they go to its undo
+   * history, not the user's) and its placement for new elements. Edits are synchronous, so the
+   * actor never leaks into anyone else's; calls nest.
+   */
+  runAs<T>(actor: DocumentActor, fn: () => T): T {
+    const previous = this.actor;
+    this.actor = actor;
+    try {
+      return fn();
+    } finally {
+      this.actor = previous;
+    }
+  }
+
+  /** A new undo history recording only the edits made with `origin` (see `runAs`). */
+  createHistory(origin: symbol): DocumentHistory {
+    return new DocumentHistory([this.elements, this.metaMap], origin);
   }
 
   /**
@@ -200,7 +224,7 @@ export class CanvasDocument {
 
   /** Stores binary data under an id. Not an undo step: undoing the element that shows it is enough. */
   addAsset(id: string, data: Uint8Array): void {
-    this.doc.transact(() => this.assets.set(id, data), LOCAL_ORIGIN);
+    this.doc.transact(() => this.assets.set(id, data), this.actor.origin);
   }
 
   // ── Metadata ────────────────────────────────────────────────────────
@@ -229,36 +253,32 @@ export class CanvasDocument {
     return () => this.metaMap.unobserve(handler);
   }
 
-  // ── History (local changes only) ────────────────────────────────────
+  // ── History (the local user's changes only, see `history`) ──────────
 
   /** Ends the current undo step so the next change starts a new one. */
   checkpoint(): void {
-    this.undoManager.stopCapturing();
+    this.history.checkpoint();
   }
 
   undo(): void {
-    this.undoManager.undo();
+    this.history.undo();
   }
 
   redo(): void {
-    this.undoManager.redo();
+    this.history.redo();
   }
 
   canUndo(): boolean {
-    return this.undoManager.canUndo();
+    return this.history.canUndo();
   }
 
   canRedo(): boolean {
-    return this.undoManager.canRedo();
+    return this.history.canRedo();
   }
 
   /** Fires when the undo/redo stacks change (after document observers have run). */
-  onHistoryChange(listener: () => void): () => void {
-    const events = ["stack-item-added", "stack-item-popped", "stack-cleared"] as const;
-    for (const event of events) this.undoManager.on(event, listener);
-    return () => {
-      for (const event of events) this.undoManager.off(event, listener);
-    };
+  onHistoryChange(listener: (change: HistoryChange) => void): () => void {
+    return this.history.onChange(listener);
   }
 
   // ── Changes ─────────────────────────────────────────────────────────
@@ -301,7 +321,7 @@ export class CanvasDocument {
   }
 
   destroy(): void {
-    this.undoManager.destroy();
+    this.history.destroy();
   }
 
   /** The highest index in the document (every type, registered or not), or `null` when empty. */
@@ -331,7 +351,8 @@ export class CanvasDocument {
 
   /** Stores a new element, placed first (see `setPlacement`); `edit` runs the `AfterEdit` hook. */
   private write(el: CanvasElement, edit = true): void {
-    const placed = this.placement ? this.placement(el) : el;
+    const placement = this.actor.placement ?? this.placement;
+    const placed = placement ? placement(el) : el;
     const map = new Y.Map<unknown>();
     for (const [key, value] of Object.entries(placed)) map.set(key, value);
     this.elements.set(placed.id, map);
@@ -355,7 +376,7 @@ export class CanvasDocument {
   }
 
   private transact(fn: () => void): void {
-    this.run(fn, LOCAL_ORIGIN);
+    this.run(fn, this.actor.origin);
   }
 
   /** Runs an edit in a transaction; when the outermost one ends, the `AfterEdit` hook runs. */

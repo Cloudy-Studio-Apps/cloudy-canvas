@@ -3,7 +3,7 @@
 // palette, agent tools and file format. The React editor is in `ui/`, which also composes the
 // product from the modules (`getBoardProduct`).
 export type * from "./agent";
-export type { BoardEngine, BoardEngineState } from "./board-engine.types";
+export type { BoardEngine, BoardEngineState, BoardWorkspace } from "./board-engine.types";
 export type { BoardToolOptions } from "./board-options.types";
 export * from "./agent";
 export {

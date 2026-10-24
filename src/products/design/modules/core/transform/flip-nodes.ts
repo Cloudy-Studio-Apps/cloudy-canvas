@@ -2,7 +2,7 @@ import {
   elementBounds,
   unionRects,
   type CanvasElement,
-  type CanvasEngine,
+  type CanvasWorkspace,
   type ElementPatch,
 } from "@canvas";
 
@@ -13,7 +13,11 @@ import { DesignNodeKind, type FlipAxis } from "../node";
  * to bottom (`y`), as one undo step: each kind flips its own (`DesignNodeKind.flip`). Locked
  * layers stay. Returns the flipped ids.
  */
-export function flipNodes(engine: CanvasEngine, ids: Iterable<string>, axis: FlipAxis): string[] {
+export function flipNodes(
+  engine: CanvasWorkspace,
+  ids: Iterable<string>,
+  axis: FlipAxis,
+): string[] {
   const selected = new Set(ids);
   const carried = new Set<string>();
   for (const id of selected)

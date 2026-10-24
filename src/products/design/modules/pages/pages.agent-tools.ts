@@ -1,13 +1,13 @@
 import { optionalBoolean, optionalNumber, optionalString, stringArg, stringList } from "@canvas";
 
 import { requireDesign, requireNodes, type DesignAgentTool } from "../../agent";
-import type { DesignEngine } from "../../design-engine.types";
+import type { DesignWorkspace } from "../../design-engine.types";
 import { DESIGN_PAGES } from "./design-pages";
 
 const PAGE_ID = { type: "string", description: "The page's id (from list_pages)." };
 
 /** The pages with what agents need to pick one. */
-function listPages(engine: DesignEngine) {
+function listPages(engine: DesignWorkspace) {
   const pages = engine.service(DESIGN_PAGES);
   return pages.pages().map((page, position) => ({
     id: page.id,
@@ -19,7 +19,7 @@ function listPages(engine: DesignEngine) {
 }
 
 /** A page id of the design, checked. */
-function requirePage(engine: DesignEngine, id: string): string {
+function requirePage(engine: DesignWorkspace, id: string): string {
   if (!engine.service(DESIGN_PAGES).page(id)) {
     throw new Error(`No page with id ${id}. Call list_pages for the ids.`);
   }
@@ -31,17 +31,17 @@ export const pagesTools: DesignAgentTool[] = [
   {
     name: "list_pages",
     description:
-      "Lists the design's pages in order: id, name, position, whether it's the page on screen " +
-      "(`current`) and how many layers it has. Every other layer tool works on the current page; " +
-      "switch_page changes it.",
+      "Lists the design's pages in order: id, name, position, whether it's the page you work on " +
+      "(`current`; the user may be on another) and how many layers it has. Every other layer " +
+      "tool works on your current page; switch_page changes it.",
     inputSchema: { type: "object", properties: {} },
     run: (host) => ({ pages: listPages(requireDesign(host).engine) }),
   },
   {
     name: "switch_page",
     description:
-      "Puts a page on screen, so the layer tools (list_nodes, create_nodes, …) work on it. The " +
-      "selection is cleared.",
+      "Switches the page you work on, so the layer tools (list_nodes, create_nodes, …) act on " +
+      "it. Only yours changes: the user stays on their page. Your selection is cleared.",
     inputSchema: { type: "object", required: ["id"], properties: { id: PAGE_ID } },
     run: (host, args) => {
       const { engine } = requireDesign(host);
@@ -58,7 +58,7 @@ export const pagesTools: DesignAgentTool[] = [
       type: "object",
       properties: {
         name: { type: "string" },
-        switchTo: { type: "boolean", description: "Show the new page (default true)." },
+        switchTo: { type: "boolean", description: "Switch to the new page (default true)." },
       },
     },
     run: (host, args) => {

@@ -75,11 +75,16 @@ export class Camera {
   }
 
   /** Fits `rect` in the viewport, without zooming past 100% unless `maxZoom` says otherwise. */
-  fitRect(rect: Rect, { padding = FIT_PADDING, maxZoom = 1 }: FitOptions = {}): void {
+  fitRect(rect: Rect, options: FitOptions = {}): void {
+    this.zoom = this.fitZoom(rect, options);
+    this.centerOn({ x: rect.x + rect.w / 2, y: rect.y + rect.h / 2 });
+  }
+
+  /** The zoom at which `rect` fits in the viewport (see `fitRect`), within the zoom limits. */
+  fitZoom(rect: Rect, { padding = FIT_PADDING, maxZoom = 1 }: FitOptions = {}): number {
     const zx = (this.viewport.w - padding * 2) / Math.max(rect.w, 1);
     const zy = (this.viewport.h - padding * 2) / Math.max(rect.h, 1);
-    this.zoom = this.clampZoom(Math.min(zx, zy, maxZoom));
-    this.centerOn({ x: rect.x + rect.w / 2, y: rect.y + rect.h / 2 });
+    return this.clampZoom(Math.min(zx, zy, maxZoom));
   }
 
   /** 100% zoom with the world origin centered. */

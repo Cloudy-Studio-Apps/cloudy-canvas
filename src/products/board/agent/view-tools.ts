@@ -8,7 +8,7 @@ const NO_ARGS = { type: "object", properties: {} };
 export const viewTools: BoardAgentTool[] = [
   {
     name: "zoom_to_fit",
-    description: "Fits the whole board in the user's view.",
+    description: "Fits the whole board in your own view (the user sees it when they follow you).",
     inputSchema: NO_ARGS,
     run: (host) => {
       requireBoard(host).engine.zoomToFit();
@@ -17,7 +17,8 @@ export const viewTools: BoardAgentTool[] = [
   },
   {
     name: "zoom_to_shape",
-    description: "Fits one shape in the user's view and selects it.",
+    description:
+      "Shows one shape in your own view and selects it (your selection, not the user's).",
     inputSchema: { type: "object", required: ["id"], properties: { id: { type: "string" } } },
     run: (host, args) => {
       const { engine } = requireBoard(host);
@@ -29,22 +30,23 @@ export const viewTools: BoardAgentTool[] = [
   },
   {
     name: "undo",
-    description: "Undoes the last change on the board (the user's or an agent's), like Ctrl+Z.",
+    description:
+      "Undoes your last change on the board (yours only: the user and other agents have their own undo).",
     inputSchema: NO_ARGS,
     run: (host) => {
       const { engine } = requireBoard(host);
-      if (!engine.getState().canUndo) return "Nothing to undo.";
+      if (!engine.canUndo()) return "Nothing to undo.";
       engine.undo();
       return "Undone.";
     },
   },
   {
     name: "redo",
-    description: "Redoes the last undone change, like Ctrl+Shift+Z.",
+    description: "Redoes your last undone change on the board.",
     inputSchema: NO_ARGS,
     run: (host) => {
       const { engine } = requireBoard(host);
-      if (!engine.getState().canRedo) return "Nothing to redo.";
+      if (!engine.canRedo()) return "Nothing to redo.";
       engine.redo();
       return "Redone.";
     },

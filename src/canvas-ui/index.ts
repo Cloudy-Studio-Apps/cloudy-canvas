@@ -2,6 +2,7 @@
 // context and hooks, the canvas theme) and the chrome around it (panels, buttons, zoom and history
 // controls). Products build their editors from these; nothing here knows a product.
 export type * from "./agent";
+export type * from "./components/collaborators";
 export type * from "./components/color";
 export type * from "./components/commit-field";
 export type * from "./components/context-menu";
@@ -57,6 +58,11 @@ export { ToolButton } from "./components/tool-button";
 export { ZoomControls } from "./components/zoom-controls";
 export { ZoomMenu } from "./components/zoom-menu";
 export { Rulers } from "./components/rulers";
+export {
+  CollaboratorLayer,
+  CollaboratorUndoButton,
+  useCollaboratorHistory,
+} from "./components/collaborators";
 export {
   CanvasFileContext,
   DocumentInfoPopover,

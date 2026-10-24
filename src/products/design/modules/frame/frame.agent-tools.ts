@@ -30,7 +30,7 @@ export const frameTools: DesignAgentTool[] = [
       required: ["preset"],
       properties: {
         preset: { type: "string", description: "A preset id from list_frame_presets." },
-        zoom: { type: "boolean", description: "Zoom the user's view to the new frame." },
+        zoom: { type: "boolean", description: "Show the new frame in your view." },
       },
     },
     run: (host, args) => {

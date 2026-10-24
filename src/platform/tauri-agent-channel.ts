@@ -9,8 +9,8 @@ export class TauriAgentChannel implements AgentChannel {
     return listen<AgentMessage>("mcp://message", (event) => handler(event.payload));
   }
 
-  reply(id: number, body: string): Promise<void> {
-    return invoke("mcp_reply", { id, body });
+  reply(id: number, body: string, session: string | null): Promise<void> {
+    return invoke("mcp_reply", { id, body, session });
   }
 
   status(): Promise<AgentServerStatus> {

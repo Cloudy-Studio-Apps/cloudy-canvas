@@ -21,8 +21,3 @@ export function entranceAt(elapsed: number): { scale: number; alpha: number } | 
     alpha: Math.min(1, p / ENTRANCE.fade),
   };
 }
-
-/** Whether the system asks for less motion (entrances are skipped then). */
-export function prefersReducedMotion(): boolean {
-  return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
-}

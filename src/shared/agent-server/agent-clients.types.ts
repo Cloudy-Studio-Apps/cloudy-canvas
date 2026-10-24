@@ -10,6 +10,8 @@ export interface AgentClient {
   /** The app's name, e.g. "Cursor". */
   label: string;
   icon: AgentClientIcon;
+  /** Recognizes the app by the name it connects with (MCP `clientInfo`) or its User-Agent. */
+  match?: RegExp;
   /** Listed under "Other AI tools" instead of the main grid. */
   more?: boolean;
   /** What the snippet is, e.g. "Terminal command" or "mcp.json". */

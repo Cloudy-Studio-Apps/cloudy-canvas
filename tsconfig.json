@@ -30,6 +30,7 @@
       "@platform/*": ["./src/platform/*"],
       "@shared/core": ["./src/shared/core/index.ts"],
       "@shared/agent-server": ["./src/shared/agent-server/index.ts"],
+      "@shared/collaborators": ["./src/shared/collaborators/index.ts"],
       "@shared/*": ["./src/shared/*"],
       "@canvas": ["./src/canvas/index.ts"],
       "@canvas/*": ["./src/canvas/*"],

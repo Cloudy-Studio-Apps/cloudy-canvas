@@ -30,4 +30,12 @@ export interface EngineState<O extends object = object> {
   rulersShown: boolean;
   canUndo: boolean;
   canRedo: boolean;
+  /**
+   * Whose history Undo and Redo step through when it isn't the user's (the name of the agent the
+   * user follows, see `CanvasEngine.setHistoryTarget`), else `null`.
+   */
+  historyOwner: string | null;
+  /** The label of the step Undo would undo (e.g. "Created shapes"), when it has one. */
+  undoLabel: string | null;
+  redoLabel: string | null;
 }

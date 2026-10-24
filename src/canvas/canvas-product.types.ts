@@ -198,4 +198,6 @@ export interface CanvasScopes {
   of(el: CanvasElement): string | null;
   /** An element being added, placed in `scope` unless it's already in one. */
   place(el: CanvasElement, scope: string): CanvasElement;
+  /** A scope's name for people (a design's page name), shown where collaborators are. */
+  label?(doc: CanvasDocument, scope: string): string | null;
 }

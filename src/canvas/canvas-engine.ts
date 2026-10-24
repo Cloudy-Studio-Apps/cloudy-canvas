@@ -1,18 +1,10 @@
 import { fontKey, type Clipboard, type DroppedFile } from "@shared/core";
 
 import { Camera } from "./camera";
+import { CameraGlide } from "./camera-glide";
 import {
-  alignOffset,
-  anchorPoint,
-  arrangeItems,
-  arrangeRoots,
-  distributeOffsets,
   nudgeCheckpoint,
-  scalePatches,
-  tidyUpOffsets,
   type Alignment,
-  type ArrangeHost,
-  type ArrangeItem,
   type DistributeAxis,
   type RotatePivot,
   type ScaleAnchor,
@@ -30,11 +22,10 @@ import {
 } from "./clipboard";
 import { createCommands } from "./commands";
 import type { Commands } from "./commands.types";
-import { CanvasDocument, type DocumentChange } from "./document";
+import { CanvasDocument, type DocumentChange, type UndoHistory } from "./document";
 import {
   elementBounds,
   elementInfo,
-  reorderIndexes,
   type CanvasElement,
   type ElementInfo,
   type ElementKinds,
@@ -54,7 +45,7 @@ import {
 import { findInteraction } from "./find-interaction";
 import type { EngineLoading } from "./engine-loading.types";
 import type { EngineState } from "./engine-state.types";
-import { rectCenter, rectsIntersect, unionRects } from "./geometry";
+import { rectCenter, rectsIntersect } from "./geometry";
 import type { Point, Rect } from "./geometry.types";
 import {
   bindKeyboard,
@@ -64,7 +55,7 @@ import {
   PointerInput,
   toCanvasPointer,
 } from "./input";
-import { effectsOutset, Renderer, type CanvasTheme, type EffectRenderer } from "./render";
+import { Renderer, type CanvasTheme, type EffectRenderer } from "./render";
 import {
   guideInside,
   overRuler,
@@ -77,6 +68,33 @@ import {
   type RulerGuide,
 } from "./ruler-guides";
 import { Scene } from "./scene";
+import {
+  ActorWorkspace,
+  type ActorWorkspaceHost,
+  type CanvasWorkspace,
+  type HistoryTarget,
+  type WorkspaceInit,
+} from "./workspace";
+import { productSceneHooks } from "./workspace/scene-hooks";
+import {
+  alignElements,
+  applyStyle,
+  applyStyleOf,
+  canAlign,
+  deleteElements,
+  distributeElements,
+  elementsBounds,
+  moveElementsBy,
+  removeElements,
+  reorderElements,
+  rotateElements,
+  scaleElements,
+  sceneExportHost,
+  setLocked,
+  tidyUpElements,
+  withMembers,
+  type WorkspaceParts,
+} from "./workspace/operations";
 import { ServiceCache, type ServiceDef } from "./services";
 import {
   GestureSnapper,
@@ -123,7 +141,7 @@ const CONTENT_TIMEOUT_MS = 8000;
  * the public methods; UI state is exposed via `subscribe()` / `getState()`. `O` is the product's
  * tool options.
  */
-export class CanvasEngine<O extends object = object> {
+export class CanvasEngine<O extends object = object> implements CanvasWorkspace<O> {
   readonly doc: CanvasDocument;
   /** The product's element kinds; ask them about any element. */
   readonly kinds: ElementKinds<O>;
@@ -163,6 +181,14 @@ export class CanvasEngine<O extends object = object> {
   }, TEXT_ZOOM_DELAY_MS);
 
   private readonly viewChanges = new Emitter();
+  /** The person moved the view themselves (see `onUserCamera`). */
+  private readonly userCamera = new Emitter();
+  private readonly glide = new CameraGlide(this.camera, () => this.onCameraChange());
+  /** Other collaborators' contexts on this document, by collaborator id (see `workspace`). */
+  private readonly actors = new Map<string, ActorWorkspace<O>>();
+  /** Whose history Undo and Redo step through instead of the user's (see `setHistoryTarget`). */
+  private historyTarget: HistoryTarget | null = null;
+  private stopHistoryTarget: (() => void) | null = null;
   private readonly elementActions = new Set<(action: ElementAction) => void>();
   private readonly contextMenus = new Set<(request: ContextMenuRequest) => void>();
   private readonly hostActions = new Map<string, HostAction>();
@@ -186,7 +212,7 @@ export class CanvasEngine<O extends object = object> {
   /** The guide whose value shows while it's dragged. */
   private activeGuide: number | null = null;
   private tool: Tool;
-  private options: O;
+  private toolOptions: O;
   private snapping: SnapSettings;
   private container: HTMLElement | null = null;
   private textEditor: TextEditor | null = null;
@@ -204,7 +230,7 @@ export class CanvasEngine<O extends object = object> {
     this.productId = product.id;
     this.kinds = product.kinds;
     this.keymap = new Keymap(product.keybindings);
-    this.options = product.defaultOptions;
+    this.toolOptions = product.defaultOptions;
     this.doc = document ?? new CanvasDocument(this.kinds);
     this.ownsDocument = !document;
     this.services = new ServiceCache(this.doc);
@@ -239,16 +265,7 @@ export class CanvasEngine<O extends object = object> {
     );
     const scopes = product.scopes;
     this.scopes = scopes;
-    this.scene = new Scene(this.doc, this.kinds, {
-      scopeOf: scopes ? (el) => scopes.of(el) : undefined,
-      resolve: product.resolveElements?.bind(product),
-      orderKeys: product.orderKeys?.bind(product),
-      clips: product.clips?.bind(product),
-      masks: product.masks?.bind(product),
-      effects: product.effects?.bind(product),
-      effectsOutset: (effects) => effectsOutset(effects, effectRenderers),
-      undrawn: product.undrawn?.bind(product),
-    });
+    this.scene = new Scene(this.doc, this.kinds, productSceneHooks(product));
     if (scopes) {
       this.scopeList = scopes.list(this.doc);
       this.scene.scope = this.scopeList[0] ?? null;
@@ -367,6 +384,10 @@ export class CanvasEngine<O extends object = object> {
     this.textEditor?.destroy();
     this.store.destroy();
     this.viewChanges.clear();
+    this.userCamera.clear();
+    this.glide.cancel();
+    this.setHistoryTarget(null);
+    for (const id of [...this.actors.keys()]) this.dropWorkspace(id);
     this.elementActions.clear();
     this.contextMenus.clear();
     if (this.scopes) this.doc.setPlacement(null);
@@ -472,29 +493,88 @@ export class CanvasEngine<O extends object = object> {
   }
 
   setToolOptions(patch: Partial<O>): void {
-    this.options = { ...this.options, ...patch };
+    this.toolOptions = { ...this.toolOptions, ...patch };
     this.restyleSelection(patch);
     this.emitChange();
   }
 
+  /** Undoes the user's last step, or the history target's while one is set. */
   undo(): void {
-    this.textEditor?.commit();
-    this.followHistory = true;
-    try {
-      this.doc.undo();
-    } finally {
-      this.followHistory = false;
-    }
+    this.stepHistory((history) => history.undo());
   }
 
   redo(): void {
-    this.textEditor?.commit();
-    this.followHistory = true;
-    try {
-      this.doc.redo();
-    } finally {
-      this.followHistory = false;
-    }
+    this.stepHistory((history) => history.redo());
+  }
+
+  canUndo(): boolean {
+    return this.activeHistory.canUndo();
+  }
+
+  canRedo(): boolean {
+    return this.activeHistory.canRedo();
+  }
+
+  /**
+   * Makes Undo and Redo (commands, buttons, `undo()`) step through someone else's history, e.g.
+   * the agent the user follows; `null` goes back to the user's own.
+   */
+  setHistoryTarget(target: HistoryTarget | null): void {
+    if (
+      target?.history === this.historyTarget?.history &&
+      target?.owner === this.historyTarget?.owner
+    )
+      return;
+    this.stopHistoryTarget?.();
+    this.historyTarget = target;
+    this.stopHistoryTarget = target ? target.history.onChange(() => this.emitChange()) : null;
+    this.emitChange();
+  }
+
+  // ── Collaborators' workspaces ─────────────────────────────────────────
+
+  /**
+   * The context collaborator `id` (an agent) works in, made the first time on `init` (by default
+   * the scope on screen and the user's view): its own scope, selection, view and undo history.
+   */
+  workspace(id: string, init?: Partial<WorkspaceInit>): ActorWorkspace<O> {
+    const existing = this.actors.get(id);
+    if (existing) return existing;
+    const workspace = new ActorWorkspace(this.actorHost, Symbol(`actor:${id}`), {
+      scope: init?.scope ?? this.scene.scope,
+      viewport: init?.viewport ?? this.camera.visibleWorldRect(),
+    });
+    this.actors.set(id, workspace);
+    return workspace;
+  }
+
+  /** Collaborator `id`'s workspace, if it has one. */
+  findWorkspace(id: string): ActorWorkspace<O> | undefined {
+    return this.actors.get(id);
+  }
+
+  /** Forgets collaborator `id`'s workspace (it left); its undo history goes with it. */
+  dropWorkspace(id: string): void {
+    const workspace = this.actors.get(id);
+    if (!workspace) return;
+    if (this.historyTarget?.history === workspace.history) this.setHistoryTarget(null);
+    workspace.destroy();
+    this.actors.delete(id);
+  }
+
+  /** What the user has selected (the engine is the user's workspace). */
+  userSelection(): string[] {
+    return this.selectedIds();
+  }
+
+  /** The tool options new elements take. */
+  options(): O {
+    return this.toolOptions;
+  }
+
+  /** A scope's name for people (a design's page name), or `null` without one. */
+  scopeLabel(scope: string | null): string | null {
+    return scope === null ? null : (this.scopes?.label?.(this.doc, scope) ?? null);
   }
 
   /** The scope on screen (a design's page, see `CanvasScopes`), or `null` without scopes. */
@@ -664,9 +744,7 @@ export class CanvasEngine<O extends object = object> {
       throw new Error("Select something to copy.");
     }
     this.textEditor?.commit();
-    const options = { format: "png", background: "transparent", area: "selection", ids } as const;
-    const png = await exportElements(this.exportHost, { ...options, scale: COPY_PNG_SCALE });
-    await this.systemClipboard.writeImage(png);
+    await this.copyPng(this.exportHost, ids);
   }
 
   /**
@@ -705,18 +783,7 @@ export class CanvasEngine<O extends object = object> {
    * with the selection. Returns the ids whose position changed.
    */
   reorderElements(ids: Iterable<string>, direction: ReorderDirection): string[] {
-    const indexes = reorderIndexes({
-      layer: this.scene.elements.filter((el) => !this.kinds.kindOf(el).frame),
-      moving: this.withMembers(ids, "move"),
-      direction,
-      bounds: (el) => elementBounds(this.kinds.kindOf(el), el),
-      above: (count) => this.doc.nextIndexes(count),
-      below: (count) => this.doc.firstIndexes(count),
-    });
-    if (indexes.size === 0) return [];
-    this.doc.checkpoint();
-    this.doc.updateMany(new Map([...indexes].map(([id, index]) => [id, { index }])));
-    return [...indexes.keys()];
+    return reorderElements(this.parts, ids, direction);
   }
 
   /**
@@ -744,15 +811,7 @@ export class CanvasEngine<O extends object = object> {
    * that changed.
    */
   setLocked(ids: Iterable<string>, locked: boolean): string[] {
-    const patches = new Map<string, ElementPatch>();
-    for (const id of ids) {
-      const el = this.scene.get(id);
-      if (el && Boolean(el.locked) !== locked) patches.set(id, { locked });
-    }
-    if (patches.size === 0) return [];
-    this.doc.checkpoint();
-    this.doc.updateMany(patches);
-    return [...patches.keys()];
+    return setLocked(this.parts, ids, locked);
   }
 
   /**
@@ -780,16 +839,7 @@ export class CanvasEngine<O extends object = object> {
    * Returns the moved ids. The caller starts the undo step.
    */
   moveElementsBy(offsets: ReadonlyMap<string, Point>): string[] {
-    const patches = new Map<string, ElementPatch>();
-    for (const [id, { x, y }] of offsets) {
-      if (x === 0 && y === 0) continue;
-      for (const member of this.withMembers([id], "move")) {
-        const el = this.doc.get(member);
-        if (el && !el.locked) patches.set(member, this.kinds.kindOf(el).move(el, x, y));
-      }
-    }
-    if (patches.size > 0) this.doc.updateMany(patches);
-    return [...patches.keys()];
+    return moveElementsBy(this.parts, offsets);
   }
 
   /**
@@ -808,17 +858,12 @@ export class CanvasEngine<O extends object = object> {
    * parent. Returns the moved ids.
    */
   alignElements(ids: Iterable<string>, alignment: Alignment): string[] {
-    const items = this.arrangeItems(ids);
-    const target = this.alignTargetOf(items);
-    if (!target) return [];
-    return this.arrange(
-      new Map(items.map((item) => [item.id, alignOffset(item.rect, target, alignment)])),
-    );
+    return alignElements(this.parts, ids, alignment);
   }
 
   /** Whether these elements can be aligned: several of them, or one inside something. */
   canAlign(ids: Iterable<string>): boolean {
-    return this.alignTargetOf(this.arrangeItems(ids)) !== null;
+    return canAlign(this.parts, ids);
   }
 
   /**
@@ -839,27 +884,7 @@ export class CanvasEngine<O extends object = object> {
     degrees: number | ((el: CanvasElement) => number),
     around: RotatePivot = "selection",
   ): string[] {
-    const roots = arrangeRoots(ids, this.arrangeHost).filter(
-      (el) => this.kinds.kindOf(el).rotatable,
-    );
-    const shown = (el: CanvasElement) => elementBounds(this.kinds.kindOf(el), el);
-    const all = unionRects(roots.map(shown));
-    if (!all) return [];
-    const patches = new Map<string, ElementPatch>();
-    for (const root of roots) {
-      const turn = typeof degrees === "number" ? degrees : degrees(root);
-      if (!turn) continue;
-      const pivot = rectCenter(around === "each" ? shown(root) : all);
-      for (const id of this.withMembers([root.id], "move")) {
-        const el = this.scene.get(id);
-        const kind = el && this.kinds.kindOf(el);
-        if (el && kind?.rotatable && !el.locked) patches.set(id, kind.rotate(el, turn, pivot));
-      }
-    }
-    if (patches.size === 0) return [];
-    this.doc.checkpoint();
-    this.doc.updateMany(patches);
-    return [...patches.keys()];
+    return rotateElements(this.parts, ids, degrees, around);
   }
 
   /**
@@ -868,22 +893,7 @@ export class CanvasEngine<O extends object = object> {
    * stay. Returns the scaled ids.
    */
   scaleElements(ids: Iterable<string>, factor: number, anchor: ScaleAnchor = "top-left"): string[] {
-    if (!(factor > 0) || factor === 1) return [];
-    const unlocked = (el: CanvasElement | undefined): el is CanvasElement => !!el && !el.locked;
-    const roots = [...ids].map((id) => this.scene.get(id)).filter(unlocked);
-    const box = unionRects(roots.map((el) => elementBounds(this.kinds.kindOf(el), el)));
-    if (!box) return [];
-    const members = this.withMembers(
-      roots.map((el) => el.id),
-      "move",
-    );
-    const scaled = [...members].map((id) => this.scene.get(id)).filter(unlocked);
-    const t = { origin: anchorPoint(box, anchor), factor };
-    const patches = scalePatches(scaled, this.kinds, t);
-    if (patches.size === 0) return [];
-    this.doc.checkpoint();
-    this.doc.updateMany(patches);
-    return [...patches.keys()];
+    return scaleElements(this.parts, ids, factor, anchor);
   }
 
   /** Spaces the selection out evenly on `axis` (three elements or more), as one undo step. */
@@ -898,7 +908,7 @@ export class CanvasEngine<O extends object = object> {
    * them. Returns the moved ids.
    */
   distributeElements(ids: Iterable<string>, axis: DistributeAxis): string[] {
-    return this.arrange(distributeOffsets(this.arrangeItems(ids), axis));
+    return distributeElements(this.parts, ids, axis);
   }
 
   /** Tidies the selection into a grid with even spacing, as one undo step. */
@@ -910,7 +920,7 @@ export class CanvasEngine<O extends object = object> {
 
   /** Tidies elements into rows and columns, with what moves with them. Returns the moved ids. */
   tidyUpElements(ids: Iterable<string>): string[] {
-    return this.arrange(tidyUpOffsets(this.arrangeItems(ids)));
+    return tidyUpElements(this.parts, ids);
   }
 
   /** Adds a copy of the selection next to it and selects the copy. Returns `false` when nothing was selected. */
@@ -966,8 +976,7 @@ export class CanvasEngine<O extends object = object> {
    * properties took (agents). Returns the ids that changed.
    */
   applyStyleOf(fromId: string, ids: Iterable<string>): string[] {
-    const from = this.scene.get(fromId);
-    return from ? this.applyStyle(this.kinds.kindOf(from).styleOf(from), ids) : [];
+    return applyStyleOf(this.parts, fromId, ids);
   }
 
   /** Label, description and hotkey of an element type, or `undefined` if it isn't registered. */
@@ -1019,12 +1028,17 @@ export class CanvasEngine<O extends object = object> {
 
   /** The box round where the selected elements show, or `null` with nothing selected. */
   selectionBounds(): Rect | null {
-    const rects: Rect[] = [];
-    for (const id of this.scene.selection.ids) {
-      const el = this.scene.get(id);
-      if (el) rects.push(elementBounds(this.kinds.kindOf(el), el));
-    }
-    return unionRects(rects);
+    return this.elementsBounds(this.scene.selection.ids);
+  }
+
+  /** The box round where these elements show, or `null` when none of them is in the scope. */
+  elementsBounds(ids: Iterable<string>): Rect | null {
+    return elementsBounds(this.parts, ids);
+  }
+
+  /** The box round every element of the scope on screen, or `null` when it's empty. */
+  contentBounds(): Rect | null {
+    return this.scene.contentBounds();
   }
 
   /**
@@ -1033,6 +1047,19 @@ export class CanvasEngine<O extends object = object> {
    */
   onViewChange(listener: () => void): () => void {
     return this.viewChanges.subscribe(listener);
+  }
+
+  /**
+   * Runs when the person moves the view themselves (scrolling, zooming with the wheel, panning),
+   * never for moves the app makes (fits, glides, agents): following someone stops then.
+   */
+  onUserCamera(listener: () => void): () => void {
+    return this.userCamera.subscribe(listener);
+  }
+
+  /** Moves the camera to show `area` exactly (a collaborator's view), gliding unless told not to. */
+  showViewport(area: Rect, { animate = true }: { animate?: boolean } = {}): void {
+    this.glide.start(area, animate);
   }
 
   /** Element actions (e.g. a press on a video's play button). Returns an unsubscribe function. */
@@ -1051,9 +1078,7 @@ export class CanvasEngine<O extends object = object> {
 
   /** Deletes elements, with what goes with them, as one undo step. Returns the removed ids. */
   deleteElements(ids: Iterable<string>): string[] {
-    const removing = [...this.withMembers(ids, "delete")];
-    this.doc.checkpoint();
-    return this.removeElements(removing);
+    return deleteElements(this.parts, ids);
   }
 
   /** Selects a part of the single selected element (see `ToolContext.setPart`); `null` clears it. */
@@ -1186,7 +1211,7 @@ export class CanvasEngine<O extends object = object> {
       camera: this.camera,
       kinds: this.kinds,
       service: (def) => this.services.get(def),
-      getOptions: () => this.options,
+      getOptions: () => this.toolOptions,
       getSelection: () => this.scene.selection.ids,
       setSelection: (ids) => this.setSelection(ids),
       setTool: (id) => this.setTool(id),
@@ -1254,7 +1279,7 @@ export class CanvasEngine<O extends object = object> {
       autoPan: (screen, onPan) => this.autoPan.update(screen, onPan),
       panBy: (dx, dy) => {
         this.camera.panBy(dx, dy);
-        this.onCameraChange();
+        this.onUserCameraChange();
       },
       activate: (elementId, action) => {
         for (const listener of this.elementActions) listener({ elementId, action });
@@ -1276,7 +1301,7 @@ export class CanvasEngine<O extends object = object> {
       getElement: (id) => this.scene.get(id),
       withMembers: (ids) => this.withMembers(ids, "move"),
       visibleRect: () => this.camera.visibleWorldRect(),
-      getOptions: () => this.options,
+      getOptions: () => this.toolOptions,
       select: (ids) => this.setSelection(ids),
       selected: () => [...this.scene.selection.ids],
       remove: (ids) => void this.removeElements(ids),
@@ -1285,19 +1310,19 @@ export class CanvasEngine<O extends object = object> {
 
   /** What exports reach of the engine. */
   private get exportHost(): ExportHost {
-    return {
-      elementsOf: (area, ids) => {
-        if (!ids && area === "board") return [...this.scene.elements];
-        const members = this.withMembers(ids ?? this.scene.selection.ids, "move");
-        return this.scene.elements.filter((el) => members.has(el.id));
+    return this.exportHostFor(this.scene, () => this.scene.selection.ids);
+  }
+
+  /** What exports of `scene` reach: its elements and the renderer's off-screen snapshot. */
+  private exportHostFor(scene: Scene, selected: () => Iterable<string>): ExportHost {
+    return sceneExportHost(
+      { ...this.parts, scene },
+      {
+        selected,
+        background: this.renderer.background,
+        snapshot: (elements, options) => this.renderer.snapshot(elements, options),
       },
-      // Exports take what effects draw past the content too (shadows, blurs), as Figma does.
-      bounds: (el) => this.scene.visualBounds(el),
-      rows: (el) => this.kinds.kindOf(el).rows(el),
-      createLinks: () => this.product.createLinks?.() ?? [],
-      background: this.renderer.background,
-      snapshot: (elements, options) => this.renderer.snapshot(elements, options),
-    };
+    );
   }
 
   private createTextEditor(container: HTMLElement): TextEditor {
@@ -1338,7 +1363,7 @@ export class CanvasEngine<O extends object = object> {
       onContextMenu: (p) => this.handleContextMenu(p),
     });
     pointer.bind(this.disposables);
-    bindWheel(this.disposables, canvas, this.camera, () => this.onCameraChange());
+    bindWheel(this.disposables, canvas, this.camera, () => this.onUserCameraChange());
     bindKeyboard(this.disposables, {
       pointer,
       keymap: this.keymap,
@@ -1557,17 +1582,7 @@ export class CanvasEngine<O extends object = object> {
 
   /** Restyles the unlocked elements among `ids` with `style`, as one undo step. */
   private applyStyle(style: ElementStyle, ids: Iterable<string>): string[] {
-    const patches = new Map<string, ElementPatch>();
-    for (const id of ids) {
-      const el = this.scene.get(id);
-      if (!el || el.locked) continue;
-      const patch = this.kinds.kindOf(el).applyStyle(el, style);
-      if (Object.keys(patch).length > 0) patches.set(id, patch);
-    }
-    if (patches.size === 0) return [];
-    this.doc.checkpoint();
-    this.doc.updateMany(patches);
-    return [...patches.keys()];
+    return applyStyle(this.parts, style, ids);
   }
 
   /** Deletes the selected part of the single selected element, as one undo step. */
@@ -1588,8 +1603,12 @@ export class CanvasEngine<O extends object = object> {
 
   /** The ids plus what the product says goes with them when moved or deleted. */
   withMembers(ids: Iterable<string>, purpose: "move" | "delete"): Set<string> {
-    const set = new Set(ids);
-    return this.product.withMembers?.(set, this.scene.elements, purpose) ?? set;
+    return withMembers(this.parts, ids, purpose);
+  }
+
+  /** What the shared workspace operations work on: the user's document and scene. */
+  private get parts(): WorkspaceParts<O> {
+    return { doc: this.doc, kinds: this.kinds, product: this.product, scene: this.scene };
   }
 
   /**
@@ -1597,14 +1616,7 @@ export class CanvasEngine<O extends object = object> {
    * after them. Returns the removed ids.
    */
   private removeElements(ids: readonly string[]): string[] {
-    const removing = ids.filter((id) => this.doc.get(id));
-    if (removing.length === 0) return [];
-    const before = this.scene.elements;
-    this.doc.batch(() => {
-      this.doc.remove(removing);
-      this.product.onRemove?.(this.doc, new Set(removing), before);
-    });
-    return removing;
+    return removeElements(this.parts, ids);
   }
 
   /** Waits for the images and fonts of the elements on screen, for at most `CONTENT_TIMEOUT_MS`. */
@@ -1655,7 +1667,8 @@ export class CanvasEngine<O extends object = object> {
     this.rulerFrameCache = null;
     // Show the selected element's style in the options panel.
     const first = this.scene.get([...this.scene.selection.ids][0] ?? "");
-    if (first) this.options = { ...this.options, ...this.kinds.kindOf(first).optionsOf(first) };
+    if (first)
+      this.toolOptions = { ...this.toolOptions, ...this.kinds.kindOf(first).optionsOf(first) };
     this.requestRender();
     this.emitChange();
   }
@@ -1681,33 +1694,6 @@ export class CanvasEngine<O extends object = object> {
 
   private setCursor(cursor: string): void {
     if (this.container) this.container.style.cursor = cursor;
-  }
-
-  private arrangeItems(ids: Iterable<string>): ArrangeItem[] {
-    return arrangeItems(ids, this.arrangeHost);
-  }
-
-  private get arrangeHost(): ArrangeHost {
-    return {
-      get: (id) => this.scene.get(id),
-      kinds: this.kinds,
-      withMembers: (members) => this.withMembers(members, "move"),
-    };
-  }
-
-  /** What items line up with: their bounds when there are several, or what holds the one. */
-  private alignTargetOf(items: readonly ArrangeItem[]): Rect | null {
-    if (items.length > 1) return unionRects(items.map((item) => item.rect));
-    const [only] = items;
-    const el = only && this.scene.get(only.id);
-    return (el && this.product.alignTarget?.(el, this.scene.elements)) ?? null;
-  }
-
-  /** Moves by these offsets as a new undo step (none when nothing moves). */
-  private arrange(offsets: ReadonlyMap<string, Point>): string[] {
-    if (![...offsets.values()].some(({ x, y }) => x !== 0 || y !== 0)) return [];
-    this.doc.checkpoint();
-    return this.moveElementsBy(offsets);
   }
 
   private setSnapFeedback(feedback: SnapFeedback | null): void {
@@ -1798,11 +1784,52 @@ export class CanvasEngine<O extends object = object> {
     if (animating) this.requestRender();
   }
 
+  /** The history Undo and Redo step through: the target's while one is set, else the user's. */
+  private get activeHistory(): UndoHistory {
+    return this.historyTarget?.history ?? this.doc.history;
+  }
+
+  private stepHistory(step: (history: UndoHistory) => void): void {
+    this.textEditor?.commit();
+    this.followHistory = true;
+    try {
+      step(this.activeHistory);
+    } finally {
+      this.followHistory = false;
+    }
+  }
+
+  private onUserCameraChange(): void {
+    this.glide.cancel();
+    this.onCameraChange();
+    this.userCamera.emit();
+  }
+
+  /** Copies elements of an export host to the system clipboard as a PNG. */
+  private async copyPng(host: ExportHost, ids: readonly string[] | undefined): Promise<void> {
+    const options = { format: "png", background: "transparent", area: "selection", ids } as const;
+    const png = await exportElements(host, { ...options, scale: COPY_PNG_SCALE });
+    await this.systemClipboard.writeImage(png);
+  }
+
+  /** What collaborators' workspaces reach of the engine. */
+  private get actorHost(): ActorWorkspaceHost<O> {
+    return {
+      product: this.product,
+      doc: this.doc,
+      options: () => this.toolOptions,
+      viewAspect: () => this.camera.viewport.w / Math.max(this.camera.viewport.h, 1) || 1,
+      userSelection: () => this.selectedIds(),
+      exportHost: (scene, selected) => this.exportHostFor(scene, selected),
+      copyPng: (host, ids) => this.copyPng(host, ids),
+    };
+  }
+
   private buildState(): EngineState<O> {
     return {
       tool: this.tool.id,
       mode: this.mode.id,
-      options: this.options,
+      options: this.toolOptions,
       zoom: this.camera.zoom,
       selectionCount: this.scene.selection.size,
       selectedIds: this.scene.selection.list(),
@@ -1814,8 +1841,11 @@ export class CanvasEngine<O extends object = object> {
       guidesShown: this.guidesShown,
       rulersShown: this.rulersShown,
       scope: this.scene.scope,
-      canUndo: this.doc.canUndo(),
-      canRedo: this.doc.canRedo(),
+      canUndo: this.activeHistory.canUndo(),
+      canRedo: this.activeHistory.canRedo(),
+      historyOwner: this.historyTarget?.owner ?? null,
+      undoLabel: this.activeHistory.undoLabel(),
+      redoLabel: this.activeHistory.redoLabel(),
     };
   }
 

@@ -7,7 +7,8 @@ const NO_ARGS = { type: "object", properties: {} };
 export const designViewTools: DesignAgentTool[] = [
   {
     name: "zoom_design_to_fit",
-    description: "Fits the whole design in the user's view.",
+    description:
+      "Fits the whole page you work on in your own view (the user sees it when they follow you).",
     inputSchema: NO_ARGS,
     run: (host) => {
       requireDesign(host).engine.zoomToFit();
@@ -16,7 +17,8 @@ export const designViewTools: DesignAgentTool[] = [
   },
   {
     name: "zoom_to_node",
-    description: "Fits one layer in the user's view and selects it.",
+    description:
+      "Shows one layer in your own view and selects it (your selection, not the user's).",
     inputSchema: { type: "object", required: ["id"], properties: { id: { type: "string" } } },
     run: (host, args) => {
       const { engine } = requireDesign(host);
@@ -27,22 +29,23 @@ export const designViewTools: DesignAgentTool[] = [
   },
   {
     name: "undo_design",
-    description: "Undoes the last change on the design (the user's or an agent's), like Ctrl+Z.",
+    description:
+      "Undoes your last change on the design (yours only: the user and other agents have their own undo).",
     inputSchema: NO_ARGS,
     run: (host) => {
       const { engine } = requireDesign(host);
-      if (!engine.getState().canUndo) return "Nothing to undo.";
+      if (!engine.canUndo()) return "Nothing to undo.";
       engine.undo();
       return "Undone.";
     },
   },
   {
     name: "redo_design",
-    description: "Redoes the last undone change on the design, like Ctrl+Shift+Z.",
+    description: "Redoes your last undone change on the design.",
     inputSchema: NO_ARGS,
     run: (host) => {
       const { engine } = requireDesign(host);
-      if (!engine.getState().canRedo) return "Nothing to redo.";
+      if (!engine.canRedo()) return "Nothing to redo.";
       engine.redo();
       return "Redone.";
     },

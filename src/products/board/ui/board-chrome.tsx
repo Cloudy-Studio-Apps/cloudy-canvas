@@ -1,4 +1,5 @@
 import {
+  CollaboratorLayer,
   CanvasContextMenu,
   ExportDialog,
   ModuleSlot,
@@ -17,6 +18,7 @@ export function BoardChrome() {
   useCopyAsPng();
   return (
     <div className="pointer-events-none absolute inset-0">
+      <CollaboratorLayer />
       <CanvasContextMenu />
       <ExportDialog name={name} />
       <div className="absolute top-3 left-3">

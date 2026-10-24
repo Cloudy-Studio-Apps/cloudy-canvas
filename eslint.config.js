@@ -21,6 +21,7 @@ const UI_LAYERS = {
     "@shared/ui/*",
     "@shared/stores/*",
     "@shared/agent-server",
+    "@shared/collaborators",
     "@canvas-ui",
     "@canvas-ui/*",
     "@pages/*",

@@ -35,6 +35,8 @@ export type CanvasFileLoadState =
 
 /** The open file, for the editor chrome (`useCanvasFile`). */
 export interface CanvasFileContextValue {
+  /** The file's id (its key in the recent files). */
+  id: string;
   /** The name to show: the document's title, or its file name when it has none. */
   name: string;
   /** The file's name (or the format's `untitled` before it has one), shown when there's no title. */

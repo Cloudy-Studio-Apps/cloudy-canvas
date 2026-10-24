@@ -2,6 +2,11 @@
 export interface AgentMessage {
   id: number;
   body: string;
+  /** The agent's MCP session (`Mcp-Session-Id`), `null` before it has one. */
+  session: string | null;
+  userAgent: string | null;
+  /** The agent ended its session; there is nothing to answer. */
+  ended: boolean;
 }
 
 export interface AgentServerStatus {
@@ -17,8 +22,11 @@ export interface AgentServerStatus {
 export interface AgentChannel {
   /** Calls `handler` for each message; resolves to the function that stops listening. */
   listen(handler: (message: AgentMessage) => void): Promise<() => void>;
-  /** Answers message `id`. An empty body means there is no response (a notification). */
-  reply(id: number, body: string): Promise<void>;
+  /**
+   * Answers message `id`. An empty body means there is no response (a notification); `session`
+   * is sent back as the agent's `Mcp-Session-Id`.
+   */
+  reply(id: number, body: string, session: string | null): Promise<void>;
   status(): Promise<AgentServerStatus>;
   setEnabled(enabled: boolean): Promise<void>;
 }

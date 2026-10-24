@@ -1,7 +1,7 @@
 use serde::Serialize;
 use tauri::State;
 
-use super::McpState;
+use super::{McpState, Reply};
 
 #[derive(Serialize)]
 pub struct McpStatus {
@@ -10,9 +10,10 @@ pub struct McpStatus {
 }
 
 /// The webview's reply to request `id`; an empty body means there is no response (a notification).
+/// `session` is sent back as the `Mcp-Session-Id` header (set when an agent connects).
 #[tauri::command]
-pub fn mcp_reply(state: State<'_, McpState>, id: u64, body: String) {
-    state.resolve(id, body);
+pub fn mcp_reply(state: State<'_, McpState>, id: u64, body: String, session: Option<String>) {
+    state.resolve(id, Reply { body, session });
 }
 
 #[tauri::command]

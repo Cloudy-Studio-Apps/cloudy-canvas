@@ -63,7 +63,7 @@ export const createNodesTool = ({ kinds }: DesignAgentContext): DesignAgentTool 
       // A layer by id, or by the key of one made earlier in the call (a parent).
       lookup: (ref) =>
         keyed.get(ref) ?? built.find((el) => el.id === ref) ?? engine.getElement(ref),
-      options: engine.getState().options,
+      options: engine.options(),
       nameFor: (base) => nextLayerName([...engine.doc.all(), ...built], base),
     };
     let index = engine.doc.nextIndex();

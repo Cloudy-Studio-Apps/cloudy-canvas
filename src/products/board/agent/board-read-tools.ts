@@ -11,7 +11,8 @@ export const boardReadTools: BoardAgentTool[] = [
     description:
       "The board open in Cloudy Canvas: id, name (its title, or its file name), title and " +
       "description (set with set_board_info; read the description for what the board is " +
-      "about), file path, unsaved changes, shape counts by type, selection and undo state. " +
+      "about), file path, unsaved changes, shape counts by type, the user's selection " +
+      "(`selection`) and yours (`yourSelection`), and your undo state. " +
       "Returns { open: false } when no board is open.",
     inputSchema: NO_ARGS,
     run: (host) => {
@@ -22,7 +23,6 @@ export const boardReadTools: BoardAgentTool[] = [
       for (const el of engine.elements()) {
         shapesByType[el.type] = (shapesByType[el.type] ?? 0) + 1;
       }
-      const { canUndo, canRedo } = engine.getState();
       const { title, description } = engine.doc.meta();
       return {
         open: true,
@@ -34,9 +34,10 @@ export const boardReadTools: BoardAgentTool[] = [
         dirty: board.dirty,
         shapeCount: engine.elements().length,
         shapesByType,
-        selection: engine.selectedIds(),
-        canUndo,
-        canRedo,
+        selection: engine.userSelection(),
+        yourSelection: engine.selectedIds(),
+        canUndo: engine.canUndo(),
+        canRedo: engine.canRedo(),
       };
     },
   },
@@ -87,13 +88,14 @@ export const boardReadTools: BoardAgentTool[] = [
   },
   {
     name: "get_selection",
-    description: "The shapes the user has selected, as summaries.",
+    description:
+      "The shapes the user has selected, as summaries (not yours: select_shapes sets yours).",
     inputSchema: NO_ARGS,
     run: (host) => {
       const { engine } = requireBoard(host);
       return engine
-        .selectedIds()
-        .map((id) => engine.getElement(id))
+        .userSelection()
+        .map((id) => engine.getElement(id) ?? engine.doc.get(id))
         .filter((el) => el !== undefined)
         .map((el) => summarizeElement(engine.kinds, el));
     },

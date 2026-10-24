@@ -7,6 +7,8 @@ export const useAgentServerStore = create<AgentServerState>()(
     (set) => ({
       enabled: true,
       setEnabled: (enabled) => set({ enabled }),
+      showCollaborators: true,
+      setShowCollaborators: (showCollaborators) => set({ showCollaborators }),
     }),
     { name: "cloudy-canvas:agent-server" },
   ),

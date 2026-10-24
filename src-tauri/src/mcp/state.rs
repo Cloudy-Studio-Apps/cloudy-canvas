@@ -4,6 +4,12 @@ use std::sync::{Arc, Mutex};
 
 use tokio::sync::oneshot;
 
+/// The webview's answer: the body (empty for none) and the MCP session to name in the response.
+pub struct Reply {
+    pub body: String,
+    pub session: Option<String>,
+}
+
 /// Shared between the HTTP server and the Tauri commands: requests waiting for the webview's reply.
 #[derive(Clone)]
 pub struct McpState(Arc<Inner>);
@@ -12,7 +18,7 @@ struct Inner {
     url: Mutex<Option<String>>,
     enabled: AtomicBool,
     next_id: AtomicU64,
-    pending: Mutex<HashMap<u64, oneshot::Sender<String>>>,
+    pending: Mutex<HashMap<u64, oneshot::Sender<Reply>>>,
 }
 
 impl McpState {
@@ -44,7 +50,7 @@ impl McpState {
     }
 
     /// A new request id and the receiver its reply arrives on.
-    pub fn register(&self) -> (u64, oneshot::Receiver<String>) {
+    pub fn register(&self) -> (u64, oneshot::Receiver<Reply>) {
         let id = self.0.next_id.fetch_add(1, Ordering::Relaxed);
         let (sender, receiver) = oneshot::channel();
         if let Ok(mut pending) = self.0.pending.lock() {
@@ -53,10 +59,10 @@ impl McpState {
         (id, receiver)
     }
 
-    pub fn resolve(&self, id: u64, body: String) {
+    pub fn resolve(&self, id: u64, reply: Reply) {
         let sender = self.0.pending.lock().ok().and_then(|mut pending| pending.remove(&id));
         if let Some(sender) = sender {
-            let _ = sender.send(body);
+            let _ = sender.send(reply);
         }
     }
 

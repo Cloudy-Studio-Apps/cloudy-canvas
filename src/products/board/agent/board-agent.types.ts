@@ -1,12 +1,18 @@
 import type { AgentFile, AgentRecentFile, AgentTool, AgentToolGroup, ElementKinds } from "@canvas";
 
-import type { BoardEngine } from "../board-engine.types";
+import type { BoardEngine, BoardWorkspace } from "../board-engine.types";
 import type { BoardToolOptions } from "../board-options.types";
 
 export type { AgentRecentFile } from "@canvas";
 
-/** The board open in the window. Its services (`DB_SCHEMA`, `ER_MODEL`, …) are `engine.service(…)`. */
-export type AgentBoard = AgentFile<BoardEngine>;
+/**
+ * The board open in the window as an agent works on it: `engine` is the agent's own workspace
+ * (its page, selection and undo). Its services (`DB_SCHEMA`, `ER_MODEL`, …) are `engine.service(…)`.
+ */
+export type AgentBoard = AgentFile<BoardWorkspace>;
+
+/** The board open in the window with its engine (the user's), which gives each agent a workspace. */
+export type OpenBoard = AgentFile<BoardEngine>;
 
 /** What board tools can reach beyond the engine, implemented by the app. */
 export interface AgentHost {

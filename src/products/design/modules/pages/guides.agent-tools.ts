@@ -1,11 +1,11 @@
 import { optionalBoolean, recordList, type RulerGuide, type ToolArgs } from "@canvas";
 
 import { requireDesign, type DesignAgentTool } from "../../agent";
-import type { DesignEngine } from "../../design-engine.types";
+import type { DesignWorkspace } from "../../design-engine.types";
 import { DesignNodeKind } from "../core";
 
 /** A guide an agent gave, checked (its frame must be a frame or section on the page). */
-function readGuide(engine: DesignEngine, args: ToolArgs): RulerGuide {
+function readGuide(engine: DesignWorkspace, args: ToolArgs): RulerGuide {
   const { axis, value, frame } = args;
   if (axis !== "x" && axis !== "y") throw new Error('A guide\'s `axis` is "x" or "y".');
   if (typeof value !== "number" || !Number.isFinite(value))

@@ -13,6 +13,7 @@ export * from "./ids";
 export * from "./keyboard";
 export type * from "./keyboard.types";
 export * from "./mcp";
+export * from "./presence";
 export type * from "./sticker-library.types";
 export type * from "./storage.types";
 export * from "./links";

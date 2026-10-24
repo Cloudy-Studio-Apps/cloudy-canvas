@@ -7,11 +7,16 @@ export function HistoryControls() {
   const engine = useEngine();
   const canUndo = useEngineState((state) => state.canUndo);
   const canRedo = useEngineState((state) => state.canRedo);
+  // While following an agent, Undo and Redo are its own (`CanvasEngine.setHistoryTarget`).
+  const owner = useEngineState((state) => state.historyOwner);
+  const undoLabel = useEngineState((state) => state.undoLabel);
+  const redoLabel = useEngineState((state) => state.redoLabel);
 
   return (
     <>
       <ToolButton
-        label="Undo"
+        label={owner ? `Undo ${owner}'s change` : "Undo"}
+        description={undoLabel ?? undefined}
         shortcut={engine.keymap.label("undo")}
         side="bottom"
         disabled={!canUndo}
@@ -21,7 +26,8 @@ export function HistoryControls() {
         <Undo2 />
       </ToolButton>
       <ToolButton
-        label="Redo"
+        label={owner ? `Redo ${owner}'s change` : "Redo"}
+        description={redoLabel ?? undefined}
         shortcut={engine.keymap.label("redo")}
         side="bottom"
         disabled={!canRedo}

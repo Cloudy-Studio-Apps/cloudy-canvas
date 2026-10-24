@@ -1,11 +1,17 @@
 import type { AgentFile, AgentRecentFile, AgentTool, AgentToolGroup, ElementKinds } from "@canvas";
 import type { FontFamily } from "@shared/core";
 
-import type { DesignEngine } from "../design-engine.types";
+import type { DesignEngine, DesignWorkspace } from "../design-engine.types";
 import type { DesignToolOptions } from "../design-options.types";
 
-/** The design open in the window. Its layer tree is `engine.service(DESIGN_TREE)`. */
-export type AgentDesign = AgentFile<DesignEngine>;
+/**
+ * The design open in the window as an agent works on it: `engine` is the agent's own workspace
+ * (its page, selection and undo). Its layer tree is `engine.service(DESIGN_TREE)`.
+ */
+export type AgentDesign = AgentFile<DesignWorkspace>;
+
+/** The design open in the window with its engine (the user's), which gives each agent a workspace. */
+export type OpenDesign = AgentFile<DesignEngine>;
 
 /** What design tools can reach beyond the engine, implemented by the app. */
 export interface DesignAgentHost {
