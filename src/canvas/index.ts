@@ -168,4 +168,13 @@ export {
   SelectTool,
   selectAndEdit,
 } from "./tools";
-export { bytesToBase64, clamp, debounce, Emitter, identityKey, LruCache, Registry } from "./utils";
+export {
+  bytesToBase64,
+  clamp,
+  debounce,
+  Emitter,
+  identityKey,
+  LruCache,
+  prefersReducedMotion,
+  Registry,
+} from "./utils";

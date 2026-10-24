@@ -1,34 +1,30 @@
 import { useEffect, useState } from "react";
 
-import { drawFrame, type FrameElement } from "@design";
+import type { FrameElement } from "@design";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { notifyError } from "@shared/stores/toast-store";
+import { previewImagesOf } from "../preview/preview-images";
 
-/** The workspace the preview draws in, so the user's page never changes. */
-const WORKSPACE = "catalog:preview";
-
-/** A picture of a page frame at most `maxSide` pixels a side, `null` while it's drawn. */
+/**
+ * A picture of a page frame at most `maxSide` pixels a side, `null` while it's drawn; pictures
+ * drawn already (`previewImagesOf`) show at once.
+ */
 export function useFrameImage(frame: FrameElement | undefined, maxSide: number): string | null {
-  const engine = useDesignEngine();
-  const [url, setUrl] = useState<string | null>(null);
+  const images = previewImagesOf(useDesignEngine());
+  const known = frame ? images.known(frame, maxSide) : null;
+  const [drawn, setDrawn] = useState<{ frame: FrameElement; url: string } | null>(null);
 
   useEffect(() => {
-    if (!frame) return;
+    if (!frame || known) return;
     let current = true;
-    let made: string | null = null;
-    drawFrame(engine.workspace(WORKSPACE), frame, { maxSide })
-      .then((file) => {
-        if (!current) return;
-        made = URL.createObjectURL(file);
-        setUrl(made);
-      })
+    images
+      .load(frame, maxSide)
+      .then((url) => current && setDrawn({ frame, url }))
       .catch((error: unknown) => notifyError("The page couldn't be drawn", error));
     return () => {
       current = false;
-      setUrl(null);
-      if (made) URL.revokeObjectURL(made);
     };
-  }, [engine, frame, maxSide]);
+  }, [images, frame, maxSide, known]);
 
-  return url;
+  return known ?? (drawn && drawn.frame === frame ? drawn.url : null);
 }
