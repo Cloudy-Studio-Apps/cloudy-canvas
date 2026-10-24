@@ -5,3 +5,4 @@ export { CanvasDocument, LOCAL_ORIGIN, compareByIndex } from "./canvas-document"
 export { DocumentFeed } from "./document-feed";
 export { DocumentHistory } from "./document-history";
 export { actorDocument } from "./actor-document";
+export { ReadOnlyDocumentError } from "./read-only-error";

@@ -15,7 +15,8 @@ export const designReadTools: DesignAgentTool[] = [
       "description (set with set_design_info), file path, unsaved changes, the page you work on " +
       "(`currentPage`, yours: the user may be on another one; see list_pages), layer counts by " +
       "type on it, how many ruler guides it has (`guides`, see list_guides), the user's " +
-      "selection (`selection`) and yours (`yourSelection`), and your undo state. " +
+      "selection (`selection`) and yours (`yourSelection`), your undo state, and `editable` " +
+      "(false when the design is shared with the user to view only: then you can only read it). " +
       "Returns { open: false } when no design is open.",
     inputSchema: NO_ARGS,
     run: (host) => {
@@ -33,6 +34,7 @@ export const designReadTools: DesignAgentTool[] = [
         description,
         path: design.path,
         dirty: design.dirty,
+        editable: !engine.doc.isReadOnly,
         currentPage: engine.scope,
         nodeCount: engine.elements().length,
         nodesByType,

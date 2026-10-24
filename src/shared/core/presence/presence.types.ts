@@ -53,6 +53,11 @@ export interface CollaboratorState {
   activity: CollaboratorActivity | null;
 }
 
+/** The person someone else's agent works for (an agent in a live session). */
+export interface CollaboratorOwner {
+  name: string;
+}
+
 /** Someone else working on the user's files: an agent now, people in a shared room later. */
 export interface Collaborator {
   id: string;
@@ -64,6 +69,8 @@ export interface Collaborator {
   /** Its cursor's and ring's colour, as `#rrggbb`. */
   color: string;
   avatar: CollaboratorAvatar;
+  /** Set for another person's agent (a live session): it's drawn in their colour. */
+  owner?: CollaboratorOwner;
   permissions: CollaboratorPermissions;
   connectedAt: number;
   /** When it last did anything. */
@@ -76,7 +83,7 @@ export interface Collaborator {
 /** Who a collaborator is, when it joins (the rest starts empty). */
 export type CollaboratorIdentity = Pick<
   Collaborator,
-  "id" | "source" | "kind" | "name" | "color" | "avatar" | "permissions"
+  "id" | "source" | "kind" | "name" | "color" | "avatar" | "owner" | "permissions"
 >;
 
 /** Fields of a collaborator besides its state that a source updates as it works. */

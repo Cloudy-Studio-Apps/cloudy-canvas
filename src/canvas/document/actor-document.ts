@@ -1,4 +1,5 @@
 import type { CanvasDocument } from "./canvas-document";
+import { ReadOnlyDocumentError } from "./read-only-error";
 import type { ActorDocumentOptions } from "./actor-document.types";
 
 /** Methods that write: they run as the actor (its origin and placement). */
@@ -44,7 +45,8 @@ const ACTOR_HISTORY: Record<PropertyKey, (options: ActorDocumentOptions) => unkn
 /**
  * The document as one collaborator edits it (an agent): the same content, but its writes are
  * made as `actor` (`CanvasDocument.runAs`) and its undo methods are its own history's. It is a
- * `CanvasDocument`, so tools, services and `asUndoStep` work on it unchanged.
+ * `CanvasDocument`, so tools, services and `asUndoStep` work on it unchanged. On a read-only
+ * document its writes throw (`ReadOnlyDocumentError`) rather than do nothing.
  */
 export function actorDocument(doc: CanvasDocument, options: ActorDocumentOptions): CanvasDocument {
   return new Proxy(doc, {
@@ -54,10 +56,12 @@ export function actorDocument(doc: CanvasDocument, options: ActorDocumentOptions
       const value: unknown = Reflect.get(target, key, target);
       if (typeof value !== "function") return value;
       if (!ACTOR_WRITES.has(key)) return value.bind(target);
-      return (...args: unknown[]) =>
-        target.runAs(options.actor(), () =>
+      return (...args: unknown[]) => {
+        if (target.isReadOnly) throw new ReadOnlyDocumentError();
+        return target.runAs(options.actor(), () =>
           (value as (...a: unknown[]) => unknown).apply(target, args),
         );
+      };
     },
   });
 }

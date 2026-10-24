@@ -1,3 +1,4 @@
+import { collaboratorTitle } from "@shared/core";
 import { collaboratorIsIdle } from "@shared/stores/collaborators-store";
 import { DropdownMenuItem, DropdownMenuLabel } from "@shared/ui/components/ui/dropdown-menu";
 import { useNow } from "@shared/ui/hooks/use-now";
@@ -10,8 +11,13 @@ import type { CollaboratorListProps } from "./collaborator-list.types";
 const TICK_MS = 5_000;
 
 /** A menu's list of collaborators: what each one does and where; picking one follows it. */
-export function CollaboratorList({ kind, followable = false, actions }: CollaboratorListProps) {
-  const collaborators = useCollaborators(kind);
+export function CollaboratorList({
+  kind,
+  source,
+  followable = false,
+  actions,
+}: CollaboratorListProps) {
+  const collaborators = useCollaborators(kind, source);
   const { following, toggle } = useFollowToggle();
   const now = useNow(TICK_MS);
 
@@ -40,7 +46,7 @@ export function CollaboratorList({ kind, followable = false, actions }: Collabor
                 />
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="flex items-center gap-1.5 truncate text-sm">
-                    {collaborator.name}
+                    {collaboratorTitle(collaborator)}
                     {followed && <span className="text-xs text-primary">Following</span>}
                   </span>
                   <span className="truncate text-xs text-muted-foreground">

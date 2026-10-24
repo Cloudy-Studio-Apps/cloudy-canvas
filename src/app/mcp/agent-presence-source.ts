@@ -1,9 +1,10 @@
 import type { ActorWorkspace } from "@canvas";
-import type {
-  CollaboratorState,
-  McpMessageContext,
-  PresencePoint,
-  PresenceRect,
+import {
+  AGENT_SOURCE,
+  type CollaboratorState,
+  type McpMessageContext,
+  type PresencePoint,
+  type PresenceRect,
 } from "@shared/core";
 import { agentColor, agentName, identifyAgent } from "@shared/agent-server";
 import { COLLABORATOR_GONE_MS } from "@shared/stores/collaborators-store";
@@ -17,8 +18,6 @@ import type {
 import { workspaceState } from "./collaborator-state";
 import type { PresenceFile } from "./presence-file.types";
 import { trackAgentCall } from "./track-agent-call";
-
-const SOURCE = "agents";
 
 /**
  * Agents as collaborators (`PresenceSink`): who connected, the call each one runs, and from its
@@ -38,7 +37,7 @@ export function createAgentPresenceSource(
     const { client, name } = identifyAgent(clientName, userAgent);
     sink.join({
       id: key,
-      source: SOURCE,
+      source: AGENT_SOURCE,
       kind: "agent",
       name: agentName(
         name,
@@ -139,7 +138,11 @@ export function createAgentPresenceSource(
     leave,
     prune(now) {
       for (const c of all()) {
-        if (c.source === SOURCE && c.running === 0 && now - c.lastSeen >= COLLABORATOR_GONE_MS)
+        if (
+          c.source === AGENT_SOURCE &&
+          c.running === 0 &&
+          now - c.lastSeen >= COLLABORATOR_GONE_MS
+        )
           leave(c.id);
       }
     },

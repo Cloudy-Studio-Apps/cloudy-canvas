@@ -1,6 +1,7 @@
 import { Redo2, Undo2, X } from "lucide-react";
 
 import { CollaboratorAvatar, collaboratorPlaceText } from "@shared/collaborators";
+import { collaboratorTitle } from "@shared/core";
 import { useCollaboratorsStore } from "@shared/stores/collaborators-store";
 import { Button } from "@shared/ui/components/ui/button";
 import { cn } from "@shared/ui/lib/utils";
@@ -16,7 +17,8 @@ export function FollowBar({ collaborator, history }: FollowBarProps) {
   const engine = useEngine();
   // Below the rulers when they show.
   const rulers = useEngineState((state) => state.rulersShown) && engine.view.rulers;
-  const { name, color, state } = collaborator;
+  const { color, state } = collaborator;
+  const name = collaboratorTitle(collaborator);
   const place = collaboratorPlaceText(collaborator);
   const undoKey = engine.keymap.label("undo");
 

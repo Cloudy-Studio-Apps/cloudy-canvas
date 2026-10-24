@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 
+import { collaboratorTitle } from "@shared/core";
 import { collaboratorIsIdle } from "@shared/stores/collaborators-store";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@shared/ui/components/ui/tooltip";
 import { useNow } from "@shared/ui/hooks/use-now";
@@ -43,6 +44,7 @@ export function CollaboratorStack({
         const isFollowed = following === collaborator.id;
         const status = collaboratorStatusText(collaborator, now);
         const place = collaboratorPlaceText(collaborator);
+        const title = collaboratorTitle(collaborator);
         const hint = isFollowed ? "Click to stop following" : "Click to follow";
         const avatar = (
           <CollaboratorAvatar
@@ -67,7 +69,7 @@ export function CollaboratorStack({
                   )}
                   style={order}
                   aria-pressed={isFollowed}
-                  aria-label={`${collaborator.name}: ${status}. ${hint}`}
+                  aria-label={`${title}: ${status}. ${hint}`}
                   onClick={() => toggle(collaborator.id)}
                 >
                   {avatar}
@@ -77,14 +79,14 @@ export function CollaboratorStack({
                   tabIndex={0}
                   className={layer}
                   style={order}
-                  aria-label={`${collaborator.name}: ${status}`}
+                  aria-label={`${title}: ${status}`}
                 >
                   {avatar}
                 </span>
               )}
             </TooltipTrigger>
             <TooltipContent side={side} className="flex max-w-64 flex-col items-start gap-0.5">
-              <span className="font-medium">{collaborator.name}</span>
+              <span className="font-medium">{title}</span>
               <span className="text-xs opacity-80">{status}</span>
               {place && <span className="text-xs opacity-80">{place}</span>}
               {followable && <span className="text-xs opacity-60">{hint}</span>}

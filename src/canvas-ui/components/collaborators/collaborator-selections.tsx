@@ -1,3 +1,5 @@
+import { collaboratorTitle } from "@shared/core";
+
 import { useEngine } from "../../engine-context";
 import { useViewMapping } from "../../overlay";
 import { rectToScreen } from "./to-screen";
@@ -33,7 +35,7 @@ export function CollaboratorSelections() {
               className="absolute -top-5 -left-0.5 rounded-t-sm px-1.5 text-[11px] leading-5 font-medium whitespace-nowrap text-surface"
               style={{ background: collaborator.color }}
             >
-              {collaborator.name}
+              {collaboratorTitle(collaborator)}
             </span>
           )}
         </div>

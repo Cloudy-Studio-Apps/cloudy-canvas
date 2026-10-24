@@ -12,7 +12,8 @@ export const boardReadTools: BoardAgentTool[] = [
       "The board open in Cloudy Canvas: id, name (its title, or its file name), title and " +
       "description (set with set_board_info; read the description for what the board is " +
       "about), file path, unsaved changes, shape counts by type, the user's selection " +
-      "(`selection`) and yours (`yourSelection`), and your undo state. " +
+      "(`selection`) and yours (`yourSelection`), your undo state, and `editable` (false when " +
+      "the board is shared with the user to view only: then you can only read it). " +
       "Returns { open: false } when no board is open.",
     inputSchema: NO_ARGS,
     run: (host) => {
@@ -32,6 +33,7 @@ export const boardReadTools: BoardAgentTool[] = [
         description,
         path: board.path,
         dirty: board.dirty,
+        editable: !engine.doc.isReadOnly,
         shapeCount: engine.elements().length,
         shapesByType,
         selection: engine.userSelection(),

@@ -93,6 +93,7 @@ export {
   DocumentFeed,
   DocumentHistory,
   LOCAL_ORIGIN,
+  ReadOnlyDocumentError,
 } from "./document";
 export { ActorWorkspace, followEdit, showArea, withAspect } from "./workspace";
 export { HOST_ORIGIN, ShareGuest, ShareHost } from "./share";

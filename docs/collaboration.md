@@ -7,7 +7,7 @@ Cloudy Canvas lets people edit a board or a design together, live, without a syn
 - **The host decides:** each newcomer shows as a card ("Ana wants to join") with **Can edit**, **Can view** and **Deny**. In the Share dialog the host can change someone's role or remove them.
 - **When it ends:** the host presses **Stop sharing**, closes the file or quits the app. Every guest's editor closes with "The session ended", and nothing is left on their computer.
 
-Everyone sees the others' cursors, selections and pages, and can follow them (the avatars in the top bar). Each person's Ctrl+Z undoes only their own changes.
+Everyone sees the others' cursors, selections and pages, and can follow them (the avatars in the top bar). Each person's Ctrl+Z undoes only their own changes. Agents connected to anyone's app show too, with their app's logo ringed in their owner's colour and the owner's name ("Claude Code · Sleepy Puffin"); only their owner can undo their steps. A viewer's agent can read the file but not edit it.
 
 ## How it connects
 

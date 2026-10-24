@@ -1,4 +1,5 @@
 import { CollaboratorAvatar } from "@shared/collaborators";
+import { collaboratorTitle } from "@shared/core";
 import { cn } from "@shared/ui/lib/utils";
 import { useViewMapping } from "../../overlay";
 import { pointToScreen } from "./to-screen";
@@ -31,7 +32,7 @@ export function CollaboratorCursor({ collaborator, at, idle }: CollaboratorCurso
         style={{ borderColor: collaborator.color }}
       >
         <CollaboratorAvatar collaborator={{ ...collaborator, running: 0 }} className="border-0" />
-        <span className="shrink-0 font-medium">{collaborator.name}</span>
+        <span className="shrink-0 font-medium">{collaboratorTitle(collaborator)}</span>
         {activity && (
           <span
             className={cn(

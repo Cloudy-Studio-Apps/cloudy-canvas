@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@shared/ui/components/ui/dropdown-menu";
+import { AGENT_SOURCE } from "@shared/core";
 import { useAgentServerStore } from "@shared/stores/agent-server-store";
 import { CollaboratorList } from "@shared/collaborators";
 import { agentServerStatusText } from "./agent-server-status-text";
@@ -54,7 +55,12 @@ export function AgentServerMenu({
           {status.available && status.enabled && (
             <>
               <DropdownMenuSeparator />
-              <CollaboratorList kind="agent" followable={followable} actions={agentActions} />
+              <CollaboratorList
+                kind="agent"
+                source={AGENT_SOURCE}
+                followable={followable}
+                actions={agentActions}
+              />
               <DropdownMenuCheckboxItem
                 checked={showCollaborators}
                 onCheckedChange={setShowCollaborators}
