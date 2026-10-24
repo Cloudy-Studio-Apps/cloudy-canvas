@@ -1,6 +1,8 @@
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { Bot, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
-import { ExtensionIconView, ToolButton } from "@canvas-ui";
+import { CollaboratorUndoButton, ExtensionIconView, ToolButton } from "@canvas-ui";
+import { AgentServerMenu } from "@shared/agent-server";
+import { useAgentServerStore } from "@shared/stores/agent-server-store";
 import { DESIGN_LAYOUT } from "../../design-layout";
 import { useDesignPanelStore } from "../../stores/design-panel-store";
 import { useLeftTabs } from "../left-panel";
@@ -8,8 +10,8 @@ import { DesignMainMenu } from "./design-main-menu";
 
 /**
  * The strip along the left edge: the main menu, a button per left panel tab of the current mode
- * (`leftTabs`; with the panel closed, one opens it on that tab) and, at the bottom, the button that
- * opens or closes it.
+ * (`leftTabs`; with the panel closed, one opens it on that tab) and, at the bottom, the agents menu
+ * and the button that opens or closes the panel.
  */
 export function DesignRail() {
   const { tabs, current } = useLeftTabs();
@@ -17,6 +19,7 @@ export function DesignRail() {
   const open = useDesignPanelStore((state) => state.leftOpen);
   const setTab = useDesignPanelStore((state) => state.setLeftTab);
   const setOpen = useDesignPanelStore((state) => state.setLeftOpen);
+  const agentsEnabled = useAgentServerStore((state) => state.enabled);
 
   return (
     <nav
@@ -40,6 +43,21 @@ export function DesignRail() {
         </ToolButton>
       ))}
       <div className="flex-1" />
+      <AgentServerMenu
+        side="right"
+        align="end"
+        followable
+        agentActions={(agent) => <CollaboratorUndoButton collaborator={agent} />}
+        trigger={
+          <ToolButton
+            label={agentsEnabled ? "Agents: on" : "Agents: off"}
+            side="right"
+            className={agentsEnabled ? undefined : "text-muted-foreground"}
+          >
+            <Bot />
+          </ToolButton>
+        }
+      />
       <ToolButton
         label={open ? "Hide left panel" : "Show left panel"}
         side="right"

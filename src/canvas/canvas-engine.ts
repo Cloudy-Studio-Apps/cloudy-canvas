@@ -1407,7 +1407,9 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
       const { width, height } = entry.contentRect;
       this.camera.setViewport(width, height);
       this.renderer.resize(width, height);
-      this.requestRender();
+      // Resizing clears the canvas: drawing now, before the browser paints (observers run after
+      // layout), keeps it from showing a blank frame while a docked panel opens or closes.
+      this.frames.flush();
       this.viewChanges.emit();
     });
     resizeObserver.observe(container);

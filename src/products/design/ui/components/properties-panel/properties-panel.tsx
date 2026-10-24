@@ -1,7 +1,6 @@
-import { Bot, Download, PanelRightClose } from "lucide-react";
+import { PanelRightClose } from "lucide-react";
 
 import {
-  CollaboratorUndoButton,
   HistoryControls,
   ShareButton,
   ToolButton,
@@ -9,25 +8,19 @@ import {
   useEngineState,
   ZoomMenu,
 } from "@canvas-ui";
-import { AgentServerMenu } from "@shared/agent-server";
 import { CollaboratorStack } from "@shared/collaborators";
-import { useAgentServerStore } from "@shared/stores/agent-server-store";
-import { Button } from "@shared/ui/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@shared/ui/components/ui/tabs";
-import { useDesignEngine } from "../../design-engine-context";
 import { DESIGN_LAYOUT } from "../../design-layout";
 import { designEditor } from "../../modules";
 import { useDesignPanelStore } from "../../stores/design-panel-store";
 import { PropertySections } from "./property-sections";
 
 /**
- * The right panel: history, agents, export and the button that hides it, then the Design/Prototype
- * tabs and the zoom, or the active tool's sidebar (`toolSidebars`), or the current mode's
- * (`modeSidebars`).
+ * The right panel: history, collaborators, sharing and the button that hides it, then the
+ * Design/Prototype tabs and the zoom, or the active tool's sidebar (`toolSidebars`), or the current
+ * mode's (`modeSidebars`). Export is in the main menu's File, the context menus and its section.
  */
 export function PropertiesPanel() {
-  const engine = useDesignEngine();
-  const agentsEnabled = useAgentServerStore((state) => state.enabled);
   const tab = useDesignPanelStore((state) => state.propertiesTab);
   const setTab = useDesignPanelStore((state) => state.setPropertiesTab);
   const setOpen = useDesignPanelStore((state) => state.setRightOpen);
@@ -48,26 +41,9 @@ export function PropertiesPanel() {
     >
       <header className="flex h-12 items-center gap-0.5 border-b px-2">
         <HistoryControls />
-        <AgentServerMenu
-          followable
-          agentActions={(agent) => <CollaboratorUndoButton collaborator={agent} />}
-          trigger={
-            <ToolButton
-              label={agentsEnabled ? "Agents: on" : "Agents: off"}
-              side="bottom"
-              className={agentsEnabled ? undefined : "text-muted-foreground"}
-            >
-              <Bot />
-            </ToolButton>
-          }
-        />
         <CollaboratorStack followable className="ml-0.5" />
         <div className="flex-1" />
         <ShareButton product="design" look="button" />
-        <Button size="sm" variant="outline" onClick={() => engine.commands.export?.()}>
-          <Download />
-          Export
-        </Button>
         <ToolButton label="Hide properties panel" side="bottom" onClick={() => setOpen(false)}>
           <PanelRightClose />
         </ToolButton>

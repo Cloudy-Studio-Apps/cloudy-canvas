@@ -17,6 +17,14 @@ export class FrameScheduler {
     });
   }
 
+  /** Runs it now instead of on the next frame (dropping a pending request), if it's started. */
+  flush(): void {
+    if (!this.enabled) return;
+    cancelAnimationFrame(this.frame);
+    this.frame = 0;
+    this.callback();
+  }
+
   stop(): void {
     this.enabled = false;
     cancelAnimationFrame(this.frame);

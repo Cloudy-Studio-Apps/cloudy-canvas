@@ -23,6 +23,7 @@ import type { AgentServerMenuProps } from "./agent-server-menu.types";
 export function AgentServerMenu({
   trigger,
   align = "start",
+  side = "bottom",
   followable = false,
   agentActions,
 }: AgentServerMenuProps) {
@@ -37,7 +38,7 @@ export function AgentServerMenu({
     <>
       <DropdownMenu onOpenChange={(open) => open && status.refresh()}>
         <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
-        <DropdownMenuContent align={align} className="w-72">
+        <DropdownMenuContent side={side} align={align} className="w-72">
           <DropdownMenuLabel>Agents (MCP)</DropdownMenuLabel>
           <p className="px-2 pb-2 text-xs break-all text-muted-foreground">
             {agentServerStatusText(status.available, status.enabled, status.url)}
