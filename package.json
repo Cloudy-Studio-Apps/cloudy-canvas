@@ -14,6 +14,7 @@
     "release:arch": "tauri build --no-bundle && cd packaging/arch && makepkg -f",
     "release:win": "tauri build --runner cargo-xwin --target x86_64-pc-windows-msvc --bundles nsis",
     "release:win:native": "tauri build --bundles nsis msi",
+    "release:mac": "tauri build --target universal-apple-darwin --bundles app,dmg",
     "release:tag": "node scripts/release-tag.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",

@@ -57,8 +57,9 @@ pub fn run() {
             app_links::setup(app)?;
             Ok(())
         })
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application")
+        .run(open_files::on_run_event);
 }
 
 /// A second window for testing live sessions on one machine: debug builds with `CLOUDY_INSTANCE`.

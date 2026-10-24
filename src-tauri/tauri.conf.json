@@ -59,15 +59,29 @@
         "name": "Cloudy Canvas board",
         "description": "Cloudy Canvas board",
         "mimeType": "application/x-cloudy-canvas-board",
-        "role": "Editor"
+        "role": "Editor",
+        "contentTypes": ["com.darkredgm.cloudycanvas.board"],
+        "exportedType": {
+          "identifier": "com.darkredgm.cloudycanvas.board",
+          "conformsTo": ["public.data"]
+        }
       },
       {
         "ext": ["cdesign"],
         "name": "Cloudy Canvas design",
         "description": "Cloudy Canvas design",
         "mimeType": "application/x-cloudy-canvas-design",
-        "role": "Editor"
+        "role": "Editor",
+        "contentTypes": ["com.darkredgm.cloudycanvas.design"],
+        "exportedType": {
+          "identifier": "com.darkredgm.cloudycanvas.design",
+          "conformsTo": ["public.data"]
+        }
       }
-    ]
+    ],
+    "macOS": {
+      "signingIdentity": "-",
+      "minimumSystemVersion": "12.0"
+    }
   }
 }

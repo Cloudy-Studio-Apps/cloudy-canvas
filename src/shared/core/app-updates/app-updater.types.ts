@@ -1,5 +1,5 @@
 /**
- * How the app was installed: `installer` (Windows) and `appimage` replace themselves when they
+ * How the app was installed: `installer` (Windows, macOS) and `appimage` replace themselves when they
  * update; a `package` (.deb, pacman) is updated by downloading the new package.
  */
 export type InstallKind = "installer" | "appimage" | "package";

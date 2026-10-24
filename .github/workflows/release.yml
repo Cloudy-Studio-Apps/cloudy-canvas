@@ -1,7 +1,7 @@
 # Builds a release when a version tag is pushed (`pnpm release:tag 0.2.0` pushes `v0.2.0`).
 #
-# Everything lands in a DRAFT release: the Windows installer, the Ubuntu .deb, the AppImage, the
-# Arch package, the updater signatures and `latest.json`. Installed apps only see the update once
+# Everything lands in a DRAFT release: the Windows installer, the macOS disk image, the Ubuntu
+# .deb, the AppImage, the Arch package, the updater signatures and `latest.json`. Installed apps only see the update once
 # the draft is published on GitHub.
 #
 # Needs the repository secrets TAURI_SIGNING_PRIVATE_KEY and TAURI_SIGNING_PRIVATE_KEY_PASSWORD
@@ -61,11 +61,18 @@ jobs:
         include:
           - name: Windows
             os: windows-latest
-            bundles: nsis
+            args: --bundles nsis
+          # One universal app for Apple Silicon and Intel Macs. It's signed ad hoc
+          # (`bundle.macOS.signingIdentity`), not with an Apple certificate nor notarized, so
+          # Gatekeeper asks before its first launch (see the README).
+          - name: macOS
+            os: macos-latest
+            rust-targets: aarch64-apple-darwin,x86_64-apple-darwin
+            args: --target universal-apple-darwin --bundles app,dmg
           # The oldest supported Ubuntu, so the AppImage runs on more distros.
           - name: Linux
             os: ubuntu-22.04
-            bundles: deb,appimage
+            args: --bundles deb,appimage
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -87,6 +94,8 @@ jobs:
           cache: pnpm
 
       - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust-targets }}
 
       - uses: swatinem/rust-cache@v2
         with:
@@ -107,7 +116,7 @@ jobs:
           releaseId: ${{ needs.create-release.outputs.release-id }}
           includeUpdaterJson: true
           updaterJsonPreferNsis: true
-          args: --config src-tauri/tauri.release.conf.json --bundles ${{ matrix.bundles }}
+          args: --config src-tauri/tauri.release.conf.json ${{ matrix.args }}
 
   arch:
     name: Build (Arch Linux)

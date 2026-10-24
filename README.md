@@ -42,13 +42,28 @@ Get the latest build from [Releases](https://github.com/Cloudy-Studio-Apps/cloud
 | Platform             | File                                           | Install                                      |
 | -------------------- | ---------------------------------------------- | -------------------------------------------- |
 | Windows 10/11        | `Cloudy Canvas_<version>_x64-setup.exe`        | Run it                                       |
+| macOS 12+            | `Cloudy Canvas_<version>_universal.dmg`        | Open it, drag the app to Applications        |
 | Ubuntu / Debian      | `Cloudy Canvas_<version>_amd64.deb`            | `sudo apt install ./Cloudy*.deb`             |
 | Arch Linux / CachyOS | `cloudy-canvas-<version>-1-x86_64.pkg.tar.zst` | `sudo pacman -U cloudy-canvas-*.pkg.tar.zst` |
 | Linux (any distro)   | `Cloudy Canvas_<version>_amd64.AppImage`       | `chmod +x` it, then run it                   |
 
-The Windows and AppImage versions update themselves: when a new version is out, the app offers to install it. The `.deb` and Arch packages tell you about it and open the download page. Click the logo, or open **Settings › About**, to check by hand.
+The Windows, macOS and AppImage versions update themselves: when a new version is out, the app offers to install it. The `.deb` and Arch packages tell you about it and open the download page. Click the logo, or open **Settings › About**, to check by hand.
 
 Windows SmartScreen may warn about an unknown publisher because the installer isn't code-signed yet. Choose **More info › Run anyway**.
+
+### Opening it on macOS
+
+The macOS app runs natively on Apple Silicon and Intel Macs, but it isn't signed with an Apple Developer certificate or notarized yet, so macOS stops it the first time. After dragging it to **Applications**, either:
+
+- run this once in **Terminal**, then open the app as usual:
+
+  ```sh
+  xattr -dr com.apple.quarantine "/Applications/Cloudy Canvas.app"
+  ```
+
+- or open the app, close the warning, then go to **System Settings › Privacy & Security**, scroll to **Security** and click **Open Anyway** next to "Cloudy Canvas" (on macOS 14 and older, right-click the app › **Open** also works).
+
+If macOS says the app "is damaged and can't be opened", that's the same check: run the `xattr` command above. Later updates install from inside the app and don't ask again.
 
 ## Building from source
 
@@ -65,6 +80,12 @@ On every OS you need [Rust](https://rustup.rs) (stable) and Node.js 20+ with pnp
 ```sh
 sudo pacman -S --needed webkit2gtk-4.1 base-devel curl wget file openssl \
   appmenu-gtk-module libappindicator-gtk3 librsvg xdotool
+```
+
+**macOS:** the Xcode Command Line Tools (`xcode-select --install`, or the full Xcode). For the universal build (`pnpm release:mac`), add both Rust targets:
+
+```sh
+rustup target add aarch64-apple-darwin x86_64-apple-darwin
 ```
 
 For other systems, see [Tauri's prerequisites](https://v2.tauri.app/start/prerequisites/).
@@ -89,6 +110,7 @@ pnpm format         # Prettier (format:check to verify)
 | `pnpm release:win`        | A Windows installer, cross-built on Linux              | `src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/` |
 | `pnpm release`            | The AppImage and the Windows installer                 |                                                                |
 | `pnpm release:win:native` | NSIS and MSI installers, run **on Windows**            | `src-tauri/target/release/bundle/`                             |
+| `pnpm release:mac`        | A universal `.app` and `.dmg`, run **on macOS**        | `src-tauri/target/universal-apple-darwin/release/bundle/`      |
 
 <details>
 <summary>Cross-building the Windows installer on Linux</summary>
@@ -105,6 +127,8 @@ cargo install --locked cargo-xwin
 The first run downloads the Windows SDK, so it takes a while. Cross-building only makes the NSIS installer; build on Windows for an `.msi`.
 
 </details>
+
+The macOS app can't be cross-built from Linux or Windows: build it on a Mac, or let the release workflow build it on GitHub's macOS runner. It's signed ad hoc (`bundle.macOS.signingIdentity: "-"` in `tauri.conf.json`), which Apple Silicon needs to run it at all; signing with a Developer ID and notarizing would remove the first-launch warning.
 
 ### Project layout
 
@@ -132,7 +156,7 @@ Releases are built by GitHub Actions ([`.github/workflows/release.yml`](.github/
 pnpm release:tag 0.2.0   # writes the version, commits "Release v0.2.0", tags v0.2.0 and pushes
 ```
 
-The workflow builds the Windows installer, the `.deb`, the AppImage and the Arch package into a **draft** release, with the updater's signatures and `latest.json`. Review the notes and press **Publish**: installed apps then see the update.
+The workflow builds the Windows installer, the macOS disk image, the `.deb`, the AppImage and the Arch package into a **draft** release, with the updater's signatures and `latest.json`. Review the notes and press **Publish**: installed apps then see the update.
 
 One-time setup: create the updater's signing key with `pnpm tauri signer generate -w ~/.tauri/cloudy-canvas.key`, put the public key in `src-tauri/tauri.conf.json` (`plugins.updater.pubkey`), and add the private key and its password to the repository's Actions secrets as `TAURI_SIGNING_PRIVATE_KEY` and `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`. Keep a backup of the private key: without it, installed copies can't verify new updates.
 
