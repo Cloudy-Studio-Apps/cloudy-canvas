@@ -7,7 +7,12 @@ import {
 } from "@canvas";
 
 import { requireDesign, type DesignAgentTool } from "../../../agent";
-import { BROCHURE_COVERS, BROCHURE_LAYOUTS, type BrochureSettings } from "../brochure";
+import {
+  BROCHURE_ARRANGES,
+  BROCHURE_COVERS,
+  BROCHURE_LAYOUTS,
+  type BrochureSettings,
+} from "../brochure";
 import { exportBrochure } from "../export";
 import { BROCHURE_SCHEMA, readBrochure } from "./brochure-args";
 
@@ -22,7 +27,11 @@ export const brochureSettingsTools: DesignAgentTool[] = [
       "keep the back cover on the left or a spread frame starting on a left page), " +
       "`splitSpreads` (frames twice the page's width are spreads of two pages: in the PDF, two " +
       "pages or one wide one), `margin` (the safe area's inset in mm, which the checks read) and " +
-      "`dpi` (the exported PDF's resolution, 300 for print).",
+      "`dpi` (the exported PDF's resolution, 300 for print) and `arrange`, which lays the " +
+      "brochure's frames out on the canvas and keeps them so after every brochure edit " +
+      "(`below`: printed pages in a row by spread, the other options under each; `beside`: a " +
+      "spread per row, options to the side; `off`, the default, leaves them where they are); " +
+      "other layers in the way are moved up or down.",
     inputSchema: {
       type: "object",
       required: ["brochure"],
@@ -32,6 +41,7 @@ export const brochureSettingsTools: DesignAgentTool[] = [
         splitSpreads: { type: "boolean" },
         margin: { type: "number", minimum: 0 },
         dpi: { type: "number", minimum: 36, maximum: 600 },
+        arrange: { enum: BROCHURE_ARRANGES },
         brochure: BROCHURE_SCHEMA,
       },
     },
@@ -43,6 +53,7 @@ export const brochureSettingsTools: DesignAgentTool[] = [
       const splitSpreads = optionalBoolean(args, "splitSpreads");
       const margin = optionalNumber(args, "margin");
       const dpi = optionalNumber(args, "dpi");
+      const arrange = optionalChoice(args, "arrange", BROCHURE_ARRANGES);
       if (margin !== undefined && margin < 0) throw new Error('"margin" must be 0 or more.');
       if (dpi !== undefined && (dpi < 36 || dpi > 600)) throw new Error('"dpi" must be 36–600.');
       const patch: Partial<BrochureSettings> = {};
@@ -51,8 +62,32 @@ export const brochureSettingsTools: DesignAgentTool[] = [
       if (splitSpreads !== undefined) patch.splitSpreads = splitSpreads;
       if (margin !== undefined) patch.margin = margin;
       if (dpi !== undefined) patch.dpi = dpi;
+      if (arrange !== undefined) patch.arrange = arrange;
       brochure.setSettings(patch);
       return { settings: brochure.settings() };
+    },
+  },
+  {
+    name: "arrange_brochure",
+    description:
+      "Lays the brochure's frames out on the canvas once as its `arrange` setting says (`below` " +
+      "when it's off: the printed pages in a row by spread, each page's other options under it) " +
+      "and moves other layers in the way up or down, in one undo step. Returns how many layers " +
+      "moved (0 when it already was arranged).",
+    inputSchema: {
+      type: "object",
+      required: ["brochure"],
+      properties: { brochure: BROCHURE_SCHEMA },
+    },
+    run: (host, args) => {
+      const { engine } = requireDesign(host);
+      const moved = readBrochure(engine, args).arrange();
+      // Count the layers moved, not everything they hold.
+      const roots = [...moved.keys()].filter((id) => {
+        const parent = engine.doc.field(id, "parentId");
+        return typeof parent !== "string" || !moved.has(parent);
+      });
+      return { moved: roots.length };
     },
   },
   {

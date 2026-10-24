@@ -18,6 +18,8 @@ import {
 import { pruneBrochure, splitLegacyBrochure } from "./model";
 import { BrochureTab } from "./ui/brochure-tab/brochure-tab";
 import { BrochureOverlay } from "./ui/canvas/brochure-overlay";
+import { useArrangeGlide } from "./ui/hooks/use-arrange-glide";
+import { useArrangeOnEnter } from "./ui/hooks/use-arrange-on-enter";
 import { useCatalogCommands } from "./ui/hooks/use-catalog-commands";
 import { BrochurePreview } from "./ui/preview/brochure-preview";
 import { CatalogSidebar } from "./ui/sidebar/catalog-sidebar";
@@ -81,5 +83,13 @@ export const catalogModule = defineModule({
       { id: "catalog.preview", component: BrochurePreview },
     );
     host.contribute(designEditor.sessionHooks, { id: "catalog.commands", use: useCatalogCommands });
+    host.contribute(designEditor.sessionHooks, {
+      id: "catalog.arrange-glide",
+      use: useArrangeGlide,
+    });
+    host.contribute(designEditor.sessionHooks, {
+      id: "catalog.arrange-on-enter",
+      use: useArrangeOnEnter,
+    });
   },
 });

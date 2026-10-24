@@ -29,6 +29,7 @@ export type * from "./workspace";
 export type { EngineLoading } from "./engine-loading.types";
 export type { EngineState } from "./engine-state.types";
 export type {
+  CaptureAreaOptions,
   ExportArea,
   ExportBackground,
   ExportFormat,
@@ -183,4 +184,5 @@ export {
   LruCache,
   prefersReducedMotion,
   Registry,
+  whenIdle,
 } from "./utils";

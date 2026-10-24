@@ -36,12 +36,14 @@
 ### Task 1: The `arrange` setting
 
 **Files:**
+
 - Modify: `src/products/design/modules/catalog/brochure/brochure.types.ts`
 - Modify: `src/products/design/modules/catalog/brochure/brochure.defaults.ts`
 - Modify: `src/products/design/modules/catalog/brochure/brochure.constants.ts` (add `BROCHURE_ARRANGES`, next to `BROCHURE_LAYOUTS`/`BROCHURE_COVERS`)
 - Modify: `src/products/design/modules/catalog/brochure/index.ts`
 
 **Interfaces:**
+
 - Produces: `type BrochureArrange = "off" | "below" | "beside"`; `BrochureSettings.arrange: BrochureArrange`; `BROCHURE_ARRANGES: readonly BrochureArrange[]`; default `arrange: "off"`.
 
 - [ ] **Step 1:** Add `BrochureArrange` with a doc comment: `off` leaves the canvas alone; `below`: printed pages on one row left to right (grouped by spread), each page's other options stacked under it; `beside`: printed pages in one column top to bottom (a spread per row), options out to the side (left page's to the left, the others' to the right). Add `arrange` to `BrochureSettings` (comment: kept up after every edit of the brochure while not `off`).
@@ -51,6 +53,7 @@
 ### Task 2: Pure layout of the brochure's frames
 
 **Files:**
+
 - Create: `src/products/design/modules/catalog/model/arrange/arrange.constants.ts`
 - Create: `src/products/design/modules/catalog/model/arrange/arrange.types.ts`
 - Create: `src/products/design/modules/catalog/model/arrange/arrange-blocks.ts`
@@ -58,6 +61,7 @@
 - Create: `src/products/design/modules/catalog/model/arrange/index.ts`
 
 **Interfaces:**
+
 - Consumes: `BookLayout`, `BookSide`, `BrochurePage` (`model/`), `BrochureArrange` (Task 1), `Point`, `Rect` from `@canvas`.
 - Produces:
   - `ARRANGE_GAPS = { spine: 0, spread: 160, option: 80 } as const` (world units; pages of one spread touch at the spine, spreads 160 apart, options 80 from the page and from each other).
@@ -73,10 +77,12 @@
 ### Task 3: Pure push-aside of other layers
 
 **Files:**
+
 - Create: `src/products/design/modules/catalog/model/arrange/push-aside.ts`
 - Modify: `src/products/design/modules/catalog/model/arrange/arrange.types.ts`, `index.ts`
 
 **Interfaces:**
+
 - Produces:
   - `interface ArrangeObstacle { id: string; rect: Rect }`
   - `pushAside(area: Rect, obstacles: readonly ArrangeObstacle[], gap: number): Map<string, Point>` — offsets (dx always 0) for the obstacles to move.
@@ -87,12 +93,14 @@
 ### Task 4: Arranging in the document and in `DesignBrochure`
 
 **Files:**
+
 - Create: `src/products/design/modules/catalog/model/arrange/arrange-brochure.ts`
 - Modify: `src/products/design/modules/catalog/model/design-brochure.ts`
 - Modify: `src/products/design/modules/catalog/model/design-brochures.ts`
 - Modify: `src/products/design/modules/catalog/model/index.ts`
 
 **Interfaces:**
+
 - Consumes: Tasks 1–3; `withDescendants`, `childrenByParent` (`core/tree/tree-members.ts`, via the design barrel), `isDesignNode`, `rotatedBounds` from `@canvas`, `Emitter` from `@canvas`.
 - Produces:
   - `arrangeBrochure(doc: CanvasDocument, brochure: BrochureElement, layout: BookLayout, pages: readonly BrochurePage[]): Map<string, Point>` — writes the moves (`doc.updateMany`, no checkpoint) and returns every moved node's offset (frames, pushed layers and all their descendants; the offset applied, as a `Point` `{ x: dx, y: dy }`).
@@ -107,6 +115,7 @@
 ### Task 5: The move glide in the canvas engine
 
 **Files:**
+
 - Create: `src/canvas/render/move-glide.ts`
 - Modify: `src/canvas/render/element-view.ts` (a glide offset applied where `placeScaled` places the view)
 - Modify: `src/canvas/render/layers/element-layer.ts` (glides map + `tick`)
@@ -114,6 +123,7 @@
 - Modify: `src/canvas/canvas-engine.ts` (public `animateMoves`, requesting frames like `animateIn`)
 
 **Interfaces:**
+
 - Produces:
   - `MOVE_GLIDE = { durationMs: 280 }`; `moveGlideAt(elapsed: number): number | null` — the share of the offset still to cover at `elapsed` ms: `(1 − t)³` for `t = elapsed / durationMs` (easeOutCubic), `null` once `t ≥ 1`.
   - `ElementView.setGlide(dx: number, dy: number): void`
@@ -127,6 +137,7 @@
 ### Task 6: Catalog UI — setting, Arrange button, glide hook
 
 **Files:**
+
 - Create: `src/products/design/modules/catalog/ui/sidebar/arrange-fields.tsx`
 - Create: `src/products/design/modules/catalog/ui/hooks/use-arrange-glide.ts`
 - Modify: `src/products/design/modules/catalog/ui/sidebar/brochure-settings-section.tsx` (render `<ArrangeFields />` after `<LayoutFields />`)
@@ -134,6 +145,7 @@
 - Modify: `src/products/design/modules/catalog/catalog.module.ts` (session hook `catalog.arrange-glide`)
 
 **Interfaces:**
+
 - Consumes: `BROCHURE_ARRANGES`, `DesignBrochure.arrange()`, `setSettings({ arrange })`, `DesignBrochures.onArranged`, `engine.animateMoves`.
 
 - [ ] **Step 1: `ArrangeFields`.** A `SettingSelect` labelled "Arrange on canvas" with choices `off` "Off", `below` "Options below each page", `beside` "Options beside each page" (`SettingChoice<BrochureArrange>[]`), writing `brochure?.setSettings({ arrange })`; under it a small secondary `Button` "Arrange now" (disabled without a brochure or pages) calling `brochure.arrange()`. Sharp styling per the design system (`rounded-md`, semantic tokens).
@@ -144,10 +156,12 @@
 ### Task 7: Agents and docs
 
 **Files:**
+
 - Modify: `src/products/design/modules/catalog/agent/brochure-settings.agent-tools.ts`
 - Modify: `CLAUDE.md` (Catalog mode paragraph; canvas engine: `animateMoves` next to `ctx.animateIn`)
 
 **Interfaces:**
+
 - Consumes: `BROCHURE_ARRANGES`, `DesignBrochure.arrange()`.
 
 - [ ] **Step 1:** `set_brochure_settings`: add `arrange: { enum: BROCHURE_ARRANGES }`, read with `optionalChoice`, and a sentence in the description: "`arrange` lays the brochure's frames out on the canvas and keeps them so after every brochure edit (`below`: printed pages in a row by spread, other options under each; `beside`: a spread per row, options to the side; `off`, the default, leaves them where they are); other layers in the way are moved up or down."

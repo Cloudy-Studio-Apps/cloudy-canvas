@@ -1,5 +1,10 @@
 export type * from "./brochure.types";
-export { BROCHURE_COVERS, BROCHURE_LAYOUTS, BROCHURE_TYPE } from "./brochure.constants";
+export {
+  BROCHURE_ARRANGES,
+  BROCHURE_COVERS,
+  BROCHURE_LAYOUTS,
+  BROCHURE_TYPE,
+} from "./brochure.constants";
 export { BROCHURE_DEFAULTS } from "./brochure.defaults";
 export { createBrochure } from "./brochure.factory";
 export { BrochureKind } from "./brochure.kind";

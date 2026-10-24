@@ -1,8 +1,11 @@
+export type * from "./arrange/arrange.types";
 export type * from "./book-layout.types";
+export type * from "./design-brochure.types";
 export type * from "./brochure-pages.types";
 export type * from "./page-pictures.types";
 export type * from "./paper-size.types";
 export { brochurePages } from "./brochure-pages";
+export { ARRANGE_GAPS, arrangeBrochure } from "./arrange";
 export { bookLayout } from "./book-layout";
 export { currentBrochure, ensureBrochure } from "./current-brochure";
 export { DesignBrochure } from "./design-brochure";

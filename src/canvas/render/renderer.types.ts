@@ -24,4 +24,6 @@ export interface CaptureOptions {
   scale: number;
   /** A 0xRRGGBB fill. */
   background: number;
+  /** Draws dimmed elements (`setFaded`) as they are, not dimmed. */
+  unfaded?: boolean;
 }

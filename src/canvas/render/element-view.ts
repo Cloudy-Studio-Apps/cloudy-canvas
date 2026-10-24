@@ -71,6 +71,8 @@ export class ElementView extends Container {
   private mirrored = false;
   private entranceScale = 1;
   private entranceAlpha = 1;
+  /** How far from its place the view is drawn while it glides there (see `setGlide`). */
+  private glide = { x: 0, y: 0 };
   private faded = false;
   /** Clipped to nothing (what a hidden parent holds), or drawn by another element. */
   private clippedAway = false;
@@ -134,6 +136,13 @@ export class ElementView extends Container {
     this.entranceScale = scale;
     this.entranceAlpha = alpha;
     this.applyAlpha();
+    this.placeScaled();
+  }
+
+  /** Draws the view this far from its place, while it glides there after a move (0 when done). */
+  setGlide(dx: number, dy: number): void {
+    if (dx === this.glide.x && dy === this.glide.y) return;
+    this.glide = { x: dx, y: dy };
     this.placeScaled();
   }
 
@@ -506,7 +515,10 @@ export class ElementView extends Container {
     const center = rotatePoint({ x: w / 2, y: h / 2 }, origin, this.turn);
     const scaled = rotatePoint({ x: (w * s) / 2, y: (h * s) / 2 }, origin, this.turn);
     const edge = this.mirrored ? rotatePoint({ x: w * s, y: 0 }, origin, this.turn) : origin;
-    this.position.set(x + center.x - scaled.x + edge.x, y + center.y - scaled.y + edge.y);
+    this.position.set(
+      x + center.x - scaled.x + edge.x + this.glide.x,
+      y + center.y - scaled.y + edge.y + this.glide.y,
+    );
   }
 
   /** A world point in the view's own (unturned, unscaled) coordinates. */

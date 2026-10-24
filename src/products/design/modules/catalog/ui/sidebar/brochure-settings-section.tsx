@@ -4,6 +4,7 @@ import { brochurePageSize, paperSize } from "@design";
 import { NumberField, PanelSection, PropertyGrid } from "@design/ui/components/panel";
 import { useBrochure } from "../hooks/use-brochure";
 import { useCatalogViewStore } from "../stores/catalog-view-store";
+import { ArrangeFields } from "./arrange-fields";
 import { LayoutFields } from "./layout-fields";
 import { SettingSelect } from "./setting-select";
 import { Toggle } from "./toggle";
@@ -16,8 +17,8 @@ const DPI_CHOICES = [
 ] as const;
 
 /**
- * How the brochure prints: its page count and size, how it's bound (`LayoutFields`), its margin
- * and resolution, and whether the margins show on the canvas.
+ * How the brochure prints: its page count and size, how it's bound (`LayoutFields`), how its
+ * frames sit on the canvas (`ArrangeFields`), its margin and resolution, and whether the margins show on the canvas.
  */
 export function BrochureSettingsSection() {
   const { brochure, pages, layout, settings } = useBrochure();
@@ -40,6 +41,7 @@ export function BrochureSettingsSection() {
       </p>
       <div className="mt-2.5 flex flex-col gap-2">
         <LayoutFields />
+        <ArrangeFields />
         <PropertyGrid>
           <NumberField
             prefix={<Ruler className="size-3.5" />}

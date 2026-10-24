@@ -1,4 +1,4 @@
-import type { CanvasDocument, ElementPatch } from "@canvas";
+import type { CanvasDocument, ElementPatch, Point } from "@canvas";
 
 import {
   BROCHURE_DEFAULTS,
@@ -8,10 +8,12 @@ import {
   type BrochureSlot,
 } from "../brochure";
 import type { FrameElement } from "../../frame";
+import { arrangeBrochure, type ArrangeMode } from "./arrange";
 import { bookLayout } from "./book-layout";
 import type { BookLayout } from "./book-layout.types";
 import { brochurePages } from "./brochure-pages";
 import type { BrochurePage } from "./brochure-pages.types";
+import type { ArrangedListener } from "./design-brochure.types";
 import {
   addOption,
   addPages,
@@ -29,11 +31,14 @@ import {
  * edits its pages and settings: each edit is one undo step. Frames are kept by id; deleted ones
  * are pruned with their deletion (`pruneBrochure`). Reads go to the document each time, so a
  * handle never holds stale data; once its record is gone it reads as empty and writes nothing.
+ * While its `arrange` setting isn't `off`, every edit also lays its frames out on the canvas in the
+ * same undo step (`arrangeBrochure`), and what moved is reported to `onArranged`.
  */
 export class DesignBrochure {
   constructor(
     private readonly doc: CanvasDocument,
     readonly id: string,
+    private readonly onArranged: ArrangedListener = () => {},
   ) {}
 
   /** The record, or `undefined` once it's deleted. */
@@ -131,6 +136,31 @@ export class DesignBrochure {
     this.write({ settings });
   }
 
+  /**
+   * Lays the frames out once as the `arrange` setting says (`below` while it's `off`), pushing
+   * other layers out of the way, in one undo step. Returns what moved (empty when it already was).
+   */
+  arrange(): ReadonlyMap<string, Point> {
+    const record = this.record();
+    if (!record) return new Map();
+    const mode = record.settings.arrange === "off" ? "below" : record.settings.arrange;
+    this.doc.checkpoint();
+    let moved = new Map<string, Point>();
+    this.doc.batch(() => {
+      moved = this.arrangeAs(mode);
+    });
+    if (moved.size > 0) this.onArranged(moved);
+    return moved;
+  }
+
+  /**
+   * Lays the frames out again when the `arrange` setting is on (frames may have moved outside the
+   * Catalog mode), in one undo step; nothing while it's off. Returns what moved.
+   */
+  keepArranged(): ReadonlyMap<string, Point> {
+    return this.settings().arrange === "off" ? new Map() : this.arrange();
+  }
+
   private writeSlots(edit: (slots: readonly BrochureSlot[]) => BrochureSlot[]): void {
     const current = this.record()?.slots ?? [];
     const slots = edit(current);
@@ -141,6 +171,20 @@ export class DesignBrochure {
   private write(patch: ElementPatch<BrochureElement>): void {
     if (!this.record()) return;
     this.doc.checkpoint();
-    this.doc.update(this.id, patch);
+    let moved = new Map<string, Point>();
+    this.doc.batch(() => {
+      this.doc.update(this.id, patch);
+      const { arrange } = this.settings();
+      if (arrange !== "off") moved = this.arrangeAs(arrange);
+    });
+    if (moved.size > 0) this.onArranged(moved);
+  }
+
+  /** Lays the frames out as `mode` says, without a checkpoint (see `arrangeBrochure`). */
+  private arrangeAs(mode: ArrangeMode): Map<string, Point> {
+    const record = this.record();
+    if (!record) return new Map();
+    const pages = brochurePages(this.doc, record);
+    return arrangeBrochure(this.doc, record, bookLayout(pages, record.settings), pages, mode);
   }
 }

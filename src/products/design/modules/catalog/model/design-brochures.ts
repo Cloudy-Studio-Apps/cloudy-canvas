@@ -1,4 +1,10 @@
-import { defineService, DocumentFeed, type CanvasDocument, type ElementPatch } from "@canvas";
+import {
+  defineService,
+  DocumentFeed,
+  type CanvasDocument,
+  type ElementPatch,
+  type Point,
+} from "@canvas";
 import { createId } from "@shared/core";
 
 import {
@@ -9,6 +15,7 @@ import {
   type BrochureElement,
 } from "../brochure";
 import { DesignBrochure } from "./design-brochure";
+import type { ArrangedListener } from "./design-brochure.types";
 
 /**
  * The design's brochures, each on one design page (a page can hold several), and the only place
@@ -20,6 +27,7 @@ import { DesignBrochure } from "./design-brochure";
 export class DesignBrochures {
   private readonly feed: DocumentFeed;
   private readonly handles = new Map<string, DesignBrochure>();
+  private readonly arranged = new Set<ArrangedListener>();
 
   constructor(private readonly doc: CanvasDocument) {
     // Renamed or redrawn frames change what the pages show, so every change counts.
@@ -29,6 +37,12 @@ export class DesignBrochures {
   subscribe = (listener: () => void): (() => void) => this.feed.subscribe(listener);
 
   getVersion = (): number => this.feed.getVersion();
+
+  /** Listens for the frames and layers any of its brochures' arranges move (for their glide). */
+  onArranged = (listener: ArrangedListener): (() => void) => {
+    this.arranged.add(listener);
+    return () => this.arranged.delete(listener);
+  };
 
   /** Every brochure's record, in order (or only a design page's). */
   records(page?: string): BrochureElement[] {
@@ -90,7 +104,8 @@ export class DesignBrochures {
     const copy = {
       ...createBrochure(this.doc.nextIndex(), source.page, `${source.name} copy`),
       slots: source.slots.map((slot) => ({ ...slot, id: createId() })),
-      settings: { ...source.settings },
+      // Off, so the copy doesn't lay the frames it shares with the source out its own way.
+      settings: { ...source.settings, arrange: "off" as const },
       openedAt: Date.now(),
     };
     this.doc.checkpoint();
@@ -122,10 +137,14 @@ export class DesignBrochures {
   private handle(id: string): DesignBrochure {
     let handle = this.handles.get(id);
     if (!handle) {
-      handle = new DesignBrochure(this.doc, id);
+      handle = new DesignBrochure(this.doc, id, (moved) => this.emitArranged(moved));
       this.handles.set(id, handle);
     }
     return handle;
+  }
+
+  private emitArranged(moved: ReadonlyMap<string, Point>): void {
+    for (const listener of this.arranged) listener(moved);
   }
 
   /** "Brochure N", one past the highest numbered brochure of the page ("Brochure" for the first). */

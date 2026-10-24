@@ -1,4 +1,12 @@
-import { BookOpen, FileDown, Hand, ListChecks, MousePointer2, Play } from "lucide-react";
+import {
+  BookOpen,
+  FileDown,
+  Hand,
+  LayoutGrid,
+  ListChecks,
+  MousePointer2,
+  Play,
+} from "lucide-react";
 
 import { CATALOG_COMMANDS, CATALOG_PICK_TOOL, CATALOG_TOOL } from "@design";
 import { FloatingPanel, PanelDivider, ToolButton, useEditorMode } from "@canvas-ui";
@@ -8,13 +16,14 @@ import { useBrochure } from "../hooks/use-brochure";
 
 /**
  * The Catalog mode's toolbar (its `modes` entry's, in place of the main one): selecting pages,
- * the hand, picking frames, the preview, the PDF and Done.
+ * the hand, picking frames, arranging them, the preview, the PDF and Done.
  */
 export function CatalogModeToolbar() {
   const engine = useDesignEngine();
   const mode = useEditorMode();
   const tool = useDesignState((state) => state.tool);
-  const pages = useBrochure().pages.length;
+  const { brochure, pages: list } = useBrochure();
+  const pages = list.length;
 
   return (
     <FloatingPanel role="toolbar" aria-label="Catalog mode" aria-orientation="horizontal">
@@ -47,6 +56,14 @@ export function CatalogModeToolbar() {
         onClick={() => engine.runHostAction(CATALOG_COMMANDS.pick)}
       >
         <ListChecks />
+      </ToolButton>
+      <ToolButton
+        label="Arrange pages and options"
+        description="Lay the pages out on one line by spread, with their options as the brochure's Arrange setting says (below them while it's off)."
+        disabled={pages === 0}
+        onClick={() => brochure?.arrange()}
+      >
+        <LayoutGrid />
       </ToolButton>
       <ToolButton
         label="Preview"

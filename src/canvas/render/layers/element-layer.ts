@@ -1,10 +1,11 @@
 import { Container } from "pixi.js";
 
 import type { CanvasElement, ElementKinds } from "../../elements";
-import type { Rect } from "../../geometry.types";
+import type { Point, Rect } from "../../geometry.types";
 import type { HiddenText } from "../element-view.types";
 import { ElementView } from "../element-view";
 import { entranceAt } from "../entrance";
+import { MOVE_GLIDE, moveGlideAt } from "../move-glide";
 import type { ImageTextures, ImageUse } from "../image-cache.types";
 import { DEFAULT_PLACEMENT, homeOf, NO_EFFECTS, NO_MASKS, scopeHome } from "../layer-placement";
 import type {
@@ -41,6 +42,11 @@ export class ElementLayer extends Container {
   private textResolution = 1;
   /** Elements playing their entrance, with when it started. */
   private readonly entrances = new Map<string, number>();
+  /**
+   * Elements gliding to where they moved: how far from it they started, how far along they are
+   * (ms, advanced by drawn frames, see `MOVE_GLIDE.maxStepMs`) and when they were last advanced.
+   */
+  private readonly glides = new Map<string, { from: Point; elapsed: number; last: number }>();
 
   constructor(
     private readonly kinds: ElementKinds,
@@ -63,6 +69,7 @@ export class ElementLayer extends Container {
       this.views.get(id)?.destroy({ children: true });
       this.views.delete(id);
       this.entrances.delete(id);
+      this.glides.delete(id);
     }
     /** Views that are new or moved in the drawing order. */
     const moved = new Set<ElementView>();
@@ -156,8 +163,39 @@ export class ElementLayer extends Container {
     }
   }
 
-  /** Advances the entrances to `now`. Returns whether some are still playing. */
+  /**
+   * Has these elements glide to where they just moved, by their offsets (those this layer doesn't
+   * draw are ignored); one already gliding goes on from where it's drawn now.
+   */
+  animateMoves(offsets: ReadonlyMap<string, Point>, now: number): void {
+    for (const [id, offset] of offsets) {
+      const view = this.views.get(id);
+      if (!view) continue;
+      const running = this.glides.get(id);
+      const share = running ? (moveGlideAt(running.elapsed) ?? 0) : 0;
+      const left = running
+        ? { x: running.from.x * share, y: running.from.y * share }
+        : { x: 0, y: 0 };
+      const from = { x: left.x - offset.x, y: left.y - offset.y };
+      this.glides.set(id, { from, elapsed: 0, last: now });
+      view.setGlide(from.x, from.y);
+    }
+  }
+
+  /** Advances the entrances and glides to `now`. Returns whether some are still playing. */
   tick(now: number): boolean {
+    for (const [id, glide] of this.glides) {
+      const view = this.views.get(id);
+      glide.elapsed += Math.min(Math.max(0, now - glide.last), MOVE_GLIDE.maxStepMs);
+      glide.last = now;
+      const share = view ? moveGlideAt(glide.elapsed) : null;
+      if (share !== null) {
+        view?.setGlide(glide.from.x * share, glide.from.y * share);
+        continue;
+      }
+      view?.setGlide(0, 0);
+      this.glides.delete(id);
+    }
     for (const [id, start] of this.entrances) {
       const view = this.views.get(id);
       const look = view ? entranceAt(now - start) : null;
@@ -168,7 +206,16 @@ export class ElementLayer extends Container {
       view?.setEntrance(1, 1);
       this.entrances.delete(id);
     }
-    return this.entrances.size > 0;
+    return this.entrances.size > 0 || this.glides.size > 0;
+  }
+
+  /**
+   * Shows every view at rest for a capture: no glide offset, no entrance scale. The next `tick`
+   * puts the ones still playing back where they were.
+   */
+  settle(): void {
+    for (const id of this.glides.keys()) this.views.get(id)?.setGlide(0, 0);
+    for (const id of this.entrances.keys()) this.views.get(id)?.setEntrance(1, 1);
   }
 
   /** Dims these elements (those this layer doesn't draw are ignored); an empty list clears it. */

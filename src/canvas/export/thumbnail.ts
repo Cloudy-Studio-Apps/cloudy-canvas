@@ -1,6 +1,6 @@
 import { unionRects } from "../geometry";
 import type { Rect } from "../geometry.types";
-import { canvasBlob } from "./canvas-blob";
+import { encodeImage } from "./encode-worker";
 import type { ThumbnailHost, ThumbnailOptions } from "./thumbnail.types";
 
 /** Space around the content, as a share of the picture. */
@@ -25,7 +25,7 @@ export async function renderThumbnail(
   const room = 1 - THUMBNAIL_MARGIN * 2;
   const scale = Math.min((width * room) / content.w, (height * room) / content.h, MAX_SCALE);
   const canvas = host.capture(framed(content, width / scale, height / scale), scale);
-  return canvasBlob(canvas, "image/jpeg", JPEG_QUALITY);
+  return encodeImage(canvas, "image/jpeg", JPEG_QUALITY);
 }
 
 /** A `w` × `h` rect centered on the content. */

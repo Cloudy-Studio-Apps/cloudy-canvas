@@ -13,3 +13,4 @@ export { base64ToBytes, bytesToBase64 } from "./base64";
 export { LruCache } from "./lru-cache";
 export { identityKey } from "./identity-key";
 export { prefersReducedMotion } from "./reduced-motion";
+export { whenIdle } from "./when-idle";

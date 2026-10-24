@@ -4,7 +4,7 @@ import "pixi.js/advanced-blend-modes";
 
 import type { Camera } from "../camera";
 import type { CanvasElement, ElementKinds } from "../elements";
-import type { Rect } from "../geometry.types";
+import type { Point, Rect } from "../geometry.types";
 import type { CanvasLinks, Guide } from "../links";
 import type { SnapFeedback } from "../snapping";
 import { prefersReducedMotion } from "../utils";
@@ -60,6 +60,8 @@ export class Renderer {
   private readonly guide = new GuideLayer();
   private readonly grid: GridLayer;
   private readonly world = new Container();
+  /** What's dimmed (`setFaded`), so a capture can draw it undimmed and put it back. */
+  private faded: string[] = [];
   private readonly rulerGuides = new RulerGuideLayer();
   private rulerGuidesView: RulerGuidesView | null = null;
   private readonly overlay = new OverlayLayer();
@@ -192,6 +194,14 @@ export class Renderer {
     this.frames.animateIn(ids, now);
   }
 
+  /** Has elements an edit just moved glide there from where they were, unless motion is reduced. */
+  animateMoves(offsets: ReadonlyMap<string, Point>): void {
+    if (prefersReducedMotion() || offsets.size === 0) return;
+    const now = performance.now();
+    this.elements.animateMoves(offsets, now);
+    this.frames.animateMoves(offsets, now);
+  }
+
   /** Shows an element that isn't in the document yet, above the others; `null` clears it. */
   setDraft(el: CanvasElement | null): void {
     this.draft.show(el);
@@ -206,6 +216,7 @@ export class Renderer {
   /** Dims these elements, e.g. the strokes an eraser is about to remove; an empty list clears it. */
   setFaded(ids: Iterable<string>): void {
     const list = [...ids];
+    this.faded = list;
     this.elements.setFaded(list);
     this.frames.setFaded(list);
   }
@@ -296,7 +307,7 @@ export class Renderer {
    * and no images loaded, so it costs about a frame. Text keeps the resolution of the current
    * zoom. The next `render` puts the camera, culling and effect scale back.
    */
-  captureView(rect: Rect, { scale, background }: CaptureOptions): HTMLCanvasElement {
+  captureView(rect: Rect, { scale, background, unfaded }: CaptureOptions): HTMLCanvasElement {
     const { x, y } = this.world.position;
     const zoom = this.world.scale.x;
     this.world.position.set(0, 0);
@@ -307,6 +318,13 @@ export class Renderer {
     this.frames.setEffectScale(1);
     this.elements.cull(rect);
     this.frames.cull(rect);
+    // At rest: gliding and popping views are put back by the next frame's tick.
+    this.elements.settle();
+    this.frames.settle();
+    if (unfaded) {
+      this.elements.setFaded([]);
+      this.frames.setFaded([]);
+    }
     try {
       return this.app.renderer.extract.canvas({
         target: this.world,
@@ -320,6 +338,10 @@ export class Renderer {
       this.world.scale.set(zoom);
       this.draft.visible = true;
       this.guide.visible = true;
+      if (unfaded) {
+        this.elements.setFaded(this.faded);
+        this.frames.setFaded(this.faded);
+      }
     }
   }
 

@@ -21,6 +21,14 @@ export type BrochureLayout = "book" | "single";
 /** Which covers a book has: pages that stand alone, the front on the right, the back on the left. */
 export type BrochureCovers = "both" | "front" | "back" | "none";
 
+/**
+ * How the brochure's frames are laid out on the canvas: `off` leaves them where they are; `below`,
+ * the printed pages in one row left to right (grouped by spread) with each page's other options
+ * stacked under it; `beside`, a spread per row top to bottom with the options out to the side (a
+ * left page's to the left, the others' to the right).
+ */
+export type BrochureArrange = "off" | "below" | "beside";
+
 /** How the brochure prints. */
 export interface BrochureSettings {
   layout: BrochureLayout;
@@ -32,6 +40,11 @@ export interface BrochureSettings {
   margin: number;
   /** Pixels per inch of the exported PDF's pages. */
   dpi: number;
+  /**
+   * How its frames are laid out on the canvas, kept up after every edit of the brochure while
+   * not `off` (other layers in the way are moved up or down).
+   */
+  arrange: BrochureArrange;
 }
 
 /**

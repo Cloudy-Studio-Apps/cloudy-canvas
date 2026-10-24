@@ -34,9 +34,11 @@ import {
   type ReorderDirection,
 } from "./elements";
 import {
+  encodeImage,
   exportElements,
   hasRows,
   renderThumbnail,
+  type CaptureAreaOptions,
   type ExportArea,
   type ExportHost,
   type ExportOptions,
@@ -781,6 +783,26 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     );
   }
 
+  /**
+   * A JPEG of a world area exactly as the scope on screen shows it (everything drawn there, at
+   * rest), drawn from the views already built like `thumbnail` (about a frame, nothing rebuilt)
+   * and encoded off the UI thread; `null` before the canvas can draw. Elements of other scopes
+   * aren't in it: draw those with `exportElements`.
+   */
+  captureArea(
+    rect: Rect,
+    { scale, unfaded, quality = 0.85 }: CaptureAreaOptions,
+  ): Promise<Blob | null> {
+    if (!this.rendererReady) return Promise.resolve(null);
+    const canvas = this.renderer.captureView(rect, {
+      scale,
+      background: this.exportHost.background,
+      unfaded,
+    });
+    this.requestRender();
+    return encodeImage(canvas, "image/jpeg", quality);
+  }
+
   /** Whether an area holds elements that export as CSV (e.g. tables). */
   canExportCsv(area: ExportArea): boolean {
     return hasRows(this.exportHost, { area });
@@ -1216,6 +1238,15 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     if (bounds) this.camera.fitRect(bounds);
     else this.camera.reset();
     this.onCameraChange();
+  }
+
+  /**
+   * Has elements an edit just moved glide to their new place from where they were: `offsets` are
+   * how far each moved (ids not on screen are ignored; nothing with reduced motion).
+   */
+  animateMoves(offsets: ReadonlyMap<string, Point>): void {
+    this.renderer.animateMoves(offsets);
+    this.requestRender();
   }
 
   /** Fits the selection in the view, zooming past 100% if it's small (Figma's Shift+2). */
