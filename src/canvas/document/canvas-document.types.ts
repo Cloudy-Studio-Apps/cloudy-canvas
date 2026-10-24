@@ -33,6 +33,8 @@ export interface EditedChange {
   removed: readonly CanvasElement[];
   /** The fields that changed, by element id, with the values they had before (not added ones). */
   before: ReadonlyMap<string, Readonly<Record<string, unknown>>>;
+  /** The token records (variables, collections) written or removed. */
+  tokens: ReadonlySet<string>;
 }
 
 /**

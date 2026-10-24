@@ -24,3 +24,4 @@ export { resolveTree } from "./resolve-tree";
 export { treeUndrawn } from "./tree-undrawn";
 export { selectionRoots, wrapNodes } from "./wrap-nodes";
 export * from "./move";
+export { DESIGN_TOKEN_CONTEXT } from "./design-token-context";

@@ -1,5 +1,9 @@
 import {
+  type BindableField,
   BoxKind,
+  normalizeAngle,
+  type ResolvedValue,
+  type TokenScope,
   type ElementBuildContext,
   type ElementClip,
   type ElementDescription,
@@ -42,6 +46,14 @@ import { NODE_DEFAULTS } from "./node.defaults";
 import { FIXED_SIZING } from "./node-layout";
 import type { LayoutAxis, LayoutSizing } from "./node-layout.types";
 import { NODE_STYLE_FIELDS, nodeStylePatch } from "./node-style";
+import { fittedBindings } from "./fitted-bindings";
+import {
+  effectBindable,
+  numberField,
+  paintBindable,
+  sizeLimitFields,
+  strokeSideFields,
+} from "./node-bindable";
 
 const NO_EFFECTS: readonly NodeEffect[] = [];
 
@@ -85,7 +97,79 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
 
   /** The pasted look as it can show it (no fills on a line, no strokes on a text). */
   override applyStyle(el: E, style: ElementStyle): ElementPatch<E> {
-    return nodeStylePatch(this, super.applyStyle(el, style));
+    const pasted = super.applyStyle(el, style);
+    const fitted = nodeStylePatch(this, pasted);
+    return { ...fitted, ...fittedBindings(el, style, pasted, fitted) };
+  }
+
+  /**
+   * Whether a turn is stored in its `rotation` (a line turns its ends instead, a group its
+   * children), so a variable can drive it.
+   */
+  readonly storesRotation: boolean = true;
+
+  /** The scope its fills' colors belong to besides every fill's (frames' and texts' differ). */
+  readonly fillScope: TokenScope = "shape-fill";
+
+  /**
+   * What variables can drive on every node: its paints' and effects' colors, opacity, size and
+   * size limits, stroke weights and turn. Kinds add theirs (a corner radius, a font size).
+   */
+  override bindable(el: E): BindableField[] {
+    return [
+      ...(this.fillable ? paintBindable(el.fills, "fills", ["all-fills", this.fillScope]) : []),
+      ...(this.strokable ? paintBindable(el.strokes, "strokes", ["stroke-color"]) : []),
+      ...effectBindable(el),
+      numberField("opacity", "opacity", "Opacity"),
+      ...(this.resizable
+        ? [numberField("w", "width-height", "Width"), numberField("h", "width-height", "Height")]
+        : []),
+      ...sizeLimitFields(el),
+      ...(this.strokable ? [numberField("strokeWeight", "stroke-weight", "Stroke weight")] : []),
+      ...(this.strokable ? strokeSideFields(el) : []),
+      ...(this.rotatable && this.storesRotation && !this.childHost
+        ? [numberField("rotation", "other-number", "Rotation")]
+        : []),
+    ];
+  }
+
+  /** Values clamped as the panel clamps them. */
+  override bindValues(el: E, path: string, value: ResolvedValue): Record<string, unknown> {
+    if (value.type === "number") {
+      const n = value.number;
+      if (path === "opacity") return { opacity: Math.min(1, Math.max(0, n)) };
+      if (path === "w" || path === "h") return { [path]: Math.max(1, n) };
+      if (path === "rotation") return { rotation: normalizeAngle(n) };
+      if (path === "strokeWeight" || path.startsWith("strokeWeights.")) {
+        return { [path]: Math.max(0, n) };
+      }
+    }
+    return super.bindValues(el, path, value);
+  }
+
+  /** A size resizes it, a turn turns it round its corner, a side's stroke sets the widest. */
+  override bindPatch(el: E, path: string, value: ResolvedValue): ElementPatch<E> | null {
+    const values = this.bindValues(el, path, value);
+    const n = values[path];
+    if (typeof n === "number") {
+      if (path === "w" || path === "h") {
+        // A bound side is fixed: an auto layout hugging or filling it would fight the variable.
+        const rect = path === "w" ? { w: n, h: el.h } : { w: el.w, h: n };
+        const resized = this.resize(el, { x: el.x, y: el.y, ...rect });
+        const axis = path === "w" ? "h" : "v";
+        return { ...resized, ...this.sizingPatch({ ...el, ...resized }, axis, "fixed") };
+      }
+      if (path === "rotation") {
+        return this.rotate(el, n - (el.rotation ?? 0), { x: el.x, y: el.y });
+      }
+      if (path.startsWith("strokeWeights.") && el.strokeWeights) {
+        const side = path.slice("strokeWeights.".length);
+        const sides = { ...el.strokeWeights, [side]: n };
+        const widest = Math.max(sides.top, sides.right, sides.bottom, sides.left);
+        return { strokeWeights: sides, strokeWeight: widest } as ElementPatch<E>;
+      }
+    }
+    return super.bindPatch(el, path, value);
   }
 
   /**

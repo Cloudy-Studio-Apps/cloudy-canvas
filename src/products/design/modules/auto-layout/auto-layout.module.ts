@@ -24,6 +24,8 @@ const COMMANDS = [
 export const autoLayoutModule = defineModule({
   id: "auto-layout",
   requires: ["core", "frame"],
+  // Variables first: a bound size or padding is written before the layout reads it.
+  after: ["variables"],
   register(host) {
     host.contribute(designCanvas.afterEdit, relayoutAfterEdit);
     host.contribute(designCanvas.onMoved, (doc, moved, _elements, kinds) =>

@@ -50,8 +50,15 @@ export const nodeEditTools: DesignAgentTool[] = [
         return { id, patch: patch as Record<string, unknown> };
       });
       const patches = agentPatches(engine, updates);
+      const bound = new Map([...patches.keys()].map((id) => [id, engine.doc.get(id)?.bindings]));
       asUndoStep(engine.doc, () => engine.doc.updateMany(patches));
-      return { updated: [...patches.keys()] };
+      // Fields bound to variables that the patch wrote are unlinked by the token sync.
+      const unlinked = [...bound].flatMap(([id, before]) => {
+        const after = engine.doc.get(id)?.bindings ?? {};
+        const paths = Object.keys(before ?? {}).filter((path) => !(path in after));
+        return paths.length > 0 ? [{ id, paths }] : [];
+      });
+      return { updated: [...patches.keys()], ...(unlinked.length > 0 ? { unlinked } : {}) };
     },
   },
   {

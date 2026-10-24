@@ -105,7 +105,7 @@ export type FramesHook<O extends object> = (
  */
 export type EditElementHook<O extends object> = (el: CanvasElement, ctx: ToolContext<O>) => boolean;
 
-/** See `CanvasProduct.afterEdit`; only one module may give it. */
+/** See `CanvasProduct.afterEdit`; several modules may give one: they run in module order. */
 export type AfterEditHook<O extends object> = (
   doc: CanvasDocument,
   change: EditedChange,

@@ -13,7 +13,8 @@ import {
 import { layoutOf, layoutPatch, type AutoLayout, type DesignNode } from "@design";
 import {
   NodeCheckbox,
-  NodeNumberField,
+  BindableNumberField,
+  BindSlot,
   NodeOptionButtons,
   NumberField,
   PanelIconButton,
@@ -56,7 +57,11 @@ export function AutoLayoutFields({ frames }: AutoLayoutFieldsProps) {
         for (const side of sides) next[side] = n;
         return layoutPatch(node, { padding: next });
       });
-    return <NumberField prefix={prefix} label={label} min={0} value={value} onCommit={commit} />;
+    return (
+      <BindSlot nodes={frames} path={sides.map((side) => `layout.padding.${side}`)}>
+        <NumberField prefix={prefix} label={label} min={0} value={value} onCommit={commit} />
+      </BindSlot>
+    );
   };
 
   return (
@@ -84,7 +89,8 @@ export function AutoLayoutFields({ frames }: AutoLayoutFieldsProps) {
                 Auto gap
               </span>
             ) : (
-              <NodeNumberField
+              <BindableNumberField
+                path="layout.gap"
                 {...field("gap")}
                 label="Gap between layers"
                 prefix={
@@ -106,7 +112,8 @@ export function AutoLayoutFields({ frames }: AutoLayoutFieldsProps) {
             </PanelIconButton>
           </div>
           {first.wrap && (
-            <NodeNumberField
+            <BindableNumberField
+              path="layout.counterGap"
               {...field("counterGap")}
               label="Gap between lines"
               prefix={<BetweenHorizontalStart />}

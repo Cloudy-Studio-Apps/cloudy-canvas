@@ -4,6 +4,10 @@ import { rectContainsPoint } from "../geometry";
 import { normalizeAngle, rotatePoint } from "../rotation";
 import type { Point, Rect, Size } from "../geometry.types";
 import type { ElementView } from "../render/element-view";
+import { pathRoot, readParent, setPathsPatch } from "../tokens/binding-path";
+import type { BindableField } from "../tokens/binding.types";
+import { splitTokenColor } from "../tokens/token-color";
+import type { ResolvedValue } from "../tokens/token.types";
 import { ELEMENT_DEFAULTS } from "./element.defaults";
 import { scaleRect } from "./element-scale";
 import type { ScaleTransform } from "./element-scale.types";
@@ -248,13 +252,47 @@ export abstract class ElementKind<
     return {};
   }
 
-  /** Its look, for Copy properties: its `styleFields`. Empty when it has none. */
+  /** The fields of the element a variable can drive (see `BindableField`). None by default. */
+  bindable(_el: E): BindableField[] {
+    return [];
+  }
+
+  /**
+   * The stored values a variable's value gives the field at `path` (paths → values; a color
+   * also sets its paint's `opacity` from its alpha). The token sync writes them and checks them:
+   * a field that no longer holds them was set by hand, and is unlinked.
+   */
+  bindValues(el: E, path: string, value: ResolvedValue): Record<string, unknown> {
+    // A style sets the fields it holds (kinds pick the ones they take).
+    if (value.type === "style") return { ...value.value };
+    if (value.type === "number") return { [path]: value.number };
+    const { hex, alpha } = splitTokenColor(value.color);
+    const parent = readParent(el, path);
+    if (path.endsWith(".color") && typeof parent?.opacity === "number") {
+      return { [path]: hex, [`${path.slice(0, -".color".length)}.opacity`]: alpha };
+    }
+    return { [path]: alpha < 1 ? value.color : hex };
+  }
+
+  /**
+   * The patch that writes `bindValues` (`null` when the path isn't there). Kinds whose fields
+   * have consequences override it (a size goes through `resize`, a text lays itself out again).
+   */
+  bindPatch(el: E, path: string, value: ResolvedValue): ElementPatch<E> | null {
+    return setPathsPatch(el, this.bindValues(el, path, value)) as ElementPatch<E> | null;
+  }
+
+  /** Its look, for Copy properties: its `styleFields`, with the variables bound to them. */
   styleOf(el: E): ElementStyle {
     const style: Record<string, unknown> = {};
     const fields = el as unknown as Record<string, unknown>;
     for (const field of this.styleFields) {
       if (fields[field] !== undefined) style[field] = structuredClone(fields[field]);
     }
+    const bindings = Object.entries(el.bindings ?? {}).filter(([path]) =>
+      this.styleFields.includes(pathRoot(path)),
+    );
+    if (bindings.length > 0) style.bindings = Object.fromEntries(bindings);
     return style;
   }
 
@@ -263,11 +301,13 @@ export abstract class ElementKind<
    * whose layout follows their look add what follows (e.g. a text's new size); empty when nothing
    * applies.
    */
-  applyStyle(_el: E, style: ElementStyle): ElementPatch<E> {
+  applyStyle(el: E, style: ElementStyle): ElementPatch<E> {
     const patch: Record<string, unknown> = {};
     for (const field of this.styleFields) {
       if (style[field] !== undefined) patch[field] = structuredClone(style[field]);
     }
+    const bindings = pastedBindings(el, style, Object.keys(patch));
+    if (bindings) patch.bindings = bindings;
     return patch as ElementPatch<E>;
   }
 
@@ -280,6 +320,27 @@ export abstract class ElementKind<
   restyle(_el: E, _options: Partial<O>): ElementPatch<E> {
     return {};
   }
+}
+
+/**
+ * An element's bindings after Paste properties replaced the fields `replaced`: theirs dropped, the
+ * copied element's for them added; `null` when nothing changes.
+ */
+export function pastedBindings(
+  el: CanvasElement,
+  style: ElementStyle,
+  replaced: readonly string[],
+): Record<string, string> | null {
+  const copied = style.bindings as Record<string, string> | undefined;
+  const own = el.bindings ?? {};
+  if (!copied && !Object.keys(own).some((path) => replaced.includes(pathRoot(path)))) return null;
+  const next = Object.fromEntries(
+    Object.entries(own).filter(([path]) => !replaced.includes(pathRoot(path))),
+  );
+  for (const [path, id] of Object.entries(copied ?? {})) {
+    if (replaced.includes(pathRoot(path))) next[path] = id;
+  }
+  return next;
 }
 
 /** To 1/100 of a unit: turned corners land between pixels, but not on float noise. */

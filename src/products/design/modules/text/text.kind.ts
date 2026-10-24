@@ -1,4 +1,6 @@
 import {
+  type BindableField,
+  type ResolvedValue,
   normalizePath,
   runsForText,
   scaleLength,
@@ -24,8 +26,10 @@ import {
   type LayoutSizing,
   type NodeBuildContext,
   type NodeGeometry,
+  numberField,
 } from "../core";
 import { TEXT_DEFAULTS } from "./text.defaults";
+import { readTextStyle, TEXT_STYLE, TEXT_STYLE_PATH } from "./text-style";
 import { retypeset } from "./retypeset";
 import { TEXT_SPEC_PROPERTIES, textFields } from "./text-args";
 import { createText } from "./text.factory";
@@ -39,6 +43,15 @@ import type { TextNodeElement } from "./text.types";
 /** Longest layer name a text takes from its content. */
 const NAME_LENGTH = 60;
 
+/** The bindable fields whose change lays the text out again. */
+const TYPOGRAPHY_PATHS = new Set([
+  "fontSize",
+  "lineHeight",
+  "letterSpacing",
+  "fontWeight",
+  TEXT_STYLE_PATH,
+]);
+
 /**
  * Text layers: typed in place, in any installed or Google font, sized to their text (auto width
  * or height) or fixed, with ranges styled their own way (`runs`). Named after their first line
@@ -51,6 +64,56 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
   override readonly tool = "text";
   override readonly defaults = TEXT_DEFAULTS;
   override readonly strokable = false;
+  override readonly fillScope = "text-fill";
+
+  /** Its type's size, line height, letter spacing and weight. */
+  override bindable(el: TextNodeElement): BindableField[] {
+    return [
+      ...super.bindable(el),
+      numberField("fontSize", "font-size", "Font size"),
+      numberField("lineHeight", "line-height", "Line height"),
+      numberField("letterSpacing", "letter-spacing", "Letter spacing"),
+      numberField("fontWeight", "font-weight", "Font weight"),
+      {
+        path: TEXT_STYLE_PATH,
+        type: "style",
+        styleType: TEXT_STYLE,
+        scopes: [],
+        label: "Text style",
+      },
+    ];
+  }
+
+  override bindValues(
+    el: TextNodeElement,
+    path: string,
+    value: ResolvedValue,
+  ): Record<string, unknown> {
+    // A text style sets the typography it holds.
+    if (value.type === "style")
+      return value.styleType === TEXT_STYLE ? readTextStyle(value.value) : {};
+    if (value.type === "number") {
+      const n = value.number;
+      if (path === "fontSize") return { fontSize: Math.max(1, n) };
+      if (path === "lineHeight") return { lineHeight: Math.max(0, n) };
+      // Weights are stored as their CSS names ("400").
+      if (path === "fontWeight") {
+        return { fontWeight: String(Math.min(900, Math.max(100, Math.round(n / 100) * 100))) };
+      }
+    }
+    return super.bindValues(el, path, value);
+  }
+
+  /** Typography laid out again, as any change of it is. */
+  override bindPatch(
+    el: TextNodeElement,
+    path: string,
+    value: ResolvedValue,
+  ): ElementPatch<TextNodeElement> | null {
+    const patch = super.bindPatch(el, path, value);
+    if (!patch || !TYPOGRAPHY_PATHS.has(path)) return patch;
+    return retypeset(el, patch);
+  }
   override readonly creatable = true;
   override readonly specProperties = TEXT_SPEC_PROPERTIES;
   override readonly styleFields = [

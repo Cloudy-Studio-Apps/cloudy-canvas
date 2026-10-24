@@ -4,6 +4,7 @@ import { PropertyGrid } from "@design/ui/components/panel";
 import type { EffectEditorProps } from "@design/ui/modules";
 import type { LayerBlurEffect } from "../../effect.types";
 import { EffectChoice, ScrubField } from "../fields";
+import { EffectBind } from "../effect-bind";
 
 const KINDS = [
   { value: "uniform", label: "Uniform" },
@@ -39,13 +40,15 @@ export function LayerBlurEditor({ effect, onChange }: EffectEditorProps<LayerBlu
         onChange={(kind) => set({ progressive: kind === "progressive" })}
       />
       <PropertyGrid>
-        <ScrubField
-          prefix={<Droplet />}
-          label="Blur"
-          min={0}
-          value={effect.radius}
-          onChange={(radius, info) => set({ radius }, info)}
-        />
+        <EffectBind field="radius">
+          <ScrubField
+            prefix={<Droplet />}
+            label="Blur"
+            min={0}
+            value={effect.radius}
+            onChange={(radius, info) => set({ radius }, info)}
+          />
+        </EffectBind>
         {effect.progressive && (
           <ScrubField
             prefix={<MoveRight />}

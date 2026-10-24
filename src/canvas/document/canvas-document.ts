@@ -2,6 +2,8 @@ import * as Y from "yjs";
 import { generateKeyBetween, generateNKeysBetween } from "fractional-indexing";
 
 import type { CanvasElement, ElementKinds, ElementPatch } from "../elements";
+import { isTokenRecord } from "../tokens/is-token-record";
+import type { TokenRecord } from "../tokens/token.types";
 import type {
   AfterEdit,
   DocumentActor,
@@ -36,6 +38,10 @@ export class CanvasDocument {
   private readonly assets: Y.Map<Uint8Array>;
   /** The document's own title and description (`DocumentMeta`), undoable like elements. */
   private readonly metaMap: Y.Map<string>;
+  /** Variables and their collections (`TokenRecord`s) by id, undoable like elements. */
+  private readonly tokensMap: Y.Map<unknown>;
+  /** Bumps on every change to `tokensMap`, whoever makes it (see `tokensVersion`). */
+  private tokensRevision = 0;
   /** What `add` does to new elements first (see `setPlacement`). */
   private placement: Placement | null = null;
   /** Who the edits running now are by (see `runAs`): the local user unless an actor is set. */
@@ -52,6 +58,7 @@ export class CanvasDocument {
   private edited = new Set<string>();
   private removedSince: CanvasElement[] = [];
   private beforeSince = new Map<string, Record<string, unknown>>();
+  private tokensSince = new Set<string>();
   /**
    * Elements as last read, by id (`null`: a type that isn't registered), dropped when they change,
    * so a change to a few elements doesn't read the whole document again. Shared by every reader:
@@ -77,6 +84,7 @@ export class CanvasDocument {
     this.elements = doc.getMap<ElementMap>("shapes");
     this.assets = doc.getMap<Uint8Array>("assets");
     this.metaMap = doc.getMap<string>("meta");
+    this.tokensMap = doc.getMap<unknown>("tokens");
     this.history = this.createHistory(LOCAL_ORIGIN);
     // Undo, redo and remote updates change maps without going through this class's writes.
     doc.on("beforeObserverCalls", this.forgetChanged);
@@ -139,7 +147,7 @@ export class CanvasDocument {
 
   /** A new undo history recording only the edits made with `origin` (see `runAs`). */
   createHistory(origin: symbol): DocumentHistory {
-    return new DocumentHistory([this.elements, this.metaMap], origin);
+    return new DocumentHistory([this.elements, this.metaMap, this.tokensMap], origin);
   }
 
   /**
@@ -151,6 +159,7 @@ export class CanvasDocument {
     this.edited.clear();
     this.removedSince = [];
     this.beforeSince.clear();
+    this.tokensSince.clear();
   }
 
   /**
@@ -282,6 +291,65 @@ export class CanvasDocument {
     const handler = () => listener();
     this.metaMap.observe(handler);
     return () => this.metaMap.unobserve(handler);
+  }
+
+  // ── Tokens ──────────────────────────────────────────────────────────
+
+  /** Every variable and collection stored (records this version doesn't understand are skipped). */
+  tokenRecords(): TokenRecord[] {
+    const records: TokenRecord[] = [];
+    this.tokensMap.forEach((value) => {
+      if (isTokenRecord(value)) records.push(value);
+    });
+    return records;
+  }
+
+  tokenRecord(id: string): TokenRecord | undefined {
+    const value = this.tokensMap.get(id);
+    return isTokenRecord(value) ? value : undefined;
+  }
+
+  /** Stores records (replacing those with the same ids): an edit like any other (undo, `afterEdit`). */
+  setTokenRecords(records: readonly TokenRecord[]): void {
+    this.transact(() => {
+      for (const record of records) {
+        this.tokensMap.set(record.id, record);
+        if (this.afterEdit) this.tokensSince.add(record.id);
+      }
+      // At once, not when observers run: the token sync reads them in this same edit.
+      this.tokensRevision++;
+    });
+  }
+
+  removeTokenRecords(ids: Iterable<string>): void {
+    this.transact(() => {
+      for (const id of ids) {
+        if (!this.tokensMap.has(id)) continue;
+        this.tokensMap.delete(id);
+        if (this.afterEdit) this.tokensSince.add(id);
+      }
+      this.tokensRevision++;
+    });
+  }
+
+  /** `setTokenRecords` outside the undo history (bringing an older file's tokens up to date). */
+  setTokenRecordsUntracked(records: readonly TokenRecord[]): void {
+    this.run(() => {
+      for (const record of records) this.tokensMap.set(record.id, record);
+      this.tokensRevision++;
+    }, UI_ORIGIN);
+  }
+
+  /** Fires with the ids of the records that changed (local edits, undo, redo, remote updates). */
+  observeTokens(listener: (changed: ReadonlySet<string>) => void): () => void {
+    const handler = (event: Y.YMapEvent<unknown>) => listener(new Set(event.keysChanged));
+    this.tokensMap.observe(handler);
+    return () => this.tokensMap.unobserve(handler);
+  }
+
+  /** Changes whenever any token record does, for caches built from them. */
+  tokensVersion(): number {
+    return this.tokensRevision;
   }
 
   // ── History (the local user's changes only, see `history`) ──────────
@@ -444,11 +512,19 @@ export class CanvasDocument {
     const afterEdit = this.afterEdit;
     if (!afterEdit || this.deferred > 0) return;
     for (let pass = 0; pass < AFTER_EDIT_PASSES; pass++) {
-      if (this.edited.size === 0 && this.removedSince.length === 0) return;
-      const change = { updated: this.edited, removed: this.removedSince, before: this.beforeSince };
+      if (this.edited.size === 0 && this.removedSince.length === 0 && this.tokensSince.size === 0) {
+        return;
+      }
+      const change = {
+        updated: this.edited,
+        removed: this.removedSince,
+        before: this.beforeSince,
+        tokens: this.tokensSince,
+      };
       this.edited = new Set();
       this.removedSince = [];
       this.beforeSince = new Map();
+      this.tokensSince = new Set();
       this.depth++;
       try {
         afterEdit(this, change);
@@ -459,6 +535,7 @@ export class CanvasDocument {
     this.edited.clear();
     this.removedSince = [];
     this.beforeSince.clear();
+    this.tokensSince.clear();
   }
 
   /** The element with this id as last read (`null`: none, or a type that isn't registered). */
@@ -480,6 +557,9 @@ export class CanvasDocument {
 
   /** Drops the cached reads of the elements a transaction changed. */
   private readonly forgetChanged = (transaction: Y.Transaction): void => {
+    // Undo, redo and remote updates change the tokens without `setTokenRecords`.
+    const tokens: unknown = this.tokensMap;
+    if ([...transaction.changed.keys()].some((type) => type === tokens)) this.tokensRevision++;
     const elements: unknown = this.elements;
     for (const [type, keys] of transaction.changed) {
       if (type === elements) {

@@ -16,6 +16,8 @@ export interface PaintFieldProps {
   target?: GradientEditTarget;
   /** The edited layer's size (one layer selected), for copying a gradient as CSS. */
   size?: Size;
+  /** Where its color is stored (`"fills.0.color"`), so a solid paint can use a color variable. */
+  bindPath?: string;
 }
 
 export interface PaintSwatchProps {

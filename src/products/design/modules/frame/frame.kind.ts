@@ -1,4 +1,6 @@
 import {
+  type BindableField,
+  type ResolvedValue,
   boxSidesStroke,
   type BoxSides,
   type PathShape,
@@ -29,6 +31,8 @@ import {
   type LayoutAxis,
   type NodeBuildContext,
   type NodeGeometry,
+  layoutFields,
+  numberField,
 } from "../core";
 import { createFrame } from "./frame.factory";
 import { FRAME_PRESETS, findPreset, presetSize } from "./frame-presets";
@@ -47,6 +51,30 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
   override readonly container = true;
   override readonly styleFields = [...NODE_STYLE_FIELDS, "cornerRadius"];
   override readonly sidedStrokes = true;
+  override readonly fillScope = "frame-fill";
+
+  /** Its corner radius, and its auto layout's gaps and padding. */
+  override bindable(el: FrameElement): BindableField[] {
+    return [
+      ...super.bindable(el),
+      numberField("cornerRadius", "corner-radius", "Corner radius"),
+      ...(el.layout ? layoutFields() : []),
+    ];
+  }
+
+  override bindValues(
+    el: FrameElement,
+    path: string,
+    value: ResolvedValue,
+  ): Record<string, unknown> {
+    if (
+      value.type === "number" &&
+      (path === "cornerRadius" || path.startsWith("layout.padding."))
+    ) {
+      return { [path]: Math.max(0, value.number) };
+    }
+    return super.bindValues(el, path, value);
+  }
 
   /** Each side's own weight round its (rounded) box. */
   protected override sidedStrokeArea(el: FrameElement, sides: BoxSides): PathShape {

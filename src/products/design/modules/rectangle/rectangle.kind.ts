@@ -1,4 +1,6 @@
 import {
+  type BindableField,
+  type ResolvedValue,
   boxSidesStroke,
   type BoxSides,
   type PathShape,
@@ -21,6 +23,7 @@ import {
   solidPaint,
   type NodeBuildContext,
   type VectorNetwork,
+  numberField,
 } from "../core";
 import { RECTANGLE_DEFAULTS } from "./rectangle.defaults";
 import { drawRectangle } from "./rectangle.draw";
@@ -35,6 +38,21 @@ export class RectangleKind extends BoxShapeKind<RectangleElement> {
   override readonly defaults = RECTANGLE_DEFAULTS;
   override readonly styleFields = [...NODE_STYLE_FIELDS, "cornerRadius"];
   override readonly sidedStrokes = true;
+
+  override bindable(el: RectangleElement): BindableField[] {
+    return [...super.bindable(el), numberField("cornerRadius", "corner-radius", "Corner radius")];
+  }
+
+  override bindValues(
+    el: RectangleElement,
+    path: string,
+    value: ResolvedValue,
+  ): Record<string, unknown> {
+    if (path === "cornerRadius" && value.type === "number") {
+      return { cornerRadius: Math.max(0, value.number) };
+    }
+    return super.bindValues(el, path, value);
+  }
 
   /** Each side's own weight round its (rounded) box. */
   protected override sidedStrokeArea(el: RectangleElement, sides: BoxSides): PathShape {

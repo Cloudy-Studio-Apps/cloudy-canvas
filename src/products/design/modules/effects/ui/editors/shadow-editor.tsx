@@ -6,6 +6,7 @@ import { SHADOW_PRESETS } from "../../effect-presets";
 import type { DropShadowEffect, InnerShadowEffect } from "../../effect.types";
 import { EffectColorField, EffectToggle, ScrubField } from "../fields";
 import { PresetRow } from "./preset-row";
+import { EffectBind } from "../effect-bind";
 
 /** A drop or inner shadow: elevation presets, its color, offset, blur and spread. */
 export function ShadowEditor<E extends DropShadowEffect | InnerShadowEffect>({
@@ -23,38 +24,48 @@ export function ShadowEditor<E extends DropShadowEffect | InnerShadowEffect>({
           onPick={(i) => set({ ...SHADOW_PRESETS[i]!.look })}
         />
       )}
-      <EffectColorField
-        label="Shadow color"
-        color={effect.color}
-        opacity={effect.opacity}
-        onChange={(next, info) => set(next, info)}
-      />
+      <EffectBind field="color">
+        <EffectColorField
+          label="Shadow color"
+          color={effect.color}
+          opacity={effect.opacity}
+          onChange={(next, info) => set(next, info)}
+        />
+      </EffectBind>
       <PropertyGrid>
-        <ScrubField
-          prefix={<ArrowRight />}
-          label="X offset"
-          value={effect.x}
-          onChange={(x, info) => set({ x }, info)}
-        />
-        <ScrubField
-          prefix={<ArrowDown />}
-          label="Y offset"
-          value={effect.y}
-          onChange={(y, info) => set({ y }, info)}
-        />
-        <ScrubField
-          prefix={<Droplet />}
-          label="Blur"
-          min={0}
-          value={effect.blur}
-          onChange={(blur, info) => set({ blur }, info)}
-        />
-        <ScrubField
-          prefix={<Maximize2 />}
-          label="Spread"
-          value={effect.spread}
-          onChange={(spread, info) => set({ spread }, info)}
-        />
+        <EffectBind field="x">
+          <ScrubField
+            prefix={<ArrowRight />}
+            label="X offset"
+            value={effect.x}
+            onChange={(x, info) => set({ x }, info)}
+          />
+        </EffectBind>
+        <EffectBind field="y">
+          <ScrubField
+            prefix={<ArrowDown />}
+            label="Y offset"
+            value={effect.y}
+            onChange={(y, info) => set({ y }, info)}
+          />
+        </EffectBind>
+        <EffectBind field="blur">
+          <ScrubField
+            prefix={<Droplet />}
+            label="Blur"
+            min={0}
+            value={effect.blur}
+            onChange={(blur, info) => set({ blur }, info)}
+          />
+        </EffectBind>
+        <EffectBind field="spread">
+          <ScrubField
+            prefix={<Maximize2 />}
+            label="Spread"
+            value={effect.spread}
+            onChange={(spread, info) => set({ spread }, info)}
+          />
+        </EffectBind>
       </PropertyGrid>
       {effect.type === "drop-shadow" && (
         <EffectToggle

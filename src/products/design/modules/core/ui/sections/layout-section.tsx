@@ -4,6 +4,7 @@ import { Link2, RectangleHorizontal, RectangleVertical, Unlink2 } from "lucide-r
 import type { ElementPatch, Size } from "@canvas";
 import type { DesignNode } from "@design";
 import {
+  BindSlot,
   NumberField,
   PanelIconButton,
   PanelSection,
@@ -44,20 +45,24 @@ export function LayoutSection({ selection: { nodes } }: PropertySectionProps) {
     <PanelSection title="Layout">
       <div className="flex items-center gap-1">
         <PropertyGrid className="flex-1">
-          <NumberField
-            prefix="W"
-            label="Width"
-            min={MIN_SIDE}
-            value={sharedValue(nodes, (node) => node.w)}
-            onCommit={(w) => resize("w", w)}
-          />
-          <NumberField
-            prefix="H"
-            label="Height"
-            min={MIN_SIDE}
-            value={sharedValue(nodes, (node) => node.h)}
-            onCommit={(h) => resize("h", h)}
-          />
+          <BindSlot nodes={nodes} path="w">
+            <NumberField
+              prefix="W"
+              label="Width"
+              min={MIN_SIDE}
+              value={sharedValue(nodes, (node) => node.w)}
+              onCommit={(w) => resize("w", w)}
+            />
+          </BindSlot>
+          <BindSlot nodes={nodes} path="h">
+            <NumberField
+              prefix="H"
+              label="Height"
+              min={MIN_SIDE}
+              value={sharedValue(nodes, (node) => node.h)}
+              onCommit={(h) => resize("h", h)}
+            />
+          </BindSlot>
         </PropertyGrid>
         <PanelIconButton
           label={keepRatio ? "Proportions kept" : "Keep proportions"}

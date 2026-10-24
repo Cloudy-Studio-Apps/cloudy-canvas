@@ -54,6 +54,7 @@ export class LineKind extends DesignNodeKind<LineNodeElement> {
   override readonly scalable = true;
   override readonly fillable = false;
   override readonly creatable = true;
+  override readonly storesRotation = false;
   override readonly styleFields = [...NODE_STYLE_FIELDS, "startCap", "endCap"];
   override readonly specProperties = {
     start: { ...POINT, description: "Line: its start (default: x, y)." },

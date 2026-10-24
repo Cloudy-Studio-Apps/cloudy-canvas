@@ -2,7 +2,7 @@ import { Minus } from "lucide-react";
 
 import { DesignNodeKind, NODE_DEFAULTS, type DesignNode } from "@design";
 import {
-  NodeNumberField,
+  BindableNumberField,
   NodeSelectField,
   PropertyGrid,
   sharedValue,
@@ -57,7 +57,8 @@ export function StrokeSection({ selection: { nodes, kinds } }: PropertySectionPr
           </div>
         )}
         {!custom && (
-          <NodeNumberField
+          <BindableNumberField
+            path="strokeWeight"
             nodes={nodes}
             prefix={<Minus />}
             label="Stroke weight"
@@ -73,7 +74,8 @@ export function StrokeSection({ selection: { nodes, kinds } }: PropertySectionPr
       {custom && (
         <PropertyGrid>
           {SIDES.map((side) => (
-            <NodeNumberField
+            <BindableNumberField
+              path={`strokeWeights.${side}`}
               key={side}
               nodes={nodes}
               prefix={SIDE_LABELS[side]}

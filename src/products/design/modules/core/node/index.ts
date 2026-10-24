@@ -57,3 +57,12 @@ export { MASK_TYPES, maskType } from "./mask-args";
 export type * from "./effect-args.types";
 export { effectTypes, readNodeEffects, setEffectReader } from "./effect-args";
 export { EMPTY_GEOMETRY, GEOMETRY_CACHE, networkGeometry } from "./node-geometry";
+export {
+  effectBindable,
+  layoutFields,
+  numberField,
+  paintBindable,
+  sizeLimitFields,
+  strokeSideFields,
+} from "./node-bindable";
+export { movedTo, removedAt, stackBindingsPatch } from "./stack-bindings";

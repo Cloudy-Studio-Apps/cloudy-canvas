@@ -4,7 +4,7 @@ import type { ElementPatch } from "@canvas";
 import type { DesignNode } from "@design";
 import {
   BlendModeSelect,
-  NodeNumberField,
+  BindableNumberField,
   PanelSection,
   PropertyGrid,
   sharedValue,
@@ -27,7 +27,8 @@ export function AppearanceSection({ selection: { nodes } }: PropertySectionProps
   return (
     <PanelSection title="Appearance">
       <PropertyGrid>
-        <NodeNumberField
+        <BindableNumberField
+          path="opacity"
           nodes={nodes}
           prefix={<Blend />}
           label="Opacity"
@@ -42,7 +43,8 @@ export function AppearanceSection({ selection: { nodes } }: PropertySectionProps
           onChange={(blendMode) => edit(nodes, () => ({ blendMode }))}
         />
         {cornered.length === nodes.length && (
-          <NodeNumberField
+          <BindableNumberField
+            path="cornerRadius"
             nodes={cornered}
             prefix={<Scan />}
             label="Corner radius"

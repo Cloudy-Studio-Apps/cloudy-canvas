@@ -9,6 +9,7 @@ export function encodeClipboard(
   elements: readonly CanvasElement[],
   selected: Iterable<string>,
   assets: Record<string, string>,
+  tokens: readonly unknown[] = [],
 ): string {
   const payload: ClipboardPayload = {
     format: FORMAT,
@@ -17,6 +18,7 @@ export function encodeClipboard(
     elements: [...elements],
     selected: [...selected],
     assets,
+    ...(tokens.length > 0 ? { tokens: [...tokens] } : {}),
   };
   return JSON.stringify(payload);
 }
@@ -56,6 +58,7 @@ export function decodeClipboard(
     elements,
     selected: data.selected.filter((id) => ids.has(id)),
     assets: validAssets(data.assets),
+    tokens: Array.isArray(data.tokens) ? data.tokens : [],
   };
 }
 

@@ -70,6 +70,9 @@ export type TextTypography = Pick<
   "fontFamily" | "fontSize" | "fontWeight" | "fontStyle" | "lineHeight" | "letterSpacing"
 >;
 
+/** What a text style holds (`StyleRecord.value` of `styleType` "text"). */
+export type TextStyleValue = TextTypography & Pick<TextNodeElement, "textDecoration">;
+
 export interface TextDefaults extends ElementDefaults {
   fontSize: number;
   typography: TextTypography;

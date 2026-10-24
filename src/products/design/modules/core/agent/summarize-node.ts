@@ -40,5 +40,9 @@ export function summarizeNode(
     ...(node?.effects.some((effect) => effect.visible)
       ? { effects: node.effects.filter((effect) => effect.visible).map((effect) => effect.type) }
       : {}),
+    ...(el.bindings && Object.keys(el.bindings).length > 0 ? { bindings: el.bindings } : {}),
+    ...(el.variableModes && Object.keys(el.variableModes).length > 0
+      ? { variableModes: el.variableModes }
+      : {}),
   };
 }

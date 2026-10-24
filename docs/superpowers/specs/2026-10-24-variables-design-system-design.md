@@ -56,7 +56,7 @@ in the Design System view, component properties bound to boolean/string variable
   bound to it).
 - Hard-coded variable types or templates: templates and categories are extension points, as the
   rest of the app is (plugins can add templates).
-- Rounded "pill" UI in the panels (the app's sharp style applies; the *generated documentation*
+- Rounded "pill" UI in the panels (the app's sharp style applies; the _generated documentation_
   may use rounded shapes because templates are user content).
 
 ## Constraints
@@ -106,7 +106,7 @@ A **token sync** keeps them true:
   redo and remote updates need nothing (they replay both).
 - Kinds declare what can be bound: `kind.bindable(el)` → `BindableField[]` (`path`, variable
   `type`, the `scopes` it accepts, a label) and apply values through `kind.bindPatch(el, path,
-  value)` (so a text re-lays itself out, a stroke weight updates `strokeWeights`, a ramp-bound size
+value)` (so a text re-lays itself out, a stroke weight updates `strokeWeights`, a ramp-bound size
   goes through `kind.resize`). A base implementation in `DesignNodeKind` covers the shared node
   fields.
 - **The detach rule (my call):** at the end of an edit, for every bound field that the edit
@@ -157,12 +157,12 @@ A **token sync** keeps them true:
 
 A style is a named, grouped, described composite, stored in the tokens map:
 
-| Style | Holds | Applies to |
-|---|---|---|
-| Paint | a `Paint[]` stack (solid, gradient, image, blend modes); paint colors and gradient-stop colors may be variables | fills or strokes (`bindings["fills"] = styleId`) |
-| Text | family, style/weight, size, line height, letter spacing, decoration, case later; each may be a variable | a whole text, or a run (rich text ranges) |
-| Effect | a `NodeEffect[]` stack; colors and numbers may be variables | a node's effects |
-| Stroke ★ | weight (+ per side), align, dashes, cap, join, miter | a node's stroke settings (not its paints) |
+| Style    | Holds                                                                                                           | Applies to                                       |
+| -------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Paint    | a `Paint[]` stack (solid, gradient, image, blend modes); paint colors and gradient-stop colors may be variables | fills or strokes (`bindings["fills"] = styleId`) |
+| Text     | family, style/weight, size, line height, letter spacing, decoration, case later; each may be a variable         | a whole text, or a run (rich text ranges)        |
+| Effect   | a `NodeEffect[]` stack; colors and numbers may be variables                                                     | a node's effects                                 |
+| Stroke ★ | weight (+ per side), align, dashes, cap, join, miter                                                            | a node's stroke settings (not its paints)        |
 
 A style binding is resolved by the same sync (a style's own variable fields are resolved in the
 **layer's** mode context, so a "Shadow / elevated" style can be darker in Dark mode). Styles carry
@@ -175,12 +175,12 @@ no modes of their own.
 
 **Design — bindable fields**
 
-| Type | Fields |
-|---|---|
-| Color | solid fills and strokes (each paint's color, and its opacity follows the alpha), **gradient stop colors**, text color (whole text and runs), drop/inner shadow color, glass tint/noise colors where an effect has a color, image placeholder color |
-| Number | width, height, min/max width/height (`sizeLimits`), corner radius, stroke weight and each side's weight, opacity (layer and paint), auto layout gap, line gap, padding per side, font size, line height, letter spacing, font weight, shadow x / y / blur / spread, layer blur and background blur radius, polygon and star point count, star inner radius, rotation ★ (Figma doesn't; cheap here) |
-| String | text content (★ with a "Language" collection's modes this gives translated mock-ups), font family, font style |
-| Boolean | visible, clip content, ★ `layoutAbsolute`, ★ mask inverted |
+| Type    | Fields                                                                                                                                                                                                                                                                                                                                                                                             |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Color   | solid fills and strokes (each paint's color, and its opacity follows the alpha), **gradient stop colors**, text color (whole text and runs), drop/inner shadow color, glass tint/noise colors where an effect has a color, image placeholder color                                                                                                                                                 |
+| Number  | width, height, min/max width/height (`sizeLimits`), corner radius, stroke weight and each side's weight, opacity (layer and paint), auto layout gap, line gap, padding per side, font size, line height, letter spacing, font weight, shadow x / y / blur / spread, layer blur and background blur radius, polygon and star point count, star inner radius, rotation ★ (Figma doesn't; cheap here) |
+| String  | text content (★ with a "Language" collection's modes this gives translated mock-ups), font family, font style                                                                                                                                                                                                                                                                                      |
+| Boolean | visible, clip content, ★ `layoutAbsolute`, ★ mask inverted                                                                                                                                                                                                                                                                                                                                         |
 
 **Design — styles:** paint, text, effect, stroke.
 
@@ -188,15 +188,15 @@ no modes of their own.
 
 Only where a brand color is genuinely useful; the rest of the board keeps its fixed palettes:
 
-| Element | Field |
-|---|---|
-| Sticky | `color` |
-| Geo shape | `fill`, `stroke`, text color if it has one |
-| Text | `color` |
-| Marker stroke (pen, not highlighter) | `color` |
-| Connector | `color` |
-| Section | `color` |
-| Table | header tint `color` and cell `fills` |
+| Element                              | Field                                      |
+| ------------------------------------ | ------------------------------------------ |
+| Sticky                               | `color`                                    |
+| Geo shape                            | `fill`, `stroke`, text color if it has one |
+| Text                                 | `color`                                    |
+| Marker stroke (pen, not highlighter) | `color`                                    |
+| Connector                            | `color`                                    |
+| Section                              | `color`                                    |
+| Table                                | header tint `color` and cell `fills`       |
 
 Not on the board: number/string/boolean variables, styles, modes per element, the Design System
 view, ER/DB elements (their look is the notation's). The board gets its **document colors**: a
@@ -213,7 +213,7 @@ normal variable of the same model, so DTCG export/import works the same.
 
 Today the properties panel shows the Page section when nothing is selected. Below it come:
 
-- **Variables**: collections as headers (with a mode switcher showing which mode the *page* uses),
+- **Variables**: collections as headers (with a mode switcher showing which mode the _page_ uses),
   then categories (Color, Number, String, Boolean), then group **accordions**; each row shows a
   preview (swatch, value, "Aa"), the name, and an alias chip when aliased. Click opens an inline
   editor popover (value per mode, alias picker, scopes, description, code syntax). Rows drag
@@ -275,7 +275,7 @@ whose **children are generated**):
   `templateOptions`, `modeView` (one mode, or all side by side), and a `generated: true` marker on
   its children.
 - **Rendering = real layers.** A template is a function `(tokens, source, options, context) →
-  generated node specs` (frames with auto layout, rectangles, texts, ellipses). The sync
+generated node specs` (frames with auto layout, rectangles, texts, ellipses). The sync
   regenerates the children whenever the tokens it shows, its source, template or options change,
   inside `afterEdit` (same undo step). The generated layers are **bound** to the variables they
   show (a swatch rectangle's fill bound to `brand/500`, its label text to the variable's name,
@@ -286,7 +286,7 @@ whose **children are generated**):
   picker as the view, plus "Source" (category / group).
 - **Convert to design** (button in its section, context menu, agent tool): the element becomes a
   normal frame; its generated children become normal, editable, unlocked layers **keeping their
-  variable bindings** (user). Labels that showed a variable's *name* become plain text (my call:
+  variable bindings** (user). Labels that showed a variable's _name_ become plain text (my call:
   a renamed variable doesn't rename converted labels; the builder may add a string-binding to
   names later). What you saw is exactly what you get, because it's the same tree.
 - Because it's real layers, Catalog mode, exports, thumbnails, copy/paste and booleans just work.
@@ -297,18 +297,18 @@ Point `styleguideTemplates` (keyed by id; `defineStyleguideTemplate({ id, catego
 options, build })`); built-ins are one file each. Categories are a point too
 (`styleguideCategories`: id, label, which tokens it takes, order), so plugins can add both.
 
-| Category | Templates |
-|---|---|
-| Colors | Ramp strip (joined shades, as the second screenshot) · Swatch grid (squares + name + hex) · Cards (rect + name, hex, rgb, code name, description) · Vertical list · Stripes (Adobe Color–style tall bands) · Circles · Pairs with contrast (on-color text sample and WCAG badge) · Mode columns (each mode side by side) |
-| Typography (text styles, font variables) | Specimen ("Aa" + family + weights) · Scale ladder (each style rendered with name and size / line height) · Paragraph sample · Table |
-| Spacing (numbers scoped gap/padding) | Bars ruler · Nested squares · Table |
-| Radius | Corner boxes · Table |
-| Strokes (stroke styles, stroke-weight numbers) | Line samples · Boxes |
-| Effects (effect styles) | Cards with the effect · Elevation ladder |
-| Paint styles | Swatches (gradients and images too) · Cards |
-| Opacity | Checkerboard swatches · Table |
-| Other (strings, booleans) | Table |
-| Cover | Title + description + date · Minimal |
+| Category                                       | Templates                                                                                                                                                                                                                                                                                                                |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Colors                                         | Ramp strip (joined shades, as the second screenshot) · Swatch grid (squares + name + hex) · Cards (rect + name, hex, rgb, code name, description) · Vertical list · Stripes (Adobe Color–style tall bands) · Circles · Pairs with contrast (on-color text sample and WCAG badge) · Mode columns (each mode side by side) |
+| Typography (text styles, font variables)       | Specimen ("Aa" + family + weights) · Scale ladder (each style rendered with name and size / line height) · Paragraph sample · Table                                                                                                                                                                                      |
+| Spacing (numbers scoped gap/padding)           | Bars ruler · Nested squares · Table                                                                                                                                                                                                                                                                                      |
+| Radius                                         | Corner boxes · Table                                                                                                                                                                                                                                                                                                     |
+| Strokes (stroke styles, stroke-weight numbers) | Line samples · Boxes                                                                                                                                                                                                                                                                                                     |
+| Effects (effect styles)                        | Cards with the effect · Elevation ladder                                                                                                                                                                                                                                                                                 |
+| Paint styles                                   | Swatches (gradients and images too) · Cards                                                                                                                                                                                                                                                                              |
+| Opacity                                        | Checkerboard swatches · Table                                                                                                                                                                                                                                                                                            |
+| Other (strings, booleans)                      | Table                                                                                                                                                                                                                                                                                                                    |
+| Cover                                          | Title + description + date · Minimal                                                                                                                                                                                                                                                                                     |
 
 ---
 

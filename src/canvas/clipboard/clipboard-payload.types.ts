@@ -11,7 +11,11 @@ export interface ClipboardPayload {
   selected: string[];
   /** The assets they show (e.g. image files), base64 by asset id, so they paste into other files. */
   assets?: Record<string, string>;
+  /** The variables they're bound to (`TokenRecord`s, checked when pasted). */
+  tokens?: unknown[];
 }
 
 /** What `decodeClipboard` reads from a payload. */
-export type DecodedClipboard = Required<Pick<ClipboardPayload, "elements" | "selected" | "assets">>;
+export type DecodedClipboard = Required<
+  Pick<ClipboardPayload, "elements" | "selected" | "assets" | "tokens">
+>;

@@ -76,6 +76,50 @@
     }
   }
 
+  /* The variables window's seal painting: breathing, the brush sweeping, the palette's dots
+     lighting up one after another, the tail flippers wiggling. */
+  --animate-seal-breathe: seal-breathe 3.2s ease-in-out infinite;
+  --animate-seal-brush: seal-brush 1.6s ease-in-out infinite;
+  --animate-seal-twinkle: seal-twinkle 2.4s ease-in-out infinite;
+  --animate-seal-tail: seal-tail 2.4s ease-in-out infinite;
+  @keyframes seal-breathe {
+    0%,
+    100% {
+      transform: scale(1, 1);
+    }
+    50% {
+      transform: scale(1.015, 0.97);
+    }
+  }
+  @keyframes seal-brush {
+    0%,
+    100% {
+      transform: rotate(-8deg);
+    }
+    50% {
+      transform: rotate(10deg);
+    }
+  }
+  @keyframes seal-twinkle {
+    0%,
+    70%,
+    100% {
+      transform: scale(1);
+    }
+    80% {
+      transform: scale(1.35);
+    }
+  }
+  @keyframes seal-tail {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(7deg);
+    }
+  }
+
   /* The name prompt's seal patting its belly: one flipper, then the other half a beat later. */
   --animate-seal-pat: seal-pat 1.2s ease-in-out infinite;
   --animate-seal-belly: seal-belly 0.6s ease-out infinite;

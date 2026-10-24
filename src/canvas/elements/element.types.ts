@@ -31,6 +31,13 @@ export interface CanvasElement {
    * mirrored too (`toUnrotated`).
    */
   mirrored?: boolean;
+  /**
+   * Fields driven by variables: a field path (`"fills.0.color"`) → the variable's id. The fields
+   * themselves keep the resolved values, which the token sync keeps up to date.
+   */
+  bindings?: Record<string, string>;
+  /** The mode of each collection it and what it holds use (collection id → mode id). */
+  variableModes?: Record<string, string>;
 }
 
 /**

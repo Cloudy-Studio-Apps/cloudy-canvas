@@ -9,6 +9,9 @@ import { textTools } from "./text.agent-tools";
 import { TEXT_DEFAULTS } from "./text.defaults";
 import { TextKind } from "./text.kind";
 import { TextTool } from "./text.tool";
+import { designStyleTypes } from "../variables/ui/style-types";
+import { TEXT_STYLE } from "./text-style";
+import { createTextStyle, TextStyleRow } from "./ui/text-styles";
 import { TypographySection } from "./ui/typography-section";
 import { useTextOutlines } from "./ui/use-text-outlines";
 
@@ -18,7 +21,7 @@ import { useTextOutlines } from "./ui/use-text-outlines";
  */
 export const textModule = defineModule({
   id: "text",
-  requires: ["core"],
+  requires: ["core", "variables"],
   register(host) {
     host.contribute(designCanvas.kinds, new TextKind(glyphOutliner));
     host.contribute(designCanvas.tools, {
@@ -29,6 +32,15 @@ export const textModule = defineModule({
     host.contribute(designCanvas.options, { textTypography: TEXT_DEFAULTS.typography });
     host.contribute(designAgentTools, { id: "text", tools: () => textTools });
 
+    host.contribute(designStyleTypes, {
+      id: TEXT_STYLE,
+      label: "Text",
+      heading: "Text styles",
+      icon: Type,
+      order: 10,
+      create: (engine) => createTextStyle(engine),
+      Row: TextStyleRow,
+    });
     host.contribute(designEditor.sessionHooks, {
       id: "text-outlines",
       use: () => useTextOutlines(glyphOutliner),

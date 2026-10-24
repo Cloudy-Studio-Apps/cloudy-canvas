@@ -16,27 +16,22 @@ import {
 import type { ElementPatch } from "@canvas";
 import { retypeset, type DesignNode, type TextNodeElement } from "@design";
 import {
+  BindSlot,
   NodeOptionButtons,
   NumberField,
   PanelSection,
   PropertyGrid,
 } from "@design/ui/components/panel";
 import type { PropertySectionProps } from "@design/ui/modules";
-import { closestVariant, sortVariants, type FontVariant } from "@shared/core";
+import { closestVariant } from "@shared/core";
 import { DecorationButtons } from "./decoration-buttons";
 import { FaceSelect } from "./face-select";
+import { facesOf } from "./faces-of";
 import { FontPicker } from "./font-picker";
 import { RangeColorField } from "./range-color-field";
+import { TextStyleControl } from "./text-styles";
 import { useFontFamilies } from "./use-font-families";
 import { useTypographyTarget } from "./use-typography-target";
-
-/** Faces offered for a family the library doesn't know (e.g. a file from another computer). */
-const ANY_FACES: FontVariant[] = sortVariants(
-  (["400", "700"] as const).flatMap((weight) => [
-    { weight, style: "normal" as const },
-    { weight, style: "italic" as const },
-  ]),
-);
 
 /**
  * For selected texts: font, face, size, line height, letter spacing, decoration, alignment and
@@ -48,12 +43,14 @@ export function TypographySection({ selection: { nodes } }: PropertySectionProps
   const texts = nodes as readonly TextNodeElement[];
   const target = useTypographyTarget(texts);
   const family = target.read("fontFamily");
-  const faces =
-    families?.find((item) => item.family === family)?.variants ?? (family ? ANY_FACES : []);
+  const faces = facesOf(families, family);
   const lineHeight = target.read("lineHeight");
 
   return (
-    <PanelSection title={target.range ? "Typography · selection" : "Typography"}>
+    <PanelSection
+      title={target.range ? "Typography · selection" : "Typography"}
+      actions={target.range ? undefined : <TextStyleControl texts={texts} />}
+    >
       <div className="flex flex-col gap-2">
         <FontPicker
           family={family}
@@ -69,27 +66,33 @@ export function TypographySection({ selection: { nodes } }: PropertySectionProps
         />
         <PropertyGrid>
           <FaceSelect target={target} faces={faces} />
-          <NumberField
-            prefix={<Type />}
-            label="Font size"
-            min={1}
-            value={target.read("fontSize")}
-            onCommit={(fontSize) => target.set({ fontSize })}
-          />
-          <NumberField
-            prefix={<UnfoldVertical />}
-            label="Line height"
-            suffix="%"
-            min={1}
-            value={lineHeight === null ? null : Math.round(lineHeight * 100)}
-            onCommit={(percent) => target.set({ lineHeight: percent / 100 })}
-          />
-          <NumberField
-            prefix={<MoveHorizontal />}
-            label="Letter spacing"
-            value={target.read("letterSpacing")}
-            onCommit={(letterSpacing) => target.set({ letterSpacing })}
-          />
+          <BindSlot nodes={target.range ? [] : texts} path="fontSize">
+            <NumberField
+              prefix={<Type />}
+              label="Font size"
+              min={1}
+              value={target.read("fontSize")}
+              onCommit={(fontSize) => target.set({ fontSize })}
+            />
+          </BindSlot>
+          <BindSlot nodes={target.range ? [] : texts} path="lineHeight">
+            <NumberField
+              prefix={<UnfoldVertical />}
+              label="Line height"
+              suffix="%"
+              min={1}
+              value={lineHeight === null ? null : Math.round(lineHeight * 100)}
+              onCommit={(percent) => target.set({ lineHeight: percent / 100 })}
+            />
+          </BindSlot>
+          <BindSlot nodes={target.range ? [] : texts} path="letterSpacing">
+            <NumberField
+              prefix={<MoveHorizontal />}
+              label="Letter spacing"
+              value={target.read("letterSpacing")}
+              onCommit={(letterSpacing) => target.set({ letterSpacing })}
+            />
+          </BindSlot>
         </PropertyGrid>
         {target.range && <RangeColorField target={target} />}
         <div className="flex flex-wrap justify-between gap-2">

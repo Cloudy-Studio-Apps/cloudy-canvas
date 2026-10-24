@@ -24,4 +24,8 @@ export interface NodeSummary extends ElementSummary {
   layoutAbsolute?: true;
   /** The types of its visible effects, bottom to top (left out when it has none). */
   effects?: string[];
+  /** Its fields driven by variables: field path → variable id (see list_variables). */
+  bindings?: Record<string, string>;
+  /** The mode of each collection it (and what it holds) uses, by collection id. */
+  variableModes?: Record<string, string>;
 }

@@ -1,4 +1,6 @@
 import {
+  type BindableField,
+  type ResolvedValue,
   clamp,
   type ElementBuildContext,
   type ElementPatch,
@@ -7,7 +9,13 @@ import {
   type Rect,
 } from "@canvas";
 
-import { pointsInBox, PointsShapeKind, wholeNumber, type NodeBuildContext } from "../core";
+import {
+  numberField,
+  pointsInBox,
+  PointsShapeKind,
+  wholeNumber,
+  type NodeBuildContext,
+} from "../core";
 import { POLYGON_DEFAULTS } from "./polygon.defaults";
 import { createPolygon } from "./polygon.factory";
 import type { PolygonElement } from "./polygon.types";
@@ -19,6 +27,24 @@ export class PolygonKind extends PointsShapeKind<PolygonElement> {
   readonly description = "A triangle or any regular polygon.";
   override readonly tool = "polygon";
   override readonly defaults = POLYGON_DEFAULTS;
+
+  override bindable(el: PolygonElement): BindableField[] {
+    return [...super.bindable(el), numberField("pointCount", "other-number", "Points")];
+  }
+
+  override bindValues(
+    el: PolygonElement,
+    path: string,
+    value: ResolvedValue,
+  ): Record<string, unknown> {
+    if (value.type !== "number") return super.bindValues(el, path, value);
+    const n = value.number;
+    const { minPoints, maxPoints } = POLYGON_DEFAULTS;
+    if (path === "pointCount") {
+      return { pointCount: Math.min(maxPoints, Math.max(minPoints, Math.round(n))) };
+    }
+    return super.bindValues(el, path, value);
+  }
   override readonly specProperties = {
     pointCount: {
       type: "integer",

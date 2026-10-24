@@ -25,6 +25,16 @@ export type * from "./stickers";
 export { createActiveFile, useAgentFile } from "./agent";
 export { readCanvasTheme } from "./canvas-theme";
 export { StickerWheel } from "./stickers";
+export type * from "./tokens";
+export {
+  matchesScopes,
+  TokenGroupAccordion,
+  TokenSwatch,
+  useDocumentTokens,
+  VariableChip,
+  VariablePicker,
+  VariableValue,
+} from "./tokens";
 export {
   commitFieldProps,
   CommitInput,

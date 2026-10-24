@@ -1,4 +1,6 @@
 import {
+  type BindableField,
+  type ResolvedValue,
   clamp,
   type ElementBuildContext,
   type ElementPatch,
@@ -13,6 +15,7 @@ import {
   PointsShapeKind,
   wholeNumber,
   type NodeBuildContext,
+  numberField,
 } from "../core";
 import { STAR_DEFAULTS } from "./star.defaults";
 import { createStar } from "./star.factory";
@@ -28,6 +31,29 @@ export class StarKind extends PointsShapeKind<StarElement> {
   readonly description = "A star with any number of points.";
   override readonly tool = "star";
   override readonly defaults = STAR_DEFAULTS;
+
+  override bindable(el: StarElement): BindableField[] {
+    return [
+      ...super.bindable(el),
+      numberField("pointCount", "other-number", "Points"),
+      numberField("innerRadius", "other-number", "Inner radius"),
+    ];
+  }
+
+  override bindValues(
+    el: StarElement,
+    path: string,
+    value: ResolvedValue,
+  ): Record<string, unknown> {
+    if (value.type !== "number") return super.bindValues(el, path, value);
+    const n = value.number;
+    const { minPoints, maxPoints } = STAR_DEFAULTS;
+    if (path === "pointCount") {
+      return { pointCount: Math.min(maxPoints, Math.max(minPoints, Math.round(n))) };
+    }
+    if (path === "innerRadius") return { innerRadius: Math.min(1, Math.max(0, n)) };
+    return super.bindValues(el, path, value);
+  }
   override readonly specProperties = {
     pointCount: {
       type: "integer",

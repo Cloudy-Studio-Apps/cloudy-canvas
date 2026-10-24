@@ -4,6 +4,7 @@ import { compareByIndex } from "../document";
 import { elementBounds, type CanvasElement } from "../elements";
 import { rectCenter, unionRects } from "../geometry";
 import type { Point, Rect } from "../geometry.types";
+import { clipboardTokens, restoreTokens } from "../tokens/clipboard-tokens";
 import { collectAssets, restoreAssets } from "./clipboard-assets";
 import { decodeClipboard, encodeClipboard, isCanvasClipboard } from "./clipboard-payload";
 import type { ElementClipboardHost, PasteOptions } from "./element-clipboard.types";
@@ -34,7 +35,8 @@ export class ElementClipboard<O extends object> {
     if (elements.length === 0) return false;
     const { doc, product } = this.host;
     const assets = collectAssets(doc, product.kinds, elements);
-    const text = encodeClipboard(product.id, elements, selected, assets);
+    const tokens = clipboardTokens(doc, elements);
+    const text = encodeClipboard(product.id, elements, selected, assets, tokens);
     this.lastText = text;
     this.pastes = 0;
     this.clipboard
@@ -77,6 +79,8 @@ export class ElementClipboard<O extends object> {
       ? centerOffset(bounds, at)
       : pasteOffset(bounds, this.host.visibleRect(), this.pastes);
     const ids = insertCopies(this.target(), payload.elements, offset);
+    // Right after the copies, so it joins their undo step; the sync then gives them its values.
+    restoreTokens(doc, payload.tokens);
     // Removed right after the copies are added, so both are one undo step.
     if (replace && ids.size > 0) this.host.remove(replace);
     this.host.select(mapIds(payload.selected, ids));

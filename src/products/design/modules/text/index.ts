@@ -10,3 +10,10 @@ export { retypeset } from "./retypeset";
 export { TextKind } from "./text.kind";
 export { isText } from "./is-text";
 export { TextTool } from "./text.tool";
+export {
+  readTextStyle,
+  TEXT_STYLE,
+  TEXT_STYLE_PATH,
+  textStyleSummary,
+  textStyleOfNode,
+} from "./text-style";

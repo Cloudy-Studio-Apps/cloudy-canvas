@@ -121,7 +121,8 @@ export interface CanvasProduct<O extends object = object> {
   /**
    * Runs after every edit, inside its transaction and undo step (`CanvasDocument.setAfterEdit`):
    * writes what follows from the change (e.g. a design's auto layout), which runs it again with
-   * what that changed. Elements a file opens with don't run it.
+   * what that changed. Elements a file opens with don't run it. Composed from every module's
+   * hook, in module order (e.g. the design's token sync, then its auto layout).
    */
   afterEdit?(doc: CanvasDocument, change: EditedChange): void;
   /**

@@ -5,7 +5,9 @@ import { isGradientPaint } from "@design";
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
 import { cn } from "@shared/ui/lib/utils";
 import { PaintPicker } from "../paint-picker";
-import { useSelectedNodes } from "../../hooks";
+import { VariableChip } from "@canvas-ui";
+import { useFieldBinding, useSelectedNodes } from "../../hooks";
+import { BindButton } from "./bind-button";
 import { useGradientEditStore } from "../../stores/gradient-edit-store";
 import { useImageCropStore } from "../../stores/image-crop-store";
 import { FieldBox } from "./field-box";
@@ -37,6 +39,7 @@ export function PaintField({
   allowImage,
   target,
   size,
+  bindPath,
 }: PaintFieldProps) {
   const [open, setOpen] = useState(false);
   const done = { done: true };
@@ -52,6 +55,9 @@ export function PaintField({
 
   // A crop being edited in the picker shows its crop box on the canvas (one layer selected).
   const nodes = useSelectedNodes();
+  const binding = useFieldBinding(nodes, paint.type === "solid" ? (bindPath ?? "") : "");
+  const bound =
+    binding.bound !== undefined && binding.field !== undefined && binding.field.type !== "style";
   const nodeId = nodes.length === 1 ? nodes[0]?.id : undefined;
   const cropping = open && paint.type === "image" && paint.scaleMode === "crop";
   const startCrop = useImageCropStore((state) => state.start);
@@ -63,7 +69,7 @@ export function PaintField({
   }, [cropping, field, index, nodeId, startCrop, stopCrop]);
 
   return (
-    <div className={cn("flex items-center gap-1", !paint.visible && "opacity-50")}>
+    <div className={cn("group/bind flex items-center gap-1", !paint.visible && "opacity-50")}>
       <FieldBox className="flex-1 gap-0 px-0">
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
@@ -85,7 +91,17 @@ export function PaintField({
             />
           </PopoverContent>
         </Popover>
-        {paint.type === "solid" ? (
+        {bound && binding.field && binding.field.type !== "style" ? (
+          <VariableChip
+            variableId={binding.bound ?? null}
+            modes={binding.modes}
+            type={binding.field.type}
+            scopes={binding.field.scopes}
+            onPick={(id) => binding.bind(id)}
+            onDetach={() => binding.bind(null)}
+            className="mx-1 h-6 flex-1 border-0"
+          />
+        ) : paint.type === "solid" ? (
           <HexInput
             color={paint.color}
             label={`${label} hex`}
@@ -101,14 +117,17 @@ export function PaintField({
             {PAINT_NAMES[paint.type]}
           </button>
         )}
-        <span className="flex h-full w-14 items-center gap-0.5 border-l border-surface px-2">
-          <PercentInput
-            value={paint.opacity}
-            label={`${label} opacity`}
-            onCommit={(opacity) => onChange({ ...paint, opacity }, done)}
-          />
-        </span>
+        {!bound && (
+          <span className="flex h-full w-14 items-center gap-0.5 border-l border-surface px-2">
+            <PercentInput
+              value={paint.opacity}
+              label={`${label} opacity`}
+              onCommit={(opacity) => onChange({ ...paint, opacity }, done)}
+            />
+          </span>
+        )}
       </FieldBox>
+      {!bound && <BindButton binding={binding} />}
       <PanelIconButton
         label={paint.visible ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`}
         onClick={() => onChange({ ...paint, visible: !paint.visible }, done)}

@@ -25,6 +25,7 @@ import { shaderEffectModule } from "@design/modules/shader-effect/shader-effect.
 import { starModule } from "@design/modules/star/star.module";
 import { stickerModule } from "@design/modules/sticker/sticker.module";
 import { textModule } from "@design/modules/text/text.module";
+import { variablesModule } from "@design/modules/variables/variables.module";
 import { vectorModule } from "@design/modules/vector/vector.module";
 import { designEditor } from "./design-editor-points";
 import type { DesignModuleOptions } from "./design-modules.types";
@@ -33,6 +34,7 @@ import type { DesignModuleOptions } from "./design-modules.types";
 let modules: AppModule[] = [
   coreModule,
   pagesModule,
+  variablesModule,
   frameModule,
   // Before the modules whose `editElement` also takes frames (an image fill's crop): in its mode,
   // double-clicking a page designs it.
