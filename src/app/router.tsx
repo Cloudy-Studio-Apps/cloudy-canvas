@@ -17,6 +17,7 @@ export const router = createBrowserRouter([
   { path: "/board/:id", element: <BoardEditorPage /> },
   { path: "/design/:id", element: <DesignEditorPage /> },
   { path: "/settings", element: <SettingsPage /> },
+  { path: "/settings/:section", element: <SettingsPage /> },
   { path: "/join/:ticket", element: <JoinPage /> },
   ...devRoutes,
   { path: "*", element: <Navigate to="/" replace /> },

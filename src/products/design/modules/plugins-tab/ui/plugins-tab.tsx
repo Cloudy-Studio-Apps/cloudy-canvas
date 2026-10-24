@@ -17,7 +17,7 @@ export function PluginsTab() {
           <p className="max-w-44 text-xs text-muted-foreground">
             Plugins add element types, tools and panels to designs.
           </p>
-          <Button variant="outline" size="sm" onClick={() => void navigate("/settings")}>
+          <Button variant="outline" size="sm" onClick={() => void navigate("/settings/plugins")}>
             Manage plugins
           </Button>
         </div>
