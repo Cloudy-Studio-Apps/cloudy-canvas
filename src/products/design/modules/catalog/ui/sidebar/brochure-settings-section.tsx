@@ -1,40 +1,39 @@
 import { Ruler } from "lucide-react";
 
-import { DESIGN_BROCHURE, paperSize } from "@design";
+import { brochurePageSize, DESIGN_BROCHURE, paperSize } from "@design";
 import { NumberField, PanelSection, PropertyGrid } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@shared/ui/components/ui/select";
 import { useBrochure } from "../hooks/use-brochure";
 import { useCatalogViewStore } from "../stores/catalog-view-store";
+import { LayoutFields } from "./layout-fields";
+import { SettingSelect } from "./setting-select";
 import { Toggle } from "./toggle";
 
 /** The export's resolutions to pick from. */
 const DPI_CHOICES = [
-  { dpi: 300, label: "Print · 300 dpi" },
-  { dpi: 150, label: "Draft · 150 dpi" },
-  { dpi: 96, label: "Screen · 96 dpi" },
-];
+  { value: "300", label: "Print · 300 dpi" },
+  { value: "150", label: "Draft · 150 dpi" },
+  { value: "96", label: "Screen · 96 dpi" },
+] as const;
 
-/** How the brochure prints: its page size, facing pages, margin and resolution. */
+/**
+ * How the brochure prints: its page count and size, how it's bound (`LayoutFields`), its margin
+ * and resolution, and whether the margins show on the canvas.
+ */
 export function BrochureSettingsSection() {
   const engine = useDesignEngine();
-  const { pages, settings } = useBrochure();
+  const { pages, layout, settings } = useBrochure();
   const margins = useCatalogViewStore((state) => state.margins);
   const setMargins = useCatalogViewStore((state) => state.setMargins);
   const brochure = engine.service(DESIGN_BROCHURE);
-  const first = pages[0]?.frame;
-  const paper = first && paperSize(first);
+  const size = brochurePageSize(pages);
+  const paper = size && paperSize(size);
+  const count = layout.pageCount;
 
   return (
     <PanelSection title="Brochure">
       <p className="text-sm text-foreground">
-        {pages.length} {pages.length === 1 ? "page" : "pages"}
+        {count} {count === 1 ? "page" : "pages"}
         {paper && (
           <span className="text-muted-foreground">
             {" "}
@@ -43,11 +42,7 @@ export function BrochureSettingsSection() {
         )}
       </p>
       <div className="mt-2.5 flex flex-col gap-2">
-        <Toggle
-          label="Facing pages (spreads)"
-          checked={settings.facing}
-          onChange={(facing) => brochure.setSettings({ facing })}
-        />
+        <LayoutFields />
         <PropertyGrid>
           <NumberField
             prefix={<Ruler className="size-3.5" />}
@@ -57,24 +52,23 @@ export function BrochureSettingsSection() {
             min={0}
             onCommit={(margin) => brochure.setSettings({ margin })}
           />
-          <Select
-            value={String(settings.dpi)}
-            onValueChange={(value) => brochure.setSettings({ dpi: Number(value) })}
-          >
-            <SelectTrigger aria-label="Quality" title="Quality" className="h-7 w-full text-xs">
-              <SelectValue placeholder={`${settings.dpi} dpi`} />
-            </SelectTrigger>
-            <SelectContent>
-              {DPI_CHOICES.map(({ dpi, label }) => (
-                <SelectItem key={dpi} value={String(dpi)}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <SettingSelect
+            label="Quality"
+            value={dpiChoice(settings.dpi)}
+            choices={DPI_CHOICES}
+            onChange={(dpi) => brochure.setSettings({ dpi: Number(dpi) })}
+          />
         </PropertyGrid>
         <Toggle label="Show margins on the canvas" checked={margins} onChange={setMargins} />
       </div>
     </PanelSection>
   );
+}
+
+/** The quality choice nearest a dpi (agents may set others). */
+function dpiChoice(dpi: number): (typeof DPI_CHOICES)[number]["value"] {
+  const nearest = [...DPI_CHOICES].sort(
+    (a, b) => Math.abs(Number(a.value) - dpi) - Math.abs(Number(b.value) - dpi),
+  )[0];
+  return nearest?.value ?? "300";
 }

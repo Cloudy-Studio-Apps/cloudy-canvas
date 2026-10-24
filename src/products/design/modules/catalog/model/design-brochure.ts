@@ -8,6 +8,8 @@ import {
   type BrochureSlot,
 } from "../brochure";
 import type { FrameElement } from "../../frame";
+import { bookLayout } from "./book-layout";
+import type { BookLayout } from "./book-layout.types";
 import { brochureOf } from "./brochure-of";
 import { brochurePages } from "./brochure-pages";
 import type { BrochurePage } from "./brochure-pages.types";
@@ -44,6 +46,11 @@ export class DesignBrochure {
   pages(): BrochurePage[] {
     const brochure = brochureOf(this.doc);
     return brochure ? brochurePages(this.doc, brochure) : [];
+  }
+
+  /** How the pages print and are read: sides, spreads, numbers (see `bookLayout`). */
+  layout(): BookLayout {
+    return bookLayout(this.pages(), this.settings());
   }
 
   /** The page a frame is printed on or is an option of. */

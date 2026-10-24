@@ -1,8 +1,8 @@
 import { cn } from "@shared/ui/lib/utils";
 import type { BookPageProps } from "./preview.types";
-import { PreviewPage } from "./preview-page";
+import { SidePicture } from "./side-picture";
 
-/** Where each side lies in the booklet, its page edges and the shade near the spine. */
+/** Each side's page edges and the shade near the spine. */
 const SIDES = {
   left: {
     edges: "shadow-[-2px_2px_0_var(--color-border),-4px_4px_0_var(--color-border-strong)]",
@@ -18,13 +18,13 @@ const SIDES = {
   },
 } as const;
 
-/** A page lying open in the 3D booklet; an empty side shows nothing. */
-export function BookPage({ frame, side, width, height }: BookPageProps) {
-  if (!frame) return null;
-  const { edges, shade } = SIDES[side];
+/** A side lying open in the 3D booklet; an empty side shows nothing. */
+export function BookPage({ side, position, left, width, height }: BookPageProps) {
+  if (!side) return null;
+  const { edges, shade } = SIDES[position];
   return (
-    <div className={cn("absolute top-0", edges)} style={{ left: side === "right" ? width : 0 }}>
-      <PreviewPage frame={frame} width={width} height={height} />
+    <div className={cn("absolute top-0", edges)} style={{ left }}>
+      <SidePicture side={side} width={width} height={height} />
       <span aria-hidden="true" className={cn("pointer-events-none absolute inset-0", shade)} />
     </div>
   );

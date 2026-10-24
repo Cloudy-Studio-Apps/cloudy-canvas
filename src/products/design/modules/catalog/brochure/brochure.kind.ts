@@ -3,7 +3,7 @@ import { ElementKind } from "@canvas";
 import type { DesignToolOptions } from "../../../design-options.types";
 import { BROCHURE_TYPE } from "./brochure.constants";
 import { BROCHURE_DEFAULTS } from "./brochure.defaults";
-import type { BrochureDefaults, BrochureElement } from "./brochure.types";
+import type { BrochureDefaults, BrochureElement, BrochureSettings } from "./brochure.types";
 
 /**
  * The brochure is a record, not a layer: never on a page (`PAGE_SCOPES` shows only nodes), drawn
@@ -24,10 +24,16 @@ export class BrochureKind extends ElementKind<BrochureElement, DesignToolOptions
   }
 
   override fillDefaults(el: BrochureElement): BrochureElement {
+    // Brochures from before layouts had `facing` (pages in spreads, or one at a time).
+    const { facing, ...settings } = (el.settings ?? {}) as Partial<BrochureSettings> & {
+      facing?: boolean;
+    };
+    const layout =
+      settings.layout ?? (facing === false ? "single" : BROCHURE_DEFAULTS.settings.layout);
     return {
       ...el,
       slots: el.slots ?? [],
-      settings: { ...BROCHURE_DEFAULTS.settings, ...el.settings },
+      settings: { ...BROCHURE_DEFAULTS.settings, ...settings, layout },
     };
   }
 }

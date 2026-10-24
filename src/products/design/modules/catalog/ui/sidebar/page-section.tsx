@@ -6,6 +6,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button } from "@shared/ui/components/ui/button";
 import { cn } from "@shared/ui/lib/utils";
 import { PageThumbnail } from "../brochure-tab/page-thumbnail";
+import { useBrochure } from "../hooks/use-brochure";
 import { optionLetter } from "../option-letter";
 import { editInDesign, showPage } from "../page-actions";
 import type { PageSectionProps } from "./sidebar.types";
@@ -17,11 +18,12 @@ import type { PageSectionProps } from "./sidebar.types";
 export function PageSection({ page }: PageSectionProps) {
   const engine = useDesignEngine();
   const brochure = engine.service(DESIGN_BROCHURE);
+  const { label } = useBrochure();
   const paper = paperSize(page.frame);
 
   return (
     <>
-      <PanelSection title={`Page ${page.number}`}>
+      <PanelSection title={`Page ${label(page)}`}>
         <p className="truncate text-sm text-foreground">{page.frame.name}</p>
         <p className="text-xs text-muted-foreground">
           {paper.name ? `${paper.name} · ` : ""}
@@ -62,7 +64,7 @@ export function PageSection({ page }: PageSectionProps) {
         ) : (
           <p className="text-xs text-muted-foreground">
             One version. To compare others, hover a greyed frame on the canvas and add it as an
-            option of page {page.number}.
+            option of page {label(page)}.
           </p>
         )}
       </PanelSection>

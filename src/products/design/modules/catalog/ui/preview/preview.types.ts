@@ -1,36 +1,45 @@
 import type { Ref } from "react";
 
-import type { BrochurePage, FrameElement } from "@design";
+import type { Size } from "@canvas";
+import type { BookLayout, BookSide, BrochurePage, FrameElement, SidePart } from "@design";
 
 export interface PreviewPageProps {
   frame: FrameElement;
-  /** The page's width on screen, in CSS pixels. */
+  /** All of the frame, or one half of a spread frame. */
+  part: SidePart;
+  /** The page's size on screen, in CSS pixels. */
   width: number;
-  /** Its height; by default the frame's proportions (with one, the picture fits inside it). */
-  height?: number;
+  height: number;
 }
 
-/** Which page (by position in the brochure) lies on each side of the open booklet. */
+export interface SidePictureProps {
+  /** A page, half a spread frame or a blank page; `null` shows nothing. */
+  side: BookSide | null;
+  width: number;
+  height: number;
+}
+
+/** Which side lies on each side of the open booklet (the single layout uses `right`). */
 export interface BookSlots {
-  left: number | null;
-  right: number | null;
+  left: BookSide | null;
+  right: BookSide | null;
 }
 
-/** A page turning over the spine: where it starts, what's on each face and how far it turns. */
+/** A page turning round its hinge: where it starts, what's on each face and how far it turns. */
 export interface TurningSheetLayout {
-  /** The side it starts on (`single`: the one page of a booklet without facing pages). */
+  /** The side it starts on (`single`: the one page of the single layout). */
   over: "left" | "right" | "single";
   /** The edge it turns round. */
   hinge: "left" | "right";
-  front: number | null;
-  back: number | null;
+  front: BookSide | null;
+  back: BookSide | null;
   /** Degrees round the hinge at the start and the end. */
   from: number;
   to: number;
 }
 
-/** What the 3D booklet shows: the pages lying open and, mid-turn, the sheet turning. */
-export interface BookLayout {
+/** What the 3D booklet shows: the sides lying open and, mid-turn, the sheet turning. */
+export interface BookView {
   base: BookSlots;
   sheet: TurningSheetLayout | null;
 }
@@ -50,35 +59,42 @@ export interface PageTurnState {
   count: number;
 }
 
+/** How big the preview draws: CSS pixels per world unit, and the stage's width (CSS pixels). */
+export interface StageSize {
+  scale: number;
+  /** One brochure page on screen. */
+  page: { width: number; height: number };
+  stageWidth: number;
+}
+
 export interface BookSpreadProps {
-  layout: BookLayout;
-  /** One page at a time (no facing pages). */
+  view: BookView;
+  /** One page at a time (the single layout). */
   single: boolean;
-  /** A page's frame by its position in the brochure. */
-  frameAt: (position: number | null) => FrameElement | undefined;
-  /** Each page's size on screen. */
-  width: number;
-  height: number;
+  size: StageSize;
+  /** The brochure's page, in world units (a blank side's size). */
+  pageSize: Size;
   turnId: number | null;
 }
 
 export interface BookPageProps {
-  frame: FrameElement | undefined;
-  side: "left" | "right" | "single";
+  side: BookSide | null;
+  position: "left" | "right" | "single";
+  /** Where it starts across the stage, and its size (CSS pixels). */
+  left: number;
   width: number;
   height: number;
 }
 
 export interface TurningSheetProps {
   sheet: TurningSheetLayout;
-  front: FrameElement | undefined;
-  back: FrameElement | undefined;
+  left: number;
   width: number;
   height: number;
 }
 
 export interface SheetFaceProps {
-  frame: FrameElement | undefined;
+  side: BookSide | null;
   width: number;
   height: number;
   /** The back face, turned to face the other way. */
@@ -88,31 +104,26 @@ export interface SheetFaceProps {
 }
 
 export interface FlatSpreadProps {
-  frames: readonly FrameElement[];
-  width: number;
+  sides: readonly BookSide[];
+  pageSize: Size;
 }
 
 export interface Preview3dToggleProps {
   className?: string;
 }
 
-/** A page's size on screen, in CSS pixels. */
-export interface PreviewSize {
-  width: number;
-  height: number;
-}
-
 export interface PreviewStageProps {
-  pages: readonly BrochurePage[];
-  spreads: readonly (readonly number[])[];
-  /** The spread shown, by position among them. */
+  layout: BookLayout;
+  /** One page at a time (the single layout), else facing pages. */
+  single: boolean;
+  /** The spread shown, by position among the layout's spreads. */
   current: number;
-  facing: boolean;
+  pageSize: Size;
 }
 
 export interface PreviewStripProps {
   pages: readonly BrochurePage[];
-  /** The positions of the pages shown. */
-  shown: readonly number[];
-  onPick: (position: number) => void;
+  /** The pages (by slot id) on the spread shown. */
+  shown: ReadonlySet<string>;
+  onPick: (slotId: string) => void;
 }

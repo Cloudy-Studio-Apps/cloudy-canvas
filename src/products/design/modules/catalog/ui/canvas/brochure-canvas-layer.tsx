@@ -31,7 +31,7 @@ const MIN_SCREEN_SIZE = 48;
  */
 export function BrochureCanvasLayer() {
   const engine = useDesignEngine();
-  const { pages, settings, version } = useBrochure();
+  const { pages, settings, version, label: labelOf } = useBrochure();
   const scope = useDesignState((state) => state.scope);
   const tool = useDesignState((state) => state.tool);
   const selectedIds = useDesignState((state) => state.selectedIds);
@@ -69,7 +69,7 @@ export function BrochureCanvasLayer() {
         const printed = page.frame.id === frame.id;
         const option = page.options.findIndex((item) => item.id === frame.id);
         const label =
-          page.options.length > 1 ? `${page.number}${optionLetter(option)}` : String(page.number);
+          page.options.length > 1 ? `${labelOf(page)}${optionLetter(option)}` : labelOf(page);
         const safe = {
           x: frame.x + inset,
           y: frame.y + inset,

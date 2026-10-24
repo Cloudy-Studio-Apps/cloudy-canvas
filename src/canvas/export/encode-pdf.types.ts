@@ -1,10 +1,14 @@
-/** One page of a PDF: a JPEG image filling it. */
+/** One page of a PDF: a JPEG image filling it, or a blank page without one. */
 export interface PdfPage {
+  image?: PdfImage;
+  /** The page's size in world units (see `PdfOptions.pointsPerUnit`). */
+  size: { width: number; height: number };
+}
+
+export interface PdfImage {
   jpeg: Uint8Array;
   /** The image's size in pixels. */
   pixels: { width: number; height: number };
-  /** The page's size in world units (see `PdfOptions.pointsPerUnit`). */
-  size: { width: number; height: number };
 }
 
 export interface PdfOptions {

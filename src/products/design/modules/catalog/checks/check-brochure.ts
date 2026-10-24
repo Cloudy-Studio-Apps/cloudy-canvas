@@ -17,6 +17,7 @@ export async function checkBrochure(workspace: DesignWorkspace): Promise<Brochur
   const check = () =>
     brochureIssues({
       pages: brochure.pages(),
+      layout: brochure.layout(),
       elements: doc.all(),
       settings: brochure.settings(),
       bounds: (el) => elementBounds(kinds.kindOf(el), el),

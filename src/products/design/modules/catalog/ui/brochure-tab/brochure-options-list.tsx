@@ -1,6 +1,7 @@
 import { DESIGN_BROCHURE } from "@design";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { cn } from "@shared/ui/lib/utils";
+import { useBrochure } from "../hooks/use-brochure";
 import { optionLetter } from "../option-letter";
 import { showPage } from "../page-actions";
 import type { BrochureOptionsListProps } from "./brochure-page-row.types";
@@ -9,9 +10,10 @@ import { PageThumbnail } from "./page-thumbnail";
 /** A page's options under its row: picking one prints it instead. */
 export function BrochureOptionsList({ page }: BrochureOptionsListProps) {
   const engine = useDesignEngine();
+  const { label } = useBrochure();
   return (
     <ul
-      aria-label={`Options of page ${page.number}`}
+      aria-label={`Options of page ${label(page)}`}
       className="mt-0.5 mb-1.5 ml-7 border-l pl-1.5"
     >
       {page.options.map((option, i) => {

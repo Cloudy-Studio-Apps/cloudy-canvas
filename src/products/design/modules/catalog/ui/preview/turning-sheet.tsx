@@ -8,7 +8,7 @@ import { SheetFace } from "./sheet-face";
 const SHADE = 0.35;
 
 /** A page turning round its hinge over the open booklet, shaded as it passes upright. */
-export function TurningSheet({ sheet, front, back, width, height }: TurningSheetProps) {
+export function TurningSheet({ sheet, left, width, height }: TurningSheetProps) {
   const sheetRef = useRef<HTMLDivElement>(null);
   const frontShade = useRef<HTMLSpanElement>(null);
   const backShade = useRef<HTMLSpanElement>(null);
@@ -36,15 +36,15 @@ export function TurningSheet({ sheet, front, back, width, height }: TurningSheet
       ref={sheetRef}
       className="absolute top-0 transform-3d"
       style={{
-        left: sheet.over === "right" ? width : 0,
+        left,
         width,
         height,
         transformOrigin: sheet.hinge === "left" ? "left center" : "right center",
         transform: `translateZ(1px) rotateY(${sheet.from}deg)`,
       }}
     >
-      <SheetFace frame={front} width={width} height={height} shadeRef={frontShade} />
-      <SheetFace frame={back} width={width} height={height} back shadeRef={backShade} />
+      <SheetFace side={sheet.front} width={width} height={height} shadeRef={frontShade} />
+      <SheetFace side={sheet.back} width={width} height={height} back shadeRef={backShade} />
     </div>
   );
 }

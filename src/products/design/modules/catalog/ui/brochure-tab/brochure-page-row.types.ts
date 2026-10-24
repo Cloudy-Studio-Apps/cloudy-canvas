@@ -1,7 +1,9 @@
-import type { BrochurePage } from "@design";
+import type { BlankReason, BrochurePage } from "@design";
 
 export interface BrochurePageRowProps {
   page: BrochurePage;
+  /** Its printed page numbers ("4", "6–7"). */
+  label: string;
   /** Its position in the brochure (0-based). */
   position: number;
   selected: boolean;
@@ -16,4 +18,10 @@ export interface BrochureOptionsListProps {
 export interface PageThumbnailProps {
   frameId: string;
   className?: string;
+}
+
+export interface BlankPageRowProps {
+  /** Its printed page number. */
+  number: number;
+  reason: BlankReason;
 }

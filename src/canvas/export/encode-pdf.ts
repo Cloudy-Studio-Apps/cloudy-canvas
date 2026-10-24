@@ -14,12 +14,12 @@ export function encodePdf(
   pixels: { width: number; height: number },
   size: { width: number; height: number },
 ): Blob {
-  return encodePdfPages([{ jpeg, pixels, size }]);
+  return encodePdfPages([{ image: { jpeg, pixels }, size }]);
 }
 
 /**
- * A PDF with one page per JPEG image, each filling its page, in order. Written by hand: the
- * images are embedded as they are (DCTDecode).
+ * A PDF with one page per JPEG image, each filling its page, in order (a page without an image is
+ * blank). Written by hand: the images are embedded as they are (DCTDecode).
  */
 export function encodePdfPages(pages: readonly PdfPage[], options: PdfOptions = {}): Blob {
   const pointsPerUnit = options.pointsPerUnit ?? POINTS_PER_UNIT;
@@ -50,20 +50,26 @@ export function encodePdfPages(pages: readonly PdfPage[], options: PdfOptions = 
   pages.forEach((page, i) => {
     const id = pageId(i);
     const { w, h } = pageSize(page.size, pointsPerUnit);
-    const content = `q ${w} 0 0 ${h} 0 0 cm /Im0 Do Q`;
+    const { image } = page;
+    const content = image ? `q ${w} 0 0 ${h} 0 0 cm /Im0 Do Q` : "";
+    const resources = image ? `/Resources << /XObject << /Im0 ${id + 1} 0 R >> >> ` : "";
     object(
       id,
-      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${w} ${h}] ` +
-        `/Resources << /XObject << /Im0 ${id + 1} 0 R >> >> /Contents ${id + 2} 0 R >>`,
+      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${w} ${h}] ${resources}/Contents ${id + 2} 0 R >>`,
     );
-    begin(id + 1);
-    write(
-      `<< /Type /XObject /Subtype /Image /Width ${page.pixels.width} ` +
-        `/Height ${page.pixels.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 ` +
-        `/Filter /DCTDecode /Length ${page.jpeg.length} >>\nstream\n`,
-    );
-    write(page.jpeg);
-    write("\nendstream\nendobj\n");
+    if (image) {
+      begin(id + 1);
+      write(
+        `<< /Type /XObject /Subtype /Image /Width ${image.pixels.width} ` +
+          `/Height ${image.pixels.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 ` +
+          `/Filter /DCTDecode /Length ${image.jpeg.length} >>\nstream\n`,
+      );
+      write(image.jpeg);
+      write("\nendstream\nendobj\n");
+    } else {
+      // Every page keeps three object numbers, so a blank one's image is an empty object.
+      object(id + 1, "null");
+    }
     object(id + 2, `<< /Length ${content.length} >>\nstream\n${content}\nendstream`);
   });
 

@@ -6,15 +6,15 @@ import type { PreviewStripProps } from "./preview.types";
 export function PreviewStrip({ pages, shown, onPick }: PreviewStripProps) {
   return (
     <div className="flex max-w-[90vw] gap-1 overflow-x-auto p-1">
-      {pages.map((page, position) => (
+      {pages.map((page) => (
         <button
           key={page.slot.id}
           type="button"
-          aria-label={`Page ${page.number}`}
-          onClick={() => onPick(position)}
+          aria-label={page.frame.name}
+          onClick={() => onPick(page.slot.id)}
           className={cn(
             "shrink-0 cursor-pointer opacity-50 outline-2 outline-transparent hover:opacity-80",
-            shown.includes(position) && "opacity-100 outline-ring",
+            shown.has(page.slot.id) && "opacity-100 outline-ring",
           )}
         >
           <PageThumbnail frameId={page.frame.id} className="h-10 w-14" />

@@ -19,7 +19,13 @@ const PAGE_DRAG = "application/x-cloudy-brochure-page";
  * reorder (dropped on the upper half of a row, a page goes before it; on the lower half, after
  * it); × takes it out of the brochure. The selected page lists its options to pick from.
  */
-export function BrochurePageRow({ page, position, selected, onDropPage }: BrochurePageRowProps) {
+export function BrochurePageRow({
+  page,
+  label,
+  position,
+  selected,
+  onDropPage,
+}: BrochurePageRowProps) {
   const engine = useDesignEngine();
   const [drop, setDrop] = useState<"before" | "after" | null>(null);
   const chosen = page.options.findIndex((option) => option.id === page.frame.id);
@@ -64,11 +70,11 @@ export function BrochurePageRow({ page, position, selected, onDropPage }: Brochu
       >
         <span
           className={cn(
-            "w-5 shrink-0 text-right text-xs font-semibold text-muted-foreground tabular-nums",
+            "min-w-5 shrink-0 text-right text-xs font-semibold text-muted-foreground tabular-nums",
             selected && "text-primary-soft-foreground",
           )}
         >
-          {page.number}
+          {label}
         </span>
         <PageThumbnail frameId={page.frame.id} className="h-10 w-14" />
         <span className="min-w-0 flex-1">

@@ -26,3 +26,15 @@ export interface ToggleProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
 }
+
+export interface SettingChoice<T extends string> {
+  value: T;
+  label: string;
+}
+
+export interface SettingSelectProps<T extends string> {
+  label: string;
+  value: T;
+  choices: readonly SettingChoice<T>[];
+  onChange: (value: T) => void;
+}

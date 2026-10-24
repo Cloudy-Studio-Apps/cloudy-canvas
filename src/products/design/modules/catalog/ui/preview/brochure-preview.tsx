@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
-import { brochureSpreads } from "@design";
+import { brochurePageSize } from "@design";
 import { Button } from "@shared/ui/components/ui/button";
 import { useBrochure } from "../hooks/use-brochure";
 import { useBrochurePreviewStore } from "../stores/preview-store";
@@ -11,7 +11,8 @@ import { PreviewStrip } from "./preview-strip";
 import { usePreviewKeys } from "./use-preview-keys";
 
 /**
- * The brochure as a reader flips through it (an `overlays` entry): a spread at a time, as a 3D
+ * The brochure as a reader flips through it (an `overlays` entry): a spread at a time as the
+ * layout reads it (covers alone, facing pages, blank pages added; or single pages), as a 3D
  * booklet whose pages turn or flat (the switch at the top), the arrows and ← → to turn, the strip
  * to jump, Esc to close.
  */
@@ -19,18 +20,32 @@ export function BrochurePreview() {
   const spread = useBrochurePreviewStore((state) => state.spread);
   const show = useBrochurePreviewStore((state) => state.show);
   const close = useBrochurePreviewStore((state) => state.close);
-  const { pages, settings } = useBrochure();
-  const spreads = brochureSpreads(pages.length, settings.facing);
-  const current = spread === null ? -1 : Math.min(spread, spreads.length - 1);
-  const shown = spreads[current] ?? [];
-  const last = spreads.length - 1;
+  const { pages, settings, layout } = useBrochure();
+  const last = layout.spreads.length - 1;
+  const current = spread === null ? -1 : Math.min(spread, last);
+  const shown = layout.spreads[current] ?? [];
   const turn = useCallback(
     (by: -1 | 1) => show(Math.max(0, Math.min(current + by, last))),
     [show, current, last],
   );
   usePreviewKeys(spread !== null, turn, close);
 
-  if (spread === null || shown.length === 0) return null;
+  const pageSize = brochurePageSize(pages);
+  if (spread === null || shown.length === 0 || !pageSize) return null;
+  const shownSlots = new Set(
+    shown.flatMap((index) => {
+      const side = layout.sides[index];
+      return side?.kind === "page" ? [side.page.slot.id] : [];
+    }),
+  );
+  const spreadOf = (slotId: string) =>
+    layout.spreads.findIndex((indexes) =>
+      indexes.some((index) => {
+        const side = layout.sides[index];
+        return side?.kind === "page" && side.page.slot.id === slotId;
+      }),
+    );
+
   return (
     <div
       role="dialog"
@@ -44,7 +59,12 @@ export function BrochurePreview() {
           Close
         </Button>
       </header>
-      <PreviewStage pages={pages} spreads={spreads} current={current} facing={settings.facing} />
+      <PreviewStage
+        layout={layout}
+        single={settings.layout === "single"}
+        current={current}
+        pageSize={pageSize}
+      />
       <div className="flex items-center gap-3 text-sm text-surface">
         <Button
           size="icon"
@@ -56,7 +76,7 @@ export function BrochurePreview() {
           <ChevronLeft />
         </Button>
         <span className="tabular-nums">
-          {shown.map((position) => position + 1).join("–")} / {pages.length}
+          {layout.spreadNumbers[current]} / {layout.pageCount}
         </span>
         <Button
           size="icon"
@@ -70,8 +90,8 @@ export function BrochurePreview() {
       </div>
       <PreviewStrip
         pages={pages}
-        shown={shown}
-        onPick={(position) => show(spreads.findIndex((item) => item.includes(position)))}
+        shown={shownSlots}
+        onPick={(slotId) => show(Math.max(0, spreadOf(slotId)))}
       />
     </div>
   );

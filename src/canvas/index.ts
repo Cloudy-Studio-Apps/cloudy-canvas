@@ -33,6 +33,7 @@ export type {
   ExportBackground,
   ExportFormat,
   ExportOptions,
+  PdfImage,
   PdfOptions,
   PdfPage,
   ThumbnailOptions,
