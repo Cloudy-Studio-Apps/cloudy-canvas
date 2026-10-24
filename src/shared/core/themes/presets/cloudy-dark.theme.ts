@@ -1,0 +1,83 @@
+import type { ThemeDefinition } from "../theme.types";
+
+/** The seal at night: ink surfaces in three steps, a brighter ice primary. */
+export const CLOUDY_DARK: ThemeDefinition = {
+  id: "cloudy-dark",
+  label: "Cloudy Dark",
+  description: "Seal-ink surfaces, easy on the eyes at night.",
+  appearance: "dark",
+  tokens: {
+    background: "oklch(0.18 0.014 256)",
+    foreground: "oklch(0.93 0.006 250)",
+    surface: "oklch(0.215 0.016 256)",
+    "surface-foreground": "oklch(0.93 0.006 250)",
+    "surface-sunken": "oklch(0.165 0.013 256)",
+    overlay: "oklch(0.08 0.01 256 / 0.6)",
+    muted: "oklch(0.255 0.017 256)",
+    "muted-foreground": "oklch(0.7 0.014 252)",
+    "subtle-foreground": "oklch(0.56 0.016 252)",
+    hover: "oklch(0.27 0.018 256)",
+    popover: "oklch(0.24 0.017 256)",
+    "popover-foreground": "oklch(0.93 0.006 250)",
+
+    "canvas-background": "oklch(0.165 0.013 256)",
+    "canvas-grid": "oklch(0.3 0.016 256)",
+    "canvas-selection": "var(--ice-400)",
+    "canvas-snap": "oklch(0.7 0.18 22)",
+    "canvas-relation": "var(--seal-400)",
+    "canvas-ruler": "oklch(0.215 0.016 256)",
+    "canvas-ruler-foreground": "oklch(0.62 0.014 252)",
+    "canvas-ruler-border": "oklch(0.3 0.018 256)",
+
+    "syntax-keyword": "var(--ice-300)",
+    "syntax-definition": "var(--seal-50)",
+    "syntax-property": "var(--seal-200)",
+    "syntax-type": "var(--lilac-300)",
+    "syntax-setting": "var(--blush-300)",
+    "syntax-string": "var(--sand-300)",
+    "syntax-number": "var(--blush-400)",
+    "syntax-operator": "var(--ice-400)",
+    "syntax-punctuation": "var(--seal-400)",
+    "syntax-comment": "var(--seal-500)",
+
+    border: "oklch(0.3 0.018 256)",
+    "border-strong": "oklch(0.37 0.02 256)",
+    input: "oklch(0.37 0.02 256)",
+    ring: "var(--ice-400)",
+
+    primary: "var(--ice-500)",
+    "primary-hover": "var(--ice-400)",
+    "primary-foreground": "oklch(1 0 0)",
+    "primary-soft": "oklch(0.3 0.06 250)",
+    "primary-soft-foreground": "var(--ice-200)",
+    secondary: "oklch(0.28 0.018 256)",
+    "secondary-hover": "oklch(0.33 0.02 256)",
+    "secondary-foreground": "oklch(0.9 0.008 250)",
+    "accent-soft": "oklch(0.3 0.05 32)",
+    "accent-soft-foreground": "var(--blush-200)",
+    "board-foreground": "var(--sand-300)",
+    "board-soft": "oklch(0.3 0.045 75)",
+    "design-foreground": "var(--lilac-300)",
+    "design-soft": "oklch(0.3 0.06 292)",
+    "success-soft": "oklch(0.3 0.05 155)",
+    "warning-soft": "oklch(0.32 0.05 75)",
+    destructive: "oklch(0.62 0.19 25)",
+    "destructive-hover": "oklch(0.68 0.18 25)",
+    "destructive-soft": "oklch(0.3 0.06 25)",
+
+    "shadow-color": "256 40% 3%",
+  },
+  products: {
+    // A step lighter than the board's, so frames read against it.
+    design: {
+      "canvas-background": "oklch(0.22 0.014 256)",
+      "canvas-grid": "oklch(0.32 0.016 256)",
+    },
+  },
+  preview: {
+    background: "oklch(0.18 0.014 256)",
+    surface: "oklch(0.215 0.016 256)",
+    primary: "oklch(0.66 0.125 245)",
+    foreground: "oklch(0.93 0.006 250)",
+  },
+};

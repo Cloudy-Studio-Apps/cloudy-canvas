@@ -1,7 +1,7 @@
 import { PanelTop } from "lucide-react";
 
 import { TABLE_COLORS } from "@board";
-import { ColorSwatch, FloatingPanel, OptionButton, PanelDivider } from "@canvas-ui";
+import { ColorPalette, FloatingPanel, OptionButton, PanelDivider } from "@canvas-ui";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";
 import { TableCellFills } from "./table-cell-fills";
 import { TableLineActions } from "./table-line-actions";
@@ -30,15 +30,12 @@ export function TableOptions() {
       {hasPart ? (
         <TableCellFills />
       ) : (
-        TABLE_COLORS.map((color) => (
-          <ColorSwatch
-            key={color.value}
-            label={`${color.name} header`}
-            color={color.value}
-            selected={tableColor === color.value}
-            onSelect={() => engine.setToolOptions({ tableColor: color.value })}
-          />
-        ))
+        <ColorPalette
+          colors={TABLE_COLORS}
+          value={tableColor}
+          labelOf={(color) => `${color.name} header`}
+          onSelect={(color) => engine.setToolOptions({ tableColor: color })}
+        />
       )}
       <TableLineActions />
     </FloatingPanel>

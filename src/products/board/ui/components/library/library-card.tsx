@@ -7,6 +7,7 @@ export function LibraryCard({ item, onPick }: LibraryCardProps) {
   const { icon, comingSoon } = item;
 
   return (
+    // eslint-disable-next-line no-restricted-syntax -- bespoke: a library tile with its preview
     <button
       type="button"
       disabled={comingSoon}

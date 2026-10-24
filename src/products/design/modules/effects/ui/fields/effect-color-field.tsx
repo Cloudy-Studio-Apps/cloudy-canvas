@@ -1,6 +1,5 @@
-import { CHECKERBOARD } from "@canvas-ui";
+import { CHECKERBOARD, ColorPicker } from "@canvas-ui";
 import { FieldBox, HexInput, PercentInput } from "@design/ui/components/panel";
-import { ColorControls } from "@design/ui/components/paint-picker";
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
 import type { EffectColorFieldProps } from "./fields.types";
 
@@ -11,6 +10,7 @@ export function EffectColorField({ label, color, opacity, onChange }: EffectColo
     <FieldBox className="gap-1.5">
       <Popover>
         <PopoverTrigger asChild>
+          {/* eslint-disable-next-line no-restricted-syntax -- bespoke: a color swatch */}
           <button
             type="button"
             aria-label={`Edit ${label.toLowerCase()}`}
@@ -21,11 +21,12 @@ export function EffectColorField({ label, color, opacity, onChange }: EffectColo
           </button>
         </PopoverTrigger>
         <PopoverContent side="left" align="start" sideOffset={24} className="w-60 p-3">
-          <ColorControls
+          <ColorPicker
             color={color}
-            opacity={alpha}
-            label={`${label} `}
-            onChange={(next, info) => onChange(next, info)}
+            opacity={opacity}
+            onChange={(next, info, nextOpacity) =>
+              onChange({ color: next, opacity: nextOpacity }, info)
+            }
           />
         </PopoverContent>
       </Popover>

@@ -1,6 +1,7 @@
 import { Trash2, X } from "lucide-react";
 
 import { Button } from "@shared/ui/components/ui/button";
+import { IconButton } from "@shared/ui/kit";
 import { CommitInput } from "@canvas-ui";
 import { useBoardSchema } from "../schema";
 import { FlagToggle } from "./flag-toggle";
@@ -28,14 +29,15 @@ export function IndexRow({ table, index, typeListId }: IndexRowProps) {
                 className="inline-flex h-6 items-center gap-0.5 rounded-sm border bg-surface-sunken pr-0.5 pl-1.5 font-mono text-xs"
               >
                 {label}
-                <button
-                  type="button"
-                  className="cursor-pointer rounded-xs p-0.5 text-muted-foreground hover:bg-hover hover:text-foreground"
-                  aria-label={`Remove ${label} from the index`}
+                <IconButton
+                  size="xs"
+                  className="size-4 [&_svg:not([class*='size-'])]:size-3"
+                  label={`Remove ${label} from the index`}
+                  tooltip={false}
                   onClick={() => update({ parts: index.parts.filter((_, j) => j !== i) })}
                 >
-                  <X className="size-3" />
-                </button>
+                  <X />
+                </IconButton>
               </span>
             );
           })}

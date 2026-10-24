@@ -6,17 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cloudy Canvas</title>
     <script>
-      // Apply the persisted theme before first paint to avoid a flash. Key and flag match shared/stores/theme-store.ts.
-      var FORCE_LIGHT_THEME = true;
+      // Show the theme of the last run before first paint (no white flash in a dark theme). The key
+      // matches THEME_CSS_KEY in shared/stores/theme-store.ts; app/theme/apply-theme.ts writes it.
       try {
-        var stored = JSON.parse(localStorage.getItem("cloudy-canvas:theme") || "{}");
-        var pref = FORCE_LIGHT_THEME
-          ? "light"
-          : (stored.state && stored.state.preference) || "system";
-        var dark =
-          pref === "dark" ||
-          (pref === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
-        document.documentElement.classList.toggle("dark", dark);
+        var cached = JSON.parse(localStorage.getItem("cloudy-canvas:theme-css") || "null");
+        if (cached && typeof cached.css === "string") {
+          var style = document.createElement("style");
+          style.id = "cloudy-theme";
+          style.textContent = cached.css;
+          document.head.appendChild(style);
+          document.documentElement.classList.toggle("dark", !!cached.dark);
+          document.documentElement.dataset.appearance = cached.dark ? "dark" : "light";
+        }
       } catch (_) {}
     </script>
   </head>

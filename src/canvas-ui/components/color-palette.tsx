@@ -9,6 +9,7 @@ export function ColorPalette({
   onSelect,
   shape,
   allowCustom = true,
+  labelOf = (color) => color.name,
 }: ColorPaletteProps) {
   const current = value.toLowerCase();
   const inPalette = colors.some((color) => color.value.toLowerCase() === current);
@@ -17,7 +18,7 @@ export function ColorPalette({
       {colors.map((color) => (
         <ColorSwatch
           key={color.value}
-          label={color.name}
+          label={labelOf(color)}
           color={color.value}
           shape={shape}
           selected={color.value.toLowerCase() === current}

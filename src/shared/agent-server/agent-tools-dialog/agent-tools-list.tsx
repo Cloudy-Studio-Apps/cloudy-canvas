@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import { Input } from "@shared/ui/components/ui/input";
+import { SearchInput } from "@shared/ui/kit";
 import { AgentToolSectionView } from "./agent-tool-section";
 import type { AgentToolsListProps } from "./agent-tools-dialog.types";
 
@@ -24,9 +24,9 @@ export function AgentToolsList({ sections }: AgentToolsListProps) {
   return (
     <>
       <div className="px-4 py-3">
-        <Input
+        <SearchInput
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={setQuery}
           placeholder="Search tools"
           aria-label="Search tools"
         />

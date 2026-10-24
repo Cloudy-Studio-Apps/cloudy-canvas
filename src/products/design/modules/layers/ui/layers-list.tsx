@@ -4,7 +4,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useVirtualList } from "@shared/ui/hooks/use-virtual-list";
 import { DropIndicator } from "./drag/drop-indicator";
 import { useLayerDrag } from "./drag/use-layer-drag";
-import { LAYER_METRICS } from "./layer-metrics";
+import { useLayerMetrics } from "./layer-metrics";
 import { LayerRow } from "./layer-row";
 import type { LayersListProps } from "./layers-list.types";
 
@@ -24,13 +24,14 @@ export function LayersList({
   const engine = useDesignEngine();
   const scroll = useRef<HTMLDivElement>(null);
   const list = useRef<HTMLUListElement>(null);
-  const range = useVirtualList(scroll, rows.length, LAYER_METRICS.rowHeight);
+  const metrics = useLayerMetrics();
+  const range = useVirtualList(scroll, rows.length, metrics.rowHeight);
   const { drag, press } = useLayerDrag({
     rows,
     tree,
     list,
     scroll,
-    metrics: LAYER_METRICS,
+    metrics,
     expand: onExpand,
     enabled: draggable,
   });
@@ -57,7 +58,8 @@ export function LayersList({
           <LayerRow
             key={item.node.id}
             item={item}
-            top={(range.start + i) * LAYER_METRICS.rowHeight}
+            metrics={metrics}
+            top={(range.start + i) * metrics.rowHeight}
             selected={selected.has(item.node.id)}
             masked={masked.has(item.node.id)}
             dropInside={drag?.drop?.inside === item.node.id}
@@ -67,7 +69,7 @@ export function LayersList({
             onPress={press}
           />
         ))}
-        {drag && <DropIndicator drag={drag} metrics={LAYER_METRICS} />}
+        {drag && <DropIndicator drag={drag} metrics={metrics} />}
       </ul>
     </div>
   );

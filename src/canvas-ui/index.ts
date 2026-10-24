@@ -23,7 +23,7 @@ export type * from "./overlay";
 export type * from "./share";
 export type * from "./stickers";
 export { createActiveFile, useAgentFile } from "./agent";
-export { readCanvasTheme } from "./canvas-theme";
+export { EXPORT_THEME_SCOPE, readCanvasTheme, readExportCanvasTheme } from "./canvas-theme";
 export { StickerWheel } from "./stickers";
 export type * from "./tokens";
 export {
@@ -53,8 +53,12 @@ export { ImageQualityNote } from "./components/image-quality-note";
 export { ColorPalette } from "./components/color-palette";
 export {
   CHECKERBOARD,
+  ColorControls,
   ColorSlider,
+  ColorSwatches,
   EyedropperButton,
+  HexInput,
+  PercentInput,
   HUE_TRACK,
   hexToHsv,
   hsvToHex,
@@ -111,5 +115,7 @@ export * from "./modules";
 export { normalizedToScreen, screenToLocal, screenToNormalized, useViewMapping } from "./overlay";
 export { useAssetUrl } from "./use-asset-url";
 export { useImageQuality } from "./use-image-quality";
+export { useScrubUndo } from "./use-scrub-undo";
+export type * from "./use-scrub-undo.types";
 export { useService } from "./use-service";
 export { useSnapping } from "./use-snapping";

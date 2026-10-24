@@ -37,9 +37,16 @@ export function PluginRow({
           {manifest.description && (
             <p className="text-sm text-muted-foreground">{manifest.description}</p>
           )}
-          {status?.state === "enabled" && !!status.stickers && (
+          {status?.state === "enabled" && (!!status.stickers || !!status.themes) && (
             <p className="text-xs text-muted-foreground">
-              Adds {status.stickers} {status.stickers === 1 ? "sticker" : "stickers"}
+              Adds{" "}
+              {[
+                status.stickers &&
+                  `${status.stickers} ${status.stickers === 1 ? "sticker" : "stickers"}`,
+                status.themes && `${status.themes} ${status.themes === 1 ? "theme" : "themes"}`,
+              ]
+                .filter(Boolean)
+                .join(" and ")}
             </p>
           )}
           {status?.state === "failed" && status.error && (

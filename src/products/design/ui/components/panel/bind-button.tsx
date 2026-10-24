@@ -17,6 +17,7 @@ export function BindButton({ binding, className }: BindButtonProps) {
       modes={binding.modes}
       onPick={(id) => binding.bind(id)}
     >
+      {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the hover hexagon over a field */}
       <button
         type="button"
         aria-label={`Use a variable for ${field.label.toLowerCase()}`}

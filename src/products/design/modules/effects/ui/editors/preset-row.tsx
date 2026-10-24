@@ -6,6 +6,7 @@ export function PresetRow({ label, presets, onPick }: PresetRowProps) {
     <div className="flex items-center gap-1">
       <span className="mr-auto text-xs text-muted-foreground">{label}</span>
       {presets.map((preset, i) => (
+        // eslint-disable-next-line no-restricted-syntax -- bespoke: a tiny preset chip
         <button
           key={preset.label}
           type="button"

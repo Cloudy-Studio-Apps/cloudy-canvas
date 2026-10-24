@@ -3,7 +3,7 @@ import { ChevronDown } from "lucide-react";
 
 import { COLUMN_TYPES, formatColumnType, splitColumnType, TYPE_ARGS } from "@board";
 import { Button } from "@shared/ui/components/ui/button";
-import { Input } from "@shared/ui/components/ui/input";
+import { SearchInput } from "@shared/ui/kit";
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
 import { Tabs, TabsList, TabsTrigger } from "@shared/ui/components/ui/tabs";
 import { CommitInput } from "@canvas-ui";
@@ -97,12 +97,12 @@ export function ColumnTypePicker({ table, column }: ColumnTypePickerProps) {
           </Button>
         </PopoverTrigger>
         <PopoverContent align="end" className="w-64 space-y-2 p-2">
-          <Input
+          <SearchInput
             autoFocus
+            size="sm"
             placeholder="Search, or type a custom type…"
             value={query}
-            className="h-7 text-sm"
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={setQuery}
             onKeyDown={(event) => {
               if (event.key !== "Enter" || !custom) return;
               pick(options.find((o) => o.name.toLowerCase() === needle)?.name ?? custom);

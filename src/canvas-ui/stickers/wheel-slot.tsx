@@ -7,6 +7,7 @@ import { slotTiming, WHEEL_MOTION } from "./wheel-motion";
 export function WheelSlot({ sticker, slot, active, onPick }: WheelSlotProps) {
   const { x, y } = slotOffset(slot);
   return (
+    // eslint-disable-next-line no-restricted-syntax -- bespoke: a sticker on the wheel
     <button
       type="button"
       title={sticker.label}

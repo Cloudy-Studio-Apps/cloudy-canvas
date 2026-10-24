@@ -11,6 +11,7 @@ export function ErRatioPicker({ from, to, onPick }: ErRatioPickerProps) {
         <span className="font-medium text-foreground">{to}</span> related?
       </p>
       {ER_RELATION_RATIOS.map((ratio, i) => (
+        // eslint-disable-next-line no-restricted-syntax -- bespoke: a ratio with its glyph and sentence
         <button
           key={ratio.id}
           type="button"

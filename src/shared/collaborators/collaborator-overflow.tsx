@@ -11,6 +11,7 @@ export function CollaboratorOverflow({ count, followable, side }: CollaboratorOv
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
+        {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the "+N" avatar */}
         <button
           type="button"
           className="relative flex size-7 shrink-0 items-center justify-center rounded-full border-2 border-border bg-muted text-[10px] font-semibold text-foreground ring-2 ring-surface hover:z-20 hover:bg-hover focus-visible:z-20 focus-visible:outline-2 focus-visible:outline-ring"

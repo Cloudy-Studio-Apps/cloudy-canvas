@@ -15,7 +15,9 @@ import type * as designModules from "@design/ui/modules";
 import type * as designPanel from "@design/ui/components/panel";
 import type * as designHooks from "@design/ui/hooks";
 import type { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
+import type * as kit from "@shared/ui/kit";
 import type { PluginStickersApi } from "./plugin-stickers.types";
+import type { PluginThemesApi } from "./plugin-themes.types";
 
 /**
  * What a plugin's `activate(api)` gets: the app's own building blocks, so a plugin needs no
@@ -81,6 +83,12 @@ export interface PluginApi {
     React: typeof React;
     toast: typeof toast;
     notifyError: typeof notifyError;
+    /**
+     * The app's UI kit (`IconButton`, `SegmentedControl`, `Field`, `Section`, `ListRow`,
+     * `SelectableCard`, `AppDialog`, …, plus the shadcn primitives and `cn`). Built on the theme's
+     * tokens, so a plugin's UI follows the theme by itself.
+     */
+    kit: typeof kit;
   } & Pick<
     typeof canvasUi,
     | "FloatingPanel"
@@ -120,6 +128,14 @@ export interface PluginApi {
    * (`registerGroup`) and stickers added to them or to the built-in ones (`registerSet`).
    */
   stickers: PluginStickersApi;
+  /** Themes for Settings › Appearance (`register`), and the active theme. */
+  themes: PluginThemesApi;
+}
+
+/** What `createPluginApi` hands out of the plugin's stages. */
+export interface PluginStaged {
+  stickers: PluginStickersApi;
+  themes: PluginThemesApi;
 }
 
 /** What design plugins build on (`api.design`). */

@@ -24,6 +24,8 @@ export class DocumentHistory implements UndoHistory {
   private nextLabel: string | null = null;
   /** The label of the step being undone or redone, given to the step that replaces it. */
   private moving: string | null = null;
+  /** How many `hold`s are open: while any is, every change joins the current step. */
+  private holds = 0;
 
   constructor(scope: HistoryScope, origin: symbol) {
     this.manager = new Y.UndoManager(scope, {
@@ -42,7 +44,29 @@ export class DocumentHistory implements UndoHistory {
   }
 
   checkpoint(): void {
-    this.manager.stopCapturing();
+    if (this.holds === 0) this.manager.stopCapturing();
+  }
+
+  /**
+   * Makes every change until the returned function is called one undo step, however long it
+   * takes and whatever calls `checkpoint` meanwhile (a field scrubbed by dragging, whose every
+   * step is written like a typed value). Holds nest; the last release ends the step.
+   */
+  hold(): () => void {
+    if (this.holds === 0) {
+      this.manager.stopCapturing();
+      this.manager.captureTimeout = Number.POSITIVE_INFINITY;
+    }
+    this.holds++;
+    let released = false;
+    return () => {
+      if (released) return;
+      released = true;
+      this.holds--;
+      if (this.holds > 0) return;
+      this.manager.captureTimeout = CAPTURE_TIMEOUT_MS;
+      this.manager.stopCapturing();
+    };
   }
 
   undo(): void {

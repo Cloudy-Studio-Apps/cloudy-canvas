@@ -4,6 +4,7 @@ import { useState } from "react";
 import { DESIGN_PAGES } from "@design";
 import { PanelAddButton } from "@design/ui/components/panel";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
+import { Button } from "@shared/ui/kit";
 import { cn } from "@shared/ui/lib/utils";
 import { addPage } from "./page-actions";
 import { PageRow } from "./page-row";
@@ -22,11 +23,12 @@ export function PagesSection() {
   return (
     <section className="shrink-0 border-t px-1.5 pb-1.5">
       <header className="flex h-10 items-center justify-between gap-1 pr-1.5 pl-1.5">
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="xs"
           aria-expanded={open}
           onClick={() => setOpen(!open)}
-          className="flex cursor-pointer items-center gap-1 text-xs font-semibold text-foreground"
+          className="-ml-1.5 font-semibold text-foreground"
         >
           Pages
           <ChevronRight
@@ -35,7 +37,7 @@ export function PagesSection() {
               open && "rotate-90",
             )}
           />
-        </button>
+        </Button>
         <PanelAddButton label="Add page" onClick={() => addPage(engine)} />
       </header>
       {open && (

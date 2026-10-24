@@ -1,13 +1,6 @@
-import type { ComponentProps, ReactNode } from "react";
+import type { IconButtonProps } from "@shared/ui/kit";
 
-import type { Button } from "@shared/ui/components/ui/button";
-
-export interface ToolButtonProps extends Omit<ComponentProps<typeof Button>, "children"> {
-  label: string;
-  /** A second, muted line in the tooltip. */
-  description?: string;
-  shortcut?: string;
-  active?: boolean;
-  children: ReactNode;
+export interface ToolButtonProps extends Omit<IconButtonProps, "size" | "tooltip"> {
+  /** Where the tooltip opens. */
   side?: "top" | "right" | "bottom" | "left";
 }

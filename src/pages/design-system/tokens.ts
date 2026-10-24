@@ -1,4 +1,4 @@
-// Token names rendered by the preview page. Values live in src/ui/styles/tokens.css.
+// Token names rendered by the preview page. Values come from the active theme (src/shared/core/themes/).
 
 export const STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] as const;
 

@@ -17,6 +17,7 @@ export function DashPatternField({ nodes }: DashPatternFieldProps) {
   return (
     <FieldBox title={bindings.title ?? "Dash pattern"} invalid={!!field.error}>
       <span className="shrink-0 text-subtle-foreground">Pattern</span>
+      {/* eslint-disable-next-line no-restricted-syntax -- bespoke: a bare input inside its FieldBox */}
       <input
         aria-label="Dash pattern"
         placeholder={shared === null ? "Mixed" : "dash, gap, …"}

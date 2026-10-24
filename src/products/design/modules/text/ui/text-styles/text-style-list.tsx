@@ -18,6 +18,7 @@ export function TextStyleList({ current, onPick }: TextStyleListProps) {
       {styles.map((style) => {
         const value = readTextStyle(style.value);
         return (
+          // eslint-disable-next-line no-restricted-syntax -- bespoke: a text style in its own font
           <button
             key={style.id}
             type="button"

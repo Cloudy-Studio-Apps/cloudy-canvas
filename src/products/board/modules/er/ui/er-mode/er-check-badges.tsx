@@ -37,6 +37,7 @@ export function ErCheckBadges() {
         const box = engine.worldRectToScreen({ x: el.x, y: el.y, w: el.w, h: el.h });
         const Icon = finding.severity === "error" ? CircleX : TriangleAlert;
         return (
+          // eslint-disable-next-line no-restricted-syntax -- bespoke: a finding badge laid over the canvas
           <button
             key={finding.shapeId}
             type="button"

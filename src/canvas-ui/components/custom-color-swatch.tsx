@@ -1,6 +1,10 @@
+import { useRef } from "react";
+
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
 import { cn } from "@shared/ui/lib/utils";
+import { useScrubUndo } from "../use-scrub-undo";
 import { ColorPicker } from "./color-picker";
+import { normalizeHex } from "./normalize-hex";
 import { OptionButton } from "./option-button";
 import type { CustomColorSwatchProps } from "./custom-color-swatch.types";
 
@@ -8,7 +12,10 @@ import type { CustomColorSwatchProps } from "./custom-color-swatch.types";
 const HUE_WHEEL =
   "conic-gradient(#ff4d4d, #ffb84d, #f5f54d, #4dff88, #4dd2ff, #6b4dff, #ff4dd2, #ff4d4d)";
 
-/** A rainbow swatch that opens a color picker; it shows the custom color while one is picked. */
+/**
+ * A rainbow swatch that opens the app's color picker (Figma's); it shows the custom color while
+ * one is picked. The color applies live while dragging, and a drag is one undo step.
+ */
 export function CustomColorSwatch({
   color,
   selected,
@@ -16,6 +23,8 @@ export function CustomColorSwatch({
   shape = "square",
 }: CustomColorSwatchProps) {
   const round = shape === "circle" ? "rounded-full" : "rounded-xs";
+  const undo = useScrubUndo();
+  const dragging = useRef(false);
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -37,8 +46,21 @@ export function CustomColorSwatch({
           </span>
         </OptionButton>
       </PopoverTrigger>
-      <PopoverContent side="top" className="w-56 p-2">
-        <ColorPicker key={color} color={color} onChange={onSelect} />
+      <PopoverContent side="top" className="w-60 p-3">
+        <ColorPicker
+          color={normalizeHex(color) ?? "#000000"}
+          onChange={(next, { done }) => {
+            if (!done && !dragging.current) {
+              dragging.current = true;
+              undo.onScrubStart();
+            }
+            onSelect(next);
+            if (done && dragging.current) {
+              dragging.current = false;
+              undo.onScrubEnd();
+            }
+          }}
+        />
       </PopoverContent>
     </Popover>
   );

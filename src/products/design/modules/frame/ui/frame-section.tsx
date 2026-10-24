@@ -4,6 +4,7 @@ import type { ElementPatch } from "@canvas";
 import type { DesignNode, FrameElement } from "@design";
 import { NodeCheckbox, PanelSection } from "@design/ui/components/panel";
 import { useEditNodes } from "@design/ui/hooks";
+import { Button } from "@shared/ui/kit";
 import type { PropertySectionProps } from "@design/ui/modules";
 import { FramePresetMenu } from "./frame-preset-menu";
 
@@ -19,14 +20,11 @@ export function FrameSection({ selection: { nodes } }: PropertySectionProps) {
         <FramePresetMenu
           onPick={({ size }) => edit(frames, () => ({ w: size.w, h: size.h }))}
           trigger={
-            <button
-              type="button"
-              className="flex h-6 cursor-pointer items-center gap-1 rounded-sm px-1.5 text-xs text-muted-foreground hover:bg-hover hover:text-foreground"
-            >
-              <Frame className="size-3" />
+            <Button variant="ghost" size="xs">
+              <Frame />
               Presets
-              <ChevronDown className="size-3" />
-            </button>
+              <ChevronDown />
+            </Button>
           }
         />
       }

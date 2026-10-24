@@ -53,6 +53,7 @@ export function BooleanToolbarMenu() {
       </ToolButton>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
+          {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the split button's chevron */}
           <button
             type="button"
             aria-label="Boolean operations"

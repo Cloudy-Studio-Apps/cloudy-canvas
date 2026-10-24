@@ -4,6 +4,7 @@ import type { FlagToggleProps } from "./flag-toggle.types";
 /** Small on/off chip for a constraint like PK or UQ. */
 export function FlagToggle({ label, title, on, onToggle, disabled }: FlagToggleProps) {
   return (
+    // eslint-disable-next-line no-restricted-syntax -- bespoke: a DB column flag chip (PK, NN, …)
     <button
       type="button"
       aria-pressed={on}

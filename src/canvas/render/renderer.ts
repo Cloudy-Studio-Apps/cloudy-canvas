@@ -72,6 +72,7 @@ export class Renderer {
 
   constructor(
     private theme: CanvasTheme,
+    private readonly exportTheme: CanvasTheme,
     private readonly kinds: ElementKinds,
     links: readonly CanvasLinks[],
     images: ImageCacheHost,
@@ -113,6 +114,11 @@ export class Renderer {
   /** The canvas background color (0xRRGGBB). */
   get background(): number {
     return this.theme.background;
+  }
+
+  /** The background exports and thumbnails are drawn on. */
+  get exportBackground(): number {
+    return this.exportTheme.background;
   }
 
   get canvas(): HTMLCanvasElement {
@@ -354,7 +360,7 @@ export class Renderer {
       this.app.renderer,
       this.kinds,
       this.images,
-      this.theme,
+      this.exportTheme,
       elements,
       this.options.placement,
       options,

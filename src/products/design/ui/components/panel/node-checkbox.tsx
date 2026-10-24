@@ -1,4 +1,5 @@
 import type { DesignNode } from "@design";
+import { Checkbox } from "@shared/ui/kit";
 import { useEditNodes } from "../../hooks";
 import type { NodeCheckboxProps } from "./node-fields.types";
 
@@ -12,14 +13,11 @@ export function NodeCheckbox<N extends DesignNode>({
   const edit = useEditNodes();
   const checked = nodes.length > 0 && nodes.every(read);
   return (
-    <label className="flex items-center gap-2 text-xs text-muted-foreground">
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={() => edit(nodes, (node) => patch(!checked, node as N))}
-        className="accent-primary"
-      />
-      {label}
-    </label>
+    <Checkbox
+      checked={checked}
+      onCheckedChange={(next) => edit(nodes, (node) => patch(next, node as N))}
+      label={label}
+      className="text-muted-foreground"
+    />
   );
 }

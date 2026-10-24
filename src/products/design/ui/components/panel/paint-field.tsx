@@ -11,11 +11,11 @@ import { BindButton } from "./bind-button";
 import { useGradientEditStore } from "../../stores/gradient-edit-store";
 import { useImageCropStore } from "../../stores/image-crop-store";
 import { FieldBox } from "./field-box";
-import { HexInput } from "./hex-input";
+import { HexInput } from "@canvas-ui";
 import { PanelIconButton } from "./panel-section";
 import type { PaintFieldProps } from "./paint-field.types";
 import { PaintSwatch } from "./paint-swatch";
-import { PercentInput } from "./percent-input";
+import { PercentInput } from "@canvas-ui";
 
 /** What the field shows for a paint that isn't a solid color. */
 const PAINT_NAMES = {
@@ -73,6 +73,7 @@ export function PaintField({
       <FieldBox className="flex-1 gap-0 px-0">
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
+            {/* eslint-disable-next-line no-restricted-syntax -- bespoke: a paint's swatch and name */}
             <button
               type="button"
               aria-label={`Edit ${label.toLowerCase()}`}
@@ -109,6 +110,7 @@ export function PaintField({
             onCommit={(color) => onChange({ ...paint, color }, done)}
           />
         ) : (
+          // eslint-disable-next-line no-restricted-syntax -- bespoke: a paint's swatch and name
           <button
             type="button"
             onClick={() => setOpen(true)}

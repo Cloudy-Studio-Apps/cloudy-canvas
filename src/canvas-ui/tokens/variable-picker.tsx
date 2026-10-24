@@ -1,8 +1,8 @@
-import { Check, Search } from "lucide-react";
+import { Check } from "lucide-react";
 import { useState } from "react";
 
 import { groupTree, type VariableRecord } from "@canvas";
-import { Input } from "@shared/ui/components/ui/input";
+import { SearchInput } from "@shared/ui/kit";
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
 import { cn } from "@shared/ui/lib/utils";
 import { matchesScopes } from "./matches-scopes";
@@ -46,15 +46,15 @@ export function VariablePicker({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent align={align} className="w-64 p-0">
-        <div className="relative border-b border-border p-2">
-          <Search className="pointer-events-none absolute top-1/2 left-4 size-3.5 -translate-y-1/2 text-subtle-foreground" />
-          <Input
+        <div className="border-b border-border p-2">
+          <SearchInput
             autoFocus
+            size="sm"
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={setQuery}
             placeholder="Search variables"
             aria-label="Search variables"
-            className="h-7 pl-7 text-xs"
+            className="text-xs"
           />
         </div>
         <div className="max-h-72 overflow-y-auto p-1">
@@ -73,6 +73,7 @@ export function VariablePicker({
                   storageKey={`picker:${collection.id}`}
                   defaultOpen={text.length > 0}
                   renderVariable={(variable) => (
+                    // eslint-disable-next-line no-restricted-syntax -- bespoke: a variable with its swatch and value
                     <button
                       type="button"
                       onClick={() => pick(variable.id)}

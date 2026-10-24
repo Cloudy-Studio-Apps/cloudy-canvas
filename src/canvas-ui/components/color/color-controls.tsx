@@ -1,23 +1,19 @@
 import { useState } from "react";
 
-import {
-  ColorSlider,
-  EyedropperButton,
-  hexToHsv,
-  hsvToHex,
-  HUE_TRACK,
-  SaturationArea,
-  type ColorChangeInfo,
-  type Hsv,
-} from "@canvas-ui";
-import { FieldBox } from "../panel/field-box";
-import { HexInput } from "../panel/hex-input";
-import { PercentInput } from "../panel/percent-input";
-import type { ColorControlsProps } from "./paint-picker.types";
+import { FieldBox } from "@shared/ui/kit";
+import { ColorSlider } from "./color-slider";
+import { HUE_TRACK } from "./color-constants";
+import { hexToHsv, hsvToHex } from "./color-math";
+import type { ColorChangeInfo, ColorControlsProps, Hsv } from "./color.types";
+import { EyedropperButton } from "./eyedropper-button";
+import { HexInput } from "./hex-input";
+import { PercentInput } from "./percent-input";
+import { SaturationArea } from "./saturation-area";
 
 /**
- * One color with its opacity: the saturation/brightness area, eyedropper, hue and opacity
- * sliders, then hex and opacity fields. Shared by solid paints and gradient stops.
+ * One color, Figma's way: the saturation/brightness area, eyedropper, hue (and opacity) sliders,
+ * then hex (and opacity) fields. Drags report `{ done: false }` steps, then `{ done: true }`.
+ * Shared by every color in the app: paints, gradient stops, effects, board palettes.
  */
 export function ColorControls({ color, opacity, onChange, label = "" }: ColorControlsProps) {
   // Kept as HSV so the hue survives grays and black, where the hex has none.
@@ -27,12 +23,13 @@ export function ColorControls({ color, opacity, onChange, label = "" }: ColorCon
     setSynced(color);
     if (hsvToHex(hsv) !== color) setHsv(hexToHsv(color));
   }
+  const alpha = opacity ?? 1;
 
   const setColor = (next: Hsv, info: ColorChangeInfo) => {
     const hex = hsvToHex(next);
     setHsv(next);
     setSynced(hex);
-    onChange({ color: hex, opacity }, info);
+    onChange({ color: hex, opacity: alpha }, info);
   };
   const pick = (hex: string) => setColor(hexToHsv(hex), { done: true });
   const setOpacity = (value: number, info: ColorChangeInfo) =>
@@ -50,13 +47,15 @@ export function ColorControls({ color, opacity, onChange, label = "" }: ColorCon
             track={HUE_TRACK}
             onChange={(h, info) => setColor({ ...hsv, h: h * 360 }, info)}
           />
-          <ColorSlider
-            label={`${label}Opacity`}
-            value={opacity}
-            track={`linear-gradient(to right, transparent, ${color})`}
-            checkered
-            onChange={setOpacity}
-          />
+          {opacity !== undefined && (
+            <ColorSlider
+              label={`${label}Opacity`}
+              value={opacity}
+              track={`linear-gradient(to right, transparent, ${color})`}
+              checkered
+              onChange={setOpacity}
+            />
+          )}
         </div>
       </div>
       <div className="flex gap-1.5">
@@ -64,13 +63,15 @@ export function ColorControls({ color, opacity, onChange, label = "" }: ColorCon
           <span className="text-subtle-foreground">Hex</span>
           <HexInput color={color} label={`${label}Hex color`} onCommit={pick} />
         </FieldBox>
-        <FieldBox className="w-16 gap-0.5">
-          <PercentInput
-            value={opacity}
-            label={`${label}Opacity`}
-            onCommit={(value) => setOpacity(value, { done: true })}
-          />
-        </FieldBox>
+        {opacity !== undefined && (
+          <FieldBox className="w-16 gap-0.5">
+            <PercentInput
+              value={opacity}
+              label={`${label}Opacity`}
+              onCommit={(value) => setOpacity(value, { done: true })}
+            />
+          </FieldBox>
+        )}
       </div>
     </div>
   );

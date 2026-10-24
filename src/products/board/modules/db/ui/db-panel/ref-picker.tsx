@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link2, LocateFixed, Unlink } from "lucide-react";
 
 import { Button } from "@shared/ui/components/ui/button";
-import { Input } from "@shared/ui/components/ui/input";
+import { ListRow, SearchInput } from "@shared/ui/kit";
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
 import { cn } from "@shared/ui/lib/utils";
 import { useEngine } from "@canvas-ui";
@@ -108,11 +108,12 @@ export function RefPicker({ table, column }: RefPickerProps) {
             </div>
           </div>
         )}
-        <Input
+        <SearchInput
           autoFocus
+          size="sm"
           placeholder="Search table.column…"
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={setQuery}
           onKeyDown={(event) => {
             const first = matches[0];
             if (event.key === "Enter" && first) link(first.tableId, first.columnId);
@@ -124,17 +125,21 @@ export function RefPicker({ table, column }: RefPickerProps) {
           )}
           {matches.map((t) => (
             <li key={`${t.tableId}/${t.columnId}`}>
-              <button
-                type="button"
-                className="flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-none hover:bg-hover focus-visible:bg-hover"
-                onClick={() => link(t.tableId, t.columnId)}
-              >
-                <span className="min-w-0 flex-1 truncate">
-                  {t.tableName}.<span className="font-medium">{t.columnName}</span>
-                </span>
-                {t.pk && <span className="text-xs font-semibold text-muted-foreground">PK</span>}
-                <span className="shrink-0 text-xs text-muted-foreground">{t.type}</span>
-              </button>
+              <ListRow
+                size="md"
+                onSelect={() => link(t.tableId, t.columnId)}
+                label={
+                  <>
+                    {t.tableName}.<span className="font-medium">{t.columnName}</span>
+                  </>
+                }
+                meta={
+                  <>
+                    {t.pk && <span className="mr-2 font-semibold">PK</span>}
+                    {t.type}
+                  </>
+                }
+              />
             </li>
           ))}
         </ul>

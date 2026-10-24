@@ -1,3 +1,4 @@
+import { Card } from "@shared/ui/kit";
 import type { SettingsSectionProps } from "./settings-section.types";
 
 /** A settings page: its title and description, then its content in a card. */
@@ -11,7 +12,7 @@ export function SettingsSection({ id, title, description, children }: SettingsSe
         </h1>
         {description && <p className="max-w-prose text-sm text-muted-foreground">{description}</p>}
       </div>
-      <div className="mt-5 rounded-card border bg-surface p-5 shadow-soft">{children}</div>
+      <Card className="mt-5 p-5">{children}</Card>
     </section>
   );
 }

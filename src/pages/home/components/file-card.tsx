@@ -28,6 +28,7 @@ export function FileCard({ file, missing, onOpen }: FileCardProps) {
   const showThumbnail = thumbnail !== null && !missing;
 
   const card = (
+    // eslint-disable-next-line no-restricted-syntax -- bespoke: Home's file card with its thumbnail
     <button
       type="button"
       onClick={missing ? undefined : () => onOpen(file)}

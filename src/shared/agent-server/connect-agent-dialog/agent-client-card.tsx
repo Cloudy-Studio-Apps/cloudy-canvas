@@ -6,6 +6,7 @@ import type { AgentClientCardProps } from "./connect-agent-dialog.types";
 export function AgentClientCard({ icon, label, action, onClick }: AgentClientCardProps) {
   const Action = action === "add" ? Plus : ChevronRight;
   return (
+    // eslint-disable-next-line no-restricted-syntax -- bespoke: an agent app's card with its logo
     <button
       type="button"
       onClick={onClick}

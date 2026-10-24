@@ -60,6 +60,7 @@ export function EffectRow({
       </span>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
+          {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the effect's FieldBox as the editor's trigger */}
           <button
             type="button"
             disabled={!Editor}

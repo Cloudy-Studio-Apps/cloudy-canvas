@@ -7,6 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@shared/ui/components/ui/dropdown-menu";
+import { IconButton } from "@shared/ui/kit";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { deletePage, duplicatePage } from "./page-actions";
 import type { PageMenuProps } from "./page-row.types";
@@ -17,15 +18,17 @@ export function PageMenu({ page, deletable, onRename }: PageMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          aria-label={`${page.name} options`}
+        <IconButton
+          size="xs"
+          className="size-5 rounded-xs"
+          label={`${page.name} options`}
           title="Page options"
+          tooltip={false}
+          revealOnHover
           onClick={(event) => event.stopPropagation()}
-          className="flex size-5 cursor-pointer items-center justify-center rounded-xs text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-foreground focus-visible:opacity-100 data-[state=open]:opacity-100 [&_svg]:size-3.5"
         >
           <MoreHorizontal />
-        </button>
+        </IconButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"

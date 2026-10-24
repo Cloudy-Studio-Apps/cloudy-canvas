@@ -138,6 +138,27 @@ export default tseslint.config(
     files: uiOf("design"),
     rules: restrict([BOARD]),
   },
+  // UI is built from the kit: a hand-written <button> or <input> outside it is flagged, so new code
+  // reaches for IconButton, SegmentedControl, NumberInput, … One-off designs say why they're bespoke
+  // with an inline disable. The variables module is exempt until it's moved onto the kit.
+  {
+    files: ["src/**/*.tsx"],
+    ignores: [
+      "src/shared/ui/kit/**",
+      "src/shared/ui/components/ui/**",
+      "src/products/design/modules/variables/**",
+    ],
+    rules: {
+      "no-restricted-syntax": [
+        "warn",
+        {
+          selector: "JSXOpeningElement[name.name=/^(button|input)$/]",
+          message:
+            "Use @shared/ui/kit (IconButton, SegmentedControl, NumberInput, SearchInput, ListRow, ChoiceCards, Button, Input, …). For a one-off design, add `eslint-disable-next-line no-restricted-syntax -- bespoke: <why>`.",
+        },
+      ],
+    },
+  },
   {
     files: ["vite.config.ts", "eslint.config.js"],
     languageOptions: { globals: globals.node },

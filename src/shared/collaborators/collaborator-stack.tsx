@@ -61,6 +61,7 @@ export function CollaboratorStack({
           <Tooltip key={collaborator.id}>
             <TooltipTrigger asChild>
               {followable ? (
+                // eslint-disable-next-line no-restricted-syntax -- bespoke: a round collaborator avatar
                 <button
                   type="button"
                   className={cn(

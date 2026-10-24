@@ -28,6 +28,7 @@ export function PaintTabs({ active, onPick, allowImage }: PaintTabsProps) {
       })).map((tab) => (
         <Tooltip key={tab.id}>
           <TooltipTrigger asChild>
+            {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the paint picker's kind tabs */}
             <button
               type="button"
               role="tab"

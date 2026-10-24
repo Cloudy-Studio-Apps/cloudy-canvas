@@ -7,6 +7,7 @@ export function PreviewStrip({ pages, shown, onPick }: PreviewStripProps) {
   return (
     <div className="flex max-w-[90vw] gap-1 overflow-x-auto p-1">
       {pages.map((page) => (
+        // eslint-disable-next-line no-restricted-syntax -- bespoke: a page thumbnail in the preview strip
         <button
           key={page.slot.id}
           type="button"

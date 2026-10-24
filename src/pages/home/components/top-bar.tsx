@@ -1,5 +1,5 @@
-import { Link } from "react-router";
-import { Bot, Palette, Settings } from "lucide-react";
+import { Link, useNavigate } from "react-router";
+import { Bot, Moon, Palette, Settings, Sun } from "lucide-react";
 
 import { formatShortcut } from "@shared/core";
 import { openAbout } from "@shared/about";
@@ -8,15 +8,17 @@ import { CollaboratorStack } from "@shared/collaborators";
 import { Wordmark } from "@shared/ui/brand/wordmark";
 import { Button } from "@shared/ui/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@shared/ui/components/ui/tooltip";
+import { ThemeMenu, useActiveTheme } from "@shared/ui/theme";
 import { AppHeader } from "@shared/ui/layout/app-header";
 import { SETTINGS_SHORTCUT } from "../home-shortcuts";
 import { JoinSessionButton } from "./join-session-button";
 
 export function TopBar() {
+  const navigate = useNavigate();
+  const dark = useActiveTheme().resolved.appearance === "dark";
   return (
     <AppHeader
       actions={
-        // <ThemeToggle /> returns here with dark mode (see FORCE_LIGHT_THEME).
         <>
           <CollaboratorStack className="mr-1" />
           <JoinSessionButton />
@@ -37,6 +39,14 @@ export function TopBar() {
               </Link>
             </Button>
           )}
+          <ThemeMenu
+            onOpenSettings={() => void navigate("/settings/appearance")}
+            trigger={
+              <Button variant="ghost" size="icon" aria-label="Theme">
+                {dark ? <Moon /> : <Sun />}
+              </Button>
+            }
+          />
           <Tooltip>
             <TooltipTrigger asChild>
               <Button variant="ghost" size="sm" asChild>
@@ -51,6 +61,7 @@ export function TopBar() {
         </>
       }
     >
+      {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the wordmark opens About */}
       <button
         type="button"
         aria-label="About Cloudy Canvas"

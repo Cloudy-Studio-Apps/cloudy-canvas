@@ -15,16 +15,6 @@ export interface PaintPickerProps {
   size?: Size;
 }
 
-export interface ColorControlsProps {
-  /** `#RRGGBB`. */
-  color: string;
-  /** 0–1. */
-  opacity: number;
-  onChange: (next: { color: string; opacity: number }, info: ColorChangeInfo) => void;
-  /** Put before the controls' names for screen readers, e.g. "Stop ". */
-  label?: string;
-}
-
 export interface SolidEditorProps {
   paint: SolidPaint;
   onChange: (paint: SolidPaint, info: ColorChangeInfo) => void;
@@ -81,10 +71,4 @@ export interface PaintTabsProps {
   active: PaintTab["id"];
   onPick: (tab: PaintTab["id"]) => void;
   allowImage: boolean;
-}
-
-export interface ColorSwatchesProps {
-  title: string;
-  colors: readonly string[];
-  onPick: (color: string) => void;
 }

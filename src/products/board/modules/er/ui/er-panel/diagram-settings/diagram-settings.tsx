@@ -2,11 +2,12 @@ import { ChevronLeft, Table2 } from "lucide-react";
 
 import { erNotation, erStandard } from "@board";
 import { Button } from "@shared/ui/components/ui/button";
+import { ChoiceCards } from "@shared/ui/kit";
 import { useErDiagram, useErQuery } from "../../model";
 import { useErToTablesStore } from "../../er-to-tables";
 import { FormSection } from "../forms/form-section";
 import { ER_SETTING_CHOICES } from "./diagram-setting-choices";
-import { ErSettingOption } from "./diagram-setting-option";
+import { ErSettingPreview } from "./diagram-setting-preview";
 import { ErCheckList } from "./check-list";
 import { ErDiagramList } from "./diagram-list";
 import { useShowAllDiagrams } from "../use-show-all-diagrams";
@@ -59,14 +60,15 @@ export function ErDiagramSettings() {
   if (!diagram.id || empty) return <ErDiagramList />;
   return (
     <div className="space-y-3">
-      <button
-        type="button"
-        className="-ml-1 flex items-center gap-1 rounded-md px-1 py-0.5 text-xs text-muted-foreground outline-none hover:bg-hover hover:text-foreground focus-visible:bg-hover"
+      <Button
+        variant="ghost"
+        size="sm"
+        className="-ml-1 h-6 gap-1 px-1 text-xs has-[>svg]:px-1"
         onClick={showAll}
       >
         <ChevronLeft className="size-3.5" />
         All diagrams
-      </button>
+      </Button>
       <p className="text-xs text-muted-foreground">
         The diagram's standard, its check and how it's drawn. Select a shape to edit it instead.
       </p>
@@ -102,24 +104,17 @@ export function ErDiagramSettings() {
       {ER_SETTING_CHOICES.map((choice) => (
         <FormSection key={choice.key} title={choice.label}>
           <p className="text-xs text-muted-foreground">{choice.hint}</p>
-          <div
-            role="group"
-            aria-label={choice.label}
-            className={
-              choice.options.length > 2 ? "grid grid-cols-3 gap-1.5" : "grid grid-cols-2 gap-1.5"
-            }
-          >
-            {choice.options.map((option) => (
-              <ErSettingOption
-                key={option.value}
-                setting={choice.key}
-                value={option.value}
-                label={option.label}
-                selected={current(choice.key) === option.value}
-                onSelect={() => choose(choice.key, option.value)}
-              />
-            ))}
-          </div>
+          <ChoiceCards
+            label={choice.label}
+            value={current(choice.key)}
+            onChange={(value) => choose(choice.key, value)}
+            columns={choice.options.length > 2 ? 3 : 2}
+            options={choice.options.map((option) => ({
+              value: option.value,
+              label: option.label,
+              picture: <ErSettingPreview setting={choice.key} value={option.value} />,
+            }))}
+          />
         </FormSection>
       ))}
     </div>

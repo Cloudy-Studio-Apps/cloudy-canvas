@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 
 import { MENU_FITS_SCREEN, useEditorModules } from "@canvas-ui";
 import { SealLogo } from "@shared/ui/brand/seal-logo";
+import { IconButton } from "@shared/ui/kit";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,13 +35,9 @@ export function DesignMainMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          aria-label="Main menu"
-          className="mb-2 flex size-9 cursor-pointer items-center justify-center rounded-md hover:bg-hover data-[state=open]:bg-hover"
-        >
+        <IconButton size="lg" label="Main menu" tooltip={false} className="mb-2">
           <SealLogo size={22} variant="mark" />
-        </button>
+        </IconButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         side="right"

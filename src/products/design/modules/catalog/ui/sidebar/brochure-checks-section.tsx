@@ -24,6 +24,7 @@ export function BrochureChecksSection() {
         <ul className="flex max-h-60 flex-col gap-1 overflow-y-auto">
           {issues.map((issue) => (
             <li key={`${issue.kind}:${issue.nodeId}`}>
+              {/* eslint-disable-next-line no-restricted-syntax -- bespoke: a multi-line check */}
               <button
                 type="button"
                 className="flex w-full cursor-pointer items-start gap-2 rounded-sm bg-accent-soft px-2 py-1.5 text-left text-xs text-accent-soft-foreground hover:bg-accent-soft/70"

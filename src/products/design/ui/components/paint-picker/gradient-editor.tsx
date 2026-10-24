@@ -13,7 +13,7 @@ import { notifyError, toast } from "@shared/stores/toast-store";
 import { useDesignEngine } from "../../design-engine-context";
 import { useGradientEditStore } from "../../stores/gradient-edit-store";
 import { usePaintRecentsStore } from "../../stores/paint-recents-store";
-import { ColorControls } from "./color-controls";
+import { ColorControls } from "@canvas-ui";
 import { GradientStopBar } from "./gradient-stop-bar";
 import { GradientStopRow } from "./gradient-stop-row";
 import { GradientSwatches } from "./gradient-swatches";

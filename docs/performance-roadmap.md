@@ -4,7 +4,7 @@ What could make the canvas cheaper as files, features and live sessions grow, wi
 
 **Already done:** off-screen views are culled every frame (`ElementLayer.cull`, `ElementView.cull`), a moved view is only moved (`viewChange`), opening a file builds views a slice at a time (`syncElementsChunked`), text textures are capped by size (`cappedTextResolution`), pictures are decoded as sharp as they show and let go off screen (`ImageCache`), exports and agents' views draw their own views (`drawSnapshot`), agents' workspaces have no views at all (headless `Scene`).
 
-**What culling doesn't cover:** being off screen only skips the GPU pass. Off-screen views are still *drawn* (`kind.draw`) on every change, and still re-rasterize their text on zoom.
+**What culling doesn't cover:** being off screen only skips the GPU pass. Off-screen views are still _drawn_ (`kind.draw`) on every change, and still re-rasterize their text on zoom.
 
 **Suggested next:** the two items under "Cheap, low risk" once a design page with many texts or an agent's large selection feels slow.
 

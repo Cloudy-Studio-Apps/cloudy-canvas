@@ -1,7 +1,6 @@
-import { Search } from "lucide-react";
 import { useState } from "react";
 
-import { Input } from "@shared/ui/components/ui/input";
+import { SearchInput } from "@shared/ui/kit";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@shared/ui/components/ui/tabs";
 import { CustomTab } from "./custom-tab";
 import { EmojiTab } from "./emoji-tab";
@@ -16,17 +15,13 @@ export function StickerPanel({ activeId, onPick }: StickerPanelProps) {
   return (
     <Tabs defaultValue="stickers" className="gap-2">
       <div className="flex flex-col gap-2 px-3 pt-3">
-        <div className="relative">
-          <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-subtle-foreground" />
-          <Input
-            autoFocus
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search stickers and emojis"
-            aria-label="Search stickers"
-            className="pl-8"
-          />
-        </div>
+        <SearchInput
+          autoFocus
+          value={query}
+          onChange={setQuery}
+          placeholder="Search stickers and emojis"
+          aria-label="Search stickers"
+        />
         <TabsList className="w-full">
           <TabsTrigger value="stickers">Stickers</TabsTrigger>
           <TabsTrigger value="emojis">Emojis</TabsTrigger>

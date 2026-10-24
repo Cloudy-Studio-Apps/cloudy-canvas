@@ -2,9 +2,9 @@ import { Minus } from "lucide-react";
 
 import { cn } from "@shared/ui/lib/utils";
 import { FieldBox } from "../panel/field-box";
-import { HexInput } from "../panel/hex-input";
+import { HexInput } from "@canvas-ui";
 import { PanelIconButton } from "../panel/panel-section";
-import { PercentInput } from "../panel/percent-input";
+import { PercentInput } from "@canvas-ui";
 import type { GradientStopRowProps } from "./paint-picker.types";
 
 /** One stop of the gradient: its position, color and opacity, and removing it. */

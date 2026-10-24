@@ -23,6 +23,10 @@ const ACTOR_HISTORY: Record<PropertyKey, (options: ActorDocumentOptions) => unkn
     ({ history }) =>
     () =>
       history.checkpoint(),
+  holdCheckpoints:
+    ({ history }) =>
+    () =>
+      history.hold(),
   undo:
     ({ history }) =>
     () =>

@@ -1,0 +1,10 @@
+{
+  "id": "theme-nord",
+  "name": "Nord theme",
+  "version": "1.0.0",
+  "description": "A cool, arctic dark theme for the whole app.",
+  "author": "Cloudy Canvas examples",
+  "apiVersion": 1,
+  "products": [],
+  "main": "main.js"
+}

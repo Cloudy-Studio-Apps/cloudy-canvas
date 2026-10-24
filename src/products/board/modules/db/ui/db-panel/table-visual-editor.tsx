@@ -2,7 +2,7 @@ import { Plus } from "lucide-react";
 
 import { DB_HEADER_COLORS } from "@board";
 import { Button } from "@shared/ui/components/ui/button";
-import { ColorSwatch, CommitInput, CommitTextarea } from "@canvas-ui";
+import { ColorPalette, CommitInput, CommitTextarea } from "@canvas-ui";
 import { useBoardSchema } from "../schema";
 import { ColumnRow } from "./column-row";
 import { IncomingRefs } from "./incoming-refs";
@@ -26,15 +26,11 @@ export function TableVisualEditor({ table }: TableVisualEditorProps) {
       <div className="space-y-1">
         <span className="text-xs font-medium text-muted-foreground">Header color</span>
         <div className="flex gap-0.5">
-          {DB_HEADER_COLORS.map((color) => (
-            <ColorSwatch
-              key={color.value}
-              label={color.name}
-              color={color.value}
-              selected={table.headerColor === color.value}
-              onSelect={() => schema.updateTable(table.id, { headerColor: color.value })}
-            />
-          ))}
+          <ColorPalette
+            colors={DB_HEADER_COLORS}
+            value={table.headerColor}
+            onSelect={(headerColor) => schema.updateTable(table.id, { headerColor })}
+          />
         </div>
       </div>
 

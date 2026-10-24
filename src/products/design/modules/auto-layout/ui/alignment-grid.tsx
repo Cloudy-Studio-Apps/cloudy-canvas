@@ -28,6 +28,7 @@ export function AlignmentGrid({ layout, onPick }: AlignmentGridProps) {
               (layout.counterAlign === "baseline" && counter === "start")) &&
             (spread || layout.align === along);
           return (
+            // eslint-disable-next-line no-restricted-syntax -- bespoke: auto layout's 3×3 alignment dots
             <button
               key={`${row}-${column}`}
               type="button"

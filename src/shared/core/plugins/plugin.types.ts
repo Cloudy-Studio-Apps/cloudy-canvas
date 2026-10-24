@@ -45,4 +45,6 @@ export interface PluginStatus {
   modules: string[];
   /** How many stickers it added (`api.stickers`, when enabled). */
   stickers?: number;
+  /** How many themes it added (`api.themes`, when enabled). */
+  themes?: number;
 }

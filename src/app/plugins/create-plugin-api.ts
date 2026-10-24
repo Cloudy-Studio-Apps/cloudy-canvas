@@ -177,12 +177,16 @@ import {
   type InstalledPlugin,
 } from "@shared/core";
 import { notifyError, toast } from "@shared/stores/toast-store";
+import * as kit from "@shared/ui/kit";
 import type { PluginApi } from "./plugin-api.types";
-import type { PluginStickersApi } from "./plugin-stickers.types";
+import type { PluginStaged } from "./plugin-api.types";
 import { strictApi } from "./strict-api";
 
-/** The API handed to one plugin's `activate` (`stickers`: its staged `api.stickers`). */
-export function createPluginApi(plugin: InstalledPlugin, stickers: PluginStickersApi): PluginApi {
+/** The API handed to one plugin's `activate` (`staged`: its staged `api.stickers` and `api.themes`). */
+export function createPluginApi(
+  plugin: InstalledPlugin,
+  { stickers, themes }: PluginStaged,
+): PluginApi {
   return strictApi<PluginApi>(
     {
       apiVersion: PLUGIN_API_VERSION,
@@ -249,6 +253,7 @@ export function createPluginApi(plugin: InstalledPlugin, stickers: PluginSticker
         useEngineState,
         useService,
         useEngineElement,
+        kit,
       },
       board: {
         canvas: boardCanvas,
@@ -366,6 +371,7 @@ export function createPluginApi(plugin: InstalledPlugin, stickers: PluginSticker
         },
       },
       stickers,
+      themes,
     },
     "api",
   );

@@ -3,9 +3,9 @@ import { ChevronRight, CornerLeftDown, Eye, EyeOff, Lock, Sparkles, Unlock } fro
 
 import type { ElementPatch } from "@canvas";
 import { layerNameOf } from "@design";
+import { IconButton } from "@shared/ui/kit";
 import { cn } from "@shared/ui/lib/utils";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import { LAYER_METRICS } from "./layer-metrics";
 import { LayerIcon } from "./layer-icon";
 import { LayerName } from "./layer-name";
 import type { LayerRowProps } from "./layer-row.types";
@@ -17,6 +17,7 @@ import type { LayerRowProps } from "./layer-row.types";
  */
 export const LayerRow = memo(function LayerRow({
   item,
+  metrics,
   top,
   selected,
   masked,
@@ -47,8 +48,8 @@ export const LayerRow = memo(function LayerRow({
       onDoubleClick={() => setRenaming(true)}
       style={{
         top,
-        height: LAYER_METRICS.rowHeight,
-        paddingLeft: LAYER_METRICS.baseIndent + depth * LAYER_METRICS.indent,
+        height: metrics.rowHeight,
+        paddingLeft: metrics.baseIndent + depth * metrics.indent,
       }}
       className={cn(
         "group absolute inset-x-0 flex cursor-default items-center gap-1 rounded-sm pr-1 text-sm text-foreground select-none hover:bg-hover",
@@ -58,6 +59,7 @@ export const LayerRow = memo(function LayerRow({
         dragged && "opacity-50",
       )}
     >
+      {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the tree's tiny disclosure triangle */}
       <button
         type="button"
         aria-label={expanded ? "Collapse" : "Expand"}
@@ -99,37 +101,35 @@ export const LayerRow = memo(function LayerRow({
           <Sparkles />
         </span>
       )}
-      <span className="flex items-center gap-0.5 text-muted-foreground [&_svg]:size-3.5">
-        <button
-          type="button"
-          aria-label={node.locked ? "Unlock" : "Lock"}
+      <span className="flex items-center gap-0.5">
+        <IconButton
+          size="xs"
+          className="size-5 rounded-xs hover:bg-transparent"
+          label={node.locked ? "Unlock" : "Lock"}
           title={node.locked ? "Unlock" : "Lock"}
+          tooltip={false}
+          revealOnHover={!node.locked}
           onClick={(event) => {
             event.stopPropagation();
             engine.setLocked([node.id], !node.locked);
           }}
-          className={cn(
-            "flex size-5 cursor-pointer items-center justify-center rounded-xs hover:text-foreground",
-            !node.locked && "invisible group-hover:visible",
-          )}
         >
           {node.locked ? <Lock /> : <Unlock />}
-        </button>
-        <button
-          type="button"
-          aria-label={node.visible ? "Hide" : "Show"}
+        </IconButton>
+        <IconButton
+          size="xs"
+          className="size-5 rounded-xs hover:bg-transparent"
+          label={node.visible ? "Hide" : "Show"}
           title={node.visible ? "Hide" : "Show"}
+          tooltip={false}
+          revealOnHover={node.visible}
           onClick={(event) => {
             event.stopPropagation();
             update({ visible: !node.visible } as ElementPatch);
           }}
-          className={cn(
-            "flex size-5 cursor-pointer items-center justify-center rounded-xs hover:text-foreground",
-            node.visible && "invisible group-hover:visible",
-          )}
         >
           {node.visible ? <Eye /> : <EyeOff />}
-        </button>
+        </IconButton>
       </span>
     </li>
   );

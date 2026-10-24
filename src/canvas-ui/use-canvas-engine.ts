@@ -3,7 +3,8 @@ import { useEffect, useState, type RefObject } from "react";
 import { CanvasEngine, type CanvasDocument, type CanvasProduct, type EngineLoading } from "@canvas";
 import { clipboard, fontLibrary } from "@platform";
 import { useSnappingStore } from "@shared/stores/snapping-store";
-import { readCanvasTheme } from "./canvas-theme";
+import { onThemeChange } from "@shared/ui/theme";
+import { readCanvasTheme, readExportCanvasTheme } from "./canvas-theme";
 import type { CanvasEngineHost } from "./use-canvas-engine.types";
 
 /**
@@ -27,12 +28,14 @@ export function useCanvasEngine<O extends object>(
     const instance = new CanvasEngine({
       product,
       theme: readCanvasTheme(container),
+      exportTheme: readExportCanvasTheme(container),
       document,
       clipboard,
       fonts: fontLibrary,
     });
     instance.setSnapping(useSnappingStore.getState().byProduct[product.id] ?? {});
     let active = true;
+    const stopTheme = onThemeChange(() => instance.setTheme(readCanvasTheme(container)));
     instance
       .mount(container, (next) => {
         if (active) setLoading(next);
@@ -49,6 +52,7 @@ export function useCanvasEngine<O extends object>(
 
     return () => {
       active = false;
+      stopTheme();
       // Its close tasks (e.g. a thumbnail) still run, then it's destroyed.
       void instance.close();
       setEngine(null);

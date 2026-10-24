@@ -11,6 +11,7 @@ export function GradientSwatches({ title, gradients, onPick }: GradientSwatchesP
       <h3 className="text-xs text-muted-foreground">{title}</h3>
       <div className="flex flex-wrap gap-1.5">
         {gradients.map((gradient) => (
+          // eslint-disable-next-line no-restricted-syntax -- bespoke: a gradient swatch
           <button
             key={gradientKey(gradient)}
             type="button"

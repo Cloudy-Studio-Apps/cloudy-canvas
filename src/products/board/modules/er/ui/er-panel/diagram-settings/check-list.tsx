@@ -23,6 +23,7 @@ export function ErCheckList({ issues }: ErCheckListProps) {
         const Icon = ICONS[issue.severity];
         return (
           <li key={`${issue.rule}:${issue.shapeId}:${issue.message}`}>
+            {/* eslint-disable-next-line no-restricted-syntax -- bespoke: a multi-line finding */}
             <button
               type="button"
               className="flex w-full items-start gap-1.5 rounded-md px-1.5 py-1 text-left text-xs outline-none hover:bg-hover focus-visible:bg-hover"

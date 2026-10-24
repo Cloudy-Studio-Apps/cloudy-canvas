@@ -83,6 +83,7 @@ export function GradientStopBar({ paint, selected, onSelect, onChange }: Gradien
         style={{ background: `${stopRampCss(paint)}, ${CHECKERBOARD}` }}
       >
         {paint.stops.map((stop, i) => (
+          // eslint-disable-next-line no-restricted-syntax -- bespoke: a gradient stop handle
           <button
             key={i}
             type="button"

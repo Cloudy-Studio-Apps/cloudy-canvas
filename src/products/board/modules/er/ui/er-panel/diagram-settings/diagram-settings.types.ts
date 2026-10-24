@@ -27,14 +27,6 @@ export interface ErDiagramLook {
   style: string;
 }
 
-export interface ErSettingOptionProps {
-  setting: ErSettingKey;
-  value: string;
-  label: string;
-  selected: boolean;
-  onSelect: () => void;
-}
-
 export interface ErSettingPreviewProps {
   setting: ErSettingKey;
   value: string;

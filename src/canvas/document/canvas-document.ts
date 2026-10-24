@@ -359,6 +359,14 @@ export class CanvasDocument {
     this.history.checkpoint();
   }
 
+  /**
+   * Joins every change until the returned function is called into one undo step, `checkpoint`
+   * calls included (see `DocumentHistory.hold`).
+   */
+  holdCheckpoints(): () => void {
+    return this.history.hold();
+  }
+
   undo(): void {
     if (!this.readOnly) this.history.undo();
   }

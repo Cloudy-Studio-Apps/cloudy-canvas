@@ -1,9 +1,12 @@
 import type { PointerEvent } from "react";
 
+import type { LayerListMetrics } from "./drag/layer-drop.types";
 import type { LayerRowItem } from "./visible-rows.types";
 
 export interface LayerRowProps {
   item: LayerRowItem;
+  /** Row height and indents (`useLayerMetrics`). */
+  metrics: LayerListMetrics;
   /** Where it's placed in the list (px from the top). */
   top: number;
   selected: boolean;

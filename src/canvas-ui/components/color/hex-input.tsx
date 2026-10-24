@@ -1,6 +1,7 @@
-import { commitFieldProps, normalizeHex, useCommitField } from "@canvas-ui";
+import { commitFieldProps, useCommitField } from "../commit-field";
+import { normalizeHex } from "../normalize-hex";
 import { cn } from "@shared/ui/lib/utils";
-import type { HexInputProps } from "./color-inputs.types";
+import type { HexInputProps } from "./color.types";
 
 /** A bare input for a hex color (no `#`), committed on Enter or blur; place it in a `FieldBox`. */
 export function HexInput({ color, label, onCommit, className }: HexInputProps) {
@@ -10,6 +11,7 @@ export function HexInput({ color, label, onCommit, className }: HexInputProps) {
     onCommit(next);
   });
   return (
+    // eslint-disable-next-line no-restricted-syntax -- bespoke: a bare input inside its FieldBox
     <input
       aria-label={label}
       spellCheck={false}

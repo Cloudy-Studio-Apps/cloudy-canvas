@@ -1,4 +1,4 @@
-import type { ColorSwatchesProps } from "./paint-picker.types";
+import type { ColorSwatchesProps } from "./color.types";
 
 /** A titled grid of colors to pick from (nothing when there are none). */
 export function ColorSwatches({ title, colors, onPick }: ColorSwatchesProps) {
@@ -8,6 +8,7 @@ export function ColorSwatches({ title, colors, onPick }: ColorSwatchesProps) {
       <h3 className="text-xs text-muted-foreground">{title}</h3>
       <div className="flex flex-wrap gap-1.5">
         {colors.map((color) => (
+          // eslint-disable-next-line no-restricted-syntax -- bespoke: a color swatch
           <button
             key={color}
             type="button"

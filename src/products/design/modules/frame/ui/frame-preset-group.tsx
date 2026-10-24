@@ -13,6 +13,7 @@ export function FramePresetGroup({
 }: FramePresetGroupProps) {
   return (
     <li>
+      {/* eslint-disable-next-line no-restricted-syntax -- bespoke: a preset row with its size */}
       <button
         type="button"
         aria-expanded={open}
@@ -28,6 +29,7 @@ export function FramePresetGroup({
         <ul className="pb-1">
           {group.presets.map((preset) => (
             <li key={preset.id}>
+              {/* eslint-disable-next-line no-restricted-syntax -- bespoke: a preset row with its size */}
               <button
                 type="button"
                 onClick={() => onPick(preset)}

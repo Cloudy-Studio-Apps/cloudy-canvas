@@ -1,5 +1,5 @@
 import { geoVariants, SHAPE_FILLS, SHAPE_STROKES } from "@board";
-import { ColorSwatch, FloatingPanel, OptionButton, PanelDivider } from "@canvas-ui";
+import { ColorPalette, FloatingPanel, OptionButton, PanelDivider } from "@canvas-ui";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";
 import { GeoKindIcon } from "./geo-kind-icon";
 
@@ -22,26 +22,20 @@ export function ShapeOptions() {
         </OptionButton>
       ))}
       <PanelDivider />
-      {SHAPE_FILLS.map((color) => (
-        <ColorSwatch
-          key={color.value}
-          label={`${color.name} fill`}
-          color={color.value}
-          selected={shapeFill === color.value}
-          onSelect={() => engine.setToolOptions({ shapeFill: color.value })}
-        />
-      ))}
+      <ColorPalette
+        colors={SHAPE_FILLS}
+        value={shapeFill}
+        labelOf={(color) => `${color.name} fill`}
+        onSelect={(color) => engine.setToolOptions({ shapeFill: color })}
+      />
       <PanelDivider />
-      {SHAPE_STROKES.map((color) => (
-        <ColorSwatch
-          key={color.value}
-          label={`${color.name} outline`}
-          color={color.value}
-          shape="circle"
-          selected={shapeStroke === color.value}
-          onSelect={() => engine.setToolOptions({ shapeStroke: color.value })}
-        />
-      ))}
+      <ColorPalette
+        colors={SHAPE_STROKES}
+        value={shapeStroke}
+        shape="circle"
+        labelOf={(color) => `${color.name} outline`}
+        onSelect={(color) => engine.setToolOptions({ shapeStroke: color })}
+      />
     </FloatingPanel>
   );
 }

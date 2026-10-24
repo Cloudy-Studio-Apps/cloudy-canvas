@@ -1,6 +1,7 @@
-import { Bot, HardDrive, Info, Keyboard, Puzzle, Users } from "lucide-react";
+import { Bot, HardDrive, Info, Keyboard, Palette, Puzzle, Users } from "lucide-react";
 
 import { AboutPage } from "./sections/about-page";
+import { AppearanceSection } from "./sections/appearance";
 import { AgentsSection } from "./sections/agents-section";
 import { CollaborationSection } from "./sections/collaboration";
 import { FilesSection } from "./sections/files-section";
@@ -16,6 +17,13 @@ export const SETTINGS_GROUPS: readonly SettingsGroup[] = [
 
 /** In nav order; the first is what `/settings` shows. */
 export const SETTINGS_SECTIONS: readonly SettingsSectionEntry[] = [
+  {
+    id: "appearance",
+    label: "Appearance",
+    icon: Palette,
+    group: "preferences",
+    component: AppearanceSection,
+  },
   {
     id: "files",
     label: "Files & storage",

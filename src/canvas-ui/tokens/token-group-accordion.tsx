@@ -53,6 +53,7 @@ function GroupSection<T extends { id: string; name: string }>({
   return (
     <div className="flex flex-col">
       <div className="group/token-group flex h-7 items-center gap-1 rounded-md pr-1 hover:bg-muted">
+        {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the accordion's group header */}
         <button
           type="button"
           onClick={() => toggle(group.path)}

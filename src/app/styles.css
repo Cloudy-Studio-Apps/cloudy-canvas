@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
 @import "../shared/ui/styles/tokens.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -11,8 +12,17 @@
   --color-white: oklch(1 0 0);
   --color-black: oklch(0 0 0);
 
-  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, "JetBrains Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  /* The theme's fonts (`--theme-font-*`), with the app's own as the fallback. */
+  --font-sans: var(--theme-font-sans, "Inter Variable", ui-sans-serif, system-ui, sans-serif);
+  --font-mono: var(
+    --theme-font-mono,
+    ui-monospace,
+    "JetBrains Mono Variable",
+    "Cascadia Code",
+    Menlo,
+    Consolas,
+    monospace
+  );
 
   /* Desktop-app type scale (14px base) */
   --text-xs: 0.75rem;
@@ -291,6 +301,13 @@
   --color-syntax-comment: var(--syntax-comment);
   --color-syntax-error: var(--syntax-error);
 
+  /* Density: h-control, h-control-sm, h-control-lg, px-control-x, h-row (sizes set by the theme). */
+  --spacing-control: var(--control-h);
+  --spacing-control-sm: var(--control-h-sm);
+  --spacing-control-lg: var(--control-h-lg);
+  --spacing-control-x: var(--control-px);
+  --spacing-row: var(--row-h);
+
   /* Sharp corners: every rounded-* utility stays at or below 8px. */
   --radius-*: initial;
   --radius-xs: var(--corner-xs);
@@ -330,7 +347,7 @@
   }
 
   ::selection {
-    background-color: var(--ice-200);
+    background-color: var(--primary-soft);
   }
 
   @media (prefers-reduced-motion: reduce) {

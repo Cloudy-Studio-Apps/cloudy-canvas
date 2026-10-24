@@ -1,8 +1,8 @@
-import { Search, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { Button } from "@shared/ui/components/ui/button";
-import { Input } from "@shared/ui/components/ui/input";
+import { SearchInput } from "@shared/ui/kit";
 import { Tabs, TabsList, TabsTrigger } from "@shared/ui/components/ui/tabs";
 import { useEditorModules } from "@canvas-ui";
 import { useBoardEngine } from "../../board-engine-context";
@@ -32,17 +32,14 @@ export function LibraryPanel({ onClose }: LibraryPanelProps) {
     <div className="flex flex-col">
       <div className="flex flex-col gap-2 border-b px-3 pt-3 pb-2">
         <div className="flex items-center gap-1">
-          <div className="relative flex-1">
-            <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-subtle-foreground" />
-            <Input
-              autoFocus
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search widgets, templates and more"
-              aria-label="Search the library"
-              className="pl-8"
-            />
-          </div>
+          <SearchInput
+            autoFocus
+            value={query}
+            onChange={setQuery}
+            placeholder="Search widgets, templates and more"
+            aria-label="Search the library"
+            className="flex-1"
+          />
           <Button variant="ghost" size="icon" aria-label="Close" onClick={onClose}>
             <X />
           </Button>

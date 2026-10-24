@@ -5,6 +5,8 @@ export interface ColorPaletteProps {
   value: string;
   onSelect: (color: string) => void;
   shape?: "square" | "circle";
-  /** Whether a swatch for any other color is offered. */
+  /** Whether a swatch for any other color is offered (the app's color picker). Default true. */
   allowCustom?: boolean;
+  /** A swatch's name from its color's (e.g. "Blue fill"); its color's name when unset. */
+  labelOf?: (color: { name: string; value: string }) => string;
 }

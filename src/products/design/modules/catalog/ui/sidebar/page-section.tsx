@@ -36,6 +36,7 @@ export function PageSection({ page }: PageSectionProps) {
               const chosen = option.id === page.frame.id;
               return (
                 <li key={option.id}>
+                  {/* eslint-disable-next-line no-restricted-syntax -- bespoke: a page option with its thumbnail */}
                   <button
                     type="button"
                     aria-pressed={chosen}

@@ -19,6 +19,7 @@ export function DocumentInfoPopover({ className, children }: DocumentInfoPopover
   return (
     <Popover>
       <PopoverTrigger asChild>
+        {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the file's name as the popover's trigger */}
         <button
           type="button"
           className={cn(

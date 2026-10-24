@@ -1,6 +1,7 @@
 import { Unlink } from "lucide-react";
 
 import { tokenLeafOf } from "@canvas";
+import { IconButton } from "@shared/ui/kit";
 import { cn } from "@shared/ui/lib/utils";
 import type { VariableChipProps } from "./tokens.types";
 import { useDocumentTokens } from "./use-document-tokens";
@@ -38,6 +39,7 @@ export function VariableChip({
         onPick={onPick}
         align="start"
       >
+        {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the chip's value, the picker's trigger */}
         <button
           type="button"
           className="flex h-full min-w-0 flex-1 items-center gap-1.5 rounded-md pl-1.5 text-left text-xs hover:bg-muted"
@@ -49,15 +51,9 @@ export function VariableChip({
           </span>
         </button>
       </VariablePicker>
-      <button
-        type="button"
-        onClick={onDetach}
-        aria-label="Detach variable"
-        title="Detach variable"
-        className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
-      >
-        <Unlink className="size-3.5" />
-      </button>
+      <IconButton size="xs" label="Detach variable" onClick={onDetach}>
+        <Unlink />
+      </IconButton>
     </div>
   );
 }

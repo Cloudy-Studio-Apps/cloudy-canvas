@@ -40,6 +40,7 @@ export function BrochureSwitcher() {
     <div className="flex h-10 shrink-0 items-center border-b px-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
+          {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the brochure's name as the menu's trigger */}
           <button
             type="button"
             title="Brochures of this page"

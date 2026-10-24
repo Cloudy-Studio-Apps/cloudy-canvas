@@ -11,6 +11,7 @@ export function TextStyleRow({ style, editing, setEditing, onDelete }: StyleRowP
   return (
     <Popover open={editing} onOpenChange={setEditing}>
       <PopoverTrigger asChild>
+        {/* eslint-disable-next-line no-restricted-syntax -- bespoke: a text style in its own font */}
         <button
           type="button"
           title={style.description || style.name}

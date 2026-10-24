@@ -11,6 +11,7 @@ import {
   type Paint,
   type SolidPaint,
 } from "@design";
+import { IconButton } from "@shared/ui/kit";
 import { BlendModeSelect } from "../panel";
 import { GradientEditor } from "./gradient-editor";
 import { ImageEditor } from "./image-editor";
@@ -77,14 +78,9 @@ export function PaintPicker({ paint, onChange, onClose, allowImage, size }: Pain
             label="Paint blend mode"
           />
         </div>
-        <button
-          type="button"
-          aria-label="Close"
-          onClick={onClose}
-          className="flex size-6 cursor-pointer items-center justify-center rounded-sm text-muted-foreground hover:bg-hover hover:text-foreground"
-        >
-          <X className="size-3.5" />
-        </button>
+        <IconButton size="xs" label="Close" tooltip={false} onClick={onClose}>
+          <X />
+        </IconButton>
       </header>
       <PaintTabs active={tab} onPick={pickTab} allowImage={allowImage} />
       {tab === "image" ? (

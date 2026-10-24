@@ -12,6 +12,7 @@ const WASH: Record<FileType, string> = {
 
 export function CreateCard({ type, title, description, onSelect }: CreateCardProps) {
   return (
+    // eslint-disable-next-line no-restricted-syntax -- bespoke: Home's create card
     <button
       type="button"
       onClick={onSelect}

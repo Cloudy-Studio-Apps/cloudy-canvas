@@ -11,6 +11,7 @@ export function TypeOptionList({ options, current, onPick }: TypeOptionListProps
     <ul className="max-h-56 overflow-y-auto" role="listbox" aria-label="Column types">
       {options.map((option) => (
         <li key={`${option.kind}:${option.name}`}>
+          {/* eslint-disable-next-line no-restricted-syntax -- bespoke: a column type with its args */}
           <button
             type="button"
             role="option"

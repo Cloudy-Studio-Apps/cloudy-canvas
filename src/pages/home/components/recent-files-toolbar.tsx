@@ -1,4 +1,4 @@
-import { ArrowDownUp, Search } from "lucide-react";
+import { ArrowDownUp } from "lucide-react";
 
 import { isFileType } from "@shared/core";
 import { Button } from "@shared/ui/components/ui/button";
@@ -9,7 +9,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@shared/ui/components/ui/dropdown-menu";
-import { Input } from "@shared/ui/components/ui/input";
+import { SearchInput } from "@shared/ui/kit";
 import { Tabs, TabsList, TabsTrigger } from "@shared/ui/components/ui/tabs";
 import type { RecentFilesSort } from "../filter-recent-files.types";
 import type { RecentFilesToolbarProps } from "./recent-files-toolbar.types";
@@ -28,17 +28,13 @@ function isSort(value: string): value is RecentFilesSort {
 export function RecentFilesToolbar({ filter, onChange }: RecentFilesToolbarProps) {
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <div className="relative w-full sm:w-64">
-        <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-subtle-foreground" />
-        <Input
-          type="search"
-          value={filter.query}
-          onChange={(event) => onChange({ ...filter, query: event.target.value })}
-          placeholder="Search files"
-          aria-label="Search recent files"
-          className="pl-8"
-        />
-      </div>
+      <SearchInput
+        value={filter.query}
+        onChange={(query) => onChange({ ...filter, query })}
+        placeholder="Search files"
+        aria-label="Search recent files"
+        className="w-full sm:w-64"
+      />
       <Tabs
         value={filter.type}
         onValueChange={(type) => onChange({ ...filter, type: isFileType(type) ? type : "all" })}

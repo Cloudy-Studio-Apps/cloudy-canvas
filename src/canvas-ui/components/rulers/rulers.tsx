@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
 
+import { onThemeChange } from "@shared/ui/theme";
 import { useEngine, useEngineState } from "../../engine-context";
 import { readRulerColors } from "./read-ruler-colors";
 import { RulerStrip } from "./ruler-strip";
@@ -19,7 +20,12 @@ export function Rulers() {
   const [colors, setColors] = useState<RulerColors | null>(null);
 
   useLayoutEffect(() => {
-    if (shown && ref.current) setColors(readRulerColors(ref.current));
+    if (!shown) return;
+    const read = () => {
+      if (ref.current) setColors(readRulerColors(ref.current));
+    };
+    read();
+    return onThemeChange(read);
   }, [shown]);
 
   if (!shown || !engine.hasGuides) return null;

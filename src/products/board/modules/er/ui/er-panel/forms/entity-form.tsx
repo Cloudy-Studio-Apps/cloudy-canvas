@@ -2,7 +2,8 @@ import { GitFork, LocateFixed } from "lucide-react";
 
 import { ER_ENTITY_COLOR, SHAPE_STROKES } from "@board";
 import { Button } from "@shared/ui/components/ui/button";
-import { ColorSwatch, CommitInput, useEngine } from "@canvas-ui";
+import { ListRow } from "@shared/ui/kit";
+import { ColorPalette, CommitInput, useEngine } from "@canvas-ui";
 import { lockedOn, useErDiagram, useErGate, useErShapes } from "../../model";
 import { FlagToggle } from "../../../../db/ui/db-panel/flag-toggle";
 import { AttributeList } from "./attribute-list";
@@ -53,15 +54,11 @@ export function EntityForm({ entity }: EntityFormProps) {
           onToggle={() => er.edits.updateEntity(entity.id, { weak: !entity.weak })}
         />
         <div className="flex gap-0.5">
-          {COLORS.map((color) => (
-            <ColorSwatch
-              key={color.value}
-              label={color.name}
-              color={color.value}
-              selected={entity.color === color.value}
-              onSelect={() => er.edits.updateEntity(entity.id, { color: color.value })}
-            />
-          ))}
+          <ColorPalette
+            colors={COLORS}
+            value={entity.color}
+            onSelect={(color) => er.edits.updateEntity(entity.id, { color })}
+          />
         </div>
       </div>
       <AttributeList ownerId={entity.id} />
@@ -91,14 +88,12 @@ export function EntityForm({ entity }: EntityFormProps) {
           <ul>
             {usedIn.map((item) => (
               <li key={item.id}>
-                <button
-                  type="button"
-                  className="flex w-full cursor-pointer items-center gap-2 rounded-sm px-1.5 py-1 text-left text-sm hover:bg-hover"
-                  onClick={() => engine.focusElement(item.id)}
-                >
-                  <span className="min-w-0 flex-1 truncate">{item.label}</span>
-                  <LocateFixed className="size-3.5 text-muted-foreground" />
-                </button>
+                <ListRow
+                  size="md"
+                  onSelect={() => engine.focusElement(item.id)}
+                  label={item.label}
+                  meta={<LocateFixed className="size-3.5" />}
+                />
               </li>
             ))}
           </ul>

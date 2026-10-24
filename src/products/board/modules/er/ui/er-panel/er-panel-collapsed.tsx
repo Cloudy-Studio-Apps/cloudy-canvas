@@ -1,6 +1,7 @@
 import { ChevronsLeft, Network } from "lucide-react";
 
 import { FloatingPanel } from "@canvas-ui";
+import { Button } from "@shared/ui/kit";
 import { useErDiagram, useErQuery } from "../model";
 import type { ErPanelCollapsedProps } from "./er-panel-collapsed.types";
 
@@ -16,9 +17,10 @@ export function ErPanelCollapsed({ onExpand }: ErPanelCollapsedProps) {
   );
   return (
     <FloatingPanel role="complementary" aria-label="ER diagram editor (collapsed)">
-      <button
-        type="button"
-        className="flex items-center gap-1.5 rounded-md px-2 py-1 text-sm outline-none hover:bg-hover focus-visible:bg-hover"
+      <Button
+        variant="ghost"
+        size="sm"
+        className="gap-1.5 px-2 text-foreground"
         title="Open the ER panel"
         onClick={onExpand}
       >
@@ -30,7 +32,7 @@ export function ErPanelCollapsed({ onExpand }: ErPanelCollapsedProps) {
             {findings}
           </span>
         )}
-      </button>
+      </Button>
     </FloatingPanel>
   );
 }

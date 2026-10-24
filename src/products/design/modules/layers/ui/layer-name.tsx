@@ -11,6 +11,7 @@ export function LayerName({ name, editing, onRename, onDone }: LayerNameProps) {
 
   if (!editing) return <span className="ml-1 min-w-0 flex-1 truncate">{name}</span>;
   return (
+    // eslint-disable-next-line no-restricted-syntax -- bespoke: the in-place rename input
     <input
       aria-label="Layer name"
       autoFocus

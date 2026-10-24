@@ -36,3 +36,37 @@ export interface EyedropperButtonProps {
 export interface EyeDropperApi {
   open(): Promise<{ sRGBHex: string }>;
 }
+
+export interface HexInputProps {
+  /** `#rrggbb`. */
+  color: string;
+  /** Names the input for screen readers, e.g. "Fill hex". */
+  label: string;
+  /** Called with a valid `#rrggbb`. */
+  onCommit: (color: string) => void;
+  className?: string;
+}
+
+export interface PercentInputProps {
+  /** 0–1, shown as 0–100. */
+  value: number;
+  label: string;
+  /** Called with the new value, 0–1. */
+  onCommit: (value: number) => void;
+}
+
+export interface ColorControlsProps {
+  /** `#RRGGBB`. */
+  color: string;
+  /** 0–1; left out for a color without its own opacity (no opacity slider or field). */
+  opacity?: number;
+  onChange: (next: { color: string; opacity: number }, info: ColorChangeInfo) => void;
+  /** Put before the controls' names for screen readers, e.g. "Stop ". */
+  label?: string;
+}
+
+export interface ColorSwatchesProps {
+  title: string;
+  colors: readonly string[];
+  onPick: (color: string) => void;
+}

@@ -14,6 +14,7 @@ export function FontPicker({ family, onPick }: FontPickerProps) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
+        {/* eslint-disable-next-line no-restricted-syntax -- bespoke: a select-like trigger in a FieldBox look */}
         <button
           type="button"
           aria-label="Font"

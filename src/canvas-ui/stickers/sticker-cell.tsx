@@ -7,6 +7,7 @@ import type { StickerCellProps } from "./sticker-picker.types";
 export function StickerCell({ sticker, active, onPick, onRemove }: StickerCellProps) {
   return (
     <div className="group relative">
+      {/* eslint-disable-next-line no-restricted-syntax -- bespoke: a sticker picture in the picker grid */}
       <button
         type="button"
         title={sticker.label}
@@ -27,6 +28,7 @@ export function StickerCell({ sticker, active, onPick, onRemove }: StickerCellPr
         />
       </button>
       {onRemove && (
+        // eslint-disable-next-line no-restricted-syntax -- bespoke: a sticker picture in the picker grid
         <button
           type="button"
           title={`Remove "${sticker.label}"`}

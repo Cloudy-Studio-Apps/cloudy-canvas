@@ -8,6 +8,8 @@ export interface UndoHistory {
   canRedo(): boolean;
   /** Ends the current step so the next change starts a new one. */
   checkpoint(): void;
+  /** Joins every change into one step until the returned function is called. */
+  hold(): () => void;
   /** The label of the step `undo` would undo, `null` when it has none or there is none. */
   undoLabel(): string | null;
   redoLabel(): string | null;

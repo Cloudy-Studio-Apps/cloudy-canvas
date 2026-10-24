@@ -2,6 +2,7 @@ import { pluginStorage } from "@platform";
 import type { AppModule, InstalledPlugin } from "@shared/core";
 import { createPluginApi } from "./create-plugin-api";
 import { createPluginStickers } from "./plugin-stickers";
+import { createPluginThemes } from "./plugin-themes";
 import type { ImportedPlugin, PluginModules, PluginProduct } from "./plugin-modules.types";
 
 const PRODUCTS: readonly PluginProduct[] = ["board", "design"];
@@ -10,7 +11,8 @@ const PRODUCTS: readonly PluginProduct[] = ["board", "design"];
  * Runs a plugin's code and returns its modules for each product. The code is one ES module,
  * imported from a `blob:` URL; its default export is `activate(api)`, which returns a module or a
  * list of them (for the one product in its manifest's `products`), or `{ board, design }` with a
- * list for each. What it gave `api.stickers` comes back staged, to commit once it's loaded. Throws
+ * list for each; a plugin that only adds stickers or themes may return nothing. What it gave
+ * `api.stickers` and `api.themes` comes back staged, to commit once it's loaded. Throws
  * with a message for the user when the plugin doesn't follow the format.
  */
 export async function importPlugin(plugin: InstalledPlugin): Promise<ImportedPlugin> {
@@ -26,10 +28,11 @@ export async function importPlugin(plugin: InstalledPlugin): Promise<ImportedPlu
     throw new Error(`${plugin.manifest.main} has no default export activate(api).`);
   }
   const stickers = createPluginStickers(plugin.manifest.id);
+  const themes = createPluginThemes(plugin.manifest.id);
   const result: unknown = await (exports.default as (api: unknown) => unknown)(
-    createPluginApi(plugin, stickers.api),
+    createPluginApi(plugin, { stickers: stickers.api, themes: themes.api }),
   );
-  return { modules: splitByProduct(plugin, result), stickers };
+  return { modules: splitByProduct(plugin, result), stickers, themes };
 }
 
 function splitByProduct(plugin: InstalledPlugin, result: unknown): PluginModules {
@@ -50,6 +53,7 @@ function splitByProduct(plugin: InstalledPlugin, result: unknown): PluginModules
     }
     return modules;
   }
+  if (result === undefined) return { board: [], design: [] };
   const targets = PRODUCTS.filter((product) => products.includes(product));
   const [target] = targets;
   if (!target || targets.length > 1) {

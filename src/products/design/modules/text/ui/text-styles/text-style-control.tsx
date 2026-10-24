@@ -32,6 +32,7 @@ export function TextStyleControl({ texts }: TextStyleControlProps) {
           setOpen(false);
         }}
       />
+      {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the text style row with its preview */}
       <button
         type="button"
         onClick={() => {

@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 
 import { formatColumnType } from "@board";
 import { Button } from "@shared/ui/components/ui/button";
+import { ListRow } from "@shared/ui/kit";
 import { Input } from "@shared/ui/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
 import type { IndexPartPickerProps } from "./index-part-picker.types";
@@ -42,16 +43,12 @@ export function IndexPartPicker({ table, parts, onAdd }: IndexPartPickerProps) {
           )}
           {columns.map((column) => (
             <li key={column.id}>
-              <button
-                type="button"
-                className="flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-none hover:bg-hover focus-visible:bg-hover"
-                onClick={() => add({ kind: "column", columnId: column.id })}
-              >
-                <span className="min-w-0 flex-1 truncate">{column.name}</span>
-                <span className="font-mono text-xs text-muted-foreground">
-                  {formatColumnType(column)}
-                </span>
-              </button>
+              <ListRow
+                size="md"
+                onSelect={() => add({ kind: "column", columnId: column.id })}
+                label={column.name}
+                meta={<span className="font-mono">{formatColumnType(column)}</span>}
+              />
             </li>
           ))}
         </ul>

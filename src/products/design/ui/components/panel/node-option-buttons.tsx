@@ -1,10 +1,13 @@
 import type { DesignNode } from "@design";
+import { SegmentedControl } from "@shared/ui/kit";
 import { useEditNodes } from "../../hooks";
 import type { NodeOptionButtonsProps } from "./node-fields.types";
-import { PanelIconButton } from "./panel-section";
 import { sharedValue } from "./shared-value";
 
-/** A row of icon buttons for one choice bound to the selected nodes (e.g. text alignment). */
+/**
+ * A row of icon buttons for one choice bound to the selected nodes (e.g. text alignment): the
+ * kit's `SegmentedControl`, nothing pressed while the selection's values differ.
+ */
 export function NodeOptionButtons<N extends DesignNode>({
   nodes,
   label,
@@ -13,19 +16,14 @@ export function NodeOptionButtons<N extends DesignNode>({
   options,
 }: NodeOptionButtonsProps<N>) {
   const edit = useEditNodes();
-  const current = sharedValue(nodes, read);
   return (
-    <div role="radiogroup" aria-label={label} className="flex rounded-sm bg-muted p-0.5">
-      {options.map((option) => (
-        <PanelIconButton
-          key={option.value}
-          label={option.label}
-          active={option.value === current}
-          onClick={() => edit(nodes, (node) => patch(option.value, node as N))}
-        >
-          {option.icon}
-        </PanelIconButton>
-      ))}
-    </div>
+    <SegmentedControl
+      label={label}
+      value={sharedValue(nodes, read)}
+      onChange={(value) => edit(nodes, (node) => patch(value, node as N))}
+      options={options}
+      iconOnly
+      size="sm"
+    />
   );
 }

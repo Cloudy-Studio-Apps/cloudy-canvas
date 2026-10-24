@@ -227,7 +227,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   private closing = false;
   private rendererReady = false;
 
-  constructor({ product, theme, document, clipboard, fonts }: CanvasEngineOptions<O>) {
+  constructor({ product, theme, exportTheme, document, clipboard, fonts }: CanvasEngineOptions<O>) {
     this.product = product;
     this.productId = product.id;
     this.kinds = product.kinds;
@@ -245,6 +245,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     const effectRenderers = product.effectRenderers ?? new Map<string, EffectRenderer>();
     this.renderer = new Renderer(
       theme,
+      exportTheme ?? theme,
       this.kinds,
       this.links,
       { read: (id) => this.doc.getAsset(id), onLoad: () => this.requestRender() },
@@ -409,6 +410,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     return this.services.get(def);
   }
 
+  /** The colors the canvas draws with on screen (exports keep `CanvasEngineOptions.exportTheme`). */
   setTheme(theme: CanvasTheme): void {
     this.renderer.setTheme(theme);
     this.requestRender();
@@ -1394,7 +1396,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
       { ...this.parts, scene },
       {
         selected,
-        background: this.renderer.background,
+        background: this.renderer.exportBackground,
         snapshot: (elements, options) => this.renderer.snapshot(elements, options),
       },
     );

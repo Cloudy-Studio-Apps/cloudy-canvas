@@ -1,5 +1,6 @@
 import { Pipette } from "lucide-react";
 
+import { IconButton } from "@shared/ui/kit";
 import { normalizeHex } from "../normalize-hex";
 import type { EyeDropperApi, EyedropperButtonProps } from "./color.types";
 
@@ -10,10 +11,9 @@ const EyeDropper = (window as unknown as { EyeDropper?: new () => EyeDropperApi 
 export function EyedropperButton({ onPick }: EyedropperButtonProps) {
   if (!EyeDropper) return null;
   return (
-    <button
-      type="button"
-      aria-label="Pick a color from the screen"
-      title="Pick a color from the screen"
+    <IconButton
+      size="xs"
+      label="Pick a color from the screen"
       onClick={() => {
         new EyeDropper()
           .open()
@@ -24,9 +24,8 @@ export function EyedropperButton({ onPick }: EyedropperButtonProps) {
           // Escape cancels the pick; nothing to do.
           .catch(() => undefined);
       }}
-      className="flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-sm text-muted-foreground hover:bg-hover hover:text-foreground [&_svg]:size-3.5"
     >
       <Pipette />
-    </button>
+    </IconButton>
   );
 }

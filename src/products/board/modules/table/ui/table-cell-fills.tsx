@@ -1,5 +1,5 @@
 import { fillCells, isTable, partCells, TABLE_FILLS, TRANSPARENT } from "@board";
-import { ColorSwatch, useEngineElement } from "@canvas-ui";
+import { ColorPalette, useEngineElement } from "@canvas-ui";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";
 
 /** Fill colors for the selected cell, row or column of a table. */
@@ -20,13 +20,12 @@ export function TableCellFills() {
     engine.doc.update(latest.id, fillCells(latest, cells, color === TRANSPARENT ? "" : color));
   };
 
-  return TABLE_FILLS.map((color) => (
-    <ColorSwatch
-      key={color.value}
-      label={color.value === TRANSPARENT ? "No fill" : `${color.name} fill`}
-      color={color.value}
-      selected={current === color.value}
-      onSelect={() => fill(color.value)}
+  return (
+    <ColorPalette
+      colors={TABLE_FILLS}
+      value={current}
+      labelOf={(color) => (color.value === TRANSPARENT ? "No fill" : `${color.name} fill`)}
+      onSelect={fill}
     />
-  ));
+  );
 }

@@ -1,7 +1,7 @@
 import { CornerDownRight, MoveRight } from "lucide-react";
 
 import { LINE_COLORS } from "@board";
-import { ColorSwatch, FloatingPanel, OptionButton, PanelDivider } from "@canvas-ui";
+import { ColorPalette, FloatingPanel, OptionButton, PanelDivider } from "@canvas-ui";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";
 import { CONNECTOR_HEADS, CONNECTOR_STYLES } from "./connector-option-items";
 
@@ -45,16 +45,12 @@ export function ConnectorOptions() {
         </OptionButton>
       ))}
       <PanelDivider />
-      {LINE_COLORS.map((color) => (
-        <ColorSwatch
-          key={color.value}
-          label={color.name}
-          color={color.value}
-          shape="circle"
-          selected={connectorColor === color.value}
-          onSelect={() => engine.setToolOptions({ connectorColor: color.value })}
-        />
-      ))}
+      <ColorPalette
+        colors={LINE_COLORS}
+        value={connectorColor}
+        shape="circle"
+        onSelect={(color) => engine.setToolOptions({ connectorColor: color })}
+      />
     </FloatingPanel>
   );
 }

@@ -2,7 +2,7 @@ import { Plus } from "lucide-react";
 
 import { DB_HEADER_COLORS } from "@board";
 import { Button } from "@shared/ui/components/ui/button";
-import { ColorSwatch, CommitInput } from "@canvas-ui";
+import { ColorPalette, CommitInput } from "@canvas-ui";
 import { useBoardSchema } from "../schema";
 import { EnumUsages } from "./enum-usages";
 import { EnumValueRow } from "./enum-value-row";
@@ -25,15 +25,11 @@ export function EnumVisualEditor({ target }: EnumVisualEditorProps) {
       <div className="space-y-1">
         <span className="text-xs font-medium text-muted-foreground">Header color</span>
         <div className="flex gap-0.5">
-          {DB_HEADER_COLORS.map((color) => (
-            <ColorSwatch
-              key={color.value}
-              label={color.name}
-              color={color.value}
-              selected={target.headerColor === color.value}
-              onSelect={() => schema.updateEnum(target.id, { headerColor: color.value })}
-            />
-          ))}
+          <ColorPalette
+            colors={DB_HEADER_COLORS}
+            value={target.headerColor}
+            onSelect={(headerColor) => schema.updateEnum(target.id, { headerColor })}
+          />
         </div>
       </div>
 

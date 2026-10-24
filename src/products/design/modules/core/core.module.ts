@@ -18,6 +18,7 @@ import { DEFAULT_MODE } from "@canvas";
 import { useHideUiCommand } from "@canvas-ui";
 import { openAbout } from "@shared/about";
 import { defineModule } from "@shared/core";
+import { themeChoices } from "@shared/ui/theme";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import { useDesignPanelStore } from "@design/ui/stores/design-panel-store";
 import { allKinds, someNodes } from "@design/ui/modules/section-filters";
@@ -292,6 +293,22 @@ export const coreModule = defineModule({
             checked: () => useDesignPanelStore.getState().rightOpen,
           },
           { command: "toggleUi", label: "Hide UI" },
+        ],
+      },
+      {
+        id: "theme",
+        order: 42,
+        label: "Theme",
+        items: [
+          ...themeChoices().map((choice) => ({
+            label: choice.label,
+            checked: choice.active,
+            run: choice.select,
+          })),
+          {
+            label: "Appearance settings…",
+            run: ({ navigate }) => navigate("/settings/appearance"),
+          },
         ],
       },
       {

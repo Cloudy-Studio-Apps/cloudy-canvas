@@ -43,6 +43,7 @@ export function ToolMenuButton({ entries }: ToolMenuButtonProps) {
       </ToolButton>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
+          {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the split button's chevron */}
           <button
             type="button"
             aria-label={`More tools like ${label.toLowerCase()}`}

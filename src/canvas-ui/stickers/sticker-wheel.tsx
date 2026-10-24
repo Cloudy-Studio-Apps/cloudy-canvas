@@ -81,6 +81,7 @@ export function StickerWheel({ activeId, onPicked }: StickerWheelProps) {
       ))}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
+          {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the wheel's center button */}
           <button
             type="button"
             title="All stickers"

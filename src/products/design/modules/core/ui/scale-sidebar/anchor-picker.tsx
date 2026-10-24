@@ -11,6 +11,7 @@ export function AnchorPicker({ value, onChange }: AnchorPickerProps) {
       className="grid size-14 shrink-0 grid-cols-3 place-items-center rounded-sm bg-muted p-1"
     >
       {SCALE_ANCHORS.map((anchor) => (
+        // eslint-disable-next-line no-restricted-syntax -- bespoke: the 3×3 anchor dots
         <button
           key={anchor}
           type="button"
