@@ -1,15 +1,16 @@
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 
 import type { ElementPatch } from "@canvas";
-import type { ColorChangeInfo } from "@canvas-ui";
-import type { DesignNode, Paint } from "@design";
+import { ImageQualityNote, type ColorChangeInfo } from "@canvas-ui";
+import { isPlaceholderPaint, type DesignNode, type Paint } from "@design";
 import { PaintField, PanelAddButton, PanelSection } from "@design/ui/components/panel";
 import { useEditNodes } from "@design/ui/hooks";
 import type { PaintListSectionProps } from "./paint-list-section.types";
 
 /**
- * The fills or strokes of the selection, topmost first like the layers. When the nodes' paints
- * differ, "+" replaces them all with one.
+ * The fills or strokes of the selection, topmost first like the layers, each picture with a note
+ * on how sharp the canvas shows it (`ImageQualityNote`). When the nodes' paints differ, "+"
+ * replaces them all with one.
  */
 export function PaintListSection({
   title,
@@ -52,18 +53,22 @@ export function PaintListSection({
       ) : first.length > 0 ? (
         <div className="flex flex-col gap-1.5">
           {[...first.entries()].reverse().map(([i, paint]) => (
-            <PaintField
-              key={i}
-              paint={paint}
-              label={label}
-              allowImage={allowImage}
-              target={{ field, index: i }}
-              size={nodes.length === 1 && nodes[0] ? { w: nodes[0].w, h: nodes[0].h } : undefined}
-              onChange={(next, info) =>
-                setPaints((current) => current.map((p, j) => (j === i ? next : p)), info)
-              }
-              onRemove={() => setPaints((current) => current.filter((_, j) => j !== i))}
-            />
+            <Fragment key={i}>
+              <PaintField
+                paint={paint}
+                label={label}
+                allowImage={allowImage}
+                target={{ field, index: i }}
+                size={nodes.length === 1 && nodes[0] ? { w: nodes[0].w, h: nodes[0].h } : undefined}
+                onChange={(next, info) =>
+                  setPaints((current) => current.map((p, j) => (j === i ? next : p)), info)
+                }
+                onRemove={() => setPaints((current) => current.filter((_, j) => j !== i))}
+              />
+              {paint.type === "image" && !isPlaceholderPaint(paint) && (
+                <ImageQualityNote assetId={paint.assetId} className="px-1" />
+              )}
+            </Fragment>
           ))}
           {children}
         </div>

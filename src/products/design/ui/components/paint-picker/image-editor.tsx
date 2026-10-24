@@ -1,7 +1,7 @@
 import { CircleHelp, ImagePlus, RotateCw } from "lucide-react";
 
 import { imageSize, rotateTransform90, type Size } from "@canvas";
-import { CHECKERBOARD, useAssetUrl } from "@canvas-ui";
+import { CHECKERBOARD, ImageQualityNote, useAssetUrl } from "@canvas-ui";
 import {
   addPlaceholderPaint,
   DEFAULT_PLACEHOLDER_COLOR,
@@ -156,6 +156,7 @@ export function ImageEditor({
           </span>
         )}
       </div>
+      {paint && !placeholder && <ImageQualityNote assetId={paint.assetId} />}
       {!placeholder && (
         <Button variant="outline" size="sm" className="w-full" onClick={addPlaceholder}>
           <CircleHelp />

@@ -13,3 +13,4 @@ export {
   transformCrop,
   zoomTransform,
 } from "./image-transform";
+export { imageHeaderSize } from "./image-header-size";

@@ -37,7 +37,7 @@ export const brochureEditTools: DesignAgentTool[] = [
       "The frames themselves don't change.",
     inputSchema: {
       type: "object",
-      required: ["pages"],
+      required: ["brochure", "pages"],
       properties: {
         pages: {
           type: "array",
@@ -67,10 +67,10 @@ export const brochureEditTools: DesignAgentTool[] = [
       "undo step: `frames` (top-level frames not in it yet, in the order given; frames already " +
       "in it are skipped), or `blank`, a new empty frame of a paper size (`preset`, " +
       "`landscape`; by default the last page's size) placed right of your page's content, as " +
-      "the page list's + does. Without `brochure`, a design page without one gets one. Returns " +
-      "the brochure.",
+      "the page list's + does. Returns the brochure.",
     inputSchema: {
       type: "object",
+      required: ["brochure"],
       properties: {
         frames: { type: "array", items: { type: "string" } },
         blank: {
@@ -86,7 +86,7 @@ export const brochureEditTools: DesignAgentTool[] = [
     },
     run: async (host, args) => {
       const { engine } = requireDesign(host);
-      const brochure = readBrochure(engine, args, { create: true });
+      const brochure = readBrochure(engine, args);
       const at = optionalPlace(args, "at", brochure.pages().length);
       const blank = optionalRecord(args, "blank");
       if (blank) {
@@ -106,7 +106,7 @@ export const brochureEditTools: DesignAgentTool[] = [
       "does, in one undo step. Returns the brochure.",
     inputSchema: {
       type: "object",
-      required: ["position", "to"],
+      required: ["brochure", "position", "to"],
       properties: { position: POSITION_SCHEMA, to: POSITION_SCHEMA, brochure: BROCHURE_SCHEMA },
     },
     run: async (host, args) => {
@@ -125,7 +125,7 @@ export const brochureEditTools: DesignAgentTool[] = [
       "step. Their frames stay in the design. Returns the brochure.",
     inputSchema: {
       type: "object",
-      required: ["positions"],
+      required: ["brochure", "positions"],
       properties: {
         positions: { type: "array", items: POSITION_SCHEMA },
         brochure: BROCHURE_SCHEMA,
@@ -153,7 +153,7 @@ export const brochureEditTools: DesignAgentTool[] = [
       "the brochure.",
     inputSchema: {
       type: "object",
-      required: ["position", "frames"],
+      required: ["brochure", "position", "frames"],
       properties: {
         position: POSITION_SCHEMA,
         frames: { type: "array", items: { type: "string" } },

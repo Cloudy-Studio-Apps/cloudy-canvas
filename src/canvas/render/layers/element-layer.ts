@@ -5,7 +5,7 @@ import type { Rect } from "../../geometry.types";
 import type { HiddenText } from "../element-view.types";
 import { ElementView } from "../element-view";
 import { entranceAt } from "../entrance";
-import type { ImageCache } from "../image-cache";
+import type { ImageTextures, ImageUse } from "../image-cache.types";
 import { DEFAULT_PLACEMENT, homeOf, NO_EFFECTS, NO_MASKS, scopeHome } from "../layer-placement";
 import type {
   ElementEffects,
@@ -44,7 +44,7 @@ export class ElementLayer extends Container {
 
   constructor(
     private readonly kinds: ElementKinds,
-    private readonly images: ImageCache,
+    private readonly images: ImageTextures,
     private readonly placement: LayerPlacement = DEFAULT_PLACEMENT,
   ) {
     super();
@@ -84,6 +84,21 @@ export class ElementLayer extends Container {
     }
     const rehome = this.syncScopes();
     for (const view of rehome ? this.views.values() : synced) this.place(view, moved.has(view));
+  }
+
+  /** The pictures the views show, leaving out culled and hidden ones when `shownOnly`. */
+  *imageUses(shownOnly: boolean): Generator<ImageUse> {
+    for (const view of this.views.values()) {
+      if (shownOnly && (view.culled || !view.visible)) continue;
+      yield* view.imageUses();
+    }
+  }
+
+  /** Draws again the views showing any of these assets, so they pick up their current textures. */
+  redrawImages(assetIds: ReadonlySet<string>): void {
+    for (const view of this.views.values()) {
+      if (view.imageUses().some((use) => assetIds.has(use.assetId))) view.redraw();
+    }
   }
 
   /** Redraws an element's view as `el` has it (the text editor's live preview), if it has one. */

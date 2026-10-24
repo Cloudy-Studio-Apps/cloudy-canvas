@@ -31,7 +31,11 @@ export const brochureReadTools: DesignAgentTool[] = [
       "splitSpreads, margin in mm, dpi), the page size, and the print issues by `kind` " +
       "(placeholder: an image placeholder still to replace, low-resolution pictures, text in " +
       "the margin, hidden pages, blank pages added, frames of another size).",
-    inputSchema: { type: "object", properties: { brochure: BROCHURE_SCHEMA } },
+    inputSchema: {
+      type: "object",
+      required: ["brochure"],
+      properties: { brochure: BROCHURE_SCHEMA },
+    },
     run: async (host, args) => {
       const { engine } = requireDesign(host);
       return describeBrochure(engine, readBrochure(engine, args));
@@ -47,7 +51,7 @@ export const brochureReadTools: DesignAgentTool[] = [
       "issues.",
     inputSchema: {
       type: "object",
-      required: ["position"],
+      required: ["brochure", "position"],
       properties: { position: POSITION_SCHEMA, brochure: BROCHURE_SCHEMA },
     },
     run: async (host, args) => {
@@ -106,6 +110,7 @@ export const brochureReadTools: DesignAgentTool[] = [
       `numbers under it. At most ${VIEW_MAX_SIDE} pixels on its longest side.`,
     inputSchema: {
       type: "object",
+      required: ["brochure"],
       properties: {
         position: POSITION_SCHEMA,
         brochure: BROCHURE_SCHEMA,

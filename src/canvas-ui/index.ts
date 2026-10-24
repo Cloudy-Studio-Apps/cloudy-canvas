@@ -9,6 +9,7 @@ export type * from "./components/context-menu";
 export type * from "./file";
 export type * from "./components/export-dialog";
 export type * from "./components/image-crop";
+export type * from "./components/image-quality-note";
 export type { ColorPaletteProps } from "./components/color-palette.types";
 export type { ColorPickerProps } from "./components/color-picker.types";
 export type { ColorSwatchProps } from "./components/color-swatch.types";
@@ -36,6 +37,7 @@ export {
 } from "./components/context-menu";
 export { ExportDialog } from "./components/export-dialog";
 export { ImageCropOverlay } from "./components/image-crop";
+export { ImageQualityNote } from "./components/image-quality-note";
 export { ColorPalette } from "./components/color-palette";
 export {
   CHECKERBOARD,
@@ -96,5 +98,6 @@ export { useDocumentMeta } from "./use-document-meta";
 export * from "./modules";
 export { normalizedToScreen, screenToLocal, screenToNormalized, useViewMapping } from "./overlay";
 export { useAssetUrl } from "./use-asset-url";
+export { useImageQuality } from "./use-image-quality";
 export { useService } from "./use-service";
 export { useSnapping } from "./use-snapping";

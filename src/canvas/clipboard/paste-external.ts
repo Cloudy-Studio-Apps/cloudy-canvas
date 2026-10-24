@@ -3,6 +3,7 @@ import { createId } from "@shared/core";
 import type { CanvasElement } from "../elements";
 import { rectCenter } from "../geometry";
 import type { Point, Rect } from "../geometry.types";
+import { imageHeaderSize } from "../image";
 import { isSvg, svgSize } from "../render/svg-image";
 import type { ElementClipboardHost } from "./element-clipboard.types";
 import type { ExternalElement, PastedImage } from "./paste-external.types";
@@ -84,11 +85,16 @@ export function addExternal<O extends object>(
   host.select(added.map(({ el }) => el.id));
 }
 
-/** An image file's size in pixels (raster or SVG), or `null` when it can't be decoded. */
+/**
+ * An image file's size in pixels (raster or SVG), read from its header when it can be, or `null`
+ * when it can't be decoded.
+ */
 export async function imageSize(
   data: Uint8Array,
 ): Promise<Pick<PastedImage, "width" | "height"> | null> {
   if (isSvg(data)) return svgSize(data);
+  const header = imageHeaderSize(data);
+  if (header) return { width: header.w, height: header.h };
   try {
     const bitmap = await createImageBitmap(new Blob([data as Uint8Array<ArrayBuffer>]));
     const size = { width: bitmap.width, height: bitmap.height };

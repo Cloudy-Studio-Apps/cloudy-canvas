@@ -2,7 +2,7 @@ import { Container, Graphics, Sprite, TilingSprite, type Texture } from "pixi.js
 
 import { fitTransform } from "../image";
 import { acquireGradient, gradientFillStyle, releaseGradient } from "./gradient-texture";
-import type { ImageCache } from "./image-cache";
+import type { ImageTextures, ImageUse } from "./image-cache.types";
 import { imageMatrix } from "./image-matrix";
 import { pixiBlendMode } from "./pixi-blend-mode";
 import type {
@@ -19,8 +19,10 @@ class ImageSlot extends Container {
   private picture: Sprite | TilingSprite | null = null;
   private readonly clip = new Graphics();
   private assetId: string | null = null;
+  /** The picture it shows, and how (see `ElementView.imageUses`). */
+  use: ImageUse | null = null;
 
-  constructor(private readonly images: ImageCache) {
+  constructor(private readonly images: ImageTextures) {
     super();
     this.addChild(this.clip);
   }
@@ -29,6 +31,7 @@ class ImageSlot extends Container {
     this.clip.clear();
     layer.mask(this.clip);
     this.assetId = layer.assetId;
+    this.use = { assetId: layer.assetId, box: layer.box, placement: layer.placement };
     const texture = this.images.get(layer.assetId);
     if (texture) return this.show(texture, layer);
     if (this.picture) this.picture.visible = false;
@@ -111,7 +114,7 @@ class ShapeSlot extends Graphics {
  * in place, reusing the drawn objects position by position.
  */
 export class PaintStack extends Container<ImageSlot | ShapeSlot> {
-  constructor(private readonly images: ImageCache) {
+  constructor(private readonly images: ImageTextures) {
     super();
   }
 
@@ -130,5 +133,12 @@ export class PaintStack extends Container<ImageSlot | ShapeSlot> {
       slot.blendMode = pixiBlendMode(layer.blendMode);
     });
     for (const extra of this.children.slice(layers.length)) extra.destroy({ children: true });
+  }
+
+  /** The pictures its image paints show. */
+  imageUses(): ImageUse[] {
+    const uses: ImageUse[] = [];
+    for (const slot of this.children) if (slot.kind === "image" && slot.use) uses.push(slot.use);
+    return uses;
   }
 }

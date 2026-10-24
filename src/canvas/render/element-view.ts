@@ -6,7 +6,7 @@ import { rotatedBoundsAround, rotatePoint } from "../rotation";
 import type { Rect } from "../geometry.types";
 import { clipCovers } from "./clip-covers";
 import { fitImage } from "./fit-image";
-import type { ImageCache } from "./image-cache";
+import type { ImageTextures, ImageUse } from "./image-cache.types";
 import type { ElementClip } from "./layer-placement.types";
 import { PaintStack } from "./paint-stack";
 import { RichTextSprite } from "./rich-text-sprite";
@@ -18,7 +18,7 @@ import { textMaskTexture } from "./text-mask";
 import { cappedTextResolution } from "./text-resolution";
 import { canvasTextStyle } from "./text-style";
 import type { CanvasTextOptions } from "./text-style.types";
-import type { ImageCrop } from "../image";
+import { cropTransform, type ImageCrop, type ImagePlacement } from "../image";
 import type { ImageFit } from "./element-view.types";
 
 /** Opacity of a faded element (see `setFaded`). */
@@ -79,7 +79,7 @@ export class ElementView extends Container {
   constructor(
     el: CanvasElement,
     kind: ElementKind,
-    private readonly images: ImageCache,
+    private readonly images: ImageTextures,
     order = "",
   ) {
     super();
@@ -113,6 +113,11 @@ export class ElementView extends Container {
     this.placeScaled();
     this.setTextResolution(this.textResolution);
     kind.draw(this, el);
+  }
+
+  /** Draws the element again as it was last shown (e.g. a sharper texture of its picture arrived). */
+  redraw(): void {
+    if (this.source && this.sourceKind) this.sync(this.source, this.sourceKind, this.order, true);
   }
 
   /** Moves the view, as drawn, so its box's corner is at (`x`, `y`). */
@@ -452,6 +457,20 @@ export class ElementView extends Container {
     this.richText?.redraw();
     // Glyphs the paints show through are drawn again in the loaded font.
     if (this.textMask) this.setPaintTextMask(true);
+  }
+
+  /** The pictures the view shows (`placeImage` and image paints), for sizing their textures. */
+  imageUses(): ImageUse[] {
+    const uses = this.paintStack?.imageUses() ?? [];
+    if (this.imageAsset) {
+      const fit = this.imageFit;
+      const placement: ImagePlacement =
+        typeof fit === "string"
+          ? { mode: fit }
+          : { mode: "transform", transform: cropTransform(fit) };
+      uses.push({ assetId: this.imageAsset, box: this.imageBox, placement });
+    }
+    return uses;
   }
 
   /** Hides the image shown with `placeImage`, if any. */

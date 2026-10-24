@@ -67,6 +67,7 @@ export type {
   EffectUniforms,
   ImageFit,
   ImagePaintLayer,
+  ImageQuality,
   PaintLayer,
   PaintStackOptions,
   PaintTools,

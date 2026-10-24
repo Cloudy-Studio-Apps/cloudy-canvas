@@ -55,7 +55,7 @@ import {
   PointerInput,
   toCanvasPointer,
 } from "./input";
-import { Renderer, type CanvasTheme, type EffectRenderer } from "./render";
+import { Renderer, type CanvasTheme, type EffectRenderer, type ImageQuality } from "./render";
 import {
   guideInside,
   overRuler,
@@ -1066,6 +1066,20 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
    */
   onViewChange(listener: () => void): () => void {
     return this.viewChanges.subscribe(listener);
+  }
+
+  /**
+   * How sharp the canvas shows a picture now: its own size, the smaller copy drawn while it looks
+   * small on screen (sharper ones follow as it's zoomed into) and how large it shows. Exports draw
+   * from the original. `null` before the picture's size is known.
+   */
+  imageQuality(assetId: string): ImageQuality | null {
+    return this.renderer.imageQuality(assetId);
+  }
+
+  /** Runs when a picture's canvas texture changes (see `imageQuality`). */
+  onImagesChange(listener: () => void): () => void {
+    return this.renderer.onImagesChange(listener);
   }
 
   /**

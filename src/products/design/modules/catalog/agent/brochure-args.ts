@@ -3,43 +3,23 @@ import { createId } from "@shared/core";
 
 import type { DesignWorkspace } from "../../../design-engine.types";
 import type { BrochureSlot } from "../brochure";
-import {
-  currentBrochure,
-  DESIGN_BROCHURES,
-  ensureBrochure,
-  isPageFrame,
-  type BrochurePage,
-  type DesignBrochure,
-} from "../model";
+import { DESIGN_BROCHURES, isPageFrame, type BrochurePage, type DesignBrochure } from "../model";
 
-/**
- * The brochure an agent named (`brochure`, an id), else the open brochure of its design page; with
- * `create`, a page without one gets one. Throws when there's none.
- */
-export function readBrochure(
-  engine: DesignWorkspace,
-  args: ToolArgs,
-  { create = false } = {},
-): DesignBrochure {
+/** The brochure an agent named (`brochure`, an id): every brochure tool asks for it, so none guesses. */
+export function readBrochure(engine: DesignWorkspace, args: ToolArgs): DesignBrochure {
   const id = optionalString(args, "brochure");
-  if (id !== undefined) {
-    const named = engine.service(DESIGN_BROCHURES).get(id);
-    if (!named) throw new Error(`There's no brochure with the id "${id}" (see list_brochures).`);
-    return named;
+  if (id === undefined) {
+    throw new Error('Give "brochure": the brochure\'s id (list_brochures, create_brochure).');
   }
-  if (create) return ensureBrochure(engine);
-  const current = currentBrochure(engine);
-  if (!current) {
-    throw new Error("This design page has no brochure yet (create_brochure, or list_brochures).");
-  }
-  return current;
+  const brochure = engine.service(DESIGN_BROCHURES).get(id);
+  if (!brochure) throw new Error(`There's no brochure with the id "${id}" (see list_brochures).`);
+  return brochure;
 }
 
 /** The JSON schema of the `brochure` argument every brochure tool takes. */
 export const BROCHURE_SCHEMA = {
   type: "string",
-  description:
-    "The brochure's id (list_brochures). Default: the open brochure of your design page.",
+  description: "The brochure's id (list_brochures, or create_brochure for a new one).",
 };
 
 /** The pages an agent gave, checked: top-level frames of the brochure's page, each in one page. */

@@ -1,5 +1,8 @@
-/** SVGs are drawn into a bitmap this many pixels on their long side (mipmaps cover zooming out). */
-const SVG_RASTER_SIZE = 512;
+/**
+ * SVGs are drawn into a bitmap this many pixels on their long side unless asked for another size;
+ * it's also the size they count as having (a tile's size, `ImageCache.naturalSize`).
+ */
+export const SVG_RASTER_SIZE = 512;
 /** Added SVGs are at least this long on their long side: small icons scale up, as vectors can. */
 const SVG_MIN_SIZE = 160;
 
@@ -9,8 +12,14 @@ export function isSvg(data: Uint8Array): boolean {
   return head.startsWith("<svg") || (head.startsWith("<?xml") && head.includes("<svg"));
 }
 
-/** Draws an SVG file into a bitmap, keeping the proportions of its `viewBox`. */
-export async function rasterizeSvg(data: Uint8Array): Promise<ImageBitmap> {
+/**
+ * Draws an SVG file into a bitmap `longSide` pixels on its long side, keeping the proportions of
+ * its `viewBox`.
+ */
+export async function rasterizeSvg(
+  data: Uint8Array,
+  longSide = SVG_RASTER_SIZE,
+): Promise<ImageBitmap> {
   const url = URL.createObjectURL(
     new Blob([data as Uint8Array<ArrayBuffer>], { type: "image/svg+xml" }),
   );
@@ -19,8 +28,8 @@ export async function rasterizeSvg(data: Uint8Array): Promise<ImageBitmap> {
     image.src = url;
     await image.decode();
     const ratio = viewBoxRatio(data) ?? (image.naturalWidth / image.naturalHeight || 1);
-    const w = Math.round(ratio >= 1 ? SVG_RASTER_SIZE : SVG_RASTER_SIZE * ratio);
-    const h = Math.round(ratio >= 1 ? SVG_RASTER_SIZE / ratio : SVG_RASTER_SIZE);
+    const w = Math.max(1, Math.round(ratio >= 1 ? longSide : longSide * ratio));
+    const h = Math.max(1, Math.round(ratio >= 1 ? longSide / ratio : longSide));
     const canvas = new OffscreenCanvas(w, h);
     canvas.getContext("2d")?.drawImage(image, 0, 0, w, h);
     return await createImageBitmap(canvas);
@@ -52,6 +61,18 @@ export async function svgSize(data: Uint8Array): Promise<{ width: number; height
   } finally {
     URL.revokeObjectURL(url);
   }
+}
+
+/**
+ * The size an SVG counts as having (`SVG_RASTER_SIZE` on its long side, in its `viewBox`'s
+ * proportions), or `null` without a usable `viewBox`.
+ */
+export function svgRasterSize(data: Uint8Array): { w: number; h: number } | null {
+  const ratio = viewBoxRatio(data);
+  if (!ratio) return null;
+  return ratio >= 1
+    ? { w: SVG_RASTER_SIZE, h: Math.max(1, Math.round(SVG_RASTER_SIZE / ratio)) }
+    : { w: Math.max(1, Math.round(SVG_RASTER_SIZE * ratio)), h: SVG_RASTER_SIZE };
 }
 
 /** Width over height from the SVG's `viewBox`, or `null` without a usable one. */

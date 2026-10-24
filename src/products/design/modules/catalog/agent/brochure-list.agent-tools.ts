@@ -19,7 +19,7 @@ export const brochureListTools: DesignAgentTool[] = [
     description:
       "The brochures of a design page (each belongs to one page and uses only its top-level " +
       "frames; a page can hold several): id, name, page count and whether it's the one open in " +
-      "the Catalog mode (the default of every brochure tool).",
+      "the Catalog mode. Every other brochure tool takes one of these ids as `brochure`.",
     inputSchema: { type: "object", properties: { page: PAGE_SCHEMA } },
     run: (host, args) => {
       const { engine } = requireDesign(host);
@@ -61,7 +61,7 @@ export const brochureListTools: DesignAgentTool[] = [
     description: "Renames a brochure, in one undo step.",
     inputSchema: {
       type: "object",
-      required: ["name"],
+      required: ["brochure", "name"],
       properties: { name: { type: "string" }, brochure: BROCHURE_SCHEMA },
     },
     run: (host, args) => {
@@ -76,7 +76,11 @@ export const brochureListTools: DesignAgentTool[] = [
     description:
       'Copies a brochure (its pages, options and settings; the frames are shared) as "<name> ' +
       'copy" on the same design page, in one undo step, e.g. to try another order. Returns it.',
-    inputSchema: { type: "object", properties: { brochure: BROCHURE_SCHEMA } },
+    inputSchema: {
+      type: "object",
+      required: ["brochure"],
+      properties: { brochure: BROCHURE_SCHEMA },
+    },
     run: async (host, args) => {
       const { engine } = requireDesign(host);
       const brochure = readBrochure(engine, args);
@@ -85,9 +89,7 @@ export const brochureListTools: DesignAgentTool[] = [
   },
   {
     name: "delete_brochure",
-    description:
-      "Deletes a brochure, in one undo step. Its frames stay in the design. Give `brochure` " +
-      "explicitly.",
+    description: "Deletes a brochure, in one undo step. Its frames stay in the design.",
     inputSchema: {
       type: "object",
       required: ["brochure"],

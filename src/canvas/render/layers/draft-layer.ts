@@ -2,7 +2,7 @@ import { Container } from "pixi.js";
 
 import type { CanvasElement, ElementKinds } from "../../elements";
 import { ElementView } from "../element-view";
-import type { ImageCache } from "../image-cache";
+import type { ImageTextures, ImageUse } from "../image-cache.types";
 
 /**
  * An element being created that isn't in the document yet (e.g. the stroke under the marker).
@@ -13,7 +13,7 @@ export class DraftLayer extends Container {
 
   constructor(
     private readonly kinds: ElementKinds,
-    private readonly images: ImageCache,
+    private readonly images: ImageTextures,
   ) {
     super();
   }
@@ -30,5 +30,15 @@ export class DraftLayer extends Container {
     } else {
       this.view = this.addChild(new ElementView(el, kind, this.images));
     }
+  }
+
+  /** The pictures the draft shows. */
+  imageUses(): ImageUse[] {
+    return this.view?.imageUses() ?? [];
+  }
+
+  /** Draws the draft again if it shows any of these assets (see `ElementLayer.redrawImages`). */
+  redrawImages(assetIds: ReadonlySet<string>): void {
+    if (this.view?.imageUses().some((use) => assetIds.has(use.assetId))) this.view.redraw();
   }
 }

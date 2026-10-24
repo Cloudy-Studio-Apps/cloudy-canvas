@@ -25,6 +25,7 @@ export const brochureSettingsTools: DesignAgentTool[] = [
       "`dpi` (the exported PDF's resolution, 300 for print).",
     inputSchema: {
       type: "object",
+      required: ["brochure"],
       properties: {
         layout: { enum: BROCHURE_LAYOUTS },
         covers: { enum: BROCHURE_COVERS },
@@ -63,6 +64,7 @@ export const brochureSettingsTools: DesignAgentTool[] = [
       "it. An existing file is replaced. Returns the path written and the page count.",
     inputSchema: {
       type: "object",
+      required: ["brochure"],
       properties: {
         path: { type: "string", description: "Absolute path of the file to write." },
         brochure: BROCHURE_SCHEMA,

@@ -11,7 +11,8 @@ import { prefersReducedMotion } from "../utils";
 import type { CanvasTheme } from "./canvas-theme.types";
 import type { HiddenText } from "./element-view.types";
 import { ImageCache } from "./image-cache";
-import type { ImageCacheHost } from "./image-cache.types";
+import { imageDemands } from "./image-demand";
+import type { ImageCacheHost, ImageQuality } from "./image-cache.types";
 import { DraftLayer } from "./layers/draft-layer";
 import { ElementLayer } from "./layers/element-layer";
 import { createGridLayer } from "./layers/create-grid-layer";
@@ -74,7 +75,11 @@ export class Renderer {
     images: ImageCacheHost,
     private readonly options: RendererOptions,
   ) {
-    this.images = new ImageCache(images);
+    this.images = new ImageCache(images, (assetIds) => {
+      this.elements.redrawImages(assetIds);
+      this.frames.redrawImages(assetIds);
+      this.draft.redrawImages(assetIds);
+    });
     this.links = new LinkLayer(links);
     this.grid = createGridLayer(options.grid);
     this.elements = new ElementLayer(kinds, this.images, options.placement);
@@ -253,6 +258,7 @@ export class Renderer {
     this.frames.setEffectScale(camera.zoom);
     this.elements.cull(visible);
     this.frames.cull(visible);
+    this.askForImages(camera.zoom);
     this.grid.draw(camera, this.theme.grid);
     this.links.draw({ zoom: camera.zoom, theme: this.theme, highlighted });
     this.guide.draw({ zoom: camera.zoom, theme: this.theme });
@@ -262,6 +268,27 @@ export class Renderer {
     this.snap.draw(camera, this.snapFeedback, this.theme.snap);
     this.app.render();
     return animating;
+  }
+
+  /** How sharp the canvas shows a picture now (see `ImageCache.quality`). */
+  imageQuality(assetId: string): ImageQuality | null {
+    return this.images.quality(assetId);
+  }
+
+  /** Runs when a picture's texture changes (loaded, sharpened, let go). */
+  onImagesChange(listener: () => void): () => void {
+    return this.images.changes.subscribe(listener);
+  }
+
+  /** Tells the image cache how sharp the pictures on screen need to be at this zoom. */
+  private askForImages(zoom: number): void {
+    const uses = [
+      ...this.elements.imageUses(true),
+      ...this.frames.imageUses(true),
+      ...this.draft.imageUses(),
+    ];
+    const pixelsPerUnit = zoom * this.app.renderer.resolution;
+    this.images.want(imageDemands(uses, (id) => this.images.naturalSize(id), pixelsPerUnit));
   }
 
   /**
