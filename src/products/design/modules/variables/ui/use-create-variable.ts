@@ -1,7 +1,7 @@
 import { DOCUMENT_TOKENS, type VariableType } from "@canvas";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { notifyError } from "@shared/stores/toast-store";
-import { FIRST_COLLECTION, NEW_VALUES } from "./scope-options";
+import { FIRST_COLLECTION, NEW_NAMES, NEW_VALUES } from "./scope-options";
 
 /**
  * Adds a variable of a type in a collection (the first, or a new "Primitives" when the file has
@@ -20,7 +20,7 @@ export function useCreateVariable(): (
         collectionId ??
         tokens.store().collections()[0]?.id ??
         tokens.createCollection(FIRST_COLLECTION).id;
-      const name = type === "color" ? "Color" : "Number";
+      const name = NEW_NAMES[type];
       return tokens.createVariable({
         collectionId: target,
         name: group ? `${group}/${name}` : name,

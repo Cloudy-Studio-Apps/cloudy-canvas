@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useDocumentTokens } from "@canvas-ui";
 import { PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import { DeleteVariablesDialog } from "./delete-variables-dialog";
+import { DeleteTokensDialog } from "@design/ui/components/styles";
 import { NewVariableMenu } from "./new-variable-menu";
 import { GlobalModes } from "./global-modes";
 import { SidebarGroups } from "./sidebar-groups";
@@ -45,7 +45,7 @@ export function VariablesSection() {
           </>
         )}
       </div>
-      <DeleteVariablesDialog ids={deleting} onClose={() => setDeleting(null)} />
+      <DeleteTokensDialog ids={deleting} onClose={() => setDeleting(null)} />
     </PanelSection>
   );
 }

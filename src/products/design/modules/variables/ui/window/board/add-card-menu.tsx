@@ -1,6 +1,7 @@
 import { Plus } from "lucide-react";
 
 import { leafName, joinPath } from "../group-paths";
+import { NEW_NAMES, NEW_VALUES } from "../../scope-options";
 import { numberKindOf } from "../group-kinds";
 import { scaleFromVariable } from "../scale-drafts";
 import { draftFromVariable } from "../shade-drafts";
@@ -27,13 +28,26 @@ export function AddCardMenu({ group, items }: AddCardMenuProps) {
     const kind = first.type === "number" ? numberKindOf(first) : null;
     const variable = tokens.createVariable({
       collectionId: collection.id,
-      name: joinPath(group, kind ? "new" : "color"),
+      name: joinPath(group, kind ? "new" : NEW_NAMES[first.type].toLowerCase()),
       type: first.type,
-      value: kind ? { number: kind.first } : { color: "#9AA5B1FF" },
-      scopes: kind?.scopes,
+      value: kind ? { number: kind.first } : NEW_VALUES[first.type],
+      scopes: kind?.scopes ?? first.scopes,
     });
     select(variable.id);
   };
+  if (first.type === "string" || first.type === "boolean") {
+    return (
+      <button
+        type="button"
+        aria-label={`New ${first.type === "string" ? "text" : "boolean"}`}
+        title={`New ${first.type === "string" ? "text" : "boolean"}`}
+        onClick={add}
+        className="grid min-h-23 place-items-center rounded-card border border-dashed border-border text-muted-foreground hover:border-primary hover:text-primary"
+      >
+        <Plus className="size-4" />
+      </button>
+    );
+  }
   const anchor = items.find((v) => leafName(v) === "500") ?? first;
   const numberAnchor = items.find((v) => leafName(v) === "md") ?? first;
   return (

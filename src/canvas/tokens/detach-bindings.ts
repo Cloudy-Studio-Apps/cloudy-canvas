@@ -22,6 +22,11 @@ export function detachEverywhere(doc: CanvasDocument, variableIds: ReadonlySet<s
   if (patches.size > 0) doc.updateMany(patches);
 }
 
+/** Whether two binding paths are the same field or one holds the other (`fills`, `fills.0.color`). */
+export function pathsOverlap(a: string, b: string): boolean {
+  return a === b || a.startsWith(`${b}.`) || b.startsWith(`${a}.`);
+}
+
 /**
  * Binds the field at `path` of each element to a variable (`null` unlinks it, keeping its value),
  * as part of the edit running now: the token sync then gives the fields their values.
@@ -42,6 +47,10 @@ export function setBindings(
       delete bindings[path];
     } else {
       if (bindings[path] === variableId) continue;
+      // A style on `fills` replaces its paints' variables, and a paint's variable the style.
+      for (const other of Object.keys(bindings)) {
+        if (pathsOverlap(path, other)) delete bindings[other];
+      }
       bindings[path] = variableId;
     }
     patches.set(id, { bindings });

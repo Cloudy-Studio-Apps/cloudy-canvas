@@ -7,6 +7,7 @@ import {
   type TokenValue,
   type ToolArgs,
   type VariableRecord,
+  type VariableType,
 } from "@canvas";
 
 const SCOPES: ReadonlySet<string> = new Set<TokenScope>([
@@ -28,6 +29,9 @@ const SCOPES: ReadonlySet<string> = new Set<TokenScope>([
   "font-weight",
   "effect-value",
   "other-number",
+  "text-content",
+  "font-family",
+  "font-style",
 ]);
 
 /** A variable by id, "Collection/path" or a path unique across collections; throws when unknown. */
@@ -81,17 +85,35 @@ export function findMode(store: TokenStore, ref: string): string {
 }
 
 /**
- * A value as agents give it: `"#3A83C9"` / `"#3A83C980"` for colors, a number, or
- * `{ alias: "variable ref" }` (resolved later, `lookup`).
+ * A value as agents give it for a variable of `type`: `"#3A83C9"` / `"#3A83C980"` for colors, a
+ * number, a text, true or false, or `{ alias: "variable ref" }` (resolved with `lookup`).
  */
-export function readTokenValue(raw: unknown, lookup: (ref: string) => string): TokenValue {
-  if (typeof raw === "number") return { number: raw };
-  if (typeof raw === "string") return { color: raw };
+export function readTokenValue(
+  raw: unknown,
+  lookup: (ref: string) => string,
+  type: VariableType,
+): TokenValue {
   if (typeof raw === "object" && raw !== null && typeof (raw as ToolArgs).alias === "string") {
     return { alias: lookup((raw as { alias: string }).alias) };
   }
-  throw new Error('A value is a color ("#3A83C9"), a number, or { "alias": "variable" }.');
+  if (type === "number" && typeof raw === "number") return { number: raw };
+  if (type === "color" && typeof raw === "string") return { color: raw };
+  if (type === "string" && typeof raw === "string") return { string: raw };
+  if (type === "boolean" && typeof raw === "boolean") return { boolean: raw };
+  throw new Error(
+    `A ${type} variable's value is ${VALUE_HINTS[type]}, or { "alias": "variable" }.`,
+  );
 }
+
+const VALUE_HINTS: Readonly<Record<VariableType, string>> = {
+  color: 'a color ("#3A83C9", "#3A83C980" with alpha)',
+  number: "a number",
+  string: "a text",
+  boolean: "true or false",
+};
+
+/** The variable types agents name. */
+export const VARIABLE_TYPES: readonly VariableType[] = ["color", "number", "string", "boolean"];
 
 /** The scopes given (checked), or `undefined`. */
 export function readScopes(raw: unknown): TokenScope[] | undefined {

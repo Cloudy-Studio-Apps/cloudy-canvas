@@ -68,6 +68,10 @@ export class BindingIndex {
     for (const id of [...variables]) {
       for (const dependent of store.aliasDependents(id)) variables.add(dependent);
     }
+    // Styles using a changed variable restyle the layers using them.
+    for (const id of [...variables]) {
+      for (const style of store.styleUsers(id)) variables.add(style);
+    }
     const found = new Set<string>();
     for (const id of variables) for (const user of this.users.get(id) ?? []) found.add(user);
     return found;

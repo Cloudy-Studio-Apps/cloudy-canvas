@@ -8,6 +8,7 @@ import { CardGrid } from "./card-grid";
 import { ColorCard } from "./color-card";
 import { GroupTitle } from "./group-title";
 import { NumberCard } from "./number-card";
+import { PlainCard } from "./plain-card";
 
 /** One group on the board: its title, its cards and the "+" card. */
 export function GroupSection({ group, items }: GroupSectionProps) {
@@ -33,8 +34,10 @@ export function GroupSection({ group, items }: GroupSectionProps) {
               max={max}
               selected={v.id === selectedId}
             />
-          ) : (
+          ) : v.type === "color" ? (
             <ColorCard key={v.id} variable={v} shown={shown} selected={v.id === selectedId} />
+          ) : (
+            <PlainCard key={v.id} variable={v} shown={shown} selected={v.id === selectedId} />
           ),
         )}
         <AddCardMenu group={group} items={items} />

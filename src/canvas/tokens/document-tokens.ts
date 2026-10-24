@@ -5,7 +5,7 @@ import { createId } from "@shared/core";
 import type { CanvasDocument } from "../document";
 import { defineService } from "../services";
 import { BindingIndex } from "./binding-index";
-import { detachEverywhere } from "./detach-bindings";
+import { detachEverywhere, pathsOverlap } from "./detach-bindings";
 import type {
   GeneratorInput,
   NewStyle,
@@ -18,6 +18,8 @@ import type { ScaleRecord } from "./scale-generator.types";
 import type { GeneratorRecord } from "./shade-generator.types";
 import { TokenFeed } from "./token-feed";
 import { normalizeTokenPath } from "./token-path";
+import { resolveStyle } from "./resolve-style";
+import { keptStyleBindings, styleLeafType, stylesWithout } from "./style-bindings";
 import type { StyleRecord } from "./token.types";
 import { VariableEdits } from "./variable-edits";
 
@@ -119,6 +121,16 @@ export class DocumentTokens extends VariableEdits {
       description: spec.description ?? "",
       order: generateKeyBetween(same.at(-1)?.order ?? null, null),
     };
+    const store = this.store();
+    const bindings = Object.fromEntries(
+      Object.entries(spec.bindings ?? {}).filter(
+        ([path, id]) => store.variable(id)?.type === styleLeafType(record.value, path),
+      ),
+    );
+    if (Object.keys(bindings).length > 0) {
+      record.bindings = bindings;
+      record.value = resolveStyle(store, record, {});
+    }
     this.write(() => this.doc.setTokenRecords([record]));
     return record;
   }
@@ -140,7 +152,46 @@ export class DocumentTokens extends VariableEdits {
     }
     if (patch.description !== undefined) next.description = patch.description;
     if (patch.value) next.value = { ...style.value, ...structuredClone(patch.value) };
+    if (patch.bindings) next.bindings = { ...patch.bindings };
+    else if (patch.value && style.bindings) next.bindings = keptStyleBindings(style, next.value);
     this.write(() => this.doc.setTokenRecords([next]), options.checkpoint ?? true);
+  }
+
+  /**
+   * Binds the part of a style's value at `path` (`"paints.0.color"`) to a variable, or unlinks it
+   * (`null`, keeping its value); bindings over or under the path are replaced. Its value takes the
+   * variable's in the file's modes, and the layers using it follow, in one undo step.
+   */
+  bindStyleField(
+    styleId: string,
+    path: string,
+    variableId: string | null,
+    options: SetValueOptions = {},
+  ): void {
+    const store = this.store();
+    const style = store.style(styleId);
+    if (!style) throw new Error(`No style with id ${styleId}.`);
+    const bindings = Object.fromEntries(
+      Object.entries(style.bindings ?? {}).filter(([other]) => !pathsOverlap(path, other)),
+    );
+    let value = style.value;
+    if (variableId !== null) {
+      const variable = store.variable(variableId);
+      if (!variable) throw new Error(`No variable with id ${variableId}.`);
+      const expected = styleLeafType(style.value, path);
+      if (!expected) throw new Error(`The style ${style.name} has no value at "${path}".`);
+      if (expected !== variable.type) {
+        throw new Error(
+          `"${path}" takes a ${expected} variable; ${variable.name} is a ${variable.type}.`,
+        );
+      }
+      bindings[path] = variable.id;
+      value = resolveStyle(store, { ...style, bindings }, {});
+    }
+    this.write(
+      () => this.doc.setTokenRecords([{ ...style, value, bindings }]),
+      options.checkpoint ?? true,
+    );
   }
 
   /** Deletes styles; the layers using them keep their look, unlinked. */
@@ -157,6 +208,9 @@ export class DocumentTokens extends VariableEdits {
     this.write(() => {
       if (orphans.length > 0) this.doc.setTokenRecords(orphans);
       detachEverywhere(this.doc, new Set(known));
+      // Styles using a deleted variable keep the value it gave them.
+      const unlinked = stylesWithout(store, new Set(known)).filter((s) => !known.includes(s.id));
+      if (unlinked.length > 0) this.doc.setTokenRecords(unlinked);
       this.doc.removeTokenRecords(known);
     });
   }

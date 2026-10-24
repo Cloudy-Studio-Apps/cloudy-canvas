@@ -1,6 +1,7 @@
 import { parseTokenColor } from "./token-color";
 import type { TokenStore } from "./token-store";
 import { DEFAULT_VALUE } from "./default-value";
+import { resolveStyle } from "./resolve-style";
 import type {
   ModeAxisRecord,
   ModeContext,
@@ -44,7 +45,9 @@ export function resolveVariable(
   modes: ModeContext,
 ): ResolvedValue | null {
   const style = store.style(id);
-  if (style) return { type: "style", styleType: style.styleType, value: style.value };
+  if (style) {
+    return { type: "style", styleType: style.styleType, value: resolveStyle(store, style, modes) };
+  }
   const type = store.variable(id)?.type;
   if (!type) return null;
   const seen = new Set<string>();
@@ -64,6 +67,8 @@ export function resolveVariable(
       return color ? { type, color } : null;
     }
     if (type === "number" && "number" in value) return { type, number: value.number };
+    if (type === "string" && "string" in value) return { type, string: value.string };
+    if (type === "boolean" && "boolean" in value) return { type, boolean: value.boolean };
     return null;
   }
   return null;
@@ -88,4 +93,14 @@ export function valueKeyOf(store: TokenStore, mode: string): string {
 /** Whether a variable has any value besides its default (it varies by its axis). */
 export function hasOverrides(variable: VariableRecord): boolean {
   return Object.keys(variable.values).some((key) => key !== DEFAULT_VALUE);
+}
+
+/** A resolved value as a raw value to store (detaching an alias keeps what it gave); not styles. */
+export function asTokenValue(value: ResolvedValue | null): TokenValue | null {
+  if (!value) return null;
+  if (value.type === "color") return { color: value.color };
+  if (value.type === "number") return { number: value.number };
+  if (value.type === "string") return { string: value.string };
+  if (value.type === "boolean") return { boolean: value.boolean };
+  return null;
 }

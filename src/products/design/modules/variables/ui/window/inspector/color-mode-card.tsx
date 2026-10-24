@@ -52,7 +52,8 @@ export function ColorModeCard({ variable, mode, first }: ModeValueCardProps) {
           <SwatchInput
             color={hex.toLowerCase()}
             label={`${mode.name} color`}
-            onCommit={(color) => set(joinTokenColor(color, alpha))}
+            opacity={alpha}
+            onChange={(color, opacity) => set(joinTokenColor(color, opacity))}
           />
           <HexInput
             color={hex}

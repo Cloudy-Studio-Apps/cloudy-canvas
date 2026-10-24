@@ -5,7 +5,7 @@ import { useDocumentTokens, VariableValue } from "@canvas-ui";
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
 import { cn } from "@shared/ui/lib/utils";
 import { VariableEditor } from "./variable-editor";
-import { numberKindOf } from "./window/group-kinds";
+import { typeGlyph } from "./window/group-kinds";
 import type { VariableRowProps } from "./variables-ui.types";
 
 /** A variable in the panel: its value on this page, its name, what it aliases; click edits it. */
@@ -33,11 +33,11 @@ export function VariableRow({ variable, modes, editing, setEditing, onDelete }: 
             <VariableValue variable={variable} modes={modes} round />
           ) : (
             <span className="w-4 shrink-0 text-center text-[11px] text-muted-foreground">
-              {numberKindOf(variable).icon}
+              {typeGlyph(variable)}
             </span>
           )}
           <span className="min-w-0 truncate">{tokenLeafOf(variable.name)}</span>
-          {variable.type === "number" && (
+          {variable.type !== "color" && (
             <VariableValue variable={variable} modes={modes} className="text-subtle-foreground" />
           )}
           <span className="flex-1" />

@@ -1,6 +1,7 @@
 import {
   asUndoStep,
   DEFAULT_VALUE,
+  defaultValueOf,
   DOCUMENT_TOKENS,
   optionalBoolean,
   optionalString,
@@ -22,10 +23,13 @@ import {
   requireCollection,
   requireVariable,
   SCOPE_NAMES,
+  VARIABLE_TYPES,
 } from "./variable-args";
 
 const VALUE = {
-  description: 'A color ("#3A83C9", "#3A83C980" with alpha), a number, or { "alias": "variable" }.',
+  description:
+    'By its type: a color ("#3A83C9", "#3A83C980" with alpha), a number, a text, true or ' +
+    'false; or { "alias": "variable" }.',
 };
 const VARIABLE_FIELDS = {
   value: {
@@ -54,20 +58,21 @@ const VARIABLE_FIELDS = {
 /** Writes an agent's `variesBy`, `value`, `values` and `clear` on a variable (aliases resolved). */
 function writeValues(tokens: DocumentTokens, id: string, item: ToolArgs): void {
   const lookup = (ref: string) => requireVariable(tokens.store(), ref).id;
+  const type = requireVariable(tokens.store(), id).type;
   if (item.variesBy !== undefined) {
     const axis =
       item.variesBy === null ? null : requireAxis(tokens.store(), stringArg(item, "variesBy")).id;
     tokens.setVariableAxis(id, axis);
   }
   if (item.value !== undefined)
-    tokens.setValue(id, DEFAULT_VALUE, readTokenValue(item.value, lookup));
+    tokens.setValue(id, DEFAULT_VALUE, readTokenValue(item.value, lookup, type));
   const values = item.values;
   if (values !== undefined) {
     if (typeof values !== "object" || values === null || Array.isArray(values)) {
       throw new Error('"values" maps mode names to values.');
     }
     for (const [mode, raw] of Object.entries(values)) {
-      tokens.setValue(id, findMode(tokens.store(), mode), readTokenValue(raw, lookup));
+      tokens.setValue(id, findMode(tokens.store(), mode), readTokenValue(raw, lookup, type));
     }
   }
   for (const mode of item.clear === undefined ? [] : stringList(item, "clear")) {
@@ -81,7 +86,7 @@ export const variablesEditTools: DesignAgentTool[] = [
     name: "create_variables",
     description:
       "Adds variables to a collection, as one undo step. Each: name (a slash path like " +
-      '"brand/primary/500"; groups come from it), type ("color" or "number"), `value` (its ' +
+      '"brand/primary/500"; groups come from it), type ("color", "number", "string" for text, "boolean"), `value` (its ' +
       "default) and optionally `values` for modes by name (it then varies by their axis). A value " +
       "may alias another variable, also one made earlier in the same call. Returns their ids.",
     inputSchema: {
@@ -96,7 +101,7 @@ export const variablesEditTools: DesignAgentTool[] = [
             required: ["name", "type", "value"],
             properties: {
               name: { type: "string" },
-              type: { type: "string", enum: ["color", "number"] },
+              type: { type: "string", enum: VARIABLE_TYPES },
               ...VARIABLE_FIELDS,
             },
           },
@@ -111,14 +116,15 @@ export const variablesEditTools: DesignAgentTool[] = [
       const created = asUndoStep(engine.doc, () => {
         const made = tokens.createVariables(
           items.map((item) => {
-            const type = stringArg(item, "type");
-            if (type !== "color" && type !== "number")
-              throw new Error('"type" is color or number.');
+            const type = stringArg(item, "type") as VariableType;
+            if (!VARIABLE_TYPES.includes(type)) {
+              throw new Error(`"type" is one of ${VARIABLE_TYPES.join(", ")}.`);
+            }
             return {
               collectionId: collection.id,
               name: stringArg(item, "name"),
-              type: type as VariableType,
-              value: type === "color" ? { color: "#000000FF" } : { number: 0 },
+              type,
+              value: defaultValueOf(type),
               scopes: readScopes(item.scopes),
               description: optionalString(item, "description"),
               codeSyntax: readCodeSyntax(item.codeSyntax),

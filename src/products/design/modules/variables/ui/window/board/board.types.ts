@@ -68,3 +68,10 @@ export interface ScalePreviewSectionProps {
   group: string;
   rest: readonly VariableRecord[];
 }
+
+/** A text or boolean variable's card. */
+export interface PlainCardProps {
+  variable: VariableRecord;
+  shown: readonly BoardMode[];
+  selected: boolean;
+}

@@ -42,24 +42,26 @@ export function AdvancedSettings({ variable }: AdvancedSettingsProps) {
       </button>
       {open && (
         <div className="flex flex-col gap-3 pl-4">
-          <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground">
-              Show in pickers for {variable.scopes.length === 0 ? "every field" : "these fields"}
-            </span>
-            <div className="grid grid-cols-2 gap-x-2 gap-y-1">
-              {SCOPE_OPTIONS[variable.type].map(({ scope, label }) => (
-                <label key={scope} className="flex items-center gap-1.5">
-                  <input
-                    type="checkbox"
-                    checked={variable.scopes.includes(scope)}
-                    onChange={() => toggleScope(scope)}
-                    className="accent-primary"
-                  />
-                  {label}
-                </label>
-              ))}
+          {SCOPE_OPTIONS[variable.type].length > 0 && (
+            <div className="flex flex-col gap-1">
+              <span className="text-muted-foreground">
+                Show in pickers for {variable.scopes.length === 0 ? "every field" : "these fields"}
+              </span>
+              <div className="grid grid-cols-2 gap-x-2 gap-y-1">
+                {SCOPE_OPTIONS[variable.type].map(({ scope, label }) => (
+                  <label key={scope} className="flex items-center gap-1.5">
+                    <input
+                      type="checkbox"
+                      checked={variable.scopes.includes(scope)}
+                      onChange={() => toggleScope(scope)}
+                      className="accent-primary"
+                    />
+                    {label}
+                  </label>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
           <div className="flex flex-col gap-1">
             <span className="text-muted-foreground">Name in code</span>
             {(["web", "ios", "android"] as const).map((platform) => (

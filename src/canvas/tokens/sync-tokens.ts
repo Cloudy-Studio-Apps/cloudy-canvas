@@ -11,9 +11,14 @@ import { TokenStore } from "./token-store";
 /** Numbers closer than this are the same value (layouts round, resizes clamp to whole units). */
 const EPSILON = 1e-3;
 
+const HEX = /^#[0-9a-f]{3,8}$/i;
+
 function sameValue(a: unknown, b: unknown): boolean {
   if (typeof a === "number" && typeof b === "number") return Math.abs(a - b) < EPSILON;
-  if (typeof a === "string" && typeof b === "string") return a.toUpperCase() === b.toUpperCase();
+  // Colors are stored in either case; any other text (a bound content, a font) must match exactly.
+  if (typeof a === "string" && typeof b === "string" && HEX.test(a) && HEX.test(b)) {
+    return a.toUpperCase() === b.toUpperCase();
+  }
   return deepEqual(a, b);
 }
 
@@ -105,8 +110,10 @@ function resolvedPatch(
   const bindings = keptBindings ?? el.bindings ?? {};
   const live: Record<string, string> = {};
   let current: CanvasElement = el;
+  // Asked once: a binding stays while the kind still offers its path (style paths included).
+  const offered = new Set(kind.bindable(el).map((field) => field.path));
   for (const [path, variable] of Object.entries(bindings)) {
-    if (readPath(current, path) === undefined) continue;
+    if (!offered.has(path)) continue;
     live[path] = variable;
     const value = resolveVariable(store, variable, modes);
     if (!value) continue;

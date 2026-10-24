@@ -5,7 +5,7 @@ import { Button } from "@shared/ui/components/ui/button";
 import type { ElementPatch } from "@canvas";
 import { isDesignNode, layerNameOf, maskOverNode, type DesignNode } from "@design";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import { NodeCheckbox, NodeSelectField, PanelSection } from "@design/ui/components/panel";
+import { BindSlot, NodeCheckbox, NodeSelectField, PanelSection } from "@design/ui/components/panel";
 import type { PropertySectionProps } from "@design/ui/modules";
 import { MASK_TYPE_OPTIONS } from "./mask-type-options";
 import { MaskSectionButton } from "./mask-section-button";
@@ -77,12 +77,14 @@ export function MaskSection({ selection: { nodes, kinds, elements } }: PropertyS
           read={(node) => node.maskType}
           patch={(maskType) => ({ maskType }) as ElementPatch<DesignNode>}
         />
-        <NodeCheckbox
-          nodes={nodes}
-          label="Invert mask (show what's outside it)"
-          read={(node) => node.maskInverted}
-          patch={(maskInverted) => ({ maskInverted }) as ElementPatch<DesignNode>}
-        />
+        <BindSlot nodes={nodes} path="maskInverted">
+          <NodeCheckbox
+            nodes={nodes}
+            label="Invert mask (show what's outside it)"
+            read={(node) => node.maskInverted}
+            patch={(maskInverted) => ({ maskInverted }) as ElementPatch<DesignNode>}
+          />
+        </BindSlot>
       </div>
     </PanelSection>
   );

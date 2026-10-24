@@ -9,9 +9,10 @@ import { textTools } from "./text.agent-tools";
 import { TEXT_DEFAULTS } from "./text.defaults";
 import { TextKind } from "./text.kind";
 import { TextTool } from "./text.tool";
-import { designStyleTypes } from "../variables/ui/style-types";
-import { TEXT_STYLE } from "./text-style";
-import { createTextStyle, TextStyleRow } from "./ui/text-styles";
+import { designStyleTypes } from "@design/ui/modules/style-types";
+import { TEXT_STYLE, textStyleSummary } from "./text-style";
+import { syncRunStyleBindings } from "./run-style-bindings";
+import { createTextStyle, TextStyleEditor, TextStylePreview } from "./ui/text-styles";
 import { TypographySection } from "./ui/typography-section";
 import { useTextOutlines } from "./ui/use-text-outlines";
 
@@ -31,6 +32,8 @@ export const textModule = defineModule({
     });
     host.contribute(designCanvas.options, { textTypography: TEXT_DEFAULTS.typography });
     host.contribute(designAgentTools, { id: "text", tools: () => textTools });
+    // Ranges using a text style are bound to it, so the token sync restyles them.
+    host.contribute(designCanvas.afterEdit, (doc, change) => syncRunStyleBindings(doc, change));
 
     host.contribute(designStyleTypes, {
       id: TEXT_STYLE,
@@ -39,7 +42,9 @@ export const textModule = defineModule({
       icon: Type,
       order: 10,
       create: (engine) => createTextStyle(engine),
-      Row: TextStyleRow,
+      Preview: TextStylePreview,
+      summary: textStyleSummary,
+      Editor: TextStyleEditor,
     });
     host.contribute(designEditor.sessionHooks, {
       id: "text-outlines",

@@ -4,9 +4,9 @@ import { rectContainsPoint } from "../geometry";
 import { normalizeAngle, rotatePoint } from "../rotation";
 import type { Point, Rect, Size } from "../geometry.types";
 import type { ElementView } from "../render/element-view";
-import { pathRoot, readParent, setPathsPatch } from "../tokens/binding-path";
+import { pathRoot, setPathsPatch } from "../tokens/binding-path";
 import type { BindableField } from "../tokens/binding.types";
-import { splitTokenColor } from "../tokens/token-color";
+import { tokenValueFields } from "../tokens/token-value-fields";
 import type { ResolvedValue } from "../tokens/token.types";
 import { ELEMENT_DEFAULTS } from "./element.defaults";
 import { scaleRect } from "./element-scale";
@@ -258,6 +258,15 @@ export abstract class ElementKind<
   }
 
   /**
+   * Whether the element still has a field at `path` a variable or style can drive. A binding to a
+   * path it no longer has (its paint removed) is dropped by the token sync; style paths like
+   * `textStyle` aren't stored fields, so this asks `bindable`, not the element's fields.
+   */
+  bindsPath(el: E, path: string): boolean {
+    return this.bindable(el).some((field) => field.path === path);
+  }
+
+  /**
    * The stored values a variable's value gives the field at `path` (paths → values; a color
    * also sets its paint's `opacity` from its alpha). The token sync writes them and checks them:
    * a field that no longer holds them was set by hand, and is unlinked.
@@ -265,13 +274,7 @@ export abstract class ElementKind<
   bindValues(el: E, path: string, value: ResolvedValue): Record<string, unknown> {
     // A style sets the fields it holds (kinds pick the ones they take).
     if (value.type === "style") return { ...value.value };
-    if (value.type === "number") return { [path]: value.number };
-    const { hex, alpha } = splitTokenColor(value.color);
-    const parent = readParent(el, path);
-    if (path.endsWith(".color") && typeof parent?.opacity === "number") {
-      return { [path]: hex, [`${path.slice(0, -".color".length)}.opacity`]: alpha };
-    }
-    return { [path]: alpha < 1 ? value.color : hex };
+    return tokenValueFields(el, path, value);
   }
 
   /**

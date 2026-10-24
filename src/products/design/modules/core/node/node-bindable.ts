@@ -65,6 +65,16 @@ export function numberField(path: string, scope: TokenScope, label: string): Bin
   return { path, type: "number", scopes: [scope], label };
 }
 
+/** A text field (content, a font's name). */
+export function stringField(path: string, scope: TokenScope, label: string): BindableField {
+  return { path, type: "string", scopes: [scope], label };
+}
+
+/** A true/false field; booleans aren't scoped (as in Figma). */
+export function booleanField(path: string, label: string): BindableField {
+  return { path, type: "boolean", scopes: [], label };
+}
+
 /** Each side's stroke weight, when the node keeps them apart. */
 export function strokeSideFields(node: DesignNode): BindableField[] {
   if (!node.strokeWeights) return [];

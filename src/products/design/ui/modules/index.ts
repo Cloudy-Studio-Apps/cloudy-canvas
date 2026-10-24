@@ -10,3 +10,5 @@ export {
   getDesignProduct,
   registerDesignModule,
 } from "./design-modules";
+export type * from "./style-types.types";
+export { designStyleTypes } from "./style-types";

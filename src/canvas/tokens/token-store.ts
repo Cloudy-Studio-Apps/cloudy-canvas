@@ -30,6 +30,7 @@ export class TokenStore {
   private readonly scaleList: ScaleRecord[];
   private readonly byId = new Map<string, TokenRecord>();
   private readonly aliasedBy = new Map<string, Set<string>>();
+  private readonly styleBoundBy = new Map<string, Set<string>>();
 
   /** The document's tokens as they are now (shared until they change). */
   static of(doc: CanvasDocument): TokenStore {
@@ -66,6 +67,13 @@ export class TokenStore {
     this.variableList = variables
       .filter((v) => this.byId.get(v.collectionId)?.kind === "collection")
       .sort(byOrder);
+    for (const style of this.styleList) {
+      for (const variable of Object.values(style.bindings ?? {})) {
+        const users = this.styleBoundBy.get(variable) ?? new Set();
+        users.add(style.id);
+        this.styleBoundBy.set(variable, users);
+      }
+    }
     for (const v of this.variableList) {
       for (const value of Object.values(v.values)) {
         if (!("alias" in value)) continue;
@@ -176,6 +184,11 @@ export class TokenStore {
     }
     const matches = this.variableList.filter((v) => v.name === ref);
     return matches.length === 1 ? matches[0] : undefined;
+  }
+
+  /** The styles binding a variable directly (aliases of it: ask for each of `aliasDependents`). */
+  styleUsers(variableId: string): Set<string> {
+    return new Set(this.styleBoundBy.get(variableId) ?? []);
   }
 
   /** Every variable whose alias chain reaches `id` (not `id` itself). */

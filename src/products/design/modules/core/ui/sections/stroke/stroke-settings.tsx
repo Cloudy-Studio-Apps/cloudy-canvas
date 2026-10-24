@@ -13,29 +13,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/u
 import { DashPatternField } from "./dash-pattern-field";
 import { dashStyle, dashStylePatch } from "./stroke-dashes";
 import type { DashStyle } from "./stroke-dashes.types";
-import { CapIcon, JoinIcon } from "./stroke-icons";
+import { CAPS, DASH_STYLES, JOINS } from "./stroke-options";
 import { SettingsRow } from "./settings-row";
 import { StrokePreview } from "./stroke-preview";
 import type { StrokeSettingsProps } from "./stroke-settings.types";
-
-const DASH_STYLES = [
-  { value: "solid", label: "Solid" },
-  { value: "dashed", label: "Dashed" },
-  { value: "dotted", label: "Dotted" },
-  { value: "custom", label: "Custom" },
-] as const satisfies readonly { value: DashStyle; label: string }[];
-
-const CAPS = [
-  { value: "none", label: "No cap", icon: <CapIcon cap="none" /> },
-  { value: "round", label: "Round cap", icon: <CapIcon cap="round" /> },
-  { value: "square", label: "Square cap", icon: <CapIcon cap="square" /> },
-];
-
-const JOINS = [
-  { value: "miter", label: "Miter join", icon: <JoinIcon join="miter" /> },
-  { value: "bevel", label: "Bevel join", icon: <JoinIcon join="bevel" /> },
-  { value: "round", label: "Round join", icon: <JoinIcon join="round" /> },
-];
 
 /**
  * The stroke settings popover: its dash style (with a live preview, the dash and gap or a custom

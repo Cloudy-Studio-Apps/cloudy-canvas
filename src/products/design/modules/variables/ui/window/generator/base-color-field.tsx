@@ -37,7 +37,7 @@ export function BaseColorField({ draft, change }: GeneratorPartProps) {
           <SwatchInput
             color={hex.toLowerCase()}
             label="Base color"
-            onCommit={(c) => change({ baseColor: joinTokenColor(c, 1) })}
+            onChange={(c) => change({ baseColor: joinTokenColor(c, 1) })}
           />
           <HexInput
             color={hex}

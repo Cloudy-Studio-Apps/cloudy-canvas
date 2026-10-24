@@ -1,6 +1,6 @@
 import { resolveVariable } from "@canvas";
 import { cssColor } from "../css-color";
-import { groupLabel, numberKindOf } from "../group-kinds";
+import { groupLabel, typeGlyph } from "../group-kinds";
 import { variablesByGroup } from "../group-paths";
 import { jumpToGroup } from "../jump-to-group";
 import { useBoard } from "../use-board";
@@ -26,8 +26,8 @@ export function GroupOutline({ collection }: GroupOutlineProps) {
             title={`${group || "Ungrouped"} · ${groupLabel(store, items)}`}
             className="flex items-center gap-1.5 rounded-md px-1.5 py-1 text-left text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
           >
-            {first?.type === "number" ? (
-              <span className="w-4 text-center text-[11px]">{numberKindOf(first).icon}</span>
+            {first && first.type !== "color" ? (
+              <span className="w-4 text-center text-[11px]">{typeGlyph(first)}</span>
             ) : (
               <span className="flex gap-px">
                 {items.slice(0, 3).map((v) => {

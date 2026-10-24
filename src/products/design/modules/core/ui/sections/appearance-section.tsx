@@ -3,8 +3,10 @@ import { Blend, Scan } from "lucide-react";
 import type { ElementPatch } from "@canvas";
 import type { DesignNode } from "@design";
 import {
+  BindSlot,
   BlendModeSelect,
   BindableNumberField,
+  NodeCheckbox,
   PanelSection,
   PropertyGrid,
   sharedValue,
@@ -18,7 +20,8 @@ function hasCorners(node: DesignNode): node is DesignNode & { cornerRadius: numb
 }
 
 /**
- * Opacity and blend mode of the selection, and its corner radius when every node has corners.
+ * Opacity and blend mode of the selection, its corner radius when every node has corners, and
+ * whether it shows (which a boolean variable can drive).
  */
 export function AppearanceSection({ selection: { nodes } }: PropertySectionProps) {
   const cornered = nodes.filter(hasCorners);
@@ -54,6 +57,15 @@ export function AppearanceSection({ selection: { nodes } }: PropertySectionProps
           />
         )}
       </PropertyGrid>
+      {/* Visibility, so a boolean variable can show or hide layers (the layers' eye unlinks it). */}
+      <BindSlot nodes={nodes} path="visible" className="mt-1.5">
+        <NodeCheckbox
+          nodes={nodes}
+          label="Visible"
+          read={(node) => node.visible}
+          patch={(visible) => ({ visible })}
+        />
+      </BindSlot>
     </PanelSection>
   );
 }

@@ -32,6 +32,7 @@ import {
   type NodeBuildContext,
   type NodeGeometry,
   layoutFields,
+  booleanField,
   numberField,
 } from "../core";
 import { createFrame } from "./frame.factory";
@@ -59,6 +60,7 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
       ...super.bindable(el),
       numberField("cornerRadius", "corner-radius", "Corner radius"),
       ...(el.layout ? layoutFields() : []),
+      booleanField("clipsContent", "Clip content"),
     ];
   }
 

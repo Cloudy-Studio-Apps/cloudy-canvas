@@ -97,6 +97,14 @@ export abstract class TokenEditsBase {
       if (!color) throw new Error("A color variable takes a color like #3A83C9 or #3A83C980.");
       return { color };
     }
+    if (type === "string") {
+      if (!("string" in value)) throw new Error("A string variable takes a text.");
+      return { string: value.string };
+    }
+    if (type === "boolean") {
+      if (!("boolean" in value)) throw new Error("A boolean variable takes true or false.");
+      return { boolean: value.boolean };
+    }
     if (!("number" in value) || !Number.isFinite(value.number)) {
       throw new Error("A number variable takes a number.");
     }

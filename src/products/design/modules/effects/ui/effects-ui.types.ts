@@ -1,5 +1,5 @@
 import type { ColorChangeInfo } from "@canvas-ui";
-import type { NodeEffect } from "@design";
+import type { DesignNode, NodeEffect } from "@design";
 import type { EffectTypeEntry } from "@design/ui/modules";
 
 export interface AddEffectMenuProps {
@@ -18,4 +18,21 @@ export interface EffectRowProps {
   onDragStart: () => void;
   onDragOver: () => void;
   onDragEnd: () => void;
+}
+
+/** Where each effect's variables go after a change (`null`: the stack was replaced). */
+export type EffectStackMap = ((index: number) => number | null) | null;
+
+export interface EffectStackEditorProps {
+  effects: readonly NodeEffect[];
+  /** The targets' stacks differ ("+" replaces them all). */
+  mixed: boolean;
+  /** Changes the stack; `map` says where each effect's variables go (unset: they stay). */
+  onChange: (
+    change: (current: readonly NodeEffect[]) => NodeEffect[],
+    info?: ColorChangeInfo,
+    map?: EffectStackMap,
+  ) => void;
+  /** The layers edited, so fields bind on them (a style's editor binds through its scope). */
+  nodes: readonly DesignNode[];
 }

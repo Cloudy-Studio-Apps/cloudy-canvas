@@ -6,7 +6,7 @@ import { useDocumentTokens } from "@canvas-ui";
 import { cn } from "@shared/ui/lib/utils";
 import { VariableRow } from "./variable-row";
 import { cssColor } from "./window/css-color";
-import { groupLabel, numberKindOf } from "./window/group-kinds";
+import { groupLabel, typeGlyph } from "./window/group-kinds";
 import { openWindowAt } from "./window/jump-to-group";
 import type { SidebarGroupRowProps } from "./variables-ui.types";
 
@@ -42,9 +42,9 @@ export function SidebarGroupRow({
               open && "rotate-90",
             )}
           />
-          {first?.type === "number" ? (
+          {first && first.type !== "color" ? (
             <span className="w-4 shrink-0 text-center text-[11px] text-muted-foreground">
-              {numberKindOf(first).icon}
+              {typeGlyph(first)}
             </span>
           ) : (
             <span className="flex shrink-0 gap-px">

@@ -1,6 +1,7 @@
 import { Link, X } from "lucide-react";
 
 import {
+  asTokenValue,
   DOCUMENT_TOKENS,
   joinTokenColor,
   resolveVariable,
@@ -14,6 +15,8 @@ import { FieldBox, HexInput, NumberField, PercentInput } from "@design/ui/compon
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { notifyError } from "@shared/stores/toast-store";
 import { cn } from "@shared/ui/lib/utils";
+import { BooleanValueInput } from "./boolean-value-input";
+import { StringValueInput } from "./string-value-input";
 import { SwatchInput } from "./swatch-input";
 import type { ActionButtonProps, ValueFieldProps } from "./variables-ui.types";
 
@@ -77,9 +80,8 @@ export function ValueField({ variable, mode, label, cell, className }: ValueFiel
           scopes={[]}
           onPick={(alias) => set({ alias })}
           onDetach={() => {
-            const resolved = resolveVariable(store, variable.id, modes);
-            if (resolved?.type === "color") set({ color: resolved.color });
-            else if (resolved?.type === "number") set({ number: resolved.number });
+            const resolved = asTokenValue(resolveVariable(store, variable.id, modes));
+            if (resolved) set(resolved);
           }}
           className="min-w-0 flex-1"
         />
@@ -110,7 +112,8 @@ export function ValueField({ variable, mode, label, cell, className }: ValueFiel
           <SwatchInput
             color={hex.toLowerCase()}
             label={`${label} color`}
-            onCommit={(color) => set({ color: joinTokenColor(color, alpha) })}
+            opacity={alpha}
+            onChange={(color, opacity) => set({ color: joinTokenColor(color, opacity) })}
           />
           <HexInput
             color={hex}
@@ -126,6 +129,30 @@ export function ValueField({ variable, mode, label, cell, className }: ValueFiel
             />
           </span>
         </FieldBox>
+        {link}
+        {clear}
+      </div>
+    );
+  }
+
+  if (variable.type === "string" || variable.type === "boolean") {
+    return (
+      <div className={cn("group/value flex min-w-0 items-center gap-0.5", className)}>
+        {variable.type === "string" ? (
+          <StringValueInput
+            value={"string" in value ? value.string : ""}
+            label={label}
+            onChange={(string) => set({ string })}
+            className={ghost}
+          />
+        ) : (
+          <BooleanValueInput
+            value={"boolean" in value ? value.boolean : false}
+            label={label}
+            onChange={(boolean) => set({ boolean })}
+            className={ghost}
+          />
+        )}
         {link}
         {clear}
       </div>

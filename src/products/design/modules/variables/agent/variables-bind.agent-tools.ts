@@ -9,7 +9,7 @@ import {
 
 import { requireDesign, requireNodes, type DesignAgentTool } from "../../../agent";
 import { setVariableModes } from "../set-variable-modes";
-import { requireStyle } from "./styles.agent-tools";
+import { requireStyle } from "./style-args";
 import { requireAxis, requireMode, requireVariable } from "./variable-args";
 
 /** Binding layers' fields to variables, and picking modes. */
@@ -24,8 +24,12 @@ export const variablesBindTools: DesignAgentTool[] = [
       '"h", "rotation", "strokeWeight", "strokeWeights.top", "cornerRadius", "layout.gap", ' +
       '"layout.counterGap", "layout.padding.left", texts\' "fontSize", "lineHeight" (a ' +
       'multiplier), "letterSpacing", "fontWeight"; polygons\' and stars\' "pointCount", stars\' ' +
-      '"innerRadius"; texts\' "textStyle" takes a text style (list_styles). get_nodes lists each layer\'s `bindings`. A field written later by hand or ' +
-      "by update_nodes is unlinked.",
+      '"innerRadius"; text variables: texts\' "text", "fontFamily", "fontStyle" (a face name like ' +
+      '"Bold Italic"); boolean variables: "visible", "layoutAbsolute", frames\' "clipsContent", ' +
+      'masks\' "maskInverted". Styles (list_styles): "fills"/"strokes" take a paint style, ' +
+      '"effects" an effect style, "strokeStyle" a stroke style, texts\' "textStyle" a text style ' +
+      "(a range's: style_text_range's textStyle). get_nodes lists each layer's `bindings`. A " +
+      "field written later by hand or by update_nodes is unlinked (a style: any field it sets).",
     inputSchema: {
       type: "object",
       required: ["bindings"],

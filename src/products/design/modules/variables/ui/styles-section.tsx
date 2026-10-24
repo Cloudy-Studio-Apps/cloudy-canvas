@@ -16,8 +16,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@shared/ui/components/ui/dropdown-menu";
-import { DeleteVariablesDialog } from "./delete-variables-dialog";
-import { designStyleTypes } from "./style-types";
+import { DeleteTokensDialog, StyleRow } from "@design/ui/components/styles";
+import { designStyleTypes } from "@design/ui/modules/style-types";
 
 /**
  * With nothing selected, Figma's Styles: "+" adds a style of a kind (Text, …), and each kind's
@@ -65,7 +65,7 @@ export function StylesSection() {
                 group={groupTree(styles)}
                 storageKey={`styles:${type.id}`}
                 renderVariable={(style) => (
-                  <type.Row
+                  <StyleRow
                     style={style}
                     editing={editingId === style.id}
                     setEditing={(open) => setEditingId(open ? style.id : null)}
@@ -83,7 +83,7 @@ export function StylesSection() {
           <p className="text-xs text-muted-foreground">Save looks you reuse as styles.</p>
         )}
       </div>
-      <DeleteVariablesDialog ids={deleting} onClose={() => setDeleting(null)} />
+      <DeleteTokensDialog ids={deleting} onClose={() => setDeleting(null)} />
     </PanelSection>
   );
 }

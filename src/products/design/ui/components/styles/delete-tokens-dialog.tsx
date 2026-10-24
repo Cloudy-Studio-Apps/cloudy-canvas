@@ -9,13 +9,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@shared/ui/components/ui/dialog";
-import type { DeleteVariablesDialogProps } from "./variables-ui.types";
+import type { DeleteTokensDialogProps } from "./styles.types";
 
 /**
- * Deleting variables: at once when nothing uses them, otherwise after saying how many layers do
+ * Deleting variables or styles: at once when nothing uses them, otherwise after saying how many layers do
  * (they keep what they show, unlinked).
  */
-export function DeleteVariablesDialog({ ids, onClose }: DeleteVariablesDialogProps) {
+export function DeleteTokensDialog({ ids, onClose }: DeleteTokensDialogProps) {
   const engine = useDesignEngine();
   const tokens = engine.service(DOCUMENT_TOKENS);
   const users = new Set((ids ?? []).flatMap((id) => tokens.usage(id)));

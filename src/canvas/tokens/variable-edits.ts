@@ -6,6 +6,7 @@ import { DEFAULT_VALUE } from "./default-value";
 import type { NewVariable, SetValueOptions, VariablePatch } from "./document-tokens.types";
 import { detachEverywhere } from "./detach-bindings";
 import { followBase } from "./generator-writes";
+import { stylesWithout } from "./style-bindings";
 import { ModeEdits } from "./mode-edits";
 import { normalizeTokenPath, renamePrefix } from "./token-path";
 import { TokenStore } from "./token-store";
@@ -146,8 +147,12 @@ export abstract class VariableEdits extends ModeEdits {
   deleteVariables(ids: readonly string[]): void {
     const known = ids.filter((id) => this.store().variable(id));
     if (known.length === 0) return;
+    const store = this.store();
     this.write(() => {
       detachEverywhere(this.doc, new Set(known));
+      // Styles using them keep the values they gave.
+      const styles = stylesWithout(store, new Set(known));
+      if (styles.length > 0) this.doc.setTokenRecords(styles);
       this.doc.removeTokenRecords(known);
     });
   }

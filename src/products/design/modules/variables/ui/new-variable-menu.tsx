@@ -1,4 +1,4 @@
-import { Hash, Palette, Plus } from "lucide-react";
+import { Hash, Palette, Plus, ToggleRight, Type } from "lucide-react";
 
 import type { VariableType } from "@canvas";
 import {
@@ -10,7 +10,7 @@ import {
 import { useCreateVariable } from "./use-create-variable";
 import type { NewVariableMenuProps } from "./variables-ui.types";
 
-/** "+": a new color or number variable (in a new collection when the file has none). */
+/** "+": a new color, number, text or boolean variable (in a new collection when the file has none). */
 export function NewVariableMenu({ onCreated, collectionId, group }: NewVariableMenuProps) {
   const createVariable = useCreateVariable();
   const create = (type: VariableType) => {
@@ -32,6 +32,12 @@ export function NewVariableMenu({ onCreated, collectionId, group }: NewVariableM
         </DropdownMenuItem>
         <DropdownMenuItem onSelect={() => create("number")}>
           <Hash /> Number
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => create("string")}>
+          <Type /> Text
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => create("boolean")}>
+          <ToggleRight /> Boolean
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -19,7 +19,10 @@ export function clipboardTokens(
   const records: TokenRecord[] = [];
   for (const id of new Set(queue)) {
     const style = store.style(id);
-    if (style) records.push(style);
+    if (!style) continue;
+    records.push(style);
+    // The variables a style uses travel with it.
+    for (const variable of Object.values(style.bindings ?? {})) queue.push(variable);
   }
   while (queue.length > 0) {
     const id = queue.pop();

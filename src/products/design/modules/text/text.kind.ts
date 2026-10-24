@@ -27,10 +27,13 @@ import {
   type NodeBuildContext,
   type NodeGeometry,
   numberField,
+  stringField,
 } from "../core";
 import { TEXT_DEFAULTS } from "./text.defaults";
 import { readTextStyle, TEXT_STYLE, TEXT_STYLE_PATH } from "./text-style";
 import { retypeset } from "./retypeset";
+import { faceFromName } from "./text-face-name";
+import { applyRunStyle, RUN_STYLE_PREFIX, runStyleIds } from "./apply-run-style";
 import { TEXT_SPEC_PROPERTIES, textFields } from "./text-args";
 import { createText } from "./text.factory";
 import { textLayout, textSize, textStyleOf } from "./text-layout";
@@ -49,6 +52,8 @@ const TYPOGRAPHY_PATHS = new Set([
   "lineHeight",
   "letterSpacing",
   "fontWeight",
+  "fontFamily",
+  "fontStyle",
   TEXT_STYLE_PATH,
 ]);
 
@@ -74,6 +79,9 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
       numberField("lineHeight", "line-height", "Line height"),
       numberField("letterSpacing", "letter-spacing", "Letter spacing"),
       numberField("fontWeight", "font-weight", "Font weight"),
+      stringField("text", "text-content", "Text"),
+      stringField("fontFamily", "font-family", "Font"),
+      stringField("fontStyle", "font-style", "Font style"),
       {
         path: TEXT_STYLE_PATH,
         type: "style",
@@ -81,6 +89,14 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
         scopes: [],
         label: "Text style",
       },
+      // Each text style its ranges use.
+      ...runStyleIds(el.runs).map((id): BindableField => ({
+        path: `${RUN_STYLE_PREFIX}${id}`,
+        type: "style",
+        styleType: TEXT_STYLE,
+        scopes: [],
+        label: "Range text style",
+      })),
     ];
   }
 
@@ -90,8 +106,14 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
     value: ResolvedValue,
   ): Record<string, unknown> {
     // A text style sets the typography it holds.
-    if (value.type === "style")
+    if (value.type === "style" && path === TEXT_STYLE_PATH) {
       return value.styleType === TEXT_STYLE ? readTextStyle(value.value) : {};
+    }
+    if (value.type === "style" && path.startsWith(RUN_STYLE_PREFIX)) {
+      if (value.styleType !== TEXT_STYLE) return {};
+      const id = path.slice(RUN_STYLE_PREFIX.length);
+      return { runs: applyRunStyle(el.runs, id, readTextStyle(value.value)) };
+    }
     if (value.type === "number") {
       const n = value.number;
       if (path === "fontSize") return { fontSize: Math.max(1, n) };
@@ -100,6 +122,11 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
       if (path === "fontWeight") {
         return { fontWeight: String(Math.min(900, Math.max(100, Math.round(n / 100) * 100))) };
       }
+    }
+    if (value.type === "string") {
+      if (path === "fontStyle") return { ...faceFromName(value.string) };
+      // An empty family would draw nothing: the field keeps what it has.
+      if (path === "fontFamily" && !value.string.trim()) return {};
     }
     return super.bindValues(el, path, value);
   }
@@ -110,8 +137,10 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
     path: string,
     value: ResolvedValue,
   ): ElementPatch<TextNodeElement> | null {
+    // Content goes through the text's own `set`, so its ranges move with it.
+    if (path === "text" && value.type === "string") return this.text.set(el, value.string);
     const patch = super.bindPatch(el, path, value);
-    if (!patch || !TYPOGRAPHY_PATHS.has(path)) return patch;
+    if (!patch || !(TYPOGRAPHY_PATHS.has(path) || path.startsWith(RUN_STYLE_PREFIX))) return patch;
     return retypeset(el, patch);
   }
   override readonly creatable = true;

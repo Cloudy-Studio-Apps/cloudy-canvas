@@ -1,8 +1,8 @@
 import type { ScaleRecord } from "./scale-generator.types";
 import type { GeneratorRecord } from "./shade-generator.types";
 
-/** The kinds of value a variable holds (strings and booleans come later). */
-export type VariableType = "color" | "number";
+/** The kinds of value a variable holds. */
+export type VariableType = "color" | "number" | "string" | "boolean";
 
 /**
  * Where a variable may be used (Figma's scoping): pickers only offer it for fields of these
@@ -26,7 +26,10 @@ export type TokenScope =
   | "letter-spacing"
   | "font-weight"
   | "effect-value"
-  | "other-number";
+  | "other-number"
+  | "text-content"
+  | "font-family"
+  | "font-style";
 
 /** One mode of an axis (Light, Dark, Brand A, Mobile…). */
 export interface ModeDef {
@@ -66,7 +69,12 @@ export interface CollectionRecord {
 }
 
 /** A variable's value: a raw value, or another variable's (an alias). */
-export type TokenValue = { color: string } | { number: number } | { alias: string };
+export type TokenValue =
+  | { color: string }
+  | { number: number }
+  | { string: string }
+  | { boolean: boolean }
+  | { alias: string };
 
 /**
  * A named value. `values[DEFAULT_VALUE]` is its value in every mode it has no override for; with
@@ -116,6 +124,11 @@ export interface StyleRecord {
   /** A slash path, like a variable's. */
   name: string;
   value: Record<string, unknown>;
+  /**
+   * Variables driving parts of its value (a path in `value`, `"paints.0.color"` → variable id).
+   * `value` keeps their values in the file's modes; layers get them in their own modes.
+   */
+  bindings?: Record<string, string>;
   description: string;
   /** Fractional index ordering it among the styles of its type. */
   order: string;
@@ -132,4 +145,6 @@ export type ModeContext = Readonly<Record<string, string>>;
 export type ResolvedValue =
   | { type: "color"; color: string }
   | { type: "number"; number: number }
+  | { type: "string"; string: string }
+  | { type: "boolean"; boolean: boolean }
   | { type: "style"; styleType: string; value: Readonly<Record<string, unknown>> };

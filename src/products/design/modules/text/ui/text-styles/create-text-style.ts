@@ -1,4 +1,4 @@
-import { DOCUMENT_TOKENS } from "@canvas";
+import { DOCUMENT_TOKENS, pickedBindings } from "@canvas";
 import {
   isText,
   TEXT_DEFAULTS,
@@ -24,5 +24,9 @@ export function createTextStyle(engine: DesignEngine, name?: string): string {
     styleType: TEXT_STYLE,
     name: name ?? `Text ${Math.round(value.fontSize)}`,
     value: { ...value },
+    // The variables its typography uses stay (weight and face are stored differently on styles).
+    bindings: text
+      ? pickedBindings(text.bindings, ["fontSize", "lineHeight", "letterSpacing", "fontFamily"])
+      : undefined,
   }).id;
 }

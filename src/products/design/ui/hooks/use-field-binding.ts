@@ -1,6 +1,9 @@
+import { useContext } from "react";
+
 import { setBindings } from "@canvas";
 import { DESIGN_TOKEN_CONTEXT, type DesignNode } from "@design";
 import { useDesignEngine } from "../design-engine-context";
+import { FieldBindingScopeContext } from "./field-binding-scope";
 import type { FieldBinding } from "./use-field-binding.types";
 
 const NO_MODES = {};
@@ -14,7 +17,9 @@ export function useFieldBinding(
   path: string | readonly string[],
 ): FieldBinding {
   const engine = useDesignEngine();
+  const scope = useContext(FieldBindingScopeContext);
   const paths = typeof path === "string" ? [path] : path;
+  if (scope) return scope.binding(paths);
   const first = nodes[0];
   const field = first
     ? engine.kinds

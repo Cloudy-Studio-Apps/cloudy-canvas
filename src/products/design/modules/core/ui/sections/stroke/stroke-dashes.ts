@@ -1,9 +1,9 @@
 import type { ElementPatch } from "@canvas";
 import type { DesignNode } from "@design";
-import type { DashStyle } from "./stroke-dashes.types";
+import type { DashStyle, StrokeLook } from "./stroke-dashes.types";
 
 /** A node's dash style: dots are zero-length dashes with round ends. */
-export function dashStyle(node: DesignNode): DashStyle {
+export function dashStyle(node: StrokeLook): DashStyle {
   const dashes = node.strokeDashes;
   if (dashes.length === 0) return "solid";
   if (dashes.length !== 2) return "custom";
@@ -11,7 +11,7 @@ export function dashStyle(node: DesignNode): DashStyle {
 }
 
 /** Gives a node a dash style, sized by its stroke weight. */
-export function dashStylePatch(style: DashStyle, node: DesignNode): ElementPatch<DesignNode> {
+export function dashStylePatch(style: DashStyle, node: StrokeLook): ElementPatch<DesignNode> {
   const weight = Math.max(1, node.strokeWeight);
   switch (style) {
     case "solid":

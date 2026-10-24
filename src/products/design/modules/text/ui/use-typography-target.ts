@@ -2,6 +2,7 @@ import type { ElementPatch } from "@canvas";
 import { clearRunFields } from "@canvas";
 import {
   rangeStyleValue,
+  unstyledRangePatch,
   retypeset,
   textStyleValue,
   type DesignNode,
@@ -31,7 +32,7 @@ export function useTypographyTarget(texts: readonly TextNodeElement[]): Typograp
     return {
       range: true,
       read: (field) => rangeStyleValue(current, runs, editing.start, editing.end, field),
-      set: (patch) => engine.styleTextRange(patch),
+      set: (patch) => engine.styleTextRange(unstyledRangePatch(patch)),
     };
   }
 
@@ -46,7 +47,9 @@ export function useTypographyTarget(texts: readonly TextNodeElement[]): Typograp
     set: (patch) => {
       edit(texts, (node: DesignNode) => {
         const text = node as TextNodeElement;
-        const runs = clearRunFields(text.runs, Object.keys(patch), text.text.length);
+        // The whole text's typography also unlinks its ranges' text styles.
+        const fields = Object.keys(unstyledRangePatch(patch));
+        const runs = clearRunFields(text.runs, fields, text.text.length);
         const next = { ...text, ...patch };
         engine.setToolOptions({
           textTypography: {

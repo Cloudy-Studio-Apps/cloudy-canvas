@@ -1,6 +1,6 @@
 import type { ModeDef, TokenRecord, TokenValue } from "./token.types";
 
-const TYPES = new Set(["color", "number"]);
+const TYPES = new Set(["color", "number", "string", "boolean"]);
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -10,8 +10,16 @@ function isTokenValue(value: unknown): value is TokenValue {
   if (!isObject(value)) return false;
   if ("color" in value) return typeof value.color === "string";
   if ("number" in value) return typeof value.number === "number" && Number.isFinite(value.number);
+  if ("string" in value) return typeof value.string === "string";
+  if ("boolean" in value) return typeof value.boolean === "boolean";
   if ("alias" in value) return typeof value.alias === "string";
   return false;
+}
+
+/** A stored value of a variable of `type`: its own kind of value, or an alias. */
+function fitsType(value: unknown, type: string): boolean {
+  if (!isTokenValue(value)) return false;
+  return "alias" in value || type in value;
 }
 
 function isModes(modes: unknown): modes is ModeDef[] {
@@ -61,6 +69,9 @@ export function isTokenRecord(data: unknown): data is TokenRecord {
       typeof data.styleType === "string" &&
       typeof data.name === "string" &&
       isObject(data.value) &&
+      (data.bindings === undefined ||
+        (isObject(data.bindings) &&
+          Object.values(data.bindings).every((id) => typeof id === "string"))) &&
       typeof data.description === "string"
     );
   }
@@ -71,7 +82,7 @@ export function isTokenRecord(data: unknown): data is TokenRecord {
     typeof data.type === "string" &&
     TYPES.has(data.type) &&
     isObject(data.values) &&
-    Object.values(data.values).every(isTokenValue) &&
+    Object.values(data.values).every((value) => fitsType(value, data.type as string)) &&
     Array.isArray(data.scopes) &&
     typeof data.description === "string" &&
     isObject(data.codeSyntax) &&

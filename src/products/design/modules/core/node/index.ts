@@ -60,7 +60,9 @@ export { EMPTY_GEOMETRY, GEOMETRY_CACHE, networkGeometry } from "./node-geometry
 export {
   effectBindable,
   layoutFields,
+  booleanField,
   numberField,
+  stringField,
   paintBindable,
   sizeLimitFields,
   strokeSideFields,

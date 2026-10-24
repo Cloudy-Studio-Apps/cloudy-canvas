@@ -2,7 +2,7 @@ import { ChevronDown, Frame } from "lucide-react";
 
 import type { ElementPatch } from "@canvas";
 import type { DesignNode, FrameElement } from "@design";
-import { NodeCheckbox, PanelSection } from "@design/ui/components/panel";
+import { BindSlot, NodeCheckbox, PanelSection } from "@design/ui/components/panel";
 import { useEditNodes } from "@design/ui/hooks";
 import { Button } from "@shared/ui/kit";
 import type { PropertySectionProps } from "@design/ui/modules";
@@ -29,12 +29,14 @@ export function FrameSection({ selection: { nodes } }: PropertySectionProps) {
         />
       }
     >
-      <NodeCheckbox
-        nodes={frames}
-        label="Clip content"
-        read={(frame) => frame.clipsContent}
-        patch={(clipsContent) => ({ clipsContent }) as ElementPatch<DesignNode>}
-      />
+      <BindSlot nodes={frames} path="clipsContent">
+        <NodeCheckbox
+          nodes={frames}
+          label="Clip content"
+          read={(frame) => frame.clipsContent}
+          patch={(clipsContent) => ({ clipsContent }) as ElementPatch<DesignNode>}
+        />
+      </BindSlot>
     </PanelSection>
   );
 }

@@ -1,6 +1,7 @@
 import type { ElementPatch } from "@canvas";
 import type { DesignNode, DesignNodeKind, LayoutAxis } from "@design";
 import {
+  BindSlot,
   NodeCheckbox,
   NodeSelectField,
   PanelSection,
@@ -50,12 +51,14 @@ export function SizingSection({ selection: { nodes, kinds, elements } }: Propert
           {select("v", "Height sizing")}
         </PropertyGrid>
         {inside && (
-          <NodeCheckbox
-            nodes={nodes}
-            label="Ignore auto layout"
-            read={(node) => node.layoutAbsolute}
-            patch={(layoutAbsolute) => ({ layoutAbsolute }) as ElementPatch<DesignNode>}
-          />
+          <BindSlot nodes={nodes} path="layoutAbsolute">
+            <NodeCheckbox
+              nodes={nodes}
+              label="Ignore auto layout"
+              read={(node) => node.layoutAbsolute}
+              patch={(layoutAbsolute) => ({ layoutAbsolute }) as ElementPatch<DesignNode>}
+            />
+          </BindSlot>
         )}
       </div>
     </PanelSection>

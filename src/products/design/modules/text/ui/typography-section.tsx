@@ -29,6 +29,7 @@ import { FaceSelect } from "./face-select";
 import { facesOf } from "./faces-of";
 import { FontPicker } from "./font-picker";
 import { RangeColorField } from "./range-color-field";
+import { TextContentBind } from "./text-content-bind";
 import { TextStyleControl } from "./text-styles";
 import { useFontFamilies } from "./use-font-families";
 import { useTypographyTarget } from "./use-typography-target";
@@ -49,23 +50,28 @@ export function TypographySection({ selection: { nodes } }: PropertySectionProps
   return (
     <PanelSection
       title={target.range ? "Typography · selection" : "Typography"}
-      actions={target.range ? undefined : <TextStyleControl texts={texts} />}
+      actions={<TextStyleControl texts={texts} />}
     >
       <div className="flex flex-col gap-2">
-        <FontPicker
-          family={family}
-          onPick={(picked) => {
-            const weight = target.read("fontWeight") ?? "400";
-            const style = target.read("fontStyle") ?? "normal";
-            const face = closestVariant(picked.variants, { weight, style });
-            target.set({
-              fontFamily: picked.family,
-              ...(face ? { fontWeight: face.weight, fontStyle: face.style } : {}),
-            });
-          }}
-        />
+        {!target.range && <TextContentBind texts={texts} />}
+        <BindSlot nodes={target.range ? [] : texts} path="fontFamily">
+          <FontPicker
+            family={family}
+            onPick={(picked) => {
+              const weight = target.read("fontWeight") ?? "400";
+              const style = target.read("fontStyle") ?? "normal";
+              const face = closestVariant(picked.variants, { weight, style });
+              target.set({
+                fontFamily: picked.family,
+                ...(face ? { fontWeight: face.weight, fontStyle: face.style } : {}),
+              });
+            }}
+          />
+        </BindSlot>
         <PropertyGrid>
-          <FaceSelect target={target} faces={faces} />
+          <BindSlot nodes={target.range ? [] : texts} path="fontStyle">
+            <FaceSelect target={target} faces={faces} />
+          </BindSlot>
           <BindSlot nodes={target.range ? [] : texts} path="fontSize">
             <NumberField
               prefix={<Type />}

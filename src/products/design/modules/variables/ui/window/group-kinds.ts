@@ -42,6 +42,13 @@ export function numberKindOf(variable: VariableRecord): NumberKind {
   );
 }
 
+/** A non-color variable's glyph: its number kind's, "T" for texts, "✓" for booleans. */
+export function typeGlyph(variable: VariableRecord): string {
+  if (variable.type === "string") return "T";
+  if (variable.type === "boolean") return "✓";
+  return numberKindOf(variable).icon;
+}
+
 /**
  * How a group is described under its title: "shades of 500" when one generator made it (an extra
  * hand-made color allowed), else "colors" or its number kind.
@@ -50,6 +57,8 @@ export function groupLabel(store: TokenStore, items: readonly VariableRecord[]):
   const first = items[0];
   if (!first) return "";
   if (first.type === "number") return numberKindOf(first).label.toLowerCase();
+  if (first.type === "string") return "texts";
+  if (first.type === "boolean") return "booleans";
   const ids = new Set(items.map((v) => v.generatorId).filter(Boolean));
   const generator = ids.size === 1 ? store.generator([...ids][0] ?? "") : undefined;
   if (generator) {

@@ -6,6 +6,8 @@ import {
   House,
   Info,
   MousePointer2,
+  Palette,
+  PenLine,
   PenTool,
   Redo2,
   Save,
@@ -19,7 +21,9 @@ import { useHideUiCommand } from "@canvas-ui";
 import { openAbout } from "@shared/about";
 import { defineModule } from "@shared/core";
 import { themeChoices } from "@shared/ui/theme";
+import { createNodeStyle } from "@design/ui/components/styles";
 import { designEditor } from "@design/ui/modules/design-editor-points";
+import { designStyleTypes } from "@design/ui/modules/style-types";
 import { useDesignPanelStore } from "@design/ui/stores/design-panel-store";
 import { allKinds, someNodes } from "@design/ui/modules/section-filters";
 import { designAgentTools, designCanvas } from "../../design-points";
@@ -50,6 +54,22 @@ import { usePanelCommands } from "./ui/use-panel-commands";
 import { useStartMode } from "./ui/use-start-mode";
 import { useViewCommands } from "./ui/use-view-commands";
 import { GradientHandles } from "./ui/gradient-handles";
+import {
+  PaintStyleEditor,
+  PaintStylePreview,
+  StrokeStyleEditor,
+  StrokeStylePreview,
+} from "./ui/styles";
+import {
+  PAINT_STYLE,
+  paintBindingsOf,
+  paintStyleOfNode,
+  paintStyleSummary,
+  STROKE_STYLE,
+  strokeBindingsOf,
+  strokeStyleOfNode,
+  strokeStyleSummary,
+} from "./styles";
 import { ScaleSidebar } from "./ui/scale-sidebar";
 import { withDescendants } from "./tree/tree-members";
 import {
@@ -187,6 +207,39 @@ export const coreModule = defineModule({
       },
     );
 
+    // Color and stroke styles (text styles are the text module's, effect styles the effects').
+    host.contribute(
+      designStyleTypes,
+      {
+        id: PAINT_STYLE,
+        label: "Color",
+        heading: "Color styles",
+        icon: Palette,
+        order: 20,
+        create: (engine) =>
+          createNodeStyle(
+            engine,
+            PAINT_STYLE,
+            (node) => paintStyleOfNode(node, "fills"),
+            (node) => paintBindingsOf(node, "fills"),
+          ),
+        Preview: PaintStylePreview,
+        summary: paintStyleSummary,
+        Editor: PaintStyleEditor,
+      },
+      {
+        id: STROKE_STYLE,
+        label: "Stroke",
+        heading: "Stroke styles",
+        icon: PenLine,
+        order: 40,
+        create: (engine) =>
+          createNodeStyle(engine, STROKE_STYLE, strokeStyleOfNode, strokeBindingsOf),
+        Preview: StrokeStylePreview,
+        summary: strokeStyleSummary,
+        Editor: StrokeStyleEditor,
+      },
+    );
     host.contribute(designEditor.toolSidebars, { tool: "scale", component: ScaleSidebar });
     host.contribute(designEditor.overlays, {
       id: "core.gradient-handles",

@@ -47,8 +47,10 @@ import { FIXED_SIZING } from "./node-layout";
 import type { LayoutAxis, LayoutSizing } from "./node-layout.types";
 import { NODE_STYLE_FIELDS, nodeStylePatch } from "./node-style";
 import { fittedBindings } from "./fitted-bindings";
+import { nodeStyleFields, nodeStyleValues } from "../styles/node-style-bindings";
 import {
   effectBindable,
+  booleanField,
   numberField,
   paintBindable,
   sizeLimitFields,
@@ -130,11 +132,17 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
       ...(this.rotatable && this.storesRotation && !this.childHost
         ? [numberField("rotation", "other-number", "Rotation")]
         : []),
+      booleanField("visible", "Visible"),
+      booleanField("layoutAbsolute", "Ignore auto layout"),
+      ...(el.isMask ? [booleanField("maskInverted", "Invert mask")] : []),
+      ...nodeStyleFields(this),
     ];
   }
 
   /** Values clamped as the panel clamps them. */
   override bindValues(el: E, path: string, value: ResolvedValue): Record<string, unknown> {
+    const styled = nodeStyleValues(this, path, value);
+    if (styled) return styled;
     if (value.type === "number") {
       const n = value.number;
       if (path === "opacity") return { opacity: Math.min(1, Math.max(0, n)) };

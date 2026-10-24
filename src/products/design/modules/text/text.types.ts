@@ -34,6 +34,11 @@ export interface TextRunStyle {
   /** Its paints; the first visible solid one colors its characters. */
   fills?: Paint[];
   textDecoration?: TextDecoration;
+  /**
+   * The text style this range uses (a style id): its typography follows the style, and writing
+   * any of it by hand clears this (`unstyledRangePatch`).
+   */
+  textStyle?: string;
 }
 
 /** A styled range of a text. */

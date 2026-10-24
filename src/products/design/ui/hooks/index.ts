@@ -8,3 +8,5 @@ export { useCanvasInset } from "./use-canvas-inset";
 export { useKeepCanvasInPlace } from "./use-keep-canvas-in-place";
 export type * from "./use-field-binding.types";
 export { useFieldBinding } from "./use-field-binding";
+export type * from "./field-binding-scope.types";
+export { FieldBindingScopeContext } from "./field-binding-scope";

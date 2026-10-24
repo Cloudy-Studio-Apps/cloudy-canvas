@@ -17,6 +17,8 @@ export function baseRunStyle(el: TextNodeElement): Required<TextRunStyle> {
     letterSpacing: el.letterSpacing,
     fills: el.fills,
     textDecoration: el.textDecoration,
+    // A text's own typography is no range's style ("" reads as none).
+    textStyle: "",
   };
 }
 

@@ -8,7 +8,7 @@ import {
   type VariableRecord,
 } from "@canvas";
 
-/** A value as agents read it: a color, a number, or `{ alias: "Collection/path" }`. */
+/** A value as agents read it: a color, number, text or boolean, or `{ alias: "Collection/path" }`. */
 function describeValue(store: TokenStore, value: TokenValue | undefined): unknown {
   if (!value) return null;
   if ("alias" in value) {
@@ -16,7 +16,10 @@ function describeValue(store: TokenStore, value: TokenValue | undefined): unknow
     const collection = target && store.collection(target.collectionId);
     return { alias: target && collection ? `${collection.name}/${target.name}` : value.alias };
   }
-  return "color" in value ? value.color : value.number;
+  if ("color" in value) return value.color;
+  if ("number" in value) return value.number;
+  if ("string" in value) return value.string;
+  return value.boolean;
 }
 
 /** A collection (a folder of variables), for agents. */

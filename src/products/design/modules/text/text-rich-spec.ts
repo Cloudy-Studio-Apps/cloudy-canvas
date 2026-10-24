@@ -7,6 +7,7 @@ import {
 } from "@canvas";
 
 import { textLayout, textSize } from "./text-layout";
+import { unstyledRangePatch } from "./apply-run-style";
 import { baseRunStyle } from "./text-spans";
 import type { TextNodeElement, TextNodeRun, TextRunStyle } from "./text.types";
 
@@ -18,7 +19,9 @@ export const TEXT_RICH: RichTextSpec<TextNodeElement, TextRunStyle> = {
   runs: (el) => el.runs,
   layout: (el, text, runs) => textLayout(el, text, runs),
   apply: (el, text, runs) => textContentPatch(el, text, runs),
-  shortcut: (el, shortcut, at) => toggledStyle({ ...baseRunStyle(el), ...at }, shortcut),
+  // A shortcut on a styled range unlinks its style, as any typography written by hand does.
+  shortcut: (el, shortcut, at) =>
+    unstyledRangePatch(toggledStyle({ ...baseRunStyle(el), ...at }, shortcut)),
 };
 
 /**

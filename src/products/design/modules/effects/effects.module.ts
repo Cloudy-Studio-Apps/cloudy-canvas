@@ -1,8 +1,18 @@
+import { Sparkles } from "lucide-react";
+
 import { defineModule } from "@shared/core";
+import { createNodeStyle } from "@design/ui/components/styles";
+import { designStyleTypes } from "@design/ui/modules/style-types";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import { someNodes } from "@design/ui/modules/section-filters";
 import { designCanvas } from "../../design-points";
-import { setEffectReader } from "../core";
+import {
+  EFFECT_STYLE,
+  effectBindingsOf,
+  effectStyleOfNode,
+  effectStyleSummary,
+  setEffectReader,
+} from "../core";
 import { designEffects } from "./design-effects";
 import { EFFECT_TYPES, effectReader } from "./effect-args";
 import {
@@ -16,6 +26,7 @@ import {
 } from "./renderers";
 import { EFFECT_CATALOG, EffectsSection } from "./ui";
 import { EffectHandles } from "./ui/handles";
+import { EffectStyleEditor, EffectStylePreview } from "./ui/styles";
 
 /**
  * Effects, as in Figma's Effects section and further: inner and drop shadows, layer blur (even
@@ -28,6 +39,18 @@ export const effectsModule = defineModule({
   // Masks and effects nest along the tree; both read `treeSlots`.
   after: ["mask"],
   register(host) {
+    host.contribute(designStyleTypes, {
+      id: EFFECT_STYLE,
+      label: "Effect",
+      heading: "Effect styles",
+      icon: Sparkles,
+      order: 30,
+      create: (engine) =>
+        createNodeStyle(engine, EFFECT_STYLE, effectStyleOfNode, effectBindingsOf),
+      Preview: EffectStylePreview,
+      summary: effectStyleSummary,
+      Editor: EffectStyleEditor,
+    });
     host.contribute(designCanvas.effects, designEffects);
     host.contribute(
       designCanvas.effectRenderers,

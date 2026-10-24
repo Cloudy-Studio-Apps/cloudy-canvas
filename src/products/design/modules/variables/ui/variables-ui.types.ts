@@ -1,3 +1,4 @@
+import type { ColorChangeInfo } from "@canvas-ui";
 import type { ComponentProps } from "react";
 
 import type { ModeContext, TokenGroupNode, VariableRecord } from "@canvas";
@@ -26,12 +27,6 @@ export interface ValueFieldProps {
   className?: string;
 }
 
-export interface DeleteVariablesDialogProps {
-  /** The variables to delete; `null` closes it. */
-  ids: string[] | null;
-  onClose: () => void;
-}
-
 export interface NewVariableMenuProps {
   /** Opens the new variable's editor. */
   onCreated: (id: string) => void;
@@ -50,8 +45,11 @@ export interface GroupActionsProps {
 export interface SwatchInputProps {
   /** `#rrggbb`. */
   color: string;
+  /** 0–1: the picker shows its opacity slider; left out for colors without one. */
+  opacity?: number;
   label: string;
-  onCommit: (color: string) => void;
+  /** Each step of a drag and its end; the steps of one drag are one undo step. */
+  onChange: (color: string, opacity: number, info: ColorChangeInfo) => void;
 }
 
 /** A hover action; takes a trigger's props and ref too (it opens the variable picker). */
@@ -74,4 +72,12 @@ export interface SidebarGroupRowProps extends SidebarGroupsProps {
   collectionId: string;
   group: string;
   items: readonly VariableRecord[];
+}
+
+/** A text or true/false variable's own value for one mode. */
+export interface PlainValueInputProps<T> {
+  value: T;
+  label: string;
+  onChange: (value: T) => void;
+  className?: string;
 }

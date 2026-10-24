@@ -1,4 +1,4 @@
-import { Palette, Plus, Ruler, SwatchBook } from "lucide-react";
+import { Palette, Plus, Ruler, SwatchBook, ToggleRight, Type } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -111,6 +111,42 @@ export function NewGroupMenu({ variant = "link" }: NewGroupMenuProps) {
             {kind.label}
           </DropdownMenuItem>
         ))}
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel>Text and switches</DropdownMenuLabel>
+        <DropdownMenuItem
+          className="items-start"
+          onSelect={() =>
+            create("text", {
+              collectionId: collection.id,
+              name: "label",
+              type: "string",
+              value: { string: "Text" },
+            })
+          }
+        >
+          <Type />
+          <span className="flex flex-col">
+            Text
+            <span className="text-xs text-muted-foreground">Labels, translations, font names</span>
+          </span>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="items-start"
+          onSelect={() =>
+            create("flags", {
+              collectionId: collection.id,
+              name: "flag",
+              type: "boolean",
+              value: { boolean: true },
+            })
+          }
+        >
+          <ToggleRight />
+          <span className="flex flex-col">
+            Boolean
+            <span className="text-xs text-muted-foreground">Show or hide layers, clip content</span>
+          </span>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
