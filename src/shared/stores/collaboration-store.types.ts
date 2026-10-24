@@ -1,7 +1,10 @@
 import type { RelaySettings } from "@shared/core";
 
-/** Which relay live sessions this app hosts go through. */
-export type RelayChoice = "public" | "custom";
+/**
+ * Which relay live sessions this app hosts go through: the one the app was built with, n0's public
+ * ones, or the user's own.
+ */
+export type RelayChoice = "builtin" | "public" | "custom";
 
 export interface CollaborationState {
   /** The name others see in live sessions (`""` until the user picks one). */

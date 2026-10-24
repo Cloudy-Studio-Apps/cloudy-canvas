@@ -22,7 +22,8 @@ import { PropertySections } from "./property-sections";
 
 /**
  * The right panel: history, agents, export and the button that hides it, then the Design/Prototype
- * tabs and the zoom, or the active tool's sidebar (`toolSidebars`).
+ * tabs and the zoom, or the active tool's sidebar (`toolSidebars`), or the current mode's
+ * (`modeSidebars`).
  */
 export function PropertiesPanel() {
   const engine = useDesignEngine();
@@ -32,8 +33,12 @@ export function PropertiesPanel() {
   const setOpen = useDesignPanelStore((state) => state.setRightOpen);
   const { host } = useEditorModules();
   const tool = useEngineState((state) => state.tool);
-  // The active tool's sidebar (e.g. the frame presets) replaces the sections while it's on.
-  const ToolSidebar = host.find(designEditor.toolSidebars, tool)?.component;
+  const mode = useEngineState((state) => state.mode);
+  // The active tool's sidebar (e.g. the frame presets) replaces the sections while it's on, and
+  // a mode's (e.g. the Catalog's brochure) while the mode is.
+  const ToolSidebar =
+    host.find(designEditor.toolSidebars, tool)?.component ??
+    host.find(designEditor.modeSidebars, mode)?.component;
 
   return (
     <aside

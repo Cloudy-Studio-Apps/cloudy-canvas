@@ -1,5 +1,6 @@
 import { FolderOpen } from "lucide-react";
 
+import { CATALOG_MODE_ID } from "@design";
 import { Button } from "@shared/ui/components/ui/button";
 import { CreateCard } from "./create-card";
 import type { CreateSectionProps } from "./create-section.types";
@@ -12,14 +13,16 @@ export function CreateSection({ onCreate, onOpenFile }: CreateSectionProps) {
           <h1 id="create-heading" className="text-2xl font-semibold tracking-tight">
             Create new
           </h1>
-          <p className="text-sm text-muted-foreground">Start from a blank board or design file.</p>
+          <p className="text-sm text-muted-foreground">
+            Start from a blank board, design or catalog.
+          </p>
         </div>
         <Button variant="outline" onClick={onOpenFile} aria-keyshortcuts="Control+O">
           <FolderOpen />
           Open file…
         </Button>
       </div>
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="grid gap-5 md:grid-cols-3">
         <CreateCard
           type="board"
           title="New Board"
@@ -31,6 +34,12 @@ export function CreateSection({ onCreate, onOpenFile }: CreateSectionProps) {
           title="New Design"
           description="Design interfaces and visuals"
           onSelect={() => onCreate("design")}
+        />
+        <CreateCard
+          type="design"
+          title="New Catalog"
+          description="Brochures and catalogs to print, page by page"
+          onSelect={() => onCreate("design", CATALOG_MODE_ID)}
         />
       </div>
     </section>

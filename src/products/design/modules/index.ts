@@ -18,3 +18,4 @@ export * from "./mask";
 export * from "./boolean";
 export * from "./effects";
 export * from "./auto-layout";
+export * from "./catalog";

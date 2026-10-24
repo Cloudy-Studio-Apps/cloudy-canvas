@@ -21,6 +21,8 @@ export interface ExportOptions {
   scale?: number;
   /** The image's longest side, in pixels, at most (lowers `scale`; 8192 by default). */
   maxSide?: number;
+  /** Exactly this world area, with no padding (e.g. a page frame), instead of the elements'. */
+  rect?: Rect;
 }
 
 /** What `exportElements` needs from the engine. */

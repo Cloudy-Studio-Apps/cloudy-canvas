@@ -12,6 +12,7 @@ export const designEditor: DesignEditorPoints = {
   }),
   mainMenu: definePoint("design.editor.mainMenu", { keyOf: (group) => group.id }),
   toolSidebars: definePoint("design.editor.toolSidebars", { keyOf: (entry) => entry.tool }),
+  modeSidebars: definePoint("design.editor.modeSidebars", { keyOf: (entry) => entry.mode }),
   layerIcons: definePoint("design.editor.layerIcons", { keyOf: (entry) => entry.type }),
   effectTypes: definePoint("design.editor.effectTypes", { keyOf: (entry) => entry.type }),
 };

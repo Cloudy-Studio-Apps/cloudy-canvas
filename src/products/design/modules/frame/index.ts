@@ -8,3 +8,4 @@ export { findPreset, FRAME_PRESET_GROUPS, FRAME_PRESETS, presetSize } from "./fr
 export { createPresetFrame } from "./create-preset-frame";
 export { presetFrameRect } from "./preset-frame-rect";
 export { FrameKind } from "./frame.kind";
+export { isFrame } from "./is-frame";

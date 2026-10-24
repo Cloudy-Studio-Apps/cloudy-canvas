@@ -6,6 +6,7 @@ import {
   House,
   Info,
   MousePointer2,
+  PenTool,
   Redo2,
   Save,
   Scaling,
@@ -13,6 +14,7 @@ import {
   Undo2,
 } from "lucide-react";
 
+import { DEFAULT_MODE } from "@canvas";
 import { useHideUiCommand } from "@canvas-ui";
 import { openAbout } from "@shared/about";
 import { defineModule } from "@shared/core";
@@ -44,6 +46,7 @@ import { selectionRulerFrame } from "./tree/ruler-frame";
 import { topFrames } from "./tree/top-frames";
 import { useFlipCommands } from "./ui/use-flip-commands";
 import { usePanelCommands } from "./ui/use-panel-commands";
+import { useStartMode } from "./ui/use-start-mode";
 import { useViewCommands } from "./ui/use-view-commands";
 import { GradientHandles } from "./ui/gradient-handles";
 import { ScaleSidebar } from "./ui/scale-sidebar";
@@ -194,7 +197,17 @@ export const coreModule = defineModule({
       { id: "view-commands", use: useViewCommands },
       { id: "panel-commands", use: usePanelCommands },
       { id: "hide-ui", use: useHideUiCommand },
+      { id: "start-mode", use: useStartMode },
     );
+    // The design's usual way of working, first in the mode switcher (shown once a module adds a
+    // mode, e.g. Catalog).
+    host.contribute(designEditor.modes, {
+      id: DEFAULT_MODE.id,
+      label: "Design",
+      description: "Every tool and every layer.",
+      icon: PenTool,
+      order: 0,
+    });
     host.contribute(designEditor.contextMenu, {
       id: "transform",
       menu: "selection",

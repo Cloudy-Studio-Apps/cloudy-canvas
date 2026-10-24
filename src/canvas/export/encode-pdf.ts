@@ -1,26 +1,28 @@
-/** PDF points per world unit (CSS pixels are 0.75pt). */
+import type { PdfOptions, PdfPage } from "./encode-pdf.types";
+
+/** PDF points per world unit by default (CSS pixels are 0.75pt). */
 const POINTS_PER_UNIT = 0.75;
 /** The largest page side PDF readers accept, in points. */
 const MAX_PAGE_POINTS = 14400;
 
 /**
  * A one-page PDF showing a JPEG image. `width` and `height` are the page size in world units, and
- * the image's pixel size is `pixels`. Written by hand: the image is embedded as is (DCTDecode).
+ * the image's pixel size is `pixels`.
  */
 export function encodePdf(
   jpeg: Uint8Array,
   pixels: { width: number; height: number },
   size: { width: number; height: number },
 ): Blob {
-  const fit = Math.min(
-    1,
-    MAX_PAGE_POINTS / (size.width * POINTS_PER_UNIT),
-    MAX_PAGE_POINTS / (size.height * POINTS_PER_UNIT),
-  );
-  const w = round(size.width * POINTS_PER_UNIT * fit);
-  const h = round(size.height * POINTS_PER_UNIT * fit);
-  const content = `q ${w} 0 0 ${h} 0 0 cm /Im0 Do Q`;
+  return encodePdfPages([{ jpeg, pixels, size }]);
+}
 
+/**
+ * A PDF with one page per JPEG image, each filling its page, in order. Written by hand: the
+ * images are embedded as they are (DCTDecode).
+ */
+export function encodePdfPages(pages: readonly PdfPage[], options: PdfOptions = {}): Blob {
+  const pointsPerUnit = options.pointsPerUnit ?? POINTS_PER_UNIT;
   const encoder = new TextEncoder();
   const chunks: Uint8Array[] = [];
   const offsets: number[] = [];
@@ -30,32 +32,62 @@ export function encodePdf(
     chunks.push(bytes);
     length += bytes.length;
   };
-  const object = (body: string) => {
-    offsets.push(length);
-    write(`${offsets.length} 0 obj\n${body}\nendobj\n`);
+  const begin = (id: number) => {
+    offsets[id - 1] = length;
+    write(`${id} 0 obj\n`);
+  };
+  const object = (id: number, body: string) => {
+    begin(id);
+    write(`${body}\nendobj\n`);
   };
 
+  // Objects: 1 the catalog, 2 the page tree, then per page its page, image and contents.
+  const pageId = (i: number) => 3 + i * 3;
   write("%PDF-1.4\n");
-  object("<< /Type /Catalog /Pages 2 0 R >>");
-  object("<< /Type /Pages /Kids [3 0 R] /Count 1 >>");
-  object(
-    `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${w} ${h}] ` +
-      "/Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>",
-  );
-  offsets.push(length);
-  write(
-    `4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${pixels.width} /Height ${pixels.height} ` +
-      `/ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>\nstream\n`,
-  );
-  write(jpeg);
-  write("\nendstream\nendobj\n");
-  object(`<< /Length ${content.length} >>\nstream\n${content}\nendstream`);
+  object(1, "<< /Type /Catalog /Pages 2 0 R >>");
+  const kids = pages.map((_, i) => `${pageId(i)} 0 R`).join(" ");
+  object(2, `<< /Type /Pages /Kids [${kids}] /Count ${pages.length} >>`);
+  pages.forEach((page, i) => {
+    const id = pageId(i);
+    const { w, h } = pageSize(page.size, pointsPerUnit);
+    const content = `q ${w} 0 0 ${h} 0 0 cm /Im0 Do Q`;
+    object(
+      id,
+      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${w} ${h}] ` +
+        `/Resources << /XObject << /Im0 ${id + 1} 0 R >> >> /Contents ${id + 2} 0 R >>`,
+    );
+    begin(id + 1);
+    write(
+      `<< /Type /XObject /Subtype /Image /Width ${page.pixels.width} ` +
+        `/Height ${page.pixels.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 ` +
+        `/Filter /DCTDecode /Length ${page.jpeg.length} >>\nstream\n`,
+    );
+    write(page.jpeg);
+    write("\nendstream\nendobj\n");
+    object(id + 2, `<< /Length ${content.length} >>\nstream\n${content}\nendstream`);
+  });
 
   const xref = length;
   const entries = offsets.map((offset) => `${String(offset).padStart(10, "0")} 00000 n \n`);
   write(`xref\n0 ${offsets.length + 1}\n0000000000 65535 f \n${entries.join("")}`);
   write(`trailer\n<< /Size ${offsets.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
   return new Blob(chunks as Uint8Array<ArrayBuffer>[], { type: "application/pdf" });
+}
+
+/** A page's size in points, shrunk to what PDF readers accept. */
+function pageSize(
+  size: { width: number; height: number },
+  pointsPerUnit: number,
+): { w: number; h: number } {
+  const fit = Math.min(
+    1,
+    MAX_PAGE_POINTS / (size.width * pointsPerUnit),
+    MAX_PAGE_POINTS / (size.height * pointsPerUnit),
+  );
+  return {
+    w: round(size.width * pointsPerUnit * fit),
+    h: round(size.height * pointsPerUnit * fit),
+  };
 }
 
 function round(value: number): number {

@@ -7,7 +7,7 @@ import type { ResizeMode, ResizeTarget } from "./handles.types";
  * one element that resizes or turns, by its own (turned) box; or several (locked ones stay put),
  * when one of them resizes or all of them turn, by the box round the outlined ones as they show
  * (never turned). With the Scale tool (`mode` "scale"), what scales gets the handles instead of what
- * resizes (e.g. a line or a group too).
+ * resizes (e.g. a line or a group too); with `none`, nothing does.
  */
 export function resizeTarget(
   selected: readonly CanvasElement[],
@@ -19,7 +19,7 @@ export function resizeTarget(
     return mode === "scale" ? kind.scalable : kind.resizable;
   };
   const [first] = selected;
-  if (!first) return null;
+  if (!first || mode === "none") return null;
   if (selected.length === 1) {
     const kind = kinds.kindOf(first);
     const turns = kind.rotatable && kind.boxed;

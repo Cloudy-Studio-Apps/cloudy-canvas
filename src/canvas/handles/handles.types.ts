@@ -7,9 +7,10 @@ export type ResizeHandle = "nw" | "n" | "ne" | "e" | "se" | "s" | "sw" | "w";
 /**
  * What dragging a resize handle does: `resize` changes the bounds (text rewraps, strokes keep
  * their weight), `scale` scales the selection and everything in it like a picture (the Scale
- * tool, K; always proportional).
+ * tool, K; always proportional), `none` shows no handles or rotate zones (a tool that only selects,
+ * e.g. the design's Catalog mode).
  */
-export type ResizeMode = "resize" | "scale";
+export type ResizeMode = "resize" | "scale" | "none";
 
 /** How a resize handle drag shapes the rect (see `resizeRect`). */
 export interface ResizeOptions {

@@ -12,6 +12,8 @@ export interface LeftTabEntry {
   icon: ExtensionIcon;
   /** Position in the rail, lowest first. Built-ins are spaced by 10 (Layers is 10). */
   order: number;
+  /** The modes it's in the rail for (see `CanvasMode`). Unset: the default mode only. */
+  modes?: readonly string[];
   component: ComponentType;
 }
 
@@ -48,6 +50,15 @@ export interface PropertySectionEntry {
  */
 export interface ToolSidebarEntry {
   tool: string;
+  component: ComponentType;
+}
+
+/**
+ * What the properties panel shows instead of the Design/Prototype tabs while a mode is on (e.g.
+ * the Catalog mode's brochure settings and page).
+ */
+export interface ModeSidebarEntry {
+  mode: string;
   component: ComponentType;
 }
 
@@ -129,6 +140,7 @@ export interface DesignEditorPoints extends EditorPoints {
   propertySections: ExtensionPoint<PropertySectionEntry>;
   mainMenu: ExtensionPoint<MainMenuGroup>;
   toolSidebars: ExtensionPoint<ToolSidebarEntry>;
+  modeSidebars: ExtensionPoint<ModeSidebarEntry>;
   layerIcons: ExtensionPoint<LayerIconEntry>;
   effectTypes: ExtensionPoint<EffectTypeEntry>;
 }

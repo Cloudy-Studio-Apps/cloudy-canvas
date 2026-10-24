@@ -22,6 +22,8 @@ export class SelectTool implements Tool {
   /** What dragging a resize handle does (the Scale tool scales instead). */
   readonly resizeMode: ResizeMode = "resize";
   readonly editsOnDoubleClick: boolean = true;
+  /** Whether dragging the selection moves it (a tool that only selects keeps it in place). */
+  readonly movesSelection: boolean = true;
   private gesture: Gesture | null = null;
   /** Whether Alt + hover distances are on screen. */
   private measuring = false;
@@ -102,7 +104,7 @@ export class SelectTool implements Tool {
     }
 
     if (!g.started) {
-      if (!pastThreshold(g.start, p, MOVE_THRESHOLD_PX)) return;
+      if (!this.movesSelection || !pastThreshold(g.start, p, MOVE_THRESHOLD_PX)) return;
       g.started = true;
       this.ctx.setCursor("move");
       this.ctx.doc.checkpoint();

@@ -10,6 +10,7 @@ import type { ContextMenuEntryGroup } from "../../modules/editor-points.types";
 import { useEngine } from "../../engine-context";
 import { useOptionalEditorPoint } from "../../modules/editor-modules-context";
 import type { OpenContextMenu } from "./canvas-context-menu.types";
+import { allowedGroups } from "./context-menu-allowed";
 import { ContextMenuGroups } from "./context-menu-groups";
 import { CANVAS_MENU, SELECTION_MENU } from "./context-menu-items";
 import type { ContextMenuContext, ContextMenuGroup } from "./context-menu-items.types";
@@ -17,7 +18,8 @@ import { MENU_FITS_SCREEN } from "./menu-fits-screen";
 
 /**
  * The canvas's right-click menu: the selection's actions on elements, or paste, select all and
- * export on the empty canvas. Opens where the engine reports a right-click; items run commands.
+ * export on the empty canvas, less what the current mode doesn't run. Opens where the engine reports
+ * a right-click; items run commands.
  */
 export function CanvasContextMenu() {
   const engine = useEngine();
@@ -28,14 +30,17 @@ export function CanvasContextMenu() {
     () =>
       engine.onContextMenu((request: ContextMenuRequest) => {
         const { target } = request;
-        setMenu({
-          at: request.screen,
-          groups: [
+        const groups = allowedGroups(
+          [
             ...(target === "selection" ? SELECTION_MENU : CANVAS_MENU),
             ...moduleMenu(moduleGroups.filter((group) => group.menu === target)),
           ],
-          context: menuContext(engine),
-        });
+          engine,
+        );
+        // A mode may leave nothing to offer.
+        setMenu(
+          groups.length > 0 ? { at: request.screen, groups, context: menuContext(engine) } : null,
+        );
       }),
     [engine, moduleGroups],
   );

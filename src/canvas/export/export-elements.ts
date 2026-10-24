@@ -26,7 +26,7 @@ export async function exportElements(host: ExportHost, options: ExportOptions): 
 
   const area = unionRects(elements.map((el) => host.bounds(el)));
   if (!area) throw new Error("There's nothing to export.");
-  const rect = padded(area);
+  const rect = options.rect ?? padded(area);
   const scale = Math.min(
     options.scale ?? DEFAULT_SCALE,
     Math.min(options.maxSide ?? MAX_PIXELS_PER_SIDE, MAX_PIXELS_PER_SIDE) /

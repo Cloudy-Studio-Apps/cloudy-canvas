@@ -1,19 +1,19 @@
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
-import { ExtensionIconView, ToolButton, useEditorModules } from "@canvas-ui";
+import { ExtensionIconView, ToolButton } from "@canvas-ui";
 import { DESIGN_LAYOUT } from "../../design-layout";
-import { designEditor } from "../../modules";
 import { useDesignPanelStore } from "../../stores/design-panel-store";
+import { useLeftTabs } from "../left-panel";
 import { DesignMainMenu } from "./design-main-menu";
 
 /**
- * The strip along the left edge: the main menu, a button per left panel tab (`leftTabs`; with the
- * panel closed, one opens it on that tab) and, at the bottom, the button that opens or closes it.
+ * The strip along the left edge: the main menu, a button per left panel tab of the current mode
+ * (`leftTabs`; with the panel closed, one opens it on that tab) and, at the bottom, the button that
+ * opens or closes it.
  */
 export function DesignRail() {
-  const { host } = useEditorModules();
-  const tabs = [...host.get(designEditor.leftTabs)].sort((a, b) => a.order - b.order);
-  const active = useDesignPanelStore((state) => state.leftTab);
+  const { tabs, current } = useLeftTabs();
+  const active = current?.id;
   const open = useDesignPanelStore((state) => state.leftOpen);
   const setTab = useDesignPanelStore((state) => state.setLeftTab);
   const setOpen = useDesignPanelStore((state) => state.setLeftOpen);

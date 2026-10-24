@@ -13,7 +13,9 @@ Everyone sees the others' cursors, selections and pages, and can follow them (th
 
 The apps connect peer to peer with [iroh](https://iroh.computer): QUIC connections, end-to-end encrypted, dialed by the host's public key. Routers and NATs are crossed by hole punching. When that fails (strict NATs, some corporate and mobile networks), a **relay** forwards the encrypted traffic. The Share dialog shows each guest as **Direct** or **Via relay**.
 
-The relay is n0's public ones by default, or your own server: see [`server/relay/README.md`](../server/relay/README.md) for setting one up on a small VPS. Choose it in **Settings › Collaboration**. Only the host needs it set: the link carries the relay, so guests use it too.
+Which relay is used is chosen in **Settings › Collaboration**: the **Cloudy Canvas relay** the app was built with, n0's public ones, or your own server (see [`server/relay/README.md`](../server/relay/README.md) for setting one up on a small VPS). Only the host needs it set: the link carries the relay, so guests use it too.
+
+The built-in relay comes from `VITE_CLOUDY_RELAY_URL` and `VITE_CLOUDY_RELAY_TOKEN` at build time: `.env.local` for your own builds (see `.env.example`), and the repository secrets `CLOUDY_RELAY_URL` and `CLOUDY_RELAY_TOKEN` for releases. A build without them offers n0's public relays by default. The token ends up in every copy of the app and in every link, so it only keeps the relay from being used casually; the relay's limits cap the rest, and documents are end-to-end encrypted either way.
 
 ## What the link holds
 

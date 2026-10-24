@@ -1,0 +1,49 @@
+import { DESIGN_BROCHURE } from "@design";
+import { useDesignEngine } from "@design/ui/design-engine-context";
+import { cn } from "@shared/ui/lib/utils";
+import { optionLetter } from "../option-letter";
+import { showPage } from "../page-actions";
+import type { BrochureOptionsListProps } from "./brochure-page-row.types";
+import { PageThumbnail } from "./page-thumbnail";
+
+/** A page's options under its row: picking one prints it instead. */
+export function BrochureOptionsList({ page }: BrochureOptionsListProps) {
+  const engine = useDesignEngine();
+  return (
+    <ul
+      aria-label={`Options of page ${page.number}`}
+      className="mt-0.5 mb-1.5 ml-7 border-l pl-1.5"
+    >
+      {page.options.map((option, i) => {
+        const chosen = option.id === page.frame.id;
+        return (
+          <li key={option.id}>
+            <button
+              type="button"
+              aria-pressed={chosen}
+              onClick={() => {
+                engine.service(DESIGN_BROCHURE).choose(page.slot.id, option.id);
+                showPage(engine, option);
+              }}
+              className={cn(
+                "flex w-full cursor-pointer items-center gap-1.5 rounded-sm px-1 py-0.5 text-left text-xs text-muted-foreground hover:bg-hover hover:text-foreground",
+                chosen && "font-medium text-foreground",
+              )}
+            >
+              <span
+                className={cn(
+                  "size-3 shrink-0 rounded-full border-[1.5px] border-border-strong",
+                  chosen && "border-4 border-primary",
+                )}
+              />
+              <PageThumbnail frameId={option.id} className="h-7 w-10" />
+              <span className="truncate">
+                {optionLetter(i)} · {option.name}
+              </span>
+            </button>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}

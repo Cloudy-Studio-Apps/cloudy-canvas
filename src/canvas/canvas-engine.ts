@@ -121,7 +121,7 @@ import type {
 import type { CanvasProduct, CanvasScopes } from "./canvas-product.types";
 import type { CanvasViewOptions } from "./canvas-view.types";
 import type { CanvasLinks } from "./links";
-import { DEFAULT_MODE, modeAllows, type CanvasMode } from "./modes";
+import { DEFAULT_MODE, modeAllows, modeAllowsCommand, type CanvasMode } from "./modes";
 
 const ZOOM_STEP = 1.25;
 const HIT_TOLERANCE_PX = 4;
@@ -439,9 +439,10 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     if (!next || this.tool === next || !modeAllows(this.mode, id)) return;
     this.tool.onCancel?.();
     this.toolFaded = [];
-    this.applyFaded();
     this.renderer.setSnapFeedback(null);
     this.tool = next;
+    // After the switch: a mode's `faded` rule may depend on the tool.
+    this.applyFaded();
     this.scene.resizeMode = next.resizeMode ?? "resize";
     this.scene.setHover(null);
     this.setCursor(this.tool.cursor);
@@ -485,6 +486,11 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   setSnapping(patch: Partial<SnapSettings>): void {
     this.snapping = { ...this.snapping, ...patch };
     this.emitChange();
+  }
+
+  /** Whether the current mode lets this command run (see `CanvasMode.commands`). */
+  allowsCommand(command: string): boolean {
+    return modeAllowsCommand(this.mode, command);
   }
 
   /** Whether the active tool handles this command itself (see `Tool.onCommand`). */
@@ -1648,16 +1654,23 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   }
 
   /** Re-reads the elements, and re-resolves the links between them. */
-  /** Dims what the tool fades (`setFaded`) and what the mode's isolation leaves out. */
+  /**
+   * Dims what the tool fades (`setFaded`) and what the mode dims: its `faded` rule, else what its
+   * isolation leaves out.
+   */
   private applyFaded(): void {
-    const { isolation } = this.scene;
-    const away = isolation ? this.scene.elements.filter((el) => !isolation(el)) : [];
-    this.renderer.setFaded([...this.toolFaded, ...away.map((el) => el.id)]);
+    this.renderer.setFaded([...this.toolFaded, ...this.modeFaded()]);
+  }
+
+  private modeFaded(): Iterable<string> {
+    const { elements, isolation } = this.scene;
+    if (this.mode.faded) return this.mode.faded({ elements, doc: this.doc, tool: this.tool.id });
+    return isolation ? elements.filter((el) => !isolation(el)).map((el) => el.id) : [];
   }
 
   private refreshScene(): void {
     this.scene.refresh();
-    if (this.scene.isolation) this.applyFaded();
+    if (this.scene.isolation || this.mode.faded) this.applyFaded();
     this.fontTracker.request(this.scene.elements.flatMap((el) => this.kinds.kindOf(el).fonts(el)));
     for (const links of this.links) links.update(this.scene.elements);
   }

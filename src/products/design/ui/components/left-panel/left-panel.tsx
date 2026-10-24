@@ -1,19 +1,14 @@
 import { ChevronDown } from "lucide-react";
 
-import { DocumentInfoPopover, SaveIndicator, useCanvasFile, useEditorModules } from "@canvas-ui";
+import { DocumentInfoPopover, SaveIndicator, useCanvasFile } from "@canvas-ui";
 import { Badge } from "@shared/ui/components/ui/badge";
 import { DESIGN_LAYOUT } from "../../design-layout";
-import { designEditor } from "../../modules";
-import { useDesignPanelStore } from "../../stores/design-panel-store";
+import { useLeftTabs } from "./use-left-tabs";
 
-/** The left panel: the file's name and state, then the tab picked in the rail. */
+/** The left panel: the file's name and state, then the tab picked in the rail (for the mode). */
 export function LeftPanel() {
-  const { host } = useEditorModules();
   const file = useCanvasFile();
-  const tabs = [...host.get(designEditor.leftTabs)].sort((a, b) => a.order - b.order);
-  const active = useDesignPanelStore((state) => state.leftTab);
-  // A tab that's gone (a plugin was removed) falls back to the first one.
-  const tab = tabs.find((item) => item.id === active) ?? tabs[0];
+  const { current: tab } = useLeftTabs();
 
   return (
     <aside

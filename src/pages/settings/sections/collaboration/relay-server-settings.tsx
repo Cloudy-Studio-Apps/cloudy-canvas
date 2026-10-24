@@ -1,22 +1,27 @@
 import { useId } from "react";
-import { CircleCheck, CircleAlert, LoaderCircle } from "lucide-react";
 
 import { CommitInput } from "@canvas-ui";
+import { BUILT_IN_RELAY } from "@shared/stores/built-in-relay";
 import { useCollaborationStore } from "@shared/stores/collaboration-store";
 import type { RelayChoice } from "@shared/stores/collaboration-store.types";
-import { Button } from "@shared/ui/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@shared/ui/components/ui/radio-group";
+import { RelayTestRow } from "./relay-test-row";
 import { useRelayTest } from "./use-relay-test";
 
-/** Which relay hosted sessions go through: n0's public ones or the user's own server. */
+/**
+ * Which relay hosted sessions go through: the one the app was built with (when it was), n0's
+ * public ones or the user's own server.
+ */
 export function RelayServerSettings() {
-  const choice = useCollaborationStore((s) => s.relayChoice);
+  const storedChoice = useCollaborationStore((s) => s.relayChoice);
   const relay = useCollaborationStore((s) => s.customRelay);
   const setChoice = useCollaborationStore((s) => s.setRelayChoice);
   const setRelay = useCollaborationStore((s) => s.setCustomRelay);
   const { state, test, reset } = useRelayTest();
   const urlId = useId();
   const tokenId = useId();
+  // A choice saved by a build with a relay, read by one without: the public ones are used.
+  const choice = storedChoice === "builtin" && !BUILT_IN_RELAY ? "public" : storedChoice;
 
   const commitUrl = (url: string) => {
     const trimmed = url.trim();
@@ -46,6 +51,12 @@ export function RelayServerSettings() {
           reset();
         }}
       >
+        {BUILT_IN_RELAY && (
+          <label className="flex items-center gap-2 text-sm">
+            <RadioGroupItem value="builtin" />
+            Cloudy Canvas relay
+          </label>
+        )}
         <label className="flex items-center gap-2 text-sm">
           <RadioGroupItem value="public" />
           Public relays (n0)
@@ -55,6 +66,11 @@ export function RelayServerSettings() {
           My relay
         </label>
       </RadioGroup>
+      {choice === "builtin" && (
+        <div className="space-y-3 border-l-2 pl-4">
+          <RelayTestRow relay={BUILT_IN_RELAY} state={state} onTest={(r) => void test(r)} />
+        </div>
+      )}
       {choice === "custom" && (
         <div className="space-y-3 border-l-2 pl-4">
           <div className="space-y-1">
@@ -82,29 +98,11 @@ export function RelayServerSettings() {
               className="font-mono"
             />
           </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={!relay.url || state.status === "testing"}
-              onClick={() => void test(relay)}
-            >
-              {state.status === "testing" && <LoaderCircle className="animate-spin" />}
-              Test connection
-            </Button>
-            {state.status === "ok" && (
-              <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                <CircleCheck className="size-4 text-success" />
-                Connected through the relay in {state.millis} ms
-              </span>
-            )}
-          </div>
-          {state.status === "failed" && (
-            <p className="flex items-start gap-1.5 text-sm text-destructive">
-              <CircleAlert className="mt-0.5 size-4 shrink-0" />
-              {state.message}
-            </p>
-          )}
+          <RelayTestRow
+            relay={relay.url ? relay : null}
+            state={state}
+            onTest={(r) => void test(r)}
+          />
         </div>
       )}
     </div>

@@ -21,7 +21,8 @@ export function HomePage() {
   const openFile = useOpenFile();
   const draggingFiles = useFileDragOver();
 
-  const createFile = (type: FileType) => navigate(`/${type}/${createId()}`);
+  const createFile = (type: FileType, mode?: string) =>
+    navigate(`/${type}/${createId()}${mode ? `?mode=${mode}` : ""}`);
   const openRecent = (file: FileInfo) => navigate(`/${file.type}/${file.id}`);
 
   // Re-check on focus too: a file moved back (or away) while the app was in the background.
@@ -40,7 +41,7 @@ export function HomePage() {
       <TopBar />
       <PageContainer as="main" className="flex-1 space-y-14 pt-10 pb-16 sm:pt-14">
         <CreateSection
-          onCreate={(type) => void createFile(type)}
+          onCreate={(type, mode) => void createFile(type, mode)}
           onOpenFile={() => void openFile()}
         />
         <RecentFiles

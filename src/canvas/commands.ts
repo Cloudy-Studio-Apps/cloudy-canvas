@@ -16,7 +16,7 @@ const ALIGN_COMMANDS: Record<string, Alignment> = {
  * Named engine actions, shared by keyboard shortcuts and any host UI that wants to trigger them.
  * Every tool gets a `tool.<id>` command, so a product's tools are reachable from its keymap, and
  * each of the product's host commands runs the host's handler for it. The active tool is asked
- * first (`Tool.onCommand`).
+ * first (`Tool.onCommand`), then the current mode (`CanvasMode.commands`).
  */
 export function createCommands(
   engine: CanvasEngine,
@@ -69,11 +69,12 @@ export function createCommands(
     export: () => engine.runHostAction("export"),
     ...toolCommands,
   };
-  // The active tool may take any command first (see `Tool.onCommand`).
+  // The active tool may take any command first (see `Tool.onCommand`); the others run only when
+  // the current mode allows them (see `CanvasMode.commands`).
   return Object.fromEntries(
     Object.entries(commands).map(([id, handler]) => [
       id,
-      () => (engine.toolTakes(id) ? true : handler()),
+      () => (engine.toolTakes(id) ? true : engine.allowsCommand(id) ? handler() : false),
     ]),
   );
 }

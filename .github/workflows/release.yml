@@ -100,6 +100,9 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           NO_STRIP: "true"
+          # The relay live sessions use by default (empty: n0's public ones).
+          VITE_CLOUDY_RELAY_URL: ${{ secrets.CLOUDY_RELAY_URL }}
+          VITE_CLOUDY_RELAY_TOKEN: ${{ secrets.CLOUDY_RELAY_TOKEN }}
         with:
           releaseId: ${{ needs.create-release.outputs.release-id }}
           includeUpdaterJson: true
@@ -121,10 +124,15 @@ jobs:
 
       # makepkg refuses to run as root.
       - name: Build the package
+        env:
+          VITE_CLOUDY_RELAY_URL: ${{ secrets.CLOUDY_RELAY_URL }}
+          VITE_CLOUDY_RELAY_TOKEN: ${{ secrets.CLOUDY_RELAY_TOKEN }}
         run: |
           useradd -m builder
           chown -R builder "$GITHUB_WORKSPACE"
-          runuser -u builder -- env HOME=/home/builder bash -euc '
+          runuser -u builder -- env HOME=/home/builder \
+            VITE_CLOUDY_RELAY_URL="$VITE_CLOUDY_RELAY_URL" \
+            VITE_CLOUDY_RELAY_TOKEN="$VITE_CLOUDY_RELAY_TOKEN" bash -euc '
             cd "$GITHUB_WORKSPACE"
             rustup default stable
             pnpm install --frozen-lockfile

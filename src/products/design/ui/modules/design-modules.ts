@@ -6,6 +6,7 @@ import { usePluginsStore } from "@shared/stores/plugins-store";
 import { assetsModule } from "@design/modules/assets/assets.module";
 import { autoLayoutModule } from "@design/modules/auto-layout/auto-layout.module";
 import { booleanModule } from "@design/modules/boolean/boolean.module";
+import { catalogModule } from "@design/modules/catalog/catalog.module";
 import { coreModule } from "@design/modules/core/core.module";
 import { effectsModule } from "@design/modules/effects/effects.module";
 import { ellipseModule } from "@design/modules/ellipse/ellipse.module";
@@ -32,6 +33,9 @@ let modules: AppModule[] = [
   coreModule,
   pagesModule,
   frameModule,
+  // Before the modules whose `editElement` also takes frames (an image fill's crop): in its mode,
+  // double-clicking a page designs it.
+  catalogModule,
   autoLayoutModule,
   sectionModule,
   groupModule,
