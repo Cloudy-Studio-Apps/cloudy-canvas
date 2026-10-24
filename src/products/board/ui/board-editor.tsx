@@ -10,10 +10,10 @@ import { useBoardLoader } from "./file";
 import { getBoardProduct } from "./modules";
 import type { BoardEditorProps } from "./board-editor.types";
 
-export function BoardEditor({ id }: BoardEditorProps) {
+export function BoardEditor({ id, live }: BoardEditorProps) {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
-  const load = useBoardLoader(id);
+  const load = useBoardLoader(id, live ?? null);
   const document = load.status === "ready" ? load.document : null;
   const { engine, loading } = useCanvasEngine(containerRef, getBoardProduct(), document);
   const draggingFiles = useFileDragOver();
@@ -28,7 +28,7 @@ export function BoardEditor({ id }: BoardEditorProps) {
         className="absolute inset-0"
       />
       {engine && load.status === "ready" && (
-        <BoardSession id={id} engine={engine} info={load.info} />
+        <BoardSession id={id} engine={engine} info={load.info} live={live} />
       )}
       {engine && draggingFiles && (
         <div

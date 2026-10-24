@@ -15,10 +15,10 @@ import { getDesignProduct } from "./modules";
  * Loads a design and mounts the engine between the docked panels. The canvas container stays
  * where it is while the session (and its chrome) comes and goes, so the engine keeps its canvas.
  */
-export function DesignEditor({ id }: DesignEditorProps) {
+export function DesignEditor({ id, live }: DesignEditorProps) {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
-  const load = useDesignLoader(id);
+  const load = useDesignLoader(id, live ?? null);
   const document = load.status === "ready" ? load.document : null;
   const { engine, loading } = useCanvasEngine(containerRef, getDesignProduct(), document);
   const draggingFiles = useFileDragOver();
@@ -37,7 +37,7 @@ export function DesignEditor({ id }: DesignEditorProps) {
         style={inset}
       />
       {engine && load.status === "ready" && (
-        <DesignSession id={id} engine={engine} info={load.info} />
+        <DesignSession id={id} engine={engine} info={load.info} live={live} />
       )}
       {engine && draggingFiles && (
         <div

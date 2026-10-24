@@ -2,6 +2,7 @@ import {
   CollaboratorLayer,
   CanvasContextMenu,
   ExportDialog,
+  LiveSessionLayer,
   ModuleSlot,
   ModuleToolOptions,
   useCanvasFile,
@@ -15,15 +16,18 @@ import { BoardTopBar } from "./components/board-top-bar";
 
 /**
  * UI around the canvas. Never holds canvas content — it only reflects engine UI state. With the UI
- * hidden (Ctrl+\) only the cursors, the context menu and the export dialog stay.
+ * hidden (Ctrl+\) only the cursors, the context menu and the export dialog stay; a live session's
+ * viewer gets no toolbar.
  */
 export function BoardChrome() {
-  const { name } = useCanvasFile();
+  const { name, live } = useCanvasFile();
   const hidden = useUiHidden();
+  const viewing = live?.role === "view";
   useCopyAsPng();
   return (
     <div className="pointer-events-none absolute inset-0">
       <CollaboratorLayer />
+      <LiveSessionLayer />
       <CanvasContextMenu />
       <ExportDialog name={name} />
       {!hidden && (
@@ -31,10 +35,12 @@ export function BoardChrome() {
           <div className="absolute top-3 left-3">
             <BoardTopBar />
           </div>
-          <div className="absolute inset-x-0 bottom-4 flex flex-col items-center gap-2">
-            <ModuleToolOptions />
-            <BoardToolbar />
-          </div>
+          {!viewing && (
+            <div className="absolute inset-x-0 bottom-4 flex flex-col items-center gap-2">
+              <ModuleToolOptions />
+              <BoardToolbar />
+            </div>
+          )}
           <div className="absolute top-3 right-3 bottom-16 flex flex-col">
             <ModuleSlot slot="sidePanels" />
           </div>

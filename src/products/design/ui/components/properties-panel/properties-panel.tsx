@@ -3,6 +3,7 @@ import { Bot, Download, PanelRightClose } from "lucide-react";
 import {
   CollaboratorUndoButton,
   HistoryControls,
+  ShareButton,
   ToolButton,
   useEditorModules,
   useEngineState,
@@ -57,7 +58,8 @@ export function PropertiesPanel() {
         />
         <CollaboratorStack followable className="ml-0.5" />
         <div className="flex-1" />
-        <Button size="sm" onClick={() => engine.commands.export?.()}>
+        <ShareButton product="design" look="button" />
+        <Button size="sm" variant="outline" onClick={() => engine.commands.export?.()}>
           <Download />
           Export
         </Button>

@@ -1,4 +1,5 @@
 export { agentChannel } from "./agent-channel";
+export { shareTransport } from "./share-transport";
 export { appInfo } from "./app-info";
 export { appLinks } from "./app-links";
 export { appLifecycle } from "./app-lifecycle";

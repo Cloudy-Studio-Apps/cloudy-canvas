@@ -26,6 +26,7 @@ export function parseAppLink(link: string): AppLink | null {
     const path = url.searchParams.get("path");
     return path ? { action: "open", path } : null;
   }
+  if (head === "join") return arg ? { action: "join", ticket: arg } : null;
   if (head === "new") return isFileType(arg) ? { action: "new", type: arg } : null;
   if (isFileType(head)) return arg ? { action: "show", type: head, id: arg } : null;
   if (head === undefined) return { action: "page", page: "home" };

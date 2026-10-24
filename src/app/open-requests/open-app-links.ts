@@ -37,6 +37,9 @@ async function openAppLink(link: AppLink): Promise<void> {
     case "page":
       confirmLeave(`Open ${link.page}?`, () => navigate(PAGE_PATHS[link.page]));
       return;
+    case "join":
+      confirmLeave("Join the live session?", () => navigate(`/join/${link.ticket}`));
+      return;
   }
 }
 

@@ -42,6 +42,8 @@ export class CanvasDocument {
   private actor: DocumentActor = { origin: LOCAL_ORIGIN, placement: null };
   /** What runs after each edit (see `setAfterEdit`). */
   private afterEdit: AfterEdit | null = null;
+  /** Local edits are ignored (see `setReadOnly`). */
+  private readOnly = false;
   /** How deep the edits running now are nested (the hook runs when the outermost ends). */
   private depth = 0;
   /** How many `deferAfterEdit` holds are open. */
@@ -154,6 +156,19 @@ export class CanvasDocument {
     };
   }
 
+  /**
+   * Makes every local edit (elements, assets, metadata, undo and redo) do nothing, whoever makes
+   * it (tools, panels, agents): a live session's viewer. Changes applied to `doc` directly (what
+   * the host sends) still come in.
+   */
+  setReadOnly(readOnly: boolean): void {
+    this.readOnly = readOnly;
+  }
+
+  get isReadOnly(): boolean {
+    return this.readOnly;
+  }
+
   /** Every element's id (every type, registered or not). */
   ids(): string[] {
     return [...this.elements.keys()];
@@ -170,11 +185,13 @@ export class CanvasDocument {
 
   /** Like `add`, but not recorded in the undo history (e.g. what a file needs when it opens). */
   addUntracked(el: CanvasElement): void {
+    if (this.readOnly) return;
     this.doc.transact(() => this.write(el, false), UI_ORIGIN);
   }
 
   /** `addUntracked` for many elements in one transaction (e.g. a whole imported file). */
   addAllUntracked(elements: Iterable<CanvasElement>): void {
+    if (this.readOnly) return;
     this.doc.transact(() => {
       for (const el of elements) this.write(el, false);
     }, UI_ORIGIN);
@@ -224,6 +241,7 @@ export class CanvasDocument {
 
   /** Stores binary data under an id. Not an undo step: undoing the element that shows it is enough. */
   addAsset(id: string, data: Uint8Array): void {
+    if (this.readOnly) return;
     this.doc.transact(() => this.assets.set(id, data), this.actor.origin);
   }
 
@@ -261,11 +279,11 @@ export class CanvasDocument {
   }
 
   undo(): void {
-    this.history.undo();
+    if (!this.readOnly) this.history.undo();
   }
 
   redo(): void {
-    this.history.redo();
+    if (!this.readOnly) this.history.redo();
   }
 
   canUndo(): boolean {
@@ -381,6 +399,7 @@ export class CanvasDocument {
 
   /** Runs an edit in a transaction; when the outermost one ends, the `AfterEdit` hook runs. */
   private run(fn: () => void, origin: symbol): void {
+    if (this.readOnly) return;
     this.doc.transact(() => {
       this.depth++;
       try {

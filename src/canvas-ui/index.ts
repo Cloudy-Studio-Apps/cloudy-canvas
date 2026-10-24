@@ -19,6 +19,7 @@ export type { ToolButtonProps } from "./components/tool-button.types";
 export type { ZoomMenuProps } from "./components/zoom-menu.types";
 export type * from "./modules";
 export type * from "./overlay";
+export type * from "./share";
 export { createActiveFile, useAgentFile } from "./agent";
 export { readCanvasTheme } from "./canvas-theme";
 export {
@@ -78,6 +79,15 @@ export {
 export { EngineContext, useEngine, useEngineState } from "./engine-context";
 export { useEngineElement } from "./use-engine-element";
 export { useCanvasEngine } from "./use-canvas-engine";
+export {
+  LiveSessionLayer,
+  ShareButton,
+  stopSharing,
+  useHeldGuest,
+  useHostedFile,
+  useLiveGuestFile,
+  useStoreState,
+} from "./share";
 export type { CanvasEngineHost } from "./use-canvas-engine.types";
 export { useCanvasFileDrop } from "./use-canvas-file-drop";
 export { useCopyAsPng } from "./use-copy-as-png";

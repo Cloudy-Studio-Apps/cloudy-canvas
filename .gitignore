@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Live sessions relay: the server's real token
+server/relay/.env
+server/*

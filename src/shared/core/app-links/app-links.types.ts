@@ -19,6 +19,8 @@ export type AppLink =
   | { action: "show"; type: FileType; id: string }
   /** `cloudy-canvas://new/board`, `…/new/design`: start a new file. */
   | { action: "new"; type: FileType }
+  /** `cloudy-canvas://join/<ticket>`: join a live session (`shareLink`). */
+  | { action: "join"; ticket: string }
   /** `cloudy-canvas://home`, `cloudy-canvas://settings` */
   | { action: "page"; page: AppLinkPage };
 

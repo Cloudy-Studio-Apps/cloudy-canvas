@@ -2,6 +2,7 @@
 // modules' points), file loading and saving, and the open design for agents.
 export type * from "./modules";
 export { getActiveDesign, waitForActiveDesign } from "./agent";
+export { DesignEditor } from "./design-editor";
 export { DesignEditorPage } from "./design-editor-page";
 export { importFigmaFile, importFigmaWithLoading } from "./file";
 export {

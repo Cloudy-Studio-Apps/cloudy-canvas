@@ -6,6 +6,7 @@ import { AppHeader } from "@shared/ui/layout/app-header";
 import { PageContainer } from "@shared/ui/layout/page-container";
 import { AboutSection } from "./sections/about-section";
 import { AgentsSection } from "./sections/agents-section";
+import { CollaborationSection } from "./sections/collaboration";
 import { DedicationCard } from "./sections/dedication-card";
 import { FilesSection } from "./sections/files-section";
 import { PluginsSection } from "./sections/plugins";
@@ -26,6 +27,7 @@ export function SettingsPage() {
       <PageContainer as="main" className="max-w-3xl flex-1 space-y-6 pt-10 pb-16">
         <AboutSection />
         <DedicationCard />
+        <CollaborationSection />
         <AgentsSection />
         <FilesSection />
         <PluginsSection />

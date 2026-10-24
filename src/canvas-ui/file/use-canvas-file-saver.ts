@@ -154,5 +154,6 @@ export function useCanvasFileSaver<O extends object>(
     autosave: autosaveEnabled,
     save: saveFile,
     saveAs: saveFileAs,
+    live: null,
   };
 }

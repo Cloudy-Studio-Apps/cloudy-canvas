@@ -1,5 +1,5 @@
 import type { CanvasDocument } from "@canvas";
-import type { FileInfo, FileType } from "@shared/core";
+import type { FileInfo, FileType, ShareIdentity, ShareRole } from "@shared/core";
 
 export type SaveStatus = "idle" | "saving" | "error";
 
@@ -25,6 +25,11 @@ export interface CanvasFileSource {
   open(bytes: Uint8Array): CanvasDocument;
   /** An empty document, for an id that isn't a saved file (just created from Home). */
   create(): CanvasDocument;
+  /**
+   * The document of a live session joined as a guest (its Yjs doc comes from the host), instead
+   * of a file: nothing is read from storage.
+   */
+  live?: () => CanvasDocument;
 }
 
 export type CanvasFileLoadState =
@@ -59,4 +64,15 @@ export interface CanvasFileContextValue {
   autosave: boolean;
   save: () => Promise<void>;
   saveAs: () => Promise<void>;
+  /** The live session the file is in, `null` when it isn't shared. */
+  live: LiveFile | null;
+}
+
+/** A file in a live session: shared by this app (`host`), or joined (`guest`). */
+export interface LiveFile {
+  side: "host" | "guest";
+  /** What this app may do: the host always edits. */
+  role: ShareRole;
+  /** Who hosts it. */
+  host: ShareIdentity;
 }

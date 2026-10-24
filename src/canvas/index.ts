@@ -92,6 +92,8 @@ export {
   LOCAL_ORIGIN,
 } from "./document";
 export { ActorWorkspace, followEdit, showArea, withAspect } from "./workspace";
+export { HOST_ORIGIN, ShareGuest, ShareHost } from "./share";
+export type * from "./share";
 export { decodeCanvasFile, encodeCanvasFile } from "./file";
 export * from "./agent";
 export * from "./elements";

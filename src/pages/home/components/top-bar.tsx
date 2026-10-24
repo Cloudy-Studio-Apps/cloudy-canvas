@@ -10,6 +10,7 @@ import { Button } from "@shared/ui/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@shared/ui/components/ui/tooltip";
 import { AppHeader } from "@shared/ui/layout/app-header";
 import { SETTINGS_SHORTCUT } from "../home-shortcuts";
+import { JoinSessionButton } from "./join-session-button";
 
 export function TopBar() {
   return (
@@ -18,6 +19,7 @@ export function TopBar() {
         // <ThemeToggle /> returns here with dark mode (see FORCE_LIGHT_THEME).
         <>
           <CollaboratorStack className="mr-1" />
+          <JoinSessionButton />
           <AgentServerMenu
             align="end"
             trigger={

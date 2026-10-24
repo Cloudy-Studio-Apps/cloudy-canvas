@@ -6,8 +6,8 @@ import type { CanvasFileLoadState, CanvasFileSource } from "./canvas-file.types"
 
 /**
  * Loads the file with this id from storage, or starts an empty document when the id isn't a saved
- * file (one just created from Home). The document is destroyed on unmount. `source` is read once
- * per id.
+ * file (one just created from Home), or takes a live session's document (`source.live`). The
+ * document is destroyed on unmount. `source` is read once per id.
  */
 export function useCanvasFileLoader(id: string, source: CanvasFileSource): CanvasFileLoadState {
   const [state, setState] = useState<CanvasFileLoadState>({ status: "loading" });
@@ -16,10 +16,16 @@ export function useCanvasFileLoader(id: string, source: CanvasFileSource): Canva
   useEffect(() => {
     let active = true;
     let loaded: CanvasDocument | null = null;
-    const { noun, open, create } = initialSource;
+    const { noun, open, create, live } = initialSource;
 
     void (async () => {
       try {
+        if (live) {
+          const document = live();
+          loaded = document;
+          setState({ status: "ready", document, info: null });
+          return;
+        }
         const info = await storage.get(id);
         const document = info ? open(await storage.load(id)) : create();
         if (!active) return document.destroy();

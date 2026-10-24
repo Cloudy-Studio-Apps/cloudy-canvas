@@ -9,6 +9,7 @@ import {
   ModuleSlot,
   PanelDivider,
   SaveIndicator,
+  ShareButton,
   ToolButton,
   useCanvasFile,
   useEngine,
@@ -42,22 +43,24 @@ export function BoardTopBar() {
       </Badge>
       <PanelDivider className="mx-1.5" />
       <HistoryControls />
-      <ToolButton
-        label={
-          file.status === "error"
-            ? "Couldn't save. Try again"
-            : file.draft
-              ? "Save to a file"
-              : "Save"
-        }
-        shortcut={engine.keymap.label("save")}
-        side="bottom"
-        disabled={file.status === "saving"}
-        className={file.status === "error" ? "text-destructive" : undefined}
-        onClick={() => void file.save()}
-      >
-        <Save />
-      </ToolButton>
+      {file.live?.side !== "guest" && (
+        <ToolButton
+          label={
+            file.status === "error"
+              ? "Couldn't save. Try again"
+              : file.draft
+                ? "Save to a file"
+                : "Save"
+          }
+          shortcut={engine.keymap.label("save")}
+          side="bottom"
+          disabled={file.status === "saving"}
+          className={file.status === "error" ? "text-destructive" : undefined}
+          onClick={() => void file.save()}
+        >
+          <Save />
+        </ToolButton>
+      )}
       <PanelDivider className="mx-1.5" />
       <ModuleSlot slot="topBar" />
       <AgentServerMenu
@@ -74,6 +77,7 @@ export function BoardTopBar() {
         }
       />
       <CollaboratorStack followable className="ml-1" />
+      <ShareButton product="board" look="tool" />
     </FloatingPanel>
   );
 }
