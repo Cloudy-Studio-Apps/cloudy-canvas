@@ -146,7 +146,7 @@ export default function activate(api) {
         keys: [{ key: "o" }],
       });
       host.contribute(board.canvas.options, { calloutColor: COLORS[0].value });
-      host.contribute(board.agentTools, { id: "callout", tools: () => [createCalloutTool] });
+      host.contribute(board.mcpTools, { id: "callout", tools: () => [createCalloutTool] });
 
       // Its button goes on the toolbar after the built-in tools; as it adds an element, it's
       // listed in the library too (name and description from the kind).

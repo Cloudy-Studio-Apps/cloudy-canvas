@@ -1,7 +1,7 @@
 import { createCanvasPoints } from "@canvas";
 import { definePoint } from "@shared/core";
 
-import type { BoardAgentToolGroup } from "./agent/board-agent.types";
+import type { BoardMcpToolGroup } from "./mcp/board-mcp.types";
 import type { BoardToolOptions } from "./board-options.types";
 import type { BoardMigration } from "./file/board-migration.types";
 import type { ErConstructDefinition } from "./modules/er/base/constructs";
@@ -11,7 +11,7 @@ import type { ErStandardDefinition } from "./modules/er/base/standards";
 export const boardCanvas = createCanvasPoints<BoardToolOptions>("board");
 
 /** Tools agents can call on the open board, one group per module (or per group file). */
-export const boardAgentTools = definePoint<BoardAgentToolGroup>("board.agentTools", {
+export const boardMcpTools = definePoint<BoardMcpToolGroup>("board.mcpTools", {
   keyOf: (group) => group.id,
 });
 

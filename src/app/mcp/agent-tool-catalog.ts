@@ -1,7 +1,7 @@
 import type { AgentToolInfo, AgentToolSection } from "@shared/agent-server";
-import { createAgentTools } from "@board";
+import { createBoardMcpTools } from "@board";
 import { getBoardModules, getBoardProduct } from "@board/ui";
-import { createDesignAgentTools } from "@design";
+import { createDesignMcpTools } from "@design";
 import { getDesignModules, getDesignProduct } from "@design/ui";
 import { agentPlugins } from "./agent-plugins";
 
@@ -12,8 +12,8 @@ import { agentPlugins } from "./agent-plugins";
 export function agentToolCatalog(): AgentToolSection[] {
   // The same names as the server's, which leaves out a tool whose name is taken.
   const taken = new Set<string>();
-  const board = createAgentTools(getBoardModules(), getBoardProduct().kinds, undefined, taken);
-  const design = createDesignAgentTools(
+  const board = createBoardMcpTools(getBoardModules(), getBoardProduct().kinds, undefined, taken);
+  const design = createDesignMcpTools(
     getDesignModules(),
     getDesignProduct().kinds,
     undefined,

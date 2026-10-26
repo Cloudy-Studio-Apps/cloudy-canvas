@@ -2,7 +2,7 @@
   "id": "callout",
   "name": "Callout",
   "version": "1.0.0",
-  "description": "A highlighted note with a colored edge, its tool (O) and an agent tool.",
+  "description": "A highlighted note with a colored edge, its tool (O) and an MCP tool.",
   "author": "Cloudy Canvas examples",
   "apiVersion": 1,
   "products": ["board"],

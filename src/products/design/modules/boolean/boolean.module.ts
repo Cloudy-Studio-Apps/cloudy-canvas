@@ -1,11 +1,11 @@
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import { ofType } from "@design/ui/modules/section-filters";
-import { designAgentTools, designCanvas } from "../../design-points";
+import { designMcpTools, designCanvas } from "../../design-points";
 import { pruneEmptyHosts } from "../core";
 import { BOOLEAN_OPERATIONS, BOOLEAN_TYPE } from "./boolean.constants";
 import type { BooleanElement } from "./boolean.types";
-import { booleanTools } from "./boolean.agent-tools";
+import { booleanTools } from "./boolean.mcp";
 import { BooleanKind } from "./boolean.kind";
 import { BooleanSection } from "./ui/boolean-section";
 import { BooleanToolbarMenu } from "./ui/boolean-toolbar-menu";
@@ -43,7 +43,7 @@ export const booleanModule = defineModule({
         keys: [{ key: "o", mod: true, shift: true }],
       },
     );
-    host.contribute(designAgentTools, { id: "boolean", tools: () => booleanTools });
+    host.contribute(designMcpTools, { id: "boolean", tools: () => booleanTools });
 
     host.contribute(designEditor.sessionHooks, { id: "boolean-commands", use: useBooleanCommands });
     host.contribute(designEditor.selectionActions, {

@@ -1,7 +1,7 @@
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
-import { designAgentTools, designCanvas } from "../../design-points";
-import { imageTools } from "./image.agent-tools";
+import { designMcpTools, designCanvas } from "../../design-points";
+import { imageTools } from "./mcp";
 import { createImageRectangle } from "./image-rectangle";
 import { CropToolbarButton } from "./ui/crop-toolbar-button";
 import { ImageCrop } from "./ui/image-crop";
@@ -30,7 +30,7 @@ export const imageModule = defineModule({
       { id: "cropImage", label: "Crop image" },
       { id: "imagePlaceholder", label: "Use as image placeholder" },
     );
-    host.contribute(designAgentTools, { id: "image", tools: () => imageTools });
+    host.contribute(designMcpTools, { id: "image", tools: () => imageTools });
 
     host.contribute(
       designEditor.sessionHooks,

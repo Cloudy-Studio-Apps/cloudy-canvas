@@ -9,5 +9,5 @@ export * from "./enum";
 export * from "./schema";
 export * from "./table";
 export { DbLinks } from "./links";
-export { dbTools } from "./db.agent-tools";
+export { dbTools } from "./db.mcp";
 export { DbTool } from "./db.tool";

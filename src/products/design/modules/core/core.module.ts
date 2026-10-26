@@ -26,7 +26,7 @@ import { designEditor } from "@design/ui/modules/design-editor-points";
 import { designStyleTypes } from "@design/ui/modules/style-types";
 import { useDesignPanelStore } from "@design/ui/stores/design-panel-store";
 import { allKinds, someNodes } from "@design/ui/modules/section-filters";
-import { designAgentTools, designCanvas, designSelectRedirects } from "../../design-points";
+import { designMcpTools, designCanvas, designSelectRedirects } from "../../design-points";
 import {
   createNodesTool,
   designExportTools,
@@ -37,7 +37,7 @@ import {
   nodeArrangeTools,
   nodeTransformTools,
   nodeEditTools,
-} from "./agent";
+} from "./mcp";
 import { pasteGradientOnto } from "./node/paste-gradient";
 import { treeOrderKeys } from "./tree/order-keys";
 import { hostSelectTarget } from "./tree/host-select-target";
@@ -140,7 +140,7 @@ export const coreModule = defineModule({
     host.contribute(designCanvas.keybindings, { "tool.scale": [{ key: "k" }] });
 
     host.contribute(
-      designAgentTools,
+      designMcpTools,
       { id: "read", tools: () => designReadTools },
       { id: "info", tools: () => designInfoTools },
       { id: "nodes", tools: (context) => [createNodesTool(context), ...nodeEditTools] },

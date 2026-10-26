@@ -5,8 +5,8 @@ import { TokenStore } from "@canvas";
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import type { DesignToolOptions } from "../../design-options.types";
-import { designAgentTools, designCanvas, designSelectRedirects } from "../../design-points";
-import { styleguideTools } from "./agent";
+import { designMcpTools, designCanvas, designSelectRedirects } from "../../design-points";
+import { styleguideTools } from "./mcp";
 import { BUILT_IN_CATEGORIES } from "./categories";
 import {
   STYLEGUIDE_COMMANDS,
@@ -58,7 +58,7 @@ export const styleguideModule = defineModule({
       syncStyleguide(doc, change, kinds, sources),
     );
 
-    host.contribute(designAgentTools, {
+    host.contribute(designMcpTools, {
       id: "styleguide",
       tools: () =>
         styleguideTools({

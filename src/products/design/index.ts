@@ -5,12 +5,12 @@
 export type { DesignEngine, DesignEngineState, DesignWorkspace } from "./design-engine.types";
 export type { DesignToolOptions } from "./design-options.types";
 export {
-  designAgentTools,
+  designMcpTools,
   designCanvas,
   designMigrations,
   designSelectRedirects,
 } from "./design-points";
 export type { SelectRedirect } from "./design-points.types";
-export * from "./agent";
+export * from "./mcp";
 export * from "./file";
 export * from "./modules";

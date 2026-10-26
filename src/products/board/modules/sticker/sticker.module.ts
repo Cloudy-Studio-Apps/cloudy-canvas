@@ -2,8 +2,8 @@ import { Sticker } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
-import { boardAgentTools, boardCanvas } from "../../board-points";
-import { stickerTools } from "./sticker.agent-tools";
+import { boardMcpTools, boardCanvas } from "../../board-points";
+import { stickerTools } from "./sticker.mcp";
 import { StickerKind } from "./sticker.kind";
 import { pasteForeignSticker } from "./sticker-paste";
 import { StickerTool } from "./sticker.tool";
@@ -21,7 +21,7 @@ export const stickerModule = defineModule({
     });
     host.contribute(boardCanvas.options, { sticker: null });
     host.contribute(boardCanvas.pasteForeign, pasteForeignSticker);
-    host.contribute(boardAgentTools, { id: "stickers", tools: () => stickerTools });
+    host.contribute(boardMcpTools, { id: "stickers", tools: () => stickerTools });
 
     host.contribute(boardEditor.tools, {
       tool: "sticker",

@@ -49,7 +49,7 @@ Everything on a canvas is an element. **Elements are plain data and behavior liv
 
 ## Where the types live
 
-- **Where the types live:** each is in its module (`products/board/modules/<name>/`: `draw` holds `stroke`, `geo`, `text`, `connector`, `section`, `table`, `image`, `sticker`, `sticky`, `embed`, `db`, `er`), and paths above are relative to it. A module's tools are `<name>.tool.ts`, its agent tools `<name>.agent-tools.ts`, its options `<name>-options.types.ts` and its panels in `ui/`.
+- **Where the types live:** each is in its module (`products/board/modules/<name>/`: `draw` holds `stroke`, `geo`, `text`, `connector`, `section`, `table`, `image`, `sticker`, `sticky`, `embed`, `db`, `er`), and paths above are relative to it. A module's tools are `<name>.tool.ts`, its MCP tools `<name>.mcp.ts`, its options `<name>-options.types.ts` and its panels in `ui/`.
 
 ## Adding a type to a product
 

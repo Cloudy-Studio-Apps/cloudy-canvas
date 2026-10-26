@@ -105,7 +105,7 @@ export type * from "./share";
 export type * from "./file/read-file-tokens.types";
 export { canvasFileMagic, decodeCanvasFile, encodeCanvasFile, readFileTokens } from "./file";
 export { canvasBlob, encodePdfPages } from "./export";
-export * from "./agent";
+export * from "./mcp";
 export * from "./elements";
 export * from "./geometry";
 export * from "./modes";

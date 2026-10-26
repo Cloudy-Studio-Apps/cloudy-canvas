@@ -6,6 +6,6 @@ export * from "./node";
 export * from "./tools";
 export * from "./tree";
 export * from "./network";
-export * from "./agent";
+export * from "./mcp";
 export * from "./transform";
 export * from "./styles";

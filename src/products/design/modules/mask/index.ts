@@ -4,4 +4,4 @@
 export type * from "./mask-edits.types";
 export { designMasks } from "./design-masks";
 export { maskedByMask, maskNodes, masksAmong, maskOverNode, releaseMasks } from "./mask-edits";
-export { maskTools } from "./mask.agent-tools";
+export { maskTools } from "./mask.mcp";

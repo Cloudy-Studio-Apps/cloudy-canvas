@@ -1,7 +1,7 @@
 /** A JSON Schema object describing a tool's arguments. */
 export type JsonSchema = Record<string, unknown>;
 
-export interface McpTool {
+export interface McpServerTool {
   name: string;
   description: string;
   inputSchema: JsonSchema;
@@ -17,7 +17,7 @@ export interface McpServerDefinition {
   version: string;
   /** Guidance sent to agents when they connect. */
   instructions?: string;
-  tools: readonly McpTool[];
+  tools: readonly McpServerTool[];
   /**
    * Notes for the caller, sent after a tool's result as extra text (e.g. "the user undid your
    * last change"); each is sent once.

@@ -13,4 +13,4 @@ export { BooleanKind } from "./boolean.kind";
 export { booleanNodes } from "./boolean-nodes";
 export { flattenNodes } from "./flatten-nodes";
 export { outlineStrokes } from "./outline-strokes";
-export { booleanTools } from "./boolean.agent-tools";
+export { booleanTools } from "./boolean.mcp";

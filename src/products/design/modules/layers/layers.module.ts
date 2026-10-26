@@ -2,8 +2,8 @@ import { Layers } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
-import { designAgentTools } from "../../design-points";
-import { layersTools } from "./layers.agent-tools";
+import { designMcpTools } from "../../design-points";
+import { layersTools } from "./mcp";
 import { LayersTab } from "./ui/layers-tab";
 
 /**
@@ -21,6 +21,6 @@ export const layersModule = defineModule({
       order: 10,
       component: LayersTab,
     });
-    host.contribute(designAgentTools, { id: "layers", tools: () => layersTools });
+    host.contribute(designMcpTools, { id: "layers", tools: () => layersTools });
   },
 });

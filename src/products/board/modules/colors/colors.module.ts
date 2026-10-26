@@ -2,8 +2,8 @@ import { syncTokens } from "@canvas";
 import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
 import { BOARD_TOKEN_CONTEXT } from "../../tokens";
-import { boardAgentTools, boardCanvas } from "../../board-points";
-import { colorTools } from "./agent";
+import { boardMcpTools, boardCanvas } from "../../board-points";
+import { colorTools } from "./mcp";
 import { BoardColorsPanel, ColorsButton } from "./ui";
 
 /**
@@ -16,7 +16,7 @@ export const colorsModule = defineModule({
     host.contribute(boardCanvas.afterEdit, (doc, change, kinds) =>
       syncTokens(doc, change, kinds, BOARD_TOKEN_CONTEXT),
     );
-    host.contribute(boardAgentTools, { id: "colors", tools: () => colorTools });
+    host.contribute(boardMcpTools, { id: "colors", tools: () => colorTools });
     host.contribute(boardEditor.sidePanels, {
       id: "colors.panel",
       order: 30,

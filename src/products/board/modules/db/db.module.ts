@@ -2,8 +2,8 @@ import { Database } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
-import { boardAgentTools, boardCanvas } from "../../board-points";
-import { dbTools } from "./db.agent-tools";
+import { boardMcpTools, boardCanvas } from "../../board-points";
+import { dbTools } from "./db.mcp";
 import { DbTool } from "./db.tool";
 import { DbEnumKind } from "./enum";
 import { DbLinks } from "./links";
@@ -33,7 +33,7 @@ export const dbModule = defineModule({
     host.contribute(boardCanvas.onRemove, (doc) => pruneRefs(doc));
     // Copies get free table and enum names.
     host.contribute(boardCanvas.prepareCopies, prepareDbCopies);
-    host.contribute(boardAgentTools, { id: "db", tools: () => dbTools });
+    host.contribute(boardMcpTools, { id: "db", tools: () => dbTools });
 
     host.contribute(boardEditor.tools, {
       tool: "db",

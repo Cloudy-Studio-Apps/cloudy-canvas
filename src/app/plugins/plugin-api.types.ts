@@ -108,7 +108,7 @@ export interface PluginApi {
     canvas: typeof board.boardCanvas;
     /** The board editor's points (tools, panels, top bar, overlays, …). */
     editor: typeof boardEditor;
-    agentTools: typeof board.boardAgentTools;
+    mcpTools: typeof board.boardMcpTools;
     library: typeof boardLibrary;
     /** The standards ER diagrams can follow; contribute ones written with `defineErStandard`. */
     erStandards: typeof board.boardErStandards;
@@ -149,7 +149,7 @@ export interface DesignPluginApi {
   editor: typeof designEditor;
   migrations: typeof design.designMigrations;
   /** Agent tools on the open design, one group per module (`requireDesign` gets the design). */
-  agentTools: typeof design.designAgentTools;
+  mcpTools: typeof design.designMcpTools;
   requireDesign: typeof design.requireDesign;
   /** The layer tree service (`useService(DESIGN_TREE)`). */
   tree: typeof design.DESIGN_TREE;

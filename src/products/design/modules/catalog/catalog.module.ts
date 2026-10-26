@@ -2,9 +2,9 @@ import { BookOpen } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
-import { designAgentTools, designCanvas, designMigrations } from "../../design-points";
+import { designMcpTools, designCanvas, designMigrations } from "../../design-points";
 import { BrochureKind } from "./brochure";
-import { catalogTools } from "./agent";
+import { catalogTools } from "./mcp";
 import {
   CATALOG_COMMANDS,
   CATALOG_MODE,
@@ -55,7 +55,7 @@ export const catalogModule = defineModule({
     // One brochure per design, from before brochures belonged to a page, is split by page.
     host.contribute(designMigrations, { id: "catalog.brochures", migrate: splitLegacyBrochure });
     host.contribute(designCanvas.editElement, editCatalogPage);
-    host.contribute(designAgentTools, { id: "catalog", tools: () => catalogTools });
+    host.contribute(designMcpTools, { id: "catalog", tools: () => catalogTools });
 
     host.contribute(designEditor.modes, {
       id: CATALOG_MODE_ID,

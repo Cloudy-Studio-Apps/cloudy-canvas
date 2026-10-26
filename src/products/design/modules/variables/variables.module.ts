@@ -2,14 +2,14 @@ import { syncTokens } from "@canvas";
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import { allKinds, noNodes } from "@design/ui/modules/section-filters";
-import { designAgentTools, designCanvas, designMigrations } from "../../design-points";
+import { designMcpTools, designCanvas, designMigrations } from "../../design-points";
 import { migrateLiveScales } from "./migrate-live-scales";
 import { migrateVariableModes } from "./migrate-variable-modes";
 import {
   DETACH_LAYERS_COMMAND,
   useDetachLayersCommand,
 } from "./ui/usage/use-detach-layers-command";
-import { exchangeTools, variableTools } from "./agent";
+import { exchangeTools, variableTools } from "./mcp";
 import { BUILT_IN_TOKEN_FORMATS, tokenFormats } from "./exchange";
 import { DESIGN_TOKEN_CONTEXT } from "../core";
 import {
@@ -33,7 +33,7 @@ export const variablesModule = defineModule({
       syncTokens(doc, change, kinds, DESIGN_TOKEN_CONTEXT),
     );
 
-    host.contribute(designAgentTools, {
+    host.contribute(designMcpTools, {
       id: "variables",
       tools: () => [...variableTools, ...exchangeTools(() => host.get(tokenFormats))],
     });

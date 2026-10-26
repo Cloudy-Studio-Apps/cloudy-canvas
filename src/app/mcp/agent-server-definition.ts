@@ -1,7 +1,7 @@
 import type { McpMessageContext, McpServerDefinition } from "@shared/core";
-import { AGENT_INSTRUCTIONS, createAgentTools, type AgentHost } from "@board";
+import { BOARD_MCP_INSTRUCTIONS, createBoardMcpTools, type AgentHost } from "@board";
 import { getBoardModules, getBoardProduct } from "@board/ui";
-import { createDesignAgentTools, DESIGN_AGENT_INSTRUCTIONS, type DesignAgentHost } from "@design";
+import { createDesignMcpTools, DESIGN_MCP_INSTRUCTIONS, type DesignAgentHost } from "@design";
 import { getDesignModules, getDesignProduct } from "@design/ui";
 import { notifyError } from "@shared/stores/toast-store";
 
@@ -24,13 +24,13 @@ export function createAgentServerDefinition(
       new Error(`"${tool.name}" (from "${group.id}") has the name of another tool.`),
     );
   const tools = [
-    ...createAgentTools(getBoardModules(), getBoardProduct().kinds, skipped, taken),
-    ...createDesignAgentTools(getDesignModules(), getDesignProduct().kinds, skipped, taken),
+    ...createBoardMcpTools(getBoardModules(), getBoardProduct().kinds, skipped, taken),
+    ...createDesignMcpTools(getDesignModules(), getDesignProduct().kinds, skipped, taken),
   ];
   return {
     name: SERVER_NAME,
     version: SERVER_VERSION,
-    instructions: `${AGENT_INSTRUCTIONS}\n${DESIGN_AGENT_INSTRUCTIONS}`,
+    instructions: `${BOARD_MCP_INSTRUCTIONS}\n${DESIGN_MCP_INSTRUCTIONS}`,
     tools: tools.map((tool) => ({
       name: tool.name,
       description: tool.description,

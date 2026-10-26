@@ -1,8 +1,8 @@
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import { ofType } from "@design/ui/modules/section-filters";
-import { designAgentTools, designCanvas } from "../../design-points";
-import { autoLayoutTools } from "./auto-layout.agent-tools";
+import { designMcpTools, designCanvas } from "../../design-points";
+import { autoLayoutTools } from "./auto-layout.mcp";
 import { reorderDropped } from "./layout-drop";
 import { relayoutAfterEdit } from "./relayout";
 import { AutoLayoutSection } from "./ui/auto-layout-section";
@@ -44,7 +44,7 @@ export const autoLayoutModule = defineModule({
         keys: [{ code: "KeyA", alt: true, shift: true, label: "A" }],
       },
     );
-    host.contribute(designAgentTools, { id: "auto-layout", tools: () => autoLayoutTools });
+    host.contribute(designMcpTools, { id: "auto-layout", tools: () => autoLayoutTools });
 
     host.contribute(designEditor.sessionHooks, {
       id: "auto-layout-commands",

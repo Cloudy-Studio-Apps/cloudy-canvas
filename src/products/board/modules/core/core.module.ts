@@ -14,8 +14,8 @@ import {
   pluginTools,
   shapeEditTools,
   viewTools,
-} from "../../agent";
-import { boardAgentTools, boardCanvas } from "../../board-points";
+} from "./mcp";
+import { boardMcpTools, boardCanvas } from "../../board-points";
 
 /**
  * What every board has whatever its modules: the select, scale (Shift+K; K is the sticker tool) and
@@ -42,7 +42,7 @@ export const coreModule = defineModule({
       order: 0,
     });
     host.contribute(
-      boardAgentTools,
+      boardMcpTools,
       { id: "read", tools: () => boardReadTools },
       { id: "info", tools: () => boardInfoTools },
       { id: "shapes", tools: (context) => [createShapesTool(context), ...shapeEditTools] },

@@ -2,8 +2,8 @@ import { Group } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
-import { designAgentTools, designCanvas } from "../../design-points";
-import { groupTools } from "./group.agent-tools";
+import { designMcpTools, designCanvas } from "../../design-points";
+import { groupTools } from "./group.mcp";
 import { GroupKind } from "./group.kind";
 import { pruneEmptyGroups } from "./group-nodes";
 import { useGroupCommands } from "./ui/use-group-commands";
@@ -26,7 +26,7 @@ export const groupModule = defineModule({
       { id: "group", label: "Group selection", keys: [{ key: "g", mod: true }] },
       { id: "ungroup", label: "Ungroup", keys: [{ key: "g", mod: true, shift: true }] },
     );
-    host.contribute(designAgentTools, { id: "group", tools: () => groupTools });
+    host.contribute(designMcpTools, { id: "group", tools: () => groupTools });
 
     host.contribute(designEditor.sessionHooks, { id: "group-commands", use: useGroupCommands });
     host.contribute(designEditor.layerIcons, { type: "group", icon: Group });

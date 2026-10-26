@@ -1,14 +1,13 @@
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import { noNodes } from "@design/ui/modules/section-filters";
-import { designAgentTools, designCanvas, designMigrations } from "../../design-points";
+import { designMcpTools, designCanvas, designMigrations } from "../../design-points";
 import { ensurePages } from "./ensure-pages";
 import { PageKind } from "./page";
 import { PAGE_GUIDES } from "./page-guides";
 import { pruneFrameGuides } from "./prune-frame-guides";
 import { PAGE_SCOPES } from "./page-scopes";
-import { guidesTools } from "./guides.agent-tools";
-import { pagesTools } from "./pages.agent-tools";
+import { guidesTools, pagesTools } from "./mcp";
 import { MOVE_TO_PAGE } from "./ui/move-to-page";
 import { PageSection } from "./ui/page-section";
 import { usePageCommands } from "./ui/use-page-commands";
@@ -34,7 +33,7 @@ export const pagesModule = defineModule({
       { id: "nextPage", label: "Next page", keys: [{ key: "PageDown", label: "PgDn" }] },
     );
     host.contribute(
-      designAgentTools,
+      designMcpTools,
       { id: "pages", tools: () => pagesTools },
       { id: "guides", tools: () => guidesTools },
     );

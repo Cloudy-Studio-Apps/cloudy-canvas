@@ -61,7 +61,7 @@ import {
   useService,
 } from "@canvas-ui";
 import {
-  boardAgentTools,
+  boardMcpTools,
   boardCanvas,
   boardErConstructs,
   boardErStandards,
@@ -113,7 +113,7 @@ import {
   createNodeBase,
   DESIGN_PAGES,
   DESIGN_TREE,
-  designAgentTools,
+  designMcpTools,
   designCanvas,
   designMigrations,
   DesignNodeKind,
@@ -258,7 +258,7 @@ export function createPluginApi(
       board: {
         canvas: boardCanvas,
         editor: boardEditor,
-        agentTools: boardAgentTools,
+        mcpTools: boardMcpTools,
         library: boardLibrary,
         erStandards: boardErStandards,
         defineErStandard,
@@ -271,7 +271,7 @@ export function createPluginApi(
         canvas: designCanvas,
         editor: designEditor,
         migrations: designMigrations,
-        agentTools: designAgentTools,
+        mcpTools: designMcpTools,
         requireDesign,
         tree: DESIGN_TREE,
         pages: DESIGN_PAGES,

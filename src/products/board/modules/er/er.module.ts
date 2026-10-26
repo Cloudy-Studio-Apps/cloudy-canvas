@@ -3,7 +3,7 @@ import { Network } from "lucide-react";
 import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
 import {
-  boardAgentTools,
+  boardMcpTools,
   boardCanvas,
   boardErConstructs,
   boardErStandards,
@@ -20,7 +20,7 @@ import { ErAggregateKind } from "./aggregate";
 import { ErAttributeKind } from "./attribute";
 import { ErConstraintKind } from "./constraint";
 import { ErEntityKind } from "./entity";
-import { erTools } from "./er.agent-tools";
+import { erTools } from "./er.mcp";
 import { ErTool } from "./er.tool";
 import { ErIsaKind } from "./isa";
 import { ErLinks } from "./links";
@@ -135,7 +135,7 @@ export const erModule = defineModule({
     // Copies get their own diagrams.
     host.contribute(boardCanvas.prepareCopies, prepareErCopies);
     host.contribute(boardMigrations, { id: "er.diagrams", migrate: migrateErDiagrams });
-    host.contribute(boardAgentTools, { id: "er", tools: () => erTools });
+    host.contribute(boardMcpTools, { id: "er", tools: () => erTools });
 
     host.contribute(boardEditor.tools, {
       tool: "er",

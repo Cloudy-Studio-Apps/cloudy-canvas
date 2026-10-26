@@ -1,7 +1,7 @@
 import { createCanvasPoints } from "@canvas";
 import { definePoint } from "@shared/core";
 
-import type { DesignAgentToolGroup } from "./agent/design-agent.types";
+import type { DesignMcpToolGroup } from "./mcp/design-mcp.types";
 import type { DesignToolOptions } from "./design-options.types";
 import type { DesignMigration } from "./file/design-migration.types";
 import type { SelectRedirect } from "./design-points.types";
@@ -10,7 +10,7 @@ import type { SelectRedirect } from "./design-points.types";
 export const designCanvas = createCanvasPoints<DesignToolOptions>("design");
 
 /** Tools agents can call on the open design, one group per module (or per group file). */
-export const designAgentTools = definePoint<DesignAgentToolGroup>("design.agentTools", {
+export const designMcpTools = definePoint<DesignMcpToolGroup>("design.mcpTools", {
   keyOf: (group) => group.id,
 });
 

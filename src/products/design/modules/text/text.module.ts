@@ -4,8 +4,8 @@ import { glyphOutliner } from "@platform";
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import { ofType } from "@design/ui/modules/section-filters";
-import { designAgentTools, designCanvas } from "../../design-points";
-import { textTools } from "./text.agent-tools";
+import { designMcpTools, designCanvas } from "../../design-points";
+import { textTools } from "./text.mcp";
 import { TEXT_DEFAULTS } from "./text.defaults";
 import { TextKind } from "./text.kind";
 import { TextTool } from "./text.tool";
@@ -31,7 +31,7 @@ export const textModule = defineModule({
       keys: [{ key: "t" }],
     });
     host.contribute(designCanvas.options, { textTypography: TEXT_DEFAULTS.typography });
-    host.contribute(designAgentTools, { id: "text", tools: () => textTools });
+    host.contribute(designMcpTools, { id: "text", tools: () => textTools });
     // Ranges using a text style are bound to it, so the token sync restyles them.
     host.contribute(designCanvas.afterEdit, (doc, change) => syncRunStyleBindings(doc, change));
 

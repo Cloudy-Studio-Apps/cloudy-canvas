@@ -6,6 +6,6 @@ export { ensurePages } from "./ensure-pages";
 export { PAGE_GUIDES } from "./page-guides";
 export { PAGE_SCOPES } from "./page-scopes";
 export { allPagesOf, pagesOf } from "./pages-of";
-export { guidesTools } from "./guides.agent-tools";
-export { pagesTools } from "./pages.agent-tools";
+export { guidesTools } from "./mcp/guides.mcp";
+export { pagesTools } from "./mcp/pages.mcp";
 export { countedUse } from "./counted-use";

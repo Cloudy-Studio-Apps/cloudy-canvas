@@ -3,8 +3,8 @@ import { Sticker } from "lucide-react";
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import { ofType } from "@design/ui/modules/section-filters";
-import { designAgentTools, designCanvas } from "../../design-points";
-import { stickerAgentTools } from "./sticker.agent-tools";
+import { designMcpTools, designCanvas } from "../../design-points";
+import { stickerAgentTools } from "./sticker.mcp";
 import { StickerNodeKind } from "./sticker.kind";
 import { pasteForeignSticker } from "./sticker-paste";
 import { DesignStickerTool } from "./sticker.tool";
@@ -32,7 +32,7 @@ export const stickerModule = defineModule({
       id: "stickerToVectors",
       label: "Convert sticker to vectors",
     });
-    host.contribute(designAgentTools, { id: "sticker", tools: () => stickerAgentTools });
+    host.contribute(designMcpTools, { id: "sticker", tools: () => stickerAgentTools });
 
     host.contribute(designEditor.tools, {
       tool: "sticker",

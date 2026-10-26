@@ -2,7 +2,7 @@ import { Pencil, PenTool as PenIcon } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
-import { designAgentTools, designCanvas } from "../../design-points";
+import { designMcpTools, designCanvas } from "../../design-points";
 import { editVector } from "./edit/edit-vector";
 import { PenTool } from "./edit/pen.tool";
 import { VectorBendTool } from "./edit/vector-bend.tool";
@@ -11,7 +11,7 @@ import { VectorCutTool } from "./edit/vector-cut.tool";
 import { VectorMoveTool } from "./edit/vector-move.tool";
 import { VECTOR_TOOLS } from "./edit/vector-tools";
 import { PencilTool } from "./pencil.tool";
-import { vectorTools } from "./vector.agent-tools";
+import { vectorTools } from "./vector.mcp";
 import { VectorEditToolbar } from "./ui/vector-edit-toolbar";
 import { VectorKind } from "./vector.kind";
 
@@ -26,7 +26,7 @@ export const vectorModule = defineModule({
   register(host) {
     host.contribute(designCanvas.kinds, new VectorKind());
     host.contribute(designCanvas.editElement, editVector);
-    host.contribute(designAgentTools, { id: "vector", tools: () => vectorTools });
+    host.contribute(designMcpTools, { id: "vector", tools: () => vectorTools });
     host.contribute(
       designCanvas.tools,
       { id: "pencil", create: (ctx) => new PencilTool(ctx), keys: [{ key: "p", shift: true }] },

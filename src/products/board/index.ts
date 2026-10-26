@@ -2,12 +2,12 @@
 // points the board's modules plug into, its element types and modules (engine side), tools,
 // palette, agent tools and file format. The React editor is in `ui/`, which also composes the
 // product from the modules (`getBoardProduct`).
-export type * from "./agent";
+export type * from "./mcp";
 export type { BoardEngine, BoardEngineState, BoardWorkspace } from "./board-engine.types";
 export type { BoardToolOptions } from "./board-options.types";
-export * from "./agent";
+export * from "./mcp";
 export {
-  boardAgentTools,
+  boardMcpTools,
   boardCanvas,
   boardErConstructs,
   boardErStandards,

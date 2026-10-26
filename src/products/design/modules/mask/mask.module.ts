@@ -1,8 +1,8 @@
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
-import { designAgentTools, designCanvas } from "../../design-points";
+import { designMcpTools, designCanvas } from "../../design-points";
 import { designMasks } from "./design-masks";
-import { maskTools } from "./mask.agent-tools";
+import { maskTools } from "./mask.mcp";
 import { MaskSection } from "./ui/mask-section";
 import { MaskToolbarButton } from "./ui/mask-toolbar-button";
 import { maskSectionShown, selectionIsMasks } from "./ui/mask-selection";
@@ -30,7 +30,7 @@ export const maskModule = defineModule({
       { id: "selectMask", label: "Select mask" },
       { id: "selectMasked", label: "Select masked layers" },
     );
-    host.contribute(designAgentTools, { id: "mask", tools: () => maskTools });
+    host.contribute(designMcpTools, { id: "mask", tools: () => maskTools });
 
     host.contribute(designEditor.sessionHooks, { id: "mask-commands", use: useMaskCommands });
     host.contribute(designEditor.selectionActions, {

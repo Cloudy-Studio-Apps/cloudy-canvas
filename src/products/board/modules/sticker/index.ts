@@ -7,4 +7,4 @@ export { createSticker } from "./sticker.factory";
 export { StickerKind } from "./sticker.kind";
 export { STICKER_DEFAULTS } from "./sticker.defaults";
 export { StickerTool } from "./sticker.tool";
-export { stickerTools } from "./sticker.agent-tools";
+export { stickerTools } from "./sticker.mcp";
