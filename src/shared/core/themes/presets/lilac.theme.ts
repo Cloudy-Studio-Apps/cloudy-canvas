@@ -1,0 +1,73 @@
+import type { ThemeDefinition } from "../theme.types";
+
+/** Cloudy Light tinted with the design's lilac: lilac surfaces and a lilac primary. */
+export const LILAC: ThemeDefinition = {
+  id: "lilac",
+  label: "Lilac",
+  description: "Cloudy, in the design's lilac.",
+  appearance: "light",
+  tokens: {
+    background: "var(--lilac-50)",
+    foreground: "var(--seal-900)",
+    surface: "oklch(1 0 0)",
+    "surface-foreground": "var(--seal-900)",
+    "surface-sunken": "var(--lilac-100)",
+    overlay: "oklch(0.22 0.06 292 / 0.4)",
+    muted: "var(--lilac-100)",
+    "muted-foreground": "var(--seal-500)",
+    "subtle-foreground": "var(--seal-400)",
+    hover: "var(--lilac-100)",
+    popover: "oklch(1 0 0)",
+    "popover-foreground": "var(--seal-900)",
+
+    "canvas-background": "var(--lilac-50)",
+    "canvas-grid": "var(--lilac-300)",
+    "canvas-selection": "var(--lilac-600)",
+    "canvas-snap": "oklch(0.6 0.21 22)",
+    "canvas-relation": "var(--seal-500)",
+    "canvas-ruler": "oklch(1 0 0)",
+    "canvas-ruler-foreground": "var(--seal-500)",
+    "canvas-ruler-border": "var(--lilac-200)",
+
+    "syntax-keyword": "var(--ice-700)",
+    "syntax-definition": "var(--seal-950)",
+    "syntax-property": "var(--seal-800)",
+    "syntax-type": "var(--lilac-600)",
+    "syntax-setting": "var(--blush-700)",
+    "syntax-string": "var(--sand-700)",
+    "syntax-number": "var(--blush-600)",
+    "syntax-operator": "var(--ice-600)",
+    "syntax-punctuation": "var(--seal-500)",
+    "syntax-comment": "var(--seal-500)",
+
+    border: "var(--lilac-200)",
+    "border-strong": "var(--lilac-300)",
+    input: "var(--lilac-300)",
+    ring: "var(--lilac-600)",
+
+    primary: "var(--lilac-600)",
+    "primary-hover": "var(--lilac-700)",
+    "primary-foreground": "oklch(1 0 0)",
+    "primary-soft": "var(--lilac-100)",
+    "primary-soft-foreground": "var(--lilac-800)",
+    secondary: "var(--lilac-100)",
+    "secondary-hover": "var(--lilac-200)",
+    "secondary-foreground": "var(--seal-800)",
+    accent: "var(--blush-400)",
+    "accent-hover": "var(--blush-500)",
+    "accent-foreground": "var(--blush-950)",
+    "accent-soft": "var(--blush-100)",
+    "accent-soft-foreground": "var(--blush-800)",
+
+    "shadow-color": "292 25% 20%",
+  },
+  products: {
+    design: { "canvas-background": "var(--lilac-200)", "canvas-grid": "var(--lilac-300)" },
+  },
+  preview: {
+    background: "oklch(0.975 0.012 295)",
+    surface: "oklch(1 0 0)",
+    primary: "oklch(0.54 0.16 293)",
+    foreground: "oklch(0.27 0.02 256)",
+  },
+};
