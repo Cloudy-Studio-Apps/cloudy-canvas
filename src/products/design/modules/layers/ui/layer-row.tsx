@@ -3,8 +3,7 @@ import { ChevronRight, CornerLeftDown, Eye, EyeOff, Lock, Sparkles, Unlock } fro
 
 import type { ElementPatch } from "@canvas";
 import { layerNameOf } from "../../core";
-import { IconButton } from "@shared/ui/kit";
-import { cn } from "@shared/ui/lib/utils";
+import { cn, IconButton } from "@shared/ui/kit";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { LayerIcon } from "./layer-icon";
 import { LayerName } from "./layer-name";

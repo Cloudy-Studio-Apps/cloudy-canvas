@@ -94,6 +94,12 @@ export interface CanvasProduct<O extends object = object> {
    */
   alignTarget?(el: CanvasElement, elements: readonly CanvasElement[]): Rect | null;
   /**
+   * The top-level element `id` is drawn in (e.g. a design layer's top frame), itself when nothing
+   * holds it, or `null` when `id` isn't an element. Without it, every element is its own root.
+   * Read from the document, so it works for elements of any scope.
+   */
+  rootOf?(doc: CanvasDocument, id: string): string | null;
+  /**
    * The frame the rulers measure for this selection (e.g. the design frame it's in, as in Figma):
    * they count from its top-left corner and number only its span (the page's while it's turned),
    * and a guide dragged out of them while it's set belongs to it. `null`, or without it, the whole

@@ -1,3 +1,4 @@
+import { ColorField } from "@canvas-ui";
 import { Eye, EyeOff, Minus, MoveHorizontal } from "lucide-react";
 import { useRef } from "react";
 
@@ -5,7 +6,7 @@ import type { ElementPatch } from "@canvas";
 import type { ColorChangeInfo } from "@canvas-ui";
 import type { DesignNode } from "../../core";
 import type { StickerNodeElement, StickerOutline } from "../sticker.types";
-import { EffectColorField, ScrubField } from "../../effects/ui";
+import { ScrubField } from "../../effects/ui";
 import { PanelIconButton } from "@design/ui/components/panel";
 import { useEditNodes } from "@design/ui/hooks";
 import type { StickerFieldsProps } from "./sticker-ui.types";
@@ -37,7 +38,7 @@ export function StickerOutlineFields({ stickers }: StickerFieldsProps) {
   return (
     <div className="flex items-center gap-1">
       <div className="min-w-0 flex-1">
-        <EffectColorField
+        <ColorField
           label="Outline"
           color={outline.color}
           onChange={({ color }, info) => change({ color: color.toUpperCase() }, info)}

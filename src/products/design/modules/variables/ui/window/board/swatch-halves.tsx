@@ -1,4 +1,4 @@
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import { cssColor } from "../css-color";
 import type { SwatchHalvesProps } from "./swatch-halves.types";
 

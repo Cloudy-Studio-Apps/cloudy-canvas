@@ -4,9 +4,7 @@ import type { DesignEngine } from "../../../design-engine.types";
 import type { DesignNode } from "../../core";
 import { ensureBrochure } from "../model/current-brochure";
 import { replaceImageFill } from "../../image";
-import { pickImageFiles } from "@platform";
-import { createId } from "@shared/core";
-import { notifyError } from "@shared/stores/toast-store";
+import { chooseImageAsset } from "@canvas-ui";
 
 /** Shows a page frame on screen, switching design page when it's on another, and selects it. */
 export function showPage(engine: DesignEngine, frame: FrameElement): void {
@@ -42,14 +40,11 @@ export async function replaceImage(
   node: DesignNode,
   fill: number,
 ): Promise<void> {
-  try {
-    const [file] = await pickImageFiles({ title: "Replace the image", multiple: false });
-    if (!file) return;
-    const assetId = createId();
-    engine.doc.addAsset(assetId, file.data);
-    engine.doc.checkpoint();
-    engine.doc.update(node.id, replaceImageFill(node, fill, assetId));
-  } catch (error) {
-    notifyError("The image couldn't be replaced", error);
-  }
+  const assetId = await chooseImageAsset(engine, {
+    title: "Replace the image",
+    errorTitle: "The image couldn't be replaced",
+  });
+  if (!assetId) return;
+  engine.doc.checkpoint();
+  engine.doc.update(node.id, replaceImageFill(node, fill, assetId));
 }

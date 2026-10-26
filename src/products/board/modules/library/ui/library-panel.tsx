@@ -1,9 +1,7 @@
 import { X } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import { Button } from "@shared/ui/components/ui/button";
-import { SearchInput } from "@shared/ui/kit";
-import { Tabs, TabsList, TabsTrigger } from "@shared/ui/components/ui/tabs";
+import { Button, SearchInput, Tabs, TabsList, TabsTrigger } from "@shared/ui/kit";
 import { useEditorModules } from "@canvas-ui";
 import { useBoardEngine } from "@board/ui/board-engine-context";
 import { LIBRARY_TABS } from "./library-catalog";

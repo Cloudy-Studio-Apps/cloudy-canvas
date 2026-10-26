@@ -1,4 +1,4 @@
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import type { ShapeSelectProps } from "./shape-select.types";
 
 /** A compact native select, styled like the panel's inputs. */

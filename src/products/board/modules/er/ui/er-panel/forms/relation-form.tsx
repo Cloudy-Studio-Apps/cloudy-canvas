@@ -2,7 +2,7 @@ import { Group, Plus, RectangleHorizontal } from "lucide-react";
 
 import { canConvert } from "../../../relation/can-convert";
 import { cardinalityRatio } from "../../../relation/cardinality-ratio";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { CommitInput, useEngine } from "@canvas-ui";
 import { useErDiagram, useErShapes, lockedOn, useErGate } from "../../model";
 import { FlagToggle } from "../../../../db/ui";

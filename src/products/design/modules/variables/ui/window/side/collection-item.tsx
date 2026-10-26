@@ -2,13 +2,13 @@ import { useState } from "react";
 
 import { CommitInput } from "@canvas-ui";
 import {
+  cn,
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuTrigger,
-} from "@shared/ui/components/ui/context-menu";
-import { cn } from "@shared/ui/lib/utils";
+} from "@shared/ui/kit";
 import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";
 import { GroupOutline } from "./group-outline";

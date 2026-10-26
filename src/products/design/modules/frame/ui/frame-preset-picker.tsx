@@ -9,11 +9,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@shared/ui/components/ui/dropdown-menu";
-import type { FramePresetMenuProps } from "./frame-preset-menu.types";
+} from "@shared/ui/kit";
+import type { FramePresetPickerProps } from "./frame-preset-picker.types";
 
-/** The frame sizes, by group (Desktop, Phone, …). */
-export function FramePresetMenu({ trigger, onPick }: FramePresetMenuProps) {
+/** A menu of the frame sizes, by group (Desktop, Phone, Paper, …), opened by `trigger`. */
+export function FramePresetPicker({ trigger, onPick }: FramePresetPickerProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>

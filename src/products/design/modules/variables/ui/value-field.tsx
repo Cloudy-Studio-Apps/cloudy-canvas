@@ -10,16 +10,21 @@ import {
   DEFAULT_VALUE,
   type TokenValue,
 } from "@canvas";
-import { useDocumentTokens, VariableChip, VariablePicker, VariableValue } from "@canvas-ui";
-import { FieldBox, HexInput, NumberField, PercentInput } from "@design/ui/components/panel";
+import {
+  ColorField,
+  useDocumentTokens,
+  VariableChip,
+  VariablePicker,
+  VariableValue,
+} from "@canvas-ui";
+import { NumberField } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { notifyError } from "@shared/stores/toast-store";
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import { BooleanValueInput } from "./boolean-value-input";
 import { ExpressionBuilder } from "./expression-builder";
 import { ExpressionInput } from "./expression-input";
 import { StringValueInput } from "./string-value-input";
-import { SwatchInput } from "./swatch-input";
 import type { ActionButtonProps, ValueFieldProps } from "./variables-ui.types";
 
 /**
@@ -136,27 +141,13 @@ export function ValueField({ variable, mode, label, cell, className }: ValueFiel
     const { hex, alpha } = splitTokenColor("color" in value ? value.color : "#000000");
     return (
       <div className={cn("group/value flex min-w-0 items-center gap-0.5", className)}>
-        <FieldBox className={cn("min-w-0 flex-1 gap-0 pl-2", ghost)}>
-          <SwatchInput
-            color={hex.toLowerCase()}
-            label={`${label} color`}
-            opacity={alpha}
-            onChange={(color, opacity) => set({ color: joinTokenColor(color, opacity) })}
-          />
-          <HexInput
-            color={hex}
-            label={`${label} hex`}
-            className="px-2"
-            onCommit={(color) => set({ color: joinTokenColor(color, alpha) })}
-          />
-          <span className="flex h-full w-12 shrink-0 items-center border-l border-surface px-1.5">
-            <PercentInput
-              value={alpha}
-              label={`${label} opacity`}
-              onCommit={(next) => set({ color: joinTokenColor(hex, next) })}
-            />
-          </span>
-        </FieldBox>
+        <ColorField
+          color={hex.toLowerCase()}
+          opacity={alpha}
+          label={`${label} color`}
+          onChange={(next) => set({ color: joinTokenColor(next.color, next.opacity) })}
+          className={cn("min-w-0 flex-1", ghost)}
+        />
         {link}
         {clear}
       </div>

@@ -1,6 +1,6 @@
 import { Check } from "lucide-react";
 
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import type { PickCheckboxProps } from "./canvas.types";
 
 /** A frame's tick on its top-right corner while frames are being picked (clicks go to the canvas). */

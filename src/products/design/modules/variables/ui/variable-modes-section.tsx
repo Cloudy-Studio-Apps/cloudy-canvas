@@ -2,13 +2,7 @@ import { useDocumentTokens } from "@canvas-ui";
 import type { PropertySectionProps } from "@design/ui/modules";
 import { PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@shared/ui/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@shared/ui/kit";
 import { setVariableModes } from "../set-variable-modes";
 
 /** What a container inheriting its mode shows (and picks to inherit again). */

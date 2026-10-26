@@ -18,21 +18,6 @@ export interface ScrubFieldProps {
   className?: string;
 }
 
-export interface EffectColorFieldProps {
-  label: string;
-  /** `#RRGGBB`. */
-  color: string;
-  /** 0–1; left out for colors without their own opacity. */
-  opacity?: number;
-  onChange: (next: { color: string; opacity: number }, info: ColorChangeInfo) => void;
-}
-
-export interface EffectToggleProps {
-  label: string;
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-}
-
 export interface EffectChoiceProps<T extends string> {
   label: string;
   value: T;

@@ -4,12 +4,15 @@
 export type * from "./agent";
 export type * from "./components/collaborators";
 export type * from "./components/color";
+export type * from "./components/color-field";
 export type * from "./components/commit-field";
 export type * from "./components/context-menu";
 export type * from "./file";
+export type * from "./images";
 export type * from "./components/export-dialog";
 export type * from "./components/image-crop";
 export type * from "./components/image-quality-note";
+export type { AnchorPickerProps } from "./components/anchor-picker.types";
 export type { ColorPaletteProps } from "./components/color-palette.types";
 export type { ColorPickerProps } from "./components/color-picker.types";
 export type { ColorSwatchProps } from "./components/color-swatch.types";
@@ -22,9 +25,16 @@ export type * from "./modules";
 export type * from "./overlay";
 export type * from "./share";
 export type * from "./stickers";
+export type * from "./thumbnails";
 export { createActiveFile, useAgentFile } from "./agent";
 export { EXPORT_THEME_SCOPE, readCanvasTheme, readExportCanvasTheme } from "./canvas-theme";
 export { StickerWheel } from "./stickers";
+export {
+  ElementThumbnail,
+  ElementThumbnails,
+  elementThumbnailsOf,
+  useElementThumbnail,
+} from "./thumbnails";
 export type * from "./tokens";
 export {
   ImportConflicts,
@@ -51,6 +61,7 @@ export {
 export { ExportDialog } from "./components/export-dialog";
 export { ImageCropOverlay } from "./components/image-crop";
 export { ImageQualityNote } from "./components/image-quality-note";
+export { AnchorPicker } from "./components/anchor-picker";
 export { ColorPalette } from "./components/color-palette";
 export {
   CHECKERBOARD,
@@ -67,6 +78,7 @@ export {
   SaturationArea,
 } from "./components/color";
 export { ColorPicker } from "./components/color-picker";
+export { ColorField, ColorPopover } from "./components/color-field";
 export { normalizeHex } from "./components/normalize-hex";
 export { ColorSwatch } from "./components/color-swatch";
 export { CustomColorSwatch } from "./components/custom-color-swatch";
@@ -115,6 +127,7 @@ export { useDocumentMeta } from "./use-document-meta";
 export * from "./modules";
 export { normalizedToScreen, screenToLocal, screenToNormalized, useViewMapping } from "./overlay";
 export { useAssetUrl } from "./use-asset-url";
+export { chooseImageAsset, ImageChooseButton } from "./images";
 export { useImageQuality } from "./use-image-quality";
 export { useScrubUndo } from "./use-scrub-undo";
 export type * from "./use-scrub-undo.types";

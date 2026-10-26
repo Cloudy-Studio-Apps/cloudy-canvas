@@ -1,6 +1,6 @@
 import { BookPlus } from "lucide-react";
 
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
 
 /**

@@ -7,14 +7,14 @@ import { useDocumentMeta } from "@canvas-ui";
 import { useBoardEngine } from "@board/ui/board-engine-context";
 import { exportFile, pickTokenFile, type TokenFilePick } from "@platform";
 import { notifyError, toast } from "@shared/stores/toast-store";
-import { IconButton } from "@shared/ui/kit";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@shared/ui/components/ui/dropdown-menu";
+  IconButton,
+} from "@shared/ui/kit";
 import type { ColorImportSource } from "./colors-ui.types";
 import { ImportColorsDialog } from "./import-colors-dialog";
 

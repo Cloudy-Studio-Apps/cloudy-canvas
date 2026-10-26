@@ -1,6 +1,6 @@
 import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { CommitInput } from "@canvas-ui";
 import { useBoardSchema } from "../schema";
 import type { EnumValueRowProps } from "./enum-value-row.types";

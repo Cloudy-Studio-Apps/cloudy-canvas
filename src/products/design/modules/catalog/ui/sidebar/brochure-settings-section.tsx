@@ -7,8 +7,7 @@ import { useBrochure } from "../hooks/use-brochure";
 import { useCatalogViewStore } from "../stores/catalog-view-store";
 import { ArrangeFields } from "./arrange-fields";
 import { LayoutFields } from "./layout-fields";
-import { SettingSelect } from "./setting-select";
-import { Toggle } from "./toggle";
+import { CheckboxField, SelectField } from "@shared/ui/kit";
 
 /** The export's resolutions to pick from. */
 const DPI_CHOICES = [
@@ -52,14 +51,14 @@ export function BrochureSettingsSection() {
             min={0}
             onCommit={(margin) => brochure?.setSettings({ margin })}
           />
-          <SettingSelect
+          <SelectField
             label="Quality"
             value={dpiChoice(settings.dpi)}
-            choices={DPI_CHOICES}
+            options={DPI_CHOICES}
             onChange={(dpi) => brochure?.setSettings({ dpi: Number(dpi) })}
           />
         </PropertyGrid>
-        <Toggle label="Show margins on the canvas" checked={margins} onChange={setMargins} />
+        <CheckboxField label="Show margins on the canvas" checked={margins} onChange={setMargins} />
       </div>
     </PanelSection>
   );

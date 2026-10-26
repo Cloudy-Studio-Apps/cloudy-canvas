@@ -2,7 +2,7 @@ import { X } from "lucide-react";
 
 import type { ScaleInput } from "@canvas";
 import { CommitInput } from "@canvas-ui";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { notifyError } from "@shared/stores/toast-store";
 import { NUMBER_KINDS } from "../group-kinds";
 import { joinPath } from "../group-paths";

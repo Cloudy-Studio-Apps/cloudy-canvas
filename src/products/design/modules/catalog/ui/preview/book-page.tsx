@@ -1,4 +1,4 @@
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import type { BookPageProps } from "./preview.types";
 import { SidePicture } from "./side-picture";
 

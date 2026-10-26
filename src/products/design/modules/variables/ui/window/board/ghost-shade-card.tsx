@@ -1,4 +1,4 @@
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import type { GhostShadeCardProps } from "./board.types";
 import { SwatchHalves } from "./swatch-halves";
 

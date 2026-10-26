@@ -8,6 +8,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { exportFile, pickTokenFile } from "@platform";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import {
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -16,8 +17,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@shared/ui/components/ui/dropdown-menu";
-import { Button } from "@shared/ui/components/ui/button";
+} from "@shared/ui/kit";
 
 import type { ImportSource } from "./exchange.types";
 import { ImportTokensDialog } from "./import-tokens-dialog";

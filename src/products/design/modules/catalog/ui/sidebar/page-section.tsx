@@ -1,11 +1,10 @@
 import { PenLine } from "lucide-react";
 
+import { ElementThumbnail } from "@canvas-ui";
 import { paperSize } from "../../model/paper-size";
 import { PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import { Button } from "@shared/ui/components/ui/button";
-import { cn } from "@shared/ui/lib/utils";
-import { PageThumbnail } from "../brochure-tab/page-thumbnail";
+import { Button, cn } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
 import { optionLetter } from "../option-letter";
 import { editInDesign, showPage } from "../page-actions";
@@ -49,7 +48,7 @@ export function PageSection({ page }: PageSectionProps) {
                       chosen && "border-ring bg-primary-soft hover:border-ring",
                     )}
                   >
-                    <PageThumbnail frameId={option.id} className="h-12 w-17" />
+                    <ElementThumbnail id={option.id} className="h-12 w-17" />
                     <span className="min-w-0 text-xs">
                       <span className="block font-semibold text-foreground">
                         Option {optionLetter(i)}

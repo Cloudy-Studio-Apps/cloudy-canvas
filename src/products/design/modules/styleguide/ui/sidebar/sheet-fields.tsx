@@ -1,5 +1,5 @@
 import type { SheetFieldsProps } from "./sheet-section.types";
-import { Button, Section, Switch } from "@shared/ui/kit";
+import { Button, Section, SwitchField } from "@shared/ui/kit";
 import { useStyleguide, useStyleguideOutline } from "../hooks/use-styleguide";
 import { useTemplateChoice } from "../hooks/use-template-choice";
 import { ChoiceEditor } from "./choice-editor";
@@ -34,15 +34,11 @@ export function SheetFields({ sheet, count }: SheetFieldsProps) {
                 styleguide.setSheet(sheet.id, { template: template.id, options: { ...options } })
               }
             />
-            <label className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
-              Show modes side by side
-              <Switch
-                checked={sheet.sheet.modeView === "all"}
-                onCheckedChange={(on) =>
-                  styleguide.setSheet(sheet.id, { modeView: on ? "all" : "current" })
-                }
-              />
-            </label>
+            <SwitchField
+              label="Show modes side by side"
+              checked={sheet.sheet.modeView === "all"}
+              onChange={(on) => styleguide.setSheet(sheet.id, { modeView: on ? "all" : "current" })}
+            />
           </>
         )}
         <Button size="sm" variant="outline" onClick={() => styleguide.convert([sheet.id])}>

@@ -2,14 +2,14 @@ import { Fragment } from "react";
 
 import { ExtensionIconView } from "@canvas-ui";
 import { PanelAddButton } from "@design/ui/components/panel";
-import { Badge } from "@shared/ui/components/ui/badge";
 import {
+  Badge,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@shared/ui/components/ui/dropdown-menu";
+} from "@shared/ui/kit";
 import type { AddEffectMenuProps } from "./effects-ui.types";
 
 /** The Effects section's "+": every effect type, as Figma lists them, Beta ones tagged. */

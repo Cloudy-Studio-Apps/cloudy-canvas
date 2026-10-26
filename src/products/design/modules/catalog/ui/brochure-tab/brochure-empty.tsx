@@ -1,17 +1,18 @@
-import { ListChecks } from "lucide-react";
+import { ChevronDown, ListChecks } from "lucide-react";
 
 import { CATALOG_PICK_TOOL } from "../../mode/catalog-mode.constants";
 import { findPreset } from "../../../frame";
+import { FramePresetPicker } from "../../../frame/ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { addBlankPage } from "../page-actions";
 
 /** A4 in points (the paper frame preset's size), for a catalog started from nothing. */
 const A4 = findPreset("a4")?.size ?? { w: 595, h: 842 };
 
 /**
- * The brochure with no pages yet: pick the design's frames, or start with a blank A4 page (for a
- * catalog made from scratch).
+ * The brochure with no pages yet: pick the design's frames, or start with a blank page (for a
+ * catalog made from scratch): A4 either way, or any frame size.
  */
 export function BrochureEmpty() {
   const engine = useDesignEngine();
@@ -45,6 +46,15 @@ export function BrochureEmpty() {
           A4 landscape
         </Button>
       </div>
+      <FramePresetPicker
+        onPick={(preset) => addBlankPage(engine, preset.size, preset.label)}
+        trigger={
+          <Button size="sm" variant="outline" className="mt-1.5 w-full">
+            Other size…
+            <ChevronDown />
+          </Button>
+        }
+      />
     </div>
   );
 }

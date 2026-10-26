@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/kit";
 import { FontList } from "./font-list";
 import type { FontPickerProps } from "./font-picker.types";
 import { useFontFamilies } from "./use-font-families";

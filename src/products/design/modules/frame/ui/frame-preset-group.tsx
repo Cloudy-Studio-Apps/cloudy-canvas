@@ -1,6 +1,6 @@
 import { ChevronRight } from "lucide-react";
 
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import type { FramePresetGroupProps } from "./frame-preset-group.types";
 
 /** One group of presets (Phone, Tablet, …): a heading that opens it, then a row per size. */

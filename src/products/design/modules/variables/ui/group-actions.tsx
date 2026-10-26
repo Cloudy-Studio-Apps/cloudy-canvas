@@ -3,7 +3,7 @@ import { Pencil } from "lucide-react";
 import { DOCUMENT_TOKENS } from "@canvas";
 import { CommitInput } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/kit";
 import { NewVariableMenu } from "./new-variable-menu";
 import type { GroupActionsProps } from "./variables-ui.types";
 

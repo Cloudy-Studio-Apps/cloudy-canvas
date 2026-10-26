@@ -1,4 +1,4 @@
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import type { SegmentedProps } from "./generator.types";
 
 /** A labelled row of choices, one picked. */

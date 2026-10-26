@@ -2,7 +2,7 @@ import { Eye, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import { CommitInput } from "@canvas-ui";
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";
 import type { ModeGroupCardProps } from "./inspector.types";

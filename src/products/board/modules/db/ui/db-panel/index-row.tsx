@@ -1,7 +1,6 @@
 import { Trash2, X } from "lucide-react";
 
-import { Button } from "@shared/ui/components/ui/button";
-import { IconButton } from "@shared/ui/kit";
+import { Button, IconButton } from "@shared/ui/kit";
 import { CommitInput } from "@canvas-ui";
 import { useBoardSchema } from "../schema";
 import { FlagToggle } from "./flag-toggle";

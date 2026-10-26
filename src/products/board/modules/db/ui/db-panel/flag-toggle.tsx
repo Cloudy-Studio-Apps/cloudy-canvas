@@ -1,4 +1,4 @@
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import type { FlagToggleProps } from "./flag-toggle.types";
 
 /** Small on/off chip for a constraint like PK or UQ. */

@@ -3,10 +3,16 @@ import { ChevronDown } from "lucide-react";
 
 import { COLUMN_TYPES, TYPE_ARGS } from "../../schema/column-types";
 import { formatColumnType, splitColumnType } from "../../table/column-type";
-import { Button } from "@shared/ui/components/ui/button";
-import { SearchInput } from "@shared/ui/kit";
-import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
-import { Tabs, TabsList, TabsTrigger } from "@shared/ui/components/ui/tabs";
+import {
+  Button,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  SearchInput,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+} from "@shared/ui/kit";
 import { CommitInput } from "@canvas-ui";
 import { useBoardSchema, useDbQuery } from "../schema";
 import { TypeOptionList } from "./type-option-list";

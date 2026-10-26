@@ -1,6 +1,6 @@
 import { Circle, Egg } from "lucide-react";
 
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { useErDiagram, useErQuery } from "../model";
 
 /** Switches the diagram's attributes between Chen ellipses and lollipop circles. */

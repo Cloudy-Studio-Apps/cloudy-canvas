@@ -3,13 +3,13 @@ import { Plus } from "lucide-react";
 import { erAddActions } from "../../model/er-add-actions";
 import { gateOf } from "../../model/standard-of";
 import type { ErPaletteItemId } from "../../model/er-drop.types";
-import { Button } from "@shared/ui/components/ui/button";
 import {
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@shared/ui/components/ui/dropdown-menu";
+} from "@shared/ui/kit";
 import { useEngine } from "@canvas-ui";
 import { useErDiagram, useErShape, useErShapes, useErSelection } from "../model";
 

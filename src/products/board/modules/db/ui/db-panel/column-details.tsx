@@ -1,8 +1,6 @@
 import { ChevronDown, ChevronUp, Ellipsis } from "lucide-react";
 
-import { Button } from "@shared/ui/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
-import { cn } from "@shared/ui/lib/utils";
+import { Button, cn, Popover, PopoverContent, PopoverTrigger } from "@shared/ui/kit";
 import { CommitInput, CommitTextarea } from "@canvas-ui";
 import { useBoardSchema } from "../schema";
 import type { ColumnDetailsProps } from "./column-details.types";

@@ -9,7 +9,7 @@ import {
   PropertyGrid,
   sharedValue,
 } from "@design/ui/components/panel";
-import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/kit";
 import { DashPatternField } from "./dash-pattern-field";
 import { dashStyle, dashStylePatch } from "./stroke-dashes";
 import type { DashStyle } from "./stroke-dashes.types";

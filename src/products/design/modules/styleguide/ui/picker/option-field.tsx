@@ -1,15 +1,6 @@
 import { useScrubUndo } from "@canvas-ui";
 import { FontPicker } from "../../../text/ui";
-import {
-  Checkbox,
-  Field,
-  NumberInput,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@shared/ui/kit";
+import { CheckboxField, Field, NumberInput, SelectField } from "@shared/ui/kit";
 import type { OptionFieldProps } from "./picker.types";
 
 /** One template option's control, by its type. */
@@ -18,11 +9,10 @@ export function OptionField({ spec, value, onChange }: OptionFieldProps) {
   switch (spec.type) {
     case "boolean":
       return (
-        <Checkbox
-          checked={value === true}
-          onCheckedChange={(checked) => onChange(checked)}
+        <CheckboxField
           label={spec.label}
-          className="text-muted-foreground"
+          checked={value === true}
+          onChange={(checked) => onChange(checked)}
         />
       );
     case "number":
@@ -43,20 +33,13 @@ export function OptionField({ spec, value, onChange }: OptionFieldProps) {
       );
     case "select":
       return (
-        <Field label={spec.label} layout="inline">
-          <Select value={String(value)} onValueChange={(next) => onChange(next)}>
-            <SelectTrigger aria-label={spec.label} className="h-7 w-full text-xs">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {spec.choices.map((choice) => (
-                <SelectItem key={choice.value} value={choice.value}>
-                  {choice.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Field>
+        <SelectField
+          label={spec.label}
+          layout="inline"
+          value={String(value)}
+          options={spec.choices}
+          onChange={(next) => onChange(next)}
+        />
       );
     case "font":
       return (

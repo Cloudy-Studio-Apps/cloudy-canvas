@@ -86,6 +86,9 @@ export type AlignTargetHook<O extends object> = (
   kinds: ElementKinds<O>,
 ) => Rect | null;
 
+/** See `CanvasProduct.rootOf`; only one module may decide it. */
+export type RootOfHook = (doc: CanvasDocument, id: string) => string | null;
+
 /** See `CanvasProduct.rulerFrame`; only one module may decide it. */
 export type RulerFrameHook<O extends object> = (
   selected: readonly CanvasElement[],
@@ -170,6 +173,8 @@ export interface CanvasPoints<O extends object> {
   selectTarget: ExtensionPoint<SelectTargetHook<O>>;
   /** What a single element aligns with (one module at most; two throw). */
   alignTarget: ExtensionPoint<AlignTargetHook<O>>;
+  /** The top-level element one is drawn in (one module at most; two throw). */
+  rootOf: ExtensionPoint<RootOfHook>;
   /** What the rulers measure (one module at most; two throw). */
   rulerFrame: ExtensionPoint<RulerFrameHook<O>>;
   /** The frames N and Shift+N step through (one module at most; two throw). */

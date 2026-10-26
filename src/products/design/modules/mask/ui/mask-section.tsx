@@ -1,6 +1,6 @@
 import { SquareDashed } from "lucide-react";
 
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 
 import type { ElementPatch } from "@canvas";
 import { isDesignNode, layerNameOf, type DesignNode } from "../../core";

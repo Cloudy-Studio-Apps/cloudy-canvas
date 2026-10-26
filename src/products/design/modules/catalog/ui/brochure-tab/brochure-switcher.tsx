@@ -11,7 +11,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@shared/ui/components/ui/dropdown-menu";
+} from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
 
 /**

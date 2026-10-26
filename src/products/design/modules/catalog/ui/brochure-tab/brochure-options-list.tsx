@@ -1,10 +1,10 @@
+import { ElementThumbnail } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
 import { optionLetter } from "../option-letter";
 import { showPage } from "../page-actions";
 import type { BrochureOptionsListProps } from "./brochure-page-row.types";
-import { PageThumbnail } from "./page-thumbnail";
 
 /** A page's options under its row: picking one prints it instead. */
 export function BrochureOptionsList({ page }: BrochureOptionsListProps) {
@@ -38,7 +38,7 @@ export function BrochureOptionsList({ page }: BrochureOptionsListProps) {
                   chosen && "border-4 border-primary",
                 )}
               />
-              <PageThumbnail frameId={option.id} className="h-7 w-10" />
+              <ElementThumbnail id={option.id} className="h-7 w-10" />
               <span className="truncate">
                 {optionLetter(i)} · {option.name}
               </span>

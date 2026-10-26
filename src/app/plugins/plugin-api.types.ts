@@ -97,6 +97,15 @@ export interface PluginApi {
     | "OptionButton"
     | "ColorSwatch"
     | "ColorPalette"
+    | "ColorField"
+    | "ColorPopover"
+    | "chooseImageAsset"
+    | "ImageChooseButton"
+    | "ModeToolbar"
+    | "ModeToolbarItem"
+    | "ElementThumbnail"
+    | "useElementThumbnail"
+    | "AnchorPicker"
     | "ExtensionIconView"
     | "useEngine"
     | "useEngineState"
@@ -256,7 +265,7 @@ export interface DesignPluginApi {
       | "atopShader"
       | "shapeUnderShader"
     > &
-    Pick<typeof effectsUi, "EffectChoice" | "EffectColorField" | "EffectToggle" | "ScrubField">;
+    Pick<typeof effectsUi, "EffectChoice" | "ScrubField">;
   hooks: Pick<typeof designHooks, "useSelectedNodes" | "useEditNodes" | "useMoveNodes"> & {
     useDesignEngine: typeof useDesignEngine;
     useDesignState: typeof useDesignState;

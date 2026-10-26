@@ -2,8 +2,7 @@ import { CornerDownRight } from "lucide-react";
 
 import { hasOverrides, tokenLeafOf, valueIn } from "@canvas";
 import { useDocumentTokens, VariableValue } from "@canvas-ui";
-import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
-import { cn } from "@shared/ui/lib/utils";
+import { cn, Popover, PopoverContent, PopoverTrigger } from "@shared/ui/kit";
 import { VariableEditor } from "./variable-editor";
 import { typeGlyph } from "./window/group-kinds";
 import type { VariableRowProps } from "./variables-ui.types";

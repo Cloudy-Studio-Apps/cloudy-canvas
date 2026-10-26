@@ -1,7 +1,7 @@
 import { ArrowLeftRight } from "lucide-react";
 
 import type { ErConstraintRule } from "../../../constraint/constraint.types";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { useErDiagram, useErShapes } from "../../model";
 import { CardinalityPicker } from "./cardinality-picker";
 import { entityOptions, relationOptions } from "./entity-options";

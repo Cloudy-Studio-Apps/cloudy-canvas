@@ -1,12 +1,6 @@
 import type { FontVariant } from "@shared/core";
 import { variantName } from "@shared/core";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@shared/ui/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@shared/ui/kit";
 import type { FaceSelectProps } from "./typography-controls.types";
 
 const faceValue = ({ weight, style }: FontVariant) => `${weight}|${style}`;

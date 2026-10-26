@@ -1,12 +1,10 @@
 import { LayoutGrid } from "lucide-react";
 
 import type { BrochureArrange } from "../../brochure/brochure.types";
-import { Button } from "@shared/ui/components/ui/button";
 import { useBrochure } from "../hooks/use-brochure";
-import { SettingSelect } from "./setting-select";
-import type { SettingChoice } from "./sidebar.types";
+import { Button, SelectField, type SelectOption } from "@shared/ui/kit";
 
-const ARRANGES: readonly SettingChoice<BrochureArrange>[] = [
+const ARRANGES: readonly SelectOption<BrochureArrange>[] = [
   { value: "off", label: "Don't arrange the canvas" },
   { value: "below", label: "Arrange · options below each page" },
   { value: "beside", label: "Arrange · options beside each page" },
@@ -22,10 +20,10 @@ export function ArrangeFields() {
 
   return (
     <div className="flex flex-col gap-1.5">
-      <SettingSelect
+      <SelectField
         label="Arrange on canvas"
         value={settings.arrange}
-        choices={ARRANGES}
+        options={ARRANGES}
         onChange={(arrange) => brochure?.setSettings({ arrange })}
       />
       <Button

@@ -7,7 +7,7 @@ Frames: containers that clip their children, drawn with F (or A) and its device 
 - **Contributes:** kinds `FrameKind`; designCanvas: `kinds`, `options`, `tools`; designEditor: `propertySections`, `toolSidebars`, `tools`; `designMcpTools`
 - **Points it owns:** —
 - **MCP tools:** `add_preset_frame`, `list_frame_presets`
-- **Files:** `frame.kind.ts`, `frame.draw.ts`, `frame-presets.ts`, `create-preset-frame.ts`, `frame.mcp.ts`, `ui/` (presets sidebar, section).
+- **Files:** `frame.kind.ts`, `frame.draw.ts`, `frame-presets.ts`, `create-preset-frame.ts`, `frame.mcp.ts`, `ui/` (presets sidebar, section, `FramePresetPicker`: the sizes menu, exported from `ui/index.ts` for other modules, e.g. the catalog's blank pages).
 
 ## How it works
 

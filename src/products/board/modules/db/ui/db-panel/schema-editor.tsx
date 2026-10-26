@@ -4,7 +4,7 @@ import { FileDown, FileUp } from "lucide-react";
 import type { DbmlError } from "../../schema/dbml/parser.types";
 import { useCanvasFile } from "@canvas-ui";
 import { exportDbmlFile, importDbmlFile } from "@platform";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { useBoardSchema } from "../schema";
 import { DbmlEditor } from "./dbml-editor";
 

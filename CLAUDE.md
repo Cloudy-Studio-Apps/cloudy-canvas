@@ -130,11 +130,10 @@ The rules above describe where the code is going (spec:
 [module conventions](docs/superpowers/specs/2026-10-25-module-conventions-design.md)). **Until a row's
 phase is done, follow the existing pattern in that part of the code.**
 
-| Rule                                                               | Code today                                             | Fixed in phase |
-| ------------------------------------------------------------------ | ------------------------------------------------------ | -------------- |
-| shared pieces (`ColorField`, `chooseImageAsset`, `ModeToolbar`, …) | duplicated per feature                                 | 5a             |
-| one mode definition (`defineDesignMode`, `registerMode`)           | about 10 contributions per mode                        | 5b             |
-| plugin API as the barrels, `host.require`, module `exports`        | a hand-kept list in `app/plugins/create-plugin-api.ts` | 6              |
+| Rule                                                        | Code today                                             | Fixed in phase |
+| ----------------------------------------------------------- | ------------------------------------------------------ | -------------- |
+| one mode definition (`defineDesignMode`, `registerMode`)    | about 10 contributions per mode                        | 5b             |
+| plugin API as the barrels, `host.require`, module `exports` | a hand-kept list in `app/plugins/create-plugin-api.ts` | 6              |
 
 ## Where to look
 

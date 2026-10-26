@@ -4,7 +4,7 @@ import type { ElementPatch } from "@canvas";
 import { BOOLEAN_OPERATIONS, BOOLEAN_TYPE } from "../boolean.constants";
 import type { BooleanElement } from "../boolean.types";
 import type { DesignNode } from "../../core";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { NodeOptionButtons, PanelIconButton, PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import type { PropertySectionProps } from "@design/ui/modules";

@@ -1,5 +1,5 @@
 import { ExtensionIconView } from "@canvas-ui";
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import type { LibraryCardProps } from "./library.types";
 
 /** One item: a preview tile and its name. Items that aren't ready yet are shown, disabled. */

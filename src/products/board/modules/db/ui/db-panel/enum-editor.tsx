@@ -1,4 +1,4 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@shared/ui/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@shared/ui/kit";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { useBoardSchema, useDbEnum } from "../schema";
 import { DbmlEditor } from "./dbml-editor";

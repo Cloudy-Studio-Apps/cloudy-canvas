@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-} from "@shared/ui/components/ui/dropdown-menu";
+} from "@shared/ui/kit";
 import { useEngine, useService } from "@canvas-ui";
 import { useErModel } from "../model";
 

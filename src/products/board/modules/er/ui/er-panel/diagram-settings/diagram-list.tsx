@@ -2,8 +2,7 @@ import { Network, Plus } from "lucide-react";
 
 import { rectCenter } from "@canvas";
 import { useEngine } from "@canvas-ui";
-import { Button } from "@shared/ui/components/ui/button";
-import { ListRow } from "@shared/ui/kit";
+import { Button, ListRow } from "@shared/ui/kit";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { useErModel, useErQuery } from "../../model";
 import { diagramShapeIds } from "../diagram-shape-ids";

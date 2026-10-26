@@ -1,6 +1,6 @@
 import { createPortal } from "react-dom";
 
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import { ErPaletteIcon } from "./er-palette-icon";
 import type { ErDragGhostProps } from "./er-palette.types";
 

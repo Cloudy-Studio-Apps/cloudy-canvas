@@ -4,7 +4,7 @@ import { useState, type ComponentType } from "react";
 import type { VariableType } from "@canvas";
 
 import { CommitTextarea } from "@canvas-ui";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { AdvancedSettings } from "../../advanced-settings";
 import { DeleteTokensDialog } from "../../../../core/ui";
 import { UsageSummary } from "@design/ui/components/token-usage";

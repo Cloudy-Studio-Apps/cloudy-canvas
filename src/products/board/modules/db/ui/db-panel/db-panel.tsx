@@ -1,7 +1,7 @@
 import { BoxSelect, Braces, LayoutGrid, X } from "lucide-react";
 
 import { FloatingPanel, useEngine, useEngineState } from "@canvas-ui";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { useBoardSchema } from "../schema";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { SchemaEditor } from "./schema-editor";

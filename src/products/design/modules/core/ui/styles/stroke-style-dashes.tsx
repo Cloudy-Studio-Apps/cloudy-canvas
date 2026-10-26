@@ -1,6 +1,6 @@
 import { commitFieldProps, useCommitField } from "@canvas-ui";
 import { FieldBox, NumberField, PropertyGrid } from "@design/ui/components/panel";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@shared/ui/kit";
+import { SelectField } from "@shared/ui/kit";
 import {
   DASH_STYLES,
   dashStyle,
@@ -23,21 +23,12 @@ export function StrokeStyleDashes({ value, onChange }: StrokeStyleDashesProps) {
   const [dash = 0, gap = 0] = value.strokeDashes;
   return (
     <>
-      <Select
+      <SelectField
+        label="Dash style"
         value={style}
-        onValueChange={(next) => onChange(dashStylePatch(next as DashStyle, value) as never)}
-      >
-        <SelectTrigger aria-label="Dash style" className="h-7 text-xs">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {DASH_STYLES.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+        options={DASH_STYLES}
+        onChange={(next) => onChange(dashStylePatch(next as DashStyle, value) as never)}
+      />
       {style === "dashed" && (
         <PropertyGrid>
           <NumberField

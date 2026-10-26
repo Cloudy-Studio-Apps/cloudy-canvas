@@ -12,7 +12,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@shared/ui/components/ui/dropdown-menu";
+} from "@shared/ui/kit";
 import type { AddCardMenuProps } from "./board.types";
 
 /**

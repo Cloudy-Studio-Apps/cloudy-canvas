@@ -2,12 +2,12 @@ import { SCALE_ANCHORS } from "@canvas";
 import { cn } from "@shared/ui/lib/utils";
 import type { AnchorPickerProps } from "./anchor-picker.types";
 
-/** The 3×3 grid that picks the point of the selection that stays put while it's scaled. */
-export function AnchorPicker({ value, onChange }: AnchorPickerProps) {
+/** The 3×3 grid that picks an anchor: the point that stays put (e.g. while the selection is scaled). */
+export function AnchorPicker({ value, onChange, label = "Anchor" }: AnchorPickerProps) {
   return (
     <div
       role="radiogroup"
-      aria-label="Scale from"
+      aria-label={label}
       className="grid size-14 shrink-0 grid-cols-3 place-items-center rounded-sm bg-muted p-1"
     >
       {SCALE_ANCHORS.map((anchor) => (

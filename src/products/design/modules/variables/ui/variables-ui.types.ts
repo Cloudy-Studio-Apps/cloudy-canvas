@@ -1,4 +1,3 @@
-import type { ColorChangeInfo } from "@canvas-ui";
 import type { ComponentProps } from "react";
 
 import type { ModeContext, TokenGroupNode, VariableRecord } from "@canvas";
@@ -40,16 +39,6 @@ export interface GroupActionsProps {
   collectionId: string;
   group: TokenGroupNode;
   onCreated: (id: string) => void;
-}
-
-export interface SwatchInputProps {
-  /** `#rrggbb`. */
-  color: string;
-  /** 0–1: the picker shows its opacity slider; left out for colors without one. */
-  opacity?: number;
-  label: string;
-  /** Each step of a drag and its end; the steps of one drag are one undo step. */
-  onChange: (color: string, opacity: number, info: ColorChangeInfo) => void;
 }
 
 /** A hover action; takes a trigger's props and ref too (it opens the variable picker). */

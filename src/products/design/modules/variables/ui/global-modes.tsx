@@ -1,7 +1,7 @@
 import { DOCUMENT_TOKENS, modeFor } from "@canvas";
 import { useDocumentTokens } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 
 /**
  * The file's modes, one switch per axis with several (Light | Dark): switching one changes every

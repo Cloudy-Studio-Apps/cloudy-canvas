@@ -2,7 +2,7 @@ import { Blocks } from "lucide-react";
 import { useEffect } from "react";
 
 import { ToolButton } from "@canvas-ui";
-import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/kit";
 import { useBoardEngine } from "@board/ui/board-engine-context";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { OPEN_LIBRARY } from "./library-command";

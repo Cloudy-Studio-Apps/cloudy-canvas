@@ -2,13 +2,7 @@ import { useMemo } from "react";
 
 import type { ShaderEffect } from "../../effects";
 import { CodeEditor } from "@shared/ui/components/code-editor";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@shared/ui/components/ui/select";
+import { SelectField } from "@shared/ui/kit";
 import { compileShaderCode } from "../shader-compile";
 import { paramValue } from "../shader-params";
 import { SHADER_PRESETS } from "../shader-presets";
@@ -26,24 +20,16 @@ export function ShaderEditor({ effect, onChange }: EffectEditorProps<ShaderEffec
   const error = compiled.ok ? null : compiled.error;
   return (
     <div className="flex flex-col gap-2">
-      <Select
+      <SelectField
+        label="Start from a preset"
         value=""
-        onValueChange={(label) => {
+        placeholder="Start from a preset…"
+        options={SHADER_PRESETS.map((preset) => ({ value: preset.label, label: preset.label }))}
+        onChange={(label) => {
           const preset = SHADER_PRESETS.find((p) => p.label === label);
           if (preset) onChange({ ...effect, code: preset.code, params: {} });
         }}
-      >
-        <SelectTrigger aria-label="Start from a preset" className="h-7 w-full text-xs">
-          <SelectValue placeholder="Start from a preset…" />
-        </SelectTrigger>
-        <SelectContent>
-          {SHADER_PRESETS.map((preset) => (
-            <SelectItem key={preset.label} value={preset.label}>
-              {preset.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      />
       <CodeEditor
         value={effect.code}
         // Typing is one undo step per pause, like the board's code panels.

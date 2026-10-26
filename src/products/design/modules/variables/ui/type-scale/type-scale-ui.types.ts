@@ -14,13 +14,6 @@ export interface TypeScalePreviewProps {
   settings: TypeScaleSettings;
 }
 
-export interface ChoiceFieldProps {
-  label: string;
-  value: string;
-  choices: readonly { value: string; label: string }[];
-  onChange(value: string): void;
-}
-
 export interface NumberFieldRowProps {
   label: string;
   value: number;

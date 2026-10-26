@@ -1,8 +1,9 @@
 import { Grid3x3, Move } from "lucide-react";
 
+import { CheckboxField } from "@shared/ui/kit";
 import { PropertyGrid } from "@design/ui/components/panel";
 import type { TextureEffect } from "../../effect.types";
-import { EffectToggle, ScrubField } from "../fields";
+import { ScrubField } from "../fields";
 import type { EffectEditorProps } from "../effects.points.types";
 
 /** Texture: how big its grain is, how far it pushes the edges, and whether it stays inside. */
@@ -29,7 +30,7 @@ export function TextureEditor({ effect, onChange }: EffectEditorProps<TextureEff
           onChange={(radius, info) => set({ radius }, info)}
         />
       </PropertyGrid>
-      <EffectToggle
+      <CheckboxField
         label="Clip to shape"
         checked={effect.clipToShape}
         onChange={(clipToShape) => set({ clipToShape })}

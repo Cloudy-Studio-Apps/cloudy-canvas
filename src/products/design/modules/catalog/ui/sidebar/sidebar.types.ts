@@ -21,21 +21,3 @@ export interface LooseFrameSectionProps {
 export interface FramesSectionProps {
   frames: readonly FrameElement[];
 }
-
-export interface ToggleProps {
-  label: string;
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-}
-
-export interface SettingChoice<T extends string> {
-  value: T;
-  label: string;
-}
-
-export interface SettingSelectProps<T extends string> {
-  label: string;
-  value: T;
-  choices: readonly SettingChoice<T>[];
-  onChange: (value: T) => void;
-}

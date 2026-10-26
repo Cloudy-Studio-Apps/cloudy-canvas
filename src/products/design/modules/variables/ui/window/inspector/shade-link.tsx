@@ -1,5 +1,5 @@
 import { tokenLeafOf } from "@canvas";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { draftFromGenerator, draftFromVariable } from "../shade-drafts";
 import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";

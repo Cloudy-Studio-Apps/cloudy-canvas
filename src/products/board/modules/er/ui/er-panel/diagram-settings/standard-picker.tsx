@@ -2,7 +2,7 @@ import { ExternalLink } from "lucide-react";
 
 import { erStandards } from "../../../base/standards/er-standard-registry";
 import { openExternal } from "@platform";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { notifyError } from "@shared/stores/toast-store";
 import { ShapeSelect } from "../forms/shape-select";
 import type { ErStandardPickerProps } from "./diagram-settings.types";

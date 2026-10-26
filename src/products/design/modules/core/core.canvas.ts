@@ -7,6 +7,7 @@ import { treeOrderKeys } from "./tree/order-keys";
 import { prepareTreeCopies } from "./tree/prepare-tree-copies";
 import { reparentMoved } from "./tree/reparent";
 import { resolveTree } from "./tree/resolve-tree";
+import { treeRootOf } from "./tree/root-of";
 import { selectionRulerFrame } from "./tree/ruler-frame";
 import { topFrames } from "./tree/top-frames";
 import { treeClips } from "./tree/tree-clips";
@@ -37,6 +38,7 @@ export function registerCoreCanvas(host: ModuleHost): void {
   host.contribute(designCanvas.withMembers, (ids, elements) => withDescendants(ids, elements));
   host.contribute(designCanvas.onMoved, reparentMoved);
   host.contribute(designCanvas.alignTarget, containerAlignTarget);
+  host.contribute(designCanvas.rootOf, treeRootOf);
   host.contribute(designCanvas.pasteOnto, pasteGradientOnto);
   host.contribute(designCanvas.rulerFrame, selectionRulerFrame);
   host.contribute(designCanvas.frames, topFrames);

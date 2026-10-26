@@ -1,7 +1,7 @@
 import { CircleCheck, CircleX, Info, TriangleAlert } from "lucide-react";
 
 import { useEngine } from "@canvas-ui";
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import type { ErCheckListProps } from "./diagram-settings.types";
 
 const ICONS = { error: CircleX, warning: TriangleAlert, info: Info } as const;

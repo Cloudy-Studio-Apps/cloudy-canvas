@@ -1,6 +1,6 @@
 import { LocateFixed } from "lucide-react";
 
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { useEngine } from "@canvas-ui";
 import { useDbQuery } from "../schema";
 import type { IncomingRefsProps } from "./incoming-refs.types";

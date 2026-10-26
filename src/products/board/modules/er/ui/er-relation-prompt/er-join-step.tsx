@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { ShapeSelect } from "../er-panel/forms/shape-select";
 import { useErModel, useErVersion } from "../model";
 import { ErRelationGlyph } from "./er-relation-glyph";

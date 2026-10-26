@@ -2,7 +2,7 @@ import { X } from "lucide-react";
 
 import { SHADE_STEPS, type GeneratorInput, type ShadeSteps } from "@canvas";
 import { CommitInput } from "@canvas-ui";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { notifyError } from "@shared/stores/toast-store";
 import { joinPath } from "../group-paths";
 import { useBoard } from "../use-board";

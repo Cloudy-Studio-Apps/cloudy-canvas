@@ -1,4 +1,4 @@
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import type { GhostNumberCardProps } from "./board.types";
 import { NumberVisual } from "./number-visual";
 

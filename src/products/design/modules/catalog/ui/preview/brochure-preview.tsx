@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 import { brochurePageSize } from "../../model/page-span";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
 import { useBrochurePreviewStore } from "../stores/preview-store";
 import { Preview3dToggle } from "./preview-3d-toggle";

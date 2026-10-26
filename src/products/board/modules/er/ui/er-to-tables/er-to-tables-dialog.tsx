@@ -3,15 +3,15 @@ import { CircleX, TriangleAlert } from "lucide-react";
 
 import type { ErHierarchyStrategy } from "../../model/to-tables/to-tables.types";
 import { useEngine } from "@canvas-ui";
-import { Button } from "@shared/ui/components/ui/button";
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@shared/ui/components/ui/dialog";
+} from "@shared/ui/kit";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { useErModel, useErVersion } from "../model";

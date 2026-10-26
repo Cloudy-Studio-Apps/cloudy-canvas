@@ -1,8 +1,7 @@
 import { Palette, X } from "lucide-react";
 
 import { FloatingPanel, useDocumentTokens } from "@canvas-ui";
-import { EmptyState, IconButton } from "@shared/ui/kit";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button, EmptyState, IconButton } from "@shared/ui/kit";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { AddMenu } from "./add-menu";
 import { BoardModes } from "./board-modes";

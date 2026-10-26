@@ -1,5 +1,5 @@
-import { cn } from "@shared/ui/lib/utils";
-import { PageThumbnail } from "../brochure-tab/page-thumbnail";
+import { ElementThumbnail } from "@canvas-ui";
+import { cn } from "@shared/ui/kit";
 import type { PreviewStripProps } from "./preview.types";
 
 /** Every page small along the bottom of the preview; a click turns to it. */
@@ -18,7 +18,7 @@ export function PreviewStrip({ pages, shown, onPick }: PreviewStripProps) {
             shown.has(page.slot.id) && "opacity-100 outline-ring",
           )}
         >
-          <PageThumbnail frameId={page.frame.id} className="h-10 w-14" />
+          <ElementThumbnail id={page.frame.id} className="h-10 w-14" />
         </button>
       ))}
     </div>

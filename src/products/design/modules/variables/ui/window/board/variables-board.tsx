@@ -1,5 +1,5 @@
 import { resolveVariable } from "@canvas";
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import { leafName, variablesByGroup } from "../group-paths";
 import { luminance } from "../luminance";
 import { useBoard } from "../use-board";

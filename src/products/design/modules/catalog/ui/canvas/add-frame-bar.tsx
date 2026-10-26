@@ -2,7 +2,7 @@ import { Plus } from "lucide-react";
 
 import { ensureBrochure } from "../../model/current-brochure";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
 import type { AddFrameBarProps } from "./canvas.types";
 

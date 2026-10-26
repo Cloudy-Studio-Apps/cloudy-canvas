@@ -1,14 +1,14 @@
 import { DOCUMENT_TOKENS } from "@canvas";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import { Button } from "@shared/ui/components/ui/button";
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@shared/ui/components/ui/dialog";
+} from "@shared/ui/kit";
 import type { DeleteTokensDialogProps } from "./styles.types";
 
 /**

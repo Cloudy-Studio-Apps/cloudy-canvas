@@ -1,14 +1,14 @@
 import { Check, ChevronDown, List, Plus } from "lucide-react";
 
-import { Button } from "@shared/ui/components/ui/button";
 import {
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@shared/ui/components/ui/dropdown-menu";
+} from "@shared/ui/kit";
 import { useEngine } from "@canvas-ui";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { useErModel, useErDiagram, useErQuery } from "../model";

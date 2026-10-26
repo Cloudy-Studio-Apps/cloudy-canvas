@@ -632,7 +632,7 @@ edits files.
    (§7.6); ER points → er (§7.4); `pages ↔ layers` point (§8 #1): layers requires only core, pages requires core and layers.
 4. **Split big module files** (done 2026-10-26; styleguide too) (§7.4, §7.5) into `.commands.ts`, `.sections.ts`, `.canvas.ts`,
    `.menu.ts`, `.migration.ts`.
-5. **Public-API imports + enforcement** (done 2026-10-26; 5a and 5b open). Fix §8 #2–#7, `CORE_MODULES`/`FEATURE_MODULES` lists, the
+5. **Public-API imports + enforcement** (done 2026-10-26; 5a done 2026-10-26, 5b open). Fix §8 #2–#7, `CORE_MODULES`/`FEATURE_MODULES` lists, the
    ESLint rules and `check:modules`. Write every module's `README.md`.
    - **5a. Shared pieces** (§16): `ColorField`, `chooseImageAsset`, `ModeToolbar`,
      `useElementThumbnail`, `AnchorPicker` in `@canvas-ui`; `SelectField`/`CheckboxField`/
@@ -1074,8 +1074,10 @@ export default function activate(api) {
   `ToolButton`, `OptionButton`, `ImageCropOverlay`, `ImageQualityNote`, `StickerWheel`,
   `ExportDialog`, `VariablePicker`, `VariableChip`, `useAssetUrl`, `useScrubUndo`, `useEditorMode`,
   `useEngine`, `useEngineState`, `useEngineElement`, `useService`, `useCanvasFile`, `useSnapping`)
-  **+** `ColorField`, `chooseImageAsset`, `ImageChooseButton`, `ModeToolbar`, `ModeToolbarItem`,
-  `useElementThumbnail`, `ElementThumbnail`, `AnchorPicker`, `defineMode`/`registerMode` (the
+  **+** `ColorField`, `ColorPopover` (the swatch and picker under it, any trigger), `chooseImageAsset`,
+  `ImageChooseButton`, `ModeToolbar`, `ModeToolbarItem` (the items' data type is `ModeToolbarEntry`),
+  `useElementThumbnail(id)` (one size, 240 px), `ElementThumbnail`, `AnchorPicker` (done in 5a; the
+  engine got `scopeOf`/`rootOf` for the thumbnails), `defineMode`/`registerMode` (the
   product-neutral base the two product helpers extend).
 - **`@design/ui`**: panel (`PanelSection`, `PropertyGrid`, `NumberField`, `NodeNumberField`,
   `NodeSelectField`, `NodeCheckbox`, `NodeOptionButtons`, `PaintField`, `PaintPicker`,
@@ -1086,8 +1088,8 @@ export default function activate(api) {
 - **`@board/ui`**: `useBoardEngine`, `useBoardState`, `SourceEditor`, **+** `defineBoardMode`.
 - **Modules' `ui/index.ts`**: frame (`FramePresetPicker`), text (`FontPicker`), layers
   (`LayerName`, `layersTabSections`), core (styles UI, `designStyleTypes`), variables
-  (`useCreateVariable`, `openVariablesWindow`), effects (the
-  effect fields `ScrubField`, `EffectToggle`, `EffectChoice`, now on `ColorField`), pages
+  (`useCreateVariable`, `openVariablesWindow()`, `useVariablesWindowOpen`), effects (the
+  effect fields `ScrubField`, `EffectChoice`; `EffectColorField` became `ColorField`, `EffectToggle` the kit's `CheckboxField`), pages
   (nothing yet: its list is a `layersTabSections` entry), image (`ImageEditor` pieces), catalog/styleguide/er (what other features or
   plugins may reuse; nothing yet).
 

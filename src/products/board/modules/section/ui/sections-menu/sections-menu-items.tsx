@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { boardSections } from "../../section-members";
 import { useEngine } from "@canvas-ui";
-import { DropdownMenuItem, DropdownMenuLabel } from "@shared/ui/components/ui/dropdown-menu";
+import { DropdownMenuItem, DropdownMenuLabel } from "@shared/ui/kit";
 
 /** Only mounted while the menu is open, so it reads the sections once per opening. */
 export function SectionsMenuItems() {

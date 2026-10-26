@@ -16,11 +16,6 @@ export interface BrochureOptionsListProps {
   page: BrochurePage;
 }
 
-export interface PageThumbnailProps {
-  frameId: string;
-  className?: string;
-}
-
 export interface BlankPageRowProps {
   /** Its printed page number. */
   number: number;

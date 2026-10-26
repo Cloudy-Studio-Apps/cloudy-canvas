@@ -4,7 +4,7 @@ import { elementBounds, unionRects, type ScaleAnchor } from "@canvas";
 import { NumberField, PanelSection, PropertyGrid } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useSelectedNodes } from "@design/ui/hooks";
-import { AnchorPicker } from "./anchor-picker";
+import { AnchorPicker } from "@canvas-ui";
 
 /** Smallest width or height typed in the panel. */
 const MIN_SIDE = 1;
@@ -59,7 +59,7 @@ export function ScaleSidebar() {
               onCommit={(percent) => scale(percent / 100)}
             />
           </div>
-          <AnchorPicker value={anchor} onChange={setAnchor} />
+          <AnchorPicker value={anchor} onChange={setAnchor} label="Scale from" />
         </div>
       ) : (
         <p className="text-xs text-muted-foreground">

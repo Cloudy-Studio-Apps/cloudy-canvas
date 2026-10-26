@@ -3,8 +3,7 @@ import { useMemo, useState } from "react";
 import { importConflicts, selectTokens, type ImportChoice, type TokenRecord } from "@canvas";
 import { ImportConflicts, useDocumentTokens } from "@canvas-ui";
 import { notifyError, toast } from "@shared/stores/toast-store";
-import { Button } from "@shared/ui/components/ui/button";
-import { AppDialog, Checkbox } from "@shared/ui/kit";
+import { AppDialog, Button, Checkbox } from "@shared/ui/kit";
 import type { ImportColorsBodyProps, ImportColorsDialogProps } from "./colors-ui.types";
 
 /**

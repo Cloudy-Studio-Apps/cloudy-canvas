@@ -1,12 +1,12 @@
-import { Button } from "@shared/ui/components/ui/button";
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@shared/ui/components/ui/dialog";
+} from "@shared/ui/kit";
 import { useBoard } from "../use-board";
 import type { DeleteCollectionDialogProps } from "./side.types";
 

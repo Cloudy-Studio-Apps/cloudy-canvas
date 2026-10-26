@@ -2,10 +2,7 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 
 import { formatColumnType } from "../../table/column-type";
-import { Button } from "@shared/ui/components/ui/button";
-import { ListRow } from "@shared/ui/kit";
-import { Input } from "@shared/ui/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
+import { Button, Input, ListRow, Popover, PopoverContent, PopoverTrigger } from "@shared/ui/kit";
 import type { IndexPartPickerProps } from "./index-part-picker.types";
 
 /** Adds a column, or an expression like `lower(email)`, to an index. */

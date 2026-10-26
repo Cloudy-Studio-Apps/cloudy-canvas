@@ -1,5 +1,5 @@
 import { DEFAULT_VALUE, resolveVariable, valueKeyOf } from "@canvas";
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import { leafName } from "../group-paths";
 import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";

@@ -1,7 +1,7 @@
+import { ColorField } from "@canvas-ui";
 import { useState } from "react";
 
 import { canRestyleEdge, stickerEdgePatches } from "../sticker-edge";
-import { EffectColorField } from "../../effects/ui";
 import { PanelIconButton } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { notifyError } from "@shared/stores/toast-store";
@@ -40,7 +40,7 @@ export function StickerEdgeField({ stickers }: StickerFieldsProps) {
   return (
     <div className="flex items-center gap-1">
       <div className="min-w-0 flex-1">
-        <EffectColorField
+        <ColorField
           label="Edge"
           color={draft ?? current}
           onChange={({ color }, { done }) => {

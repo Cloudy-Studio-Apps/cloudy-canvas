@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 
+import { ElementThumbnail } from "@canvas-ui";
 import { paperSize } from "../../model/paper-size";
 import { PanelIconButton } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
 import { optionLetter } from "../option-letter";
 import { showPage } from "../page-actions";
 import { BrochureOptionsList } from "./brochure-options-list";
 import type { BrochurePageRowProps } from "./brochure-page-row.types";
-import { PageThumbnail } from "./page-thumbnail";
 
 /** The drag data type of a brochure page row. */
 const PAGE_DRAG = "application/x-cloudy-brochure-page";
@@ -78,7 +78,7 @@ export function BrochurePageRow({
         >
           {label}
         </span>
-        <PageThumbnail frameId={page.frame.id} className="h-10 w-14" />
+        <ElementThumbnail id={page.frame.id} className="h-10 w-14" />
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm text-foreground">{page.frame.name}</span>
           <span className="block truncate text-xs text-muted-foreground">{detail}</span>

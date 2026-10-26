@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { DESIGN_PAGES } from "../design-pages";
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { LayerName } from "../../layers/ui";
 import { PageMenu } from "./page-menu";

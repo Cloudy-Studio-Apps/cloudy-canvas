@@ -1,6 +1,6 @@
 import { LocateFixed } from "lucide-react";
 
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { useEngine } from "@canvas-ui";
 import type { ErAttributeElement } from "../../../attribute/attribute.types";
 import { useErShape, useErShapes } from "../../model";

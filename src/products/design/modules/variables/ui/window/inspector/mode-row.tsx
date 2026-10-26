@@ -3,7 +3,7 @@ import { useState } from "react";
 
 import { CommitInput } from "@canvas-ui";
 import { notifyError } from "@shared/stores/toast-store";
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import { useBoard } from "../use-board";
 import type { ModeRowProps } from "./inspector.types";
 import { MoveModeMenu } from "./move-mode-menu";

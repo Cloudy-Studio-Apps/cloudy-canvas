@@ -3,7 +3,7 @@ import { useState } from "react";
 
 import { resolveVariable } from "@canvas";
 import { useDocumentTokens } from "@canvas-ui";
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import { VariableRow } from "./variable-row";
 import { cssColor } from "./window/css-color";
 import { groupLabel, typeGlyph } from "./window/group-kinds";

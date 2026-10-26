@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@shared/ui/components/ui/dropdown-menu";
+} from "@shared/ui/kit";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useSelectedNodes } from "@design/ui/hooks";
 import { BOOLEAN_COMMANDS, BOOLEAN_ICONS } from "./boolean-icons";

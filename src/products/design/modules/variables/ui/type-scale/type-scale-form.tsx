@@ -1,9 +1,8 @@
 import { useDocumentTokens } from "@canvas-ui";
 import { SCALE_RATIOS, type FontWeight } from "@canvas";
 import { FONT_WEIGHTS } from "@shared/core";
-import { Field, Input } from "@shared/ui/kit";
+import { Field, Input, SelectField } from "@shared/ui/kit";
 import { FontPicker } from "../../../text/ui";
-import { ChoiceField } from "./choice-field";
 import { NumberFieldRow } from "./number-field-row";
 import type { TypeScaleFormProps } from "./type-scale-ui.types";
 
@@ -22,10 +21,11 @@ export function TypeScaleForm({ settings, onChange }: TypeScaleFormProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      <ChoiceField
+      <SelectField
+        layout="inline"
         label="Collection"
         value={settings.collection}
-        choices={store.collections().map((c) => ({ value: c.id, label: c.name }))}
+        options={store.collections().map((c) => ({ value: c.id, label: c.name }))}
         onChange={(collection) => set({ collection })}
       />
       <Field label="Group" layout="inline">
@@ -43,10 +43,11 @@ export function TypeScaleForm({ settings, onChange }: TypeScaleFormProps) {
         max={64}
         onChange={(base) => set({ base })}
       />
-      <ChoiceField
+      <SelectField
+        layout="inline"
         label="Ratio"
         value={String(settings.ratio)}
-        choices={SCALE_RATIOS.map((r) => ({
+        options={SCALE_RATIOS.map((r) => ({
           value: String(r.ratio),
           label: `${r.label} · ${r.ratio}`,
         }))}
@@ -66,10 +67,11 @@ export function TypeScaleForm({ settings, onChange }: TypeScaleFormProps) {
         max={7}
         onChange={(above) => set({ above })}
       />
-      <ChoiceField
+      <SelectField
+        layout="inline"
         label="Font"
         value={fontValue}
-        choices={[
+        options={[
           ...fontVariables.map((v) => ({ value: v.id, label: `Variable · ${v.name}` })),
           { value: BY_NAME, label: "A family…" },
         ]}
@@ -83,16 +85,18 @@ export function TypeScaleForm({ settings, onChange }: TypeScaleFormProps) {
           onPick={(font) => set({ font: { name: font.family } })}
         />
       )}
-      <ChoiceField
+      <SelectField
+        layout="inline"
         label="Heading weight"
         value={settings.headingWeight}
-        choices={weights}
+        options={weights}
         onChange={(w) => set({ headingWeight: w as FontWeight })}
       />
-      <ChoiceField
+      <SelectField
+        layout="inline"
         label="Body weight"
         value={settings.bodyWeight}
-        choices={weights}
+        options={weights}
         onChange={(w) => set({ bodyWeight: w as FontWeight })}
       />
       <NumberFieldRow

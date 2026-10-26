@@ -3,6 +3,7 @@
 // primitives (`components/ui/`) are re-exported too, so a plugin finds everything in one place.
 export * from "./app-dialog";
 export * from "./checkbox";
+export * from "./checkbox-field";
 export * from "./choice-cards";
 export * from "./empty-state";
 export * from "./field";
@@ -14,7 +15,9 @@ export * from "./number-input";
 export * from "./search-input";
 export * from "./section";
 export * from "./segmented-control";
+export * from "./select-field";
 export * from "./selectable-card";
 export * from "./swatch";
+export * from "./switch-field";
 export * from "./toolbar";
 export * from "./primitives";

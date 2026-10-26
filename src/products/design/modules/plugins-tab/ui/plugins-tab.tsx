@@ -1,7 +1,7 @@
 import { Puzzle } from "lucide-react";
 import { useNavigate } from "react-router";
 
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { PanelSection } from "@design/ui/components/panel";
 
 /** The left panel's Plugins tab: where design plugins will be run from. */

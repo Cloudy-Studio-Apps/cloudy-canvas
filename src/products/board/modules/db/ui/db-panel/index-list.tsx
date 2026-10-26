@@ -2,7 +2,7 @@ import { useId } from "react";
 import { Plus } from "lucide-react";
 
 import { INDEX_TYPES } from "../../schema/column-types";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { useBoardSchema } from "../schema";
 import { IndexRow } from "./index-row";
 import type { IndexListProps } from "./index-list.types";

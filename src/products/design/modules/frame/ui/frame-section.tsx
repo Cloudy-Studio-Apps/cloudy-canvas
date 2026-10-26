@@ -7,7 +7,7 @@ import { BindSlot, NodeCheckbox, PanelSection } from "@design/ui/components/pane
 import { useEditNodes } from "@design/ui/hooks";
 import { Button } from "@shared/ui/kit";
 import type { PropertySectionProps } from "@design/ui/modules";
-import { FramePresetMenu } from "./frame-preset-menu";
+import { FramePresetPicker } from "./frame-preset-picker";
 
 /** For selected frames: resize to a preset, and whether they clip their content. */
 export function FrameSection({ selection: { nodes } }: PropertySectionProps) {
@@ -18,7 +18,7 @@ export function FrameSection({ selection: { nodes } }: PropertySectionProps) {
     <PanelSection
       title="Frame"
       actions={
-        <FramePresetMenu
+        <FramePresetPicker
           onPick={({ size }) => edit(frames, () => ({ w: size.w, h: size.h }))}
           trigger={
             <Button variant="ghost" size="xs">

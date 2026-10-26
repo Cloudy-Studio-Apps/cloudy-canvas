@@ -1,8 +1,7 @@
-import { HexInput, FieldBox } from "@design/ui/components/panel";
+import { ColorField } from "@canvas-ui";
 import { joinTokenColor } from "@canvas";
 import { draftBase } from "../shade-drafts";
 import { useBoard } from "../use-board";
-import { SwatchInput } from "../../swatch-input";
 import type { GeneratorPartProps } from "./generator.types";
 
 /** The shades' base: a variable's color (followed), or one picked here. */
@@ -33,19 +32,11 @@ export function BaseColorField({ draft, change }: GeneratorPartProps) {
           </button>
         </div>
       ) : (
-        <FieldBox className="gap-0 pl-2">
-          <SwatchInput
-            color={hex.toLowerCase()}
-            label="Base color"
-            onChange={(c) => change({ baseColor: joinTokenColor(c, 1) })}
-          />
-          <HexInput
-            color={hex}
-            label="Base hex"
-            className="px-2"
-            onCommit={(c) => change({ baseColor: joinTokenColor(c, 1) })}
-          />
-        </FieldBox>
+        <ColorField
+          color={hex.toLowerCase()}
+          label="Base color"
+          onChange={(next) => change({ baseColor: joinTokenColor(next.color, 1) })}
+        />
       )}
     </div>
   );

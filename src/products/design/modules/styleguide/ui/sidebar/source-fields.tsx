@@ -1,11 +1,4 @@
-import {
-  Field,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@shared/ui/kit";
+import { SelectField } from "@shared/ui/kit";
 import { useStyleguide } from "../hooks/use-styleguide";
 import type { SourceFieldsProps } from "./sheet-section.types";
 
@@ -18,52 +11,37 @@ export function SourceFields({ sheet, outline }: SourceFieldsProps) {
   const entry = outline.find((item) => item.category.id === sheet.sheet.category);
   return (
     <div className="flex flex-col gap-2">
-      <Field label="Category" layout="inline">
-        <Select
-          value={sheet.sheet.category}
-          onValueChange={(category) =>
-            // Another category: its own default template, all of it.
-            styleguide.setSheet(sheet.id, {
-              category,
-              group: undefined,
-              template: null,
-              options: null,
-            })
-          }
-        >
-          <SelectTrigger aria-label="Category" className="h-7 w-full text-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {outline.map((item) => (
-              <SelectItem key={item.category.id} value={item.category.id}>
-                {item.category.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </Field>
+      <SelectField
+        label="Category"
+        layout="inline"
+        value={sheet.sheet.category}
+        options={outline.map((item) => ({ value: item.category.id, label: item.category.label }))}
+        onChange={(category) =>
+          // Another category: its own default template, all of it.
+          styleguide.setSheet(sheet.id, {
+            category,
+            group: undefined,
+            template: null,
+            options: null,
+          })
+        }
+      />
       {entry && entry.groups.length > 1 && (
-        <Field label="Group" layout="inline">
-          <Select
-            value={sheet.sheet.group ?? WHOLE}
-            onValueChange={(group) =>
-              styleguide.setSheet(sheet.id, { group: group === WHOLE ? undefined : group })
-            }
-          >
-            <SelectTrigger aria-label="Group" className="h-7 w-full text-xs">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={WHOLE}>Whole category</SelectItem>
-              {entry.groups.map((group) => (
-                <SelectItem key={group.id} value={group.id}>
-                  {group.title || entry.category.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Field>
+        <SelectField
+          label="Group"
+          layout="inline"
+          value={sheet.sheet.group ?? WHOLE}
+          options={[
+            { value: WHOLE, label: "Whole category" },
+            ...entry.groups.map((group) => ({
+              value: group.id,
+              label: group.title || entry.category.label,
+            })),
+          ]}
+          onChange={(group) =>
+            styleguide.setSheet(sheet.id, { group: group === WHOLE ? undefined : group })
+          }
+        />
       )}
     </div>
   );

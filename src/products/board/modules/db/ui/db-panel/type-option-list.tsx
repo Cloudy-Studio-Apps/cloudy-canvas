@@ -1,6 +1,6 @@
 import { Check } from "lucide-react";
 
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import type { TypeOptionListProps } from "./type-option-list.types";
 
 export function TypeOptionList({ options, current, onPick }: TypeOptionListProps) {

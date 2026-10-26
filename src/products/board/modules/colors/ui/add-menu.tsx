@@ -1,13 +1,13 @@
 import { Plus } from "lucide-react";
 
 import { useDocumentTokens } from "@canvas-ui";
-import { IconButton } from "@shared/ui/kit";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@shared/ui/components/ui/dropdown-menu";
+  IconButton,
+} from "@shared/ui/kit";
 import { NEW_COLOR } from "./new-color";
 
 /** The colors panel's "+": a color (in the first collection, "Colors" when there's none) or a collection. */

@@ -1,4 +1,4 @@
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import type { IconActionProps } from "./icon-action.types";
 
 /** A small icon button for row actions; `label` is its tooltip and accessible name. */

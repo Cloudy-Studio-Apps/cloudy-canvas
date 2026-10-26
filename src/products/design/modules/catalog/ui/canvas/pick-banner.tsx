@@ -2,7 +2,7 @@ import { applyPick } from "../../mode/apply-pick";
 import { CATALOG_TOOL } from "../../mode/catalog-mode.constants";
 import { FloatingPanel } from "@canvas-ui";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
 
 /** While frames are being picked: how many are ticked, applying them, or cancelling. */

@@ -1,8 +1,9 @@
+import { ColorField } from "@canvas-ui";
 import { Grid3x3, Sparkles } from "lucide-react";
 
 import { PropertyGrid } from "@design/ui/components/panel";
 import type { NoiseEffect } from "../../effect.types";
-import { EffectChoice, EffectColorField, ScrubField } from "../fields";
+import { EffectChoice, ScrubField } from "../fields";
 import type { EffectEditorProps } from "../effects.points.types";
 
 const MODES = [
@@ -24,15 +25,15 @@ export function NoiseEditor({ effect, onChange }: EffectEditorProps<NoiseEffect>
         onChange={(noiseType) => set({ noiseType })}
       />
       {effect.noiseType !== "multi" && (
-        <EffectColorField
+        <ColorField
           label="Noise color"
           color={effect.color}
           opacity={effect.opacity}
-          onChange={(next, info) => set(next, info)}
+          onChange={({ color, opacity }, info) => set({ color, opacity }, info)}
         />
       )}
       {effect.noiseType === "duo" && (
-        <EffectColorField
+        <ColorField
           label="Second noise color"
           color={effect.secondColor}
           onChange={(next, info) => set({ secondColor: next.color }, info)}

@@ -1,12 +1,11 @@
 import { X } from "lucide-react";
 
 import { DEFAULT_VALUE, joinTokenColor, splitTokenColor, valueKeyOf } from "@canvas";
-import { FieldBox, HexInput, PercentInput } from "@design/ui/components/panel";
+import { ColorField } from "@canvas-ui";
 import { notifyError } from "@shared/stores/toast-store";
 import { cssColor } from "../css-color";
 import { useBoard } from "../use-board";
 import { ValueField } from "../../value-field";
-import { SwatchInput } from "../../swatch-input";
 import { SameAsFirst } from "./same-as-first";
 import type { ModeValueCardProps } from "./inspector.types";
 
@@ -48,27 +47,13 @@ export function ColorModeCard({ variable, mode, first }: ModeValueCardProps) {
         </span>
       </div>
       <div className="flex items-center gap-1 p-2">
-        <FieldBox className="min-w-0 flex-1 gap-0 pl-2">
-          <SwatchInput
-            color={hex.toLowerCase()}
-            label={`${mode.name} color`}
-            opacity={alpha}
-            onChange={(color, opacity) => set(joinTokenColor(color, opacity))}
-          />
-          <HexInput
-            color={hex}
-            label={`${mode.name} hex`}
-            className="px-2"
-            onCommit={(color) => set(joinTokenColor(color, alpha))}
-          />
-          <span className="flex h-full w-12 shrink-0 items-center border-l border-surface px-1.5">
-            <PercentInput
-              value={alpha}
-              label={`${mode.name} opacity`}
-              onCommit={(next) => set(joinTokenColor(hex, next))}
-            />
-          </span>
-        </FieldBox>
+        <ColorField
+          color={hex.toLowerCase()}
+          opacity={alpha}
+          label={`${mode.name} color`}
+          onChange={(next) => set(joinTokenColor(next.color, next.opacity))}
+          className="min-w-0 flex-1"
+        />
         {!first && key !== DEFAULT_VALUE && (
           <button
             type="button"

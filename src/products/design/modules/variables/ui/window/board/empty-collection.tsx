@@ -1,4 +1,4 @@
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { freeGroup } from "../group-paths";
 import { draftFromColor } from "../shade-drafts";
 import { useBoard } from "../use-board";

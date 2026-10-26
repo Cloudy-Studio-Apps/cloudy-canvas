@@ -1,4 +1,4 @@
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import type { PageBadgeProps } from "./canvas.types";
 
 /** A brochure page's number on its frame's top-left corner (lighter for an option not printed). */

@@ -5,8 +5,7 @@ import { ImportConflicts, useEditorModules } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { designStyleTypes } from "../../../core/ui";
 import { notifyError, toast } from "@shared/stores/toast-store";
-import { Button } from "@shared/ui/components/ui/button";
-import { AppDialog } from "@shared/ui/kit";
+import { AppDialog, Button } from "@shared/ui/kit";
 
 import type { ImportBodyProps, ImportTokensDialogProps } from "./exchange.types";
 import { ImportPickTree } from "./import-pick-tree";

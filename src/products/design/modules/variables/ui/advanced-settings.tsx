@@ -4,7 +4,7 @@ import { useState } from "react";
 import { DOCUMENT_TOKENS, type TokenScope } from "@canvas";
 import { CommitInput } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import { SCOPE_OPTIONS } from "./scope-options";
 import type { AdvancedSettingsProps } from "./variables-ui.types";
 

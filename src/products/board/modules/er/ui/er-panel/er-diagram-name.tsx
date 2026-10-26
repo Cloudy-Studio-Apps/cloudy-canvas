@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Input } from "@shared/ui/components/ui/input";
+import { Input } from "@shared/ui/kit";
 import type { ErDiagramNameProps } from "./er-diagram-name.types";
 
 /** The diagram's name, edited in place; renamed on Enter or when leaving the field. */

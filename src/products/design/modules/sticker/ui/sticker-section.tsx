@@ -9,7 +9,7 @@ import { PanelAddButton, PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useEditNodes } from "@design/ui/hooks";
 import type { PropertySectionProps } from "@design/ui/modules";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { StickerEdgeField } from "./sticker-edge-field";
 import { StickerOutlineFields } from "./sticker-outline-fields";
 

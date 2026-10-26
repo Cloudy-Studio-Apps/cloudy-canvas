@@ -3,8 +3,7 @@ import { Eye, EyeOff, GripVertical, Minus, Sparkles } from "lucide-react";
 
 import { ExtensionIconView } from "@canvas-ui";
 import { FieldBox, PanelIconButton } from "@design/ui/components/panel";
-import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
-import { cn } from "@shared/ui/lib/utils";
+import { cn, Popover, PopoverContent, PopoverTrigger } from "@shared/ui/kit";
 import { useEffectEditStore } from "./effect-edit-store";
 import type { EffectRowProps } from "./effects-ui.types";
 

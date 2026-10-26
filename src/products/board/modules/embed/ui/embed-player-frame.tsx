@@ -7,7 +7,7 @@ import { embedOf } from "../embed-preview";
 import { openExternal } from "@platform";
 import { youtubeEmbedUrl, youtubeVideo } from "@shared/core";
 import { notifyError } from "@shared/stores/toast-store";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { useBoardEngine } from "@board/ui/board-engine-context";
 import type { EmbedPlayerFrameProps } from "./embed-player-frame.types";
 

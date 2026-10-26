@@ -42,6 +42,7 @@ export function composeProduct<O extends object>(
   const undrawn = single(host.get(points.undrawn), `what the ${id} doesn't draw on its own`);
   const target = single(host.get(points.selectTarget), `what a click selects in the ${id}`);
   const aligner = single(host.get(points.alignTarget), `what one element aligns with in the ${id}`);
+  const rootOf = single(host.get(points.rootOf), `the top-level element of one in the ${id}`);
   const rulerFrame = single(host.get(points.rulerFrame), `what the ${id}'s rulers measure`);
   const frames = single(host.get(points.frames), `the frames N steps through in the ${id}`);
   const afterEdits = host.get(points.afterEdit);
@@ -79,6 +80,7 @@ export function composeProduct<O extends object>(
       : {}),
     ...(frames ? { frames: (elements) => frames(elements, kinds) } : {}),
     ...(aligner ? { alignTarget: (el, elements) => aligner(el, elements, kinds) } : {}),
+    ...(rootOf ? { rootOf } : {}),
     ...(target
       ? { selectTarget: (hitId, request, elements) => target(hitId, request, elements, kinds) }
       : {}),

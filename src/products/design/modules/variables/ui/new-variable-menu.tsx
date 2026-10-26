@@ -6,7 +6,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@shared/ui/components/ui/dropdown-menu";
+} from "@shared/ui/kit";
 import { useCreateVariable } from "./use-create-variable";
 import type { NewVariableMenuProps } from "./variables-ui.types";
 

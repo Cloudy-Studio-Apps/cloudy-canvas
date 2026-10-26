@@ -1,5 +1,4 @@
-import { Switch } from "@shared/ui/components/ui/switch";
-import { cn } from "@shared/ui/lib/utils";
+import { cn, Switch } from "@shared/ui/kit";
 import { useCatalogViewStore } from "../stores/catalog-view-store";
 import type { Preview3dToggleProps } from "./preview.types";
 

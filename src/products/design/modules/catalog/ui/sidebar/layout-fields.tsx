@@ -1,15 +1,13 @@
 import type { BrochureCovers, BrochureLayout } from "../../brochure/brochure.types";
 import { useBrochure } from "../hooks/use-brochure";
-import { SettingSelect } from "./setting-select";
-import type { SettingChoice } from "./sidebar.types";
-import { Toggle } from "./toggle";
+import { CheckboxField, SelectField, type SelectOption } from "@shared/ui/kit";
 
-const LAYOUTS: readonly SettingChoice<BrochureLayout>[] = [
+const LAYOUTS: readonly SelectOption<BrochureLayout>[] = [
   { value: "book", label: "Book · facing pages" },
   { value: "single", label: "Single pages" },
 ];
 
-const COVERS: readonly SettingChoice<BrochureCovers>[] = [
+const COVERS: readonly SelectOption<BrochureCovers>[] = [
   { value: "both", label: "Front and back covers" },
   { value: "front", label: "Front cover only" },
   { value: "back", label: "Back cover only" },
@@ -25,21 +23,21 @@ export function LayoutFields() {
 
   return (
     <div className="flex flex-col gap-1.5">
-      <SettingSelect
+      <SelectField
         label="Layout"
         value={settings.layout}
-        choices={LAYOUTS}
+        options={LAYOUTS}
         onChange={(layout) => brochure?.setSettings({ layout })}
       />
       {settings.layout === "book" && (
-        <SettingSelect
+        <SelectField
           label="Covers"
           value={settings.covers}
-          choices={COVERS}
+          options={COVERS}
           onChange={(covers) => brochure?.setSettings({ covers })}
         />
       )}
-      <Toggle
+      <CheckboxField
         label="Split spreads into pages in the PDF"
         checked={settings.splitSpreads}
         onChange={(splitSpreads) => brochure?.setSettings({ splitSpreads })}

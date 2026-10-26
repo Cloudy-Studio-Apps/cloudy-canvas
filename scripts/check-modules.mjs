@@ -10,6 +10,7 @@
 //   size          a <name>.module.ts over 120 lines (wiring only; split it)
 //   barrel        a module imports its own product's barrel (`@design`, `@board`) instead of the
 //                 file or module that declares the name
+//   kit           a module imports a shadcn primitive or `cn` directly instead of from `@shared/ui/kit`
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, normalize, relative, sep } from "node:path";
 
@@ -106,6 +107,13 @@ for (const file of sourceFiles("src")) {
   const from = owner && catalog.get(owner.product).get(owner.module);
   const isModuleList = /^src\/products\/[^/]+\/ui\/modules\/[^/]+-modules\.ts$/.test(posix);
   for (const [spec, line] of specifiers(readFileSync(file, "utf8"))) {
+    if (
+      owner &&
+      (spec.startsWith("@shared/ui/components/ui/") || spec === "@shared/ui/lib/utils")
+    ) {
+      report(file, line, "kit", `import it from "@shared/ui/kit", not "${spec}"`);
+      continue;
+    }
     if (owner && spec === `@${owner.product}`) {
       report(file, line, "barrel", `import from the declaring file or module, not "${spec}"`);
       continue;

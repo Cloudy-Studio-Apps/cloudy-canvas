@@ -1,6 +1,6 @@
 import { Search } from "lucide-react";
 
-import { Input } from "@shared/ui/components/ui/input";
+import { Input } from "@shared/ui/kit";
 import { useVariablesWindowStore } from "../variables-window-store";
 import { ModeChips } from "./mode-chips";
 

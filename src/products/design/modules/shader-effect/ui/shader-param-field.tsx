@@ -1,5 +1,6 @@
+import { ColorField } from "@canvas-ui";
 import { PropertyGrid } from "@design/ui/components/panel";
-import { EffectColorField, ScrubField } from "../../effects/ui";
+import { ScrubField } from "../../effects/ui";
 import type { ShaderParamFieldProps } from "./shader-ui.types";
 
 /** A shader parameter's control, as its note says: a slider, a color, a point or numbers. */
@@ -15,7 +16,7 @@ export function ShaderParamField({ param, value, onChange }: ShaderParamFieldPro
       )
       .join("")}`;
     return (
-      <EffectColorField
+      <ColorField
         label={name}
         color={hex}
         opacity={param.type === "vec4" ? (value[3] ?? 1) : undefined}

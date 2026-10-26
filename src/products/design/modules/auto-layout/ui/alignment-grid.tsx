@@ -1,5 +1,5 @@
 import type { LayoutAlign, LayoutCounterAlign } from "../../core";
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import type { AlignmentGridProps } from "./alignment-grid.types";
 
 const PLACES = ["start", "center", "end"] as const;

@@ -1,9 +1,11 @@
+import { ColorField } from "@canvas-ui";
 import { ArrowDown, ArrowRight, Droplet, Maximize2 } from "lucide-react";
 
+import { CheckboxField } from "@shared/ui/kit";
 import { PropertyGrid } from "@design/ui/components/panel";
 import { SHADOW_PRESETS } from "../../effect-presets";
 import type { DropShadowEffect, InnerShadowEffect } from "../../effect.types";
-import { EffectColorField, EffectToggle, ScrubField } from "../fields";
+import { ScrubField } from "../fields";
 import { PresetRow } from "./preset-row";
 import { EffectBind } from "../effect-bind";
 import type { EffectEditorProps } from "../effects.points.types";
@@ -25,11 +27,11 @@ export function ShadowEditor<E extends DropShadowEffect | InnerShadowEffect>({
         />
       )}
       <EffectBind field="color">
-        <EffectColorField
+        <ColorField
           label="Shadow color"
           color={effect.color}
           opacity={effect.opacity}
-          onChange={(next, info) => set(next, info)}
+          onChange={({ color, opacity }, info) => set({ color, opacity }, info)}
         />
       </EffectBind>
       <PropertyGrid>
@@ -68,7 +70,7 @@ export function ShadowEditor<E extends DropShadowEffect | InnerShadowEffect>({
         </EffectBind>
       </PropertyGrid>
       {effect.type === "drop-shadow" && (
-        <EffectToggle
+        <CheckboxField
           label="Show behind transparent areas"
           checked={effect.showBehind}
           onChange={(showBehind) => set({ showBehind })}

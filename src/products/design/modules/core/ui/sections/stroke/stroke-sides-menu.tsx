@@ -8,7 +8,7 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "@shared/ui/components/ui/dropdown-menu";
+} from "@shared/ui/kit";
 import { sidesMode, sidesPatch } from "./stroke-sides";
 import type { StrokeSidesMenuProps } from "./stroke-sides-menu.types";
 import type { StrokeSidesMode } from "./stroke-sides.types";

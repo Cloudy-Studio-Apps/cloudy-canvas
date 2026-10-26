@@ -1,6 +1,6 @@
 # Vectors
 
-Vector networks: the pen (P) and pencil (Shift+P), and the edit mode for a vector's points with its own toolbar.
+Vector networks: the pen (P) and pencil (Shift+P), and the edit mode for a vector's points with its own toolbar (`VectorEditToolbar`, a `ModeToolbar` of its five tools whose Done ends the edit).
 
 - **Tier:** core
 - **Requires:** core

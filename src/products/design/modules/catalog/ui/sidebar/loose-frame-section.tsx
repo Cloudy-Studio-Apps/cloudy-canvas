@@ -1,7 +1,7 @@
 import { ensureBrochure } from "../../model/current-brochure";
 import { PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
 import type { LooseFrameSectionProps } from "./sidebar.types";
 

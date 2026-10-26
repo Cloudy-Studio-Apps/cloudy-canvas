@@ -1,7 +1,7 @@
 import { Plus } from "lucide-react";
 
 import { DB_HEADER_COLORS } from "../../../../palette";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { ColorPalette, CommitInput } from "@canvas-ui";
 import { useBoardSchema } from "../schema";
 import { EnumUsages } from "./enum-usages";

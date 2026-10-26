@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { useRef } from "react";
 
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import { VariablesBoard } from "./board/variables-board";
 import { UnusedView } from "../usage/unused-view";
 import { ExchangeMenu } from "../exchange";

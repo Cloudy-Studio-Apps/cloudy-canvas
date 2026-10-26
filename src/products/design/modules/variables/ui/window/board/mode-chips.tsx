@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react";
 
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";
 

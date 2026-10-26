@@ -1,5 +1,5 @@
 import { resolveVariable } from "@canvas";
-import { cn } from "@shared/ui/lib/utils";
+import { cn } from "@shared/ui/kit";
 import { numberKindOf } from "../group-kinds";
 import { leafName } from "../group-paths";
 import { useBoard } from "../use-board";

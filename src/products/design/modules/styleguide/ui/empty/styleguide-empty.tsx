@@ -4,7 +4,11 @@ import { useSyncExternalStore } from "react";
 import { TokenStore } from "@canvas";
 import { STYLEGUIDE_MODE_ID } from "../../mode/styleguide-mode.constants";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
-import { useCreateVariable, useVariablesWindowStore } from "../../../variables/ui";
+import {
+  openVariablesWindow,
+  useCreateVariable,
+  useVariablesWindowOpen,
+} from "../../../variables/ui";
 import { Button, EmptyState } from "@shared/ui/kit";
 import { useStyleguide } from "../hooks/use-styleguide";
 import { useSystemPage } from "../hooks/use-system-page";
@@ -25,7 +29,7 @@ export function StyleguideEmpty() {
     () => !TokenStore.of(engine.doc).isEmpty,
   );
   // The Variables window (an overlay too) opens over the canvas instead.
-  const windowOpen = useVariablesWindowStore((state) => state.open);
+  const windowOpen = useVariablesWindowOpen();
   if (!inMode || page || windowOpen) return null;
   return (
     <div className="pointer-events-auto absolute inset-0 flex items-center justify-center bg-background/90">
@@ -50,11 +54,7 @@ export function StyleguideEmpty() {
               <Button size="sm" onClick={() => createVariable("color")}>
                 Add a color
               </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => useVariablesWindowStore.getState().setOpen(true)}
-              >
+              <Button size="sm" variant="outline" onClick={openVariablesWindow}>
                 Generate a palette
               </Button>
               <Button size="sm" variant="outline" disabled title="Coming soon">

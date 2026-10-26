@@ -588,6 +588,20 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     return scope === null ? null : (this.scopes?.label?.(this.doc, scope) ?? null);
   }
 
+  /** The scope an element is shown in (`CanvasScopes.of`), or `null` without scopes. */
+  scopeOf(el: CanvasElement): string | null {
+    return this.scopes?.of(el) ?? null;
+  }
+
+  /**
+   * The top-level element `id` is drawn in (`CanvasProduct.rootOf`; itself without one), or
+   * `null` when it isn't an element.
+   */
+  rootOf(id: string): string | null {
+    if (this.product.rootOf) return this.product.rootOf(this.doc, id);
+    return this.doc.get(id) ? id : null;
+  }
+
   /** The scope on screen (a design's page, see `CanvasScopes`), or `null` without scopes. */
   get scope(): string | null {
     return this.scene.scope;

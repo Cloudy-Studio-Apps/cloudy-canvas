@@ -6,8 +6,8 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@shared/ui/components/ui/dropdown-menu";
-import { IconButton } from "@shared/ui/kit";
+  IconButton,
+} from "@shared/ui/kit";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { deletePage, duplicatePage } from "./page-actions";
 import type { PageMenuProps } from "./page-row.types";

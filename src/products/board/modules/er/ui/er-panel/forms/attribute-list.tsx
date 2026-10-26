@@ -1,7 +1,7 @@
 import { Plus } from "lucide-react";
 
 import type { ErAttributeElement } from "../../../attribute/attribute.types";
-import { Button } from "@shared/ui/components/ui/button";
+import { Button } from "@shared/ui/kit";
 import { useErDiagram, useErGate, useErShapes } from "../../model";
 import { AttributeRow } from "./attribute-row";
 import { FormSection } from "./form-section";

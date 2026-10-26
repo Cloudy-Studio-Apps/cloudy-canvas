@@ -138,12 +138,15 @@ calls them. Nothing is found by its name: ESLint reads the suffix only to allow 
    surface **and to `PluginApi` at the same time**, never deep-imported.
 4. Product-level code (`products/<p>/ui`, `mcp`, `file`, `figma`) imports modules only through
    `modules/index.ts` or a module's `index.ts` / `ui/index.ts`.
-5. `<product>-points.ts` holds only product-wide points (canvas points, MCP tools, migrations, select
+5. UI comes from `@shared/ui/kit`: the shadcn primitives and `cn` too (the kit re-exports them),
+   never `@shared/ui/components/ui/…` or `@shared/ui/lib/utils` (rule `kit`). Before writing a
+   field, toolbar or picker, look for it in the kit, `@canvas-ui` or a module's `ui/index.ts`.
+6. `<product>-points.ts` holds only product-wide points (canvas points, MCP tools, migrations, select
    redirects). A feature's own points go in its `<name>.points.ts`.
 
 **Checked by** `scripts/check-modules.mjs`, part of `pnpm lint` (`pnpm check:modules` alone): deep
 imports (from modules and from anywhere else in `src/`), `requires`, core → feature, each module's
-`index.ts`/`<name>.module.ts`/`README.md`/`tier`, MCP file names, module files over 120 lines and imports of the product barrel.
+`index.ts`/`<name>.module.ts`/`README.md`/`tier`, MCP file names, module files over 120 lines, imports of the product barrel and of shadcn primitives or `cn` outside the kit.
 `node scripts/module-order.mjs` prints the order each product loads its modules in: compare it
 before and after changing `requires`/`after`, since chained hooks run in that order. A module never imports its own product's barrel (`@design`, `@board`): it imports the file or module that declares the name (rule `barrel`).
 

@@ -10,6 +10,13 @@ export {
   CardTitle,
 } from "@shared/ui/components/ui/card";
 export {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@shared/ui/components/ui/context-menu";
+export {
   Dialog,
   DialogClose,
   DialogContent,

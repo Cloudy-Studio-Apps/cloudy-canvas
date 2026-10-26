@@ -1,14 +1,14 @@
 import { Palette, Plus, Ruler, SwatchBook, ToggleRight, Type } from "lucide-react";
 
 import {
+  cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@shared/ui/components/ui/dropdown-menu";
-import { cn } from "@shared/ui/lib/utils";
+} from "@shared/ui/kit";
 import { NUMBER_KINDS } from "../group-kinds";
 import { freeGroup, joinPath } from "../group-paths";
 import { scaleFromNumber } from "../scale-drafts";

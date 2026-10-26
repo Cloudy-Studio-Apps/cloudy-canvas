@@ -1,7 +1,6 @@
 import { useState } from "react";
 
-import { SearchInput } from "@shared/ui/kit";
-import { cn } from "@shared/ui/lib/utils";
+import { cn, SearchInput } from "@shared/ui/kit";
 import type { FontListProps } from "./font-picker.types";
 
 /** Rows shown at once; typing narrows the list to what matters. */

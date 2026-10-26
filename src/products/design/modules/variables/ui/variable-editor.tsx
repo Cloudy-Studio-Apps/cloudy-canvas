@@ -3,14 +3,14 @@ import { Trash2 } from "lucide-react";
 import { DEFAULT_VALUE, DOCUMENT_TOKENS } from "@canvas";
 import { CommitInput, useDocumentTokens } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import { Button } from "@shared/ui/components/ui/button";
 import {
+  Button,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@shared/ui/components/ui/select";
+} from "@shared/ui/kit";
 import { AdvancedSettings } from "./advanced-settings";
 import { ValueField } from "./value-field";
 import type { VariableEditorProps } from "./variables-ui.types";

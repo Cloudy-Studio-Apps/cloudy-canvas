@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { Link2, LocateFixed, Unlink } from "lucide-react";
 
-import { Button } from "@shared/ui/components/ui/button";
-import { ListRow, SearchInput } from "@shared/ui/kit";
-import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
-import { cn } from "@shared/ui/lib/utils";
+import {
+  Button,
+  cn,
+  ListRow,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  SearchInput,
+} from "@shared/ui/kit";
 import { useEngine } from "@canvas-ui";
 import { useBoardSchema, useDbQuery } from "../schema";
 import { REF_KINDS } from "./ref-kinds";

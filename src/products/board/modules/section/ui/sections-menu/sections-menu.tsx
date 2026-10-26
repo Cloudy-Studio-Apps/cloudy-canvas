@@ -1,11 +1,7 @@
 import { Frame } from "lucide-react";
 
 import { ToolButton } from "@canvas-ui";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@shared/ui/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@shared/ui/kit";
 import { SectionsMenuItems } from "./sections-menu-items";
 
 /** Lists the board's sections; picking one zooms to it. */
