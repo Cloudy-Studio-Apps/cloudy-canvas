@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 import { ER_MODEL } from "@board";
 import { useEngine } from "@canvas-ui";
+import { CONVERT_TO_ENTITY_COMMAND } from "../../er.commands";
 
 /** The `er.convertToEntity` command (context menu): the selected relation becomes an entity. */
 export function useConvertCommand(): void {
@@ -19,6 +20,3 @@ export function useConvertCommand(): void {
     [engine],
   );
 }
-
-/** Turns the selected relation into an entity with a two-way relation per side. */
-export const CONVERT_TO_ENTITY_COMMAND = "er.convertToEntity";

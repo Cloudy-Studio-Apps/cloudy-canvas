@@ -131,7 +131,6 @@ phase is done, follow the existing pattern in that part of the code.**
 
 | Rule                                                               | Code today                                                                                               | Fixed in phase |
 | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- | -------------- |
-| `<name>.module.ts` ≤ ~100 lines, wiring only                       | design `core` (~380 lines), `er`                                                                         | 4              |
 | board core's tools don't import features                           | `modules/core/mcp/create-shapes.mcp.ts` imports `geo`, `mcp/apply-result.ts` imports `er` and `db` types | 5              |
 | import rules enforced; every module has a complete `README.md`     | deep imports between modules; READMEs only where descriptions moved                                      | 5              |
 | shared pieces (`ColorField`, `chooseImageAsset`, `ModeToolbar`, …) | duplicated per feature                                                                                   | 5a             |

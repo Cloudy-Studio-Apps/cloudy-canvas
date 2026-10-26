@@ -12,7 +12,7 @@ export type {
   TemplateOptions,
   TemplateOptionSpec,
 } from "./styleguide.types";
-export { styleguideCategories, styleguideTemplates } from "./styleguide-points";
+export { styleguideCategories, styleguideTemplates } from "./styleguide.points";
 export { BUILT_IN_CATEGORIES } from "./categories";
 export * from "./mode";
 export * from "./model";

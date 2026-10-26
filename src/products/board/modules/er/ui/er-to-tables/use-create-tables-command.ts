@@ -4,6 +4,7 @@ import { ER_MODEL } from "@board";
 import { useEngine } from "@canvas-ui";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { useErToTablesStore } from "./er-to-tables-store";
+import { CREATE_TABLES_COMMAND } from "../../er.commands";
 
 /** The `er.createTables` command (context menu): the dialog for the selection's diagram. */
 export function useCreateTablesCommand(): void {
@@ -20,6 +21,3 @@ export function useCreateTablesCommand(): void {
     [engine],
   );
 }
-
-/** Opens "Create tables" for the selected ER shape's diagram. */
-export const CREATE_TABLES_COMMAND = "er.createTables";

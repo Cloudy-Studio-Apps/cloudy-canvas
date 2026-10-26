@@ -88,8 +88,11 @@ modules/<name>/
   <name>.mode.ts        a mode the module adds: one defineDesignMode/defineBoardMode
   <name>.mcp.ts         MCP tools, one file …
   mcp/                  … or a folder: <topic>.mcp.ts + index.ts (+ helpers)
+  <name>.canvas.ts      canvas hooks (kinds, tools, scene and tree hooks, copies), when there are several
   <name>.commands.ts    host commands with their keys, when there are several
-  <name>.sections.ts    property-panel / main-menu / context-menu entries, when there are many
+  <name>.sections.ts    editor entries (sections, panels, overlays, session hooks, toolbar buttons,
+                        context menu), when there are many
+  <name>.menu.ts        main menu groups, when there are many
   <name>.migration.ts   file migrations (or migrations/ with index.ts)
   <name>-options.types.ts   tool options the module owns
   <type>.types.ts / .factory.ts / .kind.ts / .draw.ts / .defaults.ts / .tool.ts
@@ -97,18 +100,24 @@ modules/<name>/
   ui/                   React only; ui/index.ts is the module's public UI API
 ```
 
-| Suffix                                                                    | Holds                            | React?             |
-| ------------------------------------------------------------------------- | -------------------------------- | ------------------ |
-| `.module.ts`                                                              | `defineModule`                   | imports UI, no JSX |
-| `.points.ts`                                                              | `definePoint` tokens             | no (`ui/`: types)  |
-| `.mode.ts`                                                                | a mode's whole definition        | imports UI         |
-| `.mcp.ts`                                                                 | `McpTool`s / `McpToolGroup`      | no                 |
-| `.commands.ts`                                                            | host command entries and keys    | no                 |
-| `.sections.ts`                                                            | editor entries (sections, menus) | imports UI         |
-| `.migration.ts`                                                           | document migrations              | no                 |
-| `.kind.ts` `.tool.ts` `.draw.ts` `.factory.ts` `.defaults.ts` `.types.ts` | as in `src/canvas/elements/`     | no                 |
-| `.constants.ts`                                                           | ids, fixed values                | no                 |
-| `ui/*.tsx`                                                                | components, hooks                | yes                |
+| Suffix                                                                    | Holds                                                                                     | React?             |
+| ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------ |
+| `.module.ts`                                                              | `defineModule`                                                                            | imports UI, no JSX |
+| `.points.ts`                                                              | `definePoint` tokens                                                                      | no (`ui/`: types)  |
+| `.mode.ts`                                                                | a mode's whole definition                                                                 | imports UI         |
+| `.mcp.ts`                                                                 | `McpTool`s / `McpToolGroup`                                                               | no                 |
+| `.canvas.ts`                                                              | canvas hooks                                                                              | no                 |
+| `.commands.ts`                                                            | host command entries and keys                                                             | no                 |
+| `.sections.ts`                                                            | editor entries (sections, panels, overlays, session hooks, toolbar buttons, context menu) | imports UI         |
+| `.menu.ts`                                                                | main menu groups                                                                          | imports UI         |
+| `.migration.ts`                                                           | document migrations                                                                       | no                 |
+| `.kind.ts` `.tool.ts` `.draw.ts` `.factory.ts` `.defaults.ts` `.types.ts` | as in `src/canvas/elements/`                                                              | no                 |
+| `.constants.ts`                                                           | ids, fixed values                                                                         | no                 |
+| `ui/*.tsx`                                                                | components, hooks                                                                         | yes                |
+
+Each split file exports `register<Module><Part>(host)` (e.g. `registerCoreCanvas`); `<name>.module.ts`
+calls them. Nothing is found by its name: ESLint reads the suffix only to allow UI imports in
+`.module.ts`, `.sections.ts`, `.menu.ts` and `.mode.ts`.
 
 ## Import rules
 

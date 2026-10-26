@@ -108,8 +108,11 @@ modules/<name>/
   <name>.mode.ts        a mode the module adds: one defineDesignMode/defineBoardMode (§15)
   <name>.mcp.ts         MCP tools, one file …
   mcp/                  … or a folder: <topic>.mcp.ts + index.ts (+ helpers)
+  <name>.canvas.ts      canvas hooks (kinds, tools, scene and tree hooks, copies), when there are several
   <name>.commands.ts    host commands with their keys, when there are several
-  <name>.sections.ts    property-panel / main-menu / context-menu entries, when there are many
+  <name>.sections.ts    editor entries (sections, panels, overlays, session hooks, toolbar buttons,
+                        context menu), when there are many
+  <name>.menu.ts        main menu groups, when there are many
   <name>.migration.ts   file migrations (or migrations/ with index.ts)
   <name>-options.types.ts   tool options the module owns
   <type>.types.ts / .factory.ts / .kind.ts / .draw.ts / .defaults.ts / .tool.ts   (as today)
@@ -119,18 +122,20 @@ modules/<name>/
 
 ### File suffixes
 
-| Suffix                                                                    | Holds                            | React?             |
-| ------------------------------------------------------------------------- | -------------------------------- | ------------------ |
-| `.module.ts`                                                              | `defineModule`                   | imports UI, no JSX |
-| `.points.ts`                                                              | `definePoint` tokens             | no                 |
-| `.mode.ts`                                                                | a mode's whole definition (§15)  | imports UI         |
-| `.mcp.ts`                                                                 | `McpTool`s / `McpToolGroup`      | no                 |
-| `.commands.ts`                                                            | host command entries + keys      | no                 |
-| `.sections.ts`                                                            | editor entries (sections, menus) | imports UI         |
-| `.migration.ts`                                                           | document migrations              | no                 |
-| `.kind.ts` `.tool.ts` `.draw.ts` `.factory.ts` `.defaults.ts` `.types.ts` | as today                         | no                 |
-| `.constants.ts`                                                           | ids, fixed values                | no                 |
-| `ui/*.tsx`                                                                | components, hooks                | yes                |
+| Suffix                                                                    | Holds                                                                                     | React?             |
+| ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------ |
+| `.module.ts`                                                              | `defineModule`                                                                            | imports UI, no JSX |
+| `.points.ts`                                                              | `definePoint` tokens                                                                      | no                 |
+| `.mode.ts`                                                                | a mode's whole definition (§15)                                                           | imports UI         |
+| `.mcp.ts`                                                                 | `McpTool`s / `McpToolGroup`                                                               | no                 |
+| `.canvas.ts`                                                              | canvas hooks                                                                              | no                 |
+| `.commands.ts`                                                            | host command entries + keys                                                               | no                 |
+| `.sections.ts`                                                            | editor entries (sections, panels, overlays, session hooks, toolbar buttons, context menu) | imports UI         |
+| `.menu.ts`                                                                | main menu groups                                                                          | imports UI         |
+| `.migration.ts`                                                           | document migrations                                                                       | no                 |
+| `.kind.ts` `.tool.ts` `.draw.ts` `.factory.ts` `.defaults.ts` `.types.ts` | as today                                                                                  | no                 |
+| `.constants.ts`                                                           | ids, fixed values                                                                         | no                 |
+| `ui/*.tsx`                                                                | components, hooks                                                                         | yes                |
 
 ### Import rules
 
@@ -446,32 +451,42 @@ products/board/board-points.ts                  products/board/board-points.ts
 modules/er/                                     modules/er/
   er.agent-tools.ts                               README.md
   er.module.ts  (163 lines)                       index.ts
-  …                                               er.module.ts            (wiring)
-                                                  er.points.ts            erStandards, erConstructs
+  …                                               er.module.ts            (wiring: standards, migration, MCP)
+                                                  er.points.ts            boardErStandards, boardErConstructs
+                                                  er.canvas.ts            kinds, tool, links, diagram hooks
+                                                  er.mode.ts              the ER mode (phase 5b: one defineBoardMode)
                                                   er.commands.ts          er.convertToEntity, er.createTables
+                                                  er.sections.ts          button, panel, menus, dialogs
                                                   er.mcp.ts
-                                                  er.migration.ts         migrateErDiagrams
                                                   …                       (families as today)
 ```
 
-`api.board.erStandards`/`erConstructs` stay the same names, now re-exported from the er module.
+`api.board.erStandards`/`erConstructs` stay the same names, now re-exported from the er module. There's
+no `er.migration.ts`: `migrateErDiagrams` lives in `model/`, and its registration is one line in
+`er.module.ts`. `styleguide.module.ts` (155 lines) is split the same way (`.canvas`, `.mode`,
+`.commands`, `.sections`), and its `styleguide-points.ts` became `styleguide.points.ts`.
 
 ### 7.5 Design core: split the 380-line module
 
 ```
 BEFORE                                          AFTER
 modules/core/core.module.ts  (380 lines)        modules/core/
-                                                  core.module.ts       ~60 lines: requires, calls the rest
+                                                  core.module.ts       ~60 lines: MCP tools, style types, the
+                                                                       default mode; calls the rest
                                                   core.canvas.ts       engine hooks (order keys, clips, undrawn,
                                                                        resolveTree, withMembers, reparent, …)
                                                   core.commands.ts     flip, panels, view, hide UI, keys
-                                                  core.sections.ts     Position, Layout, Appearance, Fills,
-                                                                       Strokes, Export, Prototype
+                                                  core.sections.ts     tool buttons, Position, Layout, Appearance,
+                                                                       Fills, Strokes, Export, Prototype, overlays,
+                                                                       session hooks, Transform context menu
                                                   core.menu.ts         main menu groups (File, Edit, View, Theme)
+                                                  ui/styles/core-style-types.ts  CORE_STYLE_TYPES
                                                   mcp/                 (§6.3)
 ```
 
-`core.canvas.ts`/`core.sections.ts` export `register…(host)` functions; `core.module.ts` calls them.
+Each split file exports a `register…(host)` function (`registerCoreCanvas`, …); `core.module.ts` calls
+them. Nothing is found by its name: ESLint lets `.module.ts`, `.sections.ts`, `.menu.ts` and `.mode.ts`
+import UI, and keeps `.canvas.ts`/`.commands.ts` engine-only.
 
 ### 7.6 Effects: owns its point
 
@@ -609,7 +624,7 @@ edits files.
    Board's general tools move into `modules/core/mcp/`.
 3. **Ownership moves** (done 2026-10-26). Styles UI and style types point → core (§7.2); `effectTypes` → effects
    (§7.6); ER points → er (§7.4); `pages ↔ layers` point (§8 #1): layers requires only core, pages requires core and layers.
-4. **Split big module files** (§7.4, §7.5) into `.commands.ts`, `.sections.ts`, `.canvas.ts`,
+4. **Split big module files** (done 2026-10-26; styleguide too) (§7.4, §7.5) into `.commands.ts`, `.sections.ts`, `.canvas.ts`,
    `.menu.ts`, `.migration.ts`.
 5. **Public-API imports + enforcement.** Fix §8 #2–#7, `CORE_MODULES`/`FEATURE_MODULES` lists, the
    ESLint rules and `check:modules`. Write every module's `README.md`.

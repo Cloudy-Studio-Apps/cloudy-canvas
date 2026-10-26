@@ -4,6 +4,11 @@ _How it works. The rules are in the root [CLAUDE.md](../../../../../CLAUDE.md); 
 
 ## Er
 
+The module file (`er.module.ts`) only wires: `er.canvas.ts` (kinds, the tool, the lines and the hooks that
+keep a diagram whole), `er.mode.ts` (the ER mode), `er.commands.ts` (the create tables and convert
+commands and their ids), `er.sections.ts` (the toolbar button, the ER panel, menus and dialogs) and
+`er.points.ts` (standards and constructs).
+
 - `er/`: ER diagrams (Chen notation with the extended model; the language is documented in `docs/er-language.md`, with its sources), one family in one folder. **The ER roadmap is complete**: every construct of the theory (Chen and the extended model: weak entities, all attribute kinds, n-ary and recursive relations, join attributes, hierarchies, aggregation, constraints, associative entities, alternate keys, existence and identification marks, union types), the standards with their constructs, the Check diagram, the ER mode and ER to tables are covered, so `docs/er-roadmap.md` was removed. The only open point is confirming the approximate standards (`elmasri`, `silberschatz`, `piattini`: settings, `forbids`, `check`) and how the E mark is drawn against the books:
   - `base/`: `ErKind` (part of a diagram; created by the `er` tool or the ER text, never from an agent's spec; agents may only move them), `ErNamedKind` (the name is edited in place on one line; elements sized by their name resize round their center), `ER_DEFAULTS`, sizes (`er-size.ts`), outlines (`er-outline.ts`) and the shared types. Every element has `diagram` (an id) and `diagramName` (repeated on each element of the diagram): **a board holds several diagrams**.
   - One folder per type: `entity/` (rectangle, doubled when `weak`), `relation/` (diamond, `identifying`, `idMark`; `participants` point **by id** at entities or aggregations, with `(min,max)`, a role and `arrow`), `attribute/` (`ownerId` is an entity, relation, composite attribute, hierarchy or aggregation; key/multi/derived/optional flags, a `look`, an `order`), `isa/` (hierarchy triangle with `parentId` and children), `aggregate/` (a frame, hit by its name strip or border) and `constraint/` (hit near its line). Aggregations' and constraints' geometry is derived (`model/resolve-er.ts`, the board's `resolveElements`).

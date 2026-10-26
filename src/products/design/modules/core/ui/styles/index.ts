@@ -21,3 +21,4 @@ export { PaintStyleEditor } from "./paint-style-editor";
 export { PaintStylePreview } from "./paint-style-preview";
 export { StrokeStyleEditor } from "./stroke-style-editor";
 export { StrokeStylePreview } from "./stroke-style-preview";
+export { CORE_STYLE_TYPES } from "./core-style-types";
