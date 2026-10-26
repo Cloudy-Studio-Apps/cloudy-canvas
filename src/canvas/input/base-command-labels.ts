@@ -45,6 +45,7 @@ export const BASE_COMMAND_LABELS: Record<keyof typeof BASE_KEYBINDINGS, string> 
   zoomOut: "Zoom out",
   zoomReset: "Zoom to 100%",
   zoomToFit: "Zoom to fit",
+  centerOrigin: "Center on origin (0, 0)",
   zoomToSelection: "Zoom to selection",
   nextFrame: "Zoom to next frame",
   previousFrame: "Zoom to previous frame",

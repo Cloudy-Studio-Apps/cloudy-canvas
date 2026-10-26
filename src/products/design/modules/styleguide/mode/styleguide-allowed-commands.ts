@@ -14,6 +14,7 @@ export const STYLEGUIDE_ALLOWED_COMMANDS: readonly string[] = [
   "zoomOut",
   "zoomReset",
   "zoomToFit",
+  "centerOrigin",
   "zoomToSelection",
   "nextFrame",
   "previousFrame",

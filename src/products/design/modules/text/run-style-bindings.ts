@@ -38,6 +38,50 @@ function unlinkedRuns(doc: CanvasDocument, el: TextNodeElement): TextNodeRun[] |
 }
 
 /**
+ * The runs after an edit of the text's own range-style bindings (not of its runs): a style whose
+ * binding was removed (detached) leaves its ranges, one whose binding now names another style
+ * (replaced) gives its ranges that style. `null` when the bindings' edit says nothing about runs.
+ */
+function followedRuns(
+  el: TextNodeElement,
+  before: Readonly<Record<string, unknown>> | undefined,
+): TextNodeRun[] | null {
+  if (!before || !("bindings" in before) || "runs" in before) return null;
+  const was = (before.bindings ?? {}) as Record<string, string>;
+  const now = el.bindings ?? {};
+  const styleOf = (bindings: Record<string, string>) =>
+    new Set(
+      Object.entries(bindings)
+        .filter(([path]) => path.startsWith(RUN_STYLE_PREFIX))
+        .map(([path, target]) => `${path.slice(RUN_STYLE_PREFIX.length)}=${target}`),
+    );
+  const old = styleOf(was);
+  const fresh = styleOf(now);
+  const gone = [...old].filter((entry) => !fresh.has(entry));
+  if (gone.length === 0) return null;
+  // A binding still at a style's path but naming another style is a replace; else a detach.
+  const renamed = new Map<string, string | null>();
+  for (const entry of gone) {
+    const id = entry.slice(0, entry.indexOf("="));
+    const target = now[`${RUN_STYLE_PREFIX}${id}`];
+    const added = [...fresh].find((e) => !old.has(e))?.split("=")[1];
+    renamed.set(id, target ?? added ?? null);
+  }
+  let changed = false;
+  const runs = el.runs.map((run) => {
+    const id = run.style.textStyle;
+    if (!id || !renamed.has(id)) return run;
+    changed = true;
+    const style = { ...run.style };
+    const to = renamed.get(id);
+    if (to) style.textStyle = to;
+    else delete style.textStyle;
+    return { ...run, style };
+  });
+  return changed ? runs : null;
+}
+
+/**
  * An `afterEdit` hook: each edited text is bound to exactly the text styles its ranges use
  * (`runs.textStyle.<id>`), so the token sync restyles them when a style changes. Ranges carry the
  * style; the bindings follow them, so typing, splitting and clearing need nothing else. A range
@@ -49,7 +93,10 @@ export function syncRunStyleBindings(doc: CanvasDocument, change: EditedChange):
     if (doc.field(id, "type") !== "text") continue;
     const el = doc.get(id) as TextNodeElement | undefined;
     if (!el) continue;
-    const unlinked = unlinkedRuns(doc, el);
+    // Bindings edited on their own (detached, replaced) lead the runs; otherwise runs lead.
+    const followed = followedRuns(el, change.before.get(id));
+    const current = followed ? { ...el, runs: followed } : el;
+    const unlinked = unlinkedRuns(doc, current) ?? followed;
     const runs = unlinked ?? el.runs;
     const bindings = el.bindings ?? {};
     const next: Record<string, string> = {};

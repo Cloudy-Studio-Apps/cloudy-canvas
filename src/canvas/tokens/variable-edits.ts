@@ -6,7 +6,7 @@ import { DEFAULT_VALUE } from "./default-value";
 import type { NewVariable, SetValueOptions, VariablePatch } from "./document-tokens.types";
 import { detachEverywhere } from "./detach-bindings";
 import { followBase } from "./generator-writes";
-import { stylesWithout } from "./style-bindings";
+import { deletionRewrites } from "./token-deletion";
 import { ModeEdits } from "./mode-edits";
 import { normalizeTokenPath, renamePrefix } from "./token-path";
 import { TokenStore } from "./token-store";
@@ -47,6 +47,7 @@ export abstract class VariableEdits extends ModeEdits {
         codeSyntax: spec.codeSyntax ?? {},
         hidden: spec.hidden ?? false,
         order: generateKeyBetween(last?.order ?? null, null),
+        ...(spec.contrastWith?.length ? { contrastWith: [...new Set(spec.contrastWith)] } : {}),
       });
       store = new TokenStore([...this.doc.tokenRecords(), ...records]);
     }
@@ -71,6 +72,11 @@ export abstract class VariableEdits extends ModeEdits {
     if (patch.description !== undefined) next.description = patch.description;
     if (patch.codeSyntax) next.codeSyntax = { ...patch.codeSyntax };
     if (patch.hidden !== undefined) next.hidden = patch.hidden;
+    if (patch.contrastWith) {
+      const partners = [...new Set<string>(patch.contrastWith)].filter((other) => other !== id);
+      if (partners.length > 0) next.contrastWith = partners;
+      else delete next.contrastWith;
+    }
     this.write(() => this.doc.setTokenRecords([next]));
   }
 
@@ -147,12 +153,11 @@ export abstract class VariableEdits extends ModeEdits {
   deleteVariables(ids: readonly string[]): void {
     const known = ids.filter((id) => this.store().variable(id));
     if (known.length === 0) return;
-    const store = this.store();
+    const rewrites = deletionRewrites(this.store(), known);
     this.write(() => {
+      // Generators, styles and pairs that used them keep what they gave.
+      if (rewrites.length > 0) this.doc.setTokenRecords(rewrites);
       detachEverywhere(this.doc, new Set(known));
-      // Styles using them keep the values they gave.
-      const styles = stylesWithout(store, new Set(known));
-      if (styles.length > 0) this.doc.setTokenRecords(styles);
       this.doc.removeTokenRecords(known);
     });
   }

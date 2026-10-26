@@ -8,3 +8,4 @@ export { PAGE_SCOPES } from "./page-scopes";
 export { allPagesOf, pagesOf } from "./pages-of";
 export { guidesTools } from "./guides.agent-tools";
 export { pagesTools } from "./pages.agent-tools";
+export { countedUse } from "./counted-use";

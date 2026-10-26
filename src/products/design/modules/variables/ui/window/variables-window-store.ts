@@ -13,9 +13,17 @@ export const useVariablesWindowStore = create<VariablesWindowState>((set) => ({
   draft: null,
   scaleDraft: null,
   position: null,
+  showingUnused: false,
   setOpen: (open) => set({ open }),
   showCollection: (collectionId) =>
-    set({ collectionId, selectedId: null, draft: null, scaleDraft: null, query: "" }),
+    set({
+      collectionId,
+      selectedId: null,
+      draft: null,
+      scaleDraft: null,
+      query: "",
+      showingUnused: false,
+    }),
   setAxis: (axisId) => set({ axisId, view: "all" }),
   setView: (view) => set({ view }),
   setQuery: (query) => set({ query }),
@@ -23,4 +31,5 @@ export const useVariablesWindowStore = create<VariablesWindowState>((set) => ({
   setDraft: (draft) => set({ draft, scaleDraft: null }),
   setScaleDraft: (scaleDraft) => set({ scaleDraft, draft: null }),
   setPosition: (position) => set({ position }),
+  showUnused: (showingUnused) => set({ showingUnused, selectedId: null }),
 }));

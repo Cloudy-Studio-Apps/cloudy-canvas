@@ -4,9 +4,10 @@ import { DOCUMENT_TOKENS } from "@canvas";
 import { CommitInput, CommitTextarea } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button, Field } from "@shared/ui/kit";
+import { UsageSummary } from "../token-usage";
 import type { StyleEditorFrameProps } from "./styles.types";
 
-/** What every style's editor has: its name, its own controls, a description and Delete. */
+/** What every style's editor has: its name, its own controls, a description, its usage and Delete. */
 export function StyleEditorFrame({ style, onDelete, children }: StyleEditorFrameProps) {
   const engine = useDesignEngine();
   const tokens = engine.service(DOCUMENT_TOKENS);
@@ -32,6 +33,9 @@ export function StyleEditorFrame({ style, onDelete, children }: StyleEditorFrame
             className="min-h-12 text-xs"
           />
         )}
+      </Field>
+      <Field label="Usage">
+        <UsageSummary id={style.id} />
       </Field>
       <Button
         variant="ghost"

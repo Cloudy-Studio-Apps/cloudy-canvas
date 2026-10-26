@@ -97,7 +97,7 @@ export const SELECTION_MENU: readonly ContextMenuGroup[] = [
 /** The menu of a right-click on the empty canvas. */
 export const CANVAS_MENU: readonly ContextMenuGroup[] = [
   [{ command: "paste" }],
-  [{ command: "selectAll" }, { command: "zoomToFit" }],
+  [{ command: "selectAll" }, { command: "zoomToFit" }, { command: "centerOrigin" }],
   [{ command: "export", label: "Export board…" }],
   [unlockAll],
 ];

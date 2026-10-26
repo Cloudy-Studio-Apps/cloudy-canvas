@@ -7,10 +7,11 @@ import { CommitTextarea } from "@canvas-ui";
 import { Button } from "@shared/ui/components/ui/button";
 import { AdvancedSettings } from "../../advanced-settings";
 import { DeleteTokensDialog } from "@design/ui/components/styles";
+import { UsageSummary } from "@design/ui/components/token-usage";
+import { ContrastPairsList } from "../../contrast/contrast-pairs-list";
 import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";
 import { ColorModeCard } from "./color-mode-card";
-import { ContrastList } from "./contrast-list";
 import type { ModeValueCardProps, VariableInspectorProps } from "./inspector.types";
 import { InspectorSection } from "./inspector-section";
 import { NumberModeRow } from "./number-mode-row";
@@ -18,7 +19,6 @@ import { PlainModeRow } from "./plain-mode-row";
 import { PurposeSelect } from "./purpose-select";
 import { ScaleLink } from "./scale-link";
 import { ShadeLink } from "./shade-link";
-import { UsageRow } from "./usage-row";
 import { VariableHeader } from "./variable-header";
 
 /**
@@ -73,8 +73,10 @@ export function VariableInspector({ variable }: VariableInspectorProps) {
           <ScaleLink variable={variable} />
         </>
       )}
-      {color && <ContrastList variable={variable} />}
-      <UsageRow variable={variable} />
+      {color && <ContrastPairsList variable={variable} />}
+      <InspectorSection title="Usage">
+        <UsageSummary id={variable.id} />
+      </InspectorSection>
       <InspectorSection title="Description">
         <CommitTextarea
           aria-label="Description"

@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { Plus, Ruler } from "lucide-react";
 import { useState } from "react";
 
 import { groupTree } from "@canvas";
@@ -14,13 +14,15 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@shared/ui/components/ui/dropdown-menu";
 import { DeleteTokensDialog, StyleRow } from "@design/ui/components/styles";
 import { designStyleTypes } from "@design/ui/modules/style-types";
+import { TypeScaleDialog } from "./type-scale/type-scale-dialog";
 
 /**
- * With nothing selected, Figma's Styles: "+" adds a style of a kind (Text, …), and each kind's
+ * With nothing selected, Figma's Styles: "+" adds a style of a kind (Text, …) or a type scale, and each kind's
  * styles are listed under their heading, in their groups. Click one to edit it.
  */
 export function StylesSection() {
@@ -30,6 +32,7 @@ export function StylesSection() {
   const types = [...host.get(designStyleTypes)].sort((a, b) => a.order - b.order);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string[] | null>(null);
+  const [typeScale, setTypeScale] = useState(false);
   if (types.length === 0) return null;
 
   return (
@@ -50,6 +53,10 @@ export function StylesSection() {
                 <ExtensionIconView icon={type.icon} /> {type.label}
               </DropdownMenuItem>
             ))}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={() => setTypeScale(true)}>
+              <Ruler /> Type scale…
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       }
@@ -84,6 +91,7 @@ export function StylesSection() {
         )}
       </div>
       <DeleteTokensDialog ids={deleting} onClose={() => setDeleting(null)} />
+      {typeScale && <TypeScaleDialog open onOpenChange={setTypeScale} />}
     </PanelSection>
   );
 }

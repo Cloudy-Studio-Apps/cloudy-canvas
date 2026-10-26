@@ -8,6 +8,7 @@ import { DeleteTokensDialog } from "@design/ui/components/styles";
 import { NewVariableMenu } from "./new-variable-menu";
 import { GlobalModes } from "./global-modes";
 import { SidebarGroups } from "./sidebar-groups";
+import { ContrastWarnings } from "./contrast/contrast-warnings";
 import { usePageModes } from "./use-page-modes";
 
 /**
@@ -42,6 +43,7 @@ export function VariablesSection() {
         {!store.isEmpty && (
           <>
             <SidebarGroups {...list} />
+            <ContrastWarnings />
           </>
         )}
       </div>

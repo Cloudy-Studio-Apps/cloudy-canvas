@@ -4,6 +4,10 @@ import { designEditor } from "@design/ui/modules/design-editor-points";
 import { allKinds, noNodes } from "@design/ui/modules/section-filters";
 import { designAgentTools, designCanvas, designMigrations } from "../../design-points";
 import { migrateVariableModes } from "./migrate-variable-modes";
+import {
+  DETACH_LAYERS_COMMAND,
+  useDetachLayersCommand,
+} from "./ui/usage/use-detach-layers-command";
 import { variableTools } from "./agent";
 import { DESIGN_TOKEN_CONTEXT } from "../core";
 import {
@@ -29,7 +33,30 @@ export const variablesModule = defineModule({
 
     host.contribute(designAgentTools, { id: "variables", tools: () => variableTools });
     host.contribute(designMigrations, { id: "variable-modes", migrate: migrateVariableModes });
-    host.contribute(designCanvas.hostCommands, { id: "openVariables", label: "Variables…" });
+    host.contribute(
+      designCanvas.hostCommands,
+      { id: "openVariables", label: "Variables…" },
+      { id: DETACH_LAYERS_COMMAND, label: "Detach variables and styles" },
+    );
+    host.contribute(designEditor.sessionHooks, {
+      id: "variables.detach-layers",
+      use: useDetachLayersCommand,
+    });
+    host.contribute(designEditor.contextMenu, {
+      id: "variables",
+      menu: "selection",
+      items: [
+        {
+          command: DETACH_LAYERS_COMMAND,
+          label: "Detach variables and styles",
+          // Only while a selected layer uses a variable or a style.
+          enabled: (_context, engine) =>
+            engine
+              .selectedIds()
+              .some((id) => Object.keys(engine.getElement(id)?.bindings ?? {}).length > 0),
+        },
+      ],
+    });
     host.contribute(designEditor.sessionHooks, {
       id: "variables-window",
       use: useVariablesWindowCommand,
@@ -38,7 +65,10 @@ export const variablesModule = defineModule({
     host.contribute(designEditor.mainMenu, {
       id: "variables",
       order: 42,
-      items: [{ command: "openVariables", label: "Variables…" }],
+      items: [
+        { command: "openVariables", label: "Variables…" },
+        { command: DETACH_LAYERS_COMMAND, label: "Detach variables and styles" },
+      ],
     });
 
     host.contribute(

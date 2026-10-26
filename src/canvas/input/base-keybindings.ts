@@ -56,6 +56,7 @@ export const BASE_KEYBINDINGS = {
   zoomOut: [{ key: "-", mod: true, label: "−" }],
   zoomReset: [{ key: "0", mod: true }],
   zoomToFit: [{ code: "Digit1", shift: true, label: "1" }],
+  centerOrigin: [],
   zoomToSelection: [{ code: "Digit2", shift: true, label: "2" }],
   nextFrame: [{ key: "n" }],
   previousFrame: [{ key: "n", shift: true }],

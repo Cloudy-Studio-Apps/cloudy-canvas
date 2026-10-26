@@ -26,7 +26,7 @@ import type { StyleguideSources } from "./sync-styleguide.types";
 import { isSystemPage, settingsOf } from "./system-page";
 
 /** Bumped when reconciling changes (children sort after their parent; keys are paths). */
-const RECONCILE_VERSION = 3;
+const RECONCILE_VERSION = 4;
 
 /** Fields auto layout writes on generated layers (not an edit to repair). */
 const GEOMETRY = new Set(["x", "y", "w", "h"]);

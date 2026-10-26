@@ -1240,6 +1240,12 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     this.handleDocumentChange({ updated, removed: new Set() }, updated);
   }
 
+  /** Glides the view, at its zoom, so the canvas's origin (0, 0) is in the middle of the screen. */
+  centerOrigin(): void {
+    const { w, h } = this.camera.visibleWorldRect();
+    this.showViewport({ x: -w / 2, y: -h / 2, w, h });
+  }
+
   zoomToFit(): void {
     const bounds = this.scene.contentBounds();
     if (bounds) this.camera.fitRect(bounds);

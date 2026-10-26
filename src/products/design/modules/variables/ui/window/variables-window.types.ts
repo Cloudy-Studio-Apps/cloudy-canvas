@@ -23,6 +23,8 @@ export interface VariablesWindowState {
   /** The number scale being set up (the inspector shows it, the board previews it). */
   scaleDraft: ScaleInput | null;
   position: WindowPosition | null;
+  /** The board lists the unused variables and styles instead of a collection. */
+  showingUnused: boolean;
   setOpen: (open: boolean) => void;
   showCollection: (id: string) => void;
   setAxis: (id: string) => void;
@@ -32,4 +34,5 @@ export interface VariablesWindowState {
   setDraft: (draft: GeneratorInput | null) => void;
   setScaleDraft: (draft: ScaleInput | null) => void;
   setPosition: (position: WindowPosition | null) => void;
+  showUnused: (showing: boolean) => void;
 }

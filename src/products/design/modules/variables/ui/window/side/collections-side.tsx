@@ -9,6 +9,7 @@ import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";
 import { CollectionItem } from "./collection-item";
 import { DeleteCollectionDialog } from "./delete-collection-dialog";
+import { UnusedEntry } from "./unused-entry";
 
 /**
  * The window's left column: the collections (right-click to rename or delete one), the open one
@@ -37,6 +38,7 @@ export function CollectionsSide() {
       >
         <Plus className="size-3.5" /> New collection
       </button>
+      <UnusedEntry />
       <DeleteCollectionDialog collection={deleting} onClose={() => setDeleting(null)} />
       <div className="mt-auto flex flex-col items-center gap-1 pt-3 text-center">
         <PaintingSeal width={140} />

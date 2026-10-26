@@ -103,6 +103,8 @@ export interface VariableRecord {
   hidden: boolean;
   /** Fractional index ordering it within its collection. */
   order: string;
+  /** Color variables it's meant to be read with (text on a surface): checked for contrast. */
+  contrastWith?: string[];
 }
 
 export interface TokenCodeSyntax {

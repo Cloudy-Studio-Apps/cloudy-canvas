@@ -101,9 +101,11 @@ tools, what's not done yet. The feature prose now in `CLAUDE.md` moves there (se
 modules/<name>/
   <name>.module.ts      REQUIRED  wiring only: defineModule + host.contribute. No logic.
                                   Past ~100 lines, split into the files below.
-  index.ts              REQUIRED  the module's public API. What isn't exported here is private.
+  index.ts              REQUIRED  the module's public engine API (plain TS). What isn't exported
+                                  here or in ui/index.ts is private.
   README.md             REQUIRED  what the feature is (see §3.3).
   <name>.points.ts      if others extend it (a point lives in the module that reads it)
+  <name>.mode.ts        a mode the module adds: one defineDesignMode/defineBoardMode (§15)
   <name>.mcp.ts         MCP tools, one file …
   mcp/                  … or a folder: <topic>.mcp.ts + index.ts (+ helpers)
   <name>.commands.ts    host commands with their keys, when there are several
@@ -112,7 +114,7 @@ modules/<name>/
   <name>-options.types.ts   tool options the module owns
   <type>.types.ts / .factory.ts / .kind.ts / .draw.ts / .defaults.ts / .tool.ts   (as today)
   <sub-feature>/        families keep subfolders (er/entity, catalog/model, …), each with index.ts
-  ui/                   React only, ui/index.ts
+  ui/                   React only; ui/index.ts is the module's public UI API (§16.1)
 ```
 
 ### File suffixes
@@ -121,6 +123,7 @@ modules/<name>/
 | ------------------------------------------------------------------------- | -------------------------------- | ------------------ |
 | `.module.ts`                                                              | `defineModule`                   | imports UI, no JSX |
 | `.points.ts`                                                              | `definePoint` tokens             | no                 |
+| `.mode.ts`                                                                | a mode's whole definition (§15)  | imports UI         |
 | `.mcp.ts`                                                                 | `McpTool`s / `McpToolGroup`      | no                 |
 | `.commands.ts`                                                            | host command entries + keys      | no                 |
 | `.sections.ts`                                                            | editor entries (sections, menus) | imports UI         |
@@ -131,8 +134,10 @@ modules/<name>/
 
 ### Import rules
 
-1. A module imports another module **only through its `index.ts`** (`../frame`, never
-   `../frame/frame.kind`), and only if that module is in its `requires`.
+1. A module imports another module **only through its two public entries**: `index.ts` for engine
+   code (`../frame`) and `ui/index.ts` for React (`../frame/ui`), never a file inside
+   (`../frame/frame.kind`), and only if that module is in its `requires`. Engine files may only use
+   the other module's `index.ts`.
 2. **Core modules never import features.** Features may import core modules and the features they
    `require`.
 3. **Features use only the public surface**: `@canvas`, `@canvas-ui`, `@shared/*`, the product's
@@ -140,7 +145,7 @@ modules/<name>/
    surface **and to `PluginApi` at the same time**, never deep-imported. This is what keeps features
    and plugins the same: there is no separate plugin API to maintain.
 4. Product-level code (`products/<p>/ui`, `mcp`, `file`, `figma`) imports modules only through
-   `modules/index.ts` or a module's `index.ts`.
+   `modules/index.ts` or a module's `index.ts` / `ui/index.ts`.
 5. `<product>-points.ts` holds only product-wide points (canvas points, MCP tools, migrations,
    select redirects). A feature's own points go in its `<name>.points.ts`.
 
@@ -590,10 +595,14 @@ in `CLAUDE.md`, never repeated inside a feature description.
 
 ## 12. Migration phases
 
-Each phase ends with `pnpm lint`, `pnpm typecheck`, `pnpm format:check`, and is its own commit.
+Each phase ends with `pnpm lint`, `pnpm typecheck` and `pnpm format:check` passing. Phases run **one
+at a time, inline**: each gets its own plan in `docs/superpowers/plans/`, is executed, verified and
+reviewed by the user before the next starts. Branches and commits are the user's: the work only
+edits files.
 
-1. **Rules.** Write `docs/modules.md` (this doc's §4–§5) and the new `CLAUDE.md` rules section; move
-   the feature prose to `docs/architecture/*.md`. No code changes.
+1. **Rules.** Write `docs/modules.md` (this doc's §4–§5, §15, §16.1) and cut `CLAUDE.md` to the
+   rules (§10); move the feature prose to `docs/architecture/*.md` (and, once modules have them, to
+   their `README.md` in phase 5). No code changes.
 2. **MCP rename (mechanical).** Files per §6, folders `agent/` → `mcp/` in modules, `canvas/agent` →
    `canvas/mcp`, `products/*/agent` → `products/*/mcp`, types and points per §3.1 (no aliases).
    Board's general tools move into `modules/core/mcp/`.
@@ -603,6 +612,12 @@ Each phase ends with `pnpm lint`, `pnpm typecheck`, `pnpm format:check`, and is 
    `.menu.ts`, `.migration.ts`.
 5. **Public-API imports + enforcement.** Fix §8 #2–#7, `CORE_MODULES`/`FEATURE_MODULES` lists, the
    ESLint rules and `check:modules`. Write every module's `README.md`.
+   - **5a. Shared pieces** (§16): `ColorField`, `chooseImageAsset`, `ModeToolbar`,
+     `useElementThumbnail`, `AnchorPicker` in `@canvas-ui`; `SelectField`/`CheckboxField`/
+     `SwitchField` in the kit; the modules' `ui/index.ts`; every duplicate of §16.2 replaced.
+   - **5b. Modes** (§15): `defineMode`/`registerMode` and the product helpers, the rail rule,
+     `keepSections`, `onEnter`/`onLeave`; Catalog, Design system and ER moved onto them; vector
+     edit's toolbar on `ModeToolbar`.
 6. **Plugin API reshaped, still v1** (§14): modules' `exports` and `host.require`, the barrel-shaped `api`, the gaps
    of §14.3 opened in core, features' wrong imports fixed (§14.4), `docs/plugins.md` rewritten,
    `examples/plugins/` updated; `PLUGIN_API_VERSION` stays 1 (nothing was released).
@@ -630,6 +645,12 @@ Each phase ends with `pnpm lint`, `pnpm typecheck`, `pnpm format:check`, and is 
 4. **No legacy.** The app is in alpha and no plugin exists yet: the plugin API is redesigned freely
    (§14), with no aliases or deprecated names, and **stays v1**: no plugin was released, so v1 is
    simply what it becomes. The examples are updated with it.
+5. **Phases run one at a time, inline**, each reviewed before the next (§12). Branches and commits
+   are left to the user; this refactor is the only work in progress meanwhile.
+6. **`CLAUDE.md` is cut to the rules** (§10); the feature descriptions move to
+   `docs/architecture/*.md` and the modules' `README.md`.
+7. **MCP tool names stay as they are** in this work. Naming them by module (`sticker_…`, a required
+   plugin prefix, one shared tool per action for both products) is a separate plan.
 
 ---
 
@@ -1047,7 +1068,7 @@ export default function activate(api) {
 
 ### 16.5 Phases for 15 and 16
 
-Added to §12 between phases 5 and 6:
+Listed in §12 as phases 5a and 5b:
 
 - **5a. Shared pieces:** `ColorField`, `chooseImageAsset`, `ModeToolbar`, `useElementThumbnail`,
   `AnchorPicker` to `@canvas-ui`; `SelectField`/`CheckboxField`/`SwitchField` to the kit; the

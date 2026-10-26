@@ -6,10 +6,16 @@ import { BindingIndex } from "./binding-index";
  * Unlinks every element from these variables (they keep the values they show), as part of the
  * edit running now.
  */
-export function detachEverywhere(doc: CanvasDocument, variableIds: ReadonlySet<string>): void {
+export function detachEverywhere(
+  doc: CanvasDocument,
+  variableIds: ReadonlySet<string>,
+  counts: (elementId: string) => boolean = () => true,
+): void {
   const index = BindingIndex.of(doc);
   const ids = new Set<string>();
-  for (const variable of variableIds) for (const id of index.boundTo(variable)) ids.add(id);
+  for (const variable of variableIds) {
+    for (const id of index.boundTo(variable)) if (counts(id)) ids.add(id);
+  }
   const patches = new Map<string, ElementPatch>();
   for (const id of ids) {
     const bindings = doc.get(id)?.bindings;

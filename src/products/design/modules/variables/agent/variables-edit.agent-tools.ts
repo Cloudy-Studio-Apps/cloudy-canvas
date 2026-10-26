@@ -53,7 +53,24 @@ const VARIABLE_FIELDS = {
     properties: { web: { type: "string" }, ios: { type: "string" }, android: { type: "string" } },
   },
   hidden: { type: "boolean" },
+  contrastWith: {
+    type: "array",
+    items: { type: "string" },
+    description:
+      "Colors (ids or names) this color is read on: text on a surface, checked by check_contrast. [] clears them.",
+  },
 };
+
+/** An agent's `contrastWith` as variable ids (`undefined` when not given). */
+function readPartners(tokens: DocumentTokens, item: ToolArgs): string[] | undefined {
+  if (item.contrastWith === undefined) return undefined;
+  if (!Array.isArray(item.contrastWith)) throw new Error('"contrastWith" is a list of colors.');
+  return item.contrastWith.map((ref) => {
+    const partner = requireVariable(tokens.store(), String(ref));
+    if (partner.type !== "color") throw new Error(`"${partner.name}" isn't a color.`);
+    return partner.id;
+  });
+}
 
 /** Writes an agent's `variesBy`, `value`, `values` and `clear` on a variable (aliases resolved). */
 function writeValues(tokens: DocumentTokens, id: string, item: ToolArgs): void {
@@ -132,10 +149,13 @@ export const variablesEditTools: DesignAgentTool[] = [
             };
           }),
         );
-        // Values second, so they can alias what this call made.
+        // Values second, so they can alias what this call made (and pairs name it).
         for (const [i, item] of items.entries()) {
           const variable = made[i];
-          if (variable) writeValues(tokens, variable.id, item);
+          if (!variable) continue;
+          writeValues(tokens, variable.id, item);
+          const pairs = readPartners(tokens, item);
+          if (pairs) tokens.updateVariable(variable.id, { contrastWith: pairs });
         }
         return made;
       });
@@ -147,7 +167,8 @@ export const variablesEditTools: DesignAgentTool[] = [
     description:
       "Changes variables (by id or name), as one undo step: name (moving it between groups), " +
       "`value` (default), `values` for modes by name, `clear` (mode names going back to the " +
-      "default), variesBy, scopes, description, codeSyntax, hidden. Layers using them update in " +
+      "default), variesBy, scopes, description, codeSyntax, hidden, contrastWith. Layers using them " +
+      "update in " +
       "the same step.",
     inputSchema: {
       type: "object",
@@ -181,6 +202,7 @@ export const variablesEditTools: DesignAgentTool[] = [
             description: optionalString(item, "description"),
             hidden: optionalBoolean(item, "hidden"),
             codeSyntax: readCodeSyntax(item.codeSyntax),
+            contrastWith: readPartners(tokens, item),
           });
           writeValues(tokens, variable.id, item);
         }

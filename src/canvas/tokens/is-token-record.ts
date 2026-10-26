@@ -86,6 +86,9 @@ export function isTokenRecord(data: unknown): data is TokenRecord {
     Array.isArray(data.scopes) &&
     typeof data.description === "string" &&
     isObject(data.codeSyntax) &&
-    typeof data.hidden === "boolean"
+    typeof data.hidden === "boolean" &&
+    (data.contrastWith === undefined ||
+      (Array.isArray(data.contrastWith) &&
+        data.contrastWith.every((item) => typeof item === "string")))
   );
 }

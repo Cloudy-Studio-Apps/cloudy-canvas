@@ -3,6 +3,7 @@ import { useRef } from "react";
 
 import { cn } from "@shared/ui/lib/utils";
 import { VariablesBoard } from "./board/variables-board";
+import { UnusedView } from "../usage/unused-view";
 import { VariablesInspector } from "./inspector/variables-inspector";
 import { CollectionsSide } from "./side/collections-side";
 import { useDragPanel } from "./use-drag-panel";
@@ -14,7 +15,7 @@ import { useVariablesWindowStore } from "./variables-window-store";
  * the shade generator) on the right.
  */
 export function VariablesWindow() {
-  const { open, position, setOpen } = useVariablesWindowStore();
+  const { open, position, setOpen, showingUnused } = useVariablesWindowStore();
   const panel = useRef<HTMLDivElement>(null);
   const drag = useDragPanel(panel);
   if (!open) return null;
@@ -50,7 +51,7 @@ export function VariablesWindow() {
         </div>
         <div className="grid min-h-0 flex-1 grid-cols-[168px_minmax(0,1fr)_296px]">
           <CollectionsSide />
-          <VariablesBoard />
+          {showingUnused ? <UnusedView /> : <VariablesBoard />}
           <VariablesInspector />
         </div>
       </div>

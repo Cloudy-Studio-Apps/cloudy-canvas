@@ -67,6 +67,9 @@ export function describeVariable(store: TokenStore, variable: VariableRecord, us
     ...(variable.description ? { description: variable.description } : {}),
     ...(Object.keys(variable.codeSyntax).length > 0 ? { codeSyntax: variable.codeSyntax } : {}),
     ...(variable.hidden ? { hidden: true } : {}),
+    ...(variable.contrastWith?.length
+      ? { contrastWith: variable.contrastWith.map((id) => store.variable(id)?.name ?? id) }
+      : {}),
     usedBy: usage,
   };
 }

@@ -61,6 +61,7 @@ export function createCommands(
     zoomOut: () => engine.zoomOut(),
     zoomReset: () => engine.zoomTo(1),
     zoomToFit: () => engine.zoomToFit(),
+    centerOrigin: () => engine.centerOrigin(),
     zoomToSelection: () => engine.zoomToSelection(),
     nextFrame: () => engine.zoomToFrame(1),
     previousFrame: () => engine.zoomToFrame(-1),

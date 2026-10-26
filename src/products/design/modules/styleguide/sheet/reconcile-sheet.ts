@@ -1,6 +1,7 @@
 import { generateNKeysBetween } from "fractional-indexing";
 
 import {
+  ELEMENT_DEFAULTS,
   elementSpec,
   resolveVariable,
   type CanvasDocument,
@@ -15,6 +16,23 @@ import { SHEET_LAYOUT } from "./create-sheet";
 import { generatedMark } from "./is-sheet";
 import type { ReconcileContext } from "./reconcile-sheet.types";
 import type { SheetFrame } from "./sheet.types";
+
+/** The sizes under the minimum a spec asks for: built at the minimum, then set as wanted. */
+function smallSize(args: Record<string, unknown>): {
+  built: Record<string, number>;
+  wanted: Record<string, number>;
+} {
+  const built: Record<string, number> = {};
+  const wanted: Record<string, number> = {};
+  for (const key of ["w", "h"]) {
+    const value = args[key];
+    if (typeof value === "number" && value < ELEMENT_DEFAULTS.minSize) {
+      built[key] = ELEMENT_DEFAULTS.minSize;
+      wanted[key] = Math.max(1, value);
+    }
+  }
+  return { built, wanted };
+}
 
 /** Whether two plain JSON values are the same (fields of the document are). */
 function same(a: unknown, b: unknown): boolean {
@@ -74,12 +92,16 @@ export function reconcileSheet(
     if (!kind || !isNodeKind(kind)) return;
     let fresh: DesignNode;
     try {
-      fresh = kind.buildNode(elementSpec(spec.args), index, {
+      // Building refuses sizes under the minimum a person can draw; a template may want less
+      // (a 7 px spacing bar): it's built at the minimum, then given its size.
+      const small = smallSize(spec.args);
+      fresh = kind.buildNode(elementSpec({ ...spec.args, ...small.built }), index, {
         kinds,
         lookup: () => undefined,
         options: context.options,
         nameFor: (base) => base,
       });
+      fresh = { ...fresh, ...small.wanted } as DesignNode;
     } catch (error) {
       // A template's bad spec (a plugin's) leaves that layer out; the edit itself goes on.
       console.warn(`The design system couldn't make "${key}":`, error);

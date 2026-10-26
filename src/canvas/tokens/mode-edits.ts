@@ -4,7 +4,7 @@ import { createId } from "@shared/core";
 
 import { DEFAULT_VALUE } from "./default-value";
 import { detachEverywhere } from "./detach-bindings";
-import { stylesWithout } from "./style-bindings";
+import { deletionRewrites } from "./token-deletion";
 import { TokenEditsBase, withoutOverrides } from "./token-edits-base";
 import type { CollectionRecord, ModeAxisRecord, ModeDef } from "./token.types";
 
@@ -40,11 +40,10 @@ export abstract class ModeEdits extends TokenEditsBase {
     const variables = this.store()
       .variables(id)
       .map((v) => v.id);
-    const store = this.store();
+    const rewrites = deletionRewrites(this.store(), variables);
     this.write(() => {
+      if (rewrites.length > 0) this.doc.setTokenRecords(rewrites);
       detachEverywhere(this.doc, new Set(variables));
-      const styles = stylesWithout(store, new Set(variables));
-      if (styles.length > 0) this.doc.setTokenRecords(styles);
       this.doc.removeTokenRecords([...variables, id]);
     });
   }

@@ -12,6 +12,8 @@ export interface NewVariable {
   description?: string;
   codeSyntax?: TokenCodeSyntax;
   hidden?: boolean;
+  /** The colors it's read with (declared contrast pairs). */
+  contrastWith?: string[];
 }
 
 /** The fields of a variable that change without touching its values. */
@@ -21,6 +23,8 @@ export interface VariablePatch {
   description?: string;
   codeSyntax?: TokenCodeSyntax;
   hidden?: boolean;
+  /** The colors it's read with (declared contrast pairs); `[]` clears them. */
+  contrastWith?: string[];
 }
 
 export interface SetValueOptions {

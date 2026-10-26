@@ -3,6 +3,7 @@ import { generateKeyBetween } from "fractional-indexing";
 import { createId } from "@shared/core";
 
 import type { CanvasDocument } from "../document";
+import type { ElementPatch } from "../elements/element.types";
 import { defineService } from "../services";
 import { BindingIndex } from "./binding-index";
 import { detachEverywhere, pathsOverlap } from "./detach-bindings";
@@ -13,7 +14,11 @@ import type {
   SetValueOptions,
   StylePatch,
 } from "./document-tokens.types";
-import { orphanedGenerators, regenerate } from "./generator-writes";
+import { followBase, regenerate } from "./generator-writes";
+import { deletionRewrites } from "./token-deletion";
+import { replacePlan } from "./replace-token";
+import { tokenUsage, unusedTokens } from "./token-usage";
+import type { TokenUsage } from "./token-usage.types";
 import type { ScaleRecord } from "./scale-generator.types";
 import type { GeneratorRecord } from "./shade-generator.types";
 import { TokenFeed } from "./token-feed";
@@ -204,13 +209,10 @@ export class DocumentTokens extends VariableEdits {
     const store = this.store();
     const known = ids.filter((id) => store.variable(id) ?? store.style(id));
     if (known.length === 0) return;
-    const orphans = orphanedGenerators(store, known);
+    const rewrites = deletionRewrites(store, known);
     this.write(() => {
-      if (orphans.length > 0) this.doc.setTokenRecords(orphans);
+      if (rewrites.length > 0) this.doc.setTokenRecords(rewrites);
       detachEverywhere(this.doc, new Set(known));
-      // Styles using a deleted variable keep the value it gave them.
-      const unlinked = stylesWithout(store, new Set(known)).filter((s) => !known.includes(s.id));
-      if (unlinked.length > 0) this.doc.setTokenRecords(unlinked);
       this.doc.removeTokenRecords(known);
     });
   }
@@ -218,6 +220,89 @@ export class DocumentTokens extends VariableEdits {
   /** The ids of the elements bound to a variable or a style. */
   usage(id: string): string[] {
     return [...BindingIndex.of(this.doc).boundTo(id)];
+  }
+
+  /** Where a variable or a style is used: layers (directly or through styles), aliases, styles, generators. */
+  usageOf(id: string, counts?: (elementId: string) => boolean): TokenUsage {
+    return tokenUsage(this.store(), BindingIndex.of(this.doc), id, counts);
+  }
+
+  /** The variables and styles nothing uses (no layer, alias, style or generator). */
+  unused(counts?: (elementId: string) => boolean): string[] {
+    return unusedTokens(this.store(), BindingIndex.of(this.doc), counts);
+  }
+
+  /**
+   * Makes every use of `from` use `to` (layers, aliases, styles, generators), one undo step; the
+   * layers then show `to`'s values. Throws for another type or a loop. Returns the layers rebound.
+   */
+  replaceUses(
+    from: string,
+    to: string,
+    counts: (elementId: string) => boolean = () => true,
+  ): number {
+    const store = this.store();
+    const records = replacePlan(store, from, to);
+    const layers = [...BindingIndex.of(this.doc).boundTo(from)].filter(counts);
+    this.write(() => {
+      if (records.length > 0) this.doc.setTokenRecords(records);
+      // Generators and scales now following `to` (or an alias moved to it) make their output again.
+      for (const record of records) {
+        if (record.kind === "generator" || record.kind === "scale") regenerate(this.doc, record);
+        else if (record.kind === "variable") followBase(this.doc, record.id);
+      }
+      const patches = new Map<string, ElementPatch>();
+      for (const id of layers) {
+        const bindings = this.doc.get(id)?.bindings;
+        if (!bindings) continue;
+        // Paths stay (a text range's `runs.textStyle.<from>` too: its ranges then take `to`'s
+        // look and the text module moves their style id); only what they're bound to changes.
+        const next = Object.fromEntries(
+          Object.entries(bindings).map(([path, token]) => [path, token === from ? to : token]),
+        );
+        patches.set(id, { bindings: next });
+      }
+      if (patches.size > 0) this.doc.updateMany(patches);
+    });
+    return layers.length;
+  }
+
+  /**
+   * Unlinks every layer from these variables or styles (they keep what they show), one undo step;
+   * the tokens stay. Styles using a detached variable keep the value it gave them.
+   */
+  detachTokens(ids: readonly string[], counts?: (elementId: string) => boolean): void {
+    const store = this.store();
+    const known = new Set(ids.filter((id) => store.variable(id) ?? store.style(id)));
+    if (known.size === 0) return;
+    this.write(() => {
+      detachEverywhere(this.doc, known, counts);
+      const unlinked = stylesWithout(store, known).filter((s) => !known.has(s.id));
+      if (unlinked.length > 0) this.doc.setTokenRecords(unlinked);
+    });
+  }
+
+  /**
+   * Unlinks layers from their variables and styles (all of them, or only `tokenIds`), keeping
+   * what they show; one undo step. Returns how many bindings went.
+   */
+  detachLayers(layerIds: readonly string[], tokenIds?: readonly string[]): number {
+    const only = tokenIds ? new Set(tokenIds) : null;
+    const patches = new Map<string, ElementPatch>();
+    let count = 0;
+    for (const id of layerIds) {
+      const bindings = this.doc.get(id)?.bindings;
+      if (!bindings) continue;
+      const kept = Object.fromEntries(
+        Object.entries(bindings).filter(([, token]) => only !== null && !only.has(token)),
+      );
+      const removed = Object.keys(bindings).length - Object.keys(kept).length;
+      if (removed === 0) continue;
+      count += removed;
+      patches.set(id, { bindings: kept });
+    }
+    if (patches.size > 0) this.write(() => this.doc.updateMany(patches));
+    return count;
   }
 }
 
