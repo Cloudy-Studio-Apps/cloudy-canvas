@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { DesignNode } from "@design";
+import type { DesignNode } from "../../core";
 
 /** Which layers' effect an editor edits (one effect, at `index` of every one's stack). */
 export interface EffectBindingTarget {

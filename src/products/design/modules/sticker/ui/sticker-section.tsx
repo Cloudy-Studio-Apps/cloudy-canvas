@@ -1,12 +1,10 @@
 import { Shapes } from "lucide-react";
 
 import type { ElementPatch } from "@canvas";
-import {
-  canConvertSticker,
-  STICKER_NODE_DEFAULTS,
-  type DesignNode,
-  type StickerNodeElement,
-} from "@design";
+import { canConvertSticker } from "../sticker-to-vectors";
+import { STICKER_NODE_DEFAULTS } from "../sticker.defaults";
+import type { DesignNode } from "../../core";
+import type { StickerNodeElement } from "../sticker.types";
 import { PanelAddButton, PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useEditNodes } from "@design/ui/hooks";

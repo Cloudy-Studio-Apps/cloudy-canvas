@@ -1,7 +1,7 @@
 import { Maximize } from "lucide-react";
 
 import { CommitInput, useEngineState } from "@canvas-ui";
-import { DESIGN_PAGES } from "@design";
+import { DESIGN_PAGES } from "../design-pages";
 import { PanelIconButton, PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { usePages } from "./use-pages";

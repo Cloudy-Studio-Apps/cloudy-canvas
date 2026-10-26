@@ -9,7 +9,7 @@ import {
   selectionRoots,
   type DesignNode,
   type LayerDestination,
-} from "@design";
+} from "../../../core";
 import { notifyError } from "@shared/stores/toast-store";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import type { LayerRowItem } from "../visible-rows.types";

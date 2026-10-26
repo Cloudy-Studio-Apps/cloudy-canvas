@@ -1,4 +1,4 @@
-import type { ErParticipant, ErRelationElement } from "@board";
+import type { ErParticipant, ErRelationElement } from "../../../relation/relation.types";
 import type { ShapeSelectOption } from "./shape-select.types";
 
 export interface ParticipantRowProps {

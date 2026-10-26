@@ -12,8 +12,8 @@ import type {
   GlassEffect,
   InnerShadowEffect,
   LayerBlurEffect,
-  NodeEffect,
-} from "@design";
+} from "../../effect.types";
+import type { NodeEffect } from "../../../core";
 import { useEditNodes, useSelectedNodes } from "@design/ui/hooks";
 import { useEffectEditStore } from "../effect-edit-store";
 import { BlurHandles } from "./blur-handles";

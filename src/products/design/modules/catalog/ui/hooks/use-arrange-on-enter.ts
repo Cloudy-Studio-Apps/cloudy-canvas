@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 import { whenIdle } from "@canvas";
-import { CATALOG_MODE_ID } from "@design";
+import { CATALOG_MODE_ID } from "../../mode/catalog-mode.constants";
 import { useDesignState } from "@design/ui/design-engine-context";
 import { useBrochure } from "./use-brochure";
 

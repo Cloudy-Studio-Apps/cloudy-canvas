@@ -1,5 +1,5 @@
 import type { CanvasElement } from "@canvas";
-import { isDesignNode } from "@design";
+import { isDesignNode } from "../../core";
 import type { PropertySelection } from "@design/ui/modules";
 
 /** Whether every selected layer is a mask (and something is selected). */

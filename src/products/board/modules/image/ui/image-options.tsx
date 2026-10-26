@@ -1,7 +1,10 @@
 import { Crop, Square, SquareDashed, Undo2 } from "lucide-react";
 
 import type { ElementPatch } from "@canvas";
-import { IMAGE_BACKGROUND_COLOR, IMAGE_DEFAULTS, imageCropPatch, type ImageElement } from "@board";
+import { IMAGE_BACKGROUND_COLOR } from "../../../palette";
+import { IMAGE_DEFAULTS } from "../image.defaults";
+import { imageCropPatch } from "../image-crop";
+import type { ImageElement } from "../image.types";
 import { FloatingPanel, OptionButton, PanelDivider, useEngineState } from "@canvas-ui";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";
 import { useImageCropStore } from "./image-crop-store";

@@ -1,12 +1,8 @@
-import {
-  bindCells,
-  cellFillPath,
-  fillCells,
-  isTable,
-  partCells,
-  TABLE_FILLS,
-  TRANSPARENT,
-} from "@board";
+import { bindCells, cellFillPath } from "../table-cell-bindings";
+import { fillCells } from "../table-edits";
+import { isTable } from "../is-table";
+import { partCells } from "../table-parts";
+import { TABLE_FILLS, TRANSPARENT } from "../../../palette";
 import { ColorPalette, useEngineElement } from "@canvas-ui";
 import { DocumentColorsButton } from "@board/ui/components/board-colors";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";

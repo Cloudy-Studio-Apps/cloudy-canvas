@@ -1,7 +1,8 @@
 import { useCallback } from "react";
 
 import { useCanvasFile, useEditorModules } from "@canvas-ui";
-import { exportSystem, styleguideCategories } from "@design";
+import { exportSystem } from "../../model/export-system";
+import { styleguideCategories } from "../../styleguide.points";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { exportFile } from "@platform";
 import { runWithLoading } from "@shared/stores/loading-store";

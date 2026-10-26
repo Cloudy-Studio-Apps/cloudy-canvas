@@ -1,5 +1,5 @@
 import type { CollectionRecord, VariableRecord } from "@canvas";
-import type { ColorSource } from "@board";
+import type { ColorSource } from "../../../tokens";
 
 export interface CollectionColorsProps {
   collection: CollectionRecord;

@@ -2,7 +2,7 @@ import { memo, useState } from "react";
 import { ChevronRight, CornerLeftDown, Eye, EyeOff, Lock, Sparkles, Unlock } from "lucide-react";
 
 import type { ElementPatch } from "@canvas";
-import { layerNameOf } from "@design";
+import { layerNameOf } from "../../core";
 import { IconButton } from "@shared/ui/kit";
 import { cn } from "@shared/ui/lib/utils";
 import { useDesignEngine } from "@design/ui/design-engine-context";

@@ -1,5 +1,5 @@
 import { inLibrary, toolInfo, type ToolEntry } from "@canvas-ui";
-import type { BoardEngine } from "@board";
+import type { BoardEngine } from "../../../board-engine.types";
 import { LIBRARY_TOOLS_SECTION } from "./library-catalog";
 import type { LibraryItem } from "./library.types";
 

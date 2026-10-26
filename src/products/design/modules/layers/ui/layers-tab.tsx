@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 
 import { useEditorModules } from "@canvas-ui";
-import { siblingMasks } from "@design";
+import { siblingMasks } from "../../core";
 import { PanelIconButton } from "@design/ui/components/panel";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
 import { LayersList } from "./layers-list";

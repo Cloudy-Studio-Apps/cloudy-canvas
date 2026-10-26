@@ -1,4 +1,4 @@
-import { groupKey } from "@design";
+import { groupKey } from "../../sheet/template-choice";
 import { Button, Section } from "@shared/ui/kit";
 import { useStyleguide, useStyleguideOutline } from "../hooks/use-styleguide";
 import { useTemplateChoice } from "../hooks/use-template-choice";

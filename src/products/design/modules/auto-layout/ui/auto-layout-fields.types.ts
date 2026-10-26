@@ -1,4 +1,4 @@
-import type { DesignNode } from "@design";
+import type { DesignNode } from "../../core";
 
 export interface AutoLayoutFieldsProps {
   /** Frames that all have an auto layout. */

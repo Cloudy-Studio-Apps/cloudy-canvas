@@ -1,4 +1,4 @@
-import { SECTION_COLORS } from "@board";
+import { SECTION_COLORS } from "../../../palette";
 import { FloatingPanel } from "@canvas-ui";
 import { BoardColorPalette } from "@board/ui/components/board-colors";
 

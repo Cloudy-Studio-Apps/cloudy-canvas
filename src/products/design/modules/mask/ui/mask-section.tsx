@@ -3,7 +3,8 @@ import { SquareDashed } from "lucide-react";
 import { Button } from "@shared/ui/components/ui/button";
 
 import type { ElementPatch } from "@canvas";
-import { isDesignNode, layerNameOf, maskOverNode, type DesignNode } from "@design";
+import { isDesignNode, layerNameOf, type DesignNode } from "../../core";
+import { maskOverNode } from "../mask-edits";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { BindSlot, NodeCheckbox, NodeSelectField, PanelSection } from "@design/ui/components/panel";
 import type { PropertySectionProps } from "@design/ui/modules";

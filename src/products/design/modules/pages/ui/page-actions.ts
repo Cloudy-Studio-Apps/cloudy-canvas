@@ -1,4 +1,5 @@
-import { DESIGN_PAGES, type DesignEngine } from "@design";
+import { DESIGN_PAGES } from "../design-pages";
+import type { DesignEngine } from "../../../design-engine.types";
 import { notifyError } from "@shared/stores/toast-store";
 
 /** Adds a page after the one on screen and shows it. */

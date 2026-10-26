@@ -1,4 +1,4 @@
-import type { ArrowHead, ConnectorStyle } from "@board";
+import type { ArrowHead, ConnectorStyle } from "../connector.types";
 
 export interface ConnectorStyleItem {
   style: ConnectorStyle;

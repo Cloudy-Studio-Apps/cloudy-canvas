@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react";
 
-import { ensureBrochure } from "@design";
+import { ensureBrochure } from "../../model/current-brochure";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button } from "@shared/ui/components/ui/button";
 import { useBrochure } from "../hooks/use-brochure";

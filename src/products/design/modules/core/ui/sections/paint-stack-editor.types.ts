@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import type { Size } from "@canvas";
 import type { ColorChangeInfo } from "@canvas-ui";
-import type { Paint } from "@design";
+import type { Paint } from "../../node/paint.types";
 
 /** Where each paint's variables go after a change (`null`: the stack was replaced). */
 export type PaintStackMap = ((index: number) => number | null) | null;

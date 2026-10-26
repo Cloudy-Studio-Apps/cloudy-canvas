@@ -5,7 +5,7 @@ import { Button } from "@shared/ui/components/ui/button";
 import { SearchInput } from "@shared/ui/kit";
 import { Tabs, TabsList, TabsTrigger } from "@shared/ui/components/ui/tabs";
 import { useEditorModules } from "@canvas-ui";
-import { useBoardEngine } from "../../board-engine-context";
+import { useBoardEngine } from "@board/ui/board-engine-context";
 import { LIBRARY_TABS } from "./library-catalog";
 import { shownSections } from "./library-filter";
 import { LibrarySectionView } from "./library-section";

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
-import { isPlaceholderPaint, pagePictures } from "@design";
+import { isPlaceholderPaint } from "../../../core";
+import { pagePictures } from "../../model/page-pictures";
 import { PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useBrochure } from "../hooks/use-brochure";

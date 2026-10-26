@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 import { IDENTITY_TRANSFORM, type ElementPatch } from "@canvas";
 import { ImageCropOverlay, useAssetUrl, type ImageCropValue } from "@canvas-ui";
-import type { DesignNode, ImagePaint } from "@design";
+import type { DesignNode, ImagePaint } from "../../core";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useEditNodes, useSelectedNodes } from "@design/ui/hooks";
 import { useImageCropStore } from "@design/ui/stores/image-crop-store";

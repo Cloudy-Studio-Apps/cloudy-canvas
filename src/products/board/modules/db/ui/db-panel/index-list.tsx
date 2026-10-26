@@ -1,7 +1,7 @@
 import { useId } from "react";
 import { Plus } from "lucide-react";
 
-import { INDEX_TYPES } from "@board";
+import { INDEX_TYPES } from "../../schema/column-types";
 import { Button } from "@shared/ui/components/ui/button";
 import { useBoardSchema } from "../schema";
 import { IndexRow } from "./index-row";

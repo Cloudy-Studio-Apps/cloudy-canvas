@@ -2,14 +2,12 @@ import { useRef } from "react";
 
 import type { ElementPatch } from "@canvas";
 import type { ColorChangeInfo } from "@canvas-ui";
-import {
-  PAINT_STYLE,
-  paintBindingsOf,
-  paintStyleOfNode,
-  stackBindingsPatch,
-  type DesignNode,
-  type Paint,
-} from "@design";
+import { PAINT_STYLE } from "../../styles/style-paths";
+import { paintBindingsOf } from "../../styles/style-bindings-of";
+import { paintStyleOfNode } from "../../styles/paint-style";
+import { stackBindingsPatch } from "../../node/stack-bindings";
+import type { DesignNode } from "../../node/design-node.types";
+import type { Paint } from "../../node/paint.types";
 import { PanelAddButton, PanelSection } from "@design/ui/components/panel";
 import { StyleChip, StyleControl, createNodeStyle, useNodeStyleBinding } from "../styles";
 import { useDesignEngine } from "@design/ui/design-engine-context";

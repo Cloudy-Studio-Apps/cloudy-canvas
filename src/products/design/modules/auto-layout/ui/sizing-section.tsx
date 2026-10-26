@@ -1,5 +1,5 @@
 import type { ElementPatch } from "@canvas";
-import type { DesignNode, DesignNodeKind, LayoutAxis } from "@design";
+import type { DesignNode, DesignNodeKind, LayoutAxis } from "../../core";
 import {
   BindSlot,
   NodeCheckbox,

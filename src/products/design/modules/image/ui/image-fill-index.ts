@@ -1,5 +1,5 @@
 import type { CanvasElement } from "@canvas";
-import type { DesignNode } from "@design";
+import type { DesignNode } from "../../core";
 
 /** The position of a layer's topmost visible image fill, or `null` without one. */
 export function imageFillIndex(node: DesignNode): number | null {

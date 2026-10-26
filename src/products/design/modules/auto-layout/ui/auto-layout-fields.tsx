@@ -10,7 +10,8 @@ import {
   UnfoldVertical,
 } from "lucide-react";
 
-import { layoutOf, layoutPatch, type AutoLayout, type DesignNode } from "@design";
+import { layoutOf, type AutoLayout, type DesignNode } from "../../core";
+import { layoutPatch } from "../layout-patch";
 import {
   NodeCheckbox,
   BindableNumberField,

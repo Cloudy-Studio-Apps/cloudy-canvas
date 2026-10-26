@@ -1,4 +1,4 @@
-import { STICKY_COLORS } from "@board";
+import { STICKY_COLORS } from "../../../palette";
 import { FloatingPanel } from "@canvas-ui";
 import { BoardColorPalette } from "@board/ui/components/board-colors";
 

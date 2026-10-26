@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { addAutoLayout, removeAutoLayout } from "@design";
+import { addAutoLayout, removeAutoLayout } from "../add-auto-layout";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 
 /** Runs Add auto layout (Shift+A) and Remove auto layout (Alt+Shift+A) on the selection. */

@@ -2,7 +2,7 @@ import type { ComponentType } from "react";
 
 import type { StyleRecord } from "@canvas";
 import type { ExtensionIcon } from "@canvas-ui";
-import type { DesignEngine } from "@design";
+import type { DesignEngine } from "../../../design-engine.types";
 
 /** A style's look, small (a row's icon, a chip). */
 export interface StylePreviewProps {

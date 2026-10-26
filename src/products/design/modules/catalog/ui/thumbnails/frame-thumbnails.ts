@@ -1,5 +1,8 @@
 import { Emitter, whenIdle, type DocumentChange } from "@canvas";
-import { drawFrame, isPageFrame, type DesignEngine, type FrameElement } from "@design";
+import { drawFrame } from "../../export/draw-frame";
+import { isPageFrame } from "../../model/page-frame";
+import type { DesignEngine } from "../../../../design-engine.types";
+import type { FrameElement } from "../../../frame";
 
 /** Thumbnails' longest side, in pixels. */
 const THUMBNAIL_SIDE = 240;

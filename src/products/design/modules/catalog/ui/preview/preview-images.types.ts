@@ -1,4 +1,4 @@
-import type { FrameElement } from "@design";
+import type { FrameElement } from "../../../frame";
 
 /** One page picture the preview keeps. */
 export interface PreviewImageEntry {

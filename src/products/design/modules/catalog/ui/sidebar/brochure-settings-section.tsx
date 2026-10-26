@@ -1,6 +1,7 @@
 import { Ruler } from "lucide-react";
 
-import { brochurePageSize, paperSize } from "@design";
+import { brochurePageSize } from "../../model/page-span";
+import { paperSize } from "../../model/paper-size";
 import { NumberField, PanelSection, PropertyGrid } from "@design/ui/components/panel";
 import { useBrochure } from "../hooks/use-brochure";
 import { useCatalogViewStore } from "../stores/catalog-view-store";

@@ -1,7 +1,10 @@
 import { useEffect } from "react";
 
 import { asUndoStep } from "@canvas";
-import { BOOLEAN_OPERATIONS, booleanNodes, flattenNodes, outlineStrokes } from "@design";
+import { BOOLEAN_OPERATIONS } from "../boolean.constants";
+import { booleanNodes } from "../boolean-nodes";
+import { flattenNodes } from "../flatten-nodes";
+import { outlineStrokes } from "../outline-strokes";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { BOOLEAN_COMMANDS } from "./boolean-icons";
 

@@ -14,7 +14,9 @@ import {
 } from "lucide-react";
 
 import type { ElementPatch } from "@canvas";
-import { retypeset, type DesignNode, type TextNodeElement } from "@design";
+import { retypeset } from "../retypeset";
+import type { DesignNode } from "../../core";
+import type { TextNodeElement } from "../text.types";
 import {
   BindSlot,
   NodeOptionButtons,

@@ -1,5 +1,6 @@
 import { gradientCss } from "@canvas";
-import { isGradientPaint, type Paint } from "@design";
+import { isGradientPaint } from "../../node/gradient-paint";
+import type { Paint } from "../../node/paint.types";
 
 /** How a paint looks as a CSS background (pictures as a neutral gray). */
 export function paintCss(paint: Paint): string {

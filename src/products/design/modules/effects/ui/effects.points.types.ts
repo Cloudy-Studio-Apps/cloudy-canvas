@@ -1,7 +1,7 @@
 import type { ComponentType } from "react";
 
 import type { ColorChangeInfo, ExtensionIcon } from "@canvas-ui";
-import type { NodeEffect } from "@design";
+import type { NodeEffect } from "../../core";
 
 /** What an effect's editor gets: the effect, and how to change it. */
 export interface EffectEditorProps<E extends NodeEffect = NodeEffect> {

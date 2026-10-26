@@ -1,14 +1,14 @@
 import { useMemo, useSyncExternalStore } from "react";
 
 import { TokenStore } from "@canvas";
-import {
-  buildSheet,
-  sheetContext,
-  type GeneratedSpec,
-  type StyleguideCategory,
-  type StyleguideTemplate,
-  type TemplateOptions,
-} from "@design";
+import { buildSheet } from "../../sheet/build-sheet";
+import { sheetContext } from "../../sheet/sheet-context";
+import type {
+  GeneratedSpec,
+  StyleguideCategory,
+  StyleguideTemplate,
+  TemplateOptions,
+} from "../../styleguide.types";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 
 /** How many of a category's groups a thumbnail shows (it stays cheap). */

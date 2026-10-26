@@ -1,7 +1,9 @@
 import { Fragment } from "react";
 import { ListChecks } from "lucide-react";
 
-import { CATALOG_PICK_TOOL, paperSize, type BookSide } from "@design";
+import { CATALOG_PICK_TOOL } from "../../mode/catalog-mode.constants";
+import { paperSize } from "../../model/paper-size";
+import type { BookSide } from "../../model/book-layout.types";
 import { PanelAddButton, PanelIconButton } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useBrochure } from "../hooks/use-brochure";

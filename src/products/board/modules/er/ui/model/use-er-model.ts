@@ -1,4 +1,5 @@
-import { ER_MODEL, type ErModel } from "@board";
+import { ER_MODEL } from "../../model/er-model.service";
+import type { ErModel } from "../../model/er-model";
 import { useService } from "@canvas-ui";
 
 /** The open board's ER diagrams (the engine's `ER_MODEL` service). */

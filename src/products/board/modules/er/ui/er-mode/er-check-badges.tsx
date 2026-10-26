@@ -1,7 +1,8 @@
 import { useMemo, useReducer, useEffect } from "react";
 import { CircleX, TriangleAlert } from "lucide-react";
 
-import { ER_MODE_ID, type ErIssue } from "@board";
+import { ER_MODE_ID } from "../../mode/er-mode";
+import type { ErIssue } from "../../model/check/check-er.types";
 import { useEngine, useEngineState } from "@canvas-ui";
 import { cn } from "@shared/ui/lib/utils";
 import { useErModel, useErVersion } from "../model";

@@ -1,4 +1,4 @@
-import type { LayoutAlign, LayoutCounterAlign } from "@design";
+import type { LayoutAlign, LayoutCounterAlign } from "../../core";
 import { cn } from "@shared/ui/lib/utils";
 import type { AlignmentGridProps } from "./alignment-grid.types";
 

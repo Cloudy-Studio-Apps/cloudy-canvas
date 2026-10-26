@@ -1,4 +1,6 @@
-import { effectiveDpi, isPlaceholderPaint, LOW_DPI } from "@design";
+import { effectiveDpi } from "../../checks/effective-dpi";
+import { isPlaceholderPaint } from "../../../core";
+import { LOW_DPI } from "../../checks/brochure-checks";
 import { useAssetUrl } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button } from "@shared/ui/components/ui/button";

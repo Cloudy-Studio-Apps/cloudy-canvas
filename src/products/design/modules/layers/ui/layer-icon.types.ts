@@ -1,4 +1,4 @@
-import type { DesignNode } from "@design";
+import type { DesignNode } from "../../core";
 
 export interface LayerIconProps {
   node: DesignNode;

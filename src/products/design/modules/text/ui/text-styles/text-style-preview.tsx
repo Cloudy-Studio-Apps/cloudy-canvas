@@ -1,4 +1,4 @@
-import { readTextStyle } from "@design";
+import { readTextStyle } from "../../text-style";
 import type { StylePreviewProps } from "../../../core/ui";
 
 /** A text style's picture: "Ag" in its font. */

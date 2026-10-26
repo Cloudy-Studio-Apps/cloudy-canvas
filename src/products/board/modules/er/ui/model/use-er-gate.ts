@@ -1,6 +1,9 @@
 import { useMemo } from "react";
 
-import { constructGate, erStandards, standardOf, type ErConstructGate } from "@board";
+import { constructGate } from "../../base/constructs/construct-gate";
+import { erStandards } from "../../base/standards/er-standard-registry";
+import { standardOf } from "../../model/standard-of";
+import type { ErConstructGate } from "../../base/constructs/er-construct.types";
 import { useErQuery } from "./use-er-query";
 
 /** What the shown diagram's standard lets the editor add (re-read when its standard changes). */

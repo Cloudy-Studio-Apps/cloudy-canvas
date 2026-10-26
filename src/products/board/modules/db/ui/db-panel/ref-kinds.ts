@@ -1,4 +1,4 @@
-import type { DbRefKind } from "@board";
+import type { DbRefKind } from "../../table/db-table.types";
 
 /** Relation kinds in the order the picker shows them, read from the owning column's side. */
 export const REF_KINDS: { kind: DbRefKind; label: string; description: string }[] = [

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import type { ShaderEffect } from "@design";
+import type { ShaderEffect } from "../../effects";
 import { CodeEditor } from "@shared/ui/components/code-editor";
 import {
   Select,

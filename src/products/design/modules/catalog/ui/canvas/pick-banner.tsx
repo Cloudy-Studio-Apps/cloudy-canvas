@@ -1,4 +1,5 @@
-import { applyPick, CATALOG_TOOL } from "@design";
+import { applyPick } from "../../mode/apply-pick";
+import { CATALOG_TOOL } from "../../mode/catalog-mode.constants";
 import { FloatingPanel } from "@canvas-ui";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
 import { Button } from "@shared/ui/components/ui/button";

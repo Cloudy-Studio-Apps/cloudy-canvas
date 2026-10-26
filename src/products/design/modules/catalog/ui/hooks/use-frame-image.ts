@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import type { FrameElement } from "@design";
+import type { FrameElement } from "../../../frame";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { notifyError } from "@shared/stores/toast-store";
 import { previewImagesOf } from "../preview/preview-images";

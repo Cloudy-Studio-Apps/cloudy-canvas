@@ -1,4 +1,4 @@
-import type { StyleguideOutlineEntry } from "@design";
+import type { StyleguideOutlineEntry } from "../../model/design-styleguide.types";
 
 export interface CategoryRowProps {
   entry: StyleguideOutlineEntry;

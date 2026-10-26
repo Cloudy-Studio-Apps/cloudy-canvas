@@ -1,5 +1,5 @@
 import { clamp, type Point } from "@canvas";
-import type { LayerBlurEffect } from "@design";
+import type { LayerBlurEffect } from "../../effect.types";
 import { HandleDot } from "./handle-dot";
 import type { EffectHandlesProps } from "./handles.types";
 

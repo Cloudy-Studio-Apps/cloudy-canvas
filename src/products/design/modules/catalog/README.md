@@ -3,7 +3,7 @@
 Print brochures inside a design: in the Catalog mode a page's top-level frames are a brochure's pages, with spreads, bleed and margins, checks before printing and PDF export.
 
 - **Tier:** feature
-- **Requires:** core, pages, frame
+- **Requires:** core, pages, frame; uses: image
 - **Contributes:** kinds `BrochureKind`; designCanvas: `editElement`, `hostCommands`, `kinds`, `modes`, `onRemove`, `tools`; designEditor: `leftTabs`, `modeSidebars`, `modes`, `overlays`, `sessionHooks`; `designMcpTools`, `designMigrations`
 - **Points it owns:** —
 - **MCP tools:** `add_brochure_pages`, `arrange_brochure`, `create_brochure`, `delete_brochure`, `duplicate_brochure`, `export_brochure_pdf`, `get_brochure`, `get_brochure_page`, `list_brochures`, `move_brochure_page`, `remove_brochure_pages`, `rename_brochure`, `set_brochure_page_options`, `set_brochure_pages`, `set_brochure_settings`, `view_brochure`

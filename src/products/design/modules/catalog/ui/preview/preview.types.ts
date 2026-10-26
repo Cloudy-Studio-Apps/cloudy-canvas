@@ -1,7 +1,9 @@
 import type { Ref } from "react";
 
 import type { Size } from "@canvas";
-import type { BookLayout, BookSide, BrochurePage, FrameElement, SidePart } from "@design";
+import type { BookLayout, BookSide, SidePart } from "../../model/book-layout.types";
+import type { BrochurePage } from "../../model/brochure-pages.types";
+import type { FrameElement } from "../../../frame";
 
 export interface PreviewPageProps {
   frame: FrameElement;

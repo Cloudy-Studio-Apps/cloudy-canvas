@@ -5,7 +5,7 @@ import type * as canvasUi from "@canvas-ui";
 import type * as board from "@board";
 import type { createId, defineModule, definePoint, PluginManifest } from "@shared/core";
 import type { notifyError, toast } from "@shared/stores/toast-store";
-import type { boardLibrary } from "@board/ui/components/library";
+import type { boardLibrary } from "@board/modules/library/ui";
 import type { boardEditor } from "@board/ui";
 import type * as canvasApi from "@canvas";
 import type * as design from "@design";

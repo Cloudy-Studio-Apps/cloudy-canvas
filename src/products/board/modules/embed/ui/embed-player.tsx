@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { EMBED_ACTIONS, embedOf } from "@board";
+import { EMBED_ACTIONS } from "../embed.actions";
+import { embedOf } from "../embed-preview";
 import { openExternal } from "@platform";
 import { notifyError } from "@shared/stores/toast-store";
 import { useBoardEngine } from "@board/ui/board-engine-context";

@@ -1,4 +1,4 @@
-import { HIGHLIGHTER_SIZES, MARKER_SIZES } from "@board";
+import { HIGHLIGHTER_SIZES, MARKER_SIZES } from "../../../palette";
 import { OptionButton } from "@canvas-ui";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";
 

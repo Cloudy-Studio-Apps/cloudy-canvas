@@ -37,6 +37,9 @@ export const catalogModule = defineModule({
   id: "catalog",
   tier: "feature",
   requires: ["core", "pages", "frame"],
+  // Replaces a page's pictures with image's `replaceImageFill`; `uses`, not `requires`: catalog loads
+  // before image (its `editElement` takes frames first).
+  uses: ["image"],
   register(host) {
     host.contribute(designCanvas.kinds, new BrochureKind());
     host.contribute(designCanvas.modes, CATALOG_MODE);

@@ -3,8 +3,8 @@ import { useEffect } from "react";
 
 import { ToolButton } from "@canvas-ui";
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
-import { useBoardEngine } from "../../board-engine-context";
-import { useBoardPanelStore } from "../../stores/board-panel-store";
+import { useBoardEngine } from "@board/ui/board-engine-context";
+import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { OPEN_LIBRARY } from "./library-command";
 import { LibraryPanel } from "./library-panel";
 

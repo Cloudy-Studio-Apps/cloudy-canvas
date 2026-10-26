@@ -1,6 +1,6 @@
 import { ChevronLeft, Table2 } from "lucide-react";
 
-import { erNotation, erStandard } from "@board";
+import { erNotation, erStandard } from "../../../base/er-notation";
 import { Button } from "@shared/ui/components/ui/button";
 import { ChoiceCards } from "@shared/ui/kit";
 import { useErDiagram, useErQuery } from "../../model";

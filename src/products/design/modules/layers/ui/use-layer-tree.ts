@@ -1,7 +1,7 @@
 import { useState, useSyncExternalStore } from "react";
 
 import { useService } from "@canvas-ui";
-import { DESIGN_TREE, type LayerTree } from "@design";
+import { DESIGN_TREE, type LayerTree } from "../../core";
 import { useDesignState } from "@design/ui/design-engine-context";
 
 /** The layer tree of the page on screen, read again only when the document or the page changes. */

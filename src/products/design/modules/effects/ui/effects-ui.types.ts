@@ -1,5 +1,5 @@
 import type { ColorChangeInfo } from "@canvas-ui";
-import type { DesignNode, NodeEffect } from "@design";
+import type { DesignNode, NodeEffect } from "../../core";
 import type { EffectTypeEntry } from "./effects.points.types";
 
 export interface AddEffectMenuProps {

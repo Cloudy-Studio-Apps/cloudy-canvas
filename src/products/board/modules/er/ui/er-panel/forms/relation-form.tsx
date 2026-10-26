@@ -1,6 +1,7 @@
 import { Group, Plus, RectangleHorizontal } from "lucide-react";
 
-import { canConvert, cardinalityRatio } from "@board";
+import { canConvert } from "../../../relation/can-convert";
+import { cardinalityRatio } from "../../../relation/cardinality-ratio";
 import { Button } from "@shared/ui/components/ui/button";
 import { CommitInput, useEngine } from "@canvas-ui";
 import { useErDiagram, useErShapes, lockedOn, useErGate } from "../../model";

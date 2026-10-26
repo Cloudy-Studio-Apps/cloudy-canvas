@@ -1,4 +1,4 @@
-import type { StrokeCap, StrokeJoin } from "@design";
+import type { StrokeCap, StrokeJoin } from "../../../node/design-node.types";
 
 export interface CapIconProps {
   cap: StrokeCap;

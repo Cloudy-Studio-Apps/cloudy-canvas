@@ -1,4 +1,4 @@
-import type { MaskType } from "@design";
+import type { MaskType } from "../../core";
 
 /** The mask types as the Mask section lists them, as in Figma. */
 export const MASK_TYPE_OPTIONS: readonly { value: MaskType; label: string }[] = [

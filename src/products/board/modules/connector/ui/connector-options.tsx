@@ -1,6 +1,6 @@
 import { CornerDownRight, MoveRight } from "lucide-react";
 
-import { LINE_COLORS } from "@board";
+import { LINE_COLORS } from "../../../palette";
 import { FloatingPanel, OptionButton, PanelDivider } from "@canvas-ui";
 import { BoardColorPalette } from "@board/ui/components/board-colors";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";

@@ -1,5 +1,8 @@
 import type { ContextMenuSubmenu } from "@canvas-ui";
-import { DESIGN_PAGES, DESIGN_STYLEGUIDE, isSheet, STYLEGUIDE_COMMANDS } from "@design";
+import { DESIGN_PAGES } from "../../../pages";
+import { DESIGN_STYLEGUIDE } from "../../model/design-styleguide";
+import { isSheet } from "../../sheet/is-sheet";
+import { STYLEGUIDE_COMMANDS } from "../../mode/styleguide-mode.constants";
 import { toast } from "@shared/stores/toast-store";
 
 /**

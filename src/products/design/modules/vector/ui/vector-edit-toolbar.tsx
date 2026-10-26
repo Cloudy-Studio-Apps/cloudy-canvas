@@ -1,7 +1,7 @@
 import { MousePointer2, PaintBucket, PenTool, Scissors, Spline } from "lucide-react";
 
 import { FloatingPanel, PanelDivider, ToolButton, useEngineState } from "@canvas-ui";
-import { VECTOR_TOOLS } from "@design";
+import { VECTOR_TOOLS } from "../edit/vector-tools";
 import { Button } from "@shared/ui/components/ui/button";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 

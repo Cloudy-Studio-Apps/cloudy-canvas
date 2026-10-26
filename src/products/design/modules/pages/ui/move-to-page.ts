@@ -1,5 +1,5 @@
 import type { ContextMenuSubmenu } from "@canvas-ui";
-import { DESIGN_PAGES } from "@design";
+import { DESIGN_PAGES } from "../design-pages";
 
 /** The selection's "Move to page" submenu: every page but the one on screen. */
 export const MOVE_TO_PAGE: ContextMenuSubmenu = {

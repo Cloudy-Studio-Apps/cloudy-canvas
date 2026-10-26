@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
-import type { DesignNode, Paint } from "@design";
+import type { DesignNode } from "../../node/design-node.types";
+import type { Paint } from "../../node/paint.types";
 
 export interface PaintListSectionProps {
   title: string;

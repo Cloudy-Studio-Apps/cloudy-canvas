@@ -1,6 +1,6 @@
 import { LayoutGrid } from "lucide-react";
 
-import type { BrochureArrange } from "@design";
+import type { BrochureArrange } from "../../brochure/brochure.types";
 import { Button } from "@shared/ui/components/ui/button";
 import { useBrochure } from "../hooks/use-brochure";
 import { SettingSelect } from "./setting-select";

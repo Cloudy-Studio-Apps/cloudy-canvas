@@ -1,6 +1,6 @@
 import type React from "react";
 
-import type { DesignNode, LayerDestination, LayerTree } from "@design";
+import type { DesignNode, LayerDestination, LayerTree } from "../../../core";
 
 import type { LayerRowItem } from "../visible-rows.types";
 

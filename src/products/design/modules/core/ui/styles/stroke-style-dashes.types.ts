@@ -1,4 +1,4 @@
-import type { StrokeStyleValue } from "@design";
+import type { StrokeStyleValue } from "../../styles/stroke-style.types";
 
 export interface StrokeStyleDashesProps {
   value: StrokeStyleValue;

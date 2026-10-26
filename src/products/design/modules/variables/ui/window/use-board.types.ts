@@ -1,5 +1,5 @@
 import type { CollectionRecord, DocumentTokens, ModeAxisRecord, TokenStore } from "@canvas";
-import type { DesignEngine } from "@design";
+import type { DesignEngine } from "../../../../design-engine.types";
 
 import type { BoardMode } from "./board-model.types";
 

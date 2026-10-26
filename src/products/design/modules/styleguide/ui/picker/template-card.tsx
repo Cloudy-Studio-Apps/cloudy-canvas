@@ -1,4 +1,4 @@
-import { templateOptions } from "@design";
+import { templateOptions } from "../../sheet/template-choice";
 import { SelectableCard } from "@shared/ui/kit";
 import { useSheetPreview } from "../hooks/use-sheet-preview";
 import { SpecPreview } from "../preview/spec-preview";

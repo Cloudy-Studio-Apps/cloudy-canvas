@@ -1,7 +1,6 @@
 import { useRef } from "react";
 
-import type { ColorChangeInfo } from "@canvas-ui";
-import { useEditorModules } from "@canvas-ui";
+import { type ColorChangeInfo, useEditorModules } from "@canvas-ui";
 import {
   EFFECT_STYLE,
   effectBindingsOf,
@@ -9,7 +8,7 @@ import {
   stackBindingsPatch,
   type DesignNode,
   type NodeEffect,
-} from "@design";
+} from "../../core";
 import { PanelSection } from "@design/ui/components/panel";
 import { StyleChip, StyleControl, createNodeStyle, useNodeStyleBinding } from "../../core/ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";

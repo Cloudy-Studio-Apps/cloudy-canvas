@@ -1,4 +1,5 @@
-import { geoVariants, SHAPE_FILLS, SHAPE_STROKES } from "@board";
+import { geoVariants } from "../variants/variant.registry";
+import { SHAPE_FILLS, SHAPE_STROKES } from "../../../palette";
 import { FloatingPanel, OptionButton, PanelDivider } from "@canvas-ui";
 import { BoardColorPalette } from "@board/ui/components/board-colors";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";

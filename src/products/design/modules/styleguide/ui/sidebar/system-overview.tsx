@@ -1,6 +1,6 @@
 import { FileDown } from "lucide-react";
 
-import { STYLEGUIDE_COMMANDS } from "@design";
+import { STYLEGUIDE_COMMANDS } from "../../mode/styleguide-mode.constants";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button, Section } from "@shared/ui/kit";
 import { useStyleguideOutline } from "../hooks/use-styleguide";

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { canRestyleEdge, stickerEdgePatches } from "@design";
+import { canRestyleEdge, stickerEdgePatches } from "../sticker-edge";
 import { EffectColorField } from "../../effects/ui";
 import { PanelIconButton } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";

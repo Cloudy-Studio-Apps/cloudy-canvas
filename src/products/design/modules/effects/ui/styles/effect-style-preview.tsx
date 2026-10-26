@@ -1,4 +1,4 @@
-import { readEffectStyle } from "@design";
+import { readEffectStyle } from "../../../core";
 import type { StylePreviewProps } from "../../../core/ui";
 
 /** An effect style's picture: a small card with its first shadow (or a plain one). */

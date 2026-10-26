@@ -1,6 +1,8 @@
 import { useEffect, useReducer, useRef, useState, useSyncExternalStore } from "react";
 
-import { ER_RELATION_PROMPT, ER_RELATION_RATIOS, gateOf, type ErRelationEnd } from "@board";
+import { ER_RELATION_PROMPT, ER_RELATION_RATIOS } from "../../connect/er-relation-ratios";
+import { gateOf } from "../../model/standard-of";
+import type { ErRelationEnd } from "../../model/edits/edits.types";
 import { FloatingPanel, useEngine, useService } from "@canvas-ui";
 import { useErModel } from "../model";
 import { ErJoinStep } from "./er-join-step";

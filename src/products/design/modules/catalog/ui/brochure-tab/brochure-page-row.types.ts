@@ -1,4 +1,5 @@
-import type { BlankReason, BrochurePage } from "@design";
+import type { BlankReason } from "../../model/book-layout.types";
+import type { BrochurePage } from "../../model/brochure-pages.types";
 
 export interface BrochurePageRowProps {
   page: BrochurePage;

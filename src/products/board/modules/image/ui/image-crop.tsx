@@ -8,7 +8,8 @@ import {
   useEngineState,
   type ImageCropValue,
 } from "@canvas-ui";
-import { IMAGE_ACTIONS, type ImageElement } from "@board";
+import { IMAGE_ACTIONS } from "../image-crop";
+import type { ImageElement } from "../image.types";
 import { useBoardEngine } from "@board/ui/board-engine-context";
 import { useImageCropStore } from "./image-crop-store";
 

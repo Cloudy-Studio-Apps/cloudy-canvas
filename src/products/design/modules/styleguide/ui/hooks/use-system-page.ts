@@ -1,7 +1,9 @@
 import { useMemo, useSyncExternalStore } from "react";
 
 import { useService } from "@canvas-ui";
-import { DESIGN_PAGES, systemPageOf, type SystemPage } from "@design";
+import { DESIGN_PAGES } from "../../../pages";
+import { systemPageOf } from "../../system/system-page";
+import type { SystemPage } from "../../sheet/sheet.types";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 
 /** The design's system page as it changes (`undefined` while the file has no tokens). */

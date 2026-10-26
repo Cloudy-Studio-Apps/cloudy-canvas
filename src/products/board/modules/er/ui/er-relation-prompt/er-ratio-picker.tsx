@@ -1,4 +1,4 @@
-import { ER_RELATION_RATIOS } from "@board";
+import { ER_RELATION_RATIOS } from "../../connect/er-relation-ratios";
 import { ErRelationGlyph } from "./er-relation-glyph";
 import type { ErRatioPickerProps } from "./er-relation-prompt.types";
 

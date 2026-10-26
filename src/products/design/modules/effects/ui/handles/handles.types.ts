@@ -2,7 +2,7 @@ import type { PointerEvent as ReactPointerEvent } from "react";
 
 import type { Point } from "@canvas";
 import type { OverlayFrame, ViewMapping } from "@canvas-ui";
-import type { NodeEffect } from "@design";
+import type { NodeEffect } from "../../../core";
 
 /** Starts dragging a handle: `onMove` gets the pointer in the layer's box (0–1 each axis). */
 export type StartHandleDrag = (

@@ -1,12 +1,12 @@
 import { useMemo } from "react";
 
-import {
-  templateChoice,
-  type StyleguideCategory,
-  type TokenSheet,
-  type StyleguideTemplate,
-  type TemplateOptions,
-} from "@design";
+import { templateChoice } from "../../sheet/template-choice";
+import type {
+  StyleguideCategory,
+  StyleguideTemplate,
+  TemplateOptions,
+} from "../../styleguide.types";
+import type { TokenSheet } from "../../sheet/sheet.types";
 import { useStyleguide } from "./use-styleguide";
 
 /**

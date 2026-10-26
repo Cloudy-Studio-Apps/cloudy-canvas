@@ -1,4 +1,4 @@
-import { readStrokeStyle } from "@design";
+import { readStrokeStyle } from "../../styles/stroke-style";
 import type { StylePreviewProps } from "../core.points.types";
 
 const LINECAPS = { none: "butt", round: "round", square: "square" } as const;

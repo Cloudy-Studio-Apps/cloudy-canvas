@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 
-import { createPresetFrame, type FramePreset } from "@design";
+import { createPresetFrame } from "../create-preset-frame";
+import type { FramePreset } from "../frame.types";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 
 /**

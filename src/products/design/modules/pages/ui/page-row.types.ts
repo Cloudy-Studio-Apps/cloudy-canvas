@@ -1,4 +1,4 @@
-import type { PageElement } from "@design";
+import type { PageElement } from "../page/page.types";
 
 export interface PageRowProps {
   page: PageElement;

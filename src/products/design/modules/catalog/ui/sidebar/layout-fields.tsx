@@ -1,4 +1,4 @@
-import type { BrochureCovers, BrochureLayout } from "@design";
+import type { BrochureCovers, BrochureLayout } from "../../brochure/brochure.types";
 import { useBrochure } from "../hooks/use-brochure";
 import { SettingSelect } from "./setting-select";
 import type { SettingChoice } from "./sidebar.types";

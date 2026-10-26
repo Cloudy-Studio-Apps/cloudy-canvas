@@ -1,6 +1,6 @@
 import { GitFork, LocateFixed } from "lucide-react";
 
-import { ER_ENTITY_COLOR, SHAPE_STROKES } from "@board";
+import { ER_ENTITY_COLOR, SHAPE_STROKES } from "../../../../../palette";
 import { Button } from "@shared/ui/components/ui/button";
 import { ListRow } from "@shared/ui/kit";
 import { ColorPalette, CommitInput, useEngine } from "@canvas-ui";

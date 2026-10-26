@@ -1,4 +1,4 @@
-import type { DbApplyOptions, DbApplyResult } from "@board";
+import type { DbApplyOptions, DbApplyResult } from "../../schema/db-schema.types";
 
 export interface DbmlEditorProps {
   /** Current DBML generated from the document. */

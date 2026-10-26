@@ -8,7 +8,11 @@ import {
   Play,
 } from "lucide-react";
 
-import { CATALOG_COMMANDS, CATALOG_PICK_TOOL, CATALOG_TOOL } from "@design";
+import {
+  CATALOG_COMMANDS,
+  CATALOG_PICK_TOOL,
+  CATALOG_TOOL,
+} from "../../mode/catalog-mode.constants";
 import { FloatingPanel, PanelDivider, ToolButton, useEditorMode } from "@canvas-ui";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
 import { Button } from "@shared/ui/components/ui/button";

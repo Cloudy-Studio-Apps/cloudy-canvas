@@ -1,4 +1,4 @@
-import type { LayerTree } from "@design";
+import type { LayerTree } from "../../core";
 
 /** The ancestors of the selected layers, which open so the selection shows in the tree. */
 export function revealedLayers(tree: LayerTree, selected: readonly string[]): Set<string> {

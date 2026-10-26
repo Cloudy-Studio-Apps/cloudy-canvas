@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import type { FrameElement } from "@design";
+import type { FrameElement } from "../../../frame";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { previewImagesOf } from "./preview-images";
 import { pictureSide } from "./preview-size";

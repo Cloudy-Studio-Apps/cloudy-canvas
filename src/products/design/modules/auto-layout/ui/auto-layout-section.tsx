@@ -1,6 +1,7 @@
 import { Minus } from "lucide-react";
 
-import { addAutoLayout, layoutOf, removeAutoLayout } from "@design";
+import { addAutoLayout, removeAutoLayout } from "../add-auto-layout";
+import { layoutOf } from "../../core";
 import { PanelAddButton, PanelIconButton, PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import type { PropertySectionProps } from "@design/ui/modules";

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { isPageFrame } from "@design";
+import { isPageFrame } from "../../model/page-frame";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
 import { useBrochure } from "./use-brochure";
 import type { CatalogSelection } from "./use-catalog-selection.types";

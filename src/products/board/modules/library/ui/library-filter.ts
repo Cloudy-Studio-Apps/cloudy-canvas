@@ -1,7 +1,7 @@
-import type { BoardEngine } from "@board";
+import type { BoardEngine } from "../../../board-engine.types";
 import type { ModuleHost } from "@shared/core";
-import { boardEditor } from "../../modules/board-editor-points";
-import { boardLibrary } from "./library-points";
+import { boardEditor } from "@board/ui/modules/board-editor-points";
+import { boardLibrary } from "./library.points";
 import { toolLibraryItems } from "./library-tool-items";
 import type { LibraryItem, LibraryTabInfo, ShownLibrarySection } from "./library.types";
 

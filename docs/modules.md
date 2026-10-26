@@ -143,10 +143,9 @@ calls them. Nothing is found by its name: ESLint reads the suffix only to allow 
 
 **Checked by** `scripts/check-modules.mjs`, part of `pnpm lint` (`pnpm check:modules` alone): deep
 imports (from modules and from anywhere else in `src/`), `requires`, core → feature, each module's
-`index.ts`/`<name>.module.ts`/`README.md`/`tier`, MCP file names and module files over 120 lines.
+`index.ts`/`<name>.module.ts`/`README.md`/`tier`, MCP file names, module files over 120 lines and imports of the product barrel.
 `node scripts/module-order.mjs` prints the order each product loads its modules in: compare it
-before and after changing `requires`/`after`, since chained hooks run in that order. Not checked yet
-(phase 6): modules importing their own product barrel (`@design`, `@board`).
+before and after changing `requires`/`after`, since chained hooks run in that order. A module never imports its own product's barrel (`@design`, `@board`): it imports the file or module that declares the name (rule `barrel`).
 
 ## MCP files
 

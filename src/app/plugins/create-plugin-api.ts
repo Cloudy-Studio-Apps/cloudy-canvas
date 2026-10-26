@@ -75,7 +75,7 @@ import {
   STICKY_COLORS,
 } from "@board";
 import { boardEditor } from "@board/ui";
-import { boardLibrary } from "@board/ui/components/library";
+import { boardLibrary } from "@board/modules/library/ui";
 import {
   polylineNetwork,
   polygonNetwork,

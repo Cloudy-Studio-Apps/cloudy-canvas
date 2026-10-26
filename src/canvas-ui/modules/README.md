@@ -4,7 +4,7 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md); names 
 
 ## Editor points
 
-- **Editor points** (`canvas-ui/modules/`, `createEditorPoints(product)`, the board's `boardEditor`): see Editors. **Board points:** `boardMcpTools` and `boardMigrations` (`board-points.ts`; a migration brings an older file's document up to date when it opens), `boardLibrary` (`ui/components/library/library-points.ts`). A module can define points of its own for others to extend.
+- **Editor points** (`canvas-ui/modules/`, `createEditorPoints(product)`, the board's `boardEditor`): see Editors. **Board points:** `boardMcpTools` and `boardMigrations` (`board-points.ts`; a migration brings an older file's document up to date when it opens), `boardLibrary` (the library module's `ui/library.points.ts`). A module can define points of its own for others to extend.
 
 ## Tool entries
 

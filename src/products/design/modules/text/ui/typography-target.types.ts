@@ -1,4 +1,4 @@
-import type { TextRunStyle } from "@design";
+import type { TextRunStyle } from "../text.types";
 
 /**
  * What the Typography section reads and writes: the selected texts, or, while a text is edited,

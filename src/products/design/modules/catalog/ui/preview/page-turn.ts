@@ -1,4 +1,4 @@
-import type { BookLayout } from "@design";
+import type { BookLayout } from "../../model/book-layout.types";
 import type { BookSlots, BookView, PageTurn } from "./preview.types";
 
 /** How long a page takes to turn, in milliseconds. */

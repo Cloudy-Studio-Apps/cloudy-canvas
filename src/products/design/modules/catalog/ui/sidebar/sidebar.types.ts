@@ -1,4 +1,6 @@
-import type { BrochurePage, FrameElement, PagePicture } from "@design";
+import type { BrochurePage } from "../../model/brochure-pages.types";
+import type { FrameElement } from "../../../frame";
+import type { PagePicture } from "../../model/page-pictures.types";
 
 export interface PageSectionProps {
   page: BrochurePage;

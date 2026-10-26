@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FileDown, FileUp } from "lucide-react";
 
-import type { DbmlError } from "@board";
+import type { DbmlError } from "../../schema/dbml/parser.types";
 import { useCanvasFile } from "@canvas-ui";
 import { exportDbmlFile, importDbmlFile } from "@platform";
 import { Button } from "@shared/ui/components/ui/button";

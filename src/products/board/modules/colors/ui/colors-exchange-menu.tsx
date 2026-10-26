@@ -2,7 +2,7 @@ import { ArrowDownUp } from "lucide-react";
 import { useState } from "react";
 
 import { codeTokens, toCss, toDtcg, TokenStore } from "@canvas";
-import { readColorSource } from "@board";
+import { readColorSource } from "../../../tokens";
 import { useDocumentMeta } from "@canvas-ui";
 import { useBoardEngine } from "@board/ui/board-engine-context";
 import { exportFile, pickTokenFile, type TokenFilePick } from "@platform";

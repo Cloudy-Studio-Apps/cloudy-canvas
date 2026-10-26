@@ -1,6 +1,6 @@
 import { ExternalLink } from "lucide-react";
 
-import { erStandards } from "@board";
+import { erStandards } from "../../../base/standards/er-standard-registry";
 import { openExternal } from "@platform";
 import { Button } from "@shared/ui/components/ui/button";
 import { notifyError } from "@shared/stores/toast-store";

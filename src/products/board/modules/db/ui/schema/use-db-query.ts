@@ -1,6 +1,8 @@
 import { useState, useSyncExternalStore } from "react";
 
-import type { DbEnumElement, DbSchema, DbTableElement } from "@board";
+import type { DbEnumElement } from "../../enum/db-enum.types";
+import type { DbSchema } from "../../schema/db-schema";
+import type { DbTableElement } from "../../table/db-table.types";
 import { useBoardSchema } from "./use-board-schema";
 
 /** Changes whenever any table, enum or DBML note on the board changes. */

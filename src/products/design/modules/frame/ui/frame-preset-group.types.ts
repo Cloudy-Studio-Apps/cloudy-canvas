@@ -1,4 +1,4 @@
-import type { FramePreset, FramePresetGroup } from "@design";
+import type { FramePreset, FramePresetGroup } from "../frame.types";
 
 export interface FramePresetGroupProps {
   group: FramePresetGroup;

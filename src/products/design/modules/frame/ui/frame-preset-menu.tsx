@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 
-import { FRAME_PRESET_GROUPS } from "@design";
+import { FRAME_PRESET_GROUPS } from "../frame-presets";
 import {
   DropdownMenu,
   DropdownMenuContent,

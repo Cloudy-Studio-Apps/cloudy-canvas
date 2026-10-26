@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { FRAME_PRESET_GROUPS, FRAME_PRESETS } from "@design";
+import { FRAME_PRESET_GROUPS, FRAME_PRESETS } from "../frame-presets";
 import { PanelSection } from "@design/ui/components/panel";
 import { useDesignState } from "@design/ui/design-engine-context";
 import { FramePresetGroup } from "./frame-preset-group";

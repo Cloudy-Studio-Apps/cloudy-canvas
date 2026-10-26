@@ -1,6 +1,9 @@
 import { useState } from "react";
 
-import type { ErDiagram, ErElement, ErModel, ErShapes } from "@board";
+import type { ErDiagram } from "../../model/er-diagram";
+import type { ErElement } from "../../base/er.types";
+import type { ErModel } from "../../model/er-model";
+import type { ErShapes } from "../../model/lang/serializer.types";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { useErModel } from "./use-er-model";
 import { useErVersion } from "./use-er-version";

@@ -1,14 +1,9 @@
-import type { ElementPatch } from "@canvas";
-import { clearRunFields } from "@canvas";
-import {
-  rangeStyleValue,
-  unstyledRangePatch,
-  retypeset,
-  textStyleValue,
-  type DesignNode,
-  type TextNodeElement,
-  type TextNodeRun,
-} from "@design";
+import { type ElementPatch, clearRunFields } from "@canvas";
+import { rangeStyleValue, textStyleValue } from "../text-range-style";
+import { unstyledRangePatch } from "../apply-run-style";
+import { retypeset } from "../retypeset";
+import type { DesignNode } from "../../core";
+import type { TextNodeElement, TextNodeRun } from "../text.types";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
 import { useEditNodes } from "@design/ui/hooks";
 import type { TypographyTarget } from "./typography-target.types";

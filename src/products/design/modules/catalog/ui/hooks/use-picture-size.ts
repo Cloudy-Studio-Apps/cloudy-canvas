@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import type { Size } from "@canvas";
-import { knownPictureSize, pictureSize } from "@design";
+import { knownPictureSize, pictureSize } from "../../checks/picture-size";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 
 /** A picture asset's natural size, `null` until it's read (or when it can't be). */

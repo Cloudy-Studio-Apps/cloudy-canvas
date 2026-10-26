@@ -1,4 +1,4 @@
-import type { ErShapes } from "@board";
+import type { ErShapes } from "../../model/lang/serializer.types";
 
 /** Everything that moves with the diagram; aggregations and constraints follow on their own. */
 export function diagramShapeIds({

@@ -1,4 +1,4 @@
-import type { LayerTree } from "@design";
+import type { LayerTree } from "../../core";
 
 import type { LayerRowItem } from "./visible-rows.types";
 

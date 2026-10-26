@@ -1,4 +1,4 @@
-import type { ErHierarchyStrategy } from "@board";
+import type { ErHierarchyStrategy } from "../../model/to-tables/to-tables.types";
 
 export interface ErToTablesState {
   /** The diagram the dialog converts, or `null` while it's closed. */

@@ -1,6 +1,8 @@
 import { useEffect, useReducer, useSyncExternalStore } from "react";
 
-import { ER_QUICK_ADD, erQuickAddOptions, gateOf, isErConnectSource } from "@board";
+import { ER_QUICK_ADD, erQuickAddOptions } from "../../connect/er-quick-add";
+import { gateOf } from "../../model/standard-of";
+import { isErConnectSource } from "../../connect/er-connect";
 import {
   DropdownMenu,
   DropdownMenuContent,

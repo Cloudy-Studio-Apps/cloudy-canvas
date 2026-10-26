@@ -1,7 +1,8 @@
 import { useCallback } from "react";
 
 import { useCanvasFile } from "@canvas-ui";
-import { DESIGN_BROCHURES, exportBrochure } from "@design";
+import { DESIGN_BROCHURES } from "../../model/design-brochures";
+import { exportBrochure } from "../../export/export-brochure";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { exportFile } from "@platform";
 import { runWithLoading } from "@shared/stores/loading-store";

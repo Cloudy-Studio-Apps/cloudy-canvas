@@ -1,4 +1,5 @@
-import type { BrochurePage, FrameElement } from "@design";
+import type { BrochurePage } from "../../model/brochure-pages.types";
+import type { FrameElement } from "../../../frame";
 
 /** What's selected in the Catalog mode. */
 export type CatalogSelection =

@@ -1,4 +1,4 @@
-import type { DbColumn, DbTableElement } from "@board";
+import type { DbColumn, DbTableElement } from "../../table/db-table.types";
 
 export interface ColumnTypePickerProps {
   table: DbTableElement;

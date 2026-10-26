@@ -1,4 +1,4 @@
-import { CATALOG_MODE_ID } from "@design";
+import { CATALOG_MODE_ID } from "../../mode/catalog-mode.constants";
 import { useDesignState } from "@design/ui/design-engine-context";
 import { BrochureCanvasLayer } from "./brochure-canvas-layer";
 

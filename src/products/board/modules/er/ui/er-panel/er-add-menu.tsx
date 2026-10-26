@@ -1,6 +1,8 @@
 import { Plus } from "lucide-react";
 
-import { erAddActions, gateOf, type ErPaletteItemId } from "@board";
+import { erAddActions } from "../../model/er-add-actions";
+import { gateOf } from "../../model/standard-of";
+import type { ErPaletteItemId } from "../../model/er-drop.types";
 import { Button } from "@shared/ui/components/ui/button";
 import {
   DropdownMenu,

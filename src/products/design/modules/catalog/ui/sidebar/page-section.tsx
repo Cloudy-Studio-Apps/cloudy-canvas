@@ -1,6 +1,6 @@
 import { PenLine } from "lucide-react";
 
-import { paperSize } from "@design";
+import { paperSize } from "../../model/paper-size";
 import { PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button } from "@shared/ui/components/ui/button";

@@ -1,7 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 
-import { DESIGN_PAGES } from "@design";
+import { DESIGN_PAGES } from "../design-pages";
 import { PanelAddButton } from "@design/ui/components/panel";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
 import { Button } from "@shared/ui/kit";

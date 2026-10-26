@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link2, RectangleHorizontal, RectangleVertical, Unlink2 } from "lucide-react";
 
 import type { ElementPatch, Size } from "@canvas";
-import type { DesignNode } from "@design";
+import type { DesignNode } from "../../node/design-node.types";
 import {
   BindSlot,
   NumberField,

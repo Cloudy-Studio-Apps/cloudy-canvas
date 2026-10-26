@@ -1,7 +1,9 @@
 import { useMemo, useSyncExternalStore } from "react";
 
 import { useService } from "@canvas-ui";
-import { BROCHURE_DEFAULTS, bookLayout, DESIGN_BROCHURES } from "@design";
+import { BROCHURE_DEFAULTS } from "../../brochure/brochure.defaults";
+import { bookLayout } from "../../model/book-layout";
+import { DESIGN_BROCHURES } from "../../model/design-brochures";
 import { useDesignState } from "@design/ui/design-engine-context";
 import type { BrochureView } from "./use-brochure.types";
 

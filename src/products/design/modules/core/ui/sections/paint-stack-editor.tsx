@@ -1,7 +1,8 @@
 import { Fragment } from "react";
 
 import { ImageQualityNote } from "@canvas-ui";
-import { isPlaceholderPaint, removedAt } from "@design";
+import { isPlaceholderPaint } from "../../node/placeholder-paint";
+import { removedAt } from "../../node/stack-bindings";
 import { PaintField } from "@design/ui/components/panel";
 import type { PaintStackEditorProps } from "./paint-stack-editor.types";
 

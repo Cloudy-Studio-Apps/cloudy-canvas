@@ -1,5 +1,5 @@
 import type { DocumentTokens, StyleRecord } from "@canvas";
-import { readTextStyle } from "@design";
+import { readTextStyle } from "../../text-style";
 import type { TypographyTarget } from "../typography-target.types";
 
 /**

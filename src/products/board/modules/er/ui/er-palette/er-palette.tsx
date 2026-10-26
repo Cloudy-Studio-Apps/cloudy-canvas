@@ -1,4 +1,6 @@
-import { ER_MODE_COMMANDS, ER_MODE_ID, erClickActions } from "@board";
+import { ER_MODE_COMMANDS } from "../../mode/er-mode-commands";
+import { ER_MODE_ID } from "../../mode/er-mode";
+import { erClickActions } from "../../model/er-add-actions";
 import { rectCenter } from "@canvas";
 import { FloatingPanel, useEngine, useEngineState } from "@canvas-ui";
 import { useErDiagram, useErModel, useErSelection, useErShape, useErShapes } from "../model";

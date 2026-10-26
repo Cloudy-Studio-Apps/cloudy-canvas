@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { checkBrochure, type BrochureIssue } from "@design";
+import { checkBrochure } from "../../checks/check-brochure";
+import type { BrochureIssue } from "../../checks/brochure-checks.types";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useBrochure } from "./use-brochure";
 

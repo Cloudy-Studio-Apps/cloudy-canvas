@@ -1,5 +1,6 @@
 import type { Rect } from "@canvas";
-import type { BrochurePage, FrameElement } from "@design";
+import type { BrochurePage } from "../../model/brochure-pages.types";
+import type { FrameElement } from "../../../frame";
 
 /** Where a frame shows on screen, relative to the canvas. */
 export type ScreenRect = Rect;

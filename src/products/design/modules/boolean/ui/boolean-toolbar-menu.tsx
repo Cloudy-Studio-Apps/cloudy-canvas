@@ -2,12 +2,8 @@ import { useState } from "react";
 import { ChevronDown, Combine, Spline } from "lucide-react";
 
 import { ToolButton } from "@canvas-ui";
-import {
-  BOOLEAN_OPERATIONS,
-  BOOLEAN_TYPE,
-  type BooleanElement,
-  type BooleanOperation,
-} from "@design";
+import { BOOLEAN_OPERATIONS, BOOLEAN_TYPE } from "../boolean.constants";
+import type { BooleanElement, BooleanOperation } from "../boolean.types";
 import {
   DropdownMenu,
   DropdownMenuContent,

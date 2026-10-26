@@ -1,4 +1,4 @@
-import type { DropShadowEffect, InnerShadowEffect } from "@design";
+import type { DropShadowEffect, InnerShadowEffect } from "../../effect.types";
 import { HandleDot } from "./handle-dot";
 import type { EffectHandlesProps } from "./handles.types";
 

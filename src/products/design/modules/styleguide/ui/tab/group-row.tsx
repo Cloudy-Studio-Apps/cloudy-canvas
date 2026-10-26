@@ -1,4 +1,5 @@
-import { groupKey, DESIGN_STYLEGUIDE } from "@design";
+import { groupKey } from "../../sheet/template-choice";
+import { DESIGN_STYLEGUIDE } from "../../model/design-styleguide";
 import { useService } from "@canvas-ui";
 import { Checkbox, ListRow } from "@shared/ui/kit";
 import { useShowSection } from "../hooks/use-show-section";

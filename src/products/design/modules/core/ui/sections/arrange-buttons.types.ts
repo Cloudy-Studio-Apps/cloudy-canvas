@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 
-import type { DesignNode } from "@design";
+import type { DesignNode } from "../../node/design-node.types";
 
 export interface ArrangeButtonsProps {
   nodes: readonly DesignNode[];

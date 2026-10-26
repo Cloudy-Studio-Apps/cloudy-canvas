@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
-import type { BookSide, FrameElement } from "@design";
+import type { BookSide } from "../../model/book-layout.types";
+import type { FrameElement } from "../../../frame";
 import { useCatalogViewStore } from "../stores/catalog-view-store";
 import { BookSpread } from "./book-spread";
 import { FlatSpread } from "./flat-spread";

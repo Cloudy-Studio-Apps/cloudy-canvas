@@ -1,7 +1,8 @@
 import { ChevronDown, Frame } from "lucide-react";
 
 import type { ElementPatch } from "@canvas";
-import type { DesignNode, FrameElement } from "@design";
+import type { DesignNode } from "../../core";
+import type { FrameElement } from "../frame.types";
 import { BindSlot, NodeCheckbox, PanelSection } from "@design/ui/components/panel";
 import { useEditNodes } from "@design/ui/hooks";
 import { Button } from "@shared/ui/kit";

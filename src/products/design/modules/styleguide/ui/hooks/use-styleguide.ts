@@ -1,15 +1,10 @@
 import { useMemo, useSyncExternalStore } from "react";
 
 import { useEditorModules, useService } from "@canvas-ui";
-import {
-  DESIGN_STYLEGUIDE,
-  styleguideCategories,
-  styleguideTemplates,
-  type DesignStyleguide,
-  type StyleguideCategory,
-  type StyleguideOutlineEntry,
-  type StyleguideTemplate,
-} from "@design";
+import { DESIGN_STYLEGUIDE, type DesignStyleguide } from "../../model/design-styleguide";
+import { styleguideCategories, styleguideTemplates } from "../../styleguide.points";
+import type { StyleguideCategory, StyleguideTemplate } from "../../styleguide.types";
+import type { StyleguideOutlineEntry } from "../../model/design-styleguide.types";
 
 /** The Design system service, its version (bumps on changes it reports) and the contributed parts. */
 export function useStyleguide(): {

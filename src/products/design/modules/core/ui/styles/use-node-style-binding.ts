@@ -1,4 +1,4 @@
-import type { DesignNode } from "@design";
+import type { DesignNode } from "../../node/design-node.types";
 import { useFieldBinding } from "@design/ui/hooks";
 import type { StyleBinding } from "./styles.types";
 

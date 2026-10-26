@@ -6,7 +6,9 @@ import {
   Trash2,
 } from "lucide-react";
 
-import { insertLine, isTable, linePart, parseTablePart } from "@board";
+import { insertLine } from "../table-edits";
+import { isTable } from "../is-table";
+import { linePart, parseTablePart } from "../table-parts";
 import { OptionButton, PanelDivider } from "@canvas-ui";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";
 

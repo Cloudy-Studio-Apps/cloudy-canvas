@@ -1,6 +1,7 @@
 import { ListChecks } from "lucide-react";
 
-import { CATALOG_PICK_TOOL, findPreset } from "@design";
+import { CATALOG_PICK_TOOL } from "../../mode/catalog-mode.constants";
+import { findPreset } from "../../../frame";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button } from "@shared/ui/components/ui/button";
 import { addBlankPage } from "../page-actions";

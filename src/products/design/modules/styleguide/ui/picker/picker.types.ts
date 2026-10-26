@@ -1,4 +1,8 @@
-import type { StyleguideCategory, StyleguideTemplate, TemplateOptions } from "@design";
+import type {
+  StyleguideCategory,
+  StyleguideTemplate,
+  TemplateOptions,
+} from "../../styleguide.types";
 
 export interface TemplatePickerProps {
   category: StyleguideCategory;

@@ -1,5 +1,7 @@
 import type { Size } from "@canvas";
-import { sideWidth, type BookSide, type FrameElement } from "@design";
+import { sideWidth } from "../../model/page-span";
+import type { BookSide } from "../../model/book-layout.types";
+import type { FrameElement } from "../../../frame";
 import type { StageSize } from "./preview.types";
 
 /** How much of the window the shown spread may take. */

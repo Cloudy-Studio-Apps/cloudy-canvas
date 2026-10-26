@@ -1,6 +1,6 @@
 import { FileDown, Play } from "lucide-react";
 
-import { CATALOG_COMMANDS, CATALOG_PICK_TOOL } from "@design";
+import { CATALOG_COMMANDS, CATALOG_PICK_TOOL } from "../../mode/catalog-mode.constants";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
 import { Button } from "@shared/ui/components/ui/button";
 import { useBrochure } from "../hooks/use-brochure";

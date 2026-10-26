@@ -7,7 +7,8 @@ import {
   useViewMapping,
   type OverlayFrame,
 } from "@canvas-ui";
-import { isGradientPaint, type GradientPaint } from "@design";
+import { isGradientPaint } from "../../node/gradient-paint";
+import type { GradientPaint } from "../../node/paint.types";
 import { useEditNodes, useSelectedNodes } from "@design/ui/hooks";
 import { useGradientEditStore } from "@design/ui/stores/gradient-edit-store";
 import { dragGrip } from "./drag-grip";

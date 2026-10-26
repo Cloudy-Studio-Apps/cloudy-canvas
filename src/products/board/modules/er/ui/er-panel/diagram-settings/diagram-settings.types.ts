@@ -1,4 +1,5 @@
-import type { ErIssue, ErNotation, ErStandard } from "@board";
+import type { ErIssue } from "../../../model/check/check-er.types";
+import type { ErNotation, ErStandard } from "../../../base/er.types";
 
 /** A diagram setting the settings page shows: the attribute look or one of the notation's. */
 export type ErSettingKey =

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-import { COLUMN_TYPES, formatColumnType, splitColumnType, TYPE_ARGS } from "@board";
+import { COLUMN_TYPES, TYPE_ARGS } from "../../schema/column-types";
+import { formatColumnType, splitColumnType } from "../../table/column-type";
 import { Button } from "@shared/ui/components/ui/button";
 import { SearchInput } from "@shared/ui/kit";
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";

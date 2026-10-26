@@ -1,12 +1,9 @@
 import { DEFAULT_MODE, type Size } from "@canvas";
-import {
-  createPresetFrame,
-  type DesignEngine,
-  type DesignNode,
-  ensureBrochure,
-  type FrameElement,
-  replaceImageFill,
-} from "@design";
+import { createPresetFrame, type FrameElement } from "../../frame";
+import type { DesignEngine } from "../../../design-engine.types";
+import type { DesignNode } from "../../core";
+import { ensureBrochure } from "../model/current-brochure";
+import { replaceImageFill } from "../../image";
 import { pickImageFiles } from "@platform";
 import { createId } from "@shared/core";
 import { notifyError } from "@shared/stores/toast-store";

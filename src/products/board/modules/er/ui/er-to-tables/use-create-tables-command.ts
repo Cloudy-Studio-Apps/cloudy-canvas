@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { ER_MODEL } from "@board";
+import { ER_MODEL } from "../../model/er-model.service";
 import { useEngine } from "@canvas-ui";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { useErToTablesStore } from "./er-to-tables-store";

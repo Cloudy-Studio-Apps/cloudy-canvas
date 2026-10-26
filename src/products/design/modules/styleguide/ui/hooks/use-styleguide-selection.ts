@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 
-import { isSheet, STYLEGUIDE_MODE_ID } from "@design";
+import { isSheet } from "../../sheet/is-sheet";
+import { STYLEGUIDE_MODE_ID } from "../../mode/styleguide-mode.constants";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
 import { useStyleguideViewStore } from "../stores/styleguide-view-store";
 

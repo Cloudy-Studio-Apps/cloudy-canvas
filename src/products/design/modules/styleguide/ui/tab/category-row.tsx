@@ -2,7 +2,8 @@ import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 
 import { useService } from "@canvas-ui";
-import { DESIGN_STYLEGUIDE, groupKey } from "@design";
+import { DESIGN_STYLEGUIDE } from "../../model/design-styleguide";
+import { groupKey } from "../../sheet/template-choice";
 import { Checkbox, IconButton, ListRow } from "@shared/ui/kit";
 import { cn } from "@shared/ui/lib/utils";
 import { useShowSection } from "../hooks/use-show-section";

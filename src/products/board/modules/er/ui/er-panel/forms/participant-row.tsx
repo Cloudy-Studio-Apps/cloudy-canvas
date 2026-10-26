@@ -1,6 +1,6 @@
 import { Trash2 } from "lucide-react";
 
-import type { ErParticipantPatch } from "@board";
+import type { ErParticipantPatch } from "../../../model/edits/edits.types";
 import { CommitInput } from "@canvas-ui";
 import { FlagToggle } from "../../../../db/ui";
 import { useErDiagram, useErGate, useErShapes } from "../../model";

@@ -1,4 +1,6 @@
-import { drawFrame, type DesignEngine, type FrameElement } from "@design";
+import { drawFrame } from "../../export/draw-frame";
+import type { DesignEngine } from "../../../../design-engine.types";
+import type { FrameElement } from "../../../frame";
 import type { PreviewImageEntry as Entry } from "./preview-images.types";
 
 /** How many page pictures the preview keeps (the spread shown and the ones around it). */

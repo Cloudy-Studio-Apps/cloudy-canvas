@@ -1,12 +1,9 @@
 import { DOCUMENT_TOKENS, pickedBindings } from "@canvas";
-import {
-  isText,
-  TEXT_DEFAULTS,
-  TEXT_STYLE,
-  textStyleOfNode,
-  type DesignEngine,
-  type TextStyleValue,
-} from "@design";
+import { isText } from "../../is-text";
+import { TEXT_DEFAULTS } from "../../text.defaults";
+import { TEXT_STYLE, textStyleOfNode } from "../../text-style";
+import type { DesignEngine } from "../../../../design-engine.types";
+import type { TextStyleValue } from "../../text.types";
 
 /**
  * Adds a text style from the first selected text's typography (or the default one), named after

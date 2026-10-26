@@ -2,7 +2,8 @@ import { useLayoutEffect, useMemo, useRef } from "react";
 import { X } from "lucide-react";
 import { SiYoutube } from "react-icons/si";
 
-import { embedLayout, embedOf } from "@board";
+import { embedLayout } from "../embed.layout";
+import { embedOf } from "../embed-preview";
 import { openExternal } from "@platform";
 import { youtubeEmbedUrl, youtubeVideo } from "@shared/core";
 import { notifyError } from "@shared/stores/toast-store";

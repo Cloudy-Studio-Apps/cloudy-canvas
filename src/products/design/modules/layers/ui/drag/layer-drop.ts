@@ -1,4 +1,4 @@
-import type { LayerDestination, LayerTree } from "@design";
+import type { LayerDestination, LayerTree } from "../../../core";
 
 import type { LayerRowItem } from "../visible-rows.types";
 import type { LayerDrop, LayerDropInput } from "./layer-drop.types";

@@ -1,4 +1,4 @@
-import { TEXT_STYLE } from "@design";
+import { TEXT_STYLE } from "../../text-style";
 import { StyleControl } from "../../../core/ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { createTextStyle } from "./create-text-style";

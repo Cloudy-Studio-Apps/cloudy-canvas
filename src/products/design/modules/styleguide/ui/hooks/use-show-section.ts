@@ -1,6 +1,8 @@
 import { useCallback } from "react";
 
-import { generatedMark, sectionKey, STYLEGUIDE_MODE_ID } from "@design";
+import { generatedMark } from "../../sheet/is-sheet";
+import { sectionKey } from "../../sheet/build-sheet";
+import { STYLEGUIDE_MODE_ID } from "../../mode/styleguide-mode.constants";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useStyleguideViewStore } from "../stores/styleguide-view-store";
 

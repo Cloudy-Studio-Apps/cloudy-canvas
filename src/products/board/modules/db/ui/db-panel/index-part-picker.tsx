@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 
-import { formatColumnType } from "@board";
+import { formatColumnType } from "../../table/column-type";
 import { Button } from "@shared/ui/components/ui/button";
 import { ListRow } from "@shared/ui/kit";
 import { Input } from "@shared/ui/components/ui/input";

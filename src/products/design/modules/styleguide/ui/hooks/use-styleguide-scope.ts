@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
 
 import { DEFAULT_MODE } from "@canvas";
-import { pagesOf, STYLEGUIDE_MODE_ID } from "@design";
+import { pagesOf } from "../../../pages";
+import { STYLEGUIDE_MODE_ID } from "../../mode/styleguide-mode.constants";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
 import { useSystemPage } from "./use-system-page";
 

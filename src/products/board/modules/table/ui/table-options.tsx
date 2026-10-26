@@ -1,6 +1,6 @@
 import { PanelTop } from "lucide-react";
 
-import { TABLE_COLORS } from "@board";
+import { TABLE_COLORS } from "../../../palette";
 import { FloatingPanel, OptionButton, PanelDivider } from "@canvas-ui";
 import { BoardColorPalette } from "@board/ui/components/board-colors";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";

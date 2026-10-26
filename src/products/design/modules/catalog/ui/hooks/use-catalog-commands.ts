@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { CATALOG_COMMANDS, CATALOG_PICK_TOOL } from "@design";
+import { CATALOG_COMMANDS, CATALOG_PICK_TOOL } from "../../mode/catalog-mode.constants";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useBrochurePreviewStore } from "../stores/preview-store";
 import { useExportBrochure } from "./use-export-brochure";

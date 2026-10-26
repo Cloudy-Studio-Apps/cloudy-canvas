@@ -1,4 +1,5 @@
-import type { SheetFrame, StyleguideOutlineEntry } from "@design";
+import type { SheetFrame } from "../../sheet/sheet.types";
+import type { StyleguideOutlineEntry } from "../../model/design-styleguide.types";
 
 export interface SourceFieldsProps {
   sheet: SheetFrame;

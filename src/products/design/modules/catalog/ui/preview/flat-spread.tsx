@@ -1,4 +1,4 @@
-import { sideWidth } from "@design";
+import { sideWidth } from "../../model/page-span";
 import type { FlatSpreadProps } from "./preview.types";
 import { flatScale } from "./preview-size";
 import { SidePicture } from "./side-picture";

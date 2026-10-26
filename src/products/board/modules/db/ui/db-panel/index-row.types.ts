@@ -1,4 +1,4 @@
-import type { DbIndex, DbTableElement } from "@board";
+import type { DbIndex, DbTableElement } from "../../table/db-table.types";
 
 export interface IndexRowProps {
   table: DbTableElement;

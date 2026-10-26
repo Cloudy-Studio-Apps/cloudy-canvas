@@ -2,7 +2,7 @@ import { Palette } from "lucide-react";
 import { useSyncExternalStore } from "react";
 
 import { TokenStore } from "@canvas";
-import { STYLEGUIDE_MODE_ID } from "@design";
+import { STYLEGUIDE_MODE_ID } from "../../mode/styleguide-mode.constants";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
 import { useCreateVariable, useVariablesWindowStore } from "../../../variables/ui";
 import { Button, EmptyState } from "@shared/ui/kit";

@@ -7,7 +7,7 @@ import {
   type Point,
   type Size,
 } from "@canvas";
-import type { GradientPaint } from "@design";
+import type { GradientPaint } from "../../node/paint.types";
 
 import type { GradientGrip } from "./gradient-handles.types";
 

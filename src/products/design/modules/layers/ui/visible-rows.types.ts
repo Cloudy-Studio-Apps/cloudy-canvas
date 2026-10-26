@@ -1,4 +1,4 @@
-import type { DesignNode } from "@design";
+import type { DesignNode } from "../../core";
 
 /** One row of the layers list: a layer shown at its depth in the tree. */
 export interface LayerRowItem {

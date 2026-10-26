@@ -1,4 +1,4 @@
-import type { DesignNode } from "@design";
+import type { DesignNode } from "../../../node/design-node.types";
 
 /** How a stroke is dashed, as the settings offer it. */
 export type DashStyle = "solid" | "dashed" | "dotted" | "custom";

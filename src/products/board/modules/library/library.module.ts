@@ -1,8 +1,8 @@
 import { defineModule } from "@shared/core";
-import { BUILT_IN_ITEMS, BUILT_IN_SECTIONS } from "@board/ui/components/library/library-catalog";
-import { OPEN_LIBRARY } from "@board/ui/components/library/library-command";
-import { boardLibrary } from "@board/ui/components/library/library-points";
 import { boardCanvas } from "../../board-points";
+import { BUILT_IN_ITEMS, BUILT_IN_SECTIONS } from "./ui/library-catalog";
+import { OPEN_LIBRARY } from "./ui/library-command";
+import { boardLibrary } from "./ui/library.points";
 
 /**
  * The library of widgets, templates and more (the panel is the toolbar's last button): the command

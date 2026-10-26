@@ -1,5 +1,5 @@
 import type { CanvasElement, ElementKinds } from "@canvas";
-import { DesignNodeKind, layoutOf, type DesignNode } from "@design";
+import { DesignNodeKind, layoutOf, type DesignNode } from "../../core";
 
 /** Whether the node's parent is an auto layout frame. */
 export function inAutoLayout(node: DesignNode, elements: readonly CanvasElement[]): boolean {

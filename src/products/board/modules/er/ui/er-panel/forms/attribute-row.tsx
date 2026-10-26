@@ -1,6 +1,7 @@
 import { ArrowDown, ArrowUp, ListTree, Trash2 } from "lucide-react";
 
-import type { ErAttributePatch, ErAttributeElement } from "@board";
+import type { ErAttributePatch } from "../../../model/edits/edits.types";
+import type { ErAttributeElement } from "../../../attribute/attribute.types";
 import { CommitInput } from "@canvas-ui";
 import { FlagToggle } from "../../../../db/ui";
 import { lockedOn, useErDiagram, useErGate } from "../../model";

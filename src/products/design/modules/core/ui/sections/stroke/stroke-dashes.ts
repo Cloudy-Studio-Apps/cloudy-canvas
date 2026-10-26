@@ -1,5 +1,5 @@
 import type { ElementPatch } from "@canvas";
-import type { DesignNode } from "@design";
+import type { DesignNode } from "../../../node/design-node.types";
 import type { DashStyle, StrokeLook } from "./stroke-dashes.types";
 
 /** A node's dash style: dots are zero-length dashes with round ends. */

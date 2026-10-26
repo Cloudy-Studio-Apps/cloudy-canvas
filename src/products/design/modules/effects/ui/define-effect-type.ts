@@ -1,6 +1,6 @@
 import type { ComponentType } from "react";
 
-import type { NodeEffect } from "@design";
+import type { NodeEffect } from "../../core";
 import type {
   EffectEditorProps,
   EffectTypeEntry,

@@ -1,4 +1,4 @@
-import { templateOptions } from "@design";
+import { templateOptions } from "../../sheet/template-choice";
 import { TemplateOptions } from "../picker/template-options";
 import { TemplatePicker } from "../picker/template-picker";
 import type { ChoiceEditorProps } from "./choice-editor.types";

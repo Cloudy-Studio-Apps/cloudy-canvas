@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 
-import { loadEmbedPreview, pendingEmbeds, type BoardEngine } from "@board";
+import { loadEmbedPreview, pendingEmbeds } from "../embed-preview";
+import type { BoardEngine } from "../../../board-engine.types";
 import { useCanvasFile } from "@canvas-ui";
 import { http } from "@platform";
 

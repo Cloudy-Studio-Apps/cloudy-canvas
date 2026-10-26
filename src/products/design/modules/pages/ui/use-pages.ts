@@ -1,7 +1,8 @@
 import { useState, useSyncExternalStore } from "react";
 
 import { useService } from "@canvas-ui";
-import { DESIGN_PAGES, type PageElement } from "@design";
+import { DESIGN_PAGES } from "../design-pages";
+import type { PageElement } from "../page/page.types";
 
 /** The design's pages, in order, read again only when the document changes. */
 export function usePages(): readonly PageElement[] {

@@ -1,6 +1,6 @@
 import { remapStackBindings, withoutBindingsUnder, type BindableField } from "@canvas";
 import { useEditorModules } from "@canvas-ui";
-import { readEffectStyle } from "@design";
+import { readEffectStyle } from "../../../core";
 import {
   StyleBindingScope,
   StyleEditorFrame,

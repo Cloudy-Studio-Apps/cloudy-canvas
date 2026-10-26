@@ -1,14 +1,11 @@
 import { Minus } from "lucide-react";
 
-import {
-  DesignNodeKind,
-  NODE_DEFAULTS,
-  STROKE_STYLE,
-  STROKE_STYLE_PATH,
-  strokeBindingsOf,
-  strokeStyleOfNode,
-  type DesignNode,
-} from "@design";
+import { DesignNodeKind } from "../../../node/design-node.kind";
+import { NODE_DEFAULTS } from "../../../node/node.defaults";
+import { STROKE_STYLE, STROKE_STYLE_PATH } from "../../../styles/style-paths";
+import { strokeBindingsOf } from "../../../styles/style-bindings-of";
+import { strokeStyleOfNode } from "../../../styles/stroke-style";
+import type { DesignNode } from "../../../node/design-node.types";
 import {
   BindableNumberField,
   NodeSelectField,

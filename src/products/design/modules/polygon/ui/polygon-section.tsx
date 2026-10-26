@@ -1,7 +1,9 @@
 import { Hash } from "lucide-react";
 
 import type { ElementPatch } from "@canvas";
-import { POLYGON_DEFAULTS, type DesignNode, type PolygonElement } from "@design";
+import { POLYGON_DEFAULTS } from "../polygon.defaults";
+import type { DesignNode } from "../../core";
+import type { PolygonElement } from "../polygon.types";
 import { BindableNumberField, PanelSection, PropertyGrid } from "@design/ui/components/panel";
 import type { PropertySectionProps } from "@design/ui/modules";
 

@@ -1,6 +1,7 @@
 import type { CanvasEngine } from "@canvas";
 import type { ContextMenuEntryGroup } from "@canvas-ui";
-import { isSheet, STYLEGUIDE_COMMANDS, STYLEGUIDE_MODE_ID } from "@design";
+import { isSheet } from "../../sheet/is-sheet";
+import { STYLEGUIDE_COMMANDS, STYLEGUIDE_MODE_ID } from "../../mode/styleguide-mode.constants";
 import { ADD_TO_PAGE } from "./add-to-page";
 
 /** Whether a live element is selected. */

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { ER_MODEL } from "@board";
+import { ER_MODEL } from "../../model/er-model.service";
 import { useEngine } from "@canvas-ui";
 import { CONVERT_TO_ENTITY_COMMAND } from "../../er.commands";
 

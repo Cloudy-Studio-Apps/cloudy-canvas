@@ -1,4 +1,4 @@
-import { isSheet } from "@design";
+import { isSheet } from "../../sheet/is-sheet";
 import type { PropertySectionProps } from "@design/ui/modules/design-editor-points.types";
 import { SheetFields } from "./sheet-fields";
 

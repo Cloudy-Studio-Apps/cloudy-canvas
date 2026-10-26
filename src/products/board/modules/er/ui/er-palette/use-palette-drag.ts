@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
-import { erDropPlan, gateOf, type ErDrop } from "@board";
+import { erDropPlan } from "../../model/er-drop";
+import { gateOf } from "../../model/standard-of";
+import type { ErDrop } from "../../model/er-drop.types";
 import { MOVE_THRESHOLD_PX, type Point } from "@canvas";
 import { useEngine } from "@canvas-ui";
 import { useErModel } from "../model";

@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 
-import { ER_MODE_COMMANDS, ER_MODEL, erClickActions } from "@board";
+import { ER_MODE_COMMANDS } from "../../mode/er-mode-commands";
+import { ER_MODEL } from "../../model/er-model.service";
+import { erClickActions } from "../../model/er-add-actions";
 import { rectCenter } from "@canvas";
 import { useEngine } from "@canvas-ui";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";

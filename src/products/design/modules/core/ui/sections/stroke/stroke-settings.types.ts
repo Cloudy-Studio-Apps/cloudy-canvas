@@ -1,4 +1,4 @@
-import type { DesignNode } from "@design";
+import type { DesignNode } from "../../../node/design-node.types";
 
 export interface StrokeSettingsProps {
   nodes: readonly DesignNode[];

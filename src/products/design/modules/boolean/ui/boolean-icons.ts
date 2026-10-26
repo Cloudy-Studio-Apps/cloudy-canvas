@@ -6,7 +6,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import type { BooleanOperation } from "@design";
+import type { BooleanOperation } from "../boolean.types";
 
 /** Each operation's icon (toolbar, menus, the Boolean section, the layers panel). */
 export const BOOLEAN_ICONS: Readonly<Record<BooleanOperation, LucideIcon>> = {

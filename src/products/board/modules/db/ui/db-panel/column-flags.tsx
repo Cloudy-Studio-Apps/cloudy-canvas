@@ -1,4 +1,4 @@
-import type { DbColumnPatch } from "@board";
+import type { DbColumnPatch } from "../../schema/db-schema.types";
 import { useBoardSchema } from "../schema";
 import { FlagToggle } from "./flag-toggle";
 import type { ColumnFlagsProps } from "./column-flags.types";

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { placeholderPatches } from "@design";
+import { placeholderPatches } from "../placeholder/placeholder-patches";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 
 /**

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 
-import { stickerToVectors, type StickerNodeElement } from "@design";
+import { stickerToVectors } from "../sticker-to-vectors";
+import type { StickerNodeElement } from "../sticker.types";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { toast } from "@shared/stores/toast-store";
 

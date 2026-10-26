@@ -1,5 +1,6 @@
 import type { ElementPatch } from "@canvas";
-import type { DesignNode, LineCap, LineNodeElement } from "@design";
+import type { DesignNode } from "../../core";
+import type { LineCap, LineNodeElement } from "../line.types";
 import { NodeSelectField, PanelSection, PropertyGrid } from "@design/ui/components/panel";
 import type { PropertySectionProps } from "@design/ui/modules";
 

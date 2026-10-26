@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 import { imageSize, type ElementPatch } from "@canvas";
-import { isNodeKind, toCropPaint, type DesignNode } from "@design";
+import { isNodeKind, toCropPaint, type DesignNode } from "../../core";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useImageCropStore } from "@design/ui/stores/image-crop-store";
 import { imageFillIndex } from "./image-fill-index";

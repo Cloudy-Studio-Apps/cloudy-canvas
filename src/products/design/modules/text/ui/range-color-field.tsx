@@ -1,5 +1,5 @@
 import { PaintField } from "@design/ui/components/panel";
-import { solidPaint } from "@design";
+import { solidPaint } from "../../core";
 import type { TypographyControlProps } from "./typography-controls.types";
 
 /** The color of the selected characters while a text is edited (their first fill). */

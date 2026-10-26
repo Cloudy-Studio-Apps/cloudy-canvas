@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { rectContainsPoint } from "@canvas";
-import type { FrameElement } from "@design";
+import type { FrameElement } from "../../../frame";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 
 /**

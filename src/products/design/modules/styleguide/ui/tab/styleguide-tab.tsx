@@ -1,5 +1,5 @@
 import { useService } from "@canvas-ui";
-import { DESIGN_STYLEGUIDE } from "@design";
+import { DESIGN_STYLEGUIDE } from "../../model/design-styleguide";
 import { EmptyState } from "@shared/ui/kit";
 import { useStyleguideOutline } from "../hooks/use-styleguide";
 import { useSystemPage } from "../hooks/use-system-page";

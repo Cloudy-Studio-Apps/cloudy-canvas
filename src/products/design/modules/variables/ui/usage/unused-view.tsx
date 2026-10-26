@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useReducer, useState } from "react";
 
 import { resolveVariable } from "@canvas";
-import { countedUse } from "@design";
+import { countedUse } from "../../../pages";
 import { DeleteTokensDialog } from "../../../core/ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button, EmptyState } from "@shared/ui/kit";

@@ -1,4 +1,4 @@
-import type { AutoLayout } from "@design";
+import type { AutoLayout } from "../../core";
 
 export interface AlignmentGridProps {
   /** The frames' shared layout (the first one's when they differ). */

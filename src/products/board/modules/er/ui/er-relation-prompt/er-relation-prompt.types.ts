@@ -1,4 +1,9 @@
-import type { ErElement, ErRelationRatio, ErRelationRatioId, ErRelationSide } from "@board";
+import type { ErElement } from "../../base/er.types";
+import type {
+  ErRelationRatio,
+  ErRelationRatioId,
+  ErRelationSide,
+} from "../../connect/er-connect.types";
 
 export interface ErRelationGlyphProps {
   from: ErRelationSide;

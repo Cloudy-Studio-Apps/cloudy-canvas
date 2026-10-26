@@ -1,7 +1,9 @@
 import { Hash, Percent } from "lucide-react";
 
 import type { ElementPatch } from "@canvas";
-import { STAR_DEFAULTS, type DesignNode, type StarElement } from "@design";
+import { STAR_DEFAULTS } from "../star.defaults";
+import type { DesignNode } from "../../core";
+import type { StarElement } from "../star.types";
 import { BindableNumberField, PanelSection, PropertyGrid } from "@design/ui/components/panel";
 import type { PropertySectionProps } from "@design/ui/modules";
 

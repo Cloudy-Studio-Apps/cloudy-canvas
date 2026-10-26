@@ -1,4 +1,4 @@
-import type { ErShapes } from "@board";
+import type { ErShapes } from "../../../model/lang/serializer.types";
 import type { ShapeSelectOption } from "./shape-select.types";
 
 /**

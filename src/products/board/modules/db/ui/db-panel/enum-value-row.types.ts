@@ -1,4 +1,4 @@
-import type { DbEnumElement, DbEnumValue } from "@board";
+import type { DbEnumElement, DbEnumValue } from "../../enum/db-enum.types";
 
 export interface EnumValueRowProps {
   target: DbEnumElement;

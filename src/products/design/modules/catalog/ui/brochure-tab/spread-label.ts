@@ -1,4 +1,4 @@
-import type { BookLayout } from "@design";
+import type { BookLayout } from "../../model/book-layout.types";
 
 /**
  * A book spread's heading in the page list: "Front cover", "Back cover", or the printed page

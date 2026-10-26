@@ -1,5 +1,5 @@
 import type { BoxSides, ElementPatch } from "@canvas";
-import type { DesignNode } from "@design";
+import type { DesignNode } from "../../../node/design-node.types";
 import type { StrokeSidesMode } from "./stroke-sides.types";
 
 export const SIDES: readonly (keyof BoxSides)[] = ["top", "right", "bottom", "left"];

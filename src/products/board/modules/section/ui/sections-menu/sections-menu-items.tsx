@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { boardSections } from "@board";
+import { boardSections } from "../../section-members";
 import { useEngine } from "@canvas-ui";
 import { DropdownMenuItem, DropdownMenuLabel } from "@shared/ui/components/ui/dropdown-menu";
 

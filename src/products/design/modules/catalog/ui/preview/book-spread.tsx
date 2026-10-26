@@ -1,4 +1,5 @@
-import { sideWidth, type BookSide } from "@design";
+import { sideWidth } from "../../model/page-span";
+import type { BookSide } from "../../model/book-layout.types";
 import { BookPage } from "./book-page";
 import type { BookSpreadProps } from "./preview.types";
 import { TurningSheet } from "./turning-sheet";

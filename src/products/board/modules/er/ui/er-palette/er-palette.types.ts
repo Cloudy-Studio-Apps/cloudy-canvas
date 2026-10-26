@@ -1,6 +1,7 @@
 import type { PointerEvent as ReactPointerEvent } from "react";
 
-import type { ErDiagram, ErPaletteItemId } from "@board";
+import type { ErDiagram } from "../../model/er-diagram";
+import type { ErPaletteItemId } from "../../model/er-drop.types";
 
 export interface ErPaletteItem {
   id: ErPaletteItemId;

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 
-import { paperSize } from "@design";
+import { paperSize } from "../../model/paper-size";
 import { PanelIconButton } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { cn } from "@shared/ui/lib/utils";

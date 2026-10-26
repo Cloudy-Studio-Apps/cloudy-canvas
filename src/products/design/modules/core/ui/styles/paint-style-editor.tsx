@@ -1,5 +1,6 @@
 import { remapStackBindings, withoutBindingsUnder, type BindableField } from "@canvas";
-import { readPaintStyle, solidPaint } from "@design";
+import { readPaintStyle } from "../../styles/paint-style";
+import { solidPaint } from "../../node/solid-paint";
 import { PanelAddButton } from "@design/ui/components/panel";
 import type { StyleEditorProps } from "../core.points.types";
 import { StyleBindingScope } from "./style-binding-scope";

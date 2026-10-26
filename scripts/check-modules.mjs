@@ -8,6 +8,8 @@
 //   core-feature  a core module imports a feature
 //   mcp           an old *.agent-tool*.ts file, or a .mcp.ts outside <name>.mcp.ts / mcp/
 //   size          a <name>.module.ts over 120 lines (wiring only; split it)
+//   barrel        a module imports its own product's barrel (`@design`, `@board`) instead of the
+//                 file or module that declares the name
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, normalize, relative, sep } from "node:path";
 
@@ -104,6 +106,10 @@ for (const file of sourceFiles("src")) {
   const from = owner && catalog.get(owner.product).get(owner.module);
   const isModuleList = /^src\/products\/[^/]+\/ui\/modules\/[^/]+-modules\.ts$/.test(posix);
   for (const [spec, line] of specifiers(readFileSync(file, "utf8"))) {
+    if (owner && spec === `@${owner.product}`) {
+      report(file, line, "barrel", `import from the declaring file or module, not "${spec}"`);
+      continue;
+    }
     const target = moduleTarget(file, spec);
     if (!target) continue;
     if (owner && owner.product === target.product && owner.module === target.module) continue;

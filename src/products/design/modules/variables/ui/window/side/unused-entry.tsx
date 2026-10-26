@@ -1,4 +1,4 @@
-import { countedUse } from "@design";
+import { countedUse } from "../../../../pages";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { ListRow } from "@shared/ui/kit";
 import { useBoard } from "../use-board";

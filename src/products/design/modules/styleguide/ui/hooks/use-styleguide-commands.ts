@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 
-import { DESIGN_STYLEGUIDE, isSheet, STYLEGUIDE_COMMANDS, STYLEGUIDE_MODE_ID } from "@design";
+import { DESIGN_STYLEGUIDE } from "../../model/design-styleguide";
+import { isSheet } from "../../sheet/is-sheet";
+import { STYLEGUIDE_COMMANDS, STYLEGUIDE_MODE_ID } from "../../mode/styleguide-mode.constants";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useExportSystem } from "./use-export-system";
 

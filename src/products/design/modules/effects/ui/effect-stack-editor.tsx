@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { useEditorModules } from "@canvas-ui";
-import { movedTo, removedAt } from "@design";
+import { movedTo, removedAt } from "../../core";
 import { EffectBindingContext } from "./effect-binding-context";
 import { EffectRow } from "./effect-row";
 import type { EffectStackEditorProps } from "./effects-ui.types";

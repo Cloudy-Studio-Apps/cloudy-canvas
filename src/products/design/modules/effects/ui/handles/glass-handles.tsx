@@ -1,4 +1,4 @@
-import type { GlassEffect } from "@design";
+import type { GlassEffect } from "../../effect.types";
 import { HandleDot } from "./handle-dot";
 import type { EffectHandlesProps } from "./handles.types";
 

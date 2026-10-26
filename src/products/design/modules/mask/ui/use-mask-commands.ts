@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 import { asUndoStep } from "@canvas";
-import { maskedByMask, maskNodes, masksAmong, maskOverNode, releaseMasks } from "@design";
+import { maskedByMask, maskNodes, masksAmong, maskOverNode, releaseMasks } from "../mask-edits";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 
 /**

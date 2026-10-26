@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
-import { brochurePageSize } from "@design";
+import { brochurePageSize } from "../../model/page-span";
 import { Button } from "@shared/ui/components/ui/button";
 import { useBrochure } from "../hooks/use-brochure";
 import { useBrochurePreviewStore } from "../stores/preview-store";

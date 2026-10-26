@@ -3,7 +3,7 @@
 Text layers (T) with mixed styles in one text, the Typography section and its font picker, text styles and outlines for export.
 
 - **Tier:** core
-- **Requires:** core, variables
+- **Requires:** core
 - **Contributes:** kinds `TextKind`; designCanvas: `afterEdit`, `kinds`, `options`, `tools`; designEditor: `propertySections`, `sessionHooks`, `tools`; `designMcpTools`, `designStyleTypes`
 - **Points it owns:** —
 - **MCP tools:** `list_fonts`, `style_text_range`

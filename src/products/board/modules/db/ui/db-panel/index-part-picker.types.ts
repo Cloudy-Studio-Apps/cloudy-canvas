@@ -1,4 +1,4 @@
-import type { DbIndexPart, DbTableElement } from "@board";
+import type { DbIndexPart, DbTableElement } from "../../table/db-table.types";
 
 export interface IndexPartPickerProps {
   table: DbTableElement;

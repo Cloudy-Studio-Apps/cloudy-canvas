@@ -1,4 +1,4 @@
-import { HIGHLIGHTER_COLORS, MARKER_COLORS } from "@board";
+import { HIGHLIGHTER_COLORS, MARKER_COLORS } from "../../../palette";
 import { ColorPalette } from "@canvas-ui";
 import { BoardColorPalette } from "@board/ui/components/board-colors";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";

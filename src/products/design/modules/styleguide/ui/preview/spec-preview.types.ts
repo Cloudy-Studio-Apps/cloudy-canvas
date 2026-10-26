@@ -1,4 +1,4 @@
-import type { GeneratedSpec } from "@design";
+import type { GeneratedSpec } from "../../styleguide.types";
 
 export interface SpecPreviewProps {
   specs: readonly GeneratedSpec[];

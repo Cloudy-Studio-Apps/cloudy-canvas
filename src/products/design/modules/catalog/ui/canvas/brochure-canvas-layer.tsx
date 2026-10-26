@@ -1,12 +1,9 @@
 import { useEffect, useMemo, useReducer } from "react";
 
-import {
-  CATALOG_PICK_TOOL,
-  CATALOG_TOOL,
-  isPageFrame,
-  mmToUnits,
-  type FrameElement,
-} from "@design";
+import { CATALOG_PICK_TOOL, CATALOG_TOOL } from "../../mode/catalog-mode.constants";
+import { isPageFrame } from "../../model/page-frame";
+import { mmToUnits } from "../../model/paper-size";
+import type { FrameElement } from "../../../frame";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
 import { useBrochure } from "../hooks/use-brochure";
 import { useCatalogSelection } from "../hooks/use-catalog-selection";

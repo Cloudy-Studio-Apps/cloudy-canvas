@@ -1,4 +1,6 @@
-import type { ErAttributeElement, ErElement, ErJoin } from "@board";
+import type { ErAttributeElement } from "../../attribute/attribute.types";
+import type { ErElement } from "../../base/er.types";
+import type { ErJoin } from "../../model/edits/edits.types";
 import type { ShapeSelectOption } from "../er-panel/forms/shape-select.types";
 import type { ErJoinValue } from "./er-relation-prompt.types";
 

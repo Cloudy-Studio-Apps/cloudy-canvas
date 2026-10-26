@@ -1,10 +1,8 @@
-import type {
-  BookLayout,
-  BrochurePage,
-  BrochureSettings,
-  DesignBrochure,
-  DesignBrochures,
-} from "@design";
+import type { BookLayout } from "../../model/book-layout.types";
+import type { BrochurePage } from "../../model/brochure-pages.types";
+import type { BrochureSettings } from "../../brochure/brochure.types";
+import type { DesignBrochure } from "../../model/design-brochure";
+import type { DesignBrochures } from "../../model/design-brochures";
 
 /** The open brochure of the design page on screen, as the Catalog mode's UI reads it. */
 export interface BrochureView {

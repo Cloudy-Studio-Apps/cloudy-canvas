@@ -1,5 +1,7 @@
 import { DOCUMENT_TOKENS } from "@canvas";
-import { isDesignNode, type DesignEngine, type DesignNode } from "@design";
+import { isDesignNode } from "../../node/is-design-node";
+import type { DesignEngine } from "../../../../design-engine.types";
+import type { DesignNode } from "../../node/design-node.types";
 
 /** Default names of new styles, by type. */
 const NAMES: Readonly<Record<string, string>> = {

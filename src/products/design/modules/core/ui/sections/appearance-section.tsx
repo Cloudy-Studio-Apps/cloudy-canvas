@@ -1,7 +1,7 @@
 import { Blend, Scan } from "lucide-react";
 
 import type { ElementPatch } from "@canvas";
-import type { DesignNode } from "@design";
+import type { DesignNode } from "../../node/design-node.types";
 import {
   BindSlot,
   BlendModeSelect,

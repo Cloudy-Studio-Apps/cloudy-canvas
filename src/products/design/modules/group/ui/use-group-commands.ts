@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { groupNodes, ungroupNodes } from "@design";
+import { groupNodes, ungroupNodes } from "../group-nodes";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 
 /** Runs the group (Ctrl+G) and ungroup (Ctrl+Shift+G) commands on the selection. */

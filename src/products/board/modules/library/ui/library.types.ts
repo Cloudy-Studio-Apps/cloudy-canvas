@@ -1,4 +1,4 @@
-import type { BoardEngine } from "@board";
+import type { BoardEngine } from "../../../board-engine.types";
 import type { ExtensionIcon } from "@canvas-ui";
 
 /** A tab of the library besides "All", which shows every section. */

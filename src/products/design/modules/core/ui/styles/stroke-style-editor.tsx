@@ -1,7 +1,8 @@
 import { Minus } from "lucide-react";
 
 import type { BindableField } from "@canvas";
-import { readStrokeStyle, type StrokeStyleValue } from "@design";
+import { readStrokeStyle } from "../../styles/stroke-style";
+import type { StrokeStyleValue } from "../../styles/stroke-style.types";
 import { BindSlot, NumberField } from "@design/ui/components/panel";
 import type { StyleEditorProps } from "../core.points.types";
 import { StyleBindingScope } from "./style-binding-scope";

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CircleX, TriangleAlert } from "lucide-react";
 
-import type { ErHierarchyStrategy } from "@board";
+import type { ErHierarchyStrategy } from "../../model/to-tables/to-tables.types";
 import { useEngine } from "@canvas-ui";
 import { Button } from "@shared/ui/components/ui/button";
 import {
