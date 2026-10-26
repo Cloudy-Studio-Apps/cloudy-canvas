@@ -1,0 +1,21 @@
+# Canvas document
+
+_How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md); names may still follow the pre-refactor conventions until their phase (see its Transition table)._
+
+## Content lives only in the Yjs doc
+
+- **Content lives only in the Yjs doc.** Each element is a `Y.Map` inside the `"shapes"` map (the name is kept so existing files load). Order is a fractional-index string (`index`), and lexicographic order is z-order.
+  - All edits go through `CanvasDocument` methods (`add`, `update`, `updateMany`, `remove`), which transact with `LOCAL_ORIGIN` so `Y.UndoManager` tracks only local changes.
+  - Call `doc.checkpoint()` before a user action to start a new undo step.
+  - **After-edit hook:** the product's `afterEdit(doc, change)` (point `afterEdit`: every module's hook, in module order; `doc.setAfterEdit`, set by the engine) runs when the outermost edit ends, inside its transaction and so its undo step, with an `EditedChange` (`updated` ids, `removed` elements, `before`: the changed fields' earlier values, `tokens`: the token records written, `meta`: the title or description changed); its own writes run it again with what they changed, until nothing does (at most 32 passes; `update` only records fields whose value changes). Untracked updates run it too; `addUntracked`/`addAllUntracked` (what a file opens with, imports) don't, and undo/redo don't. `doc.deferAfterEdit()` holds it back until the returned function is called (the select tool's drags, so moved elements aren't put back mid-drag; it runs once after `onMoved`). `doc.ids()` and `doc.field(id, key)` read the store without reading whole elements.
+  - Binary data (image files) lives in the doc's `"assets"` map (`doc.addAsset`, `doc.getAsset`), keyed by a `createId()` id that elements point at. It's outside the undo history and shared by copies of an element; nothing deletes unused assets yet. Kinds name the assets an element shows with `kind.assets(el)`. The renderer decodes each one into textures as sharp as it shows (`render/image-cache.ts`, see Render cost; SVGs are rasterized at the level's size, `render/svg-image.ts`), and a drawer shows it with `view.placeImage(assetId, box, fit?)` (proportions kept: `contain`, the default, or `cover`, which crops). SVG icons are drawn with `view.placeIcon(key, svg, box)`, parsed once per icon.
+  - The document's own **title and description** live in its `"meta"` map (`doc.meta()`, `doc.setMeta(patch)`, `doc.observeMeta`; undoable like elements). The title is shown instead of the file name when set (`displayName(file)` in `shared/core`); `useDocumentMeta(doc)` (`canvas-ui`) reads it in React. `doc.onChange(listener)` fires on any change (elements, view state, assets, meta): it's what dirty tracking and autosave listen to.
+  - A document reads elements through the product's kinds (`new CanvasDocument(kinds)`, `CanvasDocument.fromUpdate(kinds, bytes)`): `doc.get`/`doc.all` return only registered types, with `kind.fillDefaults` applied. Elements of unregistered types (e.g. DB or ER shapes in older boards) stay in the doc untouched but aren't shown. Reads are cached per element (dropped when it changes: the document's own writes, and `beforeObserverCalls` for undo, redo and remote updates), so a change to a few elements doesn't read the whole file again; `doc.all()` is a new array of **shared elements: never mutate one** (they're frozen in development builds).
+
+## Actor documents
+
+- **Actor documents** (`canvas/document/`): `doc.runAs({ origin, placement }, fn)` makes the synchronous edits inside `fn` with another transaction origin and placement (calls nest), `doc.createHistory(origin)` is a `DocumentHistory` (a `Y.UndoManager` tracking only that origin; steps carry labels, `setNextLabel`, kept across undo and redo; `onChange` reports `added`/`undone`/`redone`/`cleared`), and `actorDocument(doc, { actor, history })` is a `Proxy` whose writes run as the actor and whose undo methods are its history's, typed `CanvasDocument` so tools, services and `asUndoStep` don't change. The user's own history is `doc.history` (`LOCAL_ORIGIN`).
+
+## Read-only
+
+- **Read-only:** `CanvasDocument.setReadOnly(true)` makes every local edit (elements, assets, meta, undo/redo) a no-op, tools, panels and agents alike; a viewer's editor has it and no toolbar.

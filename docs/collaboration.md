@@ -42,4 +42,4 @@ Both windows share the app data folder, which is fine for a test. For the real t
 
 ## Code
 
-The architecture is described in `CLAUDE.md` under "Collaborators and workspaces › Live sessions": the transport (`src-tauri/src/share/`, `src/platform/tauri-share-transport.ts`), the protocol (`src/shared/core/share/`), the sync (`src/canvas/share/`) and the UI (`src/canvas-ui/share/`, `src/pages/join/`).
+The architecture is described in the READMEs next to the code (`src/shared/core/share/`, `src/canvas/share/`, `src/canvas-ui/share/`): the transport (`src-tauri/src/share/`, `src/platform/tauri-share-transport.ts`), the protocol (`src/shared/core/share/`), the sync (`src/canvas/share/`) and the UI (`src/canvas-ui/share/`, `src/pages/join/`).

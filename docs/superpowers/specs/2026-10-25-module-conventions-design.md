@@ -565,16 +565,22 @@ CLAUDE.md                                CLAUDE.md
   Collaborators and workspaces               6. Code: small files, .types.ts, kit first, no type branching
   Editors                                    7. Design system: tokens only, sharp radii
   Design (≈70 KB)                            8. Never: canvas content in React/Zustand, raw <button>, …
-  Code conventions  ← the rules              Where things are (one line per folder → its doc)
-  Design system                            docs/architecture/
-                                             engine.md, elements.md, editors.md, mcp.md,
-                                             collaboration.md, files.md, design-system.md
+  Code conventions  ← the rules              Where to look: "read the README.md of the folder
+  Design system                              you change, and of its parents"
                                            docs/modules.md   (the checklist + tier table, §4–§5)
-                                           modules/*/README.md  (each feature's prose)
+                                         README.md next to the code it describes, e.g.
+                                           src/canvas/README.md, src/canvas/path/README.md,
+                                           src/canvas-ui/file/README.md, src/app/mcp/README.md,
+                                           products/design/modules/catalog/README.md
 ```
 
 The rules section is what an agent must obey; everything else is _where to look_. A rule appears once,
-in `CLAUDE.md`, never repeated inside a feature description.
+in `CLAUDE.md`, never repeated inside a feature description. **Descriptions live next to their code**
+(decided 2026-10-26): each folder the old `CLAUDE.md` described gets a `README.md` holding that
+description, so moving or deleting a folder takes its documentation with it; there is no
+`docs/architecture/`. `docs/` keeps only what isn't one folder's: guides (`plugins.md`,
+`collaboration.md`, `er-language.md`), roadmaps, specs, plans and `modules.md`. The `@CONTEXT` import
+at the end of `CLAUDE.md` is removed.
 
 ---
 
@@ -601,8 +607,9 @@ reviewed by the user before the next starts. Branches and commits are the user's
 edits files.
 
 1. **Rules.** Write `docs/modules.md` (this doc's §4–§5, §15, §16.1) and cut `CLAUDE.md` to the
-   rules (§10); move the feature prose to `docs/architecture/*.md` (and, once modules have them, to
-   their `README.md` in phase 5). No code changes.
+   rules (§10); move the feature prose, word for word, to `README.md` files next to the code it
+   describes (engine folders, products, modules). Phase 5 completes the modules' READMEs with the
+   template's fields. No code changes.
 2. **MCP rename (mechanical).** Files per §6, folders `agent/` → `mcp/` in modules, `canvas/agent` →
    `canvas/mcp`, `products/*/agent` → `products/*/mcp`, types and points per §3.1 (no aliases).
    Board's general tools move into `modules/core/mcp/`.
@@ -647,8 +654,8 @@ edits files.
    simply what it becomes. The examples are updated with it.
 5. **Phases run one at a time, inline**, each reviewed before the next (§12). Branches and commits
    are left to the user; this refactor is the only work in progress meanwhile.
-6. **`CLAUDE.md` is cut to the rules** (§10); the feature descriptions move to
-   `docs/architecture/*.md` and the modules' `README.md`.
+6. **`CLAUDE.md` is cut to the rules** (§10); the feature descriptions move to `README.md` files
+   next to their code (no `docs/architecture/`), and the `@CONTEXT` import is removed.
 7. **MCP tool names stay as they are** in this work. Naming them by module (`sticker_…`, a required
    plugin prefix, one shared tool per action for both products) is a separate plan.
 

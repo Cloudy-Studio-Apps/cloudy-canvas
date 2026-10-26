@@ -146,7 +146,7 @@ src/
 src-tauri/    the Rust desktop shell
 ```
 
-Every feature is a module that plugs into extension points, the same API plugins use. [`CLAUDE.md`](CLAUDE.md) documents the architecture and conventions in detail.
+Every feature is a module that plugs into extension points, the same API plugins use. [`CLAUDE.md`](CLAUDE.md) holds the rules, [`docs/modules.md`](docs/modules.md) the module conventions, and each folder's `README.md` how its code works.
 
 ### Publishing a release
 

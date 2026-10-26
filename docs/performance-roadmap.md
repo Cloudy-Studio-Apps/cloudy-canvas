@@ -44,7 +44,7 @@ What could make the canvas cheaper as files, features and live sessions grow, wi
 
 ## Bigger changes, only if the ones above aren't enough
 
-- [ ] **Cached scopes:** draw an unchanged effect or mask scope once into a texture and reuse it between frames (CLAUDE.md lists "caching effect scopes between frames" as not done).
+- [ ] **Cached scopes:** draw an unchanged effect or mask scope once into a texture and reuse it between frames (`src/products/design/README.md` lists "caching effect scopes between frames" as not done).
   - **Trigger:** pages with many shadows, blurs or glass effects pan slowly.
 - [ ] **Tiles at low zoom:** draw the whole page into cached tiles when zoomed far out, instead of every view.
   - **Trigger:** zoomed-out views of very large files are slow even with culling.

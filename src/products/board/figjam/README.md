@@ -1,0 +1,7 @@
+# FigJam import
+
+_How it works. The rules are in the root [CLAUDE.md](../../../../CLAUDE.md); names may still follow the pre-refactor conventions until their phase (see its Transition table)._
+
+## FigJam import
+
+- **FigJam import** (`products/board/figjam/`, outside the `@board` barrel: loaded only by `import("@board/figjam")` in `importFigJamFile`, `ui/file/`; reading and converting run in a worker, `figjam-import.worker.ts` via `convertFigJamFile`, with the shared `@canvas/figma` reader): `.jam` files ("Save local copy…") opened, dropped or picked in Home's open dialog (`figmaImportOf(path)` in `shared/core`: `fig` → design, `jam` → board) become a new board draft named after the file. `convertFigJam` takes the first page and flattens frames, groups and sections into world coordinates (`convertFigJamNode`, one converter per node type in `convert/`): stickies, shapes with text and connectors keep their looks and text in `nodeGenerationData` parts (`generatedPart`: 0 the body, 1 the text); stickies → `sticky`, shapes → `geo` (by `shapeWithTextType`), texts → `text` (wrapped lines kept from `derivedTextData`), connectors → `connector` (built last, `FigJamOutput.defer`, ends on the elements their nodes became, `FigJamContext`; curved ones straight, labels become texts), sections → `section`, image fills → `image` (FigJam's white border as padding), link preview widgets → `embed`, marker vectors → `stroke`. What was lost is counted and shown in a toast (`toastImportWarnings`, `canvas-ui/file/import-steps.ts`, shared with the Figma import).

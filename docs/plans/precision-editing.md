@@ -18,7 +18,7 @@ them laying out a UI by hand is slow and inexact. What the code has today:
 - **No rulers or ruler guides.**
 
 Goal: precise layout in the Design editor (and the board where it fits), built as engine features
-products opt into, following the module and kind architecture in CLAUDE.md.
+products opt into, following the module and kind architecture in `docs/modules.md` and `src/canvas/elements/README.md`.
 
 The first implementation step copies this plan to `docs/plans/precision-editing.md` in the repo.
 
@@ -231,8 +231,8 @@ Ordered by value for the effort:
 | 4 Rulers + guides                   | M      | 1                     |
 | 5 Extras                            | S each | —                     |
 
-Each phase ships on its own: a commit per phase, CLAUDE.md updated in the same commit (engine
-sections + Design section), plus `docs/plugins.md` when a new hook or point is exposed to plugins.
+Each phase ships on its own: a commit per phase, the READMEs of the folders it changes updated in
+the same commit (the engine's and the design's), plus `docs/plugins.md` when a new hook or point is exposed to plugins.
 
 ## Reuse
 

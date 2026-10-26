@@ -1,0 +1,7 @@
+# Align, distribute and tidy up
+
+_How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md); names may still follow the pre-refactor conventions until their phase (see its Transition table)._
+
+## Align, distribute and tidy up
+
+- **Align, distribute and tidy up** (`canvas/arrange/`, pure functions over `ArrangeItem`s: `alignOffset`, `distributeOffsets` (the first and last stay, equal spaces, whole units), `tidyUpOffsets` (rows by middle, columns as wide as their widest item, the median spacing)): `arrangeItems` picks the outlined, unlocked ids that don't already move with another of them; the engine's `alignElements`/`distributeElements`/`tidyUpElements` (and the `…Selection` commands `alignLeft`, `alignCenterX`, `alignRight`, `alignTop`, `alignCenterY`, `alignBottom` (Alt+A/H/D/W/V/S, matched by `code`), `distributeHorizontal`/`distributeVertical` (Alt+Shift+H/V) and `tidyUp` (Alt+Shift+T)) move them with `moveElementsBy` (with their members) in one undo step, with no `onMoved`, so nothing changes parent. Several elements align with their bounds; one aligns with the product's `alignTarget` (the design: its nearest container, `containerAlignTarget`; the board: the smallest section it's in, `sectionAlignTarget`), and `engine.canAlign(ids)` says whether there's one. The selection's context menu has an "Align" submenu; the design's Position section has the buttons (`ArrangeButtons`).

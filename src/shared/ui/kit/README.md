@@ -1,0 +1,7 @@
+# Kit
+
+_How it works. The rules are in the root [CLAUDE.md](../../../../CLAUDE.md); names may still follow the pre-refactor conventions until their phase (see its Transition table)._
+
+## Kit
+
+- **Kit** (`src/shared/ui/kit/`, `@shared/ui/kit`, `api.ui.kit` for plugins): `IconButton` (`label` as tooltip and aria label, `shortcut`, `description`, `active`, `revealOnHover`, sizes `xs`/`sm`/`md`/`lg`, a Radix trigger with `asChild`; `ToolButton` and the design's `PanelIconButton` are built on it), `SegmentedControl`, `Field` (`stacked`/`inline`, `useFieldId`), `NumberInput` (Figma's number field: drag the prefix or suffix sideways to scrub, `useScrub`, the pointer locked so it goes past the screen's edge, Shift ×10; Up/Down step, Shift ×10; typed arithmetic, `evaluateNumber`; `factor`, `decimals`, "Mixed" for `null`; `onScrubStart`/`onScrubEnd`, which `useScrubUndo` (`canvas-ui`) turns into one undo step with `doc.holdCheckpoints()` (`DocumentHistory.hold`: `checkpoint` is a no-op and changes merge until released); the design's `NumberField`, `ScrubField` and `PercentInput` (its "%" scrubs) are built on it), `FieldBox`, `SearchInput`, `Section` (the design's `PanelSection`, optionally `collapsible`), `ListRow` (`size` `sm` rows / `md` pickers), `ChoiceCards` (picture choices: ER settings, ER to tables), `SelectableCard`, `AppDialog`, `MenuItemContent`, `EmptyState`, `Toolbar`/`ToolbarGroup`, `Checkbox`, `Swatch`, plus the shadcn primitives and `cn` re-exported (`primitives.ts`). `/design-system` previews them (`KitSection`) with a theme switcher.
