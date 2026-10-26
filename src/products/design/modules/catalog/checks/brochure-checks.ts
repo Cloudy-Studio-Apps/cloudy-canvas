@@ -1,7 +1,12 @@
 import { rectContainsRect, rectsIntersect, type CanvasElement, type Rect } from "@canvas";
 
-import { isDesignNode, withDescendants, type DesignNode, type ImagePaint } from "../../core";
-import { isPlaceholderPaint } from "../../image";
+import {
+  isDesignNode,
+  isPlaceholderPaint,
+  withDescendants,
+  type DesignNode,
+  type ImagePaint,
+} from "../../core";
 import { isText } from "../../text";
 import { mmToUnits, type BrochurePage } from "../model";
 import { effectiveDpi } from "./effective-dpi";

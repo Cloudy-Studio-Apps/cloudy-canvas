@@ -12,6 +12,7 @@ import { EmbedPlayer, useEmbedPreviews } from "./ui";
  */
 export const embedModule = defineModule({
   id: "embed",
+  tier: "feature",
   register(host) {
     host.contribute(boardCanvas.kinds, new EmbedKind());
     host.contribute(boardCanvas.pasteText, (text, at, index) => createPastedEmbed(text, at, index));

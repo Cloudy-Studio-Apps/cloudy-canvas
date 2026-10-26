@@ -22,6 +22,7 @@ import { usePageCommands } from "./ui/use-page-commands";
  */
 export const pagesModule = defineModule({
   id: "pages",
+  tier: "core",
   requires: ["core", "layers"],
   register(host) {
     host.contribute(designCanvas.kinds, new PageKind());

@@ -10,7 +10,6 @@ import type { boardEditor } from "@board/ui";
 import type * as canvasApi from "@canvas";
 import type * as design from "@design";
 import type * as effectsUi from "@design/modules/effects/ui";
-import type * as effectFields from "@design/modules/effects/ui/fields";
 import type { designEditor } from "@design/ui";
 import type * as designModules from "@design/ui/modules";
 import type * as designPanel from "@design/ui/components/panel";
@@ -257,7 +256,7 @@ export interface DesignPluginApi {
       | "atopShader"
       | "shapeUnderShader"
     > &
-    typeof effectFields;
+    Pick<typeof effectsUi, "EffectChoice" | "EffectColorField" | "EffectToggle" | "ScrubField">;
   hooks: Pick<typeof designHooks, "useSelectedNodes" | "useEditNodes" | "useMoveNodes"> & {
     useDesignEngine: typeof useDesignEngine;
     useDesignState: typeof useDesignState;

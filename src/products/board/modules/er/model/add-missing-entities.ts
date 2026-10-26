@@ -1,4 +1,4 @@
-import type { DbmlError } from "../../db/schema/dbml";
+import type { DbmlError } from "../../db";
 import type { ParsedEr, ParsedErAttribute, ParsedErEntity } from "./lang";
 import { attributeNamed } from "./lang/parse-attributes";
 

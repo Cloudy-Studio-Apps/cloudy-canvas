@@ -6,9 +6,6 @@ export { firstImageFill, replaceImageFill } from "./replace-image-fill";
 export {
   addPlaceholderPaint,
   DEFAULT_PLACEHOLDER_COLOR,
-  isPlaceholderAsset,
-  isPlaceholderPaint,
-  PLACEHOLDER_ASSET_PREFIX,
   placeholderColorOf,
   placeholderPatch,
   canHoldPlaceholder,

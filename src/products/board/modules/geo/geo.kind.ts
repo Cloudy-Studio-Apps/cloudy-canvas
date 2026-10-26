@@ -15,9 +15,10 @@ import {
 import { colorField, colorTokenOptions, restyleColors } from "../../tokens";
 import { INK_COLOR, SHAPE_FILLS, SHAPE_STROKES } from "../../palette";
 import type { BoardToolOptions } from "../../board-options.types";
-import { QuickConnectKind } from "../connector/quick-connect.kind";
+import { QuickConnectKind } from "../connector";
 import { createGeo } from "./geo.factory";
 import { GEO_DEFAULTS } from "./geo.defaults";
+import { GEO_SPEC_PROPERTIES } from "./geo-spec-properties";
 import { drawGeo } from "./geo.draw";
 import type { GeoElement } from "./geo.types";
 import { geoVariants, variantOf } from "./variants/variant.registry";
@@ -30,6 +31,7 @@ export class GeoKind extends QuickConnectKind<GeoElement> {
   override readonly tool = "shape";
   override readonly defaults = GEO_DEFAULTS;
   override readonly styleFields = ["fill", "stroke", "strokeWidth", "fontSize"];
+  override readonly specProperties = GEO_SPEC_PROPERTIES;
   override readonly patchableFields: ReadonlySet<string> = new Set([
     "x",
     "y",

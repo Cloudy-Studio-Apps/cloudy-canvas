@@ -29,6 +29,9 @@ A module is **core** when at least one is true: (a) its data is on **every** ele
 work without it. Otherwise it's a **feature**. Every feature is always on; being one only decides _how
 it's written_.
 
+Each built-in module says its tier in `defineModule({ id, tier: "core" | "feature", … })`;
+plugins' modules leave it unset. `scripts/check-modules.mjs` reads it.
+
 ### Design
 
 | Module                                                                                   | Tier    | Why                                                                               |
@@ -123,10 +126,13 @@ calls them. Nothing is found by its name: ESLint reads the suffix only to allow 
 
 1. A module imports another module **only through its two public entries**: `index.ts` for engine
    code (`../frame`) and `ui/index.ts` for React (`../frame/ui`), never a file inside
-   (`../frame/frame.kind`), and only if that module is in its `requires`. Engine files may only use the
-   other module's `index.ts`.
+   (`../frame/frame.kind`), and only if it's a **core module or in its `requires`/`uses`**. Core
+   modules are always loaded, so importing one needs no `requires` (adding it would only change the
+   load order). `uses` is for a feature it needs loaded when `requires` would make a loop with
+   another module's `after` (er uses db and geo). Engine files may only use the other module's
+   `index.ts`.
 2. **Core modules never import features.** Features may import core modules and the features they
-   `require`.
+   `require` or `use`.
 3. **Features use only the public surface**: `@canvas`, `@canvas-ui`, `@shared/*`, the product's
    barrel and points, and other modules' public entries. If they need more, it's added to the public
    surface **and to `PluginApi` at the same time**, never deep-imported.
@@ -134,6 +140,13 @@ calls them. Nothing is found by its name: ESLint reads the suffix only to allow 
    `modules/index.ts` or a module's `index.ts` / `ui/index.ts`.
 5. `<product>-points.ts` holds only product-wide points (canvas points, MCP tools, migrations, select
    redirects). A feature's own points go in its `<name>.points.ts`.
+
+**Checked by** `scripts/check-modules.mjs`, part of `pnpm lint` (`pnpm check:modules` alone): deep
+imports (from modules and from anywhere else in `src/`), `requires`, core → feature, each module's
+`index.ts`/`<name>.module.ts`/`README.md`/`tier`, MCP file names and module files over 120 lines.
+`node scripts/module-order.mjs` prints the order each product loads its modules in: compare it
+before and after changing `requires`/`after`, since chained hooks run in that order. Not checked yet
+(phase 6): modules importing their own product barrel (`@design`, `@board`).
 
 ## MCP files
 
@@ -185,10 +198,13 @@ the code. When you change how something works, update its README in the same cha
 <One paragraph: what the feature is, as the user sees it.>
 
 - **Tier:** core | feature
-- **Requires:** core, pages
+- **Requires:** core, pages (and `uses`/`after` when it has them)
 - **Contributes:** kinds `x`; tool `x` (X); sections …; host commands …; hooks …
 - **Points it owns:** `xTypes` (who extends it)
 - **MCP tools:** `a_b`, `c_d`
 - **Files:** the important ones and what they hold
 - **Not yet:** …
 ```
+
+Then `## How it works`: the details (types, hooks, edge cases, how to extend it). Add `Not yet`
+only when something is known to be missing.

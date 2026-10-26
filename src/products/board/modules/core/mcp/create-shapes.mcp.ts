@@ -9,7 +9,6 @@ import {
   type CanvasElement,
 } from "@canvas";
 
-import { geoVariants } from "../../geo";
 import { requireBoard } from "../../../mcp/board-access";
 import type { BoardAgentContext, BoardMcpTool } from "../../../mcp/board-mcp.types";
 
@@ -48,9 +47,6 @@ export const createShapesTool = ({ kinds }: BoardAgentContext): BoardMcpTool => 
                 type: "string",
                 description: "Sticky, text, section, table header, connector or stroke color.",
               },
-              kind: { enum: geoVariants.keys(), description: "Geo shape kind." },
-              fill: { type: "string", description: 'Geo fill, or "transparent".' },
-              stroke: { type: "string", description: 'Geo outline, or "transparent".' },
               // Type-specific fields (e.g. a connector's ends).
               ...Object.assign({}, ...kinds.all().map((kind) => kind.specProperties)),
             },

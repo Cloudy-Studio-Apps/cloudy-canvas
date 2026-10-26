@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { canRestyleEdge, stickerEdgePatches } from "@design";
-import { EffectColorField } from "@design/modules/effects/ui/fields";
+import { EffectColorField } from "../../effects/ui";
 import { PanelIconButton } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { notifyError } from "@shared/stores/toast-store";

@@ -32,6 +32,7 @@ import { CORE_STYLE_TYPES } from "./ui/styles";
  */
 export const coreModule = defineModule({
   id: "core",
+  tier: "core",
   register(host) {
     registerCoreCanvas(host);
     registerCoreCommands(host);

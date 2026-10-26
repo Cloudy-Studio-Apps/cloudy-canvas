@@ -7,6 +7,7 @@ import { PluginsTab } from "./ui/plugins-tab";
 /** The Plugins tab (a pointer to Settings › Plugins for now). */
 export const pluginsTabModule = defineModule({
   id: "plugins-tab",
+  tier: "core",
   register(host) {
     host.contribute(designEditor.leftTabs, {
       id: "plugins",

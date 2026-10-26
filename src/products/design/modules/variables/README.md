@@ -1,4 +1,13 @@
-# Variables, styles and the design system
+# Variables
+
+Figma's variables and more: collections, modes and variables bound to layers' fields and kept up to date, styles, generators, import and export of tokens, and the Variables window.
+
+- **Tier:** core
+- **Requires:** core, pages
+- **Contributes:** designCanvas: `afterEdit`, `hostCommands`; designEditor: `contextMenu`, `mainMenu`, `overlays`, `propertySections`, `sessionHooks`; `designMcpTools`, `designMigrations`, `tokenFormats`
+- **Points it owns:** `tokenFormats` (`exchange/`): the token file formats; plugins add theirs
+- **MCP tools:** `bind_variables`, `check_contrast`, `create_collection`, `create_mode_axis`, `create_styles`, `create_variables`, `delete_styles`, `delete_variables`, `detach_tokens`, `export_tokens`, `find_unused_tokens`, `generate_scale`, `generate_shades`, `generate_type_scale`, `get_token_usage`, `get_variables`, `import_tokens`, `list_styles`, `list_variables`, `replace_token`, `set_variable_mode`, `unbind_variables`, `update_collection`, `update_mode_axis`, `update_styles`, `update_variables`
+- **Files:** `bind-nodes.ts`, `set-variable-modes.ts`, `migrate-*.ts`, `exchange/` (formats), `contrast/`, `type-scale/`, `mcp/`, `ui/` (sections, the window); the engine is in `canvas/tokens`.
 
 This folder is the design's **variables** module. The feature itself spans several folders,
 because the token engine is shared by both products. This guide covers all of it: what each

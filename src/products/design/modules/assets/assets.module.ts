@@ -7,6 +7,7 @@ import { AssetsTab } from "./ui/assets-tab";
 /** The Assets tab (components and libraries; a placeholder for now). */
 export const assetsModule = defineModule({
   id: "assets",
+  tier: "feature",
   register(host) {
     host.contribute(designEditor.leftTabs, {
       id: "assets",

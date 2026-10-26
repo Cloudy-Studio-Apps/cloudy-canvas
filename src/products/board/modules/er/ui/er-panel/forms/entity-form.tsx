@@ -5,7 +5,7 @@ import { Button } from "@shared/ui/components/ui/button";
 import { ListRow } from "@shared/ui/kit";
 import { ColorPalette, CommitInput, useEngine } from "@canvas-ui";
 import { lockedOn, useErDiagram, useErGate, useErShapes } from "../../model";
-import { FlagToggle } from "../../../../db/ui/db-panel/flag-toggle";
+import { FlagToggle } from "../../../../db/ui";
 import { AttributeList } from "./attribute-list";
 import { FormField } from "./form-field";
 import { FormSection } from "./form-section";

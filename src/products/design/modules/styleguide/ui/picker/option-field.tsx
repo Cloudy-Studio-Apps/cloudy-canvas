@@ -1,5 +1,5 @@
 import { useScrubUndo } from "@canvas-ui";
-import { FontPicker } from "@design/modules/text/ui/font-picker";
+import { FontPicker } from "../../../text/ui";
 import {
   Checkbox,
   Field,

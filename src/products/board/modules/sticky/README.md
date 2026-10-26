@@ -1,7 +1,14 @@
-# Sticky (Board module)
+# Sticky notes
 
-_How it works. The rules are in the root [CLAUDE.md](../../../../../CLAUDE.md); names may still follow the pre-refactor conventions until their phase (see its Transition table)._
+Sticky notes (S) in the board's colors, with quick-connect dots.
 
-## Sticky
+- **Tier:** feature
+- **Requires:** connector
+- **Contributes:** kinds `StickyKind`; boardCanvas: `kinds`, `options`, `tools`; boardEditor: `selectionPanels`, `toolPanels`, `tools`
+- **Points it owns:** —
+- **MCP tools:** —
+- **Files:** `sticky.kind.ts`, `sticky.tool.ts`, `sticky.draw.ts`, `ui/`.
+
+## How it works
 
 - `sticky/`: `StickyKind extends QuickConnectKind` (a `TextBoxKind`)

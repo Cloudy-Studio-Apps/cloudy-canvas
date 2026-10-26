@@ -1,4 +1,4 @@
-import type { DbmlError } from "../../../db/schema/dbml/parser.types";
+import type { DbmlError } from "../../../db";
 import type { ErStandardDefinition } from "../../base/standards";
 import { blockRange } from "../block-range";
 import { serializeErBlocks, type ErShapes } from "../lang";

@@ -16,10 +16,7 @@ import { erStandards } from "../base/standards";
 import { checkErDiagram, type ErIssue } from "./check";
 import { standardTextWarnings } from "./check/standard-text-warnings";
 import { standardOf } from "./standard-of";
-import { importSchemaText } from "../../db/schema/schema-dbml";
-import { schemaShapes } from "../../db/schema/schema-shapes";
-import type { DbApplyResult } from "../../db/schema/db-schema.types";
-import { formatColumnType } from "../../db/table/column-type";
+import { importSchemaText, schemaShapes, type DbApplyResult, formatColumnType } from "../../db";
 import { erToTables, type ErTableOptions, type ErTablesResult } from "./to-tables";
 
 /**

@@ -2,7 +2,7 @@ import { Trash2 } from "lucide-react";
 
 import type { ErParticipantPatch } from "@board";
 import { CommitInput } from "@canvas-ui";
-import { FlagToggle } from "../../../../db/ui/db-panel/flag-toggle";
+import { FlagToggle } from "../../../../db/ui";
 import { useErDiagram, useErGate, useErShapes } from "../../model";
 import { CardinalityPicker } from "./cardinality-picker";
 import { IconAction } from "./icon-action";

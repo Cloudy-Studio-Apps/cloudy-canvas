@@ -1,7 +1,14 @@
-# Mask (Design module)
+# Masks
 
-_How it works. The rules are in the root [CLAUDE.md](../../../../../CLAUDE.md); names may still follow the pre-refactor conventions until their phase (see its Transition table)._
+Masks as in Figma and more (alpha, vector, luminance, inverted): Use as mask (Ctrl+Alt+M), releasing masks and the Mask section.
 
-## Masks
+- **Tier:** feature
+- **Requires:** core, group
+- **Contributes:** designCanvas: `hostCommands`, `masks`; designEditor: `contextMenu`, `mainMenu`, `propertySections`, `selectionActions`, `sessionHooks`; `designMcpTools`
+- **Points it owns:** —
+- **MCP tools:** `mask_nodes`, `release_masks`
+- **Files:** `design-masks.ts` (the canvas's masks hook), `mask-edits.ts`, `mask.mcp.ts`, `ui/`.
+
+## How it works
 
 - **Masks** (`mask/`, as in Figma): nodes have `isMask`, `maskType` (`alpha`, `vector`, `luminance`) and `maskInverted` (a cut-out, beyond Figma). A visible mask masks the siblings above it up to the next mask, with what they hold (`siblingMasks`, `core/tree/`; a hidden mask masks nothing), and isn't drawn; `designMasks` (the `masks` hook) gives the canvas each mask's slot, bounds, `contains` (its parts' hit tests) and, for vector masks, the shapes (each part's `geometry(el).fill`; a part with none, a line or a text whose face isn't read yet, makes it mask by pixels; a boolean's operands aren't parts, its result is). A mask group's bounds are its mask's (`GroupKind.resolveFromChildren` leaves out what a mask hides). "Use as mask" (`useAsMask`, Ctrl+Alt+M) is `maskNodes`: several layers become a "Mask group" whose bottom-most is the mask, one layer becomes a mask in place, all-masks are released; `releaseMask` (`releaseMasks`: the selected masks, or those right inside a mask group), `selectMask` (`maskOverNode`) and `selectMasked` (`maskedByMask`) are host commands (`useMaskCommands`) in the Mask main menu and the selection's context menu (items' `label`/`enabled` get the engine). Ungrouping keeps masks masking. The Mask section, shown for any selection (masks: type, invert, Select masked, Release; other layers: a "Use as mask" button, and for a masked layer "Masked by …" and Select mask) reads `PropertySelection.elements` (`useSceneElements`). The Layers tab shows masks with a dashed icon and masked layers with a marker. Agents: `isMask`/`maskType`/`maskInverted` in `create_nodes` and `update_nodes`, `mask_nodes`, `release_masks`; summaries carry `mask` and `maskedBy`, `get_layer_tree` `mask`. The Figma import keeps masks (`mask`, `maskType`, older `maskIsOutline`).

@@ -4,7 +4,7 @@ import { canConvert, cardinalityRatio } from "@board";
 import { Button } from "@shared/ui/components/ui/button";
 import { CommitInput, useEngine } from "@canvas-ui";
 import { useErDiagram, useErShapes, lockedOn, useErGate } from "../../model";
-import { FlagToggle } from "../../../../db/ui/db-panel/flag-toggle";
+import { FlagToggle } from "../../../../db/ui";
 import { AttributeList } from "./attribute-list";
 import { entityOptions } from "./entity-options";
 import { FormField } from "./form-field";

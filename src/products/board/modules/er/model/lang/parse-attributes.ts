@@ -1,4 +1,4 @@
-import { parseSettings, type DbmlError, type TokenCursor } from "../../../db/schema/dbml";
+import { parseSettings, type DbmlError, type TokenCursor } from "../../../db";
 import type { ParsedErAttribute } from "./parser.types";
 
 /** Short prefixes: `*dni` key, `~num` partial key, `+tfno` multivalued, `/edad` derived. */

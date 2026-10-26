@@ -13,6 +13,7 @@ import { DrawOptions } from "./ui/draw-options";
 /** Freehand strokes: the kind, the marker (M) and eraser (Shift+E) and the Draw panel. */
 export const drawModule = defineModule({
   id: "draw",
+  tier: "feature",
   register(host) {
     host.contribute(boardCanvas.kinds, new StrokeKind());
     host.contribute(

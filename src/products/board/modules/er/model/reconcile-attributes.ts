@@ -1,6 +1,6 @@
 import { createId } from "@shared/core";
 
-import { pairByName } from "../../db/schema/pair-by-name";
+import { pairByName } from "../../db";
 import { NO_ER_DIAGRAM } from "../base/no-er-diagram";
 import type { ErAttributeElement, ErAttributeLook } from "../attribute/attribute.types";
 import { attributeSize } from "../base/er-size";

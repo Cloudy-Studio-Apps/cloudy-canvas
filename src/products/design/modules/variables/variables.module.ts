@@ -27,6 +27,7 @@ import {
  */
 export const variablesModule = defineModule({
   id: "variables",
+  tier: "core",
   requires: ["core", "pages"],
   register(host) {
     host.contribute(designCanvas.afterEdit, (doc, change, kinds) =>

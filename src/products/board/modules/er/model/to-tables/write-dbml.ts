@@ -1,4 +1,4 @@
-import { formatName, formatType } from "../../../db/schema/dbml/dbml-format";
+import { formatName, formatType } from "../../../db";
 import type { ErTableOptions } from "./to-tables.types";
 import type { ColumnDraft, TableDraft } from "./tables-context.types";
 

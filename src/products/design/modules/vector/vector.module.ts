@@ -22,6 +22,7 @@ import { VectorKind } from "./vector.kind";
  */
 export const vectorModule = defineModule({
   id: "vector",
+  tier: "core",
   requires: ["core"],
   register(host) {
     host.contribute(designCanvas.kinds, new VectorKind());

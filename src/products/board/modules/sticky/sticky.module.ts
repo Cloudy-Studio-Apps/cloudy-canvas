@@ -11,6 +11,7 @@ import { StickyOptions } from "./ui/sticky-options";
 /** Sticky notes: the kind, the tool (S) and its color panel. */
 export const stickyModule = defineModule({
   id: "sticky",
+  tier: "feature",
   // Notes drag connectors out of their sides.
   requires: ["connector"],
   register(host) {

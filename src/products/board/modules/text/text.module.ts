@@ -10,6 +10,7 @@ import { TextTool } from "./text.tool";
 /** Free text: the kind, the tool (T) and pasting text, which takes any text the others leave. */
 export const textModule = defineModule({
   id: "text",
+  tier: "core",
   // A pasted link is a card before it's text.
   after: ["embed"],
   register(host) {

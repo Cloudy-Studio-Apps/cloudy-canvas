@@ -1,5 +1,5 @@
 import { PropertyGrid } from "@design/ui/components/panel";
-import { EffectColorField, ScrubField } from "@design/modules/effects/ui/fields";
+import { EffectColorField, ScrubField } from "../../effects/ui";
 import type { ShaderParamFieldProps } from "./shader-ui.types";
 
 /** A shader parameter's control, as its note says: a slider, a color, a point or numbers. */

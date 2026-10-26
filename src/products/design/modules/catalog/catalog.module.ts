@@ -35,6 +35,7 @@ import { CatalogModeToolbar } from "./ui/toolbar/catalog-mode-toolbar";
  */
 export const catalogModule = defineModule({
   id: "catalog",
+  tier: "feature",
   requires: ["core", "pages", "frame"],
   register(host) {
     host.contribute(designCanvas.kinds, new BrochureKind());

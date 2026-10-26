@@ -35,6 +35,7 @@ import { designEffectTypes } from "./ui/effects.points";
  */
 export const effectsModule = defineModule({
   id: "effects",
+  tier: "core",
   requires: ["core"],
   // Masks and effects nest along the tree; both read `treeSlots`.
   after: ["mask"],

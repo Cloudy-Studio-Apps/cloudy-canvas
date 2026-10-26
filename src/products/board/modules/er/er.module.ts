@@ -17,6 +17,10 @@ import { migrateErDiagrams } from "./model";
  */
 export const erModule = defineModule({
   id: "er",
+  tier: "feature",
+  // Uses db's DBML language and tables and geo's ellipse; `uses`, not `requires`, because
+  // connectors are `after` er and db and geo come after connectors.
+  uses: ["db", "geo"],
   // A section takes its contents first; then each ER element takes its attributes along.
   after: ["section"],
   register(host) {

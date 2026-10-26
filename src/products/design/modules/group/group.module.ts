@@ -15,6 +15,7 @@ import { useGroupCommands } from "./ui/use-group-commands";
  */
 export const groupModule = defineModule({
   id: "group",
+  tier: "core",
   // Empty groups are pruned after the core puts dropped nodes in their containers.
   requires: ["core"],
   register(host) {

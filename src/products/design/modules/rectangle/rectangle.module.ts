@@ -13,6 +13,7 @@ import { RectangleKind } from "./rectangle.kind";
  */
 export const rectangleModule = defineModule({
   id: "rectangle",
+  tier: "feature",
   requires: ["core"],
   register(host) {
     const kind = new RectangleKind();

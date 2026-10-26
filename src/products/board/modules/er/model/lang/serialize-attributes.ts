@@ -1,4 +1,4 @@
-import { formatName } from "../../../db/schema/dbml";
+import { formatName } from "../../../db";
 import type { ErAttributeElement } from "../../attribute/attribute.types";
 
 const INDENT = "  ";

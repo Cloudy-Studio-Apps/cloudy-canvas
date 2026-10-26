@@ -13,6 +13,7 @@ import { ShaderEditor } from "./ui/shader-editor";
  */
 export const shaderEffectModule = defineModule({
   id: "shader-effect",
+  tier: "feature",
   requires: ["effects"],
   register(host) {
     host.contribute(designCanvas.effectRenderers, shaderRenderer);

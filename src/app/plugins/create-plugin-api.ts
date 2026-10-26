@@ -137,13 +137,14 @@ import {
   NOISE_GLSL,
 } from "@design";
 import { allKinds, designEditor, noNodes, ofType, someNodes } from "@design/ui/modules";
-import { defineEffectType, designEffectTypes } from "@design/modules/effects/ui";
 import {
+  defineEffectType,
+  designEffectTypes,
   EffectChoice,
   EffectColorField,
   EffectToggle,
   ScrubField,
-} from "@design/modules/effects/ui/fields";
+} from "@design/modules/effects/ui";
 import {
   FieldBox,
   HexInput,

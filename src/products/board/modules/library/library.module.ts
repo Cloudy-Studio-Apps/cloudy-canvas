@@ -10,6 +10,7 @@ import { boardCanvas } from "../../board-points";
  */
 export const libraryModule = defineModule({
   id: "library",
+  tier: "core",
   register(host) {
     host.contribute(boardCanvas.hostCommands, {
       ...OPEN_LIBRARY,

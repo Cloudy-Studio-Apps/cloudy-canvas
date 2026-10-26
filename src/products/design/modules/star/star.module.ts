@@ -11,6 +11,7 @@ import { StarSection } from "./ui/star-section";
 /** Stars: the kind and the tool, in the shapes menu, and the star section. */
 export const starModule = defineModule({
   id: "star",
+  tier: "feature",
   requires: ["core"],
   register(host) {
     const kind = new StarKind();

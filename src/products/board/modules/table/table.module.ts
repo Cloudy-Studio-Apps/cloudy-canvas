@@ -11,6 +11,7 @@ import { TableOptions } from "./ui/table-options";
 /** Tables: the kind, the tool (G) and its panel (header, tint, cell fills, rows and columns). */
 export const tableModule = defineModule({
   id: "table",
+  tier: "feature",
   register(host) {
     host.contribute(boardCanvas.kinds, new TableKind());
     host.contribute(boardCanvas.tools, {

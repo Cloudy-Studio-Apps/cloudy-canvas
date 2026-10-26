@@ -2,7 +2,7 @@ import { useDocumentTokens } from "@canvas-ui";
 import { SCALE_RATIOS, type FontWeight } from "@canvas";
 import { FONT_WEIGHTS } from "@shared/core";
 import { Field, Input } from "@shared/ui/kit";
-import { FontPicker } from "@design/modules/text/ui/font-picker";
+import { FontPicker } from "../../../text/ui";
 import { ChoiceField } from "./choice-field";
 import { NumberFieldRow } from "./number-field-row";
 import type { TypeScaleFormProps } from "./type-scale-ui.types";

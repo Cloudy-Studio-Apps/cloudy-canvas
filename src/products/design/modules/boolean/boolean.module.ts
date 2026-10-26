@@ -23,6 +23,7 @@ const KEYS = { union: "KeyU", subtract: "KeyS", intersect: "KeyI", exclude: "Key
  */
 export const booleanModule = defineModule({
   id: "boolean",
+  tier: "feature",
   // Flatten and Outline stroke make vectors.
   requires: ["core", "vector"],
   register(host) {

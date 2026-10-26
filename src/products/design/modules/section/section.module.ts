@@ -9,6 +9,7 @@ import { SectionKind } from "./section.kind";
 /** Sections: the kind and its tool (Shift+S), in the frame menu. */
 export const sectionModule = defineModule({
   id: "section",
+  tier: "feature",
   requires: ["frame"],
   register(host) {
     const kind = new SectionKind();

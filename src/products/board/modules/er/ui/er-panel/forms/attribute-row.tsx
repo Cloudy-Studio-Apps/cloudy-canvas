@@ -2,7 +2,7 @@ import { ArrowDown, ArrowUp, ListTree, Trash2 } from "lucide-react";
 
 import type { ErAttributePatch, ErAttributeElement } from "@board";
 import { CommitInput } from "@canvas-ui";
-import { FlagToggle } from "../../../../db/ui/db-panel/flag-toggle";
+import { FlagToggle } from "../../../../db/ui";
 import { lockedOn, useErDiagram, useErGate } from "../../model";
 import { IconAction } from "./icon-action";
 import type { AttributeRowProps } from "./attribute-row.types";

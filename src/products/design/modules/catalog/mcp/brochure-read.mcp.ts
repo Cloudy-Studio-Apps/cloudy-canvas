@@ -2,7 +2,7 @@ import { bytesToBase64, optionalNumber } from "@canvas";
 import { ToolImage } from "@shared/core";
 
 import { requireDesign, type DesignMcpTool } from "../../../mcp";
-import { isPlaceholderPaint } from "../../image";
+import { isPlaceholderPaint } from "../../core";
 import { checkBrochure, effectiveDpi, LOW_DPI, pictureSize } from "../checks";
 import { drawBrochureSheet } from "../export";
 import { brochurePageSize, pagePictures, spanOf } from "../model";

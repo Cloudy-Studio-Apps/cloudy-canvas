@@ -10,7 +10,7 @@ Cloudy Canvas (by DarkRedgm) is a desktop-first Figma + FigJam app built with Ta
 pnpm install
 pnpm tauri dev      # desktop app
 pnpm dev            # frontend only in a browser (native dialogs unavailable)
-pnpm lint           # ESLint (flat config, eslint.config.js)
+pnpm lint           # ESLint (flat config, eslint.config.js) + scripts/check-modules.mjs
 pnpm typecheck      # tsc for app + vite config (noEmit)
 pnpm format         # Prettier (with tailwind plugin); format:check to verify
 pnpm tauri build    # production bundle
@@ -81,11 +81,12 @@ look); the module conventions are in [docs/modules.md](docs/modules.md).
 
 **Modules** ([docs/modules.md](docs/modules.md))
 
-16. New functionality is a module: one folder in its product's `modules/` with `<name>.module.ts`,
-    `index.ts` and `README.md`. Its tier (core or feature) is in [Tiers](docs/modules.md#tiers), its
-    files in [Module anatomy](docs/modules.md#module-anatomy).
+16. New functionality is a module: one folder in its product's `modules/` with `<name>.module.ts`
+    (saying its `tier`), `index.ts` and a `README.md` in the template. Tiers are in
+    [Tiers](docs/modules.md#tiers), files in [Module anatomy](docs/modules.md#module-anatomy).
 17. Follow the [import rules](docs/modules.md#import-rules): other modules only through their
-    `index.ts` / `ui/index.ts` and only if they're in `requires`; core never imports features.
+    `index.ts` / `ui/index.ts`, and only if they're core modules or in `requires`/`uses`; core never
+    imports features. `scripts/check-modules.mjs` checks this as part of `pnpm lint`.
 18. A feature uses only what a plugin could. When it needs something private, make it public (and
     give it to `PluginApi`) instead of deep-importing it.
 19. A point lives in the module that reads it (`<name>.points.ts`).
@@ -129,13 +130,11 @@ The rules above describe where the code is going (spec:
 [module conventions](docs/superpowers/specs/2026-10-25-module-conventions-design.md)). **Until a row's
 phase is done, follow the existing pattern in that part of the code.**
 
-| Rule                                                               | Code today                                                                                               | Fixed in phase |
-| ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- | -------------- |
-| board core's tools don't import features                           | `modules/core/mcp/create-shapes.mcp.ts` imports `geo`, `mcp/apply-result.ts` imports `er` and `db` types | 5              |
-| import rules enforced; every module has a complete `README.md`     | deep imports between modules; READMEs only where descriptions moved                                      | 5              |
-| shared pieces (`ColorField`, `chooseImageAsset`, `ModeToolbar`, …) | duplicated per feature                                                                                   | 5a             |
-| one mode definition (`defineDesignMode`, `registerMode`)           | about 10 contributions per mode                                                                          | 5b             |
-| plugin API as the barrels, `host.require`, module `exports`        | a hand-kept list in `app/plugins/create-plugin-api.ts`                                                   | 6              |
+| Rule                                                               | Code today                                             | Fixed in phase |
+| ------------------------------------------------------------------ | ------------------------------------------------------ | -------------- |
+| shared pieces (`ColorField`, `chooseImageAsset`, `ModeToolbar`, …) | duplicated per feature                                 | 5a             |
+| one mode definition (`defineDesignMode`, `registerMode`)           | about 10 contributions per mode                        | 5b             |
+| plugin API as the barrels, `host.require`, module `exports`        | a hand-kept list in `app/plugins/create-plugin-api.ts` | 6              |
 
 ## Where to look
 

@@ -38,8 +38,18 @@ export interface ModuleHost {
 export interface AppModule {
   /** Unique, e.g. `"sticky"`. */
   readonly id: string;
+  /**
+   * Its tier (`docs/modules.md#tiers`): built-in modules say `"core"` or `"feature"`; plugins'
+   * modules leave it unset. Only `scripts/check-modules.mjs` reads it.
+   */
+  readonly tier?: "core" | "feature";
   /** Modules that must be loaded; this one registers after them. */
   readonly requires?: readonly string[];
+  /**
+   * Modules that must be loaded, in any order: this one uses their code but not their
+   * registrations (e.g. when `requires` would make a loop with another module's `after`).
+   */
+  readonly uses?: readonly string[];
   /** Modules this one registers after when they're loaded (e.g. to chain hooks in order). */
   readonly after?: readonly string[];
   register(host: ModuleHost): void;

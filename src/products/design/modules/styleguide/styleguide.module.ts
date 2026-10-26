@@ -17,6 +17,7 @@ import { BUILT_IN_TEMPLATES } from "./templates";
  */
 export const styleguideModule = defineModule({
   id: "styleguide",
+  tier: "feature",
   requires: ["core", "pages", "frame", "text", "variables", "auto-layout"],
   after: ["variables"],
   register(host) {

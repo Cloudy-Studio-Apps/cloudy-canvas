@@ -18,6 +18,7 @@ import { ConnectorOptions } from "./ui/connector-options";
  */
 export const connectorModule = defineModule({
   id: "connector",
+  tier: "core",
   // Connectors follow whatever they're attached to, ER boxes included, so they're resolved last.
   after: ["er"],
   register(host) {

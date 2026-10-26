@@ -11,6 +11,7 @@ import { LineSection } from "./ui/line-section";
 /** Lines and arrows: the kind, the line (L) and arrow (Shift+L) tools, and the line section. */
 export const lineModule = defineModule({
   id: "line",
+  tier: "feature",
   requires: ["core"],
   register(host) {
     host.contribute(designCanvas.kinds, new LineKind());

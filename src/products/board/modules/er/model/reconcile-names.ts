@@ -1,4 +1,4 @@
-import { ReconcileError } from "../../db/schema/reconcile-error";
+import { ReconcileError } from "../../db";
 import type { ReconcileContext } from "./reconcile-context.types";
 
 /** The id of a named entity (or aggregation); unknown names are an error until they're created. */

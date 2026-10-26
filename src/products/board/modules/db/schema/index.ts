@@ -3,6 +3,19 @@
 export type * from "./db-schema.types";
 export type * from "./column-types.types";
 export type { DbmlError } from "./dbml";
+// The DBML language's pieces the ER language shares (tokens, settings, names, errors).
+export {
+  DbmlSyntaxError,
+  formatName,
+  formatType,
+  parseSettings,
+  TokenCursor,
+  tokenize,
+} from "./dbml";
+export { checkNames, ReconcileError } from "./reconcile-error";
+export { pairByName } from "./pair-by-name";
+export { importSchemaText } from "./schema-dbml";
+export { schemaShapes } from "./schema-shapes";
 export { DbSchema } from "./db-schema";
 export { DB_SCHEMA } from "./db-schema.service";
 export { COLUMN_TYPES, INDEX_TYPES, TYPE_ARGS } from "./column-types";

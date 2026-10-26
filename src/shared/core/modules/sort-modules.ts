@@ -44,7 +44,9 @@ function pruneMissing(
   while (changed) {
     changed = false;
     for (const module of [...byId.values()]) {
-      const missing = module.requires?.find((id) => !byId.has(id));
+      const missing = [...(module.requires ?? []), ...(module.uses ?? [])].find(
+        (id) => !byId.has(id),
+      );
       if (!missing) continue;
       drop(module, `The module "${module.id}" requires "${missing}", which isn't loaded.`);
       changed = true;

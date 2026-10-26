@@ -1,4 +1,4 @@
-import type { DbmlError } from "../../../db/schema/dbml";
+import type { DbmlError } from "../../../db";
 import type { ErAttributeKey, ErAttributeLook } from "../../attribute/attribute.types";
 import type { ErNotation } from "../../base/er.types";
 import type { ErConstraintRule } from "../../constraint/constraint.types";

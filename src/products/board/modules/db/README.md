@@ -1,8 +1,15 @@
-# Db (Board module)
+# Database schemas
 
-_How it works. The rules are in the root [CLAUDE.md](../../../../../CLAUDE.md); names may still follow the pre-refactor conventions until their phase (see its Transition table)._
+Database tables and enums drawn on the board and edited as DBML, with the relation lines between them and the schema panel.
 
-## Db
+- **Tier:** feature
+- **Requires:** sticky
+- **Contributes:** kinds `DbEnumKind`, `DbTableKind`; boardCanvas: `kinds`, `links`, `onRemove`, `options`, `prepareCopies`, `tools`; boardEditor: `sidePanels`, `toolPanels`, `tools`, `topBar`; `boardMcpTools`
+- **Points it owns:** —
+- **MCP tools:** `apply_schema_dbml`, `apply_table_dbml`, `get_schema_dbml`, `get_table_dbml`, `import_schema_dbml`, `tidy_schema`
+- **Files:** `table/`, `enum/`, `card/` (their base), `schema/` (`DbSchema`, the DBML language), `links/`, `db.tool.ts`, `db.mcp.ts`, `ui/`.
+
+## How it works
 
 - `db/`: the database schema, one family in one folder:
   - `card/`: `DbCardKind`, the base of tables and enums (sized by content, not resizable, created by the `db` tool or DBML, never from an agent's spec; agents may only move them) and the card frame drawer and row layout.

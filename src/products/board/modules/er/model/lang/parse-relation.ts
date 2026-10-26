@@ -1,4 +1,4 @@
-import { parseSettings, type DbmlError, type TokenCursor } from "../../../db/schema/dbml";
+import { parseSettings, type DbmlError, type TokenCursor } from "../../../db";
 import {
   applyAttributeSetting,
   attributeNamed,

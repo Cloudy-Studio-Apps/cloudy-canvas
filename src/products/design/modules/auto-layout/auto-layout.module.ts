@@ -23,6 +23,7 @@ const COMMANDS = [
  */
 export const autoLayoutModule = defineModule({
   id: "auto-layout",
+  tier: "core",
   requires: ["core", "frame"],
   // Variables first: a bound size or padding is written before the layout reads it.
   after: ["variables"],

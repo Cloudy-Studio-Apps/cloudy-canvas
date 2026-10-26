@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-import { LayerName } from "@design/modules/layers/ui/layer-name";
+import { LayerName } from "../../../layers/ui";
 import {
   DropdownMenu,
   DropdownMenuContent,

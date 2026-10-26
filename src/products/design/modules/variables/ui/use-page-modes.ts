@@ -1,6 +1,6 @@
 import type { ModeContext } from "@canvas";
 import { useEngineState } from "@canvas-ui";
-import { usePages } from "../../pages/ui/use-pages";
+import { usePages } from "../../pages/ui";
 
 const NONE: ModeContext = {};
 

@@ -6,6 +6,7 @@ export type * from "./connector-options.types";
 export { createConnector } from "./connector.factory";
 export { ConnectorKind } from "./connector.kind";
 export { CONNECTOR_DEFAULTS } from "./connector.defaults";
+export { SIDE_DIRECTIONS, SIDES } from "./sides";
 export { ConnectorDrag } from "./connector-drag";
 export { QuickConnectKind } from "./quick-connect.kind";
 export { connectableAt } from "./connectable-at";

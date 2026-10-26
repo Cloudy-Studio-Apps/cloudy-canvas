@@ -14,6 +14,7 @@ import { ImageOptions } from "./ui/image-options";
  */
 export const imageModule = defineModule({
   id: "image",
+  tier: "core",
   register(host) {
     host.contribute(boardCanvas.kinds, new ImageKind());
     host.contribute(boardCanvas.options, {

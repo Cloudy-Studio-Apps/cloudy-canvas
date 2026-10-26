@@ -141,8 +141,9 @@ modules/<name>/
 
 1. A module imports another module **only through its two public entries**: `index.ts` for engine
    code (`../frame`) and `ui/index.ts` for React (`../frame/ui`), never a file inside
-   (`../frame/frame.kind`), and only if that module is in its `requires`. Engine files may only use
-   the other module's `index.ts`.
+   (`../frame/frame.kind`), and only if it's a core module or in its `requires`/`uses` (changed in
+   phase 5: core modules are always loaded, and requiring one would only reorder modules; `uses` =
+   must be loaded, in any order). Engine files may only use the other module's `index.ts`.
 2. **Core modules never import features.** Features may import core modules and the features they
    `require`.
 3. **Features use only the public surface**: `@canvas`, `@canvas-ui`, `@shared/*`, the product's
@@ -516,8 +517,9 @@ products/design/                                products/design/
   modules/  (one flat list)                       modules/       (same folders; §5 says which tier)
 ```
 
-`design-modules.ts` lists them in two arrays, `CORE_MODULES` and `FEATURE_MODULES`, so the tier is
-visible in code. Folders stay flat (no `core/` and `plugins/` subfolders) so imports don't churn.
+Each module says its tier in `defineModule({ tier })` (changed in phase 5: two arrays,
+`CORE_MODULES`/`FEATURE_MODULES`, would reorder the modules, and chained hooks depend on the order), so
+the tier is visible in code. Folders stay flat (no `core/` and `plugins/` subfolders) so imports don't churn.
 
 ---
 
@@ -595,16 +597,20 @@ at the end of `CLAUDE.md` is removed.
 
 ## 11. Enforcement
 
-- **ESLint `no-restricted-imports`** patterns:
-  - `../*/!(index)` from inside `modules/*` to another module (rule 1);
-  - core modules can't import the feature module folders (rule 2; the lists come from
-    `design-modules.ts`/`board-modules.ts`, mirrored in `eslint.config.js`);
-  - product-level code can't deep-import modules (rule 4).
-- **`scripts/check-modules.mjs`** (`pnpm check:modules`, run by `pnpm lint`) fails when:
-  - a `modules/<name>/` lacks `index.ts`, `<name>.module.ts` or `README.md`;
-  - any `*.agent-tool*.ts` file exists, or a `.mcp.ts` is outside `<name>.mcp.ts` / `mcp/`;
-  - a module's `requires` doesn't list a module it imports;
-  - a `.module.ts` is over 120 lines.
+**`scripts/check-modules.mjs`** (`pnpm check:modules`, run by `pnpm lint`) fails when (changed in
+phase 5: the script checks everything; ESLint patterns can't see relative depth, `requires` or tiers):
+
+- `files`: a `modules/<name>/` lacks `index.ts`, `<name>.module.ts` or `README.md`;
+- `tier`: a built-in module doesn't say its tier;
+- `deep`: an import into another module's files instead of its `index.ts`/`ui/index.ts`, from a
+  module or from anywhere else in `src/` (the products' module lists may import `<name>.module`);
+- `requires`: a module imports a feature that isn't in its `requires` or `uses`;
+- `core-feature`: a core module imports a feature;
+- `mcp`: any `*.agent-tool*.ts` file, or a `.mcp.ts` outside `<name>.mcp.ts` / `mcp/`;
+- `size`: a `.module.ts` over 120 lines.
+
+`scripts/module-order.mjs` prints each product's load order, to compare before and after a change to
+`requires`/`after`. Not checked yet: modules importing their own product barrel (phase 6).
 
 ---
 
@@ -626,7 +632,7 @@ edits files.
    (§7.6); ER points → er (§7.4); `pages ↔ layers` point (§8 #1): layers requires only core, pages requires core and layers.
 4. **Split big module files** (done 2026-10-26; styleguide too) (§7.4, §7.5) into `.commands.ts`, `.sections.ts`, `.canvas.ts`,
    `.menu.ts`, `.migration.ts`.
-5. **Public-API imports + enforcement.** Fix §8 #2–#7, `CORE_MODULES`/`FEATURE_MODULES` lists, the
+5. **Public-API imports + enforcement** (done 2026-10-26; 5a and 5b open). Fix §8 #2–#7, `CORE_MODULES`/`FEATURE_MODULES` lists, the
    ESLint rules and `check:modules`. Write every module's `README.md`.
    - **5a. Shared pieces** (§16): `ColorField`, `chooseImageAsset`, `ModeToolbar`,
      `useElementThumbnail`, `AnchorPicker` in `@canvas-ui`; `SelectField`/`CheckboxField`/

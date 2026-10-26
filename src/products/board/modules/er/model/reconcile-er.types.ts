@@ -1,4 +1,4 @@
-import type { DbmlError } from "../../db/schema/dbml";
+import type { DbmlError } from "../../db";
 import type { ErShapes } from "./lang";
 
 export interface ErPlan {

@@ -1,4 +1,4 @@
-import type { TokenCursor } from "../../../db/schema/dbml";
+import type { TokenCursor } from "../../../db";
 import { endOfItem } from "./parse-attributes";
 import type { ParsedErUnion } from "./parser.types";
 

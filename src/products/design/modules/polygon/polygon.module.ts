@@ -11,6 +11,7 @@ import { PolygonSection } from "./ui/polygon-section";
 /** Polygons: the kind and the tool, in the shapes menu, and the sides section. */
 export const polygonModule = defineModule({
   id: "polygon",
+  tier: "feature",
   requires: ["core"],
   register(host) {
     const kind = new PolygonKind();

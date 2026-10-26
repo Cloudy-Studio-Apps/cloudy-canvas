@@ -25,6 +25,7 @@ import { boardMcpTools, boardCanvas } from "../../board-points";
  */
 export const coreModule = defineModule({
   id: "core",
+  tier: "core",
   register(host) {
     host.contribute(boardCanvas.keybindings, { "tool.scale": [{ key: "k", shift: true }] });
     host.contribute(boardCanvas.hostCommands, {

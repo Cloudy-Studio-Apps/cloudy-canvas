@@ -12,6 +12,7 @@ import { BoardColorsPanel, ColorsButton } from "./ui";
  */
 export const colorsModule = defineModule({
   id: "colors",
+  tier: "feature",
   register(host) {
     host.contribute(boardCanvas.afterEdit, (doc, change, kinds) =>
       syncTokens(doc, change, kinds, BOARD_TOKEN_CONTEXT),

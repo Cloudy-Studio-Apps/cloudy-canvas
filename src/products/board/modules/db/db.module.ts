@@ -19,6 +19,7 @@ import { SchemaButton } from "./ui/schema-button";
  */
 export const dbModule = defineModule({
   id: "db",
+  tier: "feature",
   requires: ["sticky"],
   register(host) {
     host.contribute(boardCanvas.kinds, new DbTableKind(), new DbEnumKind());

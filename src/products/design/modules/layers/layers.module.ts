@@ -12,6 +12,7 @@ import { LayersTab } from "./ui/layers-tab";
  */
 export const layersModule = defineModule({
   id: "layers",
+  tier: "core",
   requires: ["core"],
   register(host) {
     host.contribute(designEditor.leftTabs, {

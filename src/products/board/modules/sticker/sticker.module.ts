@@ -12,6 +12,7 @@ import { BoardStickerWheel } from "./ui/board-sticker-wheel";
 /** Stickers: the kind, the tool (K) with its picker wheel, and stamping them from agents. */
 export const stickerModule = defineModule({
   id: "sticker",
+  tier: "feature",
   register(host) {
     host.contribute(boardCanvas.kinds, new StickerKind());
     host.contribute(boardCanvas.tools, {

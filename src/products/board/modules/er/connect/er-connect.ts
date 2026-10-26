@@ -7,8 +7,7 @@ import type {
 } from "@canvas";
 
 import type { BoardToolOptions } from "../../../board-options.types";
-import { CONNECTOR_DEFAULTS } from "../../connector/connector.defaults";
-import { SIDE_DIRECTIONS, SIDES } from "../../connector/sides";
+import { CONNECTOR_DEFAULTS, SIDE_DIRECTIONS, SIDES } from "../../connector";
 import { ErConnectGesture } from "./er-connect.gesture";
 import type { ErElement } from "../base/er.types";
 import type { ErAnchorOf, ErConnectSource } from "./er-connect.types";

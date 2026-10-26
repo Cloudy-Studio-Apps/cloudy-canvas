@@ -22,6 +22,7 @@ import { useTextOutlines } from "./ui/use-text-outlines";
  */
 export const textModule = defineModule({
   id: "text",
+  tier: "core",
   requires: ["core", "variables"],
   register(host) {
     host.contribute(designCanvas.kinds, new TextKind(glyphOutliner));

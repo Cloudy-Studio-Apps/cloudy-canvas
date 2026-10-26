@@ -15,6 +15,7 @@ import { useMaskCommands } from "./ui/use-mask-commands";
  */
 export const maskModule = defineModule({
   id: "mask",
+  tier: "feature",
   // Mask groups are groups.
   requires: ["core", "group"],
   register(host) {

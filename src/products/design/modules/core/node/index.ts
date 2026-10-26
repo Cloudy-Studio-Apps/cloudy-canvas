@@ -43,6 +43,11 @@ export {
   toCropPaint,
 } from "./image-paint";
 export { gradientPaint, isGradientPaint } from "./gradient-paint";
+export {
+  isPlaceholderAsset,
+  isPlaceholderPaint,
+  PLACEHOLDER_ASSET_PREFIX,
+} from "./placeholder-paint";
 export { flipPaints } from "./flip-paints";
 export { distanceToOutline, pointInPolygon, pointsInBox } from "./shape-points";
 export { BoxShapeKind } from "./box-shape.kind";

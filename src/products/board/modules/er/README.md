@@ -1,8 +1,15 @@
-# Er (Board module)
+# ER diagrams
 
-_How it works. The rules are in the root [CLAUDE.md](../../../../../CLAUDE.md); names may still follow the pre-refactor conventions until their phase (see its Transition table)._
+Chen-notation ER diagrams (extended model) on a board: drawn in the ER mode or written as text, checked against a standard and turned into database tables.
 
-## Er
+- **Tier:** feature
+- **Requires:** —; uses: db, geo; after: section
+- **Contributes:** kinds `ErAggregateKind`, `ErAttributeKind`, `ErConstraintKind`, `ErEntityKind`, `ErIsaKind`, `ErRelationKind`, `ErUnionKind`; boardCanvas: `editElement`, `hostCommands`, `kinds`, `links`, `modes`, `onRemove`, `prepareCopies`, `resolveElements`, `tools`, `withMembers`; boardEditor: `contextMenu`, `modes`, `overlays`, `sessionHooks`, `sidePanels`, `tools`; `boardErConstructs`, `boardErStandards`, `boardMcpTools`, `boardMigrations`
+- **Points it owns:** `boardErStandards`, `boardErConstructs` (`er.points.ts`): the standards diagrams follow and what they may forbid; plugins add theirs
+- **MCP tools:** `apply_er_text`, `check_er_diagram`, `convert_relation_to_entity`, `er_to_tables`, `get_er_text`, `list_er_diagrams`, `relayout_er`
+- **Files:** `er.canvas.ts`, `er.mode.ts`, `er.commands.ts`, `er.sections.ts` (wiring), `entity/`, `relation/`, `attribute/`, `isa/`, `aggregate/`, `constraint/`, `union/`, `base/`, `model/` (`ErModel`, the ER language), `links/`, `connect/`, `ui/`.
+
+## How it works
 
 The module file (`er.module.ts`) only wires: `er.canvas.ts` (kinds, the tool, the lines and the hooks that
 keep a diagram whole), `er.mode.ts` (the ER mode), `er.commands.ts` (the create tables and convert

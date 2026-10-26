@@ -4,7 +4,7 @@ import { useRef } from "react";
 import type { ElementPatch } from "@canvas";
 import type { ColorChangeInfo } from "@canvas-ui";
 import type { DesignNode, StickerNodeElement, StickerOutline } from "@design";
-import { EffectColorField, ScrubField } from "@design/modules/effects/ui/fields";
+import { EffectColorField, ScrubField } from "../../effects/ui";
 import { PanelIconButton } from "@design/ui/components/panel";
 import { useEditNodes } from "@design/ui/hooks";
 import type { StickerFieldsProps } from "./sticker-ui.types";

@@ -9,6 +9,7 @@ import { EllipseKind } from "./ellipse.kind";
 /** Ellipses: the kind and the tool (O), in the shapes menu. */
 export const ellipseModule = defineModule({
   id: "ellipse",
+  tier: "feature",
   requires: ["core"],
   register(host) {
     const kind = new EllipseKind();

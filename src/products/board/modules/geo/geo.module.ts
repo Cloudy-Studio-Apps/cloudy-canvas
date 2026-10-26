@@ -11,6 +11,7 @@ import { ShapeOptions } from "./ui/shape-options";
 /** Shapes: the kind (its variants register themselves), the shape tool (R) and its panel. */
 export const geoModule = defineModule({
   id: "geo",
+  tier: "feature",
   // Shapes drag connectors out of their sides.
   requires: ["connector"],
   register(host) {

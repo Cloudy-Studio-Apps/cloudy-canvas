@@ -1,8 +1,15 @@
-# Styleguide (Design module)
+# Design system
 
-_How it works. The rules are in the root [CLAUDE.md](../../../../../CLAUDE.md); names may still follow the pre-refactor conventions until their phase (see its Transition table)._
+The file's variables and styles drawn as a living style guide: the Design system mode over a hidden page, and live elements placed on any page that stay up to date.
 
-## Design system
+- **Tier:** feature
+- **Requires:** core, pages, frame, text, variables, auto-layout; after: variables
+- **Contributes:** designCanvas: `afterEdit`, `hostCommands`, `modes`, `prepareCopies`, `tools`; designEditor: `contextMenu`, `leftTabs`, `mainMenu`, `modeSidebars`, `modes`, `overlays`, `propertySections`, `sessionHooks`, `tools`; `designMcpTools`, `designSelectRedirects`, `styleguideCategories`, `styleguideTemplates`
+- **Points it owns:** `styleguideCategories`, `styleguideTemplates` (`styleguide.points.ts`): what the guide shows and how; plugins add theirs
+- **MCP tools:** `add_system_element`, `convert_system_element`, `export_design_system`, `get_design_system`, `set_system_template`, `view_design_system`
+- **Files:** `styleguide.canvas.ts`, `styleguide.mode.ts`, `styleguide.commands.ts`, `styleguide.sections.ts` (wiring), `categories/`, `templates/`, `system/` (the sync), `sheet/` (live elements), `mode/`, `tool/`, `mcp/`, `ui/`.
+
+## How it works
 
 The module file (`styleguide.module.ts`) only wires: `styleguide.canvas.ts` (live elements: redirects,
 copies, the token sync, the tool that places one), `styleguide.mode.ts` (the Design system mode),

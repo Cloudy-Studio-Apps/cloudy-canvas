@@ -16,6 +16,7 @@ import { FramePresetsSidebar } from "./ui/frame-presets-sidebar";
  */
 export const frameModule = defineModule({
   id: "frame",
+  tier: "core",
   requires: ["core"],
   register(host) {
     const kind = new FrameKind();

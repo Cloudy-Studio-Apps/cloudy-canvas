@@ -20,6 +20,7 @@ import { canHoldPlaceholder } from "./placeholder";
  */
 export const imageModule = defineModule({
   id: "image",
+  tier: "feature",
   requires: ["rectangle"],
   register(host) {
     host.contribute(designCanvas.pasteImage, (image, view, index) =>

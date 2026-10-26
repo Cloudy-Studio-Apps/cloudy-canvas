@@ -18,6 +18,7 @@ import { useStickerCommands } from "./ui/use-sticker-commands";
  */
 export const stickerModule = defineModule({
   id: "sticker",
+  tier: "feature",
   requires: ["core", "group", "vector"],
   register(host) {
     host.contribute(designCanvas.kinds, new StickerNodeKind());

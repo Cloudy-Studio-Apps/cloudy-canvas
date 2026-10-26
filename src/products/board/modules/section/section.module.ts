@@ -18,6 +18,7 @@ import { SectionsMenu } from "./ui/sections-menu";
  */
 export const sectionModule = defineModule({
   id: "section",
+  tier: "feature",
   register(host) {
     host.contribute(boardCanvas.kinds, new SectionKind());
     host.contribute(boardCanvas.tools, {
