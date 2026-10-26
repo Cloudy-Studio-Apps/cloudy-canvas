@@ -65,3 +65,9 @@ export type GeneratorInput = Omit<GeneratorRecord, "kind" | "id" | "order" | "ax
 
 /** What `saveScale` takes: a scale without its stored bookkeeping (`id` to change one). */
 export type ScaleInput = Omit<ScaleRecord, "kind" | "id" | "order"> & { id?: string };
+
+/** What moving a mode to another axis did. */
+export interface MoveModeResult {
+  /** Variables that vary by the old axis in other modes too: they lost the moved mode's value. */
+  dropped: number;
+}

@@ -175,7 +175,15 @@ export class TableKind extends BoxKind<TableElement, BoardToolOptions> {
     const cells =
       spec.args.cells === undefined ? undefined : requireRows(readCells, spec.args.cells, "cells");
     const grid = { ...table, ...(cells ? gridFromCells(table, cells) : gridPatch(table, {})) };
-    return this.withFills(grid, spec.args.fills);
+    // A size given scales the grid as resizing it does (rows still fit their text).
+    const sized =
+      spec.w === undefined && spec.h === undefined
+        ? grid
+        : {
+            ...grid,
+            ...scaleTable(grid, { x: grid.x, y: grid.y, w: spec.w ?? grid.w, h: spec.h ?? grid.h }),
+          };
+    return this.withFills(sized, spec.args.fills);
   }
 
   override completePatch(

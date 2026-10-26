@@ -3,6 +3,7 @@ import {
   describeAxis,
   describeCollection,
   DOCUMENT_TOKENS,
+  findMode,
   optionalString,
   recordList,
   requireAxis,
@@ -71,8 +72,10 @@ export const modesTools: DesignAgentTool[] = [
     name: "update_mode_axis",
     description:
       "Changes a mode axis (by id or name), as one undo step: rename it, add, rename or remove " +
-      "modes, switch the mode the whole file shows (`current`; frames set to their own mode " +
-      "keep it), or `remove` the axis (its variables keep their defaults).",
+      "modes, `moveModes` (modes of other axes, by name or id, moved into this one: variables " +
+      "varying only by them follow; another axis's first mode can't move), switch the mode the " +
+      "whole file shows (`current`; frames set to their own mode keep it), or `remove` the axis " +
+      "(its variables keep their defaults).",
     inputSchema: {
       type: "object",
       required: ["axis"],
@@ -89,6 +92,11 @@ export const modesTools: DesignAgentTool[] = [
           },
         },
         removeModes: { type: "array", items: { type: "string" } },
+        moveModes: {
+          type: "array",
+          items: { type: "string" },
+          description: "Modes of other axes to move into this one (name or id).",
+        },
         current: { type: "string", description: "A mode name or id." },
         remove: { type: "boolean" },
       },
@@ -102,6 +110,7 @@ export const modesTools: DesignAgentTool[] = [
         return { removed: id };
       }
       const axis = () => requireAxis(tokens.store(), id);
+      let dropped = 0;
       asUndoStep(engine.doc, () => {
         const name = optionalString(args, "name");
         if (name) tokens.renameAxis(id, name);
@@ -118,10 +127,15 @@ export const modesTools: DesignAgentTool[] = [
         for (const mode of args.removeModes === undefined ? [] : stringList(args, "removeModes")) {
           tokens.removeMode(id, requireMode(axis(), mode));
         }
+        for (const mode of args.moveModes === undefined ? [] : stringList(args, "moveModes")) {
+          dropped += tokens.moveMode(findMode(tokens.store(), mode), id).dropped;
+        }
         const current = optionalString(args, "current");
         if (current) tokens.setCurrentMode(id, requireMode(axis(), current));
       });
-      return describeAxis(tokens.store(), axis());
+      const described = describeAxis(tokens.store(), axis());
+      // Variables varying by a mode's old axis in other modes too lost the moved mode's value.
+      return dropped > 0 ? { ...described, droppedModeValues: dropped } : described;
     },
   },
 ];

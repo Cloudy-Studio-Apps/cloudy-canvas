@@ -32,7 +32,10 @@ export function ColorRow({ variable, onDelete }: ColorRowProps) {
   };
 
   return (
-    <div className="group/row flex h-8 items-center gap-2 px-1">
+    <div
+      className="group/row flex h-8 items-center gap-2 px-1"
+      title={variable.description || undefined}
+    >
       <ColorValuePopover variable={variable} />
       <div className="flex min-w-0 flex-1 flex-col">
         <CommitInput

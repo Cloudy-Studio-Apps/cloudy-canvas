@@ -51,17 +51,22 @@ export class DocumentTokens extends VariableEdits {
   // ── Shade generators ────────────────────────────────────────────────
 
   /**
-   * Makes (or, with `id`, changes) a shade generator and writes its shades in one undo step;
-   * returns it. Its axis is the file's first with several modes unless it has one.
+   * Makes (or, with `id` or for a group one already makes, changes) a shade generator and writes
+   * its shades in one undo step; returns it. Its axis is the file's first with several modes
+   * unless it has one.
    */
   saveGenerator(input: GeneratorInput): GeneratorRecord {
     const store = this.store();
-    const known = input.id ? store.generator(input.id) : undefined;
+    // Without an id, the generator already making this group's shades is the one changed.
+    const group = normalizeTokenPath(input.group);
+    const known = input.id
+      ? store.generator(input.id)
+      : store.generators().find((g) => g.collectionId === input.collectionId && g.group === group);
     const generator: GeneratorRecord = {
       ...input,
       kind: "generator",
       id: known?.id ?? createId(),
-      group: normalizeTokenPath(input.group),
+      group,
       axisId: input.axisId ?? known?.axisId ?? store.switchableAxes()[0]?.id ?? null,
       order: known?.order ?? generateKeyBetween(store.generators().at(-1)?.order ?? null, null),
     };
@@ -85,15 +90,22 @@ export class DocumentTokens extends VariableEdits {
     });
   }
 
-  /** Makes (or, with `id`, changes) a number scale and writes its steps in one undo step. */
+  /**
+   * Makes (or, with `id` or for a group one already makes, changes) a number scale and writes its
+   * steps in one undo step.
+   */
   saveScale(input: ScaleInput): ScaleRecord {
     const store = this.store();
-    const known = input.id ? store.scale(input.id) : undefined;
+    // Without an id, the scale already making this group's steps is the one changed.
+    const group = normalizeTokenPath(input.group);
+    const known = input.id
+      ? store.scale(input.id)
+      : store.scales().find((sc) => sc.collectionId === input.collectionId && sc.group === group);
     const scale: ScaleRecord = {
       ...input,
       kind: "scale",
       id: known?.id ?? createId(),
-      group: normalizeTokenPath(input.group),
+      group,
       order: known?.order ?? generateKeyBetween(store.scales().at(-1)?.order ?? null, null),
     };
     this.requireCollection(scale.collectionId);

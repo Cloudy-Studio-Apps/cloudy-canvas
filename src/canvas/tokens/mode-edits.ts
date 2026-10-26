@@ -6,6 +6,7 @@ import { DEFAULT_VALUE } from "./default-value";
 import { detachEverywhere } from "./detach-bindings";
 import { deletionRewrites } from "./token-deletion";
 import { TokenEditsBase, withoutOverrides } from "./token-edits-base";
+import type { MoveModeResult } from "./document-tokens.types";
 import type { CollectionRecord, ModeAxisRecord, ModeDef } from "./token.types";
 
 /** Collections (folders of variables) and the file's mode axes, one undo step per edit. */
@@ -137,6 +138,75 @@ export abstract class ModeEdits extends TokenEditsBase {
     });
     const current = axis.current === modeId ? undefined : axis.current;
     this.write(() => this.doc.setTokenRecords([{ ...axis, modes, current }, ...variables]));
+  }
+
+  /**
+   * Moves a mode into another axis (grouping modes put on the wrong one: Español off Theme into
+   * Language), at its end or before `beforeId`. An axis's first mode can't move: its values are
+   * the defaults. Variables whose only override on the old axis is this mode vary by the new one;
+   * those with others keep them and lose this mode's value (`dropped`, they vary by one axis).
+   * Pages and layers set to the mode keep it, under the new axis. One undo step.
+   */
+  moveMode(modeId: string, toAxisId: string, beforeId?: string): MoveModeResult {
+    const store = this.store();
+    const from = store.axes().find((a) => a.modes.some((m) => m.id === modeId));
+    if (!from) throw new Error(`No mode with id ${modeId}.`);
+    const to = this.requireAxis(toAxisId);
+    const mode = from.modes.find((m) => m.id === modeId) as ModeDef;
+    if (from.id === to.id) return this.reorderMode(from, mode, beforeId);
+    if (from.modes[0]?.id === modeId) {
+      throw new Error(
+        `${mode.name} is ${from.name}'s first mode: its values are the defaults, so it stays.`,
+      );
+    }
+    const at = beforeId ? to.modes.findIndex((m) => m.id === beforeId) : -1;
+    // Before the base would make it the base: it goes after it at the earliest.
+    const index = at < 1 ? to.modes.length : at;
+    const name = this.freeName(
+      mode.name,
+      to.modes.map((m) => m.name),
+    );
+    const modes = [...to.modes.slice(0, index), { ...mode, name }, ...to.modes.slice(index)];
+    let dropped = 0;
+    const variables = this.onAxis(from.id).flatMap((v) => {
+      if (!(modeId in v.values)) return [];
+      const others = Object.keys(v.values).filter((k) => k !== DEFAULT_VALUE && k !== modeId);
+      if (others.length === 0) return [{ ...v, axisId: to.id }];
+      dropped++;
+      const values = { ...v.values };
+      delete values[modeId];
+      return [{ ...v, values }];
+    });
+    const fromRecord: ModeAxisRecord = {
+      ...from,
+      modes: from.modes.filter((m) => m.id !== modeId),
+      current: from.current === modeId ? undefined : from.current,
+    };
+    this.write(() => {
+      this.doc.setTokenRecords([fromRecord, { ...to, modes }, ...variables]);
+      for (const id of this.doc.ids()) {
+        const picks = this.doc.field(id, "variableModes");
+        if (typeof picks !== "object" || picks === null) continue;
+        const own = picks as Record<string, string>;
+        if (own[from.id] !== modeId) continue;
+        const next = { ...own, [to.id]: modeId };
+        delete next[from.id];
+        this.doc.update(id, { variableModes: next });
+      }
+    });
+    return { dropped };
+  }
+
+  /** A mode put before `beforeId` in its own axis (its end without one); never before the base. */
+  private reorderMode(axis: ModeAxisRecord, mode: ModeDef, beforeId?: string): MoveModeResult {
+    if (axis.modes[0]?.id === mode.id || beforeId === mode.id) return { dropped: 0 };
+    const rest = axis.modes.filter((m) => m.id !== mode.id);
+    const at = beforeId ? rest.findIndex((m) => m.id === beforeId) : -1;
+    const index = at < 1 ? rest.length : at;
+    const modes = [...rest.slice(0, index), mode, ...rest.slice(index)];
+    if (modes.every((m, i) => m.id === axis.modes[i]?.id)) return { dropped: 0 };
+    this.write(() => this.doc.setTokenRecords([{ ...axis, modes }]));
+    return { dropped: 0 };
   }
 
   /** The mode the whole file shows on an axis (the global switch); pages and frames may differ. */

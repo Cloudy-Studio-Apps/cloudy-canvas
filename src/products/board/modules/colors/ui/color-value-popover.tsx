@@ -1,14 +1,21 @@
 import { useRef } from "react";
 
 import { joinTokenColor, resolveVariable, splitTokenColor } from "@canvas";
-import { ColorPicker, TokenSwatch, useDocumentTokens, useScrubUndo } from "@canvas-ui";
+import {
+  ColorPicker,
+  CommitTextarea,
+  TokenSwatch,
+  useDocumentTokens,
+  useScrubUndo,
+} from "@canvas-ui";
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
 import { colorMode } from "./color-mode";
 import type { ColorValuePopoverProps } from "./colors-ui.types";
 
 /**
  * A board color's swatch, which opens the color picker on its value in the mode the board shows
- * (an alias picked over becomes a color of its own). A drag is one undo step.
+ * (an alias picked over becomes a color of its own; a drag is one undo step) and its description
+ * (what it's for, as agents and exports read it).
  */
 export function ColorValuePopover({ variable }: ColorValuePopoverProps) {
   const { tokens, store } = useDocumentTokens();
@@ -31,7 +38,7 @@ export function ColorValuePopover({ variable }: ColorValuePopoverProps) {
           <TokenSwatch color={color} className="size-5" />
         </button>
       </PopoverTrigger>
-      <PopoverContent side="left" align="start" className="w-60 p-3">
+      <PopoverContent side="left" align="start" className="flex w-60 flex-col gap-2 p-3">
         <ColorPicker
           color={hex}
           opacity={alpha}
@@ -46,6 +53,13 @@ export function ColorValuePopover({ variable }: ColorValuePopoverProps) {
               undo.onScrubEnd();
             }
           }}
+        />
+        <CommitTextarea
+          aria-label={`${variable.name} description`}
+          placeholder="What it's for"
+          value={variable.description}
+          onCommit={(description) => tokens.updateVariable(variable.id, { description })}
+          className="min-h-14 resize-none text-xs"
         />
       </PopoverContent>
     </Popover>

@@ -64,10 +64,15 @@ export class TokenStore {
     this.scaleList = scales.sort(byOrder);
     this.styleList = styles.sort(byOrder);
     this.collectionList = collections.sort(byOrder);
-    // Variables of a collection that's gone are unreachable.
+    // Variables of a collection that's gone are unreachable. They're listed collection by
+    // collection: their order keys only order them within their own.
+    const rank = new Map(this.collectionList.map((c, i) => [c.id, i]));
     this.variableList = variables
-      .filter((v) => this.byId.get(v.collectionId)?.kind === "collection")
-      .sort(byOrder);
+      .filter((v) => rank.has(v.collectionId))
+      .sort(
+        (a, b) =>
+          (rank.get(a.collectionId) ?? 0) - (rank.get(b.collectionId) ?? 0) || byOrder(a, b),
+      );
     for (const style of this.styleList) {
       for (const variable of Object.values(style.bindings ?? {})) {
         const users = this.styleBoundBy.get(variable) ?? new Set();

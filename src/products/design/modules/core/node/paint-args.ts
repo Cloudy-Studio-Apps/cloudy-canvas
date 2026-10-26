@@ -9,7 +9,7 @@ import {
 import { paintBlendMode } from "./blend-mode-args";
 import { readImagePaint } from "./image-paint-args";
 import { fraction } from "./number-args";
-import { hexColor } from "./paint-args-color";
+import { hexColor, hexColorAlpha } from "./paint-args-color";
 import type { GradientPaint, Paint, SolidPaint } from "./paint.types";
 
 export { hexColor };
@@ -23,7 +23,8 @@ const NO_PAINT = new Set(["transparent", "none"]);
 export function colorPaints(value: string, key: string, size?: Size): Paint[] {
   if (NO_PAINT.has(value)) return [];
   if (isCssGradient(value)) return [cssGradientPaint(value, key, size)];
-  return [{ type: "solid", color: hexColor(value, key), opacity: 1, visible: true }];
+  const { color, alpha } = hexColorAlpha(value, key);
+  return [{ type: "solid", color, opacity: alpha, visible: true }];
 }
 
 /**
@@ -59,8 +60,8 @@ function readPaintLook(
   }
   const visible = paint.visible ?? true;
   if (paint.type === "solid") {
-    const color = hexColor(paint.color, `${key}.color`);
-    return { type: "solid", color, opacity, visible } satisfies SolidPaint;
+    const { color, alpha } = hexColorAlpha(paint.color, `${key}.color`);
+    return { type: "solid", color, opacity: opacity * alpha, visible } satisfies SolidPaint;
   }
   if (GRADIENT_PAINT_TYPES.includes(paint.type as GradientPaint["type"])) {
     return readGradientPaint(paint, key, { opacity, visible }, size);
