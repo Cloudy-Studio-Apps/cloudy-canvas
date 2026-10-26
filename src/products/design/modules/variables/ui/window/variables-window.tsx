@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { cn } from "@shared/ui/lib/utils";
 import { VariablesBoard } from "./board/variables-board";
 import { UnusedView } from "../usage/unused-view";
+import { ExchangeMenu } from "../exchange";
 import { VariablesInspector } from "./inspector/variables-inspector";
 import { CollectionsSide } from "./side/collections-side";
 import { useDragPanel } from "./use-drag-panel";
@@ -37,9 +38,11 @@ export function VariablesWindow() {
       >
         <div
           onPointerDown={drag}
-          className="flex h-10 shrink-0 cursor-grab items-center justify-between border-b border-border px-3 select-none active:cursor-grabbing"
+          className="flex h-10 shrink-0 cursor-grab items-center gap-1 border-b border-border px-3 select-none active:cursor-grabbing"
         >
           <span className="text-sm font-semibold">Variables</span>
+          <div className="ml-auto" />
+          <ExchangeMenu />
           <button
             type="button"
             onClick={() => setOpen(false)}

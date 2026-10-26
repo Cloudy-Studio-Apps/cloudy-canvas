@@ -25,3 +25,4 @@ export { readLocalFile } from "./read-local-file";
 export { writeExportFile } from "./write-export-file";
 export { pickPluginFolder } from "./plugin-folder-dialog";
 export { pluginStorage } from "./plugin-storage";
+export { pickTokenFile } from "./token-file";

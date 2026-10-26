@@ -1,4 +1,5 @@
 import {
+  splitTokenColor,
   defaultGradientTransform,
   invertAffine,
   type GradientTransform,
@@ -32,12 +33,24 @@ export function convertPaints(
   ctx: FigImportContext,
   allowImages = true,
 ): Paint[] {
+  return convertPaintsFrom(paints, ctx, allowImages).paints;
+}
+
+/** `convertPaints`, with each converted paint's index in Figma's stack (`from`). */
+export function convertPaintsFrom(
+  paints: readonly FigPaint[] | undefined,
+  ctx: FigImportContext,
+  allowImages = true,
+): { paints: Paint[]; from: number[] } {
   const result: Paint[] = [];
-  for (const paint of paints ?? []) {
+  const from: number[] = [];
+  (paints ?? []).forEach((paint, i) => {
     const converted = convertPaint(paint, ctx, allowImages);
-    if (converted) result.push(converted);
-  }
-  return result;
+    if (!converted) return;
+    result.push(converted);
+    from.push(i);
+  });
+  return { paints: result, from };
 }
 
 function convertPaint(paint: FigPaint, ctx: FigImportContext, allowImages: boolean): Paint | null {
@@ -54,6 +67,15 @@ function convertPaintLook(
   const opacity = paint.opacity ?? 1;
   const type = paint.type ?? "SOLID";
   if (type === "SOLID") {
+    // A color bound to a variable shows the variable's: overrides keep a stale color beside it.
+    const bound =
+      paint.colorVar?.dataType === "ALIAS"
+        ? ctx.tokenValue(paint.colorVar.value?.alias?.guid)
+        : undefined;
+    if (typeof bound === "string") {
+      const { hex, alpha } = splitTokenColor(bound);
+      return { ...solidPaint(hex, opacity * alpha), visible };
+    }
     return { ...solidPaint(hexOf(paint.color), opacity * (paint.color?.a ?? 1)), visible };
   }
   const gradient = GRADIENTS[type];

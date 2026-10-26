@@ -51,6 +51,8 @@ function runStyleOf(entry: FigTextOverride, node: FigNode, ctx: FigImportContext
   }
   if (entry.fillPaints) style.fills = convertPaints(entry.fillPaints, ctx, false);
   if (entry.textDecoration !== undefined) style.textDecoration = decorationOf(entry.textDecoration);
+  const textStyle = ctx.styleId(entry.styleIdForText);
+  if (textStyle) style.textStyle = textStyle;
   if (entry.textCase !== undefined && entry.textCase !== node.textCase) {
     ctx.warnings.add("texts' case per range was left out");
   }

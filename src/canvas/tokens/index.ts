@@ -58,3 +58,5 @@ export { resolveStyle } from "./resolve-style";
 export type { TokenUsage } from "./token-usage.types";
 export { isUnused, tokenUsage, unusedTokens } from "./token-usage";
 export { replacePlan } from "./replace-token";
+export * from "./exchange";
+export { rawValue } from "./raw-value";

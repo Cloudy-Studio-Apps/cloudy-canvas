@@ -2,7 +2,8 @@ import type { Rect } from "@canvas";
 import type { FigImportContext, FigNode } from "@canvas/figma";
 
 import { createNodeBase, type DesignNode, type MaskType } from "../../modules";
-import { convertPaints } from "./fig-paints";
+import { convertPaintsFrom } from "./fig-paints";
+import { figPaintBindings } from "./tokens/fig-bindings";
 import { figLayerBlendMode } from "./fig-blend-mode";
 import { figSizing } from "./fig-auto-layout";
 import { figEffects } from "./fig-effects";
@@ -22,10 +23,21 @@ export function figNodeBase<K extends string>(
   ctx: FigImportContext,
   paints: NodePaints = {},
 ): DesignNode & { type: K } {
+  const fills = paints.fills
+    ? { paints: paints.fills, from: [] }
+    : convertPaintsFrom(node.fillPaints, ctx, paints.allowImages);
+  const strokes = paints.strokes
+    ? { paints: paints.strokes, from: [] }
+    : convertPaintsFrom(node.strokePaints, ctx, false);
+  // The colors bound to variables, by the converted paints' places.
+  const bindings = {
+    ...figPaintBindings(node.fillPaints, fills.from, "fills", ctx),
+    ...figPaintBindings(node.strokePaints, strokes.from, "strokes", ctx),
+  };
   const base = createNodeBase(type, rect, placement.index, {
     name: node.name ?? "",
     parentId: placement.parentId,
-    fills: paints.fills ?? convertPaints(node.fillPaints, ctx, paints.allowImages),
+    fills: fills.paints,
   });
   return {
     ...base,
@@ -33,7 +45,7 @@ export function figNodeBase<K extends string>(
     visible: node.visible ?? true,
     opacity: node.opacity ?? 1,
     blendMode: figLayerBlendMode(node.blendMode, ctx),
-    strokes: paints.strokes ?? convertPaints(node.strokePaints, ctx, false),
+    strokes: strokes.paints,
     strokeWeight: node.strokeWeight ?? 0,
     ...figStroke(node),
     effects: figEffects(node, ctx),
@@ -41,6 +53,7 @@ export function figNodeBase<K extends string>(
     layoutAbsolute: !!placement.parentLayout && node.stackPositioning === "ABSOLUTE",
     ...(node.locked ? { locked: true } : {}),
     ...(node.mask ? { isMask: true, maskType: figMaskType(node, ctx) } : {}),
+    ...(Object.keys(bindings).length > 0 ? { bindings } : {}),
   };
 }
 

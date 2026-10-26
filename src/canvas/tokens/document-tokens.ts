@@ -15,6 +15,8 @@ import type {
   StylePatch,
 } from "./document-tokens.types";
 import { followBase, regenerate } from "./generator-writes";
+import type { ImportChoice, TokenImportPlan } from "./exchange/exchange.types";
+import { planTokenImport } from "./exchange/import-plan";
 import { deletionRewrites } from "./token-deletion";
 import { replacePlan } from "./replace-token";
 import { tokenUsage, unusedTokens } from "./token-usage";
@@ -25,7 +27,7 @@ import { TokenFeed } from "./token-feed";
 import { normalizeTokenPath } from "./token-path";
 import { resolveStyle } from "./resolve-style";
 import { keptStyleBindings, styleLeafType, stylesWithout } from "./style-bindings";
-import type { StyleRecord } from "./token.types";
+import type { StyleRecord, TokenRecord } from "./token.types";
 import { VariableEdits } from "./variable-edits";
 
 /**
@@ -107,6 +109,19 @@ export class DocumentTokens extends VariableEdits {
     const variable = this.requireVariable(id);
     if (!variable.generatorId) return;
     this.write(() => this.doc.setTokenRecords([{ ...variable, generatorId: null }]));
+  }
+
+  // ── Import ──────────────────────────────────────────────────────────
+
+  /**
+   * Brings variables and styles from another file in, one undo step (`planTokenImport`: ids kept,
+   * so importing the same source again updates them; `choice` for ones named like the file's).
+   * Layers bound to what it changes follow.
+   */
+  importTokens(incoming: readonly TokenRecord[], choice: ImportChoice): TokenImportPlan {
+    const plan = planTokenImport(this.store(), incoming, choice);
+    if (plan.records.length > 0) this.write(() => this.doc.setTokenRecords(plan.records));
+    return plan;
   }
 
   // ── Styles ──────────────────────────────────────────────────────────

@@ -1,3 +1,5 @@
+import type { FigVariableFields, FigVariableData } from "./fig-variable.types";
+
 /**
  * The parts of Figma's `NodeChange` the importer reads. Every field is optional: a node only
  * carries what differs from Figma's defaults, and an override carries only what it changes.
@@ -95,6 +97,8 @@ export interface FigPaint {
   scale?: number;
   /** An image's quarter turns, in degrees. */
   rotation?: number;
+  /** The variable its color is bound to (or the raw color, `dataType` `COLOR`). */
+  colorVar?: FigVariableData;
 }
 
 /** A path of `fillGeometry`/`strokeGeometry`: its commands live in a blob. */
@@ -162,7 +166,7 @@ export interface FigStyleRef {
   assetRef?: { key?: string };
 }
 
-export interface FigNode {
+export interface FigNode extends FigVariableFields {
   guid?: FigGuid;
   phase?: string;
   type?: string;

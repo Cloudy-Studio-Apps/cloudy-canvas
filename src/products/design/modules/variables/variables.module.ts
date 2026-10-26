@@ -8,7 +8,8 @@ import {
   DETACH_LAYERS_COMMAND,
   useDetachLayersCommand,
 } from "./ui/usage/use-detach-layers-command";
-import { variableTools } from "./agent";
+import { exchangeTools, variableTools } from "./agent";
+import { BUILT_IN_TOKEN_FORMATS, tokenFormats } from "./exchange";
 import { DESIGN_TOKEN_CONTEXT } from "../core";
 import {
   useVariablesWindowCommand,
@@ -31,7 +32,12 @@ export const variablesModule = defineModule({
       syncTokens(doc, change, kinds, DESIGN_TOKEN_CONTEXT),
     );
 
-    host.contribute(designAgentTools, { id: "variables", tools: () => variableTools });
+    host.contribute(designAgentTools, {
+      id: "variables",
+      tools: () => [...variableTools, ...exchangeTools(() => host.get(tokenFormats))],
+    });
+    // Import and export: DTCG both ways, Tokens Studio in, code out (plugins add their own).
+    host.contribute(tokenFormats, ...BUILT_IN_TOKEN_FORMATS);
     host.contribute(designMigrations, { id: "variable-modes", migrate: migrateVariableModes });
     host.contribute(
       designCanvas.hostCommands,

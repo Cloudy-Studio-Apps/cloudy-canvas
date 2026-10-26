@@ -31,6 +31,7 @@ import { figAutoLayout } from "./fig-auto-layout";
 import { figNodeBase } from "./fig-node-base";
 import { textFields } from "./fig-text";
 import type { NodePlacement } from "./convert-node.types";
+import { withFigBindings } from "./tokens/with-fig-bindings";
 
 /** Nodes that hold others and become frames (components and instances too). */
 const FRAMES = new Set(["FRAME", "SYMBOL", "INSTANCE", "COMPONENT_SET"]);
@@ -70,8 +71,9 @@ function convertNode(
 ): void {
   const { node } = resolved;
   const world = multiply(placement.world, node.transform ?? IDENTITY);
-  const el = convertOwn(node, world, placement, ctx);
-  if (!el) return;
+  const own = convertOwn(node, world, placement, ctx);
+  if (!own) return;
+  const el = withFigBindings(own, node, ctx);
   placement.out.push(el);
   if (!holdsChildren(el)) return;
   const parent = {

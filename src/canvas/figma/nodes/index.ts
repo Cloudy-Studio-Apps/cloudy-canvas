@@ -1,5 +1,6 @@
 export type * from "./fig-node.types";
 export type * from "./fig-tree.types";
+export type * from "./fig-variable.types";
 export { hexBytes, hexOf } from "./fig-color";
 export {
   applyLinear,
