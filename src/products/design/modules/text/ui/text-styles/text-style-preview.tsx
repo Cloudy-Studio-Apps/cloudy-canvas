@@ -1,5 +1,5 @@
 import { readTextStyle } from "@design";
-import type { StylePreviewProps } from "@design/ui/modules";
+import type { StylePreviewProps } from "../../../core/ui";
 
 /** A text style's picture: "Ag" in its font. */
 export function TextStylePreview({ style }: StylePreviewProps) {

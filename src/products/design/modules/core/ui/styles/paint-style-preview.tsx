@@ -1,5 +1,5 @@
 import { readPaintStyle } from "@design";
-import type { StylePreviewProps } from "@design/ui/modules";
+import type { StylePreviewProps } from "../core.points.types";
 import { Swatch } from "@shared/ui/kit";
 import { paintCss } from "./paint-css";
 

@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 
 import type { ShaderEffect } from "@design";
-import type { EffectEditorProps } from "@design/ui/modules";
 import { CodeEditor } from "@shared/ui/components/code-editor";
 import {
   Select,
@@ -15,6 +14,7 @@ import { paramValue } from "../shader-params";
 import { SHADER_PRESETS } from "../shader-presets";
 import { glslLanguage } from "./glsl-language";
 import { ShaderParamField } from "./shader-param-field";
+import type { EffectEditorProps } from "../../effects/ui";
 
 /**
  * A shader effect's editor: a preset to start from, the code (GLSL, applied as it's typed; a

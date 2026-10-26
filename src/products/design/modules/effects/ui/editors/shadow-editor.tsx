@@ -1,12 +1,12 @@
 import { ArrowDown, ArrowRight, Droplet, Maximize2 } from "lucide-react";
 
 import { PropertyGrid } from "@design/ui/components/panel";
-import type { EffectEditorProps } from "@design/ui/modules";
 import { SHADOW_PRESETS } from "../../effect-presets";
 import type { DropShadowEffect, InnerShadowEffect } from "../../effect.types";
 import { EffectColorField, EffectToggle, ScrubField } from "../fields";
 import { PresetRow } from "./preset-row";
 import { EffectBind } from "../effect-bind";
+import type { EffectEditorProps } from "../effects.points.types";
 
 /** A drop or inner shadow: elevation presets, its color, offset, blur and spread. */
 export function ShadowEditor<E extends DropShadowEffect | InnerShadowEffect>({

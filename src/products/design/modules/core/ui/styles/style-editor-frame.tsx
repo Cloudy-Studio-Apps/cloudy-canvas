@@ -4,7 +4,7 @@ import { DOCUMENT_TOKENS } from "@canvas";
 import { CommitInput, CommitTextarea } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button, Field } from "@shared/ui/kit";
-import { UsageSummary } from "../token-usage";
+import { UsageSummary } from "@design/ui/components/token-usage";
 import type { StyleEditorFrameProps } from "./styles.types";
 
 /** What every style's editor has: its name, its own controls, a description, its usage and Delete. */

@@ -1,5 +1,5 @@
 import { readEffectStyle } from "@design";
-import type { StylePreviewProps } from "@design/ui/modules";
+import type { StylePreviewProps } from "../../../core/ui";
 
 /** An effect style's picture: a small card with its first shadow (or a plain one). */
 export function EffectStylePreview({ style }: StylePreviewProps) {

@@ -1,8 +1,7 @@
 import { Sparkles } from "lucide-react";
 
 import { defineModule } from "@shared/core";
-import { createNodeStyle } from "@design/ui/components/styles";
-import { designStyleTypes } from "@design/ui/modules/style-types";
+import { createNodeStyle, designStyleTypes } from "../core/ui";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import { someNodes } from "@design/ui/modules/section-filters";
 import { designCanvas } from "../../design-points";
@@ -27,6 +26,7 @@ import {
 import { EFFECT_CATALOG, EffectsSection } from "./ui";
 import { EffectHandles } from "./ui/handles";
 import { EffectStyleEditor, EffectStylePreview } from "./ui/styles";
+import { designEffectTypes } from "./ui/effects.points";
 
 /**
  * Effects, as in Figma's Effects section and further: inner and drop shadows, layer blur (even
@@ -64,7 +64,7 @@ export const effectsModule = defineModule({
     );
     for (const type of EFFECT_TYPES) setEffectReader(type, effectReader(type));
 
-    host.contribute(designEditor.effectTypes, ...EFFECT_CATALOG);
+    host.contribute(designEffectTypes, ...EFFECT_CATALOG);
     host.contribute(designEditor.overlays, { id: "effects.handles", component: EffectHandles });
     host.contribute(designEditor.propertySections, {
       id: "effects",

@@ -1,5 +1,5 @@
 import { readStrokeStyle } from "@design";
-import type { StylePreviewProps } from "@design/ui/modules";
+import type { StylePreviewProps } from "../core.points.types";
 
 const LINECAPS = { none: "butt", round: "round", square: "square" } as const;
 

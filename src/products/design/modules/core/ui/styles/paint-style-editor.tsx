@@ -1,8 +1,10 @@
 import { remapStackBindings, withoutBindingsUnder, type BindableField } from "@canvas";
 import { readPaintStyle, solidPaint } from "@design";
 import { PanelAddButton } from "@design/ui/components/panel";
-import { StyleBindingScope, StyleEditorFrame, useStyleWriter } from "@design/ui/components/styles";
-import type { StyleEditorProps } from "@design/ui/modules";
+import type { StyleEditorProps } from "../core.points.types";
+import { StyleBindingScope } from "./style-binding-scope";
+import { StyleEditorFrame } from "./style-editor-frame";
+import { useStyleWriter } from "./use-style-writer";
 import { PaintStackEditor } from "../sections/paint-stack-editor";
 import type { PaintStackEditorProps } from "../sections/paint-stack-editor.types";
 

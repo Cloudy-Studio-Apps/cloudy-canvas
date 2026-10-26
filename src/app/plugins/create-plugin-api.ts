@@ -136,14 +136,8 @@ import {
   LOCAL_UNIFORMS,
   NOISE_GLSL,
 } from "@design";
-import {
-  allKinds,
-  defineEffectType,
-  designEditor,
-  noNodes,
-  ofType,
-  someNodes,
-} from "@design/ui/modules";
+import { allKinds, designEditor, noNodes, ofType, someNodes } from "@design/ui/modules";
+import { defineEffectType, designEffectTypes } from "@design/modules/effects/ui";
 import {
   EffectChoice,
   EffectColorField,
@@ -344,6 +338,7 @@ export function createPluginApi(
         },
         sections: { ofType, allKinds, someNodes, noNodes },
         effects: {
+          effectTypes: designEffectTypes,
           defineEffectType,
           setEffectReader,
           localUniforms,

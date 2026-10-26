@@ -11,19 +11,15 @@ import {
   type NodeEffect,
 } from "@design";
 import { PanelSection } from "@design/ui/components/panel";
-import {
-  createNodeStyle,
-  StyleChip,
-  StyleControl,
-  useNodeStyleBinding,
-} from "@design/ui/components/styles";
+import { StyleChip, StyleControl, createNodeStyle, useNodeStyleBinding } from "../../core/ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useEditNodes } from "@design/ui/hooks";
-import type { EffectTypeEntry, PropertySectionProps } from "@design/ui/modules";
-import { designEditor } from "@design/ui/modules/design-editor-points";
+import type { PropertySectionProps } from "@design/ui/modules";
 import { AddEffectMenu } from "./add-effect-menu";
 import { EffectStackEditor } from "./effect-stack-editor";
 import type { EffectStackMap } from "./effects-ui.types";
+import type { EffectTypeEntry } from "./effects.points.types";
+import { designEffectTypes } from "./effects.points";
 
 /**
  * The selection's effects (`EffectStackEditor`): "+" adds one of the types the modules give
@@ -34,7 +30,7 @@ import type { EffectStackMap } from "./effects-ui.types";
 export function EffectsSection({ selection: { nodes } }: PropertySectionProps) {
   const engine = useDesignEngine();
   const { host } = useEditorModules();
-  const types = [...host.get(designEditor.effectTypes)].sort((a, b) => a.order - b.order);
+  const types = [...host.get(designEffectTypes)].sort((a, b) => a.order - b.order);
   const edit = useEditNodes();
   const style = useNodeStyleBinding(nodes, "effects");
   const first = nodes[0]?.effects ?? [];

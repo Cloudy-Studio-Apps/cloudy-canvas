@@ -2,7 +2,7 @@ import { useEffect, useMemo, useReducer, useState } from "react";
 
 import { resolveVariable } from "@canvas";
 import { countedUse } from "@design";
-import { DeleteTokensDialog } from "@design/ui/components/styles";
+import { DeleteTokensDialog } from "../../../core/ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button, EmptyState } from "@shared/ui/kit";
 import { useBoard } from "../window/use-board";

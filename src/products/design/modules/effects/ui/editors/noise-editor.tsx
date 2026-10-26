@@ -1,9 +1,9 @@
 import { Grid3x3, Sparkles } from "lucide-react";
 
 import { PropertyGrid } from "@design/ui/components/panel";
-import type { EffectEditorProps } from "@design/ui/modules";
 import type { NoiseEffect } from "../../effect.types";
 import { EffectChoice, EffectColorField, ScrubField } from "../fields";
+import type { EffectEditorProps } from "../effects.points.types";
 
 const MODES = [
   { value: "mono", label: "Mono" },

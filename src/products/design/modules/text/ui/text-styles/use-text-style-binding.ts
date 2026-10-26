@@ -1,7 +1,6 @@
 import { DOCUMENT_TOKENS } from "@canvas";
 import { runStylePatch, TEXT_STYLE_PATH, type TextNodeElement } from "@design";
-import type { StyleBinding } from "@design/ui/components/styles";
-import { useNodeStyleBinding } from "@design/ui/components/styles";
+import { useNodeStyleBinding, type StyleBinding } from "../../../core/ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useTypographyTarget } from "../use-typography-target";
 

@@ -5,7 +5,7 @@ import type {
   EffectEditorProps,
   EffectTypeEntry,
   TypedEffectTypeEntry,
-} from "./design-editor-points.types";
+} from "./effects.points.types";
 
 /**
  * An `effectTypes` entry typed by its effect, so its `create`, `summary` and `editor` work on the

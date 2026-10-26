@@ -1,10 +1,10 @@
 import { Droplet, MoveRight } from "lucide-react";
 
 import { PropertyGrid } from "@design/ui/components/panel";
-import type { EffectEditorProps } from "@design/ui/modules";
 import type { LayerBlurEffect } from "../../effect.types";
 import { EffectChoice, ScrubField } from "../fields";
 import { EffectBind } from "../effect-bind";
+import type { EffectEditorProps } from "../effects.points.types";
 
 const KINDS = [
   { value: "uniform", label: "Uniform" },

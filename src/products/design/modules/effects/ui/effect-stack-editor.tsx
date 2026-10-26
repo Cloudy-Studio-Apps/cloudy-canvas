@@ -2,10 +2,10 @@ import { useState } from "react";
 
 import { useEditorModules } from "@canvas-ui";
 import { movedTo, removedAt } from "@design";
-import { designEditor } from "@design/ui/modules/design-editor-points";
 import { EffectBindingContext } from "./effect-binding-context";
 import { EffectRow } from "./effect-row";
 import type { EffectStackEditorProps } from "./effects-ui.types";
+import { designEffectTypes } from "./effects.points";
 
 /**
  * An effects stack, topmost first like the layers: each row edits, hides, removes or is dragged
@@ -41,7 +41,7 @@ export function EffectStackEditor({ effects, mixed, onChange, nodes }: EffectSta
         <EffectBindingContext.Provider key={effect.id} value={{ nodes, index: i }}>
           <EffectRow
             effect={effect}
-            entry={host.find(designEditor.effectTypes, effect.type)}
+            entry={host.find(designEffectTypes, effect.type)}
             dragging={moving?.from === i}
             onDragStart={() => setMoving({ from: i, to: i })}
             onDragOver={() => setMoving((m) => (m ? { ...m, to: i } : m))}

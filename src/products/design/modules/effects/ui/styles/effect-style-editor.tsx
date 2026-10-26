@@ -1,12 +1,16 @@
 import { remapStackBindings, withoutBindingsUnder, type BindableField } from "@canvas";
 import { useEditorModules } from "@canvas-ui";
 import { readEffectStyle } from "@design";
-import { StyleBindingScope, StyleEditorFrame, useStyleWriter } from "@design/ui/components/styles";
-import type { StyleEditorProps } from "@design/ui/modules";
-import { designEditor } from "@design/ui/modules/design-editor-points";
+import {
+  StyleBindingScope,
+  StyleEditorFrame,
+  useStyleWriter,
+  type StyleEditorProps,
+} from "../../../core/ui";
 import { AddEffectMenu } from "../add-effect-menu";
 import { EffectStackEditor } from "../effect-stack-editor";
 import type { EffectStackEditorProps } from "../effects-ui.types";
+import { designEffectTypes } from "../effects.points";
 
 const NO_LAYERS: never[] = [];
 const NUMBERS = new Set(["x", "y", "blur", "spread", "radius"]);
@@ -28,7 +32,7 @@ function effectField(path: string): BindableField | undefined {
  */
 export function EffectStyleEditor({ style, onDelete }: StyleEditorProps) {
   const { host } = useEditorModules();
-  const types = [...host.get(designEditor.effectTypes)].sort((a, b) => a.order - b.order);
+  const types = [...host.get(designEffectTypes)].sort((a, b) => a.order - b.order);
   const writer = useStyleWriter(style);
   const effects = readEffectStyle(style.value)?.effects ?? [];
   const onChange: EffectStackEditorProps["onChange"] = (change, info, map) => {

@@ -34,6 +34,7 @@ import type { DesignModuleOptions } from "./design-modules.types";
 /** The design's built-in modules. Their order is the default order of chained hooks. */
 let modules: AppModule[] = [
   coreModule,
+  layersModule,
   pagesModule,
   variablesModule,
   frameModule,
@@ -58,7 +59,6 @@ let modules: AppModule[] = [
   booleanModule,
   imageModule,
   stickerModule,
-  layersModule,
   assetsModule,
   pluginsTabModule,
 ];

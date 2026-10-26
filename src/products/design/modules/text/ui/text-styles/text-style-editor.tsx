@@ -2,7 +2,7 @@ import { MoveHorizontal, Type, UnfoldVertical } from "lucide-react";
 
 import { DOCUMENT_TOKENS } from "@canvas";
 import { NumberField, PropertyGrid } from "@design/ui/components/panel";
-import { StyleEditorFrame } from "@design/ui/components/styles";
+import { StyleEditorFrame, type StyleEditorProps } from "../../../core/ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { closestVariant } from "@shared/core";
 import { DecorationButtons } from "../decoration-buttons";
@@ -11,7 +11,6 @@ import { facesOf } from "../faces-of";
 import { FontPicker } from "../font-picker";
 import { useFontFamilies } from "../use-font-families";
 import { styleTypographyTarget } from "./style-typography-target";
-import type { StyleEditorProps } from "@design/ui/modules";
 
 /**
  * A text style's typography, edited with the Typography section's own controls (in the shared

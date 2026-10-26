@@ -9,8 +9,6 @@ import {
   SquareStack,
 } from "lucide-react";
 
-import { defineEffectType } from "@design/ui/modules/define-effect-type";
-import type { EffectEditorProps, EffectTypeEntry } from "@design/ui/modules";
 import { createEffect } from "../create-effect";
 import type { DesignEffect, DesignEffectType } from "../effect.types";
 import {
@@ -21,6 +19,8 @@ import {
   ShadowEditor,
   TextureEditor,
 } from "./editors";
+import type { EffectEditorProps, EffectTypeEntry } from "./effects.points.types";
+import { defineEffectType } from "./define-effect-type";
 
 const percent = (n: number) => `${Math.round(n * 100)}%`;
 const round = (n: number) => String(Math.round(n * 100) / 100);

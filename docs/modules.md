@@ -33,15 +33,15 @@ it's written_.
 
 | Module                                                                                   | Tier    | Why                                                                               |
 | ---------------------------------------------------------------------------------------- | ------- | --------------------------------------------------------------------------------- |
-| `core`                                                                                   | Core    | node base, layer tree, paints and strokes, select/scale/hand, panels              |
+| `core`                                                                                   | Core    | node base, layer tree, paints and strokes, panels, the style types point and UI   |
 | `pages`                                                                                  | Core    | every node has `pageId`; the design's `scopes`                                    |
-| `layers`                                                                                 | Core    | the Layers tab and the tree-move rules                                            |
+| `layers`                                                                                 | Core    | the Layers tab (`layersTabSections`) and the tree-move rules                      |
 | `frame`                                                                                  | Core    | containers and clipping; auto layout, section, catalog and styleguide require it  |
 | `group`                                                                                  | Core    | child hosts; mask and sticker require it; the Figma import                        |
 | `text`                                                                                   | Core    | text styles, fonts, outlines; the Figma import                                    |
 | `vector`                                                                                 | Core    | booleans, Flatten, Outline stroke and the Figma import produce vectors            |
-| `variables`                                                                              | Core    | the variables engine, `bindings` on every node, the style types point             |
-| `effects`                                                                                | Core    | `effects` on every node, the effects pipeline, the `effectTypes` point            |
+| `variables`                                                                              | Core    | the variables engine, `bindings` on every node, the Styles section                |
+| `effects`                                                                                | Core    | `effects` on every node, the effects pipeline, the `designEffectTypes` point      |
 | `auto-layout`                                                                            | Core    | `sizing`, `layoutAbsolute`, `sizeLimits` on every node; relayout after every edit |
 | `plugins-tab`                                                                            | Core    | the plugin manager                                                                |
 | `rectangle`, `ellipse`, `polygon`, `star`, `line`, `section`, `boolean`, `mask`, `image` | Feature | kinds, tools and commands built on the core; the Figma import makes them          |
@@ -67,8 +67,8 @@ it's written_.
 | **modes**                                            | `canvas.modes`, `editor.modes`, `editor.modeSidebars`          |
 | host commands, menus, context menu                   | `canvas.hostCommands`, `editor.mainMenu`, `editor.contextMenu` |
 | panels, sections, left tabs, overlays, session hooks | `editor.*`                                                     |
-| effect types                                         | `effectTypes` and `canvas.effectRenderers`                     |
-| style types                                          | the variables module's style types point                       |
+| effect types                                         | `effects.effectTypes` and `canvas.effectRenderers`             |
+| style types                                          | the core module's `designStyleTypes` point                     |
 | MCP tools                                            | `mcpTools`                                                     |
 | file migrations                                      | `migrations`                                                   |
 | stickers, themes, ER standards and constructs        | the app registries and the er module's points                  |
@@ -83,7 +83,8 @@ modules/<name>/
   index.ts              REQUIRED  the module's public engine API (plain TS). What isn't exported
                                   here or in ui/index.ts is private.
   README.md             REQUIRED  what the feature is (see the README template).
-  <name>.points.ts      if others extend it (a point lives in the module that reads it)
+  <name>.points.ts      if others extend it (a point lives in the module that reads it); a point
+                        whose entries hold components is ui/<name>.points.ts, exported by ui/index.ts
   <name>.mode.ts        a mode the module adds: one defineDesignMode/defineBoardMode
   <name>.mcp.ts         MCP tools, one file …
   mcp/                  … or a folder: <topic>.mcp.ts + index.ts (+ helpers)
@@ -99,7 +100,7 @@ modules/<name>/
 | Suffix                                                                    | Holds                            | React?             |
 | ------------------------------------------------------------------------- | -------------------------------- | ------------------ |
 | `.module.ts`                                                              | `defineModule`                   | imports UI, no JSX |
-| `.points.ts`                                                              | `definePoint` tokens             | no                 |
+| `.points.ts`                                                              | `definePoint` tokens             | no (`ui/`: types)  |
 | `.mode.ts`                                                                | a mode's whole definition        | imports UI         |
 | `.mcp.ts`                                                                 | `McpTool`s / `McpToolGroup`      | no                 |
 | `.commands.ts`                                                            | host command entries and keys    | no                 |

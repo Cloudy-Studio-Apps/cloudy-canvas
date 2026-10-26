@@ -1,11 +1,11 @@
 import { Droplet, Rainbow, Sun, SunDim, WavesHorizontal, Layers, Sparkle } from "lucide-react";
 
 import { PropertyGrid } from "@design/ui/components/panel";
-import type { EffectEditorProps } from "@design/ui/modules";
 import { GLASS_PRESETS } from "../../effect-presets";
 import type { GlassEffect } from "../../effect.types";
 import { ScrubField } from "../fields";
 import { PresetRow } from "./preset-row";
+import type { EffectEditorProps } from "../effects.points.types";
 
 /** Glass: presets, the light (angle, intensity, splay), the lens (refraction, depth, dispersion) and frost. */
 export function GlassEditor({ effect, onChange }: EffectEditorProps<GlassEffect>) {

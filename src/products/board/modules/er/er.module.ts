@@ -2,13 +2,7 @@ import { Network } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
-import {
-  boardMcpTools,
-  boardCanvas,
-  boardErConstructs,
-  boardErStandards,
-  boardMigrations,
-} from "../../board-points";
+import { boardMcpTools, boardCanvas, boardMigrations } from "../../board-points";
 import {
   BUILT_IN_ER_CONSTRUCTS,
   BUILT_IN_ER_STANDARDS,
@@ -21,6 +15,7 @@ import { ErAttributeKind } from "./attribute";
 import { ErConstraintKind } from "./constraint";
 import { ErEntityKind } from "./entity";
 import { erTools } from "./er.mcp";
+import { boardErConstructs, boardErStandards } from "./er.points";
 import { ErTool } from "./er.tool";
 import { ErIsaKind } from "./isa";
 import { ErLinks } from "./links";

@@ -6,7 +6,7 @@ import type { VariableType } from "@canvas";
 import { CommitTextarea } from "@canvas-ui";
 import { Button } from "@shared/ui/components/ui/button";
 import { AdvancedSettings } from "../../advanced-settings";
-import { DeleteTokensDialog } from "@design/ui/components/styles";
+import { DeleteTokensDialog } from "../../../../core/ui";
 import { UsageSummary } from "@design/ui/components/token-usage";
 import { ContrastPairsList } from "../../contrast/contrast-pairs-list";
 import { useBoard } from "../use-board";

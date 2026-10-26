@@ -1,4 +1,4 @@
-import type { StylePreviewProps } from "@design/ui/modules/style-types.types";
+import type { StylePreviewProps } from "../core.points.types";
 import { useDocumentTokens } from "@canvas-ui";
 import { shownStyle } from "./shown-style";
 import { useStyleType } from "./use-style-type";

@@ -7,12 +7,12 @@ import { layersTools } from "./mcp";
 import { LayersTab } from "./ui/layers-tab";
 
 /**
- * The Layers tab: the pages (the pages module's list) and the page's layer tree (select, rename,
+ * The Layers tab: the page's layer tree (select, rename,
  * hide, lock), and the tree for agents (`get_layer_tree`).
  */
 export const layersModule = defineModule({
   id: "layers",
-  requires: ["core", "pages"],
+  requires: ["core"],
   register(host) {
     host.contribute(designEditor.leftTabs, {
       id: "layers",

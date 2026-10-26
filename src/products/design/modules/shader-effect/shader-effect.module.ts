@@ -1,10 +1,9 @@
 import { WavesHorizontal } from "lucide-react";
 
 import { defineModule } from "@shared/core";
-import { defineEffectType } from "@design/ui/modules/define-effect-type";
-import { designEditor } from "@design/ui/modules/design-editor-points";
 import { designCanvas } from "../../design-points";
 import { createEffect, type ShaderEffect } from "../effects";
+import { defineEffectType, designEffectTypes } from "../effects/ui";
 import { shaderRenderer } from "./shader.renderer";
 import { ShaderEditor } from "./ui/shader-editor";
 
@@ -18,7 +17,7 @@ export const shaderEffectModule = defineModule({
   register(host) {
     host.contribute(designCanvas.effectRenderers, shaderRenderer);
     host.contribute(
-      designEditor.effectTypes,
+      designEffectTypes,
       defineEffectType<ShaderEffect>({
         type: "shader",
         label: "Shader",

@@ -17,8 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@shared/ui/components/ui/dropdown-menu";
-import { DeleteTokensDialog, StyleRow } from "@design/ui/components/styles";
-import { designStyleTypes } from "@design/ui/modules/style-types";
+import { DeleteTokensDialog, StyleRow, designStyleTypes } from "../../core/ui";
 import { TypeScaleDialog } from "./type-scale/type-scale-dialog";
 
 /**

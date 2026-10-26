@@ -6,13 +6,7 @@ export type * from "./mcp";
 export type { BoardEngine, BoardEngineState, BoardWorkspace } from "./board-engine.types";
 export type { BoardToolOptions } from "./board-options.types";
 export * from "./mcp";
-export {
-  boardMcpTools,
-  boardCanvas,
-  boardErConstructs,
-  boardErStandards,
-  boardMigrations,
-} from "./board-points";
+export { boardMcpTools, boardCanvas, boardMigrations } from "./board-points";
 export * from "./modules";
 export * from "./file";
 export * from "./palette";

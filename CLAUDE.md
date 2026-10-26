@@ -129,15 +129,14 @@ The rules above describe where the code is going (spec:
 [module conventions](docs/superpowers/specs/2026-10-25-module-conventions-design.md)). **Until a row's
 phase is done, follow the existing pattern in that part of the code.**
 
-| Rule                                                                 | Code today                                                                                               | Fixed in phase |
-| -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | -------------- |
-| a feature's points in its `<name>.points.ts`; styles UI in variables | some in `board-points.ts`, `design/ui/modules/`, `design/ui/components/styles/`                          | 3              |
-| `<name>.module.ts` ≤ ~100 lines, wiring only                         | design `core` (~380 lines), `er`                                                                         | 4              |
-| board core's tools don't import features                             | `modules/core/mcp/create-shapes.mcp.ts` imports `geo`, `mcp/apply-result.ts` imports `er` and `db` types | 5              |
-| import rules enforced; every module has a complete `README.md`       | deep imports between modules; READMEs only where descriptions moved                                      | 5              |
-| shared pieces (`ColorField`, `chooseImageAsset`, `ModeToolbar`, …)   | duplicated per feature                                                                                   | 5a             |
-| one mode definition (`defineDesignMode`, `registerMode`)             | about 10 contributions per mode                                                                          | 5b             |
-| plugin API as the barrels, `host.require`, module `exports`          | a hand-kept list in `app/plugins/create-plugin-api.ts`                                                   | 6              |
+| Rule                                                               | Code today                                                                                               | Fixed in phase |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- | -------------- |
+| `<name>.module.ts` ≤ ~100 lines, wiring only                       | design `core` (~380 lines), `er`                                                                         | 4              |
+| board core's tools don't import features                           | `modules/core/mcp/create-shapes.mcp.ts` imports `geo`, `mcp/apply-result.ts` imports `er` and `db` types | 5              |
+| import rules enforced; every module has a complete `README.md`     | deep imports between modules; READMEs only where descriptions moved                                      | 5              |
+| shared pieces (`ColorField`, `chooseImageAsset`, `ModeToolbar`, …) | duplicated per feature                                                                                   | 5a             |
+| one mode definition (`defineDesignMode`, `registerMode`)           | about 10 contributions per mode                                                                          | 5b             |
+| plugin API as the barrels, `host.require`, module `exports`        | a hand-kept list in `app/plugins/create-plugin-api.ts`                                                   | 6              |
 
 ## Where to look
 

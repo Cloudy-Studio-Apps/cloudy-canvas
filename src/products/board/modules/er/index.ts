@@ -15,6 +15,7 @@ export * from "./model";
 export { ErLinks } from "./links";
 export type * from "./links";
 export { ErTool } from "./er.tool";
+export { boardErConstructs, boardErStandards } from "./er.points";
 export { erTools } from "./er.mcp";
 export * from "./connect";
 export * from "./mode";

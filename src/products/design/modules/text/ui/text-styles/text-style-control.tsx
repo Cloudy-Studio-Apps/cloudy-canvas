@@ -1,5 +1,5 @@
 import { TEXT_STYLE } from "@design";
-import { StyleControl } from "@design/ui/components/styles";
+import { StyleControl } from "../../../core/ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { createTextStyle } from "./create-text-style";
 import type { TextStyleControlProps } from "./text-styles.types";

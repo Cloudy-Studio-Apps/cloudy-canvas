@@ -3,7 +3,7 @@ import { useState } from "react";
 import { DESIGN_PAGES } from "@design";
 import { cn } from "@shared/ui/lib/utils";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import { LayerName } from "@design/modules/layers/ui/layer-name";
+import { LayerName } from "../../layers/ui";
 import { PageMenu } from "./page-menu";
 import type { PageRowProps } from "./page-row.types";
 

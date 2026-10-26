@@ -11,12 +11,7 @@ import {
   type Paint,
 } from "@design";
 import { PanelAddButton, PanelSection } from "@design/ui/components/panel";
-import {
-  createNodeStyle,
-  StyleChip,
-  StyleControl,
-  useNodeStyleBinding,
-} from "@design/ui/components/styles";
+import { StyleChip, StyleControl, createNodeStyle, useNodeStyleBinding } from "../styles";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useEditNodes } from "@design/ui/hooks";
 import { PaintStackEditor } from "./paint-stack-editor";

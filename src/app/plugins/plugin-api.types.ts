@@ -9,6 +9,7 @@ import type { boardLibrary } from "@board/ui/components/library";
 import type { boardEditor } from "@board/ui";
 import type * as canvasApi from "@canvas";
 import type * as design from "@design";
+import type * as effectsUi from "@design/modules/effects/ui";
 import type * as effectFields from "@design/modules/effects/ui/fields";
 import type { designEditor } from "@design/ui";
 import type * as designModules from "@design/ui/modules";
@@ -235,10 +236,13 @@ export interface DesignPluginApi {
   sections: Pick<typeof designModules, "ofType" | "allKinds" | "someNodes" | "noNodes">;
   /**
    * Effects of a plugin's own: a renderer on `canvas.effectRenderers` (drawn on the GPU with
-   * these shaders and helpers), an entry on `editor.effectTypes` (`defineEffectType`, with these
+   * these shaders and helpers), an entry on `effectTypes` (`defineEffectType`, with these
    * fields) and how agents give it (`setEffectReader`).
    */
-  effects: Pick<typeof designModules, "defineEffectType"> &
+  effects: { effectTypes: typeof effectsUi.designEffectTypes } & Pick<
+    typeof effectsUi,
+    "defineEffectType"
+  > &
     Pick<
       typeof design,
       "setEffectReader" | "localUniforms" | "LOCAL_GLSL" | "LOCAL_UNIFORMS" | "NOISE_GLSL"

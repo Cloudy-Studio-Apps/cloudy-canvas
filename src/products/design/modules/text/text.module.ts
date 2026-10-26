@@ -9,7 +9,7 @@ import { textTools } from "./text.mcp";
 import { TEXT_DEFAULTS } from "./text.defaults";
 import { TextKind } from "./text.kind";
 import { TextTool } from "./text.tool";
-import { designStyleTypes } from "@design/ui/modules/style-types";
+import { designStyleTypes } from "../core/ui";
 import { TEXT_STYLE, textStyleSummary } from "./text-style";
 import { syncRunStyleBindings } from "./run-style-bindings";
 import { createTextStyle, TextStyleEditor, TextStylePreview } from "./ui/text-styles";

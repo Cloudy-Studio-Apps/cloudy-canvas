@@ -1,11 +1,12 @@
 import { useCallback, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 
+import { useEditorModules } from "@canvas-ui";
 import { siblingMasks } from "@design";
 import { PanelIconButton } from "@design/ui/components/panel";
-import { PagesSection } from "@design/modules/pages/ui/pages-section";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
 import { LayersList } from "./layers-list";
+import { layersTabSections } from "./layers.points";
 import { LayersSearch } from "./layers-search";
 import { matchingLayers } from "./matching-layers";
 import { revealedLayers } from "./revealed-layers";
@@ -14,10 +15,12 @@ import { visibleRows } from "./visible-rows";
 
 /**
  * The left panel's Layers tab: the layer tree of the page on screen (topmost first), searchable
- * by name, its rows dragged to rearrange it, then the pages.
+ * by name, its rows dragged to rearrange it, then the sections other modules add (the pages).
  */
 export function LayersTab() {
   const engine = useDesignEngine();
+  const { host } = useEditorModules();
+  const sections = [...host.get(layersTabSections)].sort((a, b) => a.order - b.order);
   const tree = useLayerTree();
   const selectedIds = useDesignState((state) => state.selectedIds);
   const selected = useMemo(() => new Set(selectedIds), [selectedIds]);
@@ -90,7 +93,9 @@ export function LayersTab() {
           />
         )}
       </div>
-      <PagesSection />
+      {sections.map((section) => (
+        <section.component key={section.id} />
+      ))}
     </>
   );
 }
