@@ -1,5 +1,3 @@
-import type { ImportChoice } from "@canvas";
-
 import type { TokenSourceRead } from "../../exchange";
 
 /** A picked file, read and ready to import. */
@@ -33,10 +31,4 @@ export interface ImportPickTreeProps {
   /** Ticked group keys. */
   ticked: ReadonlySet<string>;
   onChange: (ticked: Set<string>) => void;
-}
-
-export interface ImportConflictsProps {
-  names: readonly string[];
-  choice: ImportChoice;
-  onChoice: (choice: ImportChoice) => void;
 }

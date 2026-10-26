@@ -1,15 +1,18 @@
 import {
   asUndoStep,
+  describeAxis,
+  describeCollection,
   DOCUMENT_TOKENS,
   optionalString,
   recordList,
+  requireAxis,
+  requireCollection,
+  requireMode,
   stringArg,
   stringList,
 } from "@canvas";
 
 import { requireDesign, type DesignAgentTool } from "../../../agent";
-import { describeAxis, describeCollection } from "./describe-variables";
-import { requireAxis, requireCollection, requireMode } from "./variable-args";
 
 /** Collections (folders of variables) and mode axes. */
 export const modesTools: DesignAgentTool[] = [

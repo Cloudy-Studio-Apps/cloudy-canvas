@@ -24,6 +24,7 @@ export const drawModule = defineModule({
       drawPen: STROKE_DEFAULTS.pen,
       drawSmooth: false,
       markerColor: MARKER_COLORS[0].value,
+      markerColorToken: null,
       markerSize: MARKER_SIZES[1].value,
       highlighterColor: HIGHLIGHTER_COLORS[0].value,
       highlighterSize: HIGHLIGHTER_SIZES[1].value,

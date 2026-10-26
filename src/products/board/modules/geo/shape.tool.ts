@@ -8,11 +8,14 @@ import {
   type ToolContext,
   DRAW_THRESHOLD_PX,
   pastThreshold,
+  TokenStore,
 } from "@canvas";
 
 import type { BoardToolOptions } from "../../board-options.types";
 import { createGeo } from "./geo.factory";
 import { variantOf } from "./variants";
+import { newColorBindings } from "../../tokens";
+import { GEO_DEFAULTS } from "./geo.defaults";
 
 /** Click to place a geo element of the chosen variant, or drag to draw it (Shift for equal sides). */
 export class ShapeTool implements Tool {
@@ -57,8 +60,12 @@ export class ShapeTool implements Tool {
 
   private add(rect: Rect): string {
     const { doc } = this.ctx;
-    const { shapeKind, shapeFill, shapeStroke } = this.ctx.getOptions();
-    const geo = createGeo(rect, shapeKind, shapeFill, shapeStroke, doc.nextIndex());
+    const options = this.ctx.getOptions();
+    const { shapeKind, shapeFill, shapeStroke } = options;
+    const geo = {
+      ...createGeo(rect, shapeKind, shapeFill, shapeStroke, doc.nextIndex()),
+      ...newColorBindings(options, GEO_DEFAULTS.colorOptions, TokenStore.of(this.ctx.doc)),
+    };
     doc.checkpoint();
     doc.add(geo);
     return geo.id;

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 
 import { DOCUMENT_TOKENS, importConflicts, selectTokens, type ImportChoice } from "@canvas";
-import { useEditorModules } from "@canvas-ui";
+import { ImportConflicts, useEditorModules } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { designStyleTypes } from "@design/ui/modules";
 import { notifyError, toast } from "@shared/stores/toast-store";
@@ -9,7 +9,6 @@ import { Button } from "@shared/ui/components/ui/button";
 import { AppDialog } from "@shared/ui/kit";
 
 import type { ImportBodyProps, ImportTokensDialogProps } from "./exchange.types";
-import { ImportConflicts } from "./import-conflicts";
 import { ImportPickTree } from "./import-pick-tree";
 import { allKeys, pickOf, pickRows } from "./pick-rows";
 

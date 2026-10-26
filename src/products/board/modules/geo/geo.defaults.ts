@@ -5,4 +5,6 @@ export const GEO_DEFAULTS = {
   fontSize: 16,
   padding: 12,
   strokeWidth: 2,
+  /** Its color fields and the options that pick them. */
+  colorOptions: { fill: "shapeFill", stroke: "shapeStroke" },
 } as const satisfies GeoDefaults;

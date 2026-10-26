@@ -9,8 +9,10 @@ import {
   type ElementView,
   type Point,
   type ScaleTransform,
+  type BindableField,
 } from "@canvas";
 
+import { colorField, colorTokenOptions, restyleColors } from "../../tokens";
 import { INK_COLOR, SHAPE_FILLS, SHAPE_STROKES } from "../../palette";
 import type { BoardToolOptions } from "../../board-options.types";
 import { QuickConnectKind } from "../connector/quick-connect.kind";
@@ -86,19 +88,30 @@ export class GeoKind extends QuickConnectKind<GeoElement> {
     return { x: el.x + local.x, y: el.y + local.y };
   }
 
+  /** Its fill and outline bind to color variables. */
+  override bindable(): BindableField[] {
+    return [
+      colorField("fill", "Fill", "shape-fill"),
+      colorField("stroke", "Outline", "stroke-color"),
+    ];
+  }
+
   override describe(el: GeoElement): ElementDescription {
     return { ...super.describe(el), kind: el.kind };
   }
 
   override optionsOf(el: GeoElement): Partial<BoardToolOptions> {
-    return { shapeKind: el.kind, shapeFill: el.fill, shapeStroke: el.stroke };
+    return {
+      shapeKind: el.kind,
+      shapeFill: el.fill,
+      shapeStroke: el.stroke,
+      ...colorTokenOptions(el, GEO_DEFAULTS.colorOptions),
+    };
   }
 
-  override restyle(_el: GeoElement, options: Partial<BoardToolOptions>): ElementPatch<GeoElement> {
-    const patch: ElementPatch<GeoElement> = {};
+  override restyle(el: GeoElement, options: Partial<BoardToolOptions>): ElementPatch<GeoElement> {
+    const patch: ElementPatch<GeoElement> = restyleColors(el, options, GEO_DEFAULTS.colorOptions);
     if (options.shapeKind) patch.kind = options.shapeKind;
-    if (options.shapeFill) patch.fill = options.shapeFill;
-    if (options.shapeStroke) patch.stroke = options.shapeStroke;
     return patch;
   }
 }

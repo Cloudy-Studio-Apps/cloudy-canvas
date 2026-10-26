@@ -7,6 +7,8 @@ export interface DrawToolOptions {
   /** Whether new strokes are smoothed when they're finished. */
   drawSmooth: boolean;
   markerColor: string;
+  /** The color variable the pen's color is bound to (`null`: the color as picked). */
+  markerColorToken: string | null;
   markerSize: number;
   highlighterColor: string;
   highlighterSize: number;

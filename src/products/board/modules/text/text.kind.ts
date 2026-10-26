@@ -11,8 +11,10 @@ import {
   type ElementText,
   type ElementView,
   type ScaleTransform,
+  type BindableField,
 } from "@canvas";
 
+import { colorField } from "../../tokens";
 import type { BoardToolOptions } from "../../board-options.types";
 import { INK_COLOR } from "../../palette";
 import { createTextDraft } from "./text.factory";
@@ -97,6 +99,11 @@ export class TextKind extends ElementKind<TextElement, BoardToolOptions> {
       throw new Error(`"fontSize" must be between ${minFontSize} and ${maxFontSize}.`);
     }
     return { ...patch, ...measureText(patch.text ?? el.text, patch.fontSize ?? el.fontSize) };
+  }
+
+  /** Its color binds to a color variable. */
+  override bindable(): BindableField[] {
+    return [colorField("color", "Color", "text-fill")];
   }
 
   override describe(el: TextElement): ElementDescription {

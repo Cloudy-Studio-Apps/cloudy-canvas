@@ -14,8 +14,10 @@ import {
   type Point,
   type Rect,
   type ScaleTransform,
+  type BindableField,
 } from "@canvas";
 
+import { colorField, colorTokenOptions, restyleColors } from "../../tokens";
 import type { BoardToolOptions } from "../../board-options.types";
 import { INK_COLOR, TABLE_COLORS } from "../../palette";
 import { createTable } from "./table.factory";
@@ -209,6 +211,16 @@ export class TableKind extends BoxKind<TableElement, BoardToolOptions> {
     };
   }
 
+  /** Its header tint and every cell's fill bind to color variables. */
+  override bindable(el: TableElement): BindableField[] {
+    const cells = el.fills.flatMap((row, r) =>
+      row.map((_fill, c) =>
+        colorField(`fills.${r}.${c}`, `Cell ${r + 1},${c + 1} fill`, "shape-fill"),
+      ),
+    );
+    return [colorField("color", "Header tint", "shape-fill"), ...cells];
+  }
+
   override describe(el: TableElement): ElementDescription {
     return {
       label: (el.cells[0] ?? []).filter(Boolean).join(" | ") || undefined,
@@ -217,15 +229,22 @@ export class TableKind extends BoxKind<TableElement, BoardToolOptions> {
   }
 
   override optionsOf(el: TableElement): Partial<BoardToolOptions> {
-    return { tableColor: el.color, tableHeader: el.header };
+    return {
+      tableColor: el.color,
+      tableHeader: el.header,
+      ...colorTokenOptions(el, TABLE_DEFAULTS.colorOptions),
+    };
   }
 
   override restyle(
     el: TableElement,
     options: Partial<BoardToolOptions>,
   ): ElementPatch<TableElement> {
-    const patch: ElementPatch<TableElement> = {};
-    if (options.tableColor && options.tableColor !== el.color) patch.color = options.tableColor;
+    const patch: ElementPatch<TableElement> = restyleColors(
+      el,
+      options,
+      TABLE_DEFAULTS.colorOptions,
+    );
     if (options.tableHeader !== undefined && options.tableHeader !== el.header) {
       // Header text is bold, so its row may need to grow.
       Object.assign(patch, gridPatch(el, { header: options.tableHeader }));

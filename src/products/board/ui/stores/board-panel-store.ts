@@ -11,11 +11,16 @@ export const useBoardPanelStore = create<BoardPanelState>()((set) => ({
   erDiagram: null,
   erCollapsed: false,
   libraryOpen: false,
-  setSchemaOpen: (schemaOpen) => set(schemaOpen ? { schemaOpen, erOpen: false } : { schemaOpen }),
+  colorsOpen: false,
+  setSchemaOpen: (schemaOpen) =>
+    set(schemaOpen ? { schemaOpen, erOpen: false, colorsOpen: false } : { schemaOpen }),
   setTableTab: (tableTab) => set({ tableTab }),
-  setErOpen: (erOpen) => set(erOpen ? { erOpen, schemaOpen: false } : { erOpen }),
+  setErOpen: (erOpen) =>
+    set(erOpen ? { erOpen, schemaOpen: false, colorsOpen: false } : { erOpen }),
   setErTab: (erTab) => set({ erTab }),
   setErDiagram: (erDiagram) => set({ erDiagram }),
   setErCollapsed: (erCollapsed) => set({ erCollapsed }),
   setLibraryOpen: (libraryOpen) => set({ libraryOpen }),
+  setColorsOpen: (colorsOpen) =>
+    set(colorsOpen ? { colorsOpen, schemaOpen: false, erOpen: false } : { colorsOpen }),
 }));

@@ -5,11 +5,13 @@ import {
   optionalBoolean,
   optionalChoice,
   optionalNumber,
+  readScopes,
+  requireCollection,
+  requireVariable,
   stringArg,
 } from "@canvas";
 
 import { requireDesign, type DesignAgentTool } from "../../../agent";
-import { readScopes, requireCollection, requireVariable } from "./variable-args";
 
 /** Number scales (spacing, type sizes), kept linked to their base. */
 export const scaleTools: DesignAgentTool[] = [

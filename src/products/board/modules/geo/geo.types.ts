@@ -1,3 +1,4 @@
+import type { ColorOptions } from "../../tokens";
 import type { CanvasElement, ElementDefaults } from "@canvas";
 
 /** A basic diagram shape with a centered label. */
@@ -14,6 +15,8 @@ export interface GeoElement extends CanvasElement {
 }
 
 export interface GeoDefaults extends ElementDefaults {
+  /** Its color fields and the tool options that pick them (field path → option). */
+  colorOptions: ColorOptions;
   fontSize: number;
   /** Horizontal padding around the centered label. */
   padding: number;

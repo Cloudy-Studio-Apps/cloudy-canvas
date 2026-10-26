@@ -1,17 +1,17 @@
 import {
   asUndoStep,
   DOCUMENT_TOKENS,
+  type FontWeight,
   optionalNumber,
   optionalString,
+  requireCollection,
   stringArg,
-  type FontWeight,
   type ToolArgs,
 } from "@canvas";
 import { FONT_WEIGHTS } from "@shared/core";
 
 import { requireDesign, type DesignAgentTool } from "../../../agent";
 import { createTypeScale, DEFAULT_TYPE_SCALE, type TypeScaleFont } from "../type-scale";
-import { requireCollection } from "./variable-args";
 
 function weight(args: ToolArgs, key: string, fallback: FontWeight): FontWeight {
   const value = optionalString(args, key);

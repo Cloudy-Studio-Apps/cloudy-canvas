@@ -5,7 +5,9 @@ import {
   type ElementSpec,
   type ElementView,
   type ScaleTransform,
+  type BindableField,
 } from "@canvas";
+import { colorField, colorTokenOptions, restyleColors } from "../../tokens";
 import type { BoardToolOptions } from "../../board-options.types";
 
 import { drawStroke } from "./stroke.draw";
@@ -59,10 +61,20 @@ export class StrokeKind extends LineKind<StrokeElement, BoardToolOptions> {
     return { ...el, pen: el.pen ?? STROKE_DEFAULTS.pen };
   }
 
+  /** A pen stroke's color binds to a color variable (a highlighter keeps its tints). */
+  override bindable(el: StrokeElement): BindableField[] {
+    return el.pen === "pen" ? [colorField("color", "Color", "stroke-color")] : [];
+  }
+
   override optionsOf(el: StrokeElement): Partial<BoardToolOptions> {
     return el.pen === "highlighter"
       ? { drawPen: el.pen, highlighterColor: el.color, highlighterSize: el.size }
-      : { drawPen: el.pen, markerColor: el.color, markerSize: el.size };
+      : {
+          drawPen: el.pen,
+          markerColor: el.color,
+          markerSize: el.size,
+          ...colorTokenOptions(el, STROKE_DEFAULTS.colorOptions),
+        };
   }
 
   override restyle(
@@ -70,10 +82,12 @@ export class StrokeKind extends LineKind<StrokeElement, BoardToolOptions> {
     options: Partial<BoardToolOptions>,
   ): ElementPatch<StrokeElement> {
     const highlighter = el.pen === "highlighter";
-    const color = highlighter ? options.highlighterColor : options.markerColor;
     const size = highlighter ? options.highlighterSize : options.markerSize;
-    const patch: ElementPatch<StrokeElement> = {};
-    if (color) patch.color = color;
+    const patch: ElementPatch<StrokeElement> = highlighter
+      ? options.highlighterColor
+        ? { color: options.highlighterColor }
+        : {}
+      : restyleColors(el, options, STROKE_DEFAULTS.colorOptions);
     if (size !== undefined && size !== el.size) Object.assign(patch, strokeSizePatch(el, size));
     return patch;
   }

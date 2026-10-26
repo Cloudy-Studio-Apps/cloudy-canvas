@@ -1,8 +1,17 @@
-import { fillCells, isTable, partCells, TABLE_FILLS, TRANSPARENT } from "@board";
+import {
+  bindCells,
+  cellFillPath,
+  fillCells,
+  isTable,
+  partCells,
+  TABLE_FILLS,
+  TRANSPARENT,
+} from "@board";
 import { ColorPalette, useEngineElement } from "@canvas-ui";
+import { DocumentColorsButton } from "@board/ui/components/board-colors";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";
 
-/** Fill colors for the selected cell, row or column of a table. */
+/** Fill colors for the selected cell, row or column of a table; a board color binds them. */
 export function TableCellFills() {
   const engine = useBoardEngine();
   const selectedId = useBoardState((state) => state.selectedId);
@@ -12,20 +21,35 @@ export function TableCellFills() {
   const cells = partCells(table, part);
   const first = cells[0];
   const current = (first && table.fills[first.row]?.[first.column]) || TRANSPARENT;
+  const token = first ? (table.bindings?.[cellFillPath(first.row, first.column)] ?? null) : null;
 
   const fill = (color: string) => {
     const latest = engine.doc.get(table.id);
     if (!isTable(latest)) return;
     engine.doc.checkpoint();
-    engine.doc.update(latest.id, fillCells(latest, cells, color === TRANSPARENT ? "" : color));
+    engine.doc.update(latest.id, {
+      ...fillCells(latest, cells, color === TRANSPARENT ? "" : color),
+      ...bindCells(latest, cells, null),
+    });
+  };
+  // The token sync writes the bound cells' colors in the same undo step.
+  const bind = (variableId: string) => {
+    const latest = engine.doc.get(table.id);
+    if (!isTable(latest)) return;
+    engine.doc.checkpoint();
+    engine.doc.update(latest.id, bindCells(latest, cells, variableId));
   };
 
   return (
-    <ColorPalette
-      colors={TABLE_FILLS}
-      value={current}
-      labelOf={(color) => (color.value === TRANSPARENT ? "No fill" : `${color.name} fill`)}
-      onSelect={fill}
-    />
+    <>
+      <DocumentColorsButton token={token} scopes={["shape-fill"]} onPick={bind} />
+      <ColorPalette
+        colors={TABLE_FILLS}
+        value={current}
+        labelOf={(color) => (color.value === TRANSPARENT ? "No fill" : `${color.name} fill`)}
+        onSelect={fill}
+        noneSelected={!!token}
+      />
+    </>
   );
 }

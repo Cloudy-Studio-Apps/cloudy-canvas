@@ -3,28 +3,26 @@ import {
   DEFAULT_VALUE,
   defaultValueOf,
   DOCUMENT_TOKENS,
+  type DocumentTokens,
+  findMode,
   optionalBoolean,
   optionalString,
-  recordList,
-  stringArg,
-  stringList,
-  type DocumentTokens,
-  type ToolArgs,
-  type VariableType,
-} from "@canvas";
-
-import { requireDesign, type DesignAgentTool } from "../../../agent";
-import {
-  findMode,
   readCodeSyntax,
   readScopes,
   readTokenValue,
+  recordList,
   requireAxis,
   requireCollection,
   requireVariable,
   SCOPE_NAMES,
+  stringArg,
+  stringList,
+  type ToolArgs,
   VARIABLE_TYPES,
-} from "./variable-args";
+  type VariableType,
+} from "@canvas";
+
+import { requireDesign, type DesignAgentTool } from "../../../agent";
 
 const VALUE = {
   description:

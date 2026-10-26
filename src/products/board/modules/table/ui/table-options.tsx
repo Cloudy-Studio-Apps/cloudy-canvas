@@ -1,7 +1,8 @@
 import { PanelTop } from "lucide-react";
 
 import { TABLE_COLORS } from "@board";
-import { ColorPalette, FloatingPanel, OptionButton, PanelDivider } from "@canvas-ui";
+import { FloatingPanel, OptionButton, PanelDivider } from "@canvas-ui";
+import { BoardColorPalette } from "@board/ui/components/board-colors";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";
 import { TableCellFills } from "./table-cell-fills";
 import { TableLineActions } from "./table-line-actions";
@@ -13,7 +14,7 @@ import { TableLineActions } from "./table-line-actions";
  */
 export function TableOptions() {
   const engine = useBoardEngine();
-  const { tableColor, tableHeader } = useBoardState((state) => state.options);
+  const tableHeader = useBoardState((state) => state.options.tableHeader);
   const hasPart = useBoardState((state) => state.selectedPart !== null);
 
   return (
@@ -30,11 +31,11 @@ export function TableOptions() {
       {hasPart ? (
         <TableCellFills />
       ) : (
-        <ColorPalette
+        <BoardColorPalette
+          option="tableColor"
           colors={TABLE_COLORS}
-          value={tableColor}
+          scopes={["shape-fill"]}
           labelOf={(color) => `${color.name} header`}
-          onSelect={(color) => engine.setToolOptions({ tableColor: color })}
         />
       )}
       <TableLineActions />

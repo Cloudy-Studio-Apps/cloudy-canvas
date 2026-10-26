@@ -3,6 +3,7 @@ import type { EditorModules } from "@canvas-ui";
 import { boardCanvas, type BoardToolOptions } from "@board";
 import { createModuleHost, stickerCatalog, type AppModule, type ModuleHost } from "@shared/core";
 import { usePluginsStore } from "@shared/stores/plugins-store";
+import { colorsModule } from "@board/modules/colors/colors.module";
 import { connectorModule } from "@board/modules/connector/connector.module";
 import { coreModule } from "@board/modules/core/core.module";
 import { dbModule } from "@board/modules/db/db.module";
@@ -23,6 +24,7 @@ import type { BoardModuleOptions } from "./board-modules.types";
 /** The board's built-in modules. Their order is the default order of chained hooks. */
 let modules: AppModule[] = [
   coreModule,
+  colorsModule,
   drawModule,
   stickyModule,
   stickerModule,

@@ -10,4 +10,6 @@ export const STROKE_DEFAULTS = {
   smoothTolerance: 2.5,
   smoothPasses: 2,
   maxSize: 64,
+  /** A pen stroke's color field and the option that picks it (highlighters aren't bound). */
+  colorOptions: { color: "markerColor" },
 } as const satisfies StrokeDefaults;

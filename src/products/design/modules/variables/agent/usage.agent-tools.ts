@@ -1,8 +1,15 @@
-import { asUndoStep, DOCUMENT_TOKENS, stringArg, stringList, type ToolArgs } from "@canvas";
+import {
+  asUndoStep,
+  DOCUMENT_TOKENS,
+  requireToken,
+  stringArg,
+  stringList,
+  tokenName,
+  type ToolArgs,
+} from "@canvas";
 
 import { requireDesign, type DesignAgentTool } from "../../../agent";
 import { countedUse, DESIGN_PAGES } from "../../pages";
-import { requireToken, tokenName } from "./token-ref";
 
 const TOKEN = { type: "string", description: "A variable or a style, by id or name." };
 

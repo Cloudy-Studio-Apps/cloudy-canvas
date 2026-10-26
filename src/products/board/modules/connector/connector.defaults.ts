@@ -10,4 +10,6 @@ export const CONNECTOR_DEFAULTS = {
   reach: 4,
   quickConnectOffset: 18,
   quickConnectRadius: 7,
+  /** Its color field and the option that picks it. */
+  colorOptions: { color: "connectorColor" },
 } as const satisfies ConnectorDefaults;

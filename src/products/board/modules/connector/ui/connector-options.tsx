@@ -1,7 +1,8 @@
 import { CornerDownRight, MoveRight } from "lucide-react";
 
 import { LINE_COLORS } from "@board";
-import { ColorPalette, FloatingPanel, OptionButton, PanelDivider } from "@canvas-ui";
+import { FloatingPanel, OptionButton, PanelDivider } from "@canvas-ui";
+import { BoardColorPalette } from "@board/ui/components/board-colors";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";
 import { CONNECTOR_HEADS, CONNECTOR_STYLES } from "./connector-option-items";
 
@@ -10,7 +11,7 @@ const STYLE_ICONS = { elbow: CornerDownRight, straight: MoveRight };
 /** Line style, color and arrowheads for new connectors; also restyles the selected connectors. */
 export function ConnectorOptions() {
   const engine = useBoardEngine();
-  const { connectorStyle, connectorColor, connectorStartHead, connectorEndHead } = useBoardState(
+  const { connectorStyle, connectorStartHead, connectorEndHead } = useBoardState(
     (state) => state.options,
   );
 
@@ -45,11 +46,11 @@ export function ConnectorOptions() {
         </OptionButton>
       ))}
       <PanelDivider />
-      <ColorPalette
+      <BoardColorPalette
+        option="connectorColor"
         colors={LINE_COLORS}
-        value={connectorColor}
+        scopes={["stroke-color"]}
         shape="circle"
-        onSelect={(color) => engine.setToolOptions({ connectorColor: color })}
       />
     </FloatingPanel>
   );

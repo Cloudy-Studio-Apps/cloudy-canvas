@@ -5,10 +5,10 @@ import {
   type TokenScope,
   type TokenStore,
   type TokenValue,
-  type ToolArgs,
   type VariableRecord,
   type VariableType,
-} from "@canvas";
+} from "../../tokens";
+import type { ToolArgs } from "../agent-tool.types";
 
 const SCOPES: ReadonlySet<string> = new Set<TokenScope>([
   "all-fills",
@@ -35,27 +35,39 @@ const SCOPES: ReadonlySet<string> = new Set<TokenScope>([
 ]);
 
 /** A variable by id, "Collection/path" or a path unique across collections; throws when unknown. */
-export function requireVariable(store: TokenStore, ref: string): VariableRecord {
+export function requireVariable(
+  store: TokenStore,
+  ref: string,
+  listTool = "list_variables",
+): VariableRecord {
   const variable = store.find(ref);
   if (!variable) {
-    throw new Error(`No variable "${ref}". Call list_variables for the names and ids.`);
+    throw new Error(`No variable "${ref}". Call ${listTool} for the names and ids.`);
   }
   return variable;
 }
 
 /** A collection by id or name; throws when unknown. */
-export function requireCollection(store: TokenStore, ref: string): CollectionRecord {
+export function requireCollection(
+  store: TokenStore,
+  ref: string,
+  listTool = "list_variables",
+): CollectionRecord {
   const collection = store.collection(ref) ?? store.collections().find((c) => c.name === ref);
   if (!collection) {
-    throw new Error(`No collection "${ref}". Call list_variables for the collections.`);
+    throw new Error(`No collection "${ref}". Call ${listTool} for the collections.`);
   }
   return collection;
 }
 
 /** A mode axis by id or name; throws when unknown. */
-export function requireAxis(store: TokenStore, ref: string): ModeAxisRecord {
+export function requireAxis(
+  store: TokenStore,
+  ref: string,
+  listTool = "list_variables",
+): ModeAxisRecord {
   const axis = store.axis(ref) ?? store.axes().find((a) => a.name === ref);
-  if (!axis) throw new Error(`No mode axis "${ref}". Call list_variables for the axes.`);
+  if (!axis) throw new Error(`No mode axis "${ref}". Call ${listTool} for the axes.`);
   return axis;
 }
 
@@ -70,14 +82,14 @@ export function requireMode(axis: ModeAxisRecord, ref: string): string {
 }
 
 /** A mode of any axis by id or name (unique across axes); throws when unknown. */
-export function findMode(store: TokenStore, ref: string): string {
+export function findMode(store: TokenStore, ref: string, listTool = "list_variables"): string {
   const matches = store
     .axes()
     .flatMap((axis) => axis.modes.filter((m) => m.id === ref || m.name === ref));
   if (matches.length !== 1 || !matches[0]) {
     throw new Error(
       matches.length === 0
-        ? `No mode "${ref}". Call list_variables for the axes and their modes.`
+        ? `No mode "${ref}". Call ${listTool} for the axes and their modes.`
         : `Several axes have a mode "${ref}"; give its id.`,
     );
   }

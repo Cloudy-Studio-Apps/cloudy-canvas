@@ -20,6 +20,7 @@ export const tableModule = defineModule({
     });
     host.contribute(boardCanvas.options, {
       tableColor: TABLE_COLORS[0].value,
+      tableColorToken: null,
       tableHeader: true,
     });
 

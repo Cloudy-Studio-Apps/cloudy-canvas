@@ -1,3 +1,4 @@
+import type { ColorOptions } from "../../tokens";
 import type { CanvasElement, ElementDefaults, Size } from "@canvas";
 
 import type { TableCell } from "./table.layout.types";
@@ -27,6 +28,8 @@ export interface TableElement extends CanvasElement {
 }
 
 export interface TableDefaults extends ElementDefaults {
+  /** Its color fields and the tool options that pick them (field path → option). */
+  colorOptions: ColorOptions;
   size: Size;
   fontSize: number;
   /** A new table's grid. */

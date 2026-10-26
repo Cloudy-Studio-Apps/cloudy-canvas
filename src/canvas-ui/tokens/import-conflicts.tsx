@@ -1,7 +1,7 @@
 import type { ImportChoice } from "@canvas";
 import { SegmentedControl } from "@shared/ui/kit";
 
-import type { ImportConflictsProps } from "./exchange.types";
+import type { ImportConflictsProps } from "./tokens.types";
 
 const CHOICES = [
   {

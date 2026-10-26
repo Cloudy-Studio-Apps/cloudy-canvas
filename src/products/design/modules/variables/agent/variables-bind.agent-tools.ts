@@ -2,6 +2,9 @@ import {
   asUndoStep,
   DOCUMENT_TOKENS,
   recordList,
+  requireAxis,
+  requireMode,
+  requireVariable,
   setBindings,
   stringArg,
   stringList,
@@ -10,7 +13,6 @@ import {
 import { requireDesign, requireNodes, type DesignAgentTool } from "../../../agent";
 import { setVariableModes } from "../set-variable-modes";
 import { requireStyle } from "./style-args";
-import { requireAxis, requireMode, requireVariable } from "./variable-args";
 
 /** Binding layers' fields to variables, and picking modes. */
 export const variablesBindTools: DesignAgentTool[] = [

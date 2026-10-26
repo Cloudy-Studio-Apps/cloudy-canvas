@@ -14,6 +14,8 @@ export interface BoardPanelState {
   erCollapsed: boolean;
   /** Whether the library of widgets, templates and more is open above the toolbar. */
   libraryOpen: boolean;
+  /** Whether the board's colors (its color variables) are open in the side panel. */
+  colorsOpen: boolean;
   setSchemaOpen: (open: boolean) => void;
   setTableTab: (tab: TableEditorTab) => void;
   setErOpen: (open: boolean) => void;
@@ -21,4 +23,5 @@ export interface BoardPanelState {
   setErDiagram: (diagram: string | null) => void;
   setErCollapsed: (collapsed: boolean) => void;
   setLibraryOpen: (open: boolean) => void;
+  setColorsOpen: (open: boolean) => void;
 }

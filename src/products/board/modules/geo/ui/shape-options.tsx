@@ -1,12 +1,13 @@
 import { geoVariants, SHAPE_FILLS, SHAPE_STROKES } from "@board";
-import { ColorPalette, FloatingPanel, OptionButton, PanelDivider } from "@canvas-ui";
+import { FloatingPanel, OptionButton, PanelDivider } from "@canvas-ui";
+import { BoardColorPalette } from "@board/ui/components/board-colors";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";
 import { GeoKindIcon } from "./geo-kind-icon";
 
 /** Kind, fill and outline for new shapes; also restyles the selected shapes. */
 export function ShapeOptions() {
   const engine = useBoardEngine();
-  const { shapeKind, shapeFill, shapeStroke } = useBoardState((state) => state.options);
+  const shapeKind = useBoardState((state) => state.options.shapeKind);
 
   return (
     <FloatingPanel role="group" aria-label="Shape options" className="gap-1 px-2">
@@ -22,19 +23,19 @@ export function ShapeOptions() {
         </OptionButton>
       ))}
       <PanelDivider />
-      <ColorPalette
+      <BoardColorPalette
+        option="shapeFill"
         colors={SHAPE_FILLS}
-        value={shapeFill}
+        scopes={["shape-fill"]}
         labelOf={(color) => `${color.name} fill`}
-        onSelect={(color) => engine.setToolOptions({ shapeFill: color })}
       />
       <PanelDivider />
-      <ColorPalette
+      <BoardColorPalette
+        option="shapeStroke"
         colors={SHAPE_STROKES}
-        value={shapeStroke}
+        scopes={["stroke-color"]}
         shape="circle"
         labelOf={(color) => `${color.name} outline`}
-        onSelect={(color) => engine.setToolOptions({ shapeStroke: color })}
       />
     </FloatingPanel>
   );

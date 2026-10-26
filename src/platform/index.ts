@@ -20,6 +20,7 @@ export { fontLibrary, glyphOutliner } from "./fonts";
 export { importStickerFiles } from "./sticker-file";
 export { stickerLibrary } from "./sticker-library";
 export type * from "./export-file.types";
+export type * from "./token-file.types";
 export { exportFile } from "./export-file";
 export { readLocalFile } from "./read-local-file";
 export { writeExportFile } from "./write-export-file";

@@ -1,4 +1,4 @@
-import { DRAW_THRESHOLD_PX, pastThreshold } from "@canvas";
+import { DRAW_THRESHOLD_PX, pastThreshold, TokenStore } from "@canvas";
 import type { CanvasPointer, ElementGesture, Point, ToolContext } from "@canvas";
 
 import type { BoardToolOptions } from "../../board-options.types";
@@ -7,6 +7,8 @@ import { createConnector } from "./connector.factory";
 import type { ConnectorEnd, ConnectorEndName, ConnectorLook } from "./connector.types";
 import type { ConnectorDragTarget } from "./connector-drag.types";
 import { isConnector } from "./is-connector";
+import { newColorBindings } from "../../tokens";
+import { CONNECTOR_DEFAULTS } from "./connector.defaults";
 
 /**
  * Drags a connector end. Over a connectable element the end sticks to it (and follows it from
@@ -67,7 +69,14 @@ export class ConnectorDrag implements ElementGesture {
     const end = this.endAt(this.ctx.camera.screenToWorld(this.screen));
 
     if (this.id === null && this.target.kind === "new") {
-      const connector = createConnector(this.target.start, end, this.look(), doc.nextIndex());
+      const connector = {
+        ...createConnector(this.target.start, end, this.look(), doc.nextIndex()),
+        ...newColorBindings(
+          this.ctx.getOptions(),
+          CONNECTOR_DEFAULTS.colorOptions,
+          TokenStore.of(this.ctx.doc),
+        ),
+      };
       doc.add(connector);
       this.id = connector.id;
       return;

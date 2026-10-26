@@ -1,3 +1,4 @@
+import type { ColorOptions } from "../../tokens";
 import type { CanvasElement, ElementDefaults } from "@canvas";
 
 /** What drew a stroke: an opaque pen, or a wide translucent highlighter. */
@@ -26,6 +27,8 @@ export interface StrokePenLook {
 }
 
 export interface StrokeDefaults extends ElementDefaults {
+  /** Its color fields and the tool options that pick them (field path → option). */
+  colorOptions: ColorOptions;
   pen: StrokePen;
   pens: Record<StrokePen, StrokePenLook>;
   /** Screen pixels a smoothed stroke may drift from what was drawn before its points are dropped. */

@@ -20,7 +20,10 @@ export const stickyModule = defineModule({
       create: (ctx) => new StickyTool(ctx),
       keys: [{ key: "s" }],
     });
-    host.contribute(boardCanvas.options, { stickyColor: STICKY_COLORS[0].value });
+    host.contribute(boardCanvas.options, {
+      stickyColor: STICKY_COLORS[0].value,
+      stickyColorToken: null,
+    });
 
     host.contribute(boardEditor.tools, {
       tool: "sticky",

@@ -24,6 +24,8 @@ export const geoModule = defineModule({
       shapeKind: "rectangle",
       shapeFill: SHAPE_FILLS[0].value,
       shapeStroke: SHAPE_STROKES[0].value,
+      shapeFillToken: null,
+      shapeStrokeToken: null,
     });
 
     host.contribute(boardEditor.tools, {

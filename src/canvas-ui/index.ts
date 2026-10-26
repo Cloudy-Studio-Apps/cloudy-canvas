@@ -27,6 +27,7 @@ export { EXPORT_THEME_SCOPE, readCanvasTheme, readExportCanvasTheme } from "./ca
 export { StickerWheel } from "./stickers";
 export type * from "./tokens";
 export {
+  ImportConflicts,
   matchesScopes,
   TokenGroupAccordion,
   TokenSwatch,

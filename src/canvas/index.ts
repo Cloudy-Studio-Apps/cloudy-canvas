@@ -102,7 +102,8 @@ export {
 export { ActorWorkspace, followEdit, showArea, withAspect } from "./workspace";
 export { HOST_ORIGIN, ShareGuest, ShareHost } from "./share";
 export type * from "./share";
-export { decodeCanvasFile, encodeCanvasFile } from "./file";
+export type * from "./file/read-file-tokens.types";
+export { canvasFileMagic, decodeCanvasFile, encodeCanvasFile, readFileTokens } from "./file";
 export { canvasBlob, encodePdfPages } from "./export";
 export * from "./agent";
 export * from "./elements";

@@ -1,5 +1,6 @@
 export type * from "./exchange.types";
 export { camelPath, slugPath, uniqueNames } from "./token-names";
+export { colorTokensOnly } from "./color-tokens";
 export { selectTokens } from "./select-tokens";
 export { importConflicts, planTokenImport } from "./import-plan";
 export * from "./dtcg";

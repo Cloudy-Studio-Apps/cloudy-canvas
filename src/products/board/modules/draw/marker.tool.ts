@@ -1,9 +1,10 @@
-import { FreehandTool } from "@canvas";
+import { FreehandTool, TokenStore } from "@canvas";
 
 import type { BoardToolOptions } from "../../board-options.types";
 import { STROKE_DEFAULTS } from "./stroke.defaults";
 import { createStroke } from "./stroke.factory";
 import type { StrokeElement } from "./stroke.types";
+import { newColorBindings } from "../../tokens";
 
 /**
  * Freehand drawing with the picked pen (pen or highlighter), smoothed on release when smoothing
@@ -27,6 +28,9 @@ export class MarkerTool extends FreehandTool<BoardToolOptions, StrokeElement> {
           options.highlighterSize,
           index,
         )
-      : createStroke(points, "pen", options.markerColor, options.markerSize, index);
+      : {
+          ...createStroke(points, "pen", options.markerColor, options.markerSize, index),
+          ...newColorBindings(options, STROKE_DEFAULTS.colorOptions, TokenStore.of(this.ctx.doc)),
+        };
   }
 }

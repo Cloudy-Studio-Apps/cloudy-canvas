@@ -1,3 +1,4 @@
+import type { ColorOptions } from "../../tokens";
 import type { ElementDefaults, ElementSide, LineElement, Point } from "@canvas";
 
 /** One end of a connector: stuck to an element, or free at (x, y) in world coordinates. */
@@ -49,6 +50,8 @@ export interface ResolvedEnd {
 }
 
 export interface ConnectorDefaults extends ElementDefaults {
+  /** Its color fields and the tool options that pick them (field path → option). */
+  colorOptions: ColorOptions;
   /** Line thickness of new connectors. */
   lineWidth: number;
   /** How far an elbow route leaves an element before its first turn. */

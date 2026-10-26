@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import type {
   DocumentTokens,
+  ImportChoice,
   ModeContext,
   TokenGroupNode,
   TokenScope,
@@ -56,6 +57,9 @@ export interface VariablePickerProps {
   /** The trigger (rendered as the popover's anchor). */
   children: ReactNode;
   align?: "start" | "center" | "end";
+  side?: "top" | "right" | "bottom" | "left";
+  /** Below the list (e.g. a link to where the variables are managed); picking it closes the list. */
+  footer?: ReactNode;
 }
 
 export interface VariableChipProps {
@@ -75,4 +79,11 @@ export interface VariableValueProps {
   /** Colors as circles. */
   round?: boolean;
   className?: string;
+}
+
+export interface ImportConflictsProps {
+  /** The incoming names that are taken (`Collection/path`, a style's name). */
+  names: readonly string[];
+  choice: ImportChoice;
+  onChoice: (choice: ImportChoice) => void;
 }

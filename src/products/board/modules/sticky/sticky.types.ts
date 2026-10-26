@@ -1,3 +1,4 @@
+import type { ColorOptions } from "../../tokens";
 import type { CanvasElement, ElementDefaults, Size } from "@canvas";
 
 export interface StickyElement extends CanvasElement {
@@ -11,6 +12,8 @@ export interface StickyElement extends CanvasElement {
 }
 
 export interface StickyDefaults extends ElementDefaults {
+  /** Its color fields and the tool options that pick them (field path → option). */
+  colorOptions: ColorOptions;
   size: Size;
   fontSize: number;
   /** Inner padding around the text. */

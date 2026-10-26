@@ -25,6 +25,8 @@ export interface AgentHost {
   plugins(): AgentPlugin[];
   /** Writes a file to an absolute path (exports), replacing what's there. */
   writeFile(path: string, file: Blob): Promise<void>;
+  /** Reads a file at an absolute path (imports). */
+  readFile(path: string): Promise<Uint8Array>;
 }
 
 /** A tool that acts on the open board. */

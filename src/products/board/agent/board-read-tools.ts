@@ -1,4 +1,13 @@
-import { optionalRecord, optionalString, stringList, summarizeElement, type Rect } from "@canvas";
+import {
+  optionalRecord,
+  optionalString,
+  stringList,
+  summarizeElement,
+  TokenStore,
+  type Rect,
+} from "@canvas";
+
+import { boundColors } from "../tokens";
 
 import { requireBoard } from "./board-access";
 import type { BoardAgentTool } from "./board-agent.types";
@@ -72,7 +81,10 @@ export const boardReadTools: BoardAgentTool[] = [
       return engine
         .elements()
         .filter((el) => (!type || el.type === type) && (!within || overlaps(el, within)))
-        .map((el) => summarizeElement(engine.kinds, el));
+        .map((el) => ({
+          ...summarizeElement(engine.kinds, el),
+          ...boundColors(TokenStore.of(engine.doc), el),
+        }));
     },
   },
   {
@@ -99,7 +111,10 @@ export const boardReadTools: BoardAgentTool[] = [
         .userSelection()
         .map((id) => engine.getElement(id) ?? engine.doc.get(id))
         .filter((el) => el !== undefined)
-        .map((el) => summarizeElement(engine.kinds, el));
+        .map((el) => ({
+          ...summarizeElement(engine.kinds, el),
+          ...boundColors(TokenStore.of(engine.doc), el),
+        }));
     },
   },
 ];

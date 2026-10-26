@@ -23,6 +23,8 @@ export function VariablePicker({
   onPick,
   children,
   align = "end",
+  side,
+  footer,
 }: VariablePickerProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -45,7 +47,7 @@ export function VariablePicker({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent align={align} className="w-64 p-0">
+      <PopoverContent align={align} side={side} className="w-64 p-0">
         <div className="border-b border-border p-2">
           <SearchInput
             autoFocus
@@ -94,6 +96,11 @@ export function VariablePicker({
             ))
           )}
         </div>
+        {footer && (
+          <div className="border-t border-border p-1" onClick={() => setOpen(false)}>
+            {footer}
+          </div>
+        )}
       </PopoverContent>
     </Popover>
   );

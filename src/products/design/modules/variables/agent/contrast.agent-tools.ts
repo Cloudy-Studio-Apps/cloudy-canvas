@@ -1,9 +1,13 @@
-import { DOCUMENT_TOKENS, optionalBoolean, optionalString } from "@canvas";
+import {
+  DOCUMENT_TOKENS,
+  optionalBoolean,
+  optionalString,
+  requireVariable,
+  tokenName,
+} from "@canvas";
 
 import { requireDesign, type DesignAgentTool } from "../../../agent";
 import { contrastChecks } from "../contrast";
-import { requireVariable } from "./variable-args";
-import { tokenName } from "./token-ref";
 
 /** WCAG contrast of the design's color pairs. */
 export const contrastTools: DesignAgentTool[] = [

@@ -5,11 +5,12 @@ import {
   optionalChoice,
   optionalNumber,
   parseTokenColor,
+  requireCollection,
+  requireVariable,
   stringArg,
 } from "@canvas";
 
 import { requireDesign, type DesignAgentTool } from "../../../agent";
-import { requireCollection, requireVariable } from "./variable-args";
 
 /** Shades of a color, kept linked to it (the Variables window's generator). */
 export const shadeTools: DesignAgentTool[] = [

@@ -25,7 +25,10 @@ export const sectionModule = defineModule({
       create: (ctx) => new SectionTool(ctx),
       keys: [{ key: "s", shift: true }],
     });
-    host.contribute(boardCanvas.options, { sectionColor: SECTION_COLORS[0].value });
+    host.contribute(boardCanvas.options, {
+      sectionColor: SECTION_COLORS[0].value,
+      sectionColorToken: null,
+    });
     host.contribute(boardCanvas.withMembers, (ids, elements, _purpose, kinds) =>
       withSectionMembers(ids, elements, kinds),
     );

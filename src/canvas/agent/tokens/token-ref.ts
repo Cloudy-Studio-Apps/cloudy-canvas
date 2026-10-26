@@ -1,4 +1,4 @@
-import type { StyleRecord, TokenStore, VariableRecord } from "@canvas";
+import type { StyleRecord, TokenStore, VariableRecord } from "../../tokens";
 
 /** A variable or a style by id or name; throws pointing at the listing tools. */
 export function requireToken(store: TokenStore, ref: string): VariableRecord | StyleRecord {

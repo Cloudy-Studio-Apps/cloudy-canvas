@@ -1,8 +1,15 @@
-import { DOCUMENT_TOKENS, optionalString, stringList } from "@canvas";
+import {
+  describeAxis,
+  describeCollection,
+  describeVariable,
+  DOCUMENT_TOKENS,
+  optionalString,
+  requireCollection,
+  requireVariable,
+  stringList,
+} from "@canvas";
 
 import { requireDesign, type DesignAgentTool } from "../../../agent";
-import { describeAxis, describeCollection, describeVariable } from "./describe-variables";
-import { requireCollection, requireVariable } from "./variable-args";
 
 /** Reading the design's variables. */
 export const variablesReadTools: DesignAgentTool[] = [

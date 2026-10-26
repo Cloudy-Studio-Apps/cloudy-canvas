@@ -7,8 +7,10 @@ import {
   type ElementTextStyle,
   type ElementView,
   type Point,
+  type BindableField,
 } from "@canvas";
 
+import { colorField, colorTokenOptions, restyleColors } from "../../tokens";
 import type { BoardToolOptions } from "../../board-options.types";
 import { INK_COLOR, SECTION_COLORS } from "../../palette";
 import { createSection } from "./section.factory";
@@ -78,14 +80,19 @@ export class SectionKind extends TextBoxKind<SectionElement, BoardToolOptions> {
     );
   }
 
+  /** Its color binds to a color variable. */
+  override bindable(): BindableField[] {
+    return [colorField("color", "Color", "frame-fill")];
+  }
+
   override optionsOf(el: SectionElement): Partial<BoardToolOptions> {
-    return { sectionColor: el.color };
+    return { sectionColor: el.color, ...colorTokenOptions(el, SECTION_DEFAULTS.colorOptions) };
   }
 
   override restyle(
-    _el: SectionElement,
+    el: SectionElement,
     options: Partial<BoardToolOptions>,
   ): ElementPatch<SectionElement> {
-    return options.sectionColor ? { color: options.sectionColor } : {};
+    return restyleColors(el, options, SECTION_DEFAULTS.colorOptions);
   }
 }

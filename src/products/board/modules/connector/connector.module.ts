@@ -30,6 +30,7 @@ export const connectorModule = defineModule({
     host.contribute(boardCanvas.options, {
       connectorStyle: "elbow",
       connectorColor: LINE_COLORS[0].value,
+      connectorColorToken: null,
       connectorStartHead: "none",
       connectorEndHead: "arrow",
     });

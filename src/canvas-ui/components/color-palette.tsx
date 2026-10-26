@@ -10,9 +10,10 @@ export function ColorPalette({
   shape,
   allowCustom = true,
   labelOf = (color) => color.name,
+  noneSelected = false,
 }: ColorPaletteProps) {
-  const current = value.toLowerCase();
-  const inPalette = colors.some((color) => color.value.toLowerCase() === current);
+  const current = noneSelected ? null : value.toLowerCase();
+  const inPalette = noneSelected || colors.some((color) => color.value.toLowerCase() === current);
   return (
     <>
       {colors.map((color) => (

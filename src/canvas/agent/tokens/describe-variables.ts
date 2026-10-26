@@ -6,7 +6,7 @@ import {
   type TokenStore,
   type TokenValue,
   type VariableRecord,
-} from "@canvas";
+} from "../../tokens";
 
 /** A value as agents read it: a color, number, text or boolean, or `{ alias: "Collection/path" }`. */
 function describeValue(store: TokenStore, value: TokenValue | undefined): unknown {

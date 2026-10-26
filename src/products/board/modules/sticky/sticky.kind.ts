@@ -5,8 +5,10 @@ import {
   type ElementTextStyle,
   type ElementView,
   type ScaleTransform,
+  type BindableField,
 } from "@canvas";
 
+import { colorField, colorTokenOptions, restyleColors } from "../../tokens";
 import { INK_COLOR, STICKY_COLORS } from "../../palette";
 import type { BoardToolOptions } from "../../board-options.types";
 import { QuickConnectKind } from "../connector/quick-connect.kind";
@@ -59,14 +61,19 @@ export class StickyKind extends QuickConnectKind<StickyElement> {
     return { ...sticky, ...rect, text: spec.text ?? "" };
   }
 
+  /** Its color binds to a color variable. */
+  override bindable(): BindableField[] {
+    return [colorField("color", "Color", "shape-fill")];
+  }
+
   override optionsOf(el: StickyElement): Partial<BoardToolOptions> {
-    return { stickyColor: el.color };
+    return { stickyColor: el.color, ...colorTokenOptions(el, STICKY_DEFAULTS.colorOptions) };
   }
 
   override restyle(
-    _el: StickyElement,
+    el: StickyElement,
     options: Partial<BoardToolOptions>,
   ): ElementPatch<StickyElement> {
-    return options.stickyColor ? { color: options.stickyColor } : {};
+    return restyleColors(el, options, STICKY_DEFAULTS.colorOptions);
   }
 }

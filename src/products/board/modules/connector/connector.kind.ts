@@ -12,8 +12,10 @@ import {
   type InteractionQuery,
   type Point,
   type ScaleTransform,
+  type BindableField,
 } from "@canvas";
 
+import { colorField, colorTokenOptions, restyleColors } from "../../tokens";
 import type { BoardToolOptions } from "../../board-options.types";
 import { INK_COLOR } from "../../palette";
 import { CONNECTOR_DEFAULTS } from "./connector.defaults";
@@ -136,6 +138,11 @@ export class ConnectorKind extends LineKind<ConnectorElement, BoardToolOptions> 
     };
   }
 
+  /** Its color binds to a color variable. */
+  override bindable(): BindableField[] {
+    return [colorField("color", "Color", "stroke-color")];
+  }
+
   override describe(el: ConnectorElement): ElementDescription {
     return { kind: el.style, ends: { from: el.start.shapeId, to: el.end.shapeId } };
   }
@@ -146,16 +153,20 @@ export class ConnectorKind extends LineKind<ConnectorElement, BoardToolOptions> 
       connectorColor: el.color,
       connectorStartHead: el.startHead,
       connectorEndHead: el.endHead,
+      ...colorTokenOptions(el, CONNECTOR_DEFAULTS.colorOptions),
     };
   }
 
   override restyle(
-    _el: ConnectorElement,
+    el: ConnectorElement,
     o: Partial<BoardToolOptions>,
   ): ElementPatch<ConnectorElement> {
-    const patch: ElementPatch<ConnectorElement> = {};
+    const patch: ElementPatch<ConnectorElement> = restyleColors(
+      el,
+      o,
+      CONNECTOR_DEFAULTS.colorOptions,
+    );
     if (o.connectorStyle) patch.style = o.connectorStyle;
-    if (o.connectorColor) patch.color = o.connectorColor;
     if (o.connectorStartHead) patch.startHead = o.connectorStartHead;
     if (o.connectorEndHead) patch.endHead = o.connectorEndHead;
     return patch;

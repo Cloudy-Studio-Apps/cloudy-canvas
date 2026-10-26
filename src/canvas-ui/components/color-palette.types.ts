@@ -9,4 +9,6 @@ export interface ColorPaletteProps {
   allowCustom?: boolean;
   /** A swatch's name from its color's (e.g. "Blue fill"); its color's name when unset. */
   labelOf?: (color: { name: string; value: string }) => string;
+  /** No swatch shows as picked (the color comes from elsewhere, e.g. a variable). */
+  noneSelected?: boolean;
 }

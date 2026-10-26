@@ -1,3 +1,4 @@
+import type { ColorOptions } from "../../tokens";
 import type { CanvasElement, ElementDefaults, Size } from "@canvas";
 
 /**
@@ -12,6 +13,8 @@ export interface SectionElement extends CanvasElement {
 }
 
 export interface SectionDefaults extends ElementDefaults {
+  /** Its color fields and the tool options that pick them (field path → option). */
+  colorOptions: ColorOptions;
   size: Size;
   fontSize: number;
   /** Height of the title strip along the top edge. */

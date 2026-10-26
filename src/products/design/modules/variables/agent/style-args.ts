@@ -1,6 +1,7 @@
 import {
   DOCUMENT_TOKENS,
   pickedBindings,
+  requireVariable,
   resolveStyle,
   type StyleRecord,
   type TokenStore,
@@ -34,7 +35,6 @@ import {
   textStyleSummary,
   isText,
 } from "../../text";
-import { requireVariable } from "./variable-args";
 
 /** The style types agents name, as `type`. */
 export const STYLE_TYPES = [TEXT_STYLE, PAINT_STYLE, EFFECT_STYLE, STROKE_STYLE] as const;

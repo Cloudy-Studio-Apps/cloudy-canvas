@@ -6,12 +6,14 @@ import {
   type ToolContext,
   DRAW_THRESHOLD_PX,
   pastThreshold,
+  TokenStore,
 } from "@canvas";
 
 import type { BoardToolOptions } from "../../board-options.types";
 import { isSection } from "./is-section";
 import { SECTION_DEFAULTS } from "./section.defaults";
 import { createSection } from "./section.factory";
+import { newColorBindings } from "../../tokens";
 
 /** Drag to draw a section around elements (they join it), or click to place an empty one. */
 export class SectionTool implements Tool {
@@ -56,12 +58,11 @@ export class SectionTool implements Tool {
   private add(rect: Rect): string {
     const { doc } = this.ctx;
     const count = doc.all().filter(isSection).length;
-    const section = createSection(
-      rect,
-      `Section ${count + 1}`,
-      this.ctx.getOptions().sectionColor,
-      doc.nextIndex(),
-    );
+    const options = this.ctx.getOptions();
+    const section = {
+      ...createSection(rect, `Section ${count + 1}`, options.sectionColor, doc.nextIndex()),
+      ...newColorBindings(options, SECTION_DEFAULTS.colorOptions, TokenStore.of(this.ctx.doc)),
+    };
     doc.checkpoint();
     doc.add(section);
     return section.id;

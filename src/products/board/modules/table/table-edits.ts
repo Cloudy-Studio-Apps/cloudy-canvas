@@ -1,6 +1,7 @@
 import type { ElementPatch, Rect } from "@canvas";
 
 import { TABLE_DEFAULTS } from "./table.defaults";
+import { afterInsert, afterMove, afterRemove, moveCellBindings } from "./table-cell-bindings";
 import { fitRows, rowTextHeight, sum } from "./table.layout";
 import type { TableCell } from "./table.layout.types";
 import type { TableAxis, TableElement } from "./table.types";
@@ -15,7 +16,10 @@ type CellMatrices = Pick<TableElement, "cells" | "fills">;
  * follow from them, with rows grown to fit their text. Shared by the kind, its gestures, the
  * options panel and agents.
  */
-export function gridPatch(el: TableElement, changes: Partial<TableGrid>): TablePatch {
+export function gridPatch(
+  el: TableElement,
+  changes: Partial<TableGrid> & Pick<TableElement, "bindings">,
+): TablePatch {
   const grid: TableGrid = {
     columns: changes.columns ?? el.columns,
     rows: changes.rows ?? el.rows,
@@ -52,11 +56,13 @@ export function insertLine(el: TableElement, axis: TableAxis, at: number): Table
     return gridPatch(el, {
       rows: insertAt(el.rows, at, rowHeight),
       ...mapMatrices(el, (matrix) => insertAt(matrix, at, empty)),
+      ...moveCellBindings(el, axis, afterInsert(at)),
     });
   }
   return gridPatch(el, {
     columns: insertAt(el.columns, at, columnWidth),
     ...mapRows(el, (row) => insertAt(row, at, "")),
+    ...moveCellBindings(el, axis, afterInsert(at)),
   });
 }
 
@@ -67,12 +73,14 @@ export function removeLine(el: TableElement, axis: TableAxis, index: number): Ta
     return gridPatch(el, {
       rows: removeAt(el.rows, index),
       ...mapMatrices(el, (matrix) => removeAt(matrix, index)),
+      ...moveCellBindings(el, axis, afterRemove(index)),
     });
   }
   if (el.columns.length <= 1) return null;
   return gridPatch(el, {
     columns: removeAt(el.columns, index),
     ...mapRows(el, (row) => removeAt(row, index)),
+    ...moveCellBindings(el, axis, afterRemove(index)),
   });
 }
 
@@ -82,11 +90,13 @@ export function moveLine(el: TableElement, axis: TableAxis, from: number, to: nu
     return gridPatch(el, {
       rows: moveAt(el.rows, from, to),
       ...mapMatrices(el, (matrix) => moveAt(matrix, from, to)),
+      ...moveCellBindings(el, axis, afterMove(from, to)),
     });
   }
   return gridPatch(el, {
     columns: moveAt(el.columns, from, to),
     ...mapRows(el, (row) => moveAt(row, from, to)),
+    ...moveCellBindings(el, axis, afterMove(from, to)),
   });
 }
 

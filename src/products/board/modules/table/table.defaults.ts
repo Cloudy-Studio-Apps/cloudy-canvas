@@ -18,4 +18,6 @@ export const TABLE_DEFAULTS = {
   gripLengthPx: 16,
   gripThicknessPx: 5,
   lineReachPx: 4,
+  /** Its header tint field and the option that picks it. */
+  colorOptions: { color: "tableColor" },
 } as const satisfies TableDefaults;
