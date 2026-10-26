@@ -60,6 +60,7 @@ export interface PluginApi {
     | "optionalRecord"
     | "recordList"
     | "clamp"
+    | "mod"
     | "roundPoint"
     | "fitInView"
     | "elementBounds"

@@ -108,9 +108,15 @@ look); the module conventions are in [docs/modules.md](docs/modules.md).
     chrome.
 23. Text fields that commit on Enter/blur and revert on Escape use `useCommitField` +
     `commitFieldProps(field)`, never hand-written key handlers.
-24. Use `@shared/ui/kit` before writing a component. ESLint warns on a raw `<button>`/`<input>`
-    outside the kit; a one-off says why with
-    `eslint-disable-next-line no-restricted-syntax -- bespoke: <why>`.
+24. Use the shared pieces before writing a component, and never write a second copy of one:
+    `@shared/ui/kit` (`SelectField`, `CheckboxField`, `SwitchField`, `Field`, `NumberInput`,
+    `SegmentedControl`, …, plus the shadcn primitives and `cn`, which modules import only from the
+    kit); `@canvas-ui` (`ColorField`, `ColorPopover`, `chooseImageAsset`, `ImageChooseButton`,
+    `ModeToolbar`, `ElementThumbnail`, `AnchorPicker`, `FloatingPanel`, `ToolButton`, …); a
+    module's `ui/index.ts` (`FramePresetPicker`, `FontPicker`, `LayerName`, …). A piece that a
+    second feature needs moves to where it belongs ([Reusable pieces](docs/modules.md#reusable-pieces))
+    instead of being copied. ESLint warns on a raw `<button>`/`<input>` outside the kit; a one-off
+    says why with `eslint-disable-next-line no-restricted-syntax -- bespoke: <why>`.
 25. Every `interface` and `type`, including component props, goes in a sibling `<file>.types.ts`,
     imported with `import type` and re-exported by barrels with `export type`. Vendored shadcn
     primitives in `src/shared/ui/components/ui/` are exempt.
@@ -121,7 +127,8 @@ look); the module conventions are in [docs/modules.md](docs/modules.md).
     hard-coded colors or the palette scales (`ice`, `seal`, `blush`, `sand`, `lilac`).
 27. Sharp shapes: radii are 4px for controls (`rounded-md`), 6px for cards and menus
     (`rounded-card`/`rounded-lg`), 8px at most. No pills.
-28. Every color is picked with the one picker (`ColorPicker`, `ColorPalette`, `canvas-ui`).
+28. Every color is picked with the one picker: `ColorField` for a color in a panel row, `ColorPopover`
+    for another trigger, `ColorPalette` for a palette's choice (`canvas-ui`); a drag is one undo step.
 29. Report failures with `notifyError(title, error)` or `toast(…)`, never only `console.error`.
 
 ## Transition
@@ -129,6 +136,13 @@ look); the module conventions are in [docs/modules.md](docs/modules.md).
 The rules above describe where the code is going (spec:
 [module conventions](docs/superpowers/specs/2026-10-25-module-conventions-design.md)). **Until a row's
 phase is done, follow the existing pattern in that part of the code.**
+
+- **No new modes until 5b is done.** A new canvas mode (like Catalog, the Design system or ER) would
+  be ~10 contributions that 5b replaces with one definition. Ask the user first; if it must exist
+  now, copy the Catalog mode's wiring and use `ModeToolbar` for its toolbar.
+- **Until phase 6, keep plugin API changes small.** Add a newly public piece to the list in
+  `app/plugins/create-plugin-api.ts` and `plugin-api.types.ts` (rule 18), and nothing more: no
+  new `api` sections or shapes, since phase 6 replaces the list with the barrels.
 
 | Rule                                                        | Code today                                             | Fixed in phase |
 | ----------------------------------------------------------- | ------------------------------------------------------ | -------------- |

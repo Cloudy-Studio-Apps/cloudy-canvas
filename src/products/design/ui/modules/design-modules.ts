@@ -7,6 +7,7 @@ import { assetsModule } from "@design/modules/assets/assets.module";
 import { autoLayoutModule } from "@design/modules/auto-layout/auto-layout.module";
 import { booleanModule } from "@design/modules/boolean/boolean.module";
 import { catalogModule } from "@design/modules/catalog/catalog.module";
+import { colorWizardModule } from "@design/modules/color-wizard/color-wizard.module";
 import { coreModule } from "@design/modules/core/core.module";
 import { effectsModule } from "@design/modules/effects/effects.module";
 import { ellipseModule } from "@design/modules/ellipse/ellipse.module";
@@ -44,6 +45,7 @@ let modules: AppModule[] = [
   autoLayoutModule,
   // After variables (its sync resolves what templates bind) and before the rest's hooks.
   styleguideModule,
+  colorWizardModule,
   sectionModule,
   groupModule,
   maskModule,

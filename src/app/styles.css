@@ -130,6 +130,30 @@
     }
   }
 
+  /* The celebrating seal (the color wizard's done screen): flippers waving in turn, sparkles
+     twinkling around it, while it hops with seal-hop. */
+  --animate-seal-wave: seal-wave 0.45s ease-in-out infinite alternate;
+  --animate-seal-sparkle: seal-sparkle 1.2s ease-in-out infinite;
+  @keyframes seal-wave {
+    from {
+      transform: rotate(-14deg);
+    }
+    to {
+      transform: rotate(14deg);
+    }
+  }
+  @keyframes seal-sparkle {
+    0%,
+    100% {
+      transform: scale(0.4);
+      opacity: 0.3;
+    }
+    50% {
+      transform: scale(1.15);
+      opacity: 1;
+    }
+  }
+
   /* The name prompt's seal patting its belly: one flipper, then the other half a beat later. */
   --animate-seal-pat: seal-pat 1.2s ease-in-out infinite;
   --animate-seal-belly: seal-belly 0.6s ease-out infinite;

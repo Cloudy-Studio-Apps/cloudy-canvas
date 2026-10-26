@@ -5,6 +5,7 @@ export * from "./app-dialog";
 export * from "./checkbox";
 export * from "./checkbox-field";
 export * from "./choice-cards";
+export * from "./confetti";
 export * from "./empty-state";
 export * from "./field";
 export * from "./field-box";

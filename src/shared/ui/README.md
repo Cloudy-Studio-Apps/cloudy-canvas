@@ -20,4 +20,4 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md); names 
 
 ## Roles
 
-- **Roles:** primary = ice blue, secondary = seal gray, accent = blush peach (use sparingly), board = sand, design = lilac. The mascot/logo is a "foca watona" (spotted seal) peeking over a canvas (`src/shared/ui/brand/`).
+- **Roles:** primary = ice blue, secondary = seal gray, accent = blush peach (use sparingly), board = sand, design = lilac. The mascot/logo is a "foca watona" (spotted seal) peeking over a canvas (`src/shared/ui/brand/`): `SealLogo`, `HoppingSeal` (waiting), `PaintingSeal`, `PattingSeal` and `CelebratingSeal` (something's done: hopping with its flippers waving and sparkles, `animate-seal-wave` and `animate-seal-sparkle`).
