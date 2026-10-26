@@ -4,10 +4,6 @@ This folder is the design's **variables** module. The feature itself spans sever
 because the token engine is shared by both products. This guide covers all of it: what each
 feature does, how it works, where its code is, and how to extend it.
 
-The design that led to it is
-`docs/superpowers/specs/2026-10-24-variables-design-system-design.md`, with one plan per phase in
-`docs/superpowers/plans/2026-10-2*-variables-*.md`.
-
 ## Where the code lives
 
 | Folder                                      | What's there                                                                                                                                             |
