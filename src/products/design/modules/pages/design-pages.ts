@@ -16,7 +16,8 @@ import { pagesOf } from "./pages-of";
 
 /**
  * The design's pages, and the only place that edits them (each edit is one undo step). Which page
- * is on screen is the engine's (`engine.scope`, `engine.setScope`). Observes the document only
+ * is on screen is the engine's (`engine.scope`, `engine.setScope`). Hidden pages (see
+ * `PageElement.hidden`) aren't among them: a feature keeps those itself. Observes the document only
  * while something subscribes (`subscribe`/`getVersion` for `useSyncExternalStore`), so it needs
  * no cleanup.
  */

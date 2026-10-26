@@ -199,7 +199,7 @@ export interface SelectTargetRequest {
  * agents) stays in that scope. New elements are placed in the current one when they're added.
  */
 export interface CanvasScopes {
-  /** The scope ids, in order; the canvas opens on the first. */
+  /** The scope ids, in order; the canvas opens on the first that isn't `background`. */
   list(doc: CanvasDocument): string[];
   /** The scope an element is shown in; `null` for elements never shown (e.g. the page records). */
   of(el: CanvasElement): string | null;
@@ -207,4 +207,10 @@ export interface CanvasScopes {
   place(el: CanvasElement, scope: string): CanvasElement;
   /** A scope's name for people (a design's page name), shown where collaborators are. */
   label?(doc: CanvasDocument, scope: string): string | null;
+  /**
+   * A scope the canvas never shows on its own (a feature's hidden page): it doesn't open on it,
+   * undo and redo don't follow edits to it, and it isn't shown when the scope on screen goes.
+   * Only `setScope` shows it.
+   */
+  background?(doc: CanvasDocument, scope: string): boolean;
 }

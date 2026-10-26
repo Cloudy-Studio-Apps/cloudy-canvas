@@ -24,6 +24,7 @@ import { sectionModule } from "@design/modules/section/section.module";
 import { shaderEffectModule } from "@design/modules/shader-effect/shader-effect.module";
 import { starModule } from "@design/modules/star/star.module";
 import { stickerModule } from "@design/modules/sticker/sticker.module";
+import { styleguideModule } from "@design/modules/styleguide/styleguide.module";
 import { textModule } from "@design/modules/text/text.module";
 import { variablesModule } from "@design/modules/variables/variables.module";
 import { vectorModule } from "@design/modules/vector/vector.module";
@@ -40,6 +41,8 @@ let modules: AppModule[] = [
   // double-clicking a page designs it.
   catalogModule,
   autoLayoutModule,
+  // After variables (its sync resolves what templates bind) and before the rest's hooks.
+  styleguideModule,
   sectionModule,
   groupModule,
   maskModule,

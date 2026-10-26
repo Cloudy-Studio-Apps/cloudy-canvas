@@ -271,7 +271,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     this.scene = new Scene(this.doc, this.kinds, productSceneHooks(product));
     if (scopes) {
       this.scopeList = scopes.list(this.doc);
-      this.scene.scope = this.scopeList[0] ?? null;
+      this.scene.scope = this.firstShownScope(this.scopeList);
       // New elements land in the scope on screen.
       this.doc.setPlacement((el) => {
         const scope = this.scene.scope;
@@ -551,7 +551,8 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     const existing = this.actors.get(id);
     if (existing) return existing;
     const workspace = new ActorWorkspace(this.actorHost, Symbol(`actor:${id}`), {
-      scope: init?.scope ?? this.scene.scope,
+      // A collaborator never starts on a background scope (a feature's hidden page).
+      scope: init?.scope ?? this.shownScopeOr(this.scene.scope),
       viewport: init?.viewport ?? this.camera.visibleWorldRect(),
     });
     this.actors.set(id, workspace);
@@ -715,7 +716,11 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
    */
   async dropFiles(files: readonly DroppedFile[], client: Point): Promise<DropResult> {
     const at = this.clientToWorld(client);
-    if (!at) return { added: [], skipped: [] };
+    // Nothing lands on a background scope (a feature's hidden page): only it adds there.
+    const scope = this.scene.scope;
+    if (!at || (scope !== null && this.isBackground(scope))) {
+      return { added: [], skipped: files.map((file) => file.name) };
+    }
     this.textEditor?.commit();
     return dropFiles(this.clipboardHost, files, at);
   }
@@ -1511,14 +1516,33 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     this.scopeList = list;
     if (this.followHistory) {
       const touched = this.touchedScopes(change, new Set(list));
+      // Background scopes (a feature's hidden page) are never followed to.
+      for (const id of touched) if (this.isBackground(id)) touched.delete(id);
       if (touched.size > 0 && (current === null || !touched.has(current))) {
         const first = list.find((id) => touched.has(id));
         if (first) return first;
       }
     }
     if (current !== null && list.includes(current)) return current;
+    const shown = list.filter((id) => !this.isBackground(id));
     const at = current === null ? 0 : Math.max(previous.indexOf(current), 0);
-    return list[Math.min(at, list.length - 1)] ?? null;
+    return shown[Math.min(at, shown.length - 1)] ?? null;
+  }
+
+  /** Whether the canvas never goes to this scope on its own (see `CanvasScopes.background`). */
+  private isBackground(scope: string): boolean {
+    return this.scopes?.background?.(this.doc, scope) ?? false;
+  }
+
+  /** `scope`, or the first shown scope when it's a background one. */
+  private shownScopeOr(scope: string | null): string | null {
+    if (scope === null || !this.isBackground(scope)) return scope;
+    return this.firstShownScope(this.scopes?.list(this.doc) ?? []);
+  }
+
+  /** The scope the canvas opens on: the first one that isn't a background scope. */
+  private firstShownScope(list: readonly string[]): string | null {
+    return list.find((id) => !this.isBackground(id)) ?? null;
   }
 
   /** The scopes a change touched: its elements' (removed ones' as they were) and scopes' own. */

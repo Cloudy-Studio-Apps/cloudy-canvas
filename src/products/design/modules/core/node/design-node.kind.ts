@@ -145,7 +145,9 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
     if (styled) return styled;
     if (value.type === "number") {
       const n = value.number;
-      if (path === "opacity") return { opacity: Math.min(1, Math.max(0, n)) };
+      // Opacity variables are percentages (the Variables window makes them 0–100); a value up
+      // to 1 is still read as a fraction.
+      if (path === "opacity") return { opacity: Math.min(1, Math.max(0, n > 1 ? n / 100 : n)) };
       if (path === "w" || path === "h") return { [path]: Math.max(1, n) };
       if (path === "rotation") return { rotation: normalizeAngle(n) };
       if (path === "strokeWeight" || path.startsWith("strokeWeights.")) {

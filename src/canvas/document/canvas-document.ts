@@ -59,6 +59,8 @@ export class CanvasDocument {
   private removedSince: CanvasElement[] = [];
   private beforeSince = new Map<string, Record<string, unknown>>();
   private tokensSince = new Set<string>();
+  /** Whether the title or description changed since the hook last ran. */
+  private metaSince = false;
   /**
    * Elements as last read, by id (`null`: a type that isn't registered), dropped when they change,
    * so a change to a few elements doesn't read the whole document again. Shared by every reader:
@@ -160,6 +162,7 @@ export class CanvasDocument {
     this.removedSince = [];
     this.beforeSince.clear();
     this.tokensSince.clear();
+    this.metaSince = false;
   }
 
   /**
@@ -280,6 +283,7 @@ export class CanvasDocument {
         if (value === undefined) continue;
         const text = value.trim();
         if (this.metaText(key) === text) continue;
+        if (this.afterEdit) this.metaSince = true;
         if (text) this.metaMap.set(key, text);
         else this.metaMap.delete(key);
       }
@@ -520,7 +524,12 @@ export class CanvasDocument {
     const afterEdit = this.afterEdit;
     if (!afterEdit || this.deferred > 0) return;
     for (let pass = 0; pass < AFTER_EDIT_PASSES; pass++) {
-      if (this.edited.size === 0 && this.removedSince.length === 0 && this.tokensSince.size === 0) {
+      if (
+        this.edited.size === 0 &&
+        this.removedSince.length === 0 &&
+        this.tokensSince.size === 0 &&
+        !this.metaSince
+      ) {
         return;
       }
       const change = {
@@ -528,11 +537,13 @@ export class CanvasDocument {
         removed: this.removedSince,
         before: this.beforeSince,
         tokens: this.tokensSince,
+        meta: this.metaSince,
       };
       this.edited = new Set();
       this.removedSince = [];
       this.beforeSince = new Map();
       this.tokensSince = new Set();
+      this.metaSince = false;
       this.depth++;
       try {
         afterEdit(this, change);
@@ -544,6 +555,7 @@ export class CanvasDocument {
     this.removedSince = [];
     this.beforeSince.clear();
     this.tokensSince.clear();
+    this.metaSince = false;
   }
 
   /** The element with this id as last read (`null`: none, or a type that isn't registered). */

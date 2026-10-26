@@ -35,6 +35,8 @@ export interface EditedChange {
   before: ReadonlyMap<string, Readonly<Record<string, unknown>>>;
   /** The token records (variables, collections) written or removed. */
   tokens: ReadonlySet<string>;
+  /** Whether the document's title or description changed. */
+  meta: boolean;
 }
 
 /**

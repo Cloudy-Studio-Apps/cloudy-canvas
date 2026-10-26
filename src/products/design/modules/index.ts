@@ -20,3 +20,4 @@ export * from "./effects";
 export * from "./auto-layout";
 export * from "./catalog";
 export * from "./sticker";
+export * from "./styleguide";

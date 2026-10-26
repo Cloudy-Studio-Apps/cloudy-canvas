@@ -49,8 +49,10 @@ export function PropertiesPanel() {
         </ToolButton>
       </header>
 
+      {/* Every scroll area ends in 300px of room, so the last controls scroll clear of the
+          toolbar and mode switcher floating over the canvas's bottom edge. */}
       {ToolSidebar ? (
-        <div className="min-h-0 flex-1 overflow-y-auto">
+        <div className="min-h-0 flex-1 overflow-y-auto pb-75">
           <ToolSidebar />
         </div>
       ) : (
@@ -70,10 +72,10 @@ export function PropertiesPanel() {
             </TabsList>
             <ZoomMenu side="bottom" />
           </div>
-          <TabsContent value="design" className="min-h-0 overflow-y-auto">
+          <TabsContent value="design" className="min-h-0 overflow-y-auto pb-75">
             <PropertySections tab="design" />
           </TabsContent>
-          <TabsContent value="prototype" className="min-h-0 overflow-y-auto">
+          <TabsContent value="prototype" className="min-h-0 overflow-y-auto pb-75">
             <PropertySections tab="prototype" />
           </TabsContent>
         </Tabs>

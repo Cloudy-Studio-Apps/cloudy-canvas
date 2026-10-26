@@ -4,7 +4,13 @@
 // which also composes the product from the modules (`getDesignProduct`).
 export type { DesignEngine, DesignEngineState, DesignWorkspace } from "./design-engine.types";
 export type { DesignToolOptions } from "./design-options.types";
-export { designAgentTools, designCanvas, designMigrations } from "./design-points";
+export {
+  designAgentTools,
+  designCanvas,
+  designMigrations,
+  designSelectRedirects,
+} from "./design-points";
+export type { SelectRedirect } from "./design-points.types";
 export * from "./agent";
 export * from "./file";
 export * from "./modules";

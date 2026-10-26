@@ -26,7 +26,7 @@ import { designEditor } from "@design/ui/modules/design-editor-points";
 import { designStyleTypes } from "@design/ui/modules/style-types";
 import { useDesignPanelStore } from "@design/ui/stores/design-panel-store";
 import { allKinds, someNodes } from "@design/ui/modules/section-filters";
-import { designAgentTools, designCanvas } from "../../design-points";
+import { designAgentTools, designCanvas, designSelectRedirects } from "../../design-points";
 import {
   createNodesTool,
   designExportTools,
@@ -111,7 +111,10 @@ export const coreModule = defineModule({
     host.contribute(designCanvas.clips, treeClips);
     host.contribute(designCanvas.resolveElements, resolveTree);
     host.contribute(designCanvas.undrawn, treeUndrawn);
-    host.contribute(designCanvas.selectTarget, hostSelectTarget);
+    // Read when a click happens: every module has contributed by then.
+    host.contribute(designCanvas.selectTarget, (hitId, request, elements, kinds) =>
+      hostSelectTarget(hitId, request, elements, kinds, host.get(designSelectRedirects)),
+    );
     host.contribute(designCanvas.withMembers, (ids, elements) => withDescendants(ids, elements));
     host.contribute(designCanvas.onMoved, reparentMoved);
     host.contribute(designCanvas.alignTarget, containerAlignTarget);
