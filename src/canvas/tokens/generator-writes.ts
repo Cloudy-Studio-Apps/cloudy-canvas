@@ -32,21 +32,35 @@ function maker(store: TokenStore, collectionId: string, type: VariableType) {
   };
 }
 
-/** Writes a shade generator's or a scale's variables (inside the edit running now). */
+/**
+ * Writes a shade generator's or a scale's variables (inside the edit running now). A scale based
+ * on a number becomes based on the base step it writes.
+ */
 export function regenerate(doc: CanvasDocument, record: GeneratorRecord | ScaleRecord): void {
   const store = TokenStore.of(doc);
-  const made =
-    record.kind === "generator"
-      ? generatedShades(store, record, maker(store, record.collectionId, "color"))
-      : generatedScale(store, record, maker(store, record.collectionId, "number"));
-  if (made.length > 0) doc.setTokenRecords(made);
+  if (record.kind === "generator") {
+    const made = generatedShades(store, record, maker(store, record.collectionId, "color"));
+    if (made.length > 0) doc.setTokenRecords(made);
+    return;
+  }
+  const { variables, baseId } = generatedScale(
+    store,
+    record,
+    maker(store, record.collectionId, "number"),
+  );
+  const rebased = !record.baseVar && baseId ? [{ ...record, baseVar: baseId }] : [];
+  if (variables.length > 0 || rebased.length > 0) doc.setTokenRecords([...variables, ...rebased]);
 }
 
-/** Regenerates what's based on a variable that just changed (shades and scales). */
+/**
+ * Regenerates what's based on a variable that just changed, or on one following it (an alias or
+ * an expression reading it): shades and scales.
+ */
 export function followBase(doc: CanvasDocument, variableId: string): void {
   const store = TokenStore.of(doc);
+  const changed = new Set([variableId, ...store.aliasDependents(variableId)]);
   for (const record of [...store.generators(), ...store.scales()]) {
-    if (record.baseVar === variableId) regenerate(doc, record);
+    if (record.baseVar && changed.has(record.baseVar)) regenerate(doc, record);
   }
 }
 

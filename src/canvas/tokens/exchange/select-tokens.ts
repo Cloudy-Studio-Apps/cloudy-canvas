@@ -2,6 +2,7 @@ import { inTokenGroup } from "../token-path";
 import { TokenStore } from "../token-store";
 import type { TokenRecord } from "../token.types";
 import type { SelectedTokens, TokenPick } from "./exchange.types";
+import { valueRefs } from "../value-refs";
 
 /**
  * The variables and styles `pick` names, plus what they need to resolve in another file: the
@@ -28,9 +29,7 @@ export function selectTokens(records: readonly TokenRecord[], pick: TokenPick): 
   while (queue.length > 0) {
     const id = queue.pop() as string;
     const refs = [
-      ...Object.values(store.variable(id)?.values ?? {}).flatMap((value) =>
-        "alias" in value ? [value.alias] : [],
-      ),
+      ...Object.values(store.variable(id)?.values ?? {}).flatMap(valueRefs),
       ...Object.values(store.style(id)?.bindings ?? {}),
     ];
     for (const ref of refs) {

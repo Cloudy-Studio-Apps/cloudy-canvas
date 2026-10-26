@@ -1,8 +1,10 @@
+import { mapValueRefs, valueRefs } from "./value-refs";
 import type { TokenStore } from "./token-store";
 import type { TokenRecord, TokenValue } from "./token.types";
 
 /**
- * The token records replacing `from` by `to` writes: aliases of `from` now alias `to`, styles
+ * The token records replacing `from` by `to` writes: aliases of `from` now alias `to` (and
+ * expressions read it), styles
  * binding `from` bind `to`, generators and scales following `from` follow `to`. Refuses a token of
  * another kind or type, the same token, or a `to` whose alias chain reaches `from` (a loop).
  */
@@ -33,8 +35,8 @@ export function replacePlan(store: TokenStore, from: string, to: string): TokenR
       let changed = false;
       const values: Record<string, TokenValue> = {};
       for (const [key, value] of Object.entries(variable.values)) {
-        if ("alias" in value && value.alias === from) {
-          values[key] = { alias: to };
+        if (valueRefs(value).includes(from)) {
+          values[key] = mapValueRefs(value, (id) => (id === from ? to : id));
           changed = true;
         } else values[key] = value;
       }

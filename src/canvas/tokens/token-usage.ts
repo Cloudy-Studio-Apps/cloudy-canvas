@@ -1,6 +1,7 @@
 import type { BindingIndex } from "./binding-index";
 import type { TokenStore } from "./token-store";
 import type { TokenUsage } from "./token-usage.types";
+import { valueRefs } from "./value-refs";
 
 /**
  * Where a variable or a style is used: by layers (directly or through styles), aliases, styles,
@@ -25,8 +26,7 @@ export function tokenUsage(
         .variables()
         .filter(
           (v) =>
-            v.id !== id &&
-            Object.values(v.values).some((value) => "alias" in value && value.alias === id),
+            v.id !== id && Object.values(v.values).some((value) => valueRefs(value).includes(id)),
         )
         .map((v) => v.id)
     : [];

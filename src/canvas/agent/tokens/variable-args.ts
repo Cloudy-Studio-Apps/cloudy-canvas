@@ -8,6 +8,7 @@ import {
   type VariableRecord,
   type VariableType,
 } from "../../tokens";
+import { mapExpressionRefs, parseExpression } from "../../tokens/expression";
 import type { ToolArgs } from "../agent-tool.types";
 
 const SCOPES: ReadonlySet<string> = new Set<TokenScope>([
@@ -98,7 +99,8 @@ export function findMode(store: TokenStore, ref: string, listTool = "list_variab
 
 /**
  * A value as agents give it for a variable of `type`: `"#3A83C9"` / `"#3A83C980"` for colors, a
- * number, a text, true or false, or `{ alias: "variable ref" }` (resolved with `lookup`).
+ * number, a text, true or false, `{ alias: "variable ref" }` (resolved with `lookup`), or for
+ * numbers `{ expr: "{Spacing/base} * 2" }` (each `{reference}` resolved with `lookup`).
  */
 export function readTokenValue(
   raw: unknown,
@@ -108,12 +110,26 @@ export function readTokenValue(
   if (typeof raw === "object" && raw !== null && typeof (raw as ToolArgs).alias === "string") {
     return { alias: lookup((raw as { alias: string }).alias) };
   }
+  if (typeof raw === "object" && raw !== null && typeof (raw as ToolArgs).expr === "string") {
+    if (type !== "number") throw new Error(`Only number variables take an expression.`);
+    const expr = (raw as { expr: string }).expr;
+    try {
+      parseExpression(expr);
+    } catch (error) {
+      throw new Error(`The expression ${expr} doesn't read: ${(error as Error).message}.`, {
+        cause: error,
+      });
+    }
+    return { expr: mapExpressionRefs(expr, lookup) };
+  }
   if (type === "number" && typeof raw === "number") return { number: raw };
   if (type === "color" && typeof raw === "string") return { color: raw };
   if (type === "string" && typeof raw === "string") return { string: raw };
   if (type === "boolean" && typeof raw === "boolean") return { boolean: raw };
   throw new Error(
-    `A ${type} variable's value is ${VALUE_HINTS[type]}, or { "alias": "variable" }.`,
+    `A ${type} variable's value is ${VALUE_HINTS[type]}, or { "alias": "variable" }${
+      type === "number" ? ', or { "expr": "{variable} * 2" }' : ""
+    }.`,
   );
 }
 

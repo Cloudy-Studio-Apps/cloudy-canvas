@@ -9,6 +9,7 @@ import { followBase } from "./generator-writes";
 import { deletionRewrites } from "./token-deletion";
 import { ModeEdits } from "./mode-edits";
 import { normalizeTokenPath, renamePrefix } from "./token-path";
+import { baseModes } from "./token-edits-base";
 import { TokenStore } from "./token-store";
 import type { TokenValue, VariableRecord } from "./token.types";
 
@@ -87,19 +88,28 @@ export abstract class VariableEdits extends ModeEdits {
    */
   setValue(id: string, mode: string, value: TokenValue, options: SetValueOptions = {}): void {
     const variable = this.requireVariable(id);
-    const checked = this.checkValue(this.store(), id, variable.type, value);
+    const store = this.store();
     const { key, axisId } = this.valueKey(variable, mode);
+    const axis = axisId ? store.axis(axisId) : undefined;
+    const modes =
+      axis && key !== DEFAULT_VALUE ? { ...baseModes(store), [axis.id]: key } : baseModes(store);
+    const checked = this.checkValue(store, id, variable.type, value, modes);
     const next = {
       ...variable,
       axisId,
       values: { ...variable.values, [key]: checked },
-      // A shade set by hand leaves its generator.
-      generatorId: null,
+      // A shade or step set by hand leaves its generator; a scale's base step stays its base.
+      generatorId: this.isScaleBase(store, variable) ? variable.generatorId : null,
     };
     this.write(() => {
       this.doc.setTokenRecords([next]);
       followBase(this.doc, id);
     }, options.checkpoint ?? true);
+  }
+
+  /** Whether a variable is the base step its scale's other steps are worked out from. */
+  private isScaleBase(store: TokenStore, variable: VariableRecord): boolean {
+    return !!variable.generatorId && store.scale(variable.generatorId)?.baseVar === variable.id;
   }
 
   /** Removes a variable's override for a mode: it shows its default there again. */

@@ -3,6 +3,7 @@ import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import { allKinds, noNodes } from "@design/ui/modules/section-filters";
 import { designAgentTools, designCanvas, designMigrations } from "../../design-points";
+import { migrateLiveScales } from "./migrate-live-scales";
 import { migrateVariableModes } from "./migrate-variable-modes";
 import {
   DETACH_LAYERS_COMMAND,
@@ -39,6 +40,7 @@ export const variablesModule = defineModule({
     // Import and export: DTCG both ways, Tokens Studio in, code out (plugins add their own).
     host.contribute(tokenFormats, ...BUILT_IN_TOKEN_FORMATS);
     host.contribute(designMigrations, { id: "variable-modes", migrate: migrateVariableModes });
+    host.contribute(designMigrations, { id: "live-scales", migrate: migrateLiveScales });
     host.contribute(
       designCanvas.hostCommands,
       { id: "openVariables", label: "Variables…" },

@@ -21,9 +21,10 @@ export function cssValue(value: CodeValue, unit: CodeUnit): string {
   return JSON.stringify(value);
 }
 
-/** A variable's own value in a mode as CSS: `var(--target)` for an alias. */
+/** A variable's own value in a mode as CSS: `var(--target)` for an alias, `calc()` for an expression. */
 export function cssModeValue(v: CodeVariable, entry: CodeModeValue, references: boolean): string {
   if (references && entry.own && "alias" in entry.own) return `var(--${entry.own.alias})`;
+  if (references && entry.own && "calc" in entry.own) return entry.own.calc;
   return cssValue(entry.value, v.unit);
 }
 
@@ -44,7 +45,7 @@ export function cssModeBlocks(
         const entry = v.modes.find((m) => m.axis === axis.id && m.mode === mode.id);
         // With references, only the variable's own value changes; aliases follow by themselves.
         // With references, an alias of a listed variable follows it by itself.
-        if (!entry || (references && !entry.own && v.alias)) return [];
+        if (!entry || (references && !entry.own && (v.alias || v.calc))) return [];
         return [`  --${name(v)}: ${cssModeValue(v, entry, references)};`];
       });
       if (lines.length === 0) continue;

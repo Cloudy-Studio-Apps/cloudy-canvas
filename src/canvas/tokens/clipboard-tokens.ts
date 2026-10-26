@@ -3,6 +3,7 @@ import type { CanvasElement } from "../elements/element.types";
 import { isTokenRecord } from "./is-token-record";
 import { TokenStore } from "./token-store";
 import type { TokenRecord } from "./token.types";
+import { valueRefs } from "./value-refs";
 
 /**
  * The variables and styles copied elements use, with what they alias (all the way), their
@@ -31,7 +32,7 @@ export function clipboardTokens(
     if (!variable) continue;
     variables.add(id);
     for (const value of Object.values(variable.values)) {
-      if ("alias" in value) queue.push(value.alias);
+      queue.push(...valueRefs(value));
     }
   }
   const collections = new Set<string>();

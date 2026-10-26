@@ -15,6 +15,7 @@ import type {
 import type { ImportChoice, ImportConflict, TokenImportPlan } from "./exchange.types";
 import type { ImportMatches } from "./import-plan.types";
 import { matchImport, ofKind } from "./match-import";
+import { mapValueRefs } from "../value-refs";
 
 /** The incoming variables and styles named like the file's, with other ids. */
 export function importConflicts(
@@ -199,7 +200,7 @@ export function planTokenImport(
 }
 
 /**
- * A variable's axis and values in the file's terms: aliases remapped, mode keys turned into the
+ * A variable's axis and values in the file's terms: aliases and expressions' references remapped, mode keys turned into the
  * file's mode ids (the incoming default is its axis's first mode's value), and the value of the
  * file's base mode as the default.
  */
@@ -210,8 +211,7 @@ function remapValues(
   incomingBase: string | undefined,
   idOf: (id: string) => string,
 ): Pick<VariableRecord, "axisId" | "values"> {
-  const remap = (value: TokenValue): TokenValue =>
-    "alias" in value ? { alias: idOf(value.alias) } : value;
+  const remap = (value: TokenValue): TokenValue => mapValueRefs(value, idOf);
   const base = v.values[DEFAULT_VALUE];
   if (!v.axisId) return { axisId: null, values: base ? { [DEFAULT_VALUE]: remap(base) } : {} };
   const axisId = idOf(v.axisId);

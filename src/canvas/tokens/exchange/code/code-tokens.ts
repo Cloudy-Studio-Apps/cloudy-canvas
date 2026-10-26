@@ -11,6 +11,7 @@ import { DEFAULT_VALUE } from "../../default-value";
 import { PX_SCOPES } from "../dtcg/dtcg-values";
 import { camelPath, slugPath, uniqueNames } from "../token-names";
 import { namesFor } from "./code-names";
+import { cssCalc } from "./css-calc";
 import type {
   CodeAxis,
   CodeModeValue,
@@ -85,6 +86,15 @@ export function codeTokens(
     store.axes().flatMap((a) => (a.modes[0] ? [[a.id, a.modes[0].id]] : [])),
   );
 
+  /** An expression as CSS `calc()` over listed variables (each with its own unit). */
+  const calcOf = (expr: string, unit: CodeUnit) =>
+    cssCalc(
+      expr,
+      unit,
+      (id) => cssOf.get(id) ?? null,
+      (id) => unitOf(store.variable(id)?.scopes ?? []),
+    );
+
   const out: CodeVariable[] = [];
   variables.forEach((v, i) => {
     const unit = unitOf(v.scopes);
@@ -101,12 +111,15 @@ export function codeTokens(
         const raw = v.axisId === axis.id ? v.values[mode.id] : undefined;
         // An alias of a variable code doesn't list (hidden) is written as its value.
         const target = raw && "alias" in raw ? cssOf.get(raw.alias) : undefined;
+        const calc = raw && "expr" in raw ? calcOf(raw.expr, unit) : null;
         const ownValue = raw
           ? target
             ? { alias: target }
-            : "alias" in raw
-              ? { value: value ?? "" }
-              : { value: codeValue(rawResolved(raw), unit) ?? "" }
+            : calc
+              ? { calc }
+              : "alias" in raw || "expr" in raw
+                ? { value: value ?? "" }
+                : { value: codeValue(rawResolved(raw), unit) ?? "" }
           : undefined;
         if (value !== null && (value !== base || ownValue)) {
           modes.push({
@@ -128,6 +141,7 @@ export function codeTokens(
       kotlinName: kotlin[i] as string,
       base,
       ...(own && "alias" in own && cssOf.has(own.alias) ? { alias: cssOf.get(own.alias) } : {}),
+      ...withCalc(own && "expr" in own ? calcOf(own.expr, unit) : null),
       modes,
       scopes: v.scopes,
     });
@@ -162,7 +176,13 @@ function codeValue(value: ResolvedValue | null, unit: CodeUnit): CodeValue | nul
   return value.boolean;
 }
 
-function rawResolved(raw: Exclude<TokenValue, { alias: string }>): ResolvedValue {
+function withCalc(calc: string | null): { calc?: string } {
+  return calc ? { calc } : {};
+}
+
+function rawResolved(
+  raw: Exclude<TokenValue, { alias: string } | { expr: string }>,
+): ResolvedValue {
   if ("color" in raw) return { type: "color", color: raw.color };
   if ("number" in raw) return { type: "number", number: raw.number };
   if ("string" in raw) return { type: "string", string: raw.string };

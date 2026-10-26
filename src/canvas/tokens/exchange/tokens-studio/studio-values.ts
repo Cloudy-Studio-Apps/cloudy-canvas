@@ -31,7 +31,7 @@ export function studioReference(value: unknown): string | null {
   return match?.[1]?.trim() ?? null;
 }
 
-/** Whether a value is worked out (`{space} * 2`, `rgba({red}, 0.5)`): left for phase 7. */
+/** Whether a value is worked out (`{space} * 2`, `rgba({red}, 0.5)`), not a plain reference. */
 export function isExpression(value: unknown): boolean {
   return typeof value === "string" && /\{[^}]+\}/.test(value) && studioReference(value) === null;
 }

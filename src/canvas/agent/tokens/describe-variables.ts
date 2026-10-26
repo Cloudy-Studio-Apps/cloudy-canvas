@@ -1,6 +1,8 @@
 import {
   DEFAULT_VALUE,
+  formatExpression,
   modeFor,
+  resolveVariable,
   type CollectionRecord,
   type ModeAxisRecord,
   type TokenStore,
@@ -8,7 +10,10 @@ import {
   type VariableRecord,
 } from "../../tokens";
 
-/** A value as agents read it: a color, number, text or boolean, or `{ alias: "Collection/path" }`. */
+/**
+ * A value as agents read it: a color, number, text or boolean, `{ alias: "Collection/path" }`, or
+ * `{ expr: "{space/base} * 2" }` (references by name).
+ */
 function describeValue(store: TokenStore, value: TokenValue | undefined): unknown {
   if (!value) return null;
   if ("alias" in value) {
@@ -16,10 +21,18 @@ function describeValue(store: TokenStore, value: TokenValue | undefined): unknow
     const collection = target && store.collection(target.collectionId);
     return { alias: target && collection ? `${collection.name}/${target.name}` : value.alias };
   }
+  if ("expr" in value) return { expr: formatExpression(store, value.expr) };
   if ("color" in value) return value.color;
   if ("number" in value) return value.number;
   if ("string" in value) return value.string;
   return value.boolean;
+}
+
+/** What an expression variable works out to in the modes the file shows, as `result`. */
+function expressionResult(store: TokenStore, variable: VariableRecord): { result?: number } {
+  if (!Object.values(variable.values).some((value) => "expr" in value)) return {};
+  const resolved = resolveVariable(store, variable.id, {});
+  return resolved?.type === "number" ? { result: resolved.number } : {};
 }
 
 /** A collection (a folder of variables), for agents. */
@@ -62,6 +75,7 @@ export function describeVariable(store: TokenStore, variable: VariableRecord, us
     name: variable.name,
     type: variable.type,
     value: describeValue(store, variable.values[DEFAULT_VALUE]),
+    ...expressionResult(store, variable),
     ...(axis ? { variesBy: axis.name, overrides } : {}),
     ...(variable.scopes.length > 0 ? { scopes: variable.scopes } : {}),
     ...(variable.description ? { description: variable.description } : {}),

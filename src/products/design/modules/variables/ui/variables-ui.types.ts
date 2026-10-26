@@ -53,8 +53,22 @@ export interface SwatchInputProps {
 }
 
 /** A hover action; takes a trigger's props and ref too (it opens the variable picker). */
+export interface ExpressionInputProps {
+  variable: VariableRecord;
+  /** `DEFAULT_VALUE`, or a mode id. */
+  mode: string;
+  /** The stored expression (references by id). */
+  expr: string;
+  /** The modes its result is shown in. */
+  modes: ModeContext;
+  label: string;
+  className?: string;
+}
+
 export interface ActionButtonProps extends ComponentProps<"button"> {
   label: string;
+  /** Always visible, not only on hover. */
+  shown?: boolean;
 }
 
 export interface AdvancedSettingsProps {

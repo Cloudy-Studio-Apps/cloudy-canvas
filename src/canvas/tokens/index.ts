@@ -60,3 +60,6 @@ export { isUnused, tokenUsage, unusedTokens } from "./token-usage";
 export { replacePlan } from "./replace-token";
 export * from "./exchange";
 export { rawValue } from "./raw-value";
+export * from "./expression";
+export { isExpressionValue, mapValueRefs, valueRefs } from "./value-refs";
+export { liveScaleRecords } from "./live-scales";

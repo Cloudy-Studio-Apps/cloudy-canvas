@@ -1,4 +1,6 @@
 import { DEFAULT_VALUE } from "../../default-value";
+import { mapExpressionRefs } from "../../expression";
+import { resolveVariable } from "../../resolve-token";
 import type { TokenStore } from "../../token-store";
 import type { StyleRecord, TokenValue, VariableRecord } from "../../token.types";
 import { uniqueNames } from "../token-names";
@@ -13,7 +15,8 @@ import { DTCG_EXTENSION, PX_SCOPES, dtcgColor, dtcgDimension, dtcgSegment } from
 
 /**
  * The file's variables and styles as W3C Design Tokens (DTCG) JSON: a root group per collection,
- * groups by path, aliases as `{Collection.path}` references, styles a codec writes in a `Styles`
+ * groups by path, aliases as `{Collection.path}` references, expressions as their results (the
+ * expression itself in the extension), styles a codec writes in a `Styles`
  * group; modes, ids, scopes and what DTCG has no place for in `$extensions["app.cloudy-canvas"]`,
  * so reading it back is exact.
  */
@@ -80,6 +83,7 @@ function variableToken(
 ): Record<string, unknown> {
   const write = (value: TokenValue) => tokenValue(v, value, ref);
   const axis = v.axisId ? store.axis(v.axisId) : undefined;
+  const base = v.values[DEFAULT_VALUE];
   const modes: Record<string, unknown> = {};
   for (const mode of axis?.modes.slice(1) ?? []) {
     const value = v.values[mode.id];
@@ -89,6 +93,7 @@ function variableToken(
   const ext: DtcgTokenExtension = {
     id: v.id,
     ...(written !== v.name ? { name: v.name } : {}),
+    ...(base && "expr" in base ? { expr: write(base) as string } : {}),
     ...(axis ? { axis: axis.name } : {}),
     ...(Object.keys(modes).length > 0 ? { modes } : {}),
     scopes: [...v.scopes],
@@ -98,13 +103,21 @@ function variableToken(
       ? { contrastWith: v.contrastWith.flatMap((id) => ref(id) ?? []) }
       : {}),
   };
-  const base = v.values[DEFAULT_VALUE];
   return {
     $type: dtcgType(v),
-    $value: base ? write(base) : null,
+    $value: base ? write("expr" in base ? baseResult(store, v) : base) : null,
     ...(v.description ? { $description: v.description } : {}),
     $extensions: { [DTCG_EXTENSION]: ext },
   };
+}
+
+/** What an expression variable's default works out to in every axis's first mode (DTCG's `$value`). */
+function baseResult(store: TokenStore, v: VariableRecord): TokenValue {
+  const modes = Object.fromEntries(
+    store.axes().flatMap((a) => (a.modes[0] ? [[a.id, a.modes[0].id]] : [])),
+  );
+  const resolved = resolveVariable(store, v.id, modes);
+  return { number: resolved?.type === "number" ? resolved.number : 0 };
 }
 
 function dtcgType(v: VariableRecord): string {
@@ -120,6 +133,9 @@ function tokenValue(
   ref: (id: string) => string | null,
 ): unknown {
   if ("alias" in value) return ref(value.alias);
+  if ("expr" in value) {
+    return mapExpressionRefs(value.expr, (id) => ref(id)?.slice(1, -1) ?? id);
+  }
   if ("color" in value) return dtcgColor(value.color);
   if ("number" in value)
     return dtcgType(v) === "dimension" ? dtcgDimension(value.number) : value.number;

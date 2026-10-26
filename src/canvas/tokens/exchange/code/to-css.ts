@@ -3,13 +3,14 @@ import { cssModeBlocks, cssShadow, cssValue } from "./css-values";
 import type { CodeTokens } from "./code-tokens.types";
 
 /**
- * CSS custom properties: `:root` with every variable (aliases as `var()`), a block per mode
+ * CSS custom properties: `:root` with every variable (aliases as `var()`, expressions as `calc()`), a block per mode
  * (`[data-theme="dark"]`, and `prefers-color-scheme` for a Dark mode), shadow styles as
  * `--shadow-*` and text styles as `.text-*` classes.
  */
 export function toCss(tokens: CodeTokens): string {
   const lines = tokens.variables.map(
-    (v) => `  --${v.cssName}: ${v.alias ? `var(--${v.alias})` : cssValue(v.base, v.unit)};`,
+    (v) =>
+      `  --${v.cssName}: ${v.alias ? `var(--${v.alias})` : (v.calc ?? cssValue(v.base, v.unit))};`,
   );
   for (const shadow of tokens.shadows)
     lines.push(`  --shadow-${shadow.slug}: ${cssShadow(shadow.layers)};`);

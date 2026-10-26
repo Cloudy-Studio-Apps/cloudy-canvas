@@ -1,6 +1,14 @@
 import type { TokenScope, VariableRecord } from "@canvas";
 
-/** Whether a variable may be offered for a field of these scopes (one with no scopes always is). */
+/**
+ * Whether a variable may be offered for a field of these scopes: a variable with no scopes fits
+ * every field, and a field with none (an alias, an expression, Replace with…) takes every
+ * variable of its type.
+ */
 export function matchesScopes(variable: VariableRecord, scopes: readonly TokenScope[]): boolean {
-  return variable.scopes.length === 0 || variable.scopes.some((scope) => scopes.includes(scope));
+  return (
+    scopes.length === 0 ||
+    variable.scopes.length === 0 ||
+    variable.scopes.some((scope) => scopes.includes(scope))
+  );
 }

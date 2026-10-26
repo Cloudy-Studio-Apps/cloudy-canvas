@@ -25,6 +25,7 @@ import type {
   DtcgTokenExtension,
 } from "./dtcg.types";
 import { DTCG_EXTENSION, readDimension, readDtcgColor, referenceOf } from "./dtcg-values";
+import { readExchangeExpression } from "../read-exchange-expression";
 
 const VARIABLE_TYPES: Record<string, VariableType> = {
   color: "color",
@@ -123,13 +124,18 @@ export function fromDtcg(json: unknown, options: DtcgOptions = {}): TokenReadRes
     const own = extensionOf<DtcgTokenExtension>(item.token);
     const collection = collectionOf(item.path[0] as string);
     const read = (value: unknown) => readValue(type, value, refOf, warnings);
-    const base = read(item.token.$value);
+    // Our own extension's expressions (in it, any text that reads is one: `2 * 8` too).
+    const ownValue = (raw: unknown) =>
+      type === "number" && typeof raw === "string" && referenceOf(raw) === null
+        ? readExchangeExpression(raw, refOf)
+        : null;
+    const base = ownValue(own?.expr) ?? read(item.token.$value);
     if (!base) continue;
     const values: Record<string, TokenValue> = { [DEFAULT_VALUE]: base };
     const axis = own?.axis ? axes.find((a) => a.name === own.axis) : undefined;
     for (const [modeName, raw] of Object.entries(own?.modes ?? {})) {
       const mode = axis?.modes.find((m) => m.name === modeName);
-      const value = read(raw);
+      const value = ownValue(raw) ?? read(raw);
       if (mode && value) values[mode.id] = value;
     }
     const order = generateKeyBetween(orders.get(collection.id) ?? null, null);
@@ -211,6 +217,12 @@ function readValue(
     const target = refOf(reference);
     if (target) return { alias: target };
     warnings.add("references to tokens not in the file were left out");
+    return null;
+  }
+  if (type === "number" && typeof value === "string" && value.includes("{")) {
+    const expression = readExchangeExpression(value, refOf);
+    if (expression) return expression;
+    warnings.add("worked-out values it couldn't read were left out");
     return null;
   }
   if (type === "color") {

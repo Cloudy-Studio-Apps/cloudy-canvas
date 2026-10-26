@@ -1,5 +1,6 @@
 import { DEFAULT_VALUE } from "../default-value";
 import type { TokenRecord, VariableRecord } from "../token.types";
+import { valueRefs } from "../value-refs";
 
 /**
  * Only the color variables of a set of records, with what they need: their collections, the axes
@@ -19,8 +20,8 @@ export function colorTokensOnly(records: readonly TokenRecord[]): TokenRecord[] 
       .map((v) => ({
         ...v,
         values: Object.fromEntries(
-          Object.entries(v.values).filter(
-            ([, value]) => !("alias" in value) || kept.has(value.alias),
+          Object.entries(v.values).filter(([, value]) =>
+            valueRefs(value).every((ref) => kept.has(ref)),
           ),
         ),
       }))

@@ -46,6 +46,8 @@ export interface DtcgTokenExtension {
   name?: string;
   /** The axis it varies by, by name. */
   axis?: string;
+  /** Its default value's expression (references as `{Collection.path}`); `$value` is its result. */
+  expr?: string;
   /** Its value in each mode of that axis but the first, by mode name. */
   modes?: Record<string, unknown>;
   scopes: TokenScope[];

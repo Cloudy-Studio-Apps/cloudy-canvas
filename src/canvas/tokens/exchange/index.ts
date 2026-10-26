@@ -6,3 +6,4 @@ export { importConflicts, planTokenImport } from "./import-plan";
 export * from "./dtcg";
 export * from "./tokens-studio";
 export * from "./code";
+export { readExchangeExpression } from "./read-exchange-expression";

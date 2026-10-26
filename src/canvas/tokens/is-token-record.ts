@@ -13,12 +13,14 @@ function isTokenValue(value: unknown): value is TokenValue {
   if ("string" in value) return typeof value.string === "string";
   if ("boolean" in value) return typeof value.boolean === "boolean";
   if ("alias" in value) return typeof value.alias === "string";
+  if ("expr" in value) return typeof value.expr === "string";
   return false;
 }
 
-/** A stored value of a variable of `type`: its own kind of value, or an alias. */
+/** A stored value of a variable of `type`: its own kind of value, an alias, or (numbers) an expression. */
 function fitsType(value: unknown, type: string): boolean {
   if (!isTokenValue(value)) return false;
+  if ("expr" in value) return type === "number";
   return "alias" in value || type in value;
 }
 

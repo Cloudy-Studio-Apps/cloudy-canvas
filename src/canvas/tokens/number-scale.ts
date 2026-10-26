@@ -40,6 +40,7 @@ export function numberScale(base: number, settings: ScaleSettings): ScaleStep[] 
       name: stepName(settings.names, offset, offset + settings.below),
       value: offset === 0 ? base : value,
       base: offset === 0,
+      factor: settings.ratio ** offset,
     });
   }
   return steps;

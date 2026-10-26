@@ -16,6 +16,7 @@ import type { TokenReadResult } from "../exchange.types";
 import { finishStyles, styleRefs } from "../finish-styles";
 import { isExpression, STUDIO_TYPES, studioReference, studioValue } from "./studio-values";
 import type { StudioSlot as Slot, StudioTheme, StudioToken } from "./tokens-studio.types";
+import { readExchangeExpression } from "../read-exchange-expression";
 
 /** Composite types and the DTCG types their codecs read (fields mapped first). */
 const COMPOSITES: Record<string, string> = { typography: "typography", boxShadow: "shadow" };
@@ -44,7 +45,8 @@ export function isTokensStudio(json: unknown): boolean {
  * group (or "Theme") is an axis whose modes are its themes: a token defined in sets some of its
  * themes turn on and others don't becomes one variable of a collection named after the group,
  * varying by it; sets every theme turns on stay collections. Aliases (`{path}`) find the token
- * across sets; worked-out values (`{space} * 2`) are left for later, reported in `warnings`.
+ * across sets; math on numbers (`{space} * 2`) becomes an expression, other worked-out values
+ * (`rgba({red}, 0.5)`) are left out, reported in `warnings`.
  */
 export function fromTokensStudio(json: unknown, options: DtcgOptions = {}): TokenReadResult {
   if (typeof json !== "object" || json === null)
@@ -135,8 +137,12 @@ export function fromTokensStudio(json: unknown, options: DtcgOptions = {}): Toke
       return target ? { alias: target } : null;
     }
     if (isExpression(token.value)) {
-      warnings.add("worked-out values (math, rgba of a reference) were left out");
-      return null;
+      const expression =
+        STUDIO_TYPES[token.type]?.type === "number"
+          ? readExchangeExpression(token.value, refOf)
+          : null;
+      if (!expression) warnings.add("worked-out values (rgba of a reference, …) were left out");
+      return expression;
     }
     const value = studioValue(token.type, token.value);
     if (!value) warnings.add(`${token.type} values it couldn't read were left out`);

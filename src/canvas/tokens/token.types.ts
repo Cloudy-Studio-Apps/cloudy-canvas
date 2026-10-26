@@ -68,13 +68,17 @@ export interface CollectionRecord {
   order: string;
 }
 
-/** A variable's value: a raw value, or another variable's (an alias). */
+/**
+ * A variable's value: a raw value, another variable's (an alias), or, for numbers, an expression
+ * over other number variables (`{<id>} * 2`: references stored by id, see `expression/`).
+ */
 export type TokenValue =
   | { color: string }
   | { number: number }
   | { string: string }
   | { boolean: boolean }
-  | { alias: string };
+  | { alias: string }
+  | { expr: string };
 
 /**
  * A named value. `values[DEFAULT_VALUE]` is its value in every mode it has no override for; with

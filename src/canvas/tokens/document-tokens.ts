@@ -101,7 +101,8 @@ export class DocumentTokens extends VariableEdits {
       this.doc.setTokenRecords([scale]);
       regenerate(this.doc, scale);
     });
-    return scale;
+    // A scale based on a number is now based on its base step.
+    return this.store().scale(scale.id) ?? scale;
   }
 
   /** Unlinks one shade or step from what generated it (to tune it by hand). */

@@ -20,8 +20,9 @@ export const scaleTools: DesignAgentTool[] = [
     description:
       'Makes a number scale as variables in a group ("space" → space/xs, sm, md, lg …, the base ' +
       "at md), each step the one before times `ratio` (1.25 by default; 1.2, 1.333, 1.5, 1.618 " +
-      "are common), as one undo step. `base` is a number variable (the steps then follow it) or " +
-      "a number. `scopes` says what they're for (gap, padding, font-size, corner-radius, …).",
+      "are common), as one undo step. Each step is an expression of the base (`round({md} * 1.25)`), " +
+      "so editing the base moves them all. `base` is a number variable (md then aliases it) or a " +
+      "number (md holds it). `scopes` says what they're for (gap, padding, font-size, corner-radius, …).",
     inputSchema: {
       type: "object",
       required: ["collection", "group", "base"],

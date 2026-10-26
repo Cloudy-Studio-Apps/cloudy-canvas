@@ -2,7 +2,7 @@ import type { FigColor, FigGuid } from "./fig-node.types";
 
 /**
  * A variable's value as the file stores it: `dataType` says which field is set (`COLOR`,
- * `FLOAT`, `STRING`, `BOOLEAN`, or `ALIAS` for another variable).
+ * `FLOAT`, `STRING`, `BOOLEAN`, `ALIAS` for another variable, or `EXPRESSION`).
  */
 export interface FigVariableData {
   value?: {
@@ -11,9 +11,16 @@ export interface FigVariableData {
     textValue?: string;
     boolValue?: boolean;
     alias?: { guid?: FigGuid; assetRef?: { key?: string } };
+    expressionValue?: FigExpression;
   };
   dataType?: string;
   resolvedDataType?: string;
+}
+
+/** A worked-out value: a function (`ADDITION`, `MULTIPLY`, `NEGATE`…) of other values. */
+export interface FigExpression {
+  expressionFunction?: string;
+  expressionArguments?: FigVariableData[];
 }
 
 /** A layer's field bound to a variable (`variableField`: `STACK_SPACING`, `OPACITY`…). */

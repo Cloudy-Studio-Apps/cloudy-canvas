@@ -1,4 +1,4 @@
-import { Link, X } from "lucide-react";
+import { Link, Sigma, Unlink, X } from "lucide-react";
 
 import {
   asTokenValue,
@@ -16,13 +16,16 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { notifyError } from "@shared/stores/toast-store";
 import { cn } from "@shared/ui/lib/utils";
 import { BooleanValueInput } from "./boolean-value-input";
+import { ExpressionBuilder } from "./expression-builder";
+import { ExpressionInput } from "./expression-input";
 import { StringValueInput } from "./string-value-input";
 import { SwatchInput } from "./swatch-input";
 import type { ActionButtonProps, ValueFieldProps } from "./variables-ui.types";
 
 /**
- * A variable's value for one mode: a color (with its alpha) or a number, or the variable it
- * aliases (a chip; detaching keeps the value it gave). A mode without its own value shows the
+ * A variable's value for one mode: a color (with its alpha) or a number, the variable it
+ * aliases (a chip; detaching keeps the value it gave), or a number's expression (`ExpressionInput`;
+ * "Use its value instead" keeps what it works out to). A mode without its own value shows the
  * default faded, and clicking it gives the mode a value of its own; one with a value can clear it.
  */
 export function ValueField({ variable, mode, label, cell, className }: ValueFieldProps) {
@@ -69,6 +72,31 @@ export function ValueField({ variable, mode, label, cell, className }: ValueFiel
         <X />
       </ActionButton>
     ) : null;
+
+  if ("expr" in value) {
+    return (
+      <div className={cn("group/value flex min-w-0 items-center gap-0.5", className)}>
+        <ExpressionInput
+          variable={variable}
+          mode={mode}
+          expr={value.expr}
+          modes={modes}
+          label={label}
+          className={ghost}
+        />
+        <ActionButton
+          label="Use its value instead"
+          onClick={() => {
+            const resolved = asTokenValue(resolveVariable(store, variable.id, modes));
+            if (resolved) set(resolved);
+          }}
+        >
+          <Unlink />
+        </ActionButton>
+        {clear}
+      </div>
+    );
+  }
 
   if ("alias" in value) {
     return (
@@ -168,6 +196,17 @@ export function ValueField({ variable, mode, label, cell, className }: ValueFiel
         onCommit={(number) => set({ number })}
         className={cn("min-w-0 flex-1", ghost)}
       />
+      <ExpressionBuilder
+        variable={variable}
+        mode={mode}
+        expr={null}
+        start={"number" in value ? value.number : 0}
+        modes={modes}
+      >
+        <ActionButton label="Work it out from other variables" shown>
+          <Sigma />
+        </ActionButton>
+      </ExpressionBuilder>
       {link}
       {clear}
     </div>
@@ -177,15 +216,22 @@ export function ValueField({ variable, mode, label, cell, className }: ValueFiel
 /** A table cell's field: flat until hovered or focused. */
 const CELL = "bg-transparent hover:bg-muted focus-within:bg-surface-sunken";
 
-/** A row action shown on hover (alias, use the default), so values stay uncluttered. */
-function ActionButton({ label, children, ...props }: ActionButtonProps) {
+/**
+ * A row action shown on hover (alias, use the default), so values stay uncluttered; `shown` ones
+ * (working a number out from others) are always there to be found.
+ */
+function ActionButton({ label, children, shown, ...props }: ActionButtonProps) {
   return (
     <button
       type="button"
       aria-label={label}
       title={label}
       {...props}
-      className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-0 group-hover/value:opacity-100 hover:bg-muted hover:text-foreground focus-visible:opacity-100 data-[state=open]:opacity-100 [&_svg]:size-3.5"
+      className={cn(
+        "flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground [&_svg]:size-3.5",
+        !shown &&
+          "opacity-0 group-hover/value:opacity-100 focus-visible:opacity-100 data-[state=open]:opacity-100",
+      )}
     >
       {children}
     </button>

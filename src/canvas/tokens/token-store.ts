@@ -8,6 +8,7 @@ import type {
 } from "./token.types";
 import type { ScaleRecord } from "./scale-generator.types";
 import type { GeneratorRecord } from "./shade-generator.types";
+import { valueRefs } from "./value-refs";
 
 /** The store last built per document, with the tokens version it was built at. */
 const built = new WeakMap<CanvasDocument, { version: number; store: TokenStore }>();
@@ -76,10 +77,11 @@ export class TokenStore {
     }
     for (const v of this.variableList) {
       for (const value of Object.values(v.values)) {
-        if (!("alias" in value)) continue;
-        const users = this.aliasedBy.get(value.alias) ?? new Set();
-        users.add(v.id);
-        this.aliasedBy.set(value.alias, users);
+        for (const ref of valueRefs(value)) {
+          const users = this.aliasedBy.get(ref) ?? new Set();
+          users.add(v.id);
+          this.aliasedBy.set(ref, users);
+        }
       }
     }
   }
@@ -191,7 +193,7 @@ export class TokenStore {
     return new Set(this.styleBoundBy.get(variableId) ?? []);
   }
 
-  /** Every variable whose alias chain reaches `id` (not `id` itself). */
+  /** Every variable whose alias chain (or expression) reaches `id` (not `id` itself). */
   aliasDependents(id: string): Set<string> {
     const found = new Set<string>();
     const queue = [id];

@@ -1,4 +1,4 @@
-import type { TokenScope } from "./token.types";
+import type { TokenScope, VariableRecord } from "./token.types";
 
 /** How a scale's steps are named: t-shirt sizes around `md`, or numbers around 100. */
 export type ScaleNames = "tshirt" | "numeric";
@@ -32,9 +32,18 @@ export interface ScaleRecord extends ScaleSettings {
   order: string;
 }
 
-/** One step of a scale: its name, value, and whether it's the base. */
+/** One step of a scale: its name, value, whether it's the base, and its base's multiple. */
 export interface ScaleStep {
   name: string;
   value: number;
   base: boolean;
+  /** `ratio` to the power of its distance from the base (1 for the base). */
+  factor: number;
+}
+
+/** What a scale writes: its steps' variables, and the variable its steps are worked out from. */
+export interface GeneratedScale {
+  variables: VariableRecord[];
+  /** Its base variable, or the base step it made (which then becomes its base). */
+  baseId: string | null;
 }

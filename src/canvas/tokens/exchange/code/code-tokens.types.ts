@@ -11,8 +11,11 @@ export interface CodeModeValue {
   axis: string;
   mode: string;
   value: CodeValue;
-  /** Its own value there (not only through an alias): an alias target's `cssName`, or raw. */
-  own?: { alias: string } | { value: CodeValue };
+  /**
+   * Its own value there (not only through an alias): an alias target's `cssName`, an
+   * expression as CSS `calc()`, or raw.
+   */
+  own?: { alias: string } | { calc: string } | { value: CodeValue };
 }
 
 /** A variable ready for code: its names per platform and its values. */
@@ -30,6 +33,8 @@ export interface CodeVariable {
   base: CodeValue;
   /** The `cssName` of the variable it aliases there, if it does. */
   alias?: string;
+  /** Its expression there as CSS `calc()`, if it's one CSS can say. */
+  calc?: string;
   /** Where it differs from `base`. */
   modes: CodeModeValue[];
   /** What it's offered for (Tailwind's namespace). */
