@@ -1,0 +1,30 @@
+{
+  "tagline": "Boards and designs on one canvas. Part of Cloudy Studio.",
+  "reading": "Reading version…",
+  "copy": "Copy version info",
+  "copied": "Version info copied",
+  "copyFailed": "Couldn't copy to the clipboard",
+  "openFailed": "The page couldn't be opened",
+  "version": "Version {version}",
+  "build": {
+    "development": "Development build",
+    "production": "Production build"
+  },
+  "license": {
+    "title": "License",
+    "body": "{copyright}. Cloudy Canvas is free software under the {license}: you may use, study, change and share it under its terms.",
+    "read": "Read the license",
+    "source": "Source code"
+  },
+  "disclaimer": {
+    "title": "Disclaimer",
+    "warranty": "Cloudy Canvas is provided “as is”, without warranty of any kind, express or implied. In no event shall the authors be liable for any claim, damages or other liability arising from its use (see sections 15 and 16 of the license).",
+    "early": "This is an early version under active development. Keep backups of files that matter to you.",
+    "trademarks": "Figma and FigJam are trademarks of Figma, Inc. Cloudy Canvas is not affiliated with or endorsed by Figma."
+  },
+  "credits": {
+    "title": "Credits",
+    "by": "by {name} · {license}"
+  },
+  "madeBy": "Made by {author}"
+}

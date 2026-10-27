@@ -1,0 +1,32 @@
+{
+  "editor": {
+    "canvasLabel": "Lienzo de la pizarra",
+    "opening": "Abriendo pizarra",
+    "openFailed": "No se pudo abrir la pizarra",
+    "backHome": "Volver al inicio"
+  },
+  "topBar": {
+    "backHome": "Volver al inicio",
+    "about": "Acerca de Cloudy Canvas",
+    "badge": "Pizarra",
+    "saveFailed": "No se pudo guardar. Inténtalo de nuevo",
+    "saveToFile": "Guardar en un archivo",
+    "save": "Guardar",
+    "agentsOn": "Agentes: activados",
+    "agentsOff": "Agentes: desactivados"
+  },
+  "colors": {
+    "documentColor": "Color del documento: {name}",
+    "documentColors": "Colores del documento",
+    "manage": "Administrar colores de la pizarra…"
+  },
+  "shortcuts": {
+    "tools": "Herramientas",
+    "editing": "Edición y vista",
+    "or": "o"
+  },
+  "file": {
+    "untitled": "Pizarra sin título",
+    "noun": "la pizarra"
+  }
+}

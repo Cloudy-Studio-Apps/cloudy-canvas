@@ -7,6 +7,7 @@ import { FlagToggle } from "../../../../db/ui";
 import { lockedOn, useErDiagram, useErGate } from "../../model";
 import { IconAction } from "./icon-action";
 import type { AttributeRowProps } from "./attribute-row.types";
+import { t } from "../../../er.i18n";
 
 /** One attribute: name, flags, order and delete; a composite one lists its parts under it. */
 export function AttributeRow({ attribute, partsOf, first, last, depth }: AttributeRowProps) {
@@ -23,40 +24,40 @@ export function AttributeRow({ attribute, partsOf, first, last, depth }: Attribu
   }[] = [
     {
       label: "PK",
-      title: "Key attribute (underlined)",
+      title: t("form.attribute.keyTitle"),
       on: attribute.key === "pk",
       patch: () => ({ key: attribute.key === "pk" ? "none" : "pk" }),
     },
     {
       label: "PK~",
-      title: "Partial key of a weak entity (dashed underline)",
+      title: t("form.attribute.partialTitle"),
       on: attribute.key === "partial",
       patch: () => ({ key: attribute.key === "partial" ? "none" : "partial" }),
     },
     {
       label: "AK",
-      title: "Alternate (candidate) key (dotted underline)",
+      title: t("form.attribute.alternateTitle"),
       construct: "alternate-keys",
       on: attribute.key === "alternate",
       patch: () => ({ key: attribute.key === "alternate" ? "none" : "alternate" }),
     },
     {
-      label: "Multi",
-      title: "Multivalued (double ellipse)",
+      label: t("form.attribute.multi"),
+      title: t("form.attribute.multiTitle"),
       construct: "multivalued-attributes",
       on: attribute.multivalued,
       patch: () => ({ multivalued: !attribute.multivalued }),
     },
     {
-      label: "Derived",
-      title: "Derived (dashed ellipse)",
+      label: t("form.attribute.derived"),
+      title: t("form.attribute.derivedTitle"),
       construct: "derived-attributes",
       on: attribute.derived,
       patch: () => ({ derived: !attribute.derived }),
     },
     {
-      label: "Opt",
-      title: "Optional (half-filled circle in the lollipop style)",
+      label: t("form.attribute.optional"),
+      title: t("form.attribute.optionalTitle"),
       construct: "optional-attributes",
       on: attribute.optional,
       patch: () => ({ optional: !attribute.optional }),
@@ -68,33 +69,33 @@ export function AttributeRow({ attribute, partsOf, first, last, depth }: Attribu
       <div className="flex items-center gap-0.5">
         <CommitInput
           value={attribute.name}
-          aria-label="Attribute name"
+          aria-label={t("form.attribute.name")}
           className="h-7 min-w-0 flex-1 text-sm"
-          onCommit={(name) => (name.trim() ? void update({ name: name.trim() }) : "Name it")}
+          onCommit={(name) => (name.trim() ? void update({ name: name.trim() }) : t("form.nameIt"))}
         />
         <IconAction
-          label="Move up"
+          label={t("form.moveUp")}
           disabled={first}
           onClick={() => er.edits.moveAttribute(attribute.id, -1)}
         >
           <ArrowUp />
         </IconAction>
         <IconAction
-          label="Move down"
+          label={t("form.moveDown")}
           disabled={last}
           onClick={() => er.edits.moveAttribute(attribute.id, 1)}
         >
           <ArrowDown />
         </IconAction>
         <IconAction
-          label={gate.reason("composite-attributes") || "Add a part (composite attribute)"}
+          label={gate.reason("composite-attributes") || t("form.attribute.addPart")}
           disabled={!gate.allows("composite-attributes")}
           onClick={() => er.edits.addAttribute(attribute.id)}
         >
           <ListTree />
         </IconAction>
         <IconAction
-          label="Delete attribute"
+          label={t("form.attribute.delete")}
           danger
           onClick={() => er.edits.removeAttribute(attribute.id)}
         >

@@ -1,0 +1,74 @@
+{
+  "title": "Board colors",
+  "panel": {
+    "add": "Add",
+    "newColor": "New color",
+    "newCollection": "New collection",
+    "closePanel": "Close panel",
+    "emptyTitle": "No board colors yet",
+    "emptyDescription": "Colors you name here are offered first in every color bar; elements using one follow it when it changes. Bring a design's colors in with Import.",
+    "addColor": "Add a color",
+    "modeLabel": "{axis} mode"
+  },
+  "collection": {
+    "rename": "Rename collection",
+    "delete": "Delete {name}",
+    "addColor": "Add a color to {name}",
+    "renameGroup": "Rename group",
+    "empty": "No colors yet: add one with +."
+  },
+  "color": {
+    "name": "Color name",
+    "follow": "Follow another color",
+    "unfollow": "Stop following it",
+    "delete": "Delete color",
+    "edit": "Edit {name}",
+    "editTitle": "Edit color",
+    "description": "{name} description",
+    "descriptionPlaceholder": "What it's for"
+  },
+  "exchange": {
+    "importTitle": "Import colors",
+    "filterAll": "Designs, boards and tokens",
+    "filterFiles": "Cloudy Canvas files",
+    "filterJson": "Tokens JSON",
+    "readFailed": "Couldn't read that file",
+    "exportFailed": "Couldn't export the colors",
+    "formatTokens": "Design tokens",
+    "exportedTokens": "Exported as design tokens",
+    "exportedCss": "Exported as CSS",
+    "menu": "Import and export",
+    "import": "Import colors from a file…",
+    "exportTokens": "Export as design tokens (DTCG)",
+    "exportCss": "Export as CSS variables"
+  },
+  "deleteCollection": {
+    "title": "Delete “{name}”?",
+    "colors_one": "{count} color",
+    "colors_other": "{count} colors",
+    "elements_one": "{count} element",
+    "elements_other": "{count} elements",
+    "withElements": "Its {colors} go with it. {elements} using them keep their color, unlinked.",
+    "plain": "Its {colors} go with it."
+  },
+  "deleteColor": {
+    "title": "Delete “{name}”?",
+    "elements_one": "{count} element",
+    "elements_other": "{count} elements",
+    "colors_one": "{count} other color",
+    "colors_other": "{count} other colors",
+    "description": "It's used by {uses}. They keep its color, unlinked.",
+    "and": " and "
+  },
+  "import": {
+    "title": "Import colors",
+    "added": "{count} added",
+    "updated": "{count} updated",
+    "skipped": "{count} skipped",
+    "done": "Colors imported",
+    "nothing": "Nothing changed",
+    "failed": "Couldn't import the colors",
+    "button": "Import {count}",
+    "noColors": "This file has no colors."
+  }
+}

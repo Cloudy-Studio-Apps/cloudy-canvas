@@ -29,18 +29,19 @@ import { RECTANGLE_DEFAULTS } from "./rectangle.defaults";
 import { drawRectangle } from "./rectangle.draw";
 import { createRectangle } from "./rectangle.factory";
 import type { RectangleElement } from "./rectangle.types";
+import { t } from "./rectangle.i18n";
 
 export class RectangleKind extends BoxShapeKind<RectangleElement> {
   readonly type = "rectangle";
-  readonly label = "Rectangle";
-  readonly description = "A box with fills, strokes and rounded corners.";
+  readonly label = t("label");
+  readonly description = t("description");
   override readonly tool = "rectangle";
   override readonly defaults = RECTANGLE_DEFAULTS;
   override readonly styleFields = [...NODE_STYLE_FIELDS, "cornerRadius"];
   override readonly sidedStrokes = true;
 
   override bindable(el: RectangleElement): BindableField[] {
-    return [...super.bindable(el), numberField("cornerRadius", "corner-radius", "Corner radius")];
+    return [...super.bindable(el), numberField("cornerRadius", "corner-radius", t("cornerRadius"))];
   }
 
   override bindValues(

@@ -9,7 +9,10 @@ export type SaveKind = "manual" | "auto";
 /** How a product's documents are stored: its file type, codec and wording. */
 export interface CanvasFileFormat {
   type: FileType;
-  /** The product in messages, e.g. "board" ("The board couldn't be saved"). */
+  /**
+   * The product in messages, translated: "board" ("The board couldn't be saved"), and in Spanish
+   * with its article, "la pizarra" ("No se pudo guardar la pizarra"), so sentences need no gender.
+   */
   noun: string;
   /** The name of a file that has none yet, e.g. "Untitled board". */
   untitled: string;

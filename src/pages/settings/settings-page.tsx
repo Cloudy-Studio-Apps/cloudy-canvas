@@ -5,6 +5,7 @@ import { Button } from "@shared/ui/components/ui/button";
 import { AppHeader } from "@shared/ui/layout/app-header";
 import { SettingsNav } from "./components/settings-nav";
 import { findSettingsSection, SETTINGS_SECTIONS } from "./settings-sections";
+import { t } from "./settings.i18n";
 
 export function SettingsPage() {
   const { section } = useParams();
@@ -18,10 +19,10 @@ export function SettingsPage() {
         <Button variant="ghost" size="sm" asChild>
           <Link to="/">
             <ArrowLeft />
-            Home
+            {t("page.home")}
           </Link>
         </Button>
-        <span className="text-md font-semibold tracking-tight">Settings</span>
+        <span className="text-md font-semibold tracking-tight">{t("page.title")}</span>
       </AppHeader>
       <div className="flex min-h-0 flex-1 flex-col md:flex-row">
         <SettingsNav />

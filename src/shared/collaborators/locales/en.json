@@ -1,0 +1,16 @@
+{
+  "connectedAgents": "Connected agents",
+  "connectedCollaborators": "Connected collaborators",
+  "none": "No one has connected yet.",
+  "following": "Following",
+  "clickStop": "Click to stop following",
+  "clickFollow": "Click to follow",
+  "more_one": "{count} more collaborator",
+  "more_other": "{count} more collaborators",
+  "justNow": "just now",
+  "minAgo": "{minutes} min ago",
+  "idle": "Connected, idle",
+  "connected": "Connected",
+  "failed": "{label} (failed)",
+  "on": "on {place}"
+}

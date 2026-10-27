@@ -3,6 +3,7 @@ import { ToolButton } from "../components/tool-button";
 import { useEditorPoint } from "./editor-modules-context";
 import { ExtensionIconView } from "./extension-icon-view";
 import { useEditorMode } from "./use-editor-mode";
+import { t } from "./modules.i18n";
 
 /**
  * The editor's modes side by side (the `modes` point, by `order`), the current one pressed; a
@@ -13,7 +14,7 @@ export function ModeSwitcher() {
   const entries = [...useEditorPoint((points) => points.modes)].sort((a, b) => a.order - b.order);
   if (entries.length < 2) return null;
   return (
-    <FloatingPanel role="radiogroup" aria-label="Modes">
+    <FloatingPanel role="radiogroup" aria-label={t("modes")}>
       {entries.map((entry) => (
         <ToolButton
           key={entry.id}

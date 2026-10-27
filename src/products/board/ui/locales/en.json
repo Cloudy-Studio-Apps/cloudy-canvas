@@ -1,0 +1,32 @@
+{
+  "editor": {
+    "canvasLabel": "Board canvas",
+    "opening": "Opening board",
+    "openFailed": "The board couldn't be opened",
+    "backHome": "Back to home"
+  },
+  "topBar": {
+    "backHome": "Back to home",
+    "about": "About Cloudy Canvas",
+    "badge": "Board",
+    "saveFailed": "Couldn't save. Try again",
+    "saveToFile": "Save to a file",
+    "save": "Save",
+    "agentsOn": "Agents: on",
+    "agentsOff": "Agents: off"
+  },
+  "colors": {
+    "documentColor": "Document color: {name}",
+    "documentColors": "Document colors",
+    "manage": "Manage board colors…"
+  },
+  "shortcuts": {
+    "tools": "Tools",
+    "editing": "Editing & view",
+    "or": "or"
+  },
+  "file": {
+    "untitled": "Untitled board",
+    "noun": "board"
+  }
+}

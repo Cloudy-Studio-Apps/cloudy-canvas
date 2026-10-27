@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "@shared/ui/components/ui/dialog";
 import { Input } from "@shared/ui/components/ui/input";
+import { t } from "./profile.i18n";
 
 /**
  * Asks for the name others see in live sessions, once, when the app starts without one. It starts
@@ -39,15 +40,12 @@ export function NamePrompt() {
         >
           <DialogHeader className="items-center border-b-0 px-10 pt-6 pb-2 text-center sm:text-center">
             <PattingSeal size={96} className="mt-2 mb-3" />
-            <DialogTitle>What should others call you?</DialogTitle>
-            <DialogDescription>
-              Shown to the people in live sessions you host or join. You can change it any time in
-              Settings › Collaboration.
-            </DialogDescription>
+            <DialogTitle>{t("title")}</DialogTitle>
+            <DialogDescription>{t("description")}</DialogDescription>
           </DialogHeader>
           <div className="flex items-center gap-2 px-4 py-4">
             <label htmlFor={inputId} className="sr-only">
-              Your name
+              {t("name")}
             </label>
             <Input
               id={inputId}
@@ -61,8 +59,8 @@ export function NamePrompt() {
               type="button"
               variant="outline"
               size="icon"
-              aria-label="Another name"
-              title="Another name"
+              aria-label={t("another")}
+              title={t("another")}
               onClick={() => setDraft(randomPersonName())}
             >
               <Dices />
@@ -70,7 +68,7 @@ export function NamePrompt() {
           </div>
           <DialogFooter className="border-t-0 px-4 pt-0 pb-4">
             <Button type="submit" className="w-full">
-              Continue
+              {t("continue")}
             </Button>
           </DialogFooter>
         </form>

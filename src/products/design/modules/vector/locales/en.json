@@ -1,0 +1,35 @@
+{
+  "label": "Vector",
+  "description": "A path of points and curves, drawn with the pen or the pencil.",
+  "pen": {
+    "label": "Pen",
+    "description": "Draw paths of points and curves; drag while placing a point to curve it."
+  },
+  "pencil": {
+    "label": "Pencil",
+    "description": "Draw freehand lines."
+  },
+  "edit": {
+    "title": "Vector editing",
+    "move": {
+      "label": "Move points",
+      "description": "Pick and drag points, segments and handles."
+    },
+    "pen": {
+      "label": "Pen",
+      "description": "Add points, extend ends, join points."
+    },
+    "bend": {
+      "label": "Bend",
+      "description": "Drag a segment to curve it; click a point to smooth it."
+    },
+    "bucket": {
+      "label": "Paint bucket",
+      "description": "Click an enclosed area to fill it, or a filled one to unfill it."
+    },
+    "cut": {
+      "label": "Cut",
+      "description": "Click a segment to cut it."
+    }
+  }
+}

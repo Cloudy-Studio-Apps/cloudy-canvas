@@ -14,6 +14,7 @@ import {
 import { AdvancedSettings } from "./advanced-settings";
 import { ValueField } from "./value-field";
 import type { VariableEditorProps } from "./variables-ui.types";
+import { t } from "../variables.i18n";
 
 /** The "Varies by" choice of no axis. */
 const NONE = "none";
@@ -35,7 +36,7 @@ export function VariableEditor({ variable, onDelete }: VariableEditorProps) {
   return (
     <div className="flex flex-col gap-3 text-xs">
       <CommitInput
-        aria-label="Variable name"
+        aria-label={t("editor.name")}
         value={variable.name}
         onCommit={(name) => tokens.updateVariable(variable.id, { name })}
         className="h-7 text-sm font-medium"
@@ -47,14 +48,14 @@ export function VariableEditor({ variable, onDelete }: VariableEditorProps) {
             value={variable.axisId ?? NONE}
             onValueChange={(id) => tokens.setVariableAxis(variable.id, id === NONE ? null : id)}
           >
-            <SelectTrigger aria-label="Modes" className="h-7 w-full text-xs">
+            <SelectTrigger aria-label={t("editor.modes")} className="h-7 w-full text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={NONE}>Same in every mode</SelectItem>
+              <SelectItem value={NONE}>{t("editor.sameInEvery")}</SelectItem>
               {axes.map((a) => (
                 <SelectItem key={a.id} value={a.id}>
-                  Changes with {a.name}
+                  {t("editor.changesWith", { name: a.name })}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -75,13 +76,13 @@ export function VariableEditor({ variable, onDelete }: VariableEditorProps) {
             </div>
           ))
         ) : (
-          <ValueField variable={variable} mode={DEFAULT_VALUE} label="Value" />
+          <ValueField variable={variable} mode={DEFAULT_VALUE} label={t("editor.value")} />
         )}
       </div>
 
       <CommitInput
-        aria-label="Description"
-        placeholder="Add a description"
+        aria-label={t("editor.description")}
+        placeholder={t("editor.addDescription")}
         value={variable.description}
         onCommit={(description) => tokens.updateVariable(variable.id, { description })}
         className="h-7 text-xs"
@@ -95,7 +96,7 @@ export function VariableEditor({ variable, onDelete }: VariableEditorProps) {
         onClick={onDelete}
         className="justify-start text-destructive"
       >
-        <Trash2 /> Delete variable
+        <Trash2 /> {t("editor.delete")}
       </Button>
     </div>
   );

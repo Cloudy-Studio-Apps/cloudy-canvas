@@ -14,6 +14,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { cn, IconButton } from "@shared/ui/kit";
 import { ExpressionBuilder } from "./expression-builder";
 import type { ExpressionInputProps } from "./variables-ui.types";
+import { t } from "../variables.i18n";
 
 /**
  * A number variable's expression for one mode (`{space/base} * 2`), typed with variables' names,
@@ -65,7 +66,7 @@ export function ExpressionInput({
       <Sigma className="size-3.5 shrink-0 text-subtle-foreground" />
       <input
         ref={input}
-        aria-label={`${label} expression`}
+        aria-label={t("expression.label", { label })}
         placeholder="{space/base} * 2"
         {...bindings}
         onBlur={(event) => {
@@ -76,7 +77,7 @@ export function ExpressionInput({
       />
       {field.error ? (
         <span className="shrink-0 truncate text-xs text-destructive" title={field.error}>
-          Not applied
+          {t("expression.notApplied")}
         </span>
       ) : (
         <span className="shrink-0 text-xs text-subtle-foreground tabular-nums">
@@ -84,7 +85,7 @@ export function ExpressionInput({
         </span>
       )}
       <VariablePicker type="number" scopes={[]} value={null} modes={modes} onPick={insert}>
-        <IconButton label="Insert a variable" size="xs">
+        <IconButton label={t("expression.insert")} size="xs">
           <Braces />
         </IconButton>
       </VariablePicker>
@@ -95,7 +96,7 @@ export function ExpressionInput({
         start={result?.type === "number" ? result.number : 0}
         modes={modes}
       >
-        <IconButton label="Build it step by step" size="xs">
+        <IconButton label={t("expression.build")} size="xs">
           <Wand2 />
         </IconButton>
       </ExpressionBuilder>

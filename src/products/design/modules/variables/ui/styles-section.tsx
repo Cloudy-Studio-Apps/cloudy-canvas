@@ -19,6 +19,7 @@ import {
 } from "@shared/ui/kit";
 import { DeleteTokensDialog, StyleRow, designStyleTypes } from "../../core/ui";
 import { TypeScaleDialog } from "./type-scale/type-scale-dialog";
+import { t } from "../variables.i18n";
 
 /**
  * With nothing selected, Figma's Styles: "+" adds a style of a kind (Text, …) or a type scale, and each kind's
@@ -36,12 +37,12 @@ export function StylesSection() {
 
   return (
     <PanelSection
-      title="Styles"
+      title={t("styles.title")}
       actions={
         <DropdownMenu>
           <DropdownMenuTrigger
-            aria-label="Add style"
-            title="Add style"
+            aria-label={t("styles.add")}
+            title={t("styles.add")}
             className="flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground [&_svg]:size-3.5"
           >
             <Plus />
@@ -54,7 +55,7 @@ export function StylesSection() {
             ))}
             <DropdownMenuSeparator />
             <DropdownMenuItem onSelect={() => setTypeScale(true)}>
-              <Ruler /> Type scale…
+              <Ruler /> {t("styles.typeScale")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -86,7 +87,7 @@ export function StylesSection() {
           );
         })}
         {store.styles().length === 0 && (
-          <p className="text-xs text-muted-foreground">Save looks you reuse as styles.</p>
+          <p className="text-xs text-muted-foreground">{t("styles.empty")}</p>
         )}
       </div>
       <DeleteTokensDialog ids={deleting} onClose={() => setDeleting(null)} />

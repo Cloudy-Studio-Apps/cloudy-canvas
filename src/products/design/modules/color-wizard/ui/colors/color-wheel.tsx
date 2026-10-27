@@ -5,6 +5,7 @@ import { hexToHsvColor, simulateCvd } from "../..";
 import { useColorWizardStore } from "../store";
 import { drawWheel } from "./draw-wheel";
 import { useWheelDrag } from "./use-wheel-drag";
+import { t } from "../../color-wizard.i18n";
 
 const SIZE = 300;
 
@@ -51,7 +52,9 @@ export function ColorWheel() {
         <span
           key={i}
           role="slider"
-          aria-label={i === 0 ? "Base color" : `Color ${i + 1}`}
+          aria-label={
+            i === 0 ? t("sources.wheel.baseColor") : t("palette.swatch.colorN", { n: i + 1 })
+          }
           aria-valuetext={c.hex}
           aria-valuenow={i}
           tabIndex={-1}

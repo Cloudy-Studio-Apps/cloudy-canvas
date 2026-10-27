@@ -4,6 +4,7 @@ import type { DesignNode } from "../node/design-node.types";
 import { isGradientPaint } from "../node/gradient-paint";
 import type { Paint } from "../node/paint.types";
 import type { PaintStyleValue } from "./paint-style.types";
+import { t } from "../core.i18n";
 
 const PAINT_TYPES = new Set(["solid", "image", "linear", "radial", "angular", "diamond"]);
 
@@ -31,8 +32,10 @@ export function paintStyleSummary(style: StyleRecord): string {
   const paints = readPaintStyle(style.value)?.paints ?? [];
   const [only] = paints;
   if (paints.length !== 1 || !only)
-    return paints.length === 0 ? "Empty" : `${paints.length} paints`;
+    return paints.length === 0
+      ? t("styles.empty")
+      : t("styles.paintCount", { count: paints.length });
   if (only.type === "solid") return only.color.toUpperCase();
   if (isGradientPaint(only)) return only.type[0]?.toUpperCase() + only.type.slice(1);
-  return "Image";
+  return t("styles.image");
 }

@@ -4,6 +4,7 @@ import { getBoardModules, getBoardProduct } from "@board/ui";
 import { createDesignMcpTools, DESIGN_MCP_INSTRUCTIONS, type DesignAgentHost } from "@design";
 import { getDesignModules, getDesignProduct } from "@design/ui";
 import { notifyError } from "@shared/stores/toast-store";
+import { t } from "../app.i18n";
 
 const SERVER_NAME = "cloudy-canvas";
 const SERVER_VERSION = "0.1.0";
@@ -20,7 +21,7 @@ export function createAgentServerDefinition(
   const taken = new Set<string>();
   const skipped = (tool: { name: string }, group: { id: string }) =>
     notifyError(
-      "An agent tool was left out",
+      t("mcp.toolLeftOut"),
       new Error(`"${tool.name}" (from "${group.id}") has the name of another tool.`),
     );
   const tools = [

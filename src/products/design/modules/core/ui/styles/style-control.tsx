@@ -7,6 +7,7 @@ import { PanelIconButton } from "@design/ui/components/panel";
 import { ListRow, Popover, PopoverContent, PopoverTrigger, Separator } from "@shared/ui/kit";
 import { StyleList } from "./style-list";
 import type { StyleControlProps } from "./styles.types";
+import { t } from "../../core.i18n";
 
 /**
  * A section header's style button (Figma's): pick a style of its type for the selection, or save
@@ -18,7 +19,7 @@ export function StyleControl({
   createLabel,
   create,
   showName,
-  label = "Styles",
+  label = t("styles.styles"),
 }: StyleControlProps) {
   const { store } = useDocumentTokens();
   const [open, setOpen] = useState(false);
@@ -62,7 +63,7 @@ export function StyleControl({
         </PopoverContent>
       </Popover>
       {binding.bound !== undefined && (
-        <PanelIconButton label="Detach style" onClick={() => binding.bind(null)}>
+        <PanelIconButton label={t("styles.detach")} onClick={() => binding.bind(null)}>
           <Unlink />
         </PanelIconButton>
       )}

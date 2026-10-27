@@ -9,6 +9,7 @@ import { NodeOptionButtons, PanelIconButton, PanelSection } from "@design/ui/com
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import type { PropertySectionProps } from "@design/ui/modules";
 import { BOOLEAN_COMMANDS, BOOLEAN_ICONS } from "./boolean-icons";
+import { t } from "../boolean.i18n";
 
 /**
  * Booleans in the properties panel: for selected booleans their operation, for several other
@@ -24,28 +25,32 @@ export function BooleanSection({ selection: { nodes } }: PropertySectionProps) {
     return keys ? ` (${keys})` : "";
   };
   return (
-    <PanelSection title="Boolean">
+    <PanelSection title={t("title")}>
       <div className="flex flex-col gap-2">
         {booleans ? (
           <NodeOptionButtons
             nodes={nodes as readonly BooleanElement[]}
-            label="Operation"
+            label={t("panel.operation")}
             read={(node) => node.operation}
             patch={(operation) => ({ operation }) as ElementPatch<DesignNode>}
-            options={BOOLEAN_OPERATIONS.map(({ operation, label }) => {
+            options={BOOLEAN_OPERATIONS.map(({ operation }) => {
               const Icon = BOOLEAN_ICONS[operation];
-              return { value: operation, label, icon: <Icon /> };
+              return { value: operation, label: t(`operations.${operation}`), icon: <Icon /> };
             })}
           />
         ) : (
-          <div role="group" aria-label="Combine" className="flex rounded-sm bg-muted p-0.5">
-            {BOOLEAN_OPERATIONS.map(({ operation, label }) => {
+          <div
+            role="group"
+            aria-label={t("panel.combine")}
+            className="flex rounded-sm bg-muted p-0.5"
+          >
+            {BOOLEAN_OPERATIONS.map(({ operation }) => {
               const Icon = BOOLEAN_ICONS[operation];
               const command = BOOLEAN_COMMANDS[operation];
               return (
                 <PanelIconButton
                   key={operation}
-                  label={`${label}${shortcut(command)}`}
+                  label={`${t(`operations.${operation}`)}${shortcut(command)}`}
                   onClick={() => engine.commands[command]?.()}
                 >
                   <Icon />
@@ -61,7 +66,7 @@ export function BooleanSection({ selection: { nodes } }: PropertySectionProps) {
           onClick={() => engine.commands.flatten?.()}
         >
           <Combine />
-          Flatten
+          {t("commands.flatten")}
           <span className="ml-auto text-xs text-muted-foreground">
             {engine.keymap.label("flatten")}
           </span>

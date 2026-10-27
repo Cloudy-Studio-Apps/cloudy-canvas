@@ -1,18 +1,20 @@
 import { ArrowRight } from "lucide-react";
 
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
+import { tCommon } from "@shared/core";
 import { Button, Kbd } from "@shared/ui/kit";
 import { STYLEGUIDE_COMMANDS, STYLEGUIDE_MODE_ID } from "../../../styleguide";
 import { useColorWizardStore } from "../store";
 import { CreateButton } from "./create-button";
 import { stepIndex, WIZARD_STEPS } from "./steps";
+import { t } from "../../color-wizard.i18n";
 
 const HINTS = {
   colors: null,
-  roles: "Names become variable groups",
-  theme: "Click a part of a preview to change its color",
-  type: "Text styles are optional",
-  review: "One undo step",
+  roles: t("shell.footer.hintRoles"),
+  theme: t("shell.footer.hintTheme"),
+  type: t("shell.footer.hintType"),
+  review: t("shell.footer.hintReview"),
 } as const;
 
 /** Back or Cancel, and Next or Create (with what it writes); Start over on the done screen. */
@@ -29,7 +31,7 @@ export function WizardFooter() {
     return (
       <div className="flex items-center justify-end gap-2 border-t border-border px-4 py-2.5">
         <Button variant="outline" onClick={() => set({ created: null, step: "colors" })}>
-          Start over
+          {t("shell.footer.startOver")}
         </Button>
         <Button
           onClick={() => {
@@ -37,7 +39,7 @@ export function WizardFooter() {
             if (!inGuide) engine.runHostAction(STYLEGUIDE_COMMANDS.open);
           }}
         >
-          Open the style guide
+          {t("shell.footer.openGuide")}
         </Button>
       </div>
     );
@@ -48,7 +50,7 @@ export function WizardFooter() {
       <span className="text-xs text-muted-foreground">
         {step === "colors" ? (
           <>
-            Press <Kbd>Space</Kbd> for a random palette
+            {t("shell.footer.pressBefore")} <Kbd>Space</Kbd> {t("shell.footer.pressAfter")}
           </>
         ) : (
           HINTS[step]
@@ -57,16 +59,16 @@ export function WizardFooter() {
       <div className="ml-auto" />
       {at > 0 ? (
         <Button variant="outline" onClick={() => set({ step: WIZARD_STEPS[at - 1]!.id })}>
-          Back
+          {t("shell.footer.back")}
         </Button>
       ) : (
         <Button variant="ghost" onClick={() => set({ open: false })}>
-          Cancel
+          {tCommon("cancel")}
         </Button>
       )}
       {next ? (
         <Button onClick={() => set({ step: next.id })}>
-          Next: {next.label.toLowerCase()}
+          {t("shell.footer.next", { step: next.label.toLowerCase() })}
           <ArrowRight />
         </Button>
       ) : (

@@ -8,6 +8,7 @@ import { stopSharing } from "../host-session";
 import { useStoreState } from "../use-store-state";
 import { GuestRow } from "./guest-row";
 import type { HostingPanelProps } from "./share-dialog.types";
+import { t } from "../share.i18n";
 
 /** While sharing: the link to send, the people in the session, and Stop sharing. */
 export function HostingPanel({ host }: HostingPanelProps) {
@@ -15,45 +16,43 @@ export function HostingPanel({ host }: HostingPanelProps) {
 
   const copy = () =>
     void clipboard.writeText(host.link).then(
-      () =>
-        toast({ title: "Link copied", description: "Send it to the people you want to invite." }),
-      (error: unknown) => notifyError("Couldn't copy the link", error),
+      () => toast({ title: t("hosting.copied"), description: t("hosting.copiedHint") }),
+      (error: unknown) => notifyError(t("hosting.copyError"), error),
     );
 
   return (
     <div className="grid gap-4 px-4 py-4">
       <div className="space-y-1.5">
-        <p className="text-sm font-medium">Invite link</p>
+        <p className="text-sm font-medium">{t("hosting.invite")}</p>
         <div className="flex gap-2">
           <Input
             value={host.link}
             readOnly
             className="font-mono text-xs"
-            aria-label="Invite link"
+            aria-label={t("hosting.invite")}
           />
           <Button variant="outline" onClick={copy}>
             <Copy />
-            Copy
+            {t("hosting.copy")}
           </Button>
         </div>
-        <p className="text-sm text-muted-foreground">
-          Whoever opens it asks to join; you decide who comes in.
-        </p>
+        <p className="text-sm text-muted-foreground">{t("hosting.approval")}</p>
         {!host.online && (
           <p className="flex items-start gap-1.5 text-sm text-destructive">
             <TriangleAlert className="mt-0.5 size-4 shrink-0" />
-            The relay couldn&apos;t be reached, so only people on your network can join. Check
-            Settings › Collaboration.
+            {t("hosting.offline")}
           </p>
         )}
       </div>
       <div className="space-y-1">
         <p className="text-sm font-medium">
-          In the session{guests.length > 0 ? ` (${guests.length})` : ""}
+          {guests.length > 0
+            ? t("hosting.inSessionCount", { count: guests.length })
+            : t("hosting.inSession")}
         </p>
         {guests.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            {knocks.length > 0 ? "Someone is asking to join." : "Nobody has joined yet."}
+            {knocks.length > 0 ? t("hosting.knocking") : t("hosting.nobody")}
           </p>
         ) : (
           <ul className="divide-y">
@@ -65,7 +64,7 @@ export function HostingPanel({ host }: HostingPanelProps) {
       </div>
       <div className="flex justify-end border-t pt-3">
         <Button variant="outline" onClick={() => void stopSharing()}>
-          Stop sharing
+          {t("hosting.stop")}
         </Button>
       </div>
     </div>

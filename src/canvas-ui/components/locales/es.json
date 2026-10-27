@@ -1,0 +1,112 @@
+{
+  "zoom": {
+    "out": "Alejar",
+    "in": "Acercar",
+    "current": "Zoom {percent}",
+    "fit": "Ajustar a la pantalla",
+    "selection": "Ajustar a la selección",
+    "snapObjects": "Ajustar a objetos",
+    "snapPixel": "Ajustar a la cuadrícula de píxeles",
+    "snapGuides": "Ajustar a las guías"
+  },
+  "history": {
+    "undo": "Deshacer",
+    "redo": "Rehacer",
+    "undoOwner": "Deshacer el cambio de {name}",
+    "redoOwner": "Rehacer el cambio de {name}",
+    "undoStep": "Deshacer: {step}",
+    "redoStep": "Rehacer: {step}",
+    "undoKeyHint": "{keys} deshace los cambios de {name} mientras lo sigues"
+  },
+  "follow": {
+    "following": "Siguiendo a {name}",
+    "watching": "Viendo su vista",
+    "stop": "Dejar de seguir"
+  },
+  "color": {
+    "recent": "Recientes",
+    "custom": "Color personalizado",
+    "edit": "Editar {label}",
+    "hex": "{label} hex",
+    "opacity": "Opacidad de {label}",
+    "hexLabel": "Hex",
+    "saturation": "Saturación y brillo",
+    "saturationValue": "Saturación {saturation}%, brillo {brightness}%",
+    "eyedropper": "Elegir un color de la pantalla",
+    "hexError": "Escribe un color hex, como FF8800",
+    "percentError": "Escribe un porcentaje"
+  },
+  "menu": {
+    "align": "Alinear",
+    "copyPasteAs": "Copiar/Pegar como",
+    "order": "Orden",
+    "exportSelection": "Exportar selección…",
+    "exportBoard": "Exportar pizarra…",
+    "lock": "Bloquear",
+    "unlock": "Desbloquear"
+  },
+  "export": {
+    "title": "Exportar",
+    "description": "Elige el tipo de archivo, el fondo y el área que exportar.",
+    "fileType": "Tipo de archivo",
+    "background": "Fondo",
+    "area": "Área de exportación",
+    "solid": "Sólido",
+    "transparent": "Transparente",
+    "selectionOnly": "Solo la selección",
+    "entireBoard": "Toda la pizarra",
+    "exporting": "Exportando…",
+    "export": "Exportar",
+    "progress": "Exportando como {format}…",
+    "failed": "No se pudo exportar",
+    "done": "Exportado como {format}",
+    "saveError": "No se pudo guardar la exportación",
+    "formats": {
+      "png": "Imagen PNG",
+      "jpg": "Imagen JPEG",
+      "pdf": "Documento PDF",
+      "csv": "Tabla CSV"
+    }
+  },
+  "crop": {
+    "move": "Mover la imagen",
+    "scale": "Escalar la imagen",
+    "resize": "Cambiar el tamaño del recorte"
+  },
+  "loading": {
+    "opening": "Abriendo archivo"
+  },
+  "quality": {
+    "onScreen": "En pantalla ≈ {px} px",
+    "outOfView": "Ahora está fuera de la vista.",
+    "nowOnScreen": "Ahora ocupa unos {px} px en pantalla.",
+    "exportsVector": "Las exportaciones y la vista previa y el PDF del modo Catálogo la dibujan con la nitidez que necesiten.",
+    "exportsRaster": "Las exportaciones y la vista previa y el PDF del modo Catálogo usan el original en calidad completa ({size} px).",
+    "vectorLabel": "Imagen vectorial · dibujada a {size} px",
+    "vectorTip": "Una imagen vectorial se dibuja en el lienzo solo con la nitidez con que se ve, para mantenerlo rápido. {now} Acerca y se dibuja más nítida. {exports}",
+    "fullLabel": "Resolución completa · {size} px",
+    "fullTip": "El lienzo muestra esta imagen a su propio tamaño, {size} px. Las exportaciones y el modo Catálogo también la usan en calidad completa.",
+    "previewLabel": "Vista previa {shown} de {natural} px",
+    "previewTip": "Para mantener el lienzo rápido, muestra una copia más pequeña de esta imagen, tan nítida como se ve en pantalla. {now} Acerca y se carga una copia más nítida. {exports}"
+  },
+  "colorControls": {
+    "hue": "Matiz",
+    "hueOf": "Matiz de {target}",
+    "opacity": "Opacidad",
+    "opacityOf": "Opacidad de {target}",
+    "hex": "Color hexadecimal",
+    "hexOf": "Color hexadecimal de {target}"
+  },
+  "anchors": {
+    "label": "Ancla",
+    "top-left": "Arriba a la izquierda",
+    "top": "Arriba",
+    "top-right": "Arriba a la derecha",
+    "left": "Izquierda",
+    "center": "Centro",
+    "right": "Derecha",
+    "bottom-left": "Abajo a la izquierda",
+    "bottom": "Abajo",
+    "bottom-right": "Abajo a la derecha"
+  }
+}

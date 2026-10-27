@@ -7,6 +7,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button, EmptyState } from "@shared/ui/kit";
 import { useBoard } from "../window/use-board";
 import { UnusedRow } from "./unused-row";
+import { t } from "../../variables.i18n";
 
 /**
  * Find unused: the variables and styles nothing uses (no layer, alias, style or generator), to
@@ -30,10 +31,7 @@ export function UnusedView() {
   if (unused.length === 0) {
     return (
       <div className="flex min-h-0 flex-1 items-center justify-center p-6">
-        <EmptyState
-          title="Everything is used"
-          description="Every variable and style is used by a layer, an alias, a style or a generator."
-        />
+        <EmptyState title={t("unused.emptyTitle")} description={t("unused.emptyDescription")} />
       </div>
     );
   }
@@ -41,10 +39,10 @@ export function UnusedView() {
     <section className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4">
       <header className="flex items-center justify-between gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-foreground">Unused · {unused.length}</h3>
-          <p className="text-xs text-muted-foreground">
-            Not used by any layer, alias, style or generator.
-          </p>
+          <h3 className="text-sm font-semibold text-foreground">
+            {t("unused.title", { count: unused.length })}
+          </h3>
+          <p className="text-xs text-muted-foreground">{t("unused.hint")}</p>
         </div>
         <div className="flex gap-1">
           <Button
@@ -53,10 +51,12 @@ export function UnusedView() {
             disabled={kept.length === 0}
             onClick={() => setDeleting(kept)}
           >
-            Delete {kept.length || ""} picked
+            {kept.length
+              ? t("unused.deletePicked", { count: kept.length })
+              : t("unused.deletePickedNone")}
           </Button>
           <Button size="xs" variant="outline" onClick={() => setDeleting(unused)}>
-            Delete all unused
+            {t("unused.deleteAll")}
           </Button>
         </div>
       </header>
@@ -66,7 +66,7 @@ export function UnusedView() {
           if (!record) return null;
           const where =
             record.kind === "style"
-              ? `${record.styleType} style`
+              ? t("unused.styleOf", { type: record.styleType })
               : (store.collection(record.collectionId)?.name ?? "");
           const value =
             record.kind === "variable" && record.type === "color"

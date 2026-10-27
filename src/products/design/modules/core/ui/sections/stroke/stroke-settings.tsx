@@ -17,6 +17,7 @@ import { CAPS, DASH_STYLES, JOINS } from "./stroke-options";
 import { SettingsRow } from "./settings-row";
 import { StrokePreview } from "./stroke-preview";
 import type { StrokeSettingsProps } from "./stroke-settings.types";
+import { t } from "../../../core.i18n";
 
 /**
  * The stroke settings popover: its dash style (with a live preview, the dash and gap or a custom
@@ -32,18 +33,18 @@ export function StrokeSettings({ nodes, openEnds }: StrokeSettingsProps) {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <span>
-          <PanelIconButton label="Stroke settings" active={open}>
+          <PanelIconButton label={t("stroke.settings")} active={open}>
             <Settings2 />
           </PanelIconButton>
         </span>
       </PopoverTrigger>
       <PopoverContent side="left" align="start" sideOffset={16} className="w-60 p-3">
         <div className="flex flex-col gap-2.5 text-xs">
-          <h3 className="font-semibold text-foreground">Stroke settings</h3>
+          <h3 className="font-semibold text-foreground">{t("stroke.settings")}</h3>
           {first && style !== null && <StrokePreview node={first} />}
           <NodeSelectField
             nodes={nodes}
-            label="Dash style"
+            label={t("stroke.dashStyle")}
             read={dashStyle}
             patch={(value, node) => dashStylePatch(value as DashStyle, node)}
             options={DASH_STYLES}
@@ -53,7 +54,7 @@ export function StrokeSettings({ nodes, openEnds }: StrokeSettingsProps) {
               <NodeNumberField
                 nodes={nodes}
                 prefix="D"
-                label="Dash length"
+                label={t("stroke.dashLength")}
                 min={0}
                 read={(node) => node.strokeDashes[0] ?? 0}
                 patch={(dash, node) => ({ strokeDashes: [dash, node.strokeDashes[1] ?? dash] })}
@@ -61,7 +62,7 @@ export function StrokeSettings({ nodes, openEnds }: StrokeSettingsProps) {
               <NodeNumberField
                 nodes={nodes}
                 prefix="G"
-                label="Gap length"
+                label={t("stroke.gapLength")}
                 min={0}
                 read={(node) => node.strokeDashes[1] ?? 0}
                 patch={(gap, node) => ({ strokeDashes: [node.strokeDashes[0] ?? gap, gap] })}
@@ -72,7 +73,7 @@ export function StrokeSettings({ nodes, openEnds }: StrokeSettingsProps) {
             <NodeNumberField
               nodes={nodes}
               prefix="G"
-              label="Space between dots"
+              label={t("stroke.dotSpacing")}
               min={0}
               read={(node) => node.strokeDashes[1] ?? 0}
               patch={(gap) => ({ strokeDashes: [0, gap] })}
@@ -80,20 +81,20 @@ export function StrokeSettings({ nodes, openEnds }: StrokeSettingsProps) {
           )}
           {style === "custom" && <DashPatternField nodes={nodes} />}
           {(openEnds || dashed) && (
-            <SettingsRow label={dashed ? "Ends and dashes" : "Ends"}>
+            <SettingsRow label={dashed ? t("stroke.endsAndDashes") : t("stroke.ends")}>
               <NodeOptionButtons
                 nodes={nodes}
-                label="Stroke cap"
+                label={t("stroke.cap")}
                 read={(node) => node.strokeCap}
                 patch={(strokeCap) => ({ strokeCap: strokeCap as "none" })}
                 options={CAPS}
               />
             </SettingsRow>
           )}
-          <SettingsRow label="Corners">
+          <SettingsRow label={t("stroke.corners")}>
             <NodeOptionButtons
               nodes={nodes}
-              label="Stroke join"
+              label={t("stroke.join")}
               read={(node) => node.strokeJoin}
               patch={(strokeJoin) => ({ strokeJoin: strokeJoin as "miter" })}
               options={JOINS}
@@ -103,7 +104,7 @@ export function StrokeSettings({ nodes, openEnds }: StrokeSettingsProps) {
             <NodeNumberField
               nodes={nodes}
               prefix="∠"
-              label="Miter angle: sharper corners are beveled"
+              label={t("stroke.miter")}
               suffix="°"
               min={1}
               max={180}

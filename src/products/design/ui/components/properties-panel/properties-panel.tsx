@@ -14,6 +14,7 @@ import { DESIGN_LAYOUT } from "../../design-layout";
 import { designEditor } from "../../modules";
 import { useDesignPanelStore } from "../../stores/design-panel-store";
 import { PropertySections } from "./property-sections";
+import { t } from "../../design-ui.i18n";
 
 /**
  * The right panel: history, collaborators, sharing and the button that hides it, then the
@@ -35,7 +36,7 @@ export function PropertiesPanel() {
 
   return (
     <aside
-      aria-label="Properties"
+      aria-label={t("properties.label")}
       className="flex shrink-0 flex-col border-l bg-surface"
       style={{ width: DESIGN_LAYOUT.rightPanel }}
     >
@@ -44,7 +45,7 @@ export function PropertiesPanel() {
         <CollaboratorStack followable className="ml-0.5" />
         <div className="flex-1" />
         <ShareButton product="design" look="button" />
-        <ToolButton label="Hide properties panel" side="bottom" onClick={() => setOpen(false)}>
+        <ToolButton label={t("properties.hide")} side="bottom" onClick={() => setOpen(false)}>
           <PanelRightClose />
         </ToolButton>
       </header>
@@ -69,10 +70,10 @@ export function PropertiesPanel() {
           <div className="flex h-11 shrink-0 items-center justify-between border-b px-2">
             <TabsList className="h-7">
               <TabsTrigger value="design" className="px-2.5 text-xs">
-                Design
+                {t("properties.tabs.design")}
               </TabsTrigger>
               <TabsTrigger value="prototype" className="px-2.5 text-xs">
-                Prototype
+                {t("properties.tabs.prototype")}
               </TabsTrigger>
             </TabsList>
             <ZoomMenu side="bottom" />

@@ -3,6 +3,7 @@ import { Fragment, useMemo } from "react";
 import { formatShortcut } from "@shared/core";
 import { Kbd } from "@shared/ui/components/ui/kbd";
 import { boardShortcutGroups } from "./board-shortcut-rows";
+import { t } from "../../board-ui.i18n";
 
 /** Every board shortcut, read from the board's keybindings. */
 export function BoardShortcutsList() {
@@ -22,7 +23,9 @@ export function BoardShortcutsList() {
                 <dd className="flex items-center gap-1.5">
                   {row.shortcuts.map((shortcut, i) => (
                     <Fragment key={i}>
-                      {i > 0 && <span className="text-xs text-subtle-foreground">or</span>}
+                      {i > 0 && (
+                        <span className="text-xs text-subtle-foreground">{t("shortcuts.or")}</span>
+                      )}
                       <Kbd>{formatShortcut(shortcut)}</Kbd>
                     </Fragment>
                   ))}

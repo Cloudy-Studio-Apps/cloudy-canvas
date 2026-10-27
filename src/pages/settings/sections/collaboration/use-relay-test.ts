@@ -3,6 +3,7 @@ import { useState } from "react";
 import { http, shareTransport } from "@platform";
 import type { RelaySettings } from "@shared/core";
 import type { RelayTestState } from "./relay-test.types";
+import { t } from "../../settings.i18n";
 
 /**
  * Tests a relay: the app coming online through it, and when that fails, whether the server
@@ -13,7 +14,7 @@ export function useRelayTest() {
 
   const test = async (relay: RelaySettings) => {
     if (!shareTransport) {
-      setState({ status: "failed", message: "Live sessions need the desktop app." });
+      setState({ status: "failed", message: t("collaboration.needDesktop") });
       return;
     }
     setState({ status: "testing" });
@@ -33,8 +34,10 @@ export function useRelayTest() {
     setState({
       status: "failed",
       message: answers
-        ? "The relay answers but didn't let the app in: check the token."
-        : `${result.error ?? "It didn't answer."} The server can't be reached: check the address, that it's running and that ports 80, 443 and 7842/udp are open.`,
+        ? t("collaboration.answersNoToken")
+        : t("collaboration.unreachable", {
+            error: result.error ?? t("collaboration.noAnswer"),
+          }),
     });
   };
 

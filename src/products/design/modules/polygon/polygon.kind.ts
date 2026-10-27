@@ -19,17 +19,18 @@ import {
 import { POLYGON_DEFAULTS } from "./polygon.defaults";
 import { createPolygon } from "./polygon.factory";
 import type { PolygonElement } from "./polygon.types";
+import { t } from "./polygon.i18n";
 
 /** Regular polygons (a triangle by default), stretched to their box. */
 export class PolygonKind extends PointsShapeKind<PolygonElement> {
   readonly type = "polygon";
-  readonly label = "Polygon";
-  readonly description = "A triangle or any regular polygon.";
+  readonly label = t("label");
+  readonly description = t("description");
   override readonly tool = "polygon";
   override readonly defaults = POLYGON_DEFAULTS;
 
   override bindable(el: PolygonElement): BindableField[] {
-    return [...super.bindable(el), numberField("pointCount", "other-number", "Points")];
+    return [...super.bindable(el), numberField("pointCount", "other-number", t("points"))];
   }
 
   override bindValues(

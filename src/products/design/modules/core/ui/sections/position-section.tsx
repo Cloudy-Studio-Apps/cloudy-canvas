@@ -7,6 +7,7 @@ import { ArrangeButtons } from "./arrange-buttons";
 import { RotationRow } from "./rotation-row";
 import { sharedValue } from "@design/ui/components/panel";
 import { layerPosition, positionMove } from "../../tree";
+import { t } from "../../core.i18n";
 
 /**
  * Align, distribute and tidy up, X/Y (from the top-left corner of the frame each layer is in, in
@@ -22,7 +23,7 @@ export function PositionSection({ selection: { nodes } }: PropertySectionProps) 
     move(nodes, (node) => positionMove(node, axis, value, get, engine.kinds));
 
   return (
-    <PanelSection title="Position">
+    <PanelSection title={t("sections.position")}>
       <ArrangeButtons nodes={nodes} />
       <PropertyGrid>
         <NumberField

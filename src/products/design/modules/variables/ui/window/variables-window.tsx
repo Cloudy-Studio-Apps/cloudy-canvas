@@ -4,11 +4,13 @@ import { useRef } from "react";
 import { cn } from "@shared/ui/kit";
 import { VariablesBoard } from "./board/variables-board";
 import { UnusedView } from "../usage/unused-view";
+import { tCommon } from "@shared/core";
 import { ExchangeMenu } from "../exchange";
 import { VariablesInspector } from "./inspector/variables-inspector";
 import { CollectionsSide } from "./side/collections-side";
 import { useDragPanel } from "./use-drag-panel";
 import { useVariablesWindowStore } from "./variables-window-store";
+import { t } from "../../variables.i18n";
 
 /**
  * The Variables window over the canvas (dragged by its title bar, resized from its corner): the
@@ -25,7 +27,7 @@ export function VariablesWindow() {
       <div
         ref={panel}
         role="dialog"
-        aria-label="Variables"
+        aria-label={t("window.title")}
         className={cn(
           "pointer-events-auto absolute flex min-h-80 min-w-[640px] resize flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-lifted",
           !position && "top-12 left-1/2 -translate-x-1/2",
@@ -40,13 +42,13 @@ export function VariablesWindow() {
           onPointerDown={drag}
           className="flex h-10 shrink-0 cursor-grab items-center gap-1 border-b border-border px-3 select-none active:cursor-grabbing"
         >
-          <span className="text-sm font-semibold">Variables</span>
+          <span className="text-sm font-semibold">{t("window.title")}</span>
           <div className="ml-auto" />
           <ExchangeMenu />
           <button
             type="button"
             onClick={() => setOpen(false)}
-            aria-label="Close"
+            aria-label={tCommon("close")}
             className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted"
           >
             <X className="size-4" />

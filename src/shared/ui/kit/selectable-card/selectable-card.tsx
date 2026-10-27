@@ -2,6 +2,7 @@ import { Check } from "lucide-react";
 
 import { cn } from "@shared/ui/lib/utils";
 import type { SelectableCardProps } from "./selectable-card.types";
+import { t } from "../kit.i18n";
 
 /** A card picked out of a set: a picture, a title, a description, ticked when selected. */
 export function SelectableCard({
@@ -35,7 +36,9 @@ export function SelectableCard({
           <span className="truncate text-sm font-medium">{title}</span>
           {badge}
           {comingSoon && (
-            <span className="rounded-xs bg-muted px-1 text-xs text-muted-foreground">Soon</span>
+            <span className="rounded-xs bg-muted px-1 text-xs text-muted-foreground">
+              {t("card.soon")}
+            </span>
           )}
         </div>
         {description && <span className="text-xs text-muted-foreground">{description}</span>}

@@ -4,6 +4,7 @@ import type { CanvasEngine } from "@canvas";
 import type { FileDrop } from "@shared/core";
 import { useFileDropStore } from "@shared/stores/file-drop-store";
 import { notifyError, toast } from "@shared/stores/toast-store";
+import { t } from "./canvas-ui.i18n";
 
 /**
  * Adds files dropped on the window to the engine's canvas while mounted (images, SVGs and `.txt`
@@ -29,12 +30,12 @@ async function dropOn<O extends object>(engine: CanvasEngine<O>, drop: FileDrop)
     toast({
       title:
         skipped.length === 1
-          ? `“${skipped[0]}” couldn't be added`
-          : `${skipped.length} files couldn't be added`,
-      description: "Drop images, SVGs or .txt files on the canvas.",
+          ? t("drop.oneFailed", { name: skipped[0] ?? "" })
+          : t("drop.manyFailed", { count: skipped.length }),
+      description: t("drop.hint"),
       tone: "error",
     });
   } catch (error) {
-    notifyError("The files couldn't be added", error);
+    notifyError(t("drop.error"), error);
   }
 }

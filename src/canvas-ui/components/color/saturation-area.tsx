@@ -4,6 +4,7 @@ import { hueColor } from "./color-math";
 import { COLOR_KEY_STEP } from "./color-constants";
 import type { SaturationAreaProps } from "./color.types";
 import { usePointerDrag } from "./use-pointer-drag";
+import { t } from "../components.i18n";
 
 /** The square where saturation (left to right) and brightness (bottom to top) are picked. */
 export function SaturationArea({ hsv, onChange }: SaturationAreaProps) {
@@ -13,8 +14,11 @@ export function SaturationArea({ hsv, onChange }: SaturationAreaProps) {
     <div
       role="slider"
       tabIndex={0}
-      aria-label="Saturation and brightness"
-      aria-valuetext={`Saturation ${Math.round(hsv.s * 100)}%, brightness ${Math.round(hsv.v * 100)}%`}
+      aria-label={t("color.saturation")}
+      aria-valuetext={t("color.saturationValue", {
+        saturation: Math.round(hsv.s * 100),
+        brightness: Math.round(hsv.v * 100),
+      })}
       {...drag}
       onKeyDown={(event) => {
         const step = (event.shiftKey ? 10 : 1) * COLOR_KEY_STEP;

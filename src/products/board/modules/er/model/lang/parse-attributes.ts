@@ -1,5 +1,6 @@
 import { parseSettings, type DbmlError, type TokenCursor } from "../../../db";
 import type { ParsedErAttribute } from "./parser.types";
+import { t } from "../../er.i18n";
 
 /** Short prefixes: `*dni` key, `~num` partial key, `+tfno` multivalued, `/edad` derived. */
 const PREFIXES: Record<string, (attribute: ParsedErAttribute) => void> = {
@@ -100,7 +101,7 @@ export function isPlain(attribute: ParsedErAttribute): boolean {
 }
 
 export function unknownSetting(key: string, at: { line: number; column: number }): DbmlError {
-  return { message: `Unknown setting "${key}" was ignored`, line: at.line, column: at.column };
+  return { message: t("lang.unknownSetting", { key }), line: at.line, column: at.column };
 }
 
 /** Items are one per line; a trailing comma is allowed. */

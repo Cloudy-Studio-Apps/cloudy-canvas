@@ -6,6 +6,7 @@ import { installInAgent } from "../copy-agent-setup";
 import { CopyRow } from "../copy-row";
 import { NO_URL } from "./no-url";
 import type { AgentClientSetupProps } from "./connect-agent-dialog.types";
+import { t } from "../agent-server.i18n";
 
 /** One app's setup: its one-click install, when it has one, and the snippet to copy. */
 export function AgentClientSetup({ client, url }: AgentClientSetupProps) {
@@ -16,13 +17,13 @@ export function AgentClientSetup({ client, url }: AgentClientSetupProps) {
         <div className="min-w-0 flex-1">
           <p className="text-sm font-medium">{client.label}</p>
           <p className="text-xs text-muted-foreground">
-            {client.installLink ? "Add it in one click, or set it up by hand." : client.where}
+            {client.installLink ? t("connect.oneClick") : client.where}
           </p>
         </div>
         {client.installLink && (
           <Button size="sm" disabled={!url} onClick={() => url && installInAgent(client, url)}>
             <ExternalLink />
-            Add to {client.label}
+            {t("connect.addTo", { client: client.label })}
           </Button>
         )}
       </div>

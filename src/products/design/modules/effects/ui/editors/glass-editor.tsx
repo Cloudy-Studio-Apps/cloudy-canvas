@@ -6,6 +6,7 @@ import type { GlassEffect } from "../../effect.types";
 import { ScrubField } from "../fields";
 import { PresetRow } from "./preset-row";
 import type { EffectEditorProps } from "../effects.points.types";
+import { t } from "../../effects.i18n";
 
 /** Glass: presets, the light (angle, intensity, splay), the lens (refraction, depth, dispersion) and frost. */
 export function GlassEditor({ effect, onChange }: EffectEditorProps<GlassEffect>) {
@@ -31,38 +32,38 @@ export function GlassEditor({ effect, onChange }: EffectEditorProps<GlassEffect>
   return (
     <div className="flex flex-col gap-2">
       <PresetRow
-        label="Look"
+        label={t("editors.look")}
         presets={GLASS_PRESETS}
         onPick={(i) => set({ ...GLASS_PRESETS[i]!.look })}
       />
       <PropertyGrid>
         <ScrubField
           prefix={<Sun />}
-          label="Light angle"
+          label={t("editors.lightAngle")}
           suffix="°"
           value={effect.lightAngle}
           onChange={(lightAngle, info) =>
             set({ lightAngle: ((lightAngle % 360) + 360) % 360 }, info)
           }
         />
-        {share("lightIntensity", "Light intensity", <SunDim />)}
-        {share("refraction", "Refraction", <WavesHorizontal />)}
+        {share("lightIntensity", t("editors.lightIntensity"), <SunDim />)}
+        {share("refraction", t("editors.refraction"), <WavesHorizontal />)}
         <ScrubField
           prefix={<Layers />}
-          label="Depth"
+          label={t("editors.depth")}
           min={0}
           value={effect.depth}
           onChange={(depth, info) => set({ depth }, info)}
         />
-        {share("dispersion", "Dispersion", <Rainbow />)}
+        {share("dispersion", t("editors.dispersion"), <Rainbow />)}
         <ScrubField
           prefix={<Droplet />}
-          label="Frost"
+          label={t("editors.frost")}
           min={0}
           value={effect.frost}
           onChange={(frost, info) => set({ frost }, info)}
         />
-        {share("splay", "Splay", <Sparkle />)}
+        {share("splay", t("editors.splay"), <Sparkle />)}
       </PropertyGrid>
     </div>
   );

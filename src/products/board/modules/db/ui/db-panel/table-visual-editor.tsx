@@ -8,6 +8,7 @@ import { ColumnRow } from "./column-row";
 import { IncomingRefs } from "./incoming-refs";
 import { IndexList } from "./index-list";
 import type { TableVisualEditorProps } from "./table-visual-editor.types";
+import { t } from "../../db.i18n";
 
 /** Form view of one table: name, color, columns, indexes, and the note shown beside it. */
 export function TableVisualEditor({ table }: TableVisualEditorProps) {
@@ -16,7 +17,7 @@ export function TableVisualEditor({ table }: TableVisualEditorProps) {
   return (
     <div className="space-y-4">
       <label className="block space-y-1">
-        <span className="text-xs font-medium text-muted-foreground">Table name</span>
+        <span className="text-xs font-medium text-muted-foreground">{t("tableEditor.name")}</span>
         <CommitInput
           value={table.name}
           onCommit={(name) => schema.updateTable(table.id, { name })}
@@ -24,7 +25,9 @@ export function TableVisualEditor({ table }: TableVisualEditorProps) {
       </label>
 
       <div className="space-y-1">
-        <span className="text-xs font-medium text-muted-foreground">Header color</span>
+        <span className="text-xs font-medium text-muted-foreground">
+          {t("tableEditor.headerColor")}
+        </span>
         <div className="flex gap-0.5">
           <ColorPalette
             colors={DB_HEADER_COLORS}
@@ -36,10 +39,10 @@ export function TableVisualEditor({ table }: TableVisualEditorProps) {
 
       <section className="space-y-1">
         <div className="flex items-center justify-between">
-          <h3 className="text-xs font-medium text-muted-foreground">Columns</h3>
+          <h3 className="text-xs font-medium text-muted-foreground">{t("tableEditor.columns")}</h3>
           <Button variant="ghost" size="sm" onClick={() => schema.addColumn(table.id)}>
             <Plus />
-            Add column
+            {t("tableEditor.addColumn")}
           </Button>
         </div>
         <ul>
@@ -52,11 +55,11 @@ export function TableVisualEditor({ table }: TableVisualEditorProps) {
       <IndexList table={table} />
 
       <label className="block space-y-1">
-        <span className="text-xs font-medium text-muted-foreground">Note</span>
+        <span className="text-xs font-medium text-muted-foreground">{t("tableEditor.note")}</span>
         <CommitTextarea
           value={table.note}
           rows={2}
-          placeholder="Shown as a comment next to the table"
+          placeholder={t("tableEditor.notePlaceholder")}
           onCommit={(note) => schema.updateTable(table.id, { note })}
         />
       </label>

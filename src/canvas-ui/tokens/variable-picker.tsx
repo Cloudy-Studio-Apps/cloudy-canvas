@@ -10,6 +10,7 @@ import { TokenGroupAccordion } from "./token-group-accordion";
 import type { VariablePickerProps } from "./tokens.types";
 import { useDocumentTokens } from "./use-document-tokens";
 import { VariableValue } from "./variable-value";
+import { t } from "./tokens.i18n";
 
 /**
  * Picks a variable for a field: the variables of its type (and scopes), by collection and group,
@@ -54,15 +55,15 @@ export function VariablePicker({
             size="sm"
             value={query}
             onChange={setQuery}
-            placeholder="Search variables"
-            aria-label="Search variables"
+            placeholder={t("picker.search")}
+            aria-label={t("picker.search")}
             className="text-xs"
           />
         </div>
         <div className="max-h-72 overflow-y-auto p-1">
           {collections.length === 0 ? (
             <p className="px-2 py-3 text-xs text-muted-foreground">
-              {store.isEmpty ? "This file has no variables yet." : "No variables fit this field."}
+              {store.isEmpty ? t("picker.empty") : t("picker.noFit")}
             </p>
           ) : (
             collections.map(({ collection, variables }) => (

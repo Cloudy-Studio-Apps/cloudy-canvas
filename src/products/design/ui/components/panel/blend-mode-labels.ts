@@ -1,36 +1,37 @@
 import type { LayerBlendMode } from "@design";
+import { t } from "../../design-ui.i18n";
 
 /** Figma's blend menu: its groups in order, each mode with its label. */
 export const BLEND_MODE_GROUPS: readonly (readonly { value: LayerBlendMode; label: string }[])[] = [
   [
-    { value: "pass-through", label: "Pass through" },
-    { value: "normal", label: "Normal" },
+    { value: "pass-through", label: t("blendModes.passThrough") },
+    { value: "normal", label: t("blendModes.normal") },
   ],
   [
-    { value: "darken", label: "Darken" },
-    { value: "multiply", label: "Multiply" },
-    { value: "plus-darker", label: "Plus darker" },
-    { value: "color-burn", label: "Color burn" },
+    { value: "darken", label: t("blendModes.darken") },
+    { value: "multiply", label: t("blendModes.multiply") },
+    { value: "plus-darker", label: t("blendModes.plusDarker") },
+    { value: "color-burn", label: t("blendModes.colorBurn") },
   ],
   [
-    { value: "lighten", label: "Lighten" },
-    { value: "screen", label: "Screen" },
-    { value: "plus-lighter", label: "Plus lighter" },
-    { value: "color-dodge", label: "Color dodge" },
+    { value: "lighten", label: t("blendModes.lighten") },
+    { value: "screen", label: t("blendModes.screen") },
+    { value: "plus-lighter", label: t("blendModes.plusLighter") },
+    { value: "color-dodge", label: t("blendModes.colorDodge") },
   ],
   [
-    { value: "overlay", label: "Overlay" },
-    { value: "soft-light", label: "Soft light" },
-    { value: "hard-light", label: "Hard light" },
+    { value: "overlay", label: t("blendModes.overlay") },
+    { value: "soft-light", label: t("blendModes.softLight") },
+    { value: "hard-light", label: t("blendModes.hardLight") },
   ],
   [
-    { value: "difference", label: "Difference" },
-    { value: "exclusion", label: "Exclusion" },
+    { value: "difference", label: t("blendModes.difference") },
+    { value: "exclusion", label: t("blendModes.exclusion") },
   ],
   [
-    { value: "hue", label: "Hue" },
-    { value: "saturation", label: "Saturation" },
-    { value: "color", label: "Color" },
-    { value: "luminosity", label: "Luminosity" },
+    { value: "hue", label: t("blendModes.hue") },
+    { value: "saturation", label: t("blendModes.saturation") },
+    { value: "color", label: t("blendModes.color") },
+    { value: "luminosity", label: t("blendModes.luminosity") },
   ],
 ];

@@ -7,11 +7,12 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { cn } from "@shared/ui/kit";
 import { SCOPE_OPTIONS } from "./scope-options";
 import type { AdvancedSettingsProps } from "./variables-ui.types";
+import { t } from "../variables.i18n";
 
 const PLATFORM_HINTS = {
-  web: "Web, e.g. var(--brand-500)",
-  ios: "iOS, e.g. Color.brand500",
-  android: "Android, e.g. R.color.brand_500",
+  web: t("advanced.hintWeb"),
+  ios: t("advanced.hintIos"),
+  android: t("advanced.hintAndroid"),
 } as const;
 
 /**
@@ -38,14 +39,14 @@ export function AdvancedSettings({ variable }: AdvancedSettingsProps) {
         className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
       >
         <ChevronRight className={cn("size-3.5 transition-transform", open && "rotate-90")} />
-        Advanced
+        {t("advanced.title")}
       </button>
       {open && (
         <div className="flex flex-col gap-3 pl-4">
           {SCOPE_OPTIONS[variable.type].length > 0 && (
             <div className="flex flex-col gap-1">
               <span className="text-muted-foreground">
-                Show in pickers for {variable.scopes.length === 0 ? "every field" : "these fields"}
+                {variable.scopes.length === 0 ? t("advanced.showEvery") : t("advanced.showThese")}
               </span>
               <div className="grid grid-cols-2 gap-x-2 gap-y-1">
                 {SCOPE_OPTIONS[variable.type].map(({ scope, label }) => (
@@ -63,11 +64,11 @@ export function AdvancedSettings({ variable }: AdvancedSettingsProps) {
             </div>
           )}
           <div className="flex flex-col gap-1">
-            <span className="text-muted-foreground">Name in code</span>
+            <span className="text-muted-foreground">{t("advanced.nameInCode")}</span>
             {(["web", "ios", "android"] as const).map((platform) => (
               <CommitInput
                 key={platform}
-                aria-label={`${platform} code syntax`}
+                aria-label={t("advanced.syntax", { platform })}
                 placeholder={PLATFORM_HINTS[platform]}
                 value={variable.codeSyntax[platform] ?? ""}
                 onCommit={(text) =>
@@ -86,7 +87,7 @@ export function AdvancedSettings({ variable }: AdvancedSettingsProps) {
               onChange={() => tokens.updateVariable(variable.id, { hidden: !variable.hidden })}
               className="accent-primary"
             />
-            Hide from pickers and the design system
+            {t("advanced.hide")}
           </label>
         </div>
       )}

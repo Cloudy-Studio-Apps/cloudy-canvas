@@ -1,0 +1,85 @@
+{
+  "title": "Effects",
+  "style": {
+    "label": "Effect",
+    "heading": "Effect styles",
+    "create": "Create style from these effects",
+    "color": "Color"
+  },
+  "menu": {
+    "add": "Add effect",
+    "beta": "Beta"
+  },
+  "types": {
+    "innerShadow": "Inner shadow",
+    "dropShadow": "Drop shadow",
+    "layerBlur": "Layer blur",
+    "backgroundBlur": "Background blur",
+    "noise": "Noise",
+    "texture": "Texture",
+    "glass": "Glass"
+  },
+  "summary": {
+    "shadow": "{x}, {y} · {blur} blur · {opacity}",
+    "progressive": "Progressive · {start} → {end}",
+    "noise": "{mode} · {density}",
+    "glass": "{refraction} · {frost} frost"
+  },
+  "row": {
+    "dragLabel": "Drag {name} to reorder",
+    "drag": "Drag to reorder",
+    "edit": "Edit {name}",
+    "hide": "Hide {name}",
+    "show": "Show {name}",
+    "remove": "Remove {name}"
+  },
+  "stack": {
+    "mixed": "Mixed. Click + to replace them all."
+  },
+  "presets": {
+    "clear": "Clear",
+    "frosted": "Frosted",
+    "liquid": "Liquid"
+  },
+  "editors": {
+    "blur": "Blur",
+    "blurHint": "Shows through the layer's translucent fills: lower a fill's opacity to see it.",
+    "look": "Look",
+    "lightAngle": "Light angle",
+    "lightIntensity": "Light intensity",
+    "refraction": "Refraction",
+    "depth": "Depth",
+    "dispersion": "Dispersion",
+    "frost": "Frost",
+    "splay": "Splay",
+    "blurKind": "Blur kind",
+    "uniform": "Uniform",
+    "progressive": "Progressive",
+    "blurStart": "Blur at the start",
+    "start": "Start {axis}",
+    "end": "End {axis}",
+    "noiseColors": "Noise colors",
+    "noiseColor": "Noise color",
+    "secondNoiseColor": "Second noise color",
+    "mono": "Mono",
+    "duo": "Duo",
+    "multi": "Multi",
+    "grainSize": "Grain size",
+    "density": "Density",
+    "opacity": "Opacity",
+    "elevation": "Elevation",
+    "shadowColor": "Shadow color",
+    "xOffset": "X offset",
+    "yOffset": "Y offset",
+    "spread": "Spread",
+    "showBehind": "Show behind transparent areas",
+    "roughness": "Roughness",
+    "clipToShape": "Clip to shape"
+  },
+  "handles": {
+    "blurStart": "Blur start",
+    "blurEnd": "Blur end",
+    "lightDirection": "Light direction",
+    "shadowOffset": "Shadow offset"
+  }
+}

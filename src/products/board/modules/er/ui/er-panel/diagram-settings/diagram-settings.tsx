@@ -12,6 +12,7 @@ import { ErDiagramList } from "./diagram-list";
 import { useShowAllDiagrams } from "../use-show-all-diagrams";
 import { ErStandardPicker } from "./standard-picker";
 import type { ErDiagramLook, ErSettingKey } from "./diagram-settings.types";
+import { t } from "../../../er.i18n";
 
 /**
  * The shown diagram's settings, for when no shape is selected (the board's diagrams to pick from
@@ -66,12 +67,10 @@ export function ErDiagramSettings() {
         onClick={showAll}
       >
         <ChevronLeft className="size-3.5" />
-        All diagrams
+        {t("settings.back")}
       </Button>
-      <p className="text-xs text-muted-foreground">
-        The diagram's standard, its check and how it's drawn. Select a shape to edit it instead.
-      </p>
-      <FormSection title="Standard">
+      <p className="text-xs text-muted-foreground">{t("settings.intro")}</p>
+      <FormSection title={t("settings.standard")}>
         <ErStandardPicker
           standard={notation.standard ?? "cloudy"}
           onPick={(id) =>
@@ -89,7 +88,7 @@ export function ErDiagramSettings() {
       <FormSection title={checkTitle(issues.length)}>
         <ErCheckList issues={issues} />
       </FormSection>
-      <FormSection title="Tables">
+      <FormSection title={t("settings.tables")}>
         <Button
           variant="secondary"
           size="sm"
@@ -97,7 +96,7 @@ export function ErDiagramSettings() {
           onClick={() => useErToTablesStore.getState().open(diagram.id)}
         >
           <Table2 />
-          Create tables…
+          {t("settings.createTables")}
         </Button>
       </FormSection>
       {ER_SETTING_CHOICES.map((choice) => (
@@ -121,5 +120,5 @@ export function ErDiagramSettings() {
 }
 
 function checkTitle(count: number): string {
-  return count === 0 ? "Check" : `Check (${count})`;
+  return count === 0 ? t("settings.check") : t("settings.checkCount", { count });
 }

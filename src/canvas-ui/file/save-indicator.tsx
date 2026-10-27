@@ -2,6 +2,7 @@ import { CloudCheck, CloudUpload } from "lucide-react";
 
 import { cn } from "@shared/ui/lib/utils";
 import { useCanvasFile } from "./canvas-file-context";
+import { t } from "./file.i18n";
 
 /**
  * Beside the file's name: a cloud while the file is being saved and, for a few seconds after,
@@ -12,7 +13,11 @@ export function SaveIndicator() {
 
   if (dirty && (!autosave || status === "error")) {
     return (
-      <span className="text-muted-foreground" title="Unsaved changes" aria-label="Unsaved changes">
+      <span
+        className="text-muted-foreground"
+        title={t("save.unsaved")}
+        aria-label={t("save.unsaved")}
+      >
         •
       </span>
     );
@@ -20,12 +25,12 @@ export function SaveIndicator() {
 
   const saving = status === "saving";
   const label = saving
-    ? "Saving…"
+    ? t("save.saving")
     : draft
-      ? "Draft autosaved. Save to choose where it goes"
+      ? t("save.draft")
       : saved === "auto"
-        ? "Autosaved"
-        : "Saved";
+        ? t("save.autosaved")
+        : t("save.saved");
   const visible = saving || saved !== null;
   const Icon = saving ? CloudUpload : CloudCheck;
 

@@ -5,6 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/kit";
 import { FontList } from "./font-list";
 import type { FontPickerProps } from "./font-picker.types";
 import { useFontFamilies } from "./use-font-families";
+import { t } from "../text.i18n";
 
 /** The family field: opens a searchable list of installed and Google fonts. */
 export function FontPicker({ family, onPick }: FontPickerProps) {
@@ -17,10 +18,10 @@ export function FontPicker({ family, onPick }: FontPickerProps) {
         {/* eslint-disable-next-line no-restricted-syntax -- bespoke: a select-like trigger in a FieldBox look */}
         <button
           type="button"
-          aria-label="Font"
+          aria-label={t("fields.font")}
           className="flex h-7 w-full min-w-0 cursor-pointer items-center justify-between gap-1 rounded-sm border border-transparent bg-muted px-2 text-xs text-foreground hover:border-border data-[state=open]:border-ring"
         >
-          <span className="truncate">{family ?? "Mixed"}</span>
+          <span className="truncate">{family ?? t("fonts.mixed")}</span>
           <ChevronDown className="size-3 shrink-0 text-muted-foreground" />
         </button>
       </PopoverTrigger>
@@ -35,7 +36,7 @@ export function FontPicker({ family, onPick }: FontPickerProps) {
             }}
           />
         ) : (
-          <p className="w-64 p-4 text-center text-xs text-muted-foreground">Loading fonts…</p>
+          <p className="w-64 p-4 text-center text-xs text-muted-foreground">{t("fonts.loading")}</p>
         )}
       </PopoverContent>
     </Popover>

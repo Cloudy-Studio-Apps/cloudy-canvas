@@ -5,6 +5,7 @@ import { Checkbox, ListRow } from "@shared/ui/kit";
 import { useShowSection } from "../hooks/use-show-section";
 import { useStyleguideViewStore } from "../stores/styleguide-view-store";
 import type { GroupRowProps } from "./tab.types";
+import { t } from "../../styleguide.i18n";
 
 /** One group of a category: click shows its section, the box shows or hides it in the view. */
 export function GroupRow({ entry, groupId, title, count, hidden }: GroupRowProps) {
@@ -25,7 +26,7 @@ export function GroupRow({ entry, groupId, title, count, hidden }: GroupRowProps
       actions={
         <Checkbox
           checked={!hidden}
-          aria-label={hidden ? "Show in the view" : "Hide from the view"}
+          aria-label={hidden ? t("tab.row.show") : t("tab.row.hide")}
           onCheckedChange={(checked) => styleguide.setHidden(key, !checked)}
           onClick={(event) => event.stopPropagation()}
         />

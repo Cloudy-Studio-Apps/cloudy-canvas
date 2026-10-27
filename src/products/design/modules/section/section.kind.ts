@@ -15,6 +15,7 @@ import { createSection } from "./section.factory";
 import { SECTION_DEFAULTS } from "./section.defaults";
 import { sectionTitleBox } from "./section-title";
 import type { SectionElement } from "./section.types";
+import { t } from "./section.i18n";
 
 const TITLE_SLOT = "title";
 const TITLE_LAYER = "titlePill";
@@ -22,8 +23,8 @@ const TITLE_LAYER = "titlePill";
 /** Sections: labeled areas holding frames; they only go into other sections. */
 export class SectionKind extends BoxShapeKind<SectionElement> {
   readonly type = "section";
-  readonly label = "Section";
-  readonly description = "A labeled area to organize frames on the page.";
+  readonly label = t("title");
+  readonly description = t("description");
   override readonly tool = "section";
   override readonly defaults = SECTION_DEFAULTS;
   override readonly container = true;

@@ -1,3 +1,4 @@
+import { t } from "../../er.i18n";
 const EXAMPLE = `Entity Cliente {
   *dni              // or dni [pk]
   +teléfono         // multivalued
@@ -30,15 +31,20 @@ Diagram [style: lollipop]`;
 export function ErSyntaxHint() {
   return (
     <details className="text-xs text-muted-foreground">
-      <summary className="cursor-pointer select-none">Syntax</summary>
+      <summary className="cursor-pointer select-none">{t("syntax.title")}</summary>
       <pre className="mt-2 overflow-x-auto rounded-md bg-muted p-2 font-mono leading-relaxed">
         {EXAMPLE}
       </pre>
       <p className="mt-2">
-        A relation line with a cardinality, a role (<code>as jefe</code>), <code>[arrow]</code> or
-        an entity&apos;s name is a participant; other lines are attributes (force one with{" "}
-        <code>attr</code>). Entities a relation names are created when you leave the editor. The
-        full reference is in <code>docs/er-language.md</code>.
+        {t("syntax.a")}
+        <code>as jefe</code>
+        {t("syntax.b")}
+        <code>[arrow]</code>
+        {t("syntax.c")}
+        <code>attr</code>
+        {t("syntax.d")}
+        <code>docs/er-language.md</code>
+        {t("syntax.e")}
       </p>
     </details>
   );

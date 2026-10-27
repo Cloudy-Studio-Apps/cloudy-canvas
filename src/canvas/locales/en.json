@@ -1,0 +1,8 @@
+{
+  "loading": {
+    "starting": "Starting canvas",
+    "layers": "Drawing layers",
+    "fonts": "Loading fonts",
+    "images": "Loading images"
+  }
+}

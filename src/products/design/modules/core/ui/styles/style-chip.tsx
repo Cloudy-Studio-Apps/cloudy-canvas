@@ -10,6 +10,7 @@ import { shownStyle } from "./shown-style";
 import { StylePreview } from "./style-preview";
 import type { StyleChipProps } from "./styles.types";
 import { useStyleType } from "./use-style-type";
+import { t } from "../../core.i18n";
 
 /**
  * What a section shows while its field uses a style, instead of the field's own controls: the
@@ -22,13 +23,20 @@ export function StyleChip({ binding }: StyleChipProps) {
   const [editing, setEditing] = useState(false);
   const [deleting, setDeleting] = useState<string[] | null>(null);
   const detach = (
-    <IconButton size="xs" label="Detach style" onClick={() => binding.bind(null)}>
+    <IconButton size="xs" label={t("styles.detach")} onClick={() => binding.bind(null)}>
       <Unlink />
     </IconButton>
   );
 
   if (!style) {
-    return <ListRow label="Mixed styles" muted actions={detach} className="border border-border" />;
+    return (
+      <ListRow
+        label={t("styles.mixedStyles")}
+        muted
+        actions={detach}
+        className="border border-border"
+      />
+    );
   }
   return (
     <>

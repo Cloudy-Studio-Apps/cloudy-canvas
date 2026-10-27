@@ -1,0 +1,22 @@
+{
+  "stickers": {
+    "loadFailed": "No se pudieron cargar tus stickers",
+    "tooLarge": "Algunas imágenes son demasiado grandes",
+    "maxSize": "Los stickers pueden pesar hasta 2 MB.",
+    "importFailed": "No se pudieron importar los stickers",
+    "removeFailed": "No se pudo quitar el sticker"
+  },
+  "recents": {
+    "reset": "Se restablecieron los archivos recientes",
+    "resetHint": "No se pudo leer la lista, así que empieza vacía. Tus archivos no se tocaron.",
+    "readFailed": "No se pudieron leer los archivos recientes",
+    "locateFailed": "No se pudo localizar el archivo",
+    "removeFailed": "No se pudo quitar el archivo de recientes",
+    "clearFailed": "No se pudieron vaciar los archivos recientes"
+  },
+  "updates": {
+    "checkFailed": "No se pudo buscar actualizaciones",
+    "pageFailed": "No se pudo abrir la página de descarga",
+    "installFailed": "No se pudo instalar la actualización"
+  }
+}

@@ -1,10 +1,11 @@
 import { DEFAULT_SHADER_CODE } from "../effects";
+import { t } from "./shader-effect.i18n";
 
 /** Ready-made shaders to start from: what the code can do, each a few lines. */
 export const SHADER_PRESETS: readonly { label: string; code: string }[] = [
-  { label: "Vignette", code: DEFAULT_SHADER_CODE },
+  { label: t("presets.vignette"), code: DEFAULT_SHADER_CODE },
   {
-    label: "Chromatic aberration",
+    label: t("presets.chromaticAberration"),
     code: `// Red and blue pulled apart from the middle of the layer.
 uniform float uAmount; // @range 0 12 3
 
@@ -18,7 +19,7 @@ vec4 effect(vec4 color, vec2 uv, vec2 local) {
 `,
   },
   {
-    label: "Halftone",
+    label: t("presets.halftone"),
     code: `// Dots on a grid fixed to the layer, sized by how dark it is.
 uniform float uCell; // @range 2 40 8
 uniform vec3 uInk; // @color #111111
@@ -32,7 +33,7 @@ vec4 effect(vec4 color, vec2 uv, vec2 local) {
 `,
   },
   {
-    label: "Pixelate",
+    label: t("presets.pixelate"),
     code: `// Square blocks, in the layer's own units.
 uniform float uBlock; // @range 1 64 8
 
@@ -44,7 +45,7 @@ vec4 effect(vec4 color, vec2 uv, vec2 local) {
 `,
   },
   {
-    label: "Ripple",
+    label: t("presets.ripple"),
     code: `// Waves across the layer.
 uniform float uWaves; // @range 1 40 12
 uniform float uStrength; // @range 0 12 3
@@ -56,7 +57,7 @@ vec4 effect(vec4 color, vec2 uv, vec2 local) {
 `,
   },
   {
-    label: "Duotone",
+    label: t("presets.duotone"),
     code: `// Dark parts in one color, light ones in another.
 uniform vec3 uDark; // @color #1E1B4B
 uniform vec3 uLight; // @color #F0ABFC

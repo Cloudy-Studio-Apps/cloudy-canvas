@@ -8,6 +8,7 @@ import type {
   ContextMenuItem,
   ContextMenuSubmenu,
 } from "./context-menu-items.types";
+import { t } from "../components.i18n";
 
 const hasSelection = ({ selectionCount }: ContextMenuContext) => selectionCount > 0;
 const unlockAll: ContextMenuItem = { command: "unlockAll", enabled: ({ anyLocked }) => anyLocked };
@@ -24,7 +25,7 @@ const ALIGN_COMMANDS = [
 /** Align (one element with what holds it, or several), distribute and tidy up the selection. */
 const arrangeSubmenu: ContextMenuSubmenu = {
   id: "arrange",
-  label: "Align",
+  label: t("menu.align"),
   actions: (engine, { selectionCount }) => {
     const ids = engine.selectedIds();
     const run = (command: keyof typeof BASE_COMMAND_LABELS): ContextMenuAction => ({
@@ -42,7 +43,7 @@ const arrangeSubmenu: ContextMenuSubmenu = {
 /** Copy and paste properties, and the selection as a picture. */
 const copyPasteAs: ContextMenuCategory = {
   id: "copy-paste-as",
-  label: "Copy/Paste as",
+  label: t("menu.copyPasteAs"),
   groups: [
     [
       { command: "copyProperties", enabled: hasSelection },
@@ -58,7 +59,7 @@ const copyPasteAs: ContextMenuCategory = {
 /** The drawing order. */
 const order: ContextMenuCategory = {
   id: "order",
-  label: "Order",
+  label: t("menu.order"),
   groups: [
     [
       { command: "bringToFront", enabled: hasSelection },
@@ -82,12 +83,12 @@ export const SELECTION_MENU: readonly ContextMenuGroup[] = [
     { command: "duplicate", enabled: hasSelection },
     { command: "deleteSelection", enabled: hasSelection, destructive: true },
   ],
-  [copyPasteAs, { command: "export", label: "Export selection…", enabled: hasSelection }],
+  [copyPasteAs, { command: "export", label: t("menu.exportSelection"), enabled: hasSelection }],
   [arrangeSubmenu, order, { command: "zoomToSelection", enabled: hasSelection }],
   [
     {
       command: "toggleLock",
-      label: ({ selectionLocked }) => (selectionLocked ? "Unlock" : "Lock"),
+      label: ({ selectionLocked }) => (selectionLocked ? t("menu.unlock") : t("menu.lock")),
       enabled: hasSelection,
     },
     unlockAll,
@@ -98,6 +99,6 @@ export const SELECTION_MENU: readonly ContextMenuGroup[] = [
 export const CANVAS_MENU: readonly ContextMenuGroup[] = [
   [{ command: "paste" }],
   [{ command: "selectAll" }, { command: "zoomToFit" }, { command: "centerOrigin" }],
-  [{ command: "export", label: "Export board…" }],
+  [{ command: "export", label: t("menu.exportBoard") }],
   [unlockAll],
 ];

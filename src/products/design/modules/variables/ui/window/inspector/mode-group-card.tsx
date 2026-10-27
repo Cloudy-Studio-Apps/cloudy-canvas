@@ -2,11 +2,13 @@ import { Eye, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import { CommitInput } from "@canvas-ui";
+import { tCommon } from "@shared/core";
 import { cn } from "@shared/ui/kit";
 import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";
 import type { ModeGroupCardProps } from "./inspector.types";
 import { ModeRow } from "./mode-row";
+import { t } from "../../../variables.i18n";
 
 /**
  * A mode group (Theme, Language…): its name, its modes (dropping a dragged mode on the group puts
@@ -44,15 +46,15 @@ export function ModeGroupCard({ axis, shown, moves }: ModeGroupCardProps) {
     >
       <div className="flex items-center gap-1">
         <CommitInput
-          aria-label="Mode group name"
+          aria-label={t("inspector.modeGroupName")}
           value={axis.name}
           onCommit={(name) => tokens.renameAxis(axis.id, name)}
           className="h-7 min-w-0 flex-1 text-xs font-medium"
         />
         <button
           type="button"
-          aria-label={`Show ${axis.name} on the board`}
-          title={shown ? "Shown on the board" : "Show on the board"}
+          aria-label={t("inspector.showOnBoard", { name: axis.name })}
+          title={shown ? t("inspector.shownOnBoard") : t("inspector.showOnBoardTitle")}
           onClick={() => setAxis(axis.id)}
           className={cn(
             "flex size-7 items-center justify-center rounded-md hover:bg-muted",
@@ -63,8 +65,8 @@ export function ModeGroupCard({ axis, shown, moves }: ModeGroupCardProps) {
         </button>
         <button
           type="button"
-          aria-label={`Delete ${axis.name}`}
-          title={`Delete ${axis.name}`}
+          aria-label={t("inspector.delete", { name: axis.name })}
+          title={t("inspector.delete", { name: axis.name })}
           onClick={() => setConfirming(true)}
           className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-destructive"
         >
@@ -74,10 +76,8 @@ export function ModeGroupCard({ axis, shown, moves }: ModeGroupCardProps) {
       {confirming && (
         <div className="flex flex-col gap-1.5 rounded-md bg-surface-sunken p-2">
           <p>
-            Delete {axis.name}?{" "}
-            {varying > 0
-              ? `${varying} variable${varying === 1 ? "" : "s"} vary by it and keep only their first mode's value.`
-              : "No variable varies by it."}
+            {t("inspector.deleteAxis", { name: axis.name })}{" "}
+            {varying > 0 ? t("inspector.varying", { count: varying }) : t("inspector.noneVary")}
           </p>
           <div className="flex justify-end gap-1">
             <button
@@ -85,7 +85,7 @@ export function ModeGroupCard({ axis, shown, moves }: ModeGroupCardProps) {
               onClick={() => setConfirming(false)}
               className="rounded-md px-2 py-1 hover:bg-muted"
             >
-              Cancel
+              {tCommon("cancel")}
             </button>
             <button
               type="button"
@@ -95,7 +95,7 @@ export function ModeGroupCard({ axis, shown, moves }: ModeGroupCardProps) {
               }}
               className="rounded-md bg-destructive px-2 py-1 text-destructive-foreground"
             >
-              Delete
+              {tCommon("delete")}
             </button>
           </div>
         </div>
@@ -108,7 +108,7 @@ export function ModeGroupCard({ axis, shown, moves }: ModeGroupCardProps) {
         onClick={() => tokens.addMode(axis.id)}
         className="flex items-center gap-1 self-start rounded-md px-1.5 py-1 text-muted-foreground hover:bg-muted hover:text-foreground"
       >
-        <Plus className="size-3.5" /> Mode
+        <Plus className="size-3.5" /> {t("board.mode")}
       </button>
     </div>
   );

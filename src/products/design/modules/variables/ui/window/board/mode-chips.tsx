@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import { cn } from "@shared/ui/kit";
 import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";
+import { t } from "../../../variables.i18n";
 
 /**
  * Which modes the board draws: all side by side, or one (the board turns dark for a dark one), and
@@ -28,7 +29,7 @@ export function ModeChips() {
     <div className="ml-auto flex items-center gap-1">
       {modes.length > 1 && (
         <div className="flex rounded-md bg-muted p-0.5">
-          {chip("all", "All")}
+          {chip("all", t("board.all"))}
           {modes.map((mode) => chip(mode.id, mode.name))}
         </div>
       )}
@@ -37,7 +38,7 @@ export function ModeChips() {
         onClick={() => tokens.addMode(axis?.id ?? null)}
         className="flex h-7 items-center gap-1 rounded-md px-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
       >
-        <Plus className="size-3.5" /> Mode
+        <Plus className="size-3.5" /> {t("board.mode")}
       </button>
     </div>
   );

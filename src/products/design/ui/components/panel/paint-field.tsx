@@ -16,14 +16,15 @@ import { PanelIconButton } from "./panel-section";
 import type { PaintFieldProps } from "./paint-field.types";
 import { PaintSwatch } from "./paint-swatch";
 import { PercentInput } from "@canvas-ui";
+import { t } from "../../design-ui.i18n";
 
 /** What the field shows for a paint that isn't a solid color. */
 const PAINT_NAMES = {
-  linear: "Linear",
-  radial: "Radial",
-  angular: "Angular",
-  diamond: "Diamond",
-  image: "Image",
+  linear: t("paintTypes.linear"),
+  radial: t("paintTypes.radial"),
+  angular: t("paintTypes.angular"),
+  diamond: t("paintTypes.diamond"),
+  image: t("paintTypes.image"),
 } as const;
 
 /**
@@ -76,7 +77,7 @@ export function PaintField({
             {/* eslint-disable-next-line no-restricted-syntax -- bespoke: a paint's swatch and name */}
             <button
               type="button"
-              aria-label={`Edit ${label.toLowerCase()}`}
+              aria-label={t("paint.field.edit", { name: label.toLowerCase() })}
               className="ml-2 shrink-0 cursor-pointer"
             >
               <PaintSwatch paint={paint} />
@@ -105,7 +106,7 @@ export function PaintField({
         ) : paint.type === "solid" ? (
           <HexInput
             color={paint.color}
-            label={`${label} hex`}
+            label={t("paint.field.hex", { name: label })}
             className="px-2"
             onCommit={(color) => onChange({ ...paint, color }, done)}
           />
@@ -123,7 +124,7 @@ export function PaintField({
           <span className="flex h-full w-14 items-center gap-0.5 border-l border-surface px-2">
             <PercentInput
               value={paint.opacity}
-              label={`${label} opacity`}
+              label={t("paint.field.opacity", { name: label })}
               onCommit={(opacity) => onChange({ ...paint, opacity }, done)}
             />
           </span>
@@ -131,12 +132,19 @@ export function PaintField({
       </FieldBox>
       {!bound && <BindButton binding={binding} />}
       <PanelIconButton
-        label={paint.visible ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`}
+        label={
+          paint.visible
+            ? t("paint.field.hide", { name: label.toLowerCase() })
+            : t("paint.field.show", { name: label.toLowerCase() })
+        }
         onClick={() => onChange({ ...paint, visible: !paint.visible }, done)}
       >
         {paint.visible ? <Eye /> : <EyeOff />}
       </PanelIconButton>
-      <PanelIconButton label={`Remove ${label.toLowerCase()}`} onClick={onRemove}>
+      <PanelIconButton
+        label={t("paint.field.remove", { name: label.toLowerCase() })}
+        onClick={onRemove}
+      >
         <Minus />
       </PanelIconButton>
     </div>

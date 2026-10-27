@@ -15,6 +15,7 @@ import { useEditNodes } from "@design/ui/hooks";
 import { PaintStackEditor } from "./paint-stack-editor";
 import type { PaintStackMap } from "./paint-stack-editor.types";
 import type { PaintListSectionProps } from "./paint-list-section.types";
+import { t } from "../../core.i18n";
 
 /**
  * The fills or strokes of the selection (`PaintStackEditor`). Its header applies a color style
@@ -64,7 +65,7 @@ export function PaintListSection({
           <StyleControl
             binding={style}
             styleType={PAINT_STYLE}
-            createLabel={`Create style from these ${title.toLowerCase()}`}
+            createLabel={t("paints.createStyle", { name: title.toLowerCase() })}
             create={() =>
               createNodeStyle(
                 engine,
@@ -76,7 +77,7 @@ export function PaintListSection({
           />
           {style.bound === undefined && (
             <PanelAddButton
-              label={`Add ${label.toLowerCase()}`}
+              label={t("paints.add", { name: label.toLowerCase() })}
               onClick={() =>
                 setPaints(
                   (current) => (mixed ? [newPaint()] : [...current, newPaint()]),

@@ -3,6 +3,7 @@ import type { CanvasPointer, ElementPatch, Point, ToolContext } from "@canvas";
 import type { DesignToolOptions } from "../../../design-options.types";
 import { NodeDrawTool } from "../../core";
 import { createSheet, type SheetFrame } from "../sheet";
+import { t } from "../styleguide.i18n";
 
 /** The live element tool's id (Shift+D, in the toolbar's frames menu). */
 export const TOKEN_SHEET_TOOL = "token-sheet";
@@ -23,7 +24,7 @@ export class TokenSheetTool extends NodeDrawTool<SheetFrame, Point> {
   }
 
   protected layerName(): string {
-    return "Design system";
+    return t("defaults.systemPage");
   }
 
   protected dragShape(_from: Point, to: CanvasPointer): Point {

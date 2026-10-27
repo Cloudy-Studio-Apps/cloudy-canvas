@@ -3,13 +3,14 @@ import { open } from "@tauri-apps/plugin-dialog";
 import { readFile } from "@tauri-apps/plugin-fs";
 
 import type { TokenFilePick } from "./token-file.types";
+import { t } from "./platform.i18n";
 
 const DESIGN_TOKEN_FILES: TokenFilePick = {
-  title: "Import variables and styles",
+  title: t("importVariables"),
   filters: [
-    { name: "Designs and tokens", extensions: ["cdesign", "json"] },
-    { name: "Cloudy Canvas designs", extensions: ["cdesign"] },
-    { name: "Tokens JSON", extensions: ["json"] },
+    { name: t("filters.designsTokens"), extensions: ["cdesign", "json"] },
+    { name: t("filters.designs"), extensions: ["cdesign"] },
+    { name: t("filters.tokens"), extensions: ["json"] },
   ],
 };
 

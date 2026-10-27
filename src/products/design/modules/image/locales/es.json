@@ -1,0 +1,10 @@
+{
+  "commands": {
+    "crop": "Recortar imagen",
+    "placeholder": "Usar como marcador de imagen"
+  },
+  "crop": {
+    "done": "Terminar recorte",
+    "description": "Mueve y escala la imagen dentro de la capa, o cambia el tamaño de la capa a su alrededor."
+  }
+}

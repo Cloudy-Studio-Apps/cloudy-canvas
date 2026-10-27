@@ -4,6 +4,7 @@ import { draftFromColor } from "../shade-drafts";
 import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";
 import { NewGroupMenu } from "./new-group-menu";
+import { t } from "../../../variables.i18n";
 
 /** No collection yet: make one. An empty collection: start from one color, or add a group. */
 export function EmptyCollection() {
@@ -12,18 +13,21 @@ export function EmptyCollection() {
   if (!collection) {
     return (
       <div className="m-auto flex flex-col items-center gap-2.5 py-10 text-center text-xs text-muted-foreground">
-        <b className="text-sm text-foreground">No variables yet</b>
-        Variables hold the colors and numbers your layers reuse, grouped in collections.
-        <Button size="sm" onClick={() => showCollection(tokens.createCollection("Brand").id)}>
-          Create a collection
+        <b className="text-sm text-foreground">{t("board.emptyTitle")}</b>
+        {t("board.emptyText")}
+        <Button
+          size="sm"
+          onClick={() => showCollection(tokens.createCollection(t("defaults.collection")).id)}
+        >
+          {t("board.createCollection")}
         </Button>
       </div>
     );
   }
   return (
     <div className="m-auto flex flex-col items-center gap-2.5 py-10 text-center text-xs text-muted-foreground">
-      <b className="text-sm text-foreground">An empty collection</b>
-      Start from one color and get its shades, or add variables group by group.
+      <b className="text-sm text-foreground">{t("board.emptyCollection")}</b>
+      {t("board.emptyCollectionText")}
       <Button
         size="sm"
         onClick={() =>
@@ -32,7 +36,7 @@ export function EmptyCollection() {
           )
         }
       >
-        Start from a color
+        {t("board.startFromColor")}
       </Button>
       <NewGroupMenu />
     </div>

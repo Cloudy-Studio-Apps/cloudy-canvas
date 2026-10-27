@@ -1,4 +1,5 @@
 import { defineErStandard } from "./define-er-standard";
+import { t } from "../../er.i18n";
 
 /** Silberschatz, Korth & Sudarshan (from secondary sources, not checked against the book yet). */
 export const SILBERSCHATZ_STANDARD = defineErStandard({
@@ -8,7 +9,7 @@ export const SILBERSCHATZ_STANDARD = defineErStandard({
     "Abraham Silberschatz, Henry F. Korth, S. Sudarshan, Database System Concepts, 7th ed., McGraw-Hill.",
   url: "https://db-book.com/",
   approximate: true,
-  summary: "Cardinality limits on the lines, double lines for total participation, aggregation.",
+  summary: t("standards.silberschatz"),
   settings: {
     cardinality: "minmax",
     ratio: "across",

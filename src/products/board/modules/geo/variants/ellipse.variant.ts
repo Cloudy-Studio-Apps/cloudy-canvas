@@ -1,10 +1,11 @@
 import type { Graphics } from "pixi.js";
 
 import { GeoVariant } from "./geo.variant";
+import { t } from "../geo.i18n";
 
 export class Ellipse extends GeoVariant {
   readonly id = "ellipse";
-  readonly label = "Ellipse";
+  readonly label = t("variants.ellipse");
   readonly icon = "M10 3a7 7 0 1 0 0 14a7 7 0 1 0 0-14z";
   readonly defaultSize = { w: 120, h: 120 };
 

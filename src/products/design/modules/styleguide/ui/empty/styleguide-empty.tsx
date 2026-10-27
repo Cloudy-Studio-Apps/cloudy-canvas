@@ -9,6 +9,7 @@ import { Button, EmptyState } from "@shared/ui/kit";
 import { useStyleguide } from "../hooks/use-styleguide";
 import { useSystemPage } from "../hooks/use-system-page";
 import { styleguideStartActions } from "../styleguide.points";
+import { t } from "../../styleguide.i18n";
 
 /**
  * What the Design system mode shows while there's no system page (an overlay of the mode): with no
@@ -48,8 +49,8 @@ export function StyleguideEmpty() {
       {tokens !== "none" ? (
         <EmptyState
           icon={<Palette className="size-8" />}
-          title="Set up your design system"
-          description="This file has variables and styles. Lay them out as a style guide that stays up to date."
+          title={t("empty.setUp.title")}
+          description={t("empty.setUp.description")}
           action={
             <div className="flex flex-wrap justify-center gap-2">
               <Button
@@ -57,7 +58,7 @@ export function StyleguideEmpty() {
                 variant={tokens === "some" && actions.length ? "outline" : "default"}
                 onClick={() => styleguide.setup(categories)}
               >
-                Set up
+                {t("empty.setUp.action")}
               </Button>
               {tokens === "some" && started}
             </div>
@@ -66,8 +67,8 @@ export function StyleguideEmpty() {
       ) : (
         <EmptyState
           icon={<Palette className="size-8" />}
-          title="No design system yet"
-          description="Add variables and styles, and this view lays them out as a style guide that stays up to date."
+          title={t("empty.none.title")}
+          description={t("empty.none.description")}
           action={
             <div className="flex flex-wrap justify-center gap-2">
               {started}
@@ -76,10 +77,10 @@ export function StyleguideEmpty() {
                 variant={actions.length ? "outline" : "default"}
                 onClick={() => createVariable("color")}
               >
-                Add a color
+                {t("empty.none.addColor")}
               </Button>
-              <Button size="sm" variant="outline" disabled title="Coming soon">
-                Import tokens
+              <Button size="sm" variant="outline" disabled title={t("empty.none.comingSoon")}>
+                {t("empty.none.importTokens")}
               </Button>
             </div>
           }

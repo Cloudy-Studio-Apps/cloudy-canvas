@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import { formatColumnType } from "../../table/column-type";
 import { Button, Input, ListRow, Popover, PopoverContent, PopoverTrigger } from "@shared/ui/kit";
 import type { IndexPartPickerProps } from "./index-part-picker.types";
+import { t } from "../../db.i18n";
 
 /** Adds a column, or an expression like `lower(email)`, to an index. */
 export function IndexPartPicker({ table, parts, onAdd }: IndexPartPickerProps) {
@@ -25,8 +26,8 @@ export function IndexPartPicker({ table, parts, onAdd }: IndexPartPickerProps) {
           variant="ghost"
           size="icon"
           className="size-6"
-          aria-label="Add to index"
-          title="Add a column or expression"
+          aria-label={t("index.add")}
+          title={t("index.addHint")}
         >
           <Plus />
         </Button>
@@ -34,9 +35,7 @@ export function IndexPartPicker({ table, parts, onAdd }: IndexPartPickerProps) {
       <PopoverContent align="start" className="w-56 space-y-2 p-2">
         <ul className="max-h-48 overflow-y-auto">
           {columns.length === 0 && (
-            <li className="px-2 py-1.5 text-sm text-muted-foreground">
-              Every column is already in it
-            </li>
+            <li className="px-2 py-1.5 text-sm text-muted-foreground">{t("index.allUsed")}</li>
           )}
           {columns.map((column) => (
             <li key={column.id}>
@@ -50,7 +49,7 @@ export function IndexPartPicker({ table, parts, onAdd }: IndexPartPickerProps) {
           ))}
         </ul>
         <Input
-          placeholder="Expression, e.g. lower(email)"
+          placeholder={t("index.expression")}
           value={expr}
           className="h-7 font-mono text-xs"
           onChange={(event) => setExpr(event.target.value)}

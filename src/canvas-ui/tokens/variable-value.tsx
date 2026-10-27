@@ -3,6 +3,7 @@ import { cn } from "@shared/ui/lib/utils";
 import { TokenSwatch } from "./token-swatch";
 import type { VariableValueProps } from "./tokens.types";
 import { useDocumentTokens } from "./use-document-tokens";
+import { t } from "./tokens.i18n";
 
 /**
  * What a variable resolves to in `modes`: a swatch, its number (marked ƒ when an expression works
@@ -28,7 +29,7 @@ export function VariableValue({ variable, modes, round, className }: VariableVal
   if (value.type === "boolean") {
     return (
       <span className={cn("text-xs text-muted-foreground", className)}>
-        {value.boolean ? "True" : "False"}
+        {value.boolean ? t("value.true") : t("value.false")}
       </span>
     );
   }

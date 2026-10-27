@@ -4,6 +4,7 @@ import { Button } from "@shared/ui/kit";
 import { useEngine } from "@canvas-ui";
 import { useDbQuery } from "../schema";
 import type { IncomingRefsProps } from "./incoming-refs.types";
+import { t } from "../../db.i18n";
 
 /** Columns of other tables that point at this table, with a shortcut to jump to them. */
 export function IncomingRefs({ tableId }: IncomingRefsProps) {
@@ -13,7 +14,7 @@ export function IncomingRefs({ tableId }: IncomingRefsProps) {
 
   return (
     <section className="space-y-1">
-      <h3 className="text-xs font-medium text-muted-foreground">Referenced by</h3>
+      <h3 className="text-xs font-medium text-muted-foreground">{t("tableEditor.referencedBy")}</h3>
       <ul>
         {refs.map(({ table, column, target }) => (
           <li key={`${table.id}/${column.id}`} className="flex items-center gap-1 text-sm">
@@ -25,8 +26,8 @@ export function IncomingRefs({ tableId }: IncomingRefsProps) {
               variant="ghost"
               size="icon"
               className="size-7"
-              aria-label={`Go to ${table.name}`}
-              title="Go to table"
+              aria-label={t("nav.goTo", { name: table.name })}
+              title={t("nav.goToTable")}
               onClick={() => engine.focusElement(table.id)}
             >
               <LocateFixed />

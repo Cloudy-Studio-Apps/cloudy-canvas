@@ -11,13 +11,14 @@ import {
 } from "@shared/ui/components/ui/select";
 import { BLEND_MODE_GROUPS } from "./blend-mode-labels";
 import type { BlendModeSelectProps } from "./blend-mode-select.types";
+import { t } from "../../design-ui.i18n";
 
 /** Figma's blend mode menu, grouped (darken, lighten, contrast, inversion, component). */
 export function BlendModeSelect({
   value,
   onChange,
   passThrough = true,
-  label = "Blend mode",
+  label = t("blendModes.label"),
 }: BlendModeSelectProps) {
   const groups = BLEND_MODE_GROUPS.map((group) =>
     passThrough ? group : group.filter((mode) => mode.value !== "pass-through"),
@@ -25,7 +26,7 @@ export function BlendModeSelect({
   return (
     <Select value={value ?? undefined} onValueChange={(mode) => onChange(mode as LayerBlendMode)}>
       <SelectTrigger aria-label={label} title={label} className="h-7 w-full text-xs">
-        <SelectValue placeholder="Mixed" />
+        <SelectValue placeholder={t("blendModes.mixed")} />
       </SelectTrigger>
       <SelectContent>
         {groups.map((group, i) => (

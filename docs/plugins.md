@@ -142,6 +142,26 @@ Build panels, dialogs and menus with `api.ui.kit`, and color them only with the 
 
 The shadcn primitives they're built on (`Button`, `Input`, `Select…`, `DropdownMenu…`, `Popover…`, `Tooltip…`, `Dialog…`, `Tabs…`, `Switch`, `Badge`, `Kbd`, …) and `cn` are in `api.ui.kit` too. Controls size themselves with the density (`h-control`, `h-control-sm`, `h-row`, …), so they match the user's choice.
 
+## Translations
+
+The app is in English or Spanish (the OS's language, or the user's choice in Settings › Language).
+Give your plugin the same: put `locales/en.json` and `locales/es.json` in its folder, strings grouped
+in nested objects, and make a translator in `activate`:
+
+```js
+export default async function activate(api) {
+  const read = async (lang) => JSON.parse(await api.plugin.readText(`locales/${lang}.json`));
+  const t = api.core.defineMessages({ en: await read("en"), es: await read("es") });
+  t("panel.title"); // the dot path to a string
+  t("items", { count: 3 }); // items_one / items_other, {count} filled in
+  // … return your modules, with t() for their labels
+}
+```
+
+A string missing in Spanish shows the English one; a missing key shows the key itself. Keys aren't
+type-checked for plugins, so test both languages. `api.core.getLocale()` gives the locale for `Intl`
+formatters.
+
 ## Themes
 
 `api.themes.register(theme)` adds a theme to Settings › Appearance (and the theme menus). A theme lists only what it changes over the one it `extends` (Cloudy Light when unset; `cloudy-dark` and `jetbrains-dark` are the built-in dark ones):

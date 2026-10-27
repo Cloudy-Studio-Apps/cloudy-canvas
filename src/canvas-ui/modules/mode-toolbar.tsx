@@ -4,6 +4,7 @@ import { ExtensionIconView } from "./extension-icon-view";
 import { ModeToolbarItem } from "./mode-toolbar-item";
 import type { ModeToolbarProps } from "./mode-toolbar.types";
 import { useEditorMode } from "./use-editor-mode";
+import { tCommon } from "@shared/core";
 
 /**
  * A mode's toolbar, in place of the main one: its title, its items (tools, commands, actions and
@@ -31,7 +32,7 @@ export function ModeToolbar({ items, title, label, onDone }: ModeToolbarProps) {
       )}
       <PanelDivider />
       <Button size="sm" className="mx-1" onClick={onDone ?? mode.leave}>
-        Done
+        {tCommon("done")}
       </Button>
     </FloatingPanel>
   );

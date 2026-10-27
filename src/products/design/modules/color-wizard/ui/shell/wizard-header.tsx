@@ -3,6 +3,7 @@ import { Check, WandSparkles } from "lucide-react";
 import { Button, cn, DialogDescription, DialogTitle } from "@shared/ui/kit";
 import { useColorWizardStore } from "../store";
 import { stepIndex, WIZARD_STEPS } from "./steps";
+import { t } from "../../color-wizard.i18n";
 
 /** The title and the steps: done ones checked, earlier ones clickable. */
 export function WizardHeader() {
@@ -14,12 +15,10 @@ export function WizardHeader() {
     <div className="flex items-center gap-3 border-b border-border py-2 pr-12 pl-4">
       <DialogTitle className="flex items-center gap-2 whitespace-nowrap">
         <WandSparkles className="size-4" />
-        Color wizard
+        {t("shell.header.title")}
       </DialogTitle>
-      <DialogDescription className="sr-only">
-        Make a palette, its shades, a light and dark theme and text styles.
-      </DialogDescription>
-      <nav className="ml-3 hidden items-center gap-1 md:flex" aria-label="Steps">
+      <DialogDescription className="sr-only">{t("shell.header.description")}</DialogDescription>
+      <nav className="ml-3 hidden items-center gap-1 md:flex" aria-label={t("shell.header.steps")}>
         {WIZARD_STEPS.map((s, i) => {
           const done = created !== null || i < at;
           const active = created === null && i === at;

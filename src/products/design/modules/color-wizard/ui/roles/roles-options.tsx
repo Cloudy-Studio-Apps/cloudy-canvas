@@ -1,22 +1,23 @@
 import { CheckboxField } from "@shared/ui/kit";
 import { useColorWizardStore } from "../store";
 import type { RoleOption } from "./roles.types";
+import { t } from "../../color-wizard.i18n";
 
 const OPTIONS: readonly RoleOption[] = [
   {
     key: "shades",
-    label: "Shades 50–950",
-    hint: "Eleven steps per color, kept linked to it: edit the color later and its shades follow.",
+    label: t("roles.options.shades"),
+    hint: t("roles.options.shadesHint"),
   },
   {
     key: "neutral",
-    label: "Add a neutral",
-    hint: "A gray tinted with the primary's hue, when no color is one.",
+    label: t("roles.options.neutral"),
+    hint: t("roles.options.neutralHint"),
   },
   {
     key: "status",
-    label: "Status colors",
-    hint: "Success, warning, error and info, nudged toward your primary so they belong to the palette.",
+    label: t("roles.options.status"),
+    hint: t("roles.options.statusHint"),
   },
 ];
 
@@ -27,7 +28,7 @@ export function RolesOptions() {
   return (
     <div className="flex flex-col gap-3.5">
       <span className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
-        Options
+        {t("roles.options.title")}
       </span>
       {OPTIONS.map((o) => (
         <div key={o.key} className="flex flex-col gap-0.5">

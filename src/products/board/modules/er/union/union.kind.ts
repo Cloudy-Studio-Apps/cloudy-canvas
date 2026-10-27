@@ -11,10 +11,11 @@ import { ErKind } from "../base/er.kind";
 import { erConnectHandles, erConnectInteraction } from "../connect";
 import { drawErUnion } from "./union.draw";
 import type { ErUnionElement } from "./union.types";
+import { t } from "../er.i18n";
 
 export class ErUnionKind extends ErKind<ErUnionElement> {
   readonly type = "er-union";
-  readonly label = "Union type";
+  readonly label = t("kinds.union.label");
   readonly description =
     "A category: an entity whose instances are each one of its superclasses' (a U circle).";
 

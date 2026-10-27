@@ -1,0 +1,31 @@
+{
+  "label": "Tabla",
+  "description": "Una cuadrícula de celdas para listas, comparaciones y planes.",
+  "cellFill": "Relleno de la celda {row},{column}",
+  "headerTint": "Tinte del encabezado",
+  "options": {
+    "group": "Opciones de tabla",
+    "headerRow": "Fila de encabezado",
+    "headerColor": "Encabezado {color}"
+  },
+  "fills": {
+    "none": "Sin relleno",
+    "color": "Relleno {color}"
+  },
+  "row": {
+    "insertBefore": "Insertar fila antes",
+    "insertAbove": "Insertar fila arriba",
+    "insertAfter": "Insertar fila después",
+    "insertBelow": "Insertar fila abajo",
+    "delete": "Eliminar fila",
+    "deleteHint": "Eliminar fila ({shortcut})"
+  },
+  "column": {
+    "insertBefore": "Insertar columna antes",
+    "insertAbove": "Insertar columna a la izquierda",
+    "insertAfter": "Insertar columna después",
+    "insertBelow": "Insertar columna a la derecha",
+    "delete": "Eliminar columna",
+    "deleteHint": "Eliminar columna ({shortcut})"
+  }
+}

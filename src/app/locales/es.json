@@ -1,0 +1,30 @@
+{
+  "leave": {
+    "unsaved": "La pizarra abierta tiene cambios sin guardar que se perderán.",
+    "openAnyway": "Abrir de todos modos"
+  },
+  "links": {
+    "invalid": "No se puede abrir ese enlace",
+    "newBoard": "¿Empezar una pizarra nueva?",
+    "newDesign": "¿Empezar un diseño nuevo?",
+    "openHome": "¿Abrir Inicio?",
+    "openSettings": "¿Abrir Configuración?",
+    "join": "¿Unirse a la sesión en vivo?",
+    "notRecent": "Ese archivo no está en tus archivos recientes",
+    "notRecentHint": "Ábrelo desde el disco una vez y luego su enlace funcionará.",
+    "openFile": "¿Abrir «{name}»?"
+  },
+  "files": {
+    "cantOpen": "No se puede abrir ese archivo",
+    "cantOpenHint": "Cloudy Canvas abre archivos .cboard y .cdesign, e importa archivos .fig de Figma y .jam de FigJam.",
+    "figjamFailed": "No se pudo importar el archivo de FigJam",
+    "figmaFailed": "No se pudo importar el archivo de Figma",
+    "openFailed": "No se pudo abrir el archivo"
+  },
+  "plugins": {
+    "readFailed": "No se pudieron leer los complementos"
+  },
+  "mcp": {
+    "toolLeftOut": "Se omitió una herramienta de agente"
+  }
+}

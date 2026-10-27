@@ -9,6 +9,7 @@ import { ErJoinStep } from "./er-join-step";
 import { ErRatioPicker } from "./er-ratio-picker";
 import type { ErJoinValue, ErPickedRatio } from "./er-relation-prompt.types";
 import { joinAttributes, joinOf, newKeyName } from "./join-options";
+import { t } from "../../er.i18n";
 
 /**
  * Asks what a relation dragged between two entities is: one to one, one to many, many to one or
@@ -87,7 +88,7 @@ export function ErRelationPrompt() {
     >
       <FloatingPanel
         role="dialog"
-        aria-label="New relation"
+        aria-label={t("prompt.dialog")}
         className="w-80 flex-col items-stretch gap-1 p-2"
       >
         {ratio ? (

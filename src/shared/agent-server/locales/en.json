@@ -1,0 +1,71 @@
+{
+  "title": "Agents (MCP)",
+  "status": {
+    "desktopOnly": "Agents can connect to the desktop app only.",
+    "off": "Off. Agents can't reach your boards.",
+    "starting": "Starting…",
+    "connectAt": "Agents connect at {url}"
+  },
+  "menu": {
+    "connect": "Connect an agent…",
+    "tools": "Available tools…",
+    "showCursors": "Show agents' cursors and selections",
+    "urlCopied": "URL copied",
+    "copyUrl": "Copy URL",
+    "turnOff": "Turn off agent access",
+    "turnOn": "Turn on agent access"
+  },
+  "panel": {
+    "allow": "Allow agents to connect",
+    "url": "URL"
+  },
+  "copy": {
+    "copied": "{label} copied",
+    "copy": "Copy",
+    "failed": "Couldn't copy to the clipboard",
+    "openFailed": "Couldn't open {client}"
+  },
+  "identify": {
+    "agent": "Agent"
+  },
+  "tools": {
+    "title": "Agent tools",
+    "count_one": "{count} tool connected AI agents can use in Cloudy Canvas.",
+    "count_other": "{count} tools connected AI agents can use in Cloudy Canvas.",
+    "off": " Agent access is off, so no agent can use them right now.",
+    "search": "Search tools",
+    "noMatch": "No tools match.",
+    "none": "No tools are available here.",
+    "available": "{name} is available"
+  },
+  "connect": {
+    "title": "Connect Cloudy Canvas to your agents",
+    "hint": "Agents can read and edit the open board or design while you watch. Pick the one you use.",
+    "description": "Connect an AI agent to Cloudy Canvas.",
+    "turnOn": "Turn on",
+    "otherTools": "Other AI tools",
+    "oneClick": "Add it in one click, or set it up by hand.",
+    "addTo": "Add to {client}",
+    "allAgents": "All agents",
+    "manually": "Install manually",
+    "manual": {
+      "body": "Any agent that speaks MCP can connect. Add a server named {name} with the {transport} transport, no authentication, at this URL. It only accepts connections from this computer.",
+      "serverUrl": "Server URL"
+    }
+  },
+  "clients": {
+    "terminalCommand": "Terminal command",
+    "runTerminal": "Run it in a terminal.",
+    "other": "Other agents",
+    "jsonConfig": "JSON config",
+    "codex": "Paste into ~/.codex/config.toml.",
+    "cursor": "Paste into ~/.cursor/mcp.json, or .cursor/mcp.json in a project.",
+    "vscode": "Paste into .vscode/mcp.json in a project, for Copilot's agent mode.",
+    "antigravity": "Paste into the agent panel's ⋯ › MCP Servers › Manage MCP Servers › View raw config (~/.gemini/antigravity/mcp_config.json).",
+    "claudeDesktop": "Paste into Settings › Developer › Edit Config, then restart Claude. Needs Node.js.",
+    "windsurf": "Paste into ~/.codeium/windsurf/mcp_config.json.",
+    "zed": "Merge into Zed's settings.json.",
+    "opencode": "Merge into opencode.json (in a project or ~/.config/opencode/).",
+    "generic": "The usual mcpServers entry: .mcp.json, Cline and most other agents."
+  }
+}

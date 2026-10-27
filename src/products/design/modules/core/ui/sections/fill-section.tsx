@@ -2,6 +2,7 @@ import { DesignNodeKind } from "../../node/design-node.kind";
 import { solidPaint } from "../../node/solid-paint";
 import type { PropertySectionProps } from "@design/ui/modules";
 import { PaintListSection } from "./paint-list-section";
+import { t } from "../../core.i18n";
 
 /** New fills are a light gray, like new rectangles. */
 const NEW_FILL = "#D9D9D9";
@@ -15,7 +16,7 @@ export function FillSection({ selection: { nodes, kinds } }: PropertySectionProp
   });
   return (
     <PaintListSection
-      title="Fills"
+      title={t("sections.fills")}
       field="fills"
       nodes={nodes}
       allowImage={allowImage}

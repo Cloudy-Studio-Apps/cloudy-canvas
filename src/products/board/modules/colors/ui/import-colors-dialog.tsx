@@ -1,3 +1,4 @@
+import { tCommon } from "@shared/core";
 import { useMemo, useState } from "react";
 
 import { importConflicts, selectTokens, type ImportChoice, type TokenRecord } from "@canvas";
@@ -5,6 +6,7 @@ import { ImportConflicts, useDocumentTokens } from "@canvas-ui";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import { AppDialog, Button, Checkbox } from "@shared/ui/kit";
 import type { ImportColorsBodyProps, ImportColorsDialogProps } from "./colors-ui.types";
+import { t } from "../colors.i18n";
 
 /**
  * Importing a file's colors into the board: tick its collections, choose what to do with colors
@@ -43,14 +45,14 @@ function ImportColorsBody({ source, onClose }: ImportColorsBodyProps) {
     try {
       const plan = tokens.importTokens(selected, choice);
       const parts = [
-        plan.added > 0 && `${plan.added} added`,
-        plan.updated > 0 && `${plan.updated} updated`,
-        plan.skipped > 0 && `${plan.skipped} skipped`,
+        plan.added > 0 && t("import.added", { count: plan.added }),
+        plan.updated > 0 && t("import.updated", { count: plan.updated }),
+        plan.skipped > 0 && t("import.skipped", { count: plan.skipped }),
       ].filter(Boolean);
-      toast({ title: "Colors imported", description: parts.join(", ") || "Nothing changed" });
+      toast({ title: t("import.done"), description: parts.join(", ") || t("import.nothing") });
       onClose();
     } catch (error) {
-      notifyError("Couldn't import the colors", error);
+      notifyError(t("import.failed"), error);
     }
   };
 
@@ -58,23 +60,23 @@ function ImportColorsBody({ source, onClose }: ImportColorsBodyProps) {
     <AppDialog
       open
       onOpenChange={(open) => !open && onClose()}
-      title="Import colors"
+      title={t("import.title")}
       description={`${source.name} · ${source.label}`}
       size="sm"
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            Cancel
+            {tCommon("cancel")}
           </Button>
           <Button onClick={run} disabled={count === 0}>
-            Import {count}
+            {t("import.button", { count })}
           </Button>
         </>
       }
     >
       <div className="flex flex-col gap-3">
         {collections.length === 0 ? (
-          <p className="text-xs text-muted-foreground">This file has no colors.</p>
+          <p className="text-xs text-muted-foreground">{t("import.noColors")}</p>
         ) : (
           <div className="flex flex-col gap-1">
             {collections.map((collection) => (

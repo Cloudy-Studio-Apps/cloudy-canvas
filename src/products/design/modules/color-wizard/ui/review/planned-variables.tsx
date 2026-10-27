@@ -1,5 +1,6 @@
 import { Badge, Swatch } from "@shared/ui/kit";
 import { useWizardPlan } from "../store";
+import { t } from "../../color-wizard.i18n";
 
 /** Every variable and text style Create writes; with a system, which are new and which update. */
 export function PlannedVariables() {
@@ -8,7 +9,7 @@ export function PlannedVariables() {
   return (
     <div className="flex flex-col gap-3.5">
       <span className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
-        {updating ? "Variables to create and update" : "Variables to create"}
+        {updating ? t("review.planned.createUpdate") : t("review.planned.create")}
       </span>
       {plan.collections.map((c) => (
         <div key={c.name}>
@@ -30,7 +31,7 @@ export function PlannedVariables() {
                   variant="outline"
                   className={v.action === "update" ? "text-warning" : "text-success"}
                 >
-                  {v.action}
+                  {v.action === "update" ? t("review.planned.update") : t("review.planned.new")}
                 </Badge>
               )}
             </div>
@@ -40,7 +41,7 @@ export function PlannedVariables() {
       {plan.textStyles.length > 0 && (
         <div>
           <h3 className="mb-1.5 flex justify-between text-[13px] font-semibold">
-            Text styles
+            {t("review.planned.textStyles")}
             <span className="text-xs font-normal text-muted-foreground">
               {plan.textStyles.length}
             </span>

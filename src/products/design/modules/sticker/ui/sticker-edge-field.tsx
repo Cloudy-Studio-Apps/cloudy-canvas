@@ -7,6 +7,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { notifyError } from "@shared/stores/toast-store";
 import { RotateCcw } from "lucide-react";
 import type { StickerFieldsProps } from "./sticker-ui.types";
+import { t } from "../sticker.i18n";
 
 const WHITE = "#FFFFFF";
 
@@ -32,7 +33,7 @@ export function StickerEdgeField({ stickers }: StickerFieldsProps) {
       },
       (error: unknown) => {
         setDraft(null);
-        notifyError("Couldn't change the edge color", error);
+        notifyError(t("errors.edge"), error);
       },
     );
   };
@@ -41,7 +42,7 @@ export function StickerEdgeField({ stickers }: StickerFieldsProps) {
     <div className="flex items-center gap-1">
       <div className="min-w-0 flex-1">
         <ColorField
-          label="Edge"
+          label={t("edge.label")}
           color={draft ?? current}
           onChange={({ color }, { done }) => {
             setDraft(color);
@@ -50,7 +51,7 @@ export function StickerEdgeField({ stickers }: StickerFieldsProps) {
         />
       </div>
       {edged.some((sticker) => sticker.edgeColor) && (
-        <PanelIconButton label="Reset the edge to white" onClick={() => apply(null)}>
+        <PanelIconButton label={t("edge.reset")} onClick={() => apply(null)}>
           <RotateCcw />
         </PanelIconButton>
       )}

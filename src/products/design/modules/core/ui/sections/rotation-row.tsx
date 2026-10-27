@@ -5,12 +5,13 @@ import { NumberField, PanelIconButton, sharedValue } from "@design/ui/components
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { DesignNodeKind } from "../../node";
 import type { RotationRowProps } from "./rotation-row.types";
+import { t } from "../../core.i18n";
 
 const BUTTONS = [
-  { command: "rotateLeft", label: "Rotate 90° left", icon: RotateCcw },
-  { command: "rotateRight", label: "Rotate 90° right", icon: RotateCw },
-  { command: "flipHorizontal", label: "Flip horizontal", icon: FlipHorizontal2 },
-  { command: "flipVertical", label: "Flip vertical", icon: FlipVertical2 },
+  { command: "rotateLeft", label: t("commands.rotateLeft"), icon: RotateCcw },
+  { command: "rotateRight", label: t("commands.rotateRight"), icon: RotateCw },
+  { command: "flipHorizontal", label: t("commands.flipHorizontal"), icon: FlipHorizontal2 },
+  { command: "flipVertical", label: t("commands.flipVertical"), icon: FlipVertical2 },
 ] as const;
 
 /**
@@ -34,7 +35,7 @@ export function RotationRow({ nodes }: RotationRowProps) {
     <div className="mt-2 flex items-center gap-1">
       <NumberField
         prefix={<RotateCw />}
-        label="Rotation"
+        label={t("fields.rotation")}
         suffix="°"
         className="flex-1"
         value={sharedValue(nodes, (node) => Math.round(turnOf(node) * 100) / 100)}

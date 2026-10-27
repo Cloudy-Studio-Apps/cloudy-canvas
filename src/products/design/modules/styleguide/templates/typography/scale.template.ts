@@ -3,23 +3,24 @@ import type { StyleguideTemplate } from "../../styleguide.types";
 import { leafName, stylesOf, variablesOf } from "../template-kit";
 import { fontVariableRows } from "./font-variable-rows";
 import { styledSample, summaryIn } from "./typography-kit";
+import { t } from "../../styleguide.i18n";
 
 /** Each text style set in itself, with its name and size / line height. */
 export const scaleTemplate: StyleguideTemplate = {
   id: "typography.scale",
   category: "typography",
-  label: "Scale ladder",
-  description: "Each text style set in itself, with its name and size / line height.",
+  label: t("templates.typography.scale.label"),
+  description: t("templates.typography.scale.description"),
   options: [
     {
       id: "sample",
-      label: "Sample",
+      label: t("templates.typography.scale.sample"),
       type: "select",
       default: "fox",
       choices: [
-        { value: "fox", label: "The quick brown fox" },
-        { value: "name", label: "The style's name" },
-        { value: "alphabet", label: "Aa Bb Cc 123" },
+        { value: "fox", label: t("templates.typography.scale.fox") },
+        { value: "name", label: t("templates.typography.scale.name") },
+        { value: "alphabet", label: t("templates.typography.scale.alphabet") },
       ],
     },
   ],

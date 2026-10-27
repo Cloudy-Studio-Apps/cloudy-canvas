@@ -1,0 +1,85 @@
+{
+  "title": "Efectos",
+  "style": {
+    "label": "Efecto",
+    "heading": "Estilos de efecto",
+    "create": "Crear estilo con estos efectos",
+    "color": "Color"
+  },
+  "menu": {
+    "add": "Añadir efecto",
+    "beta": "Beta"
+  },
+  "types": {
+    "innerShadow": "Sombra interior",
+    "dropShadow": "Sombra paralela",
+    "layerBlur": "Desenfoque de capa",
+    "backgroundBlur": "Desenfoque de fondo",
+    "noise": "Ruido",
+    "texture": "Textura",
+    "glass": "Vidrio"
+  },
+  "summary": {
+    "shadow": "{x}, {y} · {blur} de desenfoque · {opacity}",
+    "progressive": "Progresivo · {start} → {end}",
+    "noise": "{mode} · {density}",
+    "glass": "{refraction} · {frost} de escarcha"
+  },
+  "row": {
+    "dragLabel": "Arrastra {name} para reordenar",
+    "drag": "Arrastra para reordenar",
+    "edit": "Editar {name}",
+    "hide": "Ocultar {name}",
+    "show": "Mostrar {name}",
+    "remove": "Quitar {name}"
+  },
+  "stack": {
+    "mixed": "Mixto. Haz clic en + para reemplazarlos todos."
+  },
+  "presets": {
+    "clear": "Claro",
+    "frosted": "Esmerilado",
+    "liquid": "Líquido"
+  },
+  "editors": {
+    "blur": "Desenfoque",
+    "blurHint": "Se ve a través de los rellenos translúcidos de la capa: baja la opacidad de un relleno para verlo.",
+    "look": "Aspecto",
+    "lightAngle": "Ángulo de luz",
+    "lightIntensity": "Intensidad de luz",
+    "refraction": "Refracción",
+    "depth": "Profundidad",
+    "dispersion": "Dispersión",
+    "frost": "Escarcha",
+    "splay": "Apertura",
+    "blurKind": "Tipo de desenfoque",
+    "uniform": "Uniforme",
+    "progressive": "Progresivo",
+    "blurStart": "Desenfoque inicial",
+    "start": "Inicio {axis}",
+    "end": "Fin {axis}",
+    "noiseColors": "Colores del ruido",
+    "noiseColor": "Color del ruido",
+    "secondNoiseColor": "Segundo color del ruido",
+    "mono": "Mono",
+    "duo": "Dúo",
+    "multi": "Múltiple",
+    "grainSize": "Tamaño del grano",
+    "density": "Densidad",
+    "opacity": "Opacidad",
+    "elevation": "Elevación",
+    "shadowColor": "Color de la sombra",
+    "xOffset": "Desplazamiento X",
+    "yOffset": "Desplazamiento Y",
+    "spread": "Expansión",
+    "showBehind": "Mostrar detrás de áreas transparentes",
+    "roughness": "Rugosidad",
+    "clipToShape": "Recortar a la forma"
+  },
+  "handles": {
+    "blurStart": "Inicio del desenfoque",
+    "blurEnd": "Fin del desenfoque",
+    "lightDirection": "Dirección de la luz",
+    "shadowOffset": "Desplazamiento de la sombra"
+  }
+}

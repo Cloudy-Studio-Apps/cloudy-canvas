@@ -12,6 +12,7 @@ import { LooseFrameSection } from "./loose-frame-section";
 import { PageImagesSection } from "./page-images-section";
 import { PageSection } from "./page-section";
 import { PickSection } from "./pick-section";
+import { t } from "../../catalog.i18n";
 
 /**
  * The properties panel in the Catalog mode (its `sidebar`): while picking, how to; a
@@ -36,11 +37,7 @@ export function CatalogSidebar() {
   if (selection.kind === "loose") return <LooseFrameSection frame={selection.frame} />;
   if (selection.kind === "several") return <FramesSection frames={selection.frames} />;
   if (!brochure) {
-    return (
-      <p className="px-3 py-2.5 text-xs text-muted-foreground">
-        This page has no brochure yet. Create one in the Brochure tab, or pick frames.
-      </p>
-    );
+    return <p className="px-3 py-2.5 text-xs text-muted-foreground">{t("sidebar.none")}</p>;
   }
   return (
     <>
@@ -50,7 +47,7 @@ export function CatalogSidebar() {
         <div className="flex flex-col gap-1.5 px-3 py-2.5">
           <Button size="sm" onClick={() => engine.runHostAction(CATALOG_COMMANDS.exportPdf)}>
             <FileDown />
-            Export PDF · {pages.length} pages
+            {t("sidebar.export", { count: pages.length })}
           </Button>
           <Button
             size="sm"
@@ -58,7 +55,7 @@ export function CatalogSidebar() {
             onClick={() => engine.runHostAction(CATALOG_COMMANDS.preview)}
           >
             <Play />
-            Preview
+            {t("sidebar.preview")}
           </Button>
         </div>
       )}

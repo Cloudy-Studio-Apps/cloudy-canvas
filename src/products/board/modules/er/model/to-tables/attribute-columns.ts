@@ -1,6 +1,7 @@
 import type { ErAttributeElement } from "../../attribute/attribute.types";
 import { guessColumnType } from "./guess-column-type";
 import type { AttributeColumns, TablesContext } from "./tables-context.types";
+import { t } from "../../er.i18n";
 
 /**
  * The columns of an owner's attributes: composite ones become their parts (`dirección_calle`),
@@ -14,7 +15,7 @@ export function attributeColumns(
   const result: AttributeColumns = { columns: [], keys: [], partialKeys: [], alternates: [] };
   for (const attribute of ownAttributes(ctx, ownerId)) {
     if (attribute.derived) {
-      ctx.warnings.push(`${attribute.name} is derived, so it has no column.`);
+      ctx.warnings.push(t("toTables.warnDerived", { name: attribute.name }));
       continue;
     }
     if (attribute.multivalued) continue;

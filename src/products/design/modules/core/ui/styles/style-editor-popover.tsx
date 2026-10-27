@@ -1,6 +1,7 @@
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/kit";
 import type { StyleEditorPopoverProps } from "./styles.types";
 import { useStyleType } from "./use-style-type";
+import { t } from "../../core.i18n";
 
 /** A style's editor in a popover beside the panel, opened by its row or chip. */
 export function StyleEditorPopover({
@@ -18,7 +19,7 @@ export function StyleEditorPopover({
         {entry ? (
           <entry.Editor style={style} onDelete={onDelete} />
         ) : (
-          <p className="text-xs text-muted-foreground">No editor for this kind of style.</p>
+          <p className="text-xs text-muted-foreground">{t("styles.noEditor")}</p>
         )}
       </PopoverContent>
     </Popover>

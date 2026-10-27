@@ -20,6 +20,7 @@ import type { VectorElement } from "../vector.types";
 import type { PenPull } from "./vector-edit.types";
 import { VectorEditTool } from "./vector-edit.tool";
 import { VECTOR_TOOLS } from "./vector-tools";
+import { t } from "../vector.i18n";
 
 /**
  * The pen (P), on the main toolbar and in the edit mode: outside it, a click starts a new vector
@@ -107,7 +108,12 @@ export class PenTool extends VectorEditTool {
     const at = roundPoint(p.world);
     const { doc } = this.ctx;
     const network: VectorNetwork = { vertices: [at], segments: [], regions: [] };
-    const draft = createVector(network, nextLayerName(doc.all(), "Vector"), doc.nextIndex(), null);
+    const draft = createVector(
+      network,
+      nextLayerName(doc.all(), t("label")),
+      doc.nextIndex(),
+      null,
+    );
     const vector: VectorElement = { ...draft, parentId: parentFor(this.ctx, draft) };
     doc.checkpoint();
     doc.add(vector);

@@ -1,0 +1,10 @@
+{
+  "commands": {
+    "crop": "Crop image",
+    "placeholder": "Use as image placeholder"
+  },
+  "crop": {
+    "done": "Done cropping",
+    "description": "Move and scale the picture inside the layer, or resize the layer around it."
+  }
+}

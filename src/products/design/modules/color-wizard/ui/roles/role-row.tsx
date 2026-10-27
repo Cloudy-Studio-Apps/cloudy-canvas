@@ -4,6 +4,7 @@ import { cleanRoleName } from "../..";
 import { useColorWizardStore } from "../store";
 import type { RoleRowProps } from "./roles.types";
 import { ShadeStrip } from "./shade-strip";
+import { t } from "../../color-wizard.i18n";
 
 /** One palette color: included or not, its role name, and its shades. */
 export function RoleRow({ role, index, exists }: RoleRowProps) {
@@ -22,29 +23,26 @@ export function RoleRow({ role, index, exists }: RoleRowProps) {
       <Checkbox
         checked={role.include}
         onCheckedChange={(include) => update({ include })}
-        aria-label={`Include ${role.name}`}
+        aria-label={t("roles.row.include", { name: role.name })}
       />
       <Swatch color={role.hex} className="size-8 rounded-md" />
       <div className="flex min-w-0 flex-col gap-1">
         <CommitInput
           value={role.name}
-          aria-label="Role name"
+          aria-label={t("roles.row.name")}
           spellCheck={false}
           className="h-7 rounded-md border border-input bg-surface px-2 text-xs"
           onCommit={(text) => {
             const name = cleanRoleName(text);
-            if (!name) return "Give it a name";
-            if (roles.some((r, i) => i !== index && r.name === name)) return `"${name}" is taken`;
+            if (!name) return t("roles.row.nameRequired");
+            if (roles.some((r, i) => i !== index && r.name === name))
+              return t("roles.row.taken", { name });
             update({ name });
           }}
         />
         {exists && (
-          <Badge
-            variant="outline"
-            className="self-start text-warning"
-            title="Its shades change in place; layers using them follow"
-          >
-            updates
+          <Badge variant="outline" className="self-start text-warning" title={t("roles.row.hint")}>
+            {t("roles.row.updates")}
           </Badge>
         )}
       </div>

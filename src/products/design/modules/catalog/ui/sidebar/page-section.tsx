@@ -9,6 +9,7 @@ import { useBrochure } from "../hooks/use-brochure";
 import { optionLetter } from "../option-letter";
 import { editInDesign, showPage } from "../page-actions";
 import type { PageSectionProps } from "./sidebar.types";
+import { t } from "../../catalog.i18n";
 
 /**
  * The selected page: its number, frame and size, the option it prints (picked among its
@@ -21,14 +22,14 @@ export function PageSection({ page }: PageSectionProps) {
 
   return (
     <>
-      <PanelSection title={`Page ${label(page)}`}>
+      <PanelSection title={t("page.title", { page: label(page) })}>
         <p className="truncate text-sm text-foreground">{page.frame.name}</p>
         <p className="text-xs text-muted-foreground">
           {paper.name ? `${paper.name} · ` : ""}
           {paper.width} × {paper.height} mm
         </p>
       </PanelSection>
-      <PanelSection title="Options">
+      <PanelSection title={t("page.options")}>
         {page.options.length > 1 ? (
           <ul className="flex flex-col gap-1.5">
             {page.options.map((option, i) => {
@@ -62,18 +63,17 @@ export function PageSection({ page }: PageSectionProps) {
           </ul>
         ) : (
           <p className="text-xs text-muted-foreground">
-            One version. To compare others, hover a greyed frame on the canvas and add it as an
-            option of page {label(page)}.
+            {t("page.oneVersion", { page: label(page) })}
           </p>
         )}
       </PanelSection>
       <div className="flex flex-col gap-1.5 border-b px-3 py-2.5">
         <Button size="sm" variant="outline" onClick={() => editInDesign(engine, page.frame)}>
           <PenLine />
-          Edit this page in Design
+          {t("page.edit")}
         </Button>
         <Button size="sm" variant="ghost" onClick={() => brochure?.removePages([page.slot.id])}>
-          Take out of the brochure
+          {t("tab.page.remove")}
         </Button>
       </div>
     </>

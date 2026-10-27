@@ -2,6 +2,7 @@ import { Redo2, Undo2 } from "lucide-react";
 
 import { useEngine, useEngineState } from "../engine-context";
 import { ToolButton } from "./tool-button";
+import { t } from "./components.i18n";
 
 export function HistoryControls() {
   const engine = useEngine();
@@ -15,7 +16,7 @@ export function HistoryControls() {
   return (
     <>
       <ToolButton
-        label={owner ? `Undo ${owner}'s change` : "Undo"}
+        label={owner ? t("history.undoOwner", { name: owner }) : t("history.undo")}
         description={undoLabel ?? undefined}
         shortcut={engine.keymap.label("undo")}
         side="bottom"
@@ -26,7 +27,7 @@ export function HistoryControls() {
         <Undo2 />
       </ToolButton>
       <ToolButton
-        label={owner ? `Redo ${owner}'s change` : "Redo"}
+        label={owner ? t("history.redoOwner", { name: owner }) : t("history.redo")}
         description={redoLabel ?? undefined}
         shortcut={engine.keymap.label("redo")}
         side="bottom"

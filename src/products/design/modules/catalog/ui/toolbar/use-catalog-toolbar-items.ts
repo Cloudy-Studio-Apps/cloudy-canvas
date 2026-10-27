@@ -7,6 +7,7 @@ import {
   CATALOG_TOOL,
 } from "../../mode/catalog-mode.constants";
 import { useBrochure } from "../hooks/use-brochure";
+import { t } from "../../catalog.i18n";
 
 /**
  * The Catalog mode's toolbar items: selecting pages, the hand, picking frames, arranging them,
@@ -18,38 +19,37 @@ export function useCatalogToolbarItems(): readonly ModeToolbarEntry[] {
   return [
     {
       tool: CATALOG_TOOL,
-      label: "Select pages",
-      description: "Click pages to see them; they don't move here.",
+      label: t("toolbar.selectPages"),
+      description: t("toolbar.selectPagesHint"),
       icon: MousePointer2,
     },
     { tool: "hand" },
     "divider",
     {
       command: CATALOG_COMMANDS.pick,
-      label: "Pick frames",
-      description: "Tick the frames the brochure prints.",
+      label: t("toolbar.pickFrames"),
+      description: t("toolbar.pickFramesHint"),
       icon: ListChecks,
       activeWhen: { tool: CATALOG_PICK_TOOL },
     },
     {
       run: () => brochure?.arrange(),
-      label: "Arrange pages and options",
-      description:
-        "Lay the pages out on one line by spread, with their options as the brochure's Arrange setting says (below them while it's off).",
+      label: t("toolbar.arrange"),
+      description: t("toolbar.arrangeHint"),
       icon: LayoutGrid,
       disabled: empty,
     },
     {
       command: CATALOG_COMMANDS.preview,
-      label: "Preview",
-      description: "Flip through the brochure.",
+      label: t("toolbar.preview"),
+      description: t("toolbar.previewHint"),
       icon: Play,
       disabled: empty,
     },
     {
       command: CATALOG_COMMANDS.exportPdf,
-      label: "Export PDF",
-      description: "The whole brochure as one PDF.",
+      label: t("toolbar.exportPdf"),
+      description: t("toolbar.exportPdfHint"),
       icon: FileDown,
       disabled: empty,
     },

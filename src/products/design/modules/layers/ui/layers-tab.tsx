@@ -12,6 +12,7 @@ import { matchingLayers } from "./matching-layers";
 import { revealedLayers } from "./revealed-layers";
 import { useLayerTree } from "./use-layer-tree";
 import { visibleRows } from "./visible-rows";
+import { t } from "../layers.i18n";
 
 /**
  * The left panel's Layers tab: the layer tree of the page on screen (topmost first), searchable
@@ -62,8 +63,8 @@ export function LayersTab() {
         <header className="flex h-10 shrink-0 items-center justify-between gap-1 px-3">
           {search === null ? (
             <>
-              <h2 className="text-xs font-semibold text-foreground">Layers</h2>
-              <PanelIconButton label="Search layers" onClick={() => setSearch("")}>
+              <h2 className="text-xs font-semibold text-foreground">{t("title")}</h2>
+              <PanelIconButton label={t("search.label")} onClick={() => setSearch("")}>
                 <Search />
               </PanelIconButton>
             </>
@@ -77,9 +78,7 @@ export function LayersTab() {
         </header>
         {roots.length === 0 ? (
           <p className="px-3 text-xs text-muted-foreground">
-            {searching
-              ? "No layer has that name."
-              : "Draw a frame (F), a shape (R) or text (T) to add a layer."}
+            {searching ? t("empty.noMatch") : t("empty.hint")}
           </p>
         ) : (
           <LayersList

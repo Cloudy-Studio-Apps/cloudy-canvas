@@ -16,13 +16,14 @@ import { PaintStyleEditor } from "./paint-style-editor";
 import { PaintStylePreview } from "./paint-style-preview";
 import { StrokeStyleEditor } from "./stroke-style-editor";
 import { StrokeStylePreview } from "./stroke-style-preview";
+import { t } from "../../core.i18n";
 
 /** Color and stroke styles (text styles are the text module's, effect styles the effects'). */
 export const CORE_STYLE_TYPES: readonly StyleTypeEntry[] = [
   {
     id: PAINT_STYLE,
-    label: "Color",
-    heading: "Color styles",
+    label: t("styles.color"),
+    heading: t("styles.colorHeading"),
     icon: Palette,
     order: 20,
     create: (engine) =>
@@ -38,8 +39,8 @@ export const CORE_STYLE_TYPES: readonly StyleTypeEntry[] = [
   },
   {
     id: STROKE_STYLE,
-    label: "Stroke",
-    heading: "Stroke styles",
+    label: t("styles.stroke"),
+    heading: t("styles.strokeHeading"),
     icon: PenLine,
     order: 40,
     create: (engine) => createNodeStyle(engine, STROKE_STYLE, strokeStyleOfNode, strokeBindingsOf),

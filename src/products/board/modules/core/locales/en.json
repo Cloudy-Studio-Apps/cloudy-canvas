@@ -1,0 +1,21 @@
+{
+  "hideUi": "Hide UI",
+  "mode": {
+    "label": "Board",
+    "description": "Every tool and every element."
+  },
+  "tools": {
+    "select": {
+      "label": "Select",
+      "description": "Select, move and resize. Double-click to edit text."
+    },
+    "scale": {
+      "label": "Scale",
+      "description": "Scale with the content: text, strokes and what's inside grow together."
+    },
+    "hand": {
+      "label": "Hand",
+      "description": "Pan around the board."
+    }
+  }
+}

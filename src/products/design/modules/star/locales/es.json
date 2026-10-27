@@ -1,0 +1,7 @@
+{
+  "label": "Estrella",
+  "description": "Una estrella con cualquier número de puntas.",
+  "points": "Puntas",
+  "innerRadius": "Radio interior",
+  "ratio": "Proporción"
+}

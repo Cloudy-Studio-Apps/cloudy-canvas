@@ -9,15 +9,16 @@ import { ThemePane } from "./theme-pane";
 import { ThemePartsContext } from "./theme-parts-context";
 import { ThemeStrip } from "./theme-strip";
 import type { ThemeHover } from "./theme.types";
+import { t } from "../../color-wizard.i18n";
 
 const MODES: readonly SegmentedOption<ModeSet>[] = [
-  { value: "both", label: "Light & Dark" },
-  { value: "light", label: "Light only" },
-  { value: "dark", label: "Dark only" },
+  { value: "both", label: t("theme.lightDark") },
+  { value: "light", label: t("theme.lightOnly") },
+  { value: "dark", label: t("theme.darkOnly") },
 ];
 const VIEWS = [
-  { value: "visual", label: "Visual", icon: <Eye /> },
-  { value: "list", label: "List", icon: <List /> },
+  { value: "visual", label: t("theme.visual"), icon: <Eye /> },
+  { value: "list", label: t("theme.list"), icon: <List /> },
 ] as const;
 
 /** Step 3: the Theme, edited on live previews (Visual) or token by token (List). */
@@ -49,30 +50,28 @@ export function ThemeStep() {
     <div className="flex h-full flex-col gap-3 overflow-auto px-4 py-3.5">
       <div className="flex flex-wrap items-center gap-2.5">
         <SegmentedControl
-          label="View"
+          label={t("theme.view")}
           size="sm"
           value={view}
           options={VIEWS}
           onChange={(themeView) => set({ themeView })}
         />
         <span className="text-xs text-muted-foreground">
-          {view === "visual"
-            ? "Click any part of a preview to change its color."
-            : "Click a cell to change it."}
+          {view === "visual" ? t("theme.visualHint") : t("theme.listHint")}
         </span>
         <div className="ml-auto" />
         {changed > 0 && (
           <Button variant="ghost" size="sm" onClick={() => set({ overrides: {} })}>
-            Reset all ({changed})
+            {t("theme.resetAll", { count: changed })}
           </Button>
         )}
         <CheckboxField
-          label="Create the Theme collection"
+          label={t("theme.createTheme")}
           checked={options.theme}
           onChange={(checked) => set({ options: { ...options, theme: checked } })}
         />
         <SegmentedControl
-          label="Modes"
+          label={t("theme.modes")}
           size="sm"
           value={options.modes}
           options={MODES}

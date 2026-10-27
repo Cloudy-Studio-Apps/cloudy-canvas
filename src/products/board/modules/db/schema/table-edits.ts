@@ -14,6 +14,7 @@ import {
 import { pruneRefs } from "./prune-refs";
 import type { DbColumnPatch, DbIndexPatch, DbTablePatch } from "./db-schema.types";
 import { patchTable } from "./patch-db-element";
+import { t } from "../db.i18n";
 
 // Visual edits to one table. Each is one undo step. Functions that validate return an error message.
 
@@ -27,9 +28,9 @@ export function updateTable(doc: CanvasDocument, id: string, patch: DbTablePatch
   if (!table) return null;
   if (patch.name !== undefined) {
     const name = patch.name.trim();
-    if (!name) return "A table needs a name";
+    if (!name) return t("errors.tableNeedsName");
     const taken = doc.all().some((s) => isDbTable(s) && s.id !== id && s.name === name);
-    if (taken) return `"${name}" is already used`;
+    if (taken) return t("errors.nameUsed", { name });
     patch = { ...patch, name };
   }
   doc.checkpoint();
@@ -57,15 +58,15 @@ export function updateColumn(
   if (!table) return null;
   if (patch.name !== undefined) {
     const name = patch.name.trim();
-    if (!name) return "A column needs a name";
+    if (!name) return t("errors.columnNeedsName");
     if (table.columns.some((c) => c.id !== columnId && c.name === name))
-      return `"${name}" is already used`;
+      return t("errors.nameUsed", { name });
     patch = { ...patch, name };
   }
   if (patch.type !== undefined) {
     // `varchar(255)` typed as the type sets the arguments too.
     const { type, typeArgs } = splitColumnType(patch.type);
-    if (!type) return "A column needs a type";
+    if (!type) return t("errors.columnNeedsType");
     patch = { ...patch, type, ...(typeArgs && { typeArgs }) };
   }
   if (patch.typeArgs !== undefined)

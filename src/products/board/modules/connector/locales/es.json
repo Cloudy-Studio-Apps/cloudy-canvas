@@ -1,0 +1,13 @@
+{
+  "label": "Conector",
+  "description": "Arrastra de una forma a otra para conectarlas.",
+  "color": "Color",
+  "options": {
+    "group": "Opciones del conector",
+    "elbow": "En ángulo",
+    "straight": "Recto",
+    "arrowEnd": "Flecha al final",
+    "arrowsBoth": "Flechas en ambos extremos",
+    "noArrows": "Sin flechas"
+  }
+}

@@ -16,6 +16,7 @@ import { draftFromColor } from "../shade-drafts";
 import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";
 import type { NewGroupMenuProps } from "./board.types";
+import { t } from "../../../variables.i18n";
 
 /**
  * "+ New group", asking what it will hold: a color palette (separate colors), color shades (the
@@ -41,10 +42,10 @@ export function NewGroupMenu({ variant = "link" }: NewGroupMenuProps) {
             : "h-7 px-1 text-muted-foreground hover:text-foreground",
         )}
       >
-        <Plus className="size-3.5" /> New group
+        <Plus className="size-3.5" /> {t("board.newGroup")}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-64">
-        <DropdownMenuLabel>Colors</DropdownMenuLabel>
+        <DropdownMenuLabel>{t("board.colors")}</DropdownMenuLabel>
         <DropdownMenuItem
           className="items-start"
           onSelect={() =>
@@ -58,10 +59,8 @@ export function NewGroupMenu({ variant = "link" }: NewGroupMenuProps) {
         >
           <Palette />
           <span className="flex flex-col">
-            Color palette
-            <span className="text-xs text-muted-foreground">
-              Separate colors: brand, accent, surface…
-            </span>
+            {t("board.palette")}
+            <span className="text-xs text-muted-foreground">{t("board.paletteHint")}</span>
           </span>
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -70,14 +69,12 @@ export function NewGroupMenu({ variant = "link" }: NewGroupMenuProps) {
         >
           <SwatchBook />
           <span className="flex flex-col">
-            Color shades
-            <span className="text-xs text-muted-foreground">
-              Lighter and darker variants of one color
-            </span>
+            {t("board.shades")}
+            <span className="text-xs text-muted-foreground">{t("board.shadesOneHint")}</span>
           </span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuLabel>Numbers</DropdownMenuLabel>
+        <DropdownMenuLabel>{t("board.numbers")}</DropdownMenuLabel>
         <DropdownMenuItem
           className="items-start"
           onSelect={() =>
@@ -88,10 +85,8 @@ export function NewGroupMenu({ variant = "link" }: NewGroupMenuProps) {
         >
           <Ruler />
           <span className="flex flex-col">
-            Number scale
-            <span className="text-xs text-muted-foreground">
-              Sizes from one base by a ratio: xs … 3xl
-            </span>
+            {t("board.numberScale")}
+            <span className="text-xs text-muted-foreground">{t("board.numberScaleHint")}</span>
           </span>
         </DropdownMenuItem>
         {NUMBER_KINDS.map((kind) => (
@@ -112,7 +107,7 @@ export function NewGroupMenu({ variant = "link" }: NewGroupMenuProps) {
           </DropdownMenuItem>
         ))}
         <DropdownMenuSeparator />
-        <DropdownMenuLabel>Text and switches</DropdownMenuLabel>
+        <DropdownMenuLabel>{t("board.textAndSwitches")}</DropdownMenuLabel>
         <DropdownMenuItem
           className="items-start"
           onSelect={() =>
@@ -126,8 +121,8 @@ export function NewGroupMenu({ variant = "link" }: NewGroupMenuProps) {
         >
           <Type />
           <span className="flex flex-col">
-            Text
-            <span className="text-xs text-muted-foreground">Labels, translations, font names</span>
+            {t("board.text")}
+            <span className="text-xs text-muted-foreground">{t("board.textHint")}</span>
           </span>
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -143,8 +138,8 @@ export function NewGroupMenu({ variant = "link" }: NewGroupMenuProps) {
         >
           <ToggleRight />
           <span className="flex flex-col">
-            Boolean
-            <span className="text-xs text-muted-foreground">Show or hide layers, clip content</span>
+            {t("board.boolean")}
+            <span className="text-xs text-muted-foreground">{t("board.booleanHint")}</span>
           </span>
         </DropdownMenuItem>
       </DropdownMenuContent>

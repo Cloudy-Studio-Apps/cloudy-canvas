@@ -1,0 +1,30 @@
+{
+  "conflicts": {
+    "summary_one": "{count} is named like ones this file has:",
+    "summary_other": "{count} are named like ones this file has:",
+    "more": " and {count} more",
+    "label": "Same names"
+  },
+  "choices": {
+    "replace": "Replace",
+    "replaceHint": "The file's keep their place and take the new values",
+    "keepBoth": "Keep both",
+    "keepBothHint": "The new ones are added with a number after their name",
+    "skip": "Skip",
+    "skipHint": "The file's stay as they are"
+  },
+  "chip": {
+    "mixedTitle": "Mixed variables",
+    "mixed": "Mixed",
+    "detach": "Detach variable"
+  },
+  "value": {
+    "true": "True",
+    "false": "False"
+  },
+  "picker": {
+    "search": "Search variables",
+    "empty": "This file has no variables yet.",
+    "noFit": "No variables fit this field."
+  }
+}

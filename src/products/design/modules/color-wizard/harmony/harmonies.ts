@@ -2,17 +2,18 @@ import { clamp, mod } from "@canvas";
 
 import type { Hsv } from "../color";
 import type { Harmony, HarmonyId } from "./harmony.types";
+import { t } from "../color-wizard.i18n";
 
 export const HARMONIES: readonly Harmony[] = [
-  { id: "analogous", label: "Analogous", offsets: [0, -30, 30, -60, 60] },
-  { id: "monochromatic", label: "Mono", offsets: [0] },
-  { id: "complementary", label: "Complement", offsets: [0, 180] },
-  { id: "split", label: "Split", offsets: [0, 150, 210] },
-  { id: "triad", label: "Triad", offsets: [0, 120, 240] },
-  { id: "square", label: "Square", offsets: [0, 90, 180, 270] },
-  { id: "compound", label: "Compound", offsets: [0, 30, 180, 210] },
-  { id: "shades", label: "Shades", offsets: [0] },
-  { id: "custom", label: "Custom", offsets: null },
+  { id: "analogous", label: t("harmonies.analogous"), offsets: [0, -30, 30, -60, 60] },
+  { id: "monochromatic", label: t("harmonies.mono"), offsets: [0] },
+  { id: "complementary", label: t("harmonies.complement"), offsets: [0, 180] },
+  { id: "split", label: t("harmonies.split"), offsets: [0, 150, 210] },
+  { id: "triad", label: t("harmonies.triad"), offsets: [0, 120, 240] },
+  { id: "square", label: t("harmonies.square"), offsets: [0, 90, 180, 270] },
+  { id: "compound", label: t("harmonies.compound"), offsets: [0, 30, 180, 210] },
+  { id: "shades", label: t("harmonies.shades"), offsets: [0] },
+  { id: "custom", label: t("harmonies.custom"), offsets: null },
 ];
 
 /** Each round past the harmony's hues: less saturated and lighter, then darker, … */

@@ -8,6 +8,7 @@ import { ColumnFlags } from "./column-flags";
 import { ColumnTypePicker } from "./column-type-picker";
 import { RefPicker } from "./ref-picker";
 import type { ColumnRowProps } from "./column-row.types";
+import { t } from "../../db.i18n";
 
 export function ColumnRow({ table, column, index }: ColumnRowProps) {
   const schema = useBoardSchema();
@@ -17,7 +18,7 @@ export function ColumnRow({ table, column, index }: ColumnRowProps) {
       <div className="flex items-center gap-1">
         <CommitInput
           value={column.name}
-          aria-label="Column name"
+          aria-label={t("column.name")}
           className="h-7 min-w-0 flex-1 text-sm"
           onCommit={(name) => schema.updateColumn(table.id, column.id, { name })}
         />
@@ -28,8 +29,8 @@ export function ColumnRow({ table, column, index }: ColumnRowProps) {
           variant="ghost"
           size="icon"
           className="size-7 hover:text-destructive"
-          aria-label={`Delete column ${column.name}`}
-          title="Delete column"
+          aria-label={t("column.delete", { name: column.name })}
+          title={t("column.deleteHint")}
           onClick={() => schema.removeColumn(table.id, column.id)}
         >
           <Trash2 />

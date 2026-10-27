@@ -9,6 +9,7 @@ import { ConnectAgentDialog } from "./connect-agent-dialog";
 import { NO_URL } from "./connect-agent-dialog/no-url";
 import { CopyRow } from "./copy-row";
 import { useAgentServerStatus } from "./use-agent-server-status";
+import { t } from "./agent-server.i18n";
 
 /** The agent server's switch, status and URL, for the settings page, with the connect dialog. */
 export function AgentServerPanel() {
@@ -26,7 +27,7 @@ export function AgentServerPanel() {
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-0.5">
           <label htmlFor={switchId} className="text-sm font-medium">
-            Allow agents to connect
+            {t("panel.allow")}
           </label>
           <p className="text-sm break-all text-muted-foreground">
             {agentServerStatusText(status.available, status.enabled, status.url)}
@@ -41,15 +42,15 @@ export function AgentServerPanel() {
       </div>
       {status.available && (
         <div className="space-y-4">
-          <CopyRow label="URL" value={url ?? NO_URL} disabled={!url} />
+          <CopyRow label={t("panel.url")} value={url ?? NO_URL} disabled={!url} />
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={() => setConnectOpen(true)}>
               <Bot />
-              Connect an agent…
+              {t("menu.connect")}
             </Button>
             <Button variant="outline" size="sm" onClick={() => setToolsOpen(true)}>
               <Wrench />
-              Available tools…
+              {t("menu.tools")}
             </Button>
           </div>
         </div>

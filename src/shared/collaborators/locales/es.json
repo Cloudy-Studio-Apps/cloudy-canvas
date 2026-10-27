@@ -1,0 +1,16 @@
+{
+  "connectedAgents": "Agentes conectados",
+  "connectedCollaborators": "Colaboradores conectados",
+  "none": "Nadie se ha conectado todavía.",
+  "following": "Siguiendo",
+  "clickStop": "Haz clic para dejar de seguir",
+  "clickFollow": "Haz clic para seguir",
+  "more_one": "{count} colaborador más",
+  "more_other": "{count} colaboradores más",
+  "justNow": "justo ahora",
+  "minAgo": "hace {minutes} min",
+  "idle": "Conectado, inactivo",
+  "connected": "Conectado",
+  "failed": "{label} (falló)",
+  "on": "en {place}"
+}

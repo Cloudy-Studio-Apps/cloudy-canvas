@@ -6,6 +6,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/kit";
 import { NewVariableMenu } from "./new-variable-menu";
 import type { GroupActionsProps } from "./variables-ui.types";
+import { t } from "../variables.i18n";
 
 /** A group's header buttons: add a variable in it, rename it (moving what's in it). */
 export function GroupActions({ collectionId, group, onCreated }: GroupActionsProps) {
@@ -15,8 +16,8 @@ export function GroupActions({ collectionId, group, onCreated }: GroupActionsPro
       <NewVariableMenu collectionId={collectionId} group={group.path} onCreated={onCreated} />
       <Popover>
         <PopoverTrigger
-          aria-label="Rename group"
-          title="Rename group"
+          aria-label={t("group.rename")}
+          title={t("group.rename")}
           className="flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground [&_svg]:size-3.5"
         >
           <Pencil />
@@ -24,7 +25,7 @@ export function GroupActions({ collectionId, group, onCreated }: GroupActionsPro
         <PopoverContent align="end" className="w-56 p-2">
           <CommitInput
             autoFocus
-            aria-label="Group name"
+            aria-label={t("group.name")}
             value={group.path}
             onCommit={(to) =>
               engine.service(DOCUMENT_TOKENS).renameGroup(collectionId, group.path, to)

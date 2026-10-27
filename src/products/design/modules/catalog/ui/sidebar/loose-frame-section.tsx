@@ -4,6 +4,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
 import type { LooseFrameSectionProps } from "./sidebar.types";
+import { t } from "../../catalog.i18n";
 
 /** A selected frame that isn't in the brochure: add it as a page, or as an option of the last one. */
 export function LooseFrameSection({ frame }: LooseFrameSectionProps) {
@@ -12,7 +13,7 @@ export function LooseFrameSection({ frame }: LooseFrameSectionProps) {
   const last = pages.at(-1);
 
   return (
-    <PanelSection title="Not in the brochure">
+    <PanelSection title={t("frames.loose")}>
       <p className="truncate text-sm text-foreground">{frame.name}</p>
       <p className="text-xs text-muted-foreground">
         Greyed frames stay in the design; they just aren't printed.

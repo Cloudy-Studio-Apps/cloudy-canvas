@@ -3,6 +3,7 @@ import { Pipette } from "lucide-react";
 import { IconButton } from "@shared/ui/kit";
 import { normalizeHex } from "../normalize-hex";
 import type { EyeDropperApi, EyedropperButtonProps } from "./color.types";
+import { t } from "../components.i18n";
 
 /** The browser's EyeDropper constructor, when it has one. */
 const EyeDropper = (window as unknown as { EyeDropper?: new () => EyeDropperApi }).EyeDropper;
@@ -13,7 +14,7 @@ export function EyedropperButton({ onPick }: EyedropperButtonProps) {
   return (
     <IconButton
       size="xs"
-      label="Pick a color from the screen"
+      label={t("color.eyedropper")}
       onClick={() => {
         new EyeDropper()
           .open()

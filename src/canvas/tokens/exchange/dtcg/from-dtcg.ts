@@ -26,6 +26,7 @@ import type {
 } from "./dtcg.types";
 import { DTCG_EXTENSION, readDimension, readDtcgColor, referenceOf } from "./dtcg-values";
 import { readExchangeExpression } from "../read-exchange-expression";
+import { t } from "../../tokens.i18n";
 
 const VARIABLE_TYPES: Record<string, VariableType> = {
   color: "color",
@@ -104,12 +105,14 @@ export function fromDtcg(json: unknown, options: DtcgOptions = {}): TokenReadRes
     const type = item.type ? VARIABLE_TYPES[item.type] : undefined;
     if (!type) {
       warnings.add(
-        item.type ? `${item.type} tokens were left out` : "tokens without a $type were left out",
+        item.type
+          ? t("importWarnings.typeLeftOut", { type: item.type })
+          : t("importWarnings.noType"),
       );
       continue;
     }
     if (item.path.length < 2) {
-      warnings.add("tokens outside a group were left out");
+      warnings.add(t("importWarnings.outsideGroup"));
       continue;
     }
     const id = typeof own?.id === "string" ? own.id : createId();
@@ -170,7 +173,10 @@ export function fromDtcg(json: unknown, options: DtcgOptions = {}): TokenReadRes
   for (const { item, own } of styleItems) {
     const style = readStyle(item, own, options, refs);
     if (style) styles.push(style);
-    else warnings.add(`${item?.type ?? "unknown"} styles were left out`);
+    else
+      warnings.add(
+        t("importWarnings.styleLeftOut", { type: item?.type ?? t("importWarnings.unknown") }),
+      );
   }
   const styleOrders = new Map<string, string | null>();
   for (const style of styles) {
@@ -216,13 +222,13 @@ function readValue(
   if (reference !== null) {
     const target = refOf(reference);
     if (target) return { alias: target };
-    warnings.add("references to tokens not in the file were left out");
+    warnings.add(t("importWarnings.badRefs"));
     return null;
   }
   if (type === "number" && typeof value === "string" && value.includes("{")) {
     const expression = readExchangeExpression(value, refOf);
     if (expression) return expression;
-    warnings.add("worked-out values it couldn't read were left out");
+    warnings.add(t("importWarnings.badExpressions"));
     return null;
   }
   if (type === "color") {
@@ -235,7 +241,7 @@ function readValue(
     const text = Array.isArray(value) ? value[0] : value;
     if (typeof text === "string") return { string: text };
   } else if (typeof value === "boolean") return { boolean: value };
-  warnings.add(`${type} tokens with values it couldn't read were left out`);
+  warnings.add(t("importWarnings.unreadable", { type }));
   return null;
 }
 

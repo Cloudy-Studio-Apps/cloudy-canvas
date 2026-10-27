@@ -1,5 +1,6 @@
 import type { ReportLoading } from "@shared/stores/loading-store.types";
 import { toast } from "@shared/stores/toast-store";
+import { t } from "./file.i18n";
 
 /** Most losses listed in the toast; the rest are summed up. */
 const LISTED_WARNINGS = 4;
@@ -18,6 +19,6 @@ export function toastImportWarnings(warnings: readonly string[]): void {
   if (warnings.length === 0) return;
   const listed = warnings.slice(0, LISTED_WARNINGS).join("; ");
   const more = warnings.length - LISTED_WARNINGS;
-  const description = more > 0 ? `${listed}; and ${more} more.` : `${listed}.`;
-  toast({ title: "Imported with changes", description });
+  const description = more > 0 ? t("import.more", { list: listed, count: more }) : `${listed}.`;
+  toast({ title: t("import.title"), description });
 }

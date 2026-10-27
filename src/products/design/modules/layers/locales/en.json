@@ -1,0 +1,31 @@
+{
+  "title": "Layers",
+  "name": "Layer name",
+  "collapse": "Collapse",
+  "expand": "Expand",
+  "masked": "Masked",
+  "hasEffects": "Has effects",
+  "lock": "Lock",
+  "unlock": "Unlock",
+  "hide": "Hide",
+  "show": "Show",
+  "search": {
+    "label": "Search layers",
+    "close": "Close search"
+  },
+  "mask": {
+    "alpha": "Alpha mask",
+    "vector": "Vector mask",
+    "luminance": "Luminance mask",
+    "invertedAlpha": "Inverted alpha mask",
+    "invertedVector": "Inverted vector mask",
+    "invertedLuminance": "Inverted luminance mask"
+  },
+  "empty": {
+    "noMatch": "No layer has that name.",
+    "hint": "Draw a frame (F), a shape (R) or text (T) to add a layer."
+  },
+  "errors": {
+    "moveFailed": "The layers couldn't be moved"
+  }
+}

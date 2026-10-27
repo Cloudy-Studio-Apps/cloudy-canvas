@@ -4,6 +4,7 @@ import { cn } from "@shared/ui/kit";
 import { useColorWizardStore } from "../store";
 import { useThemeParts } from "./theme-parts-context";
 import type { ThemePartProps } from "./theme.types";
+import { t } from "../../color-wizard.i18n";
 
 /**
  * A part of a preview drawn with a token: hovering outlines every part using it (and names it
@@ -26,7 +27,7 @@ export function ThemePart({
   const value = theme.tokens.find((t) => t.name === name)?.values[mode];
   if (!value) return null;
   const lit = hover?.name === name && hover.mode === mode;
-  const label = `${name} · ${value.role === "auto" ? "best contrast" : value.role === "custom" ? `custom ${value.hex}` : value.alias}`;
+  const label = `${name} · ${value.role === "auto" ? t("theme.strip.bestContrast") : value.role === "custom" ? t("theme.strip.customHex", { hex: value.hex }) : value.alias}`;
   return (
     <Tag
       role="button"

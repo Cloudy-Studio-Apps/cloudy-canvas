@@ -11,6 +11,7 @@ import { optionLetter } from "../option-letter";
 import { showPage } from "../page-actions";
 import { BrochureOptionsList } from "./brochure-options-list";
 import type { BrochurePageRowProps } from "./brochure-page-row.types";
+import { t } from "../../catalog.i18n";
 
 /** The drag data type of a brochure page row. */
 const PAGE_DRAG = "application/x-cloudy-brochure-page";
@@ -34,7 +35,10 @@ export function BrochurePageRow({
   const paper = paperSize(page.frame);
   const detail =
     page.options.length > 1
-      ? `${page.options.length} options · ${optionLetter(chosen)} printed`
+      ? t("tab.page.options", {
+          count: page.options.length,
+          letter: optionLetter(chosen),
+        })
       : (paper.name ?? `${paper.width} × ${paper.height} mm`);
 
   return (
@@ -89,7 +93,7 @@ export function BrochurePageRow({
           onClick={(event) => event.stopPropagation()}
         >
           <PanelIconButton
-            label="Take out of the brochure"
+            label={t("tab.page.remove")}
             onClick={() => brochure?.removePages([page.slot.id])}
           >
             <X />

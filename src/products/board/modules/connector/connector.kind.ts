@@ -37,6 +37,7 @@ import type {
   ConnectorEnd,
   ConnectorEndsPatch,
 } from "./connector.types";
+import { t } from "./connector.i18n";
 
 /**
  * Lines between two ends that follow the elements they're attached to. The board resolves their
@@ -45,8 +46,8 @@ import type {
  */
 export class ConnectorKind extends LineKind<ConnectorElement, BoardToolOptions> {
   readonly type = "connector";
-  readonly label = "Connector";
-  readonly description = "Drag from one shape to another to connect them.";
+  readonly label = t("label");
+  readonly description = t("description");
   override readonly tool = "connector";
   override readonly defaults: ConnectorDefaults = CONNECTOR_DEFAULTS;
   override readonly styleFields = ["color", "size", "style", "startHead", "endHead"];
@@ -140,7 +141,7 @@ export class ConnectorKind extends LineKind<ConnectorElement, BoardToolOptions> 
 
   /** Its color binds to a color variable. */
   override bindable(): BindableField[] {
-    return [colorField("color", "Color", "stroke-color")];
+    return [colorField("color", t("color"), "stroke-color")];
   }
 
   override describe(el: ConnectorElement): ElementDescription {

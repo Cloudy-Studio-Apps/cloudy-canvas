@@ -3,6 +3,7 @@ import { SquareDashed } from "lucide-react";
 import { ToolButton } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useSelectedNodes } from "@design/ui/hooks";
+import { t } from "../mask.i18n";
 
 /** The toolbar's mask button for the selection: Use as mask, or Remove mask on masks. */
 export function MaskToolbarButton() {
@@ -12,13 +13,13 @@ export function MaskToolbarButton() {
   const masks = nodes.every((node) => node.isMask);
   return (
     <ToolButton
-      label={masks ? "Remove mask" : "Use as mask"}
+      label={masks ? t("commands.remove") : t("commands.use")}
       description={
         masks
-          ? "The layers it masks show whole again."
+          ? t("toolbar.removeHint")
           : nodes.length > 1
-            ? "Groups the layers; the bottom one masks the others."
-            : "Masks the layers above it."
+            ? t("toolbar.groupsHint")
+            : t("toolbar.aboveHint")
       }
       shortcut={engine.keymap.label("useAsMask")}
       active={masks}

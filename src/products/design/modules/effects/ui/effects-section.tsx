@@ -19,6 +19,7 @@ import { EffectStackEditor } from "./effect-stack-editor";
 import type { EffectStackMap } from "./effects-ui.types";
 import type { EffectTypeEntry } from "./effects.points.types";
 import { designEffectTypes } from "./effects.points";
+import { t } from "../effects.i18n";
 
 /**
  * The selection's effects (`EffectStackEditor`): "+" adds one of the types the modules give
@@ -62,13 +63,13 @@ export function EffectsSection({ selection: { nodes } }: PropertySectionProps) {
 
   return (
     <PanelSection
-      title="Effects"
+      title={t("title")}
       actions={
         <>
           <StyleControl
             binding={style}
             styleType={EFFECT_STYLE}
-            createLabel="Create style from these effects"
+            createLabel={t("style.create")}
             create={() =>
               createNodeStyle(engine, EFFECT_STYLE, effectStyleOfNode, effectBindingsOf)
             }

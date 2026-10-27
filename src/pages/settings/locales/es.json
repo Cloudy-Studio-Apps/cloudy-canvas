@@ -1,0 +1,142 @@
+{
+  "language": {
+    "title": "Idioma",
+    "description": "El idioma de los menús, los paneles y los mensajes.",
+    "label": "Idioma",
+    "system": "Sistema ({language})",
+    "restartNote": "Los cambios se aplican la próxima vez que abras Cloudy Canvas."
+  },
+  "groups": {
+    "preferences": "Preferencias",
+    "extensions": "Extensiones",
+    "help": "Ayuda"
+  },
+  "nav": {
+    "appearance": "Apariencia",
+    "files": "Archivos y almacenamiento",
+    "collaboration": "Colaboración",
+    "agents": "Agentes (MCP)",
+    "plugins": "Complementos",
+    "shortcuts": "Atajos de teclado",
+    "about": "Acerca de"
+  },
+  "page": {
+    "home": "Inicio",
+    "title": "Configuración"
+  },
+  "about": {
+    "description": "Pizarras y diseños en un mismo lienzo. Parte de Cloudy Studio.",
+    "reading": "Leyendo la versión…",
+    "copy": "Copiar información de versión",
+    "license": "Licencia y aviso legal",
+    "madeBy": "Hecho por {author}"
+  },
+  "dedication": {
+    "title": "Cloudy Studio es para ella",
+    "body": "Cloudy Studio lleva el nombre que ella da a los personajes que ama en sus juegos: Cloudy. Cada app de esta serie está dedicada a ella, la persona que hace cada día un poco menos nublado."
+  },
+  "agents": {
+    "description": "Deja que agentes de IA como Claude Code lean y editen la pizarra abierta. Solo pueden conectarse apps de este equipo."
+  },
+  "files": {
+    "description": "Las pizarras y los diseños se guardan donde elijas. La app solo recuerda cuáles abriste.",
+    "autosave": "Guardado automático",
+    "autosaveHint": "Guarda los archivos abiertos un momento después de cada cambio. Las pizarras que aún no guardaste se conservan como borradores en la carpeta de datos de la app hasta que elijas dónde van.",
+    "recentList": "Lista de archivos recientes",
+    "showInFolder": "Mostrar en la carpeta",
+    "copyPath": "Copiar ruta",
+    "desktopOnly": "Solo la app de escritorio la conserva.",
+    "recentCount_one": "{count} archivo reciente",
+    "recentCount_other": "{count} archivos recientes",
+    "clearHint": "Vaciar la lista deja los archivos en el disco y conserva los borradores.",
+    "confirmClear_one": "¿Vaciar {count} archivo?",
+    "confirmClear_other": "¿Vaciar {count} archivos?",
+    "clear": "Vaciar",
+    "clearAll": "Vaciar archivos recientes",
+    "pathCopied": "Ruta copiada"
+  },
+  "errors": {
+    "copyFailed": "No se pudo copiar al portapapeles",
+    "folderFailed": "No se pudo abrir la carpeta",
+    "pluginAdd": "No se pudo añadir el complemento",
+    "pluginRemove": "No se pudo quitar el complemento"
+  },
+  "appearance": {
+    "description": "Cómo se ve la app: sus colores, fuentes y qué tan compactos son los controles. Los complementos pueden añadir temas. Los archivos no cambian: las exportaciones y vistas previas conservan sus propios colores.",
+    "theme": "Tema",
+    "themeHint": "«Igual que el sistema» cambia con el modo oscuro de tu SO.",
+    "themeMode": "Modo del tema",
+    "oneTheme": "Un tema",
+    "matchSystem": "Igual que el sistema",
+    "systemLight": "Cuando tu sistema es claro",
+    "systemDark": "Cuando tu sistema es oscuro",
+    "density": "Densidad",
+    "densityHint": "Qué tan altos son los controles y las filas. Un tema tiene la suya; esta la reemplaza.",
+    "densityOptions": {
+      "theme": "Del tema",
+      "compact": "Compacta",
+      "default": "Predeterminada",
+      "comfortable": "Cómoda"
+    },
+    "fromPlugin": "Del complemento «{plugin}»",
+    "missing": "«{id}» no está instalado (su complemento se quitó o se desactivó), así que se muestra un tema integrado."
+  },
+  "collaboration": {
+    "description": "Comparte en vivo una pizarra o un diseño abierto: tu app lo aloja y las personas que dejes entrar lo editan contigo hasta que termines.",
+    "yourName": "Tu nombre",
+    "nameHint": "Se muestra a los demás en las sesiones en vivo.",
+    "enterName": "Escribe un nombre",
+    "relayDown": "No se puede llegar al relay de Cloudy Canvas por un problema técnico, así que las sesiones usan relays públicos (n0). Funcionan igual y siguen cifradas de extremo a extremo. Se volverá a intentar con el relay de Cloudy Canvas en las próximas sesiones.",
+    "relayAddressError": "Escribe la dirección del relay, como https://relay.example.com",
+    "relayServer": "Servidor relay",
+    "relayHint": "Ayuda a que los invitados lleguen a ti a través de routers y lleva la sesión cuando no hay conexión directa. Nunca ve tus archivos. Los invitados usan el de tu enlace.",
+    "relayBuiltIn": "Relay de Cloudy Canvas",
+    "relayPublic": "Relays públicos (n0)",
+    "relayCustom": "Mi relay",
+    "address": "Dirección",
+    "accessToken": "Token de acceso",
+    "tokenPlaceholder": "IROH_RELAY_ACCESS_TOKEN del .env del servidor",
+    "connection": "Conexión",
+    "connectBuiltIn": "Las sesiones se conectan mediante el relay de Cloudy Canvas cuando no hay conexión directa. Nunca ve tus archivos.",
+    "connectPublic": "Las sesiones se conectan mediante relays públicos (n0) cuando no hay conexión directa. Nunca ven tus archivos.",
+    "test": "Probar conexión",
+    "connected": "Conectado mediante el relay en {millis} ms",
+    "needDesktop": "Las sesiones en vivo requieren la app de escritorio.",
+    "answersNoToken": "El relay responde pero no dejó entrar a la app: revisa el token.",
+    "unreachable": "{error} No se puede llegar al servidor: revisa la dirección, que esté en marcha y que los puertos 80, 443 y 7842/udp estén abiertos.",
+    "noAnswer": "No respondió."
+  },
+  "shortcuts": {
+    "description": "En una pizarra. Mantén Shift al redimensionar para conservar las proporciones; mantén Alt al arrastrar para duplicar."
+  },
+  "plugins": {
+    "description": "Añade herramientas, elementos y herramientas de agente a tus pizarras. Los cambios se aplican tras recargar.",
+    "install": "Instalar desde una carpeta…",
+    "link": "Añadir carpeta para desarrollo…",
+    "showFolder": "Mostrar carpeta de complementos",
+    "reloadNote": "Recarga la app para aplicar los cambios en los complementos.",
+    "reload": "Recargar",
+    "none": "No hay complementos instalados.",
+    "broken": "Carpetas que no se pudieron leer",
+    "development": "Desarrollo",
+    "failed": "Con error",
+    "addsStickers_one": "{count} sticker",
+    "addsStickers_other": "{count} stickers",
+    "addsThemes_one": "{count} tema",
+    "addsThemes_other": "{count} temas",
+    "adds": "Añade {items}",
+    "show": "Mostrar carpeta",
+    "stopLoading": "¿Dejar de cargarlo? Su carpeta se conserva.",
+    "deleteIt": "¿Eliminarlo?",
+    "remove": "Quitar",
+    "turnOn": "¿Activar {name}?",
+    "trustBody": "Los complementos se ejecutan con el mismo acceso que la app: tus archivos, la red y tus pizarras. Activa solo los que sean de confianza.",
+    "trustBodyAuthor": "Los complementos se ejecutan con el mismo acceso que la app: tus archivos, la red y tus pizarras. Activa solo los que sean de confianza (este es de {author}).",
+    "trustAndOn": "Confiar y activar",
+    "pickInstall": "Instalar un complemento desde su carpeta",
+    "pickLink": "Cargar un complemento que estás desarrollando",
+    "installed": "{name} instalado",
+    "added": "{name} añadido",
+    "turnOnBelow": "Actívalo abajo y luego recarga para usarlo."
+  }
+}

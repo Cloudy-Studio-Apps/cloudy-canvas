@@ -2,6 +2,7 @@ import { useUpdateStore } from "@shared/stores/update-store";
 import { SealLogo } from "@shared/ui/brand/seal-logo";
 import { Button } from "@shared/ui/components/ui/button";
 import { firstLine } from "./release-notes";
+import { t } from "./app-updates.i18n";
 
 /**
  * The card in the bottom-left corner while a new version is available: Update installs it (or
@@ -30,13 +31,15 @@ export function UpdateNotice() {
       <SealLogo size={32} className="shrink-0" />
       <div className="min-w-0 flex-1 space-y-2">
         <div className="space-y-0.5">
-          <p className="text-sm font-semibold">Cloudy Canvas {update.version} is available</p>
+          <p className="text-sm font-semibold">
+            {t("notice.available", { version: update.version })}
+          </p>
           <p className="truncate text-xs text-muted-foreground">
             {busy
               ? status.phase === "restarting"
-                ? "Restarting…"
-                : "Downloading the update…"
-              : (summary ?? `You have version ${__APP_VERSION__}.`)}
+                ? t("notice.restarting")
+                : t("notice.downloading")
+              : (summary ?? t("notice.youHave", { version: __APP_VERSION__ }))}
           </p>
         </div>
         {busy ? (
@@ -49,10 +52,10 @@ export function UpdateNotice() {
         ) : (
           <div className="flex gap-2">
             <Button size="sm" onClick={() => void install()}>
-              {installKind === "package" ? "Download" : "Update and restart"}
+              {installKind === "package" ? t("notice.download") : t("notice.updateRestart")}
             </Button>
             <Button size="sm" variant="ghost" onClick={dismiss}>
-              Later
+              {t("notice.later")}
             </Button>
           </div>
         )}

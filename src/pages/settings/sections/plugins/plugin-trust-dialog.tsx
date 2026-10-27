@@ -1,5 +1,6 @@
 import { ShieldAlert } from "lucide-react";
 
+import { tCommon } from "@shared/core";
 import { Button } from "@shared/ui/components/ui/button";
 import {
   Dialog,
@@ -10,6 +11,7 @@ import {
   DialogTitle,
 } from "@shared/ui/components/ui/dialog";
 import type { PluginTrustDialogProps } from "./plugins.types";
+import { t } from "../../settings.i18n";
 
 /** Asks once before a plugin runs: it gets the same access as the app. */
 export function PluginTrustDialog({ plugin, onTrust, onCancel }: PluginTrustDialogProps) {
@@ -19,19 +21,19 @@ export function PluginTrustDialog({ plugin, onTrust, onCancel }: PluginTrustDial
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ShieldAlert className="size-5 text-destructive" />
-            Turn on {plugin?.manifest.name}?
+            {t("plugins.turnOn", { name: plugin?.manifest.name ?? "" })}
           </DialogTitle>
           <DialogDescription>
-            Plugins run with the same access as the app: your files, the network and your boards.
-            Only turn on plugins you trust
-            {plugin?.manifest.author ? ` (this one is by ${plugin.manifest.author})` : ""}.
+            {plugin?.manifest.author
+              ? t("plugins.trustBodyAuthor", { author: plugin.manifest.author })
+              : t("plugins.trustBody")}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant="ghost" onClick={onCancel}>
-            Cancel
+            {tCommon("cancel")}
           </Button>
-          <Button onClick={onTrust}>Trust and turn on</Button>
+          <Button onClick={onTrust}>{t("plugins.trustAndOn")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

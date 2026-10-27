@@ -1,0 +1,13 @@
+{
+  "label": "Connector",
+  "description": "Drag from one shape to another to connect them.",
+  "color": "Color",
+  "options": {
+    "group": "Connector options",
+    "elbow": "Elbow",
+    "straight": "Straight",
+    "arrowEnd": "Arrow at end",
+    "arrowsBoth": "Arrows at both ends",
+    "noArrows": "No arrows"
+  }
+}

@@ -1,9 +1,10 @@
 import { SCALE_ANCHORS } from "@canvas";
 import { cn } from "@shared/ui/lib/utils";
 import type { AnchorPickerProps } from "./anchor-picker.types";
+import { t } from "./components.i18n";
 
 /** The 3×3 grid that picks an anchor: the point that stays put (e.g. while the selection is scaled). */
-export function AnchorPicker({ value, onChange, label = "Anchor" }: AnchorPickerProps) {
+export function AnchorPicker({ value, onChange, label = t("anchors.label") }: AnchorPickerProps) {
   return (
     <div
       role="radiogroup"
@@ -17,8 +18,8 @@ export function AnchorPicker({ value, onChange, label = "Anchor" }: AnchorPicker
           type="button"
           role="radio"
           aria-checked={anchor === value}
-          aria-label={anchor.replace("-", " ")}
-          title={anchor.replace("-", " ")}
+          aria-label={t(`anchors.${anchor}`)}
+          title={t(`anchors.${anchor}`)}
           onClick={() => onChange(anchor)}
           className="group flex size-4 cursor-pointer items-center justify-center"
         >

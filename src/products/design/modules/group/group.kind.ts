@@ -3,6 +3,7 @@ import { elementBounds, unionRects, type CanvasElement } from "@canvas";
 import { ChildHostKind, type ChildResolveContext } from "../core";
 import { GROUP_TYPE } from "./group.constants";
 import type { GroupElement } from "./group.types";
+import { t } from "./group.i18n";
 
 /**
  * Groups: they draw nothing and take no paints; a click on a child selects the group (until it's
@@ -12,8 +13,8 @@ import type { GroupElement } from "./group.types";
  */
 export class GroupKind extends ChildHostKind<GroupElement> {
   readonly type = GROUP_TYPE;
-  readonly label = "Group";
-  readonly description = "Layers that select and move together.";
+  readonly label = t("title");
+  readonly description = t("description");
   override readonly fillable = false;
   override readonly strokable = false;
   /** Nothing to copy or paste: a group draws nothing of its own. */

@@ -1,12 +1,13 @@
 import type { StyleRecord, TokenStore, VariableRecord } from "@canvas";
 
 import type { NumberKind } from "./board-model.types";
+import { t } from "../../variables.i18n";
 
 /** The kinds of number group, each tied to the fields it's for (its scopes). */
 export const NUMBER_KINDS: readonly NumberKind[] = [
   {
     id: "spacing",
-    label: "Spacing",
+    label: t("kinds.spacing"),
     icon: "↔",
     scopes: ["gap", "padding"],
     first: 8,
@@ -14,23 +15,37 @@ export const NUMBER_KINDS: readonly NumberKind[] = [
   },
   {
     id: "radius",
-    label: "Corner radius",
+    label: t("kinds.radius"),
     icon: "◜",
     scopes: ["corner-radius"],
     first: 4,
     group: "radius",
   },
-  { id: "font", label: "Font size", icon: "Aa", scopes: ["font-size"], first: 16, group: "type" },
-  { id: "opacity", label: "Opacity", icon: "◐", scopes: ["opacity"], first: 50, group: "opacity" },
+  {
+    id: "font",
+    label: t("kinds.font"),
+    icon: "Aa",
+    scopes: ["font-size"],
+    first: 16,
+    group: "type",
+  },
+  {
+    id: "opacity",
+    label: t("kinds.opacity"),
+    icon: "◐",
+    scopes: ["opacity"],
+    first: 50,
+    group: "opacity",
+  },
   {
     id: "stroke",
-    label: "Stroke weight",
+    label: t("kinds.stroke"),
     icon: "━",
     scopes: ["stroke-weight"],
     first: 1,
     group: "stroke",
   },
-  { id: "other", label: "Other number", icon: "#", scopes: [], first: 0, group: "numbers" },
+  { id: "other", label: t("kinds.other"), icon: "#", scopes: [], first: 0, group: "numbers" },
 ];
 
 /** A number variable's kind, read from its scopes. */
@@ -57,8 +72,8 @@ export function groupLabel(store: TokenStore, items: readonly VariableRecord[]):
   const first = items[0];
   if (!first) return "";
   if (first.type === "number") return numberKindOf(first).label.toLowerCase();
-  if (first.type === "string") return "texts";
-  if (first.type === "boolean") return "booleans";
+  if (first.type === "string") return t("groupLabel.texts");
+  if (first.type === "boolean") return t("groupLabel.booleans");
   const ids = new Set(items.map((v) => v.generatorId).filter(Boolean));
   const generator = ids.size === 1 ? store.generator([...ids][0] ?? "") : undefined;
   if (generator) {
@@ -67,10 +82,10 @@ export function groupLabel(store: TokenStore, items: readonly VariableRecord[]):
     );
     if (linked.length >= items.length - 1) {
       const base = generator.baseVar ? store.variable(generator.baseVar) : undefined;
-      return `shades of ${base ? leaf(base) : generator.baseColor.slice(0, 7)}`;
+      return t("groupLabel.shades", { name: base ? leaf(base) : generator.baseColor.slice(0, 7) });
     }
   }
-  return "colors";
+  return t("groupLabel.colors");
 }
 
 function leaf(record: VariableRecord | StyleRecord): string {

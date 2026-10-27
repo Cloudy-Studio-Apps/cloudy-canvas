@@ -3,6 +3,7 @@ import type { ErIsaElement } from "../../isa/isa.types";
 import { attributeColumns, ownAttributes } from "./attribute-columns";
 import { addColumn, addForeignKey, addOwnColumns, addTable } from "./table-set";
 import type { TablesContext } from "./tables-context.types";
+import { t } from "../../er.i18n";
 
 /**
  * Entities as tables. A strong entity's keys are its primary key (an `id` is added when it has
@@ -54,7 +55,7 @@ function strongTable(ctx: TablesContext, entity: ErEntityElement, isa?: ErIsaEle
     const key = category ? `${entity.name}_id` : "id";
     table.columns.unshift({ name: key, type: "integer" });
     table.pk = [key];
-    if (!category) ctx.warnings.push(`${entity.name} has no key, so it got an id column.`);
+    if (!category) ctx.warnings.push(t("toTables.warnNoKey", { name: entity.name }));
   }
 }
 
@@ -68,7 +69,7 @@ function weakTables(ctx: TablesContext, weak: readonly ErEntityElement[]): void 
     left = left.filter((e) => !ready.includes(e));
   }
   for (const entity of left) {
-    ctx.warnings.push(`${entity.name}'s owners form a loop, so it's keyed like a strong entity.`);
+    ctx.warnings.push(t("toTables.warnLoop", { name: entity.name }));
     strongTable(ctx, entity);
   }
 }
@@ -87,7 +88,7 @@ function weakTable(ctx: TablesContext, entity: ErEntityElement): void {
   const own = attributeColumns(ctx, entity.id);
   addOwnColumns(table, own);
   if (own.partialKeys.length === 0 && own.keys.length === 0) {
-    ctx.warnings.push(`${entity.name} is weak but has no partial key; its key is its owner's.`);
+    ctx.warnings.push(t("toTables.warnNoPartial", { name: entity.name }));
   }
   table.pk.push(...own.partialKeys, ...own.keys);
 }

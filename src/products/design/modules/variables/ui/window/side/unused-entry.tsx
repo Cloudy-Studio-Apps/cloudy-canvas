@@ -3,6 +3,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { ListRow } from "@shared/ui/kit";
 import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";
+import { t } from "../../../variables.i18n";
 
 /** The side's "Unused · N" entry: shows the variables and styles nothing uses. */
 export function UnusedEntry() {
@@ -14,7 +15,7 @@ export function UnusedEntry() {
   return (
     <div className="mt-2 border-t border-border pt-2">
       <ListRow
-        label="Unused"
+        label={t("side.unused")}
         meta={count}
         selected={showing}
         muted={count === 0}

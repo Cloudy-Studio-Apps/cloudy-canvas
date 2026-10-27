@@ -5,6 +5,7 @@ import { ContrastRow } from "./contrast-row";
 import type { ContrastPairsListProps } from "./contrast-ui.types";
 import { PartnerPicker } from "./partner-picker";
 import { useContrastChecks } from "./use-contrast-checks";
+import { t } from "../../variables.i18n";
 
 /**
  * A color's contrast: every pair it's in (declared, or found by scope: text colors on fills) with
@@ -20,12 +21,10 @@ export function ContrastPairsList({ variable }: ContrastPairsListProps) {
       contrastWith: (variable.contrastWith ?? []).filter((id) => id !== other),
     });
   return (
-    <InspectorSection title="Contrast">
+    <InspectorSection title={t("contrast.title")}>
       <div className="flex flex-col gap-1.5">
         {checks.length === 0 && (
-          <p className="text-xs text-subtle-foreground">
-            No pairs yet: pair it with a color it's read on, or give text and fill scopes.
-          </p>
+          <p className="text-xs text-subtle-foreground">{t("contrast.noPairs")}</p>
         )}
         {checks.map((check) => (
           <ContrastRow

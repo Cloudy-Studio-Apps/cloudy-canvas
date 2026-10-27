@@ -5,6 +5,7 @@ import {
 } from "@shared/ui/components/ui/dropdown-menu";
 import { CollaboratorList } from "./collaborator-list";
 import type { CollaboratorOverflowProps } from "./collaborator-overflow.types";
+import { t } from "./collaborators.i18n";
 
 /** The stack's "+N" circle: opens the list of every collaborator, as in Figma. */
 export function CollaboratorOverflow({ count, followable, side }: CollaboratorOverflowProps) {
@@ -15,7 +16,7 @@ export function CollaboratorOverflow({ count, followable, side }: CollaboratorOv
         <button
           type="button"
           className="relative flex size-7 shrink-0 items-center justify-center rounded-full border-2 border-border bg-muted text-[10px] font-semibold text-foreground ring-2 ring-surface hover:z-20 hover:bg-hover focus-visible:z-20 focus-visible:outline-2 focus-visible:outline-ring"
-          aria-label={`${count} more collaborators`}
+          aria-label={t("more", { count })}
         >
           +{count}
         </button>

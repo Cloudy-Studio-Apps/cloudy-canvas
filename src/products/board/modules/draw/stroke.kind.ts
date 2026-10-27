@@ -15,6 +15,7 @@ import { STROKE_DEFAULTS } from "./stroke.defaults";
 import { strokeSizePatch } from "./stroke-size";
 import { buildStroke, STROKE_SPEC_PROPERTIES, strokeSizeFrom } from "./stroke-spec";
 import type { StrokeDefaults, StrokeElement } from "./stroke.types";
+import { t } from "./draw.i18n";
 
 /**
  * Freehand strokes, drawn with the pen or the highlighter. Their points are the content: they're
@@ -23,8 +24,8 @@ import type { StrokeDefaults, StrokeElement } from "./stroke.types";
  */
 export class StrokeKind extends LineKind<StrokeElement, BoardToolOptions> {
   readonly type = "stroke";
-  readonly label = "Draw";
-  readonly description = "Pen, highlighter and eraser.";
+  readonly label = t("label");
+  readonly description = t("description");
   override readonly tool = "marker";
   override readonly defaults: StrokeDefaults = STROKE_DEFAULTS;
   override readonly styleFields = ["color", "size", "pen"];

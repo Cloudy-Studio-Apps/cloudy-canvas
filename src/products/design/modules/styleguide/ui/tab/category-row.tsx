@@ -9,6 +9,7 @@ import { useShowSection } from "../hooks/use-show-section";
 import { useStyleguideViewStore } from "../stores/styleguide-view-store";
 import { GroupRow } from "./group-row";
 import type { CategoryRowProps } from "./tab.types";
+import { t } from "../../styleguide.i18n";
 
 /** The drag data type of a category row. */
 const CATEGORY_DRAG = "application/x-cloudy-styleguide-category";
@@ -62,7 +63,7 @@ export function CategoryRow({ entry, position, onDropCategory }: CategoryRowProp
         icon={
           <IconButton
             size="xs"
-            label={open ? "Hide its groups" : "Show its groups"}
+            label={open ? t("tab.row.hideGroups") : t("tab.row.showGroups")}
             tooltip={false}
             disabled={empty || entry.groups.length < 2}
             onClick={(event) => {
@@ -74,14 +75,14 @@ export function CategoryRow({ entry, position, onDropCategory }: CategoryRowProp
           </IconButton>
         }
         label={entry.category.label}
-        meta={empty ? "Empty" : count}
+        meta={empty ? t("tab.row.empty") : count}
         selected={selected}
         muted={entry.hidden || empty}
         onSelect={() => show(entry.category.id, entry.sheetId)}
         actions={
           <Checkbox
             checked={!entry.hidden}
-            aria-label={entry.hidden ? "Show in the view" : "Hide from the view"}
+            aria-label={entry.hidden ? t("tab.row.show") : t("tab.row.hide")}
             onCheckedChange={(checked) => styleguide.setHidden(entry.category.id, !checked)}
             onClick={(event) => event.stopPropagation()}
           />

@@ -1,0 +1,22 @@
+{
+  "export": "Exportar",
+  "exportDbml": "Exportar DBML",
+  "importDbml": "Importar DBML",
+  "dbmlFilter": "Esquema DBML",
+  "openFile": "Abrir archivo",
+  "filters": {
+    "all": "Archivos de Cloudy Canvas, Figma y FigJam",
+    "canvas": "Archivos de Cloudy Canvas",
+    "figma": "Archivos de Figma y FigJam",
+    "board": "Pizarra de Cloudy Canvas",
+    "design": "Diseño de Cloudy Canvas",
+    "images": "Imágenes",
+    "designsTokens": "Diseños y tokens",
+    "designs": "Diseños de Cloudy Canvas",
+    "tokens": "JSON de tokens"
+  },
+  "saveBoard": "Guardar pizarra",
+  "saveDesign": "Guardar diseño",
+  "importStickers": "Importar stickers",
+  "importVariables": "Importar variables y estilos"
+}

@@ -1,0 +1,207 @@
+{
+  "mixed": "Mixed",
+  "commands": {
+    "flipHorizontal": "Flip horizontal",
+    "flipVertical": "Flip vertical",
+    "rotateLeft": "Rotate 90° left",
+    "rotateRight": "Rotate 90° right",
+    "rulers": "Rulers",
+    "rulerGuides": "Ruler guides",
+    "removeGuides": "Remove all guides",
+    "hideUi": "Hide UI",
+    "leftPanel": "Left panel",
+    "propertiesPanel": "Properties panel"
+  },
+  "menu": {
+    "backHome": "Back to home",
+    "file": "File",
+    "edit": "Edit",
+    "transform": "Transform",
+    "view": "View",
+    "theme": "Theme",
+    "appearanceSettings": "Appearance settings…",
+    "settings": "Settings",
+    "about": "About Cloudy Canvas"
+  },
+  "modes": {
+    "design": {
+      "label": "Design",
+      "description": "Every tool and every layer."
+    }
+  },
+  "tools": {
+    "move": {
+      "label": "Move",
+      "description": "Select, move and resize layers."
+    },
+    "scale": {
+      "label": "Scale",
+      "description": "Scale layers with their content: text, strokes, corners and children."
+    },
+    "hand": {
+      "label": "Hand",
+      "description": "Pan around the canvas."
+    }
+  },
+  "fields": {
+    "opacity": "Opacity",
+    "width": "Width",
+    "height": "Height",
+    "strokeWeight": "Stroke weight",
+    "rotation": "Rotation",
+    "visible": "Visible",
+    "ignoreAutoLayout": "Ignore auto layout",
+    "invertMask": "Invert mask",
+    "cornerRadius": "Corner radius",
+    "gap": "Gap",
+    "lineGap": "Line gap",
+    "fill": "Fill",
+    "stroke": "Stroke"
+  },
+  "bindable": {
+    "stop": "{name} {index} stop {stop}",
+    "effect": "Effect {index}",
+    "strokeSide": {
+      "top": "Stroke top",
+      "right": "Stroke right",
+      "bottom": "Stroke bottom",
+      "left": "Stroke left"
+    },
+    "padding": {
+      "top": "Padding top",
+      "right": "Padding right",
+      "bottom": "Padding bottom",
+      "left": "Padding left"
+    }
+  },
+  "gradient": {
+    "start": "Gradient start",
+    "end": "Gradient end",
+    "width": "Gradient width",
+    "stop": "Stop at {percent}%"
+  },
+  "scale": {
+    "title": "Scale",
+    "from": "Scale from",
+    "hint": "Select layers, then drag a handle or type a size to scale them with their content."
+  },
+  "sections": {
+    "appearance": "Appearance",
+    "export": "Export",
+    "fills": "Fills",
+    "strokes": "Strokes",
+    "layout": "Layout",
+    "position": "Position",
+    "interactions": "Interactions",
+    "interactionsHint": "Links between frames and transitions come in a later version."
+  },
+  "layout": {
+    "keptRatio": "Proportions kept",
+    "keepRatio": "Keep proportions",
+    "makePortrait": "Swap width and height (make portrait)",
+    "makeLandscape": "Swap width and height (make landscape)"
+  },
+  "paints": {
+    "add": "Add {name}",
+    "createStyle": "Create style from these {name}",
+    "mixedHint": "Mixed. Click + to replace them all."
+  },
+  "stroke": {
+    "styles": "Stroke styles",
+    "createStyle": "Create style from this stroke",
+    "position": "Stroke position",
+    "settings": "Stroke settings",
+    "dashStyle": "Dash style",
+    "dashLength": "Dash length",
+    "gapLength": "Gap length",
+    "dotSpacing": "Space between dots",
+    "endsAndDashes": "Ends and dashes",
+    "ends": "Ends",
+    "cap": "Stroke cap",
+    "corners": "Corners",
+    "join": "Stroke join",
+    "endsAndCorners": "Ends and corners",
+    "miter": "Miter angle: sharper corners are beveled",
+    "preview": "Stroke preview",
+    "dashPattern": "Dash pattern",
+    "pattern": "Pattern",
+    "dashPlaceholder": "dash, gap, …",
+    "dashError": "Enter lengths, e.g. 8, 4",
+    "sidesLabel": "Stroke sides: {current}",
+    "sideWeight": {
+      "top": "Top stroke weight",
+      "right": "Right stroke weight",
+      "bottom": "Bottom stroke weight",
+      "left": "Left stroke weight"
+    },
+    "sides": {
+      "all": "All sides",
+      "top": "Top",
+      "bottom": "Bottom",
+      "left": "Left",
+      "right": "Right",
+      "custom": "Custom"
+    },
+    "dash": {
+      "solid": "Solid",
+      "dashed": "Dashed",
+      "dotted": "Dotted",
+      "custom": "Custom"
+    },
+    "caps": {
+      "none": "No cap",
+      "round": "Round cap",
+      "square": "Square cap"
+    },
+    "joins": {
+      "miter": "Miter join",
+      "bevel": "Bevel join",
+      "round": "Round join"
+    },
+    "align": {
+      "inside": "Inside",
+      "center": "Center",
+      "outside": "Outside"
+    }
+  },
+  "styles": {
+    "color": "Color",
+    "colorHeading": "Color styles",
+    "stroke": "Stroke",
+    "strokeHeading": "Stroke styles",
+    "paints": "Paints",
+    "addPaint": "Add paint",
+    "paint": "Paint",
+    "weight": "Stroke weight",
+    "position": "Position",
+    "detach": "Detach style",
+    "mixedStyles": "Mixed styles",
+    "styles": "Styles",
+    "name": "Name",
+    "description": "Description",
+    "usage": "Usage",
+    "noEditor": "No editor for this kind of style.",
+    "none": "No styles of this kind yet.",
+    "search": "Search styles",
+    "fillStyle": "Fill style",
+    "strokeColorStyle": "Stroke color style",
+    "effectStyle": "Effect style",
+    "strokeStyle": "Stroke style",
+    "empty": "Empty",
+    "image": "Image",
+    "sides": "Sides",
+    "dashedSummary": "Dashed",
+    "effects_one": "{count} effect",
+    "effects_other": "{count} effects",
+    "paintCount_one": "{count} paint",
+    "paintCount_other": "{count} paints"
+  },
+  "dialog": {
+    "deleteTitle_one": "Delete it?",
+    "deleteTitle_other": "Delete these {count}?",
+    "unused": "No layer uses it.",
+    "usedBy_one": "Used by {count} layer. They keep the value they show now, no longer linked.",
+    "usedBy_other": "Used by {count} layers. They keep the value they show now, no longer linked.",
+    "deleteDetach": "Delete and detach"
+  }
+}

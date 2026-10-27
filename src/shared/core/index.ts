@@ -23,3 +23,4 @@ export * from "./modules";
 export * from "./plugins";
 export * from "./fonts";
 export * from "./themes";
+export * from "./i18n";

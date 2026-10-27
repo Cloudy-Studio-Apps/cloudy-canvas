@@ -1,3 +1,4 @@
+import { tCommon } from "@shared/core";
 import { useState } from "react";
 import { CircleX, TriangleAlert } from "lucide-react";
 
@@ -18,6 +19,7 @@ import { useErModel, useErVersion } from "../model";
 import { HierarchyChoice } from "./hierarchy-choice";
 import { useErToTablesStore } from "./er-to-tables-store";
 import type { ErToTablesBodyProps } from "./er-to-tables.types";
+import { t } from "../../er.i18n";
 
 /**
  * "Create tables": the diagram as database tables. Asks how each hierarchy becomes tables, shows
@@ -44,13 +46,13 @@ function DialogBody({ diagramId, onDone }: ErToTablesBodyProps) {
   const [hierarchies, setHierarchies] = useState<Record<string, ErHierarchyStrategy>>({});
   const preview = diagram.tablesPreview({ hierarchies });
   const errors = diagram.check().filter((issue) => issue.severity === "error");
-  const label = er.diagrams().find((d) => d.id === diagramId)?.label ?? "the diagram";
+  const label = er.diagrams().find((d) => d.id === diagramId)?.label ?? t("toTables.theDiagram");
   const nameOf = (id: string) => shapes.entities.find((e) => e.id === id)?.name ?? "?";
 
   const create = () => {
     const result = diagram.createTables({ hierarchies });
     if (!result.applied.ok) {
-      notifyError("The tables couldn't be created", new Error(result.applied.error.message));
+      notifyError(t("toTables.error"), new Error(result.applied.error.message));
       return;
     }
     const names = new Set(result.tables);
@@ -61,21 +63,21 @@ function DialogBody({ diagramId, onDone }: ErToTablesBodyProps) {
     onDone();
     useBoardPanelStore.getState().setSchemaOpen(true);
     if (ids.length > 0) engine.select(ids);
-    toast({ title: `${result.tables.length} tables written`, description: "Undo with Ctrl+Z." });
+    toast({
+      title: t("toTables.written", { count: result.tables.length }),
+      description: t("toTables.undo"),
+    });
   };
 
   return (
     <DialogContent className="max-h-[85vh] max-w-xl overflow-y-auto">
       <DialogHeader>
-        <DialogTitle>Create tables from {label}</DialogTitle>
-        <DialogDescription>
-          Each entity, multivalued attribute and many-to-many relation becomes a table, and the
-          other relations foreign keys. Tables that already exist with the same names are updated.
-        </DialogDescription>
+        <DialogTitle>{t("toTables.title", { label })}</DialogTitle>
+        <DialogDescription>{t("toTables.description")}</DialogDescription>
       </DialogHeader>
       {shapes.isas.length > 0 && (
         <section className="space-y-2">
-          <h3 className="text-xs font-medium text-muted-foreground">Hierarchies</h3>
+          <h3 className="text-xs font-medium text-muted-foreground">{t("toTables.hierarchies")}</h3>
           {shapes.isas.map((isa) => (
             <HierarchyChoice
               key={isa.id}
@@ -104,18 +106,18 @@ function DialogBody({ diagramId, onDone }: ErToTablesBodyProps) {
       )}
       <section className="space-y-1">
         <h3 className="text-xs font-medium text-muted-foreground">
-          {preview.tables.length} tables (DBML)
+          {t("toTables.count", { count: preview.tables.length })}
         </h3>
         <pre className="max-h-72 overflow-auto rounded-md border border-border bg-surface-sunken p-2 font-mono text-xs">
-          {preview.dbml || "Nothing to convert yet."}
+          {preview.dbml || t("toTables.nothing")}
         </pre>
       </section>
       <DialogFooter>
         <Button variant="ghost" onClick={onDone}>
-          Cancel
+          {tCommon("cancel")}
         </Button>
         <Button disabled={preview.tables.length === 0} onClick={create}>
-          Create tables
+          {t("toTables.create")}
         </Button>
       </DialogFooter>
     </DialogContent>

@@ -6,17 +6,18 @@ import type { DesignNode } from "../../core";
 import type { PolygonElement } from "../polygon.types";
 import { BindableNumberField, PanelSection, PropertyGrid } from "@design/ui/components/panel";
 import type { PropertySectionProps } from "@design/ui/modules";
+import { t } from "../polygon.i18n";
 
 /** For selected polygons: the number of sides. */
 export function PolygonSection({ selection: { nodes } }: PropertySectionProps) {
   return (
-    <PanelSection title="Polygon">
+    <PanelSection title={t("label")}>
       <PropertyGrid>
         <BindableNumberField
           path="pointCount"
           nodes={nodes as readonly PolygonElement[]}
           prefix={<Hash />}
-          label="Sides"
+          label={t("sides")}
           min={POLYGON_DEFAULTS.minPoints}
           max={POLYGON_DEFAULTS.maxPoints}
           read={(polygon) => polygon.pointCount}

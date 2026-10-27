@@ -1,0 +1,21 @@
+{
+  "title": "Shader",
+  "custom": "Personalizado",
+  "presets": {
+    "label": "Empezar desde un ajuste",
+    "placeholder": "Empezar desde un ajuste…",
+    "vignette": "Viñeta",
+    "chromaticAberration": "Aberración cromática",
+    "halftone": "Semitono",
+    "pixelate": "Pixelar",
+    "ripple": "Ondas",
+    "duotone": "Duotono"
+  },
+  "editor": {
+    "code": "Código del shader"
+  },
+  "errors": {
+    "noEffect": "Define vec4 effect(vec4 color, vec2 uv, vec2 local).",
+    "compile": "El shader no compila."
+  }
+}

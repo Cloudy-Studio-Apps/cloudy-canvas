@@ -16,6 +16,7 @@ import {
   viewTools,
 } from "./mcp";
 import { boardMcpTools, boardCanvas } from "../../board-points";
+import { t } from "./core.i18n";
 
 /**
  * What every board has whatever its modules: the select, scale (Shift+K; K is the sticker tool) and
@@ -30,15 +31,15 @@ export const coreModule = defineModule({
     host.contribute(boardCanvas.keybindings, { "tool.scale": [{ key: "k", shift: true }] });
     host.contribute(boardCanvas.hostCommands, {
       id: "toggleUi",
-      label: "Hide UI",
+      label: t("hideUi"),
       keys: [{ code: "Backslash", mod: true, label: "\\" }],
     });
     host.contribute(boardEditor.sessionHooks, { id: "hide-ui", use: useHideUiCommand });
     // The board's usual way of working, first in the mode switcher.
     host.contribute(boardEditor.modes, {
       id: DEFAULT_MODE.id,
-      label: "Board",
-      description: "Every tool and every element.",
+      label: t("mode.label"),
+      description: t("mode.description"),
       icon: PencilLine,
       order: 0,
     });
@@ -58,22 +59,22 @@ export const coreModule = defineModule({
       boardEditor.tools,
       {
         tool: "select",
-        label: "Select",
-        description: "Select, move and resize. Double-click to edit text.",
+        label: t("tools.select.label"),
+        description: t("tools.select.description"),
         icon: MousePointer2,
         toolbar: { group: 0, order: 10, menu: "move" },
       },
       {
         tool: "scale",
-        label: "Scale",
-        description: "Scale with the content: text, strokes and what's inside grow together.",
+        label: t("tools.scale.label"),
+        description: t("tools.scale.description"),
         icon: Scaling,
         toolbar: { group: 0, order: 15, menu: "move" },
       },
       {
         tool: "hand",
-        label: "Hand",
-        description: "Pan around the board.",
+        label: t("tools.hand.label"),
+        description: t("tools.hand.description"),
         icon: Hand,
         toolbar: { group: 0, order: 20 },
       },

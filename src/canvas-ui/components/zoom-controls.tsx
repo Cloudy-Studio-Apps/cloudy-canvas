@@ -4,6 +4,7 @@ import { useEngine } from "../engine-context";
 import { FloatingPanel } from "./floating-panel";
 import { ToolButton } from "./tool-button";
 import { ZoomMenu } from "./zoom-menu";
+import { t } from "./components.i18n";
 
 export function ZoomControls() {
   const engine = useEngine();
@@ -11,7 +12,7 @@ export function ZoomControls() {
   return (
     <FloatingPanel>
       <ToolButton
-        label="Zoom out"
+        label={t("zoom.out")}
         shortcut={engine.keymap.label("zoomOut")}
         onClick={() => engine.zoomOut()}
         className="size-8"
@@ -20,7 +21,7 @@ export function ZoomControls() {
       </ToolButton>
       <ZoomMenu />
       <ToolButton
-        label="Zoom in"
+        label={t("zoom.in")}
         shortcut={engine.keymap.label("zoomIn")}
         onClick={() => engine.zoomIn()}
         className="size-8"

@@ -1,0 +1,426 @@
+{
+  "command": {
+    "open": "Asistente de color…"
+  },
+  "gallery": {
+    "occasion": {
+      "happy": "Alegre",
+      "happyHint": "Brillante y alegre.",
+      "coffee": "Café",
+      "coffeeHint": "Espresso, latte y crema.",
+      "cream": "Crema",
+      "creamHint": "Blancos rotos cálidos.",
+      "skin": "Piel",
+      "skinHint": "Tonos de piel de claros a oscuros.",
+      "food": "Comida",
+      "foodHint": "Tomate, albahaca, limón y pan.",
+      "wedding": "Boda",
+      "weddingHint": "Marfil, rubor, salvia y oro.",
+      "christmas": "Navidad",
+      "christmasHint": "Rojo, pino, oro y nieve.",
+      "halloween": "Halloween",
+      "halloweenHint": "Calabaza, poción y noche."
+    },
+    "scene": {
+      "sunset": "Atardecer",
+      "sunsetHint": "Del naranja al rosa y al violeta.",
+      "sky": "Cielo",
+      "skyHint": "Azules claros y nubes.",
+      "sea": "Mar",
+      "seaHint": "De aguas turquesa poco profundas a aguas profundas.",
+      "nature": "Naturaleza",
+      "natureHint": "Hojas, musgo y corteza.",
+      "earth": "Tierra",
+      "earthHint": "Arcilla, arena y piedra.",
+      "night": "Noche",
+      "nightHint": "Cielos índigo y luces de ciudad.",
+      "space": "Espacio",
+      "spaceHint": "Nebulosas sobre negro.",
+      "rainbow": "Arcoíris",
+      "rainbowHint": "Repartidos a partes iguales por la rueda."
+    },
+    "season": {
+      "spring": "Primavera",
+      "springHint": "Verdes frescos, flores y sol.",
+      "summer": "Verano",
+      "summerHint": "Sol, mar y helado.",
+      "autumn": "Otoño",
+      "autumnHint": "Óxido, mostaza y hojas caídas.",
+      "winter": "Invierno",
+      "winterHint": "Nieve, escarcha y noches largas."
+    },
+    "style": {
+      "pastel": "Pastel",
+      "pastelHint": "Tonos suaves y claros. Delicados y luminosos.",
+      "vibrant": "Vibrante",
+      "vibrantHint": "Colores saturados y llenos de energía.",
+      "neon": "Neón",
+      "neonHint": "Colores eléctricos que brillan sobre oscuro.",
+      "vintage": "Vintage",
+      "vintageHint": "Desvaídos, cálidos y algo polvorientos.",
+      "retro": "Retro",
+      "retroHint": "Naranja, mostaza y verde azulado de los setenta.",
+      "gold": "Dorado",
+      "goldHint": "Dorados y bronces, con una tinta que los enmarca.",
+      "light": "Claro",
+      "lightHint": "Casi blancos y tintes ligeros.",
+      "dark": "Oscuro",
+      "darkHint": "Tonos profundos para temas nocturnos.",
+      "warm": "Cálido",
+      "warmHint": "Rojos, naranjas y amarillos.",
+      "cold": "Frío",
+      "coldHint": "Azules, cianes y violetas.",
+      "gradient": "Degradado",
+      "gradientHint": "Cinco pasos de un color a otro."
+    }
+  },
+  "harmonies": {
+    "analogous": "Análogos",
+    "mono": "Mono",
+    "complement": "Complemento",
+    "split": "Dividido",
+    "triad": "Tríada",
+    "square": "Cuadrado",
+    "compound": "Compuesto",
+    "shades": "Tonos",
+    "custom": "Personalizado",
+    "label": "Armonía"
+  },
+  "theme": {
+    "contrast": {
+      "text": "Texto sobre fondo",
+      "muted": "Texto atenuado sobre superficie",
+      "button": "Etiqueta de botón",
+      "link": "Enlace sobre superficie",
+      "error": "Texto de error sobre superficie",
+      "success": "Éxito sobre superficie",
+      "warning": "Advertencia sobre superficie"
+    },
+    "spec": {
+      "background": "Página detrás de todo",
+      "surface": "Tarjetas, paneles, menús",
+      "border": "Líneas, campos, separadores",
+      "foreground": "Texto principal",
+      "mutedForeground": "Texto secundario, pistas",
+      "primary": "Botones principales, enlaces, foco",
+      "primaryForeground": "Texto sobre el primario",
+      "primarySoft": "Resaltados sutiles, botones secundarios",
+      "accent": "Insignias, resaltados",
+      "success": "Confirmaciones",
+      "warning": "Precauciones",
+      "error": "Errores, acciones destructivas",
+      "info": "Avisos neutros"
+    },
+    "lightDark": "Claro y oscuro",
+    "lightOnly": "Solo claro",
+    "darkOnly": "Solo oscuro",
+    "visual": "Visual",
+    "list": "Lista",
+    "view": "Vista",
+    "createTheme": "Crear la colección Tema",
+    "modes": "Modos",
+    "visualHint": "Haz clic en cualquier parte de una vista previa para cambiar su color.",
+    "listHint": "Haz clic en una celda para cambiarla.",
+    "resetAll": "Restablecer todo ({count})",
+    "strip": {
+      "shadesOfColor": "Tonos de qué color",
+      "automatic": "Automático",
+      "contrast": "Contraste",
+      "custom": "Personalizado",
+      "anyColor": "Cualquier color",
+      "bestContrast": "mejor contraste",
+      "customHex": "personalizado {hex}",
+      "white": "Blanco",
+      "black": "Negro",
+      "plainWhite": "Blanco puro",
+      "plainBlack": "Negro puro",
+      "inMode": "en {mode}",
+      "automaticShown": "automático ({shown})",
+      "shadesOf": "Tonos de",
+      "mirror": "Reflejar en {mode}",
+      "wizardChoice": "Elección del asistente: {name}",
+      "whiteOrBlack": "Blanco o negro, el que se lea mejor sobre {name}",
+      "nameInMode": "{name} en {mode}"
+    },
+    "cell": {
+      "custom": "Personalizado",
+      "changed": "Cambiado",
+      "auto": "Auto",
+      "customShort": "personalizado"
+    }
+  },
+  "type": {
+    "preset": {
+      "majorSecond": "Segunda mayor",
+      "minorThird": "Tercera menor",
+      "majorThird": "Tercera mayor",
+      "perfectFourth": "Cuarta justa",
+      "augmentedFourth": "Cuarta aumentada",
+      "perfectFifth": "Quinta justa",
+      "goldenRatio": "Proporción áurea"
+    },
+    "mood": {
+      "editorial": "Editorial, cálido",
+      "tech": "Tecnológico, preciso",
+      "elegant": "Elegante",
+      "friendly": "Producto cercano",
+      "bold": "Atrevido, simple",
+      "bookish": "Libresco"
+    },
+    "createStyles": "Crear estilos de texto",
+    "headings": "Títulos",
+    "body": "Cuerpo",
+    "scale": "Escala",
+    "bodySize": "Tamaño del cuerpo",
+    "textStyles": "Estilos de texto",
+    "inTheme": "Con los colores de texto del tema",
+    "pairings": "Combinaciones",
+    "sizesBefore": "Los tamaños son cuerpo × proporción",
+    "sizesStep": "paso",
+    "sizesAfter": ", mantenidos como escala: cambia su base más tarde y todos los estilos la siguen."
+  },
+  "sources": {
+    "brand": {
+      "remove": "Quitar",
+      "locked": "Los colores de marca están bloqueados, así que Generar al azar los conserva",
+      "primary": "Primario",
+      "secondary": "Secundario",
+      "accent": "Acento",
+      "keepTitle": "Colores que debes conservar",
+      "keepHint": "Los colores de tu logo o marca. Quedan fijos en la paleta y el asistente construye el resto a su alrededor.",
+      "brandColor": "Color de marca {name}",
+      "add": "Añadir un color de marca",
+      "buildWith": "Construir el resto con",
+      "build": "Crear paleta",
+      "nextStep": "El siguiente paso añade un neutro y colores de estado teñidos hacia tu primario."
+    },
+    "file": {
+      "off": "Desactivado",
+      "close": "Cercano",
+      "similar": "Similar",
+      "loose": "Amplio",
+      "emptyTitle": "Aún no hay colores en las capas",
+      "emptyHint": "Los colores que tus capas usan sin una variable aparecen aquí, listos para ser la paleta.",
+      "mergeSimilar": "Unir colores similares",
+      "summary": "{from} colores → {to}",
+      "title": "Colores en las capas",
+      "bind_one": "Vincular este {count} relleno a las nuevas variables",
+      "bind_other": "Vincular estos {count} rellenos a las nuevas variables",
+      "use_one": "Usar {count} color",
+      "use_other": "Usar {count} colores",
+      "rowUse": "Usar {hex}",
+      "rowMerges": "une {count}"
+    },
+    "gallery": {
+      "use": "Usar esta paleta",
+      "copyHex": "Copiar códigos hex",
+      "unsave": "Quitar de favoritas",
+      "save": "Guardar en favoritas",
+      "emptyTitle": "Aún no hay favoritas",
+      "emptyHint": "Usa el corazón en una paleta para guardarla aquí.",
+      "groupStyles": "Estilos",
+      "groupSeasons": "Estaciones",
+      "groupThemes": "Temas",
+      "favorites": "Favoritas",
+      "palettes": "Paletas: {name}",
+      "savedHint": "Las paletas que guardaste, en este equipo.",
+      "saved": "Guardadas",
+      "more": "Generar más"
+    },
+    "image": {
+      "balanced": "Equilibrado",
+      "vivid": "Vívido",
+      "muted": "Atenuado",
+      "notImage": "Eso no es una imagen",
+      "choose": "Elegir una imagen…",
+      "favor": "Qué colores favorecer",
+      "images": "Imágenes en este archivo",
+      "noImages": "Este archivo aún no tiene imágenes. Elige una, o suéltala o pégala aquí.",
+      "mood": "Ambiente",
+      "drop": "Suelta una imagen aquí, o pega una",
+      "dragPin": "Arrastra un pin para elegir otro punto de la imagen.",
+      "readFailed": "No se pudo leer la imagen"
+    },
+    "import": {
+      "emptyTitle": "No se encontraron colores",
+      "emptyHint": "Pega códigos hex, CSS o tokens.",
+      "paste": "Pegar una paleta",
+      "hint": "Un enlace de Coolors, variables CSS, tokens JSON o cualquier texto con colores hex, rgb(), hsl() u oklch(). Los colores con nombre conservan su nombre como roles.",
+      "try": "Prueba:",
+      "chooseFile": "Elegir un archivo…",
+      "read": "Leer colores",
+      "readFailed": "No se pudo leer el archivo",
+      "found": "{count} encontrados",
+      "colors": "Colores",
+      "adobe": "Los enlaces de Adobe Color no incluyen los colores: exporta el tema como CSS desde Adobe y pega eso."
+    },
+    "tabs": {
+      "wheel": "Rueda",
+      "brand": "Marca",
+      "image": "Imagen",
+      "file": "Este archivo",
+      "gallery": "Galería",
+      "import": "Importar"
+    },
+    "wheel": {
+      "brightness": "Brillo",
+      "baseColor": "Color base"
+    }
+  },
+  "palette": {
+    "insert": "Añadir un color entre estos",
+    "copyAll": "Copiar todos los códigos hex",
+    "collection": "Colección",
+    "nameRequired": "Ponle un nombre a la colección",
+    "swatch": {
+      "copyHex": "Copiar hex",
+      "edit": "Editar color",
+      "remove": "Quitar",
+      "unlock": "Desbloquear",
+      "lock": "Bloquear: conservarlo al generar",
+      "colorN": "Color {n}",
+      "invalid": "No es un color: usa #RRGGBB"
+    },
+    "vision": {
+      "normal": "Visión normal",
+      "protanopia": "Protanopía",
+      "deuteranopia": "Deuteranopía",
+      "tritanopia": "Tritanopía",
+      "achromatopsia": "Acromatopsia",
+      "label": "Verlo como lo ven las personas con deficiencias de visión del color"
+    },
+    "toolbar": {
+      "undo": "Deshacer",
+      "redo": "Rehacer",
+      "fewer": "Menos colores",
+      "more": "Más colores",
+      "sort": "Ordenar por luminosidad",
+      "generate": "Generar al azar"
+    }
+  },
+  "done": {
+    "variables": "variables",
+    "themeModes": "modos de tema",
+    "created_one": "{count} variable de color",
+    "created_other": "{count} variables de color",
+    "updated": "{count} actualizadas",
+    "textStyles_one": "{count} estilo de texto",
+    "textStyles_other": "{count} estilos de texto",
+    "ready": "¡Tu sistema de diseño está listo!",
+    "nowHas": "ahora tiene {summary}.",
+    "itsColors": "sus colores",
+    "bound_one": "{count} capa ya los usa.",
+    "bound_other": "{count} capas ya los usan.",
+    "styleGuide": "La guía de estilo está lista y se mantiene al día mientras los editas.",
+    "collections_one": "colección",
+    "collections_other": "colecciones",
+    "stylesWithFont": "estilos de texto · {font}",
+    "stylesLabel": "estilos de texto",
+    "lowContrast_one": "{count} par de contraste está por debajo de AA. Puedes corregirlo cuando quieras desde el Tema.",
+    "lowContrast_other": "{count} pares de contraste están por debajo de AA. Puedes corregirlos cuando quieras desde el Tema.",
+    "allPass": "Todas las comprobaciones de contraste pasan"
+  },
+  "review": {
+    "contrast": {
+      "hint": "Prueba un color base más claro o más oscuro.",
+      "title": "Contraste (WCAG)",
+      "low": "{count} bajos",
+      "fixed_one": "Se corrigió {count} par",
+      "fixed_other": "Se corrigieron {count} pares",
+      "noFix": "Ningún tono lo arregla; prueba otro color base",
+      "fixAll": "Corregir todo",
+      "allPass": "Todo pasa",
+      "move": "Mover {name} al tono más cercano que pase",
+      "noShade": "Ningún tono de {name} pasa",
+      "fix": "Corregir"
+    },
+    "preview": {
+      "website": "Sitio web",
+      "components": "Componentes",
+      "socialMedia": "Redes sociales",
+      "brochure": "Folleto",
+      "mobileApp": "App móvil",
+      "sampleDesign": "Diseño de ejemplo",
+      "mode": "Modo"
+    },
+    "cvd": {
+      "title": "Daltonismo",
+      "close_one": "{count} par parecido",
+      "close_other": "{count} pares parecidos",
+      "apart": "Los roles se distinguen",
+      "lookAlike": "{a} y {b} se ven parecidos",
+      "everyone": "para todos",
+      "with": "con {kinds}",
+      "change": "Cambia uno de los roles",
+      "pair": "Combínalos con un icono o una etiqueta"
+    },
+    "planned": {
+      "createUpdate": "Variables a crear y actualizar",
+      "create": "Variables a crear",
+      "textStyles": "Estilos de texto",
+      "update": "actualizar",
+      "new": "crear"
+    }
+  },
+  "roles": {
+    "row": {
+      "name": "Nombre del rol",
+      "hint": "Sus tonos cambian en su lugar; las capas que los usan los siguen",
+      "include": "Incluir {name}",
+      "nameRequired": "Ponle un nombre",
+      "taken": "«{name}» ya existe",
+      "updates": "actualiza"
+    },
+    "options": {
+      "shades": "Tonos 50–950",
+      "shadesHint": "Once pasos por color, vinculados a él: edita el color más tarde y sus tonos lo siguen.",
+      "neutral": "Añadir un neutro",
+      "neutralHint": "Un gris teñido con el tono del primario, si ningún color lo es.",
+      "status": "Colores de estado",
+      "statusHint": "Éxito, advertencia, error e información, acercados a tu primario para que encajen en la paleta.",
+      "title": "Opciones"
+    },
+    "yourColors": "Tus colores",
+    "names": "Los nombres se vuelven grupos de variables:",
+    "added": "Añadidos por las opciones"
+  },
+  "shell": {
+    "steps": {
+      "colors": "Colores",
+      "roles": "Roles y tonos",
+      "theme": "Tema",
+      "type": "Tipografía",
+      "review": "Revisión"
+    },
+    "header": {
+      "steps": "Pasos",
+      "title": "Asistente de color",
+      "description": "Crea una paleta, sus tonos, un tema claro y oscuro y estilos de texto."
+    },
+    "create": {
+      "createUpdate": "Crear {created}, actualizar {updated} variables",
+      "update": "Actualizar {updated} variables",
+      "create": "Crear {created} variables",
+      "withStyles": "{variables} + {count} estilos de texto"
+    },
+    "createFailed": "No se pudo crear el sistema de diseño",
+    "footer": {
+      "hintRoles": "Los nombres se vuelven grupos de variables",
+      "hintTheme": "Haz clic en una parte de la vista previa para cambiar su color",
+      "hintType": "Los estilos de texto son opcionales",
+      "hintReview": "Un solo paso de deshacer",
+      "startOver": "Empezar de nuevo",
+      "openGuide": "Abrir la guía de estilo",
+      "pressBefore": "Pulsa",
+      "pressAfter": "para una paleta al azar",
+      "back": "Atrás",
+      "next": "Siguiente: {step}"
+    }
+  },
+  "copy": {
+    "codes": "Códigos hex copiados",
+    "hex": "{hex} copiado",
+    "codesFailed": "No se pudieron copiar los códigos hex",
+    "hexFailed": "No se pudo copiar el código hex"
+  }
+}

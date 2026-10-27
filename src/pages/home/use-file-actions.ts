@@ -5,6 +5,7 @@ import { clipboard, revealFile } from "@platform";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import type { FileAction, FileActionsOptions } from "./use-file-actions.types";
+import { t } from "./home.i18n";
 
 /** What can be done with a recent file, shared by its ⋯ menu, its context menu and the missing-file popover. */
 export function useFileActions({ file, missing, onOpen }: FileActionsOptions): FileAction[] {
@@ -14,17 +15,17 @@ export function useFileActions({ file, missing, onOpen }: FileActionsOptions): F
   return useMemo(() => {
     const copyPath: FileAction = {
       id: "copy-path",
-      label: "Copy path",
+      label: t("actions.copyPath"),
       icon: Copy,
       run: () =>
         void clipboard.writeText(file.path).then(
-          () => toast({ title: "Path copied", description: file.path }),
-          (error: unknown) => notifyError("The path couldn't be copied", error),
+          () => toast({ title: t("actions.pathCopied"), description: file.path }),
+          (error: unknown) => notifyError(t("actions.copyFailed"), error),
         ),
     };
     const remove: FileAction = {
       id: "forget",
-      label: file.draft ? "Delete draft" : "Remove from recents",
+      label: file.draft ? t("actions.deleteDraft") : t("actions.remove"),
       icon: file.draft ? Trash2 : X,
       destructive: true,
       run: () => void forget(file.id),
@@ -33,21 +34,21 @@ export function useFileActions({ file, missing, onOpen }: FileActionsOptions): F
     if (missing) {
       const locate: FileAction = {
         id: "locate",
-        label: "Locate…",
+        label: t("actions.locate"),
         icon: FolderSearch,
         run: () => void relocate(file.id),
       };
       return [locate, copyPath, remove];
     }
     return [
-      { id: "open", label: "Open", icon: ExternalLink, run: () => onOpen(file) },
+      { id: "open", label: t("actions.open"), icon: ExternalLink, run: () => onOpen(file) },
       {
         id: "reveal",
-        label: "Show in folder",
+        label: t("actions.reveal"),
         icon: FolderOpen,
         run: () =>
           void revealFile(file.path).catch((error: unknown) =>
-            notifyError("The folder couldn't be opened", error),
+            notifyError(t("actions.revealFailed"), error),
           ),
       },
       copyPath,

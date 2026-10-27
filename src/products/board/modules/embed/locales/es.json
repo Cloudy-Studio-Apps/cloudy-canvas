@@ -1,0 +1,12 @@
+{
+  "label": "Enlace",
+  "description": "Un enlace pegado: los videos se reproducen en la pizarra y las páginas se abren en el navegador.",
+  "errors": {
+    "video": "No se pudo abrir el video",
+    "link": "No se pudo abrir el enlace"
+  },
+  "player": {
+    "openYoutube": "Abrir en YouTube",
+    "close": "Cerrar video"
+  }
+}

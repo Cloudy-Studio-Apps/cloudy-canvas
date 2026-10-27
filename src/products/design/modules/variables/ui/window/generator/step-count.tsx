@@ -1,6 +1,7 @@
 import { Minus, Plus } from "lucide-react";
 
 import type { StepCountProps } from "./generator.types";
+import { t } from "../../../variables.i18n";
 
 /** A small count with − and + (how many steps below or above the base). */
 export function StepCount({ label, value, max, onChange }: StepCountProps) {
@@ -12,7 +13,7 @@ export function StepCount({ label, value, max, onChange }: StepCountProps) {
       <div className="flex items-center gap-1">
         <button
           type="button"
-          aria-label={`Fewer ${label.toLowerCase()}`}
+          aria-label={t("generator.fewer", { name: label.toLowerCase() })}
           disabled={value <= 0}
           onClick={() => onChange(value - 1)}
           className={button}
@@ -22,7 +23,7 @@ export function StepCount({ label, value, max, onChange }: StepCountProps) {
         <span className="w-5 text-center tabular-nums">{value}</span>
         <button
           type="button"
-          aria-label={`More ${label.toLowerCase()}`}
+          aria-label={t("generator.more", { name: label.toLowerCase() })}
           disabled={value >= max}
           onClick={() => onChange(value + 1)}
           className={button}

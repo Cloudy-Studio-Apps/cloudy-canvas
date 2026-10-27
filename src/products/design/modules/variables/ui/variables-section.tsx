@@ -10,6 +10,7 @@ import { GlobalModes } from "./global-modes";
 import { SidebarGroups } from "./sidebar-groups";
 import { ContrastWarnings } from "./contrast/contrast-warnings";
 import { usePageModes } from "./use-page-modes";
+import { t } from "../variables.i18n";
 
 /**
  * With nothing selected, Figma's way: the file's mode switches, "Local variables" (the table),
@@ -29,7 +30,7 @@ export function VariablesSection() {
   const list = { modes, editingId, setEditingId, onDelete: remove };
 
   return (
-    <PanelSection title="Variables" actions={<NewVariableMenu onCreated={setEditingId} />}>
+    <PanelSection title={t("section.title")} actions={<NewVariableMenu onCreated={setEditingId} />}>
       <div className="flex flex-col gap-2">
         <GlobalModes />
         <button
@@ -38,7 +39,7 @@ export function VariablesSection() {
           className="flex h-7 items-center gap-2 rounded-md px-1.5 text-left text-xs hover:bg-muted"
         >
           <Table2 className="size-3.5 text-muted-foreground" />
-          Local variables
+          {t("section.local")}
         </button>
         {!store.isEmpty && (
           <>

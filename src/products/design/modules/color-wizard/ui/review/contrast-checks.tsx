@@ -4,6 +4,7 @@ import { toast } from "@shared/stores/toast-store";
 import { Badge, Button } from "@shared/ui/kit";
 import { contrastResults } from "../..";
 import { fixAllTokens, fixToken, useColorWizardStore, useWizardTheme } from "../store";
+import { t } from "../../color-wizard.i18n";
 
 /** Each readable pair's contrast per mode; a Fix moves the token to the nearest shade that passes. */
 export function ContrastChecks() {
@@ -15,12 +16,12 @@ export function ContrastChecks() {
     <div>
       <div className="mb-2 flex items-center gap-2">
         <span className="flex-1 text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
-          Contrast (WCAG)
+          {t("review.contrast.title")}
         </span>
         {failing ? (
           <>
             <Badge variant="outline" className="text-destructive">
-              {failing} low
+              {t("review.contrast.low", { count: failing })}
             </Badge>
             <Button
               size="sm"
@@ -28,18 +29,18 @@ export function ContrastChecks() {
                 const fixed = fixAllTokens();
                 toast({
                   title: fixed
-                    ? `Fixed ${fixed} pairs`
-                    : "No shade fixes these; try another base color",
+                    ? t("review.contrast.fixed", { count: fixed })
+                    : t("review.contrast.noFix"),
                 });
               }}
             >
               <Sparkles />
-              Fix all
+              {t("review.contrast.fixAll")}
             </Button>
           </>
         ) : (
           <Badge variant="outline" className="text-success">
-            All pass
+            {t("review.contrast.allPass")}
           </Badge>
         )}
       </div>
@@ -64,18 +65,18 @@ export function ContrastChecks() {
               <Button
                 variant="outline"
                 size="xs"
-                title={`Move ${r.fix} to the nearest shade that passes`}
+                title={t("review.contrast.move", { name: r.fix })}
                 onClick={() => {
                   if (fixToken(r.fix, r.mode))
                     set({ themeSelection: { name: r.fix, mode: r.mode } });
                   else
                     toast({
-                      title: `No shade of ${r.fix} passes`,
-                      description: "Try a lighter or darker base color.",
+                      title: t("review.contrast.noShade", { name: r.fix }),
+                      description: t("review.contrast.hint"),
                     });
                 }}
               >
-                Fix
+                {t("review.contrast.fix")}
               </Button>
             )}
           </div>

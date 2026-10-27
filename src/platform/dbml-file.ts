@@ -1,8 +1,9 @@
 import { isTauri } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
+import { t } from "./platform.i18n";
 
-const DBML_FILTER = { name: "DBML schema", extensions: ["dbml"] };
+const DBML_FILTER = { name: t("dbmlFilter"), extensions: ["dbml"] };
 
 /** Asks where to save and writes the DBML text. Returns whether it was saved. */
 export async function exportDbmlFile(text: string, name: string): Promise<boolean> {
@@ -11,7 +12,7 @@ export async function exportDbmlFile(text: string, name: string): Promise<boolea
     return false;
   }
   const path = await save({
-    title: "Export DBML",
+    title: t("exportDbml"),
     defaultPath: `${name}.dbml`,
     filters: [DBML_FILTER],
   });
@@ -27,7 +28,7 @@ export async function importDbmlFile(): Promise<string | null> {
     return null;
   }
   const path = await open({
-    title: "Import DBML",
+    title: t("importDbml"),
     multiple: false,
     directory: false,
     filters: [DBML_FILTER],

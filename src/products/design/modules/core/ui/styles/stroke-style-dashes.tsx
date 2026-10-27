@@ -10,6 +10,7 @@ import {
   type DashStyle,
 } from "../sections/stroke";
 import type { StrokeStyleDashesProps } from "./stroke-style-dashes.types";
+import { t } from "../../core.i18n";
 
 /** A stroke style's dash style and its lengths (as the Strokes section's settings set them). */
 export function StrokeStyleDashes({ value, onChange }: StrokeStyleDashesProps) {
@@ -24,7 +25,7 @@ export function StrokeStyleDashes({ value, onChange }: StrokeStyleDashesProps) {
   return (
     <>
       <SelectField
-        label="Dash style"
+        label={t("stroke.dashStyle")}
         value={style}
         options={DASH_STYLES}
         onChange={(next) => onChange(dashStylePatch(next as DashStyle, value) as never)}
@@ -33,14 +34,14 @@ export function StrokeStyleDashes({ value, onChange }: StrokeStyleDashesProps) {
         <PropertyGrid>
           <NumberField
             prefix="D"
-            label="Dash length"
+            label={t("stroke.dashLength")}
             min={0}
             value={dash}
             onCommit={(next) => onChange({ strokeDashes: [next, gap] })}
           />
           <NumberField
             prefix="G"
-            label="Gap length"
+            label={t("stroke.gapLength")}
             min={0}
             value={gap}
             onCommit={(next) => onChange({ strokeDashes: [dash, next] })}
@@ -50,19 +51,19 @@ export function StrokeStyleDashes({ value, onChange }: StrokeStyleDashesProps) {
       {style === "dotted" && (
         <NumberField
           prefix="G"
-          label="Space between dots"
+          label={t("stroke.dotSpacing")}
           min={0}
           value={gap}
           onCommit={(next) => onChange({ strokeDashes: [0, next] })}
         />
       )}
       {style === "custom" && (
-        <FieldBox title={patternProps.title ?? "Dash pattern"} invalid={!!pattern.error}>
-          <span className="shrink-0 text-subtle-foreground">Pattern</span>
+        <FieldBox title={patternProps.title ?? t("stroke.dashPattern")} invalid={!!pattern.error}>
+          <span className="shrink-0 text-subtle-foreground">{t("stroke.pattern")}</span>
           {/* eslint-disable-next-line no-restricted-syntax -- bespoke: a bare input inside its FieldBox */}
           <input
-            aria-label="Dash pattern"
-            placeholder="dash, gap, …"
+            aria-label={t("stroke.dashPattern")}
+            placeholder={t("stroke.dashPlaceholder")}
             {...patternProps}
             className="min-w-0 flex-1 bg-transparent text-foreground tabular-nums outline-none placeholder:text-subtle-foreground"
           />

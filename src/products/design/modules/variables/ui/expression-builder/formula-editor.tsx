@@ -3,12 +3,13 @@ import { SegmentedControl } from "@shared/ui/kit";
 import { ChainEditor } from "./chain-editor";
 import type { FormulaEditorProps, RoundingOption } from "./expression-builder.types";
 import { FormulaLimit } from "./formula-limit";
+import { t } from "../../variables.i18n";
 
 const ROUNDINGS: readonly RoundingOption[] = [
-  { value: "none", label: "Exact", title: "Keep decimals" },
-  { value: "round", label: "Round", title: "To the nearest whole number" },
-  { value: "floor", label: "Down", title: "Down to a whole number" },
-  { value: "ceil", label: "Up", title: "Up to a whole number" },
+  { value: "none", label: t("builder.exact"), title: t("builder.exactHint") },
+  { value: "round", label: t("builder.round"), title: t("builder.roundHint") },
+  { value: "floor", label: t("builder.down"), title: t("builder.downHint") },
+  { value: "ceil", label: t("builder.up"), title: t("builder.upHint") },
 ];
 
 /**
@@ -28,9 +29,9 @@ export function FormulaEditor({ formula, onChange, modes }: FormulaEditorProps) 
         onChange={(chain) => patch({ start: chain.start, steps: chain.steps })}
       />
       <div className="flex flex-col gap-1">
-        <span className="text-xs font-medium text-muted-foreground">Rounding</span>
+        <span className="text-xs font-medium text-muted-foreground">{t("builder.rounding")}</span>
         <SegmentedControl
-          label="Rounding"
+          label={t("builder.rounding")}
           size="sm"
           fullWidth
           value={formula.rounding}
@@ -40,14 +41,14 @@ export function FormulaEditor({ formula, onChange, modes }: FormulaEditorProps) 
       </div>
       <div className="flex flex-col gap-1">
         <FormulaLimit
-          label="At least"
+          label={t("builder.atLeast")}
           limit={formula.min}
           fallback={0}
           modes={modes}
           onChange={(min) => patch({ min })}
         />
         <FormulaLimit
-          label="At most"
+          label={t("builder.atMost")}
           limit={formula.max}
           fallback={100}
           modes={modes}

@@ -1,0 +1,21 @@
+{
+  "label": "Imagen",
+  "description": "Una imagen pegada en la pizarra.",
+  "paddings": {
+    "none": "Ninguno",
+    "small": "Pequeño",
+    "medium": "Mediano",
+    "large": "Grande"
+  },
+  "options": {
+    "group": "Opciones de imagen",
+    "transparent": "Fondo transparente",
+    "white": "Fondo blanco",
+    "padding": "Relleno: {name}",
+    "doneCropping": "Terminar recorte",
+    "doneCroppingHint": "Terminar recorte (Enter)",
+    "crop": "Recortar",
+    "cropHint": "Recortar (doble clic)",
+    "resetCrop": "Restablecer recorte"
+  }
+}

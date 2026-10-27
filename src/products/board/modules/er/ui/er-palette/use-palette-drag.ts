@@ -7,6 +7,7 @@ import { MOVE_THRESHOLD_PX, type Point } from "@canvas";
 import { useEngine } from "@canvas-ui";
 import { useErModel } from "../model";
 import type { ErDragGhost, PaletteDrag, PaletteDragOptions } from "./er-palette.types";
+import { t } from "../../er.i18n";
 
 /**
  * Drags a palette item onto the canvas with pointer events (not HTML drag and drop, which the
@@ -23,7 +24,7 @@ export function usePaletteDrag({ item, diagram, onClick }: PaletteDragOptions): 
 
   const planAt = (client: Point): { drop: ErDrop; world: Point | null } => {
     const world = engine.clientToWorld(client);
-    if (!world) return { drop: { ok: false, label: "Drop on the board" }, world };
+    if (!world) return { drop: { ok: false, label: t("drop.board") }, world };
     const hit = engine.elementAt(world);
     const shape = hit && er.shape(hit.id);
     // The standard of the diagram it would go into: what it's dropped on, else the shown one.

@@ -4,6 +4,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { createTextStyle } from "./create-text-style";
 import type { TextStyleControlProps } from "./text-styles.types";
 import { useTextStyleBinding } from "./use-text-style-binding";
+import { t } from "../../text.i18n";
 
 /**
  * The Typography section's style button (Figma's): a text style for the selected texts, or for
@@ -15,7 +16,7 @@ export function TextStyleControl({ texts }: TextStyleControlProps) {
     <StyleControl
       binding={useTextStyleBinding(texts)}
       styleType={TEXT_STYLE}
-      createLabel="Create style from this text"
+      createLabel={t("styles.createStyle")}
       create={() => createTextStyle(engine)}
       showName
     />

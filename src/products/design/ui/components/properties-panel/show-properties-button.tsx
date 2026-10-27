@@ -3,6 +3,7 @@ import { PanelRightOpen } from "lucide-react";
 import { ToolButton, useEngineState } from "@canvas-ui";
 import { RULER_SIZE } from "@canvas";
 import { useDesignPanelStore } from "../../stores/design-panel-store";
+import { t } from "../../design-ui.i18n";
 
 /** Over the canvas's top right corner while the properties panel is closed: opens it again. */
 export function ShowPropertiesButton() {
@@ -15,7 +16,7 @@ export function ShowPropertiesButton() {
       className="pointer-events-auto absolute right-3 rounded-lg border bg-surface p-1 shadow-lifted"
       style={{ top: rulers ? RULER_SIZE + 8 : 12 }}
     >
-      <ToolButton label="Show properties panel" side="left" onClick={() => setOpen(true)}>
+      <ToolButton label={t("properties.show")} side="left" onClick={() => setOpen(true)}>
         <PanelRightOpen />
       </ToolButton>
     </div>

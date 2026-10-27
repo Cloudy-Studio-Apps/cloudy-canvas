@@ -6,13 +6,14 @@ import { collectFills, mergeFills } from "../..";
 import { takePalette, useColorWizardStore } from "../store";
 import { FillGroupRow } from "./fill-group-row";
 import { SectionLabel } from "./section-label";
+import { t } from "../../color-wizard.i18n";
 
 /** How alike two fills must look to merge (OKLab distance). */
 const MERGE = [
-  { value: "0", label: "Off" },
-  { value: "0.03", label: "Close" },
-  { value: "0.06", label: "Similar" },
-  { value: "0.1", label: "Loose" },
+  { value: "0", label: t("sources.file.off") },
+  { value: "0.03", label: t("sources.file.close") },
+  { value: "0.06", label: t("sources.file.similar") },
+  { value: "0.1", label: t("sources.file.loose") },
 ] as const;
 
 /** The colors the file's layers already use, near-duplicates merged, to become its palette. */
@@ -28,8 +29,8 @@ export function FileSource() {
     return (
       <EmptyState
         className="p-8"
-        title="No colors on layers yet"
-        description="Colors your layers paint without a variable show here, ready to become the palette."
+        title={t("sources.file.emptyTitle")}
+        description={t("sources.file.emptyHint")}
       />
     );
   }
@@ -38,13 +39,13 @@ export function FileSource() {
   const uses = chosen.reduce((n, g) => n + g.count, 0);
   return (
     <div className="flex flex-col gap-3 p-4">
-      <SectionLabel aside={`${fills.length} colors → ${groups.length}`}>
-        Colors on layers
+      <SectionLabel aside={t("sources.file.summary", { from: fills.length, to: groups.length })}>
+        {t("sources.file.title")}
       </SectionLabel>
       <div className="flex items-center justify-between gap-2">
-        <span className="text-xs">Merge similar colors</span>
+        <span className="text-xs">{t("sources.file.mergeSimilar")}</span>
         <SegmentedControl
-          label="Merge similar colors"
+          label={t("sources.file.mergeSimilar")}
           size="sm"
           value={String(merge) as (typeof MERGE)[number]["value"]}
           options={MERGE}
@@ -66,7 +67,7 @@ export function FileSource() {
         ))}
       </div>
       <CheckboxField
-        label={`Bind these ${uses} paints to the new variables`}
+        label={t("sources.file.bind", { count: uses })}
         checked={bindFills}
         onChange={(checked) => set({ bindFills: checked })}
       />
@@ -76,7 +77,7 @@ export function FileSource() {
           takePalette(chosen.map((g) => ({ hex: g.hex, fills: g.members.flatMap((m) => m.refs) })))
         }
       >
-        Use {chosen.length} colors
+        {t("sources.file.use", { count: chosen.length })}
       </Button>
     </div>
   );

@@ -1,0 +1,46 @@
+{
+  "title": "Diseño automático",
+  "commands": {
+    "add": "Añadir diseño automático",
+    "remove": "Quitar diseño automático"
+  },
+  "direction": {
+    "label": "Dirección",
+    "vertical": "Vertical",
+    "horizontal": "Horizontal",
+    "wrap": "Envolver"
+  },
+  "alignment": {
+    "label": "Alineación",
+    "cell": "Alinear {row} {column}",
+    "place": {
+      "start": "inicio",
+      "center": "centro",
+      "end": "final"
+    }
+  },
+  "gap": {
+    "between": "Espacio entre capas",
+    "betweenLines": "Espacio entre líneas",
+    "auto": "Espacio automático",
+    "useAuto": "Espacio automático (repartido)",
+    "useFixed": "Espacio fijo"
+  },
+  "padding": {
+    "horizontal": "Relleno horizontal",
+    "vertical": "Relleno vertical"
+  },
+  "strokesIncluded": "Incluir trazos en el diseño",
+  "firstOnTop": "Primera capa encima",
+  "resizing": {
+    "title": "Cambio de tamaño",
+    "width": "Ajuste del ancho",
+    "height": "Ajuste del alto",
+    "widthShort": "An",
+    "heightShort": "Al",
+    "fixed": "Fijo",
+    "hug": "Ajustar al contenido",
+    "fill": "Rellenar contenedor",
+    "ignore": "Ignorar diseño automático"
+  }
+}

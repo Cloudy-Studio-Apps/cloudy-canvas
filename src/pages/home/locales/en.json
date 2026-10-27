@@ -1,0 +1,76 @@
+{
+  "create": {
+    "title": "Create new",
+    "subtitle": "Start from a blank board, design or catalog.",
+    "open": "Open file…",
+    "board": "New Board",
+    "boardHint": "Brainstorm, map ideas, sticky notes",
+    "design": "New Design",
+    "designHint": "Design interfaces and visuals",
+    "catalog": "New Catalog",
+    "catalogHint": "Brochures and catalogs to print, page by page"
+  },
+  "drop": {
+    "title": "Drop to open",
+    "hint": "Boards (.cboard), designs (.cdesign) and Figma files (.fig)"
+  },
+  "empty": {
+    "title": "No files yet",
+    "hint": "Create your first board or design."
+  },
+  "actions": {
+    "copyPath": "Copy path",
+    "pathCopied": "Path copied",
+    "copyFailed": "The path couldn't be copied",
+    "deleteDraft": "Delete draft",
+    "remove": "Remove from recents",
+    "locate": "Locate…",
+    "open": "Open",
+    "reveal": "Show in folder",
+    "revealFailed": "The folder couldn't be opened",
+    "openFailed": "The file couldn't be opened"
+  },
+  "card": {
+    "board": "Board",
+    "design": "Design",
+    "missingLabel": "{type} {name} is missing. Show options",
+    "openLabel": "Open {type} {name}",
+    "meta": "{type} · Edited {time}",
+    "missing": "Missing",
+    "draft": "Draft",
+    "more": "More actions for {name}",
+    "justNow": "just now"
+  },
+  "missing": {
+    "title": "“{name}” was moved or deleted",
+    "was": "It was at {path}"
+  },
+  "join": {
+    "button": "Join",
+    "title": "Join a live session",
+    "hint": "Paste the link the host shared with you.",
+    "invalid": "That isn't a session link. Copy it again from the host's Share button."
+  },
+  "recent": {
+    "title": "Recent files",
+    "noMatch": "No files match.",
+    "search": "Search files",
+    "searchLabel": "Search recent files",
+    "fileType": "File type",
+    "all": "All",
+    "boards": "Boards",
+    "designs": "Designs",
+    "sort": {
+      "recent": "Recently opened",
+      "edited": "Last edited",
+      "name": "Name"
+    }
+  },
+  "top": {
+    "agents": "Agents",
+    "designSystem": "Design system",
+    "theme": "Theme",
+    "settings": "Settings",
+    "about": "About Cloudy Canvas"
+  }
+}

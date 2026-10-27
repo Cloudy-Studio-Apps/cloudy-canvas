@@ -11,6 +11,7 @@ import { IconAction } from "./icon-action";
 import { Segmented } from "./segmented";
 import { ShapeSelect } from "./shape-select";
 import type { IsaFormProps } from "./entity-form.types";
+import { t } from "../../../er.i18n";
 
 /** A hierarchy (ES UN triangle): parent, kind, discriminator and children. */
 export function IsaForm({ isa }: IsaFormProps) {
@@ -28,10 +29,10 @@ export function IsaForm({ isa }: IsaFormProps) {
 
   return (
     <div className="space-y-4">
-      <FormField label="Parent entity">
+      <FormField label={t("form.isa.parent")}>
         <div className="flex items-center gap-1">
           <ShapeSelect
-            aria-label="Parent entity"
+            aria-label={t("form.isa.parent")}
             value={isa.parentId}
             options={options}
             className="flex-1"
@@ -48,43 +49,43 @@ export function IsaForm({ isa }: IsaFormProps) {
         </div>
       </FormField>
       <Segmented
-        aria-label="Overlapping or exclusive"
+        aria-label={t("form.isa.overlapOrExclusive")}
         value={isa.exclusive}
         off={{
-          label: "Overlapping",
-          title: "Solapada: an occurrence can be several children at once",
+          label: t("form.isa.overlapping"),
+          title: t("form.isa.overlappingTitle"),
         }}
-        on={{ label: "Exclusive", title: "Exclusiva: only one child (arc under the triangle)" }}
+        on={{ label: t("form.isa.exclusive"), title: t("form.isa.exclusiveTitle") }}
         onChange={(exclusive) => er.edits.updateIsa(isa.id, { exclusive })}
       />
       <Segmented
-        aria-label="Partial or total"
+        aria-label={t("form.isa.partialOrTotal")}
         value={isa.total}
-        off={{ label: "Partial", title: "Parcial: it can also be none of the children" }}
-        on={{ label: "Total", title: "Total: always one of the children (circle on the line)" }}
+        off={{ label: t("form.isa.partial"), title: t("form.isa.partialTitle") }}
+        on={{ label: t("form.isa.total"), title: t("form.isa.totalTitle") }}
         onChange={(total) => er.edits.updateIsa(isa.id, { total })}
       />
-      <FormField label="Discriminator (optional)">
+      <FormField label={t("form.isa.discriminator")}>
         <CommitInput
           value={discriminator}
-          placeholder="e.g. tipo"
+          placeholder={t("form.isa.discriminatorExample")}
           onCommit={(name) => void er.edits.setDiscriminator(isa.id, name.trim())}
         />
       </FormField>
       <FormSection
-        title="Children"
+        title={t("form.isa.children")}
         actions={
           <Button
             variant="ghost"
             size="sm"
-            title="Create a new child entity"
+            title={t("form.isa.newChildTitle")}
             onClick={() => {
               const id = er.edits.addEntity();
               if (id) addChild(id);
             }}
           >
             <Plus />
-            New entity
+            {t("form.isa.newEntity")}
           </Button>
         }
       >
@@ -92,7 +93,7 @@ export function IsaForm({ isa }: IsaFormProps) {
           {isa.children.map((child) => (
             <li key={child.id} className="flex items-center gap-1 py-1.5">
               <ShapeSelect
-                aria-label="Child entity"
+                aria-label={t("form.isa.child")}
                 value={child.entityId}
                 options={options}
                 className="flex-1"
@@ -105,7 +106,7 @@ export function IsaForm({ isa }: IsaFormProps) {
                 onChange={(min, max) => er.edits.updateIsaChild(isa.id, child.id, { min, max })}
               />
               <IconAction
-                label="Remove child"
+                label={t("form.isa.removeChild")}
                 danger
                 onClick={() => er.edits.removeIsaChild(isa.id, child.id)}
               >
@@ -116,9 +117,9 @@ export function IsaForm({ isa }: IsaFormProps) {
         </ul>
         {free.length > 0 && (
           <ShapeSelect
-            aria-label="Add an existing entity as a child"
+            aria-label={t("form.isa.addExistingChild")}
             value=""
-            placeholder="Add an existing entity…"
+            placeholder={t("form.isa.addExisting")}
             options={free}
             className="w-full"
             onChange={addChild}

@@ -7,6 +7,7 @@ import { useColorWizardStore, wizardRoles } from "../store";
 import { AddedRow } from "./added-row";
 import { RoleRow } from "./role-row";
 import { RolesOptions } from "./roles-options";
+import { t } from "../../color-wizard.i18n";
 
 /** Step 2: each color's role (its variable group) and what the options add. */
 export function RolesStep() {
@@ -41,10 +42,10 @@ export function RolesStep() {
       <div className="overflow-auto px-4 py-3.5">
         <div className="flex items-baseline justify-between">
           <span className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
-            Your colors
+            {t("roles.yourColors")}
           </span>
           <span className="text-xs text-muted-foreground">
-            Names become variable groups: <code>primary/500</code>
+            {t("roles.names")} <code>primary/500</code>
           </span>
         </div>
         {roles.map((role, i) => (
@@ -53,7 +54,7 @@ export function RolesStep() {
         {added.length > 0 && (
           <>
             <div className="mt-4 text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
-              Added by the options
+              {t("roles.added")}
             </div>
             {added.map((c) => (
               <AddedRow key={c.name} color={c} exists={existing.has(c.name)} />

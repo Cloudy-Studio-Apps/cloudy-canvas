@@ -20,6 +20,7 @@ import { useAgentServerStore } from "@shared/stores/agent-server-store";
 import { openAbout } from "@shared/about";
 import { SealLogo } from "@shared/ui/brand/seal-logo";
 import { Badge } from "@shared/ui/components/ui/badge";
+import { t } from "../board-ui.i18n";
 
 export function BoardTopBar() {
   const navigate = useNavigate();
@@ -29,17 +30,17 @@ export function BoardTopBar() {
 
   return (
     <FloatingPanel className="gap-1 pr-2">
-      <ToolButton label="Back to home" side="bottom" onClick={() => void navigate("/")}>
+      <ToolButton label={t("topBar.backHome")} side="bottom" onClick={() => void navigate("/")}>
         <ArrowLeft />
       </ToolButton>
       <PanelDivider />
-      <ToolButton label="About Cloudy Canvas" side="bottom" onClick={openAbout}>
+      <ToolButton label={t("topBar.about")} side="bottom" onClick={openAbout}>
         <SealLogo size={22} variant="mark" />
       </ToolButton>
       <DocumentInfoPopover />
       <SaveIndicator />
       <Badge variant="board" className="ml-1">
-        Board
+        {t("topBar.badge")}
       </Badge>
       <PanelDivider className="mx-1.5" />
       <HistoryControls />
@@ -47,10 +48,10 @@ export function BoardTopBar() {
         <ToolButton
           label={
             file.status === "error"
-              ? "Couldn't save. Try again"
+              ? t("topBar.saveFailed")
               : file.draft
-                ? "Save to a file"
-                : "Save"
+                ? t("topBar.saveToFile")
+                : t("topBar.save")
           }
           shortcut={engine.keymap.label("save")}
           side="bottom"
@@ -68,7 +69,7 @@ export function BoardTopBar() {
         agentActions={(agent) => <CollaboratorUndoButton collaborator={agent} />}
         trigger={
           <ToolButton
-            label={agentsEnabled ? "Agents: on" : "Agents: off"}
+            label={agentsEnabled ? t("topBar.agentsOn") : t("topBar.agentsOff")}
             side="bottom"
             className={agentsEnabled ? undefined : "text-muted-foreground"}
           >

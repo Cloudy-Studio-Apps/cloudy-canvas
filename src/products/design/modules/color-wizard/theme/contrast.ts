@@ -12,22 +12,59 @@ import type {
   WizardOptions,
   WizardTheme,
 } from "./theme.types";
+import { t } from "../color-wizard.i18n";
 
 /** The pairs a theme must keep readable (WCAG AA; 3:1 for large text and UI marks). */
 export const CONTRAST_RULES: readonly ContrastRule[] = [
-  { label: "Text on background", fg: "foreground", bg: "background", min: 4.5, fix: "foreground" },
   {
-    label: "Muted text on surface",
+    label: t("theme.contrast.text"),
+    fg: "foreground",
+    bg: "background",
+    min: 4.5,
+    fix: "foreground",
+  },
+  {
+    label: t("theme.contrast.muted"),
     fg: "muted-foreground",
     bg: "surface",
     min: 4.5,
     fix: "muted-foreground",
   },
-  { label: "Button label", fg: "primary-foreground", bg: "primary", min: 4.5, fix: "primary" },
-  { label: "Link on surface", fg: "primary", bg: "surface", min: 3, fix: "primary" },
-  { label: "Error text on surface", fg: "error", bg: "surface", min: 4.5, fix: "error" },
-  { label: "Success on surface", fg: "success", bg: "surface", min: 3, fix: "success" },
-  { label: "Warning on surface", fg: "warning", bg: "surface", min: 3, fix: "warning" },
+  {
+    label: t("theme.contrast.button"),
+    fg: "primary-foreground",
+    bg: "primary",
+    min: 4.5,
+    fix: "primary",
+  },
+  {
+    label: t("theme.contrast.link"),
+    fg: "primary",
+    bg: "surface",
+    min: 3,
+    fix: "primary",
+  },
+  {
+    label: t("theme.contrast.error"),
+    fg: "error",
+    bg: "surface",
+    min: 4.5,
+    fix: "error",
+  },
+  {
+    label: t("theme.contrast.success"),
+    fg: "success",
+    bg: "surface",
+    min: 3,
+    fix: "success",
+  },
+  {
+    label: t("theme.contrast.warning"),
+    fg: "warning",
+    bg: "surface",
+    min: 3,
+    fix: "warning",
+  },
 ];
 
 /** Every rule whose two tokens exist, in every mode. */

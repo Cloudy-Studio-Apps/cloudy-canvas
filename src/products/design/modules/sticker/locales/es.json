@@ -1,0 +1,30 @@
+{
+  "commands": {
+    "toVectors": "Convertir sticker en vectores"
+  },
+  "section": {
+    "title": "Sticker",
+    "addOutline": "Añadir un contorno",
+    "convert": "Convertir en vectores",
+    "convertHint": "Lo convierte en capas vectoriales que puedes recolorear",
+    "notConvertible": "Solo los stickers dibujados como SVG pueden convertirse en vectores"
+  },
+  "edge": {
+    "label": "Borde",
+    "reset": "Restablecer el borde a blanco"
+  },
+  "outline": {
+    "label": "Contorno",
+    "width": "Ancho del contorno",
+    "hide": "Ocultar el contorno",
+    "show": "Mostrar el contorno",
+    "remove": "Quitar el contorno"
+  },
+  "toasts": {
+    "nothingTitle": "Nada que convertir",
+    "nothingBody": "Solo los stickers dibujados como SVG pueden convertirse en vectores."
+  },
+  "errors": {
+    "edge": "No se pudo cambiar el color del borde"
+  }
+}

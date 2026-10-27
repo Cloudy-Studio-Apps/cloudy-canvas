@@ -5,6 +5,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useSelectedNodes } from "@design/ui/hooks";
 import { useImageCropStore } from "@design/ui/stores/image-crop-store";
 import { imageFillIndex } from "./image-fill-index";
+import { t } from "../image.i18n";
 
 /** The toolbar's Crop image button, for one selected layer with an image fill. */
 export function CropToolbarButton() {
@@ -17,8 +18,8 @@ export function CropToolbarButton() {
   const cropping = target?.nodeId === node.id;
   return (
     <ToolButton
-      label={cropping ? "Done cropping" : "Crop image"}
-      description="Move and scale the picture inside the layer, or resize the layer around it."
+      label={cropping ? t("crop.done") : t("commands.crop")}
+      description={t("crop.description")}
       shortcut={engine.keymap.label("cropImage")}
       active={cropping}
       onClick={() => (cropping ? stop() : engine.commands.cropImage?.())}

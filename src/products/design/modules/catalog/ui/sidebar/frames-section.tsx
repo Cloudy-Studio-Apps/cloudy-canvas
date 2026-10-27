@@ -5,6 +5,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
 import type { FramesSectionProps } from "./sidebar.types";
+import { t } from "../../catalog.i18n";
 
 /** Several frames selected: add the ones not in the brochure as pages, in reading order. */
 export function FramesSection({ frames }: FramesSectionProps) {
@@ -14,9 +15,9 @@ export function FramesSection({ frames }: FramesSectionProps) {
   const ordered = readingOrder(loose.map((frame) => ({ id: frame.id, rect: frame })));
 
   return (
-    <PanelSection title={`${frames.length} frames`}>
+    <PanelSection title={t("frames.title", { count: frames.length })}>
       {loose.length === 0 ? (
-        <p className="text-xs text-muted-foreground">They're all in the brochure.</p>
+        <p className="text-xs text-muted-foreground">{t("frames.all")}</p>
       ) : (
         <Button
           size="sm"

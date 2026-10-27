@@ -1,0 +1,69 @@
+{
+  "openLibrary": "Widgets, plantillas y más",
+  "button": {
+    "description": "Plantillas, listas, widgets y herramientas de la pizarra."
+  },
+  "panel": {
+    "search": "Buscar widgets, plantillas y más",
+    "searchLabel": "Buscar en la biblioteca",
+    "empty": "Nada coincide con tu búsqueda."
+  },
+  "tabs": {
+    "all": "Todo",
+    "templates": "Plantillas",
+    "lists": "Listas",
+    "widgets": "Widgets"
+  },
+  "sections": {
+    "tools": {
+      "title": "Herramientas de la pizarra",
+      "description": "Stickers, tablas y diagramas, a un clic."
+    },
+    "templates": {
+      "title": "Plantillas",
+      "description": "Empieza una sesión desde un diseño listo."
+    },
+    "lists": {
+      "title": "Listas y listas de tareas",
+      "description": "Lleva el control de tareas, pasos e ideas."
+    },
+    "widgets": {
+      "title": "Widgets",
+      "description": "Piezas interactivas para dirigir una sesión en conjunto."
+    }
+  },
+  "items": {
+    "brainstorm": {
+      "label": "Lluvia de ideas",
+      "description": "Reúne y vota ideas."
+    },
+    "retro": {
+      "label": "Retrospectiva",
+      "description": "Qué salió bien y qué cambiar."
+    },
+    "kanban": {
+      "label": "Kanban",
+      "description": "Por hacer, en curso, hecho."
+    },
+    "checklist": {
+      "label": "Lista de tareas",
+      "description": "Tareas que vas marcando."
+    },
+    "bullets": {
+      "label": "Lista con viñetas",
+      "description": "Puntos sin un orden concreto."
+    },
+    "numbered": {
+      "label": "Lista numerada",
+      "description": "Pasos en orden."
+    },
+    "timer": {
+      "label": "Temporizador",
+      "description": "Una cuenta atrás que todos ven."
+    },
+    "voting": {
+      "label": "Votación",
+      "description": "Deja que todos elijan sus favoritos."
+    }
+  }
+}

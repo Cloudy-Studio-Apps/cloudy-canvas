@@ -1,0 +1,25 @@
+{
+  "title": "Booleana",
+  "description": "Capas combinadas en una forma: unión, restar, intersecar o excluir.",
+  "operations": {
+    "union": "Unión",
+    "subtract": "Restar",
+    "intersect": "Intersecar",
+    "exclude": "Excluir"
+  },
+  "commands": {
+    "flatten": "Aplanar",
+    "outlineStroke": "Contornear trazo"
+  },
+  "panel": {
+    "operation": "Operación",
+    "combine": "Combinar"
+  },
+  "toolbar": {
+    "description": "Combina las capas seleccionadas en una sola forma.",
+    "operations": "Operaciones booleanas"
+  },
+  "defaults": {
+    "vector": "Vector"
+  }
+}

@@ -10,6 +10,7 @@ import { ErPanel } from "./ui/er-panel";
 import { ErQuickAddMenu } from "./ui/er-quick-add";
 import { ErRelationPrompt } from "./ui/er-relation-prompt";
 import { ErToTablesDialog, useCreateTablesCommand } from "./ui/er-to-tables";
+import { t } from "./er.i18n";
 
 /**
  * The toolbar button, the ER panel, ER to tables, Convert to entity, the quick-add menu and the
@@ -29,7 +30,7 @@ export function registerErSections(host: ModuleHost): void {
     items: [
       {
         command: CONVERT_TO_ENTITY_COMMAND,
-        label: "Convert to entity",
+        label: t("menu.convertToEntity"),
         enabled: (_context, engine) => {
           const [id, ...others] = engine.selectedIds();
           const el = id && others.length === 0 ? engine.getElement(id) : undefined;
@@ -38,7 +39,7 @@ export function registerErSections(host: ModuleHost): void {
       },
       {
         command: CREATE_TABLES_COMMAND,
-        label: "Create tables…",
+        label: t("menu.createTables"),
         enabled: (_context, engine) =>
           engine.selectedIds().some((id) => isErElement(engine.getElement(id))),
       },

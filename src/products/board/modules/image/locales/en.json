@@ -1,0 +1,21 @@
+{
+  "label": "Image",
+  "description": "A picture pasted onto the board.",
+  "paddings": {
+    "none": "None",
+    "small": "Small",
+    "medium": "Medium",
+    "large": "Large"
+  },
+  "options": {
+    "group": "Image options",
+    "transparent": "Transparent background",
+    "white": "White background",
+    "padding": "{name} padding",
+    "doneCropping": "Done cropping",
+    "doneCroppingHint": "Done cropping (Enter)",
+    "crop": "Crop",
+    "cropHint": "Crop (double-click)",
+    "resetCrop": "Reset crop"
+  }
+}

@@ -6,6 +6,7 @@ import { cn, Popover, PopoverContent, PopoverTrigger } from "@shared/ui/kit";
 import { VariableEditor } from "./variable-editor";
 import { typeGlyph } from "./window/group-kinds";
 import type { VariableRowProps } from "./variables-ui.types";
+import { t } from "../variables.i18n";
 
 /** A variable in the panel: its value on this page, its name, what it aliases; click edits it. */
 export function VariableRow({ variable, modes, editing, setEditing, onDelete }: VariableRowProps) {
@@ -43,7 +44,9 @@ export function VariableRow({ variable, modes, editing, setEditing, onDelete }: 
           {hasOverrides(variable) && (
             <span
               className="size-1.5 shrink-0 rounded-full bg-primary"
-              title={`Varies by ${store.axis(variable.axisId ?? "")?.name ?? "mode"}`}
+              title={t("row.variesBy", {
+                axis: store.axis(variable.axisId ?? "")?.name ?? t("row.mode"),
+              })}
             />
           )}
           {alias && (

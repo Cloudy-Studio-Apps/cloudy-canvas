@@ -14,6 +14,7 @@ import { Store, delay } from "../utils";
 import { HOST_ORIGIN } from "./share-origins";
 import type { ShareEndReason, ShareGuestOptions, ShareGuestState } from "./share-guest.types";
 import { readSync, syncStep1, syncUpdate } from "./sync-messages";
+import { t } from "./share.i18n";
 
 /** How long a guest keeps trying to get back to the host after its connection dropped. */
 const RECONNECT_FOR_MS = 30_000;
@@ -159,10 +160,10 @@ export class ShareGuest {
         this.end("denied", message.message);
         return;
       case "removed":
-        this.end("removed", "The host removed you from the session.");
+        this.end("removed", t("guest.removed"));
         return;
       case "ended":
-        this.end("ended", "The host ended the session.");
+        this.end("ended", t("guest.ended"));
         return;
       case "hello":
         return;
@@ -173,7 +174,7 @@ export class ShareGuest {
   private async lost(): Promise<void> {
     if (this.over) return;
     if (!this.rejoin) {
-      this.end("lost", "The connection to the host was lost.");
+      this.end("lost", t("guest.lost"));
       return;
     }
     this.patch({ status: "reconnecting" });
@@ -183,7 +184,7 @@ export class ShareGuest {
       if (this.over) return;
       if (await this.connect()) return;
     }
-    this.end("lost", "Lost the connection to the host.");
+    this.end("lost", t("guest.lostAgain"));
   }
 
   private end(reason: ShareEndReason, message: string): void {

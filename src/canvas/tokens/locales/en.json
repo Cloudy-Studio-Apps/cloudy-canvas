@@ -1,0 +1,21 @@
+{
+  "ratios": {
+    "majorSecond": "Major second",
+    "minorThird": "Minor third",
+    "majorThird": "Major third",
+    "perfectFourth": "Perfect fourth",
+    "perfectFifth": "Perfect fifth",
+    "goldenRatio": "Golden ratio",
+    "double": "Double"
+  },
+  "importWarnings": {
+    "typeLeftOut": "{type} tokens were left out",
+    "noType": "tokens without a $type were left out",
+    "outsideGroup": "tokens outside a group were left out",
+    "styleLeftOut": "{type} styles were left out",
+    "unknown": "unknown",
+    "badRefs": "references to tokens not in the file were left out",
+    "badExpressions": "worked-out values it couldn't read were left out",
+    "unreadable": "{type} tokens with values it couldn't read were left out"
+  }
+}

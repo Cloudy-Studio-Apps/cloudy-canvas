@@ -2,6 +2,7 @@ import { defineService } from "@canvas";
 
 import type { ErConnectSource, ErQuickAddOption, ErQuickAddRequest } from "./er-connect.types";
 import { ErPrompt } from "./er-prompt";
+import { t } from "../er.i18n";
 
 /**
  * A connect dot dropped on empty board, waiting for what to create there (the quick-add menu).
@@ -18,21 +19,29 @@ export function erQuickAddOptions(source: ErConnectSource): ErQuickAddOption[] {
   switch (source.type) {
     case "er-entity":
       return [
-        { id: "attribute", label: "Attribute", run: (e, at) => e.addAttribute(id, { at }) },
+        {
+          id: "attribute",
+          label: t("quickAdd.attribute"),
+          run: (e, at) => e.addAttribute(id, { at }),
+        },
         {
           id: "key-attribute",
-          label: "Key attribute",
+          label: t("quickAdd.keyAttribute"),
           run: (e, at) => e.addAttribute(id, { at, key: "pk" }),
         },
         {
           id: "related-entity",
-          label: "Related entity",
+          label: t("quickAdd.relatedEntity"),
           run: (e, at) => e.addRelatedEntity(id, { at }),
         },
-        { id: "relation", label: "Relation", run: (e, at) => e.addRelation([id], { at }) },
+        {
+          id: "relation",
+          label: t("quickAdd.relation"),
+          run: (e, at) => e.addRelation([id], { at }),
+        },
         {
           id: "subtype",
-          label: "Subtype (hierarchy)",
+          label: t("quickAdd.subtype"),
           construct: "hierarchies",
           run: (e, at) => e.addSubtype(id, { at }),
         },
@@ -41,13 +50,13 @@ export function erQuickAddOptions(source: ErConnectSource): ErQuickAddOption[] {
       return [
         {
           id: "attribute",
-          label: "Attribute",
+          label: t("quickAdd.attribute"),
           construct: "relation-attributes",
           run: (e, at) => e.addAttribute(id, { at }),
         },
         {
           id: "participant",
-          label: "Participating entity",
+          label: t("quickAdd.participant"),
           // A third side makes a relation of three or more.
           ...(source.participants.length >= 2 ? { construct: "nary-relations" } : {}),
           run: (e, at) => e.addParticipantEntity(id, { at }),
@@ -57,7 +66,7 @@ export function erQuickAddOptions(source: ErConnectSource): ErQuickAddOption[] {
       return [
         {
           id: "superclass",
-          label: "Superclass entity",
+          label: t("quickAdd.superclass"),
           construct: "unions",
           run: (e, at) => e.addUnionSuperclassEntity(id, { at }),
         },
@@ -66,13 +75,13 @@ export function erQuickAddOptions(source: ErConnectSource): ErQuickAddOption[] {
       return [
         {
           id: "child",
-          label: "Child entity",
+          label: t("quickAdd.child"),
           construct: "hierarchies",
           run: (e, at) => e.addIsaChildEntity(id, { at }),
         },
         {
           id: "attribute",
-          label: "Discriminator attribute",
+          label: t("quickAdd.discriminator"),
           construct: "hierarchies",
           run: (e, at) => e.addAttribute(id, { at }),
         },

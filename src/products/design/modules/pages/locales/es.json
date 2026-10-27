@@ -1,0 +1,28 @@
+{
+  "commands": {
+    "previous": "Página anterior",
+    "next": "Página siguiente"
+  },
+  "menu": {
+    "title": "Páginas",
+    "moveTo": "Mover a la página"
+  },
+  "list": {
+    "title": "Páginas",
+    "add": "Añadir página",
+    "options": "Opciones de {name}",
+    "optionsTitle": "Opciones de la página"
+  },
+  "section": {
+    "title": "Página",
+    "zoomToFit": "Ajustar al zoom ({shortcut})",
+    "name": "Nombre de la página",
+    "zoom": "Zoom {percent}%"
+  },
+  "errors": {
+    "delete": "No se pudo eliminar la página"
+  },
+  "defaults": {
+    "page": "Página {number}"
+  }
+}

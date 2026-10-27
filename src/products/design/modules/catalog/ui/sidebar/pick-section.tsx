@@ -1,17 +1,12 @@
 import { PanelSection } from "@design/ui/components/panel";
+import { t } from "../../catalog.i18n";
 
 /** What the sidebar says while frames are being picked. */
 export function PickSection() {
   return (
-    <PanelSection title="Picking frames">
-      <p className="text-xs text-muted-foreground">
-        Click frames on the canvas to tick them, or drag a box round a whole row. Pages already in
-        the brochure start ticked.
-      </p>
-      <p className="mt-2 text-xs text-muted-foreground">
-        New pages go in reading order (rows top to bottom, left to right); drag them in the list to
-        fine-tune. Esc cancels.
-      </p>
+    <PanelSection title={t("pick.title")}>
+      <p className="text-xs text-muted-foreground">{t("pick.click")}</p>
+      <p className="mt-2 text-xs text-muted-foreground">{t("pick.order")}</p>
     </PanelSection>
   );
 }

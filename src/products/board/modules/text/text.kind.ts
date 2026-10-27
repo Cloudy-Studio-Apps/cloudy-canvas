@@ -21,6 +21,7 @@ import { createTextDraft } from "./text.factory";
 import { drawText } from "./text.draw";
 import { TEXT_DEFAULTS } from "./text.defaults";
 import type { TextElement } from "./text.types";
+import { t } from "./text.i18n";
 
 /**
  * Free text. It's sized to its text, so it isn't resized (the Scale tool grows its font), and
@@ -28,8 +29,8 @@ import type { TextElement } from "./text.types";
  */
 export class TextKind extends ElementKind<TextElement, BoardToolOptions> {
   readonly type = "text";
-  readonly label = "Text";
-  readonly description = "Click anywhere to type a label.";
+  readonly label = t("label");
+  readonly description = t("description");
   override readonly tool = "text";
   override readonly defaults = TEXT_DEFAULTS;
   override readonly styleFields = ["color", "fontSize"];
@@ -103,7 +104,7 @@ export class TextKind extends ElementKind<TextElement, BoardToolOptions> {
 
   /** Its color binds to a color variable. */
   override bindable(): BindableField[] {
-    return [colorField("color", "Color", "text-fill")];
+    return [colorField("color", t("color"), "text-fill")];
   }
 
   override describe(el: TextElement): ElementDescription {

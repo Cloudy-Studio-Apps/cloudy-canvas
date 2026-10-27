@@ -1,4 +1,5 @@
 import { defineErStandard } from "./define-er-standard";
+import { t } from "../../er.i18n";
 
 /** de Miguel, Piattini & Marcos, the Spanish textbook (from secondary sources, not checked yet). */
 export const PIATTINI_STANDARD = defineErStandard({
@@ -8,8 +9,7 @@ export const PIATTINI_STANDARD = defineErStandard({
     "Adoración de Miguel, Mario Piattini, Esperanza Marcos, Diseño de bases de datos relacionales, Alfaomega / Ra-Ma.",
   url: "https://biblioteca.cun.edu.co/bib/4716",
   approximate: true,
-  summary:
-    "(min,max) on the lines, the ratio on the diamond, triangle hierarchies, aggregation and constraints.",
+  summary: t("standards.piattini"),
   settings: {
     cardinality: "minmax",
     ratio: "across",

@@ -1,5 +1,6 @@
 import { commitFieldProps, useCommitField } from "@canvas-ui";
 import type { LayerNameProps } from "./layer-name.types";
+import { t } from "../layers.i18n";
 
 /** A layer's name, or a field to rename it (Enter or blur keeps it, Escape cancels). */
 export function LayerName({ name, editing, onRename, onDone }: LayerNameProps) {
@@ -13,7 +14,7 @@ export function LayerName({ name, editing, onRename, onDone }: LayerNameProps) {
   return (
     // eslint-disable-next-line no-restricted-syntax -- bespoke: the in-place rename input
     <input
-      aria-label="Layer name"
+      aria-label={t("name")}
       autoFocus
       {...bindings}
       onBlur={() => {

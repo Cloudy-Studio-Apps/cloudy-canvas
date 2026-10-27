@@ -3,6 +3,7 @@ import type { ContextMenuEntryGroup } from "@canvas-ui";
 import { isSheet } from "../../sheet/is-sheet";
 import { STYLEGUIDE_COMMANDS, STYLEGUIDE_MODE_ID } from "../../mode/styleguide-mode.constants";
 import { ADD_TO_PAGE } from "./add-to-page";
+import { t } from "../../styleguide.i18n";
 
 /** Whether a live element is selected. */
 function sheetSelected(_context: unknown, engine: CanvasEngine): boolean {
@@ -16,18 +17,21 @@ function sheetSelected(_context: unknown, engine: CanvasEngine): boolean {
 export const STYLEGUIDE_MENU: ContextMenuEntryGroup = {
   id: "styleguide",
   menu: "selection",
-  label: "Design system",
+  label: t("menu.label"),
   items: [
     {
       command: STYLEGUIDE_COMMANDS.exportSection,
-      label: "Export this section…",
+      label: t("menu.exportSection"),
       enabled: sheetSelected,
     },
-    { command: STYLEGUIDE_COMMANDS.exportSystem, label: "Export design system as PDF…" },
+    {
+      command: STYLEGUIDE_COMMANDS.exportSystem,
+      label: t("menu.exportSystem"),
+    },
     ADD_TO_PAGE,
     {
       command: STYLEGUIDE_COMMANDS.convert,
-      label: "Convert to design",
+      label: t("menu.convert"),
       enabled: (context, engine) =>
         engine.modeId !== STYLEGUIDE_MODE_ID && sheetSelected(context, engine),
     },

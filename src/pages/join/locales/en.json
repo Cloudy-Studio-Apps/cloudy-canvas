@@ -1,0 +1,38 @@
+{
+  "message": {
+    "back": "Back to home"
+  },
+  "nameForm": {
+    "title": "Join a live session",
+    "label": "What name should the others see?",
+    "placeholder": "Your name",
+    "join": "Join"
+  },
+  "page": {
+    "desktopOnly": "Live sessions need the desktop app",
+    "invalidTitle": "That isn't a session link",
+    "invalidHint": "Ask the host to copy the link again from their Share button."
+  },
+  "end": {
+    "ended": "The session ended",
+    "removed": "You were removed from the session",
+    "denied": "You weren't let in",
+    "lost": "Lost the connection to the host",
+    "failed": "Couldn't join the session"
+  },
+  "session": {
+    "theHost": "the host",
+    "connecting": "Connecting to the host…",
+    "waiting": "Waiting for {host} to let you in…",
+    "waitingHint": "They've been asked. This page opens the file as soon as they answer.",
+    "opening": "Opening {host}'s {product}…",
+    "board": "board",
+    "design": "design",
+    "file": "file",
+    "reconnecting": "Reconnecting to {host}… Your changes are kept and sent once it's back."
+  },
+  "plugins": {
+    "title": "Some of this file may not show",
+    "body": "The host uses plugins you don't have on: {list}. What they add stays in the file."
+  }
+}

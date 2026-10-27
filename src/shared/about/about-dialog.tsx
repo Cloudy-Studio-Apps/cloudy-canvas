@@ -25,6 +25,7 @@ import { useAboutStore } from "./about-store";
 import { LinkButton } from "./link-button";
 import { useAppInfo } from "./use-app-info";
 import { copyVersionDetails, versionDetails } from "./version-details";
+import { t } from "./about.i18n";
 
 /** The app's logo, version, license, disclaimer and credits. Mounted once; see `openAbout`. */
 export function AboutDialog() {
@@ -41,7 +42,7 @@ export function AboutDialog() {
           <DialogTitle className="text-xl tracking-tight">Cloudy Canvas</DialogTitle>
           <DialogDescription>{TAGLINE}</DialogDescription>
           <p className="text-xs text-muted-foreground">
-            {details.length > 0 ? details.join(" · ") : "Reading version…"}
+            {details.length > 0 ? details.join(" · ") : t("reading")}
           </p>
           <div className="mt-2 flex flex-wrap justify-center gap-2">
             <CheckUpdatesButton />
@@ -52,47 +53,42 @@ export function AboutDialog() {
               onClick={() => copyVersionDetails(details)}
             >
               <Copy />
-              Copy version info
+              {t("copy")}
             </Button>
           </div>
         </DialogHeader>
 
-        <AboutBlock title="License">
-          <p>
-            {COPYRIGHT}. Cloudy Canvas is free software under the {LICENSE_NAME}: you may use,
-            study, change and share it under its terms.
-          </p>
+        <AboutBlock title={t("license.title")}>
+          <p>{t("license.body", { copyright: COPYRIGHT, license: LICENSE_NAME })}</p>
           <div className="flex flex-wrap gap-1">
             <LinkButton href={`${APP_REPOSITORY_URL}/blob/master/LICENSE`}>
-              Read the license
+              {t("license.read")}
             </LinkButton>
             <LinkButton href={APP_REPOSITORY_URL} icon={Code}>
-              Source code
+              {t("license.source")}
             </LinkButton>
           </div>
         </AboutBlock>
 
-        <AboutBlock title="Disclaimer">
+        <AboutBlock title={t("disclaimer.title")}>
           {DISCLAIMER.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
           ))}
         </AboutBlock>
 
-        <AboutBlock title="Credits">
+        <AboutBlock title={t("credits.title")}>
           <ul className="space-y-1">
             {CREDITS.map((credit) => (
               <li key={credit.name}>
                 <span className="font-medium text-foreground">{credit.name}</span>
-                {` by ${credit.by} · ${credit.license}`}
+                {` ${t("credits.by", { name: credit.by, license: credit.license })}`}
               </li>
             ))}
           </ul>
         </AboutBlock>
 
         <div className="flex items-center justify-between gap-3 border-t px-6 py-4 text-sm">
-          <span>
-            Made by <span className="font-semibold">{AUTHOR}</span>
-          </span>
+          <span>{t("madeBy", { author: AUTHOR })}</span>
           <LinkButton href={WEBSITE_URL}>darkredgm.com</LinkButton>
         </div>
       </DialogContent>

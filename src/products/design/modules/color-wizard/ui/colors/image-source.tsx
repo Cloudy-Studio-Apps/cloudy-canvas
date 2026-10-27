@@ -10,17 +10,18 @@ import { useColorWizardStore } from "../store";
 import { ImagePins } from "./image-pins";
 import { ImageThumb } from "./image-thumb";
 import { SectionLabel } from "./section-label";
+import { t } from "../../color-wizard.i18n";
 
 const MOODS: readonly SegmentedOption<ImageMood>[] = [
-  { value: "balanced", label: "Balanced" },
-  { value: "vivid", label: "Vivid" },
-  { value: "muted", label: "Muted" },
+  { value: "balanced", label: t("sources.image.balanced") },
+  { value: "vivid", label: t("sources.image.vivid") },
+  { value: "muted", label: t("sources.image.muted") },
 ];
 
 /** Reads colors from a picture chosen, dropped or pasted (kept out of the file). */
 function takeImageFile(file: File | undefined): void {
   if (!file?.type.startsWith("image/")) {
-    toast({ title: "That isn't an image", tone: "error" });
+    toast({ title: t("sources.image.notImage"), tone: "error" });
     return;
   }
   const { image, set } = useColorWizardStore.getState();
@@ -50,7 +51,7 @@ export function ImageSource() {
 
   return (
     <div className="flex flex-col gap-3 p-4">
-      <SectionLabel aside={images.length}>Images in this file</SectionLabel>
+      <SectionLabel aside={images.length}>{t("sources.image.images")}</SectionLabel>
       <div className="grid grid-cols-5 gap-1.5">
         {images.map((img) => (
           <ImageThumb
@@ -63,7 +64,7 @@ export function ImageSource() {
           />
         ))}
         <IconButton
-          label="Choose an image…"
+          label={t("sources.image.choose")}
           variant="outline"
           className="aspect-square size-auto border-dashed"
           onClick={() => input.current?.click()}
@@ -74,14 +75,12 @@ export function ImageSource() {
       {url ? (
         <ImagePins url={url} />
       ) : (
-        <p className="text-xs text-muted-foreground">
-          This file has no images yet. Choose one, or drop or paste it here.
-        </p>
+        <p className="text-xs text-muted-foreground">{t("sources.image.noImages")}</p>
       )}
       <div className="flex items-center justify-between gap-2">
-        <SectionLabel>Mood</SectionLabel>
+        <SectionLabel>{t("sources.image.mood")}</SectionLabel>
         <SegmentedControl
-          label="Which colors to favor"
+          label={t("sources.image.favor")}
           size="sm"
           value={image.mood}
           options={MOODS}
@@ -104,9 +103,9 @@ export function ImageSource() {
           over && "border-primary bg-primary-soft text-primary-soft-foreground",
         )}
       >
-        Drop an image here, or paste one
+        {t("sources.image.drop")}
       </div>
-      <p className="text-xs text-muted-foreground">Drag a pin to pick another spot of the image.</p>
+      <p className="text-xs text-muted-foreground">{t("sources.image.dragPin")}</p>
       {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the hidden file input behind "Choose an image…" */}
       <input
         ref={input}

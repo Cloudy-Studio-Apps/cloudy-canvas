@@ -1,4 +1,5 @@
 import type { TypeArgsSpec } from "./column-types.types";
+import { t } from "../db.i18n";
 
 /** Built-in column types offered by the type picker; any other type can still be typed. */
 export const COLUMN_TYPES = [
@@ -27,13 +28,13 @@ export const COLUMN_TYPES = [
  * value a column gets when it switches to the type.
  */
 export const TYPE_ARGS: Readonly<Record<string, TypeArgsSpec>> = {
-  varchar: { label: "length", initial: "255" },
-  char: { label: "length", initial: "1" },
-  decimal: { label: "precision, scale", initial: "10, 2" },
-  float: { label: "precision", initial: "" },
-  time: { label: "precision", initial: "" },
-  timestamp: { label: "precision", initial: "" },
-  timestamptz: { label: "precision", initial: "" },
+  varchar: { label: t("typeArgs.length"), initial: "255" },
+  char: { label: t("typeArgs.length"), initial: "1" },
+  decimal: { label: t("typeArgs.precisionScale"), initial: "10, 2" },
+  float: { label: t("typeArgs.precision"), initial: "" },
+  time: { label: t("typeArgs.precision"), initial: "" },
+  timestamp: { label: t("typeArgs.precision"), initial: "" },
+  timestamptz: { label: t("typeArgs.precision"), initial: "" },
 };
 
 /** Index methods offered by the index editor. */

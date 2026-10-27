@@ -6,6 +6,7 @@ import { PanelAddButton, PanelIconButton, PanelSection } from "@design/ui/compon
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import type { PropertySectionProps } from "@design/ui/modules";
 import { AutoLayoutFields } from "./auto-layout-fields";
+import { t } from "../auto-layout.i18n";
 
 /**
  * For selected frames: their auto layout (direction, gaps, padding, alignment, strokes and
@@ -25,14 +26,14 @@ export function AutoLayoutSection({ selection: { nodes } }: PropertySectionProps
 
   return (
     <PanelSection
-      title="Auto layout"
+      title={t("title")}
       actions={
         some ? (
-          <PanelIconButton label={label("removeAutoLayout", "Remove auto layout")} onClick={remove}>
+          <PanelIconButton label={label("removeAutoLayout", t("commands.remove"))} onClick={remove}>
             <Minus />
           </PanelIconButton>
         ) : (
-          <PanelAddButton label={label("addAutoLayout", "Add auto layout")} onClick={add} />
+          <PanelAddButton label={label("addAutoLayout", t("commands.add"))} onClick={add} />
         )
       }
     >

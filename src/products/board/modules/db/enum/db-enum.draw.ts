@@ -3,6 +3,7 @@ import { centerTextTop, type ElementView } from "@canvas";
 import { INK_COLOR, MUTED_INK_COLOR } from "../../../palette";
 import { DB_CARD_DEFAULTS, drawCardFrame, rowTop } from "../card";
 import type { DbEnumElement } from "./db-enum.types";
+import { t } from "../db.i18n";
 
 const {
   fontSize: DB_FONT_SIZE,
@@ -35,7 +36,10 @@ export function drawDbEnum(view: ElementView, el: DbEnumElement): void {
   if (values.length === 0) {
     keep.add("empty");
     view
-      .setTextSlot("empty", "No values", { fontSize: DB_FONT_SIZE, color: MUTED_INK_COLOR })
+      .setTextSlot("empty", t("canvas.noValues"), {
+        fontSize: DB_FONT_SIZE,
+        color: MUTED_INK_COLOR,
+      })
       .position.set(DB_PADDING_X, rowTop(0) + centerTextTop(DB_ROW_H, DB_FONT_SIZE));
   }
   values.forEach((value, row) => {

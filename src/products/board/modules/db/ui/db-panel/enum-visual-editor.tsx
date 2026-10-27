@@ -7,6 +7,7 @@ import { useBoardSchema } from "../schema";
 import { EnumUsages } from "./enum-usages";
 import { EnumValueRow } from "./enum-value-row";
 import type { EnumVisualEditorProps } from "./enum-visual-editor.types";
+import { t } from "../../db.i18n";
 
 /** Form view of one enum: name, color, values, and the columns that use it. */
 export function EnumVisualEditor({ target }: EnumVisualEditorProps) {
@@ -15,7 +16,7 @@ export function EnumVisualEditor({ target }: EnumVisualEditorProps) {
   return (
     <div className="space-y-4">
       <label className="block space-y-1">
-        <span className="text-xs font-medium text-muted-foreground">Enum name</span>
+        <span className="text-xs font-medium text-muted-foreground">{t("enumEditor.name")}</span>
         <CommitInput
           value={target.name}
           onCommit={(name) => schema.updateEnum(target.id, { name })}
@@ -23,7 +24,9 @@ export function EnumVisualEditor({ target }: EnumVisualEditorProps) {
       </label>
 
       <div className="space-y-1">
-        <span className="text-xs font-medium text-muted-foreground">Header color</span>
+        <span className="text-xs font-medium text-muted-foreground">
+          {t("enumEditor.headerColor")}
+        </span>
         <div className="flex gap-0.5">
           <ColorPalette
             colors={DB_HEADER_COLORS}
@@ -35,10 +38,10 @@ export function EnumVisualEditor({ target }: EnumVisualEditorProps) {
 
       <section className="space-y-1">
         <div className="flex items-center justify-between">
-          <h3 className="text-xs font-medium text-muted-foreground">Values</h3>
+          <h3 className="text-xs font-medium text-muted-foreground">{t("enumEditor.values")}</h3>
           <Button variant="ghost" size="sm" onClick={() => schema.addEnumValue(target.id)}>
             <Plus />
-            Add value
+            {t("enumEditor.addValue")}
           </Button>
         </div>
         <ul>

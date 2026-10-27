@@ -13,6 +13,7 @@ import { MOVE_TO_PAGE } from "./ui/move-to-page";
 import { PageSection } from "./ui/page-section";
 import { PagesSection } from "./ui/pages-section";
 import { usePageCommands } from "./ui/use-page-commands";
+import { t } from "./pages.i18n";
 
 /**
  * Pages: the page records and the canvas's scopes (one page on screen at a time, new layers on
@@ -32,8 +33,12 @@ export const pagesModule = defineModule({
     host.contribute(designMigrations, { id: "pages", migrate: ensurePages });
     host.contribute(
       designCanvas.hostCommands,
-      { id: "previousPage", label: "Previous page", keys: [{ key: "PageUp", label: "PgUp" }] },
-      { id: "nextPage", label: "Next page", keys: [{ key: "PageDown", label: "PgDn" }] },
+      {
+        id: "previousPage",
+        label: t("commands.previous"),
+        keys: [{ key: "PageUp", label: "PgUp" }],
+      },
+      { id: "nextPage", label: t("commands.next"), keys: [{ key: "PageDown", label: "PgDn" }] },
     );
     host.contribute(
       designMcpTools,
@@ -58,10 +63,10 @@ export const pagesModule = defineModule({
     host.contribute(designEditor.mainMenu, {
       id: "pages",
       order: 37,
-      label: "Pages",
+      label: t("menu.title"),
       items: [
-        { command: "previousPage", label: "Previous page" },
-        { command: "nextPage", label: "Next page" },
+        { command: "previousPage", label: t("commands.previous") },
+        { command: "nextPage", label: t("commands.next") },
       ],
     });
   },

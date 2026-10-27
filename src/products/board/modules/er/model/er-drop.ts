@@ -3,6 +3,7 @@ import { isErParticipant } from "../base/is-er-element";
 import type { ErDrop, ErPaletteItemId } from "./er-drop.types";
 import { OPEN_GATE, type ErConstructGate } from "../base/constructs";
 import { PALETTE_CONSTRUCTS } from "./palette-constructs";
+import { t } from "../er.i18n";
 
 /** Element types an attribute can belong to. */
 const ATTRIBUTE_OWNERS: ReadonlySet<string> = new Set([
@@ -41,18 +42,18 @@ function plan(item: ErPaletteItemId, hit: ErElement | undefined, diagram: string
     case "entity":
     case "weak-entity": {
       const weak = item === "weak-entity";
-      const label = weak ? "Weak entity" : "Entity";
+      const label = weak ? t("drop.weakEntity") : t("drop.entity");
       if (target?.type === "er-isa" && !weak) {
         return {
           ok: true,
-          label: "Child entity of the hierarchy",
+          label: t("drop.childOfHierarchy"),
           run: (er, at) => er.diagram(own).edits.addIsaChildEntity(target.id, { at }),
         };
       }
       if (!diagram) {
         return {
           ok: true,
-          label: `${label} (a new diagram)`,
+          label: t("drop.newDiagram", { label }),
           run: (er, at) => er.newDiagram(at, { weak }),
         };
       }
@@ -65,15 +66,15 @@ function plan(item: ErPaletteItemId, hit: ErElement | undefined, diagram: string
     case "relation":
     case "associative": {
       const associative = item === "associative";
-      const noun = associative ? "Associative entity" : "Relation";
+      const noun = associative ? t("drop.associative") : t("drop.relation");
       if (target && isErParticipant(target) && "name" in target) {
         return {
           ok: true,
-          label: `${noun} from ${target.name}`,
+          label: t("drop.from", { noun, name: target.name }),
           run: (er, at) => er.diagram(own).edits.addRelation([target.id], { at, associative }),
         };
       }
-      if (!diagram) return { ok: false, label: "Drop on an entity, or add an entity first" };
+      if (!diagram) return { ok: false, label: t("drop.onEntityFirst") };
       return {
         ok: true,
         label: noun,
@@ -83,52 +84,52 @@ function plan(item: ErPaletteItemId, hit: ErElement | undefined, diagram: string
     case "attribute":
     case "key-attribute": {
       const key = item === "key-attribute" ? "pk" : "none";
-      const noun = key === "pk" ? "Key attribute" : "Attribute";
+      const noun = key === "pk" ? t("drop.keyAttribute") : t("drop.attribute");
       if (!target || !ATTRIBUTE_OWNERS.has(target.type)) {
         return {
           ok: false,
-          label: `Drop on an entity or relation to add an ${noun.toLowerCase()}`,
+          label: key === "pk" ? t("drop.onOwnerKey") : t("drop.onOwner"),
         };
       }
       return {
         ok: true,
-        label: `${noun} of ${nameOf(target)}`,
+        label: t("drop.attributeOf", { noun, name: nameOf(target) }),
         run: (er, at) => er.diagram(own).edits.addAttribute(target.id, { at, key }),
       };
     }
     case "isa":
       if (target?.type !== "er-entity") {
-        return { ok: false, label: "Drop on an entity to add a hierarchy under it" };
+        return { ok: false, label: t("drop.isaNeedsEntity") };
       }
       return {
         ok: true,
-        label: `Hierarchy under ${target.name}`,
+        label: t("drop.isaUnder", { name: target.name }),
         run: (er, at) => er.diagram(own).edits.addIsa(target.id, { at }),
       };
     case "union":
       if (target?.type !== "er-entity") {
-        return { ok: false, label: "Drop on the category entity to add a union type for it" };
+        return { ok: false, label: t("drop.unionNeedsEntity") };
       }
       return {
         ok: true,
-        label: `Union type of ${target.name}`,
+        label: t("drop.unionOf", { name: target.name }),
         run: (er, at) => er.diagram(own).edits.addUnion(target.id, { at }),
       };
     case "aggregate":
       if (target?.type !== "er-relation") {
-        return { ok: false, label: "Drop on a relation to aggregate it" };
+        return { ok: false, label: t("drop.aggregateNeedsRelation") };
       }
       return {
         ok: true,
-        label: `Aggregation of ${target.name}`,
+        label: t("drop.aggregationOf", { name: target.name }),
         run: (er) => er.diagram(own).edits.addAggregate(target.id),
       };
     case "constraint":
-      return { ok: false, label: "Click to add a constraint between two relations" };
+      return { ok: false, label: t("drop.constraintClick") };
   }
 }
 
 function nameOf(el: ErElement): string {
   if ("name" in el && el.name) return el.name;
-  return el.type === "er-isa" ? "the hierarchy" : "it";
+  return el.type === "er-isa" ? t("drop.theHierarchy") : t("drop.it");
 }

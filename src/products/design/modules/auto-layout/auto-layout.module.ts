@@ -9,10 +9,11 @@ import { AutoLayoutSection } from "./ui/auto-layout-section";
 import { showsSizing } from "./ui/in-auto-layout";
 import { SizingSection } from "./ui/sizing-section";
 import { useAutoLayoutCommands } from "./ui/use-auto-layout-commands";
+import { t } from "./auto-layout.i18n";
 
 const COMMANDS = [
-  { command: "addAutoLayout", label: "Add auto layout" },
-  { command: "removeAutoLayout", label: "Remove auto layout" },
+  { command: "addAutoLayout", label: t("commands.add") },
+  { command: "removeAutoLayout", label: t("commands.remove") },
 ];
 
 /**
@@ -36,12 +37,12 @@ export const autoLayoutModule = defineModule({
       designCanvas.hostCommands,
       {
         id: "addAutoLayout",
-        label: "Add auto layout",
+        label: t("commands.add"),
         keys: [{ code: "KeyA", shift: true, label: "A" }],
       },
       {
         id: "removeAutoLayout",
-        label: "Remove auto layout",
+        label: t("commands.remove"),
         keys: [{ code: "KeyA", alt: true, shift: true, label: "A" }],
       },
     );
@@ -68,7 +69,7 @@ export const autoLayoutModule = defineModule({
     host.contribute(designEditor.mainMenu, {
       id: "auto-layout",
       order: 35.5,
-      label: "Auto layout",
+      label: t("title"),
       items: COMMANDS,
     });
     host.contribute(designEditor.contextMenu, {

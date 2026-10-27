@@ -1,9 +1,11 @@
+import { tCommon } from "@shared/core";
 import { applyPick } from "../../mode/apply-pick";
 import { CATALOG_TOOL } from "../../mode/catalog-mode.constants";
 import { FloatingPanel } from "@canvas-ui";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
 import { Button } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
+import { t } from "../../catalog.i18n";
 
 /** While frames are being picked: how many are ticked, applying them, or cancelling. */
 export function PickBanner() {
@@ -19,13 +21,13 @@ export function PickBanner() {
   return (
     <div className="pointer-events-none absolute inset-x-0 top-3 flex justify-center">
       <FloatingPanel className="gap-3 py-1.5 pr-1.5 pl-3 text-sm">
-        <span>Pick the frames for the brochure: click them, or drag a box round a row.</span>
-        <span className="text-muted-foreground">{ticked} ticked</span>
+        <span>{t("canvas.pick.hint")}</span>
+        <span className="text-muted-foreground">{t("canvas.pick.ticked", { count: ticked })}</span>
         <Button size="sm" disabled={ticked === 0 && pages.length === 0} onClick={() => done(true)}>
-          {pages.length === 0 ? `Add ${ticked} ${ticked === 1 ? "page" : "pages"}` : "Update pages"}
+          {pages.length === 0 ? t("canvas.pick.add", { count: ticked }) : t("canvas.pick.update")}
         </Button>
         <Button size="sm" variant="ghost" onClick={() => done(false)}>
-          Cancel
+          {tCommon("cancel")}
         </Button>
       </FloatingPanel>
     </div>

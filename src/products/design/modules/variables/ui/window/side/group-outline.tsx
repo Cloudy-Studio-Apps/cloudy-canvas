@@ -5,6 +5,7 @@ import { variablesByGroup } from "../group-paths";
 import { jumpToGroup } from "../jump-to-group";
 import { useBoard } from "../use-board";
 import type { GroupOutlineProps } from "./side.types";
+import { t } from "../../../variables.i18n";
 
 /**
  * The open collection's groups under it: a color group by three of its swatches, a number group by
@@ -23,7 +24,7 @@ export function GroupOutline({ collection }: GroupOutlineProps) {
             key={group}
             type="button"
             onClick={() => jumpToGroup(group)}
-            title={`${group || "Ungrouped"} · ${groupLabel(store, items)}`}
+            title={`${group || t("common.ungrouped")} · ${groupLabel(store, items)}`}
             className="flex items-center gap-1.5 rounded-md px-1.5 py-1 text-left text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
           >
             {first && first.type !== "color" ? (
@@ -45,7 +46,7 @@ export function GroupOutline({ collection }: GroupOutlineProps) {
                 })}
               </span>
             )}
-            <span className="min-w-0 flex-1 truncate">{group || "Ungrouped"}</span>
+            <span className="min-w-0 flex-1 truncate">{group || t("common.ungrouped")}</span>
             <span className="text-[11px] text-subtle-foreground">{items.length}</span>
           </button>
         );

@@ -4,6 +4,7 @@ import type { BackgroundBlurEffect } from "../../effect.types";
 import { ScrubField } from "../fields";
 import { EffectBind } from "../effect-bind";
 import type { EffectEditorProps } from "../effects.points.types";
+import { t } from "../../effects.i18n";
 
 /** A background blur: its radius, and a hint that it shows through translucent fills only. */
 export function BackgroundBlurEditor({
@@ -15,15 +16,13 @@ export function BackgroundBlurEditor({
       <EffectBind field="radius">
         <ScrubField
           prefix={<Droplet />}
-          label="Blur"
+          label={t("editors.blur")}
           min={0}
           value={effect.radius}
           onChange={(radius, info) => onChange({ ...effect, radius }, info)}
         />
       </EffectBind>
-      <p className="text-xs text-muted-foreground">
-        Shows through the layer&apos;s translucent fills: lower a fill&apos;s opacity to see it.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("editors.blurHint")}</p>
     </div>
   );
 }

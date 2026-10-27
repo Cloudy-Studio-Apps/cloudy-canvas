@@ -1,6 +1,7 @@
 import { useErDiagram, useErQuery, useErSelection, useErVersion } from "../model";
 import { erCompletions, erLanguage, SourceEditor } from "@board/ui/components/source-editor";
 import { ErSyntaxHint } from "./er-syntax-hint";
+import { t } from "../../er.i18n";
 
 /** The shown diagram as text, applied while typing; the selected shape's block is highlighted. */
 export function ErTextEditor() {
@@ -17,10 +18,10 @@ export function ErTextEditor() {
         // A fresh editor per diagram, so text typed for one is never applied to another.
         key={diagram.id}
         version={version}
-        label="ER diagram text"
+        label={t("text.label")}
         language={erLanguage}
         completions={erCompletions}
-        hint="Matched by name, so renames keep their place. New shapes are placed automatically; entities a relation names are created when you leave the editor."
+        hint={t("text.hint")}
         read={() => diagram.text()}
         apply={(text, commit) => diagram.applyText(text, { createMissing: commit })}
         highlight={highlight}

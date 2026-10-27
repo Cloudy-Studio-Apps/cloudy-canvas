@@ -7,6 +7,7 @@ import { openCanvasFileDialog } from "@platform";
 import { figmaImportOf } from "@shared/core";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 import { notifyError } from "@shared/stores/toast-store";
+import { t } from "./home.i18n";
 
 /**
  * Shows the native open dialog and opens the chosen file in its editor (a Figma file is imported
@@ -30,7 +31,7 @@ export function useOpenFile(): () => Promise<void> {
       recents.upsert(file);
       await navigate(`/${file.type}/${file.id}`);
     } catch (error) {
-      notifyError("The file couldn't be opened", error);
+      notifyError(t("actions.openFailed"), error);
     }
   }, [navigate]);
 }

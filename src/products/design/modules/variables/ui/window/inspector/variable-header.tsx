@@ -1,8 +1,10 @@
 import { tokenGroupOf, tokenLeafOf } from "@canvas";
 import { CommitInput } from "@canvas-ui";
+import { tCommon } from "@shared/core";
 import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";
 import type { InspectorPartProps } from "./inspector.types";
+import { t } from "../../../variables.i18n";
 
 /** The inspector's top: where the variable is (collection / group) and its name, renamed in place. */
 export function VariableHeader({ variable }: InspectorPartProps) {
@@ -21,13 +23,13 @@ export function VariableHeader({ variable }: InspectorPartProps) {
           type="button"
           onClick={() => select(null)}
           className="hover:text-foreground"
-          aria-label="Close"
+          aria-label={tCommon("close")}
         >
           ✕
         </button>
       </div>
       <CommitInput
-        aria-label="Variable name"
+        aria-label={t("editor.name")}
         value={tokenLeafOf(variable.name)}
         onCommit={(leaf) =>
           tokens.updateVariable(variable.id, { name: group ? `${group}/${leaf}` : leaf })

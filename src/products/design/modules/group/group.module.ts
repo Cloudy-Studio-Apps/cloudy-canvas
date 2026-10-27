@@ -7,6 +7,7 @@ import { groupTools } from "./group.mcp";
 import { GroupKind } from "./group.kind";
 import { pruneEmptyGroups } from "./group-nodes";
 import { useGroupCommands } from "./ui/use-group-commands";
+import { t } from "./group.i18n";
 
 /**
  * Groups: the kind, bounds that follow the children, selecting the group before what's in it,
@@ -24,8 +25,8 @@ export const groupModule = defineModule({
     host.contribute(designCanvas.onMoved, (doc) => pruneEmptyGroups(doc));
     host.contribute(
       designCanvas.hostCommands,
-      { id: "group", label: "Group selection", keys: [{ key: "g", mod: true }] },
-      { id: "ungroup", label: "Ungroup", keys: [{ key: "g", mod: true, shift: true }] },
+      { id: "group", label: t("commands.group"), keys: [{ key: "g", mod: true }] },
+      { id: "ungroup", label: t("commands.ungroup"), keys: [{ key: "g", mod: true, shift: true }] },
     );
     host.contribute(designMcpTools, { id: "group", tools: () => groupTools });
 
@@ -34,18 +35,18 @@ export const groupModule = defineModule({
     host.contribute(designEditor.mainMenu, {
       id: "arrange",
       order: 35,
-      label: "Arrange",
+      label: t("menu.arrange"),
       items: [
-        { command: "group", label: "Group selection" },
-        { command: "ungroup", label: "Ungroup" },
+        { command: "group", label: t("commands.group") },
+        { command: "ungroup", label: t("commands.ungroup") },
       ],
     });
     host.contribute(designEditor.contextMenu, {
       id: "group",
       menu: "selection",
       items: [
-        { command: "group", label: "Group selection" },
-        { command: "ungroup", label: "Ungroup" },
+        { command: "group", label: t("commands.group") },
+        { command: "ungroup", label: t("commands.ungroup") },
       ],
     });
   },

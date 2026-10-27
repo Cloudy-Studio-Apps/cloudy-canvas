@@ -3,6 +3,7 @@ import type { GeneratedSpec, StyleguideTemplate } from "../../styleguide.types";
 import { contrastGrade, contrastRatio } from "../../tokens";
 import { colorOf, fontOf, leafName, variablesOf } from "../template-kit";
 import { hexOf } from "./color-text";
+import { t } from "../../styleguide.i18n";
 
 const WHITE = "#FFFFFFFF";
 const BLACK = "#000000FF";
@@ -35,21 +36,26 @@ function sample(key: string, text: string, on: string, font: string): GeneratedS
 export const contrastPairsTemplate: StyleguideTemplate = {
   id: "colors.contrast-pairs",
   category: "colors",
-  label: "Pairs with contrast",
-  description: "Text on each color, with its contrast ratio and WCAG grade.",
+  label: t("templates.colors.contrastPairs.label"),
+  description: t("templates.colors.contrastPairs.description"),
   options: [
     {
       id: "pairWith",
-      label: "Text in",
+      label: t("templates.colors.contrastPairs.textIn"),
       type: "select",
       default: "white-black",
       choices: [
-        { value: "white-black", label: "White and black" },
-        { value: "white", label: "White" },
-        { value: "black", label: "Black" },
+        { value: "white-black", label: t("templates.colors.contrastPairs.whiteAndBlack") },
+        { value: "white", label: t("templates.colors.contrastPairs.white") },
+        { value: "black", label: t("templates.colors.contrastPairs.black") },
       ],
     },
-    { id: "font", label: "Label font", type: "font", default: SHEET_LOOK.font },
+    {
+      id: "font",
+      label: t("templates.colors.contrastPairs.labelFont"),
+      type: "font",
+      default: SHEET_LOOK.font,
+    },
   ],
   build: (group, options, context) => {
     const font = fontOf(options);

@@ -1,0 +1,11 @@
+{
+  "title": "Group",
+  "description": "Layers that select and move together.",
+  "menu": {
+    "arrange": "Arrange"
+  },
+  "commands": {
+    "group": "Group selection",
+    "ungroup": "Ungroup"
+  }
+}

@@ -9,14 +9,40 @@ import { GallerySource } from "./gallery-source";
 import { ImageSource } from "./image-source";
 import { ImportSource } from "./import-source";
 import { WheelSource } from "./wheel-source";
+import { t } from "../../color-wizard.i18n";
 
 const TABS: readonly SourceTabEntry[] = [
-  { id: "wheel", label: "Wheel", icon: Aperture, panel: () => <WheelSource /> },
-  { id: "brand", label: "Brand", icon: Tag, panel: () => <BrandSource /> },
-  { id: "image", label: "Image", icon: Image, panel: () => <ImageSource /> },
-  { id: "file", label: "This file", icon: Layers, panel: () => <FileSource /> },
-  { id: "gallery", label: "Gallery", icon: Grid3x3, panel: () => <GallerySource /> },
-  { id: "import", label: "Import", icon: Upload, panel: () => <ImportSource /> },
+  {
+    id: "wheel",
+    label: t("sources.tabs.wheel"),
+    icon: Aperture,
+    panel: () => <WheelSource />,
+  },
+  { id: "brand", label: t("sources.tabs.brand"), icon: Tag, panel: () => <BrandSource /> },
+  {
+    id: "image",
+    label: t("sources.tabs.image"),
+    icon: Image,
+    panel: () => <ImageSource />,
+  },
+  {
+    id: "file",
+    label: t("sources.tabs.file"),
+    icon: Layers,
+    panel: () => <FileSource />,
+  },
+  {
+    id: "gallery",
+    label: t("sources.tabs.gallery"),
+    icon: Grid3x3,
+    panel: () => <GallerySource />,
+  },
+  {
+    id: "import",
+    label: t("sources.tabs.import"),
+    icon: Upload,
+    panel: () => <ImportSource />,
+  },
 ];
 
 /** Where the colors come from, one tab each. */

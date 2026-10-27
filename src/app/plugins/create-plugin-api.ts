@@ -183,8 +183,10 @@ import { useEditNodes, useMoveNodes, useSelectedNodes } from "@design/ui/hooks";
 import { pluginStorage } from "@platform";
 import {
   createId,
+  defineMessages,
   defineModule,
   definePoint,
+  getLocale,
   PLUGIN_API_VERSION,
   type InstalledPlugin,
 } from "@shared/core";
@@ -209,7 +211,7 @@ export function createPluginApi(
         readText: async (path) =>
           new TextDecoder().decode(await pluginStorage.readAsset(plugin, path)),
       },
-      core: { defineModule, definePoint, createId },
+      core: { defineModule, definePoint, createId, defineMessages, getLocale },
       canvas: {
         ElementKind,
         BoxKind,

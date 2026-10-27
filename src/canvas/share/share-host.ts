@@ -25,6 +25,7 @@ import type { HostPeer } from "./host-peers.types";
 import { GOODBYE_MS, HELLO_TIMEOUT_MS, MAX_GUESTS } from "./share-origins";
 import type { ShareHostOptions, ShareHostState } from "./share-host.types";
 import { readSync, syncStep1, syncUpdate } from "./sync-messages";
+import { t } from "./share.i18n";
 
 /**
  * The host's side of a live session: the document lives here and guests sync with it (a star:
@@ -84,7 +85,7 @@ export class ShareHost {
   deny(peer: number): void {
     const p = this.peers.get(peer);
     if (!p || p.stage !== "knocking") return;
-    this.dismiss(p, { type: "denied", reason: "refused", message: "The host didn't let you in." });
+    this.dismiss(p, { type: "denied", reason: "refused", message: t("host.refused") });
   }
 
   setRole(peer: number, role: ShareRole): void {
@@ -160,16 +161,16 @@ export class ShareHost {
     p.identity = hello.identity;
     p.appVersion = hello.appVersion;
     if (hello.protocol !== SHARE_PROTOCOL) {
-      const message = "This session needs another version of Cloudy Canvas: update both apps.";
+      const message = t("host.protocol");
       this.dismiss(p, { type: "denied", reason: "protocol", message });
     } else if (hello.secret !== this.secret) {
-      const message = "This link is from a session that has ended.";
+      const message = t("host.secret");
       this.dismiss(p, { type: "denied", reason: "secret", message });
     } else if (hello.rejoin && this.rejoins.has(hello.rejoin)) {
       // Back after a dropped connection: let in again as it was.
       this.welcome(p, this.rejoins.get(hello.rejoin) ?? "view", hello.rejoin);
     } else if (this.guestCount() >= MAX_GUESTS) {
-      const message = `This session already has ${MAX_GUESTS} guests.`;
+      const message = t("host.full", { max: MAX_GUESTS });
       this.dismiss(p, { type: "denied", reason: "full", message });
     } else {
       p.stage = "knocking";

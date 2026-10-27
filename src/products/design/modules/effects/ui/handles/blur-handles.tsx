@@ -2,6 +2,7 @@ import { clamp, type Point } from "@canvas";
 import type { LayerBlurEffect } from "../../effect.types";
 import { HandleDot } from "./handle-dot";
 import type { EffectHandlesProps } from "./handles.types";
+import { t } from "../../effects.i18n";
 
 /** A progressive blur's start and end as handles on the layer: drag them to lay the blur. */
 export function BlurHandles({
@@ -31,8 +32,8 @@ export function BlurHandles({
         strokeWidth={1.5}
         className="stroke-foreground/50"
       />
-      <HandleDot at={start} label="Blur start" onPointerDown={dragEnd("start")} />
-      <HandleDot at={end} label="Blur end" onPointerDown={dragEnd("end")} />
+      <HandleDot at={start} label={t("handles.blurStart")} onPointerDown={dragEnd("start")} />
+      <HandleDot at={end} label={t("handles.blurEnd")} onPointerDown={dragEnd("end")} />
     </>
   );
 }

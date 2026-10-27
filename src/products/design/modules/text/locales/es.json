@@ -1,0 +1,49 @@
+{
+  "label": "Texto",
+  "description": "Texto en cualquier fuente: haz clic para escribir o arrastra para fijar el ancho.",
+  "fields": {
+    "fontSize": "Tamaño de fuente",
+    "lineHeight": "Altura de línea",
+    "letterSpacing": "Espaciado de letras",
+    "fontWeight": "Grosor de fuente",
+    "text": "Texto",
+    "font": "Fuente",
+    "fontStyle": "Estilo de fuente"
+  },
+  "styles": {
+    "textStyle": "Estilo de texto",
+    "rangeStyle": "Estilo de texto del rango",
+    "heading": "Estilos de texto",
+    "auto": "Auto",
+    "createStyle": "Crear estilo con este texto",
+    "defaultName": "Texto {size}"
+  },
+  "typography": {
+    "title": "Tipografía",
+    "titleSelection": "Tipografía · selección",
+    "alignment": "Alineación del texto",
+    "verticalAlignment": "Alineación vertical",
+    "resizing": "Ajuste de tamaño",
+    "left": "Alinear a la izquierda",
+    "center": "Alinear al centro",
+    "right": "Alinear a la derecha",
+    "justify": "Justificar",
+    "top": "Alinear arriba",
+    "middle": "Alinear al medio",
+    "bottom": "Alinear abajo",
+    "autoWidth": "Ancho automático",
+    "autoHeight": "Alto automático",
+    "fixedSize": "Tamaño fijo",
+    "decoration": "Decoración",
+    "underline": "Subrayado",
+    "strikethrough": "Tachado",
+    "selectionColor": "Color de la selección"
+  },
+  "fonts": {
+    "mixed": "Mixto",
+    "installed": "Instaladas",
+    "search": "Buscar fuentes",
+    "noMatch": "Ninguna fuente tiene ese nombre.",
+    "loading": "Cargando fuentes…"
+  }
+}

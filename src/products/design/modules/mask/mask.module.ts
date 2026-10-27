@@ -7,6 +7,7 @@ import { MaskSection } from "./ui/mask-section";
 import { MaskToolbarButton } from "./ui/mask-toolbar-button";
 import { maskSectionShown, selectionIsMasks } from "./ui/mask-selection";
 import { useMaskCommands } from "./ui/use-mask-commands";
+import { t } from "./mask.i18n";
 
 /**
  * Masks, as in Figma and a bit more: the canvas's masks (alpha, vector, luminance, inverted),
@@ -24,12 +25,12 @@ export const maskModule = defineModule({
       designCanvas.hostCommands,
       {
         id: "useAsMask",
-        label: "Use as mask",
+        label: t("commands.use"),
         keys: [{ code: "KeyM", mod: true, alt: true, label: "M" }],
       },
-      { id: "releaseMask", label: "Release mask" },
-      { id: "selectMask", label: "Select mask" },
-      { id: "selectMasked", label: "Select masked layers" },
+      { id: "releaseMask", label: t("commands.release") },
+      { id: "selectMask", label: t("commands.select") },
+      { id: "selectMasked", label: t("commands.selectMasked") },
     );
     host.contribute(designMcpTools, { id: "mask", tools: () => maskTools });
 
@@ -49,34 +50,34 @@ export const maskModule = defineModule({
     host.contribute(designEditor.mainMenu, {
       id: "mask",
       order: 35.5,
-      label: "Mask",
+      label: t("title"),
       items: [
-        { command: "useAsMask", label: "Use as mask" },
-        { command: "releaseMask", label: "Release mask" },
-        { command: "selectMask", label: "Select mask" },
-        { command: "selectMasked", label: "Select masked layers" },
+        { command: "useAsMask", label: t("commands.use") },
+        { command: "releaseMask", label: t("commands.release") },
+        { command: "selectMask", label: t("commands.select") },
+        { command: "selectMasked", label: t("commands.selectMasked") },
       ],
     });
     host.contribute(designEditor.contextMenu, {
       id: "mask",
       menu: "selection",
-      label: "Mask",
+      label: t("title"),
       items: [
         {
           command: "useAsMask",
           label: (_context, engine) =>
             selectionIsMasks(engine.elements(), engine.selectedIds())
-              ? "Remove mask"
-              : "Use as mask",
+              ? t("commands.remove")
+              : t("commands.use"),
         },
         {
           command: "selectMasked",
-          label: "Select masked layers",
+          label: t("commands.selectMasked"),
           enabled: (_context, engine) => selectionIsMasks(engine.elements(), engine.selectedIds()),
         },
         {
           command: "selectMask",
-          label: "Select mask",
+          label: t("commands.select"),
           enabled: (context, engine) =>
             context.selectionCount > 0 &&
             !selectionIsMasks(engine.elements(), engine.selectedIds()),

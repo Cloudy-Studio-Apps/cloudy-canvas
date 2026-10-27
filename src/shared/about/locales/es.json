@@ -1,0 +1,30 @@
+{
+  "tagline": "Pizarras y diseños en un mismo lienzo. Parte de Cloudy Studio.",
+  "reading": "Leyendo la versión…",
+  "copy": "Copiar información de versión",
+  "copied": "Información de versión copiada",
+  "copyFailed": "No se pudo copiar al portapapeles",
+  "openFailed": "No se pudo abrir la página",
+  "version": "Versión {version}",
+  "build": {
+    "development": "Compilación de desarrollo",
+    "production": "Compilación de producción"
+  },
+  "license": {
+    "title": "Licencia",
+    "body": "{copyright}. Cloudy Canvas es software libre bajo la {license}: puedes usarlo, estudiarlo, modificarlo y compartirlo según sus términos.",
+    "read": "Leer la licencia",
+    "source": "Código fuente"
+  },
+  "disclaimer": {
+    "title": "Aviso legal",
+    "warranty": "Cloudy Canvas se ofrece «tal cual», sin garantía de ningún tipo, expresa o implícita. En ningún caso los autores serán responsables de reclamaciones, daños u otras responsabilidades derivadas de su uso (consulta las secciones 15 y 16 de la licencia).",
+    "early": "Esta es una versión temprana en desarrollo activo. Guarda copias de seguridad de los archivos que te importan.",
+    "trademarks": "Figma y FigJam son marcas registradas de Figma, Inc. Cloudy Canvas no está afiliado ni respaldado por Figma."
+  },
+  "credits": {
+    "title": "Créditos",
+    "by": "de {name} · {license}"
+  },
+  "madeBy": "Hecho por {author}"
+}

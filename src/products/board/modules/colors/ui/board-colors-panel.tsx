@@ -8,6 +8,7 @@ import { BoardModes } from "./board-modes";
 import { CollectionColors } from "./collection-colors";
 import { ColorsExchangeMenu } from "./colors-exchange-menu";
 import { NEW_COLOR } from "./new-color";
+import { t } from "../colors.i18n";
 
 /**
  * The side panel of the board's colors: its color variables by collection and group, edited in
@@ -33,14 +34,14 @@ export function BoardColorsPanel() {
   return (
     <FloatingPanel
       role="complementary"
-      aria-label="Board colors"
+      aria-label={t("title")}
       className="max-h-full w-[300px] flex-col items-stretch gap-3 p-3"
     >
       <header className="flex items-center gap-1">
-        <h2 className="flex-1 text-sm font-semibold">Board colors</h2>
+        <h2 className="flex-1 text-sm font-semibold">{t("title")}</h2>
         <ColorsExchangeMenu />
         <AddMenu />
-        <IconButton label="Close panel" size="sm" onClick={() => setOpen(false)}>
+        <IconButton label={t("panel.closePanel")} size="sm" onClick={() => setOpen(false)}>
           <X />
         </IconButton>
       </header>
@@ -49,11 +50,11 @@ export function BoardColorsPanel() {
         {collections.length === 0 ? (
           <EmptyState
             icon={<Palette />}
-            title="No board colors yet"
-            description="Colors you name here are offered first in every color bar; elements using one follow it when it changes. Bring a design's colors in with Import."
+            title={t("panel.emptyTitle")}
+            description={t("panel.emptyDescription")}
             action={
               <Button size="sm" onClick={addColor}>
-                Add a color
+                {t("panel.addColor")}
               </Button>
             }
           />

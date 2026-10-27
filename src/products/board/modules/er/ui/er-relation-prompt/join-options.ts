@@ -3,6 +3,7 @@ import type { ErElement } from "../../base/er.types";
 import type { ErJoin } from "../../model/edits/edits.types";
 import type { ShapeSelectOption } from "../er-panel/forms/shape-select.types";
 import type { ErJoinValue } from "./er-relation-prompt.types";
+import { t } from "../../er.i18n";
 
 export const NEW_KEY = "new";
 export const NO_JOIN = "none";
@@ -23,10 +24,10 @@ export function joinOptions(
   return [
     ...attributes.map((a) => ({
       value: `attr:${a.id}`,
-      label: a.key === "pk" ? `${a.name} (key)` : a.name,
+      label: a.key === "pk" ? t("prompt.key", { name: a.name }) : a.name,
     })),
-    { value: NEW_KEY, label: `New key attribute "${newKeyName}"` },
-    { value: NO_JOIN, label: "No join attribute" },
+    { value: NEW_KEY, label: t("prompt.newKey", { name: newKeyName }) },
+    { value: NO_JOIN, label: t("prompt.noJoin") },
   ];
 }
 

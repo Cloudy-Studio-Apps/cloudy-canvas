@@ -19,6 +19,7 @@ import {
   VariablesSection,
   VariablesWindow,
 } from "./ui";
+import { t } from "./variables.i18n";
 
 /**
  * Variables (Figma's): the document's collections, modes and variables, layers' fields bound to
@@ -44,8 +45,8 @@ export const variablesModule = defineModule({
     host.contribute(designMigrations, { id: "live-scales", migrate: migrateLiveScales });
     host.contribute(
       designCanvas.hostCommands,
-      { id: "openVariables", label: "Variables…" },
-      { id: DETACH_LAYERS_COMMAND, label: "Detach variables and styles" },
+      { id: "openVariables", label: t("commands.open") },
+      { id: DETACH_LAYERS_COMMAND, label: t("commands.detach") },
     );
     host.contribute(designEditor.sessionHooks, {
       id: "variables.detach-layers",
@@ -57,7 +58,7 @@ export const variablesModule = defineModule({
       items: [
         {
           command: DETACH_LAYERS_COMMAND,
-          label: "Detach variables and styles",
+          label: t("commands.detach"),
           // Only while a selected layer uses a variable or a style.
           enabled: (_context, engine) =>
             engine
@@ -75,8 +76,8 @@ export const variablesModule = defineModule({
       id: "variables",
       order: 42,
       items: [
-        { command: "openVariables", label: "Variables…" },
-        { command: DETACH_LAYERS_COMMAND, label: "Detach variables and styles" },
+        { command: "openVariables", label: t("commands.open") },
+        { command: DETACH_LAYERS_COMMAND, label: t("commands.detach") },
       ],
     });
 

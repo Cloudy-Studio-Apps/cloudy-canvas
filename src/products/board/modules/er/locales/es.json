@@ -1,0 +1,526 @@
+{
+  "kinds": {
+    "aggregate": {
+      "label": "Agregación",
+      "description": "Un recuadro alrededor de una relación y sus participantes que actúa como una entidad."
+    },
+    "attribute": {
+      "label": "Atributo",
+      "description": "Un atributo de una entidad, relación o agregación en un diagrama ER."
+    },
+    "entity": {
+      "label": "Entidad",
+      "description": "Una entidad de un diagrama ER; haz clic para empezar un diagrama nuevo."
+    },
+    "relation": {
+      "label": "Relación",
+      "description": "Una relación (rombo) entre entidades de un diagrama ER."
+    },
+    "isa": {
+      "label": "Jerarquía"
+    },
+    "constraint": {
+      "label": "Restricción"
+    },
+    "union": {
+      "label": "Tipo unión"
+    }
+  },
+  "mode": {
+    "label": "Diagramas ER",
+    "description": "Solo se pueden seleccionar diagramas ER, con su barra de herramientas, paleta y panel."
+  },
+  "commands": {
+    "createTables": "Crear tablas desde el diagrama",
+    "convertToEntity": "Convertir la relación en entidad"
+  },
+  "menu": {
+    "convertToEntity": "Convertir en entidad",
+    "createTables": "Crear tablas…"
+  },
+  "modeCommands": {
+    "addEntity": "Añadir una entidad",
+    "addAttribute": "Añadir un atributo a la selección",
+    "addKeyAttribute": "Añadir un atributo clave a la selección",
+    "addRelation": "Añadir una relación desde la selección",
+    "addIsa": "Añadir una jerarquía bajo la selección"
+  },
+  "quickAdd": {
+    "attribute": "Atributo",
+    "keyAttribute": "Atributo clave",
+    "relatedEntity": "Entidad relacionada",
+    "relation": "Relación",
+    "subtype": "Subtipo (jerarquía)",
+    "participant": "Entidad participante",
+    "superclass": "Entidad superclase",
+    "child": "Entidad hija",
+    "discriminator": "Atributo discriminador",
+    "addFrom": "Añadir desde {name}",
+    "theHierarchy": "la jerarquía"
+  },
+  "ratios": {
+    "oneToOne": "Uno a uno",
+    "oneToMany": "Uno a muchos",
+    "manyToOne": "Muchos a uno",
+    "manyToMany": "Muchos a muchos",
+    "describeOneToOne": "Cada {from} tiene como máximo un {to}, y viceversa",
+    "describeOneToMany": "Cada {from} tiene muchos {to}; cada {to} pertenece a un {from}",
+    "describeManyToOne": "Cada {from} pertenece a un {to}; cada {to} tiene muchos {from}",
+    "describeManyToMany": "Cada {from} tiene muchos {to}, y cada {to} muchos {from}"
+  },
+  "drop": {
+    "board": "Suelta en la pizarra",
+    "weakEntity": "Entidad débil",
+    "entity": "Entidad",
+    "childOfHierarchy": "Entidad hija de la jerarquía",
+    "newDiagram": "{label} (un diagrama nuevo)",
+    "associative": "Entidad asociativa",
+    "relation": "Relación",
+    "from": "{noun} desde {name}",
+    "onEntityFirst": "Suelta sobre una entidad o añade una entidad primero",
+    "keyAttribute": "Atributo clave",
+    "attribute": "Atributo",
+    "onOwnerKey": "Suelta sobre una entidad o relación para añadir un atributo clave",
+    "onOwner": "Suelta sobre una entidad o relación para añadir un atributo",
+    "attributeOf": "{noun} de {name}",
+    "isaNeedsEntity": "Suelta sobre una entidad para añadir una jerarquía bajo ella",
+    "isaUnder": "Jerarquía bajo {name}",
+    "unionNeedsEntity": "Suelta sobre la entidad categoría para añadirle un tipo unión",
+    "unionOf": "Tipo unión de {name}",
+    "aggregateNeedsRelation": "Suelta sobre una relación para agregarla",
+    "aggregationOf": "Agregación de {name}",
+    "constraintClick": "Haz clic para añadir una restricción entre dos relaciones",
+    "theHierarchy": "la jerarquía",
+    "it": "ella"
+  },
+  "waiting": "{label} (añade una entidad primero)",
+  "untitledDiagram": "Diagrama sin título",
+  "actions": {
+    "entityNewDiagram": "Entidad (un diagrama nuevo)",
+    "weakNewDiagram": "Entidad débil (un diagrama nuevo)",
+    "relationFrom": "Relación desde {name}",
+    "associativeFrom": "Entidad asociativa desde {name}",
+    "attributeOf": "Atributo de {name}",
+    "attributeNeedsEntity": "Atributo (añade una entidad primero)",
+    "keyAttributeOf": "Atributo clave de {name}",
+    "keyAttributeNeedsEntity": "Atributo clave (añade una entidad primero)",
+    "isaUnder": "Jerarquía bajo {name}",
+    "isaNeedsEntity": "Jerarquía (añade una entidad primero)",
+    "unionOf": "Tipo unión de {name}",
+    "unionNeedsEntity": "Tipo unión (añade una entidad primero)",
+    "aggregationOf": "Agregación de {name}",
+    "aggregationNeedsRelation": "Agregación (añade una relación primero)",
+    "constraintBetween": "Restricción entre relaciones",
+    "constraintNeedsTwo": "Restricción (necesita dos relaciones)"
+  },
+  "toolbar": {
+    "newDiagram": "Nuevo diagrama",
+    "newDiagramHint": "Empieza otro diagrama en el centro de la vista.",
+    "selectDiagram": "Seleccionar diagrama",
+    "selectDiagramHint": "Selecciona todo el diagrama mostrado para moverlo.",
+    "relayout": "Reorganizar",
+    "relayoutHint": "Vuelve a distribuir el diagrama mostrado.",
+    "text": "Texto del diagrama",
+    "textHint": "Edita el diagrama mostrado como texto en el panel ER.",
+    "check": "Revisar diagrama",
+    "checkCount": "Revisar diagrama ({count})",
+    "checkHint": "El estándar del diagrama y lo que incumple sus reglas, en el panel ER.",
+    "createTables": "Crear tablas",
+    "createTablesHint": "Convierte el diagrama mostrado en tablas de base de datos."
+  },
+  "palette": {
+    "group": "Elementos ER",
+    "entity": {
+      "label": "Entidad",
+      "description": "Haz clic para añadir o arrastra a la pizarra."
+    },
+    "weakEntity": {
+      "label": "Entidad débil",
+      "description": "Una entidad identificada a través de una relación (rectángulo doble)."
+    },
+    "relation": {
+      "label": "Relación",
+      "description": "Arrastra sobre una entidad para iniciar una relación desde ella."
+    },
+    "associative": {
+      "label": "Entidad asociativa",
+      "description": "Una relación que también es una entidad: tiene clave y participa en relaciones."
+    },
+    "attribute": {
+      "label": "Atributo",
+      "description": "Arrastra sobre una entidad o relación."
+    },
+    "keyAttribute": {
+      "label": "Atributo clave",
+      "description": "Un atributo identificador; arrastra sobre una entidad."
+    },
+    "isa": {
+      "label": "Jerarquía",
+      "description": "Arrastra sobre la entidad padre (es-un)."
+    },
+    "union": {
+      "label": "Tipo unión",
+      "description": "Una categoría: arrastra sobre la entidad que une sus superclases."
+    },
+    "aggregate": {
+      "label": "Agregación",
+      "description": "Arrastra sobre una relación para agregarla."
+    },
+    "constraint": {
+      "label": "Restricción",
+      "description": "Haz clic para añadir una restricción de exclusión entre dos relaciones."
+    }
+  },
+  "panel": {
+    "editor": "Editor de diagrama ER",
+    "srTitle": "Diagrama ER",
+    "edit": "Editar diagrama",
+    "editHint": "Edita en el modo ER: solo se pueden seleccionar diagramas ER, con las herramientas ER a mano",
+    "select": "Seleccionar diagrama",
+    "selectHint": "Selecciona todo el diagrama para moverlo",
+    "relayout": "Reorganizar",
+    "relayoutHint": "Reorganiza este diagrama",
+    "collapse": "Contraer panel",
+    "collapseHint": "Contrae el panel (se mantiene mientras el modo ER está activo)",
+    "close": "Cerrar panel",
+    "visual": "Visual",
+    "text": "Texto",
+    "textHelp": "Selecciona una forma en la pizarra para editarla con un formulario, o usa Añadir. La pestaña Visual muestra los ajustes del diagrama.",
+    "collapsedLabel": "Editor de diagrama ER (contraído)",
+    "open": "Abrir el panel ER",
+    "diagramName": "Nombre del diagrama",
+    "useChen": "Usar elipses de Chen",
+    "useLollipop": "Usar círculos de piruleta",
+    "styleLollipop": "Atributos: piruleta (cambiar a elipses de Chen)",
+    "styleChen": "Atributos: elipses de Chen (cambiar a piruleta)",
+    "diagramsOnBoard": "Diagramas de la pizarra",
+    "allDiagrams": "Todos los diagramas",
+    "diagramsOnThisBoard": "Diagramas de esta pizarra",
+    "newDiagram": "Nuevo diagrama",
+    "add": "Añadir"
+  },
+  "syntax": {
+    "title": "Sintaxis",
+    "a": "Una línea de relación con cardinalidad, rol (",
+    "b": "), ",
+    "c": " o el nombre de una entidad es un participante; las demás líneas son atributos (fuerza uno con ",
+    "d": "). Las entidades que nombra una relación se crean al salir del editor. La referencia completa está en ",
+    "e": "."
+  },
+  "text": {
+    "label": "Texto del diagrama ER",
+    "hint": "Se emparejan por nombre, así que al renombrar conservan su lugar. Las formas nuevas se colocan automáticamente; las entidades que nombra una relación se crean al salir del editor."
+  },
+  "settings": {
+    "back": "Todos los diagramas",
+    "intro": "El estándar del diagrama, su revisión y cómo se dibuja. Selecciona una forma para editarla.",
+    "standard": "Estándar",
+    "check": "Revisión",
+    "checkCount": "Revisión ({count})",
+    "tables": "Tablas",
+    "createTables": "Crear tablas…"
+  },
+  "list": {
+    "pick": "Elige un diagrama para ver sus ajustes o selecciona una de sus formas en la pizarra.",
+    "none": "Esta pizarra aún no tiene diagramas ER.",
+    "entities_one": "{count} entidad",
+    "entities_other": "{count} entidades",
+    "new": "Nuevo diagrama"
+  },
+  "check": {
+    "none": "No se encontraron problemas.",
+    "weakExistence": "{name} depende de su propietaria solo por existencia (E); una entidad débil suele identificarse a través de ella (I, o una relación identificadora).",
+    "weakIdentifying": "{name} es débil, pero ninguna relación identificadora la une a su propietaria.",
+    "weakPartialKey": "{name} es débil y no tiene clave parcial (~nombre).",
+    "weakTotal": "{entity} debería participar (1,1) en {relation}, su relación identificadora.",
+    "entityKey": "{name} no tiene atributo clave.",
+    "partialKeyStrong": "{name} es una clave parcial, pero {entity} no es débil.",
+    "keyDerived": "{name} es una clave pero derivada.",
+    "alternateKeyDerived": "{name} es una clave alternativa pero derivada.",
+    "keyMultivalued": "{name} es una clave pero multivaluada.",
+    "alternateKeyMultivalued": "{name} es una clave alternativa pero multivaluada.",
+    "relationDependency": "{name} tiene las marcas I y E; una dependencia es por identificación o por existencia.",
+    "relationParticipants": "{name} une menos de dos entidades.",
+    "relationRoles": "{name} relaciona {entity} consigo misma; dale un rol a cada lado.",
+    "anEntity": "una entidad",
+    "associativeKey": "{name} es una entidad asociativa sin atributo clave.",
+    "relationConvert": "{name} relaciona {count} lados; Convertir en entidad la transforma en una entidad con una relación bidireccional por lado.",
+    "relationAllOne": "Todos los lados de {name} son como máximo uno; una relación de tres o más suele ser de muchos en algún lado.",
+    "relationCardinality": "{entity} no tiene cardinalidad en {relation}.",
+    "aParticipant": "Un participante",
+    "isaNoChildren": "La jerarquía bajo {parent} no tiene hijos; suele tener dos o más.",
+    "isaOneChild": "La jerarquía bajo {parent} tiene un hijo; suele tener dos o más.",
+    "itsParent": "su padre",
+    "unionNoSuperclasses": "El tipo unión de {category} no tiene superclases; une dos o más.",
+    "unionOneSuperclass": "El tipo unión de {category} tiene una superclase; une dos o más.",
+    "itsCategory": "su categoría",
+    "standardConstruct": "{construct} no forman parte de {standard}."
+  },
+  "standard": {
+    "label": "Estándar",
+    "notInstalled": "{id} (no instalado)",
+    "missing": "Este estándar no está instalado (¿se quitó un complemento?), así que el diagrama se dibuja con el predeterminado.",
+    "approximate": "Dibujado a partir de fuentes secundarias: consulta el libro para ver sus símbolos exactos y ajusta la configuración de abajo si difieren.",
+    "openFailed": "No se pudo abrir la referencia",
+    "open": "Abrir la referencia"
+  },
+  "standards": {
+    "cloudy": "(mín,máx) en las líneas, la razón en el rombo, jerarquías con triángulo y patas de gallo.",
+    "chen": "El modelo original: 1, N y M en las líneas; sin jerarquías, agregaciones ni restricciones.",
+    "elmasri": "1 / N en las líneas, líneas dobles para la participación total, el círculo d / o.",
+    "silberschatz": "Límites de cardinalidad en las líneas, líneas dobles para la participación total, agregación.",
+    "piattini": "(mín,máx) en las líneas, la razón en el rombo, jerarquías con triángulo, agregación y restricciones.",
+    "cloudyCitation": "La mezcla propia de la pizarra de las notaciones habituales."
+  },
+  "settingChoices": {
+    "attributes": {
+      "label": "Atributos",
+      "hint": "Cómo se dibujan los atributos.",
+      "ellipse": "Elipses de Chen",
+      "lollipop": "Piruletas"
+    },
+    "cardinality": {
+      "label": "Cardinalidad en las líneas",
+      "hint": "Qué dice cada línea sobre su lado.",
+      "minmax": "(mín,máx)",
+      "ratio": "1 / N"
+    },
+    "ratio": {
+      "label": "Razón en el rombo",
+      "hint": "Para Cliente (0,n) y Pedido (1,1).",
+      "across": "Lectura cruzada",
+      "own": "Máximo propio"
+    },
+    "participation": {
+      "label": "Participación",
+      "hint": "Cómo se muestra un lado obligatorio (mínimo 1).",
+      "numbers": "Números",
+      "lines": "Línea doble",
+      "both": "Ambos"
+    },
+    "isa": {
+      "label": "Jerarquías",
+      "hint": "El símbolo de la especialización.",
+      "arc": "Triángulo",
+      "circle": "Círculo d / o",
+      "arrow": "Flecha"
+    },
+    "arrows": {
+      "label": "Puntas de flecha",
+      "hint": "En relaciones bidireccionales, en una entidad con la que el otro lado participa como máximo una vez.",
+      "manual": "Solo [arrow]",
+      "cardinality": "Según la cardinalidad"
+    },
+    "joins": {
+      "label": "Atributos de unión",
+      "hint": "El atributo por el que se une una relación, tras la cardinalidad.",
+      "shown": "Visibles",
+      "hidden": "Ocultos"
+    },
+    "dependency": {
+      "label": "Marcas de dependencia",
+      "hint": "Las marcas I (identificación) y E (existencia) en las relaciones.",
+      "marks": "Visibles",
+      "none": "Ocultas"
+    },
+    "crowFeet": {
+      "label": "Patas de gallo",
+      "hint": "Marca dónde las relaciones bidireccionales llegan a las entidades.",
+      "on": "Visibles",
+      "off": "Ocultas"
+    }
+  },
+  "form": {
+    "nameIt": "Ponle un nombre",
+    "moveUp": "Subir",
+    "moveDown": "Bajar",
+    "aggregate": {
+      "name": "Nombre de la agregación",
+      "relation": "Relación que agrupa",
+      "hint": "Añade esta agregación como participante de otra relación para relacionarla como una entidad."
+    },
+    "attributes": {
+      "title": "Atributos",
+      "add": "Añadir atributo",
+      "none": "Aún no hay atributos."
+    },
+    "attribute": {
+      "name": "Nombre del atributo",
+      "addPart": "Añadir una parte (atributo compuesto)",
+      "delete": "Eliminar atributo",
+      "keyTitle": "Atributo clave (subrayado)",
+      "partialTitle": "Clave parcial de una entidad débil (subrayado discontinuo)",
+      "alternateTitle": "Clave alternativa (candidata) (subrayado punteado)",
+      "multi": "Multi",
+      "multiTitle": "Multivaluado (elipse doble)",
+      "derived": "Derivado",
+      "derivedTitle": "Derivado (elipse discontinua)",
+      "optional": "Opc",
+      "optionalTitle": "Opcional (círculo medio relleno en el estilo piruleta)"
+    },
+    "cardinality": {
+      "minimum": "Mínimo",
+      "maximum": "Máximo",
+      "many": "n (muchos)"
+    },
+    "constraint": {
+      "exclusive": "Exclusividad",
+      "exclusiveHint": "La entidad participa en solo una de las dos relaciones.",
+      "inclusive": "Inclusividad",
+      "inclusiveHint": "Para participar en la segunda, la entidad debe participar en la primera (mín,máx) veces.",
+      "exclusion": "Exclusión",
+      "exclusionHint": "Las mismas ocurrencias no pueden estar en ambas relaciones.",
+      "inclusion": "Inclusión",
+      "inclusionHint": "Las ocurrencias de la segunda relación deben existir en la primera.",
+      "kind": "Tipo",
+      "entity": "Entidad",
+      "choose": "Elegir…",
+      "requiredRelation": "Relación requerida",
+      "relation": "Relación",
+      "first": "Primera relación",
+      "swap": "Intercambiar relaciones",
+      "needsIt": "Relación que la necesita",
+      "other": "Otra relación",
+      "second": "Segunda relación",
+      "howMany": "Cuántas veces"
+    },
+    "entity": {
+      "name": "Nombre de la entidad",
+      "weak": "Débil",
+      "weakTitle": "Entidad débil (rectángulo doble)",
+      "usedIn": "Usada en",
+      "specialize": "Especializa esta entidad en entidades hijas (ES UN)",
+      "addHierarchy": "Añadir jerarquía",
+      "notInRelation": "Aún no está en ninguna relación.",
+      "itsHierarchy": "▽ su jerarquía",
+      "parentHierarchy": "▽ jerarquía del padre"
+    },
+    "isa": {
+      "parent": "Entidad padre",
+      "overlapOrExclusive": "Solapada o exclusiva",
+      "overlapping": "Solapada",
+      "overlappingTitle": "Solapada: una ocurrencia puede ser varios hijos a la vez",
+      "exclusive": "Exclusiva",
+      "exclusiveTitle": "Exclusiva: solo un hijo (arco bajo el triángulo)",
+      "partialOrTotal": "Parcial o total",
+      "partial": "Parcial",
+      "partialTitle": "Parcial: también puede no ser ninguno de los hijos",
+      "total": "Total",
+      "totalTitle": "Total: siempre es uno de los hijos (círculo en la línea)",
+      "discriminator": "Discriminador (opcional)",
+      "discriminatorExample": "p. ej. tipo",
+      "children": "Hijos",
+      "newChildTitle": "Crear una entidad hija nueva",
+      "newEntity": "Nueva entidad",
+      "child": "Entidad hija",
+      "removeChild": "Quitar hija",
+      "addExistingChild": "Añadir una entidad existente como hija",
+      "addExisting": "Añadir una entidad existente…"
+    },
+    "participant": {
+      "entity": "Entidad",
+      "key": "{name} (clave)",
+      "remove": "Quitar de la relación",
+      "join": "Atributo de unión",
+      "noJoin": "Une por: ningún atributo",
+      "rolePlaceholder": "Rol (para una entidad relacionada consigo misma)",
+      "role": "Rol",
+      "arrow": "Flecha",
+      "arrowTitle": "Punta de flecha en el extremo de la entidad"
+    },
+    "relation": {
+      "name": "Nombre de la relación",
+      "identifying": "Identificadora",
+      "identifyingTitle": "Relación identificadora de una entidad débil (rombo doble)",
+      "associative": "Asociativa",
+      "associativeTitle": "Una entidad asociativa: una relación que también es una entidad, con clave propia, que participa en otras relaciones",
+      "iMark": "Marca I",
+      "iMarkTitle": "Dependencia por identificación (una I en la parte superior del rombo)",
+      "eMark": "Marca E",
+      "eMarkTitle": "Dependencia por existencia (una E en la parte superior del rombo)",
+      "ratioTitle": "A partir de las cardinalidades máximas",
+      "convertTitle": "Reemplaza la relación por una entidad y una relación bidireccional por lado",
+      "convert": "Convertir en entidad",
+      "participants": "Participantes",
+      "addParticipant": "Añadir",
+      "noParticipants": "Aún no participa ninguna entidad.",
+      "aggregateTitle": "Encierra esta relación y sus entidades para que pueda participar en otras relaciones",
+      "aggregate": "Crear una agregación"
+    },
+    "issues": "Problemas",
+    "union": {
+      "intro": "Cada {name} es exactamente una de las superclases de abajo (una categoría).",
+      "category": "Entidad categoría",
+      "superclasses": "Superclases",
+      "newTitle": "Crear una entidad superclase nueva",
+      "remove": "Quitar superclase",
+      "addExisting": "Añadir una entidad existente como superclase"
+    }
+  },
+  "prompt": {
+    "dialog": "Nueva relación",
+    "howBefore": "¿Cómo se relacionan ",
+    "and": " y ",
+    "related": "?",
+    "joinsBy": "{name} se une por",
+    "linksTo": "{other} se vincula a {name} por",
+    "joinAttribute": "Atributo de unión de {name}",
+    "back": "Atrás",
+    "create": "Crear relación",
+    "newKey": "Nuevo atributo clave «{name}»",
+    "noJoin": "Sin atributo de unión",
+    "key": "{name} (clave)"
+  },
+  "toTables": {
+    "error": "No se pudieron crear las tablas",
+    "theDiagram": "el diagrama",
+    "written_one": "{count} tabla escrita",
+    "written_other": "{count} tablas escritas",
+    "undo": "Deshaz con Ctrl+Z.",
+    "title": "Crear tablas desde {label}",
+    "description": "Cada entidad, atributo multivaluado y relación muchos a muchos se convierte en una tabla, y las demás relaciones en claves foráneas. Las tablas que ya existen con los mismos nombres se actualizan.",
+    "hierarchies": "Jerarquías",
+    "count_one": "{count} tabla (DBML)",
+    "count_other": "{count} tablas (DBML)",
+    "nothing": "Aún no hay nada que convertir.",
+    "create": "Crear tablas",
+    "perEntity": "Una tabla por entidad",
+    "perEntityHint": "Los hijos usan la clave del padre.",
+    "single": "Una tabla para todas",
+    "singleHint": "Todas las columnas en la tabla del padre, con un discriminador.",
+    "warnNeedsSides": "{name} necesita dos lados con tablas, así que se dejó fuera.",
+    "warnConstraints": "Las restricciones entre relaciones no tienen tablas; aplícalas en la aplicación.",
+    "warnGuessed": "Los tipos de columna se dedujeron de sus nombres; revísalos en el panel de base de datos.",
+    "warnNoKey": "{name} no tiene clave, así que recibió una columna id.",
+    "warnLoop": "Los propietarios de {name} forman un ciclo, así que usa clave como una entidad fuerte.",
+    "warnNoPartial": "{name} es débil pero no tiene clave parcial; su clave es la de su propietaria.",
+    "warnDerived": "{name} es derivado, así que no tiene columna."
+  },
+  "constructs": {
+    "aggregations": "Agregaciones",
+    "alternate-keys": "Claves alternativas",
+    "associative-entities": "Entidades asociativas",
+    "composite-attributes": "Atributos compuestos",
+    "constraints": "Restricciones entre relaciones",
+    "dependency-marks": "Marcas de dependencia (I, E)",
+    "derived-attributes": "Atributos derivados",
+    "hierarchies": "Jerarquías",
+    "identifying-relations": "Relaciones identificadoras (rombos dobles)",
+    "join-attributes": "Atributos de unión",
+    "multivalued-attributes": "Atributos multivaluados",
+    "nary-relations": "Relaciones de tres o más lados",
+    "optional-attributes": "Atributos opcionales",
+    "relation-attributes": "Atributos de relaciones",
+    "self-relations": "Relaciones de una entidad consigo misma",
+    "unions": "Tipos unión",
+    "weak-entities": "Entidades débiles",
+    "notPart": "{construct} no forman parte de {standard}"
+  },
+  "lang": {
+    "createdEntity": "Se creó la entidad que faltaba «{name}»",
+    "addedAttribute": "Se añadió el atributo «{via}» a «{name}»",
+    "standardMissingDrawn": "El estándar «{name}» no está instalado; se dibuja con el predeterminado",
+    "standardMissing": "El estándar «{name}» no está instalado; el diagrama se dibuja con el predeterminado.",
+    "unknownSetting": "Se ignoró el ajuste desconocido «{key}»"
+  }
+}

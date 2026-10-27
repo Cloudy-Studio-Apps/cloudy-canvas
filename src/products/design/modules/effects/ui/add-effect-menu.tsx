@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@shared/ui/kit";
 import type { AddEffectMenuProps } from "./effects-ui.types";
+import { t } from "../effects.i18n";
 
 /** The Effects section's "+": every effect type, as Figma lists them, Beta ones tagged. */
 export function AddEffectMenu({ types, onAdd }: AddEffectMenuProps) {
@@ -18,7 +19,7 @@ export function AddEffectMenu({ types, onAdd }: AddEffectMenuProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <span>
-          <PanelAddButton label="Add effect" />
+          <PanelAddButton label={t("menu.add")} />
         </span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
@@ -28,7 +29,9 @@ export function AddEffectMenu({ types, onAdd }: AddEffectMenuProps) {
             <DropdownMenuItem className="gap-2 text-xs" onSelect={() => onAdd(entry)}>
               <ExtensionIconView icon={entry.icon} className="size-3.5" />
               {entry.label}
-              {entry.beta && <Badge className="ml-auto h-4 px-1 text-[10px]">Beta</Badge>}
+              {entry.beta && (
+                <Badge className="ml-auto h-4 px-1 text-[10px]">{t("menu.beta")}</Badge>
+              )}
             </DropdownMenuItem>
           </Fragment>
         ))}

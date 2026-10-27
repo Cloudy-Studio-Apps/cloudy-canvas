@@ -7,6 +7,7 @@ import { cn } from "@shared/ui/kit";
 import { useBoard } from "../use-board";
 import type { ModeRowProps } from "./inspector.types";
 import { MoveModeMenu } from "./move-mode-menu";
+import { t } from "../../../variables.i18n";
 
 /**
  * A mode in its group: renamed in place, dragged by its grip to another group (or dropped on
@@ -47,7 +48,7 @@ export function ModeRow({ axis, mode, first, moves }: ModeRowProps) {
           moves.setDrag({ modeId: mode.id, axisId: axis.id });
         }}
         onDragEnd={() => moves.setDrag(null)}
-        title={first ? undefined : "Drag to another group"}
+        title={first ? undefined : t("inspector.dragToGroup")}
         className={cn(
           "flex size-5 shrink-0 items-center justify-center text-subtle-foreground",
           first ? "opacity-30" : "cursor-grab active:cursor-grabbing",
@@ -56,7 +57,7 @@ export function ModeRow({ axis, mode, first, moves }: ModeRowProps) {
         <GripVertical className="size-3.5" />
       </span>
       <CommitInput
-        aria-label="Mode name"
+        aria-label={t("inspector.modeName")}
         value={mode.name}
         onCommit={(name) => tokens.renameMode(axis.id, mode.id, name)}
         className="h-7 min-w-0 flex-1 text-xs"
@@ -64,22 +65,22 @@ export function ModeRow({ axis, mode, first, moves }: ModeRowProps) {
       {first ? (
         <span
           className="w-14 text-center text-[10px] text-subtle-foreground"
-          title="Its values are the defaults the other modes fall back to"
+          title={t("inspector.firstHint")}
         >
-          first
+          {t("inspector.first")}
         </span>
       ) : (
         <>
           <MoveModeMenu axis={axis} mode={mode} moves={moves} />
           <button
             type="button"
-            aria-label={`Remove ${mode.name}`}
-            title={`Remove ${mode.name}`}
+            aria-label={t("inspector.remove", { name: mode.name })}
+            title={t("inspector.remove", { name: mode.name })}
             onClick={() => {
               try {
                 tokens.removeMode(axis.id, mode.id);
               } catch (error) {
-                notifyError("Couldn't remove the mode", error);
+                notifyError(t("inspector.removeError"), error);
               }
             }}
             className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted"

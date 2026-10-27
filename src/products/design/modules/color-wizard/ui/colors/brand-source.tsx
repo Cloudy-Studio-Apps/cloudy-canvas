@@ -7,8 +7,9 @@ import { colorOklch, oklchColor } from "../..";
 import { buildFromBrand, useColorWizardStore } from "../store";
 import { HarmonyPicker } from "./harmony-picker";
 import { SectionLabel } from "./section-label";
+import { t } from "../../color-wizard.i18n";
 
-const NAMES = ["Primary", "Secondary", "Accent"];
+const NAMES = [t("sources.brand.primary"), t("sources.brand.secondary"), t("sources.brand.accent")];
 
 /** Colors that must stay (a logo's): locked in the palette, the rest built around them. */
 export function BrandSource() {
@@ -17,16 +18,13 @@ export function BrandSource() {
   const setColors = (colors: string[]) => set({ brand: { ...brand, colors } });
   return (
     <div className="flex flex-col gap-3 p-4">
-      <SectionLabel>Colors you must keep</SectionLabel>
-      <p className="text-xs text-muted-foreground">
-        Your logo or brand colors. They're locked in the palette, and the wizard builds the rest
-        around them.
-      </p>
+      <SectionLabel>{t("sources.brand.keepTitle")}</SectionLabel>
+      <p className="text-xs text-muted-foreground">{t("sources.brand.keepHint")}</p>
       {brand.colors.map((hex, i) => (
         <div key={i} className="flex items-center gap-2">
           <span className="w-20 text-xs text-muted-foreground">{NAMES[i]}</span>
           <ColorField
-            label={`${NAMES[i]} brand color`}
+            label={t("sources.brand.brandColor", { name: NAMES[i] ?? "" })}
             color={hex.toLowerCase()}
             className="flex-1"
             onChange={(next) =>
@@ -35,7 +33,7 @@ export function BrandSource() {
           />
           {brand.colors.length > 1 && (
             <IconButton
-              label="Remove"
+              label={t("sources.brand.remove")}
               onClick={() => setColors(brand.colors.filter((_, j) => j !== i))}
             >
               <Trash2 />
@@ -54,10 +52,10 @@ export function BrandSource() {
           }}
         >
           <Plus />
-          Add a brand color
+          {t("sources.brand.add")}
         </Button>
       )}
-      <SectionLabel className="mt-2">Build the rest with</SectionLabel>
+      <SectionLabel className="mt-2">{t("sources.brand.buildWith")}</SectionLabel>
       <HarmonyPicker
         custom={false}
         value={brand.harmony}
@@ -66,15 +64,13 @@ export function BrandSource() {
       <Button
         onClick={() => {
           buildFromBrand(brand.colors);
-          toast({ title: "Brand colors are locked, so Generate random keeps them" });
+          toast({ title: t("sources.brand.locked") });
         }}
       >
         <Sparkles />
-        Build palette
+        {t("sources.brand.build")}
       </Button>
-      <p className="text-xs text-muted-foreground">
-        The next step adds a neutral and status colors tinted toward your primary.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("sources.brand.nextStep")}</p>
     </div>
   );
 }

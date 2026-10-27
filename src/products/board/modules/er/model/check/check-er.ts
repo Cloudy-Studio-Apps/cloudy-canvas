@@ -2,6 +2,7 @@ import { forbiddenConstructs } from "../../base/constructs";
 import type { ErStandardDefinition } from "../../base/standards";
 import type { ErShapes } from "../lang";
 import type { ErIssue, ErIssueSeverity } from "./check-er.types";
+import { t } from "../../er.i18n";
 
 const ORDER: Record<ErIssueSeverity, number> = { error: 0, warning: 1, info: 2 };
 
@@ -33,18 +34,13 @@ export function checkErDiagram(shapes: ErShapes, standard: ErStandardDefinition)
         (r) => r.existenceMark && r.participants.some((p) => p.entityId === entity.id),
       );
       if (identifying.length === 0 && byExistence) {
-        add(
-          "weak-existence",
-          "info",
-          entity.id,
-          `${entity.name} depends on its owner by existence only (E); a weak entity is usually identified through it (I, or an identifying relation).`,
-        );
+        add("weak-existence", "info", entity.id, t("check.weakExistence", { name: entity.name }));
       } else if (identifying.length === 0) {
         add(
           "weak-identifying",
           "error",
           entity.id,
-          `${entity.name} is weak, but no identifying relation joins it to its owner.`,
+          t("check.weakIdentifying", { name: entity.name }),
         );
       }
       if (!attributes.some((a) => a.key === "partial")) {
@@ -52,7 +48,7 @@ export function checkErDiagram(shapes: ErShapes, standard: ErStandardDefinition)
           "weak-partial-key",
           "warning",
           entity.id,
-          `${entity.name} is weak and has no partial key (~name).`,
+          t("check.weakPartialKey", { name: entity.name }),
         );
       }
       for (const relation of identifying) {
@@ -62,7 +58,7 @@ export function checkErDiagram(shapes: ErShapes, standard: ErStandardDefinition)
             "weak-total",
             "warning",
             relation.id,
-            `${entity.name} should take part (1,1) in ${relation.name}, its identifying relation.`,
+            t("check.weakTotal", { entity: entity.name, relation: relation.name }),
           );
         }
       }
@@ -73,14 +69,14 @@ export function checkErDiagram(shapes: ErShapes, standard: ErStandardDefinition)
         !categories.has(entity.id) &&
         !attributes.some((a) => a.key === "pk")
       ) {
-        add("entity-key", "warning", entity.id, `${entity.name} has no key attribute.`);
+        add("entity-key", "warning", entity.id, t("check.entityKey", { name: entity.name }));
       }
       for (const attribute of attributes.filter((a) => a.key === "partial")) {
         add(
           "partial-key-strong",
           "warning",
           attribute.id,
-          `${attribute.name} is a partial key, but ${entity.name} isn't weak.`,
+          t("check.partialKeyStrong", { name: attribute.name, entity: entity.name }),
         );
       }
     }
@@ -88,16 +84,23 @@ export function checkErDiagram(shapes: ErShapes, standard: ErStandardDefinition)
 
   for (const attribute of shapes.attributes) {
     if (attribute.key !== "pk" && attribute.key !== "alternate") continue;
-    const noun = attribute.key === "pk" ? "a key" : "an alternate key";
+    const isKey = attribute.key === "pk";
     if (attribute.derived) {
-      add("key-derived", "warning", attribute.id, `${attribute.name} is ${noun} but derived.`);
+      add(
+        "key-derived",
+        "warning",
+        attribute.id,
+        t(isKey ? "check.keyDerived" : "check.alternateKeyDerived", { name: attribute.name }),
+      );
     }
     if (attribute.multivalued) {
       add(
         "key-multivalued",
         "warning",
         attribute.id,
-        `${attribute.name} is ${noun} but multivalued.`,
+        t(isKey ? "check.keyMultivalued" : "check.alternateKeyMultivalued", {
+          name: attribute.name,
+        }),
       );
     }
   }
@@ -109,7 +112,7 @@ export function checkErDiagram(shapes: ErShapes, standard: ErStandardDefinition)
         "relation-dependency",
         "error",
         relation.id,
-        `${relation.name} has both the I and the E mark; a dependency is by identification or by existence.`,
+        t("check.relationDependency", { name: relation.name }),
       );
     }
     if (participants.length < 2) {
@@ -117,7 +120,7 @@ export function checkErDiagram(shapes: ErShapes, standard: ErStandardDefinition)
         "relation-participants",
         "error",
         relation.id,
-        `${relation.name} joins fewer than two entities.`,
+        t("check.relationParticipants", { name: relation.name }),
       );
     }
     const ids = participants.map((p) => p.entityId);
@@ -127,7 +130,10 @@ export function checkErDiagram(shapes: ErShapes, standard: ErStandardDefinition)
         "relation-roles",
         "warning",
         relation.id,
-        `${relation.name} relates ${names.get(repeated[0]!) ?? "an entity"} to itself; give each side a role.`,
+        t("check.relationRoles", {
+          name: relation.name,
+          entity: names.get(repeated[0]!) ?? t("check.anEntity"),
+        }),
       );
     }
     if (relation.associative && !ownAttributes(relation.id).some((a) => a.key === "pk")) {
@@ -135,7 +141,7 @@ export function checkErDiagram(shapes: ErShapes, standard: ErStandardDefinition)
         "associative-key",
         "warning",
         relation.id,
-        `${relation.name} is an associative entity without a key attribute.`,
+        t("check.associativeKey", { name: relation.name }),
       );
     }
     if (participants.length >= 3 && !relation.associative) {
@@ -143,7 +149,7 @@ export function checkErDiagram(shapes: ErShapes, standard: ErStandardDefinition)
         "relation-convert",
         "info",
         relation.id,
-        `${relation.name} relates ${participants.length} sides; Convert to entity turns it into an entity with a two-way relation per side.`,
+        t("check.relationConvert", { name: relation.name, count: participants.length }),
       );
     }
     if (participants.length >= 3 && participants.every((p) => p.max === "1")) {
@@ -151,7 +157,7 @@ export function checkErDiagram(shapes: ErShapes, standard: ErStandardDefinition)
         "relation-all-one",
         "warning",
         relation.id,
-        `Every side of ${relation.name} is at most one; a relation of three or more is usually many on some side.`,
+        t("check.relationAllOne", { name: relation.name }),
       );
     }
     for (const p of participants.filter((p) => !p.max)) {
@@ -159,30 +165,38 @@ export function checkErDiagram(shapes: ErShapes, standard: ErStandardDefinition)
         "relation-cardinality",
         "info",
         relation.id,
-        `${names.get(p.entityId) ?? "A participant"} has no cardinality in ${relation.name}.`,
+        t("check.relationCardinality", {
+          entity: names.get(p.entityId) ?? t("check.aParticipant"),
+          relation: relation.name,
+        }),
       );
     }
   }
 
   for (const isa of shapes.isas) {
-    const parent = names.get(isa.parentId) ?? "its parent";
+    const parent = names.get(isa.parentId) ?? t("check.itsParent");
     if (isa.children.length < 2) {
       add(
         "isa-children",
         "warning",
         isa.id,
-        `The hierarchy under ${parent} has ${isa.children.length === 0 ? "no children" : "one child"}; it usually has two or more.`,
+        t(isa.children.length === 0 ? "check.isaNoChildren" : "check.isaOneChild", { parent }),
       );
     }
   }
   for (const union of shapes.unions) {
-    const category = names.get(union.categoryId) ?? "its category";
+    const category = names.get(union.categoryId) ?? t("check.itsCategory");
     if (union.superclassIds.length < 2) {
       add(
         "union-superclasses",
         "warning",
         union.id,
-        `The union type of ${category} has ${union.superclassIds.length === 0 ? "no superclasses" : "one superclass"}; it unites two or more.`,
+        t(
+          union.superclassIds.length === 0
+            ? "check.unionNoSuperclasses"
+            : "check.unionOneSuperclass",
+          { category },
+        ),
       );
     }
   }
@@ -194,7 +208,7 @@ export function checkErDiagram(shapes: ErShapes, standard: ErStandardDefinition)
         "standard-construct",
         "error",
         shapeId,
-        `${construct.label} aren't part of ${standard.label}.`,
+        t("check.standardConstruct", { construct: construct.label, standard: standard.label }),
       );
     }
   }

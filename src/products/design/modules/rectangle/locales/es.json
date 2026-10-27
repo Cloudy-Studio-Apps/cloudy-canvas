@@ -1,0 +1,5 @@
+{
+  "label": "Rectángulo",
+  "description": "Una caja con rellenos, trazos y esquinas redondeadas.",
+  "cornerRadius": "Radio de esquina"
+}

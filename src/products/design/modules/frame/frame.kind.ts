@@ -41,12 +41,13 @@ import { FRAME_DEFAULTS } from "./frame.defaults";
 import { drawFrame } from "./frame.draw";
 import { labelRect, showsLabel } from "./frame-label";
 import type { FrameElement } from "./frame.types";
+import { t } from "./frame.i18n";
 
 /** Frames hold other nodes; at the top of the page they show their name and are hit by it too. */
 export class FrameKind extends BoxShapeKind<FrameElement> {
   readonly type = "frame";
-  readonly label = "Frame";
-  readonly description = "A container for layers, like a screen or an artboard.";
+  readonly label = t("label");
+  readonly description = t("description");
   override readonly tool = "frame";
   override readonly defaults = FRAME_DEFAULTS;
   override readonly container = true;
@@ -58,9 +59,9 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
   override bindable(el: FrameElement): BindableField[] {
     return [
       ...super.bindable(el),
-      numberField("cornerRadius", "corner-radius", "Corner radius"),
+      numberField("cornerRadius", "corner-radius", t("cornerRadius")),
       ...(el.layout ? layoutFields() : []),
-      booleanField("clipsContent", "Clip content"),
+      booleanField("clipsContent", t("clipContent")),
     ];
   }
 

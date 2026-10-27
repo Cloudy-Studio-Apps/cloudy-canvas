@@ -12,6 +12,7 @@ import {
 } from "simple-icons";
 
 import type { AgentClient } from "./agent-clients.types";
+import { t } from "./agent-server.i18n";
 
 /** The name agents list the server under. */
 const SERVER_NAME = "cloudy-canvas";
@@ -27,8 +28,8 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
     label: "Claude Code",
     match: /claude[- ]?code/i,
     icon: siClaudecode,
-    snippetLabel: "Terminal command",
-    where: "Run it in a terminal.",
+    snippetLabel: t("clients.terminalCommand"),
+    where: t("clients.runTerminal"),
     snippet: (url) => `claude mcp add --transport http ${SERVER_NAME} ${url}`,
   },
   {
@@ -37,7 +38,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
     match: /codex/i,
     icon: SquareTerminal,
     snippetLabel: "config.toml",
-    where: "Paste into ~/.codex/config.toml.",
+    where: t("clients.codex"),
     snippet: (url) => `[mcp_servers.${SERVER_NAME}]\nurl = "${url}"`,
   },
   {
@@ -46,7 +47,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
     match: /cursor/i,
     icon: siCursor,
     snippetLabel: "mcp.json",
-    where: "Paste into ~/.cursor/mcp.json, or .cursor/mcp.json in a project.",
+    where: t("clients.cursor"),
     snippet: (url) => jsonSnippet({ mcpServers: { [SERVER_NAME]: { url } } }),
     installLink: (url) =>
       `cursor://anysphere.cursor-deeplink/mcp/install?name=${SERVER_NAME}&config=${encodeURIComponent(btoa(JSON.stringify({ url })))}`,
@@ -57,7 +58,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
     match: /visual studio code|vscode|copilot/i,
     icon: siGithubcopilot,
     snippetLabel: "mcp.json",
-    where: "Paste into .vscode/mcp.json in a project, for Copilot's agent mode.",
+    where: t("clients.vscode"),
     snippet: (url) => jsonSnippet({ servers: { [SERVER_NAME]: { type: "http", url } } }),
     installLink: (url) =>
       `vscode:mcp/install?${encodeURIComponent(JSON.stringify({ name: SERVER_NAME, type: "http", url }))}`,
@@ -68,8 +69,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
     match: /antigravity/i,
     icon: Orbit,
     snippetLabel: "mcp_config.json",
-    where:
-      "Paste into the agent panel's ⋯ › MCP Servers › Manage MCP Servers › View raw config (~/.gemini/antigravity/mcp_config.json).",
+    where: t("clients.antigravity"),
     snippet: (url) => jsonSnippet({ mcpServers: { [SERVER_NAME]: { serverUrl: url } } }),
   },
   {
@@ -77,8 +77,8 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
     label: "Gemini CLI",
     match: /gemini/i,
     icon: siGooglegemini,
-    snippetLabel: "Terminal command",
-    where: "Run it in a terminal.",
+    snippetLabel: t("clients.terminalCommand"),
+    where: t("clients.runTerminal"),
     snippet: (url) => `gemini mcp add --transport http ${SERVER_NAME} ${url}`,
   },
   {
@@ -87,7 +87,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
     match: /claude[- ]?(ai|desktop)|mcp-remote/i,
     icon: siClaude,
     snippetLabel: "claude_desktop_config.json",
-    where: "Paste into Settings › Developer › Edit Config, then restart Claude. Needs Node.js.",
+    where: t("clients.claudeDesktop"),
     snippet: (url) =>
       jsonSnippet({
         mcpServers: { [SERVER_NAME]: { command: "npx", args: ["-y", "mcp-remote", url] } },
@@ -99,7 +99,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
     match: /windsurf|codeium/i,
     icon: siWindsurf,
     snippetLabel: "mcp_config.json",
-    where: "Paste into ~/.codeium/windsurf/mcp_config.json.",
+    where: t("clients.windsurf"),
     snippet: (url) => jsonSnippet({ mcpServers: { [SERVER_NAME]: { serverUrl: url } } }),
   },
   {
@@ -109,7 +109,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
     icon: siZedindustries,
     more: true,
     snippetLabel: "settings.json",
-    where: "Merge into Zed's settings.json.",
+    where: t("clients.zed"),
     snippet: (url) => jsonSnippet({ context_servers: { [SERVER_NAME]: { url } } }),
   },
   {
@@ -119,7 +119,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
     icon: siOpencode,
     more: true,
     snippetLabel: "opencode.json",
-    where: "Merge into opencode.json (in a project or ~/.config/opencode/).",
+    where: t("clients.opencode"),
     snippet: (url) => jsonSnippet({ mcp: { [SERVER_NAME]: { type: "remote", url } } }),
   },
 ];
@@ -127,9 +127,9 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
 /** The default setup: the usual `mcpServers` entry most other agents read. */
 export const GENERIC_AGENT_CLIENT: AgentClient = {
   id: "other",
-  label: "Other agents",
+  label: t("clients.other"),
   icon: siModelcontextprotocol,
-  snippetLabel: "JSON config",
-  where: "The usual mcpServers entry: .mcp.json, Cline and most other agents.",
+  snippetLabel: t("clients.jsonConfig"),
+  where: t("clients.generic"),
   snippet: (url) => jsonSnippet({ mcpServers: { [SERVER_NAME]: { type: "http", url } } }),
 };

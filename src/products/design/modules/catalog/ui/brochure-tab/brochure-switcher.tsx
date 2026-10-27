@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { tCommon } from "@shared/core";
 
 import { LayerName } from "../../../layers/ui";
 import {
@@ -13,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
+import { t } from "../../catalog.i18n";
 
 /**
  * The open brochure's name atop the Brochure tab, and its menu: the design page's brochures to
@@ -43,7 +45,7 @@ export function BrochureSwitcher() {
           {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the brochure's name as the menu's trigger */}
           <button
             type="button"
-            title="Brochures of this page"
+            title={t("tab.switcher.title")}
             onDoubleClick={() => setRenaming(true)}
             className="flex min-w-0 cursor-pointer items-center gap-1 rounded-md px-1 py-0.5 text-sm font-semibold text-foreground hover:bg-hover data-[state=open]:bg-hover [&_svg]:size-3.5 [&_svg]:shrink-0"
           >
@@ -53,7 +55,7 @@ export function BrochureSwitcher() {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="min-w-52">
           <DropdownMenuLabel className="text-xs text-muted-foreground">
-            Brochures of this page
+            {t("tab.switcher.title")}
           </DropdownMenuLabel>
           <DropdownMenuRadioGroup value={brochure.id} onValueChange={(id) => brochures.open(id)}>
             {list.map((item) => (
@@ -63,17 +65,21 @@ export function BrochureSwitcher() {
             ))}
           </DropdownMenuRadioGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onSelect={() => brochures.create(scope)}>New brochure</DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => brochures.create(scope)}>
+            {t("tab.switcher.new")}
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onSelect={() => setRenaming(true)}>Rename</DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => setRenaming(true)}>
+            {tCommon("rename")}
+          </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => brochures.duplicate(brochure.id)}>
-            Duplicate
+            {tCommon("duplicate")}
           </DropdownMenuItem>
           <DropdownMenuItem
             onSelect={() => brochures.remove(brochure.id)}
             className="text-destructive"
           >
-            Delete
+            {tCommon("delete")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

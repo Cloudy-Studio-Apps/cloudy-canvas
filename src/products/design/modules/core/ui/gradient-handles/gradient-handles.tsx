@@ -14,6 +14,7 @@ import { useGradientEditStore } from "@design/ui/stores/gradient-edit-store";
 import { dragGrip } from "./drag-grip";
 import { EndHandle } from "./end-handle";
 import type { GradientGrip } from "./gradient-handles.types";
+import { t } from "../../core.i18n";
 
 /**
  * The handles of the gradient the paint picker edits, over its layer like Figma's: its ends (a
@@ -123,12 +124,16 @@ export function GradientHandles() {
           </>
         )}
       </g>
-      <EndHandle at={start} label="Gradient start" onPointerDown={(e) => startDrag(e, "start")} />
-      <EndHandle at={end} label="Gradient end" onPointerDown={(e) => startDrag(e, "end")} />
+      <EndHandle
+        at={start}
+        label={t("gradient.start")}
+        onPointerDown={(e) => startDrag(e, "start")}
+      />
+      <EndHandle at={end} label={t("gradient.end")} onPointerDown={(e) => startDrag(e, "end")} />
       {!linear && (
         <EndHandle
           at={width}
-          label="Gradient width"
+          label={t("gradient.width")}
           small
           onPointerDown={(e) => startDrag(e, "width")}
         />
@@ -140,7 +145,7 @@ export function GradientHandles() {
           <rect
             key={i}
             role="button"
-            aria-label={`Stop at ${Math.round(stop.position * 100)}%`}
+            aria-label={t("gradient.stop", { percent: Math.round(stop.position * 100) })}
             x={at.x - 6}
             y={at.y - 6}
             width={12}

@@ -1,5 +1,6 @@
 import { Checkbox, Swatch } from "@shared/ui/kit";
 import type { FillGroupRowProps } from "./colors.types";
+import { t } from "../../color-wizard.i18n";
 
 /** A color the file's layers use, with the near-duplicates merged into it and how often. */
 export function FillGroupRow({ group, checked, onCheckedChange }: FillGroupRowProps) {
@@ -9,7 +10,7 @@ export function FillGroupRow({ group, checked, onCheckedChange }: FillGroupRowPr
       <Checkbox
         checked={checked}
         onCheckedChange={onCheckedChange}
-        aria-label={`Use ${group.hex}`}
+        aria-label={t("sources.file.rowUse", { hex: group.hex })}
       />
       <Swatch color={group.hex} size="md" />
       <div className="flex min-w-0 flex-1 flex-col">
@@ -19,7 +20,7 @@ export function FillGroupRow({ group, checked, onCheckedChange }: FillGroupRowPr
             {merged.map((m) => (
               <Swatch key={m.hex} color={m.hex} size="xs" title={`${m.hex} · ${m.refs.length}`} />
             ))}
-            merges {merged.length}
+            {t("sources.file.rowMerges", { count: merged.length })}
           </span>
         )}
       </div>

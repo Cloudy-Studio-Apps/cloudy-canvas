@@ -1,0 +1,526 @@
+{
+  "kinds": {
+    "aggregate": {
+      "label": "Aggregation",
+      "description": "A box round a relation and its participants that acts as an entity."
+    },
+    "attribute": {
+      "label": "Attribute",
+      "description": "An attribute of an entity, relation or aggregation in an ER diagram."
+    },
+    "entity": {
+      "label": "Entity",
+      "description": "An entity of an ER diagram; click to start a new diagram."
+    },
+    "relation": {
+      "label": "Relation",
+      "description": "A relation (diamond) between entities of an ER diagram."
+    },
+    "isa": {
+      "label": "Hierarchy"
+    },
+    "constraint": {
+      "label": "Constraint"
+    },
+    "union": {
+      "label": "Union type"
+    }
+  },
+  "mode": {
+    "label": "ER diagrams",
+    "description": "Only ER diagrams can be selected, with their toolbar, palette and panel."
+  },
+  "commands": {
+    "createTables": "Create tables from the diagram",
+    "convertToEntity": "Convert the relation to an entity"
+  },
+  "menu": {
+    "convertToEntity": "Convert to entity",
+    "createTables": "Create tables…"
+  },
+  "modeCommands": {
+    "addEntity": "Add an entity",
+    "addAttribute": "Add an attribute to the selection",
+    "addKeyAttribute": "Add a key attribute to the selection",
+    "addRelation": "Add a relation from the selection",
+    "addIsa": "Add a hierarchy under the selection"
+  },
+  "quickAdd": {
+    "attribute": "Attribute",
+    "keyAttribute": "Key attribute",
+    "relatedEntity": "Related entity",
+    "relation": "Relation",
+    "subtype": "Subtype (hierarchy)",
+    "participant": "Participating entity",
+    "superclass": "Superclass entity",
+    "child": "Child entity",
+    "discriminator": "Discriminator attribute",
+    "addFrom": "Add from {name}",
+    "theHierarchy": "the hierarchy"
+  },
+  "ratios": {
+    "oneToOne": "One to one",
+    "oneToMany": "One to many",
+    "manyToOne": "Many to one",
+    "manyToMany": "Many to many",
+    "describeOneToOne": "Each {from} has at most one {to}, and the other way round",
+    "describeOneToMany": "Each {from} has many {to}; each {to} belongs to one {from}",
+    "describeManyToOne": "Each {from} belongs to one {to}; each {to} has many {from}",
+    "describeManyToMany": "Each {from} has many {to}, and each {to} many {from}"
+  },
+  "drop": {
+    "board": "Drop on the board",
+    "weakEntity": "Weak entity",
+    "entity": "Entity",
+    "childOfHierarchy": "Child entity of the hierarchy",
+    "newDiagram": "{label} (a new diagram)",
+    "associative": "Associative entity",
+    "relation": "Relation",
+    "from": "{noun} from {name}",
+    "onEntityFirst": "Drop on an entity, or add an entity first",
+    "keyAttribute": "Key attribute",
+    "attribute": "Attribute",
+    "onOwnerKey": "Drop on an entity or relation to add a key attribute",
+    "onOwner": "Drop on an entity or relation to add an attribute",
+    "attributeOf": "{noun} of {name}",
+    "isaNeedsEntity": "Drop on an entity to add a hierarchy under it",
+    "isaUnder": "Hierarchy under {name}",
+    "unionNeedsEntity": "Drop on the category entity to add a union type for it",
+    "unionOf": "Union type of {name}",
+    "aggregateNeedsRelation": "Drop on a relation to aggregate it",
+    "aggregationOf": "Aggregation of {name}",
+    "constraintClick": "Click to add a constraint between two relations",
+    "theHierarchy": "the hierarchy",
+    "it": "it"
+  },
+  "waiting": "{label} (add an entity first)",
+  "untitledDiagram": "Untitled diagram",
+  "actions": {
+    "entityNewDiagram": "Entity (a new diagram)",
+    "weakNewDiagram": "Weak entity (a new diagram)",
+    "relationFrom": "Relation from {name}",
+    "associativeFrom": "Associative entity from {name}",
+    "attributeOf": "Attribute of {name}",
+    "attributeNeedsEntity": "Attribute (add an entity first)",
+    "keyAttributeOf": "Key attribute of {name}",
+    "keyAttributeNeedsEntity": "Key attribute (add an entity first)",
+    "isaUnder": "Hierarchy under {name}",
+    "isaNeedsEntity": "Hierarchy (add an entity first)",
+    "unionOf": "Union type of {name}",
+    "unionNeedsEntity": "Union type (add an entity first)",
+    "aggregationOf": "Aggregation of {name}",
+    "aggregationNeedsRelation": "Aggregation (add a relation first)",
+    "constraintBetween": "Constraint between relations",
+    "constraintNeedsTwo": "Constraint (needs two relations)"
+  },
+  "toolbar": {
+    "newDiagram": "New diagram",
+    "newDiagramHint": "Start another diagram in the middle of the view.",
+    "selectDiagram": "Select diagram",
+    "selectDiagramHint": "Select the whole shown diagram, to move it.",
+    "relayout": "Re-layout",
+    "relayoutHint": "Lay the shown diagram out again.",
+    "text": "Diagram text",
+    "textHint": "Edit the shown diagram as text in the ER panel.",
+    "check": "Check diagram",
+    "checkCount": "Check diagram ({count})",
+    "checkHint": "The diagram's standard and what breaks its rules, in the ER panel.",
+    "createTables": "Create tables",
+    "createTablesHint": "Turn the shown diagram into database tables."
+  },
+  "palette": {
+    "group": "ER elements",
+    "entity": {
+      "label": "Entity",
+      "description": "Click to add, or drag onto the board."
+    },
+    "weakEntity": {
+      "label": "Weak entity",
+      "description": "An entity identified through a relation (double rectangle)."
+    },
+    "relation": {
+      "label": "Relation",
+      "description": "Drag onto an entity to start a relation from it."
+    },
+    "associative": {
+      "label": "Associative entity",
+      "description": "A relation that is also an entity: it has a key and takes part in relations."
+    },
+    "attribute": {
+      "label": "Attribute",
+      "description": "Drag onto an entity or relation."
+    },
+    "keyAttribute": {
+      "label": "Key attribute",
+      "description": "An identifying attribute; drag onto an entity."
+    },
+    "isa": {
+      "label": "Hierarchy",
+      "description": "Drag onto the parent entity (is-a)."
+    },
+    "union": {
+      "label": "Union type",
+      "description": "A category: drag onto the entity that unites its superclasses."
+    },
+    "aggregate": {
+      "label": "Aggregation",
+      "description": "Drag onto a relation to aggregate it."
+    },
+    "constraint": {
+      "label": "Constraint",
+      "description": "Click to add an exclusion constraint between two relations."
+    }
+  },
+  "panel": {
+    "editor": "ER diagram editor",
+    "srTitle": "ER diagram",
+    "edit": "Edit diagram",
+    "editHint": "Edit in the ER mode: only ER diagrams can be selected, with the ER tools at hand",
+    "select": "Select diagram",
+    "selectHint": "Select the whole diagram, to move it",
+    "relayout": "Re-layout",
+    "relayoutHint": "Re-layout this diagram",
+    "collapse": "Collapse panel",
+    "collapseHint": "Collapse the panel (it stays while the ER mode is on)",
+    "close": "Close panel",
+    "visual": "Visual",
+    "text": "Text",
+    "textHelp": "Select a shape on the board to edit it with a form, or use Add. The Visual tab shows the diagram's settings.",
+    "collapsedLabel": "ER diagram editor (collapsed)",
+    "open": "Open the ER panel",
+    "diagramName": "Diagram name",
+    "useChen": "Use Chen ellipses",
+    "useLollipop": "Use lollipop circles",
+    "styleLollipop": "Attributes: lollipop (switch to Chen ellipses)",
+    "styleChen": "Attributes: Chen ellipses (switch to lollipop)",
+    "diagramsOnBoard": "Diagrams on the board",
+    "allDiagrams": "All diagrams",
+    "diagramsOnThisBoard": "Diagrams on this board",
+    "newDiagram": "New diagram",
+    "add": "Add"
+  },
+  "syntax": {
+    "title": "Syntax",
+    "a": "A relation line with a cardinality, a role (",
+    "b": "), ",
+    "c": " or an entity's name is a participant; other lines are attributes (force one with ",
+    "d": "). Entities a relation names are created when you leave the editor. The full reference is in ",
+    "e": "."
+  },
+  "text": {
+    "label": "ER diagram text",
+    "hint": "Matched by name, so renames keep their place. New shapes are placed automatically; entities a relation names are created when you leave the editor."
+  },
+  "settings": {
+    "back": "All diagrams",
+    "intro": "The diagram's standard, its check and how it's drawn. Select a shape to edit it instead.",
+    "standard": "Standard",
+    "check": "Check",
+    "checkCount": "Check ({count})",
+    "tables": "Tables",
+    "createTables": "Create tables…"
+  },
+  "list": {
+    "pick": "Pick a diagram to see its settings, or select one of its shapes on the board.",
+    "none": "This board has no ER diagram yet.",
+    "entities_one": "{count} entity",
+    "entities_other": "{count} entities",
+    "new": "New diagram"
+  },
+  "check": {
+    "none": "No problems found.",
+    "weakExistence": "{name} depends on its owner by existence only (E); a weak entity is usually identified through it (I, or an identifying relation).",
+    "weakIdentifying": "{name} is weak, but no identifying relation joins it to its owner.",
+    "weakPartialKey": "{name} is weak and has no partial key (~name).",
+    "weakTotal": "{entity} should take part (1,1) in {relation}, its identifying relation.",
+    "entityKey": "{name} has no key attribute.",
+    "partialKeyStrong": "{name} is a partial key, but {entity} isn't weak.",
+    "keyDerived": "{name} is a key but derived.",
+    "alternateKeyDerived": "{name} is an alternate key but derived.",
+    "keyMultivalued": "{name} is a key but multivalued.",
+    "alternateKeyMultivalued": "{name} is an alternate key but multivalued.",
+    "relationDependency": "{name} has both the I and the E mark; a dependency is by identification or by existence.",
+    "relationParticipants": "{name} joins fewer than two entities.",
+    "relationRoles": "{name} relates {entity} to itself; give each side a role.",
+    "anEntity": "an entity",
+    "associativeKey": "{name} is an associative entity without a key attribute.",
+    "relationConvert": "{name} relates {count} sides; Convert to entity turns it into an entity with a two-way relation per side.",
+    "relationAllOne": "Every side of {name} is at most one; a relation of three or more is usually many on some side.",
+    "relationCardinality": "{entity} has no cardinality in {relation}.",
+    "aParticipant": "A participant",
+    "isaNoChildren": "The hierarchy under {parent} has no children; it usually has two or more.",
+    "isaOneChild": "The hierarchy under {parent} has one child; it usually has two or more.",
+    "itsParent": "its parent",
+    "unionNoSuperclasses": "The union type of {category} has no superclasses; it unites two or more.",
+    "unionOneSuperclass": "The union type of {category} has one superclass; it unites two or more.",
+    "itsCategory": "its category",
+    "standardConstruct": "{construct} aren't part of {standard}."
+  },
+  "standard": {
+    "label": "Standard",
+    "notInstalled": "{id} (not installed)",
+    "missing": "This standard isn't installed (a plugin that was removed?), so the diagram is drawn with the default.",
+    "approximate": "Drawn from secondary sources: check the book for its exact symbols, and adjust the settings below if they differ.",
+    "openFailed": "The reference couldn't be opened",
+    "open": "Open the reference"
+  },
+  "standards": {
+    "cloudy": "(min,max) on the lines, the ratio on the diamond, triangle hierarchies and crow's feet.",
+    "chen": "The original model: 1, N and M on the lines; no hierarchies, aggregations or constraints.",
+    "elmasri": "1 / N on the lines, double lines for total participation, the d / o circle.",
+    "silberschatz": "Cardinality limits on the lines, double lines for total participation, aggregation.",
+    "piattini": "(min,max) on the lines, the ratio on the diamond, triangle hierarchies, aggregation and constraints.",
+    "cloudyCitation": "The board's own mix of the common notations."
+  },
+  "settingChoices": {
+    "attributes": {
+      "label": "Attributes",
+      "hint": "How attributes are drawn.",
+      "ellipse": "Chen ellipses",
+      "lollipop": "Lollipops"
+    },
+    "cardinality": {
+      "label": "Cardinality on the lines",
+      "hint": "What each line says about its side.",
+      "minmax": "(min,max)",
+      "ratio": "1 / N"
+    },
+    "ratio": {
+      "label": "Ratio on the diamond",
+      "hint": "For Cliente (0,n) and Pedido (1,1).",
+      "across": "Read across",
+      "own": "Own maximum"
+    },
+    "participation": {
+      "label": "Participation",
+      "hint": "How a mandatory side (minimum 1) shows.",
+      "numbers": "Numbers",
+      "lines": "Double line",
+      "both": "Both"
+    },
+    "isa": {
+      "label": "Hierarchies",
+      "hint": "The specialization symbol.",
+      "arc": "Triangle",
+      "circle": "Circle d / o",
+      "arrow": "Arrow"
+    },
+    "arrows": {
+      "label": "Arrowheads",
+      "hint": "On two-way relations, at an entity the other side takes part with at most once.",
+      "manual": "Only [arrow]",
+      "cardinality": "From cardinality"
+    },
+    "joins": {
+      "label": "Join attributes",
+      "hint": "The attribute a relation joins through, after the cardinality.",
+      "shown": "Shown",
+      "hidden": "Hidden"
+    },
+    "dependency": {
+      "label": "Dependency marks",
+      "hint": "The I (identification) and E (existence) marks on relations.",
+      "marks": "Shown",
+      "none": "Hidden"
+    },
+    "crowFeet": {
+      "label": "Crow's feet",
+      "hint": "Marks where two-way relations meet entities.",
+      "on": "Shown",
+      "off": "Hidden"
+    }
+  },
+  "form": {
+    "nameIt": "Name it",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "aggregate": {
+      "name": "Aggregation name",
+      "relation": "Relation it groups",
+      "hint": "Add this aggregation as a participant of another relation to relate it like an entity."
+    },
+    "attributes": {
+      "title": "Attributes",
+      "add": "Add attribute",
+      "none": "No attributes yet."
+    },
+    "attribute": {
+      "name": "Attribute name",
+      "addPart": "Add a part (composite attribute)",
+      "delete": "Delete attribute",
+      "keyTitle": "Key attribute (underlined)",
+      "partialTitle": "Partial key of a weak entity (dashed underline)",
+      "alternateTitle": "Alternate (candidate) key (dotted underline)",
+      "multi": "Multi",
+      "multiTitle": "Multivalued (double ellipse)",
+      "derived": "Derived",
+      "derivedTitle": "Derived (dashed ellipse)",
+      "optional": "Opt",
+      "optionalTitle": "Optional (half-filled circle in the lollipop style)"
+    },
+    "cardinality": {
+      "minimum": "Minimum",
+      "maximum": "Maximum",
+      "many": "n (many)"
+    },
+    "constraint": {
+      "exclusive": "Exclusividad",
+      "exclusiveHint": "The entity takes part in only one of the two relations.",
+      "inclusive": "Inclusividad",
+      "inclusiveHint": "To take part in the second, the entity must take part in the first (min,max) times.",
+      "exclusion": "Exclusión",
+      "exclusionHint": "The same occurrences can't be in both relations.",
+      "inclusion": "Inclusión",
+      "inclusionHint": "Occurrences of the second relation must exist in the first.",
+      "kind": "Kind",
+      "entity": "Entity",
+      "choose": "Choose…",
+      "requiredRelation": "Required relation",
+      "relation": "Relation",
+      "first": "First relation",
+      "swap": "Swap relations",
+      "needsIt": "Relation that needs it",
+      "other": "Other relation",
+      "second": "Second relation",
+      "howMany": "How many times"
+    },
+    "entity": {
+      "name": "Entity name",
+      "weak": "Weak",
+      "weakTitle": "Weak entity (double rectangle)",
+      "usedIn": "Used in",
+      "specialize": "Specialize this entity into child entities (ES UN)",
+      "addHierarchy": "Add hierarchy",
+      "notInRelation": "Not in any relation yet.",
+      "itsHierarchy": "▽ its hierarchy",
+      "parentHierarchy": "▽ parent's hierarchy"
+    },
+    "isa": {
+      "parent": "Parent entity",
+      "overlapOrExclusive": "Overlapping or exclusive",
+      "overlapping": "Overlapping",
+      "overlappingTitle": "Solapada: an occurrence can be several children at once",
+      "exclusive": "Exclusive",
+      "exclusiveTitle": "Exclusiva: only one child (arc under the triangle)",
+      "partialOrTotal": "Partial or total",
+      "partial": "Partial",
+      "partialTitle": "Parcial: it can also be none of the children",
+      "total": "Total",
+      "totalTitle": "Total: always one of the children (circle on the line)",
+      "discriminator": "Discriminator (optional)",
+      "discriminatorExample": "e.g. tipo",
+      "children": "Children",
+      "newChildTitle": "Create a new child entity",
+      "newEntity": "New entity",
+      "child": "Child entity",
+      "removeChild": "Remove child",
+      "addExistingChild": "Add an existing entity as a child",
+      "addExisting": "Add an existing entity…"
+    },
+    "participant": {
+      "entity": "Entity",
+      "key": "{name} (key)",
+      "remove": "Remove from the relation",
+      "join": "Join attribute",
+      "noJoin": "Joins by: no attribute",
+      "rolePlaceholder": "Role (for an entity related to itself)",
+      "role": "Role",
+      "arrow": "Arrow",
+      "arrowTitle": "Arrowhead at the entity end"
+    },
+    "relation": {
+      "name": "Relation name",
+      "identifying": "Identifying",
+      "identifyingTitle": "Identifying relation of a weak entity (double diamond)",
+      "associative": "Associative",
+      "associativeTitle": "An associative entity: a relation that is also an entity, with a key of its own, taking part in other relations",
+      "iMark": "I mark",
+      "iMarkTitle": "Dependency by identification (an I at the top of the diamond)",
+      "eMark": "E mark",
+      "eMarkTitle": "Dependency by existence (an E at the top of the diamond)",
+      "ratioTitle": "From the max cardinalities",
+      "convertTitle": "Replace the relation with an entity and a two-way relation per side",
+      "convert": "Convert to entity",
+      "participants": "Participants",
+      "addParticipant": "Add",
+      "noParticipants": "No entities take part yet.",
+      "aggregateTitle": "Box this relation and its entities so it can take part in other relations",
+      "aggregate": "Make an aggregation"
+    },
+    "issues": "Problems",
+    "union": {
+      "intro": "Each {name} is exactly one of the superclasses below (a category).",
+      "category": "Category entity",
+      "superclasses": "Superclasses",
+      "newTitle": "Create a new superclass entity",
+      "remove": "Remove superclass",
+      "addExisting": "Add an existing entity as a superclass"
+    }
+  },
+  "prompt": {
+    "dialog": "New relation",
+    "howBefore": "How are ",
+    "and": " and ",
+    "related": " related?",
+    "joinsBy": "{name} joins by",
+    "linksTo": "{other} links to {name} by",
+    "joinAttribute": "{name} join attribute",
+    "back": "Back",
+    "create": "Create relation",
+    "newKey": "New key attribute \"{name}\"",
+    "noJoin": "No join attribute",
+    "key": "{name} (key)"
+  },
+  "toTables": {
+    "error": "The tables couldn't be created",
+    "theDiagram": "the diagram",
+    "written_one": "{count} table written",
+    "written_other": "{count} tables written",
+    "undo": "Undo with Ctrl+Z.",
+    "title": "Create tables from {label}",
+    "description": "Each entity, multivalued attribute and many-to-many relation becomes a table, and the other relations foreign keys. Tables that already exist with the same names are updated.",
+    "hierarchies": "Hierarchies",
+    "count_one": "{count} table (DBML)",
+    "count_other": "{count} tables (DBML)",
+    "nothing": "Nothing to convert yet.",
+    "create": "Create tables",
+    "perEntity": "One table per entity",
+    "perEntityHint": "Children keyed by the parent's key.",
+    "single": "One table for all",
+    "singleHint": "Every column in the parent's table, with a discriminator.",
+    "warnNeedsSides": "{name} needs two sides with tables, so it was left out.",
+    "warnConstraints": "Constraints between relations have no tables; enforce them in the application.",
+    "warnGuessed": "Column types were guessed from their names; check them in the database panel.",
+    "warnNoKey": "{name} has no key, so it got an id column.",
+    "warnLoop": "{name}'s owners form a loop, so it's keyed like a strong entity.",
+    "warnNoPartial": "{name} is weak but has no partial key; its key is its owner's.",
+    "warnDerived": "{name} is derived, so it has no column."
+  },
+  "constructs": {
+    "aggregations": "Aggregations",
+    "alternate-keys": "Alternate keys",
+    "associative-entities": "Associative entities",
+    "composite-attributes": "Composite attributes",
+    "constraints": "Constraints between relations",
+    "dependency-marks": "Dependency marks (I, E)",
+    "derived-attributes": "Derived attributes",
+    "hierarchies": "Hierarchies",
+    "identifying-relations": "Identifying relations (double diamonds)",
+    "join-attributes": "Join attributes",
+    "multivalued-attributes": "Multivalued attributes",
+    "nary-relations": "Relations of three or more sides",
+    "optional-attributes": "Optional attributes",
+    "relation-attributes": "Attributes of relations",
+    "self-relations": "Relations of an entity with itself",
+    "unions": "Union types",
+    "weak-entities": "Weak entities",
+    "notPart": "{construct} aren't part of {standard}"
+  },
+  "lang": {
+    "createdEntity": "Created the missing entity \"{name}\"",
+    "addedAttribute": "Added the attribute \"{via}\" to \"{name}\"",
+    "standardMissingDrawn": "The standard \"{name}\" isn't installed; drawn with the default",
+    "standardMissing": "The standard \"{name}\" isn't installed; the diagram is drawn with the default.",
+    "unknownSetting": "Unknown setting \"{key}\" was ignored"
+  }
+}

@@ -7,6 +7,7 @@ import { useBoardEngine } from "@board/ui/board-engine-context";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { OPEN_LIBRARY } from "./library-command";
 import { LibraryPanel } from "./library-panel";
+import { t } from "../library.i18n";
 
 /** The toolbar's last button: opens the library above the toolbar (also with its shortcut). */
 export function LibraryButton() {
@@ -28,7 +29,7 @@ export function LibraryButton() {
       <PopoverTrigger asChild>
         <ToolButton
           label={OPEN_LIBRARY.label}
-          description="Templates, lists, widgets and board tools."
+          description={t("button.description")}
           shortcut={engine.keymap.label(OPEN_LIBRARY.id)}
           active={open}
         >

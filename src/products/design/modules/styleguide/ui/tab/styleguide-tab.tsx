@@ -4,6 +4,7 @@ import { EmptyState } from "@shared/ui/kit";
 import { useStyleguideOutline } from "../hooks/use-styleguide";
 import { useSystemPage } from "../hooks/use-system-page";
 import { CategoryRow } from "./category-row";
+import { t } from "../../styleguide.i18n";
 
 /**
  * The Design system tab of the left panel (in the Design system mode): its categories in the
@@ -17,17 +18,20 @@ export function StyleguideTab() {
     return (
       <EmptyState
         className="p-4"
-        title="Nothing to show yet"
-        description="Add a variable or a style and its category shows here."
+        title={t("tab.empty.title")}
+        description={t("tab.empty.description")}
       />
     );
   }
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <header className="flex h-10 shrink-0 items-center px-3 text-sm font-semibold text-foreground">
-        Categories
+        {t("tab.categories")}
       </header>
-      <ul aria-label="Categories" className="flex flex-col gap-px overflow-y-auto px-1.5 pb-1.5">
+      <ul
+        aria-label={t("tab.ariaLabel")}
+        className="flex flex-col gap-px overflow-y-auto px-1.5 pb-1.5"
+      >
         {outline.map((entry, i) => (
           <CategoryRow
             key={entry.category.id}

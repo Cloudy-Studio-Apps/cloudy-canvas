@@ -1,0 +1,25 @@
+{
+  "title": "Boolean",
+  "description": "Layers combined into one shape: union, subtract, intersect or exclude.",
+  "operations": {
+    "union": "Union",
+    "subtract": "Subtract",
+    "intersect": "Intersect",
+    "exclude": "Exclude"
+  },
+  "commands": {
+    "flatten": "Flatten",
+    "outlineStroke": "Outline stroke"
+  },
+  "panel": {
+    "operation": "Operation",
+    "combine": "Combine"
+  },
+  "toolbar": {
+    "description": "Combine the selected layers into one shape.",
+    "operations": "Boolean operations"
+  },
+  "defaults": {
+    "vector": "Vector"
+  }
+}

@@ -3,7 +3,14 @@ import type * as React from "react";
 import type * as canvas from "@canvas";
 import type * as canvasUi from "@canvas-ui";
 import type * as board from "@board";
-import type { createId, defineModule, definePoint, PluginManifest } from "@shared/core";
+import type {
+  createId,
+  defineMessages,
+  defineModule,
+  definePoint,
+  getLocale,
+  PluginManifest,
+} from "@shared/core";
 import type { notifyError, toast } from "@shared/stores/toast-store";
 import type { boardLibrary } from "@board/modules/library/ui";
 import type { boardEditor } from "@board/ui";
@@ -38,6 +45,10 @@ export interface PluginApi {
     defineModule: typeof defineModule;
     definePoint: typeof definePoint;
     createId: typeof createId;
+    /** A translator over the plugin's own strings (`docs/plugins.md#translations`). */
+    defineMessages: typeof defineMessages;
+    /** The app's locale (`"en"`, `"es"`), e.g. for `Intl` formatters. */
+    getLocale: typeof getLocale;
   };
   canvas: Pick<
     typeof canvas,

@@ -7,6 +7,7 @@ import { parseTable } from "./parse-table";
 import { TokenCursor } from "./token-cursor";
 import { tokenize } from "./tokenizer";
 import type { DbmlError, ParsedRef, ParsedSchema, ParseResult } from "./parser.types";
+import { t } from "../../db.i18n";
 
 /** Blocks that are valid DBML but not supported on the board yet; they're skipped with a warning. */
 const UNSUPPORTED_BLOCKS: Record<string, string> = {
@@ -71,13 +72,13 @@ function parseRef(cursor: TokenCursor, refs: ParsedRef[], warnings: DbmlError[])
     refs.push({ from, to, kind, line: keyword.line });
   } catch (error) {
     if (!(error instanceof DbmlSyntaxError) || !error.message.startsWith("Composite")) throw error;
-    warnings.push(unsupported("Composite ref", keyword));
+    warnings.push(unsupported(t("dbml.compositeRef"), keyword));
     while (!cursor.atEnd() && cursor.peek().kind !== "newline" && !cursor.isSymbol("}"))
       cursor.next();
   }
   if (cursor.isSymbol("[")) {
     parseSettings(cursor, (key) => {
-      warnings.push(unsupported(`Ref setting "${key}"`, keyword));
+      warnings.push(unsupported(t("dbml.refSetting", { key }), keyword));
       return false;
     });
   }

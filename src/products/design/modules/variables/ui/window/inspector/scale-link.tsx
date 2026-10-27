@@ -4,6 +4,7 @@ import { scaleFromRecord, scaleFromVariable } from "../scale-drafts";
 import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";
 import type { InspectorPartProps } from "./inspector.types";
+import { t } from "../../../variables.i18n";
 
 /**
  * A number's link to a scale: one of its steps (edit it, or unlink this one), its base (edit
@@ -19,7 +20,7 @@ export function ScaleLink({ variable }: InspectorPartProps) {
     return (
       <div className="flex flex-col gap-1.5 rounded-md border border-border p-2 text-xs text-muted-foreground">
         <span>
-          A step of the scale from{" "}
+          {t("inspector.scaleStep")}{" "}
           <b className="text-foreground">{base ? base.name : made.baseValue}</b>
         </span>
         <div className="flex gap-3">
@@ -28,10 +29,10 @@ export function ScaleLink({ variable }: InspectorPartProps) {
             className={link}
             onClick={() => setScaleDraft(scaleFromRecord(made))}
           >
-            Edit scale
+            {t("inspector.editScale")}
           </button>
           <button type="button" className={link} onClick={() => tokens.unlinkShade(variable.id)}>
-            Unlink
+            {t("inspector.unlink")}
           </button>
         </div>
       </div>
@@ -42,8 +43,9 @@ export function ScaleLink({ variable }: InspectorPartProps) {
     return (
       <div className="flex flex-col gap-1.5 rounded-md border border-border p-2 text-xs text-muted-foreground">
         <span>
-          Base of {based.map((s) => tokenLeafOf(s.group) || "a scale").join(", ")} · its steps
-          follow it
+          {t("inspector.scaleBase", {
+            names: based.map((s) => tokenLeafOf(s.group) || t("inspector.aScale")).join(", "),
+          })}
         </span>
         <div className="flex gap-3">
           {based.map((s) => (
@@ -53,7 +55,7 @@ export function ScaleLink({ variable }: InspectorPartProps) {
               className={link}
               onClick={() => setScaleDraft(scaleFromRecord(s))}
             >
-              Edit scale
+              {t("inspector.editScale")}
             </button>
           ))}
         </div>
@@ -66,7 +68,7 @@ export function ScaleLink({ variable }: InspectorPartProps) {
       size="sm"
       onClick={() => setScaleDraft(scaleFromVariable(store, variable.id))}
     >
-      Make a scale from this number
+      {t("inspector.makeScale")}
     </Button>
   );
 }

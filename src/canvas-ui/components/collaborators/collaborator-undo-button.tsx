@@ -3,6 +3,7 @@ import { Undo2 } from "lucide-react";
 import { ToolButton } from "../tool-button";
 import { useCollaboratorHistory } from "./use-collaborator-history";
 import type { CollaboratorUndoButtonProps } from "./collaborator-undo-button.types";
+import { t } from "../components.i18n";
 
 /**
  * Undoes a collaborator's last step without following it (the Agents menu's rows). Nothing when
@@ -14,7 +15,9 @@ export function CollaboratorUndoButton({ collaborator }: CollaboratorUndoButtonP
   return (
     <ToolButton
       label={
-        history.undoLabel ? `Undo: ${history.undoLabel}` : `Undo ${collaborator.name}'s change`
+        history.undoLabel
+          ? t("history.undoStep", { step: history.undoLabel })
+          : t("history.undoOwner", { name: collaborator.name })
       }
       side="right"
       className="size-8"

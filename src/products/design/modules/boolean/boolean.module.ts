@@ -11,6 +11,7 @@ import { BooleanSection } from "./ui/boolean-section";
 import { BooleanToolbarMenu } from "./ui/boolean-toolbar-menu";
 import { BOOLEAN_COMMANDS, BOOLEAN_ICONS } from "./ui/boolean-icons";
 import { useBooleanCommands } from "./ui/use-boolean-commands";
+import { t } from "./boolean.i18n";
 
 const BOOLEAN_TYPES: ReadonlySet<string> = new Set([BOOLEAN_TYPE]);
 /** Figma's keys: Alt+Shift+U, S, I and E. */
@@ -32,15 +33,15 @@ export const booleanModule = defineModule({
     host.contribute(designCanvas.onMoved, (doc) => pruneEmptyHosts(doc, BOOLEAN_TYPES));
     host.contribute(
       designCanvas.hostCommands,
-      ...BOOLEAN_OPERATIONS.map(({ operation, label }) => ({
+      ...BOOLEAN_OPERATIONS.map(({ operation }) => ({
         id: BOOLEAN_COMMANDS[operation],
-        label,
+        label: t(`operations.${operation}`),
         keys: [{ code: KEYS[operation], alt: true, shift: true, label: KEYS[operation].slice(3) }],
       })),
-      { id: "flatten", label: "Flatten", keys: [{ key: "e", mod: true }] },
+      { id: "flatten", label: t("commands.flatten"), keys: [{ key: "e", mod: true }] },
       {
         id: "outlineStroke",
-        label: "Outline stroke",
+        label: t("commands.outlineStroke"),
         keys: [{ key: "o", mod: true, shift: true }],
       },
     );
@@ -66,18 +67,23 @@ export const booleanModule = defineModule({
       component: BooleanSection,
     });
     const items = [
-      ...BOOLEAN_OPERATIONS.map(({ operation, label }) => ({
+      ...BOOLEAN_OPERATIONS.map(({ operation }) => ({
         command: BOOLEAN_COMMANDS[operation],
-        label,
+        label: t(`operations.${operation}`),
       })),
-      { command: "flatten", label: "Flatten" },
-      { command: "outlineStroke", label: "Outline stroke" },
+      { command: "flatten", label: t("commands.flatten") },
+      { command: "outlineStroke", label: t("commands.outlineStroke") },
     ];
-    host.contribute(designEditor.mainMenu, { id: "boolean", order: 35.7, label: "Boolean", items });
+    host.contribute(designEditor.mainMenu, {
+      id: "boolean",
+      order: 35.7,
+      label: t("title"),
+      items,
+    });
     host.contribute(designEditor.contextMenu, {
       id: "boolean",
       menu: "selection",
-      label: "Boolean",
+      label: t("title"),
       items,
     });
   },

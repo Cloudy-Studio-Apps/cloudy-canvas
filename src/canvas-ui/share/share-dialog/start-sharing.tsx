@@ -12,6 +12,7 @@ import { useCanvasFile } from "../../file";
 import { startSharing } from "../host-session";
 import { RelayNote } from "./relay-note";
 import type { StartSharingProps } from "./share-dialog.types";
+import { t } from "../share.i18n";
 
 /** Before sharing: what it means, the user's name (asked once), and Start sharing. */
 export function StartSharing({ product }: StartSharingProps) {
@@ -39,35 +40,29 @@ export function StartSharing({ product }: StartSharingProps) {
         appVersion: __APP_VERSION__,
       });
     } catch (error) {
-      notifyError("Couldn't start sharing", error);
+      notifyError(t("start.error"), error);
     } finally {
       setBusy(false);
     }
   };
 
   if (!shareTransport) {
-    return (
-      <p className="px-4 py-4 text-sm text-muted-foreground">Live sessions need the desktop app.</p>
-    );
+    return <p className="px-4 py-4 text-sm text-muted-foreground">{t("start.desktopOnly")}</p>;
   }
 
   return (
     <div className="grid gap-4 px-4 py-4">
-      <p className="text-sm text-muted-foreground">
-        Your app hosts this {file.noun}: people you invite connect to it and edit with you, live. It
-        stays on your computer and is saved here; when you stop sharing or close it, they can&apos;t
-        see it anymore.
-      </p>
+      <p className="text-sm text-muted-foreground">{t("start.explain", { noun: file.noun })}</p>
       {!name && (
         <div className="space-y-1">
           <label htmlFor={nameId} className="text-sm font-medium">
-            Your name
+            {t("start.name")}
           </label>
           <Input
             id={nameId}
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
-            placeholder="Shown to the people who join"
+            placeholder={t("start.namePlaceholder")}
             maxLength={40}
           />
         </div>
@@ -76,7 +71,7 @@ export function StartSharing({ product }: StartSharingProps) {
       <div className="flex justify-end">
         <Button disabled={busy || !chosenName} onClick={() => void start()}>
           {busy ? <LoaderCircle className="animate-spin" /> : <Radio />}
-          Start sharing
+          {t("start.start")}
         </Button>
       </div>
     </div>

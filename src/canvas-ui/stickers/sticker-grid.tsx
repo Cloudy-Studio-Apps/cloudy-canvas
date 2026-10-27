@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { matchesSticker } from "@shared/core";
 import { StickerCell } from "./sticker-cell";
 import type { StickerGridProps } from "./sticker-picker.types";
+import { t } from "./stickers.i18n";
 
 /** Stickers in titled sections, filtered by the search. */
 export function StickerGrid({
@@ -11,7 +12,7 @@ export function StickerGrid({
   activeId,
   onPick,
   onRemove,
-  empty = "No stickers match your search.",
+  empty = t("grid.empty"),
 }: StickerGridProps) {
   const shown = useMemo(
     () =>

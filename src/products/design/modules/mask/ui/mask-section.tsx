@@ -10,6 +10,7 @@ import { BindSlot, NodeCheckbox, NodeSelectField, PanelSection } from "@design/u
 import type { PropertySectionProps } from "@design/ui/modules";
 import { MASK_TYPE_OPTIONS } from "./mask-type-options";
 import { MaskSectionButton } from "./mask-section-button";
+import { t } from "../mask.i18n";
 
 /**
  * For selected masks: how they mask, inverted or not, and their masked layers or releasing them.
@@ -26,31 +27,31 @@ export function MaskSection({ selection: { nodes, kinds, elements } }: PropertyS
     const masked = mask && isDesignNode(mask) ? mask : null;
     return (
       <PanelSection
-        title="Mask"
+        title={t("title")}
         actions={
-          masked && <MaskSectionButton label="Select mask" onClick={() => run("selectMask")} />
+          masked && (
+            <MaskSectionButton label={t("panel.selectMask")} onClick={() => run("selectMask")} />
+          )
         }
       >
         <div className="flex flex-col gap-2">
           {masked && (
             <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <SquareDashed className="size-3.5 shrink-0" />
-              <span className="truncate">Masked by {layerNameOf(masked, kinds)}</span>
+              <span className="truncate">
+                {t("panel.maskedBy", { name: layerNameOf(masked, kinds) })}
+              </span>
             </p>
           )}
           <Button
             variant="outline"
             size="sm"
             className="w-full"
-            title={
-              nodes.length > 1
-                ? "Groups the layers; the bottom one masks the others"
-                : "Masks the layers above it"
-            }
+            title={nodes.length > 1 ? t("panel.groupsHint") : t("panel.aboveHint")}
             onClick={() => run("useAsMask")}
           >
             <SquareDashed />
-            Use as mask
+            {t("commands.use")}
             <span className="ml-auto text-xs text-muted-foreground">
               {engine.keymap.label("useAsMask")}
             </span>
@@ -62,18 +63,18 @@ export function MaskSection({ selection: { nodes, kinds, elements } }: PropertyS
 
   return (
     <PanelSection
-      title="Mask"
+      title={t("title")}
       actions={
         <>
-          <MaskSectionButton label="Select masked" onClick={() => run("selectMasked")} />
-          <MaskSectionButton label="Release" onClick={() => run("releaseMask")} />
+          <MaskSectionButton label={t("panel.selectMasked")} onClick={() => run("selectMasked")} />
+          <MaskSectionButton label={t("panel.release")} onClick={() => run("releaseMask")} />
         </>
       }
     >
       <div className="flex flex-col gap-2">
         <NodeSelectField
           nodes={nodes}
-          label="Mask type"
+          label={t("panel.type")}
           options={MASK_TYPE_OPTIONS}
           read={(node) => node.maskType}
           patch={(maskType) => ({ maskType }) as ElementPatch<DesignNode>}
@@ -81,7 +82,7 @@ export function MaskSection({ selection: { nodes, kinds, elements } }: PropertyS
         <BindSlot nodes={nodes} path="maskInverted">
           <NodeCheckbox
             nodes={nodes}
-            label="Invert mask (show what's outside it)"
+            label={t("panel.invert")}
             read={(node) => node.maskInverted}
             patch={(maskInverted) => ({ maskInverted }) as ElementPatch<DesignNode>}
           />

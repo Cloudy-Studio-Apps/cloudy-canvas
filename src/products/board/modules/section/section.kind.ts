@@ -18,6 +18,7 @@ import { drawSection } from "./section.draw";
 import { SECTION_DEFAULTS } from "./section.defaults";
 import { sectionTitleRect } from "./section-title";
 import type { SectionElement } from "./section.types";
+import { t } from "./section.i18n";
 
 /**
  * A frame drawn behind everything else. It's grabbed by its title or border only, so clicks
@@ -25,8 +26,8 @@ import type { SectionElement } from "./section.types";
  */
 export class SectionKind extends TextBoxKind<SectionElement, BoardToolOptions> {
   readonly type = "section";
-  readonly label = "Section";
-  readonly description = "A titled area that groups and moves what's inside it.";
+  readonly label = t("label");
+  readonly description = t("description");
   override readonly tool = "section";
   override readonly defaults = SECTION_DEFAULTS;
   override readonly styleFields = ["color"];
@@ -82,7 +83,7 @@ export class SectionKind extends TextBoxKind<SectionElement, BoardToolOptions> {
 
   /** Its color binds to a color variable. */
   override bindable(): BindableField[] {
-    return [colorField("color", "Color", "frame-fill")];
+    return [colorField("color", t("color"), "frame-fill")];
   }
 
   override optionsOf(el: SectionElement): Partial<BoardToolOptions> {

@@ -7,12 +7,13 @@ import {
   SelectValue,
 } from "@shared/ui/components/ui/select";
 import type { StopEaseSelectProps } from "./stop-ease-select.types";
+import { t } from "../../design-ui.i18n";
 
 const EASES: { id: StopEase; label: string }[] = [
-  { id: "linear", label: "Linear" },
-  { id: "ease-in", label: "Ease in" },
-  { id: "ease-out", label: "Ease out" },
-  { id: "ease-in-out", label: "Ease in and out" },
+  { id: "linear", label: t("gradient.ease.linear") },
+  { id: "ease-in", label: t("gradient.ease.in") },
+  { id: "ease-out", label: t("gradient.ease.out") },
+  { id: "ease-in-out", label: t("gradient.ease.inOut") },
 ];
 
 /** How the selected stop blends into the next one. */
@@ -21,7 +22,7 @@ export function StopEaseSelect({ value, onChange }: StopEaseSelectProps) {
     <div className="flex items-center gap-2">
       <span className="shrink-0 text-xs text-muted-foreground">Blend to next</span>
       <Select value={value} onValueChange={(next) => onChange(next as StopEase)}>
-        <SelectTrigger aria-label="Blend to the next stop" className="h-7 flex-1 text-xs">
+        <SelectTrigger aria-label={t("gradient.ease.label")} className="h-7 flex-1 text-xs">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

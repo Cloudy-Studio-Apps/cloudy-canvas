@@ -2,6 +2,7 @@ import { resolveVariable } from "@canvas";
 import { useDocumentTokens } from "@canvas-ui";
 import { styleGroupOf, typeScaleSteps } from "../../type-scale";
 import type { TypeScalePreviewProps } from "./type-scale-ui.types";
+import { t } from "../../variables.i18n";
 
 /** The scale as it will look: each step's sample in its size, weight and font, largest first. */
 export function TypeScalePreview({ settings }: TypeScalePreviewProps) {
@@ -32,7 +33,7 @@ export function TypeScalePreview({ settings }: TypeScalePreviewProps) {
               lineHeight: step.lineHeight,
             }}
           >
-            The quick brown fox
+            {t("typeScale.sample")}
           </span>
         </div>
       ))}

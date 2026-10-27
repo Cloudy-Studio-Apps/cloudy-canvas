@@ -9,22 +9,36 @@ import type {
 } from "../../styleguide.types";
 import { colorOf, fontOf, leafName } from "../template-kit";
 import { hexOf, hslOf, rgbOf } from "./color-text";
+import { t } from "../../styleguide.i18n";
 
 /** The options every color template shares. */
 export const COLOR_OPTIONS: readonly TemplateOptionSpec[] = [
-  { id: "showHex", label: "Hex", type: "boolean", default: true },
-  { id: "showRgb", label: "RGB", type: "boolean", default: false },
-  { id: "showHsl", label: "HSL", type: "boolean", default: false },
-  { id: "showCode", label: "Code name", type: "boolean", default: false },
-  { id: "showDescription", label: "Description", type: "boolean", default: false },
-  { id: "swatch", label: "Swatch size", type: "number", default: 96, min: 32, max: 240, step: 8 },
-  { id: "font", label: "Label font", type: "font", default: SHEET_LOOK.font },
+  { id: "showHex", label: t("colorKit.hex"), type: "boolean", default: true },
+  { id: "showRgb", label: t("colorKit.rgb"), type: "boolean", default: false },
+  { id: "showHsl", label: t("colorKit.hsl"), type: "boolean", default: false },
+  { id: "showCode", label: t("colorKit.codeName"), type: "boolean", default: false },
+  {
+    id: "showDescription",
+    label: t("colorKit.description"),
+    type: "boolean",
+    default: false,
+  },
+  {
+    id: "swatch",
+    label: t("colorKit.swatchSize"),
+    type: "number",
+    default: 96,
+    min: 32,
+    max: 240,
+    step: 8,
+  },
+  { id: "font", label: t("colorKit.labelFont"), type: "font", default: SHEET_LOOK.font },
 ];
 
 /** The columns option of the grid-like color templates. */
 export const COLUMNS_OPTION: TemplateOptionSpec = {
   id: "columns",
-  label: "Columns",
+  label: t("colorKit.columns"),
   type: "number",
   default: 6,
   min: 1,

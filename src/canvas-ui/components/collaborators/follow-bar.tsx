@@ -8,6 +8,7 @@ import { cn } from "@shared/ui/lib/utils";
 import { useEngine, useEngineState } from "../../engine-context";
 import { ToolButton } from "../tool-button";
 import type { FollowBarProps } from "./follow-bar.types";
+import { t } from "../components.i18n";
 
 /**
  * The bar at the top of the canvas while following someone: who, what they're doing and where,
@@ -33,18 +34,20 @@ export function FollowBar({ collaborator, history }: FollowBarProps) {
     >
       <CollaboratorAvatar collaborator={collaborator} />
       <span className="flex min-w-0 flex-col leading-tight">
-        <span className="truncate font-medium">Following {name}</span>
+        <span className="truncate font-medium">{t("follow.following", { name })}</span>
         <span className="truncate text-xs text-muted-foreground">
-          {[state.activity?.label, place].filter(Boolean).join(" · ") || "Watching their view"}
+          {[state.activity?.label, place].filter(Boolean).join(" · ") || t("follow.watching")}
         </span>
       </span>
       {history && (
         <span className="flex items-center gap-0.5 border-l pl-1.5">
           <ToolButton
-            label={history.undoLabel ? `Undo: ${history.undoLabel}` : `Undo ${name}'s change`}
-            description={
-              undoKey ? `${undoKey} undoes ${name}'s changes while you follow` : undefined
+            label={
+              history.undoLabel
+                ? t("history.undoStep", { step: history.undoLabel })
+                : t("history.undoOwner", { name })
             }
+            description={undoKey ? t("history.undoKeyHint", { keys: undoKey, name }) : undefined}
             side="bottom"
             className="size-8"
             disabled={!history.canUndo}
@@ -53,7 +56,11 @@ export function FollowBar({ collaborator, history }: FollowBarProps) {
             <Undo2 />
           </ToolButton>
           <ToolButton
-            label={history.redoLabel ? `Redo: ${history.redoLabel}` : `Redo ${name}'s change`}
+            label={
+              history.redoLabel
+                ? t("history.redoStep", { step: history.redoLabel })
+                : t("history.redoOwner", { name })
+            }
             side="bottom"
             className="size-8"
             disabled={!history.canRedo}
@@ -65,7 +72,7 @@ export function FollowBar({ collaborator, history }: FollowBarProps) {
       )}
       <Button size="sm" variant="ghost" onClick={() => useCollaboratorsStore.getState().unfollow()}>
         <X />
-        Stop following
+        {t("follow.stop")}
       </Button>
     </div>
   );

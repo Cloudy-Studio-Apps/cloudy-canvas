@@ -1,0 +1,69 @@
+{
+  "openLibrary": "Widgets, templates and more",
+  "button": {
+    "description": "Templates, lists, widgets and board tools."
+  },
+  "panel": {
+    "search": "Search widgets, templates and more",
+    "searchLabel": "Search the library",
+    "empty": "Nothing matches your search."
+  },
+  "tabs": {
+    "all": "All",
+    "templates": "Templates",
+    "lists": "Lists",
+    "widgets": "Widgets"
+  },
+  "sections": {
+    "tools": {
+      "title": "Board tools",
+      "description": "Stickers, tables and diagrams, one click away."
+    },
+    "templates": {
+      "title": "Templates",
+      "description": "Start a session from a ready-made layout."
+    },
+    "lists": {
+      "title": "Lists & checklists",
+      "description": "Keep track of tasks, steps and ideas."
+    },
+    "widgets": {
+      "title": "Widgets",
+      "description": "Interactive pieces for running a session together."
+    }
+  },
+  "items": {
+    "brainstorm": {
+      "label": "Brainstorm",
+      "description": "Collect and vote on ideas."
+    },
+    "retro": {
+      "label": "Retrospective",
+      "description": "What went well, what to change."
+    },
+    "kanban": {
+      "label": "Kanban",
+      "description": "To do, doing, done."
+    },
+    "checklist": {
+      "label": "Checklist",
+      "description": "Tasks you tick off."
+    },
+    "bullets": {
+      "label": "Bulleted list",
+      "description": "Points in no particular order."
+    },
+    "numbered": {
+      "label": "Numbered list",
+      "description": "Steps in order."
+    },
+    "timer": {
+      "label": "Timer",
+      "description": "A countdown everyone sees."
+    },
+    "voting": {
+      "label": "Voting",
+      "description": "Let everyone pick their favorites."
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import type { ModeSet, ThemeMode, ThemeTokenSpec } from "./theme.types";
+import { t } from "../color-wizard.i18n";
 
 /** The modes of each choice. */
 export const MODE_SETS: Readonly<Record<ModeSet, readonly ThemeMode[]>> = {
@@ -18,7 +19,7 @@ export const THEME_SPEC: readonly ThemeTokenSpec[] = [
   {
     name: "background",
     group: "Surfaces",
-    description: "Page behind everything",
+    description: t("theme.spec.background"),
     role: "neutral",
     Light: 50,
     Dark: 950,
@@ -27,7 +28,7 @@ export const THEME_SPEC: readonly ThemeTokenSpec[] = [
   {
     name: "surface",
     group: "Surfaces",
-    description: "Cards, panels, menus",
+    description: t("theme.spec.surface"),
     role: "neutral",
     Light: "white",
     Dark: 900,
@@ -36,7 +37,7 @@ export const THEME_SPEC: readonly ThemeTokenSpec[] = [
   {
     name: "border",
     group: "Surfaces",
-    description: "Lines, inputs, dividers",
+    description: t("theme.spec.border"),
     role: "neutral",
     Light: 200,
     Dark: 800,
@@ -45,7 +46,7 @@ export const THEME_SPEC: readonly ThemeTokenSpec[] = [
   {
     name: "foreground",
     group: "Text",
-    description: "Main text",
+    description: t("theme.spec.foreground"),
     role: "neutral",
     Light: 900,
     Dark: 50,
@@ -54,7 +55,7 @@ export const THEME_SPEC: readonly ThemeTokenSpec[] = [
   {
     name: "muted-foreground",
     group: "Text",
-    description: "Secondary text, hints",
+    description: t("theme.spec.mutedForeground"),
     role: "neutral",
     Light: 600,
     Dark: 400,
@@ -63,7 +64,7 @@ export const THEME_SPEC: readonly ThemeTokenSpec[] = [
   {
     name: "primary",
     group: "Brand",
-    description: "Main buttons, links, focus",
+    description: t("theme.spec.primary"),
     role: "primary",
     Light: 600,
     Dark: 500,
@@ -72,7 +73,7 @@ export const THEME_SPEC: readonly ThemeTokenSpec[] = [
   {
     name: "primary-foreground",
     group: "Brand",
-    description: "Text on primary",
+    description: t("theme.spec.primaryForeground"),
     role: "auto",
     on: "primary",
     Light: null,
@@ -81,7 +82,7 @@ export const THEME_SPEC: readonly ThemeTokenSpec[] = [
   {
     name: "primary-soft",
     group: "Brand",
-    description: "Subtle highlights, secondary buttons",
+    description: t("theme.spec.primarySoft"),
     role: "primary",
     Light: 100,
     Dark: 900,
@@ -90,7 +91,7 @@ export const THEME_SPEC: readonly ThemeTokenSpec[] = [
   {
     name: "accent",
     group: "Brand",
-    description: "Badges, highlights",
+    description: t("theme.spec.accent"),
     role: ["accent", "secondary"],
     Light: 400,
     Dark: 400,
@@ -98,7 +99,7 @@ export const THEME_SPEC: readonly ThemeTokenSpec[] = [
   {
     name: "success",
     group: "Status",
-    description: "Confirmations",
+    description: t("theme.spec.success"),
     role: "success",
     Light: 600,
     Dark: 400,
@@ -106,7 +107,7 @@ export const THEME_SPEC: readonly ThemeTokenSpec[] = [
   {
     name: "warning",
     group: "Status",
-    description: "Cautions",
+    description: t("theme.spec.warning"),
     role: "warning",
     Light: 500,
     Dark: 400,
@@ -114,7 +115,7 @@ export const THEME_SPEC: readonly ThemeTokenSpec[] = [
   {
     name: "error",
     group: "Status",
-    description: "Errors, destructive actions",
+    description: t("theme.spec.error"),
     role: "error",
     Light: 600,
     Dark: 400,
@@ -122,7 +123,7 @@ export const THEME_SPEC: readonly ThemeTokenSpec[] = [
   {
     name: "info",
     group: "Status",
-    description: "Neutral notices",
+    description: t("theme.spec.info"),
     role: "info",
     Light: 600,
     Dark: 400,

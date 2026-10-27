@@ -1,0 +1,74 @@
+{
+  "title": "Colores de la pizarra",
+  "panel": {
+    "add": "Añadir",
+    "newColor": "Nuevo color",
+    "newCollection": "Nueva colección",
+    "closePanel": "Cerrar panel",
+    "emptyTitle": "Aún no hay colores de la pizarra",
+    "emptyDescription": "Los colores que nombres aquí se ofrecen primero en cada barra de color; los elementos que usan uno lo siguen cuando cambia. Trae los colores de un diseño con Importar.",
+    "addColor": "Añadir un color",
+    "modeLabel": "Modo {axis}"
+  },
+  "collection": {
+    "rename": "Renombrar colección",
+    "delete": "Eliminar {name}",
+    "addColor": "Añadir un color a {name}",
+    "renameGroup": "Renombrar grupo",
+    "empty": "Aún no hay colores: añade uno con +."
+  },
+  "color": {
+    "name": "Nombre del color",
+    "follow": "Seguir otro color",
+    "unfollow": "Dejar de seguirlo",
+    "delete": "Eliminar color",
+    "edit": "Editar {name}",
+    "editTitle": "Editar color",
+    "description": "Descripción de {name}",
+    "descriptionPlaceholder": "Para qué sirve"
+  },
+  "exchange": {
+    "importTitle": "Importar colores",
+    "filterAll": "Diseños, pizarras y tokens",
+    "filterFiles": "Archivos de Cloudy Canvas",
+    "filterJson": "JSON de tokens",
+    "readFailed": "No se pudo leer ese archivo",
+    "exportFailed": "No se pudieron exportar los colores",
+    "formatTokens": "Tokens de diseño",
+    "exportedTokens": "Exportado como tokens de diseño",
+    "exportedCss": "Exportado como CSS",
+    "menu": "Importar y exportar",
+    "import": "Importar colores desde un archivo…",
+    "exportTokens": "Exportar como tokens de diseño (DTCG)",
+    "exportCss": "Exportar como variables CSS"
+  },
+  "deleteCollection": {
+    "title": "¿Eliminar «{name}»?",
+    "colors_one": "{count} color",
+    "colors_other": "{count} colores",
+    "elements_one": "{count} elemento",
+    "elements_other": "{count} elementos",
+    "withElements": "Sus {colors} se eliminan con ella. {elements} que los usan conservan su color, sin vincular.",
+    "plain": "Sus {colors} se eliminan con ella."
+  },
+  "deleteColor": {
+    "title": "¿Eliminar «{name}»?",
+    "elements_one": "{count} elemento",
+    "elements_other": "{count} elementos",
+    "colors_one": "{count} color más",
+    "colors_other": "{count} colores más",
+    "description": "Lo usan {uses}. Conservan su color, sin vincular.",
+    "and": " y "
+  },
+  "import": {
+    "title": "Importar colores",
+    "added": "{count} añadidos",
+    "updated": "{count} actualizados",
+    "skipped": "{count} omitidos",
+    "done": "Colores importados",
+    "nothing": "Nada cambió",
+    "failed": "No se pudieron importar los colores",
+    "button": "Importar {count}",
+    "noColors": "Este archivo no tiene colores."
+  }
+}

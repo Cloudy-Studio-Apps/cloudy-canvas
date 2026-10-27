@@ -2,6 +2,7 @@ import type { ErParticipant, ErRelationElement } from "../../relation/relation.t
 import { attributeColumns } from "./attribute-columns";
 import { addForeignKey, addOwnColumns, addTable } from "./table-set";
 import type { TableDraft, TablesContext } from "./tables-context.types";
+import { t } from "../../er.i18n";
 
 /**
  * Relations as foreign keys or tables. A two-way relation with a side that takes part at most once
@@ -19,7 +20,7 @@ export function relationTables(ctx: TablesContext): void {
     if (ctx.done.has(relation.id)) continue;
     const sides = relation.participants.map((p) => ({ p, table: tableOf(ctx, p) }));
     if (sides.length < 2 || sides.some((s) => !s.table)) {
-      ctx.warnings.push(`${relation.name} needs two sides with tables, so it was left out.`);
+      ctx.warnings.push(t("toTables.warnNeedsSides", { name: relation.name }));
       continue;
     }
     const resolved = sides as { p: ErParticipant; table: TableDraft }[];
@@ -54,9 +55,7 @@ export function relationTables(ctx: TablesContext): void {
     }
   }
   if (ctx.shapes.constraints.length > 0) {
-    ctx.warnings.push(
-      "Constraints between relations have no tables; enforce them in the application.",
-    );
+    ctx.warnings.push(t("toTables.warnConstraints"));
   }
 }
 

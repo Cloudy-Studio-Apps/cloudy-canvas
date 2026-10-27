@@ -12,6 +12,7 @@ import {
 } from "@shared/ui/kit";
 import { useEngine, useService } from "@canvas-ui";
 import { useErModel } from "../model";
+import { t } from "../../er.i18n";
 
 /**
  * The menu a connect dot dropped on empty board opens there: what to create from the entity,
@@ -43,7 +44,9 @@ export function ErQuickAddMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="min-w-48">
         <DropdownMenuLabel>
-          Add from {"name" in source ? source.name : "the hierarchy"}
+          {t("quickAdd.addFrom", {
+            name: "name" in source ? source.name : t("quickAdd.theHierarchy"),
+          })}
         </DropdownMenuLabel>
         {erQuickAddOptions(source).map((option) => {
           // What the diagram's standard forbids is listed, disabled, with the reason.

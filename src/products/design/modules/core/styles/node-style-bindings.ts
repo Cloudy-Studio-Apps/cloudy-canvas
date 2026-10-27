@@ -6,6 +6,7 @@ import { readEffectStyle } from "./effect-style";
 import { readPaintStyle } from "./paint-style";
 import { readStrokeStyle } from "./stroke-style";
 import { EFFECT_STYLE, PAINT_STYLE, STROKE_STYLE, STROKE_STYLE_PATH } from "./style-paths";
+import { t } from "../core.i18n";
 
 function styleField(path: string, styleType: string, label: string): BindableField {
   return { path, type: "style", styleType, scopes: [], label };
@@ -14,10 +15,12 @@ function styleField(path: string, styleType: string, label: string): BindableFie
 /** The styles a node of this kind takes: paints on its fills and strokes, effects, a stroke. */
 export function nodeStyleFields<E extends DesignNode>(kind: DesignNodeKind<E>): BindableField[] {
   return [
-    ...(kind.fillable ? [styleField("fills", PAINT_STYLE, "Fill style")] : []),
-    ...(kind.strokable ? [styleField("strokes", PAINT_STYLE, "Stroke color style")] : []),
-    styleField("effects", EFFECT_STYLE, "Effect style"),
-    ...(kind.strokable ? [styleField(STROKE_STYLE_PATH, STROKE_STYLE, "Stroke style")] : []),
+    ...(kind.fillable ? [styleField("fills", PAINT_STYLE, t("styles.fillStyle"))] : []),
+    ...(kind.strokable ? [styleField("strokes", PAINT_STYLE, t("styles.strokeColorStyle"))] : []),
+    styleField("effects", EFFECT_STYLE, t("styles.effectStyle")),
+    ...(kind.strokable
+      ? [styleField(STROKE_STYLE_PATH, STROKE_STYLE, t("styles.strokeStyle"))]
+      : []),
   ];
 }
 

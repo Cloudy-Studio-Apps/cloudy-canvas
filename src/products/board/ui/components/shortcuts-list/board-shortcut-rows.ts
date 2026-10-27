@@ -3,6 +3,7 @@ import { sortedTools } from "@canvas-ui";
 import { boardCanvas } from "@board";
 import { boardEditor, getBoardModules, getBoardProduct } from "../../modules";
 import type { ShortcutGroup, ShortcutRow } from "./board-shortcut-rows.types";
+import { t } from "../../board-ui.i18n";
 
 const TOOL_PREFIX = "tool.";
 
@@ -38,7 +39,7 @@ export function boardShortcutGroups(): ShortcutGroup[] {
     });
 
   return [
-    { title: "Tools", rows: tools },
-    { title: "Editing & view", rows: editing },
+    { title: t("shortcuts.tools"), rows: tools },
+    { title: t("shortcuts.editing"), rows: editing },
   ];
 }

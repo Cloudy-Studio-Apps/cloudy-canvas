@@ -7,6 +7,7 @@ import { copyText } from "../copy-text";
 import { MAX_COLORS, removeColor, setColorAt, toggleLock, useColorWizardStore } from "../store";
 import type { PaletteSwatchProps } from "./colors.types";
 import { InsertSeam } from "./insert-seam";
+import { t } from "../../color-wizard.i18n";
 
 const TOOL = "text-current opacity-80 hover:bg-current/15 hover:text-current hover:opacity-100";
 
@@ -29,7 +30,7 @@ export function PaletteSwatch({ color, index, count }: PaletteSwatchProps) {
         )}
       >
         <IconButton
-          label={color.locked ? "Unlock" : "Lock: keep it when generating"}
+          label={color.locked ? t("palette.swatch.unlock") : t("palette.swatch.lock")}
           size="sm"
           className={TOOL}
           onClick={() => toggleLock(index)}
@@ -37,25 +38,30 @@ export function PaletteSwatch({ color, index, count }: PaletteSwatchProps) {
           {color.locked ? <Lock /> : <LockOpen />}
         </IconButton>
         <IconButton
-          label="Copy hex"
+          label={t("palette.swatch.copyHex")}
           size="sm"
           className={TOOL}
-          onClick={() => copyText(color.hex, color.hex)}
+          onClick={() => copyText(color.hex, "hex")}
         >
           <Copy />
         </IconButton>
         <ColorPopover
           color={color.hex.toLowerCase()}
-          label={`color ${index + 1}`}
+          label={t("palette.swatch.colorN", { n: index + 1 })}
           onChange={(next, info) => info.done && setColorAt(index, next.color.toUpperCase())}
           trigger={
-            <IconButton label="Edit color" size="sm" className={TOOL}>
+            <IconButton label={t("palette.swatch.edit")} size="sm" className={TOOL}>
               <Pipette />
             </IconButton>
           }
         />
         {count > 2 && (
-          <IconButton label="Remove" size="sm" className={TOOL} onClick={() => removeColor(index)}>
+          <IconButton
+            label={t("palette.swatch.remove")}
+            size="sm"
+            className={TOOL}
+            onClick={() => removeColor(index)}
+          >
             <Trash2 />
           </IconButton>
         )}
@@ -67,12 +73,12 @@ export function PaletteSwatch({ color, index, count }: PaletteSwatchProps) {
       )}
       <CommitInput
         value={color.hex}
-        aria-label={`Color ${index + 1}`}
+        aria-label={t("palette.swatch.colorN", { n: index + 1 })}
         spellCheck={false}
         className="-mx-1 w-full rounded-sm border-0 bg-transparent px-1 py-0.5 text-sm font-semibold tracking-wide text-current uppercase outline-none hover:bg-current/10 focus:bg-current/10 focus:ring-2 focus:ring-current @max-[420px]:w-24"
         onCommit={(text) => {
           const hex = normalizeColorHex(text);
-          if (!hex) return "Not a color: use #RRGGBB";
+          if (!hex) return t("palette.swatch.invalid");
           setColorAt(index, hex);
         }}
       />

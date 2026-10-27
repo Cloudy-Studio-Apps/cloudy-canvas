@@ -5,11 +5,12 @@ import { PropertyGrid } from "@design/ui/components/panel";
 import type { NoiseEffect } from "../../effect.types";
 import { EffectChoice, ScrubField } from "../fields";
 import type { EffectEditorProps } from "../effects.points.types";
+import { t } from "../../effects.i18n";
 
 const MODES = [
-  { value: "mono", label: "Mono" },
-  { value: "duo", label: "Duo" },
-  { value: "multi", label: "Multi" },
+  { value: "mono", label: t("editors.mono") },
+  { value: "duo", label: t("editors.duo") },
+  { value: "multi", label: t("editors.multi") },
 ] as const;
 
 /** Noise: one color, two or many; grain size, how much of the layer it covers, its opacity. */
@@ -19,14 +20,14 @@ export function NoiseEditor({ effect, onChange }: EffectEditorProps<NoiseEffect>
   return (
     <div className="flex flex-col gap-2">
       <EffectChoice
-        label="Noise colors"
+        label={t("editors.noiseColors")}
         value={effect.noiseType}
         options={MODES}
         onChange={(noiseType) => set({ noiseType })}
       />
       {effect.noiseType !== "multi" && (
         <ColorField
-          label="Noise color"
+          label={t("editors.noiseColor")}
           color={effect.color}
           opacity={effect.opacity}
           onChange={({ color, opacity }, info) => set({ color, opacity }, info)}
@@ -34,7 +35,7 @@ export function NoiseEditor({ effect, onChange }: EffectEditorProps<NoiseEffect>
       )}
       {effect.noiseType === "duo" && (
         <ColorField
-          label="Second noise color"
+          label={t("editors.secondNoiseColor")}
           color={effect.secondColor}
           onChange={(next, info) => set({ secondColor: next.color }, info)}
         />
@@ -42,7 +43,7 @@ export function NoiseEditor({ effect, onChange }: EffectEditorProps<NoiseEffect>
       <PropertyGrid>
         <ScrubField
           prefix={<Grid3x3 />}
-          label="Grain size"
+          label={t("editors.grainSize")}
           min={0.1}
           step={0.1}
           value={effect.size}
@@ -50,7 +51,7 @@ export function NoiseEditor({ effect, onChange }: EffectEditorProps<NoiseEffect>
         />
         <ScrubField
           prefix={<Sparkles />}
-          label="Density"
+          label={t("editors.density")}
           value={effect.density}
           factor={100}
           suffix="%"
@@ -62,7 +63,7 @@ export function NoiseEditor({ effect, onChange }: EffectEditorProps<NoiseEffect>
         {effect.noiseType === "multi" && (
           <ScrubField
             prefix="α"
-            label="Opacity"
+            label={t("editors.opacity")}
             value={effect.opacity}
             factor={100}
             suffix="%"

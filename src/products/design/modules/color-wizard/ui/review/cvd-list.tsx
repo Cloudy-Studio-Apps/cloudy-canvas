@@ -1,6 +1,7 @@
 import { Badge, Swatch } from "@shared/ui/kit";
 import { cvdWarnings, simulateCvd } from "../..";
 import { useWizardTheme } from "../store";
+import { t } from "../../color-wizard.i18n";
 
 /** Roles that look alike, to everyone or with a color-vision deficiency. */
 export function CvdList() {
@@ -10,10 +11,12 @@ export function CvdList() {
     <div>
       <div className="mb-1.5 flex items-center">
         <span className="flex-1 text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
-          Color blindness
+          {t("review.cvd.title")}
         </span>
         <Badge variant="outline" className={warnings.length ? "text-warning" : "text-success"}>
-          {warnings.length ? `${warnings.length} close pairs` : "Roles stay apart"}
+          {warnings.length
+            ? t("review.cvd.close", { count: warnings.length })
+            : t("review.cvd.apart")}
         </Badge>
       </div>
       {warnings.map((w) => (
@@ -21,11 +24,13 @@ export function CvdList() {
           <Swatch color={simulateCvd(w.aHex, w.kinds[0] ?? "none")} size="sm" />
           <Swatch color={simulateCvd(w.bHex, w.kinds[0] ?? "none")} size="sm" />
           <span className="flex-1">
-            <b>{w.a}</b> and <b>{w.b}</b> look alike{" "}
-            {w.everyone ? "to everyone" : `with ${w.kinds.join(", ")}`}
+            {t("review.cvd.lookAlike", { a: w.a, b: w.b })}{" "}
+            {w.everyone
+              ? t("review.cvd.everyone")
+              : t("review.cvd.with", { kinds: w.kinds.join(", ") })}
           </span>
           <span className="text-muted-foreground">
-            {w.everyone ? "Change one of the roles" : "Pair them with an icon or a label"}
+            {w.everyone ? t("review.cvd.change") : t("review.cvd.pair")}
           </span>
         </div>
       ))}

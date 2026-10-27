@@ -20,6 +20,7 @@ import {
 import { STAR_DEFAULTS } from "./star.defaults";
 import { createStar } from "./star.factory";
 import type { StarElement } from "./star.types";
+import { t } from "./star.i18n";
 
 /** Smallest inner radius, so a star never collapses to a point. */
 const MIN_INNER_RADIUS = 0.01;
@@ -27,16 +28,16 @@ const MIN_INNER_RADIUS = 0.01;
 /** Stars, stretched to their box. */
 export class StarKind extends PointsShapeKind<StarElement> {
   readonly type = "star";
-  readonly label = "Star";
-  readonly description = "A star with any number of points.";
+  readonly label = t("label");
+  readonly description = t("description");
   override readonly tool = "star";
   override readonly defaults = STAR_DEFAULTS;
 
   override bindable(el: StarElement): BindableField[] {
     return [
       ...super.bindable(el),
-      numberField("pointCount", "other-number", "Points"),
-      numberField("innerRadius", "other-number", "Inner radius"),
+      numberField("pointCount", "other-number", t("points")),
+      numberField("innerRadius", "other-number", t("innerRadius")),
     ];
   }
 

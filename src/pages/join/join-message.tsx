@@ -1,9 +1,11 @@
+import { tCommon } from "@shared/core";
 import { Link } from "react-router";
 import { ArrowLeft } from "lucide-react";
 
 import { HoppingSeal } from "@shared/ui/brand/hopping-seal";
 import { Button } from "@shared/ui/components/ui/button";
 import type { JoinMessageProps } from "./join-page.types";
+import { t } from "./join.i18n";
 
 /** A centered message while joining (or when it can't), with a way back home. */
 export function JoinMessage({ title, description, busy = false }: JoinMessageProps) {
@@ -17,7 +19,7 @@ export function JoinMessage({ title, description, busy = false }: JoinMessagePro
       <Button variant="outline" asChild>
         <Link to="/">
           <ArrowLeft />
-          {busy ? "Cancel" : "Back to home"}
+          {busy ? tCommon("cancel") : t("message.back")}
         </Link>
       </Button>
     </div>

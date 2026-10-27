@@ -6,6 +6,7 @@ import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { useErDiagram, useErModel, useErQuery } from "../model";
 import { diagramShapeIds } from "../er-panel/diagram-shape-ids";
 import { useErToTablesStore } from "../er-to-tables";
+import { t } from "../../er.i18n";
 
 /**
  * The ER mode's toolbar items: a new diagram, selecting and re-laying out the shown one, its
@@ -29,28 +30,28 @@ export function useErToolbarItems(): readonly ModeToolbarEntry[] {
   return [
     {
       run: () => engine.focusElement(er.newDiagram(rectCenter(engine.visibleWorldRect()))),
-      label: "New diagram",
-      description: "Start another diagram in the middle of the view.",
+      label: t("toolbar.newDiagram"),
+      description: t("toolbar.newDiagramHint"),
       icon: Plus,
     },
     {
       run: () => engine.select(diagramShapeIds(diagram.shapes())),
-      label: "Select diagram",
-      description: "Select the whole shown diagram, to move it.",
+      label: t("toolbar.selectDiagram"),
+      description: t("toolbar.selectDiagramHint"),
       icon: BoxSelect,
       disabled: none,
     },
     {
       run: () => diagram.relayout(),
-      label: "Re-layout",
-      description: "Lay the shown diagram out again.",
+      label: t("toolbar.relayout"),
+      description: t("toolbar.relayoutHint"),
       icon: LayoutGrid,
       disabled: none,
     },
     {
       run: () => openPanel("text"),
-      label: "Diagram text",
-      description: "Edit the shown diagram as text in the ER panel.",
+      label: t("toolbar.text"),
+      description: t("toolbar.textHint"),
       icon: FileCode,
     },
     {
@@ -58,16 +59,16 @@ export function useErToolbarItems(): readonly ModeToolbarEntry[] {
         engine.select([]);
         openPanel("visual");
       },
-      label: findings ? `Check diagram (${findings})` : "Check diagram",
-      description: "The diagram's standard and what breaks its rules, in the ER panel.",
+      label: findings ? t("toolbar.checkCount", { count: findings }) : t("toolbar.check"),
+      description: t("toolbar.checkHint"),
       icon: ListChecks,
       disabled: none,
       badge: findings,
     },
     {
       run: () => useErToTablesStore.getState().open(diagram.id),
-      label: "Create tables",
-      description: "Turn the shown diagram into database tables.",
+      label: t("toolbar.createTables"),
+      description: t("toolbar.createTablesHint"),
       icon: Table2,
       disabled: none,
     },

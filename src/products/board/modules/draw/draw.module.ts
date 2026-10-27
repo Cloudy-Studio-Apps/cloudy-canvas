@@ -9,6 +9,7 @@ import { MarkerTool } from "./marker.tool";
 import { STROKE_DEFAULTS } from "./stroke.defaults";
 import { StrokeKind } from "./stroke.kind";
 import { DrawOptions } from "./ui/draw-options";
+import { t } from "./draw.i18n";
 
 /** Freehand strokes: the kind, the marker (M) and eraser (Shift+E) and the Draw panel. */
 export const drawModule = defineModule({
@@ -37,7 +38,7 @@ export const drawModule = defineModule({
       element: "stroke",
       icon: PenLine,
       toolbar: { group: 1, order: 10 },
-      subTools: [{ id: "eraser", label: "Eraser" }],
+      subTools: [{ id: "eraser", label: t("options.eraser") }],
     });
     host.contribute(
       boardEditor.toolPanels,

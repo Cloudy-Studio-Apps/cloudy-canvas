@@ -1,8 +1,10 @@
 import type { LayoutAlign, LayoutCounterAlign } from "../../core";
 import { cn } from "@shared/ui/kit";
 import type { AlignmentGridProps } from "./alignment-grid.types";
+import { t } from "../auto-layout.i18n";
 
 const PLACES = ["start", "center", "end"] as const;
+const place = (value: (typeof PLACES)[number]) => t(`alignment.place.${value}`);
 
 /**
  * Figma's alignment box: nine cells, one per place of the layers along and across the layout's
@@ -15,7 +17,7 @@ export function AlignmentGrid({ layout, onPick }: AlignmentGridProps) {
   return (
     <div
       role="radiogroup"
-      aria-label="Alignment"
+      aria-label={t("alignment.label")}
       className="grid size-[60px] shrink-0 grid-cols-3 grid-rows-3 rounded-sm bg-muted p-1"
     >
       {PLACES.map((row) =>
@@ -34,8 +36,8 @@ export function AlignmentGrid({ layout, onPick }: AlignmentGridProps) {
               type="button"
               role="radio"
               aria-checked={active}
-              aria-label={`Align ${row} ${column}`}
-              title={`${row} ${column}`}
+              aria-label={t("alignment.cell", { row: place(row), column: place(column) })}
+              title={`${place(row)} ${place(column)}`}
               onClick={() => onPick({ align, counterAlign: counter })}
               className="group flex cursor-pointer items-center justify-center"
             >

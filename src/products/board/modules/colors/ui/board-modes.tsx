@@ -1,5 +1,6 @@
 import { useDocumentTokens } from "@canvas-ui";
 import { SegmentedControl } from "@shared/ui/kit";
+import { t } from "../colors.i18n";
 
 /** The mode the whole board shows, per axis with more than one mode (Light / Dark). */
 export function BoardModes() {
@@ -12,7 +13,7 @@ export function BoardModes() {
         <div key={axis.id} className="flex items-center gap-2">
           <span className="w-16 shrink-0 truncate text-xs text-muted-foreground">{axis.name}</span>
           <SegmentedControl
-            label={`${axis.name} mode`}
+            label={t("panel.modeLabel", { axis: axis.name })}
             size="sm"
             fullWidth
             value={axis.current ?? axis.modes[0]?.id ?? null}

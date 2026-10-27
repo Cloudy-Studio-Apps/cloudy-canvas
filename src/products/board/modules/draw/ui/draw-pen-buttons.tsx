@@ -2,6 +2,7 @@ import { Eraser, Highlighter, Pen } from "lucide-react";
 
 import { OptionButton, useEngineState } from "@canvas-ui";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";
+import { t } from "../draw.i18n";
 
 /** Pen, highlighter or eraser. The pens are the marker tool's options; the eraser is its own tool. */
 export function DrawPenButtons() {
@@ -14,8 +15,8 @@ export function DrawPenButtons() {
   return (
     <>
       <OptionButton
-        aria-label="Pen"
-        title="Pen"
+        aria-label={t("options.pen")}
+        title={t("options.pen")}
         selected={!erasing && drawPen === "pen"}
         onClick={() => {
           engine.setToolOptions({ drawPen: "pen" });
@@ -25,8 +26,8 @@ export function DrawPenButtons() {
         <Pen className="size-4" />
       </OptionButton>
       <OptionButton
-        aria-label="Highlighter"
-        title="Highlighter"
+        aria-label={t("options.highlighter")}
+        title={t("options.highlighter")}
         selected={!erasing && drawPen === "highlighter"}
         onClick={() => {
           engine.setToolOptions({ drawPen: "highlighter" });
@@ -36,8 +37,12 @@ export function DrawPenButtons() {
         <Highlighter className="size-4" />
       </OptionButton>
       <OptionButton
-        aria-label="Eraser"
-        title={eraserShortcut ? `Eraser (${eraserShortcut})` : "Eraser"}
+        aria-label={t("options.eraser")}
+        title={
+          eraserShortcut
+            ? t("options.eraserShortcut", { shortcut: eraserShortcut })
+            : t("options.eraser")
+        }
         selected={erasing}
         onClick={() => engine.setTool("eraser")}
       >

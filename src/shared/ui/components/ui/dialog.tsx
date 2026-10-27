@@ -3,6 +3,7 @@ import { Dialog as DialogPrimitive } from "radix-ui";
 import { XIcon } from "lucide-react";
 
 import { cn } from "@shared/ui/lib/utils";
+import { tCommon } from "@shared/core";
 
 function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
@@ -51,7 +52,7 @@ function DialogContent({
         {children}
         <DialogPrimitive.Close className="absolute top-3 right-3 rounded-md p-1 text-muted-foreground transition-colors outline-none hover:bg-hover hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring [&_svg]:size-4">
           <XIcon />
-          <span className="sr-only">Close</span>
+          <span className="sr-only">{tCommon("close")}</span>
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>
     </DialogPrimitive.Portal>

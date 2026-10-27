@@ -8,12 +8,13 @@ import { drawDbTable } from "./db-table.draw";
 import { tableInteractionAt } from "./db-table.interactions";
 import type { DbColumn, DbTableElement } from "./db-table.types";
 import { noteBubbleLayout } from "./note-bubble.layout";
+import { t } from "../db.i18n";
 
 /** A database table: a card with one row per column, its relations drawn by the board's links. */
 export class DbTableKind extends DbCardKind<DbTableElement> {
   readonly type = "db-table";
-  readonly label = "Database table";
-  readonly description = "A table of the board's database schema, edited visually or as DBML.";
+  readonly label = t("table.label");
+  readonly description = t("table.description");
   override readonly defaults = DB_CARD_DEFAULTS;
 
   draw(view: ElementView, el: DbTableElement): void {

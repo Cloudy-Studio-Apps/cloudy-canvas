@@ -7,6 +7,7 @@ import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { SchemaEditor } from "./schema-editor";
 import { EnumEditor } from "./enum-editor";
 import { TableEditor } from "./table-editor";
+import { t } from "../../db.i18n";
 
 /**
  * Right side panel: the selected table or enum's editor, or the whole schema's DBML. The header
@@ -22,7 +23,7 @@ export function DbPanel() {
   const schemaOpen = useBoardPanelStore((state) => state.schemaOpen);
   const setSchemaOpen = useBoardPanelStore((state) => state.setSchemaOpen);
   if (!schemaOpen && !tableId && !enumId) return null;
-  const title = schemaOpen ? "Database schema" : tableId ? "Table" : "Enum";
+  const title = schemaOpen ? t("panel.schema") : tableId ? t("panel.table") : t("panel.enum");
 
   const close = () => (schemaOpen ? setSchemaOpen(false) : engine.cancel());
   const cardId = schemaOpen ? null : (tableId ?? enumId);
@@ -31,7 +32,7 @@ export function DbPanel() {
   return (
     <FloatingPanel
       role="complementary"
-      aria-label={schemaOpen ? "Database schema" : `${title} editor`}
+      aria-label={schemaOpen ? t("panel.schema") : t("panel.editor", { title })}
       className="max-h-full w-[340px] flex-col items-stretch gap-3 p-3"
     >
       <header className="flex items-center gap-2">
@@ -41,8 +42,8 @@ export function DbPanel() {
             variant="ghost"
             size="icon"
             className="size-7"
-            aria-label="Select linked"
-            title="Select every table and enum linked to this one, to move them"
+            aria-label={t("panel.selectLinked")}
+            title={t("panel.selectLinkedHint")}
             onClick={() => engine.select(schema.connectedTo(cardId))}
           >
             <BoxSelect />
@@ -52,10 +53,8 @@ export function DbPanel() {
           variant="ghost"
           size="icon"
           className="size-7"
-          aria-label="Tidy up"
-          title={
-            cardId ? "Tidy up this table and the ones linked to it" : "Tidy up the whole schema"
-          }
+          aria-label={t("panel.tidy")}
+          title={cardId ? t("panel.tidyCard") : t("panel.tidyAll")}
           onClick={tidy}
         >
           <LayoutGrid />
@@ -63,14 +62,14 @@ export function DbPanel() {
         {!schemaOpen && (
           <Button variant="ghost" size="sm" onClick={() => setSchemaOpen(true)}>
             <Braces />
-            Schema
+            {t("panel.schemaButton")}
           </Button>
         )}
         <Button
           variant="ghost"
           size="icon"
           className="size-7"
-          aria-label="Close panel"
+          aria-label={t("panel.close")}
           onClick={close}
         >
           <X />

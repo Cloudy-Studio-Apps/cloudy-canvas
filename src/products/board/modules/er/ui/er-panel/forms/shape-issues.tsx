@@ -1,6 +1,7 @@
 import { useErModel, useErQuery } from "../../model";
 import { ErCheckList } from "../diagram-settings/check-list";
 import type { ErShapeFormProps } from "./er-shape-form.types";
+import { t } from "../../../er.i18n";
 
 /**
  * The Check diagram's findings about the selected shape (and its own attributes), above its form;
@@ -24,7 +25,7 @@ export function ShapeIssues({ id }: ErShapeFormProps) {
   if (issues.length === 0) return null;
   return (
     <section
-      aria-label="Problems"
+      aria-label={t("form.issues")}
       className="rounded-md border border-warning/40 bg-warning-soft px-1 py-0.5"
     >
       <ErCheckList issues={issues} />

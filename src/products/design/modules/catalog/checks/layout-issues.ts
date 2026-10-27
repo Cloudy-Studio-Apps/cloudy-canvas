@@ -1,10 +1,11 @@
 import { brochurePageSize, fitsPage, unitsToMm } from "../model";
 import type { BrochureCheckInput, BrochureIssue } from "./brochure-checks.types";
+import { t } from "../catalog.i18n";
 
 /** Why each kind of blank page was added, for its message. */
 const BLANK_REASONS = {
-  "back-cover": "so the back cover is on the left",
-  "spread-start": "so the spread starts on a left page",
+  "back-cover": t("checks.layout.reasonBack"),
+  "spread-start": t("checks.layout.reasonSpread"),
 } as const;
 
 /**
@@ -23,7 +24,7 @@ export function layoutIssues({ pages, layout }: BrochureCheckInput): BrochureIss
       page: label,
       frameId: page.frame.id,
       nodeId: page.frame.id,
-      message: `A blank page goes before it ${BLANK_REASONS[side.reason]}.`,
+      message: t("checks.layout.blank", { reason: BLANK_REASONS[side.reason] }),
     });
   }
   const size = brochurePageSize(pages);
@@ -36,7 +37,12 @@ export function layoutIssues({ pages, layout }: BrochureCheckInput): BrochureIss
       page: layout.labels.get(page.slot.id) ?? String(page.number),
       frameId: page.frame.id,
       nodeId: page.frame.id,
-      message: `It's ${mm(page.frame.w)} × ${mm(page.frame.h)} mm; the pages are ${mm(size.w)} × ${mm(size.h)} mm.`,
+      message: t("checks.layout.oddSize", {
+        w: mm(page.frame.w),
+        h: mm(page.frame.h),
+        pw: mm(size.w),
+        ph: mm(size.h),
+      }),
     });
   }
   return issues;

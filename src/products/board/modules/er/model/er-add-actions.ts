@@ -9,6 +9,7 @@ import type { ErShapes } from "./lang";
 import { OPEN_GATE, type ErConstructGate } from "../base/constructs";
 import { PALETTE_CONSTRUCTS } from "./palette-constructs";
 import { gateOf } from "./standard-of";
+import { t } from "../er.i18n";
 
 /**
  * What a click adds for each ER element type, starting from the selected element where it makes
@@ -40,54 +41,61 @@ function choices(
   const relation = pick(selected, "er-relation") ?? shapes.relations[0];
   const otherRelation = shapes.relations.find((r) => r.id !== relation?.id);
   const owner = selected && selected.type !== "er-constraint" ? selected : entity;
-  const ownerName = owner && "name" in owner ? owner.name : "the hierarchy";
+  const ownerName = owner && "name" in owner ? owner.name : t("drop.theHierarchy");
   return {
-    entity: action("entity", "Entity", true, () => edits.addEntity()),
-    "weak-entity": action("weak-entity", "Weak entity", true, () =>
+    entity: action("entity", t("drop.entity"), true, () => edits.addEntity()),
+    "weak-entity": action("weak-entity", t("drop.weakEntity"), true, () =>
       edits.addEntity(undefined, { weak: true }),
     ),
-    relation: action("relation", `Relation${entity ? ` from ${entity.name}` : ""}`, true, () =>
-      edits.addRelation(relationEnds(shapes, entity)),
+    relation: action(
+      "relation",
+      entity ? t("actions.relationFrom", { name: entity.name }) : t("drop.relation"),
+      true,
+      () => edits.addRelation(relationEnds(shapes, entity)),
     ),
     associative: action(
       "associative",
-      `Associative entity${entity ? ` from ${entity.name}` : ""}`,
+      entity ? t("actions.associativeFrom", { name: entity.name }) : t("drop.associative"),
       true,
       () => edits.addRelation(relationEnds(shapes, entity), { associative: true }),
     ),
     attribute: action(
       "attribute",
-      owner ? `Attribute of ${ownerName}` : "Attribute (add an entity first)",
+      owner ? t("actions.attributeOf", { name: ownerName }) : t("actions.attributeNeedsEntity"),
       !!owner,
       () => owner && edits.addAttribute(owner.id),
     ),
     "key-attribute": action(
       "key-attribute",
-      owner ? `Key attribute of ${ownerName}` : "Key attribute (add an entity first)",
+      owner
+        ? t("actions.keyAttributeOf", { name: ownerName })
+        : t("actions.keyAttributeNeedsEntity"),
       !!owner,
       () => owner && edits.addAttribute(owner.id, { key: "pk" }),
     ),
     isa: action(
       "isa",
-      entity ? `Hierarchy under ${entity.name}` : "Hierarchy (add an entity first)",
+      entity ? t("actions.isaUnder", { name: entity.name }) : t("actions.isaNeedsEntity"),
       !!entity,
       () => entity && edits.addIsa(entity.id),
     ),
     union: action(
       "union",
-      entity ? `Union type of ${entity.name}` : "Union type (add an entity first)",
+      entity ? t("actions.unionOf", { name: entity.name }) : t("actions.unionNeedsEntity"),
       !!entity,
       () => entity && edits.addUnion(entity.id),
     ),
     aggregate: action(
       "aggregate",
-      relation ? `Aggregation of ${relation.name}` : "Aggregation (add a relation first)",
+      relation
+        ? t("actions.aggregationOf", { name: relation.name })
+        : t("actions.aggregationNeedsRelation"),
       !!relation,
       () => relation && edits.addAggregate(relation.id),
     ),
     constraint: action(
       "constraint",
-      otherRelation ? "Constraint between relations" : "Constraint (needs two relations)",
+      otherRelation ? t("actions.constraintBetween") : t("actions.constraintNeedsTwo"),
       !!relation && !!otherRelation,
       () =>
         relation && otherRelation
@@ -134,20 +142,20 @@ export function erAddActionsWithoutDiagram(
 
 function newDiagramChoices(er: ErModel, center: () => Point): Record<ErPaletteItemId, ErAddAction> {
   const waiting = (id: ErPaletteItemId, label: string) =>
-    action(id, `${label} (add an entity first)`, false, () => undefined);
+    action(id, t("waiting", { label }), false, () => undefined);
   return {
-    entity: action("entity", "Entity (a new diagram)", true, () => er.newDiagram(center())),
-    "weak-entity": action("weak-entity", "Weak entity (a new diagram)", true, () =>
+    entity: action("entity", t("actions.entityNewDiagram"), true, () => er.newDiagram(center())),
+    "weak-entity": action("weak-entity", t("actions.weakNewDiagram"), true, () =>
       er.newDiagram(center(), { weak: true }),
     ),
-    relation: waiting("relation", "Relation"),
-    associative: waiting("associative", "Associative entity"),
-    attribute: waiting("attribute", "Attribute"),
-    "key-attribute": waiting("key-attribute", "Key attribute"),
-    isa: waiting("isa", "Hierarchy"),
-    union: waiting("union", "Union type"),
-    aggregate: waiting("aggregate", "Aggregation"),
-    constraint: waiting("constraint", "Constraint"),
+    relation: waiting("relation", t("drop.relation")),
+    associative: waiting("associative", t("drop.associative")),
+    attribute: waiting("attribute", t("drop.attribute")),
+    "key-attribute": waiting("key-attribute", t("drop.keyAttribute")),
+    isa: waiting("isa", t("kinds.isa.label")),
+    union: waiting("union", t("kinds.union.label")),
+    aggregate: waiting("aggregate", t("kinds.aggregate.label")),
+    constraint: waiting("constraint", t("kinds.constraint.label")),
   };
 }
 

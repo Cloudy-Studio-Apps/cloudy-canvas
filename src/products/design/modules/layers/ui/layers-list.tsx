@@ -7,6 +7,7 @@ import { useLayerDrag } from "./drag/use-layer-drag";
 import { useLayerMetrics } from "./layer-metrics";
 import { LayerRow } from "./layer-row";
 import type { LayersListProps } from "./layers-list.types";
+import { t } from "../layers.i18n";
 
 /**
  * The layers as one flat list of rows, drawing only those in view (pages can hold thousands), with
@@ -50,7 +51,7 @@ export function LayersList({
       <ul
         ref={list}
         role="tree"
-        aria-label="Layers"
+        aria-label={t("title")}
         className="relative"
         style={{ height: range.totalHeight }}
       >

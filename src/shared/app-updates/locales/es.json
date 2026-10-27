@@ -1,0 +1,23 @@
+{
+  "off": "Las actualizaciones están desactivadas en las compilaciones de desarrollo.",
+  "download": "Descargar {version}",
+  "updateTo": "Actualizar a {version}",
+  "upToDate": "Estás al día.",
+  "check": {
+    "idle": "Buscar actualizaciones",
+    "checking": "Buscando…",
+    "upToDate": "Buscar actualizaciones",
+    "error": "Buscar actualizaciones",
+    "downloading": "Actualizando…",
+    "restarting": "Reiniciando…"
+  },
+  "notice": {
+    "available": "Cloudy Canvas {version} está disponible",
+    "restarting": "Reiniciando…",
+    "downloading": "Descargando la actualización…",
+    "youHave": "Tienes la versión {version}.",
+    "download": "Descargar",
+    "updateRestart": "Actualizar y reiniciar",
+    "later": "Más tarde"
+  }
+}

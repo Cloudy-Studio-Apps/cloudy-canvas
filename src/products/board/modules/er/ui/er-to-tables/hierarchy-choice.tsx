@@ -1,17 +1,18 @@
 import { ChoiceCards } from "@shared/ui/kit";
 import type { HierarchyChoiceProps, StrategyOption } from "./er-to-tables.types";
 import { StrategyPicture } from "./strategy-picture";
+import { t } from "../../er.i18n";
 
 const STRATEGIES: readonly StrategyOption[] = [
   {
     value: "per-entity",
-    label: "One table per entity",
-    hint: "Children keyed by the parent's key.",
+    label: t("toTables.perEntity"),
+    hint: t("toTables.perEntityHint"),
   },
   {
     value: "single",
-    label: "One table for all",
-    hint: "Every column in the parent's table, with a discriminator.",
+    label: t("toTables.single"),
+    hint: t("toTables.singleHint"),
   },
 ];
 

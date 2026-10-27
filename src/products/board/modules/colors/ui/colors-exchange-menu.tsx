@@ -17,14 +17,15 @@ import {
 } from "@shared/ui/kit";
 import type { ColorImportSource } from "./colors-ui.types";
 import { ImportColorsDialog } from "./import-colors-dialog";
+import { t } from "../colors.i18n";
 
 /** What importing colors offers: designs, boards and tokens JSON. */
 const COLOR_FILES: TokenFilePick = {
-  title: "Import colors",
+  title: t("exchange.importTitle"),
   filters: [
-    { name: "Designs, boards and tokens", extensions: ["cdesign", "cboard", "json"] },
-    { name: "Cloudy Canvas files", extensions: ["cdesign", "cboard"] },
-    { name: "Tokens JSON", extensions: ["json"] },
+    { name: t("exchange.filterAll"), extensions: ["cdesign", "cboard", "json"] },
+    { name: t("exchange.filterFiles"), extensions: ["cdesign", "cboard"] },
+    { name: t("exchange.filterJson"), extensions: ["json"] },
   ],
 };
 
@@ -40,7 +41,7 @@ export function ColorsExchangeMenu() {
       const file = await pickTokenFile(COLOR_FILES);
       if (file) setSource({ name: file.name, ...readColorSource(file.bytes) });
     } catch (error) {
-      notifyError("Couldn't read that file", error);
+      notifyError(t("exchange.readFailed"), error);
     }
   };
   const exportAs = async (format: "dtcg" | "css") => {
@@ -52,12 +53,14 @@ export function ColorsExchangeMenu() {
       const file = name.replace(/[\\/:*?"<>|]+/g, "-").trim() || "Board colors";
       const saved = await exportFile(new Blob([text], { type: "text/plain" }), file, {
         extension: format === "dtcg" ? "tokens.json" : "css",
-        label: format === "dtcg" ? "Design tokens" : "CSS",
+        label: format === "dtcg" ? t("exchange.formatTokens") : "CSS",
       });
       if (saved)
-        toast({ title: format === "dtcg" ? "Exported as design tokens" : "Exported as CSS" });
+        toast({
+          title: format === "dtcg" ? t("exchange.exportedTokens") : t("exchange.exportedCss"),
+        });
     } catch (error) {
-      notifyError("Couldn't export the colors", error);
+      notifyError(t("exchange.exportFailed"), error);
     }
   };
 
@@ -65,20 +68,20 @@ export function ColorsExchangeMenu() {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <IconButton label="Import and export" size="sm">
+          <IconButton label={t("exchange.menu")} size="sm">
             <ArrowDownUp />
           </IconButton>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem onSelect={() => void importFile()}>
-            Import colors from a file…
+            {t("exchange.import")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem disabled={empty} onSelect={() => void exportAs("dtcg")}>
-            Export as design tokens (DTCG)
+            {t("exchange.exportTokens")}
           </DropdownMenuItem>
           <DropdownMenuItem disabled={empty} onSelect={() => void exportAs("css")}>
-            Export as CSS variables
+            {t("exchange.exportCss")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

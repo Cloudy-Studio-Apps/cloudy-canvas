@@ -12,6 +12,7 @@ import { FormField } from "./form-field";
 import { FormSection } from "./form-section";
 import { ParticipantRow } from "./participant-row";
 import type { RelationFormProps } from "./entity-form.types";
+import { t } from "../../../er.i18n";
 
 /** A relation: name, identifying marks, participants with cardinalities, and its attributes. */
 export function RelationForm({ relation }: RelationFormProps) {
@@ -26,22 +27,22 @@ export function RelationForm({ relation }: RelationFormProps) {
 
   return (
     <div className="space-y-4">
-      <FormField label="Relation name">
+      <FormField label={t("form.relation.name")}>
         <CommitInput
           value={relation.name}
           onCommit={(name) =>
             name.trim()
               ? void er.edits.updateRelation(relation.id, { name: name.trim() })
-              : "Name it"
+              : t("form.nameIt")
           }
         />
       </FormField>
       <div className="flex items-center gap-1">
         <FlagToggle
-          label="Identifying"
+          label={t("form.relation.identifying")}
           title={
             lock("identifying-relations", relation.identifying).reason ||
-            "Identifying relation of a weak entity (double diamond)"
+            t("form.relation.identifyingTitle")
           }
           on={relation.identifying}
           disabled={lock("identifying-relations", relation.identifying).disabled}
@@ -50,10 +51,10 @@ export function RelationForm({ relation }: RelationFormProps) {
           }
         />
         <FlagToggle
-          label="Associative"
+          label={t("form.relation.associative")}
           title={
             lock("associative-entities", relation.associative).reason ||
-            "An associative entity: a relation that is also an entity, with a key of its own, taking part in other relations"
+            t("form.relation.associativeTitle")
           }
           on={relation.associative}
           disabled={lock("associative-entities", relation.associative).disabled}
@@ -62,20 +63,16 @@ export function RelationForm({ relation }: RelationFormProps) {
           }
         />
         <FlagToggle
-          label="I mark"
-          title={
-            lock("dependency-marks", relation.idMark).reason ||
-            "Dependency by identification (an I at the top of the diamond)"
-          }
+          label={t("form.relation.iMark")}
+          title={lock("dependency-marks", relation.idMark).reason || t("form.relation.iMarkTitle")}
           on={relation.idMark}
           disabled={lock("dependency-marks", relation.idMark).disabled}
           onToggle={() => er.edits.updateRelation(relation.id, { idMark: !relation.idMark })}
         />
         <FlagToggle
-          label="E mark"
+          label={t("form.relation.eMark")}
           title={
-            lock("dependency-marks", relation.existenceMark).reason ||
-            "Dependency by existence (an E at the top of the diamond)"
+            lock("dependency-marks", relation.existenceMark).reason || t("form.relation.eMarkTitle")
           }
           on={relation.existenceMark}
           disabled={lock("dependency-marks", relation.existenceMark).disabled}
@@ -86,7 +83,7 @@ export function RelationForm({ relation }: RelationFormProps) {
         {ratio && (
           <span
             className="ml-auto font-mono text-xs text-muted-foreground"
-            title="From the max cardinalities"
+            title={t("form.relation.ratioTitle")}
           >
             {ratio}
           </span>
@@ -97,18 +94,18 @@ export function RelationForm({ relation }: RelationFormProps) {
           variant="secondary"
           size="sm"
           className="w-full"
-          title="Replace the relation with an entity and a two-way relation per side"
+          title={t("form.relation.convertTitle")}
           onClick={() => {
             const entity = er.edits.convertToEntity(relation.id);
             if (entity) engine.focusElement(entity);
           }}
         >
           <RectangleHorizontal />
-          Convert to entity
+          {t("form.relation.convert")}
         </Button>
       )}
       <FormSection
-        title="Participants"
+        title={t("form.relation.participants")}
         actions={
           <Button
             variant="ghost"
@@ -125,12 +122,12 @@ export function RelationForm({ relation }: RelationFormProps) {
             onClick={() => firstEntity && er.edits.addParticipant(relation.id, firstEntity)}
           >
             <Plus />
-            Add
+            {t("form.relation.addParticipant")}
           </Button>
         }
       >
         {relation.participants.length === 0 ? (
-          <p className="text-xs text-muted-foreground">No entities take part yet.</p>
+          <p className="text-xs text-muted-foreground">{t("form.relation.noParticipants")}</p>
         ) : (
           <ul className="divide-y">
             {relation.participants.map((participant) => (
@@ -148,14 +145,14 @@ export function RelationForm({ relation }: RelationFormProps) {
       <Button
         variant="outline"
         size="sm"
-        title="Box this relation and its entities so it can take part in other relations"
+        title={t("form.relation.aggregateTitle")}
         onClick={() => {
           const id = er.edits.addAggregate(relation.id);
           if (id) engine.focusElement(id);
         }}
       >
         <Group />
-        Make an aggregation
+        {t("form.relation.aggregate")}
       </Button>
     </div>
   );

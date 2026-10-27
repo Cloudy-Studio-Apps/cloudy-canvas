@@ -10,6 +10,7 @@ import {
 import { usePluginsStore } from "@shared/stores/plugins-store";
 import { notifyError } from "@shared/stores/toast-store";
 import { importPlugin } from "./import-plugin";
+import { t } from "../app.i18n";
 
 /** How long a plugin's code may take to load before it's left out. */
 const LOAD_TIMEOUT_MS = 5000;
@@ -26,7 +27,7 @@ export async function loadPlugins(): Promise<void> {
   try {
     scan = await pluginStorage.list();
   } catch (error) {
-    notifyError("Plugins couldn't be read", error);
+    notifyError(t("plugins.readFailed"), error);
     return;
   }
 

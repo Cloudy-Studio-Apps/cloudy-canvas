@@ -1,4 +1,5 @@
 import type { DbmlError } from "./parser.types";
+import { t } from "../../db.i18n";
 
 /** Thrown while parsing; caught by `parseDbml` and returned as a `DbmlError`. */
 export class DbmlSyntaxError extends Error {
@@ -18,7 +19,7 @@ export class DbmlSyntaxError extends Error {
 /** Warning for a recognized construct that the board doesn't support yet. */
 export function unsupported(what: string, at: { line: number; column: number }): DbmlError {
   return {
-    message: `${what} isn't supported yet and was ignored`,
+    message: t("dbml.unsupported", { what }),
     line: at.line,
     column: at.column,
   };

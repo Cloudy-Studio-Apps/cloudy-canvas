@@ -5,6 +5,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
 import type { AddFrameBarProps } from "./canvas.types";
+import { t } from "../../catalog.i18n";
 
 /** On a greyed frame under the pointer: make it a page, or an option of a page. */
 export function AddFrameBar({ rect, frame, target }: AddFrameBarProps) {
@@ -21,7 +22,7 @@ export function AddFrameBar({ rect, frame, target }: AddFrameBarProps) {
         onClick={() => ensureBrochure(engine).addPages([frame.id])}
       >
         <Plus />
-        Page
+        {t("canvas.page")}
       </Button>
       {target && (
         <Button

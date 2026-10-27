@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { appLifecycle, appUpdater, openExternal } from "@platform";
 import { notifyError } from "./toast-store";
 import type { UpdateState } from "./update-store.types";
+import { t } from "./stores.i18n";
 
 /** Development builds never update themselves. */
 const updater = import.meta.env.DEV ? null : appUpdater;
@@ -24,7 +25,7 @@ export const useUpdateStore = create<UpdateState>()((set, get) => ({
     } catch (error) {
       set({ status: { phase: "error", message: errorText(error) } });
       if (silent) console.warn("[updates] Couldn't check for updates:", error);
-      else notifyError("Couldn't check for updates", error);
+      else notifyError(t("updates.checkFailed"), error);
     }
   },
 
@@ -34,7 +35,7 @@ export const useUpdateStore = create<UpdateState>()((set, get) => ({
     const { update } = status;
     if (installKind === "package") {
       await openExternal(update.releaseUrl).catch((error: unknown) =>
-        notifyError("The download page couldn't be opened", error),
+        notifyError(t("updates.pageFailed"), error),
       );
       return;
     }
@@ -48,7 +49,7 @@ export const useUpdateStore = create<UpdateState>()((set, get) => ({
       });
     } catch (error) {
       set({ status: { phase: "available", update } });
-      notifyError("The update couldn't be installed", error);
+      notifyError(t("updates.installFailed"), error);
     }
   },
 

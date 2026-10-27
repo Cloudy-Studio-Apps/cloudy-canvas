@@ -3,6 +3,7 @@ import { Blocks } from "lucide-react";
 import { AgentClientIconView } from "../agent-client-icon";
 import { AgentClientCard } from "./agent-client-card";
 import type { AgentClientGridProps } from "./connect-agent-dialog.types";
+import { t } from "../agent-server.i18n";
 
 /** The apps as cards, three to a row, with an "Other AI tools" card last. */
 export function AgentClientGrid({ clients, onPick, onMore }: AgentClientGridProps) {
@@ -20,7 +21,7 @@ export function AgentClientGrid({ clients, onPick, onMore }: AgentClientGridProp
       {onMore && (
         <AgentClientCard
           icon={<AgentClientIconView icon={Blocks} className="text-muted-foreground" />}
-          label="Other AI tools"
+          label={t("connect.otherTools")}
           action="open"
           onClick={onMore}
         />

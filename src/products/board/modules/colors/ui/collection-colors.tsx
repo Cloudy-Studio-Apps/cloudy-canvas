@@ -10,6 +10,7 @@ import { DeleteColorDialog } from "./delete-color-dialog";
 import { InlineRename } from "./inline-rename";
 import { NEW_COLOR } from "./new-color";
 import type { CollectionColorsProps } from "./colors-ui.types";
+import { t } from "../colors.i18n";
 
 /**
  * A collection's colors in their groups: "+" adds one, its name and groups rename in place, and
@@ -38,12 +39,12 @@ export function CollectionColors({ collection, colors }: CollectionColorsProps) 
           {collection.name}
         </h3>
         <InlineRename
-          label="Rename collection"
+          label={t("collection.rename")}
           value={collection.name}
           onRename={(name) => tokens.renameCollection(collection.id, name)}
         />
         <IconButton
-          label={`Delete ${collection.name}`}
+          label={t("collection.delete", { name: collection.name })}
           size="xs"
           revealOnHover
           onClick={requestDeleteCollection}
@@ -51,7 +52,7 @@ export function CollectionColors({ collection, colors }: CollectionColorsProps) 
           <Trash2 />
         </IconButton>
         <IconButton
-          label={`Add a color to ${collection.name}`}
+          label={t("collection.addColor", { name: collection.name })}
           size="xs"
           onClick={() => tokens.createVariable({ ...NEW_COLOR, collectionId: collection.id })}
         >
@@ -59,7 +60,7 @@ export function CollectionColors({ collection, colors }: CollectionColorsProps) 
         </IconButton>
       </header>
       {colors.length === 0 ? (
-        <p className="px-1 py-1 text-xs text-muted-foreground">No colors yet: add one with +.</p>
+        <p className="px-1 py-1 text-xs text-muted-foreground">{t("collection.empty")}</p>
       ) : (
         <TokenGroupAccordion
           group={groupTree(colors)}
@@ -67,7 +68,7 @@ export function CollectionColors({ collection, colors }: CollectionColorsProps) 
           renderVariable={(variable) => <ColorRow variable={variable} onDelete={requestDelete} />}
           renderGroupActions={(group) => (
             <InlineRename
-              label="Rename group"
+              label={t("collection.renameGroup")}
               value={group.path}
               onRename={(to) => tokens.renameGroup(collection.id, group.path, to)}
             />

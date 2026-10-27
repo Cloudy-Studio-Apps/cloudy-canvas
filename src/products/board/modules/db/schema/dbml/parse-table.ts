@@ -5,6 +5,7 @@ import { parseIndexes } from "./parse-indexes";
 import { parseQualifiedName } from "./parse-name";
 import { parseEndpoint, parseRefKind, parseSettings, parseValue } from "./parse-settings";
 import type { DbmlError, ParsedColumn, ParsedRef, ParsedTable } from "./parser.types";
+import { t } from "../../db.i18n";
 
 /** Parses `Table name [as alias] [settings] { … }`. The cursor is on the `Table` keyword. */
 export function parseTable(
@@ -36,7 +37,7 @@ export function parseTable(
         table.note = cursor.expectString("a note");
         return true;
       }
-      warnings.push(unsupported(`Table setting "${key}"`, keyword));
+      warnings.push(unsupported(t("dbml.tableSetting", { key }), keyword));
       return false;
     });
   }
@@ -85,7 +86,7 @@ function parseColumn(
       else if (key === "not null") column.notNull = true;
       else if (key === "null") column.notNull = false;
       else if (key === "unique") column.unique = true;
-      else warnings.push(unsupported(`Column setting "${key}"`, nameToken));
+      else warnings.push(unsupported(t("dbml.columnSetting", { key }), nameToken));
       return true;
     }
     if (key === "default") {
@@ -103,7 +104,7 @@ function parseColumn(
       refs.push({ from: { table: tableName, column: column.name }, to, kind, line });
       return true;
     }
-    warnings.push(unsupported(`Column setting "${key}"`, nameToken));
+    warnings.push(unsupported(t("dbml.columnSetting", { key }), nameToken));
     return false;
   });
   return column;

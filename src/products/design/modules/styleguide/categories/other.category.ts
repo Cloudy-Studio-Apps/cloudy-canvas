@@ -1,11 +1,12 @@
 import { numberPurposeOf } from "../tokens";
 import type { StyleguideCategory } from "../styleguide.types";
 import { isFontVariable, variables } from "./category-tokens";
+import { t } from "../styleguide.i18n";
 
 /** What no other category takes: other texts, booleans and numbers (font sizes, sizes). */
 export const otherCategory: StyleguideCategory = {
   id: "other",
-  label: "Other",
+  label: t("categories.other"),
   order: 100,
   defaultTemplate: "other.table",
   groups: (store) =>

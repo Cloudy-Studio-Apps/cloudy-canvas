@@ -1,5 +1,6 @@
 import { Switch } from "@shared/ui/components/ui/switch";
 import type { AgentToolRowProps } from "./agent-tools-dialog.types";
+import { t } from "../agent-server.i18n";
 
 /** One tool: its name and what it does, with a switch that's always on (tools can't be turned off yet). */
 export function AgentToolRow({ tool }: AgentToolRowProps) {
@@ -11,7 +12,12 @@ export function AgentToolRow({ tool }: AgentToolRowProps) {
           {tool.description}
         </p>
       </div>
-      <Switch checked disabled aria-label={`${tool.name} is available`} className="mt-0.5" />
+      <Switch
+        checked
+        disabled
+        aria-label={t("tools.available", { name: tool.name })}
+        className="mt-0.5"
+      />
     </li>
   );
 }

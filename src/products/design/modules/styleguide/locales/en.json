@@ -1,0 +1,271 @@
+{
+  "categories": {
+    "colors": "Colors",
+    "cover": "Cover",
+    "effects": "Effects",
+    "opacity": "Opacity",
+    "other": "Other",
+    "paintStyles": "Paint styles",
+    "radius": "Radius",
+    "spacing": "Spacing",
+    "strokes": "Strokes",
+    "typography": "Typography"
+  },
+  "canvas": {
+    "fallback": "Colors"
+  },
+  "commands": {
+    "open": "Design system",
+    "convert": "Convert to design",
+    "exportSection": "Export this section…",
+    "exportSystem": "Export the design system as PDF"
+  },
+  "mode": {
+    "label": "Design system",
+    "description": "Your variables and styles as a living style guide."
+  },
+  "sections": {
+    "label": "Design system",
+    "description": "Place your variables and styles as a live style guide that stays up to date."
+  },
+  "templates": {
+    "colors": {
+      "cards": {
+        "label": "Cards",
+        "description": "A card per color: a wide swatch, its name, values, code name and description."
+      },
+      "circles": {
+        "label": "Circles",
+        "description": "A circle per color, its name and values under it."
+      },
+      "contrastPairs": {
+        "label": "Pairs with contrast",
+        "description": "Text on each color, with its contrast ratio and WCAG grade.",
+        "textIn": "Text in",
+        "whiteAndBlack": "White and black",
+        "white": "White",
+        "black": "Black",
+        "labelFont": "Label font"
+      },
+      "list": {
+        "label": "Vertical list",
+        "description": "One row per color: a small swatch, its name and values."
+      },
+      "modeColumns": {
+        "label": "Mode columns",
+        "description": "Every mode side by side: the swatch grid per mode."
+      },
+      "rampStrip": {
+        "label": "Ramp strip",
+        "description": "Shades joined in one strip, with their names and values under them."
+      },
+      "stripes": {
+        "label": "Stripes",
+        "description": "Tall bands side by side, labelled inside."
+      },
+      "swatchGrid": {
+        "label": "Swatch grid",
+        "description": "Squares in a grid with their names and values."
+      }
+    },
+    "cover": {
+      "minimal": {
+        "label": "Minimal",
+        "description": "The file's title, nothing else.",
+        "font": "Font"
+      },
+      "title": {
+        "label": "Title, description and date",
+        "description": "The file's title, its description and today's date.",
+        "font": "Font"
+      }
+    },
+    "effects": {
+      "cards": {
+        "label": "Cards with the effect",
+        "description": "A white card per effect style, with its name and summary.",
+        "columns": "Columns",
+        "cardHeight": "Card height"
+      },
+      "elevation": {
+        "label": "Elevation ladder",
+        "description": "The styles in one row, in name order, like an elevation scale."
+      }
+    },
+    "opacity": {
+      "checker": {
+        "label": "Over light and gray",
+        "description": "An ink square at each opacity over a half white, half gray backdrop."
+      },
+      "table": {
+        "label": "Table",
+        "description": "Every opacity in a table."
+      }
+    },
+    "other": {
+      "table": {
+        "label": "Table",
+        "description": "Every variable's name, type and value."
+      }
+    },
+    "paint": {
+      "cards": {
+        "label": "Cards",
+        "description": "A swatch per paint style with its name and what it's made of.",
+        "columns": "Columns"
+      },
+      "swatches": {
+        "label": "Swatches",
+        "description": "A square per paint style, gradients and pictures included.",
+        "columns": "Columns",
+        "swatchSize": "Swatch size"
+      }
+    },
+    "radius": {
+      "corners": {
+        "label": "Corner boxes",
+        "description": "A box rounded by each radius, with its name and value.",
+        "boxSize": "Box size"
+      },
+      "table": {
+        "label": "Table",
+        "description": "Every radius in a table."
+      }
+    },
+    "spacing": {
+      "bars": {
+        "label": "Bars ruler",
+        "description": "A bar as long as each value, with its name and value.",
+        "barColor": "Bar color",
+        "indigo": "Indigo",
+        "pink": "Pink",
+        "ink": "Ink"
+      },
+      "squares": {
+        "label": "Nested squares",
+        "description": "Squares as big as each value, nested inside each other, with a legend."
+      },
+      "table": {
+        "label": "Table",
+        "description": "Every value in a table."
+      }
+    },
+    "strokes": {
+      "boxes": {
+        "label": "Boxes",
+        "description": "A box outlined by each stroke, with its name and summary."
+      },
+      "lines": {
+        "label": "Line samples",
+        "description": "A long sample of each stroke, with its name and summary."
+      }
+    },
+    "typography": {
+      "paragraph": {
+        "label": "Paragraph sample",
+        "description": "A paragraph set in each style, to judge how it reads.",
+        "width": "Width"
+      },
+      "scale": {
+        "label": "Scale ladder",
+        "description": "Each text style set in itself, with its name and size / line height.",
+        "sample": "Sample",
+        "fox": "The quick brown fox",
+        "name": "The style's name",
+        "alphabet": "Aa Bb Cc 123"
+      },
+      "specimen": {
+        "label": "Specimen",
+        "description": "Each family the styles use: \"Aa\" set in it, its name and its weights."
+      },
+      "table": {
+        "label": "Table",
+        "description": "Every style's values in a table."
+      }
+    }
+  },
+  "colorKit": {
+    "hex": "Hex",
+    "rgb": "RGB",
+    "hsl": "HSL",
+    "codeName": "Code name",
+    "description": "Description",
+    "swatchSize": "Swatch size",
+    "labelFont": "Label font",
+    "columns": "Columns"
+  },
+  "empty": {
+    "setUp": {
+      "title": "Set up your design system",
+      "description": "This file has variables and styles. Lay them out as a style guide that stays up to date.",
+      "action": "Set up"
+    },
+    "none": {
+      "title": "No design system yet",
+      "description": "Add variables and styles, and this view lays them out as a style guide that stays up to date.",
+      "comingSoon": "Coming soon",
+      "addColor": "Add a color",
+      "importTokens": "Import tokens"
+    }
+  },
+  "export": {
+    "format": "PDF document",
+    "exporting": "Exporting the design system",
+    "drawing": "Drawing the sections",
+    "failed": "The design system couldn't be exported"
+  },
+  "addToPage": {
+    "label": "Add to page",
+    "added": "Added to {name}"
+  },
+  "menu": {
+    "label": "Design system",
+    "exportSection": "Export this section…",
+    "exportSystem": "Export design system as PDF…",
+    "convert": "Convert to design"
+  },
+  "sidebar": {
+    "modesSwitch": "Show modes side by side",
+    "sheet": {
+      "title": "Design system",
+      "sideBySide": "Show modes side by side",
+      "convert": "Convert to design",
+      "useSystem": "Use the design system's template"
+    },
+    "source": {
+      "category": "Category",
+      "group": "Group",
+      "wholeCategory": "Whole category"
+    },
+    "overview": {
+      "title": "Design system",
+      "empty": "Add variables or styles to see them here as a style guide.",
+      "summary_one": "{count} section, kept up to date as your variables and styles change. Pick one in the left panel or on the canvas to choose how it's drawn.",
+      "summary_other": "{count} sections, kept up to date as your variables and styles change. Pick one in the left panel or on the canvas to choose how it's drawn.",
+      "exportPdf": "Export as PDF"
+    },
+    "template": {
+      "groupHint": "This group's template. Unless you pick one, it uses its category's.",
+      "categoryHint": "The template every group of this category uses, unless a group picks its own.",
+      "useCategory": "Use the category's template"
+    }
+  },
+  "tab": {
+    "empty": {
+      "title": "Nothing to show yet",
+      "description": "Add a variable or a style and its category shows here."
+    },
+    "ariaLabel": "Categories",
+    "categories": "Categories",
+    "row": {
+      "hideGroups": "Hide its groups",
+      "showGroups": "Show its groups",
+      "empty": "Empty",
+      "show": "Show in the view",
+      "hide": "Hide from the view"
+    }
+  },
+  "defaults": {
+    "systemPage": "Design system"
+  }
+}

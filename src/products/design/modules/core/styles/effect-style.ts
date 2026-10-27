@@ -2,6 +2,7 @@ import type { StyleRecord } from "@canvas";
 
 import type { DesignNode, NodeEffect } from "../node/design-node.types";
 import type { EffectStyleValue } from "./effect-style.types";
+import { t } from "../core.i18n";
 
 function isEffect(value: unknown): value is NodeEffect {
   if (typeof value !== "object" || value === null) return false;
@@ -25,7 +26,9 @@ export function effectStyleSummary(style: StyleRecord): string {
   const effects = readEffectStyle(style.value)?.effects ?? [];
   const [only] = effects;
   if (effects.length !== 1 || !only) {
-    return effects.length === 0 ? "Empty" : `${effects.length} effects`;
+    return effects.length === 0
+      ? t("styles.empty")
+      : t("styles.effects", { count: effects.length });
   }
   const words = only.type.replace(/-/g, " ");
   return words.charAt(0).toUpperCase() + words.slice(1);

@@ -1,0 +1,15 @@
+{
+  "label": "Draw",
+  "description": "Pen, highlighter and eraser.",
+  "options": {
+    "group": "Drawing options",
+    "freehand": "Freehand",
+    "smooth": "Smooth",
+    "smoothHint": "Smooth: strokes are smoothed when you finish them",
+    "pen": "Pen",
+    "highlighter": "Highlighter",
+    "eraser": "Eraser",
+    "eraserShortcut": "Eraser ({shortcut})",
+    "stroke": "{size} stroke"
+  }
+}

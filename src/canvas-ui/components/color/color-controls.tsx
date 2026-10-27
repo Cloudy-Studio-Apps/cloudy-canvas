@@ -9,6 +9,7 @@ import { EyedropperButton } from "./eyedropper-button";
 import { HexInput } from "./hex-input";
 import { PercentInput } from "./percent-input";
 import { SaturationArea } from "./saturation-area";
+import { t } from "../components.i18n";
 
 /**
  * One color, Figma's way: the saturation/brightness area, eyedropper, hue (and opacity) sliders,
@@ -24,6 +25,17 @@ export function ColorControls({ color, opacity, onChange, label = "" }: ColorCon
     if (hsvToHex(hsv) !== color) setHsv(hexToHsv(color));
   }
   const alpha = opacity ?? 1;
+  const labels = label
+    ? {
+        hue: t("colorControls.hueOf", { target: label }),
+        opacity: t("colorControls.opacityOf", { target: label }),
+        hex: t("colorControls.hexOf", { target: label }),
+      }
+    : {
+        hue: t("colorControls.hue"),
+        opacity: t("colorControls.opacity"),
+        hex: t("colorControls.hex"),
+      };
 
   const setColor = (next: Hsv, info: ColorChangeInfo) => {
     const hex = hsvToHex(next);
@@ -42,14 +54,14 @@ export function ColorControls({ color, opacity, onChange, label = "" }: ColorCon
         <EyedropperButton onPick={pick} />
         <div className="flex flex-1 flex-col gap-2">
           <ColorSlider
-            label={`${label}Hue`}
+            label={labels.hue}
             value={hsv.h / 360}
             track={HUE_TRACK}
             onChange={(h, info) => setColor({ ...hsv, h: h * 360 }, info)}
           />
           {opacity !== undefined && (
             <ColorSlider
-              label={`${label}Opacity`}
+              label={labels.opacity}
               value={opacity}
               track={`linear-gradient(to right, transparent, ${color})`}
               checkered
@@ -60,14 +72,14 @@ export function ColorControls({ color, opacity, onChange, label = "" }: ColorCon
       </div>
       <div className="flex gap-1.5">
         <FieldBox className="flex-1">
-          <span className="text-subtle-foreground">Hex</span>
-          <HexInput color={color} label={`${label}Hex color`} onCommit={pick} />
+          <span className="text-subtle-foreground">{t("color.hexLabel")}</span>
+          <HexInput color={color} label={labels.hex} onCommit={pick} />
         </FieldBox>
         {opacity !== undefined && (
           <FieldBox className="w-16 gap-0.5">
             <PercentInput
               value={opacity}
-              label={`${label}Opacity`}
+              label={labels.opacity}
               onCommit={(value) => setOpacity(value, { done: true })}
             />
           </FieldBox>

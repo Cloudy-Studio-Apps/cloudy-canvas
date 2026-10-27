@@ -5,10 +5,11 @@ import type { LayerBlurEffect } from "../../effect.types";
 import { EffectChoice, ScrubField } from "../fields";
 import { EffectBind } from "../effect-bind";
 import type { EffectEditorProps } from "../effects.points.types";
+import { t } from "../../effects.i18n";
 
 const KINDS = [
-  { value: "uniform", label: "Uniform" },
-  { value: "progressive", label: "Progressive" },
+  { value: "uniform", label: t("editors.uniform") },
+  { value: "progressive", label: t("editors.progressive") },
 ] as const;
 
 /**
@@ -21,7 +22,7 @@ export function LayerBlurEditor({ effect, onChange }: EffectEditorProps<LayerBlu
   const point = (which: "start" | "end", axis: "x" | "y") => (
     <ScrubField
       prefix={`${which === "start" ? "S" : "E"}${axis.toUpperCase()}`}
-      label={`${which === "start" ? "Start" : "End"} ${axis}`}
+      label={t(which === "start" ? "editors.start" : "editors.end", { axis })}
       value={effect[which][axis]}
       factor={100}
       suffix="%"
@@ -34,7 +35,7 @@ export function LayerBlurEditor({ effect, onChange }: EffectEditorProps<LayerBlu
   return (
     <div className="flex flex-col gap-2">
       <EffectChoice
-        label="Blur kind"
+        label={t("editors.blurKind")}
         value={effect.progressive ? "progressive" : "uniform"}
         options={KINDS}
         onChange={(kind) => set({ progressive: kind === "progressive" })}
@@ -43,7 +44,7 @@ export function LayerBlurEditor({ effect, onChange }: EffectEditorProps<LayerBlu
         <EffectBind field="radius">
           <ScrubField
             prefix={<Droplet />}
-            label="Blur"
+            label={t("editors.blur")}
             min={0}
             value={effect.radius}
             onChange={(radius, info) => set({ radius }, info)}
@@ -52,7 +53,7 @@ export function LayerBlurEditor({ effect, onChange }: EffectEditorProps<LayerBlu
         {effect.progressive && (
           <ScrubField
             prefix={<MoveRight />}
-            label="Blur at the start"
+            label={t("editors.blurStart")}
             min={0}
             value={effect.startRadius}
             onChange={(startRadius, info) => set({ startRadius }, info)}

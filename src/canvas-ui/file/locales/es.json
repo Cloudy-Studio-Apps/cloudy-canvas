@@ -1,0 +1,33 @@
+{
+  "import": {
+    "title": "Importado con cambios",
+    "more": "{list}; y {count} más."
+  },
+  "save": {
+    "unsaved": "Cambios sin guardar",
+    "saving": "Guardando…",
+    "draft": "Borrador guardado automáticamente. Guarda para elegir dónde va",
+    "autosaved": "Guardado automático",
+    "saved": "Guardado",
+    "error": "No se pudo guardar {noun}"
+  },
+  "close": {
+    "title": "¿Salir de Cloudy Canvas?",
+    "unsaved": "“{name}” tiene cambios sin guardar. Se perderán si no los guardas.",
+    "saved": "Tus cambios en “{name}” están guardados.",
+    "quitWithout": "Salir sin guardar",
+    "saveQuit": "Guardar y salir",
+    "quit": "Salir"
+  },
+  "info": {
+    "title": "Título",
+    "description": "Descripción",
+    "placeholder": "De qué trata {noun}",
+    "draft": "Borrador guardado automáticamente en la app. Guarda para elegir un archivo.",
+    "unsavedFile": "Aún sin guardar",
+    "trigger": "{name}. Editar título y descripción"
+  },
+  "errors": {
+    "open": "No se pudo abrir {noun}."
+  }
+}

@@ -1,0 +1,174 @@
+{
+  "gradient": {
+    "copied": "Degradado copiado como CSS",
+    "stop": {
+      "subject": "la parada",
+      "position": "Posición de la parada",
+      "hex": "Hex de la parada",
+      "opacity": "Opacidad de la parada",
+      "remove": "Quitar parada",
+      "at": "Parada al {percent}%"
+    },
+    "onThisPage": "En esta página",
+    "recent": "Recientes",
+    "copyFailed": "No se pudo copiar el degradado",
+    "toolbar": {
+      "copyCss": "Copiar como CSS",
+      "smooth": "Mezcla suave",
+      "rotate90": "Rotar 90°",
+      "reverse": "Invertir",
+      "addStop": "Añadir parada"
+    },
+    "ease": {
+      "linear": "Lineal",
+      "in": "Aceleración",
+      "out": "Desaceleración",
+      "inOut": "Aceleración y desaceleración",
+      "label": "Mezclar hasta la siguiente parada"
+    },
+    "swatch": "Degradado {type}"
+  },
+  "image": {
+    "mode": {
+      "fill": "Rellenar",
+      "fit": "Ajustar",
+      "crop": "Recortar",
+      "tile": "Mosaico"
+    },
+    "scaleMode": "Modo de escala de la imagen",
+    "tileScale": "Escala del mosaico",
+    "rotate90": "Rotar 90°",
+    "placeholder": "Marcador",
+    "addPlaceholder": "Añadir marcador",
+    "cropHint": "Arrastra la imagen en el lienzo para moverla, sus esquinas para escalarla y el recuadro para recortarla."
+  },
+  "paint": {
+    "blendMode": "Modo de fusión de la pintura",
+    "tabs": {
+      "label": "Pintura",
+      "noImageStroke": "Los trazos aún no pueden ser imágenes",
+      "soon": "{name} (próximamente)"
+    },
+    "solid": {
+      "onThisPage": "En esta página"
+    },
+    "field": {
+      "edit": "Editar {name}",
+      "hex": "Hex de {name}",
+      "opacity": "Opacidad de {name}",
+      "hide": "Ocultar {name}",
+      "show": "Mostrar {name}",
+      "remove": "Quitar {name}"
+    }
+  },
+  "paintTypes": {
+    "solid": "Sólido",
+    "linear": "Lineal",
+    "radial": "Radial",
+    "angular": "Angular",
+    "diamond": "Diamante",
+    "image": "Imagen",
+    "pattern": "Patrón"
+  },
+  "variable": {
+    "use": "Usar una variable",
+    "useFor": "Usar una variable para {name}"
+  },
+  "blendModes": {
+    "passThrough": "Pasar a través",
+    "normal": "Normal",
+    "darken": "Oscurecer",
+    "multiply": "Multiplicar",
+    "plusDarker": "Más oscuro",
+    "colorBurn": "Subexponer color",
+    "lighten": "Aclarar",
+    "screen": "Trama",
+    "plusLighter": "Más claro",
+    "colorDodge": "Sobreexponer color",
+    "overlay": "Superponer",
+    "softLight": "Luz suave",
+    "hardLight": "Luz intensa",
+    "difference": "Diferencia",
+    "exclusion": "Exclusión",
+    "hue": "Tono",
+    "saturation": "Saturación",
+    "color": "Color",
+    "luminosity": "Luminosidad",
+    "mixed": "Mixto",
+    "label": "Modo de fusión"
+  },
+  "panel": {
+    "mixed": "Mixto"
+  },
+  "properties": {
+    "label": "Propiedades",
+    "hide": "Ocultar el panel de propiedades",
+    "tabs": {
+      "design": "Diseño",
+      "prototype": "Prototipo"
+    },
+    "show": "Mostrar el panel de propiedades"
+  },
+  "rail": {
+    "mainMenu": "Menú principal",
+    "label": "Paneles",
+    "agentsOn": "Agentes: activados",
+    "agentsOff": "Agentes: desactivados",
+    "hide": "Ocultar el panel izquierdo",
+    "show": "Mostrar el panel izquierdo"
+  },
+  "tokenUsage": {
+    "detach": {
+      "title": "¿Desvincular en todas partes?",
+      "button": "Desvincular en todas partes",
+      "description": "{layers} capas y {styles} estilos dejan de usarlo y conservan su aspecto. Se queda en el archivo.",
+      "confirm": "Desvincular"
+    },
+    "replace": {
+      "it": "él",
+      "done": "Reemplazado por {name}",
+      "layersUse_one": "{count} capa lo usa ahora.",
+      "layersUse_other": "{count} capas lo usan ahora.",
+      "failed": "No se pudo reemplazar",
+      "button": "Reemplazar con…",
+      "none": "No hay otro estilo de este tipo."
+    },
+    "summary": {
+      "layers_one": "{count} capa",
+      "layers_other": "{count} capas",
+      "aliases_one": "{count} alias",
+      "aliases_other": "{count} alias",
+      "styles_one": "{count} estilo",
+      "styles_other": "{count} estilos",
+      "generators_one": "{count} generador",
+      "generators_other": "{count} generadores",
+      "usedBy": "Usado por {parts}",
+      "unused": "No se usa en ningún sitio",
+      "selectHere": "Seleccionar {count} aquí"
+    }
+  },
+  "designEditor": {
+    "ariaLabel": "Lienzo de diseño",
+    "title": "Abriendo el diseño",
+    "failed": "No se pudo abrir el diseño",
+    "home": "Volver al inicio"
+  },
+  "leftPanel": {
+    "draft": "Borrador",
+    "saved": "Archivo guardado",
+    "notSaved": "Aún sin guardar",
+    "design": "Diseño"
+  },
+  "import": {
+    "figma": {
+      "reading": "Leyendo el archivo",
+      "building": "Creando el diseño",
+      "saving": "Guardando el borrador",
+      "importing": "Importando {name}"
+    }
+  },
+  "file": {
+    "noun": "el diseño",
+    "untitled": "Diseño sin título"
+  }
+}

@@ -1,6 +1,8 @@
+import { tCommon } from "@shared/core";
 import { useDocumentTokens } from "@canvas-ui";
 import { AppDialog, Button } from "@shared/ui/kit";
 import type { DeleteColorDialogProps } from "./colors-ui.types";
+import { t } from "../colors.i18n";
 
 /**
  * Asks before deleting a board color something uses: the elements keep their color, unlinked,
@@ -16,23 +18,23 @@ export function DeleteColorDialog({ variable, onClose }: DeleteColorDialogProps)
     onClose();
   };
   const uses = [
-    elements > 0 ? `${elements} element${elements === 1 ? "" : "s"}` : null,
-    aliases > 0 ? `${aliases} other color${aliases === 1 ? "" : "s"}` : null,
+    elements > 0 ? t("deleteColor.elements", { count: elements }) : null,
+    aliases > 0 ? t("deleteColor.colors", { count: aliases }) : null,
   ].filter(Boolean);
   return (
     <AppDialog
       open={!!variable}
       onOpenChange={(open) => !open && onClose()}
       size="sm"
-      title={`Delete “${variable?.name ?? ""}”?`}
-      description={`It's used by ${uses.join(" and ")}. They keep its color, unlinked.`}
+      title={t("deleteColor.title", { name: variable?.name ?? "" })}
+      description={t("deleteColor.description", { uses: uses.join(t("deleteColor.and")) })}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            Cancel
+            {tCommon("cancel")}
           </Button>
           <Button variant="destructive" onClick={remove}>
-            Delete
+            {tCommon("delete")}
           </Button>
         </>
       }

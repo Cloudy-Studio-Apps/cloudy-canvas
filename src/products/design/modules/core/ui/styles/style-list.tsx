@@ -8,6 +8,7 @@ import { shownStyle } from "./shown-style";
 import { StylePreview } from "./style-preview";
 import type { StyleListProps } from "./styles.types";
 import { useStyleType } from "./use-style-type";
+import { t } from "../../core.i18n";
 
 /** Past this many styles, the list gets a search field. */
 const SEARCH_FROM = 8;
@@ -22,12 +23,12 @@ export function StyleList({ styleType, current, onPick }: StyleListProps) {
     ? styles.filter((s) => s.name.toLowerCase().includes(query.trim().toLowerCase()))
     : styles;
   if (styles.length === 0) {
-    return <p className="px-2 py-2 text-xs text-muted-foreground">No styles of this kind yet.</p>;
+    return <p className="px-2 py-2 text-xs text-muted-foreground">{t("styles.none")}</p>;
   }
   return (
     <div className="flex flex-col gap-1">
       {styles.length > SEARCH_FROM && (
-        <SearchInput value={query} onChange={setQuery} size="sm" placeholder="Search styles" />
+        <SearchInput value={query} onChange={setQuery} size="sm" placeholder={t("styles.search")} />
       )}
       <div className="flex max-h-64 flex-col overflow-y-auto">
         {shown.map((style) => (

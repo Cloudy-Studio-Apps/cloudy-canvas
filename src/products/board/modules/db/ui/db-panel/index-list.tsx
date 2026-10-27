@@ -6,6 +6,7 @@ import { Button } from "@shared/ui/kit";
 import { useBoardSchema } from "../schema";
 import { IndexRow } from "./index-row";
 import type { IndexListProps } from "./index-list.types";
+import { t } from "../../db.i18n";
 
 /** The table's indexes. */
 export function IndexList({ table }: IndexListProps) {
@@ -15,7 +16,7 @@ export function IndexList({ table }: IndexListProps) {
   return (
     <section className="space-y-1">
       <div className="flex items-center justify-between">
-        <h3 className="text-xs font-medium text-muted-foreground">Indexes</h3>
+        <h3 className="text-xs font-medium text-muted-foreground">{t("indexes.title")}</h3>
         <Button
           variant="ghost"
           size="sm"
@@ -23,7 +24,7 @@ export function IndexList({ table }: IndexListProps) {
           onClick={() => schema.addIndex(table.id)}
         >
           <Plus />
-          Add index
+          {t("indexes.add")}
         </Button>
       </div>
       <datalist id={typeListId}>
@@ -32,7 +33,7 @@ export function IndexList({ table }: IndexListProps) {
         ))}
       </datalist>
       {table.indexes.length === 0 ? (
-        <p className="text-xs text-muted-foreground">No indexes.</p>
+        <p className="text-xs text-muted-foreground">{t("indexes.none")}</p>
       ) : (
         <ul>
           {table.indexes.map((index) => (

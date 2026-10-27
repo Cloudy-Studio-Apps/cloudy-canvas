@@ -1,0 +1,27 @@
+{
+  "label": "Frame",
+  "description": "A container for layers, like a screen or an artboard.",
+  "cornerRadius": "Corner radius",
+  "clipContent": "Clip content",
+  "presets": {
+    "title": "Presets",
+    "hint": "Pick a size to add a frame, or drag on the canvas to draw one.",
+    "groups": {
+      "phone": "Phone",
+      "tablet": "Tablet",
+      "desktop": "Desktop",
+      "presentation": "Presentation",
+      "watch": "Watch",
+      "paper": "Paper",
+      "social": "Social media"
+    },
+    "slide169": "Slide 16:9",
+    "slide43": "Slide 4:3",
+    "xPost": "X post",
+    "facebookPost": "Facebook post",
+    "instagramPost": "Instagram post",
+    "instagramStory": "Instagram story",
+    "linkedinPost": "LinkedIn post",
+    "youtubeThumbnail": "YouTube thumbnail"
+  }
+}

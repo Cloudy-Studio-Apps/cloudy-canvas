@@ -4,6 +4,7 @@ import { readFile } from "@tauri-apps/plugin-fs";
 
 import { extensionOf, fileNameFromPath, IMAGE_FILE_TYPES, type ImageFile } from "@shared/core";
 import type { PickImageFilesOptions } from "./image-file.types";
+import { t } from "./platform.i18n";
 
 /** Asks for image files (PNG, JPG, GIF, WebP, SVG, …) and reads them; empty when cancelled. */
 export async function pickImageFiles({
@@ -15,7 +16,7 @@ export async function pickImageFiles({
     title,
     multiple,
     directory: false,
-    filters: [{ name: "Images", extensions: Object.keys(IMAGE_FILE_TYPES) }],
+    filters: [{ name: t("filters.images"), extensions: Object.keys(IMAGE_FILE_TYPES) }],
   });
   if (!picked) return [];
   const paths = Array.isArray(picked) ? picked : [picked];

@@ -1,0 +1,71 @@
+{
+  "title": "Agentes (MCP)",
+  "status": {
+    "desktopOnly": "Los agentes solo pueden conectarse a la app de escritorio.",
+    "off": "Desactivado. Los agentes no pueden acceder a tus pizarras.",
+    "starting": "Iniciando…",
+    "connectAt": "Los agentes se conectan en {url}"
+  },
+  "menu": {
+    "connect": "Conectar un agente…",
+    "tools": "Herramientas disponibles…",
+    "showCursors": "Mostrar cursores y selecciones de los agentes",
+    "urlCopied": "URL copiada",
+    "copyUrl": "Copiar URL",
+    "turnOff": "Desactivar acceso de agentes",
+    "turnOn": "Activar acceso de agentes"
+  },
+  "panel": {
+    "allow": "Permitir que los agentes se conecten",
+    "url": "URL"
+  },
+  "copy": {
+    "copied": "{label} copiado",
+    "copy": "Copiar",
+    "failed": "No se pudo copiar al portapapeles",
+    "openFailed": "No se pudo abrir {client}"
+  },
+  "identify": {
+    "agent": "Agente"
+  },
+  "tools": {
+    "title": "Herramientas de agente",
+    "count_one": "{count} herramienta que los agentes de IA conectados pueden usar en Cloudy Canvas.",
+    "count_other": "{count} herramientas que los agentes de IA conectados pueden usar en Cloudy Canvas.",
+    "off": " El acceso de agentes está desactivado, así que ningún agente puede usarlas por ahora.",
+    "search": "Buscar herramientas",
+    "noMatch": "Ninguna herramienta coincide.",
+    "none": "No hay herramientas disponibles aquí.",
+    "available": "{name} está disponible"
+  },
+  "connect": {
+    "title": "Conecta Cloudy Canvas con tus agentes",
+    "hint": "Los agentes pueden leer y editar la pizarra o el diseño abierto mientras miras. Elige el que usas.",
+    "description": "Conecta un agente de IA a Cloudy Canvas.",
+    "turnOn": "Activar",
+    "otherTools": "Otras herramientas de IA",
+    "oneClick": "Añádelo con un clic o configúralo a mano.",
+    "addTo": "Añadir a {client}",
+    "allAgents": "Todos los agentes",
+    "manually": "Instalar manualmente",
+    "manual": {
+      "body": "Cualquier agente que hable MCP puede conectarse. Añade un servidor llamado {name} con el transporte {transport}, sin autenticación, en esta URL. Solo acepta conexiones de esta computadora.",
+      "serverUrl": "URL del servidor"
+    }
+  },
+  "clients": {
+    "terminalCommand": "Comando de terminal",
+    "runTerminal": "Ejecútalo en una terminal.",
+    "other": "Otros agentes",
+    "jsonConfig": "Configuración JSON",
+    "codex": "Pégalo en ~/.codex/config.toml.",
+    "cursor": "Pégalo en ~/.cursor/mcp.json, o en .cursor/mcp.json dentro de un proyecto.",
+    "vscode": "Pégalo en .vscode/mcp.json dentro de un proyecto, para el modo agente de Copilot.",
+    "antigravity": "Pégalo en el ⋯ › MCP Servers › Manage MCP Servers › View raw config del panel del agente (~/.gemini/antigravity/mcp_config.json).",
+    "claudeDesktop": "Pégalo en Settings › Developer › Edit Config y reinicia Claude. Requiere Node.js.",
+    "windsurf": "Pégalo en ~/.codeium/windsurf/mcp_config.json.",
+    "zed": "Combínalo con el settings.json de Zed.",
+    "opencode": "Combínalo con opencode.json (en un proyecto o en ~/.config/opencode/).",
+    "generic": "La entrada mcpServers habitual: .mcp.json, Cline y la mayoría de los otros agentes."
+  }
+}

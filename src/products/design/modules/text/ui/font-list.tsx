@@ -2,12 +2,13 @@ import { useState } from "react";
 
 import { cn, SearchInput } from "@shared/ui/kit";
 import type { FontListProps } from "./font-picker.types";
+import { t } from "../text.i18n";
 
 /** Rows shown at once; typing narrows the list to what matters. */
 const MAX_ROWS = 200;
 
 const SOURCES = [
-  { source: "installed", title: "Installed" },
+  { source: "installed", title: t("fonts.installed") },
   { source: "google", title: "Google Fonts" },
 ] as const;
 
@@ -21,8 +22,8 @@ export function FontList({ families, current, onPick }: FontListProps) {
     <div className="flex w-64 flex-col gap-2 p-2">
       <SearchInput
         size="sm"
-        aria-label="Search fonts"
-        placeholder="Search fonts"
+        aria-label={t("fonts.search")}
+        placeholder={t("fonts.search")}
         autoFocus
         value={query}
         onChange={setQuery}
@@ -31,7 +32,7 @@ export function FontList({ families, current, onPick }: FontListProps) {
       <div className="max-h-80 overflow-y-auto">
         {matches.length === 0 && (
           <p className="px-2 py-4 text-center text-xs text-muted-foreground">
-            No font has that name.
+            {t("fonts.noMatch")}
           </p>
         )}
         {SOURCES.map(({ source, title }) => {

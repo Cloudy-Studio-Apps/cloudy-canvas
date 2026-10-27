@@ -22,6 +22,7 @@ import {
 import type { ImportSource } from "./exchange.types";
 import { ImportTokensDialog } from "./import-tokens-dialog";
 import { useTokenFormats } from "./use-token-formats";
+import { t } from "../../variables.i18n";
 
 /** The Variables window's Import… (a design or tokens JSON) and Export ▸ (each format). */
 export function ExchangeMenu() {
@@ -36,7 +37,7 @@ export function ExchangeMenu() {
       if (!file) return;
       setSource({ name: file.name, ...readTokenSource(file.bytes, formats, engine.kinds) });
     } catch (error) {
-      notifyError("Couldn't read that file", error);
+      notifyError(t("exchange.readError"), error);
     }
   };
   const exportAs = async (id: string) => {
@@ -49,9 +50,9 @@ export function ExchangeMenu() {
         extension: format.extension,
         label: format.fileLabel,
       });
-      if (saved) toast({ title: `Exported as ${format.label}` });
+      if (saved) toast({ title: t("exchange.exported", { format: format.label }) });
     } catch (error) {
-      notifyError("Couldn't export the variables", error);
+      notifyError(t("exchange.exportError"), error);
     }
   };
   const empty = engine.service(DOCUMENT_TOKENS).store().isEmpty;
@@ -61,16 +62,18 @@ export function ExchangeMenu() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="xs" onPointerDown={(e) => e.stopPropagation()}>
-            <ArrowDownUp className="size-3.5" /> Import / Export
+            <ArrowDownUp className="size-3.5" /> {t("exchange.menu")}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" onPointerDown={(e) => e.stopPropagation()}>
           <DropdownMenuItem onSelect={() => void importFile()}>
-            Import from a file…
+            {t("exchange.importFile")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger disabled={empty}>Export as</DropdownMenuSubTrigger>
+            <DropdownMenuSubTrigger disabled={empty}>
+              {t("exchange.exportAs")}
+            </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
               {formats
                 .filter((f) => f.write)

@@ -3,6 +3,7 @@ import { Section } from "@shared/ui/kit";
 import { useVariablesWindowStore } from "../window/variables-window-store";
 import { GradeBadge } from "./grade-badge";
 import { useContrastChecks } from "./use-contrast-checks";
+import { t } from "../../variables.i18n";
 
 /**
  * The Variables section's contrast warnings: the pairs that fail (or pass only for large text) in
@@ -22,11 +23,7 @@ export function ContrastWarnings() {
     state.setOpen(true);
   };
   return (
-    <Section
-      title={`Contrast · ${issues.length} ${issues.length === 1 ? "issue" : "issues"}`}
-      collapsible
-      defaultOpen={false}
-    >
+    <Section title={t("contrast.issues", { count: issues.length })} collapsible defaultOpen={false}>
       <div className="flex flex-col gap-1">
         {issues.map((check) => {
           const worst = check.results.find((r) => r.grade === check.worst);
@@ -38,7 +35,10 @@ export function ContrastWarnings() {
               className="flex items-center gap-2 rounded-md px-1.5 py-1 text-left text-xs hover:bg-muted"
             >
               <span className="min-w-0 flex-1 truncate">
-                {store.variable(check.text)?.name} on {store.variable(check.surface)?.name}
+                {t("contrast.textOnSurface", {
+                  text: store.variable(check.text)?.name ?? "",
+                  surface: store.variable(check.surface)?.name ?? "",
+                })}
                 {worst?.label ? (
                   <span className="text-muted-foreground"> · {worst.label}</span>
                 ) : null}

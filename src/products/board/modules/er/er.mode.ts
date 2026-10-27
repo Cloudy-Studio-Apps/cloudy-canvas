@@ -4,6 +4,7 @@ import { defineBoardMode } from "@board/ui/modules";
 import { isErElement } from "./base/is-er-element";
 import { ER_MODE_COMMANDS, ER_MODE_ID } from "./mode";
 import { ErCheckBadges, runErModeCommand, useErToolbarItems } from "./ui/er-mode";
+import { t } from "./er.i18n";
 
 /**
  * The ER mode: only the board's ER shapes (every diagram, so linking two still joins them) can be
@@ -14,8 +15,8 @@ import { ErCheckBadges, runErModeCommand, useErToolbarItems } from "./ui/er-mode
  */
 export const erMode = defineBoardMode({
   id: ER_MODE_ID,
-  label: "ER diagrams",
-  description: "Only ER diagrams can be selected, with their toolbar, palette and panel.",
+  label: t("mode.label"),
+  description: t("mode.description"),
   icon: Network,
   order: 10,
   tool: "select",

@@ -2,6 +2,7 @@ import { boardMigrations, openBoardDocument } from "@board";
 import { CanvasDocument, type ShareGuest } from "@canvas";
 import { useCanvasFileLoader, type CanvasFileLoadState } from "@canvas-ui";
 import { getBoardModules, getBoardProduct } from "../modules";
+import { t } from "../board-ui.i18n";
 
 /**
  * Loads the board with this id (brought up to date by the modules' migrations), or starts an
@@ -10,7 +11,7 @@ import { getBoardModules, getBoardProduct } from "../modules";
  */
 export function useBoardLoader(id: string, live: ShareGuest | null = null): CanvasFileLoadState {
   return useCanvasFileLoader(id, {
-    noun: "board",
+    noun: t("file.noun"),
     open: (bytes) =>
       openBoardDocument(bytes, getBoardProduct().kinds, getBoardModules().get(boardMigrations)),
     create: () => new CanvasDocument(getBoardProduct().kinds),

@@ -2,12 +2,13 @@ import { NavLink } from "react-router";
 
 import { cn } from "@shared/ui/lib/utils";
 import { SETTINGS_GROUPS, SETTINGS_SECTIONS } from "../settings-sections";
+import { t } from "../settings.i18n";
 
 /** The settings' sections, grouped: a sidebar, or a scrolling row in a narrow window. */
 export function SettingsNav() {
   return (
     <nav
-      aria-label="Settings"
+      aria-label={t("page.title")}
       className="shrink-0 overflow-x-auto border-b bg-surface-sunken md:w-56 md:overflow-x-visible md:overflow-y-auto md:border-r md:border-b-0"
     >
       <div className="flex gap-1 p-2 md:flex-col md:gap-5 md:px-3 md:py-5">

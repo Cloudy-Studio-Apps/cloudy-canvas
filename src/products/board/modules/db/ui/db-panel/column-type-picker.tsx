@@ -18,6 +18,7 @@ import { useBoardSchema, useDbQuery } from "../schema";
 import { TypeOptionList } from "./type-option-list";
 import type { ColumnTypePickerProps, TypeTab } from "./column-type-picker.types";
 import type { TypeOption } from "./type-option-list.types";
+import { t } from "../../db.i18n";
 
 const BUILT_IN: TypeOption[] = COLUMN_TYPES.map((name) => ({ name, kind: "type" }));
 const BUILT_IN_NAMES = new Set<string>(COLUMN_TYPES);
@@ -36,7 +37,7 @@ export function ColumnTypePicker({ table, column }: ColumnTypePickerProps) {
     db.enums().map((e): TypeOption => ({
       name: e.name,
       kind: "enum",
-      detail: `${e.values.length} values`,
+      detail: t("type.enumValues", { count: e.values.length }),
     })),
   );
 
@@ -72,16 +73,16 @@ export function ColumnTypePicker({ table, column }: ColumnTypePickerProps) {
     <div className="flex w-40 shrink-0">
       <CommitInput
         value={column.type}
-        aria-label="Column type"
+        aria-label={t("type.column")}
         className="h-7 min-w-0 flex-1 rounded-r-none font-mono text-xs"
         onCommit={setType}
       />
       {showArgs && (
         <CommitInput
           value={column.typeArgs}
-          aria-label="Type arguments"
-          placeholder={spec?.label ?? "args"}
-          title={spec ? `${column.type} ${spec.label}` : "Type arguments"}
+          aria-label={t("type.args")}
+          placeholder={spec?.label ?? t("type.argsPlaceholder")}
+          title={spec ? `${column.type} ${spec.label}` : t("type.args")}
           className="h-7 w-14 shrink-0 rounded-none border-l-0 px-1.5 font-mono text-xs"
           onCommit={(typeArgs) => schema.updateColumn(table.id, column.id, { typeArgs })}
         />
@@ -98,7 +99,7 @@ export function ColumnTypePicker({ table, column }: ColumnTypePickerProps) {
             variant="outline"
             size="icon"
             className="size-7 rounded-l-none border-l-0"
-            aria-label="Choose a type"
+            aria-label={t("type.choose")}
           >
             <ChevronDown />
           </Button>
@@ -107,7 +108,7 @@ export function ColumnTypePicker({ table, column }: ColumnTypePickerProps) {
           <SearchInput
             autoFocus
             size="sm"
-            placeholder="Search, or type a custom type…"
+            placeholder={t("type.search")}
             value={query}
             onChange={setQuery}
             onKeyDown={(event) => {
@@ -117,15 +118,13 @@ export function ColumnTypePicker({ table, column }: ColumnTypePickerProps) {
           />
           <Tabs value={tab} onValueChange={(value) => setTab(value as TypeTab)}>
             <TabsList className="w-full">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="enums">Enums ({enums.length})</TabsTrigger>
-              <TabsTrigger value="types">Types</TabsTrigger>
+              <TabsTrigger value="all">{t("tabs.all")}</TabsTrigger>
+              <TabsTrigger value="enums">{t("tabs.enums", { count: enums.length })}</TabsTrigger>
+              <TabsTrigger value="types">{t("tabs.types")}</TabsTrigger>
             </TabsList>
           </Tabs>
           {tab === "enums" && enums.length === 0 && !needle ? (
-            <p className="px-2 py-1.5 text-sm text-muted-foreground">
-              No enums yet. Add one with the Database tool (Enum) or in the Schema view.
-            </p>
+            <p className="px-2 py-1.5 text-sm text-muted-foreground">{t("type.noEnums")}</p>
           ) : (
             <TypeOptionList options={options} current={column.type} onPick={pick} />
           )}
@@ -136,7 +135,7 @@ export function ColumnTypePicker({ table, column }: ColumnTypePickerProps) {
               className="w-full justify-start font-normal"
               onClick={() => pick(custom)}
             >
-              {resolved === custom ? "Use custom type" : "Use"}{" "}
+              {resolved === custom ? t("type.useCustom") : t("type.use")}{" "}
               <span className="font-mono text-xs">{resolved}</span>
             </Button>
           )}

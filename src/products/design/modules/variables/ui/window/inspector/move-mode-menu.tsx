@@ -10,6 +10,7 @@ import {
 } from "@shared/ui/kit";
 import { useBoard } from "../use-board";
 import type { MoveModeMenuProps } from "./inspector.types";
+import { t } from "../../../variables.i18n";
 
 /** A mode's "Move to group" menu: the other groups, or a new group of its own. */
 export function MoveModeMenu({ axis, mode, moves }: MoveModeMenuProps) {
@@ -18,14 +19,16 @@ export function MoveModeMenu({ axis, mode, moves }: MoveModeMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        aria-label={`Move ${mode.name} to another group`}
-        title="Move to another group"
+        aria-label={t("inspector.moveToAria", { name: mode.name })}
+        title={t("inspector.moveToTitle")}
         className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
       >
         <FolderInput className="size-3.5" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel className="text-xs">Move {mode.name} to</DropdownMenuLabel>
+        <DropdownMenuLabel className="text-xs">
+          {t("inspector.moveTo", { name: mode.name })}
+        </DropdownMenuLabel>
         {others.map((other) => (
           <DropdownMenuItem key={other.id} onSelect={() => moves.move(mode.id, other.id)}>
             {other.name}
@@ -33,7 +36,7 @@ export function MoveModeMenu({ axis, mode, moves }: MoveModeMenuProps) {
         ))}
         {others.length > 0 && <DropdownMenuSeparator />}
         <DropdownMenuItem onSelect={() => moves.moveToNewGroup(mode.id)}>
-          A new group
+          {t("inspector.newGroup")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -6,6 +6,7 @@ import { EffectBindingContext } from "./effect-binding-context";
 import { EffectRow } from "./effect-row";
 import type { EffectStackEditorProps } from "./effects-ui.types";
 import { designEffectTypes } from "./effects.points";
+import { t } from "../effects.i18n";
 
 /**
  * An effects stack, topmost first like the layers: each row edits, hides, removes or is dragged
@@ -31,7 +32,7 @@ export function EffectStackEditor({ effects, mixed, onChange, nodes }: EffectSta
   };
 
   if (mixed) {
-    return <p className="text-xs text-muted-foreground">Mixed. Click + to replace them all.</p>;
+    return <p className="text-xs text-muted-foreground">{t("stack.mixed")}</p>;
   }
   if (effects.length === 0) return null;
   // Listed topmost first; `i` stays the index in the stored list.

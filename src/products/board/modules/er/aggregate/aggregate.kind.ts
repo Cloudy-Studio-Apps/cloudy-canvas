@@ -11,6 +11,7 @@ import { ER_DEFAULTS } from "../base/er.defaults";
 import { ErNamedKind } from "../base/er-named.kind";
 import { drawErAggregate } from "./aggregate.draw";
 import type { ErAggregateElement } from "./aggregate.types";
+import { t } from "../er.i18n";
 
 /** How close to the border counts as grabbing the box, in world units. */
 const BORDER_REACH = 2;
@@ -23,8 +24,8 @@ const TITLE_FONT_SIZE = ER_DEFAULTS.fontSize - 1;
  */
 export class ErAggregateKind extends ErNamedKind<ErAggregateElement> {
   readonly type = "er-aggregate";
-  readonly label = "Aggregation";
-  readonly description = "A box round a relation and its participants that acts as an entity.";
+  readonly label = t("kinds.aggregate.label");
+  readonly description = t("kinds.aggregate.description");
   override readonly frame = true;
 
   draw(view: ElementView, el: ErAggregateElement): void {

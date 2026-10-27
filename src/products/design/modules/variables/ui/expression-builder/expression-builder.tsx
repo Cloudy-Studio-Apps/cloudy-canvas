@@ -2,11 +2,13 @@ import { useState } from "react";
 
 import { DOCUMENT_TOKENS, formatExpression, formulaOf, formulaText, type Formula } from "@canvas";
 import { useDocumentTokens } from "@canvas-ui";
+import { tCommon } from "@shared/core";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button, Popover, PopoverContent, PopoverTrigger } from "@shared/ui/kit";
 import type { ExpressionBuilderProps } from "./expression-builder.types";
 import { FormulaEditor } from "./formula-editor";
 import { FormulaPreview } from "./formula-preview";
+import { t } from "../../variables.i18n";
 
 /** A formula that only starts from a number. */
 const startingAt = (value: number): Formula => ({
@@ -64,10 +66,8 @@ export function ExpressionBuilder({
         className="flex max-h-[min(36rem,80vh)] w-80 flex-col gap-3 overflow-y-auto p-3"
       >
         <div>
-          <h4 className="text-sm font-semibold">Work out {variable.name}</h4>
-          <p className="text-xs text-muted-foreground">
-            Build it from other variables: when they change, it follows.
-          </p>
+          <h4 className="text-sm font-semibold">{t("builder.workOut", { name: variable.name })}</h4>
+          <p className="text-xs text-muted-foreground">{t("builder.intro")}</p>
         </div>
         {draft ? (
           <>
@@ -83,10 +83,7 @@ export function ExpressionBuilder({
           </>
         ) : (
           <div className="flex flex-col gap-2 text-xs">
-            <p className="text-muted-foreground">
-              This expression is written in a way the builder can't show. Edit it as text, or start
-              over here.
-            </p>
+            <p className="text-muted-foreground">{t("builder.cantShow")}</p>
             {expr ? (
               <code className="rounded-md bg-surface-sunken px-2 py-1.5 font-mono break-words">
                 {formatExpression(store, expr)}
@@ -98,17 +95,17 @@ export function ExpressionBuilder({
               className="self-start"
               onClick={() => setDraft(startingAt(start))}
             >
-              Start over
+              {t("builder.startOver")}
             </Button>
           </div>
         )}
         {error ? <p className="text-xs text-destructive">{error}</p> : null}
         <div className="flex justify-end gap-1.5">
           <Button variant="ghost" size="xs" onClick={() => setOpen(false)}>
-            Cancel
+            {tCommon("cancel")}
           </Button>
           <Button size="xs" disabled={!draft} onClick={apply}>
-            Apply
+            {t("builder.apply")}
           </Button>
         </div>
       </PopoverContent>

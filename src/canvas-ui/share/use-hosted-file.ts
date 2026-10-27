@@ -6,6 +6,7 @@ import { toast } from "@shared/stores/toast-store";
 import type { CanvasFileContextValue } from "../file";
 import { isSharing, stopSharing, useHostedSession } from "./host-session";
 import { useRoomPresence } from "./use-room-presence";
+import { t } from "./share.i18n";
 
 /**
  * The open file, marked live while this app shares it, with the session's presence. Closing the
@@ -27,8 +28,8 @@ export function useHostedFile<O extends object>(
       if (!isSharing(id)) return;
       void stopSharing();
       toast({
-        title: "Sharing stopped",
-        description: "The file was closed, so the session ended.",
+        title: t("hostedStopped.title"),
+        description: t("hostedStopped.description"),
       });
     },
     [id],

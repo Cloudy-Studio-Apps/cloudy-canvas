@@ -4,6 +4,7 @@ import { openCanvasFileDialog, storage } from "@platform";
 import { MOCK_RECENT_FILES } from "./mock-recent-files";
 import type { RecentFilesState } from "./recent-files-store.types";
 import { notifyError, toast } from "./toast-store";
+import { t } from "./stores.i18n";
 
 /** Dev-only preview of the populated Recent files grid. Enable with VITE_MOCK_RECENTS=true. */
 const showMockRecents = import.meta.env.DEV && import.meta.env.VITE_MOCK_RECENTS === "true";
@@ -19,15 +20,15 @@ export const useRecentFilesStore = create<RecentFilesState>()((set, get) => ({
       const files = await storage.list();
       if (storage.takeIndexReset()) {
         toast({
-          title: "Recent files were reset",
-          description: "The list couldn't be read, so it starts empty. Your files are untouched.",
+          title: t("recents.reset"),
+          description: t("recents.resetHint"),
         });
       }
       const found = await Promise.all(files.map((file) => storage.exists(file.id)));
       const missing = new Set(files.filter((_, i) => !found[i]).map((file) => file.id));
       set({ files, missing: missing.size > 0 ? missing : NONE });
     } catch (error) {
-      notifyError("Recent files couldn't be read", error);
+      notifyError(t("recents.readFailed"), error);
     }
   },
   upsert: (file) =>
@@ -48,7 +49,7 @@ export const useRecentFilesStore = create<RecentFilesState>()((set, get) => ({
       get().upsert(file);
       return file;
     } catch (error) {
-      notifyError("The file couldn't be located", error);
+      notifyError(t("recents.locateFailed"), error);
       return null;
     }
   },
@@ -60,7 +61,7 @@ export const useRecentFilesStore = create<RecentFilesState>()((set, get) => ({
         missing: withoutId(state.missing, id),
       }));
     } catch (error) {
-      notifyError("The file couldn't be removed from recents", error);
+      notifyError(t("recents.removeFailed"), error);
     }
   },
   clear: async () => {
@@ -68,7 +69,7 @@ export const useRecentFilesStore = create<RecentFilesState>()((set, get) => ({
       await storage.clear();
       set({ files: [], missing: NONE });
     } catch (error) {
-      notifyError("Recent files couldn't be cleared", error);
+      notifyError(t("recents.clearFailed"), error);
     }
   },
 }));

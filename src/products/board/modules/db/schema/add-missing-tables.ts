@@ -1,5 +1,6 @@
 import type { ColumnType, DbTableElement } from "../table";
 import type { ParsedColumn, ParsedEndpoint, ParsedSchema, ParsedTable } from "./dbml";
+import { t } from "../db.i18n";
 
 const DEFAULT_TYPE: ColumnType = { type: "integer", typeArgs: "" };
 
@@ -55,7 +56,7 @@ export function addMissingTables(
     warnings: [
       ...schema.warnings,
       ...tables.map((table) => ({
-        message: `Created the missing table "${table.name}"`,
+        message: t("dbml.created", { name: table.name }),
         line: table.line,
         column: 1,
       })),

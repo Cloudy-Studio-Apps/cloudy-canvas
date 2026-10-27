@@ -9,8 +9,13 @@ import {
 } from "@design/ui/components/panel";
 import type { PropertySectionProps } from "@design/ui/modules";
 import { inAutoLayout } from "./in-auto-layout";
+import { t } from "../auto-layout.i18n";
 
-const LABELS = { fixed: "Fixed", hug: "Hug", fill: "Fill" } as const;
+const LABELS = {
+  fixed: t("resizing.fixed"),
+  hug: t("resizing.hug"),
+  fill: t("resizing.fill"),
+} as const;
 
 /**
  * How the selection's width and height are decided (Figma's resizing menus): fixed, hugging what
@@ -28,7 +33,7 @@ export function SizingSection({ selection: { nodes, kinds, elements } }: Propert
     return (
       <div className="flex items-center gap-1.5">
         <span className="w-3 shrink-0 text-center text-xs text-subtle-foreground">
-          {axis === "h" ? "W" : "H"}
+          {axis === "h" ? t("resizing.widthShort") : t("resizing.heightShort")}
         </span>
         <NodeSelectField
           nodes={nodes}
@@ -44,17 +49,17 @@ export function SizingSection({ selection: { nodes, kinds, elements } }: Propert
   };
 
   return (
-    <PanelSection title="Resizing">
+    <PanelSection title={t("resizing.title")}>
       <div className="flex flex-col gap-2">
         <PropertyGrid>
-          {select("h", "Width sizing")}
-          {select("v", "Height sizing")}
+          {select("h", t("resizing.width"))}
+          {select("v", t("resizing.height"))}
         </PropertyGrid>
         {inside && (
           <BindSlot nodes={nodes} path="layoutAbsolute">
             <NodeCheckbox
               nodes={nodes}
-              label="Ignore auto layout"
+              label={t("resizing.ignore")}
               read={(node) => node.layoutAbsolute}
               patch={(layoutAbsolute) => ({ layoutAbsolute }) as ElementPatch<DesignNode>}
             />

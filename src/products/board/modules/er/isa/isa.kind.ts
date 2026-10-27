@@ -11,10 +11,11 @@ import { ErKind } from "../base/er.kind";
 import { erConnectHandles, erConnectInteraction } from "../connect";
 import { drawErIsa } from "./isa.draw";
 import type { ErIsaElement } from "./isa.types";
+import { t } from "../er.i18n";
 
 export class ErIsaKind extends ErKind<ErIsaElement> {
   readonly type = "er-isa";
-  readonly label = "Hierarchy";
+  readonly label = t("kinds.isa.label");
   readonly description =
     'A generalization (an "is a" triangle) from a parent entity to its children.';
 

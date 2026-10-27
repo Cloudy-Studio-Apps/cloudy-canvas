@@ -3,6 +3,7 @@ import { pickImageFiles } from "@platform";
 import { createId } from "@shared/core";
 import { notifyError } from "@shared/stores/toast-store";
 import type { ChooseImageOptions } from "./choose-image-asset.types";
+import { t } from "./images.i18n";
 
 /**
  * Asks for one picture and adds it to the document's assets: its asset id, or `null` when the
@@ -10,7 +11,7 @@ import type { ChooseImageOptions } from "./choose-image-asset.types";
  */
 export async function chooseImageAsset(
   engine: CanvasEngine,
-  { title, errorTitle = "The image couldn't be opened" }: ChooseImageOptions,
+  { title, errorTitle = t("error") }: ChooseImageOptions,
 ): Promise<string | null> {
   try {
     const [file] = await pickImageFiles({ title, multiple: false });

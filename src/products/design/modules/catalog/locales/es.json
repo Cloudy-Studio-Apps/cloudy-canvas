@@ -1,0 +1,160 @@
+{
+  "mode": {
+    "label": "Catálogo",
+    "description": "Organiza los marcos en un folleto para imprimir: orden, opciones, comprobaciones y PDF.",
+    "pick": "Elegir los marcos del folleto",
+    "preview": "Vista previa del folleto",
+    "exportPdf": "Exportar el folleto como PDF",
+    "brochureTab": "Folleto"
+  },
+  "toolbar": {
+    "selectPages": "Seleccionar páginas",
+    "selectPagesHint": "Haz clic en las páginas para verlas; aquí no se mueven.",
+    "pickFrames": "Elegir marcos",
+    "pickFramesHint": "Marca los marcos que imprime el folleto.",
+    "arrange": "Organizar páginas y opciones",
+    "arrangeHint": "Coloca las páginas en una línea por pliego, con sus opciones según el ajuste Organizar del folleto (debajo mientras está desactivado).",
+    "preview": "Vista previa",
+    "previewHint": "Hojea el folleto.",
+    "exportPdf": "Exportar PDF",
+    "exportPdfHint": "Todo el folleto en un PDF."
+  },
+  "tab": {
+    "page": {
+      "remove": "Quitar del folleto",
+      "options": "{count} opciones · se imprime la {letter}"
+    },
+    "switcher": {
+      "title": "Folletos de esta página",
+      "new": "Nuevo folleto"
+    },
+    "pickFrames": "Elegir marcos",
+    "addBlank": "Añadir una página en blanco",
+    "pages": "Páginas del folleto",
+    "blank": {
+      "title": "Página en blanco",
+      "added": "Añadida {reason}"
+    },
+    "empty": {
+      "title": "Aún no hay páginas",
+      "hint": "Elige los marcos que imprime este folleto. Van en el orden en que lees el lienzo: filas, de izquierda a derecha.",
+      "pick": "Elegir marcos",
+      "orBlank": "O empieza con una página en blanco:",
+      "a4Portrait": "A4 vertical",
+      "a4Landscape": "A4 horizontal",
+      "otherSize": "Otro tamaño…"
+    },
+    "options": {
+      "label": "Opciones de la página {page}"
+    },
+    "create": "Crear folleto",
+    "spread": {
+      "front": "Portada",
+      "back": "Contraportada",
+      "page": "Página {n}",
+      "pages": "Páginas {from}–{to}"
+    }
+  },
+  "export": {
+    "label": "Documento PDF",
+    "exporting": "Exportando el folleto",
+    "drawing": "Dibujando las páginas",
+    "failed": "No se pudo exportar el folleto"
+  },
+  "images": {
+    "replace": {
+      "title": "Reemplazar la imagen",
+      "failed": "No se pudo reemplazar la imagen",
+      "label": "Reemplazar"
+    },
+    "drawFailed": "No se pudo dibujar la página",
+    "toReplace": "{count} por reemplazar",
+    "title": "Imágenes",
+    "none": "No hay imágenes en esta página.",
+    "hint": "Reemplazar conserva la capa, su tamaño y cómo la imagen la rellena."
+  },
+  "preview": {
+    "label": "Vista previa del folleto",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "toggle3d": "Vista previa 3D"
+  },
+  "arrange": {
+    "off": "No organizar el lienzo",
+    "below": "Organizar · opciones debajo de cada página",
+    "beside": "Organizar · opciones al lado de cada página",
+    "label": "Organizar en el lienzo",
+    "now": "Organizar ahora"
+  },
+  "checks": {
+    "title": "Comprobaciones",
+    "empty": "Nada que corregir antes de imprimir.",
+    "hidden": "La página está oculta, así que se imprime en blanco.",
+    "placeholder": "«{name}» es un marcador: reemplázalo por la imagen.",
+    "lowDpi": "«{name}» tiene {dpi} ppp al tamaño de impresión.",
+    "margin": "«{name}» invade el margen de {margin} mm.",
+    "layout": {
+      "reasonBack": "para que la contraportada quede a la izquierda",
+      "reasonSpread": "para que el pliego empiece en una página izquierda",
+      "blank": "Va una página en blanco antes {reason}.",
+      "oddSize": "Mide {w} × {h} mm; las páginas miden {pw} × {ph} mm."
+    }
+  },
+  "settings": {
+    "quality": {
+      "print": "Impresión · 300 ppp",
+      "draft": "Borrador · 150 ppp",
+      "screen": "Pantalla · 96 ppp",
+      "label": "Calidad"
+    },
+    "margin": "Margen",
+    "showMargins": "Mostrar márgenes en el lienzo",
+    "title": "Folleto"
+  },
+  "layout": {
+    "book": "Libro · páginas enfrentadas",
+    "single": "Páginas sueltas",
+    "covers": {
+      "both": "Portada y contraportada",
+      "front": "Solo portada",
+      "back": "Solo contraportada",
+      "none": "Sin cubiertas",
+      "label": "Cubiertas"
+    },
+    "label": "Disposición",
+    "splitSpreads": "Dividir los pliegos en páginas en el PDF"
+  },
+  "frames": {
+    "loose": "Fuera del folleto",
+    "title_one": "{count} marco",
+    "title_other": "{count} marcos",
+    "all": "Todos están en el folleto."
+  },
+  "page": {
+    "options": "Opciones",
+    "title": "Página {page}",
+    "oneVersion": "Una sola versión. Para comparar otras, pasa el cursor sobre un marco atenuado del lienzo y añádelo como opción de la página {page}.",
+    "edit": "Editar esta página en Diseño"
+  },
+  "pick": {
+    "title": "Elegir marcos",
+    "click": "Haz clic en los marcos del lienzo para marcarlos, o arrastra un recuadro alrededor de una fila entera. Las páginas que ya están en el folleto empiezan marcadas.",
+    "order": "Las páginas nuevas van en orden de lectura (filas de arriba abajo, de izquierda a derecha); arrástralas en la lista para ajustar. Esc cancela."
+  },
+  "canvas": {
+    "page": "Página",
+    "pick": {
+      "hint": "Elige los marcos del folleto: haz clic en ellos o arrastra un recuadro alrededor de una fila.",
+      "ticked": "{count} marcados",
+      "add_one": "Añadir {count} página",
+      "add_other": "Añadir {count} páginas",
+      "update": "Actualizar páginas"
+    }
+  },
+  "sidebar": {
+    "none": "Esta página aún no tiene folleto. Crea uno en la pestaña Folleto o elige marcos.",
+    "export_one": "Exportar PDF · {count} página",
+    "export_other": "Exportar PDF · {count} páginas",
+    "preview": "Vista previa"
+  }
+}

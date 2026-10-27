@@ -20,6 +20,7 @@ import { useFlipCommands } from "./ui/use-flip-commands";
 import { usePanelCommands } from "./ui/use-panel-commands";
 import { useStartMode } from "./ui/use-start-mode";
 import { useViewCommands } from "./ui/use-view-commands";
+import { t } from "./core.i18n";
 
 /**
  * The move, scale and hand buttons, the properties panel's shared sections, the scale sidebar, the
@@ -30,22 +31,22 @@ export function registerCoreSections(host: ModuleHost): void {
     designEditor.tools,
     {
       tool: "select",
-      label: "Move",
-      description: "Select, move and resize layers.",
+      label: t("tools.move.label"),
+      description: t("tools.move.description"),
       icon: MousePointer2,
       toolbar: { group: 0, order: 10, menu: "move" },
     },
     {
       tool: "scale",
-      label: "Scale",
-      description: "Scale layers with their content: text, strokes, corners and children.",
+      label: t("tools.scale.label"),
+      description: t("tools.scale.description"),
       icon: Scaling,
       toolbar: { group: 0, order: 15, menu: "move" },
     },
     {
       tool: "hand",
-      label: "Hand",
-      description: "Pan around the canvas.",
+      label: t("tools.hand.label"),
+      description: t("tools.hand.description"),
       icon: Hand,
       toolbar: { group: 0, order: 20 },
     },
@@ -101,7 +102,7 @@ export function registerCoreSections(host: ModuleHost): void {
   host.contribute(designEditor.contextMenu, {
     id: "transform",
     menu: "selection",
-    label: "Transform",
+    label: t("menu.transform"),
     items: TRANSFORM_ITEMS,
   });
 }

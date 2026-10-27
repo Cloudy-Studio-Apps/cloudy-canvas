@@ -1,6 +1,7 @@
 import { DESIGN_PAGES } from "../design-pages";
 import type { DesignEngine } from "../../../design-engine.types";
 import { notifyError } from "@shared/stores/toast-store";
+import { t } from "../pages.i18n";
 
 /** Adds a page after the one on screen and shows it. */
 export function addPage(engine: DesignEngine): void {
@@ -19,7 +20,7 @@ export function deletePage(engine: DesignEngine, id: string): void {
   try {
     engine.service(DESIGN_PAGES).remove(id);
   } catch (error) {
-    notifyError("Couldn't delete the page", error);
+    notifyError(t("errors.delete"), error);
   }
 }
 

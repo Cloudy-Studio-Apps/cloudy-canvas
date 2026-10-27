@@ -1,0 +1,207 @@
+{
+  "mixed": "Mixto",
+  "commands": {
+    "flipHorizontal": "Voltear horizontalmente",
+    "flipVertical": "Voltear verticalmente",
+    "rotateLeft": "Girar 90° a la izquierda",
+    "rotateRight": "Girar 90° a la derecha",
+    "rulers": "Reglas",
+    "rulerGuides": "Guías de regla",
+    "removeGuides": "Quitar todas las guías",
+    "hideUi": "Ocultar interfaz",
+    "leftPanel": "Panel izquierdo",
+    "propertiesPanel": "Panel de propiedades"
+  },
+  "menu": {
+    "backHome": "Volver al inicio",
+    "file": "Archivo",
+    "edit": "Edición",
+    "transform": "Transformar",
+    "view": "Ver",
+    "theme": "Tema",
+    "appearanceSettings": "Ajustes de apariencia…",
+    "settings": "Ajustes",
+    "about": "Acerca de Cloudy Canvas"
+  },
+  "modes": {
+    "design": {
+      "label": "Diseño",
+      "description": "Todas las herramientas y todas las capas."
+    }
+  },
+  "tools": {
+    "move": {
+      "label": "Mover",
+      "description": "Selecciona, mueve y redimensiona capas."
+    },
+    "scale": {
+      "label": "Escalar",
+      "description": "Escala las capas con su contenido: texto, trazos, esquinas e hijos."
+    },
+    "hand": {
+      "label": "Mano",
+      "description": "Desplázate por el lienzo."
+    }
+  },
+  "fields": {
+    "opacity": "Opacidad",
+    "width": "Ancho",
+    "height": "Alto",
+    "strokeWeight": "Grosor del trazo",
+    "rotation": "Rotación",
+    "visible": "Visible",
+    "ignoreAutoLayout": "Ignorar diseño automático",
+    "invertMask": "Invertir máscara",
+    "cornerRadius": "Radio de esquina",
+    "gap": "Espacio",
+    "lineGap": "Espacio entre líneas",
+    "fill": "Relleno",
+    "stroke": "Trazo"
+  },
+  "bindable": {
+    "stop": "{name} {index} parada {stop}",
+    "effect": "Efecto {index}",
+    "strokeSide": {
+      "top": "Trazo superior",
+      "right": "Trazo derecho",
+      "bottom": "Trazo inferior",
+      "left": "Trazo izquierdo"
+    },
+    "padding": {
+      "top": "Relleno superior",
+      "right": "Relleno derecho",
+      "bottom": "Relleno inferior",
+      "left": "Relleno izquierdo"
+    }
+  },
+  "gradient": {
+    "start": "Inicio del degradado",
+    "end": "Fin del degradado",
+    "width": "Ancho del degradado",
+    "stop": "Parada al {percent}%"
+  },
+  "scale": {
+    "title": "Escalar",
+    "from": "Escalar desde",
+    "hint": "Selecciona capas y arrastra un controlador o escribe un tamaño para escalarlas con su contenido."
+  },
+  "sections": {
+    "appearance": "Apariencia",
+    "export": "Exportar",
+    "fills": "Rellenos",
+    "strokes": "Trazos",
+    "layout": "Disposición",
+    "position": "Posición",
+    "interactions": "Interacciones",
+    "interactionsHint": "Los vínculos entre marcos y las transiciones llegarán en una versión futura."
+  },
+  "layout": {
+    "keptRatio": "Proporciones bloqueadas",
+    "keepRatio": "Mantener proporciones",
+    "makePortrait": "Intercambiar ancho y alto (vertical)",
+    "makeLandscape": "Intercambiar ancho y alto (horizontal)"
+  },
+  "paints": {
+    "add": "Añadir {name}",
+    "createStyle": "Crear estilo con estos {name}",
+    "mixedHint": "Mixto. Haz clic en + para reemplazarlos todos."
+  },
+  "stroke": {
+    "styles": "Estilos de trazo",
+    "createStyle": "Crear estilo con este trazo",
+    "position": "Posición del trazo",
+    "settings": "Ajustes del trazo",
+    "dashStyle": "Estilo de guiones",
+    "dashLength": "Longitud del guion",
+    "gapLength": "Longitud del espacio",
+    "dotSpacing": "Espacio entre puntos",
+    "endsAndDashes": "Extremos y guiones",
+    "ends": "Extremos",
+    "cap": "Remate del trazo",
+    "corners": "Esquinas",
+    "join": "Unión del trazo",
+    "endsAndCorners": "Extremos y esquinas",
+    "miter": "Ángulo de inglete: las esquinas más agudas se biselan",
+    "preview": "Vista previa del trazo",
+    "dashPattern": "Patrón de guiones",
+    "pattern": "Patrón",
+    "dashPlaceholder": "guion, espacio, …",
+    "dashError": "Escribe longitudes, p. ej. 8, 4",
+    "sidesLabel": "Lados del trazo: {current}",
+    "sideWeight": {
+      "top": "Grosor del trazo superior",
+      "right": "Grosor del trazo derecho",
+      "bottom": "Grosor del trazo inferior",
+      "left": "Grosor del trazo izquierdo"
+    },
+    "sides": {
+      "all": "Todos los lados",
+      "top": "Superior",
+      "bottom": "Inferior",
+      "left": "Izquierdo",
+      "right": "Derecho",
+      "custom": "Personalizado"
+    },
+    "dash": {
+      "solid": "Continuo",
+      "dashed": "Guiones",
+      "dotted": "Puntos",
+      "custom": "Personalizado"
+    },
+    "caps": {
+      "none": "Sin remate",
+      "round": "Remate redondo",
+      "square": "Remate cuadrado"
+    },
+    "joins": {
+      "miter": "Unión en inglete",
+      "bevel": "Unión biselada",
+      "round": "Unión redonda"
+    },
+    "align": {
+      "inside": "Dentro",
+      "center": "Centro",
+      "outside": "Fuera"
+    }
+  },
+  "styles": {
+    "color": "Color",
+    "colorHeading": "Estilos de color",
+    "stroke": "Trazo",
+    "strokeHeading": "Estilos de trazo",
+    "paints": "Rellenos",
+    "addPaint": "Añadir relleno",
+    "paint": "Relleno",
+    "weight": "Grosor del trazo",
+    "position": "Posición",
+    "detach": "Desvincular estilo",
+    "mixedStyles": "Estilos mixtos",
+    "styles": "Estilos",
+    "name": "Nombre",
+    "description": "Descripción",
+    "usage": "Uso",
+    "noEditor": "No hay editor para este tipo de estilo.",
+    "none": "Aún no hay estilos de este tipo.",
+    "search": "Buscar estilos",
+    "fillStyle": "Estilo de relleno",
+    "strokeColorStyle": "Estilo de color de trazo",
+    "effectStyle": "Estilo de efecto",
+    "strokeStyle": "Estilo de trazo",
+    "empty": "Vacío",
+    "image": "Imagen",
+    "sides": "Lados",
+    "dashedSummary": "Guiones",
+    "effects_one": "{count} efecto",
+    "effects_other": "{count} efectos",
+    "paintCount_one": "{count} relleno",
+    "paintCount_other": "{count} rellenos"
+  },
+  "dialog": {
+    "deleteTitle_one": "¿Eliminarlo?",
+    "deleteTitle_other": "¿Eliminar estos {count}?",
+    "unused": "Ninguna capa lo usa.",
+    "usedBy_one": "Lo usa {count} capa. Conserva el valor que muestra ahora, sin vínculo.",
+    "usedBy_other": "Lo usan {count} capas. Conservan el valor que muestran ahora, sin vínculo.",
+    "deleteDetach": "Eliminar y desvincular"
+  }
+}

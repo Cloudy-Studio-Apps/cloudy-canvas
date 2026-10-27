@@ -4,13 +4,14 @@ import { luminance } from "../../tokens";
 import { colorOf, fontOf, leafName, variablesOf } from "../template-kit";
 import { hexOf } from "./color-text";
 import { COLOR_OPTIONS, swatchSize } from "./color-kit";
+import { t } from "../../styleguide.i18n";
 
 /** Tall bands side by side (Adobe Color's look), the name and hex inside each at the bottom. */
 export const stripesTemplate: StyleguideTemplate = {
   id: "colors.stripes",
   category: "colors",
-  label: "Stripes",
-  description: "Tall bands side by side, labelled inside.",
+  label: t("templates.colors.stripes.label"),
+  description: t("templates.colors.stripes.description"),
   options: COLOR_OPTIONS.filter((option) => option.type !== "boolean" || option.id === "showHex"),
   build: (group, options, context) => {
     const size = swatchSize(options);

@@ -6,6 +6,7 @@ import { unionTables } from "./union-tables";
 import type { ErTableOptions, ErTablesResult } from "./to-tables.types";
 import type { TablesContext } from "./tables-context.types";
 import { writeDbml } from "./write-dbml";
+import { t } from "../../er.i18n";
 
 /**
  * A diagram as relational tables, with the usual mapping rules: entities, then relations,
@@ -31,9 +32,7 @@ export function erToTables(shapes: ErShapes, options: ErTableOptions = {}): ErTa
     t.columns.some((c) => !c.ref && options.existingType?.(t.name, c.name) === undefined),
   );
   if (guessed) {
-    ctx.warnings.push(
-      "Column types were guessed from their names; check them in the database panel.",
-    );
+    ctx.warnings.push(t("toTables.warnGuessed"));
   }
   return {
     dbml: writeDbml(tables, options.existingType),

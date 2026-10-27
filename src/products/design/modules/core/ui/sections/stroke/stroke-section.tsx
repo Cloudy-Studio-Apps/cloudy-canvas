@@ -20,6 +20,7 @@ import { ALIGNS } from "./stroke-options";
 import { StrokeSettings } from "./stroke-settings";
 import { SIDES, sidePatch, sidesMode, weightPatch } from "./stroke-sides";
 import { StrokeSidesMenu } from "./stroke-sides-menu";
+import { t } from "../../../core.i18n";
 
 const SIDE_LABELS = { top: "T", right: "R", bottom: "B", left: "L" } as const;
 
@@ -43,15 +44,15 @@ export function StrokeSection({ selection: { nodes, kinds } }: PropertySectionPr
     <StyleControl
       binding={strokeStyle}
       styleType={STROKE_STYLE}
-      label="Stroke styles"
-      createLabel="Create style from this stroke"
+      label={t("stroke.styles")}
+      createLabel={t("stroke.createStyle")}
       create={() => createNodeStyle(engine, STROKE_STYLE, strokeStyleOfNode, strokeBindingsOf)}
     />
   );
 
   return (
     <PaintListSection
-      title="Strokes"
+      title={t("sections.strokes")}
       field="strokes"
       nodes={nodes}
       allowImage
@@ -71,7 +72,7 @@ export function StrokeSection({ selection: { nodes, kinds } }: PropertySectionPr
               <div className="min-w-0 flex-1">
                 <NodeSelectField
                   nodes={nodes}
-                  label="Stroke position"
+                  label={t("stroke.position")}
                   read={(node) => node.strokeAlign}
                   patch={(value) => ({ strokeAlign: value as "inside" })}
                   options={ALIGNS}
@@ -83,7 +84,7 @@ export function StrokeSection({ selection: { nodes, kinds } }: PropertySectionPr
                 path="strokeWeight"
                 nodes={nodes}
                 prefix={<Minus />}
-                label="Stroke weight"
+                label={t("fields.strokeWeight")}
                 min={0}
                 className="min-w-0 flex-1"
                 read={(node) => node.strokeWeight}
@@ -102,7 +103,7 @@ export function StrokeSection({ selection: { nodes, kinds } }: PropertySectionPr
                   key={side}
                   nodes={nodes}
                   prefix={SIDE_LABELS[side]}
-                  label={`${side[0]!.toUpperCase()}${side.slice(1)} stroke weight`}
+                  label={t(`stroke.sideWeight.${side}`)}
                   min={0}
                   read={(node) => node.strokeWeights?.[side] ?? node.strokeWeight}
                   patch={(weight, node) => sidePatch(side, weight, node)}

@@ -1,4 +1,5 @@
 import type { BooleanOperation } from "./boolean.types";
+import { t } from "./boolean.i18n";
 
 export const BOOLEAN_TYPE = "boolean";
 
@@ -10,9 +11,9 @@ export const BOOLEAN_OPERATIONS: readonly { operation: BooleanOperation; label: 
   { operation: "exclude", label: "Exclude" },
 ];
 
-/** An operation's name ("Union", …). */
+/** An operation's name in the app's language ("Union", "Unión", …): a new boolean is named after it. */
 export function operationLabel(operation: BooleanOperation): string {
-  return BOOLEAN_OPERATIONS.find((entry) => entry.operation === operation)?.label ?? "Boolean";
+  return t(`operations.${operation}`);
 }
 
 /** An agent's operation, checked. */

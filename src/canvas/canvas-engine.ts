@@ -124,6 +124,7 @@ import type { CanvasProduct, CanvasScopes } from "./canvas-product.types";
 import type { CanvasViewOptions } from "./canvas-view.types";
 import type { CanvasLinks } from "./links";
 import { DEFAULT_MODE, modeAllows, modeAllowsCommand, type CanvasMode } from "./modes";
+import { t } from "./canvas.i18n";
 
 const ZOOM_STEP = 1.25;
 const HIT_TOLERANCE_PX = 4;
@@ -308,7 +309,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     this.container = container;
     const { width, height } = container.getBoundingClientRect();
 
-    onLoading({ stage: "Starting canvas", progress: null });
+    onLoading({ stage: t("loading.starting"), progress: null });
     await Promise.all([this.renderer.init(width, height), loadFonts(this.kinds)]);
     if (this.destroyed || this.closing) {
       this.renderer.destroy();
@@ -336,7 +337,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     try {
       await this.renderer.syncElementsChunked(this.scene.elements, {
         onProgress: (done, total) =>
-          onLoading({ stage: "Drawing layers", progress: { done, total } }),
+          onLoading({ stage: t("loading.layers"), progress: { done, total } }),
         cancelled: () => this.destroyed || this.closing,
       });
       if (this.destroyed || this.closing) return;
@@ -1747,13 +1748,13 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   private async loadContent(onLoading: (loading: EngineLoading) => void): Promise<void> {
     const elements = this.scene.elements;
     const assets = [...new Set(elements.flatMap((el) => this.kinds.kindOf(el).assets(el)))];
-    const loadingFonts = () => onLoading({ stage: "Loading fonts", progress: null });
+    const loadingFonts = () => onLoading({ stage: t("loading.fonts"), progress: null });
     const images =
       assets.length === 0
         ? Promise.resolve(loadingFonts())
         : this.renderer
             .preloadImages(assets, (done, total) =>
-              onLoading({ stage: "Loading images", progress: { done, total } }),
+              onLoading({ stage: t("loading.images"), progress: { done, total } }),
             )
             .then(loadingFonts);
     await Promise.race([

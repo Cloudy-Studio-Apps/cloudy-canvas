@@ -7,6 +7,7 @@ import type { ScalePreviewSectionProps } from "./board.types";
 import { CardGrid } from "./card-grid";
 import { GhostNumberCard } from "./ghost-number-card";
 import { NumberCard } from "./number-card";
+import { t } from "../../../variables.i18n";
 
 /** The group the scale writes, previewed: its steps as ghost cards, then the rest. */
 export function ScalePreviewSection({ group, rest }: ScalePreviewSectionProps) {
@@ -22,8 +23,8 @@ export function ScalePreviewSection({ group, rest }: ScalePreviewSectionProps) {
   return (
     <section>
       <div className="mb-2 flex items-baseline gap-2">
-        <span className="text-sm font-semibold">{group || "Ungrouped"}</span>
-        <span className="text-xs text-primary">preview</span>
+        <span className="text-sm font-semibold">{group || t("common.ungrouped")}</span>
+        <span className="text-xs text-primary">{t("board.preview")}</span>
       </div>
       <CardGrid>
         {steps.map((step) => (

@@ -1,0 +1,23 @@
+{
+  "off": "Updates are off in development builds.",
+  "download": "Download {version}",
+  "updateTo": "Update to {version}",
+  "upToDate": "You're up to date.",
+  "check": {
+    "idle": "Check for updates",
+    "checking": "Checking…",
+    "upToDate": "Check for updates",
+    "error": "Check for updates",
+    "downloading": "Updating…",
+    "restarting": "Restarting…"
+  },
+  "notice": {
+    "available": "Cloudy Canvas {version} is available",
+    "restarting": "Restarting…",
+    "downloading": "Downloading the update…",
+    "youHave": "You have version {version}.",
+    "download": "Download",
+    "updateRestart": "Update and restart",
+    "later": "Later"
+  }
+}

@@ -1,6 +1,7 @@
 import { box, label, SHEET_LOOK, solidFill, stack } from "../../sheet";
 import type { StyleguideTemplate } from "../../styleguide.types";
 import { formatNumber, leafName, numberOf, variablesOf } from "../template-kit";
+import { t } from "../../styleguide.i18n";
 
 /** Half white, half gray: what an opacity is judged against. */
 const BACKDROP = "linear-gradient(90deg, #FFFFFF 50%, #9CA3AF 50%)";
@@ -12,8 +13,8 @@ const BACKDROP = "linear-gradient(90deg, #FFFFFF 50%, #9CA3AF 50%)";
 export const checkerTemplate: StyleguideTemplate = {
   id: "opacity.checker",
   category: "opacity",
-  label: "Over light and gray",
-  description: "An ink square at each opacity over a half white, half gray backdrop.",
+  label: t("templates.opacity.checker.label"),
+  description: t("templates.opacity.checker.description"),
   options: [],
   build: (group, _options, context) => [
     stack(

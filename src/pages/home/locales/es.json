@@ -1,0 +1,76 @@
+{
+  "create": {
+    "title": "Crear nuevo",
+    "subtitle": "Empieza desde una pizarra, un diseño o un catálogo en blanco.",
+    "open": "Abrir archivo…",
+    "board": "Nueva pizarra",
+    "boardHint": "Lluvia de ideas, mapas de ideas, notas adhesivas",
+    "design": "Nuevo diseño",
+    "designHint": "Diseña interfaces y elementos visuales",
+    "catalog": "Nuevo catálogo",
+    "catalogHint": "Folletos y catálogos para imprimir, página por página"
+  },
+  "drop": {
+    "title": "Suelta para abrir",
+    "hint": "Pizarras (.cboard), diseños (.cdesign) y archivos de Figma (.fig)"
+  },
+  "empty": {
+    "title": "Aún no hay archivos",
+    "hint": "Crea tu primera pizarra o diseño."
+  },
+  "actions": {
+    "copyPath": "Copiar ruta",
+    "pathCopied": "Ruta copiada",
+    "copyFailed": "No se pudo copiar la ruta",
+    "deleteDraft": "Eliminar borrador",
+    "remove": "Quitar de recientes",
+    "locate": "Localizar…",
+    "open": "Abrir",
+    "reveal": "Mostrar en la carpeta",
+    "revealFailed": "No se pudo abrir la carpeta",
+    "openFailed": "No se pudo abrir el archivo"
+  },
+  "card": {
+    "board": "Pizarra",
+    "design": "Diseño",
+    "missingLabel": "Falta {type} {name}. Mostrar opciones",
+    "openLabel": "Abrir {type} {name}",
+    "meta": "{type} · Editado {time}",
+    "missing": "No encontrado",
+    "draft": "Borrador",
+    "more": "Más acciones para {name}",
+    "justNow": "justo ahora"
+  },
+  "missing": {
+    "title": "«{name}» se movió o se eliminó",
+    "was": "Estaba en {path}"
+  },
+  "join": {
+    "button": "Unirse",
+    "title": "Unirse a una sesión en vivo",
+    "hint": "Pega el enlace que compartió el anfitrión.",
+    "invalid": "Eso no es un enlace de sesión. Cópialo de nuevo desde el botón Compartir del anfitrión."
+  },
+  "recent": {
+    "title": "Archivos recientes",
+    "noMatch": "Ningún archivo coincide.",
+    "search": "Buscar archivos",
+    "searchLabel": "Buscar en archivos recientes",
+    "fileType": "Tipo de archivo",
+    "all": "Todos",
+    "boards": "Pizarras",
+    "designs": "Diseños",
+    "sort": {
+      "recent": "Abiertos recientemente",
+      "edited": "Editados recientemente",
+      "name": "Nombre"
+    }
+  },
+  "top": {
+    "agents": "Agentes",
+    "designSystem": "Sistema de diseño",
+    "theme": "Tema",
+    "settings": "Configuración",
+    "about": "Acerca de Cloudy Canvas"
+  }
+}

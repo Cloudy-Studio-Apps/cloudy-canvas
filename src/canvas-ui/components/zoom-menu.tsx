@@ -11,6 +11,7 @@ import {
 import { useEngine, useEngineState } from "../engine-context";
 import { useSnapping } from "../use-snapping";
 import type { ZoomMenuProps } from "./zoom-menu.types";
+import { t } from "./components.i18n";
 
 const ZOOM_PRESETS = [0.5, 1, 2];
 
@@ -32,18 +33,18 @@ export function ZoomMenu({ side = "top" }: ZoomMenuProps) {
           variant="ghost"
           size="sm"
           className="w-14 justify-center font-mono text-xs tabular-nums"
-          aria-label={`Zoom ${percent}`}
+          aria-label={t("zoom.current", { percent })}
         >
           {percent}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" side={side} className="min-w-44">
         <DropdownMenuItem onSelect={() => engine.zoomToFit()}>
-          Zoom to fit
+          {t("zoom.fit")}
           <DropdownMenuShortcut>{engine.keymap.label("zoomToFit")}</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuItem disabled={!selected} onSelect={() => engine.zoomToSelection()}>
-          Zoom to selection
+          {t("zoom.selection")}
           <DropdownMenuShortcut>{engine.keymap.label("zoomToSelection")}</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -61,7 +62,7 @@ export function ZoomMenu({ side = "top" }: ZoomMenuProps) {
           onCheckedChange={(objects) => setSnapping({ objects })}
           onSelect={(event) => event.preventDefault()}
         >
-          Snap to objects
+          {t("zoom.snapObjects")}
         </DropdownMenuCheckboxItem>
         {engine.view.grid === "pixels" && (
           <DropdownMenuCheckboxItem
@@ -69,7 +70,7 @@ export function ZoomMenu({ side = "top" }: ZoomMenuProps) {
             onCheckedChange={(pixelGrid) => setSnapping({ pixelGrid })}
             onSelect={(event) => event.preventDefault()}
           >
-            Snap to pixel grid
+            {t("zoom.snapPixel")}
           </DropdownMenuCheckboxItem>
         )}
         {engine.hasGuides && (
@@ -78,7 +79,7 @@ export function ZoomMenu({ side = "top" }: ZoomMenuProps) {
             onCheckedChange={(guides) => setSnapping({ guides })}
             onSelect={(event) => event.preventDefault()}
           >
-            Snap to guides
+            {t("zoom.snapGuides")}
           </DropdownMenuCheckboxItem>
         )}
       </DropdownMenuContent>

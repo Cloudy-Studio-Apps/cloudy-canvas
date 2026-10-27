@@ -8,9 +8,10 @@ import { createSheet, isSheet, safeGroups, type SheetFrame, type SystemPage } fr
 import type { StyleguideCategory } from "../styleguide.types";
 import { orderedCategories } from "./ordered-categories";
 import { DEFAULT_STYLEGUIDE_SETTINGS, settingsOf, systemPageOf } from "./system-page";
+import { t } from "../styleguide.i18n";
 
 /** The system page's name, as collaborators see it. */
-const SYSTEM_PAGE_NAME = "Design system";
+const SYSTEM_PAGE_NAME = t("defaults.systemPage");
 
 /**
  * Keeps the system page as the tokens call for, in the edit's undo step: made with the file's

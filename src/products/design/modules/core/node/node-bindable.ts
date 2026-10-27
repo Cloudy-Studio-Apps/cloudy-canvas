@@ -2,6 +2,7 @@ import type { BindableField, TokenScope } from "@canvas";
 
 import type { DesignNode } from "./design-node.types";
 import type { Paint } from "./paint.types";
+import { t } from "../core.i18n";
 
 /** The numeric fields of an effect a variable can drive, whatever its type. */
 const EFFECT_NUMBERS = ["x", "y", "blur", "spread", "radius"] as const;
@@ -15,7 +16,7 @@ export function paintBindable(
   scopes: TokenScope[],
 ): BindableField[] {
   const fields: BindableField[] = [];
-  const name = field === "fills" ? "Fill" : "Stroke";
+  const name = field === "fills" ? t("fields.fill") : t("fields.stroke");
   for (const [i, paint] of paints.entries()) {
     if (paint.type === "solid") {
       fields.push({
@@ -30,7 +31,7 @@ export function paintBindable(
           path: `${field}.${i}.stops.${j}.color`,
           type: "color",
           scopes,
-          label: `${name} ${i + 1} stop ${j + 1}`,
+          label: t("bindable.stop", { name, index: i + 1, stop: j + 1 }),
         });
       }
     }
@@ -43,7 +44,7 @@ export function effectBindable(node: DesignNode): BindableField[] {
   const fields: BindableField[] = [];
   for (const [i, effect] of node.effects.entries()) {
     const values = effect as unknown as Record<string, unknown>;
-    const label = `Effect ${i + 1}`;
+    const label = t("bindable.effect", { index: i + 1 });
     if (typeof values.color === "string" && typeof values.opacity === "number") {
       fields.push({ path: `effects.${i}.color`, type: "color", scopes: ["effect-color"], label });
     }
@@ -79,7 +80,7 @@ export function booleanField(path: string, label: string): BindableField {
 export function strokeSideFields(node: DesignNode): BindableField[] {
   if (!node.strokeWeights) return [];
   return SIDES.map((side) =>
-    numberField(`strokeWeights.${side}`, "stroke-weight", `Stroke ${side}`),
+    numberField(`strokeWeights.${side}`, "stroke-weight", t(`bindable.strokeSide.${side}`)),
   );
 }
 
@@ -94,8 +95,10 @@ export function sizeLimitFields(node: DesignNode): BindableField[] {
 /** An auto layout's gaps and padding. */
 export function layoutFields(): BindableField[] {
   return [
-    numberField("layout.gap", "gap", "Gap"),
-    numberField("layout.counterGap", "gap", "Line gap"),
-    ...SIDES.map((side) => numberField(`layout.padding.${side}`, "padding", `Padding ${side}`)),
+    numberField("layout.gap", "gap", t("fields.gap")),
+    numberField("layout.counterGap", "gap", t("fields.lineGap")),
+    ...SIDES.map((side) =>
+      numberField(`layout.padding.${side}`, "padding", t(`bindable.padding.${side}`)),
+    ),
   ];
 }

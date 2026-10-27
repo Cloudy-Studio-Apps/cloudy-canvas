@@ -2,6 +2,7 @@ import { unsupported } from "./dbml-error";
 import { parseSettings } from "./parse-settings";
 import type { TokenCursor } from "./token-cursor";
 import type { DbmlError, ParsedIndex, ParsedIndexPart } from "./parser.types";
+import { t } from "../../db.i18n";
 
 /** Parses an `indexes { … }` block inside a table. The cursor is on the `indexes` keyword. */
 export function parseIndexes(cursor: TokenCursor, warnings: DbmlError[]): ParsedIndex[] {
@@ -46,7 +47,7 @@ function parseIndex(cursor: TokenCursor, warnings: DbmlError[]): ParsedIndex {
     else if (hasValue && key === "note") index.note = cursor.expectString("a note");
     else if (hasValue && key === "type") index.type = cursor.expectName("an index type").value;
     else {
-      warnings.push(unsupported(`Index setting "${key}"`, start));
+      warnings.push(unsupported(t("dbml.indexSetting", { key }), start));
       return false;
     }
     return true;

@@ -2,6 +2,7 @@ import { NumberField } from "@design/ui/components/panel";
 import { scaleDraftBase } from "../scale-drafts";
 import { useBoard } from "../use-board";
 import type { ScalePartProps } from "./generator.types";
+import { t } from "../../../variables.i18n";
 
 /** The scale's base: a variable's number (followed), or one typed here. */
 export function ScaleBaseField({ draft, change }: ScalePartProps) {
@@ -11,8 +12,12 @@ export function ScaleBaseField({ draft, change }: ScalePartProps) {
   return (
     <div className="flex flex-col gap-1.5 text-xs">
       <span className="flex justify-between text-muted-foreground">
-        Base (md)
-        {variable && <span className="text-subtle-foreground">from {variable.name}</span>}
+        {t("generator.baseMd")}
+        {variable && (
+          <span className="text-subtle-foreground">
+            {t("generator.from", { name: variable.name })}
+          </span>
+        )}
       </span>
       {variable ? (
         <div className="flex h-7 items-center gap-2 rounded-md bg-surface-sunken px-2">
@@ -22,13 +27,13 @@ export function ScaleBaseField({ draft, change }: ScalePartProps) {
             className="ml-auto text-primary hover:underline"
             onClick={() => change({ baseVar: null, baseValue: base })}
           >
-            Use a fixed number
+            {t("generator.useFixedNumber")}
           </button>
         </div>
       ) : (
         <NumberField
           prefix="#"
-          label="Base"
+          label={t("generator.base")}
           min={0}
           value={draft.baseValue}
           onCommit={(baseValue) => change({ baseValue })}

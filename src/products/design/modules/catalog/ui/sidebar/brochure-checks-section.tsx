@@ -5,6 +5,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useBrochure } from "../hooks/use-brochure";
 import { useBrochureIssues } from "../hooks/use-brochure-issues";
 import { showPage } from "../page-actions";
+import { t } from "../../catalog.i18n";
 
 /** What would print badly, page by page; a click shows the page. */
 export function BrochureChecksSection() {
@@ -14,11 +15,11 @@ export function BrochureChecksSection() {
   if (pages.length === 0) return null;
 
   return (
-    <PanelSection title="Checks">
+    <PanelSection title={t("checks.title")}>
       {issues.length === 0 ? (
         <p className="flex items-center gap-2 text-xs text-muted-foreground">
           <CircleCheck className="size-3.5 text-primary" />
-          Nothing to fix before printing.
+          {t("checks.empty")}
         </p>
       ) : (
         <ul className="flex max-h-60 flex-col gap-1 overflow-y-auto">

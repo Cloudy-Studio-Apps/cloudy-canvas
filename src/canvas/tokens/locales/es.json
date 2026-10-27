@@ -1,0 +1,21 @@
+{
+  "ratios": {
+    "majorSecond": "Segunda mayor",
+    "minorThird": "Tercera menor",
+    "majorThird": "Tercera mayor",
+    "perfectFourth": "Cuarta justa",
+    "perfectFifth": "Quinta justa",
+    "goldenRatio": "Proporción áurea",
+    "double": "Doble"
+  },
+  "importWarnings": {
+    "typeLeftOut": "se omitieron los tokens de tipo {type}",
+    "noType": "se omitieron los tokens sin $type",
+    "outsideGroup": "se omitieron los tokens fuera de un grupo",
+    "styleLeftOut": "se omitieron los estilos de tipo {type}",
+    "unknown": "desconocido",
+    "badRefs": "se omitieron las referencias a tokens que no están en el archivo",
+    "badExpressions": "se omitieron los valores calculados que no se pudieron leer",
+    "unreadable": "se omitieron los tokens de tipo {type} con valores que no se pudieron leer"
+  }
+}

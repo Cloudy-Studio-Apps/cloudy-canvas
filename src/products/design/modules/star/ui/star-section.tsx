@@ -6,19 +6,20 @@ import type { DesignNode } from "../../core";
 import type { StarElement } from "../star.types";
 import { BindableNumberField, PanelSection, PropertyGrid } from "@design/ui/components/panel";
 import type { PropertySectionProps } from "@design/ui/modules";
+import { t } from "../star.i18n";
 
 /** For selected stars: the number of points and how deep the inner corners go (ratio). */
 export function StarSection({ selection: { nodes } }: PropertySectionProps) {
   const stars = nodes as readonly StarElement[];
 
   return (
-    <PanelSection title="Star">
+    <PanelSection title={t("label")}>
       <PropertyGrid>
         <BindableNumberField
           path="pointCount"
           nodes={stars}
           prefix={<Hash />}
-          label="Points"
+          label={t("points")}
           min={STAR_DEFAULTS.minPoints}
           max={STAR_DEFAULTS.maxPoints}
           read={(star) => star.pointCount}
@@ -28,7 +29,7 @@ export function StarSection({ selection: { nodes } }: PropertySectionProps) {
           path="innerRadius"
           nodes={stars}
           prefix={<Percent />}
-          label="Ratio"
+          label={t("ratio")}
           suffix="%"
           min={1}
           max={100}

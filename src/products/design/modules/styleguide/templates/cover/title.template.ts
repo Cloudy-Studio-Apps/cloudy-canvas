@@ -1,19 +1,22 @@
 import { label, SHEET_LOOK, stack } from "../../sheet";
 import type { StyleguideTemplate } from "../../styleguide.types";
+import { t } from "../../styleguide.i18n";
 
 /** The file's title, its description and the date. */
 export const coverTitleTemplate: StyleguideTemplate = {
   id: "cover.title",
   category: "cover",
-  label: "Title, description and date",
-  description: "The file's title, its description and today's date.",
-  options: [{ id: "font", label: "Font", type: "font", default: SHEET_LOOK.font }],
+  label: t("templates.cover.title.label"),
+  description: t("templates.cover.title.description"),
+  options: [
+    { id: "font", label: t("templates.cover.title.font"), type: "font", default: SHEET_LOOK.font },
+  ],
   build: (_group, options, context) => [
     stack(
       "cover",
       "vertical",
       [
-        label("title", context.meta.title || "Design system", {
+        label("title", context.meta.title || t("defaults.systemPage"), {
           size: 64,
           weight: "700",
           font: String(options.font),

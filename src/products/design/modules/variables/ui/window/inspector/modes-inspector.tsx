@@ -8,6 +8,7 @@ import { useVariablesWindowStore } from "../variables-window-store";
 import { InspectorSection } from "./inspector-section";
 import type { ModeDrag, ModeMoves } from "./inspector.types";
 import { ModeGroupCard } from "./mode-group-card";
+import { t } from "../../../variables.i18n";
 
 /**
  * With nothing picked: the mode groups (Theme, Language… each a set of modes; variables vary by
@@ -30,12 +31,16 @@ export function ModesInspector() {
       const { dropped } = tokens.moveMode(modeId, axisId, beforeId);
       if (dropped > 0 && from && mode) {
         toast({
-          title: `Moved ${mode.name}`,
-          description: `${dropped} variable${dropped === 1 ? "" : "s"} also vary by other ${from.name} modes: they keep those and lost their ${mode.name} value (Ctrl+Z brings it back).`,
+          title: t("inspector.moved", { name: mode.name }),
+          description: t("inspector.movedDescription", {
+            count: dropped,
+            from: from.name,
+            mode: mode.name,
+          }),
         });
       }
     } catch (error) {
-      notifyError("Couldn't move the mode", error);
+      notifyError(t("inspector.moveError"), error);
     }
   };
   const moves: ModeMoves = {
@@ -47,7 +52,7 @@ export function ModesInspector() {
       engine.doc.checkpoint();
       const release = engine.doc.holdCheckpoints();
       try {
-        const group = tokens.createAxis("New group");
+        const group = tokens.createAxis(t("defaults.modeGroup"));
         move(modeId, group.id);
         setAxis(group.id);
       } finally {
@@ -59,27 +64,22 @@ export function ModesInspector() {
   return (
     <div className="flex flex-col gap-4 text-xs">
       <InspectorSection
-        title="Mode groups"
+        title={t("inspector.modeGroups")}
         actions={
           <button
             type="button"
-            onClick={() => setAxis(tokens.createAxis("New group").id)}
+            onClick={() => setAxis(tokens.createAxis(t("defaults.modeGroup")).id)}
             className="flex items-center gap-1 hover:text-foreground"
           >
-            <Plus className="size-3.5" /> Group
+            <Plus className="size-3.5" /> {t("inspector.group")}
           </button>
         }
       >
         {axes.length === 0 ? (
-          <p className="text-muted-foreground">
-            One value per variable. Add a group of modes (like Theme with Light and Dark) to give
-            variables other values; groups combine (Theme × Language).
-          </p>
+          <p className="text-muted-foreground">{t("inspector.noModes")}</p>
         ) : (
           <>
-            <p className="text-muted-foreground">
-              Drag a mode by its grip to another group, or use its menu.
-            </p>
+            <p className="text-muted-foreground">{t("inspector.dragHint")}</p>
             {axes.map((group) => (
               <ModeGroupCard
                 key={group.id}
@@ -91,7 +91,7 @@ export function ModesInspector() {
           </>
         )}
       </InspectorSection>
-      <p className="text-muted-foreground">Pick a card to edit it.</p>
+      <p className="text-muted-foreground">{t("inspector.pickCard")}</p>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { draftFromGenerator, draftFromVariable } from "../shade-drafts";
 import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";
 import type { InspectorPartProps } from "./inspector.types";
+import { t } from "../../../variables.i18n";
 
 /**
  * A color's link to shades: made by a generator (edit it, or unlink this one), the base of some
@@ -18,7 +19,7 @@ export function ShadeLink({ variable }: InspectorPartProps) {
     return (
       <div className="flex flex-col gap-1.5 rounded-md border border-border p-2 text-xs text-muted-foreground">
         <span>
-          Generated from{" "}
+          {t("inspector.generatedFrom")}{" "}
           <b className="text-foreground">{base ? base.name : made.baseColor.slice(0, 7)}</b>
         </span>
         <div className="flex gap-3">
@@ -27,14 +28,14 @@ export function ShadeLink({ variable }: InspectorPartProps) {
             className="text-primary hover:underline"
             onClick={() => setDraft(draftFromGenerator(made))}
           >
-            Edit shades
+            {t("inspector.editShades")}
           </button>
           <button
             type="button"
             className="text-primary hover:underline"
             onClick={() => tokens.unlinkShade(variable.id)}
           >
-            Unlink
+            {t("inspector.unlink")}
           </button>
         </div>
       </div>
@@ -45,8 +46,9 @@ export function ShadeLink({ variable }: InspectorPartProps) {
     return (
       <div className="flex flex-col gap-1.5 rounded-md border border-border p-2 text-xs text-muted-foreground">
         <span>
-          Base of {based.map((g) => tokenLeafOf(g.group) || "its shades").join(", ")} · its shades
-          follow it
+          {t("inspector.shadesBase", {
+            names: based.map((g) => tokenLeafOf(g.group) || t("inspector.itsShades")).join(", "),
+          })}
         </span>
         <div className="flex gap-3">
           {based.map((g) => (
@@ -56,7 +58,7 @@ export function ShadeLink({ variable }: InspectorPartProps) {
               className="text-primary hover:underline"
               onClick={() => setDraft(draftFromGenerator(g))}
             >
-              Edit shades
+              {t("inspector.editShades")}
             </button>
           ))}
         </div>
@@ -69,7 +71,7 @@ export function ShadeLink({ variable }: InspectorPartProps) {
       size="sm"
       onClick={() => setDraft(draftFromVariable(store, variable.id))}
     >
-      Make shades from this color
+      {t("inspector.makeShades")}
     </Button>
   );
 }

@@ -6,6 +6,7 @@ import { Button } from "@shared/ui/kit";
 import { notifyError } from "@shared/stores/toast-store";
 import { ShapeSelect } from "../forms/shape-select";
 import type { ErStandardPickerProps } from "./diagram-settings.types";
+import { t } from "../../../er.i18n";
 
 /**
  * Which standard (textbook or paper) the diagram follows: it draws in its notation and the Check
@@ -18,30 +19,22 @@ export function ErStandardPicker({ standard, onPick }: ErStandardPickerProps) {
   return (
     <div className="space-y-1.5">
       <ShapeSelect
-        aria-label="Standard"
+        aria-label={t("standard.label")}
         value={standard}
         options={[
           ...installed.map((s) => ({ value: s.id, label: s.label })),
-          ...(missing ? [{ value: standard, label: `${standard} (not installed)` }] : []),
+          ...(missing
+            ? [{ value: standard, label: t("standard.notInstalled", { id: standard }) }]
+            : []),
         ]}
         className="w-full"
         onChange={onPick}
       />
       <div className="space-y-1 rounded-md border border-border bg-surface-sunken p-2 text-xs">
-        {missing && (
-          <p className="text-muted-foreground">
-            This standard isn&apos;t installed (a plugin that was removed?), so the diagram is drawn
-            with the default.
-          </p>
-        )}
+        {missing && <p className="text-muted-foreground">{t("standard.missing")}</p>}
         <p>{info.summary}</p>
         <p className="text-muted-foreground">{info.citation}</p>
-        {info.approximate && (
-          <p className="text-muted-foreground">
-            Drawn from secondary sources: check the book for its exact symbols, and adjust the
-            settings below if they differ.
-          </p>
-        )}
+        {info.approximate && <p className="text-muted-foreground">{t("standard.approximate")}</p>}
         {info.url && (
           <Button
             variant="ghost"
@@ -49,12 +42,12 @@ export function ErStandardPicker({ standard, onPick }: ErStandardPickerProps) {
             className="-ml-2 h-7"
             onClick={() =>
               void openExternal(info.url ?? "").catch((error: unknown) =>
-                notifyError("The reference couldn't be opened", error),
+                notifyError(t("standard.openFailed"), error),
               )
             }
           >
             <ExternalLink />
-            Open the reference
+            {t("standard.open")}
           </Button>
         )}
       </div>

@@ -6,12 +6,13 @@ import { ErNamedKind } from "../base/er-named.kind";
 import { attributeSize } from "../base/er-size";
 import { drawErAttribute } from "./attribute.draw";
 import type { ErAttributeElement } from "./attribute.types";
+import { t } from "../er.i18n";
 
 export class ErAttributeKind extends ErNamedKind<ErAttributeElement> {
   readonly type = "er-attribute";
   override readonly connectable = true;
-  readonly label = "Attribute";
-  readonly description = "An attribute of an entity, relation or aggregation in an ER diagram.";
+  readonly label = t("kinds.attribute.label");
+  readonly description = t("kinds.attribute.description");
 
   draw(view: ElementView, el: ErAttributeElement): void {
     drawErAttribute(view, el, this.textStyle(el));

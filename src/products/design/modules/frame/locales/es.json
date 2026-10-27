@@ -1,0 +1,27 @@
+{
+  "label": "Marco",
+  "description": "Un contenedor de capas, como una pantalla o una mesa de trabajo.",
+  "cornerRadius": "Radio de esquina",
+  "clipContent": "Recortar contenido",
+  "presets": {
+    "title": "Ajustes preestablecidos",
+    "hint": "Elige un tamaño para añadir un marco, o arrastra en el lienzo para dibujar uno.",
+    "groups": {
+      "phone": "Teléfono",
+      "tablet": "Tableta",
+      "desktop": "Escritorio",
+      "presentation": "Presentación",
+      "watch": "Reloj",
+      "paper": "Papel",
+      "social": "Redes sociales"
+    },
+    "slide169": "Diapositiva 16:9",
+    "slide43": "Diapositiva 4:3",
+    "xPost": "Publicación de X",
+    "facebookPost": "Publicación de Facebook",
+    "instagramPost": "Publicación de Instagram",
+    "instagramStory": "Historia de Instagram",
+    "linkedinPost": "Publicación de LinkedIn",
+    "youtubeThumbnail": "Miniatura de YouTube"
+  }
+}

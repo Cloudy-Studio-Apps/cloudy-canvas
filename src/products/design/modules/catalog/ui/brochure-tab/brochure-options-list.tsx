@@ -5,6 +5,7 @@ import { useBrochure } from "../hooks/use-brochure";
 import { optionLetter } from "../option-letter";
 import { showPage } from "../page-actions";
 import type { BrochureOptionsListProps } from "./brochure-page-row.types";
+import { t } from "../../catalog.i18n";
 
 /** A page's options under its row: picking one prints it instead. */
 export function BrochureOptionsList({ page }: BrochureOptionsListProps) {
@@ -12,7 +13,7 @@ export function BrochureOptionsList({ page }: BrochureOptionsListProps) {
   const { brochure, label } = useBrochure();
   return (
     <ul
-      aria-label={`Options of page ${label(page)}`}
+      aria-label={t("tab.options.label", { page: label(page) })}
       className="mt-0.5 mb-1.5 ml-7 border-l pl-1.5"
     >
       {page.options.map((option, i) => {

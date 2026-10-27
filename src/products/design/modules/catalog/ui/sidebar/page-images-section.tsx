@@ -7,6 +7,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useBrochure } from "../hooks/use-brochure";
 import { PageImageRow } from "./page-image-row";
 import type { PageImagesSectionProps } from "./sidebar.types";
+import { t } from "../../catalog.i18n";
 
 /** The pictures on a page (its layers' image fills), each with Replace. */
 export function PageImagesSection({ frame }: PageImagesSectionProps) {
@@ -23,12 +24,12 @@ export function PageImagesSection({ frame }: PageImagesSectionProps) {
   const count =
     images.length === 0
       ? ""
-      : ` (${images.length}${placeholders > 0 ? ` · ${placeholders} to replace` : ""})`;
+      : ` (${images.length}${placeholders > 0 ? ` · ${t("images.toReplace", { count: placeholders })}` : ""})`;
 
   return (
-    <PanelSection title={`Images${count}`}>
+    <PanelSection title={`${t("images.title")}${count}`}>
       {images.length === 0 ? (
-        <p className="text-xs text-muted-foreground">No pictures on this page.</p>
+        <p className="text-xs text-muted-foreground">{t("images.none")}</p>
       ) : (
         <>
           <ul className="max-h-72 overflow-y-auto">
@@ -36,9 +37,7 @@ export function PageImagesSection({ frame }: PageImagesSectionProps) {
               <PageImageRow key={`${picture.node.id}:${picture.fill}`} picture={picture} />
             ))}
           </ul>
-          <p className="mt-1.5 text-xs text-muted-foreground">
-            Replace keeps the layer, its size and how the picture fills it.
-          </p>
+          <p className="mt-1.5 text-xs text-muted-foreground">{t("images.hint")}</p>
         </>
       )}
     </PanelSection>

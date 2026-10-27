@@ -21,12 +21,13 @@ import { useDesignEngine } from "../../design-engine-context";
 import { NumberField, PanelIconButton } from "../panel";
 import { imagePreviewStyle } from "./image-preview-style";
 import type { ImageEditorProps } from "./paint-picker.types";
+import { t } from "../../design-ui.i18n";
 
 const MODES: readonly SelectOption<ImageScaleMode>[] = [
-  { value: "fill", label: "Fill" },
-  { value: "fit", label: "Fit" },
-  { value: "crop", label: "Crop" },
-  { value: "tile", label: "Tile" },
+  { value: "fill", label: t("image.mode.fill") },
+  { value: "fit", label: t("image.mode.fit") },
+  { value: "crop", label: t("image.mode.crop") },
+  { value: "tile", label: t("image.mode.tile") },
 ];
 
 /** A square when the layer's size isn't known (several layers). */
@@ -79,7 +80,7 @@ export function ImageEditor({
       {paint && (
         <div className="flex items-center gap-1">
           <SelectField
-            label="Image scale mode"
+            label={t("image.scaleMode")}
             value={paint.scaleMode}
             options={MODES}
             onChange={(mode) => void pickMode(paint, mode)}
@@ -88,7 +89,7 @@ export function ImageEditor({
           {paint.scaleMode === "tile" && (
             <NumberField
               prefix=""
-              label="Tile scale"
+              label={t("image.tileScale")}
               value={Math.round((paint.scalingFactor ?? DEFAULT_TILE_SCALE) * 100)}
               suffix="%"
               min={1}
@@ -97,7 +98,7 @@ export function ImageEditor({
               className="w-16"
             />
           )}
-          <PanelIconButton label="Rotate 90°" onClick={() => rotate(paint)}>
+          <PanelIconButton label={t("image.rotate90")} onClick={() => rotate(paint)}>
             <RotateCw />
           </PanelIconButton>
         </div>
@@ -121,7 +122,7 @@ export function ImageEditor({
         />
         {placeholder && (
           <span className="absolute top-1.5 left-1.5 rounded-xs bg-surface px-1.5 py-0.5 text-xs text-muted-foreground shadow-sm">
-            Placeholder
+            {t("image.placeholder")}
           </span>
         )}
       </div>
@@ -129,13 +130,11 @@ export function ImageEditor({
       {!placeholder && (
         <Button variant="outline" size="sm" className="w-full" onClick={addPlaceholder}>
           <CircleHelp />
-          Add placeholder
+          {t("image.addPlaceholder")}
         </Button>
       )}
       {paint?.scaleMode === "crop" && (
-        <p className="text-xs text-muted-foreground">
-          Drag the picture on the canvas to move it, its corners to scale it and the box to crop.
-        </p>
+        <p className="text-xs text-muted-foreground">{t("image.cropHint")}</p>
       )}
     </div>
   );

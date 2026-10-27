@@ -1,0 +1,30 @@
+{
+  "conflicts": {
+    "summary_one": "{count} se llama igual que uno de este archivo:",
+    "summary_other": "{count} se llaman igual que otros de este archivo:",
+    "more": " y {count} más",
+    "label": "Mismos nombres"
+  },
+  "choices": {
+    "replace": "Reemplazar",
+    "replaceHint": "Los del archivo conservan su lugar y toman los valores nuevos",
+    "keepBoth": "Conservar ambos",
+    "keepBothHint": "Los nuevos se añaden con un número después del nombre",
+    "skip": "Omitir",
+    "skipHint": "Los del archivo se quedan como están"
+  },
+  "chip": {
+    "mixedTitle": "Variables mixtas",
+    "mixed": "Mixto",
+    "detach": "Desvincular variable"
+  },
+  "value": {
+    "true": "Verdadero",
+    "false": "Falso"
+  },
+  "picker": {
+    "search": "Buscar variables",
+    "empty": "Este archivo aún no tiene variables.",
+    "noFit": "Ninguna variable encaja en este campo."
+  }
+}

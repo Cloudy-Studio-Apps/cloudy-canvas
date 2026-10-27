@@ -19,6 +19,7 @@ import { ConnectAgentDialog } from "./connect-agent-dialog";
 import { copyText } from "./copy-agent-setup";
 import { useAgentServerStatus } from "./use-agent-server-status";
 import type { AgentServerMenuProps } from "./agent-server-menu.types";
+import { t } from "./agent-server.i18n";
 
 /** Shows where agents connect (MCP) and opens the dialog that sets them up. */
 export function AgentServerMenu({
@@ -40,17 +41,17 @@ export function AgentServerMenu({
       <DropdownMenu onOpenChange={(open) => open && status.refresh()}>
         <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
         <DropdownMenuContent side={side} align={align} className="w-72">
-          <DropdownMenuLabel>Agents (MCP)</DropdownMenuLabel>
+          <DropdownMenuLabel>{t("title")}</DropdownMenuLabel>
           <p className="px-2 pb-2 text-xs break-all text-muted-foreground">
             {agentServerStatusText(status.available, status.enabled, status.url)}
           </p>
           <DropdownMenuItem onSelect={() => setConnectOpen(true)}>
             <Bot />
-            Connect an agent…
+            {t("menu.connect")}
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => setToolsOpen(true)}>
             <Wrench />
-            Available tools…
+            {t("menu.tools")}
           </DropdownMenuItem>
           {status.available && status.enabled && (
             <>
@@ -67,21 +68,24 @@ export function AgentServerMenu({
                 onSelect={(event) => event.preventDefault()}
               >
                 <MousePointer2 />
-                Show agents' cursors and selections
+                {t("menu.showCursors")}
               </DropdownMenuCheckboxItem>
               <DropdownMenuSeparator />
             </>
           )}
           {status.available && (
             <>
-              <DropdownMenuItem disabled={!url} onSelect={() => url && copyText(url, "URL copied")}>
+              <DropdownMenuItem
+                disabled={!url}
+                onSelect={() => url && copyText(url, t("menu.urlCopied"))}
+              >
                 <Copy />
-                Copy URL
+                {t("menu.copyUrl")}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onSelect={() => status.setEnabled(!status.enabled)}>
                 <Power />
-                {status.enabled ? "Turn off agent access" : "Turn on agent access"}
+                {status.enabled ? t("menu.turnOff") : t("menu.turnOn")}
               </DropdownMenuItem>
             </>
           )}

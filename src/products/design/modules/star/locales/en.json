@@ -1,0 +1,7 @@
+{
+  "label": "Star",
+  "description": "A star with any number of points.",
+  "points": "Points",
+  "innerRadius": "Inner radius",
+  "ratio": "Ratio"
+}

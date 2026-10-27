@@ -24,6 +24,7 @@ import { useEngine, useEngineState } from "../../engine-context";
 import type { ExportDialogProps } from "./export-dialog.types";
 import { ExportField } from "./export-field";
 import { EXPORT_FORMATS } from "./export-formats";
+import { t } from "../components.i18n";
 
 /**
  * Exports the selection or the whole canvas as PNG, JPG, PDF or CSV (tables only). Opened by the
@@ -64,16 +65,16 @@ export function ExportDialog({ name }: ExportDialogProps) {
             background: solidOnly ? "solid" : background,
             area: exportArea,
           }),
-        { loading: `Exporting as ${file.name}…`, error: "Couldn't export" },
+        { loading: t("export.progress", { format: file.name }), error: t("export.failed") },
       );
       if (!blob) return;
       // No spinner here: the save dialog is waiting for the user.
       if (await exportFile(blob, name, file)) {
         setOpen(false);
-        toast({ title: `Exported as ${file.name}` });
+        toast({ title: t("export.done", { format: file.name }) });
       }
     } catch (error) {
-      notifyError("Couldn't save the export", error);
+      notifyError(t("export.saveError"), error);
     } finally {
       setBusy(false);
     }
@@ -87,17 +88,15 @@ export function ExportDialog({ name }: ExportDialogProps) {
         onKeyDown={(event) => event.stopPropagation()}
       >
         <DialogHeader>
-          <DialogTitle>Export</DialogTitle>
-          <DialogDescription className="sr-only">
-            Choose the file type, background and area to export.
-          </DialogDescription>
+          <DialogTitle>{t("export.title")}</DialogTitle>
+          <DialogDescription className="sr-only">{t("export.description")}</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 px-4 py-4">
-          <ExportField label="File type">
+          <ExportField label={t("export.fileType")}>
             <RadioGroup
               value={chosen}
               onValueChange={(value) => setFormat(value as ExportFormat)}
-              aria-label="File type"
+              aria-label={t("export.fileType")}
             >
               {EXPORT_FORMATS.map(({ id, name: formatName }) => (
                 <label
@@ -110,7 +109,7 @@ export function ExportDialog({ name }: ExportDialogProps) {
               ))}
             </RadioGroup>
           </ExportField>
-          <ExportField label="Background" id="export-background">
+          <ExportField label={t("export.background")} id="export-background">
             <Select
               value={solidOnly ? "solid" : background}
               onValueChange={(value) => setBackground(value as ExportBackground)}
@@ -120,28 +119,28 @@ export function ExportDialog({ name }: ExportDialogProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="solid">Solid</SelectItem>
-                <SelectItem value="transparent">Transparent</SelectItem>
+                <SelectItem value="solid">{t("export.solid")}</SelectItem>
+                <SelectItem value="transparent">{t("export.transparent")}</SelectItem>
               </SelectContent>
             </Select>
           </ExportField>
-          <ExportField label="Export area" id="export-area">
+          <ExportField label={t("export.area")} id="export-area">
             <Select value={exportArea} onValueChange={(value) => setArea(value as ExportArea)}>
               <SelectTrigger id="export-area" className="w-40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="selection" disabled={!hasSelection}>
-                  Selection only
+                  {t("export.selectionOnly")}
                 </SelectItem>
-                <SelectItem value="board">Entire board</SelectItem>
+                <SelectItem value="board">{t("export.entireBoard")}</SelectItem>
               </SelectContent>
             </Select>
           </ExportField>
         </div>
         <DialogFooter>
           <Button onClick={() => void run()} disabled={busy}>
-            {busy ? "Exporting…" : "Export"}
+            {busy ? t("export.exporting") : t("export.export")}
           </Button>
         </DialogFooter>
       </DialogContent>

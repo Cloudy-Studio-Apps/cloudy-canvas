@@ -1,10 +1,12 @@
 import { useId, useState } from "react";
 import { FolderOpen, Trash2 } from "lucide-react";
 
+import { getLocale, tCommon } from "@shared/core";
 import { Badge } from "@shared/ui/components/ui/badge";
 import { Button } from "@shared/ui/components/ui/button";
 import { Switch } from "@shared/ui/components/ui/switch";
 import type { PluginRowProps } from "./plugins.types";
+import { t } from "../../settings.i18n";
 
 /** One installed plugin: what it is, whether it runs, and what happened when it loaded. */
 export function PluginRow({
@@ -31,22 +33,24 @@ export function PluginRow({
               {manifest.version}
               {manifest.author ? ` · ${manifest.author}` : ""}
             </span>
-            {source === "linked" && <Badge variant="outline">Development</Badge>}
-            {status?.state === "failed" && <Badge variant="destructive">Failed</Badge>}
+            {source === "linked" && <Badge variant="outline">{t("plugins.development")}</Badge>}
+            {status?.state === "failed" && (
+              <Badge variant="destructive">{t("plugins.failed")}</Badge>
+            )}
           </div>
           {manifest.description && (
             <p className="text-sm text-muted-foreground">{manifest.description}</p>
           )}
           {status?.state === "enabled" && (!!status.stickers || !!status.themes) && (
             <p className="text-xs text-muted-foreground">
-              Adds{" "}
-              {[
-                status.stickers &&
-                  `${status.stickers} ${status.stickers === 1 ? "sticker" : "stickers"}`,
-                status.themes && `${status.themes} ${status.themes === 1 ? "theme" : "themes"}`,
-              ]
-                .filter(Boolean)
-                .join(" and ")}
+              {t("plugins.adds", {
+                items: new Intl.ListFormat(getLocale(), { type: "conjunction" }).format(
+                  [
+                    status.stickers && t("plugins.addsStickers", { count: status.stickers }),
+                    status.themes && t("plugins.addsThemes", { count: status.themes }),
+                  ].filter((item): item is string => !!item),
+                ),
+              })}
             </p>
           )}
           {status?.state === "failed" && status.error && (
@@ -58,12 +62,12 @@ export function PluginRow({
       <div className="flex flex-wrap items-center gap-2">
         <Button variant="ghost" size="sm" onClick={onReveal}>
           <FolderOpen />
-          Show folder
+          {t("plugins.show")}
         </Button>
         {confirming ? (
           <>
             <span className="text-sm">
-              {source === "linked" ? "Stop loading it? Its folder stays." : "Delete it?"}
+              {source === "linked" ? t("plugins.stopLoading") : t("plugins.deleteIt")}
             </span>
             <Button
               variant="destructive"
@@ -73,10 +77,10 @@ export function PluginRow({
                 onRemove();
               }}
             >
-              Remove
+              {t("plugins.remove")}
             </Button>
             <Button variant="ghost" size="sm" onClick={() => setConfirming(false)}>
-              Cancel
+              {tCommon("cancel")}
             </Button>
           </>
         ) : (
@@ -87,7 +91,7 @@ export function PluginRow({
             onClick={() => setConfirming(true)}
           >
             <Trash2 />
-            Remove
+            {t("plugins.remove")}
           </Button>
         )}
       </div>

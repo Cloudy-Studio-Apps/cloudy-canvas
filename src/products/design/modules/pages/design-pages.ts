@@ -13,6 +13,7 @@ import {
 import { isDesignNode, withDescendants, type DesignNode } from "../core";
 import { createPage, type PageElement } from "./page";
 import { pagesOf } from "./pages-of";
+import { t } from "./pages.i18n";
 
 /**
  * The design's pages, and the only place that edits them (each edit is one undo step). Which page
@@ -147,14 +148,17 @@ export class DesignPages {
     return generateKeyBetween(pages[position]?.index ?? null, pages[position + 1]?.index ?? null);
   }
 
-  /** "Page N", one past the highest numbered page. */
+  /** "Page N" in the app's language, one past the highest page numbered that way. */
   private nextName(): string {
+    const [before = "", after = ""] = t("defaults.page", { number: "\u0000" }).split("\u0000");
+    const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const numbered = new RegExp(`^${escape(before)}(\\d+)${escape(after)}$`);
     let highest = 0;
     for (const page of this.pages()) {
-      const match = /^Page (\d+)$/.exec(page.name);
+      const match = numbered.exec(page.name);
       if (match) highest = Math.max(highest, Number(match[1]));
     }
-    return `Page ${Math.max(highest, this.pages().length) + 1}`;
+    return t("defaults.page", { number: Math.max(highest, this.pages().length) + 1 });
   }
 }
 

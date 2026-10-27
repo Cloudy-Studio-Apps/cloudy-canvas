@@ -1,0 +1,31 @@
+{
+  "title": "Capas",
+  "name": "Nombre de la capa",
+  "collapse": "Contraer",
+  "expand": "Expandir",
+  "masked": "Enmascarada",
+  "hasEffects": "Tiene efectos",
+  "lock": "Bloquear",
+  "unlock": "Desbloquear",
+  "hide": "Ocultar",
+  "show": "Mostrar",
+  "search": {
+    "label": "Buscar capas",
+    "close": "Cerrar búsqueda"
+  },
+  "mask": {
+    "alpha": "Máscara alfa",
+    "vector": "Máscara vectorial",
+    "luminance": "Máscara de luminancia",
+    "invertedAlpha": "Máscara alfa invertida",
+    "invertedVector": "Máscara vectorial invertida",
+    "invertedLuminance": "Máscara de luminancia invertida"
+  },
+  "empty": {
+    "noMatch": "Ninguna capa tiene ese nombre.",
+    "hint": "Dibuja un marco (F), una forma (R) o texto (T) para añadir una capa."
+  },
+  "errors": {
+    "moveFailed": "No se pudieron mover las capas"
+  }
+}

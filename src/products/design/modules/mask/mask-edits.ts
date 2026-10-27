@@ -10,6 +10,7 @@ import {
 } from "../core";
 import { groupNodes } from "../group";
 import type { MaskOptions } from "./mask-edits.types";
+import { t } from "./mask.i18n";
 
 /**
  * "Use as mask" (Ctrl+Alt+M), as in Figma. Several layers go into a new "Mask group" whose
@@ -43,7 +44,7 @@ export function maskNodes(
   }
   const group = groupNodes(doc, new Set(nodes.map((node) => node.id)), elements, kinds);
   if (!group) return [];
-  doc.update(group, { name: nextLayerName(doc.all(), "Mask group") } as ElementPatch);
+  doc.update(group, { name: nextLayerName(doc.all(), t("defaults.maskGroup")) } as ElementPatch);
   doc.update(bottom.id, patch as ElementPatch);
   return [group];
 }

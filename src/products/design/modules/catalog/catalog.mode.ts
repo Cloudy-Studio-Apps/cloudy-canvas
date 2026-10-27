@@ -21,6 +21,7 @@ import { BrochurePreview } from "./ui/preview/brochure-preview";
 import { CatalogSidebar } from "./ui/sidebar/catalog-sidebar";
 import { useBrochurePreviewStore } from "./ui/stores/preview-store";
 import { useCatalogToolbarItems } from "./ui/toolbar/use-catalog-toolbar-items";
+import { t } from "./catalog.i18n";
 
 /**
  * The Catalog mode: a design's frames as a brochure's pages. Only top-level frames can be pointed
@@ -30,8 +31,8 @@ import { useCatalogToolbarItems } from "./ui/toolbar/use-catalog-toolbar-items";
  */
 export const catalogMode = defineDesignMode({
   id: CATALOG_MODE_ID,
-  label: "Catalog",
-  description: "Arrange frames into a print brochure: order, options, checks and PDF.",
+  label: t("mode.label"),
+  description: t("mode.description"),
   icon: BookOpen,
   order: 10,
   tool: CATALOG_TOOL,
@@ -46,19 +47,23 @@ export const catalogMode = defineDesignMode({
   hostCommands: [
     {
       id: CATALOG_COMMANDS.pick,
-      label: "Pick the brochure's frames",
+      label: t("mode.pick"),
       run: (engine) => engine.setTool(CATALOG_PICK_TOOL),
     },
     {
       id: CATALOG_COMMANDS.preview,
-      label: "Preview the brochure",
+      label: t("mode.preview"),
       run: () => useBrochurePreviewStore.getState().open(),
     },
     // Run by `useExportCommand`, which needs the file's name.
-    { id: CATALOG_COMMANDS.exportPdf, label: "Export the brochure as PDF" },
+    { id: CATALOG_COMMANDS.exportPdf, label: t("mode.exportPdf") },
   ],
   toolbar: { useItems: useCatalogToolbarItems },
-  rail: { tabs: [{ id: "brochure", label: "Brochure", icon: BookOpen, component: BrochureTab }] },
+  rail: {
+    tabs: [
+      { id: "brochure", label: t("mode.brochureTab"), icon: BookOpen, component: BrochureTab },
+    ],
+  },
   sidebar: CatalogSidebar,
   overlays: [BrochureCanvasLayer, BrochurePreview],
   onLeave: () => useBrochurePreviewStore.getState().close(),

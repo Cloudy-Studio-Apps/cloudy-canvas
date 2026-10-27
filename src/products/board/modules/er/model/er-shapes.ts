@@ -5,6 +5,7 @@ import type { ErDiagramFields, ErElement } from "../base/er.types";
 import type { ErEntityElement } from "../entity/entity.types";
 import type { ErDiagramInfo } from "./er-shapes.types";
 import type { ErShapes } from "./lang";
+import { t } from "../er.i18n";
 
 /** Entity names an unnamed diagram is labeled with. */
 const LABEL_NAMES = 2;
@@ -46,7 +47,7 @@ export function erDiagrams(doc: CanvasDocument): ErDiagramInfo[] {
 
 function diagramLabel(entities: readonly ErEntityElement[]): string {
   const names = entities.slice(0, LABEL_NAMES).map((entity) => entity.name);
-  if (names.length === 0) return "Untitled diagram";
+  if (names.length === 0) return t("untitledDiagram");
   return entities.length > LABEL_NAMES ? `${names.join(", ")}…` : names.join(", ");
 }
 

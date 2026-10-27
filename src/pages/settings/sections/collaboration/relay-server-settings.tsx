@@ -8,6 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@shared/ui/components/ui/radio-group
 import { RelayDownNote } from "./relay-down-note";
 import { RelayTestRow } from "./relay-test-row";
 import { useRelayTest } from "./use-relay-test";
+import { t } from "../../settings.i18n";
 
 /**
  * Which relay hosted sessions go through: the one the app was built with (when it was), n0's
@@ -27,7 +28,7 @@ export function RelayServerSettings() {
   const commitUrl = (url: string) => {
     const trimmed = url.trim();
     if (trimmed && !/^https?:\/\/[^/\s]+/.test(trimmed))
-      return "Enter the relay's address, like https://relay.example.com";
+      return t("collaboration.relayAddressError");
     setRelay({ ...relay, url: trimmed });
     reset();
   };
@@ -39,11 +40,8 @@ export function RelayServerSettings() {
   return (
     <div className="space-y-3">
       <div className="space-y-0.5">
-        <p className="text-sm font-medium">Relay server</p>
-        <p className="text-sm text-muted-foreground">
-          Helps guests reach you through routers, and carries the session when a direct connection
-          can&apos;t be made. It never sees your files. Guests use the one in your link.
-        </p>
+        <p className="text-sm font-medium">{t("collaboration.relayServer")}</p>
+        <p className="text-sm text-muted-foreground">{t("collaboration.relayHint")}</p>
       </div>
       <RadioGroup
         value={choice}
@@ -55,16 +53,16 @@ export function RelayServerSettings() {
         {BUILT_IN_RELAY && (
           <label className="flex items-center gap-2 text-sm">
             <RadioGroupItem value="builtin" />
-            Cloudy Canvas relay
+            {t("collaboration.relayBuiltIn")}
           </label>
         )}
         <label className="flex items-center gap-2 text-sm">
           <RadioGroupItem value="public" />
-          Public relays (n0)
+          {t("collaboration.relayPublic")}
         </label>
         <label className="flex items-center gap-2 text-sm">
           <RadioGroupItem value="custom" />
-          My relay
+          {t("collaboration.relayCustom")}
         </label>
       </RadioGroup>
       {choice === "builtin" && (
@@ -77,7 +75,7 @@ export function RelayServerSettings() {
         <div className="space-y-3 border-l-2 pl-4">
           <div className="space-y-1">
             <label htmlFor={urlId} className="text-sm">
-              Address
+              {t("collaboration.address")}
             </label>
             <CommitInput
               id={urlId}
@@ -89,13 +87,13 @@ export function RelayServerSettings() {
           </div>
           <div className="space-y-1">
             <label htmlFor={tokenId} className="text-sm">
-              Access token
+              {t("collaboration.accessToken")}
             </label>
             <CommitInput
               id={tokenId}
               value={relay.token ?? ""}
               onCommit={commitToken}
-              placeholder="IROH_RELAY_ACCESS_TOKEN from the server's .env"
+              placeholder={t("collaboration.tokenPlaceholder")}
               spellCheck={false}
               className="font-mono"
             />

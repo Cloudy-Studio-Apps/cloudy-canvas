@@ -1,13 +1,14 @@
 import { label, SHEET_LOOK, solidFill, stack } from "../../sheet";
 import type { GeneratedSpec, StyleguideTemplate } from "../../styleguide.types";
 import { formatNumber, leafName, numberOf, variablesOf } from "../template-kit";
+import { t } from "../../styleguide.i18n";
 
 /** Squares as big as each value, the largest outside, nested and centered. */
 export const squaresTemplate: StyleguideTemplate = {
   id: "spacing.squares",
   category: "spacing",
-  label: "Nested squares",
-  description: "Squares as big as each value, nested inside each other, with a legend.",
+  label: t("templates.spacing.squares.label"),
+  description: t("templates.spacing.squares.description"),
   options: [],
   build: (group, _options, context) => {
     const sorted = variablesOf(group)

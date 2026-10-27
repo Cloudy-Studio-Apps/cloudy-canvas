@@ -14,6 +14,7 @@ import {
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useEditNodes } from "@design/ui/hooks";
 import type { PropertySectionProps } from "@design/ui/modules";
+import { t } from "../../core.i18n";
 
 /** Smallest width or height typed in the panel. */
 const MIN_SIDE = 1;
@@ -42,13 +43,13 @@ export function LayoutSection({ selection: { nodes } }: PropertySectionProps) {
   const landscape = sharedValue(nodes, (node) => node.w > node.h) ?? true;
 
   return (
-    <PanelSection title="Layout">
+    <PanelSection title={t("sections.layout")}>
       <div className="flex items-center gap-1">
         <PropertyGrid className="flex-1">
           <BindSlot nodes={nodes} path="w">
             <NumberField
               prefix="W"
-              label="Width"
+              label={t("fields.width")}
               min={MIN_SIDE}
               value={sharedValue(nodes, (node) => node.w)}
               onCommit={(w) => resize("w", w)}
@@ -57,7 +58,7 @@ export function LayoutSection({ selection: { nodes } }: PropertySectionProps) {
           <BindSlot nodes={nodes} path="h">
             <NumberField
               prefix="H"
-              label="Height"
+              label={t("fields.height")}
               min={MIN_SIDE}
               value={sharedValue(nodes, (node) => node.h)}
               onCommit={(h) => resize("h", h)}
@@ -65,18 +66,14 @@ export function LayoutSection({ selection: { nodes } }: PropertySectionProps) {
           </BindSlot>
         </PropertyGrid>
         <PanelIconButton
-          label={keepRatio ? "Proportions kept" : "Keep proportions"}
+          label={keepRatio ? t("layout.keptRatio") : t("layout.keepRatio")}
           active={keepRatio}
           onClick={() => setKeepRatio(!keepRatio)}
         >
           {keepRatio ? <Link2 /> : <Unlink2 />}
         </PanelIconButton>
         <PanelIconButton
-          label={
-            landscape
-              ? "Swap width and height (make portrait)"
-              : "Swap width and height (make landscape)"
-          }
+          label={landscape ? t("layout.makePortrait") : t("layout.makeLandscape")}
           disabled={square}
           onClick={swap}
         >

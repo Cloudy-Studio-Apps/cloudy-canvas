@@ -1,0 +1,21 @@
+{
+  "label": "Shape",
+  "description": "A rectangle, ellipse, diamond or other diagram shape, with a label.",
+  "fill": "Fill",
+  "outline": "Outline",
+  "options": {
+    "group": "Shape options",
+    "fillLabel": "{color} fill",
+    "outlineLabel": "{color} outline"
+  },
+  "variants": {
+    "cylinder": "Cylinder",
+    "diamond": "Diamond",
+    "ellipse": "Ellipse",
+    "parallelogram": "Parallelogram",
+    "rectangle": "Rectangle",
+    "rounded": "Rounded rectangle",
+    "star": "Star",
+    "triangle": "Triangle"
+  }
+}

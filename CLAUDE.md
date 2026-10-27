@@ -11,6 +11,7 @@ pnpm install
 pnpm tauri dev      # desktop app
 pnpm dev            # frontend only in a browser (native dialogs unavailable)
 pnpm lint           # ESLint (flat config, eslint.config.js) + scripts/check-modules.mjs
+                    # + scripts/check-locales.mjs
 pnpm typecheck      # tsc for app + vite config (noEmit)
 pnpm format         # Prettier (with tailwind plugin); format:check to verify
 pnpm tauri build    # production bundle
@@ -132,6 +133,14 @@ look); the module conventions are in [docs/modules.md](docs/modules.md).
     for another trigger, `ColorPalette` for a palette's choice (`canvas-ui`); a drag is one undo step.
 29. Report failures with `notifyError(title, error)` or `toast(…)`, never only `console.error`.
 
+**Text**
+
+30. User-facing text goes through its folder's `t`: `<name>.i18n.ts` with `locales/en.json` and
+    `locales/es.json` next to it, keys grouped by area (`t("panel.add.active")`); generic words use
+    `tCommon` from `@shared/core`. MCP tool text, ids, file formats, key caps and developer messages
+    (thrown `Error`s, `console`) stay English. `scripts/check-locales.mjs` (in `pnpm lint`) keeps
+    Spanish complete. See [src/shared/core/i18n/](src/shared/core/i18n/README.md).
+
 ## Transition
 
 The rules above describe where the code is going (spec:
@@ -187,6 +196,7 @@ Each folder below explains itself in its `README.md`. The main ones:
 | Collaborators, workspaces, live sessions                                             | [src/shared/core/presence/](src/shared/core/presence/README.md), [src/canvas/workspace/](src/canvas/workspace/README.md), [docs/collaboration.md](docs/collaboration.md) |
 | The board and its modules                                                            | [src/products/board/](src/products/board/README.md), `src/products/board/modules/*/`                                                                                     |
 | The design and its modules                                                           | [src/products/design/](src/products/design/README.md), `src/products/design/modules/*/`                                                                                  |
+| Translations (i18n)                                                                  | [src/shared/core/i18n/](src/shared/core/i18n/README.md)                                                                                                                  |
 | Design system, themes, kit                                                           | [src/shared/ui/](src/shared/ui/README.md), [src/shared/ui/kit/](src/shared/ui/kit/README.md)                                                                             |
 | Module conventions and tiers                                                         | [docs/modules.md](docs/modules.md)                                                                                                                                       |
 | ER language                                                                          | [docs/er-language.md](docs/er-language.md)                                                                                                                               |

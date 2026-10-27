@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@shared/ui/kit";
 import type { AddCardMenuProps } from "./board.types";
+import { t } from "../../../variables.i18n";
 
 /**
  * The "+" card at the end of a group: a new color (separate, starting gray) or shades of the
@@ -39,8 +40,8 @@ export function AddCardMenu({ group, items }: AddCardMenuProps) {
     return (
       <button
         type="button"
-        aria-label={`New ${first.type === "string" ? "text" : "boolean"}`}
-        title={`New ${first.type === "string" ? "text" : "boolean"}`}
+        aria-label={first.type === "string" ? t("board.newText") : t("board.newBoolean")}
+        title={first.type === "string" ? t("board.newText") : t("board.newBoolean")}
         onClick={add}
         className="grid min-h-23 place-items-center rounded-card border border-dashed border-border text-muted-foreground hover:border-primary hover:text-primary"
       >
@@ -59,30 +60,28 @@ export function AddCardMenu({ group, items }: AddCardMenuProps) {
         {first.type === "number" ? (
           <>
             <DropdownMenuItem onSelect={add}>
-              New {numberKindOf(first).label.toLowerCase()}
+              {t("board.newKind", { kind: numberKindOf(first).label.toLowerCase() })}
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() => setScaleDraft(scaleFromVariable(store, numberAnchor.id))}
               className="flex-col items-start gap-0"
             >
-              Make a scale from {leafName(numberAnchor)}
-              <span className="text-xs text-muted-foreground">
-                Smaller and larger steps by a ratio
-              </span>
+              {t("board.makeScale", { name: leafName(numberAnchor) })}
+              <span className="text-xs text-muted-foreground">{t("board.makeScaleHint")}</span>
             </DropdownMenuItem>
           </>
         ) : (
           <>
             <DropdownMenuItem onSelect={add} className="flex-col items-start gap-0">
-              New color
-              <span className="text-xs text-muted-foreground">A separate color, starting gray</span>
+              {t("board.newColor")}
+              <span className="text-xs text-muted-foreground">{t("board.newColorHint")}</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() => setDraft(draftFromVariable(store, anchor.id))}
               className="flex-col items-start gap-0"
             >
-              Shades of {leafName(anchor)}
-              <span className="text-xs text-muted-foreground">Its lighter and darker steps</span>
+              {t("board.shadesOf", { name: leafName(anchor) })}
+              <span className="text-xs text-muted-foreground">{t("board.shadesHint")}</span>
             </DropdownMenuItem>
           </>
         )}

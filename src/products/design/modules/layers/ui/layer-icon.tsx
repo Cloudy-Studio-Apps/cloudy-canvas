@@ -3,6 +3,7 @@ import { Square, SquareDashed, SquareDashedTopSolid } from "lucide-react";
 import { ExtensionIconView, useEditorModules } from "@canvas-ui";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import type { LayerIconProps } from "./layer-icon.types";
+import { t } from "../layers.i18n";
 
 /**
  * A layer's icon: a mask's (dashed; half solid when inverted), else its type's `layerIcons`
@@ -12,7 +13,11 @@ export function LayerIcon({ node }: LayerIconProps) {
   const { host } = useEditorModules();
   const { type } = node;
   if (node.isMask) {
-    const label = `${node.maskInverted ? "Inverted " : ""}${node.maskType} mask`;
+    const label = node.maskInverted
+      ? t(
+          `mask.inverted${node.maskType === "alpha" ? "Alpha" : node.maskType === "vector" ? "Vector" : "Luminance"}`,
+        )
+      : t(`mask.${node.maskType}`);
     return (
       <span title={label} aria-label={label} className="flex">
         {node.maskInverted ? <SquareDashedTopSolid /> : <SquareDashed />}

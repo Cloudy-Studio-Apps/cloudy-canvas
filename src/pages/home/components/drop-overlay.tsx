@@ -1,4 +1,5 @@
 import { FileDown } from "lucide-react";
+import { t } from "../home.i18n";
 
 /** Shown over Home while files are dragged onto the window. */
 export function DropOverlay() {
@@ -9,10 +10,8 @@ export function DropOverlay() {
     >
       <div className="flex h-full w-full flex-col items-center justify-center gap-3 rounded-card border-2 border-dashed border-primary text-center">
         <FileDown className="size-10 text-primary" />
-        <p className="text-lg font-semibold">Drop to open</p>
-        <p className="text-sm text-muted-foreground">
-          Boards (.cboard), designs (.cdesign) and Figma files (.fig)
-        </p>
+        <p className="text-lg font-semibold">{t("drop.title")}</p>
+        <p className="text-sm text-muted-foreground">{t("drop.hint")}</p>
       </div>
     </div>
   );

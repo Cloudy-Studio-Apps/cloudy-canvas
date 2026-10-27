@@ -11,6 +11,7 @@ import { collaboratorPlaceText, collaboratorStatusText } from "./collaborator-st
 import { useCollaborators } from "./use-collaborators";
 import { useFollowToggle } from "./use-follow-toggle";
 import type { CollaboratorStackProps } from "./collaborator-stack.types";
+import { t } from "./collaborators.i18n";
 
 /** How often idle collaborators and "min ago" labels are worked out again. */
 const TICK_MS = 5_000;
@@ -45,7 +46,7 @@ export function CollaboratorStack({
         const status = collaboratorStatusText(collaborator, now);
         const place = collaboratorPlaceText(collaborator);
         const title = collaboratorTitle(collaborator);
-        const hint = isFollowed ? "Click to stop following" : "Click to follow";
+        const hint = isFollowed ? t("clickStop") : t("clickFollow");
         const avatar = (
           <CollaboratorAvatar
             collaborator={collaborator}

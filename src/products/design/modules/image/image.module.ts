@@ -9,6 +9,7 @@ import { isImageLayer } from "./ui/image-fill-index";
 import { useCropImageCommand } from "./ui/use-crop-image-command";
 import { useImagePlaceholderCommand } from "./ui/use-image-placeholder-command";
 import { canHoldPlaceholder } from "./placeholder";
+import { t } from "./image.i18n";
 
 /**
  * Pasted and dropped images: each becomes a rectangle filled with it (the engine stores the file
@@ -28,8 +29,8 @@ export const imageModule = defineModule({
     );
     host.contribute(
       designCanvas.hostCommands,
-      { id: "cropImage", label: "Crop image" },
-      { id: "imagePlaceholder", label: "Use as image placeholder" },
+      { id: "cropImage", label: t("commands.crop") },
+      { id: "imagePlaceholder", label: t("commands.placeholder") },
     );
     host.contribute(designMcpTools, { id: "image", tools: () => imageTools });
 
@@ -50,7 +51,7 @@ export const imageModule = defineModule({
       items: [
         {
           command: "cropImage",
-          label: "Crop image",
+          label: t("commands.crop"),
           enabled: (_context, engine) => {
             const [id, ...others] = engine.selectedIds();
             const node = id && others.length === 0 ? engine.getElement(id) : undefined;
@@ -59,7 +60,7 @@ export const imageModule = defineModule({
         },
         {
           command: "imagePlaceholder",
-          label: "Use as image placeholder",
+          label: t("commands.placeholder"),
           enabled: (_context, engine) =>
             engine.selectedIds().some((id) => {
               const node = engine.getElement(id);

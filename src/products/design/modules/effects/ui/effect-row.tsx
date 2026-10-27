@@ -6,6 +6,7 @@ import { FieldBox, PanelIconButton } from "@design/ui/components/panel";
 import { cn, Popover, PopoverContent, PopoverTrigger } from "@shared/ui/kit";
 import { useEffectEditStore } from "./effect-edit-store";
 import type { EffectRowProps } from "./effects-ui.types";
+import { t } from "../effects.i18n";
 
 /**
  * One effect: a grip to drag it in the list, its type (opens its editor), a line of its values,
@@ -46,8 +47,8 @@ export function EffectRow({
     >
       <span
         draggable
-        aria-label={`Drag ${label.toLowerCase()} to reorder`}
-        title="Drag to reorder"
+        aria-label={t("row.dragLabel", { name: label.toLowerCase() })}
+        title={t("row.drag")}
         className="flex h-7 w-3 shrink-0 cursor-grab items-center justify-center text-subtle-foreground [&_svg]:size-3"
         onDragStart={(event) => {
           event.dataTransfer.effectAllowed = "move";
@@ -63,7 +64,7 @@ export function EffectRow({
           <button
             type="button"
             disabled={!Editor}
-            aria-label={`Edit ${label.toLowerCase()}`}
+            aria-label={t("row.edit", { name: label.toLowerCase() })}
             className="min-w-0 flex-1 cursor-pointer text-left disabled:cursor-default"
           >
             <FieldBox className={cn("gap-2", open && "border-ring bg-surface")}>
@@ -95,12 +96,16 @@ export function EffectRow({
         )}
       </Popover>
       <PanelIconButton
-        label={effect.visible ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`}
+        label={
+          effect.visible
+            ? t("row.hide", { name: label.toLowerCase() })
+            : t("row.show", { name: label.toLowerCase() })
+        }
         onClick={() => onChange({ ...effect, visible: !effect.visible })}
       >
         {effect.visible ? <Eye /> : <EyeOff />}
       </PanelIconButton>
-      <PanelIconButton label={`Remove ${label.toLowerCase()}`} onClick={onRemove}>
+      <PanelIconButton label={t("row.remove", { name: label.toLowerCase() })} onClick={onRemove}>
         <Minus />
       </PanelIconButton>
     </div>

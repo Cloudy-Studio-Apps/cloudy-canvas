@@ -3,6 +3,7 @@ import { DrawColors } from "./draw-colors";
 import { DrawModeButtons } from "./draw-mode-buttons";
 import { DrawPenButtons } from "./draw-pen-buttons";
 import { DrawSizeButtons } from "./draw-size-buttons";
+import { t } from "../draw.i18n";
 
 /**
  * The drawing panel: pen, highlighter or eraser, freehand or smooth, thickness and color. With the
@@ -14,7 +15,7 @@ export function DrawOptions() {
   const erasing = tool === "eraser";
 
   return (
-    <FloatingPanel role="group" aria-label="Drawing options" className="gap-1 px-2">
+    <FloatingPanel role="group" aria-label={t("options.group")} className="gap-1 px-2">
       {!selecting && (
         <>
           <DrawPenButtons />

@@ -6,6 +6,7 @@ import { FloatingPanel, useEngine, useEngineState } from "@canvas-ui";
 import { useErDiagram, useErModel, useErSelection, useErShape, useErShapes } from "../model";
 import { ErPaletteButton } from "./er-palette-button";
 import { ER_PALETTE_ITEMS } from "./er-palette-items";
+import { t } from "../../er.i18n";
 
 /**
  * The ER element types along the canvas's left edge: always while the ER mode is on, otherwise
@@ -37,7 +38,7 @@ export function ErPalette() {
 
   return (
     <div className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2">
-      <FloatingPanel role="toolbar" aria-label="ER elements" className="flex-col">
+      <FloatingPanel role="toolbar" aria-label={t("palette.group")} className="flex-col">
         {ER_PALETTE_ITEMS.map((item) => {
           const action = actions[item.id];
           return (

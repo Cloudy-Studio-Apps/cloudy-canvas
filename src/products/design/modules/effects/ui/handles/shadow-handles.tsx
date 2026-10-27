@@ -1,6 +1,7 @@
 import type { DropShadowEffect, InnerShadowEffect } from "../../effect.types";
 import { HandleDot } from "./handle-dot";
 import type { EffectHandlesProps } from "./handles.types";
+import { t } from "../../effects.i18n";
 
 /** Shift snaps the offset's direction to steps of this many degrees. */
 const ANGLE_STEP = 45;
@@ -46,7 +47,7 @@ export function ShadowHandles({
       )}
       <HandleDot
         at={at}
-        label="Shadow offset"
+        label={t("handles.shadowOffset")}
         onPointerDown={(event) => {
           let first = true;
           startDrag(event, (p, e) => {

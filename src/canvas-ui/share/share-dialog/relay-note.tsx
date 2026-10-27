@@ -1,6 +1,7 @@
 import { BUILT_IN_RELAY, RELAY_CHOICE_IN_SETTINGS } from "@shared/stores/built-in-relay";
 import { useCollaborationStore } from "@shared/stores/collaboration-store";
 import { useRelayStatusStore } from "@shared/stores/relay-status-store";
+import { t } from "../share.i18n";
 
 /** Which relay the session will go through, under Start sharing. */
 export function RelayNote() {
@@ -9,15 +10,14 @@ export function RelayNote() {
   const builtIn = RELAY_CHOICE_IN_SETTINGS ? relayChoice === "builtin" : true;
   const relay =
     RELAY_CHOICE_IN_SETTINGS && relayChoice === "custom"
-      ? "your relay"
+      ? t("relay.own")
       : builtIn && BUILT_IN_RELAY && !builtInDown
-        ? "the Cloudy Canvas relay"
-        : "public relays";
+        ? t("relay.builtIn")
+        : t("relay.public");
 
   return (
     <p className="text-xs text-muted-foreground">
-      Connections go through {relay} when a direct one can&apos;t be made
-      {RELAY_CHOICE_IN_SETTINGS ? " (Settings › Collaboration)." : "."}
+      {t(RELAY_CHOICE_IN_SETTINGS ? "relay.noteSettings" : "relay.note", { relay })}
     </p>
   );
 }

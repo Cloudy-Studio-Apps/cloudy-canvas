@@ -13,11 +13,12 @@ import { SearchInput } from "@shared/ui/kit";
 import { Tabs, TabsList, TabsTrigger } from "@shared/ui/components/ui/tabs";
 import type { RecentFilesSort } from "../filter-recent-files.types";
 import type { RecentFilesToolbarProps } from "./recent-files-toolbar.types";
+import { t } from "../home.i18n";
 
 const SORT_LABEL: Record<RecentFilesSort, string> = {
-  recent: "Recently opened",
-  edited: "Last edited",
-  name: "Name",
+  recent: t("recent.sort.recent"),
+  edited: t("recent.sort.edited"),
+  name: t("recent.sort.name"),
 };
 
 function isSort(value: string): value is RecentFilesSort {
@@ -31,18 +32,18 @@ export function RecentFilesToolbar({ filter, onChange }: RecentFilesToolbarProps
       <SearchInput
         value={filter.query}
         onChange={(query) => onChange({ ...filter, query })}
-        placeholder="Search files"
-        aria-label="Search recent files"
+        placeholder={t("recent.search")}
+        aria-label={t("recent.searchLabel")}
         className="w-full sm:w-64"
       />
       <Tabs
         value={filter.type}
         onValueChange={(type) => onChange({ ...filter, type: isFileType(type) ? type : "all" })}
       >
-        <TabsList aria-label="File type">
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="board">Boards</TabsTrigger>
-          <TabsTrigger value="design">Designs</TabsTrigger>
+        <TabsList aria-label={t("recent.fileType")}>
+          <TabsTrigger value="all">{t("recent.all")}</TabsTrigger>
+          <TabsTrigger value="board">{t("recent.boards")}</TabsTrigger>
+          <TabsTrigger value="design">{t("recent.designs")}</TabsTrigger>
         </TabsList>
       </Tabs>
       <DropdownMenu>

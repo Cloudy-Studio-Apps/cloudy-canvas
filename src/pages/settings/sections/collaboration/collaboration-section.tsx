@@ -6,6 +6,7 @@ import { useCollaborationStore } from "@shared/stores/collaboration-store";
 import { SettingsSection } from "../../components/settings-section";
 import { RelayServerSettings } from "./relay-server-settings";
 import { RelayStatus } from "./relay-status";
+import { t } from "../../settings.i18n";
 
 export function CollaborationSection() {
   const name = useCollaborationStore((s) => s.name);
@@ -15,20 +16,20 @@ export function CollaborationSection() {
   return (
     <SettingsSection
       id="collaboration"
-      title="Collaboration"
-      description="Share an open board or design live: your app hosts it, and the people you let in edit it with you until you stop."
+      title={t("nav.collaboration")}
+      description={t("collaboration.description")}
     >
       <div className="space-y-5">
         <div className="space-y-1.5">
           <label htmlFor={nameId} className="text-sm font-medium">
-            Your name
+            {t("collaboration.yourName")}
           </label>
-          <p className="text-sm text-muted-foreground">Shown to others in live sessions.</p>
+          <p className="text-sm text-muted-foreground">{t("collaboration.nameHint")}</p>
           <CommitInput
             id={nameId}
             value={name}
-            onCommit={(value) => (value.trim() ? setName(value) : "Enter a name")}
-            placeholder="Your name"
+            onCommit={(value) => (value.trim() ? setName(value) : t("collaboration.enterName"))}
+            placeholder={t("collaboration.yourName")}
             maxLength={40}
             className="max-w-xs"
           />

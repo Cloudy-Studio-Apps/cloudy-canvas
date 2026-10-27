@@ -12,6 +12,7 @@ import { mmToUnits, type BrochurePage } from "../model";
 import { effectiveDpi } from "./effective-dpi";
 import { layoutIssues } from "./layout-issues";
 import type { BrochureCheckInput, BrochureIssue } from "./brochure-checks.types";
+import { t } from "../catalog.i18n";
 
 /** Pictures printed with fewer pixels per inch than this look soft. */
 export const LOW_DPI = 150;
@@ -33,7 +34,7 @@ function pageIssues(page: BrochurePage, input: BrochureCheckInput): BrochureIssu
     frameId: frame.id,
   };
   if (!frame.visible) {
-    const message = "The page is hidden, so it prints blank.";
+    const message = t("checks.hidden");
     return [{ ...at, kind: "hidden-page", nodeId: frame.id, message }];
   }
   const safe = inset(frame, mmToUnits(input.settings.margin));
@@ -41,7 +42,7 @@ function pageIssues(page: BrochurePage, input: BrochureCheckInput): BrochureIssu
     const issues: BrochureIssue[] = [];
     const paints = imagePaints(node);
     if (paints.some(isPlaceholderPaint)) {
-      const message = `“${node.name}” is a placeholder: replace it with the picture.`;
+      const message = t("checks.placeholder", { name: node.name });
       issues.push({ ...at, kind: "placeholder", nodeId: node.id, message });
     }
     for (const paint of paints) {
@@ -49,14 +50,17 @@ function pageIssues(page: BrochurePage, input: BrochureCheckInput): BrochureIssu
       const size = input.imageSize(paint.assetId);
       const dpi = size && effectiveDpi(paint, node, size);
       if (dpi !== null && dpi < LOW_DPI) {
-        const message = `“${node.name}” is ${Math.round(dpi)} dpi at print size.`;
+        const message = t("checks.lowDpi", { name: node.name, dpi: Math.round(dpi) });
         issues.push({ ...at, kind: "low-resolution", nodeId: node.id, message });
         break;
       }
     }
     const shown = input.bounds(node);
     if (isText(node) && rectsIntersect(shown, frame) && !rectContainsRect(safe, shown)) {
-      const message = `“${node.name}” reaches into the ${input.settings.margin} mm margin.`;
+      const message = t("checks.margin", {
+        name: node.name,
+        margin: input.settings.margin,
+      });
       issues.push({ ...at, kind: "text-in-margin", nodeId: node.id, message });
     }
     return issues;

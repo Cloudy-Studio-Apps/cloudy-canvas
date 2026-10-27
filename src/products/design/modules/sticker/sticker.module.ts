@@ -11,6 +11,7 @@ import { DesignStickerTool } from "./sticker.tool";
 import { DesignStickerWheel } from "./ui/design-sticker-wheel";
 import { StickerSection } from "./ui/sticker-section";
 import { useStickerCommands } from "./ui/use-sticker-commands";
+import { t } from "./sticker.i18n";
 
 /**
  * Stickers on designs: the kind, the tool (Shift+K; K is Scale) with the shared picker wheel,
@@ -31,7 +32,7 @@ export const stickerModule = defineModule({
     host.contribute(designCanvas.pasteForeign, pasteForeignSticker);
     host.contribute(designCanvas.hostCommands, {
       id: "stickerToVectors",
-      label: "Convert sticker to vectors",
+      label: t("commands.toVectors"),
     });
     host.contribute(designMcpTools, { id: "sticker", tools: () => stickerAgentTools });
 
@@ -57,7 +58,7 @@ export const stickerModule = defineModule({
       items: [
         {
           command: "stickerToVectors",
-          label: "Convert sticker to vectors",
+          label: t("commands.toVectors"),
           enabled: (_context, engine) =>
             engine
               .elements()

@@ -5,6 +5,7 @@ import { CHECKERBOARD } from "@canvas-ui";
 import { cn } from "@shared/ui/lib/utils";
 import type { GradientStopBarProps } from "./paint-picker.types";
 import { stopRampCss } from "./stop-ramp";
+import { t } from "../../design-ui.i18n";
 
 /** Pixels a stop is dragged off the bar to remove it. */
 const REMOVE_DISTANCE = 32;
@@ -87,7 +88,9 @@ export function GradientStopBar({ paint, selected, onSelect, onChange }: Gradien
           <button
             key={i}
             type="button"
-            aria-label={`Stop at ${Math.round(stop.position * 100)}%`}
+            aria-label={t("gradient.stop.at", {
+              percent: Math.round(stop.position * 100),
+            })}
             aria-pressed={i === selected}
             onPointerDown={(event) => drag(event, i)}
             onKeyDown={(event) => {

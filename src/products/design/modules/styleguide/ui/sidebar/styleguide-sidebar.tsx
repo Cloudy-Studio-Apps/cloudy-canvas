@@ -6,6 +6,7 @@ import { useStyleguideViewStore } from "../stores/styleguide-view-store";
 import { ChoiceEditor } from "./choice-editor";
 import { ModesSwitch } from "./modes-switch";
 import { SystemOverview } from "./system-overview";
+import { t } from "../../styleguide.i18n";
 
 /**
  * The properties panel in the Design system mode (its `sidebar`): for the category or
@@ -26,13 +27,11 @@ export function StyleguideSidebar() {
     <Section title={group ? group.title || entry.category.label : entry.category.label}>
       <div className="flex flex-col gap-3">
         <p className="text-xs text-muted-foreground">
-          {group
-            ? "This group's template. Unless you pick one, it uses its category's."
-            : "The template every group of this category uses, unless a group picks its own."}
+          {group ? t("sidebar.template.groupHint") : t("sidebar.template.categoryHint")}
         </p>
         {overridden && (
           <Button size="xs" variant="outline" onClick={() => styleguide.setChoice(key, null)}>
-            Use the category&apos;s template
+            {t("sidebar.template.useCategory")}
           </Button>
         )}
         <ChoiceEditor

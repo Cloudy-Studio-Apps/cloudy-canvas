@@ -6,6 +6,7 @@ import { useErModel, useErVersion } from "../model";
 import { ErRelationGlyph } from "./er-relation-glyph";
 import type { ErJoinStepProps, ErJoinValue } from "./er-relation-prompt.types";
 import { defaultJoin, joinAttributes, joinOptions, newKeyName } from "./join-options";
+import { t } from "../../er.i18n";
 
 /**
  * Step two: for each end the other links to (the "one" side, or both in many-to-many), which of
@@ -48,10 +49,10 @@ export function ErJoinStep({ ratio, from, to, onBack, onCreate }: ErJoinStepProp
         return (
           <label key={side} className="flex flex-col gap-1 px-1 text-xs text-muted-foreground">
             {ratio.joins.length > 1
-              ? `${nameOf(side)} joins by`
-              : `${nameOf(other)} links to ${nameOf(side)} by`}
+              ? t("prompt.joinsBy", { name: nameOf(side) })
+              : t("prompt.linksTo", { other: nameOf(other), name: nameOf(side) })}
             <ShapeSelect
-              aria-label={`${nameOf(side)} join attribute`}
+              aria-label={t("prompt.joinAttribute", { name: nameOf(side) })}
               value={joins.get(side) ?? ""}
               options={joinOptions(attributes, newKey)}
               onChange={(value) => set(side, value)}
@@ -61,10 +62,10 @@ export function ErJoinStep({ ratio, from, to, onBack, onCreate }: ErJoinStepProp
       })}
       <div className="flex justify-between gap-2 pt-1">
         <Button type="button" variant="ghost" size="sm" onClick={onBack}>
-          Back
+          {t("prompt.back")}
         </Button>
         <Button type="submit" size="sm" autoFocus>
-          Create relation
+          {t("prompt.create")}
         </Button>
       </div>
     </form>

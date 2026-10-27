@@ -35,6 +35,7 @@ import { TextContentBind } from "./text-content-bind";
 import { TextStyleControl } from "./text-styles";
 import { useFontFamilies } from "./use-font-families";
 import { useTypographyTarget } from "./use-typography-target";
+import { t } from "../text.i18n";
 
 /**
  * For selected texts: font, face, size, line height, letter spacing, decoration, alignment and
@@ -51,7 +52,7 @@ export function TypographySection({ selection: { nodes } }: PropertySectionProps
 
   return (
     <PanelSection
-      title={target.range ? "Typography · selection" : "Typography"}
+      title={target.range ? t("typography.titleSelection") : t("typography.title")}
       actions={<TextStyleControl texts={texts} />}
     >
       <div className="flex flex-col gap-2">
@@ -77,7 +78,7 @@ export function TypographySection({ selection: { nodes } }: PropertySectionProps
           <BindSlot nodes={target.range ? [] : texts} path="fontSize">
             <NumberField
               prefix={<Type />}
-              label="Font size"
+              label={t("fields.fontSize")}
               min={1}
               value={target.read("fontSize")}
               onCommit={(fontSize) => target.set({ fontSize })}
@@ -86,7 +87,7 @@ export function TypographySection({ selection: { nodes } }: PropertySectionProps
           <BindSlot nodes={target.range ? [] : texts} path="lineHeight">
             <NumberField
               prefix={<UnfoldVertical />}
-              label="Line height"
+              label={t("fields.lineHeight")}
               suffix="%"
               min={1}
               value={lineHeight === null ? null : Math.round(lineHeight * 100)}
@@ -96,7 +97,7 @@ export function TypographySection({ selection: { nodes } }: PropertySectionProps
           <BindSlot nodes={target.range ? [] : texts} path="letterSpacing">
             <NumberField
               prefix={<MoveHorizontal />}
-              label="Letter spacing"
+              label={t("fields.letterSpacing")}
               value={target.read("letterSpacing")}
               onCommit={(letterSpacing) => target.set({ letterSpacing })}
             />
@@ -107,23 +108,23 @@ export function TypographySection({ selection: { nodes } }: PropertySectionProps
           <DecorationButtons target={target} />
           <NodeOptionButtons
             nodes={texts}
-            label="Text alignment"
+            label={t("typography.alignment")}
             options={[
-              { value: "left", label: "Align left", icon: <AlignLeft /> },
-              { value: "center", label: "Align center", icon: <AlignCenter /> },
-              { value: "right", label: "Align right", icon: <AlignRight /> },
-              { value: "justify", label: "Justify", icon: <AlignJustify /> },
+              { value: "left", label: t("typography.left"), icon: <AlignLeft /> },
+              { value: "center", label: t("typography.center"), icon: <AlignCenter /> },
+              { value: "right", label: t("typography.right"), icon: <AlignRight /> },
+              { value: "justify", label: t("typography.justify"), icon: <AlignJustify /> },
             ]}
             read={(text) => text.textAlign}
             patch={(value) => ({ textAlign: value }) as ElementPatch<DesignNode>}
           />
           <NodeOptionButtons
             nodes={texts}
-            label="Vertical alignment"
+            label={t("typography.verticalAlignment")}
             options={[
-              { value: "top", label: "Align top", icon: <ArrowUpToLine /> },
-              { value: "middle", label: "Align middle", icon: <FoldVertical /> },
-              { value: "bottom", label: "Align bottom", icon: <ArrowDownToLine /> },
+              { value: "top", label: t("typography.top"), icon: <ArrowUpToLine /> },
+              { value: "middle", label: t("typography.middle"), icon: <FoldVertical /> },
+              { value: "bottom", label: t("typography.bottom"), icon: <ArrowDownToLine /> },
             ]}
             read={(text) => text.verticalAlign}
             patch={(value) => ({ verticalAlign: value }) as ElementPatch<DesignNode>}
@@ -131,11 +132,11 @@ export function TypographySection({ selection: { nodes } }: PropertySectionProps
         </div>
         <NodeOptionButtons
           nodes={texts}
-          label="Resizing"
+          label={t("typography.resizing")}
           options={[
-            { value: "width", label: "Auto width", icon: <MoveHorizontal /> },
-            { value: "height", label: "Auto height", icon: <MoveVertical /> },
-            { value: "none", label: "Fixed size", icon: <Square /> },
+            { value: "width", label: t("typography.autoWidth"), icon: <MoveHorizontal /> },
+            { value: "height", label: t("typography.autoHeight"), icon: <MoveVertical /> },
+            { value: "none", label: t("typography.fixedSize"), icon: <Square /> },
           ]}
           read={(text) => text.autoResize}
           patch={(value, node) =>

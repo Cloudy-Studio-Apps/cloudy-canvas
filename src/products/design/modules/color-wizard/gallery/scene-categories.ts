@@ -1,14 +1,15 @@
 import { between, oklchColor } from "../color";
 import type { GalleryCategory } from "./gallery.types";
 import { mixPalette, rainbowPalette, rangePalette } from "./recipes";
+import { t } from "../color-wizard.i18n";
 
 /** Palettes of places and times: sunset, sky, sea, nature, earth, night, space, rainbow. */
 export const SCENE_CATEGORIES: readonly GalleryCategory[] = [
   {
     group: "Themes",
     id: "sunset",
-    label: "Sunset",
-    description: "From orange to pink and violet.",
+    label: t("gallery.scene.sunset"),
+    description: t("gallery.scene.sunsetHint"),
     generate: mixPalette([
       [
         [0.85, 0.9],
@@ -40,22 +41,22 @@ export const SCENE_CATEGORIES: readonly GalleryCategory[] = [
   {
     group: "Themes",
     id: "sky",
-    label: "Sky",
-    description: "Clear blues and clouds.",
+    label: t("gallery.scene.sky"),
+    description: t("gallery.scene.skyHint"),
     generate: rangePalette({ l: [0.6, 0.97], c: [0.02, 0.13], hues: [[220, 250]] }),
   },
   {
     group: "Themes",
     id: "sea",
-    label: "Sea",
-    description: "Turquoise shallows to deep water.",
+    label: t("gallery.scene.sea"),
+    description: t("gallery.scene.seaHint"),
     generate: rangePalette({ l: [0.3, 0.9], c: [0.05, 0.14], hues: [[180, 240]] }),
   },
   {
     group: "Themes",
     id: "nature",
-    label: "Nature",
-    description: "Leaves, moss and bark.",
+    label: t("gallery.scene.nature"),
+    description: t("gallery.scene.natureHint"),
     generate: mixPalette([
       [
         [0.88, 0.94],
@@ -87,15 +88,15 @@ export const SCENE_CATEGORIES: readonly GalleryCategory[] = [
   {
     group: "Themes",
     id: "earth",
-    label: "Earth",
-    description: "Clay, sand and stone.",
+    label: t("gallery.scene.earth"),
+    description: t("gallery.scene.earthHint"),
     generate: rangePalette({ l: [0.35, 0.88], c: [0.03, 0.09], hues: [[40, 75]] }),
   },
   {
     group: "Themes",
     id: "night",
-    label: "Night",
-    description: "Indigo skies and city lights.",
+    label: t("gallery.scene.night"),
+    description: t("gallery.scene.nightHint"),
     generate: (random) => [
       ...rangePalette({ l: [0.15, 0.4], c: [0.04, 0.1], hues: [[250, 290]] })(random).slice(0, 4),
       oklchColor(0.85, 0.12, between(random, 80, 95)),
@@ -104,8 +105,8 @@ export const SCENE_CATEGORIES: readonly GalleryCategory[] = [
   {
     group: "Themes",
     id: "space",
-    label: "Space",
-    description: "Nebulas over black.",
+    label: t("gallery.scene.space"),
+    description: t("gallery.scene.spaceHint"),
     generate: mixPalette([
       [
         [0.12, 0.18],
@@ -137,8 +138,8 @@ export const SCENE_CATEGORIES: readonly GalleryCategory[] = [
   {
     group: "Themes",
     id: "rainbow",
-    label: "Rainbow",
-    description: "Evenly spaced around the wheel.",
+    label: t("gallery.scene.rainbow"),
+    description: t("gallery.scene.rainbowHint"),
     generate: rainbowPalette,
   },
 ];

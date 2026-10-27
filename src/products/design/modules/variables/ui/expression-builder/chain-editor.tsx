@@ -6,6 +6,7 @@ import { Button } from "@shared/ui/kit";
 import type { ChainEditorProps } from "./expression-builder.types";
 import { FormulaStepRow } from "./formula-step-row";
 import { OperandField } from "./operand-field";
+import { t } from "../../variables.i18n";
 
 /** How deep groups nest in the builder (deeper ones are typed). */
 const MAX_GROUP_DEPTH = 3;
@@ -21,10 +22,10 @@ export function ChainEditor({ chain, onChange, modes, depth }: ChainEditorProps)
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-1">
         <span className="text-xs font-medium text-muted-foreground">
-          {depth === 0 ? "Start from" : "Group starts from"}
+          {depth === 0 ? t("builder.startFrom") : t("builder.groupStartsFrom")}
         </span>
         <OperandField
-          label={depth === 0 ? "Start from" : "Group starts from"}
+          label={depth === 0 ? t("builder.startFrom") : t("builder.groupStartsFrom")}
           operand={chain.start}
           onChange={(start) => onChange({ ...chain, start })}
           modes={modes}
@@ -53,7 +54,7 @@ export function ChainEditor({ chain, onChange, modes, depth }: ChainEditorProps)
           onPick={(id) => add({ op: "+", operand: { kind: "variable", id } })}
         >
           <Button variant="ghost" size="xs">
-            <Plus /> Variable
+            <Plus /> {t("builder.addVariable")}
           </Button>
         </VariablePicker>
         <Button
@@ -61,13 +62,13 @@ export function ChainEditor({ chain, onChange, modes, depth }: ChainEditorProps)
           size="xs"
           onClick={() => add({ op: "*", operand: { kind: "number", value: 2 } })}
         >
-          <Plus /> Number
+          <Plus /> {t("builder.addNumber")}
         </Button>
         {depth < MAX_GROUP_DEPTH ? (
           <Button
             variant="ghost"
             size="xs"
-            title="A part worked out on its own first, in parentheses"
+            title={t("builder.groupHint")}
             onClick={() =>
               add({
                 op: "*",
@@ -78,7 +79,7 @@ export function ChainEditor({ chain, onChange, modes, depth }: ChainEditorProps)
               })
             }
           >
-            <Parentheses /> Group
+            <Parentheses /> {t("builder.group")}
           </Button>
         ) : null}
       </div>

@@ -7,6 +7,7 @@ import type { VariableChipProps } from "./tokens.types";
 import { useDocumentTokens } from "./use-document-tokens";
 import { VariablePicker } from "./variable-picker";
 import { VariableValue } from "./variable-value";
+import { t } from "./tokens.i18n";
 
 /**
  * A bound field's look: the variable's value and name in place of the field's input (it can't be
@@ -43,15 +44,15 @@ export function VariableChip({
         <button
           type="button"
           className="flex h-full min-w-0 flex-1 items-center gap-1.5 rounded-md pl-1.5 text-left text-xs hover:bg-muted"
-          title={variable ? variable.name : "Mixed variables"}
+          title={variable ? variable.name : t("chip.mixedTitle")}
         >
           {variable && <VariableValue variable={variable} modes={modes} />}
           <span className="truncate font-medium">
-            {variable ? tokenLeafOf(variable.name) : "Mixed"}
+            {variable ? tokenLeafOf(variable.name) : t("chip.mixed")}
           </span>
         </button>
       </VariablePicker>
-      <IconButton size="xs" label="Detach variable" onClick={onDetach}>
+      <IconButton size="xs" label={t("chip.detach")} onClick={onDetach}>
         <Unlink />
       </IconButton>
     </div>

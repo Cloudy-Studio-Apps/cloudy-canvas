@@ -4,6 +4,7 @@ import { Button, cn, Popover, PopoverContent, PopoverTrigger } from "@shared/ui/
 import { CommitInput, CommitTextarea } from "@canvas-ui";
 import { useBoardSchema } from "../schema";
 import type { ColumnDetailsProps } from "./column-details.types";
+import { t } from "../../db.i18n";
 
 /** Default value, note and order of a column. */
 export function ColumnDetails({ table, column, index }: ColumnDetailsProps) {
@@ -17,18 +18,18 @@ export function ColumnDetails({ table, column, index }: ColumnDetailsProps) {
           variant="ghost"
           size="icon"
           className={cn("size-7", hasDetails && "text-foreground")}
-          aria-label="Column details"
-          title="Default, note and order"
+          aria-label={t("column.details")}
+          title={t("column.detailsHint")}
         >
           <Ellipsis />
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-64 space-y-3">
         <label className="block space-y-1">
-          <span className="text-xs font-medium text-muted-foreground">Default</span>
+          <span className="text-xs font-medium text-muted-foreground">{t("column.default")}</span>
           <CommitInput
             value={column.default ?? ""}
-            placeholder="e.g. 0, 'draft', `now()`"
+            placeholder={t("column.defaultPlaceholder")}
             className="font-mono text-xs"
             onCommit={(value) => {
               schema.updateColumn(table.id, column.id, { default: value.trim() || null });
@@ -36,7 +37,7 @@ export function ColumnDetails({ table, column, index }: ColumnDetailsProps) {
           />
         </label>
         <label className="block space-y-1">
-          <span className="text-xs font-medium text-muted-foreground">Note</span>
+          <span className="text-xs font-medium text-muted-foreground">{t("column.note")}</span>
           <CommitTextarea
             value={column.note}
             rows={3}
@@ -46,13 +47,13 @@ export function ColumnDetails({ table, column, index }: ColumnDetailsProps) {
           />
         </label>
         <div className="flex items-center justify-between">
-          <span className="text-xs font-medium text-muted-foreground">Order</span>
+          <span className="text-xs font-medium text-muted-foreground">{t("column.order")}</span>
           <div className="flex">
             <Button
               variant="ghost"
               size="icon"
               className="size-7"
-              aria-label="Move up"
+              aria-label={t("column.moveUp")}
               disabled={index === 0}
               onClick={() => schema.moveColumn(table.id, column.id, index - 1)}
             >
@@ -62,7 +63,7 @@ export function ColumnDetails({ table, column, index }: ColumnDetailsProps) {
               variant="ghost"
               size="icon"
               className="size-7"
-              aria-label="Move down"
+              aria-label={t("column.moveDown")}
               disabled={index === table.columns.length - 1}
               onClick={() => schema.moveColumn(table.id, column.id, index + 1)}
             >

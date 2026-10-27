@@ -5,6 +5,7 @@ import { TokenSwatch, useDocumentTokens } from "@canvas-ui";
 import { IconButton } from "@shared/ui/kit";
 import { GradeBadge } from "./grade-badge";
 import type { ContrastRowProps } from "./contrast-ui.types";
+import { t } from "../../variables.i18n";
 
 /** One pair: the other color, "text on" or "under" it, and its ratio and grade in each mode. */
 export function ContrastRow({ check, from, onRemove }: ContrastRowProps) {
@@ -18,21 +19,20 @@ export function ContrastRow({ check, from, onRemove }: ContrastRowProps) {
       <div className="flex items-center gap-2">
         {value?.type === "color" && <TokenSwatch color={value.color} />}
         <span className="truncate">
-          {check.text === from ? "on " : "under "}
-          {other.name}
+          {t(check.text === from ? "contrast.on" : "contrast.under", { name: other.name })}
         </span>
         <span className="ml-auto text-[10px] text-subtle-foreground">
-          {check.declared ? "paired" : "auto"}
+          {check.declared ? t("contrast.paired") : t("contrast.auto")}
         </span>
         {onRemove && (
-          <IconButton size="xs" label="Remove this pair" onClick={onRemove}>
+          <IconButton size="xs" label={t("contrast.removePair")} onClick={onRemove}>
             <X />
           </IconButton>
         )}
       </div>
       {check.results.map((result) => (
         <div key={result.label || "current"} className="flex items-center gap-2">
-          <span className="text-muted-foreground">{result.label || "Now"}</span>
+          <span className="text-muted-foreground">{result.label || t("contrast.now")}</span>
           <span className="ml-auto font-mono">{result.ratio.toFixed(1)}:1</span>
           <GradeBadge grade={result.grade} />
         </div>

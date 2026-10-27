@@ -9,6 +9,7 @@ import { AttributeList } from "./attribute-list";
 import { FormField } from "./form-field";
 import { FormSection } from "./form-section";
 import type { EntityFormProps } from "./entity-form.types";
+import { t } from "../../../er.i18n";
 
 const COLORS = [
   { name: "Red", value: ER_ENTITY_COLOR },
@@ -30,24 +31,29 @@ export function EntityForm({ entity }: EntityFormProps) {
       .filter((i) => i.parentId === entity.id || i.children.some((c) => c.entityId === entity.id))
       .map((i) => ({
         id: i.id,
-        label: i.parentId === entity.id ? "▽ its hierarchy" : "▽ parent's hierarchy",
+        label:
+          i.parentId === entity.id
+            ? t("form.entity.itsHierarchy")
+            : t("form.entity.parentHierarchy"),
       })),
   ];
 
   return (
     <div className="space-y-4">
-      <FormField label="Entity name">
+      <FormField label={t("form.entity.name")}>
         <CommitInput
           value={entity.name}
           onCommit={(name) =>
-            name.trim() ? void er.edits.updateEntity(entity.id, { name: name.trim() }) : "Name it"
+            name.trim()
+              ? void er.edits.updateEntity(entity.id, { name: name.trim() })
+              : t("form.nameIt")
           }
         />
       </FormField>
       <div className="flex items-center justify-between gap-2">
         <FlagToggle
-          label="Weak"
-          title={lock("weak-entities", entity.weak).reason || "Weak entity (double rectangle)"}
+          label={t("form.entity.weak")}
+          title={lock("weak-entities", entity.weak).reason || t("form.entity.weakTitle")}
           on={entity.weak}
           disabled={lock("weak-entities", entity.weak).disabled}
           onToggle={() => er.edits.updateEntity(entity.id, { weak: !entity.weak })}
@@ -62,14 +68,12 @@ export function EntityForm({ entity }: EntityFormProps) {
       </div>
       <AttributeList ownerId={entity.id} />
       <FormSection
-        title="Used in"
+        title={t("form.entity.usedIn")}
         actions={
           <Button
             variant="ghost"
             size="sm"
-            title={
-              gate.reason("hierarchies") || "Specialize this entity into child entities (ES UN)"
-            }
+            title={gate.reason("hierarchies") || t("form.entity.specialize")}
             disabled={!gate.allows("hierarchies")}
             onClick={() => {
               const id = er.edits.addIsa(entity.id);
@@ -77,12 +81,12 @@ export function EntityForm({ entity }: EntityFormProps) {
             }}
           >
             <GitFork />
-            Add hierarchy
+            {t("form.entity.addHierarchy")}
           </Button>
         }
       >
         {usedIn.length === 0 ? (
-          <p className="text-xs text-muted-foreground">Not in any relation yet.</p>
+          <p className="text-xs text-muted-foreground">{t("form.entity.notInRelation")}</p>
         ) : (
           <ul>
             {usedIn.map((item) => (

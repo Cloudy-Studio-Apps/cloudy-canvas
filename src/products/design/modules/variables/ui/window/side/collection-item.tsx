@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { CommitInput } from "@canvas-ui";
+import { tCommon } from "@shared/core";
 import {
   cn,
   ContextMenu,
@@ -13,6 +14,7 @@ import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";
 import { GroupOutline } from "./group-outline";
 import type { CollectionItemProps } from "./side.types";
+import { t } from "../../../variables.i18n";
 
 /**
  * A collection in the left column: click shows it, double-click or right-click → Rename edits its
@@ -28,7 +30,7 @@ export function CollectionItem({ collection, onDelete }: CollectionItemProps) {
       {renaming ? (
         <CommitInput
           autoFocus
-          aria-label="Collection name"
+          aria-label={t("side.collectionName")}
           value={collection.name}
           onCommit={(name) => tokens.renameCollection(collection.id, name)}
           onBlur={() => setRenaming(false)}
@@ -56,10 +58,12 @@ export function CollectionItem({ collection, onDelete }: CollectionItemProps) {
             // Don't hand focus back to the row: it would take it from the rename field.
             onCloseAutoFocus={(event) => event.preventDefault()}
           >
-            <ContextMenuItem onSelect={() => setRenaming(true)}>Rename</ContextMenuItem>
+            <ContextMenuItem onSelect={() => setRenaming(true)}>
+              {tCommon("rename")}
+            </ContextMenuItem>
             <ContextMenuSeparator />
             <ContextMenuItem className="text-destructive" onSelect={() => onDelete(collection)}>
-              Delete collection
+              {t("side.deleteCollection")}
             </ContextMenuItem>
           </ContextMenuContent>
         </ContextMenu>

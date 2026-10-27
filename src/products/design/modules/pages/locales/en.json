@@ -1,0 +1,28 @@
+{
+  "commands": {
+    "previous": "Previous page",
+    "next": "Next page"
+  },
+  "menu": {
+    "title": "Pages",
+    "moveTo": "Move to page"
+  },
+  "list": {
+    "title": "Pages",
+    "add": "Add page",
+    "options": "{name} options",
+    "optionsTitle": "Page options"
+  },
+  "section": {
+    "title": "Page",
+    "zoomToFit": "Zoom to fit ({shortcut})",
+    "name": "Page name",
+    "zoom": "Zoom {percent}%"
+  },
+  "errors": {
+    "delete": "Couldn't delete the page"
+  },
+  "defaults": {
+    "page": "Page {number}"
+  }
+}

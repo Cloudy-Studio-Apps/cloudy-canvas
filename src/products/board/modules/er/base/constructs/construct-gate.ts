@@ -1,6 +1,7 @@
 import type { ErStandardDefinition } from "../standards/er-standard.types";
 import type { ErConstructDefinition, ErConstructGate } from "./er-construct.types";
 import { erConstructs } from "./er-construct-registry";
+import { t } from "../../er.i18n";
 
 /** Whether the standard lets a diagram use the construct (every one it doesn't forbid). */
 export function erAllows(standard: ErStandardDefinition, construct: string): boolean {
@@ -19,7 +20,10 @@ export function constructGate(standard: ErStandardDefinition): ErConstructGate {
     reason: (construct) =>
       erAllows(standard, construct)
         ? ""
-        : `${erConstructs.get(construct)?.label ?? construct} aren't part of ${standard.label}`,
+        : t("constructs.notPart", {
+            construct: erConstructs.get(construct)?.label ?? construct,
+            standard: standard.label,
+          }),
   };
 }
 

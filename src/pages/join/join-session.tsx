@@ -12,14 +12,15 @@ import { JoinMessage } from "./join-message";
 import { ReconnectingBanner } from "./reconnecting-banner";
 import { useMissingPluginsNotice } from "./use-missing-plugins-notice";
 import type { JoinedSessionProps, JoinSessionProps } from "./join-page.types";
+import { t } from "./join.i18n";
 
 /** End titles, by why the session ended for this guest. */
 const END_TITLES = {
-  ended: "The session ended",
-  removed: "You were removed from the session",
-  denied: "You weren't let in",
-  lost: "Lost the connection to the host",
-  failed: "Couldn't join the session",
+  ended: t("end.ended"),
+  removed: t("end.removed"),
+  denied: t("end.denied"),
+  lost: t("end.lost"),
+  failed: t("end.failed"),
 } as const;
 
 /**
@@ -59,21 +60,29 @@ function JoinedSession({ guest, onEnd }: JoinedSessionProps) {
     onEnd();
   }, [state, onEnd]);
 
-  const host = state.host?.name ?? "the host";
+  const host = state.host?.name ?? t("session.theHost");
   if (!opened) {
     switch (state.status) {
       case "connecting":
-        return <JoinMessage title="Connecting to the host…" busy />;
+        return <JoinMessage title={t("session.connecting")} busy />;
       case "waiting":
         return (
           <JoinMessage
-            title={`Waiting for ${host} to let you in…`}
-            description="They've been asked. This page opens the file as soon as they answer."
+            title={t("session.waiting", { host })}
+            description={t("session.waitingHint")}
             busy
           />
         );
       default:
-        return <JoinMessage title={`Opening ${host}'s ${state.file?.product ?? "file"}…`} busy />;
+        return (
+          <JoinMessage
+            title={t("session.opening", {
+              host,
+              product: t(`session.${state.file?.product ?? "file"}`),
+            })}
+            busy
+          />
+        );
     }
   }
 

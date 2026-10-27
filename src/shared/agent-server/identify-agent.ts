@@ -1,6 +1,7 @@
 import { AGENT_CLIENTS, GENERIC_AGENT_CLIENT } from "./agent-clients";
 import type { AgentClient } from "./agent-clients.types";
 import type { IdentifiedAgent } from "./identify-agent.types";
+import { t } from "./agent-server.i18n";
 
 /** Colors for agents whose app has no brand color, or a second agent of the same app. */
 const AGENT_COLORS = ["#2f7de1", "#c2410c", "#0f8a5f", "#9333ea", "#be185d", "#0e7490"];
@@ -18,7 +19,7 @@ export function identifyAgent(
     const client = AGENT_CLIENTS.find((candidate) => candidate.match?.test(text));
     if (client) return { client, name: client.label };
   }
-  return { client: GENERIC_AGENT_CLIENT, name: clientName?.trim() || "Agent" };
+  return { client: GENERIC_AGENT_CLIENT, name: clientName?.trim() || t("identify.agent") };
 }
 
 /** An agent client by id, the generic one when it's unknown. */

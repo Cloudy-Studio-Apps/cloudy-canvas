@@ -2,6 +2,7 @@ import { DOCUMENT_TOKENS, type VariableType } from "@canvas";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { notifyError } from "@shared/stores/toast-store";
 import { FIRST_COLLECTION, NEW_NAMES, NEW_VALUES } from "./scope-options";
+import { t } from "../variables.i18n";
 
 /**
  * Adds a variable of a type in a collection (the first, or a new "Primitives" when the file has
@@ -28,7 +29,7 @@ export function useCreateVariable(): (
         value: NEW_VALUES[type],
       }).id;
     } catch (error) {
-      notifyError("Couldn't add the variable", error);
+      notifyError(t("errors.addVariable"), error);
       return null;
     }
   };

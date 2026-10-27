@@ -1,88 +1,89 @@
 import type { ErSettingChoice } from "./diagram-settings.types";
+import { t } from "../../../er.i18n";
 
 /** The diagram settings page, top to bottom. */
 export const ER_SETTING_CHOICES: readonly ErSettingChoice[] = [
   {
     key: "style",
-    label: "Attributes",
-    hint: "How attributes are drawn.",
+    label: t("settingChoices.attributes.label"),
+    hint: t("settingChoices.attributes.hint"),
     options: [
-      { value: "ellipse", label: "Chen ellipses" },
-      { value: "lollipop", label: "Lollipops" },
+      { value: "ellipse", label: t("settingChoices.attributes.ellipse") },
+      { value: "lollipop", label: t("settingChoices.attributes.lollipop") },
     ],
   },
   {
     key: "cardinality",
-    label: "Cardinality on the lines",
-    hint: "What each line says about its side.",
+    label: t("settingChoices.cardinality.label"),
+    hint: t("settingChoices.cardinality.hint"),
     options: [
-      { value: "minmax", label: "(min,max)" },
-      { value: "ratio", label: "1 / N" },
+      { value: "minmax", label: t("settingChoices.cardinality.minmax") },
+      { value: "ratio", label: t("settingChoices.cardinality.ratio") },
     ],
   },
   {
     key: "ratio",
-    label: "Ratio on the diamond",
-    hint: "For Cliente (0,n) and Pedido (1,1).",
+    label: t("settingChoices.ratio.label"),
+    hint: t("settingChoices.ratio.hint"),
     options: [
-      { value: "across", label: "Read across" },
-      { value: "own", label: "Own maximum" },
+      { value: "across", label: t("settingChoices.ratio.across") },
+      { value: "own", label: t("settingChoices.ratio.own") },
     ],
   },
   {
     key: "participation",
-    label: "Participation",
-    hint: "How a mandatory side (minimum 1) shows.",
+    label: t("settingChoices.participation.label"),
+    hint: t("settingChoices.participation.hint"),
     options: [
-      { value: "numbers", label: "Numbers" },
-      { value: "lines", label: "Double line" },
-      { value: "both", label: "Both" },
+      { value: "numbers", label: t("settingChoices.participation.numbers") },
+      { value: "lines", label: t("settingChoices.participation.lines") },
+      { value: "both", label: t("settingChoices.participation.both") },
     ],
   },
   {
     key: "isa",
-    label: "Hierarchies",
-    hint: "The specialization symbol.",
+    label: t("settingChoices.isa.label"),
+    hint: t("settingChoices.isa.hint"),
     options: [
-      { value: "arc", label: "Triangle" },
-      { value: "circle", label: "Circle d / o" },
-      { value: "arrow", label: "Arrow" },
+      { value: "arc", label: t("settingChoices.isa.arc") },
+      { value: "circle", label: t("settingChoices.isa.circle") },
+      { value: "arrow", label: t("settingChoices.isa.arrow") },
     ],
   },
   {
     key: "arrows",
-    label: "Arrowheads",
-    hint: "On two-way relations, at an entity the other side takes part with at most once.",
+    label: t("settingChoices.arrows.label"),
+    hint: t("settingChoices.arrows.hint"),
     options: [
-      { value: "manual", label: "Only [arrow]" },
-      { value: "cardinality", label: "From cardinality" },
+      { value: "manual", label: t("settingChoices.arrows.manual") },
+      { value: "cardinality", label: t("settingChoices.arrows.cardinality") },
     ],
   },
   {
     key: "joins",
-    label: "Join attributes",
-    hint: "The attribute a relation joins through, after the cardinality.",
+    label: t("settingChoices.joins.label"),
+    hint: t("settingChoices.joins.hint"),
     options: [
-      { value: "shown", label: "Shown" },
-      { value: "hidden", label: "Hidden" },
+      { value: "shown", label: t("settingChoices.joins.shown") },
+      { value: "hidden", label: t("settingChoices.joins.hidden") },
     ],
   },
   {
     key: "dependency",
-    label: "Dependency marks",
-    hint: "The I (identification) and E (existence) marks on relations.",
+    label: t("settingChoices.dependency.label"),
+    hint: t("settingChoices.dependency.hint"),
     options: [
-      { value: "marks", label: "Shown" },
-      { value: "none", label: "Hidden" },
+      { value: "marks", label: t("settingChoices.dependency.marks") },
+      { value: "none", label: t("settingChoices.dependency.none") },
     ],
   },
   {
     key: "crowFeet",
-    label: "Crow's feet",
-    hint: "Marks where two-way relations meet entities.",
+    label: t("settingChoices.crowFeet.label"),
+    hint: t("settingChoices.crowFeet.hint"),
     options: [
-      { value: "on", label: "Shown" },
-      { value: "off", label: "Hidden" },
+      { value: "on", label: t("settingChoices.crowFeet.on") },
+      { value: "off", label: t("settingChoices.crowFeet.off") },
     ],
   },
 ];

@@ -15,6 +15,7 @@ import { BrochurePageRow } from "./brochure-page-row";
 import { BrochureSwitcher } from "./brochure-switcher";
 import { NoBrochure } from "./no-brochure";
 import { spreadLabel } from "./spread-label";
+import { t } from "../../catalog.i18n";
 
 /**
  * The Catalog mode's left tab: the design page's open brochure (`BrochureSwitcher` picks, makes,
@@ -68,12 +69,15 @@ export function BrochureTab() {
           Pages <span className="font-normal text-muted-foreground">{layout.pageCount}</span>
         </h2>
         <div className="flex items-center gap-0.5">
-          <PanelIconButton label="Pick frames" onClick={() => engine.setTool(CATALOG_PICK_TOOL)}>
+          <PanelIconButton
+            label={t("tab.pickFrames")}
+            onClick={() => engine.setTool(CATALOG_PICK_TOOL)}
+          >
             <ListChecks />
           </PanelIconButton>
           {last && (
             <PanelAddButton
-              label="Add a blank page"
+              label={t("tab.addBlank")}
               onClick={() => addBlankPage(engine, last, paperSize(last).name ?? "Page")}
             />
           )}
@@ -82,7 +86,7 @@ export function BrochureTab() {
       {pages.length === 0 ? (
         <BrochureEmpty />
       ) : (
-        <ul aria-label="Brochure pages" className="min-h-0 flex-1 overflow-y-auto px-1.5 pb-2">
+        <ul aria-label={t("tab.pages")} className="min-h-0 flex-1 overflow-y-auto px-1.5 pb-2">
           {layout.spreads.map((spread) => (
             <Fragment key={spread.join("-")}>
               {book && (

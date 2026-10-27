@@ -7,6 +7,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { exportFile } from "@platform";
 import { runWithLoading } from "@shared/stores/loading-store";
 import { notifyError } from "@shared/stores/toast-store";
+import { t } from "../../catalog.i18n";
 
 /** The workspace pages are drawn in, so the user's page never changes. */
 const WORKSPACE = "catalog:export";
@@ -19,17 +20,17 @@ export function useExportBrochure(): () => Promise<void> {
     try {
       const brochure = engine.service(DESIGN_BROCHURES).current(engine.scope);
       if (!brochure) throw new Error("This page has no brochure yet.");
-      const file = await runWithLoading("Exporting the brochure", (report) =>
+      const file = await runWithLoading(t("export.exporting"), (report) =>
         exportBrochure(engine.workspace(WORKSPACE), brochure, {
-          onProgress: (done, total) => report("Drawing the pages", { done, total }),
+          onProgress: (done, total) => report(t("export.drawing"), { done, total }),
         }),
       );
       await exportFile(file, `${name} - ${brochure.name}`, {
         extension: "pdf",
-        label: "PDF document",
+        label: t("export.label"),
       });
     } catch (error) {
-      notifyError("The brochure couldn't be exported", error);
+      notifyError(t("export.failed"), error);
     } finally {
       engine.dropWorkspace(WORKSPACE);
     }

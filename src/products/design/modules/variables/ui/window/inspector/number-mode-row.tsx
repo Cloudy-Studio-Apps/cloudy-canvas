@@ -3,6 +3,7 @@ import { useBoard } from "../use-board";
 import { ValueField } from "../../value-field";
 import type { ModeValueCardProps } from "./inspector.types";
 import { SameAsFirst } from "./same-as-first";
+import { t } from "../../../variables.i18n";
 
 /**
  * A number variable in one mode: its value (a number, an alias or an expression, with the Σ
@@ -13,7 +14,11 @@ export function NumberModeRow({ variable, mode }: ModeValueCardProps) {
   const value = variable.values[valueKeyOf(store, mode.id)];
   if (!value) {
     return (
-      <SameAsFirst variable={variable} mode={mode} firstName={modes[0]?.name ?? "the first"} />
+      <SameAsFirst
+        variable={variable}
+        mode={mode}
+        firstName={modes[0]?.name ?? t("inspector.theFirst")}
+      />
     );
   }
   return (
@@ -24,7 +29,7 @@ export function NumberModeRow({ variable, mode }: ModeValueCardProps) {
       <ValueField
         variable={variable}
         mode={mode.id}
-        label={`${mode.name} value`}
+        label={t("inspector.valueOf", { name: mode.name })}
         className="min-w-0 flex-1"
       />
     </div>

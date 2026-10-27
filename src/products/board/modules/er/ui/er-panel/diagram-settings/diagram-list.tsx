@@ -6,6 +6,7 @@ import { Button, ListRow } from "@shared/ui/kit";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { useErModel, useErQuery } from "../../model";
 import { diagramShapeIds } from "../diagram-shape-ids";
+import { t } from "../../../er.i18n";
 
 /**
  * The board's ER diagrams, for when the panel shows none: each with its entity count and the
@@ -36,9 +37,7 @@ export function ErDiagramList() {
   return (
     <div className="space-y-2">
       <p className="text-xs text-muted-foreground">
-        {diagrams.length > 0
-          ? "Pick a diagram to see its settings, or select one of its shapes on the board."
-          : "This board has no ER diagram yet."}
+        {diagrams.length > 0 ? t("list.pick") : t("list.none")}
       </p>
       {diagrams.length > 0 && (
         <ul className="divide-y rounded-md border border-border">
@@ -52,7 +51,7 @@ export function ErDiagramList() {
                 label={<span className="font-medium">{d.label}</span>}
                 meta={
                   <span className="flex items-center gap-2">
-                    {d.entityCount} {d.entityCount === 1 ? "entity" : "entities"}
+                    {t("list.entities", { count: d.entityCount })}
                     {d.findings > 0 && (
                       <span className="rounded-sm bg-warning px-1 text-[11px] leading-4 font-semibold text-surface">
                         {d.findings}
@@ -77,7 +76,7 @@ export function ErDiagramList() {
         }}
       >
         <Plus />
-        New diagram
+        {t("list.new")}
       </Button>
     </div>
   );

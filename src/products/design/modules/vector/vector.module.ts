@@ -14,6 +14,7 @@ import { PencilTool } from "./pencil.tool";
 import { vectorTools } from "./vector.mcp";
 import { VectorEditToolbar } from "./ui/vector-edit-toolbar";
 import { VectorKind } from "./vector.kind";
+import { t } from "./vector.i18n";
 
 /**
  * Vectors: the kind (a vector network), the pen (P) and the pencil (Shift+P), and the edit mode:
@@ -42,15 +43,15 @@ export const vectorModule = defineModule({
       designEditor.tools,
       {
         tool: VECTOR_TOOLS.pen,
-        label: "Pen",
-        description: "Draw paths of points and curves; drag while placing a point to curve it.",
+        label: t("pen.label"),
+        description: t("pen.description"),
         icon: PenIcon,
         toolbar: { group: 1, order: 74, menu: "draw" },
       },
       {
         tool: "pencil",
-        label: "Pencil",
-        description: "Draw freehand lines.",
+        label: t("pencil.label"),
+        description: t("pencil.description"),
         icon: Pencil,
         toolbar: { group: 1, order: 75, menu: "draw" },
       },

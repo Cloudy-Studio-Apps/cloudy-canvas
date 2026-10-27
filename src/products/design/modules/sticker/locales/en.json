@@ -1,0 +1,30 @@
+{
+  "commands": {
+    "toVectors": "Convert sticker to vectors"
+  },
+  "section": {
+    "title": "Sticker",
+    "addOutline": "Add an outline",
+    "convert": "Convert to vectors",
+    "convertHint": "Turns it into vector layers you can recolor",
+    "notConvertible": "Only stickers drawn as SVG can become vectors"
+  },
+  "edge": {
+    "label": "Edge",
+    "reset": "Reset the edge to white"
+  },
+  "outline": {
+    "label": "Outline",
+    "width": "Outline width",
+    "hide": "Hide the outline",
+    "show": "Show the outline",
+    "remove": "Remove the outline"
+  },
+  "toasts": {
+    "nothingTitle": "Nothing to convert",
+    "nothingBody": "Only stickers drawn as SVG can become vectors."
+  },
+  "errors": {
+    "edge": "Couldn't change the edge color"
+  }
+}

@@ -1,4 +1,5 @@
 import { defineErStandard } from "./define-er-standard";
+import { t } from "../../er.i18n";
 
 /** Elmasri & Navathe's EER (from secondary sources, not checked against the book yet). */
 export const ELMASRI_STANDARD = defineErStandard({
@@ -8,7 +9,7 @@ export const ELMASRI_STANDARD = defineErStandard({
     "Ramez Elmasri, Shamkant B. Navathe, Fundamentals of Database Systems, 7th ed., Pearson.",
   url: "https://www.pearson.com/en-us/subject-catalog/p/fundamentals-of-database-systems/P200000003546",
   approximate: true,
-  summary: "1 / N on the lines, double lines for total participation, the d / o circle.",
+  summary: t("standards.elmasri"),
   settings: {
     cardinality: "ratio",
     ratio: "across",

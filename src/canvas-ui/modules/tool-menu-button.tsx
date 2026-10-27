@@ -14,6 +14,7 @@ import { useEngine, useEngineState } from "../engine-context";
 import type { ToolMenuButtonProps } from "./editor-points.types";
 import { ExtensionIconView } from "./extension-icon-view";
 import { toolInfo } from "./tool-entries";
+import { t } from "./modules.i18n";
 
 /**
  * A toolbar button for several tools (e.g. the shapes): it shows the active one or the one picked
@@ -46,7 +47,7 @@ export function ToolMenuButton({ entries }: ToolMenuButtonProps) {
           {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the split button's chevron */}
           <button
             type="button"
-            aria-label={`More tools like ${label.toLowerCase()}`}
+            aria-label={t("moreLike", { label: label.toLowerCase() })}
             className="flex h-9 w-3.5 cursor-pointer items-center justify-center rounded-sm text-subtle-foreground hover:bg-hover hover:text-foreground data-[state=open]:bg-hover"
           >
             <ChevronDown className="size-3" />

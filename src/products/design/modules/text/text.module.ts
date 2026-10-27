@@ -15,6 +15,7 @@ import { syncRunStyleBindings } from "./run-style-bindings";
 import { createTextStyle, TextStyleEditor, TextStylePreview } from "./ui/text-styles";
 import { TypographySection } from "./ui/typography-section";
 import { useTextOutlines } from "./ui/use-text-outlines";
+import { t } from "./text.i18n";
 
 /**
  * Text: the kind, the tool (T), the Typography section (with the font picker) and the fonts for
@@ -38,8 +39,8 @@ export const textModule = defineModule({
 
     host.contribute(designStyleTypes, {
       id: TEXT_STYLE,
-      label: "Text",
-      heading: "Text styles",
+      label: t("label"),
+      heading: t("styles.heading"),
       icon: Type,
       order: 10,
       create: (engine) => createTextStyle(engine),

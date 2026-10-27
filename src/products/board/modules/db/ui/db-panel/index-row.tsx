@@ -6,6 +6,7 @@ import { useBoardSchema } from "../schema";
 import { FlagToggle } from "./flag-toggle";
 import { IndexPartPicker } from "./index-part-picker";
 import type { IndexRowProps } from "./index-row.types";
+import { t } from "../../db.i18n";
 
 /** One index: its columns/expressions as chips, PK/UQ, name, method and note. */
 export function IndexRow({ table, index, typeListId }: IndexRowProps) {
@@ -31,7 +32,7 @@ export function IndexRow({ table, index, typeListId }: IndexRowProps) {
                 <IconButton
                   size="xs"
                   className="size-4 [&_svg:not([class*='size-'])]:size-3"
-                  label={`Remove ${label} from the index`}
+                  label={t("index.remove", { part: label })}
                   tooltip={false}
                   onClick={() => update({ parts: index.parts.filter((_, j) => j !== i) })}
                 >
@@ -50,8 +51,8 @@ export function IndexRow({ table, index, typeListId }: IndexRowProps) {
           variant="ghost"
           size="icon"
           className="size-7 hover:text-destructive"
-          aria-label="Delete index"
-          title="Delete index"
+          aria-label={t("index.delete")}
+          title={t("index.delete")}
           onClick={() => schema.removeIndex(table.id, index.id)}
         >
           <Trash2 />
@@ -60,27 +61,27 @@ export function IndexRow({ table, index, typeListId }: IndexRowProps) {
       <div className="flex items-center gap-1">
         <FlagToggle
           label="PK"
-          title="Primary key"
+          title={t("flags.pk")}
           on={index.pk}
           onToggle={() => update({ pk: !index.pk })}
         />
         <FlagToggle
           label="UQ"
-          title="Unique"
+          title={t("flags.unique")}
           on={index.unique}
           onToggle={() => update({ unique: !index.unique })}
         />
         <CommitInput
           value={index.name}
-          placeholder="Name"
-          aria-label="Index name"
+          placeholder={t("index.name")}
+          aria-label={t("index.nameLabel")}
           className="h-6 min-w-0 flex-1 text-xs"
           onCommit={(name) => update({ name: name.trim() })}
         />
         <CommitInput
           value={index.type}
-          placeholder="Method"
-          aria-label="Index method"
+          placeholder={t("index.method")}
+          aria-label={t("index.methodLabel")}
           list={typeListId}
           className="h-6 w-20 font-mono text-xs"
           onCommit={(type) => update({ type: type.trim() })}
@@ -88,8 +89,8 @@ export function IndexRow({ table, index, typeListId }: IndexRowProps) {
       </div>
       <CommitInput
         value={index.note}
-        placeholder="Note"
-        aria-label="Index note"
+        placeholder={t("index.note")}
+        aria-label={t("index.noteLabel")}
         className="h-6 text-xs"
         onCommit={(note) => update({ note })}
       />

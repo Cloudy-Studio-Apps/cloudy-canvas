@@ -10,6 +10,7 @@ import {
   useWizardTheme,
 } from "../store";
 import { StripCell } from "./strip-cell";
+import { t } from "../../color-wizard.i18n";
 
 /**
  * The selected token's choices in one strip: Automatic (the wizard's default), best contrast for
@@ -34,8 +35,8 @@ export function ThemeStrip() {
   const special = (key: "white" | "black") => (
     <StripCell
       hex={SPECIAL_COLORS[key]!}
-      label={key === "white" ? "White" : "Black"}
-      title={key === "white" ? "Plain white" : "Plain black"}
+      label={key === "white" ? t("theme.strip.white") : t("theme.strip.black")}
+      title={key === "white" ? t("theme.strip.plainWhite") : t("theme.strip.plainBlack")}
       selected={custom && value.role === key}
       passes={passes(SPECIAL_COLORS[key]!)}
       onPick={() => setThemeChoice(name, mode, { role: key })}
@@ -43,9 +44,9 @@ export function ThemeStrip() {
   );
   const shown =
     value.role === "auto"
-      ? "best contrast"
+      ? t("theme.strip.bestContrast")
       : value.role === "custom"
-        ? `custom ${value.hex}`
+        ? t("theme.strip.customHex", { hex: value.hex })
         : value.alias;
   return (
     <div className="flex flex-col gap-2.5 rounded-lg border border-border bg-surface p-3">
@@ -57,12 +58,13 @@ export function ThemeStrip() {
         <span className="text-sm">
           <b>{name}</b>{" "}
           <span className="text-muted-foreground">
-            in {mode} · {custom ? shown : `automatic (${shown})`}
+            {t("theme.strip.inMode", { mode })} ·{" "}
+            {custom ? shown : t("theme.strip.automaticShown", { shown })}
           </span>
         </span>
-        <span className="ml-auto text-xs text-muted-foreground">Shades of</span>
+        <span className="ml-auto text-xs text-muted-foreground">{t("theme.strip.shadesOf")}</span>
         <SelectField
-          label="Which color's shades"
+          label={t("theme.strip.shadesOfColor")}
           value={roleName ?? ""}
           options={colors.map((c) => ({ value: c.name, label: c.name }))}
           onChange={(role) => setThemeChoice(name, mode, { role, stop: value.stop ?? 500 })}
@@ -70,7 +72,7 @@ export function ThemeStrip() {
         />
         {other && (
           <Button variant="outline" size="sm" onClick={() => mirrorThemeChoice(name, mode, other)}>
-            Mirror to {other}
+            {t("theme.strip.mirror", { mode: other })}
           </Button>
         )}
       </div>
@@ -79,8 +81,8 @@ export function ThemeStrip() {
           <StripCell
             wide
             hex={automatic.hex}
-            label="Automatic"
-            title={`The wizard's choice: ${automatic.alias}`}
+            label={t("theme.strip.automatic")}
+            title={t("theme.strip.wizardChoice", { name: automatic.alias })}
             selected={!custom}
             passes={passes(automatic.hex)}
             onPick={() => clearThemeChoice(name, mode)}
@@ -89,8 +91,8 @@ export function ThemeStrip() {
         {spec.on && (
           <StripCell
             hex={onColor(themeColor(theme, spec.on, mode) ?? SPECIAL_COLORS.white!)}
-            label="Contrast"
-            title={`White or black, whichever reads better on ${spec.on}`}
+            label={t("theme.strip.contrast")}
+            title={t("theme.strip.whiteOrBlack", { name: spec.on })}
             selected={custom && value.role === "auto"}
             passes={null}
             onPick={() => setThemeChoice(name, mode, { role: "auto" })}
@@ -112,7 +114,7 @@ export function ThemeStrip() {
         {special("black")}
         <ColorPopover
           color={value.hex.toLowerCase()}
-          label={`${name} in ${mode}`}
+          label={t("theme.strip.nameInMode", { name, mode })}
           onChange={(next, info) =>
             info.done &&
             setThemeChoice(name, mode, { role: "custom", hex: next.color.toUpperCase() })
@@ -120,8 +122,8 @@ export function ThemeStrip() {
           trigger={
             <StripCell
               hex={value.role === "custom" ? value.hex : SPECIAL_COLORS.white!}
-              label="Custom"
-              title="Any color"
+              label={t("theme.strip.custom")}
+              title={t("theme.strip.anyColor")}
               selected={custom && value.role === "custom"}
               passes={value.role === "custom" ? passes(value.hex) : null}
               onPick={() => undefined}

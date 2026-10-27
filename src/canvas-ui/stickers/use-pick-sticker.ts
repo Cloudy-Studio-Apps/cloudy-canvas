@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { pickSticker, type PickedSticker, type StickerDef } from "@shared/core";
 import { useStickerRecentsStore } from "@shared/stores/sticker-recents-store";
 import { notifyError } from "@shared/stores/toast-store";
+import { t } from "./stickers.i18n";
 
 /**
  * Loads a sticker's picture and hands it to `onPicked` (the product makes it what its sticker
@@ -20,7 +21,7 @@ export function usePickSticker(
         onPicked(await pickSticker(sticker));
         if (keep) remember(sticker.id);
       } catch (error) {
-        notifyError(`Couldn't pick "${sticker.label}"`, error);
+        notifyError(t("errors.pick", { label: sticker.label }), error);
       }
     },
     [onPicked, remember],

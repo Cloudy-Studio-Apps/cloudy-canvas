@@ -16,11 +16,12 @@ import { createSticky } from "./sticky.factory";
 import { drawSticky } from "./sticky.draw";
 import { STICKY_DEFAULTS } from "./sticky.defaults";
 import type { StickyElement } from "./sticky.types";
+import { t } from "./sticky.i18n";
 
 export class StickyKind extends QuickConnectKind<StickyElement> {
   readonly type = "sticky";
-  readonly label = "Sticky note";
-  readonly description = "A colored note for jotting down an idea.";
+  readonly label = t("label");
+  readonly description = t("description");
   override readonly tool = "sticky";
   override readonly defaults = STICKY_DEFAULTS;
   override readonly styleFields = ["color"];
@@ -63,7 +64,7 @@ export class StickyKind extends QuickConnectKind<StickyElement> {
 
   /** Its color binds to a color variable. */
   override bindable(): BindableField[] {
-    return [colorField("color", "Color", "shape-fill")];
+    return [colorField("color", t("color"), "shape-fill")];
   }
 
   override optionsOf(el: StickyElement): Partial<BoardToolOptions> {

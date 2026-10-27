@@ -1,0 +1,160 @@
+{
+  "mode": {
+    "label": "Catalog",
+    "description": "Arrange frames into a print brochure: order, options, checks and PDF.",
+    "pick": "Pick the brochure's frames",
+    "preview": "Preview the brochure",
+    "exportPdf": "Export the brochure as PDF",
+    "brochureTab": "Brochure"
+  },
+  "toolbar": {
+    "selectPages": "Select pages",
+    "selectPagesHint": "Click pages to see them; they don't move here.",
+    "pickFrames": "Pick frames",
+    "pickFramesHint": "Tick the frames the brochure prints.",
+    "arrange": "Arrange pages and options",
+    "arrangeHint": "Lay the pages out on one line by spread, with their options as the brochure's Arrange setting says (below them while it's off).",
+    "preview": "Preview",
+    "previewHint": "Flip through the brochure.",
+    "exportPdf": "Export PDF",
+    "exportPdfHint": "The whole brochure as one PDF."
+  },
+  "tab": {
+    "page": {
+      "remove": "Take out of the brochure",
+      "options": "{count} options · {letter} printed"
+    },
+    "switcher": {
+      "title": "Brochures of this page",
+      "new": "New brochure"
+    },
+    "pickFrames": "Pick frames",
+    "addBlank": "Add a blank page",
+    "pages": "Brochure pages",
+    "blank": {
+      "title": "Blank page",
+      "added": "Added {reason}"
+    },
+    "empty": {
+      "title": "No pages yet",
+      "hint": "Pick the frames this brochure prints. They go in the order you read the canvas: rows, left to right.",
+      "pick": "Pick frames",
+      "orBlank": "Or start with a blank page:",
+      "a4Portrait": "A4 portrait",
+      "a4Landscape": "A4 landscape",
+      "otherSize": "Other size…"
+    },
+    "options": {
+      "label": "Options of page {page}"
+    },
+    "create": "Create brochure",
+    "spread": {
+      "front": "Front cover",
+      "back": "Back cover",
+      "page": "Page {n}",
+      "pages": "Pages {from}–{to}"
+    }
+  },
+  "export": {
+    "label": "PDF document",
+    "exporting": "Exporting the brochure",
+    "drawing": "Drawing the pages",
+    "failed": "The brochure couldn't be exported"
+  },
+  "images": {
+    "replace": {
+      "title": "Replace the image",
+      "failed": "The image couldn't be replaced",
+      "label": "Replace"
+    },
+    "drawFailed": "The page couldn't be drawn",
+    "toReplace": "{count} to replace",
+    "title": "Images",
+    "none": "No pictures on this page.",
+    "hint": "Replace keeps the layer, its size and how the picture fills it."
+  },
+  "preview": {
+    "label": "Brochure preview",
+    "previous": "Previous",
+    "next": "Next",
+    "toggle3d": "3D preview"
+  },
+  "arrange": {
+    "off": "Don't arrange the canvas",
+    "below": "Arrange · options below each page",
+    "beside": "Arrange · options beside each page",
+    "label": "Arrange on canvas",
+    "now": "Arrange now"
+  },
+  "checks": {
+    "title": "Checks",
+    "empty": "Nothing to fix before printing.",
+    "hidden": "The page is hidden, so it prints blank.",
+    "placeholder": "“{name}” is a placeholder: replace it with the picture.",
+    "lowDpi": "“{name}” is {dpi} dpi at print size.",
+    "margin": "“{name}” reaches into the {margin} mm margin.",
+    "layout": {
+      "reasonBack": "so the back cover is on the left",
+      "reasonSpread": "so the spread starts on a left page",
+      "blank": "A blank page goes before it {reason}.",
+      "oddSize": "It's {w} × {h} mm; the pages are {pw} × {ph} mm."
+    }
+  },
+  "settings": {
+    "quality": {
+      "print": "Print · 300 dpi",
+      "draft": "Draft · 150 dpi",
+      "screen": "Screen · 96 dpi",
+      "label": "Quality"
+    },
+    "margin": "Margin",
+    "showMargins": "Show margins on the canvas",
+    "title": "Brochure"
+  },
+  "layout": {
+    "book": "Book · facing pages",
+    "single": "Single pages",
+    "covers": {
+      "both": "Front and back covers",
+      "front": "Front cover only",
+      "back": "Back cover only",
+      "none": "No covers",
+      "label": "Covers"
+    },
+    "label": "Layout",
+    "splitSpreads": "Split spreads into pages in the PDF"
+  },
+  "frames": {
+    "loose": "Not in the brochure",
+    "title_one": "{count} frame",
+    "title_other": "{count} frames",
+    "all": "They're all in the brochure."
+  },
+  "page": {
+    "options": "Options",
+    "title": "Page {page}",
+    "oneVersion": "One version. To compare others, hover a greyed frame on the canvas and add it as an option of page {page}.",
+    "edit": "Edit this page in Design"
+  },
+  "pick": {
+    "title": "Picking frames",
+    "click": "Click frames on the canvas to tick them, or drag a box round a whole row. Pages already in the brochure start ticked.",
+    "order": "New pages go in reading order (rows top to bottom, left to right); drag them in the list to fine-tune. Esc cancels."
+  },
+  "canvas": {
+    "page": "Page",
+    "pick": {
+      "hint": "Pick the frames for the brochure: click them, or drag a box round a row.",
+      "ticked": "{count} ticked",
+      "add_one": "Add {count} page",
+      "add_other": "Add {count} pages",
+      "update": "Update pages"
+    }
+  },
+  "sidebar": {
+    "none": "This page has no brochure yet. Create one in the Brochure tab, or pick frames.",
+    "export_one": "Export PDF · {count} page",
+    "export_other": "Export PDF · {count} pages",
+    "preview": "Preview"
+  }
+}

@@ -27,6 +27,7 @@ import { EFFECT_CATALOG, EffectsSection } from "./ui";
 import { EffectHandles } from "./ui/handles";
 import { EffectStyleEditor, EffectStylePreview } from "./ui/styles";
 import { designEffectTypes } from "./ui/effects.points";
+import { t } from "./effects.i18n";
 
 /**
  * Effects, as in Figma's Effects section and further: inner and drop shadows, layer blur (even
@@ -42,8 +43,8 @@ export const effectsModule = defineModule({
   register(host) {
     host.contribute(designStyleTypes, {
       id: EFFECT_STYLE,
-      label: "Effect",
-      heading: "Effect styles",
+      label: t("style.label"),
+      heading: t("style.heading"),
       icon: Sparkles,
       order: 30,
       create: (engine) =>

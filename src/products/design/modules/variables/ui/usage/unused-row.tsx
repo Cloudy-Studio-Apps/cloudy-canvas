@@ -2,6 +2,7 @@ import { TokenSwatch } from "@canvas-ui";
 import { Checkbox, ListRow } from "@shared/ui/kit";
 import { typeGlyph } from "../window/group-kinds";
 import type { UnusedRowProps } from "./usage-ui.types";
+import { t } from "../../variables.i18n";
 
 /** An unused variable or style: a box to pick it, its swatch or glyph, its name and where it is. */
 export function UnusedRow({ record, where, color, checked, onCheckedChange }: UnusedRowProps) {
@@ -20,7 +21,7 @@ export function UnusedRow({ record, where, color, checked, onCheckedChange }: Un
           <Checkbox
             checked={checked}
             onCheckedChange={onCheckedChange}
-            aria-label={`Pick ${record.name}`}
+            aria-label={t("unused.pick", { name: record.name })}
           />
           {icon}
         </span>

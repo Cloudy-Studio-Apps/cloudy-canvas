@@ -6,6 +6,7 @@ import { Button, Swatch, Textarea } from "@shared/ui/kit";
 import { parsePalette } from "../..";
 import { MAX_COLORS, takePalette, useColorWizardStore } from "../store";
 import { SectionLabel } from "./section-label";
+import { t } from "../../color-wizard.i18n";
 
 const EXAMPLES = {
   "Coolors link": "https://coolors.co/264653-2a9d8f-e9c46a-f4a261-e76f51",
@@ -25,15 +26,15 @@ export function ImportSource() {
     const found = parsePalette(value);
     set({ importText: value, imported: found });
     if (!found.length)
-      toast({ title: "No colors found", description: "Paste hex codes, CSS or tokens." });
+      toast({
+        title: t("sources.import.emptyTitle"),
+        description: t("sources.import.emptyHint"),
+      });
   };
   return (
     <div className="flex flex-col gap-3 p-4">
-      <SectionLabel>Paste a palette</SectionLabel>
-      <p className="text-xs text-muted-foreground">
-        A Coolors link, CSS variables, JSON tokens, or any text with hex, rgb(), hsl() or oklch()
-        colors. Named colors keep their names as roles.
-      </p>
+      <SectionLabel>{t("sources.import.paste")}</SectionLabel>
+      <p className="text-xs text-muted-foreground">{t("sources.import.hint")}</p>
       <Textarea
         value={text}
         spellCheck={false}
@@ -42,7 +43,7 @@ export function ImportSource() {
         onChange={(event) => set({ importText: event.target.value })}
       />
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs text-muted-foreground">Try:</span>
+        <span className="text-xs text-muted-foreground">{t("sources.import.try")}</span>
         {Object.entries(EXAMPLES).map(([label, example]) => (
           <Button key={label} variant="outline" size="sm" onClick={() => read(example)}>
             {label}
@@ -52,10 +53,10 @@ export function ImportSource() {
       <div className="flex items-center gap-2">
         <Button variant="outline" size="sm" onClick={() => file.current?.click()}>
           <Upload />
-          Choose a file…
+          {t("sources.import.chooseFile")}
         </Button>
         <Button size="sm" className="ml-auto" onClick={() => read(text)}>
-          Read colors
+          {t("sources.import.read")}
         </Button>
       </div>
       {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the hidden file input behind "Choose a file…" */}
@@ -69,12 +70,14 @@ export function ImportSource() {
           event.target.value = "";
           picked
             ?.text()
-            .then(read, (error: unknown) => notifyError("Couldn't read the file", error));
+            .then(read, (error: unknown) => notifyError(t("sources.import.readFailed"), error));
         }}
       />
       {imported.length > 0 && (
         <>
-          <SectionLabel aside={`${imported.length} found`}>Colors</SectionLabel>
+          <SectionLabel aside={t("sources.import.found", { count: imported.length })}>
+            {t("sources.import.colors")}
+          </SectionLabel>
           <div className="grid grid-cols-[repeat(auto-fill,minmax(110px,1fr))] gap-1.5">
             {imported.map((c) => (
               <span key={c.hex} className="flex min-w-0 items-center gap-1.5 text-xs">
@@ -87,12 +90,12 @@ export function ImportSource() {
             ))}
           </div>
           <Button onClick={() => takePalette(imported)}>
-            Use {Math.min(imported.length, MAX_COLORS)} colors
+            {t("sources.file.use", { count: Math.min(imported.length, MAX_COLORS) })}
           </Button>
         </>
       )}
       <p className="rounded-lg border border-border bg-surface-sunken p-2.5 text-xs text-muted-foreground">
-        Adobe Color links don't carry the colors: export the theme as CSS from Adobe and paste that.
+        {t("sources.import.adobe")}
       </p>
     </div>
   );

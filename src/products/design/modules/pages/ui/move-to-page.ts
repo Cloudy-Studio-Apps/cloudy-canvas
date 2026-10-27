@@ -1,10 +1,11 @@
 import type { ContextMenuSubmenu } from "@canvas-ui";
 import { DESIGN_PAGES } from "../design-pages";
+import { t } from "../pages.i18n";
 
 /** The selection's "Move to page" submenu: every page but the one on screen. */
 export const MOVE_TO_PAGE: ContextMenuSubmenu = {
   id: "moveToPage",
-  label: "Move to page",
+  label: t("menu.moveTo"),
   actions: (engine) => {
     const pages = engine.service(DESIGN_PAGES);
     return pages

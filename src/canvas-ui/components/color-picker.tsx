@@ -1,6 +1,7 @@
 import { useColorRecentsStore } from "@shared/stores/color-recents-store";
 import { ColorControls, ColorSwatches } from "./color";
 import type { ColorPickerProps } from "./color-picker.types";
+import { t } from "./components.i18n";
 
 /**
  * Picks any color, Figma's way (`ColorControls`: the area, hue, eyedropper and hex), then the
@@ -22,7 +23,7 @@ export function ColorPicker({ color, onChange, opacity, extra }: ColorPickerProp
       />
       {extra}
       <ColorSwatches
-        title="Recent"
+        title={t("color.recent")}
         colors={recents}
         onPick={(picked) => {
           onChange(picked, { done: true }, opacity ?? 1);

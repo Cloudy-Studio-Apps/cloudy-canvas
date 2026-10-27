@@ -7,6 +7,7 @@ import { renameEnumType } from "./enum-edits";
 import { reconcile } from "./reconcile";
 import { EMPTY_SCHEMA, schemaShapes, splitByNames } from "./schema-shapes";
 import type { DbApplyOptions, DbApplyResult } from "./db-schema.types";
+import { t } from "../db.i18n";
 
 /** Replaces the whole schema: shapes are updated, created (placed next to the content) or removed. */
 export function applySchemaText(
@@ -51,14 +52,12 @@ export function applyTableText(
 ): DbApplyResult {
   const shapes = schemaShapes(doc);
   const table = shapes.tables.find((t) => t.id === id);
-  if (!table) return failure("This table no longer exists");
+  if (!table) return failure(t("dbml.tableGone"));
   const parsed = parseDbml(text);
   if (!parsed.ok) return parsed;
   const { tables, enums, notes } = parsed.schema;
   if (tables.length !== 1 || enums.length > 0 || notes.length > 0) {
-    return failure(
-      "Write exactly one Table here. Use the Schema view to add tables, enums or notes",
-    );
+    return failure(t("dbml.oneTable"));
   }
   const others = { ...shapes, tables: shapes.tables.filter((t) => t.id !== id) };
   const schema = options.createMissingTables
@@ -74,14 +73,12 @@ export function applyTableText(
 export function applyEnumText(doc: CanvasDocument, id: string, text: string): DbApplyResult {
   const shapes = schemaShapes(doc);
   const current = shapes.enums.find((e) => e.id === id);
-  if (!current) return failure("This enum no longer exists");
+  if (!current) return failure(t("dbml.enumGone"));
   const parsed = parseDbml(text);
   if (!parsed.ok) return parsed;
   const { schema } = parsed;
   if (schema.enums.length !== 1 || schema.tables.length > 0 || schema.notes.length > 0) {
-    return failure(
-      "Write exactly one Enum here. Use the Schema view to add tables, enums or notes",
-    );
+    return failure(t("dbml.oneEnum"));
   }
   const result = reconcile({
     schema,

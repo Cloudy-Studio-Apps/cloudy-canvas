@@ -1,0 +1,8 @@
+{
+  "modes": "Modes",
+  "tools": "Tools",
+  "moreLike": "More tools like {label}",
+  "editorMode": {
+    "toolbarLabel": "{mode} mode"
+  }
+}

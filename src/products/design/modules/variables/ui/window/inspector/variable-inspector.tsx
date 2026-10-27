@@ -20,6 +20,7 @@ import { PurposeSelect } from "./purpose-select";
 import { ScaleLink } from "./scale-link";
 import { ShadeLink } from "./shade-link";
 import { VariableHeader } from "./variable-header";
+import { t } from "../../../variables.i18n";
 
 /**
  * The picked variable in full: its name, its value in each mode (later modes may use the first's),
@@ -33,13 +34,6 @@ const MODE_VALUES: Readonly<Record<VariableType, ComponentType<ModeValueCardProp
   boolean: PlainModeRow,
 };
 
-const TITLES: Readonly<Record<VariableType, string>> = {
-  color: "Color",
-  number: "Number",
-  string: "Text",
-  boolean: "Value",
-};
-
 export function VariableInspector({ variable }: VariableInspectorProps) {
   const { tokens, axis, modes } = useBoard();
   const select = useVariablesWindowStore((state) => state.select);
@@ -51,14 +45,14 @@ export function VariableInspector({ variable }: VariableInspectorProps) {
     <div className="flex flex-col gap-4">
       <VariableHeader variable={variable} />
       <InspectorSection
-        title={`${TITLES[variable.type]}${modes.length > 1 ? " per mode" : ""}`}
+        title={t(`inspector.titles.${variable.type}${modes.length > 1 ? "PerMode" : ""}`)}
         actions={
           <button
             type="button"
             onClick={() => tokens.addMode(axis?.id ?? null)}
             className="hover:text-foreground"
           >
-            + Mode
+            {t("inspector.addMode")}
           </button>
         }
       >
@@ -74,13 +68,13 @@ export function VariableInspector({ variable }: VariableInspectorProps) {
         </>
       )}
       {color && <ContrastPairsList variable={variable} />}
-      <InspectorSection title="Usage">
+      <InspectorSection title={t("inspector.usage")}>
         <UsageSummary id={variable.id} />
       </InspectorSection>
-      <InspectorSection title="Description">
+      <InspectorSection title={t("inspector.description")}>
         <CommitTextarea
-          aria-label="Description"
-          placeholder="What it's for"
+          aria-label={t("inspector.description")}
+          placeholder={t("inspector.purpose")}
           value={variable.description}
           onCommit={(description) => tokens.updateVariable(variable.id, { description })}
           className="min-h-14 text-xs"
@@ -93,7 +87,7 @@ export function VariableInspector({ variable }: VariableInspectorProps) {
         className="justify-start text-destructive"
         onClick={() => setDeleting([variable.id])}
       >
-        <Trash2 /> Delete variable
+        <Trash2 /> {t("editor.delete")}
       </Button>
       <DeleteTokensDialog
         ids={deleting}

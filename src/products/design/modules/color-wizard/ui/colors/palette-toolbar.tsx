@@ -10,13 +10,14 @@ import {
   undoPalette,
   useColorWizardStore,
 } from "../store";
+import { t } from "../../color-wizard.i18n";
 
 const CVD_OPTIONS: readonly SelectOption<CvdKind>[] = [
-  { value: "none", label: "Normal vision" },
-  { value: "protanopia", label: "Protanopia" },
-  { value: "deuteranopia", label: "Deuteranopia" },
-  { value: "tritanopia", label: "Tritanopia" },
-  { value: "achromatopsia", label: "Achromatopsia" },
+  { value: "none", label: t("palette.vision.normal") },
+  { value: "protanopia", label: t("palette.vision.protanopia") },
+  { value: "deuteranopia", label: t("palette.vision.deuteranopia") },
+  { value: "tritanopia", label: t("palette.vision.tritanopia") },
+  { value: "achromatopsia", label: t("palette.vision.achromatopsia") },
 ];
 
 /** Undo and redo, how many colors, sort, a color-vision preview and Generate random. */
@@ -28,28 +29,36 @@ export function PaletteToolbar() {
   const set = useColorWizardStore((s) => s.set);
   return (
     <div className="flex flex-wrap items-center gap-1">
-      <IconButton label="Undo" disabled={!canUndo} onClick={undoPalette}>
+      <IconButton label={t("palette.toolbar.undo")} disabled={!canUndo} onClick={undoPalette}>
         <Undo2 />
       </IconButton>
-      <IconButton label="Redo" disabled={!canRedo} onClick={redoPalette}>
+      <IconButton label={t("palette.toolbar.redo")} disabled={!canRedo} onClick={redoPalette}>
         <Redo2 />
       </IconButton>
       <span className="mx-1.5 h-4.5 w-px bg-border" />
       <span className="mr-1 text-xs text-muted-foreground">Colors</span>
-      <IconButton label="Fewer colors" size="sm" onClick={() => resizePalette(count - 1)}>
+      <IconButton
+        label={t("palette.toolbar.fewer")}
+        size="sm"
+        onClick={() => resizePalette(count - 1)}
+      >
         <Minus />
       </IconButton>
       <span className="min-w-5 text-center text-xs tabular-nums">{count}</span>
-      <IconButton label="More colors" size="sm" onClick={() => resizePalette(count + 1)}>
+      <IconButton
+        label={t("palette.toolbar.more")}
+        size="sm"
+        onClick={() => resizePalette(count + 1)}
+      >
         <Plus />
       </IconButton>
-      <IconButton label="Sort by lightness" onClick={sortPalette}>
+      <IconButton label={t("palette.toolbar.sort")} onClick={sortPalette}>
         <ArrowDownWideNarrow />
       </IconButton>
       <span className="mx-1.5 h-4.5 w-px bg-border" />
       <Eye className="size-4 text-muted-foreground" />
       <SelectField
-        label="See it as people with color-vision deficiencies do"
+        label={t("palette.vision.label")}
         value={cvd}
         options={CVD_OPTIONS}
         onChange={(value) => set({ cvd: value })}
@@ -57,7 +66,7 @@ export function PaletteToolbar() {
       />
       <Button variant="outline" size="sm" className="ml-auto" onClick={randomizePalette}>
         <Shuffle />
-        Generate random
+        {t("palette.toolbar.generate")}
       </Button>
     </div>
   );

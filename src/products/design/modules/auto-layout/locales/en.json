@@ -1,0 +1,46 @@
+{
+  "title": "Auto layout",
+  "commands": {
+    "add": "Add auto layout",
+    "remove": "Remove auto layout"
+  },
+  "direction": {
+    "label": "Direction",
+    "vertical": "Vertical",
+    "horizontal": "Horizontal",
+    "wrap": "Wrap"
+  },
+  "alignment": {
+    "label": "Alignment",
+    "cell": "Align {row} {column}",
+    "place": {
+      "start": "start",
+      "center": "center",
+      "end": "end"
+    }
+  },
+  "gap": {
+    "between": "Gap between layers",
+    "betweenLines": "Gap between lines",
+    "auto": "Auto gap",
+    "useAuto": "Auto gap (space between)",
+    "useFixed": "Fixed gap"
+  },
+  "padding": {
+    "horizontal": "Horizontal padding",
+    "vertical": "Vertical padding"
+  },
+  "strokesIncluded": "Strokes included in layout",
+  "firstOnTop": "First layer on top",
+  "resizing": {
+    "title": "Resizing",
+    "width": "Width sizing",
+    "height": "Height sizing",
+    "widthShort": "W",
+    "heightShort": "H",
+    "fixed": "Fixed",
+    "hug": "Hug",
+    "fill": "Fill",
+    "ignore": "Ignore auto layout"
+  }
+}

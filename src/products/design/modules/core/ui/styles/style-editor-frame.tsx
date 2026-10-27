@@ -6,6 +6,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button, Field } from "@shared/ui/kit";
 import { UsageSummary } from "@design/ui/components/token-usage";
 import type { StyleEditorFrameProps } from "./styles.types";
+import { t } from "../../core.i18n";
 
 /** What every style's editor has: its name, its own controls, a description, its usage and Delete. */
 export function StyleEditorFrame({ style, onDelete, children }: StyleEditorFrameProps) {
@@ -13,7 +14,7 @@ export function StyleEditorFrame({ style, onDelete, children }: StyleEditorFrame
   const tokens = engine.service(DOCUMENT_TOKENS);
   return (
     <div className="flex flex-col gap-3 text-xs">
-      <Field label="Name">
+      <Field label={t("styles.name")}>
         {(id) => (
           <CommitInput
             id={id}
@@ -24,7 +25,7 @@ export function StyleEditorFrame({ style, onDelete, children }: StyleEditorFrame
         )}
       </Field>
       {children}
-      <Field label="Description">
+      <Field label={t("styles.description")}>
         {(id) => (
           <CommitTextarea
             id={id}
@@ -34,7 +35,7 @@ export function StyleEditorFrame({ style, onDelete, children }: StyleEditorFrame
           />
         )}
       </Field>
-      <Field label="Usage">
+      <Field label={t("styles.usage")}>
         <UsageSummary id={style.id} />
       </Field>
       <Button

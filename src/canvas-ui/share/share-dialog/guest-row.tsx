@@ -13,6 +13,7 @@ import { PeerPathLabel } from "./peer-path-label";
 import { PersonBadge } from "./person-badge";
 import type { GuestRowProps } from "./share-dialog.types";
 import { usePeerPath } from "./use-peer-path";
+import { t } from "../share.i18n";
 
 /** A guest in the session: who, how they're connected, their role, and Remove. */
 export function GuestRow({ host, guest }: GuestRowProps) {
@@ -28,20 +29,23 @@ export function GuestRow({ host, guest }: GuestRowProps) {
         value={guest.role}
         onValueChange={(role) => host.setRole(guest.peer, role as ShareRole)}
       >
-        <SelectTrigger className="h-7 w-28" aria-label={`${guest.identity.name}'s role`}>
+        <SelectTrigger
+          className="h-7 w-28"
+          aria-label={t("guest.role", { name: guest.identity.name })}
+        >
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="edit">Can edit</SelectItem>
-          <SelectItem value="view">Can view</SelectItem>
+          <SelectItem value="edit">{t("guest.edit")}</SelectItem>
+          <SelectItem value="view">{t("guest.view")}</SelectItem>
         </SelectContent>
       </Select>
       <Button
         variant="ghost"
         size="icon"
         className="size-7"
-        aria-label={`Remove ${guest.identity.name}`}
-        title="Remove from the session"
+        aria-label={t("guest.remove", { name: guest.identity.name })}
+        title={t("guest.removeHint")}
         onClick={() => host.remove(guest.peer)}
       >
         <X />

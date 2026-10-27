@@ -1,0 +1,426 @@
+{
+  "command": {
+    "open": "Color wizard…"
+  },
+  "gallery": {
+    "occasion": {
+      "happy": "Happy",
+      "happyHint": "Bright and cheerful.",
+      "coffee": "Coffee",
+      "coffeeHint": "Espresso, latte and cream.",
+      "cream": "Cream",
+      "creamHint": "Warm off-whites.",
+      "skin": "Skin",
+      "skinHint": "Skin tones from light to deep.",
+      "food": "Food",
+      "foodHint": "Tomato, basil, lemon and bread.",
+      "wedding": "Wedding",
+      "weddingHint": "Ivory, blush, sage and gold.",
+      "christmas": "Christmas",
+      "christmasHint": "Red, pine, gold and snow.",
+      "halloween": "Halloween",
+      "halloweenHint": "Pumpkin, potion and night."
+    },
+    "scene": {
+      "sunset": "Sunset",
+      "sunsetHint": "From orange to pink and violet.",
+      "sky": "Sky",
+      "skyHint": "Clear blues and clouds.",
+      "sea": "Sea",
+      "seaHint": "Turquoise shallows to deep water.",
+      "nature": "Nature",
+      "natureHint": "Leaves, moss and bark.",
+      "earth": "Earth",
+      "earthHint": "Clay, sand and stone.",
+      "night": "Night",
+      "nightHint": "Indigo skies and city lights.",
+      "space": "Space",
+      "spaceHint": "Nebulas over black.",
+      "rainbow": "Rainbow",
+      "rainbowHint": "Evenly spaced around the wheel."
+    },
+    "season": {
+      "spring": "Spring",
+      "springHint": "Fresh greens, blossoms and sunshine.",
+      "summer": "Summer",
+      "summerHint": "Sun, sea and ice cream.",
+      "autumn": "Autumn",
+      "autumnHint": "Rust, mustard and fallen leaves.",
+      "winter": "Winter",
+      "winterHint": "Snow, frost and long nights."
+    },
+    "style": {
+      "pastel": "Pastel",
+      "pastelHint": "Soft, light tones. Delicate and bright.",
+      "vibrant": "Vibrant",
+      "vibrantHint": "Saturated colors with plenty of energy.",
+      "neon": "Neon",
+      "neonHint": "Electric colors that glow on dark.",
+      "vintage": "Vintage",
+      "vintageHint": "Faded, warm and a little dusty.",
+      "retro": "Retro",
+      "retroHint": "Seventies orange, mustard and teal.",
+      "gold": "Gold",
+      "goldHint": "Golds and bronzes, with an ink to frame them.",
+      "light": "Light",
+      "lightHint": "Near-whites and airy tints.",
+      "dark": "Dark",
+      "darkHint": "Deep tones for night themes.",
+      "warm": "Warm",
+      "warmHint": "Reds, oranges and yellows.",
+      "cold": "Cold",
+      "coldHint": "Blues, cyans and violets.",
+      "gradient": "Gradient",
+      "gradientHint": "Five steps from one color to another."
+    }
+  },
+  "harmonies": {
+    "analogous": "Analogous",
+    "mono": "Mono",
+    "complement": "Complement",
+    "split": "Split",
+    "triad": "Triad",
+    "square": "Square",
+    "compound": "Compound",
+    "shades": "Shades",
+    "custom": "Custom",
+    "label": "Harmony"
+  },
+  "theme": {
+    "contrast": {
+      "text": "Text on background",
+      "muted": "Muted text on surface",
+      "button": "Button label",
+      "link": "Link on surface",
+      "error": "Error text on surface",
+      "success": "Success on surface",
+      "warning": "Warning on surface"
+    },
+    "spec": {
+      "background": "Page behind everything",
+      "surface": "Cards, panels, menus",
+      "border": "Lines, inputs, dividers",
+      "foreground": "Main text",
+      "mutedForeground": "Secondary text, hints",
+      "primary": "Main buttons, links, focus",
+      "primaryForeground": "Text on primary",
+      "primarySoft": "Subtle highlights, secondary buttons",
+      "accent": "Badges, highlights",
+      "success": "Confirmations",
+      "warning": "Cautions",
+      "error": "Errors, destructive actions",
+      "info": "Neutral notices"
+    },
+    "lightDark": "Light & Dark",
+    "lightOnly": "Light only",
+    "darkOnly": "Dark only",
+    "visual": "Visual",
+    "list": "List",
+    "view": "View",
+    "createTheme": "Create the Theme collection",
+    "modes": "Modes",
+    "visualHint": "Click any part of a preview to change its color.",
+    "listHint": "Click a cell to change it.",
+    "resetAll": "Reset all ({count})",
+    "strip": {
+      "shadesOfColor": "Which color's shades",
+      "automatic": "Automatic",
+      "contrast": "Contrast",
+      "custom": "Custom",
+      "anyColor": "Any color",
+      "bestContrast": "best contrast",
+      "customHex": "custom {hex}",
+      "white": "White",
+      "black": "Black",
+      "plainWhite": "Plain white",
+      "plainBlack": "Plain black",
+      "inMode": "in {mode}",
+      "automaticShown": "automatic ({shown})",
+      "shadesOf": "Shades of",
+      "mirror": "Mirror to {mode}",
+      "wizardChoice": "The wizard's choice: {name}",
+      "whiteOrBlack": "White or black, whichever reads better on {name}",
+      "nameInMode": "{name} in {mode}"
+    },
+    "cell": {
+      "custom": "Custom",
+      "changed": "Changed",
+      "auto": "Auto",
+      "customShort": "custom"
+    }
+  },
+  "type": {
+    "preset": {
+      "majorSecond": "Major second",
+      "minorThird": "Minor third",
+      "majorThird": "Major third",
+      "perfectFourth": "Perfect fourth",
+      "augmentedFourth": "Augmented fourth",
+      "perfectFifth": "Perfect fifth",
+      "goldenRatio": "Golden ratio"
+    },
+    "mood": {
+      "editorial": "Editorial, warm",
+      "tech": "Tech, precise",
+      "elegant": "Elegant",
+      "friendly": "Friendly product",
+      "bold": "Bold, simple",
+      "bookish": "Bookish"
+    },
+    "createStyles": "Create text styles",
+    "headings": "Headings",
+    "body": "Body",
+    "scale": "Scale",
+    "bodySize": "Body size",
+    "textStyles": "Text styles",
+    "inTheme": "In the theme's text colors",
+    "pairings": "Pairings",
+    "sizesBefore": "Sizes are body × ratio",
+    "sizesStep": "step",
+    "sizesAfter": ", kept as a scale: change its base later and every style follows."
+  },
+  "sources": {
+    "brand": {
+      "remove": "Remove",
+      "locked": "Brand colors are locked, so Generate random keeps them",
+      "primary": "Primary",
+      "secondary": "Secondary",
+      "accent": "Accent",
+      "keepTitle": "Colors you must keep",
+      "keepHint": "Your logo or brand colors. They're locked in the palette, and the wizard builds the rest around them.",
+      "brandColor": "{name} brand color",
+      "add": "Add a brand color",
+      "buildWith": "Build the rest with",
+      "build": "Build palette",
+      "nextStep": "The next step adds a neutral and status colors tinted toward your primary."
+    },
+    "file": {
+      "off": "Off",
+      "close": "Close",
+      "similar": "Similar",
+      "loose": "Loose",
+      "emptyTitle": "No colors on layers yet",
+      "emptyHint": "Colors your layers paint without a variable show here, ready to become the palette.",
+      "mergeSimilar": "Merge similar colors",
+      "summary": "{from} colors → {to}",
+      "title": "Colors on layers",
+      "bind_one": "Bind this {count} paint to the new variables",
+      "bind_other": "Bind these {count} paints to the new variables",
+      "use_one": "Use {count} color",
+      "use_other": "Use {count} colors",
+      "rowUse": "Use {hex}",
+      "rowMerges": "merges {count}"
+    },
+    "gallery": {
+      "use": "Use this palette",
+      "copyHex": "Copy hex codes",
+      "unsave": "Remove from favorites",
+      "save": "Save to favorites",
+      "emptyTitle": "No favorites yet",
+      "emptyHint": "Use the heart on a palette to keep it here.",
+      "groupStyles": "Styles",
+      "groupSeasons": "Seasons",
+      "groupThemes": "Themes",
+      "favorites": "Favorites",
+      "palettes": "{name} palettes",
+      "savedHint": "The palettes you saved, kept on this computer.",
+      "saved": "Saved",
+      "more": "Generate more"
+    },
+    "image": {
+      "balanced": "Balanced",
+      "vivid": "Vivid",
+      "muted": "Muted",
+      "notImage": "That isn't an image",
+      "choose": "Choose an image…",
+      "favor": "Which colors to favor",
+      "images": "Images in this file",
+      "noImages": "This file has no images yet. Choose one, or drop or paste it here.",
+      "mood": "Mood",
+      "drop": "Drop an image here, or paste one",
+      "dragPin": "Drag a pin to pick another spot of the image.",
+      "readFailed": "Couldn't read the image"
+    },
+    "import": {
+      "emptyTitle": "No colors found",
+      "emptyHint": "Paste hex codes, CSS or tokens.",
+      "paste": "Paste a palette",
+      "hint": "A Coolors link, CSS variables, JSON tokens, or any text with hex, rgb(), hsl() or oklch() colors. Named colors keep their names as roles.",
+      "try": "Try:",
+      "chooseFile": "Choose a file…",
+      "read": "Read colors",
+      "readFailed": "Couldn't read the file",
+      "found": "{count} found",
+      "colors": "Colors",
+      "adobe": "Adobe Color links don't carry the colors: export the theme as CSS from Adobe and paste that."
+    },
+    "tabs": {
+      "wheel": "Wheel",
+      "brand": "Brand",
+      "image": "Image",
+      "file": "This file",
+      "gallery": "Gallery",
+      "import": "Import"
+    },
+    "wheel": {
+      "brightness": "Brightness",
+      "baseColor": "Base color"
+    }
+  },
+  "palette": {
+    "insert": "Add a color between these",
+    "copyAll": "Copy all hex codes",
+    "collection": "Collection",
+    "nameRequired": "Give the collection a name",
+    "swatch": {
+      "copyHex": "Copy hex",
+      "edit": "Edit color",
+      "remove": "Remove",
+      "unlock": "Unlock",
+      "lock": "Lock: keep it when generating",
+      "colorN": "Color {n}",
+      "invalid": "Not a color: use #RRGGBB"
+    },
+    "vision": {
+      "normal": "Normal vision",
+      "protanopia": "Protanopia",
+      "deuteranopia": "Deuteranopia",
+      "tritanopia": "Tritanopia",
+      "achromatopsia": "Achromatopsia",
+      "label": "See it as people with color-vision deficiencies do"
+    },
+    "toolbar": {
+      "undo": "Undo",
+      "redo": "Redo",
+      "fewer": "Fewer colors",
+      "more": "More colors",
+      "sort": "Sort by lightness",
+      "generate": "Generate random"
+    }
+  },
+  "done": {
+    "variables": "variables",
+    "themeModes": "theme modes",
+    "created_one": "{count} color variable",
+    "created_other": "{count} color variables",
+    "updated": "{count} updated",
+    "textStyles_one": "{count} text style",
+    "textStyles_other": "{count} text styles",
+    "ready": "Your design system is ready!",
+    "nowHas": "now has {summary}.",
+    "itsColors": "its colors",
+    "bound_one": "{count} layer now uses them.",
+    "bound_other": "{count} layers now use them.",
+    "styleGuide": "The style guide is laid out and stays up to date as you edit them.",
+    "collections_one": "collection",
+    "collections_other": "collections",
+    "stylesWithFont": "text styles · {font}",
+    "stylesLabel": "text styles",
+    "lowContrast_one": "{count} contrast pair is below AA. You can fix it any time from the Theme.",
+    "lowContrast_other": "{count} contrast pairs are below AA. You can fix them any time from the Theme.",
+    "allPass": "Every contrast check passes"
+  },
+  "review": {
+    "contrast": {
+      "hint": "Try a lighter or darker base color.",
+      "title": "Contrast (WCAG)",
+      "low": "{count} low",
+      "fixed_one": "Fixed {count} pair",
+      "fixed_other": "Fixed {count} pairs",
+      "noFix": "No shade fixes these; try another base color",
+      "fixAll": "Fix all",
+      "allPass": "All pass",
+      "move": "Move {name} to the nearest shade that passes",
+      "noShade": "No shade of {name} passes",
+      "fix": "Fix"
+    },
+    "preview": {
+      "website": "Website",
+      "components": "Components",
+      "socialMedia": "Social media",
+      "brochure": "Brochure",
+      "mobileApp": "Mobile app",
+      "sampleDesign": "Sample design",
+      "mode": "Mode"
+    },
+    "cvd": {
+      "title": "Color blindness",
+      "close_one": "{count} close pair",
+      "close_other": "{count} close pairs",
+      "apart": "Roles stay apart",
+      "lookAlike": "{a} and {b} look alike",
+      "everyone": "to everyone",
+      "with": "with {kinds}",
+      "change": "Change one of the roles",
+      "pair": "Pair them with an icon or a label"
+    },
+    "planned": {
+      "createUpdate": "Variables to create and update",
+      "create": "Variables to create",
+      "textStyles": "Text styles",
+      "update": "update",
+      "new": "create"
+    }
+  },
+  "roles": {
+    "row": {
+      "name": "Role name",
+      "hint": "Its shades change in place; layers using them follow",
+      "include": "Include {name}",
+      "nameRequired": "Give it a name",
+      "taken": "\"{name}\" is taken",
+      "updates": "updates"
+    },
+    "options": {
+      "shades": "Shades 50–950",
+      "shadesHint": "Eleven steps per color, kept linked to it: edit the color later and its shades follow.",
+      "neutral": "Add a neutral",
+      "neutralHint": "A gray tinted with the primary's hue, when no color is one.",
+      "status": "Status colors",
+      "statusHint": "Success, warning, error and info, nudged toward your primary so they belong to the palette.",
+      "title": "Options"
+    },
+    "yourColors": "Your colors",
+    "names": "Names become variable groups:",
+    "added": "Added by the options"
+  },
+  "shell": {
+    "steps": {
+      "colors": "Colors",
+      "roles": "Roles & shades",
+      "theme": "Theme",
+      "type": "Type",
+      "review": "Review"
+    },
+    "header": {
+      "steps": "Steps",
+      "title": "Color wizard",
+      "description": "Make a palette, its shades, a light and dark theme and text styles."
+    },
+    "create": {
+      "createUpdate": "Create {created}, update {updated} variables",
+      "update": "Update {updated} variables",
+      "create": "Create {created} variables",
+      "withStyles": "{variables} + {count} text styles"
+    },
+    "createFailed": "Couldn't create the design system",
+    "footer": {
+      "hintRoles": "Names become variable groups",
+      "hintTheme": "Click a part of a preview to change its color",
+      "hintType": "Text styles are optional",
+      "hintReview": "One undo step",
+      "startOver": "Start over",
+      "openGuide": "Open the style guide",
+      "pressBefore": "Press",
+      "pressAfter": "for a random palette",
+      "back": "Back",
+      "next": "Next: {step}"
+    }
+  },
+  "copy": {
+    "codes": "Hex codes copied",
+    "hex": "{hex} copied",
+    "codesFailed": "Couldn't copy the hex codes",
+    "hexFailed": "Couldn't copy the hex code"
+  }
+}

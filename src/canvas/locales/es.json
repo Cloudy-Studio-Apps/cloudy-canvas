@@ -1,0 +1,8 @@
+{
+  "loading": {
+    "starting": "Iniciando el lienzo",
+    "layers": "Dibujando capas",
+    "fonts": "Cargando fuentes",
+    "images": "Cargando imágenes"
+  }
+}

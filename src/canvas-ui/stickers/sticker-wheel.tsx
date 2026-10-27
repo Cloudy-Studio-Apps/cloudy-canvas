@@ -13,6 +13,7 @@ import { slotOffset, WHEEL } from "./wheel-geometry";
 import { popTiming, WHEEL_MOTION } from "./wheel-motion";
 import { WheelSlot } from "./wheel-slot";
 import { wheelSlots } from "./wheel-slots";
+import { t } from "./stickers.i18n";
 
 const CENTER_ART = stickerCatalog.get("seal:happy");
 
@@ -39,7 +40,7 @@ export function StickerWheel({ activeId, onPicked }: StickerWheelProps) {
   return (
     <div
       role="group"
-      aria-label="Stickers"
+      aria-label={t("wheel.label")}
       className={cn(
         WHEEL_MOTION.wheelClass,
         "pointer-events-auto relative origin-bottom rounded-full border bg-surface shadow-lifted",
@@ -84,8 +85,8 @@ export function StickerWheel({ activeId, onPicked }: StickerWheelProps) {
           {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the wheel's center button */}
           <button
             type="button"
-            title="All stickers"
-            aria-label="All stickers"
+            title={t("wheel.all")}
+            aria-label={t("wheel.all")}
             style={{
               ...popTiming(WHEEL_MOTION.center.durationMs, WHEEL_MOTION.center.delayMs),
               width: WHEEL.centerSize,

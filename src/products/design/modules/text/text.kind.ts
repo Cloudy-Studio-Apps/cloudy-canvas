@@ -42,6 +42,7 @@ import { readRuns, runsPatch } from "./text-run-args";
 import { textOutline } from "./text-outline";
 import { autoResizeFor } from "./text-auto-resize";
 import type { TextNodeElement } from "./text.types";
+import { t } from "./text.i18n";
 
 /** Longest layer name a text takes from its content. */
 const NAME_LENGTH = 60;
@@ -64,8 +65,8 @@ const TYPOGRAPHY_PATHS = new Set([
  */
 export class TextKind extends DesignNodeKind<TextNodeElement> {
   readonly type = "text";
-  readonly label = "Text";
-  readonly description = "Text in any font: click to type, or drag for a fixed width.";
+  readonly label = t("label");
+  readonly description = t("description");
   override readonly tool = "text";
   override readonly defaults = TEXT_DEFAULTS;
   override readonly strokable = false;
@@ -75,19 +76,19 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
   override bindable(el: TextNodeElement): BindableField[] {
     return [
       ...super.bindable(el),
-      numberField("fontSize", "font-size", "Font size"),
-      numberField("lineHeight", "line-height", "Line height"),
-      numberField("letterSpacing", "letter-spacing", "Letter spacing"),
-      numberField("fontWeight", "font-weight", "Font weight"),
-      stringField("text", "text-content", "Text"),
-      stringField("fontFamily", "font-family", "Font"),
-      stringField("fontStyle", "font-style", "Font style"),
+      numberField("fontSize", "font-size", t("fields.fontSize")),
+      numberField("lineHeight", "line-height", t("fields.lineHeight")),
+      numberField("letterSpacing", "letter-spacing", t("fields.letterSpacing")),
+      numberField("fontWeight", "font-weight", t("fields.fontWeight")),
+      stringField("text", "text-content", t("fields.text")),
+      stringField("fontFamily", "font-family", t("fields.font")),
+      stringField("fontStyle", "font-style", t("fields.fontStyle")),
       {
         path: TEXT_STYLE_PATH,
         type: "style",
         styleType: TEXT_STYLE,
         scopes: [],
-        label: "Text style",
+        label: t("styles.textStyle"),
       },
       // Each text style its ranges use.
       ...runStyleIds(el.runs).map((id): BindableField => ({
@@ -95,7 +96,7 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
         type: "style",
         styleType: TEXT_STYLE,
         scopes: [],
-        label: "Range text style",
+        label: t("styles.rangeStyle"),
       })),
     ];
   }

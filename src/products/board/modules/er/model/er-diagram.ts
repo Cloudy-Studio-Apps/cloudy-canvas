@@ -18,6 +18,7 @@ import { standardTextWarnings } from "./check/standard-text-warnings";
 import { standardOf } from "./standard-of";
 import { importSchemaText, schemaShapes, type DbApplyResult, formatColumnType } from "../../db";
 import { erToTables, type ErTableOptions, type ErTablesResult } from "./to-tables";
+import { t } from "../er.i18n";
 
 /**
  * One ER diagram of the board: its entities, relations, attributes and the rest. Reads it as text
@@ -90,7 +91,7 @@ export class ErDiagram {
         rule: "standard-missing",
         severity: "info",
         shapeId: first.id,
-        message: `The standard "${named}" isn't installed; the diagram is drawn with the default.`,
+        message: t("lang.standardMissing", { name: named }),
       });
     }
     return issues;

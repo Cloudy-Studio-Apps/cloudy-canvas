@@ -10,6 +10,7 @@ import { notifyError } from "@shared/stores/toast-store";
 import { Button } from "@shared/ui/kit";
 import { useBoardEngine } from "@board/ui/board-engine-context";
 import type { EmbedPlayerFrameProps } from "./embed-player-frame.types";
+import { t } from "../embed.i18n";
 
 /**
  * The YouTube player over a card's picture. It's only created when the card's play button is
@@ -49,22 +50,20 @@ export function EmbedPlayerFrame({ elementId, onClose }: EmbedPlayerFrameProps) 
   if (!card || !video) return null;
 
   const openOnYoutube = () =>
-    void openExternal(card.url).catch((error: unknown) =>
-      notifyError("The video couldn't be opened", error),
-    );
+    void openExternal(card.url).catch((error: unknown) => notifyError(t("errors.video"), error));
 
   return (
     <div ref={frameRef} className="pointer-events-auto absolute top-0 left-0 z-20">
       <div className="absolute right-0 bottom-full mb-1.5 flex gap-1">
         <Button variant="secondary" size="sm" className="shadow-soft" onClick={openOnYoutube}>
           <SiYoutube />
-          Open on YouTube
+          {t("player.openYoutube")}
         </Button>
         <Button
           variant="secondary"
           size="icon"
           className="size-7 shadow-soft"
-          aria-label="Close video"
+          aria-label={t("player.close")}
           onClick={onClose}
         >
           <X />

@@ -1,0 +1,12 @@
+{
+  "label": "Link",
+  "description": "A pasted link: videos play on the board, pages open in the browser.",
+  "errors": {
+    "video": "The video couldn't be opened",
+    "link": "The link couldn't be opened"
+  },
+  "player": {
+    "openYoutube": "Open on YouTube",
+    "close": "Close video"
+  }
+}

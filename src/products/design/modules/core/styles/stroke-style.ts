@@ -2,6 +2,7 @@ import type { BoxSides, StyleRecord } from "@canvas";
 
 import type { DesignNode } from "../node/design-node.types";
 import type { StrokeStyleValue } from "./stroke-style.types";
+import { t } from "../core.i18n";
 
 const ALIGNS = new Set(["inside", "center", "outside"]);
 const CAPS = new Set(["none", "round", "square"]);
@@ -62,9 +63,9 @@ export function strokeStyleOfNode(node: DesignNode): StrokeStyleValue {
 /** "2 · Inside · Dashed". */
 export function strokeStyleSummary(style: StyleRecord): string {
   const value = readStrokeStyle(style.value);
-  const weight = value.strokeWeights ? "Sides" : String(value.strokeWeight ?? 1);
+  const weight = value.strokeWeights ? t("styles.sides") : String(value.strokeWeight ?? 1);
   const align = value.strokeAlign ?? "inside";
-  const parts = [weight, align.charAt(0).toUpperCase() + align.slice(1)];
-  if (value.strokeDashes && value.strokeDashes.length > 0) parts.push("Dashed");
+  const parts = [weight, t(`stroke.align.${align}`)];
+  if (value.strokeDashes && value.strokeDashes.length > 0) parts.push(t("styles.dashedSummary"));
   return parts.join(" · ");
 }

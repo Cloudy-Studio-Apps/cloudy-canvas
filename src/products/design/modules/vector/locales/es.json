@@ -1,0 +1,35 @@
+{
+  "label": "Vector",
+  "description": "Un trazado de puntos y curvas, dibujado con la pluma o el lápiz.",
+  "pen": {
+    "label": "Pluma",
+    "description": "Dibuja trazados de puntos y curvas; arrastra al colocar un punto para curvarlo."
+  },
+  "pencil": {
+    "label": "Lápiz",
+    "description": "Dibuja líneas a mano alzada."
+  },
+  "edit": {
+    "title": "Edición de vectores",
+    "move": {
+      "label": "Mover puntos",
+      "description": "Elige y arrastra puntos, segmentos y manejadores."
+    },
+    "pen": {
+      "label": "Pluma",
+      "description": "Añade puntos, extiende extremos, une puntos."
+    },
+    "bend": {
+      "label": "Curvar",
+      "description": "Arrastra un segmento para curvarlo; haz clic en un punto para suavizarlo."
+    },
+    "bucket": {
+      "label": "Bote de pintura",
+      "description": "Haz clic en un área cerrada para rellenarla, o en una rellena para vaciarla."
+    },
+    "cut": {
+      "label": "Cortar",
+      "description": "Haz clic en un segmento para cortarlo."
+    }
+  }
+}

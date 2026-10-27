@@ -5,6 +5,7 @@ import { VariablePicker } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button } from "@shared/ui/kit";
 import type { PartnerPickerProps } from "./contrast-ui.types";
+import { t } from "../../variables.i18n";
 
 /** "+ Pair with…": declares a color this one is read on (it's the text, the other the surface). */
 export function PartnerPicker({ variable }: PartnerPickerProps) {
@@ -22,7 +23,7 @@ export function PartnerPicker({ variable }: PartnerPickerProps) {
       }}
     >
       <Button variant="outline" size="xs">
-        <Plus /> Pair with…
+        <Plus /> {t("contrast.pair")}
       </Button>
     </VariablePicker>
   );

@@ -15,6 +15,7 @@ import type {
   SaveStatus,
 } from "./canvas-file.types";
 import { useCanvasAutosave } from "./use-canvas-autosave";
+import { t } from "./file.i18n";
 
 /** How long the top bar shows that the file was just saved. */
 const SAVED_NOTICE_MS = 3000;
@@ -92,7 +93,7 @@ export function useCanvasFileSaver<O extends object>(
           return true;
         } catch (error) {
           if (kind === "manual" || !autosaveFailed.current) {
-            notifyError(`The ${noun} couldn't be saved`, error);
+            notifyError(t("save.error", { noun }), error);
           }
           if (kind === "auto") autosaveFailed.current = true;
           setStatus("error");

@@ -7,6 +7,7 @@ import {
   withFileExtension,
   type FileType,
 } from "@shared/core";
+import { t } from "./platform.i18n";
 
 /**
  * Shows the native "open file" dialog filtered to Cloudy Canvas files, and Figma files too with
@@ -19,19 +20,19 @@ export async function openCanvasFileDialog({ figma = false } = {}): Promise<stri
     return null;
   }
   return open({
-    title: "Open file",
+    title: t("openFile"),
     multiple: false,
     directory: false,
     filters: figma
       ? [
           {
-            name: "Cloudy Canvas, Figma and FigJam files",
+            name: t("filters.all"),
             extensions: [...ALL_FILE_EXTENSIONS, ...Object.keys(FIGMA_IMPORTS)],
           },
-          { name: "Cloudy Canvas files", extensions: ALL_FILE_EXTENSIONS },
-          { name: "Figma and FigJam files", extensions: Object.keys(FIGMA_IMPORTS) },
+          { name: t("filters.canvas"), extensions: ALL_FILE_EXTENSIONS },
+          { name: t("filters.figma"), extensions: Object.keys(FIGMA_IMPORTS) },
         ]
-      : [{ name: "Cloudy Canvas files", extensions: ALL_FILE_EXTENSIONS }],
+      : [{ name: t("filters.canvas"), extensions: ALL_FILE_EXTENSIONS }],
   });
 }
 
@@ -43,11 +44,11 @@ export async function saveCanvasFileDialog(type: FileType, name: string): Promis
   }
   const ext = FILE_EXTENSIONS[type];
   const path = await save({
-    title: type === "board" ? "Save board" : "Save design",
+    title: type === "board" ? t("saveBoard") : t("saveDesign"),
     defaultPath: `${name}.${ext}`,
     filters: [
       {
-        name: type === "board" ? "Cloudy Canvas board" : "Cloudy Canvas design",
+        name: type === "board" ? t("filters.board") : t("filters.design"),
         extensions: [ext],
       },
     ],

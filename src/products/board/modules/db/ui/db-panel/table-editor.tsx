@@ -4,6 +4,7 @@ import { useBoardSchema, useDbTable } from "../schema";
 import { DbmlEditor } from "./dbml-editor";
 import { TableVisualEditor } from "./table-visual-editor";
 import type { TableEditorProps } from "./table-editor.types";
+import { t } from "../../db.i18n";
 
 /** One table's slice of the schema, as a form or as DBML. Both edit the same board schema. */
 export function TableEditor({ tableId }: TableEditorProps) {
@@ -20,7 +21,7 @@ export function TableEditor({ tableId }: TableEditorProps) {
       className="min-h-0 flex-1"
     >
       <TabsList className="w-full">
-        <TabsTrigger value="visual">Visual</TabsTrigger>
+        <TabsTrigger value="visual">{t("tabs.visual")}</TabsTrigger>
         <TabsTrigger value="dbml">DBML</TabsTrigger>
       </TabsList>
       <TabsContent value="visual">
@@ -29,8 +30,8 @@ export function TableEditor({ tableId }: TableEditorProps) {
       <TabsContent value="dbml" className="flex min-h-0 flex-col">
         <DbmlEditor
           key={tableId}
-          label={`DBML for ${table.name}`}
-          hint="Only this table. Refer to other tables by name, e.g. [ref: > users.id]."
+          label={t("tableEditor.dbmlLabel", { name: table.name })}
+          hint={t("tableEditor.dbmlHint")}
           read={() => schema.tableDbml(tableId)}
           apply={(text, options) => schema.applyTableDbml(tableId, text, options)}
         />

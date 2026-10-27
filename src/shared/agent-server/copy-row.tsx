@@ -4,6 +4,7 @@ import { Button } from "@shared/ui/components/ui/button";
 import { cn } from "@shared/ui/lib/utils";
 import { copyText } from "./copy-agent-setup";
 import type { CopyRowProps } from "./copy-row.types";
+import { t } from "./agent-server.i18n";
 
 /** A labeled value in monospace with a Copy button. */
 export function CopyRow({ label, value, hint, disabled = false }: CopyRowProps) {
@@ -15,10 +16,10 @@ export function CopyRow({ label, value, hint, disabled = false }: CopyRowProps) 
           variant="ghost"
           size="sm"
           disabled={disabled}
-          onClick={() => copyText(value, `${label} copied`, hint)}
+          onClick={() => copyText(value, t("copy.copied", { label }), hint)}
         >
           <Copy />
-          Copy
+          {t("copy.copy")}
         </Button>
       </div>
       <pre

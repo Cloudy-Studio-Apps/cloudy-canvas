@@ -1,0 +1,13 @@
+{
+  "drop": {
+    "oneFailed": "No se pudo añadir “{name}”",
+    "manyFailed": "No se pudieron añadir {count} archivos",
+    "hint": "Suelta imágenes, SVG o archivos .txt en el lienzo.",
+    "error": "No se pudieron añadir los archivos"
+  },
+  "copyPng": {
+    "loading": "Copiando como PNG…",
+    "success": "Copiado como PNG",
+    "error": "No se pudo copiar como PNG"
+  }
+}

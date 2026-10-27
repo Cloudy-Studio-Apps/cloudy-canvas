@@ -9,6 +9,7 @@ import { SHADER_PRESETS } from "../shader-presets";
 import { glslLanguage } from "./glsl-language";
 import { ShaderParamField } from "./shader-param-field";
 import type { EffectEditorProps } from "../../effects/ui";
+import { t } from "../shader-effect.i18n";
 
 /**
  * A shader effect's editor: a preset to start from, the code (GLSL, applied as it's typed; a
@@ -21,9 +22,9 @@ export function ShaderEditor({ effect, onChange }: EffectEditorProps<ShaderEffec
   return (
     <div className="flex flex-col gap-2">
       <SelectField
-        label="Start from a preset"
+        label={t("presets.label")}
         value=""
-        placeholder="Start from a preset…"
+        placeholder={t("presets.placeholder")}
         options={SHADER_PRESETS.map((preset) => ({ value: preset.label, label: preset.label }))}
         onChange={(label) => {
           const preset = SHADER_PRESETS.find((p) => p.label === label);
@@ -35,7 +36,7 @@ export function ShaderEditor({ effect, onChange }: EffectEditorProps<ShaderEffec
         // Typing is one undo step per pause, like the board's code panels.
         onChange={(code) => onChange({ ...effect, code })}
         language={glslLanguage}
-        label="Shader code"
+        label={t("editor.code")}
         invalid={!!error}
         errorLine={error?.line ?? null}
         className="h-56 text-[11px]"

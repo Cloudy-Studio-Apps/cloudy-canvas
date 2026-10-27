@@ -5,6 +5,7 @@ import type { DesignNode } from "../../core";
 import { ensureBrochure } from "../model/current-brochure";
 import { replaceImageFill } from "../../image";
 import { chooseImageAsset } from "@canvas-ui";
+import { t } from "../catalog.i18n";
 
 /** Shows a page frame on screen, switching design page when it's on another, and selects it. */
 export function showPage(engine: DesignEngine, frame: FrameElement): void {
@@ -41,8 +42,8 @@ export async function replaceImage(
   fill: number,
 ): Promise<void> {
   const assetId = await chooseImageAsset(engine, {
-    title: "Replace the image",
-    errorTitle: "The image couldn't be replaced",
+    title: t("images.replace.title"),
+    errorTitle: t("images.replace.failed"),
   });
   if (!assetId) return;
   engine.doc.checkpoint();

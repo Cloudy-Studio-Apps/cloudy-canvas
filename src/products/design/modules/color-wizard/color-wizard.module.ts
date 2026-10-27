@@ -7,6 +7,7 @@ import { colorWizardTools } from "./color-wizard.mcp";
 import { ColorWizard } from "./ui";
 import { StartWizardButton } from "./ui/start-wizard-button";
 import { useColorWizardCommand } from "./ui/use-color-wizard-command";
+import { t } from "./color-wizard.i18n";
 
 /**
  * The color wizard: a dialog that builds a palette (wheel, brand colors, an image, the file's
@@ -25,7 +26,10 @@ export const colorWizardModule = defineModule({
       order: 10,
       component: StartWizardButton,
     });
-    host.contribute(designCanvas.hostCommands, { id: OPEN_COLOR_WIZARD, label: "Color wizard…" });
+    host.contribute(designCanvas.hostCommands, {
+      id: OPEN_COLOR_WIZARD,
+      label: t("command.open"),
+    });
     host.contribute(designEditor.sessionHooks, {
       id: "color-wizard.command",
       use: useColorWizardCommand,
@@ -33,7 +37,7 @@ export const colorWizardModule = defineModule({
     host.contribute(designEditor.mainMenu, {
       id: "color-wizard",
       order: 42.6,
-      items: [{ command: OPEN_COLOR_WIZARD, label: "Color wizard…" }],
+      items: [{ command: OPEN_COLOR_WIZARD, label: t("command.open") }],
     });
     host.contribute(designMcpTools, { id: "color-wizard", tools: () => colorWizardTools });
   },

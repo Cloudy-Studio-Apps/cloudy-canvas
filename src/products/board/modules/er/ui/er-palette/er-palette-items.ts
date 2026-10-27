@@ -1,39 +1,48 @@
 import type { ErPaletteItem } from "./er-palette.types";
+import { t } from "../../er.i18n";
 
 /** The palette's buttons, top to bottom, with what their tooltips say. */
 export const ER_PALETTE_ITEMS: readonly ErPaletteItem[] = [
-  { id: "entity", label: "Entity", description: "Click to add, or drag onto the board." },
+  { id: "entity", label: t("palette.entity.label"), description: t("palette.entity.description") },
   {
     id: "weak-entity",
-    label: "Weak entity",
-    description: "An entity identified through a relation (double rectangle).",
+    label: t("palette.weakEntity.label"),
+    description: t("palette.weakEntity.description"),
   },
   {
     id: "relation",
-    label: "Relation",
-    description: "Drag onto an entity to start a relation from it.",
+    label: t("palette.relation.label"),
+    description: t("palette.relation.description"),
   },
   {
     id: "associative",
-    label: "Associative entity",
-    description: "A relation that is also an entity: it has a key and takes part in relations.",
+    label: t("palette.associative.label"),
+    description: t("palette.associative.description"),
   },
-  { id: "attribute", label: "Attribute", description: "Drag onto an entity or relation." },
+  {
+    id: "attribute",
+    label: t("palette.attribute.label"),
+    description: t("palette.attribute.description"),
+  },
   {
     id: "key-attribute",
-    label: "Key attribute",
-    description: "An identifying attribute; drag onto an entity.",
+    label: t("palette.keyAttribute.label"),
+    description: t("palette.keyAttribute.description"),
   },
-  { id: "isa", label: "Hierarchy", description: "Drag onto the parent entity (is-a)." },
+  { id: "isa", label: t("palette.isa.label"), description: t("palette.isa.description") },
   {
     id: "union",
-    label: "Union type",
-    description: "A category: drag onto the entity that unites its superclasses.",
+    label: t("palette.union.label"),
+    description: t("palette.union.description"),
   },
-  { id: "aggregate", label: "Aggregation", description: "Drag onto a relation to aggregate it." },
+  {
+    id: "aggregate",
+    label: t("palette.aggregate.label"),
+    description: t("palette.aggregate.description"),
+  },
   {
     id: "constraint",
-    label: "Constraint",
-    description: "Click to add an exclusion constraint between two relations.",
+    label: t("palette.constraint.label"),
+    description: t("palette.constraint.description"),
   },
 ];

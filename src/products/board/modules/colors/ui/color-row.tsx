@@ -6,6 +6,7 @@ import { IconButton } from "@shared/ui/kit";
 import { colorMode } from "./color-mode";
 import { ColorValuePopover } from "./color-value-popover";
 import type { ColorRowProps } from "./colors-ui.types";
+import { t } from "../colors.i18n";
 
 /**
  * A board color: its swatch (edit), its name (rename; slashes put it in groups), the color it
@@ -39,7 +40,7 @@ export function ColorRow({ variable, onDelete }: ColorRowProps) {
       <ColorValuePopover variable={variable} />
       <div className="flex min-w-0 flex-1 flex-col">
         <CommitInput
-          aria-label="Color name"
+          aria-label={t("color.name")}
           value={leaf}
           onCommit={rename}
           className="h-6 min-w-0 rounded-md bg-transparent px-1 text-xs hover:bg-muted focus:bg-muted focus:outline-none"
@@ -57,16 +58,21 @@ export function ColorRow({ variable, onDelete }: ColorRowProps) {
           if (id !== variable.id) tokens.setValue(variable.id, mode, { alias: id });
         }}
       >
-        <IconButton label="Follow another color" size="xs" revealOnHover={!target}>
+        <IconButton label={t("color.follow")} size="xs" revealOnHover={!target}>
           <Link2 />
         </IconButton>
       </VariablePicker>
       {target && (
-        <IconButton label="Stop following it" size="xs" onClick={unalias}>
+        <IconButton label={t("color.unfollow")} size="xs" onClick={unalias}>
           <Link2Off />
         </IconButton>
       )}
-      <IconButton label="Delete color" size="xs" revealOnHover onClick={() => onDelete(variable)}>
+      <IconButton
+        label={t("color.delete")}
+        size="xs"
+        revealOnHover
+        onClick={() => onDelete(variable)}
+      >
         <Trash2 />
       </IconButton>
     </div>

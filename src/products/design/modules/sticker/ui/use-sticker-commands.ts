@@ -4,6 +4,7 @@ import { stickerToVectors } from "../sticker-to-vectors";
 import type { StickerNodeElement } from "../sticker.types";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { toast } from "@shared/stores/toast-store";
+import { t } from "../sticker.i18n";
 
 /** Runs Convert to vectors on the selected stickers, as one undo step. */
 export function useStickerCommands(): void {
@@ -22,8 +23,8 @@ export function useStickerCommands(): void {
         const groups = stickers.flatMap((sticker) => stickerToVectors(engine.doc, sticker) ?? []);
         if (groups.length === 0) {
           toast({
-            title: "Nothing to convert",
-            description: "Only stickers drawn as SVG can become vectors.",
+            title: t("toasts.nothingTitle"),
+            description: t("toasts.nothingBody"),
           });
           return;
         }

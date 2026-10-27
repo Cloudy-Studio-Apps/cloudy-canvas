@@ -9,6 +9,7 @@ import { FileActionsMenu } from "./file-actions-menu";
 import { FileContextMenu } from "./file-context-menu";
 import { MissingFilePopover } from "./missing-file-popover";
 import type { FileCardProps } from "./file-card.types";
+import { t } from "../home.i18n";
 
 const PREVIEW_TINT: Record<FileInfo["type"], string> = {
   board: "bg-board-soft/60",
@@ -16,8 +17,8 @@ const PREVIEW_TINT: Record<FileInfo["type"], string> = {
 };
 
 const TYPE_LABEL: Record<FileInfo["type"], string> = {
-  board: "Board",
-  design: "Design",
+  board: t("card.board"),
+  design: t("card.design"),
 };
 
 export function FileCard({ file, missing, onOpen }: FileCardProps) {
@@ -34,8 +35,8 @@ export function FileCard({ file, missing, onOpen }: FileCardProps) {
       onClick={missing ? undefined : () => onOpen(file)}
       aria-label={
         missing
-          ? `${typeLabel} ${name} is missing. Show options`
-          : `Open ${typeLabel.toLowerCase()} ${name}`
+          ? t("card.missingLabel", { type: typeLabel, name })
+          : t("card.openLabel", { type: typeLabel.toLowerCase(), name })
       }
       className={cn(
         "flex w-full cursor-pointer flex-col overflow-hidden rounded-card border bg-surface text-left shadow-soft",
@@ -72,14 +73,15 @@ export function FileCard({ file, missing, onOpen }: FileCardProps) {
             </p>
           )}
           <p className="text-xs text-muted-foreground">
-            {typeLabel} · Edited{" "}
-            <time dateTime={file.updatedAt}>{formatRelativeTime(file.updatedAt)}</time>
+            <time dateTime={file.updatedAt}>
+              {t("card.meta", { type: typeLabel, time: formatRelativeTime(file.updatedAt) })}
+            </time>
           </p>
         </div>
         {missing ? (
-          <Badge variant="destructive">Missing</Badge>
+          <Badge variant="destructive">{t("card.missing")}</Badge>
         ) : (
-          file.draft && <Badge variant="outline">Draft</Badge>
+          file.draft && <Badge variant="outline">{t("card.draft")}</Badge>
         )}
       </div>
     </button>
@@ -96,7 +98,7 @@ export function FileCard({ file, missing, onOpen }: FileCardProps) {
           card
         )}
         <div className="absolute top-2 right-2">
-          <FileActionsMenu actions={actions} label={`More actions for ${name}`} />
+          <FileActionsMenu actions={actions} label={t("card.more", { name })} />
         </div>
       </div>
     </FileContextMenu>

@@ -35,6 +35,7 @@ import { LineEndDrag } from "./line-end-drag";
 import { createLine } from "./line.factory";
 import { lineEnds, lineFromEnds } from "./line-geometry";
 import type { LineCap, LineNodeElement } from "./line.types";
+import { t } from "./line.i18n";
 
 const CAPS: readonly LineCap[] = ["none", "arrow"];
 const POINT = { type: "object", properties: { x: { type: "number" }, y: { type: "number" } } };
@@ -45,8 +46,8 @@ const POINT = { type: "object", properties: { x: { type: "number" }, y: { type: 
  */
 export class LineKind extends DesignNodeKind<LineNodeElement> {
   readonly type = "line";
-  readonly label = "Line";
-  readonly description = "A straight line, with an arrowhead at either end if you like.";
+  readonly label = t("label");
+  readonly description = t("description");
   override readonly tool = "line";
   override readonly defaults = LINE_DEFAULTS;
   override readonly boxed = false;
@@ -160,7 +161,7 @@ export class LineKind extends DesignNodeKind<LineNodeElement> {
         ? { x: start.x + (spec.w ?? LINE_DEFAULTS.size.w), y: start.y + (spec.h ?? 0) }
         : pointArg(args.end, "end");
     const endCap = optionalChoice(args, "endCap", CAPS) ?? "none";
-    const name = context.nameFor(endCap === "arrow" ? "Arrow" : this.label);
+    const name = context.nameFor(endCap === "arrow" ? t("arrow.label") : this.label);
     const line = createLine(start, end, name, index, null, endCap);
     return { ...line, startCap: optionalChoice(args, "startCap", CAPS) ?? line.startCap };
   }

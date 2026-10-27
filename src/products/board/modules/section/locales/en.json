@@ -1,0 +1,13 @@
+{
+  "label": "Section",
+  "description": "A titled area that groups and moves what's inside it.",
+  "color": "Color",
+  "defaultTitle": "Section {number}",
+  "colors": {
+    "group": "Section colors"
+  },
+  "menu": {
+    "title": "Sections",
+    "empty": "No sections yet. Use the Section tool to add one."
+  }
+}

@@ -3,6 +3,7 @@ import { HARMONIES, hexToHsvColor, hsvToHexColor } from "../..";
 import { applyHarmony, setColorAt, useColorWizardStore } from "../store";
 import { ColorWheel } from "./color-wheel";
 import { HarmonyPicker } from "./harmony-picker";
+import { t } from "../../color-wizard.i18n";
 
 /** Adobe's way: a base color on the wheel, a harmony, and handles to drag. */
 export function WheelSource() {
@@ -16,7 +17,7 @@ export function WheelSource() {
     <div className="flex flex-col gap-3 p-4">
       <ColorWheel />
       <ColorSlider
-        label="Brightness"
+        label={t("sources.wheel.brightness")}
         value={brightness}
         track={`linear-gradient(to right, ${hsvToHexColor({ ...hsv, v: 0 })}, ${hsvToHexColor({ ...hsv, v: 1 })})`}
         onChange={(value, info) => {
@@ -31,7 +32,7 @@ export function WheelSource() {
         }}
       />
       <ColorField
-        label="Base color"
+        label={t("sources.wheel.baseColor")}
         color={base.toLowerCase()}
         onChange={(next, info) => {
           if (!info.done) return;
@@ -45,7 +46,7 @@ export function WheelSource() {
       />
       <div className="flex items-baseline justify-between">
         <span className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
-          Harmony
+          {t("harmonies.label")}
         </span>
         <span className="text-xs text-muted-foreground">{label}</span>
       </div>

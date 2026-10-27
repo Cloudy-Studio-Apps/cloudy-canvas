@@ -4,6 +4,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { notifyError } from "@shared/stores/toast-store";
 import { applyWizard } from "../..";
 import { useColorWizardStore, wizardInput } from "../store";
+import { t } from "../../color-wizard.i18n";
 
 /** Writes what the wizard built (one undo step) and shows the done screen, or says what failed. */
 export function useCreateSystem(): () => void {
@@ -15,7 +16,7 @@ export function useCreateSystem(): () => void {
       const created = applyWizard(engine.doc, tokens, wizardInput(state));
       state.set({ created, celebration: state.celebration + 1 });
     } catch (error) {
-      notifyError("Couldn't create the design system", error);
+      notifyError(t("shell.createFailed"), error);
     }
   };
 }

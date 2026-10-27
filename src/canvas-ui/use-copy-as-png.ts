@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 import { toastProgress } from "@shared/stores/toast-store";
 import { useEngine } from "./engine-context";
+import { t } from "./canvas-ui.i18n";
 
 /**
  * Handles the `copyAsPng` command (Ctrl+Shift+C and the context menu): copies the selection as a
@@ -14,9 +15,9 @@ export function useCopyAsPng(): void {
       engine.handleHostAction("copyAsPng", () => {
         if (engine.selectedIds().length === 0) return;
         void toastProgress(() => engine.copyAsPng(), {
-          loading: "Copying as PNG…",
-          success: "Copied as PNG",
-          error: "Couldn't copy as PNG",
+          loading: t("copyPng.loading"),
+          success: t("copyPng.success"),
+          error: t("copyPng.error"),
         });
       }),
     [engine],

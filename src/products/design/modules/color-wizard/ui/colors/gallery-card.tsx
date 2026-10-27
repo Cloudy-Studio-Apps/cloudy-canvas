@@ -4,6 +4,7 @@ import { cn, IconButton } from "@shared/ui/kit";
 import { onColor } from "../..";
 import { copyText } from "../copy-text";
 import type { GalleryCardProps } from "./colors.types";
+import { t } from "../../color-wizard.i18n";
 
 /** A palette as stripes (the hex shows on a hovered one), its category, save and copy. */
 export function GalleryCard({
@@ -24,7 +25,7 @@ export function GalleryCard({
       {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the stripes are the card's big click target */}
       <button
         type="button"
-        aria-label="Use this palette"
+        aria-label={t("sources.gallery.use")}
         onClick={onUse}
         className="flex h-21 w-full cursor-pointer"
       >
@@ -43,7 +44,7 @@ export function GalleryCard({
       <div className="flex items-center gap-0.5 py-1 pr-1 pl-2.5 text-xs text-muted-foreground">
         <span className="flex-1">{label}</span>
         <IconButton
-          label={saved ? "Remove from favorites" : "Save to favorites"}
+          label={saved ? t("sources.gallery.unsave") : t("sources.gallery.save")}
           size="xs"
           active={saved}
           onClick={onToggleSaved}
@@ -52,9 +53,9 @@ export function GalleryCard({
           <Heart />
         </IconButton>
         <IconButton
-          label="Copy hex codes"
+          label={t("sources.gallery.copyHex")}
           size="xs"
-          onClick={() => copyText(colors.join(", "), "Hex codes")}
+          onClick={() => copyText(colors.join(", "), "codes")}
         >
           <Copy />
         </IconButton>

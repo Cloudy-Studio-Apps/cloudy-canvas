@@ -6,9 +6,15 @@ import { Button, cn, EmptyState } from "@shared/ui/kit";
 import { GALLERY_CATEGORIES, GALLERY_PAGE, galleryPalettes, type GalleryCategory } from "../..";
 import { takePalette, useColorWizardStore } from "../store";
 import { GalleryCard } from "./gallery-card";
+import { t } from "../../color-wizard.i18n";
 
 const FAVORITES = "favorites";
 const GROUPS = ["Styles", "Seasons", "Themes"] as const;
+const GROUP_LABELS = {
+  Styles: t("sources.gallery.groupStyles"),
+  Seasons: t("sources.gallery.groupSeasons"),
+  Themes: t("sources.gallery.groupThemes"),
+};
 const keyOf = (colors: readonly string[]) => colors.join("-");
 
 /** Palettes by style, season and theme (and the saved ones), more on demand. */
@@ -44,11 +50,11 @@ export function GallerySource() {
   return (
     <div className="grid h-full min-h-0 grid-cols-[180px_minmax(0,1fr)]">
       <nav className="overflow-auto border-r border-border p-2">
-        {tab(FAVORITES, "Favorites", favorites.length)}
+        {tab(FAVORITES, t("sources.gallery.favorites"), favorites.length)}
         {GROUPS.map((group) => (
           <div key={group}>
             <div className="px-2 pt-2.5 pb-1 text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
-              {group}
+              {GROUP_LABELS[group]}
             </div>
             {GALLERY_CATEGORIES.filter((c) => c.group === group).map((c) => tab(c.id, c.label))}
           </div>
@@ -56,10 +62,12 @@ export function GallerySource() {
       </nav>
       <div className="relative overflow-auto px-4 pt-3.5 pb-16">
         <h2 className="text-base font-semibold">
-          {category ? `${category.label} palettes` : "Favorites"}
+          {category
+            ? t("sources.gallery.palettes", { name: category.label })
+            : t("sources.gallery.favorites")}
         </h2>
         <p className="text-xs text-muted-foreground">
-          {category?.description ?? "The palettes you saved, kept on this computer."}
+          {category?.description ?? t("sources.gallery.savedHint")}
         </p>
         {palettes.length ? (
           <div className="mt-3 grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-3">
@@ -67,7 +75,7 @@ export function GallerySource() {
               <GalleryCard
                 key={`${keyOf(colors)}-${i}`}
                 colors={colors}
-                label={category?.label ?? "Saved"}
+                label={category?.label ?? t("sources.gallery.saved")}
                 picked={picked === keyOf(colors)}
                 saved={saved.has(keyOf(colors))}
                 onUse={() => {
@@ -81,8 +89,8 @@ export function GallerySource() {
         ) : (
           <EmptyState
             className="mt-6"
-            title="No favorites yet"
-            description="Use the heart on a palette to keep it here."
+            title={t("sources.gallery.emptyTitle")}
+            description={t("sources.gallery.emptyHint")}
           />
         )}
         {category && (
@@ -92,7 +100,7 @@ export function GallerySource() {
               onClick={() => set({ gallery: { ...gallery, pages: gallery.pages + 1 } })}
             >
               <Sparkles />
-              Generate more
+              {t("sources.gallery.more")}
             </Button>
           </div>
         )}

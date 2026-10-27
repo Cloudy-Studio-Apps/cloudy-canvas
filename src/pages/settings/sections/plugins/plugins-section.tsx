@@ -8,6 +8,7 @@ import { SettingsSection } from "../../components/settings-section";
 import { PluginRow } from "./plugin-row";
 import { PluginTrustDialog } from "./plugin-trust-dialog";
 import { usePluginActions } from "./use-plugin-actions";
+import { t } from "../../settings.i18n";
 
 export function PluginsSection() {
   const installed = usePluginsStore((s) => s.installed);
@@ -27,39 +28,35 @@ export function PluginsSection() {
   };
 
   return (
-    <SettingsSection
-      id="plugins"
-      title="Plugins"
-      description="Add tools, elements and agent tools to your boards. Changes apply after a reload."
-    >
+    <SettingsSection id="plugins" title={t("nav.plugins")} description={t("plugins.description")}>
       <div className="space-y-5">
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" onClick={actions.install}>
             <FolderPlus />
-            Install from folder…
+            {t("plugins.install")}
           </Button>
           <Button variant="ghost" size="sm" onClick={actions.link}>
             <Code />
-            Add folder for development…
+            {t("plugins.link")}
           </Button>
           <Button variant="ghost" size="sm" onClick={actions.showFolder}>
             <FolderOpen />
-            Show plugins folder
+            {t("plugins.showFolder")}
           </Button>
         </div>
 
         {needsReload && (
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border bg-surface-sunken px-3 py-2">
-            <p className="text-sm">Reload the app to apply the changes to plugins.</p>
+            <p className="text-sm">{t("plugins.reloadNote")}</p>
             <Button size="sm" onClick={() => location.reload()}>
               <RotateCw />
-              Reload
+              {t("plugins.reload")}
             </Button>
           </div>
         )}
 
         {installed.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No plugins installed.</p>
+          <p className="text-sm text-muted-foreground">{t("plugins.none")}</p>
         ) : (
           <div className="space-y-4">
             {installed.map((plugin) => (
@@ -78,7 +75,7 @@ export function PluginsSection() {
 
         {broken.length > 0 && (
           <div className="space-y-1.5 border-t pt-4">
-            <p className="text-sm font-medium">Folders that couldn&apos;t be read</p>
+            <p className="text-sm font-medium">{t("plugins.broken")}</p>
             {broken.map(({ path, error }) => (
               <p key={path} className="text-sm break-words text-muted-foreground">
                 <span className="font-mono text-xs">{path}</span>: {error}

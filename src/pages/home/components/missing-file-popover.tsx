@@ -4,6 +4,7 @@ import { FileWarning } from "lucide-react";
 import { Button } from "@shared/ui/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
 import type { MissingFilePopoverProps } from "./missing-file-popover.types";
+import { t } from "../home.i18n";
 
 /** Opened by clicking a missing file's card: says where it was and offers to locate or forget it. */
 export function MissingFilePopover({ file, actions, children }: MissingFilePopoverProps) {
@@ -17,8 +18,10 @@ export function MissingFilePopover({ file, actions, children }: MissingFilePopov
         <div className="flex gap-2.5">
           <FileWarning className="mt-0.5 size-4 shrink-0 text-destructive" />
           <div className="min-w-0 space-y-1">
-            <p className="text-sm font-medium">“{file.name}” was moved or deleted</p>
-            <p className="text-xs break-all text-muted-foreground">It was at {file.path}</p>
+            <p className="text-sm font-medium">{t("missing.title", { name: file.name })}</p>
+            <p className="text-xs break-all text-muted-foreground">
+              {t("missing.was", { path: file.path })}
+            </p>
           </div>
         </div>
         <div className="flex justify-end gap-2">

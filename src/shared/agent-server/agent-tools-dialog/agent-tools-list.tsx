@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { SearchInput } from "@shared/ui/kit";
 import { AgentToolSectionView } from "./agent-tool-section";
 import type { AgentToolsListProps } from "./agent-tools-dialog.types";
+import { t } from "../agent-server.i18n";
 
 /** The tools by section, filtered by a search on their names and descriptions. */
 export function AgentToolsList({ sections }: AgentToolsListProps) {
@@ -27,8 +28,8 @@ export function AgentToolsList({ sections }: AgentToolsListProps) {
         <SearchInput
           value={query}
           onChange={setQuery}
-          placeholder="Search tools"
-          aria-label="Search tools"
+          placeholder={t("tools.search")}
+          aria-label={t("tools.search")}
         />
       </div>
       <div className="max-h-[60vh] overflow-y-auto border-t border-border">
@@ -36,7 +37,7 @@ export function AgentToolsList({ sections }: AgentToolsListProps) {
           shown.map((section) => <AgentToolSectionView key={section.id} section={section} />)
         ) : (
           <p className="px-4 py-6 text-center text-sm text-muted-foreground">
-            {sections.length > 0 ? "No tools match." : "No tools are available here."}
+            {sections.length > 0 ? t("tools.noMatch") : t("tools.none")}
           </p>
         )}
       </div>

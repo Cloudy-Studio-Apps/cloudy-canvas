@@ -3,13 +3,14 @@ import type { StyleguideTemplate } from "../../styleguide.types";
 import { stylesOf, variablesOf } from "../template-kit";
 import { stringOf } from "./font-variable-rows";
 import { textStyleIn } from "./typography-kit";
+import { t } from "../../styleguide.i18n";
 
 /** Each font family the group uses: "Aa" in it, its name and the weights its styles use. */
 export const specimenTemplate: StyleguideTemplate = {
   id: "typography.specimen",
   category: "typography",
-  label: "Specimen",
-  description: 'Each family the styles use: "Aa" set in it, its name and its weights.',
+  label: t("templates.typography.specimen.label"),
+  description: t("templates.typography.specimen.description"),
   options: [],
   build: (group, _options, context) => {
     const weights = new Map<string, Set<string>>();

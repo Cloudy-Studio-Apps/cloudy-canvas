@@ -7,13 +7,14 @@ import { useColorWizardStore, useWizardTheme, type PreviewKind } from "../store"
 import { ContrastChecks } from "./contrast-checks";
 import { CvdList } from "./cvd-list";
 import { PlannedVariables } from "./planned-variables";
+import { t } from "../../color-wizard.i18n";
 
 const KINDS: readonly SegmentedOption<PreviewKind>[] = [
-  { value: "website", label: "Website", icon: <AppWindow /> },
-  { value: "components", label: "Components", icon: <LayoutGrid /> },
-  { value: "social", label: "Social media", icon: <Image /> },
-  { value: "brochure", label: "Brochure", icon: <BookOpen /> },
-  { value: "mobile", label: "Mobile app", icon: <Smartphone /> },
+  { value: "website", label: t("review.preview.website"), icon: <AppWindow /> },
+  { value: "components", label: t("review.preview.components"), icon: <LayoutGrid /> },
+  { value: "social", label: t("review.preview.socialMedia"), icon: <Image /> },
+  { value: "brochure", label: t("review.preview.brochure"), icon: <BookOpen /> },
+  { value: "mobile", label: t("review.preview.mobileApp"), icon: <Smartphone /> },
 ];
 
 /** Step 5: what Create writes, the theme on sample designs, contrast and look-alike checks. */
@@ -32,7 +33,7 @@ export function ReviewStep() {
       <div className="flex min-w-0 flex-col gap-3.5 overflow-auto px-4 py-3.5">
         <div className="flex flex-wrap items-center gap-2">
           <SegmentedControl
-            label="Sample design"
+            label={t("review.preview.sampleDesign")}
             size="sm"
             value={preview.kind}
             options={KINDS}
@@ -40,7 +41,7 @@ export function ReviewStep() {
           />
           <div className="ml-auto" />
           <SegmentedControl
-            label="Mode"
+            label={t("review.preview.mode")}
             size="sm"
             value={mode}
             options={theme.modes.map((m) => ({ value: m, label: m }))}

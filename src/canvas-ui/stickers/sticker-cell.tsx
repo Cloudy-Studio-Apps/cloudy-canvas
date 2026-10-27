@@ -2,6 +2,7 @@ import { X } from "lucide-react";
 
 import { cn } from "@shared/ui/lib/utils";
 import type { StickerCellProps } from "./sticker-picker.types";
+import { t } from "./stickers.i18n";
 
 /** One sticker in the picker's grid. */
 export function StickerCell({ sticker, active, onPick, onRemove }: StickerCellProps) {
@@ -31,8 +32,8 @@ export function StickerCell({ sticker, active, onPick, onRemove }: StickerCellPr
         // eslint-disable-next-line no-restricted-syntax -- bespoke: a sticker picture in the picker grid
         <button
           type="button"
-          title={`Remove "${sticker.label}"`}
-          aria-label={`Remove "${sticker.label}"`}
+          title={t("remove", { label: sticker.label })}
+          aria-label={t("remove", { label: sticker.label })}
           onClick={() => onRemove(sticker)}
           className="absolute -top-1 -right-1 hidden size-4 cursor-pointer items-center justify-center rounded-sm border bg-surface text-muted-foreground shadow-xs group-hover:flex hover:text-foreground"
         >

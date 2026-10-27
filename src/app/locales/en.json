@@ -1,0 +1,30 @@
+{
+  "leave": {
+    "unsaved": "The open board has unsaved changes, which will be lost.",
+    "openAnyway": "Open anyway"
+  },
+  "links": {
+    "invalid": "That link can't be opened",
+    "newBoard": "Start a new board?",
+    "newDesign": "Start a new design?",
+    "openHome": "Open Home?",
+    "openSettings": "Open Settings?",
+    "join": "Join the live session?",
+    "notRecent": "That file isn't in your recent files",
+    "notRecentHint": "Open it from disk once, then its link works.",
+    "openFile": "Open “{name}”?"
+  },
+  "files": {
+    "cantOpen": "That file can't be opened",
+    "cantOpenHint": "Cloudy Canvas opens .cboard and .cdesign files, and imports Figma .fig and FigJam .jam files.",
+    "figjamFailed": "The FigJam file couldn't be imported",
+    "figmaFailed": "The Figma file couldn't be imported",
+    "openFailed": "The file couldn't be opened"
+  },
+  "plugins": {
+    "readFailed": "Plugins couldn't be read"
+  },
+  "mcp": {
+    "toolLeftOut": "An agent tool was left out"
+  }
+}

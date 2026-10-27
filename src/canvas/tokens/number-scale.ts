@@ -1,4 +1,5 @@
 import type { ScaleNames, ScaleSettings, ScaleStep } from "./scale-generator.types";
+import { t } from "./tokens.i18n";
 
 const DOWN = ["sm", "xs", "2xs", "3xs", "4xs"];
 const UP = ["lg", "xl", "2xl", "3xl", "4xl", "5xl", "6xl"];
@@ -14,13 +15,13 @@ export const DEFAULT_SCALE_SETTINGS: ScaleSettings = {
 
 /** Musical ratios type scales are usually built on. */
 export const SCALE_RATIOS: readonly { ratio: number; label: string }[] = [
-  { ratio: 1.125, label: "Major second" },
-  { ratio: 1.2, label: "Minor third" },
-  { ratio: 1.25, label: "Major third" },
-  { ratio: 1.333, label: "Perfect fourth" },
-  { ratio: 1.5, label: "Perfect fifth" },
-  { ratio: 1.618, label: "Golden ratio" },
-  { ratio: 2, label: "Double" },
+  { ratio: 1.125, label: t("ratios.majorSecond") },
+  { ratio: 1.2, label: t("ratios.minorThird") },
+  { ratio: 1.25, label: t("ratios.majorThird") },
+  { ratio: 1.333, label: t("ratios.perfectFourth") },
+  { ratio: 1.5, label: t("ratios.perfectFifth") },
+  { ratio: 1.618, label: t("ratios.goldenRatio") },
+  { ratio: 2, label: t("ratios.double") },
 ];
 
 /** The name of the step `offset` steps from the base (`index`: its place from the smallest). */

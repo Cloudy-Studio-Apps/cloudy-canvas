@@ -2,6 +2,7 @@ import { CircleAlert, CircleCheck, LoaderCircle } from "lucide-react";
 
 import { Button } from "@shared/ui/components/ui/button";
 import type { RelayTestRowProps } from "./relay-test.types";
+import { t } from "../../settings.i18n";
 
 /** Test connection, with what the last test found. */
 export function RelayTestRow({ relay, state, onTest }: RelayTestRowProps) {
@@ -15,12 +16,12 @@ export function RelayTestRow({ relay, state, onTest }: RelayTestRowProps) {
           onClick={() => relay && onTest(relay)}
         >
           {state.status === "testing" && <LoaderCircle className="animate-spin" />}
-          Test connection
+          {t("collaboration.test")}
         </Button>
         {state.status === "ok" && (
           <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <CircleCheck className="size-4 text-success" />
-            Connected through the relay in {state.millis} ms
+            {t("collaboration.connected", { millis: state.millis })}
           </span>
         )}
       </div>

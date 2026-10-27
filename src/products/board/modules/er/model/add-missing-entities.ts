@@ -1,6 +1,7 @@
 import type { DbmlError } from "../../db";
 import type { ParsedEr, ParsedErAttribute, ParsedErEntity } from "./lang";
 import { attributeNamed } from "./lang/parse-attributes";
+import { t } from "../er.i18n";
 
 /**
  * Adds an empty entity for every name that relations or hierarchies use but nothing defines, and
@@ -35,7 +36,7 @@ export function addMissingEntities(model: ParsedEr): ParsedEr {
     warnings: [
       ...model.warnings,
       ...entities.map((entity) => ({
-        message: `Created the missing entity "${entity.name}"`,
+        message: t("lang.createdEntity", { name: entity.name }),
         line: entity.line,
         column: 1,
       })),
@@ -63,7 +64,7 @@ function addMissingVias(model: ParsedEr): ParsedEr {
       if (attributes.some((a) => a.name === via)) continue;
       const hasKey = attributes.some((a) => a.key === "pk");
       added.set(name, [...extra, { ...attributeNamed(via, line), key: hasKey ? "none" : "pk" }]);
-      warnings.push({ message: `Added the attribute "${via}" to "${name}"`, line, column: 1 });
+      warnings.push({ message: t("lang.addedAttribute", { via, name }), line, column: 1 });
     }
   }
   if (added.size === 0) return model;

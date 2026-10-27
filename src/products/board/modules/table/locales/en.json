@@ -1,0 +1,31 @@
+{
+  "label": "Table",
+  "description": "A grid of cells for lists, comparisons and plans.",
+  "cellFill": "Cell {row},{column} fill",
+  "headerTint": "Header tint",
+  "options": {
+    "group": "Table options",
+    "headerRow": "Header row",
+    "headerColor": "{color} header"
+  },
+  "fills": {
+    "none": "No fill",
+    "color": "{color} fill"
+  },
+  "row": {
+    "insertBefore": "Insert row before",
+    "insertAbove": "Insert row above",
+    "insertAfter": "Insert row after",
+    "insertBelow": "Insert row below",
+    "delete": "Delete row",
+    "deleteHint": "Delete row ({shortcut})"
+  },
+  "column": {
+    "insertBefore": "Insert column before",
+    "insertAbove": "Insert column left",
+    "insertAfter": "Insert column after",
+    "insertBelow": "Insert column right",
+    "delete": "Delete column",
+    "deleteHint": "Delete column ({shortcut})"
+  }
+}

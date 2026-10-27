@@ -2,12 +2,14 @@ import { useEffect, useId, useState } from "react";
 import { Copy, FolderOpen, Trash2 } from "lucide-react";
 
 import { clipboard, revealFile, storage } from "@platform";
+import { tCommon } from "@shared/core";
 import { useAutosaveStore } from "@shared/stores/autosave-store";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import { Button } from "@shared/ui/components/ui/button";
 import { Switch } from "@shared/ui/components/ui/switch";
 import { SettingsSection } from "../components/settings-section";
+import { t } from "../settings.i18n";
 
 export function FilesSection() {
   const count = useRecentFilesStore((s) => s.files.length);
@@ -26,35 +28,26 @@ export function FilesSection() {
 
   const copyLocation = (path: string) =>
     void clipboard.writeText(path).then(
-      () => toast({ title: "Path copied", description: path }),
-      (error: unknown) => notifyError("Couldn't copy to the clipboard", error),
+      () => toast({ title: t("files.pathCopied"), description: path }),
+      (error: unknown) => notifyError(t("errors.copyFailed"), error),
     );
   const showLocation = (path: string) =>
-    void revealFile(path).catch((error: unknown) =>
-      notifyError("The folder couldn't be opened", error),
-    );
+    void revealFile(path).catch((error: unknown) => notifyError(t("errors.folderFailed"), error));
 
   return (
-    <SettingsSection
-      id="files"
-      title="Files & storage"
-      description="Boards and designs are saved wherever you choose. The app only remembers which ones you opened."
-    >
+    <SettingsSection id="files" title={t("nav.files")} description={t("files.description")}>
       <div className="space-y-5">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-0.5">
             <label htmlFor={autosaveId} className="text-sm font-medium">
-              Autosave
+              {t("files.autosave")}
             </label>
-            <p className="text-sm text-muted-foreground">
-              Saves open files a moment after each change. Boards you haven&apos;t saved yet are
-              kept as drafts in the app data folder until you choose where they go.
-            </p>
+            <p className="text-sm text-muted-foreground">{t("files.autosaveHint")}</p>
           </div>
           <Switch id={autosaveId} checked={autosave} onCheckedChange={setAutosave} />
         </div>
         <div className="space-y-1.5 border-t pt-4">
-          <p className="text-sm font-medium">Recent files list</p>
+          <p className="text-sm font-medium">{t("files.recentList")}</p>
           {location ? (
             <>
               <p className="rounded-md border bg-surface-sunken px-2.5 py-2 font-mono text-xs break-all text-muted-foreground">
@@ -63,30 +56,26 @@ export function FilesSection() {
               <div className="flex flex-wrap gap-2">
                 <Button variant="outline" size="sm" onClick={() => showLocation(location)}>
                   <FolderOpen />
-                  Show in folder
+                  {t("files.showInFolder")}
                 </Button>
                 <Button variant="ghost" size="sm" onClick={() => copyLocation(location)}>
                   <Copy />
-                  Copy path
+                  {t("files.copyPath")}
                 </Button>
               </div>
             </>
           ) : (
-            <p className="text-sm text-muted-foreground">Kept by the desktop app only.</p>
+            <p className="text-sm text-muted-foreground">{t("files.desktopOnly")}</p>
           )}
         </div>
         <div className="flex flex-wrap items-center justify-between gap-3 border-t pt-4">
           <div className="space-y-0.5">
-            <p className="text-sm font-medium">
-              {count === 1 ? "1 recent file" : `${count} recent files`}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Clearing the list leaves the files on disk and keeps drafts.
-            </p>
+            <p className="text-sm font-medium">{t("files.recentCount", { count })}</p>
+            <p className="text-sm text-muted-foreground">{t("files.clearHint")}</p>
           </div>
           {confirming ? (
             <div className="flex items-center gap-2">
-              <span className="text-sm">Clear {count === 1 ? "1 file" : `${count} files`}?</span>
+              <span className="text-sm">{t("files.confirmClear", { count })}</span>
               <Button
                 variant="destructive"
                 size="sm"
@@ -95,10 +84,10 @@ export function FilesSection() {
                   void clear();
                 }}
               >
-                Clear
+                {t("files.clear")}
               </Button>
               <Button variant="ghost" size="sm" onClick={() => setConfirming(false)}>
-                Cancel
+                {tCommon("cancel")}
               </Button>
             </div>
           ) : (
@@ -110,7 +99,7 @@ export function FilesSection() {
               className="text-destructive"
             >
               <Trash2 />
-              Clear recent files
+              {t("files.clearAll")}
             </Button>
           )}
         </div>

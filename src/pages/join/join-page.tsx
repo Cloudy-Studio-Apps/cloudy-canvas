@@ -7,6 +7,7 @@ import { useCollaborationStore } from "@shared/stores/collaboration-store";
 import { JoinMessage } from "./join-message";
 import { JoinNameForm } from "./join-name-form";
 import { JoinSession } from "./join-session";
+import { t } from "./join.i18n";
 
 /** `/join/:ticket`: a live session's link, opened as a guest. */
 export function JoinPage() {
@@ -18,14 +19,9 @@ export function JoinPage() {
 
   let content;
   if (!shareTransport) {
-    content = <JoinMessage title="Live sessions need the desktop app" />;
+    content = <JoinMessage title={t("page.desktopOnly")} />;
   } else if (!ticket) {
-    content = (
-      <JoinMessage
-        title="That isn't a session link"
-        description="Ask the host to copy the link again from their Share button."
-      />
-    );
+    content = <JoinMessage title={t("page.invalidTitle")} description={t("page.invalidHint")} />;
   } else if (!name) {
     content = <JoinNameForm />;
   } else {

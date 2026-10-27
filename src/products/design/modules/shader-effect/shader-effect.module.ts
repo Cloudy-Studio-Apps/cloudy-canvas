@@ -6,6 +6,7 @@ import { createEffect, type ShaderEffect } from "../effects";
 import { defineEffectType, designEffectTypes } from "../effects/ui";
 import { shaderRenderer } from "./shader.renderer";
 import { ShaderEditor } from "./ui/shader-editor";
+import { t } from "./shader-effect.i18n";
 
 /**
  * The shader effect (Beta): a layer's look changed by GLSL code of one's own, with parameters
@@ -21,7 +22,7 @@ export const shaderEffectModule = defineModule({
       designEffectTypes,
       defineEffectType<ShaderEffect>({
         type: "shader",
-        label: "Shader",
+        label: t("title"),
         icon: WavesHorizontal,
         order: 100,
         beta: true,
@@ -30,7 +31,7 @@ export const shaderEffectModule = defineModule({
         // Its first comment line names it ("Red and blue pulled apart…").
         summary: (effect) => {
           const first = effect.code.split("\n")[0] ?? "";
-          return first.startsWith("//") ? first.slice(2).trim() : "Custom";
+          return first.startsWith("//") ? first.slice(2).trim() : t("custom");
         },
         editor: ShaderEditor,
       }),

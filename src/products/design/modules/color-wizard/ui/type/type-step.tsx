@@ -6,6 +6,7 @@ import { FontPicker } from "../../../text/ui";
 import { useColorWizardStore, useWizardTheme } from "../store";
 import { TypeSampleRow } from "./type-sample-row";
 import { usePreviewFonts } from "./use-preview-fonts";
+import { t } from "../../color-wizard.i18n";
 
 /** Step 4: text styles from a font pair and a modular scale, shown in the theme's text colors. */
 export function TypeStep() {
@@ -23,9 +24,9 @@ export function TypeStep() {
       <div className={cn("overflow-auto px-4 py-3.5", !type.enabled && "opacity-45")}>
         <div className="flex items-baseline justify-between">
           <span className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
-            Text styles
+            {t("type.textStyles")}
           </span>
-          <span className="text-xs text-muted-foreground">In the theme's text colors</span>
+          <span className="text-xs text-muted-foreground">{t("type.inTheme")}</span>
         </div>
         {[...steps].reverse().map((step) => (
           <TypeSampleRow key={step.name} step={step} color={color} muted={muted} />
@@ -33,12 +34,12 @@ export function TypeStep() {
       </div>
       <aside className="flex flex-col gap-3.5 overflow-auto border-t border-border px-4 py-3.5 md:border-t-0 md:border-l">
         <CheckboxField
-          label="Create text styles"
+          label={t("type.createStyles")}
           checked={type.enabled}
           onChange={(enabled) => change({ enabled })}
         />
         <span className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
-          Pairings
+          {t("type.pairings")}
         </span>
         <div className="grid grid-cols-2 gap-2">
           {FONT_PAIRS.map((pair) => (
@@ -59,14 +60,14 @@ export function TypeStep() {
             />
           ))}
         </div>
-        <Field label="Headings">
+        <Field label={t("type.headings")}>
           <FontPicker family={type.heading} onPick={(font) => change({ heading: font.family })} />
         </Field>
-        <Field label="Body">
+        <Field label={t("type.body")}>
           <FontPicker family={type.body} onPick={(font) => change({ body: font.family })} />
         </Field>
         <SelectField
-          label="Scale"
+          label={t("type.scale")}
           layout="stacked"
           value={String(type.ratio)}
           options={TYPE_RATIOS.map((r) => ({
@@ -75,9 +76,9 @@ export function TypeStep() {
           }))}
           onChange={(value) => change({ ratio: Number(value) })}
         />
-        <Field label="Body size" layout="inline">
+        <Field label={t("type.bodySize")} layout="inline">
           <NumberInput
-            label="Body size"
+            label={t("type.bodySize")}
             value={type.base}
             min={12}
             max={22}
@@ -87,8 +88,8 @@ export function TypeStep() {
           />
         </Field>
         <p className="text-xs text-muted-foreground">
-          Sizes are body × ratio<sup>step</sup>, kept as a scale: change its base later and every
-          style follows.
+          {t("type.sizesBefore")} <sup>{t("type.sizesStep")}</sup>
+          {t("type.sizesAfter")}
         </p>
       </aside>
     </div>

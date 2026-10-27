@@ -10,6 +10,7 @@ import { DesignSession } from "./design-session";
 import { useDesignLoader } from "./file";
 import { useCanvasInset, useKeepCanvasInPlace } from "./hooks";
 import { getDesignProduct } from "./modules";
+import { t } from "./design-ui.i18n";
 
 /**
  * Loads a design and mounts the engine between the docked panels. The canvas container stays
@@ -31,7 +32,7 @@ export function DesignEditor({ id, live }: DesignEditorProps) {
       <div
         ref={containerRef}
         role="application"
-        aria-label="Design canvas"
+        aria-label={t("designEditor.ariaLabel")}
         data-product="design"
         className="absolute inset-y-0"
         style={inset}
@@ -47,15 +48,15 @@ export function DesignEditor({ id, live }: DesignEditorProps) {
         />
       )}
       {!engine && load.status !== "error" && (
-        <CanvasLoadingOverlay title="Opening design" loading={loading} />
+        <CanvasLoadingOverlay title={t("designEditor.title")} loading={loading} />
       )}
       {load.status === "error" && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
-          <h1 className="text-lg font-semibold">The design couldn't be opened</h1>
+          <h1 className="text-lg font-semibold">{t("designEditor.failed")}</h1>
           <p className="max-w-md text-sm text-muted-foreground">{load.message}</p>
           <Button variant="outline" onClick={() => void navigate("/")}>
             <ArrowLeft />
-            Back to home
+            {t("designEditor.home")}
           </Button>
         </div>
       )}

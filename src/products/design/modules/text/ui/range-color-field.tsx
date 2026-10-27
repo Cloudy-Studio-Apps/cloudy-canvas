@@ -1,6 +1,7 @@
 import { PaintField } from "@design/ui/components/panel";
 import { solidPaint } from "../../core";
 import type { TypographyControlProps } from "./typography-controls.types";
+import { t } from "../text.i18n";
 
 /** The color of the selected characters while a text is edited (their first fill). */
 export function RangeColorField({ target }: TypographyControlProps) {
@@ -9,7 +10,7 @@ export function RangeColorField({ target }: TypographyControlProps) {
   return (
     <PaintField
       paint={paint}
-      label="Selection color"
+      label={t("typography.selectionColor")}
       allowImage={false}
       onChange={(next, info) => {
         if (info.done) target.set({ fills: [next] });

@@ -7,6 +7,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { exportFile } from "@platform";
 import { runWithLoading } from "@shared/stores/loading-store";
 import { notifyError } from "@shared/stores/toast-store";
+import { t } from "../../styleguide.i18n";
 
 /** The workspace sections are drawn in, so the user's page never changes. */
 const WORKSPACE = "styleguide:export";
@@ -18,17 +19,17 @@ export function useExportSystem(): () => Promise<void> {
   const { name } = useCanvasFile();
   return useCallback(async () => {
     try {
-      const file = await runWithLoading("Exporting the design system", (report) =>
+      const file = await runWithLoading(t("export.exporting"), (report) =>
         exportSystem(engine.workspace(WORKSPACE), host.get(styleguideCategories), {
-          onProgress: (done, total) => report("Drawing the sections", { done, total }),
+          onProgress: (done, total) => report(t("export.drawing"), { done, total }),
         }),
       );
       await exportFile(file, `${name} - Design system`, {
         extension: "pdf",
-        label: "PDF document",
+        label: t("export.format"),
       });
     } catch (error) {
-      notifyError("The design system couldn't be exported", error);
+      notifyError(t("export.failed"), error);
     } finally {
       engine.dropWorkspace(WORKSPACE);
     }

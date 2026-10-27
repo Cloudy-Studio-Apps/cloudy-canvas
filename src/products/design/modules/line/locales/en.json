@@ -1,0 +1,13 @@
+{
+  "label": "Line",
+  "description": "A straight line, with an arrowhead at either end if you like.",
+  "arrow": {
+    "label": "Arrow",
+    "description": "A straight line with an arrowhead at its end."
+  },
+  "section": {
+    "start": "Start",
+    "end": "End",
+    "none": "None"
+  }
+}

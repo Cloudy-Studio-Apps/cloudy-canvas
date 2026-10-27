@@ -8,6 +8,7 @@ import { useEditNodes } from "@design/ui/hooks";
 import { Button } from "@shared/ui/kit";
 import type { PropertySectionProps } from "@design/ui/modules";
 import { FramePresetPicker } from "./frame-preset-picker";
+import { t } from "../frame.i18n";
 
 /** For selected frames: resize to a preset, and whether they clip their content. */
 export function FrameSection({ selection: { nodes } }: PropertySectionProps) {
@@ -16,14 +17,14 @@ export function FrameSection({ selection: { nodes } }: PropertySectionProps) {
 
   return (
     <PanelSection
-      title="Frame"
+      title={t("label")}
       actions={
         <FramePresetPicker
           onPick={({ size }) => edit(frames, () => ({ w: size.w, h: size.h }))}
           trigger={
             <Button variant="ghost" size="xs">
               <Frame />
-              Presets
+              {t("presets.title")}
               <ChevronDown />
             </Button>
           }
@@ -33,7 +34,7 @@ export function FrameSection({ selection: { nodes } }: PropertySectionProps) {
       <BindSlot nodes={frames} path="clipsContent">
         <NodeCheckbox
           nodes={frames}
-          label="Clip content"
+          label={t("clipContent")}
           read={(frame) => frame.clipsContent}
           patch={(clipsContent) => ({ clipsContent }) as ElementPatch<DesignNode>}
         />

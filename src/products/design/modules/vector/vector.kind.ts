@@ -32,6 +32,7 @@ import {
 import { VECTOR_DEFAULTS } from "./vector.defaults";
 import { createVector } from "./vector.factory";
 import type { VectorElement } from "./vector.types";
+import { t } from "./vector.i18n";
 
 /**
  * Vectors: their regions are filled and their segments stroked; hit inside a filled region or
@@ -39,8 +40,8 @@ import type { VectorElement } from "./vector.types";
  */
 export class VectorKind extends DesignNodeKind<VectorElement> {
   readonly type = "vector";
-  readonly label = "Vector";
-  readonly description = "A path of points and curves, drawn with the pen or the pencil.";
+  readonly label = t("label");
+  readonly description = t("description");
   override readonly tool = "pen";
   override readonly defaults = VECTOR_DEFAULTS;
   override readonly creatable = true;

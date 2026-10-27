@@ -4,6 +4,7 @@ import type { BoardToolOptions } from "../../board-options.types";
 import { drawSticker } from "./sticker.draw";
 import { STICKER_DEFAULTS } from "./sticker.defaults";
 import type { StickerDefaults, StickerElement } from "./sticker.types";
+import { t } from "./sticker.i18n";
 
 /**
  * A sticker stamped on the board: a "foca watona", a common stamp, an emoji or the user's own
@@ -11,8 +12,8 @@ import type { StickerDefaults, StickerElement } from "./sticker.types";
  */
 export class StickerKind extends BoxKind<StickerElement, BoardToolOptions> {
   readonly type = "sticker";
-  readonly label = "Sticker";
-  readonly description = "Stamp reactions: seals, emojis and your own stickers.";
+  readonly label = t("label");
+  readonly description = t("description");
   override readonly tool = "sticker";
   override readonly defaults: StickerDefaults = STICKER_DEFAULTS;
   override readonly creatable = false;

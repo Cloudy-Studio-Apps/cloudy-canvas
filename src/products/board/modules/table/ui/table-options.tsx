@@ -6,6 +6,7 @@ import { BoardColorPalette } from "@board/ui/components/board-colors";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";
 import { TableCellFills } from "./table-cell-fills";
 import { TableLineActions } from "./table-line-actions";
+import { t } from "../table.i18n";
 
 /**
  * Header row and header tint for new tables; also restyles the selected tables. With a cell, row
@@ -18,10 +19,10 @@ export function TableOptions() {
   const hasPart = useBoardState((state) => state.selectedPart !== null);
 
   return (
-    <FloatingPanel role="group" aria-label="Table options" className="gap-1 px-2">
+    <FloatingPanel role="group" aria-label={t("options.group")} className="gap-1 px-2">
       <OptionButton
-        aria-label="Header row"
-        title="Header row"
+        aria-label={t("options.headerRow")}
+        title={t("options.headerRow")}
         selected={tableHeader}
         onClick={() => engine.setToolOptions({ tableHeader: !tableHeader })}
       >
@@ -35,7 +36,7 @@ export function TableOptions() {
           option="tableColor"
           colors={TABLE_COLORS}
           scopes={["shape-fill"]}
-          labelOf={(color) => `${color.name} header`}
+          labelOf={(color) => t("options.headerColor", { color: color.name })}
         />
       )}
       <TableLineActions />

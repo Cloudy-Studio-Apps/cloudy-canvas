@@ -12,6 +12,7 @@ import { ChildHostKind, drawPaints, type ChildResolveContext, type NodeGeometry 
 import { booleanOperation, BOOLEAN_TYPE, operationLabel } from "./boolean.constants";
 import { booleanGeometry, booleanGeometryKey, resolveBoolean } from "./boolean-result";
 import type { BooleanElement } from "./boolean.types";
+import { t } from "./boolean.i18n";
 
 /**
  * Booleans (Union, Subtract, Intersect, Exclude): their operands combined into one shape, drawn
@@ -20,8 +21,8 @@ import type { BooleanElement } from "./boolean.types";
  */
 export class BooleanKind extends ChildHostKind<BooleanElement> {
   readonly type = BOOLEAN_TYPE;
-  readonly label = "Boolean";
-  readonly description = "Layers combined into one shape: union, subtract, intersect or exclude.";
+  readonly label = t("title");
+  readonly description = t("description");
   override readonly ownsShape: boolean = true;
   override readonly drawsChildren: boolean = false;
   override readonly specProperties = {};

@@ -5,11 +5,13 @@ import { ImportConflicts, useEditorModules } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { designStyleTypes } from "../../../core/ui";
 import { notifyError, toast } from "@shared/stores/toast-store";
+import { tCommon } from "@shared/core";
 import { AppDialog, Button } from "@shared/ui/kit";
 
 import type { ImportBodyProps, ImportTokensDialogProps } from "./exchange.types";
 import { ImportPickTree } from "./import-pick-tree";
 import { allKeys, pickOf, pickRows } from "./pick-rows";
+import { t } from "../../variables.i18n";
 
 /**
  * Importing a picked file's variables and styles: tick collections, style types or their groups
@@ -28,7 +30,7 @@ function ImportBody({ source, onClose }: ImportBodyProps) {
     () =>
       pickRows(
         source.records,
-        (type) => host.find(designStyleTypes, type)?.heading ?? `${type} styles`,
+        (type) => host.find(designStyleTypes, type)?.heading ?? t("import.styles", { type }),
       ),
     [source, host],
   );
@@ -48,14 +50,17 @@ function ImportBody({ source, onClose }: ImportBodyProps) {
     try {
       const plan = tokens.importTokens(selected.records, choice);
       const parts = [
-        plan.added > 0 && `${plan.added} added`,
-        plan.updated > 0 && `${plan.updated} updated`,
-        plan.skipped > 0 && `${plan.skipped} skipped`,
+        plan.added > 0 && t("import.added", { count: plan.added }),
+        plan.updated > 0 && t("import.updated", { count: plan.updated }),
+        plan.skipped > 0 && t("import.skipped", { count: plan.skipped }),
       ].filter(Boolean);
-      toast({ title: "Variables imported", description: parts.join(", ") || "Nothing changed" });
+      toast({
+        title: t("import.done"),
+        description: parts.join(", ") || t("import.nothing"),
+      });
       onClose();
     } catch (error) {
-      notifyError("Couldn't import the variables", error);
+      notifyError(t("import.error"), error);
     }
   };
 
@@ -63,30 +68,29 @@ function ImportBody({ source, onClose }: ImportBodyProps) {
     <AppDialog
       open
       onOpenChange={(open) => !open && onClose()}
-      title="Import variables and styles"
+      title={t("import.title")}
       description={`${source.name} · ${source.label}`}
       size="md"
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            Cancel
+            {tCommon("cancel")}
           </Button>
           <Button onClick={run} disabled={count === 0}>
-            Import {count}
+            {t("import.action", { count })}
           </Button>
         </>
       }
     >
       <div className="flex flex-col gap-3">
         {rows.length === 0 ? (
-          <p className="text-xs text-muted-foreground">This file has no variables or styles.</p>
+          <p className="text-xs text-muted-foreground">{t("import.empty")}</p>
         ) : (
           <ImportPickTree rows={rows} ticked={ticked} onChange={setTicked} />
         )}
         {selected.extra > 0 && (
           <p className="text-xs text-muted-foreground">
-            Also brings {selected.extra} {selected.extra === 1 ? "variable" : "variables"} the
-            ticked ones use.
+            {t("import.extra", { count: selected.extra })}
           </p>
         )}
         <ImportConflicts

@@ -1,4 +1,5 @@
 import type { BookLayout } from "../../model/book-layout.types";
+import { t } from "../../catalog.i18n";
 
 /**
  * A book spread's heading in the page list: "Front cover", "Back cover", or the printed page
@@ -9,7 +10,9 @@ export function spreadLabel(layout: BookLayout, spread: readonly number[]): stri
   const alone = second === undefined;
   const isFront = alone && first === 0 && layout.offset === 1;
   const isBack = alone && first === layout.sides.length - 1 && first > 0;
-  if (isFront) return "Front cover";
-  if (isBack && (first + layout.offset) % 2 === 0) return "Back cover";
-  return alone ? `Page ${first + 1}` : `Pages ${first + 1}–${second + 1}`;
+  if (isFront) return t("tab.spread.front");
+  if (isBack && (first + layout.offset) % 2 === 0) return t("tab.spread.back");
+  return alone
+    ? t("tab.spread.page", { n: first + 1 })
+    : t("tab.spread.pages", { from: first + 1, to: second + 1 });
 }

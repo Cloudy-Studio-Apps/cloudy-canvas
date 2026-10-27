@@ -1,9 +1,10 @@
 import type { BlankPageRowProps } from "./brochure-page-row.types";
+import { t } from "../../catalog.i18n";
 
 /** Why each kind of blank page is there, as its row says. */
 const REASONS = {
-  "back-cover": "so the back cover is on the left",
-  "spread-start": "so the spread starts on a left page",
+  "back-cover": t("checks.layout.reasonBack"),
+  "spread-start": t("checks.layout.reasonSpread"),
 } as const;
 
 /** A blank page the book layout added: shown in its place, never dragged or selected. */
@@ -13,8 +14,8 @@ export function BlankPageRow({ number, reason }: BlankPageRowProps) {
       <span className="w-5 shrink-0 text-right font-semibold tabular-nums">{number}</span>
       <span className="h-10 w-14 shrink-0 rounded-xs border border-dashed border-border-strong bg-surface" />
       <span className="min-w-0 flex-1">
-        <span className="block text-muted-foreground italic">Blank page</span>
-        <span className="block truncate">Added {REASONS[reason]}</span>
+        <span className="block text-muted-foreground italic">{t("tab.blank.title")}</span>
+        <span className="block truncate">{t("tab.blank.added", { reason: REASONS[reason] })}</span>
       </span>
     </li>
   );

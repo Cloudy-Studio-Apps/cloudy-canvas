@@ -2,6 +2,7 @@ import { Badge, cn } from "@shared/ui/kit";
 import { contrastResults, onColor } from "../..";
 import { useColorWizardStore, useWizardTheme } from "../store";
 import type { ThemeListCellProps } from "./theme.types";
+import { t } from "../../color-wizard.i18n";
 
 /** A token in one mode: an "Aa" on its color, what it uses, and whether it's automatic. */
 export function ThemeListCell({ name, mode }: ThemeListCellProps) {
@@ -16,9 +17,20 @@ export function ThemeListCell({ name, mode }: ThemeListCellProps) {
   const low = contrastResults(theme).find(
     (r) => r.mode === mode && !r.pass && (r.fg === name || r.fix === name),
   );
-  const tag = value.role === "custom" ? "Custom" : custom ? "Changed" : "Auto";
+  const kind = value.role === "custom" ? "custom" : custom ? "changed" : "auto";
+  const tag = t(
+    kind === "custom"
+      ? "theme.cell.custom"
+      : kind === "changed"
+        ? "theme.cell.changed"
+        : "theme.cell.auto",
+  );
   const shown =
-    value.role === "auto" ? "best contrast" : value.role === "custom" ? "custom" : value.alias;
+    value.role === "auto"
+      ? t("theme.strip.bestContrast")
+      : value.role === "custom"
+        ? t("theme.cell.customShort")
+        : value.alias;
   return (
     // eslint-disable-next-line no-restricted-syntax -- bespoke: a list cell showing the token's color
     <button
@@ -47,7 +59,7 @@ export function ThemeListCell({ name, mode }: ThemeListCellProps) {
       )}
       <Badge
         variant="outline"
-        className={tag === "Auto" ? "text-muted-foreground" : "text-warning"}
+        className={kind === "auto" ? "text-muted-foreground" : "text-warning"}
       >
         {tag}
       </Badge>

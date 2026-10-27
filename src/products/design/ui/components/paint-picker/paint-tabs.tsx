@@ -5,6 +5,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@shared/ui/components/u
 import { cn } from "@shared/ui/lib/utils";
 import type { PaintTab, PaintTabsProps } from "./paint-picker.types";
 import { PAINT_TABS } from "./paint-tabs-data";
+import { t } from "../../design-ui.i18n";
 
 /** Each paint's glyph, drawn in the text color. */
 const GLYPHS: Partial<Record<PaintTab["id"], CSSProperties>> = {
@@ -21,7 +22,11 @@ const GLYPHS: Partial<Record<PaintTab["id"], CSSProperties>> = {
 /** The row of paint kinds; the ones not built yet are disabled. */
 export function PaintTabs({ active, onPick, allowImage }: PaintTabsProps) {
   return (
-    <div role="tablist" aria-label="Paint" className="flex items-center justify-between">
+    <div
+      role="tablist"
+      aria-label={t("paint.tabs.label")}
+      className="flex items-center justify-between"
+    >
       {PAINT_TABS.map((tab) => ({
         ...tab,
         ready: tab.ready && (allowImage || tab.id !== "image"),
@@ -55,8 +60,8 @@ export function PaintTabs({ active, onPick, allowImage }: PaintTabsProps) {
             {tab.ready
               ? tab.label
               : tab.id === "image"
-                ? "Strokes can't be images yet"
-                : `${tab.label} (coming soon)`}
+                ? t("paint.tabs.noImageStroke")
+                : t("paint.tabs.soon", { name: tab.label })}
           </TooltipContent>
         </Tooltip>
       ))}

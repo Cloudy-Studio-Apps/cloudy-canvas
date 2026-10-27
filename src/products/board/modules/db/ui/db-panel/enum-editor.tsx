@@ -4,6 +4,7 @@ import { useBoardSchema, useDbEnum } from "../schema";
 import { DbmlEditor } from "./dbml-editor";
 import { EnumVisualEditor } from "./enum-visual-editor";
 import type { EnumEditorProps } from "./enum-editor.types";
+import { t } from "../../db.i18n";
 
 /** One enum's slice of the schema, as a form or as DBML. */
 export function EnumEditor({ enumId }: EnumEditorProps) {
@@ -20,7 +21,7 @@ export function EnumEditor({ enumId }: EnumEditorProps) {
       className="min-h-0 flex-1"
     >
       <TabsList className="w-full">
-        <TabsTrigger value="visual">Visual</TabsTrigger>
+        <TabsTrigger value="visual">{t("tabs.visual")}</TabsTrigger>
         <TabsTrigger value="dbml">DBML</TabsTrigger>
       </TabsList>
       <TabsContent value="visual">
@@ -29,8 +30,8 @@ export function EnumEditor({ enumId }: EnumEditorProps) {
       <TabsContent value="dbml" className="flex min-h-0 flex-col">
         <DbmlEditor
           key={enumId}
-          label={`DBML for ${target.name}`}
-          hint="Only this enum. Renaming it also renames the type of the columns that use it."
+          label={t("enumEditor.dbmlLabel", { name: target.name })}
+          hint={t("enumEditor.dbmlHint")}
           read={() => schema.enumDbml(enumId)}
           apply={(text) => schema.applyEnumDbml(enumId, text)}
         />

@@ -1,6 +1,7 @@
 import { HIGHLIGHTER_SIZES, MARKER_SIZES } from "../../../palette";
 import { OptionButton } from "@canvas-ui";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";
+import { t } from "../draw.i18n";
 
 /** Largest dot shown for a thickness, so wide highlighters still fit the button. */
 const MAX_DOT = 18;
@@ -24,7 +25,7 @@ export function DrawSizeButtons() {
         return (
           <OptionButton
             key={size.value}
-            aria-label={`${size.name} stroke`}
+            aria-label={t("options.stroke", { size: size.name })}
             title={size.name}
             selected={current === size.value}
             onClick={() =>

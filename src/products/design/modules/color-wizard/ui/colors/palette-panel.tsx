@@ -7,6 +7,7 @@ import { copyText } from "../copy-text";
 import { useColorWizardStore } from "../store";
 import { PaletteSwatch } from "./palette-swatch";
 import { PaletteToolbar } from "./palette-toolbar";
+import { t } from "../../color-wizard.i18n";
 
 /** The palette being built: its toolbar, the colors as columns, and the collection's name. */
 export function PalettePanel() {
@@ -29,20 +30,20 @@ export function PalettePanel() {
           ))}
         </div>
         <IconButton
-          label="Copy all hex codes"
+          label={t("palette.copyAll")}
           className="ml-auto"
-          onClick={() => copyText(palette.map((c) => c.hex).join(", "), "Hex codes")}
+          onClick={() => copyText(palette.map((c) => c.hex).join(", "), "codes")}
         >
           <Copy />
         </IconButton>
-        <Field label="Collection" layout="inline" className="w-60">
+        <Field label={t("palette.collection")} layout="inline" className="w-60">
           {(id) => (
             <CommitInput
               id={id}
               value={collection}
               className="h-7 w-full rounded-md border border-input bg-surface px-2 text-xs"
               onCommit={(text) => {
-                if (!text.trim()) return "Give the collection a name";
+                if (!text.trim()) return t("palette.nameRequired");
                 set({ collection: text.trim() });
               }}
             />

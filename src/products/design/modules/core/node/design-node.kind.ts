@@ -56,6 +56,7 @@ import {
   sizeLimitFields,
   strokeSideFields,
 } from "./node-bindable";
+import { t } from "../core.i18n";
 
 const NO_EFFECTS: readonly NodeEffect[] = [];
 
@@ -122,19 +123,24 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
       ...(this.fillable ? paintBindable(el.fills, "fills", ["all-fills", this.fillScope]) : []),
       ...(this.strokable ? paintBindable(el.strokes, "strokes", ["stroke-color"]) : []),
       ...effectBindable(el),
-      numberField("opacity", "opacity", "Opacity"),
+      numberField("opacity", "opacity", t("fields.opacity")),
       ...(this.resizable
-        ? [numberField("w", "width-height", "Width"), numberField("h", "width-height", "Height")]
+        ? [
+            numberField("w", "width-height", t("fields.width")),
+            numberField("h", "width-height", t("fields.height")),
+          ]
         : []),
       ...sizeLimitFields(el),
-      ...(this.strokable ? [numberField("strokeWeight", "stroke-weight", "Stroke weight")] : []),
+      ...(this.strokable
+        ? [numberField("strokeWeight", "stroke-weight", t("fields.strokeWeight"))]
+        : []),
       ...(this.strokable ? strokeSideFields(el) : []),
       ...(this.rotatable && this.storesRotation && !this.childHost
-        ? [numberField("rotation", "other-number", "Rotation")]
+        ? [numberField("rotation", "other-number", t("fields.rotation"))]
         : []),
-      booleanField("visible", "Visible"),
-      booleanField("layoutAbsolute", "Ignore auto layout"),
-      ...(el.isMask ? [booleanField("maskInverted", "Invert mask")] : []),
+      booleanField("visible", t("fields.visible")),
+      booleanField("layoutAbsolute", t("fields.ignoreAutoLayout")),
+      ...(el.isMask ? [booleanField("maskInverted", t("fields.invertMask"))] : []),
       ...nodeStyleFields(this),
     ];
   }

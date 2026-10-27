@@ -5,6 +5,7 @@ import { nextLayerName, parentFor } from "../core";
 import { VECTOR_DEFAULTS } from "./vector.defaults";
 import { createVectorLine } from "./vector.factory";
 import type { VectorElement } from "./vector.types";
+import { t } from "./vector.i18n";
 
 /**
  * Draws freehand vectors (Shift+P), smoothed on release, each into the frame under it. The
@@ -24,7 +25,7 @@ export class PencilTool extends FreehandTool<DesignToolOptions, VectorElement> {
   protected override add(vector: VectorElement): void {
     super.add({
       ...vector,
-      name: nextLayerName(this.ctx.doc.all(), "Vector"),
+      name: nextLayerName(this.ctx.doc.all(), t("label")),
       parentId: parentFor(this.ctx, vector),
     });
   }

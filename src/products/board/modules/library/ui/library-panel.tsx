@@ -1,3 +1,4 @@
+import { tCommon } from "@shared/core";
 import { X } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -8,6 +9,7 @@ import { LIBRARY_TABS } from "./library-catalog";
 import { shownSections } from "./library-filter";
 import { LibrarySectionView } from "./library-section";
 import type { LibraryItem, LibraryPanelProps, LibraryTabInfo } from "./library.types";
+import { t } from "../library.i18n";
 
 /** Widgets, templates, lists and more, in tabs with one search for all of them. */
 export function LibraryPanel({ onClose }: LibraryPanelProps) {
@@ -34,11 +36,11 @@ export function LibraryPanel({ onClose }: LibraryPanelProps) {
             autoFocus
             value={query}
             onChange={setQuery}
-            placeholder="Search widgets, templates and more"
-            aria-label="Search the library"
+            placeholder={t("panel.search")}
+            aria-label={t("panel.searchLabel")}
             className="flex-1"
           />
-          <Button variant="ghost" size="icon" aria-label="Close" onClick={onClose}>
+          <Button variant="ghost" size="icon" aria-label={tCommon("close")} onClick={onClose}>
             <X />
           </Button>
         </div>
@@ -54,9 +56,7 @@ export function LibraryPanel({ onClose }: LibraryPanelProps) {
       </div>
       <div className="flex h-[420px] flex-col gap-3 overflow-y-auto p-3">
         {sections.length === 0 ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">
-            Nothing matches your search.
-          </p>
+          <p className="py-8 text-center text-sm text-muted-foreground">{t("panel.empty")}</p>
         ) : (
           sections.map(({ section, items }) => (
             <LibrarySectionView key={section.id} section={section} items={items} onPick={pick} />

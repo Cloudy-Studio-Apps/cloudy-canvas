@@ -61,7 +61,10 @@ export interface ColorControlsProps {
   /** 0–1; left out for a color without its own opacity (no opacity slider or field). */
   opacity?: number;
   onChange: (next: { color: string; opacity: number }, info: ColorChangeInfo) => void;
-  /** Put before the controls' names for screen readers, e.g. "Stop ". */
+  /**
+   * What the color is, in the controls' names for screen readers: "Stop" gives "Stop hue"; in
+   * Spanish with its article, "la parada" ("Matiz de la parada").
+   */
   label?: string;
 }
 

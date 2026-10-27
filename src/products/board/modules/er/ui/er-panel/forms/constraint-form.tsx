@@ -8,27 +8,28 @@ import { entityOptions, relationOptions } from "./entity-options";
 import { FormField } from "./form-field";
 import { ShapeSelect } from "./shape-select";
 import type { ConstraintFormProps } from "./entity-form.types";
+import { t } from "../../../er.i18n";
 
 const RULES: { value: ErConstraintRule; label: string; hint: string }[] = [
   {
     value: "exclusive",
-    label: "Exclusividad",
-    hint: "The entity takes part in only one of the two relations.",
+    label: t("form.constraint.exclusive"),
+    hint: t("form.constraint.exclusiveHint"),
   },
   {
     value: "inclusive",
-    label: "Inclusividad",
-    hint: "To take part in the second, the entity must take part in the first (min,max) times.",
+    label: t("form.constraint.inclusive"),
+    hint: t("form.constraint.inclusiveHint"),
   },
   {
     value: "exclusion",
-    label: "Exclusión",
-    hint: "The same occurrences can't be in both relations.",
+    label: t("form.constraint.exclusion"),
+    hint: t("form.constraint.exclusionHint"),
   },
   {
     value: "inclusion",
-    label: "Inclusión",
-    hint: "Occurrences of the second relation must exist in the first.",
+    label: t("form.constraint.inclusion"),
+    hint: t("form.constraint.inclusionHint"),
   },
 ];
 
@@ -43,9 +44,9 @@ export function ConstraintForm({ constraint }: ConstraintFormProps) {
 
   return (
     <div className="space-y-4">
-      <FormField label="Kind">
+      <FormField label={t("form.constraint.kind")}>
         <ShapeSelect
-          aria-label="Kind"
+          aria-label={t("form.constraint.kind")}
           value={constraint.rule}
           options={RULES}
           className="w-full"
@@ -56,11 +57,11 @@ export function ConstraintForm({ constraint }: ConstraintFormProps) {
       </FormField>
       {rule && <p className="text-xs text-muted-foreground">{rule.hint}</p>}
       {withEntity && (
-        <FormField label="Entity">
+        <FormField label={t("form.constraint.entity")}>
           <ShapeSelect
-            aria-label="Entity"
+            aria-label={t("form.constraint.entity")}
             value={constraint.entityId}
-            placeholder="Choose…"
+            placeholder={t("form.constraint.choose")}
             options={entityOptions(shapes)}
             className="w-full"
             onChange={(entityId) => er.edits.updateConstraint(constraint.id, { entityId })}
@@ -68,9 +69,11 @@ export function ConstraintForm({ constraint }: ConstraintFormProps) {
         </FormField>
       )}
       <div className="flex items-end gap-1">
-        <FormField label={directed ? "Required relation" : "Relation"}>
+        <FormField
+          label={directed ? t("form.constraint.requiredRelation") : t("form.constraint.relation")}
+        >
           <ShapeSelect
-            aria-label="First relation"
+            aria-label={t("form.constraint.first")}
             value={constraint.fromId}
             options={relations}
             className="w-full"
@@ -81,8 +84,8 @@ export function ConstraintForm({ constraint }: ConstraintFormProps) {
           variant="ghost"
           size="icon"
           className="size-7 shrink-0"
-          aria-label="Swap relations"
-          title="Swap relations"
+          aria-label={t("form.constraint.swap")}
+          title={t("form.constraint.swap")}
           onClick={() =>
             er.edits.updateConstraint(constraint.id, {
               fromId: constraint.toId,
@@ -92,9 +95,9 @@ export function ConstraintForm({ constraint }: ConstraintFormProps) {
         >
           <ArrowLeftRight />
         </Button>
-        <FormField label={directed ? "Relation that needs it" : "Other relation"}>
+        <FormField label={directed ? t("form.constraint.needsIt") : t("form.constraint.other")}>
           <ShapeSelect
-            aria-label="Second relation"
+            aria-label={t("form.constraint.second")}
             value={constraint.toId}
             options={relations}
             className="w-full"
@@ -103,7 +106,7 @@ export function ConstraintForm({ constraint }: ConstraintFormProps) {
         </FormField>
       </div>
       {constraint.rule === "inclusive" && (
-        <FormField label="How many times">
+        <FormField label={t("form.constraint.howMany")}>
           <CardinalityPicker
             min={constraint.min}
             max={constraint.max}

@@ -8,12 +8,13 @@ import { useCatalogViewStore } from "../stores/catalog-view-store";
 import { ArrangeFields } from "./arrange-fields";
 import { LayoutFields } from "./layout-fields";
 import { CheckboxField, SelectField } from "@shared/ui/kit";
+import { t } from "../../catalog.i18n";
 
 /** The export's resolutions to pick from. */
 const DPI_CHOICES = [
-  { value: "300", label: "Print · 300 dpi" },
-  { value: "150", label: "Draft · 150 dpi" },
-  { value: "96", label: "Screen · 96 dpi" },
+  { value: "300", label: t("settings.quality.print") },
+  { value: "150", label: t("settings.quality.draft") },
+  { value: "96", label: t("settings.quality.screen") },
 ] as const;
 
 /**
@@ -29,7 +30,7 @@ export function BrochureSettingsSection() {
   const count = layout.pageCount;
 
   return (
-    <PanelSection title={brochure?.name ?? "Brochure"}>
+    <PanelSection title={brochure?.name ?? t("settings.title")}>
       <p className="text-sm text-foreground">
         {count} {count === 1 ? "page" : "pages"}
         {paper && (
@@ -45,20 +46,20 @@ export function BrochureSettingsSection() {
         <PropertyGrid>
           <NumberField
             prefix={<Ruler className="size-3.5" />}
-            label="Margin"
+            label={t("settings.margin")}
             value={settings.margin}
             suffix="mm"
             min={0}
             onCommit={(margin) => brochure?.setSettings({ margin })}
           />
           <SelectField
-            label="Quality"
+            label={t("settings.quality.label")}
             value={dpiChoice(settings.dpi)}
             options={DPI_CHOICES}
             onChange={(dpi) => brochure?.setSettings({ dpi: Number(dpi) })}
           />
         </PropertyGrid>
-        <CheckboxField label="Show margins on the canvas" checked={margins} onChange={setMargins} />
+        <CheckboxField label={t("settings.showMargins")} checked={margins} onChange={setMargins} />
       </div>
     </PanelSection>
   );

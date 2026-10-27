@@ -11,6 +11,7 @@ import { useStyleWriter } from "./use-style-writer";
 import { Field, SegmentedControl } from "@shared/ui/kit";
 import { ALIGNS, CAPS, JOINS, StrokePreview } from "../sections/stroke";
 import { StrokeStyleDashes } from "./stroke-style-dashes";
+import { t } from "../../core.i18n";
 
 /** What a stroke style starts from when its stored value lacks a field. */
 const BASE: StrokeStyleValue = {
@@ -28,7 +29,7 @@ const NO_LAYERS: never[] = [];
 /** A stroke style's weight takes a number variable. */
 function strokeField(path: string): BindableField | undefined {
   return path === "strokeWeight"
-    ? { path, type: "number", scopes: ["stroke-weight"], label: "Stroke weight" }
+    ? { path, type: "number", scopes: ["stroke-weight"], label: t("fields.strokeWeight") }
     : undefined;
 }
 
@@ -49,15 +50,15 @@ export function StrokeStyleEditor({ style, onDelete }: StyleEditorProps) {
           <BindSlot nodes={NO_LAYERS} path="strokeWeight">
             <NumberField
               prefix={<Minus />}
-              label="Stroke weight"
+              label={t("fields.strokeWeight")}
               min={0}
               value={value.strokeWeight}
               onCommit={(strokeWeight) => set({ strokeWeight, strokeWeights: null })}
             />
           </BindSlot>
-          <Field label="Position">
+          <Field label={t("styles.position")}>
             <SegmentedControl
-              label="Stroke position"
+              label={t("stroke.position")}
               value={value.strokeAlign}
               onChange={(strokeAlign) => set({ strokeAlign })}
               options={ALIGNS}
@@ -66,10 +67,10 @@ export function StrokeStyleEditor({ style, onDelete }: StyleEditorProps) {
             />
           </Field>
           <StrokeStyleDashes value={value} onChange={set} />
-          <Field label="Ends and corners">
+          <Field label={t("stroke.endsAndCorners")}>
             <div className="flex gap-1">
               <SegmentedControl
-                label="Stroke cap"
+                label={t("stroke.cap")}
                 value={value.strokeCap}
                 onChange={(cap) => set({ strokeCap: cap as StrokeStyleValue["strokeCap"] })}
                 options={CAPS}
@@ -77,7 +78,7 @@ export function StrokeStyleEditor({ style, onDelete }: StyleEditorProps) {
                 size="sm"
               />
               <SegmentedControl
-                label="Stroke join"
+                label={t("stroke.join")}
                 value={value.strokeJoin}
                 onChange={(join) => set({ strokeJoin: join as StrokeStyleValue["strokeJoin"] })}
                 options={JOINS}
@@ -89,7 +90,7 @@ export function StrokeStyleEditor({ style, onDelete }: StyleEditorProps) {
           {value.strokeJoin === "miter" && (
             <NumberField
               prefix="∠"
-              label="Miter angle: sharper corners are beveled"
+              label={t("stroke.miter")}
               suffix="°"
               min={1}
               max={180}

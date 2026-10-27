@@ -4,6 +4,7 @@ import { toast } from "@shared/stores/toast-store";
 import { router } from "../router";
 import { confirmLeave } from "./confirm-leave";
 import { openPaths } from "./open-paths";
+import { t } from "../app.i18n";
 
 const PAGE_PATHS = { home: "/", settings: "/settings" } as const;
 
@@ -14,7 +15,7 @@ export function openAppLinks(links: string[]): void {
   const parsed = parseAppLink(link);
   if (!parsed) {
     toast({
-      title: "That link can't be opened",
+      title: t("links.invalid"),
       description: link,
       tone: "error",
     });
@@ -32,13 +33,17 @@ async function openAppLink(link: AppLink): Promise<void> {
       await showFile(link.type, link.id);
       return;
     case "new":
-      confirmLeave(`Start a new ${link.type}?`, () => navigate(`/${link.type}/${createId()}`));
+      confirmLeave(t(link.type === "board" ? "links.newBoard" : "links.newDesign"), () =>
+        navigate(`/${link.type}/${createId()}`),
+      );
       return;
     case "page":
-      confirmLeave(`Open ${link.page}?`, () => navigate(PAGE_PATHS[link.page]));
+      confirmLeave(t(link.page === "home" ? "links.openHome" : "links.openSettings"), () =>
+        navigate(PAGE_PATHS[link.page]),
+      );
       return;
     case "join":
-      confirmLeave("Join the live session?", () => navigate(`/join/${link.ticket}`));
+      confirmLeave(t("links.join"), () => navigate(`/join/${link.ticket}`));
       return;
   }
 }
@@ -50,13 +55,15 @@ async function showFile(type: FileType, id: string): Promise<void> {
   const file = useRecentFilesStore.getState().files.find((f) => f.id === id && f.type === type);
   if (!file) {
     toast({
-      title: "That file isn't in your recent files",
-      description: "Open it from disk once, then its link works.",
+      title: t("links.notRecent"),
+      description: t("links.notRecentHint"),
       tone: "error",
     });
     return;
   }
-  confirmLeave(`Open “${displayName(file)}”?`, () => navigate(`/${file.type}/${file.id}`));
+  confirmLeave(t("links.openFile", { name: displayName(file) }), () =>
+    navigate(`/${file.type}/${file.id}`),
+  );
 }
 
 function navigate(path: string): void {

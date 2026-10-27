@@ -11,6 +11,7 @@ import { facesOf } from "../faces-of";
 import { FontPicker } from "../font-picker";
 import { useFontFamilies } from "../use-font-families";
 import { styleTypographyTarget } from "./style-typography-target";
+import { t } from "../../text.i18n";
 
 /**
  * A text style's typography, edited with the Typography section's own controls (in the shared
@@ -44,14 +45,14 @@ export function TextStyleEditor({ style, onDelete }: StyleEditorProps) {
           <FaceSelect target={target} faces={facesOf(families, family)} />
           <NumberField
             prefix={<Type />}
-            label="Font size"
+            label={t("fields.fontSize")}
             min={1}
             value={target.read("fontSize")}
             onCommit={(fontSize) => target.set({ fontSize })}
           />
           <NumberField
             prefix={<UnfoldVertical />}
-            label="Line height"
+            label={t("fields.lineHeight")}
             suffix="%"
             min={1}
             value={lineHeight === null ? null : Math.round(lineHeight * 100)}
@@ -59,7 +60,7 @@ export function TextStyleEditor({ style, onDelete }: StyleEditorProps) {
           />
           <NumberField
             prefix={<MoveHorizontal />}
-            label="Letter spacing"
+            label={t("fields.letterSpacing")}
             value={target.read("letterSpacing")}
             onCommit={(letterSpacing) => target.set({ letterSpacing })}
           />

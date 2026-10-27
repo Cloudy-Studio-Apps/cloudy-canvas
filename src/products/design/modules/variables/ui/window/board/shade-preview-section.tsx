@@ -6,6 +6,7 @@ import type { ShadePreviewSectionProps } from "./board.types";
 import { CardGrid } from "./card-grid";
 import { ColorCard } from "./color-card";
 import { GhostShadeCard } from "./ghost-shade-card";
+import { t } from "../../../variables.i18n";
 
 /** The group the generator writes, previewed: its shades as ghost cards, then the rest. */
 export function ShadePreviewSection({ group, rest }: ShadePreviewSectionProps) {
@@ -22,8 +23,8 @@ export function ShadePreviewSection({ group, rest }: ShadePreviewSectionProps) {
   return (
     <section>
       <div className="mb-2 flex items-baseline gap-2">
-        <span className="text-sm font-semibold">{group || "Ungrouped"}</span>
-        <span className="text-xs text-primary">preview</span>
+        <span className="text-sm font-semibold">{group || t("common.ungrouped")}</span>
+        <span className="text-xs text-primary">{t("board.preview")}</span>
       </div>
       <CardGrid>
         {shades.map((shade, i) => (

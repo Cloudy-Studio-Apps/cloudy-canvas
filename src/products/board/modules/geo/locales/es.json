@@ -1,0 +1,21 @@
+{
+  "label": "Forma",
+  "description": "Un rectángulo, elipse, rombo u otra forma de diagrama, con una etiqueta.",
+  "fill": "Relleno",
+  "outline": "Contorno",
+  "options": {
+    "group": "Opciones de forma",
+    "fillLabel": "Relleno {color}",
+    "outlineLabel": "Contorno {color}"
+  },
+  "variants": {
+    "cylinder": "Cilindro",
+    "diamond": "Rombo",
+    "ellipse": "Elipse",
+    "parallelogram": "Paralelogramo",
+    "rectangle": "Rectángulo",
+    "rounded": "Rectángulo redondeado",
+    "star": "Estrella",
+    "triangle": "Triángulo"
+  }
+}

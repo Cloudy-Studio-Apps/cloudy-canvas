@@ -1,0 +1,13 @@
+{
+  "label": "Línea",
+  "description": "Una línea recta, con punta de flecha en cualquiera de sus extremos si quieres.",
+  "arrow": {
+    "label": "Flecha",
+    "description": "Una línea recta con punta de flecha en su extremo."
+  },
+  "section": {
+    "start": "Inicio",
+    "end": "Fin",
+    "none": "Ninguno"
+  }
+}

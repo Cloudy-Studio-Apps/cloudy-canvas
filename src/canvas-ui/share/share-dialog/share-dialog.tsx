@@ -10,6 +10,7 @@ import { useHostedSession } from "../host-session";
 import { HostingPanel } from "./hosting-panel";
 import type { ShareDialogProps } from "./share-dialog.types";
 import { StartSharing } from "./start-sharing";
+import { t } from "../share.i18n";
 
 /** Shares the open file live: starts the session, then shows its link and who's in it. */
 export function ShareDialog({ open, onOpenChange, product }: ShareDialogProps) {
@@ -23,9 +24,11 @@ export function ShareDialog({ open, onOpenChange, product }: ShareDialogProps) {
         onKeyDown={(event) => event.stopPropagation()}
       >
         <DialogHeader>
-          <DialogTitle>{host ? "Sharing live" : `Share this ${file.noun} live`}</DialogTitle>
+          <DialogTitle>
+            {host ? t("dialog.sharing") : t("dialog.share", { noun: file.noun })}
+          </DialogTitle>
           <DialogDescription className="sr-only">
-            Invite people to edit the open {file.noun} with you.
+            {t("dialog.description", { noun: file.noun })}
           </DialogDescription>
         </DialogHeader>
         {host ? <HostingPanel host={host} /> : <StartSharing product={product} />}

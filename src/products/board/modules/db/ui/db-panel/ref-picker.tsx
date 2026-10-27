@@ -14,6 +14,7 @@ import { useEngine } from "@canvas-ui";
 import { useBoardSchema, useDbQuery } from "../schema";
 import { REF_KINDS } from "./ref-kinds";
 import type { RefPickerProps } from "./ref-picker.types";
+import { t } from "../../db.i18n";
 
 /** Links a column to any column on the board, however far away its table is. */
 export function RefPicker({ table, column }: RefPickerProps) {
@@ -52,9 +53,11 @@ export function RefPicker({ table, column }: RefPickerProps) {
           size="icon"
           className={cn("size-7", current && "text-primary hover:text-primary")}
           aria-label={
-            current ? `Relation to ${current.tableName}.${current.columnName}` : "Add relation"
+            current
+              ? t("ref.relationTo", { target: `${current.tableName}.${current.columnName}` })
+              : t("ref.add")
           }
-          title={current ? `→ ${current.tableName}.${current.columnName}` : "Add relation"}
+          title={current ? `→ ${current.tableName}.${current.columnName}` : t("ref.add")}
         >
           <Link2 />
         </Button>
@@ -72,8 +75,8 @@ export function RefPicker({ table, column }: RefPickerProps) {
                   variant="ghost"
                   size="icon"
                   className="size-7"
-                  aria-label="Go to table"
-                  title="Go to table"
+                  aria-label={t("nav.goToTable")}
+                  title={t("nav.goToTable")}
                   onClick={() => {
                     setOpen(false);
                     engine.focusElement(current.tableId);
@@ -85,8 +88,8 @@ export function RefPicker({ table, column }: RefPickerProps) {
                   variant="ghost"
                   size="icon"
                   className="size-7"
-                  aria-label="Remove relation"
-                  title="Remove relation"
+                  aria-label={t("ref.remove")}
+                  title={t("ref.remove")}
                   onClick={() => {
                     schema.setColumnRef(table.id, column.id, null);
                     setOpen(false);
@@ -96,7 +99,7 @@ export function RefPicker({ table, column }: RefPickerProps) {
                 </Button>
               </div>
             </div>
-            <div className="grid grid-cols-4 gap-1" role="radiogroup" aria-label="Relation kind">
+            <div className="grid grid-cols-4 gap-1" role="radiogroup" aria-label={t("ref.kind")}>
               {REF_KINDS.map(({ kind, label, description }) => (
                 <Button
                   key={kind}
@@ -116,7 +119,7 @@ export function RefPicker({ table, column }: RefPickerProps) {
         <SearchInput
           autoFocus
           size="sm"
-          placeholder="Search table.column…"
+          placeholder={t("ref.search")}
           value={query}
           onChange={setQuery}
           onKeyDown={(event) => {
@@ -126,7 +129,7 @@ export function RefPicker({ table, column }: RefPickerProps) {
         />
         <ul className="-mx-1 max-h-56 overflow-y-auto">
           {matches.length === 0 && (
-            <li className="px-2 py-1.5 text-sm text-muted-foreground">No columns found</li>
+            <li className="px-2 py-1.5 text-sm text-muted-foreground">{t("ref.noColumns")}</li>
           )}
           {matches.map((t) => (
             <li key={`${t.tableId}/${t.columnId}`}>

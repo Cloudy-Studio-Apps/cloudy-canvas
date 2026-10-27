@@ -1,23 +1,24 @@
 import { box, label, SHEET_LOOK, solidFill, stack } from "../../sheet";
 import type { StyleguideTemplate } from "../../styleguide.types";
 import { formatNumber, leafName, numberOf, variablesOf } from "../template-kit";
+import { t } from "../../styleguide.i18n";
 
 /** A ruler: a bar as long as each spacing value (bound, so it follows it), with name and value. */
 export const barsTemplate: StyleguideTemplate = {
   id: "spacing.bars",
   category: "spacing",
-  label: "Bars ruler",
-  description: "A bar as long as each value, with its name and value.",
+  label: t("templates.spacing.bars.label"),
+  description: t("templates.spacing.bars.description"),
   options: [
     {
       id: "color",
-      label: "Bar color",
+      label: t("templates.spacing.bars.barColor"),
       type: "select",
       default: "#6366F1",
       choices: [
-        { value: "#6366F1", label: "Indigo" },
-        { value: "#F472B6", label: "Pink" },
-        { value: "#1F2328", label: "Ink" },
+        { value: "#6366F1", label: t("templates.spacing.bars.indigo") },
+        { value: "#F472B6", label: t("templates.spacing.bars.pink") },
+        { value: "#1F2328", label: t("templates.spacing.bars.ink") },
       ],
     },
   ],

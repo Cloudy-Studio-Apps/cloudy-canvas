@@ -5,6 +5,7 @@ import { CommitInput, CommitTextarea } from "../components/commit-field";
 import { useEngine } from "../engine-context";
 import { useCanvasFile } from "./canvas-file-context";
 import type { DocumentInfoPopoverProps } from "./document-info-popover.types";
+import { t } from "./file.i18n";
 
 /** The file's name in the editor's chrome, which opens its title and description. */
 export function DocumentInfoPopover({ className, children }: DocumentInfoPopoverProps) {
@@ -27,7 +28,7 @@ export function DocumentInfoPopover({ className, children }: DocumentInfoPopover
             className,
           )}
           title={file.description ? `${file.name}\n${file.description}` : file.name}
-          aria-label={`${file.name}. Edit title and description`}
+          aria-label={t("info.trigger", { name: file.name })}
         >
           <h1 className="truncate">{file.name}</h1>
           {children}
@@ -35,7 +36,7 @@ export function DocumentInfoPopover({ className, children }: DocumentInfoPopover
       </PopoverTrigger>
       <PopoverContent align="start" className="w-80 space-y-3">
         <label className="block space-y-1">
-          <span className="text-xs font-medium text-muted-foreground">Title</span>
+          <span className="text-xs font-medium text-muted-foreground">{t("info.title")}</span>
           <CommitInput
             value={file.title}
             placeholder={file.fileName}
@@ -43,18 +44,16 @@ export function DocumentInfoPopover({ className, children }: DocumentInfoPopover
           />
         </label>
         <label className="block space-y-1">
-          <span className="text-xs font-medium text-muted-foreground">Description</span>
+          <span className="text-xs font-medium text-muted-foreground">{t("info.description")}</span>
           <CommitTextarea
             value={file.description}
             rows={4}
-            placeholder={`What this ${file.noun} is about`}
+            placeholder={t("info.placeholder", { noun: file.noun })}
             onCommit={(description) => setMeta({ description })}
           />
         </label>
         <p className="truncate text-xs text-muted-foreground" title={file.path ?? undefined}>
-          {file.draft
-            ? "Draft, autosaved in the app. Save to choose a file."
-            : (file.path ?? "Not saved yet")}
+          {file.draft ? t("info.draft") : (file.path ?? t("info.unsavedFile"))}
         </p>
       </PopoverContent>
     </Popover>

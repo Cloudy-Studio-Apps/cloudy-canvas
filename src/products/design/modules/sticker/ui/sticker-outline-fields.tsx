@@ -10,6 +10,7 @@ import { ScrubField } from "../../effects/ui";
 import { PanelIconButton } from "@design/ui/components/panel";
 import { useEditNodes } from "@design/ui/hooks";
 import type { StickerFieldsProps } from "./sticker-ui.types";
+import { t } from "../sticker.i18n";
 
 /** The outline round stickers' shape: its color, width, visibility, and removing it. */
 export function StickerOutlineFields({ stickers }: StickerFieldsProps) {
@@ -39,7 +40,7 @@ export function StickerOutlineFields({ stickers }: StickerFieldsProps) {
     <div className="flex items-center gap-1">
       <div className="min-w-0 flex-1">
         <ColorField
-          label="Outline"
+          label={t("outline.label")}
           color={outline.color}
           onChange={({ color }, info) => change({ color: color.toUpperCase() }, info)}
         />
@@ -47,19 +48,19 @@ export function StickerOutlineFields({ stickers }: StickerFieldsProps) {
       <ScrubField
         className="w-16 shrink-0"
         prefix={<MoveHorizontal />}
-        label="Outline width"
+        label={t("outline.width")}
         value={outline.width}
         min={0}
         max={64}
         onChange={(width, info) => change({ width }, info)}
       />
       <PanelIconButton
-        label={outline.visible ? "Hide the outline" : "Show the outline"}
+        label={outline.visible ? t("outline.hide") : t("outline.show")}
         onClick={() => change({ visible: !outline.visible })}
       >
         {outline.visible ? <Eye /> : <EyeOff />}
       </PanelIconButton>
-      <PanelIconButton label="Remove the outline" onClick={() => change(null)}>
+      <PanelIconButton label={t("outline.remove")} onClick={() => change(null)}>
         <Minus />
       </PanelIconButton>
     </div>

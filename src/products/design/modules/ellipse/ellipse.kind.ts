@@ -10,12 +10,13 @@ import {
 import { ELLIPSE_DEFAULTS } from "./ellipse.defaults";
 import { createEllipse } from "./ellipse.factory";
 import type { EllipseElement } from "./ellipse.types";
+import { t } from "./ellipse.i18n";
 
 /** Ellipses and circles, hit inside their outline only. */
 export class EllipseKind extends BoxShapeKind<EllipseElement> {
   readonly type = "ellipse";
-  readonly label = "Ellipse";
-  readonly description = "An ellipse or, with Shift, a circle.";
+  readonly label = t("label");
+  readonly description = t("description");
   override readonly tool = "ellipse";
   override readonly defaults = ELLIPSE_DEFAULTS;
 

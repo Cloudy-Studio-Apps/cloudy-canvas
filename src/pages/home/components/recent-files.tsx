@@ -5,6 +5,7 @@ import { EmptyState } from "./empty-state";
 import { FileCard } from "./file-card";
 import { RecentFilesToolbar } from "./recent-files-toolbar";
 import type { RecentFilesProps } from "./recent-files.types";
+import { t } from "../home.i18n";
 
 export function RecentFiles({ files, missing, onOpen }: RecentFilesProps) {
   const [filter, setFilter] = useState(DEFAULT_RECENT_FILES_FILTER);
@@ -16,7 +17,7 @@ export function RecentFiles({ files, missing, onOpen }: RecentFilesProps) {
         id="recent-files-heading"
         className="text-sm font-medium tracking-wide text-muted-foreground"
       >
-        Recent files
+        {t("recent.title")}
       </h2>
       {files.length === 0 ? (
         <EmptyState />
@@ -24,7 +25,7 @@ export function RecentFiles({ files, missing, onOpen }: RecentFilesProps) {
         <>
           <RecentFilesToolbar filter={filter} onChange={setFilter} />
           {shown.length === 0 ? (
-            <p className="py-10 text-center text-sm text-muted-foreground">No files match.</p>
+            <p className="py-10 text-center text-sm text-muted-foreground">{t("recent.noMatch")}</p>
           ) : (
             <ul className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-5">
               {shown.map((file) => (

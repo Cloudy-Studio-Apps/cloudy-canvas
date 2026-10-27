@@ -2,6 +2,7 @@ import { joinTokenColor, resolveVariable, splitTokenColor } from "@canvas";
 import { ColorPopover, CommitTextarea, TokenSwatch, useDocumentTokens } from "@canvas-ui";
 import { colorMode } from "./color-mode";
 import type { ColorValuePopoverProps } from "./colors-ui.types";
+import { t } from "../colors.i18n";
 
 /**
  * A board color's swatch, which opens the color picker on its value in the mode the board shows
@@ -26,8 +27,8 @@ export function ColorValuePopover({ variable }: ColorValuePopoverProps) {
         // eslint-disable-next-line no-restricted-syntax -- bespoke: the swatch is the trigger
         <button
           type="button"
-          aria-label={`Edit ${variable.name}`}
-          title="Edit color"
+          aria-label={t("color.edit", { name: variable.name })}
+          title={t("color.editTitle")}
           className="shrink-0 rounded-xs focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
         >
           <TokenSwatch color={color} className="size-5" />
@@ -35,8 +36,8 @@ export function ColorValuePopover({ variable }: ColorValuePopoverProps) {
       }
     >
       <CommitTextarea
-        aria-label={`${variable.name} description`}
-        placeholder="What it's for"
+        aria-label={t("color.description", { name: variable.name })}
+        placeholder={t("color.descriptionPlaceholder")}
         value={variable.description}
         onCommit={(description) => tokens.updateVariable(variable.id, { description })}
         className="min-h-14 resize-none text-xs"

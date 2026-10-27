@@ -6,6 +6,7 @@ import { encodeShareTicket, readShareTicket } from "@shared/core";
 import { Button } from "@shared/ui/components/ui/button";
 import { Input } from "@shared/ui/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/components/ui/popover";
+import { t } from "../home.i18n";
 
 /** Joins a live session from a link pasted from a message (links usually open the app directly). */
 export function JoinSessionButton() {
@@ -19,7 +20,7 @@ export function JoinSessionButton() {
     event.preventDefault();
     const ticket = readShareTicket(draft);
     if (!ticket) {
-      setError("That isn't a session link. Copy it again from the host's Share button.");
+      setError(t("join.invalid"));
       return;
     }
     setOpen(false);
@@ -38,15 +39,15 @@ export function JoinSessionButton() {
       <PopoverTrigger asChild>
         <Button variant="ghost" size="sm">
           <Users />
-          Join
+          {t("join.button")}
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-80">
         <form onSubmit={submit} className="space-y-2">
           <label htmlFor={id} className="text-sm font-medium">
-            Join a live session
+            {t("join.title")}
           </label>
-          <p className="text-sm text-muted-foreground">Paste the link the host shared with you.</p>
+          <p className="text-sm text-muted-foreground">{t("join.hint")}</p>
           <Input
             id={id}
             value={draft}
@@ -62,7 +63,7 @@ export function JoinSessionButton() {
           {error && <p className="text-sm text-destructive">{error}</p>}
           <div className="flex justify-end">
             <Button type="submit" size="sm" disabled={!draft.trim()}>
-              Join
+              {t("join.button")}
             </Button>
           </div>
         </form>

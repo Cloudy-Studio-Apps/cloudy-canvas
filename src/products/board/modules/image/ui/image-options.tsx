@@ -8,6 +8,7 @@ import type { ImageElement } from "../image.types";
 import { FloatingPanel, OptionButton, PanelDivider, useEngineState } from "@canvas-ui";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";
 import { useImageCropStore } from "./image-crop-store";
+import { t } from "../image.i18n";
 
 /** Background (transparent or white), padding and crop of the selected images. */
 export function ImageOptions() {
@@ -33,18 +34,18 @@ export function ImageOptions() {
   };
 
   return (
-    <FloatingPanel role="group" aria-label="Image options" className="gap-1 px-2">
+    <FloatingPanel role="group" aria-label={t("options.group")} className="gap-1 px-2">
       <OptionButton
-        aria-label="Transparent background"
-        title="Transparent background"
+        aria-label={t("options.transparent")}
+        title={t("options.transparent")}
         selected={imageBackground === "none"}
         onClick={() => engine.setToolOptions({ imageBackground: "none" })}
       >
         <SquareDashed className="size-[18px]" />
       </OptionButton>
       <OptionButton
-        aria-label="White background"
-        title="White background"
+        aria-label={t("options.white")}
+        title={t("options.white")}
         selected={imageBackground === "white"}
         onClick={() => engine.setToolOptions({ imageBackground: "white" })}
       >
@@ -54,8 +55,8 @@ export function ImageOptions() {
       {IMAGE_DEFAULTS.paddings.map(({ name, value }) => (
         <OptionButton
           key={value}
-          aria-label={`${name} padding`}
-          title={`${name} padding`}
+          aria-label={t("options.padding", { name })}
+          title={t("options.padding", { name })}
           selected={imagePadding === value}
           onClick={() => engine.setToolOptions({ imagePadding: value })}
         >
@@ -65,15 +66,20 @@ export function ImageOptions() {
       <PanelDivider />
       {selectedId && (
         <OptionButton
-          aria-label={cropping ? "Done cropping" : "Crop"}
-          title={cropping ? "Done cropping (Enter)" : "Crop (double-click)"}
+          aria-label={cropping ? t("options.doneCropping") : t("options.crop")}
+          title={cropping ? t("options.doneCroppingHint") : t("options.cropHint")}
           selected={cropping}
           onClick={() => (cropping ? stopCrop() : startCrop(selectedId))}
         >
           <Crop className="size-[18px]" />
         </OptionButton>
       )}
-      <OptionButton aria-label="Reset crop" title="Reset crop" selected={false} onClick={resetCrop}>
+      <OptionButton
+        aria-label={t("options.resetCrop")}
+        title={t("options.resetCrop")}
+        selected={false}
+        onClick={resetCrop}
+      >
         <Undo2 className="size-[18px]" />
       </OptionButton>
     </FloatingPanel>

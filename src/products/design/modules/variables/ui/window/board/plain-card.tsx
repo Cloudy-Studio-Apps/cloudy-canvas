@@ -6,6 +6,7 @@ import { leafName } from "../group-paths";
 import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";
 import type { PlainCardProps } from "./board.types";
+import { t } from "../../../variables.i18n";
 
 /**
  * A text or boolean variable on the board: its value in each shown mode, one line each (a
@@ -45,7 +46,7 @@ export function PlainCard({ variable, shown, selected }: PlainCardProps) {
                   >
                     {value.boolean ? <Check className="size-3" /> : <X className="size-3" />}
                   </span>
-                  {value.boolean ? "True" : "False"}
+                  {value.boolean ? t("board.true") : t("board.false")}
                 </>
               ) : (
                 <span className="truncate">

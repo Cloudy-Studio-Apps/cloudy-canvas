@@ -8,6 +8,8 @@ import {
   DialogTitle,
 } from "@shared/ui/components/ui/dialog";
 import type { CloseFileDialogProps } from "./close-file-dialog.types";
+import { tCommon } from "@shared/core";
+import { t } from "../file.i18n";
 
 /**
  * Asks before the app quits with a file open. Saved files (or autosaved ones) only confirm; a
@@ -18,29 +20,27 @@ export function CloseFileDialog({ open, name, unsaved, busy, onChoose }: CloseFi
     <Dialog open={open} onOpenChange={(next) => !next && !busy && onChoose("cancel")}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Quit Cloudy Canvas?</DialogTitle>
+          <DialogTitle>{t("close.title")}</DialogTitle>
           <DialogDescription>
-            {unsaved
-              ? `“${name}” has changes that aren't saved. They'll be lost unless you save them.`
-              : `Your changes to “${name}” are saved.`}
+            {unsaved ? t("close.unsaved", { name }) : t("close.saved", { name })}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant="ghost" disabled={busy} onClick={() => onChoose("cancel")}>
-            Cancel
+            {tCommon("cancel")}
           </Button>
           {unsaved ? (
             <>
               <Button variant="outline" disabled={busy} onClick={() => onChoose("close")}>
-                Quit without saving
+                {t("close.quitWithout")}
               </Button>
               <Button disabled={busy} onClick={() => onChoose("save")}>
-                Save and quit
+                {t("close.saveQuit")}
               </Button>
             </>
           ) : (
             <Button autoFocus onClick={() => onChoose("close")}>
-              Quit
+              {t("close.quit")}
             </Button>
           )}
         </DialogFooter>

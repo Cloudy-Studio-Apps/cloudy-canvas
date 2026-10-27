@@ -12,6 +12,7 @@ import type { PropertySectionProps } from "@design/ui/modules";
 import { Button } from "@shared/ui/kit";
 import { StickerEdgeField } from "./sticker-edge-field";
 import { StickerOutlineFields } from "./sticker-outline-fields";
+import { t } from "../sticker.i18n";
 
 /** For selected stickers: the die-cut edge's color, an outline, and Convert to vectors. */
 export function StickerSection({ selection: { nodes } }: PropertySectionProps) {
@@ -23,11 +24,11 @@ export function StickerSection({ selection: { nodes } }: PropertySectionProps) {
 
   return (
     <PanelSection
-      title="Sticker"
+      title={t("section.title")}
       actions={
         !outlined && (
           <PanelAddButton
-            label="Add an outline"
+            label={t("section.addOutline")}
             onClick={() =>
               edit(
                 stickers,
@@ -47,15 +48,11 @@ export function StickerSection({ selection: { nodes } }: PropertySectionProps) {
           size="sm"
           className="w-full"
           disabled={!convertible}
-          title={
-            convertible
-              ? "Turns it into vector layers you can recolor"
-              : "Only stickers drawn as SVG can become vectors"
-          }
+          title={convertible ? t("section.convertHint") : t("section.notConvertible")}
           onClick={() => engine.commands.stickerToVectors?.()}
         >
           <Shapes />
-          Convert to vectors
+          {t("section.convert")}
         </Button>
       </div>
     </PanelSection>

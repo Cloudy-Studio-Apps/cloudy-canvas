@@ -1,17 +1,18 @@
 import type { BrochureCovers, BrochureLayout } from "../../brochure/brochure.types";
 import { useBrochure } from "../hooks/use-brochure";
 import { CheckboxField, SelectField, type SelectOption } from "@shared/ui/kit";
+import { t } from "../../catalog.i18n";
 
 const LAYOUTS: readonly SelectOption<BrochureLayout>[] = [
-  { value: "book", label: "Book · facing pages" },
-  { value: "single", label: "Single pages" },
+  { value: "book", label: t("layout.book") },
+  { value: "single", label: t("layout.single") },
 ];
 
 const COVERS: readonly SelectOption<BrochureCovers>[] = [
-  { value: "both", label: "Front and back covers" },
-  { value: "front", label: "Front cover only" },
-  { value: "back", label: "Back cover only" },
-  { value: "none", label: "No covers" },
+  { value: "both", label: t("layout.covers.both") },
+  { value: "front", label: t("layout.covers.front") },
+  { value: "back", label: t("layout.covers.back") },
+  { value: "none", label: t("layout.covers.none") },
 ];
 
 /**
@@ -24,21 +25,21 @@ export function LayoutFields() {
   return (
     <div className="flex flex-col gap-1.5">
       <SelectField
-        label="Layout"
+        label={t("layout.label")}
         value={settings.layout}
         options={LAYOUTS}
         onChange={(layout) => brochure?.setSettings({ layout })}
       />
       {settings.layout === "book" && (
         <SelectField
-          label="Covers"
+          label={t("layout.covers.label")}
           value={settings.covers}
           options={COVERS}
           onChange={(covers) => brochure?.setSettings({ covers })}
         />
       )}
       <CheckboxField
-        label="Split spreads into pages in the PDF"
+        label={t("layout.splitSpreads")}
         checked={settings.splitSpreads}
         onChange={(splitSpreads) => brochure?.setSettings({ splitSpreads })}
       />

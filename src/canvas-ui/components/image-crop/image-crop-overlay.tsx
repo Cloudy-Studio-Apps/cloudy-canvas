@@ -6,6 +6,7 @@ import { normalizedToScreen, screenToLocal, useViewMapping } from "../../overlay
 import { dragCrop } from "./crop-drag";
 import { CROP_EDGES, edgePoint } from "./crop-edges";
 import type { CropGrip, ImageCropOverlayProps, ImageCropValue } from "./image-crop-overlay.types";
+import { t } from "../components.i18n";
 
 const GRIP = 8;
 
@@ -124,7 +125,7 @@ export function ImageCropOverlay({
       )}
       <polygon
         role="button"
-        aria-label="Move the picture"
+        aria-label={t("crop.move")}
         points={polygon(quad)}
         fill="transparent"
         className="pointer-events-auto cursor-move stroke-primary"
@@ -137,7 +138,7 @@ export function ImageCropOverlay({
         <circle
           key={`corner-${corner}`}
           role="button"
-          aria-label="Scale the picture"
+          aria-label={t("crop.scale")}
           cx={p.x}
           cy={p.y}
           r={GRIP / 2 + 1}
@@ -153,7 +154,7 @@ export function ImageCropOverlay({
             <rect
               key={`${edge.x},${edge.y}`}
               role="button"
-              aria-label="Resize the crop"
+              aria-label={t("crop.resize")}
               x={at.x - GRIP / 2}
               y={at.y - GRIP / 2}
               width={GRIP}

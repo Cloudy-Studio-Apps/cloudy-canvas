@@ -14,6 +14,7 @@ import { ErStyleToggle } from "./er-style-toggle";
 import { ErTextEditor } from "./er-text-editor";
 import { ErDiagramSettings } from "./diagram-settings";
 import { ErShapeForm } from "./forms";
+import { t } from "../../er.i18n";
 
 /**
  * Right side panel for one of the board's ER diagrams: a form for the selected shape (Visual) or
@@ -66,11 +67,11 @@ export function ErPanel() {
   return (
     <FloatingPanel
       role="complementary"
-      aria-label="ER diagram editor"
+      aria-label={t("panel.editor")}
       className="max-h-full w-[340px] flex-col items-stretch gap-3 p-3"
     >
       <header className="flex items-center gap-1">
-        <h2 className="sr-only">ER diagram</h2>
+        <h2 className="sr-only">{t("panel.srTitle")}</h2>
         <ErDiagramSwitcher />
         <ErAddMenu />
         <ErStyleToggle />
@@ -79,8 +80,8 @@ export function ErPanel() {
             variant="ghost"
             size="icon"
             className="size-7"
-            aria-label="Edit diagram"
-            title="Edit in the ER mode: only ER diagrams can be selected, with the ER tools at hand"
+            aria-label={t("panel.edit")}
+            title={t("panel.editHint")}
             onClick={() => engine.setMode(ER_MODE_ID)}
           >
             <PencilRuler />
@@ -90,8 +91,8 @@ export function ErPanel() {
           variant="ghost"
           size="icon"
           className="size-7"
-          aria-label="Select diagram"
-          title="Select the whole diagram, to move it"
+          aria-label={t("panel.select")}
+          title={t("panel.selectHint")}
           onClick={() => engine.select(diagramShapeIds(diagram.shapes()))}
         >
           <BoxSelect />
@@ -100,8 +101,8 @@ export function ErPanel() {
           variant="ghost"
           size="icon"
           className="size-7"
-          aria-label="Re-layout"
-          title="Re-layout this diagram"
+          aria-label={t("panel.relayout")}
+          title={t("panel.relayoutHint")}
           onClick={() => diagram.relayout()}
         >
           <LayoutGrid />
@@ -112,8 +113,8 @@ export function ErPanel() {
             variant="ghost"
             size="icon"
             className="size-7"
-            aria-label="Collapse panel"
-            title="Collapse the panel (it stays while the ER mode is on)"
+            aria-label={t("panel.collapse")}
+            title={t("panel.collapseHint")}
             onClick={() => setCollapsed(true)}
           >
             <ChevronsRight />
@@ -123,7 +124,7 @@ export function ErPanel() {
             variant="ghost"
             size="icon"
             className="size-7"
-            aria-label="Close panel"
+            aria-label={t("panel.close")}
             onClick={() => setOpen(false)}
           >
             <X />
@@ -136,18 +137,15 @@ export function ErPanel() {
         className="-mx-3 min-h-0 flex-1 overflow-y-auto px-3"
       >
         <TabsList className="w-full">
-          <TabsTrigger value="visual">Visual</TabsTrigger>
-          <TabsTrigger value="text">Text</TabsTrigger>
+          <TabsTrigger value="visual">{t("panel.visual")}</TabsTrigger>
+          <TabsTrigger value="text">{t("panel.text")}</TabsTrigger>
         </TabsList>
         <TabsContent value="visual">
           {selectedId ? <ErShapeForm id={selectedId} /> : <ErDiagramSettings />}
         </TabsContent>
         <TabsContent value="text" className="flex min-h-0 flex-col">
           {!selectedId && (
-            <p className="mb-2 text-xs text-muted-foreground">
-              Select a shape on the board to edit it with a form, or use Add. The Visual tab shows
-              the diagram's settings.
-            </p>
+            <p className="mb-2 text-xs text-muted-foreground">{t("panel.textHelp")}</p>
           )}
           <ErTextEditor />
         </TabsContent>

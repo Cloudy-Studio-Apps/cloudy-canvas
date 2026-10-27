@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import type { CanvasDocument } from "@canvas";
 import { storage } from "@platform";
 import type { CanvasFileLoadState, CanvasFileSource } from "./canvas-file.types";
+import { t } from "./file.i18n";
 
 /**
  * Loads the file with this id from storage, or starts an empty document when the id isn't a saved
@@ -36,7 +37,7 @@ export function useCanvasFileLoader(id: string, source: CanvasFileSource): Canva
         if (active) {
           setState({
             status: "error",
-            message: error instanceof Error ? error.message : `The ${noun} couldn't be opened.`,
+            message: error instanceof Error ? error.message : t("errors.open", { noun }),
           });
         }
       }

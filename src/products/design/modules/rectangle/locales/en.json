@@ -1,0 +1,5 @@
+{
+  "label": "Rectangle",
+  "description": "A box with fills, strokes and rounded corners.",
+  "cornerRadius": "Corner radius"
+}

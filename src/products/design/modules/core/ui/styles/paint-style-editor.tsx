@@ -8,6 +8,7 @@ import { StyleEditorFrame } from "./style-editor-frame";
 import { useStyleWriter } from "./use-style-writer";
 import { PaintStackEditor } from "../sections/paint-stack-editor";
 import type { PaintStackEditorProps } from "../sections/paint-stack-editor.types";
+import { t } from "../../core.i18n";
 
 /** A new paint in a color style. */
 const NEW_PAINT = "#D9D9D9";
@@ -15,7 +16,7 @@ const NEW_PAINT = "#D9D9D9";
 /** A paint's color in a color style takes any color variable. */
 function paintField(path: string): BindableField | undefined {
   return /^paints\.\d+(\.stops\.\d+)?\.color$/.test(path)
-    ? { path, type: "color", scopes: [], label: "Color" }
+    ? { path, type: "color", scopes: [], label: t("styles.color") }
     : undefined;
 }
 
@@ -41,16 +42,16 @@ export function PaintStyleEditor({ style, onDelete }: StyleEditorProps) {
       <StyleBindingScope style={style} fieldOf={paintField}>
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Paints</span>
+            <span className="text-muted-foreground">{t("styles.paints")}</span>
             <PanelAddButton
-              label="Add paint"
+              label={t("styles.addPaint")}
               onClick={() => onChange((current) => [...current, solidPaint(NEW_PAINT)])}
             />
           </div>
           <PaintStackEditor
             paints={paints}
             mixed={false}
-            label="Paint"
+            label={t("styles.paint")}
             allowImage
             onChange={onChange}
             bindPrefix="paints"

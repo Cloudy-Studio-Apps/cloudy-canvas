@@ -18,6 +18,7 @@ import { createEmbed } from "./embed.factory";
 import { embedInteractionAt } from "./embed.interactions";
 import { embedHeight, hasPreview } from "./embed.layout";
 import type { EmbedDefaults, EmbedElement } from "./embed.types";
+import { t } from "./embed.i18n";
 
 /**
  * A pasted link as a card: YouTube videos play in place, other pages open in the browser. Its
@@ -25,8 +26,8 @@ import type { EmbedDefaults, EmbedElement } from "./embed.types";
  */
 export class EmbedKind extends BoxKind<EmbedElement, BoardToolOptions> {
   readonly type = "embed";
-  readonly label = "Link";
-  readonly description = "A pasted link: videos play on the board, pages open in the browser.";
+  readonly label = t("label");
+  readonly description = t("description");
   override readonly defaults: EmbedDefaults = EMBED_DEFAULTS;
   override readonly keepsRatio = true;
   override readonly specProperties = {

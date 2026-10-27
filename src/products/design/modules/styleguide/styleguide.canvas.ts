@@ -6,6 +6,7 @@ import { prepareSheetCopies, sheetRedirect } from "./sheet";
 import { styleguideCategories, styleguideTemplates } from "./styleguide.points";
 import { syncStyleguide } from "./system";
 import { TOKEN_SHEET_TOOL, TokenSheetTool } from "./tool";
+import { t } from "./styleguide.i18n";
 
 /**
  * Live elements: clicks and copies of what they generated, keeping them in step with the tokens,
@@ -41,7 +42,7 @@ export function registerStyleguideCanvas(host: ModuleHost): void {
           categories.find((c) => !c.untitled && c.groups(store, ctx.doc).length > 0) ??
           categories.find((c) => !c.untitled) ??
           categories[0];
-        return first ?? { id: "colors", label: "Colors" };
+        return first ?? { id: "colors", label: t("canvas.fallback") };
       }),
     keys: [{ key: "d", shift: true }],
   });

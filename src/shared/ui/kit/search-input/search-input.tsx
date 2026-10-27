@@ -2,6 +2,7 @@ import { Search, X } from "lucide-react";
 
 import { cn } from "@shared/ui/lib/utils";
 import type { SearchInputProps } from "./search-input.types";
+import { t } from "../kit.i18n";
 
 /** A search box: the icon, the text, a clear button; Escape clears it first. */
 export function SearchInput({
@@ -41,7 +42,7 @@ export function SearchInput({
       {value && (
         <button
           type="button"
-          aria-label="Clear search"
+          aria-label={t("search.clear")}
           onClick={() => onChange("")}
           className="flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-sm text-muted-foreground hover:bg-hover hover:text-foreground [&_svg]:size-3"
         >

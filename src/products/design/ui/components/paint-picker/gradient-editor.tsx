@@ -21,6 +21,7 @@ import { GradientToolbar } from "./gradient-toolbar";
 import { pageGradients } from "./page-gradients";
 import type { GradientEditorProps } from "./paint-picker.types";
 import { StopEaseSelect } from "./stop-ease-select";
+import { t } from "../../design-ui.i18n";
 
 /**
  * A gradient paint: its stops on a strip, the selected stop's color and blend, the stop list,
@@ -64,9 +65,9 @@ export function GradientEditor({ paint, onChange, size }: GradientEditorProps) {
   const copy = async () => {
     try {
       await clipboard.writeText(gradientCss(paint, size, paint.opacity));
-      toast({ title: "Copied the gradient as CSS" });
+      toast({ title: t("gradient.copied") });
     } catch (error) {
-      notifyError("The gradient couldn't be copied", error);
+      notifyError(t("gradient.copyFailed"), error);
     }
   };
 
@@ -80,7 +81,7 @@ export function GradientEditor({ paint, onChange, size }: GradientEditorProps) {
       <GradientStopBar paint={paint} selected={selected} onSelect={select} onChange={change} />
       <ColorControls
         key={selected}
-        label="Stop "
+        label={t("gradient.stop.subject")}
         color={stop.color}
         opacity={stop.opacity}
         onChange={(next, info) =>
@@ -123,8 +124,8 @@ export function GradientEditor({ paint, onChange, size }: GradientEditorProps) {
           />
         ))}
       </div>
-      <GradientSwatches title="On this page" gradients={onPage} onPick={pick} />
-      <GradientSwatches title="Recent" gradients={recents} onPick={pick} />
+      <GradientSwatches title={t("gradient.onThisPage")} gradients={onPage} onPick={pick} />
+      <GradientSwatches title={t("gradient.recent")} gradients={recents} onPick={pick} />
     </div>
   );
 }

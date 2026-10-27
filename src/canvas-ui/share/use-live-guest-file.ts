@@ -7,6 +7,7 @@ import type { CanvasFileContextValue } from "../file";
 import { useDocumentMeta } from "../use-document-meta";
 import { useRoomPresence } from "./use-room-presence";
 import { useStoreState } from "./use-store-state";
+import { t } from "./share.i18n";
 
 /**
  * The file of a live session joined as a guest: named and identified as the host's (so everyone's
@@ -20,7 +21,7 @@ export function useLiveGuestFile<O extends object>(
 ): CanvasFileContextValue {
   const { file, role, host } = useStoreState(guest.state);
   const meta = useDocumentMeta(engine.doc);
-  const hostName = host?.name ?? "The host";
+  const hostName = host?.name ?? t("guestSaves.host");
   const name = useCollaborationStore((s) => s.name);
   const color = useCollaborationStore((s) => s.color);
   const identity = useMemo(() => ({ name, color }), [name, color]);
@@ -32,8 +33,8 @@ export function useLiveGuestFile<O extends object>(
   useEffect(() => {
     const explain = () =>
       toast({
-        title: `${hostName} saves this ${noun}`,
-        description: "It's their file: changes made in the session are saved on their computer.",
+        title: t("guestSaves.title", { host: hostName, noun }),
+        description: t("guestSaves.description"),
       });
     const removeSave = engine.handleHostAction("save", explain);
     const removeSaveAs = engine.handleHostAction("saveAs", explain);
@@ -44,7 +45,7 @@ export function useLiveGuestFile<O extends object>(
   }, [engine, hostName, noun]);
 
   return useMemo(() => {
-    const fileName = file?.fileName ?? `Shared ${noun}`;
+    const fileName = file?.fileName ?? t("guestFile.name", { noun });
     const nothing = () => Promise.resolve(false);
     return {
       id: file?.fileId ?? "",

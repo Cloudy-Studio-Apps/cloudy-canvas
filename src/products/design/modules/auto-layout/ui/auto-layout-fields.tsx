@@ -25,11 +25,12 @@ import {
 import { useEditNodes } from "@design/ui/hooks";
 import { AlignmentGrid } from "./alignment-grid";
 import type { AutoLayoutFieldsProps } from "./auto-layout-fields.types";
+import { t } from "../auto-layout.i18n";
 
 const DIRECTIONS = [
-  { value: "vertical", label: "Vertical", icon: <ArrowDown /> },
-  { value: "horizontal", label: "Horizontal", icon: <ArrowRight /> },
-  { value: "wrap", label: "Wrap", icon: <TextWrap /> },
+  { value: "vertical", label: t("direction.vertical"), icon: <ArrowDown /> },
+  { value: "horizontal", label: t("direction.horizontal"), icon: <ArrowRight /> },
+  { value: "wrap", label: t("direction.wrap"), icon: <TextWrap /> },
 ] as const;
 
 /** The settings of frames that have an auto layout, each bound to all of them. */
@@ -69,7 +70,7 @@ export function AutoLayoutFields({ frames }: AutoLayoutFieldsProps) {
     <div className="flex flex-col gap-2">
       <NodeOptionButtons
         nodes={frames}
-        label="Direction"
+        label={t("direction.label")}
         options={DIRECTIONS}
         read={(node) => (layout(node).wrap ? "wrap" : layout(node).direction)}
         patch={(value, node) =>
@@ -87,13 +88,13 @@ export function AutoLayoutFields({ frames }: AutoLayoutFieldsProps) {
           <div className="flex items-center gap-1">
             {spread ? (
               <span className="flex h-7 flex-1 items-center rounded-sm bg-muted px-2 text-xs text-muted-foreground">
-                Auto gap
+                {t("gap.auto")}
               </span>
             ) : (
               <BindableNumberField
                 path="layout.gap"
                 {...field("gap")}
-                label="Gap between layers"
+                label={t("gap.between")}
                 prefix={
                   first.direction === "horizontal" ? (
                     <BetweenVerticalStart />
@@ -105,7 +106,7 @@ export function AutoLayoutFields({ frames }: AutoLayoutFieldsProps) {
               />
             )}
             <PanelIconButton
-              label={spread ? "Fixed gap" : "Auto gap (space between)"}
+              label={spread ? t("gap.useFixed") : t("gap.useAuto")}
               active={spread}
               onClick={() => set({ align: spread ? "start" : "space-between" })}
             >
@@ -116,25 +117,25 @@ export function AutoLayoutFields({ frames }: AutoLayoutFieldsProps) {
             <BindableNumberField
               path="layout.counterGap"
               {...field("counterGap")}
-              label="Gap between lines"
+              label={t("gap.betweenLines")}
               prefix={<BetweenHorizontalStart />}
             />
           )}
         </div>
       </div>
       <PropertyGrid>
-        {padding(["left", "right"], "Horizontal padding", <UnfoldHorizontal />)}
-        {padding(["top", "bottom"], "Vertical padding", <UnfoldVertical />)}
+        {padding(["left", "right"], t("padding.horizontal"), <UnfoldHorizontal />)}
+        {padding(["top", "bottom"], t("padding.vertical"), <UnfoldVertical />)}
       </PropertyGrid>
       <NodeCheckbox
         nodes={frames}
-        label="Strokes included in layout"
+        label={t("strokesIncluded")}
         read={(node) => layout(node).strokesIncluded}
         patch={(strokesIncluded, node) => layoutPatch(node, { strokesIncluded })!}
       />
       <NodeCheckbox
         nodes={frames}
-        label="First layer on top"
+        label={t("firstOnTop")}
         read={(node) => layout(node).reverseStacking}
         patch={(reverseStacking, node) => layoutPatch(node, { reverseStacking })!}
       />

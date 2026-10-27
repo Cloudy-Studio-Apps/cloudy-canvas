@@ -10,6 +10,7 @@ import { GroupSection } from "./group-section";
 import { NewGroupMenu } from "./new-group-menu";
 import { ScalePreviewSection } from "./scale-preview-section";
 import { ShadePreviewSection } from "./shade-preview-section";
+import { t } from "../../../variables.i18n";
 
 /**
  * The middle of the window: the collection's groups as card grids (filtered by the search), the
@@ -50,7 +51,7 @@ export function VariablesBoard() {
       <BoardToolbar />
       {groups.size === 0 && !text && <EmptyCollection />}
       {groups.size === 0 && text && (
-        <p className="text-xs text-muted-foreground">No variables match.</p>
+        <p className="text-xs text-muted-foreground">{t("board.noMatch")}</p>
       )}
       {[...groups].map(([group, items]) =>
         group === previewing && scaleDraft ? (

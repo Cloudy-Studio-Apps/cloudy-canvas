@@ -1,0 +1,49 @@
+{
+  "label": "Text",
+  "description": "Text in any font: click to type, or drag for a fixed width.",
+  "fields": {
+    "fontSize": "Font size",
+    "lineHeight": "Line height",
+    "letterSpacing": "Letter spacing",
+    "fontWeight": "Font weight",
+    "text": "Text",
+    "font": "Font",
+    "fontStyle": "Font style"
+  },
+  "styles": {
+    "textStyle": "Text style",
+    "rangeStyle": "Range text style",
+    "heading": "Text styles",
+    "auto": "Auto",
+    "createStyle": "Create style from this text",
+    "defaultName": "Text {size}"
+  },
+  "typography": {
+    "title": "Typography",
+    "titleSelection": "Typography · selection",
+    "alignment": "Text alignment",
+    "verticalAlignment": "Vertical alignment",
+    "resizing": "Resizing",
+    "left": "Align left",
+    "center": "Align center",
+    "right": "Align right",
+    "justify": "Justify",
+    "top": "Align top",
+    "middle": "Align middle",
+    "bottom": "Align bottom",
+    "autoWidth": "Auto width",
+    "autoHeight": "Auto height",
+    "fixedSize": "Fixed size",
+    "decoration": "Decoration",
+    "underline": "Underline",
+    "strikethrough": "Strikethrough",
+    "selectionColor": "Selection color"
+  },
+  "fonts": {
+    "mixed": "Mixed",
+    "installed": "Installed",
+    "search": "Search fonts",
+    "noMatch": "No font has that name.",
+    "loading": "Loading fonts…"
+  }
+}

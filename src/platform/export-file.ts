@@ -3,6 +3,7 @@ import { save } from "@tauri-apps/plugin-dialog";
 import { writeFile } from "@tauri-apps/plugin-fs";
 
 import type { ExportFileType } from "./export-file.types";
+import { t } from "./platform.i18n";
 
 /**
  * Asks where to save an exported file and writes it; in the browser, downloads it instead.
@@ -18,7 +19,7 @@ export async function exportFile(
     return true;
   }
   const path = await save({
-    title: "Export",
+    title: t("export"),
     defaultPath: `${name}.${extension}`,
     filters: [{ name: label, extensions: [extension] }],
   });

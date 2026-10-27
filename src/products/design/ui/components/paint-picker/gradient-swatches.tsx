@@ -2,6 +2,7 @@ import { gradientKey } from "@canvas";
 import { CHECKERBOARD } from "@canvas-ui";
 import type { GradientSwatchesProps } from "./paint-picker.types";
 import { gradientPreviewCss } from "./gradient-preview";
+import { t } from "../../design-ui.i18n";
 
 /** A titled grid of gradients to pick from (nothing when there are none). */
 export function GradientSwatches({ title, gradients, onPick }: GradientSwatchesProps) {
@@ -15,8 +16,10 @@ export function GradientSwatches({ title, gradients, onPick }: GradientSwatchesP
           <button
             key={gradientKey(gradient)}
             type="button"
-            aria-label={`${gradient.type} gradient`}
-            title={`${gradient.type[0]!.toUpperCase()}${gradient.type.slice(1)}`}
+            aria-label={t("gradient.swatch", {
+              type: t(`paintTypes.${gradient.type}`),
+            })}
+            title={t(`paintTypes.${gradient.type}`)}
             onClick={() => onPick(gradient)}
             className="size-5 cursor-pointer rounded-xs border border-border-strong hover:ring-2 hover:ring-ring/40"
             style={{ background: `${gradientPreviewCss(gradient)}, ${CHECKERBOARD}` }}

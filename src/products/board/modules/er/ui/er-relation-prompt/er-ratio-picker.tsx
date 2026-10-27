@@ -1,14 +1,18 @@
 import { ER_RELATION_RATIOS } from "../../connect/er-relation-ratios";
 import { ErRelationGlyph } from "./er-relation-glyph";
 import type { ErRatioPickerProps } from "./er-relation-prompt.types";
+import { t } from "../../er.i18n";
 
 /** Step one: what kind of relation links the two, each with its picture and a sentence. */
 export function ErRatioPicker({ from, to, onPick }: ErRatioPickerProps) {
   return (
     <div className="flex flex-col gap-1">
       <p className="px-1 pb-1 text-xs text-muted-foreground">
-        How are <span className="font-medium text-foreground">{from}</span> and{" "}
-        <span className="font-medium text-foreground">{to}</span> related?
+        {t("prompt.howBefore")}
+        <span className="font-medium text-foreground">{from}</span>
+        {t("prompt.and")}
+        <span className="font-medium text-foreground">{to}</span>
+        {t("prompt.related")}
       </p>
       {ER_RELATION_RATIOS.map((ratio, i) => (
         // eslint-disable-next-line no-restricted-syntax -- bespoke: a ratio with its glyph and sentence

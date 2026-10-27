@@ -6,6 +6,7 @@ import { TABLE_FILLS, TRANSPARENT } from "../../../palette";
 import { ColorPalette, useEngineElement } from "@canvas-ui";
 import { DocumentColorsButton } from "@board/ui/components/board-colors";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";
+import { t } from "../table.i18n";
 
 /** Fill colors for the selected cell, row or column of a table; a board color binds them. */
 export function TableCellFills() {
@@ -42,7 +43,9 @@ export function TableCellFills() {
       <ColorPalette
         colors={TABLE_FILLS}
         value={current}
-        labelOf={(color) => (color.value === TRANSPARENT ? "No fill" : `${color.name} fill`)}
+        labelOf={(color) =>
+          color.value === TRANSPARENT ? t("fills.none") : t("fills.color", { color: color.name })
+        }
         onSelect={fill}
         noneSelected={!!token}
       />

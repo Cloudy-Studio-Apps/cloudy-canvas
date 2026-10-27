@@ -9,6 +9,7 @@ import {
   IconButton,
 } from "@shared/ui/kit";
 import { NEW_COLOR } from "./new-color";
+import { t } from "../colors.i18n";
 
 /** The colors panel's "+": a color (in the first collection, "Colors" when there's none) or a collection. */
 export function AddMenu() {
@@ -20,14 +21,14 @@ export function AddMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <IconButton label="Add" size="sm">
+        <IconButton label={t("panel.add")} size="sm">
           <Plus />
         </IconButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onSelect={addColor}>New color</DropdownMenuItem>
+        <DropdownMenuItem onSelect={addColor}>{t("panel.newColor")}</DropdownMenuItem>
         <DropdownMenuItem onSelect={() => tokens.createCollection("Colors")}>
-          New collection
+          {t("panel.newCollection")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

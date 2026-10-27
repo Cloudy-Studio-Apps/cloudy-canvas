@@ -4,6 +4,7 @@ import { LOCAL_UNIFORMS } from "../effects";
 import type { CompiledShader, ShaderError } from "./shader-compile.types";
 import { shaderParams } from "./shader-params";
 import { PRELUDE_LINES, shaderSource } from "./shader-template";
+import { t } from "./shader-effect.i18n";
 
 /** Compiled codes, by their text: every layer with the same code shares one shader. */
 const compiled = new LruCache<string, CompiledShader>(64);
@@ -29,7 +30,7 @@ export function compileShaderCode(code: string): CompiledShader {
       return {
         ok: false,
         params,
-        error: { line: null, message: "Define vec4 effect(vec4 color, vec2 uv, vec2 local)." },
+        error: { line: null, message: t("errors.noEffect") },
       };
     }
     const source = shaderSource(code);
@@ -76,7 +77,7 @@ function checkSource(source: string): ShaderError | null {
   gl.deleteShader(shader);
   if (ok) return null;
   const match = /ERROR:\s*\d+:(\d+):\s*(.*)/.exec(log);
-  if (!match) return { line: null, message: log.trim() || "The shader doesn't compile." };
+  if (!match) return { line: null, message: log.trim() || t("errors.compile") };
   // The code starts after the two lines above, the prelude and the blank line between.
   const line = Number(match[1]) - 2 - PRELUDE_LINES;
   return { line: line >= 1 ? line : null, message: match[2]!.trim() };

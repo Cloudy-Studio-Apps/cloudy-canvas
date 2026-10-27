@@ -15,13 +15,14 @@ import type { ModuleHost } from "@shared/core";
 import { themeChoices } from "@shared/ui/theme";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import { useDesignPanelStore } from "@design/ui/stores/design-panel-store";
+import { t } from "./core.i18n";
 
 /** Turning and mirroring the selection, in the main menu and the context menu. */
 export const TRANSFORM_ITEMS = [
-  { command: "rotateLeft", label: "Rotate 90° left" },
-  { command: "rotateRight", label: "Rotate 90° right" },
-  { command: "flipHorizontal", label: "Flip horizontal" },
-  { command: "flipVertical", label: "Flip vertical" },
+  { command: "rotateLeft", label: t("commands.rotateLeft") },
+  { command: "rotateRight", label: t("commands.rotateRight") },
+  { command: "flipHorizontal", label: t("commands.flipHorizontal") },
+  { command: "flipVertical", label: t("commands.flipVertical") },
 ];
 
 /**
@@ -34,12 +35,12 @@ export function registerCoreMenu(host: ModuleHost): void {
     {
       id: "home",
       order: 10,
-      items: [{ label: "Back to home", icon: House, run: ({ navigate }) => navigate("/") }],
+      items: [{ label: t("menu.backHome"), icon: House, run: ({ navigate }) => navigate("/") }],
     },
     {
       id: "file",
       order: 20,
-      label: "File",
+      label: t("menu.file"),
       items: [
         { command: "save", icon: Save },
         { command: "saveAs" },
@@ -49,7 +50,7 @@ export function registerCoreMenu(host: ModuleHost): void {
     {
       id: "edit",
       order: 30,
-      label: "Edit",
+      label: t("menu.edit"),
       items: [
         { command: "undo", icon: Undo2 },
         { command: "redo", icon: Redo2 },
@@ -64,13 +65,13 @@ export function registerCoreMenu(host: ModuleHost): void {
     {
       id: "transform",
       order: 36,
-      label: "Transform",
+      label: t("menu.transform"),
       items: TRANSFORM_ITEMS,
     },
     {
       id: "view",
       order: 40,
-      label: "View",
+      label: t("menu.view"),
       items: [
         { command: "zoomIn" },
         { command: "zoomOut" },
@@ -87,32 +88,32 @@ export function registerCoreMenu(host: ModuleHost): void {
       items: [
         {
           command: "toggleRulers",
-          label: "Rulers",
+          label: t("commands.rulers"),
           checked: (engine) => engine.getState().rulersShown,
         },
         {
           command: "toggleGuides",
-          label: "Ruler guides",
+          label: t("commands.rulerGuides"),
           checked: (engine) => engine.getState().guidesShown,
         },
-        { command: "clearGuides", label: "Remove all guides" },
+        { command: "clearGuides", label: t("commands.removeGuides") },
         {
           command: "toggleLeftPanel",
-          label: "Left panel",
+          label: t("commands.leftPanel"),
           checked: () => useDesignPanelStore.getState().leftOpen,
         },
         {
           command: "toggleRightPanel",
-          label: "Properties panel",
+          label: t("commands.propertiesPanel"),
           checked: () => useDesignPanelStore.getState().rightOpen,
         },
-        { command: "toggleUi", label: "Hide UI" },
+        { command: "toggleUi", label: t("commands.hideUi") },
       ],
     },
     {
       id: "theme",
       order: 42,
-      label: "Theme",
+      label: t("menu.theme"),
       items: [
         ...themeChoices().map((choice) => ({
           label: choice.label,
@@ -120,7 +121,7 @@ export function registerCoreMenu(host: ModuleHost): void {
           run: choice.select,
         })),
         {
-          label: "Appearance settings…",
+          label: t("menu.appearanceSettings"),
           run: ({ navigate }) => navigate("/settings/appearance"),
         },
       ],
@@ -129,8 +130,8 @@ export function registerCoreMenu(host: ModuleHost): void {
       id: "app",
       order: 90,
       items: [
-        { label: "Settings", icon: Settings, run: ({ navigate }) => navigate("/settings") },
-        { label: "About Cloudy Canvas", icon: Info, run: openAbout },
+        { label: t("menu.settings"), icon: Settings, run: ({ navigate }) => navigate("/settings") },
+        { label: t("menu.about"), icon: Info, run: openAbout },
       ],
     },
   );

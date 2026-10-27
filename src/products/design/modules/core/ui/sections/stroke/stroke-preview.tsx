@@ -1,4 +1,5 @@
 import type { StrokePreviewProps } from "./stroke-preview.types";
+import { t } from "../../../core.i18n";
 
 /** Widest the preview draws a stroke, so heavy strokes still show their pattern. */
 const MAX_WIDTH = 8;
@@ -15,7 +16,7 @@ export function StrokePreview({ node }: StrokePreviewProps) {
   const dashes = node.strokeDashes.map((n) => n * scale).join(" ");
   return (
     <svg
-      aria-label="Stroke preview"
+      aria-label={t("stroke.preview")}
       role="img"
       className="h-8 w-full rounded-sm bg-muted text-foreground"
       preserveAspectRatio="none"

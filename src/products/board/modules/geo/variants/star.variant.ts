@@ -1,6 +1,7 @@
 import type { ElementSide, Point } from "@canvas";
 
 import { PolygonVariant } from "./geo.variant";
+import { t } from "../geo.i18n";
 
 /** Inner radius of the star, as a share of the outer one. */
 const INNER = 0.4;
@@ -8,7 +9,7 @@ const INNER = 0.4;
 /** Five-pointed star filling the box (nudged down so it looks centered). */
 export class Star extends PolygonVariant {
   readonly id = "star";
-  readonly label = "Star";
+  readonly label = t("variants.star");
   readonly icon = "M10 2.5l2.2 4.6l5 .7l-3.6 3.5l.9 5L10 13.9l-4.5 2.4l.9-5l-3.6-3.5l5-.7z";
   readonly defaultSize = { w: 130, h: 130 };
 

@@ -1,13 +1,14 @@
 import type { GalleryCategory } from "./gallery.types";
 import { mixPalette, rangePalette } from "./recipes";
+import { t } from "../color-wizard.i18n";
 
 /** Palettes of moods, things and occasions: happy, coffee, food, wedding, the holidays, … */
 export const OCCASION_CATEGORIES: readonly GalleryCategory[] = [
   {
     group: "Themes",
     id: "happy",
-    label: "Happy",
-    description: "Bright and cheerful.",
+    label: t("gallery.occasion.happy"),
+    description: t("gallery.occasion.happyHint"),
     generate: mixPalette([
       [
         [0.88, 0.93],
@@ -39,29 +40,29 @@ export const OCCASION_CATEGORIES: readonly GalleryCategory[] = [
   {
     group: "Themes",
     id: "coffee",
-    label: "Coffee",
-    description: "Espresso, latte and cream.",
+    label: t("gallery.occasion.coffee"),
+    description: t("gallery.occasion.coffeeHint"),
     generate: rangePalette({ l: [0.25, 0.92], c: [0.03, 0.08], hues: [[45, 70]] }),
   },
   {
     group: "Themes",
     id: "cream",
-    label: "Cream",
-    description: "Warm off-whites.",
+    label: t("gallery.occasion.cream"),
+    description: t("gallery.occasion.creamHint"),
     generate: rangePalette({ l: [0.86, 0.97], c: [0.02, 0.05], hues: [[60, 95]] }),
   },
   {
     group: "Themes",
     id: "skin",
-    label: "Skin",
-    description: "Skin tones from light to deep.",
+    label: t("gallery.occasion.skin"),
+    description: t("gallery.occasion.skinHint"),
     generate: rangePalette({ l: [0.35, 0.9], c: [0.05, 0.1], hues: [[40, 65]] }),
   },
   {
     group: "Themes",
     id: "food",
-    label: "Food",
-    description: "Tomato, basil, lemon and bread.",
+    label: t("gallery.occasion.food"),
+    description: t("gallery.occasion.foodHint"),
     generate: mixPalette([
       [
         [0.55, 0.62],
@@ -93,8 +94,8 @@ export const OCCASION_CATEGORIES: readonly GalleryCategory[] = [
   {
     group: "Themes",
     id: "wedding",
-    label: "Wedding",
-    description: "Ivory, blush, sage and gold.",
+    label: t("gallery.occasion.wedding"),
+    description: t("gallery.occasion.weddingHint"),
     generate: mixPalette([
       [
         [0.96, 0.98],
@@ -126,8 +127,8 @@ export const OCCASION_CATEGORIES: readonly GalleryCategory[] = [
   {
     group: "Themes",
     id: "christmas",
-    label: "Christmas",
-    description: "Red, pine, gold and snow.",
+    label: t("gallery.occasion.christmas"),
+    description: t("gallery.occasion.christmasHint"),
     generate: mixPalette([
       [
         [0.45, 0.52],
@@ -159,8 +160,8 @@ export const OCCASION_CATEGORIES: readonly GalleryCategory[] = [
   {
     group: "Themes",
     id: "halloween",
-    label: "Halloween",
-    description: "Pumpkin, potion and night.",
+    label: t("gallery.occasion.halloween"),
+    description: t("gallery.occasion.halloweenHint"),
     generate: mixPalette([
       [
         [0.68, 0.72],

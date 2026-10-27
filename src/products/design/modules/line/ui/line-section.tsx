@@ -3,10 +3,11 @@ import type { DesignNode } from "../../core";
 import type { LineCap, LineNodeElement } from "../line.types";
 import { NodeSelectField, PanelSection, PropertyGrid } from "@design/ui/components/panel";
 import type { PropertySectionProps } from "@design/ui/modules";
+import { t } from "../line.i18n";
 
 const CAPS: readonly { value: LineCap; label: string }[] = [
-  { value: "none", label: "None" },
-  { value: "arrow", label: "Arrow" },
+  { value: "none", label: t("section.none") },
+  { value: "arrow", label: t("arrow.label") },
 ];
 
 /** For selected lines: what each end looks like (an arrowhead or nothing). */
@@ -23,10 +24,10 @@ export function LineSection({ selection: { nodes } }: PropertySectionProps) {
   );
 
   return (
-    <PanelSection title="Line">
+    <PanelSection title={t("label")}>
       <PropertyGrid>
-        {capField("startCap", "Start")}
-        {capField("endCap", "End")}
+        {capField("startCap", t("section.start"))}
+        {capField("endCap", t("section.end"))}
       </PropertyGrid>
     </PanelSection>
   );

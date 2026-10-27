@@ -12,6 +12,7 @@ import {
   type SolidPaint,
 } from "@design";
 import { IconButton } from "@shared/ui/kit";
+import { tCommon } from "@shared/core";
 import { BlendModeSelect } from "../panel";
 import { GradientEditor } from "./gradient-editor";
 import { ImageEditor } from "./image-editor";
@@ -19,6 +20,7 @@ import type { PaintPickerProps, PaintTab } from "./paint-picker.types";
 import { PaintTabs } from "./paint-tabs";
 import { PAINT_TABS } from "./paint-tabs-data";
 import { SolidEditor } from "./solid-editor";
+import { t } from "../../design-ui.i18n";
 
 /** The color a solid tab starts with when the paint was an image. */
 const DEFAULT_SOLID = "#D9D9D9";
@@ -64,7 +66,7 @@ export function PaintPicker({ paint, onChange, onClose, allowImage, size }: Pain
   const setBlendMode = (mode: LayerBlendMode) =>
     onChange(withBlendMode(paint, mode === "pass-through" ? undefined : mode), { done: true });
 
-  const title = PAINT_TABS.find((t) => t.id === tab)?.label ?? "Paint";
+  const title = PAINT_TABS.find((t) => t.id === tab)?.label ?? t("paint.tabs.label");
 
   return (
     <div className="w-60 space-y-3 p-3">
@@ -75,10 +77,10 @@ export function PaintPicker({ paint, onChange, onClose, allowImage, size }: Pain
             value={paint.blendMode ?? "normal"}
             onChange={setBlendMode}
             passThrough={false}
-            label="Paint blend mode"
+            label={t("paint.blendMode")}
           />
         </div>
-        <IconButton size="xs" label="Close" tooltip={false} onClick={onClose}>
+        <IconButton size="xs" label={tCommon("close")} tooltip={false} onClick={onClose}>
           <X />
         </IconButton>
       </header>

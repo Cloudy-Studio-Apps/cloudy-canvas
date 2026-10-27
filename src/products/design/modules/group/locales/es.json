@@ -1,0 +1,11 @@
+{
+  "title": "Grupo",
+  "description": "Capas que se seleccionan y mueven juntas.",
+  "menu": {
+    "arrange": "Organizar"
+  },
+  "commands": {
+    "group": "Agrupar selección",
+    "ungroup": "Desagrupar"
+  }
+}

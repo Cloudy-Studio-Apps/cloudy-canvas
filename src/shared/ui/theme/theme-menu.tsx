@@ -11,6 +11,7 @@ import {
 } from "@shared/ui/components/ui/dropdown-menu";
 import type { ThemeDotProps, ThemeMenuProps } from "./theme.types";
 import { useThemes } from "./use-active-theme";
+import { t } from "./theme.i18n";
 
 /** A quick theme switcher: every theme, Match system and the Appearance settings. */
 export function ThemeMenu({ trigger, align = "end", onOpenSettings }: ThemeMenuProps) {
@@ -24,7 +25,7 @@ export function ThemeMenu({ trigger, align = "end", onOpenSettings }: ThemeMenuP
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
       <DropdownMenuContent align={align} className="min-w-48">
-        <DropdownMenuLabel>Theme</DropdownMenuLabel>
+        <DropdownMenuLabel>{t("menu.title")}</DropdownMenuLabel>
         {themes.map(({ theme }) => (
           <DropdownMenuItem key={theme.id} onSelect={() => setTheme(theme.id)}>
             <ThemeDot color={theme.preview.background} ring={theme.preview.primary} />
@@ -34,13 +35,13 @@ export function ThemeMenu({ trigger, align = "end", onOpenSettings }: ThemeMenuP
         ))}
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={() => setMode("system")}>
-          Match system
+          {t("menu.system")}
           {mode === "system" && <Check className="ml-auto" />}
         </DropdownMenuItem>
         {onOpenSettings && (
           <DropdownMenuItem onSelect={onOpenSettings}>
             <Settings2 />
-            Appearance settings…
+            {t("menu.appearance")}
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>

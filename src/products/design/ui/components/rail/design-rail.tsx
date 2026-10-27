@@ -7,6 +7,7 @@ import { DESIGN_LAYOUT } from "../../design-layout";
 import { useDesignPanelStore } from "../../stores/design-panel-store";
 import { useLeftTabs } from "../left-panel";
 import { DesignMainMenu } from "./design-main-menu";
+import { t } from "../../design-ui.i18n";
 
 /**
  * The strip along the left edge: the main menu, a button per left panel tab of the current mode
@@ -23,7 +24,7 @@ export function DesignRail() {
 
   return (
     <nav
-      aria-label="Panels"
+      aria-label={t("rail.label")}
       className="flex shrink-0 flex-col items-center gap-1 border-r bg-surface py-2"
       style={{ width: DESIGN_LAYOUT.rail }}
     >
@@ -50,7 +51,7 @@ export function DesignRail() {
         agentActions={(agent) => <CollaboratorUndoButton collaborator={agent} />}
         trigger={
           <ToolButton
-            label={agentsEnabled ? "Agents: on" : "Agents: off"}
+            label={agentsEnabled ? t("rail.agentsOn") : t("rail.agentsOff")}
             side="right"
             className={agentsEnabled ? undefined : "text-muted-foreground"}
           >
@@ -59,7 +60,7 @@ export function DesignRail() {
         }
       />
       <ToolButton
-        label={open ? "Hide left panel" : "Show left panel"}
+        label={open ? t("rail.hide") : t("rail.show")}
         side="right"
         aria-expanded={open}
         onClick={() => setOpen(!open)}

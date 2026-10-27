@@ -1,0 +1,80 @@
+{
+  "hostedStopped": {
+    "title": "Se dejó de compartir",
+    "description": "Se cerró el archivo, así que la sesión terminó."
+  },
+  "guestSaves": {
+    "title": "{host} guarda {noun}",
+    "description": "Es su archivo: los cambios hechos en la sesión se guardan en su computadora.",
+    "host": "El anfitrión"
+  },
+  "dialog": {
+    "sharing": "Compartiendo en vivo",
+    "share": "Comparte {noun} en vivo",
+    "description": "Invita a otras personas a editar {noun} contigo."
+  },
+  "start": {
+    "desktopOnly": "Las sesiones en vivo necesitan la app de escritorio.",
+    "explain": "Tu app aloja {noun}: las personas que invites se conectan y editan contigo, en vivo. El archivo se queda en tu computadora y se guarda aquí; cuando dejes de compartir o lo cierres, ya no podrán verlo.",
+    "name": "Tu nombre",
+    "namePlaceholder": "Se muestra a quienes se unan",
+    "start": "Empezar a compartir",
+    "error": "No se pudo empezar a compartir"
+  },
+  "hosting": {
+    "copied": "Enlace copiado",
+    "copiedHint": "Envíalo a las personas que quieras invitar.",
+    "copyError": "No se pudo copiar el enlace",
+    "invite": "Enlace de invitación",
+    "copy": "Copiar",
+    "approval": "Quien lo abra pide unirse; tú decides quién entra.",
+    "offline": "No se pudo contactar con el relay, así que solo pueden unirse las personas de tu red. Revisa Configuración › Colaboración.",
+    "inSession": "En la sesión",
+    "inSessionCount": "En la sesión ({count})",
+    "knocking": "Alguien pide unirse.",
+    "nobody": "Aún no se ha unido nadie.",
+    "stop": "Dejar de compartir"
+  },
+  "guest": {
+    "role": "Rol de {name}",
+    "edit": "Puede editar",
+    "view": "Puede ver",
+    "remove": "Quitar a {name}",
+    "removeHint": "Quitar de la sesión"
+  },
+  "knock": {
+    "label": "{name} quiere unirse",
+    "title": "{name} quiere unirse",
+    "version": "Usa Cloudy Canvas {theirs} (tú tienes {yours})",
+    "deny": "Denegar"
+  },
+  "badge": {
+    "viewingHint": "{host} te deja ver este archivo",
+    "liveHint": "Archivo de {host}",
+    "viewing": "Viendo",
+    "live": "En vivo"
+  },
+  "button": {
+    "sharing": "Compartiendo en vivo",
+    "share": "Compartir en vivo",
+    "live": "En vivo",
+    "shareShort": "Compartir"
+  },
+  "path": {
+    "direct": "Directa",
+    "relay": "Por relay",
+    "directHint": "Conectado directamente a esta computadora",
+    "relayHint": "El servidor relay lleva esta conexión (aún no se pudo hacer una directa)",
+    "connecting": "Conectando…"
+  },
+  "relay": {
+    "note": "Las conexiones pasan por {relay} cuando no se puede hacer una directa.",
+    "noteSettings": "Las conexiones pasan por {relay} cuando no se puede hacer una directa (Configuración › Colaboración).",
+    "own": "tu relay",
+    "builtIn": "el relay de Cloudy Canvas",
+    "public": "relays públicos"
+  },
+  "guestFile": {
+    "name": "Copia compartida de {noun}"
+  }
+}

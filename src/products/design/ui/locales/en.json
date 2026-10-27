@@ -1,0 +1,174 @@
+{
+  "gradient": {
+    "copied": "Copied the gradient as CSS",
+    "stop": {
+      "subject": "Stop",
+      "position": "Stop position",
+      "hex": "Stop hex",
+      "opacity": "Stop opacity",
+      "remove": "Remove stop",
+      "at": "Stop at {percent}%"
+    },
+    "onThisPage": "On this page",
+    "recent": "Recent",
+    "copyFailed": "The gradient couldn't be copied",
+    "toolbar": {
+      "copyCss": "Copy as CSS",
+      "smooth": "Smooth blending",
+      "rotate90": "Rotate 90°",
+      "reverse": "Reverse",
+      "addStop": "Add stop"
+    },
+    "ease": {
+      "linear": "Linear",
+      "in": "Ease in",
+      "out": "Ease out",
+      "inOut": "Ease in and out",
+      "label": "Blend to the next stop"
+    },
+    "swatch": "{type} gradient"
+  },
+  "image": {
+    "mode": {
+      "fill": "Fill",
+      "fit": "Fit",
+      "crop": "Crop",
+      "tile": "Tile"
+    },
+    "scaleMode": "Image scale mode",
+    "tileScale": "Tile scale",
+    "rotate90": "Rotate 90°",
+    "placeholder": "Placeholder",
+    "addPlaceholder": "Add placeholder",
+    "cropHint": "Drag the picture on the canvas to move it, its corners to scale it and the box to crop."
+  },
+  "paint": {
+    "blendMode": "Paint blend mode",
+    "tabs": {
+      "label": "Paint",
+      "noImageStroke": "Strokes can't be images yet",
+      "soon": "{name} (coming soon)"
+    },
+    "solid": {
+      "onThisPage": "On this page"
+    },
+    "field": {
+      "edit": "Edit {name}",
+      "hex": "{name} hex",
+      "opacity": "{name} opacity",
+      "hide": "Hide {name}",
+      "show": "Show {name}",
+      "remove": "Remove {name}"
+    }
+  },
+  "paintTypes": {
+    "solid": "Solid",
+    "linear": "Linear",
+    "radial": "Radial",
+    "angular": "Angular",
+    "diamond": "Diamond",
+    "image": "Image",
+    "pattern": "Pattern"
+  },
+  "variable": {
+    "use": "Use a variable",
+    "useFor": "Use a variable for {name}"
+  },
+  "blendModes": {
+    "passThrough": "Pass through",
+    "normal": "Normal",
+    "darken": "Darken",
+    "multiply": "Multiply",
+    "plusDarker": "Plus darker",
+    "colorBurn": "Color burn",
+    "lighten": "Lighten",
+    "screen": "Screen",
+    "plusLighter": "Plus lighter",
+    "colorDodge": "Color dodge",
+    "overlay": "Overlay",
+    "softLight": "Soft light",
+    "hardLight": "Hard light",
+    "difference": "Difference",
+    "exclusion": "Exclusion",
+    "hue": "Hue",
+    "saturation": "Saturation",
+    "color": "Color",
+    "luminosity": "Luminosity",
+    "mixed": "Mixed",
+    "label": "Blend mode"
+  },
+  "panel": {
+    "mixed": "Mixed"
+  },
+  "properties": {
+    "label": "Properties",
+    "hide": "Hide properties panel",
+    "tabs": {
+      "design": "Design",
+      "prototype": "Prototype"
+    },
+    "show": "Show properties panel"
+  },
+  "rail": {
+    "mainMenu": "Main menu",
+    "label": "Panels",
+    "agentsOn": "Agents: on",
+    "agentsOff": "Agents: off",
+    "hide": "Hide left panel",
+    "show": "Show left panel"
+  },
+  "tokenUsage": {
+    "detach": {
+      "title": "Detach everywhere?",
+      "button": "Detach everywhere",
+      "description": "{layers} layers and {styles} styles stop using it and keep their look. It stays in the file.",
+      "confirm": "Detach"
+    },
+    "replace": {
+      "it": "it",
+      "done": "Replaced with {name}",
+      "layersUse_one": "{count} layer now uses it.",
+      "layersUse_other": "{count} layers now use it.",
+      "failed": "Couldn't replace it",
+      "button": "Replace with…",
+      "none": "No other style of this kind."
+    },
+    "summary": {
+      "layers_one": "{count} layer",
+      "layers_other": "{count} layers",
+      "aliases_one": "{count} alias",
+      "aliases_other": "{count} aliases",
+      "styles_one": "{count} style",
+      "styles_other": "{count} styles",
+      "generators_one": "{count} generator",
+      "generators_other": "{count} generators",
+      "usedBy": "Used by {parts}",
+      "unused": "Not used anywhere",
+      "selectHere": "Select {count} here"
+    }
+  },
+  "designEditor": {
+    "ariaLabel": "Design canvas",
+    "title": "Opening design",
+    "failed": "The design couldn't be opened",
+    "home": "Back to home"
+  },
+  "leftPanel": {
+    "draft": "Draft",
+    "saved": "Saved file",
+    "notSaved": "Not saved yet",
+    "design": "Design"
+  },
+  "import": {
+    "figma": {
+      "reading": "Reading file",
+      "building": "Building design",
+      "saving": "Saving draft",
+      "importing": "Importing {name}"
+    }
+  },
+  "file": {
+    "noun": "design",
+    "untitled": "Untitled design"
+  }
+}

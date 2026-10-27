@@ -2,13 +2,14 @@ import { label, SHEET_LOOK, stack } from "../../sheet";
 import type { StyleguideTemplate } from "../../styleguide.types";
 import { fontOf, leafName, variablesOf } from "../template-kit";
 import { COLOR_OPTIONS, colorSwatch, colorValues } from "./color-kit";
+import { t } from "../../styleguide.i18n";
 
 /** A vertical list: a small swatch, then the name and values on one line. */
 export const listTemplate: StyleguideTemplate = {
   id: "colors.list",
   category: "colors",
-  label: "Vertical list",
-  description: "One row per color: a small swatch, its name and values.",
+  label: t("templates.colors.list.label"),
+  description: t("templates.colors.list.description"),
   options: COLOR_OPTIONS.filter((option) => option.id !== "swatch"),
   build: (group, options, context) => [
     stack(

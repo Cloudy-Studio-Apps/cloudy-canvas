@@ -8,6 +8,7 @@ import { ModeSwitcher } from "./mode-switcher";
 import { ToolMenuButton } from "./tool-menu-button";
 import { useEditorMode } from "./use-editor-mode";
 import { toolbarGroups, toolbarItems, toolInfo } from "./tool-entries";
+import { t } from "./modules.i18n";
 
 /**
  * The tools the modules place on the toolbar, in their groups (tools sharing a menu as one), then
@@ -44,7 +45,7 @@ function ToolbarForMode({ children }: ModuleToolbarProps) {
   if (ModeToolbar) return <ModeToolbar />;
 
   return (
-    <FloatingPanel role="toolbar" aria-label="Tools" aria-orientation="horizontal">
+    <FloatingPanel role="toolbar" aria-label={t("tools")} aria-orientation="horizontal">
       {groups.map((group, i) => (
         <div key={group[0]?.toolbar.group ?? i} className="flex items-center gap-0.5">
           {i > 0 && <PanelDivider />}

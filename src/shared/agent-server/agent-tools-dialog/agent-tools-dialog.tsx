@@ -11,6 +11,7 @@ import { readAgentToolCatalog } from "../agent-tool-catalog";
 import { useAgentServerStatus } from "../use-agent-server-status";
 import { AgentToolsList } from "./agent-tools-list";
 import type { AgentToolsDialogProps } from "./agent-tools-dialog.types";
+import { t } from "../agent-server.i18n";
 
 /** Every tool connected agents can use, with what it does. */
 export function AgentToolsDialog({ open, onOpenChange }: AgentToolsDialogProps) {
@@ -23,10 +24,10 @@ export function AgentToolsDialog({ open, onOpenChange }: AgentToolsDialogProps) 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="gap-0 p-0 sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle>Agent tools</DialogTitle>
+          <DialogTitle>{t("tools.title")}</DialogTitle>
           <DialogDescription>
-            {count} tools connected AI agents can use in Cloudy Canvas.
-            {!enabled && " Agent access is off, so no agent can use them right now."}
+            {t("tools.count", { count })}
+            {!enabled && t("tools.off")}
           </DialogDescription>
         </DialogHeader>
         {/* Mounted only while open, so every opening starts with an empty search. */}

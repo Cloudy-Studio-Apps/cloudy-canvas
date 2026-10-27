@@ -5,6 +5,7 @@ import { CHECKERBOARD } from "../color";
 import { ColorPicker } from "../color-picker";
 import { EngineContext } from "../../engine-context";
 import type { ColorPopoverProps } from "./color-field.types";
+import { t } from "../components.i18n";
 
 /**
  * A trigger (a swatch by default) that opens the app's color picker. A drag's steps are written
@@ -35,7 +36,7 @@ export function ColorPopover({
           // eslint-disable-next-line no-restricted-syntax -- bespoke: a color swatch
           <button
             type="button"
-            aria-label={`Edit ${label.toLowerCase()}`}
+            aria-label={t("color.edit", { label: label.toLowerCase() })}
             title={label}
             className="relative size-3.5 shrink-0 cursor-pointer overflow-hidden rounded-xs border border-border-strong outline-none focus-visible:ring-2 focus-visible:ring-ring"
             style={{ background: CHECKERBOARD }}

@@ -16,12 +16,13 @@ import { ErNamedKind } from "../base/er-named.kind";
 import { entitySize } from "../base/er-size";
 import { drawErEntity } from "./entity.draw";
 import type { ErEntityElement } from "./entity.types";
+import { t } from "../er.i18n";
 
 export class ErEntityKind extends ErNamedKind<ErEntityElement> {
   readonly type = "er-entity";
   override readonly connectable = true;
-  readonly label = "Entity";
-  readonly description = "An entity of an ER diagram; click to start a new diagram.";
+  readonly label = t("kinds.entity.label");
+  readonly description = t("kinds.entity.description");
 
   /** Connect dots: drag one to link this to another element, or to add an attribute. */
   override handles(el: ErEntityElement, zoom: number): ElementHandle[] {

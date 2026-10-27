@@ -1,0 +1,33 @@
+{
+  "title": "Mask",
+  "commands": {
+    "use": "Use as mask",
+    "remove": "Remove mask",
+    "release": "Release mask",
+    "select": "Select mask",
+    "selectMasked": "Select masked layers"
+  },
+  "panel": {
+    "selectMask": "Select mask",
+    "selectMasked": "Select masked",
+    "release": "Release",
+    "maskedBy": "Masked by {name}",
+    "groupsHint": "Groups the layers; the bottom one masks the others",
+    "aboveHint": "Masks the layers above it",
+    "type": "Mask type",
+    "invert": "Invert mask (show what's outside it)"
+  },
+  "toolbar": {
+    "removeHint": "The layers it masks show whole again.",
+    "groupsHint": "Groups the layers; the bottom one masks the others.",
+    "aboveHint": "Masks the layers above it."
+  },
+  "options": {
+    "alpha": "Alpha",
+    "vector": "Vector (outline)",
+    "luminance": "Luminance"
+  },
+  "defaults": {
+    "maskGroup": "Mask group"
+  }
+}

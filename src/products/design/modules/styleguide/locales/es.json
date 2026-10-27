@@ -1,0 +1,271 @@
+{
+  "categories": {
+    "colors": "Colores",
+    "cover": "Portada",
+    "effects": "Efectos",
+    "opacity": "Opacidad",
+    "other": "Otros",
+    "paintStyles": "Estilos de pintura",
+    "radius": "Radio",
+    "spacing": "Espaciado",
+    "strokes": "Trazos",
+    "typography": "Tipografía"
+  },
+  "canvas": {
+    "fallback": "Colores"
+  },
+  "commands": {
+    "open": "Sistema de diseño",
+    "convert": "Convertir en diseño",
+    "exportSection": "Exportar esta sección…",
+    "exportSystem": "Exportar el sistema de diseño como PDF"
+  },
+  "mode": {
+    "label": "Sistema de diseño",
+    "description": "Tus variables y estilos como una guía de estilo viva."
+  },
+  "sections": {
+    "label": "Sistema de diseño",
+    "description": "Coloca tus variables y estilos como una guía de estilo viva que se mantiene al día."
+  },
+  "templates": {
+    "colors": {
+      "cards": {
+        "label": "Tarjetas",
+        "description": "Una tarjeta por color: una muestra ancha, su nombre, valores, nombre en código y descripción."
+      },
+      "circles": {
+        "label": "Círculos",
+        "description": "Un círculo por color, con su nombre y valores debajo."
+      },
+      "contrastPairs": {
+        "label": "Pares con contraste",
+        "description": "Texto sobre cada color, con su relación de contraste y nivel WCAG.",
+        "textIn": "Texto en",
+        "whiteAndBlack": "Blanco y negro",
+        "white": "Blanco",
+        "black": "Negro",
+        "labelFont": "Fuente de etiquetas"
+      },
+      "list": {
+        "label": "Lista vertical",
+        "description": "Una fila por color: una muestra pequeña, su nombre y valores."
+      },
+      "modeColumns": {
+        "label": "Columnas de modos",
+        "description": "Todos los modos lado a lado: la cuadrícula de muestras por modo."
+      },
+      "rampStrip": {
+        "label": "Tira de rampa",
+        "description": "Tonos unidos en una tira, con sus nombres y valores debajo."
+      },
+      "stripes": {
+        "label": "Franjas",
+        "description": "Bandas altas lado a lado, con la etiqueta dentro."
+      },
+      "swatchGrid": {
+        "label": "Cuadrícula de muestras",
+        "description": "Cuadrados en una cuadrícula con sus nombres y valores."
+      }
+    },
+    "cover": {
+      "minimal": {
+        "label": "Mínima",
+        "description": "El título del archivo y nada más.",
+        "font": "Fuente"
+      },
+      "title": {
+        "label": "Título, descripción y fecha",
+        "description": "El título del archivo, su descripción y la fecha de hoy.",
+        "font": "Fuente"
+      }
+    },
+    "effects": {
+      "cards": {
+        "label": "Tarjetas con el efecto",
+        "description": "Una tarjeta blanca por estilo de efecto, con su nombre y resumen.",
+        "columns": "Columnas",
+        "cardHeight": "Alto de la tarjeta"
+      },
+      "elevation": {
+        "label": "Escala de elevación",
+        "description": "Los estilos en una fila, por orden de nombre, como una escala de elevación."
+      }
+    },
+    "opacity": {
+      "checker": {
+        "label": "Sobre claro y gris",
+        "description": "Un cuadrado de tinta con cada opacidad sobre un fondo mitad blanco, mitad gris."
+      },
+      "table": {
+        "label": "Tabla",
+        "description": "Todas las opacidades en una tabla."
+      }
+    },
+    "other": {
+      "table": {
+        "label": "Tabla",
+        "description": "El nombre, tipo y valor de cada variable."
+      }
+    },
+    "paint": {
+      "cards": {
+        "label": "Tarjetas",
+        "description": "Una muestra por estilo de pintura con su nombre y de qué está hecho.",
+        "columns": "Columnas"
+      },
+      "swatches": {
+        "label": "Muestras",
+        "description": "Un cuadrado por estilo de pintura, con degradados e imágenes incluidos.",
+        "columns": "Columnas",
+        "swatchSize": "Tamaño de muestra"
+      }
+    },
+    "radius": {
+      "corners": {
+        "label": "Cajas de esquinas",
+        "description": "Una caja redondeada con cada radio, con su nombre y valor.",
+        "boxSize": "Tamaño de la caja"
+      },
+      "table": {
+        "label": "Tabla",
+        "description": "Todos los radios en una tabla."
+      }
+    },
+    "spacing": {
+      "bars": {
+        "label": "Regla de barras",
+        "description": "Una barra tan larga como cada valor, con su nombre y valor.",
+        "barColor": "Color de barra",
+        "indigo": "Índigo",
+        "pink": "Rosa",
+        "ink": "Tinta"
+      },
+      "squares": {
+        "label": "Cuadrados anidados",
+        "description": "Cuadrados tan grandes como cada valor, anidados unos en otros, con una leyenda."
+      },
+      "table": {
+        "label": "Tabla",
+        "description": "Todos los valores en una tabla."
+      }
+    },
+    "strokes": {
+      "boxes": {
+        "label": "Cajas",
+        "description": "Una caja con el contorno de cada trazo, con su nombre y resumen."
+      },
+      "lines": {
+        "label": "Muestras de línea",
+        "description": "Una muestra larga de cada trazo, con su nombre y resumen."
+      }
+    },
+    "typography": {
+      "paragraph": {
+        "label": "Muestra de párrafo",
+        "description": "Un párrafo con cada estilo, para juzgar cómo se lee.",
+        "width": "Ancho"
+      },
+      "scale": {
+        "label": "Escala tipográfica",
+        "description": "Cada estilo de texto escrito en sí mismo, con su nombre y tamaño / alto de línea.",
+        "sample": "Muestra",
+        "fox": "El veloz zorro marrón",
+        "name": "El nombre del estilo",
+        "alphabet": "Aa Bb Cc 123"
+      },
+      "specimen": {
+        "label": "Espécimen",
+        "description": "Cada familia que usan los estilos: «Aa» escrito en ella, su nombre y sus pesos."
+      },
+      "table": {
+        "label": "Tabla",
+        "description": "Los valores de cada estilo en una tabla."
+      }
+    }
+  },
+  "colorKit": {
+    "hex": "Hex",
+    "rgb": "RGB",
+    "hsl": "HSL",
+    "codeName": "Nombre en código",
+    "description": "Descripción",
+    "swatchSize": "Tamaño de muestra",
+    "labelFont": "Fuente de etiquetas",
+    "columns": "Columnas"
+  },
+  "empty": {
+    "setUp": {
+      "title": "Configura tu sistema de diseño",
+      "description": "Este archivo tiene variables y estilos. Organízalos como una guía de estilo que se mantiene al día.",
+      "action": "Configurar"
+    },
+    "none": {
+      "title": "Aún no hay sistema de diseño",
+      "description": "Añade variables y estilos, y esta vista los organiza como una guía de estilo que se mantiene al día.",
+      "comingSoon": "Próximamente",
+      "addColor": "Añadir un color",
+      "importTokens": "Importar tokens"
+    }
+  },
+  "export": {
+    "format": "Documento PDF",
+    "exporting": "Exportando el sistema de diseño",
+    "drawing": "Dibujando las secciones",
+    "failed": "No se pudo exportar el sistema de diseño"
+  },
+  "addToPage": {
+    "label": "Añadir a la página",
+    "added": "Añadido a {name}"
+  },
+  "menu": {
+    "label": "Sistema de diseño",
+    "exportSection": "Exportar esta sección…",
+    "exportSystem": "Exportar sistema de diseño como PDF…",
+    "convert": "Convertir en diseño"
+  },
+  "sidebar": {
+    "modesSwitch": "Mostrar los modos lado a lado",
+    "sheet": {
+      "title": "Sistema de diseño",
+      "sideBySide": "Mostrar los modos lado a lado",
+      "convert": "Convertir en diseño",
+      "useSystem": "Usar la plantilla del sistema de diseño"
+    },
+    "source": {
+      "category": "Categoría",
+      "group": "Grupo",
+      "wholeCategory": "Toda la categoría"
+    },
+    "overview": {
+      "title": "Sistema de diseño",
+      "empty": "Añade variables o estilos para verlos aquí como una guía de estilo.",
+      "summary_one": "{count} sección, siempre al día cuando cambian tus variables y estilos. Elige una en el panel izquierdo o en el lienzo para decidir cómo se dibuja.",
+      "summary_other": "{count} secciones, siempre al día cuando cambian tus variables y estilos. Elige una en el panel izquierdo o en el lienzo para decidir cómo se dibuja.",
+      "exportPdf": "Exportar como PDF"
+    },
+    "template": {
+      "groupHint": "La plantilla de este grupo. Si no eliges una, usa la de su categoría.",
+      "categoryHint": "La plantilla que usan todos los grupos de esta categoría, salvo que un grupo elija la suya.",
+      "useCategory": "Usar la plantilla de la categoría"
+    }
+  },
+  "tab": {
+    "empty": {
+      "title": "Aún no hay nada que mostrar",
+      "description": "Añade una variable o un estilo y su categoría aparecerá aquí."
+    },
+    "ariaLabel": "Categorías",
+    "categories": "Categorías",
+    "row": {
+      "hideGroups": "Ocultar sus grupos",
+      "showGroups": "Mostrar sus grupos",
+      "empty": "Vacío",
+      "show": "Mostrar en la vista",
+      "hide": "Ocultar de la vista"
+    }
+  },
+  "defaults": {
+    "systemPage": "Sistema de diseño"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "label": "Sección",
+  "description": "Un área con título que agrupa y mueve lo que hay dentro.",
+  "color": "Color",
+  "defaultTitle": "Sección {number}",
+  "colors": {
+    "group": "Colores de la sección"
+  },
+  "menu": {
+    "title": "Secciones",
+    "empty": "Aún no hay secciones. Usa la herramienta Sección para añadir una."
+  }
+}

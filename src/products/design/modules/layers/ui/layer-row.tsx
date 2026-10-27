@@ -8,6 +8,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { LayerIcon } from "./layer-icon";
 import { LayerName } from "./layer-name";
 import type { LayerRowProps } from "./layer-row.types";
+import { t } from "../layers.i18n";
 
 /**
  * One layer of the list. Click selects it (Shift or Ctrl/Cmd adds), double-click renames it,
@@ -61,7 +62,7 @@ export const LayerRow = memo(function LayerRow({
       {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the tree's tiny disclosure triangle */}
       <button
         type="button"
-        aria-label={expanded ? "Collapse" : "Expand"}
+        aria-label={expanded ? t("collapse") : t("expand")}
         onClick={(event) => {
           event.stopPropagation();
           onToggle(node.id);
@@ -75,9 +76,9 @@ export const LayerRow = memo(function LayerRow({
       </button>
       {masked && (
         <span
-          title="Masked"
+          title={t("masked")}
           className="flex shrink-0 text-subtle-foreground [&_svg]:size-3"
-          aria-label="Masked"
+          aria-label={t("masked")}
         >
           <CornerLeftDown />
         </span>
@@ -93,8 +94,8 @@ export const LayerRow = memo(function LayerRow({
       />
       {node.effects.some((effect) => effect.visible) && (
         <span
-          title="Has effects"
-          aria-label="Has effects"
+          title={t("hasEffects")}
+          aria-label={t("hasEffects")}
           className="flex shrink-0 text-subtle-foreground [&_svg]:size-3"
         >
           <Sparkles />
@@ -104,8 +105,8 @@ export const LayerRow = memo(function LayerRow({
         <IconButton
           size="xs"
           className="size-5 rounded-xs hover:bg-transparent"
-          label={node.locked ? "Unlock" : "Lock"}
-          title={node.locked ? "Unlock" : "Lock"}
+          label={node.locked ? t("unlock") : t("lock")}
+          title={node.locked ? t("unlock") : t("lock")}
           tooltip={false}
           revealOnHover={!node.locked}
           onClick={(event) => {
@@ -118,8 +119,8 @@ export const LayerRow = memo(function LayerRow({
         <IconButton
           size="xs"
           className="size-5 rounded-xs hover:bg-transparent"
-          label={node.visible ? "Hide" : "Show"}
-          title={node.visible ? "Hide" : "Show"}
+          label={node.visible ? t("hide") : t("show")}
+          title={node.visible ? t("hide") : t("show")}
           tooltip={false}
           revealOnHover={node.visible}
           onClick={(event) => {

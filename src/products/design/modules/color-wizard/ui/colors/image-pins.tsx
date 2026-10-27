@@ -6,6 +6,7 @@ import { extractImageColors, rgbToHex, type PixelData } from "../..";
 import { commitPalette, setColors, useColorWizardStore } from "../store";
 import type { ImagePinsProps } from "./colors.types";
 import { downsample, pixelAt, readPixels } from "./read-pixels";
+import { t } from "../../color-wizard.i18n";
 
 /**
  * The image with a numbered pin on each color found in it. Changing the image, the mood or how
@@ -26,7 +27,7 @@ export function ImagePins({ url }: ImagePinsProps) {
       setSrc(url);
     };
     img.onerror = () =>
-      notifyError("Couldn't read the image", new Error("It isn't a picture the app can open."));
+      notifyError(t("sources.image.readFailed"), new Error("It isn't a picture the app can open."));
     img.src = url;
   }, [url]);
 
@@ -89,7 +90,7 @@ export function ImagePins({ url }: ImagePinsProps) {
           <span
             key={i}
             role="slider"
-            aria-label={`Color ${i + 1}`}
+            aria-label={t("palette.swatch.colorN", { n: i + 1 })}
             aria-valuenow={i}
             tabIndex={-1}
             onPointerDown={drag(i)}

@@ -1,0 +1,169 @@
+{
+  "table": {
+    "label": "Tabla de base de datos",
+    "description": "Una tabla del esquema de base de datos de la pizarra, editada visualmente o como DBML."
+  },
+  "enum": {
+    "label": "Enumeración de base de datos",
+    "description": "Una enumeración del esquema de base de datos de la pizarra; las columnas la usan como tipo."
+  },
+  "options": {
+    "group": "Opciones de base de datos",
+    "table": "Tabla",
+    "enum": "Enumeración"
+  },
+  "schema": {
+    "button": "Esquema de base de datos"
+  },
+  "panel": {
+    "schema": "Esquema de base de datos",
+    "table": "Tabla",
+    "enum": "Enumeración",
+    "editor": "Editor de {title}",
+    "selectLinked": "Seleccionar vinculados",
+    "selectLinkedHint": "Selecciona todas las tablas y enumeraciones vinculadas a esta, para moverlas",
+    "tidy": "Ordenar",
+    "tidyCard": "Ordena esta tabla y las vinculadas a ella",
+    "tidyAll": "Ordena todo el esquema",
+    "schemaButton": "Esquema",
+    "close": "Cerrar panel",
+    "columnTypes": "Tipos de columna"
+  },
+  "tabs": {
+    "visual": "Visual",
+    "all": "Todo",
+    "enums": "Enumeraciones ({count})",
+    "types": "Tipos"
+  },
+  "flags": {
+    "pk": "Clave primaria",
+    "notNull": "No nulo",
+    "unique": "Único",
+    "increment": "Autoincremento",
+    "group": "Restricciones"
+  },
+  "column": {
+    "details": "Detalles de la columna",
+    "detailsHint": "Valor por defecto, nota y orden",
+    "default": "Valor por defecto",
+    "defaultPlaceholder": "p. ej. 0, 'draft', `now()`",
+    "note": "Nota",
+    "order": "Orden",
+    "moveUp": "Subir",
+    "moveDown": "Bajar",
+    "name": "Nombre de la columna",
+    "delete": "Eliminar la columna {name}",
+    "deleteHint": "Eliminar columna"
+  },
+  "type": {
+    "column": "Tipo de la columna",
+    "args": "Argumentos del tipo",
+    "argsPlaceholder": "args",
+    "choose": "Elegir un tipo",
+    "search": "Busca o escribe un tipo personalizado…",
+    "enumValues": "{count} valores",
+    "noEnums": "Aún no hay enumeraciones. Añade una con la herramienta Base de datos (Enumeración) o en la vista Esquema.",
+    "useCustom": "Usar tipo personalizado",
+    "use": "Usar"
+  },
+  "typeArgs": {
+    "length": "longitud",
+    "precisionScale": "precisión, escala",
+    "precision": "precisión"
+  },
+  "enumEditor": {
+    "dbmlLabel": "DBML de {name}",
+    "dbmlHint": "Solo esta enumeración. Al renombrarla también se renombra el tipo de las columnas que la usan.",
+    "name": "Nombre de la enumeración",
+    "headerColor": "Color del encabezado",
+    "values": "Valores",
+    "addValue": "Añadir valor",
+    "value": "Valor",
+    "valueNote": "Nota del valor",
+    "deleteValue": "Eliminar el valor {name}",
+    "note": "Nota",
+    "usedBy": "Usada por",
+    "noUsages": "Aún no hay columnas. Elige esta enumeración en la lista de tipos de una columna."
+  },
+  "nav": {
+    "goTo": "Ir a {name}",
+    "goToTable": "Ir a la tabla"
+  },
+  "tableEditor": {
+    "dbmlLabel": "DBML de {name}",
+    "dbmlHint": "Solo esta tabla. Refiérete a otras tablas por su nombre, p. ej. [ref: > users.id].",
+    "name": "Nombre de la tabla",
+    "headerColor": "Color del encabezado",
+    "columns": "Columnas",
+    "addColumn": "Añadir columna",
+    "note": "Nota",
+    "notePlaceholder": "Se muestra como comentario junto a la tabla",
+    "referencedBy": "Referenciada por"
+  },
+  "indexes": {
+    "title": "Índices",
+    "add": "Añadir índice",
+    "none": "Sin índices."
+  },
+  "index": {
+    "remove": "Quitar {part} del índice",
+    "delete": "Eliminar índice",
+    "name": "Nombre",
+    "nameLabel": "Nombre del índice",
+    "method": "Método",
+    "methodLabel": "Método del índice",
+    "note": "Nota",
+    "noteLabel": "Nota del índice",
+    "add": "Añadir al índice",
+    "addHint": "Añade una columna o expresión",
+    "allUsed": "Todas las columnas ya están en él",
+    "expression": "Expresión, p. ej. lower(email)"
+  },
+  "ref": {
+    "relationTo": "Relación con {target}",
+    "add": "Añadir relación",
+    "remove": "Quitar relación",
+    "kind": "Tipo de relación",
+    "manyToOne": "Muchos a uno",
+    "oneToMany": "Uno a muchos",
+    "oneToOne": "Uno a uno",
+    "manyToMany": "Muchos a muchos",
+    "search": "Buscar tabla.columna…",
+    "noColumns": "No se encontraron columnas"
+  },
+  "schemaEditor": {
+    "import": "Importar .dbml",
+    "export": "Exportar .dbml",
+    "importFailed": "Error al importar, línea {line}: {message}",
+    "label": "DBML del esquema de la pizarra",
+    "hint": "Todas las tablas, enumeraciones y notas adhesivas DBML de la pizarra. Pega aquí un esquema completo para reemplazarlo; Importar fusiona un archivo."
+  },
+  "errors": {
+    "enumNeedsName": "Una enumeración necesita un nombre",
+    "valueNeedsName": "Un valor necesita un nombre",
+    "tableNeedsName": "Una tabla necesita un nombre",
+    "columnNeedsName": "Una columna necesita un nombre",
+    "columnNeedsType": "Una columna necesita un tipo",
+    "nameUsed": "«{name}» ya está en uso"
+  },
+  "dbml": {
+    "created": "Se creó la tabla que faltaba «{name}»",
+    "unsupported": "{what} aún no es compatible y se ignoró",
+    "tableGone": "Esta tabla ya no existe",
+    "enumGone": "Esta enumeración ya no existe",
+    "oneTable": "Escribe exactamente una Tabla aquí. Usa la vista Esquema para añadir tablas, enumeraciones o notas",
+    "oneEnum": "Escribe exactamente una Enum aquí. Usa la vista Esquema para añadir tablas, enumeraciones o notas",
+    "enumSetting": "El ajuste de enum «{key}»",
+    "enumValueSetting": "El ajuste de valor de enum «{key}»",
+    "indexSetting": "El ajuste de índice «{key}»",
+    "tableSetting": "El ajuste de tabla «{key}»",
+    "columnSetting": "El ajuste de columna «{key}»",
+    "refSetting": "El ajuste de ref «{key}»",
+    "compositeRef": "La ref compuesta"
+  },
+  "canvas": {
+    "noColumns": "Sin columnas",
+    "noValues": "Sin valores",
+    "indexes": "{count} índ."
+  }
+}

@@ -4,6 +4,7 @@ import { DESIGN_STYLEGUIDE } from "../../model/design-styleguide";
 import { isSheet } from "../../sheet/is-sheet";
 import { STYLEGUIDE_COMMANDS } from "../../mode/styleguide-mode.constants";
 import { toast } from "@shared/stores/toast-store";
+import { t } from "../../styleguide.i18n";
 
 /**
  * The selected section's "Add to page" submenu: a live element showing the same category (or
@@ -11,7 +12,7 @@ import { toast } from "@shared/stores/toast-store";
  */
 export const ADD_TO_PAGE: ContextMenuSubmenu = {
   id: STYLEGUIDE_COMMANDS.addToPage,
-  label: "Add to page",
+  label: t("addToPage.label"),
   actions: (engine) => {
     const sheet = engine
       .selectedIds()
@@ -32,7 +33,7 @@ export const ADD_TO_PAGE: ContextMenuSubmenu = {
               options,
               modeView,
             });
-          toast({ title: `Added to ${page.name}` });
+          toast({ title: t("addToPage.added", { name: page.name }) });
         },
       }));
   },

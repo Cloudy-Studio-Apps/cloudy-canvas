@@ -13,6 +13,7 @@ import {
 } from "@design/ui/components/panel";
 import { useEditNodes } from "@design/ui/hooks";
 import type { PropertySectionProps } from "@design/ui/modules";
+import { t } from "../../core.i18n";
 
 /** Nodes with rounded corners (frames, rectangles, and any type that stores `cornerRadius`). */
 function hasCorners(node: DesignNode): node is DesignNode & { cornerRadius: number } {
@@ -28,13 +29,13 @@ export function AppearanceSection({ selection: { nodes } }: PropertySectionProps
   const edit = useEditNodes();
 
   return (
-    <PanelSection title="Appearance">
+    <PanelSection title={t("sections.appearance")}>
       <PropertyGrid>
         <BindableNumberField
           path="opacity"
           nodes={nodes}
           prefix={<Blend />}
-          label="Opacity"
+          label={t("fields.opacity")}
           suffix="%"
           min={0}
           max={100}
@@ -50,7 +51,7 @@ export function AppearanceSection({ selection: { nodes } }: PropertySectionProps
             path="cornerRadius"
             nodes={cornered}
             prefix={<Scan />}
-            label="Corner radius"
+            label={t("fields.cornerRadius")}
             min={0}
             read={(node) => node.cornerRadius}
             patch={(cornerRadius) => ({ cornerRadius }) as ElementPatch<DesignNode>}
@@ -61,7 +62,7 @@ export function AppearanceSection({ selection: { nodes } }: PropertySectionProps
       <BindSlot nodes={nodes} path="visible" className="mt-1.5">
         <NodeCheckbox
           nodes={nodes}
-          label="Visible"
+          label={t("fields.visible")}
           read={(node) => node.visible}
           patch={(visible) => ({ visible })}
         />

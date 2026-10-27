@@ -22,12 +22,13 @@ import { GEO_SPEC_PROPERTIES } from "./geo-spec-properties";
 import { drawGeo } from "./geo.draw";
 import type { GeoElement } from "./geo.types";
 import { geoVariants, variantOf } from "./variants/variant.registry";
+import { t } from "./geo.i18n";
 
 /** Diagram shapes (rectangle, ellipse, …): the outline is delegated to the element's variant. */
 export class GeoKind extends QuickConnectKind<GeoElement> {
   readonly type = "geo";
-  readonly label = "Shape";
-  readonly description = "A rectangle, ellipse, diamond or other diagram shape, with a label.";
+  readonly label = t("label");
+  readonly description = t("description");
   override readonly tool = "shape";
   override readonly defaults = GEO_DEFAULTS;
   override readonly styleFields = ["fill", "stroke", "strokeWidth", "fontSize"];
@@ -93,8 +94,8 @@ export class GeoKind extends QuickConnectKind<GeoElement> {
   /** Its fill and outline bind to color variables. */
   override bindable(): BindableField[] {
     return [
-      colorField("fill", "Fill", "shape-fill"),
-      colorField("stroke", "Outline", "stroke-color"),
+      colorField("fill", t("fill"), "shape-fill"),
+      colorField("stroke", t("outline"), "stroke-color"),
     ];
   }
 

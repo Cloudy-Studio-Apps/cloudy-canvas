@@ -19,6 +19,7 @@ import {
   type DesignNode,
 } from "../core";
 import { createVector, type VectorElement } from "../vector";
+import { t } from "./boolean.i18n";
 
 /**
  * Flatten (Ctrl+E), as in Figma: the selected layers become one vector with their shapes (a
@@ -99,5 +100,11 @@ function turnedVector(node: DesignNode, shape: PathShape): VectorElement {
 function worldVector(nodes: readonly DesignNode[], contours: PathContour[]): VectorElement | null {
   const [base] = nodes;
   if (!base || contours.length === 0) return null;
-  return createVector(pathToNetwork({ contours }), "Vector", base.index, base.parentId, base);
+  return createVector(
+    pathToNetwork({ contours }),
+    t("defaults.vector"),
+    base.index,
+    base.parentId,
+    base,
+  );
 }

@@ -1,0 +1,22 @@
+{
+  "stickers": {
+    "loadFailed": "Couldn't load your stickers",
+    "tooLarge": "Some pictures are too large",
+    "maxSize": "Stickers can be up to 2 MB.",
+    "importFailed": "Couldn't import the stickers",
+    "removeFailed": "Couldn't remove the sticker"
+  },
+  "recents": {
+    "reset": "Recent files were reset",
+    "resetHint": "The list couldn't be read, so it starts empty. Your files are untouched.",
+    "readFailed": "Recent files couldn't be read",
+    "locateFailed": "The file couldn't be located",
+    "removeFailed": "The file couldn't be removed from recents",
+    "clearFailed": "Recent files couldn't be cleared"
+  },
+  "updates": {
+    "checkFailed": "Couldn't check for updates",
+    "pageFailed": "The download page couldn't be opened",
+    "installFailed": "The update couldn't be installed"
+  }
+}

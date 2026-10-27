@@ -7,6 +7,7 @@ import { ColorPicker } from "./color-picker";
 import { normalizeHex } from "./normalize-hex";
 import { OptionButton } from "./option-button";
 import type { CustomColorSwatchProps } from "./custom-color-swatch.types";
+import { t } from "./components.i18n";
 
 /** Hue wheel shown on the custom color swatch (a picker graphic, not a theme color). */
 const HUE_WHEEL =
@@ -28,7 +29,7 @@ export function CustomColorSwatch({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <OptionButton selected={selected} aria-label="Custom color" title="Custom color">
+        <OptionButton selected={selected} aria-label={t("color.custom")} title={t("color.custom")}>
           <span
             className={cn(
               "relative flex size-5 items-center justify-center border border-black/10",

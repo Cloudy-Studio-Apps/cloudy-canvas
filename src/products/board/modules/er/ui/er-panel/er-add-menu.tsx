@@ -12,6 +12,7 @@ import {
 } from "@shared/ui/kit";
 import { useEngine } from "@canvas-ui";
 import { useErDiagram, useErShape, useErShapes, useErSelection } from "../model";
+import { t } from "../../er.i18n";
 
 const MENU_ITEMS: readonly ErPaletteItemId[] = [
   "entity",
@@ -38,7 +39,7 @@ export function ErAddMenu() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm">
           <Plus />
-          Add
+          {t("panel.add")}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="min-w-52">

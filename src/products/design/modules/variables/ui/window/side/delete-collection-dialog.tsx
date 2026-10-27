@@ -1,3 +1,4 @@
+import { tCommon } from "@shared/core";
 import {
   Button,
   Dialog,
@@ -9,6 +10,7 @@ import {
 } from "@shared/ui/kit";
 import { useBoard } from "../use-board";
 import type { DeleteCollectionDialogProps } from "./side.types";
+import { t } from "../../../variables.i18n";
 
 /** Deleting a collection: its variables go with it, and the layers using them keep their values. */
 export function DeleteCollectionDialog({ collection, onClose }: DeleteCollectionDialogProps) {
@@ -19,19 +21,17 @@ export function DeleteCollectionDialog({ collection, onClose }: DeleteCollection
     <Dialog open={collection !== null} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle>Delete “{collection?.name}”?</DialogTitle>
+          <DialogTitle>{t("side.deleteTitle", { name: collection?.name ?? "" })}</DialogTitle>
           <DialogDescription>
             {variables.length === 0
-              ? "It's empty."
-              : `Its ${variables.length} ${variables.length === 1 ? "variable goes" : "variables go"} with it.` +
-                (layers > 0
-                  ? ` ${layers} ${layers === 1 ? "layer keeps" : "layers keep"} the values they show, no longer linked.`
-                  : "")}
+              ? t("side.empty")
+              : t("side.goes", { count: variables.length }) +
+                (layers > 0 ? ` ${t("side.keeps", { count: layers })}` : "")}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant="ghost" onClick={onClose}>
-            Cancel
+            {tCommon("cancel")}
           </Button>
           <Button
             variant="destructive"
@@ -40,7 +40,7 @@ export function DeleteCollectionDialog({ collection, onClose }: DeleteCollection
               onClose();
             }}
           >
-            Delete collection
+            {t("side.deleteCollection")}
           </Button>
         </DialogFooter>
       </DialogContent>

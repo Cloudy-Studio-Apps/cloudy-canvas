@@ -1,6 +1,7 @@
 import { DEFAULT_VALUE, type ModeAxisRecord, type TokenStore } from "@canvas";
 
 import type { BoardMode } from "./board-model.types";
+import { t } from "../../variables.i18n";
 
 /** The axis the board shows: the one picked, else the first with several modes, else the first. */
 export function boardAxis(store: TokenStore, axisId: string | null): ModeAxisRecord | undefined {
@@ -13,7 +14,7 @@ export function boardModes(axis: ModeAxisRecord | undefined): BoardMode[] {
     return [
       {
         id: axis?.modes[0]?.id ?? DEFAULT_VALUE,
-        name: axis?.modes[0]?.name ?? "Value",
+        name: axis?.modes[0]?.name ?? t("boardModes.value"),
         context: {},
       },
     ];

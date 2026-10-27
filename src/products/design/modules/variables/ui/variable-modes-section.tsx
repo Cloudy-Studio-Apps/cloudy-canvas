@@ -4,6 +4,7 @@ import { PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@shared/ui/kit";
 import { setVariableModes } from "../set-variable-modes";
+import { t } from "../variables.i18n";
 
 /** What a container inheriting its mode shows (and picks to inherit again). */
 const AUTO = "auto";
@@ -20,7 +21,7 @@ export function VariableModesSection({ selection: { nodes } }: PropertySectionPr
   const ids = nodes.map((node) => node.id);
 
   return (
-    <PanelSection title="Variable modes">
+    <PanelSection title={t("modes.title")}>
       <div className="flex flex-col gap-1.5">
         {axes.map((axis) => {
           const values = new Set(nodes.map((n) => n.variableModes?.[axis.id] ?? AUTO));
@@ -36,11 +37,14 @@ export function VariableModesSection({ selection: { nodes } }: PropertySectionPr
                   setVariableModes(engine.doc, ids, axis.id, mode === AUTO ? null : mode)
                 }
               >
-                <SelectTrigger aria-label={`${axis.name} mode`} className="h-7 flex-1 text-xs">
-                  <SelectValue placeholder="Mixed" />
+                <SelectTrigger
+                  aria-label={t("modes.mode", { name: axis.name })}
+                  className="h-7 flex-1 text-xs"
+                >
+                  <SelectValue placeholder={t("modes.mixed")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={AUTO}>Auto (inherit)</SelectItem>
+                  <SelectItem value={AUTO}>{t("modes.auto")}</SelectItem>
                   {axis.modes.map((mode) => (
                     <SelectItem key={mode.id} value={mode.id}>
                       {mode.name}

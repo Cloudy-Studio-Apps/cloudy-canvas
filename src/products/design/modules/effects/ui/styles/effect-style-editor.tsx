@@ -11,6 +11,7 @@ import { AddEffectMenu } from "../add-effect-menu";
 import { EffectStackEditor } from "../effect-stack-editor";
 import type { EffectStackEditorProps } from "../effects-ui.types";
 import { designEffectTypes } from "../effects.points";
+import { t } from "../../effects.i18n";
 
 const NO_LAYERS: never[] = [];
 const NUMBERS = new Set(["x", "y", "blur", "spread", "radius"]);
@@ -19,7 +20,8 @@ const NUMBERS = new Set(["x", "y", "blur", "spread", "radius"]);
 function effectField(path: string): BindableField | undefined {
   const match = /^effects\.\d+\.(\w+)$/.exec(path);
   const key = match?.[1];
-  if (key === "color") return { path, type: "color", scopes: ["effect-color"], label: "Color" };
+  if (key === "color")
+    return { path, type: "color", scopes: ["effect-color"], label: t("style.color") };
   if (key && NUMBERS.has(key)) {
     return { path, type: "number", scopes: ["effect-value"], label: key };
   }
@@ -50,7 +52,7 @@ export function EffectStyleEditor({ style, onDelete }: StyleEditorProps) {
       <StyleBindingScope style={style} fieldOf={effectField}>
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Effects</span>
+            <span className="text-muted-foreground">{t("title")}</span>
             <AddEffectMenu
               types={types}
               onAdd={(entry) => onChange((current) => [...current, entry.create()])}

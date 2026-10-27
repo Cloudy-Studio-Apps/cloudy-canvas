@@ -5,6 +5,7 @@ import { PropertyGrid } from "@design/ui/components/panel";
 import type { TextureEffect } from "../../effect.types";
 import { ScrubField } from "../fields";
 import type { EffectEditorProps } from "../effects.points.types";
+import { t } from "../../effects.i18n";
 
 /** Texture: how big its grain is, how far it pushes the edges, and whether it stays inside. */
 export function TextureEditor({ effect, onChange }: EffectEditorProps<TextureEffect>) {
@@ -15,7 +16,7 @@ export function TextureEditor({ effect, onChange }: EffectEditorProps<TextureEff
       <PropertyGrid>
         <ScrubField
           prefix={<Grid3x3 />}
-          label="Grain size"
+          label={t("editors.grainSize")}
           min={0.1}
           step={0.1}
           value={effect.size}
@@ -23,7 +24,7 @@ export function TextureEditor({ effect, onChange }: EffectEditorProps<TextureEff
         />
         <ScrubField
           prefix={<Move />}
-          label="Roughness"
+          label={t("editors.roughness")}
           min={0}
           step={0.1}
           value={effect.radius}
@@ -31,7 +32,7 @@ export function TextureEditor({ effect, onChange }: EffectEditorProps<TextureEff
         />
       </PropertyGrid>
       <CheckboxField
-        label="Clip to shape"
+        label={t("editors.clipToShape")}
         checked={effect.clipToShape}
         onChange={(clipToShape) => set({ clipToShape })}
       />

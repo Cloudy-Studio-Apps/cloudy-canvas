@@ -1,0 +1,14 @@
+{
+  "host": {
+    "refused": "El anfitrión no te dejó entrar.",
+    "protocol": "Esta sesión necesita otra versión de Cloudy Canvas: actualiza ambas apps.",
+    "secret": "Este enlace es de una sesión que ya terminó.",
+    "full": "Esta sesión ya tiene {max} invitados."
+  },
+  "guest": {
+    "removed": "El anfitrión te quitó de la sesión.",
+    "ended": "El anfitrión terminó la sesión.",
+    "lost": "Se perdió la conexión con el anfitrión.",
+    "lostAgain": "Se perdió la conexión con el anfitrión."
+  }
+}

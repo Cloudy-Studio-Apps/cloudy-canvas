@@ -26,6 +26,7 @@ import { ExpressionBuilder } from "./expression-builder";
 import { ExpressionInput } from "./expression-input";
 import { StringValueInput } from "./string-value-input";
 import type { ActionButtonProps, ValueFieldProps } from "./variables-ui.types";
+import { t } from "../variables.i18n";
 
 /**
  * A variable's value for one mode: a color (with its alpha) or a number, the variable it
@@ -46,7 +47,7 @@ export function ValueField({ variable, mode, label, cell, className }: ValueFiel
     try {
       tokens.setValue(variable.id, mode, next);
     } catch (error) {
-      notifyError("Couldn't set the value", error);
+      notifyError(t("value.setError"), error);
     }
   };
 
@@ -56,7 +57,7 @@ export function ValueField({ variable, mode, label, cell, className }: ValueFiel
       <button
         type="button"
         onClick={() => fallback && set(fallback)}
-        title="Uses the default value. Click to give this mode its own."
+        title={t("value.usesDefault")}
         className={cn(
           "flex h-7 min-w-0 items-center gap-1.5 rounded-md px-2 text-left text-xs text-subtle-foreground hover:bg-muted",
           !cell && "border border-dashed border-border",
@@ -66,14 +67,17 @@ export function ValueField({ variable, mode, label, cell, className }: ValueFiel
         <span className="opacity-40">
           <VariableValue variable={variable} modes={{}} />
         </span>
-        <span className="opacity-60">Same as first mode</span>
+        <span className="opacity-60">{t("value.sameAsFirst")}</span>
       </button>
     );
   }
 
   const clear =
     key !== DEFAULT_VALUE ? (
-      <ActionButton label="Use the default" onClick={() => tokens.clearValue(variable.id, key)}>
+      <ActionButton
+        label={t("value.useDefault")}
+        onClick={() => tokens.clearValue(variable.id, key)}
+      >
         <X />
       </ActionButton>
     ) : null;
@@ -90,7 +94,7 @@ export function ValueField({ variable, mode, label, cell, className }: ValueFiel
           className={ghost}
         />
         <ActionButton
-          label="Use its value instead"
+          label={t("value.useValue")}
           onClick={() => {
             const resolved = asTokenValue(resolveVariable(store, variable.id, modes));
             if (resolved) set(resolved);
@@ -131,7 +135,7 @@ export function ValueField({ variable, mode, label, cell, className }: ValueFiel
       modes={modes}
       onPick={(alias) => set({ alias })}
     >
-      <ActionButton label="Use another variable's value">
+      <ActionButton label={t("value.useOther")}>
         <Link />
       </ActionButton>
     </VariablePicker>
@@ -144,7 +148,7 @@ export function ValueField({ variable, mode, label, cell, className }: ValueFiel
         <ColorField
           color={hex.toLowerCase()}
           opacity={alpha}
-          label={`${label} color`}
+          label={t("value.colorOf", { label })}
           onChange={(next) => set({ color: joinTokenColor(next.color, next.opacity) })}
           className={cn("min-w-0 flex-1", ghost)}
         />
@@ -194,7 +198,7 @@ export function ValueField({ variable, mode, label, cell, className }: ValueFiel
         start={"number" in value ? value.number : 0}
         modes={modes}
       >
-        <ActionButton label="Work it out from other variables" shown>
+        <ActionButton label={t("value.workOut")} shown>
           <Sigma />
         </ActionButton>
       </ExpressionBuilder>

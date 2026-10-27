@@ -1,13 +1,14 @@
 import type { StyleguideTemplate } from "../../styleguide.types";
 import { tableRows } from "../table-rows";
 import { formatNumber, leafName, variablesOf } from "../template-kit";
+import { t } from "../../styleguide.i18n";
 
 /** The other variables as a table: name, type and value in the modes shown. */
 export const otherTableTemplate: StyleguideTemplate = {
   id: "other.table",
   category: "other",
-  label: "Table",
-  description: "Every variable's name, type and value.",
+  label: t("templates.other.table.label"),
+  description: t("templates.other.table.description"),
   options: [],
   build: (group, _options, context) => [
     tableRows(

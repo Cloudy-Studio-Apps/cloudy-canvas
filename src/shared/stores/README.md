@@ -9,3 +9,4 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md); names 
 ## Saved palettes
 
 - **Saved palettes:** `usePaletteFavoritesStore` (`palette-favorites-store.ts`) keeps the palettes saved from the color wizard's gallery between sessions (`toggle` saves or removes one). They're the user's, not a file's.
+- **Language:** `useLocaleStore` (`locale-store.ts`, `cloudy-canvas:locale`) keeps Settings › Language (`system`, `en` or `es`). `app/i18n-boot.ts` reads it once, before anything else runs, so a change applies on the next launch (see `shared/core/i18n/`).

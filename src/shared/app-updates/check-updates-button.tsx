@@ -4,6 +4,7 @@ import { appUpdater } from "@platform";
 import { useUpdateStore } from "@shared/stores/update-store";
 import { Button } from "@shared/ui/components/ui/button";
 import type { CheckUpdatesButtonProps } from "./check-updates-button.types";
+import { t } from "./app-updates.i18n";
 
 /** Checks for a new version, or installs the one found; says where it stands. */
 export function CheckUpdatesButton({ className }: CheckUpdatesButtonProps) {
@@ -13,14 +14,14 @@ export function CheckUpdatesButton({ className }: CheckUpdatesButtonProps) {
   const install = useUpdateStore((s) => s.install);
 
   if (!appUpdater || import.meta.env.DEV) {
-    return <p className="text-xs text-muted-foreground">Updates are off in development builds.</p>;
+    return <p className="text-xs text-muted-foreground">{t("off")}</p>;
   }
 
   if (status.phase === "available") {
     return (
       <Button size="sm" className={className} onClick={() => void install()}>
         <Download />
-        {installKind === "package" ? "Download" : "Update to"} {status.update.version}
+        {t(installKind === "package" ? "download" : "updateTo", { version: status.update.version })}
       </Button>
     );
   }
@@ -37,20 +38,11 @@ export function CheckUpdatesButton({ className }: CheckUpdatesButtonProps) {
         onClick={() => void check()}
       >
         {busy ? <LoaderCircle className="animate-spin" /> : <RefreshCw />}
-        {LABEL[status.phase]}
+        {t(`check.${status.phase}`)}
       </Button>
       {status.phase === "upToDate" && (
-        <span className="text-xs text-muted-foreground">You're up to date.</span>
+        <span className="text-xs text-muted-foreground">{t("upToDate")}</span>
       )}
     </div>
   );
 }
-
-const LABEL = {
-  idle: "Check for updates",
-  checking: "Checking…",
-  upToDate: "Check for updates",
-  error: "Check for updates",
-  downloading: "Updating…",
-  restarting: "Restarting…",
-} as const;

@@ -5,12 +5,13 @@ import { IconButton, SegmentedControl } from "@shared/ui/kit";
 import { ChainEditor } from "./chain-editor";
 import type { FormulaStepRowProps } from "./expression-builder.types";
 import { OperandField } from "./operand-field";
+import { t } from "../../variables.i18n";
 
 const OPERATORS: readonly { value: FormulaOperator; label: string; title: string }[] = [
-  { value: "+", label: "+", title: "Add" },
-  { value: "-", label: "−", title: "Subtract" },
-  { value: "*", label: "×", title: "Multiply by" },
-  { value: "/", label: "÷", title: "Divide by" },
+  { value: "+", label: "+", title: t("builder.add") },
+  { value: "-", label: "−", title: t("builder.subtract") },
+  { value: "*", label: "×", title: t("builder.multiply") },
+  { value: "/", label: "÷", title: t("builder.divide") },
 ];
 
 /**
@@ -30,13 +31,13 @@ export function FormulaStepRow({
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between">
         <SegmentedControl
-          label={`Step ${index + 1}: what it does`}
+          label={t("builder.step", { n: index + 1 })}
           size="sm"
           value={step.op}
           onChange={(op) => onChange({ ...step, op })}
           options={OPERATORS}
         />
-        <IconButton label="Remove this step" size="xs" onClick={onRemove}>
+        <IconButton label={t("builder.removeStep")} size="xs" onClick={onRemove}>
           <X />
         </IconButton>
       </div>
@@ -55,7 +56,7 @@ export function FormulaStepRow({
         </div>
       ) : (
         <OperandField
-          label={`Step ${index + 1} value`}
+          label={t("builder.stepValue", { n: index + 1 })}
           operand={operand}
           onChange={(next) => onChange({ ...step, operand: next })}
           modes={modes}

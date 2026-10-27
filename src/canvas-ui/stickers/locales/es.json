@@ -1,0 +1,30 @@
+{
+  "search": {
+    "placeholder": "Buscar stickers y emojis",
+    "label": "Buscar stickers"
+  },
+  "tabs": {
+    "stickers": "Stickers",
+    "emojis": "Emojis",
+    "custom": "Propios"
+  },
+  "grid": {
+    "empty": "Ningún sticker coincide con tu búsqueda."
+  },
+  "custom": {
+    "section": "Tus stickers",
+    "limits": "PNG, JPG, WebP, GIF o SVG, hasta 2 MB.",
+    "import": "Importar…",
+    "emptyHint": "Importa imágenes para estamparlas en cualquier pizarra o diseño."
+  },
+  "wheel": {
+    "label": "Stickers",
+    "all": "Todos los stickers"
+  },
+  "remove": "Quitar \"{label}\"",
+  "errors": {
+    "pick": "No se pudo elegir \"{label}\"",
+    "emojis": "No se pudieron cargar los emojis"
+  },
+  "loadingEmojis": "Cargando emojis"
+}

@@ -4,6 +4,7 @@ import type { FrameElement } from "../../../frame";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { notifyError } from "@shared/stores/toast-store";
 import { previewImagesOf } from "../preview/preview-images";
+import { t } from "../../catalog.i18n";
 
 /**
  * A picture of a page frame at most `maxSide` pixels a side, `null` while it's drawn; pictures
@@ -20,7 +21,7 @@ export function useFrameImage(frame: FrameElement | undefined, maxSide: number):
     images
       .load(frame, maxSide)
       .then((url) => current && setDrawn({ frame, url }))
-      .catch((error: unknown) => notifyError("The page couldn't be drawn", error));
+      .catch((error: unknown) => notifyError(t("images.drawFailed"), error));
     return () => {
       current = false;
     };

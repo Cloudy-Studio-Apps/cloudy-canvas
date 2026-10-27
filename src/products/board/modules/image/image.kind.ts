@@ -16,6 +16,7 @@ import { IMAGE_DEFAULTS } from "./image.defaults";
 import { checkCrop, imageCropPatch } from "./image-crop";
 import { imagePaddingPatch } from "./image-padding";
 import type { ImageDefaults, ImageElement } from "./image.types";
+import { t } from "./image.i18n";
 
 /**
  * A picture pasted onto the board. It keeps its proportions when resized; its background and
@@ -24,8 +25,8 @@ import type { ImageDefaults, ImageElement } from "./image.types";
  */
 export class ImageKind extends BoxKind<ImageElement, BoardToolOptions> {
   readonly type = "image";
-  readonly label = "Image";
-  readonly description = "A picture pasted onto the board.";
+  readonly label = t("label");
+  readonly description = t("description");
   override readonly defaults: ImageDefaults = IMAGE_DEFAULTS;
   override readonly styleFields = ["background", "padding"];
   override readonly creatable = false;

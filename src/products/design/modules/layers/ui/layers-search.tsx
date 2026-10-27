@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { PanelIconButton } from "@design/ui/components/panel";
 import { SearchInput } from "@shared/ui/kit";
 import type { LayersSearchProps } from "./layers-search.types";
+import { t } from "../layers.i18n";
 
 /** The search box that replaces the Layers heading while searching (Escape closes it). */
 export function LayersSearch({ query, onQueryChange, onClose }: LayersSearchProps) {
@@ -10,8 +11,8 @@ export function LayersSearch({ query, onQueryChange, onClose }: LayersSearchProp
     <div className="flex min-w-0 flex-1 items-center gap-1">
       <SearchInput
         size="sm"
-        aria-label="Search layers"
-        placeholder="Search layers"
+        aria-label={t("search.label")}
+        placeholder={t("search.label")}
         autoFocus
         value={query}
         onChange={onQueryChange}
@@ -21,7 +22,7 @@ export function LayersSearch({ query, onQueryChange, onClose }: LayersSearchProp
         }}
         className="flex-1 text-xs"
       />
-      <PanelIconButton label="Close search" onClick={onClose}>
+      <PanelIconButton label={t("search.close")} onClick={onClose}>
         <X />
       </PanelIconButton>
     </div>

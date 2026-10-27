@@ -2,6 +2,7 @@ import { CanvasDocument, type ShareGuest } from "@canvas";
 import { useCanvasFileLoader, type CanvasFileLoadState } from "@canvas-ui";
 import { designMigrations, newDesignDocument, openDesignDocument } from "@design";
 import { getDesignModules, getDesignProduct } from "../modules";
+import { t } from "../design-ui.i18n";
 
 /**
  * Loads the design with this id (brought up to date by the modules' migrations), or starts an
@@ -10,7 +11,7 @@ import { getDesignModules, getDesignProduct } from "../modules";
  */
 export function useDesignLoader(id: string, live: ShareGuest | null = null): CanvasFileLoadState {
   return useCanvasFileLoader(id, {
-    noun: "design",
+    noun: t("file.noun"),
     open: (bytes) =>
       openDesignDocument(bytes, getDesignProduct().kinds, getDesignModules().get(designMigrations)),
     create: () =>

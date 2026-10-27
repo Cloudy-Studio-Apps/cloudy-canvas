@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useChromeStore } from "@shared/stores/chrome-store";
 import { toast } from "@shared/stores/toast-store";
 import { useEngine } from "../engine-context";
+import { t } from "./chrome.i18n";
 
 /**
  * Runs the `toggleUi` host command (Ctrl+\, as in Figma): hides the editor's UI so only the
@@ -17,7 +18,10 @@ export function useHideUiCommand(): void {
       setHidden(!hidden);
       if (!hidden) {
         const keys = engine.keymap.label("toggleUi");
-        toast({ title: "UI hidden", description: keys ? `Press ${keys} to show it.` : undefined });
+        toast({
+          title: t("hideUi.title"),
+          description: keys ? t("hideUi.hint", { keys }) : undefined,
+        });
       }
     });
     return () => {

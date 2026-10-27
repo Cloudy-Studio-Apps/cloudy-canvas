@@ -2,6 +2,7 @@ import type { StyleRecord } from "@canvas";
 import { FONT_WEIGHTS } from "@shared/core";
 
 import type { TextNodeElement, TextStyleValue } from "./text.types";
+import { t } from "./text.i18n";
 
 /** The `styleType` of text styles. */
 export const TEXT_STYLE = "text";
@@ -47,6 +48,7 @@ export function readTextStyle(value: Readonly<Record<string, unknown>>): Partial
 export function textStyleSummary(style: StyleRecord): string {
   const value = readTextStyle(style.value);
   const size = value.fontSize === undefined ? "?" : String(Math.round(value.fontSize * 10) / 10);
-  const line = value.lineHeight === undefined ? "Auto" : `${Math.round(value.lineHeight * 100)}%`;
+  const line =
+    value.lineHeight === undefined ? t("styles.auto") : `${Math.round(value.lineHeight * 100)}%`;
   return `${size}/${line}`;
 }

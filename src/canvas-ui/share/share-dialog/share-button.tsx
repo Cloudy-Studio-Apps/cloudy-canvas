@@ -9,6 +9,7 @@ import { useStoreState } from "../use-store-state";
 import { LiveBadge } from "./live-badge";
 import { ShareDialog } from "./share-dialog";
 import type { HostedCountProps, ShareButtonProps } from "./share-dialog.types";
+import { t } from "../share.i18n";
 
 /**
  * Opens the Share dialog; while the file is shared it says so (with how many have joined). In a
@@ -23,7 +24,7 @@ export function ShareButton({ product, look }: ShareButtonProps) {
   const trigger =
     look === "tool" ? (
       <ToolButton
-        label={host ? "Sharing live" : "Share live"}
+        label={host ? t("button.sharing") : t("button.share")}
         side="bottom"
         className={host ? "text-primary" : undefined}
         onClick={() => setOpen(true)}
@@ -33,7 +34,7 @@ export function ShareButton({ product, look }: ShareButtonProps) {
     ) : (
       <Button size="sm" variant={host ? "outline" : "default"} onClick={() => setOpen(true)}>
         {host ? <Radio /> : <Users />}
-        {host ? "Live" : "Share"}
+        {host ? t("button.live") : t("button.shareShort")}
       </Button>
     );
 

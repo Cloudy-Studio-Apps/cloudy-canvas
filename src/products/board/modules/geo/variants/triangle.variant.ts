@@ -1,10 +1,11 @@
 import type { ElementSide, Point } from "@canvas";
 
 import { PolygonVariant } from "./geo.variant";
+import { t } from "../geo.i18n";
 
 export class Triangle extends PolygonVariant {
   readonly id = "triangle";
-  readonly label = "Triangle";
+  readonly label = t("variants.triangle");
   readonly icon = "M10 3l7.5 13.5h-15z";
   readonly defaultSize = { w: 130, h: 120 };
 

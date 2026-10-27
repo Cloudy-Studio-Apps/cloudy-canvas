@@ -1,5 +1,6 @@
 import { cn } from "@shared/ui/kit";
 import type { GradeBadgeProps } from "./contrast-ui.types";
+import { t } from "../../variables.i18n";
 
 const TONES = {
   AAA: "text-success bg-success-soft",
@@ -14,7 +15,7 @@ export function GradeBadge({ grade }: GradeBadgeProps) {
     <span
       className={cn("rounded-xs px-1.5 text-[10px] font-semibold whitespace-nowrap", TONES[grade])}
     >
-      {grade === "fail" ? "Fail" : grade}
+      {grade === "fail" ? t("contrast.fail") : grade}
     </span>
   );
 }

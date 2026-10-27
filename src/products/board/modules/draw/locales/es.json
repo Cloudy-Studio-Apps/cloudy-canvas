@@ -1,0 +1,15 @@
+{
+  "label": "Dibujar",
+  "description": "Lápiz, resaltador y borrador.",
+  "options": {
+    "group": "Opciones de dibujo",
+    "freehand": "A mano alzada",
+    "smooth": "Suavizado",
+    "smoothHint": "Suavizado: los trazos se suavizan al terminarlos",
+    "pen": "Lápiz",
+    "highlighter": "Resaltador",
+    "eraser": "Borrador",
+    "eraserShortcut": "Borrador ({shortcut})",
+    "stroke": "Trazo {size}"
+  }
+}

@@ -1,35 +1,36 @@
 import type { TokenScope, TokenValue, VariableType } from "@canvas";
+import { t } from "../variables.i18n";
 
 /** The scopes a variable of each type can be limited to, with their names. */
 export const SCOPE_OPTIONS: Readonly<
   Record<VariableType, readonly { scope: TokenScope; label: string }[]>
 > = {
   color: [
-    { scope: "all-fills", label: "All fills" },
-    { scope: "frame-fill", label: "Frame fill" },
-    { scope: "shape-fill", label: "Shape fill" },
-    { scope: "text-fill", label: "Text fill" },
-    { scope: "stroke-color", label: "Stroke" },
-    { scope: "effect-color", label: "Effects" },
+    { scope: "all-fills", label: t("scopes.allFills") },
+    { scope: "frame-fill", label: t("scopes.frameFill") },
+    { scope: "shape-fill", label: t("scopes.shapeFill") },
+    { scope: "text-fill", label: t("scopes.textFill") },
+    { scope: "stroke-color", label: t("scopes.strokeColor") },
+    { scope: "effect-color", label: t("scopes.effectColor") },
   ],
   number: [
-    { scope: "corner-radius", label: "Corner radius" },
-    { scope: "width-height", label: "Width and height" },
-    { scope: "gap", label: "Gap" },
-    { scope: "padding", label: "Padding" },
-    { scope: "stroke-weight", label: "Stroke weight" },
-    { scope: "opacity", label: "Opacity" },
-    { scope: "font-size", label: "Font size" },
-    { scope: "line-height", label: "Line height" },
-    { scope: "letter-spacing", label: "Letter spacing" },
-    { scope: "font-weight", label: "Font weight" },
-    { scope: "effect-value", label: "Effect values" },
-    { scope: "other-number", label: "Other numbers" },
+    { scope: "corner-radius", label: t("scopes.cornerRadius") },
+    { scope: "width-height", label: t("scopes.widthHeight") },
+    { scope: "gap", label: t("scopes.gap") },
+    { scope: "padding", label: t("scopes.padding") },
+    { scope: "stroke-weight", label: t("scopes.strokeWeight") },
+    { scope: "opacity", label: t("scopes.opacity") },
+    { scope: "font-size", label: t("scopes.fontSize") },
+    { scope: "line-height", label: t("scopes.lineHeight") },
+    { scope: "letter-spacing", label: t("scopes.letterSpacing") },
+    { scope: "font-weight", label: t("scopes.fontWeight") },
+    { scope: "effect-value", label: t("scopes.effectValue") },
+    { scope: "other-number", label: t("scopes.otherNumber") },
   ],
   string: [
-    { scope: "text-content", label: "Text content" },
-    { scope: "font-family", label: "Font family" },
-    { scope: "font-style", label: "Font style" },
+    { scope: "text-content", label: t("scopes.textContent") },
+    { scope: "font-family", label: t("scopes.fontFamily") },
+    { scope: "font-style", label: t("scopes.fontStyle") },
   ],
   // Figma's booleans aren't scoped either: they're offered wherever a true/false fits.
   boolean: [],
@@ -52,4 +53,4 @@ export const NEW_NAMES: Readonly<Record<VariableType, string>> = {
 };
 
 /** The collection made for a file's first variable. */
-export const FIRST_COLLECTION = "Primitives";
+export const FIRST_COLLECTION = t("defaults.firstCollection");

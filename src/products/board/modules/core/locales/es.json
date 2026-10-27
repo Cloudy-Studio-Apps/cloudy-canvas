@@ -1,0 +1,21 @@
+{
+  "hideUi": "Ocultar interfaz",
+  "mode": {
+    "label": "Pizarra",
+    "description": "Todas las herramientas y todos los elementos."
+  },
+  "tools": {
+    "select": {
+      "label": "Seleccionar",
+      "description": "Selecciona, mueve y cambia el tamaño. Doble clic para editar texto."
+    },
+    "scale": {
+      "label": "Escalar",
+      "description": "Escala con el contenido: texto, trazos y lo que hay dentro crecen juntos."
+    },
+    "hand": {
+      "label": "Mano",
+      "description": "Desplázate por la pizarra."
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "title": "Shader",
+  "custom": "Custom",
+  "presets": {
+    "label": "Start from a preset",
+    "placeholder": "Start from a preset…",
+    "vignette": "Vignette",
+    "chromaticAberration": "Chromatic aberration",
+    "halftone": "Halftone",
+    "pixelate": "Pixelate",
+    "ripple": "Ripple",
+    "duotone": "Duotone"
+  },
+  "editor": {
+    "code": "Shader code"
+  },
+  "errors": {
+    "noEffect": "Define vec4 effect(vec4 color, vec2 uv, vec2 local).",
+    "compile": "The shader doesn't compile."
+  }
+}

@@ -21,6 +21,7 @@ import {
 } from "./mcp";
 import { designStyleTypes } from "./ui/core.points";
 import { CORE_STYLE_TYPES } from "./ui/styles";
+import { t } from "./core.i18n";
 
 /**
  * What every design has whatever its modules: the canvas view (plain, pixel grid, 2%–25600%, size
@@ -54,8 +55,8 @@ export const coreModule = defineModule({
     // mode, e.g. Catalog).
     host.contribute(designEditor.modes, {
       id: DEFAULT_MODE.id,
-      label: "Design",
-      description: "Every tool and every layer.",
+      label: t("modes.design.label"),
+      description: t("modes.design.description"),
       icon: PenTool,
       order: 0,
     });

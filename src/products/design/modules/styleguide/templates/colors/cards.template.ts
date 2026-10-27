@@ -2,13 +2,14 @@ import { stack } from "../../sheet";
 import type { StyleguideTemplate } from "../../styleguide.types";
 import { grid, variablesOf, withDefaults } from "../template-kit";
 import { COLOR_OPTIONS, COLUMNS_OPTION, colorCaption, colorSwatch, swatchSize } from "./color-kit";
+import { t } from "../../styleguide.i18n";
 
 /** Cards: a wide swatch over the name and every value asked for, on a white card. */
 export const cardsTemplate: StyleguideTemplate = {
   id: "colors.cards",
   category: "colors",
-  label: "Cards",
-  description: "A card per color: a wide swatch, its name, values, code name and description.",
+  label: t("templates.colors.cards.label"),
+  description: t("templates.colors.cards.description"),
   options: withDefaults([...COLOR_OPTIONS, COLUMNS_OPTION], {
     showRgb: true,
     showCode: true,

@@ -1,0 +1,169 @@
+{
+  "table": {
+    "label": "Database table",
+    "description": "A table of the board's database schema, edited visually or as DBML."
+  },
+  "enum": {
+    "label": "Database enum",
+    "description": "An enum of the board's database schema; columns use it as their type."
+  },
+  "options": {
+    "group": "Database options",
+    "table": "Table",
+    "enum": "Enum"
+  },
+  "schema": {
+    "button": "Database schema"
+  },
+  "panel": {
+    "schema": "Database schema",
+    "table": "Table",
+    "enum": "Enum",
+    "editor": "{title} editor",
+    "selectLinked": "Select linked",
+    "selectLinkedHint": "Select every table and enum linked to this one, to move them",
+    "tidy": "Tidy up",
+    "tidyCard": "Tidy up this table and the ones linked to it",
+    "tidyAll": "Tidy up the whole schema",
+    "schemaButton": "Schema",
+    "close": "Close panel",
+    "columnTypes": "Column types"
+  },
+  "tabs": {
+    "visual": "Visual",
+    "all": "All",
+    "enums": "Enums ({count})",
+    "types": "Types"
+  },
+  "flags": {
+    "pk": "Primary key",
+    "notNull": "Not null",
+    "unique": "Unique",
+    "increment": "Auto increment",
+    "group": "Constraints"
+  },
+  "column": {
+    "details": "Column details",
+    "detailsHint": "Default, note and order",
+    "default": "Default",
+    "defaultPlaceholder": "e.g. 0, 'draft', `now()`",
+    "note": "Note",
+    "order": "Order",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "name": "Column name",
+    "delete": "Delete column {name}",
+    "deleteHint": "Delete column"
+  },
+  "type": {
+    "column": "Column type",
+    "args": "Type arguments",
+    "argsPlaceholder": "args",
+    "choose": "Choose a type",
+    "search": "Search, or type a custom type…",
+    "enumValues": "{count} values",
+    "noEnums": "No enums yet. Add one with the Database tool (Enum) or in the Schema view.",
+    "useCustom": "Use custom type",
+    "use": "Use"
+  },
+  "typeArgs": {
+    "length": "length",
+    "precisionScale": "precision, scale",
+    "precision": "precision"
+  },
+  "enumEditor": {
+    "dbmlLabel": "DBML for {name}",
+    "dbmlHint": "Only this enum. Renaming it also renames the type of the columns that use it.",
+    "name": "Enum name",
+    "headerColor": "Header color",
+    "values": "Values",
+    "addValue": "Add value",
+    "value": "Value",
+    "valueNote": "Value note",
+    "deleteValue": "Delete value {name}",
+    "note": "Note",
+    "usedBy": "Used by",
+    "noUsages": "No columns yet. Pick this enum in a column's type list."
+  },
+  "nav": {
+    "goTo": "Go to {name}",
+    "goToTable": "Go to table"
+  },
+  "tableEditor": {
+    "dbmlLabel": "DBML for {name}",
+    "dbmlHint": "Only this table. Refer to other tables by name, e.g. [ref: > users.id].",
+    "name": "Table name",
+    "headerColor": "Header color",
+    "columns": "Columns",
+    "addColumn": "Add column",
+    "note": "Note",
+    "notePlaceholder": "Shown as a comment next to the table",
+    "referencedBy": "Referenced by"
+  },
+  "indexes": {
+    "title": "Indexes",
+    "add": "Add index",
+    "none": "No indexes."
+  },
+  "index": {
+    "remove": "Remove {part} from the index",
+    "delete": "Delete index",
+    "name": "Name",
+    "nameLabel": "Index name",
+    "method": "Method",
+    "methodLabel": "Index method",
+    "note": "Note",
+    "noteLabel": "Index note",
+    "add": "Add to index",
+    "addHint": "Add a column or expression",
+    "allUsed": "Every column is already in it",
+    "expression": "Expression, e.g. lower(email)"
+  },
+  "ref": {
+    "relationTo": "Relation to {target}",
+    "add": "Add relation",
+    "remove": "Remove relation",
+    "kind": "Relation kind",
+    "manyToOne": "Many to one",
+    "oneToMany": "One to many",
+    "oneToOne": "One to one",
+    "manyToMany": "Many to many",
+    "search": "Search table.column…",
+    "noColumns": "No columns found"
+  },
+  "schemaEditor": {
+    "import": "Import .dbml",
+    "export": "Export .dbml",
+    "importFailed": "Import failed, line {line}: {message}",
+    "label": "Board schema DBML",
+    "hint": "Every table, enum and DBML sticky note on the board. Paste a full schema here to replace it; Import merges a file in."
+  },
+  "errors": {
+    "enumNeedsName": "An enum needs a name",
+    "valueNeedsName": "A value needs a name",
+    "tableNeedsName": "A table needs a name",
+    "columnNeedsName": "A column needs a name",
+    "columnNeedsType": "A column needs a type",
+    "nameUsed": "\"{name}\" is already used"
+  },
+  "dbml": {
+    "created": "Created the missing table \"{name}\"",
+    "unsupported": "{what} isn't supported yet and was ignored",
+    "tableGone": "This table no longer exists",
+    "enumGone": "This enum no longer exists",
+    "oneTable": "Write exactly one Table here. Use the Schema view to add tables, enums or notes",
+    "oneEnum": "Write exactly one Enum here. Use the Schema view to add tables, enums or notes",
+    "enumSetting": "Enum setting \"{key}\"",
+    "enumValueSetting": "Enum value setting \"{key}\"",
+    "indexSetting": "Index setting \"{key}\"",
+    "tableSetting": "Table setting \"{key}\"",
+    "columnSetting": "Column setting \"{key}\"",
+    "refSetting": "Ref setting \"{key}\"",
+    "compositeRef": "Composite ref"
+  },
+  "canvas": {
+    "noColumns": "No columns",
+    "noValues": "No values",
+    "indexes": "{count} idx"
+  }
+}

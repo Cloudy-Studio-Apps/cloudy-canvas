@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import type { SharedFileInfo } from "@shared/core";
 import { usePluginsStore } from "@shared/stores/plugins-store";
 import { toast } from "@shared/stores/toast-store";
+import { t } from "./join.i18n";
 
 /**
  * Says once which of the host's plugins this app doesn't have on: what they add is kept in the
@@ -20,8 +21,8 @@ export function useMissingPluginsNotice(file: SharedFileInfo | null): void {
     const missing = file.plugins.filter((id) => !have.has(id));
     if (missing.length === 0) return;
     toast({
-      title: "Some of this file may not show",
-      description: `The host uses plugins you don't have on: ${missing.join(", ")}. What they add stays in the file.`,
+      title: t("plugins.title"),
+      description: t("plugins.body", { list: missing.join(", ") }),
     });
   }, [file]);
 }

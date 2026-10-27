@@ -1,0 +1,142 @@
+{
+  "language": {
+    "title": "Language",
+    "description": "The language of menus, panels and messages.",
+    "label": "Language",
+    "system": "System ({language})",
+    "restartNote": "Changes apply the next time you open Cloudy Canvas."
+  },
+  "groups": {
+    "preferences": "Preferences",
+    "extensions": "Extensions",
+    "help": "Help"
+  },
+  "nav": {
+    "appearance": "Appearance",
+    "files": "Files & storage",
+    "collaboration": "Collaboration",
+    "agents": "Agents (MCP)",
+    "plugins": "Plugins",
+    "shortcuts": "Keyboard shortcuts",
+    "about": "About"
+  },
+  "page": {
+    "home": "Home",
+    "title": "Settings"
+  },
+  "about": {
+    "description": "Boards and designs on one canvas. Part of Cloudy Studio.",
+    "reading": "Reading version…",
+    "copy": "Copy version info",
+    "license": "License & disclaimer",
+    "madeBy": "Made by {author}"
+  },
+  "dedication": {
+    "title": "Cloudy Studio is for her",
+    "body": "Cloudy Studio is named after the name she gives the characters she loves in her games: Cloudy. Every app in this series is dedicated to her, the person who makes every day a little less cloudy."
+  },
+  "agents": {
+    "description": "Let AI agents like Claude Code read and edit the open board. Only apps on this computer can connect."
+  },
+  "files": {
+    "description": "Boards and designs are saved wherever you choose. The app only remembers which ones you opened.",
+    "autosave": "Autosave",
+    "autosaveHint": "Saves open files a moment after each change. Boards you haven't saved yet are kept as drafts in the app data folder until you choose where they go.",
+    "recentList": "Recent files list",
+    "showInFolder": "Show in folder",
+    "copyPath": "Copy path",
+    "desktopOnly": "Kept by the desktop app only.",
+    "recentCount_one": "{count} recent file",
+    "recentCount_other": "{count} recent files",
+    "clearHint": "Clearing the list leaves the files on disk and keeps drafts.",
+    "confirmClear_one": "Clear {count} file?",
+    "confirmClear_other": "Clear {count} files?",
+    "clear": "Clear",
+    "clearAll": "Clear recent files",
+    "pathCopied": "Path copied"
+  },
+  "errors": {
+    "copyFailed": "Couldn't copy to the clipboard",
+    "folderFailed": "The folder couldn't be opened",
+    "pluginAdd": "The plugin couldn't be added",
+    "pluginRemove": "The plugin couldn't be removed"
+  },
+  "appearance": {
+    "description": "How the app looks: its colors, fonts and how tight its controls are. Plugins can add themes. Files don't change: exports and previews keep their own colors.",
+    "theme": "Theme",
+    "themeHint": "Match system switches with your OS's dark mode.",
+    "themeMode": "Theme mode",
+    "oneTheme": "One theme",
+    "matchSystem": "Match system",
+    "systemLight": "When your system is light",
+    "systemDark": "When your system is dark",
+    "density": "Density",
+    "densityHint": "How tall controls and rows are. A theme has its own; this overrides it.",
+    "densityOptions": {
+      "theme": "Theme's",
+      "compact": "Compact",
+      "default": "Default",
+      "comfortable": "Comfortable"
+    },
+    "fromPlugin": "From the plugin “{plugin}”",
+    "missing": "“{id}” isn't installed (its plugin was removed or turned off), so a built-in theme is shown instead."
+  },
+  "collaboration": {
+    "description": "Share an open board or design live: your app hosts it, and the people you let in edit it with you until you stop.",
+    "yourName": "Your name",
+    "nameHint": "Shown to others in live sessions.",
+    "enterName": "Enter a name",
+    "relayDown": "The Cloudy Canvas relay can't be reached right now because of a technical problem, so sessions use public relays (n0) instead. They work the same and stay end-to-end encrypted. The Cloudy Canvas relay is tried again for later sessions.",
+    "relayAddressError": "Enter the relay's address, like https://relay.example.com",
+    "relayServer": "Relay server",
+    "relayHint": "Helps guests reach you through routers, and carries the session when a direct connection can't be made. It never sees your files. Guests use the one in your link.",
+    "relayBuiltIn": "Cloudy Canvas relay",
+    "relayPublic": "Public relays (n0)",
+    "relayCustom": "My relay",
+    "address": "Address",
+    "accessToken": "Access token",
+    "tokenPlaceholder": "IROH_RELAY_ACCESS_TOKEN from the server's .env",
+    "connection": "Connection",
+    "connectBuiltIn": "Sessions connect through the Cloudy Canvas relay when a direct connection can't be made. It never sees your files.",
+    "connectPublic": "Sessions connect through public relays (n0) when a direct connection can't be made. They never see your files.",
+    "test": "Test connection",
+    "connected": "Connected through the relay in {millis} ms",
+    "needDesktop": "Live sessions need the desktop app.",
+    "answersNoToken": "The relay answers but didn't let the app in: check the token.",
+    "unreachable": "{error} The server can't be reached: check the address, that it's running and that ports 80, 443 and 7842/udp are open.",
+    "noAnswer": "It didn't answer."
+  },
+  "shortcuts": {
+    "description": "On a board. Hold Shift while resizing to keep proportions; hold Alt while dragging to duplicate."
+  },
+  "plugins": {
+    "description": "Add tools, elements and agent tools to your boards. Changes apply after a reload.",
+    "install": "Install from folder…",
+    "link": "Add folder for development…",
+    "showFolder": "Show plugins folder",
+    "reloadNote": "Reload the app to apply the changes to plugins.",
+    "reload": "Reload",
+    "none": "No plugins installed.",
+    "broken": "Folders that couldn't be read",
+    "development": "Development",
+    "failed": "Failed",
+    "addsStickers_one": "{count} sticker",
+    "addsStickers_other": "{count} stickers",
+    "addsThemes_one": "{count} theme",
+    "addsThemes_other": "{count} themes",
+    "adds": "Adds {items}",
+    "show": "Show folder",
+    "stopLoading": "Stop loading it? Its folder stays.",
+    "deleteIt": "Delete it?",
+    "remove": "Remove",
+    "turnOn": "Turn on {name}?",
+    "trustBody": "Plugins run with the same access as the app: your files, the network and your boards. Only turn on plugins you trust.",
+    "trustBodyAuthor": "Plugins run with the same access as the app: your files, the network and your boards. Only turn on plugins you trust (this one is by {author}).",
+    "trustAndOn": "Trust and turn on",
+    "pickInstall": "Install a plugin from its folder",
+    "pickLink": "Load a plugin you're developing",
+    "installed": "{name} installed",
+    "added": "{name} added",
+    "turnOnBelow": "Turn it on below, then reload to use it."
+  }
+}

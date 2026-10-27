@@ -3,6 +3,7 @@ import { parseSettings } from "./parse-settings";
 import { parseQualifiedName } from "./parse-name";
 import type { TokenCursor } from "./token-cursor";
 import type { DbmlError, ParsedEnum } from "./parser.types";
+import { t } from "../../db.i18n";
 
 /** Parses `Enum name [settings] { value [note: '…'] … }`. The cursor is on the `Enum` keyword. */
 export function parseEnum(cursor: TokenCursor, warnings: DbmlError[]): ParsedEnum {
@@ -19,7 +20,7 @@ export function parseEnum(cursor: TokenCursor, warnings: DbmlError[]): ParsedEnu
         result.headerColor = cursor.expectColor();
         return true;
       }
-      warnings.push(unsupported(`Enum setting "${key}"`, keyword));
+      warnings.push(unsupported(t("dbml.enumSetting", { key }), keyword));
       return false;
     });
   }
@@ -37,7 +38,7 @@ export function parseEnum(cursor: TokenCursor, warnings: DbmlError[]): ParsedEnu
           note = cursor.expectString("a note");
           return true;
         }
-        warnings.push(unsupported(`Enum value setting "${key}"`, keyword));
+        warnings.push(unsupported(t("dbml.enumValueSetting", { key }), keyword));
         return false;
       });
     }

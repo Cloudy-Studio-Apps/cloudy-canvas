@@ -3,36 +3,37 @@ import { MousePointer2, PaintBucket, PenTool, Scissors, Spline } from "lucide-re
 import { ModeToolbar, type ModeToolbarEntry } from "@canvas-ui";
 import { VECTOR_TOOLS } from "../edit/vector-tools";
 import { useDesignEngine } from "@design/ui/design-engine-context";
+import { t } from "../vector.i18n";
 
 const TOOLS: readonly ModeToolbarEntry[] = [
   {
     tool: VECTOR_TOOLS.move,
-    label: "Move points",
-    description: "Pick and drag points, segments and handles.",
+    label: t("edit.move.label"),
+    description: t("edit.move.description"),
     icon: MousePointer2,
   },
   {
     tool: VECTOR_TOOLS.pen,
-    label: "Pen",
-    description: "Add points, extend ends, join points.",
+    label: t("edit.pen.label"),
+    description: t("edit.pen.description"),
     icon: PenTool,
   },
   {
     tool: VECTOR_TOOLS.bend,
-    label: "Bend",
-    description: "Drag a segment to curve it; click a point to smooth it.",
+    label: t("edit.bend.label"),
+    description: t("edit.bend.description"),
     icon: Spline,
   },
   {
     tool: VECTOR_TOOLS.bucket,
-    label: "Paint bucket",
-    description: "Click an enclosed area to fill it, or a filled one to unfill it.",
+    label: t("edit.bucket.label"),
+    description: t("edit.bucket.description"),
     icon: PaintBucket,
   },
   {
     tool: VECTOR_TOOLS.cut,
-    label: "Cut",
-    description: "Click a segment to cut it.",
+    label: t("edit.cut.label"),
+    description: t("edit.cut.description"),
     icon: Scissors,
   },
 ];
@@ -42,7 +43,7 @@ export function VectorEditToolbar() {
   const engine = useDesignEngine();
   return (
     <ModeToolbar
-      label="Vector editing"
+      label={t("edit.title")}
       items={TOOLS}
       onDone={() => engine.commands.editSelection?.()}
     />

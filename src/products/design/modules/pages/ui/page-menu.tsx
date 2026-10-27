@@ -1,3 +1,4 @@
+import { tCommon } from "@shared/core";
 import { MoreHorizontal } from "lucide-react";
 
 import {
@@ -11,6 +12,7 @@ import {
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { deletePage, duplicatePage } from "./page-actions";
 import type { PageMenuProps } from "./page-row.types";
+import { t } from "../pages.i18n";
 
 /** A page's ⋯ menu: rename, duplicate and delete. */
 export function PageMenu({ page, deletable, onRename }: PageMenuProps) {
@@ -21,8 +23,8 @@ export function PageMenu({ page, deletable, onRename }: PageMenuProps) {
         <IconButton
           size="xs"
           className="size-5 rounded-xs"
-          label={`${page.name} options`}
-          title="Page options"
+          label={t("list.options", { name: page.name })}
+          title={t("list.optionsTitle")}
           tooltip={false}
           revealOnHover
           onClick={(event) => event.stopPropagation()}
@@ -37,9 +39,9 @@ export function PageMenu({ page, deletable, onRename }: PageMenuProps) {
         onClick={(event) => event.stopPropagation()}
         onDoubleClick={(event) => event.stopPropagation()}
       >
-        <DropdownMenuItem onSelect={onRename}>Rename</DropdownMenuItem>
+        <DropdownMenuItem onSelect={onRename}>{tCommon("rename")}</DropdownMenuItem>
         <DropdownMenuItem onSelect={() => duplicatePage(engine, page.id)}>
-          Duplicate
+          {tCommon("duplicate")}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
@@ -47,7 +49,7 @@ export function PageMenu({ page, deletable, onRename }: PageMenuProps) {
           onSelect={() => deletePage(engine, page.id)}
           className="text-destructive"
         >
-          Delete
+          {tCommon("delete")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

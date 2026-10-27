@@ -6,6 +6,7 @@ import { CustomTab } from "./custom-tab";
 import { EmojiTab } from "./emoji-tab";
 import type { StickerPanelProps } from "./sticker-picker.types";
 import { StickersTab } from "./stickers-tab";
+import { t } from "./stickers.i18n";
 
 /** Every sticker, in tabs, with one search for all of them. */
 export function StickerPanel({ activeId, onPick }: StickerPanelProps) {
@@ -19,13 +20,13 @@ export function StickerPanel({ activeId, onPick }: StickerPanelProps) {
           autoFocus
           value={query}
           onChange={setQuery}
-          placeholder="Search stickers and emojis"
-          aria-label="Search stickers"
+          placeholder={t("search.placeholder")}
+          aria-label={t("search.label")}
         />
         <TabsList className="w-full">
-          <TabsTrigger value="stickers">Stickers</TabsTrigger>
-          <TabsTrigger value="emojis">Emojis</TabsTrigger>
-          <TabsTrigger value="custom">Custom</TabsTrigger>
+          <TabsTrigger value="stickers">{t("tabs.stickers")}</TabsTrigger>
+          <TabsTrigger value="emojis">{t("tabs.emojis")}</TabsTrigger>
+          <TabsTrigger value="custom">{t("tabs.custom")}</TabsTrigger>
         </TabsList>
       </div>
       <div className="h-80 overflow-y-auto">

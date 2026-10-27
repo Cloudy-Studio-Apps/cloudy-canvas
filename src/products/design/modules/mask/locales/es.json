@@ -1,0 +1,33 @@
+{
+  "title": "Máscara",
+  "commands": {
+    "use": "Usar como máscara",
+    "remove": "Quitar máscara",
+    "release": "Liberar máscara",
+    "select": "Seleccionar máscara",
+    "selectMasked": "Seleccionar capas enmascaradas"
+  },
+  "panel": {
+    "selectMask": "Seleccionar máscara",
+    "selectMasked": "Seleccionar enmascaradas",
+    "release": "Liberar",
+    "maskedBy": "Enmascarada por {name}",
+    "groupsHint": "Agrupa las capas; la de abajo enmascara a las demás",
+    "aboveHint": "Enmascara las capas que están encima",
+    "type": "Tipo de máscara",
+    "invert": "Invertir máscara (mostrar lo de afuera)"
+  },
+  "toolbar": {
+    "removeHint": "Las capas que enmascara se vuelven a mostrar completas.",
+    "groupsHint": "Agrupa las capas; la de abajo enmascara a las demás.",
+    "aboveHint": "Enmascara las capas que están encima."
+  },
+  "options": {
+    "alpha": "Alfa",
+    "vector": "Vector (contorno)",
+    "luminance": "Luminancia"
+  },
+  "defaults": {
+    "maskGroup": "Grupo de máscara"
+  }
+}

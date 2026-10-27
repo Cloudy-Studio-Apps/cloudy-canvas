@@ -4,6 +4,7 @@ import { Button } from "@shared/ui/kit";
 import { CommitInput } from "@canvas-ui";
 import { useBoardSchema } from "../schema";
 import type { EnumValueRowProps } from "./enum-value-row.types";
+import { t } from "../../db.i18n";
 
 export function EnumValueRow({ target, value, index }: EnumValueRowProps) {
   const schema = useBoardSchema();
@@ -14,7 +15,7 @@ export function EnumValueRow({ target, value, index }: EnumValueRowProps) {
       <div className="flex items-center gap-1">
         <CommitInput
           value={value.name}
-          aria-label="Value"
+          aria-label={t("enumEditor.value")}
           className="h-7 min-w-0 flex-1 font-mono text-xs"
           onCommit={(name) => schema.updateEnumValue(target.id, value.id, { name })}
         />
@@ -22,7 +23,7 @@ export function EnumValueRow({ target, value, index }: EnumValueRowProps) {
           variant="ghost"
           size="icon"
           className="size-7"
-          aria-label="Move up"
+          aria-label={t("column.moveUp")}
           disabled={index === 0}
           onClick={() => schema.moveEnumValue(target.id, value.id, index - 1)}
         >
@@ -32,7 +33,7 @@ export function EnumValueRow({ target, value, index }: EnumValueRowProps) {
           variant="ghost"
           size="icon"
           className="size-7"
-          aria-label="Move down"
+          aria-label={t("column.moveDown")}
           disabled={last}
           onClick={() => schema.moveEnumValue(target.id, value.id, index + 1)}
         >
@@ -42,7 +43,7 @@ export function EnumValueRow({ target, value, index }: EnumValueRowProps) {
           variant="ghost"
           size="icon"
           className="size-7 hover:text-destructive"
-          aria-label={`Delete value ${value.name}`}
+          aria-label={t("enumEditor.deleteValue", { name: value.name })}
           onClick={() => schema.removeEnumValue(target.id, value.id)}
         >
           <Trash2 />
@@ -50,8 +51,8 @@ export function EnumValueRow({ target, value, index }: EnumValueRowProps) {
       </div>
       <CommitInput
         value={value.note}
-        placeholder="Note"
-        aria-label="Value note"
+        placeholder={t("enumEditor.note")}
+        aria-label={t("enumEditor.valueNote")}
         className="h-6 text-xs"
         onCommit={(note) => schema.updateEnumValue(target.id, value.id, { note })}
       />

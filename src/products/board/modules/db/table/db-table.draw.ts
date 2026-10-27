@@ -5,6 +5,7 @@ import { DB_CARD_DEFAULTS, drawCardFrame, rowTop } from "../card";
 import { formatColumnType } from "./column-type";
 import type { DbColumn, DbTableElement } from "./db-table.types";
 import { drawNoteBubble } from "./note-bubble.draw";
+import { t } from "../db.i18n";
 
 const {
   fontSize: DB_FONT_SIZE,
@@ -30,7 +31,7 @@ export function drawDbTable(view: ElementView, el: DbTableElement): void {
 
   if (el.indexes.length > 0) {
     keep.add("indexes");
-    const label = view.setTextSlot("indexes", `${el.indexes.length} idx`, {
+    const label = view.setTextSlot("indexes", t("canvas.indexes", { count: el.indexes.length }), {
       fontSize: BADGE_FONT_SIZE,
       color: MUTED_INK_COLOR,
       fontWeight: "600",
@@ -45,7 +46,7 @@ export function drawDbTable(view: ElementView, el: DbTableElement): void {
 
   if (columns.length === 0) {
     keep.add("empty");
-    const empty = view.setTextSlot("empty", "No columns", {
+    const empty = view.setTextSlot("empty", t("canvas.noColumns"), {
       fontSize: DB_FONT_SIZE,
       color: MUTED_INK_COLOR,
     });

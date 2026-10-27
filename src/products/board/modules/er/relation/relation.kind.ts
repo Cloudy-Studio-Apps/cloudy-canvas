@@ -16,12 +16,13 @@ import { ErNamedKind } from "../base/er-named.kind";
 import { relationSize } from "../base/er-size";
 import { drawErRelation } from "./relation.draw";
 import type { ErRelationElement } from "./relation.types";
+import { t } from "../er.i18n";
 
 export class ErRelationKind extends ErNamedKind<ErRelationElement> {
   readonly type = "er-relation";
   override readonly connectable = true;
-  readonly label = "Relation";
-  readonly description = "A relation (diamond) between entities of an ER diagram.";
+  readonly label = t("kinds.relation.label");
+  readonly description = t("kinds.relation.description");
 
   /** Connect dots: drag one to link this to another element, or to add an attribute. */
   override handles(el: ErRelationElement, zoom: number): ElementHandle[] {

@@ -6,6 +6,7 @@ import { openExternal } from "@platform";
 import { notifyError } from "@shared/stores/toast-store";
 import { useBoardEngine } from "@board/ui/board-engine-context";
 import { EmbedPlayerFrame } from "./embed-player-frame";
+import { t } from "../embed.i18n";
 
 /**
  * Handles link cards' buttons: "open" opens the link in the browser, "play" plays the video in
@@ -24,7 +25,7 @@ export function EmbedPlayer() {
         if (action === EMBED_ACTIONS.play) setPlaying(elementId);
         else if (action === EMBED_ACTIONS.open) {
           void openExternal(card.url).catch((error: unknown) =>
-            notifyError("The link couldn't be opened", error),
+            notifyError(t("errors.link"), error),
           );
         }
       }),

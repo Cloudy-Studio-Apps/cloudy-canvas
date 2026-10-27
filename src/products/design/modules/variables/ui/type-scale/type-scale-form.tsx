@@ -5,6 +5,7 @@ import { Field, Input, SelectField } from "@shared/ui/kit";
 import { FontPicker } from "../../../text/ui";
 import { NumberFieldRow } from "./number-field-row";
 import type { TypeScaleFormProps } from "./type-scale-ui.types";
+import { t } from "../../variables.i18n";
 
 /** The value of the font select that means "a family by name". */
 const BY_NAME = "__name__";
@@ -23,21 +24,21 @@ export function TypeScaleForm({ settings, onChange }: TypeScaleFormProps) {
     <div className="flex flex-col gap-2">
       <SelectField
         layout="inline"
-        label="Collection"
+        label={t("typeScale.collection")}
         value={settings.collection}
         options={store.collections().map((c) => ({ value: c.id, label: c.name }))}
         onChange={(collection) => set({ collection })}
       />
-      <Field label="Group" layout="inline">
+      <Field label={t("typeScale.group")} layout="inline">
         <Input
-          aria-label="Group"
+          aria-label={t("typeScale.group")}
           className="h-7 text-xs"
           value={settings.group}
           onChange={(event) => set({ group: event.target.value })}
         />
       </Field>
       <NumberFieldRow
-        label="Base size"
+        label={t("typeScale.baseSize")}
         value={settings.base}
         min={8}
         max={64}
@@ -45,7 +46,7 @@ export function TypeScaleForm({ settings, onChange }: TypeScaleFormProps) {
       />
       <SelectField
         layout="inline"
-        label="Ratio"
+        label={t("typeScale.ratio")}
         value={String(settings.ratio)}
         options={SCALE_RATIOS.map((r) => ({
           value: String(r.ratio),
@@ -54,14 +55,14 @@ export function TypeScaleForm({ settings, onChange }: TypeScaleFormProps) {
         onChange={(ratio) => set({ ratio: Number(ratio) })}
       />
       <NumberFieldRow
-        label="Steps below"
+        label={t("typeScale.stepsBelow")}
         value={settings.below}
         min={0}
         max={5}
         onChange={(below) => set({ below })}
       />
       <NumberFieldRow
-        label="Steps above"
+        label={t("typeScale.stepsAbove")}
         value={settings.above}
         min={0}
         max={7}
@@ -69,11 +70,14 @@ export function TypeScaleForm({ settings, onChange }: TypeScaleFormProps) {
       />
       <SelectField
         layout="inline"
-        label="Font"
+        label={t("typeScale.font")}
         value={fontValue}
         options={[
-          ...fontVariables.map((v) => ({ value: v.id, label: `Variable · ${v.name}` })),
-          { value: BY_NAME, label: "A family…" },
+          ...fontVariables.map((v) => ({
+            value: v.id,
+            label: t("typeScale.fontVariable", { name: v.name }),
+          })),
+          { value: BY_NAME, label: t("typeScale.aFamily") },
         ]}
         onChange={(value) =>
           set({ font: value === BY_NAME ? { name: "Inter" } : { variable: value } })
@@ -87,20 +91,20 @@ export function TypeScaleForm({ settings, onChange }: TypeScaleFormProps) {
       )}
       <SelectField
         layout="inline"
-        label="Heading weight"
+        label={t("typeScale.headingWeight")}
         value={settings.headingWeight}
         options={weights}
         onChange={(w) => set({ headingWeight: w as FontWeight })}
       />
       <SelectField
         layout="inline"
-        label="Body weight"
+        label={t("typeScale.bodyWeight")}
         value={settings.bodyWeight}
         options={weights}
         onChange={(w) => set({ bodyWeight: w as FontWeight })}
       />
       <NumberFieldRow
-        label="Heading line height"
+        label={t("typeScale.headingLineHeight")}
         value={settings.lineHeight.heading}
         min={0.8}
         max={3}
@@ -109,7 +113,7 @@ export function TypeScaleForm({ settings, onChange }: TypeScaleFormProps) {
         onChange={(heading) => set({ lineHeight: { ...settings.lineHeight, heading } })}
       />
       <NumberFieldRow
-        label="Body line height"
+        label={t("typeScale.bodyLineHeight")}
         value={settings.lineHeight.body}
         min={0.8}
         max={3}

@@ -5,6 +5,7 @@ import { PanelSection } from "@design/ui/components/panel";
 import { useDesignState } from "@design/ui/design-engine-context";
 import { FramePresetGroup } from "./frame-preset-group";
 import { useAddPresetFrame } from "./use-add-preset-frame";
+import { t } from "../frame.i18n";
 
 /**
  * The properties panel while the frame tool is on (as in Figma): the preset sizes by group. A
@@ -27,10 +28,8 @@ export function FramePresetsSidebar() {
     });
 
   return (
-    <PanelSection title="Frame" className="border-b-0">
-      <p className="mb-2 text-xs text-muted-foreground">
-        Pick a size to add a frame, or drag on the canvas to draw one.
-      </p>
+    <PanelSection title={t("label")} className="border-b-0">
+      <p className="mb-2 text-xs text-muted-foreground">{t("presets.hint")}</p>
       <ul className="flex flex-col">
         {FRAME_PRESET_GROUPS.map((group) => (
           <FramePresetGroup

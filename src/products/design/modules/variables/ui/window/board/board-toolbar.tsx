@@ -3,6 +3,7 @@ import { Search } from "lucide-react";
 import { Input } from "@shared/ui/kit";
 import { useVariablesWindowStore } from "../variables-window-store";
 import { ModeChips } from "./mode-chips";
+import { t } from "../../../variables.i18n";
 
 /** The board's top: search, and the modes it draws. */
 export function BoardToolbar() {
@@ -14,8 +15,8 @@ export function BoardToolbar() {
         <Input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search variables"
-          aria-label="Search variables"
+          placeholder={t("board.search")}
+          aria-label={t("board.search")}
           className="h-7 pl-7 text-xs"
         />
       </div>

@@ -40,6 +40,7 @@ import { cellAt, cellBox, cellFontWeight, lineBounds } from "./table.layout";
 import type { TableCell } from "./table.layout.types";
 import { cellPart, cellsPart, clickedCells, parseTablePart, partCells } from "./table-parts";
 import type { TableElement } from "./table.types";
+import { t } from "./table.i18n";
 
 /**
  * A grid of cells, each edited in place (double-click a cell; Tab moves to the next one). When
@@ -48,8 +49,8 @@ import type { TableElement } from "./table.types";
  */
 export class TableKind extends BoxKind<TableElement, BoardToolOptions> {
   readonly type = "table";
-  readonly label = "Table";
-  readonly description = "A grid of cells for lists, comparisons and plans.";
+  readonly label = t("label");
+  readonly description = t("description");
   override readonly tool = "table";
   override readonly defaults = TABLE_DEFAULTS;
   override readonly styleFields = ["color"];
@@ -223,10 +224,10 @@ export class TableKind extends BoxKind<TableElement, BoardToolOptions> {
   override bindable(el: TableElement): BindableField[] {
     const cells = el.fills.flatMap((row, r) =>
       row.map((_fill, c) =>
-        colorField(`fills.${r}.${c}`, `Cell ${r + 1},${c + 1} fill`, "shape-fill"),
+        colorField(`fills.${r}.${c}`, t("cellFill", { row: r + 1, column: c + 1 }), "shape-fill"),
       ),
     );
-    return [colorField("color", "Header tint", "shape-fill"), ...cells];
+    return [colorField("color", t("headerTint"), "shape-fill"), ...cells];
   }
 
   override describe(el: TableElement): ElementDescription {

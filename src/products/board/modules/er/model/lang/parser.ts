@@ -15,6 +15,7 @@ import type {
   RawEntity,
   RawRelation,
 } from "./parser.types";
+import { t } from "../../er.i18n";
 
 /** Parses the ER language. Returns the first syntax error instead of throwing. */
 export function parseEr(source: string): ErParseResult {
@@ -91,7 +92,7 @@ function parseDiagram(cursor: TokenCursor, model: ParsedEr): void {
       else model.warnings.push(unknownSetting(`${key}: ${value}`, at));
       if (setting?.standard !== undefined && !isInstalledStandard(setting.standard)) {
         model.warnings.push({
-          message: `The standard "${value}" isn't installed; drawn with the default`,
+          message: t("lang.standardMissingDrawn", { name: value }),
           line: at.line,
           column: at.column,
         });

@@ -1,0 +1,112 @@
+{
+  "zoom": {
+    "out": "Zoom out",
+    "in": "Zoom in",
+    "current": "Zoom {percent}",
+    "fit": "Zoom to fit",
+    "selection": "Zoom to selection",
+    "snapObjects": "Snap to objects",
+    "snapPixel": "Snap to pixel grid",
+    "snapGuides": "Snap to guides"
+  },
+  "history": {
+    "undo": "Undo",
+    "redo": "Redo",
+    "undoOwner": "Undo {name}'s change",
+    "redoOwner": "Redo {name}'s change",
+    "undoStep": "Undo: {step}",
+    "redoStep": "Redo: {step}",
+    "undoKeyHint": "{keys} undoes {name}'s changes while you follow"
+  },
+  "follow": {
+    "following": "Following {name}",
+    "watching": "Watching their view",
+    "stop": "Stop following"
+  },
+  "color": {
+    "recent": "Recent",
+    "custom": "Custom color",
+    "edit": "Edit {label}",
+    "hex": "{label} hex",
+    "opacity": "{label} opacity",
+    "hexLabel": "Hex",
+    "saturation": "Saturation and brightness",
+    "saturationValue": "Saturation {saturation}%, brightness {brightness}%",
+    "eyedropper": "Pick a color from the screen",
+    "hexError": "Enter a hex color, like FF8800",
+    "percentError": "Enter a percentage"
+  },
+  "menu": {
+    "align": "Align",
+    "copyPasteAs": "Copy/Paste as",
+    "order": "Order",
+    "exportSelection": "Export selection…",
+    "exportBoard": "Export board…",
+    "lock": "Lock",
+    "unlock": "Unlock"
+  },
+  "export": {
+    "title": "Export",
+    "description": "Choose the file type, background and area to export.",
+    "fileType": "File type",
+    "background": "Background",
+    "area": "Export area",
+    "solid": "Solid",
+    "transparent": "Transparent",
+    "selectionOnly": "Selection only",
+    "entireBoard": "Entire board",
+    "exporting": "Exporting…",
+    "export": "Export",
+    "progress": "Exporting as {format}…",
+    "failed": "Couldn't export",
+    "done": "Exported as {format}",
+    "saveError": "Couldn't save the export",
+    "formats": {
+      "png": "PNG image",
+      "jpg": "JPEG image",
+      "pdf": "PDF document",
+      "csv": "CSV table"
+    }
+  },
+  "crop": {
+    "move": "Move the picture",
+    "scale": "Scale the picture",
+    "resize": "Resize the crop"
+  },
+  "loading": {
+    "opening": "Opening file"
+  },
+  "quality": {
+    "onScreen": "On screen ≈ {px} px",
+    "outOfView": "It's out of view now.",
+    "nowOnScreen": "Right now it takes about {px} px on screen.",
+    "exportsVector": "Exports and Catalog mode's preview and PDF draw it as sharp as they need.",
+    "exportsRaster": "Exports and Catalog mode's preview and PDF draw from the original at full quality ({size} px).",
+    "vectorLabel": "Vector picture · drawn at {size} px",
+    "vectorTip": "A vector picture is drawn on the canvas only as sharp as it shows, to keep the canvas fast. {now} Zoom in and it's drawn sharper. {exports}",
+    "fullLabel": "Full resolution · {size} px",
+    "fullTip": "The canvas shows this picture at its own size, {size} px. Exports and Catalog mode use it at full quality too.",
+    "previewLabel": "Preview {shown} of {natural} px",
+    "previewTip": "To keep the canvas fast, it shows a smaller copy of this picture, as sharp as the picture looks on screen. {now} Zoom in and a sharper copy loads. {exports}"
+  },
+  "colorControls": {
+    "hue": "Hue",
+    "hueOf": "{target} hue",
+    "opacity": "Opacity",
+    "opacityOf": "{target} opacity",
+    "hex": "Hex color",
+    "hexOf": "{target} hex color"
+  },
+  "anchors": {
+    "label": "Anchor",
+    "top-left": "Top left",
+    "top": "Top",
+    "top-right": "Top right",
+    "left": "Left",
+    "center": "Center",
+    "right": "Right",
+    "bottom-left": "Bottom left",
+    "bottom": "Bottom",
+    "bottom-right": "Bottom right"
+  }
+}

@@ -3,6 +3,7 @@ import { CircleCheck, CircleX, Info, TriangleAlert } from "lucide-react";
 import { useEngine } from "@canvas-ui";
 import { cn } from "@shared/ui/kit";
 import type { ErCheckListProps } from "./diagram-settings.types";
+import { t } from "../../../er.i18n";
 
 const ICONS = { error: CircleX, warning: TriangleAlert, info: Info } as const;
 
@@ -13,7 +14,7 @@ export function ErCheckList({ issues }: ErCheckListProps) {
     return (
       <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <CircleCheck className="size-4 text-success" />
-        No problems found.
+        {t("check.none")}
       </p>
     );
   }

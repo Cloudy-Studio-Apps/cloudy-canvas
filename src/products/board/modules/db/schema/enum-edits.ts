@@ -6,6 +6,7 @@ import { isDbTable } from "../table";
 import { freeName, moveItem } from "./table-edits";
 import type { DbEnumPatch, DbEnumValuePatch } from "./db-schema.types";
 import { patchEnum, patchTable } from "./patch-db-element";
+import { t } from "../db.i18n";
 
 // Visual edits to one enum. Each is one undo step. Functions that validate return an error message.
 
@@ -20,9 +21,9 @@ export function updateEnum(doc: CanvasDocument, id: string, patch: DbEnumPatch):
   if (!current) return null;
   const name = patch.name?.trim();
   if (name !== undefined) {
-    if (!name) return "An enum needs a name";
+    if (!name) return t("errors.enumNeedsName");
     if (doc.all().some((s) => isDbEnum(s) && s.id !== id && s.name === name))
-      return `"${name}" is already used`;
+      return t("errors.nameUsed", { name });
   }
   doc.checkpoint();
   doc.batch(() => {
@@ -61,9 +62,9 @@ export function updateEnumValue(
   if (!current) return null;
   if (patch.name !== undefined) {
     const name = patch.name.trim();
-    if (!name) return "A value needs a name";
+    if (!name) return t("errors.valueNeedsName");
     if (current.values.some((v) => v.id !== valueId && v.name === name))
-      return `"${name}" is already used`;
+      return t("errors.nameUsed", { name });
     patch = { ...patch, name };
   }
   writeValues(

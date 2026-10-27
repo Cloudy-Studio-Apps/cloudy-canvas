@@ -1,4 +1,5 @@
 import type { DropShadowEffect, GlassEffect } from "./effect.types";
+import { t } from "./effects.i18n";
 
 /** Shadow elevations, from resting on the page to floating well above it. */
 export const SHADOW_PRESETS: readonly {
@@ -18,7 +19,7 @@ export const GLASS_PRESETS: readonly {
   look: Omit<GlassEffect, "id" | "type" | "visible">;
 }[] = [
   {
-    label: "Clear",
+    label: t("presets.clear"),
     look: {
       lightAngle: 135,
       lightIntensity: 0.35,
@@ -30,7 +31,7 @@ export const GLASS_PRESETS: readonly {
     },
   },
   {
-    label: "Frosted",
+    label: t("presets.frosted"),
     look: {
       lightAngle: 120,
       lightIntensity: 0.4,
@@ -42,7 +43,7 @@ export const GLASS_PRESETS: readonly {
     },
   },
   {
-    label: "Liquid",
+    label: t("presets.liquid"),
     look: {
       lightAngle: 135,
       lightIntensity: 0.7,

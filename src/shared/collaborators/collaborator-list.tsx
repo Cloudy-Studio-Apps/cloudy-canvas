@@ -7,6 +7,7 @@ import { collaboratorPlaceText, collaboratorStatusText } from "./collaborator-st
 import { useCollaborators } from "./use-collaborators";
 import { useFollowToggle } from "./use-follow-toggle";
 import type { CollaboratorListProps } from "./collaborator-list.types";
+import { t } from "./collaborators.i18n";
 
 const TICK_MS = 5_000;
 
@@ -24,10 +25,10 @@ export function CollaboratorList({
   return (
     <>
       <DropdownMenuLabel>
-        Connected {kind === "agent" ? "agents" : "collaborators"}
+        {t(kind === "agent" ? "connectedAgents" : "connectedCollaborators")}
       </DropdownMenuLabel>
       {collaborators.length === 0 ? (
-        <p className="px-2 pb-2 text-xs text-muted-foreground">No one has connected yet.</p>
+        <p className="px-2 pb-2 text-xs text-muted-foreground">{t("none")}</p>
       ) : (
         collaborators.map((collaborator) => {
           const followed = following === collaborator.id;
@@ -47,7 +48,7 @@ export function CollaboratorList({
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="flex items-center gap-1.5 truncate text-sm">
                     {collaboratorTitle(collaborator)}
-                    {followed && <span className="text-xs text-primary">Following</span>}
+                    {followed && <span className="text-xs text-primary">{t("following")}</span>}
                   </span>
                   <span className="truncate text-xs text-muted-foreground">
                     {collaboratorStatusText(collaborator, now)}

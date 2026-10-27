@@ -5,6 +5,7 @@ import type { ModuleHost } from "@shared/core";
 import { useEngine, useEngineState } from "../../engine-context";
 import { ModeToolbar } from "../mode-toolbar";
 import type { EditorModeDefinition, ModePoints, ModeToolbarSpec } from "./editor-mode.types";
+import { t } from "../modules.i18n";
 
 /** A mode written as one object (it's returned as is; the type checks it). */
 export function defineEditorMode<O extends object>(
@@ -101,7 +102,13 @@ function toolbarOf(
   const title = { label, icon };
   const useItems = "useItems" in spec ? spec.useItems : () => spec;
   return function ModeToolbarOfMode() {
-    return <ModeToolbar title={title} label={`${label} mode`} items={useItems()} />;
+    return (
+      <ModeToolbar
+        title={title}
+        label={t("editorMode.toolbarLabel", { mode: label })}
+        items={useItems()}
+      />
+    );
   };
 }
 

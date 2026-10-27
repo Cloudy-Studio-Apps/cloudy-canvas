@@ -4,12 +4,14 @@ import { DOCUMENT_TOKENS } from "@canvas";
 import { useDocumentTokens } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { notifyError, toast } from "@shared/stores/toast-store";
+import { tCommon } from "@shared/core";
 import { AppDialog, Button } from "@shared/ui/kit";
 import { createTypeScale, DEFAULT_TYPE_SCALE } from "../../type-scale";
 import type { TypeScaleSettings } from "../../type-scale";
 import { TypeScaleForm } from "./type-scale-form";
 import { TypeScalePreview } from "./type-scale-preview";
 import type { TypeScaleDialogProps } from "./type-scale-ui.types";
+import { t } from "../../variables.i18n";
 
 /** The collection a new type scale goes in when the file has none ("Typography" is made then). */
 const NEW_COLLECTION = "Typography";
@@ -40,10 +42,10 @@ export function TypeScaleDialog({ open, onOpenChange }: TypeScaleDialogProps) {
       const tokens = engine.service(DOCUMENT_TOKENS);
       const collection = current.collection || tokens.createCollection(NEW_COLLECTION).id;
       const made = createTypeScale(engine.doc, tokens, { ...current, collection });
-      toast({ title: `Made ${made.styles.length} text styles` });
+      toast({ title: t("typeScale.made", { count: made.styles.length }) });
       onOpenChange(false);
     } catch (error) {
-      notifyError("The type scale couldn't be made", error);
+      notifyError(t("typeScale.error"), error);
     }
   };
 
@@ -51,15 +53,15 @@ export function TypeScaleDialog({ open, onOpenChange }: TypeScaleDialogProps) {
     <AppDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Type scale"
-      description="Text styles from a base size and a ratio. Their sizes are variables, so changing the scale later resizes every style and every text using one."
+      title={t("typeScale.title")}
+      description={t("typeScale.description")}
       size="lg"
       footer={
         <>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {tCommon("cancel")}
           </Button>
-          <Button onClick={create}>Create styles</Button>
+          <Button onClick={create}>{t("typeScale.create")}</Button>
         </>
       }
     >

@@ -8,6 +8,7 @@ import type {
 } from "../../styleguide.types";
 import { grid, variablesOf } from "../template-kit";
 import { COLOR_OPTIONS, COLUMNS_OPTION, colorCaption, colorSwatch, swatchSize } from "./color-kit";
+import { t } from "../../styleguide.i18n";
 
 /** The swatch grid's body: rows of squares with their names and values. */
 export function swatchGrid(
@@ -34,8 +35,8 @@ export function swatchGrid(
 export const swatchGridTemplate: StyleguideTemplate = {
   id: "colors.swatch-grid",
   category: "colors",
-  label: "Swatch grid",
-  description: "Squares in a grid with their names and values.",
+  label: t("templates.colors.swatchGrid.label"),
+  description: t("templates.colors.swatchGrid.description"),
   options: [...COLOR_OPTIONS, COLUMNS_OPTION],
   build: swatchGrid,
 };

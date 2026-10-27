@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { tCommon } from "@shared/core";
 
 import { brochurePageSize } from "../../model/page-span";
 import { Button } from "@shared/ui/kit";
@@ -9,6 +10,7 @@ import { Preview3dToggle } from "./preview-3d-toggle";
 import { PreviewStage } from "./preview-stage";
 import { PreviewStrip } from "./preview-strip";
 import { usePreviewKeys } from "./use-preview-keys";
+import { t } from "../../catalog.i18n";
 
 /**
  * The brochure as a reader flips through it (an `overlays` entry): a spread at a time as the
@@ -49,14 +51,14 @@ export function BrochurePreview() {
   return (
     <div
       role="dialog"
-      aria-label="Brochure preview"
+      aria-label={t("preview.label")}
       className="pointer-events-auto fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-overlay backdrop-blur-sm"
     >
       <header className="absolute inset-x-4 top-4 flex items-center justify-between">
         <Preview3dToggle />
         <Button size="sm" variant="secondary" onClick={close}>
           <X />
-          Close
+          {tCommon("close")}
         </Button>
       </header>
       <PreviewStage
@@ -69,7 +71,7 @@ export function BrochurePreview() {
         <Button
           size="icon"
           variant="secondary"
-          aria-label="Previous"
+          aria-label={t("preview.previous")}
           disabled={current === 0}
           onClick={() => turn(-1)}
         >
@@ -81,7 +83,7 @@ export function BrochurePreview() {
         <Button
           size="icon"
           variant="secondary"
-          aria-label="Next"
+          aria-label={t("preview.next")}
           disabled={current === last}
           onClick={() => turn(1)}
         >

@@ -7,6 +7,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import { Button, ListRow, Popover, PopoverContent, PopoverTrigger } from "@shared/ui/kit";
 import type { TokenUsageProps } from "./token-usage.types";
+import { t } from "../../design-ui.i18n";
 
 /**
  * Replace with…: every use of this variable (or style) moves to another of its type, layers,
@@ -20,15 +21,18 @@ export function ReplaceWith({ id }: TokenUsageProps) {
   const replace = (to: string) => {
     try {
       const count = engine.service(DOCUMENT_TOKENS).replaceUses(id, to, countedUse(engine.doc));
-      const name = store.variable(to)?.name ?? store.style(to)?.name ?? "it";
-      toast({ title: `Replaced with ${name}`, description: `${count} layers now use it.` });
+      const name = store.variable(to)?.name ?? store.style(to)?.name ?? t("tokenUsage.replace.it");
+      toast({
+        title: t("tokenUsage.replace.done", { name }),
+        description: t("tokenUsage.replace.layersUse", { count }),
+      });
     } catch (error) {
-      notifyError("Couldn't replace it", error);
+      notifyError(t("tokenUsage.replace.failed"), error);
     }
   };
   const trigger = (
     <Button variant="outline" size="xs">
-      <Replace /> Replace with…
+      <Replace /> {t("tokenUsage.replace.button")}
     </Button>
   );
   if (variable) {
@@ -45,7 +49,7 @@ export function ReplaceWith({ id }: TokenUsageProps) {
       <PopoverTrigger asChild>{trigger}</PopoverTrigger>
       <PopoverContent align="start" className="max-h-64 w-56 overflow-y-auto p-1">
         {others.length === 0 ? (
-          <p className="p-2 text-xs text-muted-foreground">No other style of this kind.</p>
+          <p className="p-2 text-xs text-muted-foreground">{t("tokenUsage.replace.none")}</p>
         ) : (
           others.map((other) => (
             <ListRow key={other.id} label={other.name} onSelect={() => replace(other.id)} />

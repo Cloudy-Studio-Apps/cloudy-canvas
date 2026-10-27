@@ -2,6 +2,7 @@ import { defineService } from "@canvas";
 
 import type { ErRelationRatio, ErRelationRequest } from "./er-connect.types";
 import { ErPrompt } from "./er-prompt";
+import { t } from "../er.i18n";
 
 /**
  * The binary relations the connect prompt offers, in Chen (min,max) participation: the number
@@ -11,43 +12,43 @@ import { ErPrompt } from "./er-prompt";
 export const ER_RELATION_RATIOS: readonly ErRelationRatio[] = [
   {
     id: "one-to-one",
-    label: "One to one",
+    label: t("ratios.oneToOne"),
     from: "one",
     to: "one",
     fromCardinality: { min: "0", max: "1" },
     toCardinality: { min: "0", max: "1" },
     joins: ["from"],
-    describe: (from, to) => `Each ${from} has at most one ${to}, and the other way round`,
+    describe: (from, to) => t("ratios.describeOneToOne", { from, to }),
   },
   {
     id: "one-to-many",
-    label: "One to many",
+    label: t("ratios.oneToMany"),
     from: "one",
     to: "many",
     fromCardinality: { min: "0", max: "n" },
     toCardinality: { min: "1", max: "1" },
     joins: ["from"],
-    describe: (from, to) => `Each ${from} has many ${to}; each ${to} belongs to one ${from}`,
+    describe: (from, to) => t("ratios.describeOneToMany", { from, to }),
   },
   {
     id: "many-to-one",
-    label: "Many to one",
+    label: t("ratios.manyToOne"),
     from: "many",
     to: "one",
     fromCardinality: { min: "1", max: "1" },
     toCardinality: { min: "0", max: "n" },
     joins: ["to"],
-    describe: (from, to) => `Each ${from} belongs to one ${to}; each ${to} has many ${from}`,
+    describe: (from, to) => t("ratios.describeManyToOne", { from, to }),
   },
   {
     id: "many-to-many",
-    label: "Many to many",
+    label: t("ratios.manyToMany"),
     from: "many",
     to: "many",
     fromCardinality: { min: "0", max: "n" },
     toCardinality: { min: "0", max: "n" },
     joins: ["from", "to"],
-    describe: (from, to) => `Each ${from} has many ${to}, and each ${to} many ${from}`,
+    describe: (from, to) => t("ratios.describeManyToMany", { from, to }),
   },
 ];
 

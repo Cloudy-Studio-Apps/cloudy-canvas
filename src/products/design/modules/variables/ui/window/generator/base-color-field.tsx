@@ -3,6 +3,7 @@ import { joinTokenColor } from "@canvas";
 import { draftBase } from "../shade-drafts";
 import { useBoard } from "../use-board";
 import type { GeneratorPartProps } from "./generator.types";
+import { t } from "../../../variables.i18n";
 
 /** The shades' base: a variable's color (followed), or one picked here. */
 export function BaseColorField({ draft, change }: GeneratorPartProps) {
@@ -13,8 +14,12 @@ export function BaseColorField({ draft, change }: GeneratorPartProps) {
   return (
     <div className="flex flex-col gap-1.5 text-xs">
       <span className="flex justify-between text-muted-foreground">
-        Base color
-        {variable && <span className="text-subtle-foreground">from {variable.name}</span>}
+        {t("generator.baseColor")}
+        {variable && (
+          <span className="text-subtle-foreground">
+            {t("generator.from", { name: variable.name })}
+          </span>
+        )}
       </span>
       {variable ? (
         <div className="flex h-7 items-center gap-2 rounded-md bg-surface-sunken px-2">
@@ -28,13 +33,13 @@ export function BaseColorField({ draft, change }: GeneratorPartProps) {
             className="ml-auto text-primary hover:underline"
             onClick={() => change({ baseVar: null, baseColor: base })}
           >
-            Use a fixed color
+            {t("generator.useFixedColor")}
           </button>
         </div>
       ) : (
         <ColorField
           color={hex.toLowerCase()}
-          label="Base color"
+          label={t("generator.baseColor")}
           onChange={(next) => change({ baseColor: joinTokenColor(next.color, 1) })}
         />
       )}

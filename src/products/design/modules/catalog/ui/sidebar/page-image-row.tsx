@@ -7,6 +7,7 @@ import { Button, cn } from "@shared/ui/kit";
 import { usePictureSize } from "../hooks/use-picture-size";
 import { replaceImage } from "../page-actions";
 import type { PageImageRowProps } from "./sidebar.types";
+import { t } from "../../catalog.i18n";
 
 /** One picture of a page: what it shows, its size and printed dpi (or that it's a placeholder), and Replace. */
 export function PageImageRow({ picture }: PageImageRowProps) {
@@ -45,7 +46,7 @@ export function PageImageRow({ picture }: PageImageRowProps) {
         variant={placeholder ? "default" : "outline"}
         onClick={() => void replaceImage(engine, node, fill)}
       >
-        Replace
+        {t("images.replace.label")}
       </Button>
     </li>
   );

@@ -6,9 +6,10 @@ import { useErDiagram, useErGate, useErShapes } from "../../model";
 import { AttributeRow } from "./attribute-row";
 import { FormSection } from "./form-section";
 import type { AttributeListProps } from "./attribute-row.types";
+import { t } from "../../../er.i18n";
 
 /** The attributes of an entity, relation or aggregation, with their parts nested under them. */
-export function AttributeList({ ownerId, title = "Attributes" }: AttributeListProps) {
+export function AttributeList({ ownerId, title = t("form.attributes.title") }: AttributeListProps) {
   const er = useErDiagram();
   const { attributes, relations } = useErShapes();
   // A relation's attributes are a construct a standard may forbid.
@@ -32,12 +33,12 @@ export function AttributeList({ ownerId, title = "Attributes" }: AttributeListPr
           onClick={() => er.edits.addAttribute(ownerId)}
         >
           <Plus />
-          Add attribute
+          {t("form.attributes.add")}
         </Button>
       }
     >
       {own.length === 0 ? (
-        <p className="text-xs text-muted-foreground">No attributes yet.</p>
+        <p className="text-xs text-muted-foreground">{t("form.attributes.none")}</p>
       ) : (
         <ul className="divide-y">
           {own.map((attribute, i) => (

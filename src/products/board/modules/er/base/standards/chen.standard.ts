@@ -1,4 +1,5 @@
 import { defineErStandard } from "./define-er-standard";
+import { t } from "../../er.i18n";
 
 /** Chen's original paper: the model before its extensions. */
 export const CHEN_STANDARD = defineErStandard({
@@ -8,8 +9,7 @@ export const CHEN_STANDARD = defineErStandard({
     "Peter P. Chen, “The Entity-Relationship Model: Toward a Unified View of Data”, ACM Transactions on Database Systems 1(1), 1976.",
   url: "https://www.comp.nus.edu.sg/~lingtw/papers/tods76.chen.pdf",
   approximate: false,
-  summary:
-    "The original model: 1, N and M on the lines; no hierarchies, aggregations or constraints.",
+  summary: t("standards.chen"),
   settings: {
     cardinality: "ratio",
     ratio: "across",

@@ -1,0 +1,38 @@
+{
+  "message": {
+    "back": "Volver al inicio"
+  },
+  "nameForm": {
+    "title": "Unirse a una sesión en vivo",
+    "label": "¿Qué nombre deben ver los demás?",
+    "placeholder": "Tu nombre",
+    "join": "Unirse"
+  },
+  "page": {
+    "desktopOnly": "Las sesiones en vivo requieren la app de escritorio",
+    "invalidTitle": "Eso no es un enlace de sesión",
+    "invalidHint": "Pide al anfitrión que copie el enlace de nuevo desde su botón Compartir."
+  },
+  "end": {
+    "ended": "La sesión terminó",
+    "removed": "Te quitaron de la sesión",
+    "denied": "No te dejaron entrar",
+    "lost": "Se perdió la conexión con el anfitrión",
+    "failed": "No se pudo unir a la sesión"
+  },
+  "session": {
+    "theHost": "el anfitrión",
+    "connecting": "Conectando con el anfitrión…",
+    "waiting": "Esperando a que {host} te deje entrar…",
+    "waitingHint": "Ya se le avisó. Esta página abre el archivo en cuanto responda.",
+    "opening": "Abriendo {product} de {host}…",
+    "board": "la pizarra",
+    "design": "el diseño",
+    "file": "el archivo",
+    "reconnecting": "Reconectando con {host}… Tus cambios se conservan y se envían cuando vuelva."
+  },
+  "plugins": {
+    "title": "Puede que parte de este archivo no se vea",
+    "body": "El anfitrión usa complementos que no tienes activados: {list}. Lo que añaden se conserva en el archivo."
+  }
+}

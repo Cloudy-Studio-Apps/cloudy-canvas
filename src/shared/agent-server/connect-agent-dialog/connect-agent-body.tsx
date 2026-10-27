@@ -1,3 +1,4 @@
+import { tCommon } from "@shared/core";
 import { SlidersHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -11,6 +12,7 @@ import { AgentClientSetup } from "./agent-client-setup";
 import { BackButton } from "./back-button";
 import { ManualSetup } from "./manual-setup";
 import type { ConnectAgentView } from "./connect-agent-dialog.types";
+import { t } from "../agent-server.i18n";
 
 const MAIN_CLIENTS = AGENT_CLIENTS.filter((client) => !client.more);
 const MORE_CLIENTS = AGENT_CLIENTS.filter((client) => client.more);
@@ -30,10 +32,8 @@ export function ConnectAgentBody() {
     <>
       <div className="flex min-h-80 flex-col gap-4 p-4">
         <div className="space-y-1">
-          <h2 className="text-base font-semibold">Connect Cloudy Canvas to your agents</h2>
-          <p className="text-xs text-muted-foreground">
-            Agents can read and edit the open board or design while you watch. Pick the one you use.
-          </p>
+          <h2 className="text-base font-semibold">{t("connect.title")}</h2>
+          <p className="text-xs text-muted-foreground">{t("connect.hint")}</p>
         </div>
         <AgentAccessNotice status={status} />
         {view.kind === "grid" && (
@@ -45,7 +45,7 @@ export function ConnectAgentBody() {
         )}
         {view.kind === "more" && (
           <>
-            <BackButton label="All agents" onClick={() => setView(GRID)} />
+            <BackButton label={t("connect.allAgents")} onClick={() => setView(GRID)} />
             <AgentClientGrid
               clients={MORE_CLIENTS}
               onPick={(client) => setView({ kind: "client", client, back: "more" })}
@@ -55,7 +55,7 @@ export function ConnectAgentBody() {
         {view.kind === "client" && (
           <>
             <BackButton
-              label={view.back === "more" ? "Other AI tools" : "All agents"}
+              label={view.back === "more" ? t("connect.otherTools") : t("connect.allAgents")}
               onClick={() => setView(view.back === "more" ? MORE : GRID)}
             />
             <AgentClientSetup client={view.client} url={url} />
@@ -63,7 +63,7 @@ export function ConnectAgentBody() {
         )}
         {view.kind === "manual" && (
           <>
-            <BackButton label="All agents" onClick={() => setView(GRID)} />
+            <BackButton label={t("connect.allAgents")} onClick={() => setView(GRID)} />
             <ManualSetup url={url} />
           </>
         )}
@@ -77,10 +77,10 @@ export function ConnectAgentBody() {
           onClick={() => setView({ kind: "manual" })}
         >
           <SlidersHorizontal />
-          Install manually
+          {t("connect.manually")}
         </Button>
         <DialogClose asChild>
-          <Button size="sm">Done</Button>
+          <Button size="sm">{tCommon("done")}</Button>
         </DialogClose>
       </DialogFooter>
     </>

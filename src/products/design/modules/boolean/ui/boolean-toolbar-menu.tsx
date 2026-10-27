@@ -15,6 +15,7 @@ import {
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useSelectedNodes } from "@design/ui/hooks";
 import { BOOLEAN_COMMANDS, BOOLEAN_ICONS } from "./boolean-icons";
+import { t } from "../boolean.i18n";
 
 /**
  * The toolbar's boolean button, as in Figma: the operation picked last (a selected boolean's own)
@@ -39,8 +40,8 @@ export function BooleanToolbarMenu() {
   return (
     <div className="flex items-center">
       <ToolButton
-        label={shown.label}
-        description="Combine the selected layers into one shape."
+        label={t(`operations.${shown.operation}`)}
+        description={t("toolbar.description")}
         shortcut={engine.keymap.label(BOOLEAN_COMMANDS[current])}
         disabled={nodes.length < 2 && only?.type !== BOOLEAN_TYPE}
         onClick={() => pick(current)}
@@ -52,19 +53,19 @@ export function BooleanToolbarMenu() {
           {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the split button's chevron */}
           <button
             type="button"
-            aria-label="Boolean operations"
+            aria-label={t("toolbar.operations")}
             className="flex h-9 w-3.5 cursor-pointer items-center justify-center rounded-sm text-subtle-foreground hover:bg-hover hover:text-foreground data-[state=open]:bg-hover"
           >
             <ChevronDown className="size-3" />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent side="top" align="start" className="min-w-52">
-          {BOOLEAN_OPERATIONS.map(({ operation, label }) => {
+          {BOOLEAN_OPERATIONS.map(({ operation }) => {
             const ItemIcon = BOOLEAN_ICONS[operation];
             return (
               <DropdownMenuItem key={operation} onSelect={() => pick(operation)}>
                 <ItemIcon />
-                {label}
+                {t(`operations.${operation}`)}
                 <DropdownMenuShortcut>
                   {engine.keymap.label(BOOLEAN_COMMANDS[operation])}
                 </DropdownMenuShortcut>
@@ -74,12 +75,12 @@ export function BooleanToolbarMenu() {
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => run("flatten")}>
             <Combine />
-            Flatten
+            {t("commands.flatten")}
             <DropdownMenuShortcut>{engine.keymap.label("flatten")}</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => run("outlineStroke")}>
             <Spline />
-            Outline stroke
+            {t("commands.outlineStroke")}
             <DropdownMenuShortcut>{engine.keymap.label("outlineStroke")}</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuContent>

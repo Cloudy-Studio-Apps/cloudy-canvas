@@ -5,6 +5,7 @@ import { resolveVariable } from "@canvas";
 import { useDocumentTokens, VariablePicker } from "@canvas-ui";
 import { IconButton, NumberInput } from "@shared/ui/kit";
 import type { OperandFieldProps } from "./expression-builder.types";
+import { t } from "../../variables.i18n";
 
 /**
  * One value a formula reads: a typed number with a button to pick a number variable instead, or
@@ -38,7 +39,7 @@ export function OperandField({ operand, onChange, modes, label }: OperandFieldPr
           className="min-w-0 flex-1"
         />
         {picker(
-          <IconButton label="Use a variable instead" size="xs">
+          <IconButton label={t("builder.useVariable")} size="xs">
             <Braces />
           </IconButton>,
         )}
@@ -50,17 +51,20 @@ export function OperandField({ operand, onChange, modes, label }: OperandFieldPr
       {picker(
         <button
           type="button"
-          aria-label={`${label}: ${variable?.name ?? "a missing variable"}, pick another`}
-          title={variable?.name ?? "This variable is gone"}
+          aria-label={t("builder.pickAnother", {
+            label,
+            name: variable?.name ?? t("builder.missingAria"),
+          })}
+          title={variable?.name ?? t("builder.gone")}
           className="flex h-control-sm min-w-0 flex-1 items-center gap-1.5 rounded-md border border-border bg-surface px-2 text-left text-xs hover:bg-muted"
         >
           <Braces className="size-3.5 shrink-0 text-subtle-foreground" />
-          <span className="min-w-0 flex-1 truncate">{variable?.name ?? "Missing"}</span>
+          <span className="min-w-0 flex-1 truncate">{variable?.name ?? t("builder.missing")}</span>
           <span className="shrink-0 text-subtle-foreground tabular-nums">{shown ?? "?"}</span>
         </button>,
       )}
       <IconButton
-        label="Use a number instead"
+        label={t("builder.useNumber")}
         size="xs"
         onClick={() => onChange({ kind: "number", value: shown ?? 1 })}
       >

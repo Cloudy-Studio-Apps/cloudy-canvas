@@ -6,6 +6,7 @@ import { HexInput } from "@canvas-ui";
 import { PanelIconButton } from "../panel/panel-section";
 import { PercentInput } from "@canvas-ui";
 import type { GradientStopRowProps } from "./paint-picker.types";
+import { t } from "../../design-ui.i18n";
 
 /** One stop of the gradient: its position, color and opacity, and removing it. */
 export function GradientStopRow({
@@ -32,7 +33,7 @@ export function GradientStopRow({
       <FieldBox className="w-14 gap-0.5">
         <PercentInput
           value={stop.position}
-          label="Stop position"
+          label={t("gradient.stop.position")}
           onCommit={(position) => update({ position })}
         />
       </FieldBox>
@@ -43,20 +44,20 @@ export function GradientStopRow({
         />
         <HexInput
           color={stop.color}
-          label="Stop hex"
+          label={t("gradient.stop.hex")}
           className="px-2"
           onCommit={(color) => update({ color })}
         />
         <span className="flex h-full w-12 items-center gap-0.5 border-l border-surface px-1.5">
           <PercentInput
             value={stop.opacity}
-            label="Stop opacity"
+            label={t("gradient.stop.opacity")}
             onCommit={(opacity) => update({ opacity })}
           />
         </span>
       </FieldBox>
       <PanelIconButton
-        label="Remove stop"
+        label={t("gradient.stop.remove")}
         disabled={paint.stops.length <= 2}
         onClick={() =>
           onChange({ ...paint, stops: paint.stops.filter((_, i) => i !== index) }, done)

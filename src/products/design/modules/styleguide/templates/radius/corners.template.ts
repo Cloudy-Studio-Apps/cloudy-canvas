@@ -1,15 +1,24 @@
 import { box, label, SHEET_LOOK, solidFill, stack } from "../../sheet";
 import type { StyleguideTemplate } from "../../styleguide.types";
 import { formatNumber, leafName, numberOf, variablesOf } from "../template-kit";
+import { t } from "../../styleguide.i18n";
 
 /** A box per radius with its corners rounded by it (bound), with name and value. */
 export const cornersTemplate: StyleguideTemplate = {
   id: "radius.corners",
   category: "radius",
-  label: "Corner boxes",
-  description: "A box rounded by each radius, with its name and value.",
+  label: t("templates.radius.corners.label"),
+  description: t("templates.radius.corners.description"),
   options: [
-    { id: "size", label: "Box size", type: "number", default: 96, min: 48, max: 240, step: 8 },
+    {
+      id: "size",
+      label: t("templates.radius.corners.boxSize"),
+      type: "number",
+      default: 96,
+      min: 48,
+      max: 240,
+      step: 8,
+    },
   ],
   build: (group, options, context) => [
     stack(

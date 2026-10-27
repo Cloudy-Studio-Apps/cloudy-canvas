@@ -2,6 +2,7 @@ import { BookPlus } from "lucide-react";
 
 import { Button } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
+import { t } from "../../catalog.i18n";
 
 /**
  * A design page without a brochure: make one. (Picking frames or adding a blank page from the
@@ -23,7 +24,7 @@ export function NoBrochure() {
         onClick={() => scope !== null && brochures.create(scope)}
       >
         <BookPlus />
-        Create brochure
+        {t("tab.create")}
       </Button>
     </div>
   );

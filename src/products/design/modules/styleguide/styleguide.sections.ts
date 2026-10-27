@@ -8,6 +8,7 @@ import { TOKEN_SHEET_TOOL } from "./tool";
 import { useStyleguideCommands } from "./ui/hooks/use-styleguide-commands";
 import { STYLEGUIDE_MENU } from "./ui/menus/styleguide-menu";
 import { SheetSection } from "./ui/sidebar/sheet-section";
+import { t } from "./styleguide.i18n";
 
 /**
  * The commands' session hook, the main and context menus, the live element tool's button and the
@@ -21,13 +22,13 @@ export function registerStyleguideSections(host: ModuleHost): void {
   host.contribute(designEditor.mainMenu, {
     id: "styleguide",
     order: 42.5,
-    items: [{ command: STYLEGUIDE_COMMANDS.open, label: "Design system" }],
+    items: [{ command: STYLEGUIDE_COMMANDS.open, label: t("sections.label") }],
   });
   host.contribute(designEditor.contextMenu, STYLEGUIDE_MENU);
   host.contribute(designEditor.tools, {
     tool: TOKEN_SHEET_TOOL,
-    label: "Design system",
-    description: "Place your variables and styles as a live style guide that stays up to date.",
+    label: t("sections.label"),
+    description: t("sections.description"),
     icon: LayoutTemplate,
     toolbar: { group: 1, order: 14, menu: "frames" },
   });

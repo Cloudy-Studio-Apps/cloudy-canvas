@@ -11,6 +11,7 @@ import { isTable } from "../is-table";
 import { linePart, parseTablePart } from "../table-parts";
 import { OptionButton, PanelDivider } from "@canvas-ui";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";
+import { t } from "../table.i18n";
 
 /** Insert before/after and delete for the table row or column selected with its grip. */
 export function TableLineActions() {
@@ -20,7 +21,7 @@ export function TableLineActions() {
   if (!selectedId || !part || part.kind === "cells") return null;
 
   const axis = part.kind;
-  const name = axis === "row" ? "row" : "column";
+  const name = axis;
   const insert = (after: boolean) => {
     const table = engine.doc.get(selectedId);
     if (!isTable(table)) return;
@@ -38,24 +39,24 @@ export function TableLineActions() {
       <PanelDivider />
       <OptionButton
         selected={false}
-        aria-label={`Insert ${name} before`}
-        title={`Insert ${name} ${axis === "row" ? "above" : "left"}`}
+        aria-label={t(`${name}.insertBefore`)}
+        title={t(`${name}.insertAbove`)}
         onClick={() => insert(false)}
       >
         <Before className="size-[18px]" />
       </OptionButton>
       <OptionButton
         selected={false}
-        aria-label={`Insert ${name} after`}
-        title={`Insert ${name} ${axis === "row" ? "below" : "right"}`}
+        aria-label={t(`${name}.insertAfter`)}
+        title={t(`${name}.insertBelow`)}
         onClick={() => insert(true)}
       >
         <After className="size-[18px]" />
       </OptionButton>
       <OptionButton
         selected={false}
-        aria-label={`Delete ${name}`}
-        title={`Delete ${name} (${engine.keymap.label("deleteSelection")})`}
+        aria-label={t(`${name}.delete`)}
+        title={t(`${name}.deleteHint`, { shortcut: engine.keymap.label("deleteSelection") ?? "" })}
         onClick={() => void engine.deleteSelection()}
       >
         <Trash2 className="size-[18px]" />

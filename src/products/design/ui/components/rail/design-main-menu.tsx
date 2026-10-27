@@ -16,6 +16,7 @@ import { MainMenuEntry } from "./main-menu-entry";
 import { mainMenuLabel } from "./main-menu-label";
 import { mainMenuSections } from "./main-menu-sections";
 import { MainMenuSubmenu } from "./main-menu-submenu";
+import { t } from "../../design-ui.i18n";
 
 /**
  * The logo at the top of the rail: opens the main menu the modules fill (`mainMenu`). Groups
@@ -35,7 +36,7 @@ export function DesignMainMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <IconButton size="lg" label="Main menu" tooltip={false} className="mb-2">
+        <IconButton size="lg" label={t("rail.mainMenu")} tooltip={false} className="mb-2">
           <SealLogo size={22} variant="mark" />
         </IconButton>
       </DropdownMenuTrigger>

@@ -4,6 +4,7 @@ import { commitFieldProps, useCommitField } from "../commit-field";
 import { evaluateNumber, useScrub } from "@shared/ui/kit";
 import { cn } from "@shared/ui/lib/utils";
 import type { PercentInputProps } from "./color.types";
+import { t } from "../components.i18n";
 
 /**
  * A bare input for a 0–100% value (stored 0–1), with its "%"; place it in a `FieldBox`. Drag the
@@ -13,7 +14,7 @@ import type { PercentInputProps } from "./color.types";
 export function PercentInput({ value, label, onCommit }: PercentInputProps) {
   const field = useCommitField(String(Math.round(value * 100)), (draft) => {
     const percent = evaluateNumber(draft);
-    if (percent === null) return "Enter a percentage";
+    if (percent === null) return t("color.percentError");
     onCommit(clamp(percent, 0, 100) / 100);
   });
   const bindings = commitFieldProps<HTMLInputElement>(field, { selectOnFocus: true });

@@ -12,14 +12,15 @@ import {
 import { sidesMode, sidesPatch } from "./stroke-sides";
 import type { StrokeSidesMenuProps } from "./stroke-sides-menu.types";
 import type { StrokeSidesMode } from "./stroke-sides.types";
+import { t } from "../../../core.i18n";
 
 const MODES = [
-  { mode: "all", label: "All sides", icon: Square },
-  { mode: "top", label: "Top", icon: PanelTop },
-  { mode: "bottom", label: "Bottom", icon: PanelBottom },
-  { mode: "left", label: "Left", icon: PanelLeft },
-  { mode: "right", label: "Right", icon: PanelRight },
-  { mode: "custom", label: "Custom", icon: Grid2x2 },
+  { mode: "all", label: t("stroke.sides.all"), icon: Square },
+  { mode: "top", label: t("stroke.sides.top"), icon: PanelTop },
+  { mode: "bottom", label: t("stroke.sides.bottom"), icon: PanelBottom },
+  { mode: "left", label: t("stroke.sides.left"), icon: PanelLeft },
+  { mode: "right", label: t("stroke.sides.right"), icon: PanelRight },
+  { mode: "custom", label: t("stroke.sides.custom"), icon: Grid2x2 },
 ] as const satisfies readonly { mode: StrokeSidesMode; label: string; icon: unknown }[];
 
 /** Which sides of a box the stroke is on: all, one, or each with its own weight. */
@@ -32,7 +33,9 @@ export function StrokeSidesMenu({ nodes }: StrokeSidesMenuProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <span>
-          <PanelIconButton label={`Stroke sides: ${current ? shown.label : "Mixed"}`}>
+          <PanelIconButton
+            label={t("stroke.sidesLabel", { current: current ? shown.label : t("mixed") })}
+          >
             <Icon />
           </PanelIconButton>
         </span>

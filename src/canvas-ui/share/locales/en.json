@@ -1,0 +1,80 @@
+{
+  "hostedStopped": {
+    "title": "Sharing stopped",
+    "description": "The file was closed, so the session ended."
+  },
+  "guestSaves": {
+    "title": "{host} saves this {noun}",
+    "description": "It's their file: changes made in the session are saved on their computer.",
+    "host": "The host"
+  },
+  "dialog": {
+    "sharing": "Sharing live",
+    "share": "Share this {noun} live",
+    "description": "Invite people to edit the open {noun} with you."
+  },
+  "start": {
+    "desktopOnly": "Live sessions need the desktop app.",
+    "explain": "Your app hosts this {noun}: people you invite connect to it and edit with you, live. It stays on your computer and is saved here; when you stop sharing or close it, they can't see it anymore.",
+    "name": "Your name",
+    "namePlaceholder": "Shown to the people who join",
+    "start": "Start sharing",
+    "error": "Couldn't start sharing"
+  },
+  "hosting": {
+    "copied": "Link copied",
+    "copiedHint": "Send it to the people you want to invite.",
+    "copyError": "Couldn't copy the link",
+    "invite": "Invite link",
+    "copy": "Copy",
+    "approval": "Whoever opens it asks to join; you decide who comes in.",
+    "offline": "The relay couldn't be reached, so only people on your network can join. Check Settings › Collaboration.",
+    "inSession": "In the session",
+    "inSessionCount": "In the session ({count})",
+    "knocking": "Someone is asking to join.",
+    "nobody": "Nobody has joined yet.",
+    "stop": "Stop sharing"
+  },
+  "guest": {
+    "role": "{name}'s role",
+    "edit": "Can edit",
+    "view": "Can view",
+    "remove": "Remove {name}",
+    "removeHint": "Remove from the session"
+  },
+  "knock": {
+    "label": "{name} wants to join",
+    "title": "{name} wants to join",
+    "version": "Uses Cloudy Canvas {theirs} (you have {yours})",
+    "deny": "Deny"
+  },
+  "badge": {
+    "viewingHint": "{host} lets you view this file",
+    "liveHint": "{host}'s file",
+    "viewing": "Viewing",
+    "live": "Live"
+  },
+  "button": {
+    "sharing": "Sharing live",
+    "share": "Share live",
+    "live": "Live",
+    "shareShort": "Share"
+  },
+  "path": {
+    "direct": "Direct",
+    "relay": "Via relay",
+    "directHint": "Connected straight to this computer",
+    "relayHint": "The relay server carries this connection (a direct one couldn't be made yet)",
+    "connecting": "Connecting…"
+  },
+  "relay": {
+    "note": "Connections go through {relay} when a direct one can't be made.",
+    "noteSettings": "Connections go through {relay} when a direct one can't be made (Settings › Collaboration).",
+    "own": "your relay",
+    "builtIn": "the Cloudy Canvas relay",
+    "public": "public relays"
+  },
+  "guestFile": {
+    "name": "Shared {noun}"
+  }
+}

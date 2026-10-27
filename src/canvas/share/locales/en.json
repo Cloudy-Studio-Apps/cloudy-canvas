@@ -1,0 +1,14 @@
+{
+  "host": {
+    "refused": "The host didn't let you in.",
+    "protocol": "This session needs another version of Cloudy Canvas: update both apps.",
+    "secret": "This link is from a session that has ended.",
+    "full": "This session already has {max} guests."
+  },
+  "guest": {
+    "removed": "The host removed you from the session.",
+    "ended": "The host ended the session.",
+    "lost": "The connection to the host was lost.",
+    "lostAgain": "Lost the connection to the host."
+  }
+}

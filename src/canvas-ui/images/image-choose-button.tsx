@@ -4,12 +4,13 @@ import { Button } from "@shared/ui/kit";
 import { useEngine } from "../engine-context";
 import { chooseImageAsset } from "./choose-image-asset";
 import type { ImageChooseButtonProps } from "./image-choose-button.types";
+import { t } from "./images.i18n";
 
 /** A button that asks for a picture, adds it to the document and hands over its asset id. */
 export function ImageChooseButton({
   onChoose,
   replace = false,
-  title = "Choose an image",
+  title = t("chooseTitle"),
   ...props
 }: ImageChooseButtonProps) {
   const engine = useEngine();
@@ -20,7 +21,7 @@ export function ImageChooseButton({
   return (
     <Button {...props} onClick={() => void choose()}>
       <ImagePlus />
-      {replace ? "Replace image…" : "Choose image…"}
+      {replace ? t("replace") : t("choose")}
     </Button>
   );
 }

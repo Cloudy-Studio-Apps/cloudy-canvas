@@ -1,6 +1,7 @@
 import type { GlassEffect } from "../../effect.types";
 import { HandleDot } from "./handle-dot";
 import type { EffectHandlesProps } from "./handles.types";
+import { t } from "../../effects.i18n";
 
 /** Shift snaps the light's angle to steps of this many degrees. */
 const ANGLE_STEP = 15;
@@ -31,7 +32,7 @@ export function GlassHandles({
       />
       <HandleDot
         at={at}
-        label="Light direction"
+        label={t("handles.lightDirection")}
         onPointerDown={(event) => {
           let first = true;
           startDrag(event, (p, e) => {

@@ -9,6 +9,7 @@ import { BoardSession } from "./board-session";
 import { useBoardLoader } from "./file";
 import { getBoardProduct } from "./modules";
 import type { BoardEditorProps } from "./board-editor.types";
+import { t } from "./board-ui.i18n";
 
 export function BoardEditor({ id, live }: BoardEditorProps) {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ export function BoardEditor({ id, live }: BoardEditorProps) {
       <div
         ref={containerRef}
         role="application"
-        aria-label="Board canvas"
+        aria-label={t("editor.canvasLabel")}
         className="absolute inset-0"
       />
       {engine && load.status === "ready" && (
@@ -37,15 +38,15 @@ export function BoardEditor({ id, live }: BoardEditorProps) {
         />
       )}
       {!engine && load.status !== "error" && (
-        <CanvasLoadingOverlay title="Opening board" loading={loading} />
+        <CanvasLoadingOverlay title={t("editor.opening")} loading={loading} />
       )}
       {load.status === "error" && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
-          <h1 className="text-lg font-semibold">The board couldn't be opened</h1>
+          <h1 className="text-lg font-semibold">{t("editor.openFailed")}</h1>
           <p className="max-w-md text-sm text-muted-foreground">{load.message}</p>
           <Button variant="outline" onClick={() => void navigate("/")}>
             <ArrowLeft />
-            Back to home
+            {t("editor.backHome")}
           </Button>
         </div>
       )}

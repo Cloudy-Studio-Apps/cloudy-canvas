@@ -1,13 +1,14 @@
 import type { GalleryCategory } from "./gallery.types";
 import { mixPalette, rangePalette } from "./recipes";
+import { t } from "../color-wizard.i18n";
 
 /** Palettes by season. */
 export const SEASON_CATEGORIES: readonly GalleryCategory[] = [
   {
     group: "Seasons",
     id: "spring",
-    label: "Spring",
-    description: "Fresh greens, blossoms and sunshine.",
+    label: t("gallery.season.spring"),
+    description: t("gallery.season.springHint"),
     generate: mixPalette([
       [
         [0.9, 0.96],
@@ -39,8 +40,8 @@ export const SEASON_CATEGORIES: readonly GalleryCategory[] = [
   {
     group: "Seasons",
     id: "summer",
-    label: "Summer",
-    description: "Sun, sea and ice cream.",
+    label: t("gallery.season.summer"),
+    description: t("gallery.season.summerHint"),
     generate: mixPalette([
       [
         [0.9, 0.95],
@@ -72,15 +73,15 @@ export const SEASON_CATEGORIES: readonly GalleryCategory[] = [
   {
     group: "Seasons",
     id: "autumn",
-    label: "Autumn",
-    description: "Rust, mustard and fallen leaves.",
+    label: t("gallery.season.autumn"),
+    description: t("gallery.season.autumnHint"),
     generate: rangePalette({ l: [0.35, 0.8], c: [0.08, 0.17], hues: [[25, 90]] }),
   },
   {
     group: "Seasons",
     id: "winter",
-    label: "Winter",
-    description: "Snow, frost and long nights.",
+    label: t("gallery.season.winter"),
+    description: t("gallery.season.winterHint"),
     generate: mixPalette([
       [
         [0.95, 0.99],

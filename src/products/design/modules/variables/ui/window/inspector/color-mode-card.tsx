@@ -8,6 +8,7 @@ import { useBoard } from "../use-board";
 import { ValueField } from "../../value-field";
 import { SameAsFirst } from "./same-as-first";
 import type { ModeValueCardProps } from "./inspector.types";
+import { t } from "../../../variables.i18n";
 
 /**
  * A color variable in one mode: a big block of its color with the swatch, hex and opacity; in a
@@ -19,7 +20,11 @@ export function ColorModeCard({ variable, mode, first }: ModeValueCardProps) {
   const value = variable.values[key];
   if (!value) {
     return (
-      <SameAsFirst variable={variable} mode={mode} firstName={modes[0]?.name ?? "the first"} />
+      <SameAsFirst
+        variable={variable}
+        mode={mode}
+        firstName={modes[0]?.name ?? t("inspector.theFirst")}
+      />
     );
   }
   // Another variable's value: its chip (pick another, or detach to a color of its own).
@@ -30,7 +35,7 @@ export function ColorModeCard({ variable, mode, first }: ModeValueCardProps) {
     try {
       tokens.setValue(variable.id, mode.id, { color });
     } catch (error) {
-      notifyError("Couldn't set the color", error);
+      notifyError(t("inspector.setColorError"), error);
     }
   };
   return (
@@ -50,15 +55,19 @@ export function ColorModeCard({ variable, mode, first }: ModeValueCardProps) {
         <ColorField
           color={hex.toLowerCase()}
           opacity={alpha}
-          label={`${mode.name} color`}
+          label={t("value.colorOf", { label: mode.name })}
           onChange={(next) => set(joinTokenColor(next.color, next.opacity))}
           className="min-w-0 flex-1"
         />
         {!first && key !== DEFAULT_VALUE && (
           <button
             type="button"
-            aria-label={`Use ${modes[0]?.name ?? "the first mode"}'s color`}
-            title={`Use ${modes[0]?.name ?? "the first mode"}'s color`}
+            aria-label={t("inspector.useFirstColor", {
+              name: modes[0]?.name ?? t("inspector.theFirstMode"),
+            })}
+            title={t("inspector.useFirstColor", {
+              name: modes[0]?.name ?? t("inspector.theFirstMode"),
+            })}
             onClick={() => tokens.clearValue(variable.id, key)}
             className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
           >

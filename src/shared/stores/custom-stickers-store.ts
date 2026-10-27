@@ -4,6 +4,7 @@ import { importStickerFiles, stickerLibrary } from "@platform";
 import type { CustomSticker, StickerDef, StickerImage } from "@shared/core";
 import { notifyError, toast } from "./toast-store";
 import type { CustomStickersState } from "./custom-stickers-store.types";
+import { t } from "./stores.i18n";
 
 /** Larger pictures are refused: every stamp copies the file into the board. */
 const MAX_BYTES = 2 * 1024 * 1024;
@@ -25,7 +26,7 @@ export const useCustomStickersStore = create<CustomStickersState>()((set, get) =
         set({ stickers, loaded: true });
       } catch (error) {
         loading = null;
-        notifyError("Couldn't load your stickers", error);
+        notifyError(t("stickers.loadFailed"), error);
       }
     })();
     return loading;
@@ -36,14 +37,14 @@ export const useCustomStickersStore = create<CustomStickersState>()((set, get) =
       const fitting = images.filter((image) => image.data.byteLength <= MAX_BYTES);
       if (fitting.length < images.length) {
         toast({
-          title: "Some pictures are too large",
-          description: "Stickers can be up to 2 MB.",
+          title: t("stickers.tooLarge"),
+          description: t("stickers.maxSize"),
         });
       }
       const added = await Promise.all(fitting.map(addImage));
       set({ stickers: [...get().stickers, ...added] });
     } catch (error) {
-      notifyError("Couldn't import the stickers", error);
+      notifyError(t("stickers.importFailed"), error);
     }
   },
   remove: async (id) => {
@@ -53,7 +54,7 @@ export const useCustomStickersStore = create<CustomStickersState>()((set, get) =
       if (removed) URL.revokeObjectURL(removed.url);
       set({ stickers: get().stickers.filter((sticker) => sticker.id !== id) });
     } catch (error) {
-      notifyError("Couldn't remove the sticker", error);
+      notifyError(t("stickers.removeFailed"), error);
     }
   },
 }));

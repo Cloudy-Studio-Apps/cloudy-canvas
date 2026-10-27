@@ -5,6 +5,7 @@ import { isPlaceholderPaint } from "../../node/placeholder-paint";
 import { removedAt } from "../../node/stack-bindings";
 import { PaintField } from "@design/ui/components/panel";
 import type { PaintStackEditorProps } from "./paint-stack-editor.types";
+import { t } from "../../core.i18n";
 
 /**
  * A paint stack, topmost first like the layers, each picture with a note on how sharp the canvas
@@ -22,7 +23,7 @@ export function PaintStackEditor({
   children,
 }: PaintStackEditorProps) {
   if (mixed) {
-    return <p className="text-xs text-muted-foreground">Mixed. Click + to replace them all.</p>;
+    return <p className="text-xs text-muted-foreground">{t("paints.mixedHint")}</p>;
   }
   if (paints.length === 0) return null;
   return (

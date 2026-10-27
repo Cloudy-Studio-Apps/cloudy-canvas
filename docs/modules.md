@@ -97,6 +97,8 @@ modules/<name>/
                         context menu), when there are many
   <name>.menu.ts        main menu groups, when there are many
   <name>.migration.ts   file migrations (or migrations/ with index.ts)
+  <name>.i18n.ts       its translator, `export const t = defineMessages({ en, es })`, over
+  locales/              en.json and es.json (src/shared/core/i18n/README.md)
   <name>-options.types.ts   tool options the module owns
   <type>.types.ts / .factory.ts / .kind.ts / .draw.ts / .defaults.ts / .tool.ts
   <sub-feature>/        families keep subfolders (er/entity, catalog/model, …), each with index.ts

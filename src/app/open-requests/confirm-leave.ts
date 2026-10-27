@@ -1,5 +1,6 @@
 import { toast } from "@shared/stores/toast-store";
 import { useUnsavedChangesStore } from "@shared/stores/unsaved-changes-store";
+import { t } from "../app.i18n";
 
 /** Runs `leave` now, or once the user agrees to lose the open editor's unsaved changes. */
 export function confirmLeave(title: string, leave: () => void): void {
@@ -9,7 +10,7 @@ export function confirmLeave(title: string, leave: () => void): void {
   }
   toast({
     title,
-    description: "The open board has unsaved changes, which will be lost.",
-    action: { label: "Open anyway", run: leave },
+    description: t("leave.unsaved"),
+    action: { label: t("leave.openAnyway"), run: leave },
   });
 }

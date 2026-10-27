@@ -21,9 +21,18 @@ import {
 } from "./editors";
 import type { EffectEditorProps, EffectTypeEntry } from "./effects.points.types";
 import { defineEffectType } from "./define-effect-type";
+import { t } from "../effects.i18n";
 
 const percent = (n: number) => `${Math.round(n * 100)}%`;
 const round = (n: number) => String(Math.round(n * 100) / 100);
+
+const shadowSummary = (e: { x: number; y: number; blur: number; opacity: number }) =>
+  t("summary.shadow", {
+    x: round(e.x),
+    y: round(e.y),
+    blur: round(e.blur),
+    opacity: percent(e.opacity),
+  });
 
 /** One built-in type's entry, typed by its effect. */
 function entry<T extends DesignEffectType>(
@@ -49,34 +58,34 @@ function entry<T extends DesignEffectType>(
 export const EFFECT_CATALOG: readonly EffectTypeEntry[] = [
   entry(
     "inner-shadow",
-    "Inner shadow",
+    t("types.innerShadow"),
     SquareSquare,
     10,
-    (e) => `${round(e.x)}, ${round(e.y)} · ${round(e.blur)} blur · ${percent(e.opacity)}`,
+    (e) => shadowSummary(e),
     ShadowEditor,
   ),
   entry(
     "drop-shadow",
-    "Drop shadow",
+    t("types.dropShadow"),
     SquareStack,
     20,
-    (e) => `${round(e.x)}, ${round(e.y)} · ${round(e.blur)} blur · ${percent(e.opacity)}`,
+    (e) => shadowSummary(e),
     ShadowEditor,
   ),
   entry(
     "layer-blur",
-    "Layer blur",
+    t("types.layerBlur"),
     Droplet,
     30,
     (e) =>
       e.progressive
-        ? `Progressive · ${round(e.startRadius)} → ${round(e.radius)}`
+        ? t("summary.progressive", { start: round(e.startRadius), end: round(e.radius) })
         : round(e.radius),
     LayerBlurEditor,
   ),
   entry(
     "background-blur",
-    "Background blur",
+    t("types.backgroundBlur"),
     Blinds,
     40,
     (e) => round(e.radius),
@@ -84,15 +93,15 @@ export const EFFECT_CATALOG: readonly EffectTypeEntry[] = [
   ),
   entry(
     "noise",
-    "Noise",
+    t("types.noise"),
     Sparkles,
     50,
-    (e) => `${e.noiseType[0]!.toUpperCase()}${e.noiseType.slice(1)} · ${percent(e.density)}`,
+    (e) => t("summary.noise", { mode: t(`editors.${e.noiseType}`), density: percent(e.density) }),
     NoiseEditor,
   ),
   entry(
     "texture",
-    "Texture",
+    t("types.texture"),
     Grip,
     60,
     (e) => `${round(e.size)} · ${round(e.radius)}`,
@@ -100,10 +109,10 @@ export const EFFECT_CATALOG: readonly EffectTypeEntry[] = [
   ),
   entry(
     "glass",
-    "Glass",
+    t("types.glass"),
     GlassWater,
     70,
-    (e) => `${percent(e.refraction)} · ${round(e.frost)} frost`,
+    (e) => t("summary.glass", { refraction: percent(e.refraction), frost: round(e.frost) }),
     GlassEditor,
   ),
 ];

@@ -7,6 +7,7 @@ import { exportDbmlFile, importDbmlFile } from "@platform";
 import { Button } from "@shared/ui/kit";
 import { useBoardSchema } from "../schema";
 import { DbmlEditor } from "./dbml-editor";
+import { t } from "../../db.i18n";
 
 /** The whole board schema as DBML. New tables appear next to the content; removed ones are deleted. */
 export function SchemaEditor() {
@@ -26,7 +27,7 @@ export function SchemaEditor() {
       <div className="flex gap-1">
         <Button variant="outline" size="sm" onClick={() => void importFile().catch(console.error)}>
           <FileUp />
-          Import .dbml
+          {t("schemaEditor.import")}
         </Button>
         <Button
           variant="outline"
@@ -34,17 +35,17 @@ export function SchemaEditor() {
           onClick={() => void exportDbmlFile(schema.schemaDbml(), file.name).catch(console.error)}
         >
           <FileDown />
-          Export .dbml
+          {t("schemaEditor.export")}
         </Button>
       </div>
       {importError && (
         <p role="alert" className="text-xs text-destructive">
-          Import failed, line {importError.line}: {importError.message}
+          {t("schemaEditor.importFailed", { line: importError.line, message: importError.message })}
         </p>
       )}
       <DbmlEditor
-        label="Board schema DBML"
-        hint="Every table, enum and DBML sticky note on the board. Paste a full schema here to replace it; Import merges a file in."
+        label={t("schemaEditor.label")}
+        hint={t("schemaEditor.hint")}
         read={() => schema.schemaDbml()}
         apply={(text, options) => schema.applySchemaDbml(text, options)}
       />

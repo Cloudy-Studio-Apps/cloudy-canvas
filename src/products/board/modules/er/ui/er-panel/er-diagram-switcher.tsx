@@ -14,6 +14,7 @@ import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { useErModel, useErDiagram, useErQuery } from "../model";
 import { ErDiagramName } from "./er-diagram-name";
 import { useShowAllDiagrams } from "./use-show-all-diagrams";
+import { t } from "../../er.i18n";
 
 /**
  * The shown diagram's name (editable) and a menu of the board's diagrams: picking one takes the
@@ -40,17 +41,22 @@ export function ErDiagramSwitcher() {
       <ErDiagramName key={`${diagram.id}:${name}`} name={name} onRename={diagram.rename} />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="size-7" aria-label="Diagrams on the board">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-7"
+            aria-label={t("panel.diagramsOnBoard")}
+          >
             <ChevronDown />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="max-w-64 min-w-52">
           <DropdownMenuItem onSelect={showAll}>
             <List />
-            All diagrams
+            {t("panel.allDiagrams")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuLabel>Diagrams on this board</DropdownMenuLabel>
+          <DropdownMenuLabel>{t("panel.diagramsOnThisBoard")}</DropdownMenuLabel>
           {diagrams.map((item) => (
             <DropdownMenuItem key={item.id} onSelect={() => show(item.id)}>
               <Check className={item.id === diagram.id ? "" : "invisible"} />
@@ -60,7 +66,7 @@ export function ErDiagramSwitcher() {
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => engine.focusElement(er.newDiagram())}>
             <Plus />
-            New diagram
+            {t("panel.newDiagram")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -5,6 +5,7 @@ import { FloatingPanel, OptionButton, PanelDivider } from "@canvas-ui";
 import { BoardColorPalette } from "@board/ui/components/board-colors";
 import { useBoardEngine, useBoardState } from "@board/ui/board-engine-context";
 import { CONNECTOR_HEADS, CONNECTOR_STYLES } from "./connector-option-items";
+import { t } from "../connector.i18n";
 
 const STYLE_ICONS = { elbow: CornerDownRight, straight: MoveRight };
 
@@ -16,7 +17,7 @@ export function ConnectorOptions() {
   );
 
   return (
-    <FloatingPanel role="group" aria-label="Connector options" className="gap-1 px-2">
+    <FloatingPanel role="group" aria-label={t("options.group")} className="gap-1 px-2">
       {CONNECTOR_STYLES.map(({ style, label }) => {
         const Icon = STYLE_ICONS[style];
         return (

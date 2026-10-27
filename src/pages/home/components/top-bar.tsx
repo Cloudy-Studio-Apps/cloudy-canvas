@@ -12,6 +12,7 @@ import { ThemeMenu, useActiveTheme } from "@shared/ui/theme";
 import { AppHeader } from "@shared/ui/layout/app-header";
 import { SETTINGS_SHORTCUT } from "../home-shortcuts";
 import { JoinSessionButton } from "./join-session-button";
+import { t } from "../home.i18n";
 
 export function TopBar() {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ export function TopBar() {
             trigger={
               <Button variant="ghost" size="sm">
                 <Bot />
-                Agents
+                {t("top.agents")}
               </Button>
             }
           />
@@ -35,14 +36,14 @@ export function TopBar() {
             <Button variant="ghost" size="sm" asChild>
               <Link to="/design-system">
                 <Palette />
-                Design system
+                {t("top.designSystem")}
               </Link>
             </Button>
           )}
           <ThemeMenu
             onOpenSettings={() => void navigate("/settings/appearance")}
             trigger={
-              <Button variant="ghost" size="icon" aria-label="Theme">
+              <Button variant="ghost" size="icon" aria-label={t("top.theme")}>
                 {dark ? <Moon /> : <Sun />}
               </Button>
             }
@@ -52,11 +53,13 @@ export function TopBar() {
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/settings" aria-keyshortcuts="Control+Comma">
                   <Settings />
-                  Settings
+                  {t("top.settings")}
                 </Link>
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Settings ({formatShortcut(SETTINGS_SHORTCUT)})</TooltipContent>
+            <TooltipContent>
+              {t("top.settings")} ({formatShortcut(SETTINGS_SHORTCUT)})
+            </TooltipContent>
           </Tooltip>
         </>
       }
@@ -64,7 +67,7 @@ export function TopBar() {
       {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the wordmark opens About */}
       <button
         type="button"
-        aria-label="About Cloudy Canvas"
+        aria-label={t("top.about")}
         className="-mx-1.5 cursor-pointer rounded-md px-1.5 py-1 hover:bg-hover"
         onClick={openAbout}
       >

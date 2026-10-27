@@ -2,6 +2,7 @@ import type { FontVariant } from "@shared/core";
 import { variantName } from "@shared/core";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@shared/ui/kit";
 import type { FaceSelectProps } from "./typography-controls.types";
+import { t } from "../text.i18n";
 
 const faceValue = ({ weight, style }: FontVariant) => `${weight}|${style}`;
 
@@ -21,8 +22,12 @@ export function FaceSelect({ target, faces }: FaceSelectProps) {
         target.set({ fontWeight, fontStyle });
       }}
     >
-      <SelectTrigger aria-label="Font style" title="Font style" className="h-7 w-full text-xs">
-        <SelectValue placeholder="Mixed" />
+      <SelectTrigger
+        aria-label={t("fields.fontStyle")}
+        title={t("fields.fontStyle")}
+        className="h-7 w-full text-xs"
+      >
+        <SelectValue placeholder={t("fonts.mixed")} />
       </SelectTrigger>
       <SelectContent>
         {faces.map((face) => (

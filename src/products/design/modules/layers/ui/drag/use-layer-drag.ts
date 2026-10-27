@@ -15,6 +15,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import type { LayerRowItem } from "../visible-rows.types";
 import { layerDrop } from "./layer-drop";
 import type { LayerDragOptions, LayerDragState } from "./layer-drop.types";
+import { t } from "../../layers.i18n";
 
 /** How close to the list's top or bottom edge (px) the pointer scrolls it while dragging. */
 const SCROLL_EDGE = 28;
@@ -141,7 +142,7 @@ export function useLayerDrag(options: LayerDragOptions): {
           const moved = moveLayers(engine.doc, engine.kinds, current.moving, destination);
           if (moved.length > 0) engine.select(moved);
         } catch (error) {
-          notifyError("The layers couldn't be moved", error);
+          notifyError(t("errors.moveFailed"), error);
         }
       };
 

@@ -2,13 +2,14 @@ import { dot, solidFill, stack } from "../../sheet";
 import type { StyleguideTemplate } from "../../styleguide.types";
 import { colorOf, grid, leafName, variablesOf, withDefaults } from "../template-kit";
 import { COLOR_OPTIONS, COLUMNS_OPTION, colorCaption, swatchSize } from "./color-kit";
+import { t } from "../../styleguide.i18n";
 
 /** Circles with their names under them. */
 export const circlesTemplate: StyleguideTemplate = {
   id: "colors.circles",
   category: "colors",
-  label: "Circles",
-  description: "A circle per color, its name and values under it.",
+  label: t("templates.colors.circles.label"),
+  description: t("templates.colors.circles.description"),
   options: withDefaults([...COLOR_OPTIONS, COLUMNS_OPTION], { swatch: 72, columns: 8 }),
   build: (group, options, context) => {
     const size = swatchSize(options);

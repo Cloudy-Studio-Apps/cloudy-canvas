@@ -2,13 +2,14 @@ import { Check } from "lucide-react";
 
 import { cn } from "@shared/ui/kit";
 import type { TypeOptionListProps } from "./type-option-list.types";
+import { t } from "../../db.i18n";
 
 export function TypeOptionList({ options, current, onPick }: TypeOptionListProps) {
   if (options.length === 0) {
     return <p className="px-2 py-1.5 text-sm text-muted-foreground">Nothing matches</p>;
   }
   return (
-    <ul className="max-h-56 overflow-y-auto" role="listbox" aria-label="Column types">
+    <ul className="max-h-56 overflow-y-auto" role="listbox" aria-label={t("panel.columnTypes")}>
       {options.map((option) => (
         <li key={`${option.kind}:${option.name}`}>
           {/* eslint-disable-next-line no-restricted-syntax -- bespoke: a column type with its args */}

@@ -8,6 +8,7 @@ import { Button, cn } from "@shared/ui/kit";
 import { addPage } from "./page-actions";
 import { PageRow } from "./page-row";
 import { usePages } from "./use-pages";
+import { t } from "../pages.i18n";
 
 /**
  * The design's pages, below its layers: the one on screen is highlighted. "+" adds a
@@ -29,7 +30,7 @@ export function PagesSection() {
           onClick={() => setOpen(!open)}
           className="-ml-1.5 font-semibold text-foreground"
         >
-          Pages
+          {t("list.title")}
           <ChevronRight
             className={cn(
               "size-3 text-subtle-foreground transition-transform",
@@ -37,10 +38,10 @@ export function PagesSection() {
             )}
           />
         </Button>
-        <PanelAddButton label="Add page" onClick={() => addPage(engine)} />
+        <PanelAddButton label={t("list.add")} onClick={() => addPage(engine)} />
       </header>
       {open && (
-        <ul aria-label="Pages" className="flex max-h-48 flex-col gap-px overflow-y-auto">
+        <ul aria-label={t("list.title")} className="flex max-h-48 flex-col gap-px overflow-y-auto">
           {pages.map((page, i) => (
             <PageRow
               key={page.id}
