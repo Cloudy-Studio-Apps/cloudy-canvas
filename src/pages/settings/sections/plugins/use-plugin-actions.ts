@@ -1,5 +1,5 @@
 import { pickPluginFolder, pluginStorage, revealFile } from "@platform";
-import type { InstalledPlugin } from "@shared/core";
+import type { BrokenPlugin, InstalledPlugin } from "@shared/core";
 import { usePluginsStore } from "@shared/stores/plugins-store";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import type { PluginActions } from "./plugins.types";
@@ -42,6 +42,11 @@ export function usePluginActions(): PluginActions {
         usePluginsStore.getState().setEnabled(plugin.manifest.id, false);
         await rescan();
       })().catch((error: unknown) => notifyError(t("errors.pluginRemove"), error)),
+    removeBroken: (plugin: BrokenPlugin) =>
+      void pluginStorage
+        .remove(plugin)
+        .then(rescan)
+        .catch((error: unknown) => notifyError(t("errors.pluginRemove"), error)),
     reveal: (path: string) =>
       void revealFile(path).catch((error: unknown) => notifyError(t("errors.folderFailed"), error)),
     showFolder: () =>

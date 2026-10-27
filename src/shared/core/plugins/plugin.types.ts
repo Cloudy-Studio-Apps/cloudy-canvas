@@ -26,6 +26,8 @@ export interface InstalledPlugin {
 /** A folder that looks like a plugin but can't be loaded (no or invalid `plugin.json`, …). */
 export interface BrokenPlugin {
   path: string;
+  /** Copied into the app data folder, or a linked development folder (which may be gone). */
+  source: InstalledPlugin["source"];
   error: string;
 }
 

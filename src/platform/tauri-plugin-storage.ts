@@ -44,7 +44,11 @@ export class TauriPluginStorage implements PluginStorage {
         if (taken) throw new Error(`Another plugin (${taken.path}) has the id "${manifest.id}".`);
         plugins.push({ manifest, source, path });
       } catch (error) {
-        broken.push({ path, error: error instanceof Error ? error.message : String(error) });
+        broken.push({
+          path,
+          source,
+          error: error instanceof Error ? error.message : String(error),
+        });
       }
     };
 
@@ -87,7 +91,7 @@ export class TauriPluginStorage implements PluginStorage {
     return { manifest, source: "linked", path };
   }
 
-  async remove(plugin: InstalledPlugin): Promise<void> {
+  async remove(plugin: Pick<InstalledPlugin, "source" | "path">): Promise<void> {
     if (plugin.source === "linked") {
       await this.mutate((index) => ({ linked: index.linked.filter((p) => p !== plugin.path) }));
     } else if (await exists(plugin.path)) {

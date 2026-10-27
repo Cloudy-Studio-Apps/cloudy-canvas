@@ -1,4 +1,4 @@
-import type { InstalledPlugin, PluginStatus } from "@shared/core";
+import type { BrokenPlugin, InstalledPlugin, PluginStatus } from "@shared/core";
 
 export interface PluginRowProps {
   plugin: InstalledPlugin;
@@ -7,6 +7,17 @@ export interface PluginRowProps {
   onToggle: (enabled: boolean) => void;
   onRemove: () => void;
   onReveal: () => void;
+}
+
+export interface RemovePluginButtonProps {
+  /** A linked plugin is only forgotten (its folder stays); a copied one is deleted. */
+  source: InstalledPlugin["source"];
+  onRemove: () => void;
+}
+
+export interface BrokenPluginRowProps {
+  plugin: BrokenPlugin;
+  onRemove: () => void;
 }
 
 export interface PluginTrustDialogProps {
@@ -20,6 +31,8 @@ export interface PluginActions {
   install: () => void;
   link: () => void;
   remove: (plugin: InstalledPlugin) => void;
+  /** Forgets a development folder that couldn't be read, or deletes a broken copy. */
+  removeBroken: (plugin: BrokenPlugin) => void;
   reveal: (path: string) => void;
   showFolder: () => void;
 }

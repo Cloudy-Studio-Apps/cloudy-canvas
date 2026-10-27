@@ -11,8 +11,11 @@ export interface PluginStorage {
   installFromFolder(path: string): Promise<InstalledPlugin>;
   /** Loads a plugin from its own folder on every start (for developing one). */
   link(path: string): Promise<InstalledPlugin>;
-  /** Deletes a copied plugin, or forgets a linked one (its folder is left alone). */
-  remove(plugin: InstalledPlugin): Promise<void>;
+  /**
+   * Deletes a copied plugin, or forgets a linked one (its folder is left alone); a plugin that
+   * couldn't be read too (`BrokenPlugin`), e.g. a development folder that was deleted.
+   */
+  remove(plugin: Pick<InstalledPlugin, "source" | "path">): Promise<void>;
   /** The folder copied plugins live in, or `null` where there's none (the browser). */
   folder(): Promise<string | null>;
 }

@@ -5,6 +5,7 @@ import type { InstalledPlugin } from "@shared/core";
 import { usePluginsStore } from "@shared/stores/plugins-store";
 import { Button } from "@shared/ui/components/ui/button";
 import { SettingsSection } from "../../components/settings-section";
+import { BrokenPluginRow } from "./broken-plugin-row";
 import { PluginRow } from "./plugin-row";
 import { PluginTrustDialog } from "./plugin-trust-dialog";
 import { usePluginActions } from "./use-plugin-actions";
@@ -74,12 +75,14 @@ export function PluginsSection() {
         )}
 
         {broken.length > 0 && (
-          <div className="space-y-1.5 border-t pt-4">
+          <div className="space-y-3 border-t pt-4">
             <p className="text-sm font-medium">{t("plugins.broken")}</p>
-            {broken.map(({ path, error }) => (
-              <p key={path} className="text-sm break-words text-muted-foreground">
-                <span className="font-mono text-xs">{path}</span>: {error}
-              </p>
+            {broken.map((plugin) => (
+              <BrokenPluginRow
+                key={plugin.path}
+                plugin={plugin}
+                onRemove={() => actions.removeBroken(plugin)}
+              />
             ))}
           </div>
         )}

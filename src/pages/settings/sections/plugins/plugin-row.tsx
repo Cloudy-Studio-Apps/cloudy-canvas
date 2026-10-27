@@ -1,11 +1,12 @@
-import { useId, useState } from "react";
-import { FolderOpen, Trash2 } from "lucide-react";
+import { useId } from "react";
+import { FolderOpen } from "lucide-react";
 
-import { getLocale, tCommon } from "@shared/core";
+import { getLocale } from "@shared/core";
 import { Badge } from "@shared/ui/components/ui/badge";
 import { Button } from "@shared/ui/components/ui/button";
 import { Switch } from "@shared/ui/components/ui/switch";
 import type { PluginRowProps } from "./plugins.types";
+import { RemovePluginButton } from "./remove-plugin-button";
 import { t } from "../../settings.i18n";
 
 /** One installed plugin: what it is, whether it runs, and what happened when it loaded. */
@@ -19,7 +20,6 @@ export function PluginRow({
 }: PluginRowProps) {
   const { manifest, source } = plugin;
   const switchId = useId();
-  const [confirming, setConfirming] = useState(false);
 
   return (
     <div className="space-y-2 border-t pt-4 first:border-t-0 first:pt-0">
@@ -64,36 +64,7 @@ export function PluginRow({
           <FolderOpen />
           {t("plugins.show")}
         </Button>
-        {confirming ? (
-          <>
-            <span className="text-sm">
-              {source === "linked" ? t("plugins.stopLoading") : t("plugins.deleteIt")}
-            </span>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => {
-                setConfirming(false);
-                onRemove();
-              }}
-            >
-              {t("plugins.remove")}
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => setConfirming(false)}>
-              {tCommon("cancel")}
-            </Button>
-          </>
-        ) : (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-destructive"
-            onClick={() => setConfirming(true)}
-          >
-            <Trash2 />
-            {t("plugins.remove")}
-          </Button>
-        )}
+        <RemovePluginButton source={source} onRemove={onRemove} />
       </div>
     </div>
   );
