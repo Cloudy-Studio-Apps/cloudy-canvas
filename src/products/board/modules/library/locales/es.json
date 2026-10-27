@@ -65,5 +65,8 @@
       "label": "Votación",
       "description": "Deja que todos elijan sus favoritos."
     }
+  },
+  "card": {
+    "soon": "Pronto"
   }
 }

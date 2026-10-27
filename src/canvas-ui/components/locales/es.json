@@ -7,7 +7,8 @@
     "selection": "Ajustar a la selección",
     "snapObjects": "Ajustar a objetos",
     "snapPixel": "Ajustar a la cuadrícula de píxeles",
-    "snapGuides": "Ajustar a las guías"
+    "snapGuides": "Ajustar a las guías",
+    "toPercent": "Zoom al {percent}%"
   },
   "history": {
     "undo": "Deshacer",

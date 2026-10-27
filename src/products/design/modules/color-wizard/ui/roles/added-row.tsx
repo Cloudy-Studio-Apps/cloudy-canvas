@@ -2,6 +2,7 @@ import { Badge, Swatch } from "@shared/ui/kit";
 import type { AddedRowProps } from "./roles.types";
 import { ShadeStrip } from "./shade-strip";
 import { useColorWizardStore } from "../store";
+import { t } from "../../color-wizard.i18n";
 
 /** A color an option adds (the neutral, a status color). */
 export function AddedRow({ color, exists }: AddedRowProps) {
@@ -12,10 +13,10 @@ export function AddedRow({ color, exists }: AddedRowProps) {
       <Swatch color={color.hex} className="size-8 rounded-md" />
       <span className="flex items-center gap-1.5 text-xs">
         <b>{color.name}</b>
-        <span className="text-muted-foreground">added</span>
+        <span className="text-muted-foreground">{t("roles.addedTag")}</span>
         {exists && (
           <Badge variant="outline" className="text-warning">
-            updates
+            {t("roles.updatesTag")}
           </Badge>
         )}
       </span>

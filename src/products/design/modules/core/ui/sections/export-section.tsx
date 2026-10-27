@@ -17,7 +17,7 @@ export function ExportSection() {
         onClick={() => engine.commands.export?.()}
       >
         <Download />
-        Export…
+        {t("exportSection.button")}
         <span className="ml-auto text-xs text-muted-foreground">
           {engine.keymap.label("export")}
         </span>

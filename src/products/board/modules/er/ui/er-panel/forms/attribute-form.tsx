@@ -6,6 +6,7 @@ import type { ErAttributeElement } from "../../../attribute/attribute.types";
 import { useErShape, useErShapes } from "../../model";
 import { AttributeRow } from "./attribute-row";
 import type { AttributeFormProps } from "./attribute-form.types";
+import { t } from "../../../er.i18n";
 
 /** One attribute (with its parts); its owner is a click away. */
 export function AttributeForm({ attribute }: AttributeFormProps) {
@@ -25,7 +26,7 @@ export function AttributeForm({ attribute }: AttributeFormProps) {
       </ul>
       <Button variant="outline" size="sm" onClick={() => engine.focusElement(attribute.ownerId)}>
         <LocateFixed />
-        Edit {ownerName}
+        {t("forms.editOwner", { name: ownerName })}
       </Button>
     </div>
   );

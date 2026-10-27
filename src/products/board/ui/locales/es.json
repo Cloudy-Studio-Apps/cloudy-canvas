@@ -28,5 +28,8 @@
   "file": {
     "untitled": "Pizarra sin título",
     "noun": "la pizarra"
+  },
+  "sourceEditor": {
+    "lineError": "Línea {line}: {message}"
   }
 }

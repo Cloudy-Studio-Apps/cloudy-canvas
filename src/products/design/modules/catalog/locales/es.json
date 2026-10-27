@@ -53,7 +53,10 @@
       "back": "Contraportada",
       "page": "Página {n}",
       "pages": "Páginas {from}–{to}"
-    }
+    },
+    "pagesHeading": "Páginas",
+    "noBrochure": "No hay folleto en esta página",
+    "noBrochureHint": "Un folleto imprime los marcos de esta página en el orden que elijas. Una página puede tener varios, por ejemplo uno por temporada o idioma."
   },
   "export": {
     "label": "Documento PDF",
@@ -71,13 +74,16 @@
     "toReplace": "{count} por reemplazar",
     "title": "Imágenes",
     "none": "No hay imágenes en esta página.",
-    "hint": "Reemplazar conserva la capa, su tamaño y cómo la imagen la rellena."
+    "hint": "Reemplazar conserva la capa, su tamaño y cómo la imagen la rellena.",
+    "placeholder": "Marcador · por reemplazar",
+    "lowForPrint": " · baja para imprimir"
   },
   "preview": {
     "label": "Vista previa del folleto",
     "previous": "Anterior",
     "next": "Siguiente",
-    "toggle3d": "Vista previa 3D"
+    "toggle3d": "Vista previa 3D",
+    "view3d": "Vista 3D"
   },
   "arrange": {
     "off": "No organizar el lienzo",
@@ -98,7 +104,8 @@
       "reasonSpread": "para que el pliego empiece en una página izquierda",
       "blank": "Va una página en blanco antes {reason}.",
       "oddSize": "Mide {w} × {h} mm; las páginas miden {pw} × {ph} mm."
-    }
+    },
+    "page": "Página {page}"
   },
   "settings": {
     "quality": {
@@ -128,13 +135,19 @@
     "loose": "Fuera del folleto",
     "title_one": "{count} marco",
     "title_other": "{count} marcos",
-    "all": "Todos están en el folleto."
+    "all": "Todos están en el folleto.",
+    "addAsPages": "Añadir {count} como páginas",
+    "newPagesHint": "Las páginas nuevas van al final, en orden de lectura (filas, de izquierda a derecha).",
+    "greyedHint": "Los marcos en gris se quedan en el diseño; solo no se imprimen.",
+    "addAsPage": "Añadir como página {page}",
+    "addAsOption": "Añadir como opción de la página {page}"
   },
   "page": {
     "options": "Opciones",
     "title": "Página {page}",
     "oneVersion": "Una sola versión. Para comparar otras, pasa el cursor sobre un marco atenuado del lienzo y añádelo como opción de la página {page}.",
-    "edit": "Editar esta página en Diseño"
+    "edit": "Editar esta página en Diseño",
+    "option": "Opción {letter}"
   },
   "pick": {
     "title": "Elegir marcos",
@@ -149,7 +162,8 @@
       "add_one": "Añadir {count} página",
       "add_other": "Añadir {count} páginas",
       "update": "Actualizar páginas"
-    }
+    },
+    "optionOfPage": "Opción de la página {page}"
   },
   "sidebar": {
     "none": "Esta página aún no tiene folleto. Crea uno en la pestaña Folleto o elige marcos.",

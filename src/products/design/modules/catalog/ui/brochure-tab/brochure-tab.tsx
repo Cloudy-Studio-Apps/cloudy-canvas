@@ -66,7 +66,8 @@ export function BrochureTab() {
       <BrochureSwitcher />
       <header className="flex h-10 shrink-0 items-center justify-between px-3">
         <h2 className="text-xs font-semibold text-foreground">
-          Pages <span className="font-normal text-muted-foreground">{layout.pageCount}</span>
+          {t("tab.pagesHeading")}{" "}
+          <span className="font-normal text-muted-foreground">{layout.pageCount}</span>
         </h2>
         <div className="flex items-center gap-0.5">
           <PanelIconButton

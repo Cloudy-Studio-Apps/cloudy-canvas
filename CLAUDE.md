@@ -139,7 +139,7 @@ look); the module conventions are in [docs/modules.md](docs/modules.md).
     `locales/es.json` next to it, keys grouped by area (`t("panel.add.active")`); generic words use
     `tCommon` from `@shared/core`. MCP tool text, ids, file formats, key caps and developer messages
     (thrown `Error`s, `console`) stay English. `scripts/check-locales.mjs` (in `pnpm lint`) keeps
-    Spanish complete. See [src/shared/core/i18n/](src/shared/core/i18n/README.md).
+    Spanish complete, and ESLint's `cloudy/no-literal-ui-text` flags literal text in `.tsx` files. See [src/shared/core/i18n/](src/shared/core/i18n/README.md).
 
 ## Transition
 

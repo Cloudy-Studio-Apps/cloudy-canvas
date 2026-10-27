@@ -36,7 +36,8 @@ export function BrochureChecksSection() {
               >
                 <TriangleAlert className="mt-px size-3.5 shrink-0" />
                 <span>
-                  <span className="font-semibold">Page {issue.page}</span> · {issue.message}
+                  <span className="font-semibold">{t("checks.page", { page: issue.page })}</span> ·{" "}
+                  {issue.message}
                 </span>
               </button>
             </li>

@@ -4,7 +4,9 @@
     "description": "The language of menus, panels and messages.",
     "label": "Language",
     "system": "System ({language})",
-    "restartNote": "Changes apply the next time you open Cloudy Canvas."
+    "restartNote": "Restart Cloudy Canvas to use the new language. Your work is saved first.",
+    "restart": "Restart now",
+    "restartFailed": "Cloudy Canvas couldn't restart"
   },
   "groups": {
     "preferences": "Preferences",

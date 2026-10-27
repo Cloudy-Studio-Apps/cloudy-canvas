@@ -15,12 +15,10 @@ export function LooseFrameSection({ frame }: LooseFrameSectionProps) {
   return (
     <PanelSection title={t("frames.loose")}>
       <p className="truncate text-sm text-foreground">{frame.name}</p>
-      <p className="text-xs text-muted-foreground">
-        Greyed frames stay in the design; they just aren't printed.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("frames.greyedHint")}</p>
       <div className="mt-2.5 flex flex-col gap-1.5">
         <Button size="sm" onClick={() => ensureBrochure(engine).addPages([frame.id])}>
-          Add as page {layout.pageCount + 1}
+          {t("frames.addAsPage", { page: layout.pageCount + 1 })}
         </Button>
         {last && (
           <Button
@@ -28,7 +26,7 @@ export function LooseFrameSection({ frame }: LooseFrameSectionProps) {
             variant="outline"
             onClick={() => ensureBrochure(engine).addOption(last.slot.id, frame.id)}
           >
-            Add as an option of page {label(last)}
+            {t("frames.addAsOption", { page: label(last) })}
           </Button>
         )}
       </div>

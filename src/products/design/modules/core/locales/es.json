@@ -194,7 +194,8 @@
     "effects_one": "{count} efecto",
     "effects_other": "{count} efectos",
     "paintCount_one": "{count} relleno",
-    "paintCount_other": "{count} rellenos"
+    "paintCount_other": "{count} rellenos",
+    "delete": "Eliminar estilo"
   },
   "dialog": {
     "deleteTitle_one": "¿Eliminarlo?",
@@ -203,5 +204,8 @@
     "usedBy_one": "Lo usa {count} capa. Conserva el valor que muestra ahora, sin vínculo.",
     "usedBy_other": "Lo usan {count} capas. Conservan el valor que muestran ahora, sin vínculo.",
     "deleteDetach": "Eliminar y desvincular"
+  },
+  "exportSection": {
+    "button": "Exportar…"
   }
 }

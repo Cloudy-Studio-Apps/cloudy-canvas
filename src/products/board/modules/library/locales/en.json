@@ -65,5 +65,8 @@
       "label": "Voting",
       "description": "Let everyone pick their favorites."
     }
+  },
+  "card": {
+    "soon": "Soon"
   }
 }

@@ -57,10 +57,7 @@ export function WheelSource() {
           if (next !== "custom") applyHarmony({ ...hsv, v: brightness });
         }}
       />
-      <p className="text-xs text-muted-foreground">
-        Drag the large handle to move the base color; the others follow the harmony. In Custom,
-        every handle moves on its own.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("sources.wheelHint")}</p>
     </div>
   );
 }

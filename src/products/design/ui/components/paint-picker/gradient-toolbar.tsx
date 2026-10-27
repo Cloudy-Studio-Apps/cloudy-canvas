@@ -11,7 +11,7 @@ export function GradientToolbar({ paint, onChange, onAddStop, onCopy }: Gradient
   const smooth = paint.interpolation === "oklab";
   return (
     <div className="flex items-center justify-between">
-      <h3 className="text-xs text-muted-foreground">Stops</h3>
+      <h3 className="text-xs text-muted-foreground">{t("gradient.stops")}</h3>
       <div className="flex items-center gap-0.5">
         <PanelIconButton label={t("gradient.toolbar.copyCss")} onClick={onCopy}>
           <Copy />

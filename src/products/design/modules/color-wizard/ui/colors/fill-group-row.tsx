@@ -24,7 +24,9 @@ export function FillGroupRow({ group, checked, onCheckedChange }: FillGroupRowPr
           </span>
         )}
       </div>
-      <span className="text-xs text-muted-foreground">{group.count} uses</span>
+      <span className="text-xs text-muted-foreground">
+        {t("sources.fileUses", { count: group.count })}
+      </span>
     </div>
   );
 }

@@ -26,7 +26,7 @@ export function PageImageRow({ picture }: PageImageRowProps) {
       <span className="min-w-0 flex-1 text-xs">
         <span className="block truncate text-foreground">{node.name}</span>
         {placeholder ? (
-          <span className="block truncate text-warning">Placeholder · to replace</span>
+          <span className="block truncate text-warning">{t("images.placeholder")}</span>
         ) : (
           size &&
           dpi !== null && (
@@ -36,7 +36,7 @@ export function PageImageRow({ picture }: PageImageRowProps) {
                 dpi < LOW_DPI && "text-warning",
               )}
             >
-              {size.w} × {size.h} · {dpi} dpi{dpi < LOW_DPI && " · low for print"}
+              {size.w} × {size.h} · {dpi} dpi{dpi < LOW_DPI && t("images.lowForPrint")}
             </span>
           )
         )}

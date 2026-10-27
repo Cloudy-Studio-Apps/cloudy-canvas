@@ -5,6 +5,8 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import prettier from "eslint-config-prettier";
 
+import cloudy from "./scripts/eslint/no-literal-ui-text.js";
+
 // Layering (see CLAUDE.md). Each group of folders lists what it may not import. A file gets one
 // `no-restricted-imports` rule, so the groups below don't overlap.
 const REACT = {
@@ -158,6 +160,24 @@ export default tseslint.config(
         },
       ],
     },
+  },
+  // Text people read goes through a translator (CLAUDE.md rule 30). React files only: engine code's
+  // strings are mostly ids and agent text, and its user-facing ones are kept in check by review.
+  {
+    files: ["src/**/*.tsx"],
+    ignores: [
+      "src/shared/ui/components/ui/**",
+      "src/pages/design-system/**",
+      // Sample content (a mock website, brochure, app, type and diagram), not interface text.
+      "src/products/design/modules/color-wizard/ui/previews/**",
+      "src/products/design/modules/color-wizard/ui/theme/theme-pane.tsx",
+      "src/products/design/modules/color-wizard/ui/type/type-sample-row.tsx",
+      "src/products/design/modules/text/ui/text-styles/text-style-preview.tsx",
+      "src/products/design/modules/variables/ui/window/board/number-visual.tsx",
+      "src/products/board/modules/er/ui/er-panel/diagram-settings/diagram-setting-preview.tsx",
+    ],
+    plugins: { cloudy },
+    rules: { "cloudy/no-literal-ui-text": "error" },
   },
   {
     files: ["vite.config.ts", "eslint.config.js"],

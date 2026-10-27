@@ -24,12 +24,10 @@ export function FramesSection({ frames }: FramesSectionProps) {
           className="w-full"
           onClick={() => ensureBrochure(engine).addPages(ordered.map((item) => item.id))}
         >
-          Add {loose.length} as pages
+          {t("frames.addAsPages", { count: loose.length })}
         </Button>
       )}
-      <p className="mt-1.5 text-xs text-muted-foreground">
-        New pages go at the end, in reading order (rows, left to right).
-      </p>
+      <p className="mt-1.5 text-xs text-muted-foreground">{t("frames.newPagesHint")}</p>
     </PanelSection>
   );
 }

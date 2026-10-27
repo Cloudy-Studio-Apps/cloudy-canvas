@@ -81,6 +81,7 @@ export function NumberScalePanel({ draft }: NumberScalePanelProps) {
         label={t("generator.names")}
         value={draft.names}
         options={[
+          // eslint-disable-next-line cloudy/no-literal-ui-text -- T-shirt size names, the same in every language
           { value: "tshirt", label: "xs … 3xl" },
           { value: "numeric", label: "100 … 900" },
         ]}

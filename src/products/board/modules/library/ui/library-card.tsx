@@ -1,6 +1,7 @@
 import { ExtensionIconView } from "@canvas-ui";
 import { cn } from "@shared/ui/kit";
 import type { LibraryCardProps } from "./library.types";
+import { t } from "../library.i18n";
 
 /** One item: a preview tile and its name. Items that aren't ready yet are shown, disabled. */
 export function LibraryCard({ item, onPick }: LibraryCardProps) {
@@ -29,7 +30,7 @@ export function LibraryCard({ item, onPick }: LibraryCardProps) {
         />
         {comingSoon && (
           <span className="absolute top-1.5 right-1.5 rounded-sm bg-surface-sunken px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
-            Soon
+            {t("card.soon")}
           </span>
         )}
       </span>

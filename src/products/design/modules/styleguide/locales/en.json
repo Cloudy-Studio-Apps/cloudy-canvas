@@ -182,7 +182,8 @@
         "label": "Table",
         "description": "Every style's values in a table."
       }
-    }
+    },
+    "none": "No templates for this category."
   },
   "colorKit": {
     "hex": "Hex",

@@ -194,7 +194,8 @@
     "effects_one": "{count} effect",
     "effects_other": "{count} effects",
     "paintCount_one": "{count} paint",
-    "paintCount_other": "{count} paints"
+    "paintCount_other": "{count} paints",
+    "delete": "Delete style"
   },
   "dialog": {
     "deleteTitle_one": "Delete it?",
@@ -203,5 +204,8 @@
     "usedBy_one": "Used by {count} layer. They keep the value they show now, no longer linked.",
     "usedBy_other": "Used by {count} layers. They keep the value they show now, no longer linked.",
     "deleteDetach": "Delete and detach"
+  },
+  "exportSection": {
+    "button": "Export…"
   }
 }

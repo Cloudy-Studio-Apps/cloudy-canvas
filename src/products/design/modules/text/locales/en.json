@@ -45,5 +45,8 @@
     "search": "Search fonts",
     "noMatch": "No font has that name.",
     "loading": "Loading fonts…"
+  },
+  "bind": {
+    "textContent": "Text content"
   }
 }

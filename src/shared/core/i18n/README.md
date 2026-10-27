@@ -35,7 +35,7 @@ Every folder that shows text (a module, a page, an area like `canvas-ui`) owns i
 `setLocale` runs once at boot, in `app/i18n-boot.ts` (the first import of `main.tsx`), from the
 user's choice (`shared/stores/locale-store.ts`: `system`, `en` or `es`) and `navigator.languages`
 (`resolveLocale`, `matchLocale`: `es-419`, `es_PE` and `ES` are Spanish; anything unsupported is
-English). A change in Settings › Language applies on the next launch, so `t()` is a plain function:
+English). A change in Settings › Language applies after Restart now (which saves, then reloads the window) or on the next launch, so `t()` is a plain function:
 engine code and top-level constants (a module's command labels) can call it, and nothing
 re-renders. `t()` before `setLocale` shows English and warns once in dev. `getLocale()` gives the
 locale to `Intl` formatters.
@@ -50,6 +50,18 @@ locale to `Intl` formatters.
   page, untitled files) follow the creator's language and are saved as they are, like Figma.
   Names the code looks up by name stay English, as identifiers (the color wizard's collections,
   axis and groups).
+
+## The lint checks
+
+- `scripts/check-locales.mjs` (in `pnpm lint`): `es.json` has every key of `en.json`, with the same
+  placeholders and plural pairs.
+- `cloudy/no-literal-ui-text` (`scripts/eslint/no-literal-ui-text.js`, an error in every `.tsx`):
+  JSX text and the string values of `label`, `title`, `description`, `placeholder`, `aria-label`
+  and similar props and option fields must come from a translator. Brand names, "Aa", strings
+  without words, all-caps abbreviations, units, URLs, paths and expressions pass, as does text in
+  `<code>` and `<Kbd>`. Sample content (the color wizard's previews, type and diagram samples) is
+  ignored in `eslint.config.js`; a one-off says why with
+  `eslint-disable-next-line cloudy/no-literal-ui-text -- <why>`. Plain `.ts` files aren't checked.
 
 ## Not translated yet
 

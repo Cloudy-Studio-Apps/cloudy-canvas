@@ -45,5 +45,8 @@
     "search": "Buscar fuentes",
     "noMatch": "Ninguna fuente tiene ese nombre.",
     "loading": "Cargando fuentes…"
+  },
+  "bind": {
+    "textContent": "Contenido del texto"
   }
 }

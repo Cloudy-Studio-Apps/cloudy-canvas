@@ -24,9 +24,11 @@
       "in": "Aceleración",
       "out": "Desaceleración",
       "inOut": "Aceleración y desaceleración",
-      "label": "Mezclar hasta la siguiente parada"
+      "label": "Mezclar hasta la siguiente parada",
+      "blendToNext": "Fundir con la siguiente"
     },
-    "swatch": "Degradado {type}"
+    "swatch": "Degradado {type}",
+    "stops": "Paradas"
   },
   "image": {
     "mode": {

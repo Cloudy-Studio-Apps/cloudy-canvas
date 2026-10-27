@@ -52,7 +52,7 @@ export function PageSection({ page }: PageSectionProps) {
                     <ElementThumbnail id={option.id} className="h-12 w-17" />
                     <span className="min-w-0 text-xs">
                       <span className="block font-semibold text-foreground">
-                        Option {optionLetter(i)}
+                        {t("page.option", { letter: optionLetter(i) })}
                       </span>
                       <span className="block truncate text-muted-foreground">{option.name}</span>
                     </span>

@@ -522,5 +522,8 @@
     "standardMissingDrawn": "The standard \"{name}\" isn't installed; drawn with the default",
     "standardMissing": "The standard \"{name}\" isn't installed; the diagram is drawn with the default.",
     "unknownSetting": "Unknown setting \"{key}\" was ignored"
+  },
+  "forms": {
+    "editOwner": "Edit {name}"
   }
 }

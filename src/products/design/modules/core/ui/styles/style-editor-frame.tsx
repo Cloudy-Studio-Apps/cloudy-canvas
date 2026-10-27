@@ -44,7 +44,7 @@ export function StyleEditorFrame({ style, onDelete, children }: StyleEditorFrame
         onClick={onDelete}
         className="justify-start text-destructive"
       >
-        <Trash2 /> Delete style
+        <Trash2 /> {t("styles.delete")}
       </Button>
     </div>
   );

@@ -522,5 +522,8 @@
     "standardMissingDrawn": "El estándar «{name}» no está instalado; se dibuja con el predeterminado",
     "standardMissing": "El estándar «{name}» no está instalado; el diagrama se dibuja con el predeterminado.",
     "unknownSetting": "Se ignoró el ajuste desconocido «{key}»"
+  },
+  "forms": {
+    "editOwner": "Editar {name}"
   }
 }

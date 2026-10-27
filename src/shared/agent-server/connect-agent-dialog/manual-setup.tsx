@@ -17,10 +17,12 @@ export function ManualSetup({ url }: ManualSetupProps) {
           .split(/(\uE000|\uE001)/)
           .map((part, index) =>
             part === NAME ? (
+              // eslint-disable-next-line cloudy/no-literal-ui-text -- a name, styled inside the translated sentence
               <span key={index} className="font-mono text-foreground">
                 cloudy-canvas
               </span>
             ) : part === TRANSPORT ? (
+              // eslint-disable-next-line cloudy/no-literal-ui-text -- a name, styled inside the translated sentence
               <span key={index} className="font-medium text-foreground">
                 Streamable HTTP
               </span>

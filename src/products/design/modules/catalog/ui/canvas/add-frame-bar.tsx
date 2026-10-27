@@ -32,7 +32,7 @@ export function AddFrameBar({ rect, frame, target }: AddFrameBarProps) {
           onClick={() => ensureBrochure(engine).addOption(target.slot.id, frame.id)}
         >
           <Plus />
-          Option of page {label(target)}
+          {t("canvas.optionOfPage", { page: label(target) })}
         </Button>
       )}
     </div>

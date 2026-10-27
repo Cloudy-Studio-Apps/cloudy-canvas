@@ -50,7 +50,7 @@ export function ZoomMenu({ side = "top" }: ZoomMenuProps) {
         <DropdownMenuSeparator />
         {ZOOM_PRESETS.map((preset) => (
           <DropdownMenuItem key={preset} onSelect={() => engine.zoomTo(preset)}>
-            Zoom to {preset * 100}%
+            {t("zoom.toPercent", { percent: preset * 100 })}
             {preset === 1 && (
               <DropdownMenuShortcut>{engine.keymap.label("zoomReset")}</DropdownMenuShortcut>
             )}

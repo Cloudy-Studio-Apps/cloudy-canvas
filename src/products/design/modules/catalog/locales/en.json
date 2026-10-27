@@ -53,7 +53,10 @@
       "back": "Back cover",
       "page": "Page {n}",
       "pages": "Pages {from}–{to}"
-    }
+    },
+    "pagesHeading": "Pages",
+    "noBrochure": "No brochure on this page",
+    "noBrochureHint": "A brochure prints this page's frames in the order you choose. A page can hold several, e.g. one per season or language."
   },
   "export": {
     "label": "PDF document",
@@ -71,13 +74,16 @@
     "toReplace": "{count} to replace",
     "title": "Images",
     "none": "No pictures on this page.",
-    "hint": "Replace keeps the layer, its size and how the picture fills it."
+    "hint": "Replace keeps the layer, its size and how the picture fills it.",
+    "placeholder": "Placeholder · to replace",
+    "lowForPrint": " · low for print"
   },
   "preview": {
     "label": "Brochure preview",
     "previous": "Previous",
     "next": "Next",
-    "toggle3d": "3D preview"
+    "toggle3d": "3D preview",
+    "view3d": "3D view"
   },
   "arrange": {
     "off": "Don't arrange the canvas",
@@ -98,7 +104,8 @@
       "reasonSpread": "so the spread starts on a left page",
       "blank": "A blank page goes before it {reason}.",
       "oddSize": "It's {w} × {h} mm; the pages are {pw} × {ph} mm."
-    }
+    },
+    "page": "Page {page}"
   },
   "settings": {
     "quality": {
@@ -128,13 +135,19 @@
     "loose": "Not in the brochure",
     "title_one": "{count} frame",
     "title_other": "{count} frames",
-    "all": "They're all in the brochure."
+    "all": "They're all in the brochure.",
+    "addAsPages": "Add {count} as pages",
+    "newPagesHint": "New pages go at the end, in reading order (rows, left to right).",
+    "greyedHint": "Greyed frames stay in the design; they just aren't printed.",
+    "addAsPage": "Add as page {page}",
+    "addAsOption": "Add as an option of page {page}"
   },
   "page": {
     "options": "Options",
     "title": "Page {page}",
     "oneVersion": "One version. To compare others, hover a greyed frame on the canvas and add it as an option of page {page}.",
-    "edit": "Edit this page in Design"
+    "edit": "Edit this page in Design",
+    "option": "Option {letter}"
   },
   "pick": {
     "title": "Picking frames",
@@ -149,7 +162,8 @@
       "add_one": "Add {count} page",
       "add_other": "Add {count} pages",
       "update": "Update pages"
-    }
+    },
+    "optionOfPage": "Option of page {page}"
   },
   "sidebar": {
     "none": "This page has no brochure yet. Create one in the Brochure tab, or pick frames.",

@@ -24,9 +24,11 @@
       "in": "Ease in",
       "out": "Ease out",
       "inOut": "Ease in and out",
-      "label": "Blend to the next stop"
+      "label": "Blend to the next stop",
+      "blendToNext": "Blend to next"
     },
-    "swatch": "{type} gradient"
+    "swatch": "{type} gradient",
+    "stops": "Stops"
   },
   "image": {
     "mode": {

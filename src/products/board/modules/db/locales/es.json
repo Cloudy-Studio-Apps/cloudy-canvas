@@ -27,7 +27,8 @@
     "tidyAll": "Ordena todo el esquema",
     "schemaButton": "Esquema",
     "close": "Cerrar panel",
-    "columnTypes": "Tipos de columna"
+    "columnTypes": "Tipos de columna",
+    "nothingMatches": "No hay coincidencias"
   },
   "tabs": {
     "visual": "Visual",

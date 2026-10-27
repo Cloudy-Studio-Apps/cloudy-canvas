@@ -58,7 +58,7 @@ export function PlannedVariables() {
       )}
       {plan.bindings > 0 && (
         <p className="rounded-lg border border-border bg-surface-sunken p-2.5 text-xs text-muted-foreground">
-          Also binds {plan.bindings} paints of the collected layers to the new variables.
+          {t("review.alsoBinds", { count: plan.bindings })}
         </p>
       )}
     </div>

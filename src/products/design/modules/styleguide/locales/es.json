@@ -182,7 +182,8 @@
         "label": "Tabla",
         "description": "Los valores de cada estilo en una tabla."
       }
-    }
+    },
+    "none": "No hay plantillas para esta categoría."
   },
   "colorKit": {
     "hex": "Hex",

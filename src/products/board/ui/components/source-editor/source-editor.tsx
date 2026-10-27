@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { CodeEditor } from "@shared/ui/components/code-editor";
 import type { SourceEditorProps, SourceStatus } from "./source-editor.types";
+import { t } from "../../board-ui.i18n";
 
 /** Typing pauses this long before the text is applied to the board. */
 const APPLY_DELAY_MS = 400;
@@ -81,7 +82,7 @@ export function SourceEditor({
       </div>
       {"error" in status ? (
         <p role="alert" className="text-xs text-destructive">
-          Line {status.error.line}: {status.error.message}
+          {t("sourceEditor.lineError", { line: status.error.line, message: status.error.message })}
         </p>
       ) : (
         <>

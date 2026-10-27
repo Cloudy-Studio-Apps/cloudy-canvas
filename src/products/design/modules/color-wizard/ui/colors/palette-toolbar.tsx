@@ -36,7 +36,7 @@ export function PaletteToolbar() {
         <Redo2 />
       </IconButton>
       <span className="mx-1.5 h-4.5 w-px bg-border" />
-      <span className="mr-1 text-xs text-muted-foreground">Colors</span>
+      <span className="mr-1 text-xs text-muted-foreground">{t("palette.colorsLabel")}</span>
       <IconButton
         label={t("palette.toolbar.fewer")}
         size="sm"

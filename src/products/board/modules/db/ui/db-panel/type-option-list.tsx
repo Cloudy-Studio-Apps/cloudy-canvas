@@ -6,7 +6,7 @@ import { t } from "../../db.i18n";
 
 export function TypeOptionList({ options, current, onPick }: TypeOptionListProps) {
   if (options.length === 0) {
-    return <p className="px-2 py-1.5 text-sm text-muted-foreground">Nothing matches</p>;
+    return <p className="px-2 py-1.5 text-sm text-muted-foreground">{t("panel.nothingMatches")}</p>;
   }
   return (
     <ul className="max-h-56 overflow-y-auto" role="listbox" aria-label={t("panel.columnTypes")}>

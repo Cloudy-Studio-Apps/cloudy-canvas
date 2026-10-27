@@ -80,8 +80,7 @@ export function ThemeStep() {
       </div>
       {!options.theme && (
         <p className="rounded-lg border border-border bg-surface-sunken p-2.5 text-xs text-muted-foreground">
-          The Theme collection is off: these choices still color the previews, but only the
-          palette's variables are made.
+          {t("theme.collectionOff")}
         </p>
       )}
       <ThemePartsContext.Provider value={context}>

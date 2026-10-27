@@ -27,7 +27,8 @@
     "tidyAll": "Tidy up the whole schema",
     "schemaButton": "Schema",
     "close": "Close panel",
-    "columnTypes": "Column types"
+    "columnTypes": "Column types",
+    "nothingMatches": "Nothing matches"
   },
   "tabs": {
     "visual": "Visual",

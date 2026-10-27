@@ -20,7 +20,9 @@ const EASES: { id: StopEase; label: string }[] = [
 export function StopEaseSelect({ value, onChange }: StopEaseSelectProps) {
   return (
     <div className="flex items-center gap-2">
-      <span className="shrink-0 text-xs text-muted-foreground">Blend to next</span>
+      <span className="shrink-0 text-xs text-muted-foreground">
+        {t("gradient.ease.blendToNext")}
+      </span>
       <Select value={value} onValueChange={(next) => onChange(next as StopEase)}>
         <SelectTrigger aria-label={t("gradient.ease.label")} className="h-7 flex-1 text-xs">
           <SelectValue />

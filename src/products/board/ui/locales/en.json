@@ -28,5 +28,8 @@
   "file": {
     "untitled": "Untitled board",
     "noun": "board"
+  },
+  "sourceEditor": {
+    "lineError": "Line {line}: {message}"
   }
 }

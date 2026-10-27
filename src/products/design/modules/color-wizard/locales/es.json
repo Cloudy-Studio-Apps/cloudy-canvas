@@ -147,7 +147,8 @@
       "changed": "Cambiado",
       "auto": "Auto",
       "customShort": "personalizado"
-    }
+    },
+    "collectionOff": "La colección Tema está desactivada: estas opciones siguen coloreando las vistas previas, pero solo se crean las variables de la paleta."
   },
   "type": {
     "preset": {
@@ -265,7 +266,10 @@
     "wheel": {
       "brightness": "Brillo",
       "baseColor": "Color base"
-    }
+    },
+    "fileUses_one": "{count} uso",
+    "fileUses_other": "{count} usos",
+    "wheelHint": "Arrastra el control grande para mover el color base; los demás siguen la armonía. En Personalizada, cada control se mueve por su cuenta."
   },
   "palette": {
     "insert": "Añadir un color entre estos",
@@ -296,7 +300,8 @@
       "more": "Más colores",
       "sort": "Ordenar por luminosidad",
       "generate": "Generar al azar"
-    }
+    },
+    "colorsLabel": "Colores"
   },
   "done": {
     "variables": "variables",
@@ -360,7 +365,9 @@
       "textStyles": "Estilos de texto",
       "update": "actualizar",
       "new": "crear"
-    }
+    },
+    "alsoBinds_one": "También vincula {count} pintura de las capas reunidas a las nuevas variables.",
+    "alsoBinds_other": "También vincula {count} pinturas de las capas reunidas a las nuevas variables."
   },
   "roles": {
     "row": {
@@ -382,7 +389,9 @@
     },
     "yourColors": "Tus colores",
     "names": "Los nombres se vuelven grupos de variables:",
-    "added": "Añadidos por las opciones"
+    "added": "Añadidos por las opciones",
+    "addedTag": "añadido",
+    "updatesTag": "actualiza"
   },
   "shell": {
     "steps": {

@@ -147,7 +147,8 @@
       "changed": "Changed",
       "auto": "Auto",
       "customShort": "custom"
-    }
+    },
+    "collectionOff": "The Theme collection is off: these choices still color the previews, but only the palette's variables are made."
   },
   "type": {
     "preset": {
@@ -265,7 +266,10 @@
     "wheel": {
       "brightness": "Brightness",
       "baseColor": "Base color"
-    }
+    },
+    "fileUses_one": "{count} use",
+    "fileUses_other": "{count} uses",
+    "wheelHint": "Drag the large handle to move the base color; the others follow the harmony. In Custom, every handle moves on its own."
   },
   "palette": {
     "insert": "Add a color between these",
@@ -296,7 +300,8 @@
       "more": "More colors",
       "sort": "Sort by lightness",
       "generate": "Generate random"
-    }
+    },
+    "colorsLabel": "Colors"
   },
   "done": {
     "variables": "variables",
@@ -360,7 +365,9 @@
       "textStyles": "Text styles",
       "update": "update",
       "new": "create"
-    }
+    },
+    "alsoBinds_one": "Also binds {count} paint of the collected layers to the new variables.",
+    "alsoBinds_other": "Also binds {count} paints of the collected layers to the new variables."
   },
   "roles": {
     "row": {
@@ -382,7 +389,9 @@
     },
     "yourColors": "Your colors",
     "names": "Names become variable groups:",
-    "added": "Added by the options"
+    "added": "Added by the options",
+    "addedTag": "added",
+    "updatesTag": "updates"
   },
   "shell": {
     "steps": {

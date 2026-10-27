@@ -10,7 +10,7 @@ export function Preview3dToggle({ className }: Preview3dToggleProps) {
   return (
     <label className={cn("flex cursor-pointer items-center gap-2 text-sm text-surface", className)}>
       <Switch checked={on} onCheckedChange={set} aria-label={t("preview.toggle3d")} />
-      3D view
+      {t("preview.view3d")}
     </label>
   );
 }
