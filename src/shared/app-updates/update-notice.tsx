@@ -1,12 +1,14 @@
+import { getLocale, parseReleaseNotes } from "@shared/core";
 import { useUpdateStore } from "@shared/stores/update-store";
-import { SealLogo } from "@shared/ui/brand/seal-logo";
+import { openWhatsNew } from "@shared/stores/whats-new-store";
 import { Button } from "@shared/ui/components/ui/button";
-import { firstLine } from "./release-notes";
+import { NoticeCard } from "./notice-card";
 import { t } from "./app-updates.i18n";
 
 /**
  * The card in the bottom-left corner while a new version is available: Update installs it (or
- * opens its download page for a package install), Later hides it until the next start.
+ * opens its download page for a package install), What's new shows its changes, Later hides it
+ * until the next start.
  */
 export function UpdateNotice() {
   const status = useUpdateStore((s) => s.status);
@@ -20,46 +22,47 @@ export function UpdateNotice() {
   if (status.phase === "available" && dismissed === update.version) return null;
 
   const busy = status.phase !== "available";
-  const summary = firstLine(update.notes);
+  const groups = parseReleaseNotes(update.notes, getLocale());
+  const summary = groups[0]?.items[0]?.text.replaceAll("`", "");
   const progress = status.phase === "downloading" ? status.progress : 1;
 
   return (
-    <div
-      role="status"
-      className="fixed bottom-4 left-4 z-50 flex w-80 gap-3 rounded-card border bg-surface p-4 shadow-popover"
+    <NoticeCard
+      title={t("notice.available", { version: update.version })}
+      description={
+        busy
+          ? status.phase === "restarting"
+            ? t("notice.restarting")
+            : t("notice.downloading")
+          : (summary ?? t("notice.youHave", { version: __APP_VERSION__ }))
+      }
     >
-      <SealLogo size={32} className="shrink-0" />
-      <div className="min-w-0 flex-1 space-y-2">
-        <div className="space-y-0.5">
-          <p className="text-sm font-semibold">
-            {t("notice.available", { version: update.version })}
-          </p>
-          <p className="truncate text-xs text-muted-foreground">
-            {busy
-              ? status.phase === "restarting"
-                ? t("notice.restarting")
-                : t("notice.downloading")
-              : (summary ?? t("notice.youHave", { version: __APP_VERSION__ }))}
-          </p>
+      {busy ? (
+        <div className="h-1.5 overflow-hidden rounded-md bg-muted">
+          <div
+            className="h-full bg-primary transition-[width]"
+            style={{ width: `${Math.round((progress ?? 0.1) * 100)}%` }}
+          />
         </div>
-        {busy ? (
-          <div className="h-1.5 overflow-hidden rounded-md bg-muted">
-            <div
-              className="h-full bg-primary transition-[width]"
-              style={{ width: `${Math.round((progress ?? 0.1) * 100)}%` }}
-            />
-          </div>
-        ) : (
-          <div className="flex gap-2">
-            <Button size="sm" onClick={() => void install()}>
-              {installKind === "package" ? t("notice.download") : t("notice.updateRestart")}
+      ) : (
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" onClick={() => void install()}>
+            {installKind === "package" ? t("notice.download") : t("notice.updateRestart")}
+          </Button>
+          {groups.length > 0 && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => openWhatsNew({ kind: "update", version: update.version, groups })}
+            >
+              {t("notice.whatsNew")}
             </Button>
-            <Button size="sm" variant="ghost" onClick={dismiss}>
-              {t("notice.later")}
-            </Button>
-          </div>
-        )}
-      </div>
-    </div>
+          )}
+          <Button size="sm" variant="ghost" onClick={dismiss}>
+            {t("notice.later")}
+          </Button>
+        </div>
+      )}
+    </NoticeCard>
   );
 }

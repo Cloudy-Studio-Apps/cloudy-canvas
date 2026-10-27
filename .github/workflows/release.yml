@@ -1,8 +1,10 @@
 # Builds a release when a version tag is pushed (`pnpm release:tag 0.2.0` pushes `v0.2.0`).
 #
 # Everything lands in a DRAFT release: the Windows installer, the macOS disk image, the Ubuntu
-# .deb, the AppImage, the Arch package, the updater signatures and `latest.json`. Installed apps only see the update once
-# the draft is published on GitHub.
+# .deb, the AppImage, the Arch package, the updater signatures and `latest.json`. Its description
+# and the updater's notes are the version's changes from CHANGELOG.md and CHANGELOG.es.md. Once
+# every build passed, `publish` publishes it and installed apps see the update; a failed build
+# leaves the draft unpublished (re-run the failed job: when it passes, the release is published).
 #
 # Needs the repository secrets TAURI_SIGNING_PRIVATE_KEY and TAURI_SIGNING_PRIVATE_KEY_PASSWORD
 # (from `pnpm tauri signer generate`), which sign the files the updater downloads.
@@ -25,6 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       release-id: ${{ steps.draft.outputs.id }}
+      notes: ${{ steps.notes.outputs.notes }}
     steps:
       - uses: actions/checkout@v4
 
@@ -36,6 +39,22 @@ jobs:
             exit 1
           fi
 
+      # The notes script runs the app's TypeScript parser, which needs a Node that strips types.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      # Fails before anything is built when the changelogs have no changes for this version.
+      - name: Write the release notes
+        id: notes
+        run: |
+          node scripts/changelog/release-notes.mjs "$GITHUB_REF_NAME" > notes.md
+          {
+            echo "notes<<CLOUDY_NOTES_END"
+            cat notes.md
+            echo "CLOUDY_NOTES_END"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Create the draft
         id: draft
         env:
@@ -45,7 +64,7 @@ jobs:
         run: |
           id=$(gh api "repos/$GITHUB_REPOSITORY/releases" \
             -f tag_name="$GITHUB_REF_NAME" -f name="Cloudy Canvas $GITHUB_REF_NAME" \
-            -F draft=true -F generate_release_notes=true --jq .id)
+            -F draft=true -F body=@notes.md --jq .id)
           if [ -z "$id" ]; then
             echo "::error::Couldn't create the draft release"
             exit 1
@@ -114,6 +133,7 @@ jobs:
           VITE_CLOUDY_RELAY_TOKEN: ${{ secrets.CLOUDY_RELAY_TOKEN }}
         with:
           releaseId: ${{ needs.create-release.outputs.release-id }}
+          releaseBody: ${{ needs.create-release.outputs.notes }}
           includeUpdaterJson: true
           updaterJsonPreferNsis: true
           args: --config src-tauri/tauri.release.conf.json ${{ matrix.args }}
@@ -155,3 +175,17 @@ jobs:
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           gh release upload "$GITHUB_REF_NAME" packaging/arch/*.pkg.tar.zst --clobber \
             --repo "$GITHUB_REPOSITORY"
+
+  publish:
+    name: Publish the release
+    # Runs only when every build above passed.
+    needs: [create-release, build, arch]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_ID: ${{ needs.create-release.outputs.release-id }}
+        run: |
+          gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID" \
+            -F draft=false -f make_latest=true --silent

@@ -153,10 +153,10 @@ Every feature is a module that plugs into extension points, the same API plugins
 Releases are built by GitHub Actions ([`.github/workflows/release.yml`](.github/workflows/release.yml)) when a version tag is pushed:
 
 ```sh
-pnpm release:tag 0.2.0   # writes the version, commits "Release v0.2.0", tags v0.2.0 and pushes
+pnpm release:tag 0.2.0   # dates the changelogs, writes the version, commits "Release v0.2.0", tags v0.2.0 and pushes
 ```
 
-The workflow builds the Windows installer, the macOS disk image, the `.deb`, the AppImage and the Arch package into a **draft** release, with the updater's signatures and `latest.json`. Review the notes and press **Publish**: installed apps then see the update.
+Every user-facing change adds its entry to [CHANGELOG.md](CHANGELOG.md) and [CHANGELOG.es.md](CHANGELOG.es.md) under the unreleased section; `release:tag` refuses to run when there's nothing in it. The workflow builds the Windows installer, the macOS disk image, the `.deb`, the AppImage and the Arch package into a **draft** release, with the updater's signatures and `latest.json`, and the version's changes from both changelogs as its description. When every build has passed, the workflow publishes the release, and installed apps then see the update. If a build fails, the release stays a draft and nobody is offered it: re-run the failed job when the failure was temporary (it publishes once it passes), or release the fix as a new version.
 
 One-time setup: create the updater's signing key with `pnpm tauri signer generate -w ~/.tauri/cloudy-canvas.key`, put the public key in `src-tauri/tauri.conf.json` (`plugins.updater.pubkey`), and add the private key and its password to the repository's Actions secrets as `TAURI_SIGNING_PRIVATE_KEY` and `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`. Keep a backup of the private key: without it, installed copies can't verify new updates.
 

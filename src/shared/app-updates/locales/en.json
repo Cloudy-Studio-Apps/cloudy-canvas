@@ -18,6 +18,26 @@
     "youHave": "You have version {version}.",
     "download": "Download",
     "updateRestart": "Update and restart",
-    "later": "Later"
+    "later": "Later",
+    "whatsNew": "What's new"
+  },
+  "changelog": "Changelog",
+  "groups": {
+    "new": "New",
+    "improved": "Improved",
+    "fixed": "Fixed"
+  },
+  "whatsNew": {
+    "updateTitle": "What's new in {version}",
+    "updateDescription": "The changes in this version.",
+    "historyTitle": "Changelog",
+    "historyDescription": "The changes in each version of Cloudy Canvas. You have version {version}.",
+    "unreleased": "Not released yet",
+    "empty": "No changes are listed yet. They will appear here with the next version."
+  },
+  "updated": {
+    "title": "Updated to {version}",
+    "description": "See what changed in this version.",
+    "dismiss": "Dismiss"
   }
 }

@@ -11,7 +11,7 @@ pnpm install
 pnpm tauri dev      # desktop app
 pnpm dev            # frontend only in a browser (native dialogs unavailable)
 pnpm lint           # ESLint (flat config, eslint.config.js) + scripts/check-modules.mjs
-                    # + scripts/check-locales.mjs
+                    # + scripts/check-locales.mjs + scripts/changelog/check-changelog.mjs
 pnpm typecheck      # tsc for app + vite config (noEmit)
 pnpm format         # Prettier (with tailwind plugin); format:check to verify
 pnpm tauri build    # production bundle
@@ -25,7 +25,9 @@ pnpm release        # both
 pnpm release:win:native  # on Windows itself: NSIS and MSI installers
 pnpm release:mac    # on macOS itself: a universal .app and .dmg (both Rust darwin targets),
                     # src-tauri/target/universal-apple-darwin/release/bundle/
-pnpm release:tag 0.2.0   # bump the version, commit, tag v0.2.0 and push: CI builds a draft release
+pnpm release:tag 0.2.0   # date the changelogs' unreleased changes, bump the version, commit, tag
+                         # v0.2.0 and push: CI builds a draft release and publishes it once
+                         # every build passed
 ```
 
 There is no test framework. **Verification is `pnpm lint` and `pnpm typecheck` only** (plus `pnpm format:check`). Do not run `tauri dev`, cargo, builds or browser checks to verify changes unless asked.
@@ -143,6 +145,14 @@ look); the module conventions are in [docs/modules.md](docs/modules.md).
     `tCommon` from `@shared/core`. MCP tool text, ids, file formats, key caps and developer messages
     (thrown `Error`s, `console`) stay English. `scripts/check-locales.mjs` (in `pnpm lint`) keeps
     Spanish complete, and ESLint's `cloudy/no-literal-ui-text` flags literal text in `.tsx` files. See [src/shared/core/i18n/](src/shared/core/i18n/README.md).
+31. Every user-facing change (a new feature, an improvement, a bug fix) adds its entry under the
+    unreleased section of `CHANGELOG.md` and `CHANGELOG.es.md`, in the same change, under `New`,
+    `Improved` or `Fixed` (`Novedades`, `Mejoras`, `Correcciones`). Users read it in the app and on
+    the release page: write for them, professionally and as well as possible, one or two sentences
+    on what changed and why it matters; no emojis, no internal names (modules, files, functions,
+    refactors). Internal-only changes (refactors, docs, tooling) get none. `pnpm release:tag`
+    dates the section; `scripts/changelog/check-changelog.mjs` (in `pnpm lint`) keeps the two files
+    in step. See [src/shared/core/app-updates/](src/shared/core/app-updates/README.md).
 
 ## Where to look
 

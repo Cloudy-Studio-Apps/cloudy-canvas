@@ -9,7 +9,7 @@ import {
   versionDetails,
   WEBSITE_URL,
 } from "@shared/about";
-import { CheckUpdatesButton } from "@shared/app-updates";
+import { ChangelogButton, CheckUpdatesButton } from "@shared/app-updates";
 import { SealLogo } from "@shared/ui/brand/seal-logo";
 import { Button } from "@shared/ui/components/ui/button";
 import { SettingsSection } from "../components/settings-section";
@@ -42,10 +42,13 @@ export function AboutSection() {
       </div>
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t pt-4">
         <CheckUpdatesButton />
-        <Button variant="ghost" size="sm" onClick={openAbout}>
-          <Scale />
-          {t("about.license")}
-        </Button>
+        <div className="flex flex-wrap gap-1">
+          <ChangelogButton />
+          <Button variant="ghost" size="sm" onClick={openAbout}>
+            <Scale />
+            {t("about.license")}
+          </Button>
+        </div>
       </div>
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t pt-4">
         <p className="text-sm">{t("about.madeBy", { author: AUTHOR })}</p>

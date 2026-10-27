@@ -1,7 +1,7 @@
 import { Code, Copy } from "lucide-react";
 
 import { APP_REPOSITORY_URL } from "@shared/core";
-import { CheckUpdatesButton } from "@shared/app-updates";
+import { ChangelogButton, CheckUpdatesButton } from "@shared/app-updates";
 import { SealLogo } from "@shared/ui/brand/seal-logo";
 import { SealsVideo } from "@shared/ui/brand/seals-video";
 import { Button } from "@shared/ui/components/ui/button";
@@ -52,6 +52,7 @@ export function AboutDialog() {
           </p>
           <div className="mt-2 flex flex-wrap justify-center gap-2">
             <CheckUpdatesButton />
+            <ChangelogButton />
             <Button
               variant="ghost"
               size="sm"
