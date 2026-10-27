@@ -53,7 +53,10 @@ export function HomePage() {
       <PageContainer as="main" className="flex-1 space-y-12 pt-10 pb-16 sm:pt-12">
         {recentFiles.length === 0 ? (
           <>
-            <Welcome onCreate={(type, mode) => void createFile(type, mode)} />
+            <Welcome
+              onCreate={(type, mode) => void createFile(type, mode)}
+              onOpenFile={() => void openFile()}
+            />
             <StartersRow />
           </>
         ) : (

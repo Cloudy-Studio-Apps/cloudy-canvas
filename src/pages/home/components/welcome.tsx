@@ -1,11 +1,12 @@
 import { SealLogo } from "@shared/ui/brand/seal-logo";
 import { SealsVideo } from "@shared/ui/brand/seals-video";
 import { CreateTiles } from "./create-tiles";
+import { OpenFileTile } from "./open-file-tile";
 import type { WelcomeProps } from "./welcome.types";
 import { t } from "../home.i18n";
 
-/** Home before there's any file: what the app makes, the three ways to start, and the seals. */
-export function Welcome({ onCreate }: WelcomeProps) {
+/** Home before there's any file: what the app makes, the ways to start (or open a file), and the seals. */
+export function Welcome({ onCreate, onOpenFile }: WelcomeProps) {
   return (
     <section
       aria-labelledby="welcome-heading"
@@ -21,6 +22,7 @@ export function Welcome({ onCreate }: WelcomeProps) {
         </div>
         <div className="flex flex-col gap-2.5 pt-2">
           <CreateTiles onCreate={onCreate} detailed />
+          <OpenFileTile onOpenFile={onOpenFile} />
         </div>
         <p className="text-xs text-muted-foreground">{t("welcome.drop")}</p>
       </div>
