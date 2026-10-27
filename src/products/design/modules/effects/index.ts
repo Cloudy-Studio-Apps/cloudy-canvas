@@ -3,7 +3,8 @@
 export type * from "./effect.types";
 export { createEffect } from "./create-effect";
 export { EFFECT_DEFAULTS } from "./effect.defaults";
-export { effectReader } from "./effect-args";
+export type * from "./effect-args.types";
+export { EFFECT_FIELDS, effectReader, readEffectFields } from "./effect-args";
 export { designEffects } from "./design-effects";
 export { premultiplied, rgb } from "./effect-color";
 export { LOCAL_GLSL, LOCAL_UNIFORMS, localUniforms, NOISE_GLSL } from "./renderers";

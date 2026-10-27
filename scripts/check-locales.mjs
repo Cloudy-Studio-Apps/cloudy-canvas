@@ -1,6 +1,6 @@
 // Checks the translations (src/shared/core/i18n/README.md) that TypeScript can't see; part of
 // `pnpm lint` (`pnpm check:locales` alone). Prints one line per problem and exits 1, or prints
-// nothing. For every `locales/` folder under src/:
+// nothing. For every `locales/` folder under src/ and examples/plugins/*/src/:
 //
 //   files         en.json or es.json is missing, or no <name>.i18n.ts sits next to the folder
 //   shape         a value that's neither a string nor a group, or a key that's a string in one
@@ -70,7 +70,15 @@ const placeholders = (value) =>
     .sort()
     .join(", ");
 
-for (const folder of localeFolders(join(ROOT, "src"))) {
+// The app, and the example plugins written in TypeScript (their src/, built by the plugin kit).
+const PLUGINS = join(ROOT, "examples", "plugins");
+const roots = [
+  join(ROOT, "src"),
+  ...readdirSync(PLUGINS)
+    .map((name) => join(PLUGINS, name, "src"))
+    .filter(existsSync),
+];
+for (const folder of roots.flatMap(localeFolders)) {
   const parent = dirname(folder);
   if (!readdirSync(parent).some((name) => name.endsWith(".i18n.ts"))) {
     report(folder, 1, "files", "no <name>.i18n.ts next to this locales/ folder");

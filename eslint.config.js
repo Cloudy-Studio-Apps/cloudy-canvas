@@ -92,7 +92,9 @@ const uiOf = (product) =>
   PRODUCT_UI.map((glob) => glob.replace("products/*", `products/${product}`));
 
 export default tseslint.config(
-  { ignores: ["dist", "src-tauri/target", "src-tauri/gen"] },
+  {
+    ignores: ["dist", "src-tauri/target", "src-tauri/gen"],
+  },
   {
     files: ["**/*.{ts,tsx}"],
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
@@ -158,11 +160,12 @@ export default tseslint.config(
     files: uiOf("design"),
     rules: restrict([BOARD]),
   },
-  // UI is built from the kit: a hand-written <button> or <input> outside it is flagged, so new code
-  // reaches for IconButton, SegmentedControl, NumberInput, … One-off designs say why they're bespoke
-  // with an inline disable. The variables module is exempt until it's moved onto the kit.
+  // UI is built from the kit (the example plugins' too): a hand-written <button> or <input> outside
+  // it is flagged, so new code reaches for IconButton, SegmentedControl, NumberInput, … One-off
+  // designs say why they're bespoke with an inline disable. The variables module is exempt until
+  // it's moved onto the kit.
   {
-    files: ["src/**/*.tsx"],
+    files: ["src/**/*.tsx", "examples/plugins/*/src/**/*.tsx"],
     ignores: [
       "src/shared/ui/kit/**",
       "src/shared/ui/components/ui/**",
@@ -182,7 +185,7 @@ export default tseslint.config(
   // Text people read goes through a translator (CLAUDE.md rule 30). React files only: engine code's
   // strings are mostly ids and agent text, and its user-facing ones are kept in check by review.
   {
-    files: ["src/**/*.tsx"],
+    files: ["src/**/*.tsx", "examples/plugins/*/src/**/*.tsx"],
     ignores: [
       "src/shared/ui/components/ui/**",
       "src/pages/design-system/**",

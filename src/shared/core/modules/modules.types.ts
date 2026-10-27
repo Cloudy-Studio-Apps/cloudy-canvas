@@ -30,8 +30,9 @@ export interface ModuleHost {
   /** Whether a module with this id is loaded. */
   has(moduleId: string): boolean;
   /**
-   * The `exports` of a module this one `requires` or `uses` (the same object on every call). Only
-   * while registering; throws for a module that isn't listed or exports nothing.
+   * The `exports` of a module this one `requires` or `uses`, or of any core module (the same object
+   * on every call). Only while registering; throws for a module that isn't listed (nor core) or
+   * exports nothing.
    */
   require<T extends object = ModuleExports>(moduleId: string): T;
 }

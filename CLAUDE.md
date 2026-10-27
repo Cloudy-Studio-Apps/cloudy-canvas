@@ -14,6 +14,8 @@ pnpm lint           # ESLint (flat config, eslint.config.js) + scripts/check-mod
                     # + scripts/check-locales.mjs + scripts/changelog/check-changelog.mjs
 pnpm typecheck      # tsc for app + vite config (noEmit)
 pnpm format         # Prettier (with tailwind plugin); format:check to verify
+pnpm plugin:build examples/plugins/<name>  # a TypeScript plugin's src/ into its main.js
+                    # (scripts/plugin-kit/)
 pnpm tauri build    # production bundle
 pnpm release:linux  # AppImage (src-tauri/target/release/bundle/appimage/)
 pnpm release:arch   # pacman package (packaging/arch/PKGBUILD, needs makepkg):

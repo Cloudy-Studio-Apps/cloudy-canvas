@@ -648,7 +648,7 @@ edits files.
 6. **Plugin API reshaped, still v1** (§14; done 2026-10-27, see §14.6): modules' `exports` and `host.require`, the barrel-shaped `api`, the gaps
    of §14.3 opened in core, features' wrong imports fixed (§14.4), `docs/plugins.md` rewritten,
    `examples/plugins/` updated; `PLUGIN_API_VERSION` stays 1 (nothing was released).
-7. **Proof.** Copy `shader-effect` (smallest) to `examples/plugins/` as a real plugin, then `catalog`
+7. **Proof** (done 2026-10-27, see §14.7). Copy `shader-effect` (smallest) to `examples/plugins/` as a real plugin, then `catalog`
    (a mode): both must work with only their import lines changed. Anything they can't reach is a gap
    left in §14.3; open it.
 
@@ -891,6 +891,28 @@ changed from the plan above:
   elsewhere). **`openFile`** replaced `pickTokenFile` and the DBML pickers (their dialog strings moved
   to db's and variables' locales). **`DEFAULT_SHADER_CODE`** and the shader agent reader moved to
   shader-effect; the **DBML and ER languages** moved into db and er.
+
+### 14.7 Done in phase 7 (2026-10-27)
+
+- **A build, not a hand-written file.** Plugins may be written like a module (TypeScript, JSX, any
+  folders) and built with `pnpm plugin:build <folder>` (`scripts/plugin-kit/`, rolldown): the
+  app's aliases become `api` groups by name, a module path (`@design/modules/<id>(/ui)`) reads the
+  product barrel or `host.require(id)` when the plugin's first module registers, `react` and the
+  other shared libraries come from `api.libs`, JSX from `api.libs.React`, images become data URLs.
+  The loader and API v1 are unchanged (one `main.js`). It may become an npm package (with the API's
+  types) once v1 is stable.
+- **The proof:** both modules were copied to `examples/plugins/` with only their imports and ids
+  changed (beside the built-ins); both built, typechecked (an `examples/plugins/tsconfig.json`
+  extending the root one), linted (the UI rules and check-locales cover `examples/plugins/*/src`)
+  and ran in the app, the Catalog copy as a second Catalog mode. Being the same as the built-ins,
+  both copies were then removed (with that tsconfig, which has nothing to check); a small original
+  mode will be the TypeScript example.
+- **Gaps opened:** `host.require` of a core module needs no listing (as importing it doesn't);
+  effects exports `readEffectFields(type, defaults, fields)` and `EFFECT_FIELDS`, so a plugin's
+  effect type reads agents' fields like a built-in one.
+- **Gap left:** Home names the Catalog mode (`CATALOG_MODE_ID`: the "New catalog" tile and the
+  catalog card). A plugin reaches Home only through `designStarters` (the Catalog copy's starter showed
+  there); its mode gets no tile or card kind until Home has an app-level registry for them.
 
 ---
 

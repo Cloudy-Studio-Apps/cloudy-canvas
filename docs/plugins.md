@@ -31,7 +31,7 @@ my-plugin/
 ```
 
 - `id`: lowercase letters, digits and dashes. Module ids must be the plugin id or start with `<id>.`.
-- `main`: **one ES module with no imports.** Everything comes from `api`. If you write it in TypeScript or JSX, bundle it into one file and use `api.libs.React.createElement` as the JSX factory. Never bundle your own React.
+- `main`: **one ES module with no imports.** Everything comes from `api`. Write it by hand in plain JavaScript, or write the plugin in TypeScript or JSX, in any folders, and build `main.js` with `pnpm plugin:build` ([Writing a plugin in TypeScript](#writing-a-plugin-in-typescript)). Never bundle your own React.
 
 - `products`: `["board"]`, `["design"]` or both.
 
@@ -101,7 +101,8 @@ fields of its look in `styleFields` so Copy and Paste properties carry them, and
 ### Using another module
 
 A module's UI pieces and its points that aren't in a barrel come from the module itself. List it in
-`requires` (or `uses`) and ask the host while registering:
+`requires` (or `uses`) and ask the host while registering; a core module (`effects`, `frame`,
+`layers`, …, see [Tiers](modules.md#tiers)) can be required without listing it:
 
 ```js
 api.core.defineModule({
@@ -118,7 +119,7 @@ Every built-in module hands its `index.ts` and `ui/index.ts` this way (`host.req
 gives `designEffectTypes`, `defineEffectType`, `ScrubField`, …; `host.require("frame")` gives
 `FramePresetPicker`), and so can a plugin's module, by setting `exports`, for other plugins that
 require it. `host.require` throws, naming both modules, outside `register`, for a module that isn't
-in `requires`/`uses`, and for one that exports nothing.
+core nor in `requires`/`uses`, and for one that exports nothing.
 
 ### Moved in version 1
 
@@ -380,6 +381,49 @@ entry (`id`, `label`, `description`, `icon`, `order`), `toolbar` (items, `{ useI
 `{ component }`, drawn with `ModeToolbar`), `hostCommands` with `run(engine)`, `overlays` (shown
 only while the mode is on), `onEnter`/`onLeave`, `hooks`, and for designs `rail` (the left tabs
 while it's on) and `sidebar` (the properties panel). See [Modes](modules.md#modes).
+
+## Writing a plugin in TypeScript
+
+A plugin can be written like a built-in module, in TypeScript or JSX and in any folder structure,
+and built into its `main.js`:
+
+```
+my-plugin/
+  plugin.json
+  main.js              built by pnpm plugin:build; don't edit
+  src/
+    main.ts            export default myModule (or a list, or { board, design })
+    my-plugin.module.ts
+    my-plugin.i18n.ts  defineMessages({ en, es }) over ./locales/*.json
+    locales/en.json, es.json
+    ui/editor.tsx
+```
+
+```ts
+import { EffectShader } from "@canvas";
+import { ColorField } from "@canvas-ui";
+import { SelectField } from "@shared/ui/kit";
+import { useMemo } from "react";
+import { designCanvas } from "@design";
+import { designEffectTypes } from "@design/modules/effects/ui";
+```
+
+```sh
+pnpm plugin:build examples/plugins/my-plugin
+```
+
+It imports the app by the same aliases a built-in feature uses, and the build
+([scripts/plugin-kit](../scripts/plugin-kit/README.md)) turns each import into `api`: `@canvas` is
+`api.canvas`, `@design/ui` is `api.design`, `react` is `api.libs.React`, and a module's own
+pieces (`@design/modules/effects/ui`) come from the design barrel or, when they aren't there,
+from `host.require("effects")` when the module registers. Other npm packages and images are
+bundled in. The build fails, naming each import, for what a plugin can't reach (`@app/…`, a file
+inside another module, a library `api.libs` doesn't share). Two rules: import types with
+`import type`, and read names from `host.require` inside functions, not at a file's top level.
+
+The app's shader effect and Catalog mode were both built this way, copied out of the app with
+only their imports and ids changed, and ran as plugins. In this repo `pnpm lint` checks the code
+and translations of `examples/plugins/*/src`.
 
 ## Rules
 

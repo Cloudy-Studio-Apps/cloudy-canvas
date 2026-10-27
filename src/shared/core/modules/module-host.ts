@@ -68,7 +68,9 @@ export function createModuleHost(
         throw new Error(`host.require("${moduleId}") can only be called while modules register.`);
       }
       const from = registering;
-      if (!from.requires?.includes(moduleId) && !from.uses?.includes(moduleId)) {
+      // Core modules are always loaded, so any module may require them unlisted (as it may import them).
+      const listed = from.requires?.includes(moduleId) || from.uses?.includes(moduleId);
+      if (!listed && byId.get(moduleId)?.tier !== "core") {
         throw new Error(
           `The module "${from.id}" requires "${moduleId}" without listing it in requires or uses.`,
         );
