@@ -12,6 +12,8 @@ import { DbTableKind } from "./table";
 import { DbOptions } from "./ui/db-options";
 import { DbPanel } from "./ui/db-panel";
 import { SchemaButton } from "./ui/schema-button";
+import * as dbApi from ".";
+import * as dbUi from "./ui";
 
 /**
  * Database schemas: tables and enums, the relation lines between them, the Database tool (D), the
@@ -21,6 +23,7 @@ export const dbModule = defineModule({
   id: "db",
   tier: "feature",
   requires: ["sticky"],
+  exports: { ...dbApi, ...dbUi },
   register(host) {
     host.contribute(boardCanvas.kinds, new DbTableKind(), new DbEnumKind());
     host.contribute(boardCanvas.tools, {

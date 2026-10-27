@@ -10,6 +10,7 @@ import { detachConnectors } from "./detach-connectors";
 import { prepareConnectorCopies } from "./prepare-connector-copies";
 import { resolveConnectors } from "./resolve-connectors";
 import { ConnectorOptions } from "./ui/connector-options";
+import * as connectorApi from ".";
 
 /**
  * Connectors: the kind, the tool (X) and its panel, and the hooks that keep them on what they're
@@ -21,6 +22,7 @@ export const connectorModule = defineModule({
   tier: "core",
   // Connectors follow whatever they're attached to, ER boxes included, so they're resolved last.
   after: ["er"],
+  exports: { ...connectorApi },
   register(host) {
     host.contribute(boardCanvas.kinds, new ConnectorKind());
     host.contribute(boardCanvas.tools, {

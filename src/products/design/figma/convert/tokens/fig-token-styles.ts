@@ -1,5 +1,3 @@
-import { generateKeyBetween } from "fractional-indexing";
-
 import type { StyleRecord } from "@canvas";
 import type { FigImportContext, FigNode } from "@canvas/figma";
 import { createId } from "@shared/core";
@@ -9,6 +7,7 @@ import { figEffects } from "../fig-effects";
 import { convertPaintsFrom } from "../fig-paints";
 import { textFields } from "../fig-text";
 import { figPaintBindings } from "./fig-bindings";
+import { keyBetween } from "@canvas";
 
 /**
  * The file's shared styles as ours: text styles (typography), color styles (`FILL`: a paint
@@ -27,7 +26,7 @@ export function figStyles(nodes: readonly FigNode[], ctx: FigImportContext): Sty
       ctx.warnings.add(`${(node.styleType ?? "").toLowerCase()} styles were left out`);
       continue;
     }
-    const order = generateKeyBetween(orders.get(style.styleType) ?? null, null);
+    const order = keyBetween(orders.get(style.styleType) ?? null, null);
     orders.set(style.styleType, order);
     ctx.setTokenId(node.guid, style.id, node.key);
     styles.push({ ...style, order });

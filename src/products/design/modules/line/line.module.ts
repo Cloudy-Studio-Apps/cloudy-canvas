@@ -8,12 +8,14 @@ import { LineKind } from "./line.kind";
 import { LineTool } from "./line.tool";
 import { LineSection } from "./ui/line-section";
 import { t } from "./line.i18n";
+import * as lineApi from ".";
 
 /** Lines and arrows: the kind, the line (L) and arrow (Shift+L) tools, and the line section. */
 export const lineModule = defineModule({
   id: "line",
   tier: "feature",
   requires: ["core"],
+  exports: { ...lineApi },
   register(host) {
     host.contribute(designCanvas.kinds, new LineKind());
     host.contribute(

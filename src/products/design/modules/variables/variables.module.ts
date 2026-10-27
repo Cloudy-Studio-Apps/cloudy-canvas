@@ -20,6 +20,8 @@ import {
   VariablesWindow,
 } from "./ui";
 import { t } from "./variables.i18n";
+import * as variablesApi from ".";
+import * as variablesUi from "./ui";
 
 /**
  * Variables (Figma's): the document's collections, modes and variables, layers' fields bound to
@@ -30,6 +32,7 @@ export const variablesModule = defineModule({
   id: "variables",
   tier: "core",
   requires: ["core", "pages"],
+  exports: { ...variablesApi, ...variablesUi },
   register(host) {
     host.contribute(designCanvas.afterEdit, (doc, change, kinds) =>
       syncTokens(doc, change, kinds, DESIGN_TOKEN_CONTEXT),

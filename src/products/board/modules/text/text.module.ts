@@ -6,6 +6,7 @@ import { boardCanvas } from "../../board-points";
 import { createPastedText } from "./pasted-text";
 import { TextKind } from "./text.kind";
 import { TextTool } from "./text.tool";
+import * as textApi from ".";
 
 /** Free text: the kind, the tool (T) and pasting text, which takes any text the others leave. */
 export const textModule = defineModule({
@@ -13,6 +14,7 @@ export const textModule = defineModule({
   tier: "core",
   // A pasted link is a card before it's text.
   after: ["embed"],
+  exports: { ...textApi },
   register(host) {
     host.contribute(boardCanvas.kinds, new TextKind());
     host.contribute(boardCanvas.tools, {

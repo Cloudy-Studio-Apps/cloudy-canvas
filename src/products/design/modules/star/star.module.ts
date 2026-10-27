@@ -7,12 +7,14 @@ import { designCanvas } from "../../design-points";
 import { BoxDrawTool } from "../core";
 import { StarKind } from "./star.kind";
 import { StarSection } from "./ui/star-section";
+import * as starApi from ".";
 
 /** Stars: the kind and the tool, in the shapes menu, and the star section. */
 export const starModule = defineModule({
   id: "star",
   tier: "feature",
   requires: ["core"],
+  exports: { ...starApi },
   register(host) {
     const kind = new StarKind();
     host.contribute(designCanvas.kinds, kind);

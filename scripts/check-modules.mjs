@@ -11,6 +11,8 @@
 //   barrel        a module imports its own product's barrel (`@design`, `@board`) instead of the
 //                 file or module that declares the name
 //   kit           a module imports a shadcn primitive or `cn` directly instead of from `@shared/ui/kit`
+//   exports       a module whose index.ts or ui/index.ts exports values doesn't hand them as its
+//                 `exports` (`exports: { ...frameApi, ...frameUi }`), so plugins can't host.require it
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, normalize, relative, sep } from "node:path";
 
@@ -68,6 +70,14 @@ function ownerOf(file) {
   return null;
 }
 
+/** Whether the file exists and exports a value (not only types). */
+function exportsValues(file) {
+  if (!existsSync(file)) return false;
+  return readFileSync(file, "utf8")
+    .split("\n")
+    .some((line) => /^export (\{|\*|const|function|class)/.test(line));
+}
+
 const PUBLIC_ENTRIES = new Set(["", "index", "ui", "ui/index"]);
 const catalog = new Map(PRODUCTS.map((product) => [product, readModules(product)]));
 
@@ -82,7 +92,26 @@ for (const [product, modules] of catalog) {
     if (module.tier !== "core" && module.tier !== "feature") {
       report(module.file, 1, "tier", `say tier: "core" or "feature" in defineModule`);
     }
-    const lines = readFileSync(module.file, "utf8").split("\n").length;
+    const text = readFileSync(module.file, "utf8");
+    const entries = [
+      ["index.ts", "."],
+      ["ui/index.ts", "./ui"],
+    ].filter(([entry]) => exportsValues(join(dir, entry)));
+    const handed =
+      /\bexports:/.test(text) && entries.every(([, spec]) => text.includes(`from "${spec}"`));
+    if (!handed) {
+      const name = module.name.replace(/-(\w)/g, (_, c) => c.toUpperCase());
+      const spread = entries.map(([entry]) =>
+        entry === "index.ts" ? `...${name}Api` : `...${name}Ui`,
+      );
+      report(
+        module.file,
+        1,
+        "exports",
+        `hand index.ts${entries.length > 1 ? " and ui/index.ts" : ""} as exports: { ${spread.join(", ")} } (docs/modules.md, Module anatomy)`,
+      );
+    }
+    const lines = text.split("\n").length;
     if (lines > MAX_MODULE_LINES) {
       report(module.file, 1, "size", `${lines} lines; split it (docs/modules.md, Module anatomy)`);
     }

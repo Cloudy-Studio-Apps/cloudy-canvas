@@ -8,11 +8,13 @@ import { StickerKind } from "./sticker.kind";
 import { pasteForeignSticker } from "./sticker-paste";
 import { StickerTool } from "./sticker.tool";
 import { BoardStickerWheel } from "./ui/board-sticker-wheel";
+import * as stickerApi from ".";
 
 /** Stickers: the kind, the tool (K) with its picker wheel, and stamping them from agents. */
 export const stickerModule = defineModule({
   id: "sticker",
   tier: "feature",
+  exports: { ...stickerApi },
   register(host) {
     host.contribute(boardCanvas.kinds, new StickerKind());
     host.contribute(boardCanvas.tools, {

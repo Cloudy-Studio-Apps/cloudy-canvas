@@ -1,10 +1,9 @@
-import { generateKeyBetween } from "fractional-indexing";
-
 import type { CanvasDocument, ElementPatch } from "@canvas";
 
 import { isDesignNode, type DesignNode } from "../core";
 import { createPage } from "./page";
 import { allPagesOf, pagesOf } from "./pages-of";
+import { keyBetween } from "@canvas";
 
 /**
  * Every design has a page, and every node is on one: designs from before pages (and new ones)
@@ -15,7 +14,7 @@ export function ensurePages(doc: CanvasDocument): void {
   const pages = pagesOf(doc);
   let first = pages[0];
   if (!first) {
-    first = createPage("Page 1", generateKeyBetween(null, null));
+    first = createPage("Page 1", keyBetween(null, null));
     doc.addUntracked(first);
   }
   const known = new Set(

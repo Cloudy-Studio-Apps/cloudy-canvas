@@ -1,11 +1,12 @@
 // An example plugin: everything a module can add, written in plain JavaScript with no build step.
-// It gets the app's building blocks from `api` (see docs/plugins.md) and imports nothing.
+// It gets the app's building blocks from `api` (see docs/plugins.md) and imports nothing. Its text
+// is in English and Spanish (`locales/`); the MCP tool's stays English, like the app's.
 
 const COLORS = [
-  { name: "Ice", value: "#dcecf9" },
-  { name: "Sand", value: "#f6ead2" },
-  { name: "Blush", value: "#fbe1da" },
-  { name: "Mint", value: "#dcf2e4" },
+  { key: "ice", value: "#dcecf9" },
+  { key: "sand", value: "#f6ead2" },
+  { key: "blush", value: "#fbe1da" },
+  { key: "mint", value: "#dcf2e4" },
 ];
 const SIZE = { w: 280, h: 120 };
 const EDGE = 6;
@@ -14,10 +15,12 @@ const ICON =
   'stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H8l-4 4z"/>' +
   '<path d="M8 4v12"/></svg>';
 
-export default function activate(api) {
-  const { canvas, board, ui, core } = api;
-  const { React } = ui;
-  const ink = board.palette.INK_COLOR;
+export default async function activate(api) {
+  const { canvas, canvasUi, board, core } = api;
+  const { React } = api.libs;
+  const ink = board.INK_COLOR;
+  const read = async (lang) => JSON.parse(await api.plugin.readText(`locales/${lang}.json`));
+  const t = core.defineMessages({ en: await read("en"), es: await read("es") });
 
   function createCallout(center, color, text, index) {
     const rect = {
@@ -31,8 +34,8 @@ export default function activate(api) {
 
   class CalloutKind extends canvas.TextBoxKind {
     type = "callout";
-    label = "Callout";
-    description = "A highlighted note with a colored edge.";
+    label = t("kind.label");
+    description = t("kind.description");
     tool = "callout";
     // Agents create callouts with create_callout, and change them with update_shapes.
     creatable = false;
@@ -86,15 +89,15 @@ export default function activate(api) {
 
   /** The color panel, for the tool and for selected callouts. */
   function CalloutOptions() {
-    const engine = ui.useEngine();
-    const color = ui.useEngineState((state) => state.options.calloutColor);
+    const engine = canvasUi.useEngine();
+    const color = canvasUi.useEngineState((state) => state.options.calloutColor);
     return React.createElement(
-      ui.FloatingPanel,
-      { role: "group", "aria-label": "Callout colors", className: "gap-1 px-2" },
+      canvasUi.FloatingPanel,
+      { role: "group", "aria-label": t("colors.panel"), className: "gap-1 px-2" },
       COLORS.map((c) =>
-        React.createElement(ui.ColorSwatch, {
+        React.createElement(canvasUi.ColorSwatch, {
           key: c.value,
-          label: c.name,
+          label: t(`colors.${c.key}`),
           color: c.value,
           selected: color === c.value,
           onSelect: () => engine.setToolOptions({ calloutColor: c.value }),
@@ -139,26 +142,29 @@ export default function activate(api) {
   return core.defineModule({
     id: "callout",
     register(host) {
-      host.contribute(board.canvas.kinds, new CalloutKind());
-      host.contribute(board.canvas.tools, {
+      host.contribute(board.boardCanvas.kinds, new CalloutKind());
+      host.contribute(board.boardCanvas.tools, {
         id: "callout",
         create: (ctx) => new CalloutTool(ctx),
         keys: [{ key: "o" }],
       });
-      host.contribute(board.canvas.options, { calloutColor: COLORS[0].value });
-      host.contribute(board.mcpTools, { id: "callout", tools: () => [createCalloutTool] });
+      host.contribute(board.boardCanvas.options, { calloutColor: COLORS[0].value });
+      host.contribute(board.boardMcpTools, { id: "callout", tools: () => [createCalloutTool] });
 
       // Its button goes on the toolbar after the built-in tools; as it adds an element, it's
       // listed in the library too (name and description from the kind).
-      host.contribute(board.editor.tools, {
+      host.contribute(board.boardEditor.tools, {
         tool: "callout",
         element: "callout",
         icon: { svg: ICON },
         toolbar: { group: 1, order: 110 },
         library: { keywords: ["note", "highlight"] },
       });
-      host.contribute(board.editor.toolPanels, { tool: "callout", component: CalloutOptions });
-      host.contribute(board.editor.selectionPanels, { type: "callout", component: CalloutOptions });
+      host.contribute(board.boardEditor.toolPanels, { tool: "callout", component: CalloutOptions });
+      host.contribute(board.boardEditor.selectionPanels, {
+        type: "callout",
+        component: CalloutOptions,
+      });
     },
   });
 }

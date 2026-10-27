@@ -1,5 +1,3 @@
-import { generateKeyBetween } from "fractional-indexing";
-
 import { DEFAULT_VALUE } from "../default-value";
 import type { TokenStore } from "../token-store";
 import type { GeneratorRecord } from "../shade-generator.types";
@@ -16,6 +14,7 @@ import type { ImportChoice, ImportConflict, TokenImportPlan } from "./exchange.t
 import type { ImportMatches } from "./import-plan.types";
 import { matchImport, ofKind } from "./match-import";
 import { mapValueRefs } from "../value-refs";
+import { keyBetween } from "../../utils";
 
 /** The incoming variables and styles named like the file's, with other ids. */
 export function importConflicts(
@@ -256,7 +255,7 @@ class Orders {
   ): string {
     const key = `${list}:${scope ?? ""}`;
     const last = this.last.has(key) ? (this.last.get(key) ?? null) : this.lastOf(list, scope);
-    const order = generateKeyBetween(last, null);
+    const order = keyBetween(last, null);
     this.last.set(key, order);
     return order;
   }

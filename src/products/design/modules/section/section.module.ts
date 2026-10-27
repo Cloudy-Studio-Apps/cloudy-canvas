@@ -5,12 +5,14 @@ import { designEditor } from "@design/ui/modules/design-editor-points";
 import { designCanvas } from "../../design-points";
 import { BoxDrawTool } from "../core";
 import { SectionKind } from "./section.kind";
+import * as sectionApi from ".";
 
 /** Sections: the kind and its tool (Shift+S), in the frame menu. */
 export const sectionModule = defineModule({
   id: "section",
   tier: "feature",
   requires: ["frame"],
+  exports: { ...sectionApi },
   register(host) {
     const kind = new SectionKind();
     host.contribute(designCanvas.kinds, kind);

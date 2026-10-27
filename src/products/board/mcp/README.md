@@ -4,7 +4,7 @@ The host the board's MCP tools reach (`AgentHost`, `requireBoard`), the server's
 (`BOARD_MCP_INSTRUCTIONS`), `createBoardMcpTools` (collects the modules' groups) and `reportApplied`.
 The tools themselves live in their modules: the general ones in `modules/core/mcp/`.
 
-_How it works. The rules are in the root [CLAUDE.md](../../../../CLAUDE.md); names may still follow the pre-refactor conventions until their phase (see its Transition table)._
+_How it works. The rules are in the root [CLAUDE.md](../../../../CLAUDE.md)._
 
 ## The board's tools are contributed by modules
 

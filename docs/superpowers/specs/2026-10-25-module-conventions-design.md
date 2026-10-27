@@ -607,7 +607,12 @@ phase 5: the script checks everything; ESLint patterns can't see relative depth,
 - `requires`: a module imports a feature that isn't in its `requires` or `uses`;
 - `core-feature`: a core module imports a feature;
 - `mcp`: any `*.agent-tool*.ts` file, or a `.mcp.ts` outside `<name>.mcp.ts` / `mcp/`;
-- `size`: a `.module.ts` over 120 lines.
+- `size`: a `.module.ts` over 120 lines;
+- `exports` (phase 6): a module that doesn't hand its `index.ts`/`ui/index.ts` as `exports`.
+
+`scripts/check-public-api.mjs` (phase 6, also in `pnpm lint`) checks with the TypeScript API that
+every value a feature imports from outside its folder is exported by the barrel that covers it
+(rule `public`): what a plugin could reach.
 
 `scripts/module-order.mjs` prints each product's load order, to compare before and after a change to
 `requires`/`after`. Modules importing their own product barrel were fixed and are checked too (rule `barrel`, done before phase 5a, not in phase 6).
@@ -640,7 +645,7 @@ edits files.
    - **5b. Modes** (§15): `defineMode`/`registerMode` and the product helpers, the rail rule,
      `keepSections`, `onEnter`/`onLeave`; Catalog, Design system and ER moved onto them; vector
      edit's toolbar on `ModeToolbar`.
-6. **Plugin API reshaped, still v1** (§14): modules' `exports` and `host.require`, the barrel-shaped `api`, the gaps
+6. **Plugin API reshaped, still v1** (§14; done 2026-10-27, see §14.6): modules' `exports` and `host.require`, the barrel-shaped `api`, the gaps
    of §14.3 opened in core, features' wrong imports fixed (§14.4), `docs/plugins.md` rewritten,
    `examples/plugins/` updated; `PLUGIN_API_VERSION` stays 1 (nothing was released).
 7. **Proof.** Copy `shader-effect` (smallest) to `examples/plugins/` as a real plugin, then `catalog`
@@ -867,6 +872,26 @@ catalog → image (`isPlaceholderPaint`, `replaceImageFill`), er → db (the DBM
   on something a plugin couldn't reach.
 - The proof (phase 7) moves a feature out as a real plugin and checks it still works.
 
+### 14.6 Done in phase 6 (2026-10-27)
+
+Measured after 5b, the gaps were ~40 names, not the ~600 of §14.1: phase 5 had fixed the rest. What
+changed from the plan above:
+
+- **Names are the barrels' names**, no renaming layer: `api.board.boardCanvas`,
+  `api.design.designEditor`, `api.design.defineDesignMode` (the 5b aliases `api.design.defineMode`
+  etc. went; §15.3 updated). docs/plugins.md has a "Moved in version 1" table.
+- **Core modules' UI and points not in a barrel** (`boardLibrary`, `designEffectTypes`,
+  `FramePresetPicker`) come from `host.require(id)`; the product barrels keep the modules' engine
+  side. Every built-in module hands `exports: { ...<name>Api, ...<name>Ui }` (rule `exports`).
+- **`api.ui`, `api.platform`, `api.libs`** are curated files in `app/plugins/api/`; `api.libs.createStore`
+  is zustand's `create`. `strictApi` wraps only the api and its groups, so values keep their own keys.
+- **`@design/ui`/`@board/ui`** export the editor pieces; features still import them by path (the
+  barrel would loop through the module list) and `check-public-api.mjs` keeps the two in step.
+- **Engine owns fractional indexes** (`keyBetween`/`nKeysBetween`; ESLint bans `fractional-indexing`
+  elsewhere). **`openFile`** replaced `pickTokenFile` and the DBML pickers (their dialog strings moved
+  to db's and variables' locales). **`DEFAULT_SHADER_CODE`** and the shader agent reader moved to
+  shader-effect; the **DBML and ER languages** moved into db and er.
+
 ---
 
 ## 15. Modes: one definition
@@ -1005,12 +1030,12 @@ menu, agents, panel toggle) always stay.
 
 ### 15.3 How it's imported
 
-|                                 | Feature                                                       | Plugin                                                            |
-| ------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------- |
-| define                          | `import { defineDesignMode, registerMode } from "@design/ui"` | `api.design.defineMode(…)`, `api.design.registerMode(host, mode)` |
-| toolbar pieces (custom toolbar) | `import { ModeToolbar, ModeToolbarItem } from "@canvas-ui"`   | `api.canvasUi.ModeToolbar`                                        |
-| read the mode                   | `useEditorMode()` from `@canvas-ui`                           | `api.canvasUi.useEditorMode()`                                    |
-| board                           | `import { defineBoardMode } from "@board/ui"`                 | `api.board.defineMode(…)`                                         |
+|                                 | Feature                                                       | Plugin                                                                        |
+| ------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| define                          | `import { defineDesignMode, registerMode } from "@design/ui"` | `api.design.defineDesignMode(…)`, `api.design.registerDesignMode(host, mode)` |
+| toolbar pieces (custom toolbar) | `import { ModeToolbar, ModeToolbarItem } from "@canvas-ui"`   | `api.canvasUi.ModeToolbar`                                                    |
+| read the mode                   | `useEditorMode()` from `@canvas-ui`                           | `api.canvasUi.useEditorMode()`                                                |
+| board                           | `import { defineBoardMode } from "@board/ui"`                 | `api.board.defineBoardMode(…)`                                                |
 
 Catalog, the Design system and ER are rewritten on it (they're the proof), and the vector edit
 toolbar uses `ModeToolbar` too.
@@ -1021,12 +1046,12 @@ toolbar uses `ModeToolbar` too.
 
 ### 16.1 Where a reusable piece lives (by what it knows)
 
-| Knows                                                       | Lives in                   | Import (feature)                     | Plugin                    |
-| ----------------------------------------------------------- | -------------------------- | ------------------------------------ | ------------------------- |
-| nothing but the theme (fields, selects, cards)              | `@shared/ui/kit`           | `@shared/ui/kit`                     | `api.ui.kit`              |
-| the canvas engine (colors, images, thumbnails, mode chrome) | `@canvas-ui`               | `@canvas-ui`                         | `api.canvasUi`            |
-| the product (paints, bindings, node fields, modes)          | `@design/ui` / `@board/ui` | `@design/ui`                         | `api.design`              |
-| one module (font picker, frame presets, layer names)        | the module's `ui/index.ts` | `../text/ui` (only if in `requires`) | `host.require("text").ui` |
+| Knows                                                       | Lives in                   | Import (feature)                     | Plugin                 |
+| ----------------------------------------------------------- | -------------------------- | ------------------------------------ | ---------------------- |
+| nothing but the theme (fields, selects, cards)              | `@shared/ui/kit`           | `@shared/ui/kit`                     | `api.ui.kit`           |
+| the canvas engine (colors, images, thumbnails, mode chrome) | `@canvas-ui`               | `@canvas-ui`                         | `api.canvasUi`         |
+| the product (paints, bindings, node fields, modes)          | `@design/ui` / `@board/ui` | `@design/ui`                         | `api.design`           |
+| one module (font picker, frame presets, layer names)        | the module's `ui/index.ts` | `../text/ui` (only if in `requires`) | `host.require("text")` |
 
 A module therefore has **two public entries**: `index.ts` (engine, plain TS) and `ui/index.ts`
 (React). Its `exports` (§14.2.1) is `{ ...engine, ui }`, declared in `<name>.module.ts` (which may
@@ -1062,13 +1087,13 @@ import { LayerName } from "../layers/ui";
 export default function activate(api) {
   const { ColorField, chooseImageAsset, ElementThumbnail } = api.canvasUi;
   const { SelectField, SwitchField, Button } = api.ui.kit;
-  const { PaintField, BindSlot, defineMode, registerMode } = api.design;
+  const { PaintField, BindSlot, defineDesignMode, registerDesignMode } = api.design;
   return [api.core.defineModule({
     id: "my-feature",
     requires: ["frame", "layers"],
     register(host) {
-      const { FramePresetPicker } = host.require("frame").ui;
-      const { LayerName } = host.require("layers").ui;
+      const { FramePresetPicker } = host.require("frame");
+      const { LayerName } = host.require("layers");
       …
     },
   })];

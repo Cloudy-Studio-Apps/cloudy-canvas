@@ -1,5 +1,3 @@
-import { generateNKeysBetween } from "fractional-indexing";
-
 import {
   booleanPaths,
   isSvg,
@@ -15,6 +13,7 @@ import {
   type Point,
   type SvgDocument,
   type SvgLayer,
+  nKeysBetween,
 } from "@canvas";
 import { createId } from "@shared/core";
 
@@ -70,7 +69,7 @@ export function stickerToVectors(doc: CanvasDocument, el: StickerNodeElement): s
   const edge = svg.edge ? edgeVector(svg, toWorld, scale, el.edgeColor, group.id) : null;
   const children = edge ? [edge, ...layers] : layers;
   if (children.length === 0) return null;
-  const indexes = generateNKeysBetween(null, null, children.length);
+  const indexes = nKeysBetween(null, null, children.length);
 
   const effects: NodeEffect[] = [];
   if (el.outline?.visible && el.outline.width > 0) {

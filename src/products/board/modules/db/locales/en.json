@@ -137,7 +137,11 @@
     "export": "Export .dbml",
     "importFailed": "Import failed, line {line}: {message}",
     "label": "Board schema DBML",
-    "hint": "Every table, enum and DBML sticky note on the board. Paste a full schema here to replace it; Import merges a file in."
+    "hint": "Every table, enum and DBML sticky note on the board. Paste a full schema here to replace it; Import merges a file in.",
+    "dialogTitle": "Import DBML",
+    "fileType": "DBML schema",
+    "readFailed": "Couldn't read that DBML file",
+    "exportFailed": "Couldn't export the DBML"
   },
   "errors": {
     "enumNeedsName": "An enum needs a name",

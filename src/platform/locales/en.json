@@ -1,8 +1,5 @@
 {
   "export": "Export",
-  "exportDbml": "Export DBML",
-  "importDbml": "Import DBML",
-  "dbmlFilter": "DBML schema",
   "openFile": "Open file",
   "filters": {
     "all": "Cloudy Canvas, Figma and FigJam files",
@@ -10,13 +7,9 @@
     "figma": "Figma and FigJam files",
     "board": "Cloudy Canvas board",
     "design": "Cloudy Canvas design",
-    "images": "Images",
-    "designsTokens": "Designs and tokens",
-    "designs": "Cloudy Canvas designs",
-    "tokens": "Tokens JSON"
+    "images": "Images"
   },
   "saveBoard": "Save board",
   "saveDesign": "Save design",
-  "importStickers": "Import stickers",
-  "importVariables": "Import variables and styles"
+  "importStickers": "Import stickers"
 }

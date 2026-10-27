@@ -28,6 +28,8 @@ import { EffectHandles } from "./ui/handles";
 import { EffectStyleEditor, EffectStylePreview } from "./ui/styles";
 import { designEffectTypes } from "./ui/effects.points";
 import { t } from "./effects.i18n";
+import * as effectsApi from ".";
+import * as effectsUi from "./ui";
 
 /**
  * Effects, as in Figma's Effects section and further: inner and drop shadows, layer blur (even
@@ -40,6 +42,7 @@ export const effectsModule = defineModule({
   requires: ["core"],
   // Masks and effects nest along the tree; both read `treeSlots`.
   after: ["mask"],
+  exports: { ...effectsApi, ...effectsUi },
   register(host) {
     host.contribute(designStyleTypes, {
       id: EFFECT_STYLE,

@@ -10,6 +10,7 @@ import { SectionKind } from "./section.kind";
 import { SectionTool } from "./section.tool";
 import { SectionOptions } from "./ui/section-options";
 import { SectionsMenu } from "./ui/sections-menu";
+import * as sectionApi from ".";
 
 /**
  * Sections: the kind, the tool (Shift+S) and its panel, taking what's inside a section along when
@@ -19,6 +20,7 @@ import { SectionsMenu } from "./ui/sections-menu";
 export const sectionModule = defineModule({
   id: "section",
   tier: "feature",
+  exports: { ...sectionApi },
   register(host) {
     host.contribute(boardCanvas.kinds, new SectionKind());
     host.contribute(boardCanvas.tools, {

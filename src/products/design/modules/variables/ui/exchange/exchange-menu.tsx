@@ -5,7 +5,7 @@ import { readTokenSource } from "../../exchange";
 import { DOCUMENT_TOKENS, TokenStore } from "@canvas";
 import { useDocumentMeta } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import { exportFile, pickTokenFile } from "@platform";
+import { exportFile, openFile, type OpenFilePick } from "@platform";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import {
   Button,
@@ -24,6 +24,16 @@ import { ImportTokensDialog } from "./import-tokens-dialog";
 import { useTokenFormats } from "./use-token-formats";
 import { t } from "../../variables.i18n";
 
+/** What importing variables offers: designs and tokens JSON. */
+const TOKEN_FILES: OpenFilePick = {
+  title: t("exchange.dialogTitle"),
+  filters: [
+    { name: t("exchange.filters.designsTokens"), extensions: ["cdesign", "json"] },
+    { name: t("exchange.filters.designs"), extensions: ["cdesign"] },
+    { name: t("exchange.filters.tokens"), extensions: ["json"] },
+  ],
+};
+
 /** The Variables window's Import… (a design or tokens JSON) and Export ▸ (each format). */
 export function ExchangeMenu() {
   const engine = useDesignEngine();
@@ -33,7 +43,7 @@ export function ExchangeMenu() {
 
   const importFile = async () => {
     try {
-      const file = await pickTokenFile();
+      const file = await openFile(TOKEN_FILES);
       if (!file) return;
       setSource({ name: file.name, ...readTokenSource(file.bytes, formats, engine.kinds) });
     } catch (error) {

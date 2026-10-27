@@ -15,6 +15,7 @@ import { vectorTools } from "./vector.mcp";
 import { VectorEditToolbar } from "./ui/vector-edit-toolbar";
 import { VectorKind } from "./vector.kind";
 import { t } from "./vector.i18n";
+import * as vectorApi from ".";
 
 /**
  * Vectors: the kind (a vector network), the pen (P) and the pencil (Shift+P), and the edit mode:
@@ -25,6 +26,7 @@ export const vectorModule = defineModule({
   id: "vector",
   tier: "core",
   requires: ["core"],
+  exports: { ...vectorApi },
   register(host) {
     host.contribute(designCanvas.kinds, new VectorKind());
     host.contribute(designCanvas.editElement, editVector);

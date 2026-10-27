@@ -16,6 +16,8 @@ import { createTextStyle, TextStyleEditor, TextStylePreview } from "./ui/text-st
 import { TypographySection } from "./ui/typography-section";
 import { useTextOutlines } from "./ui/use-text-outlines";
 import { t } from "./text.i18n";
+import * as textApi from ".";
+import * as textUi from "./ui";
 
 /**
  * Text: the kind, the tool (T), the Typography section (with the font picker) and the fonts for
@@ -25,6 +27,7 @@ export const textModule = defineModule({
   id: "text",
   tier: "core",
   requires: ["core"],
+  exports: { ...textApi, ...textUi },
   register(host) {
     host.contribute(designCanvas.kinds, new TextKind(glyphOutliner));
     host.contribute(designCanvas.tools, {

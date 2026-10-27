@@ -1,12 +1,16 @@
 import { snippetCompletion } from "@codemirror/autocomplete";
 import type { Completion, CompletionContext, CompletionSource } from "@codemirror/autocomplete";
 
-import { completionResult, nameOptions, startingWith } from "./completion-result";
-import { definedNames } from "./defined-names";
+import {
+  completionResult,
+  definedNames,
+  nameOptions,
+  readSourceContext,
+  startingWith,
+  type SourceContext,
+} from "@board/ui/components/source-editor";
 import { entityAttributeNames } from "./entity-attribute-names";
-import { readSourceContext } from "./source-context";
-import type { SourceContext } from "./source-context.types";
-import { notationValues } from "@board";
+import { notationValues } from "../../model";
 
 const TOP_LEVEL: Completion[] = [
   snippetCompletion("Entity ${name} {\n\t${}\n}", { label: "Entity", type: "keyword" }),

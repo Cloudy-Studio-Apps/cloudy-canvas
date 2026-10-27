@@ -1,5 +1,3 @@
-import { generateNKeysBetween } from "fractional-indexing";
-
 import type { CanvasDocument, CanvasElement, ElementKinds, ElementPatch } from "@canvas";
 
 import { isDesignNode, type DesignNode } from "../../node";
@@ -8,6 +6,7 @@ import { treeOrderKeys } from "../order-keys";
 import { selectionRoots } from "../wrap-nodes";
 import type { LayerDestination, LayerPlace } from "./layer-move.types";
 import { holdsLayers, moveIntoProblem } from "./move-into";
+import { nKeysBetween } from "@canvas";
 
 /**
  * The children of `parentId` (`null`: the top of `page`) topmost first, as the layers panel lists
@@ -49,7 +48,7 @@ export function placeLayers(
   const at = Math.max(0, Math.min(siblings.length, Math.round(destination.position)));
   const above = siblings[at - 1] ?? null;
   const below = siblings[at] ?? null;
-  const indexes = generateNKeysBetween(below?.index ?? null, above?.index ?? null, nodes.length);
+  const indexes = nKeysBetween(below?.index ?? null, above?.index ?? null, nodes.length);
   return new Map(
     nodes.map((node, i) => [
       node.id,

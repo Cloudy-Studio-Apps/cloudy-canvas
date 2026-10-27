@@ -9,6 +9,8 @@ import { styleguideMode } from "./styleguide.mode";
 import { styleguideCategories, styleguideTemplates } from "./styleguide.points";
 import { registerStyleguideSections } from "./styleguide.sections";
 import { BUILT_IN_TEMPLATES } from "./templates";
+import * as styleguideApi from ".";
+import * as styleguideUi from "./ui";
 
 /**
  * The Design system: the view (a mode over a hidden page holding one live element per category,
@@ -21,6 +23,7 @@ export const styleguideModule = defineModule({
   tier: "feature",
   requires: ["core", "pages", "frame", "text", "variables", "auto-layout"],
   after: ["variables"],
+  exports: { ...styleguideApi, ...styleguideUi },
   register(host) {
     host.contribute(styleguideCategories, ...BUILT_IN_CATEGORIES);
     host.contribute(styleguideTemplates, ...BUILT_IN_TEMPLATES);

@@ -29,7 +29,15 @@ export interface ModuleHost {
   ownerOf<T>(point: ExtensionPoint<T>, key: string): string | undefined;
   /** Whether a module with this id is loaded. */
   has(moduleId: string): boolean;
+  /**
+   * The `exports` of a module this one `requires` or `uses` (the same object on every call). Only
+   * while registering; throws for a module that isn't listed or exports nothing.
+   */
+  require<T extends object = ModuleExports>(moduleId: string): T;
 }
+
+/** What a module hands to the modules that require it. */
+export type ModuleExports = Readonly<Record<string, unknown>>;
 
 /**
  * A feature (sticky notes, the database schema, a plugin, …): one folder whose `<name>.module.ts`
@@ -52,6 +60,11 @@ export interface AppModule {
   readonly uses?: readonly string[];
   /** Modules this one registers after when they're loaded (e.g. to chain hooks in order). */
   readonly after?: readonly string[];
+  /**
+   * Its public API, for modules that require it (`host.require`): built-in modules hand their
+   * `index.ts` and `ui/index.ts`, `{ ...frame, ...frameUi }`.
+   */
+  readonly exports?: ModuleExports;
   register(host: ModuleHost): void;
 }
 

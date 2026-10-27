@@ -2,8 +2,10 @@ import { PLUGIN_API_VERSION } from "@shared/core";
 
 /**
  * The object as a plugin sees it: reading a property it doesn't have throws, naming it (e.g.
- * `api.board.editor.toolbar`), instead of handing the plugin `undefined` to fail on later.
- * Nested objects are checked the same way.
+ * `api.board.palette`), instead of handing the plugin `undefined` to fail on later. Only this
+ * object is checked, not what it holds: `createPluginApi` wraps the api and each of its groups,
+ * so a plugin can still look up a key that may be missing in a value (`api.board.STICKY_COLORS`),
+ * and points stay the same objects.
  */
 export function strictApi<T extends object>(value: T, path: string): T {
   return new Proxy(value, {
@@ -15,18 +17,7 @@ export function strictApi<T extends object>(value: T, path: string): T {
           `${path}.${key} isn't part of the plugin API (version ${PLUGIN_API_VERSION}).`,
         );
       }
-      return isPlainObject(found) ? strictApi(found, `${path}.${key}`) : found;
+      return found;
     },
   });
-}
-
-/**
- * Only the API's own groups are wrapped. Classes, functions, React and lists are handed out as
- * they are, and so is anything with an `id`: extension points must stay the same objects (the
- * host keys contributions by them), and a manifest may lack optional fields.
- */
-function isPlainObject(value: unknown): value is object {
-  if (typeof value !== "object" || value === null || "id" in value) return false;
-  const proto: unknown = Object.getPrototypeOf(value);
-  return proto === Object.prototype || proto === null;
 }

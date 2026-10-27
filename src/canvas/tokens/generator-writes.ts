@@ -1,5 +1,3 @@
-import { generateKeyBetween } from "fractional-indexing";
-
 import { createId } from "@shared/core";
 
 import type { CanvasDocument } from "../document";
@@ -9,12 +7,13 @@ import type { ScaleRecord } from "./scale-generator.types";
 import type { GeneratorRecord } from "./shade-generator.types";
 import { TokenStore } from "./token-store";
 import type { TokenRecord, VariableRecord, VariableType } from "./token.types";
+import { keyBetween } from "../utils";
 
 /** Makes new variables for a generator, ordered after the collection's last one. */
 function maker(store: TokenStore, collectionId: string, type: VariableType) {
   let last = store.variables(collectionId).at(-1)?.order ?? null;
   return (name: string): VariableRecord => {
-    last = generateKeyBetween(last, null);
+    last = keyBetween(last, null);
     return {
       kind: "variable",
       id: createId(),

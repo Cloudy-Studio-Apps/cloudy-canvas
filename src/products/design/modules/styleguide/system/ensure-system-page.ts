@@ -1,5 +1,3 @@
-import { generateKeyBetween } from "fractional-indexing";
-
 import type { CanvasDocument, TokenStore } from "@canvas";
 
 import { withDescendants } from "../../core";
@@ -9,6 +7,7 @@ import type { StyleguideCategory } from "../styleguide.types";
 import { orderedCategories } from "./ordered-categories";
 import { DEFAULT_STYLEGUIDE_SETTINGS, settingsOf, systemPageOf } from "./system-page";
 import { t } from "../styleguide.i18n";
+import { keyBetween } from "@canvas";
 
 /** The system page's name, as collaborators see it. */
 const SYSTEM_PAGE_NAME = t("defaults.systemPage");
@@ -36,7 +35,7 @@ export function ensureSystemPage(
   if (!page) {
     const last = allPagesOf(doc).at(-1);
     page = {
-      ...createPage(SYSTEM_PAGE_NAME, generateKeyBetween(last?.index ?? null, null)),
+      ...createPage(SYSTEM_PAGE_NAME, keyBetween(last?.index ?? null, null)),
       hidden: true,
       styleguide: DEFAULT_STYLEGUIDE_SETTINGS,
     };

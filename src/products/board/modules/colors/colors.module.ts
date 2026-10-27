@@ -5,6 +5,8 @@ import { BOARD_TOKEN_CONTEXT } from "../../tokens";
 import { boardMcpTools, boardCanvas } from "../../board-points";
 import { colorTools } from "./mcp";
 import { BoardColorsPanel, ColorsButton } from "./ui";
+import * as colorsApi from ".";
+import * as colorsUi from "./ui";
 
 /**
  * Board colors: the document's color variables, which board elements' colors bind to, kept up to
@@ -13,6 +15,7 @@ import { BoardColorsPanel, ColorsButton } from "./ui";
 export const colorsModule = defineModule({
   id: "colors",
   tier: "feature",
+  exports: { ...colorsApi, ...colorsUi },
   register(host) {
     host.contribute(boardCanvas.afterEdit, (doc, change, kinds) =>
       syncTokens(doc, change, kinds, BOARD_TOKEN_CONTEXT),

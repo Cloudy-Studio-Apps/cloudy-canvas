@@ -9,6 +9,8 @@ import { frameTools } from "./frame.mcp";
 import { FrameKind } from "./frame.kind";
 import { FrameSection } from "./ui/frame-section";
 import { FramePresetsSidebar } from "./ui/frame-presets-sidebar";
+import * as frameApi from ".";
+import * as frameUi from "./ui";
 
 /**
  * Frames: the kind, the tool (F, A) with its presets sidebar (shown in the properties panel while
@@ -18,6 +20,7 @@ export const frameModule = defineModule({
   id: "frame",
   tier: "core",
   requires: ["core"],
+  exports: { ...frameApi, ...frameUi },
   register(host) {
     const kind = new FrameKind();
     host.contribute(designCanvas.kinds, kind);

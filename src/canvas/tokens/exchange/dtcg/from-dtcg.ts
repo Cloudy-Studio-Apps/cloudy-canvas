@@ -1,5 +1,3 @@
-import { generateKeyBetween } from "fractional-indexing";
-
 import { createId } from "@shared/core";
 
 import { DEFAULT_VALUE } from "../../default-value";
@@ -27,6 +25,7 @@ import type {
 import { DTCG_EXTENSION, readDimension, readDtcgColor, referenceOf } from "./dtcg-values";
 import { readExchangeExpression } from "../read-exchange-expression";
 import { t } from "../../tokens.i18n";
+import { keyBetween } from "../../../utils";
 
 const VARIABLE_TYPES: Record<string, VariableType> = {
   color: "color",
@@ -59,7 +58,7 @@ export function fromDtcg(json: unknown, options: DtcgOptions = {}): TokenReadRes
   const axes: ModeAxisRecord[] = [];
   let axisOrder: string | null = null;
   for (const a of ext?.axes ?? []) {
-    axisOrder = generateKeyBetween(axisOrder, null);
+    axisOrder = keyBetween(axisOrder, null);
     axes.push({
       kind: "axis",
       id: a.id,
@@ -74,7 +73,7 @@ export function fromDtcg(json: unknown, options: DtcgOptions = {}): TokenReadRes
   const collectionOf = (name: string): CollectionRecord => {
     const known = collections.get(name);
     if (known) return known;
-    collectionOrder = generateKeyBetween(collectionOrder, null);
+    collectionOrder = keyBetween(collectionOrder, null);
     const listed = ext?.collections.find((c) => (c.group ?? c.name) === name);
     const made: CollectionRecord = {
       kind: "collection",
@@ -141,7 +140,7 @@ export function fromDtcg(json: unknown, options: DtcgOptions = {}): TokenReadRes
       const value = ownValue(raw) ?? read(raw);
       if (mode && value) values[mode.id] = value;
     }
-    const order = generateKeyBetween(orders.get(collection.id) ?? null, null);
+    const order = keyBetween(orders.get(collection.id) ?? null, null);
     orders.set(collection.id, order);
     const contrastWith = (own?.contrastWith ?? []).flatMap((r) => {
       const target = refOf(referenceOf(r) ?? "");
@@ -180,7 +179,7 @@ export function fromDtcg(json: unknown, options: DtcgOptions = {}): TokenReadRes
   }
   const styleOrders = new Map<string, string | null>();
   for (const style of styles) {
-    const order = generateKeyBetween(styleOrders.get(style.styleType) ?? null, null);
+    const order = keyBetween(styleOrders.get(style.styleType) ?? null, null);
     styleOrders.set(style.styleType, order);
     style.order = order;
   }

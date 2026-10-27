@@ -1,5 +1,3 @@
-import { generateNKeysBetween } from "fractional-indexing";
-
 import {
   ELEMENT_DEFAULTS,
   elementSpec,
@@ -8,6 +6,7 @@ import {
   type CanvasElement,
   type ElementKinds,
   type ElementPatch,
+  nKeysBetween,
 } from "@canvas";
 
 import { DESIGN_TOKEN_CONTEXT, isNodeKind, type DesignNode } from "../../core";
@@ -150,7 +149,7 @@ export function reconcileSheet(
     parentIndex: string,
     parentKey: string,
   ): void => {
-    const indexes = generateNKeysBetween(parentIndex, null, children.length);
+    const indexes = nKeysBetween(parentIndex, null, children.length);
     // A layer is matched by its key's whole path from the sheet (templates reuse short keys like
     // "swatch" in every item), and a key repeated among siblings gets a number.
     const seen = new Map<string, number>();

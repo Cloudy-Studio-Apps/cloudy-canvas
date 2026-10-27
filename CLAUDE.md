@@ -89,8 +89,10 @@ look); the module conventions are in [docs/modules.md](docs/modules.md).
 17. Follow the [import rules](docs/modules.md#import-rules): other modules only through their
     `index.ts` / `ui/index.ts`, and only if they're core modules or in `requires`/`uses`; core never
     imports features. `scripts/check-modules.mjs` checks this as part of `pnpm lint`.
-18. A feature uses only what a plugin could. When it needs something private, make it public (and
-    give it to `PluginApi`) instead of deep-importing it.
+18. A feature uses only what a plugin could: the plugin API is the barrels (`app/plugins/`), so
+    when a feature needs something private, export it from its barrel or module `index.ts` instead
+    of deep-importing it. `scripts/check-public-api.mjs` (in `pnpm lint`) checks this. A module
+    hands its `index.ts`/`ui/index.ts` as `exports`, which plugins get with `host.require(id)`.
 19. A point lives in the module that reads it (`<name>.points.ts`).
 
 **MCP**
@@ -104,7 +106,8 @@ look); the module conventions are in [docs/modules.md](docs/modules.md).
 21. Small, single-purpose files: one component, tool, layer or helper per file, re-exported through a
     folder `index.ts`. Split a file once it mixes concerns or grows past ~200 lines.
 22. Reuse before writing: `canvas/utils` (`Store`, `Emitter`, `Disposables`, `FrameScheduler`,
-    `Registry`, `debounce`, `clamp`/`mod`), `canvas/geometry.ts`, `canvas/tools/drag-threshold.ts`
+    `Registry`, `debounce`, `clamp`/`mod`, `keyBetween`/`nKeysBetween` for fractional indexes),
+    `canvas/geometry.ts`, `canvas/tools/drag-threshold.ts`
     (`pastThreshold`, `MOVE_THRESHOLD_PX`, `DRAW_THRESHOLD_PX`), `shared/core/keyboard.ts`,
     `shared/ui/layout` (`AppHeader`, `PageContainer`), `shared/ui/hooks`, `canvas-ui` for editor
     chrome.
@@ -140,20 +143,6 @@ look); the module conventions are in [docs/modules.md](docs/modules.md).
     `tCommon` from `@shared/core`. MCP tool text, ids, file formats, key caps and developer messages
     (thrown `Error`s, `console`) stay English. `scripts/check-locales.mjs` (in `pnpm lint`) keeps
     Spanish complete, and ESLint's `cloudy/no-literal-ui-text` flags literal text in `.tsx` files. See [src/shared/core/i18n/](src/shared/core/i18n/README.md).
-
-## Transition
-
-The rules above describe where the code is going (spec:
-[module conventions](docs/superpowers/specs/2026-10-25-module-conventions-design.md)). **Until a row's
-phase is done, follow the existing pattern in that part of the code.**
-
-- **Until phase 6, keep plugin API changes small.** Add a newly public piece to the list in
-  `app/plugins/create-plugin-api.ts` and `plugin-api.types.ts` (rule 18), and nothing more: no
-  new `api` sections or shapes, since phase 6 replaces the list with the barrels.
-
-| Rule                                                        | Code today                                             | Fixed in phase |
-| ----------------------------------------------------------- | ------------------------------------------------------ | -------------- |
-| plugin API as the barrels, `host.require`, module `exports` | a hand-kept list in `app/plugins/create-plugin-api.ts` | 6              |
 
 ## Where to look
 

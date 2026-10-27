@@ -1,5 +1,3 @@
-import { generateKeyBetween } from "fractional-indexing";
-
 import { createId } from "@shared/core";
 
 import { DEFAULT_VALUE } from "./default-value";
@@ -8,6 +6,7 @@ import { deletionRewrites } from "./token-deletion";
 import { TokenEditsBase, withoutOverrides } from "./token-edits-base";
 import type { MoveModeResult } from "./document-tokens.types";
 import type { CollectionRecord, ModeAxisRecord, ModeDef } from "./token.types";
+import { keyBetween } from "../utils";
 
 /** Collections (folders of variables) and the file's mode axes, one undo step per edit. */
 export abstract class ModeEdits extends TokenEditsBase {
@@ -22,7 +21,7 @@ export abstract class ModeEdits extends TokenEditsBase {
         name.trim() || "Collection",
         store.collections().map((c) => c.name),
       ),
-      order: generateKeyBetween(store.collections().at(-1)?.order ?? null, null),
+      order: keyBetween(store.collections().at(-1)?.order ?? null, null),
     };
     this.write(() => this.doc.setTokenRecords([record]));
     return record;
@@ -65,7 +64,7 @@ export abstract class ModeEdits extends TokenEditsBase {
         id: createId(),
         name: mode.trim() || "Mode",
       })),
-      order: generateKeyBetween(store.axes().at(-1)?.order ?? null, null),
+      order: keyBetween(store.axes().at(-1)?.order ?? null, null),
     };
     this.write(() => this.doc.setTokenRecords([record]));
     return record;

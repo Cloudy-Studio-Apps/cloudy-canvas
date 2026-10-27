@@ -4,11 +4,13 @@ import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import { AssetsTab } from "./ui/assets-tab";
 import { t } from "./assets.i18n";
+import * as assetsApi from ".";
 
 /** The Assets tab (components and libraries; a placeholder for now). */
 export const assetsModule = defineModule({
   id: "assets",
   tier: "feature",
+  exports: { ...assetsApi },
   register(host) {
     host.contribute(designEditor.leftTabs, {
       id: "assets",

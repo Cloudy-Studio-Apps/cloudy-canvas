@@ -1,5 +1,3 @@
-import { generateNKeysBetween } from "fractional-indexing";
-
 import type { CanvasElement } from "@canvas";
 import {
   boxOf,
@@ -32,6 +30,7 @@ import { figNodeBase } from "./fig-node-base";
 import { textFields } from "./fig-text";
 import type { NodePlacement } from "./convert-node.types";
 import { withFigBindings } from "./tokens/with-fig-bindings";
+import { nKeysBetween } from "@canvas";
 
 /** Nodes that hold others and become frames (components and instances too). */
 const FRAMES = new Set(["FRAME", "SYMBOL", "INSTANCE", "COMPONENT_SET"]);
@@ -56,7 +55,7 @@ export function convertChildren(
   ctx: FigImportContext,
   onEach?: () => void,
 ): void {
-  const keys = generateNKeysBetween(null, null, children.length);
+  const keys = nKeysBetween(null, null, children.length);
   children.forEach((child, i) => {
     const index = keys[i];
     if (index) convertNode(child, { ...parent, index }, ctx);

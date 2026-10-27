@@ -11,6 +11,7 @@ import { registerErSections } from "./er.sections";
 import { enterErMode } from "./mode";
 import { migrateErDiagrams } from "./model";
 import { ErPalette } from "./ui/er-palette";
+import * as erApi from ".";
 
 /**
  * ER diagrams: the element kinds, the lines between them, the tool (E) and the hooks that keep a
@@ -26,6 +27,7 @@ export const erModule = defineModule({
   uses: ["db", "geo"],
   // A section takes its contents first; then each ER element takes its attributes along.
   after: ["section"],
+  exports: { ...erApi },
   register(host) {
     // The standards diagrams follow: the built-ins here, plugins' next to them. Read once the
     // modules have loaded, so every module's count.

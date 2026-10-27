@@ -1,0 +1,13 @@
+{
+  "kind": {
+    "label": "Llamada",
+    "description": "Una nota destacada con un borde de color."
+  },
+  "colors": {
+    "panel": "Colores de la llamada",
+    "ice": "Hielo",
+    "sand": "Arena",
+    "blush": "Rubor",
+    "mint": "Menta"
+  }
+}

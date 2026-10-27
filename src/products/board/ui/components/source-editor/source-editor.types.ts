@@ -21,7 +21,7 @@ export interface SourceEditorProps {
   hint: string;
   /** Part of the text to point out (e.g. the selected shape's block): scrolled to and highlighted. */
   highlight?: SourceRange | null;
-  /** Syntax colors (`dbmlLanguage`, `erLanguage`). */
+  /** Syntax colors, from `createSourceLanguage` (the db and er modules have theirs). */
   language: Extension;
   /** Suggestions while typing (`dbmlCompletions`, `erCompletions`). */
   completions?: CompletionSource;

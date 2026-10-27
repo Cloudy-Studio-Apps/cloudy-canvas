@@ -1,5 +1,3 @@
-import { generateNKeysBetween } from "fractional-indexing";
-
 import {
   elementBounds,
   rectCenter,
@@ -7,6 +5,7 @@ import {
   type ElementKinds,
   type ElementPatch,
   type Point,
+  nKeysBetween,
 } from "@canvas";
 
 import { layoutOf, type AutoLayout, type DesignNode } from "../core";
@@ -53,7 +52,7 @@ export function reorderDropped(
     const ordered = nodes
       .map((node) => ({ node, at: localCenter(node, frame, kinds) }))
       .sort((a, b) => (comesBefore(a.at, b.at, layout) ? -1 : 1));
-    const keys = generateNKeysBetween(
+    const keys = nKeysBetween(
       stay[before - 1]?.index ?? null,
       stay[before]?.index ?? null,
       ordered.length,

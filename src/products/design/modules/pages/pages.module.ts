@@ -14,6 +14,8 @@ import { PageSection } from "./ui/page-section";
 import { PagesSection } from "./ui/pages-section";
 import { usePageCommands } from "./ui/use-page-commands";
 import { t } from "./pages.i18n";
+import * as pagesApi from ".";
+import * as pagesUi from "./ui";
 
 /**
  * Pages: the page records and the canvas's scopes (one page on screen at a time, new layers on
@@ -25,6 +27,7 @@ export const pagesModule = defineModule({
   id: "pages",
   tier: "core",
   requires: ["core", "layers"],
+  exports: { ...pagesApi, ...pagesUi },
   register(host) {
     host.contribute(designCanvas.kinds, new PageKind());
     host.contribute(designCanvas.scopes, PAGE_SCOPES);

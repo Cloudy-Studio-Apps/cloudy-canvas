@@ -6,6 +6,7 @@ import { catalogMode } from "./catalog.mode";
 import { catalogTools } from "./mcp";
 import { editCatalogPage } from "./mode";
 import { pruneBrochure, splitLegacyBrochure } from "./model";
+import * as catalogApi from ".";
 
 /**
  * Catalog: a design page's top-level frames as a print brochure's pages (the Catalog mode,
@@ -20,6 +21,7 @@ export const catalogModule = defineModule({
   // Replaces a page's pictures with image's `replaceImageFill`; `uses`, not `requires`: catalog loads
   // before image (its `editElement` takes frames first).
   uses: ["image"],
+  exports: { ...catalogApi },
   register(host) {
     host.contribute(designCanvas.kinds, new BrochureKind());
     registerDesignMode(host, catalogMode);

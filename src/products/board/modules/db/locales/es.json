@@ -137,7 +137,11 @@
     "export": "Exportar .dbml",
     "importFailed": "Error al importar, línea {line}: {message}",
     "label": "DBML del esquema de la pizarra",
-    "hint": "Todas las tablas, enumeraciones y notas adhesivas DBML de la pizarra. Pega aquí un esquema completo para reemplazarlo; Importar fusiona un archivo."
+    "hint": "Todas las tablas, enumeraciones y notas adhesivas DBML de la pizarra. Pega aquí un esquema completo para reemplazarlo; Importar fusiona un archivo.",
+    "dialogTitle": "Importar DBML",
+    "fileType": "Esquema DBML",
+    "readFailed": "No se pudo leer ese archivo DBML",
+    "exportFailed": "No se pudo exportar el DBML"
   },
   "errors": {
     "enumNeedsName": "Una enumeración necesita un nombre",

@@ -3,7 +3,8 @@ import { FileDown, FileUp } from "lucide-react";
 
 import type { DbmlError } from "../../schema/dbml/parser.types";
 import { useCanvasFile } from "@canvas-ui";
-import { exportDbmlFile, importDbmlFile } from "@platform";
+import { exportFile, openFile } from "@platform";
+import { notifyError } from "@shared/stores/toast-store";
 import { Button } from "@shared/ui/kit";
 import { useBoardSchema } from "../schema";
 import { DbmlEditor } from "./dbml-editor";
@@ -16,24 +17,35 @@ export function SchemaEditor() {
   const [importError, setImportError] = useState<DbmlError | null>(null);
 
   const importFile = async () => {
-    const text = await importDbmlFile();
-    if (text === null) return;
-    const result = schema.importSchemaDbml(text);
-    setImportError(result.ok ? null : result.error);
+    try {
+      const picked = await openFile({
+        title: t("schemaEditor.dialogTitle"),
+        filters: [{ name: t("schemaEditor.fileType"), extensions: ["dbml"] }],
+      });
+      if (!picked) return;
+      const result = schema.importSchemaDbml(new TextDecoder().decode(picked.bytes));
+      setImportError(result.ok ? null : result.error);
+    } catch (error) {
+      notifyError(t("schemaEditor.readFailed"), error);
+    }
+  };
+  const exportSchema = async () => {
+    try {
+      const text = new Blob([schema.schemaDbml()], { type: "text/plain" });
+      await exportFile(text, file.name, { extension: "dbml", label: t("schemaEditor.fileType") });
+    } catch (error) {
+      notifyError(t("schemaEditor.exportFailed"), error);
+    }
   };
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2">
       <div className="flex gap-1">
-        <Button variant="outline" size="sm" onClick={() => void importFile().catch(console.error)}>
+        <Button variant="outline" size="sm" onClick={() => void importFile()}>
           <FileUp />
           {t("schemaEditor.import")}
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => void exportDbmlFile(schema.schemaDbml(), file.name).catch(console.error)}
-        >
+        <Button variant="outline" size="sm" onClick={() => void exportSchema()}>
           <FileDown />
           {t("schemaEditor.export")}
         </Button>

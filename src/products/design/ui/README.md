@@ -1,6 +1,8 @@
 # Design editor
 
-_How it works. The rules are in the root [CLAUDE.md](../../../../CLAUDE.md); names may still follow the pre-refactor conventions until their phase (see its Transition table)._
+_How it works. The rules are in the root [CLAUDE.md](../../../../CLAUDE.md)._
+
+**Public API.** `ui/index.ts` (`@design/ui`) is the editor's public API as well as its entry: `ui/components/panel` (all of it), `ui/hooks`, `useDesignEngine`/`useDesignState`, `useImageCropStore`, `ui/modules` (points, mode helpers, section filters). Built-in modules import those pieces by their path (importing `@design/ui` from a module would loop through the module list), and plugins get them as `api.design`, with the engine barrel. `scripts/check-public-api.mjs` fails when a feature imports a piece this barrel doesn't export.
 
 ## Editor
 

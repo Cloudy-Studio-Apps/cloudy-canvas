@@ -21,10 +21,13 @@ export function createModuleHost(
 ): ModuleHost {
   const { isOptional = () => false, onError } = options;
   const sorted = sortModules(modules, options);
+  const byId = new Map(modules.map((module) => [module.id, module]));
   const loaded = new Set<string>();
   const points: Points = new Map();
   /** Where the module that's registering contributes: the points, or its own staging area. */
   let target: { module: string; points: Points } | null = null;
+  /** The module that's registering, for `require`. */
+  let registering: AppModule | null = null;
 
   const host: ModuleHost = {
     contribute<T>(point: ExtensionPoint<T>, ...items: T[]) {
@@ -60,15 +63,35 @@ export function createModuleHost(
     ownerOf: <T>(point: ExtensionPoint<T>, key: string) =>
       points.get(point as ExtensionPoint<unknown>)?.keys.get(key)?.module,
     has: (moduleId) => loaded.has(moduleId),
+    require<T extends object>(moduleId: string): T {
+      if (!registering) {
+        throw new Error(`host.require("${moduleId}") can only be called while modules register.`);
+      }
+      const from = registering;
+      if (!from.requires?.includes(moduleId) && !from.uses?.includes(moduleId)) {
+        throw new Error(
+          `The module "${from.id}" requires "${moduleId}" without listing it in requires or uses.`,
+        );
+      }
+      const exports = byId.get(moduleId)?.exports;
+      if (!exports) {
+        throw new Error(
+          `The module "${moduleId}" exports nothing, so "${from.id}" can't require it.`,
+        );
+      }
+      return exports as T;
+    },
   };
 
   for (const module of sorted) {
     if (!isOptional(module)) {
       target = { module: module.id, points };
+      registering = module;
       try {
         module.register(host);
       } finally {
         target = null;
+        registering = null;
       }
       loaded.add(module.id);
       continue;
@@ -84,6 +107,7 @@ export function createModuleHost(
     }
     const staged: Points = new Map();
     target = { module: module.id, points: staged };
+    registering = module;
     try {
       module.register(host);
     } catch (error) {
@@ -91,6 +115,7 @@ export function createModuleHost(
       continue;
     } finally {
       target = null;
+      registering = null;
     }
     commit(points, staged);
     loaded.add(module.id);

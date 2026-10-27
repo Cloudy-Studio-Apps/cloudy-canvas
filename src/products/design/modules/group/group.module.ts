@@ -8,6 +8,7 @@ import { GroupKind } from "./group.kind";
 import { pruneEmptyGroups } from "./group-nodes";
 import { useGroupCommands } from "./ui/use-group-commands";
 import { t } from "./group.i18n";
+import * as groupApi from ".";
 
 /**
  * Groups: the kind, bounds that follow the children, selecting the group before what's in it,
@@ -19,6 +20,7 @@ export const groupModule = defineModule({
   tier: "core",
   // Empty groups are pruned after the core puts dropped nodes in their containers.
   requires: ["core"],
+  exports: { ...groupApi },
   register(host) {
     host.contribute(designCanvas.kinds, new GroupKind());
     host.contribute(designCanvas.onRemove, (doc) => pruneEmptyGroups(doc));

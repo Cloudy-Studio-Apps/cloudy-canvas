@@ -1,6 +1,6 @@
 # Snapping and smart guides
 
-_How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md); names may still follow the pre-refactor conventions until their phase (see its Transition table)._
+_How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
 
 ## Snapping and smart guides
 

@@ -1,0 +1,13 @@
+{
+  "kind": {
+    "label": "Callout",
+    "description": "A highlighted note with a colored edge."
+  },
+  "colors": {
+    "panel": "Callout colors",
+    "ice": "Ice",
+    "sand": "Sand",
+    "blush": "Blush",
+    "mint": "Mint"
+  }
+}

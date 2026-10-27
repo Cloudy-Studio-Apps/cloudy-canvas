@@ -5,6 +5,8 @@ import { boardCanvas } from "../../board-points";
 import { EmbedKind } from "./embed.kind";
 import { createPastedEmbed } from "./pasted-embed";
 import { EmbedPlayer, useEmbedPreviews } from "./ui";
+import * as embedApi from ".";
+import * as embedUi from "./ui";
 
 /**
  * Pasted links shown as cards: the kind, pasting a link (before any other text paste), the
@@ -13,6 +15,7 @@ import { EmbedPlayer, useEmbedPreviews } from "./ui";
 export const embedModule = defineModule({
   id: "embed",
   tier: "feature",
+  exports: { ...embedApi, ...embedUi },
   register(host) {
     host.contribute(boardCanvas.kinds, new EmbedKind());
     host.contribute(boardCanvas.pasteText, (text, at, index) => createPastedEmbed(text, at, index));

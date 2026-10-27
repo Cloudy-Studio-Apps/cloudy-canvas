@@ -1,5 +1,3 @@
-import { generateKeyBetween } from "fractional-indexing";
-
 import { createId } from "@shared/core";
 
 import { DEFAULT_VALUE } from "../../default-value";
@@ -17,6 +15,7 @@ import { finishStyles, styleRefs } from "../finish-styles";
 import { isExpression, STUDIO_TYPES, studioReference, studioValue } from "./studio-values";
 import type { StudioSlot as Slot, StudioTheme, StudioToken } from "./tokens-studio.types";
 import { readExchangeExpression } from "../read-exchange-expression";
+import { keyBetween } from "../../../utils";
 
 /** Composite types and the DTCG types their codecs read (fields mapped first). */
 const COMPOSITES: Record<string, string> = { typography: "typography", boxShadow: "shadow" };
@@ -70,7 +69,7 @@ export function fromTokensStudio(json: unknown, options: DtcgOptions = {}): Toke
   const modeOf = new Map<StudioTheme, string>();
   for (const [name, members] of groups) {
     if (members.length < 2) continue;
-    axisOrder = generateKeyBetween(axisOrder, null);
+    axisOrder = keyBetween(axisOrder, null);
     const axis: ModeAxisRecord = {
       kind: "axis",
       id: createId(),
@@ -96,7 +95,7 @@ export function fromTokensStudio(json: unknown, options: DtcgOptions = {}): Toke
   const collectionNamed = (name: string) => {
     let c = collections.get(name);
     if (!c) {
-      collectionOrder = generateKeyBetween(collectionOrder, null);
+      collectionOrder = keyBetween(collectionOrder, null);
       c = { kind: "collection", id: createId(), name, order: collectionOrder };
       collections.set(name, c);
     }
@@ -172,7 +171,7 @@ export function fromTokensStudio(json: unknown, options: DtcgOptions = {}): Toke
     if (!(DEFAULT_VALUE in values)) continue;
     const studioType = STUDIO_TYPES[first.type];
     if (!studioType) continue;
-    const order = generateKeyBetween(orders.get(slot.collection.id) ?? null, null);
+    const order = keyBetween(orders.get(slot.collection.id) ?? null, null);
     orders.set(slot.collection.id, order);
     variables.push({
       kind: "variable",
@@ -201,7 +200,7 @@ export function fromTokensStudio(json: unknown, options: DtcgOptions = {}): Toke
       warnings.add(`${token.type} tokens were left out`);
       continue;
     }
-    const styleOrder = generateKeyBetween(styleOrders.get(codec.styleType) ?? null, null);
+    const styleOrder = keyBetween(styleOrders.get(codec.styleType) ?? null, null);
     styleOrders.set(codec.styleType, styleOrder);
     styles.push({
       kind: "style",

@@ -1,5 +1,3 @@
-import { generateNKeysBetween } from "fractional-indexing";
-
 import {
   migrateCollectionModes,
   rawValue,
@@ -9,6 +7,7 @@ import {
   type TokenCodeSyntax,
   type TokenValue,
   type VariableRecord,
+  nKeysBetween,
 } from "@canvas";
 import { guidKey, type FigImportContext, type FigNode } from "@canvas/figma";
 import { createId } from "@shared/core";
@@ -34,7 +33,7 @@ export function figVariables(
 ): (CollectionRecord | VariableRecord)[] {
   const live = nodes.filter((n) => n.phase !== "REMOVED");
   const sets = live.filter((n) => n.type === "VARIABLE_SET").sort(byPosition);
-  const setOrders = generateNKeysBetween(null, null, sets.length);
+  const setOrders = nKeysBetween(null, null, sets.length);
   const modeIds = new Map<string, string>();
   const collections = new Map<string, CollectionRecord>();
   sets.forEach((set, i) => {
@@ -93,7 +92,7 @@ export function figVariables(
       const platform = entry.platform && PLATFORMS[entry.platform];
       if (platform && entry.value) codeSyntax[platform] = entry.value;
     }
-    const [order] = generateNKeysBetween(orders.get(collection.id) ?? null, null, 1);
+    const [order] = nKeysBetween(orders.get(collection.id) ?? null, null, 1);
     orders.set(collection.id, order ?? null);
     out.push({
       kind: "variable",

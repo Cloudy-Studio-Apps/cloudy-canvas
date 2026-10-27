@@ -12,6 +12,7 @@ import { DesignStickerWheel } from "./ui/design-sticker-wheel";
 import { StickerSection } from "./ui/sticker-section";
 import { useStickerCommands } from "./ui/use-sticker-commands";
 import { t } from "./sticker.i18n";
+import * as stickerApi from ".";
 
 /**
  * Stickers on designs: the kind, the tool (Shift+K; K is Scale) with the shared picker wheel,
@@ -21,6 +22,7 @@ export const stickerModule = defineModule({
   id: "sticker",
   tier: "feature",
   requires: ["core", "group", "vector"],
+  exports: { ...stickerApi },
   register(host) {
     host.contribute(designCanvas.kinds, new StickerNodeKind());
     host.contribute(designCanvas.tools, {

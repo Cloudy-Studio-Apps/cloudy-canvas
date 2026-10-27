@@ -132,7 +132,13 @@
     "exportError": "Couldn't export the variables",
     "menu": "Import / Export",
     "importFile": "Import from a file…",
-    "exportAs": "Export as"
+    "exportAs": "Export as",
+    "dialogTitle": "Import variables and styles",
+    "filters": {
+      "designsTokens": "Designs and tokens",
+      "designs": "Cloudy Canvas designs",
+      "tokens": "Tokens JSON"
+    }
   },
   "import": {
     "added": "{count} added",

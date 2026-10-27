@@ -1,8 +1,7 @@
-import { generateNKeysBetween } from "fractional-indexing";
-
 import { rectsIntersect, unionRects } from "../geometry";
 import type { CanvasElement } from "./element.types";
 import type { ReorderInput } from "./reorder.types";
+import { nKeysBetween } from "../utils";
 
 /**
  * New indexes that move elements in the drawing order, keeping their order among themselves:
@@ -37,13 +36,13 @@ export function reorderIndexes({
       const top = moved[moved.length - 1]!.index;
       const at = rest.findIndex((el) => el.index > top && overlaps(el));
       if (at < 0) return new Map();
-      indexes = generateNKeysBetween(rest[at]!.index, rest[at + 1]?.index ?? null, moved.length);
+      indexes = nKeysBetween(rest[at]!.index, rest[at + 1]?.index ?? null, moved.length);
     } else {
       const bottom = moved[0]!.index;
       let at = rest.length - 1;
       while (at >= 0 && !(rest[at]!.index < bottom && overlaps(rest[at]!))) at--;
       if (at < 0) return new Map();
-      indexes = generateNKeysBetween(rest[at - 1]?.index ?? null, rest[at]!.index, moved.length);
+      indexes = nKeysBetween(rest[at - 1]?.index ?? null, rest[at]!.index, moved.length);
     }
   }
   return new Map(moved.map((el, i) => [el.id, indexes[i]!]));

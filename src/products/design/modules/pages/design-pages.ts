@@ -1,5 +1,3 @@
-import { generateKeyBetween } from "fractional-indexing";
-
 import {
   changesOnly,
   cloneElements,
@@ -8,6 +6,7 @@ import {
   GEOMETRY_FIELDS,
   type CanvasDocument,
   type ElementPatch,
+  keyBetween,
 } from "@canvas";
 
 import { isDesignNode, withDescendants, type DesignNode } from "../core";
@@ -103,7 +102,7 @@ export class DesignPages {
     const page = this.requirePage(id);
     const others = this.pages().filter((other) => other.id !== id);
     const at = Math.max(0, Math.min(Math.round(position), others.length));
-    const index = generateKeyBetween(others[at - 1]?.index ?? null, others[at]?.index ?? null);
+    const index = keyBetween(others[at - 1]?.index ?? null, others[at]?.index ?? null);
     if (this.pages().indexOf(page) === at) return;
     this.doc.checkpoint();
     this.doc.update(id, { index });
@@ -145,7 +144,7 @@ export class DesignPages {
     const pages = this.pages();
     const at = after === null ? pages.length - 1 : pages.findIndex((page) => page.id === after);
     const position = at < 0 ? pages.length - 1 : at;
-    return generateKeyBetween(pages[position]?.index ?? null, pages[position + 1]?.index ?? null);
+    return keyBetween(pages[position]?.index ?? null, pages[position + 1]?.index ?? null);
   }
 
   /** "Page N" in the app's language, one past the highest page numbered that way. */

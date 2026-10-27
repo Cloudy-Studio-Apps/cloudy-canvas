@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 
 import { useBoardSchema, useDbVersion } from "../schema";
-import { dbmlCompletions, dbmlLanguage, SourceEditor } from "@board/ui/components/source-editor";
+import { SourceEditor } from "@board/ui/components/source-editor";
+import { dbmlCompletions, dbmlLanguage } from "../source";
 import type { DbmlEditorProps } from "./dbml-editor.types";
 
 /**

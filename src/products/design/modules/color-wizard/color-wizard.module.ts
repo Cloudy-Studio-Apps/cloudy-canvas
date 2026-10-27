@@ -8,6 +8,8 @@ import { ColorWizard } from "./ui";
 import { StartWizardButton } from "./ui/start-wizard-button";
 import { useColorWizardCommand } from "./ui/use-color-wizard-command";
 import { t } from "./color-wizard.i18n";
+import * as colorWizardApi from ".";
+import * as colorWizardUi from "./ui";
 
 /**
  * The color wizard: a dialog that builds a palette (wheel, brand colors, an image, the file's
@@ -19,6 +21,7 @@ export const colorWizardModule = defineModule({
   id: "color-wizard",
   tier: "feature",
   requires: ["core", "pages", "text", "variables", "styleguide"],
+  exports: { ...colorWizardApi, ...colorWizardUi },
   register(host) {
     host.contribute(designEditor.overlays, { id: "color-wizard", component: ColorWizard });
     host.contribute(styleguideStartActions, {

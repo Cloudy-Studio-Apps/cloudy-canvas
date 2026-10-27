@@ -10,6 +10,7 @@ import { showsSizing } from "./ui/in-auto-layout";
 import { SizingSection } from "./ui/sizing-section";
 import { useAutoLayoutCommands } from "./ui/use-auto-layout-commands";
 import { t } from "./auto-layout.i18n";
+import * as autoLayoutApi from ".";
 
 const COMMANDS = [
   { command: "addAutoLayout", label: t("commands.add") },
@@ -28,6 +29,7 @@ export const autoLayoutModule = defineModule({
   requires: ["core", "frame"],
   // Variables first: a bound size or padding is written before the layout reads it.
   after: ["variables"],
+  exports: { ...autoLayoutApi },
   register(host) {
     host.contribute(designCanvas.afterEdit, relayoutAfterEdit);
     host.contribute(designCanvas.onMoved, (doc, moved, _elements, kinds) =>

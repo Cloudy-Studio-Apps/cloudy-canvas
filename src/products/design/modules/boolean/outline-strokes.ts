@@ -5,8 +5,8 @@ import {
   type CanvasElement,
   type ElementKinds,
   type ElementPatch,
+  keyBetween,
 } from "@canvas";
-import { generateKeyBetween } from "fractional-indexing";
 
 import {
   DesignNodeKind,
@@ -37,7 +37,7 @@ export function outlineStrokes(
     if (keepsFill) {
       doc.update(node.id, { strokes: [] } as ElementPatch);
       const above = siblingAbove(node, elements);
-      const placed = { ...vector, index: generateKeyBetween(node.index, above?.index ?? null) };
+      const placed = { ...vector, index: keyBetween(node.index, above?.index ?? null) };
       doc.add(placed);
       selected.push(placed.id);
     } else {

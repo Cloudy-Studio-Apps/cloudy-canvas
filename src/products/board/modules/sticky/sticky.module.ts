@@ -7,6 +7,7 @@ import { STICKY_COLORS } from "../../palette";
 import { StickyKind } from "./sticky.kind";
 import { StickyTool } from "./sticky.tool";
 import { StickyOptions } from "./ui/sticky-options";
+import * as stickyApi from ".";
 
 /** Sticky notes: the kind, the tool (S) and its color panel. */
 export const stickyModule = defineModule({
@@ -14,6 +15,7 @@ export const stickyModule = defineModule({
   tier: "feature",
   // Notes drag connectors out of their sides.
   requires: ["connector"],
+  exports: { ...stickyApi },
   register(host) {
     host.contribute(boardCanvas.kinds, new StickyKind());
     host.contribute(boardCanvas.tools, {

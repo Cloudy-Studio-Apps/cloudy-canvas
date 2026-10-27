@@ -1,5 +1,3 @@
-import { generateKeyBetween } from "fractional-indexing";
-
 import {
   asUndoStep,
   buildElement,
@@ -7,6 +5,7 @@ import {
   optionalString,
   recordList,
   type CanvasElement,
+  keyBetween,
 } from "@canvas";
 
 import { requireBoard } from "../../../mcp/board-access";
@@ -67,7 +66,7 @@ export const createShapesTool = ({ kinds }: BoardAgentContext): BoardMcpTool => 
     let index = engine.doc.nextIndex();
     const created = specs.map((spec, i) => {
       const el = buildElement(engine.kinds, spec, index, lookup);
-      index = generateKeyBetween(index, null);
+      index = keyBetween(index, null);
       built.push(el);
       const key = optionalString(spec, "key");
       if (key) keyed.set(key, el);

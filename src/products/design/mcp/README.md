@@ -4,7 +4,7 @@ The host the design's MCP tools reach (`DesignAgentHost`, `requireDesign`, `requ
 server's instructions (`DESIGN_MCP_INSTRUCTIONS`) and `createDesignMcpTools`. The tools themselves
 live in their modules (`modules/*/<name>.mcp.ts` or `modules/*/mcp/`).
 
-_How it works. The rules are in the root [CLAUDE.md](../../../../CLAUDE.md); names may still follow the pre-refactor conventions until their phase (see its Transition table)._
+_How it works. The rules are in the root [CLAUDE.md](../../../../CLAUDE.md)._
 
 ## The design's tools are contributed by its modules
 

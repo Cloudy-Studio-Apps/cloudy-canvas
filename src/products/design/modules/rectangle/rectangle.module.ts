@@ -6,6 +6,7 @@ import { designCanvas } from "../../design-points";
 import { BoxDrawTool } from "../core";
 import { RECTANGLE_DEFAULTS } from "./rectangle.defaults";
 import { RectangleKind } from "./rectangle.kind";
+import * as rectangleApi from ".";
 
 /**
  * Rectangles: the kind, the tool (R) and its toolbar button. Their fills, strokes and corners are
@@ -15,6 +16,7 @@ export const rectangleModule = defineModule({
   id: "rectangle",
   tier: "feature",
   requires: ["core"],
+  exports: { ...rectangleApi },
   register(host) {
     const kind = new RectangleKind();
     host.contribute(designCanvas.kinds, kind);

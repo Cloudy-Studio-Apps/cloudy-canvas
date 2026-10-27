@@ -22,6 +22,8 @@ import {
 import { designStyleTypes } from "./ui/core.points";
 import { CORE_STYLE_TYPES } from "./ui/styles";
 import { t } from "./core.i18n";
+import * as coreApi from ".";
+import * as coreUi from "./ui";
 
 /**
  * What every design has whatever its modules: the canvas view (plain, pixel grid, 2%–25600%, size
@@ -34,6 +36,7 @@ import { t } from "./core.i18n";
 export const coreModule = defineModule({
   id: "core",
   tier: "core",
+  exports: { ...coreApi, ...coreUi },
   register(host) {
     registerCoreCanvas(host);
     registerCoreCommands(host);

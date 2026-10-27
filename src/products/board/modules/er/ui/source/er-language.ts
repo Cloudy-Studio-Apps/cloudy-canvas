@@ -1,4 +1,4 @@
-import { createSourceLanguage } from "./stream-language";
+import { createSourceLanguage } from "@board/ui/components/source-editor";
 
 /** Syntax colors for the ER diagram text (`docs/er-language.md`). */
 export const erLanguage = createSourceLanguage({

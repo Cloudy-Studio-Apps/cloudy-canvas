@@ -12,6 +12,7 @@ import { BooleanToolbarMenu } from "./ui/boolean-toolbar-menu";
 import { BOOLEAN_COMMANDS, BOOLEAN_ICONS } from "./ui/boolean-icons";
 import { useBooleanCommands } from "./ui/use-boolean-commands";
 import { t } from "./boolean.i18n";
+import * as booleanApi from ".";
 
 const BOOLEAN_TYPES: ReadonlySet<string> = new Set([BOOLEAN_TYPE]);
 /** Figma's keys: Alt+Shift+U, S, I and E. */
@@ -27,6 +28,7 @@ export const booleanModule = defineModule({
   tier: "feature",
   // Flatten and Outline stroke make vectors.
   requires: ["core", "vector"],
+  exports: { ...booleanApi },
   register(host) {
     host.contribute(designCanvas.kinds, new BooleanKind());
     host.contribute(designCanvas.onRemove, (doc) => pruneEmptyHosts(doc, BOOLEAN_TYPES));

@@ -10,6 +10,7 @@ import { useCropImageCommand } from "./ui/use-crop-image-command";
 import { useImagePlaceholderCommand } from "./ui/use-image-placeholder-command";
 import { canHoldPlaceholder } from "./placeholder";
 import { t } from "./image.i18n";
+import * as imageApi from ".";
 
 /**
  * Pasted and dropped images: each becomes a rectangle filled with it (the engine stores the file
@@ -23,6 +24,7 @@ export const imageModule = defineModule({
   id: "image",
   tier: "feature",
   requires: ["rectangle"],
+  exports: { ...imageApi },
   register(host) {
     host.contribute(designCanvas.pasteImage, (image, view, index) =>
       createImageRectangle(image, view, index),

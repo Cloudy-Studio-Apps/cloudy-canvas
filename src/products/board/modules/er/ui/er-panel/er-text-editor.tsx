@@ -1,5 +1,6 @@
 import { useErDiagram, useErQuery, useErSelection, useErVersion } from "../model";
-import { erCompletions, erLanguage, SourceEditor } from "@board/ui/components/source-editor";
+import { SourceEditor } from "@board/ui/components/source-editor";
+import { erCompletions, erLanguage } from "../source";
 import { ErSyntaxHint } from "./er-syntax-hint";
 import { t } from "../../er.i18n";
 

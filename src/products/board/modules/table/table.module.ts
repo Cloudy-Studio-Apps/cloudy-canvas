@@ -7,11 +7,13 @@ import { TABLE_COLORS } from "../../palette";
 import { TableKind } from "./table.kind";
 import { TableTool } from "./table.tool";
 import { TableOptions } from "./ui/table-options";
+import * as tableApi from ".";
 
 /** Tables: the kind, the tool (G) and its panel (header, tint, cell fills, rows and columns). */
 export const tableModule = defineModule({
   id: "table",
   tier: "feature",
+  exports: { ...tableApi },
   register(host) {
     host.contribute(boardCanvas.kinds, new TableKind());
     host.contribute(boardCanvas.tools, {

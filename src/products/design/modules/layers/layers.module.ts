@@ -6,6 +6,8 @@ import { designMcpTools } from "../../design-points";
 import { layersTools } from "./mcp";
 import { LayersTab } from "./ui/layers-tab";
 import { t } from "./layers.i18n";
+import * as layersApi from ".";
+import * as layersUi from "./ui";
 
 /**
  * The Layers tab: the page's layer tree (select, rename,
@@ -15,6 +17,7 @@ export const layersModule = defineModule({
   id: "layers",
   tier: "core",
   requires: ["core"],
+  exports: { ...layersApi, ...layersUi },
   register(host) {
     host.contribute(designEditor.leftTabs, {
       id: "layers",

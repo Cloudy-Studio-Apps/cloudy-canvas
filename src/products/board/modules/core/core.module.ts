@@ -17,6 +17,7 @@ import {
 } from "./mcp";
 import { boardMcpTools, boardCanvas } from "../../board-points";
 import { t } from "./core.i18n";
+import * as coreApi from ".";
 
 /**
  * What every board has whatever its modules: the select, scale (Shift+K; K is the sticker tool) and
@@ -27,6 +28,7 @@ import { t } from "./core.i18n";
 export const coreModule = defineModule({
   id: "core",
   tier: "core",
+  exports: { ...coreApi },
   register(host) {
     host.contribute(boardCanvas.keybindings, { "tool.scale": [{ key: "k", shift: true }] });
     host.contribute(boardCanvas.hostCommands, {

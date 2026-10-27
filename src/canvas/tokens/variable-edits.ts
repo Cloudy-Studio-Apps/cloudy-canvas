@@ -1,5 +1,3 @@
-import { generateKeyBetween } from "fractional-indexing";
-
 import { createId } from "@shared/core";
 
 import { DEFAULT_VALUE } from "./default-value";
@@ -12,6 +10,7 @@ import { normalizeTokenPath, renamePrefix } from "./token-path";
 import { baseModes } from "./token-edits-base";
 import { TokenStore } from "./token-store";
 import type { TokenValue, VariableRecord } from "./token.types";
+import { keyBetween } from "../utils";
 
 /** Variables: making, renaming, values per mode, groups, order, deleting; one undo step each. */
 export abstract class VariableEdits extends ModeEdits {
@@ -47,7 +46,7 @@ export abstract class VariableEdits extends ModeEdits {
         description: spec.description ?? "",
         codeSyntax: spec.codeSyntax ?? {},
         hidden: spec.hidden ?? false,
-        order: generateKeyBetween(last?.order ?? null, null),
+        order: keyBetween(last?.order ?? null, null),
         ...(spec.contrastWith?.length ? { contrastWith: [...new Set(spec.contrastWith)] } : {}),
       });
       store = new TokenStore([...this.doc.tokenRecords(), ...records]);
@@ -155,7 +154,7 @@ export abstract class VariableEdits extends ModeEdits {
       .filter((v) => v.id !== id);
     const at = beforeId === null ? list.length : list.findIndex((v) => v.id === beforeId);
     const index = at < 0 ? list.length : at;
-    const order = generateKeyBetween(list[index - 1]?.order ?? null, list[index]?.order ?? null);
+    const order = keyBetween(list[index - 1]?.order ?? null, list[index]?.order ?? null);
     this.write(() => this.doc.setTokenRecords([{ ...variable, order }]));
   }
 

@@ -60,12 +60,22 @@ const PRODUCT_UI_IMPORTS = {
 };
 const DESIGN = { group: ["@design", "@design/*"], message: "Products must not import each other." };
 
-/** A `no-restricted-imports` rule from pattern groups, optionally banning React too. */
-function restrict(patterns, { react = false } = {}) {
+/** The engine owns fractional indexes: everything else uses `keyBetween`/`nKeysBetween`. */
+const FRACTIONAL = {
+  name: "fractional-indexing",
+  message: "Use keyBetween/nKeysBetween from @canvas.",
+};
+
+/**
+ * A `no-restricted-imports` rule from pattern groups, optionally banning React too. Every rule
+ * bans `fractional-indexing`, except `fractional: false` (the one file that wraps it).
+ */
+function restrict(patterns, { react = false, fractional = true } = {}) {
+  const paths = [...(react ? REACT.paths : []), ...(fractional ? [FRACTIONAL] : [])];
   return {
     "no-restricted-imports": [
       "error",
-      react ? { paths: REACT.paths, patterns: [...REACT.patterns, ...patterns] } : { patterns },
+      { paths, patterns: [...(react ? REACT.patterns : []), ...patterns] },
     ],
   };
 }
@@ -117,6 +127,14 @@ export default tseslint.config(
   {
     files: ["src/canvas/**/*.ts"],
     rules: restrict([UI_LAYERS, PLATFORM, PRODUCTS], { react: true }),
+  },
+  {
+    files: ["src/canvas/utils/fractional-keys.ts"],
+    rules: restrict([UI_LAYERS, PLATFORM, PRODUCTS], { react: true, fractional: false }),
+  },
+  {
+    files: ["src/app/**/*.{ts,tsx}", "src/pages/**/*.{ts,tsx}", "src/platform/**/*.{ts,tsx}"],
+    rules: restrict([]),
   },
   {
     files: ["src/canvas-ui/**/*.{ts,tsx}"],

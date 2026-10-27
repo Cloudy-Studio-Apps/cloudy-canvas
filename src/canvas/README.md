@@ -1,6 +1,6 @@
 # Canvas engine
 
-_How it works. The rules are in the root [CLAUDE.md](../../CLAUDE.md); names may still follow the pre-refactor conventions until their phase (see its Transition table)._
+_How it works. The rules are in the root [CLAUDE.md](../../CLAUDE.md)._
 
 The engine is the same for every product. **A product is a `CanvasProduct`** (`canvas-product.types.ts`): its `kinds` (`ElementKinds`), `createTools(ctx)` (added after the built-in select and hand tools), `keybindings` and `defaultOptions`. `O` is the product's tool options type, threaded through `CanvasEngine<O>`, `ElementKind<E, O>`, `ToolContext<O>` and `EngineState<O>`. Products are assembled from modules with `composeProduct` (see Modules): the board's is `getBoardProduct()` (`products/board/ui/modules/board-modules.ts`), the design's `getDesignProduct()` (`products/design/ui/modules/design-modules.ts`).
 

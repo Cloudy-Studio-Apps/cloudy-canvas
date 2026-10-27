@@ -10,11 +10,13 @@ import { STROKE_DEFAULTS } from "./stroke.defaults";
 import { StrokeKind } from "./stroke.kind";
 import { DrawOptions } from "./ui/draw-options";
 import { t } from "./draw.i18n";
+import * as drawApi from ".";
 
 /** Freehand strokes: the kind, the marker (M) and eraser (Shift+E) and the Draw panel. */
 export const drawModule = defineModule({
   id: "draw",
   tier: "feature",
+  exports: { ...drawApi },
   register(host) {
     host.contribute(boardCanvas.kinds, new StrokeKind());
     host.contribute(

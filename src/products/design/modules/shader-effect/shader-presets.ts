@@ -1,4 +1,4 @@
-import { DEFAULT_SHADER_CODE } from "../effects";
+import { DEFAULT_SHADER_CODE } from "./shader-defaults";
 import { t } from "./shader-effect.i18n";
 
 /** Ready-made shaders to start from: what the code can do, each a few lines. */

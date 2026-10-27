@@ -1,6 +1,6 @@
 # Elements
 
-_How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md); names may still follow the pre-refactor conventions until their phase (see its Transition table)._
+_How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
 
 Everything on a canvas is an element. **Elements are plain data and behavior lives in kind classes.** Never branch on `el.type` outside an element's folder: ask its kind. The framework is in `canvas/elements/`; the element types live in their product's modules (`products/board/modules/<name>/`).
 

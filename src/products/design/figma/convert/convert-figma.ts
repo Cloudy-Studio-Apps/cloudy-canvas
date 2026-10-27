@@ -1,5 +1,3 @@
-import { generateNKeysBetween } from "fractional-indexing";
-
 import type { CanvasElement } from "@canvas";
 import {
   buildFigTree,
@@ -16,6 +14,7 @@ import { convertChildren } from "./convert-node";
 import { figPageGuides } from "./page-guides";
 import { resolveFigNode } from "./resolve-instances";
 import { figStyles, figVariableModes, figVariables } from "./tokens";
+import { nKeysBetween } from "@canvas";
 
 /**
  * A decoded Figma file as design elements: a page per Figma page (in order, dividers left out),
@@ -36,7 +35,7 @@ export function convertFigma(
   const pages = tree
     .childrenOf(tree.root)
     .filter((page) => page.type === "CANVAS" && !page.internalOnly && !page.isPageDivider);
-  const keys = generateNKeysBetween(null, null, pages.length);
+  const keys = nKeysBetween(null, null, pages.length);
   const topLayers = pages.map((page) => tree.childrenOf(page).filter((node) => !node.internalOnly));
   const total = topLayers.reduce((sum, layers) => sum + layers.length, 0);
   let done = 0;

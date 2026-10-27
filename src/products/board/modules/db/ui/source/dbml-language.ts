@@ -1,4 +1,4 @@
-import { createSourceLanguage } from "./stream-language";
+import { createSourceLanguage } from "@board/ui/components/source-editor";
 
 /** Syntax colors for the DBML the database panel edits. */
 export const dbmlLanguage = createSourceLanguage({

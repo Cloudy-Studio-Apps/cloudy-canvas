@@ -1,5 +1,4 @@
 import * as Y from "yjs";
-import { generateKeyBetween, generateNKeysBetween } from "fractional-indexing";
 
 import type { CanvasElement, ElementKinds, ElementPatch } from "../elements";
 import { isTokenRecord } from "../tokens/is-token-record";
@@ -15,6 +14,7 @@ import type {
 } from "./canvas-document.types";
 import { DocumentHistory } from "./document-history";
 import type { HistoryChange } from "./document-history.types";
+import { keyBetween, nKeysBetween } from "../utils";
 
 /** Origin tag for local edits, so the undo manager only tracks this client's changes. */
 export const LOCAL_ORIGIN = Symbol("local");
@@ -111,17 +111,17 @@ export class CanvasDocument {
 
   /** Index that places a new element above everything else. */
   nextIndex(): string {
-    return generateKeyBetween(this.topIndex(), null);
+    return keyBetween(this.topIndex(), null);
   }
 
   /** `count` ascending indexes that place new elements above everything else. */
   nextIndexes(count: number): string[] {
-    return generateNKeysBetween(this.topIndex(), null, count);
+    return nKeysBetween(this.topIndex(), null, count);
   }
 
   /** `count` ascending indexes that place elements below everything else. */
   firstIndexes(count: number): string[] {
-    return generateNKeysBetween(null, this.bottomIndex(), count);
+    return nKeysBetween(null, this.bottomIndex(), count);
   }
 
   /**

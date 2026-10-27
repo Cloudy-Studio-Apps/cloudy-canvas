@@ -1,5 +1,3 @@
-import { generateKeyBetween } from "fractional-indexing";
-
 import {
   asUndoStep,
   creatableTypes,
@@ -7,6 +5,7 @@ import {
   optionalString,
   recordList,
   stringArg,
+  keyBetween,
 } from "@canvas";
 
 import { requireDesign, type DesignAgentContext, type DesignMcpTool } from "../../../mcp";
@@ -80,7 +79,7 @@ export const createNodesTool = ({ kinds }: DesignAgentContext): DesignMcpTool =>
         "parent" in spec
           ? checkParent(node, spec.parent, context)
           : (containerAt(node, [...engine.elements(), ...built], engine.kinds)?.id ?? null);
-      index = generateKeyBetween(index, null);
+      index = keyBetween(index, null);
       built.push({ ...node, parentId });
       const key = optionalString(spec, "key");
       if (key) keyed.set(key, built[built.length - 1]!);

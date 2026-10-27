@@ -14,3 +14,4 @@ export { LruCache } from "./lru-cache";
 export { identityKey } from "./identity-key";
 export { prefersReducedMotion } from "./reduced-motion";
 export { whenIdle } from "./when-idle";
+export { keyBetween, nKeysBetween } from "./fractional-keys";

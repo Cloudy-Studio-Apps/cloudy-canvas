@@ -1,7 +1,7 @@
 # Modules
 
-_The conventions every module follows. Where the code doesn't yet, see the Transition table in
-[CLAUDE.md](../CLAUDE.md). Background and the reasoning:
+_The conventions every module follows (the rules are in [CLAUDE.md](../CLAUDE.md)). Background and
+the reasoning:
 [the module conventions spec](superpowers/specs/2026-10-25-module-conventions-design.md)._
 
 ## Words
@@ -82,7 +82,10 @@ plugins' modules leave it unset. `scripts/check-modules.mjs` reads it.
 ```
 modules/<name>/
   <name>.module.ts      REQUIRED  wiring only: defineModule + host.contribute. No logic.
-                                  Past ~100 lines, split into the files below.
+                                  Past ~100 lines, split into the files below. Hands its public
+                                  entries as `exports: { ...frameApi, ...frameUi }` (imported
+                                  `* as` from "." and "./ui"), so a plugin gets them with
+                                  host.require("frame").
   index.ts              REQUIRED  the module's public engine API (plain TS). What isn't exported
                                   here or in ui/index.ts is private.
   README.md             REQUIRED  what the feature is (see the README template).
@@ -135,9 +138,11 @@ calls them. Nothing is found by its name: ESLint reads the suffix only to allow 
    `index.ts`.
 2. **Core modules never import features.** Features may import core modules and the features they
    `require` or `use`.
-3. **Features use only the public surface**: `@canvas`, `@canvas-ui`, `@shared/*`, the product's
-   barrel and points, and other modules' public entries. If they need more, it's added to the public
-   surface **and to `PluginApi` at the same time**, never deep-imported.
+3. **Features use only the public surface**: `@canvas`, `@canvas-ui`, `@shared/core`, the kit, the
+   product's barrels (`@design` and `@design/ui`, imported by the declaring file's path), other
+   modules' public entries and the curated groups in `app/plugins/api/` (`ui`, `platform`). That's
+   exactly what a plugin gets (`api` is those barrels), so if a feature needs more, it's exported
+   from the barrel, never deep-imported.
 4. Product-level code (`products/<p>/ui`, `mcp`, `file`, `figma`) imports modules only through
    `modules/index.ts` or a module's `index.ts` / `ui/index.ts`.
 5. UI comes from `@shared/ui/kit`: the shadcn primitives and `cn` too (the kit re-exports them),
@@ -148,7 +153,10 @@ calls them. Nothing is found by its name: ESLint reads the suffix only to allow 
 
 **Checked by** `scripts/check-modules.mjs`, part of `pnpm lint` (`pnpm check:modules` alone): deep
 imports (from modules and from anywhere else in `src/`), `requires`, core → feature, each module's
-`index.ts`/`<name>.module.ts`/`README.md`/`tier`, MCP file names, module files over 120 lines, imports of the product barrel and of shadcn primitives or `cn` outside the kit.
+`index.ts`/`<name>.module.ts`/`README.md`/`tier`, MCP file names, module files over 120 lines, imports of the product barrel and of shadcn primitives or `cn` outside the kit, and modules that don't hand their `index.ts`/`ui/index.ts` as `exports` (rule `exports`).
+`scripts/check-public-api.mjs`, also in `pnpm lint` (`pnpm check:public-api`), checks rule 3 with
+the TypeScript API: every value a feature imports from outside its folder must be exported by the
+barrel covering the file it comes from (rule `public`).
 `node scripts/module-order.mjs` prints the order each product loads its modules in: compare it
 before and after changing `requires`/`after`, since chained hooks run in that order. A module never imports its own product's barrel (`@design`, `@board`): it imports the file or module that declares the name (rule `barrel`).
 
@@ -166,8 +174,8 @@ before and after changing `requires`/`after`, since chained hooks run in that or
 
 A mode is one definition, `defineDesignMode({…})` (`@design/ui/modules`) or `defineBoardMode({…})`
 (`@board/ui/modules`), in the module's `<name>.mode.ts`, registered with one call,
-`registerDesignMode(host, mode)` / `registerBoardMode(host, mode)` (plugins: `api.design.defineMode`,
-`api.design.registerMode`, the same on `api.board`). It fans out to the existing points through
+`registerDesignMode(host, mode)` / `registerBoardMode(host, mode)` (plugins: `api.design.defineDesignMode`,
+`api.design.registerDesignMode`, `api.board.defineBoardMode`, `api.board.registerBoardMode`). It fans out to the existing points through
 `@canvas-ui`'s `registerEditorMode`. Catalog, the Design system and ER are written this way.
 
 | Field                                                                        | What it does                                                                                                     |
@@ -189,16 +197,16 @@ agents, panel toggle) always stay.
 
 Export a piece once, where what it knows lives, and reuse it instead of writing another:
 
-| Knows                                                       | Lives in                   | Import (feature)                  | Plugin                    |
-| ----------------------------------------------------------- | -------------------------- | --------------------------------- | ------------------------- |
-| nothing but the theme (fields, selects, cards)              | `@shared/ui/kit`           | `@shared/ui/kit`                  | `api.ui.kit`              |
-| the canvas engine (colors, images, thumbnails, mode chrome) | `@canvas-ui`               | `@canvas-ui`                      | `api.canvasUi`            |
-| the product (paints, bindings, node fields, modes)          | `@design/ui` / `@board/ui` | `@design/ui`                      | `api.design`              |
-| one module (font picker, frame presets, layer names)        | the module's `ui/index.ts` | `../text/ui` (only if `requires`) | `host.require("text").ui` |
+| Knows                                                       | Lives in                   | Import (feature)                  | Plugin                 |
+| ----------------------------------------------------------- | -------------------------- | --------------------------------- | ---------------------- |
+| nothing but the theme (fields, selects, cards)              | `@shared/ui/kit`           | `@shared/ui/kit`                  | `api.ui.kit`           |
+| the canvas engine (colors, images, thumbnails, mode chrome) | `@canvas-ui`               | `@canvas-ui`                      | `api.canvasUi`         |
+| the product (paints, bindings, node fields, modes)          | `@design/ui` / `@board/ui` | `@design/ui/<path>`               | `api.design`           |
+| one module (font picker, frame presets, layer names)        | the module's `ui/index.ts` | `../text/ui` (only if `requires`) | `host.require("text")` |
 
-The Plugin column is the API after phase 6. Until then plugins get the `@canvas-ui` pieces as
-`api.ui.<name>` and the product's from the hand-kept lists in `api.design`/`api.board`
-(`app/plugins/create-plugin-api.ts`).
+A feature imports the product's pieces by their path (`@design/ui/components/panel`), since
+importing `@design/ui` from a module would loop through the module list; `@design/ui` exports them
+all, and `check-public-api` keeps the two in step.
 
 ## README template
 

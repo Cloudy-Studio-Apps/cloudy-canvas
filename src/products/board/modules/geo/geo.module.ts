@@ -7,6 +7,7 @@ import { SHAPE_FILLS, SHAPE_STROKES } from "../../palette";
 import { GeoKind } from "./geo.kind";
 import { ShapeTool } from "./shape.tool";
 import { ShapeOptions } from "./ui/shape-options";
+import * as geoApi from ".";
 
 /** Shapes: the kind (its variants register themselves), the shape tool (R) and its panel. */
 export const geoModule = defineModule({
@@ -14,6 +15,7 @@ export const geoModule = defineModule({
   tier: "feature",
   // Shapes drag connectors out of their sides.
   requires: ["connector"],
+  exports: { ...geoApi },
   register(host) {
     host.contribute(boardCanvas.kinds, new GeoKind());
     host.contribute(boardCanvas.tools, {

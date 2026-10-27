@@ -1,12 +1,17 @@
 import { snippetCompletion } from "@codemirror/autocomplete";
 import type { Completion, CompletionContext, CompletionSource } from "@codemirror/autocomplete";
 
-import { COLUMN_TYPES } from "@board";
-import { completionResult, nameOptions, startingWith } from "./completion-result";
+import {
+  completionResult,
+  definedNames,
+  nameOptions,
+  readSourceContext,
+  startingWith,
+  writtenName,
+  type SourceContext,
+} from "@board/ui/components/source-editor";
+import { COLUMN_TYPES } from "../../schema";
 import type { DbmlNames } from "./dbml-completions.types";
-import { definedNames, writtenName } from "./defined-names";
-import { readSourceContext } from "./source-context";
-import type { SourceContext } from "./source-context.types";
 
 const TOP_LEVEL: Completion[] = [
   snippetCompletion("Table ${name} {\n\t${}\n}", {

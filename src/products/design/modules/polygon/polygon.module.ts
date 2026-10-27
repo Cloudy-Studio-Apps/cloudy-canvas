@@ -7,12 +7,14 @@ import { designCanvas } from "../../design-points";
 import { BoxDrawTool } from "../core";
 import { PolygonKind } from "./polygon.kind";
 import { PolygonSection } from "./ui/polygon-section";
+import * as polygonApi from ".";
 
 /** Polygons: the kind and the tool, in the shapes menu, and the sides section. */
 export const polygonModule = defineModule({
   id: "polygon",
   tier: "feature",
   requires: ["core"],
+  exports: { ...polygonApi },
   register(host) {
     const kind = new PolygonKind();
     host.contribute(designCanvas.kinds, kind);

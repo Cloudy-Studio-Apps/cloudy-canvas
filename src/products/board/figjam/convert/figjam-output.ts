@@ -1,6 +1,5 @@
-import { generateNKeysBetween } from "fractional-indexing";
-
 import type { CanvasElement } from "@canvas";
+import { nKeysBetween } from "@canvas";
 
 /**
  * The converted elements in drawing order. Some can only be built once every node is converted
@@ -23,7 +22,7 @@ export class FigJamOutput {
     const elements = this.entries.flatMap((entry) =>
       typeof entry === "function" ? entry() : [entry],
     );
-    const keys = generateNKeysBetween(null, null, elements.length);
+    const keys = nKeysBetween(null, null, elements.length);
     return elements.map((el, i) => ({ ...el, index: keys[i] ?? el.index }));
   }
 }

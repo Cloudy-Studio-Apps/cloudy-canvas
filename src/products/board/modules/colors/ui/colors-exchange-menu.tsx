@@ -5,7 +5,7 @@ import { codeTokens, toCss, toDtcg, TokenStore } from "@canvas";
 import { readColorSource } from "../../../tokens";
 import { useDocumentMeta } from "@canvas-ui";
 import { useBoardEngine } from "@board/ui/board-engine-context";
-import { exportFile, pickTokenFile, type TokenFilePick } from "@platform";
+import { exportFile, openFile, type OpenFilePick } from "@platform";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import {
   DropdownMenu,
@@ -20,7 +20,7 @@ import { ImportColorsDialog } from "./import-colors-dialog";
 import { t } from "../colors.i18n";
 
 /** What importing colors offers: designs, boards and tokens JSON. */
-const COLOR_FILES: TokenFilePick = {
+const COLOR_FILES: OpenFilePick = {
   title: t("exchange.importTitle"),
   filters: [
     { name: t("exchange.filterAll"), extensions: ["cdesign", "cboard", "json"] },
@@ -38,7 +38,7 @@ export function ColorsExchangeMenu() {
 
   const importFile = async () => {
     try {
-      const file = await pickTokenFile(COLOR_FILES);
+      const file = await openFile(COLOR_FILES);
       if (file) setSource({ name: file.name, ...readColorSource(file.bytes) });
     } catch (error) {
       notifyError(t("exchange.readFailed"), error);

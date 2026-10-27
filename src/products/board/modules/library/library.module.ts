@@ -3,6 +3,8 @@ import { boardCanvas } from "../../board-points";
 import { BUILT_IN_ITEMS, BUILT_IN_SECTIONS } from "./ui/library-catalog";
 import { OPEN_LIBRARY } from "./ui/library-command";
 import { boardLibrary } from "./ui/library.points";
+import * as libraryApi from ".";
+import * as libraryUi from "./ui";
 
 /**
  * The library of widgets, templates and more (the panel is the toolbar's last button): the command
@@ -11,6 +13,7 @@ import { boardLibrary } from "./ui/library.points";
 export const libraryModule = defineModule({
   id: "library",
   tier: "core",
+  exports: { ...libraryApi, ...libraryUi },
   register(host) {
     host.contribute(boardCanvas.hostCommands, {
       ...OPEN_LIBRARY,

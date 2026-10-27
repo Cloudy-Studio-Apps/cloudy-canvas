@@ -1,5 +1,3 @@
-import { generateKeyBetween } from "fractional-indexing";
-
 import { createId } from "@shared/core";
 
 import type { CanvasDocument } from "../document";
@@ -29,6 +27,7 @@ import { resolveStyle } from "./resolve-style";
 import { keptStyleBindings, styleLeafType, stylesWithout } from "./style-bindings";
 import type { StyleRecord, TokenRecord } from "./token.types";
 import { VariableEdits } from "./variable-edits";
+import { keyBetween } from "../utils";
 
 /**
  * A document's variables, collections, modes, shade generators, scales and styles, and the only
@@ -68,7 +67,7 @@ export class DocumentTokens extends VariableEdits {
       id: known?.id ?? createId(),
       group,
       axisId: input.axisId ?? known?.axisId ?? store.switchableAxes()[0]?.id ?? null,
-      order: known?.order ?? generateKeyBetween(store.generators().at(-1)?.order ?? null, null),
+      order: known?.order ?? keyBetween(store.generators().at(-1)?.order ?? null, null),
     };
     this.requireCollection(generator.collectionId);
     this.write(() => {
@@ -106,7 +105,7 @@ export class DocumentTokens extends VariableEdits {
       kind: "scale",
       id: known?.id ?? createId(),
       group,
-      order: known?.order ?? generateKeyBetween(store.scales().at(-1)?.order ?? null, null),
+      order: known?.order ?? keyBetween(store.scales().at(-1)?.order ?? null, null),
     };
     this.requireCollection(scale.collectionId);
     this.write(() => {
@@ -152,7 +151,7 @@ export class DocumentTokens extends VariableEdits {
       ),
       value: structuredClone(spec.value),
       description: spec.description ?? "",
-      order: generateKeyBetween(same.at(-1)?.order ?? null, null),
+      order: keyBetween(same.at(-1)?.order ?? null, null),
     };
     const store = this.store();
     const bindings = Object.fromEntries(

@@ -8,6 +8,7 @@ import { MaskToolbarButton } from "./ui/mask-toolbar-button";
 import { maskSectionShown, selectionIsMasks } from "./ui/mask-selection";
 import { useMaskCommands } from "./ui/use-mask-commands";
 import { t } from "./mask.i18n";
+import * as maskApi from ".";
 
 /**
  * Masks, as in Figma and a bit more: the canvas's masks (alpha, vector, luminance, inverted),
@@ -19,6 +20,7 @@ export const maskModule = defineModule({
   tier: "feature",
   // Mask groups are groups.
   requires: ["core", "group"],
+  exports: { ...maskApi },
   register(host) {
     host.contribute(designCanvas.masks, designMasks);
     host.contribute(

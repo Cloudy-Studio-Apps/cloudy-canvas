@@ -7,6 +7,7 @@ import { createPastedImage } from "./pasted-image";
 import { editImage } from "./image-crop";
 import { ImageCrop } from "./ui/image-crop";
 import { ImageOptions } from "./ui/image-options";
+import * as imageApi from ".";
 
 /**
  * Pictures: the kind, pasting and dropping images, cropping them on the canvas (double-click) and
@@ -15,6 +16,7 @@ import { ImageOptions } from "./ui/image-options";
 export const imageModule = defineModule({
   id: "image",
   tier: "core",
+  exports: { ...imageApi },
   register(host) {
     host.contribute(boardCanvas.kinds, new ImageKind());
     host.contribute(boardCanvas.options, {
