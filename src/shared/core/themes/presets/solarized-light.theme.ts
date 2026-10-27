@@ -5,6 +5,7 @@ export const SOLARIZED_LIGHT: ThemeDefinition = {
   id: "solarized-light",
   label: "Solarized Light",
   description: "The classic Solarized palette on cream.",
+  family: "Solarized",
   appearance: "light",
   tokens: {
     background: "#fdf6e3",

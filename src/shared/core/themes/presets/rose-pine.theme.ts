@@ -5,6 +5,7 @@ export const ROSE_PINE: ThemeDefinition = {
   id: "rose-pine",
   label: "Rosé Pine",
   description: "Muted violet night with iris and rose.",
+  family: "Rosé Pine",
   appearance: "dark",
   tokens: {
     background: "#191724",

@@ -5,6 +5,7 @@ export const CLOUDY_DARK: ThemeDefinition = {
   id: "cloudy-dark",
   label: "Cloudy Dark",
   description: "Seal-ink surfaces, easy on the eyes at night.",
+  family: "Cloudy",
   appearance: "dark",
   tokens: {
     background: "oklch(0.18 0.014 256)",

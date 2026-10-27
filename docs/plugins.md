@@ -228,6 +228,7 @@ api.themes.register({
   id: "theme-nord", // unique among every theme: name it after the plugin
   label: "Nord",
   appearance: "dark", // which slot of "Match system" it's offered for
+  family: "Nord", // optional: a light and a dark theme with the same family share one card
   extends: "cloudy-dark",
   tokens: { background: "#2e3440", surface: "#3b4252", primary: "#88c0d0" /* … */ },
   products: { design: { "canvas-background": "#323846" } }, // inside one editor only
@@ -240,6 +241,7 @@ api.themes.register({
 
 - `api.themes.tokens` lists every token a theme can set: surfaces and text, the canvas (`canvas-*`: background, grid, selection, snap guides, rulers), code (`syntax-*`), lines, roles and `shadow-color` (an `H S% L%` triple). Unknown names are left out with a warning in the console; values are CSS values (colors, `var(--seal-900)`).
 - `preview` is the card's picture; left out, it's taken from the tokens.
+- Settings lists a plugin's themes in their own section under the plugin's name. Two themes of yours with the same `family`, one light and one dark, show as one card with a Light/Dark switch, named after the family.
 - Exports and file previews keep the base theme's colors, so files look the same whoever made them.
 - A plugin that only adds themes can have `"products": []` and return nothing from `activate`. What it registers is added once `activate` returns and dropped if the plugin fails. When the user's theme comes from a plugin that's later removed, the app falls back to a built-in theme of the same appearance.
 - For drawing that reads tokens itself (a canvas, a chart), `api.themes.useActiveTheme()` gives the theme shown (`resolved.appearance`, `resolved.tokens`), and `api.themes.onThemeChange(listener)` says when it changes.

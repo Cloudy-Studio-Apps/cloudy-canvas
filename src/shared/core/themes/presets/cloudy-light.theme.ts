@@ -5,6 +5,7 @@ export const CLOUDY_LIGHT: ThemeDefinition = {
   id: "cloudy-light",
   label: "Cloudy Light",
   description: "The default: seal-white surfaces and ice blue.",
+  family: "Cloudy",
   appearance: "light",
   tokens: {
     background: "var(--seal-50)",

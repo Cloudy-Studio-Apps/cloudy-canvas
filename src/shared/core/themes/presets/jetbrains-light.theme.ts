@@ -5,6 +5,7 @@ export const JETBRAINS_LIGHT: ThemeDefinition = {
   id: "jetbrains-light",
   label: "JetBrains Light",
   description: "IDE grays, JetBrains Mono and compact controls.",
+  family: "JetBrains",
   appearance: "light",
   tokens: {
     background: "#f7f8fa",

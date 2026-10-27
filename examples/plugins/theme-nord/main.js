@@ -5,6 +5,7 @@ export default function activate(api) {
     id: "theme-nord",
     label: "Nord",
     description: "Arctic blues on polar night.",
+    family: "Nord",
     appearance: "dark",
     extends: "cloudy-dark",
     tokens: {

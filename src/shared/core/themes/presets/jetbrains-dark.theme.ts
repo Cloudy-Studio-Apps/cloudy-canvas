@@ -8,6 +8,7 @@ export const JETBRAINS_DARK: ThemeDefinition = {
   id: "jetbrains-dark",
   label: "JetBrains Dark",
   description: "IDE grays, JetBrains Mono and compact controls.",
+  family: "JetBrains",
   appearance: "dark",
   tokens: {
     background: "#1e1f22",

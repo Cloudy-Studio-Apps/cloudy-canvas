@@ -5,6 +5,7 @@ export const SOLARIZED_DARK: ThemeDefinition = {
   id: "solarized-dark",
   label: "Solarized Dark",
   description: "The classic Solarized palette on deep teal.",
+  family: "Solarized",
   appearance: "dark",
   tokens: {
     background: "#002b36",

@@ -1,31 +1,52 @@
-import { themeRegistry } from "@shared/core";
-import { SelectableCard } from "@shared/ui/kit";
-import { useThemes } from "@shared/ui/theme";
+import {
+  groupThemeFamilies,
+  matchThemeFamily,
+  themeRegistry,
+  type ThemeFamily,
+} from "@shared/core";
+import { usePluginsStore } from "@shared/stores/plugins-store";
+import { EmptyState } from "@shared/ui/kit";
+import { useActiveTheme, useThemes } from "@shared/ui/theme";
 import type { ThemeGridProps } from "./appearance.types";
-import { ThemePreviewPicture } from "./theme-preview-picture";
+import { ThemeSection } from "./theme-section";
 import { t } from "../../settings.i18n";
 
-/** The themes as cards to pick from, a picture of each; a missing pick is listed as such. */
-export function ThemeGrid({ appearance, selectedId, onSelect }: ThemeGridProps) {
+/**
+ * The themes to pick from as family cards matching the search: the app's first, then one section
+ * per plugin under its name; a missing pick is listed as such.
+ */
+export function ThemeGrid({ appearance, selectedId, onSelect, query }: ThemeGridProps) {
   const themes = useThemes().filter(({ theme }) => !appearance || theme.appearance === appearance);
+  const installed = usePluginsStore((s) => s.installed);
+  const preferred = useActiveTheme().resolved.appearance;
   const missing = !themeRegistry.get(selectedId);
 
+  const ownerName = (owner: string) =>
+    owner === "app"
+      ? undefined
+      : (installed.find((p) => p.manifest.id === owner)?.manifest.name ?? owner);
+  const byOwner = new Map<string, ThemeFamily[]>();
+  for (const family of groupThemeFamilies(themes)) {
+    if (!matchThemeFamily(family, query, ownerName(family.owner))) continue;
+    byOwner.set(family.owner, [...(byOwner.get(family.owner) ?? []), family]);
+  }
+  const sections = [...byOwner].sort(([a], [b]) => Number(a !== "app") - Number(b !== "app"));
+
   return (
-    <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-3">
-      {themes.map(({ theme, owner }) => (
-        <SelectableCard
-          key={theme.id}
-          selected={theme.id === selectedId}
-          onSelect={() => onSelect(theme.id)}
-          media={<ThemePreviewPicture preview={theme.preview} />}
-          title={theme.label}
-          description={
-            owner === "app" ? theme.description : t("appearance.fromPlugin", { plugin: owner })
-          }
+    <div className="space-y-4">
+      {sections.map(([owner, families]) => (
+        <ThemeSection
+          key={owner}
+          heading={ownerName(owner)}
+          families={families}
+          selectedId={selectedId}
+          onSelect={onSelect}
+          preferred={preferred}
         />
       ))}
+      {sections.length === 0 && <EmptyState title={t("appearance.noMatch", { query })} />}
       {missing && (
-        <p className="col-span-full text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           {t("appearance.missing", { id: selectedId })}
         </p>
       )}

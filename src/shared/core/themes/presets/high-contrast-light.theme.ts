@@ -5,6 +5,7 @@ export const HIGH_CONTRAST_LIGHT: ThemeDefinition = {
   id: "high-contrast-light",
   label: "High Contrast Light",
   description: "Black on white, strong borders and focus rings.",
+  family: "High Contrast",
   appearance: "light",
   tokens: {
     background: "#ffffff",

@@ -43,6 +43,8 @@ export interface ThemeDefinition {
   id: string;
   label: string;
   description?: string;
+  /** The name a light/dark pair shares ("Catppuccin"): Settings shows the pair as one card. */
+  family?: string;
   appearance: ThemeAppearance;
   /** The theme it starts from. */
   extends?: string;
@@ -79,6 +81,17 @@ export interface ThemeMetrics {
 export interface RegisteredTheme {
   theme: ThemeDefinition;
   owner: string;
+}
+
+/** A family's themes, one per appearance, from one owner; a theme without a family is its own. */
+export interface ThemeFamily {
+  /** `owner:family` (or `owner:id`): a plugin's family never merges into the app's. */
+  key: string;
+  /** The family's name when it has both appearances, the theme's label otherwise. */
+  label: string;
+  owner: string;
+  light?: ThemeDefinition;
+  dark?: ThemeDefinition;
 }
 
 /** A plugin's theme once checked, and the token names it gave that don't exist. */

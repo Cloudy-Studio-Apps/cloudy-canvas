@@ -13,14 +13,6 @@ export interface ActiveTheme {
   missing: boolean;
 }
 
-/** A theme in a quick menu: ticked while it's shown in `fixed` mode, picked to show it. */
-export interface ThemeChoice {
-  id: string;
-  label: string;
-  active(): boolean;
-  select(): void;
-}
-
 export interface ThemeMenuProps {
   /** The menu's button. */
   trigger: React.ReactNode;

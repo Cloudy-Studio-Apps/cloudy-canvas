@@ -80,8 +80,12 @@
       "default": "Predeterminada",
       "comfortable": "Cómoda"
     },
-    "fromPlugin": "Del complemento «{plugin}»",
-    "missing": "«{id}» no está instalado (su complemento se quitó o se desactivó), así que se muestra un tema integrado."
+    "missing": "«{id}» no está instalado (su complemento se quitó o se desactivó), así que se muestra un tema integrado.",
+    "search": "Buscar temas",
+    "noMatch": "Ningún tema coincide con «{query}»",
+    "variant": "Claro u oscuro",
+    "light": "Claro",
+    "dark": "Oscuro"
   },
   "collaboration": {
     "description": "Comparte en vivo una pizarra o un diseño abierto: tu app lo aloja y las personas que dejes entrar lo editan contigo hasta que termines.",

@@ -80,8 +80,12 @@
       "default": "Default",
       "comfortable": "Comfortable"
     },
-    "fromPlugin": "From the plugin “{plugin}”",
-    "missing": "“{id}” isn't installed (its plugin was removed or turned off), so a built-in theme is shown instead."
+    "missing": "“{id}” isn't installed (its plugin was removed or turned off), so a built-in theme is shown instead.",
+    "search": "Search themes",
+    "noMatch": "No themes match “{query}”",
+    "variant": "Light or dark",
+    "light": "Light",
+    "dark": "Dark"
   },
   "collaboration": {
     "description": "Share an open board or design live: your app hosts it, and the people you let in edit it with you until you stop.",

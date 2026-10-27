@@ -60,6 +60,7 @@ export function readThemeDefinition(data: unknown): ReadThemeResult {
       label: t.label,
       appearance: t.appearance,
       ...(typeof t.description === "string" ? { description: t.description } : {}),
+      ...(typeof t.family === "string" && t.family.trim() ? { family: t.family.trim() } : {}),
       ...(typeof t.extends === "string" ? { extends: t.extends } : {}),
       tokens,
       products,

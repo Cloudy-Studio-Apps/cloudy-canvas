@@ -1,7 +1,9 @@
+import { useState } from "react";
+
 import { useThemeStore } from "@shared/stores/theme-store";
 import type { ThemeDensity } from "@shared/core";
 import type { ThemeMode } from "@shared/stores/theme-store.types";
-import { Field, SegmentedControl } from "@shared/ui/kit";
+import { Field, SearchInput, SegmentedControl } from "@shared/ui/kit";
 import { SettingsSection } from "../../components/settings-section";
 import { ThemeGrid } from "./theme-grid";
 import { t } from "../../settings.i18n";
@@ -25,6 +27,7 @@ export function AppearanceSection() {
   const darkThemeId = useThemeStore((s) => s.darkThemeId);
   const density = useThemeStore((s) => s.density);
   const { setMode, setTheme, setSystemTheme, setDensity } = useThemeStore.getState();
+  const [query, setQuery] = useState("");
 
   return (
     <SettingsSection
@@ -41,8 +44,14 @@ export function AppearanceSection() {
             options={MODES}
           />
         </Field>
+        <SearchInput
+          value={query}
+          onChange={setQuery}
+          placeholder={t("appearance.search")}
+          aria-label={t("appearance.search")}
+        />
         {mode === "fixed" ? (
-          <ThemeGrid selectedId={themeId} onSelect={setTheme} />
+          <ThemeGrid selectedId={themeId} onSelect={setTheme} query={query} />
         ) : (
           <>
             <div className="space-y-2">
@@ -51,6 +60,7 @@ export function AppearanceSection() {
                 appearance="light"
                 selectedId={lightThemeId}
                 onSelect={(id) => setSystemTheme("light", id)}
+                query={query}
               />
             </div>
             <div className="space-y-2">
@@ -59,6 +69,7 @@ export function AppearanceSection() {
                 appearance="dark"
                 selectedId={darkThemeId}
                 onSelect={(id) => setSystemTheme("dark", id)}
+                query={query}
               />
             </div>
           </>

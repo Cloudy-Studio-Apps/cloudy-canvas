@@ -3,6 +3,8 @@
 export type * from "./theme.types";
 export { BASE_THEME_ID, BUILT_IN_THEMES, FALLBACK_THEME_IDS } from "./presets";
 export { DENSITY_METRICS } from "./theme-density";
+export { groupThemeFamilies } from "./group-theme-families";
+export { matchThemeFamily } from "./match-theme-family";
 export { readThemeDefinition } from "./read-theme-definition";
 export { resolveTheme } from "./resolve-theme";
 export { themeCss } from "./theme-css";

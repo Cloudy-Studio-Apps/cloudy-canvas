@@ -12,7 +12,6 @@ import {
 
 import { openAbout } from "@shared/about";
 import type { ModuleHost } from "@shared/core";
-import { themeChoices } from "@shared/ui/theme";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import { useDesignPanelStore } from "@design/ui/stores/design-panel-store";
 import { t } from "./core.i18n";
@@ -108,22 +107,6 @@ export function registerCoreMenu(host: ModuleHost): void {
           checked: () => useDesignPanelStore.getState().rightOpen,
         },
         { command: "toggleUi", label: t("commands.hideUi") },
-      ],
-    },
-    {
-      id: "theme",
-      order: 42,
-      label: t("menu.theme"),
-      items: [
-        ...themeChoices().map((choice) => ({
-          label: choice.label,
-          checked: choice.active,
-          run: choice.select,
-        })),
-        {
-          label: t("menu.appearanceSettings"),
-          run: ({ navigate }) => navigate("/settings/appearance"),
-        },
       ],
     },
     {

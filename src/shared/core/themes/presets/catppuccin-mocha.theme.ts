@@ -5,6 +5,7 @@ export const CATPPUCCIN_MOCHA: ThemeDefinition = {
   id: "catppuccin-mocha",
   label: "Catppuccin Mocha",
   description: "Soothing pastels on a deep base.",
+  family: "Catppuccin",
   appearance: "dark",
   tokens: {
     background: "#1e1e2e",

@@ -5,6 +5,7 @@ export const CATPPUCCIN_LATTE: ThemeDefinition = {
   id: "catppuccin-latte",
   label: "Catppuccin Latte",
   description: "Soothing pastels on a light base.",
+  family: "Catppuccin",
   appearance: "light",
   tokens: {
     background: "#e6e9ef",
