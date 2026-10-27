@@ -1,0 +1,21 @@
+{
+  "eyebrow": "Error inesperado",
+  "title": "La foca se resbaló del lienzo",
+  "lead": "Cloudy Canvas tuvo un error del que no pudo recuperarse. Tus archivos en disco están a salvo; lo que no guardaste en esta ventana puede perderse.",
+  "actions": {
+    "reload": "Recargar ventana",
+    "home": "Volver al inicio",
+    "copyDetails": "Copiar detalles del error",
+    "copyCode": "Copiar código de error"
+  },
+  "code": {
+    "label": "Código de error",
+    "hint": "Incluye este código si informas del problema."
+  },
+  "details": {
+    "title": "Detalles técnicos",
+    "ownFrames": "Los marcos de tu código están en negrita"
+  },
+  "copied": "Copiado",
+  "copyFailed": "No se pudo copiar el error"
+}

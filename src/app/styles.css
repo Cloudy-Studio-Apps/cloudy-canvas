@@ -154,6 +154,67 @@
     }
   }
 
+  /* The error page's seal adrift on a cracked floe: the floe bobbing, a broken chunk drifting off,
+     waves sliding, dizzy eyes spinning, stars circling, flippers holding on, a sweat drop. */
+  --animate-seal-bob: seal-bob 3.2s ease-in-out infinite;
+  --animate-seal-drift: seal-drift 4.6s ease-in-out infinite;
+  --animate-seal-waves: seal-waves 5s linear infinite;
+  --animate-seal-dizzy: seal-dizzy 2.4s linear infinite;
+  --animate-seal-orbit: seal-dizzy 3s linear infinite;
+  --animate-seal-flap: seal-flap 1.6s ease-in-out infinite;
+  --animate-seal-drop: seal-drop 3.2s ease-in infinite;
+  @keyframes seal-bob {
+    0%,
+    100% {
+      transform: translateY(0) rotate(-2deg);
+    }
+    50% {
+      transform: translateY(5px) rotate(2deg);
+    }
+  }
+  @keyframes seal-drift {
+    0%,
+    100% {
+      transform: translate(0, 0) rotate(6deg);
+    }
+    50% {
+      transform: translate(8px, 4px) rotate(-3deg);
+    }
+  }
+  @keyframes seal-waves {
+    to {
+      transform: translateX(-80px);
+    }
+  }
+  @keyframes seal-dizzy {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes seal-flap {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(var(--seal-swing, -14deg));
+    }
+  }
+  @keyframes seal-drop {
+    0%,
+    55% {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    65% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+
   /* The name prompt's seal patting its belly: one flipper, then the other half a beat later. */
   --animate-seal-pat: seal-pat 1.2s ease-in-out infinite;
   --animate-seal-belly: seal-belly 0.6s ease-out infinite;

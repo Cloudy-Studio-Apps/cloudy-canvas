@@ -1,0 +1,21 @@
+{
+  "eyebrow": "Unexpected error",
+  "title": "The seal slipped off the canvas",
+  "lead": "Cloudy Canvas hit an error it couldn't recover from. Your files on disk are safe; anything you didn't save in this window may be lost.",
+  "actions": {
+    "reload": "Reload window",
+    "home": "Back to Home",
+    "copyDetails": "Copy error details",
+    "copyCode": "Copy error code"
+  },
+  "code": {
+    "label": "Error code",
+    "hint": "Include this code if you report the problem."
+  },
+  "details": {
+    "title": "Technical details",
+    "ownFrames": "Frames from your code are in bold"
+  },
+  "copied": "Copied",
+  "copyFailed": "The error couldn't be copied"
+}
