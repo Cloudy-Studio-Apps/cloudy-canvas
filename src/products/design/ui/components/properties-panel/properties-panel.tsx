@@ -18,7 +18,7 @@ import { PropertySections } from "./property-sections";
 /**
  * The right panel: history, collaborators, sharing and the button that hides it, then the
  * Design/Prototype tabs and the zoom, or the active tool's sidebar (`toolSidebars`), or the current
- * mode's (`modeSidebars`). Export is in the main menu's File, the context menus and its section.
+ * mode's (`modePanels`). Export is in the main menu's File, the context menus and its section.
  */
 export function PropertiesPanel() {
   const tab = useDesignPanelStore((state) => state.propertiesTab);
@@ -28,10 +28,10 @@ export function PropertiesPanel() {
   const tool = useEngineState((state) => state.tool);
   const mode = useEngineState((state) => state.mode);
   // The active tool's sidebar (e.g. the frame presets) replaces the sections while it's on, and
-  // a mode's (e.g. the Catalog's brochure) while the mode is.
-  const ToolSidebar =
-    host.find(designEditor.toolSidebars, tool)?.component ??
-    host.find(designEditor.modeSidebars, mode)?.component;
+  // a mode's (e.g. the Catalog's brochure, with any sections it keeps) while the mode is.
+  const ToolSidebar = host.find(designEditor.toolSidebars, tool)?.component;
+  const panel = ToolSidebar ? undefined : host.find(designEditor.modePanels, mode);
+  const ModeSidebar = panel?.sidebar;
 
   return (
     <aside
@@ -54,6 +54,11 @@ export function PropertiesPanel() {
       {ToolSidebar ? (
         <div className="min-h-0 flex-1 overflow-y-auto pb-75">
           <ToolSidebar />
+        </div>
+      ) : ModeSidebar ? (
+        <div className="min-h-0 flex-1 overflow-y-auto pb-75">
+          <ModeSidebar />
+          {panel.keepSections && <PropertySections tab="design" only={panel.keepSections} />}
         </div>
       ) : (
         <Tabs

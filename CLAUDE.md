@@ -83,7 +83,8 @@ look); the module conventions are in [docs/modules.md](docs/modules.md).
 
 16. New functionality is a module: one folder in its product's `modules/` with `<name>.module.ts`
     (saying its `tier`), `index.ts` and a `README.md` in the template. Tiers are in
-    [Tiers](docs/modules.md#tiers), files in [Module anatomy](docs/modules.md#module-anatomy).
+    [Tiers](docs/modules.md#tiers), files in [Module anatomy](docs/modules.md#module-anatomy). A mode
+    is one `defineDesignMode`/`defineBoardMode` object in `<name>.mode.ts` ([Modes](docs/modules.md#modes)).
 17. Follow the [import rules](docs/modules.md#import-rules): other modules only through their
     `index.ts` / `ui/index.ts`, and only if they're core modules or in `requires`/`uses`; core never
     imports features. `scripts/check-modules.mjs` checks this as part of `pnpm lint`.
@@ -137,16 +138,12 @@ The rules above describe where the code is going (spec:
 [module conventions](docs/superpowers/specs/2026-10-25-module-conventions-design.md)). **Until a row's
 phase is done, follow the existing pattern in that part of the code.**
 
-- **No new modes until 5b is done.** A new canvas mode (like Catalog, the Design system or ER) would
-  be ~10 contributions that 5b replaces with one definition. Ask the user first; if it must exist
-  now, copy the Catalog mode's wiring and use `ModeToolbar` for its toolbar.
 - **Until phase 6, keep plugin API changes small.** Add a newly public piece to the list in
   `app/plugins/create-plugin-api.ts` and `plugin-api.types.ts` (rule 18), and nothing more: no
   new `api` sections or shapes, since phase 6 replaces the list with the barrels.
 
 | Rule                                                        | Code today                                             | Fixed in phase |
 | ----------------------------------------------------------- | ------------------------------------------------------ | -------------- |
-| one mode definition (`defineDesignMode`, `registerMode`)    | about 10 contributions per mode                        | 5b             |
 | plugin API as the barrels, `host.require`, module `exports` | a hand-kept list in `app/plugins/create-plugin-api.ts` | 6              |
 
 ## Where to look

@@ -14,7 +14,7 @@ import { PageSection } from "./page-section";
 import { PickSection } from "./pick-section";
 
 /**
- * The properties panel in the Catalog mode (its `modeSidebars` entry): while picking, how to; a
+ * The properties panel in the Catalog mode (its `sidebar`): while picking, how to; a
  * selected page with its options and pictures; a frame that isn't in it; several frames; or the
  * brochure itself (settings, checks, preview and export).
  */

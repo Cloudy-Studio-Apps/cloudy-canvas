@@ -1,6 +1,5 @@
 export { applyPick } from "./apply-pick";
 export { CATALOG_ALLOWED_COMMANDS } from "./catalog-allowed-commands";
-export { CATALOG_MODE } from "./catalog-mode";
 export {
   CATALOG_COMMANDS,
   CATALOG_MODE_ID,

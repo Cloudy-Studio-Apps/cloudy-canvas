@@ -11,6 +11,7 @@ export function useLeftTabs(): LeftTabs {
   const { host } = useEditorModules();
   const mode = useEngineState((state) => state.mode);
   const picked = useDesignPanelStore((state) => state.leftTab);
-  const tabs = tabsForMode(host.get(designEditor.leftTabs), mode);
+  const keep = host.find(designEditor.modePanels, mode)?.keepTabs;
+  const tabs = tabsForMode(host.get(designEditor.leftTabs), mode, keep);
   return { tabs, current: tabs.find((tab) => tab.id === picked) ?? tabs[0] };
 }

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { BoxSelect, ChevronsRight, LayoutGrid, PencilRuler, X } from "lucide-react";
 
-import { ER_MODE_ID } from "../../mode/er-mode";
+import { ER_MODE_ID } from "../../mode/er-mode.constants";
 import { Button, Tabs, TabsContent, TabsList, TabsTrigger } from "@shared/ui/kit";
 import { useEngine, useEngineState, FloatingPanel } from "@canvas-ui";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";

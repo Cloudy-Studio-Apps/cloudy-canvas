@@ -1,5 +1,5 @@
 export { STYLEGUIDE_ALLOWED_COMMANDS } from "./styleguide-allowed-commands";
-export { STYLEGUIDE_MODE } from "./styleguide-mode";
+export { styleguideIsolate } from "./styleguide-isolate";
 export {
   STYLEGUIDE_COMMANDS,
   STYLEGUIDE_MODE_ID,

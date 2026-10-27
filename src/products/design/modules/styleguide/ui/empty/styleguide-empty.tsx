@@ -3,8 +3,7 @@ import { useMemo, useSyncExternalStore } from "react";
 
 import { TokenStore } from "@canvas";
 import { useEditorModules } from "@canvas-ui";
-import { STYLEGUIDE_MODE_ID } from "../../mode/styleguide-mode.constants";
-import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
+import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useCreateVariable, useVariablesWindowOpen } from "../../../variables/ui";
 import { Button, EmptyState } from "@shared/ui/kit";
 import { useStyleguide } from "../hooks/use-styleguide";
@@ -12,14 +11,13 @@ import { useSystemPage } from "../hooks/use-system-page";
 import { styleguideStartActions } from "../styleguide.points";
 
 /**
- * What the Design system mode shows while there's no system page (an `overlays` entry): with no
+ * What the Design system mode shows while there's no system page (an overlay of the mode): with no
  * tokens, a way to start (the contributed `styleguideStartActions`, such as the color wizard,
  * then a color, later imported tokens); with tokens from before the view existed, a button that
  * sets it up (and the start actions too while there's no color).
  */
 export function StyleguideEmpty() {
   const engine = useDesignEngine();
-  const inMode = useDesignState((state) => state.mode === STYLEGUIDE_MODE_ID);
   const page = useSystemPage();
   const { styleguide, categories } = useStyleguide();
   const createVariable = useCreateVariable();
@@ -41,7 +39,7 @@ export function StyleguideEmpty() {
   );
   // The Variables window (an overlay too) opens over the canvas instead.
   const windowOpen = useVariablesWindowOpen();
-  if (!inMode || page || windowOpen) return null;
+  if (page || windowOpen) return null;
   const started = actions.map(({ id, component: Action }, i) => (
     <Action key={id} primary={i === 0} />
   ));

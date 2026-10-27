@@ -1,6 +1,8 @@
 export type * from "./editor-points.types";
 export type * from "./mode-toolbar.types";
+export type * from "./editor-mode";
 export { createEditorPoints } from "./create-editor-points";
+export { defineEditorMode, registerEditorMode } from "./editor-mode";
 export {
   EditorModulesContext,
   useEditorModules,

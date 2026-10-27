@@ -7,6 +7,7 @@ import type { createId, defineModule, definePoint, PluginManifest } from "@share
 import type { notifyError, toast } from "@shared/stores/toast-store";
 import type { boardLibrary } from "@board/modules/library/ui";
 import type { boardEditor } from "@board/ui";
+import type * as boardModules from "@board/ui/modules";
 import type * as canvasApi from "@canvas";
 import type * as design from "@design";
 import type * as effectsUi from "@design/modules/effects/ui";
@@ -127,6 +128,9 @@ export interface PluginApi {
     erConstructs: typeof board.boardErConstructs;
     defineErConstruct: typeof board.defineErConstruct;
     requireBoard: typeof board.requireBoard;
+    /** A board mode in one object (`defineBoardMode`), registered with `registerMode(host, mode)`. */
+    defineMode: typeof boardModules.defineBoardMode;
+    registerMode: typeof boardModules.registerBoardMode;
     palette: Pick<
       typeof board,
       "STICKY_COLORS" | "SHAPE_FILLS" | "SHAPE_STROKES" | "LINE_COLORS" | "INK_COLOR"
@@ -157,6 +161,12 @@ export interface DesignPluginApi {
    * `leftTabs`, `propertySections` and `mainMenu`.
    */
   editor: typeof designEditor;
+  /**
+   * A design mode in one object (`defineDesignMode`: canvas behavior, toolbar, rail tabs, sidebar,
+   * overlays, commands, enter/leave), registered with `registerMode(host, mode)`.
+   */
+  defineMode: typeof designModules.defineDesignMode;
+  registerMode: typeof designModules.registerDesignMode;
   migrations: typeof design.designMigrations;
   /** Agent tools on the open design, one group per module (`requireDesign` gets the design). */
   mcpTools: typeof design.designMcpTools;

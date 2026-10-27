@@ -1,10 +1,11 @@
 import { defineModule } from "@shared/core";
+import { registerDesignMode } from "@design/ui/modules";
 import { designMcpTools } from "../../design-points";
 import { BUILT_IN_CATEGORIES } from "./categories";
 import { styleguideTools } from "./mcp";
 import { registerStyleguideCanvas } from "./styleguide.canvas";
 import { registerStyleguideCommands } from "./styleguide.commands";
-import { registerStyleguideMode } from "./styleguide.mode";
+import { styleguideMode } from "./styleguide.mode";
 import { styleguideCategories, styleguideTemplates } from "./styleguide.points";
 import { registerStyleguideSections } from "./styleguide.sections";
 import { BUILT_IN_TEMPLATES } from "./templates";
@@ -34,7 +35,7 @@ export const styleguideModule = defineModule({
         }),
     });
 
-    registerStyleguideMode(host);
+    registerDesignMode(host, styleguideMode);
     registerStyleguideCommands(host);
     registerStyleguideSections(host);
   },

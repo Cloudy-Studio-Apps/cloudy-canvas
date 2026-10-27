@@ -162,21 +162,26 @@ before and after changing `requires`/`after`, since chained hooks run in that or
 
 ## Modes
 
-A mode is described by one definition (`defineDesignMode` / `defineBoardMode`, arriving in phase 5b of
-the spec) registered with one call, `registerMode(host, mode)`, which fans out to the existing points.
+A mode is one definition, `defineDesignMode({…})` (`@design/ui/modules`) or `defineBoardMode({…})`
+(`@board/ui/modules`), in the module's `<name>.mode.ts`, registered with one call,
+`registerDesignMode(host, mode)` / `registerBoardMode(host, mode)` (plugins: `api.design.defineMode`,
+`api.design.registerMode`, the same on `api.board`). It fans out to the existing points through
+`@canvas-ui`'s `registerEditorMode`. Catalog, the Design system and ER are written this way.
 
-| Field                                                                         | What it does                                                                           |
-| ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `tool`, `tools`, `allowTools`, `isolate`, `faded`, `commands`, `keybindings`  | how the canvas behaves in it (`canvas.modes`, `canvas.tools`)                          |
-| `label`, `description`, `icon`, `order`                                       | its button in the mode switcher                                                        |
-| `toolbar`                                                                     | items (tools, commands, custom `run`, dividers) drawn by `ModeToolbar`, or a component |
-| `rail.tabs`, `rail.keep`                                                      | **only** these left tabs while it's on (one is fine), plus kept ones                   |
-| `sidebar`                                                                     | the properties panel: a component, optionally keeping some sections                    |
-| `overlays`, `hostCommands` (with `run`), `onEnter`/`onLeave`, `hooks`, `menu` | the rest of its UI and behavior                                                        |
+| Field                                                                        | What it does                                                                                                     |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `tool`, `tools`, `allowTools`, `isolate`, `faded`, `commands`, `keybindings` | how the canvas behaves in it (`canvas.modes`, `canvas.tools`)                                                    |
+| `label`, `description`, `icon`, `order`                                      | its button in the mode switcher                                                                                  |
+| `toolbar`                                                                    | an item list or `{ useItems }` (items that depend on state), drawn by `ModeToolbar`, or `{ component }`          |
+| `hostCommands`                                                               | its commands; `run(engine)` handles one (left out when a hook needs React context to)                            |
+| `overlays`                                                                   | DOM over the canvas, mounted only while it's on                                                                  |
+| `onEnter`/`onLeave`, `hooks`                                                 | work on switching in or out; session hooks for as long as the editor is open                                     |
+| `rail.tabs`, `rail.keep` (design)                                            | **only** these left tabs while it's on, plus the default tabs it keeps                                           |
+| `sidebar` (design)                                                           | the properties panel while it's on: a component, or `{ component, keepSections }` to keep some sections under it |
 
-**The rail rule:** in the default mode the rail shows every tab without `modes`; in any other mode it
-shows only the mode's `rail.tabs` plus `rail.keep`. The rail's fixed buttons (main menu, agents, panel
-toggle) always stay.
+**The rail rule** (`tabsForMode`): in the default mode the rail shows every tab without `modes`; in any
+other mode it shows only the mode's `rail.tabs` plus `rail.keep`. The rail's fixed buttons (main menu,
+agents, panel toggle) always stay.
 
 ## Reusable pieces
 

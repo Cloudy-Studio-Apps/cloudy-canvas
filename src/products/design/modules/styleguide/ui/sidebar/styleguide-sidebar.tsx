@@ -8,7 +8,7 @@ import { ModesSwitch } from "./modes-switch";
 import { SystemOverview } from "./system-overview";
 
 /**
- * The properties panel in the Design system mode (its `modeSidebars` entry): for the category or
+ * The properties panel in the Design system mode (its `sidebar`): for the category or
  * group picked, its template and options (a category's default; a group's override); otherwise
  * the view's settings and export.
  */

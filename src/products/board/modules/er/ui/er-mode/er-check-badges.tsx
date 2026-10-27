@@ -1,15 +1,14 @@
 import { useMemo, useReducer, useEffect } from "react";
 import { CircleX, TriangleAlert } from "lucide-react";
 
-import { ER_MODE_ID } from "../../mode/er-mode";
 import type { ErIssue } from "../../model/check/check-er.types";
-import { useEngine, useEngineState } from "@canvas-ui";
+import { useEngine } from "@canvas-ui";
 import { cn } from "@shared/ui/kit";
 import { useErModel, useErVersion } from "../model";
 import type { ErShapeFindings } from "./er-check-badges.types";
 
 /**
- * While the ER mode is on, a badge at the top-right corner of each shape the Check diagram has an
+ * While the ER mode is on (an overlay of the mode), a badge at the top-right corner of each shape the Check diagram has an
  * error or warning about (every diagram on the board); hovering lists them, a click selects the
  * shape. The badges follow the view.
  */
@@ -17,18 +16,16 @@ export function ErCheckBadges() {
   const engine = useEngine();
   const er = useErModel();
   const version = useErVersion();
-  const inMode = useEngineState((state) => state.mode === ER_MODE_ID);
   const [, redraw] = useReducer((n: number) => n + 1, 0);
 
-  useEffect(() => (inMode ? engine.onViewChange(redraw) : undefined), [engine, inMode]);
+  useEffect(() => engine.onViewChange(redraw), [engine]);
 
   const findings = useMemo(
-    () => (inMode ? byShape(er.diagrams().flatMap((d) => er.diagram(d.id).check())) : []),
+    () => byShape(er.diagrams().flatMap((d) => er.diagram(d.id).check())),
     // The version re-reads the diagrams when any ER shape changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [er, inMode, version],
+    [er, version],
   );
-  if (!inMode) return null;
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">

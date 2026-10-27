@@ -54,12 +54,17 @@ export interface ToolSidebarEntry {
 }
 
 /**
- * What the properties panel shows instead of the Design/Prototype tabs while a mode is on (e.g.
- * the Catalog mode's brochure settings and page).
+ * How the panels look while a mode is on: the properties panel's sidebar instead of the
+ * Design/Prototype tabs (e.g. the Catalog's brochure settings), with some of the usual sections
+ * kept under it, and default-mode rail tabs kept next to the mode's own.
  */
-export interface ModeSidebarEntry {
+export interface ModePanelEntry {
   mode: string;
-  component: ComponentType;
+  sidebar?: ComponentType;
+  /** Property sections (ids) shown under the sidebar. */
+  keepSections?: readonly string[];
+  /** Rail tabs of the default mode (ids) kept in the rail while the mode is on. */
+  keepTabs?: readonly string[];
 }
 
 /**
@@ -102,6 +107,6 @@ export interface DesignEditorPoints extends EditorPoints {
   propertySections: ExtensionPoint<PropertySectionEntry>;
   mainMenu: ExtensionPoint<MainMenuGroup>;
   toolSidebars: ExtensionPoint<ToolSidebarEntry>;
-  modeSidebars: ExtensionPoint<ModeSidebarEntry>;
+  modePanels: ExtensionPoint<ModePanelEntry>;
   layerIcons: ExtensionPoint<LayerIconEntry>;
 }

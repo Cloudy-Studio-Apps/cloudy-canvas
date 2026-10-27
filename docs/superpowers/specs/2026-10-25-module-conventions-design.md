@@ -632,7 +632,7 @@ edits files.
    (§7.6); ER points → er (§7.4); `pages ↔ layers` point (§8 #1): layers requires only core, pages requires core and layers.
 4. **Split big module files** (done 2026-10-26; styleguide too) (§7.4, §7.5) into `.commands.ts`, `.sections.ts`, `.canvas.ts`,
    `.menu.ts`, `.migration.ts`.
-5. **Public-API imports + enforcement** (done 2026-10-26; 5a done 2026-10-26, 5b open). Fix §8 #2–#7, `CORE_MODULES`/`FEATURE_MODULES` lists, the
+5. **Public-API imports + enforcement** (done 2026-10-26; 5a done 2026-10-26, 5b done 2026-10-27). Fix §8 #2–#7, `CORE_MODULES`/`FEATURE_MODULES` lists, the
    ESLint rules and `check:modules`. Write every module's `README.md`.
    - **5a. Shared pieces** (§16): `ColorField`, `chooseImageAsset`, `ModeToolbar`,
      `useElementThumbnail`, `AnchorPicker` in `@canvas-ui`; `SelectField`/`CheckboxField`/
@@ -905,6 +905,15 @@ Findings:
   (`useArrangeOnEnter`, `useStyleguideScope`).
 
 ### 15.2 Proposal: `defineDesignMode` / `defineBoardMode`
+
+**Done in 5b (2026-10-27), with these differences:** the base is `registerEditorMode(host, points,
+mode)` in `@canvas-ui`, and the helpers are `registerDesignMode`/`registerBoardMode` (plugins see
+them as `api.design.registerMode`/`api.board.registerMode`). `toolbar` is an item list,
+`{ useItems }` (a hook, for items that depend on state) or `{ component }`. A host command's `run`
+is optional (Catalog's PDF export needs React context, so a hook handles it). Design's
+`modeSidebars` point became `modePanels` (`sidebar`, `keepSections`, `keepTabs`). Not done: `menu`
+and board's `sidePanel` (nothing needs them yet). ER's palette stays a normal overlay, since it
+also shows outside the mode.
 
 One object describes the whole mode; one call registers it into the same points as today (nothing in
 the editor changes, the helper just fans out). The engine half is a plain `CanvasMode`, so the

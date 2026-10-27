@@ -1,5 +1,5 @@
 import { ER_MODE_COMMANDS } from "../../mode/er-mode-commands";
-import { ER_MODE_ID } from "../../mode/er-mode";
+import { ER_MODE_ID } from "../../mode/er-mode.constants";
 import { erClickActions } from "../../model/er-add-actions";
 import { rectCenter } from "@canvas";
 import { FloatingPanel, useEngine, useEngineState } from "@canvas-ui";

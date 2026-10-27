@@ -85,6 +85,7 @@ import {
   STICKY_COLORS,
 } from "@board";
 import { boardEditor } from "@board/ui";
+import { defineBoardMode, registerBoardMode } from "@board/ui/modules";
 import { boardLibrary } from "@board/modules/library/ui";
 import {
   polylineNetwork,
@@ -146,7 +147,15 @@ import {
   LOCAL_UNIFORMS,
   NOISE_GLSL,
 } from "@design";
-import { allKinds, designEditor, noNodes, ofType, someNodes } from "@design/ui/modules";
+import {
+  allKinds,
+  defineDesignMode,
+  designEditor,
+  noNodes,
+  ofType,
+  registerDesignMode,
+  someNodes,
+} from "@design/ui/modules";
 import {
   defineEffectType,
   designEffectTypes,
@@ -278,11 +287,15 @@ export function createPluginApi(
         erConstructs: boardErConstructs,
         defineErConstruct,
         requireBoard,
+        defineMode: defineBoardMode,
+        registerMode: registerBoardMode,
         palette: { STICKY_COLORS, SHAPE_FILLS, SHAPE_STROKES, LINE_COLORS, INK_COLOR },
       },
       design: {
         canvas: designCanvas,
         editor: designEditor,
+        defineMode: defineDesignMode,
+        registerMode: registerDesignMode,
         migrations: designMigrations,
         mcpTools: designMcpTools,
         requireDesign,

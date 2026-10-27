@@ -1,9 +1,13 @@
 import { Palette } from "lucide-react";
 
-import type { ModuleHost } from "@shared/core";
-import { designEditor } from "@design/ui/modules/design-editor-points";
-import { designCanvas } from "../../design-points";
-import { STYLEGUIDE_MODE, STYLEGUIDE_MODE_ID, STYLEGUIDE_TOOL, StyleguideTool } from "./mode";
+import { defineDesignMode } from "@design/ui/modules";
+import {
+  STYLEGUIDE_ALLOWED_COMMANDS,
+  STYLEGUIDE_MODE_ID,
+  STYLEGUIDE_TOOL,
+  StyleguideTool,
+  styleguideIsolate,
+} from "./mode";
 import { StyleguideEmpty } from "./ui/empty/styleguide-empty";
 import { useStyleguideScope } from "./ui/hooks/use-styleguide-scope";
 import { useStyleguideSelection } from "./ui/hooks/use-styleguide-selection";
@@ -11,42 +15,26 @@ import { StyleguideSidebar } from "./ui/sidebar/styleguide-sidebar";
 import { StyleguideTab } from "./ui/tab/styleguide-tab";
 
 /**
- * The Design system mode: its canvas mode and tool, its scope and selection, the empty state, its
- * rail tab and sidebar.
+ * The Design system mode: the system page's sections (one live element per category) can be
+ * pointed at, selected and exported, never edited; the select-only tool and the hand work. Its
+ * rail tab, sidebar and empty state; `useStyleguideScope` shows the system page while it's on
+ * (and turns it on when someone follows another there), `useStyleguideSelection` follows picks.
  */
-export function registerStyleguideMode(host: ModuleHost): void {
-  // The Design system mode.
-  host.contribute(designCanvas.modes, STYLEGUIDE_MODE);
-  host.contribute(designCanvas.tools, {
-    id: STYLEGUIDE_TOOL,
-    create: (ctx) => new StyleguideTool(ctx),
-  });
-  host.contribute(designEditor.modes, {
-    id: STYLEGUIDE_MODE_ID,
-    label: "Design system",
-    description: "Your variables and styles as a living style guide.",
-    icon: Palette,
-    order: 20,
-  });
-  host.contribute(designEditor.sessionHooks, {
-    id: "styleguide.scope",
-    use: useStyleguideScope,
-  });
-  host.contribute(designEditor.sessionHooks, {
-    id: "styleguide.selection",
-    use: useStyleguideSelection,
-  });
-  host.contribute(designEditor.overlays, { id: "styleguide.empty", component: StyleguideEmpty });
-  host.contribute(designEditor.leftTabs, {
-    id: "styleguide",
-    label: "Design system",
-    icon: Palette,
-    order: 10,
-    modes: [STYLEGUIDE_MODE_ID],
-    component: StyleguideTab,
-  });
-  host.contribute(designEditor.modeSidebars, {
-    mode: STYLEGUIDE_MODE_ID,
-    component: StyleguideSidebar,
-  });
-}
+export const styleguideMode = defineDesignMode({
+  id: STYLEGUIDE_MODE_ID,
+  label: "Design system",
+  description: "Your variables and styles as a living style guide.",
+  icon: Palette,
+  order: 20,
+  tool: STYLEGUIDE_TOOL,
+  tools: [{ id: STYLEGUIDE_TOOL, create: (ctx) => new StyleguideTool(ctx) }],
+  allowTools: ["hand"],
+  isolate: styleguideIsolate,
+  commands: STYLEGUIDE_ALLOWED_COMMANDS,
+  rail: {
+    tabs: [{ id: "styleguide", label: "Design system", icon: Palette, component: StyleguideTab }],
+  },
+  sidebar: StyleguideSidebar,
+  overlays: [StyleguideEmpty],
+  hooks: [useStyleguideScope, useStyleguideSelection],
+});

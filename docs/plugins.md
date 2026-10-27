@@ -290,6 +290,17 @@ Tools that don't draw a box (like the line tool, which draws between two ends) e
 
 Design agent tools are groups contributed to `api.design.mcpTools`, like the board's (`run(host, args)` gets the design host; `api.design.requireDesign(host)` is the open design, `{ engine, path, … }`). A kind agents may create with `create_nodes` sets `creatable = true`, lists its own fields in `specProperties` and overrides `nodeFromSpec(spec, index, context)` (`BoxShapeKind` already does: `w`/`h` or its click size, named with `context.nameFor(label)`); `update_nodes` checks patches with its `completePatch` (call `super.completePatch` for the shared fields: paints, opacity, parent).
 
+## Modes
+
+A mode (a way of working with its own tools, toolbar and panels, like the Catalog or the ER mode) is
+one object, `api.design.defineMode({…})` or `api.board.defineMode({…})`, registered from your
+module with `api.design.registerMode(host, mode)` (or `api.board.registerMode`). It gives the canvas
+part (`tool`, `tools`, `allowTools`, `isolate`, `faded`, `commands`, `keybindings`), the switcher
+entry (`id`, `label`, `description`, `icon`, `order`), `toolbar` (items, `{ useItems }` or
+`{ component }`, drawn with `ModeToolbar`), `hostCommands` with `run(engine)`, `overlays` (shown
+only while the mode is on), `onEnter`/`onLeave`, `hooks`, and for designs `rail` (the left tabs
+while it's on) and `sidebar` (the properties panel). See [Modes](modules.md#modes).
+
 ## Rules
 
 - **Name everything after the plugin:** element types, tool ids, option keys and agent tool names, so they don't collide with the app or other plugins. When a plugin collides (a type, tool or command that's already taken, an option given twice), it's turned off with the reason shown in Settings › Plugins, and the board opens without it.
