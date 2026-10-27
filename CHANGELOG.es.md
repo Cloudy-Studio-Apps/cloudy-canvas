@@ -5,6 +5,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ## Sin publicar
 
+## 0.5.0 - 2026-10-27
+
 ### Novedades
 
 - Cloudy Canvas ya está disponible en español. El idioma sigue al de tu sistema, o puedes elegirlo

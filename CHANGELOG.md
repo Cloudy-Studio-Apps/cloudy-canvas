@@ -5,6 +5,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ## Unreleased
 
+## 0.5.0 - 2026-10-27
+
 ### New
 
 - Cloudy Canvas is now available in Spanish. The language follows your system, or you can choose
