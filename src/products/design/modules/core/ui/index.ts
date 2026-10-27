@@ -2,4 +2,4 @@
 // Styles section) and the style types point.
 export * from "./styles";
 export type * from "./core.points.types";
-export { designStyleTypes } from "./core.points";
+export { designStarters, designStyleTypes } from "./core.points";

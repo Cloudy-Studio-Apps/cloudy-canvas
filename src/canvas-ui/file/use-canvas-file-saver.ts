@@ -150,6 +150,7 @@ export function useCanvasFileSaver<O extends object>(
     description: meta.description,
     noun,
     path: info && !draft ? info.path : null,
+    isNew: initialInfo === null,
     draft,
     dirty,
     status,

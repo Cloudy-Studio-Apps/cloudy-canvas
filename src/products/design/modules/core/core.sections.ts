@@ -18,6 +18,7 @@ import {
 } from "./ui/sections";
 import { useFlipCommands } from "./ui/use-flip-commands";
 import { usePanelCommands } from "./ui/use-panel-commands";
+import { useDesignStartStarter } from "./ui/use-design-start-starter";
 import { useStartMode } from "./ui/use-start-mode";
 import { useViewCommands } from "./ui/use-view-commands";
 import { t } from "./core.i18n";
@@ -98,6 +99,7 @@ export function registerCoreSections(host: ModuleHost): void {
     { id: "panel-commands", use: usePanelCommands },
     { id: "hide-ui", use: useHideUiCommand },
     { id: "start-mode", use: useStartMode },
+    { id: "start-starter", use: useDesignStartStarter },
   );
   host.contribute(designEditor.contextMenu, {
     id: "transform",

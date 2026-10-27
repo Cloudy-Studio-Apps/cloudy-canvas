@@ -10,8 +10,8 @@ const STYLES: Record<FileType, FileTypeStyle> = {
 };
 
 /** Accent-tinted icon chip for a file type. */
-export function FileTypeIcon({ type, size = "md", className }: FileTypeIconProps) {
-  const { icon: Icon, className: tint } = STYLES[type];
+export function FileTypeIcon({ type, size = "md", style, className }: FileTypeIconProps) {
+  const { icon: Icon, className: tint } = style ?? STYLES[type];
   return (
     <span
       aria-hidden="true"

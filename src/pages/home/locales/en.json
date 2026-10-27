@@ -1,22 +1,41 @@
 {
   "create": {
-    "title": "Create new",
-    "subtitle": "Start from a blank board, design or catalog.",
+    "label": "Create new",
     "open": "Open file…",
-    "board": "New Board",
-    "boardHint": "Brainstorm, map ideas, sticky notes",
-    "design": "New Design",
-    "designHint": "Design interfaces and visuals",
-    "catalog": "New Catalog",
-    "catalogHint": "Brochures and catalogs to print, page by page"
+    "openHint": ".cboard, .cdesign or .fig · {shortcut}",
+    "board": "New board",
+    "boardHint": "Sticky notes, diagrams, ER",
+    "design": "New design",
+    "designHint": "Interfaces and visuals",
+    "catalog": "New catalog",
+    "catalogHint": "Print brochures"
+  },
+  "welcome": {
+    "title": "Welcome to Cloudy Canvas",
+    "tagline": "Boards for thinking out loud, designs for building it, catalogs for printing it. Everything is a local file you own.",
+    "boardHint": "Sticky notes, diagrams, ER and database schemas",
+    "designHint": "Frames, layers, variables and auto layout",
+    "catalogHint": "Print brochures, page by page",
+    "drop": "Or drop a .cboard, .cdesign or Figma .fig file anywhere on this window."
+  },
+  "continue": {
+    "title": "Continue where you left off",
+    "open": "Open"
+  },
+  "seals": {
+    "caption": "Hover me",
+    "label": "The seals. Open About Cloudy Canvas",
+    "hide": "Hide the seals",
+    "hidden": "Seals hidden",
+    "restore": "Bring them back"
+  },
+  "starters": {
+    "title": "Start from",
+    "label": "New {type} from “{name}”"
   },
   "drop": {
     "title": "Drop to open",
     "hint": "Boards (.cboard), designs (.cdesign) and Figma files (.fig)"
-  },
-  "empty": {
-    "title": "No files yet",
-    "hint": "Create your first board or design."
   },
   "actions": {
     "copyPath": "Copy path",
@@ -39,7 +58,10 @@
     "missing": "Missing",
     "draft": "Draft",
     "more": "More actions for {name}",
-    "justNow": "just now"
+    "justNow": "just now",
+    "catalog": "Catalog",
+    "draftLocation": "Draft, not saved yet",
+    "missingLocation": "Moved or deleted"
   },
   "missing": {
     "title": "“{name}” was moved or deleted",
@@ -60,10 +82,22 @@
     "all": "All",
     "boards": "Boards",
     "designs": "Designs",
+    "catalogs": "Catalogs",
     "sort": {
       "recent": "Recently opened",
       "edited": "Last edited",
       "name": "Name"
+    },
+    "view": {
+      "label": "View",
+      "grid": "Grid",
+      "list": "List"
+    },
+    "columns": {
+      "name": "Name",
+      "kind": "Type",
+      "location": "Location",
+      "edited": "Edited"
     }
   },
   "top": {

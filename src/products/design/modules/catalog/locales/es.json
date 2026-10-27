@@ -170,5 +170,11 @@
     "export_one": "Exportar PDF · {count} página",
     "export_other": "Exportar PDF · {count} páginas",
     "preview": "Vista previa"
+  },
+  "starters": {
+    "a4Brochure": {
+      "label": "Folleto A4",
+      "description": "Cuatro páginas A4 en blanco, abiertas en el modo Catálogo"
+    }
   }
 }

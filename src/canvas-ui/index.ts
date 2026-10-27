@@ -24,10 +24,12 @@ export type { ZoomMenuProps } from "./components/zoom-menu.types";
 export type * from "./modules";
 export type * from "./overlay";
 export type * from "./share";
+export type * from "./starters";
 export type * from "./stickers";
 export type * from "./thumbnails";
 export { createActiveFile, useAgentFile } from "./agent";
 export { EXPORT_THEME_SCOPE, readCanvasTheme, readExportCanvasTheme } from "./canvas-theme";
+export { useStartStarter } from "./starters";
 export { StickerWheel } from "./stickers";
 export {
   ElementThumbnail,

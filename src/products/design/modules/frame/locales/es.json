@@ -23,5 +23,15 @@
     "instagramStory": "Historia de Instagram",
     "linkedinPost": "Publicación de LinkedIn",
     "youtubeThumbnail": "Miniatura de YouTube"
+  },
+  "starters": {
+    "mobileApp": {
+      "label": "App móvil",
+      "description": "Un marco de iPhone 16 para diseñar pantallas de una app"
+    },
+    "desktopLanding": {
+      "label": "Página de escritorio",
+      "description": "Un marco de escritorio de 1440 × 1024 para una página web"
+    }
   }
 }

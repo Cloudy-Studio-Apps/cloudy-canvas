@@ -1,4 +1,5 @@
 import { displayName, type FileInfo } from "@shared/core";
+import type { HomeFileKind } from "./file-kind.types";
 import type { RecentFilesFilter } from "./filter-recent-files.types";
 
 export const DEFAULT_RECENT_FILES_FILTER: RecentFilesFilter = {
@@ -9,12 +10,16 @@ export const DEFAULT_RECENT_FILES_FILTER: RecentFilesFilter = {
 
 const byName = new Intl.Collator(undefined, { sensitivity: "base", numeric: true });
 
-/** The recent files that match the search and type, in the chosen order. */
-export function filterRecentFiles(files: FileInfo[], filter: RecentFilesFilter): FileInfo[] {
+/** The recent files that match the search and kind (`kindOf`), in the chosen order. */
+export function filterRecentFiles(
+  files: FileInfo[],
+  filter: RecentFilesFilter,
+  kindOf: (file: FileInfo) => HomeFileKind,
+): FileInfo[] {
   const query = filter.query.trim().toLowerCase();
   const matching = files.filter(
     (file) =>
-      (filter.type === "all" || file.type === filter.type) &&
+      (filter.type === "all" || kindOf(file) === filter.type) &&
       (!query || searchText(file).includes(query)),
   );
   switch (filter.sort) {

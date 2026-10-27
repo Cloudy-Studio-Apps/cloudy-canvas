@@ -2,6 +2,7 @@
 // modules' points), file loading and saving, and the open design for agents. It's also the
 // editor's public API: what modules import by path (`@design/ui/components/panel`, …) and plugins
 // get as `api.design`, with the engine barrel (`@design`).
+export type * from "./stores/design-mode-store.types";
 export type * from "./stores/image-crop-store.types";
 export * from "./components/panel";
 export * from "./hooks";
@@ -11,4 +12,5 @@ export { DesignEditor } from "./design-editor";
 export { DesignEditorPage } from "./design-editor-page";
 export { useDesignEngine, useDesignState } from "./design-engine-context";
 export { importFigmaFile, importFigmaWithLoading } from "./file";
+export { useDesignModeStore } from "./stores/design-mode-store";
 export { useImageCropStore } from "./stores/image-crop-store";

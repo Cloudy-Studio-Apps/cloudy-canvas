@@ -3,6 +3,7 @@ import { Code, Copy } from "lucide-react";
 import { APP_REPOSITORY_URL } from "@shared/core";
 import { CheckUpdatesButton } from "@shared/app-updates";
 import { SealLogo } from "@shared/ui/brand/seal-logo";
+import { SealsVideo } from "@shared/ui/brand/seals-video";
 import { Button } from "@shared/ui/components/ui/button";
 import {
   Dialog,
@@ -37,9 +38,14 @@ export function AboutDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-h-[85vh] gap-0 overflow-y-auto p-0 sm:max-w-md">
-        <DialogHeader className="items-center gap-2 px-6 pt-8 pb-5 text-center sm:text-center">
-          <SealLogo size={80} />
-          <DialogTitle className="text-xl tracking-tight">Cloudy Canvas</DialogTitle>
+        <div className="aspect-video shrink-0 overflow-hidden border-b bg-surface-sunken">
+          <SealsVideo playing={open} />
+        </div>
+        <DialogHeader className="items-center gap-2 px-6 pt-6 pb-5 text-center sm:text-center">
+          <DialogTitle className="flex items-center gap-2 text-xl tracking-tight">
+            <SealLogo size={32} />
+            Cloudy Canvas
+          </DialogTitle>
           <DialogDescription>{TAGLINE}</DialogDescription>
           <p className="text-xs text-muted-foreground">
             {details.length > 0 ? details.join(" · ") : t("reading")}

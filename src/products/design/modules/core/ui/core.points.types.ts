@@ -1,7 +1,7 @@
 import type { ComponentType } from "react";
 
 import type { StyleRecord } from "@canvas";
-import type { ExtensionIcon } from "@canvas-ui";
+import type { CanvasStarter, ExtensionIcon } from "@canvas-ui";
 import type { DesignEngine } from "../../../design-engine.types";
 
 /** A style's look, small (a row's icon, a chip). */
@@ -37,3 +37,6 @@ export interface StyleTypeEntry {
   summary: (style: StyleRecord) => string;
   Editor: ComponentType<StyleEditorProps>;
 }
+
+/** A ready-made start for a new design (Home's "Start from"); see `CanvasStarter`. */
+export type DesignStarter = CanvasStarter<DesignEngine>;

@@ -3,6 +3,7 @@ import { Database } from "lucide-react";
 import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
 import { boardMcpTools, boardCanvas } from "../../board-points";
+import { boardStarters } from "../core/ui";
 import { dbTools } from "./db.mcp";
 import { DbTool } from "./db.tool";
 import { DbEnumKind } from "./enum";
@@ -12,6 +13,7 @@ import { DbTableKind } from "./table";
 import { DbOptions } from "./ui/db-options";
 import { DbPanel } from "./ui/db-panel";
 import { SchemaButton } from "./ui/schema-button";
+import { databaseSchemaStarter } from "./ui/starters/database-schema.starter";
 import * as dbApi from ".";
 import * as dbUi from "./ui";
 
@@ -26,6 +28,7 @@ export const dbModule = defineModule({
   exports: { ...dbApi, ...dbUi },
   register(host) {
     host.contribute(boardCanvas.kinds, new DbTableKind(), new DbEnumKind());
+    host.contribute(boardStarters, databaseSchemaStarter);
     host.contribute(boardCanvas.tools, {
       id: "db",
       create: (ctx) => new DbTool(ctx),

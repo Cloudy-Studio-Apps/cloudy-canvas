@@ -1,32 +1,21 @@
-import { displayName, type FileInfo } from "@shared/core";
-import { FileTypeIcon } from "@shared/ui/components/file-type-icon";
+import { displayName } from "@shared/core";
 import { Badge } from "@shared/ui/components/ui/badge";
 import { cn } from "@shared/ui/lib/utils";
 import { formatRelativeTime } from "../format-relative-time";
+import { KIND_LABEL } from "../file-kind";
 import { useFileActions } from "../use-file-actions";
-import { useFileThumbnail } from "../use-file-thumbnail";
 import { FileActionsMenu } from "./file-actions-menu";
 import { FileContextMenu } from "./file-context-menu";
+import { FileKindIcon } from "./file-kind-icon";
+import { FilePreview } from "./file-preview";
 import { MissingFilePopover } from "./missing-file-popover";
 import type { FileCardProps } from "./file-card.types";
 import { t } from "../home.i18n";
 
-const PREVIEW_TINT: Record<FileInfo["type"], string> = {
-  board: "bg-board-soft/60",
-  design: "bg-design-soft/60",
-};
-
-const TYPE_LABEL: Record<FileInfo["type"], string> = {
-  board: t("card.board"),
-  design: t("card.design"),
-};
-
-export function FileCard({ file, missing, onOpen }: FileCardProps) {
+export function FileCard({ file, kind, missing, onOpen }: FileCardProps) {
   const actions = useFileActions({ file, missing, onOpen });
-  const typeLabel = TYPE_LABEL[file.type];
+  const typeLabel = KIND_LABEL[kind];
   const name = displayName(file);
-  const thumbnail = useFileThumbnail(file.id);
-  const showThumbnail = thumbnail !== null && !missing;
 
   const card = (
     // eslint-disable-next-line no-restricted-syntax -- bespoke: Home's file card with its thumbnail
@@ -45,24 +34,9 @@ export function FileCard({ file, missing, onOpen }: FileCardProps) {
         missing && "border-dashed",
       )}
     >
-      <div
-        className={cn(
-          "flex aspect-[16/10] items-center justify-center overflow-hidden",
-          missing ? "bg-surface-sunken" : PREVIEW_TINT[file.type],
-        )}
-      >
-        {showThumbnail ? (
-          <img src={thumbnail} alt="" draggable={false} className="size-full object-cover" />
-        ) : (
-          <FileTypeIcon
-            type={file.type}
-            size="lg"
-            className={cn("bg-surface/70", missing && "opacity-40 grayscale")}
-          />
-        )}
-      </div>
+      <FilePreview file={file} kind={kind} missing={missing} className="aspect-[16/10]" />
       <div className="flex items-center gap-3 border-t p-3.5">
-        <FileTypeIcon type={file.type} size="sm" className={cn(missing && "opacity-40")} />
+        <FileKindIcon kind={kind} size="sm" className={cn(missing && "opacity-40")} />
         <div className="min-w-0 flex-1">
           <p className={cn("truncate text-sm font-medium", missing && "text-muted-foreground")}>
             {name}

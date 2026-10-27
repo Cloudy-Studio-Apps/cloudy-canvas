@@ -18,6 +18,8 @@ import {
 import { boardMcpTools, boardCanvas } from "../../board-points";
 import { t } from "./core.i18n";
 import * as coreApi from ".";
+import * as coreUi from "./ui";
+import { useBoardStartStarter } from "./ui/use-board-start-starter";
 
 /**
  * What every board has whatever its modules: the select, scale (Shift+K; K is the sticker tool) and
@@ -28,7 +30,7 @@ import * as coreApi from ".";
 export const coreModule = defineModule({
   id: "core",
   tier: "core",
-  exports: { ...coreApi },
+  exports: { ...coreApi, ...coreUi },
   register(host) {
     host.contribute(boardCanvas.keybindings, { "tool.scale": [{ key: "k", shift: true }] });
     host.contribute(boardCanvas.hostCommands, {
@@ -36,7 +38,11 @@ export const coreModule = defineModule({
       label: t("hideUi"),
       keys: [{ code: "Backslash", mod: true, label: "\\" }],
     });
-    host.contribute(boardEditor.sessionHooks, { id: "hide-ui", use: useHideUiCommand });
+    host.contribute(
+      boardEditor.sessionHooks,
+      { id: "hide-ui", use: useHideUiCommand },
+      { id: "start-starter", use: useBoardStartStarter },
+    );
     // The board's usual way of working, first in the mode switcher.
     host.contribute(boardEditor.modes, {
       id: DEFAULT_MODE.id,

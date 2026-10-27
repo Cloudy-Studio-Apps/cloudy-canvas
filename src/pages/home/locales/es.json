@@ -1,22 +1,41 @@
 {
   "create": {
-    "title": "Crear nuevo",
-    "subtitle": "Empieza desde una pizarra, un diseño o un catálogo en blanco.",
+    "label": "Crear nuevo",
     "open": "Abrir archivo…",
+    "openHint": ".cboard, .cdesign o .fig · {shortcut}",
     "board": "Nueva pizarra",
-    "boardHint": "Lluvia de ideas, mapas de ideas, notas adhesivas",
+    "boardHint": "Notas adhesivas, diagramas, ER",
     "design": "Nuevo diseño",
-    "designHint": "Diseña interfaces y elementos visuales",
+    "designHint": "Interfaces y elementos visuales",
     "catalog": "Nuevo catálogo",
-    "catalogHint": "Folletos y catálogos para imprimir, página por página"
+    "catalogHint": "Folletos para imprimir"
+  },
+  "welcome": {
+    "title": "Bienvenido a Cloudy Canvas",
+    "tagline": "Pizarras para pensar en voz alta, diseños para construirlo, catálogos para imprimirlo. Todo es un archivo local que es tuyo.",
+    "boardHint": "Notas adhesivas, diagramas, ER y esquemas de bases de datos",
+    "designHint": "Marcos, capas, variables y diseño automático",
+    "catalogHint": "Folletos para imprimir, página por página",
+    "drop": "O suelta un archivo .cboard, .cdesign o .fig de Figma en cualquier parte de esta ventana."
+  },
+  "continue": {
+    "title": "Continúa donde lo dejaste",
+    "open": "Abrir"
+  },
+  "seals": {
+    "caption": "Pasa el cursor",
+    "label": "Las focas. Abrir Acerca de Cloudy Canvas",
+    "hide": "Ocultar las focas",
+    "hidden": "Focas ocultas",
+    "restore": "Traerlas de vuelta"
+  },
+  "starters": {
+    "title": "Empieza desde",
+    "label": "Nuevo archivo de tipo {type} desde «{name}»"
   },
   "drop": {
     "title": "Suelta para abrir",
     "hint": "Pizarras (.cboard), diseños (.cdesign) y archivos de Figma (.fig)"
-  },
-  "empty": {
-    "title": "Aún no hay archivos",
-    "hint": "Crea tu primera pizarra o diseño."
   },
   "actions": {
     "copyPath": "Copiar ruta",
@@ -39,7 +58,10 @@
     "missing": "No encontrado",
     "draft": "Borrador",
     "more": "Más acciones para {name}",
-    "justNow": "justo ahora"
+    "justNow": "justo ahora",
+    "catalog": "Catálogo",
+    "draftLocation": "Borrador, aún sin guardar",
+    "missingLocation": "Movido o eliminado"
   },
   "missing": {
     "title": "«{name}» se movió o se eliminó",
@@ -60,10 +82,22 @@
     "all": "Todos",
     "boards": "Pizarras",
     "designs": "Diseños",
+    "catalogs": "Catálogos",
     "sort": {
       "recent": "Abiertos recientemente",
       "edited": "Editados recientemente",
       "name": "Nombre"
+    },
+    "view": {
+      "label": "Vista",
+      "grid": "Cuadrícula",
+      "list": "Lista"
+    },
+    "columns": {
+      "name": "Nombre",
+      "kind": "Tipo",
+      "location": "Ubicación",
+      "edited": "Editado"
     }
   },
   "top": {

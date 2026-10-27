@@ -170,5 +170,11 @@
     "noColumns": "No columns",
     "noValues": "No values",
     "indexes": "{count} idx"
+  },
+  "starters": {
+    "databaseSchema": {
+      "label": "Database schema",
+      "description": "A shop's tables and their references, as DBML"
+    }
   }
 }

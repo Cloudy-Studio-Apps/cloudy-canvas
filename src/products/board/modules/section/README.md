@@ -3,8 +3,8 @@
 Sections (Shift+S): titled areas that take what's inside along when they move, with the top bar's Sections menu.
 
 - **Tier:** feature
-- **Requires:** —
-- **Contributes:** kinds `SectionKind`; boardCanvas: `alignTarget`, `frames`, `kinds`, `options`, `tools`, `withMembers`; boardEditor: `selectionPanels`, `toolPanels`, `tools`, `topBar`
+- **Requires:** —; uses: sticky
+- **Contributes:** kinds `SectionKind`; boardCanvas: `alignTarget`, `frames`, `kinds`, `options`, `tools`, `withMembers`; boardEditor: `selectionPanels`, `toolPanels`, `tools`, `topBar`; `boardStarters` (Retrospective: Went well, To improve and Actions sections with a sticky each, `ui/starters/`)
 - **Points it owns:** —
 - **MCP tools:** —
 - **Files:** `section.kind.ts`, `section.tool.ts`, `section-members.ts`, `board-sections.ts`, `ui/`.

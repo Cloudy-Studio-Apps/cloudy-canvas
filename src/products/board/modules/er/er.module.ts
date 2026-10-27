@@ -1,6 +1,7 @@
 import { defineModule } from "@shared/core";
 import { boardEditor, registerBoardMode } from "@board/ui/modules";
 import { boardCanvas, boardMcpTools, boardMigrations } from "../../board-points";
+import { boardStarters } from "../core/ui";
 import { BUILT_IN_ER_CONSTRUCTS, BUILT_IN_ER_STANDARDS, erConstructs, erStandards } from "./base";
 import { registerErCanvas } from "./er.canvas";
 import { registerErCommands } from "./er.commands";
@@ -11,6 +12,7 @@ import { registerErSections } from "./er.sections";
 import { enterErMode } from "./mode";
 import { migrateErDiagrams } from "./model";
 import { ErPalette } from "./ui/er-palette";
+import { erDiagramStarter } from "./ui/starters/er-diagram.starter";
 import * as erApi from ".";
 
 /**
@@ -47,5 +49,6 @@ export const erModule = defineModule({
     registerErSections(host);
     host.contribute(boardMigrations, { id: "er.diagrams", migrate: migrateErDiagrams });
     host.contribute(boardMcpTools, { id: "er", tools: () => erTools });
+    host.contribute(boardStarters, erDiagramStarter);
   },
 });

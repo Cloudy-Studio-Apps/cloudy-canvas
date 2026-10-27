@@ -23,5 +23,15 @@
     "instagramStory": "Instagram story",
     "linkedinPost": "LinkedIn post",
     "youtubeThumbnail": "YouTube thumbnail"
+  },
+  "starters": {
+    "mobileApp": {
+      "label": "Mobile app",
+      "description": "An iPhone 16 frame to design app screens in"
+    },
+    "desktopLanding": {
+      "label": "Desktop landing",
+      "description": "A 1440 × 1024 desktop frame for a web page"
+    }
   }
 }

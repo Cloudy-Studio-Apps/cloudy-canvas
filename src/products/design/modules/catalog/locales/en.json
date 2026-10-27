@@ -170,5 +170,11 @@
     "export_one": "Export PDF · {count} page",
     "export_other": "Export PDF · {count} pages",
     "preview": "Preview"
+  },
+  "starters": {
+    "a4Brochure": {
+      "label": "A4 brochure",
+      "description": "Four blank A4 pages, open in the Catalog mode"
+    }
   }
 }

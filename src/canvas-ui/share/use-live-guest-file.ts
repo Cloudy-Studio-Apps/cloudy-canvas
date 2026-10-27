@@ -55,6 +55,7 @@ export function useLiveGuestFile<O extends object>(
       description: meta.description,
       noun,
       path: null,
+      isNew: false,
       draft: false,
       dirty: false,
       status: "idle",

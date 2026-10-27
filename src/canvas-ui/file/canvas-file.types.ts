@@ -56,6 +56,8 @@ export interface CanvasFileContextValue {
   noun: string;
   /** Where the file is saved; `null` until a location is chosen (it may be a draft meanwhile). */
   path: string | null;
+  /** Opened without a saved file: one just created from Home (it may have been autosaved since). */
+  isNew: boolean;
   /** Autosaved in the app data folder; Save asks where to put it. */
   draft: boolean;
   /** Unsaved changes since the last save (or since opening). */

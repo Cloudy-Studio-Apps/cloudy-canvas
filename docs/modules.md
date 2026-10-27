@@ -72,6 +72,7 @@ plugins' modules leave it unset. `scripts/check-modules.mjs` reads it.
 | panels, sections, left tabs, overlays, session hooks | `editor.*`                                                     |
 | effect types                                         | `effects.effectTypes` and `canvas.effectRenderers`             |
 | style types                                          | the core module's `designStyleTypes` point                     |
+| Home's starters                                      | the core modules' `boardStarters` / `designStarters` points    |
 | MCP tools                                            | `mcpTools`                                                     |
 | file migrations                                      | `migrations`                                                   |
 | stickers, themes, ER standards and constructs        | the app registries and the er module's points                  |

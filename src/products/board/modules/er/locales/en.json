@@ -525,5 +525,12 @@
   },
   "forms": {
     "editOwner": "Edit {name}"
+  },
+  "starters": {
+    "erDiagram": {
+      "label": "ER diagram",
+      "description": "A small library model, open in the ER mode",
+      "text": "Diagram Library\n\nEntity Book {\n  isbn [pk]\n  title\n}\n\nEntity Member {\n  id [pk]\n  name\n}\n\nRelation borrows {\n  Member (0,n)\n  Book (0,n)\n  date\n}"
+    }
   }
 }

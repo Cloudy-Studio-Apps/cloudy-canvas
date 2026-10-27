@@ -9,5 +9,23 @@
   "menu": {
     "title": "Secciones",
     "empty": "Aún no hay secciones. Usa la herramienta Sección para añadir una."
+  },
+  "starters": {
+    "retro": {
+      "label": "Retrospectiva",
+      "description": "Qué salió bien, Qué mejorar y Acciones",
+      "wentWell": {
+        "title": "Qué salió bien",
+        "prompt": "¿Qué nos ayudó en este sprint?"
+      },
+      "toImprove": {
+        "title": "Qué mejorar",
+        "prompt": "¿Qué nos frenó?"
+      },
+      "actions": {
+        "title": "Acciones",
+        "prompt": "¿Qué probaremos ahora?"
+      }
+    }
   }
 }

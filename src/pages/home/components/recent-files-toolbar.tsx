@@ -1,6 +1,5 @@
 import { ArrowDownUp } from "lucide-react";
 
-import { isFileType } from "@shared/core";
 import { Button } from "@shared/ui/components/ui/button";
 import {
   DropdownMenu,
@@ -11,7 +10,9 @@ import {
 } from "@shared/ui/components/ui/dropdown-menu";
 import { SearchInput } from "@shared/ui/kit";
 import { Tabs, TabsList, TabsTrigger } from "@shared/ui/components/ui/tabs";
+import { isHomeFileKind } from "../file-kind";
 import type { RecentFilesSort } from "../filter-recent-files.types";
+import { RecentFilesViewToggle } from "./recent-files-view-toggle";
 import type { RecentFilesToolbarProps } from "./recent-files-toolbar.types";
 import { t } from "../home.i18n";
 
@@ -25,7 +26,7 @@ function isSort(value: string): value is RecentFilesSort {
   return value in SORT_LABEL;
 }
 
-/** Search, type filter and sort order for the Recent files grid. */
+/** Search, kind filter, sort order and grid or list for the Recent files. */
 export function RecentFilesToolbar({ filter, onChange }: RecentFilesToolbarProps) {
   return (
     <div className="flex flex-wrap items-center gap-3">
@@ -38,12 +39,13 @@ export function RecentFilesToolbar({ filter, onChange }: RecentFilesToolbarProps
       />
       <Tabs
         value={filter.type}
-        onValueChange={(type) => onChange({ ...filter, type: isFileType(type) ? type : "all" })}
+        onValueChange={(type) => onChange({ ...filter, type: isHomeFileKind(type) ? type : "all" })}
       >
         <TabsList aria-label={t("recent.fileType")}>
           <TabsTrigger value="all">{t("recent.all")}</TabsTrigger>
           <TabsTrigger value="board">{t("recent.boards")}</TabsTrigger>
           <TabsTrigger value="design">{t("recent.designs")}</TabsTrigger>
+          <TabsTrigger value="catalog">{t("recent.catalogs")}</TabsTrigger>
         </TabsList>
       </Tabs>
       <DropdownMenu>
@@ -68,6 +70,7 @@ export function RecentFilesToolbar({ filter, onChange }: RecentFilesToolbarProps
           </DropdownMenuRadioGroup>
         </DropdownMenuContent>
       </DropdownMenu>
+      <RecentFilesViewToggle />
     </div>
   );
 }

@@ -9,5 +9,23 @@
   "menu": {
     "title": "Sections",
     "empty": "No sections yet. Use the Section tool to add one."
+  },
+  "starters": {
+    "retro": {
+      "label": "Retrospective",
+      "description": "Went well, To improve and Actions",
+      "wentWell": {
+        "title": "Went well",
+        "prompt": "What helped us this sprint?"
+      },
+      "toImprove": {
+        "title": "To improve",
+        "prompt": "What slowed us down?"
+      },
+      "actions": {
+        "title": "Actions",
+        "prompt": "What will we try next?"
+      }
+    }
   }
 }

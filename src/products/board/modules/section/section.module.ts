@@ -3,6 +3,7 @@ import { Frame } from "lucide-react";
 import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
 import { boardCanvas } from "../../board-points";
+import { boardStarters } from "../core/ui";
 import { SECTION_COLORS } from "../../palette";
 import { boardSections } from "./board-sections";
 import { sectionAlignTarget, withSectionMembers } from "./section-members";
@@ -10,6 +11,7 @@ import { SectionKind } from "./section.kind";
 import { SectionTool } from "./section.tool";
 import { SectionOptions } from "./ui/section-options";
 import { SectionsMenu } from "./ui/sections-menu";
+import { retroStarter } from "./ui/starters/retro.starter";
 import * as sectionApi from ".";
 
 /**
@@ -20,9 +22,12 @@ import * as sectionApi from ".";
 export const sectionModule = defineModule({
   id: "section",
   tier: "feature",
+  // The retro starter puts sticky notes in its sections.
+  uses: ["sticky"],
   exports: { ...sectionApi },
   register(host) {
     host.contribute(boardCanvas.kinds, new SectionKind());
+    host.contribute(boardStarters, retroStarter);
     host.contribute(boardCanvas.tools, {
       id: "section",
       create: (ctx) => new SectionTool(ctx),
