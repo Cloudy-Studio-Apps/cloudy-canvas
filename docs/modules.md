@@ -1,8 +1,6 @@
 # Modules
 
-_The conventions every module follows (the rules are in [CLAUDE.md](../CLAUDE.md)). Background and
-the reasoning:
-[the module conventions spec](superpowers/specs/2026-10-25-module-conventions-design.md)._
+_The conventions every module follows (the rules are in [CLAUDE.md](../CLAUDE.md))._
 
 ## Words
 

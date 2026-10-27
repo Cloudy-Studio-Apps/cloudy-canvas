@@ -1,7 +1,7 @@
-// Checks that a feature uses only what a plugin can reach (CLAUDE.md rule 18, the module
-// conventions spec §14.5); part of `pnpm lint` (`pnpm check:public-api` alone). A plugin gets the
-// barrels and the curated groups in `src/app/plugins/api/`, so every value a feature module imports
-// from outside its folder must be exported by the barrel that covers the file it comes from:
+// Checks that a feature uses only what a plugin can reach (CLAUDE.md rule 18); part of `pnpm lint`
+// (`pnpm check:public-api` alone). A plugin gets the barrels and the curated groups in
+// `src/app/plugins/api/`, so every value a feature module imports from outside its folder must be
+// exported by the barrel that covers the file it comes from:
 //
 //   src/canvas/**          src/canvas/index.ts
 //   src/canvas-ui/**       src/canvas-ui/index.ts
