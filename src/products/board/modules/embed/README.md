@@ -7,7 +7,7 @@ Pasted links shown as cards, with previews and a player for videos.
 - **Contributes:** kinds `EmbedKind`; boardCanvas: `kinds`, `pasteText`; boardEditor: `overlays`, `sessionHooks`
 - **Points it owns:** —
 - **MCP tools:** —
-- **Files:** `embed.kind.ts`, `pasted-embed.ts`, `embed-preview.ts`, `embed.draw.ts`, `embed.interactions.ts`, `ui/`.
+- **Files:** `embed.canvas.ts` (its canvas side: what `register` gives `boardCanvas`, no UI), `embed.kind.ts`, `pasted-embed.ts`, `embed-preview.ts`, `embed.draw.ts`, `embed.interactions.ts`, `ui/`.
 
 ## How it works
 

@@ -93,7 +93,8 @@ modules/<name>/
   <name>.mode.ts        a mode the module adds: one defineDesignMode/defineBoardMode
   <name>.mcp.ts         MCP tools, one file …
   mcp/                  … or a folder: <topic>.mcp.ts + index.ts (+ helpers)
-  <name>.canvas.ts      canvas hooks (kinds, tools, scene and tree hooks, copies), when there are several
+  <name>.canvas.ts      canvas hooks (kinds, tools, scene and tree hooks, copies): every board module
+                        with any, so the HTML viewer can draw its elements without the editor UI
   <name>.commands.ts    host commands with their keys, when there are several
   <name>.sections.ts    editor entries (sections, panels, overlays, session hooks, toolbar buttons,
                         context menu), when there are many
@@ -113,7 +114,7 @@ modules/<name>/
 | `.points.ts`                                                              | `definePoint` tokens                                                                      | no (`ui/`: types)  |
 | `.mode.ts`                                                                | a mode's whole definition                                                                 | imports UI         |
 | `.mcp.ts`                                                                 | `McpTool`s / `McpToolGroup`                                                               | no                 |
-| `.canvas.ts`                                                              | canvas hooks                                                                              | no                 |
+| `.canvas.ts`                                                              | canvas hooks (a board module's every `boardCanvas` entry)                                 | no                 |
 | `.commands.ts`                                                            | host command entries and keys                                                             | no                 |
 | `.sections.ts`                                                            | editor entries (sections, panels, overlays, session hooks, toolbar buttons, context menu) | imports UI         |
 | `.menu.ts`                                                                | main menu groups                                                                          | imports UI         |

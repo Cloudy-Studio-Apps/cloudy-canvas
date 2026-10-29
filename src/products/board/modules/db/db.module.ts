@@ -2,20 +2,16 @@ import { Database } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
-import { boardMcpTools, boardCanvas } from "../../board-points";
+import { boardMcpTools } from "../../board-points";
 import { boardStarters } from "../core/ui";
 import { dbTools } from "./db.mcp";
-import { DbTool } from "./db.tool";
-import { DbEnumKind } from "./enum";
-import { DbLinks } from "./links";
-import { prepareDbCopies, pruneRefs } from "./schema";
-import { DbTableKind } from "./table";
 import { DbOptions } from "./ui/db-options";
 import { DbPanel } from "./ui/db-panel";
 import { SchemaButton } from "./ui/schema-button";
 import { databaseSchemaStarter } from "./ui/starters/database-schema.starter";
 import * as dbApi from ".";
 import * as dbUi from "./ui";
+import { registerDbCanvas } from "./db.canvas";
 
 /**
  * Database schemas: tables and enums, the relation lines between them, the Database tool (D), the
@@ -27,19 +23,9 @@ export const dbModule = defineModule({
   requires: ["sticky"],
   exports: { ...dbApi, ...dbUi },
   register(host) {
-    host.contribute(boardCanvas.kinds, new DbTableKind(), new DbEnumKind());
+    registerDbCanvas(host);
     host.contribute(boardStarters, databaseSchemaStarter);
-    host.contribute(boardCanvas.tools, {
-      id: "db",
-      create: (ctx) => new DbTool(ctx),
-      keys: [{ key: "d" }],
-    });
-    host.contribute(boardCanvas.options, { dbKind: "table" });
-    host.contribute(boardCanvas.links, () => new DbLinks());
-    // Relations pointing at deleted tables or columns go with them.
-    host.contribute(boardCanvas.onRemove, (doc) => pruneRefs(doc));
-    // Copies get free table and enum names.
-    host.contribute(boardCanvas.prepareCopies, prepareDbCopies);
+
     host.contribute(boardMcpTools, { id: "db", tools: () => dbTools });
 
     host.contribute(boardEditor.tools, {

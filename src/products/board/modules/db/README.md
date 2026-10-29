@@ -7,7 +7,7 @@ Database tables and enums drawn on the board and edited as DBML, with the relati
 - **Contributes:** kinds `DbEnumKind`, `DbTableKind`; boardCanvas: `kinds`, `links`, `onRemove`, `options`, `prepareCopies`, `tools`; boardEditor: `sidePanels`, `toolPanels`, `tools`, `topBar`; `boardMcpTools`, `boardStarters` (Database schema: a shop's tables imported as DBML, `ui/starters/`)
 - **Points it owns:** —
 - **MCP tools:** `apply_schema_dbml`, `apply_table_dbml`, `get_schema_dbml`, `get_table_dbml`, `import_schema_dbml`, `tidy_schema`
-- **Files:** `table/`, `enum/`, `card/` (their base), `schema/` (`DbSchema`, the DBML language), `links/`, `db.tool.ts`, `db.mcp.ts`, `ui/` (`ui/source/`: `dbmlLanguage` and `dbmlCompletions` (keywords, column types and enums, settings, `table.column` ref targets, from the board schema plus names the text defines) for the `SourceEditor`).
+- **Files:** `db.canvas.ts` (its canvas side: what `register` gives `boardCanvas`, no UI), `table/`, `enum/`, `card/` (their base), `schema/` (`DbSchema`, the DBML language), `links/`, `db.tool.ts`, `db.mcp.ts`, `ui/` (`ui/source/`: `dbmlLanguage` and `dbmlCompletions` (keywords, column types and enums, settings, `table.column` ref targets, from the board schema plus names the text defines) for the `SourceEditor`).
 
 ## How it works
 

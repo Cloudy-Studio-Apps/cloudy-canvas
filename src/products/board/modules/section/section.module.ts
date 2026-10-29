@@ -2,17 +2,12 @@ import { Frame } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
-import { boardCanvas } from "../../board-points";
 import { boardStarters } from "../core/ui";
-import { SECTION_COLORS } from "../../palette";
-import { boardSections } from "./board-sections";
-import { sectionAlignTarget, withSectionMembers } from "./section-members";
-import { SectionKind } from "./section.kind";
-import { SectionTool } from "./section.tool";
 import { SectionOptions } from "./ui/section-options";
 import { SectionsMenu } from "./ui/sections-menu";
 import { retroStarter } from "./ui/starters/retro.starter";
 import * as sectionApi from ".";
+import { registerSectionCanvas } from "./section.canvas";
 
 /**
  * Sections: the kind, the tool (Shift+S) and its panel, taking what's inside a section along when
@@ -26,22 +21,8 @@ export const sectionModule = defineModule({
   uses: ["sticky"],
   exports: { ...sectionApi },
   register(host) {
-    host.contribute(boardCanvas.kinds, new SectionKind());
+    registerSectionCanvas(host);
     host.contribute(boardStarters, retroStarter);
-    host.contribute(boardCanvas.tools, {
-      id: "section",
-      create: (ctx) => new SectionTool(ctx),
-      keys: [{ key: "s", shift: true }],
-    });
-    host.contribute(boardCanvas.options, {
-      sectionColor: SECTION_COLORS[0].value,
-      sectionColorToken: null,
-    });
-    host.contribute(boardCanvas.withMembers, (ids, elements, _purpose, kinds) =>
-      withSectionMembers(ids, elements, kinds),
-    );
-    host.contribute(boardCanvas.alignTarget, sectionAlignTarget);
-    host.contribute(boardCanvas.frames, boardSections);
 
     host.contribute(boardEditor.tools, {
       tool: "section",

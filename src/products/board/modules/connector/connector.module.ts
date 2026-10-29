@@ -2,15 +2,9 @@ import { Spline } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
-import { boardCanvas } from "../../board-points";
-import { LINE_COLORS } from "../../palette";
-import { ConnectorKind } from "./connector.kind";
-import { ConnectorTool } from "./connector.tool";
-import { detachConnectors } from "./detach-connectors";
-import { prepareConnectorCopies } from "./prepare-connector-copies";
-import { resolveConnectors } from "./resolve-connectors";
 import { ConnectorOptions } from "./ui/connector-options";
 import * as connectorApi from ".";
+import { registerConnectorCanvas } from "./connector.canvas";
 
 /**
  * Connectors: the kind, the tool (X) and its panel, and the hooks that keep them on what they're
@@ -24,22 +18,7 @@ export const connectorModule = defineModule({
   after: ["er"],
   exports: { ...connectorApi },
   register(host) {
-    host.contribute(boardCanvas.kinds, new ConnectorKind());
-    host.contribute(boardCanvas.tools, {
-      id: "connector",
-      create: (ctx) => new ConnectorTool(ctx),
-      keys: [{ key: "x" }],
-    });
-    host.contribute(boardCanvas.options, {
-      connectorStyle: "elbow",
-      connectorColor: LINE_COLORS[0].value,
-      connectorColorToken: null,
-      connectorStartHead: "none",
-      connectorEndHead: "arrow",
-    });
-    host.contribute(boardCanvas.resolveElements, resolveConnectors);
-    host.contribute(boardCanvas.onRemove, detachConnectors);
-    host.contribute(boardCanvas.prepareCopies, prepareConnectorCopies);
+    registerConnectorCanvas(host);
 
     host.contribute(boardEditor.tools, {
       tool: "connector",

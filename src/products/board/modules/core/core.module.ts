@@ -15,11 +15,12 @@ import {
   shapeEditTools,
   viewTools,
 } from "./mcp";
-import { boardMcpTools, boardCanvas } from "../../board-points";
+import { boardMcpTools } from "../../board-points";
 import { t } from "./core.i18n";
 import * as coreApi from ".";
 import * as coreUi from "./ui";
 import { useBoardStartStarter } from "./ui/use-board-start-starter";
+import { registerCoreCanvas } from "./core.canvas";
 
 /**
  * What every board has whatever its modules: the select, scale (Shift+K; K is the sticker tool) and
@@ -32,12 +33,8 @@ export const coreModule = defineModule({
   tier: "core",
   exports: { ...coreApi, ...coreUi },
   register(host) {
-    host.contribute(boardCanvas.keybindings, { "tool.scale": [{ key: "k", shift: true }] });
-    host.contribute(boardCanvas.hostCommands, {
-      id: "toggleUi",
-      label: t("hideUi"),
-      keys: [{ code: "Backslash", mod: true, label: "\\" }],
-    });
+    registerCoreCanvas(host);
+
     host.contribute(
       boardEditor.sessionHooks,
       { id: "hide-ui", use: useHideUiCommand },

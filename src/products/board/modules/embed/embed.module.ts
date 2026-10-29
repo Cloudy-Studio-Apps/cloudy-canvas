@@ -1,12 +1,10 @@
 import { defineModule } from "@shared/core";
 import { useBoardEngine } from "@board/ui/board-engine-context";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
-import { boardCanvas } from "../../board-points";
-import { EmbedKind } from "./embed.kind";
-import { createPastedEmbed } from "./pasted-embed";
 import { EmbedPlayer, useEmbedPreviews } from "./ui";
 import * as embedApi from ".";
 import * as embedUi from "./ui";
+import { registerEmbedCanvas } from "./embed.canvas";
 
 /**
  * Pasted links shown as cards: the kind, pasting a link (before any other text paste), the
@@ -17,8 +15,7 @@ export const embedModule = defineModule({
   tier: "feature",
   exports: { ...embedApi, ...embedUi },
   register(host) {
-    host.contribute(boardCanvas.kinds, new EmbedKind());
-    host.contribute(boardCanvas.pasteText, (text, at, index) => createPastedEmbed(text, at, index));
+    registerEmbedCanvas(host);
 
     host.contribute(boardEditor.overlays, { id: "embed.player", component: EmbedPlayer });
     host.contribute(boardEditor.sessionHooks, {

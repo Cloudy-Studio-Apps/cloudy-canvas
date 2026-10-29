@@ -7,7 +7,7 @@ The board's named color variables: shapes' colors bind to them and follow them, 
 - **Contributes:** boardCanvas: `afterEdit`; boardEditor: `sidePanels`, `topBar`; `boardMcpTools`
 - **Points it owns:** —
 - **MCP tools:** `bind_board_colors`, `create_board_color_collection`, `create_board_colors`, `delete_board_colors`, `export_board_colors`, `import_board_colors`, `list_board_colors`, `set_board_color_mode`, `unbind_board_colors`, `update_board_colors`
-- **Files:** `colors.module.ts`, `mcp/`, `ui/` (the colors panel and top-bar button).
+- **Files:** `colors.canvas.ts` (its canvas side: what `register` gives `boardCanvas`, no UI), `colors.module.ts`, `mcp/`, `ui/` (the colors panel and top-bar button).
 
 ## How it works
 

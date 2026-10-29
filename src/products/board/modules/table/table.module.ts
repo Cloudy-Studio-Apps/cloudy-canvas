@@ -2,12 +2,9 @@ import { Table } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
-import { boardCanvas } from "../../board-points";
-import { TABLE_COLORS } from "../../palette";
-import { TableKind } from "./table.kind";
-import { TableTool } from "./table.tool";
 import { TableOptions } from "./ui/table-options";
 import * as tableApi from ".";
+import { registerTableCanvas } from "./table.canvas";
 
 /** Tables: the kind, the tool (G) and its panel (header, tint, cell fills, rows and columns). */
 export const tableModule = defineModule({
@@ -15,17 +12,7 @@ export const tableModule = defineModule({
   tier: "feature",
   exports: { ...tableApi },
   register(host) {
-    host.contribute(boardCanvas.kinds, new TableKind());
-    host.contribute(boardCanvas.tools, {
-      id: "table",
-      create: (ctx) => new TableTool(ctx),
-      keys: [{ key: "g" }],
-    });
-    host.contribute(boardCanvas.options, {
-      tableColor: TABLE_COLORS[0].value,
-      tableColorToken: null,
-      tableHeader: true,
-    });
+    registerTableCanvas(host);
 
     host.contribute(boardEditor.tools, {
       tool: "table",

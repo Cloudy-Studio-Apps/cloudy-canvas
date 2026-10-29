@@ -1,12 +1,11 @@
-import { syncTokens } from "@canvas";
 import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
-import { BOARD_TOKEN_CONTEXT } from "../../tokens";
-import { boardMcpTools, boardCanvas } from "../../board-points";
+import { boardMcpTools } from "../../board-points";
 import { colorTools } from "./mcp";
 import { BoardColorsPanel, ColorsButton } from "./ui";
 import * as colorsApi from ".";
 import * as colorsUi from "./ui";
+import { registerColorsCanvas } from "./colors.canvas";
 
 /**
  * Board colors: the document's color variables, which board elements' colors bind to, kept up to
@@ -17,9 +16,7 @@ export const colorsModule = defineModule({
   tier: "feature",
   exports: { ...colorsApi, ...colorsUi },
   register(host) {
-    host.contribute(boardCanvas.afterEdit, (doc, change, kinds) =>
-      syncTokens(doc, change, kinds, BOARD_TOKEN_CONTEXT),
-    );
+    registerColorsCanvas(host);
     host.contribute(boardMcpTools, { id: "colors", tools: () => colorTools });
     host.contribute(boardEditor.sidePanels, {
       id: "colors.panel",

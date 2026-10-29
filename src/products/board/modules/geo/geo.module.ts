@@ -2,12 +2,9 @@ import { Shapes } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
-import { boardCanvas } from "../../board-points";
-import { SHAPE_FILLS, SHAPE_STROKES } from "../../palette";
-import { GeoKind } from "./geo.kind";
-import { ShapeTool } from "./shape.tool";
 import { ShapeOptions } from "./ui/shape-options";
 import * as geoApi from ".";
+import { registerGeoCanvas } from "./geo.canvas";
 
 /** Shapes: the kind (its variants register themselves), the shape tool (R) and its panel. */
 export const geoModule = defineModule({
@@ -17,19 +14,7 @@ export const geoModule = defineModule({
   requires: ["connector"],
   exports: { ...geoApi },
   register(host) {
-    host.contribute(boardCanvas.kinds, new GeoKind());
-    host.contribute(boardCanvas.tools, {
-      id: "shape",
-      create: (ctx) => new ShapeTool(ctx),
-      keys: [{ key: "r" }],
-    });
-    host.contribute(boardCanvas.options, {
-      shapeKind: "rectangle",
-      shapeFill: SHAPE_FILLS[0].value,
-      shapeStroke: SHAPE_STROKES[0].value,
-      shapeFillToken: null,
-      shapeStrokeToken: null,
-    });
+    registerGeoCanvas(host);
 
     host.contribute(boardEditor.tools, {
       tool: "shape",

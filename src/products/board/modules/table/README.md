@@ -7,7 +7,7 @@ Tables (G) with a header, tinted rows and cell fills, rows and columns added and
 - **Contributes:** kinds `TableKind`; boardCanvas: `kinds`, `options`, `tools`; boardEditor: `selectionPanels`, `toolPanels`, `tools`
 - **Points it owns:** —
 - **MCP tools:** —
-- **Files:** `table.kind.ts`, `table.layout.ts`, `table.draw.ts`, `table-edits.ts`, `table.handles.ts`, `table.interactions.ts`, `ui/`.
+- **Files:** `table.canvas.ts` (its canvas side: what `register` gives `boardCanvas`, no UI), `table.kind.ts`, `table.layout.ts`, `table.draw.ts`, `table-edits.ts`, `table.handles.ts`, `table.interactions.ts`, `ui/`.
 
 ## How it works
 

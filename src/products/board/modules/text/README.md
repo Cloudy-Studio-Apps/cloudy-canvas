@@ -7,7 +7,7 @@ Free text on a board (T), and pasted text that no other module takes.
 - **Contributes:** kinds `TextKind`; boardCanvas: `kinds`, `pasteText`, `tools`; boardEditor: `tools`
 - **Points it owns:** —
 - **MCP tools:** —
-- **Files:** `text.kind.ts`, `text.tool.ts`, `text.draw.ts`, `pasted-text.ts`.
+- **Files:** `text.canvas.ts` (its canvas side: what `register` gives `boardCanvas`, no UI), `text.kind.ts`, `text.tool.ts`, `text.draw.ts`, `pasted-text.ts`.
 
 ## How it works
 

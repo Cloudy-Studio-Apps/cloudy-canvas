@@ -7,7 +7,7 @@ Connectors (X): lines between shapes that follow them, with elbow routes, heads 
 - **Contributes:** kinds `ConnectorKind`; boardCanvas: `kinds`, `onRemove`, `options`, `prepareCopies`, `resolveElements`, `tools`; boardEditor: `selectionPanels`, `toolPanels`, `tools`
 - **Points it owns:** —
 - **MCP tools:** —
-- **Files:** `connector.kind.ts`, `connector.tool.ts`, `resolve-connectors.ts`, `elbow-route.ts`, `quick-connect.kind.ts` (the base of stickies and shapes), `sides.ts`, `ui/`.
+- **Files:** `connector.canvas.ts` (its canvas side: what `register` gives `boardCanvas`, no UI), `connector.kind.ts`, `connector.tool.ts`, `resolve-connectors.ts`, `elbow-route.ts`, `quick-connect.kind.ts` (the base of stickies and shapes), `sides.ts`, `ui/`.
 
 ## How it works
 

@@ -7,7 +7,7 @@ Diagram shapes (R): rectangles, ellipses, diamonds and the other variants, with 
 - **Contributes:** kinds `GeoKind`; boardCanvas: `kinds`, `options`, `tools`; boardEditor: `selectionPanels`, `toolPanels`, `tools`
 - **Points it owns:** —
 - **MCP tools:** —
-- **Files:** `geo.kind.ts`, `geo.draw.ts`, `variants/` (each shape), `shape.tool.ts`, `geo-spec-properties.ts`, `ui/`.
+- **Files:** `geo.canvas.ts` (its canvas side: what `register` gives `boardCanvas`, no UI), `geo.kind.ts`, `geo.draw.ts`, `variants/` (each shape), `shape.tool.ts`, `geo-spec-properties.ts`, `ui/`.
 
 ## How it works
 

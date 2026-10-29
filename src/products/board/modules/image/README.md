@@ -7,7 +7,7 @@ Pasted and dropped pictures on a board, cropped on the canvas (double-click), wi
 - **Contributes:** kinds `ImageKind`; boardCanvas: `editElement`, `kinds`, `options`, `pasteImage`; boardEditor: `overlays`, `selectionPanels`
 - **Points it owns:** —
 - **MCP tools:** —
-- **Files:** `image.kind.ts`, `pasted-image.ts`, `image-crop.ts`, `image.draw.ts`, `ui/`.
+- **Files:** `image.canvas.ts` (its canvas side: what `register` gives `boardCanvas`, no UI), `image.kind.ts`, `pasted-image.ts`, `image-crop.ts`, `image.draw.ts`, `ui/`.
 
 ## How it works
 

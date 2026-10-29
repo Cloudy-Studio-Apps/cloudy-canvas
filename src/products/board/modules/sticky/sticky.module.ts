@@ -2,12 +2,9 @@ import { StickyNote } from "lucide-react";
 
 import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
-import { boardCanvas } from "../../board-points";
-import { STICKY_COLORS } from "../../palette";
-import { StickyKind } from "./sticky.kind";
-import { StickyTool } from "./sticky.tool";
 import { StickyOptions } from "./ui/sticky-options";
 import * as stickyApi from ".";
+import { registerStickyCanvas } from "./sticky.canvas";
 
 /** Sticky notes: the kind, the tool (S) and its color panel. */
 export const stickyModule = defineModule({
@@ -17,16 +14,7 @@ export const stickyModule = defineModule({
   requires: ["connector"],
   exports: { ...stickyApi },
   register(host) {
-    host.contribute(boardCanvas.kinds, new StickyKind());
-    host.contribute(boardCanvas.tools, {
-      id: "sticky",
-      create: (ctx) => new StickyTool(ctx),
-      keys: [{ key: "s" }],
-    });
-    host.contribute(boardCanvas.options, {
-      stickyColor: STICKY_COLORS[0].value,
-      stickyColorToken: null,
-    });
+    registerStickyCanvas(host);
 
     host.contribute(boardEditor.tools, {
       tool: "sticky",
