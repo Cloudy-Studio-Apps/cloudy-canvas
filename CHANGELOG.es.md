@@ -11,6 +11,11 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   navegador sin instalar nada. Puede moverse por ella y acercarse con la misma nitidez que en la app
   y ver el código de cada tabla o diagrama ER, pero no puede cambiar nada.
 
+### Correcciones
+
+- La ventana Acerca de ya no muestra su texto encima del video de las focas: el video queda solo
+  arriba, con la versión, la licencia y los créditos debajo.
+
 ## 0.5.0 - 2026-10-27
 
 ### Novedades

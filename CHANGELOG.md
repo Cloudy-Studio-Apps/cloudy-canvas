@@ -11,6 +11,11 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   nothing to install. They can move around and zoom in as sharply as in the app and open the code of
   each table or ER diagram, but they can't change anything.
 
+### Fixed
+
+- The About window no longer shows its text over the seals video: the video sits on its own at the
+  top, with the version, license and credits below it.
+
 ## 0.5.0 - 2026-10-27
 
 ### New

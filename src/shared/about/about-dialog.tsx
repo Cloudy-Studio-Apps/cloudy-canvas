@@ -37,7 +37,9 @@ export function AboutDialog() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-h-[85vh] gap-0 overflow-y-auto p-0 sm:max-w-md">
+      {/* A column, not the dialog's grid: a grid row can collapse under the video's aspect-ratio box
+          (its minimum height is 0 with overflow hidden), so the text slid under the video. */}
+      <DialogContent className="flex max-h-[85vh] flex-col gap-0 overflow-y-auto p-0 sm:max-w-md">
         <div className="aspect-video shrink-0 overflow-hidden border-b bg-surface-sunken">
           <SealsVideo playing={open} />
         </div>
