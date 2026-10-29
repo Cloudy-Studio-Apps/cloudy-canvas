@@ -14,6 +14,8 @@ export interface ViewerPlugin {
   name: string;
   /** Its `main.js`, run in the viewer from a `blob:` URL. */
   code: string;
+  /** The element types it draws, shown as placeholders if it fails in the viewer. */
+  types: string[];
 }
 
 /** What an exported HTML file carries: gzipped JSON, base64, in its `#cloudy-board` script. */

@@ -2,7 +2,7 @@ import { registerBoardModule } from "@board/ui";
 import { registerDesignModule } from "@design/ui";
 import { pluginStorage } from "@platform";
 import {
-  pluginViewerSources,
+  loadedPlugins,
   stickerCatalog,
   themeRegistry,
   type InstalledPlugin,
@@ -59,10 +59,8 @@ async function loadPlugin(
       themeRegistry.drop(id);
       throw error;
     }
-    if (imported.viewerCode) {
-      pluginViewerSources.set(id, { name: plugin.manifest.name, code: imported.viewerCode });
-    }
     const modules = [...new Set([...board, ...design].map((module) => module.id))];
+    loadedPlugins.set({ id, name: plugin.manifest.name, modules, viewerCode: imported.viewerCode });
     return { id, state: "enabled", modules, stickers, themes };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

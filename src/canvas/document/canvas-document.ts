@@ -11,6 +11,7 @@ import type {
   DocumentMetaPatch,
   ElementMap,
   Placement,
+  UnregisteredElement,
 } from "./canvas-document.types";
 import { DocumentHistory } from "./document-history";
 import type { HistoryChange } from "./document-history.types";
@@ -196,6 +197,21 @@ export class CanvasDocument {
   /** Every element's id (every type, registered or not). */
   ids(): string[] {
     return [...this.elements.keys()];
+  }
+
+  /**
+   * Where the elements of types that aren't registered sit (a plugin that isn't installed), which
+   * `get` and `all` leave out: for showing a stand-in in their place.
+   */
+  unregistered(): UnregisteredElement[] {
+    const list: UnregisteredElement[] = [];
+    for (const [id, map] of this.elements) {
+      const data = map.toJSON() as Partial<UnregisteredElement>;
+      if (this.kinds.isElement(data) || typeof data.type !== "string") continue;
+      const { type, index = "", x = 0, y = 0, w = 0, h = 0 } = data;
+      list.push({ id, type, index, x, y, w, h });
+    }
+    return list;
   }
 
   /** One stored field of an element, read without reading the whole element. */

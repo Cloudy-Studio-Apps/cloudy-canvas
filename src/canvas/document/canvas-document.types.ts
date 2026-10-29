@@ -57,3 +57,14 @@ export interface DocumentActor {
   origin: symbol;
   placement: Placement | null;
 }
+
+/** Where an element of a type that isn't registered sits (see `CanvasDocument.unregistered`). */
+export interface UnregisteredElement {
+  id: string;
+  type: string;
+  index: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}

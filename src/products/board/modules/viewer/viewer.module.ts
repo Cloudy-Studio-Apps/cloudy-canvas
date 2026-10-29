@@ -1,4 +1,6 @@
 import { defineModule } from "@shared/core";
+import { boardEditor } from "@board/ui/modules/board-editor-points";
+import { htmlExportFormat } from "./ui/export";
 import * as viewerApi from ".";
 import * as viewerUi from "./ui";
 
@@ -10,5 +12,7 @@ export const viewerModule = defineModule({
   id: "viewer",
   tier: "feature",
   exports: { ...viewerApi, ...viewerUi },
-  register() {},
+  register(host) {
+    host.contribute(boardEditor.exportFormats, htmlExportFormat);
+  },
 });

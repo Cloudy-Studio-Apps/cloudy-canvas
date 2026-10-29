@@ -3,7 +3,7 @@ import type { EditorModules } from "@canvas-ui";
 import { boardCanvas, type BoardToolOptions } from "@board";
 import {
   createModuleHost,
-  pluginViewerSources,
+  loadedPlugins,
   stickerCatalog,
   type AppModule,
   type ModuleHost,
@@ -114,6 +114,6 @@ export function getBoardEditorModules(): EditorModules {
 function failPlugin(plugin: string | undefined, error: string): void {
   if (!plugin) return;
   stickerCatalog.drop(plugin);
-  pluginViewerSources.drop(plugin);
+  loadedPlugins.drop(plugin);
   usePluginsStore.getState().setStatus({ id: plugin, state: "failed", error, modules: [] });
 }

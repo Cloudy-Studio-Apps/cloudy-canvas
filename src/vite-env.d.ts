@@ -13,3 +13,9 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+/** The board's HTML viewer, built into one HTML file (`scripts/vite/viewer-runtime-plugin.ts`). */
+declare module "virtual:board-viewer-runtime" {
+  const html: string;
+  export default html;
+}
