@@ -176,5 +176,8 @@
       "label": "Esquema de base de datos",
       "description": "Las tablas de una tienda y sus referencias, en DBML"
     }
+  },
+  "viewer": {
+    "schema": "Esquema"
   }
 }

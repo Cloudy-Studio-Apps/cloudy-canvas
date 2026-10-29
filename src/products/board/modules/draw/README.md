@@ -7,7 +7,7 @@ Freehand drawing: the marker (M), the highlighter and the eraser (Shift+E), with
 - **Contributes:** kinds `StrokeKind`; boardCanvas: `kinds`, `options`, `tools`; boardEditor: `selectionPanels`, `toolPanels`, `tools`
 - **Points it owns:** —
 - **MCP tools:** —
-- **Files:** `draw.canvas.ts` (its canvas side: what `register` gives `boardCanvas`, no UI), `stroke.kind.ts`, `stroke.draw.ts`, `stroke.outline.ts`, `marker.tool.ts`, `eraser.tool.ts`, `stroke-spec.ts`, `ui/`.
+- **Files:** `draw.viewer.ts` (the module the HTML viewer loads instead), `draw.canvas.ts` (its canvas side: what `register` gives `boardCanvas`, no UI), `stroke.kind.ts`, `stroke.draw.ts`, `stroke.outline.ts`, `marker.tool.ts`, `eraser.tool.ts`, `stroke-spec.ts`, `ui/`.
 
 ## How it works
 

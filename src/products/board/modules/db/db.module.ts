@@ -12,6 +12,8 @@ import { databaseSchemaStarter } from "./ui/starters/database-schema.starter";
 import * as dbApi from ".";
 import * as dbUi from "./ui";
 import { registerDbCanvas } from "./db.canvas";
+import { boardViewerParts } from "../viewer/ui";
+import { dbViewerPart } from "./ui/viewer/db-viewer-part";
 
 /**
  * Database schemas: tables and enums, the relation lines between them, the Database tool (D), the
@@ -20,10 +22,12 @@ import { registerDbCanvas } from "./db.canvas";
 export const dbModule = defineModule({
   id: "db",
   tier: "feature",
+  uses: ["viewer"],
   requires: ["sticky"],
   exports: { ...dbApi, ...dbUi },
   register(host) {
     registerDbCanvas(host);
+    host.contribute(boardViewerParts, dbViewerPart);
     host.contribute(boardStarters, databaseSchemaStarter);
 
     host.contribute(boardMcpTools, { id: "db", tools: () => dbTools });

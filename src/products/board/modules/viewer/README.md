@@ -11,7 +11,7 @@ Modules add toggles and side panels to it (the schema's DBML, the ER text) and p
   the viewer
 - **MCP tools:** —
 - **Files:** `viewer-file.types.ts` (`ViewerFile`, what the file carries), `viewer-placeholder.ts`,
-  `ui/viewer-part.types.ts` (`ViewerPart`), `ui/viewer.points.ts`, `ui/export/` (making the file).
+  `ui/viewer-part.types.ts` (`ViewerPart`), `ui/viewer.points.ts`, `ui/define-viewer-part.ts`, `viewer.viewer.ts`, `ui/export/` (making the file).
 
 ## How it works
 
@@ -45,3 +45,6 @@ Modules add toggles and side panels to it (the schema's DBML, the ER text) and p
   `order`), `ZoomBar`, `ViewerPanelHost` (one panel at a time) and `ViewerCodePanel` (title, All
   code, Copy, close; a `<pre>`) are the chrome. `embeddedFontLoader` loads the file's font faces;
   `ViewerError` replaces the board when WebGL is missing or the data is damaged.
+- **Typed parts:** `defineViewerPart<D>(part)` checks a part against the data it collects and hands it
+  as the point takes it. Built-in parts: `db` (Schema), `er` (ER diagrams), `embed` (links open in a
+  new tab).

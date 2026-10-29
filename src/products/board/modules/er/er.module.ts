@@ -14,6 +14,8 @@ import { migrateErDiagrams } from "./model";
 import { ErPalette } from "./ui/er-palette";
 import { erDiagramStarter } from "./ui/starters/er-diagram.starter";
 import * as erApi from ".";
+import { boardViewerParts } from "../viewer/ui";
+import { erViewerPart } from "./ui/viewer/er-viewer-part";
 
 /**
  * ER diagrams: the element kinds, the lines between them, the tool (E) and the hooks that keep a
@@ -26,7 +28,7 @@ export const erModule = defineModule({
   tier: "feature",
   // Uses db's DBML language and tables and geo's ellipse; `uses`, not `requires`, because
   // connectors are `after` er and db and geo come after connectors.
-  uses: ["db", "geo"],
+  uses: ["db", "geo", "viewer"],
   // A section takes its contents first; then each ER element takes its attributes along.
   after: ["section"],
   exports: { ...erApi },
@@ -39,6 +41,7 @@ export const erModule = defineModule({
     host.contribute(boardErConstructs, ...BUILT_IN_ER_CONSTRUCTS);
     erConstructs.useSource(() => host.get(boardErConstructs));
     registerErCanvas(host);
+    host.contribute(boardViewerParts, erViewerPart);
     registerBoardMode(host, erMode);
     // Double-clicking an ER shape (or Enter) enters the ER mode.
     host.contribute(boardCanvas.editElement, enterErMode);

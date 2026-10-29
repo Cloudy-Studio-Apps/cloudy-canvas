@@ -7,7 +7,7 @@ Stickers (K): the foca watona seals, stamps, plugins' sets and emojis, picked fr
 - **Contributes:** kinds `StickerKind`; boardCanvas: `kinds`, `options`, `pasteForeign`, `tools`; boardEditor: `toolPanels`, `tools`; `boardMcpTools`
 - **Points it owns:** —
 - **MCP tools:** `list_stickers`, `stamp_stickers`
-- **Files:** `sticker.canvas.ts` (its canvas side: what `register` gives `boardCanvas`, no UI), `sticker.kind.ts`, `sticker.tool.ts`, `sticker.draw.ts`, `sticker-paste.ts`, `mcp-stickers.ts`, `sticker.mcp.ts`, `ui/`.
+- **Files:** `sticker.viewer.ts` (the module the HTML viewer loads instead), `sticker.canvas.ts` (its canvas side: what `register` gives `boardCanvas`, no UI), `sticker.kind.ts`, `sticker.tool.ts`, `sticker.draw.ts`, `sticker-paste.ts`, `mcp-stickers.ts`, `sticker.mcp.ts`, `ui/`.
 
 ## How it works
 

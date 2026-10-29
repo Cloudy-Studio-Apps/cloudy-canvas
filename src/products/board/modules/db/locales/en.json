@@ -176,5 +176,8 @@
       "label": "Database schema",
       "description": "A shop's tables and their references, as DBML"
     }
+  },
+  "viewer": {
+    "schema": "Schema"
   }
 }

@@ -532,5 +532,9 @@
       "description": "Un pequeño modelo de biblioteca, abierto en el modo ER",
       "text": "Diagram Biblioteca\n\nEntity Libro {\n  isbn [pk]\n  titulo\n}\n\nEntity Socio {\n  id [pk]\n  nombre\n}\n\nRelation presta {\n  Socio (0,n)\n  Libro (0,n)\n  fecha\n}"
     }
+  },
+  "viewer": {
+    "er": "Diagramas ER",
+    "all": "Todos los diagramas"
   }
 }

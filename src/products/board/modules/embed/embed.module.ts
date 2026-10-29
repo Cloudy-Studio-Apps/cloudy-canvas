@@ -5,6 +5,8 @@ import { EmbedPlayer, useEmbedPreviews } from "./ui";
 import * as embedApi from ".";
 import * as embedUi from "./ui";
 import { registerEmbedCanvas } from "./embed.canvas";
+import { boardViewerParts } from "../viewer/ui";
+import { embedViewerPart } from "./ui/embed-viewer-part";
 
 /**
  * Pasted links shown as cards: the kind, pasting a link (before any other text paste), the
@@ -13,9 +15,11 @@ import { registerEmbedCanvas } from "./embed.canvas";
 export const embedModule = defineModule({
   id: "embed",
   tier: "feature",
+  uses: ["viewer"],
   exports: { ...embedApi, ...embedUi },
   register(host) {
     registerEmbedCanvas(host);
+    host.contribute(boardViewerParts, embedViewerPart);
 
     host.contribute(boardEditor.overlays, { id: "embed.player", component: EmbedPlayer });
     host.contribute(boardEditor.sessionHooks, {

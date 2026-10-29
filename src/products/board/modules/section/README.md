@@ -7,7 +7,7 @@ Sections (Shift+S): titled areas that take what's inside along when they move, w
 - **Contributes:** kinds `SectionKind`; boardCanvas: `alignTarget`, `frames`, `kinds`, `options`, `tools`, `withMembers`; boardEditor: `selectionPanels`, `toolPanels`, `tools`, `topBar`; `boardStarters` (Retrospective: Went well, To improve and Actions sections with a sticky each, `ui/starters/`)
 - **Points it owns:** —
 - **MCP tools:** —
-- **Files:** `section.canvas.ts` (its canvas side: what `register` gives `boardCanvas`, no UI), `section.kind.ts`, `section.tool.ts`, `section-members.ts`, `board-sections.ts`, `ui/`.
+- **Files:** `section.viewer.ts` (the module the HTML viewer loads instead), `section.canvas.ts` (its canvas side: what `register` gives `boardCanvas`, no UI), `section.kind.ts`, `section.tool.ts`, `section-members.ts`, `board-sections.ts`, `ui/`.
 
 ## How it works
 
