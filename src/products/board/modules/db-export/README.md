@@ -77,6 +77,11 @@ format`; single mode: `prisma/<table>.prisma` with the model and its enums. Type
      `@ManyToOne` + `@JoinColumn`, `@OneToMany`, `@OneToOne`, `@ManyToMany` + `@JoinTable`,
      `@Index`), `create-`/`update-<name>.dto.ts` with `class-validator` and `PartialType`
      (`write-dto.ts`) and string enums in `src/common/enums/`.
+   - `mongodb/`: one `schema.mongodb.js` for `mongosh` (single mode: `<table>.mongodb.js`):
+     `createCollection` with a `$jsonSchema` validator per table (`bson-type-map.ts`; `required`
+     from not null, enums as `enum`, nullable as `[type, "null"]`), then unique indexes for the
+     primary key and unique columns and the table's indexes. Increments, defaults and foreign keys
+     have no MongoDB form: warnings, and references get a comment.
 4. **`ui/`**: `CodeExportDialog` (an overlay, open while `useCodeExportStore` holds ids: `[]` for the
    whole schema): with one table, a This table / Whole schema switch; the target, version and
    option fields (`TargetFields`); the file tree (`CodeFileList`, `fileTree`); the warnings; the

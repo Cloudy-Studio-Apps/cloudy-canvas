@@ -1,6 +1,6 @@
 # Database schema code export — design
 
-Date: 2026-10-29. Status: design, awaiting approval.
+Date: 2026-10-29. Status: implemented (plan: `docs/superpowers/plans/2026-10-29-db-code-export.md`).
 
 ## Intent
 
