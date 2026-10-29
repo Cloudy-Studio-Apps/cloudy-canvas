@@ -7,13 +7,22 @@ import type { BrandBarProps } from "./brand-bar.types";
 import { TitlePopover } from "./title-popover";
 
 /**
- * The viewer's top-left card: the seal and "Cloudy Canvas", the board's title (its popover holds
+ * The viewer's top-left card: the seal (toggling the "Made with" card) and "Cloudy Canvas", the board's title (its popover holds
  * the description), "view only", then the parts' toggles.
  */
-export function BrandBar({ meta, toggles }: BrandBarProps) {
+export function BrandBar({ meta, toggles, madeWithOpen, onLogo }: BrandBarProps) {
   return (
     <div className="pointer-events-auto absolute top-3 left-3 flex items-center gap-2 rounded-lg border bg-surface px-2.5 py-1.5 shadow-md">
-      <SealLogo size={20} variant="mark" />
+      {/* eslint-disable-next-line no-restricted-syntax -- bespoke: the logo itself is the button */}
+      <button
+        type="button"
+        aria-label={t("madeWith.toggle")}
+        aria-pressed={madeWithOpen}
+        onClick={onLogo}
+        className="-m-0.5 rounded-md p-0.5 hover:bg-accent aria-pressed:bg-accent"
+      >
+        <SealLogo size={20} variant="mark" />
+      </button>
       <span className="text-sm font-semibold">{t("bar.brand")}</span>
       <span aria-hidden className="text-muted-foreground">
         /

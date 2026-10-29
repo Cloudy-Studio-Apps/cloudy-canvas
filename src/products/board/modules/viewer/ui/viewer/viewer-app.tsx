@@ -3,6 +3,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import type { CanvasElement } from "@canvas";
 import type { ViewerPart } from "../viewer-part.types";
 import { BrandBar } from "./brand-bar";
+import { MadeWithCard } from "./made-with-card";
 import type { BrandBarToggle } from "./brand-bar.types";
 import { useViewerClicks } from "./use-viewer-clicks";
 import { useViewerEngine } from "./use-viewer-engine";
@@ -19,6 +20,9 @@ export function ViewerApp({ file, product, document, fonts, parts }: ViewerAppPr
   const containerRef = useRef<HTMLDivElement>(null);
   const { engine, failed } = useViewerEngine(containerRef, { product, document, fonts });
   const [open, setOpen] = useState<OpenPanel | null>(null);
+  // "Made with Cloudy Canvas" greets whoever opens the file; the logo brings it back.
+  const [madeWith, setMadeWith] = useState(true);
+  const closeMadeWith = useCallback(() => setMadeWith(false), []);
 
   // A panel needs what its part collected; a click of its own works without.
   const reachable = useMemo(
@@ -47,7 +51,13 @@ export function ViewerApp({ file, product, document, fonts, parts }: ViewerAppPr
     <div className="relative h-full w-full overflow-hidden bg-background">
       <div ref={containerRef} className="absolute inset-0" />
       <div className="pointer-events-none absolute inset-0">
-        <BrandBar meta={file.meta} toggles={toggles} />
+        <BrandBar
+          meta={file.meta}
+          toggles={toggles}
+          madeWithOpen={madeWith}
+          onLogo={() => setMadeWith((shown) => !shown)}
+        />
+        {madeWith && <MadeWithCard onClose={closeMadeWith} />}
         {engine && <ZoomBar engine={engine} />}
         {open && (
           <ViewerPanelHost

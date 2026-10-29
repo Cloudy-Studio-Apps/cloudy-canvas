@@ -1,7 +1,19 @@
 {
-  "bar": { "brand": "Cloudy Canvas", "viewOnly": "solo lectura" },
-  "zoom": { "in": "Acercar", "out": "Alejar", "fit": "Ajustar" },
-  "panel": { "all": "Todo el código", "copy": "Copiar", "copied": "Copiado", "close": "Cerrar" },
+  "bar": {
+    "brand": "Cloudy Canvas",
+    "viewOnly": "solo lectura"
+  },
+  "zoom": {
+    "in": "Acercar",
+    "out": "Alejar",
+    "fit": "Ajustar"
+  },
+  "panel": {
+    "all": "Todo el código",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "close": "Cerrar"
+  },
   "error": {
     "webgl": "Este navegador no puede dibujar la pizarra (WebGL está desactivado o no disponible).",
     "data": "Este archivo está dañado y no se puede abrir."
@@ -10,5 +22,14 @@
     "format": "HTML (solo lectura)",
     "placeholders": "{count} elementos de {plugins} se verán como marcadores."
   },
-  "placeholder": { "unknown": "Plugin desconocido" }
+  "placeholder": {
+    "unknown": "Plugin desconocido"
+  },
+  "madeWith": {
+    "title": "Hecho con Cloudy Canvas",
+    "text": "Una app de escritorio gratuita para pizarras, diagramas y diseños, de DarkRedgm.",
+    "get": "Descargar Cloudy Canvas",
+    "author": "darkredgm.com",
+    "toggle": "Acerca de Cloudy Canvas"
+  }
 }

@@ -43,7 +43,7 @@ Modules add toggles and side panels to it (the schema's DBML, the ER text) and p
   `MOVE_THRESHOLD_PX`) on an element of a part's `types` runs its `click` or opens its panel on it;
   the pointer points over those. `BrandBar` (seal, "Cloudy Canvas", the title with its plain-text
   `TitlePopover`, "view only", the toggles of parts with a `button`, a `panel` and data, by
-  `order`), `ZoomBar`, `ViewerPanelHost` (one panel at a time) and `ViewerCodePanel` (title, All
+  `order`), `MadeWithCard` ("Made with Cloudy Canvas": shown when the file opens, toggled by the logo, closed by ✕ or Esc; links to the latest release and darkredgm.com), `ZoomBar`, `ViewerPanelHost` (one panel at a time) and `ViewerCodePanel` (title, All
   code, Copy, close; a `<pre>`) are the chrome. `embeddedFontLoader` loads the file's font faces;
   `ViewerError` replaces the board when WebGL is missing or the data is damaged.
 - **Typed parts:** `defineViewerPart<D>(part)` checks a part against the data it collects and hands it

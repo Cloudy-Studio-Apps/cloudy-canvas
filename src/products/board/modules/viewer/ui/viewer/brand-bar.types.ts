@@ -12,6 +12,9 @@ export interface BrandBarToggle {
 export interface BrandBarProps {
   meta: DocumentMeta;
   toggles: readonly BrandBarToggle[];
+  /** Whether the "Made with Cloudy Canvas" card is open; the logo toggles it. */
+  madeWithOpen: boolean;
+  onLogo(): void;
 }
 
 export interface TitlePopoverProps {
