@@ -135,6 +135,8 @@ for (const file of sourceFiles("src")) {
   const owner = ownerOf(file);
   const from = owner && catalog.get(owner.product).get(owner.module);
   const isModuleList = /^src\/products\/[^/]+\/ui\/modules\/[^/]+-modules\.ts$/.test(posix);
+  // The HTML viewer's list of the board's `.viewer` modules.
+  const isViewerList = posix === "src/viewer/board-viewer-modules.ts";
   for (const [spec, line] of specifiers(readFileSync(file, "utf8"))) {
     if (
       owner &&
@@ -153,7 +155,9 @@ for (const file of sourceFiles("src")) {
     const to = catalog.get(target.product).get(target.module);
     if (!to) continue;
 
-    const listsModule = isModuleList && target.rest === `${target.module}.module`;
+    const listsModule =
+      (isModuleList && target.rest === `${target.module}.module`) ||
+      (isViewerList && target.rest === `${target.module}.viewer`);
     if (!PUBLIC_ENTRIES.has(target.rest) && !listsModule) {
       const entry = target.rest.startsWith("ui/") ? "ui" : "";
       const shown = [target.module, entry].filter(Boolean).join("/");

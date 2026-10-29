@@ -6,7 +6,7 @@ export const VIEWER_DATA_MARKER = "<!--cloudy-board-data-->";
 
 /**
  * The HTML file: the viewer runtime with the board's data (gzipped JSON, base64, so nothing in
- * the board can be read as HTML) in place of its marker, and its title and description.
+ * the board can be read as HTML) in place of its marker, its language, title and description.
  */
 export async function encodeViewerHtml(runtime: string, file: ViewerFile): Promise<Blob> {
   if (!runtime.includes(VIEWER_DATA_MARKER)) {
@@ -17,6 +17,8 @@ export async function encodeViewerHtml(runtime: string, file: ViewerFile): Promi
   const title = escapeHtml(file.meta.title);
   const description = escapeHtml(file.meta.description);
   const html = runtime
+    // The viewer sets its language from this before anything else loads.
+    .replace(/<html[^>]*>/, () => `<html lang="${file.locale}">`)
     .replace(/<title>[^<]*<\/title>/, () => `<title>${title}</title>`)
     .replace("</head>", () => `<meta name="description" content="${description}">\n</head>`)
     .replace(

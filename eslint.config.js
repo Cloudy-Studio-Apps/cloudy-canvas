@@ -200,8 +200,16 @@ export default tseslint.config(
     plugins: { cloudy },
     rules: { "cloudy/no-literal-ui-text": "error" },
   },
+  // The HTML viewer's build is a shell like app/, but runs in someone else's browser: no platform.
   {
-    files: ["vite.config.ts", "eslint.config.js"],
+    files: ["src/viewer/**/*.{ts,tsx}"],
+    rules: restrict([
+      PLATFORM,
+      { group: ["@app/*", "@pages/*"], message: "The viewer is a shell of its own, not the app." },
+    ]),
+  },
+  {
+    files: ["vite.config.ts", "vite.viewer.config.ts", "scripts/vite/**/*.ts", "eslint.config.js"],
     languageOptions: { globals: globals.node },
   },
   prettier,

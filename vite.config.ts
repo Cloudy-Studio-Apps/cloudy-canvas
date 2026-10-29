@@ -5,6 +5,8 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
+import { viewerRuntime } from "./scripts/vite/viewer-runtime-plugin";
+
 const host = process.env.TAURI_DEV_HOST;
 
 const { version } = JSON.parse(
@@ -17,7 +19,7 @@ const fromSrc = (path: string) => fileURLToPath(new URL(`./src/${path}`, import.
 
 // https://vite.dev/config/
 export default defineConfig(() => ({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), viewerRuntime()],
 
   define: { __APP_VERSION__: JSON.stringify(version) },
 

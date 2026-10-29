@@ -1,7 +1,8 @@
 import { useEffect, useState, type RefObject } from "react";
 
 import { CanvasEngine } from "@canvas";
-import { readCanvasTheme } from "@canvas-ui";
+// From its file, not the barrel: the viewer build must not pull in the editor or the platform.
+import { readCanvasTheme } from "@canvas-ui/canvas-theme";
 import type { ViewerEngineHost, ViewerEngineOptions } from "./use-viewer-engine.types";
 
 /** The only tool the viewer has: dragging moves around, nothing else happens. */

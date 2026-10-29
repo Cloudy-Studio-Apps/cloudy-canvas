@@ -1,4 +1,5 @@
-import { ExtensionIconView } from "@canvas-ui";
+// From its file, not the barrel: the viewer build must not pull in the editor or the platform.
+import { ExtensionIconView } from "@canvas-ui/modules/extension-icon-view";
 import { SealLogo } from "@shared/ui/brand/seal-logo";
 import { IconButton } from "@shared/ui/kit";
 import { t } from "../../viewer.i18n";

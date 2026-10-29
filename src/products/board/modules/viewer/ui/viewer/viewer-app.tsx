@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import type { CanvasElement } from "@canvas";
-import { t } from "../../viewer.i18n";
 import type { ViewerPart } from "../viewer-part.types";
 import { BrandBar } from "./brand-bar";
 import type { BrandBarToggle } from "./brand-bar.types";
@@ -43,7 +42,7 @@ export function ViewerApp({ file, product, document, fonts, parts }: ViewerAppPr
         setOpen((current) => (current?.part.id === part.id ? null : { part, element: null })),
     }));
 
-  if (failed) return <ViewerError message={t("error.webgl")} />;
+  if (failed) return <ViewerError reason="webgl" />;
   return (
     <div className="relative h-full w-full overflow-hidden bg-background">
       <div ref={containerRef} className="absolute inset-0" />

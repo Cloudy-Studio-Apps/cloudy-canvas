@@ -180,6 +180,7 @@ src/
                 layer tree; frame, rectangle, layers, assets, plugins-tab)
       ui/       the design editor (React): rail, left panel, properties panel, toolbar
   pages/        app pages that aren't a product: home, settings, join, design-system
+  viewer/       the board HTML export's runtime: a shell built into one HTML file (vite.viewer.config.ts)
 server/relay/   the live sessions' relay (iroh-relay config, Docker, deploy script, guide)
 ```
 
