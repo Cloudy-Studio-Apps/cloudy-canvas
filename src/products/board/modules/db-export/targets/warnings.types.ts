@@ -11,7 +11,8 @@ export type CodeWarningId =
   | "unsupported-default"
   | "unsupported-increment"
   | "unsupported-reference"
-  | "unsupported-index";
+  | "unsupported-index"
+  | "unsupported-index-method";
 
 /** Something the export couldn't write as the schema says. Its text is `warningText`. */
 export interface CodeWarning {

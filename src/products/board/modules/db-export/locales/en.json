@@ -11,6 +11,7 @@
     "unsupported-default": "{table}.{column}: the default {value} can't be written in {target}.",
     "unsupported-increment": "{table}.{column}: {target} has no auto-increment.",
     "unsupported-reference": "{table}.{column}: {target} has no foreign keys, so it's a plain field.",
-    "unsupported-index": "{table}: an index on an expression can't be written in {target}."
+    "unsupported-index": "{table}: an index on an expression can't be written in {target}.",
+    "unsupported-index-method": "{table}: {target} has no {method} indexes, so the default is used."
   }
 }

@@ -11,6 +11,7 @@
     "unsupported-default": "{table}.{column}: el valor por defecto {value} no se puede escribir en {target}.",
     "unsupported-increment": "{table}.{column}: {target} no tiene autoincremento.",
     "unsupported-reference": "{table}.{column}: {target} no tiene claves foráneas, así que es un campo normal.",
-    "unsupported-index": "{table}: un índice sobre una expresión no se puede escribir en {target}."
+    "unsupported-index": "{table}: un índice sobre una expresión no se puede escribir en {target}.",
+    "unsupported-index-method": "{table}: {target} no tiene índices {method}, así que se usa el predeterminado."
   }
 }
