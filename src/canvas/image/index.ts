@@ -1,5 +1,6 @@
 // How a picture sits in its layer: fitted, cropped (Figma's image transform) or tiled.
 export type * from "./image-transform.types";
+export type * from "./placeholder-svg.types";
 export {
   clampCrop,
   coverCrop,
@@ -14,3 +15,5 @@ export {
   zoomTransform,
 } from "./image-transform";
 export { imageHeaderSize } from "./image-header-size";
+export { placeholderInk } from "./placeholder-ink";
+export { placeholderSvg } from "./placeholder-svg";

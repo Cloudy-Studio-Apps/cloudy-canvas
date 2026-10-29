@@ -1,4 +1,4 @@
-import { hexToRgba, rgbaToHex } from "@canvas";
+import { hexToRgba, rgbaToHex } from "../gradient/gradient-color";
 
 /**
  * The color a placeholder draws its seal and "?" with on `background`: the background darkened on

@@ -1,4 +1,5 @@
-import type { Size } from "@canvas";
+import type { Size } from "../geometry.types";
+import type { PlaceholderSvgOptions } from "./placeholder-svg.types";
 
 import { placeholderInk } from "./placeholder-ink";
 
@@ -35,17 +36,46 @@ function sealArt(ink: string): string {
 
 /**
  * A placeholder picture: `background` at `size`'s proportions with the foca watona and a "?" in
- * its middle, as an SVG file.
+ * its middle, as an SVG file; `options.label` is written under the art (e.g. a plugin's name).
  */
-export function placeholderSvg(background: string, size: Size): string {
+export function placeholderSvg(
+  background: string,
+  size: Size,
+  options: PlaceholderSvgOptions = {},
+): string {
   const { w, h } = size;
   const scale = (Math.min(w, h) * ART_SHARE) / ART;
   const x = (w - ART * scale) / 2;
   const y = (h - ART * scale) / 2;
+  const ink = placeholderInk(background);
   return (
     `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">` +
     `<rect width="${w}" height="${h}" fill="${background}"/>` +
-    `<g transform="translate(${x} ${y}) scale(${scale})">${sealArt(placeholderInk(background))}</g>` +
+    `<g transform="translate(${x} ${y}) scale(${scale})">${sealArt(ink)}</g>` +
+    (options.label ? labelText(options.label, ink, size, y + ART * scale) : "") +
     `</svg>`
   );
+}
+
+/** One centered line under the art, squeezed to fit when it's wider than the picture. */
+function labelText(label: string, ink: string, { w, h }: Size, artBottom: number): string {
+  const fontSize = Math.min(w, h) * 0.08;
+  const baseline = Math.min(h - fontSize * 0.4, artBottom + fontSize * 1.4);
+  // A rough width (0.55 em a letter) decides whether it has to be squeezed.
+  const fit =
+    label.length * fontSize * 0.55 > w * 0.9
+      ? ` textLength="${w * 0.9}" lengthAdjust="spacingAndGlyphs"`
+      : "";
+  return (
+    `<text x="${w / 2}" y="${baseline}" text-anchor="middle" fill="${ink}" ` +
+    `font-family="Inter, sans-serif" font-size="${fontSize}"${fit}>${escapeXml(label)}</text>`
+  );
+}
+
+function escapeXml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }

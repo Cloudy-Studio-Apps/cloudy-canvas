@@ -1,7 +1,6 @@
-import type { CanvasDocument, ElementPatch, Size } from "@canvas";
+import { placeholderSvg, type CanvasDocument, type ElementPatch, type Size } from "@canvas";
 
 import { imagePaint, PLACEHOLDER_ASSET_PREFIX, type DesignNode, type ImagePaint } from "../../core";
-import { placeholderSvg } from "./placeholder-svg";
 
 /** A placeholder's color when its layer has no solid fill: the design canvas's background. */
 export const DEFAULT_PLACEHOLDER_COLOR = "#E4E7EB";
