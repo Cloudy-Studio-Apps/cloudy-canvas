@@ -5,6 +5,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ## Sin publicar
 
+## 0.6.0 - 2026-10-29
+
 ### Novedades
 
 - Exporta una pizarra como HTML y envíala a quien quieras: es un solo archivo que se abre en su

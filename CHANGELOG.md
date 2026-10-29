@@ -5,6 +5,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ## Unreleased
 
+## 0.6.0 - 2026-10-29
+
 ### New
 
 - Export a board as HTML and send it to anyone: it's a single file that opens in their browser with

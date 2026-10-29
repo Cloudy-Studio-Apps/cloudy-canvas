@@ -1,6 +1,6 @@
 [package]
 name = "cloudy-canvas"
-version = "0.5.0"
+version = "0.6.0"
 description = "Cloudy Canvas — boards and designs on one canvas"
 authors = ["DarkRedgm"]
 license = "AGPL-3.0-only"
