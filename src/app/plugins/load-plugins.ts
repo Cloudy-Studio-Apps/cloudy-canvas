@@ -2,6 +2,7 @@ import { registerBoardModule } from "@board/ui";
 import { registerDesignModule } from "@design/ui";
 import { pluginStorage } from "@platform";
 import {
+  pluginViewerSources,
   stickerCatalog,
   themeRegistry,
   type InstalledPlugin,
@@ -57,6 +58,9 @@ async function loadPlugin(
       stickerCatalog.drop(id);
       themeRegistry.drop(id);
       throw error;
+    }
+    if (imported.viewerCode) {
+      pluginViewerSources.set(id, { name: plugin.manifest.name, code: imported.viewerCode });
     }
     const modules = [...new Set([...board, ...design].map((module) => module.id))];
     return { id, state: "enabled", modules, stickers, themes };

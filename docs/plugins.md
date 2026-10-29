@@ -425,6 +425,45 @@ The app's shader effect and Catalog mode were both built this way, copied out of
 only their imports and ids changed, and ran as plugins. In this repo `pnpm lint` checks the code
 and translations of `examples/plugins/*/src`.
 
+## In the HTML export
+
+A board can be exported as one HTML file that opens in any browser, read-only (Export › HTML).
+**By default your plugin's elements show there as a placeholder**: a box of the element's size with
+the question-mark seal and your plugin's name. Nothing of your plugin goes into the file.
+
+To have them drawn for real, export `activateViewer(api)` from `main.js` next to `activate`. Your
+whole `main.js` is then copied into the file and runs in the reviewer's browser when they open it.
+The viewer edits nothing, so `activateViewer` returns only the modules that draw: your kinds, links
+and, if you like, a viewer part (a toggle with a side panel, or what a click on your element does).
+
+```js
+export function activateViewer(api) {
+  return api.core.defineModule({
+    id: "my-plugin",
+    uses: ["viewer"],
+    register(host) {
+      host.contribute(api.board.boardCanvas.kinds, new MyKind());
+      const viewer = host.require("viewer");
+      host.contribute(viewer.boardViewerParts, {
+        id: "my-plugin",
+        types: ["my-type"],
+        // Runs in the app when exporting: what the file carries for you (`null`: nothing).
+        collect: (doc) => ({ count: doc.ids().length }),
+        click: (el) => window.open(el.url, "_blank", "noopener"),
+      });
+    },
+  });
+}
+```
+
+- Contribute the same part from `activate` too, so `collect` runs when the board is exported.
+- In the viewer, `api` has `apiVersion`, `plugin` (`id`, `manifest`), `core`, `canvas`, `board`
+  (the engine side only, no editor UI) and `libs.React` for a part's `panel`. There's no
+  `readAsset`: bundle what you draw into `main.js` (`pnpm plugin:build` inlines images).
+- Editor entries (tools, panels, menus, MCP tools) do nothing there; leave them in `activate`.
+- If `activateViewer` throws in the viewer, your elements show as placeholders and the rest of the
+  board still opens.
+
 ## Rules
 
 - **Name everything after the plugin:** element types, tool ids, option keys and agent tool names, so they don't collide with the app or other plugins. When a plugin collides (a type, tool or command that's already taken, an option given twice), it's turned off with the reason shown in Settings › Plugins, and the board opens without it.

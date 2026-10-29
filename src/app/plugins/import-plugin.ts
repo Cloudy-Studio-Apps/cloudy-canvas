@@ -18,9 +18,9 @@ const PRODUCTS: readonly PluginProduct[] = ["board", "design"];
 export async function importPlugin(plugin: InstalledPlugin): Promise<ImportedPlugin> {
   const code = await pluginStorage.readMain(plugin);
   const url = URL.createObjectURL(new Blob([code], { type: "text/javascript" }));
-  let exports: { default?: unknown };
+  let exports: { default?: unknown; activateViewer?: unknown };
   try {
-    exports = (await import(/* @vite-ignore */ url)) as { default?: unknown };
+    exports = (await import(/* @vite-ignore */ url)) as typeof exports;
   } finally {
     URL.revokeObjectURL(url);
   }
@@ -32,7 +32,8 @@ export async function importPlugin(plugin: InstalledPlugin): Promise<ImportedPlu
   const result: unknown = await (exports.default as (api: unknown) => unknown)(
     createPluginApi(plugin, { stickers: stickers.api, themes: themes.api }),
   );
-  return { modules: splitByProduct(plugin, result), stickers, themes };
+  const viewerCode = typeof exports.activateViewer === "function" ? code : null;
+  return { modules: splitByProduct(plugin, result), stickers, themes, viewerCode };
 }
 
 function splitByProduct(plugin: InstalledPlugin, result: unknown): PluginModules {

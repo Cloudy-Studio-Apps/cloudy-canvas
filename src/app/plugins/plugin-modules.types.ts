@@ -13,4 +13,6 @@ export interface ImportedPlugin {
   modules: PluginModules;
   stickers: PluginStickerStage;
   themes: PluginThemeStage;
+  /** Its code, when it also exports `activateViewer(api)` (it draws in the board's HTML export). */
+  viewerCode: string | null;
 }
