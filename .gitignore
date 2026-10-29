@@ -26,3 +26,4 @@ dist-ssr
 # Live sessions relay: the server's real token
 server/relay/.env
 server/*
+.superpowers/
