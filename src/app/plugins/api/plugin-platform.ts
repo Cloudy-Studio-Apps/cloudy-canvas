@@ -4,6 +4,7 @@
 export {
   clipboard,
   exportFile,
+  exportFiles,
   fontLibrary,
   http,
   openExternal,

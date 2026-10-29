@@ -11,7 +11,7 @@ import { highlightEffects, rangeHighlight } from "./range-highlight";
 
 /**
  * A code editor (CodeMirror) with line numbers, syntax colors, bracket matching, an error line
- * and a highlighted range. Controlled through `value`; only the user's edits come back in
+ * and a highlighted range, or a read-only viewer with `readOnly`. Controlled through `value`; only the user's edits come back in
  * `onChange`. Text set from outside starts a fresh editor state, so undo never reaches text the
  * user didn't type.
  */
@@ -26,12 +26,13 @@ export function CodeEditor({
   invalid = false,
   errorLine: errorLineNumber = null,
   highlight = null,
+  readOnly = false,
   className,
 }: CodeEditorProps) {
   const host = useRef<HTMLDivElement>(null);
   const view = useRef<EditorView | null>(null);
   const callbacks = useRef({ onChange, onFocus, onBlur, completions });
-  const config = useRef({ language, label, invalid });
+  const config = useRef({ language, label, invalid, readOnly });
   const slots = useRef({
     language: new Compartment(),
     label: new Compartment(),
@@ -40,15 +41,17 @@ export function CodeEditor({
 
   useEffect(() => {
     callbacks.current = { onChange, onFocus, onBlur, completions };
-    config.current = { language, label, invalid };
+    config.current = { language, label, invalid, readOnly };
   });
 
   const createState = (doc: string): EditorState => {
-    const { language, label, invalid } = config.current;
+    const { language, label, invalid, readOnly } = config.current;
     return EditorState.create({
       doc,
       extensions: [
         editorBasics,
+        EditorState.readOnly.of(readOnly),
+        EditorView.editable.of(!readOnly),
         slots.current.language.of(language),
         slots.current.label.of(labelAttributes(label)),
         slots.current.invalid.of(invalidAttributes(invalid)),

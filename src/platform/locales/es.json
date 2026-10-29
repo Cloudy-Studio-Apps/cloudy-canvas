@@ -11,5 +11,6 @@
   },
   "saveBoard": "Guardar pizarra",
   "saveDesign": "Guardar diseño",
-  "importStickers": "Importar stickers"
+  "importStickers": "Importar stickers",
+  "exportToFolder": "Exportar a una carpeta"
 }

@@ -28,5 +28,7 @@ export interface CodeEditorProps {
   errorLine?: number | null;
   /** Part of the text to point out: its lines are banded and scrolled into view. */
   highlight?: CodeRange | null;
+  /** Shows the text without letting it be edited (set when the editor is created). */
+  readOnly?: boolean;
   className?: string;
 }

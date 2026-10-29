@@ -11,5 +11,6 @@
   },
   "saveBoard": "Save board",
   "saveDesign": "Save design",
-  "importStickers": "Import stickers"
+  "importStickers": "Import stickers",
+  "exportToFolder": "Export to folder"
 }

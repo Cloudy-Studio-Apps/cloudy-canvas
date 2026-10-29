@@ -1,4 +1,47 @@
 {
+  "commands": {
+    "exportCode": "Export code"
+  },
+  "menu": {
+    "exportCode": "Export code…"
+  },
+  "button": {
+    "label": "Export code",
+    "table": "Export this table as code",
+    "schema": "Export the schema as code"
+  },
+  "dialog": {
+    "title": "Export code",
+    "description": "Your database schema as a framework's files: models, migrations or scripts, for the version you use.",
+    "scope": "What to export",
+    "thisTable": "This table",
+    "wholeSchema": "Whole schema",
+    "target": "Framework",
+    "version": "Version",
+    "files": "Files",
+    "warnings_one": "{count} warning",
+    "warnings_other": "{count} warnings",
+    "copy": "Copy file",
+    "saveAll_one": "Save {count} file",
+    "saveAll_other": "Save {count} files",
+    "emptyTitle": "Nothing to export yet",
+    "emptyDescription": "Add database tables to the board, then export them as code."
+  },
+  "copy": {
+    "done": "Copied to the clipboard",
+    "error": "Couldn't copy the file"
+  },
+  "save": {
+    "done_one": "File saved",
+    "done_other": "{count} files saved",
+    "error": "Couldn't save the files"
+  },
+  "overwrite": {
+    "title": "Replace existing files?",
+    "description_one": "{count} file is already in this folder and will be replaced.",
+    "description_other": "{count} files are already in this folder and will be replaced.",
+    "replace": "Replace"
+  },
   "warnings": {
     "missing-table": "{table} isn't exported: its foreign keys are kept, but no relation is written to it.",
     "unknown-type": "{table}.{column}: the type {type} has no equivalent in {target}, so {fallback} is used.",

@@ -1,4 +1,47 @@
 {
+  "commands": {
+    "exportCode": "Exportar código"
+  },
+  "menu": {
+    "exportCode": "Exportar código…"
+  },
+  "button": {
+    "label": "Exportar código",
+    "table": "Exportar esta tabla como código",
+    "schema": "Exportar el esquema como código"
+  },
+  "dialog": {
+    "title": "Exportar código",
+    "description": "Tu esquema de base de datos como archivos de un framework: modelos, migraciones o scripts, para la versión que usas.",
+    "scope": "Qué exportar",
+    "thisTable": "Esta tabla",
+    "wholeSchema": "Todo el esquema",
+    "target": "Framework",
+    "version": "Versión",
+    "files": "Archivos",
+    "warnings_one": "{count} aviso",
+    "warnings_other": "{count} avisos",
+    "copy": "Copiar archivo",
+    "saveAll_one": "Guardar {count} archivo",
+    "saveAll_other": "Guardar {count} archivos",
+    "emptyTitle": "Aún no hay nada que exportar",
+    "emptyDescription": "Añade tablas de base de datos al tablero y luego expórtalas como código."
+  },
+  "copy": {
+    "done": "Copiado al portapapeles",
+    "error": "No se pudo copiar el archivo"
+  },
+  "save": {
+    "done_one": "Archivo guardado",
+    "done_other": "{count} archivos guardados",
+    "error": "No se pudieron guardar los archivos"
+  },
+  "overwrite": {
+    "title": "¿Reemplazar los archivos existentes?",
+    "description_one": "{count} archivo ya está en esta carpeta y se reemplazará.",
+    "description_other": "{count} archivos ya están en esta carpeta y se reemplazarán.",
+    "replace": "Reemplazar"
+  },
   "warnings": {
     "missing-table": "{table} no se exporta: sus claves foráneas se mantienen, pero no se escribe ninguna relación con ella.",
     "unknown-type": "{table}.{column}: el tipo {type} no tiene equivalente en {target}, así que se usa {fallback}.",

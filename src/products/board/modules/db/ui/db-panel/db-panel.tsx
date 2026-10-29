@@ -1,17 +1,19 @@
 import { BoxSelect, Braces, LayoutGrid, X } from "lucide-react";
 
-import { FloatingPanel, useEngine, useEngineState } from "@canvas-ui";
+import { FloatingPanel, useEditorModules, useEngine, useEngineState } from "@canvas-ui";
 import { Button } from "@shared/ui/kit";
 import { useBoardSchema } from "../schema";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { SchemaEditor } from "./schema-editor";
 import { EnumEditor } from "./enum-editor";
 import { TableEditor } from "./table-editor";
+import { dbPanelActions } from "../db.points";
 import { t } from "../../db.i18n";
 
 /**
  * Right side panel: the selected table or enum's editor, or the whole schema's DBML. The header
- * selects or tidies the selected card's linked group (or tidies the whole schema).
+ * selects or tidies the selected card's linked group (or tidies the whole schema), then shows
+ * the buttons other modules add (`dbPanelActions`).
  */
 export function DbPanel() {
   const engine = useEngine();
@@ -22,6 +24,9 @@ export function DbPanel() {
   const enumId = selectionTypes === "db-enum" ? selectedId : null;
   const schemaOpen = useBoardPanelStore((state) => state.schemaOpen);
   const setSchemaOpen = useBoardPanelStore((state) => state.setSchemaOpen);
+  const actions = [...useEditorModules().host.get(dbPanelActions)].sort(
+    (a, b) => a.order - b.order,
+  );
   if (!schemaOpen && !tableId && !enumId) return null;
   const title = schemaOpen ? t("panel.schema") : tableId ? t("panel.table") : t("panel.enum");
 
@@ -59,6 +64,9 @@ export function DbPanel() {
         >
           <LayoutGrid />
         </Button>
+        {actions.map((action) => (
+          <action.component key={action.id} tableId={schemaOpen ? null : tableId} />
+        ))}
         {!schemaOpen && (
           <Button variant="ghost" size="sm" onClick={() => setSchemaOpen(true)}>
             <Braces />
