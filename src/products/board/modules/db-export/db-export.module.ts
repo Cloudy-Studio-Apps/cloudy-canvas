@@ -1,6 +1,8 @@
 import { defineModule } from "@shared/core";
+import { boardMcpTools } from "../../board-points";
 import { BUILT_IN_CODE_TARGETS, codeTargets } from "./targets";
 import { registerDbExportCommands } from "./db-export.commands";
+import { dbExportTools } from "./db-export.mcp";
 import { boardCodeTargets } from "./db-export.points";
 import { registerDbExportSections } from "./db-export.sections";
 import * as dbExportApi from ".";
@@ -9,7 +11,7 @@ import * as dbExportUi from "./ui";
 /**
  * Database schema code export: the targets (frameworks and their versions), the Export code
  * command in `db-export.commands.ts` and its dialog, menu item and panel button in
- * `db-export.sections.ts`.
+ * `db-export.sections.ts`; the agent tools in `db-export.mcp.ts`.
  */
 export const dbExportModule = defineModule({
   id: "db-export",
@@ -22,5 +24,6 @@ export const dbExportModule = defineModule({
     codeTargets.useSource(() => host.get(boardCodeTargets));
     registerDbExportCommands(host);
     registerDbExportSections(host);
+    host.contribute(boardMcpTools, { id: "db-export", tools: () => dbExportTools });
   },
 });

@@ -12,10 +12,11 @@ or the selection's context menu.
   command); db's `dbPanelActions` (the button)
 - **Points it owns:** `boardCodeTargets` (`db-export.points.ts`): the frameworks the schema exports
   to; plugins add theirs through `api.board.boardCodeTargets` (see `docs/plugins.md`)
-- **MCP tools:** —
+- **MCP tools:** `list_code_targets`, `export_schema_code` (read-only: they return the files, an
+  agent writes them where it wants)
 - **Files:** `model/` (`CodeSchema`), `code/` (naming and writing helpers), `targets/` (the target
   types, the registry, `exportCode` and one folder per framework), `db-export.commands.ts`,
-  `db-export.sections.ts`, `ui/` (the dialog)
+  `db-export.sections.ts`, `db-export.mcp.ts`, `ui/` (the dialog)
 
 ## How it works
 
