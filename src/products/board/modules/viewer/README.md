@@ -36,3 +36,12 @@ Modules add toggles and side panels to it (the schema's DBML, the ER text) and p
   - `encodeViewerHtml`: the JSON gzipped and base64 into the runtime (`virtual:board-viewer-runtime`,
     loaded only when exporting) in place of `<!--cloudy-board-data-->`, with the board's title and
     description as the page's `<title>` and meta description.
+- **Viewing** (`ui/viewer/`, `ViewerApp`, mounted by `src/viewer/`): the engine draws the board
+  read-only (`useViewerEngine`: `doc.setReadOnly(true)`, the hand tool forced back after any key
+  picks another, any selection cleared). A click without a drag (`useViewerClicks`, under
+  `MOVE_THRESHOLD_PX`) on an element of a part's `types` runs its `click` or opens its panel on it;
+  the pointer points over those. `BrandBar` (seal, "Cloudy Canvas", the title with its plain-text
+  `TitlePopover`, "view only", the toggles of parts with a `button`, a `panel` and data, by
+  `order`), `ZoomBar`, `ViewerPanelHost` (one panel at a time) and `ViewerCodePanel` (title, All
+  code, Copy, close; a `<pre>`) are the chrome. `embeddedFontLoader` loads the file's font faces;
+  `ViewerError` replaces the board when WebGL is missing or the data is damaged.
