@@ -58,6 +58,7 @@ plugins' modules leave it unset. `scripts/check-modules.mjs` reads it.
 | `text`, `image`                                                       | Core    | the fallbacks of `pasteText` and `pasteImage`; the FigJam import       |
 | `sticky`, `geo`, `section`, `draw`, `table`, `embed`, `sticker`, `db` | Feature | kinds and tools built on the core                                      |
 | `er` (a mode with its own points: standards and constructs)           | Feature | built on `db`, `connector`, `geo` and `section`                        |
+| `db-export` (its own point: code targets)                             | Feature | built on `db`: the schema as framework code                            |
 
 ### What a feature or a plugin can register (the same list)
 

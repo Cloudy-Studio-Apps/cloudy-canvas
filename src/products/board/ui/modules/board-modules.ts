@@ -13,6 +13,7 @@ import { colorsModule } from "@board/modules/colors/colors.module";
 import { connectorModule } from "@board/modules/connector/connector.module";
 import { coreModule } from "@board/modules/core/core.module";
 import { dbModule } from "@board/modules/db/db.module";
+import { dbExportModule } from "@board/modules/db-export/db-export.module";
 import { drawModule } from "@board/modules/draw/draw.module";
 import { embedModule } from "@board/modules/embed/embed.module";
 import { erModule } from "@board/modules/er/er.module";
@@ -43,6 +44,7 @@ let modules: AppModule[] = [
   imageModule,
   embedModule,
   dbModule,
+  dbExportModule,
   erModule,
   libraryModule,
   viewerModule,

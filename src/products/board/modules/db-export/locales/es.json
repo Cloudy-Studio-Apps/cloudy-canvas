@@ -1,0 +1,16 @@
+{
+  "warnings": {
+    "missing-table": "{table} no se exporta: sus claves foráneas se mantienen, pero no se escribe ninguna relación con ella.",
+    "unknown-type": "{table}.{column}: el tipo {type} no tiene equivalente en {target}, así que se usa {fallback}.",
+    "reserved-word": "{name} es una palabra reservada en {target}; cámbiale el nombre para evitar errores.",
+    "name-collision": "{names} se convierten en {converted}; los siguientes llevan un número.",
+    "no-primary-key": "{table} no tiene clave primaria.",
+    "composite-key": "{table} tiene una clave primaria compuesta, que los modelos de {target} no pueden expresar.",
+    "fk-cycle": "{table}.{column} cierra un ciclo de claves foráneas, así que se añade después de todas las tablas.",
+    "many-to-many": "{from} y {to} son de muchos a muchos: añade una tabla intermedia al esquema para exportarla.",
+    "unsupported-default": "{table}.{column}: el valor por defecto {value} no se puede escribir en {target}.",
+    "unsupported-increment": "{table}.{column}: {target} no tiene autoincremento.",
+    "unsupported-reference": "{table}.{column}: {target} no tiene claves foráneas, así que es un campo normal.",
+    "unsupported-index": "{table}: un índice sobre una expresión no se puede escribir en {target}."
+  }
+}

@@ -44,7 +44,7 @@ the browser zip.
 1. **Reserved words and quoting:** a table `order`/`user`/`group` or a column `class`/`default`
    must be quoted in SQL (`"order"` PG, `` `order` `` MySQL) and warned about where it is a
    reserved word of PHP/TS (class names) — owned by Tasks 2 (reserved lists) and 4/5/8/9.
-2. **Self-references and FK cycles:** `employees.manager_id → employees.id` is *not* a cycle for
+2. **Self-references and FK cycles:** `employees.manager_id → employees.id` is _not_ a cycle for
    ordering (the FK is in the table's own `CREATE`); a real cycle (`a → b → a`) defers FKs to the
    end (`ALTER TABLE`, a final Laravel migration) with a warning — Task 3 (ordering) and Tasks 4/5.
 3. **Composite or missing primary keys:** a `pk` index over two columns → `PRIMARY KEY (a, b)` /
@@ -190,6 +190,7 @@ To add a new framework, create a new folder in `targets/` and add one line to
 plugin does the same through `api.board.boardCodeTargets`.
 
 Modified elsewhere:
+
 - `src/products/board/modules/index.ts` — `export * from "./db-export";`
 - `src/products/board/ui/modules/board-modules.ts` — add `dbExportModule` after `dbModule`
 - `src/products/board/modules/db/db.points.ts` (new) + `db/db.module.ts`, `db/index.ts`,
@@ -203,6 +204,7 @@ Modified elsewhere:
 ### Task 1: Module skeleton, `CodeSchema` types, targets point and registry
 
 **Files:**
+
 - Create: `db-export.module.ts`, `db-export.points.ts`, `db-export.i18n.ts`, `locales/en.json`,
   `locales/es.json`, `index.ts`, `README.md`, `model/code-schema.types.ts`, `model/index.ts`,
   `targets/code-target.types.ts`, `targets/define-code-target.ts`,
@@ -212,6 +214,7 @@ Modified elsewhere:
   `src/products/board/README.md` (modules list), `docs/plugins.md` (new point)
 
 **Interfaces:**
+
 - Produces (`model/code-schema.types.ts`):
 
 ```ts
@@ -266,7 +269,10 @@ export interface CodeTable {
   incoming: CodeRelation[];
 }
 
-export interface CodeEnum { name: string; values: { name: string; note: string }[] }
+export interface CodeEnum {
+  name: string;
+  values: { name: string; note: string }[];
+}
 
 export interface CodeSchema {
   /** In FK dependency order (a table after the tables it references; self-refs ignored). */
@@ -284,15 +290,24 @@ export interface CodeSchema {
 
 ```ts
 export type CodeLanguage = "php" | "ts" | "sql" | "prisma" | "js";
-export interface CodeFile { path: string; content: string; language: CodeLanguage }
+export interface CodeFile {
+  path: string;
+  content: string;
+  language: CodeLanguage;
+}
 export type CodeOptionValue = string | boolean;
 export type CodeOption =
-  | { id: string; kind: "select"; label: () => string; default: string;
-      choices: { value: string; label: () => string }[] }
+  | {
+      id: string;
+      kind: "select";
+      label: () => string;
+      default: string;
+      choices: { value: string; label: () => string }[];
+    }
   | { id: string; kind: "switch"; label: () => string; default: boolean };
 export interface CodeProfile {
-  id: string;            // "13", "22", "latest"
-  label: string;         // "Laravel 13" — a product name, not translated
+  id: string; // "13", "22", "latest"
+  label: string; // "Laravel 13" — a product name, not translated
   flags: Readonly<Record<string, string | number | boolean>>;
 }
 export interface CodeRequest {
@@ -302,10 +317,13 @@ export interface CodeRequest {
   /** Export time, for Laravel migration names; passed in so output is deterministic per call. */
   now: Date;
 }
-export interface CodeOutput { files: CodeFile[]; warnings: CodeWarning[] }
+export interface CodeOutput {
+  files: CodeFile[];
+  warnings: CodeWarning[];
+}
 export interface CodeTargetDefinition {
-  id: string;            // "laravel", "angular", "nestjs", "mysql", "postgres", "mongodb"
-  label: string;         // "Laravel"
+  id: string; // "laravel", "angular", "nestjs", "mysql", "postgres", "mongodb"
+  label: string; // "Laravel"
   /** Newest first; the first is the default. */
   profiles: readonly CodeProfile[];
   options: readonly CodeOption[];
@@ -314,37 +332,39 @@ export interface CodeTargetDefinition {
 ```
 
 - Produces (`targets/warnings.types.ts`): `CodeWarning { id: CodeWarningId; params: Record<string,
-  string>; table?: string; column?: string }` with `CodeWarningId` a string union that grows per
+string>; table?: string; column?: string }` with `CodeWarningId` a string union that grows per
   task (start with `"missing-table" | "unknown-type" | "reserved-word" | "name-collision" |
-  "no-primary-key" | "composite-key" | "fk-cycle" | "unsupported"`). `targets/warnings.ts`:
+"no-primary-key" | "composite-key" | "fk-cycle" | "unsupported"`). `targets/warnings.ts`:
   `warn(id, params, at?: { table?: string; column?: string }): CodeWarning` and
-  `warningText(w: CodeWarning): string` = `t(\`warnings.${w.id}\`, w.params)` (UI only). The MCP
-  returns `id`/`params` raw, so it stays English.
+  `warningText(w: CodeWarning): string` = `t(\`warnings.${w.id}\`, w.params)`(UI only). The MCP
+returns`id`/`params` raw, so it stays English.
 - Produces: `defineCodeTarget(def: CodeTargetDefinition): CodeTargetDefinition` (identity, for
   typing, like `defineErStandard`); `CodeTargetRegistry` with `useSource`, `list()`, `get(id)` —
   copy the shape of `er/base/standards/er-standard-registry.ts`; `export const codeTargets`.
 - Produces (`db-export.points.ts`): `export const boardCodeTargets =
-  definePoint<CodeTargetDefinition>("board.codeTargets", { keyOf: (t) => t.id });`
+definePoint<CodeTargetDefinition>("board.codeTargets", { keyOf: (t) => t.id });`
 - `dbExportModule`: `defineModule({ id: "db-export", tier: "feature", requires: ["db"], exports:
-  { ...api, ...ui }, register(host) { host.contribute(boardCodeTargets, ...BUILT_IN_CODE_TARGETS);
-  codeTargets.useSource(() => host.get(boardCodeTargets)); } })`.
+{ ...api, ...ui }, register(host) { host.contribute(boardCodeTargets, ...BUILT_IN_CODE_TARGETS);
+codeTargets.useSource(() => host.get(boardCodeTargets)); } })`.
 
 - [ ] **Step 1:** Create the files above; README in the module template (Tier, Requires,
-  Contributes, Points it owns: `boardCodeTargets`, MCP tools: none yet, Files, How it works).
-  Locale files start with `warnings.*` keys for every `CodeWarningId` (en + es).
+      Contributes, Points it owns: `boardCodeTargets`, MCP tools: none yet, Files, How it works).
+      Locale files start with `warnings.*` keys for every `CodeWarningId` (en + es).
 - [ ] **Step 2:** Register the module in `board-modules.ts` after `dbModule`; export the engine
-  side from `modules/index.ts`; document `boardCodeTargets` in `docs/plugins.md` next to
-  `boardErStandards` (`api.board.boardCodeTargets`, `defineCodeTarget`).
+      side from `modules/index.ts`; document `boardCodeTargets` in `docs/plugins.md` next to
+      `boardErStandards` (`api.board.boardCodeTargets`, `defineCodeTarget`).
 - [ ] **Step 3:** Run `pnpm lint && pnpm typecheck && pnpm format:check` — all pass.
 - [ ] **Step 4:** Commit `feat(db-export): module skeleton and code targets point`.
 
 ### Task 2: Naming and code-writing helpers
 
 **Files:**
+
 - Create: `code/inflect.ts`, `code/naming.ts`, `code/naming.types.ts`, `code/reserved-words.ts`,
   `code/code-writer.ts`, `code/index.ts`
 
 **Interfaces:**
+
 - Produces:
   - `words(name: string): string[]` (splits snake, kebab, camel, Pascal, spaces; lowercases)
   - `toPascal`, `toCamel`, `toSnake`, `toKebab` `(name: string) => string`
@@ -355,33 +375,35 @@ export interface CodeTargetDefinition {
     `-xes`, `-ches`, `-shes`, `-ves/-f(e)`, default `-s`.
   - `className(table: string): string` = `toPascal(singular(table))` (`order_items` → `OrderItem`)
   - `RESERVED: { php: ReadonlySet<string>; ts: ReadonlySet<string>; mysql: ReadonlySet<string>;
-    postgres: ReadonlySet<string> }` (lowercase; PHP class-name reserved words incl. `class`,
+postgres: ReadonlySet<string> }` (lowercase; PHP class-name reserved words incl. `class`,
     `list`, `match`, `enum`, `object`, `string`, `int`, `float`, `bool`, `array`, `parent`, `self`;
     the usual SQL keyword lists incl. `order`, `user` (PG), `group`, `select`, `table`, `key`)
   - `collisions(names: { source: string; converted: string }[]): { converted: string; sources:
-    string[] }[]` and `uniqueNames(names: string[]): string[]` (second `OrderItem` → `OrderItem2`)
+string[] }[]` and `uniqueNames(names: string[]): string[]` (second `OrderItem` → `OrderItem2`)
   - `class CodeWriter { line(text?: string): this; block(open: string, close: string, body: () =>
-    void): this; indent(body: () => void): this; toString(): string }` — 4 spaces for PHP, 2 for
+void): this; indent(body: () => void): this; toString(): string }` — 4 spaces for PHP, 2 for
     TS/Prisma/SQL/JS: constructor `new CodeWriter(indent: string)`; output ends with one `\n`.
 
 - [ ] **Step 1:** Implement the helpers (no dependencies).
 - [ ] **Step 2:** Expected (check by reading): `className("people") = "Person"`,
-  `className("categories") = "Category"`, `className("order_status") = "OrderStatus"`,
-  `toCamel("order_id") = "orderId"`, `toKebab("OrderItem") = "order-item"`,
-  `plural("category") = "categories"`.
+      `className("categories") = "Category"`, `className("order_status") = "OrderStatus"`,
+      `toCamel("order_id") = "orderId"`, `toKebab("OrderItem") = "order-item"`,
+      `plural("category") = "categories"`.
 - [ ] **Step 3:** Verify lint/typecheck/format pass. Commit `feat(db-export): naming and code writer`.
 
 ### Task 3: `toCodeSchema`
 
 **Files:**
+
 - Create: `model/to-code-schema.ts`, `model/code-relations.ts`, `model/dependency-order.ts`,
   `model/parse-default.ts`, `model/parse-args.ts` (+ `.types.ts` where they declare types)
 
 **Interfaces:**
+
 - Consumes: `DbSchema` (`tables()`, `enums()`), `DbTableElement`, `DbColumn`, `DbIndex`, `DbRef`,
   `canonicalTypeName` from `../db`.
 - Produces: `toCodeSchema(schema: DbSchema, ids?: readonly string[]): { schema: CodeSchema;
-  warnings: CodeWarning[] }` — `ids` are table/enum element ids; omitted = everything. Enums used by
+warnings: CodeWarning[] }` — `ids` are table/enum element ids; omitted = everything. Enums used by
   an exported table are always included.
 - Produces: `dependencyOrder(tables: CodeTable[]): { order: CodeTable[]; deferred: CodeRelation[] }`
   — Kahn's algorithm on outgoing non-self, non-external relations; ties keep the board order
@@ -390,6 +412,7 @@ export interface CodeTargetDefinition {
 
 Relation normalization (`code-relations.ts`), from the owning column `c` of table `T` with
 `ref { tableId, columnId, kind }` pointing at `U.d`:
+
 - `">"` → `{ from: T.c, to: U.d, kind: "many-to-one" }`
 - `"<"` → `{ from: U.d, to: T.c, kind: "many-to-one" }` (the FK is on the other side)
 - `"-"` → `{ from: T.c, to: U.d, kind: "one-to-one" }`
@@ -403,28 +426,30 @@ boolean (`true`/`false`), `null`, or expression (`` `now()` ``) → `{ kind: "ex
 Composite pk: a `DbIndex` with `pk: true` sets `primaryKey` to its columns and marks them `pk`.
 
 - [ ] **Step 1:** Implement. A table with no pk adds a `no-primary-key` warning here (once, so
-  targets don't repeat it).
+      targets don't repeat it).
 - [ ] **Step 2:** Verify lint/typecheck/format. Commit `feat(db-export): neutral code schema`.
 
 ### Task 4: SQL targets (MySQL, PostgreSQL)
 
 **Files:**
+
 - Create: `targets/sql/sql-dialect.types.ts`, `targets/sql/mysql.dialect.ts`,
   `targets/sql/postgres.dialect.ts`, `targets/sql/write-ddl.ts`, `targets/sql/write-table.ts`,
   `targets/sql/mysql.target.ts`, `targets/sql/postgres.target.ts`, `targets/sql/index.ts`
 - Modify: `targets/built-in-targets.ts`
 
 **Interfaces:**
+
 - `SqlDialect { quote(name: string): string; columnType(c: CodeColumn): string | null (null =
-  unknown → `text` + warning); autoIncrement(c: CodeColumn): string; enumType(e: CodeEnum):
-  string | null (PG: a `CREATE TYPE`; MySQL: null, enum inline); inlineEnum(e: CodeEnum): string;
-  comment(table: CodeTable): string[]; columnComment(c: CodeColumn): string; reserved:
-  ReadonlySet<string> }`
+unknown → `text`+ warning); autoIncrement(c: CodeColumn): string; enumType(e: CodeEnum):
+string | null (PG: a`CREATE TYPE`; MySQL: null, enum inline); inlineEnum(e: CodeEnum): string;
+comment(table: CodeTable): string[]; columnComment(c: CodeColumn): string; reserved:
+ReadonlySet<string> }`
 - `writeDdl(schema: CodeSchema, dialect: SqlDialect, mode: "single" | "project"): CodeOutput` —
   one file `schema.sql` (single mode: `<table>.sql` with that table, its enum types and indexes).
 - Targets: `mysqlTarget` (`id: "mysql"`, `label: "MySQL"`, profiles `[{ id: "latest", label:
-  "MySQL 8.4", flags: {} }]`, no options), `postgresTarget` (`id: "postgres"`, `label:
-  "PostgreSQL"`, profiles `[{ id: "latest", label: "PostgreSQL 18", flags: {} }]`).
+"MySQL 8.4", flags: {} }]`, no options), `postgresTarget` (`id: "postgres"`, `label:
+"PostgreSQL"`, profiles `[{ id: "latest", label: "PostgreSQL 18", flags: {} }]`).
 
 Order of the file: header comment (`-- Generated by Cloudy Canvas`), enum types (PG), tables in
 `schema.tables` order (columns, `PRIMARY KEY (...)`, inline `FOREIGN KEY ... REFERENCES ...` for
@@ -438,7 +463,7 @@ PG increment: `integer`/`bigint` + increment → `GENERATED BY DEFAULT AS IDENTI
 
 - [ ] **Step 1:** Implement dialects, writer and both targets; add them to `BUILT_IN_CODE_TARGETS`.
 - [ ] **Step 2:** Expected PG for `orders(id int pk increment, status order_status, user_id int >
-  users.id)`:
+users.id)`:
 
 ```sql
 CREATE TYPE order_status AS ENUM ('pending', 'paid');
@@ -457,6 +482,7 @@ CREATE TABLE orders (
 ### Task 5: Laravel target (11, 12, 13)
 
 **Files:**
+
 - Create: `targets/laravel/laravel.target.ts`, `targets/laravel/profiles.ts`,
   `targets/laravel/type-map.ts`, `targets/laravel/write-model.ts`,
   `targets/laravel/model-relations.ts`, `targets/laravel/model-casts.ts`,
@@ -465,11 +491,12 @@ CREATE TABLE orders (
 - Modify: `targets/built-in-targets.ts`
 
 **Interfaces:**
+
 - `laravelTarget`: `id: "laravel"`, `label: "Laravel"`, profiles (newest first)
   `{ id: "13", label: "Laravel 13", flags: { php: "8.3" } }`, `{ id: "12", …, php: "8.2" }`,
   `{ id: "11", …, php: "8.2" }`; no options.
 - `writeModel(table: CodeTable, schema: CodeSchema, profile: CodeProfile): { file: CodeFile;
-  warnings: CodeWarning[] }`, `writeMigration(table, schema, at: Date, index: number): CodeFile`,
+warnings: CodeWarning[] }`, `writeMigration(table, schema, at: Date, index: number): CodeFile`,
   `writeEnum(e: CodeEnum): CodeFile`, `blueprintColumn(c: CodeColumn, table: CodeTable): string`.
 
 Rules (from the spec, Targets → Laravel): `$table` only if `table !== toSnake(plural(className))`;
@@ -492,7 +519,7 @@ OrderStatus: string { case Pending = 'pending'; … }`. Single mode = the model 
 
 - [ ] **Step 1:** Implement; add to built-ins.
 - [ ] **Step 2:** Expected model for `order_items(id pk increment, order_id > orders.id, quantity
-  int, price decimal(10,2), created_at, updated_at)`:
+int, price decimal(10,2), created_at, updated_at)`:
 
 ```php
 <?php
@@ -530,13 +557,14 @@ class OrderItem extends Model
 ### Task 6: Dialog, saving and entry points (first shippable release)
 
 **Files:**
+
 - Create: `src/platform/export-files.ts`, `src/platform/export-files.types.ts`
 - Modify: `src/platform/index.ts`; `src/shared/ui/components/code-editor/code-editor.tsx` +
   `code-editor.types.ts` (`readOnly?: boolean` → `EditorState.readOnly.of(true)` and
   `EditorView.editable.of(false)`); `src/shared/ui/README.md` if it documents the editor's props
 - Create (db): `db/db.points.ts` — `dbPanelActions = definePoint<DbPanelAction>("board.dbPanelActions",
-  { keyOf: (a) => a.id })` with `DbPanelAction { id: string; order: number; component:
-  ComponentType<{ tableId: string | null }> }` (types in `db/db.points.types.ts`)
+{ keyOf: (a) => a.id })` with `DbPanelAction { id: string; order: number; component:
+ComponentType<{ tableId: string | null }> }` (types in `db/db.points.types.ts`)
 - Modify (db): `db/db.module.ts` (nothing to contribute; the point is read by the panel),
   `db/ui/db-panel/db-panel.tsx` (render `host.get(dbPanelActions)` sorted by `order` in the header,
   passing the selected table id or null; read through the module host the way other editor points
@@ -549,20 +577,22 @@ class OrderItem extends Model
 - Modify: `db-export.module.ts`, locales, README, `CHANGELOG.md`, `CHANGELOG.es.md`
 
 **Interfaces:**
+
 - Platform: `exportFiles(files: { path: string; content: string }[], name: string, confirm:
-  (existing: string[]) => Promise<boolean>): Promise<boolean>` — Tauri: `open({ directory: true
-  })`; `exists()` each `join(folder, path)`; if any exist and `confirm(existing)` is false → false;
+(existing: string[]) => Promise<boolean>): Promise<boolean>` — Tauri: `open({ directory: true
+})`; `exists()` each `join(folder, path)`; if any exist and `confirm(existing)` is false → false;
   `mkdir(dirname, { recursive: true })` + `writeTextFile`. Browser: `zipSync` from `fflate`, download
   `<name>.zip`. Single files use the existing `exportFile(blob, name, { extension, label })`.
 - `EXPORT_CODE_COMMAND = "db.exportCode"`, registered with `boardCanvas.hostCommands`
   (label `t("commands.exportCode")`).
 - `useCodeExportStore`: `{ ids: string[] | null; open(ids: string[]): void; close(): void;
-  last: { target: string; profile: string; options: Record<string, CodeOptionValue> } | null;
-  remember(last): void }` — in-memory app UI state (call made: not persisted, not per board).
+last: { target: string; profile: string; options: Record<string, CodeOptionValue> } | null;
+remember(last): void }` — in-memory app UI state (call made: not persisted, not per board).
 - `useCodeOutput(ids, target, profile, options, mode): { output: CodeOutput; schemaEmpty: boolean }`
   — memoized `toCodeSchema` + `target.generate` (`now` fixed when the dialog opens).
 
 Behavior:
+
 - Opening: `ExportCodeButton` (contributed to `dbPanelActions`, label `t("button")`, icon
   `FileCode`) opens with the selected table id or `[]` (whole schema). The context menu item
   (`boardEditor.contextMenu`, `menu: "selection"`) runs the command, enabled when the selection
@@ -584,23 +614,24 @@ Behavior:
 - [ ] **Step 1:** Platform `exportFiles` and `CodeEditor` `readOnly`.
 - [ ] **Step 2:** `dbPanelActions` point in db and the panel header rendering it.
 - [ ] **Step 3:** Store, command, hook, dialog components, button, context menu; wire in
-  `db-export.module.ts` (`boardEditor.overlays` for the dialog, `boardEditor.sessionHooks` for the
-  command, `dbPanelActions` for the button) — mirror `er/er.sections.ts` and `er/ui/er-to-tables/`.
+      `db-export.module.ts` (`boardEditor.overlays` for the dialog, `boardEditor.sessionHooks` for the
+      command, `dbPanelActions` for the button) — mirror `er/er.sections.ts` and `er/ui/er-to-tables/`.
 - [ ] **Step 4:** Locales (en + es), READMEs, changelog entries.
 - [ ] **Step 5:** Verify lint/typecheck/format (locale and changelog checks are part of lint).
-  Commit `feat(db-export): Export code dialog`.
+      Commit `feat(db-export): Export code dialog`.
 
 ### Task 7: MCP tools
 
 **Files:** Create `db-export.mcp.ts`; modify `db-export.module.ts`, README.
 
 **Interfaces:**
+
 - `list_code_targets` (no args) → `{ targets: { id, label, profiles: { id, label }[], options: {
-  id, kind, default, choices?: string[] }[] }[] }`.
+id, kind, default, choices?: string[] }[] }[] }`.
 - `export_schema_code` args `{ target: string; version?: string (profile id, default newest);
-  options?: object; tables?: string[] (names; omitted = whole schema); mode?: "single" | "project"
-  (default: single when exactly one table) }` → `{ files: CodeFile[]; warnings: { id, params,
-  table?, column? }[] }`. Read-only: no `asUndoStep`. Unknown target/version/table names throw
+options?: object; tables?: string[] (names; omitted = whole schema); mode?: "single" | "project"
+(default: single when exactly one table) }` → `{ files: CodeFile[]; warnings: { id, params,
+table?, column? }[] }`. Read-only: no `asUndoStep`. Unknown target/version/table names throw
   `Error` with the valid ids listed (validate all args before generating).
 - Contribute with `host.contribute(boardMcpTools, { id: "db-export", tools: () => dbExportTools })`.
 
@@ -665,5 +696,5 @@ increments, SQL defaults and FK constraints (refs become a field of the target's
 
 - [ ] **Step 1:** Implement; verify; commit `feat(db-export): MongoDB target`.
 - [ ] **Step 2:** Final: update the changelog entry (en + es) to list every target, update the
-  module README (all targets, the MCP tools), mark the spec's Status "implemented (plan: this
-  file)". Verify; commit `docs(db-export): targets in the changelog and README`.
+      module README (all targets, the MCP tools), mark the spec's Status "implemented (plan: this
+      file)". Verify; commit `docs(db-export): targets in the changelog and README`.

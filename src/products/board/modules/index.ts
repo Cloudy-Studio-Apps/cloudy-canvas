@@ -3,6 +3,7 @@
 // `ui/` are React and are listed by `ui/modules/board-modules.ts`.
 export * from "./connector";
 export * from "./db";
+export * from "./db-export";
 export * from "./draw";
 export * from "./embed";
 export * from "./er";

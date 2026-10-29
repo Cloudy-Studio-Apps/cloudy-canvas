@@ -76,19 +76,19 @@ So a plugin that adds an element always shows it in the library, with the icon, 
 the same names. A group is checked when you read it (`api.board.palette` throws, naming it); what's
 inside a group is handed out as it is.
 
-| `api.…`    | What it is                                                                                                                                                                                                                                                                                             |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `plugin`   | `id`, `manifest`, `readAsset(path)`, `readText(path)` (files in the plugin's folder)                                                                                                                                                                                                                   |
-| `core`     | `@shared/core`: `defineModule`, `definePoint` (points other plugins can extend), `createId`, `defineMessages`/`getLocale`/`tCommon` ([Translations](#translations)), stickers, links, …                                                                                                                |
-| `canvas`   | `@canvas`, the engine: the kind bases (`ElementKind`, `BoxKind`, `TextBoxKind`, `LineKind`), tools (`FreehandTool`, `pastThreshold`, …), geometry, paths, text, colors, `keyBetween`/`nKeysBetween`, export, variables, the agent tool helpers (`asUndoStep`, `buildElement`, `stringArg`, …)          |
-| `canvasUi` | `@canvas-ui`, the shared editor pieces: `useEngine`, `useEngineState`, `useService`, `useEngineElement`, `useEditorMode`, `FloatingPanel`, `ToolButton`, `ColorField`/`ColorPopover`/`ColorPalette`/`ColorSwatch`, `chooseImageAsset`, `ModeToolbar`, `ElementThumbnail`, `AnchorPicker`, …            |
-| `ui`       | `kit` (see [Building UI](#building-ui)), `toast`, `notifyError`, `runWithLoading`, `CodeEditor`, the brand seals, `usePaletteFavoritesStore`                                                                                                                                                           |
-| `platform` | `exportFile(blob, name, { extension, label })`, `openFile({ title, filters })`, `pickImageFiles`, `readLocalFile`, `http`, `openExternal`, `clipboard`, `fontLibrary`: the parts that touch the user's computer                                                                                        |
-| `libs`     | the app's own libraries: `React`, `createPortal`, `icons` (Lucide), `createStore` and `persist` (zustand), `StreamLanguage` (CodeMirror). Bundle any other library yourself                                                                                                                            |
-| `board`    | `@board` and `@board/ui`: the points (`boardCanvas`, `boardEditor`, `boardMcpTools`, `boardMigrations`, the er module's `boardErStandards`/`boardErConstructs`), `requireBoard`, the palette (`STICKY_COLORS`, `INK_COLOR`, …), `useBoardEngine`/`useBoardState`, `SourceEditor`, `defineBoardMode`, … |
-| `design`   | `@design` and `@design/ui`: see [Design plugins](#design-plugins)                                                                                                                                                                                                                                      |
-| `themes`   | `register(theme)`, `useActiveTheme`, `onThemeChange`, `tokens`: see [Themes](#themes)                                                                                                                                                                                                                  |
-| `stickers` | `registerGroup({ id, label, description?, order, tab? })`, `registerSet(groupId, stickers)` and `stickerSvg(art, defs?)`: stickers for both products, see [Stickers](#stickers)                                                                                                                        |
+| `api.…`    | What it is                                                                                                                                                                                                                                                                                                                                        |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plugin`   | `id`, `manifest`, `readAsset(path)`, `readText(path)` (files in the plugin's folder)                                                                                                                                                                                                                                                              |
+| `core`     | `@shared/core`: `defineModule`, `definePoint` (points other plugins can extend), `createId`, `defineMessages`/`getLocale`/`tCommon` ([Translations](#translations)), stickers, links, …                                                                                                                                                           |
+| `canvas`   | `@canvas`, the engine: the kind bases (`ElementKind`, `BoxKind`, `TextBoxKind`, `LineKind`), tools (`FreehandTool`, `pastThreshold`, …), geometry, paths, text, colors, `keyBetween`/`nKeysBetween`, export, variables, the agent tool helpers (`asUndoStep`, `buildElement`, `stringArg`, …)                                                     |
+| `canvasUi` | `@canvas-ui`, the shared editor pieces: `useEngine`, `useEngineState`, `useService`, `useEngineElement`, `useEditorMode`, `FloatingPanel`, `ToolButton`, `ColorField`/`ColorPopover`/`ColorPalette`/`ColorSwatch`, `chooseImageAsset`, `ModeToolbar`, `ElementThumbnail`, `AnchorPicker`, …                                                       |
+| `ui`       | `kit` (see [Building UI](#building-ui)), `toast`, `notifyError`, `runWithLoading`, `CodeEditor`, the brand seals, `usePaletteFavoritesStore`                                                                                                                                                                                                      |
+| `platform` | `exportFile(blob, name, { extension, label })`, `openFile({ title, filters })`, `pickImageFiles`, `readLocalFile`, `http`, `openExternal`, `clipboard`, `fontLibrary`: the parts that touch the user's computer                                                                                                                                   |
+| `libs`     | the app's own libraries: `React`, `createPortal`, `icons` (Lucide), `createStore` and `persist` (zustand), `StreamLanguage` (CodeMirror). Bundle any other library yourself                                                                                                                                                                       |
+| `board`    | `@board` and `@board/ui`: the points (`boardCanvas`, `boardEditor`, `boardMcpTools`, `boardMigrations`, the er module's `boardErStandards`/`boardErConstructs`, the db-export module's `boardCodeTargets`), `requireBoard`, the palette (`STICKY_COLORS`, `INK_COLOR`, …), `useBoardEngine`/`useBoardState`, `SourceEditor`, `defineBoardMode`, … |
+| `design`   | `@design` and `@design/ui`: see [Design plugins](#design-plugins)                                                                                                                                                                                                                                                                                 |
+| `themes`   | `register(theme)`, `useActiveTheme`, `onThemeChange`, `tokens`: see [Themes](#themes)                                                                                                                                                                                                                                                             |
+| `stickers` | `registerGroup({ id, label, description?, order, tab? })`, `registerSet(groupId, stickers)` and `stickerSvg(art, defs?)`: stickers for both products, see [Stickers](#stickers)                                                                                                                                                                   |
 
 The kinds: set `rotatable` for elements that turn (the engine draws and hits them turned and your
 kind works unturned); override `scale(el, t)` so the Scale tool grows what you draw (e.g. a font
@@ -301,6 +301,33 @@ api.board.defineErConstruct({
 ```
 
 Contribute it to `api.board.boardErConstructs`; any standard that lists its id in `forbids` then reports each shape it detects as an error ("Names longer than 30 characters aren't part of My school's notation."). Ids in `forbids` that aren't installed are ignored, and a construct no standard forbids changes nothing.
+
+## Code export targets
+
+The database schema's Export code dialog writes the schema as a framework's files (Laravel, Angular, NestJS, MySQL, PostgreSQL, MongoDB). Each framework is a target, written the same way a plugin writes one: it reads the neutral `CodeSchema` (tables in foreign key order, columns with canonical types, relations written from the foreign key side, enums) and returns the files. Versions are `profiles`, plain data the generator reads, so a new version is one more entry.
+
+```js
+host.contribute(
+  api.board.boardCodeTargets,
+  api.board.defineCodeTarget({
+    id: "drizzle",
+    label: "Drizzle",
+    profiles: [{ id: "0.40", label: "Drizzle 0.40", flags: {} }], // newest first
+    options: [], // { id, kind: "select" | "switch", label: () => string, default, choices? }
+    // request: { mode: "single" | "project", profile, options, now }
+    generate: (schema, request) => ({
+      files: schema.tables.map((table) => ({
+        path: `src/db/${table.name}.ts`,
+        content: `export const ${table.name} = pgTable("${table.name}", {});\n`,
+        language: "ts",
+      })),
+      warnings: [],
+    }),
+  }),
+);
+```
+
+It then shows in the dialog's target picker and in the `export_schema_code` agent tool. An id that's taken throws, naming both modules.
 
 ## Design plugins
 

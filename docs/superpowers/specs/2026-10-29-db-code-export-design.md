@@ -23,23 +23,24 @@ small profile, so adding Laravel 14 or a new ORM is adding data or one folder, n
   - **one table selected → one file, its model** (Laravel `app/Models/OrderItem.php`, Angular
     `order-item.model.ts`, a TypeORM entity, …);
   - **nothing selected / the whole schema → the framework's whole structure** (Laravel: migrations
-    + models + enum classes, in Laravel's folders; others: their own layout, see Targets);
+    - models + enum classes, in Laravel's folders; others: their own layout, see Targets);
   - several tables selected → the whole-structure export limited to those tables (see Selection).
 - **Targets and versions for the first release:**
 
-  | Target     | Profiles (versions)                     | Output                                        |
-  | ---------- | --------------------------------------- | --------------------------------------------- |
-  | Laravel    | 11, 12, 13                              | models, migrations, PHP enums                 |
-  | Angular    | 20, 21, 22                              | model interfaces, enum types, barrel          |
-  | NestJS     | 11, with ORM option: Prisma, TypeORM    | `schema.prisma`, or entities + DTOs           |
-  | MySQL      | latest (8.4 LTS; confirm 9.x LTS state) | one DDL script                                |
-  | PostgreSQL | latest (18; 19 when GA)                 | one DDL script                                |
-  | MongoDB    | latest (8.x)                            | one `mongosh` script with `$jsonSchema`        |
+  | Target     | Profiles (versions)                     | Output                                  |
+  | ---------- | --------------------------------------- | --------------------------------------- |
+  | Laravel    | 11, 12, 13                              | models, migrations, PHP enums           |
+  | Angular    | 20, 21, 22                              | model interfaces, enum types, barrel    |
+  | NestJS     | 11, with ORM option: Prisma, TypeORM    | `schema.prisma`, or entities + DTOs     |
+  | MySQL      | latest (8.4 LTS; confirm 9.x LTS state) | one DDL script                          |
+  | PostgreSQL | latest (18; 19 when GA)                 | one DDL script                          |
+  | MongoDB    | latest (8.x)                            | one `mongosh` script with `$jsonSchema` |
 
   Version support as of 2026-10-29: Laravel 13 is current (2026-03-17), 12 has security fixes to
   2027-02-24, 11 is EOL since 2026-03-12 but kept because many projects still run it; Angular 22 is
   current (2026-06-03), 21 supported, 20 is LTS to 2026-11-28; PostgreSQL 19 was at RC1 on
   2026-10-15. The builder re-checks these before shipping.
+
 - **Definitions only, the basics needed to work with the model** (see Targets for each): the class
   or type, its fields typed from the columns, casts, keys, relations, enums. Nothing else.
 - **Each framework's own naming conventions** (see Naming).
@@ -81,7 +82,7 @@ small profile, so adding Laravel 14 or a new ORM is adding data or one folder, n
 - **Several tables (or an enum) selected:** project mode limited to them. A ref to a table outside
   the set stays a foreign key column (and an FK constraint in migrations/DDL), but no relation
   method or nested type is generated for it, and a warning names the missing tables. Enums used by
-  the selected tables are always included. *(Builder's call, approved as a default.)*
+  the selected tables are always included. _(Builder's call, approved as a default.)_
 
 ## Naming
 
@@ -89,13 +90,13 @@ One shared helper (`toPascal`, `toCamel`, `toKebab`, `toSnake`, `singular`, `plu
 inflection with the common irregulars) does every conversion; each target only says which it uses.
 For `order_items.order_id`:
 
-| Target           | Type / class                   | Fields                                        | DB names                               |
-| ---------------- | ------------------------------ | --------------------------------------------- | -------------------------------------- |
-| Laravel          | `OrderItem`, `OrderItem.php`   | attributes **snake_case** (`order_id`), relation methods camelCase (`order()`, `orderItems()`) | `order_items`, `order_id`; `$table` only if not the inferred plural snake |
-| Angular          | `OrderItem`, `order-item.model.ts` | `orderId`                                 | —                                      |
-| TypeORM          | `OrderItem`, `order-item.entity.ts` | `orderId`                                | `@Entity('order_items')`, `@Column({ name: 'order_id' })` |
-| Prisma           | `model OrderItem`              | `orderId`                                     | `@map("order_id")`, `@@map("order_items")` |
-| SQL / PG / Mongo | —                              | as written in the schema                      | as written                             |
+| Target           | Type / class                        | Fields                                                                                         | DB names                                                                  |
+| ---------------- | ----------------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Laravel          | `OrderItem`, `OrderItem.php`        | attributes **snake_case** (`order_id`), relation methods camelCase (`order()`, `orderItems()`) | `order_items`, `order_id`; `$table` only if not the inferred plural snake |
+| Angular          | `OrderItem`, `order-item.model.ts`  | `orderId`                                                                                      | —                                                                         |
+| TypeORM          | `OrderItem`, `order-item.entity.ts` | `orderId`                                                                                      | `@Entity('order_items')`, `@Column({ name: 'order_id' })`                 |
+| Prisma           | `model OrderItem`                   | `orderId`                                                                                      | `@map("order_id")`, `@@map("order_items")`                                |
+| SQL / PG / Mongo | —                                   | as written in the schema                                                                       | as written                                                                |
 
 Eloquent attributes stay snake_case: that is the Laravel convention (`$fillable`, casts, `toArray()`
 all use the column names); only methods are camelCase. Enum classes are Pascal singular
@@ -167,7 +168,7 @@ What each generator writes. "Profile flags" are what may differ between versions
 ### MongoDB (latest)
 
 - One `schema.mongodb.js` for `mongosh`: `db.createCollection("<table>", { validator: {
-  $jsonSchema: … } })` per table (`bsonType` from columns, `required` from `notNull`, `enum` from
+$jsonSchema: … } })` per table (`bsonType` from columns, `required` from `notNull`, `enum` from
   DBML enums), `createIndex` for indexes and unique columns. References become a field of the
   target's id type with a comment; no joins. Increments and SQL defaults can't be expressed:
   warnings.
@@ -220,11 +221,11 @@ DbSchema ──▶ toCodeSchema() ──▶ CodeSchema (neutral, plain data)
   order. Targets never touch the document, kinds or `DbSchema`. (This is also where an ER source
   plugs in later.)
 - **`CodeTarget`** (`defineCodeTarget`): `id`, `label`, `language`/icon hint, `profiles:
-  CodeProfile[]` (`id`, `label` like "Laravel 12", plus the target's own flags as plain data),
+CodeProfile[]` (`id`, `label` like "Laravel 12", plus the target's own flags as plain data),
   `options: CodeOption[]` (declared select/switch options with defaults, so the dialog renders them
   without knowing the target), and `generate(schema, request) → { files: CodeFile[], warnings:
-  CodeWarning[] }`. `CodeFile` is `{ path, content, language }`; `CodeWarning` is `{ message,
-  table?, column? }` (messages are user-facing: through `t`).
+CodeWarning[] }`. `CodeFile` is `{ path, content, language }`; `CodeWarning` is `{ message,
+table?, column? }` (messages are user-facing: through `t`).
 - **One folder per target** (`targets/laravel/`, `targets/angular/`, `targets/nestjs/` with
   `prisma/` and `typeorm/`, `targets/sql/` with the `mysql` and `postgres` dialects sharing one DDL
   writer, `targets/mongodb/`): `<id>.target.ts`, `profiles.ts`, a type map, and one small file per
