@@ -1,6 +1,6 @@
 # Board HTML export (read-only viewer) — design
 
-Date: 2026-10-29. Status: design, waiting for approval.
+Date: 2026-10-29. Status: implemented (plan: `docs/superpowers/plans/2026-10-29-board-html-export.md`).
 
 ## Intent
 

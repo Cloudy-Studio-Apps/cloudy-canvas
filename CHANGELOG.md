@@ -5,6 +5,12 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ## Unreleased
 
+### New
+
+- Export a board as HTML and send it to anyone: it's a single file that opens in their browser with
+  nothing to install. They can move around and zoom in as sharply as in the app and open the code of
+  each table or ER diagram, but they can't change anything.
+
 ## 0.5.0 - 2026-10-27
 
 ### New

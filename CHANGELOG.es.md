@@ -5,6 +5,12 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ## Sin publicar
 
+### Novedades
+
+- Exporta una pizarra como HTML y envíala a quien quieras: es un solo archivo que se abre en su
+  navegador sin instalar nada. Puede moverse por ella y acercarse con la misma nitidez que en la app
+  y ver el código de cada tabla o diagrama ER, pero no puede cambiar nada.
+
 ## 0.5.0 - 2026-10-27
 
 ### Novedades
