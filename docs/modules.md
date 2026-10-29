@@ -95,6 +95,9 @@ modules/<name>/
   mcp/                  … or a folder: <topic>.mcp.ts + index.ts (+ helpers)
   <name>.canvas.ts      canvas hooks (kinds, tools, scene and tree hooks, copies): every board module
                         with any, so the HTML viewer can draw its elements without the editor UI
+  <name>.viewer.ts      the board module the HTML viewer build loads instead of <name>.module.ts:
+                        the same id, requires, uses and after; registers <name>.canvas.ts and its
+                        viewer parts (`boardViewerParts`), never editor entries
   <name>.commands.ts    host commands with their keys, when there are several
   <name>.sections.ts    editor entries (sections, panels, overlays, session hooks, toolbar buttons,
                         context menu), when there are many
@@ -115,6 +118,7 @@ modules/<name>/
 | `.mode.ts`                                                                | a mode's whole definition                                                                 | imports UI         |
 | `.mcp.ts`                                                                 | `McpTool`s / `McpToolGroup`                                                               | no                 |
 | `.canvas.ts`                                                              | canvas hooks (a board module's every `boardCanvas` entry)                                 | no                 |
+| `.viewer.ts`                                                              | the viewer build's module (canvas side + viewer parts)                                    | imports UI         |
 | `.commands.ts`                                                            | host command entries and keys                                                             | no                 |
 | `.sections.ts`                                                            | editor entries (sections, panels, overlays, session hooks, toolbar buttons, context menu) | imports UI         |
 | `.menu.ts`                                                                | main menu groups                                                                          | imports UI         |
@@ -125,7 +129,7 @@ modules/<name>/
 
 Each split file exports `register<Module><Part>(host)` (e.g. `registerCoreCanvas`); `<name>.module.ts`
 calls them. Nothing is found by its name: ESLint reads the suffix only to allow UI imports in
-`.module.ts`, `.sections.ts`, `.menu.ts` and `.mode.ts`.
+`.module.ts`, `.sections.ts`, `.menu.ts`, `.mode.ts` and `.viewer.ts`.
 
 ## Import rules
 

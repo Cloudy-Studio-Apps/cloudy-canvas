@@ -1,0 +1,14 @@
+{
+  "bar": { "brand": "Cloudy Canvas", "viewOnly": "view only" },
+  "zoom": { "in": "Zoom in", "out": "Zoom out", "fit": "Fit" },
+  "panel": { "all": "All code", "copy": "Copy", "copied": "Copied", "close": "Close" },
+  "error": {
+    "webgl": "This browser can't draw the board (WebGL is off or unavailable).",
+    "data": "This file is damaged and can't be opened."
+  },
+  "export": {
+    "format": "HTML (view only)",
+    "placeholders": "{count} elements from {plugins} will show as placeholders."
+  },
+  "placeholder": { "unknown": "Unknown plugin" }
+}

@@ -18,6 +18,7 @@ import { stickerModule } from "@board/modules/sticker/sticker.module";
 import { stickyModule } from "@board/modules/sticky/sticky.module";
 import { tableModule } from "@board/modules/table/table.module";
 import { textModule } from "@board/modules/text/text.module";
+import { viewerModule } from "@board/modules/viewer/viewer.module";
 import { boardEditor } from "./board-editor-points";
 import type { BoardModuleOptions } from "./board-modules.types";
 
@@ -38,6 +39,7 @@ let modules: AppModule[] = [
   dbModule,
   erModule,
   libraryModule,
+  viewerModule,
 ];
 /** Module id → the plugin it comes from (installed plugins, which may fail on their own). */
 const pluginOf = new Map<string, string>();

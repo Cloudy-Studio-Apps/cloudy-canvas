@@ -81,11 +81,11 @@ function restrict(patterns, { react = false, fractional = true } = {}) {
 }
 
 // A module folder (`products/*/modules/<name>/`) is engine code except its `ui/` and the files that
-// plug it into the UI: `.module.ts`, `.sections.ts`, `.menu.ts`, `.mode.ts`.
+// plug it into the UI: `.module.ts`, `.sections.ts`, `.menu.ts`, `.mode.ts`, `.viewer.ts`.
 const PRODUCT_UI = [
   "src/products/*/ui/**/*.{ts,tsx}",
   "src/products/*/modules/*/ui/**/*.{ts,tsx}",
-  "src/products/*/modules/*/*.{module,sections,menu,mode}.ts",
+  "src/products/*/modules/*/*.{module,sections,menu,mode,viewer}.ts",
 ];
 /** `PRODUCT_UI` of one product. */
 const uiOf = (product) =>

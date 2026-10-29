@@ -1,0 +1,14 @@
+{
+  "bar": { "brand": "Cloudy Canvas", "viewOnly": "solo lectura" },
+  "zoom": { "in": "Acercar", "out": "Alejar", "fit": "Ajustar" },
+  "panel": { "all": "Todo el código", "copy": "Copiar", "copied": "Copiado", "close": "Cerrar" },
+  "error": {
+    "webgl": "Este navegador no puede dibujar el tablero (WebGL está desactivado o no disponible).",
+    "data": "Este archivo está dañado y no se puede abrir."
+  },
+  "export": {
+    "format": "HTML (solo lectura)",
+    "placeholders": "{count} elementos de {plugins} se verán como marcadores."
+  },
+  "placeholder": { "unknown": "Plugin desconocido" }
+}
