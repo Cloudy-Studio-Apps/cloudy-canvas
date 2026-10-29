@@ -196,8 +196,8 @@ export interface ExportFormatEntry {
   label: string;
   /** A line the dialog shows while it's picked (e.g. what won't export as it looks), or `null`. */
   note?(engine: CanvasEngine): string | null;
-  /** The file, or `null` when there's nothing to export. */
-  run(engine: CanvasEngine): Promise<Blob | null>;
+  /** The file, or `null` when there's nothing to export; `name` is the file's (the board's name). */
+  run(engine: CanvasEngine, name: string): Promise<Blob | null>;
 }
 
 /** The loaded modules of the editor that's open, and its points. */

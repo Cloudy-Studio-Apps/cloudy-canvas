@@ -1,4 +1,4 @@
-import { CanvasDocument, composeProduct, type CanvasElement } from "@canvas";
+import { CanvasDocument, composeProduct, type CanvasElement, type ElementKinds } from "@canvas";
 import { boardCanvas } from "@board";
 import { viewerPlaceholder, type ViewerFile } from "@board/modules/viewer";
 import { boardViewerParts } from "@board/modules/viewer/ui";
@@ -29,23 +29,29 @@ export async function openViewerBoard(file: ViewerFile): Promise<ViewerBoard> {
 
   const document = new CanvasDocument(product.kinds);
   for (const [id, url] of Object.entries(file.assets)) document.addAsset(id, dataUrlBytes(url));
-  for (const el of withPlaceholders(file, failed, document)) document.addUntracked(el);
+  for (const el of withPlaceholders(file, failed, product.kinds, document)) {
+    document.addUntracked(el);
+  }
   return { product, document, parts: host.get(boardViewerParts) };
 }
 
-/** The file's elements, those of the plugins in `failed` swapped for placeholders. */
+/**
+ * The file's elements, with placeholders for those nothing here draws: a plugin in `failed`, or
+ * a type its viewer modules didn't register.
+ */
 function withPlaceholders(
   file: ViewerFile,
   failed: ReadonlySet<string>,
+  kinds: ElementKinds,
   document: CanvasDocument,
 ): CanvasElement[] {
-  const owners = new Map<string, string>();
-  for (const plugin of file.plugins) {
-    if (failed.has(plugin.id)) for (const type of plugin.types) owners.set(type, plugin.name);
-  }
+  const owners = new Map<string, { id: string; name: string }>();
+  for (const plugin of file.plugins) for (const type of plugin.types) owners.set(type, plugin);
   return file.elements.map((el) => {
-    const name = owners.get(el.type);
-    if (name === undefined) return el;
+    const owner = owners.get(el.type);
+    const drawn = kinds.has(el.type) && !(owner && failed.has(owner.id));
+    if (drawn) return el;
+    const name = owner?.name ?? el.type;
     const placeholder = viewerPlaceholder(el, name);
     document.addAsset(placeholder.assetId, new TextEncoder().encode(placeholder.svg));
     return placeholder.element;

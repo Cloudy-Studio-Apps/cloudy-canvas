@@ -67,7 +67,7 @@ export function ExportDialog({ name }: ExportDialogProps) {
       const blob = await toastProgress(
         () =>
           moduleFormat
-            ? moduleFormat.run(engine)
+            ? moduleFormat.run(engine, name)
             : engine.exportElements({
                 format: chosen,
                 background: solidOnly ? "solid" : background,

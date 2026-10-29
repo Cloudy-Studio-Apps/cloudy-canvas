@@ -29,5 +29,5 @@ carries, draws it read-only and shows the viewer chrome (the board's `viewer` mo
   URLs, with `viewer-plugin-api.ts`: `core`, `canvas`, `board` engine side, `libs.React`), composes
   the board from `BOARD_VIEWER_MODULES` (`board-viewer-modules.ts`: each module's `.viewer.ts`, in
   the board's order) plus theirs (optional: one that fails is left out), fills a document with the
-  file's assets and elements, and swaps the elements of a plugin that failed for placeholders.
+  file's assets and elements, and swaps for placeholders the elements of a plugin that failed or of a type nothing registered.
 - `main.tsx` renders `ViewerApp`, or `ViewerError` when the file can't be read.

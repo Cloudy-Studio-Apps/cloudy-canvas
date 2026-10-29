@@ -8,16 +8,18 @@ import { collectParts } from "./collect-parts";
 import { collectPlugins } from "./collect-plugins";
 import { encodeViewerHtml } from "./encode-viewer-html";
 
-/** The whole board as a read-only HTML file (see the viewer module's README). */
-export async function exportBoardHtml(engine: CanvasEngine): Promise<Blob> {
+/** The whole board as a read-only HTML file named `name` (see the viewer module's README). */
+export async function exportBoardHtml(engine: CanvasEngine, name: string): Promise<Blob> {
   // The runtime is a few megabytes of HTML: loaded only when a board is exported.
   const { default: runtime } = await import("virtual:board-viewer-runtime");
   const { elements, placeholderSvgs, pluginTypes } = collectElements(engine);
+  const meta = engine.doc.meta();
   const file: ViewerFile = {
     format: 1,
     appVersion: __APP_VERSION__,
     locale: getLocale(),
-    meta: engine.doc.meta(),
+    // An untitled board goes by its file's name, as the app shows it.
+    meta: { ...meta, title: meta.title || name },
     elements,
     assets: await collectAssets(engine, elements, placeholderSvgs),
     fonts: await collectFonts(engine, elements),

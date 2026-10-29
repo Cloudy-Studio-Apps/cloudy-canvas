@@ -14,6 +14,7 @@ Everything on a canvas is an element. **Elements are plain data and behavior liv
   - `draw`, `bounds`, `hitTest`
   - `move`, `resizable` / `resize`, `keepsRatio` (always resize proportionally, not only with Shift)
   - `assets(el)`: the document assets it shows (e.g. an image's file)
+  - `assetScale(el, assetId)`: how many times larger than the box an asset is drawn (1; a cropped picture more), so the HTML export keeps it sharp
   - `text`: an `ElementText` spec (`get`, `set`, `style`) that the `TextEditor` and the drawer share, so edited text lines up with drawn text. `fitContent` sizes the element to its unwrapped text (the editor grows while typing), and `removeWhenEmpty` deletes it when its text is emptied
   - `fillDefaults` (for older files)
   - `describe` (agent summaries), `completePatch(el, patch, context)` (fields that follow from an agent's patch, e.g. a text's size; it throws on invalid values, e.g. an unknown geo `kind`, and maps fields the element doesn't store, e.g. a connector's `from`/`to`, which `patchableFields` must list)

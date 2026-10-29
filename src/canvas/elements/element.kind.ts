@@ -238,6 +238,14 @@ export abstract class ElementKind<
     return [];
   }
 
+  /**
+   * How many times larger than the element's box one of its assets is drawn (a picture cropped to
+   * a part of it shows that part across the box): what an export needs to keep it sharp.
+   */
+  assetScale(_el: E, _assetId: string): number {
+    return 1;
+  }
+
   /** The element's grid of texts, one array per row (e.g. a table's cells), for CSV exports. */
   rows(_el: E): string[][] | null {
     return null;

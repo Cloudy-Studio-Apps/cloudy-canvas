@@ -8,7 +8,7 @@ const PIXELS_PER_UNIT = 2;
 
 /**
  * The assets the elements show, as data URLs: SVG files as they are, pictures shrunk to the
- * largest size they're placed at (times two), never larger than the original. `extra` holds the
+ * largest size they're placed at (times two, and larger for a crop, `kind.assetScale`), never larger than the original. `extra` holds the
  * placeholders' SVG files, which aren't in the document.
  */
 export async function collectAssets(
@@ -21,7 +21,10 @@ export async function collectAssets(
     const kind = engine.kinds.get(el.type);
     if (!kind) continue;
     const { w, h } = elementBounds(kind, el);
-    for (const id of kind.assets(el)) placed.set(id, Math.max(placed.get(id) ?? 0, w, h));
+    for (const id of kind.assets(el)) {
+      const size = Math.max(w, h) * kind.assetScale(el, id);
+      placed.set(id, Math.max(placed.get(id) ?? 0, size));
+    }
   }
 
   const assets: Record<string, string> = {};

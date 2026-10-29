@@ -55,6 +55,11 @@ export class ImageKind extends BoxKind<ImageElement, BoardToolOptions> {
     return [el.assetId];
   }
 
+  override assetScale(el: ImageElement): number {
+    // A crop shows its part of the picture across the whole box.
+    return el.crop ? 1 / Math.max(0.01, Math.min(el.crop.w, el.crop.h)) : 1;
+  }
+
   override resize(el: ImageElement, rect: Rect): ElementPatch<ImageElement> {
     // The image itself never gets smaller than the minimum size.
     const min = ELEMENT_DEFAULTS.minSize + el.padding * 2;

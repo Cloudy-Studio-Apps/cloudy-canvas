@@ -28,7 +28,8 @@ Modules add toggles and side panels to it (the schema's DBML, the ER text) and p
     plugin's name (`viewerPlaceholder`, `placeholderSvg` from `@canvas`). The dialog's note counts
     them per plugin.
   - `collectAssets`: each asset the elements show (`kind.assets`), as a data URL: SVG files as they
-    are; pictures shrunk to the largest box they're placed in, times two, as WebP (`shrinkImage`;
+    are; pictures shrunk to the largest box they're placed in (times `kind.assetScale`, larger for
+    a crop), times two, as WebP (`shrinkImage`;
     the original when that isn't smaller or can't be decoded); assets nothing shows are left out.
   - `collectFonts`: the faces the text uses (`kind.fonts`) whose files `fontLibrary` has.
   - `collectParts`: each `boardViewerParts` entry's `collect(doc)`.
@@ -48,3 +49,5 @@ Modules add toggles and side panels to it (the schema's DBML, the ER text) and p
 - **Typed parts:** `defineViewerPart<D>(part)` checks a part against the data it collects and hands it
   as the point takes it. Built-in parts: `db` (Schema), `er` (ER diagrams), `embed` (links open in a
   new tab).
+- **Names:** an untitled board takes its file's name as the title (`exportBoardHtml(engine, name)`,
+  the Export dialog's `run(engine, name)`).

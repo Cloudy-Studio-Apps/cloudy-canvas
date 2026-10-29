@@ -461,6 +461,8 @@ export function activateViewer(api) {
   (the engine side only, no editor UI) and `libs.React` for a part's `panel`. There's no
   `readAsset`: bundle what you draw into `main.js` (`pnpm plugin:build` inlines images).
 - Editor entries (tools, panels, menus, MCP tools) do nothing there; leave them in `activate`.
+- `host.require` works for the built-in modules' engine API (`index.ts`); their editor UI
+  (`ui/index.ts`) isn't in the viewer.
 - If `activateViewer` throws in the viewer, your elements show as placeholders and the rest of the
   board still opens.
 
