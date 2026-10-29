@@ -29,6 +29,8 @@ export function CodeExportDialog() {
   return <DialogBody key={ids.join(",")} ids={ids} targets={targets} onDone={close} />;
 }
 
+const WHOLE_SCHEMA: string[] = [];
+
 function DialogBody({ ids, targets, onDone }: CodeExportBodyProps) {
   const engine = useEngine();
   const last = useCodeExportStore((state) => state.last);
@@ -53,7 +55,7 @@ function DialogBody({ ids, targets, onDone }: CodeExportBodyProps) {
     target,
     profile: profileId,
     options,
-    ids: single ? [] : ids,
+    ids: single ? WHOLE_SCHEMA : ids,
     table: single ? (oneTable ?? null) : null,
     now,
   });
@@ -86,10 +88,14 @@ function DialogBody({ ids, targets, onDone }: CodeExportBodyProps) {
             <Button variant="outline" onClick={onDone}>
               {tCommon("cancel")}
             </Button>
-            <Button variant="outline" disabled={!file} onClick={() => file && void copy(file)}>
+            <Button
+              variant="outline"
+              disabled={empty || !file}
+              onClick={() => file && void copy(file)}
+            >
               {t("dialog.copy")}
             </Button>
-            <Button disabled={output.files.length === 0} onClick={() => void saveAll()}>
+            <Button disabled={empty || output.files.length === 0} onClick={() => void saveAll()}>
               {output.files.length > 1
                 ? t("dialog.saveAll", { count: output.files.length })
                 : tCommon("save")}
