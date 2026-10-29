@@ -17,5 +17,6 @@ export function createEditorPoints(product: string): EditorPoints {
     contextMenu: definePoint(id("contextMenu"), { keyOf: (entry) => entry.id }),
     toolbars: definePoint(id("toolbars"), { keyOf: (entry) => entry.id }),
     modes: definePoint(id("modes"), { keyOf: (entry) => entry.id }),
+    exportFormats: definePoint(id("exportFormats"), { keyOf: (entry) => entry.id }),
   };
 }

@@ -1,6 +1,7 @@
 import type { ComponentType, ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 
+import type { CanvasEngine } from "@canvas";
 import type { ExtensionPoint, ModuleHost } from "@shared/core";
 import type { ContextMenuGroup } from "../components/context-menu/context-menu-items.types";
 
@@ -178,6 +179,25 @@ export interface EditorPoints {
   toolbars: ExtensionPoint<ToolbarModeEntry>;
   /** The modes the switcher lists, keyed by mode id (see `EditorModeEntry`). */
   modes: ExtensionPoint<EditorModeEntry>;
+  /** File types the Export dialog offers after the built-in ones (e.g. the board's HTML). */
+  exportFormats: ExtensionPoint<ExportFormatEntry>;
+}
+
+/**
+ * A file type a module adds to the Export dialog, which it produces itself from the whole canvas
+ * (the dialog's area and background don't apply to it).
+ */
+export interface ExportFormatEntry {
+  id: string;
+  /** Short name in the dialog and its toasts, e.g. "HTML". */
+  name: string;
+  extension: string;
+  /** What the save dialog calls the file type. */
+  label: string;
+  /** A line the dialog shows while it's picked (e.g. what won't export as it looks), or `null`. */
+  note?(engine: CanvasEngine): string | null;
+  /** The file, or `null` when there's nothing to export. */
+  run(engine: CanvasEngine): Promise<Blob | null>;
 }
 
 /** The loaded modules of the editor that's open, and its points. */

@@ -4,7 +4,7 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
 
 ## Editor points
 
-- **Editor points** (`canvas-ui/modules/`, `createEditorPoints(product)`, the board's `boardEditor`): see Editors. **Board points:** `boardMcpTools` and `boardMigrations` (`board-points.ts`; a migration brings an older file's document up to date when it opens), `boardLibrary` (the library module's `ui/library.points.ts`). A module can define points of its own for others to extend.
+- **Editor points** (`canvas-ui/modules/`, `createEditorPoints(product)`, the board's `boardEditor`): see Editors. **Board points:** `boardMcpTools` and `boardMigrations` (`board-points.ts`; a migration brings an older file's document up to date when it opens), `boardLibrary` (the library module's `ui/library.points.ts`). `exportFormats` adds a file type to the Export dialog (`ExportFormatEntry`: `name`, `extension`, `label`, an optional `note(engine)` shown while it's picked, and `run(engine)`, which makes the file from the whole canvas, so the dialog hides background and area; the board's HTML). A module can define points of its own for others to extend.
 
 ## Tool entries
 
