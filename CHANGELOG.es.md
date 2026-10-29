@@ -10,8 +10,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 - Exporta una pizarra como HTML y envíala a quien quieras: es un solo archivo que se abre en su
   navegador sin instalar nada. Puede moverse por ella y acercarse con la misma nitidez que en la app
   y ver el código de cada tabla o diagrama ER, pero no puede cambiar nada.
-- Exporta tu esquema de base de datos como código. Elige Laravel, MySQL o PostgreSQL y la versión
-  que usas, y obtén los modelos, las migraciones o el script SQL escritos como ese framework espera.
+- Exporta tu esquema de base de datos como código. Elige Laravel, Angular, MySQL o PostgreSQL y la versión
+  que usas, y obtén los modelos, las migraciones, las interfaces de TypeScript o el script SQL escritos como ese framework espera.
   Exporta una tabla como su modelo, o todo el esquema como una carpeta lista para tu proyecto.
 
 ### Correcciones

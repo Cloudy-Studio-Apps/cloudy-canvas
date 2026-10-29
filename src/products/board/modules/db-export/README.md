@@ -60,6 +60,11 @@ Four layers, each reading only the ones above it:
      (`write-migration.ts`, `blueprint-column.ts`: `id()`, `foreignId()->constrained()`, `enum`,
      `timestamps()`, `softDeletes()`, indexes, `rawIndex` for expressions), a last migration for
      deferred foreign keys and string-backed enums in `app/Enums`. Single mode: the model only.
+   - `angular/`: one interface per table (`write-model.ts`, `model-properties.ts`: camelCase
+     properties typed as the JSON an API sends (`type-map.ts`: decimals and dates are strings with a
+     comment), `| null` when nullable, optional when the database fills them, relations as optional
+     nested objects or arrays), enums as a `<NAME>_VALUES` constant and the type it forms, and an
+     `index.ts`. The `modelSuffix` flag names files `<name>.model.ts` / `<name>.enum.ts`.
 4. **`ui/`**: `CodeExportDialog` (an overlay, open while `useCodeExportStore` holds ids: `[]` for the
    whole schema): with one table, a This table / Whole schema switch; the target, version and
    option fields (`TargetFields`); the file tree (`CodeFileList`, `fileTree`); the warnings; the

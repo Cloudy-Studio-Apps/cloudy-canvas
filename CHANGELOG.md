@@ -10,8 +10,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - Export a board as HTML and send it to anyone: it's a single file that opens in their browser with
   nothing to install. They can move around and zoom in as sharply as in the app and open the code of
   each table or ER diagram, but they can't change anything.
-- Export your database schema as code. Pick Laravel, MySQL or PostgreSQL and the version you use,
-  then get the models, migrations or SQL script written the way that framework expects. Export one
+- Export your database schema as code. Pick Laravel, Angular, MySQL or PostgreSQL and the version you use,
+  then get the models, migrations, TypeScript interfaces or SQL script written the way that framework expects. Export one
   table as its model, or the whole schema as a folder ready to drop into your project.
 
 ### Fixed
