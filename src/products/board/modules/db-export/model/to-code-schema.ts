@@ -4,7 +4,8 @@ import {
   type DbEnumElement,
   type DbTableElement,
 } from "../../db";
-import { warn, type CodeWarning } from "../targets";
+import { warn } from "../targets/warnings";
+import type { CodeWarning } from "../targets/warnings.types";
 import type { CodeColumn, CodeIndex, CodeRelation, CodeTable } from "./code-schema.types";
 import { codeRelation } from "./code-relations";
 import { dependencyOrder } from "./dependency-order";

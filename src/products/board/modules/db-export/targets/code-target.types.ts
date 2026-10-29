@@ -35,6 +35,8 @@ export interface CodeProfile {
 export interface CodeRequest {
   /** `single`: the one table's model; `project`: the framework's whole structure. */
   mode: "single" | "project";
+  /** Single mode: the table to write (the schema holds every table, so relations resolve). */
+  table: string | null;
   profile: CodeProfile;
   options: Readonly<Record<string, CodeOptionValue>>;
   /** Export time (Laravel migration names), passed in so the output is the same per call. */

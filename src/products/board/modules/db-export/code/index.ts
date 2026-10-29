@@ -2,6 +2,7 @@
 // words, collisions) and `CodeWriter`.
 export type * from "./naming.types";
 export { CodeWriter } from "./code-writer";
+export { indexName } from "./index-name";
 export { plural, singular } from "./inflect";
 export {
   className,

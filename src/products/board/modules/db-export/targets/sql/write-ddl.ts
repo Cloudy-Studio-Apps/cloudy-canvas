@@ -1,9 +1,10 @@
+import { focusTables } from "../focus-tables";
+import { indexName } from "../../code";
 import type { CodeSchema, CodeTable } from "../../model";
 import type { CodeOutput, CodeRequest } from "../code-target.types";
 import { warn } from "../warnings";
 import type { CodeWarning } from "../warnings.types";
 import type { SqlDialect } from "./sql-dialect.types";
-import { indexName } from "./sql-values";
 import { foreignKey, writeTable } from "./write-table";
 
 /**
@@ -18,7 +19,7 @@ export function writeDdl(
 ): CodeOutput {
   const warnings: CodeWarning[] = [];
   const single = request.mode === "single";
-  const tables = single ? schema.tables.slice(0, 1) : schema.tables;
+  const tables = single ? focusTables(schema, request) : schema.tables;
   const used = new Set(tables.flatMap((table) => table.columns.map((c) => c.enum)));
   const enums = schema.enums.filter((e) => !single || used.has(e.name));
   const deferred = single ? [] : schema.deferred;

@@ -33,7 +33,11 @@ export class CodeWriter {
   }
 
   toString(): string {
-    const text = this.out.join("\n").replace(/\n{3,}/g, "\n\n");
+    // No runs of blank lines, and none right before a closing bracket.
+    const text = this.out
+      .join("\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .replace(/\n\n(\s*[}\])])/g, "\n$1");
     return `${text.trimEnd()}\n`;
   }
 }
