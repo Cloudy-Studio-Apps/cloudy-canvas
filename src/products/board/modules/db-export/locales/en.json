@@ -42,6 +42,11 @@
     "description_other": "{count} files are already in this folder and will be replaced.",
     "replace": "Replace"
   },
+  "options": {
+    "orm": "ORM",
+    "provider": "Database",
+    "dtos": "Validated DTOs (TypeORM)"
+  },
   "warnings": {
     "missing-table": "{table} isn't exported: its foreign keys are kept, but no relation is written to it.",
     "unknown-type": "{table}.{column}: the type {type} has no equivalent in {target}, so {fallback} is used.",

@@ -42,6 +42,11 @@
     "description_other": "{count} archivos ya están en esta carpeta y se reemplazarán.",
     "replace": "Reemplazar"
   },
+  "options": {
+    "orm": "ORM",
+    "provider": "Base de datos",
+    "dtos": "DTO validados (TypeORM)"
+  },
   "warnings": {
     "missing-table": "{table} no se exporta: sus claves foráneas se mantienen, pero no se escribe ninguna relación con ella.",
     "unknown-type": "{table}.{column}: el tipo {type} no tiene equivalente en {target}, así que se usa {fallback}.",

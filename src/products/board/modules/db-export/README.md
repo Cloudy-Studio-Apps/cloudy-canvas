@@ -65,6 +65,18 @@ Four layers, each reading only the ones above it:
      comment), `| null` when nullable, optional when the database fills them, relations as optional
      nested objects or arrays), enums as a `<NAME>_VALUES` constant and the type it forms, and an
      `index.ts`. The `modelSuffix` flag names files `<name>.model.ts` / `<name>.enum.ts`.
+   - `nestjs/`: the `orm` option picks `prisma/` or `typeorm/`, `provider` (PostgreSQL or MySQL) the
+     native types both write, `dtos` TypeORM's DTOs. `relation-props.ts` names every relation's two
+     properties once for the schema (`user` / `orders`), so both sides agree, and names the relation
+     when two models share several or a model points at itself. Prisma (`write-prisma.ts`): one
+     `prisma/schema.prisma` (generator, datasource, enums, models with `@map`/`@@map`, `@relation`
+     on both sides, implicit many to many, `@@id`, `@@index`/`@@unique`), aligned like `prisma
+format`; single mode: `prisma/<table>.prisma` with the model and its enums. TypeORM: an entity
+     per table in `src/<feature>/entities/` (`write-entity.ts`, `typeorm-column.ts`:
+     `@PrimaryGeneratedColumn`, `@Column` options, `@CreateDateColumn`… for timestamps,
+     `@ManyToOne` + `@JoinColumn`, `@OneToMany`, `@OneToOne`, `@ManyToMany` + `@JoinTable`,
+     `@Index`), `create-`/`update-<name>.dto.ts` with `class-validator` and `PartialType`
+     (`write-dto.ts`) and string enums in `src/common/enums/`.
 4. **`ui/`**: `CodeExportDialog` (an overlay, open while `useCodeExportStore` holds ids: `[]` for the
    whole schema): with one table, a This table / Whole schema switch; the target, version and
    option fields (`TargetFields`); the file tree (`CodeFileList`, `fileTree`); the warnings; the

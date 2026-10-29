@@ -16,3 +16,4 @@ export {
   words,
 } from "./naming";
 export { RESERVED } from "./reserved-words";
+export { tsImport } from "./ts-import";
