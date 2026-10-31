@@ -7,7 +7,7 @@ import { useEasedPoint } from "./use-eased-point";
 import type { CollaboratorCursorProps } from "./collaborator-cursor.types";
 
 /** A collaborator's pointer on the canvas, with its avatar, name and what it's doing. */
-export function CollaboratorCursor({ collaborator, at, idle }: CollaboratorCursorProps) {
+export function CollaboratorCursor({ collaborator, at, idle, hidden }: CollaboratorCursorProps) {
   const view = useViewMapping();
   const world = useEasedPoint(at);
   const screen = pointToScreen(view, world);
@@ -15,7 +15,10 @@ export function CollaboratorCursor({ collaborator, at, idle }: CollaboratorCurso
 
   return (
     <div
-      className={cn("absolute top-0 left-0 transition-opacity", idle && "opacity-40")}
+      className={cn(
+        "absolute top-0 left-0 transition-opacity",
+        hidden ? "opacity-0" : idle && "opacity-40",
+      )}
       style={{ transform: `translate(${screen.x}px, ${screen.y}px)` }}
     >
       <svg width="18" height="20" viewBox="0 0 18 20" className="drop-shadow-sm" aria-hidden>

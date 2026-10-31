@@ -12,6 +12,11 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   diseño, y tú eliges si el texto se convierte en contornos que se ven igual en todas partes o sigue
   siendo editable.
 
+### Mejoras
+
+- El cursor y la selección de un agente ahora se desvanecen unos segundos después de que deja de
+  trabajar, para no estorbar en lo que estás haciendo. Vuelven en cuanto retoma el trabajo.
+
 ## 0.6.0 - 2026-10-29
 
 ### Novedades

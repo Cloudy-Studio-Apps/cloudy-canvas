@@ -20,6 +20,8 @@ export function mirrorRoomPresence(awareness: Awareness, sink: PresenceSink): ()
   const joined = new Set<number>();
   /** Each client's agents shown, by collaborator id, with who they were when they joined. */
   const agentsOf = new Map<number, Map<string, string>>();
+  /** The `idleFor` last received per agent: a heartbeat repeats it, and that's not activity. */
+  const idleFor = new Map<string, number>();
 
   const syncAgents = (client: number, room: RoomPresence, now: number) => {
     const shown = agentsOf.get(client) ?? new Map<string, string>();
@@ -33,14 +35,17 @@ export function mirrorRoomPresence(awareness: Awareness, sink: PresenceSink): ()
         shown.set(identity.id, key);
         sink.join(identity);
       }
+      const repeated = idleFor.get(identity.id) === agent.idleFor;
+      idleFor.set(identity.id, agent.idleFor);
       sink.patch(identity.id, agent.presence, {
-        lastSeen: now - agent.idleFor,
+        ...(repeated ? {} : { lastSeen: now - agent.idleFor }),
         running: agent.running,
       });
     }
     for (const id of shown.keys()) {
       if (seen.has(id)) continue;
       shown.delete(id);
+      idleFor.delete(id);
       sink.leave(id);
     }
   };
@@ -48,7 +53,10 @@ export function mirrorRoomPresence(awareness: Awareness, sink: PresenceSink): ()
   const forget = (client: number) => {
     joined.delete(client);
     sink.leave(collaboratorId(client));
-    for (const id of agentsOf.get(client)?.keys() ?? []) sink.leave(id);
+    for (const id of agentsOf.get(client)?.keys() ?? []) {
+      idleFor.delete(id);
+      sink.leave(id);
+    }
     agentsOf.delete(client);
   };
 

@@ -7,6 +7,10 @@ import type { CollaboratorsState } from "./collaborators-store.types";
 export const COLLABORATOR_IDLE_MS = 20_000;
 /** A collaborator silent this long is no longer shown. */
 export const COLLABORATOR_GONE_MS = 10 * 60_000;
+/** An agent silent this long leaves no cursor or selection on the canvas. */
+export const AGENT_TRACE_MS = 4_000;
+/** How often the canvas checks for agents that stopped working. */
+export const TRACE_CHECK_MS = 1_000;
 
 /**
  * Who else works on the user's files (`Collaborator`s, written by presence sources such as the
@@ -61,4 +65,13 @@ export const useCollaboratorsStore = create<CollaboratorsState>()((set) => {
 /** The collaborator hasn't done anything for a while and isn't running anything. */
 export function collaboratorIsIdle(collaborator: Collaborator, now: number): boolean {
   return collaborator.running === 0 && now - collaborator.lastSeen >= COLLABORATOR_IDLE_MS;
+}
+
+/** An agent that stopped working: its cursor and selection leave the canvas, not its work. */
+export function collaboratorTraceHidden(collaborator: Collaborator, now: number): boolean {
+  return (
+    collaborator.kind === "agent" &&
+    collaborator.running === 0 &&
+    now - collaborator.lastSeen >= AGENT_TRACE_MS
+  );
 }

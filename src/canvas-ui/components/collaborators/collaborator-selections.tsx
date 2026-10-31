@@ -1,4 +1,7 @@
 import { collaboratorTitle } from "@shared/core";
+import { collaboratorTraceHidden, TRACE_CHECK_MS } from "@shared/stores/collaborators-store";
+import { useNow } from "@shared/ui/hooks/use-now";
+import { cn } from "@shared/ui/lib/utils";
 
 import { useEngine } from "../../engine-context";
 import { useViewMapping } from "../../overlay";
@@ -11,6 +14,7 @@ export function CollaboratorSelections() {
   const engine = useEngine();
   const view = useViewMapping();
   const here = useCollaboratorsHere();
+  const now = useNow(TRACE_CHECK_MS);
   // Elements move without the camera moving: draw again on every change.
   useViewVersion();
 
@@ -22,7 +26,10 @@ export function CollaboratorSelections() {
       return (
         <div
           key={`${collaborator.id}:${id}`}
-          className="absolute top-0 left-0 border-2"
+          className={cn(
+            "absolute top-0 left-0 border-2 transition-opacity",
+            collaboratorTraceHidden(collaborator, now) && "opacity-0",
+          )}
           style={{
             borderColor: collaborator.color,
             transform: `translate(${box.x - 2}px, ${box.y - 2}px)`,

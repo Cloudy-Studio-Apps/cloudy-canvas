@@ -11,6 +11,11 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   are sharp at any size and can be edited in other design tools, and you choose whether text becomes
   outlines that look the same everywhere or stays editable.
 
+### Improved
+
+- An agent's cursor and selection now fade away a few seconds after it stops working, so they don't
+  get in the way of what you're doing. They come back as soon as it starts again.
+
 ## 0.6.0 - 2026-10-29
 
 ### New
