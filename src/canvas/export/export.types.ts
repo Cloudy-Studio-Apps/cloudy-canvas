@@ -1,11 +1,14 @@
 import type { CanvasElement } from "../elements";
 import type { Rect } from "../geometry.types";
 import type { CanvasLinks } from "../links";
-import type { SnapshotOptions } from "../render";
+import type { SnapshotOptions, VectorSnapshotOptions } from "../render";
 
-export type ExportFormat = "png" | "jpg" | "pdf" | "csv";
+export type ExportFormat = "png" | "jpg" | "pdf" | "csv" | "svg";
 
-/** `solid` fills with the canvas background; JPG and PDF are always solid. */
+/** How an SVG holds text: as glyph outlines (looks the same anywhere) or as live, editable text. */
+export type SvgText = "outlines" | "live";
+
+/** `solid` fills with the canvas background; PNG and SVG can leave it out, JPG and PDF can't. */
 export type ExportBackground = "solid" | "transparent";
 
 /** The selection (with what moves with it) or every element on the canvas. */
@@ -23,6 +26,8 @@ export interface ExportOptions {
   maxSide?: number;
   /** Exactly this world area, with no padding (e.g. a page frame), instead of the elements'. */
   rect?: Rect;
+  /** How an SVG holds text (outlines by default). */
+  svgText?: SvgText;
 }
 
 /** What `exportElements` needs from the engine. */
@@ -42,4 +47,9 @@ export interface ExportHost {
     elements: readonly CanvasElement[],
     options: SnapshotOptions,
   ): Promise<HTMLCanvasElement>;
+  /** The elements as an SVG document, written from the same off-screen tree as `snapshot`. */
+  vector(
+    elements: readonly CanvasElement[],
+    options: Omit<VectorSnapshotOptions, "glyphs">,
+  ): Promise<string>;
 }

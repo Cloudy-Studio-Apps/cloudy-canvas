@@ -17,7 +17,8 @@ import { copyShader } from "./effect-shaders";
 import type { EffectStep } from "./effect-stack-filter.types";
 import { effectsOutset } from "./effects-outset";
 
-const STAGES: readonly EffectStage[] = ["backdrop", "content", "behind", "filter"];
+/** The order effects are drawn in. */
+export const EFFECT_STAGES: readonly EffectStage[] = ["backdrop", "content", "behind", "filter"];
 
 /**
  * Every effect of one scope as one Pixi filter: Pixi renders the scope's content into a texture,
@@ -56,7 +57,9 @@ export class EffectStackFilter extends Filter {
       const renderer = renderers.get(effect.type);
       return effect.visible && renderer ? [{ effect, renderer }] : [];
     });
-    this.steps = STAGES.flatMap((stage) => steps.filter((step) => step.renderer.stage === stage));
+    this.steps = EFFECT_STAGES.flatMap((stage) =>
+      steps.filter((step) => step.renderer.stage === stage),
+    );
     this.rotation = rotation;
     this.composite =
       composite && (composite.opacity < 1 || composite.blendMode !== "normal") ? composite : null;

@@ -11,6 +11,8 @@ import type { FaceState, HarfBuzz, OpenFace } from "./glyph-outliner.types";
 
 let harfbuzz: Promise<HarfBuzz> | null = null;
 const faces = new Map<string, FaceState>();
+/** Faces being read, for `prepare` to wait on. */
+const reads = new Map<string, Promise<void>>();
 const listeners = new Set<(font: FontRequest) => void>();
 
 /**
@@ -19,6 +21,11 @@ const listeners = new Set<(font: FontRequest) => void>();
  */
 export const glyphOutliner: GlyphOutliner = {
   ready: (font) => faces.get(fontKey(font))?.status === "ready",
+  prepare: async (font) => {
+    faceOf(font);
+    await reads.get(fontKey(font));
+    return faces.get(fontKey(font))?.status === "ready";
+  },
   shape(font, text, size) {
     const face = faceOf(font);
     if (face.status !== "ready") return null;
@@ -66,12 +73,14 @@ function faceOf(font: FontRequest): FaceState {
   const known = faces.get(key);
   if (known) return known;
   faces.set(key, { status: "loading" });
-  void openFace(font)
+  const read = openFace(font)
     .catch(() => null)
     .then((face) => {
       faces.set(key, face ? { status: "ready", ...face } : { status: "failed" });
+      reads.delete(key);
       if (face) for (const listener of listeners) listener(font);
     });
+  reads.set(key, read);
   return { status: "loading" };
 }
 

@@ -302,6 +302,10 @@ api.board.defineErConstruct({
 
 Contribute it to `api.board.boardErConstructs`; any standard that lists its id in `forbids` then reports each shape it detects as an error ("Names longer than 30 characters aren't part of My school's notation."). Ids in `forbids` that aren't installed are ignored, and a construct no standard forbids changes nothing.
 
+## SVG exports
+
+SVG exports read what your element kinds draw, so a kind needs no code for them. An effect renderer can give an `svg(effect, context)` that returns SVG filter steps; without it, layers using that effect are embedded in the SVG as pictures.
+
 ## Code export targets
 
 The database schema's Export code dialog writes the schema as a framework's files (Laravel, Angular, NestJS, MySQL, PostgreSQL, MongoDB). Each framework is a target, written the same way a plugin writes one: it reads the neutral `CodeSchema` (tables in foreign key order, columns with canonical types, relations written from the foreign key side, enums) and returns the files. Versions are `profiles`, plain data the generator reads, so a new version is one more entry.

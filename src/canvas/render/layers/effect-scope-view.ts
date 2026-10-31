@@ -27,6 +27,8 @@ export class EffectScopeView extends Container {
   private bounds: Rect = { x: 0, y: 0, w: 0, h: 0 };
   /** The effects as last applied, so unchanged ones aren't set up again. */
   private applied = "";
+  private scope: EffectScope | null = null;
+  private renderers: EffectRenderers = new Map();
   private clipMask: ClipGraphics | null = null;
   /** The clip as last set, with the reach it was checked against. */
   private clipped = "";
@@ -36,6 +38,11 @@ export class EffectScopeView extends Container {
     this.filters = [this.stack];
   }
 
+  /** The scope as last applied, with the renderers of its effects, for writing it as SVG. */
+  get look(): { scope: EffectScope; renderers: EffectRenderers } | null {
+    return this.scope && { scope: this.scope, renderers: this.renderers };
+  }
+
   /** How far past what it holds the effects draw, in world units. */
   get outset(): number {
     return this.stack.outset;
@@ -43,6 +50,8 @@ export class EffectScopeView extends Container {
 
   apply(scope: EffectScope, renderers: EffectRenderers): void {
     this.bounds = scope.bounds;
+    this.scope = scope;
+    this.renderers = renderers;
     const { box, rotation, composite } = scope;
     const look = `${rotation}|${box.x},${box.y},${box.w},${box.h}|${JSON.stringify(scope.effects)}|${JSON.stringify(composite ?? null)}`;
     if (look === this.applied) return;

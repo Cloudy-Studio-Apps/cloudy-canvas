@@ -14,7 +14,8 @@ import type { BoardWorkspace } from "../../../board-engine.types";
 import { requireBoard, requireShapes } from "../../../mcp/board-access";
 import type { BoardMcpTool } from "../../../mcp/board-mcp.types";
 
-const FORMATS: readonly ExportFormat[] = ["png", "jpg", "pdf", "csv"];
+const FORMATS: readonly ExportFormat[] = ["png", "jpg", "svg", "pdf", "csv"];
+const SVG_TEXTS = ["outlines", "live"] as const;
 const BACKGROUNDS = ["solid", "transparent"] as const;
 /** Keeps pictures sent to agents small enough to read. */
 const VIEW_MAX_SIDE = 2000;
@@ -29,7 +30,7 @@ export const exportTools: BoardMcpTool[] = [
     name: "export_shapes",
     description:
       "Exports the board, or some shapes, to a file as the Export dialog does: png or jpg (an " +
-      "image), pdf (one page) or csv (the tables' and database tables' cells). The file goes to " +
+      "image), svg (vector), pdf (one page) or csv (the tables' and database tables' cells). The file goes to " +
       '"path" (absolute; the extension is added when missing), or next to the board\'s file, ' +
       "named after the board. An existing file is replaced. Returns the path written.",
     inputSchema: {
@@ -41,9 +42,14 @@ export const exportTools: BoardMcpTool[] = [
         path: { type: "string", description: "Absolute path of the file to write." },
         background: {
           enum: BACKGROUNDS,
-          description: "PNG only: transparent or the canvas color (solid, the default).",
+          description: "PNG and SVG: transparent or the canvas color (solid, the default).",
         },
         scale: { type: "number", description: "Pixels per world unit for images (2 by default)." },
+        text: {
+          enum: SVG_TEXTS,
+          description:
+            "SVG only: glyph outlines that look the same anywhere (the default), or live editable text.",
+        },
       },
     },
     run: async (host, args) => {
@@ -58,6 +64,7 @@ export const exportTools: BoardMcpTool[] = [
         area: "board",
         ids,
         scale: optionalNumber(args, "scale"),
+        svgText: optionalChoice(args, "text", SVG_TEXTS),
       });
       await host.writeFile(path, file);
       return { path, bytes: file.size };

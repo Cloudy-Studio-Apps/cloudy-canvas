@@ -12,7 +12,8 @@ import { cappedTextResolution } from "./text-resolution";
  * layout, the resolution or the fonts change.
  */
 export class RichTextSprite extends Sprite {
-  private layout: RichTextLayout | null = null;
+  /** What it shows, for reading its text instead of its pixels. */
+  layout: RichTextLayout | null = null;
   private resolution = 1;
 
   /** Shows `layout` at `resolution` (capped by its size, as other texts are). */

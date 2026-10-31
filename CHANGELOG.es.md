@@ -5,6 +5,13 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ## Sin publicar
 
+### Novedades
+
+- Exporta pizarras y diseños como SVG, ya sea la selección o toda la página. Las formas siguen siendo
+  vectoriales, así que se ven nítidas a cualquier tamaño y se pueden editar en otras herramientas de
+  diseño, y tú eliges si el texto se convierte en contornos que se ven igual en todas partes o sigue
+  siendo editable.
+
 ## 0.6.0 - 2026-10-29
 
 ### Novedades

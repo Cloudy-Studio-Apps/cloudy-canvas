@@ -1,4 +1,4 @@
-import { imageType } from "./image-type";
+import { imageType } from "@canvas";
 import type { ShrunkImage } from "./shrink-image.types";
 
 /** WebP quality of pictures in the file: small, and hard to tell from the original on screen. */

@@ -6,4 +6,5 @@ export interface SceneExportOptions {
   selected(): Iterable<string>;
   background: number;
   snapshot: ExportHost["snapshot"];
+  vector: ExportHost["vector"];
 }

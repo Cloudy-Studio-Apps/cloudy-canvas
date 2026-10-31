@@ -13,8 +13,9 @@ const MAX_PIXELS_PER_SIDE = 8192;
 const JPEG_QUALITY = 0.92;
 
 /**
- * Exports the elements of an area as an image (PNG, JPG), a PDF page or CSV (the elements that
- * have rows, e.g. tables). Throws with a message for the user when there's nothing to export.
+ * Exports the elements of an area as an image (PNG, JPG), a vector SVG, a PDF page or CSV (the
+ * elements that have rows, e.g. tables). Throws with a message for the user when there's nothing
+ * to export.
  */
 export async function exportElements(host: ExportHost, options: ExportOptions): Promise<Blob> {
   const elements = host.elementsOf(options.area, options.ids);
@@ -27,6 +28,15 @@ export async function exportElements(host: ExportHost, options: ExportOptions): 
   const area = unionRects(elements.map((el) => host.bounds(el)));
   if (!area) throw new Error("There's nothing to export.");
   const rect = options.rect ?? padded(area);
+  if (options.format === "svg") {
+    const svg = await host.vector(elements, {
+      rect,
+      background: options.background === "transparent" ? null : host.background,
+      links: host.createLinks(),
+      text: options.svgText ?? "outlines",
+    });
+    return new Blob([svg], { type: "image/svg+xml" });
+  }
   const scale = Math.min(
     options.scale ?? DEFAULT_SCALE,
     Math.min(options.maxSide ?? MAX_PIXELS_PER_SIDE, MAX_PIXELS_PER_SIDE) /

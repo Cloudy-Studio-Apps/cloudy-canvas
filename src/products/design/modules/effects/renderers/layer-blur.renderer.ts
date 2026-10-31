@@ -25,4 +25,9 @@ export const layerBlurRenderer: EffectRenderer<LayerBlurEffect> = {
     progressiveBlurShader.bind({ uHalf: half, uFull: full });
     return pass.run(progressiveBlurShader, current);
   },
+  // SVG blurs evenly; a progressive one is embedded as a picture.
+  svg: (e, { current, result }) =>
+    e.progressive
+      ? null
+      : `<feGaussianBlur in="${current}" stdDeviation="${e.radius / 2}" result="${result}"/>`,
 };

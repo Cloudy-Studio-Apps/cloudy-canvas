@@ -47,6 +47,18 @@ export interface EffectPass {
   blur(input: Texture, radius: number): Texture;
 }
 
+/** What a renderer writes its SVG filter steps with (see `EffectRenderer.svg`). */
+export interface EffectSvgContext {
+  /** The name of the pipeline's result so far (the `in` of what builds on it). */
+  current: string;
+  /** The name the renderer's last step gives its `result`. */
+  result: string;
+  /** A prefix for the names of its own steps, unique in the filter. */
+  prefix: string;
+  /** A world offset (dx, dy) in the element's turned frame. */
+  offset(dx: number, dy: number): { x: number; y: number };
+}
+
 /**
  * How one type of effect is drawn: an engine-side piece a product contributes (the design's
  * shadows, blurs, noise, glass, shaders). It works on the GPU through `EffectPass`.
@@ -70,6 +82,12 @@ export interface EffectRenderer<E extends CanvasEffect = CanvasEffect> {
   margin?(effect: E): number;
   /** Draws the effect over `current` (the pipeline so far) and returns the new result. */
   render(pass: EffectPass, effect: E, current: Texture): Texture;
+  /**
+   * The effect as SVG filter steps (`<fe…>` markup), `""` to leave it out of SVG exports (what
+   * can't work from the scope alone), or `null` or left out when it can't be written: the scope
+   * is then embedded as a picture.
+   */
+  svg?(effect: E, context: EffectSvgContext): string | null;
 }
 
 /** A product's effect renderers by type. */

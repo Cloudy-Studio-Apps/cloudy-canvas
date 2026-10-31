@@ -41,6 +41,8 @@ export interface ShapedLine {
 export interface GlyphOutliner {
   /** Whether the face is read and can shape. */
   ready(font: FontRequest): boolean;
+  /** Reads the face if it hasn't been, resolving to whether it can shape. */
+  prepare(font: FontRequest): Promise<boolean>;
   /** One line of `text` at `size` pixels, or `null` while the face loads (or can't be had). */
   shape(font: FontRequest, text: string, size: number): ShapedLine | null;
   /** Calls `listener` with each face once it's ready. Returns the unsubscribe. */

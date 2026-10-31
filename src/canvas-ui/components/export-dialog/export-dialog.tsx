@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import type { ExportArea, ExportBackground, ExportFormat } from "@canvas";
+import type { ExportArea, ExportBackground, ExportFormat, SvgText } from "@canvas";
 import { exportFile } from "@platform";
 import { Button } from "@shared/ui/components/ui/button";
 import {
@@ -25,10 +25,11 @@ import { useOptionalEditorPoint } from "../../modules/editor-modules-context";
 import type { ExportDialogProps } from "./export-dialog.types";
 import { ExportField } from "./export-field";
 import { EXPORT_FORMATS } from "./export-formats";
+import { ExportSvgTextField } from "./export-svg-text-field";
 import { t } from "../components.i18n";
 
 /**
- * Exports the selection or the whole canvas as PNG, JPG, PDF or CSV (tables only), or as a file
+ * Exports the selection or the whole canvas as PNG, JPG, SVG, PDF or CSV (tables only), or as a file
  * type a module adds (`exportFormats`, made from the whole canvas). Opened by the `export` command
  * (Ctrl+Shift+E and the context menu), on the selection when there is one.
  */
@@ -40,6 +41,7 @@ export function ExportDialog({ name }: ExportDialogProps) {
   const [format, setFormat] = useState<string>("png");
   const [background, setBackground] = useState<ExportBackground>("solid");
   const [area, setArea] = useState<ExportArea>("selection");
+  const [svgText, setSvgText] = useState<SvgText>("outlines");
   const [busy, setBusy] = useState(false);
 
   useEffect(
@@ -56,8 +58,8 @@ export function ExportDialog({ name }: ExportDialogProps) {
   const moduleFormat = moduleFormats.find((f) => f.id === format) ?? null;
   const builtIn = EXPORT_FORMATS.find((f) => f.id === format) ?? EXPORT_FORMATS[0]!;
   const chosen: ExportFormat = builtIn.id === "csv" && !csvAvailable ? "png" : builtIn.id;
-  // Only PNG keeps transparency.
-  const solidOnly = chosen !== "png";
+  // Only PNG and SVG keep transparency.
+  const solidOnly = chosen !== "png" && chosen !== "svg";
   const file = moduleFormat ?? EXPORT_FORMATS.find((f) => f.id === chosen)!;
   const note = open && moduleFormat?.note ? moduleFormat.note(engine) : null;
 
@@ -72,6 +74,7 @@ export function ExportDialog({ name }: ExportDialogProps) {
                 format: chosen,
                 background: solidOnly ? "solid" : background,
                 area: exportArea,
+                svgText,
               }),
         { loading: t("export.progress", { format: file.name }), error: t("export.failed") },
       );
@@ -126,6 +129,12 @@ export function ExportDialog({ name }: ExportDialogProps) {
           {note && <p className="text-sm text-muted-foreground">{note}</p>}
           {!moduleFormat && (
             <>
+              {chosen === "svg" && (
+                <>
+                  <p className="text-sm text-muted-foreground">{t("export.svgNote")}</p>
+                  <ExportSvgTextField value={svgText} onChange={setSvgText} />
+                </>
+              )}
               <ExportField label={t("export.background")} id="export-background">
                 <Select
                   value={solidOnly ? "solid" : background}

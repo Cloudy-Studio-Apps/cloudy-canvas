@@ -28,6 +28,11 @@ export class ExportImages implements ImageTextures {
     return Promise.resolve(this.get(assetId));
   }
 
+  /** The asset's file as stored, for exports that embed it instead of drawing it. */
+  file(assetId: string): Uint8Array | undefined {
+    return this.host.read(assetId);
+  }
+
   naturalSize(assetId: string): Size | null {
     if (!this.sizes.has(assetId)) {
       const data = this.host.read(assetId);

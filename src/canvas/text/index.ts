@@ -7,6 +7,8 @@ export { fontsVersion } from "./rich/font-metrics";
 export { fragmentOffsets } from "./rich/rich-caret";
 export { richTextInk } from "./rich/rich-text-ink";
 export { decorationRect } from "./rich/draw-rich-text";
+export type * from "./outline-run.types";
+export { outlineRun } from "./outline-run";
 export {
   clearRunFields,
   normalizeRuns,

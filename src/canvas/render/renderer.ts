@@ -25,8 +25,9 @@ import type { RulerGuidesView } from "./layers/ruler-guide-layer.types";
 import { SizeLabelLayer } from "./layers/size-label-layer";
 import { SnapLayer } from "./layers/snap-layer";
 import type { OverlayState } from "./overlay-state.types";
-import { drawSnapshot } from "./snapshot";
-import type { SnapshotOptions } from "./snapshot.types";
+import { drawSnapshot, withSnapshotTree } from "./snapshot";
+import type { SnapshotOptions, VectorSnapshotOptions } from "./snapshot.types";
+import { drawSvg } from "./vector";
 import type { CaptureOptions, ChunkedSyncOptions, RendererOptions } from "./renderer.types";
 
 /**
@@ -51,6 +52,9 @@ function nextFrame(): Promise<void> {
  * guides, overlay, size label and smart guides (screen), with a pixel grid above the world instead.
  * Frames have their own layer so links show above them.
  */
+/** Pixels per world unit what an SVG flattens is drawn at. */
+const VECTOR_IMAGE_SCALE = 2;
+
 export class Renderer {
   readonly app = new Application();
   private readonly elements: ElementLayer;
@@ -364,6 +368,24 @@ export class Renderer {
       elements,
       this.options.placement,
       options,
+    );
+  }
+
+  /** Writes elements as an SVG document, from the same off-screen tree as `snapshot`. */
+  vectorSnapshot(
+    elements: readonly CanvasElement[],
+    options: VectorSnapshotOptions,
+  ): Promise<string> {
+    const { renderer } = this.app;
+    return withSnapshotTree(
+      renderer,
+      this.kinds,
+      this.images,
+      this.exportTheme,
+      elements,
+      this.options.placement,
+      { scale: VECTOR_IMAGE_SCALE, links: options.links },
+      (root, textures, assets) => drawSvg(renderer, root, textures, assets, options),
     );
   }
 

@@ -21,5 +21,6 @@ export function sceneExportHost(parts: WorkspaceParts, options: SceneExportOptio
     createLinks: () => product.createLinks?.() ?? [],
     background: options.background,
     snapshot: options.snapshot,
+    vector: options.vector,
   };
 }

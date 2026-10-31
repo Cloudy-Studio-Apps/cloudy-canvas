@@ -50,16 +50,23 @@ export class MaskScopeView extends Container {
   private applied = "";
   private bounds: Rect = { x: 0, y: 0, w: 0, h: 0 };
   private inverted = false;
+  private mode: ElementMask["mode"] = "alpha";
 
   constructor(readonly maskId: string) {
     super();
     this.addChild(this.source);
   }
 
+  /** How it masks, for writing it as SVG: `shape` is the outline of a vector mask that has one. */
+  get look(): { mode: ElementMask["mode"]; inverted: boolean; shape: Graphics | null } {
+    return { mode: this.mode, inverted: this.inverted, shape: this.shape };
+  }
+
   /** Masks the scope as `mask` says (its mode, inversion and outline). */
   apply(mask: ElementMask): void {
     this.bounds = mask.bounds;
     this.inverted = mask.inverted;
+    this.mode = mask.mode;
     const vector = mask.mode === "vector" && mask.shape !== null;
     const look = `${mask.mode}|${mask.inverted}|${vector}`;
     if (look !== this.applied) {

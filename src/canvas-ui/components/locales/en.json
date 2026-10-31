@@ -62,9 +62,14 @@
     "failed": "Couldn't export",
     "done": "Exported as {format}",
     "saveError": "Couldn't save the export",
+    "svgText": "Text",
+    "svgOutlines": "Outlines",
+    "svgLive": "Editable text",
+    "svgNote": "Effects SVG can't represent are embedded as images, and background blur is left out.",
     "formats": {
       "png": "PNG image",
       "jpg": "JPEG image",
+      "svg": "SVG vector image",
       "pdf": "PDF document",
       "csv": "CSV table"
     }

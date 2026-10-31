@@ -25,6 +25,8 @@ interface Entry {
 
 /** Drawn gradients, shared by every view that paints the same one, freed with their last user. */
 const entries = new Map<string, Entry>();
+/** What each texture draws, for reading a fill as data instead of pixels. */
+const drawn = new WeakMap<Texture, Gradient>();
 
 /** Draws the gradient over its box's normalized area (see `FROM`, `SPAN`). */
 function drawGradient(gradient: Gradient): Texture {
@@ -69,6 +71,7 @@ export function acquireGradient(gradient: Gradient): { key: string; texture: Tex
   let entry = entries.get(key);
   if (!entry) {
     entry = { texture: drawGradient(gradient), users: 0 };
+    drawn.set(entry.texture, gradient);
     entries.set(key, entry);
   }
   entry.users++;
@@ -100,4 +103,14 @@ export function gradientFillStyle(texture: Texture, box: Rect, alpha: number): F
       box.y + FROM * h,
     ),
   };
+}
+
+/** The gradient and box a fill style from `gradientFillStyle` paints, or `null` for other fills. */
+export function gradientOfFill(style: FillStyle): { gradient: Gradient; box: Rect } | null {
+  const gradient = style.texture && drawn.get(style.texture);
+  const { matrix } = style;
+  if (!gradient || !matrix) return null;
+  const w = (matrix.a * SIZE) / SPAN;
+  const h = (matrix.d * SIZE) / SPAN;
+  return { gradient, box: { x: matrix.tx - FROM * w, y: matrix.ty - FROM * h, w, h } };
 }

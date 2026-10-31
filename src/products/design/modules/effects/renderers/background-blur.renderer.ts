@@ -18,4 +18,6 @@ export const backgroundBlurRenderer: EffectRenderer<BackgroundBlurEffect> = {
     shapeUnderShader.bind({ uLayer: behind, uContent: pass.content });
     return pass.run(shapeUnderShader, current);
   },
+  // SVG filters can't read what's behind a layer in every viewer: it's left out.
+  svg: () => "",
 };

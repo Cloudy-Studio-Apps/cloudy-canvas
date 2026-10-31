@@ -15,5 +15,6 @@ export {
   zoomTransform,
 } from "./image-transform";
 export { imageHeaderSize } from "./image-header-size";
+export { imageType } from "./image-type";
 export { placeholderInk } from "./placeholder-ink";
 export { placeholderSvg } from "./placeholder-svg";

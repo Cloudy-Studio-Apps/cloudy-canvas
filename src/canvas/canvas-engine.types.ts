@@ -1,4 +1,4 @@
-import type { Clipboard, FontLoader } from "@shared/core";
+import type { Clipboard, FontLoader, GlyphOutliner } from "@shared/core";
 
 import type { CanvasProduct } from "./canvas-product.types";
 import type { CanvasDocument } from "./document";
@@ -32,6 +32,8 @@ export interface CanvasEngineOptions<O extends object = object> {
   clipboard?: Clipboard;
   /** Loads the fonts elements use (`ElementKind.fonts`); without one, text uses what's there. */
   fonts?: FontLoader;
+  /** Turns text into outlines for SVG exports; without one, their text stays live. */
+  glyphs?: GlyphOutliner;
 }
 
 /**

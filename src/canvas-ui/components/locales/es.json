@@ -62,9 +62,14 @@
     "failed": "No se pudo exportar",
     "done": "Exportado como {format}",
     "saveError": "No se pudo guardar la exportación",
+    "svgText": "Texto",
+    "svgOutlines": "Contornos",
+    "svgLive": "Texto editable",
+    "svgNote": "Los efectos que SVG no puede representar se incrustan como imágenes y el desenfoque de fondo se omite.",
     "formats": {
       "png": "Imagen PNG",
       "jpg": "Imagen JPEG",
+      "svg": "Imagen vectorial SVG",
       "pdf": "Documento PDF",
       "csv": "Tabla CSV"
     }

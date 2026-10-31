@@ -1,6 +1,5 @@
-import { elementBounds, type CanvasElement, type CanvasEngine } from "@canvas";
+import { elementBounds, imageType, type CanvasElement, type CanvasEngine } from "@canvas";
 import { bytesToBase64 } from "./bytes-to-base64";
-import { imageType } from "./image-type";
 import { shrinkImage } from "./shrink-image";
 
 /** Pictures are kept at twice their placed size, so they stay sharp on high-density screens. */

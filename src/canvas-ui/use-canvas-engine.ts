@@ -1,7 +1,7 @@
 import { useEffect, useState, type RefObject } from "react";
 
 import { CanvasEngine, type CanvasDocument, type CanvasProduct, type EngineLoading } from "@canvas";
-import { clipboard, fontLibrary } from "@platform";
+import { clipboard, fontLibrary, glyphOutliner } from "@platform";
 import { useSnappingStore } from "@shared/stores/snapping-store";
 import { onThemeChange } from "@shared/ui/theme";
 import { readCanvasTheme, readExportCanvasTheme } from "./canvas-theme";
@@ -32,6 +32,7 @@ export function useCanvasEngine<O extends object>(
       document,
       clipboard,
       fonts: fontLibrary,
+      glyphs: glyphOutliner,
     });
     instance.setSnapping(useSnappingStore.getState().byProduct[product.id] ?? {});
     let active = true;

@@ -1,4 +1,4 @@
-import { fontKey, type Clipboard, type DroppedFile } from "@shared/core";
+import { fontKey, type Clipboard, type DroppedFile, type GlyphOutliner } from "@shared/core";
 
 import { Camera } from "./camera";
 import { CameraGlide } from "./camera-glide";
@@ -165,6 +165,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   private readonly renderer: Renderer;
   private readonly scene: Scene;
   private readonly fontTracker: FontTracker;
+  private readonly glyphs: GlyphOutliner | null;
   /** What tools (and the product's `editElement`) reach of the engine. */
   private readonly toolContext: ToolContext<O>;
   private readonly services: ServiceCache;
@@ -228,7 +229,15 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   private closing = false;
   private rendererReady = false;
 
-  constructor({ product, theme, exportTheme, document, clipboard, fonts }: CanvasEngineOptions<O>) {
+  constructor({
+    product,
+    theme,
+    exportTheme,
+    document,
+    clipboard,
+    fonts,
+    glyphs,
+  }: CanvasEngineOptions<O>) {
     this.product = product;
     this.productId = product.id;
     this.kinds = product.kinds;
@@ -281,6 +290,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     }
     if (product.afterEdit) this.doc.setAfterEdit(product.afterEdit.bind(product));
     this.scopeGuides = new ScopeGuides(this.doc, product.guides);
+    this.glyphs = glyphs ?? null;
     this.fontTracker = new FontTracker(fonts, (key) => this.handleFontLoad(key));
     this.systemClipboard = clipboard ?? new MemoryClipboard();
     this.clipboard = this.createClipboard(this.systemClipboard);
@@ -1424,6 +1434,8 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
         selected,
         background: this.renderer.exportBackground,
         snapshot: (elements, options) => this.renderer.snapshot(elements, options),
+        vector: (elements, options) =>
+          this.renderer.vectorSnapshot(elements, { ...options, glyphs: this.glyphs }),
       },
     );
   }

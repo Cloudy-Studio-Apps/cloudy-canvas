@@ -2,6 +2,7 @@ import { atopShader, silhouetteShader, type EffectRenderer } from "@canvas";
 
 import { premultiplied } from "../effect-color";
 import type { InnerShadowEffect } from "../effect.types";
+import { shadowSvg } from "./shadow-svg";
 
 /**
  * An inner shadow: what's outside the content, moved, grown inward by its spread, blurred and
@@ -25,5 +26,18 @@ export const innerShadowRenderer: EffectRenderer<InnerShadowEffect> = {
     atopShader.set({ uShape: 0 });
     atopShader.bind({ uLayer: shadow, uContent: pass.content });
     return pass.run(atopShader, current);
+  },
+  svg(e, { current, result, prefix, offset }) {
+    const outside = `${prefix}o`;
+    const shadow = `${prefix}s`;
+    const inside = `${prefix}n`;
+    return (
+      `<feComponentTransfer in="SourceAlpha" result="${outside}">` +
+      `<feFuncA type="table" tableValues="1 0"/></feComponentTransfer>` +
+      shadowSvg(e, outside, offset(e.x, e.y), prefix, shadow) +
+      `<feComposite in="${shadow}" in2="SourceAlpha" operator="in" result="${inside}"/>` +
+      `<feMerge result="${result}"><feMergeNode in="${current}"/>` +
+      `<feMergeNode in="${inside}"/></feMerge>`
+    );
   },
 };

@@ -10,7 +10,8 @@ import { ToolImage } from "@shared/core";
 
 import { optionalNodeIds, requireDesign, type DesignMcpTool } from "../../../mcp";
 
-const FORMATS: readonly ExportFormat[] = ["png", "jpg", "pdf"];
+const FORMATS: readonly ExportFormat[] = ["png", "jpg", "svg", "pdf"];
+const SVG_TEXTS = ["outlines", "live"] as const;
 const BACKGROUNDS = ["solid", "transparent"] as const;
 /** Keeps pictures sent to agents small enough to read. */
 const VIEW_MAX_SIDE = 2000;
@@ -25,7 +26,7 @@ export const designExportTools: DesignMcpTool[] = [
     name: "export_nodes",
     description:
       "Exports the design, or some layers, to a file as the Export dialog does: png or jpg (an " +
-      'image) or pdf (one page). The file goes to "path" (absolute; the extension is added when ' +
+      'image), svg (vector) or pdf (one page). The file goes to "path" (absolute; the extension is added when ' +
       "missing), or next to the design's file, named after it. An existing file is replaced. " +
       "Returns the path written.",
     inputSchema: {
@@ -37,9 +38,14 @@ export const designExportTools: DesignMcpTool[] = [
         path: { type: "string", description: "Absolute path of the file to write." },
         background: {
           enum: BACKGROUNDS,
-          description: "PNG only: transparent or the canvas color (solid, the default).",
+          description: "PNG and SVG: transparent or the canvas color (solid, the default).",
         },
         scale: { type: "number", description: "Pixels per world unit for images (2 by default)." },
+        text: {
+          enum: SVG_TEXTS,
+          description:
+            "SVG only: glyph outlines that look the same anywhere (the default), or live editable text.",
+        },
       },
     },
     run: async (host, args) => {
@@ -54,6 +60,7 @@ export const designExportTools: DesignMcpTool[] = [
         area: "board",
         ids,
         scale: optionalNumber(args, "scale"),
+        svgText: optionalChoice(args, "text", SVG_TEXTS),
       });
       await host.writeFile(path, file);
       return { path, bytes: file.size };

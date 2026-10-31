@@ -273,6 +273,11 @@ export class ElementView extends Container {
     text.renderable = false;
   }
 
+  /** The text the paints show through (`setPaintTextMask`), or `null`. */
+  get maskingText(): Text | RichTextSprite | null {
+    return this.textMask ? (this.richText ?? this.textNode) : null;
+  }
+
   /** The text's glyphs drawn white, and where they're placed. */
   private textGlyphs(
     text: Text | RichTextSprite,
