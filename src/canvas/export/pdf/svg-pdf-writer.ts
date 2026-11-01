@@ -1,6 +1,7 @@
+import type { PdfColorOutput } from "./color";
 import { hrefOf } from "./pdf-image";
 import { PdfContent, type PdfDocument } from "./pdf-document";
-import { gradientShading, rgbOf } from "./pdf-gradient";
+import { gradientShading } from "./pdf-gradient";
 import { IDENTITY, matrixOps, multiply, parseTransform, pdfNumber } from "./pdf-matrix";
 import type { PdfExportOptions } from "./pdf-options.types";
 import { attr, clipOps, formBox, rectOf } from "./pdf-clip";
@@ -39,6 +40,7 @@ export class SvgPdfWriter {
     private readonly root: Element,
     private readonly images: ReadonlyMap<string, number>,
     private readonly options: PdfExportOptions,
+    private readonly output: PdfColorOutput,
   ) {
     for (const element of root.querySelectorAll("[id]")) this.ids.set(element.id, element);
   }
@@ -96,7 +98,7 @@ export class SvgPdfWriter {
     this.writeChildren(el, form, { local: IDENTITY, page });
     const ref = this.doc.content(
       `/Type /XObject /Subtype /Form /BBox [${formBox(page)}] ` +
-        `/Group << /S /Transparency /CS /DeviceRGB /I true >>`,
+        `/Group << /S /Transparency /CS /${this.output.space} /I true >>`,
       form,
     );
     const state = this.state(
@@ -128,16 +130,19 @@ export class SvgPdfWriter {
     attribute: "fill" | "stroke",
   ): string {
     const paint = attr(el, attribute);
-    const operators = attribute === "fill" ? ["rg", "cs", "scn", "ca"] : ["RG", "CS", "SCN", "CA"];
-    const [color, space, pattern, alpha] = operators as [string, string, string, string];
+    const stroke = attribute === "stroke";
+    const [space, pattern, alpha] = stroke ? ["CS", "SCN", "CA"] : ["cs", "scn", "ca"];
     const opacity = el.getAttribute(`${attribute}-opacity`);
     const faded = opacity
       ? `/${out.name("ExtGState", this.state(`/${alpha} ${opacity}`))} gs `
       : "";
     const gradient = this.ids.get(/url\(#(.+)\)/.exec(paint)?.[1] ?? "");
-    if (!gradient) return `${faded}${rgbOf(paint)} ${color}`;
+    if (!gradient) return `${faded}${this.output.paint(paint, stroke)}`;
     let shading = this.shadings.get(gradient);
-    if (!shading) this.shadings.set(gradient, (shading = gradientShading(this.doc, gradient)));
+    if (!shading) {
+      shading = gradientShading(this.doc, gradient, this.output);
+      this.shadings.set(gradient, shading);
+    }
     const matrix = multiply(local, parseTransform(gradient.getAttribute("gradientTransform")));
     const ref = this.doc.add(
       `<< /Type /Pattern /PatternType 2 /Shading ${shading} 0 R /Matrix [${matrixOps(matrix)}] >>`,

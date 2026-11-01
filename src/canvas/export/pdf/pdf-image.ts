@@ -1,6 +1,4 @@
-import { zlibSync } from "fflate";
-
-import { canvasBlob } from "../canvas-blob";
+import type { PdfColorOutput } from "./color";
 import { apply, multiply, parseTransform } from "./pdf-matrix";
 import { PDF_JPEG_QUALITY } from "./pdf-options";
 import type { PdfDocument } from "./pdf-document";
@@ -24,6 +22,7 @@ export async function embedImages(
   root: Element,
   scale: number,
   { dpi, imageQuality }: PdfExportOptions,
+  output: PdfColorOutput,
 ): Promise<Map<string, number>> {
   const sizes = new Map<string, { w: number; h: number }>();
   measure(root, [scale, 0, 0, scale, 0, 0], root, sizes);
@@ -33,7 +32,7 @@ export async function embedImages(
       w: (size.w / POINTS_PER_INCH) * dpi,
       h: (size.h / POINTS_PER_INCH) * dpi,
     };
-    refs.set(href, await embedImage(doc, href, pixels, PDF_JPEG_QUALITY[imageQuality]));
+    refs.set(href, await embedImage(doc, href, pixels, PDF_JPEG_QUALITY[imageQuality], output));
   }
   return refs;
 }
@@ -69,6 +68,7 @@ async function embedImage(
   href: string,
   wanted: { w: number; h: number },
   quality: number,
+  output: PdfColorOutput,
 ): Promise<number> {
   const image = new Image();
   image.src = href;
@@ -84,37 +84,9 @@ async function embedImage(
   if (!context) throw new Error("Couldn't draw a picture for the PDF.");
   context.drawImage(image, 0, 0, width, height);
   const { data } = context.getImageData(0, 0, width, height);
-  const size = `/Type /XObject /Subtype /Image /Width ${width} /Height ${height} /BitsPerComponent 8`;
-  if (isOpaque(data)) {
-    const jpeg = await canvasBlob(canvas, "image/jpeg", quality);
-    return embedJpeg(doc, new Uint8Array(await jpeg.arrayBuffer()), { width, height });
-  }
-  const rgb = new Uint8Array(width * height * 3);
-  const alpha = new Uint8Array(width * height);
-  for (let i = 0; i < alpha.length; i++) {
-    rgb[i * 3] = data[i * 4]!;
-    rgb[i * 3 + 1] = data[i * 4 + 1]!;
-    rgb[i * 3 + 2] = data[i * 4 + 2]!;
-    alpha[i] = data[i * 4 + 3]!;
-  }
-  const mask = doc.stream(`${size} /ColorSpace /DeviceGray /Filter /FlateDecode`, zlibSync(alpha));
-  return doc.stream(
-    `${size} /ColorSpace /DeviceRGB /SMask ${mask} 0 R /Filter /FlateDecode`,
-    zlibSync(rgb),
-  );
-}
-
-/** Embeds a JPEG file as it is. */
-export function embedJpeg(
-  doc: PdfDocument,
-  jpeg: Uint8Array,
-  { width, height }: { width: number; height: number },
-): number {
-  return doc.stream(
-    `/Type /XObject /Subtype /Image /Width ${width} /Height ${height} /BitsPerComponent 8 ` +
-      `/ColorSpace /DeviceRGB /Filter /DCTDecode`,
-    jpeg,
-  );
+  return isOpaque(data)
+    ? output.opaque(doc, canvas, quality)
+    : output.translucent(doc, { data, width, height });
 }
 
 function isOpaque(rgba: Uint8ClampedArray): boolean {

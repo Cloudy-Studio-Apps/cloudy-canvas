@@ -1,7 +1,6 @@
-import { canvasBlob } from "../canvas-blob";
 import type { ExportHost } from "../export.types";
+import { RGB_OUTPUT, type PdfColorOutput } from "./color";
 import { PdfContent, PdfDocument } from "./pdf-document";
-import { embedJpeg } from "./pdf-image";
 import { matrixOps } from "./pdf-matrix";
 import { DEFAULT_PDF_OPTIONS, PDF_JPEG_QUALITY, pdfImageScale } from "./pdf-options";
 import type { PdfExportOptions } from "./pdf-options.types";
@@ -24,7 +23,7 @@ export async function exportPdf(
 ): Promise<Blob> {
   const options = { ...DEFAULT_PDF_OPTIONS, ...given };
   const doc = new PdfDocument();
-  for (const page of pages) await addPdfPage(doc, host, page, background, options);
+  for (const page of pages) await addPdfPage(doc, host, page, background, options, RGB_OUTPUT);
   return doc.save();
 }
 
@@ -35,8 +34,9 @@ export async function addPdfPage(
   page: PdfPageSource,
   background: "solid" | "transparent",
   options: PdfExportOptions,
+  output: PdfColorOutput,
 ): Promise<void> {
-  if (options.mode === "flattened") return addFlattened(doc, host, page, options);
+  if (options.mode === "flattened") return addFlattened(doc, host, page, options, output);
   const { elements, rect } = page;
   try {
     const svg = await host.vector(elements, {
@@ -47,10 +47,10 @@ export async function addPdfPage(
       target: "pdf",
       imageScale: pdfImageScale(options),
     });
-    await addSvgPage(doc, svg, rect, options);
+    await addSvgPage(doc, svg, rect, options, output);
   } catch (error) {
     console.warn("Sharp PDF failed, exporting it flattened:", error);
-    await addFlattened(doc, host, page, options);
+    await addFlattened(doc, host, page, options, output);
   }
 }
 
@@ -60,6 +60,7 @@ async function addFlattened(
   host: ExportHost,
   { elements, rect }: PdfPageSource,
   options: PdfExportOptions,
+  output: PdfColorOutput,
 ): Promise<void> {
   const canvas = await host.snapshot(elements, {
     rect,
@@ -67,8 +68,7 @@ async function addFlattened(
     background: host.background,
     links: host.createLinks(),
   });
-  const jpeg = await canvasBlob(canvas, "image/jpeg", PDF_JPEG_QUALITY[options.imageQuality]);
-  const image = embedJpeg(doc, new Uint8Array(await jpeg.arrayBuffer()), canvas);
+  const image = await output.opaque(doc, canvas, PDF_JPEG_QUALITY[options.imageQuality]);
   const layout = pdfPageLayout(rect, options);
   const { scale, left, top } = layout;
   const w = rect.w * scale;

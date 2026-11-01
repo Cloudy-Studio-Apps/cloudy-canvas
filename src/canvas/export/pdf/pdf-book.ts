@@ -1,5 +1,6 @@
 import type { Size } from "../../geometry.types";
 import type { ExportHost } from "../export.types";
+import { RGB_OUTPUT } from "./color";
 import { addPdfPage } from "./export-pdf";
 import { PdfContent, PdfDocument } from "./pdf-document";
 import { DEFAULT_PDF_OPTIONS } from "./pdf-options";
@@ -25,7 +26,7 @@ export class PdfBook {
     const host = this.host();
     const elements = host.elementsOf("board", ids).map((el) => host.forExport(el));
     if (elements.length === 0) throw new Error("There's nothing to export on this page.");
-    await addPdfPage(this.doc, host, { elements, rect }, "solid", this.options);
+    await addPdfPage(this.doc, host, { elements, rect }, "solid", this.options, RGB_OUTPUT);
   }
 
   /** An empty page. */
