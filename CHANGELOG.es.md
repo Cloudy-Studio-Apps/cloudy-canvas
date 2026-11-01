@@ -58,6 +58,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 - Los títulos de los marcos ya no aparecen en imágenes, PDF, SVG ni copias exportadas.
 - En Sistema de diseño, al hacer clic en una zona vacía del lienzo la sección desaparece del panel
   lateral y vuelve la vista general, con los botones de exportación.
+- El texto de los PDF nítidos ahora siempre se puede buscar y copiar. Antes se omitían las líneas con
+  caracteres como €, comillas tipográficas, griego, cirílico, japonés o emojis.
 
 ## 0.6.0 - 2026-10-29
 

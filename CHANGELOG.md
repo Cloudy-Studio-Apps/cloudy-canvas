@@ -54,6 +54,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - Frame titles no longer appear in exported images, PDFs, SVGs or copies.
 - In Design system, clicking an empty part of the canvas now clears the section from the side panel
   and brings back the overview, with the export buttons.
+- Text in sharp PDFs can now always be searched and copied. Lines with characters such as €, curly
+  quotes, Greek, Cyrillic, Japanese or emoji used to be left out.
 
 ## 0.6.0 - 2026-10-29
 

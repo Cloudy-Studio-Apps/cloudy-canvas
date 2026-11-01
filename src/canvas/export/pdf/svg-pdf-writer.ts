@@ -5,7 +5,7 @@ import { IDENTITY, matrixOps, multiply, parseTransform, pdfNumber } from "./pdf-
 import type { PdfExportOptions } from "./pdf-options.types";
 import { attr, clipOps, formBox, rectOf } from "./pdf-clip";
 import { pathOps } from "./pdf-path";
-import { hiddenFont, hiddenTextOps } from "./pdf-text";
+import { hiddenTextFont } from "./pdf-text";
 import type { PdfFrame, PdfMatrix } from "./pdf-writer.types";
 
 const PDF_BLEND: Readonly<Record<string, string>> = {
@@ -33,7 +33,6 @@ export class SvgPdfWriter {
   private readonly ids = new Map<string, Element>();
   private readonly shadings = new Map<Element, number>();
   private readonly states = new Map<string, number>();
-  private font: number | null = null;
 
   constructor(
     private readonly doc: PdfDocument,
@@ -149,9 +148,9 @@ export class SvgPdfWriter {
   private writeHiddenText(el: Element, out: PdfContent): void {
     const text = el.getAttribute("data-text");
     if (text === null || this.options.text !== "selectable") return;
-    this.font ??= hiddenFont(this.doc);
-    const ops = hiddenTextOps(
-      out.name("Font", this.font),
+    const font = hiddenTextFont(this.doc);
+    const ops = font.ops(
+      out.name("Font", font.ref),
       text,
       Number(el.getAttribute("data-x")),
       Number(el.getAttribute("data-y")),

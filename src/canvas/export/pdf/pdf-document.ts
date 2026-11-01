@@ -40,11 +40,26 @@ export class PdfDocument {
   private readonly pages: number[] = [];
   /** The page tree's number, reserved by the first page because pages point back at it. */
   private tree: number | null = null;
+  private readonly finishers: (() => void)[] = [];
 
   /** Adds an object from its body (a dictionary, an array…) and returns its number. */
   add(body: string): number {
     this.objects.push(strToU8(body));
     return this.objects.length;
+  }
+
+  /** Reserves an object for something only known at the end, filled with `fill`. */
+  reserve(): number {
+    return this.add("null");
+  }
+
+  fill(ref: number, body: string): void {
+    this.objects[ref - 1] = strToU8(body);
+  }
+
+  /** Runs `finish` once every page is in, to write what depends on all of them. */
+  beforeSave(finish: () => void): void {
+    this.finishers.push(finish);
   }
 
   /** Adds a stream whose `data` is encoded already; `dict` holds the entries besides `/Length`. */
@@ -67,7 +82,7 @@ export class PdfDocument {
 
   /** Adds a page showing `content`, after the ones so far. */
   addPage({ width, height }: PdfPageLayout, content: PdfContent): void {
-    this.tree ??= this.add("null");
+    this.tree ??= this.reserve();
     const stream = this.content("", content);
     this.pages.push(
       this.add(
@@ -81,10 +96,9 @@ export class PdfDocument {
   /** The whole file, of the pages added. */
   save(): Blob {
     if (this.tree === null) throw new Error("A PDF needs at least one page.");
+    for (const finish of this.finishers.splice(0)) finish();
     const kids = this.pages.map((page) => `${page} 0 R`).join(" ");
-    this.objects[this.tree - 1] = strToU8(
-      `<< /Type /Pages /Kids [${kids}] /Count ${this.pages.length} >>`,
-    );
+    this.fill(this.tree, `<< /Type /Pages /Kids [${kids}] /Count ${this.pages.length} >>`);
     const catalog = this.add(`<< /Type /Catalog /Pages ${this.tree} 0 R >>`);
     return this.file(catalog);
   }
