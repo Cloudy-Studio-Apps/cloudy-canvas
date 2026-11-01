@@ -1,9 +1,10 @@
 import { Plus } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { useAssetUrl } from "@canvas-ui";
+import { useAssetUrl, useFileDropZone } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import { toast } from "@shared/stores/toast-store";
+import { imageTypeFromName, type DroppedFile } from "@shared/core";
+import { notifyError, toast } from "@shared/stores/toast-store";
 import { cn, IconButton, SegmentedControl, type SegmentedOption } from "@shared/ui/kit";
 import { collectImages, type ImageMood } from "../..";
 import { useColorWizardStore } from "../store";
@@ -28,6 +29,16 @@ function takeImageFile(file: File | undefined): void {
   set({ image: { ...image, assetId: null, upload: URL.createObjectURL(file), readFrom: null } });
 }
 
+/** Reads a file dropped on the window, which comes with its path and no media type. */
+async function takeDroppedFile(file: DroppedFile): Promise<void> {
+  try {
+    const data = (await file.read()) as Uint8Array<ArrayBuffer>;
+    takeImageFile(new File([data], file.name, { type: imageTypeFromName(file.name) ?? "" }));
+  } catch (error) {
+    notifyError(t("sources.image.readFailed"), error);
+  }
+}
+
 /** Colors from a picture: one of the file's, or one chosen, dropped or pasted. */
 export function ImageSource() {
   const engine = useDesignEngine();
@@ -35,6 +46,8 @@ export function ImageSource() {
   const set = useColorWizardStore((s) => s.set);
   const images = useMemo(() => collectImages(engine.doc), [engine]);
   const [over, setOver] = useState(false);
+  const dropZone = useRef<HTMLDivElement>(null);
+  const draggingFiles = useFileDropZone(dropZone, (file) => void takeDroppedFile(file));
   const input = useRef<HTMLInputElement>(null);
   const picked = image.assetId ?? (image.upload ? null : (images[0]?.assetId ?? null));
   const assetUrl = useAssetUrl(picked);
@@ -88,6 +101,7 @@ export function ImageSource() {
         />
       </div>
       <div
+        ref={dropZone}
         onDragOver={(event) => {
           event.preventDefault();
           setOver(true);
@@ -100,7 +114,7 @@ export function ImageSource() {
         }}
         className={cn(
           "rounded-lg border border-dashed border-border-strong px-3 py-5 text-center text-xs text-muted-foreground",
-          over && "border-primary bg-primary-soft text-primary-soft-foreground",
+          (over || draggingFiles) && "border-primary bg-primary-soft text-primary-soft-foreground",
         )}
       >
         {t("sources.image.drop")}

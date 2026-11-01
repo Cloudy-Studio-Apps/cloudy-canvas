@@ -98,6 +98,7 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   funciona en Windows y macOS, y las listas largas se desplazan mientras arrastras.
 - Reordenar efectos y mover modos de variables entre grupos arrastrándolos ahora funciona en Windows
   y macOS.
+- Soltar una imagen en el asistente de color ahora funciona en la app de escritorio.
 
 ## 0.6.0 - 2026-10-29
 
