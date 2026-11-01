@@ -243,7 +243,8 @@
       "empty": "Add variables or styles to see them here as a style guide.",
       "summary_one": "{count} section, kept up to date as your variables and styles change. Pick one in the left panel or on the canvas to choose how it's drawn.",
       "summary_other": "{count} sections, kept up to date as your variables and styles change. Pick one in the left panel or on the canvas to choose how it's drawn.",
-      "exportPdf": "Export as PDF"
+      "exportPdf": "Export as PDF",
+      "exportTokens": "Export tokens…"
     },
     "template": {
       "groupHint": "This group's template. Unless you pick one, it uses its category's.",

@@ -172,6 +172,10 @@ The file's variables and styles drawn as a style guide that stays up to date.
     reading it back is exact.
   - CSS (modes as `[data-<axis>]` blocks and `prefers-color-scheme`).
   - Tailwind v4 `@theme`, SCSS, Swift and Kotlin.
+- **Export dialog:** `ExportTokensDialog` (`ui/exchange/`, an overlay opened with `openExportTokens` from
+  the Variables window's Import / Export menu and the Design system overview): the format, a tick tree (`TokenPickTree`, shared with import), the file read-only, then
+  Copy or Save. `selectTokens` narrows the records, with what they alias, and the format writes
+  from a store of those alone.
 - **Formats are a point:** `tokenFormats` (`TokenFormat`: `write`, `read`, `detect`).
 - **Figma import** (`figma/convert/tokens/`): variables with their modes, aliases, scopes, code
   syntax and expressions; shared text, color and effect styles; and layers' bindings to them.

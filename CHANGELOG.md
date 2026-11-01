@@ -28,6 +28,10 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   and paste it into a README, wiki or note. ER diagrams keep their entities, relations and attributes,
   and GitHub, GitLab, Notion and Obsidian draw them for you. Find it in the ER mode's toolbar and in
   Export code.
+- Choose what to export from a design's variables: a new dialog, in the Variables window and in
+  Design system, lets you pick the format, tick the collections, groups or styles to include, preview
+  the file, then copy or save it. Anything the ticked variables depend on comes along, so the file
+  keeps working.
 
 ### Improved
 

@@ -9,8 +9,8 @@ import { tCommon } from "@shared/core";
 import { AppDialog, Button } from "@shared/ui/kit";
 
 import type { ImportBodyProps, ImportTokensDialogProps } from "./exchange.types";
-import { ImportPickTree } from "./import-pick-tree";
 import { allKeys, pickOf, pickRows } from "./pick-rows";
+import { TokenPickTree } from "./token-pick-tree";
 import { t } from "../../variables.i18n";
 
 /**
@@ -86,7 +86,7 @@ function ImportBody({ source, onClose }: ImportBodyProps) {
         {rows.length === 0 ? (
           <p className="text-xs text-muted-foreground">{t("import.empty")}</p>
         ) : (
-          <ImportPickTree rows={rows} ticked={ticked} onChange={setTicked} />
+          <TokenPickTree rows={rows} ticked={ticked} onChange={setTicked} />
         )}
         {selected.extra > 0 && (
           <p className="text-xs text-muted-foreground">

@@ -243,7 +243,8 @@
       "empty": "Añade variables o estilos para verlos aquí como una guía de estilo.",
       "summary_one": "{count} sección, siempre al día cuando cambian tus variables y estilos. Elige una en el panel izquierdo o en el lienzo para decidir cómo se dibuja.",
       "summary_other": "{count} secciones, siempre al día cuando cambian tus variables y estilos. Elige una en el panel izquierdo o en el lienzo para decidir cómo se dibuja.",
-      "exportPdf": "Exportar como PDF"
+      "exportPdf": "Exportar como PDF",
+      "exportTokens": "Exportar tokens…"
     },
     "template": {
       "groupHint": "La plantilla de este grupo. Si no eliges una, usa la de su categoría.",

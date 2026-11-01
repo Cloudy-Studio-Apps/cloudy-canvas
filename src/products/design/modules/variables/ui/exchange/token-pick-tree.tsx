@@ -1,9 +1,9 @@
-import { Checkbox } from "@shared/ui/kit";
+import { Checkbox, cn } from "@shared/ui/kit";
 
-import type { ImportPickTreeProps } from "./exchange.types";
+import type { TokenPickTreeProps } from "./exchange.types";
 
-/** The import's tree: each collection or style type, and its top-level groups, all tickable. */
-export function ImportPickTree({ rows, ticked, onChange }: ImportPickTreeProps) {
+/** The import and export tree: each collection or style type, and its top-level groups, all tickable. */
+export function TokenPickTree({ rows, ticked, onChange, className }: TokenPickTreeProps) {
   const set = (keys: readonly string[], on: boolean) => {
     const next = new Set(ticked);
     for (const key of keys) {
@@ -13,7 +13,12 @@ export function ImportPickTree({ rows, ticked, onChange }: ImportPickTreeProps) 
     onChange(next);
   };
   return (
-    <div className="flex max-h-72 flex-col gap-1 overflow-y-auto rounded-md border border-border p-2">
+    <div
+      className={cn(
+        "flex max-h-72 flex-col gap-1 overflow-y-auto rounded-md border border-border p-2",
+        className,
+      )}
+    >
       {rows.map((row) => {
         const keys = row.children.map((child) => child.key);
         const on = keys.filter((key) => ticked.has(key)).length;

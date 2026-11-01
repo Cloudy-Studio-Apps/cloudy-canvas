@@ -13,6 +13,7 @@ import { exchangeTools, variableTools } from "./mcp";
 import { BUILT_IN_TOKEN_FORMATS, tokenFormats } from "./exchange";
 import { DESIGN_TOKEN_CONTEXT } from "../core";
 import {
+  ExportTokensDialog,
   useVariablesWindowCommand,
   VariableModesSection,
   StylesSection,
@@ -75,6 +76,10 @@ export const variablesModule = defineModule({
       use: useVariablesWindowCommand,
     });
     host.contribute(designEditor.overlays, { id: "variables.window", component: VariablesWindow });
+    host.contribute(designEditor.overlays, {
+      id: "variables.export",
+      component: ExportTokensDialog,
+    });
     host.contribute(designEditor.mainMenu, {
       id: "variables",
       order: 42,

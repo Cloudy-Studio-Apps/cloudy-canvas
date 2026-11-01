@@ -132,13 +132,13 @@
     "exportError": "No se pudieron exportar las variables",
     "menu": "Importar / Exportar",
     "importFile": "Importar desde un archivo…",
-    "exportAs": "Exportar como",
     "dialogTitle": "Importar variables y estilos",
     "filters": {
       "designsTokens": "Diseños y tokens",
       "designs": "Diseños de Cloudy Canvas",
       "tokens": "JSON de tokens"
-    }
+    },
+    "export": "Exportar…"
   },
   "import": {
     "added": "{count} añadidas",
@@ -418,5 +418,18 @@
     "collection": "Marca",
     "collectionNumbered": "Colección {number}",
     "modeGroup": "Nuevo grupo"
+  },
+  "export": {
+    "title": "Exportar variables y estilos",
+    "description": "Elige un formato y qué incluir. Las variables de las que dependen las marcadas se añaden también, para que el archivo siga funcionando.",
+    "format": "Formato",
+    "preview": "Archivo {format}",
+    "copy": "Copiar",
+    "copied": "Copiado al portapapeles",
+    "copyError": "No se pudieron copiar las variables",
+    "extra_one": "También incluye {count} variable que usan las marcadas.",
+    "extra_other": "También incluye {count} variables que usan las marcadas.",
+    "emptyTitle": "Nada marcado",
+    "emptyDescription": "Marca una colección, un grupo o un estilo para ver su archivo."
   }
 }

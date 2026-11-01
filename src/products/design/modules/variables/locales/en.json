@@ -132,13 +132,13 @@
     "exportError": "Couldn't export the variables",
     "menu": "Import / Export",
     "importFile": "Import from a file…",
-    "exportAs": "Export as",
     "dialogTitle": "Import variables and styles",
     "filters": {
       "designsTokens": "Designs and tokens",
       "designs": "Cloudy Canvas designs",
       "tokens": "Tokens JSON"
-    }
+    },
+    "export": "Export…"
   },
   "import": {
     "added": "{count} added",
@@ -418,5 +418,18 @@
     "collection": "Brand",
     "collectionNumbered": "Collection {number}",
     "modeGroup": "New group"
+  },
+  "export": {
+    "title": "Export variables and styles",
+    "description": "Pick a format and what to include. Variables the ticked ones depend on come along, so the file still works.",
+    "format": "Format",
+    "preview": "{format} file",
+    "copy": "Copy",
+    "copied": "Copied to the clipboard",
+    "copyError": "Couldn't copy the variables",
+    "extra_one": "Also includes {count} variable the ticked ones use.",
+    "extra_other": "Also includes {count} variables the ticked ones use.",
+    "emptyTitle": "Nothing ticked",
+    "emptyDescription": "Tick a collection, a group or a style to see its file."
   }
 }

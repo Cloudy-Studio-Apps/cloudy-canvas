@@ -1,6 +1,7 @@
-import { FileDown } from "lucide-react";
+import { FileCode, FileDown } from "lucide-react";
 
 import { STYLEGUIDE_COMMANDS } from "../../mode/styleguide-mode.constants";
+import { openExportTokens } from "../../../variables/ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button, Section } from "@shared/ui/kit";
 import { useStyleguideOutline } from "../hooks/use-styleguide";
@@ -28,6 +29,10 @@ export function SystemOverview() {
         <Button size="sm" onClick={() => engine.runHostAction(STYLEGUIDE_COMMANDS.exportSystem)}>
           <FileDown />
           {t("sidebar.overview.exportPdf")}
+        </Button>
+        <Button variant="secondary" size="sm" onClick={openExportTokens}>
+          <FileCode />
+          {t("sidebar.overview.exportTokens")}
         </Button>
       </div>
     </Section>

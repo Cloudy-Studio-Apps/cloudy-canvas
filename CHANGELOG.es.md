@@ -30,6 +30,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   un bloque Mermaid y pégalo en un README, una wiki o una nota. Los diagramas ER conservan sus
   entidades, relaciones y atributos, y GitHub, GitLab, Notion y Obsidian los dibujan por ti. Lo
   encontrarás en la barra de herramientas del modo ER y en Exportar código.
+- Elige qué exportar de las variables de un diseño: un nuevo diálogo, en la ventana Variables y en
+  Sistema de diseño, te permite escoger el formato, marcar las colecciones, los grupos o los estilos
+  que quieres incluir, ver el archivo y copiarlo o guardarlo. Todo aquello de lo que dependen las
+  variables marcadas se incluye también, para que el archivo siga funcionando.
 
 ### Mejoras
 

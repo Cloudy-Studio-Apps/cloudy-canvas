@@ -1,4 +1,4 @@
-import type { TokenSourceRead } from "../../exchange";
+import type { TokenFormat, TokenSourceRead } from "../../exchange";
 
 /** A picked file, read and ready to import. */
 export interface ImportSource extends TokenSourceRead {
@@ -16,7 +16,19 @@ export interface ImportBodyProps {
   onClose: () => void;
 }
 
-/** One tickable row of the import tree: a collection or style type, or a group of one. */
+export interface ExportTokensState {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}
+
+export interface ExportTokensBodyProps {
+  /** The formats that can write a file. */
+  formats: readonly TokenFormat[];
+  first: TokenFormat;
+  onClose: () => void;
+}
+
+/** One tickable row of the import and export tree: a collection or style type, or a group of one. */
 export interface PickRow {
   key: string;
   label: string;
@@ -26,9 +38,10 @@ export interface PickRow {
   children: PickRow[];
 }
 
-export interface ImportPickTreeProps {
+export interface TokenPickTreeProps {
   rows: readonly PickRow[];
   /** Ticked group keys. */
   ticked: ReadonlySet<string>;
   onChange: (ticked: Set<string>) => void;
+  className?: string;
 }

@@ -2,24 +2,21 @@ import { ArrowDownUp } from "lucide-react";
 import { useState } from "react";
 
 import { readTokenSource } from "../../exchange";
-import { DOCUMENT_TOKENS, TokenStore } from "@canvas";
-import { useDocumentMeta } from "@canvas-ui";
+import { DOCUMENT_TOKENS } from "@canvas";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import { exportFile, openFile, type OpenFilePick } from "@platform";
-import { notifyError, toast } from "@shared/stores/toast-store";
+import { openFile, type OpenFilePick } from "@platform";
+import { notifyError } from "@shared/stores/toast-store";
 import {
   Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@shared/ui/kit";
 
 import type { ImportSource } from "./exchange.types";
+import { openExportTokens } from "./export-tokens-store";
 import { ImportTokensDialog } from "./import-tokens-dialog";
 import { useTokenFormats } from "./use-token-formats";
 import { t } from "../../variables.i18n";
@@ -34,10 +31,9 @@ const TOKEN_FILES: OpenFilePick = {
   ],
 };
 
-/** The Variables window's Import… (a design or tokens JSON) and Export ▸ (each format). */
+/** The Variables window's Import… (a design or tokens JSON) and Export… (its dialog). */
 export function ExchangeMenu() {
   const engine = useDesignEngine();
-  const { title } = useDocumentMeta(engine.doc);
   const formats = useTokenFormats();
   const [source, setSource] = useState<ImportSource | null>(null);
 
@@ -48,21 +44,6 @@ export function ExchangeMenu() {
       setSource({ name: file.name, ...readTokenSource(file.bytes, formats, engine.kinds) });
     } catch (error) {
       notifyError(t("exchange.readError"), error);
-    }
-  };
-  const exportAs = async (id: string) => {
-    const format = formats.find((f) => f.id === id);
-    if (!format?.write) return;
-    try {
-      const name = title.trim() || "Design tokens";
-      const text = format.write(TokenStore.of(engine.doc), name);
-      const saved = await exportFile(new Blob([text], { type: "text/plain" }), fileName(name), {
-        extension: format.extension,
-        label: format.fileLabel,
-      });
-      if (saved) toast({ title: t("exchange.exported", { format: format.label }) });
-    } catch (error) {
-      notifyError(t("exchange.exportError"), error);
     }
   };
   const empty = engine.service(DOCUMENT_TOKENS).store().isEmpty;
@@ -80,20 +61,9 @@ export function ExchangeMenu() {
             {t("exchange.importFile")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger disabled={empty}>
-              {t("exchange.exportAs")}
-            </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
-              {formats
-                .filter((f) => f.write)
-                .map((f) => (
-                  <DropdownMenuItem key={f.id} onSelect={() => void exportAs(f.id)}>
-                    {f.label}
-                  </DropdownMenuItem>
-                ))}
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
+          <DropdownMenuItem disabled={empty} onSelect={openExportTokens}>
+            {t("exchange.export")}
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       {/* The dialog sits in the window's title bar: presses in it mustn't drag the window. */}
@@ -102,9 +72,4 @@ export function ExchangeMenu() {
       </div>
     </>
   );
-}
-
-/** A title fit for a file name. */
-function fileName(title: string): string {
-  return title.replace(/[\\/:*?"<>|]+/g, "-").trim() || "Design tokens";
 }
