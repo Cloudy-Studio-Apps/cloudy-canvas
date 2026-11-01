@@ -1,7 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 
-import { useService } from "@canvas-ui";
+import { rowDropLine, useService } from "@canvas-ui";
 import { DESIGN_STYLEGUIDE } from "../../model/design-styleguide";
 import { groupKey } from "../../sheet/template-choice";
 import { Checkbox, cn, IconButton, ListRow } from "@shared/ui/kit";
@@ -11,18 +11,16 @@ import { GroupRow } from "./group-row";
 import type { CategoryRowProps } from "./tab.types";
 import { t } from "../../styleguide.i18n";
 
-/** The drag data type of a category row. */
-const CATEGORY_DRAG = "application/x-cloudy-styleguide-category";
-
 /**
  * A category: click shows its section, the chevron lists its groups, the box shows or hides it,
- * and rows drag to reorder (the upper half of a row drops before it, the lower half after it).
+ * and rows drag to reorder (`rowDrag`, owned by the list).
  */
-export function CategoryRow({ entry, position, onDropCategory }: CategoryRowProps) {
+export function CategoryRow({ entry, rowDrag }: CategoryRowProps) {
   const styleguide = useService(DESIGN_STYLEGUIDE);
   const show = useShowSection();
   const [open, setOpen] = useState(false);
-  const [drop, setDrop] = useState<"before" | "after" | null>(null);
+  const { drag } = rowDrag;
+  const id = entry.category.id;
   const selected = useStyleguideViewStore(
     (state) => state.selected?.category === entry.category.id && !state.selected.group,
   );
@@ -32,31 +30,12 @@ export function CategoryRow({ entry, position, onDropCategory }: CategoryRowProp
 
   return (
     <li
-      draggable
-      onDragStart={(event) => {
-        event.dataTransfer.setData(CATEGORY_DRAG, entry.category.id);
-        event.dataTransfer.effectAllowed = "move";
-      }}
-      onDragOver={(event) => {
-        if (!event.dataTransfer.types.includes(CATEGORY_DRAG)) return;
-        event.preventDefault();
-        const box = event.currentTarget.getBoundingClientRect();
-        setDrop(event.clientY < box.top + box.height / 2 ? "before" : "after");
-      }}
-      onDragLeave={() => setDrop(null)}
-      onDrop={(event) => {
-        const id = event.dataTransfer.getData(CATEGORY_DRAG);
-        setDrop(null);
-        if (!id) return;
-        event.preventDefault();
-        onDropCategory(id, drop === "after" ? position + 1 : position);
-      }}
+      {...rowDrag.grabProps(id)}
+      {...rowDrag.dropProps(id)}
       className={cn(
         "relative",
-        drop === "before" &&
-          "before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-primary",
-        drop === "after" &&
-          "after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-primary",
+        rowDropLine(drag?.overId === id ? drag.side : null),
+        drag?.id === id && "opacity-50",
       )}
     >
       <ListRow

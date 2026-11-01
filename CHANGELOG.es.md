@@ -94,6 +94,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 - En macOS, Cmd+Q ahora pregunta por los cambios sin guardar y termina de guardar antes de cerrar la
   app.
 - Pellizcar en el trackpad de un Mac ahora hace zoom en el lienzo donde está el puntero.
+- Reordenar páginas, páginas de folleto y categorías de la guía de estilo arrastrándolas ahora
+  funciona en Windows y macOS, y las listas largas se desplazan mientras arrastras.
 
 ## 0.6.0 - 2026-10-29
 

@@ -84,6 +84,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   screens.
 - On macOS, Cmd+Q now asks about unsaved changes and finishes saving before the app quits.
 - Pinching on a Mac trackpad now zooms the canvas at the pointer.
+- Reordering pages, brochure pages and style guide categories by dragging now works on Windows and
+  macOS, and long lists scroll while you drag.
 
 ## 0.6.0 - 2026-10-29
 

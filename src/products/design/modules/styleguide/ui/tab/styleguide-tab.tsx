@@ -1,4 +1,4 @@
-import { useService } from "@canvas-ui";
+import { DragGhost, rowDropIndex, useRowDrag, useService } from "@canvas-ui";
 import { DESIGN_STYLEGUIDE } from "../../model/design-styleguide";
 import { EmptyState } from "@shared/ui/kit";
 import { useStyleguideOutline } from "../hooks/use-styleguide";
@@ -14,6 +14,17 @@ export function StyleguideTab() {
   const styleguide = useService(DESIGN_STYLEGUIDE);
   const outline = useStyleguideOutline();
   const page = useSystemPage();
+  const rowDrag = useRowDrag({
+    onDrop: (id, overId, side) => {
+      const ids = outline.map((other) => other.category.id);
+      const from = ids.indexOf(id);
+      const to = rowDropIndex(from, ids.indexOf(overId), side);
+      ids.splice(from, 1);
+      ids.splice(to, 0, id);
+      styleguide.setOrder(ids);
+    },
+  });
+  const dragged = outline.find((entry) => entry.category.id === rowDrag.drag?.id);
   if (!page) {
     return (
       <EmptyState
@@ -32,22 +43,13 @@ export function StyleguideTab() {
         aria-label={t("tab.ariaLabel")}
         className="flex flex-col gap-px overflow-y-auto px-1.5 pb-1.5"
       >
-        {outline.map((entry, i) => (
-          <CategoryRow
-            key={entry.category.id}
-            entry={entry}
-            position={i}
-            onDropCategory={(id, position) => {
-              const ids = outline.map((other) => other.category.id);
-              const from = ids.indexOf(id);
-              if (from < 0) return;
-              ids.splice(from, 1);
-              ids.splice(from < position ? position - 1 : position, 0, id);
-              styleguide.setOrder(ids);
-            }}
-          />
+        {outline.map((entry) => (
+          <CategoryRow key={entry.category.id} entry={entry} rowDrag={rowDrag} />
         ))}
       </ul>
+      {dragged && rowDrag.drag && (
+        <DragGhost label={dragged.category.label} pointer={rowDrag.drag.pointer} />
+      )}
     </div>
   );
 }

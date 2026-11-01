@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 import { ListChecks } from "lucide-react";
 
+import { DragGhost, rowDropIndex, useRowDrag } from "@canvas-ui";
 import { CATALOG_PICK_TOOL } from "../../mode/catalog-mode.constants";
 import { paperSize } from "../../model/paper-size";
 import type { BookSide } from "../../model/book-layout.types";
@@ -30,6 +31,13 @@ export function BrochureTab() {
   const selectedSlot = selection.kind === "page" ? selection.page.slot.id : null;
   const last = pages.at(-1)?.frame;
   const book = settings.layout === "book";
+  const rowDrag = useRowDrag({
+    onDrop: (id, overId, side) => {
+      const indexOf = (slotId: string) => pages.findIndex((other) => other.slot.id === slotId);
+      brochure?.move(id, rowDropIndex(indexOf(id), indexOf(overId), side));
+    },
+  });
+  const dragged = pages.find((page) => page.slot.id === rowDrag.drag?.id);
 
   const row = (side: BookSide, index: number) => {
     if (side.kind === "blank")
@@ -42,13 +50,8 @@ export function BrochureTab() {
         key={page.slot.id}
         page={page}
         label={label(page)}
-        position={pages.indexOf(page)}
         selected={page.slot.id === selectedSlot}
-        onDropPage={(slotId, to) => {
-          // Dropped after itself or below: the slot shifts once it leaves its place.
-          const from = pages.findIndex((other) => other.slot.id === slotId);
-          brochure?.move(slotId, from < to ? to - 1 : to);
-        }}
+        rowDrag={rowDrag}
       />
     );
   };
@@ -64,6 +67,9 @@ export function BrochureTab() {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <BrochureSwitcher />
+      {dragged && rowDrag.drag && (
+        <DragGhost label={dragged.frame.name} pointer={rowDrag.drag.pointer} />
+      )}
       <header className="flex h-10 shrink-0 items-center justify-between px-3">
         <h2 className="text-xs font-semibold text-foreground">
           {t("tab.pagesHeading")}{" "}

@@ -1,6 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 
+import { DragGhost, rowDropIndex, useRowDrag } from "@canvas-ui";
 import { DESIGN_PAGES } from "../design-pages";
 import { PanelAddButton } from "@design/ui/components/panel";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
@@ -19,6 +20,14 @@ export function PagesSection() {
   const pages = usePages();
   const current = useDesignState((state) => state.scope);
   const [open, setOpen] = useState(true);
+  const rowDrag = useRowDrag({
+    onDrop: (id, overId, side) => {
+      const indexOf = (pageId: string) => pages.findIndex((other) => other.id === pageId);
+      const to = rowDropIndex(indexOf(id), indexOf(overId), side);
+      engine.service(DESIGN_PAGES).reorder(id, to);
+    },
+  });
+  const dragged = pages.find((page) => page.id === rowDrag.drag?.id);
 
   return (
     <section className="shrink-0 border-t px-1.5 pb-1.5">
@@ -42,22 +51,18 @@ export function PagesSection() {
       </header>
       {open && (
         <ul aria-label={t("list.title")} className="flex max-h-48 flex-col gap-px overflow-y-auto">
-          {pages.map((page, i) => (
+          {pages.map((page) => (
             <PageRow
               key={page.id}
               page={page}
-              position={i}
               current={page.id === current}
               deletable={pages.length > 1}
-              onDropPage={(id, position) => {
-                // Dropped after itself or below: the slot shifts once it leaves its place.
-                const from = pages.findIndex((other) => other.id === id);
-                engine.service(DESIGN_PAGES).reorder(id, from < position ? position - 1 : position);
-              }}
+              rowDrag={rowDrag}
             />
           ))}
         </ul>
       )}
+      {dragged && rowDrag.drag && <DragGhost label={dragged.name} pointer={rowDrag.drag.pointer} />}
     </section>
   );
 }

@@ -1,10 +1,10 @@
+import type { RowDrag } from "@canvas-ui";
 import type { StyleguideOutlineEntry } from "../../model/design-styleguide.types";
 
 export interface CategoryRowProps {
   entry: StyleguideOutlineEntry;
-  /** Its place in the list, for drops. */
-  position: number;
-  onDropCategory(id: string, position: number): void;
+  /** The list's row drag. */
+  rowDrag: RowDrag;
 }
 
 export interface GroupRowProps {

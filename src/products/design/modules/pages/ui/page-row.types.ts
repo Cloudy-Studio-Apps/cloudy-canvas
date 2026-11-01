@@ -1,14 +1,13 @@
+import type { RowDrag } from "@canvas-ui";
 import type { PageElement } from "../page/page.types";
 
 export interface PageRowProps {
   page: PageElement;
-  /** Its position in the page order. */
-  position: number;
   current: boolean;
   /** Whether it can be deleted (it isn't the only page). */
   deletable: boolean;
-  /** A page row was dropped on this one: the dragged page goes to `position`. */
-  onDropPage(id: string, position: number): void;
+  /** The list's row drag. */
+  rowDrag: RowDrag;
 }
 
 export interface PageMenuProps {

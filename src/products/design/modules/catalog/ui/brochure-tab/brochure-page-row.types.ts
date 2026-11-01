@@ -1,3 +1,4 @@
+import type { RowDrag } from "@canvas-ui";
 import type { BlankReason } from "../../model/book-layout.types";
 import type { BrochurePage } from "../../model/brochure-pages.types";
 
@@ -5,11 +6,9 @@ export interface BrochurePageRowProps {
   page: BrochurePage;
   /** Its printed page numbers ("4", "6–7"). */
   label: string;
-  /** Its position in the brochure (0-based). */
-  position: number;
   selected: boolean;
-  /** A page row was dropped on this one: the dragged page goes to `position`. */
-  onDropPage(slotId: string, position: number): void;
+  /** The list's row drag. */
+  rowDrag: RowDrag;
 }
 
 export interface BrochureOptionsListProps {
