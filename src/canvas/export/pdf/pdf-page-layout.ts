@@ -1,6 +1,7 @@
 import type { Rect } from "../../geometry.types";
 import type { PdfExportOptions, PdfPageSize } from "./pdf-options.types";
 import type { PdfMatrix, PdfPageLayout } from "./pdf-writer.types";
+import { printPageLayout } from "./print/print-layout";
 
 const POINTS_PER_MM = 72 / 25.4;
 const PAPER: Readonly<Record<Exclude<PdfPageSize, "fit">, [number, number]>> = {
@@ -11,6 +12,7 @@ const PAPER: Readonly<Record<Exclude<PdfPageSize, "fit">, [number, number]>> = {
 
 /** The page `rect` goes on: its own size, or fitted and centered on paper inside the margin. */
 export function pdfPageLayout(rect: Rect, options: PdfExportOptions): PdfPageLayout {
+  if (options.print) return printPageLayout(rect, options.print, options.pointsPerUnit);
   if (options.page === "fit") {
     const scale = options.pointsPerUnit;
     const width = rect.w * scale;

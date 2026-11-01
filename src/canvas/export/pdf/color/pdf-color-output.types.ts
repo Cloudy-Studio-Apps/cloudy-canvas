@@ -27,6 +27,8 @@ export interface PdfPixels {
 export interface PdfColorOutput {
   /** The name of the space, for shadings and transparency groups. */
   readonly space: string;
+  /** The operators stroking in a color that prints on every plate, for crop marks. */
+  readonly registration: string;
   /** The operators setting a `#rrggbb` color for fills, or strokes with `stroke`. */
   paint(hex: string, stroke: boolean): string;
   /** A gradient's stops: as many as it takes for its blend to look as it does on screen. */

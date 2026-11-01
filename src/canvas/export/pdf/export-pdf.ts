@@ -1,3 +1,4 @@
+import type { Rect } from "../../geometry.types";
 import type { ExportHost } from "../export.types";
 import { RGB_OUTPUT, type PdfColorOutput } from "./color";
 import { PdfContent, PdfDocument } from "./pdf-document";
@@ -5,6 +6,7 @@ import { matrixOps } from "./pdf-matrix";
 import { DEFAULT_PDF_OPTIONS, PDF_JPEG_QUALITY, pdfImageScale } from "./pdf-options";
 import type { PdfExportOptions } from "./pdf-options.types";
 import { pdfPageLayout } from "./pdf-page-layout";
+import { cropMarkOps, outsetRect } from "./print/print-layout";
 import { addSvgPage } from "./svg-to-pdf";
 import type { PdfPageSource } from "./pdf-writer.types";
 
@@ -37,10 +39,11 @@ export async function addPdfPage(
   output: PdfColorOutput,
 ): Promise<void> {
   if (options.mode === "flattened") return addFlattened(doc, host, page, options, output);
-  const { elements, rect } = page;
+  const { elements, rect, clips } = page;
   try {
     const svg = await host.vector(elements, {
-      rect,
+      rect: drawnRect(rect, options),
+      clips,
       background: background === "transparent" ? null : host.background,
       links: host.createLinks(),
       text: "outlines",
@@ -58,24 +61,32 @@ export async function addPdfPage(
 async function addFlattened(
   doc: PdfDocument,
   host: ExportHost,
-  { elements, rect }: PdfPageSource,
+  { elements, rect, clips }: PdfPageSource,
   options: PdfExportOptions,
   output: PdfColorOutput,
 ): Promise<void> {
+  const drawn = drawnRect(rect, options);
   const canvas = await host.snapshot(elements, {
-    rect,
-    scale: Math.min(pdfImageScale(options), MAX_SIDE / Math.max(rect.w, rect.h)),
+    rect: drawn,
+    clips,
+    scale: Math.min(pdfImageScale(options), MAX_SIDE / Math.max(drawn.w, drawn.h)),
     background: host.background,
     links: host.createLinks(),
   });
   const image = await output.opaque(doc, canvas, PDF_JPEG_QUALITY[options.imageQuality]);
   const layout = pdfPageLayout(rect, options);
   const { scale, left, top } = layout;
-  const w = rect.w * scale;
-  const h = rect.h * scale;
+  const w = drawn.w * scale;
+  const h = drawn.h * scale;
+  const x = left + (drawn.x - rect.x) * scale;
+  const y = top - (drawn.y - rect.y) * scale - h;
   const content = new PdfContent();
-  content.ops.push(
-    `q ${matrixOps([w, 0, 0, h, left, top - h])} cm /${content.name("XObject", image)} Do Q`,
-  );
+  content.ops.push(`q ${matrixOps([w, 0, 0, h, x, y])} cm /${content.name("XObject", image)} Do Q`);
+  if (options.print?.marks) content.ops.push(cropMarkOps(layout, output.registration));
   doc.addPage(layout, content);
+}
+
+/** The world area a page draws: past its trim by the bleed, when it has one. */
+function drawnRect(rect: Rect, { print }: PdfExportOptions): Rect {
+  return print ? outsetRect(rect, print.bleed) : rect;
 }

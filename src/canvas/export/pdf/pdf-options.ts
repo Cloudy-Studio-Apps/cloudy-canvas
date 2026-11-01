@@ -12,6 +12,7 @@ export const DEFAULT_PDF_OPTIONS: PdfExportOptions = {
   orientation: "auto",
   pages: "single",
   margin: 0,
+  print: null,
 };
 
 /** JPEG quality of each choice. */

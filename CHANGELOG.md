@@ -41,6 +41,9 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - Export all in Design: from the main menu, export every frame of a page or the whole file into a
   folder or a ZIP. Layers with their own export settings use them, and the rest use the default you
   choose. With all pages, each page gets its own folder.
+- Brochures are now ready to trim: PDFs include bleed and crop marks, with the page boxes print shops
+  expect, and layers placed past the page edge run into the bleed. Set the bleed or turn the marks off
+  in the Print section of the Catalog panel.
 
 ### Improved
 

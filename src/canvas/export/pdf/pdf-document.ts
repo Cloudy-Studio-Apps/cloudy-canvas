@@ -1,6 +1,6 @@
 import { strToU8, zlibSync } from "fflate";
 
-import type { PdfPageLayout, PdfResourceKind } from "./pdf-writer.types";
+import type { PdfBox, PdfPageLayout, PdfResourceKind } from "./pdf-writer.types";
 import { pdfNumber } from "./pdf-matrix";
 
 const NAME_PREFIX: Readonly<Record<PdfResourceKind, string>> = {
@@ -9,6 +9,8 @@ const NAME_PREFIX: Readonly<Record<PdfResourceKind, string>> = {
   XObject: "X",
   Font: "F",
 };
+
+const boxOf = (box: PdfBox) => box.map(pdfNumber).join(" ");
 
 /** A content stream being written: its operators and the resources they name. */
 export class PdfContent {
@@ -81,13 +83,14 @@ export class PdfDocument {
   }
 
   /** Adds a page showing `content`, after the ones so far. */
-  addPage({ width, height }: PdfPageLayout, content: PdfContent): void {
+  addPage({ width, height, boxes }: PdfPageLayout, content: PdfContent): void {
     this.tree ??= this.reserve();
     const stream = this.content("", content);
     this.pages.push(
       this.add(
         `<< /Type /Page /Parent ${this.tree} 0 R ` +
           `/MediaBox [0 0 ${pdfNumber(width)} ${pdfNumber(height)}] ` +
+          (boxes ? `/TrimBox [${boxOf(boxes.trim)}] /BleedBox [${boxOf(boxes.bleed)}] ` : "") +
           `/Contents ${stream} 0 R /Resources ${content.resources()} >>`,
       ),
     );

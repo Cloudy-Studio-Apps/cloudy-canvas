@@ -4,6 +4,7 @@ import "pixi.js/advanced-blend-modes";
 
 import type { Camera } from "../camera";
 import type { CanvasElement, ElementKinds } from "../elements";
+import type { ElementClip, LayerPlacement } from "./layer-placement.types";
 import type { Point, Rect } from "../geometry.types";
 import type { CanvasLinks, Guide } from "../links";
 import type { SnapFeedback } from "../snapping";
@@ -371,7 +372,7 @@ export class Renderer {
       this.images,
       this.exportTheme,
       elements,
-      this.options.placement,
+      this.placementFor(options.clips),
       options,
     );
   }
@@ -388,10 +389,16 @@ export class Renderer {
       this.images,
       this.exportTheme,
       elements,
-      this.options.placement,
+      this.placementFor(options.clips),
       { scale: options.imageScale ?? VECTOR_IMAGE_SCALE, links: options.links },
       (root, textures, assets) => drawSvg(renderer, root, textures, assets, options),
     );
+  }
+
+  /** The canvas's placement, with the clips an export gives instead of the canvas's. */
+  private placementFor(clips: ReadonlyMap<string, ElementClip> | undefined): LayerPlacement {
+    const { placement } = this.options;
+    return clips ? { ...placement, clipOf: (el) => clips.get(el.id) ?? null } : placement;
   }
 
   destroy(): void {

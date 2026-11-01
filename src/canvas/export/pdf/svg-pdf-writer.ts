@@ -45,11 +45,16 @@ export class SvgPdfWriter {
     for (const element of root.querySelectorAll("[id]")) this.ids.set(element.id, element);
   }
 
-  /** The page's content; `base` takes world units to its points. */
-  write(base: PdfMatrix): PdfContent {
+  /**
+   * The page's content; `base` takes world units to its points. `clip` keeps it inside an area,
+   * leaving the graphics state as it was for what's drawn after.
+   */
+  write(base: PdfMatrix, clip = ""): PdfContent {
     const out = new PdfContent();
+    if (clip) out.ops.push("q", clip);
     out.ops.push(`${matrixOps(base)} cm`);
     this.writeChildren(this.root, out, { local: base, page: base });
+    if (clip) out.ops.push("Q");
     return out;
   }
 

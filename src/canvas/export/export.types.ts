@@ -1,6 +1,7 @@
 import type { WebpEncoder } from "@shared/core";
 
 import type { CanvasElement } from "../elements";
+import type { ElementClip } from "../render/layer-placement.types";
 import type { Rect } from "../geometry.types";
 import type { CanvasLinks } from "../links";
 import type { SnapshotOptions, VectorSnapshotOptions } from "../render";
@@ -49,6 +50,8 @@ export interface ExportHost {
   bounds(el: CanvasElement): Rect;
   /** The element as files show it (see `ElementKind.forExport`). */
   forExport(el: CanvasElement): CanvasElement;
+  /** What clips elements drawn changed from the canvas, worked out from them alone. */
+  clipsOf(elements: readonly CanvasElement[]): ReadonlyMap<string, ElementClip>;
   /** The product's frames, in order (see `CanvasProduct.frames`), which PDFs can give a page each. */
   frames(): readonly CanvasElement[];
   /** The element's grid of texts for CSV, or `null` (see `ElementKind.rows`). */

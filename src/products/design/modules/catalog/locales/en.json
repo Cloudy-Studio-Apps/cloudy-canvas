@@ -181,5 +181,10 @@
       "label": "A4 brochure",
       "description": "Four blank A4 pages, open in the Catalog mode"
     }
+  },
+  "print": {
+    "title": "Print",
+    "bleed": "Bleed",
+    "cropMarks": "Crop marks"
   }
 }

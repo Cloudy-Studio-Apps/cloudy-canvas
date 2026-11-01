@@ -7,6 +7,8 @@ export const BROCHURE_DEFAULTS = {
     covers: "both",
     splitSpreads: true,
     margin: 12,
+    bleed: 3,
+    cropMarks: true,
     dpi: 300,
     pdfMode: "sharp",
     arrange: "off",

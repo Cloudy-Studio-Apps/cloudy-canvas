@@ -12,6 +12,7 @@ import { LooseFrameSection } from "./loose-frame-section";
 import { PageImagesSection } from "./page-images-section";
 import { PageSection } from "./page-section";
 import { PickSection } from "./pick-section";
+import { PrintSection } from "./print-section";
 import { t } from "../../catalog.i18n";
 
 /**
@@ -42,6 +43,7 @@ export function CatalogSidebar() {
   return (
     <>
       <BrochureSettingsSection />
+      <PrintSection />
       <BrochureChecksSection />
       {pages.length > 0 && (
         <div className="flex flex-col gap-1.5 px-3 py-2.5">

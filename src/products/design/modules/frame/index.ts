@@ -10,3 +10,4 @@ export { createPresetFrame } from "./create-preset-frame";
 export { presetFrameRect } from "./preset-frame-rect";
 export { FrameKind } from "./frame.kind";
 export { isFrame } from "./is-frame";
+export { bleedFrame } from "./bleed-frame";

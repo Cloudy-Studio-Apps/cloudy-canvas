@@ -1,5 +1,6 @@
 import type { GlyphOutliner } from "@shared/core";
 
+import type { ElementClip } from "./layer-placement.types";
 import type { SvgText } from "../export/export.types";
 import type { Rect } from "../geometry.types";
 import type { CanvasLinks } from "../links";
@@ -14,6 +15,8 @@ export interface SnapshotOptions {
   background: number | null;
   /** Links resolved for the drawn elements only (fresh from the product's `createLinks`). */
   links: readonly CanvasLinks[];
+  /** What clips each element, when they're drawn changed from the canvas (see `ExportHost.clipsOf`). */
+  clips?: ReadonlyMap<string, ElementClip>;
 }
 
 /** What the off-screen tree of an export needs to be built (see `withSnapshotTree`). */
@@ -29,6 +32,8 @@ export interface VectorSnapshotOptions {
   /** A 0xRRGGBB fill, or `null` for a transparent background. */
   background: number | null;
   links: readonly CanvasLinks[];
+  /** What clips each element, as `SnapshotOptions.clips`. */
+  clips?: ReadonlyMap<string, ElementClip>;
   /** Text as glyph outlines or as live text. */
   text: SvgText;
   /** `pdf` flattens what a PDF can't hold, for `svgToPdf`. */

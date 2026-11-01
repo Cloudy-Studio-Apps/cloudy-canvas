@@ -20,6 +20,7 @@ export function sceneExportHost(parts: WorkspaceParts, options: SceneExportOptio
     forExport: (el) => kinds.kindOf(el).forExport(el),
     frames: () => product.frames?.(scene.elements) ?? [],
     rows: (el) => kinds.kindOf(el).rows(el),
+    clipsOf: (elements) => product.clips?.(elements) ?? new Map(),
     createLinks: () => product.createLinks?.() ?? [],
     background: options.background,
     snapshot: options.snapshot,

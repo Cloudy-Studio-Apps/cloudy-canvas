@@ -17,6 +17,7 @@ function rgbOf(hex: string): string {
 /** Screen colors: what a PDF is written in unless it's going to press. */
 export const RGB_OUTPUT: PdfColorOutput = {
   space: "DeviceRGB",
+  registration: "0 G",
   paint: (hex, stroke) => `${rgbOf(hex)} ${stroke ? "RG" : "rg"}`,
   stops: (stops) => stops.map(({ offset, color }) => ({ offset, color: rgbOf(color) })),
   async opaque(doc: PdfDocument, canvas, quality) {

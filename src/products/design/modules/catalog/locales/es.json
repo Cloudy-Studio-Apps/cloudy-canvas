@@ -181,5 +181,10 @@
       "label": "Folleto A4",
       "description": "Cuatro páginas A4 en blanco, abiertas en el modo Catálogo"
     }
+  },
+  "print": {
+    "title": "Impresión",
+    "bleed": "Sangrado",
+    "cropMarks": "Marcas de corte"
   }
 }

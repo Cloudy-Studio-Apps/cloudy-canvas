@@ -1,3 +1,5 @@
+import type { PdfPrintBoxes } from "./print/pdf-print.types";
+
 /** `sharp` keeps shapes and text as vectors; `flattened` saves the page as one picture. */
 export type PdfMode = "sharp" | "flattened";
 /** `selectable` adds a hidden text layer over the outlines, so text can be searched and copied. */
@@ -23,4 +25,6 @@ export interface PdfExportOptions {
   pages: PdfPages;
   /** Millimeters round the content on a paper size. */
   margin: number;
+  /** Bleed and crop marks, for a file going to press; `page` is `fit`. */
+  print: PdfPrintBoxes | null;
 }

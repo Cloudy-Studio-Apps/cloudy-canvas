@@ -1,11 +1,13 @@
 import type { PdfBook } from "@canvas";
 
 import type { DesignWorkspace } from "../../../design-engine.types";
-import type { DesignBrochure } from "../model";
+import { bleedFrame, isFrame } from "../../frame";
+import { mmToUnits, type DesignBrochure } from "../model";
 import { partRect } from "./draw-frame";
 import type { BrochureExportOptions } from "./export-brochure.types";
 import { printedPages } from "./printed-pages";
 import type { PrintedPage } from "./printed-pages.types";
+import { printOptions } from "./print-options";
 
 /**
  * A brochure as one PDF, its pages as the layout prints them (`printedPages`: blanks added,
@@ -22,15 +24,12 @@ export async function exportBrochure(
   if (pages.length === 0) throw new Error("The brochure has no pages yet.");
   const settings = brochure.settings();
   const printed = printedPages(pages, brochure.layout(), settings.splitSpreads);
-  const book = workspace.pdfBook({
-    mode: settings.pdfMode,
-    dpi: settings.dpi,
-    pointsPerUnit: 1,
-  });
+  const book = workspace.pdfBook(printOptions(settings));
+  const bleed = mmToUnits(settings.bleed);
   const scope = workspace.scope;
   try {
     for (const [done, page] of printed.entries()) {
-      await addPage(book, workspace, page);
+      await addPage(book, workspace, page, bleed);
       onProgress?.(done + 1, printed.length);
     }
   } finally {
@@ -43,6 +42,7 @@ async function addPage(
   book: PdfBook,
   workspace: DesignWorkspace,
   page: PrintedPage,
+  bleed: number,
 ): Promise<void> {
   if (page.kind === "blank") {
     book.addBlank(page.size);
@@ -50,5 +50,9 @@ async function addPage(
   }
   const { frame, part } = page;
   if (workspace.scope !== frame.pageId) workspace.setScope(frame.pageId);
-  await book.add({ ids: [frame.id], rect: partRect(frame, part) });
+  await book.add({
+    ids: [frame.id],
+    rect: partRect(frame, part),
+    prepare: (el) => (el.id === frame.id && isFrame(el) ? bleedFrame(el, bleed) : el),
+  });
 }

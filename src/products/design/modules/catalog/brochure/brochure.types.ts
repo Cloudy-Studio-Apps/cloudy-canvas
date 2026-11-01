@@ -38,6 +38,10 @@ export interface BrochureSettings {
   splitSpreads: boolean;
   /** The safe area's inset from each page edge, in millimetres (what the checks read). */
   margin: number;
+  /** How far pages run past their trim in the PDF, in millimetres. */
+  bleed: number;
+  /** Crop marks round each page of the PDF. */
+  cropMarks: boolean;
   /** Pixels per inch of the exported PDF's pictures, and of whole pages when `flattened`. */
   dpi: number;
   /** `sharp` keeps shapes and text as vectors; `flattened` prints each page as one picture. */

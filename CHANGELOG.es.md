@@ -43,6 +43,9 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 - Exportar todo en Diseño: desde el menú principal, exporta todos los marcos de una página o de todo
   el archivo a una carpeta o a un ZIP. Las capas con sus propios ajustes de exportación los usan, y
   las demás usan el predeterminado que elijas. Con todas las páginas, cada una tiene su propia carpeta.
+- Los folletos ya vienen listos para cortar: los PDF incluyen sangrado y marcas de corte, con las cajas
+  de página que esperan las imprentas, y las capas colocadas más allá del borde llegan al sangrado.
+  Ajusta el sangrado o quita las marcas en la sección Impresión del panel de Catálogo.
 
 ### Mejoras
 

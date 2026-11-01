@@ -4,6 +4,7 @@ import { embedImages } from "./pdf-image";
 import type { PdfDocument } from "./pdf-document";
 import type { PdfExportOptions } from "./pdf-options.types";
 import { pageMatrix, pdfPageLayout } from "./pdf-page-layout";
+import { bleedClipOps, cropMarkOps } from "./print/print-layout";
 import { SvgPdfWriter } from "./svg-pdf-writer";
 
 /**
@@ -23,5 +24,7 @@ export async function addSvgPage(
   const layout = pdfPageLayout(rect, options);
   const images = await embedImages(doc, root, layout.scale, options, output);
   const writer = new SvgPdfWriter(doc, root, images, options, output);
-  doc.addPage(layout, writer.write(pageMatrix(layout, rect)));
+  const content = writer.write(pageMatrix(layout, rect), bleedClipOps(layout));
+  if (options.print?.marks) content.ops.push(cropMarkOps(layout, output.registration));
+  doc.addPage(layout, content);
 }
