@@ -1,5 +1,7 @@
 /** What file names can't hold on any of the systems the app runs on. */
-const UNSAFE_CHARS = /[\\/:*?"<>|]/g;
+const UNSAFE_CHARS = /[\\/:*?"<>|\p{Cc}]/gu;
+/** Names Windows keeps for itself, whatever the extension. */
+const RESERVED_NAME = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i;
 
 /**
  * A file name no other export has: `used` holds the ones taken (compared as Windows and macOS do,
@@ -22,7 +24,12 @@ export function uniqueFolderName(name: string, used: Set<string>): string {
 }
 
 function safeName(name: string): string {
-  return name.replace(UNSAFE_CHARS, "_").trim();
+  // Windows drops trailing dots and spaces.
+  const safe = name
+    .replace(UNSAFE_CHARS, "_")
+    .replace(/[. ]+$/, "")
+    .trimStart();
+  return RESERVED_NAME.test(safe) ? `${safe}_` : safe;
 }
 
 function uniqueName(base: string, end: string, used: Set<string>): string {

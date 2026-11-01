@@ -104,6 +104,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   archivo un momento.
 - En Ubuntu y Debian, los archivos de pizarra y diseño ahora se reconocen y se abren en Cloudy
   Canvas con doble clic. Los Mac en español ahora abren la app en español.
+- Exportar capas con nombres de archivos del sistema de Windows, como CON, ya no falla, y el
+  selector de fuentes de macOS ya no muestra fuentes ocultas del sistema.
 
 ## 0.6.0 - 2026-10-29
 

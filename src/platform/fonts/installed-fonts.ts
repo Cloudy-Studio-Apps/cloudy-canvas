@@ -15,6 +15,8 @@ export async function installedFonts(): Promise<FontFamily[]> {
   const faces = await invoke<SystemFont[]>("system_fonts");
   const byFamily = new Map<string, FontFamily>();
   for (const face of faces) {
+    // macOS hides its own interface fonts behind names like ".SF NS".
+    if (face.family.startsWith(".")) continue;
     let family = byFamily.get(face.family);
     if (!family) {
       family = { family: face.family, source: "installed", variants: [] };

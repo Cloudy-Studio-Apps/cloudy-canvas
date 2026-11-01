@@ -24,7 +24,9 @@ struct Launch {
 impl LaunchFiles {
     pub fn from_env() -> Self {
         let cwd = std::env::current_dir().unwrap_or_default();
-        let paths = paths_from_args(std::env::args(), &cwd);
+        // `env::args()` panics on an argument that isn't valid Unicode.
+        let args = std::env::args_os().map(|arg| arg.to_string_lossy().into_owned());
+        let paths = paths_from_args(args, &cwd);
         Self(Mutex::new(Launch { paths, taken: false }))
     }
 }
