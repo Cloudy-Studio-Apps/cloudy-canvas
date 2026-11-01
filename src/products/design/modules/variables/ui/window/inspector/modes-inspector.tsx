@@ -1,12 +1,13 @@
 import { Plus } from "lucide-react";
-import { useState } from "react";
 
+import { DragGhost, useRowDrag } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";
 import { InspectorSection } from "./inspector-section";
-import type { ModeDrag, ModeMoves } from "./inspector.types";
+import type { ModeMoves } from "./inspector.types";
+import { axisIdOf } from "./mode-drop-id";
 import { ModeGroupCard } from "./mode-group-card";
 import { t } from "../../../variables.i18n";
 
@@ -20,11 +21,9 @@ export function ModesInspector() {
   const engine = useDesignEngine();
   const { tokens, store, axis } = useBoard();
   const setAxis = useVariablesWindowStore((state) => state.setAxis);
-  const [drag, setDrag] = useState<ModeDrag | null>(null);
   const axes = store.axes();
 
   const move = (modeId: string, axisId: string, beforeId?: string) => {
-    setDrag(null);
     const from = store.axes().find((a) => a.modes.some((m) => m.id === modeId));
     const mode = from?.modes.find((m) => m.id === modeId);
     try {
@@ -43,9 +42,26 @@ export function ModesInspector() {
       notifyError(t("inspector.moveError"), error);
     }
   };
+  const axisOfMode = (modeId: string) =>
+    store.axes().find((a) => a.modes.some((m) => m.id === modeId));
+  const rowDrag = useRowDrag({
+    canDrop: (id, overId) => {
+      const target = axisIdOf(overId);
+      if (target !== null) return axisOfMode(id)?.id !== target;
+      return axisOfMode(overId)?.modes[0]?.id !== overId;
+    },
+    onDrop: (id, overId) => {
+      const target = axisIdOf(overId);
+      if (target !== null) {
+        move(id, target);
+        return;
+      }
+      const axisId = axisOfMode(overId)?.id;
+      if (axisId) move(id, axisId, overId);
+    },
+  });
   const moves: ModeMoves = {
-    drag,
-    setDrag,
+    rowDrag,
     move,
     moveToNewGroup: (modeId) => {
       // Making the group and moving the mode in are one undo step.
@@ -60,6 +76,8 @@ export function ModesInspector() {
       }
     },
   };
+
+  const dragged = axes.flatMap((a) => a.modes).find((m) => m.id === rowDrag.drag?.id);
 
   return (
     <div className="flex flex-col gap-4 text-xs">
@@ -92,6 +110,7 @@ export function ModesInspector() {
         )}
       </InspectorSection>
       <p className="text-muted-foreground">{t("inspector.pickCard")}</p>
+      {dragged && rowDrag.drag && <DragGhost label={dragged.name} pointer={rowDrag.drag.pointer} />}
     </div>
   );
 }

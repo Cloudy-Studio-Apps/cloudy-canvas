@@ -1,5 +1,4 @@
 import { GripVertical, X } from "lucide-react";
-import { useState } from "react";
 
 import { CommitInput } from "@canvas-ui";
 import { notifyError } from "@shared/stores/toast-store";
@@ -15,39 +14,19 @@ import { t } from "../../../variables.i18n";
  */
 export function ModeRow({ axis, mode, first, moves }: ModeRowProps) {
   const { tokens } = useBoard();
-  const [over, setOver] = useState(false);
-  const { drag } = moves;
-  const accepts = !first && drag !== null && drag.modeId !== mode.id;
+  const { rowDrag } = moves;
+  const { drag } = rowDrag;
   return (
     <div
-      onDragOver={(event) => {
-        if (!accepts) return;
-        event.preventDefault();
-        event.stopPropagation();
-        setOver(true);
-      }}
-      onDragLeave={() => setOver(false)}
-      onDrop={(event) => {
-        setOver(false);
-        if (!accepts || !drag) return;
-        event.preventDefault();
-        event.stopPropagation();
-        moves.move(drag.modeId, axis.id, mode.id);
-      }}
+      {...rowDrag.dropProps(mode.id)}
       className={cn(
         "flex items-center gap-1 border-t-2 border-transparent",
-        over && "border-primary",
-        drag?.modeId === mode.id && "opacity-50",
+        drag?.overId === mode.id && "border-primary",
+        drag?.id === mode.id && "opacity-50",
       )}
     >
       <span
-        draggable={!first}
-        onDragStart={(event) => {
-          event.dataTransfer.effectAllowed = "move";
-          event.dataTransfer.setData("text/plain", mode.name);
-          moves.setDrag({ modeId: mode.id, axisId: axis.id });
-        }}
-        onDragEnd={() => moves.setDrag(null)}
+        {...rowDrag.grabProps(mode.id, !first)}
         title={first ? undefined : t("inspector.dragToGroup")}
         className={cn(
           "flex size-5 shrink-0 items-center justify-center text-subtle-foreground",

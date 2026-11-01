@@ -1,3 +1,4 @@
+import type { RowDrag } from "@canvas-ui";
 import type { ColorChangeInfo } from "@canvas-ui";
 import type { DesignNode, NodeEffect } from "../../core";
 import type { EffectTypeEntry } from "./effects.points.types";
@@ -13,11 +14,8 @@ export interface EffectRowProps {
   entry: EffectTypeEntry | undefined;
   onChange: (next: NodeEffect, info?: ColorChangeInfo) => void;
   onRemove: () => void;
-  /** Drag handle events, so rows can be reordered. */
-  dragging: boolean;
-  onDragStart: () => void;
-  onDragOver: () => void;
-  onDragEnd: () => void;
+  /** The stack's row drag. */
+  rowDrag: RowDrag;
 }
 
 /** Where each effect's variables go after a change (`null`: the stack was replaced). */

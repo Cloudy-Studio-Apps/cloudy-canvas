@@ -1,4 +1,5 @@
 import type { ModeAxisRecord, ModeDef, VariableRecord } from "@canvas";
+import type { RowDrag } from "@canvas-ui";
 
 import type { BoardMode } from "../board-model.types";
 
@@ -24,16 +25,10 @@ export interface InspectorSectionProps {
   children: React.ReactNode;
 }
 
-/** A mode being dragged between mode groups. */
-export interface ModeDrag {
-  modeId: string;
-  axisId: string;
-}
-
 /** What the mode groups do: move a mode (into a group, before a mode of it), or into a new one. */
 export interface ModeMoves {
-  drag: ModeDrag | null;
-  setDrag: (drag: ModeDrag | null) => void;
+  /** Dragging a mode into a group, or before a mode of one. */
+  rowDrag: RowDrag;
   move: (modeId: string, axisId: string, beforeId?: string) => void;
   moveToNewGroup: (modeId: string) => void;
 }

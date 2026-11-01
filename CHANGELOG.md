@@ -86,6 +86,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - Pinching on a Mac trackpad now zooms the canvas at the pointer.
 - Reordering pages, brochure pages and style guide categories by dragging now works on Windows and
   macOS, and long lists scroll while you drag.
+- Reordering effects and moving variable modes between groups by dragging now works on Windows and
+  macOS.
 
 ## 0.6.0 - 2026-10-29
 

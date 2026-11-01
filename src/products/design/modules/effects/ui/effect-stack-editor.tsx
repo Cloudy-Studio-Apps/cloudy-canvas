@@ -1,6 +1,4 @@
-import { useState } from "react";
-
-import { useEditorModules } from "@canvas-ui";
+import { DragGhost, rowDropIndex, useEditorModules, useRowDrag } from "@canvas-ui";
 import { movedTo, removedAt } from "../../core";
 import { EffectBindingContext } from "./effect-binding-context";
 import { EffectRow } from "./effect-row";
@@ -14,22 +12,27 @@ import { t } from "../effects.i18n";
  */
 export function EffectStackEditor({ effects, mixed, onChange, nodes }: EffectStackEditorProps) {
   const { host } = useEditorModules();
-  const [moving, setMoving] = useState<{ from: number; to: number } | null>(null);
-  const finishMove = () => {
-    if (moving && moving.from !== moving.to) {
+  const rowDrag = useRowDrag({
+    onDrop: (id, overId, side) => {
+      // Listed topmost first, so the row's place in the list is the stored index turned around.
+      const shown = [...effects].reverse().map((effect) => effect.id);
+      const last = effects.length - 1;
+      const from = last - shown.indexOf(id);
+      const to = last - rowDropIndex(shown.indexOf(id), shown.indexOf(overId), side);
+      if (from === to) return;
       onChange(
         (current) => {
           const next = [...current];
-          const [effect] = next.splice(moving.from, 1);
-          if (effect) next.splice(moving.to, 0, effect);
+          const [effect] = next.splice(from, 1);
+          if (effect) next.splice(to, 0, effect);
           return next;
         },
         undefined,
-        movedTo(moving.from, moving.to),
+        movedTo(from, to),
       );
-    }
-    setMoving(null);
-  };
+    },
+  });
+  const dragged = effects.find((effect) => effect.id === rowDrag.drag?.id);
 
   if (mixed) {
     return <p className="text-xs text-muted-foreground">{t("stack.mixed")}</p>;
@@ -43,10 +46,7 @@ export function EffectStackEditor({ effects, mixed, onChange, nodes }: EffectSta
           <EffectRow
             effect={effect}
             entry={host.find(designEffectTypes, effect.type)}
-            dragging={moving?.from === i}
-            onDragStart={() => setMoving({ from: i, to: i })}
-            onDragOver={() => setMoving((m) => (m ? { ...m, to: i } : m))}
-            onDragEnd={finishMove}
+            rowDrag={rowDrag}
             onChange={(next, info) =>
               onChange((current) => current.map((e, j) => (j === i ? next : e)), info)
             }
@@ -56,6 +56,12 @@ export function EffectStackEditor({ effects, mixed, onChange, nodes }: EffectSta
           />
         </EffectBindingContext.Provider>
       ))}
+      {dragged && rowDrag.drag && (
+        <DragGhost
+          label={host.find(designEffectTypes, dragged.type)?.label ?? dragged.type}
+          pointer={rowDrag.drag.pointer}
+        />
+      )}
     </div>
   );
 }

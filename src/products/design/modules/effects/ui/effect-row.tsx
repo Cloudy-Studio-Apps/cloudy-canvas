@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Eye, EyeOff, GripVertical, Minus, Sparkles } from "lucide-react";
 
-import { ExtensionIconView } from "@canvas-ui";
+import { ExtensionIconView, rowDropLine } from "@canvas-ui";
 import { FieldBox, PanelIconButton } from "@design/ui/components/panel";
 import { cn, Popover, PopoverContent, PopoverTrigger } from "@shared/ui/kit";
 import { useEffectEditStore } from "./effect-edit-store";
@@ -12,16 +12,7 @@ import { t } from "../effects.i18n";
  * One effect: a grip to drag it in the list, its type (opens its editor), a line of its values,
  * show/hide and remove.
  */
-export function EffectRow({
-  effect,
-  entry,
-  onChange,
-  onRemove,
-  dragging,
-  onDragStart,
-  onDragOver,
-  onDragEnd,
-}: EffectRowProps) {
+export function EffectRow({ effect, entry, onChange, onRemove, rowDrag }: EffectRowProps) {
   const [open, setOpen] = useState(false);
   const setEditing = useEffectEditStore((state) => state.setEditing);
   // While its editor is open, the effect's handles show on the canvas.
@@ -31,30 +22,23 @@ export function EffectRow({
     return () => setEditing(null);
   }, [open, effect.id, setEditing]);
   const Editor = entry?.editor;
+  const { drag } = rowDrag;
   const label = entry?.label ?? effect.type;
   return (
     <div
+      {...rowDrag.dropProps(effect.id)}
       className={cn(
-        "flex items-center gap-1",
+        "relative flex items-center gap-1",
         !effect.visible && "opacity-50",
-        dragging && "opacity-40",
+        drag?.id === effect.id && "opacity-40",
+        rowDropLine(drag?.overId === effect.id ? drag.side : null),
       )}
-      onDragOver={(event) => {
-        event.preventDefault();
-        onDragOver();
-      }}
-      onDrop={(event) => event.preventDefault()}
     >
       <span
-        draggable
+        {...rowDrag.grabProps(effect.id)}
         aria-label={t("row.dragLabel", { name: label.toLowerCase() })}
         title={t("row.drag")}
         className="flex h-7 w-3 shrink-0 cursor-grab items-center justify-center text-subtle-foreground [&_svg]:size-3"
-        onDragStart={(event) => {
-          event.dataTransfer.effectAllowed = "move";
-          onDragStart();
-        }}
-        onDragEnd={onDragEnd}
       >
         <GripVertical />
       </span>

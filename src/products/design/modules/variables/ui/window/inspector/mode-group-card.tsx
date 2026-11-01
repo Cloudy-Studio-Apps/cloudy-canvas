@@ -7,6 +7,7 @@ import { cn } from "@shared/ui/kit";
 import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";
 import type { ModeGroupCardProps } from "./inspector.types";
+import { axisDropId } from "./mode-drop-id";
 import { ModeRow } from "./mode-row";
 import { t } from "../../../variables.i18n";
 
@@ -17,31 +18,17 @@ import { t } from "../../../variables.i18n";
 export function ModeGroupCard({ axis, shown, moves }: ModeGroupCardProps) {
   const { tokens, store } = useBoard();
   const setAxis = useVariablesWindowStore((state) => state.setAxis);
-  const [over, setOver] = useState(false);
   const [confirming, setConfirming] = useState(false);
-  const { drag } = moves;
-  const accepts = drag !== null && drag.axisId !== axis.id;
+  const { rowDrag } = moves;
+  const dropId = axisDropId(axis.id);
   const varying = store.variables().filter((v) => v.axisId === axis.id).length;
   return (
     <div
-      onDragOver={(event) => {
-        if (!accepts) return;
-        event.preventDefault();
-        setOver(true);
-      }}
-      onDragLeave={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOver(false);
-      }}
-      onDrop={(event) => {
-        setOver(false);
-        if (!accepts || !drag) return;
-        event.preventDefault();
-        moves.move(drag.modeId, axis.id);
-      }}
+      {...rowDrag.dropProps(dropId)}
       className={cn(
         "flex flex-col gap-1.5 rounded-md border border-border p-2",
         shown && "border-primary/50",
-        over && "border-primary bg-primary/5",
+        rowDrag.drag?.overId === dropId && "border-primary bg-primary/5",
       )}
     >
       <div className="flex items-center gap-1">
