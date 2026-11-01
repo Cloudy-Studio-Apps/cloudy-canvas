@@ -8,6 +8,14 @@ export interface ColumnDraft {
   unique?: boolean;
   /** A foreign key: the table and column it points at. */
   ref?: { table: string; column: string };
+  /** The attribute this column holds. */
+  attributeId?: string;
+  /** What put this key here: a relation, hierarchy, union or multivalued attribute. */
+  fromShape?: string;
+  /** The relation's participant this key points at. */
+  fromSide?: string;
+  /** A key made because the entity had none. */
+  added?: boolean;
 }
 
 export interface TableDraft {
@@ -46,4 +54,8 @@ export interface ForeignKeyOptions {
   unique?: boolean;
   /** Point at this column of the target instead of its key (a join attribute). */
   only?: string | undefined;
+  /** What puts this key here (`ColumnDraft.fromShape`). */
+  fromShape?: string;
+  /** The participant it points at (`ColumnDraft.fromSide`). */
+  fromSide?: string;
 }

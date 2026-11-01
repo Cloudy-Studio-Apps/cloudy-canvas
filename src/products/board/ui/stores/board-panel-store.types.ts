@@ -1,6 +1,14 @@
 export type TableEditorTab = "visual" | "dbml";
 export type ErEditorTab = "visual" | "text";
 
+/** How the ER panel got to the selected shape, for its back button. */
+export interface ErTrail {
+  /** The shapes it came through, oldest first. */
+  from: string[];
+  /** The shape it went to; any other selection drops the trail. */
+  at: string | null;
+}
+
 export interface BoardPanelState {
   /** Whether the side panel shows the whole schema's DBML instead of the selected table. */
   schemaOpen: boolean;
@@ -12,6 +20,7 @@ export interface BoardPanelState {
   erDiagram: string | null;
   /** Whether the ER panel is folded to a small bar (in the ER mode, where it can't be closed). */
   erCollapsed: boolean;
+  erTrail: ErTrail;
   /** Whether the library of widgets, templates and more is open above the toolbar. */
   libraryOpen: boolean;
   /** Whether the board's colors (its color variables) are open in the side panel. */
@@ -22,6 +31,7 @@ export interface BoardPanelState {
   setErTab: (tab: ErEditorTab) => void;
   setErDiagram: (diagram: string | null) => void;
   setErCollapsed: (collapsed: boolean) => void;
+  setErTrail: (trail: ErTrail) => void;
   setLibraryOpen: (open: boolean) => void;
   setColorsOpen: (open: boolean) => void;
 }

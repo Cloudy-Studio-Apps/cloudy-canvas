@@ -1,81 +1,82 @@
-import { Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 
 import { Button } from "@shared/ui/kit";
-import { useEngine } from "@canvas-ui";
 import { useErDiagram, useErShapes } from "../../model";
 import { entityOptions } from "./entity-options";
 import { FormField } from "./form-field";
 import { FormSection } from "./form-section";
-import { IconAction } from "./icon-action";
+import { memberName } from "./shape-label";
+import { ShapeChips } from "./shape-chips";
 import { ShapeSelect } from "./shape-select";
+import { UnionPicture } from "./union-picture";
+import { UnionTables } from "./union-tables";
+import { useErGoTo } from "./use-er-go-to";
+import { FormHint, OpenShape } from "./visual";
 import type { UnionFormProps } from "./entity-form.types";
 import { t } from "../../../er.i18n";
 
-/** A union type (category): the category entity and the superclasses it unites. */
+/** A union type (category): its drawing, the category, what it can be and the keys it adds. */
 export function UnionForm({ union }: UnionFormProps) {
-  const engine = useEngine();
   const er = useErDiagram();
   const shapes = useErShapes();
+  const { goTo } = useErGoTo();
   const options = entityOptions(shapes);
-  const nameOf = (id: string) => options.find((o) => o.value === id)?.label ?? "?";
+  const name = memberName(shapes, union.categoryId);
   const free = options.filter(
     (o) => o.value !== union.categoryId && !union.superclassIds.includes(o.value),
   );
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-muted-foreground">
-        {t("form.union.intro", { name: nameOf(union.categoryId) })}
-      </p>
+      <UnionPicture union={union} />
+      <FormHint>{t("form.union.intro", { name })}</FormHint>
       <FormField label={t("form.union.category")}>
-        <ShapeSelect
-          aria-label={t("form.union.category")}
-          value={union.categoryId}
-          options={options}
-          onChange={(categoryId) => er.edits.setUnionCategory(union.id, categoryId)}
-        />
+        <div className="flex items-center gap-1">
+          <ShapeSelect
+            aria-label={t("form.union.category")}
+            value={union.categoryId}
+            options={options}
+            className="flex-1"
+            onChange={(categoryId) => er.edits.setUnionCategory(union.id, categoryId)}
+          />
+          <OpenShape id={union.categoryId} label={name} />
+        </div>
       </FormField>
-      <FormSection
-        title={t("form.union.superclasses")}
-        actions={
+      <FormSection title={t("form.union.superclasses")}>
+        <ShapeChips
+          chips={union.superclassIds.map((id) => ({
+            id,
+            label: memberName(shapes, id),
+            removeLabel: t("form.union.remove"),
+            onRemove: () => er.edits.removeUnionSuperclass(union.id, id),
+          }))}
+        />
+        <div className="grid grid-cols-2 gap-1">
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             title={t("form.union.newTitle")}
             onClick={() => {
               const id = er.edits.addUnionSuperclassEntity(union.id);
-              if (id) engine.focusElement(id);
+              if (id) goTo(id);
             }}
           >
             <Plus />
             {t("form.isa.newEntity")}
           </Button>
-        }
-      >
-        <ul className="divide-y">
-          {union.superclassIds.map((id) => (
-            <li key={id} className="flex items-center gap-1 py-1.5 text-sm">
-              <span className="flex-1">{nameOf(id)}</span>
-              <IconAction
-                label={t("form.union.remove")}
-                danger
-                onClick={() => er.edits.removeUnionSuperclass(union.id, id)}
-              >
-                <Trash2 />
-              </IconAction>
-            </li>
-          ))}
-        </ul>
-        {free.length > 0 && (
-          <ShapeSelect
-            aria-label={t("form.union.addExisting")}
-            value=""
-            placeholder={t("form.isa.addExisting")}
-            options={free}
-            className="w-full"
-            onChange={(entityId) => entityId && er.edits.addUnionSuperclass(union.id, entityId)}
-          />
-        )}
+          {free.length > 0 && (
+            <ShapeSelect
+              aria-label={t("form.union.addExisting")}
+              value=""
+              placeholder={t("form.isa.addExisting")}
+              options={free}
+              onChange={(entityId) => entityId && er.edits.addUnionSuperclass(union.id, entityId)}
+            />
+          )}
+        </div>
+      </FormSection>
+      <FormSection title={t("form.union.tablesTitle")}>
+        <UnionTables union={union} />
       </FormSection>
     </div>
   );

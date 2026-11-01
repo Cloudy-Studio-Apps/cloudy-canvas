@@ -10,6 +10,7 @@ export const useBoardPanelStore = create<BoardPanelState>()((set) => ({
   erTab: "visual",
   erDiagram: null,
   erCollapsed: false,
+  erTrail: { from: [], at: null },
   libraryOpen: false,
   colorsOpen: false,
   setSchemaOpen: (schemaOpen) =>
@@ -20,6 +21,7 @@ export const useBoardPanelStore = create<BoardPanelState>()((set) => ({
   setErTab: (erTab) => set({ erTab }),
   setErDiagram: (erDiagram) => set({ erDiagram }),
   setErCollapsed: (erCollapsed) => set({ erCollapsed }),
+  setErTrail: (erTrail) => set({ erTrail }),
   setLibraryOpen: (libraryOpen) => set({ libraryOpen }),
   setColorsOpen: (colorsOpen) =>
     set(colorsOpen ? { colorsOpen, schemaOpen: false, erOpen: false } : { colorsOpen }),

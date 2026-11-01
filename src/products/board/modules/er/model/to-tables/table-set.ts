@@ -44,6 +44,8 @@ export function addForeignKey(
       ref: { table: target.name, column },
       ...(options.notNull ? { notNull: true } : {}),
       ...(options.unique ? { unique: true } : {}),
+      ...(options.fromShape ? { fromShape: options.fromShape } : {}),
+      ...(options.fromSide ? { fromSide: options.fromSide } : {}),
     });
   });
 }

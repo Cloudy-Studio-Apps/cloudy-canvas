@@ -343,26 +343,41 @@
     "aggregate": {
       "name": "Nombre de la agregación",
       "relation": "Relación que agrupa",
-      "hint": "Añade esta agregación como participante de otra relación para relacionarla como una entidad."
+      "hint": "Añade esta agregación como participante de otra relación para relacionarla como una entidad.",
+      "table": "La relación siempre se convierte en su propia tabla, para que otras relaciones puedan apuntarle."
     },
     "attributes": {
       "title": "Atributos",
       "add": "Añadir atributo",
-      "none": "Aún no hay atributos."
+      "none": "Aún no hay atributos.",
+      "hint": "Haz clic en un óvalo para seleccionar ese atributo."
     },
     "attribute": {
       "name": "Nombre del atributo",
-      "addPart": "Añadir una parte (atributo compuesto)",
       "delete": "Eliminar atributo",
       "keyTitle": "Atributo clave (subrayado)",
       "partialTitle": "Clave parcial de una entidad débil (subrayado discontinuo)",
       "alternateTitle": "Clave alternativa (candidata) (subrayado punteado)",
-      "multi": "Multi",
       "multiTitle": "Multivaluado (elipse doble)",
-      "derived": "Derivado",
       "derivedTitle": "Derivado (elipse discontinua)",
-      "optional": "Opc",
-      "optionalTitle": "Opcional (círculo medio relleno en el estilo piruleta)"
+      "optionalTitle": "Opcional (círculo medio relleno en el estilo piruleta)",
+      "what": "¿Qué es?",
+      "parts": "Dividir en partes",
+      "addPartShort": "Añadir una parte",
+      "flag": {
+        "key": "Clave",
+        "keyHint": "Identifica cada fila",
+        "partial": "Clave parcial",
+        "partialHint": "Identifica dentro de su dueña",
+        "alternate": "Otra clave",
+        "alternateHint": "También única",
+        "multi": "Lista",
+        "multiHint": "Guarda varios valores",
+        "derived": "Calculado",
+        "derivedHint": "Se calcula, nunca se guarda",
+        "optional": "Opcional",
+        "optionalHint": "Puede estar vacío"
+      }
     },
     "cardinality": {
       "minimum": "Mínimo",
@@ -388,7 +403,24 @@
       "needsIt": "Relación que la necesita",
       "other": "Otra relación",
       "second": "Segunda relación",
-      "howMany": "Cuántas veces"
+      "howMany": "Cuántas veces",
+      "noTable": "Esta regla no crea ninguna tabla. Tu aplicación debe hacerla cumplir.",
+      "rule": {
+        "exclusive": "Solo una",
+        "exclusiveHint": "Participa en una de las dos",
+        "inclusive": "Necesita la otra",
+        "inclusiveHint": "Debe hacer la primera para hacer la segunda",
+        "exclusion": "Nunca ambas",
+        "exclusionHint": "Las mismas filas no pueden estar en ambas",
+        "inclusion": "Debe existir allí",
+        "inclusionHint": "Las filas ya deben estar en la primera"
+      },
+      "say": {
+        "exclusive": "Cada {name} participa en solo una: {first} o {second}.",
+        "inclusive": "Para usar {second}, un {name} debe haber hecho {first} ({min},{max}) veces.",
+        "exclusion": "Las mismas filas no pueden estar en {first} y {second} a la vez.",
+        "inclusion": "Todo lo que esté en {second} también debe existir en {first}."
+      }
     },
     "entity": {
       "name": "Nombre de la entidad",
@@ -399,7 +431,14 @@
       "addHierarchy": "Añadir jerarquía",
       "notInRelation": "Aún no está en ninguna relación.",
       "itsHierarchy": "▽ su jerarquía",
-      "parentHierarchy": "▽ jerarquía del padre"
+      "parentHierarchy": "▽ jerarquía del padre",
+      "kind": "Tipo de entidad",
+      "strong": "Fuerte",
+      "strongHint": "Tiene clave propia",
+      "weakHint": "Necesita otra entidad para identificarse",
+      "color": "Color",
+      "itsUnion": "U su unión",
+      "unionOf": "U unión {name}"
     },
     "isa": {
       "parent": "Entidad padre",
@@ -421,14 +460,25 @@
       "child": "Entidad hija",
       "removeChild": "Quitar hija",
       "addExistingChild": "Añadir una entidad existente como hija",
-      "addExisting": "Añadir una entidad existente…"
+      "addExisting": "Añadir una entidad existente…",
+      "moreThanOne": "¿Un {name} puede ser más de uno?",
+      "noneOfThem": "¿Un {name} puede no ser ninguno?",
+      "overlappingHint": "Sí, varios a la vez",
+      "exclusiveHint": "No, solo uno",
+      "partialHint": "Sí, puede no ser ninguno",
+      "totalHint": "No, siempre uno de ellos",
+      "apart": "Qué los distingue",
+      "apartHint": "Opcional. Una columna que dice qué hijo es cada fila.",
+      "lineNumbers": "Números en las líneas. Déjalos vacíos para ocultarlos.",
+      "list": "{first} o {last}",
+      "sayExactlyOne": "Cada {name} es exactamente uno: {list}.",
+      "sayAtMostOne": "Cada {name} es {list}, o ninguno. Nunca ambos.",
+      "sayAtLeastOne": "Cada {name} es al menos uno, y puede ser varios: {list}.",
+      "sayAny": "Cada {name} puede ser {list}, varios o ninguno."
     },
     "participant": {
       "entity": "Entidad",
-      "key": "{name} (clave)",
       "remove": "Quitar de la relación",
-      "join": "Atributo de unión",
-      "noJoin": "Une por: ningún atributo",
       "rolePlaceholder": "Rol (para una entidad relacionada consigo misma)",
       "role": "Rol",
       "arrow": "Flecha",
@@ -451,7 +501,12 @@
       "addParticipant": "Añadir",
       "noParticipants": "Aún no participa ninguna entidad.",
       "aggregateTitle": "Encierra esta relación y sus entidades para que pueda participar en otras relaciones",
-      "aggregate": "Crear una agregación"
+      "aggregate": "Crear una agregación",
+      "kind": "Tipo de relación",
+      "identifyingHint": "Da su identidad a una entidad débil",
+      "associativeHint": "Actúa como entidad, con clave propia",
+      "iMarkHint": "Necesita a la otra para identificarse",
+      "eMarkHint": "Necesita a la otra para existir"
     },
     "issues": "Problemas",
     "union": {
@@ -460,7 +515,76 @@
       "superclasses": "Superclases",
       "newTitle": "Crear una entidad superclase nueva",
       "remove": "Quitar superclase",
-      "addExisting": "Añadir una entidad existente como superclase"
+      "addExisting": "Añadir una entidad existente como superclase",
+      "tablesTitle": "Sus tablas",
+      "tables": "Cada una recibe una columna nueva, {column}, que puede quedar vacía. Apunta a {name}."
+    },
+    "more": "Más opciones",
+    "select": "Seleccionar {name}",
+    "back": {
+      "hierarchy": "Jerarquía",
+      "union": "Unión",
+      "constraint": "Restricción"
+    },
+    "amount": {
+      "title": "¿Cuántos?",
+      "hint": "Punto sólido: siempre está. Punto discontinuo: opcional.",
+      "each": "Cada {name} tiene {amount} {other}",
+      "eachAlone": "Cada {name} participa {amount}",
+      "pick": "Cuántos para {name}",
+      "zeroOrOne": "0 o 1",
+      "exactlyOne": "solo 1",
+      "zeroOrMore": "0 o más",
+      "oneOrMore": "1 o más",
+      "other": "otro",
+      "many": "muchos",
+      "unset": "sin definir",
+      "exactly": "exactamente {value}",
+      "range": "de {min} a {max}"
+    },
+    "join": {
+      "title": "Qué los conecta",
+      "hint": "Haz clic en la fila por la que se conecta.",
+      "noSides": "Añade dos lados para ver cómo se conectan.",
+      "newTable": "{name} (tabla nueva)",
+      "link": "Ambos lados pueden tener muchos, así que una tabla nueva, {name}, guarda cada pareja.",
+      "identifies": "{name} no se puede identificar por sí sola, así que esta clave pasa a formar parte de su propia clave.",
+      "oneColumn": "{holder} recibe una columna nueva, {column}, para guardar a qué {other} pertenece.",
+      "columns": "{holder} recibe {number} columnas nuevas para guardar a qué {other} pertenece.",
+      "required": "Siempre debe tener valor.",
+      "optional": "Puede quedar vacía.",
+      "requiredMany": "Siempre deben tener valor.",
+      "optionalMany": "Pueden quedar vacías.",
+      "unique": "Cada {name} solo puede aparecer una vez.",
+      "risky": "{name} se puede repetir, así que dos filas de {side} podrían coincidir. La fila con la llave es la opción segura."
+    },
+    "table": {
+      "title": "Su tabla",
+      "from": "de {name}",
+      "added": "añadida",
+      "child": "Su clave viene de {parent}, así que cada {name} apunta a un {parent}.",
+      "category": "{name} recibe su propia clave, a la que apuntan sus superclases.",
+      "noKey": "No tiene clave propia, así que se le añade una.",
+      "key": "Las llaves doradas identifican cada {name}. Una llave azul apunta a otra tabla.",
+      "keys": "Las llaves doradas identifican juntas cada {name}. Una llave azul apunta a otra tabla."
+    },
+    "effect": {
+      "title": "Qué genera",
+      "board": "En la pizarra",
+      "table": "En la tabla",
+      "noTable": "Sin columna",
+      "unique": "única",
+      "derived": "No se guarda en ninguna tabla. Se calcula cuando hace falta.",
+      "multi": "Varios valores no caben en una celda, así que tiene su propia tabla.",
+      "parts": "Cada parte se convierte en su propia columna.",
+      "key": "Identifica cada fila, así que dos filas no pueden compartirla.",
+      "partial": "Identifica una fila solo junto con la clave de su dueña.",
+      "alternate": "No es la clave principal, pero dos filas no pueden compartirla.",
+      "relation": "Describe la conexión, así que se guarda con la clave.",
+      "optional": "Una columna normal que puede quedar vacía.",
+      "plain": "Una columna normal.",
+      "discriminator": "Solo se guarda si Crear tablas usa “Una tabla para todo”.",
+      "notSaved": "Aún no tiene columna."
     }
   },
   "prompt": {

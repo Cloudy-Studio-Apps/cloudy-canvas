@@ -19,7 +19,13 @@ import { checkErDiagram, type ErIssue } from "./check";
 import { standardTextWarnings } from "./check/standard-text-warnings";
 import { standardOf } from "./standard-of";
 import { importSchemaText, schemaShapes, type DbApplyResult, formatColumnType } from "../../db";
-import { erToTables, type ErTableOptions, type ErTablesResult } from "./to-tables";
+import {
+  erTablesModel,
+  erToTables,
+  type ErTableOptions,
+  type ErTablesModel,
+  type ErTablesResult,
+} from "./to-tables";
 import { t } from "../er.i18n";
 
 /**
@@ -101,6 +107,9 @@ export class ErDiagram {
     }
     return issues;
   };
+
+  /** The tables the diagram becomes, as data, for the forms to show. */
+  tablesModel = (): ErTablesModel => erTablesModel(this.shapes());
 
   /**
    * The diagram as tables (see `erToTables`), keeping the column types of tables that already

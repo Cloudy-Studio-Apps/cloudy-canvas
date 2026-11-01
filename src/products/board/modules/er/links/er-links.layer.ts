@@ -14,8 +14,8 @@ const TOTAL_MARK_RADIUS = 5;
 
 /**
  * Lines of the board's ER diagrams (relation ↔ participant, attribute ↔ owner, hierarchy ↔ parent
- * and children) with their cardinality labels, arrows, total marks and, on a binary relation's
- * lines, crow's-foot marks read from the cardinalities.
+ * and children) with their cardinality labels, arrows, total marks, exclusive arcs and, on a binary
+ * relation's lines, crow's-foot marks read from the cardinalities.
  */
 export class ErLinks implements CanvasLinks {
   private links: ErLink[] = [];
@@ -61,6 +61,12 @@ function drawLink(g: Graphics, link: ErLink, color: number | string): void {
       width: ER_DEFAULTS.strokeWidth,
       fill: ER_FILL_COLOR,
     });
+  }
+  if (link.arc) {
+    const { center, radius, from, to } = link.arc;
+    g.moveTo(center.x + Math.cos(from) * radius, center.y + Math.sin(from) * radius)
+      .arc(center.x, center.y, radius, from, to)
+      .stroke({ color, width: ER_DEFAULTS.strokeWidth });
   }
   if (link.totalMark) {
     const mid = { x: (first.x + end.x) / 2, y: (first.y + end.y) / 2 };

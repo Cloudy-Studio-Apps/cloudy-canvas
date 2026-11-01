@@ -1,3 +1,5 @@
+import type * as React from "react";
+
 import type { ErUnionElement } from "../../../union/union.types";
 import type { ErAggregateElement } from "../../../aggregate/aggregate.types";
 import type { ErConstraintElement } from "../../../constraint/constraint.types";
@@ -13,8 +15,18 @@ export interface RelationFormProps {
   relation: ErRelationElement;
 }
 
+export interface RelationKindGlyphProps {
+  inner: React.ReactNode;
+  /** The mark in the diamond. */
+  letter?: string;
+}
+
 export interface IsaFormProps {
   isa: ErIsaElement;
+}
+
+export interface IsaVennProps {
+  kind: "overlapping" | "exclusive" | "partial" | "total";
 }
 
 export interface UnionFormProps {

@@ -1,3 +1,5 @@
+import type { TableDraft } from "./tables-context.types";
+
 /** How a hierarchy becomes tables: one per entity (children keyed by the parent) or one for all. */
 export type ErHierarchyStrategy = "per-entity" | "single";
 
@@ -6,6 +8,13 @@ export interface ErTableOptions {
   hierarchies?: Readonly<Record<string, ErHierarchyStrategy>>;
   /** A column's current type when its table already exists (kept instead of the guess). */
   existingType?: (table: string, column: string) => string | undefined;
+}
+
+/** The tables a diagram becomes, before writing them: what the ER forms show. */
+export interface ErTablesModel {
+  tables: TableDraft[];
+  /** The table an ER shape (entity, aggregation, associative relation) became, by shape id. */
+  tableOf: ReadonlyMap<string, string>;
 }
 
 /** A diagram as tables: the DBML to apply, the tables it writes and what to know about it. */

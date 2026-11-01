@@ -18,7 +18,7 @@ export { gateOf, standardOf } from "./standard-of";
 export { PALETTE_CONSTRUCTS } from "./palette-constructs";
 export type * from "./check";
 export type * from "./to-tables";
-export { erToTables } from "./to-tables";
+export { attributeColumnsIn, erToTables, relationKeys, tableOfShape } from "./to-tables";
 export { notationValues } from "./lang/notation-settings";
 export type * from "./er-add-actions.types";
 export { erAddActions, erAddActionsWithoutDiagram, erClickActions } from "./er-add-actions";

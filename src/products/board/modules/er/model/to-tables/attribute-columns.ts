@@ -25,7 +25,7 @@ export function attributeColumns(
       parts.length > 0
         ? attributeColumns(ctx, attribute.id, `${name}_`)
         : {
-            columns: [{ name, type: guessColumnType(name) }],
+            columns: [{ name, type: guessColumnType(name), attributeId: attribute.id }],
             keys: [],
             partialKeys: [],
             alternates: [],

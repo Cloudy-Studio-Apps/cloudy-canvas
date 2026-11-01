@@ -2,14 +2,13 @@ import type { ErAttributeElement } from "../../../attribute/attribute.types";
 
 export interface AttributeRowProps {
   attribute: ErAttributeElement;
-  /** Parts of this attribute, when it's composite (and their parts, recursively). */
-  partsOf: ReadonlyMap<string, ErAttributeElement[]>;
-  first: boolean;
-  last: boolean;
-  depth: number;
 }
 
 export interface AttributeListProps {
   ownerId: string;
   title?: string;
+  /** The add button's text. */
+  addLabel?: string;
+  /** Why the list can't grow; empty when it can. */
+  blocked?: string;
 }

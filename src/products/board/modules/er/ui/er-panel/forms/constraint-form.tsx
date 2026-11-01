@@ -4,68 +4,81 @@ import type { ErConstraintRule } from "../../../constraint/constraint.types";
 import { Button } from "@shared/ui/kit";
 import { useErDiagram, useErShapes } from "../../model";
 import { CardinalityPicker } from "./cardinality-picker";
+import { ConstraintPicture } from "./constraint-picture";
+import { CONSTRAINT_GLYPHS } from "./constraint-rules";
 import { entityOptions, relationOptions } from "./entity-options";
 import { FormField } from "./form-field";
+import { FormSection } from "./form-section";
+import { memberName } from "./shape-label";
 import { ShapeSelect } from "./shape-select";
+import { FormHint, OpenShape, ToggleTile } from "./visual";
 import type { ConstraintFormProps } from "./entity-form.types";
 import { t } from "../../../er.i18n";
 
-const RULES: { value: ErConstraintRule; label: string; hint: string }[] = [
-  {
-    value: "exclusive",
-    label: t("form.constraint.exclusive"),
-    hint: t("form.constraint.exclusiveHint"),
-  },
-  {
-    value: "inclusive",
-    label: t("form.constraint.inclusive"),
-    hint: t("form.constraint.inclusiveHint"),
-  },
-  {
-    value: "exclusion",
-    label: t("form.constraint.exclusion"),
-    hint: t("form.constraint.exclusionHint"),
-  },
-  {
-    value: "inclusion",
-    label: t("form.constraint.inclusion"),
-    hint: t("form.constraint.inclusionHint"),
-  },
-];
+const RULES: readonly ErConstraintRule[] = ["exclusive", "inclusive", "exclusion", "inclusion"];
 
 /** A constraint between two relations (and, for exclusive / inclusive, the entity in both). */
 export function ConstraintForm({ constraint }: ConstraintFormProps) {
   const er = useErDiagram();
   const shapes = useErShapes();
   const relations = relationOptions(shapes);
-  const rule = RULES.find((r) => r.value === constraint.rule);
-  const withEntity = constraint.rule === "exclusive" || constraint.rule === "inclusive";
-  const directed = constraint.rule === "inclusive" || constraint.rule === "inclusion";
+  const { rule } = constraint;
+  const withEntity = rule === "exclusive" || rule === "inclusive";
+  const directed = rule === "inclusive" || rule === "inclusion";
+  const relationName = (id: string) => shapes.relations.find((r) => r.id === id)?.name ?? "?";
+  const entity = memberName(shapes, constraint.entityId);
 
   return (
     <div className="space-y-4">
-      <FormField label={t("form.constraint.kind")}>
-        <ShapeSelect
-          aria-label={t("form.constraint.kind")}
-          value={constraint.rule}
-          options={RULES}
-          className="w-full"
-          onChange={(value) =>
-            er.edits.updateConstraint(constraint.id, { rule: value as ErConstraintRule })
-          }
-        />
-      </FormField>
-      {rule && <p className="text-xs text-muted-foreground">{rule.hint}</p>}
+      <ConstraintPicture constraint={constraint} />
+      <FormHint>
+        {t(`form.constraint.say.${rule}`, {
+          name: entity || "?",
+          first: relationName(constraint.fromId),
+          second: relationName(constraint.toId),
+          min: constraint.min,
+          max: constraint.max,
+        })}
+      </FormHint>
+      <FormSection title={t("form.constraint.kind")}>
+        <div className="grid grid-cols-2 gap-1">
+          {RULES.map((value) => (
+            <ToggleTile
+              key={value}
+              picture={
+                <svg
+                  viewBox="0 0 40 30"
+                  aria-hidden
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                  className="h-[30px] w-10"
+                >
+                  {CONSTRAINT_GLYPHS[value]}
+                </svg>
+              }
+              label={t(`form.constraint.rule.${value}`)}
+              hint={t(`form.constraint.rule.${value}Hint`)}
+              title={t(`form.constraint.${value}Hint`)}
+              on={rule === value}
+              onToggle={() => er.edits.updateConstraint(constraint.id, { rule: value })}
+            />
+          ))}
+        </div>
+      </FormSection>
       {withEntity && (
         <FormField label={t("form.constraint.entity")}>
-          <ShapeSelect
-            aria-label={t("form.constraint.entity")}
-            value={constraint.entityId}
-            placeholder={t("form.constraint.choose")}
-            options={entityOptions(shapes)}
-            className="w-full"
-            onChange={(entityId) => er.edits.updateConstraint(constraint.id, { entityId })}
-          />
+          <div className="flex items-center gap-1">
+            <ShapeSelect
+              aria-label={t("form.constraint.entity")}
+              value={constraint.entityId}
+              placeholder={t("form.constraint.choose")}
+              options={entityOptions(shapes)}
+              className="min-w-0 flex-1"
+              onChange={(entityId) => er.edits.updateConstraint(constraint.id, { entityId })}
+            />
+            <OpenShape id={constraint.entityId} label={entity} />
+          </div>
         </FormField>
       )}
       <div className="flex items-end gap-1">
@@ -105,7 +118,7 @@ export function ConstraintForm({ constraint }: ConstraintFormProps) {
           />
         </FormField>
       </div>
-      {constraint.rule === "inclusive" && (
+      {rule === "inclusive" && (
         <FormField label={t("form.constraint.howMany")}>
           <CardinalityPicker
             min={constraint.min}
@@ -114,6 +127,7 @@ export function ConstraintForm({ constraint }: ConstraintFormProps) {
           />
         </FormField>
       )}
+      <FormHint>{t("form.constraint.noTable")}</FormHint>
     </div>
   );
 }

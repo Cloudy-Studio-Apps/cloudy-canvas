@@ -41,7 +41,12 @@ function strongTable(ctx: TablesContext, entity: ErEntityElement, isa?: ErIsaEle
     for (const key of parent.pk) {
       const type = parent.columns.find((c) => c.name === key)?.type ?? "integer";
       table.pk.push(
-        addColumn(table, { name: key, type, ref: { table: parent.name, column: key } }),
+        addColumn(table, {
+          name: key,
+          type,
+          ref: { table: parent.name, column: key },
+          ...(isa ? { fromShape: isa.id } : {}),
+        }),
       );
     }
     addOwnColumns(table, own);
@@ -53,7 +58,7 @@ function strongTable(ctx: TablesContext, entity: ErEntityElement, isa?: ErIsaEle
     // A union type's category is keyed by a surrogate its superclasses point at.
     const category = ctx.shapes.unions.some((u) => u.categoryId === entity.id);
     const key = category ? `${entity.name}_id` : "id";
-    table.columns.unshift({ name: key, type: "integer" });
+    table.columns.unshift({ name: key, type: "integer", added: true });
     table.pk = [key];
     if (!category) ctx.warnings.push(t("toTables.warnNoKey", { name: entity.name }));
   }
@@ -77,10 +82,16 @@ function weakTables(ctx: TablesContext, weak: readonly ErEntityElement[]): void 
 function weakTable(ctx: TablesContext, entity: ErEntityElement): void {
   const table = addTable(ctx, entity.name);
   ctx.tableOf.set(entity.id, table.name);
-  for (const { owner, relationId } of ownersOf(ctx, entity)) {
+  for (const { owner, relationId, participantId } of ownersOf(ctx, entity)) {
     const target = ctx.tables.get(ctx.tableOf.get(owner) ?? "");
     if (!target) continue;
-    table.pk.push(...addForeignKey(table, target, target.name, { notNull: true }));
+    table.pk.push(
+      ...addForeignKey(table, target, target.name, {
+        notNull: true,
+        fromShape: relationId,
+        fromSide: participantId,
+      }),
+    );
     ctx.done.add(relationId);
     // The identifying relation's attributes describe the weak entity.
     addOwnColumns(table, attributeColumns(ctx, relationId));
@@ -102,7 +113,7 @@ function ownersOf(ctx: TablesContext, entity: ErEntityElement) {
     .flatMap((r) =>
       r.participants
         .filter((p) => p.entityId !== entity.id)
-        .map((p) => ({ owner: p.entityId, relationId: r.id })),
+        .map((p) => ({ owner: p.entityId, relationId: r.id, participantId: p.id })),
     );
 }
 

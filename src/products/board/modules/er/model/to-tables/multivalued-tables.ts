@@ -9,9 +9,15 @@ export function multivaluedTables(ctx: TablesContext): void {
     if (!owner) continue;
     for (const attribute of ownAttributes(ctx, ownerId).filter((a) => a.multivalued)) {
       const table = addTable(ctx, `${owner.name}_${attribute.name}`);
-      const keys = addForeignKey(table, owner, owner.name, { notNull: true });
+      const keys = addForeignKey(table, owner, owner.name, {
+        notNull: true,
+        fromShape: attribute.id,
+      });
       const parts = attributeColumns(ctx, attribute.id, `${attribute.name}_`).columns;
-      const values = parts.length > 0 ? parts : [{ name: attribute.name, type: "varchar" }];
+      const values =
+        parts.length > 0
+          ? parts
+          : [{ name: attribute.name, type: "varchar", attributeId: attribute.id }];
       table.pk = [...keys, ...values.map((column) => addColumn(table, column))];
     }
   }

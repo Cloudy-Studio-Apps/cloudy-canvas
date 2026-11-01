@@ -7,6 +7,10 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### New
 
+- ER diagrams have new menus built around pictures. Instead of dropdowns and codes like (0,n), you
+  pick how many with dots, see each option as it's drawn, and watch what it does to the tables: click
+  a row and a line shows the key your relation adds, and where it goes. Click any shape named in a
+  menu to select it, and use the back button to return.
 - Animated GIFs now play on boards and designs, including in image fills, crops and tiles, and in
   boards exported as HTML. Add them by dropping the file or choosing it from the image picker, as a
   GIF pasted from another app arrives as a still picture. They pause while off screen, and you can
@@ -64,6 +68,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### Fixed
 
+- In ER diagrams, a hierarchy's lines to its children now start at the tip of the triangle, so they no
+  longer cut across it, and the exclusive arc grows to cover every line as you move the children.
 - Copy as PNG now copies exactly what you selected, without an empty margin around it.
 - Frame titles no longer appear in exported images, PDFs, SVGs or copies.
 - In Design system, clicking an empty part of the canvas now clears the section from the side panel

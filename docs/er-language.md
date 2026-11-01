@@ -542,16 +542,17 @@ Constraint exclusion: diseña, fabrica
 
 ## Visual editor reference
 
-The **Visual** tab shows a form for the selected shape. Every change is one undo step, and new shapes are placed for you.
+The **Visual** tab shows a menu for the selected shape, drawn with pictures. Every change is one undo step, and new shapes are placed for you. Any name, oval or drawing of a shape in a menu selects that shape, and the back button returns to where you were; the › beside a dropdown does the same.
 
-| Selected    | Form                                                                                                                                                           |
-| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Entity      | Name, **Weak**, outline color, attributes, "Used in" (click to jump), **Add hierarchy**                                                                        |
-| Attribute   | Name and the PK / PK~ / Multi / Derived / Opt toggles; ↑ ↓ to reorder; "Add a part" makes it composite; a button to edit its owner                             |
-| Relation    | Name, **Identifying**, **I mark**, the computed ratio; participants (entity or aggregation, `(min,max)`, role, **Arrow**); attributes; **Make an aggregation** |
-| Hierarchy   | Parent and its cardinality, Overlapping/Exclusive, Partial/Total, discriminator, children (pick existing or **New entity**)                                    |
-| Aggregation | Name, the relation it groups, its attributes                                                                                                                   |
-| Constraint  | Kind, entity (for exclusividad/inclusividad), the two relations (with a swap button), how many times (inclusividad)                                            |
+| Selected    | Form                                                                                                                                               |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Entity      | Name, Strong or Weak, outline color, its table, attributes, "Used in", **Add hierarchy**                                                           |
+| Attribute   | Name, what it is (Key, Partial key, Other key, List, Calculated, Optional), what it makes, its parts, Move up/down, Delete                         |
+| Relation    | Name, how many of each side, what connects them (click a row), its kind, attributes; More options: sides, role, **Arrow**, **Make an aggregation** |
+| Hierarchy   | Its drawing, Overlapping/Exclusive, Partial/Total, parent, children, what tells them apart; More options: the numbers on its lines                 |
+| Aggregation | Its drawing, name, the relation inside the box, its attributes, its table                                                                          |
+| Union       | Its drawing, the category, what it can be (pick existing or **New entity**), the column each one gets                                              |
+| Constraint  | Its drawing, the rule, the entity (exclusive, inclusive), the two relations (with a swap button), how many times (inclusive)                       |
 
 ## Sources
 

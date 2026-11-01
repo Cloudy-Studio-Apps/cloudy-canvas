@@ -19,6 +19,16 @@ export interface ErLink {
   double: boolean;
   /** Crow's-foot marks at the `to` end (a binary relation's line), or `null`. */
   crowFoot: CrowFoot | null;
+  /** An exclusive hierarchy's arc across its children's lines, or `null`. */
+  arc: ErArc | null;
+}
+
+/** An arc, with its angles in radians, clockwise from the right. */
+export interface ErArc {
+  center: Point;
+  radius: number;
+  from: number;
+  to: number;
 }
 
 /**

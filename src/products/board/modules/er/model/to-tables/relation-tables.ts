@@ -35,6 +35,8 @@ export function relationTables(ctx: TablesContext): void {
       const made = addForeignKey(table, side.table, prefix, {
         notNull: true,
         only: joinColumn(ctx, side.p, side.table),
+        fromShape: relation.id,
+        fromSide: side.p.id,
       });
       keys.push(...made);
       if (side.p.max !== "1") manyKeys.push(...made);
@@ -77,6 +79,8 @@ function foreignKey(
     notNull: mandatory(holder.p.min),
     unique: oneA && oneB,
     only: joinColumn(ctx, other.p, other.table),
+    fromShape: relation.id,
+    fromSide: other.p.id,
   });
   addOwnColumns(holder.table, attributeColumns(ctx, relation.id));
   return true;

@@ -2,6 +2,7 @@ import { useErShape } from "../../model";
 import { AggregateForm } from "./aggregate-form";
 import { AttributeForm } from "./attribute-form";
 import { ConstraintForm } from "./constraint-form";
+import { ErBackLink } from "./er-back-link";
 import { EntityForm } from "./entity-form";
 import { IsaForm } from "./isa-form";
 import { RelationForm } from "./relation-form";
@@ -13,6 +14,7 @@ import type { ErShapeFormProps } from "./er-shape-form.types";
 export function ErShapeForm({ id }: ErShapeFormProps) {
   return (
     <div className="space-y-3">
+      <ErBackLink />
       <ShapeIssues id={id} />
       <ShapeForm id={id} />
     </div>

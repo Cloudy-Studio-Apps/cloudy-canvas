@@ -8,6 +8,7 @@ import { outlinePoint, shapeCenter } from "../base/er-outline";
 import { erNotation } from "../base/er-notation";
 import type { ErUnionElement } from "../union/union.types";
 import type { CrowFoot, ErLink } from "./er-links.types";
+import { isaArc } from "./isa-arc";
 import { LINK_LABEL_FONT_SIZE } from "./link-label";
 import { loopPoints } from "./loop-route";
 
@@ -138,11 +139,25 @@ function isaLinks(isa: ErIsaElement, byId: ReadonlyMap<string, ErElement>): ErLi
       double: isa.total && erNotation(isa.notation).isa === "circle",
     });
   }
+  const look = erNotation(isa.notation).isa;
+  const triangle = look !== "circle" && look !== "arrow";
+  const apex = { x: isa.x + isa.w / 2, y: isa.y + isa.h };
+  const ends: Point[] = [];
   for (const child of isa.children) {
     const entity = byId.get(child.entityId);
-    if (entity)
-      links.push(straightLink(isa, entity, cardinalityLabel(child.min, child.max), false));
+    if (!entity) continue;
+    const label = cardinalityLabel(child.min, child.max);
+    // Lines leave the triangle's tip so they never cut through it; a child above it can't.
+    if (triangle && shapeCenter(entity).y > apex.y) {
+      const end = outlinePoint(entity, apex);
+      ends.push(end);
+      links.push(polyLink(isa.id, entity.id, [apex, end], label, false));
+    } else {
+      links.push(straightLink(isa, entity, label, false));
+    }
   }
+  const last = links.at(-1);
+  if (triangle && isa.exclusive && last) last.arc = isaArc(apex, ends);
   return links;
 }
 
@@ -171,6 +186,7 @@ function polyLink(
     totalMark: false,
     double: false,
     crowFoot: null,
+    arc: null,
   };
 }
 

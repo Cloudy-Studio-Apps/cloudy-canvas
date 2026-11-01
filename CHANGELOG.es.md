@@ -7,6 +7,11 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Novedades
 
+- Los diagramas ER tienen menús nuevos basados en imágenes. En lugar de listas desplegables y códigos
+  como (0,n), eliges cuántos con puntos, ves cada opción tal como se dibuja y compruebas qué hace en
+  las tablas: haz clic en una fila y una línea muestra la clave que añade tu relación y dónde va.
+  Haz clic en cualquier forma nombrada en un menú para seleccionarla y usa el botón de volver para
+  regresar.
 - Los GIF animados ahora se reproducen en pizarras y diseños, también en rellenos de imagen,
   recortes y mosaicos, y en las pizarras exportadas como HTML. Añádelos soltando el archivo o
   eligiéndolo en el selector de imágenes, ya que un GIF pegado desde otra app llega como imagen fija.
@@ -70,6 +75,9 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Correcciones
 
+- En los diagramas ER, las líneas de una jerarquía hacia sus hijos ahora salen de la punta del
+  triángulo, así que ya no lo atraviesan, y el arco de exclusividad crece para cubrir todas las líneas
+  al mover los hijos.
 - Copiar como PNG ahora copia exactamente lo que seleccionaste, sin un margen vacío alrededor.
 - Los títulos de los marcos ya no aparecen en imágenes, PDF, SVG ni copias exportadas.
 - En Sistema de diseño, al hacer clic en una zona vacía del lienzo la sección desaparece del panel

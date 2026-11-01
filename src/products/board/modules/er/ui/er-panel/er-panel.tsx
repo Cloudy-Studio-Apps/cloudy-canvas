@@ -40,6 +40,8 @@ export function ErPanel() {
   const setCollapsed = useBoardPanelStore((state) => state.setErCollapsed);
   const tab = useBoardPanelStore((state) => state.erTab);
   const setTab = useBoardPanelStore((state) => state.setErTab);
+  const trail = useBoardPanelStore((state) => state.erTrail);
+  const setTrail = useBoardPanelStore((state) => state.setErTrail);
 
   useEffect(() => {
     if (erSelected || inMode) setOpen(true);
@@ -60,6 +62,11 @@ export function ErPanel() {
   useEffect(() => {
     if (selectedDiagram) setDiagram(selectedDiagram);
   }, [selectedDiagram, setDiagram]);
+
+  // Selecting anything but where the panel went (on the board, say) starts over.
+  useEffect(() => {
+    if (trail.from.length > 0 && selectedId !== trail.at) setTrail({ from: [], at: null });
+  }, [selectedId, trail, setTrail]);
 
   if (!open || dbSelected || schemaOpen) return null;
   if (inMode && collapsed) return <ErPanelCollapsed onExpand={() => setCollapsed(false)} />;

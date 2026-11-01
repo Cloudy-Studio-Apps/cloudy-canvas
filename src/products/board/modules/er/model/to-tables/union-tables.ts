@@ -8,7 +8,8 @@ export function unionTables(ctx: TablesContext): void {
     if (!category) continue;
     for (const id of union.superclassIds) {
       const superclass = ctx.tables.get(ctx.tableOf.get(id) ?? "");
-      if (superclass) addForeignKey(superclass, category, category.name, { unique: true });
+      if (!superclass) continue;
+      addForeignKey(superclass, category, category.name, { unique: true, fromShape: union.id });
     }
   }
 }

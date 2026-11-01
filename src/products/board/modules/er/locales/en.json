@@ -343,26 +343,41 @@
     "aggregate": {
       "name": "Aggregation name",
       "relation": "Relation it groups",
-      "hint": "Add this aggregation as a participant of another relation to relate it like an entity."
+      "hint": "Add this aggregation as a participant of another relation to relate it like an entity.",
+      "table": "The relation always becomes its own table, so other relations can point to it."
     },
     "attributes": {
       "title": "Attributes",
       "add": "Add attribute",
-      "none": "No attributes yet."
+      "none": "No attributes yet.",
+      "hint": "Click an oval to select that attribute."
     },
     "attribute": {
       "name": "Attribute name",
-      "addPart": "Add a part (composite attribute)",
       "delete": "Delete attribute",
       "keyTitle": "Key attribute (underlined)",
       "partialTitle": "Partial key of a weak entity (dashed underline)",
       "alternateTitle": "Alternate (candidate) key (dotted underline)",
-      "multi": "Multi",
       "multiTitle": "Multivalued (double ellipse)",
-      "derived": "Derived",
       "derivedTitle": "Derived (dashed ellipse)",
-      "optional": "Opt",
-      "optionalTitle": "Optional (half-filled circle in the lollipop style)"
+      "optionalTitle": "Optional (half-filled circle in the lollipop style)",
+      "what": "What is it?",
+      "parts": "Split into parts",
+      "addPartShort": "Add a part",
+      "flag": {
+        "key": "Key",
+        "keyHint": "Identifies each row",
+        "partial": "Partial key",
+        "partialHint": "Identifies it inside its owner",
+        "alternate": "Other key",
+        "alternateHint": "Also unique",
+        "multi": "List",
+        "multiHint": "Holds several values",
+        "derived": "Calculated",
+        "derivedHint": "Worked out, never saved",
+        "optional": "Optional",
+        "optionalHint": "Can be empty"
+      }
     },
     "cardinality": {
       "minimum": "Minimum",
@@ -388,7 +403,24 @@
       "needsIt": "Relation that needs it",
       "other": "Other relation",
       "second": "Second relation",
-      "howMany": "How many times"
+      "howMany": "How many times",
+      "noTable": "This rule makes no table. Your application has to enforce it.",
+      "rule": {
+        "exclusive": "Only one",
+        "exclusiveHint": "Takes part in one of the two",
+        "inclusive": "Needs the other",
+        "inclusiveHint": "Must do the first to do the second",
+        "exclusion": "Never both",
+        "exclusionHint": "The same rows can’t be in both",
+        "inclusion": "Must exist there",
+        "inclusionHint": "Rows must already be in the first"
+      },
+      "say": {
+        "exclusive": "Each {name} takes part in only one: {first} or {second}.",
+        "inclusive": "To use {second}, a {name} must have done {first} ({min},{max}) times.",
+        "exclusion": "The same rows can’t be in both {first} and {second}.",
+        "inclusion": "Everything in {second} must also exist in {first}."
+      }
     },
     "entity": {
       "name": "Entity name",
@@ -399,7 +431,14 @@
       "addHierarchy": "Add hierarchy",
       "notInRelation": "Not in any relation yet.",
       "itsHierarchy": "▽ its hierarchy",
-      "parentHierarchy": "▽ parent's hierarchy"
+      "parentHierarchy": "▽ parent's hierarchy",
+      "kind": "Kind of entity",
+      "strong": "Strong",
+      "strongHint": "Has its own key",
+      "weakHint": "Needs another entity to be identified",
+      "color": "Color",
+      "itsUnion": "U its union",
+      "unionOf": "U union {name}"
     },
     "isa": {
       "parent": "Parent entity",
@@ -421,14 +460,25 @@
       "child": "Child entity",
       "removeChild": "Remove child",
       "addExistingChild": "Add an existing entity as a child",
-      "addExisting": "Add an existing entity…"
+      "addExisting": "Add an existing entity…",
+      "moreThanOne": "Can a {name} be more than one?",
+      "noneOfThem": "Can a {name} be none of them?",
+      "overlappingHint": "Yes, several at once",
+      "exclusiveHint": "No, only one",
+      "partialHint": "Yes, it can be none",
+      "totalHint": "No, always one of them",
+      "apart": "What tells them apart",
+      "apartHint": "Optional. A column that says which child each row is.",
+      "lineNumbers": "Numbers on the lines. Leave them empty to hide them.",
+      "list": "{first} or {last}",
+      "sayExactlyOne": "Each {name} is exactly one: {list}.",
+      "sayAtMostOne": "Each {name} is {list}, or neither. Never both.",
+      "sayAtLeastOne": "Each {name} is at least one, and can be several: {list}.",
+      "sayAny": "Each {name} can be {list}, several, or none."
     },
     "participant": {
       "entity": "Entity",
-      "key": "{name} (key)",
       "remove": "Remove from the relation",
-      "join": "Join attribute",
-      "noJoin": "Joins by: no attribute",
       "rolePlaceholder": "Role (for an entity related to itself)",
       "role": "Role",
       "arrow": "Arrow",
@@ -451,7 +501,12 @@
       "addParticipant": "Add",
       "noParticipants": "No entities take part yet.",
       "aggregateTitle": "Box this relation and its entities so it can take part in other relations",
-      "aggregate": "Make an aggregation"
+      "aggregate": "Make an aggregation",
+      "kind": "Kind of relation",
+      "identifyingHint": "Gives a weak entity its identity",
+      "associativeHint": "Acts as an entity, with its own key",
+      "iMarkHint": "Needs the other to be identified",
+      "eMarkHint": "Needs the other to exist"
     },
     "issues": "Problems",
     "union": {
@@ -460,7 +515,76 @@
       "superclasses": "Superclasses",
       "newTitle": "Create a new superclass entity",
       "remove": "Remove superclass",
-      "addExisting": "Add an existing entity as a superclass"
+      "addExisting": "Add an existing entity as a superclass",
+      "tablesTitle": "Its tables",
+      "tables": "Each one gets a new column, {column}, that can stay empty. It points to {name}."
+    },
+    "more": "More options",
+    "select": "Select {name}",
+    "back": {
+      "hierarchy": "Hierarchy",
+      "union": "Union",
+      "constraint": "Constraint"
+    },
+    "amount": {
+      "title": "How many?",
+      "hint": "Solid dot: always there. Dashed dot: optional.",
+      "each": "Each {name} has {amount} {other}",
+      "eachAlone": "Each {name} takes part {amount}",
+      "pick": "How many for {name}",
+      "zeroOrOne": "0 or 1",
+      "exactlyOne": "exactly 1",
+      "zeroOrMore": "0 or more",
+      "oneOrMore": "1 or more",
+      "other": "other",
+      "many": "many",
+      "unset": "not set",
+      "exactly": "exactly {value}",
+      "range": "{min} to {max}"
+    },
+    "join": {
+      "title": "What connects them",
+      "hint": "Click the row it connects through.",
+      "noSides": "Add two sides to see how they connect.",
+      "newTable": "{name} (new table)",
+      "link": "Both sides can have many, so a new table, {name}, saves each pair.",
+      "identifies": "{name} can’t be identified alone, so this key becomes part of its own key.",
+      "oneColumn": "{holder} gets a new column, {column}, to save which {other} it belongs to.",
+      "columns": "{holder} gets {number} new columns to save which {other} it belongs to.",
+      "required": "It must always be filled.",
+      "optional": "It can stay empty.",
+      "requiredMany": "They must always be filled.",
+      "optionalMany": "They can stay empty.",
+      "unique": "Each {name} can appear only once.",
+      "risky": "{name} can repeat, so two rows of {side} could match. The key icon is the safe choice."
+    },
+    "table": {
+      "title": "Its table",
+      "from": "from {name}",
+      "added": "added",
+      "child": "Its key comes from {parent}, so each {name} points to one {parent}.",
+      "category": "{name} gets its own key, which its superclasses point to.",
+      "noKey": "It has no key of its own, so one is added for it.",
+      "key": "Gold keys identify each {name}. A blue key points to another table.",
+      "keys": "Gold keys identify each {name} together. A blue key points to another table."
+    },
+    "effect": {
+      "title": "What it makes",
+      "board": "On the board",
+      "table": "In the table",
+      "noTable": "No column",
+      "unique": "unique",
+      "derived": "Not saved in any table. It’s worked out when needed.",
+      "multi": "Several values don’t fit in one cell, so it gets a table of its own.",
+      "parts": "Each part becomes its own column.",
+      "key": "Identifies each row, so no two can share it.",
+      "partial": "Identifies a row only together with its owner’s key.",
+      "alternate": "Not the main key, but no two rows can share it.",
+      "relation": "It describes the connection, so it’s saved with the key.",
+      "optional": "A normal column that can stay empty.",
+      "plain": "A normal column.",
+      "discriminator": "Saved only if Create tables uses “One table for all”.",
+      "notSaved": "It has no column yet."
     }
   },
   "prompt": {

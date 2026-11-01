@@ -1,13 +1,16 @@
-import { GitFork, LocateFixed } from "lucide-react";
+import { ChevronRight, GitFork } from "lucide-react";
 
 import { ER_ENTITY_COLOR, SHAPE_STROKES } from "../../../../../palette";
-import { Button, ListRow } from "@shared/ui/kit";
+import { Button, ChoiceCards, ListRow } from "@shared/ui/kit";
 import { ColorPalette, CommitInput, useEngine } from "@canvas-ui";
 import { lockedOn, useErDiagram, useErGate, useErShapes } from "../../model";
-import { FlagToggle } from "../../../../db/ui";
 import { AttributeList } from "./attribute-list";
+import { EntityTable } from "./entity-table";
 import { FormField } from "./form-field";
 import { FormSection } from "./form-section";
+import { memberName } from "./shape-label";
+import { useErGoTo } from "./use-er-go-to";
+import { FormHint } from "./visual";
 import type { EntityFormProps } from "./entity-form.types";
 import { t } from "../../../er.i18n";
 
@@ -15,14 +18,16 @@ const COLORS = [
   { name: "Red", value: ER_ENTITY_COLOR },
   ...SHAPE_STROKES.filter((c) => c.value !== "transparent" && c.value !== ER_ENTITY_COLOR),
 ];
+const ICON = "h-8 w-[52px] fill-none stroke-current stroke-[1.5]";
 
-/** An entity: name, weak, outline color, attributes, and where it's used. */
+/** An entity: name, strong or weak, outline color, its table, attributes and where it's used. */
 export function EntityForm({ entity }: EntityFormProps) {
   const engine = useEngine();
   const gate = useErGate();
-  const lock = (construct: string, on: boolean) => lockedOn(gate, construct, on);
   const er = useErDiagram();
   const shapes = useErShapes();
+  const { goTo } = useErGoTo();
+  const locked = lockedOn(gate, "weak-entities", entity.weak);
   const usedIn = [
     ...shapes.relations
       .filter((r) => r.participants.some((p) => p.entityId === entity.id))
@@ -35,6 +40,15 @@ export function EntityForm({ entity }: EntityFormProps) {
           i.parentId === entity.id
             ? t("form.entity.itsHierarchy")
             : t("form.entity.parentHierarchy"),
+      })),
+    ...shapes.unions
+      .filter((u) => u.categoryId === entity.id || u.superclassIds.includes(entity.id))
+      .map((u) => ({
+        id: u.id,
+        label:
+          u.categoryId === entity.id
+            ? t("form.entity.itsUnion")
+            : t("form.entity.unionOf", { name: memberName(shapes, u.categoryId) }),
       })),
   ];
 
@@ -50,14 +64,39 @@ export function EntityForm({ entity }: EntityFormProps) {
           }
         />
       </FormField>
-      <div className="flex items-center justify-between gap-2">
-        <FlagToggle
-          label={t("form.entity.weak")}
-          title={lock("weak-entities", entity.weak).reason || t("form.entity.weakTitle")}
-          on={entity.weak}
-          disabled={lock("weak-entities", entity.weak).disabled}
-          onToggle={() => er.edits.updateEntity(entity.id, { weak: !entity.weak })}
+      <FormSection title={t("form.entity.kind")}>
+        <ChoiceCards
+          label={t("form.entity.kind")}
+          value={entity.weak ? "weak" : "strong"}
+          onChange={(value) => er.edits.updateEntity(entity.id, { weak: value === "weak" })}
+          options={[
+            {
+              value: "strong",
+              label: t("form.entity.strong"),
+              hint: t("form.entity.strongHint"),
+              picture: (
+                <svg viewBox="0 0 52 32" className={ICON} aria-hidden>
+                  <rect x="8" y="7" width="36" height="18" />
+                </svg>
+              ),
+            },
+            {
+              value: "weak",
+              label: t("form.entity.weak"),
+              hint: t("form.entity.weakHint"),
+              disabled: locked.disabled,
+              title: locked.reason || t("form.entity.weakTitle"),
+              picture: (
+                <svg viewBox="0 0 52 32" className={ICON} aria-hidden>
+                  <rect x="6" y="5" width="40" height="22" />
+                  <rect x="10" y="9" width="32" height="14" />
+                </svg>
+              ),
+            },
+          ]}
         />
+      </FormSection>
+      <FormSection title={t("form.entity.color")}>
         <div className="flex gap-0.5">
           <ColorPalette
             colors={COLORS}
@@ -65,7 +104,10 @@ export function EntityForm({ entity }: EntityFormProps) {
             onSelect={(color) => er.edits.updateEntity(entity.id, { color })}
           />
         </div>
-      </div>
+      </FormSection>
+      <FormSection title={t("form.table.title")}>
+        <EntityTable entity={entity} />
+      </FormSection>
       <AttributeList ownerId={entity.id} />
       <FormSection
         title={t("form.entity.usedIn")}
@@ -86,16 +128,16 @@ export function EntityForm({ entity }: EntityFormProps) {
         }
       >
         {usedIn.length === 0 ? (
-          <p className="text-xs text-muted-foreground">{t("form.entity.notInRelation")}</p>
+          <FormHint>{t("form.entity.notInRelation")}</FormHint>
         ) : (
           <ul>
             {usedIn.map((item) => (
               <li key={item.id}>
                 <ListRow
                   size="md"
-                  onSelect={() => engine.focusElement(item.id)}
+                  onSelect={() => goTo(item.id)}
                   label={item.label}
-                  meta={<LocateFixed className="size-3.5" />}
+                  meta={<ChevronRight className="size-3.5" />}
                 />
               </li>
             ))}
