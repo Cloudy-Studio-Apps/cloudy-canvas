@@ -91,6 +91,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   cambios sin guardar, y los atajos de imprimir o buscar ya no abren ventanas del navegador.
 - Los archivos que sueltas en el lienzo ahora caen donde los sueltas en Mac con pantalla Retina y en
   pantallas Linux de alta resolución.
+- En macOS, Cmd+Q ahora pregunta por los cambios sin guardar y termina de guardar antes de cerrar la
+  app.
 
 ## 0.6.0 - 2026-10-29
 

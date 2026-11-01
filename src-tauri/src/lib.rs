@@ -2,6 +2,8 @@
 // so the future web version can reuse it.
 mod app_links;
 mod install_kind;
+#[cfg(target_os = "macos")]
+mod mac_menu;
 mod mcp;
 mod open_files;
 mod share;
@@ -55,6 +57,8 @@ pub fn run() {
         .setup(|app| {
             mcp::start(app.handle());
             app_links::setup(app)?;
+            #[cfg(target_os = "macos")]
+            mac_menu::setup(app)?;
             Ok(())
         })
         .build(tauri::generate_context!())
