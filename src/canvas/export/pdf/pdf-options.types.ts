@@ -7,6 +7,8 @@ export type PdfDpi = 300 | 150 | 96;
 /** `fit` sizes the page to the content; the others are paper sizes. */
 export type PdfPageSize = "fit" | "a4" | "letter" | "a3";
 export type PdfOrientation = "auto" | "portrait" | "landscape";
+/** `frames` gives each of the product's frames (a board's sections) its own page. */
+export type PdfPages = "single" | "frames";
 
 export interface PdfExportOptions {
   mode: PdfMode;
@@ -16,6 +18,7 @@ export interface PdfExportOptions {
   dpi: PdfDpi;
   page: PdfPageSize;
   orientation: PdfOrientation;
+  pages: PdfPages;
   /** Millimeters round the content on a paper size. */
   margin: number;
 }

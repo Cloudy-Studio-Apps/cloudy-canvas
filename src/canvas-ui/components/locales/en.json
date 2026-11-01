@@ -100,7 +100,8 @@
       "portrait": "Portrait",
       "landscape": "Landscape",
       "margin": "Margin",
-      "letter": "Letter"
+      "letter": "Letter",
+      "pages": "Pages"
     }
   },
   "crop": {

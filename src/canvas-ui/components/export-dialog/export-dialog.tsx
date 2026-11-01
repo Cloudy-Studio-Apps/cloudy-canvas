@@ -41,7 +41,7 @@ import { t } from "../components.i18n";
  * type a module adds (`exportFormats`, made from the whole canvas). Opened by the `export` command
  * (Ctrl+Shift+E and the context menu), on the selection when there is one.
  */
-export function ExportDialog({ name }: ExportDialogProps) {
+export function ExportDialog({ name, framePagesLabel }: ExportDialogProps) {
   const engine = useEngine();
   const hasSelection = useEngineState((state) => state.selectionCount > 0);
   const [open, setOpen] = useState(false);
@@ -71,6 +71,8 @@ export function ExportDialog({ name }: ExportDialogProps) {
   const solidOnly =
     chosen === "jpg" || chosen === "csv" || (chosen === "pdf" && pdf.mode === "flattened");
   const file = moduleFormat ?? EXPORT_FORMATS.find((f) => f.id === chosen)!;
+  const splits =
+    open && chosen === "pdf" && !!framePagesLabel && engine.pdfPageCount(exportArea) > 1;
   const note = open && moduleFormat?.note ? moduleFormat.note(engine) : null;
 
   const run = async () => {
@@ -150,6 +152,7 @@ export function ExportDialog({ name }: ExportDialogProps) {
                 <ExportPdfOptions
                   options={pdf}
                   onChange={(patch) => setPdf({ ...pdf, ...patch })}
+                  framePagesLabel={splits ? (framePagesLabel ?? null) : null}
                 />
               )}
               <ExportField label={t("export.background")} id="export-background">

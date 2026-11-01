@@ -43,6 +43,7 @@ import {
   encodeImage,
   exportElements,
   hasRows,
+  pdfPageCount,
   renderThumbnail,
   type CaptureAreaOptions,
   type ExportArea,
@@ -842,6 +843,11 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     });
     this.requestRender();
     return encodeImage(canvas, "image/jpeg", quality);
+  }
+
+  /** How many pages an area's PDF has with one for each of the product's frames. */
+  pdfPageCount(area: ExportArea): number {
+    return pdfPageCount(this.exportHost, area);
   }
 
   /** Whether an area holds elements that export as CSV (e.g. tables). */

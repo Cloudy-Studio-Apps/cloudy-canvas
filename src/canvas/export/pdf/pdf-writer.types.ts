@@ -1,3 +1,12 @@
+import type { CanvasElement } from "../../elements";
+import type { Rect } from "../../geometry.types";
+
+/** One page to write: its elements and the world area it shows. */
+export interface PdfPageSource {
+  elements: readonly CanvasElement[];
+  rect: Rect;
+}
+
 /** An affine map, as PDF and SVG write it: `a b c d e f`. */
 export type PdfMatrix = readonly [number, number, number, number, number, number];
 

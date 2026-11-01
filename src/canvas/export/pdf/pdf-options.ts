@@ -7,6 +7,7 @@ export const DEFAULT_PDF_OPTIONS: PdfExportOptions = {
   dpi: 300,
   page: "fit",
   orientation: "auto",
+  pages: "single",
   margin: 0,
 };
 

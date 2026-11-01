@@ -20,6 +20,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   same files again after any change.
 - Frame selection in Design: Ctrl+Alt+G, or the option next to Group selection, wraps the selected
   layers in a new frame around them, without changing how they look.
+- Export a PDF with one page per section on a board, or per top-level frame in a design, so large
+  files stay readable. Anything outside them goes on a last page.
 - Choose whether a frame's fill appears in exports: turn off Show in exports under Fills and the
   frame keeps its fill on the canvas, while exported files leave it out.
 

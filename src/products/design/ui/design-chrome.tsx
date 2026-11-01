@@ -16,6 +16,7 @@ import { PropertiesPanel, ShowPropertiesButton } from "./components/properties-p
 import { DesignRail } from "./components/rail";
 import { useCanvasInset } from "./hooks";
 import { useDesignPanelStore } from "./stores/design-panel-store";
+import { t } from "./design-ui.i18n";
 
 /**
  * The UI around the canvas: the rail and left panel, the properties panel, and over the canvas
@@ -35,7 +36,7 @@ export function DesignChrome() {
 
   return (
     <div className="pointer-events-none absolute inset-0">
-      <ExportDialog name={name} />
+      <ExportDialog name={name} framePagesLabel={t("export.pagePerFrame")} />
       <LiveSessionLayer />
       {!hidden && (
         <>

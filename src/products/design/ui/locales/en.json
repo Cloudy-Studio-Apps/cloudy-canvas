@@ -172,5 +172,8 @@
   "file": {
     "noun": "design",
     "untitled": "Untitled design"
+  },
+  "export": {
+    "pagePerFrame": "One page per frame"
   }
 }

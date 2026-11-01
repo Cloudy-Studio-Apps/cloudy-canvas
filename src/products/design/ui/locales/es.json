@@ -172,5 +172,8 @@
   "file": {
     "noun": "el diseño",
     "untitled": "Diseño sin título"
+  },
+  "export": {
+    "pagePerFrame": "Una página por marco"
   }
 }

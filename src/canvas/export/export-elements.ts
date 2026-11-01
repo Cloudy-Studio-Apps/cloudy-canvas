@@ -1,10 +1,11 @@
+import type { CanvasElement } from "../elements";
 import { unionRects } from "../geometry";
 import type { Rect } from "../geometry.types";
 import { canvasBlob } from "./canvas-blob";
 import { encodeCsv } from "./encode-csv";
 import { encodeWebp } from "./encode-webp";
-import type { ExportHost, ExportOptions } from "./export.types";
-import { exportPdf } from "./pdf";
+import type { ExportArea, ExportHost, ExportOptions } from "./export.types";
+import { exportPdf, pdfPageGroups } from "./pdf";
 
 /** Space around the exported elements, in world units. */
 const EXPORT_PADDING = 16;
@@ -15,7 +16,7 @@ const JPEG_QUALITY = 0.92;
 const WEBP_QUALITY = 0.92;
 
 /**
- * Exports the elements of an area as an image (PNG, JPG, WebP), a vector SVG, a PDF page (`exportPdf`) or
+ * Exports the elements of an area as an image (PNG, JPG, WebP), a vector SVG, a PDF (`exportPdf`) or
  * CSV (the elements that have rows, e.g. tables). Throws with a message for the user when there's nothing
  * to export.
  */
@@ -30,7 +31,9 @@ export async function exportElements(host: ExportHost, options: ExportOptions): 
   // Measured as they are: what a file leaves out doesn't change its size.
   const area = unionRects(found.map((el) => host.bounds(el)));
   if (!area) throw new Error("There's nothing to export.");
-  const elements = options.asShown ? found : found.map((el) => host.forExport(el));
+  const shown = (els: readonly CanvasElement[]) =>
+    options.asShown ? els : els.map((el) => host.forExport(el));
+  const elements = shown(found);
   const rect = options.rect ?? padded(area, options.padding ?? EXPORT_PADDING);
   if (options.format === "svg") {
     const svg = await host.vector(elements, {
@@ -42,7 +45,20 @@ export async function exportElements(host: ExportHost, options: ExportOptions): 
     return new Blob([svg], { type: "image/svg+xml" });
   }
   if (options.format === "pdf") {
-    return exportPdf(host, elements, rect, options.background, options.pdf);
+    const groups =
+      options.pdf?.pages === "frames" && !options.rect ? pdfPageGroups(host, found) : [];
+    const pages = groups.flatMap((group) => {
+      const bounds = unionRects(group.map((el) => host.bounds(el)));
+      return bounds
+        ? [{ elements: shown(group), rect: padded(bounds, options.padding ?? EXPORT_PADDING) }]
+        : [];
+    });
+    return exportPdf(
+      host,
+      pages.length > 0 ? pages : [{ elements, rect }],
+      options.background,
+      options.pdf,
+    );
   }
   const scale = Math.min(
     options.scale ?? DEFAULT_SCALE,
@@ -61,6 +77,11 @@ export async function exportElements(host: ExportHost, options: ExportOptions): 
   if (options.format === "png") return canvasBlob(canvas, "image/png");
   if (options.format === "webp") return encodeWebp(canvas, WEBP_QUALITY, host.webp);
   return canvasBlob(canvas, "image/jpeg", JPEG_QUALITY);
+}
+
+/** How many pages a PDF of the area has with `pages: "frames"`. */
+export function pdfPageCount(host: ExportHost, area: ExportArea): number {
+  return Math.max(pdfPageGroups(host, host.elementsOf(area)).length, 1);
 }
 
 /** Whether exporting the area as CSV would find something (an element with rows). */

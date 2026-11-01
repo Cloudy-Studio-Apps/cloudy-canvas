@@ -100,7 +100,8 @@
       "portrait": "Vertical",
       "landscape": "Horizontal",
       "margin": "Margen",
-      "letter": "Carta"
+      "letter": "Carta",
+      "pages": "Páginas"
     }
   },
   "crop": {

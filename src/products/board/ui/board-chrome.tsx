@@ -13,6 +13,7 @@ import {
 
 import { BoardToolbar } from "./components/board-toolbar";
 import { BoardTopBar } from "./components/board-top-bar";
+import { t } from "./board-ui.i18n";
 
 /**
  * UI around the canvas. Never holds canvas content — it only reflects engine UI state. With the UI
@@ -29,7 +30,7 @@ export function BoardChrome() {
       <CollaboratorLayer />
       <LiveSessionLayer />
       <CanvasContextMenu />
-      <ExportDialog name={name} />
+      <ExportDialog name={name} framePagesLabel={t("export.pagePerSection")} />
       {!hidden && (
         <>
           <div className="absolute top-3 left-3">

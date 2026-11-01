@@ -7,5 +7,5 @@ export { encodeCsv } from "./encode-csv";
 export { encodeImage } from "./encode-worker";
 export { DEFAULT_PDF_OPTIONS } from "./pdf";
 export { encodePdf, encodePdfPages } from "./encode-pdf";
-export { exportElements, hasRows } from "./export-elements";
+export { exportElements, hasRows, pdfPageCount } from "./export-elements";
 export { renderThumbnail } from "./thumbnail";

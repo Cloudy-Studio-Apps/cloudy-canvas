@@ -1,31 +1,42 @@
 import { canvasBlob } from "../canvas-blob";
 import type { ExportHost } from "../export.types";
-import type { CanvasElement } from "../../elements";
-import type { Rect } from "../../geometry.types";
 import { PdfContent, PdfDocument } from "./pdf-document";
 import { embedJpeg } from "./pdf-image";
 import { matrixOps } from "./pdf-matrix";
 import { DEFAULT_PDF_OPTIONS, PDF_JPEG_QUALITY, pdfImageScale } from "./pdf-options";
 import type { PdfExportOptions } from "./pdf-options.types";
 import { pdfPageLayout } from "./pdf-page-layout";
-import { svgToPdf } from "./svg-to-pdf";
+import { addSvgPage } from "./svg-to-pdf";
+import type { PdfPageSource } from "./pdf-writer.types";
 
 /** Keeps the image within what GPUs can render in one texture. */
 const MAX_SIDE = 8192;
 
 /**
- * Elements as a one-page PDF: `sharp` keeps them vectors, and falls back to `flattened` if that
- * fails, so an export always gives a file.
+ * Elements as a PDF of one page per `pages` entry. `sharp` keeps them vectors; a page that fails
+ * falls back to `flattened`, so an export always gives a file.
  */
 export async function exportPdf(
   host: ExportHost,
-  elements: readonly CanvasElement[],
-  rect: Rect,
+  pages: readonly PdfPageSource[],
   background: "solid" | "transparent",
   given: Partial<PdfExportOptions> = {},
 ): Promise<Blob> {
   const options = { ...DEFAULT_PDF_OPTIONS, ...given };
-  if (options.mode === "flattened") return flattened(host, elements, rect, options);
+  const doc = new PdfDocument();
+  for (const page of pages) await addPage(doc, host, page, background, options);
+  return doc.save();
+}
+
+async function addPage(
+  doc: PdfDocument,
+  host: ExportHost,
+  page: PdfPageSource,
+  background: "solid" | "transparent",
+  options: PdfExportOptions,
+): Promise<void> {
+  if (options.mode === "flattened") return addFlattened(doc, host, page, options);
+  const { elements, rect } = page;
   try {
     const svg = await host.vector(elements, {
       rect,
@@ -35,20 +46,20 @@ export async function exportPdf(
       target: "pdf",
       imageScale: pdfImageScale(options.dpi),
     });
-    return await svgToPdf(svg, rect, options);
+    await addSvgPage(doc, svg, rect, options);
   } catch (error) {
     console.warn("Sharp PDF failed, exporting it flattened:", error);
-    return flattened(host, elements, rect, options);
+    await addFlattened(doc, host, page, options);
   }
 }
 
 /** The elements as one JPEG on the page. */
-async function flattened(
+async function addFlattened(
+  doc: PdfDocument,
   host: ExportHost,
-  elements: readonly CanvasElement[],
-  rect: Rect,
+  { elements, rect }: PdfPageSource,
   options: PdfExportOptions,
-): Promise<Blob> {
+): Promise<void> {
   const canvas = await host.snapshot(elements, {
     rect,
     scale: Math.min(pdfImageScale(options.dpi), MAX_SIDE / Math.max(rect.w, rect.h)),
@@ -56,7 +67,6 @@ async function flattened(
     links: host.createLinks(),
   });
   const jpeg = await canvasBlob(canvas, "image/jpeg", PDF_JPEG_QUALITY[options.imageQuality]);
-  const doc = new PdfDocument();
   const image = embedJpeg(doc, new Uint8Array(await jpeg.arrayBuffer()), canvas);
   const layout = pdfPageLayout(rect, options);
   const { scale, left, top } = layout;
@@ -66,5 +76,5 @@ async function flattened(
   content.ops.push(
     `q ${matrixOps([w, 0, 0, h, left, top - h])} cm /${content.name("XObject", image)} Do Q`,
   );
-  return doc.save(layout, content);
+  doc.addPage(layout, content);
 }

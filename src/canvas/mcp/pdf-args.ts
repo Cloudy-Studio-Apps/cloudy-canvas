@@ -8,6 +8,7 @@ const QUALITIES = ["high", "balanced", "small"] as const;
 const PAGES = ["fit", "a4", "letter", "a3"] as const;
 const ORIENTATIONS = ["auto", "portrait", "landscape"] as const;
 const DPIS = [300, 150, 96] as const;
+const PAGE_SPLITS = ["single", "frames"] as const;
 
 /** The `pdf` argument of agents' export tools: the Export dialog's PDF options. */
 export const PDF_ARG_SCHEMA = {
@@ -25,6 +26,11 @@ export const PDF_ARG_SCHEMA = {
     page: { enum: PAGES, description: "fit sizes the page to the content (the default)." },
     orientation: { enum: ORIENTATIONS },
     margin: { type: "number", description: "Millimeters, on a paper size." },
+    pages: {
+      enum: PAGE_SPLITS,
+      description:
+        "single is one page (the default). frames gives each board section or design top-level frame its own page, then a last page for what's in none.",
+    },
   },
 };
 
@@ -47,6 +53,7 @@ export function pdfArg(args: ToolArgs): Partial<PdfExportOptions> {
     page: optionalChoice(pdf, "page", PAGES),
     orientation: optionalChoice(pdf, "orientation", ORIENTATIONS),
     margin,
+    pages: optionalChoice(pdf, "pages", PAGE_SPLITS),
   };
   return Object.fromEntries(Object.entries(options).filter(([, value]) => value !== undefined));
 }

@@ -49,6 +49,8 @@ export interface ExportHost {
   bounds(el: CanvasElement): Rect;
   /** The element as files show it (see `ElementKind.forExport`). */
   forExport(el: CanvasElement): CanvasElement;
+  /** The product's frames, in order (see `CanvasProduct.frames`), which PDFs can give a page each. */
+  frames(): readonly CanvasElement[];
   /** The element's grid of texts for CSV, or `null` (see `ElementKind.rows`). */
   rows(el: CanvasElement): string[][] | null;
   /** Encodes WebP where the canvas can't (see `encodeWebp`). */

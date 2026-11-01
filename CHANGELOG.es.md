@@ -22,6 +22,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   en el archivo, así que puedes volver a generar los mismos archivos tras cualquier cambio.
 - Enmarcar selección en los diseños: Ctrl+Alt+G, o la opción junto a Agrupar selección, envuelve las
   capas seleccionadas en un marco nuevo a su alrededor, sin cambiar cómo se ven.
+- Exporta un PDF con una página por sección en una pizarra, o por marco principal en un diseño, para
+  que los archivos grandes se sigan leyendo bien. Lo que quede fuera va en una última página.
 - Elige si el relleno de un marco aparece al exportar: desactiva Mostrar en exportaciones en Rellenos
   y el marco conserva su relleno en el lienzo, mientras que los archivos exportados lo omiten.
 

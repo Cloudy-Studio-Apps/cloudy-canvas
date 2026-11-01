@@ -37,6 +37,9 @@ export class PdfContent {
 /** A PDF file's objects, written out with their cross-reference table. */
 export class PdfDocument {
   private readonly objects: Uint8Array[] = [];
+  private readonly pages: number[] = [];
+  /** The page tree's number, reserved by the first page because pages point back at it. */
+  private tree: number | null = null;
 
   /** Adds an object from its body (a dictionary, an array…) and returns its number. */
   add(body: string): number {
@@ -62,17 +65,27 @@ export class PdfDocument {
     return this.stream(entries, zlibSync(strToU8(content.ops.join("\n"))));
   }
 
-  /** The whole file, of one page showing `content`. */
-  save({ width, height }: PdfPageLayout, content: PdfContent): Blob {
+  /** Adds a page showing `content`, after the ones so far. */
+  addPage({ width, height }: PdfPageLayout, content: PdfContent): void {
+    this.tree ??= this.add("null");
     const stream = this.content("", content);
-    const pages = this.objects.length + 1;
-    const page = this.add(
-      `<< /Type /Page /Parent ${pages + 1} 0 R ` +
-        `/MediaBox [0 0 ${pdfNumber(width)} ${pdfNumber(height)}] ` +
-        `/Contents ${stream} 0 R /Resources ${content.resources()} >>`,
+    this.pages.push(
+      this.add(
+        `<< /Type /Page /Parent ${this.tree} 0 R ` +
+          `/MediaBox [0 0 ${pdfNumber(width)} ${pdfNumber(height)}] ` +
+          `/Contents ${stream} 0 R /Resources ${content.resources()} >>`,
+      ),
     );
-    const tree = this.add(`<< /Type /Pages /Kids [${page} 0 R] /Count 1 >>`);
-    const catalog = this.add(`<< /Type /Catalog /Pages ${tree} 0 R >>`);
+  }
+
+  /** The whole file, of the pages added. */
+  save(): Blob {
+    if (this.tree === null) throw new Error("A PDF needs at least one page.");
+    const kids = this.pages.map((page) => `${page} 0 R`).join(" ");
+    this.objects[this.tree - 1] = strToU8(
+      `<< /Type /Pages /Kids [${kids}] /Count ${this.pages.length} >>`,
+    );
+    const catalog = this.add(`<< /Type /Catalog /Pages ${this.tree} 0 R >>`);
     return this.file(catalog);
   }
 

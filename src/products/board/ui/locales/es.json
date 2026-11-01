@@ -31,5 +31,8 @@
   },
   "sourceEditor": {
     "lineError": "Línea {line}: {message}"
+  },
+  "export": {
+    "pagePerSection": "Una página por sección"
   }
 }

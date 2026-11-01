@@ -9,13 +9,13 @@ import type {
   PdfPageSize,
   PdfText,
 } from "@canvas";
-import { Button, NumberInput, SegmentedControl, SelectField } from "@shared/ui/kit";
+import { Button, CheckboxField, NumberInput, SegmentedControl, SelectField } from "@shared/ui/kit";
 import type { ExportPdfOptionsProps } from "./export-dialog.types";
 import { ExportField } from "./export-field";
 import { t } from "../components.i18n";
 
 /** A PDF's options: its type and text with what they mean as tooltips, the rest folded away. */
-export function ExportPdfOptions({ options, onChange }: ExportPdfOptionsProps) {
+export function ExportPdfOptions({ options, onChange, framePagesLabel }: ExportPdfOptionsProps) {
   const [more, setMore] = useState(false);
   const sharp = options.mode === "sharp";
   const modes: { value: PdfMode; label: string; title: string }[] = [
@@ -70,6 +70,15 @@ export function ExportPdfOptions({ options, onChange }: ExportPdfOptionsProps) {
             options={texts}
             onChange={(text) => onChange({ text })}
             fullWidth
+          />
+        </ExportField>
+      )}
+      {framePagesLabel && (
+        <ExportField label={t("export.pdf.pages")}>
+          <CheckboxField
+            label={framePagesLabel}
+            checked={options.pages === "frames"}
+            onChange={(on) => onChange({ pages: on ? "frames" : "single" })}
           />
         </ExportField>
       )}
