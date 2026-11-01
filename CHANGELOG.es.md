@@ -93,6 +93,7 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   pantallas Linux de alta resolución.
 - En macOS, Cmd+Q ahora pregunta por los cambios sin guardar y termina de guardar antes de cerrar la
   app.
+- Pellizcar en el trackpad de un Mac ahora hace zoom en el lienzo donde está el puntero.
 
 ## 0.6.0 - 2026-10-29
 

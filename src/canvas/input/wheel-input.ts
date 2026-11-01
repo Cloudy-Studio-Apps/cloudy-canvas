@@ -10,7 +10,10 @@ const PAGE_HEIGHT_PX = 100;
 const MAX_ZOOM_DELTA = 30;
 const ZOOM_SENSITIVITY = 0.01;
 
-/** Wheel pans; Ctrl/Cmd + wheel (and trackpad pinch, which arrives the same way) zooms at the cursor. */
+/**
+ * Wheel pans; Ctrl/Cmd + wheel zooms at the cursor, as does a trackpad pinch in Chromium, which
+ * arrives the same way (WebKit sends gestures instead, see `bindPinch`).
+ */
 export function bindWheel(
   disposables: Disposables,
   canvas: HTMLCanvasElement,

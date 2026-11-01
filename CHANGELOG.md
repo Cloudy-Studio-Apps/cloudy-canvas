@@ -83,6 +83,7 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - Files dropped on the canvas now land where you drop them on Retina Macs and high-resolution Linux
   screens.
 - On macOS, Cmd+Q now asks about unsaved changes and finishes saving before the app quits.
+- Pinching on a Mac trackpad now zooms the canvas at the pointer.
 
 ## 0.6.0 - 2026-10-29
 

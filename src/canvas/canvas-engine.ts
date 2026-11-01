@@ -62,6 +62,7 @@ import { rectCenter, rectsIntersect } from "./geometry";
 import type { Point, Rect } from "./geometry.types";
 import {
   bindKeyboard,
+  bindPinch,
   bindWheel,
   EdgeAutoPan,
   Keymap,
@@ -1532,6 +1533,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     });
     pointer.bind(this.disposables);
     bindWheel(this.disposables, canvas, this.camera, () => this.onUserCameraChange());
+    bindPinch(this.disposables, canvas, this.camera, () => this.onUserCameraChange());
     bindKeyboard(this.disposables, {
       pointer,
       keymap: this.keymap,
