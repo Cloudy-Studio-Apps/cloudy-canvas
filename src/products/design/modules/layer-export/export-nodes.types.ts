@@ -1,10 +1,17 @@
 import type { DesignNode, NodeExport } from "../core";
 
+export interface PlanExportOptions {
+  /** What a layer without rows exports as. */
+  fallback?: NodeExport;
+  /** The folder a layer's files go in. */
+  folderOf?: (node: DesignNode) => string;
+}
+
 /** One file a layer's exports will make. */
 export interface PlannedExport {
   node: DesignNode;
   row: NodeExport;
-  /** Its file name, unique among the planned files. */
+  /** Its path, unique among the planned files. */
   path: string;
 }
 

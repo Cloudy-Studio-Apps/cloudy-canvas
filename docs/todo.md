@@ -2,7 +2,7 @@
 
 ## Exports
 
-SVG, sharp PDFs, one PDF page per section or frame, WebP, export rows, Mermaid, `.dbml` files and design tokens are done. Nothing else is planned for now.
+SVG, sharp PDFs, one PDF page per section or frame, WebP, export rows, Mermaid, `.dbml` files, design tokens, Copy as SVG and Export all are done. Nothing else is planned for now.
 
 ### PDF, later
 

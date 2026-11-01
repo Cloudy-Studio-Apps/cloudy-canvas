@@ -18,5 +18,19 @@
   "failed": "No se pudo exportar",
   "saveError": "No se pudo guardar la exportación",
   "done_one": "{count} archivo exportado",
-  "done_other": "{count} archivos exportados"
+  "done_other": "{count} archivos exportados",
+  "all": {
+    "command": "Exportar todo…",
+    "title": "Exportar todo",
+    "description": "Las capas con ajustes de exportación usan los suyos. Los demás marcos usan el ajuste predeterminado de abajo.",
+    "scope": "Qué exportar",
+    "thisPage": "Esta página",
+    "allPages": "Todas las páginas",
+    "defaults": "Predeterminado para marcos sin ajustes de exportación",
+    "default": "Predeterminado",
+    "action_one": "Exportar {count} archivo",
+    "action_other": "Exportar {count} archivos",
+    "empty": "Nada que exportar",
+    "emptyHint": "No hay marcos ni capas con ajustes de exportación."
+  }
 }

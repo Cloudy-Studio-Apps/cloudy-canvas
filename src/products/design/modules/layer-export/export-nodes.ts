@@ -1,21 +1,29 @@
 import { layerNameOf, type DesignNode } from "../core";
 import type { DesignWorkspace } from "../../design-engine.types";
 import { uniqueFileName } from "./export-file-name";
-import type { PlannedExport, RenderedExport } from "./export-nodes.types";
+import type { PlanExportOptions, PlannedExport, RenderedExport } from "./export-nodes.types";
 
-/** What the layers' exports will make, each with its file name, in their order. */
+/**
+ * What the layers' exports will make, each with its file name, in their order. A layer without rows
+ * makes nothing, or `fallback`'s file; `folderOf` puts a layer's files in a folder, where names
+ * only have to be unique.
+ */
 export function plannedExports(
   workspace: Pick<DesignWorkspace, "kinds">,
   nodes: readonly DesignNode[],
+  { fallback, folderOf }: PlanExportOptions = {},
 ): PlannedExport[] {
-  const used = new Set<string>();
+  const usedIn = new Map<string, Set<string>>();
   return nodes.flatMap((node) => {
     const layer = layerNameOf(node, workspace.kinds);
-    return node.exports.map((row) => ({
-      node,
-      row,
-      path: uniqueFileName(layer, row.suffix, row.format, used),
-    }));
+    const folder = folderOf?.(node) ?? "";
+    const used = usedIn.get(folder) ?? new Set<string>();
+    usedIn.set(folder, used);
+    const rows = node.exports.length > 0 ? node.exports : fallback ? [fallback] : [];
+    return rows.map((row) => {
+      const name = uniqueFileName(layer, row.suffix, row.format, used);
+      return { node, row, path: folder ? `${folder}/${name}` : name };
+    });
   });
 }
 

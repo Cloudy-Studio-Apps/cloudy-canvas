@@ -26,6 +26,7 @@ export const CATALOG_ALLOWED_COMMANDS: readonly string[] = [
   "save",
   "saveAs",
   "export",
+  "layerExport.all",
   "toggleUi",
   "toggleLeftPanel",
   "toggleRightPanel",

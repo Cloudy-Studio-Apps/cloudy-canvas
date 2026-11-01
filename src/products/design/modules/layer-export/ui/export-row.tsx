@@ -50,9 +50,11 @@ export function ExportRow({ row, onChange, onRemove }: ExportRowProps) {
         options={TYPE_OPTIONS}
         onChange={(format) => onChange({ ...row, format })}
       />
-      <PanelIconButton label={t("remove")} onClick={onRemove}>
-        <Minus />
-      </PanelIconButton>
+      {onRemove && (
+        <PanelIconButton label={t("remove")} onClick={onRemove}>
+          <Minus />
+        </PanelIconButton>
+      )}
     </div>
   );
 }

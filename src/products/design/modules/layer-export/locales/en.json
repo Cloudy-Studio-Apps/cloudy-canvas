@@ -18,5 +18,19 @@
   "failed": "Couldn't export",
   "saveError": "Couldn't save the export",
   "done_one": "Exported {count} file",
-  "done_other": "Exported {count} files"
+  "done_other": "Exported {count} files",
+  "all": {
+    "command": "Export all…",
+    "title": "Export all",
+    "description": "Layers with export settings use them. The other frames use the default below.",
+    "scope": "What to export",
+    "thisPage": "This page",
+    "allPages": "All pages",
+    "defaults": "Default for frames with no export settings",
+    "default": "Default",
+    "action_one": "Export {count} file",
+    "action_other": "Export {count} files",
+    "empty": "Nothing to export",
+    "emptyHint": "This has no frames or layers with export settings."
+  }
 }

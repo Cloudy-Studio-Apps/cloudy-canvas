@@ -12,8 +12,20 @@ export function uniqueFileName(
   extension: string,
   used: Set<string>,
 ): string {
-  const base = layer.replace(UNSAFE_CHARS, "_").trim() || "layer";
-  const end = `${suffix.replace(UNSAFE_CHARS, "_")}.${extension}`;
+  const base = safeName(layer) || "layer";
+  return uniqueName(base, `${safeName(suffix)}.${extension}`, used);
+}
+
+/** A folder name no other has, by the same rules: a taken one is numbered. */
+export function uniqueFolderName(name: string, used: Set<string>): string {
+  return uniqueName(safeName(name) || "page", "", used);
+}
+
+function safeName(name: string): string {
+  return name.replace(UNSAFE_CHARS, "_").trim();
+}
+
+function uniqueName(base: string, end: string, used: Set<string>): string {
   for (let n = 1; ; n++) {
     const name = n === 1 ? `${base}${end}` : `${base} ${n}${end}`;
     if (!used.has(name.toLowerCase())) {

@@ -38,6 +38,9 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   keeps working.
 - Copy as SVG: copy your selection on a board or in a design as SVG code, from the right-click menu,
   and paste it straight into your code or into other design tools.
+- Export all in Design: from the main menu, export every frame of a page or the whole file into a
+  folder or a ZIP. Layers with their own export settings use them, and the rest use the default you
+  choose. With all pages, each page gets its own folder.
 
 ### Improved
 
