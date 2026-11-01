@@ -20,10 +20,80 @@
         }
       } catch (_) {}
     </script>
+    <style>
+      /* Self-contained: in dev the app's CSS only arrives with its JS. The tokens come from the
+         cached theme above; the first run has none, so it uses the default light background. */
+      #splash {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        background: var(--background, #fff);
+      }
+      /* One 22-frame strip, moved by a transform: the compositor keeps that running while the
+         app's code loads, when a <video> or a requested image doesn't draw. */
+      #splash .splash-clip {
+        width: 240px;
+        height: 240px;
+        overflow: hidden;
+        border-radius: 6px;
+      }
+      #splash .splash-clip img {
+        display: block;
+        width: 240px;
+        height: 5280px;
+        will-change: transform;
+        animation: splash-clip 4.4s steps(22, end) infinite;
+      }
+      #splash .splash-bar {
+        width: 224px;
+        height: 4px;
+        overflow: hidden;
+        border-radius: 2px;
+        background: var(--muted, #e8e8ec);
+      }
+      #splash .splash-bar div {
+        width: 33%;
+        height: 100%;
+        background: var(--primary, #8a8a94);
+        animation: splash-bar 1.2s ease-in-out infinite;
+      }
+      @keyframes splash-clip {
+        to {
+          transform: translateY(-100%);
+        }
+      }
+      @keyframes splash-bar {
+        from {
+          transform: translateX(-100%);
+        }
+        to {
+          transform: translateX(300%);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #splash .splash-clip img,
+        #splash .splash-bar div {
+          animation: none;
+        }
+      }
+    </style>
   </head>
 
   <body>
-    <div id="root"></div>
+    <!-- The splash: React replaces it on its first render, so it needs no code of the app. -->
+    <div id="root">
+      <div id="splash">
+        <div class="splash-clip">
+          <!-- scripts/vite/inline-splash-plugin.ts writes the data URL. -->
+          <img src="__SPLASH_STRIP__" alt="" decoding="sync" />
+        </div>
+        <div class="splash-bar"><div></div></div>
+      </div>
+    </div>
     <script type="module" src="/src/app/main.tsx"></script>
   </body>
 </html>

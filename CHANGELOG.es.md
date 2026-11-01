@@ -27,6 +27,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Mejoras
 
+- La aplicación ahora muestra una pantalla de inicio con la foca watona mientras arranca, en lugar
+  de una ventana vacía.
 - El cursor y la selección de un agente ahora se desvanecen unos segundos después de que deja de
   trabajar, para no estorbar en lo que estás haciendo. Vuelven en cuanto retoma el trabajo.
 

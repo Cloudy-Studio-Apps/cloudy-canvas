@@ -25,6 +25,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### Improved
 
+- The app now shows a splash screen with the foca watona while it starts, instead of an empty
+  window.
 - An agent's cursor and selection now fade away a few seconds after it stops working, so they don't
   get in the way of what you're doing. They come back as soon as it starts again.
 
