@@ -1,4 +1,4 @@
-import { createPortal } from "react-dom";
+import { DragGhost } from "@canvas-ui";
 
 import type { DropIndicatorProps } from "./drop-indicator.types";
 
@@ -27,16 +27,7 @@ export function DropIndicator({ drag, metrics }: DropIndicatorProps) {
           <span className="h-0.5 flex-1 bg-primary" />
         </div>
       )}
-      {createPortal(
-        <div
-          aria-hidden
-          className="pointer-events-none fixed z-50 max-w-48 truncate rounded-md border bg-surface px-2 py-0.5 text-xs text-foreground shadow-sm"
-          style={{ left: drag.pointer.x + 14, top: drag.pointer.y + 10 }}
-        >
-          {drag.label}
-        </div>,
-        document.body,
-      )}
+      <DragGhost label={drag.label} pointer={drag.pointer} />
     </>
   );
 }

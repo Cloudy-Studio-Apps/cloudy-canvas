@@ -11,6 +11,7 @@ export type * from "./file";
 export type * from "./images";
 export type * from "./components/export-dialog";
 export type * from "./components/overwrite-dialog";
+export type * from "./components/row-drag";
 export type * from "./components/image-crop";
 export type * from "./components/image-quality-note";
 export type { AnchorPickerProps } from "./components/anchor-picker.types";
@@ -126,6 +127,13 @@ export {
   useStoreState,
 } from "./share";
 export type { CanvasEngineHost } from "./use-canvas-engine.types";
+export {
+  DragGhost,
+  edgeScrollStep,
+  rowDropIndex,
+  rowDropLine,
+  useRowDrag,
+} from "./components/row-drag";
 export { useCanvasFileDrop } from "./use-canvas-file-drop";
 export { useCopyAs } from "./use-copy-as";
 export { useDocumentMeta } from "./use-document-meta";

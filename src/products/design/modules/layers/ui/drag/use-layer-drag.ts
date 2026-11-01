@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react";
 
 import { MOVE_THRESHOLD_PX, type CanvasElement } from "@canvas";
+import { edgeScrollStep } from "@canvas-ui";
 import {
   holdsLayers,
   layerNameOf,
@@ -17,10 +18,6 @@ import { layerDrop } from "./layer-drop";
 import type { LayerDragOptions, LayerDragState } from "./layer-drop.types";
 import { t } from "../../layers.i18n";
 
-/** How close to the list's top or bottom edge (px) the pointer scrolls it while dragging. */
-const SCROLL_EDGE = 28;
-/** The fastest it scrolls, in px per frame. */
-const SCROLL_SPEED = 14;
 /** How long (ms) dragging over a closed layer's middle takes to open it. */
 const EXPAND_DELAY = 600;
 
@@ -94,15 +91,8 @@ export function useLayerDrag(options: LayerDragOptions): {
         frame = requestAnimationFrame(autoScroll);
         const scroller = latest.current.scroll.current;
         if (!session || !scroller) return;
-        const box = scroller.getBoundingClientRect();
-        const near =
-          pointer.y < box.top + SCROLL_EDGE
-            ? -(box.top + SCROLL_EDGE - pointer.y)
-            : pointer.y > box.bottom - SCROLL_EDGE
-              ? pointer.y - (box.bottom - SCROLL_EDGE)
-              : 0;
-        if (near === 0) return;
-        const step = Math.sign(near) * Math.min(SCROLL_SPEED, Math.ceil(Math.abs(near) / 2));
+        const step = edgeScrollStep(pointer.y, scroller.getBoundingClientRect());
+        if (step === 0) return;
         const before = scroller.scrollTop;
         scroller.scrollTop += step;
         if (scroller.scrollTop !== before) update();
