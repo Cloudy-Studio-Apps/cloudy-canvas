@@ -1,16 +1,25 @@
-import { BoxSelect, FileCode, LayoutGrid, ListChecks, Plus, Table2 } from "lucide-react";
+import {
+  BoxSelect,
+  FileCode,
+  FileOutput,
+  LayoutGrid,
+  ListChecks,
+  Plus,
+  Table2,
+} from "lucide-react";
 
 import { rectCenter } from "@canvas";
 import { useEngine, type ModeToolbarEntry } from "@canvas-ui";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
 import { useErDiagram, useErModel, useErQuery } from "../model";
 import { diagramShapeIds } from "../er-panel/diagram-shape-ids";
+import { useErMermaidStore } from "../er-mermaid";
 import { useErToTablesStore } from "../er-to-tables";
 import { t } from "../../er.i18n";
 
 /**
  * The ER mode's toolbar items: a new diagram, selecting and re-laying out the shown one, its
- * text, its check (with the number of errors and warnings) and its tables. The element types are
+ * text, its check (with the number of errors and warnings), its tables and its Mermaid. The element types are
  * in the palette at the left edge.
  */
 export function useErToolbarItems(): readonly ModeToolbarEntry[] {
@@ -70,6 +79,13 @@ export function useErToolbarItems(): readonly ModeToolbarEntry[] {
       label: t("toolbar.createTables"),
       description: t("toolbar.createTablesHint"),
       icon: Table2,
+      disabled: none,
+    },
+    {
+      run: () => useErMermaidStore.getState().open(diagram.id),
+      label: t("toolbar.mermaid"),
+      description: t("toolbar.mermaidHint"),
+      icon: FileOutput,
       disabled: none,
     },
   ];

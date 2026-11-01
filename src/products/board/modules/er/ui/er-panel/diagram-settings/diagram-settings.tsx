@@ -1,8 +1,9 @@
-import { ChevronLeft, Table2 } from "lucide-react";
+import { ChevronLeft, FileOutput, Table2 } from "lucide-react";
 
 import { erNotation, erStandard } from "../../../base/er-notation";
 import { Button, ChoiceCards } from "@shared/ui/kit";
 import { useErDiagram, useErQuery } from "../../model";
+import { useErMermaidStore } from "../../er-mermaid";
 import { useErToTablesStore } from "../../er-to-tables";
 import { FormSection } from "../forms/form-section";
 import { ER_SETTING_CHOICES } from "./diagram-setting-choices";
@@ -97,6 +98,17 @@ export function ErDiagramSettings() {
         >
           <Table2 />
           {t("settings.createTables")}
+        </Button>
+      </FormSection>
+      <FormSection title={t("settings.export")}>
+        <Button
+          variant="secondary"
+          size="sm"
+          className="w-full"
+          onClick={() => useErMermaidStore.getState().open(diagram.id)}
+        >
+          <FileOutput />
+          {t("settings.mermaid")}
         </Button>
       </FormSection>
       {ER_SETTING_CHOICES.map((choice) => (

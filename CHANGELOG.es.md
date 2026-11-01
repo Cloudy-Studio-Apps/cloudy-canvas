@@ -26,6 +26,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   que los archivos grandes se sigan leyendo bien. Lo que quede fuera va en una última página.
 - Elige si el relleno de un marco aparece al exportar: desactiva Mostrar en exportaciones en Rellenos
   y el marco conserva su relleno en el lienzo, mientras que los archivos exportados lo omiten.
+- Lleva tus diagramas a archivos Markdown: exporta un diagrama ER o un esquema de base de datos como
+  un bloque Mermaid y pégalo en un README, una wiki o una nota. Los diagramas ER conservan sus
+  entidades, relaciones y atributos, y GitHub, GitLab, Notion y Obsidian los dibujan por ti. Lo
+  encontrarás en la barra de herramientas del modo ER y en Exportar código.
 
 ### Mejoras
 

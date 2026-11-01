@@ -77,6 +77,10 @@ format`; single mode: `prisma/<table>.prisma` with the model and its enums. Type
      `@ManyToOne` + `@JoinColumn`, `@OneToMany`, `@OneToOne`, `@ManyToMany` + `@JoinTable`,
      `@Index`), `create-`/`update-<name>.dto.ts` with `class-validator` and `PartialType`
      (`write-dto.ts`) and string enums in `src/common/enums/`.
+   - `mermaid/`: an `erDiagram` in a fenced block for Markdown files, in `schema.md` (single mode:
+     `<table>.md`, with its relations). `writeErDiagram` quotes every name, since words like `class`
+     break Mermaid's parser, and cleans column names and types to the words it accepts; an enum's
+     values go in the column's comment and relations are labeled with their foreign key.
    - `mongodb/`: one `schema.mongodb.js` for `mongosh` (single mode: `<table>.mongodb.js`):
      `createCollection` with a `$jsonSchema` validator per table (`bson-type-map.ts`; `required`
      from not null, enums as `enum`, nullable as `[type, "null"]`), then unique indexes for the

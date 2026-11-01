@@ -34,6 +34,15 @@ export const erTools: BoardMcpTool[] = [
       diagramArg(requireBoard(host).engine.service(ER_MODEL), args, false).text(),
   },
   {
+    name: "get_er_mermaid",
+    description:
+      "One ER diagram as a fenced Mermaid flowchart block, ready to paste into a Markdown file: " +
+      "the board's Chen shapes and labels, placed by Mermaid. Nothing changes on the board.",
+    inputSchema: DIAGRAM_ONLY,
+    run: (host, args) =>
+      diagramArg(requireBoard(host).engine.service(ER_MODEL), args, false).mermaid(),
+  },
+  {
     name: "apply_er_text",
     description:
       "Replaces one ER diagram with this text as one undo step. Entities, relations and " +

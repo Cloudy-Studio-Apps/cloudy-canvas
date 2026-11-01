@@ -3,9 +3,14 @@ import { Network } from "lucide-react";
 import type { ModuleHost } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
 import { isErElement } from "./base";
-import { CONVERT_TO_ENTITY_COMMAND, CREATE_TABLES_COMMAND } from "./er.commands";
+import {
+  CONVERT_TO_ENTITY_COMMAND,
+  CREATE_TABLES_COMMAND,
+  EXPORT_MERMAID_COMMAND,
+} from "./er.commands";
 import { canConvert, type ErRelationElement } from "./relation";
 import { useConvertCommand } from "./ui/er-convert";
+import { ErMermaidDialog, useExportMermaidCommand } from "./ui/er-mermaid";
 import { ErPanel } from "./ui/er-panel";
 import { ErQuickAddMenu } from "./ui/er-quick-add";
 import { ErRelationPrompt } from "./ui/er-relation-prompt";
@@ -13,8 +18,8 @@ import { ErToTablesDialog, useCreateTablesCommand } from "./ui/er-to-tables";
 import { t } from "./er.i18n";
 
 /**
- * The toolbar button, the ER panel, ER to tables, Convert to entity, the quick-add menu and the
- * relation prompt.
+ * The toolbar button, the ER panel, ER to tables, Mermaid, Convert to entity, the quick-add menu
+ * and the relation prompt.
  */
 export function registerErSections(host: ModuleHost): void {
   // ER to tables: the dialog, its command (context menu) and the panel and toolbar buttons.
@@ -23,6 +28,11 @@ export function registerErSections(host: ModuleHost): void {
   host.contribute(boardEditor.sessionHooks, {
     id: "er.createTables",
     use: useCreateTablesCommand,
+  });
+  host.contribute(boardEditor.overlays, { id: "er.mermaid", component: ErMermaidDialog });
+  host.contribute(boardEditor.sessionHooks, {
+    id: "er.exportMermaid",
+    use: useExportMermaidCommand,
   });
   host.contribute(boardEditor.contextMenu, {
     id: "er",
@@ -40,6 +50,12 @@ export function registerErSections(host: ModuleHost): void {
       {
         command: CREATE_TABLES_COMMAND,
         label: t("menu.createTables"),
+        enabled: (_context, engine) =>
+          engine.selectedIds().some((id) => isErElement(engine.getElement(id))),
+      },
+      {
+        command: EXPORT_MERMAID_COMMAND,
+        label: t("menu.exportMermaid"),
         enabled: (_context, engine) =>
           engine.selectedIds().some((id) => isErElement(engine.getElement(id))),
       },

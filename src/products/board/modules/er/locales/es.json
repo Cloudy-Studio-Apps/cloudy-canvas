@@ -32,11 +32,13 @@
   },
   "commands": {
     "createTables": "Crear tablas desde el diagrama",
-    "convertToEntity": "Convertir la relación en entidad"
+    "convertToEntity": "Convertir la relación en entidad",
+    "exportMermaid": "Exportar el diagrama como Mermaid"
   },
   "menu": {
     "convertToEntity": "Convertir en entidad",
-    "createTables": "Crear tablas…"
+    "createTables": "Crear tablas…",
+    "exportMermaid": "Exportar como Mermaid…"
   },
   "modeCommands": {
     "addEntity": "Añadir una entidad",
@@ -126,7 +128,9 @@
     "checkCount": "Revisar diagrama ({count})",
     "checkHint": "El estándar del diagrama y lo que incumple sus reglas, en el panel ER.",
     "createTables": "Crear tablas",
-    "createTablesHint": "Convierte el diagrama mostrado en tablas de base de datos."
+    "createTablesHint": "Convierte el diagrama mostrado en tablas de base de datos.",
+    "mermaid": "Mermaid",
+    "mermaidHint": "Obtén el diagrama mostrado como Mermaid, para archivos Markdown."
   },
   "palette": {
     "group": "Elementos ER",
@@ -218,7 +222,9 @@
     "check": "Revisión",
     "checkCount": "Revisión ({count})",
     "tables": "Tablas",
-    "createTables": "Crear tablas…"
+    "createTables": "Crear tablas…",
+    "export": "Exportar",
+    "mermaid": "Exportar como Mermaid…"
   },
   "list": {
     "pick": "Elige un diagrama para ver sus ajustes o selecciona una de sus formas en la pizarra.",
@@ -536,5 +542,16 @@
   "viewer": {
     "er": "Diagramas ER",
     "all": "Todos los diagramas"
+  },
+  "mermaid": {
+    "title": "Mermaid de {label}",
+    "description": "Pega este bloque en un archivo Markdown. GitHub, GitLab, Notion y Obsidian lo dibujan como un diagrama, con las mismas formas y etiquetas, pero con su propia disposición.",
+    "code": "Bloque Mermaid",
+    "copy": "Copiar",
+    "copied": "Bloque Mermaid copiado",
+    "copyError": "No se pudo copiar el bloque Mermaid",
+    "saved": "Archivo Markdown guardado",
+    "saveError": "No se pudo guardar el archivo Markdown",
+    "fileType": "Archivo Markdown"
   }
 }

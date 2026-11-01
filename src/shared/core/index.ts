@@ -20,6 +20,7 @@ export type * from "./sticker-library.types";
 export * from "./stickers";
 export type * from "./storage.types";
 export * from "./links";
+export * from "./markdown-block";
 export * from "./modules";
 export * from "./plugins";
 export * from "./fonts";

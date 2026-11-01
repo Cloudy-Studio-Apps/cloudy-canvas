@@ -2,14 +2,12 @@
 
 ## Exports
 
-SVG, sharp PDFs, one PDF page per section or frame, WebP and export rows are done. What's left, in the suggested order. The small Board formats don't depend on anything,
-so any of them can go first.
+SVG, sharp PDFs, one PDF page per section or frame, WebP, export rows, Mermaid and `.dbml` files are done. What's left, in the suggested order.
 
 | Format                                        | Product | Why it's useful                                                       | Effort          |
 | --------------------------------------------- | ------- | --------------------------------------------------------------------- | --------------- |
 | Design tokens (JSON, CSS variables, Tailwind) | Design  | Gets variables into code; today they only leave as a PDF              | Small to medium |
 | Markdown outline                              | Board   | Turns sections, stickies and text from a workshop or retro into notes | Small           |
-| Mermaid and DBML                              | Board   | Puts diagrams and schemas into READMEs and developer tools            | Small to medium |
 
 ### PDF, later
 

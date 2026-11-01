@@ -24,6 +24,10 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   files stay readable. Anything outside them goes on a last page.
 - Choose whether a frame's fill appears in exports: turn off Show in exports under Fills and the
   frame keeps its fill on the canvas, while exported files leave it out.
+- Put your diagrams in Markdown files: export an ER diagram or a database schema as a Mermaid block
+  and paste it into a README, wiki or note. ER diagrams keep their entities, relations and attributes,
+  and GitHub, GitLab, Notion and Obsidian draw them for you. Find it in the ER mode's toolbar and in
+  Export code.
 
 ### Improved
 

@@ -4,6 +4,7 @@ import { ER_DEFAULTS } from "../base/er.defaults";
 import { ER_FILL_COLOR, INK_COLOR, MUTED_INK_COLOR } from "../../../palette";
 import type { ErRelationElement } from "./relation.types";
 import { cardinalityRatio } from "./cardinality-ratio";
+import { dependencyLetter } from "./dependency-letter";
 import { erNotation } from "../base/er-notation";
 
 const RATIO_FONT_SIZE = 12;
@@ -76,10 +77,4 @@ export function drawErRelation(
     label.position.set(w / 4 - label.width - 2, h / 4 - label.height - 2);
   }
   view.pruneTextSlots(keep);
-}
-
-/** "I" for dependency by identification, "E" by existence ("I E" for both, which Check reports). */
-function dependencyLetter(shape: ErRelationElement): string {
-  if (shape.idMark && shape.existenceMark) return "I E";
-  return shape.idMark ? "I" : shape.existenceMark ? "E" : "";
 }

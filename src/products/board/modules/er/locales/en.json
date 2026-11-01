@@ -32,11 +32,13 @@
   },
   "commands": {
     "createTables": "Create tables from the diagram",
-    "convertToEntity": "Convert the relation to an entity"
+    "convertToEntity": "Convert the relation to an entity",
+    "exportMermaid": "Export the diagram as Mermaid"
   },
   "menu": {
     "convertToEntity": "Convert to entity",
-    "createTables": "Create tables…"
+    "createTables": "Create tables…",
+    "exportMermaid": "Export as Mermaid…"
   },
   "modeCommands": {
     "addEntity": "Add an entity",
@@ -126,7 +128,9 @@
     "checkCount": "Check diagram ({count})",
     "checkHint": "The diagram's standard and what breaks its rules, in the ER panel.",
     "createTables": "Create tables",
-    "createTablesHint": "Turn the shown diagram into database tables."
+    "createTablesHint": "Turn the shown diagram into database tables.",
+    "mermaid": "Mermaid",
+    "mermaidHint": "Get the shown diagram as Mermaid, for Markdown files."
   },
   "palette": {
     "group": "ER elements",
@@ -218,7 +222,9 @@
     "check": "Check",
     "checkCount": "Check ({count})",
     "tables": "Tables",
-    "createTables": "Create tables…"
+    "createTables": "Create tables…",
+    "export": "Export",
+    "mermaid": "Export as Mermaid…"
   },
   "list": {
     "pick": "Pick a diagram to see its settings, or select one of its shapes on the board.",
@@ -536,5 +542,16 @@
   "viewer": {
     "er": "ER diagrams",
     "all": "All diagrams"
+  },
+  "mermaid": {
+    "title": "Mermaid for {label}",
+    "description": "Paste this block into a Markdown file. GitHub, GitLab, Notion and Obsidian draw it as a diagram, with the same shapes and labels but their own layout.",
+    "code": "Mermaid block",
+    "copy": "Copy",
+    "copied": "Mermaid block copied",
+    "copyError": "The Mermaid block couldn't be copied",
+    "saved": "Markdown file saved",
+    "saveError": "The Markdown file couldn't be saved",
+    "fileType": "Markdown file"
   }
 }

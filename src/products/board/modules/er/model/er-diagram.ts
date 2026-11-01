@@ -1,4 +1,5 @@
 import type { CanvasDocument, ElementPatch } from "@canvas";
+import { markdownCodeBlock } from "@shared/core";
 
 import type { ErElementBase, ErNotation } from "../base/er.types";
 import { addMissingEntities } from "./add-missing-entities";
@@ -8,6 +9,7 @@ import { ErEdits } from "./er-edits";
 import { allErShapes, erShapes, placedErShapes } from "./er-shapes";
 import { parseEr, serializeEr, serializeErBlocks, type ErShapes, type TextRange } from "./lang";
 import { layoutAll } from "./layout";
+import { erToMermaid } from "./mermaid";
 import { placeAt } from "./position-layout";
 import { reconcileEr } from "./reconcile-er";
 import type { ErApplyOptions, ErApplyResult } from "./reconcile-er.types";
@@ -40,6 +42,9 @@ export class ErDiagram {
   shapes = (): ErShapes => erShapes(this.doc, this.id);
 
   text = (): string => serializeEr(this.shapes());
+
+  /** The diagram as a fenced Mermaid block, ready to paste into a Markdown file. */
+  mermaid = (): string => markdownCodeBlock("mermaid", erToMermaid(this.shapes()));
 
   /** Where the shape (or, for an attribute, its owner) is written in `text()`. */
   textRange = (shapeId: string): TextRange | null => {
