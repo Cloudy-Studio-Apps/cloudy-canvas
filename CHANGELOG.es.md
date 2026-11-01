@@ -89,6 +89,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   también funciona en macOS.
 - En Windows, F5, Ctrl+R y Actualizar en el menú contextual ya no recargan la app ni pierden los
   cambios sin guardar, y los atajos de imprimir o buscar ya no abren ventanas del navegador.
+- Los archivos que sueltas en el lienzo ahora caen donde los sueltas en Mac con pantalla Retina y en
+  pantallas Linux de alta resolución.
 
 ## 0.6.0 - 2026-10-29
 

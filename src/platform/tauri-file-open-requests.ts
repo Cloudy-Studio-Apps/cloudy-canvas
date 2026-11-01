@@ -1,9 +1,15 @@
 import { invoke, isTauri } from "@tauri-apps/api/core";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import { getCurrentWebview } from "@tauri-apps/api/webview";
+import type { PhysicalPosition } from "@tauri-apps/api/dpi";
 import { readFile } from "@tauri-apps/plugin-fs";
 
-import { baseNameFromPath, type FileDrop, type FileOpenRequests } from "@shared/core";
+import {
+  baseNameFromPath,
+  isWindowsPlatform,
+  type FileDrop,
+  type FileOpenRequests,
+} from "@shared/core";
 
 /** Files from the OS (`src-tauri/src/open_files.rs`) and files dropped on the webview, read from disk. */
 export class TauriFileOpenRequests implements FileOpenRequests {
@@ -21,15 +27,14 @@ export class TauriFileOpenRequests implements FileOpenRequests {
     if (!isTauri()) return () => {};
     const unlisten = getCurrentWebview().onDragDropEvent((event) => {
       if (event.payload.type !== "drop" || event.payload.paths.length === 0) return;
-      // Tauri reports the position in physical pixels of the webview.
-      const at = event.payload.position.toLogical(window.devicePixelRatio);
+      const at = dropPoint(event.payload.position);
       handler({
         files: event.payload.paths.map((path) => ({
           name: baseNameFromPath(path),
           path,
           read: () => readFile(path),
         })),
-        at: { x: at.x, y: at.y },
+        at,
       });
     });
     return unlistenAll(unlisten);
@@ -44,6 +49,16 @@ export class TauriFileOpenRequests implements FileOpenRequests {
     });
     return unlistenAll(unlisten);
   }
+}
+
+/**
+ * Where a drop landed in CSS pixels. Tauri calls the position physical, but only Windows reports
+ * physical pixels: macOS and GTK report logical points already.
+ */
+function dropPoint(position: PhysicalPosition): { x: number; y: number } {
+  if (!isWindowsPlatform()) return { x: position.x, y: position.y };
+  const { x, y } = position.toLogical(window.devicePixelRatio);
+  return { x, y };
 }
 
 /** Tauri's listeners resolve their unlisten functions later; this unlistens whenever they arrive. */
