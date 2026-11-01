@@ -106,6 +106,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   Canvas con doble clic. Los Mac en español ahora abren la app en español.
 - Exportar capas con nombres de archivos del sistema de Windows, como CON, ya no falla, y el
   selector de fuentes de macOS ya no muestra fuentes ocultas del sistema.
+- El lienzo ahora se recupera solo cuando se reinicia el controlador gráfico, por ejemplo al
+  despertar de la suspensión.
 
 ## 0.6.0 - 2026-10-29
 

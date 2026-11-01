@@ -1563,6 +1563,14 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     resizeObserver.observe(container);
     this.disposables.add(() => resizeObserver.disconnect());
 
+    // Pixi rebuilds its GL objects; the engine renders on demand, so nothing would draw them.
+    const contextRestored = () => {
+      this.refreshElements(this.scene.elements.map((el) => el.id));
+      this.requestRender();
+    };
+    canvas.addEventListener("webglcontextrestored", contextRestored);
+    this.disposables.add(() => canvas.removeEventListener("webglcontextrestored", contextRestored));
+
     watchPixelRatio(this.disposables, (ratio) => {
       this.renderer.setPixelRatio(ratio);
       this.renderer.setTextZoom(this.camera.zoom);

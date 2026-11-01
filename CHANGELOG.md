@@ -95,6 +95,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   double click. Macs set to Spanish now open the app in Spanish.
 - Exporting layers named like Windows system files, such as CON, no longer fails, and the macOS font
   picker no longer lists hidden system fonts.
+- The canvas now comes back by itself after the graphics driver resets, for example after waking
+  from sleep.
 
 ## 0.6.0 - 2026-10-29
 
