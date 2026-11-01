@@ -23,6 +23,7 @@ import {
   type FileType,
   type Storage,
 } from "@shared/core";
+import { renameWithRetry } from "./rename-with-retry";
 import type { IndexEdit } from "./tauri-storage.types";
 
 /** Recent files index, kept in the app data folder. */
@@ -216,7 +217,7 @@ export class TauriStorage implements Storage {
     await mkdir(await appDataDir(), { recursive: true });
     const path = await indexPath(INDEX_FILE);
     await writeTextFile(`${path}.tmp`, JSON.stringify(files.slice(0, MAX_RECENTS), null, 2));
-    await rename(`${path}.tmp`, path);
+    await renameWithRetry(`${path}.tmp`, path);
   }
 }
 
@@ -250,7 +251,7 @@ function fileEntry(
 /** Writes beside the file and swaps it in, so a failed save never leaves half a file. */
 async function writeAtomic(path: string, data: Uint8Array): Promise<void> {
   await writeFile(`${path}.tmp`, data);
-  await rename(`${path}.tmp`, path);
+  await renameWithRetry(`${path}.tmp`, path);
 }
 
 /** Deletes a draft's file; a failure only leaves a stray file in the drafts folder. */

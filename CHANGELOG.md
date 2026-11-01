@@ -90,6 +90,7 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   macOS.
 - Dropping a picture on the color wizard now works in the desktop app.
 - The canvas stays sharp when you move the window to a screen with different scaling.
+- Saving no longer fails when antivirus or a sync app such as OneDrive briefly holds the file.
 
 ## 0.6.0 - 2026-10-29
 

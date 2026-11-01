@@ -100,6 +100,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   y macOS.
 - Soltar una imagen en el asistente de color ahora funciona en la app de escritorio.
 - El lienzo se mantiene nítido cuando mueves la ventana a una pantalla con otra escala.
+- Guardar ya no falla cuando un antivirus o una app de sincronización como OneDrive retiene el
+  archivo un momento.
 
 ## 0.6.0 - 2026-10-29
 
