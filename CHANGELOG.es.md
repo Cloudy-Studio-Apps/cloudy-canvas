@@ -29,6 +29,9 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 - La aplicación ahora muestra una pantalla de inicio con la foca watona mientras arranca, en lugar
   de una ventana vacía.
+- La aplicación arranca mucho más rápido: Inicio se abre primero y las pizarras y los diseños se
+  cargan detrás, así que están listos cuando abres uno. Si usas plugins, estos se siguen cargando
+  antes de que aparezca Inicio.
 - El cursor y la selección de un agente ahora se desvanecen unos segundos después de que deja de
   trabajar, para no estorbar en lo que estás haciendo. Vuelven en cuanto retoma el trabajo.
 

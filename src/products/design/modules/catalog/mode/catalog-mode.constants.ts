@@ -1,5 +1,5 @@
 /** The Catalog mode's id (`engine.setMode`, `EngineState.mode`, `?mode=catalog` links). */
-export const CATALOG_MODE_ID = "catalog";
+export { CATALOG_MODE_ID } from "@shared/core";
 /** The tool the mode starts with: it selects pages, never moves or resizes them. */
 export const CATALOG_TOOL = "catalog";
 /** The tool that ticks the frames the brochure uses (the "Pick frames" button). */

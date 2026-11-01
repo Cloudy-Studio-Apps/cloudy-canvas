@@ -31,7 +31,8 @@
   },
   "starters": {
     "title": "Empieza desde",
-    "label": "Nuevo archivo de tipo {type} desde «{name}»"
+    "label": "Nuevo archivo de tipo {type} desde «{name}»",
+    "failed": "No se pudieron cargar las plantillas"
   },
   "drop": {
     "title": "Suelta para abrir",

@@ -1,7 +1,7 @@
 import { useLayoutEffect, useMemo, useRef } from "react";
 import { X } from "lucide-react";
-import { SiYoutube } from "react-icons/si";
 
+import { YOUTUBE_LOGO_PATH } from "../embed-icons";
 import { embedLayout } from "../embed.layout";
 import { embedOf } from "../embed-preview";
 import { openExternal } from "@platform";
@@ -56,7 +56,9 @@ export function EmbedPlayerFrame({ elementId, onClose }: EmbedPlayerFrameProps) 
     <div ref={frameRef} className="pointer-events-auto absolute top-0 left-0 z-20">
       <div className="absolute right-0 bottom-full mb-1.5 flex gap-1">
         <Button variant="secondary" size="sm" className="shadow-soft" onClick={openOnYoutube}>
-          <SiYoutube />
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d={YOUTUBE_LOGO_PATH} />
+          </svg>
           {t("player.openYoutube")}
         </Button>
         <Button

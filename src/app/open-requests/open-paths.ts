@@ -1,5 +1,3 @@
-import { importFigJamWithLoading } from "@board/ui";
-import { importFigmaWithLoading } from "@design/ui";
 import { figmaImportOf, fileNameFromPath, isOpenablePath, type FileType } from "@shared/core";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 import { notifyError, toast } from "@shared/stores/toast-store";
@@ -25,8 +23,14 @@ export function openPaths(paths: string[]): void {
 
 /** How each kind of Figma file is imported: a FigJam file as a board, a Figma file as a design. */
 const IMPORTERS: Record<FileType, FigmaImporter> = {
-  board: { run: importFigJamWithLoading, failed: t("files.figjamFailed") },
-  design: { run: importFigmaWithLoading, failed: t("files.figmaFailed") },
+  board: {
+    run: (path) => import("@board/ui").then((ui) => ui.importFigJamWithLoading(path)),
+    failed: t("files.figjamFailed"),
+  },
+  design: {
+    run: (path) => import("@design/ui").then((ui) => ui.importFigmaWithLoading(path)),
+    failed: t("files.figmaFailed"),
+  },
 };
 
 async function openPath(path: string): Promise<void> {

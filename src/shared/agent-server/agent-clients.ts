@@ -1,4 +1,6 @@
 import { Orbit, SquareTerminal } from "lucide-react";
+
+import type { AgentClient } from "./agent-clients.types";
 import {
   siClaude,
   siClaudecode,
@@ -9,9 +11,7 @@ import {
   siOpencode,
   siWindsurf,
   siZedindustries,
-} from "simple-icons";
-
-import type { AgentClient } from "./agent-clients.types";
+} from "./brand-icons";
 import { t } from "./agent-server.i18n";
 
 /** The name agents list the server under. */

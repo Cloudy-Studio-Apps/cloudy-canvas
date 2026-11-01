@@ -31,7 +31,8 @@
   },
   "starters": {
     "title": "Start from",
-    "label": "New {type} from “{name}”"
+    "label": "New {type} from “{name}”",
+    "failed": "The starters couldn't be loaded"
   },
   "drop": {
     "title": "Drop to open",

@@ -26,5 +26,10 @@
   },
   "mcp": {
     "toolLeftOut": "Se omitió una herramienta de agente"
+  },
+  "products": {
+    "loadFailed": "No se pudo cargar una parte de la aplicación",
+    "opening": "Abriendo",
+    "openingHint": "Un momento…"
   }
 }

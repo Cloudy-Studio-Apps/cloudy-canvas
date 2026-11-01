@@ -1,8 +1,9 @@
 import type { LucideIcon } from "lucide-react";
-import type { SimpleIcon } from "simple-icons";
+
+import type { BrandIcon } from "./brand-icons.types";
 
 /** An app's logo: a brand icon (drawn in its color) or a Lucide icon for apps without one. */
-export type AgentClientIcon = SimpleIcon | LucideIcon;
+export type AgentClientIcon = BrandIcon | LucideIcon;
 
 /** An agent app (MCP client) and how to point it at the agent server. */
 export interface AgentClient {

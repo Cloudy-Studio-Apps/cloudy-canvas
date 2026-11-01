@@ -1,7 +1,12 @@
-import { resolveTheme, themeCss, themeRegistry, type ThemeDensity } from "@shared/core";
+import {
+  EXPORT_THEME_SCOPE,
+  resolveTheme,
+  themeCss,
+  themeRegistry,
+  type ThemeDensity,
+} from "@shared/core";
 import { THEME_CSS_KEY } from "@shared/stores/theme-store";
 import type { ActiveTheme } from "@shared/ui/theme";
-import { EXPORT_THEME_SCOPE } from "@canvas-ui";
 
 /** The `<style>` the theme is written into; index.html creates it from the cache before paint. */
 const STYLE_ID = "cloudy-theme";

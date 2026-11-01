@@ -2,6 +2,12 @@ import { DENSITY_METRICS, DENSITY_PADDING } from "./theme-density";
 import type { ResolvedTheme, ThemeDensity, ThemeTokens } from "./theme.types";
 
 /**
+ * The class of an element that shows the base theme whatever theme the app is in: the colors
+ * exports and thumbnails are drawn with, so files don't depend on the user's theme.
+ */
+export const EXPORT_THEME_SCOPE = "theme-export-scope";
+
+/**
  * The CSS that applies `theme` inside `scope`: `:root` for the app (written stronger than
  * tokens.css's own rules, so it wins whatever order the sheets load in), or a class for an element
  * that must look like another theme (exports' canvas colors). Product tokens apply inside

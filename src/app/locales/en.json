@@ -26,5 +26,10 @@
   },
   "mcp": {
     "toolLeftOut": "An agent tool was left out"
+  },
+  "products": {
+    "loadFailed": "Part of the app couldn't be loaded",
+    "opening": "Opening",
+    "openingHint": "One moment…"
   }
 }

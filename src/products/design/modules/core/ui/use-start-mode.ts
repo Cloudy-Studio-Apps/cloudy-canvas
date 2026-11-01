@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router";
 
 import { useCanvasFile } from "@canvas-ui";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
-import { useDesignModeStore } from "@design/ui/stores/design-mode-store";
+import { useDesignModeStore } from "@shared/stores/design-mode-store";
 
 /** The link's query parameter naming the mode a design opens in (`/design/<id>?mode=catalog`). */
 const MODE_PARAM = "mode";

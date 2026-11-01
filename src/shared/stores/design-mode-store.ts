@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { DEFAULT_MODE } from "@canvas";
+import { DEFAULT_MODE_ID } from "@shared/core";
 import type { DesignModeState } from "./design-mode-store.types";
 
 /** The mode each design was left in (e.g. Catalog), so it opens in it again. UI state only. */
@@ -11,9 +11,9 @@ export const useDesignModeStore = create<DesignModeState>()(
       modes: {},
       remember: (fileId, mode) =>
         set(({ modes }) => {
-          if ((modes[fileId] ?? DEFAULT_MODE.id) === mode) return {};
+          if ((modes[fileId] ?? DEFAULT_MODE_ID) === mode) return {};
           const next = { ...modes };
-          if (mode === DEFAULT_MODE.id) delete next[fileId];
+          if (mode === DEFAULT_MODE_ID) delete next[fileId];
           else next[fileId] = mode;
           return { modes: next };
         }),

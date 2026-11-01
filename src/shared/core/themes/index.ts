@@ -7,6 +7,6 @@ export { groupThemeFamilies } from "./group-theme-families";
 export { matchThemeFamily } from "./match-theme-family";
 export { readThemeDefinition } from "./read-theme-definition";
 export { resolveTheme } from "./resolve-theme";
-export { themeCss } from "./theme-css";
+export { EXPORT_THEME_SCOPE, themeCss } from "./theme-css";
 export { ThemeRegistry, themeRegistry } from "./theme-registry";
 export { isThemeToken, THEME_TOKEN_NAMES } from "./theme-tokens";

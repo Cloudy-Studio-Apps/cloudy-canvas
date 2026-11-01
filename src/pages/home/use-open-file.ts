@@ -1,8 +1,6 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router";
 
-import { importFigJamWithLoading } from "@board/ui";
-import { importFigmaWithLoading } from "@design/ui";
 import { openCanvasFileDialog } from "@platform";
 import { figmaImportOf } from "@shared/core";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
@@ -24,9 +22,9 @@ export function useOpenFile(): () => Promise<void> {
       const imported = figmaImportOf(path);
       const file =
         imported === "board"
-          ? await importFigJamWithLoading(path)
+          ? await import("@board/ui").then((ui) => ui.importFigJamWithLoading(path))
           : imported === "design"
-            ? await importFigmaWithLoading(path)
+            ? await import("@design/ui").then((ui) => ui.importFigmaWithLoading(path))
             : await recents.open(path);
       recents.upsert(file);
       await navigate(`/${file.type}/${file.id}`);

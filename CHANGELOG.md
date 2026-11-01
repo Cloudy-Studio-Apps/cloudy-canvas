@@ -27,6 +27,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 - The app now shows a splash screen with the foca watona while it starts, instead of an empty
   window.
+- The app starts much faster: Home opens first, and boards and designs load behind it, so they are
+  ready by the time you open one. If you use plugins, they still load before Home appears.
 - An agent's cursor and selection now fade away a few seconds after it stops working, so they don't
   get in the way of what you're doing. They come back as soon as it starts again.
 

@@ -1,48 +1,16 @@
 import { useEffect } from "react";
 
-import { handleMcpMessage, type McpServerDefinition } from "@shared/core";
+import { handleMcpMessage } from "@shared/core";
 import { agentChannel } from "@platform";
-import { setAgentToolCatalog } from "@shared/agent-server";
 import { useAgentServerStore } from "@shared/stores/agent-server-store";
-import { useCollaboratorsStore } from "@shared/stores/collaborators-store";
-import { agentHostFor, openFile } from "./agent-host";
-import { presenceKey } from "./agent-presence-key";
-import { createAgentPresenceSource } from "./agent-presence-source";
-import { createAgentServerDefinition } from "./agent-server-definition";
-import { agentToolCatalog } from "./agent-tool-catalog";
-import { createUndoNotes } from "./agent-undo-notes";
-
-// The agent menu lists the tools agents see.
-setAgentToolCatalog(agentToolCatalog);
+import { notifyError } from "@shared/stores/toast-store";
+import { t } from "../app.i18n";
 
 /** How often agents that went silent are forgotten. */
 const PRUNE_INTERVAL_MS = 30_000;
 
-/** What the user undid or redid of each agent's work, for its next reply. */
-const undoNotes = createUndoNotes();
-
-/** Agents as collaborators, shown in the app; they work on the board or design open in the window. */
-const presence = createAgentPresenceSource({
-  openFile,
-  sink: useCollaboratorsStore.getState(),
-  read: (id) => useCollaboratorsStore.getState().collaborators[id],
-  all: () => Object.values(useCollaboratorsStore.getState().collaborators),
-  notes: undoNotes,
-});
-
-let server: McpServerDefinition | null = null;
-
-/**
- * The server agents see, made on the first request: by then the plugins have loaded, so their
- * tools are listed too. Each call runs in its agent's own workspace.
- */
-function agentServer(): McpServerDefinition {
-  server ??= createAgentServerDefinition(
-    (context) => agentHostFor(presenceKey(context)),
-    (context) => undoNotes.take(presenceKey(context)),
-  );
-  return server;
-}
+/** The side of the server that needs the products. */
+const loadRuntime = () => import("./agent-runtime");
 
 /** Answers agents' MCP requests from the platform's local endpoint while the app runs. */
 export function useAgentServer(): void {
@@ -53,7 +21,13 @@ export function useAgentServer(): void {
   }, [enabled]);
 
   useEffect(() => {
-    const timer = setInterval(() => presence.prune(Date.now()), PRUNE_INTERVAL_MS);
+    const prune = () =>
+      loadRuntime().then(
+        ({ presence }) => presence.prune(Date.now()),
+        // Whoever needed it first has said so.
+        () => {},
+      );
+    const timer = setInterval(() => void prune(), PRUNE_INTERVAL_MS);
     return () => clearInterval(timer);
   }, []);
 
@@ -64,13 +38,17 @@ export function useAgentServer(): void {
     let disposed = false;
     void channel
       .listen(({ id, body, session, userAgent, ended }) => {
-        if (ended) {
-          if (session) presence.leave(session);
-          return;
-        }
-        void handleMcpMessage(body, agentServer(), { session, userAgent }, presence).then((reply) =>
-          channel.reply(id, reply.body, reply.session),
-        );
+        loadRuntime()
+          .then(async ({ agentServer, presence }) => {
+            if (ended) {
+              if (session) presence.leave(session);
+              return;
+            }
+            const context = { session, userAgent };
+            const reply = await handleMcpMessage(body, agentServer(), context, presence);
+            await channel.reply(id, reply.body, reply.session);
+          })
+          .catch((error: unknown) => notifyError(t("products.loadFailed"), error));
       })
       .then((unlisten) => {
         if (disposed) unlisten();

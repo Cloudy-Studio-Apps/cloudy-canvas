@@ -1,4 +1,4 @@
-import { CATALOG_MODE_ID } from "@design";
+import { CATALOG_MODE_ID } from "@shared/core";
 import { CreateTile } from "./create-tile";
 import { FileKindIcon } from "./file-kind-icon";
 import type { CreateTilesProps } from "./create-tiles.types";

@@ -29,7 +29,8 @@ export type * from "./starters";
 export type * from "./stickers";
 export type * from "./thumbnails";
 export { createActiveFile, useAgentFile } from "./agent";
-export { EXPORT_THEME_SCOPE, readCanvasTheme, readExportCanvasTheme } from "./canvas-theme";
+export { EXPORT_THEME_SCOPE } from "@shared/core";
+export { readCanvasTheme, readExportCanvasTheme } from "./canvas-theme";
 export { useStartStarter } from "./starters";
 export { StickerWheel } from "./stickers";
 export {

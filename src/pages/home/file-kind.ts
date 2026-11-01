@@ -1,9 +1,8 @@
 import { useCallback } from "react";
 import { BookOpen } from "lucide-react";
 
-import { CATALOG_MODE_ID } from "@design";
-import { useDesignModeStore } from "@design/ui";
-import type { FileInfo } from "@shared/core";
+import { CATALOG_MODE_ID, type FileInfo } from "@shared/core";
+import { useDesignModeStore } from "@shared/stores/design-mode-store";
 import type { FileTypeStyle } from "@shared/ui/components/file-type-icon.types";
 import type { HomeFileKind } from "./file-kind.types";
 import { t } from "./home.i18n";
