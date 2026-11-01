@@ -9,6 +9,7 @@ import { DEFAULT_PDF_OPTIONS } from "./pdf-options";
 import type { PdfExportOptions } from "./pdf-options.types";
 import { pdfPageLayout } from "./pdf-page-layout";
 import type { PdfBookOptions, PdfBookPage } from "./pdf-book.types";
+import { markPdfX } from "./print/pdf-x";
 import { cropMarkOps } from "./print/print-layout";
 
 /**
@@ -25,6 +26,8 @@ export class PdfBook {
   constructor({ host, ...options }: PdfBookOptions) {
     this.host = host;
     this.options = { ...DEFAULT_PDF_OPTIONS, ...options };
+    const color = this.options.print?.color;
+    if (color) markPdfX(this.doc, color);
   }
 
   async add({ ids, rect, prepare }: PdfBookPage): Promise<void> {

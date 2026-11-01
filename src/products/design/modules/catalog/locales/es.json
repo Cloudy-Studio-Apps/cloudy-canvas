@@ -105,7 +105,9 @@
       "blank": "Va una página en blanco antes {reason}.",
       "oddSize": "Mide {w} × {h} mm; las páginas miden {pw} × {ph} mm."
     },
-    "page": "Página {page}"
+    "page": "Página {page}",
+    "noProfile": "CMYK necesita el perfil de tu imprenta: cárgalo en la sección Impresión.",
+    "stopsAtEdge": "«{name}» termina en el borde de la página: alárgalo {bleed} mm más allá para que no se vea una línea tras el corte."
   },
   "settings": {
     "quality": {

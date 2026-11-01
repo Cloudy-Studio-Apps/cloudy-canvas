@@ -105,7 +105,9 @@
       "blank": "A blank page goes before it {reason}.",
       "oddSize": "It's {w} × {h} mm; the pages are {pw} × {ph} mm."
     },
-    "page": "Page {page}"
+    "page": "Page {page}",
+    "noProfile": "CMYK needs your print shop's profile: load it in the Print section.",
+    "stopsAtEdge": "“{name}” stops at the page edge: run it {bleed} mm past it, so no line shows after cutting."
   },
   "settings": {
     "quality": {

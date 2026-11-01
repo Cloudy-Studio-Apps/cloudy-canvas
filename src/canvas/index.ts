@@ -39,6 +39,7 @@ export type {
   PdfImageQuality,
   PdfMode,
   PdfPrintColor,
+  PdfXStandard,
   PdfOrientation,
   PdfPageSize,
   PdfText,

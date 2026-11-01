@@ -50,6 +50,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   texto, las formas, los degradados y las imágenes se convierten con él, mientras que el texto negro
   puro se imprime solo con tinta negra. El perfil se queda en el archivo, así que puedes volver a
   exportar el mismo folleto en cualquier momento.
+- Los folletos CMYK ahora se exportan como PDF/X para las imprentas: PDF/X-4 con el tipo Nítido y
+  PDF/X-1a con Imagen, cada uno con el perfil de impresión dentro. Las comprobaciones avisan si un
+  folleto CMYK no tiene perfil y si una capa termina justo en el borde, y Mostrar márgenes también
+  dibuja el sangrado.
 
 ### Mejoras
 

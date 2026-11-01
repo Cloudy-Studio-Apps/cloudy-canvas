@@ -8,6 +8,7 @@ import { mmToUnits } from "../model";
 export function printOptions(
   settings: BrochureSettings,
   asset: (id: string) => Uint8Array | undefined,
+  title: string,
 ): Partial<PdfExportOptions> {
   return {
     mode: settings.pdfMode,
@@ -16,17 +17,24 @@ export function printOptions(
     print: {
       bleed: mmToUnits(settings.bleed),
       marks: settings.cropMarks,
-      color: printColor(settings, asset),
+      color: printColor(settings, asset, title),
     },
   };
 }
 
 function printColor(
-  { colorMode, printProfile, renderingIntent }: BrochureSettings,
+  { colorMode, pdfMode, printProfile, renderingIntent }: BrochureSettings,
   asset: (id: string) => Uint8Array | undefined,
+  title: string,
 ): PdfPrintColor | null {
   if (colorMode === "rgb") return null;
   const profile = printProfile && asset(printProfile.assetId);
   if (!profile) throw new Error(t("print.noProfile"));
-  return { profile, intent: renderingIntent };
+  return {
+    profile,
+    profileName: printProfile.name,
+    intent: renderingIntent,
+    standard: pdfMode === "sharp" ? "x4" : "x1a",
+    title,
+  };
 }

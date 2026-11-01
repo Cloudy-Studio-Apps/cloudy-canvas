@@ -24,7 +24,9 @@ export async function exportBrochure(
   if (pages.length === 0) throw new Error("The brochure has no pages yet.");
   const settings = brochure.settings();
   const printed = printedPages(pages, brochure.layout(), settings.splitSpreads);
-  const book = workspace.pdfBook(printOptions(settings, (id) => workspace.doc.getAsset(id)));
+  const book = workspace.pdfBook(
+    printOptions(settings, (id) => workspace.doc.getAsset(id), brochure.name),
+  );
   const bleed = mmToUnits(settings.bleed);
   const scope = workspace.scope;
   try {

@@ -47,6 +47,9 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - Export brochures in true CMYK: load your print shop's .icc profile in the Print section, and text,
   shapes, gradients and pictures are converted with it, while pure black text prints on black ink
   alone. The profile stays in the file, so the same brochure can be exported again at any time.
+- CMYK brochures now export as PDF/X for print shops: PDF/X-4 from the Sharp PDF type, and PDF/X-1a
+  from Image, each with the print profile inside. The checks warn when a CMYK brochure has no profile
+  and when a layer stops exactly at the page edge, and Show margins also draws the bleed.
 
 ### Improved
 

@@ -1,10 +1,25 @@
 import type { RenderingIntent } from "@shared/core";
 
+/** The PDF/X a file is: X-4 keeps live transparency, X-1a has none, as its flat pages. */
+export type PdfXStandard = "x4" | "x1a";
+
 /** The press a file is converted for. */
 export interface PdfPrintColor {
   /** The `.icc` file. */
   profile: Uint8Array;
+  profileName: string;
   intent: RenderingIntent;
+  standard: PdfXStandard;
+  /** The document's title. */
+  title: string;
+}
+
+/** What a PDF/X-4 file's XMP says. */
+export interface PdfXmpFields {
+  title: string;
+  producer: string;
+  date: Date;
+  id: string;
 }
 
 /** What a page going to press has round its trim, in world units. */

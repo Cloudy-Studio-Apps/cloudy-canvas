@@ -48,6 +48,7 @@ export function BrochureCanvasLayer() {
   const picking = tool === CATALOG_PICK_TOOL;
   const ticked = new Set(selectedIds);
   const target = selection.kind === "page" ? selection.page : pages.at(-1);
+  const bleed = mmToUnits(settings.bleed);
   const inset = mmToUnits(settings.margin);
 
   return (
@@ -73,9 +74,18 @@ export function BrochureCanvasLayer() {
           w: frame.w - inset * 2,
           h: frame.h - inset * 2,
         };
+        const bled = {
+          x: frame.x - bleed,
+          y: frame.y - bleed,
+          w: frame.w + bleed * 2,
+          h: frame.h + bleed * 2,
+        };
         return (
           <span key={frame.id}>
             {margins && printed && <MarginGuide rect={engine.worldRectToScreen(safe)} />}
+            {margins && printed && bleed > 0 && (
+              <MarginGuide rect={engine.worldRectToScreen(bled)} />
+            )}
             <PageBadge rect={rect} label={label} printed={printed} />
           </span>
         );

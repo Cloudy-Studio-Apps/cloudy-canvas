@@ -30,7 +30,7 @@ export const brochureReadTools: DesignMcpTool[] = [
       "spreads as they're read (printed page numbers), the print settings (layout, covers, " +
       "splitSpreads, margin in mm, dpi), the page size, and the print issues by `kind` " +
       "(placeholder: an image placeholder still to replace, low-resolution pictures, text in " +
-      "the margin, hidden pages, blank pages added, frames of another size).",
+      "the margin, hidden pages, blank pages added, frames of another size, CMYK with no print profile, layers stopping at the page edge with no bleed).",
     inputSchema: {
       type: "object",
       required: ["brochure"],

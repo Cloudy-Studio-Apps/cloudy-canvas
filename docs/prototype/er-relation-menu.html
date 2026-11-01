@@ -846,6 +846,88 @@
       .r.fk {
         color: var(--ice-strong);
       }
+      .back {
+        align-self: flex-start;
+        padding: 3px 8px;
+        margin-bottom: -6px;
+        border-radius: 4px;
+        background: var(--well);
+        color: var(--ice-strong);
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .back:hover {
+        background: #404a5a;
+      }
+      .x {
+        line-height: 1;
+      }
+      .go {
+        font: inherit;
+        color: inherit;
+        text-decoration: underline;
+        text-decoration-color: rgba(182, 224, 240, 0.45);
+        text-underline-offset: 3px;
+      }
+      .go:hover {
+        color: var(--ice-strong);
+        text-decoration-color: var(--ice-strong);
+      }
+      .line > .go {
+        flex: none;
+        width: 26px;
+        height: 30px;
+        text-decoration: none;
+        font-size: 16px;
+        border-radius: 4px;
+        color: var(--muted);
+      }
+      .line > .go:hover {
+        background: #404a5a;
+        color: #fff;
+      }
+      .chip .go {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: 600;
+        text-align: left;
+        flex: 1;
+        min-width: 0;
+      }
+      .chip .del {
+        width: 22px;
+        height: 22px;
+        color: var(--muted);
+        border-radius: 3px;
+        font-size: 14px;
+        flex: none;
+      }
+      .chip .del:hover {
+        background: #404a5a;
+        color: #fff;
+      }
+      g.hot {
+        cursor: pointer;
+        outline: none;
+      }
+      g.hot:hover .box,
+      g.hot:hover .dia {
+        stroke: var(--ice-strong);
+        stroke-width: 3;
+      }
+      g.hot:focus-visible .box,
+      g.hot:focus-visible .dia {
+        stroke: #fff;
+        stroke-width: 3;
+      }
+      .linkrow.still {
+        cursor: default;
+        color: var(--muted);
+      }
+      .glyph:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
     </style>
   </head>
   <body>
@@ -986,7 +1068,7 @@
             return `<button class="r" data-pick="${side}:${r.n}" data-f="p${side}${r.n}" data-row="${side}.${r.n}" aria-pressed="${on}">${body}</button>`;
           })
           .join("");
-        return `<div class="card"><h4>${side}</h4>${rows}</div>`;
+        return `<div class="card"><h4>${goLink(`goEnt:${side}`, side)}</h4>${rows}</div>`;
       }
       function joinBox() {
         const r = resolve();
@@ -997,7 +1079,7 @@
           ];
           return `<div class="join" id="join">${pickCard("Member")}${pickCard("Copy")}
       <div class="card wide"><h4>borrows <span>new table</span></h4>${cols.map(([n, f]) => `<div class="r new" data-new="${n}" data-from="${f}"><span class="i">${key}</span><span class="n">${n}</span><span class="t">new</span></div>`).join("")}
-      <div class="r moved"><span class="i"></span><span class="n">due_date</span></div></div>
+      ${relRows()}</div>
       <svg class="wires" id="wires" aria-hidden="true"></svg></div>`;
         }
         const H = r.holder,
@@ -1012,7 +1094,7 @@
             return `<div class="r new" data-new="${n}" data-from="${O}.${c}"><span class="i">${key}</span><span class="n">${n}</span><span class="t">+</span></div>`;
           })
           .join("");
-        return `<div class="join" id="join">${pickCard(O)}<div class="card"><h4>${H}</h4>${own}${added}<div class="r moved"><span class="i"></span><span class="n">due_date</span></div></div><svg class="wires" id="wires" aria-hidden="true"></svg></div>`;
+        return `<div class="join" id="join">${pickCard(O)}<div class="card"><h4>${goLink(`goEnt:${H}`, H)}</h4>${own}${added}${relRows()}</div><svg class="wires" id="wires" aria-hidden="true"></svg></div>`;
       }
       function caption() {
         const r = resolve(),
@@ -1045,7 +1127,7 @@
   <div class="sec"><p class="ttl">How many?</p><p class="lbl">Solid dot: always there. Dashed dot: optional.</p>${howMany("Member")}${howMany("Copy")}</div>
   <div class="sec"><p class="ttl">What connects them</p><p class="lbl">Click the row it connects through.</p>${joinBox()}${caption()}</div>
   <div class="sec"><p class="ttl">Kind of relation</p><div class="kinds">${KINDS.map(([id, l, d, g]) => `<button class="kind" data-kind="${id}" data-f="k${id}" aria-pressed="${S.kinds[id]}"><svg viewBox="0 0 40 30" aria-hidden="true">${g}</svg><b>${l}</b><small>${d}</small></button>`).join("")}</div></div>
-  <div class="sec"><p class="lbl">Attributes</p><div class="attr"><code>due_date</code><small>Saved with the connection</small></div></div>
+  <div class="sec"><p class="ttl">Attributes</p><p class="lbl">Click an oval to select that attribute.</p>${attrList("relAttrs")}</div>
   <details class="more" id="more"${S.more ? " open" : ""}><summary>More options</summary><div class="body">
     ${["Member", "Copy"].map((s) => `<div class="side"><span>${s}</span><input aria-label="Role of ${s}" placeholder="Role, for self-relations" data-role="${s}" value="${S.sides[s].role}"><button class="flag" data-arrow="${s}" data-f="a${s}" aria-pressed="${S.sides[s].arrow}" title="Draw an arrow on this side">Arrow</button></div>`).join("")}
     <button class="act">Add another side</button><button class="act">Turn into an entity</button><button class="act">Group as an aggregation</button>
@@ -1062,7 +1144,7 @@
           S.kinds.e && "existence",
           S.kinds.associative && "associative",
         ].filter(Boolean);
-        return `<pre>Relation borrows${fl.length ? ` [${fl.join(", ")}]` : ""} {\n${side("Member")}\n${side("Copy")}\n  due_date\n}</pre>`;
+        return `<pre>Relation borrows${fl.length ? ` [${fl.join(", ")}]` : ""} {\n${side("Member")}\n${side("Copy")}\n${S.relAttrs.map((a) => attrText(a)).join("\n")}\n}</pre>`;
       }
       /* ── The other menus ─────────────────────────────────────────────── */
       const A = (name, o = {}) => ({
@@ -1076,19 +1158,43 @@
       });
       Object.assign(S, {
         menu: "relation",
-        ent: {
-          name: "Copy",
-          weak: true,
-          color: "#e2474e",
-          open: null,
-          attrs: [A("number", { key: "partial" }), A("condition")],
+        stack: [],
+        attrRef: { list: "ents.Copy.attrs", i: 0 },
+        ents: {
+          Copy: {
+            name: "Copy",
+            weak: true,
+            color: "#e2474e",
+            attrs: [A("number", { key: "partial" }), A("condition")],
+          },
+          Member: {
+            name: "Member",
+            weak: false,
+            color: "#e2474e",
+            attrs: [A("id", { key: "pk" }), A("name"), A("phone", { multi: true })],
+          },
+          Book: {
+            name: "Book",
+            weak: false,
+            color: "#e2474e",
+            attrs: [A("isbn", { key: "pk" }), A("title"), A("available_copies", { derived: true })],
+          },
+          Author: {
+            name: "Author",
+            weak: false,
+            color: "#e2474e",
+            attrs: [A("id", { key: "pk" }), A("name")],
+          },
+          Student: { name: "Student", weak: false, color: "#e2474e", attrs: [] },
+          Staff: { name: "Staff", weak: false, color: "#e2474e", attrs: [] },
+          Donor: { name: "Donor", weak: false, color: "#e2474e", attrs: [] },
         },
-        attr: A("phone", { multi: true }),
+        relAttrs: [A("due_date")],
         isa: {
           parent: "Member",
           exclusive: true,
           total: true,
-          disc: "kind",
+          attrs: [A("kind")],
           pMin: "",
           pMax: "",
           kids: [
@@ -1097,7 +1203,7 @@
           ],
         },
         uni: { cat: "Donor", sup: ["Member", "Author"] },
-        agg: { name: "Loan", rel: "borrows", attrs: ["fine"] },
+        agg: { name: "Loan", rel: "borrows", attrs: [A("fine")] },
         con: {
           rule: "exclusive",
           entity: "Member",
@@ -1107,6 +1213,53 @@
           max: "n",
         },
       });
+      function setEnt(n) {
+        S.ents[n] ??= { name: n, weak: false, color: "#e2474e", attrs: [] };
+        S.entName = n;
+        S.ent = S.ents[n];
+      }
+      setEnt("Copy");
+      const relRows = () =>
+        S.relAttrs
+          .filter((a) => !a.derived && !a.multi)
+          .map(
+            (a) =>
+              `<div class="r moved"><span class="i"></span><span class="n">${a.name}</span></div>`,
+          )
+          .join("");
+      const goLink = (act, label, inner) =>
+        `<button class="go" data-act="${act}" title="Select ${label}">${inner ?? label}</button>`;
+      const hot = (act, label, inner) =>
+        `<g class="hot" data-act="${act}" tabindex="0" role="button" aria-label="Select ${label}">${inner}</g>`;
+      const isChild = (n) => S.isa.kids.some((k) => k.n === n);
+      const curAttr = () => at(S.attrRef.list)[S.attrRef.i];
+      function attrOwner() {
+        const l = S.attrRef.list;
+        if (l.startsWith("ents."))
+          return {
+            kind: "Entity",
+            name: S.ents[l.split(".")[1]].name,
+            table: S.ents[l.split(".")[1]].name,
+          };
+        if (l === "relAttrs") {
+          const r = resolve();
+          return { kind: "Relation", name: "borrows", table: r.link ? "borrows" : r.holder };
+        }
+        if (l === "agg.attrs") return { kind: "Aggregate", name: S.agg.name, table: S.agg.name };
+        return { kind: "Isa", name: S.isa.parent, table: S.isa.parent };
+      }
+      const nowLabel = () =>
+        ({
+          entity: () => S.ent.name,
+          relation: () => "borrows",
+          attribute: () => curAttr()?.name || "attribute",
+          isa: () => "Hierarchy",
+          union: () => "Union",
+          aggregate: () => S.agg.name,
+          constraint: () => "Constraint",
+        })[S.menu]();
+      const push = () =>
+        S.stack.push({ menu: S.menu, ent: S.entName, ref: { ...S.attrRef }, label: nowLabel() });
       const ENTITIES = ["Member", "Copy", "Book", "Author", "Student", "Staff"];
       const RELATIONS = ["borrows", "reserves", "has", "writes"];
       const COLORS = ["#e2474e", "#2c3140", "#9aa3b2", "#3b82cf", "#2f9e62"];
@@ -1120,8 +1273,8 @@
         `<div class="r${fresh ? " new" : ""}${fk ? " fk" : ""}"><span class="i">${k ? key : ""}</span><span class="n">${n}</span>${tag ? `<span class="t">${tag}</span>` : ""}</div>`;
       const kindTile = (act, on, glyph, title, sub) =>
         `<button class="kind" data-act="${act}" data-f="${act}" aria-pressed="${on}"><svg viewBox="0 0 40 30" aria-hidden="true">${glyph}</svg><b>${title}</b><small>${sub}</small></button>`;
-      const chip = (n, act, label) =>
-        `<div class="chip"><span>${n}</span><button data-act="${act}" aria-label="${label}" title="${label}">×</button></div>`;
+      const chip = (n, act, label, go) =>
+        `<div class="chip"><button class="go" data-act="${go}" title="Select ${n}">${n}</button><button class="del" data-act="${act}" aria-label="${label}" title="${label}">×</button></div>`;
 
       /* An attribute's oval, drawn as it is on the board */
       function oval(a, label = "abc") {
@@ -1163,47 +1316,85 @@
       const partsEditor = (path, a) =>
         `<div class="sec"><p class="lbl">Split into parts</p>${a.parts.map((p, i) => `<div class="line"><input aria-label="Part name" data-bind="${path}.parts.${i}" value="${p}"><button class="x" data-act="delPart:${path}:${i}" aria-label="Remove part">×</button></div>`).join("")}<button class="act" data-act="addPart:${path}" data-f="ap${path}">+ Add a part</button></div>`;
       const at = (path) => path.split(".").reduce((o, k) => o[k], S);
+      const attrList = (list) =>
+        `${at(list)
+          .map(
+            (a, i) =>
+              `<div class="attr-row"><div class="line"><button class="glyph" data-act="pickAttr:${list}:${i}" data-f="o${list}${i}" aria-label="Select ${a.name}" title="Select this attribute">${oval(a)}</button><input aria-label="Attribute name" data-bind="${list}.${i}.name" value="${a.name}"><button class="x" data-act="pickAttr:${list}:${i}" aria-label="Open ${a.name}" title="Select this attribute">›</button><button class="x" data-act="delAttr:${list}:${i}" aria-label="Delete ${a.name}">×</button></div></div>`,
+          )
+          .join(
+            "",
+          )}<button class="act" data-act="addAttr:${list}" data-f="aa${list}">+ Add attribute</button>`;
 
       /* Entity */
       function entityRows() {
-        const e = S.ent,
+        const n = S.entName,
+          e = S.ent,
           r = resolve(),
-          rows = [];
-        const ownKey = e.attrs.some((a) => a.key === "pk" && !a.derived && !a.multi);
-        if (!e.weak && !ownKey) rows.push(row("id", { k: 1, tag: "added", fresh: 1 }));
-        rows.push(row("Book_isbn", { k: 1, fk: !e.weak, tag: "from has" }));
+          rows = [],
+          pk = (a) => a.key === "pk" && !a.derived && !a.multi,
+          own = e.attrs.some(pk);
+        if (isChild(n)) rows.push(row("id", { k: 1, fk: 1, tag: "from " + S.isa.parent }));
+        else if (n === S.uni.cat) rows.push(row(`${n}_id`, { k: 1, tag: "added" }));
+        else if (!e.weak && !own && n !== "Copy")
+          rows.push(row("id", { k: 1, tag: "added", fresh: 1 }));
+        if (n === "Copy") {
+          if (!e.weak && !own) rows.push(row("id", { k: 1, tag: "added", fresh: 1 }));
+          rows.push(row("Book_isbn", { k: 1, fk: !e.weak, tag: "from has" }));
+        }
         for (const a of e.attrs) {
           if (a.derived || a.multi) continue;
           const k = a.key === "pk" || (a.key === "partial" && e.weak);
           if (a.parts.length) a.parts.forEach((p) => rows.push(row(`${a.name}_${p}`, { k })));
           else rows.push(row(a.name, { k, tag: a.key === "alternate" ? "unique" : "" }));
         }
-        if (!r.link && r.holder === "Copy")
-          rows.push(
-            row("Member_id", { k: 1, fk: 1, tag: "from borrows" }),
-            row("due_date", { tag: "from borrows" }),
+        if (!r.link && r.holder === n) {
+          targets(r.other).forEach((c) =>
+            rows.push(row(fkName(r.other, c), { k: 1, fk: 1, tag: "from borrows" })),
           );
+          S.relAttrs.forEach((a) => {
+            if (!a.derived && !a.multi) rows.push(row(a.name, { tag: "from borrows" }));
+          });
+        }
+        if (S.uni.sup.includes(n))
+          rows.push(row(`${S.uni.cat}_id`, { k: 1, fk: 1, tag: "from " + S.uni.cat }));
         return rows.join("");
+      }
+      function usedIn(n) {
+        const u = [];
+        if (n === "Copy") u.push(["◇", "has", null], ["◇", "borrows", "goMenu:relation"]);
+        if (n === "Member") u.push(["◇", "borrows", "goMenu:relation"]);
+        if (n === "Book") u.push(["◇", "has", null], ["◇", "writes", null]);
+        if (n === "Author") u.push(["◇", "writes", null]);
+        if (n === S.isa.parent || isChild(n))
+          u.push(["▽", n === S.isa.parent ? "Its hierarchy" : "Parent’s hierarchy", "goMenu:isa"]);
+        if (n === S.uni.cat || S.uni.sup.includes(n))
+          u.push(["U", n === S.uni.cat ? "Its union" : `Union ${S.uni.cat}`, "goMenu:union"]);
+        return u;
       }
       function entityVisual() {
         const e = S.ent,
-          list = e.attrs
-            .map((a, i) => {
-              const open = e.open === i;
-              return `<div class="attr-row${open ? " open" : ""}"><div class="line"><button class="glyph" data-act="open:${i}" data-f="o${i}" aria-expanded="${open}" aria-label="Options for ${a.name}" title="Options">${oval(a)}</button><input aria-label="Attribute name" data-bind="ent.attrs.${i}.name" value="${a.name}"><button class="x" data-act="delAttr:${i}" aria-label="Delete ${a.name}">×</button></div>
-    ${open ? `${flagTiles(`ent.attrs.${i}`, a)}<div class="pair"><button class="act" data-act="move:${i}:-1"${i === 0 ? " disabled" : ""}>Move up</button><button class="act" data-act="move:${i}:1"${i === e.attrs.length - 1 ? " disabled" : ""}>Move down</button></div>${partsEditor(`ent.attrs.${i}`, a)}` : ""}</div>`;
-            })
-            .join("");
+          n = S.entName,
+          u = usedIn(n),
+          pk = e.attrs.some((a) => a.key === "pk" && !a.derived && !a.multi);
+        const say = isChild(n)
+          ? `Its key comes from ${S.isa.parent}, so each ${e.name} points to one ${S.isa.parent}.`
+          : e.weak
+            ? `Gold keys identify each ${e.name} together. A blue key points to another table.`
+            : pk
+              ? `Gold keys identify each ${e.name}. A blue key points to another table.`
+              : n === S.uni.cat
+                ? `Each ${e.name} gets its own key, which ${S.uni.sup.join(" and ")} point to.`
+                : `It has no key of its own, so <code>id</code> is added for it.`;
         return `${field("Entity name", "ent.name", e.name)}
   <div class="sec"><p class="ttl">Kind of entity</p><div class="kinds">
     ${kindTile("weak:0", !e.weak, '<rect x="3" y="6" width="34" height="18"/>', "Strong", "Has its own key")}
     ${kindTile("weak:1", e.weak, '<rect x="1" y="4" width="38" height="22"/><rect x="5" y="8" width="30" height="14"/>', "Weak", "Needs another entity to be identified")}
   </div></div>
   <div class="sec"><p class="ttl">Color</p><div class="swatches">${COLORS.map((c) => `<button class="sw" data-act="color:${c}" data-f="c${c}" style="background:${c}" aria-label="Color ${c}" aria-pressed="${e.color === c}"></button>`).join("")}</div></div>
-  <div class="sec"><p class="ttl">Its table</p><div class="card" style="border-color:${e.color}"><h4>${e.name}</h4>${entityRows()}</div>
-  <p class="note">${e.weak ? `Gold keys identify each ${e.name} together. A blue key points to another table.` : e.attrs.some((a) => a.key === "pk" && !a.derived && !a.multi) ? `Gold keys identify each ${e.name}. A blue key points to another table.` : `It has no key of its own, so <code>id</code> is added for it.`}</p></div>
-  <div class="sec"><p class="ttl">Attributes</p><p class="lbl">Click an oval to see its options.</p>${list}<button class="act" data-act="addAttr" data-f="aa">+ Add attribute</button></div>
-  <div class="sec"><p class="ttl">Used in</p>${["has", "borrows"].map((r) => `<button class="linkrow" data-act="menu:relation"><span aria-hidden="true">◇</span><span>${r}</span><span>Open</span></button>`).join("")}<button class="act" data-act="menu:isa">Add hierarchy</button></div>`;
+  <div class="sec"><p class="ttl">Its table</p><div class="card" style="border-color:${e.color}"><h4>${e.name}</h4>${entityRows()}</div><p class="note">${say}</p></div>
+  <div class="sec"><p class="ttl">Attributes</p><p class="lbl">Click an oval to select that attribute.</p>${attrList(`ents.${n}.attrs`)}</div>
+  <div class="sec"><p class="ttl">Used in</p>${u.map(([g, l, act]) => (act ? `<button class="linkrow" data-act="${act}"><span aria-hidden="true">${g}</span><span>${l}</span><span>›</span></button>` : `<div class="linkrow still"><span aria-hidden="true">${g}</span><span>${l}</span></div>`)).join("") || '<p class="tiny">Not in any relation yet.</p>'}${n === S.isa.parent || isChild(n) ? "" : '<button class="act" data-act="goMenu:isa">Add hierarchy</button>'}</div>`;
       }
       const entityText = () => {
         const e = S.ent;
@@ -1212,14 +1403,23 @@
 
       /* Attribute */
       function attrEffect() {
-        const a = S.attr,
-          own = "Member";
+        const a = curAttr(),
+          o = attrOwner(),
+          own = o.table;
+        const E = S.ents[own],
+          ownerKeys = [
+            ...(own === "Copy" && E.weak ? ["Book_isbn"] : []),
+            ...(E?.attrs ?? [])
+              .filter((x) => x !== a && (x.key === "pk" || x.key === "partial"))
+              .map((x) => x.name),
+          ];
+        if (!ownerKeys.length) ownerKeys.push("id");
         let cards, say;
         if (a.derived) {
           cards = `<div class="card"><h4>${own}</h4><div class="r gone"><span class="i"></span><span class="n">${a.name}</span></div></div>`;
           say = `Not saved in any table. It’s worked out when needed.`;
         } else if (a.multi) {
-          cards = `<div class="card" style="border-color:var(--ice)"><h4>${own}_${a.name}</h4>${row(`${own}_id`, { k: 1, fresh: 1 })}${row(a.name, { k: 1, fresh: 1 })}</div>`;
+          cards = `<div class="card" style="border-color:var(--ice)"><h4>${own}_${a.name}</h4>${ownerKeys.map((k) => row(`${own}_${k}`, { k: 1, fresh: 1 })).join("")}${row(a.name, { k: 1, fresh: 1 })}</div>`;
           say = `Several values don’t fit in one cell, so it gets a table of its own.`;
         } else if (a.parts.length) {
           const p = a.parts.map((x) => `${a.name}_${x}`);
@@ -1229,20 +1429,42 @@
           cards = `<div class="card"><h4>${own}</h4>${row(a.name, { k: a.key === "pk" || a.key === "partial", tag: a.key === "alternate" ? "unique" : "" })}</div>`;
           say = {
             pk: `Identifies each ${own}, so no two can share it.`,
-            partial: `Identifies it only together with its owner’s key.`,
+            partial: `Identifies a ${own} only together with its owner’s key.`,
             alternate: `Not the main key, but no two can share it.`,
             none: a.optional ? "A normal column that can stay empty." : "A normal column.",
           }[a.key];
         }
+        if (o.kind === "Isa" && !a.derived && !a.multi)
+          say =
+            "It tells the children apart. Saved only if Create tables uses “One table for all”.";
+        if (o.kind === "Relation" && !a.derived && !a.multi)
+          say = `It describes the connection, so it’s saved with the key, in ${own}.`;
         return `<div class="effect"><div class="big">${oval(a, a.name.slice(0, 7))}<small>On the board</small></div><div class="to" aria-hidden="true">→</div><div>${cards}<small class="under">In the table</small></div></div><p class="note">${say}</p>`;
       }
-      const attrVisual = () => `${field("Attribute name", "attr.name", S.attr.name)}
-  <div class="sec"><p class="ttl">What is it?</p>${flagTiles("attr", S.attr)}</div>
+      const backTo = () =>
+        S.stack.length
+          ? `<button class="back" data-act="back" data-f="back">← ${S.stack.at(-1).label}</button>`
+          : "";
+      const attrVisual = () => {
+        const a = curAttr(),
+          { list, i } = S.attrRef,
+          p = `${list}.${i}`,
+          n = at(list).length;
+        if (!a)
+          return `<p class="note">No attribute selected. Click an oval in an Entity menu.</p>`;
+        return `${field("Attribute name", `${p}.name`, a.name)}
+  <div class="sec"><p class="ttl">What is it?</p>${flagTiles(p, a)}</div>
   <div class="sec"><p class="ttl">What it makes</p>${attrEffect()}</div>
-  ${partsEditor("attr", S.attr)}
-  <details class="more"><summary>More options</summary><div class="body"><div class="pair"><button class="act">Move up</button><button class="act">Move down</button></div><button class="act">Delete attribute</button></div></details>
-  <button class="act">Open Member</button>`;
-      const attrText2 = () => `<pre>Entity Member {\n  ...\n${attrText(S.attr)}\n}</pre>`;
+  ${partsEditor(p, a)}
+  ${n > 1 ? `<div class="pair"><button class="act" data-act="moveAttr:${list}:${i}:-1" data-f="mu"${i === 0 ? " disabled" : ""}>Move up</button><button class="act" data-act="moveAttr:${list}:${i}:1" data-f="md"${i === n - 1 ? " disabled" : ""}>Move down</button></div>` : ""}
+  <button class="act" data-act="delAttr:${list}:${i}">Delete attribute</button>`;
+      };
+      const attrText2 = () => {
+        const a = curAttr(),
+          o = attrOwner();
+        if (!a) return "<pre></pre>";
+        return `<pre>${o.kind} ${o.name} {\n  ...\n${attrText(a)}\n}</pre>`;
+      };
 
       /* Hierarchy */
       const VENN = {
@@ -1276,12 +1498,13 @@
         const kids = s.kids
           .map((k, i) => {
             const x = x0 + i * (bw + 8);
-            return `<path d="M163 100L${x + bw / 2} 138"/><rect class="box" x="${x}" y="138" width="${bw}" height="28"/><text x="${x + bw / 2}" y="156">${k.n}</text>`;
+            return `<path d="M163 100L${x + bw / 2} 138"/>${hot(`goEnt:${k.n}`, k.n, `<rect class="box" x="${x}" y="138" width="${bw}" height="28"/><text x="${x + bw / 2}" y="156">${k.n}</text>`)}`;
           })
           .join("");
-        return `<svg class="pic" viewBox="0 0 326 170" role="img" aria-label="Hierarchy drawing"><path d="M163 36V68"/><rect class="box" x="108" y="6" width="110" height="30"/><text x="163" y="26">${s.parent}</text>
+        return `<svg class="pic" viewBox="0 0 326 170" role="img" aria-label="Hierarchy drawing"><path d="M163 36V68"/>${hot(`goEnt:${s.parent}`, s.parent, `<rect class="box" x="108" y="6" width="110" height="30"/><text x="163" y="26">${s.parent}</text>`)}
   <path class="tri" d="M133 68H193L163 100Z"/>${s.total ? '<circle class="tot" cx="163" cy="52" r="6"/>' : ""}${s.exclusive ? '<path class="mark" d="M133 112Q163 130 193 112"/>' : ""}${kids}</svg>`;
       }
+      const disc = () => S.isa.attrs[0]?.name ?? "";
       const isaVisual = () => {
         const s = S.isa;
         return `${isaPicture()}<p class="note">${isaSentence()}</p>
@@ -1289,17 +1512,17 @@
     ${kindTile("isa:exclusive:0", !s.exclusive, VENN.over, "Overlapping", "Yes, several at once")}${kindTile("isa:exclusive:1", s.exclusive, VENN.excl, "Exclusive", "No, only one")}</div></div>
   <div class="sec"><p class="ttl">Can a ${s.parent} be none of them?</p><div class="kinds">
     ${kindTile("isa:total:0", !s.total, VENN.part, "Partial", "Yes, it can be none")}${kindTile("isa:total:1", s.total, VENN.tot, "Total", "No, always one of them")}</div></div>
-  <div class="sec"><label class="lbl">Parent</label>${pickSel("isa.parent", ENTITIES, s.parent, "Parent entity")}</div>
-  <div class="sec"><p class="ttl">Children</p><div class="chips">${s.kids.map((k, i) => chip(k.n, `delKid:${i}`, `Remove ${k.n}`)).join("")}</div>
+  <div class="sec"><label class="lbl">Parent</label><div class="line">${pickSel("isa.parent", ENTITIES, s.parent, "Parent entity")}${goLink(`goEnt:${s.parent}`, s.parent, "›")}</div></div>
+  <div class="sec"><p class="ttl">Children</p><div class="chips">${s.kids.map((k, i) => chip(k.n, `delKid:${i}`, `Remove ${k.n}`, `goEnt:${k.n}`)).join("")}</div>
     <div class="pair"><button class="act" data-act="newKid" data-f="nk">+ New entity</button><select aria-label="Add an existing entity as a child" data-act-change="addKid" class="wide-sel"><option value="">Add existing…</option>${ENTITIES.filter(
       (n) => n !== s.parent && !s.kids.some((k) => k.n === n),
     )
       .map((n) => opt(n))
       .join("")}</select></div></div>
-  <div class="sec"><p class="ttl">What tells them apart</p><p class="lbl">Optional. A column that says which child each row is.</p><input class="name" aria-label="Discriminator" data-bind="isa.disc" value="${s.disc}" placeholder="e.g. kind">
+  <div class="sec"><p class="ttl">What tells them apart</p><p class="lbl">Optional. A column that says which child each row is.</p><div class="line"><button class="glyph" data-act="pickAttr:isa.attrs:0" data-f="disc" aria-label="Select ${disc()}" title="Select this attribute"${disc() ? "" : " disabled"}>${oval(s.attrs[0])}</button><input aria-label="Discriminator" data-bind="isa.attrs.0.name" value="${disc()}" placeholder="e.g. kind"></div>
     ${
-      s.disc
-        ? `<div class="card"><h4>${s.parent}</h4><div class="r"><span class="i">${key}</span><span class="n">id</span><span class="t mono-t">${s.disc}</span></div>${s.kids
+      disc()
+        ? `<div class="card"><h4>${s.parent}</h4><div class="r"><span class="i">${key}</span><span class="n">id</span><span class="t mono-t">${disc()}</span></div>${s.kids
             .slice(0, 3)
             .map(
               (k, i) =>
@@ -1318,7 +1541,7 @@
       const isaText = () => {
         const s = S.isa,
           c = (m, x) => (m && x ? ` (${m},${x})` : ""),
-          fl = [s.exclusive && "exclusive", s.total && "total", s.disc && `by: ${s.disc}`].filter(
+          fl = [s.exclusive && "exclusive", s.total && "total", disc() && `by: ${disc()}`].filter(
             Boolean,
           );
         return `<pre>Isa ${s.parent}${c(s.pMin, s.pMax)}${fl.length ? ` [${fl.join(", ")}]` : ""} {\n${s.kids.map((k) => `  ${k.n}${c(k.min, k.max)}`).join("\n")}\n}</pre>`;
@@ -1335,21 +1558,21 @@
         const top = s.sup
           .map((k, i) => {
             const x = x0 + i * (bw + 8);
-            return `<path d="M${x + bw / 2} 34L163 62"/><rect class="box" x="${x}" y="6" width="${bw}" height="28"/><text x="${x + bw / 2}" y="25">${k}</text>`;
+            return `<path d="M${x + bw / 2} 34L163 62"/>${hot(`goEnt:${k}`, k, `<rect class="box" x="${x}" y="6" width="${bw}" height="28"/><text x="${x + bw / 2}" y="25">${k}</text>`)}`;
           })
           .join("");
-        return `<svg class="pic" viewBox="0 0 326 140" role="img" aria-label="Union drawing">${top}<path d="M163 96V110"/><circle class="tot big-c" cx="163" cy="78" r="17"/><text x="163" y="84" class="u">U</text><rect class="box" x="108" y="110" width="110" height="28"/><text x="163" y="129">${s.cat}</text></svg>`;
+        return `<svg class="pic" viewBox="0 0 326 140" role="img" aria-label="Union drawing">${top}<path d="M163 96V110"/><circle class="tot big-c" cx="163" cy="78" r="17"/><text x="163" y="84" class="u">U</text>${hot(`goEnt:${s.cat}`, s.cat, `<rect class="box" x="108" y="110" width="110" height="28"/><text x="163" y="129">${s.cat}</text>`)}</svg>`;
       }
       const unionVisual = () => {
         const s = S.uni;
         return `${unionPicture()}<p class="note">Each <b>${s.cat}</b> is exactly one of: ${s.sup.join(", ") || "nothing yet"}.</p>
-  <div class="sec"><label class="lbl">Category</label>${pickSel(
+  <div class="sec"><label class="lbl">Category</label><div class="line">${pickSel(
     "uni.cat",
     ["Donor", ...ENTITIES].filter((n) => !s.sup.includes(n)),
     s.cat,
     "Category entity",
-  )}</div>
-  <div class="sec"><p class="ttl">What it can be</p><div class="chips">${s.sup.map((n, i) => chip(n, `delSup:${i}`, `Remove ${n}`)).join("")}</div>
+  )}${goLink(`goEnt:${s.cat}`, s.cat, "›")}</div></div>
+  <div class="sec"><p class="ttl">What it can be</p><div class="chips">${s.sup.map((n, i) => chip(n, `delSup:${i}`, `Remove ${n}`, `goEnt:${n}`)).join("")}</div>
     <div class="pair"><button class="act" data-act="newSup" data-f="ns">+ New entity</button><select aria-label="Add an existing entity as a superclass" data-act-change="addSup" class="wide-sel"><option value="">Add existing…</option>${ENTITIES.filter(
       (n) => !s.sup.includes(n) && n !== s.cat,
     )
@@ -1359,7 +1582,7 @@
     .slice(0, 4)
     .map(
       (n) =>
-        `<div class="card"><h4>${n}</h4>${row(`${s.cat}_id`, { k: 1, tag: "+", fresh: 1 })}</div>`,
+        `<div class="card"><h4>${goLink(`goEnt:${n}`, n)}</h4>${row(`${s.cat}_id`, { k: 1, tag: "+", fresh: 1 })}</div>`,
     )
     .join("")}</div>
   <p class="note">${s.sup.length === 1 ? "It gets" : "Each one gets"} a new column, <code>${s.cat}_id</code>, that can stay empty. ${s.cat} gets that key as its own.</p></div>`;
@@ -1377,7 +1600,10 @@
         const s = S.agg,
           [a, b] = AGG[s.rel];
         return `<svg class="pic" viewBox="0 0 326 110" role="img" aria-label="Aggregation drawing"><rect class="frame" x="3" y="3" width="320" height="104"/><path class="frame" d="M3 25H323"/><text x="163" y="19" class="u2">${s.name}</text>
-  <path d="M84 68H242"/><rect class="box" x="14" y="52" width="72" height="32"/><text x="50" y="73">${a}</text><rect class="box" x="240" y="52" width="72" height="32"/><text x="276" y="73">${b}</text><path class="dia" d="M163 44 208 68 163 92 118 68Z"/><text x="163" y="73">${s.rel}</text></svg>`;
+  <path d="M84 68H242"/>${hot(`goEnt:${a}`, a, `<rect class="box" x="14" y="52" width="72" height="32"/><text x="50" y="73">${a}</text>`)}${hot(`goEnt:${b}`, b, `<rect class="box" x="240" y="52" width="72" height="32"/><text x="276" y="73">${b}</text>`)}${(() => {
+    const d = `<path class="dia" d="M163 44 208 68 163 92 118 68Z"/><text x="163" y="73">${s.rel}</text>`;
+    return s.rel === "borrows" ? hot("goMenu:relation", "borrows", d) : d;
+  })()}</svg>`;
       }
       const aggVisual = () => {
         const s = S.agg,
@@ -1390,11 +1616,11 @@
         `<button class="rel-tile" data-act="aggRel:${r}" data-f="ar${r}" aria-pressed="${s.rel === r}"><svg viewBox="0 0 40 24" aria-hidden="true"><path d="M20 2 38 12 20 22 2 12Z"/></svg>${r}</button>`,
     )
     .join("")}</div></div>
-  <div class="sec"><p class="ttl">Its attributes</p>${s.attrs.map((a, i) => `<div class="line"><input aria-label="Attribute name" data-bind="agg.attrs.${i}" value="${a}"><button class="x" data-act="delAgg:${i}" aria-label="Delete ${a}">×</button></div>`).join("")}<button class="act" data-act="addAgg" data-f="aga">+ Add attribute</button></div>
-  <div class="sec"><p class="ttl">Its table</p><div class="card" style="border-color:var(--ice)"><h4>${s.name}</h4>${keys.map((k) => row(k, { k: 1, fresh: 1 })).join("")}${[...own, ...s.attrs].map((a) => row(a)).join("")}</div><p class="note">The relation always becomes its own table, so other relations can point to it.</p></div>`;
+  <div class="sec"><p class="ttl">Its attributes</p><p class="lbl">Click an oval to select that attribute.</p>${attrList("agg.attrs")}</div>
+  <div class="sec"><p class="ttl">Its table</p><div class="card" style="border-color:var(--ice)"><h4>${s.name}</h4>${keys.map((k) => row(k, { k: 1, fresh: 1 })).join("")}${[...own, ...s.attrs.filter((a) => !a.derived && !a.multi).map((a) => a.name)].map((a) => row(a)).join("")}</div><p class="note">The relation always becomes its own table, so other relations can point to it.</p></div>`;
       };
       const aggText = () =>
-        `<pre>Aggregate ${S.agg.name} { ${S.agg.rel}\n${S.agg.attrs.map((a) => "  " + a).join("\n")}\n}</pre>`;
+        `<pre>Aggregate ${S.agg.name} { ${S.agg.rel}\n${S.agg.attrs.map((a) => attrText(a)).join("\n")}\n}</pre>`;
 
       /* Constraint */
       const dia = (x, y) =>
@@ -1430,12 +1656,14 @@
           ent = c.rule === "exclusive" || c.rule === "inclusive";
         const box = (x, y, t) =>
           `<path class="dia" d="M${x} ${y - 24} ${x + 58} ${y} ${x} ${y + 24} ${x - 58} ${y}Z"/><text x="${x}" y="${y + 5}">${t}</text>`;
+        const rbox = (x, y, t) =>
+          t === "borrows" ? hot("goMenu:relation", t, box(x, y, t)) : box(x, y, t);
         if (ent)
           return `<svg class="pic" viewBox="0 0 326 150" role="img" aria-label="Constraint drawing"><defs><marker id="ah" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="var(--ice)"/></marker></defs>
-    <path d="M96 75H128M128 75 208 34M128 75 208 116"/><rect class="box" x="8" y="59" width="90" height="32"/><text x="53" y="80">${c.entity}</text>${box(250, 34, c.a)}${box(250, 116, c.b)}
+    <path d="M96 75H128M128 75 208 34M128 75 208 116"/>${hot(`goEnt:${c.entity}`, c.entity, `<rect class="box" x="8" y="59" width="90" height="32"/><text x="53" y="80">${c.entity}</text>`)}${rbox(250, 34, c.a)}${rbox(250, 116, c.b)}
     ${c.rule === "exclusive" ? '<path class="mark" d="M158 52Q172 75 158 98"/>' : `<path class="mark" d="M250 90V60" marker-end="url(#ah)" stroke-dasharray="4 3"/><text x="284" y="79" class="lab2">(${c.min},${c.max})</text>`}</svg>`;
         return `<svg class="pic" viewBox="0 0 326 80" role="img" aria-label="Constraint drawing"><defs><marker id="ah" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="var(--ice)"/></marker></defs>
-    ${box(62, 40, c.a)}${box(264, 40, c.b)}<path class="mark" d="${c.rule === "inclusion" ? "M206 40H122" : "M122 40H206"}"${c.rule === "inclusion" ? ' marker-end="url(#ah)"' : ""}/></svg>`;
+    ${rbox(62, 40, c.a)}${rbox(264, 40, c.b)}<path class="mark" d="${c.rule === "inclusion" ? "M206 40H122" : "M122 40H206"}"${c.rule === "inclusion" ? ' marker-end="url(#ah)"' : ""}/></svg>`;
       }
       function conSentence() {
         const c = S.con;
@@ -1452,7 +1680,7 @@
           dir = c.rule === "inclusive" || c.rule === "inclusion";
         return `${conPicture()}<p class="note">${conSentence()}</p>
   <div class="sec"><p class="ttl">The rule</p><div class="kinds">${RULES.map(([id, l, d, g]) => kindTile(`rule:${id}`, c.rule === id, g, l, d)).join("")}</div></div>
-  ${ent ? `<div class="sec"><label class="lbl">Entity</label>${pickSel("con.entity", ENTITIES, c.entity, "Entity", "Choose…")}</div>` : ""}
+  ${ent ? `<div class="sec"><label class="lbl">Entity</label><div class="line">${pickSel("con.entity", ENTITIES, c.entity, "Entity", "Choose…")}${c.entity ? goLink(`goEnt:${c.entity}`, c.entity, "›") : ""}</div></div>` : ""}
   <div class="sec"><p class="ttl">The two relations</p><div class="swap"><div><label class="lbl">${dir ? "Required" : "Relation"}</label>${pickSel("con.a", RELATIONS, c.a, "First relation")}</div><button class="x big-x" data-act="swap" data-f="sw" aria-label="Swap relations" title="Swap relations">⇄</button><div><label class="lbl">${dir ? "Needs it" : "Other relation"}</label>${pickSel("con.b", RELATIONS, c.b, "Second relation")}</div></div></div>
   ${c.rule === "inclusive" ? `<div class="sec"><p class="ttl">How many times</p>${minmax("Times", "con.min", "con.max", c.min, c.max)}</div>` : ""}
   <p class="tiny">This rule makes no table. Your application has to enforce it.</p>`;
@@ -1504,6 +1732,28 @@
       const ACT = {
         menu(m) {
           S.menu = m;
+          S.stack = [];
+        },
+        goMenu(m) {
+          push();
+          S.menu = m;
+        },
+        goEnt(n) {
+          push();
+          setEnt(n);
+          S.menu = "entity";
+        },
+        pickAttr(list, i) {
+          push();
+          S.attrRef = { list, i: +i };
+          S.menu = "attribute";
+        },
+        back() {
+          const b = S.stack.pop();
+          if (!b) return;
+          S.menu = b.menu;
+          setEnt(b.ent);
+          S.attrRef = b.ref;
         },
         weak(v) {
           S.ent.weak = v === "1";
@@ -1511,23 +1761,22 @@
         color(c) {
           S.ent.color = c;
         },
-        open(i) {
-          S.ent.open = S.ent.open === +i ? null : +i;
+        addAttr(list) {
+          at(list).push(A("new_attribute"));
         },
-        addAttr() {
-          S.ent.attrs.push(A("new_attribute"));
-          S.ent.open = S.ent.attrs.length - 1;
+        delAttr(list, i) {
+          at(list).splice(+i, 1);
+          if (S.menu === "attribute") {
+            S.attrRef.i = 0;
+            ACT.back();
+          }
         },
-        delAttr(i) {
-          S.ent.attrs.splice(+i, 1);
-          S.ent.open = null;
-        },
-        move(i, d) {
-          const l = S.ent.attrs,
+        moveAttr(list, i, d) {
+          const l = at(list),
             a = +i,
             b = a + +d;
           [l[a], l[b]] = [l[b], l[a]];
-          S.ent.open = b;
+          S.attrRef.i = b;
         },
         flag(path, id) {
           const a = at(path);
@@ -1558,12 +1807,6 @@
         aggRel(r) {
           S.agg.rel = r;
         },
-        delAgg(i) {
-          S.agg.attrs.splice(+i, 1);
-        },
-        addAgg() {
-          S.agg.attrs.push("new_attribute");
-        },
         rule(r) {
           S.con.rule = r;
         },
@@ -1584,7 +1827,7 @@
       function render() {
         const f = document.activeElement?.dataset?.f;
         $("#panel").innerHTML =
-          `<div class="tabs" role="tablist"><button role="tab" data-tab="visual" aria-selected="${S.tab === "visual"}">Visual</button><button role="tab" data-tab="text" aria-selected="${S.tab === "text"}">Text</button></div>${S.tab === "visual" ? MENUS[S.menu].v() : MENUS[S.menu].t()}`;
+          `<div class="tabs" role="tablist"><button role="tab" data-tab="visual" aria-selected="${S.tab === "visual"}">Visual</button><button role="tab" data-tab="text" aria-selected="${S.tab === "text"}">Text</button></div>${backTo()}${S.tab === "visual" ? MENUS[S.menu].v() : MENUS[S.menu].t()}`;
         $("#picker").innerHTML = `<p>Selected on the board</p>${Object.entries(MENUS)
           .map(
             ([id, m]) =>
@@ -1669,6 +1912,11 @@
       });
       document.addEventListener("change", (e) => {
         const d = e.target.dataset;
+        if (d.bind && d.bind === "isa.parent") {
+          S.isa.parent = e.target.value;
+          render();
+          return;
+        }
         if (d.bind) {
           const k = d.bind.split("."),
             last = k.pop(),
@@ -1699,6 +1947,14 @@
         true,
       );
       addEventListener("resize", wires);
+      document.addEventListener("keydown", (e) => {
+        if ((e.key === "Enter" || e.key === " ") && e.target.matches?.("g.hot")) {
+          e.preventDefault();
+          const [n, ...a] = e.target.dataset.act.split(":");
+          ACT[n]?.(...a);
+          render();
+        }
+      });
       const h = location.hash.slice(1);
       if (h === "many") S.sides.Copy.max = "n";
       if (h === "flip") {

@@ -29,6 +29,18 @@ export interface PdfPageLayout {
   boxes?: { trim: PdfBox; bleed: PdfBox };
 }
 
+/** What a file going to press says about itself (see `markPdfX`). */
+export interface PdfIdentity {
+  /** The header's version. */
+  version: string;
+  /** The document information object. */
+  info: number;
+  /** Entries for the catalog. */
+  catalog: string;
+  /** The file's identifier, as hex. */
+  id: string;
+}
+
 /** The named things a content stream uses. */
 export type PdfResourceKind = "ExtGState" | "Pattern" | "XObject" | "Font";
 

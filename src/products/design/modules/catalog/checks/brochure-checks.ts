@@ -1,16 +1,12 @@
-import { rectContainsRect, rectsIntersect, type CanvasElement, type Rect } from "@canvas";
+import { rectContainsRect, rectsIntersect, type Rect } from "@canvas";
 
-import {
-  isDesignNode,
-  isPlaceholderPaint,
-  withDescendants,
-  type DesignNode,
-  type ImagePaint,
-} from "../../core";
+import { isPlaceholderPaint, type DesignNode, type ImagePaint } from "../../core";
 import { isText } from "../../text";
 import { mmToUnits, type BrochurePage } from "../model";
 import { effectiveDpi } from "./effective-dpi";
 import { layoutIssues } from "./layout-issues";
+import { printIssues } from "./print-issues";
+import { shownNodes } from "./shown-nodes";
 import type { BrochureCheckInput, BrochureIssue } from "./brochure-checks.types";
 import { t } from "../catalog.i18n";
 
@@ -20,10 +16,15 @@ export const LOW_DPI = 150;
 /**
  * What would print badly in the brochure: blank pages the layout added and frames of another size
  * (`layoutIssues`), then page by page hidden pages (they print blank), image placeholders still to
- * replace, pictures under `LOW_DPI` at their printed size, and text reaching into the margin.
+ * replace, pictures under `LOW_DPI` at their printed size, and text reaching into the margin; last
+ * what the press needs (`printIssues`).
  */
 export function brochureIssues(input: BrochureCheckInput): BrochureIssue[] {
-  return [...layoutIssues(input), ...input.pages.flatMap((page) => pageIssues(page, input))];
+  return [
+    ...layoutIssues(input),
+    ...input.pages.flatMap((page) => pageIssues(page, input)),
+    ...printIssues(input),
+  ];
 }
 
 /** What would print badly on one page: hidden, placeholders, soft pictures, text in the margin. */
@@ -65,17 +66,6 @@ function pageIssues(page: BrochurePage, input: BrochureCheckInput): BrochureIssu
     }
     return issues;
   });
-}
-
-/** The visible layers inside a frame (a hidden one hides what it holds). */
-function shownNodes(frameId: string, elements: readonly CanvasElement[]): DesignNode[] {
-  const nodes = elements.filter(isDesignNode);
-  const hidden = withDescendants(
-    new Set(nodes.filter((node) => !node.visible).map((node) => node.id)),
-    nodes,
-  );
-  const inside = withDescendants(new Set([frameId]), nodes);
-  return nodes.filter((node) => node.id !== frameId && inside.has(node.id) && !hidden.has(node.id));
 }
 
 function imagePaints(node: DesignNode): ImagePaint[] {

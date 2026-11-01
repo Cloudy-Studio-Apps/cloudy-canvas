@@ -1,6 +1,6 @@
 import { strToU8, zlibSync } from "fflate";
 
-import type { PdfBox, PdfPageLayout, PdfResourceKind } from "./pdf-writer.types";
+import type { PdfBox, PdfIdentity, PdfPageLayout, PdfResourceKind } from "./pdf-writer.types";
 import { pdfNumber } from "./pdf-matrix";
 
 const NAME_PREFIX: Readonly<Record<PdfResourceKind, string>> = {
@@ -43,6 +43,7 @@ export class PdfDocument {
   /** The page tree's number, reserved by the first page because pages point back at it. */
   private tree: number | null = null;
   private readonly finishers: (() => void)[] = [];
+  private identity: PdfIdentity | null = null;
 
   /** Adds an object from its body (a dictionary, an array…) and returns its number. */
   add(body: string): number {
@@ -57,6 +58,11 @@ export class PdfDocument {
 
   fill(ref: number, body: string): void {
     this.objects[ref - 1] = strToU8(body);
+  }
+
+  /** What a file going to press says about itself. */
+  identify(identity: PdfIdentity): void {
+    this.identity = identity;
   }
 
   /** Runs `finish` once every page is in, to write what depends on all of them. */
@@ -102,12 +108,20 @@ export class PdfDocument {
     for (const finish of this.finishers.splice(0)) finish();
     const kids = this.pages.map((page) => `${page} 0 R`).join(" ");
     this.fill(this.tree, `<< /Type /Pages /Kids [${kids}] /Count ${this.pages.length} >>`);
-    const catalog = this.add(`<< /Type /Catalog /Pages ${this.tree} 0 R >>`);
+    const extra = this.identity ? ` ${this.identity.catalog}` : "";
+    const catalog = this.add(`<< /Type /Catalog /Pages ${this.tree} 0 R${extra} >>`);
     return this.file(catalog);
   }
 
+  private trailerEntries(): string {
+    if (!this.identity) return "";
+    const { info, id } = this.identity;
+    return ` /Info ${info} 0 R /ID [<${id}> <${id}>]`;
+  }
+
   private file(root: number): Blob {
-    const parts: Uint8Array[] = [strToU8("%PDF-1.7\n%\xE2\xE3\xCF\xD3\n", true)];
+    const version = this.identity?.version ?? "1.7";
+    const parts: Uint8Array[] = [strToU8(`%PDF-${version}\n%\xE2\xE3\xCF\xD3\n`, true)];
     let offset = parts[0]!.length;
     const offsets: number[] = [];
     this.objects.forEach((object, i) => {
@@ -122,7 +136,8 @@ export class PdfDocument {
     parts.push(
       strToU8(
         `xref\n0 ${size}\n0000000000 65535 f \n${rows}` +
-          `trailer\n<< /Size ${size} /Root ${root} 0 R >>\nstartxref\n${offset}\n%%EOF\n`,
+          `trailer\n<< /Size ${size} /Root ${root} 0 R${this.trailerEntries()} >>\n` +
+          `startxref\n${offset}\n%%EOF\n`,
       ),
     );
     return new Blob(parts as BlobPart[], { type: "application/pdf" });
