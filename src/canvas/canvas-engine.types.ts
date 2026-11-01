@@ -1,4 +1,10 @@
-import type { Clipboard, FontLoader, GlyphOutliner, WebpEncoder } from "@shared/core";
+import type {
+  Clipboard,
+  ColorConversion,
+  FontLoader,
+  GlyphOutliner,
+  WebpEncoder,
+} from "@shared/core";
 
 import type { CanvasProduct } from "./canvas-product.types";
 import type { CanvasDocument } from "./document";
@@ -36,6 +42,8 @@ export interface CanvasEngineOptions<O extends object = object> {
   glyphs?: GlyphOutliner;
   /** Encodes WebP exports where the canvas can't; without one, they fail there. */
   webp?: WebpEncoder;
+  /** Color management for files going to press. */
+  color?: ColorConversion;
 }
 
 /**

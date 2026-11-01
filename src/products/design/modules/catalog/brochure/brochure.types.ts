@@ -1,4 +1,5 @@
 import type { CanvasElement, ElementDefaults, PdfMode } from "@canvas";
+import type { RenderingIntent } from "@shared/core";
 
 /**
  * One page of a brochure: the frames that could be it (its options, e.g. "Opción A/B/C") and the
@@ -29,6 +30,15 @@ export type BrochureCovers = "both" | "front" | "back" | "none";
  */
 export type BrochureArrange = "off" | "below" | "beside";
 
+export type BrochureColorMode = "rgb" | "cmyk";
+
+/** A print profile stored with the file. */
+export interface BrochurePrintProfile {
+  /** The document asset holding the `.icc` file. */
+  assetId: string;
+  name: string;
+}
+
 /** How the brochure prints. */
 export interface BrochureSettings {
   layout: BrochureLayout;
@@ -42,6 +52,11 @@ export interface BrochureSettings {
   bleed: number;
   /** Crop marks round each page of the PDF. */
   cropMarks: boolean;
+  /** `cmyk` converts everything through `printProfile`, for a press. */
+  colorMode: BrochureColorMode;
+  /** The press's profile, kept in the file; `null` until one's loaded. */
+  printProfile: BrochurePrintProfile | null;
+  renderingIntent: RenderingIntent;
   /** Pixels per inch of the exported PDF's pictures, and of whole pages when `flattened`. */
   dpi: number;
   /** `sharp` keeps shapes and text as vectors; `flattened` prints each page as one picture. */

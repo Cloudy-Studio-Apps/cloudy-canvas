@@ -185,6 +185,19 @@
   "print": {
     "title": "Impresión",
     "bleed": "Sangrado",
-    "cropMarks": "Marcas de corte"
+    "cropMarks": "Marcas de corte",
+    "noProfile": "Carga el perfil de tu imprenta para exportar en CMYK.",
+    "profileDialog": "Cargar un perfil de impresión",
+    "profileFiles": "Perfiles de color ICC",
+    "profileError": "No se pudo cargar el perfil",
+    "color": "Colores",
+    "colorRgb": "RGB · para pantallas",
+    "colorCmyk": "CMYK · para imprenta",
+    "noProfileYet": "Aún no hay perfil de impresión",
+    "loadProfile": "Cargar perfil .icc…",
+    "changeProfile": "Cambiar perfil…",
+    "intent": "Propósito de conversión",
+    "intentRelative": "Colorimétrico relativo",
+    "intentPerceptual": "Perceptual"
   }
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState, type RefObject } from "react";
 
 import { CanvasEngine, type CanvasDocument, type CanvasProduct, type EngineLoading } from "@canvas";
-import { clipboard, fontLibrary, glyphOutliner, webpEncoder } from "@platform";
+import { clipboard, colorConversion, fontLibrary, glyphOutliner, webpEncoder } from "@platform";
 import { useMotionStore } from "@shared/stores/motion-store";
 import { useSnappingStore } from "@shared/stores/snapping-store";
 import { onThemeChange } from "@shared/ui/theme";
@@ -35,6 +35,7 @@ export function useCanvasEngine<O extends object>(
       fonts: fontLibrary,
       glyphs: glyphOutliner,
       webp: webpEncoder,
+      color: colorConversion,
     });
     instance.setSnapping(useSnappingStore.getState().byProduct[product.id] ?? {});
     instance.setGifPlayback(useMotionStore.getState().playGifs);

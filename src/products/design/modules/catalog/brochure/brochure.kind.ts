@@ -23,6 +23,12 @@ export class BrochureKind extends ElementKind<BrochureElement, DesignToolOptions
     return false;
   }
 
+  /** Its print profile, so it stays in the file and copies with the brochure. */
+  override assets({ settings }: BrochureElement): string[] {
+    const profile = settings.printProfile;
+    return profile ? [profile.assetId] : [];
+  }
+
   override fillDefaults(el: BrochureElement): BrochureElement {
     // Brochures from before layouts had `facing` (pages in spreads, or one at a time).
     const { facing, ...settings } = (el.settings ?? {}) as Partial<BrochureSettings> & {

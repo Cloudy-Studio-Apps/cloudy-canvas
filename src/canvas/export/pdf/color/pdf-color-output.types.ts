@@ -31,6 +31,8 @@ export interface PdfColorOutput {
   readonly registration: string;
   /** The operators setting a `#rrggbb` color for fills, or strokes with `stroke`. */
   paint(hex: string, stroke: boolean): string;
+  /** Whether text in a color prints over what's under it, to keep white halos off it. */
+  overprints?(hex: string): boolean;
   /** A gradient's stops: as many as it takes for its blend to look as it does on screen. */
   stops(stops: readonly PdfGradientStop[]): PdfOutputStop[];
   /** Embeds an opaque canvas, returning its object. */

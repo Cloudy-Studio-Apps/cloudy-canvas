@@ -8,4 +8,5 @@ export interface SceneExportOptions {
   snapshot: ExportHost["snapshot"];
   vector: ExportHost["vector"];
   webp: ExportHost["webp"];
+  color: ExportHost["color"];
 }

@@ -5,6 +5,7 @@ export * from "./app-repository";
 export * from "./app-updates";
 export type * from "./app-lifecycle.types";
 export type * from "./clipboard.types";
+export type * from "./color-conversion.types";
 export * from "./file-modes";
 export * from "./files";
 export type * from "./files.types";

@@ -13,5 +13,10 @@
   "saveDesign": "Save design",
   "importStickers": "Import stickers",
   "exportToFolder": "Export to folder",
-  "zipFile": "ZIP archive"
+  "zipFile": "ZIP archive",
+  "printProfile": {
+    "unreadable": "That file can't be read as a color profile.",
+    "notCmyk": "That isn't a CMYK print profile. Ask your print shop for their .icc file.",
+    "unnamed": "Print profile"
+  }
 }

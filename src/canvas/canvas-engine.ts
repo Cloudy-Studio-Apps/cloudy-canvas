@@ -4,6 +4,8 @@ import {
   type DroppedFile,
   type GlyphOutliner,
   type WebpEncoder,
+  type ColorConversion,
+  type PrintProfileInfo,
 } from "@shared/core";
 
 import { Camera } from "./camera";
@@ -176,6 +178,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   private readonly fontTracker: FontTracker;
   private readonly glyphs: GlyphOutliner | null;
   private readonly webp: WebpEncoder | null;
+  private readonly color: ColorConversion | null;
   /** What tools (and the product's `editElement`) reach of the engine. */
   private readonly toolContext: ToolContext<O>;
   private readonly services: ServiceCache;
@@ -248,6 +251,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     fonts,
     glyphs,
     webp,
+    color,
   }: CanvasEngineOptions<O>) {
     this.product = product;
     this.productId = product.id;
@@ -303,6 +307,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     this.scopeGuides = new ScopeGuides(this.doc, product.guides);
     this.glyphs = glyphs ?? null;
     this.webp = webp ?? null;
+    this.color = color ?? null;
     this.fontTracker = new FontTracker(fonts, (key) => this.handleFontLoad(key));
     this.systemClipboard = clipboard ?? new MemoryClipboard();
     this.clipboard = this.createClipboard(this.systemClipboard);
@@ -823,6 +828,12 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   exportElements(options: ExportOptions): Promise<Blob> {
     this.textEditor?.commit();
     return exportElements(this.exportHost, options);
+  }
+
+  /** Reads a print profile (`.icc`), rejecting with a message when it isn't a CMYK one. */
+  async readPrintProfile(profile: Uint8Array): Promise<PrintProfileInfo> {
+    if (!this.color) throw new Error("Color management isn't available here.");
+    return this.color.readProfile(profile);
   }
 
   /** A PDF written a page at a time, reading the canvas as each page is added. */
@@ -1477,6 +1488,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
         vector: (elements, options) =>
           this.renderer.vectorSnapshot(elements, { ...options, glyphs: this.glyphs }),
         webp: this.webp,
+        color: this.color,
       },
     );
   }

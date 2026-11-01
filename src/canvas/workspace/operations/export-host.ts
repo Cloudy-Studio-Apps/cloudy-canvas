@@ -26,5 +26,6 @@ export function sceneExportHost(parts: WorkspaceParts, options: SceneExportOptio
     snapshot: options.snapshot,
     vector: options.vector,
     webp: options.webp,
+    color: options.color,
   };
 }

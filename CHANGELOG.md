@@ -44,6 +44,9 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - Brochures are now ready to trim: PDFs include bleed and crop marks, with the page boxes print shops
   expect, and layers placed past the page edge run into the bleed. Set the bleed or turn the marks off
   in the Print section of the Catalog panel.
+- Export brochures in true CMYK: load your print shop's .icc profile in the Print section, and text,
+  shapes, gradients and pictures are converted with it, while pure black text prints on black ink
+  alone. The profile stays in the file, so the same brochure can be exported again at any time.
 
 ### Improved
 

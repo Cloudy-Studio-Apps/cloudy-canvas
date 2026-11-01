@@ -1,3 +1,5 @@
+import type { PrintProfileInfo } from "@shared/core";
+
 import type { Alignment, DistributeAxis, RotatePivot, ScaleAnchor } from "../arrange";
 import { ElementClipboard, MemoryClipboard, PASTE_STEP } from "../clipboard";
 import type { ElementClipboardHost } from "../clipboard";
@@ -240,6 +242,12 @@ export class ActorWorkspace<O extends object> implements CanvasWorkspace<O> {
 
   exportElements(options: ExportOptions): Promise<Blob> {
     return exportElements(this.exportHost(), options);
+  }
+
+  async readPrintProfile(profile: Uint8Array): Promise<PrintProfileInfo> {
+    const { color } = this.exportHost();
+    if (!color) throw new Error("Color management isn't available here.");
+    return color.readProfile(profile);
   }
 
   pdfBook(options: Partial<PdfExportOptions> = {}): PdfBook {

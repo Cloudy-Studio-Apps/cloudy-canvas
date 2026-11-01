@@ -29,6 +29,8 @@ const PDF_BLEND: Readonly<Record<string, string>> = {
 const LINE_CAPS: Readonly<Record<string, number>> = { butt: 0, round: 1, square: 2 };
 const LINE_JOINS: Readonly<Record<string, number>> = { miter: 0, round: 1, bevel: 2 };
 
+const OVERPRINT = "/OP true /op true /OPM 1";
+
 /** Writes the SVG writer's elements as PDF operators. */
 export class SvgPdfWriter {
   private readonly ids = new Map<string, Element>();
@@ -142,7 +144,11 @@ export class SvgPdfWriter {
       ? `/${out.name("ExtGState", this.state(`/${alpha} ${opacity}`))} gs `
       : "";
     const gradient = this.ids.get(/url\(#(.+)\)/.exec(paint)?.[1] ?? "");
-    if (!gradient) return `${faded}${this.output.paint(paint, stroke)}`;
+    if (!gradient) {
+      const overprint = el.hasAttribute("data-text") && this.output.overprints?.(paint);
+      const over = overprint ? `/${out.name("ExtGState", this.state(OVERPRINT))} gs ` : "";
+      return `${faded}${over}${this.output.paint(paint, stroke)}`;
+    }
     let shading = this.shadings.get(gradient);
     if (!shading) {
       shading = gradientShading(this.doc, gradient, this.output);

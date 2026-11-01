@@ -3,9 +3,10 @@ import { Scissors } from "lucide-react";
 import { NumberField, PanelSection } from "@design/ui/components/panel";
 import { CheckboxField } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
+import { PrintColorFields } from "./print-color-fields";
 import { t } from "../../catalog.i18n";
 
-/** What the PDF adds for a print shop: the bleed and the crop marks. */
+/** What the PDF has for a print shop: the bleed, the crop marks and its colors. */
 export function PrintSection() {
   const { brochure, settings } = useBrochure();
   return (
@@ -24,6 +25,7 @@ export function PrintSection() {
           checked={settings.cropMarks}
           onChange={(cropMarks) => brochure?.setSettings({ cropMarks })}
         />
+        <PrintColorFields />
       </div>
     </PanelSection>
   );

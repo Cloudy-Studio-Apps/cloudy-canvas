@@ -1,4 +1,4 @@
-import type { WebpEncoder } from "@shared/core";
+import type { ColorConversion, WebpEncoder } from "@shared/core";
 
 import type { CanvasElement } from "../elements";
 import type { ElementClip } from "../render/layer-placement.types";
@@ -56,6 +56,8 @@ export interface ExportHost {
   frames(): readonly CanvasElement[];
   /** The element's grid of texts for CSV, or `null` (see `ElementKind.rows`). */
   rows(el: CanvasElement): string[][] | null;
+  /** Color management for files going to press (see `ColorConversion`). */
+  color: ColorConversion | null;
   /** Encodes WebP where the canvas can't (see `encodeWebp`). */
   webp: WebpEncoder | null;
   /** Fresh links for an export (the product's `createLinks`). */

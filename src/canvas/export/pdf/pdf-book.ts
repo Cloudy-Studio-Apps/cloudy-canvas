@@ -1,6 +1,8 @@
+import type { ColorConverter } from "@shared/core";
+
 import type { Size } from "../../geometry.types";
 import type { ExportHost } from "../export.types";
-import { RGB_OUTPUT } from "./color";
+import { cmykOutput, RGB_OUTPUT, type PdfColorOutput } from "./color";
 import { addPdfPage } from "./export-pdf";
 import { PdfContent, PdfDocument } from "./pdf-document";
 import { DEFAULT_PDF_OPTIONS } from "./pdf-options";
@@ -17,6 +19,8 @@ export class PdfBook {
   private readonly doc = new PdfDocument();
   private readonly host: () => ExportHost;
   private readonly options: PdfExportOptions;
+  private output: PdfColorOutput | null = null;
+  private converter: ColorConverter | null = null;
 
   constructor({ host, ...options }: PdfBookOptions) {
     this.host = host;
@@ -24,6 +28,7 @@ export class PdfBook {
   }
 
   async add({ ids, rect, prepare }: PdfBookPage): Promise<void> {
+    const output = await this.colorOutput();
     const host = this.host();
     const elements = host.elementsOf("board", ids).map((el) => {
       const shown = host.forExport(el);
@@ -31,18 +36,32 @@ export class PdfBook {
     });
     if (elements.length === 0) throw new Error("There's nothing to export on this page.");
     const clips = prepare ? host.clipsOf(elements) : undefined;
-    await addPdfPage(this.doc, host, { elements, rect, clips }, "solid", this.options, RGB_OUTPUT);
+    await addPdfPage(this.doc, host, { elements, rect, clips }, "solid", this.options, output);
   }
 
   /** An empty page. */
-  addBlank({ w, h }: Size): void {
+  async addBlank({ w, h }: Size): Promise<void> {
+    const output = await this.colorOutput();
     const layout = pdfPageLayout({ x: 0, y: 0, w, h }, this.options);
     const content = new PdfContent();
-    if (this.options.print?.marks) content.ops.push(cropMarkOps(layout, RGB_OUTPUT.registration));
+    if (this.options.print?.marks) content.ops.push(cropMarkOps(layout, output.registration));
     this.doc.addPage(layout, content);
   }
 
+  /** The file; the book can't take more pages after. */
   save(): Blob {
+    this.converter?.close();
+    this.converter = null;
     return this.doc.save();
+  }
+
+  private async colorOutput(): Promise<PdfColorOutput> {
+    if (this.output) return this.output;
+    const color = this.options.print?.color;
+    if (!color) return (this.output = RGB_OUTPUT);
+    const conversion = this.host().color;
+    if (!conversion) throw new Error("Color management isn't available here.");
+    this.converter = await conversion.converter(color.profile, color.intent);
+    return (this.output = cmykOutput(this.converter));
   }
 }

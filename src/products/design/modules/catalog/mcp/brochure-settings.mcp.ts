@@ -13,10 +13,12 @@ import {
   BROCHURE_LAYOUTS,
   type BrochureSettings,
 } from "../brochure";
-import { exportBrochure } from "../export";
+import { exportBrochure, loadPrintProfile, printedPages } from "../export";
 import { BROCHURE_SCHEMA, readBrochure } from "./brochure-args";
 
 const PDF_MODES = ["sharp", "flattened"] as const;
+const COLOR_MODES = ["rgb", "cmyk"] as const;
+const RENDERING_INTENTS = ["relative", "perceptual"] as const;
 
 /** How the brochure prints, and its PDF. */
 export const brochureSettingsTools: DesignMcpTool[] = [
@@ -29,6 +31,10 @@ export const brochureSettingsTools: DesignMcpTool[] = [
       "keep the back cover on the left or a spread frame starting on a left page), " +
       "`splitSpreads` (frames twice the page's width are spreads of two pages: in the PDF, two " +
       "pages or one wide one), `margin` (the safe area's inset in mm, which the checks read) and " +
+      "`bleed` (how far pages run past their trim in the PDF, in mm), `cropMarks`, `colorMode` " +
+      "(`rgb`, or `cmyk`, which needs a print profile), `printProfilePath` (the absolute path of " +
+      "the print shop's .icc file, kept in the design; it sets `colorMode` to `cmyk`), " +
+      "`renderingIntent` (`relative` or `perceptual`), " +
       "`dpi` (the exported PDF's picture resolution, 300 for print), `pdfMode` (`sharp`, the " +
       "default, keeps shapes and text as vectors; `flattened` prints each page as one picture, " +
       "for print shops that ask for it) and `arrange`, which lays the " +
@@ -46,22 +52,34 @@ export const brochureSettingsTools: DesignMcpTool[] = [
         margin: { type: "number", minimum: 0 },
         dpi: { type: "number", minimum: 36, maximum: 600 },
         pdfMode: { enum: PDF_MODES },
+        bleed: { type: "number", minimum: 0 },
+        cropMarks: { type: "boolean" },
+        colorMode: { enum: COLOR_MODES },
+        renderingIntent: { enum: RENDERING_INTENTS },
+        printProfilePath: { type: "string" },
         arrange: { enum: BROCHURE_ARRANGES },
         brochure: BROCHURE_SCHEMA,
       },
     },
-    run: (host, args) => {
+    run: async (host, args) => {
       const { engine } = requireDesign(host);
       const brochure = readBrochure(engine, args);
+      const profilePath = optionalString(args, "printProfilePath");
       const layout = optionalChoice(args, "layout", BROCHURE_LAYOUTS);
       const covers = optionalChoice(args, "covers", BROCHURE_COVERS);
       const splitSpreads = optionalBoolean(args, "splitSpreads");
       const margin = optionalNumber(args, "margin");
       const dpi = optionalNumber(args, "dpi");
       const pdfMode = optionalChoice(args, "pdfMode", PDF_MODES);
+      const bleed = optionalNumber(args, "bleed");
+      const cropMarks = optionalBoolean(args, "cropMarks");
+      const colorMode = optionalChoice(args, "colorMode", COLOR_MODES);
+      const renderingIntent = optionalChoice(args, "renderingIntent", RENDERING_INTENTS);
       const arrange = optionalChoice(args, "arrange", BROCHURE_ARRANGES);
+      if (bleed !== undefined && bleed < 0) throw new Error('"bleed" must be 0 or more.');
       if (margin !== undefined && margin < 0) throw new Error('"margin" must be 0 or more.');
       if (dpi !== undefined && (dpi < 36 || dpi > 600)) throw new Error('"dpi" must be 36–600.');
+      if (profilePath) await loadPrintProfile(engine, brochure, await host.readFile(profilePath));
       const patch: Partial<BrochureSettings> = {};
       if (layout !== undefined) patch.layout = layout;
       if (covers !== undefined) patch.covers = covers;
@@ -69,6 +87,10 @@ export const brochureSettingsTools: DesignMcpTool[] = [
       if (margin !== undefined) patch.margin = margin;
       if (dpi !== undefined) patch.dpi = dpi;
       if (pdfMode !== undefined) patch.pdfMode = pdfMode;
+      if (bleed !== undefined) patch.bleed = bleed;
+      if (cropMarks !== undefined) patch.cropMarks = cropMarks;
+      if (colorMode !== undefined) patch.colorMode = colorMode;
+      if (renderingIntent !== undefined) patch.renderingIntent = renderingIntent;
       if (arrange !== undefined) patch.arrange = arrange;
       brochure.setSettings(patch);
       return { settings: brochure.settings() };
@@ -101,7 +123,8 @@ export const brochureSettingsTools: DesignMcpTool[] = [
     name: "export_brochure_pdf",
     description:
       "Writes the brochure as one PDF, a page per brochure page in order, each the printed " +
-      "frame exactly, sharp or flattened as the brochure's pdfMode says (an A4 frame is an A4 page). The file goes to " +
+      "frame as its print settings say: trimmed to its size (an A4 frame trims to A4), with bleed, " +
+      "crop marks, colors and pdfMode. The file goes to " +
       '"path" (absolute; .pdf is added when missing), or next to the design\'s file, named after ' +
       "it. An existing file is replaced. Returns the path written and the page count.",
     inputSchema: {
@@ -118,10 +141,11 @@ export const brochureSettingsTools: DesignMcpTool[] = [
       const path = exportPath(design, "pdf", optionalString(args, "path"), "design");
       const file = await exportBrochure(design.engine, brochure);
       await host.writeFile(path, file);
+      const pages = brochure.pages();
       return {
         path,
         bytes: file.size,
-        pages: brochure.pages().length,
+        pages: printedPages(pages, brochure.layout(), brochure.settings().splitSpreads).length,
       };
     },
   },

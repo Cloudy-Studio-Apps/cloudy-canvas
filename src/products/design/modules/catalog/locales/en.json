@@ -185,6 +185,19 @@
   "print": {
     "title": "Print",
     "bleed": "Bleed",
-    "cropMarks": "Crop marks"
+    "cropMarks": "Crop marks",
+    "noProfile": "Load your print shop's profile to export in CMYK.",
+    "profileDialog": "Load a print profile",
+    "profileFiles": "ICC color profiles",
+    "profileError": "Couldn't load the profile",
+    "color": "Colors",
+    "colorRgb": "RGB · for screens",
+    "colorCmyk": "CMYK · for press",
+    "noProfileYet": "No print profile yet",
+    "loadProfile": "Load .icc profile…",
+    "changeProfile": "Change profile…",
+    "intent": "Rendering intent",
+    "intentRelative": "Relative colorimetric",
+    "intentPerceptual": "Perceptual"
   }
 }

@@ -1,3 +1,5 @@
+import type { PrintProfileInfo } from "@shared/core";
+
 import type { Alignment, DistributeAxis, RotatePivot, ScaleAnchor } from "../arrange";
 import type { CanvasDocument, UndoHistory } from "../document";
 import type { CanvasElement, ElementKinds, ReorderDirection } from "../elements";
@@ -60,6 +62,8 @@ export interface CanvasWorkspace<O extends object = object> {
 
   // View.
   exportElements(options: ExportOptions): Promise<Blob>;
+  /** Reads a print profile (`.icc`), rejecting with a message when it isn't a CMYK one. */
+  readPrintProfile(profile: Uint8Array): Promise<PrintProfileInfo>;
   /** A PDF written a page at a time, reading the workspace as each page is added. */
   pdfBook(options?: Partial<PdfExportOptions>): PdfBook;
   copyAsPng(ids?: readonly string[]): Promise<void>;

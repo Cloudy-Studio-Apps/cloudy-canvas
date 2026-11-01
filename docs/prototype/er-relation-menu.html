@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>ER relation menu</title>
+    <title>ER menus</title>
     <style>
       @font-face {
         font-family: Inter;
@@ -50,6 +50,8 @@
         min-height: 100vh;
         display: flex;
         justify-content: center;
+        align-items: flex-start;
+        gap: 14px;
         padding: 28px 12px;
       }
       button {
@@ -439,6 +441,411 @@
           monospace;
         white-space: pre-wrap;
       }
+
+      /* Which shape is selected */
+      .picker {
+        position: sticky;
+        top: 28px;
+        width: 142px;
+        background: var(--panel);
+        border-radius: 6px;
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        box-shadow: 0 20px 40px -20px rgba(40, 25, 90, 0.55);
+      }
+      .picker p {
+        margin: 2px 4px 6px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .pick {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px;
+        border-radius: 4px;
+        color: var(--muted);
+        text-align: left;
+        font-size: 12.5px;
+        font-weight: 550;
+      }
+      .pick:hover {
+        background: #404a5a;
+        color: #fff;
+      }
+      .pick[aria-pressed="true"] {
+        background: var(--ice);
+        color: var(--ice-ink);
+      }
+      .pick svg {
+        width: 28px;
+        height: 24px;
+        flex: none;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.6;
+      }
+
+      .wide-sel {
+        width: 100%;
+      }
+      .line {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .line input {
+        flex: 1;
+        width: 100%;
+      }
+      .mm span:first-child {
+        flex: 1;
+        font-size: 12px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .mm span {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .x {
+        flex: none;
+        width: 26px;
+        height: 26px;
+        border-radius: 4px;
+        color: var(--muted);
+        font-size: 15px;
+      }
+      .x:hover {
+        background: #404a5a;
+        color: #fff;
+      }
+      .pair {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+        align-items: stretch;
+      }
+      .act {
+        text-align: center;
+      }
+      .act:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .sec .act {
+        width: 100%;
+      }
+      .oval {
+        width: 44px;
+        height: 25px;
+        display: block;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.3;
+      }
+      .oval text {
+        fill: currentColor;
+        stroke: none;
+        font: 600 9.5px Inter;
+        text-anchor: middle;
+      }
+      .solid {
+        fill: currentColor;
+        stroke: none;
+      }
+      .soft {
+        opacity: 0.55;
+      }
+      .flags {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 4px;
+      }
+      .flag-tile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        padding: 7px 3px 6px;
+        border-radius: 4px;
+        background: var(--well);
+        color: var(--text);
+        text-align: center;
+        min-width: 0;
+      }
+      .flag-tile:hover {
+        background: #404a5a;
+      }
+      .flag-tile[aria-pressed="true"] {
+        background: var(--ice);
+        color: var(--ice-ink);
+      }
+      .flag-tile b {
+        font-size: 11.5px;
+        font-weight: 640;
+      }
+      .flag-tile small {
+        font-size: 10px;
+        line-height: 1.2;
+        opacity: 0.8;
+      }
+      .swatches {
+        display: flex;
+        gap: 6px;
+      }
+      .sw {
+        width: 30px;
+        height: 24px;
+        border-radius: 4px;
+        border: 2px solid transparent;
+      }
+      .sw[aria-pressed="true"] {
+        border-color: #fff;
+        outline: 1px solid var(--ice);
+      }
+      .attr-row {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        padding: 3px;
+        border-radius: 4px;
+      }
+      .attr-row.open {
+        background: var(--well-2);
+        padding: 7px;
+      }
+      .glyph {
+        flex: none;
+        color: var(--text);
+        border-radius: 4px;
+      }
+      .glyph:hover {
+        color: var(--ice-strong);
+      }
+      .glyph .oval {
+        width: 42px;
+        height: 24px;
+      }
+      .effect {
+        display: grid;
+        grid-template-columns: 96px 18px minmax(0, 1fr);
+        gap: 6px;
+        align-items: center;
+      }
+      .big {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        min-width: 0;
+      }
+      .big .oval {
+        width: 92px;
+        height: 52px;
+        stroke-width: 0.9;
+      }
+      .big small,
+      .under {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        text-align: center;
+      }
+      .under {
+        margin-top: 3px;
+      }
+      .to {
+        color: var(--ice);
+        font-size: 16px;
+        text-align: center;
+      }
+      .r.gone .n {
+        text-decoration: line-through;
+        opacity: 0.65;
+      }
+      .r .mono-t {
+        color: var(--ice-strong);
+        opacity: 1;
+      }
+      .chips {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+      }
+      .chip {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 4px;
+        padding: 3px 3px 3px 9px;
+        background: var(--well);
+        border-left: 3px solid #e2474e;
+        border-radius: 3px;
+        font-size: 12.5px;
+        font-weight: 600;
+        min-width: 0;
+      }
+      .chip span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .chip button {
+        width: 22px;
+        height: 22px;
+        color: var(--muted);
+        border-radius: 3px;
+        font-size: 14px;
+        flex: none;
+      }
+      .chip button:hover {
+        background: #404a5a;
+        color: #fff;
+      }
+      .pic {
+        display: block;
+        width: 100%;
+        height: auto;
+        fill: none;
+        stroke: var(--muted);
+        stroke-width: 1.5;
+      }
+      .pic text {
+        fill: var(--text);
+        stroke: none;
+        font: 600 12.5px Inter;
+        text-anchor: middle;
+      }
+      .pic .box {
+        fill: var(--well-2);
+        stroke: #e2474e;
+        stroke-width: 2;
+      }
+      .pic .tri {
+        fill: var(--well-2);
+        stroke: var(--text);
+      }
+      .pic .tot {
+        fill: var(--well-2);
+        stroke: var(--ice);
+        stroke-width: 2;
+      }
+      .pic .frame {
+        stroke: var(--ice);
+      }
+      .pic .dia {
+        fill: var(--well-2);
+        stroke: #6aa8e4;
+        stroke-width: 2;
+      }
+      .pic .mark {
+        stroke: var(--ice);
+        stroke-width: 2.5;
+      }
+      .pic text.u {
+        font-size: 15px;
+        font-weight: 700;
+      }
+      .pic text.u2 {
+        fill: var(--ice-strong);
+        font-weight: 650;
+      }
+      .pic text.lab2 {
+        fill: var(--ice-strong);
+        font-size: 11.5px;
+      }
+      .two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+      .rels {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 4px;
+      }
+      .rel-tile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        padding: 7px 3px;
+        border-radius: 4px;
+        background: var(--well);
+        font-size: 12px;
+        color: var(--text);
+      }
+      .rel-tile:hover {
+        background: #404a5a;
+      }
+      .rel-tile[aria-pressed="true"] {
+        background: var(--ice);
+        color: var(--ice-ink);
+        font-weight: 640;
+      }
+      .rel-tile svg {
+        width: 40px;
+        height: 24px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.5;
+      }
+      .swap {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr);
+        gap: 4px;
+        align-items: end;
+      }
+      .big-x {
+        height: 32px;
+        width: 28px;
+        font-size: 16px;
+      }
+      @media (max-width: 560px) {
+        body {
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+        }
+        .picker {
+          position: static;
+          width: min(350px, 100%);
+          flex-direction: row;
+          flex-wrap: wrap;
+        }
+        .picker p {
+          width: 100%;
+        }
+      }
+      .linkrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        padding: 4px 0;
+        text-align: left;
+      }
+      .linkrow:hover {
+        color: var(--ice-strong);
+      }
+      .linkrow span:last-child {
+        margin-left: auto;
+        color: var(--subtle);
+        font-size: 12px;
+      }
+      .tiny {
+        color: var(--subtle);
+        font-size: 12px;
+        margin: 0;
+      }
+      .r.fk .i svg {
+        stroke: var(--ice-strong);
+      }
+      .r.fk {
+        color: var(--ice-strong);
+      }
     </style>
   </head>
   <body>
@@ -450,6 +857,7 @@
         </g>
       </symbol>
     </svg>
+    <nav class="picker" id="picker" aria-label="Selected shape"></nav>
     <main class="panel" id="panel" aria-label="Relation menu"></main>
     <script>
       "use strict";
@@ -656,10 +1064,533 @@
         ].filter(Boolean);
         return `<pre>Relation borrows${fl.length ? ` [${fl.join(", ")}]` : ""} {\n${side("Member")}\n${side("Copy")}\n  due_date\n}</pre>`;
       }
+      /* ── The other menus ─────────────────────────────────────────────── */
+      const A = (name, o = {}) => ({
+        name,
+        key: "none",
+        multi: false,
+        derived: false,
+        optional: false,
+        parts: [],
+        ...o,
+      });
+      Object.assign(S, {
+        menu: "relation",
+        ent: {
+          name: "Copy",
+          weak: true,
+          color: "#e2474e",
+          open: null,
+          attrs: [A("number", { key: "partial" }), A("condition")],
+        },
+        attr: A("phone", { multi: true }),
+        isa: {
+          parent: "Member",
+          exclusive: true,
+          total: true,
+          disc: "kind",
+          pMin: "",
+          pMax: "",
+          kids: [
+            { n: "Student", min: "", max: "" },
+            { n: "Staff", min: "", max: "" },
+          ],
+        },
+        uni: { cat: "Donor", sup: ["Member", "Author"] },
+        agg: { name: "Loan", rel: "borrows", attrs: ["fine"] },
+        con: {
+          rule: "exclusive",
+          entity: "Member",
+          a: "borrows",
+          b: "reserves",
+          min: "2",
+          max: "n",
+        },
+      });
+      const ENTITIES = ["Member", "Copy", "Book", "Author", "Student", "Staff"];
+      const RELATIONS = ["borrows", "reserves", "has", "writes"];
+      const COLORS = ["#e2474e", "#2c3140", "#9aa3b2", "#3b82cf", "#2f9e62"];
+      const opt = (v, l = v, cur) =>
+        `<option value="${v}"${v === cur ? " selected" : ""}>${l}</option>`;
+      const pickSel = (bind, list, cur, label, ph) =>
+        `<select class="wide-sel" aria-label="${label}" data-bind="${bind}">${ph ? `<option value="">${ph}</option>` : ""}${list.map((v) => opt(v, v, cur)).join("")}</select>`;
+      const field = (label, bind, val, ph = "") =>
+        `<div class="sec"><label class="lbl">${label}</label><input class="name" aria-label="${label}" data-bind="${bind}" value="${val}" placeholder="${ph}"></div>`;
+      const row = (n, { k, tag, fresh, fk } = {}) =>
+        `<div class="r${fresh ? " new" : ""}${fk ? " fk" : ""}"><span class="i">${k ? key : ""}</span><span class="n">${n}</span>${tag ? `<span class="t">${tag}</span>` : ""}</div>`;
+      const kindTile = (act, on, glyph, title, sub) =>
+        `<button class="kind" data-act="${act}" data-f="${act}" aria-pressed="${on}"><svg viewBox="0 0 40 30" aria-hidden="true">${glyph}</svg><b>${title}</b><small>${sub}</small></button>`;
+      const chip = (n, act, label) =>
+        `<div class="chip"><span>${n}</span><button data-act="${act}" aria-label="${label}" title="${label}">×</button></div>`;
+
+      /* An attribute's oval, drawn as it is on the board */
+      function oval(a, label = "abc") {
+        const w = a.derived ? ' stroke-dasharray="4 3"' : "",
+          dash = {
+            pk: "",
+            partial: ' stroke-dasharray="3 2"',
+            alternate: ' stroke-dasharray="1 2"',
+          }[a.key];
+        return `<svg class="oval" viewBox="0 0 54 30" aria-hidden="true"><ellipse cx="25" cy="15" rx="23" ry="13"${w}/>${a.multi ? '<ellipse cx="25" cy="15" rx="19" ry="9.5"/>' : ""}
+  <text x="25" y="18.5">${label}</text>${a.key !== "none" ? `<path d="M14 22h22"${dash}/>` : ""}
+  ${a.optional ? '<circle cx="49" cy="7" r="4.2" fill="var(--panel)"/><path d="M49 2.8a4.2 4.2 0 0 1 0 8.4z" class="solid"/>' : ""}</svg>`;
+      }
+      const FLAGS = [
+        ["pk", "Key", "Identifies each row", { key: "pk" }],
+        ["partial", "Partial key", "Identifies it inside its owner", { key: "partial" }],
+        ["alternate", "Other key", "Also unique", { key: "alternate" }],
+        ["multi", "List", "Holds several values", { multi: true }],
+        ["derived", "Calculated", "Worked out, never saved", { derived: true }],
+        ["optional", "Optional", "Can be empty", { optional: true }],
+      ];
+      const flagOn = (a, id) =>
+        ["pk", "partial", "alternate"].includes(id) ? a.key === id : a[id];
+      const flagTiles = (path, a) =>
+        `<div class="flags">${FLAGS.map(([id, l, d, o]) => `<button class="flag-tile" data-act="flag:${path}:${id}" data-f="f${path}${id}" aria-pressed="${flagOn(a, id)}" title="${d}">${oval(A("", o))}<b>${l}</b><small>${d}</small></button>`).join("")}</div>`;
+      const flagsOf = (a) =>
+        [
+          a.key === "pk" && "pk",
+          a.key === "partial" && "partial",
+          a.key === "alternate" && "ak",
+          a.multi && "multi",
+          a.derived && "derived",
+          a.optional && "optional",
+        ].filter(Boolean);
+      const attrText = (a, ind = "  ") =>
+        a.parts.length
+          ? `${ind}${a.name}${flagsOf(a).length ? ` [${flagsOf(a).join(", ")}]` : ""} {\n${a.parts.map((p) => `${ind}  ${p}`).join("\n")}\n${ind}}`
+          : `${ind}${a.name}${flagsOf(a).length ? ` [${flagsOf(a).join(", ")}]` : ""}`;
+      const partsEditor = (path, a) =>
+        `<div class="sec"><p class="lbl">Split into parts</p>${a.parts.map((p, i) => `<div class="line"><input aria-label="Part name" data-bind="${path}.parts.${i}" value="${p}"><button class="x" data-act="delPart:${path}:${i}" aria-label="Remove part">×</button></div>`).join("")}<button class="act" data-act="addPart:${path}" data-f="ap${path}">+ Add a part</button></div>`;
+      const at = (path) => path.split(".").reduce((o, k) => o[k], S);
+
+      /* Entity */
+      function entityRows() {
+        const e = S.ent,
+          r = resolve(),
+          rows = [];
+        const ownKey = e.attrs.some((a) => a.key === "pk" && !a.derived && !a.multi);
+        if (!e.weak && !ownKey) rows.push(row("id", { k: 1, tag: "added", fresh: 1 }));
+        rows.push(row("Book_isbn", { k: 1, fk: !e.weak, tag: "from has" }));
+        for (const a of e.attrs) {
+          if (a.derived || a.multi) continue;
+          const k = a.key === "pk" || (a.key === "partial" && e.weak);
+          if (a.parts.length) a.parts.forEach((p) => rows.push(row(`${a.name}_${p}`, { k })));
+          else rows.push(row(a.name, { k, tag: a.key === "alternate" ? "unique" : "" }));
+        }
+        if (!r.link && r.holder === "Copy")
+          rows.push(
+            row("Member_id", { k: 1, fk: 1, tag: "from borrows" }),
+            row("due_date", { tag: "from borrows" }),
+          );
+        return rows.join("");
+      }
+      function entityVisual() {
+        const e = S.ent,
+          list = e.attrs
+            .map((a, i) => {
+              const open = e.open === i;
+              return `<div class="attr-row${open ? " open" : ""}"><div class="line"><button class="glyph" data-act="open:${i}" data-f="o${i}" aria-expanded="${open}" aria-label="Options for ${a.name}" title="Options">${oval(a)}</button><input aria-label="Attribute name" data-bind="ent.attrs.${i}.name" value="${a.name}"><button class="x" data-act="delAttr:${i}" aria-label="Delete ${a.name}">×</button></div>
+    ${open ? `${flagTiles(`ent.attrs.${i}`, a)}<div class="pair"><button class="act" data-act="move:${i}:-1"${i === 0 ? " disabled" : ""}>Move up</button><button class="act" data-act="move:${i}:1"${i === e.attrs.length - 1 ? " disabled" : ""}>Move down</button></div>${partsEditor(`ent.attrs.${i}`, a)}` : ""}</div>`;
+            })
+            .join("");
+        return `${field("Entity name", "ent.name", e.name)}
+  <div class="sec"><p class="ttl">Kind of entity</p><div class="kinds">
+    ${kindTile("weak:0", !e.weak, '<rect x="3" y="6" width="34" height="18"/>', "Strong", "Has its own key")}
+    ${kindTile("weak:1", e.weak, '<rect x="1" y="4" width="38" height="22"/><rect x="5" y="8" width="30" height="14"/>', "Weak", "Needs another entity to be identified")}
+  </div></div>
+  <div class="sec"><p class="ttl">Color</p><div class="swatches">${COLORS.map((c) => `<button class="sw" data-act="color:${c}" data-f="c${c}" style="background:${c}" aria-label="Color ${c}" aria-pressed="${e.color === c}"></button>`).join("")}</div></div>
+  <div class="sec"><p class="ttl">Its table</p><div class="card" style="border-color:${e.color}"><h4>${e.name}</h4>${entityRows()}</div>
+  <p class="note">${e.weak ? `Gold keys identify each ${e.name} together. A blue key points to another table.` : e.attrs.some((a) => a.key === "pk" && !a.derived && !a.multi) ? `Gold keys identify each ${e.name}. A blue key points to another table.` : `It has no key of its own, so <code>id</code> is added for it.`}</p></div>
+  <div class="sec"><p class="ttl">Attributes</p><p class="lbl">Click an oval to see its options.</p>${list}<button class="act" data-act="addAttr" data-f="aa">+ Add attribute</button></div>
+  <div class="sec"><p class="ttl">Used in</p>${["has", "borrows"].map((r) => `<button class="linkrow" data-act="menu:relation"><span aria-hidden="true">◇</span><span>${r}</span><span>Open</span></button>`).join("")}<button class="act" data-act="menu:isa">Add hierarchy</button></div>`;
+      }
+      const entityText = () => {
+        const e = S.ent;
+        return `<pre>Entity ${e.name}${e.weak ? " [weak]" : ""} {\n${e.attrs.map((a) => attrText(a)).join("\n")}\n}</pre>`;
+      };
+
+      /* Attribute */
+      function attrEffect() {
+        const a = S.attr,
+          own = "Member";
+        let cards, say;
+        if (a.derived) {
+          cards = `<div class="card"><h4>${own}</h4><div class="r gone"><span class="i"></span><span class="n">${a.name}</span></div></div>`;
+          say = `Not saved in any table. It’s worked out when needed.`;
+        } else if (a.multi) {
+          cards = `<div class="card" style="border-color:var(--ice)"><h4>${own}_${a.name}</h4>${row(`${own}_id`, { k: 1, fresh: 1 })}${row(a.name, { k: 1, fresh: 1 })}</div>`;
+          say = `Several values don’t fit in one cell, so it gets a table of its own.`;
+        } else if (a.parts.length) {
+          const p = a.parts.map((x) => `${a.name}_${x}`);
+          cards = `<div class="card"><h4>${own}</h4>${p.map((n) => row(n, { k: a.key === "pk" || a.key === "partial" })).join("")}</div>`;
+          say = `Each part becomes its own column.`;
+        } else {
+          cards = `<div class="card"><h4>${own}</h4>${row(a.name, { k: a.key === "pk" || a.key === "partial", tag: a.key === "alternate" ? "unique" : "" })}</div>`;
+          say = {
+            pk: `Identifies each ${own}, so no two can share it.`,
+            partial: `Identifies it only together with its owner’s key.`,
+            alternate: `Not the main key, but no two can share it.`,
+            none: a.optional ? "A normal column that can stay empty." : "A normal column.",
+          }[a.key];
+        }
+        return `<div class="effect"><div class="big">${oval(a, a.name.slice(0, 7))}<small>On the board</small></div><div class="to" aria-hidden="true">→</div><div>${cards}<small class="under">In the table</small></div></div><p class="note">${say}</p>`;
+      }
+      const attrVisual = () => `${field("Attribute name", "attr.name", S.attr.name)}
+  <div class="sec"><p class="ttl">What is it?</p>${flagTiles("attr", S.attr)}</div>
+  <div class="sec"><p class="ttl">What it makes</p>${attrEffect()}</div>
+  ${partsEditor("attr", S.attr)}
+  <details class="more"><summary>More options</summary><div class="body"><div class="pair"><button class="act">Move up</button><button class="act">Move down</button></div><button class="act">Delete attribute</button></div></details>
+  <button class="act">Open Member</button>`;
+      const attrText2 = () => `<pre>Entity Member {\n  ...\n${attrText(S.attr)}\n}</pre>`;
+
+      /* Hierarchy */
+      const VENN = {
+        over: '<circle cx="15" cy="15" r="9.5"/><circle cx="25" cy="15" r="9.5"/>',
+        excl: '<circle cx="10" cy="15" r="8"/><circle cx="30" cy="15" r="8"/>',
+        part: '<rect x="1" y="2" width="38" height="26"/><circle cx="12" cy="15" r="6.5" class="solid"/><circle cx="28" cy="15" r="6.5" class="solid"/>',
+        tot: '<rect x="1" y="2" width="38" height="26"/><path d="M20 2v26"/><path d="M1 2h19v26H1z" class="solid"/><path d="M20 2h19v26H20z" class="solid soft"/>',
+      };
+      function isaSentence() {
+        const s = S.isa,
+          names = s.kids.map((k) => k.n),
+          l =
+            names.length > 1
+              ? names.slice(0, -1).join(", ") + " or " + names.at(-1)
+              : (names[0] ?? "its children");
+        return s.exclusive
+          ? s.total
+            ? `Each ${s.parent} is exactly one: ${l}.`
+            : `Each ${s.parent} is ${l}, or neither. Never both.`
+          : s.total
+            ? `Each ${s.parent} is at least one, and can be several: ${l}.`
+            : `Each ${s.parent} can be any of ${l}, several, or none.`;
+      }
+      function isaPicture() {
+        const s = S.isa,
+          n = s.kids.length,
+          W = 326,
+          bw = Math.min(100, (W - (n - 1) * 8) / Math.max(n, 1)),
+          total = n * bw + (n - 1) * 8,
+          x0 = (W - total) / 2;
+        const kids = s.kids
+          .map((k, i) => {
+            const x = x0 + i * (bw + 8);
+            return `<path d="M163 100L${x + bw / 2} 138"/><rect class="box" x="${x}" y="138" width="${bw}" height="28"/><text x="${x + bw / 2}" y="156">${k.n}</text>`;
+          })
+          .join("");
+        return `<svg class="pic" viewBox="0 0 326 170" role="img" aria-label="Hierarchy drawing"><path d="M163 36V68"/><rect class="box" x="108" y="6" width="110" height="30"/><text x="163" y="26">${s.parent}</text>
+  <path class="tri" d="M133 68H193L163 100Z"/>${s.total ? '<circle class="tot" cx="163" cy="52" r="6"/>' : ""}${s.exclusive ? '<path class="mark" d="M133 112Q163 130 193 112"/>' : ""}${kids}</svg>`;
+      }
+      const isaVisual = () => {
+        const s = S.isa;
+        return `${isaPicture()}<p class="note">${isaSentence()}</p>
+  <div class="sec"><p class="ttl">Can a ${s.parent} be more than one?</p><div class="kinds">
+    ${kindTile("isa:exclusive:0", !s.exclusive, VENN.over, "Overlapping", "Yes, several at once")}${kindTile("isa:exclusive:1", s.exclusive, VENN.excl, "Exclusive", "No, only one")}</div></div>
+  <div class="sec"><p class="ttl">Can a ${s.parent} be none of them?</p><div class="kinds">
+    ${kindTile("isa:total:0", !s.total, VENN.part, "Partial", "Yes, it can be none")}${kindTile("isa:total:1", s.total, VENN.tot, "Total", "No, always one of them")}</div></div>
+  <div class="sec"><label class="lbl">Parent</label>${pickSel("isa.parent", ENTITIES, s.parent, "Parent entity")}</div>
+  <div class="sec"><p class="ttl">Children</p><div class="chips">${s.kids.map((k, i) => chip(k.n, `delKid:${i}`, `Remove ${k.n}`)).join("")}</div>
+    <div class="pair"><button class="act" data-act="newKid" data-f="nk">+ New entity</button><select aria-label="Add an existing entity as a child" data-act-change="addKid" class="wide-sel"><option value="">Add existing…</option>${ENTITIES.filter(
+      (n) => n !== s.parent && !s.kids.some((k) => k.n === n),
+    )
+      .map((n) => opt(n))
+      .join("")}</select></div></div>
+  <div class="sec"><p class="ttl">What tells them apart</p><p class="lbl">Optional. A column that says which child each row is.</p><input class="name" aria-label="Discriminator" data-bind="isa.disc" value="${s.disc}" placeholder="e.g. kind">
+    ${
+      s.disc
+        ? `<div class="card"><h4>${s.parent}</h4><div class="r"><span class="i">${key}</span><span class="n">id</span><span class="t mono-t">${s.disc}</span></div>${s.kids
+            .slice(0, 3)
+            .map(
+              (k, i) =>
+                `<div class="r"><span class="i"></span><span class="n">${i + 1}</span><span class="t">${k.n}</span></div>`,
+            )
+            .join(
+              "",
+            )}</div><p class="tiny">Saved only if Create tables uses “One table for all”.</p>`
+        : ""
+    }</div>
+  <details class="more"><summary>More options</summary><div class="body"><p class="lbl">Numbers on the lines. Leave empty to hide them.</p>
+    ${minmax("Parent", "isa.pMin", "isa.pMax", s.pMin, s.pMax)}${s.kids.map((k, i) => minmax(k.n, `isa.kids.${i}.min`, `isa.kids.${i}.max`, k.min, k.max)).join("")}</div></details>`;
+      };
+      const minmax = (l, a, b, x, y) =>
+        `<div class="line mm"><span>${l}</span><select aria-label="${l} minimum" data-bind="${a}">${["", "0", "1", "2"].map((v) => opt(v, v || "–", x)).join("")}</select><span>to</span><select aria-label="${l} maximum" data-bind="${b}">${["", "1", "2", "n"].map((v) => opt(v, v === "n" ? "many" : v || "–", y)).join("")}</select></div>`;
+      const isaText = () => {
+        const s = S.isa,
+          c = (m, x) => (m && x ? ` (${m},${x})` : ""),
+          fl = [s.exclusive && "exclusive", s.total && "total", s.disc && `by: ${s.disc}`].filter(
+            Boolean,
+          );
+        return `<pre>Isa ${s.parent}${c(s.pMin, s.pMax)}${fl.length ? ` [${fl.join(", ")}]` : ""} {\n${s.kids.map((k) => `  ${k.n}${c(k.min, k.max)}`).join("\n")}\n}</pre>`;
+      };
+
+      /* Union */
+      function unionPicture() {
+        const s = S.uni,
+          n = s.sup.length,
+          W = 326,
+          bw = Math.min(100, (W - (n - 1) * 8) / Math.max(n, 1)),
+          total = n * bw + (n - 1) * 8,
+          x0 = (W - total) / 2;
+        const top = s.sup
+          .map((k, i) => {
+            const x = x0 + i * (bw + 8);
+            return `<path d="M${x + bw / 2} 34L163 62"/><rect class="box" x="${x}" y="6" width="${bw}" height="28"/><text x="${x + bw / 2}" y="25">${k}</text>`;
+          })
+          .join("");
+        return `<svg class="pic" viewBox="0 0 326 140" role="img" aria-label="Union drawing">${top}<path d="M163 96V110"/><circle class="tot big-c" cx="163" cy="78" r="17"/><text x="163" y="84" class="u">U</text><rect class="box" x="108" y="110" width="110" height="28"/><text x="163" y="129">${s.cat}</text></svg>`;
+      }
+      const unionVisual = () => {
+        const s = S.uni;
+        return `${unionPicture()}<p class="note">Each <b>${s.cat}</b> is exactly one of: ${s.sup.join(", ") || "nothing yet"}.</p>
+  <div class="sec"><label class="lbl">Category</label>${pickSel(
+    "uni.cat",
+    ["Donor", ...ENTITIES].filter((n) => !s.sup.includes(n)),
+    s.cat,
+    "Category entity",
+  )}</div>
+  <div class="sec"><p class="ttl">What it can be</p><div class="chips">${s.sup.map((n, i) => chip(n, `delSup:${i}`, `Remove ${n}`)).join("")}</div>
+    <div class="pair"><button class="act" data-act="newSup" data-f="ns">+ New entity</button><select aria-label="Add an existing entity as a superclass" data-act-change="addSup" class="wide-sel"><option value="">Add existing…</option>${ENTITIES.filter(
+      (n) => !s.sup.includes(n) && n !== s.cat,
+    )
+      .map((n) => opt(n))
+      .join("")}</select></div></div>
+  <div class="sec"><p class="ttl">Its tables</p><div class="two">${s.sup
+    .slice(0, 4)
+    .map(
+      (n) =>
+        `<div class="card"><h4>${n}</h4>${row(`${s.cat}_id`, { k: 1, tag: "+", fresh: 1 })}</div>`,
+    )
+    .join("")}</div>
+  <p class="note">${s.sup.length === 1 ? "It gets" : "Each one gets"} a new column, <code>${s.cat}_id</code>, that can stay empty. ${s.cat} gets that key as its own.</p></div>`;
+      };
+      const unionText = () =>
+        `<pre>Union ${S.uni.cat} {\n${S.uni.sup.map((n) => "  " + n).join("\n")}\n}</pre>`;
+
+      /* Aggregation */
+      const AGG = {
+        borrows: ["Member", "Copy", ["Member_id", "Copy_Book_isbn", "Copy_number"], ["due_date"]],
+        has: ["Book", "Copy", ["Book_isbn", "Copy_Book_isbn", "Copy_number"], []],
+        writes: ["Author", "Book", ["Author_id", "Book_isbn"], []],
+      };
+      function aggPicture() {
+        const s = S.agg,
+          [a, b] = AGG[s.rel];
+        return `<svg class="pic" viewBox="0 0 326 110" role="img" aria-label="Aggregation drawing"><rect class="frame" x="3" y="3" width="320" height="104"/><path class="frame" d="M3 25H323"/><text x="163" y="19" class="u2">${s.name}</text>
+  <path d="M84 68H242"/><rect class="box" x="14" y="52" width="72" height="32"/><text x="50" y="73">${a}</text><rect class="box" x="240" y="52" width="72" height="32"/><text x="276" y="73">${b}</text><path class="dia" d="M163 44 208 68 163 92 118 68Z"/><text x="163" y="73">${s.rel}</text></svg>`;
+      }
+      const aggVisual = () => {
+        const s = S.agg,
+          [, , keys, own] = AGG[s.rel];
+        return `${aggPicture()}<p class="note">This box acts like one entity, so you can connect it to other relations.</p>
+  ${field("Aggregation name", "agg.name", s.name)}
+  <div class="sec"><p class="ttl">Relation inside the box</p><div class="rels">${Object.keys(AGG)
+    .map(
+      (r) =>
+        `<button class="rel-tile" data-act="aggRel:${r}" data-f="ar${r}" aria-pressed="${s.rel === r}"><svg viewBox="0 0 40 24" aria-hidden="true"><path d="M20 2 38 12 20 22 2 12Z"/></svg>${r}</button>`,
+    )
+    .join("")}</div></div>
+  <div class="sec"><p class="ttl">Its attributes</p>${s.attrs.map((a, i) => `<div class="line"><input aria-label="Attribute name" data-bind="agg.attrs.${i}" value="${a}"><button class="x" data-act="delAgg:${i}" aria-label="Delete ${a}">×</button></div>`).join("")}<button class="act" data-act="addAgg" data-f="aga">+ Add attribute</button></div>
+  <div class="sec"><p class="ttl">Its table</p><div class="card" style="border-color:var(--ice)"><h4>${s.name}</h4>${keys.map((k) => row(k, { k: 1, fresh: 1 })).join("")}${[...own, ...s.attrs].map((a) => row(a)).join("")}</div><p class="note">The relation always becomes its own table, so other relations can point to it.</p></div>`;
+      };
+      const aggText = () =>
+        `<pre>Aggregate ${S.agg.name} { ${S.agg.rel}\n${S.agg.attrs.map((a) => "  " + a).join("\n")}\n}</pre>`;
+
+      /* Constraint */
+      const dia = (x, y) =>
+        `<path d="M${x} ${y - 9} ${x + 14} ${y} ${x} ${y + 9} ${x - 14} ${y}Z"/>`;
+      const RULES = [
+        [
+          "exclusive",
+          "Only one",
+          "Takes part in one of the two",
+          `<path d="M2 15H10"/><path d="M10 15 24 7M10 15 24 23"/><path d="M15 9Q19 15 15 21"/><path d="M29 2 37 7 29 12 21 7Z"/><path d="M29 18 37 23 29 28 21 23Z"/>`,
+        ],
+        [
+          "inclusive",
+          "Needs the other",
+          "Must do the first to do the second",
+          `<path d="M2 15H10"/><path d="M10 15 24 7M10 15 24 23"/><path d="M29 2 37 7 29 12 21 7Z"/><path d="M29 18 37 23 29 28 21 23Z"/><path d="M29 18V12" stroke-dasharray="2 2"/>`,
+        ],
+        [
+          "exclusion",
+          "Never both",
+          "The same rows can’t be in both",
+          `<path d="M9 7 17 15 9 23 1 15Z"/><path d="M31 7 39 15 31 23 23 15Z"/><path d="M17 15H23"/>`,
+        ],
+        [
+          "inclusion",
+          "Must exist there",
+          "Rows must already be in the first",
+          `<path d="M9 7 17 15 9 23 1 15Z"/><path d="M31 7 39 15 31 23 23 15Z"/><path d="M23 15H18M21 12l-3 3 3 3"/>`,
+        ],
+      ];
+      function conPicture() {
+        const c = S.con,
+          ent = c.rule === "exclusive" || c.rule === "inclusive";
+        const box = (x, y, t) =>
+          `<path class="dia" d="M${x} ${y - 24} ${x + 58} ${y} ${x} ${y + 24} ${x - 58} ${y}Z"/><text x="${x}" y="${y + 5}">${t}</text>`;
+        if (ent)
+          return `<svg class="pic" viewBox="0 0 326 150" role="img" aria-label="Constraint drawing"><defs><marker id="ah" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="var(--ice)"/></marker></defs>
+    <path d="M96 75H128M128 75 208 34M128 75 208 116"/><rect class="box" x="8" y="59" width="90" height="32"/><text x="53" y="80">${c.entity}</text>${box(250, 34, c.a)}${box(250, 116, c.b)}
+    ${c.rule === "exclusive" ? '<path class="mark" d="M158 52Q172 75 158 98"/>' : `<path class="mark" d="M250 90V60" marker-end="url(#ah)" stroke-dasharray="4 3"/><text x="284" y="79" class="lab2">(${c.min},${c.max})</text>`}</svg>`;
+        return `<svg class="pic" viewBox="0 0 326 80" role="img" aria-label="Constraint drawing"><defs><marker id="ah" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7Z" fill="var(--ice)"/></marker></defs>
+    ${box(62, 40, c.a)}${box(264, 40, c.b)}<path class="mark" d="${c.rule === "inclusion" ? "M206 40H122" : "M122 40H206"}"${c.rule === "inclusion" ? ' marker-end="url(#ah)"' : ""}/></svg>`;
+      }
+      function conSentence() {
+        const c = S.con;
+        return {
+          exclusive: `Each ${c.entity} takes part in only one: <b>${c.a}</b> or <b>${c.b}</b>.`,
+          inclusive: `To use <b>${c.b}</b>, a ${c.entity} must have done <b>${c.a}</b> (${c.min},${c.max}) times.`,
+          exclusion: `The same rows can’t be in both <b>${c.a}</b> and <b>${c.b}</b>.`,
+          inclusion: `Everything in <b>${c.b}</b> must also exist in <b>${c.a}</b>.`,
+        }[c.rule];
+      }
+      const conVisual = () => {
+        const c = S.con,
+          ent = c.rule === "exclusive" || c.rule === "inclusive",
+          dir = c.rule === "inclusive" || c.rule === "inclusion";
+        return `${conPicture()}<p class="note">${conSentence()}</p>
+  <div class="sec"><p class="ttl">The rule</p><div class="kinds">${RULES.map(([id, l, d, g]) => kindTile(`rule:${id}`, c.rule === id, g, l, d)).join("")}</div></div>
+  ${ent ? `<div class="sec"><label class="lbl">Entity</label>${pickSel("con.entity", ENTITIES, c.entity, "Entity", "Choose…")}</div>` : ""}
+  <div class="sec"><p class="ttl">The two relations</p><div class="swap"><div><label class="lbl">${dir ? "Required" : "Relation"}</label>${pickSel("con.a", RELATIONS, c.a, "First relation")}</div><button class="x big-x" data-act="swap" data-f="sw" aria-label="Swap relations" title="Swap relations">⇄</button><div><label class="lbl">${dir ? "Needs it" : "Other relation"}</label>${pickSel("con.b", RELATIONS, c.b, "Second relation")}</div></div></div>
+  ${c.rule === "inclusive" ? `<div class="sec"><p class="ttl">How many times</p>${minmax("Times", "con.min", "con.max", c.min, c.max)}</div>` : ""}
+  <p class="tiny">This rule makes no table. Your application has to enforce it.</p>`;
+      };
+      const conText = () => {
+        const c = S.con;
+        return `<pre>${{ exclusive: `Constraint exclusive ${c.entity}: ${c.a}, ${c.b}`, inclusive: `Constraint inclusive ${c.entity} (${c.min},${c.max}): ${c.a} -> ${c.b}`, exclusion: `Constraint exclusion: ${c.a}, ${c.b}`, inclusion: `Constraint inclusion: ${c.a} -> ${c.b}` }[c.rule]}</pre>`;
+      };
+
+      const MENUS = {
+        entity: {
+          l: "Entity",
+          g: '<rect x="2" y="5" width="24" height="14"/>',
+          v: entityVisual,
+          t: entityText,
+        },
+        relation: {
+          l: "Relation",
+          g: '<path d="M14 3 26 12 14 21 2 12Z"/>',
+          v: visual,
+          t: textTab,
+        },
+        attribute: {
+          l: "Attribute",
+          g: '<ellipse cx="14" cy="12" rx="12" ry="8"/>',
+          v: attrVisual,
+          t: attrText2,
+        },
+        isa: { l: "Hierarchy", g: '<path d="M3 4H25L14 21Z"/>', v: isaVisual, t: isaText },
+        union: {
+          l: "Union",
+          g: '<circle cx="14" cy="12" r="9"/><path d="M10 8v5a4 4 0 0 0 8 0V8"/>',
+          v: unionVisual,
+          t: unionText,
+        },
+        aggregate: {
+          l: "Aggregation",
+          g: '<rect x="2" y="3" width="24" height="18"/><path d="M14 7 20 12 14 17 8 12Z"/>',
+          v: aggVisual,
+          t: aggText,
+        },
+        constraint: {
+          l: "Constraint",
+          g: '<path d="M2 20Q14 -4 26 20" stroke-dasharray="3 2.5"/>',
+          v: conVisual,
+          t: conText,
+        },
+      };
+      const ACT = {
+        menu(m) {
+          S.menu = m;
+        },
+        weak(v) {
+          S.ent.weak = v === "1";
+        },
+        color(c) {
+          S.ent.color = c;
+        },
+        open(i) {
+          S.ent.open = S.ent.open === +i ? null : +i;
+        },
+        addAttr() {
+          S.ent.attrs.push(A("new_attribute"));
+          S.ent.open = S.ent.attrs.length - 1;
+        },
+        delAttr(i) {
+          S.ent.attrs.splice(+i, 1);
+          S.ent.open = null;
+        },
+        move(i, d) {
+          const l = S.ent.attrs,
+            a = +i,
+            b = a + +d;
+          [l[a], l[b]] = [l[b], l[a]];
+          S.ent.open = b;
+        },
+        flag(path, id) {
+          const a = at(path);
+          if (["pk", "partial", "alternate"].includes(id)) a.key = a.key === id ? "none" : id;
+          else a[id] = !a[id];
+        },
+        addPart(path) {
+          at(path).parts.push("part");
+        },
+        delPart(path, i) {
+          at(path).parts.splice(+i, 1);
+        },
+        isa(k, v) {
+          S.isa[k] = v === "1";
+        },
+        delKid(i) {
+          S.isa.kids.splice(+i, 1);
+        },
+        newKid() {
+          S.isa.kids.push({ n: "New_entity", min: "", max: "" });
+        },
+        delSup(i) {
+          S.uni.sup.splice(+i, 1);
+        },
+        newSup() {
+          S.uni.sup.push("New_entity");
+        },
+        aggRel(r) {
+          S.agg.rel = r;
+        },
+        delAgg(i) {
+          S.agg.attrs.splice(+i, 1);
+        },
+        addAgg() {
+          S.agg.attrs.push("new_attribute");
+        },
+        rule(r) {
+          S.con.rule = r;
+        },
+        swap() {
+          const c = S.con;
+          [c.a, c.b] = [c.b, c.a];
+        },
+      };
+      const CHANGE = {
+        addKid(v) {
+          S.isa.kids.push({ n: v, min: "", max: "" });
+        },
+        addSup(v) {
+          S.uni.sup.push(v);
+        },
+      };
+
       function render() {
         const f = document.activeElement?.dataset?.f;
         $("#panel").innerHTML =
-          `<div class="tabs" role="tablist"><button role="tab" data-tab="visual" aria-selected="${S.tab === "visual"}">Visual</button><button role="tab" data-tab="text" aria-selected="${S.tab === "text"}">Text</button></div>${S.tab === "visual" ? visual() : textTab()}`;
+          `<div class="tabs" role="tablist"><button role="tab" data-tab="visual" aria-selected="${S.tab === "visual"}">Visual</button><button role="tab" data-tab="text" aria-selected="${S.tab === "text"}">Text</button></div>${S.tab === "visual" ? MENUS[S.menu].v() : MENUS[S.menu].t()}`;
+        $("#picker").innerHTML = `<p>Selected on the board</p>${Object.entries(MENUS)
+          .map(
+            ([id, m]) =>
+              `<button class="pick" data-act="menu:${id}" data-f="m${id}" aria-pressed="${S.menu === id}"><svg viewBox="0 0 28 24" aria-hidden="true">${m.g}</svg>${m.l}</button>`,
+          )
+          .join("")}`;
         if (f) $(`[data-f="${f}"]`)?.focus();
         wires();
       }
@@ -710,6 +1641,13 @@
         svg.innerHTML = `<path class="wire" d="${out.join("")}"/>`;
       }
       document.addEventListener("click", (e) => {
+        const act = e.target.closest("[data-act]");
+        if (act) {
+          const [n, ...a] = act.dataset.act.split(":");
+          ACT[n]?.(...a);
+          render();
+          return;
+        }
         const t = e.target.closest(
           "[data-tab],[data-amount],[data-custom],[data-pick],[data-kind],[data-arrow]",
         );
@@ -731,6 +1669,19 @@
       });
       document.addEventListener("change", (e) => {
         const d = e.target.dataset;
+        if (d.bind) {
+          const k = d.bind.split("."),
+            last = k.pop(),
+            o = k.reduce((x, y) => x[y], S);
+          o[last] = e.target.value;
+          render();
+          return;
+        }
+        if (d.actChange) {
+          if (e.target.value) CHANGE[d.actChange](e.target.value);
+          render();
+          return;
+        }
         if (d.min) S.sides[d.min].min = e.target.value;
         if (d.max) S.sides[d.max].max = e.target.value;
         if (d.min || d.max) {
@@ -755,6 +1706,7 @@
         S.sides.Copy.max = "n";
       }
       if (h === "name") S.sides.Member.via = "name";
+      if (MENUS[h]) S.menu = h;
       render();
       document.fonts.ready.then(wires);
     </script>

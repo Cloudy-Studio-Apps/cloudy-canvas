@@ -46,6 +46,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 - Los folletos ya vienen listos para cortar: los PDF incluyen sangrado y marcas de corte, con las cajas
   de página que esperan las imprentas, y las capas colocadas más allá del borde llegan al sangrado.
   Ajusta el sangrado o quita las marcas en la sección Impresión del panel de Catálogo.
+- Exporta folletos en CMYK real: carga el perfil .icc de tu imprenta en la sección Impresión, y el
+  texto, las formas, los degradados y las imágenes se convierten con él, mientras que el texto negro
+  puro se imprime solo con tinta negra. El perfil se queda en el archivo, así que puedes volver a
+  exportar el mismo folleto en cualquier momento.
 
 ### Mejoras
 
