@@ -18,6 +18,7 @@ export function StyleguideTab() {
     onDrop: (id, overId, side) => {
       const ids = outline.map((other) => other.category.id);
       const from = ids.indexOf(id);
+      if (from < 0) return;
       const to = rowDropIndex(from, ids.indexOf(overId), side);
       ids.splice(from, 1);
       ids.splice(to, 0, id);
