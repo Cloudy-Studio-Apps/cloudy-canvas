@@ -1,9 +1,10 @@
 import { useState } from "react";
 
+import { useMotionStore } from "@shared/stores/motion-store";
 import { useThemeStore } from "@shared/stores/theme-store";
 import type { ThemeDensity } from "@shared/core";
 import type { ThemeMode } from "@shared/stores/theme-store.types";
-import { Field, SearchInput, SegmentedControl } from "@shared/ui/kit";
+import { Field, SearchInput, SegmentedControl, SwitchField } from "@shared/ui/kit";
 import { SettingsSection } from "../../components/settings-section";
 import { ThemeGrid } from "./theme-grid";
 import { t } from "../../settings.i18n";
@@ -27,6 +28,8 @@ export function AppearanceSection() {
   const darkThemeId = useThemeStore((s) => s.darkThemeId);
   const density = useThemeStore((s) => s.density);
   const { setMode, setTheme, setSystemTheme, setDensity } = useThemeStore.getState();
+  const playGifs = useMotionStore((s) => s.playGifs);
+  const setPlayGifs = useMotionStore((s) => s.setPlayGifs);
   const [query, setQuery] = useState("");
 
   return (
@@ -85,6 +88,18 @@ export function AppearanceSection() {
             value={density ?? "theme"}
             onChange={(value) => setDensity(value === "theme" ? null : (value as ThemeDensity))}
             options={DENSITIES}
+          />
+        </Field>
+        <Field
+          label={t("appearance.playGifs")}
+          layout="inline"
+          hint={t("appearance.playGifsHint")}
+          className="border-t pt-4"
+        >
+          <SwitchField
+            label={t("appearance.playGifsSwitch")}
+            checked={playGifs}
+            onChange={setPlayGifs}
           />
         </Field>
       </div>

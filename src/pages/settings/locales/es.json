@@ -80,6 +80,9 @@
       "default": "Predeterminada",
       "comfortable": "Cómoda"
     },
+    "playGifs": "GIF animados",
+    "playGifsHint": "Reproduce los GIF en pizarras y diseños. Si se desactiva, muestran su primer fotograma. Las pizarras exportadas como HTML siempre los reproducen.",
+    "playGifsSwitch": "Reproducir GIF",
     "missing": "«{id}» no está instalado (su complemento se quitó o se desactivó), así que se muestra un tema integrado.",
     "search": "Buscar temas",
     "noMatch": "Ningún tema coincide con «{query}»",

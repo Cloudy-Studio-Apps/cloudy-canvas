@@ -296,6 +296,11 @@ export class Renderer {
     return this.images.quality(assetId);
   }
 
+  /** Whether animated GIFs play (see `ImageCache.setGifPlayback`). */
+  setGifPlayback(enabled: boolean): void {
+    this.images.setGifPlayback(enabled);
+  }
+
   /** Runs when a picture's texture changes (loaded, sharpened, let go). */
   onImagesChange(listener: () => void): () => void {
     return this.images.changes.subscribe(listener);

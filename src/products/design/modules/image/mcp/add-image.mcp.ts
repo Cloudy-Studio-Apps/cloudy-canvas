@@ -28,7 +28,7 @@ export const imageTools: DesignMcpTool[] = [
       'Places a picture file (PNG, JPG, GIF, WebP, SVG, …) as a rectangle named "Image" filled ' +
       "with it, as dropping the file does, in one undo step. It's at its pixel size unless w " +
       "and/or h are given (one keeps the proportions), and goes into the frame under its center " +
-      "unless `parent` says where. Returns the layer's id and the image's assetId, which other " +
+      "unless `parent` says where. An animated GIF plays on the canvas. Returns the layer's id and the image's assetId, which other " +
       'layers can use in an image paint ({ type: "image", assetId }). Without a picture yet, ' +
       "use add_image_placeholder instead.",
     inputSchema: {

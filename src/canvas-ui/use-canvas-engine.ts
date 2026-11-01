@@ -2,6 +2,7 @@ import { useEffect, useState, type RefObject } from "react";
 
 import { CanvasEngine, type CanvasDocument, type CanvasProduct, type EngineLoading } from "@canvas";
 import { clipboard, fontLibrary, glyphOutliner, webpEncoder } from "@platform";
+import { useMotionStore } from "@shared/stores/motion-store";
 import { useSnappingStore } from "@shared/stores/snapping-store";
 import { onThemeChange } from "@shared/ui/theme";
 import { readCanvasTheme, readExportCanvasTheme } from "./canvas-theme";
@@ -9,7 +10,7 @@ import type { CanvasEngineHost } from "./use-canvas-engine.types";
 
 /**
  * Creates a CanvasEngine for `product` editing `document`, mounted into the container while both
- * exist, with the system clipboard for copy and paste, the app's fonts and the user's snapping. The document stays owned
+ * exist, with the system clipboard for copy and paste, the app's fonts and the user's snapping and GIF playback. The document stays owned
  * by the caller. The engine is handed out once it has mounted; until then `loading` says what it's
  * doing (for `CanvasLoadingOverlay`).
  */
@@ -36,8 +37,12 @@ export function useCanvasEngine<O extends object>(
       webp: webpEncoder,
     });
     instance.setSnapping(useSnappingStore.getState().byProduct[product.id] ?? {});
+    instance.setGifPlayback(useMotionStore.getState().playGifs);
     let active = true;
     const stopTheme = onThemeChange(() => instance.setTheme(readCanvasTheme(container)));
+    const stopMotion = useMotionStore.subscribe((state) => {
+      instance.setGifPlayback(state.playGifs);
+    });
     instance
       .mount(container, (next) => {
         if (active) setLoading(next);
@@ -55,6 +60,7 @@ export function useCanvasEngine<O extends object>(
     return () => {
       active = false;
       stopTheme();
+      stopMotion();
       // Its close tasks (e.g. a thumbnail) still run, then it's destroyed.
       void instance.close();
       setEngine(null);

@@ -509,6 +509,11 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     this.emitChange();
   }
 
+  /** Whether animated GIFs play (the host keeps the user's choice; on by default). */
+  setGifPlayback(enabled: boolean): void {
+    this.renderer.setGifPlayback(enabled);
+  }
+
   /** Changes what snaps (the host keeps the user's choice). */
   setSnapping(patch: Partial<SnapSettings>): void {
     this.snapping = { ...this.snapping, ...patch };

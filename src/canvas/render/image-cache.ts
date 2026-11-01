@@ -1,9 +1,11 @@
 import { ImageSource, Texture } from "pixi.js";
 
 import type { Size } from "../geometry.types";
+import { parseAnimatedGif, type GifFile } from "../image";
 import { Emitter } from "../utils";
 import { decodeImage, isVectorImage, knownImageSize } from "./decode-image";
 import { ExportImages } from "./export-images";
+import { GifPlayback } from "./gif-playback";
 import type {
   CachedImage,
   ImageCacheHost,
@@ -41,6 +43,7 @@ function sizeOf(texture: Texture): number {
  * that settles, each picture on screen moves to the level it shows at (sharper when zoomed into,
  * back down when zoomed out) and the views showing it draw again (`onUpgrade`). Past
  * `TEXTURE_BUDGET_BYTES`, the sharp levels of pictures out of view are let go too. Images that can't be decoded are remembered as missing.
+ * An animated GIF has one texture, its base, that `GifPlayback` keeps changing while it's on screen.
  */
 export class ImageCache implements ImageTextures {
   private readonly entries = new Map<string, CachedImage>();
@@ -51,6 +54,7 @@ export class ImageCache implements ImageTextures {
   private settle: ReturnType<typeof setTimeout> | null = null;
   private decoding = 0;
   private destroyed = false;
+  private readonly gifs: GifPlayback;
   /**
    * Fires when what `quality` reports changes: a picture's texture (loaded, sharper, let go) or
    * how large the pictures on screen show.
@@ -60,7 +64,9 @@ export class ImageCache implements ImageTextures {
   constructor(
     private readonly host: ImageCacheHost,
     private readonly onUpgrade: ImageUpgradeListener,
-  ) {}
+  ) {
+    this.gifs = new GifPlayback(() => host.onLoad());
+  }
 
   /** The asset's sharpest loaded texture, otherwise `null`. */
   get(assetId: string): Texture | null {
@@ -108,10 +114,12 @@ export class ImageCache implements ImageTextures {
     let changed = false;
     let moved = false;
     let shown = 0;
+    const gifs = new Set<string>();
     for (const { assetId, pixels } of demands) {
       const entry = this.entries.get(assetId);
       if (!entry?.natural) continue;
       shown++;
+      if (entry.gif) gifs.add(assetId);
       if (entry.seen !== this.round - 1 || entry.wanted !== pixels) moved = true;
       entry.seen = this.round;
       const target = this.target(entry, pixels);
@@ -122,6 +130,7 @@ export class ImageCache implements ImageTextures {
     // A picture left the view.
     if (shown !== this.shown) moved = true;
     this.shown = shown;
+    this.gifs.show(gifs);
     if (moved) this.changes.emit();
     if (!changed) return;
     if (this.settle) clearTimeout(this.settle);
@@ -129,6 +138,11 @@ export class ImageCache implements ImageTextures {
       this.settle = null;
       this.settleLevels();
     }, SETTLE_MS);
+  }
+
+  /** Whether animated GIFs play; off, they rest on their first frame. */
+  setGifPlayback(enabled: boolean): void {
+    this.gifs.setEnabled(enabled);
   }
 
   /** A cache for one export, decoding pictures at the size it draws them (see `ExportImages`). */
@@ -143,6 +157,7 @@ export class ImageCache implements ImageTextures {
 
   destroy(): void {
     this.destroyed = true;
+    this.gifs.destroy();
     this.changes.clear();
     if (this.settle) clearTimeout(this.settle);
     for (const entry of this.entries.values())
@@ -150,10 +165,13 @@ export class ImageCache implements ImageTextures {
     this.entries.clear();
   }
 
-  /** The asset's smallest loaded texture at least `pixels` on its long side, if any. */
+  /**
+   * The asset's smallest loaded texture at least `pixels` on its long side, if any. Never a GIF's,
+   * whose frame changes: exports decode the file, which gives its first frame.
+   */
   private atLeast(assetId: string, pixels: number): Texture | null {
     const entry = this.entries.get(assetId);
-    if (!entry) return null;
+    if (!entry || entry.gif) return null;
     let found: Texture | null = null;
     for (const texture of entry.levels.values()) {
       const long = Math.max(texture.width, texture.height);
@@ -173,6 +191,7 @@ export class ImageCache implements ImageTextures {
     const entry: CachedImage = {
       natural: knownImageSize(data),
       vector: isVectorImage(data),
+      gif: parseAnimatedGif(data),
       levels: new Map(),
       base: 0,
       loading: null,
@@ -184,11 +203,11 @@ export class ImageCache implements ImageTextures {
     return entry;
   }
 
-  /** The level that shows `pixels` sharply, never below the base. */
+  /** The level that shows `pixels` sharply, never below the base (a GIF only has its base). */
   private target(entry: CachedImage, pixels: number): number {
     const own =
       entry.vector || !entry.natural ? MAX_LEVEL : Math.max(entry.natural.w, entry.natural.h);
-    return Math.max(entry.base, levelFor(pixels, own));
+    return Math.max(entry.base, entry.gif ? 0 : levelFor(pixels, own));
   }
 
   /** The level shown or on its way. */
@@ -196,8 +215,20 @@ export class ImageCache implements ImageTextures {
     return Math.max(bestLevel(entry), entry.upgrading ?? 0);
   }
 
+  /** A GIF's base level is its texture for `GifPlayback` to play. */
+  private openGif(assetId: string, entry: CachedImage, gif: GifFile): Texture {
+    entry.natural = { w: gif.width, h: gif.height };
+    entry.base = levelFor(BASE_LEVEL, Math.max(gif.width, gif.height));
+    const texture = this.gifs.open(assetId, gif, entry.base);
+    entry.levels.set(entry.base, texture);
+    this.host.onLoad();
+    this.changes.emit();
+    return texture;
+  }
+
   private async decodeBase(assetId: string, entry: CachedImage): Promise<Texture | null> {
     try {
+      if (entry.gif) return this.openGif(assetId, entry, entry.gif);
       const { bitmap, natural } = await decodeImage(
         this.host.read(assetId)!,
         BASE_LEVEL,

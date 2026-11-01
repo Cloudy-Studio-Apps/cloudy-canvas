@@ -7,6 +7,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Novedades
 
+- Los GIF animados ahora se reproducen en pizarras y diseños, también en rellenos de imagen,
+  recortes y mosaicos, y en las pizarras exportadas como HTML. Añádelos soltando el archivo o
+  eligiéndolo en el selector de imágenes, ya que un GIF pegado desde otra app llega como imagen fija.
+  Se pausan cuando están fuera de la pantalla, y puedes desactivarlos en Ajustes › Apariencia.
 - Exporta pizarras y diseños como SVG, ya sea la selección o toda la página. Las formas siguen siendo
   vectoriales, así que se ven nítidas a cualquier tamaño y se pueden editar en otras herramientas de
   diseño, y tú eliges si el texto se convierte en contornos que se ven igual en todas partes o sigue

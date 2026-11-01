@@ -80,6 +80,9 @@
       "default": "Default",
       "comfortable": "Comfortable"
     },
+    "playGifs": "Animated GIFs",
+    "playGifsHint": "Play GIFs on boards and designs. Off, they show their first frame. Exported HTML boards always play them.",
+    "playGifsSwitch": "Play GIFs",
     "missing": "“{id}” isn't installed (its plugin was removed or turned off), so a built-in theme is shown instead.",
     "search": "Search themes",
     "noMatch": "No themes match “{query}”",

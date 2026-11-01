@@ -1,4 +1,10 @@
-import { elementBounds, imageType, type CanvasElement, type CanvasEngine } from "@canvas";
+import {
+  elementBounds,
+  imageType,
+  isAnimatedGif,
+  type CanvasElement,
+  type CanvasEngine,
+} from "@canvas";
 import { bytesToBase64 } from "./bytes-to-base64";
 import { shrinkImage } from "./shrink-image";
 
@@ -6,7 +12,7 @@ import { shrinkImage } from "./shrink-image";
 const PIXELS_PER_UNIT = 2;
 
 /**
- * The assets the elements show, as data URLs: SVG files as they are, pictures shrunk to the
+ * The assets the elements show, as data URLs: SVG files and animated GIFs as they are, pictures shrunk to the
  * largest size they're placed at (times two, and larger for a crop, `kind.assetScale`), never larger than the original. `extra` holds the
  * placeholders' SVG files, which aren't in the document.
  */
@@ -35,9 +41,10 @@ export async function collectAssets(
     }
     const bytes = engine.doc.getAsset(id);
     if (!bytes) continue;
+    const type = imageType(bytes);
     const kept =
-      imageType(bytes) === "image/svg+xml"
-        ? { bytes, type: "image/svg+xml" }
+      type === "image/svg+xml" || isAnimatedGif(bytes)
+        ? { bytes, type }
         : await shrinkImage(bytes, Math.ceil(size * PIXELS_PER_UNIT));
     assets[id] = `data:${kept.type};base64,${bytesToBase64(kept.bytes)}`;
   }

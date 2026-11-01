@@ -7,6 +7,10 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### New
 
+- Animated GIFs now play on boards and designs, including in image fills, crops and tiles, and in
+  boards exported as HTML. Add them by dropping the file or choosing it from the image picker, as a
+  GIF pasted from another app arrives as a still picture. They pause while off screen, and you can
+  turn them off in Settings › Appearance.
 - Export boards and designs as SVG, for the selection or the whole page. Shapes stay vector, so they
   are sharp at any size and can be edited in other design tools, and you choose whether text becomes
   outlines that look the same everywhere or stays editable.

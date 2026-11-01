@@ -1,7 +1,7 @@
 import type { Texture } from "pixi.js";
 
 import type { Rect, Size } from "../geometry.types";
-import type { ImagePlacement } from "../image";
+import type { GifFile, ImagePlacement } from "../image";
 
 /** Where `ImageCache` reads image files from, and whom it tells when one is ready. */
 export interface ImageCacheHost {
@@ -49,6 +49,8 @@ export interface CachedImage {
   natural: Size | null;
   /** Drawn at any size (an SVG), so levels aren't capped by `natural`. */
   vector: boolean;
+  /** Its frames, when it's an animated GIF. */
+  gif: GifFile | null;
   /** Its textures by level (pixels on the long side); the base one is never let go. */
   levels: Map<number, Texture>;
   /** The level `load` gives, and keeps. */

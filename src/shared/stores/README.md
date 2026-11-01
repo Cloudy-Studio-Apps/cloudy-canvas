@@ -11,6 +11,7 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
 - **Saved palettes:** `usePaletteFavoritesStore` (`palette-favorites-store.ts`) keeps the palettes saved from the color wizard's gallery between sessions (`toggle` saves or removes one). They're the user's, not a file's.
 - **Products:** `useProductsStore` (`products-store.ts`) says when both products have loaded behind the first page; see [Startup](../../app/README.md#startup). `useDesignModeStore` (`design-mode-store.ts`) keeps the mode each design was left in.
 - **Home:** `useHomeStore` (`home-store.ts`, `cloudy-canvas:home`) keeps Home's choices: the seals card hidden or not, and the recent files as a grid or a list.
+- **Motion:** `useMotionStore` (`motion-store.ts`, `cloudy-canvas:motion`) keeps Settings › Appearance's Play GIFs (on by default); `useCanvasEngine` applies it to every editor's engine, live. The board's HTML viewer doesn't read it.
 - **Language:** `useLocaleStore` (`locale-store.ts`, `cloudy-canvas:locale`) keeps Settings › Language (`system`, `en` or `es`). `app/i18n-boot.ts` reads it once, before anything else runs, so a change applies on the next launch (see `shared/core/i18n/`).
 
 ## Updates
