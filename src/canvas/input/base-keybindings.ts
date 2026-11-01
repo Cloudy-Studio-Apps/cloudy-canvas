@@ -38,7 +38,7 @@ export const BASE_KEYBINDINGS = {
   rotateLeft: [],
   rotateRight: [],
   toggleLock: [{ key: "l", mod: true, shift: true }],
-  unlockAll: [{ key: "l", mod: true, alt: true, shift: true }],
+  unlockAll: [{ code: "KeyL", mod: true, alt: true, shift: true, label: "L" }],
   nudgeLeft: [{ key: "ArrowLeft", label: "←" }],
   nudgeRight: [{ key: "ArrowRight", label: "→" }],
   nudgeUp: [{ key: "ArrowUp", label: "↑" }],

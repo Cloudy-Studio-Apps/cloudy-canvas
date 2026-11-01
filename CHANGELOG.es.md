@@ -84,6 +84,9 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   lateral y vuelve la vista general, con los botones de exportación.
 - El texto de los PDF nítidos ahora siempre se puede buscar y copiar. Antes se omitían las líneas con
   caracteres como €, comillas tipográficas, griego, cirílico, japonés o emojis.
+- Los atajos de teclado ahora funcionan en teclados donde una tecla necesita AltGr u Opción, como
+  los atajos de orden de capas [ y ] en teclados españoles en Windows y macOS. Desbloquear todo
+  también funciona en macOS.
 
 ## 0.6.0 - 2026-10-29
 

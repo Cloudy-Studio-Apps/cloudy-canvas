@@ -4,6 +4,10 @@ export function isApplePlatform(): boolean {
   return typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform);
 }
 
+export function isWindowsPlatform(): boolean {
+  return typeof navigator !== "undefined" && /Win/.test(navigator.platform);
+}
+
 export function isModKey(event: KeyboardEvent | MouseEvent): boolean {
   return event.ctrlKey || event.metaKey;
 }
@@ -13,11 +17,22 @@ export function matchesShortcut(event: KeyboardEvent, shortcut: Shortcut): boole
   if (shortcut.key !== undefined && event.key.toLowerCase() !== shortcut.key.toLowerCase()) {
     return false;
   }
+  // AltGr types a character: Windows reports it as Ctrl+Alt, which is neither `mod` nor `alt` here.
+  const altGr = !isApplePlatform() && event.getModifierState("AltGraph");
+  const mod = !altGr && isModKey(event);
+  const alt = !altGr && event.altKey;
+  // macOS has no AltGr: `[` on a Spanish keyboard is Option plus a key, with `key` already "[".
+  const optionTyped = alt && !shortcut.alt && isApplePlatform() && isSymbolKey(shortcut.key);
   return (
-    isModKey(event) === Boolean(shortcut.mod) &&
+    mod === Boolean(shortcut.mod) &&
     event.shiftKey === Boolean(shortcut.shift) &&
-    event.altKey === Boolean(shortcut.alt)
+    (alt === Boolean(shortcut.alt) || optionTyped)
   );
+}
+
+/** Whether `key` is one character that isn't a letter or a digit, like `[`. */
+function isSymbolKey(key: string | undefined): boolean {
+  return key !== undefined && /^[^\p{L}\p{N}]$/u.test(key);
 }
 
 /** Human-readable label, e.g. "Ctrl ⇧ Z" or "⌘⇧Z". */

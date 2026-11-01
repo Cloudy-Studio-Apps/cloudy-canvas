@@ -76,6 +76,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   and brings back the overview, with the export buttons.
 - Text in sharp PDFs can now always be searched and copied. Lines with characters such as €, curly
   quotes, Greek, Cyrillic, Japanese or emoji used to be left out.
+- Keyboard shortcuts now work on keyboards where a key needs AltGr or Option, such as the layer
+  order shortcuts [ and ] on Spanish keyboards on Windows and macOS. Unlock All also works on macOS.
 
 ## 0.6.0 - 2026-10-29
 
