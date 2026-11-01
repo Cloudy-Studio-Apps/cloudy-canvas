@@ -78,6 +78,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   quotes, Greek, Cyrillic, Japanese or emoji used to be left out.
 - Keyboard shortcuts now work on keyboards where a key needs AltGr or Option, such as the layer
   order shortcuts [ and ] on Spanish keyboards on Windows and macOS. Unlock All also works on macOS.
+- On Windows, F5, Ctrl+R and the right-click Refresh no longer reload the app and lose unsaved
+  changes, and print or find shortcuts no longer open browser windows.
 
 ## 0.6.0 - 2026-10-29
 

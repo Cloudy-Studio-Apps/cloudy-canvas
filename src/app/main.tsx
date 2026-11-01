@@ -2,10 +2,14 @@ import "./i18n-boot";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
+import { installBrowserGuard } from "@platform";
+
 import { App } from "./App";
 import { loadPlugins } from "./plugins";
 import { preloadProducts } from "./preload-products";
 import "./styles.css";
+
+installBrowserGuard();
 
 const root = document.getElementById("root");
 if (!root) throw new Error("Root element #root not found");

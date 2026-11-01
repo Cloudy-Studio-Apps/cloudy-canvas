@@ -2,6 +2,10 @@
 
 _How it works. The rules are in the root [CLAUDE.md](../../CLAUDE.md)._
 
+## Browser behavior
+
+A release shouldn't act like a browser page. `installBrowserGuard()` (`platform/browser-guard.ts`, called in `main.tsx`) turns off the webview's own right-click menu everywhere but text fields, and on Windows the keys WebView2 acts on by itself (`isBrowserReservedKey`: F5, Ctrl+R, Ctrl+P, Ctrl+F, …), which would reload the app and lose work. Dev builds keep both. `contextmenu` is handled in the bubble phase, because Radix skips its own handler on an event that's already prevented; `keydown` in the capture phase, and listeners that skip prevented events still take these keys, since some are app shortcuts too (Ctrl+G).
+
 ## Startup
 
 The first load holds Home and the app's shell, never a product or the canvas engine, so the window shows something fast. Anything in Home's static imports that reaches `@board`, `@design`, `@canvas` or `@canvas-ui` (a type import doesn't) brings them all back into the first load: a value Home needs from a product moves to `shared/` instead.

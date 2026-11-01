@@ -87,6 +87,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 - Los atajos de teclado ahora funcionan en teclados donde una tecla necesita AltGr u Opción, como
   los atajos de orden de capas [ y ] en teclados españoles en Windows y macOS. Desbloquear todo
   también funciona en macOS.
+- En Windows, F5, Ctrl+R y Actualizar en el menú contextual ya no recargan la app ni pierden los
+  cambios sin guardar, y los atajos de imprimir o buscar ya no abren ventanas del navegador.
 
 ## 0.6.0 - 2026-10-29
 

@@ -35,6 +35,17 @@ function isSymbolKey(key: string | undefined): boolean {
   return key !== undefined && /^[^\p{L}\p{N}]$/u.test(key);
 }
 
+/**
+ * True for the keys WebView2 acts on by itself (reload, print, find, …) when a page doesn't stop
+ * them. Some are app shortcuts too (Ctrl+G groups), so a listener that skips default-prevented
+ * events must still take these.
+ */
+export function isBrowserReservedKey(event: KeyboardEvent): boolean {
+  if (event.key === "F3" || event.key === "F5" || event.key === "F7") return true;
+  if (!event.ctrlKey || event.altKey) return false;
+  return (event.shiftKey ? /^[gpr]$/ : /^[fgjpr]$/).test(event.key.toLowerCase());
+}
+
 /** Human-readable label, e.g. "Ctrl ⇧ Z" or "⌘⇧Z". */
 export function formatShortcut(shortcut: Shortcut, apple = isApplePlatform()): string {
   const parts: string[] = [];

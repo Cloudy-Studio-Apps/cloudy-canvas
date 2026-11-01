@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-import { isTypingTarget, matchesShortcut, type Shortcut } from "@shared/core";
+import { isBrowserReservedKey, isTypingTarget, matchesShortcut, type Shortcut } from "@shared/core";
 
 /** Runs `handler` when `shortcut` is pressed anywhere in the window (but not while typing). */
 export function useHotkey(shortcut: Shortcut, handler: () => void): void {
@@ -14,7 +14,8 @@ export function useHotkey(shortcut: Shortcut, handler: () => void): void {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.defaultPrevented || isTypingTarget(event.target)) return;
+      const prevented = event.defaultPrevented && !isBrowserReservedKey(event);
+      if (prevented || isTypingTarget(event.target)) return;
       if (!matchesShortcut(event, shortcutRef.current)) return;
       event.preventDefault();
       handlerRef.current();
