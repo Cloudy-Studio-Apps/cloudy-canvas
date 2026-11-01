@@ -16,7 +16,14 @@ const library = async () => {
   return { lcms, api };
 };
 let loaded: ReturnType<typeof library> | null = null;
-const load = () => (loaded ??= library());
+/** The library, loaded once; a load that failed is tried again next time. */
+const load = () => {
+  loaded ??= library().catch((error: unknown) => {
+    loaded = null;
+    throw error;
+  });
+  return loaded;
+};
 
 function classOf(profile: Uint8Array): string {
   return String.fromCharCode(...profile.subarray(CLASS_OFFSET, CLASS_OFFSET + 4));

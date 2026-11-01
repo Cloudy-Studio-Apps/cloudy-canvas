@@ -4,7 +4,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { openFile, type OpenFilePick } from "@platform";
 import { notifyError } from "@shared/stores/toast-store";
 import { t } from "../../catalog.i18n";
-import { loadPrintProfile } from "../../export/load-print-profile";
+import { storePrintProfile } from "../../export/store-print-profile";
 import { useBrochure } from "./use-brochure";
 
 const PROFILE_FILES: OpenFilePick = {
@@ -20,7 +20,8 @@ export function useLoadPrintProfile(): () => Promise<void> {
     try {
       const file = await openFile(PROFILE_FILES);
       if (!file || !brochure) return;
-      await loadPrintProfile(engine, brochure, file.bytes);
+      const printProfile = await storePrintProfile(engine, file.bytes);
+      brochure.setSettings({ colorMode: "cmyk", printProfile });
     } catch (error) {
       notifyError(t("print.profileError"), error);
     }

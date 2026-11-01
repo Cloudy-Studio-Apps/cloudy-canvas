@@ -13,7 +13,7 @@ import {
   BROCHURE_LAYOUTS,
   type BrochureSettings,
 } from "../brochure";
-import { exportBrochure, loadPrintProfile, printedPages } from "../export";
+import { exportBrochure, printedPages, storePrintProfile } from "../export";
 import { BROCHURE_SCHEMA, readBrochure } from "./brochure-args";
 
 const PDF_MODES = ["sharp", "flattened"] as const;
@@ -79,8 +79,11 @@ export const brochureSettingsTools: DesignMcpTool[] = [
       if (bleed !== undefined && bleed < 0) throw new Error('"bleed" must be 0 or more.');
       if (margin !== undefined && margin < 0) throw new Error('"margin" must be 0 or more.');
       if (dpi !== undefined && (dpi < 36 || dpi > 600)) throw new Error('"dpi" must be 36–600.');
-      if (profilePath) await loadPrintProfile(engine, brochure, await host.readFile(profilePath));
       const patch: Partial<BrochureSettings> = {};
+      if (profilePath) {
+        patch.printProfile = await storePrintProfile(engine, await host.readFile(profilePath));
+        patch.colorMode = "cmyk";
+      }
       if (layout !== undefined) patch.layout = layout;
       if (covers !== undefined) patch.covers = covers;
       if (splitSpreads !== undefined) patch.splitSpreads = splitSpreads;

@@ -39,7 +39,15 @@ export class PdfBook {
     });
     if (elements.length === 0) throw new Error("There's nothing to export on this page.");
     const clips = prepare ? host.clipsOf(elements) : undefined;
-    await addPdfPage(this.doc, host, { elements, rect, clips }, "solid", this.options, output);
+    await addPdfPage(
+      this.doc,
+      host,
+      { elements, rect, clips },
+      // Paper shows where nothing's drawn: the canvas's color isn't to be printed.
+      this.options.print ? "transparent" : "solid",
+      this.options,
+      output,
+    );
   }
 
   /** An empty page. */
@@ -51,11 +59,14 @@ export class PdfBook {
     this.doc.addPage(layout, content);
   }
 
-  /** The file; the book can't take more pages after. */
   save(): Blob {
+    return this.doc.save();
+  }
+
+  /** Frees what it holds; call it when done, whether or not the book was saved. */
+  close(): void {
     this.converter?.close();
     this.converter = null;
-    return this.doc.save();
   }
 
   private async colorOutput(): Promise<PdfColorOutput> {

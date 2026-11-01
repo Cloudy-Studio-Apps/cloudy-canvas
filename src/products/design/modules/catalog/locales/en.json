@@ -107,7 +107,8 @@
     },
     "page": "Page {page}",
     "noProfile": "CMYK needs your print shop's profile: load it in the Print section.",
-    "stopsAtEdge": "“{name}” stops at the page edge: run it {bleed} mm past it, so no line shows after cutting."
+    "stopsAtEdge": "“{name}” stops at the page edge: run it {bleed} mm past it, so no line shows after cutting.",
+    "roundedPage": "“{name}” has rounded corners, so it prints without bleed."
   },
   "settings": {
     "quality": {

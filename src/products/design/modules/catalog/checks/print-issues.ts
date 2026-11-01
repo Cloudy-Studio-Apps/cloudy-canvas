@@ -30,11 +30,19 @@ export function printIssues(input: BrochureCheckInput): BrochureIssue[] {
 
 function edgeIssues(page: BrochurePage, input: BrochureCheckInput): BrochureIssue[] {
   const { frame } = page;
+  const at = {
+    page: input.layout.labels.get(page.slot.id) ?? String(page.number),
+    frameId: frame.id,
+  };
+  // A rounded page has no bleed, so what's on its edge has nothing to run into.
+  if (frame.cornerRadius > 0) {
+    const message = t("checks.roundedPage", { name: frame.name });
+    return [{ ...at, nodeId: frame.id, kind: "rounded-page", message }];
+  }
   return shownNodes(frame.id, input.elements)
     .filter((node) => painted(node) && stopsOnEdge(input.bounds(node), frame))
     .map((node) => ({
-      page: input.layout.labels.get(page.slot.id) ?? String(page.number),
-      frameId: frame.id,
+      ...at,
       nodeId: node.id,
       kind: "stops-at-edge",
       message: t("checks.stopsAtEdge", { name: node.name, bleed: input.settings.bleed }),

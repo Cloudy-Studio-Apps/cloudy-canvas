@@ -34,10 +34,11 @@ export async function exportBrochure(
       await addPage(book, workspace, page, bleed);
       onProgress?.(done + 1, printed.length);
     }
+    return book.save();
   } finally {
+    book.close();
     if (scope !== null && workspace.scope !== scope) workspace.setScope(scope);
   }
-  return book.save();
 }
 
 async function addPage(

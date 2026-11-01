@@ -5,5 +5,5 @@ export type * from "./printed-pages.types";
 export { drawBrochureSheet } from "./brochure-sheet";
 export { drawFrame, partRect } from "./draw-frame";
 export { exportBrochure } from "./export-brochure";
-export { loadPrintProfile } from "./load-print-profile";
+export { storePrintProfile } from "./store-print-profile";
 export { printedPages } from "./printed-pages";

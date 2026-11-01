@@ -10,6 +10,8 @@ import { cropMarkOps, outsetRect } from "./print/print-layout";
 import { addSvgPage } from "./svg-to-pdf";
 import type { PdfPageSource } from "./pdf-writer.types";
 
+/** What a flat page going to press shows where nothing's drawn. */
+const PAPER = 0xffffff;
 /** Keeps the image within what GPUs can render in one texture. */
 const MAX_SIDE = 8192;
 
@@ -70,7 +72,7 @@ async function addFlattened(
     rect: drawn,
     clips,
     scale: Math.min(pdfImageScale(options), MAX_SIDE / Math.max(drawn.w, drawn.h)),
-    background: host.background,
+    background: options.print ? PAPER : host.background,
     links: host.createLinks(),
   });
   const image = await output.opaque(doc, canvas, PDF_JPEG_QUALITY[options.imageQuality]);
