@@ -5,6 +5,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ## Unreleased
 
+## 0.7.0 - 2026-11-01
+
 ### New
 
 - ER diagrams have new menus built around pictures. Instead of dropdowns and codes like (0,n), you

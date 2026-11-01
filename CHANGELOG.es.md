@@ -5,6 +5,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ## Sin publicar
 
+## 0.7.0 - 2026-11-01
+
 ### Novedades
 
 - Los diagramas ER tienen menús nuevos basados en imágenes. En lugar de listas desplegables y códigos
