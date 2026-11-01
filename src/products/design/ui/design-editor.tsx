@@ -2,7 +2,12 @@ import { useRef } from "react";
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
 
-import { CanvasLoadingOverlay, useCanvasEngine, useCanvasFileDrop } from "@canvas-ui";
+import {
+  CanvasLoadingOverlay,
+  useCanvasEngine,
+  useCanvasFileDrop,
+  useMissingFontsNotice,
+} from "@canvas-ui";
 import { Button } from "@shared/ui/components/ui/button";
 import { useFileDragOver } from "@shared/ui/hooks/use-file-drag-over";
 import type { DesignEditorProps } from "./design-editor.types";
@@ -24,6 +29,7 @@ export function DesignEditor({ id, live }: DesignEditorProps) {
   const { engine, loading } = useCanvasEngine(containerRef, getDesignProduct(), document);
   const draggingFiles = useFileDragOver();
   useCanvasFileDrop(engine);
+  useMissingFontsNotice(engine);
   const inset = useCanvasInset();
   useKeepCanvasInPlace(engine, inset.left);
 

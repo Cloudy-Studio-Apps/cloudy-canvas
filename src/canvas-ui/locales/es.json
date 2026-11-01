@@ -1,4 +1,10 @@
 {
+  "fonts": {
+    "missing": {
+      "title": "Faltan fuentes en este equipo",
+      "description": "{names} se mostrarán con una fuente alternativa, así que el texto puede moverse."
+    }
+  },
   "drop": {
     "oneFailed": "No se pudo añadir “{name}”",
     "manyFailed": "No se pudieron añadir {count} archivos",

@@ -65,6 +65,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   get in the way of what you're doing. They come back as soon as it starts again.
 - PDFs of brochures and design systems are now sharp at any zoom, with text you can search and copy.
   Brochures have a PDF type setting for print shops that ask for flat image pages.
+- Opening a design that uses a font this computer doesn't have now tells you which fonts are
+  missing, so text that shifts doesn't come as a surprise.
 
 ### Fixed
 

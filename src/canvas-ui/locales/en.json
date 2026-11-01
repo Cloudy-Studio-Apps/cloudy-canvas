@@ -1,4 +1,10 @@
 {
+  "fonts": {
+    "missing": {
+      "title": "Some fonts aren't on this computer",
+      "description": "{names} will show in a fallback font, so text may shift."
+    }
+  },
   "drop": {
     "oneFailed": "“{name}” couldn't be added",
     "manyFailed": "{count} files couldn't be added",

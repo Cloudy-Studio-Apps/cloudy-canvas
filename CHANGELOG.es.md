@@ -72,6 +72,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 - Los PDF de folletos y sistemas de diseño ahora son nítidos a cualquier zoom, con texto que puedes
   buscar y copiar. Los folletos tienen un ajuste de tipo de PDF para las imprentas que piden páginas
   planas de imagen.
+- Al abrir un diseño con una fuente que este equipo no tiene, ahora se te indica qué fuentes faltan,
+  para que el texto que se mueva no te tome por sorpresa.
 
 ### Correcciones
 

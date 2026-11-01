@@ -136,6 +136,7 @@ export {
 } from "./components/row-drag";
 export { useCanvasFileDrop } from "./use-canvas-file-drop";
 export { useFileDropZone } from "./use-file-drop-zone";
+export { useMissingFontsNotice } from "./use-missing-fonts-notice";
 export { useCopyAs } from "./use-copy-as";
 export { useDocumentMeta } from "./use-document-meta";
 export * from "./modules";
