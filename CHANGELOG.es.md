@@ -49,6 +49,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 - Copiar como PNG ahora copia exactamente lo que seleccionaste, sin un margen vacío alrededor.
 - Los títulos de los marcos ya no aparecen en imágenes, PDF, SVG ni copias exportadas.
+- En Sistema de diseño, al hacer clic en una zona vacía del lienzo la sección desaparece del panel
+  lateral y vuelve la vista general, con los botones de exportación.
 
 ## 0.6.0 - 2026-10-29
 

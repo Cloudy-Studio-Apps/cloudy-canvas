@@ -46,6 +46,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 - Copy as PNG now copies exactly what you selected, without an empty margin around it.
 - Frame titles no longer appear in exported images, PDFs, SVGs or copies.
+- In Design system, clicking an empty part of the canvas now clears the section from the side panel
+  and brings back the overview, with the export buttons.
 
 ## 0.6.0 - 2026-10-29
 
