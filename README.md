@@ -39,13 +39,13 @@ Also:
 
 Get the latest build from [Releases](https://github.com/Cloudy-Studio-Apps/cloudy-canvas/releases/latest):
 
-| Platform             | File                                           | Install                                      |
-| -------------------- | ---------------------------------------------- | -------------------------------------------- |
-| Windows 10/11        | `Cloudy Canvas_<version>_x64-setup.exe`        | Run it                                       |
-| macOS 12+            | `Cloudy Canvas_<version>_universal.dmg`        | Open it, drag the app to Applications        |
-| Ubuntu / Debian      | `Cloudy Canvas_<version>_amd64.deb`            | `sudo apt install ./Cloudy*.deb`             |
-| Arch Linux / CachyOS | `cloudy-canvas-<version>-1-x86_64.pkg.tar.zst` | `sudo pacman -U cloudy-canvas-*.pkg.tar.zst` |
-| Linux (any distro)   | `Cloudy Canvas_<version>_amd64.AppImage`       | `chmod +x` it, then run it                   |
+| Platform                    | File                                           | Install                                      |
+| --------------------------- | ---------------------------------------------- | -------------------------------------------- |
+| Windows 10/11               | `Cloudy Canvas_<version>_x64-setup.exe`        | Run it                                       |
+| macOS 12+ with Safari 16.4+ | `Cloudy Canvas_<version>_universal.dmg`        | Open it, drag the app to Applications        |
+| Ubuntu / Debian             | `Cloudy Canvas_<version>_amd64.deb`            | `sudo apt install ./Cloudy*.deb`             |
+| Arch Linux / CachyOS        | `cloudy-canvas-<version>-1-x86_64.pkg.tar.zst` | `sudo pacman -U cloudy-canvas-*.pkg.tar.zst` |
+| Linux (any distro)          | `Cloudy Canvas_<version>_amd64.AppImage`       | `chmod +x` it, then run it                   |
 
 The Windows, macOS and AppImage versions update themselves: when a new version is out, the app offers to install it. The `.deb` and Arch packages tell you about it and open the download page. Click the logo, or open **Settings › About**, to check by hand.
 

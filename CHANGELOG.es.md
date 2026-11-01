@@ -102,6 +102,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 - El lienzo se mantiene nítido cuando mueves la ventana a una pantalla con otra escala.
 - Guardar ya no falla cuando un antivirus o una app de sincronización como OneDrive retiene el
   archivo un momento.
+- En Ubuntu y Debian, los archivos de pizarra y diseño ahora se reconocen y se abren en Cloudy
+  Canvas con doble clic. Los Mac en español ahora abren la app en español.
 
 ## 0.6.0 - 2026-10-29
 

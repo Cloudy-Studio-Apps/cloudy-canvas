@@ -79,6 +79,13 @@
         }
       }
     ],
+    "linux": {
+      "deb": {
+        "files": {
+          "/usr/share/mime/packages/cloudy-canvas.xml": "../packaging/arch/cloudy-canvas.xml"
+        }
+      }
+    },
     "macOS": {
       "signingIdentity": "-",
       "minimumSystemVersion": "12.0"

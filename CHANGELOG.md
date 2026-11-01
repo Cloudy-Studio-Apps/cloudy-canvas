@@ -91,6 +91,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - Dropping a picture on the color wizard now works in the desktop app.
 - The canvas stays sharp when you move the window to a screen with different scaling.
 - Saving no longer fails when antivirus or a sync app such as OneDrive briefly holds the file.
+- On Ubuntu and Debian, board and design files are now recognized and open in Cloudy Canvas with a
+  double click. Macs set to Spanish now open the app in Spanish.
 
 ## 0.6.0 - 2026-10-29
 
