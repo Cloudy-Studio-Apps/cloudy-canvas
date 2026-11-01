@@ -10,6 +10,7 @@ import type {
 } from "@canvas";
 import type { Graphics } from "pixi.js";
 
+import type { NodeExport } from "./node-export.types";
 import type { NodeSizing, SizeLimits } from "./node-layout.types";
 import type { Paint } from "./paint.types";
 
@@ -75,6 +76,8 @@ export interface DesignNode extends CanvasElement {
    * drawn over it and what it holds, together.
    */
   effects: NodeEffect[];
+  /** The files it exports as (see the layer-export module), top to bottom in the Export section. */
+  exports: NodeExport[];
   /**
    * How its width and height are decided in an auto layout (see `NodeSizing`). A text's hugging
    * follows its `autoResize`, so it stores only `fill` or `fixed`.

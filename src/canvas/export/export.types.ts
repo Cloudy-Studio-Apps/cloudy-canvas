@@ -26,6 +26,8 @@ export interface ExportOptions {
   maxSide?: number;
   /** Exactly this world area, with no padding (e.g. a page frame), instead of the elements'. */
   rect?: Rect;
+  /** World units left round the elements (16 by default); ignored with `rect`. */
+  padding?: number;
   /** How an SVG holds text (outlines by default). */
   svgText?: SvgText;
 }

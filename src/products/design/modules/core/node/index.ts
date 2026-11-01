@@ -1,6 +1,7 @@
 // The base every design element extends: the `DesignNode` data and `DesignNodeKind` behavior.
 export type * from "./create-node-base.types";
 export type * from "./design-node.types";
+export type * from "./node-export.types";
 export type * from "./flip.types";
 export type * from "./node-build.types";
 export type * from "./paint.types";

@@ -9,7 +9,6 @@ import { GradientHandles } from "./ui/gradient-handles";
 import { ScaleSidebar } from "./ui/scale-sidebar";
 import {
   AppearanceSection,
-  ExportSection,
   FillSection,
   LayoutSection,
   PositionSection,
@@ -78,7 +77,6 @@ export function registerCoreSections(host: ModuleHost): void {
       when: allKinds((kind) => kind.strokable),
       component: StrokeSection,
     },
-    { id: "export", tab: "design", order: 90, when: () => true, component: ExportSection },
     {
       id: "prototype",
       tab: "prototype",

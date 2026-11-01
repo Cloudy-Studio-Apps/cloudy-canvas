@@ -114,5 +114,11 @@
     "bottom-left": "Bottom left",
     "bottom": "Bottom",
     "bottom-right": "Bottom right"
+  },
+  "overwrite": {
+    "title": "Replace existing files?",
+    "description_one": "{count} file is already in this folder and will be replaced.",
+    "description_other": "{count} files are already in this folder and will be replaced.",
+    "replace": "Replace"
   }
 }

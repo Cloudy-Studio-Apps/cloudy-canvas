@@ -3,3 +3,8 @@ export interface OverwriteRequest {
   existing: string[];
   resolve: (replace: boolean) => void;
 }
+
+export interface OverwriteDialogProps {
+  request: OverwriteRequest | null;
+  onAnswer: (replace: boolean) => void;
+}

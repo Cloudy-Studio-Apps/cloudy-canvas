@@ -36,12 +36,6 @@
     "done_other": "{count} archivos guardados",
     "error": "No se pudieron guardar los archivos"
   },
-  "overwrite": {
-    "title": "¿Reemplazar los archivos existentes?",
-    "description_one": "{count} archivo ya está en esta carpeta y se reemplazará.",
-    "description_other": "{count} archivos ya están en esta carpeta y se reemplazarán.",
-    "replace": "Reemplazar"
-  },
   "options": {
     "orm": "ORM",
     "provider": "Base de datos",

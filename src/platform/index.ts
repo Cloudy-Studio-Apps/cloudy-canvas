@@ -22,7 +22,7 @@ export type * from "./export-file.types";
 export type * from "./open-file.types";
 export { exportFile } from "./export-file";
 export type * from "./export-files.types";
-export { exportFiles } from "./export-files";
+export { canSaveToFolder, exportFiles } from "./export-files";
 export { readLocalFile } from "./read-local-file";
 export { writeExportFile } from "./write-export-file";
 export { pickPluginFolder } from "./plugin-folder-dialog";

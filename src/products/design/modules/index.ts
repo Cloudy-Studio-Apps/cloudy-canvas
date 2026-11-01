@@ -17,6 +17,7 @@ export * from "./vector";
 export * from "./mask";
 export * from "./boolean";
 export * from "./effects";
+export * from "./layer-export";
 export * from "./auto-layout";
 export * from "./catalog";
 export * from "./sticker";

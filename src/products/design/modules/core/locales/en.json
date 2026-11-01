@@ -85,7 +85,6 @@
   },
   "sections": {
     "appearance": "Appearance",
-    "export": "Export",
     "fills": "Fills",
     "strokes": "Strokes",
     "layout": "Layout",
@@ -202,8 +201,5 @@
     "usedBy_one": "Used by {count} layer. They keep the value they show now, no longer linked.",
     "usedBy_other": "Used by {count} layers. They keep the value they show now, no longer linked.",
     "deleteDetach": "Delete and detach"
-  },
-  "exportSection": {
-    "button": "Export…"
   }
 }

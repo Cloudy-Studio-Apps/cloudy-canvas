@@ -27,7 +27,7 @@ export async function exportElements(host: ExportHost, options: ExportOptions): 
 
   const area = unionRects(elements.map((el) => host.bounds(el)));
   if (!area) throw new Error("There's nothing to export.");
-  const rect = options.rect ?? padded(area);
+  const rect = options.rect ?? padded(area, options.padding ?? EXPORT_PADDING);
   if (options.format === "svg") {
     const svg = await host.vector(elements, {
       rect,
@@ -66,11 +66,13 @@ export function hasRows(host: ExportHost, options: Pick<ExportOptions, "area" | 
   return host.elementsOf(options.area, options.ids).some((el) => host.rows(el) !== null);
 }
 
-function padded({ x, y, w, h }: Rect): Rect {
+function padded({ x, y, w, h }: Rect, padding: number): Rect {
+  const left = Math.floor(x - padding);
+  const top = Math.floor(y - padding);
   return {
-    x: Math.floor(x - EXPORT_PADDING),
-    y: Math.floor(y - EXPORT_PADDING),
-    w: Math.ceil(w + EXPORT_PADDING * 2),
-    h: Math.ceil(h + EXPORT_PADDING * 2),
+    x: left,
+    y: top,
+    w: Math.ceil(x + w + padding) - left,
+    h: Math.ceil(y + h + padding) - top,
   };
 }

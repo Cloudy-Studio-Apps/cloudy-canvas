@@ -36,12 +36,6 @@
     "done_other": "{count} files saved",
     "error": "Couldn't save the files"
   },
-  "overwrite": {
-    "title": "Replace existing files?",
-    "description_one": "{count} file is already in this folder and will be replaced.",
-    "description_other": "{count} files are already in this folder and will be replaced.",
-    "replace": "Replace"
-  },
   "options": {
     "orm": "ORM",
     "provider": "Database",

@@ -45,6 +45,7 @@ plugins' modules leave it unset. `scripts/check-modules.mjs` reads it.
 | `effects`                                                                                                | Core    | `effects` on every node, the effects pipeline, the `designEffectTypes` point      |
 | `auto-layout`                                                                                            | Core    | `sizing`, `layoutAbsolute`, `sizeLimits` on every node; relayout after every edit |
 | `plugins-tab`                                                                                            | Core    | the plugin manager                                                                |
+| `layer-export`                                                                                           | Core    | `exports` on every node, the Export section                                       |
 | `rectangle`, `ellipse`, `polygon`, `star`, `line`, `section`, `boolean`, `mask`, `image`                 | Feature | kinds, tools and commands built on the core; the Figma import makes them          |
 | `sticker`, `shader-effect` (one effect type), `catalog` (a mode), `styleguide`, `assets`, `color-wizard` | Feature | built on the core and on each other                                               |
 

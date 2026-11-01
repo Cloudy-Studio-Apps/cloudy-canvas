@@ -1,28 +1,26 @@
 import { isTauri } from "@tauri-apps/api/core";
 import { dirname, join } from "@tauri-apps/api/path";
 import { open } from "@tauri-apps/plugin-dialog";
-import { exists, mkdir, writeTextFile } from "@tauri-apps/plugin-fs";
-import { strToU8, zipSync } from "fflate";
+import { exists, mkdir, writeFile, writeTextFile } from "@tauri-apps/plugin-fs";
+import { strToU8, zipSync, type Zippable } from "fflate";
 
-import type { ConfirmOverwrite, ExportTextFile } from "./export-files.types";
+import { exportFile } from "./export-file";
+import type { ConfirmOverwrite, ExportedFile, ExportFilesOptions } from "./export-files.types";
 import { t } from "./platform.i18n";
 
 /**
  * Asks for a folder and writes the files under it, keeping their paths (creating folders, asking
- * before replacing files that exist); in the browser, downloads them as `<name>.zip` instead.
- * Returns whether they were saved.
+ * before replacing files that exist), or saves them as `<name>.zip` with `as: "zip"`, as the
+ * browser always does. Returns whether they were saved.
  */
 export async function exportFiles(
-  files: readonly ExportTextFile[],
+  files: readonly ExportedFile[],
   name: string,
   confirm: ConfirmOverwrite,
+  { as = "folder" }: ExportFilesOptions = {},
 ): Promise<boolean> {
-  if (!isTauri()) {
-    const zip = zipSync(
-      Object.fromEntries(files.map((file) => [file.path, strToU8(file.content)])),
-    );
-    download(new Blob([zip], { type: "application/zip" }), `${name}.zip`);
-    return true;
+  if (!canSaveToFolder() || as === "zip") {
+    return exportFile(zipOf(files), name, { extension: "zip", label: t("zipFile") });
   }
   const folder = await open({ directory: true, multiple: false, title: t("exportToFolder") });
   if (typeof folder !== "string") return false;
@@ -37,16 +35,22 @@ export async function exportFiles(
     const file = files[i];
     if (!file) continue;
     await mkdir(await dirname(path), { recursive: true });
-    await writeTextFile(path, file.content);
+    if (typeof file.content === "string") await writeTextFile(path, file.content);
+    else await writeFile(path, file.content);
   }
   return true;
 }
 
-function download(file: Blob, fileName: string): void {
-  const url = URL.createObjectURL(file);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = fileName;
-  link.click();
-  setTimeout(() => URL.revokeObjectURL(url), 0);
+/** Whether files can go into a folder the user picks (the browser only downloads). */
+export function canSaveToFolder(): boolean {
+  return isTauri();
+}
+
+/** The files as a zip. Pictures are stored as they are: they're compressed already. */
+function zipOf(files: readonly ExportedFile[]): Blob {
+  const entries: Zippable = {};
+  for (const { path, content } of files) {
+    entries[path] = typeof content === "string" ? strToU8(content) : [content, { level: 0 }];
+  }
+  return new Blob([zipSync(entries) as BlobPart], { type: "application/zip" });
 }

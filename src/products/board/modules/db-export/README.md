@@ -88,5 +88,5 @@ format`; single mode: `prisma/<table>.prisma` with the model and its enums. Type
    selected file read-only (`CodePreview`, the `CodeEditor` with `readOnly`, no syntax colors yet).
    Copy puts the selected file on the clipboard; Save (`useSaveCode`) writes one file through the
    save dialog and several into a folder (`exportFiles`, asking before replacing files with
-   `OverwriteDialog`; a zip in the browser). The last target, version and options are remembered
+   `OverwriteDialog` from `@canvas-ui`; a zip in the browser). The last target, version and options are remembered
    while the app is open.

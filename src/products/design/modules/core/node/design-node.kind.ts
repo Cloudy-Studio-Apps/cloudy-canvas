@@ -492,6 +492,7 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
       maskType: el.maskType ?? NODE_DEFAULTS.maskType,
       maskInverted: el.maskInverted ?? false,
       effects: el.effects ?? [],
+      exports: el.exports ?? [],
       sizing: el.sizing ?? FIXED_SIZING,
       layoutAbsolute: el.layoutAbsolute ?? false,
       sizeLimits: el.sizeLimits ?? null,

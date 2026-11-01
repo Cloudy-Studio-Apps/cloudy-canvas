@@ -12,5 +12,6 @@
   "saveBoard": "Guardar pizarra",
   "saveDesign": "Guardar diseño",
   "importStickers": "Importar stickers",
-  "exportToFolder": "Exportar a una carpeta"
+  "exportToFolder": "Exportar a una carpeta",
+  "zipFile": "Archivo ZIP"
 }

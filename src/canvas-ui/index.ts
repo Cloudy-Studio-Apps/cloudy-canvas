@@ -10,6 +10,7 @@ export type * from "./components/context-menu";
 export type * from "./file";
 export type * from "./images";
 export type * from "./components/export-dialog";
+export type * from "./components/overwrite-dialog";
 export type * from "./components/image-crop";
 export type * from "./components/image-quality-note";
 export type { AnchorPickerProps } from "./components/anchor-picker.types";
@@ -61,6 +62,7 @@ export {
   SELECTION_MENU,
 } from "./components/context-menu";
 export { ExportDialog } from "./components/export-dialog";
+export { OverwriteDialog, useOverwritePrompt } from "./components/overwrite-dialog";
 export { ImageCropOverlay } from "./components/image-crop";
 export { ImageQualityNote } from "./components/image-quality-note";
 export { AnchorPicker } from "./components/anchor-picker";

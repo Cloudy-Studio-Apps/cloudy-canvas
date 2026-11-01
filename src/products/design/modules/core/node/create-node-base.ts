@@ -37,6 +37,7 @@ export function createNodeBase<K extends string>(
     maskType: NODE_DEFAULTS.maskType,
     maskInverted: false,
     effects: [],
+    exports: [],
     sizing: FIXED_SIZING,
     layoutAbsolute: false,
     sizeLimits: null,

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Database } from "lucide-react";
 
 import { tCommon } from "@shared/core";
-import { useEngine } from "@canvas-ui";
+import { OverwriteDialog, useEngine } from "@canvas-ui";
 import { AppDialog, Button, EmptyState, SegmentedControl } from "@shared/ui/kit";
 import { isDbTable } from "../../db";
 import { codeTargets, type CodeOptionValue, type CodeTargetDefinition } from "../targets";
@@ -11,7 +11,6 @@ import type { CodeExportBodyProps, CodeExportScope } from "./code-export-dialog.
 import { CodeFileList } from "./code-file-list";
 import { CodePreview } from "./code-preview";
 import { CodeWarnings } from "./code-warnings";
-import { OverwriteDialog } from "./overwrite-dialog";
 import { TargetFields } from "./target-fields";
 import { useCodeOutput } from "./use-code-output";
 import { useSaveCode } from "./use-save-code";

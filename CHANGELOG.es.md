@@ -11,6 +11,9 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   vectoriales, así que se ven nítidas a cualquier tamaño y se pueden editar en otras herramientas de
   diseño, y tú eliges si el texto se convierte en contornos que se ven igual en todas partes o sigue
   siendo editable.
+- Guarda ajustes de exportación en las capas de un diseño: añade filas con un tamaño, un sufijo para
+  el nombre y un tipo de archivo, y expórtalas todas con un clic a una carpeta o a un ZIP. Se quedan
+  en el archivo, así que puedes volver a generar los mismos archivos tras cualquier cambio.
 
 ### Mejoras
 

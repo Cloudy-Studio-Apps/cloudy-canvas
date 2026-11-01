@@ -14,6 +14,7 @@ import { ellipseModule } from "@design/modules/ellipse/ellipse.module";
 import { frameModule } from "@design/modules/frame/frame.module";
 import { groupModule } from "@design/modules/group/group.module";
 import { imageModule } from "@design/modules/image/image.module";
+import { layerExportModule } from "@design/modules/layer-export/layer-export.module";
 import { layersModule } from "@design/modules/layers/layers.module";
 import { lineModule } from "@design/modules/line/line.module";
 import { maskModule } from "@design/modules/mask/mask.module";
@@ -36,6 +37,7 @@ import type { DesignModuleOptions } from "./design-modules.types";
 let modules: AppModule[] = [
   coreModule,
   layersModule,
+  layerExportModule,
   pagesModule,
   variablesModule,
   frameModule,

@@ -10,6 +10,9 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - Export boards and designs as SVG, for the selection or the whole page. Shapes stay vector, so they
   are sharp at any size and can be edited in other design tools, and you choose whether text becomes
   outlines that look the same everywhere or stays editable.
+- Save export settings on layers in Design: add rows with a size, a name suffix and a file type, then
+  export them all with one click into a folder or a ZIP. They stay in the file, so you can make the
+  same files again after any change.
 
 ### Improved
 

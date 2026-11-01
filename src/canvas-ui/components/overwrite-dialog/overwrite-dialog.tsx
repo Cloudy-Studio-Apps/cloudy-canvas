@@ -1,7 +1,7 @@
 import { tCommon } from "@shared/core";
 import { AppDialog, Button } from "@shared/ui/kit";
 import type { OverwriteDialogProps } from "./overwrite-dialog.types";
-import { t } from "../db-export.i18n";
+import { t } from "../components.i18n";
 
 /** Asks before saving replaces files that are already in the chosen folder. */
 export function OverwriteDialog({ request, onAnswer }: OverwriteDialogProps) {

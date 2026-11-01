@@ -1,0 +1,22 @@
+{
+  "title": "Export",
+  "add": "Add export",
+  "remove": "Remove export",
+  "size": "Size",
+  "suffix": "Suffix",
+  "format": "File type",
+  "mixed": "These layers have different exports. Adding one replaces them.",
+  "open": "Export…",
+  "exportOne": "Export {name}",
+  "exportMany_one": "Export {count} layer",
+  "exportMany_other": "Export {count} layers",
+  "saveAs": "Save as",
+  "folder": "Folder",
+  "zip": "ZIP",
+  "progress_one": "Exporting {count} file…",
+  "progress_other": "Exporting {count} files…",
+  "failed": "Couldn't export",
+  "saveError": "Couldn't save the export",
+  "done_one": "Exported {count} file",
+  "done_other": "Exported {count} files"
+}

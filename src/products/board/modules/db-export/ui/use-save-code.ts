@@ -1,9 +1,7 @@
-import { useState } from "react";
-
+import { useOverwritePrompt } from "@canvas-ui";
 import { clipboard, exportFile, exportFiles } from "@platform";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import type { CodeFile } from "../targets";
-import type { OverwriteRequest } from "./use-save-code.types";
 import { t } from "../db-export.i18n";
 
 /**
@@ -11,7 +9,7 @@ import { t } from "../db-export.i18n";
  * folder (asking first, through `overwrite`, when files there would be replaced).
  */
 export function useSaveCode(name: string) {
-  const [overwrite, setOverwrite] = useState<OverwriteRequest | null>(null);
+  const { request: overwrite, confirm, answer } = useOverwritePrompt();
 
   const copy = async (file: CodeFile) => {
     try {
@@ -35,10 +33,6 @@ export function useSaveCode(name: string) {
         if (saved) toast({ title: t("save.done", { count: 1 }) });
         return saved;
       }
-      const confirm = (existing: string[]) =>
-        new Promise<boolean>((resolve) => {
-          setOverwrite({ existing, resolve });
-        });
       const saved = await exportFiles(files, name, confirm);
       if (saved) toast({ title: t("save.done", { count: files.length }) });
       return saved;
@@ -46,11 +40,6 @@ export function useSaveCode(name: string) {
       notifyError(t("save.error"), error);
       return false;
     }
-  };
-
-  const answer = (replace: boolean) => {
-    overwrite?.resolve(replace);
-    setOverwrite(null);
   };
 
   return { copy, save, overwrite, answer };
