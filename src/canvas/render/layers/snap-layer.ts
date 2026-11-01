@@ -21,6 +21,7 @@ export class SnapLayer extends Container {
   private readonly lines = new Graphics();
   private readonly tags = new Graphics();
   private readonly labels: Text[] = [];
+  private resolution = window.devicePixelRatio || 1;
 
   constructor() {
     super();
@@ -97,12 +98,17 @@ export class SnapLayer extends Container {
     label.position.set(left + LABEL_PADDING_X, top + LABEL_PADDING_Y);
   }
 
+  setResolution(resolution: number): void {
+    this.resolution = resolution;
+    for (const label of this.labels) label.resolution = resolution;
+  }
+
   private labelAt(i: number): Text {
     let label = this.labels[i];
     if (!label) {
       label = new Text({
         text: "",
-        resolution: window.devicePixelRatio || 1,
+        resolution: this.resolution,
         style: {
           fontFamily: ELEMENT_DEFAULTS.fontFamily,
           fontSize: LABEL_FONT_SIZE,

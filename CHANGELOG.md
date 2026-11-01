@@ -89,6 +89,7 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - Reordering effects and moving variable modes between groups by dragging now works on Windows and
   macOS.
 - Dropping a picture on the color wizard now works in the desktop app.
+- The canvas stays sharp when you move the window to a screen with different scaling.
 
 ## 0.6.0 - 2026-10-29
 

@@ -69,7 +69,13 @@ import {
   PointerInput,
   toCanvasPointer,
 } from "./input";
-import { Renderer, type CanvasTheme, type EffectRenderer, type ImageQuality } from "./render";
+import {
+  Renderer,
+  watchPixelRatio,
+  type CanvasTheme,
+  type EffectRenderer,
+  type ImageQuality,
+} from "./render";
 import {
   guideInside,
   overRuler,
@@ -1556,6 +1562,13 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     });
     resizeObserver.observe(container);
     this.disposables.add(() => resizeObserver.disconnect());
+
+    watchPixelRatio(this.disposables, (ratio) => {
+      this.renderer.setPixelRatio(ratio);
+      this.renderer.setTextZoom(this.camera.zoom);
+      this.frames.flush();
+      this.viewChanges.emit();
+    });
   }
 
   // ── Reactions ─────────────────────────────────────────────────────────

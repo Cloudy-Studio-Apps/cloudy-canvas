@@ -26,6 +26,10 @@ export class SizeLabelLayer extends Container {
     this.visible = false;
   }
 
+  setResolution(resolution: number): void {
+    this.text.resolution = resolution;
+  }
+
   draw(camera: Camera, size: SizeLabel | null, color: number): void {
     this.visible = size !== null;
     if (!size) return;

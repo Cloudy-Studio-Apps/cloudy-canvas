@@ -4,6 +4,7 @@ export type * from "./text-style.types";
 export type * from "./element-view.types";
 export type * from "./snapshot.types";
 export { Renderer } from "./renderer";
+export { watchPixelRatio } from "./watch-pixel-ratio";
 export { ElementView } from "./element-view";
 export { buildOverlayState } from "./overlay-state";
 export { clipBounds } from "./clip-bounds";

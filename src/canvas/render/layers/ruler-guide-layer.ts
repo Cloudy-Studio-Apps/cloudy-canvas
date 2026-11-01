@@ -32,6 +32,10 @@ export class RulerGuideLayer extends Container {
     this.addChild(this.lines, this.tag, this.text);
   }
 
+  setResolution(resolution: number): void {
+    this.text.resolution = resolution;
+  }
+
   draw(camera: Camera, view: RulerGuidesView | null, color: number): void {
     this.lines.clear();
     this.tag.clear();

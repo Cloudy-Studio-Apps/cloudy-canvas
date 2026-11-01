@@ -134,6 +134,15 @@ export class Renderer {
     this.app.renderer.resize(width, height);
   }
 
+  /** Draws for a screen with this pixel ratio: the canvas keeps its size in CSS pixels. */
+  setPixelRatio(ratio: number): void {
+    const { width, height } = this.app.renderer.screen;
+    this.app.renderer.resize(width, height, ratio);
+    this.rulerGuides.setResolution(ratio);
+    this.sizeLabel.setResolution(ratio);
+    this.snap.setResolution(ratio);
+  }
+
   setTheme(theme: CanvasTheme): void {
     this.theme = theme;
     this.app.renderer.background.color = theme.background;
