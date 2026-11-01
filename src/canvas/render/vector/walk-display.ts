@@ -11,7 +11,7 @@ import type { SvgContext } from "./svg-context.types";
 import { writeEffectScope } from "./write-effects";
 import { writeGraphics } from "./write-graphics";
 import { writeSprite, writeTiles } from "./write-image";
-import { clipAttr, maskAttr, writeMaskScope } from "./write-mask";
+import { clipAttr, maskAttr, outlinesClipAttr, writeMaskScope } from "./write-mask";
 import { writeText } from "./write-text";
 
 /** What a container's children draw: masks and what's never drawn on its own are left out. */
@@ -62,7 +62,11 @@ function bodyOf(node: Container, w: SvgContext): string | null {
   if (node instanceof EffectScopeView) return writeEffectScope(node, w);
   if (node.filters && (Array.isArray(node.filters) ? node.filters.length > 0 : true)) return null;
   if (node instanceof Graphics) return writeGraphics(node, w);
-  if (node instanceof Text || node instanceof RichTextSprite) return writeText(node, w);
+  if (node instanceof Text || node instanceof RichTextSprite) {
+    const text = writeText(node, w);
+    // A PDF has no live text: what can't be outlined is drawn as a picture.
+    return w.target === "pdf" && text.includes("<text") ? null : text;
+  }
   if (node instanceof TilingSprite) return writeTiles(node, w);
   if (node instanceof Sprite) return writeSprite(node, w);
   // Anything else that draws (a plugin's mesh) has no writing.
@@ -78,7 +82,9 @@ function maskOf(node: Container, mask: unknown, w: SvgContext): string | null | 
   if (mask instanceof Graphics) return clipAttr(mask, w) ?? undefined;
   const view = node.parent;
   if (mask instanceof Sprite && view instanceof ElementView && view.maskingText) {
-    return maskAttr(writeText(view.maskingText, w, true), w, false);
+    const text = writeText(view.maskingText, w, true);
+    if (w.target !== "pdf") return maskAttr(text, w, false);
+    return text.includes("<text") ? undefined : outlinesClipAttr(text, w);
   }
   return undefined;
 }

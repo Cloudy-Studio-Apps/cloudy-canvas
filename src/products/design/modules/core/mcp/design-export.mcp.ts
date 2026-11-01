@@ -4,6 +4,8 @@ import {
   optionalChoice,
   optionalNumber,
   optionalString,
+  PDF_ARG_SCHEMA,
+  pdfArg,
   type ExportFormat,
 } from "@canvas";
 import { ToolImage } from "@shared/core";
@@ -26,7 +28,7 @@ export const designExportTools: DesignMcpTool[] = [
     name: "export_nodes",
     description:
       "Exports the design, or some layers, to a file as the Export dialog does: png or jpg (an " +
-      'image), svg (vector) or pdf (one page). The file goes to "path" (absolute; the extension is added when ' +
+      'image), svg (vector) or pdf (one page, with the pdf options). The file goes to "path" (absolute; the extension is added when ' +
       "missing), or next to the design's file, named after it. An existing file is replaced. " +
       "Returns the path written.",
     inputSchema: {
@@ -38,9 +40,11 @@ export const designExportTools: DesignMcpTool[] = [
         path: { type: "string", description: "Absolute path of the file to write." },
         background: {
           enum: BACKGROUNDS,
-          description: "PNG and SVG: transparent or the canvas color (solid, the default).",
+          description:
+            "PNG, SVG and sharp PDFs: transparent or the canvas color (solid, the default).",
         },
         scale: { type: "number", description: "Pixels per world unit for images (2 by default)." },
+        pdf: PDF_ARG_SCHEMA,
         text: {
           enum: SVG_TEXTS,
           description:
@@ -61,6 +65,7 @@ export const designExportTools: DesignMcpTool[] = [
         ids,
         scale: optionalNumber(args, "scale"),
         svgText: optionalChoice(args, "text", SVG_TEXTS),
+        pdf: pdfArg(args),
       });
       await host.writeFile(path, file);
       return { path, bytes: file.size };

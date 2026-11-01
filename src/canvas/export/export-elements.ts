@@ -2,8 +2,8 @@ import { unionRects } from "../geometry";
 import type { Rect } from "../geometry.types";
 import { canvasBlob } from "./canvas-blob";
 import { encodeCsv } from "./encode-csv";
-import { encodePdf } from "./encode-pdf";
 import type { ExportHost, ExportOptions } from "./export.types";
+import { exportPdf } from "./pdf";
 
 /** Space around the exported elements, in world units. */
 const EXPORT_PADDING = 16;
@@ -13,8 +13,8 @@ const MAX_PIXELS_PER_SIDE = 8192;
 const JPEG_QUALITY = 0.92;
 
 /**
- * Exports the elements of an area as an image (PNG, JPG), a vector SVG, a PDF page or CSV (the
- * elements that have rows, e.g. tables). Throws with a message for the user when there's nothing
+ * Exports the elements of an area as an image (PNG, JPG), a vector SVG, a PDF page (`exportPdf`) or
+ * CSV (the elements that have rows, e.g. tables). Throws with a message for the user when there's nothing
  * to export.
  */
 export async function exportElements(host: ExportHost, options: ExportOptions): Promise<Blob> {
@@ -37,6 +37,9 @@ export async function exportElements(host: ExportHost, options: ExportOptions): 
     });
     return new Blob([svg], { type: "image/svg+xml" });
   }
+  if (options.format === "pdf") {
+    return exportPdf(host, elements, rect, options.background, options.pdf);
+  }
   const scale = Math.min(
     options.scale ?? DEFAULT_SCALE,
     Math.min(options.maxSide ?? MAX_PIXELS_PER_SIDE, MAX_PIXELS_PER_SIDE) /
@@ -52,13 +55,7 @@ export async function exportElements(host: ExportHost, options: ExportOptions): 
   });
 
   if (options.format === "png") return canvasBlob(canvas, "image/png");
-  const jpeg = await canvasBlob(canvas, "image/jpeg", JPEG_QUALITY);
-  if (options.format === "jpg") return jpeg;
-  return encodePdf(
-    new Uint8Array(await jpeg.arrayBuffer()),
-    { width: canvas.width, height: canvas.height },
-    { width: rect.w, height: rect.h },
-  );
+  return canvasBlob(canvas, "image/jpeg", JPEG_QUALITY);
 }
 
 /** Whether exporting the area as CSV would find something (an element with rows). */

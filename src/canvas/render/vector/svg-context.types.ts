@@ -4,6 +4,7 @@ import type { FontRequest, GlyphOutliner } from "@shared/core";
 
 import type { Rect } from "../../geometry.types";
 import type { ExportImages } from "../export-images";
+import type { VectorTarget } from "../snapshot.types";
 import type { SvgDefs } from "./svg-defs";
 
 /** The faces outlined text uses, by `faceKey`; `null`: none could be read, so it stays live. */
@@ -18,6 +19,10 @@ export interface SvgContext {
   textures: ExportImages;
   /** Texture sources → the assets they show, so pictures embed their files. */
   assets: ReadonlyMap<TextureSource, string>;
+  /** Who reads the document: `pdf` has writers flatten what a PDF can't hold. */
+  target: VectorTarget;
+  /** Pixels per world unit of what's flattened. */
+  flattenScale: number;
   /** Shapes outlined text; `null` keeps every text live. */
   glyphs: GlyphOutliner | null;
   faces: SvgFaces;

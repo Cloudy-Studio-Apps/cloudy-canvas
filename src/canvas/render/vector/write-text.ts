@@ -116,6 +116,7 @@ function outlinedRun(run: TextRun, w: SvgContext): string | null {
   const gap = (space?.glyphs[0]?.advance ?? 0) + run.letterSpacing + run.wordSpacing;
   let pen = run.x;
   const data: string[] = [];
+  const hidden = hiddenTextAttrs(run, w);
   for (const piece of pieces) {
     const shaped = outlineRun(w.glyphs, face, piece, run.size, {
       letterSpacing: run.letterSpacing,
@@ -126,7 +127,15 @@ function outlinedRun(run: TextRun, w: SvgContext): string | null {
     data.push(contoursData(shaped.contours));
     pen += shaped.advance + gap;
   }
-  return `<path d="${data.join("")}" ${fillAttrs(run.hex, run.alpha)}/>`;
+  return `<path d="${data.join("")}" ${fillAttrs(run.hex, run.alpha)}${hidden(pen - gap - run.x)}/>`;
+}
+
+/** What `svgToPdf` needs for a run's hidden text; nothing for an SVG. */
+function hiddenTextAttrs(run: TextRun, w: SvgContext): (width: number) => string {
+  if (w.target !== "pdf") return () => "";
+  return (width) =>
+    ` data-text="${escapeXml(run.text)}" data-x="${num(run.x)}" data-y="${num(run.baseline)}"` +
+    ` data-size="${num(run.size)}" data-width="${num(width)}"`;
 }
 
 function liveRun(run: TextRun): string {

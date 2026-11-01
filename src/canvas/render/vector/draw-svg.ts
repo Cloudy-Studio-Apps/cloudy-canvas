@@ -17,7 +17,7 @@ export async function drawSvg(
   root: Container,
   textures: ExportImages,
   assetIds: readonly string[],
-  { rect, background, text, glyphs }: VectorSnapshotOptions,
+  { rect, background, text, glyphs, target = "svg", imageScale = 2 }: VectorSnapshotOptions,
 ): Promise<string> {
   const assets = new Map<TextureSource, string>();
   for (const id of assetIds) {
@@ -31,6 +31,8 @@ export async function drawSvg(
     defs: new SvgDefs(),
     textures,
     assets,
+    target,
+    flattenScale: imageScale,
     glyphs: outlined,
     faces: outlined ? await resolveFaces(root, outlined) : new Map(),
     writeChildren: (node) => writeChildren(node, context),

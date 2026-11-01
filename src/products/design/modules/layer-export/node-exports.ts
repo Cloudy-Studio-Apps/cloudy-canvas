@@ -28,7 +28,7 @@ export function withScale(row: NodeExport, scale: number): NodeExport {
   return { ...row, scale, suffix };
 }
 
-/** Whether a file type's output depends on its size (an SVG is vector). */
+/** Whether a file type's output depends on its size (SVG and PDF are vector). */
 export function hasSize(format: NodeExportFormat): boolean {
-  return format !== "svg";
+  return format === "png" || format === "jpg";
 }

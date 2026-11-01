@@ -41,6 +41,8 @@ export function writeEffectScope(scope: EffectScopeView, w: SvgContext): string 
     current = context.result;
     reach = Math.max(reach, renderer.margin?.(effect) ?? 0);
   }
+  // PDF has no filters: the scope is drawn as a picture.
+  if (markup.length > 0 && w.target === "pdf") return null;
   const filtered = markup.length > 0 ? withFilter(body, markup.join(""), bounds, reach, w) : body;
   // An opacity handed down is the view's alpha, which the walker writes.
   const opacity = composite && scope.alpha === 1 ? composite.opacity : 1;

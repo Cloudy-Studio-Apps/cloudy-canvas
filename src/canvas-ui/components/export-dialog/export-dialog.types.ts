@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { SvgText } from "@canvas";
+import type { PdfExportOptions, SvgText } from "@canvas";
 
 export interface ExportDialogProps {
   /** The exported file's name without its extension, e.g. the board's name. */
@@ -17,4 +17,9 @@ export interface ExportFieldProps {
 export interface ExportSvgTextFieldProps {
   value: SvgText;
   onChange(value: SvgText): void;
+}
+
+export interface ExportPdfOptionsProps {
+  options: PdfExportOptions;
+  onChange(patch: Partial<PdfExportOptions>): void;
 }

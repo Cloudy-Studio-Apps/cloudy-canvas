@@ -4,8 +4,7 @@ import { intersectRects } from "../../geometry";
 import { num } from "./svg-format";
 import type { FlattenOptions, SvgContext } from "./svg-context.types";
 
-/** Pixels per unit, and the longest side a picture can have on the GPU. */
-const SCALE = 2;
+/** The longest side a picture can have on the GPU. */
 const MAX_SIDE = 8192;
 /** Units past the bounds, so soft edges aren't cut. */
 const EDGE = 1;
@@ -40,7 +39,7 @@ export function flatten(
     const canvas = w.renderer.extract.canvas({
       target: holder,
       frame: new Rectangle(x, y, frameW, frameH),
-      resolution: Math.min(SCALE, MAX_SIDE / Math.max(frameW, frameH)),
+      resolution: Math.min(w.flattenScale, MAX_SIDE / Math.max(frameW, frameH)),
       clearColor: [0, 0, 0, 0],
       antialias: true,
     }) as HTMLCanvasElement;

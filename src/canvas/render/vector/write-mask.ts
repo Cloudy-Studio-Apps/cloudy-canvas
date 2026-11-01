@@ -18,6 +18,13 @@ export function clipAttr(mask: Graphics, w: SvgContext): string | null {
   return `clip-path="url(#${id})"`;
 }
 
+/** A `clip-path` attribute of markup of outlines, for a PDF (`svgToPdf` reads it as is). */
+export function outlinesClipAttr(outlines: string, w: SvgContext): string {
+  const id = w.defs.id("c");
+  w.defs.add(`<clipPath id="${id}">${outlines}</clipPath>`);
+  return `clip-path="url(#${id})"`;
+}
+
 /**
  * A `mask` attribute of `content`: shown where it's white (or, `alpha`, where it's opaque). Masks
  * in world coordinates cover the document; others keep SVG's default area, round what they mask.
@@ -43,6 +50,8 @@ export function writeMaskScope(scope: MaskScopeView, w: SvgContext): string | nu
 
 function scopeMask(scope: MaskScopeView, w: SvgContext): string | null {
   const { mode, inverted, shape } = scope.look;
+  // PDF gets clips only; other masks are drawn as pictures.
+  if (w.target === "pdf" && (!shape || inverted)) return null;
   if (shape) return inverted ? invertedShape(shape, w) : clipAttr(shape, w);
   // SVG masks can't be turned inside out.
   if (inverted) return null;

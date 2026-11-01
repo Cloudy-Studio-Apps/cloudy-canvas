@@ -27,6 +27,7 @@ export function writeSprite(sprite: Sprite, w: SvgContext): string | null {
 
 /** A tiled picture: a pattern of its file filling the sprite's box. */
 export function writeTiles(tiles: TilingSprite, w: SvgContext): string | null {
+  if (w.target === "pdf") return null;
   const { texture } = tiles;
   const picture = pictureOf(texture, w);
   if (!picture) return null;

@@ -20,6 +20,8 @@ const SAMPLES = 32;
  */
 export function gradientPaint(gradient: Gradient, box: Rect, w: SvgContext): string | null {
   if (gradient.type !== "linear" && gradient.type !== "radial") return null;
+  // A PDF shading has no opacity of its own.
+  if (w.target === "pdf" && gradient.stops.some((stop) => stop.opacity < 1)) return null;
   const back = invertAffine(gradient.transform);
   if (!back) return null;
   const toBox: GradientTransform = [

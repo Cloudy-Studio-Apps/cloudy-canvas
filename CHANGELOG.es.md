@@ -11,6 +11,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   vectoriales, así que se ven nítidas a cualquier tamaño y se pueden editar en otras herramientas de
   diseño, y tú eliges si el texto se convierte en contornos que se ven igual en todas partes o sigue
   siendo editable.
+- Los PDF exportados ahora se mantienen nítidos a cualquier zoom y al imprimir, con texto que puedes
+  buscar y copiar. Unas nuevas opciones permiten conservar el PDF de tipo imagen, convertir el texto
+  en contornos y elegir la calidad de imagen, la resolución, el tamaño de papel, la orientación y
+  los márgenes.
 - Guarda ajustes de exportación en las capas de un diseño: añade filas con un tamaño, un sufijo para
   el nombre y un tipo de archivo, y expórtalas todas con un clic a una carpeta o a un ZIP. Se quedan
   en el archivo, así que puedes volver a generar los mismos archivos tras cualquier cambio.

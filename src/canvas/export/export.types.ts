@@ -2,6 +2,7 @@ import type { CanvasElement } from "../elements";
 import type { Rect } from "../geometry.types";
 import type { CanvasLinks } from "../links";
 import type { SnapshotOptions, VectorSnapshotOptions } from "../render";
+import type { PdfExportOptions } from "./pdf/pdf-options.types";
 
 export type ExportFormat = "png" | "jpg" | "pdf" | "csv" | "svg";
 
@@ -30,6 +31,8 @@ export interface ExportOptions {
   padding?: number;
   /** How an SVG holds text (outlines by default). */
   svgText?: SvgText;
+  /** A PDF's options (`DEFAULT_PDF_OPTIONS` for what's left out). */
+  pdf?: Partial<PdfExportOptions>;
 }
 
 /** What `exportElements` needs from the engine. */

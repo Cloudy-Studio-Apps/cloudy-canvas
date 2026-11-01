@@ -14,5 +14,6 @@ export { collectMcpTools } from "./collect-mcp-tools";
 export { elementPatch } from "./element-patch";
 export { summarizeElement } from "./element-summary";
 export { exportPath } from "./export-path";
+export { PDF_ARG_SCHEMA, pdfArg } from "./pdf-args";
 export * from "./tool-args";
 export * from "./tokens";

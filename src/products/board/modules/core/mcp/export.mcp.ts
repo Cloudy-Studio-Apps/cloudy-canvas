@@ -4,6 +4,8 @@ import {
   optionalChoice,
   optionalNumber,
   optionalString,
+  PDF_ARG_SCHEMA,
+  pdfArg,
   stringList,
   type ExportFormat,
   type ToolArgs,
@@ -30,7 +32,7 @@ export const exportTools: BoardMcpTool[] = [
     name: "export_shapes",
     description:
       "Exports the board, or some shapes, to a file as the Export dialog does: png or jpg (an " +
-      "image), svg (vector), pdf (one page) or csv (the tables' and database tables' cells). The file goes to " +
+      "image), svg (vector), pdf (one page, with the pdf options) or csv (the tables' and database tables' cells). The file goes to " +
       '"path" (absolute; the extension is added when missing), or next to the board\'s file, ' +
       "named after the board. An existing file is replaced. Returns the path written.",
     inputSchema: {
@@ -42,9 +44,11 @@ export const exportTools: BoardMcpTool[] = [
         path: { type: "string", description: "Absolute path of the file to write." },
         background: {
           enum: BACKGROUNDS,
-          description: "PNG and SVG: transparent or the canvas color (solid, the default).",
+          description:
+            "PNG, SVG and sharp PDFs: transparent or the canvas color (solid, the default).",
         },
         scale: { type: "number", description: "Pixels per world unit for images (2 by default)." },
+        pdf: PDF_ARG_SCHEMA,
         text: {
           enum: SVG_TEXTS,
           description:
@@ -65,6 +69,7 @@ export const exportTools: BoardMcpTool[] = [
         ids,
         scale: optionalNumber(args, "scale"),
         svgText: optionalChoice(args, "text", SVG_TEXTS),
+        pdf: pdfArg(args),
       });
       await host.writeFile(path, file);
       return { path, bytes: file.size };

@@ -36,7 +36,7 @@ export const layerExportTools: DesignMcpTool[] = [
             required: ["format"],
             properties: {
               format: { enum: EXPORT_FILE_TYPES },
-              scale: { enum: EXPORT_SCALES, description: "1 by default; svg ignores it." },
+              scale: { enum: EXPORT_SCALES, description: "1 by default; svg and pdf ignore it." },
               suffix: {
                 type: "string",
                 description: "Added to the file name; @2x style by default.",

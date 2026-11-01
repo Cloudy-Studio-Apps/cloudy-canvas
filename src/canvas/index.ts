@@ -34,6 +34,13 @@ export type {
   ExportBackground,
   ExportFormat,
   SvgText,
+  PdfDpi,
+  PdfExportOptions,
+  PdfImageQuality,
+  PdfMode,
+  PdfOrientation,
+  PdfPageSize,
+  PdfText,
   ExportOptions,
   PdfImage,
   PdfOptions,
@@ -105,7 +112,7 @@ export { HOST_ORIGIN, ShareGuest, ShareHost } from "./share";
 export type * from "./share";
 export type * from "./file/read-file-tokens.types";
 export { canvasFileMagic, decodeCanvasFile, encodeCanvasFile, readFileTokens } from "./file";
-export { canvasBlob, encodePdfPages } from "./export";
+export { canvasBlob, DEFAULT_PDF_OPTIONS, encodePdfPages } from "./export";
 export * from "./mcp";
 export * from "./elements";
 export * from "./geometry";
