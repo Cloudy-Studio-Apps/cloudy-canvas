@@ -140,6 +140,7 @@ export class ElementThumbnails {
       ids: [el.id],
       rect: { x, y, w, h },
       scale: scaleFor(el),
+      asShown: true,
     });
   }
 

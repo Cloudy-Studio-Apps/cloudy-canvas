@@ -1,7 +1,7 @@
 import type { ExportFormat } from "@canvas";
 
 /** The file types a layer can export as. */
-export type NodeExportFormat = Extract<ExportFormat, "png" | "jpg" | "svg" | "pdf">;
+export type NodeExportFormat = Extract<ExportFormat, "png" | "jpg" | "webp" | "svg" | "pdf">;
 
 /** One file a layer exports as: a row of the Export section. */
 export interface NodeExport {

@@ -6,6 +6,7 @@
   },
   "commands": {
     "group": "Group selection",
+    "frame": "Frame selection",
     "ungroup": "Ungroup"
   }
 }

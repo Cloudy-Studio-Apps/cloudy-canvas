@@ -86,6 +86,7 @@
   "sections": {
     "appearance": "Apariencia",
     "fills": "Rellenos",
+    "showInExports": "Mostrar en exportaciones",
     "strokes": "Trazos",
     "layout": "Disposición",
     "position": "Posición",

@@ -203,6 +203,8 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
   readonly strokable: boolean = true;
   /** Whether its fills can be images (text can't: its fill is its color). */
   readonly imageFills: boolean = true;
+  /** Whether "Show in exports" can leave its fills out of exports (frames, as in Figma). */
+  readonly fillExportToggle: boolean = false;
 
   /**
    * Its shape in local coordinates (see `NodeGeometry`): what it draws, is hit by, masks with as a
@@ -498,6 +500,10 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
       sizeLimits: el.sizeLimits ?? null,
       mirrored: el.mirrored ?? false,
     };
+  }
+
+  override forExport(el: E): E {
+    return this.fillExportToggle && el.fillInExports === false ? { ...el, fills: [] } : el;
   }
 
   /** The images its paints show, so copies, exports and previews carry them. */

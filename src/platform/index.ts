@@ -16,6 +16,7 @@ export { TauriStorage } from "./tauri-storage";
 export type * from "./image-file.types";
 export { pickImageFiles } from "./image-file";
 export { fontLibrary, glyphOutliner } from "./fonts";
+export { webpEncoder } from "./webp-encoder";
 export { importStickerFiles } from "./sticker-file";
 export { stickerLibrary } from "./sticker-library";
 export type * from "./export-file.types";

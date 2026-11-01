@@ -6,6 +6,7 @@ import { t } from "../components.i18n";
 export const EXPORT_FORMATS: readonly (ExportFileType & { id: ExportFormat; name: string })[] = [
   { id: "png", name: "PNG", extension: "png", label: t("export.formats.png") },
   { id: "jpg", name: "JPG", extension: "jpg", label: t("export.formats.jpg") },
+  { id: "webp", name: "WebP", extension: "webp", label: t("export.formats.webp") },
   { id: "svg", name: "SVG", extension: "svg", label: t("export.formats.svg") },
   { id: "pdf", name: "PDF", extension: "pdf", label: t("export.formats.pdf") },
   { id: "csv", name: "CSV", extension: "csv", label: t("export.formats.csv") },

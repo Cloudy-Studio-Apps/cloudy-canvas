@@ -2,6 +2,7 @@ import { unionRects } from "../geometry";
 import type { Rect } from "../geometry.types";
 import { canvasBlob } from "./canvas-blob";
 import { encodeCsv } from "./encode-csv";
+import { encodeWebp } from "./encode-webp";
 import type { ExportHost, ExportOptions } from "./export.types";
 import { exportPdf } from "./pdf";
 
@@ -11,22 +12,25 @@ const DEFAULT_SCALE = 2;
 /** Keeps the image within what GPUs can render in one texture. */
 const MAX_PIXELS_PER_SIDE = 8192;
 const JPEG_QUALITY = 0.92;
+const WEBP_QUALITY = 0.92;
 
 /**
- * Exports the elements of an area as an image (PNG, JPG), a vector SVG, a PDF page (`exportPdf`) or
+ * Exports the elements of an area as an image (PNG, JPG, WebP), a vector SVG, a PDF page (`exportPdf`) or
  * CSV (the elements that have rows, e.g. tables). Throws with a message for the user when there's nothing
  * to export.
  */
 export async function exportElements(host: ExportHost, options: ExportOptions): Promise<Blob> {
-  const elements = host.elementsOf(options.area, options.ids);
+  const found = host.elementsOf(options.area, options.ids);
   if (options.format === "csv") {
-    const grids = elements.map((el) => host.rows(el)).filter((rows) => rows !== null);
+    const grids = found.map((el) => host.rows(el)).filter((rows) => rows !== null);
     if (grids.length === 0) throw new Error("There are no tables to export as CSV.");
     return new Blob([encodeCsv(grids)], { type: "text/csv" });
   }
 
-  const area = unionRects(elements.map((el) => host.bounds(el)));
+  // Measured as they are: what a file leaves out doesn't change its size.
+  const area = unionRects(found.map((el) => host.bounds(el)));
   if (!area) throw new Error("There's nothing to export.");
+  const elements = options.asShown ? found : found.map((el) => host.forExport(el));
   const rect = options.rect ?? padded(area, options.padding ?? EXPORT_PADDING);
   if (options.format === "svg") {
     const svg = await host.vector(elements, {
@@ -45,7 +49,7 @@ export async function exportElements(host: ExportHost, options: ExportOptions): 
     Math.min(options.maxSide ?? MAX_PIXELS_PER_SIDE, MAX_PIXELS_PER_SIDE) /
       Math.max(rect.w, rect.h),
   );
-  const transparent = options.format === "png" && options.background === "transparent";
+  const transparent = options.format !== "jpg" && options.background === "transparent";
   const background = transparent ? null : host.background;
   const canvas = await host.snapshot(elements, {
     rect,
@@ -55,6 +59,7 @@ export async function exportElements(host: ExportHost, options: ExportOptions): 
   });
 
   if (options.format === "png") return canvasBlob(canvas, "image/png");
+  if (options.format === "webp") return encodeWebp(canvas, WEBP_QUALITY, host.webp);
   return canvasBlob(canvas, "image/jpeg", JPEG_QUALITY);
 }
 

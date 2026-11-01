@@ -37,7 +37,7 @@ import { ExportSvgTextField } from "./export-svg-text-field";
 import { t } from "../components.i18n";
 
 /**
- * Exports the selection or the whole canvas as PNG, JPG, SVG, PDF or CSV (tables only), or as a file
+ * Exports the selection or the whole canvas as PNG, JPG, WebP, SVG, PDF or CSV (tables only), or as a file
  * type a module adds (`exportFormats`, made from the whole canvas). Opened by the `export` command
  * (Ctrl+Shift+E and the context menu), on the selection when there is one.
  */
@@ -67,9 +67,9 @@ export function ExportDialog({ name }: ExportDialogProps) {
   const moduleFormat = moduleFormats.find((f) => f.id === format) ?? null;
   const builtIn = EXPORT_FORMATS.find((f) => f.id === format) ?? EXPORT_FORMATS[0]!;
   const chosen: ExportFormat = builtIn.id === "csv" && !csvAvailable ? "png" : builtIn.id;
-  // PNG, SVG and sharp PDFs keep transparency.
+  // JPG, CSV and flattened PDFs can't keep transparency.
   const solidOnly =
-    chosen !== "png" && chosen !== "svg" && !(chosen === "pdf" && pdf.mode === "sharp");
+    chosen === "jpg" || chosen === "csv" || (chosen === "pdf" && pdf.mode === "flattened");
   const file = moduleFormat ?? EXPORT_FORMATS.find((f) => f.id === chosen)!;
   const note = open && moduleFormat?.note ? moduleFormat.note(engine) : null;
 

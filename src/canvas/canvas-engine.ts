@@ -1,4 +1,10 @@
-import { fontKey, type Clipboard, type DroppedFile, type GlyphOutliner } from "@shared/core";
+import {
+  fontKey,
+  type Clipboard,
+  type DroppedFile,
+  type GlyphOutliner,
+  type WebpEncoder,
+} from "@shared/core";
 
 import { Camera } from "./camera";
 import { CameraGlide } from "./camera-glide";
@@ -166,6 +172,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   private readonly scene: Scene;
   private readonly fontTracker: FontTracker;
   private readonly glyphs: GlyphOutliner | null;
+  private readonly webp: WebpEncoder | null;
   /** What tools (and the product's `editElement`) reach of the engine. */
   private readonly toolContext: ToolContext<O>;
   private readonly services: ServiceCache;
@@ -237,6 +244,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     clipboard,
     fonts,
     glyphs,
+    webp,
   }: CanvasEngineOptions<O>) {
     this.product = product;
     this.productId = product.id;
@@ -291,6 +299,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     if (product.afterEdit) this.doc.setAfterEdit(product.afterEdit.bind(product));
     this.scopeGuides = new ScopeGuides(this.doc, product.guides);
     this.glyphs = glyphs ?? null;
+    this.webp = webp ?? null;
     this.fontTracker = new FontTracker(fonts, (key) => this.handleFontLoad(key));
     this.systemClipboard = clipboard ?? new MemoryClipboard();
     this.clipboard = this.createClipboard(this.systemClipboard);
@@ -1436,6 +1445,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
         snapshot: (elements, options) => this.renderer.snapshot(elements, options),
         vector: (elements, options) =>
           this.renderer.vectorSnapshot(elements, { ...options, glyphs: this.glyphs }),
+        webp: this.webp,
       },
     );
   }
@@ -1955,10 +1965,10 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     this.userCamera.emit();
   }
 
-  /** Copies elements of an export host to the system clipboard as a PNG. */
+  /** Copies elements of an export host to the system clipboard as a PNG, with no margin. */
   private async copyPng(host: ExportHost, ids: readonly string[] | undefined): Promise<void> {
     const options = { format: "png", background: "transparent", area: "selection", ids } as const;
-    const png = await exportElements(host, { ...options, scale: COPY_PNG_SCALE });
+    const png = await exportElements(host, { ...options, scale: COPY_PNG_SCALE, padding: 0 });
     await this.systemClipboard.writeImage(png);
   }
 

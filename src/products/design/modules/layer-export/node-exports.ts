@@ -4,7 +4,7 @@ import type { NodeExport, NodeExportFormat } from "../core";
 
 /** The sizes an export can have, as multiples of the layer's size. */
 export const EXPORT_SCALES: readonly number[] = [0.5, 0.75, 1, 1.5, 2, 3, 4];
-export const EXPORT_FILE_TYPES: readonly NodeExportFormat[] = ["png", "jpg", "svg", "pdf"];
+export const EXPORT_FILE_TYPES: readonly NodeExportFormat[] = ["png", "jpg", "webp", "svg", "pdf"];
 
 /** What a size's files are named with unless the user says otherwise (`@2x`; none at 1x). */
 export function defaultSuffix(scale: number): string {
@@ -30,5 +30,5 @@ export function withScale(row: NodeExport, scale: number): NodeExport {
 
 /** Whether a file type's output depends on its size (SVG and PDF are vector). */
 export function hasSize(format: NodeExportFormat): boolean {
-  return format === "png" || format === "jpg";
+  return format !== "svg" && format !== "pdf";
 }

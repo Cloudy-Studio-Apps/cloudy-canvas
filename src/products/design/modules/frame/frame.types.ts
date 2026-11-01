@@ -10,6 +10,8 @@ export interface FrameElement extends DesignNode {
   clipsContent: boolean;
   /** Its auto layout, or `null` when its layers stay where they're put. */
   layout: AutoLayout | null;
+  /** On the copies exports draw, never stored: files don't show its name. */
+  exported?: boolean;
 }
 
 export interface FrameDefaults extends ElementDefaults {

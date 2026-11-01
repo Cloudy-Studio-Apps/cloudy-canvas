@@ -28,7 +28,7 @@ export default defineConfig(() => ({
 
   // HarfBuzz finds its WASM next to its script (`new URL(…, import.meta.url)`), which pre-bundling
   // would move away from it.
-  optimizeDeps: { exclude: ["harfbuzzjs"] },
+  optimizeDeps: { exclude: ["harfbuzzjs", "@jsquash/webp"] },
 
   // Keep in sync with `paths` in tsconfig.json
   resolve: {

@@ -22,5 +22,6 @@ export * from "./links";
 export * from "./modules";
 export * from "./plugins";
 export * from "./fonts";
+export type * from "./webp-encoder.types";
 export * from "./themes";
 export * from "./i18n";

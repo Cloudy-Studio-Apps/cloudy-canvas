@@ -31,7 +31,7 @@ export async function renderExports(
   for (const { node, row, path } of planned) {
     const file = await workspace.exportElements({
       format: row.format,
-      background: row.format === "png" || row.format === "svg" ? "transparent" : "solid",
+      background: row.format === "jpg" || row.format === "pdf" ? "solid" : "transparent",
       area: "board",
       ids: [node.id],
       scale: row.scale,

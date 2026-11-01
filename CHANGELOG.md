@@ -10,17 +10,28 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - Export boards and designs as SVG, for the selection or the whole page. Shapes stay vector, so they
   are sharp at any size and can be edited in other design tools, and you choose whether text becomes
   outlines that look the same everywhere or stays editable.
+- Export images as WebP, which keeps transparency and gives smaller files than PNG, on boards and
+  designs and in a layer's export rows.
 - PDF exports now stay sharp at any zoom and in print, with text you can search and copy. A new set
   of options lets you keep the old picture-style PDF, turn text into outlines, and choose image
   quality, resolution, paper size, orientation and margins.
 - Save export settings on layers in Design: add rows with a size, a name suffix and a file type, then
   export them all with one click into a folder or a ZIP. They stay in the file, so you can make the
   same files again after any change.
+- Frame selection in Design: Ctrl+Alt+G, or the option next to Group selection, wraps the selected
+  layers in a new frame around them, without changing how they look.
+- Choose whether a frame's fill appears in exports: turn off Show in exports under Fills and the
+  frame keeps its fill on the canvas, while exported files leave it out.
 
 ### Improved
 
 - An agent's cursor and selection now fade away a few seconds after it stops working, so they don't
   get in the way of what you're doing. They come back as soon as it starts again.
+
+### Fixed
+
+- Copy as PNG now copies exactly what you selected, without an empty margin around it.
+- Frame titles no longer appear in exported images, PDFs, SVGs or copies.
 
 ## 0.6.0 - 2026-10-29
 

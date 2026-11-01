@@ -71,7 +71,8 @@
       "jpg": "Imagen JPEG",
       "svg": "Imagen vectorial SVG",
       "pdf": "Documento PDF",
-      "csv": "Tabla CSV"
+      "csv": "Tabla CSV",
+      "webp": "Imagen WebP"
     },
     "pdf": {
       "type": "Tipo de PDF",

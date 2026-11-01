@@ -54,6 +54,7 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
   override readonly styleFields = [...NODE_STYLE_FIELDS, "cornerRadius"];
   override readonly sidedStrokes = true;
   override readonly fillScope = "frame-fill";
+  override readonly fillExportToggle = true;
 
   /** Its corner radius, and its auto layout's gaps and padding. */
   override bindable(el: FrameElement): BindableField[] {
@@ -98,6 +99,10 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
     clipsContent: {
       type: "boolean",
       description: "Frame: hide what its layers draw outside it (true by default).",
+    },
+    fillInExports: {
+      type: "boolean",
+      description: "Frame: false leaves its fills out of exported files (true by default).",
     },
     layout: {
       type: ["object", "null"],
@@ -145,6 +150,9 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
         ? { cornerRadius: nonNegative(args.cornerRadius, "cornerRadius") }
         : {}),
       clipsContent: optionalBoolean(args, "clipsContent") ?? frame.clipsContent,
+      ...(args.fillInExports !== undefined
+        ? { fillInExports: optionalBoolean(args, "fillInExports") }
+        : {}),
       ...(args.layout !== undefined ? { layout: readAutoLayout(args.layout, null) } : {}),
     };
   }
@@ -167,6 +175,9 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
     context: ElementBuildContext,
   ): ElementPatch<FrameElement> {
     if ("cornerRadius" in patch) nonNegative(patch.cornerRadius, "cornerRadius");
+    if ("fillInExports" in patch && typeof patch.fillInExports !== "boolean") {
+      throw new Error('"fillInExports" must be true or false.');
+    }
     if (!("layout" in patch)) return super.completePatch(el, patch, context);
     const layout = readAutoLayout(patch.layout, el.layout);
     // Without a layout, nothing is left to hug.
@@ -191,6 +202,11 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
    */
   override mirrorsOnFlip(el: FrameElement): boolean {
     return el.layout !== null || super.mirrorsOnFlip(el);
+  }
+
+  /** Files leave out its name, whatever margin they have round it. */
+  override forExport(el: FrameElement): FrameElement {
+    return { ...super.forExport(el), exported: true };
   }
 
   override geometryKey(el: FrameElement): string {

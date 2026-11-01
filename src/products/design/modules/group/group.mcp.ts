@@ -1,11 +1,12 @@
 import { asUndoStep, optionalString, stringList, type ElementPatch } from "@canvas";
 
 import { requireDesign, requireNodes, type DesignMcpTool } from "../../mcp";
+import { frameNodes } from "../frame";
 import { groupNodes, ungroupNodes } from "./group-nodes";
 
 const IDS_SCHEMA = { type: "array", items: { type: "string" } };
 
-/** Grouping, as Ctrl+G and Ctrl+Shift+G do. */
+/** Grouping and framing, as Ctrl+G, Ctrl+Shift+G and Ctrl+Alt+G do. */
 export const groupTools: DesignMcpTool[] = [
   {
     name: "group_nodes",
@@ -29,6 +30,31 @@ export const groupTools: DesignMcpTool[] = [
       });
       if (!group) throw new Error("Nothing to group.");
       return { group };
+    },
+  },
+  {
+    name: "frame_nodes",
+    description:
+      'Puts layers into a new frame round them (named "Frame 2" unless `name` is given) where the ' +
+      "topmost of them was, as Ctrl+Alt+G does, in one undo step. Unlike a group, its size stays " +
+      "when its layers change. It has no fill and doesn't clip, so nothing looks different. " +
+      "Returns the frame's id.",
+    inputSchema: {
+      type: "object",
+      required: ["ids"],
+      properties: { ids: IDS_SCHEMA, name: { type: "string" } },
+    },
+    run: (host, args) => {
+      const { engine } = requireDesign(host);
+      const ids = new Set(requireNodes(engine, stringList(args, "ids")));
+      const name = optionalString(args, "name");
+      const frame = asUndoStep(engine.doc, () => {
+        const id = frameNodes(engine.doc, ids, engine.elements(), engine.kinds);
+        if (id && name) engine.doc.update(id, { name } as ElementPatch);
+        return id;
+      });
+      if (!frame) throw new Error("Nothing to frame.");
+      return { frame };
     },
   },
   {

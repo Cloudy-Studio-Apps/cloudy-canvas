@@ -12,14 +12,14 @@ import * as groupApi from ".";
 
 /**
  * Groups: the kind, bounds that follow the children, selecting the group before what's in it,
- * removing groups left empty, the group (Ctrl+G) and ungroup (Ctrl+Shift+G) commands, their
- * context menu items and agent tools.
+ * removing groups left empty, the group (Ctrl+G), frame selection (Ctrl+Alt+G) and ungroup
+ * (Ctrl+Shift+G) commands, their context menu items and agent tools.
  */
 export const groupModule = defineModule({
   id: "group",
   tier: "core",
   // Empty groups are pruned after the core puts dropped nodes in their containers.
-  requires: ["core"],
+  requires: ["core", "frame"],
   exports: { ...groupApi },
   register(host) {
     host.contribute(designCanvas.kinds, new GroupKind());
@@ -28,6 +28,11 @@ export const groupModule = defineModule({
     host.contribute(
       designCanvas.hostCommands,
       { id: "group", label: t("commands.group"), keys: [{ key: "g", mod: true }] },
+      {
+        id: "frameSelection",
+        label: t("commands.frame"),
+        keys: [{ code: "KeyG", mod: true, alt: true, label: "G" }],
+      },
       { id: "ungroup", label: t("commands.ungroup"), keys: [{ key: "g", mod: true, shift: true }] },
     );
     host.contribute(designMcpTools, { id: "group", tools: () => groupTools });
@@ -40,6 +45,7 @@ export const groupModule = defineModule({
       label: t("menu.arrange"),
       items: [
         { command: "group", label: t("commands.group") },
+        { command: "frameSelection", label: t("commands.frame") },
         { command: "ungroup", label: t("commands.ungroup") },
       ],
     });
@@ -48,6 +54,7 @@ export const groupModule = defineModule({
       menu: "selection",
       items: [
         { command: "group", label: t("commands.group") },
+        { command: "frameSelection", label: t("commands.frame") },
         { command: "ungroup", label: t("commands.ungroup") },
       ],
     });

@@ -7,4 +7,5 @@ export interface SceneExportOptions {
   background: number;
   snapshot: ExportHost["snapshot"];
   vector: ExportHost["vector"];
+  webp: ExportHost["webp"];
 }

@@ -50,7 +50,9 @@ export function ExportSection({ selection: { nodes } }: PropertySectionProps) {
         )
       }
     >
-      <div className="grid gap-2">
+      {/* One column capped at the panel's width: left to `auto`, a long layer name widens it and
+          the rows' remove buttons are cut off. */}
+      <div className="grid grid-cols-1 gap-2">
         {mixed ? (
           <p className="text-xs text-muted-foreground">{t("mixed")}</p>
         ) : (

@@ -3,6 +3,7 @@
 export type * from "./frame.types";
 export type * from "./frame-options.types";
 export { createFrame } from "./frame.factory";
+export { frameNodes } from "./frame-nodes";
 export { FRAME_DEFAULTS } from "./frame.defaults";
 export { findPreset, FRAME_PRESET_GROUPS, FRAME_PRESETS, presetSize } from "./frame-presets";
 export { createPresetFrame } from "./create-preset-frame";

@@ -17,10 +17,12 @@ export function sceneExportHost(parts: WorkspaceParts, options: SceneExportOptio
     },
     // Exports take what effects draw past the content too (shadows, blurs), as Figma does.
     bounds: (el) => scene.visualBounds(el),
+    forExport: (el) => kinds.kindOf(el).forExport(el),
     rows: (el) => kinds.kindOf(el).rows(el),
     createLinks: () => product.createLinks?.() ?? [],
     background: options.background,
     snapshot: options.snapshot,
     vector: options.vector,
+    webp: options.webp,
   };
 }

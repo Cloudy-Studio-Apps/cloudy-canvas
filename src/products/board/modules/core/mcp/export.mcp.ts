@@ -16,7 +16,7 @@ import type { BoardWorkspace } from "../../../board-engine.types";
 import { requireBoard, requireShapes } from "../../../mcp/board-access";
 import type { BoardMcpTool } from "../../../mcp/board-mcp.types";
 
-const FORMATS: readonly ExportFormat[] = ["png", "jpg", "svg", "pdf", "csv"];
+const FORMATS: readonly ExportFormat[] = ["png", "jpg", "webp", "svg", "pdf", "csv"];
 const SVG_TEXTS = ["outlines", "live"] as const;
 const BACKGROUNDS = ["solid", "transparent"] as const;
 /** Keeps pictures sent to agents small enough to read. */
@@ -31,7 +31,7 @@ export const exportTools: BoardMcpTool[] = [
   {
     name: "export_shapes",
     description:
-      "Exports the board, or some shapes, to a file as the Export dialog does: png or jpg (an " +
+      "Exports the board, or some shapes, to a file as the Export dialog does: png, jpg or webp (an " +
       "image), svg (vector), pdf (one page, with the pdf options) or csv (the tables' and database tables' cells). The file goes to " +
       '"path" (absolute; the extension is added when missing), or next to the board\'s file, ' +
       "named after the board. An existing file is replaced. Returns the path written.",
@@ -45,7 +45,7 @@ export const exportTools: BoardMcpTool[] = [
         background: {
           enum: BACKGROUNDS,
           description:
-            "PNG, SVG and sharp PDFs: transparent or the canvas color (solid, the default).",
+            "PNG, WebP, SVG and sharp PDFs: transparent or the canvas color (solid, the default).",
         },
         scale: { type: "number", description: "Pixels per world unit for images (2 by default)." },
         pdf: PDF_ARG_SCHEMA,

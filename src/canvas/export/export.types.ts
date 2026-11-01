@@ -1,15 +1,17 @@
+import type { WebpEncoder } from "@shared/core";
+
 import type { CanvasElement } from "../elements";
 import type { Rect } from "../geometry.types";
 import type { CanvasLinks } from "../links";
 import type { SnapshotOptions, VectorSnapshotOptions } from "../render";
 import type { PdfExportOptions } from "./pdf/pdf-options.types";
 
-export type ExportFormat = "png" | "jpg" | "pdf" | "csv" | "svg";
+export type ExportFormat = "png" | "jpg" | "webp" | "pdf" | "csv" | "svg";
 
 /** How an SVG holds text: as glyph outlines (looks the same anywhere) or as live, editable text. */
 export type SvgText = "outlines" | "live";
 
-/** `solid` fills with the canvas background; PNG and SVG can leave it out, JPG and PDF can't. */
+/** `solid` fills with the canvas background; PNG, WebP and SVG can leave it out, JPG can't. */
 export type ExportBackground = "solid" | "transparent";
 
 /** The selection (with what moves with it) or every element on the canvas. */
@@ -33,6 +35,8 @@ export interface ExportOptions {
   svgText?: SvgText;
   /** A PDF's options (`DEFAULT_PDF_OPTIONS` for what's left out). */
   pdf?: Partial<PdfExportOptions>;
+  /** Draws the elements as the canvas does, for a picture to look at rather than a file. */
+  asShown?: boolean;
 }
 
 /** What `exportElements` needs from the engine. */
@@ -43,8 +47,12 @@ export interface ExportHost {
    */
   elementsOf(area: ExportArea, ids?: readonly string[]): CanvasElement[];
   bounds(el: CanvasElement): Rect;
+  /** The element as files show it (see `ElementKind.forExport`). */
+  forExport(el: CanvasElement): CanvasElement;
   /** The element's grid of texts for CSV, or `null` (see `ElementKind.rows`). */
   rows(el: CanvasElement): string[][] | null;
+  /** Encodes WebP where the canvas can't (see `encodeWebp`). */
+  webp: WebpEncoder | null;
   /** Fresh links for an export (the product's `createLinks`). */
   createLinks(): CanvasLinks[];
   background: number;

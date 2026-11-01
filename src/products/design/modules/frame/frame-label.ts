@@ -3,9 +3,9 @@ import { ELEMENT_DEFAULTS, measureText, type Rect } from "@canvas";
 import { FRAME_DEFAULTS } from "./frame.defaults";
 import type { FrameElement } from "./frame.types";
 
-/** Whether a frame shows its name above it: only frames at the top of the page do. */
+/** Whether a frame shows its name above it: only frames at the top of the page do, not in files. */
 export function showsLabel(el: FrameElement): boolean {
-  return el.parentId === null && el.visible;
+  return el.parentId === null && el.visible && !el.exported;
 }
 
 /** Where a frame's name is drawn, in world units (up to the frame's width). */

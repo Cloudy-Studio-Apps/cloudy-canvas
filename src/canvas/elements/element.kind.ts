@@ -233,6 +233,11 @@ export abstract class ElementKind<
     return null;
   }
 
+  /** The element as exported files show it: as it is, unless a kind leaves something out. */
+  forExport(el: E): E {
+    return el;
+  }
+
   /** Ids of the document assets it shows (e.g. an image's file), so copies carry them along. */
   assets(_el: E): string[] {
     return [];

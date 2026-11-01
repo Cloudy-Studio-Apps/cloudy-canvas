@@ -6,6 +6,7 @@
   },
   "commands": {
     "group": "Agrupar selección",
+    "frame": "Enmarcar selección",
     "ungroup": "Desagrupar"
   }
 }

@@ -2,7 +2,7 @@
 
 ## Exports
 
-SVG, sharp PDFs and export rows are done. What's left, in the suggested order. The small Board formats don't depend on anything,
+SVG, sharp PDFs, WebP and export rows are done. What's left, in the suggested order. The small Board formats don't depend on anything,
 so any of them can go first.
 
 | Format                                        | Product | Why it's useful                                                       | Effort          |
@@ -11,7 +11,6 @@ so any of them can go first.
 | PDF with one page per section                 | Board   | Large boards hit the 8192px limit and lose detail                     | Small           |
 | Markdown outline                              | Board   | Turns sections, stickies and text from a workshop or retro into notes | Small           |
 | Mermaid and DBML                              | Board   | Puts diagrams and schemas into READMEs and developer tools            | Small to medium |
-| WebP                                          | Both    | Smaller files for the web                                             | Very small      |
 
 ### PDF, later
 

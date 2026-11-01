@@ -78,6 +78,8 @@ export interface DesignNode extends CanvasElement {
   effects: NodeEffect[];
   /** The files it exports as (see the layer-export module), top to bottom in the Export section. */
   exports: NodeExport[];
+  /** `false` leaves its fills out of exports, on kinds with `fillExportToggle` (shown by default). */
+  fillInExports?: boolean;
   /**
    * How its width and height are decided in an auto layout (see `NodeSizing`). A text's hugging
    * follows its `autoResize`, so it stores only `fill` or `fixed`.

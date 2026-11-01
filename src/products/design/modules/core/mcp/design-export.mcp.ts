@@ -12,7 +12,7 @@ import { ToolImage } from "@shared/core";
 
 import { optionalNodeIds, requireDesign, type DesignMcpTool } from "../../../mcp";
 
-const FORMATS: readonly ExportFormat[] = ["png", "jpg", "svg", "pdf"];
+const FORMATS: readonly ExportFormat[] = ["png", "jpg", "webp", "svg", "pdf"];
 const SVG_TEXTS = ["outlines", "live"] as const;
 const BACKGROUNDS = ["solid", "transparent"] as const;
 /** Keeps pictures sent to agents small enough to read. */
@@ -27,7 +27,7 @@ export const designExportTools: DesignMcpTool[] = [
   {
     name: "export_nodes",
     description:
-      "Exports the design, or some layers, to a file as the Export dialog does: png or jpg (an " +
+      "Exports the design, or some layers, to a file as the Export dialog does: png, jpg or webp (an " +
       'image), svg (vector) or pdf (one page, with the pdf options). The file goes to "path" (absolute; the extension is added when ' +
       "missing), or next to the design's file, named after it. An existing file is replaced. " +
       "Returns the path written.",
@@ -41,7 +41,7 @@ export const designExportTools: DesignMcpTool[] = [
         background: {
           enum: BACKGROUNDS,
           description:
-            "PNG, SVG and sharp PDFs: transparent or the canvas color (solid, the default).",
+            "PNG, WebP, SVG and sharp PDFs: transparent or the canvas color (solid, the default).",
         },
         scale: { type: "number", description: "Pixels per world unit for images (2 by default)." },
         pdf: PDF_ARG_SCHEMA,
@@ -92,6 +92,7 @@ export const designExportTools: DesignMcpTool[] = [
         ids: optionalNodeIds(engine, args),
         scale: optionalNumber(args, "scale") ?? 1,
         maxSide: VIEW_MAX_SIDE,
+        asShown: true,
       });
       return new ToolImage(bytesToBase64(new Uint8Array(await png.arrayBuffer())), "image/png");
     },
@@ -100,7 +101,7 @@ export const designExportTools: DesignMcpTool[] = [
     name: "copy_nodes_as_png",
     description:
       "Copies layers (with what they hold) to the system clipboard as a PNG image with a " +
-      "transparent background, as Ctrl+Shift+C does. Without ids, copies the user's selection.",
+      "transparent background and no margin, as Ctrl+Shift+C does. Without ids, copies the user's selection.",
     inputSchema: {
       type: "object",
       properties: { ids: { type: "array", items: { type: "string" } } },

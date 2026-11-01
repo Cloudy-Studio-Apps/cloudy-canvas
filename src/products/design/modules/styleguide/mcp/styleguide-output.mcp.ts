@@ -59,6 +59,7 @@ export function styleguideOutputTools(sources: StyleguideToolSources): DesignMcp
             ids,
             scale: optionalNumber(args, "scale") ?? 0.5,
             maxSide: VIEW_MAX_SIDE,
+            asShown: true,
           });
           return new ToolImage(bytesToBase64(new Uint8Array(await png.arrayBuffer())), "image/png");
         } finally {
