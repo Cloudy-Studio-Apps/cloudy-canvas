@@ -16,6 +16,8 @@ import {
 import { exportBrochure } from "../export";
 import { BROCHURE_SCHEMA, readBrochure } from "./brochure-args";
 
+const PDF_MODES = ["sharp", "flattened"] as const;
+
 /** How the brochure prints, and its PDF. */
 export const brochureSettingsTools: DesignMcpTool[] = [
   {
@@ -27,7 +29,9 @@ export const brochureSettingsTools: DesignMcpTool[] = [
       "keep the back cover on the left or a spread frame starting on a left page), " +
       "`splitSpreads` (frames twice the page's width are spreads of two pages: in the PDF, two " +
       "pages or one wide one), `margin` (the safe area's inset in mm, which the checks read) and " +
-      "`dpi` (the exported PDF's resolution, 300 for print) and `arrange`, which lays the " +
+      "`dpi` (the exported PDF's picture resolution, 300 for print), `pdfMode` (`sharp`, the " +
+      "default, keeps shapes and text as vectors; `flattened` prints each page as one picture, " +
+      "for print shops that ask for it) and `arrange`, which lays the " +
       "brochure's frames out on the canvas and keeps them so after every brochure edit " +
       "(`below`: printed pages in a row by spread, the other options under each; `beside`: a " +
       "spread per row, options to the side; `off`, the default, leaves them where they are); " +
@@ -41,6 +45,7 @@ export const brochureSettingsTools: DesignMcpTool[] = [
         splitSpreads: { type: "boolean" },
         margin: { type: "number", minimum: 0 },
         dpi: { type: "number", minimum: 36, maximum: 600 },
+        pdfMode: { enum: PDF_MODES },
         arrange: { enum: BROCHURE_ARRANGES },
         brochure: BROCHURE_SCHEMA,
       },
@@ -53,6 +58,7 @@ export const brochureSettingsTools: DesignMcpTool[] = [
       const splitSpreads = optionalBoolean(args, "splitSpreads");
       const margin = optionalNumber(args, "margin");
       const dpi = optionalNumber(args, "dpi");
+      const pdfMode = optionalChoice(args, "pdfMode", PDF_MODES);
       const arrange = optionalChoice(args, "arrange", BROCHURE_ARRANGES);
       if (margin !== undefined && margin < 0) throw new Error('"margin" must be 0 or more.');
       if (dpi !== undefined && (dpi < 36 || dpi > 600)) throw new Error('"dpi" must be 36–600.');
@@ -62,6 +68,7 @@ export const brochureSettingsTools: DesignMcpTool[] = [
       if (splitSpreads !== undefined) patch.splitSpreads = splitSpreads;
       if (margin !== undefined) patch.margin = margin;
       if (dpi !== undefined) patch.dpi = dpi;
+      if (pdfMode !== undefined) patch.pdfMode = pdfMode;
       if (arrange !== undefined) patch.arrange = arrange;
       brochure.setSettings(patch);
       return { settings: brochure.settings() };
@@ -94,7 +101,7 @@ export const brochureSettingsTools: DesignMcpTool[] = [
     name: "export_brochure_pdf",
     description:
       "Writes the brochure as one PDF, a page per brochure page in order, each the printed " +
-      "frame exactly at the brochure's dpi (an A4 frame is an A4 page). The file goes to " +
+      "frame exactly, sharp or flattened as the brochure's pdfMode says (an A4 frame is an A4 page). The file goes to " +
       '"path" (absolute; .pdf is added when missing), or next to the design\'s file, named after ' +
       "it. An existing file is replaced. Returns the path written and the page count.",
     inputSchema: {

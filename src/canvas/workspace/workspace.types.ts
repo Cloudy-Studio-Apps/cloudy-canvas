@@ -1,7 +1,7 @@
 import type { Alignment, DistributeAxis, RotatePivot, ScaleAnchor } from "../arrange";
 import type { CanvasDocument, UndoHistory } from "../document";
 import type { CanvasElement, ElementKinds, ReorderDirection } from "../elements";
-import type { ExportOptions } from "../export";
+import type { ExportOptions, PdfBook, PdfExportOptions } from "../export";
 import type { Point, Rect } from "../geometry.types";
 import type { RulerGuide } from "../ruler-guides";
 import type { ServiceDef } from "../services";
@@ -60,6 +60,8 @@ export interface CanvasWorkspace<O extends object = object> {
 
   // View.
   exportElements(options: ExportOptions): Promise<Blob>;
+  /** A PDF written a page at a time, reading the workspace as each page is added. */
+  pdfBook(options?: Partial<PdfExportOptions>): PdfBook;
   copyAsPng(ids?: readonly string[]): Promise<void>;
   zoomToFit(): void;
   zoomToElement(id: string): void;

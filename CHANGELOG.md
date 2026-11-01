@@ -41,6 +41,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   ready by the time you open one. If you use plugins, they still load before Home appears.
 - An agent's cursor and selection now fade away a few seconds after it stops working, so they don't
   get in the way of what you're doing. They come back as soon as it starts again.
+- PDFs of brochures and design systems are now sharp at any zoom, with text you can search and copy.
+  Brochures have a PDF type setting for print shops that ask for flat image pages.
 
 ### Fixed
 

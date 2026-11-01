@@ -17,9 +17,15 @@ const DPI_CHOICES = [
   { value: "96", label: t("settings.quality.screen") },
 ] as const;
 
+/** The kinds of PDF to pick from. */
+const PDF_MODE_CHOICES = [
+  { value: "sharp", label: t("settings.pdfMode.sharp") },
+  { value: "flattened", label: t("settings.pdfMode.flattened") },
+] as const;
+
 /**
  * How the brochure prints: its page count and size, how it's bound (`LayoutFields`), how its
- * frames sit on the canvas (`ArrangeFields`), its margin and resolution, and whether the margins show on the canvas.
+ * frames sit on the canvas (`ArrangeFields`), its margin, resolution and kind of PDF, and whether the margins show on the canvas.
  */
 export function BrochureSettingsSection() {
   const { brochure, pages, layout, settings } = useBrochure();
@@ -59,6 +65,12 @@ export function BrochureSettingsSection() {
             onChange={(dpi) => brochure?.setSettings({ dpi: Number(dpi) })}
           />
         </PropertyGrid>
+        <SelectField
+          label={t("settings.pdfMode.label")}
+          value={settings.pdfMode}
+          options={PDF_MODE_CHOICES}
+          onChange={(pdfMode) => brochure?.setSettings({ pdfMode })}
+        />
         <CheckboxField label={t("settings.showMargins")} checked={margins} onChange={setMargins} />
       </div>
     </PanelSection>

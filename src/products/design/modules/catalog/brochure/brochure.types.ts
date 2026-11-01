@@ -1,4 +1,4 @@
-import type { CanvasElement, ElementDefaults } from "@canvas";
+import type { CanvasElement, ElementDefaults, PdfMode } from "@canvas";
 
 /**
  * One page of a brochure: the frames that could be it (its options, e.g. "Opción A/B/C") and the
@@ -38,8 +38,10 @@ export interface BrochureSettings {
   splitSpreads: boolean;
   /** The safe area's inset from each page edge, in millimetres (what the checks read). */
   margin: number;
-  /** Pixels per inch of the exported PDF's pages. */
+  /** Pixels per inch of the exported PDF's pictures, and of whole pages when `flattened`. */
   dpi: number;
+  /** `sharp` keeps shapes and text as vectors; `flattened` prints each page as one picture. */
+  pdfMode: PdfMode;
   /**
    * How its frames are laid out on the canvas, kept up after every edit of the brochure while
    * not `off` (other layers in the way are moved up or down).

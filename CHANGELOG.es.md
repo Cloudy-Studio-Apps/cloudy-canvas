@@ -44,6 +44,9 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   antes de que aparezca Inicio.
 - El cursor y la selección de un agente ahora se desvanecen unos segundos después de que deja de
   trabajar, para no estorbar en lo que estás haciendo. Vuelven en cuanto retoma el trabajo.
+- Los PDF de folletos y sistemas de diseño ahora son nítidos a cualquier zoom, con texto que puedes
+  buscar y copiar. Los folletos tienen un ajuste de tipo de PDF para las imprentas que piden páginas
+  planas de imagen.
 
 ### Correcciones
 

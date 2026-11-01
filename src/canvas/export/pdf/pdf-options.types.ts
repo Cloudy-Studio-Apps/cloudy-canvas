@@ -15,7 +15,9 @@ export interface PdfExportOptions {
   text: PdfText;
   imageQuality: PdfImageQuality;
   /** Pixels per inch of pictures, and of the whole page when flattened. */
-  dpi: PdfDpi;
+  dpi: number;
+  /** PDF points per world unit: 0.75 reads units as CSS pixels, 1 as points (print pages). */
+  pointsPerUnit: number;
   page: PdfPageSize;
   orientation: PdfOrientation;
   pages: PdfPages;

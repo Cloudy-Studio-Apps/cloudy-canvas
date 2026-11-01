@@ -42,9 +42,6 @@ export type {
   PdfPageSize,
   PdfText,
   ExportOptions,
-  PdfImage,
-  PdfOptions,
-  PdfPage,
   ThumbnailOptions,
 } from "./export";
 export type { Point, Rect, Size } from "./geometry.types";
@@ -112,7 +109,7 @@ export { HOST_ORIGIN, ShareGuest, ShareHost } from "./share";
 export type * from "./share";
 export type * from "./file/read-file-tokens.types";
 export { canvasFileMagic, decodeCanvasFile, encodeCanvasFile, readFileTokens } from "./file";
-export { canvasBlob, DEFAULT_PDF_OPTIONS, encodePdfPages } from "./export";
+export { canvasBlob, DEFAULT_PDF_OPTIONS, PdfBook } from "./export";
 export * from "./mcp";
 export * from "./elements";
 export * from "./geometry";

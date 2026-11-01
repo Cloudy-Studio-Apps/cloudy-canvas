@@ -116,7 +116,12 @@
     },
     "margin": "Margen",
     "showMargins": "Mostrar márgenes en el lienzo",
-    "title": "Folleto"
+    "title": "Folleto",
+    "pdfMode": {
+      "label": "Tipo de PDF",
+      "sharp": "Nítido · vectorial",
+      "flattened": "Imagen · páginas planas"
+    }
   },
   "layout": {
     "book": "Libro · páginas enfrentadas",

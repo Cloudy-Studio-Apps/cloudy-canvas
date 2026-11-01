@@ -2,7 +2,7 @@
 
 _How it works. The rules are in the root [CLAUDE.md](../../../../CLAUDE.md)._
 
-`exportPdf` writes a PDF of one or more pages in one of two ways (`PdfExportOptions.mode`). A page that fails in `sharp` falls back to `flattened`, so an export always gives a file. Catalog brochures and the Design system still use `encodePdfPages`.
+`exportPdf` writes a PDF of one or more pages in one of two ways (`PdfExportOptions.mode`). `PdfBook` (`workspace.pdfBook(options)`) does the same a page at a time, for exports that change design page between pages, report progress or add blank pages (Catalog brochures, the Design system). `pointsPerUnit` says how big a world unit prints: 0.75 by default, 1 for brochures. A page that fails in `sharp` falls back to `flattened`, so an export always gives a file. Catalog brochures and the Design system still use `encodePdfPages`.
 
 - **Flattened:** `host.snapshot` at `dpi`, as one JPEG on the page.
 - **Sharp:** the SVG writer ([render/vector/](../../render/vector/README.md)) runs with `target: "pdf"`, and `svgToPdf` reads its document (`DOMParser`) and writes it as PDF operators (`SvgPdfWriter`). So everything the SVG export can draw comes here for free. That target has the SVG writer flatten what PDF can't hold: effects written as filters, masks that aren't clips, semi-transparent gradients, tiled images, and text whose font can't be read. It clips gradient-filled text by its outlines.

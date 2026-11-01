@@ -116,7 +116,12 @@
     },
     "margin": "Margin",
     "showMargins": "Show margins on the canvas",
-    "title": "Brochure"
+    "title": "Brochure",
+    "pdfMode": {
+      "label": "PDF type",
+      "sharp": "Sharp · vector",
+      "flattened": "Image · flat pages"
+    }
   },
   "layout": {
     "book": "Book · facing pages",

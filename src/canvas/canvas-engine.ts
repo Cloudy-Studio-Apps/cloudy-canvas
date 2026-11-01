@@ -43,12 +43,14 @@ import {
   encodeImage,
   exportElements,
   hasRows,
+  PdfBook,
   pdfPageCount,
   renderThumbnail,
   type CaptureAreaOptions,
   type ExportArea,
   type ExportHost,
   type ExportOptions,
+  type PdfExportOptions,
   type ThumbnailOptions,
 } from "./export";
 import { findInteraction } from "./find-interaction";
@@ -804,6 +806,12 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   exportElements(options: ExportOptions): Promise<Blob> {
     this.textEditor?.commit();
     return exportElements(this.exportHost, options);
+  }
+
+  /** A PDF written a page at a time, reading the canvas as each page is added. */
+  pdfBook(options: Partial<PdfExportOptions> = {}): PdfBook {
+    this.textEditor?.commit();
+    return new PdfBook({ ...options, host: () => this.exportHost });
   }
 
   /** A small JPEG of the whole canvas for file previews, or `null` when it's empty. */

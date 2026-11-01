@@ -8,7 +8,7 @@ import {
   type Placement,
 } from "../document";
 import type { CanvasElement, ElementKinds, ReorderDirection } from "../elements";
-import { exportElements, type ExportOptions } from "../export";
+import { exportElements, PdfBook, type ExportOptions, type PdfExportOptions } from "../export";
 import type { Point, Rect } from "../geometry.types";
 import { ScopeGuides, type RulerGuide } from "../ruler-guides";
 import { Scene } from "../scene";
@@ -240,6 +240,10 @@ export class ActorWorkspace<O extends object> implements CanvasWorkspace<O> {
 
   exportElements(options: ExportOptions): Promise<Blob> {
     return exportElements(this.exportHost(), options);
+  }
+
+  pdfBook(options: Partial<PdfExportOptions> = {}): PdfBook {
+    return new PdfBook({ ...options, host: () => this.exportHost() });
   }
 
   copyAsPng(ids?: readonly string[]): Promise<void> {

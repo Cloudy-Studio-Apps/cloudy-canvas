@@ -24,11 +24,12 @@ export async function exportPdf(
 ): Promise<Blob> {
   const options = { ...DEFAULT_PDF_OPTIONS, ...given };
   const doc = new PdfDocument();
-  for (const page of pages) await addPage(doc, host, page, background, options);
+  for (const page of pages) await addPdfPage(doc, host, page, background, options);
   return doc.save();
 }
 
-async function addPage(
+/** Writes one page into `doc`, sharp or flattened as `options` say. */
+export async function addPdfPage(
   doc: PdfDocument,
   host: ExportHost,
   page: PdfPageSource,
@@ -44,7 +45,7 @@ async function addPage(
       links: host.createLinks(),
       text: "outlines",
       target: "pdf",
-      imageScale: pdfImageScale(options.dpi),
+      imageScale: pdfImageScale(options),
     });
     await addSvgPage(doc, svg, rect, options);
   } catch (error) {
@@ -62,7 +63,7 @@ async function addFlattened(
 ): Promise<void> {
   const canvas = await host.snapshot(elements, {
     rect,
-    scale: Math.min(pdfImageScale(options.dpi), MAX_SIDE / Math.max(rect.w, rect.h)),
+    scale: Math.min(pdfImageScale(options), MAX_SIDE / Math.max(rect.w, rect.h)),
     background: host.background,
     links: host.createLinks(),
   });

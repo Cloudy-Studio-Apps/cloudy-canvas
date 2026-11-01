@@ -1,10 +1,13 @@
 import type { PdfExportOptions, PdfImageQuality } from "./pdf-options.types";
 
+const POINTS_PER_INCH = 72;
+
 export const DEFAULT_PDF_OPTIONS: PdfExportOptions = {
   mode: "sharp",
   text: "selectable",
   imageQuality: "high",
   dpi: 300,
+  pointsPerUnit: 0.75,
   page: "fit",
   orientation: "auto",
   pages: "single",
@@ -18,7 +21,10 @@ export const PDF_JPEG_QUALITY: Readonly<Record<PdfImageQuality, number>> = {
   small: 0.6,
 };
 
-/** The pixels of a CSS pixel, which is what world units are, at `dpi`. */
-export function pdfImageScale(dpi: number): number {
-  return dpi / 96;
+/** Pixels per world unit at `dpi`. */
+export function pdfImageScale({
+  dpi,
+  pointsPerUnit,
+}: Pick<PdfExportOptions, "dpi" | "pointsPerUnit">): number {
+  return (dpi * pointsPerUnit) / POINTS_PER_INCH;
 }

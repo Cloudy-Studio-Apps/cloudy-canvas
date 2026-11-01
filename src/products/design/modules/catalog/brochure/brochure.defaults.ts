@@ -8,6 +8,7 @@ export const BROCHURE_DEFAULTS = {
     splitSpreads: true,
     margin: 12,
     dpi: 300,
+    pdfMode: "sharp",
     arrange: "off",
   },
 } satisfies BrochureDefaults;
