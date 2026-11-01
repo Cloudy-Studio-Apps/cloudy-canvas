@@ -10,6 +10,7 @@ export const STYLEGUIDE_ALLOWED_COMMANDS: readonly string[] = [
   "cancel",
   "selectAll",
   "copyAsPng",
+  "copyAsSvg",
   "zoomIn",
   "zoomOut",
   "zoomReset",

@@ -38,6 +38,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   Sistema de diseño, te permite escoger el formato, marcar las colecciones, los grupos o los estilos
   que quieres incluir, ver el archivo y copiarlo o guardarlo. Todo aquello de lo que dependen las
   variables marcadas se incluye también, para que el archivo siga funcionando.
+- Copiar como SVG: copia tu selección en una pizarra o un diseño como código SVG, desde el menú del
+  botón derecho, y pégala directamente en tu código o en otras herramientas de diseño.
 
 ### Mejoras
 

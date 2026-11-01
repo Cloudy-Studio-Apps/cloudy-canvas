@@ -16,4 +16,5 @@ export interface ActorWorkspaceHost<O extends object> {
   exportHost(scene: Scene, selected: () => Iterable<string>): ExportHost;
   /** Copies elements of an export host to the system clipboard as a PNG. */
   copyPng(host: ExportHost, ids: readonly string[]): Promise<void>;
+  copySvg(host: ExportHost, ids: readonly string[]): Promise<void>;
 }

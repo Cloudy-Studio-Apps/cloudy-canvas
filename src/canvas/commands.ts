@@ -41,6 +41,7 @@ export function createCommands(
     paste: () => engine.paste(),
     pasteToReplace: () => engine.pasteToReplace(),
     copyAsPng: () => engine.runHostAction("copyAsPng"),
+    copyAsSvg: () => engine.runHostAction("copyAsSvg"),
     copyProperties: () => engine.copyStyle(),
     pasteProperties: () => engine.pasteStyle().length > 0,
     duplicate: () => engine.duplicateSelection(),

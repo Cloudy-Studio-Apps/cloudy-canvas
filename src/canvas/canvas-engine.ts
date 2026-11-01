@@ -805,6 +805,18 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   }
 
   /**
+   * Copies the selection (with what moves with it) to the clipboard as SVG text. Rejects with a
+   * message for the user when nothing is selected or it can't be copied.
+   */
+  async copyAsSvg(ids?: readonly string[]): Promise<void> {
+    if ((ids?.length ?? this.scene.selection.size) === 0) {
+      throw new Error("Select something to copy.");
+    }
+    this.textEditor?.commit();
+    await this.copySvg(this.exportHost, ids);
+  }
+
+  /**
    * Exports the selection (with what moves with it) or the whole canvas as an image, a PDF page
    * or CSV. Rejects with a message for the user when there's nothing to export.
    */
@@ -1984,6 +1996,18 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     this.userCamera.emit();
   }
 
+  /** Copies elements of an export host to the system clipboard as SVG text, with no margin. */
+  private async copySvg(host: ExportHost, ids: readonly string[] | undefined): Promise<void> {
+    const svg = await exportElements(host, {
+      format: "svg",
+      background: "transparent",
+      area: "selection",
+      ids,
+      padding: 0,
+    });
+    await this.systemClipboard.writeText(await svg.text());
+  }
+
   /** Copies elements of an export host to the system clipboard as a PNG, with no margin. */
   private async copyPng(host: ExportHost, ids: readonly string[] | undefined): Promise<void> {
     const options = { format: "png", background: "transparent", area: "selection", ids } as const;
@@ -2001,6 +2025,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
       userSelection: () => this.selectedIds(),
       exportHost: (scene, selected) => this.exportHostFor(scene, selected),
       copyPng: (host, ids) => this.copyPng(host, ids),
+      copySvg: (host, ids) => this.copySvg(host, ids),
     };
   }
 

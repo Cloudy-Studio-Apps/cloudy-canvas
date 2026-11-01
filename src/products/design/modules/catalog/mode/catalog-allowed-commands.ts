@@ -12,6 +12,7 @@ export const CATALOG_ALLOWED_COMMANDS: readonly string[] = [
   "deleteSelection",
   "editSelection",
   "copyAsPng",
+  "copyAsSvg",
   "zoomIn",
   "zoomOut",
   "zoomReset",

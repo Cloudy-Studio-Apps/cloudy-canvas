@@ -250,6 +250,10 @@ export class ActorWorkspace<O extends object> implements CanvasWorkspace<O> {
     return this.host.copyPng(this.exportHost(), ids ?? this.selectedIds());
   }
 
+  copyAsSvg(ids?: readonly string[]): Promise<void> {
+    return this.host.copySvg(this.exportHost(), ids ?? this.selectedIds());
+  }
+
   undo(): void {
     this.history.undo();
   }

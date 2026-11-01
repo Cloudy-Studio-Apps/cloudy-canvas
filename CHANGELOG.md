@@ -36,6 +36,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   Design system, lets you pick the format, tick the collections, groups or styles to include, preview
   the file, then copy or save it. Anything the ticked variables depend on comes along, so the file
   keeps working.
+- Copy as SVG: copy your selection on a board or in a design as SVG code, from the right-click menu,
+  and paste it straight into your code or into other design tools.
 
 ### Improved
 

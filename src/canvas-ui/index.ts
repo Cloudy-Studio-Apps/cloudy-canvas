@@ -127,7 +127,7 @@ export {
 } from "./share";
 export type { CanvasEngineHost } from "./use-canvas-engine.types";
 export { useCanvasFileDrop } from "./use-canvas-file-drop";
-export { useCopyAsPng } from "./use-copy-as-png";
+export { useCopyAs } from "./use-copy-as";
 export { useDocumentMeta } from "./use-document-meta";
 export * from "./modules";
 export { normalizedToScreen, screenToLocal, screenToNormalized, useViewMapping } from "./overlay";

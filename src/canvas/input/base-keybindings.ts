@@ -17,6 +17,7 @@ export const BASE_KEYBINDINGS = {
   paste: [{ key: "v", mod: true }],
   pasteToReplace: [{ key: "r", mod: true, shift: true }],
   copyAsPng: [{ key: "c", mod: true, shift: true }],
+  copyAsSvg: [],
   copyProperties: [{ code: "KeyC", mod: true, alt: true, label: "C" }],
   pasteProperties: [{ code: "KeyV", mod: true, alt: true, label: "V" }],
   duplicate: [{ key: "d", mod: true }],

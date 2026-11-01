@@ -6,7 +6,7 @@ import {
   ModuleSlot,
   ModuleToolOptions,
   useCanvasFile,
-  useCopyAsPng,
+  useCopyAs,
   useUiHidden,
   ZoomControls,
 } from "@canvas-ui";
@@ -24,7 +24,7 @@ export function BoardChrome() {
   const { name, live } = useCanvasFile();
   const hidden = useUiHidden();
   const viewing = live?.role === "view";
-  useCopyAsPng();
+  useCopyAs();
   return (
     <div className="pointer-events-none absolute inset-0">
       <CollaboratorLayer />

@@ -63,6 +63,7 @@ export interface CanvasWorkspace<O extends object = object> {
   /** A PDF written a page at a time, reading the workspace as each page is added. */
   pdfBook(options?: Partial<PdfExportOptions>): PdfBook;
   copyAsPng(ids?: readonly string[]): Promise<void>;
+  copyAsSvg(ids?: readonly string[]): Promise<void>;
   zoomToFit(): void;
   zoomToElement(id: string): void;
 

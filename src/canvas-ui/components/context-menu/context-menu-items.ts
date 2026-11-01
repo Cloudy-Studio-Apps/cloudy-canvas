@@ -52,7 +52,10 @@ const copyPasteAs: ContextMenuCategory = {
         enabled: (context) => hasSelection(context) && context.styleCopied,
       },
     ],
-    [{ command: "copyAsPng", enabled: hasSelection }],
+    [
+      { command: "copyAsPng", enabled: hasSelection },
+      { command: "copyAsSvg", enabled: hasSelection },
+    ],
   ],
 };
 

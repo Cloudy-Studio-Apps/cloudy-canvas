@@ -8,7 +8,7 @@ import {
   ModuleToolOptions,
   Rulers,
   useCanvasFile,
-  useCopyAsPng,
+  useCopyAs,
   useUiHidden,
 } from "@canvas-ui";
 import { LeftPanel } from "./components/left-panel";
@@ -32,7 +32,7 @@ export function DesignChrome() {
   const hidden = useUiHidden();
   const leftOpen = useDesignPanelStore((state) => state.leftOpen);
   const rightOpen = useDesignPanelStore((state) => state.rightOpen);
-  useCopyAsPng();
+  useCopyAs();
 
   return (
     <div className="pointer-events-none absolute inset-0">

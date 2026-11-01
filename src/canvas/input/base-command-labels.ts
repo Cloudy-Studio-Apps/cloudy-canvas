@@ -13,6 +13,7 @@ export const BASE_COMMAND_LABELS: Record<keyof typeof BASE_KEYBINDINGS, string> 
   paste: t("commands.paste"),
   pasteToReplace: t("commands.pasteToReplace"),
   copyAsPng: t("commands.copyAsPng"),
+  copyAsSvg: t("commands.copyAsSvg"),
   copyProperties: t("commands.copyProperties"),
   pasteProperties: t("commands.pasteProperties"),
   duplicate: tCommon("duplicate"),

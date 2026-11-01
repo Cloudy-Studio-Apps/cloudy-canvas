@@ -9,5 +9,10 @@
     "loading": "Copying as PNG…",
     "success": "Copied as PNG",
     "error": "Couldn't copy as PNG"
+  },
+  "copySvg": {
+    "loading": "Copying as SVG…",
+    "success": "Copied as SVG",
+    "error": "Couldn't copy as SVG"
   }
 }
