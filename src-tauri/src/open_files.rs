@@ -5,11 +5,14 @@
 use std::path::Path;
 use std::sync::Mutex;
 
-use tauri::{AppHandle, Emitter, Manager, RunEvent, State};
+use tauri::{AppHandle, RunEvent, State};
+#[cfg(desktop)]
+use tauri::{Emitter, Manager};
 
 use crate::app_links;
 
 /// Emitted with the paths a later launch asked to open.
+#[cfg(desktop)]
 const OPEN_FILES_EVENT: &str = "app://open-files";
 
 /// The paths this process was launched with, until the webview takes them.
@@ -56,6 +59,7 @@ pub fn on_run_event(app: &AppHandle, event: RunEvent) {
 }
 
 /// A second launch (single instance): bring the window forward and pass its paths on.
+#[cfg(desktop)]
 pub fn on_second_instance(app: &AppHandle, argv: Vec<String>, cwd: String) {
     if let Some(window) = app.get_webview_window("main") {
         let _ = window.unminimize();
@@ -66,6 +70,7 @@ pub fn on_second_instance(app: &AppHandle, argv: Vec<String>, cwd: String) {
 
 /// Paths asked for while the app runs: kept with the launch paths until the webview takes them
 /// (macOS sends the files it was launched with before the webview loads), sent after.
+#[cfg(desktop)]
 fn forward(app: &AppHandle, paths: Vec<String>) {
     if paths.is_empty() {
         return;
