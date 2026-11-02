@@ -12,6 +12,7 @@ import {
 } from "@tauri-apps/plugin-fs";
 
 import {
+  isAndroidPlatform,
   isSafeRelativePath,
   readPluginManifest,
   type BrokenPlugin,
@@ -28,13 +29,13 @@ const FOLDER = "plugins";
 const INDEX_FILE = "index.json";
 const MANIFEST_FILE = "plugin.json";
 
-/** Plugins on disk. Outside Tauri there are none. */
+/** Plugins on disk. Outside Tauri there are none, and Android doesn't run plugins for now. */
 export class TauriPluginStorage implements PluginStorage {
   /** Index edits run one after another, so two edits never read the same old index. */
   private queue: Promise<unknown> = Promise.resolve();
 
   async list(): Promise<PluginScan> {
-    if (!isTauri()) return { plugins: [], broken: [] };
+    if (!isTauri() || isAndroidPlatform()) return { plugins: [], broken: [] };
     const plugins: InstalledPlugin[] = [];
     const broken: BrokenPlugin[] = [];
     const add = async (path: string, source: InstalledPlugin["source"]) => {

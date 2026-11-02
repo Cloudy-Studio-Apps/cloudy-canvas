@@ -13,6 +13,6 @@ The first load holds Home and the app's shell, never a product or the canvas eng
 1. `index.html` shows the splash (see `shared/ui`), which needs none of the app's code.
 2. `main.tsx` runs `loadPlugins()`. The products only load this early when a plugin is enabled and trusted (`plugins/activate-plugin.ts`), because the plugin API holds both and their modules must register before the products compose.
 3. React renders, replacing the splash. Every route but Home is a `lazyPage` (`lazy-page.tsx`): opening one loads it, with the loading screen until it's there.
-4. `preloadProducts()` (`preload-products.ts`) loads the board, the design and `mcp/agent-runtime.ts` behind the first page, with gaps so the window can answer, then sets `useProductsStore`'s `ready`: Home's starters wait for it, and from then on opening a product is instant. The agent menu's tools are empty until this finishes.
+4. `preloadProducts()` (`preload-products.ts`) loads the board, the design and, where agents can connect, `mcp/agent-runtime.ts` behind the first page, with gaps so the window can answer, then sets `useProductsStore`'s `ready`: Home's starters wait for it, and from then on opening a product is instant. The agent menu's tools are empty until this finishes.
 
 An agent's request that arrives before that loads `agent-runtime.ts` itself, so agents never depend on the preload.

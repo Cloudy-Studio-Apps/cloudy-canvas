@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@shared/ui/components/ui/dropdown-menu";
-import { AGENT_SOURCE } from "@shared/core";
+import { AGENT_SOURCE, isAndroidPlatform } from "@shared/core";
 import { useAgentServerStore } from "@shared/stores/agent-server-store";
 import { CollaboratorList } from "@shared/collaborators";
 import { agentServerStatusText } from "./agent-server-status-text";
@@ -35,6 +35,8 @@ export function AgentServerMenu({
   const url = status.enabled ? status.url : null;
   const showCollaborators = useAgentServerStore((state) => state.showCollaborators);
   const setShowCollaborators = useAgentServerStore((state) => state.setShowCollaborators);
+
+  if (isAndroidPlatform()) return null;
 
   return (
     <>

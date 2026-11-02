@@ -8,6 +8,11 @@ export function isWindowsPlatform(): boolean {
   return typeof navigator !== "undefined" && /Win/.test(navigator.platform);
 }
 
+/** `navigator.platform` reads like Linux on Android, so this goes by the user agent. */
+export function isAndroidPlatform(): boolean {
+  return typeof navigator !== "undefined" && /Android/.test(navigator.userAgent);
+}
+
 export function isModKey(event: KeyboardEvent | MouseEvent): boolean {
   return event.ctrlKey || event.metaKey;
 }

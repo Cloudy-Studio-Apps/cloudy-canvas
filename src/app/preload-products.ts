@@ -1,3 +1,4 @@
+import { agentChannel } from "@platform";
 import { useProductsStore } from "@shared/stores/products-store";
 import { notifyError } from "@shared/stores/toast-store";
 import { t } from "./app.i18n";
@@ -15,7 +16,8 @@ async function load(): Promise<void> {
   await pause(GAP_MS);
   await import("@design/ui");
   await pause(GAP_MS);
-  await import("./mcp/agent-runtime");
+  // Without a channel no agent can call, so a phone doesn't pay for the tools.
+  if (agentChannel) await import("./mcp/agent-runtime");
   useProductsStore.getState().setReady();
 }
 

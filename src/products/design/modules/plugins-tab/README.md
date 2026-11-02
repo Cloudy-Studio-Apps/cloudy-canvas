@@ -11,4 +11,4 @@ The Plugins tab of the left panel; for now it points at Settings › Plugins.
 
 ## How it works
 
-The Plugins tab (a pointer to Settings › Plugins for now).
+The Plugins tab (a pointer to Settings › Plugins for now). Android runs no plugins yet, so it doesn't contribute the tab there.

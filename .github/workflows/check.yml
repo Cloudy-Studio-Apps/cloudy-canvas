@@ -49,3 +49,36 @@ jobs:
       # The Rust crate embeds the frontend, so `dist/` has to exist.
       - run: pnpm exec vite build
       - run: cargo check --locked --manifest-path src-tauri/Cargo.toml
+
+  android:
+    name: Check (Android)
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec vite build
+      # C dependencies (ring) build with the NDK's compiler. The runner comes with an NDK.
+      - name: Check the Rust crate for Android
+        run: |
+          bin="$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin"
+          export CC_aarch64_linux_android="$bin/aarch64-linux-android24-clang"
+          export AR_aarch64_linux_android="$bin/llvm-ar"
+          cargo check --locked --target aarch64-linux-android --manifest-path src-tauri/Cargo.toml

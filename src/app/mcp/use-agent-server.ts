@@ -21,6 +21,7 @@ export function useAgentServer(): void {
   }, [enabled]);
 
   useEffect(() => {
+    if (!agentChannel) return;
     const prune = () =>
       loadRuntime().then(
         ({ presence }) => presence.prune(Date.now()),

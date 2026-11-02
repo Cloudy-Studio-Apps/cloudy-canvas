@@ -16,7 +16,11 @@ const PORT_ATTEMPTS: u16 = 10;
 const DISCOVERY_FILE: &str = "mcp.json";
 
 /// Starts listening on 127.0.0.1 in the background. Failing to bind only disables the endpoint.
+/// Phones and tablets have no local agents to connect, so nothing listens there.
 pub fn start(app: &AppHandle) {
+    if cfg!(mobile) {
+        return;
+    }
     let app = app.clone();
     let state = app.state::<McpState>().inner().clone();
     tauri::async_runtime::spawn(async move {
