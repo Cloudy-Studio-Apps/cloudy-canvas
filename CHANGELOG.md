@@ -5,6 +5,11 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ## Unreleased
 
+### Fixed
+
+- Fast pen strokes no longer fill in as solid black shapes at sharp turns, and they follow your hand
+  more closely.
+
 ## 0.7.0 - 2026-11-01
 
 ### New

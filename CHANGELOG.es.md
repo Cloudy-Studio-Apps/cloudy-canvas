@@ -5,6 +5,11 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ## Sin publicar
 
+### Correcciones
+
+- Los trazos rápidos con el bolígrafo ya no se rellenan como formas negras sólidas en los giros
+  cerrados, y siguen mejor tu mano.
+
 ## 0.7.0 - 2026-11-01
 
 ### Novedades

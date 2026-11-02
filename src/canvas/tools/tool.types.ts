@@ -124,6 +124,8 @@ export interface Tool {
   readonly resizeMode?: ResizeMode;
   /** Double-click edits what it hits (enters groups, edits text) while it's on: the select tool. */
   readonly editsOnDoubleClick?: boolean;
+  /** Takes every point the pointer passed between events, for tools that trace its path. */
+  readonly tracesPointer?: boolean;
   onPointerDown(p: CanvasPointer): void;
   onPointerMove?(p: CanvasPointer): void;
   onPointerUp?(p: CanvasPointer): void;

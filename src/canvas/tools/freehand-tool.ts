@@ -13,6 +13,7 @@ export abstract class FreehandTool<
 > implements Tool {
   abstract readonly id: string;
   readonly cursor: string = "crosshair";
+  readonly tracesPointer = true;
   private points: number[] | null = null;
 
   constructor(protected readonly ctx: ToolContext<O>) {}

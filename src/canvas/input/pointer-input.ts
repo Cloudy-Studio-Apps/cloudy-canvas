@@ -56,7 +56,12 @@ export class PointerInput {
 
   private handleMove = (event: PointerEvent) => {
     if (this.active?.pointerId === event.pointerId) {
-      this.active.tool.onPointerMove?.(this.pointer(event));
+      const { tool } = this.active;
+      // A fast hand outruns the screen: this one event can stand for several points.
+      const passed = tool.tracesPointer ? event.getCoalescedEvents?.() : undefined;
+      for (const point of passed?.length ? passed : [event]) {
+        tool.onPointerMove?.(this.pointer(point));
+      }
     } else if (!this.active && !this.spaceHeld) {
       this.host.activeTool().onHover?.(this.pointer(event));
     }
