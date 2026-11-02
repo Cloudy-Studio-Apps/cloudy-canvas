@@ -39,10 +39,10 @@ export function JoinSessionButton() {
       <PopoverTrigger asChild>
         <Button variant="ghost" size="sm">
           <Users />
-          {t("join.button")}
+          <span className="max-sm:sr-only">{t("join.button")}</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-80">
+      <PopoverContent align="end" className="w-80 max-w-[calc(100vw-2rem)]">
         <form onSubmit={submit} className="space-y-2">
           <label htmlFor={id} className="text-sm font-medium">
             {t("join.title")}

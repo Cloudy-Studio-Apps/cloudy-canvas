@@ -1,3 +1,4 @@
+import { isAndroidPlatform } from "@shared/core";
 import { SealLogo } from "@shared/ui/brand/seal-logo";
 import { SealsVideo } from "@shared/ui/brand/seals-video";
 import { CreateTiles } from "./create-tiles";
@@ -10,7 +11,7 @@ export function Welcome({ onCreate, onOpenFile }: WelcomeProps) {
   return (
     <section
       aria-labelledby="welcome-heading"
-      className="grid items-center gap-8 rounded-card border bg-surface p-6 shadow-soft sm:p-8 lg:grid-cols-[1.1fr_1fr]"
+      className="grid grid-cols-1 items-center gap-8 rounded-card border bg-surface p-6 shadow-soft sm:p-8 lg:grid-cols-[1.1fr_1fr]"
     >
       <div className="space-y-4">
         <SealLogo size={44} />
@@ -24,7 +25,9 @@ export function Welcome({ onCreate, onOpenFile }: WelcomeProps) {
           <CreateTiles onCreate={onCreate} detailed />
           <OpenFileTile onOpenFile={onOpenFile} />
         </div>
-        <p className="text-xs text-muted-foreground">{t("welcome.drop")}</p>
+        {!isAndroidPlatform() && (
+          <p className="text-xs text-muted-foreground">{t("welcome.drop")}</p>
+        )}
       </div>
       <div className="aspect-[16/10] overflow-hidden rounded-card border bg-surface-sunken">
         <SealsVideo playing />

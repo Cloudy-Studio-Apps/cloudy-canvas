@@ -28,7 +28,7 @@ export function TopBar() {
             trigger={
               <Button variant="ghost" size="sm">
                 <Bot />
-                {t("top.agents")}
+                <span className="max-sm:sr-only">{t("top.agents")}</span>
               </Button>
             }
           />
@@ -36,7 +36,7 @@ export function TopBar() {
             <Button variant="ghost" size="sm" asChild>
               <Link to="/design-system">
                 <Palette />
-                {t("top.designSystem")}
+                <span className="max-sm:sr-only">{t("top.designSystem")}</span>
               </Link>
             </Button>
           )}
@@ -53,7 +53,7 @@ export function TopBar() {
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/settings" aria-keyshortcuts="Control+Comma">
                   <Settings />
-                  {t("top.settings")}
+                  <span className="max-sm:sr-only">{t("top.settings")}</span>
                 </Link>
               </Button>
             </TooltipTrigger>
@@ -71,7 +71,7 @@ export function TopBar() {
         className="-mx-1.5 cursor-pointer rounded-md px-1.5 py-1 hover:bg-hover"
         onClick={openAbout}
       >
-        <Wordmark />
+        <Wordmark textClassName="max-sm:sr-only" />
       </button>
     </AppHeader>
   );
