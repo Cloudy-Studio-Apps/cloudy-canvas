@@ -1536,6 +1536,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
       },
       onDoubleClick: (p) => this.handleDoubleClick(p),
       onContextMenu: (p) => this.handleContextMenu(p),
+      onCameraChange: () => this.onUserCameraChange(),
     });
     pointer.bind(this.disposables);
     bindWheel(this.disposables, canvas, this.camera, () => this.onUserCameraChange());

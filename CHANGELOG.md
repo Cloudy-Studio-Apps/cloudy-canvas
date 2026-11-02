@@ -5,6 +5,11 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ## Unreleased
 
+### New
+
+- On touch screens, pinch with two fingers to zoom the canvas and drag with two fingers to move it,
+  with any tool selected.
+
 ### Fixed
 
 - Fast pen strokes no longer fill in as solid black shapes at sharp turns, and they follow your hand

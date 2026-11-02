@@ -5,6 +5,11 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ## Sin publicar
 
+### Novedades
+
+- En pantallas táctiles, pellizca con dos dedos para hacer zoom en el lienzo y arrastra con dos dedos
+  para moverlo, con cualquier herramienta seleccionada.
+
 ### Correcciones
 
 - Los trazos rápidos con el bolígrafo ya no se rellenan como formas negras sólidas en los giros
