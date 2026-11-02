@@ -3,15 +3,32 @@ import { FloatingPanel, PanelDivider } from "../components/floating-panel";
 import { ExtensionIconView } from "./extension-icon-view";
 import { ModeToolbarItem } from "./mode-toolbar-item";
 import type { ModeToolbarProps } from "./mode-toolbar.types";
+import { PhoneModeItems, PhoneToolbar } from "./phone-toolbar";
 import { useEditorMode } from "./use-editor-mode";
+import { useIsPhone } from "@shared/ui/hooks/use-is-phone";
 import { tCommon } from "@shared/core";
 
 /**
  * A mode's toolbar, in place of the main one: its title, its items (tools, commands, actions and
- * dividers, as data) and Done, which leaves the mode unless `onDone` says otherwise.
+ * dividers, as data) and Done, which leaves the mode unless `onDone` says otherwise. On a phone
+ * the items go in the sheet (`PhoneToolbar`).
  */
 export function ModeToolbar({ items, title, label, onDone }: ModeToolbarProps) {
   const mode = useEditorMode();
+  const phone = useIsPhone();
+  if (phone) {
+    return (
+      <PhoneToolbar
+        trailing={
+          <Button size="sm" className="mx-1" onClick={onDone ?? mode.leave}>
+            {tCommon("done")}
+          </Button>
+        }
+      >
+        <PhoneModeItems items={items} />
+      </PhoneToolbar>
+    );
+  }
   return (
     <FloatingPanel
       role="toolbar"

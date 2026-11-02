@@ -1,7 +1,8 @@
 import { Blocks } from "lucide-react";
 import { useEffect } from "react";
 
-import { ToolButton } from "@canvas-ui";
+import { PhoneToolCell, ToolButton } from "@canvas-ui";
+import { useIsPhone } from "@shared/ui/hooks/use-is-phone";
 import { Popover, PopoverContent, PopoverTrigger } from "@shared/ui/kit";
 import { useBoardEngine } from "@board/ui/board-engine-context";
 import { useBoardPanelStore } from "@board/ui/stores/board-panel-store";
@@ -14,6 +15,7 @@ export function LibraryButton() {
   const engine = useBoardEngine();
   const open = useBoardPanelStore((state) => state.libraryOpen);
   const setOpen = useBoardPanelStore((state) => state.setLibraryOpen);
+  const phone = useIsPhone();
 
   useEffect(
     () =>
@@ -27,16 +29,24 @@ export function LibraryButton() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <ToolButton
-          label={OPEN_LIBRARY.label}
-          description={t("button.description")}
-          shortcut={engine.keymap.label(OPEN_LIBRARY.id)}
-          active={open}
-        >
-          <Blocks />
-        </ToolButton>
+        {phone ? (
+          <PhoneToolCell
+            icon={<Blocks className="size-5" />}
+            label={OPEN_LIBRARY.label}
+            active={open}
+          />
+        ) : (
+          <ToolButton
+            label={OPEN_LIBRARY.label}
+            description={t("button.description")}
+            shortcut={engine.keymap.label(OPEN_LIBRARY.id)}
+            active={open}
+          >
+            <Blocks />
+          </ToolButton>
+        )}
       </PopoverTrigger>
-      <PopoverContent side="top" sideOffset={10} className="w-[480px] p-0">
+      <PopoverContent side="top" sideOffset={10} className="w-[480px] max-w-[calc(100vw-2rem)] p-0">
         <LibraryPanel onClose={() => setOpen(false)} />
       </PopoverContent>
     </Popover>

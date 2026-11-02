@@ -47,6 +47,18 @@ export interface ModeToolbarProps {
   onDone?: () => void;
 }
 
+/** What an item of a mode's toolbar shows and does (`useModeToolbarItem`). */
+export interface ModeToolbarItemView {
+  label: string;
+  description: string | undefined;
+  shortcut: string | undefined;
+  icon: ExtensionIcon;
+  badge: number | undefined;
+  active: boolean | undefined;
+  disabled: boolean | undefined;
+  run: () => void;
+}
+
 export interface ModeToolbarItemProps {
   item: Exclude<ModeToolbarEntry, "divider">;
 }

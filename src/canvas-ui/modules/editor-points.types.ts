@@ -214,8 +214,12 @@ export interface ToolMenuButtonProps {
 }
 
 export interface ModuleToolbarProps {
-  /** Drawn after the tools (e.g. the library button). */
+  /** Drawn after the tools (e.g. the library button), or in the phone's sheet. */
   children?: ReactNode;
+}
+
+export interface ToolbarForModeProps extends ModuleToolbarProps {
+  phone: boolean;
 }
 
 export interface ExtensionIconViewProps {

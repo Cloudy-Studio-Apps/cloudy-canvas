@@ -17,6 +17,7 @@ export { ModuleToolbar } from "./module-toolbar";
 export { ModeSwitcher } from "./mode-switcher";
 export { ModeToolbar } from "./mode-toolbar";
 export { ModeToolbarItem } from "./mode-toolbar-item";
+export { PhoneToolCell } from "./phone-toolbar";
 export { useEditorMode } from "./use-editor-mode";
 export { inLibrary, sortedTools, toolbarGroups, toolbarItems, toolInfo } from "./tool-entries";
 export { ToolMenuButton } from "./tool-menu-button";
