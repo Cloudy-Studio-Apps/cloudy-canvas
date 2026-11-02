@@ -6,6 +6,7 @@ export { useSceneElements } from "./use-scene-elements";
 export { useSelectedNodes } from "./use-selected-nodes";
 export { useCanvasInset } from "./use-canvas-inset";
 export { useKeepCanvasInPlace } from "./use-keep-canvas-in-place";
+export { usePhonePanels } from "./use-phone-panels";
 export type * from "./use-field-binding.types";
 export { useFieldBinding } from "./use-field-binding";
 export type * from "./field-binding-scope.types";

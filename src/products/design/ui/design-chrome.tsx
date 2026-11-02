@@ -14,16 +14,16 @@ import {
 import { LeftPanel } from "./components/left-panel";
 import { PropertiesPanel, ShowPropertiesButton } from "./components/properties-panel";
 import { DesignRail } from "./components/rail";
-import { useCanvasInset } from "./hooks";
+import { useCanvasInset, usePhonePanels } from "./hooks";
 import { useDesignPanelStore } from "./stores/design-panel-store";
 import { t } from "./design-ui.i18n";
 
 /**
  * The UI around the canvas: the rail and left panel, the properties panel, and over the canvas
  * the rulers, the toolbar, the context menu and the modules' overlays. Everything in it comes from the
- * modules' points; it never holds canvas content. Closed panels leave their space to the canvas, and
- * with the UI hidden (Ctrl+\) only the collaborators, the context menu and the overlays stay; a live
- * session's viewer gets no toolbar.
+ * modules' points; it never holds canvas content. Closed panels leave their space to the canvas (on
+ * a phone they start closed and open over it), and with the UI hidden (Ctrl+\) only the
+ * collaborators, the context menu and the overlays stay; a live session's viewer gets no toolbar.
  */
 export function DesignChrome() {
   const { name, live } = useCanvasFile();
@@ -33,6 +33,7 @@ export function DesignChrome() {
   const leftOpen = useDesignPanelStore((state) => state.leftOpen);
   const rightOpen = useDesignPanelStore((state) => state.rightOpen);
   useCopyAs();
+  usePhonePanels();
 
   return (
     <div className="pointer-events-none absolute inset-0">
@@ -40,12 +41,12 @@ export function DesignChrome() {
       <LiveSessionLayer />
       {!hidden && (
         <>
-          <div className="pointer-events-auto absolute inset-y-0 left-0 flex">
+          <div className="pointer-events-auto absolute inset-y-0 left-0 z-10 flex">
             <DesignRail />
             {leftOpen && <LeftPanel />}
           </div>
           {rightOpen && (
-            <div className="pointer-events-auto absolute inset-y-0 right-0 flex">
+            <div className="pointer-events-auto absolute inset-y-0 right-0 z-10 flex">
               <PropertiesPanel />
             </div>
           )}

@@ -14,7 +14,7 @@ export function ModeSwitcher() {
   const entries = [...useEditorPoint((points) => points.modes)].sort((a, b) => a.order - b.order);
   if (entries.length < 2) return null;
   return (
-    <FloatingPanel role="radiogroup" aria-label={t("modes")}>
+    <FloatingPanel role="radiogroup" aria-label={t("modes")} scrollsOnPhones>
       {entries.map((entry) => (
         <ToolButton
           key={entry.id}
