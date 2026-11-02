@@ -29,7 +29,11 @@ class MainActivity : TauriActivity() {
     controller.hide(WindowInsetsCompat.Type.statusBars())
   }
 
-  /** Android draws apps under its bars, the notch and the keyboard; the webview stays out of them. */
+  /**
+   * Android draws apps under its bars, the notch and the keyboard; the webview stays out of them.
+   * The top is left to the page (`safe-area-inset-top` in `styles.css`), so the app's own color
+   * fills the strip around the camera. The insets go on to the webview for that.
+   */
   private fun keepClearOfSystemUi() {
     val content = findViewById<View>(android.R.id.content)
     ViewCompat.setOnApplyWindowInsetsListener(content) { view, insets ->
@@ -38,8 +42,8 @@ class MainActivity : TauriActivity() {
           WindowInsetsCompat.Type.displayCutout() or
           WindowInsetsCompat.Type.ime()
       )
-      view.setPadding(system.left, system.top, system.right, system.bottom)
-      WindowInsetsCompat.CONSUMED
+      view.setPadding(system.left, 0, system.right, system.bottom)
+      insets
     }
   }
 }

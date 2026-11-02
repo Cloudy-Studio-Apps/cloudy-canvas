@@ -426,9 +426,15 @@
     height: 100%;
   }
 
+  html {
+    @apply bg-background;
+  }
+
   body {
     @apply bg-background font-sans text-base text-foreground antialiased;
     font-feature-settings: "cv11", "ss01";
+    /* The strip around a phone's camera, which shows the app's background. */
+    padding-top: env(safe-area-inset-top);
   }
 
   ::selection {
