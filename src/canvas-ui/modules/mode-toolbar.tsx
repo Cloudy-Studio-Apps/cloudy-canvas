@@ -13,7 +13,12 @@ import { tCommon } from "@shared/core";
 export function ModeToolbar({ items, title, label, onDone }: ModeToolbarProps) {
   const mode = useEditorMode();
   return (
-    <FloatingPanel role="toolbar" aria-label={label ?? title?.label} aria-orientation="horizontal">
+    <FloatingPanel
+      role="toolbar"
+      aria-label={label ?? title?.label}
+      aria-orientation="horizontal"
+      scrollsOnPhones
+    >
       {title && (
         <>
           <span className="flex items-center gap-1.5 px-2 text-sm font-medium">

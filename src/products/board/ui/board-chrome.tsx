@@ -33,11 +33,11 @@ export function BoardChrome() {
       <ExportDialog name={name} framePagesLabel={t("export.pagePerSection")} />
       {!hidden && (
         <>
-          <div className="absolute top-3 left-3">
+          <div className="absolute top-3 left-3 max-sm:right-3">
             <BoardTopBar />
           </div>
           {!viewing && (
-            <div className="absolute inset-x-0 bottom-4 flex flex-col items-center gap-2">
+            <div className="absolute inset-x-0 bottom-4 flex flex-col items-center gap-2 max-sm:px-3">
               <ModuleToolOptions />
               <BoardToolbar />
             </div>
@@ -45,7 +45,8 @@ export function BoardChrome() {
           <div className="absolute top-3 right-3 bottom-16 flex flex-col">
             <ModuleSlot slot="sidePanels" />
           </div>
-          <div className="absolute right-3 bottom-4">
+          {/* On a phone the toolbar takes the whole bottom, so zoom sits under the top bar. */}
+          <div className="absolute right-3 bottom-4 max-sm:top-16 max-sm:bottom-auto">
             <ZoomControls />
           </div>
         </>

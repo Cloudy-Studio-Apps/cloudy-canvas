@@ -29,17 +29,22 @@ export function BoardTopBar() {
   const agentsEnabled = useAgentServerStore((state) => state.enabled);
 
   return (
-    <FloatingPanel className="gap-1 pr-2">
+    <FloatingPanel className="gap-1 pr-2" scrollsOnPhones>
       <ToolButton label={t("topBar.backHome")} side="bottom" onClick={() => void navigate("/")}>
         <ArrowLeft />
       </ToolButton>
       <PanelDivider />
-      <ToolButton label={t("topBar.about")} side="bottom" onClick={openAbout}>
+      <ToolButton
+        label={t("topBar.about")}
+        side="bottom"
+        className="max-sm:hidden"
+        onClick={openAbout}
+      >
         <SealLogo size={22} variant="mark" />
       </ToolButton>
-      <DocumentInfoPopover />
+      <DocumentInfoPopover className="max-sm:max-w-32" />
       <SaveIndicator />
-      <Badge variant="board" className="ml-1">
+      <Badge variant="board" className="ml-1 max-sm:hidden">
         {t("topBar.badge")}
       </Badge>
       <PanelDivider className="mx-1.5" />

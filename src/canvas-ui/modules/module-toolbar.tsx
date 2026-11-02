@@ -18,7 +18,7 @@ import { t } from "./modules.i18n";
  */
 export function ModuleToolbar({ children }: ModuleToolbarProps) {
   return (
-    <div className="pointer-events-none flex items-center gap-2">
+    <div className="pointer-events-none flex max-w-full items-center gap-2">
       <ToolbarForMode>{children}</ToolbarForMode>
       <ModeSwitcher />
     </div>
@@ -45,7 +45,12 @@ function ToolbarForMode({ children }: ModuleToolbarProps) {
   if (ModeToolbar) return <ModeToolbar />;
 
   return (
-    <FloatingPanel role="toolbar" aria-label={t("tools")} aria-orientation="horizontal">
+    <FloatingPanel
+      role="toolbar"
+      aria-label={t("tools")}
+      aria-orientation="horizontal"
+      scrollsOnPhones
+    >
       {groups.map((group, i) => (
         <div key={group[0]?.toolbar.group ?? i} className="flex items-center gap-0.5">
           {i > 0 && <PanelDivider />}
