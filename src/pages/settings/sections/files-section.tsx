@@ -2,7 +2,7 @@ import { useEffect, useId, useState } from "react";
 import { Copy, FolderOpen, Trash2 } from "lucide-react";
 
 import { clipboard, revealFile, storage } from "@platform";
-import { tCommon } from "@shared/core";
+import { isAndroidPlatform, tCommon } from "@shared/core";
 import { useAutosaveStore } from "@shared/stores/autosave-store";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 import { notifyError, toast } from "@shared/stores/toast-store";
@@ -33,6 +33,23 @@ export function FilesSection() {
     );
   const showLocation = (path: string) =>
     void revealFile(path).catch((error: unknown) => notifyError(t("errors.folderFailed"), error));
+
+  // Android keeps files in the app: there's no folder to show, and the list is the files.
+  if (isAndroidPlatform()) {
+    return (
+      <SettingsSection id="files" title={t("nav.files")} description={t("files.description")}>
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-0.5">
+            <label htmlFor={autosaveId} className="text-sm font-medium">
+              {t("files.autosave")}
+            </label>
+            <p className="text-sm text-muted-foreground">{t("files.autosaveHint")}</p>
+          </div>
+          <Switch id={autosaveId} checked={autosave} onCheckedChange={setAutosave} />
+        </div>
+      </SettingsSection>
+    );
+  }
 
   return (
     <SettingsSection id="files" title={t("nav.files")} description={t("files.description")}>

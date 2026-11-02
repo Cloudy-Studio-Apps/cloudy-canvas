@@ -17,6 +17,7 @@ import {
   FILE_EXTENSIONS,
   fileNameFromPath,
   fileTypeFromPath,
+  isAndroidPlatform,
   isFileInfo,
   type FileInfo,
   type FileMeta,
@@ -36,7 +37,11 @@ const DRAFTS_DIR = "drafts";
 /** Folder in the app data where files' preview pictures are kept, by file id. */
 const THUMBNAILS_DIR = "thumbnails";
 
-/** Desktop storage: files live wherever the user saved them; an index remembers recent ones. */
+/**
+ * Files live wherever the user saved them and an index remembers recent ones. On Android they all
+ * live in the app (`app-library.ts`), so the index is the only way to them: it has no limit there,
+ * and leaving it deletes the file, as it does for a draft anywhere.
+ */
 export class TauriStorage implements Storage {
   /** Index edits run one after another, so two edits never read the same old index. */
   private queue: Promise<unknown> = Promise.resolve();
@@ -92,16 +97,14 @@ export class TauriStorage implements Storage {
       files: files.filter((f) => f.id !== id),
       result: files.find((f) => f.id === id),
     }));
-    // A draft is only reachable through the recent files, so forgetting it deletes it.
-    if (forgotten?.draft) await removeDraft(forgotten.path);
+    if (forgotten && onlyInList(forgotten)) await removeOwnFile(forgotten.path);
     await this.saveThumbnail(id, null);
   }
 
   async clear(): Promise<void> {
-    // Drafts stay: the list is the only way back to them.
     const removed = await this.mutate((files) => ({
-      files: files.filter((f) => f.draft),
-      result: files.filter((f) => !f.draft),
+      files: files.filter(onlyInList),
+      result: files.filter((f) => !onlyInList(f)),
     }));
     for (const file of removed) await this.saveThumbnail(file.id, null);
   }
@@ -148,7 +151,7 @@ export class TauriStorage implements Storage {
       return { files: [file, ...rest], result: { file, draft } };
     });
     // The draft now has a real file, so its autosaved copy goes.
-    if (draft) await removeDraft(draft);
+    if (draft) await removeOwnFile(draft);
     return file;
   }
 
@@ -216,7 +219,8 @@ export class TauriStorage implements Storage {
     if (!isTauri()) throw new Error("Saving files is only available in the desktop app.");
     await mkdir(await appDataDir(), { recursive: true });
     const path = await indexPath(INDEX_FILE);
-    await writeTextFile(`${path}.tmp`, JSON.stringify(files.slice(0, MAX_RECENTS), null, 2));
+    const kept = isAndroidPlatform() ? files : files.slice(0, MAX_RECENTS);
+    await writeTextFile(`${path}.tmp`, JSON.stringify(kept, null, 2));
     await renameWithRetry(`${path}.tmp`, path);
   }
 }
@@ -254,12 +258,17 @@ async function writeAtomic(path: string, data: Uint8Array): Promise<void> {
   await renameWithRetry(`${path}.tmp`, path);
 }
 
-/** Deletes a draft's file; a failure only leaves a stray file in the drafts folder. */
-async function removeDraft(path: string): Promise<void> {
+/** Whether the list is the only way back to a file: a draft, or anything on Android. */
+function onlyInList(file: FileInfo): boolean {
+  return !!file.draft || isAndroidPlatform();
+}
+
+/** Deletes a file the app keeps; a failure only leaves a stray file in its folder. */
+async function removeOwnFile(path: string): Promise<void> {
   try {
     if (await exists(path)) await remove(path);
   } catch (error) {
-    console.error("[storage] Couldn't delete the draft.", error);
+    console.error("[storage] Couldn't delete the file.", error);
   }
 }
 

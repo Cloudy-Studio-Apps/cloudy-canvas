@@ -24,7 +24,9 @@ export async function exportFile(
     filters: [{ name: label, extensions: [extension] }],
   });
   if (!path) return false;
-  const target = path.toLowerCase().endsWith(`.${extension}`) ? path : `${path}.${extension}`;
+  // Android answers with a `content://` address, which is no file name to complete.
+  const named = path.startsWith("content://") || path.toLowerCase().endsWith(`.${extension}`);
+  const target = named ? path : `${path}.${extension}`;
   await writeFile(target, new Uint8Array(await file.arrayBuffer()));
   return true;
 }

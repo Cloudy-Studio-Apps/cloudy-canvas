@@ -1,7 +1,8 @@
 {
   "leave": {
     "unsaved": "La pizarra abierta tiene cambios sin guardar que se perderán.",
-    "openAnyway": "Abrir de todos modos"
+    "openAnyway": "Abrir de todos modos",
+    "failed": "No se pudo cerrar la app"
   },
   "links": {
     "invalid": "No se puede abrir ese enlace",

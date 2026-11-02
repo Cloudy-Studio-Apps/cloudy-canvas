@@ -10,8 +10,8 @@ const AUTOSAVE_MAX_WAIT_MS = 10_000;
 
 /**
  * Runs `autosave` shortly after the document changes, and once more when the editor or the window
- * closes or autosave is turned off, so nothing pending is lost. `autosave` skips a file with no
- * changes.
+ * closes, the app goes to the background or autosave is turned off, so nothing pending is lost.
+ * `autosave` skips a file with no changes.
  */
 export function useCanvasAutosave<O extends object>(
   engine: CanvasEngine<O>,
@@ -40,16 +40,19 @@ export function useCanvasAutosave<O extends object>(
     // Changes made while autosave was off are saved now.
     schedule();
     const removeObserver = engine.doc.onChange(schedule);
-    // Closing the window waits for pending changes to be saved.
-    const removeQuitTask = appLifecycle.onBeforeQuit(() => {
+    const saveNow = () => {
       debounced.cancel();
       clearTimeout(maxWait);
       maxWait = undefined;
       return autosaveRef.current();
-    });
+    };
+    // Closing the window waits for pending changes to be saved; a phone may not warn it's closing.
+    const removeQuitTask = appLifecycle.onBeforeQuit(saveNow);
+    const removeBackgroundTask = appLifecycle.onBackground(saveNow);
     return () => {
       removeObserver();
       removeQuitTask();
+      removeBackgroundTask();
       run();
     };
   }, [engine, enabled]);

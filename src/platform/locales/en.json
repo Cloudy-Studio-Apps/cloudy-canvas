@@ -1,6 +1,12 @@
 {
   "export": "Export",
   "openFile": "Open file",
+  "notOpenable": "\"{name}\" isn't a Cloudy Canvas or Figma file.",
+  "deleteFile": {
+    "title": "Delete file",
+    "message": "\"{name}\" will be deleted for good. Save a copy first if you may need it.",
+    "ok": "Delete"
+  },
   "filters": {
     "all": "Cloudy Canvas, Figma and FigJam files",
     "canvas": "Cloudy Canvas files",

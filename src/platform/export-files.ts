@@ -4,6 +4,7 @@ import { open } from "@tauri-apps/plugin-dialog";
 import { exists, mkdir, writeFile, writeTextFile } from "@tauri-apps/plugin-fs";
 import { strToU8, zipSync, type Zippable } from "fflate";
 
+import { isAndroidPlatform } from "@shared/core";
 import { exportFile } from "./export-file";
 import type { ConfirmOverwrite, ExportedFile, ExportFilesOptions } from "./export-files.types";
 import { t } from "./platform.i18n";
@@ -41,9 +42,9 @@ export async function exportFiles(
   return true;
 }
 
-/** Whether files can go into a folder the user picks (the browser only downloads). */
+/** Whether files can go into a folder the user picks (the browser only downloads, Android zips). */
 export function canSaveToFolder(): boolean {
-  return isTauri();
+  return isTauri() && !isAndroidPlatform();
 }
 
 /** The files as a zip. Pictures are stored as they are: they're compressed already. */

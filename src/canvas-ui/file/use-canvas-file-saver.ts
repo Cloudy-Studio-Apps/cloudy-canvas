@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { CanvasEngine } from "@canvas";
-import type { FileInfo } from "@shared/core";
-import { saveCanvasFileDialog, storage } from "@platform";
+import { FILE_EXTENSIONS, isAndroidPlatform, type FileInfo } from "@shared/core";
+import { exportFile, saveCanvasFileDialog, storage } from "@platform";
 import { useAutosaveStore } from "@shared/stores/autosave-store";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 import { notifyError } from "@shared/stores/toast-store";
@@ -109,16 +109,20 @@ export function useCanvasFileSaver<O extends object>(
   const save = useCallback(
     async (asNew: boolean): Promise<boolean> => {
       const current = infoRef.current;
+      const name = engine.doc.meta().title || (current?.name ?? untitled);
+      // Android keeps the file in the app, so saving elsewhere is handing out a copy.
+      if (asNew && isAndroidPlatform()) {
+        const data = encode(engine.doc) as BlobPart;
+        return exportFile(new Blob([data]), name, {
+          extension: FILE_EXTENSIONS[type],
+          label: noun,
+        });
+      }
       const path =
-        !asNew && current && !current.draft
-          ? current.path
-          : await saveCanvasFileDialog(
-              type,
-              engine.doc.meta().title || (current?.name ?? untitled),
-            );
+        !asNew && current && !current.draft ? current.path : await saveCanvasFileDialog(type, name);
       return path ? write(path, "manual") : false;
     },
-    [engine, write, type, untitled],
+    [engine, write, encode, type, noun, untitled],
   );
 
   const autosave = useCallback(async () => {

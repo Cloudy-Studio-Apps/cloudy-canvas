@@ -1,7 +1,7 @@
 import { isTauri } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
-import type { AppLifecycle } from "@shared/core";
+import { isAndroidPlatform, type AppLifecycle } from "@shared/core";
 
 /** How long closing the window waits for the tasks. */
 const QUIT_TIMEOUT_MS = 5000;
@@ -12,8 +12,10 @@ const QUIT_TIMEOUT_MS = 5000;
  */
 export class TauriAppLifecycle implements AppLifecycle {
   private readonly tasks = new Set<() => Promise<void>>();
+  private readonly backgroundTasks = new Set<() => Promise<void>>();
   private confirm: (() => Promise<boolean>) | null = null;
   private listening = false;
+  private listeningForBackground = false;
 
   onCloseRequest(confirm: () => Promise<boolean>): () => void {
     if (!isTauri()) return () => {};
@@ -31,6 +33,13 @@ export class TauriAppLifecycle implements AppLifecycle {
     return () => this.tasks.delete(task);
   }
 
+  onBackground(task: () => Promise<void>): () => void {
+    if (!isAndroidPlatform()) return () => {};
+    this.backgroundTasks.add(task);
+    this.listenForBackground();
+    return () => this.backgroundTasks.delete(task);
+  }
+
   async runQuitTasks(): Promise<void> {
     const running = [...this.tasks].map((task) => task());
     const timeout = new Promise((resolve) => setTimeout(resolve, QUIT_TIMEOUT_MS));
@@ -46,6 +55,15 @@ export class TauriAppLifecycle implements AppLifecycle {
         return;
       }
       await this.runQuitTasks();
+    });
+  }
+
+  private listenForBackground(): void {
+    if (this.listeningForBackground) return;
+    this.listeningForBackground = true;
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState !== "hidden") return;
+      for (const task of this.backgroundTasks) void task();
     });
   }
 }

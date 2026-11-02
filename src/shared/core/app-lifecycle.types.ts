@@ -11,6 +11,12 @@ export interface AppLifecycle {
    */
   onBeforeQuit(task: () => Promise<void>): () => void;
   /**
+   * Runs `task` when the app goes out of sight on a system that may then close it without a word
+   * (Android), so it's for saving, not for ending things: the app usually comes back as it was.
+   * Returns an unsubscribe function.
+   */
+  onBackground(task: () => Promise<void>): () => void;
+  /**
    * Runs the `onBeforeQuit` tasks now (a few seconds at most), for when the app is about to close
    * on its own, e.g. to install an update. It doesn't ask.
    */

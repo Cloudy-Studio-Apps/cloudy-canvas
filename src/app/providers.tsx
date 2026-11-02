@@ -5,6 +5,7 @@ import { GlobalLoader } from "@shared/ui/components/loading-screen";
 import { Toaster } from "@shared/ui/components/toaster";
 import { TooltipProvider } from "@shared/ui/components/ui/tooltip";
 import { AgentServer } from "./agent-server";
+import { BackButton } from "./back-button";
 import { OpenRequests } from "./open-requests";
 import { ThemeSync } from "./theme";
 import type { ProvidersProps } from "./providers.types";
@@ -15,6 +16,7 @@ export function Providers({ children }: ProvidersProps) {
       <ThemeSync />
       <AgentServer />
       <OpenRequests />
+      <BackButton />
       {children}
       <GlobalLoader />
       <AboutDialog />

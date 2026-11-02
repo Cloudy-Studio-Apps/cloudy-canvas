@@ -57,7 +57,8 @@ pub fn run() {
             app_links::launch_links,
             install_kind::install_kind,
             system_fonts::system_fonts,
-            system_fonts::system_font_data
+            system_fonts::system_font_data,
+            leave_app
         ])
         .setup(|app| {
             mcp::start(app.handle());
@@ -69,6 +70,12 @@ pub fn run() {
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
         .run(open_files::on_run_event);
+}
+
+/// Android's back button on the app's first screen.
+#[tauri::command]
+fn leave_app(app: tauri::AppHandle) {
+    app.exit(0);
 }
 
 /// A second window for testing live sessions on one machine: debug builds with `CLOUDY_INSTANCE`.

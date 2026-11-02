@@ -1,7 +1,8 @@
 {
   "leave": {
     "unsaved": "The open board has unsaved changes, which will be lost.",
-    "openAnyway": "Open anyway"
+    "openAnyway": "Open anyway",
+    "failed": "The app couldn't be closed"
   },
   "links": {
     "invalid": "That link can't be opened",

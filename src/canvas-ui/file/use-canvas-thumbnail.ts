@@ -46,7 +46,12 @@ export function useCanvasThumbnail<O extends object>(
 
   useEffect(() => {
     engine.onClose("thumbnail", capture);
-    return appLifecycle.onBeforeQuit(capture);
+    const removeQuitTask = appLifecycle.onBeforeQuit(capture);
+    const removeBackgroundTask = appLifecycle.onBackground(capture);
+    return () => {
+      removeQuitTask();
+      removeBackgroundTask();
+    };
   }, [engine, capture]);
 
   useEffect(() => {
