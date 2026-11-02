@@ -218,10 +218,6 @@ export interface ModuleToolbarProps {
   children?: ReactNode;
 }
 
-export interface ToolbarForModeProps extends ModuleToolbarProps {
-  phone: boolean;
-}
-
 export interface ExtensionIconViewProps {
   icon: ExtensionIcon;
   className?: string;

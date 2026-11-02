@@ -4,7 +4,7 @@ import type { PlacedToolEntry } from "../editor-points.types";
 import type { ModeToolbarEntry } from "../mode-toolbar.types";
 
 export interface PhoneToolbarProps {
-  /** What the sheet lists under the modes. */
+  /** What the sheet lists. */
   children: ReactNode;
   /** The buttons for the selection, on the bar. */
   actions?: ReactNode;

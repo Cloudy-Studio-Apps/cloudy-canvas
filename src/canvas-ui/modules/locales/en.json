@@ -2,7 +2,7 @@
   "modes": "Modes",
   "tools": "Tools",
   "allTools": "All tools",
-  "allToolsHint": "Pick a tool or a mode.",
+  "allToolsHint": "Pick a tool.",
   "moreLike": "More tools like {label}",
   "editorMode": {
     "toolbarLabel": "{mode} mode"
