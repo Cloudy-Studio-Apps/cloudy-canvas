@@ -86,8 +86,22 @@ pub async fn share_join(
     }
 }
 
-/// Sends one frame to a peer: the raw body is the frame, the `session` and `peer` headers say
-/// where it goes.
+/// The frame in a request's body: raw bytes, or on Android, where a request can't carry them, the
+/// same bytes as a JSON array.
+fn frame_in(body: &InvokeBody) -> Result<Vec<u8>, String> {
+    match body {
+        InvokeBody::Raw(frame) => Ok(frame.clone()),
+        InvokeBody::Json(serde_json::Value::Array(bytes)) => bytes
+            .iter()
+            .map(|byte| byte.as_u64().and_then(|byte| u8::try_from(byte).ok()))
+            .collect::<Option<Vec<u8>>>()
+            .ok_or_else(|| "expected a frame of bytes".to_string()),
+        InvokeBody::Json(_) => Err("expected a frame of bytes".to_string()),
+    }
+}
+
+/// Sends one frame to a peer: the body is the frame, the `session` and `peer` headers say where it
+/// goes.
 #[tauri::command]
 pub fn share_send(state: State<'_, ShareState>, request: Request<'_>) -> Result<(), String> {
     let header = |name: &str| {
@@ -99,11 +113,9 @@ pub fn share_send(state: State<'_, ShareState>, request: Request<'_>) -> Result<
             .ok_or_else(|| format!("missing {name} header"))
     };
     let (session, peer) = (header("session")?, header("peer")?);
-    let InvokeBody::Raw(frame) = request.body() else {
-        return Err("expected a raw body".to_string());
-    };
+    let frame = frame_in(request.body())?;
     let current = state.session(session).ok_or_else(|| "the session ended".to_string())?;
-    current.send(peer, frame.clone())
+    current.send(peer, frame)
 }
 
 #[tauri::command]

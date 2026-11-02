@@ -95,14 +95,24 @@ export class ShareGuest {
       void this.connection.stop();
       return true;
     }
-    this.send({
-      type: "hello",
-      protocol: SHARE_PROTOCOL,
-      appVersion,
-      secret: ticket.secret,
-      identity,
-      rejoin: this.rejoin,
+    const hello = encodeFrame({
+      kind: "control",
+      message: {
+        type: "hello",
+        protocol: SHARE_PROTOCOL,
+        appVersion,
+        secret: ticket.secret,
+        identity,
+        rejoin: this.rejoin,
+      },
     });
+    try {
+      // Nothing comes back until the host hears this, so a guest it never reached would wait forever.
+      if (this.hostPeer !== null) await this.connection.send(this.hostPeer, hello);
+    } catch {
+      void this.connection.stop();
+      return false;
+    }
     return true;
   }
 
@@ -198,10 +208,6 @@ export class ShareGuest {
 
   private patch(patch: Partial<ShareGuestState>): void {
     this.state.set({ ...this.state.get(), ...patch });
-  }
-
-  private send(message: ShareControl): void {
-    this.sendBytes(encodeFrame({ kind: "control", message }));
   }
 
   private sendBytes(bytes: Uint8Array): void {
