@@ -715,6 +715,7 @@ dependencies = [
  "axum",
  "fontdb",
  "iroh",
+ "rustls",
  "serde",
  "serde_json",
  "tauri",

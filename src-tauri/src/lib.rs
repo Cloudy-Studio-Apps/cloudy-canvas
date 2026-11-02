@@ -11,6 +11,11 @@ mod system_fonts;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    // iroh leaves reqwest without TLS crypto and only the updater brings it, so without the updater
+    // the first HTTP client panics. An error means a provider is in already.
+    #[cfg(mobile)]
+    let _ = rustls::crypto::ring::default_provider().install_default();
+
     let builder = tauri::Builder::default();
     // Registered first, so a second launch hands its files to this one and exits.
     // (Debug builds started with CLOUDY_INSTANCE set skip it, to test live sessions on one machine.)
