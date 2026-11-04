@@ -21,7 +21,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 - En la lista de páginas de un folleto, ahora puedes soltar una página sobre una página en blanco
   para que ocupe su lugar, sobre el encabezado de un pliego para que lo empiece (o sobre
   «Contraportada» para que sea la contraportada) y debajo de la última página para llevarla al
-  final. Antes, soltarla ahí no hacía nada.
+  final. Soltar la contraportada sobre la página en blanco añadida antes de ella la convierte en una
+  última página normal, sin contraportada. Antes, soltarla ahí no hacía nada.
 
 ## 0.7.0 - 2026-11-01
 

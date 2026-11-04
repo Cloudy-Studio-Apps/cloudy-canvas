@@ -85,3 +85,18 @@ export function dropPosition(
       return pages.length - 1;
   }
 }
+
+/**
+ * Whether dropping `dragged` on `target` means "this page isn't the back cover": the back cover
+ * dropped on the blank page added before it (so it ends on the left). Moving pages never removes
+ * that blank, as the count stays the same; leaving the back cover out of the covers does.
+ */
+export function dropsBackCover(
+  layout: BookLayout,
+  dragged: string,
+  target: ListDropTarget,
+): boolean {
+  if (target.kind !== "blank") return false;
+  const blank = layout.sides[target.side];
+  return blank?.kind === "blank" && blank.reason === "back-cover" && blank.before === dragged;
+}

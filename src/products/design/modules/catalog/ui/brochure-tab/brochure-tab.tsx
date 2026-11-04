@@ -14,7 +14,7 @@ import { BlankPageRow } from "./blank-page-row";
 import { BrochureEmpty } from "./brochure-empty";
 import { BrochurePageRow } from "./brochure-page-row";
 import { BrochureSwitcher } from "./brochure-switcher";
-import { dropId, dropPosition, parseDropId } from "./drop-position";
+import { dropId, dropPosition, dropsBackCover, parseDropId } from "./drop-position";
 import { ListEndDrop } from "./list-end-drop";
 import { NoBrochure } from "./no-brochure";
 import { SpreadHeadingRow } from "./spread-heading-row";
@@ -40,7 +40,13 @@ export function BrochureTab() {
     // Pages, blank pages, spread headings and the list's end all take a dropped page.
     onDrop: (id, overId, side) => {
       const target = parseDropId(overId);
-      if (target) brochure?.move(id, dropPosition(layout, pages, id, target, side));
+      if (!target || !brochure) return;
+      // The back cover dropped on its own blank: it becomes a page, the back cover goes.
+      if (dropsBackCover(layout, id, target)) {
+        brochure.setSettings({ covers: settings.covers === "both" ? "front" : "none" });
+        return;
+      }
+      brochure.move(id, dropPosition(layout, pages, id, target, side));
     },
     canDrop: (id, overId) => overId !== dropId({ kind: "page", slotId: id }),
   });

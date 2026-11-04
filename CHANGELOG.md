@@ -20,7 +20,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   more closely.
 - In a brochure's page list, pages can now be dropped on a blank page to take its place, on a
   spread's heading to start that spread (or on "Back cover" to make it the back cover), and below
-  the last page to move it to the end. Before, dropping a page there did nothing.
+  the last page to move it to the end. Dropping the back cover on the blank page added before it
+  makes it a normal last page, without a back cover. Before, dropping a page there did nothing.
 
 ## 0.7.0 - 2026-11-01
 
