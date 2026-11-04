@@ -7,9 +7,9 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Novedades
 
-- Los diseños ya pueden tener fuentes de datos: un archivo CSV o JSON, o una API web. La nueva
-  pestaña Datos las lista y muestra sus filas, y Actualizar vuelve a leerlas cuando tú lo elijas.
-  Las claves de API se quedan en este dispositivo y nunca se guardan en el archivo.
+- Los diseños ya pueden tener fuentes de datos, como un archivo CSV o JSON o una API web: la nueva
+  pestaña Datos las lista con sus filas, y Actualizar vuelve a leerlas cuando tú lo elijas. Las
+  claves de API se quedan en este dispositivo y nunca se guardan en el archivo.
 
 ## 0.8.0 - 2026-11-04
 
