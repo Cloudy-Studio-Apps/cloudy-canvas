@@ -18,6 +18,7 @@ The [phase 1](2026-11-04-data-merge-01-sources.md#global-constraints) and [phase
 - Copies are `locked` and tagged; editing the template changes every copy not detached; a detached copy is never updated or replaced.
 - `limit` caps rows everywhere; `designLimit` caps only copies made in the document (phase 4's export makes all).
 - Copies are matched by the row key (the iterator's `key` field, else the row's position).
+- **From the phase 2 review:** `planDataCopies` patches copies at the leaf level and skips every data-resolved path of each node (its `dataBindings` keys, `text`, `runs`, `visible`), so copying the template never counts as a hand edit and never unlinks a copy's bindings. Scopes are per node: build the root scope once per sync and add `scopeFor(el, root)` walking ancestors (never rescan the document per node); pass each row name's source to `childScope` so pictures resolve per source (`images(value, sourceId)`). `renameReferences` skips expressions whose first name is a nearer `as` and renames `repeat.source`, `key`, filter and sort paths; renaming an `as` rewrites its subtree; `setRepeat` and source naming refuse names that would shadow each other.
 - **Preview row** moves here from phase 2 (planning decision): a template only has rows once it's in an iterator.
 
 ## Review Focus
