@@ -5,6 +5,7 @@ import { PdfContent, PdfDocument } from "./pdf-document";
 import { matrixOps } from "./pdf-matrix";
 import { DEFAULT_PDF_OPTIONS, PDF_JPEG_QUALITY, pdfImageScale } from "./pdf-options";
 import type { PdfExportOptions } from "./pdf-options.types";
+import type { PdfLink } from "./pdf-links.types";
 import { pdfPageLayout } from "./pdf-page-layout";
 import { cropMarkOps, outsetRect } from "./print/print-layout";
 import { addSvgPage } from "./svg-to-pdf";
@@ -39,8 +40,10 @@ export async function addPdfPage(
   background: "solid" | "transparent",
   options: PdfExportOptions,
   output: PdfColorOutput,
+  pageLinks: readonly PdfLink[] = [],
 ): Promise<void> {
-  if (options.mode === "flattened") return addFlattened(doc, host, page, options, output);
+  if (options.mode === "flattened")
+    return addFlattened(doc, host, page, options, output, pageLinks);
   const { elements, rect, clips } = page;
   try {
     const svg = await host.vector(elements, {
@@ -52,10 +55,10 @@ export async function addPdfPage(
       target: "pdf",
       imageScale: pdfImageScale(options),
     });
-    await addSvgPage(doc, svg, rect, options, output);
+    await addSvgPage(doc, svg, rect, options, output, pageLinks);
   } catch (error) {
     console.warn("Sharp PDF failed, exporting it flattened:", error);
-    await addFlattened(doc, host, page, options, output);
+    await addFlattened(doc, host, page, options, output, pageLinks);
   }
 }
 
@@ -66,6 +69,7 @@ async function addFlattened(
   { elements, rect, clips }: PdfPageSource,
   options: PdfExportOptions,
   output: PdfColorOutput,
+  pageLinks: readonly PdfLink[],
 ): Promise<void> {
   const drawn = drawnRect(rect, options);
   const canvas = await host.snapshot(elements, {
@@ -85,7 +89,7 @@ async function addFlattened(
   const content = new PdfContent();
   content.ops.push(`q ${matrixOps([w, 0, 0, h, x, y])} cm /${content.name("XObject", image)} Do Q`);
   if (options.print?.marks) content.ops.push(cropMarkOps(layout, output.registration));
-  doc.addPage(layout, content);
+  doc.addPage(layout, content, pageLinks);
 }
 
 /** The world area a page draws: past its trim by the bleed, when it has one. */

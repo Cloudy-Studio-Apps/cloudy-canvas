@@ -2,6 +2,7 @@ import type { Rect } from "../../geometry.types";
 import type { PdfColorOutput } from "./color";
 import { embedImages } from "./pdf-image";
 import type { PdfDocument } from "./pdf-document";
+import type { PdfLink } from "./pdf-links.types";
 import type { PdfExportOptions } from "./pdf-options.types";
 import { pageMatrix, pdfPageLayout } from "./pdf-page-layout";
 import { bleedClipOps, cropMarkOps } from "./print/print-layout";
@@ -18,6 +19,7 @@ export async function addSvgPage(
   rect: Rect,
   options: PdfExportOptions,
   output: PdfColorOutput,
+  links: readonly PdfLink[] = [],
 ): Promise<void> {
   const root = new DOMParser().parseFromString(svg, "image/svg+xml").documentElement;
   if (root.tagName !== "svg") throw new Error("The drawing couldn't be read.");
@@ -26,5 +28,5 @@ export async function addSvgPage(
   const writer = new SvgPdfWriter(doc, root, images, options, output);
   const content = writer.write(pageMatrix(layout, rect), bleedClipOps(layout));
   if (options.print?.marks) content.ops.push(cropMarkOps(layout, output.registration));
-  doc.addPage(layout, content);
+  doc.addPage(layout, content, links);
 }

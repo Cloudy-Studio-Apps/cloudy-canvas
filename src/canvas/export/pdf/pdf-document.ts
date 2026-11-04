@@ -1,7 +1,11 @@
 import { strToU8, zlibSync } from "fflate";
 
 import type { PdfBox, PdfIdentity, PdfPageLayout, PdfResourceKind } from "./pdf-writer.types";
+import { linkAnnotations } from "./pdf-links";
+import type { PdfLink } from "./pdf-links.types";
 import { pdfNumber } from "./pdf-matrix";
+import { writeOutline } from "./pdf-outline";
+import type { PdfOutlineItem } from "./pdf-outline.types";
 
 const NAME_PREFIX: Readonly<Record<PdfResourceKind, string>> = {
   ExtGState: "G",
@@ -45,6 +49,7 @@ export class PdfDocument {
   private readonly finishers: (() => void)[] = [];
   private identity: PdfIdentity | null = null;
   private language: string | null = null;
+  private outline: readonly PdfOutlineItem[] = [];
 
   /** Adds an object from its body (a dictionary, an array…) and returns its number. */
   add(body: string): number {
@@ -94,18 +99,45 @@ export class PdfDocument {
     return this.stream(entries, zlibSync(strToU8(content.ops.join("\n"))));
   }
 
-  /** Adds a page showing `content`, after the ones so far. */
-  addPage({ width, height, boxes }: PdfPageLayout, content: PdfContent): void {
+  /**
+   * Adds a page showing `content`, after the ones so far, with `links` to other pages (any page,
+   * resolved at save), and returns its 0-based index.
+   */
+  addPage(
+    { width, height, boxes }: PdfPageLayout,
+    content: PdfContent,
+    links: readonly PdfLink[] = [],
+  ): number {
     this.tree ??= this.reserve();
     const stream = this.content("", content);
+    let annots = "";
+    if (links.length > 0) {
+      const ref = this.reserve();
+      annots = `/Annots ${ref} 0 R `;
+      this.beforeSave(() => {
+        this.fill(ref, `[${linkAnnotations(links, (page) => this.pageRef(page)).join(" ")}]`);
+      });
+    }
     this.pages.push(
       this.add(
         `<< /Type /Page /Parent ${this.tree} 0 R ` +
           `/MediaBox [0 0 ${pdfNumber(width)} ${pdfNumber(height)}] ` +
           (boxes ? `/TrimBox [${boxOf(boxes.trim)}] /BleedBox [${boxOf(boxes.bleed)}] ` : "") +
+          annots +
           `/Contents ${stream} 0 R /Resources ${content.resources()} >>`,
       ),
     );
+    return this.pages.length - 1;
+  }
+
+  /** The object number of the page at `index`, `null` when there's no such page. */
+  pageRef(index: number): number | null {
+    return this.pages[index] ?? null;
+  }
+
+  /** The bookmarks shown in the reader's sidebar, written at save. */
+  setOutline(items: readonly PdfOutlineItem[]): void {
+    this.outline = items;
   }
 
   /** The whole file, of the pages added. */
@@ -115,7 +147,9 @@ export class PdfDocument {
     const kids = this.pages.map((page) => `${page} 0 R`).join(" ");
     this.fill(this.tree, `<< /Type /Pages /Kids [${kids}] /Count ${this.pages.length} >>`);
     const lang = this.language ? ` /Lang (${this.language})` : "";
-    const extra = (this.identity ? ` ${this.identity.catalog}` : "") + lang;
+    const outline = writeOutline(this, this.outline, (page) => this.pageRef(page));
+    const outlines = outline === null ? "" : ` /Outlines ${outline} 0 R /PageMode /UseOutlines`;
+    const extra = (this.identity ? ` ${this.identity.catalog}` : "") + lang + outlines;
     const catalog = this.add(`<< /Type /Catalog /Pages ${this.tree} 0 R${extra} >>`);
     return this.file(catalog);
   }
