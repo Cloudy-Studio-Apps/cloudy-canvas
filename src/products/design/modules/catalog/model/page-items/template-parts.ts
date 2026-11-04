@@ -31,7 +31,12 @@ export function templateParts(template: string, context: TemplateContext): Templ
       const target = context.refs(refName);
       const label = target ? target.label : UNMATCHED_PAGE_REF;
       if (target && label)
-        links.push({ start: text.length, end: text.length + label.length, side: target.side });
+        links.push({
+          start: text.length,
+          end: text.length + label.length,
+          side: target.side,
+          kind: "ref",
+        });
       text += label;
     } else if (option !== undefined && token !== "section") {
       text += whole;
@@ -39,7 +44,12 @@ export function templateParts(template: string, context: TemplateContext): Templ
       context.contents.forEach((entry, i) => {
         if (i > 0) text += "\n";
         const line = contentsLine(entry);
-        links.push({ start: text.length, end: text.length + line.length, side: entry.side });
+        links.push({
+          start: text.length,
+          end: text.length + line.length,
+          side: entry.side,
+          kind: "contents",
+        });
         text += line;
       });
     } else {

@@ -34,6 +34,9 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   sección o la página a la que remite y seguirá mostrando el número correcto aunque las páginas se
   muevan, como "ver página 12". Al hacer doble clic en un elemento de página ahora se edita su
   texto, como "Página {page} de {pages}", en lugar del número que muestra.
+- Los folletos exportados ya se abren con marcadores en la barra lateral del lector de PDF, que siguen
+  tus secciones, y cada línea del índice y cada referencia a página te lleva a su página. Los
+  archivos de imprenta en CMYK conservan los marcadores.
 
 ## 0.8.0 - 2026-11-04
 

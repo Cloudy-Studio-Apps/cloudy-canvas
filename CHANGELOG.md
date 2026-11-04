@@ -30,6 +30,9 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   to, and it keeps showing the right number as pages move, such as "see page 12". Double-clicking a
   page item now edits its wording, such as "Page {page} of {pages}", instead of the number it
   shows.
+- Exported brochures now open with bookmarks in the PDF reader's sidebar that follow your sections,
+  and every line of the table of contents and every page reference takes you to its page. Print
+  files in CMYK keep the bookmarks.
 
 ## 0.8.0 - 2026-11-04
 

@@ -11,20 +11,23 @@ export function printedPages(
   split: boolean,
 ): PrintedPage[] {
   const size = brochurePageSize(pages) ?? { w: 0, h: 0 };
-  return layout.sides.flatMap((side): PrintedPage[] => {
-    if (side.kind === "blank") return [{ kind: "blank", size }];
+  return layout.sides.flatMap((side, i): PrintedPage[] => {
+    if (side.kind === "blank") return [{ kind: "blank", size, sides: [i] }];
     const { frame } = side.page;
     if (side.part !== "whole") {
-      // Unsplit, a spread prints once, as its left side comes.
-      if (split) return [{ kind: "frame", frame, part: side.part }];
-      return side.part === "left" ? [{ kind: "frame", frame, part: "whole" }] : [];
+      // Unsplit, a spread prints once, as its left side comes, and shows its right side too.
+      if (split) return [{ kind: "frame", frame, part: side.part, sides: [i] }];
+      if (side.part === "right") return [];
+      const next = layout.sides[i + 1];
+      const right = next?.kind === "page" && next.page.frame.id === frame.id ? [i + 1] : [];
+      return [{ kind: "frame", frame, part: "whole", sides: [i, ...right] }];
     }
     if (split && spanOf(frame, size) === 2) {
       return [
-        { kind: "frame", frame, part: "left" },
-        { kind: "frame", frame, part: "right" },
+        { kind: "frame", frame, part: "left", sides: [i] },
+        { kind: "frame", frame, part: "right", sides: [i] },
       ];
     }
-    return [{ kind: "frame", frame, part: "whole" }];
+    return [{ kind: "frame", frame, part: "whole", sides: [i] }];
   });
 }
