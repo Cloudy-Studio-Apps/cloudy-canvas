@@ -18,7 +18,10 @@ function templateFor(el: DesignNode, text: string): NonNullable<BindDataPatch["t
   if (current && current.text === text) return { text, runs: [...current.runs] };
   const runs = current?.runs ?? (isText(el) ? el.runs : []);
   const first = runs[0];
-  const whole = first && first.start === 0 && first.end >= (current?.text.length ?? 0);
+  const whole =
+    first &&
+    first.start === 0 &&
+    first.end >= (current?.text ?? (isText(el) ? el.text : "")).length;
   if (!whole || text.length === 0) return { text, runs: [] };
   return { text, runs: [{ start: 0, end: text.length, style: { ...first.style } }] };
 }
