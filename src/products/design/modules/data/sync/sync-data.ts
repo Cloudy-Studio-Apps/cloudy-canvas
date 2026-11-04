@@ -8,7 +8,7 @@ import type {
 import { getLocale } from "@shared/core";
 
 import { isDesignNode } from "../../core";
-import { hasDataFields, planBindings, rootScope } from "../bindings";
+import { hasDataFields, isCatalogText, planBindings, rootScope } from "../bindings";
 import type { BindingContext } from "../bindings";
 import { dataSourcesIn } from "../source";
 import { imageKey, readSnapshot } from "../update";
@@ -46,7 +46,7 @@ export function syncData(doc: CanvasDocument, change: EditedChange, kinds: Eleme
   const patches = new Map<string, ElementPatch>();
   const plan = (el: CanvasElement) => {
     if (!isDesignNode(el) || !hasDataFields(el)) return;
-    if ((el as { catalogText?: unknown }).catalogText !== undefined) return;
+    if (isCatalogText(el)) return;
     // An edit that also changed a source is the sync's to own: nothing in it unlinks.
     const before = affected.all ? undefined : change.before.get(el.id);
     const unlinked = before ? droppedBindings(el, before, scope, ctx) : null;

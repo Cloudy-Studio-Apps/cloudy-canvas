@@ -1,4 +1,4 @@
-import { lookup, namesInScope, type DataScope } from "../../bindings";
+import { dataTypeOf, lookup, namesInScope, type DataScope } from "../../bindings";
 import { parsePath } from "../../table";
 import { valueText } from "../data-tab/value-text";
 import type { PickerName } from "./picker-names.types";
@@ -19,7 +19,7 @@ export function pickerNames(scope: DataScope): PickerName[] {
       label: count ? t("section.fields.count") : (field?.alias ?? expr),
       group,
       sample: valueText(lookup(scope, expr)?.value),
-      type: count ? "integer" : (field?.type ?? null),
+      type: dataTypeOf(scope, expr),
     });
   }
   return out;

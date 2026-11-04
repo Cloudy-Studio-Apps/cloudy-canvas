@@ -155,8 +155,9 @@
     "text": {
       "toggle": "Text from data",
       "template": "Template",
-      "hint": "Insert fields with the button; each one shows the row's value.",
-      "insert": "Insert field"
+      "hint": "Insert fields with the button; each one shows the row's value. Turning this on made any {example} already in the text a field.",
+      "insert": "Insert field",
+      "exampleWord": "word"
     },
     "fields": {
       "title": "Fields",

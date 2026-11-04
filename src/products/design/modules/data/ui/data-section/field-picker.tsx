@@ -21,12 +21,22 @@ function byGroup(names: readonly PickerName[]): [string, PickerName[]][] {
  * Picks a data field: the names in scope under their source, each by its alias with the first
  * row's value. Picking hands the expression as the scope wrote it.
  */
-export function FieldPicker({ names, value, onPick, children }: FieldPickerProps) {
+export function FieldPicker({
+  names,
+  value,
+  onPick,
+  onCloseAutoFocus,
+  children,
+}: FieldPickerProps) {
   const chosen = value === undefined ? undefined : pickedName(names, value)?.expr;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="max-h-80 w-64 overflow-y-auto">
+      <DropdownMenuContent
+        align="end"
+        className="max-h-80 w-64 overflow-y-auto"
+        onCloseAutoFocus={onCloseAutoFocus}
+      >
         {names.length === 0 && (
           <DropdownMenuItem disabled className="text-xs">
             {t("section.fields.none")}

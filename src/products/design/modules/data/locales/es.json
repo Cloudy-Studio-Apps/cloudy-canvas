@@ -153,10 +153,11 @@
     "noSources": "Añade una fuente en la pestaña Datos para rellenar esta capa con sus filas.",
     "failed": "No se pudo vincular la capa a los datos",
     "text": {
-      "toggle": "Texto de los datos",
+      "toggle": "Texto desde datos",
       "template": "Plantilla",
-      "hint": "Inserta campos con el botón; cada uno muestra el valor de la fila.",
-      "insert": "Insertar campo"
+      "hint": "Inserta campos con el botón; cada uno muestra el valor de la fila. Al activarlo, cualquier {example} que ya tuviera el texto pasó a ser un campo.",
+      "insert": "Insertar campo",
+      "exampleWord": "palabra"
     },
     "fields": {
       "title": "Campos",

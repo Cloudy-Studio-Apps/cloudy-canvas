@@ -2,6 +2,7 @@ import type { ElementPatch } from "@canvas";
 
 import type { TextNodeElement, TextTemplateSource } from "../../text";
 import { dataFieldsOf } from "./binding-fields";
+import { isCatalogText } from "./is-catalog-text";
 
 /**
  * A text bound to data (`dataText`) is edited as its template, `{product.name}`, not as the text
@@ -10,9 +11,7 @@ import { dataFieldsOf } from "./binding-fields";
  */
 export const BOUND_TEXT_TEMPLATE: TextTemplateSource = {
   id: "data.bound-text",
-  claims: (el) =>
-    dataFieldsOf(el).dataText !== undefined &&
-    (el as { catalogText?: unknown }).catalogText === undefined,
+  claims: (el) => dataFieldsOf(el).dataText !== undefined && !isCatalogText(el),
   read: (el) => {
     const template = dataFieldsOf(el).dataText;
     return template ? { text: template.text, runs: [...template.runs] } : { text: "", runs: [] };
