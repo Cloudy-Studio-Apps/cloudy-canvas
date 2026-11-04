@@ -5,6 +5,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ## Unreleased
 
+## 0.8.0 - 2026-11-04
+
 ### New
 
 - On touch screens, pinch with two fingers to zoom the canvas and drag with two fingers to move it,
