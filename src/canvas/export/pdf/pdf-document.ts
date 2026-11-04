@@ -111,21 +111,24 @@ export class PdfDocument {
     this.tree ??= this.reserve();
     const stream = this.content("", content);
     let annots = "";
+    const own = this.reserve();
     if (links.length > 0) {
       const ref = this.reserve();
       annots = `/Annots ${ref} 0 R `;
+      // Each annotation is an object of its own, as the array must hold references.
       this.beforeSave(() => {
-        this.fill(ref, `[${linkAnnotations(links, (page) => this.pageRef(page)).join(" ")}]`);
+        const dicts = linkAnnotations(links, own, (page) => this.pageRef(page));
+        this.fill(ref, `[${dicts.map((dict) => `${this.add(dict)} 0 R`).join(" ")}]`);
       });
     }
-    this.pages.push(
-      this.add(
-        `<< /Type /Page /Parent ${this.tree} 0 R ` +
-          `/MediaBox [0 0 ${pdfNumber(width)} ${pdfNumber(height)}] ` +
-          (boxes ? `/TrimBox [${boxOf(boxes.trim)}] /BleedBox [${boxOf(boxes.bleed)}] ` : "") +
-          annots +
-          `/Contents ${stream} 0 R /Resources ${content.resources()} >>`,
-      ),
+    this.pages.push(own);
+    this.fill(
+      own,
+      `<< /Type /Page /Parent ${this.tree} 0 R ` +
+        `/MediaBox [0 0 ${pdfNumber(width)} ${pdfNumber(height)}] ` +
+        (boxes ? `/TrimBox [${boxOf(boxes.trim)}] /BleedBox [${boxOf(boxes.bleed)}] ` : "") +
+        annots +
+        `/Contents ${stream} 0 R /Resources ${content.resources()} >>`,
     );
     return this.pages.length - 1;
   }

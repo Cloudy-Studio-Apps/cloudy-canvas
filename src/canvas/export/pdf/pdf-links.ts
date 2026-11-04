@@ -6,10 +6,12 @@ export const pdfDestination = (pageRef: number) => `[${pageRef} 0 R /XYZ null nu
 
 /**
  * The `/Link` annotations of a page's links, with no border and no appearance, so they never
- * show or print. A link to a page the document doesn't have is left out.
+ * show or print, on the page `own` (its object number). A link to a page the document doesn't have
+ * is left out.
  */
 export function linkAnnotations(
   links: readonly PdfLink[],
+  own: number,
   pageRef: (index: number) => number | null,
 ): string[] {
   return links.flatMap(({ box, page }) => {
@@ -18,7 +20,7 @@ export function linkAnnotations(
     const rect = box.map(pdfNumber).join(" ");
     return [
       `<< /Type /Annot /Subtype /Link /Rect [${rect}] /Border [0 0 0] ` +
-        `/Dest ${pdfDestination(ref)} >>`,
+        `/P ${own} 0 R /Dest ${pdfDestination(ref)} >>`,
     ];
   });
 }

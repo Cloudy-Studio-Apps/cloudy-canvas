@@ -37,6 +37,8 @@ export function planPageItems(input: PlanInput): PageItemPlan {
   const plan: PageItemPlan = { add: [], update: new Map(), remove: [] };
   const existing = new Map<string, CanvasElement>();
   const used = new Set<string>();
+  // The page items read for a page; the others show their template.
+  const resolved = new Set<string>();
   // Each frame's brochure (the last to use it) and its sides there.
   const byFrame = new Map<string, { owner: PlanBrochure; parts: StampTarget[] }>();
   for (const owner of brochures) {
@@ -120,24 +122,19 @@ export function planPageItems(input: PlanInput): PageItemPlan {
       const middle = el.x + el.w / 2;
       const part = parts.find((p) => p.half !== "left" || middle < frame.x + frame.w / 2);
       if (!part) continue;
+      resolved.add(id);
       const patch = itemTextPatch(el, resolveTemplate(template, { ...context, info: part.info }));
       if (patch) plan.update.set(id, patch as ElementPatch);
     }
   }
 
-  // A master's own page items show their template ("Page {page}"), also after it's edited.
-  for (const { record } of brochures) {
-    for (const master of record.masters) {
-      for (const frameId of [master.left, master.right]) {
-        for (const id of frameId ? descendants(children, frameId) : []) {
-          const el = byId.get(id);
-          const template = pageItemTemplate(el);
-          if (!el || !isText(el) || template === null || pageItemTag(el)) continue;
-          const patch = itemTextPatch(el, template);
-          if (patch) plan.update.set(id, patch as ElementPatch);
-        }
-      }
-    }
+  // Every other page item (on a master, or on a frame no brochure prints) shows its template
+  // ("Page {page}"), so an edit of its template always shows.
+  for (const el of byId.values()) {
+    const template = pageItemTemplate(el);
+    if (!isText(el) || template === null || pageItemTag(el) || resolved.has(el.id)) continue;
+    const patch = itemTextPatch(el, template);
+    if (patch) plan.update.set(el.id, patch as ElementPatch);
   }
 
   for (const el of byId.values()) {
