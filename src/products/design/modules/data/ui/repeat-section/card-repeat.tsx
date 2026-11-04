@@ -38,18 +38,18 @@ export function CardRepeat({ node, frame, layers }: CardRepeatProps) {
       variant="secondary"
       size="sm"
       className="w-full"
-      disabled={!repeat && lists.length === 0}
       onClick={repeat ? () => runRepeat(() => repeatLayer(engine.doc, node.id)) : undefined}
     >
       <Repeat />
       {t("repeat.card.repeat")}
     </Button>
   );
-  const note = repeat
-    ? t("repeat.card.switchHint", { frame: frame.name, card: current?.name ?? "" })
-    : lists.length === 0
-      ? t("repeat.noLists")
-      : t("repeat.card.hint", { frame: frame.name });
+  const notes = repeat
+    ? [
+        t("repeat.card.switchHint", { frame: frame.name, card: current?.name ?? "" }),
+        t("repeat.card.switchKeeps", { card: current?.name ?? "" }),
+      ]
+    : [t("repeat.card.hint", { frame: frame.name })];
   return (
     <div className="flex flex-col gap-1.5">
       {repeat ? (
@@ -69,7 +69,11 @@ export function CardRepeat({ node, frame, layers }: CardRepeatProps) {
           {button}
         </FieldPicker>
       )}
-      <p className="text-xs text-muted-foreground">{note}</p>
+      {notes.map((note) => (
+        <p key={note} className="text-xs text-muted-foreground">
+          {note}
+        </p>
+      ))}
     </div>
   );
 }

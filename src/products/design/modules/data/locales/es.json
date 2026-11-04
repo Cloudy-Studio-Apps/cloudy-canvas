@@ -228,8 +228,9 @@
       "repeat": "Repetir esta capa",
       "repeatedBy": "Repetida por {frame}",
       "select": "Seleccionar",
-      "hint": "Muestra esta capa una vez por cada fila de una lista; {frame} contiene y alinea las copias.",
-      "switchHint": "{frame} repite ahora {card}: esto repite esta capa en su lugar."
+      "hint": "Muestra esta capa una vez por cada fila de una lista. {frame} contiene las copias; si recibe un diseño automático para ellas, sus otras capas también se alinean.",
+      "switchHint": "{frame} repite {card}. Repite esta capa en su lugar.",
+      "switchKeeps": "{card} queda entonces como una capa normal."
     }
   },
   "copy": {

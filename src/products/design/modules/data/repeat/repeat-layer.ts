@@ -1,5 +1,6 @@
 import type { CanvasDocument } from "@canvas";
 
+import { isDesignNode } from "../../core";
 import { isFrame } from "../../frame";
 import { REPEAT_ERRORS } from "./repeat-errors";
 import { setRepeat } from "./set-repeat";
@@ -19,9 +20,8 @@ export function repeatLayer(
   opts: SetRepeatOptions = {},
 ): void {
   const card = doc.get(cardId);
-  if (!card) throw new Error(`"${cardId}" isn't a layer.`);
-  const parentId = doc.field(cardId, "parentId");
-  const parent = typeof parentId === "string" ? doc.get(parentId) : undefined;
+  if (!card || !isDesignNode(card)) throw new Error(`"${cardId}" isn't a layer.`);
+  const parent = card.parentId ? doc.get(card.parentId) : undefined;
   if (!parent || !isFrame(parent)) throw new Error(REPEAT_ERRORS.noParentFrame);
   setRepeat(doc, parent.id, { ...repeat, template: cardId }, opts);
 }

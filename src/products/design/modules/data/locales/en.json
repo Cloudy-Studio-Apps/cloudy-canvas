@@ -228,8 +228,9 @@
       "repeat": "Repeat this layer",
       "repeatedBy": "Repeated by {frame}",
       "select": "Select",
-      "hint": "Shows this layer once for each row of a list; {frame} holds and lines up the copies.",
-      "switchHint": "{frame} repeats {card} now: this repeats this layer instead."
+      "hint": "Shows this layer once for each row of a list. {frame} holds the copies; when it gets an auto layout for them, its other layers are lined up too.",
+      "switchHint": "{frame} repeats {card}. Repeat this layer instead.",
+      "switchKeeps": "{card} then stays as a normal layer."
     }
   },
   "copy": {

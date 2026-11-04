@@ -63,20 +63,19 @@ function removeRepeat(doc: CanvasDocument, frameId: string): void {
 
 /**
  * Makes a frame an iterator (or changes its repeat), as one undo step: its child repeated (the
- * card, `repeat.template`) is the one `repeat.template` gives (one of its own layers, not a
- * copy), else the one it repeats now, else its first child. Changing the card is allowed: the
- * sync removes the old card's copies and makes the new one's, in the same step, and `detached`
- * starts empty (unless given). `repeat` is merged over the
- * stored one, with `as` (a free `item` name by default), empty `filter`, `sort` and `detached`.
- * Everything is checked first, with English errors: a frame with a layer; `source` a list in the
- * frame's scope (a source not readable here passes); a new `as` a name that isn't a brochure
- * placeholder, a source's name or the row name of an iterator around or inside it; the rules'
- * paths, ops and caps. A changed `as` renames what reads it under the frame (and the repeat's own
- * row paths) in the same step. With `addLayout`, a frame without an auto layout gets a wrapping
- * row. `null` removes the repeat and its copies (and those of its copies in outer copies); the
- * sync writes the copies otherwise. Fields it doesn't know stay as stored; a repeat that comes
- * out the same writes nothing. A copied iterator (one an outer iterator made) is refused: its
- * repeat follows its template's.
+ * card) is the one `repeat.template` gives (one of its own layers, not a copy), else the one it
+ * repeats now, else its first child. Changing the card is allowed: the sync removes the old
+ * card's copies and makes the new one's, in the same step, and `detached` starts empty (unless
+ * given). `repeat` is merged over the stored one, with `as` (a free `item` name by default),
+ * empty `filter`, `sort` and `detached`. Everything is checked first, with English errors: a
+ * frame with a layer; `source` a list in the frame's scope (a source not readable here passes);
+ * a new `as` a name that isn't a brochure placeholder, a source's name or the row name of an
+ * iterator around or inside it; the rules' paths, ops and caps. A changed `as` renames what
+ * reads it under the frame (and the repeat's own row paths) in the same step. With `addLayout`,
+ * a frame without an auto layout gets a wrapping row. `null` removes the repeat and its copies
+ * (and those of its copies in outer copies); the sync writes the copies otherwise. Fields it
+ * doesn't know stay as stored; a repeat that comes out the same writes nothing. A copied
+ * iterator (one an outer iterator made) is refused: its repeat follows its template's.
  */
 export function setRepeat(
   doc: CanvasDocument,
