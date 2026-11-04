@@ -1,5 +1,6 @@
 import type { DataField, FieldType } from "../source";
 import type { DataRow } from "./data-table.types";
+import { joinKey as join } from "./path-text";
 
 const SAMPLE_ROWS = 200;
 const IMAGE_URL = /^https?:\/\/\S+\.(png|jpe?g|gif|webp|svg|avif|bmp)(\?\S*)?(#\S*)?$/i;
@@ -9,16 +10,6 @@ const isObject = (v: unknown): v is DataRow =>
   v !== null && typeof v === "object" && !Array.isArray(v);
 
 const isEmpty = (v: unknown): boolean => v === null || v === undefined || v === "";
-
-function keyStep(key: string): string {
-  return /^[^.[\]"]+$/.test(key) && !/^\d+$/.test(key) ? key : `[${JSON.stringify(key)}]`;
-}
-
-function join(base: string, key: string): string {
-  const step = keyStep(key);
-  if (!base) return step;
-  return step.startsWith("[") ? base + step : `${base}.${step}`;
-}
 
 /** The type of one non-empty value. */
 function guessValue(v: unknown): FieldType {

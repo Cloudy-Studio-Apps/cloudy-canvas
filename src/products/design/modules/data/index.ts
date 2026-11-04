@@ -8,3 +8,4 @@ export type * from "./data.points.types";
 export * from "./update";
 export * from "./model";
 export { dataTools } from "./mcp";
+export * from "./bindings";
