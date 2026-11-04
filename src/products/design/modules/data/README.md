@@ -4,10 +4,10 @@ Sources of data for a design: a file, a link or a sheet whose rows later fill th
 
 - **Tier:** core
 - **Requires:** core, pages, frame; uses: text, image, auto-layout
-- **Contributes:** kinds `DataSourceKind`
+- **Contributes:** kinds `DataSourceKind`; source types `file` and `http`; formats `csv` and `json` (also NDJSON)
 - **Points it owns:** `dataSourceTypes` (where data comes from; built-ins and plugins), `dataFormats` (how raw data becomes rows). A source type's `icon` is a lucide icon name (a string), since engine code cannot import the UI icon type.
 - **MCP tools:** none yet
-- **Files:** `settings/` (declarative `SettingSpec`, `missingSettings`, `splitSecrets`), `services/` (`DataServices`, `RawData`, `SourceContext`), `table/` (`parsePath`, `readPath`, `normalizeRows`, `guessFields`: data paths such as `a.b[0].c`, parsed data into rows, and each field's guessed type; fields already known that the rows lack are kept after the found ones, so a partial refresh never wipes their settings), `data.points.ts`, `source/` (the `data-source` record: types, defaults, factory, kind), `data.i18n.ts` with `locales/`, `ui/`.
+- **Files:** `settings/` (declarative `SettingSpec`, `missingSettings`, `splitSecrets`), `services/` (`DataServices`, `RawData`, `SourceContext`), `table/` (`parsePath`, `readPath`, `normalizeRows`, `guessFields`: data paths such as `a.b[0].c`, parsed data into rows, and each field's guessed type; fields already known that the rows lack are kept after the found ones, so a partial refresh never wipes their settings), `formats/` (`CSV_FORMAT`, `JSON_FORMAT`, `detectFormat`: by extension, then mime, then `sniff`), `sources/` (`FILE_SOURCE`, `HTTP_SOURCE`; labels are getters so they follow the app language; header values come from `ctx.secrets["headers.<name>"]`), `data.points.ts`, `source/` (the `data-source` record: types, defaults, factory, kind), `data.i18n.ts` with `locales/`, `ui/`.
 
 ## How it works
 

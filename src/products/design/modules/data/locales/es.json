@@ -1,5 +1,33 @@
 {
   "tab": {
     "title": "Datos"
+  },
+  "sources": {
+    "file": {
+      "label": "Archivo",
+      "path": "Archivo"
+    },
+    "http": {
+      "label": "Enlace",
+      "url": "URL",
+      "method": "Método",
+      "headers": "Encabezados",
+      "body": "Cuerpo"
+    }
+  },
+  "formats": {
+    "csv": {
+      "label": "CSV",
+      "delimiter": "Separador",
+      "delimiterAuto": "Detectar automáticamente",
+      "delimiterComma": "Coma",
+      "delimiterSemicolon": "Punto y coma",
+      "delimiterTab": "Tabulación",
+      "delimiterPipe": "Barra vertical",
+      "header": "La primera fila es el encabezado"
+    },
+    "json": {
+      "label": "JSON"
+    }
   }
 }

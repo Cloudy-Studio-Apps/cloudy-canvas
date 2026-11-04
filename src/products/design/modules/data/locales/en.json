@@ -1,5 +1,33 @@
 {
   "tab": {
     "title": "Data"
+  },
+  "sources": {
+    "file": {
+      "label": "File",
+      "path": "File"
+    },
+    "http": {
+      "label": "Link",
+      "url": "URL",
+      "method": "Method",
+      "headers": "Headers",
+      "body": "Body"
+    }
+  },
+  "formats": {
+    "csv": {
+      "label": "CSV",
+      "delimiter": "Delimiter",
+      "delimiterAuto": "Detect automatically",
+      "delimiterComma": "Comma",
+      "delimiterSemicolon": "Semicolon",
+      "delimiterTab": "Tab",
+      "delimiterPipe": "Pipe",
+      "header": "First row is the header"
+    },
+    "json": {
+      "label": "JSON"
+    }
   }
 }

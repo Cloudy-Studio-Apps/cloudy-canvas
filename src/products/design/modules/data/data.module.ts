@@ -1,5 +1,8 @@
 import { defineModule } from "@shared/core";
 import { designCanvas } from "../../design-points";
+import { dataFormats, dataSourceTypes } from "./data.points";
+import { CSV_FORMAT, JSON_FORMAT } from "./formats";
+import { FILE_SOURCE, HTTP_SOURCE } from "./sources";
 import { DataSourceKind } from "./source";
 import * as dataApi from ".";
 import * as dataUi from "./ui";
@@ -16,5 +19,7 @@ export const dataModule = defineModule({
   exports: { ...dataApi, ...dataUi },
   register(host) {
     host.contribute(designCanvas.kinds, new DataSourceKind());
+    host.contribute(dataSourceTypes, FILE_SOURCE, HTTP_SOURCE);
+    host.contribute(dataFormats, CSV_FORMAT, JSON_FORMAT);
   },
 });
