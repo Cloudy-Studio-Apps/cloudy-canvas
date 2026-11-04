@@ -2,7 +2,7 @@ import { rectContainsRect, rectsIntersect, type Rect } from "@canvas";
 
 import { isPlaceholderPaint, type DesignNode, type ImagePaint } from "../../core";
 import { isText } from "../../text";
-import { mmToUnits, pageItemTemplate, type BrochurePage } from "../model";
+import { mmToUnits, pageItemTemplate, pageRefNames, type BrochurePage } from "../model";
 import { effectiveDpi } from "./effective-dpi";
 import { layoutIssues } from "./layout-issues";
 import { printIssues } from "./print-issues";
@@ -17,7 +17,7 @@ export const LOW_DPI = 150;
  * What would print badly in the brochure: blank pages the layout added and frames of another size
  * (`layoutIssues`), then page by page hidden pages (they print blank), image placeholders still to
  * replace, pictures under `LOW_DPI` at their printed size, text reaching into the margin and a
- * table of contents running past the bottom margin; last
+ * table of contents running past the bottom margin, page references naming no section or page; last
  * what the press needs (`printIssues`).
  */
 export function brochureIssues(input: BrochureCheckInput): BrochureIssue[] {
@@ -56,6 +56,14 @@ function pageIssues(page: BrochurePage, input: BrochureCheckInput): BrochureIssu
         issues.push({ ...at, kind: "low-resolution", nodeId: node.id, message });
         break;
       }
+    }
+    const template = isText(node) ? pageItemTemplate(node) : null;
+    for (const target of template ? pageRefNames(template) : []) {
+      if (input.refs(target)) continue;
+      const message = target.trim()
+        ? t("checks.pageRefMissing", { name: node.name, target })
+        : t("checks.pageRefEmpty", { name: node.name });
+      issues.push({ ...at, kind: "page-ref-missing", nodeId: node.id, message });
     }
     const shown = input.bounds(node);
     // A table of contents grows down with its lines: past the bottom margin, it doesn't fit.

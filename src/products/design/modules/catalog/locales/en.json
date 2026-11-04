@@ -133,7 +133,9 @@
     "noProfile": "CMYK needs your print shop's profile: load it in the Print section.",
     "stopsAtEdge": "“{name}” stops at the page edge: run it {bleed} mm past it, so no line shows after cutting.",
     "roundedPage": "“{name}” has rounded corners, so it prints without bleed.",
-    "tocOverflow": "“{name}” doesn't fit its page: its contents run past the bottom margin. Make the text smaller or give it more room."
+    "tocOverflow": "“{name}” doesn't fit its page: its contents run past the bottom margin. Make the text smaller or give it more room.",
+    "pageRefMissing": "“{name}” refers to “{target}”, which isn't a section or page of this brochure. Pick what it points to in its properties.",
+    "pageRefEmpty": "“{name}” doesn't point to a page yet: pick one in its properties."
   },
   "settings": {
     "quality": {

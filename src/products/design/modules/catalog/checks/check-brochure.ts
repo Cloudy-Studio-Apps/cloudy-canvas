@@ -1,7 +1,7 @@
 import { elementBounds } from "@canvas";
 
 import type { DesignWorkspace } from "../../../design-engine.types";
-import type { DesignBrochure } from "../model";
+import { pageNumbers, pageRefs, type DesignBrochure } from "../model";
 import { brochureIssues } from "./brochure-checks";
 import type { BrochureIssue } from "./brochure-checks.types";
 import { knownPictureSize, pictureSize } from "./picture-size";
@@ -16,10 +16,14 @@ export async function checkBrochure(
 ): Promise<BrochureIssue[]> {
   const { doc, kinds } = workspace;
   const missing = new Set<string>();
+  const layout = brochure.layout();
+  const record = brochure.record();
+  const refs = record ? pageRefs(layout, pageNumbers(layout, record)) : () => null;
   const check = () =>
     brochureIssues({
       pages: brochure.pages(),
-      layout: brochure.layout(),
+      layout,
+      refs,
       elements: doc.all(),
       settings: brochure.settings(),
       bounds: (el) => elementBounds(kinds.kindOf(el), el),

@@ -1,7 +1,7 @@
 import type { CanvasElement, Rect, Size } from "@canvas";
 
 import type { BrochureSettings } from "../brochure";
-import type { BookLayout, BrochurePage } from "../model";
+import type { BookLayout, BrochurePage, PageRefs } from "../model";
 
 export type BrochureIssueKind =
   | "placeholder"
@@ -13,7 +13,8 @@ export type BrochureIssueKind =
   | "no-print-profile"
   | "stops-at-edge"
   | "rounded-page"
-  | "toc-overflow";
+  | "toc-overflow"
+  | "page-ref-missing";
 
 /** Something that would print badly, on one page. */
 export interface BrochureIssue {
@@ -37,6 +38,8 @@ export interface BrochureCheckInput {
   settings: BrochureSettings;
   /** Where an element shows (its turned box). */
   bounds: (el: CanvasElement) => Rect;
+  /** What a `{page:Name}` points to (`pageRefs`). */
+  refs: PageRefs;
   /** A picture's natural size, or `null` while it isn't known. */
   imageSize: (assetId: string) => Size | null;
 }

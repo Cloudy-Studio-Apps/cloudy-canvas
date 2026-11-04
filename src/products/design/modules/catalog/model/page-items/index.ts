@@ -12,6 +12,7 @@ export type * from "./contents-entries.types";
 export type * from "./page-refs.types";
 export type * from "./template-parts.types";
 export { contentsEntries } from "./contents-entries";
+export { pageRefNames } from "./page-ref-token";
 export { pageRefs } from "./page-refs";
 export { tableOfContents } from "./table-of-contents";
 export { brochureContext } from "./template-context";
