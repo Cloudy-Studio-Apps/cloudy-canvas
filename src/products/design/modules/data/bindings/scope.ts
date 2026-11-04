@@ -3,6 +3,8 @@ import type { CanvasDocument } from "@canvas";
 import type { DataField, DataSourceElement } from "../source";
 import { dataSourcesIn } from "../source/data-sources-in";
 import { readSnapshot } from "../update/snapshot";
+// A leaf, not the index: `repeat/` reads scopes from here.
+import { dataScopes } from "../repeat/data-scopes";
 import { formatPath, parsePath } from "../table";
 import type { DataRow, PathStep } from "../table";
 import { fieldKey, sampleExpression } from "./field-key";
@@ -42,13 +44,17 @@ export function rootScope(
 }
 
 /**
- * The names a layer's expressions read: for now the root scope, every source of the document by
- * name. Phase 3 adds the scopes of the repeats around the node (`_nodeId` is for them).
+ * The names a layer's expressions read: every source of the document by name, and from the
+ * layer up, each iterator around it adds the row the layer belongs to (a copy's row, the
+ * template's preview row; `dataScopes`). For one question (the Data section, an agent); the sync
+ * builds its root scope once and asks `dataScopes` for every layer.
  */
-export function scopeAt(doc: CanvasDocument, _nodeId: string): DataScope {
+export function scopeAt(doc: CanvasDocument, nodeId: string): DataScope {
   const sources = dataSourcesIn(doc);
   const byId = new Map(sources.map((source) => [source.id, source]));
-  return rootScope(sources, (id) => readSnapshot(doc, byId.get(id)?.snapshot ?? null));
+  const root = rootScope(sources, (id) => readSnapshot(doc, byId.get(id)?.snapshot ?? null));
+  const el = doc.get(nodeId);
+  return el ? dataScopes(doc, root).scopeFor(el) : root;
 }
 
 /** A scope inside another: an iterator's row, a template's own names. */

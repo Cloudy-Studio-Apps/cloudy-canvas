@@ -21,8 +21,8 @@ import * as dataUi from "./ui";
  * Data: sources of data (a file, a link, a sheet) a design's layers can be filled from. It holds
  * the source record, the built-in source types (file, link) and formats (CSV, JSON), the Data tab
  * and the session hook that hands the sources this device's services, the sync that keeps
- * layers bound to data up to date, and the properties panel's Data section that binds a layer;
- * iterators come in a later phase.
+ * layers bound to data (and iterators' copies) up to date, and the properties panel's Data
+ * section that binds a layer.
  */
 export const dataModule = defineModule({
   id: "data",

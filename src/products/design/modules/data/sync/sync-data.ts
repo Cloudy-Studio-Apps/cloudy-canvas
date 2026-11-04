@@ -7,19 +7,14 @@ import type {
 } from "@canvas";
 import { getLocale } from "@shared/core";
 
-import { isDesignNode } from "../../core";
-import {
-  carriedTemplate,
-  hasDataFields,
-  isCatalogText,
-  planBindings,
-  rootScope,
-} from "../bindings";
+import { rootScope } from "../bindings";
 import type { BindingContext } from "../bindings";
+import { dataCopyTag, dataScopes, repeatOf } from "../repeat";
 import { dataSourcesIn, type DataSourceElement } from "../source";
 import { imageKey, readSnapshot } from "../update";
 import { affectedData } from "./affected-data";
-import { droppedBindings, droppedVisibility, replacedByVariables } from "./hand-edits";
+import { planLayer } from "./plan-layer";
+import { syncIterators } from "./sync-iterators";
 
 /**
  * Each source's saved pictures by `imageKey`, apart: a file name is relative to its own source's
@@ -45,19 +40,20 @@ function picturesBySource(
  * The data module's `afterEdit` hook, in the edit's undo step: fills the layers the edit asks
  * for (`affectedData`: every bound layer when a source's data changed, else the changed bound
  * layers) from the sources' rows, writing only what differs, so its own writes, which run it
- * again, end it. A variable bound over a data-bound field replaces its data binding
- * (`replacedByVariables`); a hand edit of a data-bound field unlinks it (`droppedBindings`,
- * `droppedVisibility`), as variables do; a style edit of a bound text's shown runs is carried
- * into its template (`carriedTemplate`), so it sticks. The root scope (each source by name) is
- * built once per run; layers holding a catalog template are the catalog's to fill.
+ * again, end it. First the layers edited (`planLayer`, with the hand-edit rules), each in its
+ * own scope (`dataScopes`: the rows of the iterators around it); copies are left to their
+ * iterator. Then the iterators the edit reached (`syncIterators`, outermost first) bring their
+ * copies in step and fill them. The root scope (each source by name) and each iterator's rows
+ * are built once per run.
  */
 export function syncData(doc: CanvasDocument, change: EditedChange, kinds: ElementKinds): void {
   const affected = affectedData(doc, change);
-  if (!affected.all && affected.nodes.length === 0) return;
+  if (!affected.all && affected.nodes.length === 0 && affected.iterators.length === 0) return;
 
   const sources = dataSourcesIn(doc);
   const byId = new Map(sources.map((source) => [source.id, source]));
-  const scope = rootScope(sources, (id) => readSnapshot(doc, byId.get(id)?.snapshot ?? null));
+  const root = rootScope(sources, (id) => readSnapshot(doc, byId.get(id)?.snapshot ?? null));
+  const scopes = dataScopes(doc, root);
   const pictures = picturesBySource(doc, sources);
   const ctx: BindingContext = {
     kinds,
@@ -66,33 +62,14 @@ export function syncData(doc: CanvasDocument, change: EditedChange, kinds: Eleme
   };
 
   const patches = new Map<string, ElementPatch>();
+  const iterators = affected.all ? [] : [...affected.iterators];
   const plan = (el: CanvasElement) => {
-    if (!isDesignNode(el) || !hasDataFields(el)) return;
-    if (isCatalogText(el)) return;
+    if (affected.all && repeatOf(el)) iterators.push(el.id);
+    // A copy is its iterator's to fill, with no hand-edit rules: it follows its template.
+    if (dataCopyTag(el)) return;
     const edited = change.before.get(el.id);
-    // One binding per field: a variable bound in this edit wins, even beside a source change.
-    const replaced = edited ? replacedByVariables(el, edited) : null;
-    let node = replaced ? ({ ...el, ...replaced } as typeof el) : el;
-    // An edit that also changed a source is the sync's to own: nothing in it unlinks.
-    const before = affected.all ? undefined : edited;
-    const unlinked = before ? droppedBindings(node, before, scope, ctx) : null;
-    if (unlinked) node = { ...node, ...unlinked } as typeof el;
-    // Runs styled outside the editor (Typography, a text style, an agent) restyle the template.
-    const carried = before && "runs" in before ? carriedTemplate(node, scope, ctx.locale) : null;
-    if (carried) node = { ...node, dataText: carried } as typeof el;
-    const planned = planBindings(node, scope, ctx).patch as Record<string, unknown> | null;
-    const hidden = before ? droppedVisibility(node, before, planned) : null;
-    const patch = { ...planned };
-    // The eye's choice stays.
-    if (hidden) delete patch.visible;
-    const all = {
-      ...replaced,
-      ...unlinked,
-      ...(carried ? { dataText: carried } : {}),
-      ...hidden,
-      ...patch,
-    };
-    if (Object.keys(all).length > 0) patches.set(el.id, all as ElementPatch);
+    const patch = planLayer(el, edited, affected.all, scopes.scopeFor(el), ctx);
+    if (patch) patches.set(el.id, patch);
   };
   if (affected.all) for (const el of doc.all()) plan(el);
   else {
@@ -102,4 +79,5 @@ export function syncData(doc: CanvasDocument, change: EditedChange, kinds: Eleme
     }
   }
   if (patches.size > 0) doc.updateMany(patches);
+  if (iterators.length > 0) syncIterators(doc, iterators, scopes, ctx);
 }

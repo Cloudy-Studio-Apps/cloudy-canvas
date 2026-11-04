@@ -34,20 +34,41 @@ function recordChanged(
   return "snapshot" in before && !sameData(before.snapshot, doc.field(id, "snapshot"));
 }
 
+const ALL: AffectedData = { all: true, nodes: [], iterators: [] };
+
 /**
  * What an edit asks the data sync to fill again: `all` when a source changed what its layers
- * read (or one was added or removed), otherwise the changed layers that carry data fields.
+ * read (or one was added or removed), otherwise the changed layers that carry data fields and
+ * the iterators to bring in step: a frame whose `repeat` changed (or that came with one), and
+ * every iterator around a layer that changed, came, went or moved (its template's or a copy's).
+ * Only frames hold a `repeat`; the sync reads it with `repeatOf`.
  */
 export function affectedData(doc: CanvasDocument, change: EditedChange): AffectedData {
-  if (change.removed.some((el) => el.type === DATA_SOURCE_TYPE)) return { all: true, nodes: [] };
+  if (change.removed.some((el) => el.type === DATA_SOURCE_TYPE)) return ALL;
   const nodes: string[] = [];
+  const iterators = new Set<string>();
+  const walked = new Set<string>();
+  // Each ancestor holding a repeat; an ancestor walked once had all of its own walked.
+  const around = (parentId: unknown) => {
+    for (let id = parentId; typeof id === "string" && !walked.has(id);) {
+      walked.add(id);
+      if (doc.field(id, "repeat") != null) iterators.add(id);
+      id = doc.field(id, "parentId");
+    }
+  };
   for (const id of change.updated) {
+    const before = change.before.get(id);
     if (doc.field(id, "type") === DATA_SOURCE_TYPE) {
-      if (recordChanged(doc, id, change.before.get(id))) return { all: true, nodes: [] };
+      if (recordChanged(doc, id, before)) return ALL;
       continue;
     }
     const el = doc.get(id);
-    if (el && isDesignNode(el) && hasDataFields(el)) nodes.push(id);
+    if (!el || !isDesignNode(el)) continue;
+    if (hasDataFields(el)) nodes.push(id);
+    if (before ? "repeat" in before : doc.field(id, "repeat") != null) iterators.add(id);
+    around(el.parentId);
+    if (before && "parentId" in before) around(before.parentId);
   }
-  return { all: false, nodes };
+  for (const el of change.removed) if (isDesignNode(el)) around(el.parentId);
+  return { all: false, nodes, iterators: [...iterators] };
 }

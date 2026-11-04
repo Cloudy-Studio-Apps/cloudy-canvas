@@ -4,4 +4,9 @@ export interface AffectedData {
   all: boolean;
   /** Otherwise, the changed layers that carry data fields. */
   nodes: string[];
+  /**
+   * Otherwise, the frames whose copies to bring in step (their `repeat` or something in them
+   * changed). With `all`, every iterator.
+   */
+  iterators: string[];
 }
