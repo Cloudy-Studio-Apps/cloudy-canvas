@@ -46,7 +46,7 @@ Phase 1 shipped: sources (files and APIs), the Data tab, Update and agent tools.
 
 ### C3. Bookmarks and links in the PDF
 
-- [ ] Decide · Priority: —
+- [x] Decide · Priority: P1
 
 - Sections become the PDF's bookmarks (the sidebar outline in a PDF reader), nested like the
   folders.
@@ -56,6 +56,9 @@ Phase 1 shipped: sources (files and APIs), the Data tab, Update and agent tools.
 
 **Notes:**
 yes, this i like it, and how we have the table of content can work togheter smoothly
+
+Shipped: bookmarks, clickable table of contents, page references. Web links are left to the
+editor's linking plan.
 
 ### C4. Booklet printing
 
