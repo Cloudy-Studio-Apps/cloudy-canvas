@@ -1,7 +1,11 @@
+import type { ElementKinds, ResolvedValue } from "@canvas";
+
 import type { DesignNode } from "../../core";
 
 /** What filling a layer needs besides its scope. */
 export interface BindingContext {
+  /** The design's kinds: a bound field is written the way its kind writes a variable's value. */
+  kinds: ElementKinds;
   /** The language numbers, prices and dates are written in. */
   locale: string;
   /** The asset of the picture a value names (`imageKey`), `null` when it hasn't been saved. */
@@ -16,10 +20,12 @@ export interface PlannedBindings {
   missing: string[];
 }
 
-/** What one `dataBindings` entry writes. */
+/** What one `dataBindings` entry writes: a value for its field, or a picture for its paint. */
 export interface BindingWrite {
-  /** Paths → values, as `setPathsPatch` takes them; `null` to leave the field alone. */
-  values: Record<string, unknown> | null;
+  /** The value as the field's variable type takes it; `null` to leave the field alone. */
+  value: ResolvedValue | null;
+  /** An image paint's new picture (`paint` is `fills.<i>` / `strokes.<i>`). */
+  image: { paint: string; assetId: string } | null;
   /** An image binding whose value is empty (for "hide when empty"). */
   emptyImage: boolean;
 }

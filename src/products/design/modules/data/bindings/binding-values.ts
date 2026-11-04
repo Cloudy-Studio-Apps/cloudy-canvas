@@ -1,4 +1,4 @@
-import { parseTokenColor, readPath, tokenValueFields } from "@canvas";
+import { readPath, setPathsPatch, parseTokenColor, type ResolvedValue } from "@canvas";
 
 import { imagePaint, type DesignNode } from "../../core";
 import { toBoolean, toNumber } from "./coerce";
@@ -7,70 +7,110 @@ import type { DataBinding } from "./binding.types";
 import type { BindingContext, BindingWrite } from "./plan-bindings.types";
 import type { LookupResult } from "./scope.types";
 
-/** `fills.<i>.image` / `strokes.<i>.image`: a paint's picture. */
+/** `fills.<i>.image` / `strokes.<i>.image`: a paint's picture, data's own binding. */
 const IMAGE_PATH = /^((?:fills|strokes)\.\d+)\.image$/;
 
-const KEEP: BindingWrite = { values: null, emptyImage: false };
+const KEEP: BindingWrite = { value: null, image: null, emptyImage: false };
+
+/** Whether a binding path is a paint's picture. */
+export function isImageBinding(path: string): boolean {
+  return IMAGE_PATH.test(path);
+}
 
 function isEmpty(value: unknown): boolean {
   return value === null || value === undefined || (typeof value === "string" && !value.trim());
 }
 
-/** An image paint's picture: the paint's asset swapped (another paint becomes an image one). */
-function imageWrite(
-  el: DesignNode,
-  paintPath: string,
-  value: unknown,
-  ctx: BindingContext,
-): BindingWrite {
-  if (isEmpty(value) || typeof value === "object") return { values: null, emptyImage: true };
-  const assetId = ctx.images(String(value));
-  const paint = readPath(el, paintPath) as { type?: unknown; opacity?: unknown; visible?: unknown };
-  if (assetId === null || typeof paint !== "object" || paint === null) return KEEP;
-  if (paint.type === "image")
-    return { values: { [`${paintPath}.assetId`]: assetId }, emptyImage: false };
-  const next = {
-    ...imagePaint(assetId),
-    ...(typeof paint.opacity === "number" ? { opacity: paint.opacity } : {}),
-    ...(typeof paint.visible === "boolean" ? { visible: paint.visible } : {}),
-  };
-  return { values: { [paintPath]: next }, emptyImage: false };
+/** A data value as the variable type a field takes, `null` when it doesn't fit. */
+function resolvedValue(
+  type: string,
+  read: LookupResult,
+  binding: DataBinding,
+  locale: string,
+): ResolvedValue | null {
+  if (type === "number") {
+    const n = toNumber(read.value);
+    return n === null ? null : { type: "number", number: n };
+  }
+  if (type === "boolean") {
+    const b = toBoolean(read.value);
+    return b === null ? null : { type: "boolean", boolean: b };
+  }
+  if (type === "color") {
+    const color = typeof read.value === "string" ? parseTokenColor(read.value) : null;
+    return color === null ? null : { type: "color", color };
+  }
+  if (type === "string") {
+    return { type: "string", string: formatValue(read.value, read.field, binding.format, locale) };
+  }
+  return null;
 }
 
 /**
- * What one binding writes into its field, by what the field holds now: a number is coerced, a
- * color parsed (`#rgb`…`#rrggbbaa`; a paint's alpha goes to its opacity, as variables do), a
- * boolean read, a text formatted; an image paint takes the saved picture's asset. A value that
- * doesn't fit leaves the field alone.
+ * What one binding writes: for a paint's picture, the saved picture's asset (`null` from
+ * `images` keeps the current one); otherwise the value turned into the type the kind's
+ * `BindableField` takes (a number coerced, a color parsed, a boolean read, a text formatted).
+ * A field the kind doesn't offer, or a value that doesn't fit, is left alone.
  */
 export function bindingWrite(
   el: DesignNode,
   path: string,
   binding: DataBinding,
-  read: LookupResult,
+  read: LookupResult | null,
   ctx: BindingContext,
 ): BindingWrite {
   const image = IMAGE_PATH.exec(path);
-  if (image) return imageWrite(el, image[1] as string, read.value, ctx);
-  const current = readPath(el, path);
-  if (current === undefined) return KEEP;
-  if (typeof current === "number") {
-    const n = toNumber(read.value);
-    return n === null
-      ? KEEP
-      : { values: tokenValueFields(el, path, { type: "number", number: n }), emptyImage: false };
+  if (image) {
+    const value = read?.value;
+    if (isEmpty(value) || typeof value === "object") return { ...KEEP, emptyImage: true };
+    const assetId = ctx.images(String(value));
+    return assetId === null ? KEEP : { ...KEEP, image: { paint: image[1] as string, assetId } };
   }
-  if (typeof current === "boolean") {
-    const b = toBoolean(read.value);
-    return b === null ? KEEP : { values: { [path]: b }, emptyImage: false };
-  }
-  if (typeof current !== "string") return KEEP;
-  if (path.endsWith("color") || path.endsWith("Color") || parseTokenColor(current) !== null) {
-    const color = typeof read.value === "string" ? parseTokenColor(read.value) : null;
-    return color === null
-      ? KEEP
-      : { values: tokenValueFields(el, path, { type: "color", color }), emptyImage: false };
-  }
-  const text = formatValue(read.value, read.field, binding.format, ctx.locale);
-  return { values: { [path]: text }, emptyImage: false };
+  if (!read) return KEEP;
+  const field = ctx.kinds
+    .kindOf(el)
+    .bindable(el)
+    .find((f) => f.path === path);
+  if (!field) return KEEP;
+  return { ...KEEP, value: resolvedValue(field.type, read, binding, ctx.locale) };
+}
+
+/** The paint fields a picture sets (another paint becomes an image one, keeping its look). */
+function imageFields(el: DesignNode, paintPath: string, assetId: string): Record<string, unknown> {
+  const paint = readPath(el, paintPath) as { type?: unknown; opacity?: unknown; visible?: unknown };
+  if (typeof paint !== "object" || paint === null) return {};
+  if (paint.type === "image") return { [`${paintPath}.assetId`]: assetId };
+  return {
+    [paintPath]: {
+      ...imagePaint(assetId),
+      ...(typeof paint.opacity === "number" ? { opacity: paint.opacity } : {}),
+      ...(typeof paint.visible === "boolean" ? { visible: paint.visible } : {}),
+    },
+  };
+}
+
+/** The stored values (paths → values) a write leaves in the layer, `null` when it writes none. */
+export function writtenFields(
+  el: DesignNode,
+  path: string,
+  write: BindingWrite,
+  ctx: BindingContext,
+): Record<string, unknown> | null {
+  if (write.image) return imageFields(el, write.image.paint, write.image.assetId);
+  if (write.value) return ctx.kinds.kindOf(el).bindValues(el, path, write.value);
+  return null;
+}
+
+/** The patch a write makes, through the kind's `bindPatch` (a size resizes, a text lays out). */
+export function writePatch(
+  el: DesignNode,
+  path: string,
+  write: BindingWrite,
+  ctx: BindingContext,
+): Record<string, unknown> | null {
+  if (write.image)
+    return setPathsPatch(el, imageFields(el, write.image.paint, write.image.assetId));
+  if (write.value)
+    return ctx.kinds.kindOf(el).bindPatch(el, path, write.value) as Record<string, unknown> | null;
+  return null;
 }

@@ -12,3 +12,6 @@ export type * from "./resolve-template.types";
 export { evaluateCondition } from "./evaluate-condition";
 export { planBindings } from "./plan-bindings";
 export type * from "./plan-bindings.types";
+export { bindingWrite, isImageBinding, writePatch, writtenFields } from "./binding-values";
+export { readValue } from "./read-value";
+export { sameValue } from "./same-value";

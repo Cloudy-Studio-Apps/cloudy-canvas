@@ -30,7 +30,7 @@ export const dataModule = defineModule({
   register(host) {
     host.contribute(designCanvas.kinds, new DataSourceKind());
     host.contribute(designCanvas.onRemove, forgetRemovedSources);
-    host.contribute(designCanvas.afterEdit, (doc, change) => syncData(doc, change));
+    host.contribute(designCanvas.afterEdit, (doc, change, kinds) => syncData(doc, change, kinds));
     host.contribute(dataSourceTypes, FILE_SOURCE, HTTP_SOURCE);
     host.contribute(dataFormats, CSV_FORMAT, JSON_FORMAT);
     host.contribute(designEditor.leftTabs, {
