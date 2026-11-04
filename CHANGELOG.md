@@ -22,6 +22,10 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   such as one card per product, lined up by the frame and filtered, sorted and capped as you choose
   in the new Repeat section. The copies follow the card you design and update with the data, and
   any copy can be detached to edit it on its own.
+- The Data tab now points out data that doesn't fit: fields a layer reads that no longer exist,
+  texts too long for their box, pictures that couldn't be saved, sources that failed or were never
+  updated, and lists that would make too many or stacked copies. Each source shows its count, and
+  Select takes you to the layer.
 
 ## 0.8.0 - 2026-11-04
 

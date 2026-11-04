@@ -244,5 +244,21 @@
     "nested": "Separa primero la copia exterior",
     "detachFailed": "No se pudo separar la copia",
     "container": "Seleccionar contenedor"
+  },
+  "issues": {
+    "title": "Requiere atención",
+    "count_one": "{count} problema",
+    "count_other": "{count} problemas",
+    "select": "Seleccionar",
+    "kind": {
+      "unresolvedToken": "Lee datos que no existen: {detail}",
+      "imageFailed": "Imágenes sin guardar: {detail}",
+      "textOverflow": "El texto no cabe en su caja ({detail} px)",
+      "detachedRowGone": "Copias separadas cuya fila ya no está en la lista: {detail}",
+      "sourceError": "La última actualización falló: {detail}",
+      "neverUpdated": "Nunca actualizada: pulsa Actualizar para leer sus filas",
+      "tooManyCopies": "Se harían {detail} copias: pon un límite mientras diseñas",
+      "copiesStacked": "{detail} copias se apilan unas sobre otras: dale un auto layout al marco"
+    }
   }
 }

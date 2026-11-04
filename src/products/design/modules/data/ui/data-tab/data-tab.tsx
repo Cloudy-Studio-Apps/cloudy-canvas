@@ -3,6 +3,7 @@ import { Database } from "lucide-react";
 
 import { EmptyState } from "@shared/ui/kit";
 import { useDataRegistry } from "../hooks/use-data-registry";
+import { useDataIssues } from "../hooks/use-data-issues";
 import { useDataSources } from "../hooks/use-data-sources";
 import { AddSourceMenu } from "./add-source-menu";
 import type { DataTabView } from "./data-tab.types";
@@ -18,6 +19,7 @@ import { t } from "../../data.i18n";
  */
 export function DataTab() {
   const sources = useDataSources();
+  const { issues } = useDataIssues();
   const { types } = useDataRegistry();
   const [view, setView] = useState<DataTabView>({ kind: "list" });
   const toList = () => setView({ kind: "list" });
@@ -27,6 +29,7 @@ export function DataTab() {
     return (
       <SourceDetail
         source={null}
+        issues={issues}
         sourceType={sourceType}
         onBack={toList}
         onCreated={(id) => setView({ kind: "detail", id })}
@@ -40,6 +43,7 @@ export function DataTab() {
     return (
       <SourceDetail
         source={open}
+        issues={issues}
         sourceType={types.find((type) => type.id === open.sourceType)}
         onBack={toList}
         onCreated={(id) => setView({ kind: "detail", id })}
@@ -70,6 +74,7 @@ export function DataTab() {
           <SourceList
             sources={sources}
             types={types}
+            issues={issues}
             onOpen={(id) => setView({ kind: "detail", id })}
           />
         )}

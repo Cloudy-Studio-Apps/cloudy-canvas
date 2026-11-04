@@ -244,5 +244,21 @@
     "nested": "Detach the outer copy first",
     "detachFailed": "Couldn't detach the copy",
     "container": "Select container"
+  },
+  "issues": {
+    "title": "Needs attention",
+    "count_one": "{count} issue",
+    "count_other": "{count} issues",
+    "select": "Select",
+    "kind": {
+      "unresolvedToken": "Reads data that isn't there: {detail}",
+      "imageFailed": "Pictures not saved: {detail}",
+      "textOverflow": "The text doesn't fit its box ({detail} px)",
+      "detachedRowGone": "Detached copies whose row is gone from the list: {detail}",
+      "sourceError": "The last Update failed: {detail}",
+      "neverUpdated": "Never updated: press Update to read its rows",
+      "tooManyCopies": "{detail} copies would be made: set a limit while designing",
+      "copiesStacked": "{detail} copies stack on top of each other: give the frame an auto layout"
+    }
   }
 }

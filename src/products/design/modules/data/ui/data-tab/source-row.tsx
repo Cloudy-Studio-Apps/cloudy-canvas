@@ -1,4 +1,4 @@
-import { KeyRound } from "lucide-react";
+import { KeyRound, TriangleAlert } from "lucide-react";
 
 import { useService } from "@canvas-ui";
 import { DESIGN_DATA_SOURCES } from "../../model";
@@ -17,7 +17,7 @@ import { t } from "../../data.i18n";
  * updated (the stage while an Update runs), the last Update's error and whether this device lacks
  * a key it needs, and Update. A click opens its detail.
  */
-export function SourceRow({ source, sourceType, onOpen }: SourceRowProps) {
+export function SourceRow({ source, sourceType, issues, onOpen }: SourceRowProps) {
   const sources = useService(DESIGN_DATA_SOURCES);
   const update = useUpdateSource(source.id);
   const { missing } = useSourceSecrets(source);
@@ -61,6 +61,12 @@ export function SourceRow({ source, sourceType, onOpen }: SourceRowProps) {
         {error !== null && (
           <p className="line-clamp-2 pl-5 text-xs break-words text-destructive" title={error}>
             {error}
+          </p>
+        )}
+        {issues.length > 0 && (
+          <p className="flex items-center gap-1 pl-5 text-xs text-warning">
+            <TriangleAlert className="size-3 shrink-0" />
+            {t("issues.count", { count: issues.length })}
           </p>
         )}
         {missing.length > 0 && (

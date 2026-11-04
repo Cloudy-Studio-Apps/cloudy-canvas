@@ -17,7 +17,7 @@ import { t } from "../../data.i18n";
  * A source's page in the tab (or a new one's form), with a back arrow to the list; a double-click
  * on the name renames the source.
  */
-export function SourceDetail({ source, sourceType, onBack, onCreated }: SourceDetailProps) {
+export function SourceDetail({ source, sourceType, issues, onBack, onCreated }: SourceDetailProps) {
   const sources = useService(DESIGN_DATA_SOURCES);
   const [editing, setEditing] = useState(false);
   const title = t("source.new", { type: sourceType?.label ?? "" });
@@ -51,7 +51,12 @@ export function SourceDetail({ source, sourceType, onBack, onCreated }: SourceDe
         {source && <SourceUpdateButton sourceId={source.id} />}
       </header>
       {source ? (
-        <SourceSections source={source} sourceType={sourceType} onRemoved={onBack} />
+        <SourceSections
+          source={source}
+          sourceType={sourceType}
+          issues={issues.filter((issue) => issue.sourceId === source.id)}
+          onRemoved={onBack}
+        />
       ) : (
         sourceType && (
           <CreateSourceForm sourceType={sourceType} onCreated={onCreated} onCancel={onBack} />

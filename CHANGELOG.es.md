@@ -26,6 +26,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   ordenadas y limitadas como elijas en la nueva sección Repetir. Las copias siguen a la tarjeta que
   diseñas y se actualizan con los datos, y cualquier copia se puede separar para editarla por sí
   sola.
+- La pestaña Datos ahora señala los datos que no encajan: campos que una capa lee y ya no existen,
+  textos demasiado largos para su caja, imágenes que no se pudieron guardar, fuentes que fallaron o
+  nunca se actualizaron, y listas que harían demasiadas copias o copias apiladas. Cada fuente
+  muestra su cuenta y Seleccionar te lleva a la capa.
 
 ## 0.8.0 - 2026-11-04
 

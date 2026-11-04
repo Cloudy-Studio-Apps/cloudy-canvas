@@ -13,6 +13,7 @@ import { FormatSelect } from "./format-select";
 import { ImageFailuresLine } from "./image-failures-line";
 import { RemoveSourceButton } from "./remove-source-button";
 import { RowsTable } from "./rows-table";
+import { SourceIssues } from "./source-issues";
 import { SourceSettingsForm } from "./source-settings-form";
 import type { SourceSectionsProps } from "./source-sections.types";
 import { translatedError } from "./error-text";
@@ -22,7 +23,7 @@ import { t } from "../../data.i18n";
  * A source's detail: its settings (each change saved at once, secrets to this device), how it is
  * read, its fields, its first rows, and Remove.
  */
-export function SourceSections({ source, sourceType, onRemoved }: SourceSectionsProps) {
+export function SourceSections({ source, sourceType, issues, onRemoved }: SourceSectionsProps) {
   const sources = useService(DESIGN_DATA_SOURCES);
   const { formats } = useDataRegistry();
   const secrets = useSourceSecrets(source);
@@ -42,6 +43,7 @@ export function SourceSections({ source, sourceType, onRemoved }: SourceSections
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto">
+      <SourceIssues issues={issues} />
       <PanelSection title={t("source.settings")}>
         {sourceType ? (
           <div className="flex flex-col gap-2">
