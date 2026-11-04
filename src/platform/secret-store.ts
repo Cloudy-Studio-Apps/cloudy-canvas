@@ -1,6 +1,6 @@
 import { isTauri } from "@tauri-apps/api/core";
 import { appDataDir, join } from "@tauri-apps/api/path";
-import { exists, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
+import { exists, mkdir, readTextFile, rename, writeTextFile } from "@tauri-apps/plugin-fs";
 
 import type { SecretStore } from "@shared/core";
 
@@ -26,8 +26,8 @@ export const secretStore: SecretStore = {
       const all = { ...(await load()) };
       if (value === null) delete all[key];
       else all[key] = value;
-      cache = Promise.resolve(all);
       await save(all);
+      cache = Promise.resolve(all);
     });
     queue = run.catch(() => undefined);
     return run;
@@ -43,20 +43,29 @@ function load(): Promise<Record<string, string>> {
 }
 
 async function read(): Promise<Record<string, string>> {
-  let text: string | null;
-  if (isTauri()) {
-    const path = await join(await appDataDir(), FILE);
-    text = (await exists(path)) ? await readTextFile(path) : null;
-  } else {
-    text = localStorage.getItem(BROWSER_KEY);
-  }
+  if (!isTauri()) return parse(localStorage.getItem(BROWSER_KEY)) ?? {};
+  const path = await join(await appDataDir(), FILE);
+  if (!(await exists(path))) return {};
+  const parsed = parse(await readTextFile(path));
+  if (parsed) return parsed;
+  console.warn(`${FILE} is unreadable; keeping it as ${FILE}.bak and starting empty.`);
+  await rename(path, `${path}.bak`);
+  return {};
+}
+
+/** The string entries of a JSON object, or `null` when the text isn't one (empty text is `{}`). */
+function parse(text: string | null): Record<string, string> | null {
   if (!text) return {};
+  let value: unknown;
   try {
-    const parsed: unknown = JSON.parse(text);
-    return parsed && typeof parsed === "object" ? (parsed as Record<string, string>) : {};
+    value = JSON.parse(text);
   } catch {
-    return {};
+    return null;
   }
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const all: Record<string, string> = {};
+  for (const [key, entry] of Object.entries(value)) if (typeof entry === "string") all[key] = entry;
+  return all;
 }
 
 async function save(all: Record<string, string>): Promise<void> {
@@ -65,5 +74,7 @@ async function save(all: Record<string, string>): Promise<void> {
     localStorage.setItem(BROWSER_KEY, text);
     return;
   }
-  await writeTextFile(await join(await appDataDir(), FILE), text);
+  const dir = await appDataDir();
+  await mkdir(dir, { recursive: true });
+  await writeTextFile(await join(dir, FILE), text);
 }
