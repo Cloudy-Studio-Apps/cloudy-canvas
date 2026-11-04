@@ -2,6 +2,8 @@
 // (T) and its layout. The module (`text.module.ts`) adds the Typography section.
 export type * from "./text.types";
 export type * from "./text-options.types";
+export type * from "./text.points.types";
+export { textTemplates } from "./text.points";
 export { createText } from "./text.factory";
 export { TEXT_DEFAULTS } from "./text.defaults";
 export { fontOf, textLayout, textSize, textStyleOf } from "./text-layout";

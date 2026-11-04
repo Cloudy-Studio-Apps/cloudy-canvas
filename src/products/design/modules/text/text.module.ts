@@ -8,6 +8,7 @@ import { designMcpTools, designCanvas } from "../../design-points";
 import { textTools } from "./text.mcp";
 import { TEXT_DEFAULTS } from "./text.defaults";
 import { TextKind } from "./text.kind";
+import { textTemplates } from "./text.points";
 import { TextTool } from "./text.tool";
 import { designStyleTypes } from "../core/ui";
 import { TEXT_STYLE, textStyleSummary } from "./text-style";
@@ -29,7 +30,8 @@ export const textModule = defineModule({
   requires: ["core"],
   exports: { ...textApi, ...textUi },
   register(host) {
-    host.contribute(designCanvas.kinds, new TextKind(glyphOutliner));
+    // Its texts are edited through the first template that claims them.
+    host.contribute(designCanvas.kinds, new TextKind(glyphOutliner, () => host.get(textTemplates)));
     host.contribute(designCanvas.tools, {
       id: "text",
       create: (ctx) => new TextTool(ctx),

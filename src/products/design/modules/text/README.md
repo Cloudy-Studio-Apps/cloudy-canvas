@@ -5,9 +5,9 @@ Text layers (T) with mixed styles in one text, the Typography section and its fo
 - **Tier:** core
 - **Requires:** core
 - **Contributes:** kinds `TextKind`; designCanvas: `afterEdit`, `kinds`, `options`, `tools`; designEditor: `propertySections`, `sessionHooks`, `tools`; `designMcpTools`, `designStyleTypes`
-- **Points it owns:** —
+- **Points it owns:** `textTemplates` (`text.points.ts`, `TextTemplateSource`: `claims`, `read`, `write`, keyed by id): templates a text is edited through instead of its shown text (data contributes `dataText`'s).
 - **MCP tools:** `list_fonts`, `style_text_range`
-- **Files:** `text.kind.ts`, `text-layout.ts`, `text-spans.ts`, `text-style.ts`, `run-style-bindings.ts`, `text-outline.ts`, `text.mcp.ts`, `ui/` (Typography, font picker, text styles).
+- **Files:** `text.kind.ts`, `text.points.ts`, `text-template.ts`, `text-layout.ts`, `text-spans.ts`, `text-style.ts`, `run-style-bindings.ts`, `text-outline.ts`, `text.mcp.ts`, `ui/` (Typography, font picker, text styles).
 
 ## How it works
 
@@ -18,6 +18,10 @@ Text layers (T) with mixed styles in one text, the Typography section and its fo
 ### Text
 
 - **Text** (`text/`): `TextKind` (`text`, `fontFamily` (a family name), `fontSize`, `fontWeight`, `fontStyle`, `lineHeight`, `letterSpacing`, `textAlign`, `verticalAlign`, `autoResize`: `width`/`height`/`none`); one visible solid fill is its color; other fills (gradients, images, several paints) show through its glyphs (`setPaintTextMask`; `strokable` is off), its layer is named after its first line (`layerName`) until renamed, and `textSize`/`retypeset` lay it out again after any change (resizing a side fixes the width, the height the size). `TextTool` (T): click for auto width, drag for a fixed width, click a text to edit it. The Typography section has `FontPicker` (`useFontFamilies`, a searchable list of installed and Google families), the face, size, line height, letter spacing, alignment and resizing; its changes become the `textTypography` tool option new texts use.
+
+### Editing through a template
+
+- **Templates** (`textTemplates`): a text some entry `claims` (the first one, in module order) is edited as that template, not as the text it shows (a text bound to data opens on `{product.name}`). The kind gets the point's entries from the module host (`new TextKind(outliner, () => host.get(textTemplates))`). Only the editor sees the template: its open (`text.get`, `TEXT_RICH`'s `runs`) reads `read(el)`, its live preview (`apply`, unchanged) shows what's typed, and its commit (`RichTextSpec.commit`, `templateCommit`) writes only the entry's `write` (nothing when the template is unchanged), never `text`/`runs`; the owner writes the shown text after (data's sync). Callers checked: the kind's `text.get` and the rich spec's `runs`/`apply`/`layout`/`shortcut` are called only by `canvas/text/text-editor.ts` and `rich-editor/rich-text-session.ts`; `text.set` is also the variables' write of `text` (`bindPatch`), so it stays on the shown text (design texts are always rich, so the editor never calls it); `textContentPatch` is also `alignedTextPatch` (catalog, data sync) and `style_text_range`. Drawing, export, layout, outlines, layer names, search and agents read `el.text`/`el.runs` directly. A text nothing claims is edited exactly as before (`commit` is `textContentPatch`, as `apply`).
 
 ### Text outlines
 

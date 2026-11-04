@@ -90,6 +90,12 @@ export interface RichTextSpec<E extends CanvasElement, S extends object = object
   layout(el: E, text: string, runs: readonly TextRun<S>[]): RichTextLayout;
   /** What writes this text and these runs (the size following them), or `null` for no change. */
   apply(el: E, text: string, runs: readonly TextRun<S>[]): ElementPatch<E> | null;
+  /**
+   * What writes the edited text when editing ends, when that differs from `apply` (which still
+   * draws it while typing): e.g. a text edited through a template writes the template. Left out,
+   * `apply` writes it.
+   */
+  commit?(el: E, text: string, runs: readonly TextRun<S>[]): ElementPatch<E> | null;
   /** The style a shortcut sets over a range starting with style `at`, or `null` to ignore it. */
   shortcut?(el: E, shortcut: TextStyleShortcut, at: Partial<S>): Partial<S> | null;
 }

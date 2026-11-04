@@ -15,3 +15,4 @@ export type * from "./plan-bindings.types";
 export { bindingWrite, isImageBinding, writePatch, writtenFields } from "./binding-values";
 export { readValue } from "./read-value";
 export { sameValue } from "./same-value";
+export { BOUND_TEXT_TEMPLATE } from "./bound-text-template";

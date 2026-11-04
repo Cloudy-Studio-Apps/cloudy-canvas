@@ -67,7 +67,10 @@ export class RichTextSession<E extends CanvasElement> {
   result(): { el: E; text: string; patch: ElementPatch<E> | null } | null {
     const el = this.element();
     if (!el) return null;
-    return { el, text: this.text, patch: this.spec.apply(el, this.text, this.runs) };
+    const patch = this.spec.commit
+      ? this.spec.commit(el, this.text, this.runs)
+      : this.spec.apply(el, this.text, this.runs);
+    return { el, text: this.text, patch };
   }
 
   /** The selection as the textarea has it. */

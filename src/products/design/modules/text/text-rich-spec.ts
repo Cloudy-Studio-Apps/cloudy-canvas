@@ -1,6 +1,5 @@
 import {
   normalizeRuns,
-  sameRunStyle,
   type ElementPatch,
   type RichTextSpec,
   type TextStyleShortcut,
@@ -9,6 +8,7 @@ import {
 import { textLayout, textSize } from "./text-layout";
 import { unstyledRangePatch } from "./apply-run-style";
 import { baseRunStyle } from "./text-spans";
+import { sameTextContent } from "./same-text-content";
 import type { TextNodeElement, TextNodeRun, TextRunStyle } from "./text.types";
 
 /** A weight this heavy or more counts as bold for Ctrl+B. */
@@ -34,16 +34,7 @@ export function textContentPatch(
   runs: readonly TextNodeRun[],
 ): ElementPatch<TextNodeElement> | null {
   const normalized = normalizeRuns(runs, text.length);
-  const same =
-    text === el.text &&
-    normalized.length === el.runs.length &&
-    normalized.every((run, i) => {
-      const own = el.runs[i];
-      return (
-        own && own.start === run.start && own.end === run.end && sameRunStyle(own.style, run.style)
-      );
-    });
-  if (same) return null;
+  if (sameTextContent(text, normalized, el.text, el.runs)) return null;
   return { text, runs: normalized, ...textSize(el, text, normalized) };
 }
 

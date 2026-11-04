@@ -41,7 +41,9 @@ import { textContentPatch, TEXT_RICH } from "./text-rich-spec";
 import { readRuns, runsPatch } from "./text-run-args";
 import { textOutline } from "./text-outline";
 import { autoResizeFor } from "./text-auto-resize";
-import type { TextNodeElement } from "./text.types";
+import type { TextNodeElement, TextRunStyle } from "./text.types";
+import type { TextTemplates } from "./text.points.types";
+import { templateCommit, templateOf } from "./text-template";
 import { t } from "./text.i18n";
 
 /** Longest layer name a text takes from its content. */
@@ -161,9 +163,13 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
 
   /**
    * `outliner` gives its glyphs' outlines (flattening it, booleans and vector masks made of it);
-   * without one, a text has no shape.
+   * without one, a text has no shape. `templates` are the templates its texts may be edited
+   * through (the module's `textTemplates` entries).
    */
-  constructor(private readonly outliner: GlyphOutliner | null = null) {
+  constructor(
+    private readonly outliner: GlyphOutliner | null = null,
+    private readonly templates: TextTemplates = () => [],
+  ) {
     super();
   }
 
@@ -198,15 +204,31 @@ export class TextKind extends DesignNodeKind<TextNodeElement> {
     return { fill, stroke: fill };
   }
 
+  /**
+   * Edited through a template when one claims the text (`textTemplates`): the editor opens on the
+   * template's text and runs (`get`, `rich.runs`), shows it while typing (`rich.apply`) and writes
+   * only the template when it ends (`rich.commit`). `set` (variables' writes) and everything
+   * else read and write the shown `text` and `runs`.
+   */
   override readonly text: ElementText<TextNodeElement> = {
-    get: (el) => el.text,
+    get: (el) => templateOf(this.templates, el)?.read(el).text ?? el.text,
     // Ranges follow the change (what's typed takes the style before it).
     set: (el, text) => textContentPatch(el, text, runsForText(el.runs, el.text, text)),
     style: (el) => textStyleOf(el),
     sizing: (el) =>
       el.autoResize === "width" ? "content" : el.autoResize === "height" ? "height" : "fixed",
     removeWhenEmpty: true,
-    rich: TEXT_RICH as unknown as RichTextSpec<TextNodeElement>,
+    rich: {
+      ...TEXT_RICH,
+      runs: (el) => templateOf(this.templates, el)?.read(el).runs ?? el.runs,
+      commit: (el, text, runs) => {
+        const source = templateOf(this.templates, el);
+        return source ? templateCommit(source, el, text, runs) : textContentPatch(el, text, runs);
+      },
+    } satisfies RichTextSpec<
+      TextNodeElement,
+      TextRunStyle
+    > as unknown as RichTextSpec<TextNodeElement>,
   };
 
   /**
