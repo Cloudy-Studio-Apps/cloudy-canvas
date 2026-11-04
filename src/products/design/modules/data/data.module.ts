@@ -3,7 +3,15 @@ import { Database } from "lucide-react";
 import { defineModule } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
 import { designCanvas, designMcpTools } from "../../design-points";
-import { bindDataTool, dataTools } from "./mcp";
+import {
+  bindDataTool,
+  dataIssuesTool,
+  dataTools,
+  detachDataCopyTool,
+  removeRepeatTool,
+  repeatLayerTool,
+  setRepeatTool,
+} from "./mcp";
 import { dataFormats, dataSourceTypes } from "./data.points";
 import { CSV_FORMAT, JSON_FORMAT } from "./formats";
 import { FILE_SOURCE, HTTP_SOURCE } from "./sources";
@@ -87,7 +95,15 @@ export const dataModule = defineModule({
     });
     host.contribute(designMcpTools, {
       id: "data",
-      tools: (context) => [...dataTools, bindDataTool(context)],
+      tools: (context) => [
+        ...dataTools,
+        bindDataTool(context),
+        setRepeatTool(context),
+        repeatLayerTool(context),
+        removeRepeatTool,
+        detachDataCopyTool,
+        dataIssuesTool(context),
+      ],
     });
     host.contribute(designEditor.sessionHooks, { id: "data.services", use: useDataServices });
   },

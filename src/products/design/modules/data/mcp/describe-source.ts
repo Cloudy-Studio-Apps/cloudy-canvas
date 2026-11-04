@@ -3,6 +3,10 @@ import { DESIGN_DATA_SOURCES } from "../model";
 import { holdsDevicePath } from "../settings";
 import { secretKeys } from "../update";
 import type { DataSourceElement } from "../source";
+import { sourceOf } from "../checks/source-of";
+import { dataCopyTag, repeatOf, scopeAt, templateOf } from "../repeat";
+import { isDesignNode, type DesignNode } from "../../core";
+import { isFrame } from "../../frame";
 
 /** The summary `list_data_sources` and the other tools give of a source. */
 export async function summarizeSource(engine: DesignWorkspace, source: DataSourceElement) {
@@ -17,6 +21,23 @@ export async function summarizeSource(engine: DesignWorkspace, source: DataSourc
     lastError: sources.error(source.id),
     needsSecrets: await sources.missingSecrets(source.id),
   };
+}
+
+/** The frames that repeat a card for this source's rows: id, name and the card (id, name). */
+function iteratorsOf(engine: DesignWorkspace, source: DataSourceElement) {
+  const doc = engine.doc;
+  return doc.all().flatMap((el) => {
+    if (!isFrame(el) || dataCopyTag(el)) return [];
+    const repeat = repeatOf(el);
+    if (!repeat || sourceOf(scopeAt(doc, el.id), repeat.source) !== source.id) return [];
+    const card = templateOf(
+      el,
+      doc.all().filter((c): c is DesignNode => isDesignNode(c) && c.parentId === el.id),
+    );
+    return [
+      { frame: el.id, name: el.name, template: card ? { id: card.id, name: card.name } : null },
+    ];
+  });
 }
 
 /**
@@ -46,6 +67,7 @@ export async function describeSource(
         ? [{ key: spec.key, onDevice: !missingFiles.includes(spec.key) }]
         : [],
     ),
+    iterators: iteratorsOf(engine, source),
     fields: source.fields,
     sampleRows: all.slice(0, rows),
   };
