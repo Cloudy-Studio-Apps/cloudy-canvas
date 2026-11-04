@@ -18,6 +18,9 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 - Los folletos pueden dividirse en secciones. El nombre de una sección puede aparecer en las
   cabeceras, y la numeración puede reiniciarse o pasar a números romanos, con las portadas
   contadas, ocultas o sin contar.
+- Una lista de elementos de página listos (número de página, «Página 3 de 24», título, sección,
+  fecha e índice) se puede añadir con un clic o arrastrar a una maestra o una página, ya colocados
+  en su margen.
 
 ### Mejoras
 

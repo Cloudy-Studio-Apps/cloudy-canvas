@@ -16,6 +16,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   same, and Detach makes one editable on a single page.
 - Brochures can be split into sections. A section's name can appear in headers, and numbering can
   restart or switch to roman numerals, with covers counted, hidden or left out.
+- A list of ready-made page items (page number, "Page 3 of 24", title, section, date and table of
+  contents) can be clicked or dragged onto a master or a page, already placed in its margin.
 
 ### Improved
 

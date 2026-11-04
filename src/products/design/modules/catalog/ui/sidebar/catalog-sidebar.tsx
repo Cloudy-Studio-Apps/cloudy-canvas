@@ -12,6 +12,7 @@ import { LooseFrameSection } from "./loose-frame-section";
 import { MasterSideSection } from "./master-side-section";
 import { NumberingSection } from "./numbering-section";
 import { PageImagesSection } from "./page-images-section";
+import { PageItemsSection } from "./page-items-section";
 import { PageSection } from "./page-section";
 import { PickSection } from "./pick-section";
 import { PrintSection } from "./print-section";
@@ -19,7 +20,7 @@ import { t } from "../../catalog.i18n";
 
 /**
  * The properties panel in the Catalog mode (its `sidebar`): while picking, how to; a
- * selected page with its options and pictures; a side of a master; a frame that isn't in it;
+ * selected page with its options, page items and pictures; a side of a master and its page items; a frame that isn't in it;
  * several frames; or the brochure itself (settings, numbering, checks, preview and export).
  */
 export function CatalogSidebar() {
@@ -33,12 +34,18 @@ export function CatalogSidebar() {
     return (
       <>
         <PageSection page={selection.page} />
+        <PageItemsSection frame={selection.frame} />
         <PageImagesSection frame={selection.frame} />
       </>
     );
   }
   if (selection.kind === "master") {
-    return <MasterSideSection master={selection.master} side={selection.side} />;
+    return (
+      <>
+        <MasterSideSection master={selection.master} side={selection.side} />
+        <PageItemsSection frame={selection.frame} />
+      </>
+    );
   }
   if (selection.kind === "loose") return <LooseFrameSection frame={selection.frame} />;
   if (selection.kind === "several") return <FramesSection frames={selection.frames} />;

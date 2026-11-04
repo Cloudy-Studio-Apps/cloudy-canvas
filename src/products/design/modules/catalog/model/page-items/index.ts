@@ -9,3 +9,8 @@ export { resolveTemplate } from "./resolve-template";
 export { stampTargets } from "./stamp-targets";
 export { syncPageItems } from "./sync-page-items";
 export { tableOfContents } from "./table-of-contents";
+export type * from "./page-item-definition.types";
+export { insertPageItems } from "./insert-page-items";
+export { PAGE_ITEMS } from "./page-item-library";
+export { placePageItem } from "./place-page-item";
+export { itemTargetAt, itemTargets } from "./item-targets";

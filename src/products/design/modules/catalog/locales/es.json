@@ -279,5 +279,23 @@
     "defaultMaster": "Maestra predeterminada",
     "noMaster": "Sin maestra",
     "mastersOnCovers": "Maestras en las portadas"
+  },
+  "items": {
+    "pageNumber": "Número de página",
+    "pageOf": "Página de total",
+    "pageOfTemplate": "Página {page} de {pages}",
+    "title": "Título del folleto",
+    "section": "Nombre de la sección",
+    "folio": "Sección y página",
+    "date": "Fecha",
+    "toc": "Índice",
+    "panel": {
+      "title": "Elementos de página",
+      "hintMaster": "Haz clic en uno para añadirlo a esta maestra, o arrástralo a una página o una maestra.",
+      "hintPage": "Haz clic en uno para añadirlo a esta página, o arrástralo a una página o una maestra.",
+      "bothSides": "Añadir a los dos lados",
+      "dropHere": "Suelta en una página o una maestra",
+      "added": "{item} añadido"
+    }
   }
 }

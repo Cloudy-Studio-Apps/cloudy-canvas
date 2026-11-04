@@ -11,7 +11,10 @@ import { pageItemTag } from "./model/page-items/page-item-fields";
 import { FromMasterBadge } from "./ui/design-mode/from-master-badge";
 import { FromMasterSection } from "./ui/design-mode/from-master-section";
 import { a4BrochureStarter } from "./ui/starters/a4-brochure.starter";
+import { BUILT_IN_PAGE_ITEMS } from "./ui/page-items/built-in-page-items";
+import { catalogPageItems } from "./ui/catalog.points";
 import * as catalogApi from ".";
+import * as catalogUi from "./ui";
 
 /**
  * Catalog: a design page's top-level frames as a print brochure's pages (the Catalog mode,
@@ -27,7 +30,7 @@ export const catalogModule = defineModule({
   // before image (its `editElement` takes frames first).
   // Reads and sizes page items' texts with text's helpers.
   uses: ["image", "text"],
-  exports: { ...catalogApi },
+  exports: { ...catalogApi, ...catalogUi },
   register(host) {
     host.contribute(designCanvas.kinds, new BrochureKind());
     registerDesignMode(host, catalogMode);
@@ -54,5 +57,7 @@ export const catalogModule = defineModule({
     host.contribute(designCanvas.editElement, editCatalogPage);
     host.contribute(designMcpTools, { id: "catalog", tools: () => catalogTools });
     host.contribute(designStarters, a4BrochureStarter);
+    // The Page items list's built-ins (page number, title, …); plugins add their own.
+    host.contribute(catalogPageItems, ...BUILT_IN_PAGE_ITEMS);
   },
 });

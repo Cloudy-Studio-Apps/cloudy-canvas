@@ -36,3 +36,8 @@ export interface MasterSideSectionProps {
   master: BrochureMaster;
   side: "left" | "right";
 }
+
+export interface PageItemsSectionProps {
+  /** The page or master frame selected, which a click adds the items to. */
+  frame: FrameElement;
+}

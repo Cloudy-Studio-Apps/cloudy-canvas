@@ -279,5 +279,23 @@
     "defaultMaster": "Default master",
     "noMaster": "No master",
     "mastersOnCovers": "Masters on covers"
+  },
+  "items": {
+    "pageNumber": "Page number",
+    "pageOf": "Page of total",
+    "pageOfTemplate": "Page {page} of {pages}",
+    "title": "Brochure title",
+    "section": "Section name",
+    "folio": "Section and page",
+    "date": "Date",
+    "toc": "Table of contents",
+    "panel": {
+      "title": "Page items",
+      "hintMaster": "Click one to add it to this master, or drag it onto a page or a master.",
+      "hintPage": "Click one to add it to this page, or drag it onto a page or a master.",
+      "bothSides": "Add to both sides",
+      "dropHere": "Drop on a page or a master",
+      "added": "{item} added"
+    }
   }
 }
