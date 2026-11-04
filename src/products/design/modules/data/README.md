@@ -7,7 +7,7 @@ Sources of data for a design: a file, a link or a sheet whose rows later fill th
 - **Contributes:** kinds `DataSourceKind`
 - **Points it owns:** `dataSourceTypes` (where data comes from; built-ins and plugins), `dataFormats` (how raw data becomes rows). A source type's `icon` is a lucide icon name (a string), since engine code cannot import the UI icon type.
 - **MCP tools:** none yet
-- **Files:** `settings/` (declarative `SettingSpec`, `missingSettings`, `splitSecrets`), `services/` (`DataServices`, `RawData`, `SourceContext`), `data.points.ts`, `source/` (the `data-source` record: types, defaults, factory, kind), `data.i18n.ts` with `locales/`, `ui/`.
+- **Files:** `settings/` (declarative `SettingSpec`, `missingSettings`, `splitSecrets`), `services/` (`DataServices`, `RawData`, `SourceContext`), `table/` (`parsePath`, `readPath`, `normalizeRows`, `guessFields`: data paths such as `a.b[0].c`, parsed data into rows, and each field's guessed type), `data.points.ts`, `source/` (the `data-source` record: types, defaults, factory, kind), `data.i18n.ts` with `locales/`, `ui/`.
 
 ## How it works
 
