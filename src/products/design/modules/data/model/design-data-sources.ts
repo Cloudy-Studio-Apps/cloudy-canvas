@@ -1,7 +1,7 @@
 import { defineService, DocumentFeed, type CanvasDocument, type ElementPatch } from "@canvas";
 
+import { renameReferences } from "../bindings";
 import type { DataFormat, DataSourceType } from "../data.points.types";
-import { holdsDevicePath } from "../settings";
 import type { SettingValue } from "../source";
 import {
   createDataSource,
@@ -14,9 +14,6 @@ import {
 } from "../source";
 import type { DataRow, DataTable } from "../table";
 import {
-  loadFilePaths,
-  loadSourceSecrets,
-  missingSecretKeys,
   readSnapshot,
   updateSource,
   type DataContext,
@@ -31,6 +28,7 @@ import { sharedState } from "./shared-state";
 import type { SharedState } from "./shared-state.types";
 import type { SourceUpdates } from "./source-updates";
 import type { UpdateProgress } from "./source-updates.types";
+import { missingFiles, missingSecrets } from "./missing-device-state";
 import { clearSecrets, writeSecrets } from "./write-secrets";
 
 const NOT_READY = "Data sources aren't ready: no editor is open.";
@@ -123,7 +121,15 @@ export class DesignDataSources {
     if (!name.trim()) return;
     const taken = this.list().flatMap((s) => (s.id === id ? [] : [s.name]));
     const next = sourceName(name, taken);
-    if (next !== source.name) this.patch(id, { name: next });
+    if (next === source.name) return;
+    // One undo step: the name and every reference to it change together, which is also why the
+    // data sync sees a source change and unlinks nothing.
+    this.doc.checkpoint();
+    this.doc.batch(() => {
+      const patch: ElementPatch<DataSourceElement> = { name: next };
+      this.doc.update(id, patch);
+      renameReferences(this.doc, source.name, next);
+    });
   }
 
   /** Replaces a source's settings; secrets in them go to this device and stale ones are cleared. */
@@ -188,21 +194,15 @@ export class DesignDataSources {
    * The secrets a source needs that this device doesn't have (by `key` / `key.name`), also the
    * ones entered for another origin than the settings' now.
    */
-  async missingSecrets(id: string): Promise<string[]> {
+  missingSecrets(id: string): Promise<string[]> {
     const source = this.require(id);
-    const { services, type } = this.ready(source.sourceType);
-    const stored = await loadSourceSecrets(services, id, type, source.settings);
-    return missingSecretKeys(type.settings, source.settings, stored);
+    return missingSecrets(source, this.ready(source.sourceType));
   }
 
   /** The file and folder settings this device has no path for (pick them again here). */
-  async missingFiles(id: string): Promise<string[]> {
+  missingFiles(id: string): Promise<string[]> {
     const source = this.require(id);
-    const { services, type } = this.ready(source.sourceType);
-    const paths = await loadFilePaths(services, id, type.settings, source.settings);
-    return type.settings.flatMap((spec) =>
-      holdsDevicePath(spec) && source.settings[spec.key] && !paths[spec.key] ? [spec.key] : [],
-    );
+    return missingFiles(source, this.ready(source.sourceType));
   }
 
   /** The last failed Update's message on this device, `null` once one succeeds. */

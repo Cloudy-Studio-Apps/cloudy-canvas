@@ -16,3 +16,4 @@ export { bindingWrite, isImageBinding, writePatch, writtenFields } from "./bindi
 export { readValue } from "./read-value";
 export { sameValue } from "./same-value";
 export { BOUND_TEXT_TEMPLATE } from "./bound-text-template";
+export { renameReferences } from "./rename-references";
