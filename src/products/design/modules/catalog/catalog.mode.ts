@@ -91,6 +91,7 @@ export const catalogMode = defineDesignMode({
     tabs: [
       { id: "brochure", label: t("mode.brochureTab"), icon: BookOpen, component: BrochureTab },
     ],
+    keep: ["data"],
   },
   sidebar: CatalogSidebar,
   overlays: [BrochureCanvasLayer, BrochurePreview],

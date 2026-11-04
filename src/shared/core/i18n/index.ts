@@ -4,6 +4,7 @@ export type * from "./i18n.types";
 export { tCommon } from "./common/common.i18n";
 export { getLocale, setLocale } from "./current-locale";
 export { defineMessages } from "./define-messages";
+export { relativeTime } from "./relative-time";
 export {
   DEFAULT_LOCALE,
   isLocale,

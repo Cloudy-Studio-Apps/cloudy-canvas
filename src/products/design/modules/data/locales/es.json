@@ -1,6 +1,12 @@
 {
   "tab": {
-    "title": "Datos"
+    "title": "Datos",
+    "sources": "Fuentes",
+    "add": "Añadir fuente",
+    "empty": {
+      "title": "Aún no hay fuentes de datos",
+      "description": "Añade un archivo o un enlace con + para llenar las capas de este diseño con sus filas."
+    }
   },
   "sources": {
     "file": {
@@ -28,6 +34,81 @@
     },
     "json": {
       "label": "JSON"
+    }
+  },
+  "source": {
+    "new": "Nueva fuente: {type}",
+    "back": "Volver a las fuentes",
+    "settings": "Ajustes",
+    "create": "Crear y actualizar",
+    "createFailed": "No se pudo crear la fuente",
+    "saveFailed": "No se pudieron guardar los ajustes",
+    "unknownType": "Esta fuente viene de \"{type}\", que no está instalado aquí.",
+    "rows_one": "{count} fila",
+    "rows_other": "{count} filas",
+    "neverUpdated": "Nunca actualizada",
+    "updatedAgo": "actualizada {time}",
+    "updatedNow": "actualizada ahora mismo",
+    "needsKey": "Necesita una clave en este dispositivo",
+    "needsKeyHint": "Este dispositivo no tiene todas las claves que necesita esta fuente. Escríbelas aquí para actualizarla.",
+    "secretStored": "Guardada en este dispositivo",
+    "secretEmpty": "Sin definir",
+    "secretForget": "Olvidar la clave guardada",
+    "pickFile": "Elegir un archivo de datos",
+    "dataFiles": "Archivos de datos",
+    "pickFailed": "No se pudo abrir el archivo",
+    "noFile": "Ningún archivo elegido",
+    "chooseFile": "Elegir…",
+    "pairName": "Nombre",
+    "pairValue": "Valor",
+    "pairRemove": "Quitar",
+    "pairAdd": "Añadir",
+    "format": "Leer como",
+    "formatAuto": "Automático",
+    "formatTitle": "Formato",
+    "remove": "Quitar fuente",
+    "removeTitle": "¿Quitar «{name}»?",
+    "removeMessage": "Deshacer devuelve la fuente, pero las claves guardadas para ella en este dispositivo se borran.",
+    "removeFailed": "No se pudo quitar la fuente",
+    "table": {
+      "title": "Filas",
+      "empty": "Aún no hay filas. Actualiza la fuente para leer sus datos.",
+      "showing": "Mostrando {shown} de {count} filas"
+    }
+  },
+  "fields": {
+    "title": "Campos",
+    "empty": "Aún no hay campos. Actualiza la fuente para encontrarlos.",
+    "hidden": "Oculto",
+    "alias": "Nombre",
+    "aliasPlaceholder": "Igual que la ruta",
+    "type": "Tipo",
+    "types": {
+      "text": "Texto",
+      "integer": "Número entero",
+      "number": "Número",
+      "currency": "Moneda",
+      "boolean": "Sí / no",
+      "date": "Fecha",
+      "color": "Color",
+      "url": "Enlace",
+      "imageUrl": "Enlace de imagen",
+      "imageBase64": "Imagen incrustada",
+      "imageFile": "Archivo de imagen",
+      "list": "Lista",
+      "object": "Objeto"
+    }
+  },
+  "update": {
+    "run": "Actualizar",
+    "all": "Actualizar todo",
+    "allRunning": "Actualizando todas las fuentes",
+    "cancelHint": "Haz clic para cancelar",
+    "failed": "No se pudo actualizar «{name}»",
+    "stage": {
+      "fetching": "Obteniendo los datos…",
+      "parsing": "Leyendo los datos…",
+      "saving": "Guardando…"
     }
   }
 }

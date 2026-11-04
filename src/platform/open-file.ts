@@ -18,5 +18,5 @@ export async function openFile(pick: OpenFilePick): Promise<OpenedFile | null> {
   });
   if (!path) return null;
   const name = path.split(/[\\/]/).pop() ?? path;
-  return { name, bytes: await readFile(path) };
+  return { name, path, bytes: await readFile(path) };
 }

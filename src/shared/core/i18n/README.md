@@ -38,7 +38,8 @@ user's choice (`shared/stores/locale-store.ts`: `system`, `en` or `es`) and `nav
 English). A change in Settings › Language applies after Restart now (which saves, then reloads the window) or on the next launch, so `t()` is a plain function:
 engine code and top-level constants (a module's command labels) can call it, and nothing
 re-renders. `t()` before `setLocale` shows English and warns once in dev. `getLocale()` gives the
-locale to `Intl` formatters.
+locale to `Intl` formatters; `relativeTime(time)` words how long ago a time was in it ("3 days
+ago"; `null` under a minute, which the caller words).
 
 ## Product names and default names
 
