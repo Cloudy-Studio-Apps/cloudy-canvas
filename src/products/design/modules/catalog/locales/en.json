@@ -32,7 +32,6 @@
       "new": "New brochure"
     },
     "pickFrames": "Pick frames",
-    "addBlank": "Add a blank page",
     "pages": "Brochure pages",
     "blank": {
       "title": "Blank page",
@@ -61,7 +60,15 @@
     "noBrochure": "No brochure on this page",
     "noBrochureHint": "A brochure prints this page's frames in the order you choose. A page can hold several, e.g. one per season or language.",
     "dragCount": "{count} pages",
-    "selected": "{count} selected"
+    "selected": "{count} selected",
+    "add": {
+      "title": "Add",
+      "blank": "Blank page",
+      "section": "New section",
+      "blankAfter": "Blank page after this one",
+      "sectionAfter": "New section after this one",
+      "endSection": "Remove the section starting here"
+    }
   },
   "export": {
     "label": "PDF document",

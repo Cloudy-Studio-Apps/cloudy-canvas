@@ -3,14 +3,13 @@ import { ListChecks } from "lucide-react";
 
 import { DragGhost, useRowDrag } from "@canvas-ui";
 import { CATALOG_PICK_TOOL } from "../../mode/catalog-mode.constants";
-import { paperSize } from "../../model/paper-size";
 import type { BookSide } from "../../model/book-layout.types";
-import { PanelAddButton, PanelIconButton } from "@design/ui/components/panel";
+import { PanelIconButton } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useBrochure } from "../hooks/use-brochure";
 import { useCatalogSelection } from "../hooks/use-catalog-selection";
 import { usePageListSelection } from "../hooks/use-page-list-selection";
-import { addBlankPage } from "../page-actions";
+import { AddPageMenu } from "./add-page-menu";
 import { BlankPageRow } from "./blank-page-row";
 import { BrochureEmpty } from "./brochure-empty";
 import { BrochurePageRow } from "./brochure-page-row";
@@ -19,9 +18,11 @@ import { dropId, dropPosition, dropsBackCover, parseDropId } from "./drop-positi
 import { ListEndDrop } from "./list-end-drop";
 import { MastersSection } from "./masters-section";
 import { NoBrochure } from "./no-brochure";
+import { PagesListMenu } from "./pages-list-menu";
 import { SectionHeadingRow } from "./section-heading-row";
 import { SpreadHeadingRow } from "./spread-heading-row";
 import { spreadLabel } from "./spread-label";
+import { useAddPageEntries } from "./use-add-page-entries";
 import { t } from "../../catalog.i18n";
 
 /**
@@ -31,7 +32,8 @@ import { t } from "../../catalog.i18n";
  * a page dropped on a blank page takes its place, on a spread's heading starts that spread (or is
  * the back cover), and after the last row goes last. Ctrl/⌘ and Shift + click select several
  * pages, which drag together (and move a place with Alt+↑/↓);
- * "Pick frames" ticks frames on the canvas and "+" adds a blank page the size of the last one.
+ * "Pick frames" ticks frames on the canvas; "+" and a right-click on the list add a blank page the
+ * size of the last one or a new section on one, and a right-click on a page adds them after it.
  * Its masters are listed above the pages, and a section's name above its first page.
  */
 export function BrochureTab() {
@@ -43,6 +45,7 @@ export function BrochureTab() {
   const book = settings.layout === "book";
   const sectionAt = new Map(sections.map((section) => [section.start, section]));
   const list = usePageListSelection(pages);
+  const adds = useAddPageEntries(last);
   const rowDrag = useRowDrag({
     // Pages, blank pages, spread headings and the list's end all take the dragged pages.
     onDrop: (id, overId, side) => {
@@ -126,38 +129,35 @@ export function BrochureTab() {
           >
             <ListChecks />
           </PanelIconButton>
-          {last && (
-            <PanelAddButton
-              label={t("tab.addBlank")}
-              onClick={() => addBlankPage(engine, last, paperSize(last).name ?? "Page")}
-            />
-          )}
+          {adds.length > 0 && <AddPageMenu entries={adds} />}
         </div>
       </header>
       {pages.length === 0 ? (
         <BrochureEmpty />
       ) : (
-        <ul
-          aria-label={t("tab.pages")}
-          className="flex min-h-0 flex-1 flex-col overflow-y-auto px-1.5 pb-2"
-        >
-          {layout.spreads.map((spread) => (
-            <Fragment key={spread.join("-")}>
-              {book && (
-                <SpreadHeadingRow
-                  label={spreadLabel(layout, spread)}
-                  rowDrag={rowDrag}
-                  dropId={dropId({ kind: "spread", first: spread[0] ?? 0 })}
-                />
-              )}
-              {spread.map((index) => {
-                const side = layout.sides[index];
-                return side ? row(side, index) : null;
-              })}
-            </Fragment>
-          ))}
-          <ListEndDrop rowDrag={rowDrag} />
-        </ul>
+        <PagesListMenu entries={adds}>
+          <ul
+            aria-label={t("tab.pages")}
+            className="flex min-h-0 flex-1 flex-col overflow-y-auto px-1.5 pb-2"
+          >
+            {layout.spreads.map((spread) => (
+              <Fragment key={spread.join("-")}>
+                {book && (
+                  <SpreadHeadingRow
+                    label={spreadLabel(layout, spread)}
+                    rowDrag={rowDrag}
+                    dropId={dropId({ kind: "spread", first: spread[0] ?? 0 })}
+                  />
+                )}
+                {spread.map((index) => {
+                  const side = layout.sides[index];
+                  return side ? row(side, index) : null;
+                })}
+              </Fragment>
+            ))}
+            <ListEndDrop rowDrag={rowDrag} />
+          </ul>
+        </PagesListMenu>
       )}
     </div>
   );

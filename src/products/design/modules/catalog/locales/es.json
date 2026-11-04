@@ -32,7 +32,6 @@
       "new": "Nuevo folleto"
     },
     "pickFrames": "Elegir marcos",
-    "addBlank": "Añadir una página en blanco",
     "pages": "Páginas del folleto",
     "blank": {
       "title": "Página en blanco",
@@ -61,7 +60,15 @@
     "noBrochure": "No hay folleto en esta página",
     "noBrochureHint": "Un folleto imprime los marcos de esta página en el orden que elijas. Una página puede tener varios, por ejemplo uno por temporada o idioma.",
     "dragCount": "{count} páginas",
-    "selected": "{count} seleccionadas"
+    "selected": "{count} seleccionadas",
+    "add": {
+      "title": "Añadir",
+      "blank": "Página en blanco",
+      "section": "Nueva sección",
+      "blankAfter": "Página en blanco después de esta",
+      "sectionAfter": "Nueva sección después de esta",
+      "endSection": "Quitar la sección que empieza aquí"
+    }
   },
   "export": {
     "label": "Documento PDF",

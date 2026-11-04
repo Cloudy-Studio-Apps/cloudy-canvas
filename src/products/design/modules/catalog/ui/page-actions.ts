@@ -2,6 +2,9 @@ import { DEFAULT_MODE, type Size } from "@canvas";
 import { createPresetFrame, type FrameElement } from "../../frame";
 import type { DesignEngine } from "../../../design-engine.types";
 import type { DesignNode } from "../../core";
+import { createId } from "@shared/core";
+import type { BrochureSection } from "../brochure";
+import type { DesignBrochure } from "../model/design-brochure";
 import { ensureBrochure } from "../model/current-brochure";
 import { replaceImageFill } from "../../image";
 import { chooseImageAsset } from "@canvas-ui";
@@ -21,15 +24,46 @@ export function editInDesign(engine: DesignEngine, frame: FrameElement): void {
 }
 
 /**
- * Adds a blank frame of `size` (named `label` and numbered) right of the page's content, as the
- * last page of the page's open brochure (made when there's none), in one undo step, and shows
- * it.
+ * Adds a blank frame of `size` (named `label` and numbered) right of the page's content, as a
+ * page of the page's open brochure (made when there's none) at `at` (default: the end), in one
+ * undo step, and shows it.
  */
-export function addBlankPage(engine: DesignEngine, size: Size, label: string): void {
-  const preset = { id: "brochure-page", group: "Paper", label, size };
-  const frame = createPresetFrame(preset, engine.doc, engine.elements());
-  ensureBrochure(engine).addNewPage(frame);
+export function addBlankPage(engine: DesignEngine, size: Size, label: string, at?: number): void {
+  const frame = blankFrame(engine, size, label);
+  ensureBrochure(engine).addNewPage(frame, at);
   engine.focusElement(frame.id);
+}
+
+/**
+ * Adds a blank page as `addBlankPage` does that starts a new section ("Section 4"), in one undo
+ * step, and shows it.
+ */
+export function addSectionPage(engine: DesignEngine, size: Size, label: string, at?: number): void {
+  const frame = blankFrame(engine, size, label);
+  const brochure = ensureBrochure(engine);
+  brochure.addNewSection(frame, nextSectionName(brochure.masters.sections()), at);
+  engine.focusElement(frame.id);
+}
+
+/** Starts a section at page `slotId` ("Section 4"), or ends the one starting there. */
+export function toggleSection(brochure: DesignBrochure, slotId: string): void {
+  const sections = brochure.masters.sections();
+  if (sections.some((section) => section.start === slotId)) {
+    brochure.masters.setSections(sections.filter((section) => section.start !== slotId));
+    return;
+  }
+  const section = { id: createId(), name: nextSectionName(sections), start: slotId };
+  brochure.masters.setSections([...sections, section]);
+}
+
+/** What a new section is called before it's renamed. */
+export function nextSectionName(sections: readonly BrochureSection[]): string {
+  return t("section.defaultName", { n: sections.length + 1 });
+}
+
+function blankFrame(engine: DesignEngine, size: Size, label: string): FrameElement {
+  const preset = { id: "brochure-page", group: "Paper", label, size };
+  return createPresetFrame(preset, engine.doc, engine.elements());
 }
 
 /**

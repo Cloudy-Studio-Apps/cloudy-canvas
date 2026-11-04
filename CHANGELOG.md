@@ -7,6 +7,9 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### New
 
+- In the Catalog mode, the pages list has a menu to add a blank page or a new section: from the
+  "+" button, by right-clicking the list, or by right-clicking a page to add them right after it.
+  The page's menu also starts or removes a section there and takes the page out of the brochure.
 - On touch screens, pinch with two fingers to zoom the canvas and drag with two fingers to move it,
   with any tool selected.
 - Brochures can have masters: a header and footer designed once, with a frame for left pages and

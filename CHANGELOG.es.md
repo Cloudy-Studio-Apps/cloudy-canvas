@@ -7,6 +7,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Novedades
 
+- En el modo Catálogo, la lista de páginas tiene un menú para añadir una página en blanco o una
+  sección nueva: desde el botón "+", con clic derecho en la lista o con clic derecho en una página
+  para añadirlas justo después. El menú de la página también empieza o quita una sección en ella y
+  la saca del folleto.
 - En pantallas táctiles, pellizca con dos dedos para hacer zoom en el lienzo y arrastra con dos dedos
   para moverlo, con cualquier herramienta seleccionada.
 - Los folletos pueden tener maestras: una cabecera y un pie diseñados una vez, con un marco para

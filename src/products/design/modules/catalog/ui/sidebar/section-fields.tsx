@@ -6,6 +6,7 @@ import type { BrochureSection } from "../../brochure/brochure.types";
 import { NumberField } from "@design/ui/components/panel";
 import { CheckboxField, Field, SelectField } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
+import { nextSectionName } from "../page-actions";
 import type { SectionFieldsProps } from "./sidebar.types";
 import { t } from "../../catalog.i18n";
 
@@ -42,7 +43,7 @@ export function SectionFields({ page }: SectionFieldsProps) {
       brochure.masters.setSections(sections.filter((item) => item.id !== section?.id));
       return;
     }
-    const name = t("section.defaultName", { n: sections.length + 1 });
+    const name = nextSectionName(sections);
     brochure.masters.setSections([...sections, { id: createId(), name, start: page.slot.id }]);
   };
 

@@ -1,4 +1,5 @@
 import type { CanvasDocument, ElementPatch, Point } from "@canvas";
+import { createId } from "@shared/core";
 
 import {
   BROCHURE_DEFAULTS,
@@ -92,6 +93,22 @@ export class DesignBrochure {
     this.doc.batch(() => {
       this.doc.add(frame);
       this.addPages([frame.id], at);
+    });
+  }
+
+  /**
+   * Adds a new frame to the design as a page at `at` (default: the end) that starts a section
+   * named `name`, in one undo step.
+   */
+  addNewSection(frame: FrameElement, name: string, at?: number): void {
+    this.doc.checkpoint();
+    this.doc.batch(() => {
+      this.doc.add(frame);
+      this.addPages([frame.id], at);
+      const slot = this.record()?.slots.find((item) => item.frames.includes(frame.id));
+      if (!slot) return;
+      const section = { id: createId(), name, start: slot.id };
+      this.masters.setSections([...this.masters.sections(), section]);
     });
   }
 
