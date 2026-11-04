@@ -9,6 +9,7 @@ import { CSV_FORMAT, JSON_FORMAT } from "./formats";
 import { FILE_SOURCE, HTTP_SOURCE } from "./sources";
 import { forgetRemovedSources } from "./model";
 import { syncData } from "./sync";
+import { prepareDataCopies, pruneData } from "./repeat";
 import { BOUND_TEXT_TEMPLATE } from "./bindings";
 import { textTemplates } from "../text";
 import { DataSourceKind } from "./source";
@@ -33,6 +34,8 @@ export const dataModule = defineModule({
   register(host) {
     host.contribute(designCanvas.kinds, new DataSourceKind());
     host.contribute(designCanvas.onRemove, forgetRemovedSources);
+    host.contribute(designCanvas.onRemove, pruneData);
+    host.contribute(designCanvas.prepareCopies, prepareDataCopies);
     host.contribute(designCanvas.afterEdit, (doc, change, kinds) => syncData(doc, change, kinds));
     // A bound text is edited as its template; the sync then writes what it shows.
     host.contribute(textTemplates, BOUND_TEXT_TEMPLATE);

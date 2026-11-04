@@ -3,22 +3,10 @@ import type { CanvasDocument, CanvasElement, ElementPatch } from "@canvas";
 import { isDesignNode, type DesignNode } from "../../core";
 import { readsUnreadable } from "../bindings";
 import { descendants } from "./descendants";
+import { freedPatch } from "./freed-patch";
 import { dataCopyTag, repeatOf } from "./repeat-fields";
 import { repeatRows } from "./repeat-rows";
 import { scopeAt } from "./scope-at";
-
-/** What a layer of a detached copy drops: its tag, its lock, and what data wrote into it. */
-function detachedPatch(el: CanvasElement): ElementPatch | null {
-  const raw = el as unknown as Record<string, unknown>;
-  const patch: Record<string, unknown> = {};
-  if (raw.dataCopy != null) patch.dataCopy = null;
-  if (raw.locked === true) patch.locked = false;
-  for (const field of ["dataText", "dataBindings", "dataVisible", "repeat"]) {
-    if (raw[field] != null) patch[field] = null;
-  }
-  if (raw.dataHideEmpty === true) patch.dataHideEmpty = false;
-  return Object.keys(patch).length > 0 ? (patch as ElementPatch) : null;
-}
 
 /**
  * Detaches an iterator's copy (`copyId`, its root or a layer in it), as one undo step: its key
@@ -67,7 +55,7 @@ export function detachDataCopy(doc: CanvasDocument, copyId: string): void {
 
   const patches = new Map<string, ElementPatch>();
   for (const layer of [root, ...descendants(doc, root.id)]) {
-    const patch = detachedPatch(layer);
+    const patch = freedPatch(layer);
     if (patch) patches.set(layer.id, patch);
   }
   const stored = (frame as unknown as Record<string, unknown>).repeat as Record<string, unknown>;

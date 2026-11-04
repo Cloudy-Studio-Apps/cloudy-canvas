@@ -14,6 +14,7 @@ import { dataSourcesIn, type DataSourceElement } from "../source";
 import { imageKey, readSnapshot } from "../update";
 import { affectedData } from "./affected-data";
 import { planLayer } from "./plan-layer";
+import { sweepOrphans } from "./sweep-orphans";
 import { syncIterators } from "./sync-iterators";
 
 /**
@@ -47,6 +48,8 @@ function picturesBySource(
  * are built once per run.
  */
 export function syncData(doc: CanvasDocument, change: EditedChange, kinds: ElementKinds): void {
+  // Copies that lost their iterator become ordinary layers.
+  sweepOrphans(doc, change);
   const affected = affectedData(doc, change);
   if (!affected.all && affected.nodes.length === 0 && affected.iterators.length === 0) return;
 

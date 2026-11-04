@@ -14,3 +14,6 @@ export { setRepeat } from "./set-repeat";
 export { detachDataCopy, detachedRowsGone } from "./detach-data-copy";
 export { renameReferences } from "./rename-references";
 export { iteratorNames } from "./iterator-names";
+export { pruneData } from "./prune-data";
+export { prepareDataCopies } from "./prepare-data-copies";
+export { freedPatch } from "./freed-patch";
