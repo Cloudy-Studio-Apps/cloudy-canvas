@@ -14,10 +14,13 @@ export function SourceIssues({ issues }: SourceIssuesProps) {
   return (
     <PanelSection title={t("issues.title")}>
       <ul className="flex flex-col gap-1.5">
-        {issues.map((issue, i) => {
+        {issues.map((issue) => {
           const { nodeId } = issue;
           return (
-            <li key={i} className="flex items-start gap-1 text-xs text-warning">
+            <li
+              key={`${issue.kind}:${issue.nodeId ?? ""}:${issue.detail}`}
+              className="flex items-start gap-1 text-xs text-warning"
+            >
               <TriangleAlert className="mt-0.5 size-3 shrink-0" />
               <span className="min-w-0 flex-1 break-words">{issueText(issue)}</span>
               {nodeId !== undefined && (

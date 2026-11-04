@@ -2,6 +2,7 @@ import type { CanvasDocument, CanvasElement, ElementPatch } from "@canvas";
 
 import { isDesignNode, type DesignNode } from "../../core";
 import { readsUnreadable } from "../bindings";
+import type { DataScope } from "../bindings";
 import { descendants } from "./descendants";
 import { freedPatch } from "./freed-patch";
 import { dataCopyTag, repeatOf } from "./repeat-fields";
@@ -73,11 +74,16 @@ export function detachDataCopy(doc: CanvasDocument, copyId: string): void {
  * The detached keys of an iterator whose rows are gone from its list (every row counted, as an
  * export makes them), for checks. None while its source can't be read here.
  */
-export function detachedRowsGone(doc: CanvasDocument, frameId: string): string[] {
+export function detachedRowsGone(
+  doc: CanvasDocument,
+  frameId: string,
+  /** The scope the frame reads, when the caller has it (else made here). */
+  known?: DataScope,
+): string[] {
   const frame = doc.get(frameId);
   const repeat = frame ? repeatOf(frame) : null;
   if (!repeat || repeat.detached.length === 0) return [];
-  const scope = scopeAt(doc, frameId);
+  const scope = known ?? scopeAt(doc, frameId);
   if (readsUnreadable(scope, repeat.source)) return [];
   const keys = new Set(repeatRows(repeat, scope, "export").rows.map((row) => row.key));
   return repeat.detached.filter((key) => !keys.has(key));

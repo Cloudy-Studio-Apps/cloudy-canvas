@@ -42,7 +42,7 @@ export function dataIssues(doc: CanvasDocument, options: DataIssueOptions = {}):
     if (sink.full()) break;
     if (limit && !limit.has(el.id)) continue;
     if (!isDesignNode(el)) continue;
-    if (isFrame(el) && repeatOf(el)) iteratorIssues(doc, el, scopes, sink);
+    if (isFrame(el) && repeatOf(el) && !dataCopyTag(el)) iteratorIssues(doc, el, scopes, sink);
     if (ctx && !dataCopyTag(el) && hasDataFields(el) && !isCatalogText(el)) {
       nodeIssues(el, scopes.scopeFor(el), ctx, sink);
     }

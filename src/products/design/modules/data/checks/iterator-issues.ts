@@ -29,7 +29,7 @@ export function iteratorIssues(
     sink.add({ kind: "copies-stacked", nodeId, sourceId, detail: String(rows.rows.length) });
   }
   if (repeat.detached.length > 0) {
-    const gone = detachedRowsGone(doc, nodeId);
+    const gone = detachedRowsGone(doc, nodeId, it.scope);
     if (gone.length > 0) {
       sink.add({ kind: "detached-row-gone", nodeId, sourceId, detail: gone.join(", ") });
     }
