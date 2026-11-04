@@ -19,6 +19,8 @@ The [phase 1 constraints](2026-11-04-data-merge-01-sources.md#global-constraints
 - Binding a field to data removes that field's variable binding (`el.bindings[path]`) in the same undo step, so the two syncs never fight. (Planning decision; the spec said data "overrides" the variable.)
 - `syncData` writes only differences, inside the edit's undo step, never a checkpoint of its own.
 - Texts with a catalog template (`catalogText`) are the catalog's: `syncData` never touches them.
+- **From the phase 1 review:** field paths can hold any key (`Product Name`, `unit-price`, accents). Pickers and `namesInScope` build expressions from `PathStep[]` with `["…"]` quoting (as `guessFields` writes them), never by joining strings; the token regex accepts `["…"]` steps. Aliases are display-only labels, never names in tokens.
+- **From the phase 1 review:** snapshot rows are frozen and shared: copy before sorting or filtering. `affectedData` ignores a data-source change that only touched `snapshot.updatedAt` (a no-op Update). `formatValue` never throws: bad formats fall back to the plain value.
 
 ## Review Focus
 

@@ -19,6 +19,7 @@ The earlier phases' constraints, plus:
 - Group sections are derived from the data at read time (`sectionsWithData`), not written into `record.sections`.
 - The export never adds pages to the user's document.
 - Data shown on brochure pages is formatted in the brochure's language (`brochureLanguage`).
+- **From the phase 1 review, before this phase ships:** snapshot assets pile up (every changed Update adds one and nothing deletes them). Add pruning of data-snapshot assets that no data-source record references, when the document is saved, or keep only the last snapshot per source; "Update the data first" on export makes this urgent.
 
 ## Review Focus
 
