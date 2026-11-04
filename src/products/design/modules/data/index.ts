@@ -10,3 +10,4 @@ export * from "./model";
 export { dataTools } from "./mcp";
 export * from "./bindings";
 export * from "./sync";
+export * from "./repeat";
