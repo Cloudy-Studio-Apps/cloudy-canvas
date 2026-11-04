@@ -99,3 +99,14 @@ export const POSITION_SCHEMA = {
   minimum: 1,
   description: "A page's position in the brochure, from 1 (`position` in get_brochure).",
 };
+
+/** The pages at the 1-based positions an agent gave (`positions`), checked, as slot ids. */
+export function readPositions(brochure: DesignBrochure, positions: readonly unknown[]): string[] {
+  if (positions.length === 0) throw new Error('"positions" is empty.');
+  const slots = positions.map((position, i) => {
+    const key = `positions[${i}]`;
+    return requirePagePosition(brochure, { [key]: position }, key).slot.id;
+  });
+  if (new Set(slots).size !== slots.length) throw new Error('"positions" repeats a page.');
+  return slots;
+}

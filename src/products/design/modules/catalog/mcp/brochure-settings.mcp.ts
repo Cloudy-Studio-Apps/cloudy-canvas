@@ -1,6 +1,8 @@
 import {
+  asUndoStep,
   exportPath,
   optionalBoolean,
+  optionalRecord,
   optionalChoice,
   optionalNumber,
   optionalString,
@@ -15,10 +17,13 @@ import {
 } from "../brochure";
 import { exportBrochure, printedPages, storePrintProfile } from "../export";
 import { BROCHURE_SCHEMA, readBrochure } from "./brochure-args";
+import { readMaster } from "./master-args";
 
 const PDF_MODES = ["sharp", "flattened"] as const;
 const COLOR_MODES = ["rgb", "cmyk"] as const;
 const RENDERING_INTENTS = ["relative", "perceptual"] as const;
+const NUMBER_STYLES = ["arabic", "roman-lower", "roman-upper"] as const;
+const COVER_NUMBERINGS = ["numbered", "hidden", "uncounted"] as const;
 
 /** How the brochure prints, and its PDF. */
 export const brochureSettingsTools: DesignMcpTool[] = [
@@ -41,7 +46,11 @@ export const brochureSettingsTools: DesignMcpTool[] = [
       "brochure's frames out on the canvas and keeps them so after every brochure edit " +
       "(`below`: printed pages in a row by spread, the other options under each; `beside`: a " +
       "spread per row, options to the side; `off`, the default, leaves them where they are); " +
-      "other layers in the way are moved up or down.",
+      "other layers in the way are moved up or down. Masters and numbering: `numbering` (`start`, " +
+      "the first page's number; `style`, `arabic`, `roman-lower` or `roman-upper`; `covers`, " +
+      "`numbered`, `hidden` (counted, not written: the default) or `uncounted`), " +
+      "`defaultMaster` (the master pages show unless they pick one: a master's id, or null for " +
+      "none) and `mastersOnCovers` (whether covers show their master too).",
     inputSchema: {
       type: "object",
       required: ["brochure"],
@@ -58,6 +67,16 @@ export const brochureSettingsTools: DesignMcpTool[] = [
         renderingIntent: { enum: RENDERING_INTENTS },
         printProfilePath: { type: "string" },
         arrange: { enum: BROCHURE_ARRANGES },
+        numbering: {
+          type: "object",
+          properties: {
+            start: { type: "number", minimum: 0 },
+            style: { enum: NUMBER_STYLES },
+            covers: { enum: COVER_NUMBERINGS },
+          },
+        },
+        defaultMaster: { type: ["string", "null"] },
+        mastersOnCovers: { type: "boolean" },
         brochure: BROCHURE_SCHEMA,
       },
     },
@@ -79,6 +98,18 @@ export const brochureSettingsTools: DesignMcpTool[] = [
       if (bleed !== undefined && bleed < 0) throw new Error('"bleed" must be 0 or more.');
       if (margin !== undefined && margin < 0) throw new Error('"margin" must be 0 or more.');
       if (dpi !== undefined && (dpi < 36 || dpi > 600)) throw new Error('"dpi" must be 36–600.');
+      const numbering = optionalRecord(args, "numbering");
+      const start = numbering && optionalNumber(numbering, "start");
+      if (start !== undefined && start < 0) throw new Error('"numbering.start" must be 0 or more.');
+      const style = numbering && optionalChoice(numbering, "style", NUMBER_STYLES);
+      const coverNumbers = numbering && optionalChoice(numbering, "covers", COVER_NUMBERINGS);
+      const mastersOnCovers = optionalBoolean(args, "mastersOnCovers");
+      const defaultMaster =
+        args.defaultMaster === null
+          ? null
+          : "defaultMaster" in args
+            ? readMaster(brochure, args, "defaultMaster").id
+            : undefined;
       const patch: Partial<BrochureSettings> = {};
       if (profilePath) {
         patch.printProfile = await storePrintProfile(engine, await host.readFile(profilePath));
@@ -95,7 +126,15 @@ export const brochureSettingsTools: DesignMcpTool[] = [
       if (colorMode !== undefined) patch.colorMode = colorMode;
       if (renderingIntent !== undefined) patch.renderingIntent = renderingIntent;
       if (arrange !== undefined) patch.arrange = arrange;
-      brochure.setSettings(patch);
+      if (numbering) {
+        patch.numbering = { ...brochure.settings().numbering };
+        if (start !== undefined) patch.numbering.start = Math.round(start);
+        if (style !== undefined) patch.numbering.style = style;
+        if (coverNumbers !== undefined) patch.numbering.covers = coverNumbers;
+      }
+      if (defaultMaster !== undefined) patch.defaultMaster = defaultMaster;
+      if (mastersOnCovers !== undefined) patch.mastersOnCovers = mastersOnCovers;
+      asUndoStep(engine.doc, () => brochure.setSettings(patch));
       return { settings: brochure.settings() };
     },
   },

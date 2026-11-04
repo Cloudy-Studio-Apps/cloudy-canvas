@@ -1,15 +1,7 @@
-import {
-  optionalBoolean,
-  optionalChoice,
-  optionalRecord,
-  optionalString,
-  type ToolArgs,
-} from "@canvas";
+import { asUndoStep, optionalRecord, optionalString } from "@canvas";
 
 import { requireDesign, type DesignMcpTool } from "../../../mcp";
-import type { DesignWorkspace } from "../../../design-engine.types";
-import { createPresetFrame, FRAME_PRESETS, findPreset, type FrameElement } from "../../frame";
-import type { DesignBrochure } from "../model";
+import { blankFrame, PAPER_PRESETS } from "./blank-frame";
 import {
   BROCHURE_SCHEMA,
   optionalPlace,
@@ -17,14 +9,11 @@ import {
   readBrochure,
   readPageFrames,
   readSlots,
+  readPositions,
   requirePagePosition,
 } from "./brochure-args";
 import { describeBrochure } from "./describe-brochure";
-
-/** The paper presets a blank page can be (the frame presets' Paper group). */
-const PAPER_PRESETS = FRAME_PRESETS.filter((preset) => preset.group === "Paper").map(
-  (preset) => preset.id,
-);
+import { PAGE_MASTER_SCHEMA, readPageMaster } from "./master-args";
 
 /** Changing a brochure's pages, page by page or all at once, each one undo step. */
 export const brochureEditTools: DesignMcpTool[] = [
@@ -102,19 +91,31 @@ export const brochureEditTools: DesignMcpTool[] = [
   {
     name: "move_brochure_page",
     description:
-      "Moves a page (by `position`, from 1) to position `to`, as dragging it in the page list " +
-      "does, in one undo step. Returns the brochure.",
+      "Moves a page (by `position`, from 1), or several (`positions`, kept in the brochure's " +
+      "order and moved together), so the first starts at position `to`, as dragging them in the " +
+      "page list does, in one undo step. Returns the brochure.",
     inputSchema: {
       type: "object",
-      required: ["brochure", "position", "to"],
-      properties: { position: POSITION_SCHEMA, to: POSITION_SCHEMA, brochure: BROCHURE_SCHEMA },
+      required: ["brochure", "to"],
+      properties: {
+        position: POSITION_SCHEMA,
+        positions: { type: "array", items: POSITION_SCHEMA },
+        to: POSITION_SCHEMA,
+        brochure: BROCHURE_SCHEMA,
+      },
     },
     run: async (host, args) => {
       const { engine } = requireDesign(host);
       const brochure = readBrochure(engine, args);
-      const page = requirePagePosition(brochure, args);
-      const to = requirePagePosition(brochure, args, "to");
-      brochure.move(page.slot.id, to.number - 1);
+      const slots = Array.isArray(args.positions)
+        ? readPositions(brochure, args.positions)
+        : [requirePagePosition(brochure, args).slot.id];
+      const room = brochure.pages().length - slots.length + 1;
+      const to = args.to;
+      if (typeof to !== "number" || to < 1 || to > room) {
+        throw new Error(`"to" must be a position from 1 to ${room}.`);
+      }
+      asUndoStep(engine.doc, () => brochure.moveMany(slots, Math.round(to) - 1));
       return describeBrochure(engine, brochure);
     },
   },
@@ -134,13 +135,8 @@ export const brochureEditTools: DesignMcpTool[] = [
     run: async (host, args) => {
       const { engine } = requireDesign(host);
       const brochure = readBrochure(engine, args);
-      const positions = Array.isArray(args.positions) ? args.positions : [];
-      if (positions.length === 0) throw new Error('"positions" is empty.');
-      const slots = positions.map((position, i) => {
-        const key = `positions[${i}]`;
-        return requirePagePosition(brochure, { [key]: position }, key).slot.id;
-      });
-      brochure.removePages(slots);
+      const slots = readPositions(brochure, Array.isArray(args.positions) ? args.positions : []);
+      asUndoStep(engine.doc, () => brochure.removePages(slots));
       return describeBrochure(engine, brochure);
     },
   },
@@ -149,15 +145,16 @@ export const brochureEditTools: DesignMcpTool[] = [
     description:
       "Sets a page's options (`frames`, top-level frames in the order they're listed; frames " +
       "taken from other pages leave them) and the one it prints (`chosen`, the first by " +
-      "default), in one undo step: adding, removing or choosing an alternative version. Returns " +
-      "the brochure.",
+      "default), and the master it shows (`master`), in one undo step: adding, removing or " +
+      "choosing an alternative version. Give `frames` or `master`, or both. Returns the brochure.",
     inputSchema: {
       type: "object",
-      required: ["brochure", "position", "frames"],
+      required: ["brochure", "position"],
       properties: {
         position: POSITION_SCHEMA,
         frames: { type: "array", items: { type: "string" } },
         chosen: { type: "string" },
+        master: PAGE_MASTER_SCHEMA,
         brochure: BROCHURE_SCHEMA,
       },
     },
@@ -165,35 +162,19 @@ export const brochureEditTools: DesignMcpTool[] = [
       const { engine } = requireDesign(host);
       const brochure = readBrochure(engine, args);
       const page = requirePagePosition(brochure, args);
-      const frames = readPageFrames(engine, brochure, args, "frames");
-      if (frames.length === 0) throw new Error('"frames" is empty.');
+      const master = readPageMaster(brochure, args);
+      const frames = "frames" in args ? readPageFrames(engine, brochure, args, "frames") : null;
+      if (frames?.length === 0) throw new Error('"frames" is empty.');
+      if (!frames && !master.given) throw new Error('Give "frames" or "master".');
       const chosen = optionalString(args, "chosen");
-      if (chosen !== undefined && !frames.includes(chosen)) {
+      if (chosen !== undefined && !frames?.includes(chosen)) {
         throw new Error(`"chosen" isn't one of "frames".`);
       }
-      brochure.setOptions(page.slot.id, frames, chosen);
+      asUndoStep(engine.doc, () => {
+        if (frames) brochure.setOptions(page.slot.id, frames, chosen);
+        if (master.given) brochure.masters.setPageMaster([page.slot.id], master.master);
+      });
       return describeBrochure(engine, brochure);
     },
   },
 ];
-
-/** A new empty page frame for `add_brochure_pages`: a paper preset, or the last page's size. */
-function blankFrame(
-  engine: DesignWorkspace,
-  brochure: DesignBrochure,
-  blank: ToolArgs,
-): FrameElement {
-  if (engine.scope !== brochure.page) {
-    throw new Error("Blank pages are added on your design page: switch_page to the brochure's.");
-  }
-  const presetId = optionalChoice(blank, "preset", PAPER_PRESETS);
-  const preset = presetId === undefined ? undefined : findPreset(presetId);
-  const last = brochure.pages().at(-1)?.frame;
-  const size = preset?.size ?? (last ? { w: last.w, h: last.h } : findPreset("a4")?.size);
-  if (!size) throw new Error('Give "blank.preset".');
-  const landscape = preset !== undefined && optionalBoolean(blank, "landscape") === true;
-  const label = `${preset?.label ?? "Page"}${landscape ? " landscape" : ""}`;
-  const shaped = landscape ? { w: Math.max(size.w, size.h), h: Math.min(size.w, size.h) } : size;
-  const page = { id: "brochure-page", group: "Paper", label, size: shaped };
-  return createPresetFrame(page, engine.doc, engine.elements());
-}
