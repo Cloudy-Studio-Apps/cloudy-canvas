@@ -38,6 +38,7 @@ plugins' modules leave it unset. `scripts/check-modules.mjs` reads it.
 | `pages`                                                                                                  | Core    | every node has `pageId`; the design's `scopes`                                    |
 | `layers`                                                                                                 | Core    | the Layers tab (`layersTabSections`) and the tree-move rules                      |
 | `frame`                                                                                                  | Core    | containers and clipping; auto layout, section, catalog and styleguide require it  |
+| `data`                                                                                                   | Core    | data sources, bindings and iterators; the `dataSourceTypes`/`dataFormats` points  |
 | `group`                                                                                                  | Core    | child hosts; mask and sticker require it; the Figma import                        |
 | `text`                                                                                                   | Core    | text styles, fonts, outlines; the Figma import                                    |
 | `vector`                                                                                                 | Core    | booleans, Flatten, Outline stroke and the Figma import produce vectors            |

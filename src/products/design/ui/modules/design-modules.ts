@@ -9,6 +9,7 @@ import { booleanModule } from "@design/modules/boolean/boolean.module";
 import { catalogModule } from "@design/modules/catalog/catalog.module";
 import { colorWizardModule } from "@design/modules/color-wizard/color-wizard.module";
 import { coreModule } from "@design/modules/core/core.module";
+import { dataModule } from "@design/modules/data/data.module";
 import { effectsModule } from "@design/modules/effects/effects.module";
 import { ellipseModule } from "@design/modules/ellipse/ellipse.module";
 import { frameModule } from "@design/modules/frame/frame.module";
@@ -41,6 +42,7 @@ let modules: AppModule[] = [
   pagesModule,
   variablesModule,
   frameModule,
+  dataModule,
   // Before the modules whose `editElement` also takes frames (an image fill's crop): in its mode,
   // double-clicking a page designs it.
   catalogModule,
