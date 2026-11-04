@@ -89,6 +89,7 @@ export class DesignDataSources {
       sourceType: init.sourceType,
       settings: {},
       format: init.format,
+      formatOptions: init.formatOptions,
     });
     const settings = await writeSecrets(
       services,

@@ -39,6 +39,7 @@
   "source": {
     "new": "Nueva fuente: {type}",
     "back": "Volver a las fuentes",
+    "renameHint": "Doble clic para cambiar el nombre",
     "settings": "Ajustes",
     "create": "Crear y actualizar",
     "createFailed": "No se pudo crear la fuente",
@@ -52,6 +53,7 @@
     "needsKey": "Necesita una clave en este dispositivo",
     "needsKeyHint": "Este dispositivo no tiene todas las claves que necesita esta fuente. Escríbelas aquí para actualizarla.",
     "secretStored": "Guardada en este dispositivo",
+    "secretPending": "Se guardará en este dispositivo",
     "secretEmpty": "Sin definir",
     "secretForget": "Olvidar la clave guardada",
     "pickFile": "Elegir un archivo de datos",

@@ -8,7 +8,8 @@ export type SettingSpec =
       required?: boolean;
     }
   | { key: string; kind: "number"; label: string; min?: number; max?: number }
-  | { key: string; kind: "boolean"; label: string }
+  /** `default`: what it is while unset (off when left out). */
+  | { key: string; kind: "boolean"; label: string; default?: boolean }
   | { key: string; kind: "select"; label: string; options: { value: string; label: string }[] }
   /** Headers: name → value. */
   | { key: string; kind: "pairs"; label: string; secretValues?: boolean }

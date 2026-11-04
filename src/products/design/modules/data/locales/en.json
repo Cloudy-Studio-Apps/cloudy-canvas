@@ -39,6 +39,7 @@
   "source": {
     "new": "New {type} source",
     "back": "Back to sources",
+    "renameHint": "Double-click to rename",
     "settings": "Settings",
     "create": "Create and update",
     "createFailed": "Couldn't create the source",
@@ -52,6 +53,7 @@
     "needsKey": "Needs a key on this device",
     "needsKeyHint": "This device doesn't have every key this source needs. Type them here to update it.",
     "secretStored": "Saved on this device",
+    "secretPending": "Will be saved on this device",
     "secretEmpty": "Not set",
     "secretForget": "Forget the saved key",
     "pickFile": "Choose a data file",

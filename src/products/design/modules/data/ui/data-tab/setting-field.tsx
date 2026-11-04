@@ -56,7 +56,13 @@ export function SettingField({ spec, value, stored, onChange, onFilePicked }: Se
         </Field>
       );
     case "boolean":
-      return <SwitchField label={spec.label} checked={value !== false} onChange={onChange} />;
+      return (
+        <SwitchField
+          label={spec.label}
+          checked={typeof value === "boolean" ? value : (spec.default ?? false)}
+          onChange={onChange}
+        />
+      );
     case "select":
       return (
         <SelectField
@@ -79,6 +85,13 @@ export function SettingField({ spec, value, stored, onChange, onFilePicked }: Se
         />
       );
     case "secret":
-      return <SecretField spec={spec} stored={stored.has(spec.key)} onChange={onChange} />;
+      return (
+        <SecretField
+          spec={spec}
+          stored={stored.has(spec.key)}
+          pending={typeof value === "string" && value !== ""}
+          onChange={onChange}
+        />
+      );
   }
 }

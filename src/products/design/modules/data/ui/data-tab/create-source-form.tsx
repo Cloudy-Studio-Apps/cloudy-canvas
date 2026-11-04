@@ -33,8 +33,8 @@ export function CreateSourceForm({ sourceType, onCreated, onCancel }: CreateSour
         sourceType: sourceType.id,
         settings: values,
         format,
+        formatOptions: options,
       });
-      if (Object.keys(options).length > 0) sources.setFormat(source.id, format, options);
       onCreated(source.id);
       startUpdate(sources, source.id);
     } catch (error) {

@@ -31,7 +31,9 @@ export function SourceSections({ source, sourceType, onRemoved }: SourceSections
       notifyError(t("source.saveFailed"), error);
     });
   };
+  // "Automatic" stays automatic: it reads the new file's extension by itself.
   const proposeFormat = (name: string) => {
+    if (source.format === "auto") return;
     const format = detectFormat({ fileName: name }, formats);
     if (format && format.id !== source.format) sources.setFormat(source.id, format.id, {});
   };

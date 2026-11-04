@@ -6,5 +6,6 @@ export interface DataSourceInit {
   settings: Record<string, SettingValue>;
   secrets?: Record<string, string>;
   format?: string;
+  formatOptions?: Record<string, SettingValue>;
   name?: string;
 }

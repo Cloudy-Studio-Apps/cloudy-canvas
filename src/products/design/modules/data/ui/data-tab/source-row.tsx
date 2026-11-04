@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { KeyRound } from "lucide-react";
 
 import { useService } from "@canvas-ui";
-import { LayerName } from "../../../layers/ui";
 import { DESIGN_DATA_SOURCES } from "../../model";
 import { useSourceSecrets } from "../hooks/use-source-secrets";
 import { useUpdateSource } from "../hooks/use-update-source";
@@ -13,7 +11,7 @@ import { UpdateButton } from "./update-button";
 import { t } from "../../data.i18n";
 
 /**
- * One source: its type's icon, its name (a double-click renames it), its rows and when it was
+ * One source: its type's icon, its name (renamed in its detail), its rows and when it was
  * updated (the stage while an Update runs), the last Update's error and whether this device lacks
  * a key it needs, and Update. A click opens its detail.
  */
@@ -21,7 +19,6 @@ export function SourceRow({ source, sourceType, onOpen }: SourceRowProps) {
   const sources = useService(DESIGN_DATA_SOURCES);
   const update = useUpdateSource(source.id);
   const { missing } = useSourceSecrets(source);
-  const [editing, setEditing] = useState(false);
   const error = sources.error(source.id);
 
   return (
@@ -43,20 +40,7 @@ export function SourceRow({ source, sourceType, onOpen }: SourceRowProps) {
             name={sourceType?.icon ?? ""}
             className="size-3.5 shrink-0 text-muted-foreground"
           />
-          <span
-            className="flex min-w-0 flex-1"
-            onDoubleClick={(event) => {
-              event.stopPropagation();
-              setEditing(true);
-            }}
-          >
-            <LayerName
-              name={source.name}
-              editing={editing}
-              onRename={(name) => sources.rename(source.id, name)}
-              onDone={() => setEditing(false)}
-            />
-          </span>
+          <span className="ml-1 min-w-0 flex-1 truncate">{source.name}</span>
           <span className="shrink-0" onClick={(event) => event.stopPropagation()}>
             <UpdateButton
               stage={update.stage}

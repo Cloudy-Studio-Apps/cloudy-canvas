@@ -34,6 +34,8 @@ export function DataTab() {
     );
   }
   const open = view.kind === "detail" ? sources.find((s) => s.id === view.id) : undefined;
+  // The open source went away (undo, an agent): back to the list.
+  if (view.kind === "detail" && !open) setView({ kind: "list" });
   if (open) {
     return (
       <SourceDetail

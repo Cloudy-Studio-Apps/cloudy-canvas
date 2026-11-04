@@ -1,4 +1,9 @@
+import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
+
+import { useService } from "@canvas-ui";
+import { LayerName } from "../../../layers/ui";
+import { DESIGN_DATA_SOURCES } from "../../model";
 
 import { IconButton } from "@shared/ui/kit";
 import { SourceIcon } from "../source-icon";
@@ -8,9 +13,14 @@ import type { SourceDetailProps } from "./source-detail.types";
 import { SourceUpdateButton } from "./source-update-button";
 import { t } from "../../data.i18n";
 
-/** A source's page in the tab (or a new one's form), with a back arrow to the list. */
+/**
+ * A source's page in the tab (or a new one's form), with a back arrow to the list; a double-click
+ * on the name renames the source.
+ */
 export function SourceDetail({ source, sourceType, onBack, onCreated }: SourceDetailProps) {
-  const title = source ? source.name : t("source.new", { type: sourceType?.label ?? "" });
+  const sources = useService(DESIGN_DATA_SOURCES);
+  const [editing, setEditing] = useState(false);
+  const title = t("source.new", { type: sourceType?.label ?? "" });
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -22,7 +32,22 @@ export function SourceDetail({ source, sourceType, onBack, onCreated }: SourceDe
           name={sourceType?.icon ?? ""}
           className="size-3.5 shrink-0 text-muted-foreground"
         />
-        <h2 className="min-w-0 flex-1 truncate text-xs font-semibold text-foreground">{title}</h2>
+        {source ? (
+          <h2
+            className="flex min-w-0 flex-1 text-xs font-semibold text-foreground"
+            title={t("source.renameHint")}
+            onDoubleClick={() => setEditing(true)}
+          >
+            <LayerName
+              name={source.name}
+              editing={editing}
+              onRename={(name) => sources.rename(source.id, name)}
+              onDone={() => setEditing(false)}
+            />
+          </h2>
+        ) : (
+          <h2 className="min-w-0 flex-1 truncate text-xs font-semibold text-foreground">{title}</h2>
+        )}
         {source && <SourceUpdateButton sourceId={source.id} />}
       </header>
       {source ? (

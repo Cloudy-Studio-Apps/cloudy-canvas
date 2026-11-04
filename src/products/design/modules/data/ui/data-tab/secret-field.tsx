@@ -10,7 +10,7 @@ import { t } from "../../data.i18n";
  * A secret (an API key): never shown, only replaced. Empty, it says whether this device has one;
  * a typed value is saved on the device when it commits, and × forgets the saved one.
  */
-export function SecretField({ spec, stored, onChange }: SecretFieldProps) {
+export function SecretField({ spec, stored, pending, onChange }: SecretFieldProps) {
   // A new key per commit empties the field again: the value is never shown back.
   const [round, setRound] = useState(0);
   return (
@@ -23,7 +23,13 @@ export function SecretField({ spec, stored, onChange }: SecretFieldProps) {
             type="password"
             autoComplete="off"
             value=""
-            placeholder={stored ? t("source.secretStored") : t("source.secretEmpty")}
+            placeholder={
+              pending
+                ? t("source.secretPending")
+                : stored
+                  ? t("source.secretStored")
+                  : t("source.secretEmpty")
+            }
             onCommit={(next) => {
               if (next !== "") onChange(next);
               setRound((n) => n + 1);

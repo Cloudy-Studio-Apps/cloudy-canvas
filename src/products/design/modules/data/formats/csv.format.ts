@@ -41,7 +41,12 @@ export const CSV_FORMAT: DataFormat = {
           { value: "|", label: t("formats.csv.delimiterPipe") },
         ],
       },
-      { key: "header", kind: "boolean" as const, label: t("formats.csv.header") },
+      {
+        key: "header",
+        kind: "boolean" as const,
+        label: t("formats.csv.header"),
+        default: true,
+      },
     ];
   },
   sniff(raw) {
