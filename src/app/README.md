@@ -12,6 +12,7 @@ A release shouldn't act like a browser page. `installBrowserGuard()` (`platform/
 - **Going to the background** runs `appLifecycle.onBackground` tasks (autosave, the preview picture), since Android may close the app without warning. They aren't quit tasks: those end live sessions, and the app usually comes back.
 - **The back button** (`back-button/`): closes what's open on top, else goes to Home, else leaves the app (`leave_app`).
 - **Signing:** release builds read their key from `src-tauri/gen/android/keystore.properties` (gitignored; copy `keystore.properties.example` next to it: `storeFile`, `storePassword`, `keyAlias`, `keyPassword`), set in `app/build.gradle.kts`; without it they come out unsigned. The keystore itself lives outside the repo, and losing it means no more updates to installed apps.
+- **Crash symbols:** `pnpm release:play` builds the Rust libraries unstripped (`CARGO_PROFILE_RELEASE_STRIP=false`, overriding `strip = true` in `Cargo.toml`) and the release build type sets `debugSymbolLevel = "SYMBOL_TABLE"`, so the `.aab` carries the native symbols Play uses to name functions in crash and ANR reports. Gradle still strips the libraries it installs.
 - **Not there yet:** opening files from other apps. A file manager rarely sends a `.cboard` with the type the manifest's intent filters ask for.
 
 ## Startup

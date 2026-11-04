@@ -59,6 +59,9 @@ android {
         }
         getByName("release") {
             signingConfigs.findByName("release")?.let { signingConfig = it }
+            // Puts the native symbols in the .aab for Play's crash reports (the libraries it ships
+            // stay stripped). Needs unstripped Rust libraries: `pnpm release:play` builds them.
+            ndk { debugSymbolLevel = "SYMBOL_TABLE" }
             optimization {
                enable = true
             }

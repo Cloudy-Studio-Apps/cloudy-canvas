@@ -16,7 +16,7 @@
     "release:win:native": "tauri build --bundles nsis msi",
     "release:mac": "tauri build --target universal-apple-darwin --bundles app,dmg",
     "release:android": "tauri android build --apk",
-    "release:play": "tauri android build --aab",
+    "release:play": "CARGO_PROFILE_RELEASE_STRIP=false tauri android build --aab",
     "release:tag": "node scripts/release-tag.mjs",
     "android:dev": "tauri android dev",
     "lint": "eslint . && node scripts/check-modules.mjs && node scripts/check-locales.mjs && node scripts/check-public-api.mjs && node scripts/changelog/check-changelog.mjs",
