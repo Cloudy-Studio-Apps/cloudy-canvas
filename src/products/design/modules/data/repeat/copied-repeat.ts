@@ -5,11 +5,12 @@ const isObject = (v: unknown): v is Record<string, unknown> =>
   v !== null && typeof v === "object" && !Array.isArray(v);
 
 /**
- * The `repeat` a copy of an iterator inside a template takes: its template layer's, with its own
- * `detached` (empty in a fresh copy: a copy has detached nothing yet) and its `template` naming
- * the copy of the inner template (`templateCopy`, when there is one), so each copied iterator
- * repeats its own child. `null` when the template layer's `repeat` isn't a record (it's mirrored
- * as any field is).
+ * The `repeat` a copy of an iterator inside a template takes: its template layer's as it is,
+ * `detached` included (the template's detached copies are template content, which comes along
+ * in each outer copy as plain layers, so their rows must stay detached there too), with its
+ * `template` naming the copy of the inner template (`templateCopy`; else the copy's own, else the
+ * template's), so each copied iterator repeats its own child. `null` when the template layer's
+ * `repeat` isn't a record (it's mirrored as any field is).
  */
 export function copiedRepeat(
   templateRepeat: unknown,
@@ -17,9 +18,7 @@ export function copiedRepeat(
   templateCopy: string | undefined,
 ): Record<string, unknown> | null {
   if (!isObject(templateRepeat)) return null;
-  const detached =
-    isObject(copyRepeat) && Array.isArray(copyRepeat.detached) ? copyRepeat.detached : [];
-  const out: Record<string, unknown> = { ...templateRepeat, detached };
+  const out: Record<string, unknown> = { ...templateRepeat };
   if (templateCopy) out.template = templateCopy;
   else if (isObject(copyRepeat) && typeof copyRepeat.template === "string") {
     out.template = copyRepeat.template;
@@ -35,8 +34,7 @@ export function repeatField(node: object): Record<string, unknown> | null {
 
 /**
  * Gives each copied iterator of one row's copy its own `repeat` (`copiedRepeat`): its template
- * layer's, with the copy's `detached` (none in a fresh copy) and `template` naming the copy of the
- * inner template. A fresh copy takes it as it's added; a kept one is patched only when it differs.
+ * layer's, `detached` mirrored, with `template` naming the copy of the inner template. A fresh copy takes it as it's added; a kept one is patched only when it differs.
  */
 export function copiedIterators(
   parts: readonly DesignNode[],

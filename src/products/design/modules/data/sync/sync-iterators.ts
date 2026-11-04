@@ -3,7 +3,7 @@ import type { CanvasDocument, ElementPatch } from "@canvas";
 import type { DesignNode } from "../../core";
 import { isFrame } from "../../frame";
 import type { BindingContext } from "../bindings";
-import { emptyCopyPlan, planDataCopies, repeatOf, writeDataCopies } from "../repeat";
+import { dataCopyTag, emptyCopyPlan, planDataCopies, repeatOf, writeDataCopies } from "../repeat";
 import type { DataScopes } from "../repeat";
 import { planLayer } from "./plan-layer";
 
@@ -78,9 +78,13 @@ function syncIterator(
   for (let el = stack.pop(); el; el = stack.pop()) {
     const patch = planLayer(el, undefined, true, scopes.scopeFor(el), ctx);
     if (patch) patches.set(el.id, patch);
-    // An iterator inside fills its own children, in its own turn.
-    if (repeatOf(el)) nested.push(el.id);
-    else stack.push(...scopes.children(el.id));
+    // An iterator inside fills its own children, in its own turn; so does a frame that stopped
+    // repeating but still holds its copies (a copied iterator whose template's repeat went), whose
+    // turn removes them.
+    const kids = scopes.children(el.id);
+    if (repeatOf(el) || kids.some((kid) => dataCopyTag(kid)?.iterator === el.id)) {
+      nested.push(el.id);
+    } else stack.push(...kids);
   }
   if (patches.size > 0) doc.updateMany(patches);
   return nested;

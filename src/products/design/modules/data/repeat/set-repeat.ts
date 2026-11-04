@@ -1,6 +1,6 @@
 import type { CanvasDocument, ElementPatch } from "@canvas";
 
-import { isDesignNode, type DesignNode } from "../../core";
+import { isDesignNode, layoutOf, type DesignNode } from "../../core";
 import { isFrame } from "../../frame";
 import { checkRepeatRules, checkRepeatSource, freeRowName, rowNameProblem } from "./check-repeat";
 import { descendants } from "./descendants";
@@ -21,11 +21,19 @@ const OPTIONAL = ["key", "limit", "designLimit", "previewRow"] as const;
 
 /** Removes a frame's repeat and every copy it made (with what they hold), as one undo step. */
 function removeRepeat(doc: CanvasDocument, frameId: string): void {
-  const copies = doc
-    .all()
-    .filter(
-      (el) => isDesignNode(el) && el.parentId === frameId && dataCopyTag(el)?.iterator === frameId,
+  // Its copies, and those of its copies in outer copies (`source` is this frame), which the outer
+  // iterator's sync then takes the repeat from.
+  const all = doc.all();
+  const frames = new Set([
+    frameId,
+    ...all.filter((el) => dataCopyTag(el)?.source === frameId).map((el) => el.id),
+  ]);
+  const copies = all.filter((el) => {
+    const iterator = dataCopyTag(el)?.iterator;
+    return (
+      isDesignNode(el) && iterator !== undefined && el.parentId === iterator && frames.has(iterator)
     );
+  });
   const ids = new Set<string>();
   for (const copy of copies) {
     ids.add(copy.id);
@@ -47,7 +55,10 @@ function removeRepeat(doc: CanvasDocument, frameId: string): void {
  * placeholder, a source's name or the row name of an iterator around or inside it; the rules'
  * paths, ops and caps. A changed `as` renames what reads it under the frame (and the repeat's own
  * row paths) in the same step. With `addLayout`, a frame without an auto layout gets a wrapping
- * row. `null` removes the repeat and its copies; the sync writes the copies otherwise.
+ * row. `null` removes the repeat and its copies (and those of its copies in outer copies); the
+ * sync writes the copies otherwise. Fields it doesn't know stay as stored; a repeat that comes
+ * out the same writes nothing. A copied iterator (one an outer iterator made) is refused: its
+ * repeat follows its template's.
  */
 export function setRepeat(
   doc: CanvasDocument,
@@ -57,8 +68,14 @@ export function setRepeat(
 ): void {
   const frame = doc.get(frameId);
   if (!frame || !isFrame(frame)) throw new Error(`"${frameId}" isn't a frame.`);
+  if (dataCopyTag(frame)) {
+    throw new Error(
+      `"${frame.name}" is a copy an outer iterator made. Edit the template's repeat instead.`,
+    );
+  }
+  const stored = (frame as unknown as Record<string, unknown>).repeat;
   if (repeat === null) {
-    if ((frame as unknown as Record<string, unknown>).repeat != null) removeRepeat(doc, frameId);
+    if (stored != null) removeRepeat(doc, frameId);
     return;
   }
   const current = repeatOf(frame);
@@ -96,13 +113,21 @@ export function setRepeat(
     const paths = renameRepeatPaths(next, renamed, as, { source: false, row: true });
     if (paths) next = paths as unknown as RepeatSettings;
   }
+  // Fields this version doesn't know stay as stored; an optional one cleared goes.
+  const record: Record<string, unknown> = {
+    ...(stored !== null && typeof stored === "object" ? stored : {}),
+    ...next,
+  };
+  for (const field of OPTIONAL) if (next[field] === undefined) delete record[field];
+  const layout = Boolean(opts.addLayout) && !layoutOf(frame);
+  if (!layout && JSON.stringify(record) === JSON.stringify(stored)) return;
 
   // `addAutoLayout` takes its own checkpoint: holding them keeps everything one undo step.
   const release = doc.holdCheckpoints();
   try {
-    if (opts.addLayout && opts.kinds) addRepeatLayout(doc, frameId, opts.kinds);
+    if (layout && opts.kinds) addRepeatLayout(doc, frameId, opts.kinds);
     doc.batch(() => {
-      doc.update(frameId, { repeat: next } as ElementPatch);
+      doc.update(frameId, { repeat: record } as ElementPatch);
       if (renamed) renameReferences(doc, renamed, as, frameId);
     });
   } finally {

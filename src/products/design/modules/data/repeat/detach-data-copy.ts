@@ -25,7 +25,8 @@ function detachedPatch(el: CanvasElement): ElementPatch | null {
  * joins the iterator's `detached`, so the sync never updates or replaces it, and the copy and
  * what it holds are untagged, unlocked and lose their data fields (`dataText`, `dataBindings`,
  * `dataVisible`, `dataHideEmpty`, and an iterator's `repeat` inside), keeping what they show now:
- * a detached copy has no row to read.
+ * a detached copy has no row to read. A copy inside another iterator's copy (its iterator, or
+ * a frame around it, is a copy) is refused: detach the outer copy first.
  */
 export function detachDataCopy(doc: CanvasDocument, copyId: string): void {
   const el = doc.get(copyId);
@@ -51,6 +52,18 @@ export function detachDataCopy(doc: CanvasDocument, copyId: string): void {
   const frame = doc.get(tag.iterator);
   const repeat = frame ? repeatOf(frame) : null;
   if (!frame || !repeat) throw new Error(`"${copyId}": its iterator no longer repeats.`);
+  // A copy inside another copy is the outer iterator's to write: detaching it alone wouldn't last.
+  const seenUp = new Set<string>();
+  for (let at: CanvasElement | undefined = frame; at && !seenUp.has(at.id);) {
+    seenUp.add(at.id);
+    if (dataCopyTag(at)) {
+      throw new Error(
+        `"${root.name}": this copy is inside another copy. Detach the outer copy first.`,
+      );
+    }
+    const parentId = doc.field(at.id, "parentId");
+    at = typeof parentId === "string" ? doc.get(parentId) : undefined;
+  }
 
   const patches = new Map<string, ElementPatch>();
   for (const layer of [root, ...descendants(doc, root.id)]) {
