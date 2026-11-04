@@ -38,6 +38,7 @@ export class DataSourceKind extends ElementKind<DataSourceElement, DesignToolOpt
       settings: el.settings ?? {},
       format: el.format ?? DATA_SOURCE_DEFAULTS.format,
       formatOptions: el.formatOptions ?? {},
+      rowsPath: typeof el.rowsPath === "string" ? el.rowsPath : null,
       fields: el.fields ?? [],
       snapshot: el.snapshot ?? null,
       images: el.images ?? {},

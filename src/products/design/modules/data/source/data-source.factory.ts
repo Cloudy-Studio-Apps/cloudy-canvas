@@ -13,6 +13,7 @@ export function createDataSource(
     settings: Record<string, SettingValue>;
     format?: string;
     formatOptions?: Record<string, SettingValue>;
+    rowsPath?: string | null;
   },
 ): DataSourceElement {
   return {
@@ -22,6 +23,7 @@ export function createDataSource(
     settings: init.settings,
     format: init.format ?? DATA_SOURCE_DEFAULTS.format,
     formatOptions: init.formatOptions ?? {},
+    rowsPath: init.rowsPath ?? null,
     fields: [],
     snapshot: null,
     images: {},

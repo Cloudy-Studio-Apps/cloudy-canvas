@@ -2,5 +2,7 @@ export type * from "./data-table.types";
 export type * from "./read-path.types";
 export { parsePath, readPath } from "./read-path";
 export { normalizeRows } from "./normalize-rows";
+export { extraValues, findLists, valueAtRowsPath } from "./find-lists";
+export type * from "./find-lists.types";
 export { guessFields } from "./guess-fields";
 export { keyStep, joinKey, formatPath, normalizePath } from "./path-text";

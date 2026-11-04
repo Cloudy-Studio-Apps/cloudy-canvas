@@ -18,7 +18,7 @@ const TYPES: readonly FieldType[] = [
 ];
 
 /** What each field type is called, in the app's language. */
-function fieldTypeLabel(type: FieldType): string {
+export function fieldTypeLabel(type: FieldType): string {
   const labels: Record<FieldType, string> = {
     text: t("fields.types.text"),
     integer: t("fields.types.integer"),

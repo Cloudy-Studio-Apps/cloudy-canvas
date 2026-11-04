@@ -1,5 +1,6 @@
 import type { SettingValue } from "../source";
 import type { SettingSpec } from "./setting-spec.types";
+import { secretRequired } from "./secret-required";
 
 function isEmpty(value: SettingValue | string | undefined): boolean {
   return (
@@ -16,7 +17,7 @@ export function missingSettings(
   const missing: string[] = [];
   for (const spec of specs) {
     if (spec.kind === "secret") {
-      if (spec.required && isEmpty(secrets[spec.key])) missing.push(spec.key);
+      if (secretRequired(spec, settings) && isEmpty(secrets[spec.key])) missing.push(spec.key);
     } else if (
       (spec.kind === "text" || spec.kind === "url" || spec.kind === "multiline") &&
       spec.required &&

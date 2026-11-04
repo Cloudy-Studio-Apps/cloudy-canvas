@@ -7,5 +7,7 @@ export interface DataSourceInit {
   secrets?: Record<string, string>;
   format?: string;
   formatOptions?: Record<string, SettingValue>;
+  /** Where the rows are in the data; left out, the first list found. */
+  rowsPath?: string | null;
   name?: string;
 }

@@ -1,5 +1,7 @@
 import type { CanvasElement, ElementDefaults } from "@canvas";
 
+import type { DataExtraValue, DataList } from "../table/find-lists.types";
+
 /** A setting of a source type or format: text, a number, a switch, a map (headers) or unset. */
 export type SettingValue = string | number | boolean | Record<string, string> | null;
 
@@ -28,7 +30,12 @@ export interface FieldFormat {
   suffix?: string;
   trueText?: string;
   falseText?: string;
+  /** How a list shows: every item with commas (`"all"`, the default), the first, or how many. */
+  list?: ListShow;
 }
+
+/** How a list's items show in a text. */
+export type ListShow = "all" | "first" | "count";
 
 /** One field of the data: where it is (`path`), what it is called and how it is read. */
 export interface DataField {
@@ -45,6 +52,10 @@ export interface DataSnapshot {
   updatedAt: number;
   rowCount: number;
   hash: string;
+  /** The lists of objects the data had that could be its rows (`findLists`), for the picker. */
+  lists?: DataList[];
+  /** The plain values at the top of the data, beside its rows (`total: 194`). */
+  extras?: Record<string, DataExtraValue>;
 }
 
 /**
@@ -59,6 +70,11 @@ export interface DataSourceElement extends CanvasElement {
   /** `"auto"` or a format id. */
   format: string;
   formatOptions: Record<string, SettingValue>;
+  /**
+   * Where the rows are in the data (`products`, `data.items`; `""` the data itself), or `null`:
+   * the first list found.
+   */
+  rowsPath: string | null;
   fields: DataField[];
   snapshot: DataSnapshot | null;
   /** Image assets the data points at, by the value that names them. */
@@ -70,6 +86,7 @@ export interface DataSourceDefaults extends ElementDefaults {
   name: string;
   format: string;
   formatOptions: Record<string, SettingValue>;
+  rowsPath: string | null;
   fields: DataField[];
   snapshot: DataSnapshot | null;
   images: Record<string, string>;

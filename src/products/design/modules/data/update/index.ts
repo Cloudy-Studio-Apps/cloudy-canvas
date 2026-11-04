@@ -1,5 +1,6 @@
 export type * from "./snapshot.types";
 export type * from "./update-source.types";
+export type * from "./preview-source.types";
 export { encodeRows, readSnapshot, writeSnapshot } from "./snapshot";
 export {
   loadSecrets,
@@ -18,3 +19,4 @@ export { downloadImages, MAX_IMAGE_BYTES, MAX_NEW_IMAGES } from "./download-imag
 export { decodeImageData, isImageBytes } from "./image-bytes";
 export { imagePathIn } from "./image-path";
 export { updateSource } from "./update-source";
+export { previewSource } from "./preview-source";

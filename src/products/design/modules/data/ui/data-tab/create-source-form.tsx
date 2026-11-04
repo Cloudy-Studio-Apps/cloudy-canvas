@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { useService } from "@canvas-ui";
 import { PanelSection } from "@design/ui/components/panel";
@@ -40,16 +40,20 @@ export function CreateSourceForm({ sourceType, onCreated, onCancel }: CreateSour
   const [values, setValues] = useState<Record<string, SettingValue>>({});
   const [format, setFormat] = useState("auto");
   const [options, setOptions] = useState<Record<string, SettingValue>>({});
+  const [rowsPath, setRowsPath] = useState<string | null>(null);
+  // A form's "Save and update" picks the list and saves in one go: read the latest here.
+  const latestPath = useRef<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const create = async () => {
+  const create = async (settings = values) => {
     setBusy(true);
     try {
       const source = await sources.create({
         sourceType: sourceType.id,
-        settings: values,
+        settings,
         format,
         formatOptions: options,
+        rowsPath: latestPath.current,
       });
       onCreated(source.id);
       startUpdate(sources, source.id);
@@ -66,7 +70,28 @@ export function CreateSourceForm({ sourceType, onCreated, onCancel }: CreateSour
           sourceType={sourceType}
           values={values}
           stored={pickedFiles(sourceType, values)}
-          onChange={setValues}
+          onChange={(next, change) => {
+            setValues(next);
+            // The form's own "Save and update" creates the source right away.
+            if (change?.update) void create(next);
+          }}
+          onPreview={(settings, path, signal) =>
+            sources.preview(
+              {
+                sourceType: sourceType.id,
+                settings,
+                format,
+                formatOptions: options,
+                rowsPath: path,
+              },
+              signal,
+            )
+          }
+          rowsPath={rowsPath}
+          onRowsPathChange={(path) => {
+            latestPath.current = path;
+            setRowsPath(path);
+          }}
           onFilePicked={(name) => {
             const found = detectFormat({ fileName: name }, formats);
             if (found && found.id !== format) {

@@ -6,12 +6,15 @@ import { notifyError } from "@shared/stores/toast-store";
 import { detectFormat } from "../../formats";
 import { DESIGN_DATA_SOURCES } from "../../model";
 import type { SettingValue } from "../../source";
+import type { SourceFormChangeOptions } from "../data.points.types";
+import { startUpdate } from "../hooks/run-update";
 import { useDataRegistry } from "../hooks/use-data-registry";
 import { useSourceSecrets } from "../hooks/use-source-secrets";
-import { FieldList } from "./field-list";
+import { FieldTreeView } from "./field-tree-view";
 import { FormatSelect } from "./format-select";
 import { ImageFailuresLine } from "./image-failures-line";
 import { RemoveSourceButton } from "./remove-source-button";
+import { RowsFromField } from "./rows-from-field";
 import { RowsTable } from "./rows-table";
 import { SourceIssues } from "./source-issues";
 import { SourceSettingsForm } from "./source-settings-form";
@@ -29,11 +32,34 @@ export function SourceSections({ source, sourceType, issues, onRemoved }: Source
   const secrets = useSourceSecrets(source);
   const rows = sources.rows(source.id);
 
-  const save = (values: Record<string, SettingValue>) => {
-    sources.setSettings(source.id, values).then(secrets.refresh, (error: unknown) => {
-      notifyError(t("source.saveFailed"), translatedError(error));
-    });
+  const save = (values: Record<string, SettingValue>, options?: SourceFormChangeOptions) => {
+    sources.setSettings(source.id, values).then(
+      () => {
+        secrets.refresh();
+        if (options?.update) startUpdate(sources, source.id);
+      },
+      (error: unknown) => {
+        notifyError(t("source.saveFailed"), translatedError(error));
+      },
+    );
   };
+  const preview = (
+    values: Record<string, SettingValue>,
+    rowsPath: string | null,
+    signal: AbortSignal,
+  ) =>
+    sources.preview(
+      {
+        sourceType: source.sourceType,
+        settings: values,
+        sourceId: source.id,
+        format: source.format,
+        formatOptions: source.formatOptions,
+        rowsPath,
+        fields: source.fields,
+      },
+      signal,
+    );
   // "Automatic" stays automatic: it reads the new file's extension by itself.
   const proposeFormat = (name: string) => {
     if (source.format === "auto") return;
@@ -53,6 +79,9 @@ export function SourceSections({ source, sourceType, issues, onRemoved }: Source
               stored={secrets.stored}
               onChange={save}
               onFilePicked={proposeFormat}
+              onPreview={preview}
+              rowsPath={source.rowsPath}
+              onRowsPathChange={(rowsPath) => sources.setRowsPath(source.id, rowsPath)}
             />
             {secrets.missing.length > 0 && (
               <p className="flex items-center gap-1 text-xs text-warning">
@@ -68,17 +97,20 @@ export function SourceSections({ source, sourceType, issues, onRemoved }: Source
         )}
       </PanelSection>
       <PanelSection title={t("source.formatTitle")}>
-        <FormatSelect
-          formats={formats}
-          format={source.format}
-          options={source.formatOptions}
-          onChange={(format, options) => sources.setFormat(source.id, format, options)}
-        />
+        <div className="flex flex-col gap-2.5">
+          <FormatSelect
+            formats={formats}
+            format={source.format}
+            options={source.formatOptions}
+            onChange={(format, options) => sources.setFormat(source.id, format, options)}
+          />
+          <RowsFromField source={source} />
+        </div>
       </PanelSection>
       <PanelSection title={t("fields.title")}>
         <div className="flex flex-col gap-1">
           <ImageFailuresLine sourceId={source.id} />
-          <FieldList source={source} rows={rows} />
+          <FieldTreeView source={source} rows={rows} />
         </div>
       </PanelSection>
       <PanelSection title={t("source.table.title")}>

@@ -16,4 +16,14 @@ export type SettingSpec =
   | { key: string; kind: "file"; label: string; extensions: string[] }
   /** A folder on this device (e.g. where the data's image files are); like a file, its path stays on the device. */
   | { key: string; kind: "folder"; label: string }
-  | { key: string; kind: "secret"; label: string; required?: boolean };
+  /**
+   * `requiredWhen`: required only while another setting has that value (a token while the sign-in
+   * is "bearer"); otherwise as `required` says.
+   */
+  | {
+      key: string;
+      kind: "secret";
+      label: string;
+      required?: boolean;
+      requiredWhen?: { key: string; value: string };
+    };

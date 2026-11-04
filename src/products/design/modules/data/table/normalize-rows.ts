@@ -1,4 +1,5 @@
 import type { DataRow } from "./data-table.types";
+import { valueAtRowsPath } from "./find-lists";
 
 const MAX_DEPTH = 4;
 
@@ -8,8 +9,18 @@ const isObject = (v: unknown): v is DataRow =>
 const isRowList = (v: unknown): v is DataRow[] =>
   Array.isArray(v) && v.length > 0 && v.every(isObject);
 
-/** Turns parsed data into rows: a list of objects, a list of values, or the first list inside an object. */
-export function normalizeRows(parsed: unknown): DataRow[] {
+/**
+ * Turns parsed data into rows: a list of objects, a list of values, or the first list inside an
+ * object. With `rowsPath` (`""` the data itself), the list there; `null` when nothing there is a
+ * list.
+ */
+export function normalizeRows(parsed: unknown): DataRow[];
+export function normalizeRows(parsed: unknown, rowsPath: string | null): DataRow[] | null;
+export function normalizeRows(parsed: unknown, rowsPath: string | null = null): DataRow[] | null {
+  if (rowsPath !== null) {
+    const list = valueAtRowsPath(parsed, rowsPath);
+    return Array.isArray(list) ? normalizeRows(list) : null;
+  }
   if (Array.isArray(parsed)) {
     if (isRowList(parsed)) return parsed;
     return parsed.filter((v) => v !== undefined).map((value) => ({ value }));

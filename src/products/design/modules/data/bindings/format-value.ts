@@ -78,7 +78,11 @@ function formatOne(
   locale: string,
 ): string {
   if (value === null || value === undefined) return "";
-  if (Array.isArray(value)) return value.map((v) => formatOne(v, null, f, locale)).join(", ");
+  if (Array.isArray(value)) {
+    if (f.list === "count") return formatNumber(value.length, "number", { decimals: 0 }, locale);
+    const items = f.list === "first" ? value.slice(0, 1) : value;
+    return items.map((v) => formatOne(v, null, f, locale)).join(", ");
+  }
   if (typeof value === "object") return "";
   const kind = kindOf(value, field);
   if (kind === "number" || kind === "currency") {

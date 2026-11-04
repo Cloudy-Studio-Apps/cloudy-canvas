@@ -1,6 +1,6 @@
 import type { DataSourceType } from "../data.points.types";
 import type { DataServices } from "../services";
-import type { SettingSpec } from "../settings";
+import { secretRequired, type SettingSpec } from "../settings";
 import type { SettingValue } from "../source";
 
 /** Where the origin a source's secrets were entered for is kept (`DataSourceType.secretOrigin`). */
@@ -36,7 +36,7 @@ export function missingSecretKeys(
   stored: Record<string, string>,
 ): string[] {
   const optional = new Set(
-    specs.flatMap((s) => (s.kind === "secret" && !s.required ? [s.key] : [])),
+    specs.flatMap((s) => (s.kind === "secret" && !secretRequired(s, settings) ? [s.key] : [])),
   );
   return secretKeys(specs, settings).filter((key) => !(key in stored) && !optional.has(key));
 }

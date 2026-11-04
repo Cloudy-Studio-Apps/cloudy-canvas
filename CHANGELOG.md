@@ -26,6 +26,15 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   texts too long for their box, pictures that couldn't be saved, sources that failed or were never
   updated, and lists that would make too many or stacked copies. Each source shows its count, and
   Select takes you to the layer.
+- A web link's connection is now edited in a Connection dialog that says in plain words what will
+  be sent. The options at the end of the link become rows, signing in takes an API key, a token or
+  a username and password without writing headers by hand, common headers are offered with what
+  each is for, and a POST can send a form, JSON built from rows or written by hand, or text. Try it
+  shows the rows the link gives before you save.
+- Data that holds its rows inside an object, such as an API's products list, now shows where the
+  rows come from and lets you pick another list. Fields inside groups, such as a product's
+  dimensions, are shown as a tree with an icon for each kind, and a list in each row, such as its
+  tags or images, can show all its items, only the first or how many there are.
 - Page items can now point to another page: add a Page reference, pick the section or page it points
   to, and it keeps showing the right number as pages move, such as "see page 12". Double-clicking a
   page item now edits its wording, such as "Page {page} of {pages}", instead of the number it

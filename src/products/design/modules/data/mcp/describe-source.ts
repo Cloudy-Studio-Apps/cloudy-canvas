@@ -56,6 +56,8 @@ export async function describeSource(
   return {
     ...(await summarizeSource(engine, source)),
     formatOptions: source.formatOptions,
+    rowsPath: source.rowsPath,
+    lists: source.snapshot?.lists ?? [],
     settings: source.settings,
     secrets: (type ? secretKeys(type.settings, source.settings) : []).map((key) => ({
       key,

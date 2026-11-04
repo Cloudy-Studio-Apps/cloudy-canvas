@@ -16,9 +16,12 @@ import {
 } from "../source";
 import type { DataRow, DataTable } from "../table";
 import {
+  previewSource,
   readSnapshot,
   updateSource,
   type DataContext,
+  type PreviewInput,
+  type PreviewResult,
   type ImageFailure,
   type UpdateOptions,
   type UpdateResult,
@@ -107,6 +110,7 @@ export class DesignDataSources {
       settings: {},
       format: init.format,
       formatOptions: init.formatOptions,
+      rowsPath: init.rowsPath,
     });
     const settings = await writeSecrets(services, draft.id, type, init.settings, init.secrets);
     // A row name (`as`) would hide the source inside its iterator.
@@ -164,6 +168,13 @@ export class DesignDataSources {
     this.patch(id, { format, formatOptions: options });
   }
 
+  /** Sets where the rows are in the data (`null`: the first list found); an Update reads it. */
+  setRowsPath(id: string, rowsPath: string | null): void {
+    const source = this.require(id);
+    if (source.rowsPath === rowsPath) return;
+    this.patch(id, { rowsPath });
+  }
+
   /** Deletes a source and its secrets on this device (its snapshot asset stays, for undo). */
   async remove(id: string): Promise<void> {
     const source = this.require(id);
@@ -181,6 +192,16 @@ export class DesignDataSources {
     const context = this.context;
     if (!context) throw new Error(NOT_READY);
     return this.updates.run(id, options, (opts) => updateSource(this.doc, id, context, opts));
+  }
+
+  /**
+   * Try it: runs settings not saved yet once and gives the rows they bring, writing nothing (see
+   * `previewSource`).
+   */
+  preview(input: PreviewInput, signal: AbortSignal): Promise<PreviewResult> {
+    const context = this.context;
+    if (!context) throw new Error(NOT_READY);
+    return previewSource(context, input, signal);
   }
 
   /** Updates every source, one after another; the results are in list order. */

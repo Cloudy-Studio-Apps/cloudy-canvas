@@ -30,6 +30,17 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   textos demasiado largos para su caja, imágenes que no se pudieron guardar, fuentes que fallaron o
   nunca se actualizaron, y listas que harían demasiadas copias o copias apiladas. Cada fuente
   muestra su cuenta y Seleccionar te lleva a la capa.
+- La conexión de un enlace web ahora se edita en un cuadro Conexión que explica con palabras
+  sencillas lo que se enviará. Las opciones al final del enlace se convierten en filas, iniciar
+  sesión admite una clave de API, un token o un usuario y contraseña sin escribir encabezados a
+  mano, los encabezados habituales se ofrecen con lo que hace cada uno, y un POST puede enviar un
+  formulario, JSON creado desde filas o escrito a mano, o texto. Probar muestra las filas que da el
+  enlace antes de guardar.
+- Los datos que guardan sus filas dentro de un objeto, como la lista de productos de una API, ahora
+  muestran de dónde vienen las filas y permiten elegir otra lista. Los campos dentro de grupos, como
+  las dimensiones de un producto, se muestran como un árbol con un icono para cada tipo, y una lista
+  en cada fila, como sus etiquetas o imágenes, puede mostrar todos sus elementos, solo el primero o
+  cuántos hay.
 - Los elementos de página ya pueden remitir a otra página: añade una Referencia a página, elige la
   sección o la página a la que remite y seguirá mostrando el número correcto aunque las páginas se
   muevan, como "ver página 12". Al hacer doble clic en un elemento de página ahora se edita su

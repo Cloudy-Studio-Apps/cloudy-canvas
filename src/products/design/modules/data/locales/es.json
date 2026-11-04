@@ -18,8 +18,28 @@
       "label": "Enlace",
       "url": "URL",
       "method": "Método",
-      "headers": "Encabezados",
-      "body": "Cuerpo"
+      "headers": "Encabezados privados",
+      "body": "Cuerpo",
+      "auth": "Inicio de sesión",
+      "authNone": "Ninguno",
+      "authApiKey": "Clave de API",
+      "authBearer": "Token",
+      "authBasic": "Usuario y contraseña",
+      "apiKeyName": "Nombre de la clave",
+      "apiKeyIn": "Enviar la clave",
+      "apiKeyInHeader": "Como encabezado",
+      "apiKeyInQuery": "En el enlace",
+      "apiKey": "Clave de API",
+      "token": "Token de acceso",
+      "username": "Usuario",
+      "password": "Contraseña",
+      "plainHeaders": "Encabezados",
+      "bodyKind": "Cuerpo",
+      "bodyNone": "Nada",
+      "bodyForm": "Formulario",
+      "bodyJson": "JSON",
+      "bodyText": "Texto",
+      "form": "Valores del formulario"
     }
   },
   "formats": {
@@ -104,7 +124,29 @@
       "list": "Lista",
       "object": "Objeto"
     },
-    "updateForImages": "Actualiza para descargar sus imágenes"
+    "updateForImages": "Actualiza para descargar sus imágenes",
+    "kindMenu": {
+      "showAs": "Mostrar este campo como",
+      "listShow": "Cada fila tiene varios. Mostrar",
+      "list": {
+        "all": "Todos, separados por comas",
+        "first": "Solo el primero",
+        "count": "Cuántos hay"
+      },
+      "rename": "Cambiar nombre…",
+      "button": "{kind} · haz clic para cambiarlo"
+    },
+    "collapse": "Cerrar",
+    "expand": "Abrir",
+    "listOfItems_one": "Una lista · {count} campo en cada elemento",
+    "listOfItems_other": "Una lista · {count} campos en cada elemento",
+    "innerNote": "Cada fila tiene sus propios {name}. Rellénalos repitiendo una tarjeta dentro de la tarjeta principal.",
+    "show": "Mostrar en el diseño",
+    "hide": "Ocultar del diseño",
+    "groupCount_one": "{count} campo",
+    "groupCount_other": "{count} campos",
+    "itemCount_one": "{count} elemento",
+    "itemCount_other": "{count} elementos"
   },
   "update": {
     "run": "Actualizar",
@@ -130,7 +172,8 @@
     "pickFolderAgain": "Vuelve a elegir la carpeta en este dispositivo.",
     "privateFolder": "Esta carpeta está en la carpeta de datos de la propia app, que las fuentes de datos no pueden leer.",
     "noLayer": "Este marco no tiene ninguna capa que repetir: añade una primero.",
-    "noParentFrame": "Primero pon la capa dentro de un marco."
+    "noParentFrame": "Primero pon la capa dentro de un marco.",
+    "noList": "Ya no hay una lista en \"{path}\" en los datos. Vuelve a elegir de dónde vienen las filas."
   },
   "format": {
     "yes": "Sí",
@@ -261,5 +304,159 @@
       "tooManyCopies": "Se hacen {detail} copias al diseñar: baja ese límite",
       "copiesStacked": "{detail} copias se apilan unas sobre otras: dale un auto layout al marco"
     }
+  },
+  "connection": {
+    "title": "Conexión",
+    "description": "De dónde vienen estos datos y qué envía Cloudy Canvas para obtenerlos.",
+    "link": "Enlace",
+    "badLink": "Esto aún no es un enlace completo. Debe empezar por https://",
+    "getHint": "GET lee datos. La mayoría de los enlaces lo usan.",
+    "postHint": "POST envía el cuerpo y luego lee lo que responde el sitio.",
+    "save": "Guardar y actualizar",
+    "unsaved": "Cambios sin guardar",
+    "private": "Se guarda solo en este dispositivo",
+    "makePrivate": "Guardar este valor en este dispositivo",
+    "tabs": {
+      "params": "Ajustes del enlace",
+      "auth": "Inicio de sesión",
+      "headers": "Encabezados",
+      "body": "Cuerpo"
+    },
+    "summary": {
+      "aLink": "un enlace",
+      "get": "Obtener datos de {where}{tail}.",
+      "post": "Enviar {body} a {where}{tail} y leer la respuesta.",
+      "with": ", con {details}",
+      "settings_one": "{count} ajuste ({list})",
+      "settings_other": "{count} ajustes ({list})",
+      "headers_one": "{count} encabezado extra",
+      "headers_other": "{count} encabezados extra",
+      "auth": {
+        "apikey": "iniciando sesión con tu clave de API",
+        "bearer": "iniciando sesión con tu token de acceso",
+        "basic": "iniciando sesión con tu usuario y contraseña"
+      },
+      "body": {
+        "none": "nada",
+        "form": "un formulario",
+        "json": "JSON",
+        "text": "texto"
+      }
+    },
+    "params": {
+      "intro": "Opciones escritas al final del enlace, como cuántos elementos obtener. Cambiarlas aquí cambia el enlace, y al revés.",
+      "name": "Ajuste",
+      "add": "Añadir un ajuste…"
+    },
+    "auth": {
+      "intro": "¿Este sitio necesita saber quién eres? La mayoría de los datos públicos no.",
+      "kinds": {
+        "none": {
+          "label": "Ninguno",
+          "hint": "Datos públicos"
+        },
+        "apikey": {
+          "label": "Clave de API",
+          "hint": "Un código que te dio el sitio"
+        },
+        "bearer": {
+          "label": "Token",
+          "hint": "Un token de acceso (Bearer)"
+        },
+        "basic": {
+          "label": "Usuario",
+          "hint": "Un nombre y una contraseña"
+        }
+      },
+      "noneHint": "No se envía nada más. Si Probar dice que el sitio no te deja entrar, elige otra opción.",
+      "pasteKey": "Pega la clave aquí",
+      "pasteToken": "Pega el token aquí",
+      "apiKeyInHint": "La guía del sitio dice cuál. Normalmente, un encabezado.",
+      "secretNote": "Se guarda en este dispositivo, nunca en el archivo, y solo se envía a {host}.",
+      "thisSite": "este sitio"
+    },
+    "headers": {
+      "intro": "Detalles extra que se envían con la petición. Elige uno común o escribe el tuyo; los valores con candado se quedan en este dispositivo.",
+      "name": "Encabezado",
+      "add": "Añadir un encabezado…",
+      "common": "Añadir uno común:",
+      "quick": {
+        "json": "Respuesta en JSON",
+        "fresh": "Siempre actualizado",
+        "language": "Idioma"
+      }
+    },
+    "headerHints": {
+      "accept": "Qué tipo de respuesta quieres recibir",
+      "contentType": "Qué tipo de cuerpo envías",
+      "authorization": "Quién eres (más fácil en la pestaña Inicio de sesión)",
+      "apiKey": "Una clave de API que piden algunos sitios",
+      "acceptLanguage": "El idioma de la respuesta",
+      "cacheControl": "Obtener siempre datos nuevos, no una copia guardada",
+      "userAgent": "Quién pregunta (algunos sitios lo exigen)",
+      "ifNoneMatch": "Enviar solo los datos que cambiaron"
+    },
+    "body": {
+      "getNote": "Una petición GET solo lee, así que no envía cuerpo. Cambia a POST para enviar algo con ella.",
+      "usePost": "Usar POST",
+      "noneHint": "No se envía nada. Elige Formulario o JSON si el sitio espera algo.",
+      "formHint": "Se envía como un formulario web.",
+      "jsonMode": "Cómo escribir el JSON",
+      "rows": "Filas",
+      "code": "Código",
+      "nested": "Este JSON tiene partes anidadas: sigue editándolo como código",
+      "kind": "Tipo",
+      "kinds": {
+        "text": "Texto",
+        "number": "Número",
+        "boolean": "Sí / no",
+        "null": "Vacío"
+      },
+      "yes": "Sí",
+      "no": "No",
+      "addValue": "Añadir un valor",
+      "jsonValid": "JSON válido",
+      "jsonInvalid": "Esto aún no es JSON válido",
+      "jsonLine": "Algo está mal en la línea {line}",
+      "tidy": "Ordenar",
+      "textPlaceholder": "Cualquier cosa, se envía tal cual"
+    },
+    "try": {
+      "title": "Probar",
+      "run": "Ejecutar",
+      "idle": "Ejecútalo para ver las filas que da este enlace antes de guardar.",
+      "asking": "Preguntando a {host}…",
+      "works": "Funciona",
+      "rows": "filas",
+      "fields": "campos",
+      "groups": "grupos",
+      "notAllowed": "El sitio dice que no tienes permiso",
+      "notFound": "No hay nada en este enlace",
+      "siteProblem": "El sitio tuvo un problema",
+      "failed": "No se pudieron obtener los datos",
+      "unavailable": "Probar no está disponible aquí."
+    },
+    "card": {
+      "edit": "Editar conexión…",
+      "noLink": "Aún no hay enlace",
+      "headers_one": "{count} encabezado",
+      "headers_other": "{count} encabezados",
+      "body": {
+        "none": "Sin cuerpo",
+        "form": "Cuerpo de formulario",
+        "json": "Cuerpo JSON",
+        "text": "Cuerpo de texto"
+      }
+    }
+  },
+  "rowsFrom": {
+    "title": "Las filas vienen de",
+    "auto": "Automático: la primera lista",
+    "autoWith": "Automático ({list})",
+    "list_one": "{list} · {count} elemento",
+    "list_other": "{list} · {count} elementos",
+    "missing": "{list} (ya no está en los datos)",
+    "whole": "Toda la respuesta",
+    "extras": "También en los datos: {list}"
   }
 }

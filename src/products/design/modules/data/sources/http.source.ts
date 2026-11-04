@@ -2,6 +2,8 @@ import { t } from "../data.i18n";
 import type { DataSourceType } from "../data.points.types";
 import { withoutExtension } from "../settings";
 import { answeredMessage } from "../update";
+import { buildHttpRequest } from "./http-request";
+import { httpSettings } from "./http-settings";
 
 function textSetting(value: unknown): string {
   return typeof value === "string" ? value : "";
@@ -24,7 +26,10 @@ function decodeSegment(segment: string): string {
   }
 }
 
-/** A link (a REST endpoint, a published sheet, a raw file). */
+/**
+ * A link (a REST endpoint, a published sheet, a raw file): its headers, sign-in and body are
+ * built by `buildHttpRequest`.
+ */
 export const HTTP_SOURCE: DataSourceType = {
   id: "http",
   get label() {
@@ -32,25 +37,7 @@ export const HTTP_SOURCE: DataSourceType = {
   },
   icon: "Globe",
   get settings() {
-    return [
-      { key: "url", kind: "url" as const, label: t("sources.http.url"), required: true },
-      {
-        key: "method",
-        kind: "select" as const,
-        label: t("sources.http.method"),
-        options: [
-          { value: "GET", label: "GET" },
-          { value: "POST", label: "POST" },
-        ],
-      },
-      {
-        key: "headers",
-        kind: "pairs" as const,
-        label: t("sources.http.headers"),
-        secretValues: true,
-      },
-      { key: "body", kind: "multiline" as const, label: t("sources.http.body") },
-    ];
+    return httpSettings();
   },
   defaultName(settings) {
     const url = textSetting(settings.url).trim();
@@ -75,20 +62,8 @@ export const HTTP_SOURCE: DataSourceType = {
   async update(settings, ctx) {
     const url = textSetting(settings.url).trim();
     if (!url) throw new Error("No URL.");
-    const stored = settings.headers && typeof settings.headers === "object" ? settings.headers : {};
-    const headers: Record<string, string> = {};
-    for (const [name, value] of Object.entries(stored)) {
-      headers[name] = ctx.secrets[`headers.${name}`] ?? value;
-    }
-    const method = settings.method === "POST" ? "POST" : "GET";
-    const body = textSetting(settings.body);
-    const res = await ctx.services.http.request({
-      url,
-      method,
-      headers,
-      body: method === "POST" && body !== "" ? body : undefined,
-      signal: ctx.signal,
-    });
+    const request = buildHttpRequest(settings, ctx.secrets);
+    const res = await ctx.services.http.request({ ...request, signal: ctx.signal });
     if (!res.ok) throw new Error(answeredMessage(url, res.status));
     return { bytes: res.bytes, mime: res.headers["content-type"], fileName: lastSegment(url) };
   },

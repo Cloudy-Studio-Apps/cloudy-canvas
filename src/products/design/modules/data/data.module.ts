@@ -13,6 +13,7 @@ import {
   setRepeatTool,
 } from "./mcp";
 import { dataFormats, dataSourceTypes } from "./data.points";
+import { dataSourceForms } from "./ui/data.points";
 import { CSV_FORMAT, JSON_FORMAT } from "./formats";
 import { FILE_SOURCE, HTTP_SOURCE } from "./sources";
 import { forgetRemovedSources } from "./model";
@@ -26,6 +27,7 @@ import {
   DataCopySection,
   DataSection,
   DataTab,
+  HttpSourceForm,
   RepeatSection,
   repeatTargets,
   useDataServices,
@@ -57,6 +59,8 @@ export const dataModule = defineModule({
     host.contribute(textTemplates, BOUND_TEXT_TEMPLATE);
     host.contribute(dataSourceTypes, FILE_SOURCE, HTTP_SOURCE);
     host.contribute(dataFormats, CSV_FORMAT, JSON_FORMAT);
+    // A link's own form: the connection as a card, edited in the Connection dialog.
+    host.contribute(dataSourceForms, { type: HTTP_SOURCE.id, component: HttpSourceForm });
     host.contribute(designEditor.leftTabs, {
       id: "data",
       label: t("tab.title"),

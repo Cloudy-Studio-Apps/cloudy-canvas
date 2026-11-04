@@ -1,13 +1,12 @@
 import type { CanvasDocument, ElementPatch } from "@canvas";
 
-import { detectFormat } from "../formats";
 import { missingSettings } from "../settings";
 import { isDataSource, type DataSourceElement } from "../source";
-import { guessFields, normalizeRows } from "../table";
+import { extraValues, findLists, guessFields, normalizeRows } from "../table";
 import { addSnapshot, encodeRows } from "./snapshot";
 import { downloadImages } from "./download-images";
 import { requireFilePaths } from "./file-paths";
-import { isWebPage } from "./is-web-page";
+import { readData } from "./read-data";
 import { loadSourceSecrets, missingSecretKeys } from "./source-secrets";
 import { UPDATE_ERRORS } from "./update-errors";
 import type { DataContext, UpdateOptions, UpdateResult } from "./update-source.types";
@@ -49,23 +48,22 @@ export async function updateSource(
     if (missing.length > 0) throw new Error(`${UPDATE_ERRORS.missing}${missing.join(", ")}`);
     const files = await requireFilePaths(ctx.services, id, specs, source.settings);
 
-    options.onStage?.("fetching");
     const services = ctx.services;
-    const raw = await type.update(source.settings, { services, signal, secrets, files });
-    signal.throwIfAborted();
-    if (isWebPage(raw)) throw new Error(UPDATE_ERRORS.webPage);
-
-    options.onStage?.("parsing");
-    const format =
-      source.format === "auto"
-        ? detectFormat(raw, ctx.formats)
-        : (ctx.formats.find((f) => f.id === source.format) ?? null);
-    if (!format) {
-      throw new Error(
-        source.format === "auto" ? UPDATE_ERRORS.noFormat : `Unknown format "${source.format}".`,
-      );
-    }
-    const rows = normalizeRows(await format.parse(raw, source.formatOptions));
+    const parsed = await readData(
+      {
+        type,
+        settings: source.settings,
+        secrets,
+        files,
+        format: source.format,
+        formatOptions: source.formatOptions,
+      },
+      ctx,
+      signal,
+      options.onStage,
+    );
+    const rows = normalizeRows(parsed, source.rowsPath);
+    if (!rows) throw new Error(`${UPDATE_ERRORS.noList}${source.rowsPath ?? ""}`);
     signal.throwIfAborted();
 
     const encoded = await encodeRows(rows);
@@ -100,10 +98,12 @@ export async function updateSource(
     const images = { ...current.images, ...downloaded.images };
     const imagesChanged = JSON.stringify(images) !== JSON.stringify(current.images);
     // Same data keeps its asset, unless this device lacks it: then the rows are saved again.
-    const snapshot =
+    const base =
       previous && !changed && doc.hasAsset(previous.assetId)
         ? { ...previous, updatedAt: Date.now() }
         : addSnapshot(doc, rows, encoded);
+    // What else the data holds, for the "Rows come from" picker: kept with the snapshot.
+    const snapshot = { ...base, lists: findLists(parsed), extras: extraValues(parsed) };
     doc.checkpoint();
     // One record update: the snapshot, the fields and the new pictures, one undo step.
     const patch: ElementPatch<DataSourceElement> = {

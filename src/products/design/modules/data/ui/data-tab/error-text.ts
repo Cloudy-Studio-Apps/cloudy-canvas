@@ -10,6 +10,9 @@ export function errorText(message: string): string {
   if (message.startsWith(UPDATE_ERRORS.missing)) {
     return t("errors.missing", { keys: message.slice(UPDATE_ERRORS.missing.length) });
   }
+  if (message.startsWith(UPDATE_ERRORS.noList)) {
+    return t("errors.noList", { path: message.slice(UPDATE_ERRORS.noList.length) });
+  }
   const answered = readAnsweredMessage(message);
   if (answered) return t("errors.answered", answered);
   switch (message) {

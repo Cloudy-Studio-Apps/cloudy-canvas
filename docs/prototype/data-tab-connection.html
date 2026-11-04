@@ -1,0 +1,5054 @@
+<!doctype html>
+<!--
+╔══════════════════════════════════════════════════════════════════════════════════════════════╗
+║  CLOUDY CANVAS · PROTOTYPE TEMPLATE · DESIGN                                                 ║
+║                                                                                              ║
+║  AGENT: read this whole header before you edit anything.                                     ║
+║                                                                                              ║
+║  What this is                                                                                ║
+║    One self-contained HTML file (no build, no React, no framework) that looks like the real  ║
+║    app: the same tokens (copied from src/shared/ui/styles/tokens.css and the Cloudy Light /  ║
+║    Cloudy Dark themes), the same sizes (rail 48px, left panel 240px, properties panel 256px, ║
+║    32px controls, 28px rows), the same sharp corners and the same pieces (FieldBox, Section, ║
+║    SegmentedControl, ListRow, Toolbar, FloatingPanel, Badge, Button, IconButton, menus,      ║
+║    dialogs, toasts). Use it to show the user a realistic proposal before writing real code.  ║
+║                                                                                              ║
+║  How to use it                                                                               ║
+║    1. Copy this file to docs/prototype/<feature-name>.html. Never edit the template itself   ║
+║       for a feature (only to keep it in step with the app).                                  ║
+║    2. Change <title> and the note in the proto bar to say what you're proposing.             ║
+║    3. This is the DESIGN editor (.cdesign, Figma-style, /design/:id). For the other product, ║
+║       copy _board-template.html instead. Keep only the chrome your proposal needs.           ║
+║    4. Find the "AGENT: ADD …" blocks and put your proposal there. Search for "AGENT:".       ║
+║    5. Open the file in a browser (double-click). Nothing to install.                         ║
+║                                                                                              ║
+║  Rules (the same as the app's, see CLAUDE.md "UI")                                           ║
+║    • Colors: only the semantic variables (var(--surface), var(--muted-foreground),            ║
+║      var(--primary), …). Never a hex/oklch literal or a palette scale (--ice-*, --seal-*, …) ║
+║      in the UI chrome. The ONLY exception is canvas content (sticky colors, a user's fills), ║
+║      which is document data, not theme.                                                      ║
+║    • Corners: 4px controls (var(--corner)), 6px cards/menus (var(--corner-card)), 8px max    ║
+║      (dialogs). No pills, no fully rounded buttons. Avatars are the only circles.            ║
+║    • Sizes: controls 32px (--control-h), small controls 28px (--control-h-sm), list rows 28px ║
+║      (--row-h). Text is small: 12px (labels, panels), 13px (body), 14px (base).               ║
+║    • Reuse the classes below before writing new CSS. If you need a new piece, add it in the  ║
+║      "AGENT: ADD YOUR OWN CSS" block at the end of <style>, built from the variables.        ║
+║    • Text: write it in English like the app does (it ships en + es; the real code goes       ║
+║      through i18n, the prototype doesn't need to).                                           ║
+║    • Interactivity: use the data-* attributes documented in the <script> at the bottom       ║
+║      (tabs, menus, dialogs, toggles, picks, toasts). Write JS only if those aren't enough.   ║
+║    • Icons: <svg class="i"><use href="#i-NAME"/></svg>, from the sprite right after <body>.  ║
+║      They're lucide icons (what the app uses). To add one, copy its paths from lucide.dev    ║
+║      into a new <symbol id="i-NAME" viewBox="0 0 24 24">.                                    ║
+║                                                                                              ║
+║  Show changes, not the whole app: keep the surrounding chrome as context and make the part   ║
+║  you're proposing obvious. Mark it with class="proposal" (a dashed outline) if it helps the  ║
+║  user see what's new, and remove the mark when they're comparing looks.                      ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════╝
+-->
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- AGENT: rename. Shown in the browser tab. -->
+    <title>Data tab: visual connection · Cloudy Canvas</title>
+    <!--
+      The app ships Inter Variable and JetBrains Mono Variable. This loads Inter from its CDN; offline,
+      the font stack falls back to the system's sans. For a file that must look exact offline, embed
+      the font as a base64 @font-face (see er-relation-menu.html in this folder).
+    -->
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <style>
+      /* ════════════════════════════════════════════════════════════════════════════════════════
+         1. TOKENS
+         Copied from src/shared/ui/styles/tokens.css (palette, shape, density, elevation, motion)
+         and src/shared/core/themes/presets/cloudy-{light,dark}.theme.ts (semantic tokens).
+         AGENT: don't edit these to style a proposal. If the app's tokens change, update them here.
+         ════════════════════════════════════════════════════════════════════════════════════════ */
+      :root {
+        /* Palette: ONLY the semantic tokens below may use these. */
+        --ice-100: oklch(0.95 0.025 245);
+        --ice-200: oklch(0.905 0.045 245);
+        --ice-400: oklch(0.76 0.1 245);
+        --ice-500: oklch(0.66 0.125 245);
+        --ice-600: oklch(0.56 0.13 247);
+        --ice-700: oklch(0.48 0.12 248);
+        --ice-800: oklch(0.4 0.1 250);
+        --seal-50: oklch(0.985 0.003 250);
+        --seal-100: oklch(0.963 0.005 250);
+        --seal-200: oklch(0.925 0.008 250);
+        --seal-300: oklch(0.87 0.011 250);
+        --seal-400: oklch(0.74 0.015 250);
+        --seal-500: oklch(0.6 0.018 252);
+        --seal-800: oklch(0.34 0.02 254);
+        --seal-900: oklch(0.27 0.02 256);
+        --blush-100: oklch(0.95 0.03 35);
+        --blush-200: oklch(0.91 0.055 35);
+        --blush-300: oklch(0.85 0.085 35);
+        --blush-400: oklch(0.78 0.115 35);
+        --blush-500: oklch(0.7 0.14 35);
+        --blush-800: oklch(0.41 0.1 30);
+        --blush-950: oklch(0.24 0.06 30);
+        --sand-100: oklch(0.96 0.04 88);
+        --sand-300: oklch(0.88 0.1 86);
+        --sand-500: oklch(0.76 0.13 80);
+        --sand-800: oklch(0.42 0.08 68);
+        --lilac-100: oklch(0.95 0.025 295);
+        --lilac-300: oklch(0.83 0.08 295);
+        --lilac-500: oklch(0.63 0.15 294);
+        --lilac-700: oklch(0.46 0.14 292);
+
+        /* Shape: sharp by design. Nothing in the chrome goes above 8px. */
+        --corner-xs: 2px;
+        --corner-sm: 3px;
+        --corner: 4px;
+        --corner-card: 6px;
+        --corner-max: 8px;
+
+        /* Density */
+        --control-h-sm: 28px;
+        --control-h: 32px;
+        --control-h-lg: 40px;
+        --control-px: 14px;
+        --row-h: 28px;
+
+        /* Layout of the design editor (src/products/design/ui/design-layout.ts) */
+        --rail-w: 48px;
+        --left-w: 240px;
+        --right-w: 256px;
+
+        /* Motion */
+        --duration-fast: 150ms;
+        --easing-out: cubic-bezier(0.2, 0.7, 0.3, 1);
+
+        /* Type: the app's desktop scale (14px base) */
+        --font-sans: "Inter Variable", InterVariable, Inter, ui-sans-serif, system-ui, sans-serif;
+        --font-mono:
+          ui-monospace, "JetBrains Mono Variable", "JetBrains Mono", "Cascadia Code", Menlo,
+          Consolas, monospace;
+        --text-xs: 0.75rem; /* 12px: panels, labels, badges */
+        --text-sm: 0.8125rem; /* 13px: buttons, menus, body */
+        --text-base: 0.875rem; /* 14px: base */
+        --text-lg: 1.0625rem; /* 17px: dialog titles */
+        --text-xl: 1.25rem;
+      }
+
+      /* Cloudy Light (the default theme) */
+      :root,
+      [data-theme="light"] {
+        --background: var(--seal-50);
+        --foreground: var(--seal-900);
+        --surface: oklch(1 0 0);
+        --surface-foreground: var(--seal-900);
+        --surface-sunken: var(--seal-100);
+        --overlay: oklch(0.19 0.018 256 / 0.4);
+        --muted: var(--seal-100);
+        --muted-foreground: var(--seal-500);
+        --subtle-foreground: var(--seal-400);
+        --hover: var(--seal-100);
+        --popover: oklch(1 0 0);
+        --popover-foreground: var(--seal-900);
+        --canvas-background: var(--seal-50);
+        --canvas-grid: var(--seal-300);
+        --canvas-selection: var(--ice-500);
+        --canvas-snap: oklch(0.6 0.21 22);
+        --canvas-ruler: oklch(1 0 0);
+        --canvas-ruler-foreground: var(--seal-500);
+        --canvas-ruler-border: var(--seal-200);
+        --border: var(--seal-200);
+        --border-strong: var(--seal-300);
+        --input: var(--seal-300);
+        --ring: var(--ice-500);
+        --primary: var(--ice-600);
+        --primary-hover: var(--ice-700);
+        --primary-foreground: oklch(1 0 0);
+        --primary-soft: var(--ice-100);
+        --primary-soft-foreground: var(--ice-800);
+        --secondary: var(--seal-100);
+        --secondary-hover: var(--seal-200);
+        --secondary-foreground: var(--seal-800);
+        --accent: var(--blush-400);
+        --accent-hover: var(--blush-500);
+        --accent-foreground: var(--blush-950);
+        --accent-soft: var(--blush-100);
+        --accent-soft-foreground: var(--blush-800);
+        --board: var(--sand-500);
+        --board-foreground: var(--sand-800);
+        --board-soft: var(--sand-100);
+        --design: var(--lilac-500);
+        --design-foreground: var(--lilac-700);
+        --design-soft: var(--lilac-100);
+        --success: oklch(0.6 0.13 155);
+        --success-soft: oklch(0.95 0.04 155);
+        --warning: oklch(0.72 0.14 70);
+        --warning-soft: oklch(0.96 0.05 80);
+        --destructive: oklch(0.58 0.19 25);
+        --destructive-hover: oklch(0.52 0.18 25);
+        --destructive-foreground: oklch(1 0 0);
+        --destructive-soft: oklch(0.95 0.03 25);
+        --shadow-color: 256 20% 18%;
+      }
+
+      /* Cloudy Dark */
+      [data-theme="dark"] {
+        --background: oklch(0.18 0.014 256);
+        --foreground: oklch(0.93 0.006 250);
+        --surface: oklch(0.215 0.016 256);
+        --surface-foreground: oklch(0.93 0.006 250);
+        --surface-sunken: oklch(0.165 0.013 256);
+        --overlay: oklch(0.08 0.01 256 / 0.6);
+        --muted: oklch(0.255 0.017 256);
+        --muted-foreground: oklch(0.7 0.014 252);
+        --subtle-foreground: oklch(0.56 0.016 252);
+        --hover: oklch(0.27 0.018 256);
+        --popover: oklch(0.24 0.017 256);
+        --popover-foreground: oklch(0.93 0.006 250);
+        --canvas-background: oklch(0.165 0.013 256);
+        --canvas-grid: oklch(0.3 0.016 256);
+        --canvas-selection: var(--ice-400);
+        --canvas-snap: oklch(0.7 0.18 22);
+        --canvas-ruler: oklch(0.215 0.016 256);
+        --canvas-ruler-foreground: oklch(0.62 0.014 252);
+        --canvas-ruler-border: oklch(0.3 0.018 256);
+        --border: oklch(0.3 0.018 256);
+        --border-strong: oklch(0.37 0.02 256);
+        --input: oklch(0.37 0.02 256);
+        --ring: var(--ice-400);
+        --primary: var(--ice-500);
+        --primary-hover: var(--ice-400);
+        --primary-soft: oklch(0.3 0.06 250);
+        --primary-soft-foreground: var(--ice-200);
+        --secondary: oklch(0.28 0.018 256);
+        --secondary-hover: oklch(0.33 0.02 256);
+        --secondary-foreground: oklch(0.9 0.008 250);
+        --accent-soft: oklch(0.3 0.05 32);
+        --accent-soft-foreground: var(--blush-200);
+        --board-foreground: var(--sand-300);
+        --board-soft: oklch(0.3 0.045 75);
+        --design-foreground: var(--lilac-300);
+        --design-soft: oklch(0.3 0.06 292);
+        --success-soft: oklch(0.3 0.05 155);
+        --warning-soft: oklch(0.32 0.05 75);
+        --destructive: oklch(0.62 0.19 25);
+        --destructive-hover: oklch(0.68 0.18 25);
+        --destructive-soft: oklch(0.3 0.06 25);
+        --shadow-color: 256 40% 3%;
+      }
+
+      /* The design editor's canvas is darker than the board's, so white frames stand out. */
+      [data-layout="design"] {
+        --canvas-background: var(--seal-200);
+        --canvas-grid: var(--seal-300);
+      }
+      [data-theme="dark"] [data-layout="design"],
+      [data-theme="dark"][data-layout="design"] {
+        --canvas-background: oklch(0.22 0.014 256);
+        --canvas-grid: oklch(0.32 0.016 256);
+      }
+
+      /* Elevation (depends on --shadow-color, so it's defined after the themes) */
+      :root,
+      [data-theme] {
+        --elevation-xs: 0 1px 0 hsl(var(--shadow-color) / 0.04);
+        --elevation-soft:
+          0 1px 2px hsl(var(--shadow-color) / 0.06), 0 2px 6px -2px hsl(var(--shadow-color) / 0.06);
+        --elevation-lifted:
+          0 2px 4px hsl(var(--shadow-color) / 0.06),
+          0 10px 24px -8px hsl(var(--shadow-color) / 0.14);
+        --elevation-popover:
+          0 4px 8px -2px hsl(var(--shadow-color) / 0.08),
+          0 16px 32px -8px hsl(var(--shadow-color) / 0.16);
+      }
+
+      /* ════════════════════════════════════════════════════════════════════════════════════════
+         2. BASE
+         ════════════════════════════════════════════════════════════════════════════════════════ */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        border-color: var(--border);
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        overflow: hidden;
+        background: var(--background);
+        color: var(--foreground);
+        font-family: var(--font-sans);
+        font-size: var(--text-base);
+        line-height: 1.375rem;
+        font-feature-settings: "cv11", "ss01";
+        -webkit-font-smoothing: antialiased;
+      }
+      ::selection {
+        background: var(--primary-soft);
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+        color: inherit;
+      }
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .i {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .i-sm {
+        width: 14px;
+        height: 14px;
+      }
+      .i-lg {
+        width: 18px;
+        height: 18px;
+      }
+      .mono {
+        font-family: var(--font-mono);
+      }
+      .muted {
+        color: var(--muted-foreground);
+      }
+      .subtle {
+        color: var(--subtle-foreground);
+      }
+      .text-xs {
+        font-size: var(--text-xs);
+        line-height: 1rem;
+      }
+      .text-sm {
+        font-size: var(--text-sm);
+        line-height: 1.25rem;
+      }
+      .grow {
+        flex: 1;
+        min-width: 0;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      /* ════════════════════════════════════════════════════════════════════════════════════════
+         3. COMPONENTS (each mirrors a real one; the source is named in its comment)
+         AGENT: build your proposal from these classes.
+         ════════════════════════════════════════════════════════════════════════════════════════ */
+
+      /* Button (shadcn button.tsx). Variants: (default=primary) .btn-secondary .btn-outline
+         .btn-ghost .btn-accent .btn-destructive .btn-link. Sizes: .btn-xs .btn-sm (default) .btn-lg
+         .btn-icon. Usage: <button class="btn btn-outline btn-sm">Label</button> */
+      .btn {
+        display: inline-flex;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: var(--control-h);
+        padding: 0 var(--control-px);
+        border: 0;
+        border-radius: var(--corner);
+        background: var(--primary);
+        color: var(--primary-foreground);
+        font-size: var(--text-sm);
+        font-weight: 500;
+        white-space: nowrap;
+        cursor: pointer;
+        box-shadow: var(--elevation-xs);
+        transition:
+          background-color var(--duration-fast) var(--easing-out),
+          color var(--duration-fast) var(--easing-out);
+        user-select: none;
+      }
+      .btn:hover {
+        background: var(--primary-hover);
+      }
+      .btn:focus-visible,
+      .icon-btn:focus-visible,
+      .seg button:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 40%, transparent);
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+      .btn-secondary {
+        background: var(--secondary);
+        color: var(--secondary-foreground);
+        box-shadow: none;
+      }
+      .btn-secondary:hover {
+        background: var(--secondary-hover);
+      }
+      .btn-outline {
+        border: 1px solid var(--border-strong);
+        background: var(--surface);
+        color: var(--foreground);
+      }
+      .btn-outline:hover {
+        background: var(--hover);
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--muted-foreground);
+        box-shadow: none;
+      }
+      .btn-ghost:hover {
+        background: var(--hover);
+        color: var(--foreground);
+      }
+      .btn-accent {
+        background: var(--accent);
+        color: var(--accent-foreground);
+      }
+      .btn-accent:hover {
+        background: var(--accent-hover);
+      }
+      .btn-destructive {
+        background: var(--destructive);
+        color: var(--destructive-foreground);
+      }
+      .btn-destructive:hover {
+        background: var(--destructive-hover);
+      }
+      .btn-link {
+        background: none;
+        color: var(--primary);
+        box-shadow: none;
+        padding: 0;
+        height: auto;
+      }
+      .btn-link:hover {
+        background: none;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+      .btn-xs {
+        height: 24px;
+        gap: 4px;
+        padding: 0 6px;
+        border-radius: var(--corner-sm);
+        font-size: var(--text-xs);
+      }
+      .btn-sm {
+        height: var(--control-h-sm);
+        gap: 6px;
+        padding: 0 10px;
+      }
+      .btn-lg {
+        height: var(--control-h-lg);
+        padding: 0 20px;
+        font-size: var(--text-base);
+      }
+      .btn-icon {
+        width: var(--control-h);
+        padding: 0;
+      }
+
+      /* IconButton (kit/icon-button) and ToolButton (canvas-ui, = .icon-btn-lg).
+         Sizes: .icon-btn-xs (24) .icon-btn-sm (28) (default 32) .icon-btn-lg (36, toolbars and rail).
+         Active: aria-pressed="true". Tooltip: data-tip="Label" data-kbd="V" (data-tip-side="bottom|right"). */
+      .icon-btn {
+        position: relative;
+        display: inline-flex;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        width: var(--control-h);
+        height: var(--control-h);
+        padding: 0;
+        border: 0;
+        border-radius: var(--corner);
+        background: transparent;
+        color: var(--muted-foreground);
+        cursor: pointer;
+        transition:
+          background-color var(--duration-fast) var(--easing-out),
+          color var(--duration-fast) var(--easing-out);
+      }
+      .icon-btn:hover,
+      .icon-btn[data-open="true"] {
+        background: var(--hover);
+        color: var(--foreground);
+      }
+      .icon-btn[aria-pressed="true"] {
+        background: var(--primary-soft);
+        color: var(--primary-soft-foreground);
+      }
+      .icon-btn:disabled {
+        opacity: 0.4;
+        pointer-events: none;
+      }
+      .icon-btn-xs {
+        width: 24px;
+        height: 24px;
+        border-radius: var(--corner-sm);
+      }
+      .icon-btn-xs .i {
+        width: 14px;
+        height: 14px;
+      }
+      .icon-btn-sm {
+        width: var(--control-h-sm);
+        height: var(--control-h-sm);
+      }
+      .icon-btn-lg {
+        width: 36px;
+        height: 36px;
+      }
+      .icon-btn-lg .i {
+        width: 18px;
+        height: 18px;
+      }
+      .icon-btn-outline {
+        border: 1px solid var(--border-strong);
+        background: var(--surface);
+        box-shadow: var(--elevation-xs);
+      }
+
+      /* Tooltip (shadcn tooltip): any element with data-tip. Shortcut chip from data-kbd. */
+      [data-tip] {
+        position: relative;
+      }
+      [data-tip]:hover::after {
+        content: attr(data-tip);
+        position: absolute;
+        z-index: 100;
+        left: 50%;
+        bottom: calc(100% + 6px);
+        transform: translateX(-50%);
+        padding: 4px 8px;
+        border-radius: var(--corner);
+        background: var(--foreground);
+        color: var(--background);
+        font-size: var(--text-xs);
+        line-height: 1rem;
+        font-weight: 500;
+        white-space: nowrap;
+        pointer-events: none;
+      }
+      [data-tip][data-kbd]:hover::after {
+        content: attr(data-tip) "  " attr(data-kbd);
+      }
+      [data-tip-side="bottom"]:hover::after {
+        bottom: auto;
+        top: calc(100% + 6px);
+      }
+      [data-tip-side="right"]:hover::after {
+        left: calc(100% + 6px);
+        bottom: auto;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      /* Badge (shadcn badge). Variants: (default=primary soft) .badge-secondary .badge-accent
+         .badge-outline .badge-board .badge-design .badge-destructive .badge-success .badge-warning */
+      .badge {
+        display: inline-flex;
+        flex-shrink: 0;
+        align-items: center;
+        gap: 4px;
+        width: fit-content;
+        padding: 2px 6px;
+        border-radius: var(--corner-sm);
+        background: var(--primary-soft);
+        color: var(--primary-soft-foreground);
+        font-size: var(--text-xs);
+        line-height: 1rem;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+      .badge .i {
+        width: 12px;
+        height: 12px;
+      }
+      .badge-secondary {
+        background: var(--secondary);
+        color: var(--secondary-foreground);
+      }
+      .badge-accent {
+        background: var(--accent-soft);
+        color: var(--accent-soft-foreground);
+      }
+      .badge-outline {
+        background: none;
+        border: 1px solid var(--border-strong);
+        color: var(--muted-foreground);
+      }
+      .badge-board {
+        background: var(--board-soft);
+        color: var(--board-foreground);
+      }
+      .badge-design {
+        background: var(--design-soft);
+        color: var(--design-foreground);
+      }
+      .badge-destructive {
+        background: var(--destructive-soft);
+        color: var(--destructive);
+      }
+      .badge-success {
+        background: var(--success-soft);
+        color: var(--success);
+      }
+      .badge-warning {
+        background: var(--warning-soft);
+        color: var(--warning);
+      }
+
+      /* Kbd: a key cap in menus and hints */
+      .kbd {
+        margin-left: auto;
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+        letter-spacing: 0.04em;
+      }
+
+      /* Separator */
+      .sep {
+        height: 1px;
+        margin: 4px 0;
+        background: var(--border);
+      }
+      .vsep {
+        width: 1px;
+        height: 24px;
+        margin: 0 4px;
+        background: var(--border);
+        flex-shrink: 0;
+      }
+
+      /* Section (kit/section, PanelSection): a titled block of a side panel, a rule under it.
+         Collapsible: use <details class="section" open><summary class="section-head">…</summary>…
+         Non collapsible: <section class="section"><header class="section-head">…</header>…</section> */
+      .section {
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      .section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        height: 24px;
+        font-size: var(--text-xs);
+        font-weight: 600;
+        list-style: none;
+        cursor: default;
+      }
+      .section-head::-webkit-details-marker {
+        display: none;
+      }
+      details.section > .section-head {
+        cursor: pointer;
+      }
+      details.section > .section-head .chev {
+        transition: transform var(--duration-fast) var(--easing-out);
+        color: var(--muted-foreground);
+      }
+      details.section[open] > .section-head .chev {
+        transform: rotate(90deg);
+      }
+      .section-actions {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+      }
+      .section-body {
+        margin-top: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      /* FieldBox (kit/field-box): the compact panel field. A muted box holding a label and a bare
+         input. <label class="field-box"><span class="field-label">X</span><input value="120"></label> */
+      .field-box {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        height: var(--control-h-sm);
+        padding: 0 8px;
+        border: 1px solid transparent;
+        border-radius: var(--corner-sm);
+        background: var(--muted);
+        font-size: var(--text-xs);
+      }
+      .field-box:hover {
+        border-color: var(--border);
+      }
+      .field-box:focus-within {
+        border-color: var(--ring);
+        background: var(--surface);
+      }
+      .field-box.is-invalid {
+        border-color: var(--destructive);
+      }
+      .field-box input {
+        width: 100%;
+        min-width: 0;
+        padding: 0;
+        border: 0;
+        outline: 0;
+        background: none;
+        font-size: var(--text-xs);
+        font-variant-numeric: tabular-nums;
+      }
+      .field-label {
+        flex-shrink: 0;
+        color: var(--muted-foreground);
+      }
+      .field-label .i {
+        width: 13px;
+        height: 13px;
+      }
+
+      /* PropertyGrid: fields two per row (or .grid-3 for three) */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+      }
+
+      /* Field (kit/field): a labelled control in a dialog or settings page */
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .field-title {
+        font-size: var(--text-sm);
+        font-weight: 500;
+      }
+      .field-hint {
+        font-size: var(--text-xs);
+        color: var(--muted-foreground);
+      }
+
+      /* Input (shadcn input): a full-size text field for dialogs and pages */
+      .input {
+        width: 100%;
+        height: var(--control-h);
+        padding: 0 10px;
+        border: 1px solid var(--input);
+        border-radius: var(--corner);
+        background: var(--surface);
+        font-size: var(--text-sm);
+        outline: none;
+        box-shadow: var(--elevation-xs);
+      }
+      .input:focus {
+        border-color: var(--ring);
+        box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 40%, transparent);
+      }
+      .input::placeholder {
+        color: var(--subtle-foreground);
+      }
+      textarea.input {
+        height: auto;
+        min-height: 72px;
+        padding: 8px 10px;
+        resize: vertical;
+      }
+
+      /* SelectField (kit/select-field). Native select styled like the app's. .select-sm for panels */
+      .select {
+        appearance: none;
+        width: 100%;
+        height: var(--control-h);
+        padding: 0 28px 0 10px;
+        border: 1px solid var(--input);
+        border-radius: var(--corner);
+        background: var(--surface)
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+          no-repeat right 8px center;
+        font-size: var(--text-sm);
+        cursor: pointer;
+        outline: none;
+      }
+      .select:focus {
+        border-color: var(--ring);
+      }
+      .select-sm {
+        height: var(--control-h-sm);
+        border-color: transparent;
+        background-color: var(--muted);
+        font-size: var(--text-xs);
+        border-radius: var(--corner-sm);
+      }
+      .select-sm:hover {
+        border-color: var(--border);
+      }
+
+      /* SegmentedControl (kit/segmented-control): one choice out of a few.
+         <div class="seg" role="radiogroup"><button role="radio" aria-checked="true">A</button>…</div>
+         .seg-sm (28px), .seg-full (fills the row), .seg-icons (square icon buttons) */
+      .seg {
+        display: inline-flex;
+        align-items: stretch;
+        gap: 2px;
+        height: var(--control-h);
+        padding: 2px;
+        border-radius: var(--corner);
+        background: var(--muted);
+      }
+      .seg-sm {
+        height: var(--control-h-sm);
+      }
+      .seg-full {
+        display: flex;
+        width: 100%;
+      }
+      .seg button {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        min-width: 0;
+        padding: 0 10px;
+        border: 0;
+        border-radius: var(--corner-sm);
+        background: none;
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+        font-weight: 500;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+      .seg-full button {
+        flex: 1;
+      }
+      .seg-icons button {
+        aspect-ratio: 1;
+        padding: 0;
+      }
+      .seg button .i {
+        width: 14px;
+        height: 14px;
+      }
+      .seg button:hover {
+        color: var(--foreground);
+      }
+      .seg button[aria-checked="true"] {
+        background: var(--surface);
+        color: var(--foreground);
+        box-shadow: var(--elevation-xs);
+      }
+
+      /* Switch (shadcn switch, kit/switch-field). <button class="switch" role="switch" aria-checked="true"> */
+      .switch {
+        position: relative;
+        flex-shrink: 0;
+        width: 32px;
+        height: 18px;
+        padding: 0;
+        border: 0;
+        border-radius: var(--corner);
+        background: var(--input);
+        cursor: pointer;
+        transition: background-color var(--duration-fast) var(--easing-out);
+      }
+      .switch::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 14px;
+        height: 14px;
+        border-radius: var(--corner-sm);
+        background: var(--surface);
+        box-shadow: var(--elevation-soft);
+        transition: transform var(--duration-fast) var(--easing-out);
+      }
+      .switch[aria-checked="true"] {
+        background: var(--primary);
+      }
+      .switch[aria-checked="true"]::after {
+        transform: translateX(14px);
+      }
+
+      /* Checkbox (kit/checkbox): <label class="check"><input type="checkbox" checked> Label</label> */
+      .check {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: var(--text-xs);
+        cursor: pointer;
+      }
+      .check input {
+        width: 14px;
+        height: 14px;
+        margin: 0;
+        accent-color: var(--primary);
+        border-radius: var(--corner-sm);
+      }
+
+      /* Swatch (kit/swatch): a color chip. Its color is DATA, so an inline background is fine. */
+      .swatch {
+        flex-shrink: 0;
+        width: 16px;
+        height: 16px;
+        border-radius: var(--corner-sm);
+        box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--foreground) 12%, transparent);
+      }
+
+      /* ListRow (kit/list-row): a row of a list or tree. aria-pressed="true" = selected.
+         Indent a tree level with style="--depth: 1" (12px per level). .list-row-md for 32px rows. */
+      .list-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        height: var(--row-h);
+        padding: 0 4px 0 calc(8px + var(--depth, 0) * 12px);
+        border-radius: var(--corner-sm);
+        font-size: var(--text-xs);
+        cursor: pointer;
+        user-select: none;
+      }
+      .list-row:hover {
+        background: var(--hover);
+      }
+      .list-row[aria-pressed="true"] {
+        background: var(--primary-soft);
+        color: var(--primary-soft-foreground);
+      }
+      .list-row .row-icon {
+        display: flex;
+        color: var(--muted-foreground);
+      }
+      .list-row .row-icon .i {
+        width: 14px;
+        height: 14px;
+      }
+      .list-row .row-label {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .list-row .row-meta {
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+      }
+      .list-row .row-actions {
+        display: flex;
+        gap: 2px;
+        opacity: 0;
+      }
+      .list-row:hover .row-actions {
+        opacity: 1;
+      }
+      .list-row.is-muted {
+        color: var(--subtle-foreground);
+      }
+      .list-row-md {
+        height: auto;
+        min-height: var(--control-h);
+        padding-top: 6px;
+        padding-bottom: 6px;
+        font-size: var(--text-sm);
+      }
+
+      /* Tabs (shadcn tabs): <div class="tabs-list"><button class="tab" data-tab="a" aria-selected="true"> */
+      .tabs-list {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        height: 28px;
+        padding: 2px;
+        border-radius: var(--corner);
+        background: var(--muted);
+      }
+      .tab {
+        height: 100%;
+        padding: 0 10px;
+        border: 0;
+        border-radius: var(--corner-sm);
+        background: none;
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+        font-weight: 500;
+        cursor: pointer;
+      }
+      .tab:hover {
+        color: var(--foreground);
+      }
+      .tab[aria-selected="true"] {
+        background: var(--surface);
+        color: var(--foreground);
+        box-shadow: var(--elevation-xs);
+      }
+
+      /* FloatingPanel (canvas-ui): chrome that floats over the canvas (the board's top bar) */
+      .floating-panel {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        padding: 4px;
+        border: 1px solid var(--border);
+        border-radius: var(--corner-card);
+        background: var(--surface);
+        box-shadow: var(--elevation-lifted);
+      }
+
+      /* Toolbar (kit/toolbar): the floating tool bar at the bottom of the canvas.
+         <div class="toolbar"><div class="toolbar-group">…icon-btn-lg…</div><div class="toolbar-group">… */
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px;
+        border: 1px solid var(--border);
+        border-radius: var(--corner-card);
+        background: var(--surface);
+        box-shadow: var(--elevation-lifted);
+      }
+      .toolbar-group {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+      }
+      .toolbar-group + .toolbar-group {
+        padding-left: 4px;
+        border-left: 1px solid var(--border);
+      }
+
+      /* Card (kit selectable-card / shadcn card) */
+      .card {
+        border: 1px solid var(--border);
+        border-radius: var(--corner-card);
+        background: var(--surface);
+        box-shadow: var(--elevation-soft);
+      }
+      .card-selectable {
+        cursor: pointer;
+        transition: border-color var(--duration-fast) var(--easing-out);
+      }
+      .card-selectable:hover {
+        border-color: var(--border-strong);
+      }
+      .card-selectable[aria-pressed="true"] {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 1px var(--primary);
+      }
+
+      /* Menu (shadcn dropdown-menu / context-menu / popover).
+         <div class="menu" id="my-menu" hidden> <button class="menu-item">…<span class="kbd">Ctrl+S</span></button>
+         <div class="sep"></div> <div class="menu-label">Group</div> … </div>
+         Open it with data-menu="#my-menu" on a trigger (see the script). .popover for a padded panel. */
+      .menu {
+        position: fixed;
+        z-index: 50;
+        min-width: 200px;
+        padding: 4px;
+        border: 1px solid var(--border);
+        border-radius: var(--corner-card);
+        background: var(--popover);
+        color: var(--popover-foreground);
+        box-shadow: var(--elevation-popover);
+        font-size: var(--text-sm);
+      }
+      .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        height: 30px;
+        padding: 0 8px;
+        border: 0;
+        border-radius: var(--corner-sm);
+        background: none;
+        text-align: left;
+        cursor: pointer;
+      }
+      .menu-item:hover {
+        background: var(--hover);
+      }
+      .menu-item .i {
+        color: var(--muted-foreground);
+      }
+      .menu-item.is-destructive {
+        color: var(--destructive);
+      }
+      .menu-item.is-destructive .i {
+        color: var(--destructive);
+      }
+      .menu-label {
+        padding: 6px 8px 4px;
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+        font-weight: 500;
+      }
+      .popover {
+        padding: 12px;
+        min-width: 240px;
+      }
+
+      /* Dialog (kit/app-dialog). A native <dialog class="dialog">, opened with data-dialog="#id". */
+      .dialog {
+        width: min(480px, calc(100vw - 32px));
+        padding: 0;
+        border: 1px solid var(--border);
+        border-radius: var(--corner-max);
+        background: var(--surface);
+        color: var(--foreground);
+        box-shadow: var(--elevation-popover);
+      }
+      .dialog::backdrop {
+        background: var(--overlay);
+      }
+      .dialog-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 20px 20px 0;
+      }
+      .dialog-title {
+        font-size: var(--text-lg);
+        font-weight: 600;
+        letter-spacing: -0.015em;
+      }
+      .dialog-desc {
+        margin-top: 4px;
+        color: var(--muted-foreground);
+        font-size: var(--text-sm);
+      }
+      .dialog-body {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px 20px;
+      }
+      .dialog-foot {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 12px 20px;
+        border-top: 1px solid var(--border);
+        background: var(--surface-sunken);
+        border-radius: 0 0 var(--corner-max) var(--corner-max);
+      }
+
+      /* Toast (sonner). Shown by data-toast="Message" (see the script). */
+      .toasts {
+        position: fixed;
+        z-index: 200;
+        right: 16px;
+        bottom: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .toast {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 280px;
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        border-radius: var(--corner-card);
+        background: var(--popover);
+        box-shadow: var(--elevation-popover);
+        font-size: var(--text-sm);
+        animation: toast-in 200ms var(--easing-out);
+      }
+      .toast .i {
+        color: var(--success);
+      }
+      @keyframes toast-in {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+      }
+
+      /* EmptyState (kit/empty-state) */
+      .empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 24px 16px;
+        text-align: center;
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+      }
+      .empty strong {
+        color: var(--foreground);
+        font-size: var(--text-sm);
+        font-weight: 500;
+      }
+
+      /* Avatar (CollaboratorStack): the one circle allowed. Its color is the collaborator's. */
+      .avatar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 2px solid var(--surface);
+        color: oklch(1 0 0);
+        font-size: 10px;
+        font-weight: 600;
+      }
+      .avatars {
+        display: flex;
+      }
+      .avatars .avatar + .avatar {
+        margin-left: -6px;
+      }
+
+      /* Search input (kit/search-input) */
+      .search {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        height: var(--control-h-sm);
+        padding: 0 8px;
+        border-radius: var(--corner-sm);
+        background: var(--muted);
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+      }
+      .search input {
+        flex: 1;
+        min-width: 0;
+        border: 0;
+        outline: 0;
+        background: none;
+        font-size: var(--text-xs);
+        color: var(--foreground);
+      }
+
+      /* A proposal marker: a dashed outline so the user sees what's new. Remove for final looks. */
+      .proposal {
+        outline: 2px dashed var(--accent);
+        outline-offset: 2px;
+      }
+
+      /* ════════════════════════════════════════════════════════════════════════════════════════
+         4. EDITOR LAYOUTS
+         ════════════════════════════════════════════════════════════════════════════════════════ */
+      .layout-design,
+      .layout-board {
+        position: fixed;
+        inset: 0;
+      }
+      body:not([data-layout="design"]) .layout-design,
+      body:not([data-layout="board"]) .layout-board {
+        display: none;
+      }
+
+      /* The canvas fills the window; the chrome sits over it (like DesignChrome / BoardChrome). */
+      .canvas {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        background: var(--canvas-background);
+      }
+      /* The board shows a dot grid; the design canvas is plain. */
+      .canvas-dots {
+        background-image: radial-gradient(var(--canvas-grid) 1px, transparent 1px);
+        background-size: 24px 24px;
+      }
+      /* The world: everything on the canvas is positioned inside it, in px (left/top = x/y). */
+      .world {
+        position: absolute;
+        inset: 0;
+      }
+      .world > * {
+        position: absolute;
+      }
+
+      /* Design editor: rail + left panel on the left, properties panel on the right. */
+      .design-left {
+        position: absolute;
+        inset: 0 auto 0 0;
+        z-index: 10;
+        display: flex;
+      }
+      .design-right {
+        position: absolute;
+        inset: 0 0 0 auto;
+        z-index: 10;
+        display: flex;
+      }
+      .design-viewport {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: calc(var(--rail-w) + var(--left-w));
+        right: var(--right-w);
+      }
+      .layout-design.left-closed .design-viewport {
+        left: var(--rail-w);
+      }
+      .layout-design.right-closed .design-viewport {
+        right: 0;
+      }
+
+      .rail {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        width: var(--rail-w);
+        padding: 8px 0;
+        border-right: 1px solid var(--border);
+        background: var(--surface);
+      }
+      .rail .logo {
+        margin-bottom: 8px;
+      }
+      .left-panel {
+        display: flex;
+        flex-direction: column;
+        width: var(--left-w);
+        border-right: 1px solid var(--border);
+        background: var(--surface);
+      }
+      .left-panel-head {
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      .file-name {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: var(--text-sm);
+        font-weight: 600;
+      }
+      .panel-scroll {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        /* Room so the last controls scroll clear of the floating toolbar, like the app's pb-75. */
+        padding-bottom: 300px;
+      }
+      .props-panel {
+        display: flex;
+        flex-direction: column;
+        width: var(--right-w);
+        border-left: 1px solid var(--border);
+        background: var(--surface);
+      }
+      .props-head {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        height: 48px;
+        padding: 0 8px;
+        border-bottom: 1px solid var(--border);
+      }
+      .props-tabs {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 44px;
+        padding: 0 8px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      /* Rulers (design editor) */
+      .ruler-top,
+      .ruler-left {
+        position: absolute;
+        z-index: 5;
+        background-color: var(--canvas-ruler);
+        color: var(--canvas-ruler-foreground);
+        border-color: var(--canvas-ruler-border);
+        font-size: 9px;
+      }
+      .ruler-top {
+        top: 0;
+        left: 20px;
+        right: 0;
+        height: 20px;
+        border-bottom: 1px solid var(--canvas-ruler-border);
+        background-image: linear-gradient(90deg, var(--canvas-ruler-border) 1px, transparent 1px);
+        background-size: 50px 6px;
+        background-repeat: repeat-x;
+        background-position: 0 bottom;
+      }
+      .ruler-left {
+        top: 20px;
+        left: 0;
+        bottom: 0;
+        width: 20px;
+        border-right: 1px solid var(--canvas-ruler-border);
+        background-image: linear-gradient(0deg, var(--canvas-ruler-border) 1px, transparent 1px);
+        background-size: 6px 50px;
+        background-repeat: repeat-y;
+        background-position: right 0;
+      }
+      .ruler-corner {
+        position: absolute;
+        z-index: 6;
+        top: 0;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        background: var(--canvas-ruler);
+        border-right: 1px solid var(--canvas-ruler-border);
+        border-bottom: 1px solid var(--canvas-ruler-border);
+      }
+
+      /* Floating bits over the canvas */
+      .canvas-bottom {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 16px;
+        z-index: 8;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        pointer-events: none;
+      }
+      .canvas-bottom > * {
+        pointer-events: auto;
+      }
+      .show-props {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 8;
+      }
+
+      /* Canvas content: frames (design) */
+      .frame-label {
+        position: absolute;
+        top: -20px;
+        left: 0;
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+        white-space: nowrap;
+      }
+      .frame {
+        background: oklch(1 0 0); /* canvas content: a frame's fill is document data */
+        box-shadow: 0 1px 3px hsl(var(--shadow-color) / 0.12);
+      }
+      /* Selection on the canvas: the outline, the 8 handles and the size label */
+      .selected {
+        outline: 1px solid var(--canvas-selection);
+      }
+      .handles {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+      .handles i {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        margin: -4px 0 0 -4px;
+        border: 1px solid var(--canvas-selection);
+        background: oklch(1 0 0);
+      }
+      .size-label {
+        position: absolute;
+        left: 50%;
+        bottom: -24px;
+        transform: translateX(-50%);
+        padding: 1px 6px;
+        border-radius: var(--corner-sm);
+        background: var(--canvas-selection);
+        color: oklch(1 0 0);
+        font-size: 10px;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      /* Canvas content: board elements (stickies, shapes, sections). Their colors are data. */
+      .sticky {
+        width: 200px;
+        height: 200px;
+        padding: 16px;
+        box-shadow:
+          0 1px 2px hsl(var(--shadow-color) / 0.1),
+          0 6px 14px -6px hsl(var(--shadow-color) / 0.25);
+        color: oklch(0.27 0.02 256);
+        font-size: 16px;
+        line-height: 1.35;
+      }
+      .board-section {
+        border: 1px solid var(--border-strong);
+        border-radius: var(--corner-card);
+        background: color-mix(in oklch, var(--surface) 60%, transparent);
+      }
+      .board-section-title {
+        position: absolute;
+        top: -28px;
+        left: 0;
+        padding: 2px 8px;
+        border-radius: var(--corner);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        font-size: var(--text-sm);
+        font-weight: 500;
+      }
+
+      /* Board editor: floating top bar, bottom toolbar, zoom, side panels */
+      .board-top {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        z-index: 8;
+      }
+      .board-side {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        bottom: 64px;
+        z-index: 8;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .board-zoom {
+        position: absolute;
+        right: 12px;
+        bottom: 16px;
+        z-index: 8;
+      }
+      .side-panel {
+        display: flex;
+        flex-direction: column;
+        width: 280px;
+        max-height: 100%;
+        border: 1px solid var(--border);
+        border-radius: var(--corner-card);
+        background: var(--surface);
+        box-shadow: var(--elevation-lifted);
+      }
+      .side-panel-head {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        height: 44px;
+        padding: 0 8px 0 12px;
+        border-bottom: 1px solid var(--border);
+        font-size: var(--text-sm);
+        font-weight: 600;
+      }
+
+      /* PROTOTYPE ONLY: the bar to flip theme and layout. Not part of the app. */
+      .proto-bar {
+        position: fixed;
+        z-index: 300;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 4px 4px 10px;
+        border: 1px dashed var(--accent);
+        border-radius: var(--corner-card);
+        background: var(--popover);
+        box-shadow: var(--elevation-popover);
+        font-size: var(--text-xs);
+      }
+      .proto-bar .note {
+        max-width: 320px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* ════════════════════════════════════════════════════════════════════════════════════════
+         5. AGENT: ADD YOUR OWN CSS HERE
+         Build it from the variables above (var(--surface), var(--corner), var(--control-h-sm), …).
+         No literal colors in chrome, no radius above 8px, no pills.
+         ════════════════════════════════════════════════════════════════════════════════════════ */
+      /* ── Data tab proposal ───────────────────────────────────────────────────────────── */
+      .ds-head {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        height: 40px;
+        padding: 0 8px;
+        border-bottom: 1px solid var(--border);
+        font-size: var(--text-sm);
+        font-weight: 600;
+      }
+      .ds-head .grow {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      /* The connection summary card in the sidebar: what a request is, at a glance. */
+      .conn-card {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--border);
+        border-radius: var(--corner-card);
+        background: var(--surface-sunken);
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+      }
+      .conn-card:hover {
+        border-color: var(--border-strong);
+      }
+      .conn-top {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        font-size: var(--text-sm);
+        font-weight: 600;
+      }
+      .conn-top .host {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .conn-path {
+        overflow: hidden;
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .method {
+        display: inline-flex;
+        align-items: center;
+        height: 18px;
+        padding: 0 5px;
+        border-radius: var(--corner-sm);
+        background: var(--primary-soft);
+        color: var(--primary-soft-foreground);
+        font-family: var(--font-mono, ui-monospace, monospace);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+      }
+      .method.is-post {
+        background: var(--accent-soft);
+        color: var(--accent-soft-foreground);
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        height: 20px;
+        padding: 0 6px;
+        border: 1px solid var(--border);
+        border-radius: var(--corner-sm);
+        background: var(--surface);
+        color: var(--muted-foreground);
+        font-size: 11px;
+        white-space: nowrap;
+      }
+      .chip .i {
+        width: 12px;
+        height: 12px;
+      }
+      button.chip {
+        cursor: pointer;
+        font: inherit;
+        font-size: 11px;
+      }
+      button.chip:hover {
+        border-color: var(--border-strong);
+        color: var(--foreground);
+      }
+      .status-line {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+      }
+      .dot {
+        width: 7px;
+        height: 7px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: var(--success);
+      }
+      .dot.is-warn {
+        background: var(--warning);
+      }
+      .dot.is-bad {
+        background: var(--destructive);
+      }
+
+      /* Field rows: a type chip, the name, a sample, hide. */
+      .field-row {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 2px 8px;
+        padding: 6px 4px 6px 6px;
+        border-radius: var(--corner-sm);
+      }
+      .field-row:hover {
+        background: var(--hover);
+      }
+      .field-row .name {
+        font-family: var(--font-mono, ui-monospace, monospace);
+        font-size: var(--text-xs);
+        font-weight: 500;
+      }
+      .field-row .sample {
+        grid-column: 2 / 4;
+        overflow: hidden;
+        color: var(--muted-foreground);
+        font-size: 11px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .field-row.is-hidden .name,
+      .field-row.is-hidden .sample {
+        opacity: 0.45;
+        text-decoration: line-through;
+      }
+      .type-chip {
+        display: inline-flex;
+        grid-row: 1 / 3;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border: 1px solid var(--border);
+        border-radius: var(--corner);
+        background: var(--surface);
+        color: var(--muted-foreground);
+        cursor: pointer;
+      }
+      .type-chip:hover {
+        border-color: var(--border-strong);
+        color: var(--foreground);
+      }
+
+      .mini-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11px;
+        table-layout: fixed;
+      }
+      .mini-table th,
+      .mini-table td {
+        overflow: hidden;
+        padding: 4px 6px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .mini-table th {
+        background: var(--muted);
+        color: var(--muted-foreground);
+        font-weight: 500;
+      }
+      .table-wrap {
+        overflow: auto;
+        border: 1px solid var(--border);
+        border-radius: var(--corner);
+      }
+
+      /* ── The connection dialog ── */
+      .dialog.dialog-wide {
+        width: min(960px, calc(100vw - 32px));
+      }
+      .conn-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 300px;
+        min-height: 520px;
+        border-top: 1px solid var(--border);
+        margin-top: 16px;
+      }
+      .conn-main {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        padding: 16px 20px 20px;
+        min-width: 0;
+      }
+      .conn-side {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 16px;
+        border-left: 1px solid var(--border);
+        background: var(--surface-sunken);
+        min-width: 0;
+      }
+      .sentence {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 10px 12px;
+        border-radius: var(--corner-card);
+        background: var(--primary-soft);
+        color: var(--primary-soft-foreground);
+        font-size: var(--text-sm);
+        line-height: 1.45;
+      }
+      .sentence b {
+        font-weight: 600;
+      }
+      .url-bar {
+        display: flex;
+        gap: 6px;
+      }
+      .url-bar .seg {
+        flex-shrink: 0;
+      }
+      .url-bar .input {
+        font-family: var(--font-mono, ui-monospace, monospace);
+        font-size: var(--text-xs);
+      }
+      .tab .count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 16px;
+        height: 16px;
+        margin-left: 4px;
+        padding: 0 4px;
+        border-radius: var(--corner-sm);
+        background: var(--surface);
+        color: var(--muted-foreground);
+        font-size: 10px;
+        font-weight: 600;
+      }
+      .tab .count:empty {
+        display: none;
+      }
+      .tab-intro {
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+        line-height: 1.5;
+      }
+
+      /* Key-value table (headers, address settings, form body). */
+      .kv {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .kv-head,
+      .kv-row {
+        display: grid;
+        grid-template-columns: 18px minmax(0, 1fr) minmax(0, 1.3fr) 28px 28px;
+        align-items: center;
+        gap: 6px;
+      }
+      .kv.no-secret .kv-head,
+      .kv.no-secret .kv-row {
+        grid-template-columns: 18px minmax(0, 1fr) minmax(0, 1.3fr) 28px;
+      }
+      .kv.typed .kv-head,
+      .kv.typed .kv-row {
+        grid-template-columns: 18px minmax(0, 1fr) 96px minmax(0, 1.3fr) 28px;
+      }
+      .kv-head {
+        padding-bottom: 2px;
+        color: var(--muted-foreground);
+        font-size: 11px;
+        font-weight: 500;
+      }
+      .kv-row .field-box input {
+        font-size: var(--text-xs);
+      }
+      .kv-row .field-box.is-key input {
+        font-family: var(--font-mono, ui-monospace, monospace);
+      }
+      .kv-row.is-off .field-box {
+        opacity: 0.5;
+      }
+      .kv-row .help {
+        grid-column: 2 / -1;
+        margin-top: -2px;
+        color: var(--muted-foreground);
+        font-size: 11px;
+      }
+      .kv-row .select-sm {
+        width: 100%;
+      }
+      .kv-add {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        margin-top: 4px;
+      }
+      .kv-add .label {
+        color: var(--muted-foreground);
+        font-size: 11px;
+      }
+
+      /* Suggestions under a key or value box. */
+      .suggest {
+        position: fixed;
+        z-index: 60;
+        max-height: 260px;
+        min-width: 240px;
+        overflow-y: auto;
+      }
+      .suggest .menu-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1px;
+        height: auto;
+        padding-top: 5px;
+        padding-bottom: 5px;
+      }
+      .suggest .menu-item .s-name {
+        font-family: var(--font-mono, ui-monospace, monospace);
+        font-size: var(--text-xs);
+      }
+      .suggest .menu-item .s-desc {
+        color: var(--muted-foreground);
+        font-size: 11px;
+      }
+      .suggest .menu-item.is-active {
+        background: var(--hover);
+      }
+
+      /* Sign-in choice cards. */
+      .choice-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+      }
+      .choice {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 10px;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+      }
+      .choice .i {
+        color: var(--muted-foreground);
+      }
+      .choice[aria-pressed="true"] .i {
+        color: var(--primary);
+      }
+      .choice strong {
+        font-size: var(--text-sm);
+        font-weight: 500;
+      }
+      .choice span {
+        color: var(--muted-foreground);
+        font-size: 11px;
+        line-height: 1.35;
+      }
+      .note-line {
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+        line-height: 1.45;
+      }
+      .note-line .i {
+        width: 14px;
+        height: 14px;
+        margin-top: 1px;
+      }
+      .callout {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: var(--corner-card);
+        background: var(--warning-soft);
+        font-size: var(--text-xs);
+      }
+      .callout .grow {
+        line-height: 1.45;
+      }
+      .code-area {
+        width: 100%;
+        min-height: 180px;
+        padding: 10px;
+        border: 1px solid var(--input);
+        border-radius: var(--corner);
+        background: var(--surface);
+        color: var(--foreground);
+        font-family: var(--font-mono, ui-monospace, monospace);
+        font-size: var(--text-xs);
+        line-height: 1.55;
+        outline: none;
+        resize: vertical;
+        tab-size: 2;
+      }
+      .code-area:focus {
+        border-color: var(--ring);
+      }
+      .code-area.is-invalid {
+        border-color: var(--destructive);
+      }
+      .bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .preview-empty {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+        text-align: center;
+      }
+      .preview-empty .i-lg {
+        width: 28px;
+        height: 28px;
+        opacity: 0.6;
+      }
+      .stat-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px;
+      }
+      .stat {
+        padding: 8px;
+        border: 1px solid var(--border);
+        border-radius: var(--corner);
+        background: var(--surface);
+      }
+      .stat b {
+        display: block;
+        font-size: var(--text-base, 14px);
+        font-weight: 600;
+      }
+      .stat span {
+        color: var(--muted-foreground);
+        font-size: 11px;
+      }
+      .spin {
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      /* Nested fields: groups (an object in each row) and lists inside rows. */
+      .field-row {
+        padding-left: calc(6px + var(--depth, 0) * 14px);
+      }
+      .field-group {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        height: var(--row-h);
+        padding: 0 4px 0 calc(4px + var(--depth, 0) * 14px);
+        border-radius: var(--corner-sm);
+        font-size: var(--text-xs);
+        cursor: pointer;
+        user-select: none;
+      }
+      .field-group:hover {
+        background: var(--hover);
+      }
+      .field-group .chev,
+      .field-group .group-icon {
+        display: flex;
+        color: var(--muted-foreground);
+      }
+      .field-group .chev .i {
+        width: 12px;
+        height: 12px;
+      }
+      .field-group .group-icon .i {
+        width: 14px;
+        height: 14px;
+      }
+      .field-group .name {
+        font-family: var(--font-mono);
+        font-weight: 500;
+      }
+      .field-group .meta {
+        margin-left: auto;
+        color: var(--muted-foreground);
+        font-size: 11px;
+        white-space: nowrap;
+      }
+      .group-note {
+        display: flex;
+        gap: 6px;
+        margin: 2px 0 4px;
+        padding: 6px 8px;
+        margin-left: calc(6px + var(--depth, 0) * 14px);
+        border-radius: var(--corner-sm);
+        background: var(--muted);
+        color: var(--muted-foreground);
+        font-size: 11px;
+        line-height: 1.4;
+      }
+      .group-note .i {
+        width: 12px;
+        height: 12px;
+        margin-top: 1px;
+        flex-shrink: 0;
+      }
+      .type-chip.is-list {
+        box-shadow:
+          2px 2px 0 -1px var(--surface),
+          2px 2px 0 0 var(--border);
+      }
+      .thumbs {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        vertical-align: middle;
+      }
+      .thumb {
+        width: 22px;
+        height: 22px;
+        border: 1px solid var(--border);
+        border-radius: var(--corner-sm);
+        background: var(--muted);
+        object-fit: cover;
+      }
+      .swatch-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        margin-right: 4px;
+        border: 1px solid var(--border);
+        border-radius: 2px;
+        vertical-align: -1px;
+      }
+      .mini-table {
+        table-layout: auto;
+      }
+      .mini-table th,
+      .mini-table td {
+        min-width: 70px;
+        max-width: 180px;
+      }
+    </style>
+  </head>
+
+  <!-- The theme is on <html data-theme="light|dark">. Keep data-layout as it is: the CSS uses it. -->
+  <body data-layout="design">
+    <!-- ══ ICONS (lucide). Use: <svg class="i"><use href="#i-NAME" /></svg> ══════════════════════
+         AGENT: add icons here as <symbol>, with paths copied from lucide.dev. -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="i-pointer" viewBox="0 0 24 24">
+        <path
+          d="M4.037 4.688a.495.495 0 0 1 .651-.651l16 6.5a.5.5 0 0 1-.063.947l-6.124 1.58a2 2 0 0 0-1.438 1.435l-1.579 6.126a.5.5 0 0 1-.947.063z"
+        />
+      </symbol>
+      <symbol id="i-hand" viewBox="0 0 24 24">
+        <path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2" />
+        <path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2" />
+        <path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8" />
+        <path
+          d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"
+        />
+      </symbol>
+      <symbol id="i-frame" viewBox="0 0 24 24">
+        <line x1="22" x2="2" y1="6" y2="6" />
+        <line x1="22" x2="2" y1="18" y2="18" />
+        <line x1="6" x2="6" y1="2" y2="22" />
+        <line x1="18" x2="18" y1="2" y2="22" />
+      </symbol>
+      <symbol id="i-square" viewBox="0 0 24 24">
+        <rect width="18" height="18" x="3" y="3" rx="2" />
+      </symbol>
+      <symbol id="i-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /></symbol>
+      <symbol id="i-type" viewBox="0 0 24 24">
+        <path d="M12 4v16" />
+        <path d="M4 7V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2" />
+        <path d="M9 20h6" />
+      </symbol>
+      <symbol id="i-pen" viewBox="0 0 24 24">
+        <path
+          d="M15.707 21.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 1 0-1.414l5.586-5.586a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 1 0 1.414z"
+        />
+        <path
+          d="m18 13-1.375-6.874a1 1 0 0 0-.746-.776L3.235 2.028a1 1 0 0 0-1.207 1.207L5.35 15.879a1 1 0 0 0 .776.746L13 18"
+        />
+        <path d="m2.3 2.3 7.286 7.286" />
+        <circle cx="11" cy="11" r="2" />
+      </symbol>
+      <symbol id="i-image" viewBox="0 0 24 24">
+        <rect width="18" height="18" x="3" y="3" rx="2" />
+        <circle cx="9" cy="9" r="2" />
+        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+      </symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24">
+        <path
+          d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"
+        />
+        <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+        <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+      </symbol>
+      <symbol id="i-shapes" viewBox="0 0 24 24">
+        <path
+          d="M8.3 10a.7.7 0 0 1-.626-1.079L11.4 3a.7.7 0 0 1 1.198-.043L16.3 8.9a.7.7 0 0 1-.572 1.1Z"
+        />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <circle cx="17.5" cy="17.5" r="3.5" />
+      </symbol>
+      <symbol id="i-puzzle" viewBox="0 0 24 24">
+        <path
+          d="M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z"
+        />
+      </symbol>
+      <symbol id="i-undo" viewBox="0 0 24 24">
+        <path d="M9 14 4 9l5-5" />
+        <path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11" />
+      </symbol>
+      <symbol id="i-redo" viewBox="0 0 24 24">
+        <path d="m15 14 5-5-5-5" />
+        <path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13" />
+      </symbol>
+      <symbol id="i-panel-left-close" viewBox="0 0 24 24">
+        <rect width="18" height="18" x="3" y="3" rx="2" />
+        <path d="M9 3v18" />
+        <path d="m16 15-3-3 3-3" />
+      </symbol>
+      <symbol id="i-panel-right-close" viewBox="0 0 24 24">
+        <rect width="18" height="18" x="3" y="3" rx="2" />
+        <path d="M15 3v18" />
+        <path d="m8 9 3 3-3 3" />
+      </symbol>
+      <symbol id="i-panel-right-open" viewBox="0 0 24 24">
+        <rect width="18" height="18" x="3" y="3" rx="2" />
+        <path d="M15 3v18" />
+        <path d="m10 15-3-3 3-3" />
+      </symbol>
+      <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol>
+      <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24">
+        <path d="M5 12h14" />
+        <path d="M12 5v14" />
+      </symbol>
+      <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" /></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24">
+        <path
+          d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"
+        />
+        <circle cx="12" cy="12" r="3" />
+      </symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24">
+        <rect width="18" height="11" x="3" y="11" rx="2" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+      </symbol>
+      <symbol id="i-bot" viewBox="0 0 24 24">
+        <path d="M12 8V4H8" />
+        <rect width="16" height="12" x="4" y="8" rx="2" />
+        <path d="M2 14h2" />
+        <path d="M20 14h2" />
+        <path d="M15 13v2" />
+        <path d="M9 13v2" />
+      </symbol>
+      <symbol id="i-share" viewBox="0 0 24 24">
+        <path d="M12 2v13" />
+        <path d="m16 6-4-4-4 4" />
+        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+      </symbol>
+      <symbol id="i-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.3-4.3" />
+      </symbol>
+      <symbol id="i-x" viewBox="0 0 24 24">
+        <path d="M18 6 6 18" />
+        <path d="m6 6 12 12" />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></symbol>
+      <symbol id="i-arrow-left" viewBox="0 0 24 24">
+        <path d="m12 19-7-7 7-7" />
+        <path d="M19 12H5" />
+      </symbol>
+      <symbol id="i-arrow-right" viewBox="0 0 24 24">
+        <path d="M5 12h14" />
+        <path d="m12 5 7 7-7 7" />
+      </symbol>
+      <symbol id="i-arrow-down" viewBox="0 0 24 24">
+        <path d="M12 5v14" />
+        <path d="m19 12-7 7-7-7" />
+      </symbol>
+      <symbol id="i-save" viewBox="0 0 24 24">
+        <path
+          d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+        />
+        <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" />
+        <path d="M7 3v4a1 1 0 0 0 1 1h7" />
+      </symbol>
+      <symbol id="i-sticky" viewBox="0 0 24 24">
+        <path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z" />
+        <path d="M15 3v4a2 2 0 0 0 2 2h4" />
+      </symbol>
+      <symbol id="i-connector" viewBox="0 0 24 24">
+        <circle cx="19" cy="5" r="2" />
+        <circle cx="5" cy="19" r="2" />
+        <path d="M5 17A12 12 0 0 1 17 5" />
+      </symbol>
+      <symbol id="i-table" viewBox="0 0 24 24">
+        <path d="M12 3v18" />
+        <rect width="18" height="18" x="3" y="3" rx="2" />
+        <path d="M3 9h18" />
+        <path d="M3 15h18" />
+      </symbol>
+      <symbol id="i-section" viewBox="0 0 24 24">
+        <path d="M5 3a2 2 0 0 0-2 2" />
+        <path d="M19 3a2 2 0 0 1 2 2" />
+        <path d="M21 19a2 2 0 0 1-2 2" />
+        <path d="M5 21a2 2 0 0 1-2-2" />
+        <path d="M9 3h1" />
+        <path d="M9 21h1" />
+        <path d="M14 3h1" />
+        <path d="M14 21h1" />
+        <path d="M3 9v1" />
+        <path d="M21 9v1" />
+        <path d="M3 14v1" />
+        <path d="M21 14v1" />
+      </symbol>
+      <symbol id="i-smile" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+        <line x1="9" x2="9.01" y1="9" y2="9" />
+        <line x1="15" x2="15.01" y1="9" y2="9" />
+      </symbol>
+      <symbol id="i-comment" viewBox="0 0 24 24">
+        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+      </symbol>
+      <symbol id="i-rotate" viewBox="0 0 24 24">
+        <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+        <path d="M21 3v5h-5" />
+      </symbol>
+      <symbol id="i-download" viewBox="0 0 24 24">
+        <path d="M12 15V3" />
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+        <path d="m7 10 5 5 5-5" />
+      </symbol>
+      <symbol id="i-more" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="1" />
+        <circle cx="19" cy="12" r="1" />
+        <circle cx="5" cy="12" r="1" />
+      </symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24">
+        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+      </symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2" />
+        <path d="M12 20v2" />
+        <path d="m4.93 4.93 1.41 1.41" />
+        <path d="m17.66 17.66 1.41 1.41" />
+        <path d="M2 12h2" />
+        <path d="M20 12h2" />
+        <path d="m6.34 17.66-1.41 1.41" />
+        <path d="m19.07 4.93-1.41 1.41" />
+      </symbol>
+    </svg>
+
+    <!-- The mascot's mark (SealLogo variant="mark", src/shared/ui/brand/seal-logo.tsx). Brand art may
+         use the palette. Reuse it with <svg class="i i-lg"><use href="#seal-mark" /></svg>. -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="seal-mark" viewBox="0 0 64 64">
+        <defs>
+          <linearGradient id="seal-fur" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="oklch(0.87 0.011 250)" />
+            <stop offset="75%" stop-color="oklch(0.963 0.005 250)" />
+          </linearGradient>
+        </defs>
+        <g
+          stroke="oklch(0.27 0.02 256)"
+          stroke-width="2.4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <ellipse cx="32" cy="28" rx="20" ry="16.5" fill="url(#seal-fur)" />
+          <g stroke="none" fill="oklch(0.74 0.015 250)">
+            <ellipse cx="24" cy="15.5" rx="1.6" ry="1.1" />
+            <ellipse cx="31" cy="12.6" rx="1.2" ry="0.8" />
+            <ellipse cx="38.5" cy="14" rx="1.8" ry="1.2" />
+            <ellipse cx="45" cy="19" rx="1.3" ry="1" />
+          </g>
+          <g stroke="none" fill="oklch(0.85 0.085 35)" opacity="0.8">
+            <ellipse cx="19.5" cy="26" rx="3" ry="1.8" />
+            <ellipse cx="44.5" cy="26" rx="3" ry="1.8" />
+          </g>
+          <path d="M21.5 22.5q3-3 6 0M36.5 22.5q3-3 6 0" fill="none" />
+          <path
+            d="M32 26.2c-1-1.6-5.6-1.6-6 1.4-.3 2.4 2.6 3.4 4.4 2.6.8-.3 1.3-.8 1.6-1.3.3.5.8 1 1.6 1.3 1.8.8 4.7-.2 4.4-2.6-.4-3-5-3-6-1.4z"
+            fill="oklch(0.985 0.003 250)"
+            stroke-width="1.92"
+          />
+          <ellipse cx="32" cy="25.9" rx="1.7" ry="1.15" fill="oklch(0.27 0.02 256)" stroke="none" />
+          <rect x="8" y="33" width="48" height="25" rx="1.5" fill="oklch(1 0 0)" />
+          <ellipse
+            cx="17.5"
+            cy="34.5"
+            rx="4.6"
+            ry="2.6"
+            transform="rotate(-18 17.5 34.5)"
+            fill="oklch(0.87 0.011 250)"
+          />
+          <ellipse
+            cx="46.5"
+            cy="34.5"
+            rx="4.6"
+            ry="2.6"
+            transform="rotate(18 46.5 34.5)"
+            fill="oklch(0.87 0.011 250)"
+          />
+        </g>
+      </symbol>
+      <symbol id="i-globe" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+        <path d="M2 12h20" />
+      </symbol>
+      <symbol id="i-database" viewBox="0 0 24 24">
+        <ellipse cx="12" cy="5" rx="9" ry="3" />
+        <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+        <path d="M3 12A9 3 0 0 0 21 12" />
+      </symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24">
+        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+        <path d="M21 3v5h-5" />
+        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+        <path d="M8 16H3v5" />
+      </symbol>
+      <symbol id="i-key" viewBox="0 0 24 24">
+        <path
+          d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
+        />
+        <circle cx="16.5" cy="7.5" r=".5" />
+      </symbol>
+      <symbol id="i-pencil" viewBox="0 0 24 24">
+        <path
+          d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+        />
+        <path d="m15 5 4 4" />
+      </symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24">
+        <path d="M3 6h18" />
+        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+      </symbol>
+      <symbol id="i-eye-off" viewBox="0 0 24 24">
+        <path
+          d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"
+        />
+        <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" />
+        <path
+          d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"
+        />
+        <path d="m2 2 20 20" />
+      </symbol>
+      <symbol id="i-hash" viewBox="0 0 24 24">
+        <line x1="4" x2="20" y1="9" y2="9" />
+        <line x1="4" x2="20" y1="15" y2="15" />
+        <line x1="10" x2="8" y1="3" y2="21" />
+        <line x1="16" x2="14" y1="3" y2="21" />
+      </symbol>
+      <symbol id="i-link" viewBox="0 0 24 24">
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+      </symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24">
+        <path d="M8 2v4" />
+        <path d="M16 2v4" />
+        <rect width="18" height="18" x="3" y="4" rx="2" />
+        <path d="M3 10h18" />
+      </symbol>
+      <symbol id="i-toggle" viewBox="0 0 24 24">
+        <rect width="20" height="12" x="2" y="6" rx="6" ry="6" />
+        <circle cx="8" cy="12" r="2" />
+      </symbol>
+      <symbol id="i-braces" viewBox="0 0 24 24">
+        <path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5c0 1.1.9 2 2 2h1" />
+        <path d="M16 21h1a2 2 0 0 0 2-2v-5c0-1.1.9-2 2-2a2 2 0 0 1-2-2V5a2 2 0 0 0-2-2h-1" />
+      </symbol>
+      <symbol id="i-list" viewBox="0 0 24 24">
+        <path d="M3 12h.01" />
+        <path d="M3 18h.01" />
+        <path d="M3 6h.01" />
+        <path d="M8 12h13" />
+        <path d="M8 18h13" />
+        <path d="M8 6h13" />
+      </symbol>
+      <symbol id="i-file-text" viewBox="0 0 24 24">
+        <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+        <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+        <path d="M10 9H8" />
+        <path d="M16 13H8" />
+        <path d="M16 17H8" />
+      </symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3" /></symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" x2="12" y1="8" y2="12" />
+        <line x1="12" x2="12.01" y1="16" y2="16" />
+      </symbol>
+      <symbol id="i-info" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 16v-4" />
+        <path d="M12 8h.01" />
+      </symbol>
+      <symbol id="i-user" viewBox="0 0 24 24">
+        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </symbol>
+      <symbol id="i-ban" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <path d="m4.9 4.9 14.2 14.2" />
+      </symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24">
+        <path
+          d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+        />
+      </symbol>
+      <symbol id="i-maximize" viewBox="0 0 24 24">
+        <polyline points="15 3 21 3 21 9" />
+        <polyline points="9 21 3 21 3 15" />
+        <line x1="21" x2="14" y1="3" y2="10" />
+        <line x1="3" x2="10" y1="21" y2="14" />
+      </symbol>
+      <symbol id="i-dollar" viewBox="0 0 24 24">
+        <line x1="12" x2="12" y1="2" y2="22" />
+        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+      </symbol>
+      <symbol id="i-sparkles" viewBox="0 0 24 24">
+        <path
+          d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"
+        />
+      </symbol>
+      <symbol id="i-code" viewBox="0 0 24 24">
+        <polyline points="16 18 22 12 16 6" />
+        <polyline points="8 6 2 12 8 18" />
+      </symbol>
+      <symbol id="i-loader" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56" /></symbol>
+      <symbol id="i-palette" viewBox="0 0 24 24">
+        <circle cx="13.5" cy="6.5" r=".5" />
+        <circle cx="17.5" cy="10.5" r=".5" />
+        <circle cx="8.5" cy="7.5" r=".5" />
+        <circle cx="6.5" cy="12.5" r=".5" />
+        <path
+          d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"
+        />
+      </symbol>
+    </svg>
+
+    <!-- ══ PROTOTYPE BAR (not part of the app) ════════════════════════════════════════════════════
+         Lets the user flip the theme. AGENT: write one line on what you're proposing in .note. -->
+    <div class="proto-bar">
+      <span class="badge badge-accent">Prototype</span>
+      <span class="note"
+        >Data tab: the link as a readable card, a Connection dialog with Try it, and nested answers
+        (groups, lists) as a field tree</span
+      >
+      <div class="seg seg-sm" role="radiogroup" aria-label="Example">
+        <button role="radio" aria-checked="true" data-example="pokemon">Pokémon</button>
+        <button role="radio" aria-checked="false" data-example="products">Products (nested)</button>
+      </div>
+      <div class="seg seg-sm seg-icons" role="radiogroup" aria-label="Theme">
+        <button role="radio" aria-checked="true" data-set-theme="light" title="Light">
+          <svg class="i"><use href="#i-sun" /></svg>
+        </button>
+        <button role="radio" aria-checked="false" data-set-theme="dark" title="Dark">
+          <svg class="i"><use href="#i-moon" /></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════════════════════════
+         DESIGN EDITOR (/design/:id), mirrors src/products/design/ui/design-chrome.tsx
+         ┌──────┬──────────────┬──────────────────────────────┬────────────────┐
+         │ rail │ left panel   │ canvas (rulers, frames)      │ properties     │
+         │ 48px │ 240px        │        [tool options]        │ panel 256px    │
+         │      │              │        [  toolbar   ]        │                │
+         └──────┴──────────────┴──────────────────────────────┴────────────────┘
+         Panels close with the buttons (data-toggle-class); the canvas takes their room.
+         ══════════════════════════════════════════════════════════════════════════════════════ -->
+    <div class="layout-design" id="design">
+      <!-- The canvas. AGENT: canvas content goes inside .world, positioned with left/top in px. -->
+      <div class="design-viewport">
+        <div class="canvas">
+          <div class="ruler-corner"></div>
+          <div class="ruler-top"></div>
+          <div class="ruler-left"></div>
+
+          <div class="world">
+            <!-- A frame with its name above it. AGENT: ADD canvas content (frames, shapes, text). -->
+            <div style="left: 80px; top: 80px; width: 520px; height: 340px" class="frame">
+              <span class="frame-label">Desktop · 1</span>
+              <!-- Content inside a frame: positioned relative to the frame. -->
+              <div
+                style="
+                  position: absolute;
+                  left: 32px;
+                  top: 32px;
+                  width: 200px;
+                  height: 120px;
+                  background: oklch(0.85 0.07 245);
+                  border-radius: 4px;
+                "
+                class="selected"
+              >
+                <!-- The selection's handles and size label. Move this block to what's selected. -->
+                <div class="handles">
+                  <i style="left: 0; top: 0"></i><i style="left: 50%; top: 0"></i
+                  ><i style="left: 100%; top: 0"></i><i style="left: 100%; top: 50%"></i
+                  ><i style="left: 100%; top: 100%"></i><i style="left: 50%; top: 100%"></i
+                  ><i style="left: 0; top: 100%"></i><i style="left: 0; top: 50%"></i>
+                </div>
+                <span class="size-label">200 × 120</span>
+              </div>
+              <div
+                style="
+                  position: absolute;
+                  left: 32px;
+                  top: 184px;
+                  color: oklch(0.27 0.02 256);
+                  font-size: 24px;
+                  font-weight: 600;
+                "
+              >
+                Hello, seal
+              </div>
+            </div>
+          </div>
+
+          <!-- Shown when the properties panel is closed (ShowPropertiesButton). -->
+          <div class="show-props" id="show-props" hidden>
+            <button
+              class="icon-btn icon-btn-outline"
+              data-tip="Show properties"
+              data-tip-side="bottom"
+              data-toggle-class="#design:right-closed"
+              data-toggle="#show-props"
+            >
+              <svg class="i"><use href="#i-panel-right-open" /></svg>
+            </button>
+          </div>
+
+          <!-- Over the canvas's bottom edge: the tool options, then the toolbar (ModuleToolOptions,
+               ModuleToolbar). -->
+          <div class="canvas-bottom">
+            <!-- AGENT: ADD a tool's options bar here (a .toolbar with .seg / .field-box / buttons),
+                 shown above the toolbar while a tool is on. Example:
+            <div class="toolbar">
+              <div class="toolbar-group">
+                <div class="seg seg-sm"><button role="radio" aria-checked="true">Fill</button><button role="radio" aria-checked="false">Stroke</button></div>
+              </div>
+            </div> -->
+
+            <div class="toolbar" role="toolbar" aria-label="Tools" data-pick>
+              <div class="toolbar-group">
+                <button
+                  class="icon-btn icon-btn-lg"
+                  aria-pressed="true"
+                  data-tip="Move"
+                  data-kbd="V"
+                >
+                  <svg class="i"><use href="#i-pointer" /></svg>
+                </button>
+                <button
+                  class="icon-btn icon-btn-lg"
+                  aria-pressed="false"
+                  data-tip="Hand"
+                  data-kbd="H"
+                >
+                  <svg class="i"><use href="#i-hand" /></svg>
+                </button>
+              </div>
+              <div class="toolbar-group">
+                <button
+                  class="icon-btn icon-btn-lg"
+                  aria-pressed="false"
+                  data-tip="Frame"
+                  data-kbd="F"
+                >
+                  <svg class="i"><use href="#i-frame" /></svg>
+                </button>
+                <button
+                  class="icon-btn icon-btn-lg"
+                  aria-pressed="false"
+                  data-tip="Rectangle"
+                  data-kbd="R"
+                >
+                  <svg class="i"><use href="#i-square" /></svg>
+                </button>
+                <button
+                  class="icon-btn icon-btn-lg"
+                  aria-pressed="false"
+                  data-tip="Ellipse"
+                  data-kbd="O"
+                >
+                  <svg class="i"><use href="#i-circle" /></svg>
+                </button>
+                <button
+                  class="icon-btn icon-btn-lg"
+                  aria-pressed="false"
+                  data-tip="Pen"
+                  data-kbd="P"
+                >
+                  <svg class="i"><use href="#i-pen" /></svg>
+                </button>
+                <button
+                  class="icon-btn icon-btn-lg"
+                  aria-pressed="false"
+                  data-tip="Text"
+                  data-kbd="T"
+                >
+                  <svg class="i"><use href="#i-type" /></svg>
+                </button>
+                <button
+                  class="icon-btn icon-btn-lg"
+                  aria-pressed="false"
+                  data-tip="Image"
+                  data-kbd="Shift+Ctrl+K"
+                >
+                  <svg class="i"><use href="#i-image" /></svg>
+                </button>
+              </div>
+              <!-- AGENT: ADD a new tool as another .icon-btn-lg, or a new .toolbar-group. -->
+              <div class="toolbar-group">
+                <button
+                  class="icon-btn icon-btn-lg"
+                  aria-pressed="false"
+                  data-tip="Comment"
+                  data-kbd="C"
+                >
+                  <svg class="i"><use href="#i-comment" /></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Left side: the rail and the left panel (DesignRail, LeftPanel). data-tabs links the rail's
+           buttons (data-tab) to the panel's contents (data-tab-panel). -->
+      <div class="design-left" data-tabs>
+        <nav class="rail" aria-label="Panels">
+          <!-- The logo opens the main menu. -->
+          <button
+            class="icon-btn icon-btn-lg logo"
+            aria-label="Main menu"
+            data-menu="#main-menu"
+            data-side="right"
+          >
+            <svg class="i" style="width: 22px; height: 22px"><use href="#seal-mark" /></svg>
+          </button>
+          <button
+            class="icon-btn icon-btn-lg"
+            data-tab="layers"
+            aria-pressed="false"
+            data-tip="Layers"
+            data-tip-side="right"
+          >
+            <svg class="i"><use href="#i-layers" /></svg>
+          </button>
+          <button
+            class="icon-btn icon-btn-lg"
+            data-tab="assets"
+            aria-pressed="false"
+            data-tip="Assets"
+            data-tip-side="right"
+          >
+            <svg class="i"><use href="#i-shapes" /></svg>
+          </button>
+          <button
+            class="icon-btn icon-btn-lg"
+            data-tab="plugins"
+            aria-pressed="false"
+            data-tip="Plugins"
+            data-tip-side="right"
+          >
+            <svg class="i"><use href="#i-puzzle" /></svg>
+          </button>
+          <button
+            class="icon-btn icon-btn-lg"
+            data-tab="data"
+            aria-pressed="true"
+            data-tip="Data"
+            data-tip-side="right"
+          >
+            <svg class="i"><use href="#i-database" /></svg>
+          </button>
+          <!-- AGENT: ADD a left panel tab: a button here with data-tab="NAME", and a
+               <div data-tab-panel="NAME" hidden> in .left-panel below. -->
+          <div class="grow"></div>
+          <div class="avatars" style="flex-direction: column; gap: 0">
+            <span class="avatar" style="background: oklch(0.6 0.15 33)">MC</span>
+          </div>
+          <button class="icon-btn icon-btn-lg" data-tip="Agents: on" data-tip-side="right">
+            <svg class="i"><use href="#i-bot" /></svg>
+          </button>
+          <button
+            class="icon-btn icon-btn-lg"
+            data-tip="Hide panel"
+            data-tip-side="right"
+            data-toggle-class="#design:left-closed"
+            data-toggle="#left-panel"
+          >
+            <svg class="i"><use href="#i-panel-left-close" /></svg>
+          </button>
+        </nav>
+
+        <aside class="left-panel" id="left-panel">
+          <!-- The file's name and state. -->
+          <header class="left-panel-head">
+            <div class="file-name">
+              Pokédex cards
+              <svg class="i i-sm muted"><use href="#i-chevron-down" /></svg>
+            </div>
+            <div class="row muted text-xs" style="margin-top: 4px">
+              <span>Saved</span>
+              <span class="badge badge-design">Design</span>
+            </div>
+          </header>
+
+          <!-- Data tab (PROPOSAL): one source open. The request is a readable card; editing it
+               opens the Connection dialog. Fields show their kind as an icon you can click. -->
+          <div class="panel-scroll" data-tab-panel="data">
+            <div class="ds-head">
+              <button class="icon-btn icon-btn-sm" aria-label="Back to sources">
+                <svg class="i"><use href="#i-arrow-left" /></svg>
+              </button>
+              <svg class="i i-sm muted"><use href="#i-globe" /></svg>
+              <span class="grow" id="sb-name">pokemon</span>
+              <button class="icon-btn icon-btn-sm" data-tip="Update now" id="sb-update">
+                <svg class="i"><use href="#i-refresh" /></svg>
+              </button>
+            </div>
+
+            <section class="section proposal">
+              <header class="section-head">
+                Connection
+                <div class="section-actions">
+                  <button class="icon-btn icon-btn-xs" data-tip="Edit connection" data-open-conn>
+                    <svg class="i"><use href="#i-pencil" /></svg>
+                  </button>
+                </div>
+              </header>
+              <div class="section-body">
+                <button class="conn-card" data-open-conn>
+                  <div class="conn-top">
+                    <span class="method" id="sb-method">GET</span>
+                    <span class="host" id="sb-host">pokeapi.co</span>
+                  </div>
+                  <div class="conn-path mono" id="sb-path">/api/v2/pokemon</div>
+                  <div class="chips" id="sb-chips"></div>
+                </button>
+                <div class="status-line" id="sb-status">
+                  <span class="dot"></span> Updated 2 min ago · 20 rows
+                </div>
+              </div>
+            </section>
+
+            <section class="section">
+              <header class="section-head">Read as</header>
+              <div class="section-body">
+                <div class="seg seg-full seg-sm" role="radiogroup" aria-label="Read as">
+                  <button role="radio" aria-checked="false">Auto</button>
+                  <button role="radio" aria-checked="true">JSON</button>
+                  <button role="radio" aria-checked="false">CSV</button>
+                </div>
+                <div class="field">
+                  <span class="field-hint">Rows come from</span>
+                  <div
+                    class="field-box proposal"
+                    title="The list in the answer that becomes the rows"
+                  >
+                    <svg class="i i-sm muted"><use href="#i-list" /></svg>
+                    <select
+                      class="select select-sm"
+                      id="sb-list"
+                      style="flex: 1; min-width: 0; border: 0; background: none; padding-left: 0"
+                    ></select>
+                  </div>
+                  <span class="field-hint" id="sb-extra"></span>
+                </div>
+              </div>
+            </section>
+
+            <section class="section proposal">
+              <header class="section-head">
+                Fields
+                <span class="muted text-xs" style="font-weight: 400" id="sb-field-count"></span>
+              </header>
+              <div class="section-body" style="gap: 0" id="sb-fields"></div>
+            </section>
+
+            <section class="section">
+              <header class="section-head">
+                Rows
+                <div class="section-actions">
+                  <button
+                    class="icon-btn icon-btn-xs"
+                    data-tip="See all rows"
+                    data-dialog="#rows-dialog"
+                  >
+                    <svg class="i"><use href="#i-maximize" /></svg>
+                  </button>
+                </div>
+              </header>
+              <div class="section-body">
+                <div class="table-wrap" style="max-height: 220px">
+                  <table class="mini-table" id="sb-rows"></table>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- Layers tab: the layer tree (ListRow per node, depth with --depth). -->
+          <div class="panel-scroll" data-tab-panel="layers" hidden>
+            <section class="section" style="border-bottom: 0">
+              <header class="section-head">
+                Pages
+                <div class="section-actions">
+                  <button class="icon-btn icon-btn-xs" data-tip="Add page">
+                    <svg class="i"><use href="#i-plus" /></svg>
+                  </button>
+                </div>
+              </header>
+              <div class="section-body" style="gap: 0" data-pick>
+                <div class="list-row" aria-pressed="true" data-pick-item>
+                  <span class="row-label">Page 1</span>
+                </div>
+                <div class="list-row" aria-pressed="false" data-pick-item>
+                  <span class="row-label">Components</span>
+                </div>
+              </div>
+            </section>
+            <div class="sep" style="margin: 0"></div>
+            <section class="section" style="border-bottom: 0">
+              <header class="section-head">Layers</header>
+              <div class="section-body" style="gap: 0" data-pick>
+                <div class="list-row" aria-pressed="false" data-pick-item>
+                  <span class="row-icon"
+                    ><svg class="i"><use href="#i-chevron-down" /></svg
+                  ></span>
+                  <span class="row-icon"
+                    ><svg class="i"><use href="#i-frame" /></svg
+                  ></span>
+                  <span class="row-label">Desktop · 1</span>
+                  <span class="row-actions">
+                    <button class="icon-btn icon-btn-xs" aria-label="Lock">
+                      <svg class="i"><use href="#i-lock" /></svg>
+                    </button>
+                    <button class="icon-btn icon-btn-xs" aria-label="Hide">
+                      <svg class="i"><use href="#i-eye" /></svg>
+                    </button>
+                  </span>
+                </div>
+                <div class="list-row" style="--depth: 1" aria-pressed="false" data-pick-item>
+                  <span class="row-icon"
+                    ><svg class="i"><use href="#i-type" /></svg
+                  ></span>
+                  <span class="row-label">Hello, seal</span>
+                </div>
+                <div class="list-row" style="--depth: 1" aria-pressed="true" data-pick-item>
+                  <span class="row-icon"
+                    ><svg class="i"><use href="#i-square" /></svg
+                  ></span>
+                  <span class="row-label">Card</span>
+                </div>
+                <!-- AGENT: ADD layer rows (one .list-row per node, --depth per level). -->
+              </div>
+            </section>
+          </div>
+
+          <!-- Assets tab -->
+          <div class="panel-scroll" data-tab-panel="assets" hidden>
+            <div style="padding: 10px 12px">
+              <label class="search">
+                <svg class="i i-sm"><use href="#i-search" /></svg>
+                <input placeholder="Search assets" />
+              </label>
+            </div>
+            <div class="empty">
+              <strong>No assets yet</strong>
+              Components, styles and images you add to this file show here.
+            </div>
+          </div>
+
+          <!-- Plugins tab -->
+          <div class="panel-scroll" data-tab-panel="plugins" hidden>
+            <div class="empty">
+              <strong>No plugins</strong>
+              Install plugins in Settings.
+              <button class="btn btn-outline btn-sm" style="margin-top: 6px">Open settings</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Right side: the properties panel (PropertiesPanel). -->
+      <div class="design-right">
+        <aside class="props-panel" id="props-panel" aria-label="Properties">
+          <!-- History, sharing, hide. -->
+          <header class="props-head">
+            <button
+              class="icon-btn icon-btn-lg"
+              data-tip="Undo"
+              data-kbd="Ctrl+Z"
+              data-tip-side="bottom"
+            >
+              <svg class="i"><use href="#i-undo" /></svg>
+            </button>
+            <button
+              class="icon-btn icon-btn-lg"
+              data-tip="Redo"
+              data-kbd="Ctrl+Shift+Z"
+              data-tip-side="bottom"
+              disabled
+            >
+              <svg class="i"><use href="#i-redo" /></svg>
+            </button>
+            <div class="grow"></div>
+            <button class="btn btn-sm">
+              <svg class="i i-sm"><use href="#i-share" /></svg>
+              Share
+            </button>
+            <button
+              class="icon-btn icon-btn-lg"
+              data-tip="Hide properties"
+              data-tip-side="bottom"
+              data-toggle-class="#design:right-closed"
+              data-toggle="#props-panel,#show-props"
+            >
+              <svg class="i"><use href="#i-panel-right-close" /></svg>
+            </button>
+          </header>
+
+          <!-- Design / Prototype tabs, and the zoom. -->
+          <div data-tabs style="display: contents">
+            <div class="props-tabs">
+              <div class="tabs-list" role="tablist">
+                <button class="tab" role="tab" data-tab="design" aria-selected="true">
+                  Design
+                </button>
+                <button class="tab" role="tab" data-tab="prototype" aria-selected="false">
+                  Prototype
+                </button>
+              </div>
+              <button class="btn btn-ghost btn-xs" data-menu="#zoom-menu">
+                100%
+                <svg class="i"><use href="#i-chevron-down" /></svg>
+              </button>
+            </div>
+
+            <!-- Design tab: one .section per property group (PropertySections). -->
+            <div class="panel-scroll" data-tab-panel="design">
+              <!-- Position and size -->
+              <section class="section">
+                <header class="section-head">Position</header>
+                <div class="section-body">
+                  <div class="grid-2">
+                    <label class="field-box"
+                      ><span class="field-label">X</span><input value="32"
+                    /></label>
+                    <label class="field-box"
+                      ><span class="field-label">Y</span><input value="32"
+                    /></label>
+                    <label class="field-box"
+                      ><span class="field-label">W</span><input value="200"
+                    /></label>
+                    <label class="field-box"
+                      ><span class="field-label">H</span><input value="120"
+                    /></label>
+                    <label class="field-box">
+                      <span class="field-label"
+                        ><svg class="i"><use href="#i-rotate" /></svg
+                      ></span>
+                      <input value="0°" />
+                    </label>
+                    <label class="field-box">
+                      <span class="field-label"
+                        ><svg class="i"><use href="#i-square" /></svg
+                      ></span>
+                      <input value="4" />
+                    </label>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Auto layout (a collapsible section) -->
+              <details class="section" open>
+                <summary class="section-head">
+                  <span class="row" style="gap: 2px">
+                    <svg class="i i-sm chev"><use href="#i-chevron-right" /></svg>
+                    Auto layout
+                  </span>
+                  <span class="section-actions">
+                    <button class="icon-btn icon-btn-xs" data-tip="Remove auto layout">
+                      <svg class="i"><use href="#i-minus" /></svg>
+                    </button>
+                  </span>
+                </summary>
+                <div class="section-body">
+                  <div class="seg seg-sm seg-full" role="radiogroup" aria-label="Direction">
+                    <button role="radio" aria-checked="false" title="Horizontal">
+                      <svg class="i"><use href="#i-arrow-right" /></svg>
+                    </button>
+                    <button role="radio" aria-checked="true" title="Vertical">
+                      <svg class="i"><use href="#i-arrow-down" /></svg>
+                    </button>
+                  </div>
+                  <div class="grid-2">
+                    <label class="field-box"
+                      ><span class="field-label">Gap</span><input value="12"
+                    /></label>
+                    <label class="field-box"
+                      ><span class="field-label">Pad</span><input value="16"
+                    /></label>
+                  </div>
+                </div>
+              </details>
+
+              <!-- Fill: a paint row (swatch + hex + opacity) and the + to add one -->
+              <section class="section">
+                <header class="section-head">
+                  Fill
+                  <div class="section-actions">
+                    <button class="icon-btn icon-btn-xs" data-tip="Add fill">
+                      <svg class="i"><use href="#i-plus" /></svg>
+                    </button>
+                  </div>
+                </header>
+                <div class="section-body">
+                  <div class="row">
+                    <label class="field-box grow">
+                      <span class="swatch" style="background: oklch(0.85 0.07 245)"></span>
+                      <input class="mono" value="A9CDF0" />
+                      <input value="100%" style="width: 40px; text-align: right" />
+                    </label>
+                    <button class="icon-btn icon-btn-xs" aria-label="Hide fill">
+                      <svg class="i"><use href="#i-eye" /></svg>
+                    </button>
+                    <button class="icon-btn icon-btn-xs" aria-label="Remove fill">
+                      <svg class="i"><use href="#i-minus" /></svg>
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+              <!-- An empty section: just the title and its + -->
+              <section class="section">
+                <header class="section-head">
+                  Stroke
+                  <div class="section-actions">
+                    <button class="icon-btn icon-btn-xs" data-tip="Add stroke">
+                      <svg class="i"><use href="#i-plus" /></svg>
+                    </button>
+                  </div>
+                </header>
+              </section>
+
+              <!-- A section with a select and a switch -->
+              <section class="section">
+                <header class="section-head">Layer</header>
+                <div class="section-body">
+                  <select class="select select-sm">
+                    <option>Pass through</option>
+                    <option>Normal</option>
+                    <option>Multiply</option>
+                  </select>
+                  <div class="row text-xs">
+                    <span class="grow">Clip content</span>
+                    <button
+                      class="switch"
+                      role="switch"
+                      aria-checked="true"
+                      aria-label="Clip content"
+                    ></button>
+                  </div>
+                </div>
+              </section>
+
+              <!-- ════════════════════════════════════════════════════════════════════════════
+                   AGENT: ADD A PROPERTIES SECTION HERE (most proposals land here).
+                   <section class="section">
+                     <header class="section-head">Title <div class="section-actions">…</div></header>
+                     <div class="section-body">
+                       .grid-2 of .field-box · .seg · .select-sm · .row with a .switch · .list-row …
+                     </div>
+                   </section>
+                   ════════════════════════════════════════════════════════════════════════ -->
+
+              <section class="section">
+                <header class="section-head">
+                  Export
+                  <div class="section-actions">
+                    <button class="icon-btn icon-btn-xs" data-tip="Add export">
+                      <svg class="i"><use href="#i-plus" /></svg>
+                    </button>
+                  </div>
+                </header>
+                <div class="section-body">
+                  <button class="btn btn-outline btn-sm" data-dialog="#export-dialog">
+                    <svg class="i i-sm"><use href="#i-download" /></svg>
+                    Export Card
+                  </button>
+                </div>
+              </section>
+            </div>
+
+            <!-- Prototype tab -->
+            <div class="panel-scroll" data-tab-panel="prototype" hidden>
+              <div class="empty">
+                <strong>No interactions</strong>
+                Select a layer to add a click, hover or link.
+              </div>
+              <!-- AGENT: ADD prototype-tab sections here. -->
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ══ MENUS ═════════════════════════════════════════════════════════════════════════════════
+         Opened by a trigger with data-menu="#id" (data-side="bottom|right|top", default bottom).
+         They close on a click outside, on Escape or when an item is picked.
+         AGENT: ADD context menus / dropdowns / popovers here, then point a trigger at them. -->
+    <div class="menu" id="main-menu" hidden>
+      <button class="menu-item">Back to home</button>
+      <div class="sep"></div>
+      <button class="menu-item">
+        File <svg class="i i-sm" style="margin-left: auto"><use href="#i-chevron-right" /></svg>
+      </button>
+      <button class="menu-item">
+        Edit <svg class="i i-sm" style="margin-left: auto"><use href="#i-chevron-right" /></svg>
+      </button>
+      <button class="menu-item">
+        View <svg class="i i-sm" style="margin-left: auto"><use href="#i-chevron-right" /></svg>
+      </button>
+      <div class="sep"></div>
+      <button class="menu-item" data-toast="Design saved">
+        Save <span class="kbd">Ctrl+S</span>
+      </button>
+      <button class="menu-item" data-dialog="#export-dialog">
+        Export… <span class="kbd">Ctrl+Shift+E</span>
+      </button>
+      <div class="sep"></div>
+      <div class="menu-label">Danger</div>
+      <button class="menu-item is-destructive">Delete file</button>
+    </div>
+
+    <div class="menu" id="zoom-menu" hidden>
+      <button class="menu-item">Zoom in <span class="kbd">Ctrl++</span></button>
+      <button class="menu-item">Zoom out <span class="kbd">Ctrl+-</span></button>
+      <button class="menu-item">Zoom to fit <span class="kbd">Shift+1</span></button>
+      <button class="menu-item">Zoom to 100% <span class="kbd">Ctrl+0</span></button>
+    </div>
+
+    <!-- ══ DIALOGS ═══════════════════════════════════════════════════════════════════════════════
+         A native <dialog class="dialog">, opened with data-dialog="#id" on any button, closed by any
+         button with data-close inside it (or Escape).
+         AGENT: ADD dialogs here (head, body of .field blocks, foot with Cancel + the action). -->
+    <dialog class="dialog" id="export-dialog">
+      <div class="dialog-head">
+        <div>
+          <h2 class="dialog-title">Export</h2>
+          <p class="dialog-desc">Save the selection as an image or a PDF.</p>
+        </div>
+        <button class="icon-btn icon-btn-sm" aria-label="Close" data-close>
+          <svg class="i"><use href="#i-x" /></svg>
+        </button>
+      </div>
+      <div class="dialog-body">
+        <div class="field">
+          <span class="field-title">Format</span>
+          <div class="seg seg-full" role="radiogroup" aria-label="Format">
+            <button role="radio" aria-checked="true">PNG</button>
+            <button role="radio" aria-checked="false">JPG</button>
+            <button role="radio" aria-checked="false">SVG</button>
+            <button role="radio" aria-checked="false">PDF</button>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <span class="field-title">Scale</span>
+            <select class="select">
+              <option>1×</option>
+              <option selected>2×</option>
+              <option>3×</option>
+            </select>
+          </div>
+          <div class="field">
+            <span class="field-title">File name</span>
+            <input class="input" value="Card" />
+          </div>
+        </div>
+        <label class="check"><input type="checkbox" checked /> Transparent background</label>
+        <p class="field-hint">Frames export one page each in a PDF.</p>
+      </div>
+      <div class="dialog-foot">
+        <button class="btn btn-ghost" data-close>Cancel</button>
+        <button class="btn" data-close data-toast="Exported Card.png">Export</button>
+      </div>
+    </dialog>
+
+    <!-- Field kind picker (PROPOSAL): each kind with its icon, so "Link" or "Image" is obvious. -->
+    <div class="menu" id="type-menu" hidden>
+      <div class="menu-label">Show this field as</div>
+      <button class="menu-item" data-type="text">
+        <svg class="i i-sm"><use href="#i-type" /></svg> Text
+      </button>
+      <button class="menu-item" data-type="number">
+        <svg class="i i-sm"><use href="#i-hash" /></svg> Number
+      </button>
+      <button class="menu-item" data-type="currency">
+        <svg class="i i-sm"><use href="#i-dollar" /></svg> Price
+      </button>
+      <button class="menu-item" data-type="boolean">
+        <svg class="i i-sm"><use href="#i-toggle" /></svg> Yes / no
+      </button>
+      <button class="menu-item" data-type="date">
+        <svg class="i i-sm"><use href="#i-calendar" /></svg> Date
+      </button>
+      <button class="menu-item" data-type="color">
+        <svg class="i i-sm"><use href="#i-palette" /></svg> Color
+      </button>
+      <button class="menu-item" data-type="url">
+        <svg class="i i-sm"><use href="#i-link" /></svg> Link
+      </button>
+      <button class="menu-item" data-type="image">
+        <svg class="i i-sm"><use href="#i-image" /></svg> Image
+      </button>
+      <button class="menu-item" data-type="list">
+        <svg class="i i-sm"><use href="#i-list" /></svg> List
+      </button>
+      <div class="sep" data-list-only></div>
+      <div class="menu-label" data-list-only>Each row has several. Show</div>
+      <button class="menu-item" data-list-only data-show="all">
+        <svg class="i i-sm tick"><use href="#i-check" /></svg> All, with commas
+      </button>
+      <button class="menu-item" data-list-only data-show="first">
+        <svg class="i i-sm tick"><use href="#i-check" /></svg> Only the first
+      </button>
+      <button class="menu-item" data-list-only data-show="count">
+        <svg class="i i-sm tick"><use href="#i-check" /></svg> How many there are
+      </button>
+      <div class="sep"></div>
+      <button class="menu-item" data-rename>
+        <svg class="i i-sm"><use href="#i-pencil" /></svg> Rename…
+      </button>
+    </div>
+
+    <div class="menu suggest" id="suggest" hidden></div>
+
+    <!-- The Connection dialog (PROPOSAL). Left: the request in plain words and four tabs.
+         Right: Try it, with what came back. -->
+    <dialog class="dialog dialog-wide" id="conn-dialog">
+      <div class="dialog-head">
+        <div>
+          <h2 class="dialog-title">Connection</h2>
+          <p class="dialog-desc">
+            Where this data comes from and what Cloudy Canvas sends to get it.
+          </p>
+        </div>
+        <button class="icon-btn icon-btn-sm" aria-label="Close" data-close>
+          <svg class="i"><use href="#i-x" /></svg>
+        </button>
+      </div>
+      <div class="conn-grid">
+        <div class="conn-main" data-tabs>
+          <div class="sentence" id="cd-sentence">
+            <svg class="i i-sm" style="margin-top: 2px"><use href="#i-sparkles" /></svg>
+            <span></span>
+          </div>
+
+          <div class="field">
+            <span class="field-title">Link</span>
+            <div class="url-bar">
+              <div class="seg" role="radiogroup" aria-label="Method" id="cd-method">
+                <button role="radio" aria-checked="true" data-value="GET" title="Read data">
+                  GET
+                </button>
+                <button
+                  role="radio"
+                  aria-checked="false"
+                  data-value="POST"
+                  title="Send something and read the answer"
+                >
+                  POST
+                </button>
+              </div>
+              <input class="input" id="cd-url" spellcheck="false" />
+            </div>
+            <span class="field-hint" id="cd-method-hint"></span>
+          </div>
+
+          <div class="tabs-list" role="tablist">
+            <button class="tab" role="tab" data-tab="params" aria-selected="true">
+              Link settings<span class="count" id="ct-params"></span>
+            </button>
+            <button class="tab" role="tab" data-tab="auth" aria-selected="false">
+              Sign in<span class="count" id="ct-auth"></span>
+            </button>
+            <button class="tab" role="tab" data-tab="headers" aria-selected="false">
+              Headers<span class="count" id="ct-headers"></span>
+            </button>
+            <button class="tab" role="tab" data-tab="body" aria-selected="false">
+              Body<span class="count" id="ct-body"></span>
+            </button>
+          </div>
+
+          <!-- Link settings: the ?a=b part of the link as rows, kept in step with the link. -->
+          <div data-tab-panel="params" class="stack" style="gap: 10px">
+            <p class="tab-intro">
+              Options written at the end of the link, like how many items to get. Editing them here
+              changes the link, and the other way round.
+            </p>
+            <div class="kv no-secret" id="kv-params"></div>
+          </div>
+
+          <!-- Sign in: the common ways a site asks who you are, instead of hand-writing a header. -->
+          <div data-tab-panel="auth" class="stack" style="gap: 12px" hidden>
+            <p class="tab-intro">
+              Does this site need to know who you are? Most public data doesn't.
+            </p>
+            <div class="choice-grid" data-pick id="cd-auth-kind">
+              <button
+                class="card card-selectable choice"
+                data-pick-item
+                data-value="none"
+                aria-pressed="true"
+              >
+                <svg class="i"><use href="#i-ban" /></svg><strong>None</strong
+                ><span>Public data</span>
+              </button>
+              <button
+                class="card card-selectable choice"
+                data-pick-item
+                data-value="apikey"
+                aria-pressed="false"
+              >
+                <svg class="i"><use href="#i-key" /></svg><strong>API key</strong
+                ><span>A code the site gave you</span>
+              </button>
+              <button
+                class="card card-selectable choice"
+                data-pick-item
+                data-value="bearer"
+                aria-pressed="false"
+              >
+                <svg class="i"><use href="#i-shield" /></svg><strong>Token</strong
+                ><span>An access token (Bearer)</span>
+              </button>
+              <button
+                class="card card-selectable choice"
+                data-pick-item
+                data-value="basic"
+                aria-pressed="false"
+              >
+                <svg class="i"><use href="#i-user" /></svg><strong>Username</strong
+                ><span>A name and a password</span>
+              </button>
+            </div>
+            <div id="auth-fields" class="stack" style="gap: 10px"></div>
+          </div>
+
+          <!-- Headers: name → value, with the common names and their usual values offered. -->
+          <div data-tab-panel="headers" class="stack" style="gap: 10px" hidden>
+            <p class="tab-intro">
+              Extra details sent with the request. Pick a common one or type your own; values marked
+              with the lock stay on this device.
+            </p>
+            <div class="kv" id="kv-headers"></div>
+          </div>
+
+          <!-- Body: what POST sends, as a form, JSON (built from rows or written) or plain text. -->
+          <div data-tab-panel="body" class="stack" style="gap: 10px" hidden>
+            <div class="callout" id="body-get-note">
+              <svg class="i i-sm"><use href="#i-info" /></svg>
+              <span class="grow"
+                >A GET request only reads, so it sends no body. Switch to POST to send something
+                with it.</span
+              >
+              <button class="btn btn-outline btn-sm" id="body-to-post">Use POST</button>
+            </div>
+            <div id="body-editor" class="stack" style="gap: 10px">
+              <div class="bar">
+                <div class="seg seg-sm" role="radiogroup" aria-label="Body kind" id="cd-body-kind">
+                  <button role="radio" aria-checked="true" data-value="none">Nothing</button>
+                  <button role="radio" aria-checked="false" data-value="form">Form</button>
+                  <button role="radio" aria-checked="false" data-value="json">JSON</button>
+                  <button role="radio" aria-checked="false" data-value="text">Text</button>
+                </div>
+                <div class="grow"></div>
+                <div
+                  class="seg seg-sm"
+                  role="radiogroup"
+                  aria-label="JSON editor"
+                  id="cd-json-mode"
+                  hidden
+                >
+                  <button
+                    role="radio"
+                    aria-checked="true"
+                    data-value="rows"
+                    title="Build it from rows"
+                  >
+                    <svg class="i i-sm"><use href="#i-list" /></svg> Rows
+                  </button>
+                  <button
+                    role="radio"
+                    aria-checked="false"
+                    data-value="code"
+                    title="Write it yourself"
+                  >
+                    <svg class="i i-sm"><use href="#i-code" /></svg> Code
+                  </button>
+                </div>
+              </div>
+              <div data-body="none" class="empty" style="padding: 20px">
+                <strong>Nothing is sent</strong>
+                Pick Form or JSON if the site expects you to send something.
+              </div>
+              <div data-body="form" hidden>
+                <div class="kv no-secret" id="kv-form"></div>
+                <p class="field-hint" style="margin-top: 8px">
+                  Sent like a web form (application/x-www-form-urlencoded).
+                </p>
+              </div>
+              <div data-body="json-rows" hidden>
+                <div class="kv typed" id="kv-json"></div>
+              </div>
+              <div data-body="json-code" hidden class="stack" style="gap: 6px">
+                <textarea class="code-area" id="cd-json" spellcheck="false"></textarea>
+                <div class="bar">
+                  <span class="badge badge-success" id="cd-json-state">Valid JSON</span>
+                  <div class="grow"></div>
+                  <button class="btn btn-ghost btn-sm" id="cd-json-format">
+                    <svg class="i i-sm"><use href="#i-sparkles" /></svg> Tidy up
+                  </button>
+                </div>
+              </div>
+              <div data-body="text" hidden class="stack" style="gap: 6px">
+                <textarea
+                  class="code-area"
+                  id="cd-text"
+                  spellcheck="false"
+                  placeholder="Anything, sent as it is"
+                ></textarea>
+                <div class="field-box" style="max-width: 260px">
+                  <span class="field-label">Sent as</span>
+                  <select class="select select-sm" style="flex: 1; border: 0; background: none">
+                    <option>text/plain</option>
+                    <option>text/csv</option>
+                    <option>application/xml</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Try it: run the request now and see what it gives, before saving. -->
+        <div class="conn-side">
+          <div class="bar">
+            <span class="field-title">Try it</span>
+            <div class="grow"></div>
+            <button class="btn btn-sm" id="cd-try">
+              <svg class="i i-sm"><use href="#i-play" /></svg> Run
+            </button>
+          </div>
+          <div id="cd-result" class="stack" style="gap: 10px; flex: 1; min-height: 0">
+            <div class="preview-empty">
+              <svg class="i i-lg"><use href="#i-database" /></svg>
+              <span>Run it to see the rows this link gives, before you save.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dialog-foot">
+        <span class="muted grow text-xs" id="cd-dirty"></span>
+        <button class="btn btn-ghost" data-close>Cancel</button>
+        <button class="btn" id="cd-save">Save and update</button>
+      </div>
+    </dialog>
+
+    <dialog class="dialog dialog-wide" id="rows-dialog">
+      <div class="dialog-head">
+        <div>
+          <h2 class="dialog-title">Rows</h2>
+          <p class="dialog-desc">Everything this source gave on its last update.</p>
+        </div>
+        <button class="icon-btn icon-btn-sm" aria-label="Close" data-close>
+          <svg class="i"><use href="#i-x" /></svg>
+        </button>
+      </div>
+      <div class="dialog-body">
+        <div class="table-wrap" style="max-height: 60vh">
+          <table class="mini-table" id="rows-full" style="font-size: 12px"></table>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Toasts land here. -->
+    <div class="toasts" id="toasts"></div>
+
+    <!-- ══ BEHAVIOR ══════════════════════════════════════════════════════════════════════════════
+         Tiny, generic, attribute-driven. AGENT: prefer these attributes over writing new JS.
+
+         data-set-theme="light|dark"      switches <html data-theme>
+         .seg [role=radio]                one checked per .seg (aria-checked)
+         [data-pick] > [data-pick-item]   one pressed per group (aria-pressed); in a .toolbar with
+                                          [data-pick], every .icon-btn is an item
+         [data-tabs] [data-tab=X]         shows [data-tab-panel=X] in the same [data-tabs], hides the
+                                          others, marks the trigger (aria-selected / aria-pressed)
+         data-toggle="#a,#b"              toggles the hidden attribute on those elements
+         data-toggle-class="#el:cls"      toggles a class on an element
+         .switch[role=switch]             flips aria-checked
+         data-menu="#id" data-side=…      opens a .menu next to the trigger
+         data-dialog="#id" / data-close   opens / closes a <dialog>
+         data-toast="Message"             shows a toast for 3 s
+
+         AGENT: ADD extra JS at the end of this script, in its own clearly named function.
+         ════════════════════════════════════════════════════════════════════════════════════════ -->
+    <script>
+      (() => {
+        const $ = (selector) => document.querySelector(selector);
+        let openMenu = null;
+
+        function closeMenu() {
+          if (!openMenu) return;
+          openMenu.menu.hidden = true;
+          openMenu.trigger.removeAttribute("data-open");
+          openMenu = null;
+        }
+
+        function showMenu(trigger, menu) {
+          closeMenu();
+          menu.hidden = false;
+          trigger.setAttribute("data-open", "true");
+          const box = trigger.getBoundingClientRect();
+          const side = trigger.dataset.side ?? "bottom";
+          const { offsetWidth: w, offsetHeight: h } = menu;
+          let left = side === "right" ? box.right + 6 : box.left;
+          let top = side === "right" ? box.top : side === "top" ? box.top - h - 6 : box.bottom + 6;
+          left = Math.min(Math.max(8, left), innerWidth - w - 8);
+          top = Math.min(Math.max(8, top), innerHeight - h - 8);
+          menu.style.left = `${left}px`;
+          menu.style.top = `${top}px`;
+          openMenu = { trigger, menu };
+        }
+
+        function toast(message) {
+          const el = document.createElement("div");
+          el.className = "toast";
+          el.innerHTML = '<svg class="i"><use href="#i-check" /></svg><span></span>';
+          el.querySelector("span").textContent = message;
+          $("#toasts").append(el);
+          setTimeout(() => el.remove(), 3000);
+        }
+
+        function pickIn(group, item, attr) {
+          for (const other of group.querySelectorAll(
+            group.matches(".toolbar") ? ".icon-btn" : "[data-pick-item]",
+          ))
+            other.setAttribute(attr, "false");
+          item.setAttribute(attr, "true");
+        }
+
+        document.addEventListener("click", (event) => {
+          const target = event.target instanceof Element ? event.target : null;
+          if (!target) return;
+
+          const theme = target.closest("[data-set-theme]");
+          if (theme) document.documentElement.dataset.theme = theme.dataset.setTheme;
+
+          const radio = target.closest(".seg [role=radio]");
+          if (radio) {
+            for (const other of radio.parentElement.children)
+              other.setAttribute("aria-checked", "false");
+            radio.setAttribute("aria-checked", "true");
+          }
+
+          const pickGroup = target.closest("[data-pick]");
+          const pickItem = pickGroup?.matches(".toolbar")
+            ? target.closest(".icon-btn")
+            : target.closest("[data-pick-item]");
+          if (pickGroup && pickItem && pickGroup.contains(pickItem))
+            pickIn(pickGroup, pickItem, "aria-pressed");
+
+          const tab = target.closest("[data-tab]");
+          if (tab) {
+            const scope = tab.closest("[data-tabs]");
+            for (const trigger of scope.querySelectorAll("[data-tab]")) {
+              const on = trigger === tab;
+              trigger.setAttribute(
+                trigger.getAttribute("role") === "tab" ? "aria-selected" : "aria-pressed",
+                String(on),
+              );
+            }
+            for (const panel of scope.querySelectorAll("[data-tab-panel]"))
+              panel.hidden = panel.dataset.tabPanel !== tab.dataset.tab;
+          }
+
+          const toggle = target.closest("[data-toggle]");
+          if (toggle)
+            for (const el of document.querySelectorAll(toggle.dataset.toggle))
+              el.hidden = !el.hidden;
+
+          const toggleClass = target.closest("[data-toggle-class]");
+          if (toggleClass) {
+            const [selector, cls] = toggleClass.dataset.toggleClass.split(":");
+            $(selector)?.classList.toggle(cls);
+          }
+
+          const sw = target.closest(".switch[role=switch]");
+          if (sw)
+            sw.setAttribute("aria-checked", String(sw.getAttribute("aria-checked") !== "true"));
+
+          const dialog = target.closest("[data-dialog]");
+          if (dialog) $(dialog.dataset.dialog)?.showModal();
+          const close = target.closest("[data-close]");
+          if (close) close.closest("dialog")?.close();
+
+          const toaster = target.closest("[data-toast]");
+          if (toaster) toast(toaster.dataset.toast);
+
+          const menuTrigger = target.closest("[data-menu]");
+          if (menuTrigger) {
+            const menu = $(menuTrigger.dataset.menu);
+            if (openMenu?.menu === menu) closeMenu();
+            else if (menu) showMenu(menuTrigger, menu);
+            return;
+          }
+          // A click in a menu on an item, or anywhere outside it, closes it.
+          if (!openMenu?.menu.contains(target) || target.closest(".menu-item")) closeMenu();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") closeMenu();
+        });
+
+        // AGENT: ADD extra behavior below, one named function per piece.
+        // ── Data tab proposal ─────────────────────────────────────────────────────────────
+        // State: `saved` drives the sidebar; the Connection dialog edits a `draft` copy.
+        const POKEMON = [
+          "bulbasaur",
+          "ivysaur",
+          "venusaur",
+          "charmander",
+          "charmeleon",
+          "charizard",
+          "squirtle",
+          "wartortle",
+          "blastoise",
+          "caterpie",
+          "metapod",
+          "butterfree",
+          "weedle",
+          "kakuna",
+          "beedrill",
+          "pidgey",
+          "pidgeotto",
+          "pidgeot",
+          "rattata",
+          "raticate",
+        ];
+        // What each example link answers when the browser can't reach it (offline, blocked).
+        const POKEMON_ANSWER = {
+          count: 1302,
+          next: "https://pokeapi.co/api/v2/pokemon?offset=20&limit=20",
+          previous: null,
+          results: POKEMON.map((name, i) => ({
+            name,
+            url: `https://pokeapi.co/api/v2/pokemon/${i + 1}/`,
+          })),
+        };
+        const CDN = "https://cdn.dummyjson.com/product-images";
+        const product = (id, title, category, price, rating, tags, brand, slug) => ({
+          id,
+          title,
+          description: `${title}, a popular pick in ${category}.`,
+          category,
+          price,
+          discountPercentage: 7.17,
+          rating,
+          stock: 5 + id * 3,
+          tags,
+          brand,
+          sku: `SKU-${1000 + id}`,
+          weight: 2 + (id % 4),
+          dimensions: { width: 23.17, height: 14.43, depth: 28.01 },
+          warrantyInformation: "1 month warranty",
+          availabilityStatus: id % 3 ? "In Stock" : "Low Stock",
+          reviews: [
+            {
+              rating: 5,
+              comment: "Very happy!",
+              date: "2025-04-30T09:41:02.053Z",
+              reviewerName: "Eleanor Collins",
+            },
+            {
+              rating: 4,
+              comment: "Would buy again",
+              date: "2025-04-30T09:41:02.053Z",
+              reviewerName: "Lucas Gordon",
+            },
+            {
+              rating: 2,
+              comment: "Not as described",
+              date: "2025-04-30T09:41:02.053Z",
+              reviewerName: "Eli Bennett",
+            },
+          ],
+          meta: {
+            createdAt: "2025-04-30T09:41:02.053Z",
+            barcode: `59${id}4873829`,
+            qrCode: `${CDN}/qr.png`,
+          },
+          images: [`${CDN}/${category}/${slug}/1.webp`, `${CDN}/${category}/${slug}/2.webp`],
+          thumbnail: `${CDN}/${category}/${slug}/thumbnail.webp`,
+        });
+        const PRODUCTS_ANSWER = {
+          products: [
+            product(
+              1,
+              "Essence Mascara Lash Princess",
+              "beauty",
+              9.99,
+              2.56,
+              ["beauty", "mascara"],
+              "Essence",
+              "essence-mascara-lash-princess",
+            ),
+            product(
+              2,
+              "Eyeshadow Palette with Mirror",
+              "beauty",
+              19.99,
+              2.86,
+              ["beauty", "eyeshadow"],
+              "Glamour Beauty",
+              "eyeshadow-palette-with-mirror",
+            ),
+            product(
+              3,
+              "Powder Canister",
+              "beauty",
+              14.99,
+              4.64,
+              ["beauty", "face powder"],
+              "Velvet Touch",
+              "powder-canister",
+            ),
+            product(
+              4,
+              "Red Lipstick",
+              "beauty",
+              12.99,
+              4.36,
+              ["beauty", "lipstick"],
+              "Chic Cosmetics",
+              "red-lipstick",
+            ),
+            product(
+              5,
+              "Red Nail Polish",
+              "beauty",
+              8.99,
+              4.32,
+              ["beauty", "nail polish"],
+              "Nail Couture",
+              "red-nail-polish",
+            ),
+          ],
+          total: 194,
+          skip: 0,
+          limit: 30,
+        };
+        const EXAMPLES = {
+          pokemon: {
+            name: "pokemon",
+            url: "https://pokeapi.co/api/v2/pokemon?limit=20&offset=0",
+            answer: POKEMON_ANSWER,
+          },
+          products: {
+            name: "products",
+            url: "https://dummyjson.com/products",
+            answer: PRODUCTS_ANSWER,
+          },
+        };
+        const mockFor = (url) => (/dummyjson/.test(url) ? PRODUCTS_ANSWER : POKEMON_ANSWER);
+
+        // ── Reading an answer: where the rows are, and what's inside each row ──
+        // Mirrors the engine (table/normalize-rows.ts, guess-fields.ts): rows are a list of
+        // objects; objects inside a row become groups of fields (dimensions.width); a list of
+        // plain values (tags, images) is one field; a list of objects (reviews) is a list inside
+        // each row.
+        const isObj = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+        const IMG = /^https?:\/\/\S+\.(png|jpe?g|gif|webp|svg|avif)(\?\S*)?$/i;
+        function guess(v) {
+          if (typeof v === "boolean") return "boolean";
+          if (typeof v === "number") return "number";
+          if (typeof v !== "string") return "text";
+          if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v)) return "color";
+          if (/^https?:\/\//i.test(v)) return IMG.test(v) ? "image" : "url";
+          if (/^\d{4}-\d{2}-\d{2}/.test(v) && !Number.isNaN(Date.parse(v))) return "date";
+          return "text";
+        }
+        /** Every list of objects in the answer that could be the rows (not lists inside rows). */
+        function findLists(v, path = "", depth = 0, out = []) {
+          if (Array.isArray(v)) {
+            if (v.length && v.every(isObj)) out.push({ path, count: v.length });
+            return out;
+          }
+          if (!isObj(v) || depth > 4) return out;
+          for (const [k, x] of Object.entries(v))
+            findLists(x, path ? `${path}.${k}` : k, depth + 1, out);
+          return out;
+        }
+        const at = (v, path) =>
+          path ? path.split(".").reduce((c, k) => (c == null ? undefined : c[k]), v) : v;
+        /** Plain values next to the rows (total, skip, …): not rows, but worth showing. */
+        function besideRows(answer, listPath) {
+          if (!isObj(answer)) return [];
+          return Object.entries(answer).filter(
+            ([k, v]) => k !== listPath && (v === null || typeof v !== "object"),
+          );
+        }
+        function rowsOf(s) {
+          const list = at(s.answer, s.listPath);
+          return Array.isArray(list) ? list.filter(isObj) : [];
+        }
+        function defaultList(answer) {
+          return findLists(answer)[0]?.path ?? "";
+        }
+        /** The fields inside the rows, as a tree. */
+        function fieldTree(rows) {
+          const root = new Map();
+          const visit = (map, v, key, path) => {
+            let node = map.get(key);
+            if (isObj(v)) {
+              node ??= { key, path, kind: "group", children: new Map() };
+              if (node.children)
+                for (const [k, x] of Object.entries(v)) visit(node.children, x, k, `${path}.${k}`);
+            } else if (Array.isArray(v) && v.some(isObj)) {
+              node ??= { key, path, kind: "rows", children: new Map(), most: 0 };
+              node.most = Math.max(node.most ?? 0, v.length);
+              if (node.children)
+                for (const o of v.filter(isObj))
+                  for (const [k, x] of Object.entries(o))
+                    visit(node.children, x, k, `${path}[].${k}`);
+            } else if (Array.isArray(v)) {
+              node ??= { key, path, kind: "values" };
+              const first = v.find((x) => x != null && x !== "");
+              if (first !== undefined) node.type ??= guess(first);
+            } else {
+              node ??= { key, path, kind: "leaf" };
+              if (v != null && v !== "") node.type ??= guess(v);
+            }
+            map.set(key, node);
+          };
+          for (const r of rows.slice(0, 50))
+            for (const [k, x] of Object.entries(r)) visit(root, x, k, k);
+          return root;
+        }
+        /** A path's value in a row; `a[].b` gives every b in the list a. */
+        function valueAt(row, path) {
+          const [head, ...rest] = path.split("[].");
+          const v = at(row, head);
+          if (!rest.length) return v;
+          return Array.isArray(v) ? v.map((x) => valueAt(x, rest.join("[]."))) : undefined;
+        }
+
+        const HEADER_HINTS = [
+          {
+            name: "Accept",
+            desc: "What kind of answer you want back",
+            values: ["application/json", "text/csv", "*/*"],
+          },
+          {
+            name: "Content-Type",
+            desc: "What kind of body you send",
+            values: ["application/json", "application/x-www-form-urlencoded", "text/plain"],
+          },
+          {
+            name: "Authorization",
+            desc: "Who you are (easier in the Sign in tab)",
+            values: ["Bearer ", "Basic "],
+            secret: true,
+          },
+          { name: "X-API-Key", desc: "An API key some sites ask for", values: [], secret: true },
+          {
+            name: "Accept-Language",
+            desc: "The language of the answer",
+            values: ["en", "es", "en-US, es;q=0.8"],
+          },
+          {
+            name: "Cache-Control",
+            desc: "Always get fresh data, not a stored copy",
+            values: ["no-cache", "max-age=0"],
+          },
+          {
+            name: "User-Agent",
+            desc: "Who is asking (a few sites require it)",
+            values: ["CloudyCanvas/1.0"],
+          },
+          { name: "If-None-Match", desc: "Only send data that changed", values: [] },
+        ];
+        const hintFor = (name) =>
+          HEADER_HINTS.find((h) => h.name.toLowerCase() === String(name).trim().toLowerCase());
+
+        const FIELD_TYPES = {
+          text: { icon: "type", label: "Text" },
+          number: { icon: "hash", label: "Number" },
+          currency: { icon: "dollar", label: "Price" },
+          boolean: { icon: "toggle", label: "Yes / no" },
+          date: { icon: "calendar", label: "Date" },
+          color: { icon: "palette", label: "Color" },
+          url: { icon: "link", label: "Link" },
+          image: { icon: "image", label: "Image" },
+          list: { icon: "list", label: "List" },
+        };
+
+        let saved = {
+          method: "GET",
+          url: "https://pokeapi.co/api/v2/pokemon?limit=20&offset=0",
+          params: [],
+          auth: {
+            kind: "none",
+            keyName: "X-API-Key",
+            key: "",
+            where: "header",
+            token: "",
+            user: "",
+            pass: "",
+          },
+          headers: [{ on: true, key: "Accept", value: "application/json", secret: false }],
+          bodyKind: "none",
+          jsonMode: "rows",
+          form: [],
+          json: [
+            { on: true, key: "name", type: "text", value: "bulbasaur" },
+            { on: true, key: "limit", type: "number", value: "20" },
+          ],
+          jsonText: "",
+          text: "",
+          name: "pokemon",
+          answer: POKEMON_ANSWER,
+          listPath: "results",
+          prefs: {},
+          updated: "Updated 2 min ago",
+        };
+        let draft = null;
+        const clone = (o) => JSON.parse(JSON.stringify(o));
+        const esc = (s) =>
+          String(s).replace(
+            /[&<>"]/g,
+            (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c],
+          );
+        const icon = (name, cls = "i i-sm") =>
+          `<svg class="${cls}"><use href="#i-${name}" /></svg>`;
+
+        // ── URL ⇄ link settings ──
+        function parseUrl(raw) {
+          try {
+            const u = new URL(raw);
+            return {
+              ok: true,
+              host: u.host,
+              path: u.pathname,
+              params: [...u.searchParams].map(([key, value]) => ({ on: true, key, value })),
+            };
+          } catch {
+            return { ok: false, host: "", path: raw, params: [] };
+          }
+        }
+        function urlWithParams(raw, params) {
+          const base = raw.split("?")[0];
+          const qs = params
+            .filter((p) => p.on && p.key)
+            .map((p) => `${encodeURIComponent(p.key)}=${encodeURIComponent(p.value)}`)
+            .join("&");
+          return qs ? `${base}?${qs}` : base;
+        }
+        saved.params = parseUrl(saved.url).params;
+
+        // ── Plain-language summary of a request ──
+        const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+        function authText(a) {
+          return {
+            none: "",
+            apikey: "your API key",
+            bearer: "your access token",
+            basic: "your username and password",
+          }[a.kind];
+        }
+        function sentence(s) {
+          const p = parseUrl(s.url);
+          const where = p.ok
+            ? `<b>${esc(p.host)}</b>${esc(p.path)}`
+            : `<b>${esc(s.url || "a link")}</b>`;
+          const on = (list) => list.filter((r) => r.on && r.key);
+          const parts = [];
+          const params = on(s.params);
+          if (params.length)
+            parts.push(
+              `${plural(params.length, "setting", "settings")} (${params.map((x) => `${esc(x.key)} = ${esc(x.value)}`).join(", ")})`,
+            );
+          if (s.auth.kind !== "none") parts.push(`signing in with ${authText(s.auth)}`);
+          const hs = on(s.headers);
+          if (hs.length) parts.push(plural(hs.length, "extra header", "extra headers"));
+          const tail = parts.length ? `, with ${parts.join(", ")}` : "";
+          if (s.method === "GET") return `Get data from ${where}${tail}.`;
+          const body = {
+            none: "nothing",
+            form: `a form with ${plural(on(s.form).length, "value", "values")}`,
+            json: "a JSON body",
+            text: "some text",
+          }[s.bodyKind];
+          return `Send ${body} to ${where}${tail}, then read the answer.`;
+        }
+
+        // ── Sidebar ──
+        function renderSidebar() {
+          const s = saved;
+          const p = parseUrl(s.url);
+          $("#sb-method").textContent = s.method;
+          $("#sb-method").classList.toggle("is-post", s.method === "POST");
+          $("#sb-host").textContent = p.ok ? p.host : s.url;
+          $("#sb-path").textContent = p.ok ? p.path : "";
+          const chips = [];
+          for (const x of s.params.filter((x) => x.on && x.key))
+            chips.push(["params", "link", `${x.key} = ${x.value}`]);
+          if (s.auth.kind !== "none")
+            chips.push([
+              "auth",
+              "key",
+              { apikey: "API key", bearer: "Token", basic: "Username" }[s.auth.kind],
+            ]);
+          const hs = s.headers.filter((h) => h.on && h.key).length;
+          if (hs) chips.push(["headers", "list", plural(hs, "header", "headers")]);
+          if (s.method === "POST" && s.bodyKind !== "none")
+            chips.push([
+              "body",
+              "braces",
+              { form: "Form", json: "JSON", text: "Text" }[s.bodyKind] + " body",
+            ]);
+          $("#sb-chips").innerHTML = chips
+            .map(
+              ([tab, ic, label]) =>
+                `<span class="chip" data-open-conn="${tab}">${icon(ic)}${esc(label)}</span>`,
+            )
+            .join("");
+          $("#sb-name").textContent = s.name;
+          $("#sb-status").innerHTML =
+            `<span class="dot"></span> ${esc(s.updated)} · ${plural(rowsOf(s).length, "row", "rows")}`;
+          $("#sb-list").innerHTML = listOptions(s.answer, s.listPath);
+          $("#sb-extra").innerHTML = besideText(s.answer, s.listPath);
+          renderFields();
+          renderTables();
+        }
+
+        // ── Fields: a tree, so groups and lists read as what they are ──
+        let currentField = null;
+        const openGroups = new Set(["dimensions"]);
+        const prefOf = (path) => (saved.prefs[path] ??= {});
+        const LIST_SHOW = {
+          all: "All, with commas",
+          first: "Only the first",
+          count: "How many there are",
+        };
+        function leafType(node) {
+          return prefOf(node.path).type ?? node.type ?? "text";
+        }
+        function thumb(src) {
+          return `<img class="thumb" src="${esc(src)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'" />`;
+        }
+        function sampleHtml(node, row) {
+          const v = valueAt(row ?? {}, node.path);
+          const type = leafType(node);
+          if (node.kind === "values") {
+            const list = Array.isArray(v) ? v.flat() : [];
+            const show = prefOf(node.path).show ?? "all";
+            if (show === "count") return `${list.length}`;
+            const items = show === "first" ? list.slice(0, 1) : list;
+            if (type === "image")
+              return `<span class="thumbs">${items.slice(0, 4).map(thumb).join("")}${items.length > 4 ? `<span>+${items.length - 4}</span>` : ""}</span>`;
+            return esc(items.join(", "));
+          }
+          const vals = Array.isArray(v) ? v : [v];
+          if (type === "image")
+            return `<span class="thumbs">${vals.slice(0, 3).map(thumb).join("")}</span>`;
+          if (type === "color")
+            return `<span class="swatch-dot" style="background:${esc(vals[0])}"></span>${esc(vals[0])}`;
+          return esc(vals.filter((x) => x != null).join(", "));
+        }
+        function countLeaves(map) {
+          let n = 0;
+          for (const node of map.values()) n += node.children ? countLeaves(node.children) : 1;
+          return n;
+        }
+
+        function renderFields() {
+          const list = $("#sb-fields");
+          const rows = rowsOf(saved);
+          const tree = fieldTree(rows);
+          $("#sb-field-count").textContent = countLeaves(tree);
+          list.innerHTML = "";
+          const add = (node, depth, inRows) => {
+            const p = prefOf(node.path);
+            if (node.children) {
+              const open = openGroups.has(node.path);
+              const head = document.createElement("div");
+              head.className = "field-group";
+              head.style.setProperty("--depth", depth);
+              const meta =
+                node.kind === "rows"
+                  ? `list · up to ${node.most} in each`
+                  : `${plural(node.children.size, "field", "fields")}`;
+              head.innerHTML = `
+                <span class="chev">${icon(open ? "chevron-down" : "chevron-right")}</span>
+                <span class="group-icon">${icon(node.kind === "rows" ? "list" : "braces")}</span>
+                <span class="name">${esc(p.label ?? node.key)}</span>
+                <span class="meta">${meta}</span>`;
+              head.addEventListener("click", () => {
+                open ? openGroups.delete(node.path) : openGroups.add(node.path);
+                renderFields();
+              });
+              list.append(head);
+              if (!open) return;
+              if (node.kind === "rows") {
+                const note = document.createElement("p");
+                note.className = "group-note";
+                note.style.setProperty("--depth", depth + 1);
+                note.innerHTML = `${icon("info")}<span>Each ${esc(rows[0] ? "row" : "item")} has its own ${esc(node.key)}. Use these in a card repeated inside the main card.</span>`;
+                list.append(note);
+              }
+              for (const child of node.children.values())
+                add(child, depth + 1, inRows || node.kind === "rows");
+              return;
+            }
+            const type = leafType(node);
+            const isList = node.kind === "values";
+            const t = FIELD_TYPES[type] ?? FIELD_TYPES.text;
+            const row = document.createElement("div");
+            row.className = "field-row" + (p.hidden ? " is-hidden" : "");
+            row.style.setProperty("--depth", depth);
+            const kindLabel = isList
+              ? `List of ${t.label.toLowerCase()} · ${LIST_SHOW[p.show ?? "all"].toLowerCase()}`
+              : t.label;
+            row.innerHTML = `
+              <button class="type-chip${isList ? " is-list" : ""}" data-menu="#type-menu" data-tip="${esc(kindLabel)} · click to change" aria-label="Kind: ${esc(kindLabel)}">${icon(t.icon, "i")}</button>
+              <span class="name" title="${esc(node.path)}">${esc(p.label ?? node.key)}</span>
+              <button class="icon-btn icon-btn-xs" data-tip="${p.hidden ? "Show in the design" : "Hide from the design"}">${icon(p.hidden ? "eye-off" : "eye")}</button>
+              <span class="sample">${sampleHtml(node, rows[0])}</span>`;
+            row._field = { node, row, isList };
+            row.querySelector(".icon-btn").addEventListener("click", () => {
+              p.hidden = !p.hidden;
+              renderFields();
+              renderTables();
+            });
+            list.append(row);
+          };
+          for (const node of tree.values()) add(node, 0, false);
+          if (!tree.size)
+            list.innerHTML = `<div class="empty"><strong>No fields</strong>Pick where the rows are above.</div>`;
+        }
+        // The kind menu: a list field also says how its items show (all, the first, how many).
+        $("#type-menu").addEventListener("click", (e) => {
+          const item = e.target.closest(".menu-item");
+          if (!item || !currentField) return;
+          const p = prefOf(currentField.node.path);
+          if (item.dataset.type) p.type = item.dataset.type;
+          if (item.dataset.show) p.show = item.dataset.show;
+          if (item.dataset.type || item.dataset.show) {
+            renderFields();
+            renderTables();
+            return;
+          }
+          // Rename: the name becomes a field; Enter or leaving keeps it, Escape reverts.
+          const { node, row } = currentField;
+          const name = row.querySelector(".name");
+          name.innerHTML = `<div class="field-box"><input value="${esc(p.label ?? node.key)}" /></div>`;
+          const input = name.querySelector("input");
+          input.focus();
+          input.select();
+          let finished = false;
+          const done = (keep) => {
+            if (finished) return;
+            finished = true;
+            if (keep && input.value.trim()) p.label = input.value.trim();
+            renderFields();
+          };
+          input.addEventListener("keydown", (ev) => {
+            if (ev.key === "Enter") done(true);
+            if (ev.key === "Escape") done(false);
+          });
+          input.addEventListener("blur", () => done(true));
+        });
+        // The list-only part of the kind menu shows only for list fields.
+        document.addEventListener(
+          "click",
+          (e) => {
+            const chip = e.target instanceof Element ? e.target.closest(".type-chip") : null;
+            if (!chip) return;
+            currentField = chip.closest(".field-row")._field;
+            for (const el of document.querySelectorAll("#type-menu [data-list-only]"))
+              el.hidden = !currentField?.isList;
+            const show = prefOf(currentField.node.path).show ?? "all";
+            for (const el of document.querySelectorAll("#type-menu [data-show]"))
+              el.querySelector(".tick").style.visibility =
+                el.dataset.show === show ? "visible" : "hidden";
+          },
+          true,
+        );
+
+        // ── Rows: one column per field; images as pictures, lists as counts ──
+        function columns(tree, out = []) {
+          for (const node of tree.values()) {
+            if (prefOf(node.path).hidden) continue;
+            if (node.kind === "group") columns(node.children, out);
+            else out.push(node);
+          }
+          return out;
+        }
+        function cellHtml(node, row) {
+          if (node.kind === "rows") {
+            const n = (valueAt(row, node.path) ?? []).length;
+            return `<span class="chip">${icon("list")}${n} ${esc(node.key)}</span>`;
+          }
+          return sampleHtml(node, row);
+        }
+        function renderRows(table, rows) {
+          const cols = columns(fieldTree(rows));
+          table.innerHTML =
+            `<thead><tr>${cols.map((c) => `<th title="${esc(c.path)}">${esc(prefOf(c.path).label ?? c.path)}</th>`).join("")}</tr></thead>` +
+            `<tbody>${rows.map((r) => `<tr>${cols.map((c) => `<td>${cellHtml(c, r)}</td>`).join("")}</tr>`).join("")}</tbody>`;
+        }
+        function renderTables() {
+          const rows = rowsOf(saved);
+          renderRows($("#sb-rows"), rows.slice(0, 50));
+          renderRows($("#rows-full"), rows);
+        }
+
+        // ── Where the rows are: every list in the answer, picked for you, changeable ──
+        function listOptions(answer, current) {
+          const lists = findLists(answer);
+          return (
+            lists
+              .map(
+                (l) =>
+                  `<option value="${esc(l.path)}" ${l.path === current ? "selected" : ""}>${esc(l.path || "The whole answer")} · ${plural(l.count, "item", "items")}</option>`,
+              )
+              .join("") || `<option>No list found</option>`
+          );
+        }
+        function besideText(answer, listPath) {
+          const extra = besideRows(answer, listPath);
+          if (!extra.length) return "";
+          return `Also in the answer: ${extra
+            .slice(0, 4)
+            .map(([k, v]) => `<span class="mono">${esc(k)}</span> ${esc(v ?? "empty")}`)
+            .join(" · ")}`;
+        }
+        $("#sb-list").addEventListener("change", (e) => {
+          saved.listPath = e.target.value;
+          renderSidebar();
+        });
+
+        // ── Getting the answer: the real link when the browser can reach it, else a sample ──
+        async function fetchAnswer(s) {
+          let status = 200;
+          try {
+            if (s.method === "GET") {
+              const res = await fetch(s.url);
+              status = res.status;
+              if (res.ok) return { status, answer: await res.json(), live: true };
+              return { status, answer: null };
+            }
+          } catch {}
+          return { status, answer: mockFor(s.url), live: false };
+        }
+        async function updateSaved() {
+          const btn = $("#sb-update");
+          btn.querySelector(".i").classList.add("spin");
+          const { answer, status } = await fetchAnswer(saved);
+          btn.querySelector(".i").classList.remove("spin");
+          if (!answer) return toast(`${plainError(status)[0]}`);
+          saved.answer = answer;
+          if (!findLists(answer).some((l) => l.path === saved.listPath))
+            saved.listPath = defaultList(answer);
+          saved.updated = "Updated just now";
+          renderSidebar();
+          toast(`${saved.name} updated · ${plural(rowsOf(saved).length, "row", "rows")}`);
+        }
+        $("#sb-update").addEventListener("click", updateSaved);
+
+        // The proto bar's examples: switch the open source to another link.
+        document.addEventListener("click", (e) => {
+          const ex = e.target instanceof Element ? e.target.closest("[data-example]") : null;
+          if (!ex) return;
+          const x = EXAMPLES[ex.dataset.example];
+          saved = {
+            ...saved,
+            name: x.name,
+            url: x.url,
+            params: parseUrl(x.url).params,
+            answer: x.answer,
+            listPath: defaultList(x.answer),
+            prefs: {},
+            updated: "Updated just now",
+          };
+          renderSidebar();
+          updateSaved();
+        });
+
+        // ── Key-value editor (link settings, headers, form, JSON rows) ──
+        // Always ends in an empty row: typing in it adds a row, so there's no "Add" to find.
+        function kvEditor(el, getRows, opts) {
+          function render(focus) {
+            const rows = getRows();
+            const cols = opts.typed
+              ? `<span></span><span>Name</span><span>Kind</span><span>Value</span><span></span>`
+              : `<span></span><span>${opts.keyLabel ?? "Name"}</span><span>Value</span>${opts.secret ? "<span></span>" : ""}<span></span>`;
+            el.innerHTML = `<div class="kv-head">${cols}</div>`;
+            [...rows, null].forEach((r, i) => {
+              const ghost = r === null;
+              r ??= { on: true, key: "", value: "", type: "text", secret: false };
+              const row = document.createElement("div");
+              row.className = "kv-row" + (r.on ? "" : " is-off");
+              const hint = opts.hint?.(r.key);
+              const valueType = r.secret && !r.reveal ? "password" : "text";
+              row.innerHTML = `
+                <label class="check" title="Send it">${ghost ? "" : `<input type="checkbox" ${r.on ? "checked" : ""} data-k="on" />`}</label>
+                <div class="field-box is-key"><input data-k="key" value="${esc(r.key)}" placeholder="${ghost ? opts.addLabel : ""}" spellcheck="false" /></div>
+                ${opts.typed ? `<select class="select select-sm" data-k="type"><option value="text">Text</option><option value="number">Number</option><option value="boolean">Yes / no</option><option value="null">Empty</option></select>` : ""}
+                <div class="field-box">
+                  ${
+                    opts.typed && r.type === "boolean"
+                      ? `<select class="select select-sm" data-k="value" style="flex:1;border:0;background:none"><option value="true">Yes</option><option value="false">No</option></select>`
+                      : `<input data-k="value" value="${esc(r.value)}" type="${valueType}" ${opts.typed && r.type === "null" ? 'disabled placeholder="null"' : ""} spellcheck="false" />`
+                  }
+                  ${r.secret ? `<button class="icon-btn icon-btn-xs" data-act="reveal" aria-label="Show">${icon(r.reveal ? "eye-off" : "eye")}</button>` : ""}
+                </div>
+                ${opts.secret ? `<button class="icon-btn icon-btn-sm" data-act="secret" data-tip="${r.secret ? "Kept on this device only" : "Keep this value on this device"}" ${ghost ? "disabled" : ""} ${r.secret ? 'aria-pressed="true" style="color:var(--primary)"' : ""}>${icon(r.secret ? "lock" : "lock")}</button>` : ""}
+                <button class="icon-btn icon-btn-sm" data-act="remove" aria-label="Remove" ${ghost ? "disabled" : ""}>${icon("trash")}</button>
+                ${hint && !ghost ? `<span class="help">${esc(hint)}</span>` : ""}`;
+              if (opts.typed) {
+                row.querySelector('[data-k="type"]').value = r.type;
+                const sel = row.querySelector('select[data-k="value"]');
+                if (sel) sel.value = r.value === "false" ? "false" : "true";
+              }
+              row.addEventListener("input", (e) => {
+                const k = e.target.dataset.k;
+                if (!k) return;
+                if (ghost) {
+                  const fresh = {
+                    on: true,
+                    key: "",
+                    value: "",
+                    type: "text",
+                    secret: false,
+                    [k]: e.target.value,
+                  };
+                  if (k === "key" && opts.autoSecret?.(fresh.key)) fresh.secret = true;
+                  rows.push(fresh);
+                  opts.onChange();
+                  render({ i, k, caret: e.target.selectionStart });
+                  return;
+                }
+                if (k === "on") r.on = e.target.checked;
+                else r[k] = e.target.value;
+                if (k === "key" && opts.autoSecret?.(r.key)) r.secret = true;
+                if (k === "type") {
+                  if (r.type === "boolean") r.value = "true";
+                  if (r.type === "null") r.value = "";
+                }
+                opts.onChange();
+                if (k === "on" || k === "type") render();
+                else if (k === "key") {
+                  const help = row.querySelector(".help");
+                  const h = opts.hint?.(r.key);
+                  if (help) help.textContent = h ?? "";
+                  else if (h) render({ i, k, caret: e.target.selectionStart });
+                }
+              });
+              row.addEventListener("click", (e) => {
+                const act = e.target.closest("[data-act]")?.dataset.act;
+                if (!act) return;
+                if (act === "remove") rows.splice(i, 1);
+                if (act === "secret") r.secret = !r.secret;
+                if (act === "reveal") r.reveal = !r.reveal;
+                opts.onChange();
+                render();
+              });
+              if (opts.keySuggest)
+                attachSuggest(
+                  row.querySelector('[data-k="key"]'),
+                  (q) => opts.keySuggest(q),
+                  (v) => {
+                    const inp = row.querySelector('[data-k="key"]');
+                    inp.value = v;
+                    inp.dispatchEvent(new Event("input", { bubbles: true }));
+                  },
+                );
+              const valueInput = row.querySelector('input[data-k="value"]');
+              if (opts.valueSuggest && valueInput)
+                attachSuggest(
+                  valueInput,
+                  (q) => opts.valueSuggest(r.key, q),
+                  (v) => {
+                    valueInput.value = v;
+                    valueInput.dispatchEvent(new Event("input", { bubbles: true }));
+                  },
+                );
+              el.append(row);
+            });
+            if (opts.quick) {
+              const bar = document.createElement("div");
+              bar.className = "kv-add";
+              bar.innerHTML =
+                `<span class="label">Add a common one:</span>` +
+                opts.quick
+                  .map(
+                    (q, n) =>
+                      `<button class="chip" data-q="${n}">${icon("plus")}${esc(q.label)}</button>`,
+                  )
+                  .join("");
+              bar.addEventListener("click", (e) => {
+                const q = opts.quick[e.target.closest("[data-q]")?.dataset.q];
+                if (!q) return;
+                const existing = rows.find((x) => x.key.toLowerCase() === q.row.key.toLowerCase());
+                if (existing) Object.assign(existing, q.row, { on: true });
+                else rows.push({ on: true, secret: false, ...q.row });
+                opts.onChange();
+                render();
+              });
+              el.append(bar);
+            }
+            if (focus) {
+              const target = el
+                .querySelectorAll(".kv-row")
+                [focus.i]?.querySelector(`[data-k="${focus.k}"]`);
+              if (target) {
+                target.focus();
+                try {
+                  target.setSelectionRange(focus.caret, focus.caret);
+                } catch {}
+              }
+            }
+          }
+          return { render };
+        }
+
+        // ── Suggestions under a box (header names and their usual values) ──
+        const suggest = $("#suggest");
+        let suggestFor = null;
+        function attachSuggest(input, items, pick) {
+          let active = 0;
+          const show = () => {
+            const list = items(input.value);
+            if (!list.length) return hideSuggest();
+            suggestFor = input;
+            active = Math.min(active, list.length - 1);
+            suggest.innerHTML = list
+              .map(
+                (it, n) =>
+                  `<button class="menu-item${n === active ? " is-active" : ""}" data-n="${n}"><span class="s-name">${esc(it.name)}</span>${it.desc ? `<span class="s-desc">${esc(it.desc)}</span>` : ""}</button>`,
+              )
+              .join("");
+            input.closest("dialog").append(suggest);
+            suggest.hidden = false;
+            const box = input.closest(".field-box").getBoundingClientRect();
+            suggest.style.left = `${box.left}px`;
+            suggest.style.top = `${box.bottom + 4}px`;
+            suggest.style.minWidth = `${Math.max(240, box.width)}px`;
+            suggest.onmousedown = (e) => {
+              const n = e.target.closest("[data-n]")?.dataset.n;
+              if (n === undefined) return;
+              e.preventDefault();
+              hideSuggest();
+              pick(list[n].value ?? list[n].name);
+            };
+            input._list = list;
+          };
+          input.addEventListener("focus", () => {
+            active = 0;
+            show();
+          });
+          input.addEventListener("input", () => {
+            active = 0;
+            if (document.activeElement === input) show();
+          });
+          input.addEventListener("blur", () =>
+            setTimeout(() => suggestFor === input && hideSuggest(), 0),
+          );
+          input.addEventListener("keydown", (e) => {
+            if (suggest.hidden || suggestFor !== input) return;
+            const list = input._list ?? [];
+            if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+              e.preventDefault();
+              active = (active + (e.key === "ArrowDown" ? 1 : list.length - 1)) % list.length;
+              show();
+            } else if (e.key === "Enter" && list[active]) {
+              e.preventDefault();
+              hideSuggest();
+              pick(list[active].value ?? list[active].name);
+            } else if (e.key === "Escape") {
+              e.preventDefault();
+              e.stopPropagation();
+              hideSuggest();
+            }
+          });
+        }
+        function hideSuggest() {
+          suggest.hidden = true;
+          suggestFor = null;
+        }
+
+        // ── The Connection dialog ──
+        const dlg = $("#conn-dialog");
+        const touch = () => {
+          renderDialogChrome();
+          $("#cd-dirty").textContent =
+            JSON.stringify(draft) === JSON.stringify(saved) ? "" : "Unsaved changes";
+        };
+        const params = kvEditor($("#kv-params"), () => draft.params, {
+          keyLabel: "Setting",
+          addLabel: "Add a setting…",
+          onChange: () => {
+            draft.url = urlWithParams(draft.url, draft.params);
+            $("#cd-url").value = draft.url;
+            touch();
+          },
+        });
+        const headers = kvEditor($("#kv-headers"), () => draft.headers, {
+          secret: true,
+          addLabel: "Add a header…",
+          hint: (k) => hintFor(k)?.desc,
+          autoSecret: (k) => !!hintFor(k)?.secret,
+          keySuggest: (q) =>
+            HEADER_HINTS.filter(
+              (h) =>
+                h.name.toLowerCase().includes(q.trim().toLowerCase()) &&
+                h.name.toLowerCase() !== q.trim().toLowerCase(),
+            ).map((h) => ({ name: h.name, desc: h.desc })),
+          valueSuggest: (k, q) =>
+            (hintFor(k)?.values ?? [])
+              .filter((v) => v !== q && v.toLowerCase().includes(q.toLowerCase()))
+              .map((v) => ({ name: v })),
+          quick: [
+            { label: "Answer in JSON", row: { key: "Accept", value: "application/json" } },
+            { label: "Always fresh", row: { key: "Cache-Control", value: "no-cache" } },
+            { label: "Language", row: { key: "Accept-Language", value: "es" } },
+          ],
+          onChange: touch,
+        });
+        const form = kvEditor($("#kv-form"), () => draft.form, {
+          addLabel: "Add a value…",
+          onChange: touch,
+        });
+        const jsonRows = kvEditor($("#kv-json"), () => draft.json, {
+          typed: true,
+          addLabel: "Add a value…",
+          onChange: touch,
+        });
+
+        function rowsToJson(rows) {
+          const out = {};
+          for (const r of rows.filter((x) => x.on && x.key)) {
+            out[r.key] =
+              r.type === "number"
+                ? Number(r.value) || 0
+                : r.type === "boolean"
+                  ? r.value !== "false"
+                  : r.type === "null"
+                    ? null
+                    : r.value;
+          }
+          return JSON.stringify(out, null, 2);
+        }
+        function jsonToRows(text) {
+          const obj = JSON.parse(text);
+          if (!obj || typeof obj !== "object" || Array.isArray(obj)) return null;
+          const rows = [];
+          for (const [key, v] of Object.entries(obj)) {
+            if (v !== null && typeof v === "object") return null;
+            rows.push({
+              on: true,
+              key,
+              type:
+                v === null
+                  ? "null"
+                  : typeof v === "number"
+                    ? "number"
+                    : typeof v === "boolean"
+                      ? "boolean"
+                      : "text",
+              value: v === null ? "" : String(v),
+            });
+          }
+          return rows;
+        }
+        function validateJson() {
+          const area = $("#cd-json");
+          const badge = $("#cd-json-state");
+          try {
+            JSON.parse(area.value || "{}");
+            area.classList.remove("is-invalid");
+            badge.className = "badge badge-success";
+            badge.textContent = "Valid JSON";
+            return true;
+          } catch (err) {
+            const pos = /position (\d+)/.exec(err.message)?.[1];
+            const line = pos ? area.value.slice(0, Number(pos)).split("\n").length : null;
+            area.classList.add("is-invalid");
+            badge.className = "badge badge-destructive";
+            badge.textContent = line
+              ? `Something's wrong on line ${line}`
+              : "This isn't valid JSON yet";
+            return false;
+          }
+        }
+
+        function renderAuth() {
+          const a = draft.auth;
+          for (const c of $("#cd-auth-kind").children)
+            c.setAttribute("aria-pressed", String(c.dataset.value === a.kind));
+          const host = parseUrl(draft.url).host || "this site";
+          const secretNote = `<p class="note-line">${icon("lock")}<span>Kept on this device, never saved in the file, and sent only to <b>${esc(host)}</b>.</span></p>`;
+          const field = (label, key, type = "text", ph = "") =>
+            `<div class="field"><span class="field-title">${label}</span><input class="input" data-a="${key}" type="${type}" value="${esc(a[key])}" placeholder="${ph}" spellcheck="false" /></div>`;
+          let html = "";
+          if (a.kind === "none")
+            html = `<p class="note-line">${icon("info")}<span>Nothing extra is sent. If Try it says the site needs you to sign in, pick one of the others.</span></p>`;
+          if (a.kind === "apikey")
+            html = `<div class="grid-2">${field("Key name", "keyName", "text", "X-API-Key")}${field("Key", "key", "password", "Paste the key here")}</div>
+              <div class="field"><span class="field-title">Send it</span>
+              <div class="seg seg-sm" role="radiogroup" id="auth-where" style="align-self:flex-start">
+                <button role="radio" data-value="header" aria-checked="${a.where === "header"}">As a header</button>
+                <button role="radio" data-value="query" aria-checked="${a.where === "query"}">In the link</button></div>
+              <span class="field-hint">Your site's guide says which one. Usually a header.</span></div>${secretNote}`;
+          if (a.kind === "bearer")
+            html = `${field("Token", "token", "password", "Paste the token here")}<p class="field-hint mono">Sends: Authorization: Bearer ••••••</p>${secretNote}`;
+          if (a.kind === "basic")
+            html = `<div class="grid-2">${field("Username", "user")}${field("Password", "pass", "password")}</div>${secretNote}`;
+          const box = $("#auth-fields");
+          box.innerHTML = html;
+          box.querySelectorAll("[data-a]").forEach((inp) =>
+            inp.addEventListener("input", () => {
+              a[inp.dataset.a] = inp.value;
+              touch();
+            }),
+          );
+          box.querySelector("#auth-where")?.addEventListener("click", (e) => {
+            const v = e.target.closest("[data-value]")?.dataset.value;
+            if (v) {
+              a.where = v;
+              touch();
+            }
+          });
+        }
+        $("#cd-auth-kind").addEventListener("click", (e) => {
+          const v = e.target.closest("[data-value]")?.dataset.value;
+          if (!v) return;
+          draft.auth.kind = v;
+          renderAuth();
+          touch();
+        });
+
+        function renderBody() {
+          const post = draft.method === "POST";
+          $("#body-get-note").hidden = post;
+          $("#body-editor").hidden = !post;
+          for (const c of $("#cd-body-kind").children)
+            c.setAttribute("aria-checked", String(c.dataset.value === draft.bodyKind));
+          for (const c of $("#cd-json-mode").children)
+            c.setAttribute("aria-checked", String(c.dataset.value === draft.jsonMode));
+          $("#cd-json-mode").hidden = draft.bodyKind !== "json";
+          const shown = draft.bodyKind === "json" ? `json-${draft.jsonMode}` : draft.bodyKind;
+          for (const p of dlg.querySelectorAll("[data-body]")) p.hidden = p.dataset.body !== shown;
+          if (shown === "form") form.render();
+          if (shown === "json-rows") jsonRows.render();
+          if (shown === "json-code") {
+            $("#cd-json").value = draft.jsonText;
+            validateJson();
+          }
+          if (shown === "text") $("#cd-text").value = draft.text;
+        }
+        $("#cd-body-kind").addEventListener("click", (e) => {
+          const v = e.target.closest("[data-value]")?.dataset.value;
+          if (!v) return;
+          draft.bodyKind = v;
+          // A JSON or form body says what it is, so the Content-Type header follows the choice.
+          const type = {
+            json: "application/json",
+            form: "application/x-www-form-urlencoded",
+            text: "text/plain",
+          }[v];
+          const ct = draft.headers.find((h) => h.key.toLowerCase() === "content-type");
+          if (type && ct) ct.value = type;
+          else if (type)
+            draft.headers.push({ on: true, key: "Content-Type", value: type, secret: false });
+          headers.render();
+          renderBody();
+          touch();
+        });
+        $("#cd-json-mode").addEventListener("click", (e) => {
+          const v = e.target.closest("[data-value]")?.dataset.value;
+          if (!v || v === draft.jsonMode) return;
+          if (v === "code") draft.jsonText = rowsToJson(draft.json);
+          else {
+            let rows = null;
+            try {
+              rows = jsonToRows(draft.jsonText || "{}");
+            } catch {}
+            if (!rows) {
+              $("#cd-json-state").className = "badge badge-warning";
+              $("#cd-json-state").textContent = "Has nested parts: keep editing it as code";
+              for (const c of $("#cd-json-mode").children)
+                c.setAttribute("aria-checked", String(c.dataset.value === "code"));
+              return;
+            }
+            draft.json = rows;
+          }
+          draft.jsonMode = v;
+          renderBody();
+          touch();
+        });
+        $("#cd-json").addEventListener("input", (e) => {
+          draft.jsonText = e.target.value;
+          validateJson();
+          touch();
+        });
+        $("#cd-json").addEventListener("keydown", (e) => {
+          if (e.key !== "Tab") return;
+          e.preventDefault();
+          e.target.setRangeText("  ", e.target.selectionStart, e.target.selectionEnd, "end");
+          e.target.dispatchEvent(new Event("input"));
+        });
+        $("#cd-json-format").addEventListener("click", () => {
+          if (!validateJson()) return;
+          draft.jsonText = JSON.stringify(JSON.parse(draft.jsonText || "{}"), null, 2);
+          $("#cd-json").value = draft.jsonText;
+          touch();
+        });
+        $("#cd-text").addEventListener("input", (e) => {
+          draft.text = e.target.value;
+          touch();
+        });
+
+        function setMethod(m) {
+          draft.method = m;
+          for (const c of $("#cd-method").children)
+            c.setAttribute("aria-checked", String(c.dataset.value === m));
+          renderBody();
+          touch();
+        }
+        $("#cd-method").addEventListener("click", (e) => {
+          const v = e.target.closest("[data-value]")?.dataset.value;
+          if (v) setMethod(v);
+        });
+        $("#body-to-post").addEventListener("click", () => setMethod("POST"));
+        $("#cd-url").addEventListener("input", (e) => {
+          draft.url = e.target.value;
+          const p = parseUrl(draft.url);
+          if (p.ok) {
+            draft.params = p.params;
+            params.render();
+          }
+          $("#cd-url").classList.toggle("is-invalid", !p.ok && draft.url !== "");
+          touch();
+        });
+
+        function renderDialogChrome() {
+          $("#cd-sentence span").innerHTML = sentence(draft);
+          $("#cd-method-hint").textContent =
+            draft.method === "GET"
+              ? "GET reads data. Most links use it."
+              : "POST sends the body below, then reads what the site answers.";
+          const n = (list) => list.filter((r) => r.on && r.key).length || "";
+          $("#ct-params").textContent = n(draft.params);
+          $("#ct-headers").textContent = n(draft.headers);
+          $("#ct-auth").textContent = draft.auth.kind === "none" ? "" : "1";
+          $("#ct-body").textContent =
+            draft.method === "POST" && draft.bodyKind !== "none" ? "1" : "";
+        }
+
+        function openConnection(tab) {
+          draft = clone(saved);
+          $("#cd-url").value = draft.url;
+          for (const c of $("#cd-method").children)
+            c.setAttribute("aria-checked", String(c.dataset.value === draft.method));
+          params.render();
+          headers.render();
+          renderAuth();
+          renderBody();
+          touch();
+          $("#cd-result").innerHTML =
+            `<div class="preview-empty">${icon("database", "i i-lg")}<span>Run it to see the rows this link gives, before you save.</span></div>`;
+          dlg.showModal();
+          dlg.querySelector(`.tab[data-tab="${tab || "params"}"]`)?.click();
+        }
+        document.addEventListener("click", (e) => {
+          const t = e.target instanceof Element ? e.target.closest("[data-open-conn]") : null;
+          if (t) openConnection(t.dataset.openConn);
+        });
+
+        // ── Try it: run the request, show where the rows are and what each row holds ──
+        function plainError(status) {
+          if (status === 401 || status === 403)
+            return [
+              "The site says you're not allowed in",
+              "Check the Sign in tab: the key or token may be missing or wrong.",
+            ];
+          if (status === 404)
+            return ["There's nothing at this link", "Check the address for typos."];
+          if (status >= 500)
+            return ["The site had a problem", "It isn't your settings. Try again in a while."];
+          return ["Couldn't reach the site", "Check the link and your internet connection."];
+        }
+        function renderTry() {
+          const out = $("#cd-result");
+          const answer = draft._answer;
+          const listPath = draft._listPath;
+          const rows = Array.isArray(at(answer, listPath))
+            ? at(answer, listPath).filter(isObj)
+            : [];
+          const tree = fieldTree(rows);
+          const chips = [...tree.values()]
+            .map((n) => {
+              const ic =
+                n.kind === "group"
+                  ? "braces"
+                  : n.kind === "rows" || n.kind === "values"
+                    ? "list"
+                    : (FIELD_TYPES[n.type ?? "text"]?.icon ?? "type");
+              const extra = n.children ? ` <span class="subtle">${n.children.size}</span>` : "";
+              return `<span class="chip">${icon(ic)}${esc(n.key)}${extra}</span>`;
+            })
+            .join("");
+          const cols = columns(tree).slice(0, 6);
+          out.innerHTML = `
+            <div class="bar"><span class="badge badge-success">It works</span><span class="muted text-xs">${draft._live ? `${(draft._ms / 1000).toFixed(1)} s` : "sample answer (offline)"}</span></div>
+            <div class="field">
+              <span class="field-title">Rows come from</span>
+              <select class="select" id="cd-list">${listOptions(answer, listPath)}</select>
+              <span class="field-hint">${besideText(answer, listPath) || "Picked for you: the first list in the answer."}</span>
+            </div>
+            <div class="stat-row">
+              <div class="stat"><b>${rows.length}</b><span>rows</span></div>
+              <div class="stat"><b>${countLeaves(tree)}</b><span>fields</span></div>
+              <div class="stat"><b>${[...tree.values()].filter((n) => n.children).length}</b><span>groups</span></div>
+            </div>
+            <div class="chips">${chips}</div>
+            <div class="table-wrap" style="flex:1;min-height:0">
+              <table class="mini-table"><thead><tr>${cols.map((c) => `<th>${esc(c.path)}</th>`).join("")}</tr></thead>
+              <tbody>${rows
+                .slice(0, 12)
+                .map((r) => `<tr>${cols.map((c) => `<td>${cellHtml(c, r)}</td>`).join("")}</tr>`)
+                .join("")}</tbody></table>
+            </div>`;
+          $("#cd-list").addEventListener("change", (e) => {
+            draft._listPath = e.target.value;
+            renderTry();
+          });
+        }
+        $("#cd-try").addEventListener("click", async () => {
+          const out = $("#cd-result");
+          out.innerHTML = `<div class="preview-empty">${icon("loader", "i i-lg spin")}<span>Asking ${esc(parseUrl(draft.url).host || "the site")}…</span></div>`;
+          const started = performance.now();
+          const a = draft.auth;
+          // Demo of a failure in plain words: a sign-in picked but left empty.
+          const missing =
+            (a.kind === "apikey" && !a.key) ||
+            (a.kind === "bearer" && !a.token) ||
+            (a.kind === "basic" && !a.user);
+          await new Promise((r) => setTimeout(r, 350));
+          let result = { status: 0, answer: null };
+          if (parseUrl(draft.url).ok)
+            result = missing ? { status: 401, answer: null } : await fetchAnswer(draft);
+          if (!result.answer) {
+            const [title, help] = plainError(result.status);
+            out.innerHTML = `<div class="callout" style="background:var(--destructive-soft)">${icon("alert")}<span class="grow"><b>${title}</b><br />${help}</span></div>
+              ${result.status ? `<p class="field-hint mono">The site answered ${result.status}</p>` : ""}`;
+            return;
+          }
+          draft._answer = result.answer;
+          draft._live = result.live;
+          draft._ms = performance.now() - started;
+          draft._listPath = findLists(result.answer).some((l) => l.path === saved.listPath)
+            ? saved.listPath
+            : defaultList(result.answer);
+          renderTry();
+        });
+
+        $("#cd-save").addEventListener("click", () => {
+          const { _answer, _listPath, _live, _ms, ...rest } = draft;
+          const changedLink = rest.url !== saved.url;
+          saved = { ...rest, updated: "Updated just now" };
+          if (_answer) {
+            saved.answer = _answer;
+            saved.listPath = _listPath;
+          }
+          if (changedLink)
+            saved.name = parseUrl(rest.url).path.split("/").filter(Boolean).pop() ?? saved.name;
+          dlg.close();
+          renderSidebar();
+          if (changedLink && !_answer) updateSaved();
+          else toast(`Connection saved · ${saved.name} updated`);
+        });
+
+        dlg.addEventListener("close", hideSuggest);
+
+        renderSidebar();
+      })();
+    </script>
+  </body>
+</html>

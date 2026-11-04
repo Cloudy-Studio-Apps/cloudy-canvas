@@ -4,6 +4,7 @@ import { requireDesign, type DesignMcpTool } from "../../../mcp";
 import { DESIGN_DATA_SOURCES } from "../model";
 import { describeSource, summarizeSource } from "./describe-source";
 import { patchFields } from "./field-args";
+import { readRowsPath, ROWS_PATH_SCHEMA } from "./rows-path-arg";
 import {
   checkFormat,
   inUndoStep,
@@ -28,8 +29,12 @@ const BINDING_NOTE =
 const SETTINGS_SCHEMA = {
   type: "object",
   description:
-    "The type's settings by key, e.g. a file's absolute `path`, a link's `url` and `headers` " +
-    "(name to value). Unknown keys are an error.",
+    "The type's settings by key, e.g. a file's absolute `path`; a link's `url`, `method` (GET, " +
+    "POST), `plainHeaders` (name to value, kept in the file), `headers` (name to value, the " +
+    "values kept on this device), `auth` (none, apikey, bearer, basic) with `apiKeyName` and " +
+    "`apiKeyIn` (header, query) and the secrets `apiKey`, `token` or `username` + the secret " +
+    "`password`, and for POST `bodyKind` (none, form, json, text) with `form` (name to value) " +
+    "or `body` (text). Unknown keys are an error.",
 };
 
 const SECRETS_SCHEMA = {
@@ -96,6 +101,7 @@ export const dataTools: DesignMcpTool[] = [
         settings: SETTINGS_SCHEMA,
         secrets: SECRETS_SCHEMA,
         format: FORMAT_SCHEMA,
+        rowsPath: ROWS_PATH_SCHEMA,
         name: {
           type: "string",
           description: "Becomes a lower-case identifier; default from the settings.",
@@ -123,6 +129,7 @@ export const dataTools: DesignMcpTool[] = [
         settings,
         secrets,
         format,
+        rowsPath: readRowsPath(args),
         name: optionalString(args, "name"),
       });
       const result = update ? await sources.update(created.id) : undefined;
@@ -168,7 +175,7 @@ export const dataTools: DesignMcpTool[] = [
     name: "set_data_source",
     description:
       "Changes a data source in one undo step: `name`, `settings` (merged into the current " +
-      "ones; null removes a secret setting), `secrets`, `format` and `formatOptions`, and " +
+      "ones; null removes a secret setting), `secrets`, `format` and `formatOptions`, `rowsPath`, and " +
       "`fields` (patches matched by `path`: alias, type, format, hidden; an unknown path is an " +
       `error). Nothing is fetched: call update_data_source after changing where data comes ` +
       `from. ${DEVICE_NOTE} ${BINDING_NOTE}`,
@@ -182,6 +189,7 @@ export const dataTools: DesignMcpTool[] = [
         secrets: SECRETS_SCHEMA,
         format: FORMAT_SCHEMA,
         formatOptions: { type: "object", description: "The format's options by key." },
+        rowsPath: ROWS_PATH_SCHEMA,
         fields: {
           type: "array",
           items: {
@@ -202,7 +210,7 @@ export const dataTools: DesignMcpTool[] = [
               format: {
                 type: "object",
                 description:
-                  "decimals (a whole number 0-20), currency (a 3-letter ISO code), dateStyle (short, medium, long), prefix, suffix, trueText, falseText (text).",
+                  "decimals (a whole number 0-20), currency (a 3-letter ISO code), dateStyle (short, medium, long), prefix, suffix, trueText, falseText (text), list (all, first, count: how a list field's items show).",
               },
               hidden: { type: "boolean" },
             },
@@ -233,6 +241,7 @@ export const dataTools: DesignMcpTool[] = [
       if (options && !spec)
         throw new Error('"formatOptions" needs an explicit "format" (not "auto").');
       const fields = patchFields(source, args);
+      const rowsPath = readRowsPath(args);
       const keepOptions = format === undefined || format === source.format;
       await inUndoStep(engine, async () => {
         if (name !== undefined) sources.rename(source.id, name);
@@ -243,6 +252,7 @@ export const dataTools: DesignMcpTool[] = [
         if (settings || secrets)
           await sources.setSettings(source.id, settings ?? source.settings, secrets);
         if (fields) sources.setFields(source.id, fields);
+        if (rowsPath !== undefined) sources.setRowsPath(source.id, rowsPath);
       });
       return describeSource(engine, sources.get(source.id) ?? source, 5);
     },

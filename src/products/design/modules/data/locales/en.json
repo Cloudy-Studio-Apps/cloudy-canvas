@@ -18,8 +18,28 @@
       "label": "Link",
       "url": "URL",
       "method": "Method",
-      "headers": "Headers",
-      "body": "Body"
+      "headers": "Private headers",
+      "body": "Body",
+      "auth": "Sign in",
+      "authNone": "None",
+      "authApiKey": "API key",
+      "authBearer": "Token",
+      "authBasic": "Username and password",
+      "apiKeyName": "Key name",
+      "apiKeyIn": "Send the key",
+      "apiKeyInHeader": "As a header",
+      "apiKeyInQuery": "In the link",
+      "apiKey": "API key",
+      "token": "Access token",
+      "username": "Username",
+      "password": "Password",
+      "plainHeaders": "Headers",
+      "bodyKind": "Body",
+      "bodyNone": "Nothing",
+      "bodyForm": "Form",
+      "bodyJson": "JSON",
+      "bodyText": "Text",
+      "form": "Form values"
     }
   },
   "formats": {
@@ -104,7 +124,29 @@
       "list": "List",
       "object": "Object"
     },
-    "updateForImages": "Update to download its images"
+    "updateForImages": "Update to download its images",
+    "kindMenu": {
+      "showAs": "Show this field as",
+      "listShow": "Each row has several. Show",
+      "list": {
+        "all": "All, with commas",
+        "first": "Only the first",
+        "count": "How many there are"
+      },
+      "rename": "Rename…",
+      "button": "{kind} · click to change"
+    },
+    "collapse": "Close",
+    "expand": "Open",
+    "listOfItems_one": "A list · {count} field in each item",
+    "listOfItems_other": "A list · {count} fields in each item",
+    "innerNote": "Each row has its own {name}. Fill these by repeating a card inside the main card.",
+    "show": "Show in the design",
+    "hide": "Hide from the design",
+    "groupCount_one": "{count} field",
+    "groupCount_other": "{count} fields",
+    "itemCount_one": "{count} item",
+    "itemCount_other": "{count} items"
   },
   "update": {
     "run": "Update",
@@ -130,7 +172,8 @@
     "pickFolderAgain": "Pick the folder again on this device.",
     "privateFolder": "This folder is in the app's own data folder, which data sources can't read.",
     "noLayer": "This frame has no layer to repeat: add one to it first.",
-    "noParentFrame": "Put the layer inside a frame first."
+    "noParentFrame": "Put the layer inside a frame first.",
+    "noList": "There's no list at \"{path}\" in the data any more. Pick where the rows come from again."
   },
   "format": {
     "yes": "Yes",
@@ -261,5 +304,159 @@
       "tooManyCopies": "{detail} copies are made while designing: lower that limit",
       "copiesStacked": "{detail} copies stack on top of each other: give the frame an auto layout"
     }
+  },
+  "connection": {
+    "title": "Connection",
+    "description": "Where this data comes from and what Cloudy Canvas sends to get it.",
+    "link": "Link",
+    "badLink": "This isn't a full link yet. It should start with https://",
+    "getHint": "GET reads data. Most links use it.",
+    "postHint": "POST sends the body, then reads what the site answers.",
+    "save": "Save and update",
+    "unsaved": "Unsaved changes",
+    "private": "Kept on this device only",
+    "makePrivate": "Keep this value on this device",
+    "tabs": {
+      "params": "Link settings",
+      "auth": "Sign in",
+      "headers": "Headers",
+      "body": "Body"
+    },
+    "summary": {
+      "aLink": "a link",
+      "get": "Get data from {where}{tail}.",
+      "post": "Send {body} to {where}{tail}, then read the answer.",
+      "with": ", with {details}",
+      "settings_one": "{count} setting ({list})",
+      "settings_other": "{count} settings ({list})",
+      "headers_one": "{count} extra header",
+      "headers_other": "{count} extra headers",
+      "auth": {
+        "apikey": "signing in with your API key",
+        "bearer": "signing in with your access token",
+        "basic": "signing in with your username and password"
+      },
+      "body": {
+        "none": "nothing",
+        "form": "a form",
+        "json": "JSON",
+        "text": "some text"
+      }
+    },
+    "params": {
+      "intro": "Options written at the end of the link, like how many items to get. Changing them here changes the link, and the other way round.",
+      "name": "Setting",
+      "add": "Add a setting…"
+    },
+    "auth": {
+      "intro": "Does this site need to know who you are? Most public data doesn't.",
+      "kinds": {
+        "none": {
+          "label": "None",
+          "hint": "Public data"
+        },
+        "apikey": {
+          "label": "API key",
+          "hint": "A code the site gave you"
+        },
+        "bearer": {
+          "label": "Token",
+          "hint": "An access token (Bearer)"
+        },
+        "basic": {
+          "label": "Username",
+          "hint": "A name and a password"
+        }
+      },
+      "noneHint": "Nothing extra is sent. If Try it says the site won't let you in, pick one of the others.",
+      "pasteKey": "Paste the key here",
+      "pasteToken": "Paste the token here",
+      "apiKeyInHint": "The site's guide says which one. Usually a header.",
+      "secretNote": "Kept on this device, never saved in the file, and sent only to {host}.",
+      "thisSite": "this site"
+    },
+    "headers": {
+      "intro": "Extra details sent with the request. Pick a common one or type your own; values with the lock stay on this device.",
+      "name": "Header",
+      "add": "Add a header…",
+      "common": "Add a common one:",
+      "quick": {
+        "json": "Answer in JSON",
+        "fresh": "Always fresh",
+        "language": "Language"
+      }
+    },
+    "headerHints": {
+      "accept": "What kind of answer you want back",
+      "contentType": "What kind of body you send",
+      "authorization": "Who you are (easier in the Sign in tab)",
+      "apiKey": "An API key some sites ask for",
+      "acceptLanguage": "The language of the answer",
+      "cacheControl": "Always get fresh data, not a stored copy",
+      "userAgent": "Who is asking (a few sites require it)",
+      "ifNoneMatch": "Only send data that changed"
+    },
+    "body": {
+      "getNote": "A GET request only reads, so it sends no body. Switch to POST to send something with it.",
+      "usePost": "Use POST",
+      "noneHint": "Nothing is sent. Pick Form or JSON if the site expects something.",
+      "formHint": "Sent like a web form.",
+      "jsonMode": "How to write the JSON",
+      "rows": "Rows",
+      "code": "Code",
+      "nested": "This JSON has nested parts: keep editing it as code",
+      "kind": "Kind",
+      "kinds": {
+        "text": "Text",
+        "number": "Number",
+        "boolean": "Yes / no",
+        "null": "Empty"
+      },
+      "yes": "Yes",
+      "no": "No",
+      "addValue": "Add a value",
+      "jsonValid": "Valid JSON",
+      "jsonInvalid": "This isn't valid JSON yet",
+      "jsonLine": "Something's wrong on line {line}",
+      "tidy": "Tidy up",
+      "textPlaceholder": "Anything, sent as it is"
+    },
+    "try": {
+      "title": "Try it",
+      "run": "Run",
+      "idle": "Run it to see the rows this link gives, before you save.",
+      "asking": "Asking {host}…",
+      "works": "It works",
+      "rows": "rows",
+      "fields": "fields",
+      "groups": "groups",
+      "notAllowed": "The site says you're not allowed in",
+      "notFound": "There's nothing at this link",
+      "siteProblem": "The site had a problem",
+      "failed": "Couldn't get the data",
+      "unavailable": "Try it isn't available here."
+    },
+    "card": {
+      "edit": "Edit connection…",
+      "noLink": "No link yet",
+      "headers_one": "{count} header",
+      "headers_other": "{count} headers",
+      "body": {
+        "none": "No body",
+        "form": "Form body",
+        "json": "JSON body",
+        "text": "Text body"
+      }
+    }
+  },
+  "rowsFrom": {
+    "title": "Rows come from",
+    "auto": "Automatic: the first list",
+    "autoWith": "Automatic ({list})",
+    "list_one": "{list} · {count} item",
+    "list_other": "{list} · {count} items",
+    "missing": "{list} (not in the data any more)",
+    "whole": "The whole answer",
+    "extras": "Also in the data: {list}"
   }
 }

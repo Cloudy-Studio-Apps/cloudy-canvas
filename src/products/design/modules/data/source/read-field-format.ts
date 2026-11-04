@@ -8,7 +8,10 @@ const FORMAT_KEYS = [
   "suffix",
   "trueText",
   "falseText",
+  "list",
 ] as const;
+
+const LIST_SHOWS = ["all", "first", "count"] as const;
 
 const DATE_STYLES = ["short", "medium", "long"] as const;
 const TEXT_FORMAT_KEYS = new Set(["prefix", "suffix", "trueText", "falseText"]);
@@ -30,6 +33,12 @@ function readFormatValue(key: string, value: unknown, where: string): unknown {
   if (key === "dateStyle") {
     if (!(DATE_STYLES as readonly unknown[]).includes(value)) {
       throw new Error(`${where} must be one of: ${DATE_STYLES.join(", ")}.`);
+    }
+    return value;
+  }
+  if (key === "list") {
+    if (!(LIST_SHOWS as readonly unknown[]).includes(value)) {
+      throw new Error(`${where} must be one of: ${LIST_SHOWS.join(", ")}.`);
     }
     return value;
   }

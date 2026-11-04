@@ -10,6 +10,8 @@ export const UPDATE_ERRORS = {
   privateFile: "This file is in the app's own data folder, which data sources can't read.",
   privateFolder: "This folder is in the app's own data folder, which data sources can't read.",
   webPage: "The source answered a web page, not data.",
+  /** Followed by the path, e.g. `No list at: products`. */
+  noList: "No list at: ",
 } as const;
 
 /** The message of a link that answered an HTTP error (`<url> answered <status>.`). */
