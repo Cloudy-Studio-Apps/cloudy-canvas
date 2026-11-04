@@ -1,6 +1,6 @@
 import { defineService, DocumentFeed, type CanvasDocument, type ElementPatch } from "@canvas";
 
-import type { DataSourceType } from "../data.points.types";
+import type { DataFormat, DataSourceType } from "../data.points.types";
 import type { SettingValue } from "../source";
 import {
   createDataSource,
@@ -27,6 +27,26 @@ import { sourceName } from "./source-name";
 import { SourceUpdates } from "./source-updates";
 import { clearSecrets, writeSecrets } from "./write-secrets";
 
+/**
+ * What every view of one document shares: an agent's workspace has its own service on a proxy of
+ * the same Yjs doc, and must see the editor's context and the Updates it runs.
+ */
+interface SharedState {
+  context: DataContext | null;
+  updates: SourceUpdates;
+}
+
+const SHARED = new WeakMap<object, SharedState>();
+
+function sharedState(doc: CanvasDocument): SharedState {
+  let state = SHARED.get(doc.doc);
+  if (!state) {
+    state = { context: null, updates: new SourceUpdates() };
+    SHARED.set(doc.doc, state);
+  }
+  return state;
+}
+
 const NOT_READY = "Data sources aren't ready: no editor is open.";
 
 /**
@@ -36,11 +56,11 @@ const NOT_READY = "Data sources aren't ready: no editor is open.";
  * belong to this device, not to the file.
  */
 export class DesignDataSources {
-  private context: DataContext | null = null;
   private readonly feed: DocumentFeed;
-  private readonly updates = new SourceUpdates();
+  private readonly shared: SharedState;
 
   constructor(private readonly doc: CanvasDocument) {
+    this.shared = sharedState(doc);
     this.feed = new DocumentFeed(
       doc,
       (change) =>
@@ -49,9 +69,17 @@ export class DesignDataSources {
     );
   }
 
+  private get context(): DataContext | null {
+    return this.shared.context;
+  }
+
+  private get updates(): SourceUpdates {
+    return this.shared.updates;
+  }
+
   /** Sets (or clears, with `null`) what Updates and secrets need from the open editor. */
   setContext(context: DataContext | null): void {
-    this.context = context;
+    this.shared.context = context;
   }
 
   /** Fires when a source's record changes and when an Update moves on, ends or fails. */
@@ -62,6 +90,15 @@ export class DesignDataSources {
       offFeed();
       offLocal();
     };
+  }
+
+  /** The source types and formats registered in the open editor (empty without one). */
+  types(): DataSourceType[] {
+    return this.context?.types ?? [];
+  }
+
+  formats(): DataFormat[] {
+    return this.context?.formats ?? [];
   }
 
   /** Every source, in order. */
