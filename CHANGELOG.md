@@ -14,10 +14,10 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - Pictures named in a data source, as image links, embedded images or file names in a folder you
   choose, are saved in the design when you update it, so they keep showing offline and on other
   computers. The Data tab shows the download's progress and how many pictures couldn't be saved.
-- Layers can be filled from data in the new Data section of the properties panel: a text can show a
-  template with fields from your rows, and colors, sizes, opacity and pictures can each take a
-  field. A layer can also show only when a field meets a condition, or hide when its data is empty,
-  and everything updates as soon as the data does.
+- Texts, images and colors can now show data from a source: write a field's name in braces, such as
+  {products[0].name}, or bind a layer's image, color, size or opacity in the new Data section of
+  the properties panel. Numbers, prices and dates are written in your language, a layer can show
+  only when a field meets a condition, and layers hide when a value is empty.
 
 ## 0.8.0 - 2026-11-04
 
