@@ -20,6 +20,7 @@ The earlier phases' constraints, plus:
 - The export never adds pages to the user's document.
 - Data shown on brochure pages is formatted in the brochure's language (`brochureLanguage`).
 - **From the phase 1 review, before this phase ships:** snapshot assets pile up (every changed Update adds one and nothing deletes them). Add pruning of data-snapshot assets that no data-source record references, when the document is saved, or keep only the last snapshot per source; "Update the data first" on export makes this urgent.
+- **From the phase 3 review:** (a) exports must read `repeatRows(…, "export")`: today an unset `designLimit` caps the document at 24 copies (`DEFAULT_DESIGN_LIMIT`) and current PNG/PDF exports show only those, so the export path has to make every row of element iterators too, not only pages. (b) Grouping or wrapping a repeated card (Ctrl+G, Ctrl+Alt+G, Shift+A) ends the repeat because the template left the frame's children; point `repeat.template` at the new wrapper when the card is wrapped in place (`template-of.ts`, `sync-iterators.ts`).
 
 ## Review Focus
 
