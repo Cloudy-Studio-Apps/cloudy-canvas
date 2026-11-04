@@ -17,7 +17,9 @@ import { BrochurePageRow } from "./brochure-page-row";
 import { BrochureSwitcher } from "./brochure-switcher";
 import { dropId, dropPosition, dropsBackCover, parseDropId } from "./drop-position";
 import { ListEndDrop } from "./list-end-drop";
+import { MastersSection } from "./masters-section";
 import { NoBrochure } from "./no-brochure";
+import { SectionHeadingRow } from "./section-heading-row";
 import { SpreadHeadingRow } from "./spread-heading-row";
 import { spreadLabel } from "./spread-label";
 import { t } from "../../catalog.i18n";
@@ -30,14 +32,16 @@ import { t } from "../../catalog.i18n";
  * the back cover), and after the last row goes last. Ctrl/⌘ and Shift + click select several
  * pages, which drag together (and move a place with Alt+↑/↓);
  * "Pick frames" ticks frames on the canvas and "+" adds a blank page the size of the last one.
+ * Its masters are listed above the pages, and a section's name above its first page.
  */
 export function BrochureTab() {
   const engine = useDesignEngine();
-  const { brochure, pages, settings, layout, label } = useBrochure();
+  const { brochure, pages, settings, layout, label, sections, numbers } = useBrochure();
   const selection = useCatalogSelection();
   const selectedSlot = selection.kind === "page" ? selection.page.slot.id : null;
   const last = pages.at(-1)?.frame;
   const book = settings.layout === "book";
+  const sectionAt = new Map(sections.map((section) => [section.start, section]));
   const list = usePageListSelection(pages);
   const rowDrag = useRowDrag({
     // Pages, blank pages, spread headings and the list's end all take the dragged pages.
@@ -66,7 +70,7 @@ export function BrochureTab() {
       return (
         <BlankPageRow
           key={`blank:${index}`}
-          number={index + 1}
+          number={String(numbers[index]?.number ?? index + 1)}
           reason={side.reason}
           rowDrag={rowDrag}
           dropId={dropId({ kind: "blank", side: index })}
@@ -75,17 +79,20 @@ export function BrochureTab() {
     // A spread frame's two sides are one row, at its left side.
     if (side.part === "right") return null;
     const { page } = side;
+    const section = sectionAt.get(page.slot.id);
     return (
-      <BrochurePageRow
-        key={page.slot.id}
-        page={page}
-        label={label(page)}
-        selected={list.selected.has(page.slot.id)}
-        expanded={page.slot.id === selectedSlot}
-        carried={carried.has(page.slot.id)}
-        onClick={(event) => list.click(page, event)}
-        rowDrag={rowDrag}
-      />
+      <Fragment key={page.slot.id}>
+        {section && <SectionHeadingRow name={section.name} />}
+        <BrochurePageRow
+          page={page}
+          label={label(page)}
+          selected={list.selected.has(page.slot.id)}
+          expanded={page.slot.id === selectedSlot}
+          carried={carried.has(page.slot.id)}
+          onClick={(event) => list.click(page, event)}
+          rowDrag={rowDrag}
+        />
+      </Fragment>
     );
   };
 
@@ -100,6 +107,7 @@ export function BrochureTab() {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <BrochureSwitcher />
+      <MastersSection />
       {dragged && rowDrag.drag && <DragGhost label={ghost} pointer={rowDrag.drag.pointer} />}
       <header className="flex h-10 shrink-0 items-center justify-between px-3">
         <h2 className="text-xs font-semibold text-foreground">

@@ -24,8 +24,8 @@ export interface BrochureOptionsListProps {
 }
 
 export interface BlankPageRowProps {
-  /** Its printed page number. */
-  number: number;
+  /** Its page number (counted, though a blank page doesn't print it). */
+  number: string;
   reason: BlankReason;
   /** The list's row drag: a page dropped on a blank takes its place. */
   rowDrag: RowDrag;
@@ -44,4 +44,9 @@ export interface SpreadHeadingRowProps {
 export interface ListEndDropProps {
   /** The list's row drag: a page dropped after the last row goes last. */
   rowDrag: RowDrag;
+}
+
+export interface SectionHeadingRowProps {
+  /** The section's name. */
+  name: string;
 }

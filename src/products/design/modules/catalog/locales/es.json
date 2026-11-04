@@ -216,5 +216,68 @@
       "edit": "Editar maestra",
       "detach": "Separar"
     }
+  },
+  "masters": {
+    "title": "Maestras",
+    "add": "Añadir una maestra",
+    "remove": "Quitar la maestra",
+    "default": "Predeterminada",
+    "empty": "Aún no hay maestras. Una maestra es una cabecera y un pie diseñados una vez y repetidos en cada página que la usa.",
+    "rowHint": "Haz clic para verla y doble clic para diseñarla",
+    "show": "Mostrar las maestras",
+    "hide": "Ocultar las maestras",
+    "left": "Páginas izquierdas",
+    "right": "Páginas derechas",
+    "noSide": "Sin marco",
+    "badge": {
+      "left": "{name} · izquierda",
+      "right": "{name} · derecha"
+    },
+    "sideTitle": {
+      "left": "{name} · páginas izquierdas",
+      "right": "{name} · páginas derechas"
+    },
+    "sideBody": "Las capas que pongas en este marco aparecen, bloqueadas, en cada página que usa {name}. Los textos pueden llevar {page}, {pages}, {title}, {section} y {date}.",
+    "edit": "Diseñar esta maestra",
+    "showLeft": "Ver el lado izquierdo",
+    "showRight": "Ver el lado derecho",
+    "removeHint": "Al quitarla, sus marcos se quedan en el diseño como marcos normales."
+  },
+  "pageMaster": {
+    "label": "Maestra",
+    "default": "Predeterminada ({name})",
+    "defaultNone": "Predeterminada (ninguna)",
+    "none": "Ninguna",
+    "mixed": "Varias",
+    "noMasters": "Añade una maestra en la pestaña Folleto para dar a las páginas una cabecera y un pie."
+  },
+  "section": {
+    "title": "Sección",
+    "start": "Empezar una sección aquí",
+    "name": "Nombre de la sección",
+    "defaultName": "Sección {n}",
+    "restart": "Reiniciar la numeración",
+    "restartAt": "Desde",
+    "style": "Números",
+    "styleSame": "Como antes",
+    "in": "En «{name}»",
+    "none": "Aún no está en una sección."
+  },
+  "numbering": {
+    "title": "Números de página",
+    "start": "Primer número",
+    "style": "Estilo",
+    "arabic": "1, 2, 3",
+    "romanLower": "i, ii, iii",
+    "romanUpper": "I, II, III",
+    "covers": {
+      "label": "Portadas",
+      "numbered": "Portadas numeradas",
+      "hidden": "Portadas contadas, sin número",
+      "uncounted": "Portadas sin contar"
+    },
+    "defaultMaster": "Maestra predeterminada",
+    "noMaster": "Sin maestra",
+    "mastersOnCovers": "Maestras en las portadas"
   }
 }

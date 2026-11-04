@@ -216,5 +216,68 @@
       "edit": "Edit master",
       "detach": "Detach"
     }
+  },
+  "masters": {
+    "title": "Masters",
+    "add": "Add a master",
+    "remove": "Remove master",
+    "default": "Default",
+    "empty": "No masters yet. A master is a header and footer designed once and repeated on every page that uses it.",
+    "rowHint": "Click to see it, double-click to design it",
+    "show": "Show masters",
+    "hide": "Hide masters",
+    "left": "Left pages",
+    "right": "Right pages",
+    "noSide": "No frame",
+    "badge": {
+      "left": "{name} · left",
+      "right": "{name} · right"
+    },
+    "sideTitle": {
+      "left": "{name} · left pages",
+      "right": "{name} · right pages"
+    },
+    "sideBody": "Layers you put on this frame appear, locked, on every page that uses {name}. Text can hold {page}, {pages}, {title}, {section} and {date}.",
+    "edit": "Design this master",
+    "showLeft": "Show the left side",
+    "showRight": "Show the right side",
+    "removeHint": "Removing it keeps its frames in the design, as ordinary frames."
+  },
+  "pageMaster": {
+    "label": "Master",
+    "default": "Default ({name})",
+    "defaultNone": "Default (none)",
+    "none": "None",
+    "mixed": "Mixed",
+    "noMasters": "Add a master in the Brochure tab to give pages a header and footer."
+  },
+  "section": {
+    "title": "Section",
+    "start": "Start a section here",
+    "name": "Section name",
+    "defaultName": "Section {n}",
+    "restart": "Restart numbering",
+    "restartAt": "From",
+    "style": "Numbers",
+    "styleSame": "As before",
+    "in": "In “{name}”",
+    "none": "Not in a section yet."
+  },
+  "numbering": {
+    "title": "Page numbers",
+    "start": "First number",
+    "style": "Style",
+    "arabic": "1, 2, 3",
+    "romanLower": "i, ii, iii",
+    "romanUpper": "I, II, III",
+    "covers": {
+      "label": "Covers",
+      "numbered": "Covers numbered",
+      "hidden": "Covers counted, not numbered",
+      "uncounted": "Covers not counted"
+    },
+    "defaultMaster": "Default master",
+    "noMaster": "No master",
+    "mastersOnCovers": "Masters on covers"
   }
 }

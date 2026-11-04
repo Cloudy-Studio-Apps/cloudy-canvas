@@ -1,6 +1,7 @@
 import type { BrochurePage } from "../../model/brochure-pages.types";
 import type { FrameElement } from "../../../frame";
 import type { PagePicture } from "../../model/page-pictures.types";
+import type { BrochureMaster } from "../../brochure/brochure.types";
 
 export interface PageSectionProps {
   page: BrochurePage;
@@ -20,4 +21,18 @@ export interface LooseFrameSectionProps {
 
 export interface FramesSectionProps {
   frames: readonly FrameElement[];
+}
+
+export interface PageMasterFieldProps {
+  /** The pages it sets (slot ids). */
+  slotIds: readonly string[];
+}
+
+export interface SectionFieldsProps {
+  page: BrochurePage;
+}
+
+export interface MasterSideSectionProps {
+  master: BrochureMaster;
+  side: "left" | "right";
 }

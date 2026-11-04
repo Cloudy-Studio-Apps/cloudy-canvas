@@ -9,6 +9,8 @@ import { BrochureChecksSection } from "./brochure-checks-section";
 import { BrochureSettingsSection } from "./brochure-settings-section";
 import { FramesSection } from "./frames-section";
 import { LooseFrameSection } from "./loose-frame-section";
+import { MasterSideSection } from "./master-side-section";
+import { NumberingSection } from "./numbering-section";
 import { PageImagesSection } from "./page-images-section";
 import { PageSection } from "./page-section";
 import { PickSection } from "./pick-section";
@@ -17,8 +19,8 @@ import { t } from "../../catalog.i18n";
 
 /**
  * The properties panel in the Catalog mode (its `sidebar`): while picking, how to; a
- * selected page with its options and pictures; a frame that isn't in it; several frames; or the
- * brochure itself (settings, checks, preview and export).
+ * selected page with its options and pictures; a side of a master; a frame that isn't in it;
+ * several frames; or the brochure itself (settings, numbering, checks, preview and export).
  */
 export function CatalogSidebar() {
   const engine = useDesignEngine();
@@ -35,6 +37,9 @@ export function CatalogSidebar() {
       </>
     );
   }
+  if (selection.kind === "master") {
+    return <MasterSideSection master={selection.master} side={selection.side} />;
+  }
   if (selection.kind === "loose") return <LooseFrameSection frame={selection.frame} />;
   if (selection.kind === "several") return <FramesSection frames={selection.frames} />;
   if (!brochure) {
@@ -43,6 +48,7 @@ export function CatalogSidebar() {
   return (
     <>
       <BrochureSettingsSection />
+      <NumberingSection />
       <PrintSection />
       <BrochureChecksSection />
       {pages.length > 0 && (

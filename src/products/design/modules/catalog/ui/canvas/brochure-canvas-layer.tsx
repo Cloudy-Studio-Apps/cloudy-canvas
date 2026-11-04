@@ -15,6 +15,7 @@ import { MarginGuide } from "./margin-guide";
 import { PageBadge } from "./page-badge";
 import { PickBanner } from "./pick-banner";
 import { PickCheckbox } from "./pick-checkbox";
+import { t } from "../../catalog.i18n";
 
 /** No frames to hover (the same list each time, so the hover hook doesn't start again). */
 const NO_FRAMES: readonly FrameElement[] = [];
@@ -23,12 +24,12 @@ const MIN_SCREEN_SIZE = 48;
 
 /**
  * What the Catalog mode draws over the canvas, following the view: each page's number on its
- * frame (and its options' 9A, 9B, …), the margins when they're shown, "+ Page / + Option" on the
+ * frame (and its options' 9A, 9B, …), each master frame's name and side, the margins when they're shown, "+ Page / + Option" on the
  * greyed frame under the pointer, and while picking, a tick on every frame and the banner.
  */
 export function BrochureCanvasLayer() {
   const engine = useDesignEngine();
-  const { pages, settings, version, label: labelOf } = useBrochure();
+  const { pages, settings, version, masters, label: labelOf } = useBrochure();
   const scope = useDesignState((state) => state.scope);
   const tool = useDesignState((state) => state.tool);
   const selectedIds = useDesignState((state) => state.selectedIds);
@@ -58,6 +59,18 @@ export function BrochureCanvasLayer() {
         if (Math.max(rect.w, rect.h) < MIN_SCREEN_SIZE) return null;
         if (picking)
           return <PickCheckbox key={frame.id} rect={rect} ticked={ticked.has(frame.id)} />;
+        const master = masters.find((item) => item.left === frame.id || item.right === frame.id);
+        if (master) {
+          const side = master.left === frame.id ? "left" : "right";
+          return (
+            <PageBadge
+              key={frame.id}
+              rect={rect}
+              label={t(`masters.badge.${side}`, { name: master.name })}
+              printed={false}
+            />
+          );
+        }
         const page = pages.find((item) => item.options.some((option) => option.id === frame.id));
         if (!page) {
           return frame.id === hovered ? (

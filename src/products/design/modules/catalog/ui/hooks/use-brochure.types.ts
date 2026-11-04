@@ -1,6 +1,11 @@
 import type { BookLayout } from "../../model/book-layout.types";
 import type { BrochurePage } from "../../model/brochure-pages.types";
-import type { BrochureSettings } from "../../brochure/brochure.types";
+import type {
+  BrochureMaster,
+  BrochureSection,
+  BrochureSettings,
+} from "../../brochure/brochure.types";
+import type { PageInfo } from "../../model/numbering";
 import type { DesignBrochure } from "../../model/design-brochure";
 import type { DesignBrochures } from "../../model/design-brochures";
 
@@ -19,7 +24,13 @@ export interface BrochureView {
   settings: BrochureSettings;
   /** How the pages print and are read (sides, spreads, numbers). */
   layout: BookLayout;
-  /** A page's numbers as printed ("4", "6–7"). */
+  /** Its masters (headers and footers stamped on its pages). */
+  masters: readonly BrochureMaster[];
+  /** Its sections, each from its first page on. */
+  sections: readonly BrochureSection[];
+  /** Each printed side's number and section (indexed like `layout.sides`). */
+  numbers: readonly PageInfo[];
+  /** A page's numbers as printed ("4", "iv", "6–7"). */
   label: (page: BrochurePage) => string;
   /** Changes with every document change (for effects that re-read the brochure). */
   version: number;

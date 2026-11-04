@@ -9,6 +9,15 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 - En pantallas táctiles, pellizca con dos dedos para hacer zoom en el lienzo y arrastra con dos dedos
   para moverlo, con cualquier herramienta seleccionada.
+- Los folletos pueden tener maestras: una cabecera y un pie diseñados una vez, con un marco para
+  las páginas izquierdas y otro para las derechas, y repetidos en cada página que la usa. El texto
+  de una maestra puede mostrar el número de página, el total de páginas, el título del folleto, la
+  sección y la fecha, y cada página elige su maestra o ninguna. En el modo Diseño, las capas de la
+  maestra están bloqueadas y marcadas para que todas las páginas sigan iguales, y Separar hace una
+  editable en una sola página.
+- Los folletos pueden dividirse en secciones. El nombre de una sección puede aparecer en las
+  cabeceras, y la numeración puede reiniciarse o pasar a números romanos, con las portadas
+  contadas, ocultas o sin contar.
 
 ### Mejoras
 

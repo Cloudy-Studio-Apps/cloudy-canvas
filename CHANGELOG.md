@@ -9,6 +9,13 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 - On touch screens, pinch with two fingers to zoom the canvas and drag with two fingers to move it,
   with any tool selected.
+- Brochures can have masters: a header and footer designed once, with a frame for left pages and
+  one for right pages, and repeated on every page that uses it. Text on a master can show the page
+  number, the page count, the brochure's title, the section and the date, and each page picks its
+  master or none. In the Design mode, master layers are locked and marked so every page stays the
+  same, and Detach makes one editable on a single page.
+- Brochures can be split into sections. A section's name can appear in headers, and numbering can
+  restart or switch to roman numerals, with covers counted, hidden or left out.
 
 ### Improved
 

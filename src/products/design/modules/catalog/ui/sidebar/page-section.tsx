@@ -8,12 +8,14 @@ import { Button, cn } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
 import { optionLetter } from "../option-letter";
 import { editInDesign, showPage } from "../page-actions";
+import { PageMasterField } from "./page-master-field";
+import { SectionFields } from "./section-fields";
 import type { PageSectionProps } from "./sidebar.types";
 import { t } from "../../catalog.i18n";
 
 /**
- * The selected page: its number, frame and size, the option it prints (picked among its
- * options), and going back to design it or taking it out of the brochure.
+ * The selected page: its number, frame and size, its master, the section it starts, the option it
+ * prints (picked among its options), and going back to design it or taking it out of the brochure.
  */
 export function PageSection({ page }: PageSectionProps) {
   const engine = useDesignEngine();
@@ -28,6 +30,12 @@ export function PageSection({ page }: PageSectionProps) {
           {paper.name ? `${paper.name} · ` : ""}
           {paper.width} × {paper.height} mm
         </p>
+      </PanelSection>
+      <PanelSection title={t("pageMaster.label")}>
+        <PageMasterField slotIds={[page.slot.id]} />
+      </PanelSection>
+      <PanelSection title={t("section.title")}>
+        <SectionFields page={page} />
       </PanelSection>
       <PanelSection title={t("page.options")}>
         {page.options.length > 1 ? (
