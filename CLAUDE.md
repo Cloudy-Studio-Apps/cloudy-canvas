@@ -30,6 +30,8 @@ pnpm release:mac    # on macOS itself: a universal .app and .dmg (both Rust darw
 pnpm android:dev    # the app on a connected device or emulator (needs src-tauri/gen/android,
                     # made once by `pnpm tauri android init`)
 pnpm release:android  # an Android APK, src-tauri/gen/android/app/build/outputs/apk/
+pnpm release:play   # the Android App Bundle (.aab) Google Play takes, signed with the key in
+                    # src-tauri/gen/android/keystore.properties: app/build/outputs/bundle/
 pnpm release:tag 0.2.0   # date the changelogs' unreleased changes, bump the version, commit, tag
                          # v0.2.0 and push: CI builds a draft release and publishes it once
                          # every build passed
