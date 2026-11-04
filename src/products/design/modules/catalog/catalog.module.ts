@@ -7,14 +7,23 @@ import { catalogMode } from "./catalog.mode";
 import { t } from "./catalog.i18n";
 import { catalogTools } from "./mcp";
 import { CATALOG_COMMANDS, CATALOG_MODE_ID, editCatalogPage } from "./mode";
-import { prepareItemCopies, pruneBrochure, splitLegacyBrochure, syncPageItems } from "./model";
+import {
+  CATALOG_TEXT_TEMPLATE,
+  prepareItemCopies,
+  pruneBrochure,
+  readPageRef,
+  splitLegacyBrochure,
+  syncPageItems,
+} from "./model";
 import { pageItemTag, pageItemTemplate } from "./model/page-items/page-item-fields";
 import { FromMasterBadge } from "./ui/design-mode/from-master-badge";
 import { FromMasterSection } from "./ui/design-mode/from-master-section";
+import { PageRefSection } from "./ui/design-mode/page-ref-section";
 import { SectionParentsSection } from "./ui/design-mode/section-parents-section";
 import { a4BrochureStarter } from "./ui/starters/a4-brochure.starter";
 import { BUILT_IN_PAGE_ITEMS } from "./ui/page-items/built-in-page-items";
 import { catalogPageItems } from "./ui/catalog.points";
+import { textTemplates } from "../text";
 import * as catalogApi from ".";
 import * as catalogUi from "./ui";
 
@@ -67,6 +76,21 @@ export const catalogModule = defineModule({
         }),
       component: SectionParentsSection,
     });
+    // A page reference picks the section or page it points to.
+    host.contribute(designEditor.propertySections, {
+      id: "catalog.page-ref",
+      tab: "design",
+      order: 3,
+      when: ({ nodes }) =>
+        nodes.length === 1 &&
+        nodes.some((node) => {
+          const template = pageItemTemplate(node);
+          return !pageItemTag(node) && template !== null && readPageRef(template) !== null;
+        }),
+      component: PageRefSection,
+    });
+    // A page item's text is edited as its template, which the sync then reads for its page.
+    host.contribute(textTemplates, CATALOG_TEXT_TEMPLATE);
     // Shift+Delete in the Catalog mode's menu, after its Delete (which takes pages out).
     host.contribute(designEditor.contextMenu, {
       id: "catalog.delete-pages",

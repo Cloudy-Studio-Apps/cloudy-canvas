@@ -12,6 +12,8 @@ export interface DocumentTexts {
   items: Record<string, string>;
   /** The "Page 3 of 24" item's template. */
   pageOf: string;
+  /** The "see page 12" item's template, its target left to pick (`{page:}`). */
+  pageRef: string;
   /** A master's frames' names after the master's: "A-Master · left". */
   left: string;
   right: string;

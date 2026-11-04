@@ -2,12 +2,14 @@ import type { PageItemDefinition } from "../page-items/page-item-definition.type
 import { documentTexts } from "./document-texts";
 
 /**
- * A page item as a brochure in language `code` writes it: a built-in's layer name and "Page 3
- * of 24" in that language; any other item (a plugin's) as it is.
+ * A page item as a brochure in language `code` writes it: a built-in's layer name, "Page 3
+ * of 24" and "see page 12" in that language; any other item (a plugin's) as it is.
  */
 export function localizedItem(item: PageItemDefinition, code: string): PageItemDefinition {
   const texts = documentTexts(code);
   const label = texts.items[item.id];
   if (label === undefined) return item;
-  return { ...item, label, ...(item.id === "page-of" ? { template: texts.pageOf } : {}) };
+  const template =
+    item.id === "page-of" ? texts.pageOf : item.id === "page-ref" ? texts.pageRef : item.template;
+  return { ...item, label, template };
 }

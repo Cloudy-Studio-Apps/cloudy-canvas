@@ -59,4 +59,12 @@ export const PAGE_ITEMS: readonly PageItemDefinition[] = [
     align: "outer",
     fontSize: 12,
   },
+  {
+    id: "page-ref",
+    label: t("items.pageRef"),
+    template: t("items.pageRefTemplate"),
+    anchor: "body",
+    align: "outer",
+    fontSize: 10,
+  },
 ];

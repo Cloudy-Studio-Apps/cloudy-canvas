@@ -1,4 +1,10 @@
-import { optionalChoice, optionalNumber, type ToolArgs } from "@canvas";
+import {
+  optionalChoice,
+  optionalNumber,
+  optionalString,
+  type ElementPatch,
+  type ToolArgs,
+} from "@canvas";
 
 import type { DesignWorkspace } from "../../../design-engine.types";
 import {
@@ -9,7 +15,10 @@ import {
   itemTargets,
   mmToUnits,
   PAGE_ITEMS,
+  pageItemTemplate,
   pageNumbers,
+  pageRefs,
+  withPageRef,
   type DesignBrochure,
   type PageItemTarget,
 } from "../model";
@@ -26,7 +35,9 @@ export const ADD_PAGE_ITEM_DESCRIPTION =
   "{page} of {pages}\"), `title` ({title}, the brochure's name), `section` ({section}, the " +
   "page's section), `folio` (\"{section} · {page}\"), `date` ({date}, today in the app's " +
   "language) and `toc` ({toc}, the table of contents: a line per section, or per page, with " +
-  "its number). Each is a text whose tokens are filled in on every page; on a master the text " +
+  'its number) and `page-ref` ("see page {page:Name}": the number of the section, else the ' +
+  "page frame, called `target`, which it requires and is checked first; it follows pages as " +
+  "they move and opens that page in the PDF). Each is a text whose tokens are filled in on every page; on a master the text " +
   "shows the tokens. Headers and footers sit in the margin against the edge their item says " +
   "(away from the spine, centered or by it), the contents fill the page's width from its top " +
   "margin; give `x` and `y` (world units) to center it there instead. Returns the new texts' ids.";
@@ -41,6 +52,10 @@ export const ADD_PAGE_ITEM_SCHEMA = {
     position: POSITION_SCHEMA,
     x: { type: "number" },
     y: { type: "number" },
+    target: {
+      type: "string",
+      description: "With `page-ref` only: the name of the section or page it points to.",
+    },
     brochure: BROCHURE_SCHEMA,
   },
 };
@@ -71,6 +86,15 @@ export function addPageItem(
     numbers: record ? pageNumbers(layout, record) : [],
     masters: brochure.masters.list(),
   };
+  const target = optionalString(args, "target");
+  if (item.id === "page-ref") {
+    if (target === undefined) throw new Error('Give "target": the section or page it points to.');
+    if (target.includes("}") || !pageRefs(layout, input.numbers)(target)) {
+      throw new Error(`"${target}" isn't a section or page of this brochure (get_brochure).`);
+    }
+  } else if (target !== undefined) {
+    throw new Error('"target" is only for the `page-ref` item.');
+  }
   let frames: string[];
   if (onMaster) {
     const master = readMaster(brochure, args);
@@ -94,5 +118,15 @@ export function addPageItem(
   }
   const settings = brochure.settings();
   const language = brochureLanguage(settings);
-  return insertPageItems(engine.doc, item, targets, mmToUnits(settings.margin), language, at);
+  const ids = insertPageItems(engine.doc, item, targets, mmToUnits(settings.margin), language, at);
+  if (target === undefined) return ids;
+  const patches = new Map<string, ElementPatch>();
+  for (const id of ids) {
+    const template = pageItemTemplate(engine.doc.get(id));
+    if (template !== null) {
+      patches.set(id, { catalogText: withPageRef(template, target) } as ElementPatch);
+    }
+  }
+  engine.doc.updateMany(patches);
+  return ids;
 }

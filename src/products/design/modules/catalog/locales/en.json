@@ -250,6 +250,13 @@
       "many": "With {n} sections above",
       "all": "With every section above",
       "hint": "Parents come first, joined with {join}."
+    },
+    "pageRef": {
+      "title": "Page reference",
+      "target": "Points to",
+      "placeholder": "Pick a section or page",
+      "missing": "{name} (not in this brochure)",
+      "hint": "It shows that page's number and, in the PDF, opens it."
     }
   },
   "masters": {
@@ -327,6 +334,8 @@
     "folio": "Section and page",
     "date": "Date",
     "toc": "Table of contents",
+    "pageRef": "Page reference",
+    "pageRefTemplate": "see page {page:}",
     "panel": {
       "title": "Page items",
       "hintMaster": "Click one to add it to this master, or drag it onto a page or a master.",

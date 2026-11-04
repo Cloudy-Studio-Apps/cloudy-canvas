@@ -250,6 +250,13 @@
       "many": "Con {n} secciones por encima",
       "all": "Con todas las secciones por encima",
       "hint": "Las secciones superiores van primero, unidas con {join}."
+    },
+    "pageRef": {
+      "title": "Referencia a página",
+      "target": "Remite a",
+      "placeholder": "Elige una sección o página",
+      "missing": "{name} (no está en este folleto)",
+      "hint": "Muestra el número de esa página y, en el PDF, la abre."
     }
   },
   "masters": {
@@ -327,6 +334,8 @@
     "folio": "Sección y página",
     "date": "Fecha",
     "toc": "Índice",
+    "pageRef": "Referencia a página",
+    "pageRefTemplate": "ver página {page:}",
     "panel": {
       "title": "Elementos de página",
       "hintMaster": "Haz clic en uno para añadirlo a esta maestra, o arrástralo a una página o una maestra.",

@@ -30,6 +30,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   textos demasiado largos para su caja, imágenes que no se pudieron guardar, fuentes que fallaron o
   nunca se actualizaron, y listas que harían demasiadas copias o copias apiladas. Cada fuente
   muestra su cuenta y Seleccionar te lleva a la capa.
+- Los elementos de página ya pueden remitir a otra página: añade una Referencia a página, elige la
+  sección o la página a la que remite y seguirá mostrando el número correcto aunque las páginas se
+  muevan, como "ver página 12". Al hacer doble clic en un elemento de página ahora se edita su
+  texto, como "Página {page} de {pages}", en lugar del número que muestra.
 
 ## 0.8.0 - 2026-11-04
 

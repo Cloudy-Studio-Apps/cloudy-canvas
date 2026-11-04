@@ -26,6 +26,10 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   texts too long for their box, pictures that couldn't be saved, sources that failed or were never
   updated, and lists that would make too many or stacked copies. Each source shows its count, and
   Select takes you to the layer.
+- Page items can now point to another page: add a Page reference, pick the section or page it points
+  to, and it keeps showing the right number as pages move, such as "see page 12". Double-clicking a
+  page item now edits its wording, such as "Page {page} of {pages}", instead of the number it
+  shows.
 
 ## 0.8.0 - 2026-11-04
 

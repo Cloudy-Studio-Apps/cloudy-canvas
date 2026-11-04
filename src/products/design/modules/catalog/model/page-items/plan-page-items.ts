@@ -125,6 +125,21 @@ export function planPageItems(input: PlanInput): PageItemPlan {
     }
   }
 
+  // A master's own page items show their template ("Page {page}"), also after it's edited.
+  for (const { record } of brochures) {
+    for (const master of record.masters) {
+      for (const frameId of [master.left, master.right]) {
+        for (const id of frameId ? descendants(children, frameId) : []) {
+          const el = byId.get(id);
+          const template = pageItemTemplate(el);
+          if (!el || !isText(el) || template === null || pageItemTag(el)) continue;
+          const patch = itemTextPatch(el, template);
+          if (patch) plan.update.set(id, patch as ElementPatch);
+        }
+      }
+    }
+  }
+
   for (const el of byId.values()) {
     if (pageItemTag(el) && !used.has(el.id)) plan.remove.push(el.id);
   }

@@ -3,6 +3,7 @@ import {
   Bookmark,
   CalendarDays,
   FileDigit,
+  FileSymlink,
   Hash,
   Heading,
   TableOfContents,
@@ -20,6 +21,7 @@ const ICONS: Record<string, LucideIcon> = {
   folio: BookMarked,
   date: CalendarDays,
   toc: TableOfContents,
+  "page-ref": FileSymlink,
 };
 
 /** The built-in page items with their icons, as the catalog module contributes them. */
