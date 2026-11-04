@@ -11,13 +11,21 @@ export interface PageItemPlan {
   remove: string[];
 }
 
-/** What planning a design page reads. */
-export interface PlanInput {
-  /** The page's open brochure, `null` when it has none (its copies then go). */
-  record: BrochureElement | null;
+/** One brochure of a design page, as planning it reads. */
+export interface PlanBrochure {
+  record: BrochureElement;
   targets: readonly StampTarget[];
   /** The tokens' values but the page's own (`info`). */
   context: Omit<TemplateContext, "info">;
+}
+
+/** What planning a design page reads. */
+export interface PlanInput {
+  /**
+   * The page's brochures, the open one last: each stamps its own frames, and a frame two of
+   * them use gets the last one's copies. None: every copy on the page goes.
+   */
+  brochures: readonly PlanBrochure[];
   /** The design page's layers, by id. */
   byId: ReadonlyMap<string, CanvasElement>;
   /** Parent id → its children's ids (`childrenByParent`). */

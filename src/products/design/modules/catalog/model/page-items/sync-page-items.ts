@@ -12,21 +12,24 @@ import { planPageItems } from "./plan-page-items";
 import { stampTargets } from "./stamp-targets";
 import { tableOfContents } from "./table-of-contents";
 
-/** A design page's open brochure: the one opened last, else its first (as `current`). */
-function openOn(records: readonly BrochureElement[], page: string): BrochureElement | null {
+/**
+ * A design page's brochures, the open one last (the one opened last, else its first, as
+ * `current`), so it takes the frames it shares with another.
+ */
+function brochuresOn(records: readonly BrochureElement[], page: string): BrochureElement[] {
+  const mine = records.filter((record) => record.page === page);
   let open: BrochureElement | null = null;
-  for (const record of records) {
-    if (record.page !== page) continue;
+  for (const record of mine) {
     if (!open || (record.openedAt ?? 0) > (open.openedAt ?? 0)) open = record;
   }
-  return open;
+  return open ? [...mine.filter((record) => record !== open), open] : [];
 }
 
 /**
  * The design's `afterEdit` hook, in the edit's undo step: on each design page the edit touched
- * (`affectedPages`), stamps the open brochure's masters onto its pages and reads its page items
+ * (`affectedPages`), stamps every brochure's masters onto its pages and reads their page items
  * (`planPageItems`), writing only what differs, so its own writes, which run it again, end it.
- * Only the open brochure of a page stamps; its copies leave the frames of the page's others.
+ * A frame two brochures use shows the open one's.
  */
 export function syncPageItems(doc: CanvasDocument, change: EditedChange): void {
   const records = brochuresOf(doc).records();
@@ -40,19 +43,21 @@ export function syncPageItems(doc: CanvasDocument, change: EditedChange): void {
   for (const page of pages) {
     const byId = new Map<string, CanvasElement>();
     for (const el of elements) if (isDesignNode(el) && el.pageId === page) byId.set(el.id, el);
-    const record = openOn(records, page);
-    const pageList = record ? brochurePages(doc, record) : [];
-    const layout = bookLayout(pageList, record?.settings ?? { layout: "book", covers: "none" });
-    const numbers = record ? pageNumbers(layout, record) : [];
     const plan = planPageItems({
-      record,
-      targets: record ? stampTargets(doc, record, layout, numbers) : [],
-      context: {
-        pages: numbers.filter((info) => info.counted).length,
-        title: record?.name ?? "",
-        date,
-        toc: tableOfContents(layout, numbers),
-      },
+      brochures: brochuresOn(records, page).map((record) => {
+        const layout = bookLayout(brochurePages(doc, record), record.settings);
+        const numbers = pageNumbers(layout, record);
+        return {
+          record,
+          targets: stampTargets(doc, record, layout, numbers),
+          context: {
+            pages: numbers.filter((info) => info.counted).length,
+            title: record.name,
+            date,
+            toc: tableOfContents(layout, numbers),
+          },
+        };
+      }),
       byId,
       children,
     });
