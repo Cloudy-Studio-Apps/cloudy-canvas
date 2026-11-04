@@ -7,6 +7,12 @@ The store listing's images. The SVGs are the sources; the PNGs are what gets upl
 | `icon-512.png`                 | App icon (Ícono de la app)             | 512×512 PNG, under 1 MB   |
 | `feature-graphic-1024x500.png` | Feature graphic (Gráfico de funciones) | 1024×500 PNG, under 15 MB |
 
+| `screenshots/*.png` | Phone screenshots (Capturas de pantalla de teléfono) | 16:9, 1920×1080 PNG |
+
+- **Screenshots:** the app on a phone in landscape, captured with `adb exec-out screencap -p`, the
+  system bars cropped out (`-crop 2450x1220+142+0` on a 2712×1220 screen) and fitted to 1920×1080
+  on the canvas background (`-resize 1920x -background "#f9fafc" -gravity center -extent 1920x1080`).
+  They show the Home starters (ER diagram, database schema, retrospective) zoomed to fit, in English.
 - **Icon:** the app icon's artwork (`src-tauri/icons/source/app-icon.svg`) on a full-bleed square.
   Play rounds the corners and adds the shadow itself, so it has no radius or padding. Change the
   artwork in both files.
