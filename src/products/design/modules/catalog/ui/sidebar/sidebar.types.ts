@@ -1,3 +1,4 @@
+import type { BrochureSection } from "../../brochure/brochure.types";
 import type { BrochurePage } from "../../model/brochure-pages.types";
 import type { FrameElement } from "../../../frame";
 import type { PagePicture } from "../../model/page-pictures.types";
@@ -30,6 +31,14 @@ export interface PageMasterFieldProps {
 
 export interface SectionFieldsProps {
   page: BrochurePage;
+}
+
+export interface SectionCardProps {
+  section: BrochureSection;
+  /** The level it reads at (0 the top). */
+  depth: number;
+  /** Its first page's place among the layout's sides. */
+  side: number;
 }
 
 export interface MasterSideSectionProps {

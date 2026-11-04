@@ -67,7 +67,16 @@
       "section": "New section",
       "blankAfter": "Blank page after this one",
       "sectionAfter": "New section after this one",
-      "endSection": "Remove the section starting here"
+      "endSection": "Remove section “{name}”"
+    },
+    "folder": {
+      "expand": "Show its pages",
+      "collapse": "Hide its pages",
+      "addPage": "Blank page at its end",
+      "addSubsection": "New subsection at its end",
+      "indent": "Move into the section above",
+      "outdent": "Move out a level",
+      "remove": "Remove section (pages stay)"
     }
   },
   "export": {
@@ -227,6 +236,15 @@
       "body": "This layer comes from {master} in the brochure “{brochure}”. It's locked here so every page stays the same: edit it on the master, or detach it to change it on this page only.",
       "edit": "Edit master",
       "detach": "Detach"
+    },
+    "sectionParents": {
+      "title": "Section name",
+      "label": "Shows",
+      "own": "Only its own section",
+      "one": "With the section it's in",
+      "many": "With {n} sections above",
+      "all": "With every section above",
+      "hint": "Parents come first, joined with {join}."
     }
   },
   "masters": {
@@ -273,7 +291,10 @@
     "style": "Numbers",
     "styleSame": "As before",
     "in": "In “{name}”",
-    "none": "Not in a section yet."
+    "none": "Not in a section yet.",
+    "startSub": "Start a subsection here",
+    "levelTop": "Section",
+    "level": "Subsection · level {n}"
   },
   "numbering": {
     "title": "Page numbers",

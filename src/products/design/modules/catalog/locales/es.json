@@ -67,7 +67,16 @@
       "section": "Nueva sección",
       "blankAfter": "Página en blanco después de esta",
       "sectionAfter": "Nueva sección después de esta",
-      "endSection": "Quitar la sección que empieza aquí"
+      "endSection": "Quitar la sección «{name}»"
+    },
+    "folder": {
+      "expand": "Mostrar sus páginas",
+      "collapse": "Ocultar sus páginas",
+      "addPage": "Página en blanco al final",
+      "addSubsection": "Nueva subsección al final",
+      "indent": "Meter en la sección de arriba",
+      "outdent": "Subir un nivel",
+      "remove": "Quitar sección (las páginas se quedan)"
     }
   },
   "export": {
@@ -227,6 +236,15 @@
       "body": "Esta capa viene de {master} en el folleto «{brochure}». Está bloqueada aquí para que todas las páginas sigan iguales: edítala en la maestra o sepárala para cambiarla solo en esta página.",
       "edit": "Editar maestra",
       "detach": "Separar"
+    },
+    "sectionParents": {
+      "title": "Nombre de sección",
+      "label": "Muestra",
+      "own": "Solo su propia sección",
+      "one": "Con la sección en la que está",
+      "many": "Con {n} secciones por encima",
+      "all": "Con todas las secciones por encima",
+      "hint": "Las secciones superiores van primero, unidas con {join}."
     }
   },
   "masters": {
@@ -273,7 +291,10 @@
     "style": "Números",
     "styleSame": "Como antes",
     "in": "En «{name}»",
-    "none": "Aún no está en una sección."
+    "none": "Aún no está en una sección.",
+    "startSub": "Empezar una subsección aquí",
+    "levelTop": "Sección",
+    "level": "Subsección · nivel {n}"
   },
   "numbering": {
     "title": "Números de página",

@@ -74,7 +74,8 @@ export const brochureListTools: DesignMcpTool[] = [
   {
     name: "duplicate_brochure",
     description:
-      'Copies a brochure (its pages, options and settings; the frames are shared) as "<name> ' +
+      "Copies a brochure (its pages, options, masters, sections and settings; the frames are " +
+      'shared) as "<name> ' +
       'copy" on the same design page, in one undo step, e.g. to try another order. Returns it.',
     inputSchema: {
       type: "object",

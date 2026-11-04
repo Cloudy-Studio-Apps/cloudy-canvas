@@ -4,7 +4,7 @@ import type { BrochurePage } from "../../model/brochure-pages.types";
 import type { ListDropTarget } from "./drop-position.types";
 import { isBackCover } from "../../model/is-back-cover";
 
-const PREFIX = { page: "page:", blank: "blank:", spread: "spread:" } as const;
+const PREFIX = { page: "page:", blank: "blank:", spread: "spread:", section: "section:" } as const;
 const END = "end";
 
 /** The row-drag id of a drop target in the Brochure tab's list. */
@@ -16,6 +16,8 @@ export function dropId(target: ListDropTarget): string {
       return PREFIX.blank + target.side;
     case "spread":
       return PREFIX.spread + target.first;
+    case "section":
+      return PREFIX.section + target.id;
     case "end":
       return END;
   }
@@ -24,6 +26,8 @@ export function dropId(target: ListDropTarget): string {
 /** The drop target a row-drag id names, `null` for none. */
 export function parseDropId(id: string): ListDropTarget | null {
   if (id === END) return { kind: "end" };
+  if (id.startsWith(PREFIX.section))
+    return { kind: "section", id: id.slice(PREFIX.section.length) };
   if (id.startsWith(PREFIX.page)) return { kind: "page", slotId: id.slice(PREFIX.page.length) };
   const index = (prefix: string) => {
     const n = Number(id.slice(prefix.length));
@@ -81,6 +85,9 @@ export function dropPosition(
       if (!first) return null;
       return before(first.kind === "page" ? first.page.slot.id : first.before);
     }
+    // The list turns a folder into a drop after its last page first.
+    case "section":
+      return null;
     case "end":
       return others.length;
   }

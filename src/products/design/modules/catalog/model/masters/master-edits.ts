@@ -66,8 +66,8 @@ export function skipMasterLayer(
 }
 
 /**
- * The sections that still start on a slot of the brochure, one per slot (the last given wins),
- * so a deleted page's section goes and the one before it runs on.
+ * The sections that still start on a slot of the brochure, one per slot and level (the last given
+ * wins), so a deleted page's section goes and the one before it runs on.
  */
 export function keptSections(
   sections: readonly BrochureSection[],
@@ -76,7 +76,7 @@ export function keptSections(
   const present = new Set(slots.map((slot) => slot.id));
   const byStart = new Map<string, BrochureSection>();
   for (const section of sections)
-    if (present.has(section.start)) byStart.set(section.start, section);
+    if (present.has(section.start)) byStart.set(`${section.start}:${section.level ?? 0}`, section);
   return [...byStart.values()];
 }
 

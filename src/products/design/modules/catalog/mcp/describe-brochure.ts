@@ -5,6 +5,7 @@ import {
   DESIGN_BROCHURES,
   pageNumbers,
   paperSize,
+  placeSections,
   printedLabels,
   spanOf,
   type DesignBrochure,
@@ -55,13 +56,18 @@ export async function describeBrochure(engine: DesignWorkspace, brochure: Design
       ...master,
       default: master.id === settings.defaultMaster,
     })),
-    sections: (record?.sections ?? []).map(({ id, name, start, restart, style }) => ({
-      id,
-      name,
-      startPosition: positionOf.get(start) ?? null,
-      restart: restart ?? null,
-      style: style ?? null,
-    })),
+    // In reading order, with the depth they're read at and the section they're in.
+    sections: placeSections(record?.sections ?? [], record?.slots ?? []).map(
+      ({ section: { id, name, start, restart, style }, depth, parent }) => ({
+        id,
+        name,
+        startPosition: positionOf.get(start) ?? null,
+        level: depth,
+        parent,
+        restart: restart ?? null,
+        style: style ?? null,
+      }),
+    ),
     paper: size ? paperSize(size) : null,
     issues: (await checkBrochure(engine, brochure)).map(({ kind, page, nodeId, message }) => ({
       kind,

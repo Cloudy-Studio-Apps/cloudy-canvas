@@ -1,6 +1,7 @@
 import { rowDropLine } from "@canvas-ui";
 import { cn } from "@shared/ui/kit";
 import type { BlankPageRowProps } from "./brochure-page-row.types";
+import { INDENT_PX } from "./section-folder-row";
 import { t } from "../../catalog.i18n";
 
 /** Why each kind of blank page is there, as its row says. */
@@ -13,11 +14,12 @@ const REASONS = {
  * A blank page the book layout added: shown in its place, never dragged or selected. A page
  * dropped on it takes its place.
  */
-export function BlankPageRow({ number, reason, rowDrag, dropId }: BlankPageRowProps) {
+export function BlankPageRow({ number, reason, rowDrag, dropId, depth }: BlankPageRowProps) {
   const over = rowDrag.drag?.overId === dropId;
   return (
     <li
       {...rowDrag.dropProps(dropId)}
+      style={{ paddingLeft: 4 + depth * INDENT_PX }}
       className={cn(
         "relative flex items-center gap-2 rounded-sm px-1 py-1 text-xs text-subtle-foreground",
         over && "bg-primary-soft",

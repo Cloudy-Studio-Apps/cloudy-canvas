@@ -5,4 +5,7 @@ export interface CatalogViewState {
   /** Whether the preview shows the brochure as a 3D booklet whose pages turn (else flat). */
   preview3d: boolean;
   setPreview3d: (preview3d: boolean) => void;
+  /** The sections folded away in the page list (their ids). */
+  collapsed: string[];
+  toggleCollapsed: (id: string) => void;
 }

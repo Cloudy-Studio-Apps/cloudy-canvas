@@ -64,8 +64,12 @@ export const brochureMasterTools: DesignMcpTool[] = [
     name: "set_brochure_sections",
     description:
       "Replaces the brochure's sections, in one undo step. A section runs from its first page " +
-      "(`startPosition`, from 1) to the next section's; its `name` is the `{section}` of its " +
-      "pages' headers and a line of the table of contents, `restart` restarts the page numbers " +
+      "(`startPosition`, from 1) to the next section's at its `level` or above (0, the default, a " +
+      "top-level section; 1 a subsection of the section before it, and so on, any depth; a " +
+      "section and its first subsection can start on the same page). Its `name` is the " +
+      "`{section}` of its pages' headers (`{section:1}` adds its parent's, `{section:all}` every " +
+      'parent\'s: "Tunnels › Shotcrete") and a line of the table of contents, indented by ' +
+      "level; `restart` restarts the page numbers " +
       "there, and `style` (`arabic`, `roman-lower`, `roman-upper`) changes how they're written " +
       "from there on. An empty list removes them all. Returns the brochure.",
     inputSchema: {
@@ -80,6 +84,7 @@ export const brochureMasterTools: DesignMcpTool[] = [
             properties: {
               name: { type: "string" },
               startPosition: POSITION_SCHEMA,
+              level: { type: "integer", minimum: 0 },
               restart: { type: "number", minimum: 0 },
               style: { enum: NUMBER_STYLES },
             },
@@ -91,23 +96,33 @@ export const brochureMasterTools: DesignMcpTool[] = [
     run: async (host, args) => {
       const { engine } = requireDesign(host);
       const brochure = readBrochure(engine, args);
-      const before = new Map(brochure.masters.sections().map((item) => [item.start, item.id]));
+      const key = (start: string, level: number) => `${start}:${level}`;
+      const before = new Map(
+        brochure.masters.sections().map((item) => [key(item.start, item.level ?? 0), item.id]),
+      );
       const starts = new Set<string>();
       const sections = recordList(args, "sections").map((entry, i): BrochureSection => {
         const name = optionalString(entry, "name")?.trim();
         if (!name) throw new Error(`sections[${i}].name is empty.`);
         const start = requirePagePosition(brochure, entry, "startPosition").slot.id;
-        if (starts.has(start)) throw new Error(`Two sections start at sections[${i}]'s page.`);
-        starts.add(start);
+        const level = optionalNumber(entry, "level") ?? 0;
+        if (!Number.isInteger(level) || level < 0) {
+          throw new Error(`sections[${i}].level must be a whole number, 0 or more.`);
+        }
+        if (starts.has(key(start, level))) {
+          throw new Error(`Two sections of level ${level} start at sections[${i}]'s page.`);
+        }
+        starts.add(key(start, level));
         const restart = optionalNumber(entry, "restart");
         if (restart !== undefined && restart < 0) {
           throw new Error(`sections[${i}].restart must be 0 or more.`);
         }
         const style = optionalChoice(entry, "style", NUMBER_STYLES);
         return {
-          id: before.get(start) ?? createId(),
+          id: before.get(key(start, level)) ?? createId(),
           name,
           start,
+          ...(level === 0 ? {} : { level }),
           ...(restart === undefined ? {} : { restart: Math.round(restart) }),
           ...(style === undefined ? {} : { style }),
         };

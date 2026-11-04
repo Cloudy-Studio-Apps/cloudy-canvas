@@ -12,6 +12,7 @@ export * from "./language";
 export * from "./masters";
 export * from "./numbering";
 export * from "./page-items";
+export * from "./sections";
 export { currentBrochure, ensureBrochure } from "./current-brochure";
 export { DesignBrochure } from "./design-brochure";
 export { brochuresOf, DESIGN_BROCHURES, DesignBrochures } from "./design-brochures";

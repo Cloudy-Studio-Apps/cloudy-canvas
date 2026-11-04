@@ -7,9 +7,10 @@ import { catalogMode } from "./catalog.mode";
 import { catalogTools } from "./mcp";
 import { editCatalogPage } from "./mode";
 import { prepareItemCopies, pruneBrochure, splitLegacyBrochure, syncPageItems } from "./model";
-import { pageItemTag } from "./model/page-items/page-item-fields";
+import { pageItemTag, pageItemTemplate } from "./model/page-items/page-item-fields";
 import { FromMasterBadge } from "./ui/design-mode/from-master-badge";
 import { FromMasterSection } from "./ui/design-mode/from-master-section";
+import { SectionParentsSection } from "./ui/design-mode/section-parents-section";
 import { a4BrochureStarter } from "./ui/starters/a4-brochure.starter";
 import { BUILT_IN_PAGE_ITEMS } from "./ui/page-items/built-in-page-items";
 import { catalogPageItems } from "./ui/catalog.points";
@@ -52,6 +53,18 @@ export const catalogModule = defineModule({
       order: 1,
       when: ({ nodes }) => nodes.some((node) => pageItemTag(node)),
       component: FromMasterSection,
+    });
+    // Page items that write the section say how many of its parents they write.
+    host.contribute(designEditor.propertySections, {
+      id: "catalog.section-parents",
+      tab: "design",
+      order: 2,
+      when: ({ nodes }) =>
+        nodes.some((node) => {
+          const template = pageItemTemplate(node);
+          return !pageItemTag(node) && template !== null && template.includes("{section");
+        }),
+      component: SectionParentsSection,
     });
     host.contribute(designMigrations, { id: "catalog.brochures", migrate: splitLegacyBrochure });
     host.contribute(designCanvas.editElement, editCatalogPage);

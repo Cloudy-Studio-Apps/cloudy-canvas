@@ -95,7 +95,7 @@ export class BrochureMasters {
     this.brochure.write({ slots: skipMasterLayer(record.slots, slotId, sources) });
   }
 
-  /** Replaces the sections (one per starting page; those on pages not in it are dropped). */
+  /** Replaces the sections (one per starting page and level; those on pages not in it are dropped). */
   setSections(sections: readonly BrochureSection[]): void {
     const present = new Set(this.brochure.record()?.slots.map((slot) => slot.id));
     this.brochure.write({ sections: sections.filter((section) => present.has(section.start)) });

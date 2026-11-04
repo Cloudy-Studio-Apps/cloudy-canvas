@@ -11,6 +11,13 @@ export const useCatalogViewStore = create<CatalogViewState>()(
       setMargins: (margins) => set({ margins }),
       preview3d: true,
       setPreview3d: (preview3d) => set({ preview3d }),
+      collapsed: [],
+      toggleCollapsed: (id) =>
+        set(({ collapsed }) => ({
+          collapsed: collapsed.includes(id)
+            ? collapsed.filter((item) => item !== id)
+            : [...collapsed, id],
+        })),
     }),
     { name: "cloudy-canvas:catalog-view" },
   ),

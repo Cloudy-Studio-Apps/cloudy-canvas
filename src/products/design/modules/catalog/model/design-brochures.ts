@@ -98,12 +98,23 @@ export class DesignBrochures {
     this.doc.update(id, patch);
   }
 
-  /** Adds a copy of a brochure (its pages, options and settings) named "<name> copy", opened. */
+  /**
+   * Adds a copy of a brochure (its pages, options, masters, sections and settings) named
+   * "<name> copy", opened. Its masters use the same master frames, as its pages use the same
+   * page frames.
+   */
   duplicate(id: string): DesignBrochure {
     const source = this.require(id);
+    const slotIds = new Map(source.slots.map((slot) => [slot.id, createId()]));
     const copy = {
       ...createBrochure(this.doc.nextIndex(), source.page, `${source.name} copy`),
-      slots: source.slots.map((slot) => ({ ...slot, id: createId() })),
+      slots: source.slots.map((slot) => ({ ...slot, id: slotIds.get(slot.id) ?? createId() })),
+      masters: source.masters.map((master) => ({ ...master })),
+      sections: source.sections.map((section) => ({
+        ...section,
+        id: createId(),
+        start: slotIds.get(section.start) ?? section.start,
+      })),
       // Off, so the copy doesn't lay the frames it shares with the source out its own way.
       settings: { ...source.settings, arrange: "off" as const },
       openedAt: Date.now(),

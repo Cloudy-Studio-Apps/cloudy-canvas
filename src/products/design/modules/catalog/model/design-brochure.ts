@@ -1,5 +1,4 @@
 import type { CanvasDocument, ElementPatch, Point } from "@canvas";
-import { createId } from "@shared/core";
 
 import {
   BROCHURE_DEFAULTS,
@@ -17,6 +16,7 @@ import type { BrochurePage } from "./brochure-pages.types";
 import type { ArrangedListener } from "./design-brochure.types";
 import { BrochureMasters } from "./masters/brochure-masters";
 import { keptSections } from "./masters/master-edits";
+import { withSection } from "./sections/section-edits";
 import { brochureLanguage, retranslateItems } from "./language";
 import {
   addOption,
@@ -98,17 +98,16 @@ export class DesignBrochure {
 
   /**
    * Adds a new frame to the design as a page at `at` (default: the end) that starts a section
-   * named `name`, in one undo step.
+   * named `name` at `level` (0, the top), in one undo step.
    */
-  addNewSection(frame: FrameElement, name: string, at?: number): void {
+  addNewSection(frame: FrameElement, name: string, at?: number, level = 0): void {
     this.doc.checkpoint();
     this.doc.batch(() => {
       this.doc.add(frame);
       this.addPages([frame.id], at);
       const slot = this.record()?.slots.find((item) => item.frames.includes(frame.id));
       if (!slot) return;
-      const section = { id: createId(), name, start: slot.id };
-      this.masters.setSections([...this.masters.sections(), section]);
+      this.masters.setSections(withSection(this.masters.sections(), slot.id, level, name));
     });
   }
 

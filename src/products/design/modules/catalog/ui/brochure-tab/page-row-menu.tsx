@@ -1,4 +1,4 @@
-import { Bookmark, BookmarkX, X } from "lucide-react";
+import { Bookmark, BookmarkPlus, BookmarkX, X } from "lucide-react";
 
 import {
   ContextMenu,
@@ -8,21 +8,24 @@ import {
   ContextMenuTrigger,
 } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
-import { toggleSection } from "../page-actions";
+import { startSection, removeSection } from "../section-actions";
+import { startLevels } from "../../model/sections";
 import type { PageRowMenuProps } from "./add-page-menu.types";
 import { useAddPageEntries } from "./use-add-page-entries";
 import { t } from "../../catalog.i18n";
 
 /**
- * A page's right-click menu: a blank page or a new section after it, a section starting at it
- * (or no longer), and taking it out of the brochure.
+ * A page's right-click menu: a blank page or a new section after it, a section or a subsection
+ * starting at it (`startLevels`), removing the ones that do, and taking it out of the brochure.
  */
 export function PageRowMenu({ page, children }: PageRowMenuProps) {
   const { brochure, sections } = useBrochure();
   const position = brochure?.record()?.slots.findIndex((slot) => slot.id === page.slot.id) ?? -1;
   const entries = useAddPageEntries(page.frame, position + 1);
   if (!brochure) return children;
-  const starts = sections.some((section) => section.start === page.slot.id);
+  const slots = brochure.record()?.slots ?? [];
+  const levels = startLevels(sections, slots, page.slot.id);
+  const starting = sections.filter((section) => section.start === page.slot.id);
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
@@ -34,13 +37,34 @@ export function PageRowMenu({ page, children }: PageRowMenuProps) {
           </ContextMenuItem>
         ))}
         <ContextMenuSeparator />
-        <ContextMenuItem
-          className="gap-2 text-xs"
-          onSelect={() => toggleSection(brochure, page.slot.id)}
-        >
-          {starts ? <BookmarkX className="size-3.5" /> : <Bookmark className="size-3.5" />}
-          {starts ? t("tab.add.endSection") : t("section.start")}
-        </ContextMenuItem>
+        {levels.section !== null && (
+          <ContextMenuItem
+            className="gap-2 text-xs"
+            onSelect={() => startSection(brochure, page.slot.id, levels.section ?? 0)}
+          >
+            <Bookmark className="size-3.5" />
+            {t("section.start")}
+          </ContextMenuItem>
+        )}
+        {levels.subsection !== null && (
+          <ContextMenuItem
+            className="gap-2 text-xs"
+            onSelect={() => startSection(brochure, page.slot.id, levels.subsection ?? 1)}
+          >
+            <BookmarkPlus className="size-3.5" />
+            {t("section.startSub")}
+          </ContextMenuItem>
+        )}
+        {starting.map((section) => (
+          <ContextMenuItem
+            key={section.id}
+            className="gap-2 text-xs"
+            onSelect={() => removeSection(brochure, section.id)}
+          >
+            <BookmarkX className="size-3.5" />
+            {t("tab.add.endSection", { name: section.name })}
+          </ContextMenuItem>
+        ))}
         <ContextMenuSeparator />
         <ContextMenuItem
           className="gap-2 text-xs text-destructive"

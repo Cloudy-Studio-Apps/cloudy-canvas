@@ -60,6 +60,11 @@ export interface BrochureSection {
   name: string;
   /** The slot it starts at. */
   start: string;
+  /**
+   * How deep it is: left out (0) a top-level section, 1 a subsection of the one before it, and so
+   * on (read no deeper than one under the section before, `placeSections`).
+   */
+  level?: number;
   /** Its first page's number, when numbering restarts there. */
   restart?: number;
   /** How its pages' numbers are written, when it changes there. */
@@ -151,7 +156,7 @@ export interface BrochureElement extends CanvasElement {
   slots: BrochureSlot[];
   /** Its masters (`fillDefaults` gives older records none). */
   masters: BrochureMaster[];
-  /** Its sections, in no particular order (each starts at a slot). */
+  /** Its sections, in no particular order (each starts at a slot, one per level there). */
   sections: BrochureSection[];
   settings: BrochureSettings;
 }

@@ -1,7 +1,10 @@
+import type { ReactNode } from "react";
+
 import type { RowDrag } from "@canvas-ui";
 import type { BlankReason } from "../../model/book-layout.types";
 import type { BrochurePage } from "../../model/brochure-pages.types";
 import type { PageClick } from "../hooks/use-page-list-selection.types";
+import type { FolderRow } from "./page-tree.types";
 
 export interface BrochurePageRowProps {
   page: BrochurePage;
@@ -17,6 +20,8 @@ export interface BrochurePageRowProps {
   onClick: (event: PageClick) => void;
   /** The list's row drag. */
   rowDrag: RowDrag;
+  /** How far it's indented: the sections it's in. */
+  depth: number;
 }
 
 export interface BrochureOptionsListProps {
@@ -31,6 +36,8 @@ export interface BlankPageRowProps {
   rowDrag: RowDrag;
   /** Its id as a drop target. */
   dropId: string;
+  /** How far it's indented: the sections it's in. */
+  depth: number;
 }
 
 export interface SpreadHeadingRowProps {
@@ -39,6 +46,8 @@ export interface SpreadHeadingRowProps {
   rowDrag: RowDrag;
   /** Its id as a drop target. */
   dropId: string;
+  /** How far it's indented: the sections it's in. */
+  depth: number;
 }
 
 export interface ListEndDropProps {
@@ -46,7 +55,18 @@ export interface ListEndDropProps {
   rowDrag: RowDrag;
 }
 
-export interface SectionHeadingRowProps {
-  /** The section's name. */
-  name: string;
+export interface SectionFolderRowProps {
+  folder: FolderRow;
+  /** The list's row drag: the folder drags its pages, and a page dropped on it goes last in it. */
+  rowDrag: RowDrag;
+  /** Whether it's carried by the drag on (it's in a section being dragged). */
+  carried: boolean;
+}
+
+export interface SectionFolderMenuProps {
+  folder: FolderRow;
+  /** Starts renaming it in place. */
+  onRename: () => void;
+  /** The row the menu opens on. */
+  children: ReactNode;
 }

@@ -7,6 +7,12 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### New
 
+- Brochure sections can hold subsections, as many levels deep as you need. In the Catalog
+  mode's pages list each section is a folder over its pages: fold it away, drag it to move the
+  whole section, drop pages on it, and right-click it to add a page or a subsection, move it a
+  level in or out, rename or remove it. The table of contents indents subsections under theirs.
+- A header that shows the section name can also show the sections it's in, such as "Tunnels ›
+  Shotcrete": choose its own section only, a number of levels above, or all of them.
 - In the Catalog mode, the pages list has a menu to add a blank page or a new section: from the
   "+" button, by right-clicking the list, or by right-clicking a page to add them right after it.
   The page's menu also starts or removes a section there and takes the page out of the brochure.
@@ -36,6 +42,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### Fixed
 
+- Duplicating a brochure now keeps its masters and sections, so the copy has the same headers,
+  footers and numbering as the original.
 - Fast pen strokes no longer fill in as solid black shapes at sharp turns, and they follow your hand
   more closely.
 - In a brochure's page list, pages can now be dropped on a blank page to take its place, on a

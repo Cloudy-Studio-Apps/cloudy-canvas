@@ -2,10 +2,8 @@ import { DEFAULT_MODE, type Size } from "@canvas";
 import { createPresetFrame, type FrameElement } from "../../frame";
 import type { DesignEngine } from "../../../design-engine.types";
 import type { DesignNode } from "../../core";
-import { createId } from "@shared/core";
-import type { BrochureSection } from "../brochure";
-import type { DesignBrochure } from "../model/design-brochure";
 import { ensureBrochure } from "../model/current-brochure";
+import { nextSectionName } from "./section-actions";
 import { replaceImageFill } from "../../image";
 import { chooseImageAsset } from "@canvas-ui";
 import { t } from "../catalog.i18n";
@@ -35,30 +33,20 @@ export function addBlankPage(engine: DesignEngine, size: Size, label: string, at
 }
 
 /**
- * Adds a blank page as `addBlankPage` does that starts a new section ("Section 4"), in one undo
- * step, and shows it.
+ * Adds a blank page as `addBlankPage` does that starts a new section ("Section 4") at `level`
+ * (0, the top), in one undo step, and shows it.
  */
-export function addSectionPage(engine: DesignEngine, size: Size, label: string, at?: number): void {
+export function addSectionPage(
+  engine: DesignEngine,
+  size: Size,
+  label: string,
+  at?: number,
+  level = 0,
+): void {
   const frame = blankFrame(engine, size, label);
   const brochure = ensureBrochure(engine);
-  brochure.addNewSection(frame, nextSectionName(brochure.masters.sections()), at);
+  brochure.addNewSection(frame, nextSectionName(brochure.masters.sections()), at, level);
   engine.focusElement(frame.id);
-}
-
-/** Starts a section at page `slotId` ("Section 4"), or ends the one starting there. */
-export function toggleSection(brochure: DesignBrochure, slotId: string): void {
-  const sections = brochure.masters.sections();
-  if (sections.some((section) => section.start === slotId)) {
-    brochure.masters.setSections(sections.filter((section) => section.start !== slotId));
-    return;
-  }
-  const section = { id: createId(), name: nextSectionName(sections), start: slotId };
-  brochure.masters.setSections([...sections, section]);
-}
-
-/** What a new section is called before it's renamed. */
-export function nextSectionName(sections: readonly BrochureSection[]): string {
-  return t("section.defaultName", { n: sections.length + 1 });
 }
 
 function blankFrame(engine: DesignEngine, size: Size, label: string): FrameElement {

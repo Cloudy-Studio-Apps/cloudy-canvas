@@ -8,8 +8,10 @@ export interface PageInfo {
   number: number | null;
   /** Its number as written ("4", "iv"), empty when it's hidden (a cover, a blank) or uncounted. */
   label: string;
-  /** The section it's in, `null` before the first. */
+  /** The innermost section it's in, `null` before the first. */
   section: BrochureSection | null;
+  /** Every section it's in, outermost first (empty before the first). */
+  path: readonly BrochureSection[];
   /** The side of the spine it's on (always `right` in the single layout). */
   parity: "left" | "right";
   /** Whether it's the front or the back cover. */

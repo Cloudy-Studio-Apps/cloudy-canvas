@@ -11,6 +11,7 @@ import { CATALOG_COMMANDS } from "../../mode/catalog-mode.constants";
 import { BrochureOptionsList } from "./brochure-options-list";
 import { dropId } from "./drop-position";
 import { PageRowMenu } from "./page-row-menu";
+import { INDENT_PX } from "./section-folder-row";
 import type { BrochurePageRowProps } from "./brochure-page-row.types";
 import { t } from "../../catalog.i18n";
 
@@ -27,6 +28,7 @@ export function BrochurePageRow({
   carried,
   onClick,
   rowDrag,
+  depth,
 }: BrochurePageRowProps) {
   const engine = useDesignEngine();
   const { brochure } = useBrochure();
@@ -55,6 +57,7 @@ export function BrochurePageRow({
           title={hint}
           aria-current={expanded ? "page" : undefined}
           aria-selected={selected}
+          style={{ paddingLeft: 4 + depth * INDENT_PX }}
           className={cn(
             "group relative flex cursor-default items-center gap-2 rounded-sm px-1 py-1 hover:bg-hover",
             selected && "bg-primary-soft hover:bg-primary-soft",

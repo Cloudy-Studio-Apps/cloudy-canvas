@@ -7,6 +7,13 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Novedades
 
+- Las secciones de un folleto pueden tener subsecciones, con tantos niveles como haga falta. En
+  la lista de páginas del modo Catálogo cada sección es una carpeta con sus páginas: se puede
+  plegar, arrastrar para mover la sección entera, soltar páginas en ella y, con clic derecho,
+  añadir una página o una subsección, subirla o bajarla de nivel, renombrarla o quitarla. El
+  índice sangra las subsecciones bajo su sección.
+- Un encabezado que muestra el nombre de la sección también puede mostrar las secciones en las
+  que está, como «Túneles › Shotcrete»: solo su sección, unos niveles por encima o todas.
 - En el modo Catálogo, la lista de páginas tiene un menú para añadir una página en blanco o una
   sección nueva: desde el botón "+", con clic derecho en la lista o con clic derecho en una página
   para añadirlas justo después. El menú de la página también empieza o quita una sección en ella y
@@ -42,6 +49,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Correcciones
 
+- Al duplicar un folleto ahora se conservan sus páginas maestras y secciones, así que la copia
+  tiene los mismos encabezados, pies y numeración que el original.
 - Los trazos rápidos con el bolígrafo ya no se rellenan como formas negras sólidas en los giros
   cerrados, y siguen mejor tu mano.
 - En la lista de páginas de un folleto, ahora puedes soltar una página sobre una página en blanco
