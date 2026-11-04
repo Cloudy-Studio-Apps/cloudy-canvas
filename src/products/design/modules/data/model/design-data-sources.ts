@@ -20,6 +20,7 @@ import {
   readSnapshot,
   updateSource,
   type DataContext,
+  type ImageFailure,
   type UpdateOptions,
   type UpdateResult,
   type UpdateStage,
@@ -224,7 +225,12 @@ export class DesignDataSources {
    * non-image download, a file not in the folder, or past the limit), in memory only.
    */
   imageFailures(id: string): string[] {
-    return this.updates.imageFailures(id).values;
+    return this.updates.imageFailures(id).failed.map((failure) => failure.value);
+  }
+
+  /** `imageFailures(id)` with why each one wasn't saved (`ImageFailure.reason`). */
+  imageFailureDetails(id: string): ImageFailure[] {
+    return this.updates.imageFailures(id).failed;
   }
 
   /** How many of `imageFailures(id)` were past the limit of new pictures one Update saves. */

@@ -1,5 +1,6 @@
 import type { DataFormat, DataSourceType } from "../data.points.types";
 import type { DataServices } from "../services";
+import type { ImageFailure } from "./download-images.types";
 
 /**
  * What an Update is doing: fetching the data, parsing it, saving the pictures it names, saving
@@ -12,8 +13,8 @@ export interface UpdateOptions {
   onStage?(stage: UpdateStage): void;
   /** How many of the pictures the data names are in (during `"images"`). */
   onProgress?(done: number, total: number): void;
-  /** The values whose picture couldn't be saved, once the Update succeeds. */
-  onImageFailures?(failed: string[], overLimit: number): void;
+  /** The pictures that couldn't be saved, with why, once the Update succeeds. */
+  onImageFailures?(failed: ImageFailure[], overLimit: number): void;
 }
 
 export interface UpdateResult {
@@ -26,6 +27,8 @@ export interface UpdateResult {
   imagesFailed: number;
   /** How many of `imagesFailed` were past the limit of new pictures one Update saves. */
   imagesOverLimit: number;
+  /** How many of `imagesFailed` were over the size limit of one picture (25 MB). */
+  imagesTooLarge?: number;
   /** The Update was cancelled (its signal aborted): not a failure to report. */
   aborted?: boolean;
 }

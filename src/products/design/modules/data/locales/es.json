@@ -138,6 +138,14 @@
     "failed_one": "{count} imagen no se pudo guardar en el archivo",
     "failed_other": "{count} imágenes no se pudieron guardar en el archivo",
     "failedOverLimit_one": "{count} imagen no se pudo guardar en el archivo ({over} por encima del límite de {limit} imágenes nuevas por actualización: actualiza otra vez para el resto)",
-    "failedOverLimit_other": "{count} imágenes no se pudieron guardar en el archivo ({over} por encima del límite de {limit} imágenes nuevas por actualización: actualiza otra vez para el resto)"
+    "failedOverLimit_other": "{count} imágenes no se pudieron guardar en el archivo ({over} por encima del límite de {limit} imágenes nuevas por actualización: actualiza otra vez para el resto)",
+    "reason": {
+      "unreadable_one": "{count} no se pudo descargar ni leer",
+      "unreadable_other": "{count} no se pudieron descargar ni leer",
+      "notImage_one": "{count} no es una imagen",
+      "notImage_other": "{count} no son imágenes",
+      "tooLarge_one": "{count} pesa más de 25 MB",
+      "tooLarge_other": "{count} pesan más de 25 MB"
+    }
   }
 }

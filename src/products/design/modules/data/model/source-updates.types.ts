@@ -4,8 +4,10 @@ export interface UpdateProgress {
   total: number;
 }
 
-/** The pictures an Update couldn't save: their values, and how many were past the limit. */
+import type { ImageFailure } from "../update";
+
+/** The pictures an Update couldn't save (with why), and how many were past the limit. */
 export interface ImageFailures {
-  values: string[];
+  failed: ImageFailure[];
   overLimit: number;
 }

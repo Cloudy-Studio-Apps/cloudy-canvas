@@ -118,6 +118,7 @@ export async function updateSource(
       rowCount: rows.length,
       changed,
       imagesFailed: downloaded.failed.length,
+      imagesTooLarge: downloaded.failed.filter((f) => f.reason === "tooLarge").length,
       imagesOverLimit: downloaded.overLimit,
     };
   } catch (error) {

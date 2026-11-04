@@ -33,7 +33,8 @@ export function syncData(doc: CanvasDocument, change: EditedChange, kinds: Eleme
   const images = new Map<string, string>();
   for (const source of sources) {
     for (const [key, assetId] of Object.entries(source.images)) {
-      if (!images.has(key)) images.set(key, assetId);
+      // A picture this device lacks reads as not saved: the layer keeps its current one.
+      if (!images.has(key) && doc.hasAsset(assetId)) images.set(key, assetId);
     }
   }
   const ctx: BindingContext = {

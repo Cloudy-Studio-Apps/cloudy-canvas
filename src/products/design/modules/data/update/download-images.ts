@@ -5,10 +5,17 @@ import { parsePath, readPath, type DataRow, type PathStep } from "../table";
 import { decodeImageData, isImageBytes } from "./image-bytes";
 import { imageKey } from "./image-key";
 import { imagePathIn } from "./image-path";
-import type { DownloadedImages, DownloadImagesContext } from "./download-images.types";
+import type {
+  DownloadedImages,
+  DownloadImagesContext,
+  ImageFailure,
+  ImageFailureReason,
+} from "./download-images.types";
 
 /** At most this many new pictures are saved by one Update; the rest are reported as failed. */
 export const MAX_NEW_IMAGES = 2000;
+/** A picture larger than this (25 MB) isn't saved. */
+export const MAX_IMAGE_BYTES = 25 * 1024 * 1024;
 /** Downloads (or file reads) running at once. */
 const PARALLEL = 4;
 
@@ -62,6 +69,8 @@ function abortable<T>(promise: Promise<T>, signal: AbortSignal): Promise<T> {
  */
 async function fetchBytes(job: Job, ctx: DownloadImagesContext): Promise<Uint8Array | null> {
   if (job.value.startsWith("data:") || job.type === "image-base64") {
+    // Base64 holds 3 bytes per 4 characters: one far over the limit isn't even decoded.
+    if (job.value.length * 0.75 > MAX_IMAGE_BYTES + 3) throw new TooLarge();
     return decodeImageData(job.value);
   }
   if (job.type === "image-url") {
@@ -69,7 +78,18 @@ async function fetchBytes(job: Job, ctx: DownloadImagesContext): Promise<Uint8Ar
     return abortable(ctx.services.http.getBytes(job.value), ctx.signal);
   }
   const path = ctx.folder ? imagePathIn(ctx.folder, job.value) : null;
-  return path ? abortable(ctx.services.readFile(path), ctx.signal) : null;
+  if (!path || (await ctx.services.isPrivatePath(path))) return null;
+  return abortable(ctx.services.readFile(path), ctx.signal);
+}
+
+/** A base64 picture known to be over the limit before decoding it. */
+class TooLarge extends Error {}
+
+/** Why bytes (or their absence) don't make a picture, `null` when they do. */
+function rejection(bytes: Uint8Array | null): ImageFailureReason | null {
+  if (!bytes || bytes.length === 0) return "unreadable";
+  if (bytes.length > MAX_IMAGE_BYTES) return "tooLarge";
+  return isImageBytes(bytes) ? null : "notImage";
 }
 
 /**
@@ -77,7 +97,8 @@ async function fetchBytes(job: Job, ctx: DownloadImagesContext): Promise<Uint8Ar
  * file as document assets, so bound image fills work offline. Values already in `known` (whose
  * asset this device has) are skipped; the rest are fetched 4 at a time, at most
  * `MAX_NEW_IMAGES` of them, and kept only when their bytes are a picture (PNG, JPEG, GIF, WebP,
- * SVG). One picture failing never throws: its value is in `failed`. A cancel (`signal`) throws
+ * SVG) of at most `MAX_IMAGE_BYTES`. One picture failing never throws: it is in `failed` with
+ * why. A file is read only inside the folder and never in the app's own data folder. A cancel (`signal`) throws
  * and adds nothing: the assets are added once every picture is in.
  */
 export async function downloadImages(
@@ -91,9 +112,11 @@ export async function downloadImages(
     return !assetId || !ctx.doc.hasAsset(assetId);
   });
   const jobs = pending.slice(0, MAX_NEW_IMAGES);
-  const skipped = pending.slice(MAX_NEW_IMAGES).map((job) => job.value);
+  const skipped = pending
+    .slice(MAX_NEW_IMAGES)
+    .map((job): ImageFailure => ({ value: job.value, reason: "overLimit" }));
   const found = new Map<string, Uint8Array>();
-  const failed: string[] = [];
+  const failed: ImageFailure[] = [];
   let next = 0;
   let done = 0;
   ctx.onProgress?.(0, jobs.length);
@@ -103,13 +126,16 @@ export async function downloadImages(
       ctx.signal.throwIfAborted();
       const job = jobs[next++] as Job;
       let bytes: Uint8Array | null = null;
+      let reason: ImageFailureReason | null;
       try {
         bytes = await fetchBytes(job, ctx);
-      } catch {
+        reason = rejection(bytes);
+      } catch (error) {
         ctx.signal.throwIfAborted();
+        reason = error instanceof TooLarge ? "tooLarge" : "unreadable";
       }
-      if (bytes && bytes.length > 0 && isImageBytes(bytes)) found.set(job.key, bytes);
-      else failed.push(job.value);
+      if (bytes && reason === null) found.set(job.key, bytes);
+      else failed.push({ value: job.value, reason: reason ?? "unreadable" });
       ctx.onProgress?.(++done, jobs.length);
     }
   };

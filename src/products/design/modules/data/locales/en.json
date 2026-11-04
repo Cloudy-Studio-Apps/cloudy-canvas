@@ -138,6 +138,14 @@
     "failed_one": "{count} image couldn't be saved in the file",
     "failed_other": "{count} images couldn't be saved in the file",
     "failedOverLimit_one": "{count} image couldn't be saved in the file ({over} past the limit of {limit} new images per Update: update again for the rest)",
-    "failedOverLimit_other": "{count} images couldn't be saved in the file ({over} past the limit of {limit} new images per Update: update again for the rest)"
+    "failedOverLimit_other": "{count} images couldn't be saved in the file ({over} past the limit of {limit} new images per Update: update again for the rest)",
+    "reason": {
+      "unreadable_one": "{count} couldn't be downloaded or read",
+      "unreadable_other": "{count} couldn't be downloaded or read",
+      "notImage_one": "{count} isn't a picture",
+      "notImage_other": "{count} aren't pictures",
+      "tooLarge_one": "{count} is over 25 MB",
+      "tooLarge_other": "{count} are over 25 MB"
+    }
   }
 }

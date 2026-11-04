@@ -1,3 +1,5 @@
+import { isSvg } from "@canvas";
+
 const PNG = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
 const JPEG = [0xff, 0xd8, 0xff];
 
@@ -9,15 +11,10 @@ function ascii(text: string): number[] {
   return Array.from(text, (c) => c.charCodeAt(0));
 }
 
-/** Whether bytes start as SVG text (an XML prolog, comments or doctype allowed before `<svg`). */
-function isSvg(bytes: Uint8Array): boolean {
-  // The decoder drops a leading byte order mark.
-  const head = new TextDecoder("utf-8", { fatal: false }).decode(bytes.subarray(0, 2048));
-  const text = head.trimStart();
-  return text.startsWith("<") && /<svg[\s>]/i.test(text);
-}
-
-/** Whether bytes are a picture, by their first bytes: PNG, JPEG, GIF, WebP or SVG text. */
+/**
+ * Whether bytes are a picture, by their first bytes: PNG, JPEG, GIF, WebP, or an SVG the renderer
+ * draws (its own `isSvg`, so a saved picture never fails to decode).
+ */
 export function isImageBytes(bytes: Uint8Array): boolean {
   if (startsWith(bytes, PNG) || startsWith(bytes, JPEG)) return true;
   if (startsWith(bytes, ascii("GIF87a")) || startsWith(bytes, ascii("GIF89a"))) return true;

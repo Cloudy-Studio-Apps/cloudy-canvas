@@ -3,7 +3,7 @@ import { Emitter } from "@canvas";
 import type { UpdateOptions, UpdateResult, UpdateStage } from "../update";
 import type { ImageFailures, UpdateProgress } from "./source-updates.types";
 
-const NO_FAILURES: ImageFailures = { values: [], overLimit: 0 };
+const NO_FAILURES: ImageFailures = { failed: [], overLimit: 0 };
 
 /**
  * This device's Update state per source: the running Update (one at a time), its stage and
@@ -45,10 +45,10 @@ export class SourceUpdates {
         this.emitter.emit();
         options.onProgress?.(done, total);
       },
-      onImageFailures: (values, overLimit) => {
+      onImageFailures: (failed, overLimit) => {
         if (this.tokens.get(id) !== token) return;
-        this.failures.set(id, { values, overLimit });
-        options.onImageFailures?.(values, overLimit);
+        this.failures.set(id, { failed, overLimit });
+        options.onImageFailures?.(failed, overLimit);
       },
     }).then((result) => {
       // Forgotten meanwhile (the source was removed): record nothing.

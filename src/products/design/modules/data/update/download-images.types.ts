@@ -12,12 +12,24 @@ export interface DownloadImagesContext {
   onProgress?(done: number, total: number): void;
 }
 
+/**
+ * Why a picture wasn't saved: it couldn't be downloaded or read, its bytes aren't a picture, it
+ * is over the size limit, or it was past the limit of new pictures one Update saves.
+ */
+export type ImageFailureReason = "unreadable" | "notImage" | "tooLarge" | "overLimit";
+
+/** A picture the data names that wasn't saved, and why. */
+export interface ImageFailure {
+  value: string;
+  reason: ImageFailureReason;
+}
+
 /** The pictures an Update saved. */
 export interface DownloadedImages {
   /** Every picture's asset by its `imageKey`: the known ones and the new ones. */
   images: Record<string, string>;
-  /** The values whose picture couldn't be saved (also the ones past the limit). */
-  failed: string[];
+  /** The pictures that couldn't be saved, with why (also the ones past the limit). */
+  failed: ImageFailure[];
   /** How many of `failed` were past the limit of new pictures one Update saves. */
   overLimit: number;
   /** How many new pictures were saved. */
