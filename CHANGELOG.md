@@ -18,6 +18,9 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 - Fast pen strokes no longer fill in as solid black shapes at sharp turns, and they follow your hand
   more closely.
+- In a brochure's page list, pages can now be dropped on a blank page to take its place, on a
+  spread's heading to start that spread (or on "Back cover" to make it the back cover), and below
+  the last page to move it to the end. Before, dropping a page there did nothing.
 
 ## 0.7.0 - 2026-11-01
 

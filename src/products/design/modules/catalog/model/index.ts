@@ -10,6 +10,7 @@ export { bookLayout } from "./book-layout";
 export { currentBrochure, ensureBrochure } from "./current-brochure";
 export { DesignBrochure } from "./design-brochure";
 export { brochuresOf, DESIGN_BROCHURES, DesignBrochures } from "./design-brochures";
+export { isBackCover } from "./is-back-cover";
 export { isPageFrame } from "./page-frame";
 export { pagePictures } from "./page-pictures";
 export { brochurePageSize, fitsPage, sideWidth, spanOf } from "./page-span";

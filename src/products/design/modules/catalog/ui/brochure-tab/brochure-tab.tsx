@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import { ListChecks } from "lucide-react";
 
-import { DragGhost, rowDropIndex, useRowDrag } from "@canvas-ui";
+import { DragGhost, useRowDrag } from "@canvas-ui";
 import { CATALOG_PICK_TOOL } from "../../mode/catalog-mode.constants";
 import { paperSize } from "../../model/paper-size";
 import type { BookSide } from "../../model/book-layout.types";
@@ -14,7 +14,10 @@ import { BlankPageRow } from "./blank-page-row";
 import { BrochureEmpty } from "./brochure-empty";
 import { BrochurePageRow } from "./brochure-page-row";
 import { BrochureSwitcher } from "./brochure-switcher";
+import { dropId, dropPosition, parseDropId } from "./drop-position";
+import { ListEndDrop } from "./list-end-drop";
 import { NoBrochure } from "./no-brochure";
+import { SpreadHeadingRow } from "./spread-heading-row";
 import { spreadLabel } from "./spread-label";
 import { t } from "../../catalog.i18n";
 
@@ -22,6 +25,8 @@ import { t } from "../../catalog.i18n";
  * The Catalog mode's left tab: the design page's open brochure (`BrochureSwitcher` picks, makes,
  * renames and deletes the page's brochures) and its pages in order, to drag into place. In the book
  * layout they're grouped as they're read (covers, spreads) with the blank pages the layout adds;
+ * a page dropped on a blank page takes its place, on a spread's heading starts that spread (or is
+ * the back cover), and after the last row goes last;
  * "Pick frames" ticks frames on the canvas and "+" adds a blank page the size of the last one.
  */
 export function BrochureTab() {
@@ -32,16 +37,26 @@ export function BrochureTab() {
   const last = pages.at(-1)?.frame;
   const book = settings.layout === "book";
   const rowDrag = useRowDrag({
+    // Pages, blank pages, spread headings and the list's end all take a dropped page.
     onDrop: (id, overId, side) => {
-      const indexOf = (slotId: string) => pages.findIndex((other) => other.slot.id === slotId);
-      brochure?.move(id, rowDropIndex(indexOf(id), indexOf(overId), side));
+      const target = parseDropId(overId);
+      if (target) brochure?.move(id, dropPosition(layout, pages, id, target, side));
     },
+    canDrop: (id, overId) => overId !== dropId({ kind: "page", slotId: id }),
   });
   const dragged = pages.find((page) => page.slot.id === rowDrag.drag?.id);
 
   const row = (side: BookSide, index: number) => {
     if (side.kind === "blank")
-      return <BlankPageRow key={`blank:${index}`} number={index + 1} reason={side.reason} />;
+      return (
+        <BlankPageRow
+          key={`blank:${index}`}
+          number={index + 1}
+          reason={side.reason}
+          rowDrag={rowDrag}
+          dropId={dropId({ kind: "blank", side: index })}
+        />
+      );
     // A spread frame's two sides are one row, at its left side.
     if (side.part === "right") return null;
     const { page } = side;
@@ -93,13 +108,18 @@ export function BrochureTab() {
       {pages.length === 0 ? (
         <BrochureEmpty />
       ) : (
-        <ul aria-label={t("tab.pages")} className="min-h-0 flex-1 overflow-y-auto px-1.5 pb-2">
+        <ul
+          aria-label={t("tab.pages")}
+          className="flex min-h-0 flex-1 flex-col overflow-y-auto px-1.5 pb-2"
+        >
           {layout.spreads.map((spread) => (
             <Fragment key={spread.join("-")}>
               {book && (
-                <li className="px-1 pt-2 pb-0.5 text-[10px] font-medium tracking-wide text-subtle-foreground uppercase">
-                  {spreadLabel(layout, spread)}
-                </li>
+                <SpreadHeadingRow
+                  label={spreadLabel(layout, spread)}
+                  rowDrag={rowDrag}
+                  dropId={dropId({ kind: "spread", first: spread[0] ?? 0 })}
+                />
               )}
               {spread.map((index) => {
                 const side = layout.sides[index];
@@ -107,6 +127,7 @@ export function BrochureTab() {
               })}
             </Fragment>
           ))}
+          <ListEndDrop rowDrag={rowDrag} />
         </ul>
       )}
     </div>

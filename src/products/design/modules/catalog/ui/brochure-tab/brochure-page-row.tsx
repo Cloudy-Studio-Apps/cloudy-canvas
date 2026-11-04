@@ -9,6 +9,7 @@ import { useBrochure } from "../hooks/use-brochure";
 import { optionLetter } from "../option-letter";
 import { showPage } from "../page-actions";
 import { BrochureOptionsList } from "./brochure-options-list";
+import { dropId } from "./drop-position";
 import type { BrochurePageRowProps } from "./brochure-page-row.types";
 import { t } from "../../catalog.i18n";
 
@@ -20,6 +21,7 @@ export function BrochurePageRow({ page, label, selected, rowDrag }: BrochurePage
   const engine = useDesignEngine();
   const { brochure } = useBrochure();
   const { drag } = rowDrag;
+  const target = dropId({ kind: "page", slotId: page.slot.id });
   const chosen = page.options.findIndex((option) => option.id === page.frame.id);
   const paper = paperSize(page.frame);
   const detail =
@@ -34,13 +36,13 @@ export function BrochurePageRow({ page, label, selected, rowDrag }: BrochurePage
     <li>
       <div
         {...rowDrag.grabProps(page.slot.id)}
-        {...rowDrag.dropProps(page.slot.id)}
+        {...rowDrag.dropProps(target)}
         onClick={() => showPage(engine, page.frame)}
         aria-current={selected ? "page" : undefined}
         className={cn(
           "group relative flex cursor-default items-center gap-2 rounded-sm px-1 py-1 hover:bg-hover",
           selected && "bg-primary-soft hover:bg-primary-soft",
-          rowDropLine(drag?.overId === page.slot.id ? drag.side : null),
+          rowDropLine(drag?.overId === target ? drag.side : null),
           drag?.id === page.slot.id && "opacity-50",
         )}
       >

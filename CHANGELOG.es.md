@@ -18,6 +18,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 - Los trazos rápidos con el bolígrafo ya no se rellenan como formas negras sólidas en los giros
   cerrados, y siguen mejor tu mano.
+- En la lista de páginas de un folleto, ahora puedes soltar una página sobre una página en blanco
+  para que ocupe su lugar, sobre el encabezado de un pliego para que lo empiece (o sobre
+  «Contraportada» para que sea la contraportada) y debajo de la última página para llevarla al
+  final. Antes, soltarla ahí no hacía nada.
 
 ## 0.7.0 - 2026-11-01
 
