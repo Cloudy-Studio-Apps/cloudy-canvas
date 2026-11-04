@@ -9,6 +9,8 @@ export interface PageItemTag {
   brochure: string;
   master: string;
   source: string;
+  /** The half of a spread frame it's on (a frame holding two pages); left out on a single page. */
+  half?: "left" | "right";
 }
 
 /** What the tokens of a page item's text read on one page. */

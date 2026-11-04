@@ -6,7 +6,7 @@ import { BrochureKind } from "./brochure";
 import { catalogMode } from "./catalog.mode";
 import { catalogTools } from "./mcp";
 import { editCatalogPage } from "./mode";
-import { pruneBrochure, splitLegacyBrochure } from "./model";
+import { pruneBrochure, splitLegacyBrochure, syncPageItems } from "./model";
 import { a4BrochureStarter } from "./ui/starters/a4-brochure.starter";
 import * as catalogApi from ".";
 
@@ -22,7 +22,8 @@ export const catalogModule = defineModule({
   requires: ["core", "pages", "frame"],
   // Replaces a page's pictures with image's `replaceImageFill`; `uses`, not `requires`: catalog loads
   // before image (its `editElement` takes frames first).
-  uses: ["image"],
+  // Reads and sizes page items' texts with text's helpers.
+  uses: ["image", "text"],
   exports: { ...catalogApi },
   register(host) {
     host.contribute(designCanvas.kinds, new BrochureKind());
@@ -30,6 +31,8 @@ export const catalogModule = defineModule({
     // Deleted frames leave the brochures, and a deleted page's brochures go, in the same undo step.
     host.contribute(designCanvas.onRemove, (doc, removed) => pruneBrochure(doc, removed));
     // One brochure per design, from before brochures belonged to a page, is split by page.
+    // The pages show their masters and page items, kept up in every edit's undo step.
+    host.contribute(designCanvas.afterEdit, (doc, change) => syncPageItems(doc, change));
     host.contribute(designMigrations, { id: "catalog.brochures", migrate: splitLegacyBrochure });
     host.contribute(designCanvas.editElement, editCatalogPage);
     host.contribute(designMcpTools, { id: "catalog", tools: () => catalogTools });
