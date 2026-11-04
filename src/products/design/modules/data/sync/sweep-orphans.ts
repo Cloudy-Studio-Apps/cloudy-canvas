@@ -24,12 +24,11 @@ function isInside(doc: CanvasDocument, id: string, ancestor: string): boolean {
  */
 export function sweepOrphans(doc: CanvasDocument, change: EditedChange): void {
   const patches = new Map<string, ElementPatch>();
-  const free = (id: string, iterator: string) => {
+  const free = (id: string) => {
     const queue = [id];
     for (let i = 0; i < queue.length; i++) {
       const el = doc.get(queue[i] as string);
       if (!el) continue;
-      if (i > 0 && dataCopyTag(el)?.iterator !== iterator) continue;
       const patch = freedPatch(el);
       if (patch) patches.set(el.id, patch);
       for (const other of doc.all()) {
@@ -41,12 +40,12 @@ export function sweepOrphans(doc: CanvasDocument, change: EditedChange): void {
     const el = doc.get(id);
     const tag = el ? dataCopyTag(el) : null;
     if (!tag) continue;
-    if (!doc.get(tag.iterator) || !isInside(doc, id, tag.iterator)) free(id, tag.iterator);
+    if (!doc.get(tag.iterator) || !isInside(doc, id, tag.iterator)) free(id);
   }
   if (change.removed.some((el) => repeatOf(el))) {
     for (const el of doc.all()) {
       const tag = dataCopyTag(el);
-      if (tag && !doc.get(tag.iterator) && !patches.has(el.id)) free(el.id, tag.iterator);
+      if (tag && !doc.get(tag.iterator) && !patches.has(el.id)) free(el.id);
     }
   }
   if (patches.size > 0) doc.updateMany(patches);
