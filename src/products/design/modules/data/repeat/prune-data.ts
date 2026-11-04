@@ -7,7 +7,7 @@ import {
 
 import { isFrame } from "../../frame";
 import { isDesignNode, type DesignNode } from "../../core";
-import { descendants } from "./descendants";
+import { childrenMap, walkDescendants } from "./descendants";
 import { dataCopyTag, repeatOf } from "./repeat-fields";
 import { templateOf } from "./template-of";
 
@@ -56,8 +56,8 @@ export function pruneData(
     .map((el) => el.id);
   // What a copy holds goes with it, such as a copied iterator's own copies.
   const copies = new Set(roots);
-  for (const id of roots) {
-    for (const inner of descendants(doc, id)) if (!removed.has(inner.id)) copies.add(inner.id);
+  for (const inner of walkDescendants(childrenMap(doc), roots)) {
+    if (!removed.has(inner.id)) copies.add(inner.id);
   }
   if (copies.size > 0) doc.remove([...copies]);
   for (const id of emptied) doc.update(id, { repeat: null } as ElementPatch);

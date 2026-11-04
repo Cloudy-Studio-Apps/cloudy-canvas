@@ -1,7 +1,6 @@
 import type { CanvasDocument, EditedChange, ElementPatch } from "@canvas";
 
-import { isDesignNode } from "../../core";
-import { dataCopyTag, freedPatch, repeatOf } from "../repeat";
+import { childrenMap, dataCopyTag, freedPatch, repeatOf, walkDescendants } from "../repeat";
 
 /** Whether `id` sits inside `ancestor` (any depth). */
 function isInside(doc: CanvasDocument, id: string, ancestor: string): boolean {
@@ -23,30 +22,27 @@ function isInside(doc: CanvasDocument, id: string, ancestor: string): boolean {
  * nothing.
  */
 export function sweepOrphans(doc: CanvasDocument, change: EditedChange): void {
-  const patches = new Map<string, ElementPatch>();
-  const free = (id: string) => {
-    const queue = [id];
-    for (let i = 0; i < queue.length; i++) {
-      const el = doc.get(queue[i] as string);
-      if (!el) continue;
-      const patch = freedPatch(el);
-      if (patch) patches.set(el.id, patch);
-      for (const other of doc.all()) {
-        if (isDesignNode(other) && other.parentId === el.id) queue.push(other.id);
-      }
-    }
-  };
+  const roots = new Set<string>();
   for (const id of change.updated) {
     const el = doc.get(id);
     const tag = el ? dataCopyTag(el) : null;
     if (!tag) continue;
-    if (!doc.get(tag.iterator) || !isInside(doc, id, tag.iterator)) free(id);
+    if (!doc.get(tag.iterator) || !isInside(doc, id, tag.iterator)) roots.add(id);
   }
   if (change.removed.some((el) => repeatOf(el))) {
     for (const el of doc.all()) {
       const tag = dataCopyTag(el);
-      if (tag && !doc.get(tag.iterator) && !patches.has(el.id)) free(el.id);
+      if (tag && !doc.get(tag.iterator)) roots.add(el.id);
     }
+  }
+  if (roots.size === 0) return;
+  // One pass over the document for the layers every freed copy holds.
+  const patches = new Map<string, ElementPatch>();
+  const everyone = [...roots, ...walkDescendants(childrenMap(doc), roots).map((el) => el.id)];
+  for (const id of everyone) {
+    const el = doc.get(id);
+    const patch = el ? freedPatch(el) : null;
+    if (patch) patches.set(id, patch);
   }
   if (patches.size > 0) doc.updateMany(patches);
 }
