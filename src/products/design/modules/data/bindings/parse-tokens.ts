@@ -1,4 +1,4 @@
-import { RESERVED_NAMES } from "../model";
+import { RESERVED_NAMES } from "../model/source-name";
 import type { TemplatePart } from "./parse-tokens.types";
 
 const TOKEN = /\{([$A-Za-z_][\w$]*(?:\.[\w$]+|\[\d+\]|\["[^"]*"\])*)\}/y;
