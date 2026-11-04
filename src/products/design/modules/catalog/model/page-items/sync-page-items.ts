@@ -5,12 +5,11 @@ import type { BrochureElement } from "../../brochure";
 import { bookLayout } from "../book-layout";
 import { brochurePages } from "../brochure-pages";
 import { brochuresOf } from "../design-brochures";
-import { brochureLanguage } from "../language/document-texts";
 import { pageNumbers } from "../numbering/page-numbers";
 import { affectedPages } from "./affected-pages";
 import { planPageItems } from "./plan-page-items";
 import { stampTargets } from "./stamp-targets";
-import { tableOfContents } from "./table-of-contents";
+import { brochureContext } from "./template-context";
 
 /**
  * A design page's brochures, the open one last (the one opened last, else its first, as
@@ -46,19 +45,10 @@ export function syncPageItems(doc: CanvasDocument, change: EditedChange): void {
       brochures: brochuresOn(records, page).map((record) => {
         const layout = bookLayout(brochurePages(doc, record), record.settings);
         const numbers = pageNumbers(layout, record);
-        // Today, written in the brochure's language.
-        const date = new Intl.DateTimeFormat(brochureLanguage(record.settings), {
-          dateStyle: "long",
-        }).format(new Date());
         return {
           record,
           targets: stampTargets(doc, record, layout, numbers),
-          context: {
-            pages: numbers.filter((info) => info.counted).length,
-            title: record.name,
-            date,
-            toc: tableOfContents(layout, numbers),
-          },
+          context: brochureContext(record, layout, numbers),
         };
       }),
       byId,

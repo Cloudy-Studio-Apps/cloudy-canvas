@@ -1,5 +1,6 @@
 import type { BrochureView } from "../hooks/use-brochure.types";
 import type { PageItemTarget } from "../../model/page-items/page-item-definition.types";
+import { pageRefs } from "../../model/page-items/page-refs";
 import { resolveTemplate } from "../../model/page-items/resolve-template";
 import { brochureLanguage } from "../../model/language/document-texts";
 
@@ -35,6 +36,7 @@ export function itemPreview(
     date: new Intl.DateTimeFormat(brochureLanguage(view.settings), { dateStyle: "long" }).format(
       new Date(),
     ),
-    toc: "",
+    contents: [],
+    refs: pageRefs(layout, numbers),
   }).replace(/\s+/g, " ");
 }
