@@ -20,29 +20,37 @@ export function repeatRows(
   if (!Array.isArray(list)) return { rows: [], total: 0 };
   const { fields, sources } = rowNames(scope, repeat);
   const scopeOf = (row: unknown) => childScope(scope, { [repeat.as]: row }, fields, sources);
-  // Snapshot rows are frozen: this copy is the one filtered and sorted.
-  let shown: unknown[] = [...list];
+  // Snapshot rows are frozen: this copy is the one filtered and sorted. `src` is a row's place in
+  // the list, which positional keys use so a filter or sort never renames the rows left.
+  let shown = list.map((row: unknown, src: number) => ({ row, src }));
   if (repeat.filter.length > 0) {
-    shown = shown.filter((row) => {
-      const inRow = scopeOf(row);
+    shown = shown.filter((item) => {
+      const inRow = scopeOf(item.row);
       return repeat.filter.every((c) => evaluateCondition(c, inRow));
     });
   }
-  shown = sortItems(shown, repeat.sort, scopeOf);
+  shown = sortItems(shown, repeat.sort, (item) => scopeOf(item.row));
   if (repeat.limit !== undefined) shown = shown.slice(0, repeat.limit);
   const total = shown.length;
   if (phase === "design" && repeat.designLimit !== undefined) {
     shown = shown.slice(0, repeat.designLimit);
   }
+  // Keys are made in source order so the `#n` suffixes don't depend on the sort.
+  const keys: string[] = new Array(shown.length);
   const used = new Set<string>();
-  const rows = shown.map((row, index) => {
-    const base =
-      (repeat.key ? keyText(lookup(scopeOf(row), repeat.key)?.value) : null) ?? String(index);
-    let key = base;
-    for (let n = 2; used.has(key); n++) key = `${base}#${n}`;
-    used.add(key);
-    return { key, row, index };
-  });
+  shown
+    .map((item, index) => ({ item, index }))
+    .sort((x, y) => x.item.src - y.item.src)
+    .forEach(({ item, index }) => {
+      const base =
+        (repeat.key ? keyText(lookup(scopeOf(item.row), repeat.key)?.value) : null) ??
+        String(item.src);
+      let key = base;
+      for (let n = 2; used.has(key); n++) key = `${base}#${n}`;
+      used.add(key);
+      keys[index] = key;
+    });
+  const rows = shown.map((item, index) => ({ key: keys[index] as string, row: item.row, index }));
   return { rows, total };
 }
 

@@ -1,5 +1,6 @@
 import type { CanvasElement } from "@canvas";
 
+import { isFrame } from "../../frame";
 import type { ConditionOp, DataCondition } from "../bindings";
 import type { DataCopyTag, RepeatSettings, SortRule } from "./repeat.types";
 
@@ -34,7 +35,7 @@ function sortRule(raw: unknown): SortRule | null {
 
 /** What a frame repeats, read defensively (frames only; anything malformed gives `null`). */
 export function repeatOf(el: CanvasElement): RepeatSettings | null {
-  if (el.type !== "frame") return null;
+  if (!isFrame(el)) return null;
   const raw = (el as unknown as Record<string, unknown>).repeat;
   if (!isObject(raw) || typeof raw.source !== "string" || !raw.source) return null;
   const out: RepeatSettings = {

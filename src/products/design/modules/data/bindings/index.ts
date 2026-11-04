@@ -29,3 +29,4 @@ export { carriedTemplate, carryRunEdit } from "./carry-run-edit";
 export { resolveDataText } from "./resolve-data-text";
 export { readsUnreadable, templateReadsUnreadable } from "./unreadable";
 export { replacedPath } from "./bind-data-checks";
+export { toNumber } from "./coerce";
