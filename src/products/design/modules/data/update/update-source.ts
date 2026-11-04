@@ -5,7 +5,7 @@ import { missingSettings } from "../settings";
 import { isDataSource, type DataSourceElement } from "../source";
 import { guessFields, normalizeRows } from "../table";
 import { addSnapshot, encodeRows } from "./snapshot";
-import { loadSecrets, secretKeys } from "./source-secrets";
+import { loadSecrets, missingSecretKeys, secretKeys } from "./source-secrets";
 import type { DataContext, UpdateOptions, UpdateResult } from "./update-source.types";
 
 function record(doc: CanvasDocument, id: string): DataSourceElement {
@@ -32,7 +32,13 @@ export async function updateSource(
     if (!type) throw new Error(`Unknown source type "${source.sourceType}".`);
     const specs = type.settings;
     const secrets = await loadSecrets(ctx.services, id, secretKeys(specs, source.settings));
-    const missing = missingSettings(specs, source.settings, secrets);
+    // Secret pairs too (a header whose value isn't on this device), not only required settings.
+    const missing = [
+      ...new Set([
+        ...missingSettings(specs, source.settings, secrets),
+        ...missingSecretKeys(specs, source.settings, secrets),
+      ]),
+    ];
     if (missing.length > 0) throw new Error(`Missing: ${missing.join(", ")}`);
 
     options.onStage?.("fetching");

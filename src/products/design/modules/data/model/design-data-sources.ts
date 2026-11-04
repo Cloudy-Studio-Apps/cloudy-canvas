@@ -13,6 +13,7 @@ import {
 import type { DataRow, DataTable } from "../table";
 import {
   loadSecrets,
+  missingSecretKeys,
   readSnapshot,
   secretKeys,
   updateSource,
@@ -182,13 +183,8 @@ export class DesignDataSources {
   async missingSecrets(id: string): Promise<string[]> {
     const source = this.require(id);
     const { services, type } = this.ready(source.sourceType);
-    const keys = secretKeys(type.settings, source.settings);
-    const stored = await loadSecrets(services, id, keys);
-    // A secret setting counts only when required; a secret pair's value always does.
-    const optional = new Set(
-      type.settings.flatMap((s) => (s.kind === "secret" && !s.required ? [s.key] : [])),
-    );
-    return keys.filter((key) => !(key in stored) && !optional.has(key));
+    const stored = await loadSecrets(services, id, secretKeys(type.settings, source.settings));
+    return missingSecretKeys(type.settings, source.settings, stored);
   }
 
   /** The last failed Update's message on this device, `null` once one succeeds. */

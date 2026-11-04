@@ -11,6 +11,8 @@ export class SourceUpdates {
   private readonly errors = new Map<string, string>();
   private readonly stages = new Map<string, UpdateStage>();
   private readonly running = new Map<string, Promise<UpdateResult>>();
+  /** The run each source's state belongs to; gone once the source is forgotten. */
+  private readonly tokens = new Map<string, object>();
 
   /** Runs `start` for a source unless one already runs (then returns that one). */
   run(
@@ -20,17 +22,21 @@ export class SourceUpdates {
   ): Promise<UpdateResult> {
     const running = this.running.get(id);
     if (running) return running;
-    const run: Promise<UpdateResult> = start({
+    // Made before `start`, so a stage reported at once already knows its run.
+    const token = {};
+    this.tokens.set(id, token);
+    const run = start({
       signal: options.signal,
       onStage: (stage) => {
-        if (this.running.get(id) !== run) return;
+        if (this.tokens.get(id) !== token) return;
         this.stages.set(id, stage);
         this.emitter.emit();
         options.onStage?.(stage);
       },
     }).then((result) => {
       // Forgotten meanwhile (the source was removed): record nothing.
-      if (this.running.get(id) !== run) return result;
+      if (this.tokens.get(id) !== token) return result;
+      this.tokens.delete(id);
       this.running.delete(id);
       this.stages.delete(id);
       if (result.ok) this.errors.delete(id);
@@ -55,5 +61,6 @@ export class SourceUpdates {
     this.errors.delete(id);
     this.stages.delete(id);
     this.running.delete(id);
+    this.tokens.delete(id);
   }
 }

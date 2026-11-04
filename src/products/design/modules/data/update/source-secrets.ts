@@ -22,6 +22,21 @@ export function secretKeys(specs: SettingSpec[], settings: Record<string, Settin
   return keys;
 }
 
+/**
+ * The secrets a source needs that `stored` lacks (by `key` / `key.name`): its required secret
+ * settings and every secret pair's value.
+ */
+export function missingSecretKeys(
+  specs: SettingSpec[],
+  settings: Record<string, SettingValue>,
+  stored: Record<string, string>,
+): string[] {
+  const optional = new Set(
+    specs.flatMap((s) => (s.kind === "secret" && !s.required ? [s.key] : [])),
+  );
+  return secretKeys(specs, settings).filter((key) => !(key in stored) && !optional.has(key));
+}
+
 /** A source's secrets stored on this device, by `key` / `key.name` (missing or empty ones left out). */
 export async function loadSecrets(
   services: DataServices,
