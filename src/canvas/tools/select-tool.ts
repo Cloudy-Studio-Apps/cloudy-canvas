@@ -107,8 +107,14 @@ export class SelectTool implements Tool {
       if (!this.movesSelection || !pastThreshold(g.start, p, MOVE_THRESHOLD_PX)) return;
       g.started = true;
       this.ctx.setCursor("move");
-      this.ctx.doc.checkpoint();
-      g.release = this.ctx.doc.deferAfterEdit();
+      // One undo step from here to release, however long the pointer rests: the after-edit hook,
+      // held back until then, writes in the drag's step too.
+      const hold = this.ctx.doc.holdCheckpoints();
+      const defer = this.ctx.doc.deferAfterEdit();
+      g.release = () => {
+        defer();
+        hold();
+      };
       // Alt-drag leaves the originals in place and drags out a copy.
       if (p.altKey) this.dragCopies(g);
       g.box = this.boxOf(g.origins.values());
