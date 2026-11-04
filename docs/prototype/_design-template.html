@@ -1,0 +1,2661 @@
+<!doctype html>
+<!--
+╔══════════════════════════════════════════════════════════════════════════════════════════════╗
+║  CLOUDY CANVAS · PROTOTYPE TEMPLATE · DESIGN                                                 ║
+║                                                                                              ║
+║  AGENT: read this whole header before you edit anything.                                     ║
+║                                                                                              ║
+║  What this is                                                                                ║
+║    One self-contained HTML file (no build, no React, no framework) that looks like the real  ║
+║    app: the same tokens (copied from src/shared/ui/styles/tokens.css and the Cloudy Light /  ║
+║    Cloudy Dark themes), the same sizes (rail 48px, left panel 240px, properties panel 256px, ║
+║    32px controls, 28px rows), the same sharp corners and the same pieces (FieldBox, Section, ║
+║    SegmentedControl, ListRow, Toolbar, FloatingPanel, Badge, Button, IconButton, menus,      ║
+║    dialogs, toasts). Use it to show the user a realistic proposal before writing real code.  ║
+║                                                                                              ║
+║  How to use it                                                                               ║
+║    1. Copy this file to docs/prototype/<feature-name>.html. Never edit the template itself   ║
+║       for a feature (only to keep it in step with the app).                                  ║
+║    2. Change <title> and the note in the proto bar to say what you're proposing.             ║
+║    3. This is the DESIGN editor (.cdesign, Figma-style, /design/:id). For the other product, ║
+║       copy _board-template.html instead. Keep only the chrome your proposal needs.           ║
+║    4. Find the "AGENT: ADD …" blocks and put your proposal there. Search for "AGENT:".       ║
+║    5. Open the file in a browser (double-click). Nothing to install.                         ║
+║                                                                                              ║
+║  Rules (the same as the app's, see CLAUDE.md "UI")                                           ║
+║    • Colors: only the semantic variables (var(--surface), var(--muted-foreground),            ║
+║      var(--primary), …). Never a hex/oklch literal or a palette scale (--ice-*, --seal-*, …) ║
+║      in the UI chrome. The ONLY exception is canvas content (sticky colors, a user's fills), ║
+║      which is document data, not theme.                                                      ║
+║    • Corners: 4px controls (var(--corner)), 6px cards/menus (var(--corner-card)), 8px max    ║
+║      (dialogs). No pills, no fully rounded buttons. Avatars are the only circles.            ║
+║    • Sizes: controls 32px (--control-h), small controls 28px (--control-h-sm), list rows 28px ║
+║      (--row-h). Text is small: 12px (labels, panels), 13px (body), 14px (base).               ║
+║    • Reuse the classes below before writing new CSS. If you need a new piece, add it in the  ║
+║      "AGENT: ADD YOUR OWN CSS" block at the end of <style>, built from the variables.        ║
+║    • Text: write it in English like the app does (it ships en + es; the real code goes       ║
+║      through i18n, the prototype doesn't need to).                                           ║
+║    • Interactivity: use the data-* attributes documented in the <script> at the bottom       ║
+║      (tabs, menus, dialogs, toggles, picks, toasts). Write JS only if those aren't enough.   ║
+║    • Icons: <svg class="i"><use href="#i-NAME"/></svg>, from the sprite right after <body>.  ║
+║      They're lucide icons (what the app uses). To add one, copy its paths from lucide.dev    ║
+║      into a new <symbol id="i-NAME" viewBox="0 0 24 24">.                                    ║
+║                                                                                              ║
+║  Show changes, not the whole app: keep the surrounding chrome as context and make the part   ║
+║  you're proposing obvious. Mark it with class="proposal" (a dashed outline) if it helps the  ║
+║  user see what's new, and remove the mark when they're comparing looks.                      ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════╝
+-->
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- AGENT: rename. Shown in the browser tab. -->
+    <title>Prototype · Cloudy Canvas</title>
+    <!--
+      The app ships Inter Variable and JetBrains Mono Variable. This loads Inter from its CDN; offline,
+      the font stack falls back to the system's sans. For a file that must look exact offline, embed
+      the font as a base64 @font-face (see er-relation-menu.html in this folder).
+    -->
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <style>
+      /* ════════════════════════════════════════════════════════════════════════════════════════
+         1. TOKENS
+         Copied from src/shared/ui/styles/tokens.css (palette, shape, density, elevation, motion)
+         and src/shared/core/themes/presets/cloudy-{light,dark}.theme.ts (semantic tokens).
+         AGENT: don't edit these to style a proposal. If the app's tokens change, update them here.
+         ════════════════════════════════════════════════════════════════════════════════════════ */
+      :root {
+        /* Palette: ONLY the semantic tokens below may use these. */
+        --ice-100: oklch(0.95 0.025 245);
+        --ice-200: oklch(0.905 0.045 245);
+        --ice-400: oklch(0.76 0.1 245);
+        --ice-500: oklch(0.66 0.125 245);
+        --ice-600: oklch(0.56 0.13 247);
+        --ice-700: oklch(0.48 0.12 248);
+        --ice-800: oklch(0.4 0.1 250);
+        --seal-50: oklch(0.985 0.003 250);
+        --seal-100: oklch(0.963 0.005 250);
+        --seal-200: oklch(0.925 0.008 250);
+        --seal-300: oklch(0.87 0.011 250);
+        --seal-400: oklch(0.74 0.015 250);
+        --seal-500: oklch(0.6 0.018 252);
+        --seal-800: oklch(0.34 0.02 254);
+        --seal-900: oklch(0.27 0.02 256);
+        --blush-100: oklch(0.95 0.03 35);
+        --blush-200: oklch(0.91 0.055 35);
+        --blush-300: oklch(0.85 0.085 35);
+        --blush-400: oklch(0.78 0.115 35);
+        --blush-500: oklch(0.7 0.14 35);
+        --blush-800: oklch(0.41 0.1 30);
+        --blush-950: oklch(0.24 0.06 30);
+        --sand-100: oklch(0.96 0.04 88);
+        --sand-300: oklch(0.88 0.1 86);
+        --sand-500: oklch(0.76 0.13 80);
+        --sand-800: oklch(0.42 0.08 68);
+        --lilac-100: oklch(0.95 0.025 295);
+        --lilac-300: oklch(0.83 0.08 295);
+        --lilac-500: oklch(0.63 0.15 294);
+        --lilac-700: oklch(0.46 0.14 292);
+
+        /* Shape: sharp by design. Nothing in the chrome goes above 8px. */
+        --corner-xs: 2px;
+        --corner-sm: 3px;
+        --corner: 4px;
+        --corner-card: 6px;
+        --corner-max: 8px;
+
+        /* Density */
+        --control-h-sm: 28px;
+        --control-h: 32px;
+        --control-h-lg: 40px;
+        --control-px: 14px;
+        --row-h: 28px;
+
+        /* Layout of the design editor (src/products/design/ui/design-layout.ts) */
+        --rail-w: 48px;
+        --left-w: 240px;
+        --right-w: 256px;
+
+        /* Motion */
+        --duration-fast: 150ms;
+        --easing-out: cubic-bezier(0.2, 0.7, 0.3, 1);
+
+        /* Type: the app's desktop scale (14px base) */
+        --font-sans: "Inter Variable", InterVariable, Inter, ui-sans-serif, system-ui, sans-serif;
+        --font-mono:
+          ui-monospace, "JetBrains Mono Variable", "JetBrains Mono", "Cascadia Code", Menlo,
+          Consolas, monospace;
+        --text-xs: 0.75rem; /* 12px: panels, labels, badges */
+        --text-sm: 0.8125rem; /* 13px: buttons, menus, body */
+        --text-base: 0.875rem; /* 14px: base */
+        --text-lg: 1.0625rem; /* 17px: dialog titles */
+        --text-xl: 1.25rem;
+      }
+
+      /* Cloudy Light (the default theme) */
+      :root,
+      [data-theme="light"] {
+        --background: var(--seal-50);
+        --foreground: var(--seal-900);
+        --surface: oklch(1 0 0);
+        --surface-foreground: var(--seal-900);
+        --surface-sunken: var(--seal-100);
+        --overlay: oklch(0.19 0.018 256 / 0.4);
+        --muted: var(--seal-100);
+        --muted-foreground: var(--seal-500);
+        --subtle-foreground: var(--seal-400);
+        --hover: var(--seal-100);
+        --popover: oklch(1 0 0);
+        --popover-foreground: var(--seal-900);
+        --canvas-background: var(--seal-50);
+        --canvas-grid: var(--seal-300);
+        --canvas-selection: var(--ice-500);
+        --canvas-snap: oklch(0.6 0.21 22);
+        --canvas-ruler: oklch(1 0 0);
+        --canvas-ruler-foreground: var(--seal-500);
+        --canvas-ruler-border: var(--seal-200);
+        --border: var(--seal-200);
+        --border-strong: var(--seal-300);
+        --input: var(--seal-300);
+        --ring: var(--ice-500);
+        --primary: var(--ice-600);
+        --primary-hover: var(--ice-700);
+        --primary-foreground: oklch(1 0 0);
+        --primary-soft: var(--ice-100);
+        --primary-soft-foreground: var(--ice-800);
+        --secondary: var(--seal-100);
+        --secondary-hover: var(--seal-200);
+        --secondary-foreground: var(--seal-800);
+        --accent: var(--blush-400);
+        --accent-hover: var(--blush-500);
+        --accent-foreground: var(--blush-950);
+        --accent-soft: var(--blush-100);
+        --accent-soft-foreground: var(--blush-800);
+        --board: var(--sand-500);
+        --board-foreground: var(--sand-800);
+        --board-soft: var(--sand-100);
+        --design: var(--lilac-500);
+        --design-foreground: var(--lilac-700);
+        --design-soft: var(--lilac-100);
+        --success: oklch(0.6 0.13 155);
+        --success-soft: oklch(0.95 0.04 155);
+        --warning: oklch(0.72 0.14 70);
+        --warning-soft: oklch(0.96 0.05 80);
+        --destructive: oklch(0.58 0.19 25);
+        --destructive-hover: oklch(0.52 0.18 25);
+        --destructive-foreground: oklch(1 0 0);
+        --destructive-soft: oklch(0.95 0.03 25);
+        --shadow-color: 256 20% 18%;
+      }
+
+      /* Cloudy Dark */
+      [data-theme="dark"] {
+        --background: oklch(0.18 0.014 256);
+        --foreground: oklch(0.93 0.006 250);
+        --surface: oklch(0.215 0.016 256);
+        --surface-foreground: oklch(0.93 0.006 250);
+        --surface-sunken: oklch(0.165 0.013 256);
+        --overlay: oklch(0.08 0.01 256 / 0.6);
+        --muted: oklch(0.255 0.017 256);
+        --muted-foreground: oklch(0.7 0.014 252);
+        --subtle-foreground: oklch(0.56 0.016 252);
+        --hover: oklch(0.27 0.018 256);
+        --popover: oklch(0.24 0.017 256);
+        --popover-foreground: oklch(0.93 0.006 250);
+        --canvas-background: oklch(0.165 0.013 256);
+        --canvas-grid: oklch(0.3 0.016 256);
+        --canvas-selection: var(--ice-400);
+        --canvas-snap: oklch(0.7 0.18 22);
+        --canvas-ruler: oklch(0.215 0.016 256);
+        --canvas-ruler-foreground: oklch(0.62 0.014 252);
+        --canvas-ruler-border: oklch(0.3 0.018 256);
+        --border: oklch(0.3 0.018 256);
+        --border-strong: oklch(0.37 0.02 256);
+        --input: oklch(0.37 0.02 256);
+        --ring: var(--ice-400);
+        --primary: var(--ice-500);
+        --primary-hover: var(--ice-400);
+        --primary-soft: oklch(0.3 0.06 250);
+        --primary-soft-foreground: var(--ice-200);
+        --secondary: oklch(0.28 0.018 256);
+        --secondary-hover: oklch(0.33 0.02 256);
+        --secondary-foreground: oklch(0.9 0.008 250);
+        --accent-soft: oklch(0.3 0.05 32);
+        --accent-soft-foreground: var(--blush-200);
+        --board-foreground: var(--sand-300);
+        --board-soft: oklch(0.3 0.045 75);
+        --design-foreground: var(--lilac-300);
+        --design-soft: oklch(0.3 0.06 292);
+        --success-soft: oklch(0.3 0.05 155);
+        --warning-soft: oklch(0.32 0.05 75);
+        --destructive: oklch(0.62 0.19 25);
+        --destructive-hover: oklch(0.68 0.18 25);
+        --destructive-soft: oklch(0.3 0.06 25);
+        --shadow-color: 256 40% 3%;
+      }
+
+      /* The design editor's canvas is darker than the board's, so white frames stand out. */
+      [data-layout="design"] {
+        --canvas-background: var(--seal-200);
+        --canvas-grid: var(--seal-300);
+      }
+      [data-theme="dark"] [data-layout="design"],
+      [data-theme="dark"][data-layout="design"] {
+        --canvas-background: oklch(0.22 0.014 256);
+        --canvas-grid: oklch(0.32 0.016 256);
+      }
+
+      /* Elevation (depends on --shadow-color, so it's defined after the themes) */
+      :root,
+      [data-theme] {
+        --elevation-xs: 0 1px 0 hsl(var(--shadow-color) / 0.04);
+        --elevation-soft:
+          0 1px 2px hsl(var(--shadow-color) / 0.06), 0 2px 6px -2px hsl(var(--shadow-color) / 0.06);
+        --elevation-lifted:
+          0 2px 4px hsl(var(--shadow-color) / 0.06),
+          0 10px 24px -8px hsl(var(--shadow-color) / 0.14);
+        --elevation-popover:
+          0 4px 8px -2px hsl(var(--shadow-color) / 0.08),
+          0 16px 32px -8px hsl(var(--shadow-color) / 0.16);
+      }
+
+      /* ════════════════════════════════════════════════════════════════════════════════════════
+         2. BASE
+         ════════════════════════════════════════════════════════════════════════════════════════ */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        border-color: var(--border);
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        overflow: hidden;
+        background: var(--background);
+        color: var(--foreground);
+        font-family: var(--font-sans);
+        font-size: var(--text-base);
+        line-height: 1.375rem;
+        font-feature-settings: "cv11", "ss01";
+        -webkit-font-smoothing: antialiased;
+      }
+      ::selection {
+        background: var(--primary-soft);
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+        color: inherit;
+      }
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .i {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .i-sm {
+        width: 14px;
+        height: 14px;
+      }
+      .i-lg {
+        width: 18px;
+        height: 18px;
+      }
+      .mono {
+        font-family: var(--font-mono);
+      }
+      .muted {
+        color: var(--muted-foreground);
+      }
+      .subtle {
+        color: var(--subtle-foreground);
+      }
+      .text-xs {
+        font-size: var(--text-xs);
+        line-height: 1rem;
+      }
+      .text-sm {
+        font-size: var(--text-sm);
+        line-height: 1.25rem;
+      }
+      .grow {
+        flex: 1;
+        min-width: 0;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      /* ════════════════════════════════════════════════════════════════════════════════════════
+         3. COMPONENTS (each mirrors a real one; the source is named in its comment)
+         AGENT: build your proposal from these classes.
+         ════════════════════════════════════════════════════════════════════════════════════════ */
+
+      /* Button (shadcn button.tsx). Variants: (default=primary) .btn-secondary .btn-outline
+         .btn-ghost .btn-accent .btn-destructive .btn-link. Sizes: .btn-xs .btn-sm (default) .btn-lg
+         .btn-icon. Usage: <button class="btn btn-outline btn-sm">Label</button> */
+      .btn {
+        display: inline-flex;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: var(--control-h);
+        padding: 0 var(--control-px);
+        border: 0;
+        border-radius: var(--corner);
+        background: var(--primary);
+        color: var(--primary-foreground);
+        font-size: var(--text-sm);
+        font-weight: 500;
+        white-space: nowrap;
+        cursor: pointer;
+        box-shadow: var(--elevation-xs);
+        transition:
+          background-color var(--duration-fast) var(--easing-out),
+          color var(--duration-fast) var(--easing-out);
+        user-select: none;
+      }
+      .btn:hover {
+        background: var(--primary-hover);
+      }
+      .btn:focus-visible,
+      .icon-btn:focus-visible,
+      .seg button:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 40%, transparent);
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+      .btn-secondary {
+        background: var(--secondary);
+        color: var(--secondary-foreground);
+        box-shadow: none;
+      }
+      .btn-secondary:hover {
+        background: var(--secondary-hover);
+      }
+      .btn-outline {
+        border: 1px solid var(--border-strong);
+        background: var(--surface);
+        color: var(--foreground);
+      }
+      .btn-outline:hover {
+        background: var(--hover);
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--muted-foreground);
+        box-shadow: none;
+      }
+      .btn-ghost:hover {
+        background: var(--hover);
+        color: var(--foreground);
+      }
+      .btn-accent {
+        background: var(--accent);
+        color: var(--accent-foreground);
+      }
+      .btn-accent:hover {
+        background: var(--accent-hover);
+      }
+      .btn-destructive {
+        background: var(--destructive);
+        color: var(--destructive-foreground);
+      }
+      .btn-destructive:hover {
+        background: var(--destructive-hover);
+      }
+      .btn-link {
+        background: none;
+        color: var(--primary);
+        box-shadow: none;
+        padding: 0;
+        height: auto;
+      }
+      .btn-link:hover {
+        background: none;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+      .btn-xs {
+        height: 24px;
+        gap: 4px;
+        padding: 0 6px;
+        border-radius: var(--corner-sm);
+        font-size: var(--text-xs);
+      }
+      .btn-sm {
+        height: var(--control-h-sm);
+        gap: 6px;
+        padding: 0 10px;
+      }
+      .btn-lg {
+        height: var(--control-h-lg);
+        padding: 0 20px;
+        font-size: var(--text-base);
+      }
+      .btn-icon {
+        width: var(--control-h);
+        padding: 0;
+      }
+
+      /* IconButton (kit/icon-button) and ToolButton (canvas-ui, = .icon-btn-lg).
+         Sizes: .icon-btn-xs (24) .icon-btn-sm (28) (default 32) .icon-btn-lg (36, toolbars and rail).
+         Active: aria-pressed="true". Tooltip: data-tip="Label" data-kbd="V" (data-tip-side="bottom|right"). */
+      .icon-btn {
+        position: relative;
+        display: inline-flex;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        width: var(--control-h);
+        height: var(--control-h);
+        padding: 0;
+        border: 0;
+        border-radius: var(--corner);
+        background: transparent;
+        color: var(--muted-foreground);
+        cursor: pointer;
+        transition:
+          background-color var(--duration-fast) var(--easing-out),
+          color var(--duration-fast) var(--easing-out);
+      }
+      .icon-btn:hover,
+      .icon-btn[data-open="true"] {
+        background: var(--hover);
+        color: var(--foreground);
+      }
+      .icon-btn[aria-pressed="true"] {
+        background: var(--primary-soft);
+        color: var(--primary-soft-foreground);
+      }
+      .icon-btn:disabled {
+        opacity: 0.4;
+        pointer-events: none;
+      }
+      .icon-btn-xs {
+        width: 24px;
+        height: 24px;
+        border-radius: var(--corner-sm);
+      }
+      .icon-btn-xs .i {
+        width: 14px;
+        height: 14px;
+      }
+      .icon-btn-sm {
+        width: var(--control-h-sm);
+        height: var(--control-h-sm);
+      }
+      .icon-btn-lg {
+        width: 36px;
+        height: 36px;
+      }
+      .icon-btn-lg .i {
+        width: 18px;
+        height: 18px;
+      }
+      .icon-btn-outline {
+        border: 1px solid var(--border-strong);
+        background: var(--surface);
+        box-shadow: var(--elevation-xs);
+      }
+
+      /* Tooltip (shadcn tooltip): any element with data-tip. Shortcut chip from data-kbd. */
+      [data-tip] {
+        position: relative;
+      }
+      [data-tip]:hover::after {
+        content: attr(data-tip);
+        position: absolute;
+        z-index: 100;
+        left: 50%;
+        bottom: calc(100% + 6px);
+        transform: translateX(-50%);
+        padding: 4px 8px;
+        border-radius: var(--corner);
+        background: var(--foreground);
+        color: var(--background);
+        font-size: var(--text-xs);
+        line-height: 1rem;
+        font-weight: 500;
+        white-space: nowrap;
+        pointer-events: none;
+      }
+      [data-tip][data-kbd]:hover::after {
+        content: attr(data-tip) "  " attr(data-kbd);
+      }
+      [data-tip-side="bottom"]:hover::after {
+        bottom: auto;
+        top: calc(100% + 6px);
+      }
+      [data-tip-side="right"]:hover::after {
+        left: calc(100% + 6px);
+        bottom: auto;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      /* Badge (shadcn badge). Variants: (default=primary soft) .badge-secondary .badge-accent
+         .badge-outline .badge-board .badge-design .badge-destructive .badge-success .badge-warning */
+      .badge {
+        display: inline-flex;
+        flex-shrink: 0;
+        align-items: center;
+        gap: 4px;
+        width: fit-content;
+        padding: 2px 6px;
+        border-radius: var(--corner-sm);
+        background: var(--primary-soft);
+        color: var(--primary-soft-foreground);
+        font-size: var(--text-xs);
+        line-height: 1rem;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+      .badge .i {
+        width: 12px;
+        height: 12px;
+      }
+      .badge-secondary {
+        background: var(--secondary);
+        color: var(--secondary-foreground);
+      }
+      .badge-accent {
+        background: var(--accent-soft);
+        color: var(--accent-soft-foreground);
+      }
+      .badge-outline {
+        background: none;
+        border: 1px solid var(--border-strong);
+        color: var(--muted-foreground);
+      }
+      .badge-board {
+        background: var(--board-soft);
+        color: var(--board-foreground);
+      }
+      .badge-design {
+        background: var(--design-soft);
+        color: var(--design-foreground);
+      }
+      .badge-destructive {
+        background: var(--destructive-soft);
+        color: var(--destructive);
+      }
+      .badge-success {
+        background: var(--success-soft);
+        color: var(--success);
+      }
+      .badge-warning {
+        background: var(--warning-soft);
+        color: var(--warning);
+      }
+
+      /* Kbd: a key cap in menus and hints */
+      .kbd {
+        margin-left: auto;
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+        letter-spacing: 0.04em;
+      }
+
+      /* Separator */
+      .sep {
+        height: 1px;
+        margin: 4px 0;
+        background: var(--border);
+      }
+      .vsep {
+        width: 1px;
+        height: 24px;
+        margin: 0 4px;
+        background: var(--border);
+        flex-shrink: 0;
+      }
+
+      /* Section (kit/section, PanelSection): a titled block of a side panel, a rule under it.
+         Collapsible: use <details class="section" open><summary class="section-head">…</summary>…
+         Non collapsible: <section class="section"><header class="section-head">…</header>…</section> */
+      .section {
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      .section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        height: 24px;
+        font-size: var(--text-xs);
+        font-weight: 600;
+        list-style: none;
+        cursor: default;
+      }
+      .section-head::-webkit-details-marker {
+        display: none;
+      }
+      details.section > .section-head {
+        cursor: pointer;
+      }
+      details.section > .section-head .chev {
+        transition: transform var(--duration-fast) var(--easing-out);
+        color: var(--muted-foreground);
+      }
+      details.section[open] > .section-head .chev {
+        transform: rotate(90deg);
+      }
+      .section-actions {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+      }
+      .section-body {
+        margin-top: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      /* FieldBox (kit/field-box): the compact panel field. A muted box holding a label and a bare
+         input. <label class="field-box"><span class="field-label">X</span><input value="120"></label> */
+      .field-box {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        height: var(--control-h-sm);
+        padding: 0 8px;
+        border: 1px solid transparent;
+        border-radius: var(--corner-sm);
+        background: var(--muted);
+        font-size: var(--text-xs);
+      }
+      .field-box:hover {
+        border-color: var(--border);
+      }
+      .field-box:focus-within {
+        border-color: var(--ring);
+        background: var(--surface);
+      }
+      .field-box.is-invalid {
+        border-color: var(--destructive);
+      }
+      .field-box input {
+        width: 100%;
+        min-width: 0;
+        padding: 0;
+        border: 0;
+        outline: 0;
+        background: none;
+        font-size: var(--text-xs);
+        font-variant-numeric: tabular-nums;
+      }
+      .field-label {
+        flex-shrink: 0;
+        color: var(--muted-foreground);
+      }
+      .field-label .i {
+        width: 13px;
+        height: 13px;
+      }
+
+      /* PropertyGrid: fields two per row (or .grid-3 for three) */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+      }
+
+      /* Field (kit/field): a labelled control in a dialog or settings page */
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .field-title {
+        font-size: var(--text-sm);
+        font-weight: 500;
+      }
+      .field-hint {
+        font-size: var(--text-xs);
+        color: var(--muted-foreground);
+      }
+
+      /* Input (shadcn input): a full-size text field for dialogs and pages */
+      .input {
+        width: 100%;
+        height: var(--control-h);
+        padding: 0 10px;
+        border: 1px solid var(--input);
+        border-radius: var(--corner);
+        background: var(--surface);
+        font-size: var(--text-sm);
+        outline: none;
+        box-shadow: var(--elevation-xs);
+      }
+      .input:focus {
+        border-color: var(--ring);
+        box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 40%, transparent);
+      }
+      .input::placeholder {
+        color: var(--subtle-foreground);
+      }
+      textarea.input {
+        height: auto;
+        min-height: 72px;
+        padding: 8px 10px;
+        resize: vertical;
+      }
+
+      /* SelectField (kit/select-field). Native select styled like the app's. .select-sm for panels */
+      .select {
+        appearance: none;
+        width: 100%;
+        height: var(--control-h);
+        padding: 0 28px 0 10px;
+        border: 1px solid var(--input);
+        border-radius: var(--corner);
+        background: var(--surface)
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+          no-repeat right 8px center;
+        font-size: var(--text-sm);
+        cursor: pointer;
+        outline: none;
+      }
+      .select:focus {
+        border-color: var(--ring);
+      }
+      .select-sm {
+        height: var(--control-h-sm);
+        border-color: transparent;
+        background-color: var(--muted);
+        font-size: var(--text-xs);
+        border-radius: var(--corner-sm);
+      }
+      .select-sm:hover {
+        border-color: var(--border);
+      }
+
+      /* SegmentedControl (kit/segmented-control): one choice out of a few.
+         <div class="seg" role="radiogroup"><button role="radio" aria-checked="true">A</button>…</div>
+         .seg-sm (28px), .seg-full (fills the row), .seg-icons (square icon buttons) */
+      .seg {
+        display: inline-flex;
+        align-items: stretch;
+        gap: 2px;
+        height: var(--control-h);
+        padding: 2px;
+        border-radius: var(--corner);
+        background: var(--muted);
+      }
+      .seg-sm {
+        height: var(--control-h-sm);
+      }
+      .seg-full {
+        display: flex;
+        width: 100%;
+      }
+      .seg button {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        min-width: 0;
+        padding: 0 10px;
+        border: 0;
+        border-radius: var(--corner-sm);
+        background: none;
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+        font-weight: 500;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+      .seg-full button {
+        flex: 1;
+      }
+      .seg-icons button {
+        aspect-ratio: 1;
+        padding: 0;
+      }
+      .seg button .i {
+        width: 14px;
+        height: 14px;
+      }
+      .seg button:hover {
+        color: var(--foreground);
+      }
+      .seg button[aria-checked="true"] {
+        background: var(--surface);
+        color: var(--foreground);
+        box-shadow: var(--elevation-xs);
+      }
+
+      /* Switch (shadcn switch, kit/switch-field). <button class="switch" role="switch" aria-checked="true"> */
+      .switch {
+        position: relative;
+        flex-shrink: 0;
+        width: 32px;
+        height: 18px;
+        padding: 0;
+        border: 0;
+        border-radius: var(--corner);
+        background: var(--input);
+        cursor: pointer;
+        transition: background-color var(--duration-fast) var(--easing-out);
+      }
+      .switch::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 14px;
+        height: 14px;
+        border-radius: var(--corner-sm);
+        background: var(--surface);
+        box-shadow: var(--elevation-soft);
+        transition: transform var(--duration-fast) var(--easing-out);
+      }
+      .switch[aria-checked="true"] {
+        background: var(--primary);
+      }
+      .switch[aria-checked="true"]::after {
+        transform: translateX(14px);
+      }
+
+      /* Checkbox (kit/checkbox): <label class="check"><input type="checkbox" checked> Label</label> */
+      .check {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: var(--text-xs);
+        cursor: pointer;
+      }
+      .check input {
+        width: 14px;
+        height: 14px;
+        margin: 0;
+        accent-color: var(--primary);
+        border-radius: var(--corner-sm);
+      }
+
+      /* Swatch (kit/swatch): a color chip. Its color is DATA, so an inline background is fine. */
+      .swatch {
+        flex-shrink: 0;
+        width: 16px;
+        height: 16px;
+        border-radius: var(--corner-sm);
+        box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--foreground) 12%, transparent);
+      }
+
+      /* ListRow (kit/list-row): a row of a list or tree. aria-pressed="true" = selected.
+         Indent a tree level with style="--depth: 1" (12px per level). .list-row-md for 32px rows. */
+      .list-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        height: var(--row-h);
+        padding: 0 4px 0 calc(8px + var(--depth, 0) * 12px);
+        border-radius: var(--corner-sm);
+        font-size: var(--text-xs);
+        cursor: pointer;
+        user-select: none;
+      }
+      .list-row:hover {
+        background: var(--hover);
+      }
+      .list-row[aria-pressed="true"] {
+        background: var(--primary-soft);
+        color: var(--primary-soft-foreground);
+      }
+      .list-row .row-icon {
+        display: flex;
+        color: var(--muted-foreground);
+      }
+      .list-row .row-icon .i {
+        width: 14px;
+        height: 14px;
+      }
+      .list-row .row-label {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .list-row .row-meta {
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+      }
+      .list-row .row-actions {
+        display: flex;
+        gap: 2px;
+        opacity: 0;
+      }
+      .list-row:hover .row-actions {
+        opacity: 1;
+      }
+      .list-row.is-muted {
+        color: var(--subtle-foreground);
+      }
+      .list-row-md {
+        height: auto;
+        min-height: var(--control-h);
+        padding-top: 6px;
+        padding-bottom: 6px;
+        font-size: var(--text-sm);
+      }
+
+      /* Tabs (shadcn tabs): <div class="tabs-list"><button class="tab" data-tab="a" aria-selected="true"> */
+      .tabs-list {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        height: 28px;
+        padding: 2px;
+        border-radius: var(--corner);
+        background: var(--muted);
+      }
+      .tab {
+        height: 100%;
+        padding: 0 10px;
+        border: 0;
+        border-radius: var(--corner-sm);
+        background: none;
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+        font-weight: 500;
+        cursor: pointer;
+      }
+      .tab:hover {
+        color: var(--foreground);
+      }
+      .tab[aria-selected="true"] {
+        background: var(--surface);
+        color: var(--foreground);
+        box-shadow: var(--elevation-xs);
+      }
+
+      /* FloatingPanel (canvas-ui): chrome that floats over the canvas (the board's top bar) */
+      .floating-panel {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        padding: 4px;
+        border: 1px solid var(--border);
+        border-radius: var(--corner-card);
+        background: var(--surface);
+        box-shadow: var(--elevation-lifted);
+      }
+
+      /* Toolbar (kit/toolbar): the floating tool bar at the bottom of the canvas.
+         <div class="toolbar"><div class="toolbar-group">…icon-btn-lg…</div><div class="toolbar-group">… */
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px;
+        border: 1px solid var(--border);
+        border-radius: var(--corner-card);
+        background: var(--surface);
+        box-shadow: var(--elevation-lifted);
+      }
+      .toolbar-group {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+      }
+      .toolbar-group + .toolbar-group {
+        padding-left: 4px;
+        border-left: 1px solid var(--border);
+      }
+
+      /* Card (kit selectable-card / shadcn card) */
+      .card {
+        border: 1px solid var(--border);
+        border-radius: var(--corner-card);
+        background: var(--surface);
+        box-shadow: var(--elevation-soft);
+      }
+      .card-selectable {
+        cursor: pointer;
+        transition: border-color var(--duration-fast) var(--easing-out);
+      }
+      .card-selectable:hover {
+        border-color: var(--border-strong);
+      }
+      .card-selectable[aria-pressed="true"] {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 1px var(--primary);
+      }
+
+      /* Menu (shadcn dropdown-menu / context-menu / popover).
+         <div class="menu" id="my-menu" hidden> <button class="menu-item">…<span class="kbd">Ctrl+S</span></button>
+         <div class="sep"></div> <div class="menu-label">Group</div> … </div>
+         Open it with data-menu="#my-menu" on a trigger (see the script). .popover for a padded panel. */
+      .menu {
+        position: fixed;
+        z-index: 50;
+        min-width: 200px;
+        padding: 4px;
+        border: 1px solid var(--border);
+        border-radius: var(--corner-card);
+        background: var(--popover);
+        color: var(--popover-foreground);
+        box-shadow: var(--elevation-popover);
+        font-size: var(--text-sm);
+      }
+      .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        height: 30px;
+        padding: 0 8px;
+        border: 0;
+        border-radius: var(--corner-sm);
+        background: none;
+        text-align: left;
+        cursor: pointer;
+      }
+      .menu-item:hover {
+        background: var(--hover);
+      }
+      .menu-item .i {
+        color: var(--muted-foreground);
+      }
+      .menu-item.is-destructive {
+        color: var(--destructive);
+      }
+      .menu-item.is-destructive .i {
+        color: var(--destructive);
+      }
+      .menu-label {
+        padding: 6px 8px 4px;
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+        font-weight: 500;
+      }
+      .popover {
+        padding: 12px;
+        min-width: 240px;
+      }
+
+      /* Dialog (kit/app-dialog). A native <dialog class="dialog">, opened with data-dialog="#id". */
+      .dialog {
+        width: min(480px, calc(100vw - 32px));
+        padding: 0;
+        border: 1px solid var(--border);
+        border-radius: var(--corner-max);
+        background: var(--surface);
+        color: var(--foreground);
+        box-shadow: var(--elevation-popover);
+      }
+      .dialog::backdrop {
+        background: var(--overlay);
+      }
+      .dialog-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 20px 20px 0;
+      }
+      .dialog-title {
+        font-size: var(--text-lg);
+        font-weight: 600;
+        letter-spacing: -0.015em;
+      }
+      .dialog-desc {
+        margin-top: 4px;
+        color: var(--muted-foreground);
+        font-size: var(--text-sm);
+      }
+      .dialog-body {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px 20px;
+      }
+      .dialog-foot {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 12px 20px;
+        border-top: 1px solid var(--border);
+        background: var(--surface-sunken);
+        border-radius: 0 0 var(--corner-max) var(--corner-max);
+      }
+
+      /* Toast (sonner). Shown by data-toast="Message" (see the script). */
+      .toasts {
+        position: fixed;
+        z-index: 200;
+        right: 16px;
+        bottom: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .toast {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 280px;
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        border-radius: var(--corner-card);
+        background: var(--popover);
+        box-shadow: var(--elevation-popover);
+        font-size: var(--text-sm);
+        animation: toast-in 200ms var(--easing-out);
+      }
+      .toast .i {
+        color: var(--success);
+      }
+      @keyframes toast-in {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+      }
+
+      /* EmptyState (kit/empty-state) */
+      .empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 24px 16px;
+        text-align: center;
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+      }
+      .empty strong {
+        color: var(--foreground);
+        font-size: var(--text-sm);
+        font-weight: 500;
+      }
+
+      /* Avatar (CollaboratorStack): the one circle allowed. Its color is the collaborator's. */
+      .avatar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 2px solid var(--surface);
+        color: oklch(1 0 0);
+        font-size: 10px;
+        font-weight: 600;
+      }
+      .avatars {
+        display: flex;
+      }
+      .avatars .avatar + .avatar {
+        margin-left: -6px;
+      }
+
+      /* Search input (kit/search-input) */
+      .search {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        height: var(--control-h-sm);
+        padding: 0 8px;
+        border-radius: var(--corner-sm);
+        background: var(--muted);
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+      }
+      .search input {
+        flex: 1;
+        min-width: 0;
+        border: 0;
+        outline: 0;
+        background: none;
+        font-size: var(--text-xs);
+        color: var(--foreground);
+      }
+
+      /* A proposal marker: a dashed outline so the user sees what's new. Remove for final looks. */
+      .proposal {
+        outline: 2px dashed var(--accent);
+        outline-offset: 2px;
+      }
+
+      /* ════════════════════════════════════════════════════════════════════════════════════════
+         4. EDITOR LAYOUTS
+         ════════════════════════════════════════════════════════════════════════════════════════ */
+      .layout-design,
+      .layout-board {
+        position: fixed;
+        inset: 0;
+      }
+      body:not([data-layout="design"]) .layout-design,
+      body:not([data-layout="board"]) .layout-board {
+        display: none;
+      }
+
+      /* The canvas fills the window; the chrome sits over it (like DesignChrome / BoardChrome). */
+      .canvas {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        background: var(--canvas-background);
+      }
+      /* The board shows a dot grid; the design canvas is plain. */
+      .canvas-dots {
+        background-image: radial-gradient(var(--canvas-grid) 1px, transparent 1px);
+        background-size: 24px 24px;
+      }
+      /* The world: everything on the canvas is positioned inside it, in px (left/top = x/y). */
+      .world {
+        position: absolute;
+        inset: 0;
+      }
+      .world > * {
+        position: absolute;
+      }
+
+      /* Design editor: rail + left panel on the left, properties panel on the right. */
+      .design-left {
+        position: absolute;
+        inset: 0 auto 0 0;
+        z-index: 10;
+        display: flex;
+      }
+      .design-right {
+        position: absolute;
+        inset: 0 0 0 auto;
+        z-index: 10;
+        display: flex;
+      }
+      .design-viewport {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: calc(var(--rail-w) + var(--left-w));
+        right: var(--right-w);
+      }
+      .layout-design.left-closed .design-viewport {
+        left: var(--rail-w);
+      }
+      .layout-design.right-closed .design-viewport {
+        right: 0;
+      }
+
+      .rail {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        width: var(--rail-w);
+        padding: 8px 0;
+        border-right: 1px solid var(--border);
+        background: var(--surface);
+      }
+      .rail .logo {
+        margin-bottom: 8px;
+      }
+      .left-panel {
+        display: flex;
+        flex-direction: column;
+        width: var(--left-w);
+        border-right: 1px solid var(--border);
+        background: var(--surface);
+      }
+      .left-panel-head {
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      .file-name {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: var(--text-sm);
+        font-weight: 600;
+      }
+      .panel-scroll {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        /* Room so the last controls scroll clear of the floating toolbar, like the app's pb-75. */
+        padding-bottom: 300px;
+      }
+      .props-panel {
+        display: flex;
+        flex-direction: column;
+        width: var(--right-w);
+        border-left: 1px solid var(--border);
+        background: var(--surface);
+      }
+      .props-head {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        height: 48px;
+        padding: 0 8px;
+        border-bottom: 1px solid var(--border);
+      }
+      .props-tabs {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 44px;
+        padding: 0 8px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      /* Rulers (design editor) */
+      .ruler-top,
+      .ruler-left {
+        position: absolute;
+        z-index: 5;
+        background-color: var(--canvas-ruler);
+        color: var(--canvas-ruler-foreground);
+        border-color: var(--canvas-ruler-border);
+        font-size: 9px;
+      }
+      .ruler-top {
+        top: 0;
+        left: 20px;
+        right: 0;
+        height: 20px;
+        border-bottom: 1px solid var(--canvas-ruler-border);
+        background-image: linear-gradient(90deg, var(--canvas-ruler-border) 1px, transparent 1px);
+        background-size: 50px 6px;
+        background-repeat: repeat-x;
+        background-position: 0 bottom;
+      }
+      .ruler-left {
+        top: 20px;
+        left: 0;
+        bottom: 0;
+        width: 20px;
+        border-right: 1px solid var(--canvas-ruler-border);
+        background-image: linear-gradient(0deg, var(--canvas-ruler-border) 1px, transparent 1px);
+        background-size: 6px 50px;
+        background-repeat: repeat-y;
+        background-position: right 0;
+      }
+      .ruler-corner {
+        position: absolute;
+        z-index: 6;
+        top: 0;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        background: var(--canvas-ruler);
+        border-right: 1px solid var(--canvas-ruler-border);
+        border-bottom: 1px solid var(--canvas-ruler-border);
+      }
+
+      /* Floating bits over the canvas */
+      .canvas-bottom {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 16px;
+        z-index: 8;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        pointer-events: none;
+      }
+      .canvas-bottom > * {
+        pointer-events: auto;
+      }
+      .show-props {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 8;
+      }
+
+      /* Canvas content: frames (design) */
+      .frame-label {
+        position: absolute;
+        top: -20px;
+        left: 0;
+        color: var(--muted-foreground);
+        font-size: var(--text-xs);
+        white-space: nowrap;
+      }
+      .frame {
+        background: oklch(1 0 0); /* canvas content: a frame's fill is document data */
+        box-shadow: 0 1px 3px hsl(var(--shadow-color) / 0.12);
+      }
+      /* Selection on the canvas: the outline, the 8 handles and the size label */
+      .selected {
+        outline: 1px solid var(--canvas-selection);
+      }
+      .handles {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+      .handles i {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        margin: -4px 0 0 -4px;
+        border: 1px solid var(--canvas-selection);
+        background: oklch(1 0 0);
+      }
+      .size-label {
+        position: absolute;
+        left: 50%;
+        bottom: -24px;
+        transform: translateX(-50%);
+        padding: 1px 6px;
+        border-radius: var(--corner-sm);
+        background: var(--canvas-selection);
+        color: oklch(1 0 0);
+        font-size: 10px;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      /* Canvas content: board elements (stickies, shapes, sections). Their colors are data. */
+      .sticky {
+        width: 200px;
+        height: 200px;
+        padding: 16px;
+        box-shadow:
+          0 1px 2px hsl(var(--shadow-color) / 0.1),
+          0 6px 14px -6px hsl(var(--shadow-color) / 0.25);
+        color: oklch(0.27 0.02 256);
+        font-size: 16px;
+        line-height: 1.35;
+      }
+      .board-section {
+        border: 1px solid var(--border-strong);
+        border-radius: var(--corner-card);
+        background: color-mix(in oklch, var(--surface) 60%, transparent);
+      }
+      .board-section-title {
+        position: absolute;
+        top: -28px;
+        left: 0;
+        padding: 2px 8px;
+        border-radius: var(--corner);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        font-size: var(--text-sm);
+        font-weight: 500;
+      }
+
+      /* Board editor: floating top bar, bottom toolbar, zoom, side panels */
+      .board-top {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        z-index: 8;
+      }
+      .board-side {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        bottom: 64px;
+        z-index: 8;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .board-zoom {
+        position: absolute;
+        right: 12px;
+        bottom: 16px;
+        z-index: 8;
+      }
+      .side-panel {
+        display: flex;
+        flex-direction: column;
+        width: 280px;
+        max-height: 100%;
+        border: 1px solid var(--border);
+        border-radius: var(--corner-card);
+        background: var(--surface);
+        box-shadow: var(--elevation-lifted);
+      }
+      .side-panel-head {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        height: 44px;
+        padding: 0 8px 0 12px;
+        border-bottom: 1px solid var(--border);
+        font-size: var(--text-sm);
+        font-weight: 600;
+      }
+
+      /* PROTOTYPE ONLY: the bar to flip theme and layout. Not part of the app. */
+      .proto-bar {
+        position: fixed;
+        z-index: 300;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 4px 4px 10px;
+        border: 1px dashed var(--accent);
+        border-radius: var(--corner-card);
+        background: var(--popover);
+        box-shadow: var(--elevation-popover);
+        font-size: var(--text-xs);
+      }
+      .proto-bar .note {
+        max-width: 320px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* ════════════════════════════════════════════════════════════════════════════════════════
+         5. AGENT: ADD YOUR OWN CSS HERE
+         Build it from the variables above (var(--surface), var(--corner), var(--control-h-sm), …).
+         No literal colors in chrome, no radius above 8px, no pills.
+         ════════════════════════════════════════════════════════════════════════════════════════ */
+    </style>
+  </head>
+
+  <!-- The theme is on <html data-theme="light|dark">. Keep data-layout as it is: the CSS uses it. -->
+  <body data-layout="design">
+    <!-- ══ ICONS (lucide). Use: <svg class="i"><use href="#i-NAME" /></svg> ══════════════════════
+         AGENT: add icons here as <symbol>, with paths copied from lucide.dev. -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="i-pointer" viewBox="0 0 24 24">
+        <path
+          d="M4.037 4.688a.495.495 0 0 1 .651-.651l16 6.5a.5.5 0 0 1-.063.947l-6.124 1.58a2 2 0 0 0-1.438 1.435l-1.579 6.126a.5.5 0 0 1-.947.063z"
+        />
+      </symbol>
+      <symbol id="i-hand" viewBox="0 0 24 24">
+        <path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2" />
+        <path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2" />
+        <path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8" />
+        <path
+          d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"
+        />
+      </symbol>
+      <symbol id="i-frame" viewBox="0 0 24 24">
+        <line x1="22" x2="2" y1="6" y2="6" />
+        <line x1="22" x2="2" y1="18" y2="18" />
+        <line x1="6" x2="6" y1="2" y2="22" />
+        <line x1="18" x2="18" y1="2" y2="22" />
+      </symbol>
+      <symbol id="i-square" viewBox="0 0 24 24">
+        <rect width="18" height="18" x="3" y="3" rx="2" />
+      </symbol>
+      <symbol id="i-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /></symbol>
+      <symbol id="i-type" viewBox="0 0 24 24">
+        <path d="M12 4v16" />
+        <path d="M4 7V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2" />
+        <path d="M9 20h6" />
+      </symbol>
+      <symbol id="i-pen" viewBox="0 0 24 24">
+        <path
+          d="M15.707 21.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 1 0-1.414l5.586-5.586a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 1 0 1.414z"
+        />
+        <path
+          d="m18 13-1.375-6.874a1 1 0 0 0-.746-.776L3.235 2.028a1 1 0 0 0-1.207 1.207L5.35 15.879a1 1 0 0 0 .776.746L13 18"
+        />
+        <path d="m2.3 2.3 7.286 7.286" />
+        <circle cx="11" cy="11" r="2" />
+      </symbol>
+      <symbol id="i-image" viewBox="0 0 24 24">
+        <rect width="18" height="18" x="3" y="3" rx="2" />
+        <circle cx="9" cy="9" r="2" />
+        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+      </symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24">
+        <path
+          d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"
+        />
+        <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+        <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+      </symbol>
+      <symbol id="i-shapes" viewBox="0 0 24 24">
+        <path
+          d="M8.3 10a.7.7 0 0 1-.626-1.079L11.4 3a.7.7 0 0 1 1.198-.043L16.3 8.9a.7.7 0 0 1-.572 1.1Z"
+        />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <circle cx="17.5" cy="17.5" r="3.5" />
+      </symbol>
+      <symbol id="i-puzzle" viewBox="0 0 24 24">
+        <path
+          d="M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z"
+        />
+      </symbol>
+      <symbol id="i-undo" viewBox="0 0 24 24">
+        <path d="M9 14 4 9l5-5" />
+        <path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11" />
+      </symbol>
+      <symbol id="i-redo" viewBox="0 0 24 24">
+        <path d="m15 14 5-5-5-5" />
+        <path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13" />
+      </symbol>
+      <symbol id="i-panel-left-close" viewBox="0 0 24 24">
+        <rect width="18" height="18" x="3" y="3" rx="2" />
+        <path d="M9 3v18" />
+        <path d="m16 15-3-3 3-3" />
+      </symbol>
+      <symbol id="i-panel-right-close" viewBox="0 0 24 24">
+        <rect width="18" height="18" x="3" y="3" rx="2" />
+        <path d="M15 3v18" />
+        <path d="m8 9 3 3-3 3" />
+      </symbol>
+      <symbol id="i-panel-right-open" viewBox="0 0 24 24">
+        <rect width="18" height="18" x="3" y="3" rx="2" />
+        <path d="M15 3v18" />
+        <path d="m10 15-3-3 3-3" />
+      </symbol>
+      <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol>
+      <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24">
+        <path d="M5 12h14" />
+        <path d="M12 5v14" />
+      </symbol>
+      <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" /></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24">
+        <path
+          d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"
+        />
+        <circle cx="12" cy="12" r="3" />
+      </symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24">
+        <rect width="18" height="11" x="3" y="11" rx="2" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+      </symbol>
+      <symbol id="i-bot" viewBox="0 0 24 24">
+        <path d="M12 8V4H8" />
+        <rect width="16" height="12" x="4" y="8" rx="2" />
+        <path d="M2 14h2" />
+        <path d="M20 14h2" />
+        <path d="M15 13v2" />
+        <path d="M9 13v2" />
+      </symbol>
+      <symbol id="i-share" viewBox="0 0 24 24">
+        <path d="M12 2v13" />
+        <path d="m16 6-4-4-4 4" />
+        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+      </symbol>
+      <symbol id="i-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.3-4.3" />
+      </symbol>
+      <symbol id="i-x" viewBox="0 0 24 24">
+        <path d="M18 6 6 18" />
+        <path d="m6 6 12 12" />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></symbol>
+      <symbol id="i-arrow-left" viewBox="0 0 24 24">
+        <path d="m12 19-7-7 7-7" />
+        <path d="M19 12H5" />
+      </symbol>
+      <symbol id="i-arrow-right" viewBox="0 0 24 24">
+        <path d="M5 12h14" />
+        <path d="m12 5 7 7-7 7" />
+      </symbol>
+      <symbol id="i-arrow-down" viewBox="0 0 24 24">
+        <path d="M12 5v14" />
+        <path d="m19 12-7 7-7-7" />
+      </symbol>
+      <symbol id="i-save" viewBox="0 0 24 24">
+        <path
+          d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+        />
+        <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" />
+        <path d="M7 3v4a1 1 0 0 0 1 1h7" />
+      </symbol>
+      <symbol id="i-sticky" viewBox="0 0 24 24">
+        <path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z" />
+        <path d="M15 3v4a2 2 0 0 0 2 2h4" />
+      </symbol>
+      <symbol id="i-connector" viewBox="0 0 24 24">
+        <circle cx="19" cy="5" r="2" />
+        <circle cx="5" cy="19" r="2" />
+        <path d="M5 17A12 12 0 0 1 17 5" />
+      </symbol>
+      <symbol id="i-table" viewBox="0 0 24 24">
+        <path d="M12 3v18" />
+        <rect width="18" height="18" x="3" y="3" rx="2" />
+        <path d="M3 9h18" />
+        <path d="M3 15h18" />
+      </symbol>
+      <symbol id="i-section" viewBox="0 0 24 24">
+        <path d="M5 3a2 2 0 0 0-2 2" />
+        <path d="M19 3a2 2 0 0 1 2 2" />
+        <path d="M21 19a2 2 0 0 1-2 2" />
+        <path d="M5 21a2 2 0 0 1-2-2" />
+        <path d="M9 3h1" />
+        <path d="M9 21h1" />
+        <path d="M14 3h1" />
+        <path d="M14 21h1" />
+        <path d="M3 9v1" />
+        <path d="M21 9v1" />
+        <path d="M3 14v1" />
+        <path d="M21 14v1" />
+      </symbol>
+      <symbol id="i-smile" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+        <line x1="9" x2="9.01" y1="9" y2="9" />
+        <line x1="15" x2="15.01" y1="9" y2="9" />
+      </symbol>
+      <symbol id="i-comment" viewBox="0 0 24 24">
+        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+      </symbol>
+      <symbol id="i-rotate" viewBox="0 0 24 24">
+        <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+        <path d="M21 3v5h-5" />
+      </symbol>
+      <symbol id="i-download" viewBox="0 0 24 24">
+        <path d="M12 15V3" />
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+        <path d="m7 10 5 5 5-5" />
+      </symbol>
+      <symbol id="i-more" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="1" />
+        <circle cx="19" cy="12" r="1" />
+        <circle cx="5" cy="12" r="1" />
+      </symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24">
+        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+      </symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2" />
+        <path d="M12 20v2" />
+        <path d="m4.93 4.93 1.41 1.41" />
+        <path d="m17.66 17.66 1.41 1.41" />
+        <path d="M2 12h2" />
+        <path d="M20 12h2" />
+        <path d="m6.34 17.66-1.41 1.41" />
+        <path d="m19.07 4.93-1.41 1.41" />
+      </symbol>
+    </svg>
+
+    <!-- The mascot's mark (SealLogo variant="mark", src/shared/ui/brand/seal-logo.tsx). Brand art may
+         use the palette. Reuse it with <svg class="i i-lg"><use href="#seal-mark" /></svg>. -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="seal-mark" viewBox="0 0 64 64">
+        <defs>
+          <linearGradient id="seal-fur" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="oklch(0.87 0.011 250)" />
+            <stop offset="75%" stop-color="oklch(0.963 0.005 250)" />
+          </linearGradient>
+        </defs>
+        <g
+          stroke="oklch(0.27 0.02 256)"
+          stroke-width="2.4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <ellipse cx="32" cy="28" rx="20" ry="16.5" fill="url(#seal-fur)" />
+          <g stroke="none" fill="oklch(0.74 0.015 250)">
+            <ellipse cx="24" cy="15.5" rx="1.6" ry="1.1" />
+            <ellipse cx="31" cy="12.6" rx="1.2" ry="0.8" />
+            <ellipse cx="38.5" cy="14" rx="1.8" ry="1.2" />
+            <ellipse cx="45" cy="19" rx="1.3" ry="1" />
+          </g>
+          <g stroke="none" fill="oklch(0.85 0.085 35)" opacity="0.8">
+            <ellipse cx="19.5" cy="26" rx="3" ry="1.8" />
+            <ellipse cx="44.5" cy="26" rx="3" ry="1.8" />
+          </g>
+          <path d="M21.5 22.5q3-3 6 0M36.5 22.5q3-3 6 0" fill="none" />
+          <path
+            d="M32 26.2c-1-1.6-5.6-1.6-6 1.4-.3 2.4 2.6 3.4 4.4 2.6.8-.3 1.3-.8 1.6-1.3.3.5.8 1 1.6 1.3 1.8.8 4.7-.2 4.4-2.6-.4-3-5-3-6-1.4z"
+            fill="oklch(0.985 0.003 250)"
+            stroke-width="1.92"
+          />
+          <ellipse cx="32" cy="25.9" rx="1.7" ry="1.15" fill="oklch(0.27 0.02 256)" stroke="none" />
+          <rect x="8" y="33" width="48" height="25" rx="1.5" fill="oklch(1 0 0)" />
+          <ellipse
+            cx="17.5"
+            cy="34.5"
+            rx="4.6"
+            ry="2.6"
+            transform="rotate(-18 17.5 34.5)"
+            fill="oklch(0.87 0.011 250)"
+          />
+          <ellipse
+            cx="46.5"
+            cy="34.5"
+            rx="4.6"
+            ry="2.6"
+            transform="rotate(18 46.5 34.5)"
+            fill="oklch(0.87 0.011 250)"
+          />
+        </g>
+      </symbol>
+    </svg>
+
+    <!-- ══ PROTOTYPE BAR (not part of the app) ════════════════════════════════════════════════════
+         Lets the user flip the theme. AGENT: write one line on what you're proposing in .note. -->
+    <div class="proto-bar">
+      <span class="badge badge-accent">Prototype</span>
+      <span class="note">AGENT: one line on what this proposes</span>
+      <div class="seg seg-sm seg-icons" role="radiogroup" aria-label="Theme">
+        <button role="radio" aria-checked="true" data-set-theme="light" title="Light">
+          <svg class="i"><use href="#i-sun" /></svg>
+        </button>
+        <button role="radio" aria-checked="false" data-set-theme="dark" title="Dark">
+          <svg class="i"><use href="#i-moon" /></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════════════════════════
+         DESIGN EDITOR (/design/:id), mirrors src/products/design/ui/design-chrome.tsx
+         ┌──────┬──────────────┬──────────────────────────────┬────────────────┐
+         │ rail │ left panel   │ canvas (rulers, frames)      │ properties     │
+         │ 48px │ 240px        │        [tool options]        │ panel 256px    │
+         │      │              │        [  toolbar   ]        │                │
+         └──────┴──────────────┴──────────────────────────────┴────────────────┘
+         Panels close with the buttons (data-toggle-class); the canvas takes their room.
+         ══════════════════════════════════════════════════════════════════════════════════════ -->
+    <div class="layout-design" id="design">
+      <!-- The canvas. AGENT: canvas content goes inside .world, positioned with left/top in px. -->
+      <div class="design-viewport">
+        <div class="canvas">
+          <div class="ruler-corner"></div>
+          <div class="ruler-top"></div>
+          <div class="ruler-left"></div>
+
+          <div class="world">
+            <!-- A frame with its name above it. AGENT: ADD canvas content (frames, shapes, text). -->
+            <div style="left: 80px; top: 80px; width: 520px; height: 340px" class="frame">
+              <span class="frame-label">Desktop · 1</span>
+              <!-- Content inside a frame: positioned relative to the frame. -->
+              <div
+                style="
+                  position: absolute;
+                  left: 32px;
+                  top: 32px;
+                  width: 200px;
+                  height: 120px;
+                  background: oklch(0.85 0.07 245);
+                  border-radius: 4px;
+                "
+                class="selected"
+              >
+                <!-- The selection's handles and size label. Move this block to what's selected. -->
+                <div class="handles">
+                  <i style="left: 0; top: 0"></i><i style="left: 50%; top: 0"></i
+                  ><i style="left: 100%; top: 0"></i><i style="left: 100%; top: 50%"></i
+                  ><i style="left: 100%; top: 100%"></i><i style="left: 50%; top: 100%"></i
+                  ><i style="left: 0; top: 100%"></i><i style="left: 0; top: 50%"></i>
+                </div>
+                <span class="size-label">200 × 120</span>
+              </div>
+              <div
+                style="
+                  position: absolute;
+                  left: 32px;
+                  top: 184px;
+                  color: oklch(0.27 0.02 256);
+                  font-size: 24px;
+                  font-weight: 600;
+                "
+              >
+                Hello, seal
+              </div>
+            </div>
+          </div>
+
+          <!-- Shown when the properties panel is closed (ShowPropertiesButton). -->
+          <div class="show-props" id="show-props" hidden>
+            <button
+              class="icon-btn icon-btn-outline"
+              data-tip="Show properties"
+              data-tip-side="bottom"
+              data-toggle-class="#design:right-closed"
+              data-toggle="#show-props"
+            >
+              <svg class="i"><use href="#i-panel-right-open" /></svg>
+            </button>
+          </div>
+
+          <!-- Over the canvas's bottom edge: the tool options, then the toolbar (ModuleToolOptions,
+               ModuleToolbar). -->
+          <div class="canvas-bottom">
+            <!-- AGENT: ADD a tool's options bar here (a .toolbar with .seg / .field-box / buttons),
+                 shown above the toolbar while a tool is on. Example:
+            <div class="toolbar">
+              <div class="toolbar-group">
+                <div class="seg seg-sm"><button role="radio" aria-checked="true">Fill</button><button role="radio" aria-checked="false">Stroke</button></div>
+              </div>
+            </div> -->
+
+            <div class="toolbar" role="toolbar" aria-label="Tools" data-pick>
+              <div class="toolbar-group">
+                <button
+                  class="icon-btn icon-btn-lg"
+                  aria-pressed="true"
+                  data-tip="Move"
+                  data-kbd="V"
+                >
+                  <svg class="i"><use href="#i-pointer" /></svg>
+                </button>
+                <button
+                  class="icon-btn icon-btn-lg"
+                  aria-pressed="false"
+                  data-tip="Hand"
+                  data-kbd="H"
+                >
+                  <svg class="i"><use href="#i-hand" /></svg>
+                </button>
+              </div>
+              <div class="toolbar-group">
+                <button
+                  class="icon-btn icon-btn-lg"
+                  aria-pressed="false"
+                  data-tip="Frame"
+                  data-kbd="F"
+                >
+                  <svg class="i"><use href="#i-frame" /></svg>
+                </button>
+                <button
+                  class="icon-btn icon-btn-lg"
+                  aria-pressed="false"
+                  data-tip="Rectangle"
+                  data-kbd="R"
+                >
+                  <svg class="i"><use href="#i-square" /></svg>
+                </button>
+                <button
+                  class="icon-btn icon-btn-lg"
+                  aria-pressed="false"
+                  data-tip="Ellipse"
+                  data-kbd="O"
+                >
+                  <svg class="i"><use href="#i-circle" /></svg>
+                </button>
+                <button
+                  class="icon-btn icon-btn-lg"
+                  aria-pressed="false"
+                  data-tip="Pen"
+                  data-kbd="P"
+                >
+                  <svg class="i"><use href="#i-pen" /></svg>
+                </button>
+                <button
+                  class="icon-btn icon-btn-lg"
+                  aria-pressed="false"
+                  data-tip="Text"
+                  data-kbd="T"
+                >
+                  <svg class="i"><use href="#i-type" /></svg>
+                </button>
+                <button
+                  class="icon-btn icon-btn-lg"
+                  aria-pressed="false"
+                  data-tip="Image"
+                  data-kbd="Shift+Ctrl+K"
+                >
+                  <svg class="i"><use href="#i-image" /></svg>
+                </button>
+              </div>
+              <!-- AGENT: ADD a new tool as another .icon-btn-lg, or a new .toolbar-group. -->
+              <div class="toolbar-group">
+                <button
+                  class="icon-btn icon-btn-lg"
+                  aria-pressed="false"
+                  data-tip="Comment"
+                  data-kbd="C"
+                >
+                  <svg class="i"><use href="#i-comment" /></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Left side: the rail and the left panel (DesignRail, LeftPanel). data-tabs links the rail's
+           buttons (data-tab) to the panel's contents (data-tab-panel). -->
+      <div class="design-left" data-tabs>
+        <nav class="rail" aria-label="Panels">
+          <!-- The logo opens the main menu. -->
+          <button
+            class="icon-btn icon-btn-lg logo"
+            aria-label="Main menu"
+            data-menu="#main-menu"
+            data-side="right"
+          >
+            <svg class="i" style="width: 22px; height: 22px"><use href="#seal-mark" /></svg>
+          </button>
+          <button
+            class="icon-btn icon-btn-lg"
+            data-tab="layers"
+            aria-pressed="true"
+            data-tip="Layers"
+            data-tip-side="right"
+          >
+            <svg class="i"><use href="#i-layers" /></svg>
+          </button>
+          <button
+            class="icon-btn icon-btn-lg"
+            data-tab="assets"
+            aria-pressed="false"
+            data-tip="Assets"
+            data-tip-side="right"
+          >
+            <svg class="i"><use href="#i-shapes" /></svg>
+          </button>
+          <button
+            class="icon-btn icon-btn-lg"
+            data-tab="plugins"
+            aria-pressed="false"
+            data-tip="Plugins"
+            data-tip-side="right"
+          >
+            <svg class="i"><use href="#i-puzzle" /></svg>
+          </button>
+          <!-- AGENT: ADD a left panel tab: a button here with data-tab="NAME", and a
+               <div data-tab-panel="NAME" hidden> in .left-panel below. -->
+          <div class="grow"></div>
+          <div class="avatars" style="flex-direction: column; gap: 0">
+            <span class="avatar" style="background: oklch(0.6 0.15 33)">MC</span>
+          </div>
+          <button class="icon-btn icon-btn-lg" data-tip="Agents: on" data-tip-side="right">
+            <svg class="i"><use href="#i-bot" /></svg>
+          </button>
+          <button
+            class="icon-btn icon-btn-lg"
+            data-tip="Hide panel"
+            data-tip-side="right"
+            data-toggle-class="#design:left-closed"
+            data-toggle="#left-panel"
+          >
+            <svg class="i"><use href="#i-panel-left-close" /></svg>
+          </button>
+        </nav>
+
+        <aside class="left-panel" id="left-panel">
+          <!-- The file's name and state. -->
+          <header class="left-panel-head">
+            <div class="file-name">
+              Landing page
+              <svg class="i i-sm muted"><use href="#i-chevron-down" /></svg>
+            </div>
+            <div class="row muted text-xs" style="margin-top: 4px">
+              <span>Saved</span>
+              <span class="badge badge-design">Design</span>
+            </div>
+          </header>
+
+          <!-- Layers tab: the layer tree (ListRow per node, depth with --depth). -->
+          <div class="panel-scroll" data-tab-panel="layers">
+            <section class="section" style="border-bottom: 0">
+              <header class="section-head">
+                Pages
+                <div class="section-actions">
+                  <button class="icon-btn icon-btn-xs" data-tip="Add page">
+                    <svg class="i"><use href="#i-plus" /></svg>
+                  </button>
+                </div>
+              </header>
+              <div class="section-body" style="gap: 0" data-pick>
+                <div class="list-row" aria-pressed="true" data-pick-item>
+                  <span class="row-label">Page 1</span>
+                </div>
+                <div class="list-row" aria-pressed="false" data-pick-item>
+                  <span class="row-label">Components</span>
+                </div>
+              </div>
+            </section>
+            <div class="sep" style="margin: 0"></div>
+            <section class="section" style="border-bottom: 0">
+              <header class="section-head">Layers</header>
+              <div class="section-body" style="gap: 0" data-pick>
+                <div class="list-row" aria-pressed="false" data-pick-item>
+                  <span class="row-icon"
+                    ><svg class="i"><use href="#i-chevron-down" /></svg
+                  ></span>
+                  <span class="row-icon"
+                    ><svg class="i"><use href="#i-frame" /></svg
+                  ></span>
+                  <span class="row-label">Desktop · 1</span>
+                  <span class="row-actions">
+                    <button class="icon-btn icon-btn-xs" aria-label="Lock">
+                      <svg class="i"><use href="#i-lock" /></svg>
+                    </button>
+                    <button class="icon-btn icon-btn-xs" aria-label="Hide">
+                      <svg class="i"><use href="#i-eye" /></svg>
+                    </button>
+                  </span>
+                </div>
+                <div class="list-row" style="--depth: 1" aria-pressed="false" data-pick-item>
+                  <span class="row-icon"
+                    ><svg class="i"><use href="#i-type" /></svg
+                  ></span>
+                  <span class="row-label">Hello, seal</span>
+                </div>
+                <div class="list-row" style="--depth: 1" aria-pressed="true" data-pick-item>
+                  <span class="row-icon"
+                    ><svg class="i"><use href="#i-square" /></svg
+                  ></span>
+                  <span class="row-label">Card</span>
+                </div>
+                <!-- AGENT: ADD layer rows (one .list-row per node, --depth per level). -->
+              </div>
+            </section>
+          </div>
+
+          <!-- Assets tab -->
+          <div class="panel-scroll" data-tab-panel="assets" hidden>
+            <div style="padding: 10px 12px">
+              <label class="search">
+                <svg class="i i-sm"><use href="#i-search" /></svg>
+                <input placeholder="Search assets" />
+              </label>
+            </div>
+            <div class="empty">
+              <strong>No assets yet</strong>
+              Components, styles and images you add to this file show here.
+            </div>
+          </div>
+
+          <!-- Plugins tab -->
+          <div class="panel-scroll" data-tab-panel="plugins" hidden>
+            <div class="empty">
+              <strong>No plugins</strong>
+              Install plugins in Settings.
+              <button class="btn btn-outline btn-sm" style="margin-top: 6px">Open settings</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Right side: the properties panel (PropertiesPanel). -->
+      <div class="design-right">
+        <aside class="props-panel" id="props-panel" aria-label="Properties">
+          <!-- History, sharing, hide. -->
+          <header class="props-head">
+            <button
+              class="icon-btn icon-btn-lg"
+              data-tip="Undo"
+              data-kbd="Ctrl+Z"
+              data-tip-side="bottom"
+            >
+              <svg class="i"><use href="#i-undo" /></svg>
+            </button>
+            <button
+              class="icon-btn icon-btn-lg"
+              data-tip="Redo"
+              data-kbd="Ctrl+Shift+Z"
+              data-tip-side="bottom"
+              disabled
+            >
+              <svg class="i"><use href="#i-redo" /></svg>
+            </button>
+            <div class="grow"></div>
+            <button class="btn btn-sm">
+              <svg class="i i-sm"><use href="#i-share" /></svg>
+              Share
+            </button>
+            <button
+              class="icon-btn icon-btn-lg"
+              data-tip="Hide properties"
+              data-tip-side="bottom"
+              data-toggle-class="#design:right-closed"
+              data-toggle="#props-panel,#show-props"
+            >
+              <svg class="i"><use href="#i-panel-right-close" /></svg>
+            </button>
+          </header>
+
+          <!-- Design / Prototype tabs, and the zoom. -->
+          <div data-tabs style="display: contents">
+            <div class="props-tabs">
+              <div class="tabs-list" role="tablist">
+                <button class="tab" role="tab" data-tab="design" aria-selected="true">
+                  Design
+                </button>
+                <button class="tab" role="tab" data-tab="prototype" aria-selected="false">
+                  Prototype
+                </button>
+              </div>
+              <button class="btn btn-ghost btn-xs" data-menu="#zoom-menu">
+                100%
+                <svg class="i"><use href="#i-chevron-down" /></svg>
+              </button>
+            </div>
+
+            <!-- Design tab: one .section per property group (PropertySections). -->
+            <div class="panel-scroll" data-tab-panel="design">
+              <!-- Position and size -->
+              <section class="section">
+                <header class="section-head">Position</header>
+                <div class="section-body">
+                  <div class="grid-2">
+                    <label class="field-box"
+                      ><span class="field-label">X</span><input value="32"
+                    /></label>
+                    <label class="field-box"
+                      ><span class="field-label">Y</span><input value="32"
+                    /></label>
+                    <label class="field-box"
+                      ><span class="field-label">W</span><input value="200"
+                    /></label>
+                    <label class="field-box"
+                      ><span class="field-label">H</span><input value="120"
+                    /></label>
+                    <label class="field-box">
+                      <span class="field-label"
+                        ><svg class="i"><use href="#i-rotate" /></svg
+                      ></span>
+                      <input value="0°" />
+                    </label>
+                    <label class="field-box">
+                      <span class="field-label"
+                        ><svg class="i"><use href="#i-square" /></svg
+                      ></span>
+                      <input value="4" />
+                    </label>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Auto layout (a collapsible section) -->
+              <details class="section" open>
+                <summary class="section-head">
+                  <span class="row" style="gap: 2px">
+                    <svg class="i i-sm chev"><use href="#i-chevron-right" /></svg>
+                    Auto layout
+                  </span>
+                  <span class="section-actions">
+                    <button class="icon-btn icon-btn-xs" data-tip="Remove auto layout">
+                      <svg class="i"><use href="#i-minus" /></svg>
+                    </button>
+                  </span>
+                </summary>
+                <div class="section-body">
+                  <div class="seg seg-sm seg-full" role="radiogroup" aria-label="Direction">
+                    <button role="radio" aria-checked="false" title="Horizontal">
+                      <svg class="i"><use href="#i-arrow-right" /></svg>
+                    </button>
+                    <button role="radio" aria-checked="true" title="Vertical">
+                      <svg class="i"><use href="#i-arrow-down" /></svg>
+                    </button>
+                  </div>
+                  <div class="grid-2">
+                    <label class="field-box"
+                      ><span class="field-label">Gap</span><input value="12"
+                    /></label>
+                    <label class="field-box"
+                      ><span class="field-label">Pad</span><input value="16"
+                    /></label>
+                  </div>
+                </div>
+              </details>
+
+              <!-- Fill: a paint row (swatch + hex + opacity) and the + to add one -->
+              <section class="section">
+                <header class="section-head">
+                  Fill
+                  <div class="section-actions">
+                    <button class="icon-btn icon-btn-xs" data-tip="Add fill">
+                      <svg class="i"><use href="#i-plus" /></svg>
+                    </button>
+                  </div>
+                </header>
+                <div class="section-body">
+                  <div class="row">
+                    <label class="field-box grow">
+                      <span class="swatch" style="background: oklch(0.85 0.07 245)"></span>
+                      <input class="mono" value="A9CDF0" />
+                      <input value="100%" style="width: 40px; text-align: right" />
+                    </label>
+                    <button class="icon-btn icon-btn-xs" aria-label="Hide fill">
+                      <svg class="i"><use href="#i-eye" /></svg>
+                    </button>
+                    <button class="icon-btn icon-btn-xs" aria-label="Remove fill">
+                      <svg class="i"><use href="#i-minus" /></svg>
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+              <!-- An empty section: just the title and its + -->
+              <section class="section">
+                <header class="section-head">
+                  Stroke
+                  <div class="section-actions">
+                    <button class="icon-btn icon-btn-xs" data-tip="Add stroke">
+                      <svg class="i"><use href="#i-plus" /></svg>
+                    </button>
+                  </div>
+                </header>
+              </section>
+
+              <!-- A section with a select and a switch -->
+              <section class="section">
+                <header class="section-head">Layer</header>
+                <div class="section-body">
+                  <select class="select select-sm">
+                    <option>Pass through</option>
+                    <option>Normal</option>
+                    <option>Multiply</option>
+                  </select>
+                  <div class="row text-xs">
+                    <span class="grow">Clip content</span>
+                    <button
+                      class="switch"
+                      role="switch"
+                      aria-checked="true"
+                      aria-label="Clip content"
+                    ></button>
+                  </div>
+                </div>
+              </section>
+
+              <!-- ════════════════════════════════════════════════════════════════════════════
+                   AGENT: ADD A PROPERTIES SECTION HERE (most proposals land here).
+                   <section class="section">
+                     <header class="section-head">Title <div class="section-actions">…</div></header>
+                     <div class="section-body">
+                       .grid-2 of .field-box · .seg · .select-sm · .row with a .switch · .list-row …
+                     </div>
+                   </section>
+                   ════════════════════════════════════════════════════════════════════════ -->
+
+              <section class="section">
+                <header class="section-head">
+                  Export
+                  <div class="section-actions">
+                    <button class="icon-btn icon-btn-xs" data-tip="Add export">
+                      <svg class="i"><use href="#i-plus" /></svg>
+                    </button>
+                  </div>
+                </header>
+                <div class="section-body">
+                  <button class="btn btn-outline btn-sm" data-dialog="#export-dialog">
+                    <svg class="i i-sm"><use href="#i-download" /></svg>
+                    Export Card
+                  </button>
+                </div>
+              </section>
+            </div>
+
+            <!-- Prototype tab -->
+            <div class="panel-scroll" data-tab-panel="prototype" hidden>
+              <div class="empty">
+                <strong>No interactions</strong>
+                Select a layer to add a click, hover or link.
+              </div>
+              <!-- AGENT: ADD prototype-tab sections here. -->
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ══ MENUS ═════════════════════════════════════════════════════════════════════════════════
+         Opened by a trigger with data-menu="#id" (data-side="bottom|right|top", default bottom).
+         They close on a click outside, on Escape or when an item is picked.
+         AGENT: ADD context menus / dropdowns / popovers here, then point a trigger at them. -->
+    <div class="menu" id="main-menu" hidden>
+      <button class="menu-item">Back to home</button>
+      <div class="sep"></div>
+      <button class="menu-item">
+        File <svg class="i i-sm" style="margin-left: auto"><use href="#i-chevron-right" /></svg>
+      </button>
+      <button class="menu-item">
+        Edit <svg class="i i-sm" style="margin-left: auto"><use href="#i-chevron-right" /></svg>
+      </button>
+      <button class="menu-item">
+        View <svg class="i i-sm" style="margin-left: auto"><use href="#i-chevron-right" /></svg>
+      </button>
+      <div class="sep"></div>
+      <button class="menu-item" data-toast="Design saved">
+        Save <span class="kbd">Ctrl+S</span>
+      </button>
+      <button class="menu-item" data-dialog="#export-dialog">
+        Export… <span class="kbd">Ctrl+Shift+E</span>
+      </button>
+      <div class="sep"></div>
+      <div class="menu-label">Danger</div>
+      <button class="menu-item is-destructive">Delete file</button>
+    </div>
+
+    <div class="menu" id="zoom-menu" hidden>
+      <button class="menu-item">Zoom in <span class="kbd">Ctrl++</span></button>
+      <button class="menu-item">Zoom out <span class="kbd">Ctrl+-</span></button>
+      <button class="menu-item">Zoom to fit <span class="kbd">Shift+1</span></button>
+      <button class="menu-item">Zoom to 100% <span class="kbd">Ctrl+0</span></button>
+    </div>
+
+    <!-- ══ DIALOGS ═══════════════════════════════════════════════════════════════════════════════
+         A native <dialog class="dialog">, opened with data-dialog="#id" on any button, closed by any
+         button with data-close inside it (or Escape).
+         AGENT: ADD dialogs here (head, body of .field blocks, foot with Cancel + the action). -->
+    <dialog class="dialog" id="export-dialog">
+      <div class="dialog-head">
+        <div>
+          <h2 class="dialog-title">Export</h2>
+          <p class="dialog-desc">Save the selection as an image or a PDF.</p>
+        </div>
+        <button class="icon-btn icon-btn-sm" aria-label="Close" data-close>
+          <svg class="i"><use href="#i-x" /></svg>
+        </button>
+      </div>
+      <div class="dialog-body">
+        <div class="field">
+          <span class="field-title">Format</span>
+          <div class="seg seg-full" role="radiogroup" aria-label="Format">
+            <button role="radio" aria-checked="true">PNG</button>
+            <button role="radio" aria-checked="false">JPG</button>
+            <button role="radio" aria-checked="false">SVG</button>
+            <button role="radio" aria-checked="false">PDF</button>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <span class="field-title">Scale</span>
+            <select class="select">
+              <option>1×</option>
+              <option selected>2×</option>
+              <option>3×</option>
+            </select>
+          </div>
+          <div class="field">
+            <span class="field-title">File name</span>
+            <input class="input" value="Card" />
+          </div>
+        </div>
+        <label class="check"><input type="checkbox" checked /> Transparent background</label>
+        <p class="field-hint">Frames export one page each in a PDF.</p>
+      </div>
+      <div class="dialog-foot">
+        <button class="btn btn-ghost" data-close>Cancel</button>
+        <button class="btn" data-close data-toast="Exported Card.png">Export</button>
+      </div>
+    </dialog>
+
+    <!-- Toasts land here. -->
+    <div class="toasts" id="toasts"></div>
+
+    <!-- ══ BEHAVIOR ══════════════════════════════════════════════════════════════════════════════
+         Tiny, generic, attribute-driven. AGENT: prefer these attributes over writing new JS.
+
+         data-set-theme="light|dark"      switches <html data-theme>
+         .seg [role=radio]                one checked per .seg (aria-checked)
+         [data-pick] > [data-pick-item]   one pressed per group (aria-pressed); in a .toolbar with
+                                          [data-pick], every .icon-btn is an item
+         [data-tabs] [data-tab=X]         shows [data-tab-panel=X] in the same [data-tabs], hides the
+                                          others, marks the trigger (aria-selected / aria-pressed)
+         data-toggle="#a,#b"              toggles the hidden attribute on those elements
+         data-toggle-class="#el:cls"      toggles a class on an element
+         .switch[role=switch]             flips aria-checked
+         data-menu="#id" data-side=…      opens a .menu next to the trigger
+         data-dialog="#id" / data-close   opens / closes a <dialog>
+         data-toast="Message"             shows a toast for 3 s
+
+         AGENT: ADD extra JS at the end of this script, in its own clearly named function.
+         ════════════════════════════════════════════════════════════════════════════════════════ -->
+    <script>
+      (() => {
+        const $ = (selector) => document.querySelector(selector);
+        let openMenu = null;
+
+        function closeMenu() {
+          if (!openMenu) return;
+          openMenu.menu.hidden = true;
+          openMenu.trigger.removeAttribute("data-open");
+          openMenu = null;
+        }
+
+        function showMenu(trigger, menu) {
+          closeMenu();
+          menu.hidden = false;
+          trigger.setAttribute("data-open", "true");
+          const box = trigger.getBoundingClientRect();
+          const side = trigger.dataset.side ?? "bottom";
+          const { offsetWidth: w, offsetHeight: h } = menu;
+          let left = side === "right" ? box.right + 6 : box.left;
+          let top = side === "right" ? box.top : side === "top" ? box.top - h - 6 : box.bottom + 6;
+          left = Math.min(Math.max(8, left), innerWidth - w - 8);
+          top = Math.min(Math.max(8, top), innerHeight - h - 8);
+          menu.style.left = `${left}px`;
+          menu.style.top = `${top}px`;
+          openMenu = { trigger, menu };
+        }
+
+        function toast(message) {
+          const el = document.createElement("div");
+          el.className = "toast";
+          el.innerHTML = '<svg class="i"><use href="#i-check" /></svg><span></span>';
+          el.querySelector("span").textContent = message;
+          $("#toasts").append(el);
+          setTimeout(() => el.remove(), 3000);
+        }
+
+        function pickIn(group, item, attr) {
+          for (const other of group.querySelectorAll(
+            group.matches(".toolbar") ? ".icon-btn" : "[data-pick-item]",
+          ))
+            other.setAttribute(attr, "false");
+          item.setAttribute(attr, "true");
+        }
+
+        document.addEventListener("click", (event) => {
+          const target = event.target instanceof Element ? event.target : null;
+          if (!target) return;
+
+          const theme = target.closest("[data-set-theme]");
+          if (theme) document.documentElement.dataset.theme = theme.dataset.setTheme;
+
+          const radio = target.closest(".seg [role=radio]");
+          if (radio) {
+            for (const other of radio.parentElement.children)
+              other.setAttribute("aria-checked", "false");
+            radio.setAttribute("aria-checked", "true");
+          }
+
+          const pickGroup = target.closest("[data-pick]");
+          const pickItem = pickGroup?.matches(".toolbar")
+            ? target.closest(".icon-btn")
+            : target.closest("[data-pick-item]");
+          if (pickGroup && pickItem && pickGroup.contains(pickItem))
+            pickIn(pickGroup, pickItem, "aria-pressed");
+
+          const tab = target.closest("[data-tab]");
+          if (tab) {
+            const scope = tab.closest("[data-tabs]");
+            for (const trigger of scope.querySelectorAll("[data-tab]")) {
+              const on = trigger === tab;
+              trigger.setAttribute(
+                trigger.getAttribute("role") === "tab" ? "aria-selected" : "aria-pressed",
+                String(on),
+              );
+            }
+            for (const panel of scope.querySelectorAll("[data-tab-panel]"))
+              panel.hidden = panel.dataset.tabPanel !== tab.dataset.tab;
+          }
+
+          const toggle = target.closest("[data-toggle]");
+          if (toggle)
+            for (const el of document.querySelectorAll(toggle.dataset.toggle))
+              el.hidden = !el.hidden;
+
+          const toggleClass = target.closest("[data-toggle-class]");
+          if (toggleClass) {
+            const [selector, cls] = toggleClass.dataset.toggleClass.split(":");
+            $(selector)?.classList.toggle(cls);
+          }
+
+          const sw = target.closest(".switch[role=switch]");
+          if (sw)
+            sw.setAttribute("aria-checked", String(sw.getAttribute("aria-checked") !== "true"));
+
+          const dialog = target.closest("[data-dialog]");
+          if (dialog) $(dialog.dataset.dialog)?.showModal();
+          const close = target.closest("[data-close]");
+          if (close) close.closest("dialog")?.close();
+
+          const toaster = target.closest("[data-toast]");
+          if (toaster) toast(toaster.dataset.toast);
+
+          const menuTrigger = target.closest("[data-menu]");
+          if (menuTrigger) {
+            const menu = $(menuTrigger.dataset.menu);
+            if (openMenu?.menu === menu) closeMenu();
+            else if (menu) showMenu(menuTrigger, menu);
+            return;
+          }
+          // A click in a menu on an item, or anywhere outside it, closes it.
+          if (!openMenu?.menu.contains(target) || target.closest(".menu-item")) closeMenu();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") closeMenu();
+        });
+
+        // AGENT: ADD extra behavior below, one named function per piece.
+      })();
+    </script>
+  </body>
+</html>
