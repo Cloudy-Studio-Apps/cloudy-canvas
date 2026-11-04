@@ -6,6 +6,7 @@ import {
   DropdownMenuTrigger,
   MenuItemContent,
 } from "@shared/ui/kit";
+import { pickedName } from "./picked-label";
 import type { PickerName } from "./picker-names.types";
 import type { FieldPickerProps } from "./field-picker.types";
 import { t } from "../../data.i18n";
@@ -21,6 +22,7 @@ function byGroup(names: readonly PickerName[]): [string, PickerName[]][] {
  * row's value. Picking hands the expression as the scope wrote it.
  */
 export function FieldPicker({ names, value, onPick, children }: FieldPickerProps) {
+  const chosen = value === undefined ? undefined : pickedName(names, value)?.expr;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
@@ -41,7 +43,7 @@ export function FieldPicker({ names, value, onPick, children }: FieldPickerProps
                 onSelect={() => onPick(name.expr)}
               >
                 <MenuItemContent
-                  checked={name.expr === value}
+                  checked={name.expr === chosen}
                   label={
                     <span className="flex min-w-0 items-baseline gap-2">
                       <span className="truncate">{name.label}</span>

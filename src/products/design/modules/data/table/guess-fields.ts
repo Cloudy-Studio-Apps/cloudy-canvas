@@ -1,6 +1,6 @@
 import type { DataField, FieldType } from "../source";
 import type { DataRow } from "./data-table.types";
-import { joinKey as join } from "./path-text";
+import { joinKey as join, normalizePath } from "./path-text";
 
 const SAMPLE_ROWS = 200;
 const IMAGE_URL = /^https?:\/\/\S+\.(png|jpe?g|gif|webp|svg|avif|bmp)(\?\S*)?(#\S*)?$/i;
@@ -65,11 +65,12 @@ export function guessFields(rows: DataRow[], keep: DataField[]): DataField[] {
   for (const row of rows.slice(0, SAMPLE_ROWS)) {
     if (isObject(row)) for (const k of Object.keys(row)) collect(row[k], join("", k), found);
   }
-  const known = new Map(keep.map((f) => [f.path, f]));
+  // Matched by their one written form, so a field saved as `a.b c` is the `a["b c"]` found now.
+  const known = new Map(keep.map((f) => [normalizePath(f.path), f]));
   const fields = [...found].map(([path, type]): DataField => {
     const old = known.get(path);
-    return old ? { ...old } : { path, type: type ?? "text" };
+    return old ? { ...old, path } : { path, type: type ?? "text" };
   });
-  for (const f of keep) if (!found.has(f.path)) fields.push({ ...f });
+  for (const f of keep) if (!found.has(normalizePath(f.path))) fields.push({ ...f });
   return fields;
 }

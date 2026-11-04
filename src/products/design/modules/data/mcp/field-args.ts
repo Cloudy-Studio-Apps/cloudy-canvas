@@ -1,6 +1,7 @@
 import type { ToolArgs } from "@canvas";
 
 import type { DataField, DataSourceElement, FieldFormat, FieldType } from "../source";
+import { normalizePath } from "../table";
 
 /** Every field type, for validating what an agent sets. */
 export const FIELD_TYPES: readonly FieldType[] = [
@@ -82,7 +83,10 @@ export function patchFields(source: DataSourceElement, args: ToolArgs): DataFiel
     const where = `fields[${i}]`;
     if (typeof patch !== "object" || patch === null) throw new Error(`${where} must be an object.`);
     const p = patch as Record<string, unknown>;
-    const field = fields.find((f) => f.path === p.path);
+    const field =
+      typeof p.path === "string"
+        ? fields.find((f) => normalizePath(f.path) === normalizePath(p.path as string))
+        : undefined;
     if (typeof p.path !== "string" || !field) {
       throw new Error(`${where}: no field "${String(p.path)}" (see get_data_source).`);
     }

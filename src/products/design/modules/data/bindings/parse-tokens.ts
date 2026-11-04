@@ -1,7 +1,7 @@
 import { RESERVED_NAMES } from "../model/source-name";
 import type { TemplatePart } from "./parse-tokens.types";
 
-const TOKEN = /\{([$A-Za-z_][\w$]*(?:\.[\w$]+|\[\d+\]|\["[^"]*"\])*)\}/y;
+const TOKEN = /\{([$A-Za-z_][\w$]*(?:\.[\w$]+|\[\d+\]|\["(?:[^"\\]|\\.)*"\])*)\}/y;
 const FIRST_NAME = /^[$A-Za-z_][\w$]*/;
 
 /** The catalog's own placeholders (`{page}`, `{title}`…): left as text for the catalog to fill. */

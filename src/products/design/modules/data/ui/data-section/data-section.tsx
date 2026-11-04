@@ -4,6 +4,7 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import type { PropertySectionProps } from "@design/ui/modules";
 import { isText } from "../../../text";
 import { dataBindableFields, dataFieldsOf, scopeAt } from "../../bindings";
+import { hasCatalogText } from "./has-catalog-text";
 import { useDataSources } from "../hooks/use-data-sources";
 import { BindFieldRow } from "./bind-field-row";
 import { ConditionField } from "./condition-field";
@@ -13,7 +14,7 @@ import { useBindData } from "./use-bind-data";
 import { t } from "../../data.i18n";
 
 /**
- * The selected layer's data: its text's template (texts), the fields filled from data, and when
+ * The selected layer's data: its text's template (texts, except those a catalog fills), the fields filled from data, and when
  * it shows. Every change is one `bindData` step; without sources it points at the Data tab.
  */
 export function DataSection({ selection: { nodes } }: PropertySectionProps) {
@@ -38,7 +39,9 @@ export function DataSection({ selection: { nodes } }: PropertySectionProps) {
   return (
     <PanelSection title={t("section.title")}>
       <div className="flex flex-col gap-3">
-        {isText(node) && <TextDataBlock text={node} names={names} apply={apply} />}
+        {isText(node) && !hasCatalogText(node) && (
+          <TextDataBlock text={node} names={names} apply={apply} />
+        )}
         {bindable.length > 0 && (
           <div className="flex flex-col gap-1.5">
             <p className="text-xs font-medium text-foreground">{t("section.fields.title")}</p>
