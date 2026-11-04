@@ -63,7 +63,11 @@ function formatNumber(n: number, kind: ValueKind, f: FieldFormat, locale: string
         ...digits,
       }).format(n);
     }
-    return new Intl.NumberFormat(locale, { maximumFractionDigits: f.decimals ?? 2 }).format(n);
+    const digits =
+      f.decimals === undefined
+        ? { maximumFractionDigits: 2 }
+        : { minimumFractionDigits: f.decimals, maximumFractionDigits: f.decimals };
+    return new Intl.NumberFormat(locale, digits).format(n);
   } catch {
     return String(n);
   }
