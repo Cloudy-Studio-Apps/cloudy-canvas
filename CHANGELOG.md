@@ -10,6 +10,10 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - On touch screens, pinch with two fingers to zoom the canvas and drag with two fingers to move it,
   with any tool selected.
 
+### Improved
+
+- In the design editor, the people and agents working on the file now show as a column of avatars in the left rail, above the Agents button, so the top of the properties panel stays tidy however many join.
+
 ### Fixed
 
 - Fast pen strokes no longer fill in as solid black shapes at sharp turns, and they follow your hand

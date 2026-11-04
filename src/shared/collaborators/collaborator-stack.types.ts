@@ -5,5 +5,7 @@ export interface CollaboratorStackProps {
   side?: "top" | "bottom" | "left" | "right";
   /** How many avatars show before the rest fold into a "+N" button (default 3). */
   max?: number;
+  /** Lays the avatars out in a row (top bars, default) or a column (a side rail). */
+  direction?: "row" | "column";
   className?: string;
 }

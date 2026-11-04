@@ -17,7 +17,8 @@ import { t } from "./collaborators.i18n";
 const TICK_MS = 5_000;
 
 /**
- * The collaborators' avatars, as in Figma's top bar: overlapping circles, at most `max` of them
+ * The collaborators' avatars, as in Figma's top bar: overlapping circles in a row (or a column
+ * for a side rail), at most `max` of them
  * (the followed one always among them) and a "+N" button listing everyone. Hover one for what
  * it's doing and where; click one to follow its view (`followable`), click it again to stop.
  */
@@ -25,6 +26,7 @@ export function CollaboratorStack({
   followable = false,
   side = "bottom",
   max = 3,
+  direction = "row",
   className,
 }: CollaboratorStackProps) {
   const collaborators = useCollaborators();
@@ -40,7 +42,13 @@ export function CollaboratorStack({
   const hidden = collaborators.length - shown.length;
 
   return (
-    <div className={cn("flex items-center -space-x-1.5", className)}>
+    <div
+      className={cn(
+        "flex items-center",
+        direction === "column" ? "flex-col -space-y-1.5" : "-space-x-1.5",
+        className,
+      )}
+    >
       {shown.map((collaborator, i) => {
         const isFollowed = following === collaborator.id;
         const status = collaboratorStatusText(collaborator, now);

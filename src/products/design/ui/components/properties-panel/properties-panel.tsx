@@ -8,7 +8,6 @@ import {
   useEngineState,
   ZoomMenu,
 } from "@canvas-ui";
-import { CollaboratorStack } from "@shared/collaborators";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@shared/ui/components/ui/tabs";
 import { DESIGN_LAYOUT } from "../../design-layout";
 import { designEditor } from "../../modules";
@@ -17,7 +16,7 @@ import { PropertySections } from "./property-sections";
 import { t } from "../../design-ui.i18n";
 
 /**
- * The right panel: history, collaborators, sharing and the button that hides it, then the
+ * The right panel: history, sharing and the button that hides it, then the
  * Design/Prototype tabs and the zoom, or the active tool's sidebar (`toolSidebars`), or the current
  * mode's (`modePanels`). Export is in the main menu's File, the context menus and its section.
  */
@@ -42,7 +41,6 @@ export function PropertiesPanel() {
     >
       <header className="flex h-12 items-center gap-0.5 border-b px-2">
         <HistoryControls />
-        <CollaboratorStack followable className="ml-0.5" />
         <div className="flex-1" />
         <ShareButton product="design" look="button" />
         <ToolButton label={t("properties.hide")} side="bottom" onClick={() => setOpen(false)}>

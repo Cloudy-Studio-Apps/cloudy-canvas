@@ -2,6 +2,7 @@ import { Bot, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
 import { CollaboratorUndoButton, ExtensionIconView, ToolButton } from "@canvas-ui";
 import { AgentServerMenu } from "@shared/agent-server";
+import { CollaboratorStack } from "@shared/collaborators";
 import { useAgentServerStore } from "@shared/stores/agent-server-store";
 import { DESIGN_LAYOUT } from "../../design-layout";
 import { useDesignPanelStore } from "../../stores/design-panel-store";
@@ -11,8 +12,9 @@ import { t } from "../../design-ui.i18n";
 
 /**
  * The strip along the left edge: the main menu, a button per left panel tab of the current mode
- * (`leftTabs`; with the panel closed, one opens it on that tab) and, at the bottom, the agents menu
- * and the button that opens or closes the panel.
+ * (`leftTabs`; with the panel closed, one opens it on that tab) and, at the bottom, the
+ * collaborators (a column of avatars, so many fit), the agents menu and the button that opens
+ * or closes the panel.
  */
 export function DesignRail() {
   const { tabs, current } = useLeftTabs();
@@ -44,6 +46,7 @@ export function DesignRail() {
         </ToolButton>
       ))}
       <div className="flex-1" />
+      <CollaboratorStack followable direction="column" side="right" className="mb-1" />
       <AgentServerMenu
         side="right"
         align="end"
