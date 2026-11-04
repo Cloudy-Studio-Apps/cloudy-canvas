@@ -5,6 +5,7 @@ import type { SettingValue } from "../source";
 import {
   createDataSource,
   DATA_SOURCE_DEFAULTS,
+  dataSourcesIn,
   DATA_SOURCE_TYPE,
   isDataSource,
   type DataField,
@@ -85,13 +86,7 @@ export class DesignDataSources {
 
   /** Every source, in order. */
   list(): DataSourceElement[] {
-    const records: DataSourceElement[] = [];
-    for (const id of this.doc.ids()) {
-      if (this.doc.field(id, "type") !== DATA_SOURCE_TYPE) continue;
-      const el = this.doc.get(id);
-      if (el && isDataSource(el)) records.push(el);
-    }
-    return records.sort((a, b) => (a.index < b.index ? -1 : a.index > b.index ? 1 : 0));
+    return dataSourcesIn(this.doc);
   }
 
   get(id: string): DataSourceElement | undefined {

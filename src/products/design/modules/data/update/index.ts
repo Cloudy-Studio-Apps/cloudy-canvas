@@ -12,4 +12,5 @@ export {
 export { deviceKeys, filePathKey, loadFilePaths, requireFilePaths } from "./file-paths";
 export { answeredMessage, readAnsweredMessage, UPDATE_ERRORS } from "./update-errors";
 export { isWebPage } from "./is-web-page";
+export { imageKey } from "./image-key";
 export { updateSource } from "./update-source";

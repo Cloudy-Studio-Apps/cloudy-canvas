@@ -1,3 +1,4 @@
+import { toNumber } from "./coerce";
 import { lookup } from "./scope";
 import type { DataCondition } from "./binding.types";
 import type { DataScope } from "./scope.types";
@@ -11,20 +12,13 @@ function isEmpty(value: unknown): boolean {
   );
 }
 
-function numeric(value: unknown): number | null {
-  if (typeof value === "number") return Number.isFinite(value) ? value : null;
-  if (typeof value !== "string" || !value.trim()) return null;
-  const n = Number(value.trim());
-  return Number.isFinite(n) ? n : null;
-}
-
 function text(value: unknown): string {
   return value === null || value === undefined ? "" : String(value);
 }
 
 function equal(a: unknown, b: unknown): boolean {
-  const na = numeric(a);
-  const nb = numeric(b);
+  const na = toNumber(a);
+  const nb = toNumber(b);
   return na !== null && nb !== null ? na === nb : text(a) === text(b);
 }
 
@@ -43,8 +37,8 @@ export function evaluateCondition(condition: DataCondition, scope: DataScope): b
       return !equal(value, other);
     case "gt":
     case "lt": {
-      const a = numeric(value);
-      const b = numeric(other);
+      const a = toNumber(value);
+      const b = toNumber(other);
       if (a === null || b === null) return false;
       return condition.op === "gt" ? a > b : a < b;
     }

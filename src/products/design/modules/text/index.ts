@@ -7,6 +7,7 @@ export { TEXT_DEFAULTS } from "./text.defaults";
 export { fontOf, textLayout, textSize, textStyleOf } from "./text-layout";
 export { rangeStyleValue, textStyleValue } from "./text-range-style";
 export { retypeset } from "./retypeset";
+export { alignedTextPatch } from "./aligned-text-patch";
 export {
   applyRunStyle,
   RUN_STYLE_PREFIX,

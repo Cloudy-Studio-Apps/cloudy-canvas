@@ -8,6 +8,7 @@ import { dataFormats, dataSourceTypes } from "./data.points";
 import { CSV_FORMAT, JSON_FORMAT } from "./formats";
 import { FILE_SOURCE, HTTP_SOURCE } from "./sources";
 import { forgetRemovedSources } from "./model";
+import { syncData } from "./sync";
 import { DataSourceKind } from "./source";
 import { DataTab, useDataServices } from "./ui";
 import { t } from "./data.i18n";
@@ -17,8 +18,8 @@ import * as dataUi from "./ui";
 /**
  * Data: sources of data (a file, a link, a sheet) a design's layers can be filled from. It holds
  * the source record, the built-in source types (file, link) and formats (CSV, JSON), the Data tab
- * and the session hook that hands the sources this device's services; bindings and iterators
- * come in later tasks.
+ * and the session hook that hands the sources this device's services, and the sync that keeps
+ * layers bound to data up to date; iterators come in a later phase.
  */
 export const dataModule = defineModule({
   id: "data",
@@ -29,6 +30,7 @@ export const dataModule = defineModule({
   register(host) {
     host.contribute(designCanvas.kinds, new DataSourceKind());
     host.contribute(designCanvas.onRemove, forgetRemovedSources);
+    host.contribute(designCanvas.afterEdit, (doc, change) => syncData(doc, change));
     host.contribute(dataSourceTypes, FILE_SOURCE, HTTP_SOURCE);
     host.contribute(dataFormats, CSV_FORMAT, JSON_FORMAT);
     host.contribute(designEditor.leftTabs, {

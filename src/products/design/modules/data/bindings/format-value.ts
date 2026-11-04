@@ -1,4 +1,5 @@
 import { t } from "../data.i18n";
+import { toBoolean, toNumber } from "./coerce";
 import type { DataField, FieldFormat } from "../source";
 import type { ValueKind } from "./format-value.types";
 
@@ -20,23 +21,6 @@ function kindOf(value: unknown, field: DataField | null): ValueKind {
   if (typeof value === "number") return "number";
   if (typeof value === "boolean") return "boolean";
   return "text";
-}
-
-function toNumber(value: unknown): number | null {
-  if (typeof value === "number") return Number.isFinite(value) ? value : null;
-  if (typeof value !== "string" || !value.trim()) return null;
-  const n = Number(value.trim());
-  return Number.isFinite(n) ? n : null;
-}
-
-function toBoolean(value: unknown): boolean | null {
-  if (typeof value === "boolean") return value;
-  if (typeof value === "string") {
-    const v = value.trim().toLowerCase();
-    if (v === "true") return true;
-    if (v === "false") return false;
-  }
-  return null;
 }
 
 function toDate(value: unknown): { date: Date; dateOnly: boolean } | null {

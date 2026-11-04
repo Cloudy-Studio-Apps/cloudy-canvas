@@ -10,3 +10,5 @@ export type * from "./format-value.types";
 export { resolveRichTemplate } from "./resolve-template";
 export type * from "./resolve-template.types";
 export { evaluateCondition } from "./evaluate-condition";
+export { planBindings } from "./plan-bindings";
+export type * from "./plan-bindings.types";
