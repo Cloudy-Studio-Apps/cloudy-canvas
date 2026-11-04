@@ -135,6 +135,15 @@ export class SelectTool implements Tool {
   }
 
   onPointerUp(p: CanvasPointer): void {
+    // Released however the finish goes: a held drag left open would merge every later edit.
+    try {
+      this.finishGesture(p);
+    } finally {
+      this.onCancel();
+    }
+  }
+
+  private finishGesture(p: CanvasPointer): void {
     const g = this.gesture;
     if (g?.kind === "move" && !g.started && g.toggleOnClick) {
       const next = new Set(this.ctx.getSelection());
@@ -152,7 +161,6 @@ export class SelectTool implements Tool {
       this.gesture = null;
       g.gesture.finish(p);
     }
-    this.onCancel();
   }
 
   onHover(p: CanvasPointer): void {
