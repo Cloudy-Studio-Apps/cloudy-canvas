@@ -11,6 +11,7 @@ import {
   CatalogTool,
 } from "./mode";
 import { catalogFaded } from "./mode/catalog-faded";
+import { moveSelectedPages } from "./mode/move-selected-pages";
 import { isPageFrame } from "./model";
 import { BrochureTab } from "./ui/brochure-tab/brochure-tab";
 import { BrochureCanvasLayer } from "./ui/canvas/brochure-canvas-layer";
@@ -44,6 +45,10 @@ export const catalogMode = defineDesignMode({
   isolate: isPageFrame,
   faded: catalogFaded,
   commands: CATALOG_ALLOWED_COMMANDS,
+  keybindings: {
+    [CATALOG_COMMANDS.movePageUp]: [{ key: "ArrowUp", alt: true, label: "↑" }],
+    [CATALOG_COMMANDS.movePageDown]: [{ key: "ArrowDown", alt: true, label: "↓" }],
+  },
   hostCommands: [
     {
       id: CATALOG_COMMANDS.pick,
@@ -54,6 +59,16 @@ export const catalogMode = defineDesignMode({
       id: CATALOG_COMMANDS.preview,
       label: t("mode.preview"),
       run: () => useBrochurePreviewStore.getState().open(),
+    },
+    {
+      id: CATALOG_COMMANDS.movePageUp,
+      label: t("mode.movePageUp"),
+      run: (engine) => moveSelectedPages(engine, -1),
+    },
+    {
+      id: CATALOG_COMMANDS.movePageDown,
+      label: t("mode.movePageDown"),
+      run: (engine) => moveSelectedPages(engine, 1),
     },
     // Run by `useExportCommand`, which needs the file's name.
     { id: CATALOG_COMMANDS.exportPdf, label: t("mode.exportPdf") },

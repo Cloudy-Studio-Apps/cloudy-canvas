@@ -74,11 +74,24 @@ export function moveSlot(
   slotId: string,
   position: number,
 ): BrochureSlot[] {
-  const slot = slots.find((other) => other.id === slotId);
-  if (!slot) return [...slots];
-  const others = slots.filter((other) => other !== slot);
+  return moveSlots(slots, [slotId], position);
+}
+
+/**
+ * Moves slots together to `position` (0-based, counted in the brochure without them), keeping
+ * their order in it: several pages dragged, or moved a place with Alt+↑/↓.
+ */
+export function moveSlots(
+  slots: readonly BrochureSlot[],
+  slotIds: readonly string[],
+  position: number,
+): BrochureSlot[] {
+  const ids = new Set(slotIds);
+  const moved = slots.filter((slot) => ids.has(slot.id));
+  if (moved.length === 0) return [...slots];
+  const others = slots.filter((slot) => !ids.has(slot.id));
   const at = Math.max(0, Math.min(Math.round(position), others.length));
-  return [...others.slice(0, at), slot, ...others.slice(at)];
+  return [...others.slice(0, at), ...moved, ...others.slice(at)];
 }
 
 export function removeSlots(

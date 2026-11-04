@@ -1,12 +1,20 @@
 import type { RowDrag } from "@canvas-ui";
 import type { BlankReason } from "../../model/book-layout.types";
 import type { BrochurePage } from "../../model/brochure-pages.types";
+import type { PageClick } from "../hooks/use-page-list-selection.types";
 
 export interface BrochurePageRowProps {
   page: BrochurePage;
   /** Its printed page numbers ("4", "6–7"). */
   label: string;
+  /** Whether it's among the selected pages. */
   selected: boolean;
+  /** Whether it lists its options (it's the one page selected). */
+  expanded: boolean;
+  /** Whether it's carried by the drag on (one of several selected pages dragged). */
+  carried: boolean;
+  /** A click on it, with its modifier keys. */
+  onClick: (event: PageClick) => void;
   /** The list's row drag. */
   rowDrag: RowDrag;
 }

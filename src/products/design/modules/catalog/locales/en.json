@@ -5,7 +5,9 @@
     "pick": "Pick the brochure's frames",
     "preview": "Preview the brochure",
     "exportPdf": "Export the brochure as PDF",
-    "brochureTab": "Brochure"
+    "brochureTab": "Brochure",
+    "movePageUp": "Move page up",
+    "movePageDown": "Move page down"
   },
   "toolbar": {
     "selectPages": "Select pages",
@@ -22,7 +24,8 @@
   "tab": {
     "page": {
       "remove": "Take out of the brochure",
-      "options": "{count} options · {letter} printed"
+      "options": "{count} options · {letter} printed",
+      "moveHint": "Move up {up} · down {down}"
     },
     "switcher": {
       "title": "Brochures of this page",
@@ -56,7 +59,9 @@
     },
     "pagesHeading": "Pages",
     "noBrochure": "No brochure on this page",
-    "noBrochureHint": "A brochure prints this page's frames in the order you choose. A page can hold several, e.g. one per season or language."
+    "noBrochureHint": "A brochure prints this page's frames in the order you choose. A page can hold several, e.g. one per season or language.",
+    "dragCount": "{count} pages",
+    "selected": "{count} selected"
   },
   "export": {
     "label": "PDF document",

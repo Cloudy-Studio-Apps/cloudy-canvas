@@ -13,6 +13,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 ### Improved
 
 - In the design editor, the people and agents working on the file now show as a column of avatars in the left rail, above the Agents button, so the top of the properties panel stays tidy however many join.
+- In a brochure's page list, Ctrl (⌘ on a Mac) + click and Shift + click select several pages,
+  which you can then drag together, and Alt+↑/↓ moves the selected pages one place up or down.
 
 ### Fixed
 

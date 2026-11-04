@@ -10,4 +10,6 @@ export const CATALOG_COMMANDS = {
   pick: "catalog.pick",
   preview: "catalog.preview",
   exportPdf: "catalog.exportPdf",
+  movePageUp: "catalog.movePageUp",
+  movePageDown: "catalog.movePageDown",
 } as const;

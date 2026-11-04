@@ -5,7 +5,9 @@
     "pick": "Elegir los marcos del folleto",
     "preview": "Vista previa del folleto",
     "exportPdf": "Exportar el folleto como PDF",
-    "brochureTab": "Folleto"
+    "brochureTab": "Folleto",
+    "movePageUp": "Subir página",
+    "movePageDown": "Bajar página"
   },
   "toolbar": {
     "selectPages": "Seleccionar páginas",
@@ -22,7 +24,8 @@
   "tab": {
     "page": {
       "remove": "Quitar del folleto",
-      "options": "{count} opciones · se imprime la {letter}"
+      "options": "{count} opciones · se imprime la {letter}",
+      "moveHint": "Subir {up} · bajar {down}"
     },
     "switcher": {
       "title": "Folletos de esta página",
@@ -56,7 +59,9 @@
     },
     "pagesHeading": "Páginas",
     "noBrochure": "No hay folleto en esta página",
-    "noBrochureHint": "Un folleto imprime los marcos de esta página en el orden que elijas. Una página puede tener varios, por ejemplo uno por temporada o idioma."
+    "noBrochureHint": "Un folleto imprime los marcos de esta página en el orden que elijas. Una página puede tener varios, por ejemplo uno por temporada o idioma.",
+    "dragCount": "{count} páginas",
+    "selected": "{count} seleccionadas"
   },
   "export": {
     "label": "Documento PDF",

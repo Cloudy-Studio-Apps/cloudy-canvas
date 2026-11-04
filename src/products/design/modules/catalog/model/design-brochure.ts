@@ -19,6 +19,7 @@ import {
   addPages,
   chooseOption,
   moveSlot,
+  moveSlots,
   pickPages,
   removeFrames,
   removeSlots,
@@ -109,6 +110,11 @@ export class DesignBrochure {
   /** Moves a page to `position` (0-based). */
   move(slotId: string, position: number): void {
     this.writeSlots((slots) => moveSlot(slots, slotId, position));
+  }
+
+  /** Moves pages together to `position` (0-based, among the others), keeping their order. */
+  moveMany(slotIds: readonly string[], position: number): void {
+    this.writeSlots((slots) => moveSlots(slots, slotIds, position));
   }
 
   removePages(slotIds: Iterable<string>): void {

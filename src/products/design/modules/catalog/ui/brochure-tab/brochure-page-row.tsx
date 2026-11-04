@@ -7,21 +7,33 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { cn } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
 import { optionLetter } from "../option-letter";
-import { showPage } from "../page-actions";
+import { CATALOG_COMMANDS } from "../../mode/catalog-mode.constants";
 import { BrochureOptionsList } from "./brochure-options-list";
 import { dropId } from "./drop-position";
 import type { BrochurePageRowProps } from "./brochure-page-row.types";
 import { t } from "../../catalog.i18n";
 
 /**
- * One brochure page: its number, picture, frame and options. A click shows it; rows drag to
- * reorder (`rowDrag`, owned by the list); × takes it out of the brochure. The selected page lists its options to pick from.
+ * One brochure page: its number, picture, frame and options. A click selects it (`onClick`, with
+ * Ctrl/⌘ and Shift for several, owned by the list); rows drag to reorder (`rowDrag`), several when
+ * they're selected; × takes it out of the brochure. The one page selected lists its options.
  */
-export function BrochurePageRow({ page, label, selected, rowDrag }: BrochurePageRowProps) {
+export function BrochurePageRow({
+  page,
+  label,
+  selected,
+  expanded,
+  carried,
+  onClick,
+  rowDrag,
+}: BrochurePageRowProps) {
   const engine = useDesignEngine();
   const { brochure } = useBrochure();
   const { drag } = rowDrag;
   const target = dropId({ kind: "page", slotId: page.slot.id });
+  const up = engine.keymap.label(CATALOG_COMMANDS.movePageUp);
+  const down = engine.keymap.label(CATALOG_COMMANDS.movePageDown);
+  const hint = up && down ? t("tab.page.moveHint", { up, down }) : undefined;
   const chosen = page.options.findIndex((option) => option.id === page.frame.id);
   const paper = paperSize(page.frame);
   const detail =
@@ -37,13 +49,15 @@ export function BrochurePageRow({ page, label, selected, rowDrag }: BrochurePage
       <div
         {...rowDrag.grabProps(page.slot.id)}
         {...rowDrag.dropProps(target)}
-        onClick={() => showPage(engine, page.frame)}
-        aria-current={selected ? "page" : undefined}
+        onClick={onClick}
+        title={hint}
+        aria-current={expanded ? "page" : undefined}
+        aria-selected={selected}
         className={cn(
           "group relative flex cursor-default items-center gap-2 rounded-sm px-1 py-1 hover:bg-hover",
           selected && "bg-primary-soft hover:bg-primary-soft",
           rowDropLine(drag?.overId === target ? drag.side : null),
-          drag?.id === page.slot.id && "opacity-50",
+          carried && "opacity-50",
         )}
       >
         <span
@@ -72,7 +86,7 @@ export function BrochurePageRow({ page, label, selected, rowDrag }: BrochurePage
           </PanelIconButton>
         </span>
       </div>
-      {selected && page.options.length > 1 && <BrochureOptionsList page={page} />}
+      {expanded && page.options.length > 1 && <BrochureOptionsList page={page} />}
     </li>
   );
 }
