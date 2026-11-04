@@ -2,12 +2,17 @@ import { FolderOpen } from "lucide-react";
 
 import { notifyError } from "@shared/stores/toast-store";
 import { Button, Field } from "@shared/ui/kit";
+import { baseName, isAbsolutePath } from "../../settings";
 import { platformDataServices } from "../hooks/data-services";
 import type { FileFieldProps } from "./file-field.types";
 import { t } from "../../data.i18n";
 
-/** A file on this device: its path, and a button that asks for another. */
-export function FileField({ spec, value, onChange, onFilePicked }: FileFieldProps) {
+/**
+ * A file on this device: its name, a button that asks for another, and, when this device doesn't
+ * know where the chosen file is (the design came from another device), a line asking to pick it.
+ */
+export function FileField({ spec, value, onDevice, onChange, onFilePicked }: FileFieldProps) {
+  const name = baseName(value);
   const choose = async () => {
     try {
       const file = await platformDataServices.pickFile(spec.extensions);
@@ -26,13 +31,16 @@ export function FileField({ spec, value, onChange, onFilePicked }: FileFieldProp
           className="min-w-0 flex-1 truncate text-xs text-muted-foreground"
           title={value || undefined}
         >
-          {value || t("source.noFile")}
+          {name || t("source.noFile")}
         </span>
         <Button size="xs" variant="outline" onClick={() => void choose()}>
           <FolderOpen />
           {t("source.chooseFile")}
         </Button>
       </div>
+      {value !== "" && !onDevice && !isAbsolutePath(value) && (
+        <p className="text-xs text-warning">{t("errors.pickFileAgain")}</p>
+      )}
     </Field>
   );
 }

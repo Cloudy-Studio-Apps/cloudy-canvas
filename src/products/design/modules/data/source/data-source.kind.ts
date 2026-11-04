@@ -13,6 +13,11 @@ export class DataSourceKind extends ElementKind<DataSourceElement, DesignToolOpt
   override readonly defaults: DataSourceDefaults = DATA_SOURCE_DEFAULTS;
   override readonly creatable = false;
   override readonly boxed = false;
+  /**
+   * Nothing through the generic tools (`update_nodes`): settings carry the secret split and the
+   * file paths, so every edit goes through the data sources service.
+   */
+  override readonly patchableFields: ReadonlySet<string> = new Set();
 
   draw(): void {}
 

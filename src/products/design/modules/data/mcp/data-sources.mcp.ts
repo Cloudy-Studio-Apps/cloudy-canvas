@@ -3,10 +3,10 @@ import { optionalBoolean, optionalNumber, optionalString, stringArg } from "@can
 import { requireDesign, type DesignMcpTool } from "../../../mcp";
 import { DESIGN_DATA_SOURCES } from "../model";
 import { describeSource, summarizeSource } from "./describe-source";
+import { patchFields } from "./field-args";
 import {
   checkFormat,
   inUndoStep,
-  patchFields,
   readSecretValues,
   readSettingValues,
   readSource,
@@ -18,11 +18,18 @@ const DEVICE_NOTE =
   "Nothing updates on its own: call update_data_source. Secrets (keys, header values) are kept " +
   "on this device, never in the file, and are never returned.";
 
+const BINDING_NOTE =
+  "A link's header secrets are bound to the URL's origin they were given for: once `url` " +
+  "points at another origin they read as not set (and aren't sent) until given again. A file's " +
+  "absolute path stays on this device; the settings keep only the file's name, and another " +
+  "device has to be given the path again (`files[].onDevice`). Files in the app's own data " +
+  "folder are never read.";
+
 const SETTINGS_SCHEMA = {
   type: "object",
   description:
-    "The type's settings by key, e.g. a file's `path`, a link's `url` and `headers` (name to " +
-    "value). Unknown keys are an error.",
+    "The type's settings by key, e.g. a file's absolute `path`, a link's `url` and `headers` " +
+    "(name to value). Unknown keys are an error.",
 };
 
 const SECRETS_SCHEMA = {
@@ -56,8 +63,9 @@ export const dataTools: DesignMcpTool[] = [
     name: "get_data_source",
     description:
       "One data source in full: settings, fields (path, alias, type, format, hidden), the " +
-      "secrets it uses with `set` true or false (their values are never returned) and sample " +
-      "rows from its last update.",
+      "secrets it uses with `set` true or false (their values are never returned), the files it " +
+      "reads with `onDevice`, and sample " +
+      `rows from its last update. ${BINDING_NOTE}`,
     inputSchema: {
       type: "object",
       required: ["source"],
@@ -160,7 +168,7 @@ export const dataTools: DesignMcpTool[] = [
       "ones; null removes a secret setting), `secrets`, `format` and `formatOptions`, and " +
       "`fields` (patches matched by `path`: alias, type, format, hidden; an unknown path is an " +
       `error). Nothing is fetched: call update_data_source after changing where data comes ` +
-      `from. ${DEVICE_NOTE}`,
+      `from. ${DEVICE_NOTE} ${BINDING_NOTE}`,
     inputSchema: {
       type: "object",
       required: ["source"],
@@ -178,7 +186,11 @@ export const dataTools: DesignMcpTool[] = [
             required: ["path"],
             properties: {
               path: { type: "string", description: "The field's path (get_data_source)." },
-              alias: { type: "string", description: 'The name bindings use; "" clears it.' },
+              alias: {
+                type: "string",
+                description:
+                  'A label shown for the field in pickers and the rows table; bindings keep using the path. "" clears it.',
+              },
               type: {
                 type: "string",
                 description:
@@ -187,7 +199,7 @@ export const dataTools: DesignMcpTool[] = [
               format: {
                 type: "object",
                 description:
-                  "decimals, currency, dateStyle (short, medium, long), prefix, suffix, trueText, falseText.",
+                  "decimals (a whole number 0-20), currency (a 3-letter ISO code), dateStyle (short, medium, long), prefix, suffix, trueText, falseText (text).",
               },
               hidden: { type: "boolean" },
             },

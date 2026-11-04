@@ -12,10 +12,10 @@ import {
 } from "../source";
 import type { DataRow, DataTable } from "../table";
 import {
-  loadSecrets,
+  loadFilePaths,
+  loadSourceSecrets,
   missingSecretKeys,
   readSnapshot,
-  secretKeys,
   updateSource,
   type DataContext,
   type UpdateOptions,
@@ -24,28 +24,10 @@ import {
 } from "../update";
 import type { DataSourceInit } from "./design-data-sources.types";
 import { sourceName } from "./source-name";
-import { SourceUpdates } from "./source-updates";
+import { sharedState } from "./shared-state";
+import type { SharedState } from "./shared-state.types";
+import type { SourceUpdates } from "./source-updates";
 import { clearSecrets, writeSecrets } from "./write-secrets";
-
-/**
- * What every view of one document shares: an agent's workspace has its own service on a proxy of
- * the same Yjs doc, and must see the editor's context and the Updates it runs.
- */
-interface SharedState {
-  context: DataContext | null;
-  updates: SourceUpdates;
-}
-
-const SHARED = new WeakMap<object, SharedState>();
-
-function sharedState(doc: CanvasDocument): SharedState {
-  let state = SHARED.get(doc.doc);
-  if (!state) {
-    state = { context: null, updates: new SourceUpdates() };
-    SHARED.set(doc.doc, state);
-  }
-  return state;
-}
 
 const NOT_READY = "Data sources aren't ready: no editor is open.";
 
@@ -128,13 +110,7 @@ export class DesignDataSources {
       format: init.format,
       formatOptions: init.formatOptions,
     });
-    const settings = await writeSecrets(
-      services,
-      draft.id,
-      type.settings,
-      init.settings,
-      init.secrets,
-    );
+    const settings = await writeSecrets(services, draft.id, type, init.settings, init.secrets);
     const taken = this.list().map((s) => s.name);
     const wanted = init.name?.trim() || type.defaultName(settings) || DATA_SOURCE_DEFAULTS.name;
     const record = { ...draft, settings, name: sourceName(wanted, taken) };
@@ -160,14 +136,7 @@ export class DesignDataSources {
   ): Promise<void> {
     const source = this.require(id);
     const { services, type } = this.ready(source.sourceType);
-    const settings = await writeSecrets(
-      services,
-      id,
-      type.settings,
-      values,
-      secrets,
-      source.settings,
-    );
+    const settings = await writeSecrets(services, id, type, values, secrets, source.settings);
     this.patch(id, { settings });
   }
 
@@ -209,7 +178,7 @@ export class DesignDataSources {
   }
 
   /** The rows of a source's last snapshot. */
-  rows(id: string): DataRow[] {
+  rows(id: string): readonly DataRow[] {
     return readSnapshot(this.doc, this.get(id)?.snapshot ?? null);
   }
 
@@ -217,12 +186,25 @@ export class DesignDataSources {
     return { rows: this.rows(id), fields: this.get(id)?.fields ?? [] };
   }
 
-  /** The secrets a source needs that this device doesn't have (by `key` / `key.name`). */
+  /**
+   * The secrets a source needs that this device doesn't have (by `key` / `key.name`), also the
+   * ones entered for another origin than the settings' now.
+   */
   async missingSecrets(id: string): Promise<string[]> {
     const source = this.require(id);
     const { services, type } = this.ready(source.sourceType);
-    const stored = await loadSecrets(services, id, secretKeys(type.settings, source.settings));
+    const stored = await loadSourceSecrets(services, id, type, source.settings);
     return missingSecretKeys(type.settings, source.settings, stored);
+  }
+
+  /** The file settings whose file this device has no path for (pick it again here). */
+  async missingFiles(id: string): Promise<string[]> {
+    const source = this.require(id);
+    const { services, type } = this.ready(source.sourceType);
+    const paths = await loadFilePaths(services, id, type.settings, source.settings);
+    return type.settings.flatMap((spec) =>
+      spec.kind === "file" && source.settings[spec.key] && !paths[spec.key] ? [spec.key] : [],
+    );
   }
 
   /** The last failed Update's message on this device, `null` once one succeeds. */

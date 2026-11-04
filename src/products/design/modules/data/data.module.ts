@@ -7,6 +7,7 @@ import { dataTools } from "./mcp";
 import { dataFormats, dataSourceTypes } from "./data.points";
 import { CSV_FORMAT, JSON_FORMAT } from "./formats";
 import { FILE_SOURCE, HTTP_SOURCE } from "./sources";
+import { forgetRemovedSources } from "./model";
 import { DataSourceKind } from "./source";
 import { DataTab, useDataServices } from "./ui";
 import { t } from "./data.i18n";
@@ -27,6 +28,7 @@ export const dataModule = defineModule({
   exports: { ...dataApi, ...dataUi },
   register(host) {
     host.contribute(designCanvas.kinds, new DataSourceKind());
+    host.contribute(designCanvas.onRemove, forgetRemovedSources);
     host.contribute(dataSourceTypes, FILE_SOURCE, HTTP_SOURCE);
     host.contribute(dataFormats, CSV_FORMAT, JSON_FORMAT);
     host.contribute(designEditor.leftTabs, {

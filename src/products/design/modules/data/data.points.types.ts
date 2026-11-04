@@ -10,6 +10,12 @@ export interface DataSourceType {
   icon: string;
   settings: SettingSpec[];
   defaultName(settings: Record<string, SettingValue>): string;
+  /**
+   * Where the source's secrets may be sent (a link's origin), or `null` when nowhere. Secrets
+   * entered for one origin are bound to it: once the settings point at another they aren't sent
+   * and read as missing until given again. Left out, secrets aren't bound.
+   */
+  secretOrigin?(settings: Record<string, SettingValue>): string | null;
   update(settings: Record<string, SettingValue>, ctx: SourceContext): Promise<RawData>;
 }
 

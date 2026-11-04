@@ -1,6 +1,10 @@
+import type { DataSourceType } from "../data.points.types";
 import type { DataServices } from "../services";
 import type { SettingSpec } from "../settings";
 import type { SettingValue } from "../source";
+
+/** Where the origin a source's secrets were entered for is kept (`DataSourceType.secretOrigin`). */
+export const ORIGIN_KEY = "@origin";
 
 /** Where a source's secret is kept on this device (`key`, or `key.name` for a pair's value). */
 export function secretStoreKey(sourceId: string, key: string): string {
@@ -49,4 +53,22 @@ export async function loadSecrets(
     if (value !== null && value !== "") secrets[key] = value;
   }
   return secrets;
+}
+
+/**
+ * The secrets this device may use for a source as its settings are now: none when the type binds
+ * them to an origin (`secretOrigin`, a link's) and that isn't the one they were entered for, so a
+ * key typed for one site is never sent to another. They then read as missing until given again.
+ */
+export async function loadSourceSecrets(
+  services: DataServices,
+  sourceId: string,
+  type: DataSourceType,
+  settings: Record<string, SettingValue>,
+): Promise<Record<string, string>> {
+  const secrets = await loadSecrets(services, sourceId, secretKeys(type.settings, settings));
+  if (!type.secretOrigin || Object.keys(secrets).length === 0) return secrets;
+  const origin = type.secretOrigin(settings);
+  const bound = await services.secrets.get(secretStoreKey(sourceId, ORIGIN_KEY));
+  return origin !== null && bound === origin ? secrets : {};
 }

@@ -30,6 +30,7 @@ export { exportFile } from "./export-file";
 export type * from "./export-files.types";
 export { canSaveToFolder, exportFiles } from "./export-files";
 export { readLocalFile } from "./read-local-file";
+export { isAppDataPath } from "./is-app-data-path";
 export { writeExportFile } from "./write-export-file";
 export { pickPluginFolder } from "./plugin-folder-dialog";
 export { pluginStorage } from "./plugin-storage";

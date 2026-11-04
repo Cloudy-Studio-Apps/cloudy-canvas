@@ -5,6 +5,6 @@ export type DataRow = Record<string, unknown>;
 
 /** Rows with the fields found in them. */
 export interface DataTable {
-  rows: DataRow[];
+  rows: readonly DataRow[];
   fields: DataField[];
 }

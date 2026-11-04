@@ -14,6 +14,7 @@ import { RemoveSourceButton } from "./remove-source-button";
 import { RowsTable } from "./rows-table";
 import { SourceSettingsForm } from "./source-settings-form";
 import type { SourceSectionsProps } from "./source-sections.types";
+import { translatedError } from "./error-text";
 import { t } from "../../data.i18n";
 
 /**
@@ -28,7 +29,7 @@ export function SourceSections({ source, sourceType, onRemoved }: SourceSections
 
   const save = (values: Record<string, SettingValue>) => {
     sources.setSettings(source.id, values).then(secrets.refresh, (error: unknown) => {
-      notifyError(t("source.saveFailed"), error);
+      notifyError(t("source.saveFailed"), translatedError(error));
     });
   };
   // "Automatic" stays automatic: it reads the new file's extension by itself.

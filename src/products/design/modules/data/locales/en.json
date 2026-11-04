@@ -112,5 +112,13 @@
       "parsing": "Reading the data…",
       "saving": "Saving…"
     }
+  },
+  "errors": {
+    "missing": "Missing: {keys}",
+    "answered": "{url} answered with error {status}.",
+    "noFormat": "Couldn't tell the data's format. Choose one under Format.",
+    "pickFileAgain": "Pick the file again on this device.",
+    "privateFile": "This file is in the app's own data folder, which data sources can't read.",
+    "webPage": "The source answered a web page, not data. Check the link, or whether it needs a key."
   }
 }

@@ -28,6 +28,8 @@ function guessValue(v: unknown): FieldType {
   if (typeof v !== "string") return "text";
   const s = v.trim();
   if (s === "true" || s === "false") return "boolean";
+  // A leading zero ("007", "01234") is a code, not a number: it would be lost as one.
+  if (/^-?0\d/.test(s)) return "text";
   if (/^-?\d+$/.test(s)) return "integer";
   if (/^-?\d*\.\d+$/.test(s)) return "number";
   if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(s)) return "color";

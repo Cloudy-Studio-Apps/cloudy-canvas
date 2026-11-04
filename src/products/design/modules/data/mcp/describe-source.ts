@@ -19,8 +19,8 @@ export async function summarizeSource(engine: DesignWorkspace, source: DataSourc
 }
 
 /**
- * A source in full: its settings (secret values never, only which secrets this device holds), its
- * fields and its first `rows` rows.
+ * A source in full: its settings (secret values never, only which secrets this device holds, and
+ * whether it knows where each chosen file is), its fields and its first `rows` rows.
  */
 export async function describeSource(
   engine: DesignWorkspace,
@@ -30,6 +30,7 @@ export async function describeSource(
   const sources = engine.service(DESIGN_DATA_SOURCES);
   const type = sources.types().find((t) => t.id === source.sourceType);
   const missing = await sources.missingSecrets(source.id);
+  const missingFiles = await sources.missingFiles(source.id);
   const all = sources.rows(source.id);
   return {
     ...(await summarizeSource(engine, source)),
@@ -39,6 +40,11 @@ export async function describeSource(
       key,
       set: !missing.includes(key),
     })),
+    files: (type?.settings ?? []).flatMap((spec) =>
+      spec.kind === "file" && source.settings[spec.key]
+        ? [{ key: spec.key, onDevice: !missingFiles.includes(spec.key) }]
+        : [],
+    ),
     fields: source.fields,
     sampleRows: all.slice(0, rows),
   };

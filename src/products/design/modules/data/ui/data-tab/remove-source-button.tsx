@@ -7,6 +7,7 @@ import { tCommon } from "@shared/core";
 import { AppDialog, Button } from "@shared/ui/kit";
 import { DESIGN_DATA_SOURCES } from "../../model";
 import type { RemoveSourceButtonProps } from "./remove-source-button.types";
+import { translatedError } from "./error-text";
 import { t } from "../../data.i18n";
 
 /**
@@ -23,7 +24,7 @@ export function RemoveSourceButton({ source, onRemoved }: RemoveSourceButtonProp
       await sources.remove(source.id);
       onRemoved();
     } catch (error) {
-      notifyError(t("source.removeFailed"), error);
+      notifyError(t("source.removeFailed"), translatedError(error));
     }
   };
 

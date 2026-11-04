@@ -18,6 +18,9 @@ export function elementPatch(
   const kind = context.kinds.kindOf(el);
   for (const [key, value] of Object.entries(patch)) {
     if (IMMUTABLE_FIELDS.has(key)) throw new Error(`"${key}" can't be changed.`);
+    if (kind.patchableFields?.size === 0) {
+      throw new Error(`${el.type} elements can't be changed with this tool; use their own tools.`);
+    }
     if (kind.patchableFields && !kind.patchableFields.has(key)) {
       const allowed = [...kind.patchableFields].join(", ");
       throw new Error(`Only ${allowed} can be changed on ${el.type} elements.`);

@@ -1,5 +1,6 @@
 import { CommitInput, CommitTextarea } from "@canvas-ui";
 import { Field, NumberInput, SelectField, SwitchField } from "@shared/ui/kit";
+import { filePathKey } from "../../update";
 import { FileField } from "./file-field";
 import { PairsField } from "./pairs-field";
 import { SecretField } from "./secret-field";
@@ -80,6 +81,7 @@ export function SettingField({ spec, value, stored, onChange, onFilePicked }: Se
         <FileField
           spec={spec}
           value={text(value)}
+          onDevice={stored.has(filePathKey(spec.key))}
           onChange={onChange}
           onFilePicked={onFilePicked}
         />

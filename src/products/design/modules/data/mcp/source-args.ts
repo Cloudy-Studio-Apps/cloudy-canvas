@@ -3,35 +3,8 @@ import { optionalString, type ToolArgs } from "@canvas";
 import type { DesignWorkspace } from "../../../design-engine.types";
 import { DESIGN_DATA_SOURCES } from "../model";
 import type { SettingSpec } from "../settings";
-import type { DataField, DataSourceElement, FieldFormat, FieldType, SettingValue } from "../source";
+import type { DataSourceElement, SettingValue } from "../source";
 import type { DataSourceType } from "../data.points.types";
-
-/** Every field type, for validating what an agent sets. */
-export const FIELD_TYPES: readonly FieldType[] = [
-  "text",
-  "integer",
-  "number",
-  "currency",
-  "boolean",
-  "date",
-  "color",
-  "url",
-  "image-url",
-  "image-base64",
-  "image-file",
-  "list",
-  "object",
-];
-
-const FORMAT_KEYS = [
-  "decimals",
-  "currency",
-  "dateStyle",
-  "prefix",
-  "suffix",
-  "trueText",
-  "falseText",
-] as const;
 
 /** The JSON schema of the `source` argument every source tool takes. */
 export const SOURCE_SCHEMA = {
@@ -133,54 +106,6 @@ export function readSecretValues(
     secrets[key] = value;
   }
   return secrets;
-}
-
-function readFieldFormat(value: unknown, where: string): FieldFormat {
-  if (typeof value !== "object" || value === null || Array.isArray(value)) {
-    throw new Error(`${where}.format must be an object.`);
-  }
-  const format: Record<string, unknown> = {};
-  for (const [key, v] of Object.entries(value)) {
-    if (!(FORMAT_KEYS as readonly string[]).includes(key)) {
-      throw new Error(`${where}.format has no "${key}" (use ${FORMAT_KEYS.join(", ")}).`);
-    }
-    format[key] = v;
-  }
-  return format as FieldFormat;
-}
-
-/** The source's fields with an agent's `fields` patches applied by path; unknown paths are errors. */
-export function patchFields(source: DataSourceElement, args: ToolArgs): DataField[] | undefined {
-  const patches = args.fields;
-  if (patches === undefined || patches === null) return undefined;
-  if (!Array.isArray(patches)) throw new Error('"fields" must be an array of objects.');
-  const fields = source.fields.map((f) => ({ ...f }));
-  patches.forEach((patch: unknown, i) => {
-    const where = `fields[${i}]`;
-    if (typeof patch !== "object" || patch === null) throw new Error(`${where} must be an object.`);
-    const p = patch as Record<string, unknown>;
-    const field = fields.find((f) => f.path === p.path);
-    if (typeof p.path !== "string" || !field) {
-      throw new Error(`${where}: no field "${String(p.path)}" (see get_data_source).`);
-    }
-    if (p.alias !== undefined) {
-      if (typeof p.alias !== "string") throw new Error(`${where}.alias must be text.`);
-      if (p.alias === "") delete field.alias;
-      else field.alias = p.alias;
-    }
-    if (p.type !== undefined) {
-      if (!FIELD_TYPES.includes(p.type as FieldType)) {
-        throw new Error(`${where}.type must be one of: ${FIELD_TYPES.join(", ")}.`);
-      }
-      field.type = p.type as FieldType;
-    }
-    if (p.format !== undefined) field.format = readFieldFormat(p.format, where);
-    if (p.hidden !== undefined) {
-      if (typeof p.hidden !== "boolean") throw new Error(`${where}.hidden must be true or false.`);
-      field.hidden = p.hidden;
-    }
-  });
-  return fields;
 }
 
 /** Runs `edit` as one undo step, also when it awaits (the service's own checkpoints join it). */

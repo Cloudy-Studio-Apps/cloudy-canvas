@@ -5,6 +5,7 @@ import { DESIGN_DATA_SOURCES } from "../../model";
 import { useSourceSecrets } from "../hooks/use-source-secrets";
 import { useUpdateSource } from "../hooks/use-update-source";
 import { SourceIcon } from "../source-icon";
+import { errorText } from "./error-text";
 import { sourceMeta, stageText } from "./source-meta";
 import type { SourceRowProps } from "./source-row.types";
 import { UpdateButton } from "./update-button";
@@ -19,7 +20,8 @@ export function SourceRow({ source, sourceType, onOpen }: SourceRowProps) {
   const sources = useService(DESIGN_DATA_SOURCES);
   const update = useUpdateSource(source.id);
   const { missing } = useSourceSecrets(source);
-  const error = sources.error(source.id);
+  const stored = sources.error(source.id);
+  const error = stored === null ? null : errorText(stored);
 
   return (
     <li>

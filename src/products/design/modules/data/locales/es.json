@@ -112,5 +112,13 @@
       "parsing": "Leyendo los datos…",
       "saving": "Guardando…"
     }
+  },
+  "errors": {
+    "missing": "Falta: {keys}",
+    "answered": "{url} respondió con el error {status}.",
+    "noFormat": "No se pudo saber el formato de los datos. Elige uno en Formato.",
+    "pickFileAgain": "Vuelve a elegir el archivo en este dispositivo.",
+    "privateFile": "Este archivo está en la carpeta de datos de la propia app, que las fuentes de datos no pueden leer.",
+    "webPage": "La fuente respondió con una página web, no con datos. Revisa el enlace o si necesita una clave."
   }
 }

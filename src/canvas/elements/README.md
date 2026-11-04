@@ -25,7 +25,7 @@ Everything on a canvas is an element. **Elements are plain data and behavior liv
   - `handles(el, zoom)`: `ElementHandle`s the overlay draws while the element is selected or hovered (`look: "dot"` for small actions; `bar` and `add`, with `w`/`h`, for grips and "+" strips). A hovered element with handles stays hovered a little outside its bounds, so handles drawn outside it can be reached.
   - `boxed`: whether selection and hover outline its bounds (`false` for connectors, which show their ends)
   - `connectable` and `anchor(el, side)`: whether connectors attach to it, and where on each `ElementSide` (`BoxKind` is connectable; geo variants give their own `sideAnchor`)
-  - `build(spec, index, context)` from an `ElementSpec` (agents' `create_shapes`), plus `creatable` and `patchableFields`. Type-specific spec fields are declared in `specProperties` (merged into the `create_shapes` schema) and read from `spec.args`; `context.lookup(ref)` finds elements by id or by a `key` given earlier in the same call.
+  - `build(spec, index, context)` from an `ElementSpec` (agents' `create_shapes`), plus `creatable` and `patchableFields` (`null`: any stored field; an empty set: none, the generic edit tools refuse the element, e.g. a data source whose settings only its own service writes). Type-specific spec fields are declared in `specProperties` (merged into the `create_shapes` schema) and read from `spec.args`; `context.lookup(ref)` finds elements by id or by a `key` given earlier in the same call.
 
 ## Shared bases
 

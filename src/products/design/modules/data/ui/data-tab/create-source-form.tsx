@@ -13,6 +13,7 @@ import { useDataRegistry } from "../hooks/use-data-registry";
 import { FormatSelect } from "./format-select";
 import { SourceSettingsForm } from "./source-settings-form";
 import type { CreateSourceFormProps } from "./create-source-form.types";
+import { translatedError } from "./error-text";
 import { t } from "../../data.i18n";
 
 const NO_SECRETS: ReadonlySet<string> = new Set();
@@ -38,7 +39,7 @@ export function CreateSourceForm({ sourceType, onCreated, onCancel }: CreateSour
       onCreated(source.id);
       startUpdate(sources, source.id);
     } catch (error) {
-      notifyError(t("source.createFailed"), error);
+      notifyError(t("source.createFailed"), translatedError(error));
       setBusy(false);
     }
   };

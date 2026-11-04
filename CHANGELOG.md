@@ -9,7 +9,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 - Designs can now hold data sources, such as a CSV or JSON file or a web API: the new Data tab lists
   them with their rows, and Update reads them again whenever you choose. API keys stay on this
-  device and are never saved in the file.
+  device and are never saved in the file, and a key is only sent to the site it was typed for. A
+  file's location stays on this device too, so on another computer you pick the file once there.
 
 ## 0.8.0 - 2026-11-04
 

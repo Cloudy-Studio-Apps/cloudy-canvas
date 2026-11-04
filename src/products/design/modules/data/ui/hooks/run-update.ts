@@ -2,6 +2,7 @@ import { Emitter } from "@canvas";
 import { notifyError } from "@shared/stores/toast-store";
 import type { DesignDataSources } from "../../model";
 import type { UpdateResult } from "../../update";
+import { errorText, translatedError } from "../data-tab/error-text";
 import type { TabUpdates } from "./run-update.types";
 import { t } from "../../data.i18n";
 
@@ -32,11 +33,11 @@ async function runOne(
   try {
     const result = await sources.update(id, { signal: controller.signal });
     if (!result.ok && !result.aborted) {
-      notifyError(t("update.failed", { name }), new Error(result.error ?? ""));
+      notifyError(t("update.failed", { name }), new Error(errorText(result.error ?? "")));
     }
     return result;
   } catch (error) {
-    notifyError(t("update.failed", { name }), error);
+    notifyError(t("update.failed", { name }), translatedError(error));
     return null;
   } finally {
     if (map.get(id) === controller) map.delete(id);

@@ -5,7 +5,10 @@ import { missingSettings } from "../settings";
 import { isDataSource, type DataSourceElement } from "../source";
 import { guessFields, normalizeRows } from "../table";
 import { addSnapshot, encodeRows } from "./snapshot";
-import { loadSecrets, missingSecretKeys, secretKeys } from "./source-secrets";
+import { requireFilePaths } from "./file-paths";
+import { isWebPage } from "./is-web-page";
+import { loadSourceSecrets, missingSecretKeys } from "./source-secrets";
+import { UPDATE_ERRORS } from "./update-errors";
 import type { DataContext, UpdateOptions, UpdateResult } from "./update-source.types";
 
 function record(doc: CanvasDocument, id: string): DataSourceElement {
@@ -31,7 +34,8 @@ export async function updateSource(
     const type = ctx.types.find((t) => t.id === source.sourceType);
     if (!type) throw new Error(`Unknown source type "${source.sourceType}".`);
     const specs = type.settings;
-    const secrets = await loadSecrets(ctx.services, id, secretKeys(specs, source.settings));
+    // Secrets bound to another origin than the settings' read as missing (never sent there).
+    const secrets = await loadSourceSecrets(ctx.services, id, type, source.settings);
     // Secret pairs too (a header whose value isn't on this device), not only required settings.
     const missing = [
       ...new Set([
@@ -39,11 +43,14 @@ export async function updateSource(
         ...missingSecretKeys(specs, source.settings, secrets),
       ]),
     ];
-    if (missing.length > 0) throw new Error(`Missing: ${missing.join(", ")}`);
+    if (missing.length > 0) throw new Error(`${UPDATE_ERRORS.missing}${missing.join(", ")}`);
+    const files = await requireFilePaths(ctx.services, id, specs, source.settings);
 
     options.onStage?.("fetching");
-    const raw = await type.update(source.settings, { services: ctx.services, signal, secrets });
+    const services = ctx.services;
+    const raw = await type.update(source.settings, { services, signal, secrets, files });
     signal.throwIfAborted();
+    if (isWebPage(raw)) throw new Error(UPDATE_ERRORS.webPage);
 
     options.onStage?.("parsing");
     const format =
@@ -52,9 +59,7 @@ export async function updateSource(
         : (ctx.formats.find((f) => f.id === source.format) ?? null);
     if (!format) {
       throw new Error(
-        source.format === "auto"
-          ? "Couldn't tell the data's format."
-          : `Unknown format "${source.format}".`,
+        source.format === "auto" ? UPDATE_ERRORS.noFormat : `Unknown format "${source.format}".`,
       );
     }
     const rows = normalizeRows(await format.parse(raw, source.formatOptions));
