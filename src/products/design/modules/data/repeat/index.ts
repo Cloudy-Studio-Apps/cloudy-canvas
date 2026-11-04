@@ -9,3 +9,8 @@ export { emptyCopyPlan, writeDataCopies } from "./write-data-copies";
 export { dataScopes } from "./data-scopes";
 export { templateOf } from "./template-of";
 export { scopeAt } from "./scope-at";
+export type * from "./set-repeat.types";
+export { setRepeat } from "./set-repeat";
+export { detachDataCopy, detachedRowsGone } from "./detach-data-copy";
+export { renameReferences } from "./rename-references";
+export { iteratorNames } from "./iterator-names";

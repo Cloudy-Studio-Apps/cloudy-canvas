@@ -8,12 +8,15 @@ import { renamePath } from "./rename-path";
  * The template with `from` renamed to `to` in its tokens, or `null` when no token names it. The
  * text between tokens is copied as it is; the runs move with their text (a run that touched a
  * token now covers the whole renamed token), clipped so they stay sorted, in range and apart.
+ * Never throws: a stored template that breaks `bindData`'s rules (an older or hand-made file) is
+ * left as it is (`null`), so one bad layer never stops a rename halfway.
  */
 export function renameTemplate(
   template: DataTemplate,
   from: string,
   to: string,
 ): DataTemplate | null {
+  if (!valid(template)) return null;
   const source = template.text;
   // Each changed token: where it was and where it is now.
   const moved: { start: number; end: number; newStart: number; newEnd: number }[] = [];
@@ -54,6 +57,14 @@ export function renameTemplate(
   }
   const renamed = { text: out, runs };
   // The same rules `bindData` holds a template to (sorted, apart, inside the text).
-  checkTemplate(renamed);
-  return renamed;
+  return valid(renamed) ? renamed : null;
+}
+
+function valid(template: DataTemplate): boolean {
+  try {
+    checkTemplate(template);
+    return true;
+  } catch {
+    return false;
+  }
 }

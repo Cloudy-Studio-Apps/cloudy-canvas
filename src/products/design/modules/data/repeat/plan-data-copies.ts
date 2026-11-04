@@ -1,6 +1,7 @@
 import type { DesignNode } from "../../core";
 import type { FrameElement } from "../../frame";
 import { copyNode, copyPatch } from "./copy-node";
+import { copiedIterators, repeatField } from "./copied-repeat";
 import { dataResolvedPaths, layoutPlacedPaths } from "./data-resolved-paths";
 import { orderKeys } from "./order-keys";
 import { dataCopyTag } from "./repeat-fields";
@@ -37,6 +38,7 @@ export function planDataCopies(
   const partById = new Map(parts.map((part) => [part.id, part]));
   const children = new Map<string, DesignNode[]>();
   const mine = new Map<DesignNode, DataCopyTag>();
+  const byId = new Map(existing.map((el) => [el.id, el]));
   for (const el of existing) {
     if (el.parentId !== null) {
       const list = children.get(el.parentId);
@@ -111,6 +113,8 @@ export function planDataCopies(
         idFor.set(part.id, old.id);
         const parent = isRoot ? frame : (partById.get(part.parentId ?? "") ?? null);
         const keep = [...dataResolvedPaths(part), ...layoutPlacedPaths(part, parent)];
+        // A copied iterator's `repeat` is its own (below), never the template layer's as it is.
+        if (repeatField(part)) keep.push("repeat");
         at.set(part.id, {
           x: isRoot || keep.includes("x") ? old.x : x,
           y: isRoot || keep.includes("y") ? old.y : y,
@@ -139,6 +143,7 @@ export function planDataCopies(
       idFor.set(part.id, copy.id);
       fresh.push(copy);
     }
+    copiedIterators(parts, idFor, fresh, byId, plan);
     if (fresh.length > 0) plan.add.push({ key: row.key, index: row.index, nodes: fresh });
   });
 

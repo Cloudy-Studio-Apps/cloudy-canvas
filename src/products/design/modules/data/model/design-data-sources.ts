@@ -1,6 +1,8 @@
 import { defineService, DocumentFeed, type CanvasDocument, type ElementPatch } from "@canvas";
 
-import { renameReferences } from "../bindings";
+// Leaves of `repeat/`, as `bindings/` imports `model/` leaves: no index cycles.
+import { iteratorNames } from "../repeat/iterator-names";
+import { renameReferences } from "../repeat/rename-references";
 import type { DataFormat, DataSourceType } from "../data.points.types";
 import type { SettingValue } from "../source";
 import {
@@ -107,7 +109,8 @@ export class DesignDataSources {
       formatOptions: init.formatOptions,
     });
     const settings = await writeSecrets(services, draft.id, type, init.settings, init.secrets);
-    const taken = this.list().map((s) => s.name);
+    // A row name (`as`) would hide the source inside its iterator.
+    const taken = [...this.list().map((s) => s.name), ...iteratorNames(this.doc)];
     const wanted = init.name?.trim() || type.defaultName(settings) || DATA_SOURCE_DEFAULTS.name;
     const record = { ...draft, settings, name: sourceName(wanted, taken) };
     this.doc.checkpoint();
@@ -115,11 +118,17 @@ export class DesignDataSources {
     return this.get(record.id) ?? record;
   }
 
-  /** Renames a source to an identifier made from `name` (unique, not a reserved word). */
+  /**
+   * Renames a source to an identifier made from `name` (unique, not a reserved word, nor an
+   * iterator's row name).
+   */
   rename(id: string, name: string): void {
     const source = this.require(id);
     if (!name.trim()) return;
-    const taken = this.list().flatMap((s) => (s.id === id ? [] : [s.name]));
+    const taken = [
+      ...this.list().flatMap((s) => (s.id === id ? [] : [s.name])),
+      ...iteratorNames(this.doc),
+    ];
     const next = sourceName(name, taken);
     if (next === source.name) return;
     // One undo step: the name and every reference to it change together, which is also why the
