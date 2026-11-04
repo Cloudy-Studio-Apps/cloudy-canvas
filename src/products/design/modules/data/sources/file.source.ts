@@ -6,7 +6,9 @@ import { UPDATE_ERRORS } from "../update";
 
 /**
  * A file on the device. Its `path` setting keeps only the file's name in the document; the path
- * itself stays on this device (`ctx.files.path`), so another device picks the file again.
+ * itself stays on this device (`ctx.files.path`), so another device picks the file again. Its
+ * `imagesFolder` is where the data's image file names (`image-file` fields) are read, also kept
+ * on this device only.
  */
 export const FILE_SOURCE: DataSourceType = {
   id: "file",
@@ -22,6 +24,7 @@ export const FILE_SOURCE: DataSourceType = {
         label: t("sources.file.path"),
         extensions: [...CSV_FORMAT.extensions, ...JSON_FORMAT.extensions],
       },
+      { key: "imagesFolder", kind: "folder" as const, label: t("sources.file.imagesFolder") },
     ];
   },
   defaultName(settings) {

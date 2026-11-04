@@ -5,6 +5,7 @@ import { missingSettings } from "../settings";
 import { isDataSource, type DataSourceElement } from "../source";
 import { guessFields, normalizeRows } from "../table";
 import { addSnapshot, encodeRows } from "./snapshot";
+import { downloadImages } from "./download-images";
 import { requireFilePaths } from "./file-paths";
 import { isWebPage } from "./is-web-page";
 import { loadSourceSecrets, missingSecretKeys } from "./source-secrets";
@@ -18,9 +19,11 @@ function record(doc: CanvasDocument, id: string): DataSourceElement {
 }
 
 /**
- * Fetches a source, parses its data into rows, guesses its fields and saves a new snapshot, in one
- * undo step. The asset is added before the checkpoint (assets are outside undo), so undoing points
- * the record back at the previous snapshot and fields. When anything fails nothing is written.
+ * Fetches a source, parses its data into rows, guesses its fields, saves the pictures the data
+ * names (`downloadImages`) and a new snapshot, in one undo step. The assets are added before the
+ * checkpoint (assets are outside undo), so undoing points the record back at the previous
+ * snapshot, fields and pictures. When anything fails nothing is written; a picture that can't be
+ * saved is counted in `imagesFailed` instead.
  */
 export async function updateSource(
   doc: CanvasDocument,
@@ -65,26 +68,69 @@ export async function updateSource(
     const rows = normalizeRows(await format.parse(raw, source.formatOptions));
     signal.throwIfAborted();
 
-    options.onStage?.("saving");
     const encoded = await encodeRows(rows);
     signal.throwIfAborted();
+
+    // The pictures the data names, saved in the file; their assets are added (outside undo)
+    // once all are in, and nothing async follows, so a cancel adds none.
+    const before = record(doc, id);
+    const typed = guessFields(rows, before.fields);
+    let reported = false;
+    const folderKey = specs.find((spec) => spec.kind === "folder")?.key;
+    const downloaded = await downloadImages(rows, typed, before.images, {
+      doc,
+      services,
+      folder: (folderKey && files[folderKey]) || null,
+      signal,
+      // The stage shows only when there are pictures to save.
+      onProgress: (done, total) => {
+        if (total === 0) return;
+        if (!reported) options.onStage?.("images");
+        reported = true;
+        options.onProgress?.(done, total);
+      },
+    });
+
+    options.onStage?.("saving");
     // Read again: the record may have changed (or gone) while fetching.
     const current = record(doc, id);
     const previous = current.snapshot;
     const changed = previous?.hash !== encoded.hash;
     const fields = guessFields(rows, current.fields);
+    const images = { ...current.images, ...downloaded.images };
+    const imagesChanged = JSON.stringify(images) !== JSON.stringify(current.images);
     // Same data keeps its asset, unless this device lacks it: then the rows are saved again.
     const snapshot =
       previous && !changed && doc.hasAsset(previous.assetId)
         ? { ...previous, updatedAt: Date.now() }
         : addSnapshot(doc, rows, encoded);
     doc.checkpoint();
-    const patch: ElementPatch<DataSourceElement> = changed ? { snapshot, fields } : { snapshot };
+    // One record update: the snapshot, the fields and the new pictures, one undo step.
+    const patch: ElementPatch<DataSourceElement> = {
+      snapshot,
+      ...(changed ? { fields } : {}),
+      ...(imagesChanged ? { images } : {}),
+    };
     doc.update(id, patch);
-    return { ok: true, rowCount: rows.length, changed };
+    options.onImageFailures?.(downloaded.failed, downloaded.overLimit);
+    return {
+      ok: true,
+      rowCount: rows.length,
+      changed,
+      imagesFailed: downloaded.failed.length,
+      imagesOverLimit: downloaded.overLimit,
+    };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     const aborted = signal.aborted || undefined;
-    return { ok: false, rowCount: 0, error: message, changed: false, aborted };
+    return {
+      ok: false,
+      rowCount: 0,
+      error: message,
+      changed: false,
+      imagesFailed: 0,
+      imagesOverLimit: 0,
+      aborted,
+    };
   }
 }

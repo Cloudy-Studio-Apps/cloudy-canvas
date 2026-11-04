@@ -33,5 +33,6 @@ export { readLocalFile } from "./read-local-file";
 export { isAppDataPath } from "./is-app-data-path";
 export { writeExportFile } from "./write-export-file";
 export { pickPluginFolder } from "./plugin-folder-dialog";
+export { pickFolder } from "./pick-folder";
 export { pluginStorage } from "./plugin-storage";
 export { openFile } from "./open-file";

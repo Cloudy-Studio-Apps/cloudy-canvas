@@ -8,6 +8,7 @@ export const UPDATE_ERRORS = {
   noFormat: "Couldn't tell the data's format.",
   pickFileAgain: "Pick the file again on this device.",
   privateFile: "This file is in the app's own data folder, which data sources can't read.",
+  privateFolder: "This folder is in the app's own data folder, which data sources can't read.",
   webPage: "The source answered a web page, not data.",
 } as const;
 

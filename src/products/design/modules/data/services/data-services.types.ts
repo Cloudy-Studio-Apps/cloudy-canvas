@@ -7,6 +7,8 @@ export interface DataServices {
   pickFile(
     extensions: string[],
   ): Promise<{ path: string | null; name: string; bytes: Uint8Array } | null>;
+  /** Asks for a folder on this device; its path, `null` when cancelled. */
+  pickFolder(): Promise<string | null>;
   secrets: SecretStore;
   /** Whether a path is inside the app's own data folder (where secrets are kept): never read. */
   isPrivatePath(path: string): Promise<boolean>;
@@ -25,6 +27,9 @@ export interface SourceContext {
   services: DataServices;
   signal: AbortSignal;
   secrets: Record<string, string>;
-  /** This device's paths of the source's chosen files, by setting key (the file keeps names only). */
+  /**
+   * This device's paths of the source's chosen files and folders, by setting key (the file keeps
+   * names only).
+   */
   files: Record<string, string>;
 }

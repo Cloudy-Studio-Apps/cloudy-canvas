@@ -12,6 +12,7 @@ export function useUpdateSource(id: string): SourceUpdate {
   return {
     run: () => startUpdate(sources, id),
     stage,
+    progress: sources.progress(id),
     cancel: () => cancelUpdate(sources, id),
     cancellable: stage !== null && canCancelUpdate(sources, id),
   };

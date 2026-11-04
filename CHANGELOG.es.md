@@ -12,6 +12,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   claves de API se quedan en este dispositivo y nunca se guardan en el archivo, y cada clave solo se
   envía al sitio para el que se escribió. La ubicación de un archivo también se queda en este
   dispositivo, así que en otro equipo eliges el archivo una vez allí.
+- Las imágenes que nombra una fuente de datos, como enlaces a imágenes, imágenes incrustadas o
+  nombres de archivo en una carpeta que eliges, se guardan en el diseño al actualizarla, así que se
+  siguen viendo sin conexión y en otros equipos. La pestaña Datos muestra el progreso de la descarga
+  y cuántas imágenes no se pudieron guardar.
 
 ## 0.8.0 - 2026-11-04
 

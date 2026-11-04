@@ -1,3 +1,5 @@
+import { RefreshCw } from "lucide-react";
+
 import { CommitInput } from "@canvas-ui";
 import { CheckboxField, SelectField, cn } from "@shared/ui/kit";
 import type { FieldType } from "../../source";
@@ -6,7 +8,7 @@ import type { FieldRowProps } from "./field-row.types";
 import { t } from "../../data.i18n";
 
 /** One field of the data: its path, its name (alias), its type, hidden, and a sample value. */
-export function FieldRow({ field, sample, onChange }: FieldRowProps) {
+export function FieldRow({ field, sample, needsUpdate, onChange }: FieldRowProps) {
   return (
     <li className={cn("flex flex-col gap-1 py-1.5", field.hidden && "opacity-60")}>
       <div className="flex min-w-0 items-center gap-1.5">
@@ -41,6 +43,12 @@ export function FieldRow({ field, sample, onChange }: FieldRowProps) {
           className="w-28 shrink-0"
         />
       </div>
+      {needsUpdate && (
+        <p className="flex items-center gap-1 text-xs text-warning">
+          <RefreshCw className="size-3 shrink-0" />
+          {t("fields.updateForImages")}
+        </p>
+      )}
       {sample !== "" && (
         <p className="truncate text-xs text-muted-foreground" title={sample}>
           {sample}

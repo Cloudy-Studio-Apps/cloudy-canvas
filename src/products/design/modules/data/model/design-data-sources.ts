@@ -1,6 +1,7 @@
 import { defineService, DocumentFeed, type CanvasDocument, type ElementPatch } from "@canvas";
 
 import type { DataFormat, DataSourceType } from "../data.points.types";
+import { holdsDevicePath } from "../settings";
 import type { SettingValue } from "../source";
 import {
   createDataSource,
@@ -28,6 +29,7 @@ import { sourceName } from "./source-name";
 import { sharedState } from "./shared-state";
 import type { SharedState } from "./shared-state.types";
 import type { SourceUpdates } from "./source-updates";
+import type { UpdateProgress } from "./source-updates.types";
 import { clearSecrets, writeSecrets } from "./write-secrets";
 
 const NOT_READY = "Data sources aren't ready: no editor is open.";
@@ -192,13 +194,13 @@ export class DesignDataSources {
     return missingSecretKeys(type.settings, source.settings, stored);
   }
 
-  /** The file settings whose file this device has no path for (pick it again here). */
+  /** The file and folder settings this device has no path for (pick them again here). */
   async missingFiles(id: string): Promise<string[]> {
     const source = this.require(id);
     const { services, type } = this.ready(source.sourceType);
     const paths = await loadFilePaths(services, id, type.settings, source.settings);
     return type.settings.flatMap((spec) =>
-      spec.kind === "file" && source.settings[spec.key] && !paths[spec.key] ? [spec.key] : [],
+      holdsDevicePath(spec) && source.settings[spec.key] && !paths[spec.key] ? [spec.key] : [],
     );
   }
 
@@ -210,6 +212,24 @@ export class DesignDataSources {
   /** What a running Update of a source is doing, `null` when none is running. */
   stage(id: string): UpdateStage | null {
     return this.updates.stage(id);
+  }
+
+  /** How far a running Update's pictures are (`done` of `total`), `null` when none are saving. */
+  progress(id: string): UpdateProgress | null {
+    return this.updates.progress(id);
+  }
+
+  /**
+   * The values whose picture the last good Update on this device couldn't save (a failed or
+   * non-image download, a file not in the folder, or past the limit), in memory only.
+   */
+  imageFailures(id: string): string[] {
+    return this.updates.imageFailures(id).values;
+  }
+
+  /** How many of `imageFailures(id)` were past the limit of new pictures one Update saves. */
+  imagesOverLimit(id: string): number {
+    return this.updates.imageFailures(id).overLimit;
   }
 
   private ready(sourceType: string): DataContext & { type: DataSourceType } {

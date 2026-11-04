@@ -1,12 +1,18 @@
 import { relativeTime } from "@shared/core";
 import type { DataSourceElement } from "../../source";
+import type { UpdateProgress } from "../../model";
 import type { UpdateStage } from "../../update";
 import { t } from "../../data.i18n";
 
-/** What an Update is doing, in words. */
-export function stageText(stage: UpdateStage): string {
+/** What an Update is doing, in words (with how many pictures are in while it saves them). */
+export function stageText(stage: UpdateStage, progress: UpdateProgress | null = null): string {
   if (stage === "fetching") return t("update.stage.fetching");
   if (stage === "parsing") return t("update.stage.parsing");
+  if (stage === "images") {
+    return progress && progress.total > 0
+      ? t("update.stage.imagesProgress", { done: progress.done, total: progress.total })
+      : t("update.stage.images");
+  }
   return t("update.stage.saving");
 }
 

@@ -11,7 +11,8 @@
   "sources": {
     "file": {
       "label": "File",
-      "path": "File"
+      "path": "File",
+      "imagesFolder": "Images folder"
     },
     "http": {
       "label": "Link",
@@ -76,7 +77,10 @@
       "title": "Rows",
       "empty": "No rows yet. Update the source to read its data.",
       "showing": "Showing {shown} of {count} rows"
-    }
+    },
+    "pickFolder": "Choose the images folder",
+    "pickFolderFailed": "Couldn't open the folder",
+    "noFolder": "No folder chosen"
   },
   "fields": {
     "title": "Fields",
@@ -99,7 +103,8 @@
       "imageFile": "Image file",
       "list": "List",
       "object": "Object"
-    }
+    },
+    "updateForImages": "Update to download its images"
   },
   "update": {
     "run": "Update",
@@ -110,7 +115,9 @@
     "stage": {
       "fetching": "Fetching the data…",
       "parsing": "Reading the data…",
-      "saving": "Saving…"
+      "saving": "Saving…",
+      "images": "Saving images…",
+      "imagesProgress": "Saving images… {done} of {total}"
     }
   },
   "errors": {
@@ -119,10 +126,18 @@
     "noFormat": "Couldn't tell the data's format. Choose one under Format.",
     "pickFileAgain": "Pick the file again on this device.",
     "privateFile": "This file is in the app's own data folder, which data sources can't read.",
-    "webPage": "The source answered a web page, not data. Check the link, or whether it needs a key."
+    "webPage": "The source answered a web page, not data. Check the link, or whether it needs a key.",
+    "pickFolderAgain": "Pick the folder again on this device.",
+    "privateFolder": "This folder is in the app's own data folder, which data sources can't read."
   },
   "format": {
     "yes": "Yes",
     "no": "No"
+  },
+  "images": {
+    "failed_one": "{count} image couldn't be saved in the file",
+    "failed_other": "{count} images couldn't be saved in the file",
+    "failedOverLimit_one": "{count} image couldn't be saved in the file ({over} past the limit of {limit} new images per Update: update again for the rest)",
+    "failedOverLimit_other": "{count} images couldn't be saved in the file ({over} past the limit of {limit} new images per Update: update again for the rest)"
   }
 }

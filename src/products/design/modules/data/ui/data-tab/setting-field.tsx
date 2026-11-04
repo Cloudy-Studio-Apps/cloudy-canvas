@@ -77,6 +77,7 @@ export function SettingField({ spec, value, stored, onChange, onFilePicked }: Se
     case "pairs":
       return <PairsField spec={spec} value={value} stored={stored} onChange={onChange} />;
     case "file":
+    case "folder":
       return (
         <FileField
           spec={spec}

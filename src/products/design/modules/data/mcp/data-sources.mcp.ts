@@ -21,9 +21,9 @@ const DEVICE_NOTE =
 const BINDING_NOTE =
   "A link's header secrets are bound to the URL's origin they were given for: once `url` " +
   "points at another origin they read as not set (and aren't sent) until given again. A file's " +
-  "absolute path stays on this device; the settings keep only the file's name, and another " +
-  "device has to be given the path again (`files[].onDevice`). Files in the app's own data " +
-  "folder are never read.";
+  "absolute path (and a file source's `imagesFolder`, where its image file names are read) " +
+  "stays on this device; the settings keep only the name, and another device has to be given " +
+  "the path again (`files[].onDevice`). Files in the app's own data folder are never read.";
 
 const SETTINGS_SCHEMA = {
   type: "object",
@@ -135,7 +135,10 @@ export const dataTools: DesignMcpTool[] = [
     description:
       "Fetches a data source again into a new snapshot (one undo step; a failure changes " +
       "nothing), or every source with `all: true`. May take a while. Returns the result of " +
-      "each: ok, rowCount, changed and the error. Missing secrets fail it with `Missing: …`.",
+      "each: ok, rowCount, changed, the error, and imagesFailed: how many pictures the data " +
+      "names (image-url, image-base64 and image-file fields) couldn't be saved in the file " +
+      "(imagesOverLimit of them past the 2,000 new pictures one Update saves). Missing secrets " +
+      "fail it with `Missing: …`.",
     inputSchema: {
       type: "object",
       properties: {

@@ -1,6 +1,6 @@
 import type { DataSourceType } from "../data.points.types";
 import type { DataServices } from "../services";
-import { baseName, isAbsolutePath, splitSecrets } from "../settings";
+import { baseName, holdsDevicePath, isAbsolutePath, splitSecrets } from "../settings";
 import type { SettingSpec } from "../settings";
 import type { SettingValue } from "../source";
 import { deviceKeys, filePathKey, ORIGIN_KEY, secretKeys, secretStoreKey } from "../update";
@@ -49,7 +49,7 @@ export async function writeSecrets(
     writes.set(ORIGIN_KEY, origin);
   }
   for (const spec of specs) {
-    if (spec.kind !== "file") continue;
+    if (!holdsDevicePath(spec)) continue;
     const value = values[spec.key];
     if (typeof value === "string" && isAbsolutePath(value)) {
       settings[spec.key] = baseName(value);

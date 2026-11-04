@@ -10,6 +10,7 @@ import { useDataRegistry } from "../hooks/use-data-registry";
 import { useSourceSecrets } from "../hooks/use-source-secrets";
 import { FieldList } from "./field-list";
 import { FormatSelect } from "./format-select";
+import { ImageFailuresLine } from "./image-failures-line";
 import { RemoveSourceButton } from "./remove-source-button";
 import { RowsTable } from "./rows-table";
 import { SourceSettingsForm } from "./source-settings-form";
@@ -73,7 +74,10 @@ export function SourceSections({ source, sourceType, onRemoved }: SourceSections
         />
       </PanelSection>
       <PanelSection title={t("fields.title")}>
-        <FieldList source={source} rows={rows} />
+        <div className="flex flex-col gap-1">
+          <ImageFailuresLine sourceId={source.id} />
+          <FieldList source={source} rows={rows} />
+        </div>
       </PanelSection>
       <PanelSection title={t("source.table.title")}>
         <RowsTable rows={rows} fields={source.fields} />

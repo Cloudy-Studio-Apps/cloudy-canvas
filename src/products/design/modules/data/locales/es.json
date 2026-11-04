@@ -11,7 +11,8 @@
   "sources": {
     "file": {
       "label": "Archivo",
-      "path": "Archivo"
+      "path": "Archivo",
+      "imagesFolder": "Carpeta de imágenes"
     },
     "http": {
       "label": "Enlace",
@@ -76,7 +77,10 @@
       "title": "Filas",
       "empty": "Aún no hay filas. Actualiza la fuente para leer sus datos.",
       "showing": "Mostrando {shown} de {count} filas"
-    }
+    },
+    "pickFolder": "Elegir la carpeta de imágenes",
+    "pickFolderFailed": "No se pudo abrir la carpeta",
+    "noFolder": "Ninguna carpeta elegida"
   },
   "fields": {
     "title": "Campos",
@@ -99,7 +103,8 @@
       "imageFile": "Archivo de imagen",
       "list": "Lista",
       "object": "Objeto"
-    }
+    },
+    "updateForImages": "Actualiza para descargar sus imágenes"
   },
   "update": {
     "run": "Actualizar",
@@ -110,7 +115,9 @@
     "stage": {
       "fetching": "Obteniendo los datos…",
       "parsing": "Leyendo los datos…",
-      "saving": "Guardando…"
+      "saving": "Guardando…",
+      "images": "Guardando imágenes…",
+      "imagesProgress": "Guardando imágenes… {done} de {total}"
     }
   },
   "errors": {
@@ -119,10 +126,18 @@
     "noFormat": "No se pudo saber el formato de los datos. Elige uno en Formato.",
     "pickFileAgain": "Vuelve a elegir el archivo en este dispositivo.",
     "privateFile": "Este archivo está en la carpeta de datos de la propia app, que las fuentes de datos no pueden leer.",
-    "webPage": "La fuente respondió con una página web, no con datos. Revisa el enlace o si necesita una clave."
+    "webPage": "La fuente respondió con una página web, no con datos. Revisa el enlace o si necesita una clave.",
+    "pickFolderAgain": "Vuelve a elegir la carpeta en este dispositivo.",
+    "privateFolder": "Esta carpeta está en la carpeta de datos de la propia app, que las fuentes de datos no pueden leer."
   },
   "format": {
     "yes": "Sí",
     "no": "No"
+  },
+  "images": {
+    "failed_one": "{count} imagen no se pudo guardar en el archivo",
+    "failed_other": "{count} imágenes no se pudieron guardar en el archivo",
+    "failedOverLimit_one": "{count} imagen no se pudo guardar en el archivo ({over} por encima del límite de {limit} imágenes nuevas por actualización: actualiza otra vez para el resto)",
+    "failedOverLimit_other": "{count} imágenes no se pudieron guardar en el archivo ({over} por encima del límite de {limit} imágenes nuevas por actualización: actualiza otra vez para el resto)"
   }
 }

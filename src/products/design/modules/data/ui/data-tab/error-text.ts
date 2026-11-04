@@ -18,6 +18,8 @@ export function errorText(message: string): string {
       return t("errors.pickFileAgain");
     case UPDATE_ERRORS.privateFile:
       return t("errors.privateFile");
+    case UPDATE_ERRORS.privateFolder:
+      return t("errors.privateFolder");
     case UPDATE_ERRORS.webPage:
       return t("errors.webPage");
     default:

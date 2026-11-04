@@ -1,15 +1,21 @@
 import { Emitter } from "@canvas";
 
 import type { UpdateOptions, UpdateResult, UpdateStage } from "../update";
+import type { ImageFailures, UpdateProgress } from "./source-updates.types";
+
+const NO_FAILURES: ImageFailures = { values: [], overLimit: 0 };
 
 /**
- * This device's Update state per source: the running Update (one at a time), its stage and the
- * last failure's message. In memory only, never in the file.
+ * This device's Update state per source: the running Update (one at a time), its stage and
+ * progress, the last failure's message and the pictures the last good Update couldn't save. In
+ * memory only, never in the file.
  */
 export class SourceUpdates {
   readonly emitter = new Emitter();
   private readonly errors = new Map<string, string>();
   private readonly stages = new Map<string, UpdateStage>();
+  private readonly progresses = new Map<string, UpdateProgress>();
+  private readonly failures = new Map<string, ImageFailures>();
   private readonly running = new Map<string, Promise<UpdateResult>>();
   /** The run each source's state belongs to; gone once the source is forgotten. */
   private readonly tokens = new Map<string, object>();
@@ -33,12 +39,24 @@ export class SourceUpdates {
         this.emitter.emit();
         options.onStage?.(stage);
       },
+      onProgress: (done, total) => {
+        if (this.tokens.get(id) !== token) return;
+        this.progresses.set(id, { done, total });
+        this.emitter.emit();
+        options.onProgress?.(done, total);
+      },
+      onImageFailures: (values, overLimit) => {
+        if (this.tokens.get(id) !== token) return;
+        this.failures.set(id, { values, overLimit });
+        options.onImageFailures?.(values, overLimit);
+      },
     }).then((result) => {
       // Forgotten meanwhile (the source was removed): record nothing.
       if (this.tokens.get(id) !== token) return result;
       this.tokens.delete(id);
       this.running.delete(id);
       this.stages.delete(id);
+      this.progresses.delete(id);
       if (result.ok) this.errors.delete(id);
       else if (!result.aborted) this.errors.set(id, result.error ?? "");
       this.emitter.emit();
@@ -56,10 +74,22 @@ export class SourceUpdates {
     return this.stages.get(id) ?? null;
   }
 
+  /** How far the running Update's pictures are, `null` when it isn't saving any. */
+  progress(id: string): UpdateProgress | null {
+    return this.progresses.get(id) ?? null;
+  }
+
+  /** The pictures the last good Update couldn't save (none before one). */
+  imageFailures(id: string): ImageFailures {
+    return this.failures.get(id) ?? NO_FAILURES;
+  }
+
   /** Drops everything kept for a source (it was removed); a run still going records nothing. */
   forget(id: string): void {
     this.errors.delete(id);
     this.stages.delete(id);
+    this.progresses.delete(id);
+    this.failures.delete(id);
     this.running.delete(id);
     this.tokens.delete(id);
   }

@@ -6,7 +6,14 @@ import type { UpdateButtonProps } from "./update-button.types";
 import { t } from "../../data.i18n";
 
 /** Update: a spinner and the stage while it runs, and a click then cancels it. */
-export function UpdateButton({ stage, cancellable, onRun, onCancel, label }: UpdateButtonProps) {
+export function UpdateButton({
+  stage,
+  progress = null,
+  cancellable,
+  onRun,
+  onCancel,
+  label,
+}: UpdateButtonProps) {
   if (stage === null) {
     return (
       <IconButton size="xs" label={label ?? t("update.run")} onClick={onRun}>
@@ -17,7 +24,7 @@ export function UpdateButton({ stage, cancellable, onRun, onCancel, label }: Upd
   return (
     <IconButton
       size="xs"
-      label={stageText(stage)}
+      label={stageText(stage, progress)}
       description={cancellable ? t("update.cancelHint") : undefined}
       disabled={!cancellable}
       active

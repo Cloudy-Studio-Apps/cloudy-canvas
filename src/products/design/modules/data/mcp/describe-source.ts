@@ -1,5 +1,6 @@
 import type { DesignWorkspace } from "../../../design-engine.types";
 import { DESIGN_DATA_SOURCES } from "../model";
+import { holdsDevicePath } from "../settings";
 import { secretKeys } from "../update";
 import type { DataSourceElement } from "../source";
 
@@ -41,7 +42,7 @@ export async function describeSource(
       set: !missing.includes(key),
     })),
     files: (type?.settings ?? []).flatMap((spec) =>
-      spec.kind === "file" && source.settings[spec.key]
+      holdsDevicePath(spec) && source.settings[spec.key]
         ? [{ key: spec.key, onDevice: !missingFiles.includes(spec.key) }]
         : [],
     ),

@@ -14,4 +14,6 @@ export type SettingSpec =
   /** Headers: name → value. */
   | { key: string; kind: "pairs"; label: string; secretValues?: boolean }
   | { key: string; kind: "file"; label: string; extensions: string[] }
+  /** A folder on this device (e.g. where the data's image files are); like a file, its path stays on the device. */
+  | { key: string; kind: "folder"; label: string }
   | { key: string; kind: "secret"; label: string; required?: boolean };

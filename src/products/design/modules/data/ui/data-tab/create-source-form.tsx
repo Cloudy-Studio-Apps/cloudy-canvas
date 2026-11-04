@@ -7,7 +7,7 @@ import { notifyError } from "@shared/stores/toast-store";
 import { Button } from "@shared/ui/kit";
 import { detectFormat } from "../../formats";
 import { DESIGN_DATA_SOURCES } from "../../model";
-import { isAbsolutePath } from "../../settings";
+import { holdsDevicePath, isAbsolutePath } from "../../settings";
 import { filePathKey } from "../../update";
 import type { SettingValue } from "../../source";
 import { startUpdate } from "../hooks/run-update";
@@ -26,7 +26,7 @@ function pickedFiles(
   return new Set(
     sourceType.settings.flatMap((spec) => {
       const value = values[spec.key];
-      return spec.kind === "file" && typeof value === "string" && isAbsolutePath(value)
+      return holdsDevicePath(spec) && typeof value === "string" && isAbsolutePath(value)
         ? [filePathKey(spec.key)]
         : [];
     }),

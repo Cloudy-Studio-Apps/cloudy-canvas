@@ -9,6 +9,7 @@ import { errorText } from "./error-text";
 import { sourceMeta, stageText } from "./source-meta";
 import type { SourceRowProps } from "./source-row.types";
 import { UpdateButton } from "./update-button";
+import { ImageFailuresLine } from "./image-failures-line";
 import { t } from "../../data.i18n";
 
 /**
@@ -46,6 +47,7 @@ export function SourceRow({ source, sourceType, onOpen }: SourceRowProps) {
           <span className="shrink-0" onClick={(event) => event.stopPropagation()}>
             <UpdateButton
               stage={update.stage}
+              progress={update.progress}
               cancellable={update.cancellable}
               onRun={update.run}
               onCancel={update.cancel}
@@ -53,8 +55,9 @@ export function SourceRow({ source, sourceType, onOpen }: SourceRowProps) {
           </span>
         </div>
         <p className="truncate pl-5 text-xs text-muted-foreground">
-          {update.stage ? stageText(update.stage) : sourceMeta(source)}
+          {update.stage ? stageText(update.stage, update.progress) : sourceMeta(source)}
         </p>
+        <ImageFailuresLine sourceId={source.id} className="pl-5" />
         {error !== null && (
           <p className="line-clamp-2 pl-5 text-xs break-words text-destructive" title={error}>
             {error}

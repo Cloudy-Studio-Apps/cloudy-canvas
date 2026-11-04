@@ -13,4 +13,8 @@ export { deviceKeys, filePathKey, loadFilePaths, requireFilePaths } from "./file
 export { answeredMessage, readAnsweredMessage, UPDATE_ERRORS } from "./update-errors";
 export { isWebPage } from "./is-web-page";
 export { imageKey } from "./image-key";
+export type * from "./download-images.types";
+export { downloadImages, MAX_NEW_IMAGES } from "./download-images";
+export { decodeImageData, isImageBytes } from "./image-bytes";
+export { imagePathIn } from "./image-path";
 export { updateSource } from "./update-source";

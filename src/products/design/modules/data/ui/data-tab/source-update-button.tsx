@@ -8,6 +8,7 @@ export function SourceUpdateButton({ sourceId }: SourceUpdateButtonProps) {
   return (
     <UpdateButton
       stage={update.stage}
+      progress={update.progress}
       cancellable={update.cancellable}
       onRun={update.run}
       onCancel={update.cancel}

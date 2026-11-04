@@ -1,4 +1,4 @@
-import { http, isAppDataPath, openFile, readLocalFile, secretStore } from "@platform";
+import { http, isAppDataPath, openFile, pickFolder, readLocalFile, secretStore } from "@platform";
 import type { DataServices } from "../../services";
 import { UPDATE_ERRORS } from "../../update";
 import { t } from "../../data.i18n";
@@ -20,6 +20,7 @@ export const platformDataServices: DataServices = {
     });
     return file ? { path: file.path, name: file.name, bytes: file.bytes } : null;
   },
+  pickFolder: () => pickFolder(t("source.pickFolder")),
   secrets: secretStore,
   isPrivatePath: isAppDataPath,
 };
