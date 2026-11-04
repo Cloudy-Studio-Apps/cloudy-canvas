@@ -84,13 +84,13 @@ The earlier phases' constraints, plus:
 **Files:**
 
 - Create: `catalog/model/data-pages/sync-data-pages.ts`
-- Modify: `catalog/catalog.module.ts` (a second `afterEdit`: `syncDataPages`), `data/bindings/scope.ts` (an extension so `scopeAt` asks registered scope providers: add `dataScopeProviders` point in data, `(doc, nodeId, parent) => DataScope | null`, which catalog contributes for nodes inside generated or template page frames), `data/data.points.ts`, `data/sync/sync-data.ts` (locale per node via a provider too: `dataLocaleProviders`, catalog answers `brochureLanguage`)
+- Modify: `catalog/catalog.module.ts` (a second `afterEdit`: `syncDataPages`), `data/repeat/data-scopes.ts` and `data/repeat/scope-at.ts` (an extension so per-node scopes ask registered scope providers: add `dataScopeProviders` point in data, `(doc, nodeId, parent) => DataScope | null`, which catalog contributes for nodes inside generated or template page frames), `data/data.points.ts`, `data/sync/sync-data.ts` (locale per node via a provider too: `dataLocaleProviders`, catalog answers `brochureLanguage`)
 
 **Interfaces:**
 
 - Produces: `syncDataPages(doc: CanvasDocument, change: EditedChange, phase?: "design" | "export"): void` — for each brochure slot with `repeat` whose record, template frame subtree, opener subtree or source changed: `planDataPages`; then make/patch/remove generated frames (copies of the template frame or the opener: data's `copyNode`, tagged `dataCopy { iterator: slot.id, key, source }`, locked, placed to the right of the previous page with the gap `ARRANGE_GAPS` uses, then the brochure's arrange runs if on) and their slots (`generated: { from, key }`, right after the template slot / previous generated slot, keeping their order by key); detached keys skipped; nothing written when nothing differs. `phase` defaults to the doc's data phase (`DesignDataSources.phase()`, added in this task: `"design"` unless set by the export).
 - `scopeAt` for a node inside a generated page frame returns `dataPageScope` for its page; inside the template frame, page 0.
-- [ ] **Step 1:** Add `dataScopeProviders`/`dataLocaleProviders` and the `phase` to data; use them in `scopeAt` and `syncData`.
+- [ ] **Step 1:** Add `dataScopeProviders`/`dataLocaleProviders` and the `phase` to data; use them in `dataScopes`/`scopeAt` (repeat/, never in bindings/ — that would bring back the import cycle) and `syncData`.
 - [ ] **Step 2:** Write `syncDataPages` and register it, plus the providers, in `catalog.module.ts`.
 - [ ] **Step 3:** `pnpm typecheck && pnpm lint && pnpm format:check` → pass. Commit: `feat(catalog): brochure pages repeat for each row`.
 
