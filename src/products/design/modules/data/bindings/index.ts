@@ -25,3 +25,7 @@ export { dataTypeOf } from "./data-type-of";
 export { isCatalogText } from "./is-catalog-text";
 export type * from "./data-bindable.types";
 export { editTemplate } from "./edit-template";
+export { carriedTemplate, carryRunEdit } from "./carry-run-edit";
+export { resolveDataText } from "./resolve-data-text";
+export { readsUnreadable, templateReadsUnreadable } from "./unreadable";
+export { replacedPath } from "./bind-data-checks";

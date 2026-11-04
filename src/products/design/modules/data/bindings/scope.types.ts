@@ -8,12 +8,21 @@ export interface DataScope {
   names: Record<string, unknown>;
   parent: DataScope | null;
   fields: Map<string, DataField>;
+  /** The source each name's data comes from (name → source id): pictures are found per source. */
+  sources: ReadonlyMap<string, string>;
+  /**
+   * Names of sources whose data can't be read here (the snapshot's asset missing or broken):
+   * left out of `names`, and what reads them is left alone rather than blanked.
+   */
+  unreadable: ReadonlySet<string>;
 }
 
 /** What an expression reads: its value and, when it is a source's field, that field. */
 export interface LookupResult {
   value: unknown;
   field: DataField | null;
+  /** The id of the source the value comes from, `null` when it isn't a source's. */
+  source: string | null;
 }
 
 /** A name a picker can offer. */

@@ -1,5 +1,6 @@
 import { t } from "../data.i18n";
 import { toBoolean, toNumber } from "./coerce";
+import { dateFormat, numberFormat } from "./intl-formats";
 import type { DataField, FieldFormat } from "../source";
 import type { ValueKind } from "./format-value.types";
 
@@ -41,7 +42,7 @@ function formatNumber(n: number, kind: ValueKind, f: FieldFormat, locale: string
         f.decimals === undefined
           ? {}
           : { minimumFractionDigits: f.decimals, maximumFractionDigits: f.decimals };
-      return new Intl.NumberFormat(locale, {
+      return numberFormat(locale, {
         style: "currency",
         currency: f.currency ?? "USD",
         ...digits,
@@ -51,7 +52,7 @@ function formatNumber(n: number, kind: ValueKind, f: FieldFormat, locale: string
       f.decimals === undefined
         ? { maximumFractionDigits: 2 }
         : { minimumFractionDigits: f.decimals, maximumFractionDigits: f.decimals };
-    return new Intl.NumberFormat(locale, digits).format(n);
+    return numberFormat(locale, digits).format(n);
   } catch {
     return String(n);
   }
@@ -61,7 +62,7 @@ function formatDate(value: unknown, f: FieldFormat, locale: string): string {
   const parsed = toDate(value);
   if (!parsed) return String(value);
   try {
-    return new Intl.DateTimeFormat(locale, {
+    return dateFormat(locale, {
       dateStyle: f.dateStyle ?? "medium",
       ...(parsed.dateOnly ? { timeZone: "UTC" } : {}),
     }).format(parsed.date);
@@ -81,7 +82,7 @@ function formatOne(
   if (typeof value === "object") return "";
   const kind = kindOf(value, field);
   if (kind === "number" || kind === "currency") {
-    const n = toNumber(value);
+    const n = toNumber(value, field?.type);
     return n === null ? String(value) : formatNumber(n, kind, f, locale);
   }
   if (kind === "date") return formatDate(value, f, locale);

@@ -1,12 +1,13 @@
 import type { TextNodeRun } from "../../text";
 import type { DataTemplate } from "./binding.types";
+import { checkTemplate } from "./bind-data-checks";
 import { parseTokens } from "./parse-tokens";
 import { renamePath } from "./rename-path";
 
 /**
  * The template with `from` renamed to `to` in its tokens, or `null` when no token names it. The
  * text between tokens is copied as it is; the runs move with their text (a run that touched a
- * token now covers the whole renamed token), so they stay sorted, in range and apart.
+ * token now covers the whole renamed token), clipped so they stay sorted, in range and apart.
  */
 export function renameTemplate(
   template: DataTemplate,
@@ -40,10 +41,19 @@ export function renameTemplate(
     }
     return offset + delta;
   };
-  const runs: TextNodeRun[] = template.runs.map((run) => ({
-    ...run,
-    start: map(run.start, "start"),
-    end: map(run.end, "end"),
-  }));
-  return { text: out, runs };
+  // A run edge inside a renamed token moves to the token's edge, so neighbours could overlap:
+  // each run starts where the one before it ends at the earliest, and empty ones go.
+  const runs: TextNodeRun[] = [];
+  let last = 0;
+  for (const run of [...template.runs].sort((a, b) => a.start - b.start)) {
+    const start = Math.max(map(run.start, "start"), last);
+    const end = Math.min(map(run.end, "end"), out.length);
+    if (end <= start) continue;
+    runs.push({ ...run, start, end });
+    last = end;
+  }
+  const renamed = { text: out, runs };
+  // The same rules `bindData` holds a template to (sorted, apart, inside the text).
+  checkTemplate(renamed);
+  return renamed;
 }

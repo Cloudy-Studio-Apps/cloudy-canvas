@@ -17,7 +17,7 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - Texts, images and colors can now show data from a source: write a field's name in braces, such as
   {products[0].name}, or bind a layer's image, color, size or opacity in the new Data section of
   the properties panel. Numbers, prices and dates are written in your language, a layer can show
-  only when a field meets a condition, and layers hide when a value is empty.
+  only when a field meets a condition, and a layer can hide while its value is empty.
 
 ## 0.8.0 - 2026-11-04
 

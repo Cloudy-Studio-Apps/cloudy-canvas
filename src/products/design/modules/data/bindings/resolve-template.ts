@@ -1,7 +1,7 @@
 import type { TextNodeRun } from "../../text";
 import { parseTokens } from "./parse-tokens";
 import type { DataTemplate } from "./binding.types";
-import type { ResolvedTemplate } from "./resolve-template.types";
+import type { ResolvedTemplate, TemplateSpan } from "./resolve-template.types";
 
 /**
  * Fills a template's tokens and keeps its styling: text outside tokens keeps its runs, a token's
@@ -17,6 +17,7 @@ export function resolveRichTemplate(
   const startMap = new Array<number>(source.length + 1).fill(0);
   const endMap = new Array<number>(source.length + 1).fill(0);
   const missing: string[] = [];
+  const spans: TemplateSpan[] = [];
   let out = "";
   let allEmpty = true;
   let textIsBlank = true;
@@ -35,6 +36,7 @@ export function resolveRichTemplate(
         startMap[i] = out.length;
         endMap[i] = out.length;
       }
+      spans.push({ start: part.start, end: part.end, from, to: out.length });
       continue;
     }
     if (part.text.trim()) textIsBlank = false;
@@ -42,6 +44,8 @@ export function resolveRichTemplate(
     while (i < part.end) {
       startMap[i] = out.length;
       endMap[i] = out.length;
+      const at = i;
+      const from = out.length;
       if (source[i] === "{" && source[i + 1] === "{") {
         out += "{";
         startMap[i + 1] = out.length;
@@ -51,6 +55,7 @@ export function resolveRichTemplate(
         out += source[i];
         i++;
       }
+      spans.push({ start: at, end: i, from, to: out.length });
       endMap[i] = out.length;
       startMap[i] = out.length;
     }
@@ -65,7 +70,7 @@ export function resolveRichTemplate(
     runs.push({ ...run, start, end });
     last = end;
   }
-  return { text: out, runs, empty: allEmpty && textIsBlank, missing };
+  return { text: out, runs, empty: allEmpty && textIsBlank, missing, spans };
 }
 
 function clampIndex(value: number, max: number): number {

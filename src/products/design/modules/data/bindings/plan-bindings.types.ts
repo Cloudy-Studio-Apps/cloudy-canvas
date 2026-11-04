@@ -8,8 +8,11 @@ export interface BindingContext {
   kinds: ElementKinds;
   /** The language numbers, prices and dates are written in. */
   locale: string;
-  /** The asset of the picture a value names (`imageKey`), `null` when it hasn't been saved. */
-  images: (value: string) => string | null;
+  /**
+   * The asset of the picture a value of source `sourceId` names (`imageKey`, among that source's
+   * own pictures: file names are relative to each source's folder), `null` when it isn't saved.
+   */
+  images: (value: string, sourceId: string) => string | null;
 }
 
 /** What a layer's data fields make of it in a scope. */
@@ -18,6 +21,11 @@ export interface PlannedBindings {
   patch: Partial<DesignNode> | null;
   /** Expressions that read nothing (a typo, a field gone after an Update). */
   missing: string[];
+  /**
+   * What was left alone because its source's data can't be read here (a snapshot not arrived
+   * yet, or broken): the expressions, `"text"` for the text's template.
+   */
+  unreadable: string[];
 }
 
 /** What one `dataBindings` entry writes: a value for its field, or a picture for its paint. */

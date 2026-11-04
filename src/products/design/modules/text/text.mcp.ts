@@ -14,6 +14,8 @@ import { readRange, readRunStyle, RUN_STYLE_PROPERTIES } from "./text-run-args";
 import { runStylePatch, unstyledRangePatch } from "./apply-run-style";
 import { TEXT_STYLE } from "./text-style";
 import { textContentPatch } from "./text-rich-spec";
+import { templateOf } from "./text-template";
+import type { TextTemplates } from "./text.points.types";
 import type { TextNodeElement, TextRunStyle } from "./text.types";
 import type { DesignWorkspace } from "../../design-engine.types";
 
@@ -32,8 +34,11 @@ function rangeTextStyle(engine: DesignWorkspace, ref: unknown): Partial<TextRunS
 }
 const DEFAULT_LIMIT = 50;
 
-/** The fonts texts can use, as the font picker lists them, and styling part of a text. */
-export const textTools: DesignMcpTool[] = [
+/**
+ * The fonts texts can use, as the font picker lists them, and styling part of a text. A text
+ * edited through a template (`templates`) is styled only as a whole here.
+ */
+export const textTools = (templates: TextTemplates): DesignMcpTool[] => [
   {
     name: "list_fonts",
     description:
@@ -77,7 +82,8 @@ export const textTools: DesignMcpTool[] = [
       "the style's fields; the rest of the text keeps its own. A text's ranges are its `runs` in " +
       "get_nodes; setting a field for the whole text (update_nodes) clears it from them. " +
       "`textStyle` (a text style's id or name from list_styles, or null) gives the range that " +
-      "style: it follows the style's changes until its typography is set by hand.",
+      "style: it follows the style's changes until its typography is set by hand. A text bound " +
+      "to data can only be styled whole here.",
     inputSchema: {
       type: "object",
       required: ["id", "start", "end"],
@@ -97,6 +103,13 @@ export const textTools: DesignMcpTool[] = [
       const text = el as TextNodeElement;
       const length = text.text.length;
       const range = readRange(args.start, args.end, length, "range");
+      // Its shown ranges come from the template; only a whole-text style carries over to it.
+      if (templateOf(templates, text) && (range.start > 0 || range.end < length)) {
+        throw new Error(
+          `Layer ${text.id} is a bound text: style a bound text's ranges while editing its ` +
+            `template, or style the whole text (start 0, end ${length}).`,
+        );
+      }
       const own = args.style === undefined ? {} : readRunStyle(args.style, "style");
       const style = { ...unstyledRangePatch(own), ...rangeTextStyle(engine, args.textStyle) };
       if (Object.keys(style).length === 0) throw new Error('Give "style" or "textStyle".');

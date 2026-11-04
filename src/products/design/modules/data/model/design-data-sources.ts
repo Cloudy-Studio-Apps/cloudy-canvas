@@ -181,9 +181,9 @@ export class DesignDataSources {
     return results;
   }
 
-  /** The rows of a source's last snapshot. */
+  /** The rows of a source's last snapshot (none while its asset can't be read). */
   rows(id: string): readonly DataRow[] {
-    return readSnapshot(this.doc, this.get(id)?.snapshot ?? null);
+    return readSnapshot(this.doc, this.get(id)?.snapshot ?? null) ?? [];
   }
 
   table(id: string): DataTable {

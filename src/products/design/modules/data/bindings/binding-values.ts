@@ -29,7 +29,7 @@ function resolvedValue(
   locale: string,
 ): ResolvedValue | null {
   if (type === "number") {
-    const n = toNumber(read.value);
+    const n = toNumber(read.value, read.field?.type);
     return n === null ? null : { type: "number", number: n };
   }
   if (type === "boolean") {
@@ -47,8 +47,8 @@ function resolvedValue(
 }
 
 /**
- * What one binding writes: for a paint's picture, the saved picture's asset (`null` from
- * `images` keeps the current one); otherwise the value turned into the type the kind's
+ * What one binding writes: for a paint's picture, the saved picture's asset among the pictures
+ * of the source the value comes from (`null` from `images` keeps the current one); otherwise the value turned into the type the kind's
  * `BindableField` takes (a number coerced, a color parsed, a boolean read, a text formatted).
  * A field the kind doesn't offer, or a value that doesn't fit, is left alone.
  */
@@ -63,7 +63,9 @@ export function bindingWrite(
   if (image) {
     const value = read?.value;
     if (isEmpty(value) || typeof value === "object") return { ...KEEP, emptyImage: true };
-    const assetId = ctx.images(String(value));
+    const source = read?.source;
+    if (!source) return KEEP;
+    const assetId = ctx.images(String(value), source);
     return assetId === null ? KEEP : { ...KEEP, image: { paint: image[1] as string, assetId } };
   }
   if (!read) return KEEP;

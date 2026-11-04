@@ -1,10 +1,11 @@
-import { pathRoot, readPath } from "@canvas";
+import { pathRoot, pathsOverlap, readPath } from "@canvas";
 
 import type { DesignNode } from "../../core";
 import {
   bindingWrite,
   dataFieldsOf,
   readValue,
+  replacedPath,
   sameValue,
   writtenFields,
   type BindingContext,
@@ -61,4 +62,36 @@ export function droppedVisibility(
     ...(fields.dataVisible ? { dataVisible: null } : {}),
     ...(fields.dataHideEmpty ? { dataHideEmpty: false } : {}),
   };
+}
+
+/**
+ * The data bindings a variable bound in this edit replaces: one field has one binding, from
+ * either side (`bindData` drops a field's variable binding the same way). A variable newly at a
+ * path overlapping a `dataBindings` key (`pathsOverlap`; a picture's paint for an image key)
+ * drops that key, and one at `text` drops the text's template, which keeps what it shows.
+ * `null` when the edit bound no variable over data.
+ */
+export function replacedByVariables(
+  el: DesignNode,
+  before: Before,
+): Record<string, unknown> | null {
+  if (!("bindings" in before)) return null;
+  const was = (before.bindings ?? {}) as Readonly<Record<string, string>>;
+  const now = el.bindings ?? {};
+  const fresh = Object.keys(now).filter((path) => was[path] !== now[path]);
+  if (fresh.length === 0) return null;
+  const fields = dataFieldsOf(el);
+  const out: Record<string, unknown> = {};
+  if (fields.dataBindings) {
+    const kept = { ...fields.dataBindings };
+    let dropped = false;
+    for (const key of Object.keys(kept)) {
+      if (!fresh.some((path) => pathsOverlap(path, replacedPath(key)))) continue;
+      delete kept[key];
+      dropped = true;
+    }
+    if (dropped) out.dataBindings = kept;
+  }
+  if (fields.dataText && fresh.some((path) => pathsOverlap(path, "text"))) out.dataText = null;
+  return Object.keys(out).length > 0 ? out : null;
 }

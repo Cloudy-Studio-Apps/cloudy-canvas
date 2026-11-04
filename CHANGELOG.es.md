@@ -20,7 +20,7 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   un campo entre llaves, como {products[0].name}, o enlaza la imagen, el color, el tamaño o la
   opacidad de una capa en la nueva sección Datos del panel de propiedades. Los números, precios y
   fechas se escriben en tu idioma, una capa puede mostrarse solo cuando un campo cumple una
-  condición, y las capas se ocultan cuando un valor está vacío.
+  condición, y una capa puede ocultarse mientras su valor está vacío.
 
 ## 0.8.0 - 2026-11-04
 

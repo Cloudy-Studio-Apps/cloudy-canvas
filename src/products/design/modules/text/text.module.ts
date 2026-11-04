@@ -38,7 +38,10 @@ export const textModule = defineModule({
       keys: [{ key: "t" }],
     });
     host.contribute(designCanvas.options, { textTypography: TEXT_DEFAULTS.typography });
-    host.contribute(designMcpTools, { id: "text", tools: () => textTools });
+    host.contribute(designMcpTools, {
+      id: "text",
+      tools: () => textTools(() => host.get(textTemplates)),
+    });
     // Ranges using a text style are bound to it, so the token sync restyles them.
     host.contribute(designCanvas.afterEdit, (doc, change) => syncRunStyleBindings(doc, change));
 

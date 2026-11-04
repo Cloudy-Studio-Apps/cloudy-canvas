@@ -10,15 +10,24 @@ import type { DataScope, LookupResult, ScopeName } from "./scope.types";
 
 const COUNT = "$count";
 
-/** The root scope: each source by name is its rows array, with its fields keyed for lookup. */
+/**
+ * The root scope: each source by name is its rows array, with its fields keyed for lookup. A
+ * source whose rows can't be read (`rowsOf` gives `null`) is left out and listed as unreadable.
+ */
 export function rootScope(
   sources: DataSourceElement[],
-  rowsOf: (id: string) => readonly DataRow[],
+  rowsOf: (id: string) => readonly DataRow[] | null,
 ): DataScope {
   const names: Record<string, unknown> = {};
   const fields = new Map<string, DataField>();
+  const ids = new Map<string, string>();
+  const unreadable = new Set<string>();
   for (const source of sources) {
-    names[source.name] = rowsOf(source.id);
+    const rows = rowsOf(source.id);
+    if (rows) {
+      names[source.name] = rows;
+      ids.set(source.name, source.id);
+    } else unreadable.add(source.name);
     for (const field of source.fields) {
       let steps: PathStep[];
       try {
@@ -29,7 +38,7 @@ export function rootScope(
       fields.set(fieldKey([{ key: source.name }, { index: 0 }, ...steps]), field);
     }
   }
-  return { names, parent: null, fields };
+  return { names, parent: null, fields, sources: ids, unreadable };
 }
 
 /**
@@ -47,8 +56,9 @@ export function childScope(
   parent: DataScope,
   names: Record<string, unknown>,
   fields: Map<string, DataField> = new Map(),
+  sources: ReadonlyMap<string, string> = new Map(),
 ): DataScope {
-  return { names, parent, fields };
+  return { names, parent, fields, sources, unreadable: new Set() };
 }
 
 /** Reads an expression: its first step up the chain of scopes, the rest from that value. */
@@ -66,12 +76,13 @@ export function lookup(scope: DataScope, expr: string): LookupResult | null {
     const rest = steps.slice(1);
     const base = s.names[first.key];
     const field = s.fields.get(fieldKey(steps)) ?? null;
-    if (rest.length === 0) return { value: base, field };
+    const source = s.sources.get(first.key) ?? null;
+    if (rest.length === 0) return { value: base, field, source };
     if (Array.isArray(base) && rest.length === 1) {
       const only = rest[0] as PathStep;
-      if ("key" in only && only.key === COUNT) return { value: base.length, field: null };
+      if ("key" in only && only.key === COUNT) return { value: base.length, field: null, source };
     }
-    return { value: readSteps(base, rest), field };
+    return { value: readSteps(base, rest), field, source };
   }
   return null;
 }

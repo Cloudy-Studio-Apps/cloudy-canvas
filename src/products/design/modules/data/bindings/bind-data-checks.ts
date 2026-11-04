@@ -76,8 +76,8 @@ function offeredType(el: DesignNode, key: string, kinds: ElementKinds): string |
 }
 
 /**
- * One binding: its key a layer field (a picture's paint there), its format's shape, its path a
- * data expression; with `kinds` the key a field the kind offers and the data's type one that fits.
+ * One binding: its key a layer field (a picture's paint there; never `text`, which is the
+ * template's), its format's shape, its path a data expression; with `kinds` the key a field the kind offers and the data's type one that fits.
  */
 export function checkBinding(
   el: DesignNode,
@@ -87,6 +87,11 @@ export function checkBinding(
   kinds?: ElementKinds,
 ): void {
   const where = `bindings["${key}"]`;
+  if (key === "text") {
+    throw new Error(
+      'bindings: a text\'s content is its template; pass it as the "text" argument ("{products[0].name}").',
+    );
+  }
   if (!FIELD_PATH.test(key)) throw new Error(`bindings: "${key}" isn't a layer field.`);
   if (isImageBinding(key)) {
     const paint: unknown = readPath(el, replacedPath(key));

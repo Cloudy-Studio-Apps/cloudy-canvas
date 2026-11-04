@@ -15,7 +15,8 @@ const DESCRIPTION =
   "`{page}`, `{pages}`, `{title}`, `{section}`, `{date}` and `{toc}` are catalog words, not " +
   "data, and stay as text; a text a catalog fills can't be bound. The layer's current style is " +
   "kept (setting the same text keeps its styled ranges). `bindings` maps a layer's field path " +
-  '("fills.0.color", "opacity", "width", "fills.0.image" for a picture) to { path, format? } ' +
+  '("fills.0.color", "opacity", "w" and "h" for the size, "fills.0.image" for a picture) to ' +
+  "{ path, format? } " +
   "(path is an expression such as products[0].price; format is a field format like { decimals, " +
   "currency, dateStyle }) or null to unbind; the data's type must fit the field (colors need " +
   "color values, numbers need numbers, pictures need image fields). Binding a field replaces " +
@@ -24,7 +25,8 @@ const DESCRIPTION =
   "{ path, op: exists|empty|eq|neq|gt|lt|contains, value? } shows the layer only while it " +
   "holds; `hideWhenEmpty` hides a layer whose text or picture comes out empty. Numbers, " +
   "prices and dates are written in the app's language. Returns the layer's data fields and " +
-  "`missing`: expressions that read nothing (a typo, or a source not updated yet).";
+  "`missing`: expressions that read nothing (a typo, or a source not updated yet), and " +
+  "`unreadable`: what was left as it is because its source's saved data isn't on this device.";
 
 /** Binds a layer's text, fields and visibility to data. */
 export const bindDataTool = ({ kinds }: DesignAgentContext): DesignMcpTool => ({
@@ -61,6 +63,11 @@ export const bindDataTool = ({ kinds }: DesignAgentContext): DesignMcpTool => ({
       locale: getLocale(),
       images: () => null,
     });
-    return { layer: id, data: dataFieldsOf(after), missing: planned.missing };
+    return {
+      layer: id,
+      data: dataFieldsOf(after),
+      missing: planned.missing,
+      ...(planned.unreadable.length > 0 ? { unreadable: planned.unreadable } : {}),
+    };
   },
 });

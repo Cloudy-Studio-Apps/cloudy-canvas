@@ -6,12 +6,12 @@ import type { DataRow } from "../table";
 import type { EncodedRows, SnapshotFile } from "./snapshot.types";
 
 /**
- * Parsed rows by Yjs doc, then asset id: an asset never changes, so each is parsed once. The rows
- * are frozen (the array and each row), since every reader shares them.
+ * Parsed rows by Yjs doc, then asset id: an asset never changes, so each is parsed once (`null`:
+ * broken). The rows are frozen (the array and each row), since every reader shares them.
  */
-const caches = new WeakMap<CanvasDocument["doc"], Map<string, readonly DataRow[]>>();
+const caches = new WeakMap<CanvasDocument["doc"], Map<string, readonly DataRow[] | null>>();
 
-function cacheOf(doc: CanvasDocument): Map<string, readonly DataRow[]> {
+function cacheOf(doc: CanvasDocument): Map<string, readonly DataRow[] | null> {
   let cache = caches.get(doc.doc);
   if (!cache) {
     cache = new Map();
@@ -58,27 +58,27 @@ export async function writeSnapshot(
 }
 
 /**
- * The rows a snapshot holds (frozen: read-only), none when there's no snapshot or its asset is
- * missing or broken.
+ * The rows a snapshot holds (frozen: read-only): none when there's no snapshot yet, `null` when
+ * its asset can't be read (missing on this device, as in a live session before it arrives, or
+ * broken). A missing asset isn't remembered, so it reads once it arrives.
  */
 export function readSnapshot(
   doc: CanvasDocument,
   snapshot: DataSnapshot | null,
-): readonly DataRow[] {
+): readonly DataRow[] | null {
   if (!snapshot) return [];
   const cache = cacheOf(doc);
-  const cached = cache.get(snapshot.assetId);
-  if (cached) return cached;
+  if (cache.has(snapshot.assetId)) return cache.get(snapshot.assetId) ?? null;
   const bytes = doc.getAsset(snapshot.assetId);
-  if (!bytes) return [];
-  let rows: DataRow[] = [];
+  if (!bytes) return null;
+  let rows: readonly DataRow[] | null = null;
   try {
     const file = JSON.parse(new TextDecoder().decode(bytes)) as Partial<SnapshotFile> | null;
-    if (file && file.version === 1 && Array.isArray(file.rows)) rows = file.rows;
+    if (file && file.version === 1 && Array.isArray(file.rows))
+      rows = freezeRows(file.rows as DataRow[]);
   } catch {
-    rows = [];
+    rows = null;
   }
-  const frozen = freezeRows(rows);
-  cache.set(snapshot.assetId, frozen);
-  return frozen;
+  cache.set(snapshot.assetId, rows);
+  return rows;
 }
