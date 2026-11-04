@@ -11,6 +11,8 @@ export function createBrochure(index: string, page: string, name: string): Broch
     name,
     page,
     slots: [],
+    masters: [],
+    sections: [],
     settings: { ...BROCHURE_DEFAULTS.settings },
   };
 }

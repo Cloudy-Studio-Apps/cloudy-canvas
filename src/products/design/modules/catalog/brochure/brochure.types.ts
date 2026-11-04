@@ -11,6 +11,59 @@ export interface BrochureSlot {
   frames: string[];
   /** The option printed; one of `frames`. */
   chosen: string;
+  /**
+   * The master its frames show (a `BrochureMaster` id): left out, the brochure's default
+   * (`settings.defaultMaster`); `null`, none (a full-bleed photo).
+   */
+  master?: string | null;
+  /** The master layers detached on this page (their ids on the master): they're no longer stamped. */
+  skip?: string[];
+}
+
+/**
+ * A brochure's master: a header and footer designed once, on a frame for left pages and one for
+ * right pages (frames of its design page, the page's size, never printed themselves). Its
+ * layers are stamped onto every page that uses it, as locked copies (`syncPageItems`).
+ */
+export interface BrochureMaster {
+  id: string;
+  name: string;
+  /** The frame for left pages, `null` when it's gone (then left pages get none). */
+  left: string | null;
+  /** The frame for right pages (and every page of the single layout), `null` when it's gone. */
+  right: string | null;
+}
+
+/** How page numbers are written. */
+export type PageNumberStyle = "arabic" | "roman-lower" | "roman-upper";
+
+/**
+ * How covers are numbered: `numbered`, like any page; `hidden`, counted but not written (the
+ * usual in print); `uncounted`, neither (the first page inside is 1).
+ */
+export type CoverNumbering = "numbered" | "hidden" | "uncounted";
+
+export interface BrochureNumbering {
+  /** The first page's number. */
+  start: number;
+  style: PageNumberStyle;
+  covers: CoverNumbering;
+}
+
+/**
+ * A part of the brochure (a chapter: "Lima", "Cusco"), from the page `start` to the next
+ * section: its name is the `{section}` of its pages' headers and a line of the contents, and its
+ * numbering can restart.
+ */
+export interface BrochureSection {
+  id: string;
+  name: string;
+  /** The slot it starts at. */
+  start: string;
+  /** Its first page's number, when numbering restarts there. */
+  restart?: number;
+  /** How its pages' numbers are written, when it changes there. */
+  style?: PageNumberStyle;
 }
 
 /**
@@ -66,6 +119,12 @@ export interface BrochureSettings {
    * not `off` (other layers in the way are moved up or down).
    */
   arrange: BrochureArrange;
+  /** How its pages are numbered. */
+  numbering: BrochureNumbering;
+  /** The master pages show unless they pick another or none; `null` for none. */
+  defaultMaster: string | null;
+  /** Whether covers show their master too (they don't by default). */
+  mastersOnCovers: boolean;
 }
 
 /**
@@ -84,6 +143,10 @@ export interface BrochureElement extends CanvasElement {
    */
   openedAt?: number;
   slots: BrochureSlot[];
+  /** Its masters (`fillDefaults` gives older records none). */
+  masters: BrochureMaster[];
+  /** Its sections, in no particular order (each starts at a slot). */
+  sections: BrochureSection[];
   settings: BrochureSettings;
 }
 

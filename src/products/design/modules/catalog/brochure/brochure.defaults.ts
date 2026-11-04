@@ -15,5 +15,8 @@ export const BROCHURE_DEFAULTS = {
     dpi: 300,
     pdfMode: "sharp",
     arrange: "off",
+    numbering: { start: 1, style: "arabic", covers: "hidden" },
+    defaultMaster: null,
+    mastersOnCovers: false,
   },
 } satisfies BrochureDefaults;

@@ -14,6 +14,8 @@ import type { BookLayout } from "./book-layout.types";
 import { brochurePages } from "./brochure-pages";
 import type { BrochurePage } from "./brochure-pages.types";
 import type { ArrangedListener } from "./design-brochure.types";
+import { BrochureMasters } from "./masters/brochure-masters";
+import { keptSections } from "./masters/master-edits";
 import {
   addOption,
   addPages,
@@ -167,14 +169,27 @@ export class DesignBrochure {
     return this.settings().arrange === "off" ? new Map() : this.arrange();
   }
 
-  private writeSlots(edit: (slots: readonly BrochureSlot[]) => BrochureSlot[]): void {
-    const current = this.record()?.slots ?? [];
-    const slots = edit(current);
-    if (!sameSlots(slots, current)) this.write({ slots });
+  /** Its masters, sections and numbering (see `BrochureMasters`). */
+  get masters(): BrochureMasters {
+    return new BrochureMasters(this.doc, this);
   }
 
-  /** One undo step patching the record (nothing once it's deleted). */
-  private write(patch: ElementPatch<BrochureElement>): void {
+  private writeSlots(edit: (slots: readonly BrochureSlot[]) => BrochureSlot[]): void {
+    const record = this.record();
+    const current = record?.slots ?? [];
+    const slots = edit(current);
+    if (sameSlots(slots, current)) return;
+    // A section starting on a page that went goes; the one before it runs on.
+    const sections = keptSections(record?.sections ?? [], slots);
+    const changed = sections.length !== (record?.sections.length ?? 0);
+    this.write(changed ? { slots, sections } : { slots });
+  }
+
+  /**
+   * One undo step patching the record (nothing once it's deleted), arranging the frames when
+   * that's on; what follows from it (the pages' master copies) is written by the edit's hooks.
+   */
+  write(patch: ElementPatch<BrochureElement>): void {
     if (!this.record()) return;
     this.doc.checkpoint();
     let moved = new Map<string, Point>();
