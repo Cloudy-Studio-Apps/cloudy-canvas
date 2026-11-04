@@ -62,8 +62,9 @@ export async function updateSource(
     const previous = current.snapshot;
     const changed = previous?.hash !== encoded.hash;
     const fields = guessFields(rows, current.fields);
+    // Same data keeps its asset, unless this device lacks it: then the rows are saved again.
     const snapshot =
-      previous && !changed
+      previous && !changed && doc.hasAsset(previous.assetId)
         ? { ...previous, updatedAt: Date.now() }
         : addSnapshot(doc, rows, encoded);
     doc.checkpoint();
@@ -72,6 +73,7 @@ export async function updateSource(
     return { ok: true, rowCount: rows.length, changed };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    return { ok: false, rowCount: 0, error: message, changed: false };
+    const aborted = signal.aborted || undefined;
+    return { ok: false, rowCount: 0, error: message, changed: false, aborted };
   }
 }

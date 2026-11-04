@@ -20,18 +20,21 @@ export class SourceUpdates {
   ): Promise<UpdateResult> {
     const running = this.running.get(id);
     if (running) return running;
-    const run = start({
+    const run: Promise<UpdateResult> = start({
       signal: options.signal,
       onStage: (stage) => {
+        if (this.running.get(id) !== run) return;
         this.stages.set(id, stage);
         this.emitter.emit();
         options.onStage?.(stage);
       },
     }).then((result) => {
+      // Forgotten meanwhile (the source was removed): record nothing.
+      if (this.running.get(id) !== run) return result;
       this.running.delete(id);
       this.stages.delete(id);
       if (result.ok) this.errors.delete(id);
-      else this.errors.set(id, result.error ?? "");
+      else if (!result.aborted) this.errors.set(id, result.error ?? "");
       this.emitter.emit();
       return result;
     });
@@ -47,7 +50,10 @@ export class SourceUpdates {
     return this.stages.get(id) ?? null;
   }
 
+  /** Drops everything kept for a source (it was removed); a run still going records nothing. */
   forget(id: string): void {
     this.errors.delete(id);
+    this.stages.delete(id);
+    this.running.delete(id);
   }
 }

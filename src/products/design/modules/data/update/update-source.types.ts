@@ -15,6 +15,8 @@ export interface UpdateResult {
   error?: string;
   /** Whether the data differs from the last snapshot. */
   changed: boolean;
+  /** The Update was cancelled (its signal aborted): not a failure to report. */
+  aborted?: boolean;
 }
 
 /** What an Update needs from the editor: the registered types and formats, and the platform. */

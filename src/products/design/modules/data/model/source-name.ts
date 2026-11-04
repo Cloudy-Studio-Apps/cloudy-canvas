@@ -1,5 +1,5 @@
 /** Names a source can't take: the brochure's own placeholders use them. */
-export const RESERVED_NAMES = ["page", "pages", "title", "section", "date", "toc", "item"];
+export const RESERVED_NAMES = ["page", "pages", "title", "section", "date", "toc", "item"] as const;
 
 const FALLBACK = "data";
 
@@ -7,7 +7,7 @@ const FALLBACK = "data";
 function identifier(text: string): string {
   const id = text
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/\p{M}/gu, "")
     .toLowerCase()
     .replace(/[^a-z0-9_]+/g, "_")
     .replace(/_+/g, "_")

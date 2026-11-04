@@ -22,7 +22,7 @@ export function secretKeys(specs: SettingSpec[], settings: Record<string, Settin
   return keys;
 }
 
-/** A source's secrets stored on this device, by `key` / `key.name` (missing ones left out). */
+/** A source's secrets stored on this device, by `key` / `key.name` (missing or empty ones left out). */
 export async function loadSecrets(
   services: DataServices,
   sourceId: string,
@@ -31,7 +31,7 @@ export async function loadSecrets(
   const secrets: Record<string, string> = {};
   for (const key of keys) {
     const value = await services.secrets.get(secretStoreKey(sourceId, key));
-    if (value !== null) secrets[key] = value;
+    if (value !== null && value !== "") secrets[key] = value;
   }
   return secrets;
 }

@@ -5,8 +5,9 @@ import { secretKeys, secretStoreKey } from "../update";
 
 /**
  * Splits raw setting values into what the file keeps and what the device keeps, writes the
- * secrets to the store and clears stale ones: a secret pair's name that's gone, and a secret
- * setting given empty. A secret setting left out keeps its stored value. Returns the safe settings.
+ * secrets to the store and clears stale ones. An empty or missing value keeps the stored one (a
+ * form round-trip carries `""` for every secret it can't show); a secret setting given `null` is
+ * deleted, and so is the value of a secret pair whose name is gone. Returns the safe settings.
  */
 export async function writeSecrets(
   services: DataServices,
@@ -19,12 +20,14 @@ export async function writeSecrets(
   const { settings, secrets } = splitSecrets(specs, values);
   const writes = new Map<string, string | null>();
   const pairs = specs.filter((spec) => spec.kind === "pairs");
-  for (const key of secretKeys(pairs, previous)) writes.set(key, null);
+  const kept = new Set(secretKeys(pairs, settings));
+  for (const key of secretKeys(pairs, previous)) if (!kept.has(key)) writes.set(key, null);
   for (const spec of specs) {
-    if (spec.kind === "secret" && values[spec.key] === "") writes.set(spec.key, null);
+    if (spec.kind === "secret" && values[spec.key] === null) writes.set(spec.key, null);
   }
-  for (const [key, value] of Object.entries(secrets)) writes.set(key, value);
-  for (const [key, value] of Object.entries(extra)) writes.set(key, value === "" ? null : value);
+  for (const [key, value] of Object.entries({ ...secrets, ...extra })) {
+    if (value !== "") writes.set(key, value);
+  }
   for (const [key, value] of writes) {
     await services.secrets.set(secretStoreKey(sourceId, key), value);
   }
