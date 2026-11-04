@@ -14,6 +14,10 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - Pictures named in a data source, as image links, embedded images or file names in a folder you
   choose, are saved in the design when you update it, so they keep showing offline and on other
   computers. The Data tab shows the download's progress and how many pictures couldn't be saved.
+- Layers can be filled from data in the new Data section of the properties panel: a text can show a
+  template with fields from your rows, and colors, sizes, opacity and pictures can each take a
+  field. A layer can also show only when a field meets a condition, or hide when its data is empty,
+  and everything updates as soon as the data does.
 
 ## 0.8.0 - 2026-11-04
 

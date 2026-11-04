@@ -147,5 +147,43 @@
       "tooLarge_one": "{count} pesa más de 25 MB",
       "tooLarge_other": "{count} pesan más de 25 MB"
     }
+  },
+  "section": {
+    "title": "Datos",
+    "noSources": "Añade una fuente en la pestaña Datos para rellenar esta capa con sus filas.",
+    "failed": "No se pudo vincular la capa a los datos",
+    "text": {
+      "toggle": "Texto de los datos",
+      "template": "Plantilla",
+      "hint": "Inserta campos con el botón; cada uno muestra el valor de la fila.",
+      "insert": "Insertar campo"
+    },
+    "fields": {
+      "title": "Campos",
+      "image": "Imagen del relleno {index}",
+      "choose": "Elige un campo",
+      "clear": "Desvincular",
+      "none": "No hay campos de este tipo",
+      "count": "Número de filas"
+    },
+    "show": {
+      "title": "Mostrar cuando",
+      "hideEmpty": "Ocultar si está vacío"
+    }
+  },
+  "condition": {
+    "field": "Campo",
+    "op": "Condición",
+    "value": "Valor",
+    "clear": "Quitar condición",
+    "ops": {
+      "exists": "tiene un valor",
+      "empty": "está vacío",
+      "eq": "es",
+      "neq": "no es",
+      "gt": "es mayor que",
+      "lt": "es menor que",
+      "contains": "contiene"
+    }
   }
 }

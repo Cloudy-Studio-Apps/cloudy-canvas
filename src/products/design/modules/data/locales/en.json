@@ -147,5 +147,43 @@
       "tooLarge_one": "{count} is over 25 MB",
       "tooLarge_other": "{count} are over 25 MB"
     }
+  },
+  "section": {
+    "title": "Data",
+    "noSources": "Add a source in the Data tab to fill this layer from its rows.",
+    "failed": "Couldn't bind the layer to data",
+    "text": {
+      "toggle": "Text from data",
+      "template": "Template",
+      "hint": "Insert fields with the button; each one shows the row's value.",
+      "insert": "Insert field"
+    },
+    "fields": {
+      "title": "Fields",
+      "image": "Fill {index} image",
+      "choose": "Choose a field",
+      "clear": "Unbind",
+      "none": "No fields of this type",
+      "count": "Number of rows"
+    },
+    "show": {
+      "title": "Show when",
+      "hideEmpty": "Hide when empty"
+    }
+  },
+  "condition": {
+    "field": "Field",
+    "op": "Condition",
+    "value": "Value",
+    "clear": "Remove condition",
+    "ops": {
+      "exists": "has a value",
+      "empty": "is empty",
+      "eq": "is",
+      "neq": "is not",
+      "gt": "is more than",
+      "lt": "is less than",
+      "contains": "contains"
+    }
   }
 }

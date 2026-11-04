@@ -12,7 +12,7 @@ import { syncData } from "./sync";
 import { BOUND_TEXT_TEMPLATE } from "./bindings";
 import { textTemplates } from "../text";
 import { DataSourceKind } from "./source";
-import { DataTab, useDataServices } from "./ui";
+import { DataSection, DataTab, useDataServices } from "./ui";
 import { t } from "./data.i18n";
 import * as dataApi from ".";
 import * as dataUi from "./ui";
@@ -20,8 +20,9 @@ import * as dataUi from "./ui";
 /**
  * Data: sources of data (a file, a link, a sheet) a design's layers can be filled from. It holds
  * the source record, the built-in source types (file, link) and formats (CSV, JSON), the Data tab
- * and the session hook that hands the sources this device's services, and the sync that keeps
- * layers bound to data up to date; iterators come in a later phase.
+ * and the session hook that hands the sources this device's services, the sync that keeps
+ * layers bound to data up to date, and the properties panel's Data section that binds a layer;
+ * iterators come in a later phase.
  */
 export const dataModule = defineModule({
   id: "data",
@@ -43,6 +44,14 @@ export const dataModule = defineModule({
       icon: Database,
       order: 25,
       component: DataTab,
+    });
+    // One layer's bindings, after Effects and before Export.
+    host.contribute(designEditor.propertySections, {
+      id: "data.bindings",
+      tab: "design",
+      order: 85,
+      when: ({ nodes }) => nodes.length === 1,
+      component: DataSection,
     });
     host.contribute(designMcpTools, { id: "data", tools: () => dataTools });
     host.contribute(designEditor.sessionHooks, { id: "data.services", use: useDataServices });

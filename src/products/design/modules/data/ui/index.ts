@@ -8,3 +8,7 @@ export { useDataServices } from "./hooks/use-data-services";
 export { useUpdateSource } from "./hooks/use-update-source";
 export { SourceIcon } from "./source-icon";
 export { DataTab } from "./data-tab/data-tab";
+export type * from "./data-section/picker-names.types";
+export { DataSection } from "./data-section/data-section";
+export { FieldPicker } from "./data-section/field-picker";
+export type * from "./data-section/field-picker.types";

@@ -1,4 +1,8 @@
+import type { CanvasDocument } from "@canvas";
+
 import type { DataField, DataSourceElement } from "../source";
+import { dataSourcesIn } from "../source/data-sources-in";
+import { readSnapshot } from "../update/snapshot";
 import { formatPath, parsePath } from "../table";
 import type { DataRow, PathStep } from "../table";
 import { fieldKey, sampleExpression } from "./field-key";
@@ -26,6 +30,16 @@ export function rootScope(
     }
   }
   return { names, parent: null, fields };
+}
+
+/**
+ * The names a layer's expressions read: for now the root scope, every source of the document by
+ * name. Phase 3 adds the scopes of the repeats around the node (`_nodeId` is for them).
+ */
+export function scopeAt(doc: CanvasDocument, _nodeId: string): DataScope {
+  const sources = dataSourcesIn(doc);
+  const byId = new Map(sources.map((source) => [source.id, source]));
+  return rootScope(sources, (id) => readSnapshot(doc, byId.get(id)?.snapshot ?? null));
 }
 
 /** A scope inside another: an iterator's row, a template's own names. */

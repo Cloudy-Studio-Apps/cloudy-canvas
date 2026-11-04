@@ -16,6 +16,11 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   nombres de archivo en una carpeta que eliges, se guardan en el diseño al actualizarla, así que se
   siguen viendo sin conexión y en otros equipos. La pestaña Datos muestra el progreso de la descarga
   y cuántas imágenes no se pudieron guardar.
+- Las capas se pueden rellenar con datos desde la nueva sección Datos del panel de propiedades: un
+  texto puede mostrar una plantilla con campos de tus filas, y los colores, tamaños, la opacidad y
+  las imágenes pueden tomar cada uno un campo. Una capa también puede mostrarse solo cuando un campo
+  cumple una condición, u ocultarse cuando sus datos están vacíos, y todo se actualiza en cuanto
+  cambian los datos.
 
 ## 0.8.0 - 2026-11-04
 
