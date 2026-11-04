@@ -8,8 +8,9 @@ import * as dataApi from ".";
 import * as dataUi from "./ui";
 
 /**
- * Data: sources of data (a file, a link, a sheet) a design's layers can be filled from. For now
- * only the source record; the sources, bindings and iterators come in later tasks.
+ * Data: sources of data (a file, a link, a sheet) a design's layers can be filled from. It holds
+ * the source record, the built-in source types (file, link) and formats (CSV, JSON); bindings and
+ * iterators come in later tasks.
  */
 export const dataModule = defineModule({
   id: "data",

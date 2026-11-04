@@ -19,17 +19,21 @@ export const JSON_FORMAT: DataFormat = {
     try {
       return JSON.parse(text);
     } catch (whole) {
-      const lines = text.split(/\r?\n/).filter((line) => line.trim() !== "");
-      if (lines.length < 2) {
-        throw new Error(`JSON: ${whole instanceof Error ? whole.message : String(whole)}`, {
+      const lines = text
+        .split(/\r?\n/)
+        .map((line, i) => ({ line, number: i + 1 }))
+        .filter(({ line }) => line.trim() !== "");
+      const failure = () =>
+        new Error(`JSON: ${whole instanceof Error ? whole.message : String(whole)}`, {
           cause: whole,
         });
-      }
-      return lines.map((line, i) => {
+      if (lines.length < 2) throw failure();
+      return lines.map(({ line, number }, i) => {
         try {
           return JSON.parse(line);
         } catch (lineError) {
-          throw new Error(`NDJSON: line ${i + 1} is not valid JSON.`, { cause: lineError });
+          if (i === 0) throw failure();
+          throw new Error(`NDJSON: line ${number} is not valid JSON.`, { cause: lineError });
         }
       });
     }

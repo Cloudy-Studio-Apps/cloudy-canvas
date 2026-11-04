@@ -6,14 +6,16 @@ import { rawText } from "./raw-text";
 
 const DELIMITERS: Record<string, string> = { auto: "", ",": ",", ";": ";", tab: "\t", "|": "|" };
 
-/** Names for the columns: empty ones `column_N`, repeated ones `name_2`, `name_3`. */
-function columnNames(header: string[]): string[] {
-  const seen = new Map<string, number>();
-  return header.map((raw, i) => {
-    const name = raw.trim() === "" ? `column_${i + 1}` : raw;
-    const count = (seen.get(name) ?? 0) + 1;
-    seen.set(name, count);
-    return count === 1 ? name : `${name}_${count}`;
+/** Names for `width` columns: empty ones `column_N`, repeated ones `name_2`, `name_3`, all unique. */
+function columnNames(header: string[], width: number): string[] {
+  const used = new Set<string>();
+  return Array.from({ length: width }, (_, i) => {
+    const raw = header[i] ?? "";
+    const base = raw.trim() === "" ? `column_${i + 1}` : raw;
+    let name = base;
+    for (let n = 2; used.has(name); n++) name = `${base}_${n}`;
+    used.add(name);
+    return name;
   });
 }
 
@@ -67,7 +69,7 @@ export const CSV_FORMAT: DataFormat = {
     const matrix = result.data;
     const width = matrix.reduce((max, row) => Math.max(max, row.length), 0);
     const first = matrix[0] ?? [];
-    const names = columnNames(hasHeader ? first : Array.from({ length: width }, () => ""));
+    const names = columnNames(hasHeader ? first : [], width);
     const body = hasHeader ? matrix.slice(1) : matrix;
     return body.map((row) => {
       const out: Record<string, string> = {};
