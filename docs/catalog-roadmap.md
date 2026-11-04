@@ -26,7 +26,6 @@ translations.
 
 **Notes:**
 
-
 ### C2. A catalog built from data (data merge)
 
 - [ ] Decide · Priority: —
@@ -39,10 +38,9 @@ Open questions: which file types, images by file name or URL, one card per page 
 what happens to pages edited by hand after the data changes.
 
 **Notes:**
-i was thinking, that have antoher tab, cuz now only has "brochure", we could add a new one that is source (or a btter name) so can select all the sources and add new ones, from api, from file csv, json, excel, so we need to add a parser for it. 
+i was thinking, that have antoher tab, cuz now only has "brochure", we could add a new one that is source (or a btter name) so can select all the sources and add new ones, from api, from file csv, json, excel, so we need to add a parser for it.
 that ways shows all and can use it, and personalize a bit, cuz otherwise could like like "{my_uploaded_file_extrange.data.sfdf.dfd.f.name.[$index].data}" we could personalize like "{products.[$index].name}"
 so that way we can reuse it in the brochure correctly, and declare what value is? text, intener, ... imageUrl, Image Base64.?... etc
-
 
 ### C3. Bookmarks and links in the PDF
 
@@ -76,12 +74,12 @@ yes, this i like it, and how we have the table of content can work togheter smoo
 - [ ] Decide · Priority: —
 
 - [ ] Zero-padding ("06")
-    lets included
+      lets included
 
 - [ ] A prefix or suffix ("A-3")
-    lets included
+      lets included
 - [ ] Numbers that include the section ("2.3")
- lets include it
+      lets include it
 
 **Notes:**
 
@@ -128,7 +126,6 @@ Page numbers and running heads are linked to a text style and a color variable, 
 every header is a single edit.
 
 **Notes:**
-
 
 ### C10. More export options
 
