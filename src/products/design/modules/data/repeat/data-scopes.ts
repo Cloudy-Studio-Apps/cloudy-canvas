@@ -5,6 +5,8 @@ import { isFrame, type FrameElement } from "../../frame";
 import type { DataScope } from "../bindings";
 import { dataCopyTag, repeatOf } from "./repeat-fields";
 import { repeatRows, rowScope } from "./repeat-rows";
+import { rowNames } from "./row-names";
+import { templateOf as templateIn } from "./template-of";
 import type { DataScopes, IteratorRows } from "./data-scopes.types";
 
 const byIndex = (a: DesignNode, b: DesignNode) =>
@@ -43,7 +45,7 @@ export function dataScopes(doc: CanvasDocument, root: DataScope): DataScopes {
   };
 
   const templateOf = (frame: FrameElement): DesignNode | null =>
-    children(frame.id).find((child) => dataCopyTag(child)?.iterator !== frame.id) ?? null;
+    templateIn(frame, children(frame.id));
 
   const iterator = (frame: FrameElement): IteratorRows | null => {
     const known = iterators.get(frame.id);
@@ -58,7 +60,8 @@ export function dataScopes(doc: CanvasDocument, root: DataScope): DataScopes {
           ? repeat.previewRow
           : 0;
       const byKey = new Map(rows.rows.map((row) => [row.key, row]));
-      out = { repeat, scope, rows, byKey, preview, template: templateOf(frame) };
+      const names = rowNames(scope, repeat);
+      out = { repeat, scope, rows, byKey, preview, names, template: templateOf(frame) };
     }
     iterators.set(frame.id, out);
     return out;
@@ -79,7 +82,8 @@ export function dataScopes(doc: CanvasDocument, root: DataScope): DataScopes {
     if (known) return known;
     // A copy whose row is gone (about to be removed) reads no row: its fields are left alone.
     const row = key === TEMPLATE ? it.rows.rows[it.preview] : it.byKey.get(key);
-    const scope = rowScope(it.scope, it.repeat, row?.row, row?.index ?? 0, it.rows.total);
+    const index = row?.index ?? 0;
+    const scope = rowScope(it.scope, it.repeat, row?.row, index, it.rows.total, it.names);
     mine.set(key, scope);
     return scope;
   };

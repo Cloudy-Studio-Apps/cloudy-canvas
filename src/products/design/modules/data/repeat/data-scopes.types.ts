@@ -3,7 +3,7 @@ import type { CanvasElement } from "@canvas";
 import type { DesignNode } from "../../core";
 import type { FrameElement } from "../../frame";
 import type { DataScope } from "../bindings";
-import type { RepeatRow, RepeatRows, RepeatSettings } from "./repeat.types";
+import type { RepeatRow, RepeatRows, RepeatSettings, RowNames } from "./repeat.types";
 
 /** An iterator as one sync reads it: its rows (computed once) and the child they repeat. */
 export interface IteratorRows {
@@ -14,6 +14,8 @@ export interface IteratorRows {
   byKey: ReadonlyMap<string, RepeatRow>;
   /** The position of the row the template shows: `previewRow` when it's in range, else 0. */
   preview: number;
+  /** What the row name carries (its fields and source), made once for every row's scope. */
+  names: RowNames;
   template: DesignNode | null;
 }
 
@@ -29,7 +31,7 @@ export interface DataScopes {
   iterator(frame: FrameElement): IteratorRows | null;
   /** A layer's children by sibling order. */
   children(id: string): readonly DesignNode[];
-  /** The child a frame repeats: its first child that isn't one of its copies. */
+  /** The child a frame repeats (`templateOf`: the one its repeat names, else its first own child). */
   templateOf(frame: FrameElement): DesignNode | null;
   /**
    * Forgets the layer tree after writes. Rows stay (the data doesn't change within a sync) but

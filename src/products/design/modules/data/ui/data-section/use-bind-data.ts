@@ -1,6 +1,7 @@
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { notifyError } from "@shared/stores/toast-store";
 import { bindData } from "../../bindings";
+import { scopeAt } from "../../repeat";
 import type { ApplyBindData } from "./use-bind-data.types";
 import { t } from "../../data.i18n";
 
@@ -9,7 +10,7 @@ export function useBindData(nodeId: string): ApplyBindData {
   const engine = useDesignEngine();
   return (patch) => {
     try {
-      bindData(engine.doc, nodeId, patch, engine.kinds);
+      bindData(engine.doc, nodeId, patch, scopeAt(engine.doc, nodeId), engine.kinds);
     } catch (error) {
       notifyError(t("section.failed"), error);
     }

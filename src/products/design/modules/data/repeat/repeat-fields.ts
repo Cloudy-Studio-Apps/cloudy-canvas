@@ -52,6 +52,7 @@ export function repeatOf(el: CanvasElement): RepeatSettings | null {
       : [],
   };
   if (typeof raw.key === "string" && raw.key) out.key = raw.key;
+  if (typeof raw.template === "string" && raw.template) out.template = raw.template;
   const limit = count(raw.limit);
   if (limit !== undefined) out.limit = limit;
   const designLimit = count(raw.designLimit);

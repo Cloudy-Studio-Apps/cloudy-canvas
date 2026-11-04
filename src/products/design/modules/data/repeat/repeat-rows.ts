@@ -2,7 +2,7 @@ import { childScope, evaluateCondition, lookup } from "../bindings";
 import type { DataScope } from "../bindings";
 import { rowNames } from "./row-names";
 import { sortItems } from "./sort-rows";
-import type { RepeatRows, RepeatSettings } from "./repeat.types";
+import type { RepeatRows, RepeatSettings, RowNames } from "./repeat.types";
 
 function keyText(value: unknown): string | null {
   if (value === null || value === undefined || typeof value === "object") return null;
@@ -55,15 +55,19 @@ export function repeatRows(
   return { rows, total };
 }
 
-/** The scope a copy's expressions read: the row under its name, plus `$index`, `$number` and `$count`. */
+/**
+ * The scope a copy's expressions read: the row under its name, plus `$index`, `$number` and
+ * `$count`. `names` (`rowNames`) can be made once for an iterator's rows.
+ */
 export function rowScope(
   parent: DataScope,
   repeat: RepeatSettings,
   row: unknown,
   index: number,
   total: number,
+  names: RowNames = rowNames(parent, repeat),
 ): DataScope {
-  const { fields, sources } = rowNames(parent, repeat);
+  const { fields, sources } = names;
   return childScope(
     parent,
     { [repeat.as]: row, $index: index, $number: index + 1, $count: total },

@@ -7,3 +7,5 @@ export { copyNode, copyPatch } from "./copy-node";
 export { planDataCopies } from "./plan-data-copies";
 export { emptyCopyPlan, writeDataCopies } from "./write-data-copies";
 export { dataScopes } from "./data-scopes";
+export { templateOf } from "./template-of";
+export { scopeAt } from "./scope-at";

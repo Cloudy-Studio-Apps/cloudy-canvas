@@ -3,7 +3,8 @@ import { getLocale } from "@shared/core";
 
 import { isDesignNode } from "../../core";
 import { requireDesign, type DesignAgentContext, type DesignMcpTool } from "../../../mcp";
-import { bindData, dataFieldsOf, planBindings, scopeAt } from "../bindings";
+import { bindData, dataFieldsOf, planBindings } from "../bindings";
+import { scopeAt } from "../repeat";
 import { readBindPatch } from "./bind-data-args";
 
 const DESCRIPTION =
@@ -55,7 +56,7 @@ export const bindDataTool = ({ kinds }: DesignAgentContext): DesignMcpTool => ({
     const el = engine.doc.get(id);
     if (!el || !isDesignNode(el)) throw new Error(`No layer with id ${id}.`);
     const patch = readBindPatch(el, args);
-    asUndoStep(engine.doc, () => bindData(engine.doc, id, patch, kinds));
+    asUndoStep(engine.doc, () => bindData(engine.doc, id, patch, scopeAt(engine.doc, id), kinds));
     const after = engine.doc.get(id);
     if (!after || !isDesignNode(after)) throw new Error(`No layer with id ${id}.`);
     const planned = planBindings(after, scopeAt(engine.doc, id), {

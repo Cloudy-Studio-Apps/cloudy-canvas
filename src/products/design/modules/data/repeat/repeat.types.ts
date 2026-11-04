@@ -26,6 +26,11 @@ export interface RepeatSettings {
   previewRow?: number;
   /** Row keys of detached copies: never updated or replaced. */
   detached: string[];
+  /**
+   * The id of the child repeated (set with the repeat), so a detached copy is never taken for
+   * it; older records go by the first child that isn't a copy (`templateOf`).
+   */
+  template?: string;
 }
 
 /** What a copy of the template carries: which iterator made it, for which row, from which child. */

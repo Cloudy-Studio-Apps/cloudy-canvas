@@ -28,6 +28,11 @@ What could make the canvas cheaper as files, features and live sessions grow, wi
   - **Trigger:** files with many fonts open slowly, mostly offline or with Google fonts not cached yet.
   - **Risk:** text off screen shows in a fallback face until its font arrives (it's redrawn then, as now).
 
+- [ ] **Data iterators: cheaper nested syncs.** `syncIterators` (data module) reads the layer tree once per sync, but every iterator that writes copies drops it (`dataScopes.invalidate`), so the next one reads the whole document again: with nested iterators that's one full read per inner copy (24 outer copies, 24 reads). Picking the next iterator scans the pending ones each time (fine for tens). And any change to a copy (auto layout moving it included) plans its whole iterator again, once per pass.
+  - Keep the children map up to date from each plan (`add`, reparenting `patch`, `remove`) instead of reading it again, and keep pending iterators in a heap by depth.
+  - **Trigger:** a document with nested iterators (or hundreds of copies) makes edits inside a template, or an Update, visibly slow.
+  - **Risk:** small: a stale children map would plan from a tree that isn't there, so the incremental update must mirror `writeDataCopies` exactly.
+
 ## Worth it with heavy collaboration or agents
 
 - [ ] **Deferred redraws for off-screen views.** A document change redraws every changed view (`handleDocumentChange` → `renderer.syncElements` → `kind.draw`), seen or not. A view that's culled and whose new bounds stay out of view could keep the change pending and draw it when it shows (`cull` flushes it before `app.render()`). The same pending state would cover `redrawImages` and `refreshText`.

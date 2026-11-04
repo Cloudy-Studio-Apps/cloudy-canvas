@@ -17,7 +17,8 @@ const byIndex = (a: DesignNode, b: DesignNode) =>
  * row key, its layers to the template's by their tag's `source`. A copy kept is patched where its
  * template part changed, but never in what its data or its layout decides (`dataResolvedPaths`,
  * `layoutPlacedPaths`), which `planBindings` and the auto layout write; its root keeps its place
- * (auto layout moves it), its other layers sit where the template's do relative to it. Copies of
+ * (auto layout moves it), each other layer sits where its template layer does relative to its
+ * own parent's copy (where that copy is now, or is being added). Copies of
  * a key gone, the later of a repeated key, and parts the template lost are removed with what they
  * hold. Copies follow row order right after the template, moving as few as can be. A detached
  * key's copy is left alone. Pure: it only reads.
@@ -92,12 +93,17 @@ export function planDataCopies(
         }
       }
     }
-    const rootX = root ? root.x : template.x;
-    const rootY = root ? root.y : template.y;
+    // Where each part's copy ends up: a layer sits where its template layer does relative to its
+    // own parent (an inner group auto layout moved takes its layers along), the root keeps its place.
+    const at = new Map<string, { x: number; y: number }>();
     for (const part of parts) {
       const isRoot = part === template;
       const parentId = isRoot ? frame.id : idFor.get(part.parentId ?? "");
       if (parentId === undefined) continue;
+      const templateParent = isRoot ? null : partById.get(part.parentId ?? "");
+      const copyParent = isRoot ? null : at.get(part.parentId ?? "");
+      const x = templateParent && copyParent ? copyParent.x + part.x - templateParent.x : part.x;
+      const y = templateParent && copyParent ? copyParent.y + part.y - templateParent.y : part.y;
       const tag = tagFor(row.key, part.id);
       const old = isRoot ? root : candidates.get(part.id);
       if (old && old.type === part.type && !used.has(old.id)) {
@@ -105,6 +111,10 @@ export function planDataCopies(
         idFor.set(part.id, old.id);
         const parent = isRoot ? frame : (partById.get(part.parentId ?? "") ?? null);
         const keep = [...dataResolvedPaths(part), ...layoutPlacedPaths(part, parent)];
+        at.set(part.id, {
+          x: isRoot || keep.includes("x") ? old.x : x,
+          y: isRoot || keep.includes("y") ? old.y : y,
+        });
         const patch = copyPatch(
           old,
           part,
@@ -112,8 +122,8 @@ export function planDataCopies(
             parentId,
             pageId: frame.pageId,
             tag,
-            x: isRoot ? null : rootX + part.x - template.x,
-            y: isRoot ? null : rootY + part.y - template.y,
+            x: isRoot ? null : x,
+            y: isRoot ? null : y,
             index: isRoot ? null : part.index,
           },
           keep,
@@ -122,8 +132,9 @@ export function planDataCopies(
         continue;
       }
       const copy = copyNode(part, parentId, frame.pageId, tag);
-      copy.x = rootX + part.x - template.x;
-      copy.y = rootY + part.y - template.y;
+      copy.x = x;
+      copy.y = y;
+      at.set(part.id, { x, y });
       if (isRoot) copy.index = index ?? copy.index;
       idFor.set(part.id, copy.id);
       fresh.push(copy);

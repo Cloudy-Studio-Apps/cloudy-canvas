@@ -7,14 +7,15 @@ import { dataFieldsOf } from "./binding-fields";
 import type { BindDataPatch } from "./bind-data.types";
 import { checkBinding, checkCondition, checkTemplate, replacedPath } from "./bind-data-checks";
 import { isCatalogText } from "./is-catalog-text";
-import { scopeAt } from "./scope";
+import type { DataScope } from "./scope.types";
 
 /**
  * Binds a layer to data, the one edit the properties panel and agents share: its text's template
  * (`null` stops it, keeping the text shown now), its fields' bindings (`null` unbinds one), its
  * show condition and "hide when empty". Every path is checked first (throwing an English error
  * naming it, writing nothing); with `kinds`, binding keys must be fields the layer's kind offers
- * and the data's type must fit them (`acceptedTypes`, the Data section's table).
+ * and the data's type must fit them (`acceptedTypes`, the Data section's table). `scope` is the
+ * layer's (`scopeAt`, the repeat module's: bindings never read the iterators around a layer).
  * A field bound to data loses its variable binding: a field has one binding. One undo step; the
  * data sync then fills the layer.
  */
@@ -22,6 +23,7 @@ export function bindData(
   doc: CanvasDocument,
   id: string,
   patch: BindDataPatch,
+  scope: DataScope,
   kinds?: ElementKinds,
 ): void {
   const el = doc.get(id);
@@ -34,7 +36,6 @@ export function bindData(
   if (patch.bindings !== undefined && (typeof patch.bindings !== "object" || !patch.bindings)) {
     throw new Error("bindings must be an object of field paths.");
   }
-  const scope = scopeAt(doc, id);
   for (const [key, binding] of Object.entries(patch.bindings ?? {})) {
     if (binding) checkBinding(el, key, binding, scope, kinds);
   }
