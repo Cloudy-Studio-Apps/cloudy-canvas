@@ -10,6 +10,7 @@ import {
   spanOf,
   type DesignBrochure,
 } from "../model";
+import { pageItemsIn } from "./page-item-summary";
 
 /**
  * A brochure as agents read it (get_brochure, and what the edit tools return): its pages with
@@ -23,6 +24,7 @@ export async function describeBrochure(engine: DesignWorkspace, brochure: Design
   const numbers = record ? pageNumbers(layout, record) : [];
   const printed = printedLabels(layout, numbers);
   const settings = brochure.settings();
+  const elements = engine.doc.all();
   const positionOf = new Map(pages.map((page, i) => [page.slot.id, i + 1]));
   const others = engine
     .service(DESIGN_BROCHURES)
@@ -55,6 +57,10 @@ export async function describeBrochure(engine: DesignWorkspace, brochure: Design
     masters: (record?.masters ?? []).map((master) => ({
       ...master,
       default: master.id === settings.defaultMaster,
+      // Its own page items, the ones set_page_item changes for every page.
+      pageItems: [master.left, master.right].flatMap((frame) =>
+        frame ? pageItemsIn(frame, elements) : [],
+      ),
     })),
     // In reading order, with the depth they're read at and the section they're in.
     sections: placeSections(record?.sections ?? [], record?.slots ?? []).map(

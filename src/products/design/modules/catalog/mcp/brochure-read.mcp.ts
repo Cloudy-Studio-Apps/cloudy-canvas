@@ -13,6 +13,7 @@ import {
   requirePagePosition,
 } from "./brochure-args";
 import { describeBrochure } from "./describe-brochure";
+import { pageItemsIn } from "./page-item-summary";
 
 /** Keeps pictures sent to agents small enough to read. */
 const VIEW_MAX_SIDE = 2000;
@@ -30,7 +31,10 @@ export const brochureReadTools: DesignMcpTool[] = [
       "spreads as they're read (printed page numbers), the print settings (layout, covers, " +
       "splitSpreads, margin in mm, dpi), the page size, and the print issues by `kind` " +
       "(placeholder: an image placeholder still to replace, low-resolution pictures, text in " +
-      "the margin, hidden pages, blank pages added, frames of another size, CMYK with no print profile, layers stopping at the page edge with no bleed).",
+      "the margin, hidden pages, blank pages added, frames of another size, CMYK with no print " +
+      "profile, layers stopping at the page edge with no bleed, rounded pages, a table of " +
+      "contents past the bottom margin (toc-overflow), a page reference naming no section or page " +
+      "(page-ref-missing)). Each master lists its own `pageItems` (template and target).",
     inputSchema: {
       type: "object",
       required: ["brochure"],
@@ -47,8 +51,10 @@ export const brochureReadTools: DesignMcpTool[] = [
       "One brochure page (by `position`, from 1): its printed frame, page numbers, span and " +
       "options, every picture on it (the layer, which of its fills, the assetId, the " +
       "picture's pixel size, its dpi at print size and whether that's low, or `placeholder: true` " +
-      "for an image placeholder waiting for its picture; replace_image swaps one) and its print " +
-      "issues.",
+      "for an image placeholder waiting for its picture; replace_image swaps one), its page " +
+      "items (`pageItems`: the text shown, its `template`, a page reference's `target`, and on a " +
+      "master's copy `fromMaster`, the master layer to change instead; set_page_item changes " +
+      "them) and its print issues.",
     inputSchema: {
       type: "object",
       required: ["brochure", "position"],
@@ -97,6 +103,7 @@ export const brochureReadTools: DesignMcpTool[] = [
         span: size ? spanOf(frame, size) : 1,
         options: page.options.map((option) => ({ id: option.id, name: option.name })),
         pictures,
+        pageItems: pageItemsIn(frame.id, engine.doc.all()),
         issues,
       };
     },

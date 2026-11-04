@@ -177,7 +177,10 @@ export const brochureSettingsTools: DesignMcpTool[] = [
       "frame as its print settings say: trimmed to its size (an A4 frame trims to A4), with bleed, " +
       "crop marks, colors and pdfMode. The file goes to " +
       '"path" (absolute; .pdf is added when missing), or next to the design\'s file, named after ' +
-      "it. An existing file is replaced. Returns the path written and the page count.",
+      "it. An existing file is replaced. The PDF opens with bookmarks in the reader's sidebar " +
+      "(the table of contents' entries: the sections, nested, else the pages), and every table " +
+      "of contents line and page reference ({page:Name}) opens its page; CMYK (PDF/X) files keep " +
+      "the bookmarks and have no links. Returns the path written and the page count.",
     inputSchema: {
       type: "object",
       required: ["brochure"],

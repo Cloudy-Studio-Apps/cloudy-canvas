@@ -13,6 +13,7 @@ import {
 } from "./brochure-args";
 import { describeBrochure } from "./describe-brochure";
 import { readMaster } from "./master-args";
+import { setPageItem, SET_PAGE_ITEM_DESCRIPTION, SET_PAGE_ITEM_SCHEMA } from "./set-page-item";
 
 const NUMBER_STYLES = ["arabic", "roman-lower", "roman-upper"] as const;
 
@@ -139,6 +140,20 @@ export const brochureMasterTools: DesignMcpTool[] = [
       const { engine } = requireDesign(host);
       const brochure = readBrochure(engine, args);
       return { nodes: asUndoStep(engine.doc, () => addPageItem(engine, brochure, args)) };
+    },
+  },
+  {
+    name: "set_page_item",
+    description: SET_PAGE_ITEM_DESCRIPTION,
+    inputSchema: SET_PAGE_ITEM_SCHEMA,
+    run: (host, args) => {
+      const { engine } = requireDesign(host);
+      const brochure = readBrochure(engine, args);
+      const node = String(args.node);
+      const { next, unmatched, patch } = setPageItem(engine, brochure, args);
+      asUndoStep(engine.doc, () => engine.doc.update(node, patch));
+      const el = engine.doc.get(node) as { text?: unknown } | undefined;
+      return { node, template: next, text: el?.text, unmatched };
     },
   },
   {
