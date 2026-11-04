@@ -4,8 +4,7 @@ import { holdsDevicePath } from "../settings";
 import { secretKeys } from "../update";
 import type { DataSourceElement } from "../source";
 import { sourceOf } from "../checks/source-of";
-import { dataCopyTag, repeatOf, scopeAt, templateOf } from "../repeat";
-import { isDesignNode, type DesignNode } from "../../core";
+import { dataCopyTag, documentScopes, repeatOf } from "../repeat";
 import { isFrame } from "../../frame";
 
 /** The summary `list_data_sources` and the other tools give of a source. */
@@ -23,17 +22,17 @@ export async function summarizeSource(engine: DesignWorkspace, source: DataSourc
   };
 }
 
-/** The frames that repeat a card for this source's rows: id, name and the card (id, name). */
+/**
+ * The frames that repeat a card for this source's rows: id, name and the card (id, name). One
+ * `documentScopes` answers every frame's scope and children.
+ */
 function iteratorsOf(engine: DesignWorkspace, source: DataSourceElement) {
-  const doc = engine.doc;
-  return doc.all().flatMap((el) => {
+  const scopes = documentScopes(engine.doc);
+  return engine.doc.all().flatMap((el) => {
     if (!isFrame(el) || dataCopyTag(el)) return [];
     const repeat = repeatOf(el);
-    if (!repeat || sourceOf(scopeAt(doc, el.id), repeat.source) !== source.id) return [];
-    const card = templateOf(
-      el,
-      doc.all().filter((c): c is DesignNode => isDesignNode(c) && c.parentId === el.id),
-    );
+    if (!repeat || sourceOf(scopes.scopeFor(el), repeat.source) !== source.id) return [];
+    const card = scopes.templateOf(el);
     return [
       { frame: el.id, name: el.name, template: card ? { id: card.id, name: card.name } : null },
     ];

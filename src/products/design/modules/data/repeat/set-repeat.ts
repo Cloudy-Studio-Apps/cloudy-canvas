@@ -2,6 +2,7 @@ import type { CanvasDocument, ElementPatch } from "@canvas";
 
 import { isDesignNode, layoutOf, type DesignNode } from "../../core";
 import { isFrame } from "../../frame";
+import { byIndex } from "./by-index";
 import { checkRepeatRules, checkRepeatSource, freeRowName, rowNameProblem } from "./check-repeat";
 import { descendants } from "./descendants";
 import { renameReferences } from "./rename-references";
@@ -13,9 +14,6 @@ import { scopeAt } from "./scope-at";
 import { templateOf } from "./template-of";
 import type { RepeatSettings } from "./repeat.types";
 import type { SetRepeatOptions } from "./set-repeat.types";
-
-const byIndex = (a: DesignNode, b: DesignNode) =>
-  a.index < b.index ? -1 : a.index > b.index ? 1 : 0;
 
 /** The optional settings: one given (even as `undefined`, which clears it) replaces the stored one. */
 const OPTIONAL = ["key", "limit", "designLimit", "previewRow"] as const;
@@ -66,7 +64,7 @@ function removeRepeat(doc: CanvasDocument, frameId: string): void {
  * card) is the one `repeat.template` gives (one of its own layers, not a copy), else the one it
  * repeats now, else its first child. Changing the card is allowed: the sync removes the old
  * card's copies and makes the new one's, in the same step, and `detached` starts empty (unless
- * given). `repeat` is merged over the stored one, with `as` (a free `item` name by default),
+ * given), as it does when `source` changes. `repeat` is merged over the stored one, with `as` (a free `item` name by default),
  * empty `filter`, `sort` and `detached`. Everything is checked first, with English errors: a
  * frame with a layer; `source` a list in the frame's scope (a source not readable here passes);
  * a new `as` a name that isn't a brochure placeholder, a source's name or the row name of an
@@ -107,6 +105,9 @@ export function setRepeat(
   // Another card: the sync replaces the old card's copies with the new one's, in this step; the
   // rows detached from the old card start over.
   const switched = storedTemplate !== null && storedTemplate.id !== template.id;
+  // Another list: its rows' keys aren't the old list's, so none of them starts detached.
+  const relisted =
+    current !== null && repeat.source !== undefined && repeat.source !== current.source;
 
   const as = repeat.as ?? current?.as ?? freeRowName(doc, frameId);
   if (as !== current?.as) {
@@ -118,7 +119,7 @@ export function setRepeat(
     as,
     filter: repeat.filter ?? current?.filter ?? [],
     sort: repeat.sort ?? current?.sort ?? [],
-    detached: repeat.detached ?? (switched ? [] : (current?.detached ?? [])),
+    detached: repeat.detached ?? (switched || relisted ? [] : (current?.detached ?? [])),
     template: template.id,
   };
   for (const field of OPTIONAL) {

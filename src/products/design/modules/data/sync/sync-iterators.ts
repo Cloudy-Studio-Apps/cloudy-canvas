@@ -45,7 +45,10 @@ function syncIterator(
   for (const child of scopes.children(frame.id)) {
     if (child.id !== template?.id) existing.push(...subtree(child));
   }
-  if (template) {
+  if (it?.unreadable) {
+    // Its list can't be read on this device (a snapshot not here yet, or broken): the copies stay
+    // as they are rather than all go; their layers' unreadable fields are left alone too.
+  } else if (template) {
     const rows = it
       ? it.rows.rows
           .filter((row) => row.index !== it.preview)
@@ -65,11 +68,17 @@ function syncIterator(
       scopes.invalidate(plan.patch.filter(({ patch }) => "repeat" in patch).map(({ id }) => id));
     }
   } else {
-    // Nothing left to repeat: every child is one of its copies, and they go.
-    if (existing.length > 0) {
-      doc.remove(existing.map((el) => el.id));
-      scopes.invalidate();
-    }
+    // Nothing left to repeat: its copies go (its other layers, a detached copy, stay). A card
+    // named but gone (moved out of the frame) takes the repeat too; a copied iterator's is its
+    // template's to say.
+    const copies = scopes
+      .children(frame.id)
+      .filter((child) => dataCopyTag(child)?.iterator === frame.id)
+      .flatMap(subtree);
+    const named = repeatOf(frame)?.template !== undefined && !dataCopyTag(frame);
+    if (copies.length > 0) doc.remove(copies.map((el) => el.id));
+    if (named) doc.update(frame.id, { repeat: null } as ElementPatch);
+    if (copies.length > 0 || named) scopes.invalidate(named ? [frame.id] : []);
   }
 
   const patches = new Map<string, ElementPatch>();

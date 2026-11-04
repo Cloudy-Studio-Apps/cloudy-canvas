@@ -13,7 +13,8 @@ import { templateOf } from "./template-of";
 
 /**
  * After a deletion, in its undo step (an `onRemove`): a removed template takes its iterator's
- * copies (the repeat goes too when the frame has no layer left), and a removed iterator takes
+ * copies and its repeat (an older record without `template` keeps the repeat while the frame
+ * has another layer, which becomes the template), and a removed iterator takes
  * the copies that weren't removed with it (dragged out of it). `before` is the scene as it was,
  * which says what the frame repeated and held.
  */
@@ -44,6 +45,7 @@ export function pruneData(
     if (template?.id !== el.id) continue;
     gone.add(frame.id);
     if (
+      repeat.template !== undefined ||
       children.every((child) => removed.has(child.id) || dataCopyTag(child)?.iterator === frame.id)
     ) {
       emptied.push(frame.id);

@@ -17,6 +17,11 @@ export interface IteratorRows {
   /** What the row name carries (its fields and source), made once for every row's scope. */
   names: RowNames;
   template: DesignNode | null;
+  /**
+   * Its list reads a source this device can't read (`readsUnreadable`): its copies are kept as
+   * they are, and its row name reads as unreadable inside it, so nested iterators wait too.
+   */
+  unreadable: boolean;
 }
 
 /**
@@ -25,6 +30,8 @@ export interface IteratorRows {
  * its ancestors, remembered on the way, so nothing rescans the document per layer.
  */
 export interface DataScopes {
+  /** The scope they're made over: every source by name. */
+  readonly root: DataScope;
   /** The scope a layer's expressions read: the root's, and a row's for each iterator around it. */
   scopeFor(el: CanvasElement): DataScope;
   /** A frame's repeat and its rows, `null` when it repeats nothing. */

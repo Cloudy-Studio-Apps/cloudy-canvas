@@ -59,10 +59,16 @@ export function rowNameProblem(doc: CanvasDocument, frameId: string, as: unknown
   return near ? `"${as}" is already the row name of ${near}.` : null;
 }
 
-/** The first free row name: `item`, else `item_2`, `item_3`… */
+/** The first row name `taken` refuses (`item`, else `item_2`, `item_3`…; never a placeholder). */
+export function firstFreeRowName(taken: (name: string) => boolean): string {
+  const free = (name: string) => !PLACEHOLDERS.has(name) && !taken(name);
+  if (free("item")) return "item";
+  for (let n = 2; ; n++) if (free(`item_${n}`)) return `item_${n}`;
+}
+
+/** The first free row name for the iterator `frameId`: `item`, else `item_2`, `item_3`… */
 export function freeRowName(doc: CanvasDocument, frameId: string): string {
-  if (!rowNameProblem(doc, frameId, "item")) return "item";
-  for (let n = 2; ; n++) if (!rowNameProblem(doc, frameId, `item_${n}`)) return `item_${n}`;
+  return firstFreeRowName((name) => rowNameProblem(doc, frameId, name) !== null);
 }
 
 /** Throws unless `source` reads a list in the frame's scope (a source not readable here passes). */

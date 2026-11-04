@@ -1,16 +1,14 @@
 import type { DesignNode } from "../../core";
 import type { FrameElement } from "../../frame";
+import { byIndex } from "./by-index";
 import { copyNode, copyPatch } from "./copy-node";
 import { copiedIterators, repeatField } from "./copied-repeat";
 import { dataResolvedPaths, layoutPlacedPaths } from "./data-resolved-paths";
 import { orderKeys } from "./order-keys";
 import { dataCopyTag } from "./repeat-fields";
 import { templateParts } from "./template-parts";
-import type { DataCopyPlan } from "./plan-data-copies.types";
+import type { DataCopyPatch, DataCopyPlan } from "./plan-data-copies.types";
 import type { DataCopyTag } from "./repeat.types";
-
-const byIndex = (a: DesignNode, b: DesignNode) =>
-  a.index < b.index ? -1 : a.index > b.index ? 1 : 0;
 
 /**
  * What keeps an iterator's copies in step: one copy of the template per row (`rows`: the rows
@@ -33,6 +31,7 @@ export function planDataCopies(
   detached: string[],
 ): DataCopyPlan {
   const plan: DataCopyPlan = { add: [], patch: [], remove: [], order: [] };
+  const patches = new Map<string, DataCopyPatch>();
   const skip = new Set(detached);
   const parts = templateParts(template, templateTree);
   const partById = new Map(parts.map((part) => [part.id, part]));
@@ -132,7 +131,11 @@ export function planDataCopies(
           },
           keep,
         );
-        if (patch) plan.patch.push({ id: old.id, patch });
+        if (patch) {
+          const entry = { id: old.id, patch };
+          plan.patch.push(entry);
+          patches.set(old.id, entry);
+        }
         continue;
       }
       const copy = copyNode(part, parentId, frame.pageId, tag);
@@ -143,7 +146,7 @@ export function planDataCopies(
       idFor.set(part.id, copy.id);
       fresh.push(copy);
     }
-    copiedIterators(parts, idFor, fresh, byId, plan);
+    copiedIterators(parts, idFor, fresh, byId, plan, patches);
     if (fresh.length > 0) plan.add.push({ key: row.key, index: row.index, nodes: fresh });
   });
 

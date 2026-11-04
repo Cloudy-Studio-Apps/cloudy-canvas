@@ -10,11 +10,17 @@ export interface DataCopyAdd {
   nodes: DesignNode[];
 }
 
+/** A patch to one of the copies' layers. */
+export interface DataCopyPatch {
+  id: string;
+  patch: Partial<DesignNode>;
+}
+
 /** What keeps an iterator's copies in step with its template and rows. Pure data: nothing is written. */
 export interface DataCopyPlan {
   add: DataCopyAdd[];
   /** Copies' layers whose template part changed (data-resolved fields never in it). */
-  patch: { id: string; patch: Partial<DesignNode> }[];
+  patch: DataCopyPatch[];
   /** Layers to remove: copies whose key is gone or repeated, with what they hold, and parts the template lost. */
   remove: string[];
   /** Copies kept that move so the copies follow row order after the template. */

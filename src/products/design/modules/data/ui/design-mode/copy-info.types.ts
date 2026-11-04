@@ -1,3 +1,5 @@
+import type { DetachBlocker } from "../../repeat";
+
 /** Where an iterator's copy comes from, for the properties panel. */
 export interface CopyInfo {
   /** The list its iterator repeats (`products`); "" when it no longer repeats. */
@@ -8,6 +10,6 @@ export interface CopyInfo {
   iterator: string;
   /** The template layer it's a copy of. */
   template: string;
-  /** Inside another iterator's copy: only detaching the outer copy lasts. */
-  nested: boolean;
+  /** Why it can't be detached (`detachBlocker`), `null` when it can. */
+  blocked: DetachBlocker | null;
 }

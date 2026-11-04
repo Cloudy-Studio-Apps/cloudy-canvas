@@ -13,8 +13,8 @@ import { t } from "../../data.i18n";
 /**
  * In the properties panel, for an iterator's copies: the row they show, Edit template (selects
  * the template layer they copy), Select container (the frame holding them) and Detach (they
- * become plain layers). A copy inside another copy can't be detached alone: its outer copy is
- * detached first.
+ * become plain layers). A copy inside another copy, or of a repeat inside a repeated card, can't
+ * be detached (`detachBlocker`): the button is disabled and its tooltip says why.
  */
 export function DataCopySection({ selection: { nodes } }: PropertySectionProps) {
   const engine = useDesignEngine();
@@ -24,7 +24,8 @@ export function DataCopySection({ selection: { nodes } }: PropertySectionProps) 
   const first = copies[0];
   const info = first ? copyInfo(engine.doc, first) : null;
   if (!first || !info) return null;
-  const nested = copies.some((node) => copyInfo(engine.doc, node)?.nested);
+  const blocked =
+    copies.map((node) => copyInfo(engine.doc, node)?.blocked).find((reason) => reason) ?? null;
   const detach = () => {
     try {
       detachCopies(engine.doc, copies);
@@ -50,14 +51,18 @@ export function DataCopySection({ selection: { nodes } }: PropertySectionProps) 
         <Tooltip>
           <TooltipTrigger asChild>
             {/* A disabled button gets no pointer events: the tooltip hangs on its wrapper. */}
-            <span className="inline-flex" tabIndex={nested ? 0 : undefined}>
-              <Button size="sm" variant="ghost" disabled={nested} onClick={detach}>
+            <span className="inline-flex" tabIndex={blocked ? 0 : undefined}>
+              <Button size="sm" variant="ghost" disabled={blocked !== null} onClick={detach}>
                 {t("copy.detach")}
               </Button>
             </span>
           </TooltipTrigger>
           <TooltipContent className="max-w-56">
-            {nested ? t("copy.nested") : t("copy.detachHint")}
+            {blocked === "inside-copy"
+              ? t("copy.nested")
+              : blocked === "repeated-card"
+                ? t("copy.inRepeatedCard")
+                : t("copy.detachHint")}
           </TooltipContent>
         </Tooltip>
       </div>

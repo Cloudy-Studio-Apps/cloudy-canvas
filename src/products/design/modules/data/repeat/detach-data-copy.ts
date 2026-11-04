@@ -1,9 +1,10 @@
-import type { CanvasDocument, CanvasElement, ElementPatch } from "@canvas";
+import type { CanvasDocument, ElementPatch } from "@canvas";
 
 import { isDesignNode, type DesignNode } from "../../core";
 import { readsUnreadable } from "../bindings";
 import type { DataScope } from "../bindings";
 import { descendants } from "./descendants";
+import { detachBlocker } from "./detach-blocker";
 import { freedPatch } from "./freed-patch";
 import { dataCopyTag, repeatOf } from "./repeat-fields";
 import { repeatRows } from "./repeat-rows";
@@ -14,8 +15,8 @@ import { scopeAt } from "./scope-at";
  * joins the iterator's `detached`, so the sync never updates or replaces it, and the copy and
  * what it holds are untagged, unlocked and lose their data fields (`dataText`, `dataBindings`,
  * `dataVisible`, `dataHideEmpty`, and an iterator's `repeat` inside), keeping what they show now:
- * a detached copy has no row to read. A copy inside another iterator's copy (its iterator, or
- * a frame around it, is a copy) is refused: detach the outer copy first.
+ * a detached copy has no row to read. Refused where `detachBlocker` says so: a copy inside another
+ * iterator's copy (detach the outer copy first), or of an iterator inside a repeated card.
  */
 export function detachDataCopy(doc: CanvasDocument, copyId: string): void {
   const el = doc.get(copyId);
@@ -42,16 +43,18 @@ export function detachDataCopy(doc: CanvasDocument, copyId: string): void {
   const repeat = frame ? repeatOf(frame) : null;
   if (!frame || !repeat) throw new Error(`"${copyId}": its iterator no longer repeats.`);
   // A copy inside another copy is the outer iterator's to write: detaching it alone wouldn't last.
-  const seenUp = new Set<string>();
-  for (let at: CanvasElement | undefined = frame; at && !seenUp.has(at.id);) {
-    seenUp.add(at.id);
-    if (dataCopyTag(at)) {
-      throw new Error(
-        `"${root.name}": this copy is inside another copy. Detach the outer copy first.`,
-      );
-    }
-    const parentId = doc.field(at.id, "parentId");
-    at = typeof parentId === "string" ? doc.get(parentId) : undefined;
+  // One in a repeated card would be mirrored into every outer copy, with this row's data.
+  const blocker = detachBlocker(doc, frame.id);
+  if (blocker === "inside-copy") {
+    throw new Error(
+      `"${root.name}": this copy is inside another copy. Detach the outer copy first.`,
+    );
+  }
+  if (blocker === "repeated-card") {
+    throw new Error(
+      `"${root.name}": detach isn't possible for a repeat inside a repeated card (it shows in ` +
+        "every copy of that card). Detach the outer copy instead.",
+    );
   }
 
   const patches = new Map<string, ElementPatch>();

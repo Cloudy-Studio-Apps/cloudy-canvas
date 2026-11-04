@@ -230,7 +230,7 @@
       "select": "Seleccionar",
       "hint": "Muestra esta capa una vez por cada fila de una lista. {frame} contiene las copias; si recibe un diseño automático para ellas, sus otras capas también se alinean.",
       "switchHint": "{frame} repite {card}. Repite esta capa en su lugar.",
-      "switchKeeps": "{card} queda entonces como una capa normal."
+      "switchKeeps": "{card} queda entonces como una capa normal, y sus campos de datos no muestran nada hasta que los vuelvas a vincular."
     }
   },
   "copy": {
@@ -242,6 +242,7 @@
     "detach": "Separar",
     "detachHint": "Convierte esta copia en capas normales que puedes editar. Hasta entonces sigue a su plantilla, y una copia borrada vuelve a aparecer.",
     "nested": "Separa primero la copia exterior",
+    "inRepeatedCard": "Esta repetición está dentro de una tarjeta repetida, así que sus copias aparecen en cada copia de esa tarjeta. Separa la copia exterior.",
     "detachFailed": "No se pudo separar la copia",
     "container": "Seleccionar contenedor"
   },
@@ -257,7 +258,7 @@
       "detachedRowGone": "Copias separadas cuya fila ya no está en la lista: {detail}",
       "sourceError": "La última actualización falló: {detail}",
       "neverUpdated": "Nunca actualizada: pulsa Actualizar para leer sus filas",
-      "tooManyCopies": "Se harían {detail} copias: pon un límite mientras diseñas",
+      "tooManyCopies": "Se hacen {detail} copias al diseñar: baja ese límite",
       "copiesStacked": "{detail} copias se apilan unas sobre otras: dale un auto layout al marco"
     }
   }

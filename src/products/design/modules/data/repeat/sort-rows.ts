@@ -3,12 +3,7 @@ import { getLocale } from "@shared/core";
 import { lookup, toNumber } from "../bindings";
 import type { DataScope } from "../bindings";
 import type { SortRule } from "./repeat.types";
-
-interface SortValue {
-  /** `null` for a missing value (sorted last). */
-  text: string | null;
-  number: number | null;
-}
+import type { SortValue } from "./sort-rows.types";
 
 function sortValue(scope: DataScope, path: string): SortValue {
   const found = lookup(scope, path);

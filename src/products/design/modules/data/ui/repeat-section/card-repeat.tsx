@@ -6,7 +6,6 @@ import { repeatLayer, repeatOf, scopeAt, templateOf } from "../../repeat";
 import { FieldPicker } from "../data-section/field-picker";
 import { listNames } from "./list-names";
 import { runRepeat } from "./run-repeat";
-import { startPatch } from "./start-patch";
 import type { CardRepeatProps } from "./card-repeat.types";
 import { t } from "../../data.i18n";
 
@@ -59,10 +58,12 @@ export function CardRepeat({ node, frame, layers }: CardRepeatProps) {
           names={lists}
           onPick={(source) =>
             runRepeat(() =>
-              repeatLayer(engine.doc, node.id, startPatch(scope, source), {
-                addLayout: true,
-                kinds: engine.kinds,
-              }),
+              repeatLayer(
+                engine.doc,
+                node.id,
+                { source },
+                { addLayout: true, kinds: engine.kinds },
+              ),
             )
           }
         >

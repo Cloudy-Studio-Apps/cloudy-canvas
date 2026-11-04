@@ -1,10 +1,23 @@
 import { asUndoStep, stringArg, type ToolArgs } from "@canvas";
 
 import { isDesignNode } from "../../core";
-import { requireDesign, type DesignAgentContext, type DesignMcpTool } from "../../../mcp";
+import {
+  requireDesign,
+  type DesignAgentContext,
+  type DesignAgentHost,
+  type DesignMcpTool,
+} from "../../../mcp";
 import { dataIssues } from "../checks";
 import { DESIGN_DATA_SOURCES } from "../model";
-import { dataCopyTag, detachDataCopy, repeatLayer, repeatOf, setRepeat } from "../repeat";
+import {
+  DEFAULT_DESIGN_LIMIT,
+  dataCopyTag,
+  detachDataCopy,
+  repeatLayer,
+  repeatOf,
+  setRepeat,
+} from "../repeat";
+import { isDataSource } from "../source";
 import { readRepeatArgs } from "./repeat-args";
 
 const CARD_NOTE =
@@ -33,7 +46,9 @@ const OPTIONS = {
   limit: { type: ["number", "null"], description: "Most rows shown everywhere; null removes." },
   designLimit: {
     type: ["number", "null"],
-    description: "Most copies made in the design only (exports show all); null removes.",
+    description:
+      `Most copies made in the design only (exports show all); unset or null means ` +
+      `${DEFAULT_DESIGN_LIMIT}.`,
   },
   previewRow: {
     type: ["number", "null"],
@@ -46,7 +61,7 @@ const OPTIONS = {
 };
 
 /** The frame's repeat and how many copies it holds, as every editing tool answers. */
-function repeatResult(host: Parameters<DesignMcpTool["run"]>[0], frameId: string) {
+function repeatResult(host: DesignAgentHost, frameId: string) {
   const { engine } = requireDesign(host);
   const frame = engine.doc.get(frameId);
   const copies = engine.doc
@@ -58,7 +73,7 @@ function repeatResult(host: Parameters<DesignMcpTool["run"]>[0], frameId: string
   return { frame: frameId, repeat: frame ? repeatOf(frame) : null, copies };
 }
 
-function layerArg(host: Parameters<DesignMcpTool["run"]>[0], args: ToolArgs, name: string) {
+function layerArg(host: DesignAgentHost, args: ToolArgs, name: string) {
   const { engine } = requireDesign(host);
   const id = stringArg(args, name);
   const el = engine.doc.get(id);
@@ -73,7 +88,9 @@ export const setRepeatTool = ({ kinds }: DesignAgentContext): DesignMcpTool => (
     `Makes a frame repeat a card for each row of a data source, or changes its repeat, in one ` +
     `undo step. ${CARD_NOTE} Only what you pass changes (null clears key, limit, designLimit and ` +
     "previewRow); a new `source` is required the first time. Changing `template` swaps the " +
-    "card. Returns the repeat settings and `copies`, the number of copies made.",
+    `card. While designLimit is unset the design makes at most ${DEFAULT_DESIGN_LIMIT} copies ` +
+    "(an export makes every row). Returns the repeat settings and `copies`, the number of " +
+    "copies made.",
   inputSchema: {
     type: "object",
     required: ["frame"],
@@ -105,6 +122,9 @@ export const repeatLayerTool = ({ kinds }: DesignAgentContext): DesignMcpTool =>
   },
   run: async (host, args) => {
     const { engine, id } = layerArg(host, args, "layer");
+    if (args.template !== undefined) {
+      throw new Error("repeat_layer takes no template: the layer is the card. Use set_repeat.");
+    }
     const { repeat, addLayout } = readRepeatArgs(args);
     asUndoStep(engine.doc, () => repeatLayer(engine.doc, id, repeat, { addLayout, kinds }));
     const parentId = engine.doc.field(id, "parentId");
@@ -165,6 +185,9 @@ export const dataIssuesTool = ({ kinds }: DesignAgentContext): DesignMcpTool => 
     const { engine } = requireDesign(host);
     const only =
       args.source === undefined || args.source === null ? null : stringArg(args, "source");
+    const source = only ? engine.doc.get(only) : undefined;
+    if (only && !(source && isDataSource(source)))
+      throw new Error(`No data source with id ${only}.`);
     const found = dataIssues(engine.doc, { sources: engine.service(DESIGN_DATA_SOURCES), kinds });
     return {
       issues: only ? found.issues.filter((issue) => issue.sourceId === only) : found.issues,

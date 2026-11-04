@@ -1,5 +1,5 @@
 import type { DesignNode } from "../../core";
-import type { DataCopyPlan } from "./plan-data-copies.types";
+import type { DataCopyPatch, DataCopyPlan } from "./plan-data-copies.types";
 
 const isObject = (v: unknown): v is Record<string, unknown> =>
   v !== null && typeof v === "object" && !Array.isArray(v);
@@ -34,7 +34,9 @@ export function repeatField(node: object): Record<string, unknown> | null {
 
 /**
  * Gives each copied iterator of one row's copy its own `repeat` (`copiedRepeat`): its template
- * layer's, `detached` mirrored, with `template` naming the copy of the inner template. A fresh copy takes it as it's added; a kept one is patched only when it differs.
+ * layer's, `detached` mirrored, with `template` naming the copy of the inner template. A fresh
+ * copy takes it as it's added; a kept one is patched only when it differs. `patches` is the
+ * plan's patches by id (kept in step with `plan.patch`), so nothing is searched per layer.
  */
 export function copiedIterators(
   parts: readonly DesignNode[],
@@ -42,13 +44,16 @@ export function copiedIterators(
   fresh: readonly DesignNode[],
   existing: ReadonlyMap<string, DesignNode>,
   plan: DataCopyPlan,
+  patches: Map<string, DataCopyPatch>,
 ): void {
+  let freshById: Map<string, DesignNode> | null = null;
   for (const part of parts) {
     const repeat = repeatField(part);
     const id = idFor.get(part.id);
     if (!repeat || !id) continue;
     const inner = typeof repeat.template === "string" ? idFor.get(repeat.template) : undefined;
-    const added = fresh.find((node) => node.id === id);
+    freshById ??= new Map(fresh.map((node) => [node.id, node]));
+    const added = freshById.get(id);
     if (added) {
       (added as unknown as Record<string, unknown>).repeat = copiedRepeat(repeat, null, inner);
       continue;
@@ -58,9 +63,13 @@ export function copiedIterators(
     const was = repeatField(copy);
     const want = copiedRepeat(repeat, was, inner);
     if (JSON.stringify(was) === JSON.stringify(want)) continue;
-    const entry = plan.patch.find((p) => p.id === id);
+    const entry = patches.get(id);
     const patch = { repeat: want } as Partial<DesignNode>;
     if (entry) entry.patch = { ...entry.patch, ...patch };
-    else plan.patch.push({ id, patch });
+    else {
+      const added = { id, patch };
+      plan.patch.push(added);
+      patches.set(id, added);
+    }
   }
 }

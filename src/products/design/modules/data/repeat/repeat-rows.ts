@@ -1,5 +1,6 @@
 import { childScope, evaluateCondition, lookup } from "../bindings";
 import type { DataScope } from "../bindings";
+import { DEFAULT_DESIGN_LIMIT } from "./design-limit";
 import { rowNames } from "./row-names";
 import { sortItems } from "./sort-rows";
 import type { RepeatRows, RepeatSettings, RowNames } from "./repeat.types";
@@ -10,7 +11,10 @@ function keyText(value: unknown): string | null {
   return text === "" ? null : text;
 }
 
-/** The rows an iterator shows: filtered, sorted, capped by `limit` (and `designLimit` in the document). */
+/**
+ * The rows an iterator shows: filtered, sorted, capped by `limit` (and in the document by
+ * `designLimit`, `DEFAULT_DESIGN_LIMIT` while unset).
+ */
 export function repeatRows(
   repeat: RepeatSettings,
   scope: DataScope,
@@ -49,9 +53,7 @@ export function repeatRows(
   let rows = shown.map((item, index) => ({ key: keys[index] as string, row: item.row, index }));
   if (repeat.limit !== undefined) rows = rows.slice(0, repeat.limit);
   const total = rows.length;
-  if (phase === "design" && repeat.designLimit !== undefined) {
-    rows = rows.slice(0, repeat.designLimit);
-  }
+  if (phase === "design") rows = rows.slice(0, repeat.designLimit ?? DEFAULT_DESIGN_LIMIT);
   return { rows, total };
 }
 

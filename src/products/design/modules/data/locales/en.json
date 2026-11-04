@@ -230,7 +230,7 @@
       "select": "Select",
       "hint": "Shows this layer once for each row of a list. {frame} holds the copies; when it gets an auto layout for them, its other layers are lined up too.",
       "switchHint": "{frame} repeats {card}. Repeat this layer instead.",
-      "switchKeeps": "{card} then stays as a normal layer."
+      "switchKeeps": "{card} then stays as a normal layer, and its data fields read nothing until you bind them again."
     }
   },
   "copy": {
@@ -242,6 +242,7 @@
     "detach": "Detach",
     "detachHint": "Makes this copy plain layers you can edit. Until then it follows its template, and a deleted copy comes back.",
     "nested": "Detach the outer copy first",
+    "inRepeatedCard": "This repeat is inside a repeated card, so its copies show in every copy of that card. Detach the outer copy instead.",
     "detachFailed": "Couldn't detach the copy",
     "container": "Select container"
   },
@@ -257,7 +258,7 @@
       "detachedRowGone": "Detached copies whose row is gone from the list: {detail}",
       "sourceError": "The last Update failed: {detail}",
       "neverUpdated": "Never updated: press Update to read its rows",
-      "tooManyCopies": "{detail} copies would be made: set a limit while designing",
+      "tooManyCopies": "{detail} copies are made while designing: lower that limit",
       "copiesStacked": "{detail} copies stack on top of each other: give the frame an auto layout"
     }
   }

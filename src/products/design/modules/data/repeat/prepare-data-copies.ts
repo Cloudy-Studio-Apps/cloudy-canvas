@@ -1,19 +1,22 @@
 import type { CanvasElement, CopyContext } from "@canvas";
 
 import { freedPatch } from "./freed-patch";
+import { freePastedRowNames } from "./free-pasted-row-names";
 import { dataCopyTag } from "./repeat-fields";
 
 /**
  * Copies of an iterator's copies (`prepareCopies`): copied with their iterator frame they're left
  * out (the pasted frame's sync makes its own); copied without it they become ordinary layers,
  * untagged, unlocked and without their data fields, as they look, and so does everything inside
- * them, a copied iterator's own copies included. A copied iterator frame needs nothing here: ids
+ * them, a copied iterator's own copies included. A copied iterator frame keeps its repeat: ids
  * are remapped, so its `repeat.template` already names the pasted template, and its `detached`
  * stays: the detached copies are plain layers pasted with it, and their rows must not be made again.
+ * Its row name changes only when it would hide a source or an outer row name where it lands
+ * (`freePastedRowNames`).
  */
 export function prepareDataCopies(
   copies: CanvasElement[],
-  { copied }: CopyContext,
+  { copied, existing }: CopyContext,
 ): CanvasElement[] {
   const byId = new Map(copies.map((el) => [el.id, el]));
   const memo = new Map<string, boolean>();
@@ -34,5 +37,5 @@ export function prepareDataCopies(
     if (!dataCopyTag(el)) out.push(el);
     else if (freed(el)) out.push({ ...el, ...freedPatch(el) } as CanvasElement);
   }
-  return out;
+  return freePastedRowNames(out, existing);
 }

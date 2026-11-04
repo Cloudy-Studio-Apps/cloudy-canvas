@@ -2,15 +2,14 @@ import type { CanvasDocument, CanvasElement } from "@canvas";
 
 import { isDesignNode, type DesignNode } from "../../core";
 import { isFrame, type FrameElement } from "../../frame";
+import { readsUnreadable } from "../bindings";
 import type { DataScope } from "../bindings";
 import { dataCopyTag, repeatOf } from "./repeat-fields";
 import { repeatRows, rowScope } from "./repeat-rows";
 import { rowNames } from "./row-names";
 import { templateOf as templateIn } from "./template-of";
 import type { DataScopes, IteratorRows } from "./data-scopes.types";
-
-const byIndex = (a: DesignNode, b: DesignNode) =>
-  a.index < b.index ? -1 : a.index > b.index ? 1 : 0;
+import { byIndex } from "./by-index";
 
 /** The key a template's row scope is kept under (row keys are never empty). */
 const TEMPLATE = "";
@@ -61,7 +60,8 @@ export function dataScopes(doc: CanvasDocument, root: DataScope): DataScopes {
           : 0;
       const byKey = new Map(rows.rows.map((row) => [row.key, row]));
       const names = rowNames(scope, repeat);
-      out = { repeat, scope, rows, byKey, preview, names, template: templateOf(frame) };
+      const unreadable = readsUnreadable(scope, repeat.source);
+      out = { repeat, scope, rows, byKey, preview, names, template: templateOf(frame), unreadable };
     }
     iterators.set(frame.id, out);
     return out;
@@ -78,8 +78,22 @@ export function dataScopes(doc: CanvasDocument, root: DataScope): DataScopes {
     else return base;
     let mine = rowScopes.get(frame.id);
     if (!mine) rowScopes.set(frame.id, (mine = new Map()));
+    // A list this device can't read: every row reads as unreadable, so what reads it is left alone.
+    if (it.unreadable) key = TEMPLATE;
     const known = mine.get(key);
     if (known) return known;
+    if (it.unreadable) {
+      const names = [it.repeat.as, "$index", "$number", "$count"];
+      const scope: DataScope = {
+        names: {},
+        parent: it.scope,
+        fields: new Map(),
+        sources: new Map(),
+        unreadable: new Set(names),
+      };
+      mine.set(key, scope);
+      return scope;
+    }
     // A copy whose row is gone (about to be removed) reads no row: its fields are left alone.
     const row = key === TEMPLATE ? it.rows.rows[it.preview] : it.byKey.get(key);
     const index = row?.index ?? 0;
@@ -110,6 +124,7 @@ export function dataScopes(doc: CanvasDocument, root: DataScope): DataScopes {
   const scopeFor = (el: CanvasElement): DataScope => seenBy(el.id);
 
   return {
+    root,
     scopeFor,
     iterator,
     children,

@@ -20,7 +20,7 @@ export interface RepeatSettings {
   sort: SortRule[];
   /** Caps the rows everywhere (document and export). */
   limit?: number;
-  /** Caps the copies made in the document only. */
+  /** Caps the copies made in the document only; unset, `DEFAULT_DESIGN_LIMIT` (24). */
   designLimit?: number;
   /** The row the template itself shows (0 when unset). */
   previewRow?: number;

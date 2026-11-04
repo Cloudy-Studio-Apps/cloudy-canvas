@@ -5,7 +5,6 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { scopeAt } from "../../repeat";
 import { FieldPicker } from "../data-section/field-picker";
 import { listNames } from "./list-names";
-import { startPatch } from "./start-patch";
 import type { RepeatStartProps } from "./repeat-start.types";
 import { t } from "../../data.i18n";
 
@@ -18,10 +17,7 @@ export function RepeatStart({ frameId, cardId, apply }: RepeatStartProps) {
   const scope = scopeAt(engine.doc, frameId);
   const lists = listNames(scope);
   const start = (source: string) =>
-    apply(
-      { ...startPatch(scope, source), template: cardId },
-      { addLayout: true, kinds: engine.kinds },
-    );
+    apply({ source, template: cardId }, { addLayout: true, kinds: engine.kinds });
   const note = !cardId ? t("repeat.noLayer") : lists.length === 0 ? t("repeat.noLists") : null;
   return (
     <div className="flex flex-col gap-1.5">

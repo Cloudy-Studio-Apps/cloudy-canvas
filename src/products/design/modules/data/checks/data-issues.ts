@@ -18,9 +18,9 @@ import { sourceIssues } from "./source-issues";
 /**
  * The data that doesn't fit, for the Data tab and agents: a bound layer's expressions that read
  * nothing (in its own scope, through `planBindings`), a fixed-size bound text taller than its
- * box, an iterator with over 500 copies and no `designLimit`, copies stacked for want of an auto
- * layout, detached rows gone from the list, and, with the service, each source's last Update
- * error, pictures it couldn't save and whether it was never updated. The root scope and the
+ * box, an iterator making over 500 copies (a `designLimit` set that high), copies stacked for
+ * want of an auto layout, detached rows gone from the list, and, with the service, each source's
+ * last Update error, pictures it couldn't save and whether it was never updated. The root scope and the
  * iterators' rows are made once per call; it stops after `MAX_ISSUES` (`truncated`). A copy is
  * left to its template, which says the same.
  */
