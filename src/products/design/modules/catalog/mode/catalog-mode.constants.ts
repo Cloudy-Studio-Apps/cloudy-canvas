@@ -12,4 +12,5 @@ export const CATALOG_COMMANDS = {
   exportPdf: "catalog.exportPdf",
   movePageUp: "catalog.movePageUp",
   movePageDown: "catalog.movePageDown",
+  deletePages: "catalog.deletePages",
 } as const;

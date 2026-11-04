@@ -9,7 +9,9 @@ import {
   CATALOG_TOOL,
   CatalogPickTool,
   CatalogTool,
+  deleteSelectedPages,
 } from "./mode";
+import { toast } from "@shared/stores/toast-store";
 import { catalogFaded } from "./mode/catalog-faded";
 import { moveSelectedPages } from "./mode/move-selected-pages";
 import { isPageFrame } from "./model";
@@ -48,7 +50,10 @@ export const catalogMode = defineDesignMode({
   keybindings: {
     [CATALOG_COMMANDS.movePageUp]: [{ key: "ArrowUp", alt: true, label: "↑" }],
     [CATALOG_COMMANDS.movePageDown]: [{ key: "ArrowDown", alt: true, label: "↓" }],
+    [CATALOG_COMMANDS.deletePages]: [{ key: "Delete", shift: true, label: "Del" }],
   },
+  // Delete organizes here: it takes pages out, the frames stay.
+  commandLabels: { deleteSelection: t("mode.takeOut") },
   hostCommands: [
     {
       id: CATALOG_COMMANDS.pick,
@@ -69,6 +74,14 @@ export const catalogMode = defineDesignMode({
       id: CATALOG_COMMANDS.movePageDown,
       label: t("mode.movePageDown"),
       run: (engine) => moveSelectedPages(engine, 1),
+    },
+    {
+      id: CATALOG_COMMANDS.deletePages,
+      label: t("mode.deletePages"),
+      run: (engine) => {
+        const kept = deleteSelectedPages(engine);
+        if (kept > 0) toast({ title: t("mode.deleteKept", { count: kept }) });
+      },
     },
     // Run by `useExportCommand`, which needs the file's name.
     { id: CATALOG_COMMANDS.exportPdf, label: t("mode.exportPdf") },

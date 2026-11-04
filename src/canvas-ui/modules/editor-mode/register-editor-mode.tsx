@@ -34,6 +34,7 @@ export function registerEditorMode<O extends object>(
     ...(mode.faded ? { faded: mode.faded } : {}),
     ...(mode.commands ? { commands: mode.commands } : {}),
     ...(mode.keybindings ? { keybindings: mode.keybindings } : {}),
+    ...(mode.commandLabels ? { commandLabels: mode.commandLabels } : {}),
   };
   host.contribute(canvas.modes, canvasMode);
   if (mode.tools?.length) host.contribute(canvas.tools, ...mode.tools);

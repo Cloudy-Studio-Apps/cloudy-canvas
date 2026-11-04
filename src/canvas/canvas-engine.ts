@@ -490,6 +490,11 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     this.emitChange();
   }
 
+  /** What the current mode calls `command` (`CanvasMode.commandLabels`), `undefined` when it doesn't rename it. */
+  commandLabel(command: string): string | undefined {
+    return this.mode.commandLabels?.[command];
+  }
+
   /** The current mode's id (`DEFAULT_MODE`'s when none of the product's is on). */
   get modeId(): string {
     return this.mode.id;

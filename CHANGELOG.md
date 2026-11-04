@@ -36,6 +36,9 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### Improved
 
+- In the Catalog mode, Delete is now labelled "Take out of the brochure", as it keeps the frame on
+  the canvas. The new "Delete page and frame" (Shift+Delete) removes the frame from the design too,
+  in one undo step, unless another brochure on the page still prints it.
 - In the design editor, the people and agents working on the file now show as a column of avatars in the left rail, above the Agents button, so the top of the properties panel stays tidy however many join.
 - In a brochure's page list, Ctrl (⌘ on a Mac) + click and Shift + click select several pages,
   which you can then drag together, and Alt+↑/↓ moves the selected pages one place up or down.

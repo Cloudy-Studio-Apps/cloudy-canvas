@@ -7,7 +7,10 @@
     "exportPdf": "Export the brochure as PDF",
     "brochureTab": "Brochure",
     "movePageUp": "Move page up",
-    "movePageDown": "Move page down"
+    "movePageDown": "Move page down",
+    "takeOut": "Take out of the brochure",
+    "deletePages": "Delete page and frame",
+    "deleteKept": "{count} frames are printed by another brochure of this page, so they were only taken out of this one."
   },
   "toolbar": {
     "selectPages": "Select pages",

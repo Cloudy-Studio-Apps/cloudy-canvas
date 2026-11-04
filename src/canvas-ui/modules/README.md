@@ -12,7 +12,7 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
 
 ## Module chrome
 
-- **Module chrome (`canvas-ui/modules/`):** an editor provides its modules with `EditorModulesContext` (`{ host, points }`), and the generic pieces read its `EditorPoints`: `ModuleToolbar` (the `tools` entries with a `toolbar` placement, in groups), `ModuleToolOptions` (`toolPanels` by tool, or `selectionPanels` by the selection's type with the select tool), `ModuleSlot` (`sidePanels`, `topBar`), `ModuleSession` (runs the `sessionHooks` and draws the `overlays`), the toolbar's `selectionActions` (buttons for the selection after the tools while the select tool is on: the design's mask button and boolean menu) and the context menu (`contextMenu` groups after the built-in ones). Icons are an `ExtensionIcon` (a Lucide icon or `{ svg }`, `ExtensionIconView`).
+- **Module chrome (`canvas-ui/modules/`):** an editor provides its modules with `EditorModulesContext` (`{ host, points }`), and the generic pieces read its `EditorPoints`: `ModuleToolbar` (the `tools` entries with a `toolbar` placement, in groups), `ModuleToolOptions` (`toolPanels` by tool, or `selectionPanels` by the selection's type with the select tool), `ModuleSlot` (`sidePanels`, `topBar`), `ModuleSession` (runs the `sessionHooks` and draws the `overlays`), the toolbar's `selectionActions` (buttons for the selection after the tools while the select tool is on: the design's mask button and boolean menu) and the context menu (`contextMenu` groups after the built-in ones; a group with `modes` shows only in those modes). Icons are an `ExtensionIcon` (a Lucide icon or `{ svg }`, `ExtensionIconView`).
 
 ## Mode toolbars
 

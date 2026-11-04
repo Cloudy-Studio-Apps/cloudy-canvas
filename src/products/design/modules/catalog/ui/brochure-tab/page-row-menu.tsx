@@ -1,4 +1,4 @@
-import { Bookmark, BookmarkPlus, BookmarkX, X } from "lucide-react";
+import { Bookmark, BookmarkPlus, BookmarkX, Trash2, X } from "lucide-react";
 
 import {
   ContextMenu,
@@ -7,6 +7,9 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@shared/ui/kit";
+import { useDesignEngine } from "@design/ui/design-engine-context";
+import { toast } from "@shared/stores/toast-store";
+import { deleteSelectedPages } from "../../mode/delete-selected-pages";
 import { useBrochure } from "../hooks/use-brochure";
 import { startSection, removeSection } from "../section-actions";
 import { startLevels } from "../../model/sections";
@@ -16,9 +19,11 @@ import { t } from "../../catalog.i18n";
 
 /**
  * A page's right-click menu: a blank page or a new section after it, a section or a subsection
- * starting at it (`startLevels`), removing the ones that do, and taking it out of the brochure.
+ * starting at it (`startLevels`), removing the ones that do, taking it out of the brochure and
+ * deleting its frame (`deleteSelectedPages`).
  */
 export function PageRowMenu({ page, children }: PageRowMenuProps) {
+  const engine = useDesignEngine();
   const { brochure, sections } = useBrochure();
   const position = brochure?.record()?.slots.findIndex((slot) => slot.id === page.slot.id) ?? -1;
   const entries = useAddPageEntries(page.frame, position + 1);
@@ -71,7 +76,18 @@ export function PageRowMenu({ page, children }: PageRowMenuProps) {
           onSelect={() => brochure.removePages([page.slot.id])}
         >
           <X className="size-3.5" />
-          {t("tab.page.remove")}
+          {t("mode.takeOut")}
+        </ContextMenuItem>
+        <ContextMenuItem
+          className="gap-2 text-xs text-destructive"
+          onSelect={() => {
+            engine.select([page.frame.id]);
+            const kept = deleteSelectedPages(engine);
+            if (kept > 0) toast({ title: t("mode.deleteKept", { count: kept }) });
+          }}
+        >
+          <Trash2 className="size-3.5" />
+          {t("mode.deletePages")}
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>

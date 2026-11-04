@@ -4,8 +4,9 @@ import { designMcpTools, designCanvas, designMigrations } from "../../design-poi
 import { designStarters } from "../core/ui";
 import { BrochureKind } from "./brochure";
 import { catalogMode } from "./catalog.mode";
+import { t } from "./catalog.i18n";
 import { catalogTools } from "./mcp";
-import { editCatalogPage } from "./mode";
+import { CATALOG_COMMANDS, CATALOG_MODE_ID, editCatalogPage } from "./mode";
 import { prepareItemCopies, pruneBrochure, splitLegacyBrochure, syncPageItems } from "./model";
 import { pageItemTag, pageItemTemplate } from "./model/page-items/page-item-fields";
 import { FromMasterBadge } from "./ui/design-mode/from-master-badge";
@@ -65,6 +66,20 @@ export const catalogModule = defineModule({
           return !pageItemTag(node) && template !== null && template.includes("{section");
         }),
       component: SectionParentsSection,
+    });
+    // Shift+Delete in the Catalog mode's menu, after its Delete (which takes pages out).
+    host.contribute(designEditor.contextMenu, {
+      id: "catalog.delete-pages",
+      menu: "selection",
+      modes: [CATALOG_MODE_ID],
+      items: [
+        {
+          command: CATALOG_COMMANDS.deletePages,
+          label: t("mode.deletePages"),
+          destructive: true,
+          enabled: ({ selectionCount }) => selectionCount > 0,
+        },
+      ],
     });
     host.contribute(designMigrations, { id: "catalog.brochures", migrate: splitLegacyBrochure });
     host.contribute(designCanvas.editElement, editCatalogPage);

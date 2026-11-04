@@ -33,7 +33,12 @@ export function CanvasContextMenu() {
         const groups = allowedGroups(
           [
             ...(target === "selection" ? SELECTION_MENU : CANVAS_MENU),
-            ...moduleMenu(moduleGroups.filter((group) => group.menu === target)),
+            ...moduleMenu(
+              moduleGroups.filter(
+                (group) =>
+                  group.menu === target && (!group.modes || group.modes.includes(engine.modeId)),
+              ),
+            ),
           ],
           engine,
         );

@@ -38,6 +38,7 @@ export interface EditorModeDefinition<O extends object> {
   faded?: CanvasMode["faded"];
   commands?: CanvasMode["commands"];
   keybindings?: CanvasMode["keybindings"];
+  commandLabels?: CanvasMode["commandLabels"];
   hostCommands?: readonly ModeHostCommand[];
   toolbar?: ModeToolbarSpec;
   /** DOM over the canvas, mounted only while the mode is on. */

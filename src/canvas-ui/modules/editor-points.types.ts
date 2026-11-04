@@ -105,6 +105,8 @@ export interface SessionHookEntry {
 export interface ContextMenuEntryGroup {
   id: string;
   menu: "selection" | "canvas";
+  /** The modes it's shown in (their ids); left out, every mode that runs its commands. */
+  modes?: readonly string[];
   /** Shows the items in a submenu of this name instead of in the menu itself. */
   label?: string;
   items: ContextMenuGroup;

@@ -6,7 +6,8 @@ import { CATALOG_TOOL } from "./catalog-mode.constants";
 
 /**
  * The Catalog mode's tool: selects pages (click, Shift, marquee) without moving or resizing them.
- * Delete takes the selected frames out of the brochure; they stay in the design. Double-click and
+ * Delete takes the selected frames out of the brochure; they stay in the design (Shift+Delete
+ * deletes them, `deleteSelectedPages`). Double-click and
  * Enter edit a page in the design (`editCatalogPage`). Works on the page's open brochure.
  */
 export class CatalogTool extends SelectTool {

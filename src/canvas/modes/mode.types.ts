@@ -42,4 +42,9 @@ export interface CanvasMode {
    * for an entity). Their commands are host commands without keys of their own.
    */
   keybindings?: Keybindings;
+  /**
+   * What its commands are called while it's on, where they do something else than usual (the
+   * Catalog mode's Delete takes pages out): menus read them with `engine.commandLabel`.
+   */
+  commandLabels?: Readonly<Record<string, string>>;
 }

@@ -7,7 +7,10 @@
     "exportPdf": "Exportar el folleto como PDF",
     "brochureTab": "Folleto",
     "movePageUp": "Subir página",
-    "movePageDown": "Bajar página"
+    "movePageDown": "Bajar página",
+    "takeOut": "Sacar del folleto",
+    "deletePages": "Eliminar página y marco",
+    "deleteKept": "Otro folleto de esta página imprime {count} marcos, así que solo se sacaron de este."
   },
   "toolbar": {
     "selectPages": "Seleccionar páginas",
