@@ -1,8 +1,10 @@
 export type * from "./page-item.types";
 export type * from "./plan-page-items.types";
 export type * from "./stamp-targets.types";
+export { detachCopies } from "./detach-copies";
 export { pageItemTag, pageItemTemplate } from "./page-item-fields";
 export { planPageItems } from "./plan-page-items";
+export { prepareItemCopies } from "./prepare-item-copies";
 export { resolveTemplate } from "./resolve-template";
 export { stampTargets } from "./stamp-targets";
 export { syncPageItems } from "./sync-page-items";

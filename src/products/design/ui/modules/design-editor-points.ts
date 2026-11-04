@@ -14,4 +14,5 @@ export const designEditor: DesignEditorPoints = {
   toolSidebars: definePoint("design.editor.toolSidebars", { keyOf: (entry) => entry.tool }),
   modePanels: definePoint("design.editor.modePanels", { keyOf: (entry) => entry.mode }),
   layerIcons: definePoint("design.editor.layerIcons", { keyOf: (entry) => entry.type }),
+  layerBadges: definePoint("design.editor.layerBadges", { keyOf: (entry) => entry.id }),
 };

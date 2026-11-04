@@ -207,5 +207,14 @@
     "intent": "Rendering intent",
     "intentRelative": "Relative colorimetric",
     "intentPerceptual": "Perceptual"
+  },
+  "design": {
+    "fromMaster": "From {master}: edit it on the master",
+    "section": {
+      "title": "From a master",
+      "body": "This layer comes from {master} in the brochure “{brochure}”. It's locked here so every page stays the same: edit it on the master, or detach it to change it on this page only.",
+      "edit": "Edit master",
+      "detach": "Detach"
+    }
   }
 }

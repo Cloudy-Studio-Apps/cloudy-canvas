@@ -207,5 +207,14 @@
     "intent": "Propósito de conversión",
     "intentRelative": "Colorimétrico relativo",
     "intentPerceptual": "Perceptual"
+  },
+  "design": {
+    "fromMaster": "De {master}: edítalo en la maestra",
+    "section": {
+      "title": "De una maestra",
+      "body": "Esta capa viene de {master} en el folleto «{brochure}». Está bloqueada aquí para que todas las páginas sigan iguales: edítala en la maestra o sepárala para cambiarla solo en esta página.",
+      "edit": "Editar maestra",
+      "detach": "Separar"
+    }
   }
 }

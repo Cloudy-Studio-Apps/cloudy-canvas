@@ -7,7 +7,7 @@ The Layers tab: the page's layer tree (select, rename, hide, lock, drag to rearr
 - **Contributes:** designEditor: `leftTabs`; `designMcpTools`
 - **Points it owns:** `layersTabSections` (`ui/layers.points.ts`): sections under the layer tree; pages adds its list
 - **MCP tools:** `get_layer_tree`, `move_layers`
-- **Files:** `layers.module.ts`, `layer-tree-of.ts` (the tree for agents), `mcp/` (`get_layer_tree`, `move_layers`), `ui/` (the tab, rows, drag, `layers.points.ts`).
+- **Files:** `layers.module.ts`, `layer-tree-of.ts` (the tree for agents), `mcp/` (`get_layer_tree`, `move_layers`), `ui/` (the tab, rows, drag, `layers.points.ts`; a row shows the `designEditor.layerBadges` modules give after its name, `LayerBadges`).
 
 ## How it works
 

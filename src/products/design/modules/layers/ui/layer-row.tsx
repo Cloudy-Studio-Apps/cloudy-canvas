@@ -5,6 +5,7 @@ import type { ElementPatch } from "@canvas";
 import { layerNameOf } from "../../core";
 import { cn, IconButton } from "@shared/ui/kit";
 import { useDesignEngine } from "@design/ui/design-engine-context";
+import { LayerBadges } from "./layer-badges";
 import { LayerIcon } from "./layer-icon";
 import { LayerName } from "./layer-name";
 import type { LayerRowProps } from "./layer-row.types";
@@ -92,6 +93,7 @@ export const LayerRow = memo(function LayerRow({
         onRename={(name) => update({ name } as ElementPatch)}
         onDone={() => setRenaming(false)}
       />
+      <LayerBadges node={node} />
       {node.effects.some((effect) => effect.visible) && (
         <span
           title={t("hasEffects")}

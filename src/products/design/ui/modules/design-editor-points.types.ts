@@ -78,6 +78,19 @@ export interface LayerIconEntry {
   iconOf?: (node: DesignNode) => ExtensionIcon;
 }
 
+export interface LayerBadgeProps {
+  node: DesignNode;
+}
+
+/**
+ * A mark after a layer's name in the layers panel, for what a module knows about it (e.g. a
+ * brochure master's copy, locked). Its component draws nothing for layers it isn't about.
+ */
+export interface LayerBadgeEntry {
+  id: string;
+  component: ComponentType<LayerBadgeProps>;
+}
+
 /** What a main menu item can reach when it's picked. */
 export interface MainMenuContext {
   engine: DesignEngine;
@@ -109,4 +122,5 @@ export interface DesignEditorPoints extends EditorPoints {
   toolSidebars: ExtensionPoint<ToolSidebarEntry>;
   modePanels: ExtensionPoint<ModePanelEntry>;
   layerIcons: ExtensionPoint<LayerIconEntry>;
+  layerBadges: ExtensionPoint<LayerBadgeEntry>;
 }
