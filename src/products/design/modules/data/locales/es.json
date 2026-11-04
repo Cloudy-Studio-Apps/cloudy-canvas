@@ -120,5 +120,9 @@
     "pickFileAgain": "Vuelve a elegir el archivo en este dispositivo.",
     "privateFile": "Este archivo está en la carpeta de datos de la propia app, que las fuentes de datos no pueden leer.",
     "webPage": "La fuente respondió con una página web, no con datos. Revisa el enlace o si necesita una clave."
+  },
+  "format": {
+    "yes": "Sí",
+    "no": "No"
   }
 }
