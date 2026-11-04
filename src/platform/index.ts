@@ -13,6 +13,7 @@ export { fileOpenRequests } from "./file-open-requests";
 export { http } from "./http";
 export { openExternal } from "./open-external";
 export { revealFile } from "./reveal-file";
+export { secretStore } from "./secret-store";
 export { storage } from "./storage";
 export { TauriAgentChannel } from "./tauri-agent-channel";
 export { TauriStorage } from "./tauri-storage";
