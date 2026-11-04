@@ -13,6 +13,10 @@ The store listing's images. The SVGs are the sources; the PNGs are what gets upl
   system bars cropped out (`-crop 2450x1220+142+0` on a 2712×1220 screen) and fitted to 1920×1080
   on the canvas background (`-resize 1920x -background "#f9fafc" -gravity center -extent 1920x1080`).
   They show the Home starters (ER diagram, database schema, retrospective) zoomed to fit, in English.
+- **Framed screenshots** (`screenshots-framed/`, the ones to upload): each screenshot on the brand
+  blue with a caption, laid out in Cloudy Canvas as a design with one 1920×1080 frame per shot. The
+  export comes out with a 16 px margin (the screenshot's shadow), so crop it back:
+  `magick <file> -crop 1920x1080+16+16 +repage <file>`.
 - **Icon:** the app icon's artwork (`src-tauri/icons/source/app-icon.svg`) on a full-bleed square.
   Play rounds the corners and adds the shadow itself, so it has no radius or padding. Change the
   artwork in both files.
