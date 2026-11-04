@@ -28,7 +28,7 @@ export interface NumberInputProps {
   /** A drag of the prefix starts and ends: hosts join its steps into one undo step. */
   onScrubStart?: () => void;
   onScrubEnd?: () => void;
-  /** Shown while `value` is `null`, instead of "Mixed" (a setting that's off: "None"). */
+  /** Shown while `value` is `null`, instead of "Mixed" (a cap that's off: "All"). */
   placeholder?: string;
   /** Lets the field be emptied: an empty commit calls this (otherwise it's invalid). */
   onClear?: () => void;

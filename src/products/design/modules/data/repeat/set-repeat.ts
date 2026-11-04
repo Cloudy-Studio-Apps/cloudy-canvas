@@ -20,6 +20,20 @@ const byIndex = (a: DesignNode, b: DesignNode) =>
 /** The optional settings: one given (even as `undefined`, which clears it) replaces the stored one. */
 const OPTIONAL = ["key", "limit", "designLimit", "previewRow"] as const;
 
+/** The child `template` names, checked: one of the frame's own layers, never a copy. */
+function pickTemplate(
+  frameName: string,
+  children: readonly DesignNode[],
+  template: string | undefined,
+): DesignNode | null {
+  if (template === undefined) return null;
+  const child = children.find((el) => el.id === template);
+  if (!child || dataCopyTag(child)) {
+    throw new Error(`repeat.template: "${template}" isn't one of "${frameName}"'s own layers.`);
+  }
+  return child;
+}
+
 /** Removes a frame's repeat and every copy it made (with what they hold), as one undo step. */
 function removeRepeat(doc: CanvasDocument, frameId: string): void {
   // Its copies, and those of its copies in outer copies (`source` is this frame), which the outer
@@ -48,8 +62,11 @@ function removeRepeat(doc: CanvasDocument, frameId: string): void {
 }
 
 /**
- * Makes a frame an iterator (or changes its repeat), as one undo step: its child repeated is the
- * one the repeat names, else its first child now (`repeat.template`); `repeat` is merged over the
+ * Makes a frame an iterator (or changes its repeat), as one undo step: its child repeated (the
+ * card, `repeat.template`) is the one `repeat.template` gives (one of its own layers, not a
+ * copy), else the one it repeats now, else its first child. Changing the card is allowed: the
+ * sync removes the old card's copies and makes the new one's, in the same step, and `detached`
+ * starts empty (unless given). `repeat` is merged over the
  * stored one, with `as` (a free `item` name by default), empty `filter`, `sort` and `detached`.
  * Everything is checked first, with English errors: a frame with a layer; `source` a list in the
  * frame's scope (a source not readable here passes); a new `as` a name that isn't a brochure
@@ -84,8 +101,13 @@ export function setRepeat(
     .all()
     .filter((el): el is DesignNode => isDesignNode(el) && el.parentId === frameId)
     .sort(byIndex);
-  const template = templateOf(frame, children);
+  const storedTemplate = current ? templateOf(frame, children) : null;
+  const template =
+    pickTemplate(frame.name, children, repeat.template) ?? templateOf(frame, children);
   if (!template) throw new Error(REPEAT_ERRORS.noLayer);
+  // Another card: the sync replaces the old card's copies with the new one's, in this step; the
+  // rows detached from the old card start over.
+  const switched = storedTemplate !== null && storedTemplate.id !== template.id;
 
   const as = repeat.as ?? current?.as ?? freeRowName(doc, frameId);
   if (as !== current?.as) {
@@ -97,7 +119,7 @@ export function setRepeat(
     as,
     filter: repeat.filter ?? current?.filter ?? [],
     sort: repeat.sort ?? current?.sort ?? [],
-    detached: repeat.detached ?? current?.detached ?? [],
+    detached: repeat.detached ?? (switched ? [] : (current?.detached ?? [])),
     template: template.id,
   };
   for (const field of OPTIONAL) {

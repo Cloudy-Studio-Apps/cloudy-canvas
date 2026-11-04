@@ -129,7 +129,8 @@
     "webPage": "La fuente respondió con una página web, no con datos. Revisa el enlace o si necesita una clave.",
     "pickFolderAgain": "Vuelve a elegir la carpeta en este dispositivo.",
     "privateFolder": "Esta carpeta está en la carpeta de datos de la propia app, que las fuentes de datos no pueden leer.",
-    "noLayer": "Este marco no tiene ninguna capa que repetir: añade una primero."
+    "noLayer": "Este marco no tiene ninguna capa que repetir: añade una primero.",
+    "noParentFrame": "Primero pon la capa dentro de un marco."
   },
   "format": {
     "yes": "Sí",
@@ -191,8 +192,8 @@
   "repeat": {
     "title": "Repetir",
     "start": "Repetir por cada fila",
-    "hint": "Muestra la primera capa del marco una vez por cada fila de una lista, alineadas en una fila que se ajusta.",
-    "noLayer": "Añade una capa a este marco para repetirla por cada fila.",
+    "hint": "Elige la tarjeta y luego una lista: la tarjeta se muestra una vez por cada fila, alineadas por el diseño automático de este marco.",
+    "noLayer": "Añade una capa a este marco para repetirla como tarjeta.",
     "noLists": "Todavía no hay ninguna lista que repetir. Añade una fuente en la pestaña Datos.",
     "copied": "Este marco es una copia hecha por otra repetición. Edita la repetición de la plantilla.",
     "list": "Lista",
@@ -221,6 +222,14 @@
     "preview": {
       "label": "Fila de vista previa",
       "of": "de {count}"
+    },
+    "card": {
+      "label": "Tarjeta",
+      "repeat": "Repetir esta capa",
+      "repeatedBy": "Repetida por {frame}",
+      "select": "Seleccionar",
+      "hint": "Muestra esta capa una vez por cada fila de una lista; {frame} contiene y alinea las copias.",
+      "switchHint": "{frame} repite ahora {card}: esto repite esta capa en su lugar."
     }
   },
   "copy": {
@@ -232,6 +241,7 @@
     "detach": "Separar",
     "detachHint": "Convierte esta copia en capas normales que puedes editar. Hasta entonces sigue a su plantilla, y una copia borrada vuelve a aparecer.",
     "nested": "Separa primero la copia exterior",
-    "detachFailed": "No se pudo separar la copia"
+    "detachFailed": "No se pudo separar la copia",
+    "container": "Seleccionar contenedor"
   }
 }

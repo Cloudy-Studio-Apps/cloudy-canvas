@@ -14,9 +14,10 @@ import { useBindData } from "./use-bind-data";
 import { t } from "../../data.i18n";
 
 /**
- * The selected layer's data: the preview row of the template it's in, its text's template (texts, except those a catalog fills), the
- * fields filled from data, and when it shows. Every change is one `bindData` step. Without
- * sources it points at the Data tab and keeps only what is bound, so it can still be undone.
+ * The selected layer's data: the preview row of the template it's in, its text's template
+ * (texts, except those a catalog fills), the fields filled from data, and when it shows. Every
+ * change is one `bindData` step. Without sources it points at the Data tab and keeps only what
+ * is bound, so it can still be undone.
  */
 export function DataSection({ selection: { nodes } }: PropertySectionProps) {
   const engine = useDesignEngine();

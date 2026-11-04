@@ -7,7 +7,7 @@ export interface SortRule {
   descending?: boolean;
 }
 
-/** What a frame repeats: its first child is the template, shown once per row of a list. */
+/** What a frame repeats: one of its layers (the card, `template`), shown once per row of a list. */
 export interface RepeatSettings {
   /** An expression for a list in scope: `products`, `product.specs`, `page.rows`. */
   source: string;

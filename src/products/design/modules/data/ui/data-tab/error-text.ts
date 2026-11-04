@@ -25,6 +25,8 @@ export function errorText(message: string): string {
       return t("errors.webPage");
     case REPEAT_ERRORS.noLayer:
       return t("errors.noLayer");
+    case REPEAT_ERRORS.noParentFrame:
+      return t("errors.noParentFrame");
     default:
       return message;
   }

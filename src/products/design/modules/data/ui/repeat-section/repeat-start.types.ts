@@ -2,7 +2,7 @@ import type { ApplyRepeat } from "./use-set-repeat.types";
 
 export interface RepeatStartProps {
   frameId: string;
-  /** Whether the frame has a layer to repeat. */
-  hasLayer: boolean;
+  /** The card chosen to repeat; unset when the frame has no layer. */
+  cardId: string | undefined;
   apply: ApplyRepeat;
 }

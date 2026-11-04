@@ -9,17 +9,17 @@ import { CSV_FORMAT, JSON_FORMAT } from "./formats";
 import { FILE_SOURCE, HTTP_SOURCE } from "./sources";
 import { forgetRemovedSources } from "./model";
 import { syncData } from "./sync";
-import { dataCopyTag, prepareDataCopies, pruneData, repeatOf } from "./repeat";
+import { dataCopyTag, prepareDataCopies, pruneData } from "./repeat";
 import { BOUND_TEXT_TEMPLATE } from "./bindings";
 import { textTemplates } from "../text";
 import { DataSourceKind } from "./source";
-import { isFrame } from "../frame";
 import {
   DataCopyBadge,
   DataCopySection,
   DataSection,
   DataTab,
   RepeatSection,
+  repeatTargets,
   useDataServices,
 } from "./ui";
 import { t } from "./data.i18n";
@@ -64,19 +64,15 @@ export const dataModule = defineModule({
       when: ({ nodes }) => nodes.length === 1,
       component: DataSection,
     });
-    // A frame's repeat, just before the Data section; a copied iterator only says where it's set.
+    // Repeating a layer (the card) in its frame, right after the frame's auto layout.
     host.contribute(designEditor.propertySections, {
       id: "data.repeat",
       tab: "design",
-      order: 84,
-      when: ({ nodes }) => {
-        const node = nodes[0];
-        return (
-          nodes.length === 1 &&
-          node !== undefined &&
-          isFrame(node) &&
-          (!dataCopyTag(node) || repeatOf(node) !== null)
-        );
+      order: 33,
+      when: ({ nodes, elements }) => {
+        if (nodes.length !== 1) return false;
+        const { card, container } = repeatTargets(nodes[0], elements);
+        return card !== null || container !== null;
       },
       component: RepeatSection,
     });

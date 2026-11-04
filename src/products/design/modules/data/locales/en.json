@@ -129,7 +129,8 @@
     "webPage": "The source answered a web page, not data. Check the link, or whether it needs a key.",
     "pickFolderAgain": "Pick the folder again on this device.",
     "privateFolder": "This folder is in the app's own data folder, which data sources can't read.",
-    "noLayer": "This frame has no layer to repeat: add one to it first."
+    "noLayer": "This frame has no layer to repeat: add one to it first.",
+    "noParentFrame": "Put the layer inside a frame first."
   },
   "format": {
     "yes": "Yes",
@@ -191,8 +192,8 @@
   "repeat": {
     "title": "Repeat",
     "start": "Repeat for each row",
-    "hint": "Shows the frame's first layer once for each row of a list, lined up in a wrapping row.",
-    "noLayer": "Add a layer to this frame to repeat it for each row.",
+    "hint": "Choose the card, then a list: the card shows once for each row, lined up by this frame's auto layout.",
+    "noLayer": "Add a layer to this frame to repeat it as a card.",
     "noLists": "There's no list to repeat yet. Add a source in the Data tab.",
     "copied": "This frame is a copy another repeat made. Edit the template's repeat instead.",
     "list": "List",
@@ -221,6 +222,14 @@
     "preview": {
       "label": "Preview row",
       "of": "of {count}"
+    },
+    "card": {
+      "label": "Card",
+      "repeat": "Repeat this layer",
+      "repeatedBy": "Repeated by {frame}",
+      "select": "Select",
+      "hint": "Shows this layer once for each row of a list; {frame} holds and lines up the copies.",
+      "switchHint": "{frame} repeats {card} now: this repeats this layer instead."
     }
   },
   "copy": {
@@ -232,6 +241,7 @@
     "detach": "Detach",
     "detachHint": "Makes this copy plain layers you can edit. Until then it follows its template, and a deleted copy comes back.",
     "nested": "Detach the outer copy first",
-    "detachFailed": "Couldn't detach the copy"
+    "detachFailed": "Couldn't detach the copy",
+    "container": "Select container"
   }
 }

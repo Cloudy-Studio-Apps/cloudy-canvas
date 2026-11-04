@@ -11,6 +11,7 @@ export { templateOf } from "./template-of";
 export { scopeAt } from "./scope-at";
 export type * from "./set-repeat.types";
 export { setRepeat } from "./set-repeat";
+export { repeatLayer } from "./repeat-layer";
 export { REPEAT_ERRORS } from "./repeat-errors";
 export { detachDataCopy, detachedRowsGone } from "./detach-data-copy";
 export { renameReferences } from "./rename-references";

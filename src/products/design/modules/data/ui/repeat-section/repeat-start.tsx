@@ -2,33 +2,27 @@ import { Repeat } from "lucide-react";
 
 import { Button } from "@shared/ui/kit";
 import { useDesignEngine } from "@design/ui/design-engine-context";
-import { lookup } from "../../bindings";
 import { scopeAt } from "../../repeat";
 import { FieldPicker } from "../data-section/field-picker";
 import { listNames } from "./list-names";
+import { startPatch } from "./start-patch";
 import type { RepeatStartProps } from "./repeat-start.types";
 import { t } from "../../data.i18n";
 
-/** Copies made while designing when a long list is picked: the rest show in an export. */
-const DESIGN_LIMIT = 24;
-
 /**
- * A frame without a repeat: "Repeat for each row" asks for the list, then repeats the frame's
- * first layer with a wrapping row layout. A list longer than 24 rows shows 24 while designing.
+ * A frame without a repeat: "Repeat for each row" asks for the list, then repeats the chosen
+ * card, the frame holding its copies in a wrapping row (an auto layout when it has none).
  */
-export function RepeatStart({ frameId, hasLayer, apply }: RepeatStartProps) {
+export function RepeatStart({ frameId, cardId, apply }: RepeatStartProps) {
   const engine = useDesignEngine();
   const scope = scopeAt(engine.doc, frameId);
   const lists = listNames(scope);
-  const start = (source: string) => {
-    const rows = lookup(scope, source)?.value;
-    const long = Array.isArray(rows) && rows.length > DESIGN_LIMIT;
+  const start = (source: string) =>
     apply(
-      { source, ...(long ? { designLimit: DESIGN_LIMIT } : {}) },
+      { ...startPatch(scope, source), template: cardId },
       { addLayout: true, kinds: engine.kinds },
     );
-  };
-  const note = !hasLayer ? t("repeat.noLayer") : lists.length === 0 ? t("repeat.noLists") : null;
+  const note = !cardId ? t("repeat.noLayer") : lists.length === 0 ? t("repeat.noLists") : null;
   return (
     <div className="flex flex-col gap-1.5">
       <FieldPicker names={lists} onPick={start}>
@@ -36,7 +30,7 @@ export function RepeatStart({ frameId, hasLayer, apply }: RepeatStartProps) {
           variant="secondary"
           size="sm"
           className="w-full"
-          disabled={!hasLayer || lists.length === 0}
+          disabled={!cardId || lists.length === 0}
         >
           <Repeat />
           {t("repeat.start")}

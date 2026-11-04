@@ -18,9 +18,10 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   {products[0].name}, or bind a layer's image, color, size or opacity in the new Data section of
   the properties panel. Numbers, prices and dates are written in your language, a layer can show
   only when a field meets a condition, and a layer can hide while its value is empty.
-- A frame can now repeat its card once for each row of a list, such as one product card per product,
-  filtered, sorted and capped as you choose in the new Repeat section. The copies follow the card
-  you design and update with the data, and any copy can be detached to edit it on its own.
+- Select a card inside a frame and choose Repeat this layer to show it once for each row of a list,
+  such as one card per product, lined up by the frame and filtered, sorted and capped as you choose
+  in the new Repeat section. The copies follow the card you design and update with the data, and
+  any copy can be detached to edit it on its own.
 
 ## 0.8.0 - 2026-11-04
 

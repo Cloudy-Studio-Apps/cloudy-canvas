@@ -21,10 +21,11 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   opacidad de una capa en la nueva sección Datos del panel de propiedades. Los números, precios y
   fechas se escriben en tu idioma, una capa puede mostrarse solo cuando un campo cumple una
   condición, y una capa puede ocultarse mientras su valor está vacío.
-- Un marco ya puede repetir su tarjeta una vez por cada fila de una lista, como una tarjeta por
-  producto, filtrada, ordenada y limitada como elijas en la nueva sección Repetir. Las copias siguen
-  a la tarjeta que diseñas y se actualizan con los datos, y cualquier copia se puede separar para
-  editarla por sí sola.
+- Selecciona una tarjeta dentro de un marco y elige Repetir esta capa para mostrarla una vez por
+  cada fila de una lista, como una tarjeta por producto, alineadas por el marco y filtradas,
+  ordenadas y limitadas como elijas en la nueva sección Repetir. Las copias siguen a la tarjeta que
+  diseñas y se actualizan con los datos, y cualquier copia se puede separar para editarla por sí
+  sola.
 
 ## 0.8.0 - 2026-11-04
 

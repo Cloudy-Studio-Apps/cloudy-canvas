@@ -12,8 +12,9 @@ import { t } from "../../data.i18n";
 
 /**
  * In the properties panel, for an iterator's copies: the row they show, Edit template (selects
- * the template layer they copy) and Detach (they become plain layers). A copy inside another
- * copy can't be detached alone: its outer copy is detached first.
+ * the template layer they copy), Select container (the frame holding them) and Detach (they
+ * become plain layers). A copy inside another copy can't be detached alone: its outer copy is
+ * detached first.
  */
 export function DataCopySection({ selection: { nodes } }: PropertySectionProps) {
   const engine = useDesignEngine();
@@ -39,9 +40,12 @@ export function DataCopySection({ selection: { nodes } }: PropertySectionProps) 
           ? t("copy.rowHidden", { source: info.source })
           : t("copy.row", { row: info.row, source: info.source })}
       </p>
-      <div className="mt-2 flex gap-1.5">
+      <div className="mt-2 flex flex-wrap gap-1.5">
         <Button size="sm" variant="secondary" onClick={() => engine.focusElement(info.template)}>
           {t("copy.edit")}
+        </Button>
+        <Button size="sm" variant="ghost" onClick={() => engine.focusElement(info.iterator)}>
+          {t("copy.container")}
         </Button>
         <Tooltip>
           <TooltipTrigger asChild>

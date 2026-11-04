@@ -1,4 +1,3 @@
-import { useScrubUndo } from "@canvas-ui";
 import { NumberInput } from "@shared/ui/kit";
 import { SettingRow } from "./setting-row";
 import type { LimitFieldsProps } from "./limit-fields.types";
@@ -11,7 +10,6 @@ const CAPS = ["limit", "designLimit"] as const;
  * document only); emptied, a cap is off.
  */
 export function LimitFields({ repeat, apply }: LimitFieldsProps) {
-  const scrubUndo = useScrubUndo();
   return (
     <>
       {CAPS.map((cap) => (
@@ -25,7 +23,6 @@ export function LimitFields({ repeat, apply }: LimitFieldsProps) {
             onChange={(value) => apply({ [cap]: value })}
             onClear={() => apply({ [cap]: undefined })}
             className="min-w-0 flex-1"
-            {...scrubUndo}
           />
         </SettingRow>
       ))}

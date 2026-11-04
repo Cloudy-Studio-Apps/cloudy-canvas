@@ -28,6 +28,7 @@ export function copyInfo(doc: CanvasDocument, node: CanvasElement): CopyInfo | n
   return {
     source: repeat?.source ?? "",
     row: row ? row.index + 1 : null,
+    iterator: tag.iterator,
     template: tag.source,
     nested: frame ? insideCopy(doc, frame) : false,
   };
