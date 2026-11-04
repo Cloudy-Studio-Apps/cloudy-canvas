@@ -18,6 +18,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   restart or switch to roman numerals, with covers counted, hidden or left out.
 - A list of ready-made page items (page number, "Page 3 of 24", title, section, date and table of
   contents) can be clicked or dragged onto a master or a page, already placed in its margin.
+- The table of contents item lists the brochure's sections, or its pages, with their page numbers,
+  and updates when pages move. The checks warn when it runs past its page's bottom margin.
 
 ### Improved
 

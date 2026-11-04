@@ -12,7 +12,8 @@ export type BrochureIssueKind =
   | "odd-size"
   | "no-print-profile"
   | "stops-at-edge"
-  | "rounded-page";
+  | "rounded-page"
+  | "toc-overflow";
 
 /** Something that would print badly, on one page. */
 export interface BrochureIssue {

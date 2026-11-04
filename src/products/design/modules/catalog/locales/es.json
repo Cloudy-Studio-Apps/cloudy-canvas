@@ -113,7 +113,8 @@
     "page": "Página {page}",
     "noProfile": "CMYK necesita el perfil de tu imprenta: cárgalo en la sección Impresión.",
     "stopsAtEdge": "«{name}» termina en el borde de la página: alárgalo {bleed} mm más allá para que no se vea una línea tras el corte.",
-    "roundedPage": "«{name}» tiene esquinas redondeadas, así que se imprime sin sangrado."
+    "roundedPage": "«{name}» tiene esquinas redondeadas, así que se imprime sin sangrado.",
+    "tocOverflow": "«{name}» no cabe en su página: el índice pasa del margen inferior. Reduce el texto o dale más espacio."
   },
   "settings": {
     "quality": {

@@ -2,7 +2,7 @@ import { rectContainsRect, rectsIntersect, type Rect } from "@canvas";
 
 import { isPlaceholderPaint, type DesignNode, type ImagePaint } from "../../core";
 import { isText } from "../../text";
-import { mmToUnits, type BrochurePage } from "../model";
+import { mmToUnits, pageItemTemplate, type BrochurePage } from "../model";
 import { effectiveDpi } from "./effective-dpi";
 import { layoutIssues } from "./layout-issues";
 import { printIssues } from "./print-issues";
@@ -16,7 +16,8 @@ export const LOW_DPI = 150;
 /**
  * What would print badly in the brochure: blank pages the layout added and frames of another size
  * (`layoutIssues`), then page by page hidden pages (they print blank), image placeholders still to
- * replace, pictures under `LOW_DPI` at their printed size, and text reaching into the margin; last
+ * replace, pictures under `LOW_DPI` at their printed size, text reaching into the margin and a
+ * table of contents running past the bottom margin; last
  * what the press needs (`printIssues`).
  */
 export function brochureIssues(input: BrochureCheckInput): BrochureIssue[] {
@@ -57,6 +58,14 @@ function pageIssues(page: BrochurePage, input: BrochureCheckInput): BrochureIssu
       }
     }
     const shown = input.bounds(node);
+    // A table of contents grows down with its lines: past the bottom margin, it doesn't fit.
+    if (isText(node) && pageItemTemplate(node)?.includes("{toc}")) {
+      if (shown.y + shown.h > safe.y + safe.h) {
+        const message = t("checks.tocOverflow", { name: node.name });
+        issues.push({ ...at, kind: "toc-overflow", nodeId: node.id, message });
+      }
+      return issues;
+    }
     if (isText(node) && rectsIntersect(shown, frame) && !rectContainsRect(safe, shown)) {
       const message = t("checks.margin", {
         name: node.name,

@@ -21,6 +21,9 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 - Una lista de elementos de página listos (número de página, «Página 3 de 24», título, sección,
   fecha e índice) se puede añadir con un clic o arrastrar a una maestra o una página, ya colocados
   en su margen.
+- El elemento de índice lista las secciones del folleto, o sus páginas, con sus números de página, y
+  se actualiza cuando las páginas se mueven. Las comprobaciones avisan cuando pasa del margen
+  inferior de su página.
 
 ### Mejoras
 
