@@ -9,6 +9,8 @@ export { brochurePages } from "./brochure-pages";
 export { ARRANGE_GAPS, arrangeBrochure } from "./arrange";
 export { bookLayout } from "./book-layout";
 export * from "./masters";
+export * from "./numbering";
+export * from "./page-items";
 export { currentBrochure, ensureBrochure } from "./current-brochure";
 export { DesignBrochure } from "./design-brochure";
 export { brochuresOf, DESIGN_BROCHURES, DesignBrochures } from "./design-brochures";
