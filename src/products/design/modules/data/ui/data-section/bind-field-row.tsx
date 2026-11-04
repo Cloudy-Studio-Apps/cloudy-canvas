@@ -1,8 +1,7 @@
-import { ChevronDown, X } from "lucide-react";
+import { X } from "lucide-react";
 
-import { Button, IconButton, cn } from "@shared/ui/kit";
-import { FieldPicker } from "./field-picker";
-import { pickedLabel } from "./picked-label";
+import { IconButton } from "@shared/ui/kit";
+import { FieldPickerButton } from "./field-picker-button";
 import type { BindFieldRowProps } from "./bind-field-row.types";
 import { t } from "../../data.i18n";
 
@@ -13,26 +12,11 @@ export function BindFieldRow({ field, binding, names, onChange }: BindFieldRowPr
       <span className="w-20 shrink-0 truncate text-xs text-muted-foreground" title={field.label}>
         {field.label}
       </span>
-      <FieldPicker
+      <FieldPickerButton
         names={names}
         value={binding?.path}
         onPick={(path) => onChange({ ...binding, path })}
-      >
-        <Button
-          variant="outline"
-          size="xs"
-          className={cn(
-            "min-w-0 flex-1 justify-between font-normal",
-            !binding && "text-muted-foreground",
-          )}
-          title={binding?.path}
-        >
-          <span className="truncate">
-            {binding ? pickedLabel(names, binding.path) : t("section.fields.choose")}
-          </span>
-          <ChevronDown />
-        </Button>
-      </FieldPicker>
+      />
       {binding && (
         <IconButton size="xs" label={t("section.fields.clear")} onClick={() => onChange(null)}>
           <X />

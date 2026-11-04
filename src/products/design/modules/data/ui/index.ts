@@ -12,3 +12,8 @@ export type * from "./data-section/picker-names.types";
 export { DataSection } from "./data-section/data-section";
 export { FieldPicker } from "./data-section/field-picker";
 export type * from "./data-section/field-picker.types";
+export { FieldPickerButton } from "./data-section/field-picker-button";
+export type * from "./data-section/field-picker-button.types";
+export { RepeatSection } from "./repeat-section/repeat-section";
+export { DataCopyBadge } from "./design-mode/data-copy-badge";
+export { DataCopySection } from "./design-mode/data-copy-section";

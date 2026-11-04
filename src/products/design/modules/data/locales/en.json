@@ -128,7 +128,8 @@
     "privateFile": "This file is in the app's own data folder, which data sources can't read.",
     "webPage": "The source answered a web page, not data. Check the link, or whether it needs a key.",
     "pickFolderAgain": "Pick the folder again on this device.",
-    "privateFolder": "This folder is in the app's own data folder, which data sources can't read."
+    "privateFolder": "This folder is in the app's own data folder, which data sources can't read.",
+    "noLayer": "This frame has no layer to repeat: add one to it first."
   },
   "format": {
     "yes": "Yes",
@@ -186,5 +187,51 @@
       "lt": "is less than",
       "contains": "contains"
     }
+  },
+  "repeat": {
+    "title": "Repeat",
+    "start": "Repeat for each row",
+    "hint": "Shows the frame's first layer once for each row of a list, lined up in a wrapping row.",
+    "noLayer": "Add a layer to this frame to repeat it for each row.",
+    "noLists": "There's no list to repeat yet. Add a source in the Data tab.",
+    "copied": "This frame is a copy another repeat made. Edit the template's repeat instead.",
+    "list": "List",
+    "rowName": "Row name",
+    "key": "Key",
+    "keyNone": "Row position",
+    "keyClear": "Use the row position",
+    "filter": {
+      "title": "Only rows where",
+      "add": "Add a condition"
+    },
+    "sort": {
+      "title": "Sort by",
+      "add": "Add a sort",
+      "ascending": "Ascending (click for descending)",
+      "descending": "Descending (click for ascending)",
+      "remove": "Remove sort"
+    },
+    "limit": "Limit",
+    "designLimit": "While designing, show",
+    "none": "All",
+    "count_one": "{shown} of {count} row shown",
+    "count_other": "{shown} of {count} rows shown",
+    "remove": "Remove repeat",
+    "failed": "Couldn't change the repeat",
+    "preview": {
+      "label": "Preview row",
+      "of": "of {count}"
+    }
+  },
+  "copy": {
+    "title": "Repeated copy",
+    "row": "Row {row} of {source}",
+    "rowHidden": "A row of {source} not shown now",
+    "badge": "A copy for one row of {source}",
+    "edit": "Edit template",
+    "detach": "Detach",
+    "detachHint": "Makes this copy plain layers you can edit. Until then it follows its template, and a deleted copy comes back.",
+    "nested": "Detach the outer copy first",
+    "detachFailed": "Couldn't detach the copy"
   }
 }

@@ -13,7 +13,7 @@ import { useScrub } from "./use-scrub";
  *   takes away; Shift: ×10),
  * - Up/Down add or take away `step` (Shift: ×10), each press a change,
  * - type a value or arithmetic ("120+24"); Enter or blur commits, Escape reverts.
- * Shows "Mixed" for `null`.
+ * Shows "Mixed" for `null` (or `placeholder`); with `onClear`, an emptied field clears it.
  */
 export function NumberInput({
   value,
@@ -29,6 +29,8 @@ export function NumberInput({
   decimals = 2,
   onScrubStart,
   onScrubEnd,
+  placeholder,
+  onClear,
   disabled,
   className,
 }: NumberInputProps) {
@@ -45,6 +47,10 @@ export function NumberInput({
   };
   const commitDraft = () => {
     if (draft === null || draft === shown) return true;
+    if (onClear && draft.trim() === "") {
+      onClear();
+      return true;
+    }
     const typed = evaluateNumber(draft);
     if (typed === null) return false;
     commit(typed / factor);
@@ -92,7 +98,7 @@ export function NumberInput({
         aria-label={label}
         inputMode="decimal"
         disabled={disabled}
-        placeholder={value === null ? "Mixed" : undefined}
+        placeholder={value === null ? (placeholder ?? "Mixed") : undefined}
         value={draft ?? shown}
         onChange={(event) => {
           setDraft(event.target.value);

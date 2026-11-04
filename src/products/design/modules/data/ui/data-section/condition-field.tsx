@@ -1,10 +1,9 @@
-import { ChevronDown, X } from "lucide-react";
+import { X } from "lucide-react";
 
 import { CommitInput } from "@canvas-ui";
-import { Button, IconButton, SelectField, cn } from "@shared/ui/kit";
+import { IconButton, SelectField } from "@shared/ui/kit";
 import { CONDITION_OPS, opTakesValue, type ConditionOp } from "../../bindings";
-import { FieldPicker } from "./field-picker";
-import { pickedLabel } from "./picked-label";
+import { FieldPickerButton } from "./field-picker-button";
 import type { ConditionFieldProps } from "./condition-field.types";
 import { t } from "../../data.i18n";
 
@@ -14,27 +13,12 @@ export function ConditionField({ condition, names, onChange }: ConditionFieldPro
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex min-w-0 items-center gap-1.5">
-        <FieldPicker
+        <FieldPickerButton
           names={names}
           value={condition?.path}
+          label={t("condition.field")}
           onPick={(path) => onChange({ op: "exists", ...condition, path })}
-        >
-          <Button
-            variant="outline"
-            size="xs"
-            aria-label={t("condition.field")}
-            className={cn(
-              "min-w-0 flex-1 justify-between font-normal",
-              !condition && "text-muted-foreground",
-            )}
-            title={condition?.path}
-          >
-            <span className="truncate">
-              {condition ? pickedLabel(names, condition.path) : t("section.fields.choose")}
-            </span>
-            <ChevronDown />
-          </Button>
-        </FieldPicker>
+        />
         {condition && (
           <IconButton size="xs" label={t("condition.clear")} onClick={() => onChange(null)}>
             <X />

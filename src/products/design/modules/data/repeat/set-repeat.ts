@@ -5,6 +5,7 @@ import { isFrame } from "../../frame";
 import { checkRepeatRules, checkRepeatSource, freeRowName, rowNameProblem } from "./check-repeat";
 import { descendants } from "./descendants";
 import { renameReferences } from "./rename-references";
+import { REPEAT_ERRORS } from "./repeat-errors";
 import { renameRepeatPaths } from "./rename-repeat-paths";
 import { dataCopyTag, repeatOf } from "./repeat-fields";
 import { addRepeatLayout } from "./repeat-layout";
@@ -84,7 +85,7 @@ export function setRepeat(
     .filter((el): el is DesignNode => isDesignNode(el) && el.parentId === frameId)
     .sort(byIndex);
   const template = templateOf(frame, children);
-  if (!template) throw new Error("This frame has no layer to repeat: add one to it first.");
+  if (!template) throw new Error(REPEAT_ERRORS.noLayer);
 
   const as = repeat.as ?? current?.as ?? freeRowName(doc, frameId);
   if (as !== current?.as) {

@@ -1,9 +1,10 @@
+import { REPEAT_ERRORS } from "../../repeat";
 import { readAnsweredMessage, UPDATE_ERRORS } from "../../update";
 import { t } from "../../data.i18n";
 
 /**
  * An engine message as the user reads it: the ones an Update is known to fail with translated
- * (`UPDATE_ERRORS`, a link's HTTP error), any other one as it is.
+ * (`UPDATE_ERRORS`, a link's HTTP error) and `REPEAT_ERRORS`, any other one as it is.
  */
 export function errorText(message: string): string {
   if (message.startsWith(UPDATE_ERRORS.missing)) {
@@ -22,6 +23,8 @@ export function errorText(message: string): string {
       return t("errors.privateFolder");
     case UPDATE_ERRORS.webPage:
       return t("errors.webPage");
+    case REPEAT_ERRORS.noLayer:
+      return t("errors.noLayer");
     default:
       return message;
   }

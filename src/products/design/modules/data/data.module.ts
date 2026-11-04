@@ -9,11 +9,19 @@ import { CSV_FORMAT, JSON_FORMAT } from "./formats";
 import { FILE_SOURCE, HTTP_SOURCE } from "./sources";
 import { forgetRemovedSources } from "./model";
 import { syncData } from "./sync";
-import { prepareDataCopies, pruneData } from "./repeat";
+import { dataCopyTag, prepareDataCopies, pruneData, repeatOf } from "./repeat";
 import { BOUND_TEXT_TEMPLATE } from "./bindings";
 import { textTemplates } from "../text";
 import { DataSourceKind } from "./source";
-import { DataSection, DataTab, useDataServices } from "./ui";
+import { isFrame } from "../frame";
+import {
+  DataCopyBadge,
+  DataCopySection,
+  DataSection,
+  DataTab,
+  RepeatSection,
+  useDataServices,
+} from "./ui";
 import { t } from "./data.i18n";
 import * as dataApi from ".";
 import * as dataUi from "./ui";
@@ -23,7 +31,7 @@ import * as dataUi from "./ui";
  * the source record, the built-in source types (file, link) and formats (CSV, JSON), the Data tab
  * and the session hook that hands the sources this device's services, the sync that keeps
  * layers bound to data (and iterators' copies) up to date, and the properties panel's Data
- * section that binds a layer.
+ * section that binds a layer, its Repeat section and the copies' section and badge.
  */
 export const dataModule = defineModule({
   id: "data",
@@ -55,6 +63,31 @@ export const dataModule = defineModule({
       order: 85,
       when: ({ nodes }) => nodes.length === 1,
       component: DataSection,
+    });
+    // A frame's repeat, just before the Data section; a copied iterator only says where it's set.
+    host.contribute(designEditor.propertySections, {
+      id: "data.repeat",
+      tab: "design",
+      order: 84,
+      when: ({ nodes }) => {
+        const node = nodes[0];
+        return (
+          nodes.length === 1 &&
+          node !== undefined &&
+          isFrame(node) &&
+          (!dataCopyTag(node) || repeatOf(node) !== null)
+        );
+      },
+      component: RepeatSection,
+    });
+    // An iterator's copies are marked, and say which row they show.
+    host.contribute(designEditor.layerBadges, { id: "data.copy", component: DataCopyBadge });
+    host.contribute(designEditor.propertySections, {
+      id: "data.copy",
+      tab: "design",
+      order: 1,
+      when: ({ nodes }) => nodes.some((node) => dataCopyTag(node)),
+      component: DataCopySection,
     });
     host.contribute(designMcpTools, {
       id: "data",

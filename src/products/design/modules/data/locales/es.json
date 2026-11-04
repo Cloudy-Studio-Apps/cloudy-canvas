@@ -128,7 +128,8 @@
     "privateFile": "Este archivo está en la carpeta de datos de la propia app, que las fuentes de datos no pueden leer.",
     "webPage": "La fuente respondió con una página web, no con datos. Revisa el enlace o si necesita una clave.",
     "pickFolderAgain": "Vuelve a elegir la carpeta en este dispositivo.",
-    "privateFolder": "Esta carpeta está en la carpeta de datos de la propia app, que las fuentes de datos no pueden leer."
+    "privateFolder": "Esta carpeta está en la carpeta de datos de la propia app, que las fuentes de datos no pueden leer.",
+    "noLayer": "Este marco no tiene ninguna capa que repetir: añade una primero."
   },
   "format": {
     "yes": "Sí",
@@ -186,5 +187,51 @@
       "lt": "es menor que",
       "contains": "contiene"
     }
+  },
+  "repeat": {
+    "title": "Repetir",
+    "start": "Repetir por cada fila",
+    "hint": "Muestra la primera capa del marco una vez por cada fila de una lista, alineadas en una fila que se ajusta.",
+    "noLayer": "Añade una capa a este marco para repetirla por cada fila.",
+    "noLists": "Todavía no hay ninguna lista que repetir. Añade una fuente en la pestaña Datos.",
+    "copied": "Este marco es una copia hecha por otra repetición. Edita la repetición de la plantilla.",
+    "list": "Lista",
+    "rowName": "Nombre de fila",
+    "key": "Clave",
+    "keyNone": "Posición de la fila",
+    "keyClear": "Usar la posición de la fila",
+    "filter": {
+      "title": "Solo filas donde",
+      "add": "Añadir una condición"
+    },
+    "sort": {
+      "title": "Ordenar por",
+      "add": "Añadir un orden",
+      "ascending": "Ascendente (clic para descendente)",
+      "descending": "Descendente (clic para ascendente)",
+      "remove": "Quitar orden"
+    },
+    "limit": "Límite",
+    "designLimit": "Al diseñar, mostrar",
+    "none": "Todas",
+    "count_one": "Se muestra {shown} de {count} fila",
+    "count_other": "Se muestran {shown} de {count} filas",
+    "remove": "Quitar repetición",
+    "failed": "No se pudo cambiar la repetición",
+    "preview": {
+      "label": "Fila de vista previa",
+      "of": "de {count}"
+    }
+  },
+  "copy": {
+    "title": "Copia repetida",
+    "row": "Fila {row} de {source}",
+    "rowHidden": "Una fila de {source} que ahora no se muestra",
+    "badge": "Una copia para una fila de {source}",
+    "edit": "Editar plantilla",
+    "detach": "Separar",
+    "detachHint": "Convierte esta copia en capas normales que puedes editar. Hasta entonces sigue a su plantilla, y una copia borrada vuelve a aparecer.",
+    "nested": "Separa primero la copia exterior",
+    "detachFailed": "No se pudo separar la copia"
   }
 }
