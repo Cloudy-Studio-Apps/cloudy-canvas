@@ -7,6 +7,8 @@ import { notifyError } from "@shared/stores/toast-store";
 import { Button } from "@shared/ui/kit";
 import { detectFormat } from "../../formats";
 import { DESIGN_DATA_SOURCES } from "../../model";
+import { isAbsolutePath } from "../../settings";
+import { filePathKey } from "../../update";
 import type { SettingValue } from "../../source";
 import { startUpdate } from "../hooks/run-update";
 import { useDataRegistry } from "../hooks/use-data-registry";
@@ -16,7 +18,20 @@ import type { CreateSourceFormProps } from "./create-source-form.types";
 import { translatedError } from "./error-text";
 import { t } from "../../data.i18n";
 
-const NO_SECRETS: ReadonlySet<string> = new Set();
+/** A file just picked here holds its path in this form: it counts as known on this device. */
+function pickedFiles(
+  sourceType: CreateSourceFormProps["sourceType"],
+  values: Record<string, SettingValue>,
+) {
+  return new Set(
+    sourceType.settings.flatMap((spec) => {
+      const value = values[spec.key];
+      return spec.kind === "file" && typeof value === "string" && isAbsolutePath(value)
+        ? [filePathKey(spec.key)]
+        : [];
+    }),
+  );
+}
 
 /** A new source's form: its settings and format, then "Create and update". */
 export function CreateSourceForm({ sourceType, onCreated, onCancel }: CreateSourceFormProps) {
@@ -50,7 +65,7 @@ export function CreateSourceForm({ sourceType, onCreated, onCancel }: CreateSour
         <SourceSettingsForm
           sourceType={sourceType}
           values={values}
-          stored={NO_SECRETS}
+          stored={pickedFiles(sourceType, values)}
           onChange={setValues}
           onFilePicked={(name) => {
             const found = detectFormat({ fileName: name }, formats);

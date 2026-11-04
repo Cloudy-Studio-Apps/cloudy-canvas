@@ -12,7 +12,9 @@ import { deviceKeys, filePathKey, ORIGIN_KEY, secretKeys, secretStoreKey } from 
  * deleted, and so is the value of a secret pair whose name is gone. Secrets typed now bind the
  * type's `secretOrigin` (the link's origin); when that moves, the ones not typed again are
  * deleted, so they never follow a link to another site. A file setting given an absolute path
- * keeps that path on the device (`@<key>`) and only the file's name in the settings. Returns the
+ * keeps that path on the device (`@<key>`) and only the file's name in the settings, but only when
+ * it differs from the record's value in `previous`: an absolute value echoed from the record came
+ * from the document, so it is reduced to its name and never saved. Returns the
  * safe settings.
  */
 export async function writeSecrets(
@@ -50,8 +52,10 @@ export async function writeSecrets(
     if (spec.kind !== "file") continue;
     const value = values[spec.key];
     if (typeof value === "string" && isAbsolutePath(value)) {
-      writes.set(filePathKey(spec.key), value);
       settings[spec.key] = baseName(value);
+      // Only a path supplied now is this device's; one echoed from the record came from the
+      // document (a collaborator or a legacy file) and is never trusted: any stored path goes.
+      writes.set(filePathKey(spec.key), value !== previous[spec.key] ? value : null);
     } else if (value !== previous[spec.key]) {
       // Another name (or none) than the one this device's path is for: that path is stale.
       writes.set(filePathKey(spec.key), null);

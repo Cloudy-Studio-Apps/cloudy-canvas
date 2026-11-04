@@ -2,7 +2,7 @@ import { FolderOpen } from "lucide-react";
 
 import { notifyError } from "@shared/stores/toast-store";
 import { Button, Field } from "@shared/ui/kit";
-import { baseName, isAbsolutePath } from "../../settings";
+import { baseName } from "../../settings";
 import { platformDataServices } from "../hooks/data-services";
 import type { FileFieldProps } from "./file-field.types";
 import { t } from "../../data.i18n";
@@ -38,7 +38,7 @@ export function FileField({ spec, value, onDevice, onChange, onFilePicked }: Fil
           {t("source.chooseFile")}
         </Button>
       </div>
-      {value !== "" && !onDevice && !isAbsolutePath(value) && (
+      {value !== "" && !onDevice && (
         <p className="text-xs text-warning">{t("errors.pickFileAgain")}</p>
       )}
     </Field>
