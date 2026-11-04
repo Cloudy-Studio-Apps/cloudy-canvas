@@ -7,17 +7,6 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Novedades
 
-- Las secciones de un folleto pueden tener subsecciones, con tantos niveles como haga falta. En
-  la lista de páginas del modo Catálogo cada sección es una carpeta con sus páginas: se puede
-  plegar, arrastrar para mover la sección entera, soltar páginas en ella y, con clic derecho,
-  añadir una página o una subsección, subirla o bajarla de nivel, renombrarla o quitarla. El
-  índice sangra las subsecciones bajo su sección.
-- Un encabezado que muestra el nombre de la sección también puede mostrar las secciones en las
-  que está, como «Túneles › Shotcrete»: solo su sección, unos niveles por encima o todas.
-- En el modo Catálogo, la lista de páginas tiene un menú para añadir una página en blanco o una
-  sección nueva: desde el botón "+", con clic derecho en la lista o con clic derecho en una página
-  para añadirlas justo después. El menú de la página también empieza o quita una sección en ella y
-  la saca del folleto.
 - En pantallas táctiles, pellizca con dos dedos para hacer zoom en el lienzo y arrastra con dos dedos
   para moverlo, con cualquier herramienta seleccionada.
 - Los folletos pueden tener maestras: una cabecera y un pie diseñados una vez, con un marco para
@@ -25,35 +14,43 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   de una maestra puede mostrar el número de página, el total de páginas, el título del folleto, la
   sección y la fecha, y cada página elige su maestra o ninguna. En el modo Diseño, las capas de la
   maestra están bloqueadas y marcadas para que todas las páginas sigan iguales, y Separar hace una
-  editable en una sola página.
-- Los folletos pueden dividirse en secciones. El nombre de una sección puede aparecer en las
-  cabeceras, y la numeración puede reiniciarse o pasar a números romanos, con las portadas
+  editable en una sola página. Al duplicar un folleto se conservan sus maestras.
+- Los folletos pueden dividirse en secciones y subsecciones, con tantos niveles como haga falta. En
+  la lista de páginas del modo Catálogo cada sección es una carpeta con sus páginas: se puede
+  plegar, arrastrar para mover la sección entera, soltar páginas en ella y, con clic derecho,
+  añadir una página o una subsección, subirla o bajarla de nivel, renombrarla o quitarla. La
+  numeración puede reiniciarse o pasar a números romanos en una sección, con las portadas
   contadas, ocultas o sin contar.
+- Una cabecera puede mostrar el nombre de la sección solo o con las secciones en las que está, como
+  «Túneles › Shotcrete».
 - Una lista de elementos de página listos (número de página, «Página 3 de 24», título, sección,
   fecha e índice) se puede añadir con un clic o arrastrar a una maestra o una página, ya colocados
   en su margen.
-- El elemento de índice lista las secciones del folleto, o sus páginas, con sus números de página, y
-  se actualiza cuando las páginas se mueven. Las comprobaciones avisan cuando pasa del margen
-  inferior de su página.
+- El elemento de índice lista las secciones del folleto, con las subsecciones sangradas, o sus
+  páginas, con sus números de página, y se actualiza cuando las páginas se mueven. Las
+  comprobaciones avisan cuando pasa del margen inferior de su página.
 - Cada folleto tiene su propio idioma, así que un diseño puede tener una versión en español y otra
   en francés del mismo catálogo. Las fechas, los elementos de página y el PDF lo siguen, y al
   cambiarlo se reescriben las cabeceras y los pies ya colocados, salvo que hayas editado su texto.
   Cada folleto de una página conserva sus propias cabeceras y pies.
+- En el modo Catálogo, la lista de páginas tiene un menú para añadir una página en blanco o una
+  sección nueva: desde el botón «+», con clic derecho en la lista o con clic derecho en una página
+  para añadirlas justo después.
 
 ### Mejoras
 
 - En el modo Catálogo, Suprimir ahora se llama «Sacar del folleto», ya que deja el marco en el
   lienzo. La nueva opción «Eliminar página y marco» (Mayús+Supr) también quita el marco del diseño,
   en un solo paso de deshacer, salvo que otro folleto de la página lo siga imprimiendo.
-- En el editor de diseño, las personas y agentes que trabajan en el archivo aparecen ahora como una columna de avatares en la barra lateral izquierda, sobre el botón de Agentes, para que la parte superior del panel de propiedades siga ordenada aunque se unan muchos.
 - En la lista de páginas de un folleto, Ctrl (⌘ en Mac) + clic y Mayús + clic seleccionan varias
   páginas, que luego puedes arrastrar juntas, y Alt+↑/↓ mueve las páginas seleccionadas un lugar
   hacia arriba o hacia abajo.
+- En el editor de diseño, las personas y agentes que trabajan en el archivo aparecen ahora como una
+  columna de avatares en la barra lateral izquierda, sobre el botón de Agentes, para que la parte
+  superior del panel de propiedades siga ordenada aunque se unan muchos.
 
 ### Correcciones
 
-- Al duplicar un folleto ahora se conservan sus páginas maestras y secciones, así que la copia
-  tiene los mismos encabezados, pies y numeración que el original.
 - Los trazos rápidos con el bolígrafo ya no se rellenan como formas negras sólidas en los giros
   cerrados, y siguen mejor tu mano.
 - En la lista de páginas de un folleto, ahora puedes soltar una página sobre una página en blanco

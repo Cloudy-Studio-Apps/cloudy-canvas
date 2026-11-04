@@ -7,46 +7,45 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### New
 
-- Brochure sections can hold subsections, as many levels deep as you need. In the Catalog
-  mode's pages list each section is a folder over its pages: fold it away, drag it to move the
-  whole section, drop pages on it, and right-click it to add a page or a subsection, move it a
-  level in or out, rename or remove it. The table of contents indents subsections under theirs.
-- A header that shows the section name can also show the sections it's in, such as "Tunnels ›
-  Shotcrete": choose its own section only, a number of levels above, or all of them.
-- In the Catalog mode, the pages list has a menu to add a blank page or a new section: from the
-  "+" button, by right-clicking the list, or by right-clicking a page to add them right after it.
-  The page's menu also starts or removes a section there and takes the page out of the brochure.
 - On touch screens, pinch with two fingers to zoom the canvas and drag with two fingers to move it,
   with any tool selected.
 - Brochures can have masters: a header and footer designed once, with a frame for left pages and
   one for right pages, and repeated on every page that uses it. Text on a master can show the page
   number, the page count, the brochure's title, the section and the date, and each page picks its
   master or none. In the Design mode, master layers are locked and marked so every page stays the
-  same, and Detach makes one editable on a single page.
-- Brochures can be split into sections. A section's name can appear in headers, and numbering can
-  restart or switch to roman numerals, with covers counted, hidden or left out.
+  same, and Detach makes one editable on a single page. Duplicating a brochure keeps its masters.
+- Brochures can be split into sections and subsections, as many levels deep as you need. In the
+  Catalog mode's pages list each section is a folder over its pages: fold it away, drag it to move
+  the whole section, drop pages on it, and right-click it to add a page or a subsection, move it a
+  level in or out, rename or remove it. Numbering can restart or switch to roman numerals at a
+  section, with covers counted, hidden or left out.
+- A header can show the section's name alone or with the sections it's in, such as "Tunnels ›
+  Shotcrete".
 - A list of ready-made page items (page number, "Page 3 of 24", title, section, date and table of
   contents) can be clicked or dragged onto a master or a page, already placed in its margin.
-- The table of contents item lists the brochure's sections, or its pages, with their page numbers,
-  and updates when pages move. The checks warn when it runs past its page's bottom margin.
+- The table of contents item lists the brochure's sections, with subsections indented, or its
+  pages, with their page numbers, and updates when pages move. The checks warn when it runs past
+  its page's bottom margin.
 - Each brochure has its own language, so one design can hold a Spanish and a French version of
   the same catalog. Dates, page items and the PDF follow it, and changing it rewrites the headers
   and footers already placed, unless you edited their text. Every brochure on a page keeps its own
   headers and footers.
+- In the Catalog mode, the pages list has a menu to add a blank page or a new section: from the
+  "+" button, by right-clicking the list, or by right-clicking a page to add them right after it.
 
 ### Improved
 
 - In the Catalog mode, Delete is now labelled "Take out of the brochure", as it keeps the frame on
   the canvas. The new "Delete page and frame" (Shift+Delete) removes the frame from the design too,
   in one undo step, unless another brochure on the page still prints it.
-- In the design editor, the people and agents working on the file now show as a column of avatars in the left rail, above the Agents button, so the top of the properties panel stays tidy however many join.
 - In a brochure's page list, Ctrl (⌘ on a Mac) + click and Shift + click select several pages,
   which you can then drag together, and Alt+↑/↓ moves the selected pages one place up or down.
+- In the design editor, the people and agents working on the file now show as a column of avatars
+  in the left rail, above the Agents button, so the top of the properties panel stays tidy however
+  many join.
 
 ### Fixed
 
-- Duplicating a brochure now keeps its masters and sections, so the copy has the same headers,
-  footers and numbering as the original.
 - Fast pen strokes no longer fill in as solid black shapes at sharp turns, and they follow your hand
   more closely.
 - In a brochure's page list, pages can now be dropped on a blank page to take its place, on a
