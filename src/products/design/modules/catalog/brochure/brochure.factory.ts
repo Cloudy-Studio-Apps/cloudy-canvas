@@ -1,4 +1,5 @@
 import { createElementBase } from "@canvas";
+import { getLocale } from "@shared/core";
 
 import { BROCHURE_TYPE } from "./brochure.constants";
 import { BROCHURE_DEFAULTS } from "./brochure.defaults";
@@ -13,6 +14,7 @@ export function createBrochure(index: string, page: string, name: string): Broch
     slots: [],
     masters: [],
     sections: [],
-    settings: { ...BROCHURE_DEFAULTS.settings },
+    // Written in its creator's language until it's set (`settings.language`).
+    settings: { ...BROCHURE_DEFAULTS.settings, language: getLocale() },
   };
 }

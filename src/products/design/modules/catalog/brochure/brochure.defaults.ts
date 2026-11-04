@@ -18,5 +18,6 @@ export const BROCHURE_DEFAULTS = {
     numbering: { start: 1, style: "arabic", covers: "hidden" },
     defaultMaster: null,
     mastersOnCovers: false,
+    language: null,
   },
 } satisfies BrochureDefaults;

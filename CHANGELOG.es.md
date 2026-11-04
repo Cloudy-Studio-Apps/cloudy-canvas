@@ -24,6 +24,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 - El elemento de índice lista las secciones del folleto, o sus páginas, con sus números de página, y
   se actualiza cuando las páginas se mueven. Las comprobaciones avisan cuando pasa del margen
   inferior de su página.
+- Cada folleto tiene su propio idioma, así que un diseño puede tener una versión en español y otra
+  en francés del mismo catálogo. Las fechas, los elementos de página y el PDF lo siguen, y al
+  cambiarlo se reescriben las cabeceras y los pies ya colocados, salvo que hayas editado su texto.
+  Cada folleto de una página conserva sus propias cabeceras y pies.
 
 ### Mejoras
 

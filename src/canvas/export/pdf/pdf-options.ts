@@ -13,6 +13,7 @@ export const DEFAULT_PDF_OPTIONS: PdfExportOptions = {
   pages: "single",
   margin: 0,
   print: null,
+  language: null,
 };
 
 /** JPEG quality of each choice. */

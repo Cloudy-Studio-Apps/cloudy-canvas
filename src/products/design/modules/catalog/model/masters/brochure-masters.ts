@@ -7,6 +7,7 @@ import type {
   BrochureSection,
   BrochureSettings,
 } from "../../brochure";
+import { brochureLanguage } from "../language/document-texts";
 import { brochurePageSize } from "../page-span";
 import type { DesignBrochure } from "../design-brochure";
 import { createMasterFrames } from "./create-master-frames";
@@ -46,7 +47,8 @@ export class BrochureMasters {
     const size = brochurePageSize(this.brochure.pages()) ?? { w: 595, h: 842 };
     const id = createId();
     const label = name?.trim() || masterName(record.masters.length);
-    const frames = createMasterFrames(this.doc, record.page, label, size);
+    const language = brochureLanguage(record.settings);
+    const frames = createMasterFrames(this.doc, record.page, label, size, language);
     const master: BrochureMaster = {
       id,
       name: label,

@@ -1,6 +1,7 @@
 import { nKeysBetween, type CanvasDocument, type Point } from "@canvas";
 
 import type { PageItemDefinition, PageItemTarget } from "./page-item-definition.types";
+import { localizedItem } from "../language/localized-item";
 import { placePageItem } from "./place-page-item";
 
 /** The highest sibling index among `frame`'s own layers ("" when it has none). */
@@ -16,20 +17,22 @@ function topIndex(doc: CanvasDocument, frame: string): string {
 
 /**
  * Puts page item `item` on each of `targets` (a master's sides, a page), on top of the frame's
- * layers, in one undo step; on a page the sync then fills in its text. `at` (one target) is
- * where it's dropped. Returns the new texts' ids.
+ * layers, in one undo step, in the brochure's `language` (`localizedItem`); on a page the sync
+ * then fills in its text. `at` (one target) is where it's dropped. Returns the new texts' ids.
  */
 export function insertPageItems(
   doc: CanvasDocument,
   item: PageItemDefinition,
   targets: readonly PageItemTarget[],
   margin: number,
+  language: string,
   at?: Point,
 ): string[] {
   if (targets.length === 0) return [];
+  const written = localizedItem(item, language);
   const nodes = targets.map((target) => {
     const [index = "a0"] = nKeysBetween(topIndex(doc, target.frame.id) || null, null, 1);
-    return placePageItem({ item, target, margin, index, at });
+    return placePageItem({ item: written, target, margin, index, at });
   });
   doc.checkpoint();
   doc.batch(() => {

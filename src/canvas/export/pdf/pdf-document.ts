@@ -44,6 +44,7 @@ export class PdfDocument {
   private tree: number | null = null;
   private readonly finishers: (() => void)[] = [];
   private identity: PdfIdentity | null = null;
+  private language: string | null = null;
 
   /** Adds an object from its body (a dictionary, an array…) and returns its number. */
   add(body: string): number {
@@ -63,6 +64,11 @@ export class PdfDocument {
   /** What a file going to press says about itself. */
   identify(identity: PdfIdentity): void {
     this.identity = identity;
+  }
+
+  /** The language its text is in (a BCP 47 tag), written as the catalog's `/Lang`. */
+  setLanguage(tag: string | null): void {
+    this.language = tag && /^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$/.test(tag) ? tag : null;
   }
 
   /** Runs `finish` once every page is in, to write what depends on all of them. */
@@ -108,7 +114,8 @@ export class PdfDocument {
     for (const finish of this.finishers.splice(0)) finish();
     const kids = this.pages.map((page) => `${page} 0 R`).join(" ");
     this.fill(this.tree, `<< /Type /Pages /Kids [${kids}] /Count ${this.pages.length} >>`);
-    const extra = this.identity ? ` ${this.identity.catalog}` : "";
+    const lang = this.language ? ` /Lang (${this.language})` : "";
+    const extra = (this.identity ? ` ${this.identity.catalog}` : "") + lang;
     const catalog = this.add(`<< /Type /Catalog /Pages ${this.tree} 0 R${extra} >>`);
     return this.file(catalog);
   }

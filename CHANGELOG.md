@@ -20,6 +20,10 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   contents) can be clicked or dragged onto a master or a page, already placed in its margin.
 - The table of contents item lists the brochure's sections, or its pages, with their page numbers,
   and updates when pages move. The checks warn when it runs past its page's bottom margin.
+- Each brochure has its own language, so one design can hold a Spanish and a French version of
+  the same catalog. Dates, page items and the PDF follow it, and changing it rewrites the headers
+  and footers already placed, unless you edited their text. Every brochure on a page keeps its own
+  headers and footers.
 
 ### Improved
 

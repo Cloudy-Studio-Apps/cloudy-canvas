@@ -130,6 +130,10 @@
       "label": "PDF type",
       "sharp": "Sharp · vector",
       "flattened": "Image · flat pages"
+    },
+    "language": {
+      "label": "Language",
+      "app": "Same as the app"
     }
   },
   "layout": {

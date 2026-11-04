@@ -2,7 +2,7 @@ import type { PdfExportOptions, PdfPrintColor } from "@canvas";
 
 import type { BrochureSettings } from "../brochure";
 import { t } from "../catalog.i18n";
-import { mmToUnits } from "../model";
+import { brochureLanguage, mmToUnits } from "../model";
 
 /** The PDF a brochure's settings ask for, the one place that reads them for it. */
 export function printOptions(
@@ -14,6 +14,7 @@ export function printOptions(
     mode: settings.pdfMode,
     dpi: settings.dpi,
     pointsPerUnit: 1,
+    language: brochureLanguage(settings),
     print: {
       bleed: mmToUnits(settings.bleed),
       marks: settings.cropMarks,

@@ -6,6 +6,7 @@ import { NumberField, PanelSection, PropertyGrid } from "@design/ui/components/p
 import { useBrochure } from "../hooks/use-brochure";
 import { useCatalogViewStore } from "../stores/catalog-view-store";
 import { ArrangeFields } from "./arrange-fields";
+import { LanguageField } from "./language-field";
 import { LayoutFields } from "./layout-fields";
 import { CheckboxField, SelectField } from "@shared/ui/kit";
 import { t } from "../../catalog.i18n";
@@ -24,7 +25,8 @@ const PDF_MODE_CHOICES = [
 ] as const;
 
 /**
- * How the brochure prints: its page count and size, how it's bound (`LayoutFields`), how its
+ * How the brochure prints: its page count and size, its language (`LanguageField`), how it's
+ * bound (`LayoutFields`), how its
  * frames sit on the canvas (`ArrangeFields`), its margin, resolution and kind of PDF, and whether the margins show on the canvas.
  */
 export function BrochureSettingsSection() {
@@ -47,6 +49,7 @@ export function BrochureSettingsSection() {
         )}
       </p>
       <div className="mt-2.5 flex flex-col gap-2">
+        <LanguageField />
         <LayoutFields />
         <ArrangeFields />
         <PropertyGrid>

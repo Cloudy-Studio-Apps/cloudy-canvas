@@ -125,6 +125,12 @@ export interface BrochureSettings {
   defaultMaster: string | null;
   /** Whether covers show their master too (they don't by default). */
   mastersOnCovers: boolean;
+  /**
+   * The language it's written in (a BCP 47 tag, `BROCHURE_LANGUAGES`): its dates, the words of
+   * its page items and master frames, and its PDF's language; `null` (files from before), the
+   * app's.
+   */
+  language: string | null;
 }
 
 /**

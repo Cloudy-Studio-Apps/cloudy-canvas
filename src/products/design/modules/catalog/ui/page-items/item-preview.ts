@@ -1,11 +1,11 @@
-import { getLocale } from "@shared/core";
-
 import type { BrochureView } from "../hooks/use-brochure.types";
 import type { PageItemTarget } from "../../model/page-items/page-item-definition.types";
 import { resolveTemplate } from "../../model/page-items/resolve-template";
+import { brochureLanguage } from "../../model/language/document-texts";
 
 /**
- * What a page item's template reads on `target` (a master side: its first page), on one line;
+ * What a page item's template reads on `target` (a master side: its first page), on one line, in
+ * the brochure's language;
  * the template itself when there's no page to read it on, and `null` for the contents.
  */
 export function itemPreview(
@@ -32,7 +32,9 @@ export function itemPreview(
     info,
     pages: numbers.filter((item) => item.counted).length,
     title: brochure?.name ?? "",
-    date: new Intl.DateTimeFormat(getLocale(), { dateStyle: "long" }).format(new Date()),
+    date: new Intl.DateTimeFormat(brochureLanguage(view.settings), { dateStyle: "long" }).format(
+      new Date(),
+    ),
     toc: "",
   }).replace(/\s+/g, " ");
 }

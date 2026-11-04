@@ -50,7 +50,10 @@ export const brochureSettingsTools: DesignMcpTool[] = [
       "the first page's number; `style`, `arabic`, `roman-lower` or `roman-upper`; `covers`, " +
       "`numbered`, `hidden` (counted, not written: the default) or `uncounted`), " +
       "`defaultMaster` (the master pages show unless they pick one: a master's id, or null for " +
-      "none) and `mastersOnCovers` (whether covers show their master too).",
+      "none) and `mastersOnCovers` (whether covers show their master too). `language` (a BCP 47 " +
+      "tag: es, en, fr, pt, de, it) is the language the brochure is written in: its dates, its " +
+      "built-in page items' words (already placed ones are rewritten in it, unless someone " +
+      "changed them), its master frames' names and its PDF's language.",
     inputSchema: {
       type: "object",
       required: ["brochure"],
@@ -77,6 +80,7 @@ export const brochureSettingsTools: DesignMcpTool[] = [
         },
         defaultMaster: { type: ["string", "null"] },
         mastersOnCovers: { type: "boolean" },
+        language: { type: "string", description: "A BCP 47 tag, e.g. es, fr, pt-BR." },
         brochure: BROCHURE_SCHEMA,
       },
     },
@@ -104,6 +108,10 @@ export const brochureSettingsTools: DesignMcpTool[] = [
       const style = numbering && optionalChoice(numbering, "style", NUMBER_STYLES);
       const coverNumbers = numbering && optionalChoice(numbering, "covers", COVER_NUMBERINGS);
       const mastersOnCovers = optionalBoolean(args, "mastersOnCovers");
+      const language = optionalString(args, "language")?.trim();
+      if (language !== undefined && !/^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$/.test(language)) {
+        throw new Error('"language" must be a BCP 47 tag, e.g. "es", "fr" or "pt-BR".');
+      }
       const defaultMaster =
         args.defaultMaster === null
           ? null
@@ -134,6 +142,7 @@ export const brochureSettingsTools: DesignMcpTool[] = [
       }
       if (defaultMaster !== undefined) patch.defaultMaster = defaultMaster;
       if (mastersOnCovers !== undefined) patch.mastersOnCovers = mastersOnCovers;
+      if (language !== undefined) patch.language = language;
       asUndoStep(engine.doc, () => brochure.setSettings(patch));
       return { settings: brochure.settings() };
     },

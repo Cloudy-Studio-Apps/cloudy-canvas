@@ -3,19 +3,23 @@ import { unionRects, type CanvasDocument, type Size } from "@canvas";
 import { isDesignNode } from "../../../core";
 import { createFrame } from "../../../frame";
 import { ARRANGE_GAPS } from "../arrange/arrange.constants";
+import { documentTexts } from "../language/document-texts";
 import type { MasterFrames } from "./create-master-frames.types";
 
 /**
  * A new master's frames: one for left pages and one for right pages, `size` each, side by side
  * above everything on design page `page` (so they never sit among the pages), named after the
- * master. Transparent, so a page's own fill shows through; not added yet.
+ * master and their side in the brochure's `language`. Transparent, so a page's own fill shows
+ * through; not added yet.
  */
 export function createMasterFrames(
   doc: CanvasDocument,
   page: string,
   name: string,
   size: Size,
+  language: string,
 ): MasterFrames {
+  const words = documentTexts(language);
   const onPage = doc
     .all()
     .filter((el) => isDesignNode(el) && el.pageId === page && el.parentId === null);
@@ -30,7 +34,7 @@ export function createMasterFrames(
     clipsContent: true,
   });
   return {
-    left: make(area.x, "left", leftIndex),
-    right: make(area.x + size.w, "right", rightIndex),
+    left: make(area.x, words.left, leftIndex),
+    right: make(area.x + size.w, words.right, rightIndex),
   };
 }

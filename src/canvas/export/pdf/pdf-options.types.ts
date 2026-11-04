@@ -27,4 +27,9 @@ export interface PdfExportOptions {
   margin: number;
   /** Bleed and crop marks, for a file going to press; `page` is `fit`. */
   print: PdfPrintBoxes | null;
+  /**
+   * The language its text is in (a BCP 47 tag, the catalog's `/Lang`, which screen readers and
+   * accessibility checks read); `null` says none.
+   */
+  language: string | null;
 }

@@ -16,6 +16,7 @@ import type { BrochurePage } from "./brochure-pages.types";
 import type { ArrangedListener } from "./design-brochure.types";
 import { BrochureMasters } from "./masters/brochure-masters";
 import { keptSections } from "./masters/master-edits";
+import { brochureLanguage, retranslateItems } from "./language";
 import {
   addOption,
   addPages,
@@ -138,10 +139,27 @@ export class DesignBrochure {
     this.writeSlots(() => [...slots]);
   }
 
+  /**
+   * Changes settings, in one undo step. A new `language` also rewrites its built-in page items
+   * and master frames' words in it (`retranslateItems`).
+   */
   setSettings(patch: Partial<BrochureSettings>): void {
     const settings = { ...this.settings(), ...patch };
     if (JSON.stringify(settings) === JSON.stringify(this.settings())) return;
-    this.write({ settings });
+    const record = this.record();
+    const words =
+      record && settings.language !== record.settings.language
+        ? retranslateItems(this.doc, record, brochureLanguage(settings))
+        : new Map<string, ElementPatch>();
+    if (words.size === 0) {
+      this.write({ settings });
+      return;
+    }
+    this.doc.checkpoint();
+    this.doc.batch(() => {
+      this.write({ settings });
+      this.doc.updateMany(words);
+    });
   }
 
   /**

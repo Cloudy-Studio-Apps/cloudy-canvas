@@ -2,6 +2,7 @@ import { optionalChoice, optionalNumber, type ToolArgs } from "@canvas";
 
 import type { DesignWorkspace } from "../../../design-engine.types";
 import {
+  brochureLanguage,
   insertPageItems,
   isPageFrame,
   itemTargetAt,
@@ -91,5 +92,7 @@ export function addPageItem(
     if (!target) throw new Error('"x", "y" isn\'t on that page.');
     targets = [target];
   }
-  return insertPageItems(engine.doc, item, targets, mmToUnits(brochure.settings().margin), at);
+  const settings = brochure.settings();
+  const language = brochureLanguage(settings);
+  return insertPageItems(engine.doc, item, targets, mmToUnits(settings.margin), language, at);
 }

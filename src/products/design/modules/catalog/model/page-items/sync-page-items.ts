@@ -1,11 +1,11 @@
 import type { CanvasDocument, CanvasElement, EditedChange } from "@canvas";
-import { getLocale } from "@shared/core";
 
 import { childrenByParent, isDesignNode } from "../../../core";
 import type { BrochureElement } from "../../brochure";
 import { bookLayout } from "../book-layout";
 import { brochurePages } from "../brochure-pages";
 import { brochuresOf } from "../design-brochures";
+import { brochureLanguage } from "../language/document-texts";
 import { pageNumbers } from "../numbering/page-numbers";
 import { affectedPages } from "./affected-pages";
 import { planPageItems } from "./plan-page-items";
@@ -38,7 +38,6 @@ export function syncPageItems(doc: CanvasDocument, change: EditedChange): void {
   if (pages.size === 0) return;
   const elements = doc.all();
   const children = childrenByParent(elements);
-  const date = new Intl.DateTimeFormat(getLocale(), { dateStyle: "long" }).format(new Date());
 
   for (const page of pages) {
     const byId = new Map<string, CanvasElement>();
@@ -47,6 +46,10 @@ export function syncPageItems(doc: CanvasDocument, change: EditedChange): void {
       brochures: brochuresOn(records, page).map((record) => {
         const layout = bookLayout(brochurePages(doc, record), record.settings);
         const numbers = pageNumbers(layout, record);
+        // Today, written in the brochure's language.
+        const date = new Intl.DateTimeFormat(brochureLanguage(record.settings), {
+          dateStyle: "long",
+        }).format(new Date());
         return {
           record,
           targets: stampTargets(doc, record, layout, numbers),

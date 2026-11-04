@@ -3,6 +3,8 @@ import { useMemo, useState } from "react";
 import { DragGhost, useEditorModules } from "@canvas-ui";
 import type { Point } from "@canvas";
 import { insertPageItems } from "../../model/page-items/insert-page-items";
+import { brochureLanguage } from "../../model/language/document-texts";
+import { localizedItem } from "../../model/language/localized-item";
 import { itemTargetAt, itemTargets } from "../../model/page-items/item-targets";
 import { isPageFrame } from "../../model/page-frame";
 import { mmToUnits } from "../../model/paper-size";
@@ -38,6 +40,7 @@ export function PageItemsSection({ frame }: PageItemsSectionProps) {
     ...(both && isPageFrame(otherFrame) ? itemTargets(otherFrame, input) : []),
   ];
   const margin = mmToUnits(settings.margin);
+  const language = brochureLanguage(settings);
 
   const targetAt = (world: Point) => {
     const ids = [
@@ -56,7 +59,7 @@ export function PageItemsSection({ frame }: PageItemsSectionProps) {
     targetAt,
     onDrop: (id, target, at) => {
       const item = items.find((entry) => entry.id === id);
-      if (item) insertPageItems(engine.doc, item, [target], margin, at);
+      if (item) insertPageItems(engine.doc, item, [target], margin, language, at);
     },
   });
   const dragged = items.find((item) => item.id === drop.drag?.id);
@@ -84,7 +87,7 @@ export function PageItemsSection({ frame }: PageItemsSectionProps) {
       <ul className="-mx-1.5 flex flex-col">
         {items.map((item) => {
           const Icon = item.icon;
-          const preview = itemPreview(item.template, targets[0], view);
+          const preview = itemPreview(localizedItem(item, language).template, targets[0], view);
           return (
             <li key={item.id}>
               <ListRow
@@ -94,7 +97,7 @@ export function PageItemsSection({ frame }: PageItemsSectionProps) {
                 label={item.label}
                 meta={preview ?? undefined}
                 title={item.template}
-                onSelect={() => insertPageItems(engine.doc, item, targets, margin)}
+                onSelect={() => insertPageItems(engine.doc, item, targets, margin, language)}
               />
             </li>
           );

@@ -130,6 +130,10 @@
       "label": "Tipo de PDF",
       "sharp": "Nítido · vectorial",
       "flattened": "Imagen · páginas planas"
+    },
+    "language": {
+      "label": "Idioma",
+      "app": "El de la app"
     }
   },
   "layout": {

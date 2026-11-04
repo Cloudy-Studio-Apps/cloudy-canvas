@@ -26,6 +26,7 @@ export class PdfBook {
   constructor({ host, ...options }: PdfBookOptions) {
     this.host = host;
     this.options = { ...DEFAULT_PDF_OPTIONS, ...options };
+    this.doc.setLanguage(this.options.language);
     const color = this.options.print?.color;
     if (color) markPdfX(this.doc, color);
   }

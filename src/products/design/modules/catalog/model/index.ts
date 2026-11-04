@@ -8,6 +8,7 @@ export type * from "./paper-size.types";
 export { brochurePages } from "./brochure-pages";
 export { ARRANGE_GAPS, arrangeBrochure } from "./arrange";
 export { bookLayout } from "./book-layout";
+export * from "./language";
 export * from "./masters";
 export * from "./numbering";
 export * from "./page-items";
