@@ -42,6 +42,8 @@ i was thinking, that have antoher tab, cuz now only has "brochure", we could add
 that ways shows all and can use it, and personalize a bit, cuz otherwise could like like "{my_uploaded_file_extrange.data.sfdf.dfd.f.name.[$index].data}" we could personalize like "{products.[$index].name}"
 so that way we can reuse it in the brochure correctly, and declare what value is? text, intener, ... imageUrl, Image Base64.?... etc
 
+Phase 1 shipped: sources (files and APIs), the Data tab, Update and agent tools.
+
 ### C3. Bookmarks and links in the PDF
 
 - [ ] Decide · Priority: —
