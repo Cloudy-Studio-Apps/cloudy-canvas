@@ -125,7 +125,8 @@ src/
         bound-text-template.ts                                  + [2] the textTemplates entry
       repeat/                                                   + [3]
         repeat.types.ts, repeat-fields.ts, repeat-rows.ts
-        plan-data-copies.ts, plan-data-copies.types.ts, copy-node.ts
+        plan-data-copies.ts, plan-data-copies.types.ts, copy-node.ts, data-resolved-paths.ts,
+        mirror-field.ts, order-keys.ts, template-parts.ts, row-names.ts, sort-rows.ts
         write-data-copies.ts, set-repeat.ts, detach-data-copy.ts
         prepare-data-copies.ts, prune-data.ts, index.ts
       sync/                                                     + [2] (grows in [3])

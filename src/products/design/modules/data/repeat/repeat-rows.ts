@@ -30,12 +30,8 @@ export function repeatRows(
     });
   }
   shown = sortItems(shown, repeat.sort, (item) => scopeOf(item.row));
-  if (repeat.limit !== undefined) shown = shown.slice(0, repeat.limit);
-  const total = shown.length;
-  if (phase === "design" && repeat.designLimit !== undefined) {
-    shown = shown.slice(0, repeat.designLimit);
-  }
-  // Keys are made in source order so the `#n` suffixes don't depend on the sort.
+  // Keys are made over every shown row, before any cap, in source order: a row keeps its key in
+  // the document and in an export, and the `#n` suffixes don't depend on the sort.
   const keys: string[] = new Array(shown.length);
   const used = new Set<string>();
   shown
@@ -50,7 +46,12 @@ export function repeatRows(
       used.add(key);
       keys[index] = key;
     });
-  const rows = shown.map((item, index) => ({ key: keys[index] as string, row: item.row, index }));
+  let rows = shown.map((item, index) => ({ key: keys[index] as string, row: item.row, index }));
+  if (repeat.limit !== undefined) rows = rows.slice(0, repeat.limit);
+  const total = rows.length;
+  if (phase === "design" && repeat.designLimit !== undefined) {
+    rows = rows.slice(0, repeat.designLimit);
+  }
   return { rows, total };
 }
 
