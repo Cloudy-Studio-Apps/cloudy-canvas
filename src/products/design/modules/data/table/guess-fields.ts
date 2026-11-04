@@ -62,12 +62,21 @@ function collect(value: unknown, path: string, into: Map<string, FieldType | nul
   into.set(path, prev ? widen(prev, type) : type);
 }
 
-/** The fields found in the first rows, in order of first appearance; known fields keep their settings. */
+/**
+ * The fields found in the first rows, in order of first appearance; known fields keep their
+ * settings (as copies). Fields in `keep` that the rows don't have are appended unchanged, in
+ * their order, so a partial or empty refresh never wipes them.
+ */
 export function guessFields(rows: DataRow[], keep: DataField[]): DataField[] {
   const found = new Map<string, FieldType | null>();
   for (const row of rows.slice(0, SAMPLE_ROWS)) {
     if (isObject(row)) for (const k of Object.keys(row)) collect(row[k], join("", k), found);
   }
   const known = new Map(keep.map((f) => [f.path, f]));
-  return [...found].map(([path, type]) => known.get(path) ?? { path, type: type ?? "text" });
+  const fields = [...found].map(([path, type]): DataField => {
+    const old = known.get(path);
+    return old ? { ...old } : { path, type: type ?? "text" };
+  });
+  for (const f of keep) if (!found.has(f.path)) fields.push({ ...f });
+  return fields;
 }
