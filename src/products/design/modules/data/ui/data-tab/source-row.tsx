@@ -52,11 +52,16 @@ export function SourceRow({ source, sourceType, issues, onOpen }: SourceRowProps
               cancellable={update.cancellable}
               onRun={update.run}
               onCancel={update.cancel}
+              disabled={!sourceType}
             />
           </span>
         </div>
         <p className="truncate pl-5 text-xs text-muted-foreground">
-          {update.stage ? stageText(update.stage, update.progress) : sourceMeta(source)}
+          {update.stage
+            ? stageText(update.stage, update.progress)
+            : sourceType
+              ? sourceMeta(source)
+              : `${t("source.pluginMissing")} · ${sourceMeta(source)}`}
         </p>
         <ImageFailuresLine sourceId={source.id} className="pl-5" />
         <UpdateWarningsLine sourceId={source.id} className="pl-5" />

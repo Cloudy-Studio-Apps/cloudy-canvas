@@ -3,7 +3,7 @@ import type { SourceUpdateButtonProps } from "./source-update-button.types";
 import { UpdateButton } from "./update-button";
 
 /** Update for one source, wired to its running Update. */
-export function SourceUpdateButton({ sourceId }: SourceUpdateButtonProps) {
+export function SourceUpdateButton({ sourceId, disabled }: SourceUpdateButtonProps) {
   const update = useUpdateSource(sourceId);
   return (
     <UpdateButton
@@ -12,6 +12,7 @@ export function SourceUpdateButton({ sourceId }: SourceUpdateButtonProps) {
       cancellable={update.cancellable}
       onRun={update.run}
       onCancel={update.cancel}
+      disabled={disabled}
     />
   );
 }

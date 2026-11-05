@@ -12,4 +12,6 @@ export interface UpdateButtonProps {
   onCancel: () => void;
   /** The idle button's name (default: "Update"). */
   label?: string;
+  /** Whether Update is unavailable (a source whose plugin isn't installed). */
+  disabled?: boolean;
 }

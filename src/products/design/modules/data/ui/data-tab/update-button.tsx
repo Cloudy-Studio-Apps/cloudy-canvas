@@ -13,10 +13,11 @@ export function UpdateButton({
   onRun,
   onCancel,
   label,
+  disabled = false,
 }: UpdateButtonProps) {
   if (stage === null) {
     return (
-      <IconButton size="xs" label={label ?? t("update.run")} onClick={onRun}>
+      <IconButton size="xs" label={label ?? t("update.run")} disabled={disabled} onClick={onRun}>
         <RefreshCw />
       </IconButton>
     );

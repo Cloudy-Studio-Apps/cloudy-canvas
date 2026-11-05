@@ -55,7 +55,7 @@ export async function updateSource(
   try {
     const source = record(doc, id);
     const type = ctx.types.find((t) => t.id === source.sourceType);
-    if (!type) throw new Error(`Unknown source type "${source.sourceType}".`);
+    if (!type) throw new Error(`No source type ${source.sourceType}.`);
     const specs = type.settings;
     // Secrets bound to another origin than the settings' read as missing (never sent there).
     const secrets = await loadSourceSecrets(ctx.services, id, type, source.settings);

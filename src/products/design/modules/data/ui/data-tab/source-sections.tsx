@@ -95,7 +95,7 @@ export function SourceSections({ source, sourceType, issues, onRemoved }: Source
           </div>
         ) : (
           <p className="text-xs text-muted-foreground">
-            {t("source.unknownType", { type: source.sourceType })}
+            {t("source.unknownType", { type: source.sourceType })} {t("source.pluginMissing")}
           </p>
         )}
       </PanelSection>

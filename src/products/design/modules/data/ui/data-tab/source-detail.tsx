@@ -48,7 +48,7 @@ export function SourceDetail({ source, sourceType, issues, onBack, onCreated }: 
         ) : (
           <h2 className="min-w-0 flex-1 truncate text-xs font-semibold text-foreground">{title}</h2>
         )}
-        {source && <SourceUpdateButton sourceId={source.id} />}
+        {source && <SourceUpdateButton sourceId={source.id} disabled={!sourceType} />}
       </header>
       {source ? (
         <SourceSections

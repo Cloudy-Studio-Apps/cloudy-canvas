@@ -1,0 +1,10 @@
+{
+  "id": "sample-products-source",
+  "name": "Sample products source",
+  "version": "1.0.0",
+  "description": "A data source of made-up products with pictures, for trying data in a design.",
+  "author": "Cloudy Canvas examples",
+  "apiVersion": 1,
+  "products": ["design"],
+  "main": "main.js"
+}

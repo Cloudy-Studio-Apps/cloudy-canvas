@@ -402,6 +402,61 @@ Tools that don't draw a box (like the line tool, which draws between two ends) e
 
 Design agent tools are groups contributed to `api.design.designMcpTools`, like the board's (`run(host, args)` gets the design host; `api.design.requireDesign(host)` is the open design, `{ engine, path, … }`). A kind agents may create with `create_nodes` sets `creatable = true`, lists its own fields in `specProperties` and overrides `nodeFromSpec(spec, index, context)` (`BoxShapeKind` already does: `w`/`h` or its click size, named with `context.nameFor(label)`); `update_nodes` checks patches with its `completePatch` (call `super.completePatch` for the shared fields: paints, opacity, parent).
 
+## Data sources and formats
+
+A design's Data tab reads rows from **source types** (a file, a link) through **formats** (CSV, JSON,
+Excel). A plugin adds its own on the points of the `data` module, a core module, so
+`host.require("data")` needs no `requires`:
+
+- `dataSourceTypes`: a `DataSourceType`, `{ id, label, icon, settings, defaultName(settings),
+secretOrigin?(settings), update(settings, ctx) }`. `icon` is a lucide name the Data tab knows
+  (`Table`, `Database`, `Cloud`, `Globe`, `Sheet`, …). `update` returns the data as it was got
+  (`RawData`: `text` or `bytes`, with `mime` or `fileName` so a format is chosen), and a format then
+  parses it into rows; `rowsPlaced: true` says the rows are already found at the source's
+  `rowsPath`.
+- `dataFormats`: a `DataFormat`, `{ id, label, extensions, mimes, options?, sniff?(raw),
+parse(raw, options) }`, which turns `RawData` into the parsed value (the rows or an object that
+  holds them).
+- `settings` is a list of `SettingSpec`, one per setting, and the form is drawn from them: `text`,
+  `url` and `multiline` (with `placeholder`, `required`), `number` (`min`, `max`), `boolean`
+  (`default`), `select` (`options`), `pairs` (headers), `file` (`extensions`), `folder` and
+  `secret` (kept on this device, never in the file; `required`, `requiredWhen`). Labels are
+  already translated strings. A type that needs a form the specs can't make contributes a
+  component to `dataSourceForms` from `host.require("data")` (the link's own form is one).
+- `ctx` (`SourceContext`) gives `signal` (an `AbortSignal`: stop and throw when the user cancels),
+  `secrets` and `files` (by setting key), `rowsPath`, `services` (`http`, `readFile`, …), `preview`
+  (Try it is asking: fetch only the first piece) and `warn(message)` (shown on the source). A throw
+  is the Update's error and writes nothing.
+
+`examples/plugins/sample-products-source/` is a complete one in plain JavaScript:
+
+```js
+export default async function activate(api) {
+  return api.core.defineModule({
+    id: "sample-products-source",
+    register(host) {
+      const data = host.require("data");
+      host.contribute(data.dataSourceTypes, {
+        id: "sample-products",
+        label: "Sample products",
+        icon: "Table",
+        settings: [{ key: "count", kind: "number", label: "How many products", min: 1, max: 200 }],
+        defaultName: () => "Sample products",
+        async update(settings, ctx) {
+          const count = typeof settings.count === "number" ? settings.count : 24;
+          return { text: JSON.stringify(makeProducts(count)), mime: "application/json" };
+        },
+      });
+    },
+  });
+}
+```
+
+Its manifest has `"products": ["design"]`. **+ Add source** then lists "Sample products"; the
+products are `{ id, name, price, category, image }`, with each `image` a small inline SVG `data:` URL
+so it works offline. If the plugin is removed, its sources keep their saved rows, fields, bindings
+and repeats; they show "Its plugin isn't installed" and can't be updated until it's back.
+
 ## Modes
 
 A mode (a way of working with its own tools, toolbar and panels, like the Catalog or the ER mode) is
