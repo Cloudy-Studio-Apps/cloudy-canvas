@@ -24,7 +24,9 @@ import { t } from "../../catalog.i18n";
  * starting at it (`startLevels`), removing the ones that do, taking it out of the brochure and
  * deleting its frame (`deleteSelectedPages`). "Repeat this page…" (or its settings, when it repeats)
  * shows the page, whose panel sets the repeat, and "Remove repeat" takes it off with its copies. A
- * page a repeat made follows its template: it starts no section and doesn't repeat.
+ * page a repeat made follows its template: it starts no section and doesn't repeat, and taking it
+ * out detaches it from its repeat (it stays where it is, a normal page). A page taken out of a
+ * repeat (`detached`) starts no section and doesn't repeat either.
  */
 export function PageRowMenu({ page, children }: PageRowMenuProps) {
   const engine = useDesignEngine();
@@ -34,7 +36,8 @@ export function PageRowMenu({ page, children }: PageRowMenuProps) {
   if (!brochure) return children;
   const slots = brochure.record()?.slots ?? [];
   const copy = !!page.slot.generated;
-  const levels = copy
+  const plain = copy || !!page.slot.detached;
+  const levels = plain
     ? { section: null, subsection: null }
     : startLevels(sections, slots, page.slot.id);
   const { repeat } = page.slot;
@@ -50,7 +53,7 @@ export function PageRowMenu({ page, children }: PageRowMenuProps) {
           </ContextMenuItem>
         ))}
         <ContextMenuSeparator />
-        {!copy && (
+        {!plain && (
           <ContextMenuItem className="gap-2 text-xs" onSelect={() => showPage(engine, page.frame)}>
             <Repeat className="size-3.5" />
             {repeat ? t("repeat.menuSettings") : t("repeat.menuPage")}
@@ -99,7 +102,7 @@ export function PageRowMenu({ page, children }: PageRowMenuProps) {
           onSelect={() => brochure.removePages([page.slot.id])}
         >
           <X className="size-3.5" />
-          {t("mode.takeOut")}
+          {copy ? t("repeat.detach") : t("mode.takeOut")}
         </ContextMenuItem>
         <ContextMenuItem
           className="gap-2 text-xs text-destructive"

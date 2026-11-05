@@ -135,6 +135,24 @@ export function pickPages(
   return addPages(kept, ticked);
 }
 
+/**
+ * New slots for the pages (`set_brochure_pages`) where each that prints the frame a page printed
+ * is that page, with its frames and choice from `next`: its id (so sections starting on it and its
+ * copies stay), master, repeat and what a repeat gave it.
+ */
+export function keepingSlots(
+  current: readonly BrochureSlot[],
+  next: readonly BrochureSlot[],
+): BrochureSlot[] {
+  const byChosen = new Map(current.map((slot) => [slot.chosen, slot]));
+  return next.map((slot) => {
+    const old = byChosen.get(slot.chosen);
+    if (!old) return slot;
+    byChosen.delete(slot.chosen);
+    return { ...old, frames: slot.frames, chosen: slot.chosen };
+  });
+}
+
 /** Whether two slot lists are the same (so an edit that changes nothing writes nothing). */
 export function sameSlots(a: readonly BrochureSlot[], b: readonly BrochureSlot[]): boolean {
   return JSON.stringify(a) === JSON.stringify(b);

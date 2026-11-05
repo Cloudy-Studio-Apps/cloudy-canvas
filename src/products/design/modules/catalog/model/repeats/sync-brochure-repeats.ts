@@ -17,6 +17,7 @@ import { expandBrochure } from "./expand-brochure";
 import { hasRepeats } from "./has-repeats";
 import { planBrochureRepeats } from "./plan-brochure-repeats";
 import { repeatSignature } from "./repeat-signature";
+import { templateSlots } from "./repeat-tree";
 import { touchedTops } from "./touched-tops";
 import { emptyRepeatsPlan, writeBrochureRepeats } from "./write-brochure-repeats";
 
@@ -75,7 +76,7 @@ export function syncBrochureRepeats(
     const affected =
       sources ||
       change.updated.has(record.id) ||
-      record.slots.some((slot) => !slot.generated && slot.frames.some((id) => tops.has(id)));
+      templateSlots(record).some((slot) => slot.frames.some((id) => tops.has(id)));
     if (!affected) continue;
     root ??= documentScopes(doc).root;
     const expansion = expandBrochure(record, root, dataPhase(doc));

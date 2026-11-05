@@ -6,10 +6,13 @@ import { showPage } from "../page-actions";
 import type { PageSectionProps } from "./sidebar.types";
 import { t } from "../../catalog.i18n";
 
-/** A page a repeat made: it follows its template page, which a button shows. */
+/**
+ * A page a repeat made: it follows its template page, which a button shows; Detach takes it out of
+ * its repeat (`removePages`), a normal page where it is.
+ */
 export function GeneratedPageSection({ page }: PageSectionProps) {
   const engine = useDesignEngine();
-  const { pages } = useBrochure();
+  const { brochure, pages } = useBrochure();
   const from = page.slot.generated?.from;
   const template = pages.find((item) => item.slot.id === from)?.frame;
   return (
@@ -26,6 +29,15 @@ export function GeneratedPageSection({ page }: PageSectionProps) {
             {t("repeat.showTemplate")}
           </Button>
         )}
+        <Button
+          size="sm"
+          variant="outline"
+          className="w-full"
+          title={t("repeat.detachHint")}
+          onClick={() => brochure?.removePages([page.slot.id])}
+        >
+          {t("repeat.detach")}
+        </Button>
       </div>
     </PanelSection>
   );

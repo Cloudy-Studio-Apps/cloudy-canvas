@@ -68,12 +68,16 @@ export const catalogMode = defineDesignMode({
     {
       id: CATALOG_COMMANDS.movePageUp,
       label: t("mode.movePageUp"),
-      run: (engine) => moveSelectedPages(engine, -1),
+      run: (engine) => {
+        if (!moveSelectedPages(engine, -1)) toast({ title: t("repeat.generatedMove") });
+      },
     },
     {
       id: CATALOG_COMMANDS.movePageDown,
       label: t("mode.movePageDown"),
-      run: (engine) => moveSelectedPages(engine, 1),
+      run: (engine) => {
+        if (!moveSelectedPages(engine, 1)) toast({ title: t("repeat.generatedMove") });
+      },
     },
     {
       id: CATALOG_COMMANDS.deletePages,

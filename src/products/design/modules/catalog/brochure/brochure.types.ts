@@ -1,6 +1,10 @@
 import type { CanvasElement, ElementDefaults, PdfMode } from "@canvas";
 import type { RenderingIntent } from "@shared/core";
-import type { BrochureRepeat, GeneratedSlot } from "../model/repeats/brochure-repeat.types";
+import type {
+  BrochureRepeat,
+  DetachedSlot,
+  GeneratedSlot,
+} from "../model/repeats/brochure-repeat.types";
 
 /**
  * One page of a brochure: the frames that could be it (its options, e.g. "Opción A/B/C") and the
@@ -23,6 +27,11 @@ export interface BrochureSlot {
   repeat?: BrochureRepeat;
   /** A copy made by a repeat (a section's or a page's), never edited by hand. */
   generated?: GeneratedSlot;
+  /**
+   * A copy taken out of its repeat by hand: a plain page where it was, never part of a template
+   * nor repeated (`expandBrochure` places it after the slot before it).
+   */
+  detached?: DetachedSlot;
 }
 
 /**

@@ -12,6 +12,7 @@ import {
   readPositions,
   requirePagePosition,
 } from "./brochure-args";
+import { storedPosition } from "../model";
 import { describeBrochure } from "./describe-brochure";
 import { PAGE_MASTER_SCHEMA, readPageMaster } from "./master-args";
 
@@ -23,6 +24,9 @@ export const brochureEditTools: DesignMcpTool[] = [
       "Replaces the brochure's pages, in order, in one undo step. Each page lists the top-level " +
       "frames that could be it (`frames`, its options) and the one printed (`chosen`, the first " +
       "by default). Frames must be on the brochure's design page; a frame can be in one page only. " +
+      "A page printing the frame a page printed stays that page (its sections, master and " +
+      "repeat). A page a repeat made that's left out is detached from its repeat (its row isn't " +
+      "made again, and the other pages of a repeated section's copy stay as normal pages). " +
       "The frames themselves don't change.",
     inputSchema: {
       type: "object",
@@ -76,7 +80,10 @@ export const brochureEditTools: DesignMcpTool[] = [
     run: async (host, args) => {
       const { engine } = requireDesign(host);
       const brochure = readBrochure(engine, args);
-      const at = optionalPlace(args, "at", brochure.pages().length);
+      const pages = brochure.pages();
+      const place = optionalPlace(args, "at", pages.length);
+      const slots = brochure.record()?.slots ?? [];
+      const at = place === undefined ? undefined : storedPosition(slots, pages, [], place);
       const blank = optionalRecord(args, "blank");
       if (blank) {
         brochure.addNewPage(blankFrame(engine, brochure, blank), at);
@@ -93,7 +100,8 @@ export const brochureEditTools: DesignMcpTool[] = [
     description:
       "Moves a page (by `position`, from 1), or several (`positions`, kept in the brochure's " +
       "order and moved together), so the first starts at position `to`, as dragging them in the " +
-      "page list does, in one undo step. Returns the brochure.",
+      "page list does, in one undo step. Pages a repeat made follow their template and can't be " +
+      "moved; a page moved past pending pages goes past all of them. Returns the brochure.",
     inputSchema: {
       type: "object",
       required: ["brochure", "to"],
@@ -110,12 +118,22 @@ export const brochureEditTools: DesignMcpTool[] = [
       const slots = Array.isArray(args.positions)
         ? readPositions(brochure, args.positions)
         : [requirePagePosition(brochure, args).slot.id];
-      const room = brochure.pages().length - slots.length + 1;
+      const pages = brochure.pages();
+      const made = pages.find((page) => page.slot.generated && slots.includes(page.slot.id));
+      if (made) {
+        throw new Error(
+          `Page ${made.number} was made by a repeat: it follows its template page and can't be ` +
+            "moved. Remove it (remove_brochure_pages) to detach it from its repeat first.",
+        );
+      }
+      const room = pages.length - slots.length + 1;
       const to = args.to;
       if (typeof to !== "number" || to < 1 || to > room) {
         throw new Error(`"to" must be a position from 1 to ${room}.`);
       }
-      asUndoStep(engine.doc, () => brochure.moveMany(slots, Math.round(to) - 1));
+      const stored = brochure.record()?.slots ?? [];
+      const at = storedPosition(stored, pages, slots, Math.round(to) - 1);
+      asUndoStep(engine.doc, () => brochure.moveMany(slots, at));
       return describeBrochure(engine, brochure);
     },
   },
@@ -123,7 +141,9 @@ export const brochureEditTools: DesignMcpTool[] = [
     name: "remove_brochure_pages",
     description:
       "Takes pages (by `positions`, from 1) out of the brochure with their options, in one undo " +
-      "step. Their frames stay in the design. Returns the brochure.",
+      "step. Their frames stay in the design. A page a repeat made isn't taken out but detached: " +
+      "it stays where it is as a normal page, unlocked, and its row isn't made again (a repeated " +
+      "section's copy is detached with all its pages). Returns the brochure.",
     inputSchema: {
       type: "object",
       required: ["brochure", "positions"],

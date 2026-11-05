@@ -26,3 +26,4 @@ export { mmToUnits, paperSize, unitsToMm } from "./paper-size";
 export { pruneBrochure } from "./prune-brochure";
 export { splitLegacyBrochure } from "./split-legacy-brochure";
 export { newSlot } from "./slot-edits";
+export { storedPosition } from "./stored-position";

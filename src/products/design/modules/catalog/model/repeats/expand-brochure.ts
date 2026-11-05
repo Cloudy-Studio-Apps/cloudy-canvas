@@ -5,6 +5,7 @@ import { copyName } from "./copy-name";
 import { expandedId } from "./expanded-id";
 import { loopContexts } from "./loop-contexts";
 import { rowsPerPage } from "./loop-units";
+import { placeDetached } from "./place-detached";
 import { repeatTree } from "./repeat-tree";
 import type { BrochureExpansion, ExpandedPage, ExpandedSection } from "./expand-brochure.types";
 import type { ExpandContext, RepeatNode, RepeatSectionNode } from "./repeat-tree.types";
@@ -16,7 +17,8 @@ import type { ExpandContext, RepeatNode, RepeatSectionNode } from "./repeat-tree
  * `perPage` rows; inner repeats expand inside each copy. While designing the template pages show
  * the preview row, a few copies are made and the rest are pending (`made: false`), planned in full
  * (their own inner loops too) so page counts and numbers are right; in an export all are made.
- * Section names read their tokens in each copy's scope, in the brochure's language. Pure: nothing
+ * Section names read their tokens in each copy's scope, in the brochure's language. Copies taken
+ * out of a repeat (`detached`) are plain pages where they were (`placeDetached`). Pure: nothing
  * is written.
  */
 export function expandBrochure(
@@ -82,5 +84,6 @@ export function expandBrochure(
   };
 
   walk(repeatTree(record), { scope: root, layers: [], path: [], made: true, printed: true });
+  placeDetached(record, pages, sections);
   return { pages, sections, pending: pages.filter((item) => !item.made && item.printed).length };
 }

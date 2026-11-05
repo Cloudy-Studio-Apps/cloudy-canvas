@@ -4,9 +4,12 @@ import { placeSections, sectionWithChildren } from "../sections";
 import type { PlacedSection } from "../sections";
 import type { RepeatNode } from "./repeat-tree.types";
 
-/** The slots the user placed: every slot but the copies repeats made. */
+/**
+ * The slots the user placed: every slot but the copies repeats made and the copies taken out of
+ * them (`detached`, plain pages outside every run, `placeDetached`).
+ */
 export function templateSlots(record: Pick<BrochureElement, "slots">): BrochureSlot[] {
-  return record.slots.filter((slot) => !slot.generated);
+  return record.slots.filter((slot) => !slot.generated && !slot.detached);
 }
 
 /** Where a placed section's pages end: the next section at its depth or less, else the last slot. */
@@ -21,8 +24,8 @@ function sectionEnd(placed: readonly PlacedSection[], at: number, slotCount: num
  * A brochure's template slots as a tree: each section holds the pages from its start to the next
  * section at its depth or less, its subsections nested (`placeSections`). A repeating section also
  * ends before the back cover (`backCoverSlot`), so the closing page prints once; a subsection
- * starting there then reads as in the section around the repeating one. Copies (`generated`) are
- * left out.
+ * starting there then reads as in the section around the repeating one. Copies (`generated`) and
+ * copies taken out of a repeat (`detached`) are left out.
  */
 export function repeatTree(
   record: Pick<BrochureElement, "slots" | "sections" | "settings">,

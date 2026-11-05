@@ -20,7 +20,9 @@ import { t } from "../../catalog.i18n";
 /**
  * One brochure page: its number, picture, frame and options. A click selects it (`onClick`, with
  * Ctrl/⌘ and Shift for several, owned by the list); rows drag to reorder (`rowDrag`), several when
- * they're selected; × takes it out of the brochure, and a right-click opens its menu (`PageRowMenu`). The one page selected lists its options.
+ * they're selected; × takes it out of the brochure (a copy a repeat made is detached from its repeat
+ * instead, staying where it is), and a right-click opens its menu (`PageRowMenu`). The one page
+ * selected lists its options.
  * A page that repeats is badged, a copy a repeat made carries the data mark ("Copy of …"), and a
  * template page that doesn't print for its row is dimmed ("Not printed for this row").
  */
@@ -103,7 +105,7 @@ export function BrochurePageRow({
             onClick={(event) => event.stopPropagation()}
           >
             <PanelIconButton
-              label={t("tab.page.remove")}
+              label={generated ? t("repeat.detach") : t("tab.page.remove")}
               onClick={() => brochure?.removePages([page.slot.id])}
             >
               <X />

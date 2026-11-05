@@ -371,6 +371,10 @@
     "notPrinted": "Not printed for this row",
     "copyTitle": "Repeated page",
     "copyHint": "A repeat made this page for one row of its list. It follows its template page: edit that one.",
-    "showTemplate": "Show the template page"
+    "showTemplate": "Show the template page",
+    "generatedMove": "Pages a repeat made follow their template, so they can't be moved. Detach one from the repeat to move it on its own.",
+    "detach": "Detach from the repeat",
+    "detachHint": "Detached, it stays here as a normal page you can edit, and the repeat doesn't make its row again. A copy of a repeated section is detached with all its pages.",
+    "deleteCopy": "Delete this copy's pages"
   }
 }

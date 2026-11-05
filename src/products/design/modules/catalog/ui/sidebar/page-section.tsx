@@ -19,7 +19,8 @@ import { t } from "../../catalog.i18n";
  * The selected page: its number, frame and size, its master, the section it starts, the option it
  * prints (picked among its options), and going back to design it or taking it out of the brochure.
  * A template page sets its repeat ("Repeat this page") and the repeats of the sections starting on
- * it; a page a repeat made only says what it follows (its master and sections are its template's).
+ * it; a page a repeat made only says what it follows (its master and sections are its template's),
+ * and one taken out of a repeat (`detached`) neither starts sections nor repeats.
  */
 export function PageSection({ page }: PageSectionProps) {
   const engine = useDesignEngine();
@@ -45,13 +46,18 @@ export function PageSection({ page }: PageSectionProps) {
           <PanelSection title={t("pageMaster.label")}>
             <PageMasterField slotIds={[page.slot.id]} />
           </PanelSection>
-          <PanelSection title={t("section.title")}>
-            <SectionFields page={page} />
-          </PanelSection>
-          {starting.map((section) => (
-            <BrochureRepeatSection key={section.id} target={{ section: section.id }} />
-          ))}
-          <BrochureRepeatSection target={{ slot: page.slot.id }} />
+          {/* A page taken out of a repeat is outside every run: it starts nothing, nor repeats. */}
+          {!page.slot.detached && (
+            <>
+              <PanelSection title={t("section.title")}>
+                <SectionFields page={page} />
+              </PanelSection>
+              {starting.map((section) => (
+                <BrochureRepeatSection key={section.id} target={{ section: section.id }} />
+              ))}
+              <BrochureRepeatSection target={{ slot: page.slot.id }} />
+            </>
+          )}
         </>
       )}
       <PanelSection title={t("page.options")}>
@@ -98,7 +104,7 @@ export function PageSection({ page }: PageSectionProps) {
           {t("page.edit")}
         </Button>
         <Button size="sm" variant="ghost" onClick={() => brochure?.removePages([page.slot.id])}>
-          {t("tab.page.remove")}
+          {copy ? t("repeat.detach") : t("tab.page.remove")}
         </Button>
       </div>
     </>

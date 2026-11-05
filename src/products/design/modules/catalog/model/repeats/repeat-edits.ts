@@ -21,7 +21,7 @@ function without<T extends { repeat?: BrochureRepeat }>(item: T): T {
  * A section's or page's repeat set (`repeat` merged over the one there; a list to read is
  * required) or removed (`null`: the copies its loop made go, the template pages stay as normal
  * pages). `null` when nothing changes. Throws for a section or page that isn't in the brochure,
- * a copy a repeat made, or a repeat with no list. Pure.
+ * a copy a repeat made (or one taken out of it), or a repeat with no list. Pure.
  */
 export function repeatEdit(
   record: Pick<BrochureElement, "slots" | "sections">,
@@ -33,6 +33,7 @@ export function repeatEdit(
   const slot = "slot" in target ? record.slots.find((item) => item.id === id) : undefined;
   if (!section && !slot) throw new Error(`"${id}" isn't a section or page of the brochure.`);
   if (slot?.generated) throw new Error("A page a repeat made can't repeat itself.");
+  if (slot?.detached) throw new Error("A page taken out of a repeat can't repeat itself.");
   const current = (section ?? slot)?.repeat;
 
   if (repeat === null) {

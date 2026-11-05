@@ -38,3 +38,14 @@ export interface GeneratedSlot {
   /** Its copy segments (`copySegment`), outermost first: the `ExpandedPage.path` it was made for. */
   path: string[];
 }
+
+/**
+ * A page taken out of a repeat (`BrochureSlot.detached`): it was a copy, its copy path is in its
+ * loop's `detached`, and it's now a plain page where it was, outside every run.
+ */
+export interface DetachedSlot {
+  /** The loop it was made by: the repeating section's or slot's id. */
+  owner: string;
+  /** Its copy's path (`copyPathKey`), as in the loop's `detached`. */
+  key: string;
+}

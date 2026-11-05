@@ -19,6 +19,8 @@ import { keptSections } from "./masters/master-edits";
 import { withSection } from "./sections/section-edits";
 import { brochureLanguage, retranslateItems } from "./language";
 import { brochureExpansion } from "./repeats/brochure-expansion";
+import { detachGenerated } from "./repeats/detach-generated";
+import { freedCopyPatches } from "./repeats/freed-copy-patches";
 import { generatedLayers } from "./repeats/generated-layers";
 import { repeatEdit } from "./repeats/repeat-edits";
 import type { BrochureRepeat } from "./repeats/brochure-repeat.types";
@@ -28,6 +30,7 @@ import {
   addOption,
   addPages,
   chooseOption,
+  keepingSlots,
   moveSlot,
   moveSlots,
   pickPages,
@@ -175,23 +178,49 @@ export class DesignBrochure {
     this.writeSlots((slots) => moveSlots(slots, slotIds, position));
   }
 
+  /**
+   * Takes pages out of the brochure (their frames stay in the design). A page a repeat made is
+   * detached instead (`detachGenerated`): it stays where it is as a plain page, untagged and
+   * unlocked, and its row isn't made again (a section's copy is detached with all its pages).
+   */
   removePages(slotIds: Iterable<string>): void {
-    this.writeSlots((slots) => removeSlots(slots, slotIds));
+    const ids = new Set(slotIds);
+    const copies = this.copies((slot) => ids.has(slot.id));
+    for (const slot of copies) ids.delete(slot.id);
+    this.writeSlots((slots) => removeSlots(slots, ids), copies);
   }
 
-  /** Takes frames out of the brochure (they stay in the design). */
+  /** Takes frames out of the brochure (they stay in the design); a copy's is detached (`removePages`). */
   removeFrames(frames: Iterable<string>): void {
-    this.writeSlots((slots) => removeFrames(slots, frames));
+    const gone = new Set(frames);
+    const copies = this.copies((slot) => slot.frames.some((frame) => gone.has(frame)));
+    const copied = new Set(copies.flatMap((slot) => slot.frames));
+    const out = [...gone].filter((frame) => !copied.has(frame));
+    this.writeSlots((slots) => removeFrames(slots, out), copies);
   }
 
-  /** What the pick tool's ticks on its design page make of the brochure (see `pickPages`). */
+  /**
+   * What the pick tool's ticks on its design page make of the brochure (see `pickPages`); a page a
+   * repeat made that's unticked is detached and taken out (`detachGenerated`).
+   */
   pick(ticked: readonly string[], onPage: ReadonlySet<string>): void {
-    this.writeSlots((slots) => pickPages(slots, ticked, onPage));
+    const keep = new Set(ticked);
+    const copies = this.copies((slot) => onPage.has(slot.chosen) && !keep.has(slot.chosen));
+    this.writeSlots((slots) => pickPages(slots, ticked, onPage), copies);
   }
 
-  /** Replaces every page (agents' `set_brochure_pages`; the slots are checked by the caller). */
+  /**
+   * Replaces every page (agents' `set_brochure_pages`; the slots are checked by the caller). A page
+   * printing the frame one printed is that one (`keepingSlots`); a page a repeat made that's left
+   * out is detached and taken out (`detachGenerated`).
+   */
   setSlots(slots: readonly BrochureSlot[]): void {
-    this.writeSlots(() => [...slots]);
+    const next = keepingSlots(this.record()?.slots ?? [], slots);
+    const kept = new Set(next.map((slot) => slot.id));
+    this.writeSlots(
+      () => next,
+      this.copies((slot) => !kept.has(slot.id)),
+    );
   }
 
   /**
@@ -247,9 +276,28 @@ export class DesignBrochure {
     return new BrochureMasters(this.doc, this);
   }
 
-  private writeSlots(edit: (slots: readonly BrochureSlot[]) => BrochureSlot[]): void {
+  /** The pages its repeats made that `test` picks. */
+  private copies(test: (slot: BrochureSlot) => boolean): BrochureSlot[] {
+    return (this.record()?.slots ?? []).filter((slot) => slot.generated && test(slot));
+  }
+
+  /** Writes a slot edit; `copies`, pages its repeats made, are detached with it, in one step. */
+  private writeSlots(
+    edit: (slots: readonly BrochureSlot[]) => BrochureSlot[],
+    copies: readonly BrochureSlot[] = [],
+  ): void {
     const record = this.record();
     const current = record?.slots ?? [];
+    if (record && copies.length > 0) {
+      const detach = detachGenerated({ slots: edit(current), sections: record.sections }, copies);
+      const freed = freedCopyPatches(this.doc, record.id, detach.free);
+      this.doc.checkpoint();
+      this.doc.batch(() => {
+        if (freed.size > 0) this.doc.updateMany(freed);
+        this.write({ slots: detach.slots, sections: keptSections(detach.sections, detach.slots) });
+      });
+      return;
+    }
     const slots = edit(current);
     if (sameSlots(slots, current)) return;
     // A section starting on a page that went goes; the one before it runs on.

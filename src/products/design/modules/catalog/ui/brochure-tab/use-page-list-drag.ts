@@ -1,4 +1,6 @@
 import { useRowDrag } from "@canvas-ui";
+import { toast } from "@shared/stores/toast-store";
+import { storedPosition } from "../../model/stored-position";
 import { useBrochure } from "../hooks/use-brochure";
 import { dropId, dropPosition, dropsBackCover, parseDropId } from "./drop-position";
 import type { ListDropTarget } from "./drop-position.types";
@@ -8,7 +10,9 @@ import { t } from "../../catalog.i18n";
 /**
  * Dragging in the page list: a page (every selected one when it's one of them) or a section's
  * folder (all its pages, its subsections' too) onto pages, blank pages, spread headings,
- * folders (last in that section) and the list's end.
+ * folders (last in that section) and the list's end. The drop's place, counted over the rows shown
+ * (pending pages too), is moved to the stored pages' (`storedPosition`). A page a repeat made
+ * never moves: dropping one is refused with a toast.
  */
 export function usePageListDrag({ list, folders }: PageListDragInput): PageListDrag {
   const { brochure, pages, layout, settings } = useBrochure();
@@ -30,6 +34,13 @@ export function usePageListDrag({ list, folders }: PageListDragInput): PageListD
       const over = parseDropId(overId);
       if (!over || !brochure) return;
       const dragged = carriedFor(id);
+      const copies = new Set(
+        pages.filter((page) => page.slot.generated).map((page) => page.slot.id),
+      );
+      if (dragged.some((slotId) => copies.has(slotId))) {
+        toast({ title: t("repeat.generatedMove") });
+        return;
+      }
       // The back cover dropped on its own blank: it becomes a page, the back cover goes.
       if (dropsBackCover(layout, dragged, over)) {
         brochure.setSettings({ covers: settings.covers === "both" ? "front" : "none" });
@@ -44,7 +55,9 @@ export function usePageListDrag({ list, folders }: PageListDragInput): PageListD
         drop.target,
         drop.after ? "after" : side,
       );
-      if (position !== null) brochure.moveMany(dragged, position);
+      if (position === null) return;
+      const slots = brochure.record()?.slots ?? [];
+      brochure.moveMany(dragged, storedPosition(slots, pages, dragged, position));
     },
     canDrop: (id, overId) => {
       const dragged = carriedFor(id);

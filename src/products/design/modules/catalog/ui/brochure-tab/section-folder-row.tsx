@@ -6,6 +6,7 @@ import { PanelIconButton } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { cn } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
+import { CopyFolderMenu } from "./copy-folder-menu";
 import { renameSection } from "../section-actions";
 import { useCatalogViewStore } from "../stores/catalog-view-store";
 import { dropId } from "./drop-position";
@@ -20,8 +21,9 @@ import { t } from "../../catalog.i18n";
  * A section as a folder over its pages: the chevron folds it away, a click selects its pages, a
  * double-click on the name renames it, and it drags with all its pages (its subsections too). A
  * page dropped on it goes last in it; a right-click opens its menu (`SectionFolderMenu`). A section
- * that repeats is badged; a copy a repeat made carries the data mark and is only folded and
- * selected: never renamed, dragged, dropped on or given section actions.
+ * that repeats is badged; a copy a repeat made carries the data mark and is only folded, selected,
+ * detached or deleted (`CopyFolderMenu`): never renamed, dragged, dropped on or given section
+ * actions.
  */
 export function SectionFolderRow({ folder, rowDrag, carried }: SectionFolderRowProps) {
   const engine = useDesignEngine();
@@ -94,7 +96,7 @@ export function SectionFolderRow({ folder, rowDrag, carried }: SectionFolderRowP
   return (
     <li>
       {copy ? (
-        row
+        <CopyFolderMenu folder={folder}>{row}</CopyFolderMenu>
       ) : (
         <SectionFolderMenu folder={folder} onRename={() => setRenaming(true)}>
           {row}
