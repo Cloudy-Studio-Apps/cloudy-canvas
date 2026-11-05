@@ -2,7 +2,14 @@ import type { CanvasDocument, ElementPatch } from "@canvas";
 
 import { missingSettings } from "../settings";
 import { isDataSource, type DataSourceElement } from "../source";
-import { extraValues, findLists, guessFields, SHAPE_ERRORS } from "../table";
+import {
+  extraValues,
+  findLists,
+  guessFields,
+  normalizeRows,
+  placeRows,
+  SHAPE_ERRORS,
+} from "../table";
 import { shapedData } from "./shaped-data";
 import { removeAddedPictures } from "./remove-added-pictures";
 import type { SourceRead } from "./shaped-data.types";
@@ -64,7 +71,7 @@ export async function updateSource(
 
     const services = ctx.services;
     const warnings: string[] = [];
-    const parsed = await readData(
+    const { parsed: fetched, placed } = await readData(
       {
         type,
         settings: source.settings,
@@ -83,6 +90,8 @@ export async function updateSource(
     // ones current when it writes win (below). With a shape step that changes something the rows
     // as read are kept too, so the step can change without fetching again (`setShape`).
     let read: SourceRead = { rowsPath: source.rowsPath, shape: source.shape ?? null };
+    // The data as the rows path in `read` finds it (re-placed when the path changes below).
+    let parsed = fetched;
     let { rows, raw: kept } = shapedData(parsed, read.rowsPath, read.shape);
     signal.throwIfAborted();
 
@@ -120,6 +129,11 @@ export async function updateSource(
       current = record(doc, id);
       for (let tries = 0; !sameRead(current, read); tries++) {
         if (tries >= MAX_RESHAPES) throw new Error(SHAPE_ERRORS.changed);
+        // A paged type put its rows at the path it was given: put them at the new one.
+        if (placed && current.rowsPath !== read.rowsPath) {
+          const found = normalizeRows(parsed, read.rowsPath);
+          if (found) parsed = placeRows(found, current.rowsPath);
+        }
         read = { rowsPath: current.rowsPath, shape: current.shape ?? null };
         ({ rows, raw: kept } = shapedData(parsed, read.rowsPath, read.shape));
         encoded = await encodeRows(rows, kept);

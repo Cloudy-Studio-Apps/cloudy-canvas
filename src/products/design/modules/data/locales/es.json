@@ -477,7 +477,7 @@
       }
     },
     "pages": {
-      "intro": "Algunos sitios entregan sus filas de a pocas. Elige cómo lo hace este y Cloudy Canvas leerá todas las páginas y unirá las filas. Probar lee solo la primera página.",
+      "intro": "Algunos sitios entregan sus filas de a pocas. Elige cómo lo hace este y Cloudy Canvas leerá todas las páginas (las respuestas deben ser JSON) y unirá las filas. Solo se conserva la lista elegida en De dónde vienen las filas. Probar lee solo la primera página.",
       "pageHint": "Pide la página 1, 2, 3… cambiando un ajuste del enlace.",
       "offsetHint": "Pide filas desde la 0 y luego a continuación de las ya leídas.",
       "nextHint": "Sigue el enlace que cada respuesta da para la página siguiente.",
@@ -526,6 +526,9 @@
     "same": "Se detuvo tras {pages} páginas: la siguiente devolvió las mismas filas, así que el sitio puede estar ignorando el ajuste de página. Se conservaron las filas leídas.",
     "limit": "Se detuvo en el límite de {pages} páginas. Se conservaron las filas leídas; sube el límite en Páginas para leer más.",
     "notJson": "{url} no respondió JSON, que es lo que necesita la lectura por páginas.",
-    "warnings": "Leído con un aviso"
+    "warnings": "Leído con un aviso",
+    "failed": "Se detuvo en la página {page}: {message} Se conservaron las filas leídas antes.",
+    "otherSite": "Se detuvo tras {pages} páginas: la siguiente está en otro sitio y tus claves nunca se envían allí. Se conservaron las filas leídas.",
+    "noNextPath": "Indica dónde está en la respuesta el enlace a la página siguiente (pestaña Páginas)."
   }
 }

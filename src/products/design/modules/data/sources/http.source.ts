@@ -1,9 +1,10 @@
 import { t } from "../data.i18n";
 import type { DataSourceType } from "../data.points.types";
 import { withoutExtension } from "../settings";
+import { placeRows } from "../table";
 import { answeredMessage } from "../update";
 import { buildHttpRequest } from "./http-request";
-import { firstPageUrl, fetchPages, pagingSettings, placeRows } from "./http-pagination";
+import { fetchPages, firstPageUrl, pagingSettings } from "./http-pagination";
 import { httpSettings } from "./http-settings";
 
 function textSetting(value: unknown): string {
@@ -64,6 +65,7 @@ export const HTTP_SOURCE: DataSourceType = {
     const url = textSetting(settings.url).trim();
     if (!url) throw new Error("No URL.");
     const paging = pagingSettings(settings);
+    if (paging.mode === "next" && paging.nextPath === "") throw new Error(t("paging.noNextPath"));
     // One request to `at`, with the link's headers and sign-in (every page gets them).
     const get = async (at: string) => {
       const request = buildHttpRequest({ ...settings, url: at }, ctx.secrets);
@@ -93,6 +95,7 @@ export const HTTP_SOURCE: DataSourceType = {
     return {
       text: JSON.stringify(placeRows(rows, ctx.rowsPath)),
       mime: "application/json",
+      rowsPlaced: true,
       fileName: lastSegment(url),
     };
   },

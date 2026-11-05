@@ -477,7 +477,7 @@
       }
     },
     "pages": {
-      "intro": "Some sites give their rows a few at a time. Choose how this one does, and Cloudy Canvas reads every page and joins the rows. Try it reads only the first page.",
+      "intro": "Some sites give their rows a few at a time. Choose how this one does, and Cloudy Canvas reads every page (the answers must be JSON) and joins the rows. Only the list chosen under Rows come from is kept. Try it reads only the first page.",
       "pageHint": "Asks for page 1, 2, 3… by changing one setting of the link.",
       "offsetHint": "Asks for rows starting at 0, then after the rows already read.",
       "nextHint": "Follows the link each answer gives for the next page.",
@@ -526,6 +526,9 @@
     "same": "Stopped after {pages} pages: the next page gave the same rows again, so the site may be ignoring the page setting. The rows so far were kept.",
     "limit": "Stopped at the limit of {pages} pages. The rows so far were kept; raise the limit under Pages to read more.",
     "notJson": "{url} didn't answer JSON, which reading in pages needs.",
-    "warnings": "Read with a warning"
+    "warnings": "Read with a warning",
+    "failed": "Stopped at page {page}: {message} The rows read before it were kept.",
+    "otherSite": "Stopped after {pages} pages: the next page is on another site, and your keys are never sent there. The rows so far were kept.",
+    "noNextPath": "Say where the answer holds the link to the next page (Pages tab)."
   }
 }

@@ -1,7 +1,7 @@
 import { detectFormat } from "../formats";
 import { isWebPage } from "./is-web-page";
 import { UPDATE_ERRORS } from "./update-errors";
-import type { ReadDataInput } from "./read-data.types";
+import type { ReadDataInput, ReadResult } from "./read-data.types";
 import type { DataContext, UpdateStage } from "./update-source.types";
 
 /**
@@ -14,7 +14,7 @@ export async function readData(
   signal: AbortSignal,
   onStage?: (stage: UpdateStage) => void,
   onWarning?: (message: string) => void,
-): Promise<unknown> {
+): Promise<ReadResult> {
   onStage?.("fetching");
   const { services } = ctx;
   const raw = await input.type.update(input.settings, {
@@ -41,5 +41,5 @@ export async function readData(
   }
   const parsed = await format.parse(raw, input.formatOptions);
   signal.throwIfAborted();
-  return parsed;
+  return { parsed, placed: raw.rowsPlaced === true };
 }

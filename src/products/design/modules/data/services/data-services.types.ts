@@ -16,6 +16,8 @@ export interface DataServices {
 
 /** Data as a source type fetched it, before a format parses it. */
 export interface RawData {
+  /** The rows are already found and placed at the source's `rowsPath` (a link that pages). */
+  rowsPlaced?: boolean;
   text?: string;
   bytes?: Uint8Array;
   mime?: string;

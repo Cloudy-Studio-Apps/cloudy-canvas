@@ -57,7 +57,7 @@ export async function previewSource(
     }
 
     const notes: string[] = [];
-    const parsed = await readData(
+    const { parsed } = await readData(
       {
         type,
         settings,

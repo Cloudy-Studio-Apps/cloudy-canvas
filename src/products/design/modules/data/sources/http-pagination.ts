@@ -1,6 +1,6 @@
 import { t } from "../data.i18n";
 import type { SettingValue } from "../source";
-import { normalizeRows, parsePath, readPath } from "../table";
+import { normalizeRows, readPath } from "../table";
 import { UPDATE_ERRORS } from "../update";
 import type { DataRow } from "../table";
 import type {
@@ -80,6 +80,8 @@ export async function fetchPages(
   let link: string | null = firstPageUrl(input.url, paging);
   let before: string | null = null;
   let pages = 0;
+  // Secrets go only to the first link's site: a next link elsewhere ends the reading.
+  const origin = new URL(input.url).origin;
   while (link !== null) {
     signal.throwIfAborted();
     if (seen.has(link)) {
@@ -91,38 +93,40 @@ export async function fetchPages(
       break;
     }
     seen.add(link);
-    const page = await fetchOne(link);
-    signal.throwIfAborted();
-    const list = normalizeRows(page, input.rowsPath);
-    if (!list) throw new Error(`${UPDATE_ERRORS.noList}${input.rowsPath ?? ""}`);
+    let page: unknown;
+    let list: DataRow[];
+    try {
+      page = await fetchOne(link);
+      signal.throwIfAborted();
+      const found = normalizeRows(page, input.rowsPath);
+      if (!found) throw new Error(`${UPDATE_ERRORS.noList}${input.rowsPath ?? ""}`);
+      list = found;
+    } catch (error) {
+      // The first page failing fails the Update; a later one keeps the rows read, with a warning.
+      if (pages === 0 || signal.aborted) throw error;
+      const message = error instanceof Error ? error.message : String(error);
+      input.warn(t("paging.failed", { page: pages + 1, message }));
+      break;
+    }
     // With no rows path, a response without a list reads as one row (itself): after the first
     // page that is the end ({ "results": [] }), not a row.
     const ended = list.length === 0 || (pages > 0 && list.length === 1 && list[0] === page);
     if (ended) break;
-    pages++;
     const fingerprint = JSON.stringify(list);
     if (fingerprint === before) {
       input.warn(t("paging.same", { pages }));
       break;
     }
+    pages++;
     before = fingerprint;
     for (const row of list) rows.push(row);
-    if (paging.mode === "next") link = nextLink(page, paging, link);
-    else link = pageUrl(input.url, paging, pages, rows.length);
+    if (paging.mode === "next") {
+      link = nextLink(page, paging, link);
+      if (link !== null && new URL(link).origin !== origin) {
+        input.warn(t("paging.otherSite", { pages }));
+        break;
+      }
+    } else link = pageUrl(input.url, paging, pages, rows.length);
   }
   return { rows, pages };
-}
-
-/**
- * The pages' rows placed where `rowsPath` says (`data.items` gives `{ "data": { "items": rows } }`),
- * so reading the combined result with the same "Rows come from" path finds them and the path is
- * not applied to anything else. Without a path, the rows themselves.
- */
-export function placeRows(rows: DataRow[], rowsPath: string | null): unknown {
-  if (rowsPath === null || rowsPath === "") return rows;
-  let value: unknown = rows;
-  for (const step of parsePath(rowsPath).reverse()) {
-    value = "index" in step ? Object.assign([], { [step.index]: value }) : { [step.key]: value };
-  }
-  return value;
 }

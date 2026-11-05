@@ -145,7 +145,8 @@ export const dataTools: DesignMcpTool[] = [
     description:
       "Fetches a data source again into a new snapshot (one undo step; a failure changes " +
       "nothing), or every source with `all: true`. May take a while. Returns the result of " +
-      "each: ok, rowCount, changed, the error, and imagesFailed: how many pictures the data " +
+      "each: ok, rowCount, changed, the error, `warnings` (a link that reads pages and stopped " +
+      "early, keeping the rows it had) and imagesFailed: how many pictures the data " +
       "names (image-url, image-base64 and image-file fields) couldn't be saved in the file " +
       "(imagesOverLimit of them past the 2,000 new pictures one Update saves). Missing secrets " +
       "fail it with `Missing: …`.",

@@ -11,3 +11,4 @@ export { isIncluded, isPlainShape, rowFields, shapedPath, shapeRows } from "./sh
 export { checkShape, fieldPaths, readShape } from "./check-shape";
 export { shapeRenames } from "./shape-renames";
 export { readShapeError, SHAPE_ERRORS } from "./shape-errors";
+export { placeRows } from "./place-rows";

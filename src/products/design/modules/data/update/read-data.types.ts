@@ -14,3 +14,9 @@ export interface ReadDataInput {
   /** Try it asks, so a type that pages gets only the first page. */
   preview?: boolean;
 }
+
+/** Data read and parsed; `placed`: its rows were found by the type already, at the rows path. */
+export interface ReadResult {
+  parsed: unknown;
+  placed: boolean;
+}
