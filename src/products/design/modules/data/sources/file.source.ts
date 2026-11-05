@@ -1,6 +1,6 @@
 import { t } from "../data.i18n";
 import type { DataSourceType } from "../data.points.types";
-import { CSV_FORMAT, JSON_FORMAT } from "../formats";
+import { CSV_FORMAT, JSON_FORMAT, XLSX_FORMAT } from "../formats";
 import { baseName, withoutExtension } from "../settings";
 import { UPDATE_ERRORS } from "../update";
 
@@ -22,7 +22,11 @@ export const FILE_SOURCE: DataSourceType = {
         key: "path",
         kind: "file" as const,
         label: t("sources.file.path"),
-        extensions: [...CSV_FORMAT.extensions, ...JSON_FORMAT.extensions],
+        extensions: [
+          ...CSV_FORMAT.extensions,
+          ...JSON_FORMAT.extensions,
+          ...XLSX_FORMAT.extensions,
+        ],
       },
       { key: "imagesFolder", kind: "folder" as const, label: t("sources.file.imagesFolder") },
     ];

@@ -14,7 +14,7 @@ import {
 } from "./mcp";
 import { dataFormats, dataSourceTypes } from "./data.points";
 import { dataSourceForms } from "./ui/data.points";
-import { CSV_FORMAT, JSON_FORMAT } from "./formats";
+import { CSV_FORMAT, JSON_FORMAT, XLSX_FORMAT } from "./formats";
 import { FILE_SOURCE, HTTP_SOURCE } from "./sources";
 import { forgetRemovedSources } from "./model";
 import { everyRowCopy, syncData } from "./sync";
@@ -39,7 +39,7 @@ import * as dataUi from "./ui";
 
 /**
  * Data: sources of data (a file, a link, a sheet) a design's layers can be filled from. It holds
- * the source record, the built-in source types (file, link) and formats (CSV, JSON), the Data tab
+ * the source record, the built-in source types (file, link) and formats (CSV, JSON, Excel), the Data tab
  * and the session hook that hands the sources this device's services, the sync that keeps
  * layers bound to data (and iterators' copies) up to date, and the properties panel's Data
  * section that binds a layer, its Repeat section and the copies' section and badge.
@@ -63,7 +63,7 @@ export const dataModule = defineModule({
     // A bound text is edited as its template; the sync then writes what it shows.
     host.contribute(textTemplates, BOUND_TEXT_TEMPLATE);
     host.contribute(dataSourceTypes, FILE_SOURCE, HTTP_SOURCE);
-    host.contribute(dataFormats, CSV_FORMAT, JSON_FORMAT);
+    host.contribute(dataFormats, CSV_FORMAT, JSON_FORMAT, XLSX_FORMAT);
     // A link's own form: the connection as a card, edited in the Connection dialog.
     host.contribute(dataSourceForms, { type: HTTP_SOURCE.id, component: HttpSourceForm });
     host.contribute(designEditor.leftTabs, {

@@ -55,6 +55,12 @@
     },
     "json": {
       "label": "JSON"
+    },
+    "xlsx": {
+      "label": "Excel",
+      "sheet": "Hoja",
+      "sheetPlaceholder": "Primera hoja",
+      "headerRow": "Fila de encabezado (vacío: primera fila con datos)"
     }
   },
   "source": {
