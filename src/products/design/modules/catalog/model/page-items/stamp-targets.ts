@@ -25,7 +25,8 @@ function masterFor(
 /**
  * Every page of the brochure as it's stamped: each printed side, on every option frame of its
  * page (so choosing another option shows a finished page), a spread frame's two halves apart.
- * Blank pages the layout adds have no frame, so nothing.
+ * Blank pages the layout adds have no frame, so nothing, and neither do pending pages (they read
+ * as their template's frame, which is stamped as its own page).
  */
 export function stampTargets(
   doc: CanvasDocument,
@@ -36,7 +37,7 @@ export function stampTargets(
   const targets: StampTarget[] = [];
   layout.sides.forEach((side, i) => {
     const info = numbers[i];
-    if (side.kind !== "page" || !info) return;
+    if (side.kind !== "page" || !info || side.page.pending) return;
     const { slot, options } = side.page;
     const master = masterFor(doc, record, slot, info);
     const skip = new Set(slot.skip ?? []);

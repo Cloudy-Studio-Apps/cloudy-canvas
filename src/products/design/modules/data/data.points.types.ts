@@ -41,6 +41,9 @@ export interface DataFormat {
  * Its layers sit between the sources and the card repeaters inside the frame. Called once per
  * frame per sync pass, so it may read the document freely; `root` is the scope of the document's
  * sources the asker built, which the provider may read its lists in rather than build its own.
+ * `root` is one object per pass: a provider whose answer needs a document-wide walk (a brochure's
+ * expansion) memoizes it on `root` (a `WeakMap`), as catalog's does, so a pass walks once rather
+ * than once per frame.
  */
 export type DataScopeProvider = (
   doc: CanvasDocument,

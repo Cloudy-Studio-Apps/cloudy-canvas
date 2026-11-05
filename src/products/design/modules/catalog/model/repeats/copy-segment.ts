@@ -10,3 +10,9 @@ export function copySegment(owner: string, key: string): string {
 export function copyPathKey(path: readonly string[]): string {
   return path.join("/");
 }
+
+/** The loop a copy segment belongs to: the repeating section's or slot's id. */
+export function segmentOwner(segment: string): string {
+  const at = segment.indexOf(":");
+  return at === -1 ? segment : segment.slice(0, at);
+}

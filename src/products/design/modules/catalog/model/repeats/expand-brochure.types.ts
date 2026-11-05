@@ -15,7 +15,10 @@ export interface ExpandedPage {
   layers: readonly ScopeLayer[];
   /** `false`: a pending page, counted but not made until the export. */
   made: boolean;
-  /** `false` when a page repeat's list is empty in its scope (or a section repeat's): no page prints. */
+  /**
+   * `false` when a page repeat's list is empty in its scope (or a section repeat's, or every row
+   * is detached): no page prints. A list this device can't read isn't empty: its template prints.
+   */
   printed: boolean;
 }
 

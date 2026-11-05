@@ -80,6 +80,11 @@ export function requirePagePosition(
       `"${key}" must be a page position from 1 to ${pages.length} (see get_brochure).`,
     );
   }
+  if (page.pending) {
+    throw new Error(
+      `Page ${Math.round(position as number)} is pending: a repeat makes it at export, so it can't be edited.`,
+    );
+  }
   return page;
 }
 

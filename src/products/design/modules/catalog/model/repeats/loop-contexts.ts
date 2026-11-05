@@ -21,8 +21,8 @@ function templatePass(wanted: number, count: number, isDetached: (at: number) =>
  * other rows follow as copies (path + `copySegment(owner, key)`), made while their place among the
  * copies is within `designLimit` (3 unset) and every loop around is made, all of them in an
  * export; detached copies (their whole path in `detached`) make none. An empty list, or one whose
- * every row is detached, gives the template alone, not printed. Pending copies are planned all the
- * same: only `made` differs.
+ * every row is detached, gives the template alone, not printed; a list this device can't read
+ * gives the template alone, printed. Pending copies are planned all the same: only `made` differs.
  *
  * Inside a copy of an outer loop, an inner page repeat whose list is empty there gives one pass
  * with the copy's path, `printed: false`: no frame is made for it (only the true template, path
@@ -79,7 +79,9 @@ export function loopContexts(
   const clamped = Math.min(Math.max(Number.isFinite(wanted) ? wanted : 0, 0), count - 1);
   const preview = count === 0 ? -1 : templatePass(clamped, count, isDetached);
   const shown = units[preview];
-  if (!shown) return [enter(null, ctx.path, ctx.made, false)];
+  // A list this device can't read isn't empty: the template prints as it is (and the copies made
+  // elsewhere are kept, `syncBrochureRepeats`). Only a readable list with no row prints nothing.
+  if (!shown) return [enter(null, ctx.path, ctx.made, unreadable && ctx.printed)];
   const out = [enter(shown, ctx.path, ctx.made, ctx.printed)];
   const limit = repeat.designLimit ?? DEFAULT_BROCHURE_DESIGN_LIMIT;
   let copies = 0;

@@ -26,3 +26,7 @@ export { pruneData } from "./prune-data";
 export { prepareDataCopies } from "./prepare-data-copies";
 export { freedPatch } from "./freed-patch";
 export { childrenMap, walkDescendants } from "./descendants";
+// Named apart from catalog's `templateParts` (a page item's text), both in the design's barrel.
+export { templateParts as templateCopyParts } from "./template-parts";
+export { mirroredField } from "./mirror-field";
+export { dataResolvedPaths, layoutPlacedPaths } from "./data-resolved-paths";

@@ -4,3 +4,4 @@ export { arrangeBlocks } from "./arrange-blocks";
 export { arrangeFrames } from "./arrange-frames";
 export { pushAside } from "./push-aside";
 export { arrangeBrochure } from "./arrange-brochure";
+export { arrangedPages } from "./arranged-pages";

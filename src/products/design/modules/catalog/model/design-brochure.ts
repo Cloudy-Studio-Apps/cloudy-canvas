@@ -8,7 +8,7 @@ import {
   type BrochureSlot,
 } from "../brochure";
 import type { FrameElement } from "../../frame";
-import { arrangeBrochure, type ArrangeMode } from "./arrange";
+import { arrangeBrochure, arrangedPages, type ArrangeMode } from "./arrange";
 import { bookLayout } from "./book-layout";
 import type { BookLayout } from "./book-layout.types";
 import { brochurePages } from "./brochure-pages";
@@ -18,6 +18,12 @@ import { BrochureMasters } from "./masters/brochure-masters";
 import { keptSections } from "./masters/master-edits";
 import { withSection } from "./sections/section-edits";
 import { brochureLanguage, retranslateItems } from "./language";
+import { brochureExpansion } from "./repeats/brochure-expansion";
+import { generatedLayers } from "./repeats/generated-layers";
+import { repeatEdit } from "./repeats/repeat-edits";
+import type { BrochureRepeat } from "./repeats/brochure-repeat.types";
+import type { BrochureExpansion } from "./repeats/expand-brochure.types";
+import type { RepeatTarget } from "./repeats/repeat-edits.types";
 import {
   addOption,
   addPages,
@@ -72,9 +78,42 @@ export class DesignBrochure {
     return bookLayout(this.pages(), this.settings());
   }
 
-  /** The page a frame is printed on or is an option of. */
+  /** The page a frame is printed on or is an option of (never a pending page). */
   pageOf(frameId: string): BrochurePage | undefined {
-    return this.pages().find((page) => page.options.some((option) => option.id === frameId));
+    return this.pages().find(
+      (page) => !page.pending && page.options.some((option) => option.id === frameId),
+    );
+  }
+
+  /** Its pages and sections with its repeats expanded (see `expandBrochure`). */
+  expansion(): BrochureExpansion {
+    const record = this.record();
+    return record ? brochureExpansion(this.doc, record) : { pages: [], sections: [], pending: 0 };
+  }
+
+  /** How many pages its repeats will make at export but haven't ("+36 pages at export"). */
+  pendingPages(): number {
+    return this.expansion().pending;
+  }
+
+  /**
+   * Sets a section's or page's repeat (merged over the one there), or removes it (`null`): the
+   * pages its loop made go, frames and slots, and the template pages stay as normal pages. One
+   * undo step; the copies are then made by the edit's sync (`syncBrochureRepeats`). Throws for a
+   * section or page not in the brochure, a page a repeat made, or a repeat with no list.
+   */
+  setRepeat(target: RepeatTarget, repeat: Partial<BrochureRepeat> | null): void {
+    const record = this.record();
+    if (!record) return;
+    const edit = repeatEdit(record, target, repeat);
+    if (!edit) return;
+    const { gone, ...patch } = edit;
+    const layers = generatedLayers(this.doc, record.id, gone);
+    this.doc.checkpoint();
+    this.doc.batch(() => {
+      if (layers.length > 0) this.doc.remove(layers);
+      this.write(patch);
+    });
   }
 
   settings(): BrochureSettings {
@@ -239,7 +278,7 @@ export class DesignBrochure {
   private arrangeAs(mode: ArrangeMode): Map<string, Point> {
     const record = this.record();
     if (!record) return new Map();
-    const pages = brochurePages(this.doc, record);
+    const pages = arrangedPages(brochurePages(this.doc, record));
     return arrangeBrochure(this.doc, record, bookLayout(pages, record.settings), pages, mode);
   }
 }

@@ -17,6 +17,7 @@ const OWN = new Set([
   "y",
   "dataCopy",
   "catalogCopy",
+  "repeatCopy",
 ]);
 
 function same(a: unknown, b: unknown): boolean {
@@ -26,8 +27,8 @@ function same(a: unknown, b: unknown): boolean {
 
 /**
  * A fresh copy of a template layer: a new id, under `parentId`, locked and tagged; a catalog
- * master's tag isn't copied. Its data fields come along, so `planBindings` then fills it from
- * its row.
+ * master's tag and a brochure page copy's (`repeatCopy`, on a card inside a generated page) aren't
+ * copied. Its data fields come along, so `planBindings` then fills it from its row.
  */
 export function copyNode(
   source: DesignNode,
@@ -37,6 +38,7 @@ export function copyNode(
 ): DesignNode {
   const copy = { ...source, id: createId(), parentId, pageId, locked: true, dataCopy: tag };
   delete (copy as { catalogCopy?: unknown }).catalogCopy;
+  delete (copy as { repeatCopy?: unknown }).repeatCopy;
   return copy as DesignNode;
 }
 

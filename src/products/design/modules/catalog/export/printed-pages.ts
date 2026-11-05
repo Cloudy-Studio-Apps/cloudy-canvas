@@ -3,7 +3,9 @@ import type { PrintedPage } from "./printed-pages.types";
 
 /**
  * The PDF's pages: the layout's sides in order, a blank page for each blank side, and spread
- * frames as their two halves (`split`) or one wide page.
+ * frames as their two halves (`split`) or one wide page. Pages that don't print (`notPrinted`)
+ * are left out; a pending page (a repeat's copy not made yet) can't print: the export makes
+ * every page first, on a scratch copy of the document.
  */
 export function printedPages(
   pages: readonly BrochurePage[],
@@ -13,6 +15,8 @@ export function printedPages(
   const size = brochurePageSize(pages) ?? { w: 0, h: 0 };
   return layout.sides.flatMap((side, i): PrintedPage[] => {
     if (side.kind === "blank") return [{ kind: "blank", size, sides: [i] }];
+    if (side.page.pending) throw new Error("Pending pages must be made before printing.");
+    if (side.page.notPrinted) return [];
     const { frame } = side.page;
     if (side.part !== "whole") {
       // Unsplit, a spread prints once, as its left side comes, and shows its right side too.

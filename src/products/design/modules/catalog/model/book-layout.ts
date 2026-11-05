@@ -8,12 +8,14 @@ import { brochurePageSize, spanOf } from "./page-span";
  * with a front cover the first page is alone on the right, spread frames give two facing pages
  * and start on a left page (a blank goes before one that wouldn't), and with a back cover the
  * last page ends alone on the left (after a blank when it wouldn't). In the single layout each
- * page is seen on its own, spread frames whole.
+ * page is seen on its own, spread frames whole. A page that doesn't print (`notPrinted`) takes no
+ * side; a pending one does, as its template page (it will print).
  */
 export function bookLayout(
-  pages: readonly BrochurePage[],
+  all: readonly BrochurePage[],
   settings: Pick<BrochureSettings, "layout" | "covers">,
 ): BookLayout {
+  const pages = all.filter((page) => !page.notPrinted);
   const size = brochurePageSize(pages);
   const span = (page: BrochurePage) => (size ? spanOf(page.frame, size) : 1);
   return settings.layout === "single" ? singleLayout(pages, span) : bookOf(pages, settings, span);

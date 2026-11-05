@@ -19,9 +19,11 @@ export async function checkBrochure(
   const layout = brochure.layout();
   const record = brochure.record();
   const refs = record ? pageRefs(layout, pageNumbers(layout, record)) : () => null;
+  // Pending pages are their template's frame (checked once, as itself); not printed ones print nothing.
+  const pages = brochure.pages().filter((page) => !page.pending && !page.notPrinted);
   const check = () =>
     brochureIssues({
-      pages: brochure.pages(),
+      pages,
       layout,
       refs,
       elements: doc.all(),
