@@ -14,6 +14,8 @@
 
 The earlier phases' constraints, plus:
 
+- **From the phase 4 review (left for later, fix if a task touches them):** brochure exports scan the document for sources on every expansion (`dataSourcesIn`; a cache needs a change signal inside `afterEdit`, see docs/performance-roadmap.md); a blank page right before a section start sits outside the repeat's bracket in the page list; a repeating section stops before the last page even when that page is a spread, not a back cover; `catalog/model/design-brochures.ts` is ~205 lines; a copy deleted outside the Catalog mode while its data can't be read here comes back on a device that can read it; a detached copy whose row later becomes the template's preview row shows twice while designing (export is right).
+
 - Shape is optional: a source without one behaves exactly as before.
 - The example plugin uses only what `host.require("data")` gives and the plugin API (`docs/plugins.md`); no deep imports (`scripts/check-public-api.mjs`).
 - API pagination stops at a page cap (default 50) and never loops on a repeated "next" URL.
