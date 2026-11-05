@@ -13,6 +13,7 @@ import { useSourceSecrets } from "../hooks/use-source-secrets";
 import { FieldTreeView } from "./field-tree-view";
 import { FormatSelect } from "./format-select";
 import { ImageFailuresLine } from "./image-failures-line";
+import { UpdateWarningsLine } from "./update-warnings-line";
 import { RemoveSourceButton } from "./remove-source-button";
 import { RowsFromField } from "./rows-from-field";
 import { RowsTable } from "./rows-table";
@@ -113,6 +114,7 @@ export function SourceSections({ source, sourceType, issues, onRemoved }: Source
       <PanelSection title={t("fields.title")}>
         <div className="flex flex-col gap-1">
           <ImageFailuresLine sourceId={source.id} />
+          <UpdateWarningsLine sourceId={source.id} />
           <FieldTreeView source={source} rows={rows} />
         </div>
       </PanelSection>

@@ -3,6 +3,7 @@ import type { DataSourceType } from "../data.points.types";
 import { withoutExtension } from "../settings";
 import { answeredMessage } from "../update";
 import { buildHttpRequest } from "./http-request";
+import { firstPageUrl, fetchPages, pagingSettings, placeRows } from "./http-pagination";
 import { httpSettings } from "./http-settings";
 
 function textSetting(value: unknown): string {
@@ -62,9 +63,37 @@ export const HTTP_SOURCE: DataSourceType = {
   async update(settings, ctx) {
     const url = textSetting(settings.url).trim();
     if (!url) throw new Error("No URL.");
-    const request = buildHttpRequest(settings, ctx.secrets);
-    const res = await ctx.services.http.request({ ...request, signal: ctx.signal });
-    if (!res.ok) throw new Error(answeredMessage(url, res.status));
-    return { bytes: res.bytes, mime: res.headers["content-type"], fileName: lastSegment(url) };
+    const paging = pagingSettings(settings);
+    // One request to `at`, with the link's headers and sign-in (every page gets them).
+    const get = async (at: string) => {
+      const request = buildHttpRequest({ ...settings, url: at }, ctx.secrets);
+      const res = await ctx.services.http.request({ ...request, signal: ctx.signal });
+      if (!res.ok) throw new Error(answeredMessage(at, res.status));
+      return res;
+    };
+    if (paging.mode === "none" || ctx.preview) {
+      // Try it reads only the first page, and says so.
+      if (paging.mode !== "none") ctx.warn(t("paging.firstOnly"));
+      const res = await get(firstPageUrl(url, paging));
+      return { bytes: res.bytes, mime: res.headers["content-type"], fileName: lastSegment(url) };
+    }
+    const { rows } = await fetchPages(
+      { url, settings: paging, rowsPath: ctx.rowsPath, signal: ctx.signal, warn: ctx.warn },
+      async (at) => {
+        const res = await get(at);
+        try {
+          return JSON.parse(new TextDecoder().decode(res.bytes)) as unknown;
+        } catch {
+          throw new Error(t("paging.notJson", { url: at }));
+        }
+      },
+    );
+    // JSON again, with the rows where "Rows come from" looks, so the pipeline reads them as it
+    // reads any response (the path is applied once, to the combined rows).
+    return {
+      text: JSON.stringify(placeRows(rows, ctx.rowsPath)),
+      mime: "application/json",
+      fileName: lastSegment(url),
+    };
   },
 };

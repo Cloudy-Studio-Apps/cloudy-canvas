@@ -39,7 +39,17 @@
       "bodyForm": "Formulario",
       "bodyJson": "JSON",
       "bodyText": "Texto",
-      "form": "Valores del formulario"
+      "form": "Valores del formulario",
+      "pagination": "Páginas",
+      "paginationNone": "Una sola respuesta",
+      "paginationPage": "Por número de página",
+      "paginationOffset": "Por desplazamiento",
+      "paginationNext": "Por un enlace a la página siguiente",
+      "pageParam": "Ajuste de página",
+      "sizeParam": "Ajuste de tamaño",
+      "pageSize": "Filas por página",
+      "nextPath": "El enlace siguiente viene de",
+      "maxPages": "Máximo de páginas a leer"
     }
   },
   "formats": {
@@ -332,7 +342,8 @@
       "params": "Ajustes del enlace",
       "auth": "Inicio de sesión",
       "headers": "Encabezados",
-      "body": "Cuerpo"
+      "body": "Cuerpo",
+      "pages": "Páginas"
     },
     "summary": {
       "aLink": "un enlace",
@@ -458,7 +469,23 @@
         "form": "Cuerpo de formulario",
         "json": "Cuerpo JSON",
         "text": "Cuerpo de texto"
+      },
+      "pages": {
+        "page": "Por número de página",
+        "offset": "Por desplazamiento",
+        "next": "Páginas por enlace"
       }
+    },
+    "pages": {
+      "intro": "Algunos sitios entregan sus filas de a pocas. Elige cómo lo hace este y Cloudy Canvas leerá todas las páginas y unirá las filas. Probar lee solo la primera página.",
+      "pageHint": "Pide la página 1, 2, 3… cambiando un ajuste del enlace.",
+      "offsetHint": "Pide filas desde la 0 y luego a continuación de las ya leídas.",
+      "nextHint": "Sigue el enlace que cada respuesta da para la página siguiente.",
+      "pageParamHint": "El nombre en el enlace que lleva el número de página.",
+      "offsetParamHint": "El nombre en el enlace que lleva desde dónde empezar.",
+      "sizeParamHint": "El nombre en el enlace que lleva cuántas filas pedir. Déjalo vacío si el sitio no tiene uno.",
+      "nextPathHint": "Dónde está en la respuesta el enlace de la página siguiente, como links.next. Si falta o está vacío, esa fue la última página.",
+      "maxHint": "La lectura se detiene aquí aunque el sitio tenga más, para que un sitio sin fin no corra para siempre."
     }
   },
   "rowsFrom": {
@@ -492,5 +519,13 @@
     "rowOf": "{n} de {count}",
     "empty": "Sin filas",
     "unreadable": "No está en este dispositivo"
+  },
+  "paging": {
+    "firstOnly": "Se muestra solo la primera página. Actualizar lee todas.",
+    "repeated": "Se detuvo tras {pages} páginas: la siguiente era un enlace ya leído. Se conservaron las filas leídas.",
+    "same": "Se detuvo tras {pages} páginas: la siguiente devolvió las mismas filas, así que el sitio puede estar ignorando el ajuste de página. Se conservaron las filas leídas.",
+    "limit": "Se detuvo en el límite de {pages} páginas. Se conservaron las filas leídas; sube el límite en Páginas para leer más.",
+    "notJson": "{url} no respondió JSON, que es lo que necesita la lectura por páginas.",
+    "warnings": "Leído con un aviso"
   }
 }

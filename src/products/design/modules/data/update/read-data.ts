@@ -13,6 +13,7 @@ export async function readData(
   ctx: DataContext,
   signal: AbortSignal,
   onStage?: (stage: UpdateStage) => void,
+  onWarning?: (message: string) => void,
 ): Promise<unknown> {
   onStage?.("fetching");
   const { services } = ctx;
@@ -21,6 +22,9 @@ export async function readData(
     signal,
     secrets: input.secrets,
     files: input.files,
+    rowsPath: input.rowsPath,
+    preview: input.preview ?? false,
+    warn: (message) => onWarning?.(message),
   });
   signal.throwIfAborted();
   if (isWebPage(raw)) throw new Error(UPDATE_ERRORS.webPage);

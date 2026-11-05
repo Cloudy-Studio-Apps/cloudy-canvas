@@ -10,6 +10,7 @@ import { sourceMeta, stageText } from "./source-meta";
 import type { SourceRowProps } from "./source-row.types";
 import { UpdateButton } from "./update-button";
 import { ImageFailuresLine } from "./image-failures-line";
+import { UpdateWarningsLine } from "./update-warnings-line";
 import { t } from "../../data.i18n";
 
 /**
@@ -58,6 +59,7 @@ export function SourceRow({ source, sourceType, issues, onOpen }: SourceRowProps
           {update.stage ? stageText(update.stage, update.progress) : sourceMeta(source)}
         </p>
         <ImageFailuresLine sourceId={source.id} className="pl-5" />
+        <UpdateWarningsLine sourceId={source.id} className="pl-5" />
         {error !== null && (
           <p className="line-clamp-2 pl-5 text-xs break-words text-destructive" title={error}>
             {error}

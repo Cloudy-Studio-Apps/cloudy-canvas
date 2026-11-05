@@ -63,6 +63,7 @@ export async function updateSource(
     const files = await requireFilePaths(ctx.services, id, specs, source.settings);
 
     const services = ctx.services;
+    const warnings: string[] = [];
     const parsed = await readData(
       {
         type,
@@ -71,10 +72,12 @@ export async function updateSource(
         files,
         format: source.format,
         formatOptions: source.formatOptions,
+        rowsPath: source.rowsPath,
       },
       ctx,
       signal,
       options.onStage,
+      (message) => warnings.push(message),
     );
     // The rows path and shape step read now; the record's may change while this runs, and the
     // ones current when it writes win (below). With a shape step that changes something the rows
@@ -150,8 +153,10 @@ export async function updateSource(
     };
     doc.update(id, patch);
     options.onImageFailures?.(downloaded.failed, downloaded.overLimit);
+    options.onWarnings?.(warnings);
     return {
       ok: true,
+      ...(warnings.length > 0 ? { warnings } : {}),
       rowCount: rows.length,
       changed,
       imagesFailed: downloaded.failed.length,

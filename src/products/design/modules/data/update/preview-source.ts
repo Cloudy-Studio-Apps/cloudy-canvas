@@ -56,10 +56,22 @@ export async function previewSource(
       }
     }
 
+    const notes: string[] = [];
     const parsed = await readData(
-      { type, settings, secrets, files, format: input.format, formatOptions: input.formatOptions },
+      {
+        type,
+        settings,
+        secrets,
+        files,
+        format: input.format,
+        formatOptions: input.formatOptions,
+        rowsPath: input.rowsPath,
+        preview: true,
+      },
       ctx,
       signal,
+      undefined,
+      (message) => notes.push(message),
     );
     const found = normalizeRows(parsed, input.rowsPath);
     if (!found) throw new Error(`${UPDATE_ERRORS.noList}${input.rowsPath ?? ""}`);
@@ -71,6 +83,7 @@ export async function previewSource(
       fields: guessFields(rows, input.fields ?? []),
       lists: findLists(parsed),
       extras: extraValues(parsed),
+      ...(notes.length > 0 ? { notes } : {}),
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

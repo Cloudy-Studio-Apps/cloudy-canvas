@@ -32,4 +32,10 @@ export interface SourceContext {
    * names only).
    */
   files: Record<string, string>;
+  /** The source's "Rows come from" path (`null`: the first list found), for a type that pages. */
+  rowsPath: string | null;
+  /** Try it is asking: a type that would fetch many pieces needs only the first. */
+  preview: boolean;
+  /** Tells the user something about this fetch (shown on the source, or in Try it). */
+  warn(message: string): void;
 }

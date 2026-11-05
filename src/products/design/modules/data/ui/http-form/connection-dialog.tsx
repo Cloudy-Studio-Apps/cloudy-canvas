@@ -13,6 +13,7 @@ import { connectionSummary } from "./connection-summary";
 import type { ConnectionTab } from "./connection-tabs.types";
 import { HeadersTab } from "./headers-tab";
 import { jsonProblem } from "./json-body";
+import { PagesTab } from "./pages-tab";
 import { ParamsTab } from "./params-tab";
 import { TryPanel } from "./try-panel";
 import { UrlBar } from "./url-bar";
@@ -28,12 +29,13 @@ function counts(draft: ConnectionDraft): Record<ConnectionTab, number> {
     auth: draft.auth === "none" ? 0 : 1,
     headers: named(draft.headers),
     body: draft.method === "POST" && draft.bodyKind !== "none" ? 1 : 0,
+    pages: draft.pagination === "none" ? 0 : 1,
   };
 }
 
 /**
- * The Connection dialog: the request in plain words, the link, four tabs (link settings, sign
- * in, headers, body) and Try it beside them. Nothing is saved until "Save and update". It
+ * The Connection dialog: the request in plain words, the link, five tabs (link settings, sign
+ * in, headers, body, pages) and Try it beside them. Nothing is saved until "Save and update". It
  * starts from the saved settings when it mounts: the form mounts a fresh one for each opening.
  */
 export function ConnectionDialog({
@@ -111,7 +113,7 @@ export function ConnectionDialog({
           <UrlBar draft={draft} onChange={setDraft} />
           <Tabs value={tab} onValueChange={(value) => setTab(value as ConnectionTab)}>
             <TabsList>
-              {(["params", "auth", "headers", "body"] as const).map((id) => (
+              {(["params", "auth", "headers", "body", "pages"] as const).map((id) => (
                 <TabsTrigger key={id} value={id}>
                   {t(`connection.tabs.${id}`)}
                   {badges[id] > 0 && (
@@ -133,6 +135,9 @@ export function ConnectionDialog({
             </TabsContent>
             <TabsContent value="body" className="pt-3">
               <BodyTab draft={draft} onChange={setDraft} />
+            </TabsContent>
+            <TabsContent value="pages" className="pt-3">
+              <PagesTab draft={draft} onChange={setDraft} />
             </TabsContent>
           </Tabs>
         </div>

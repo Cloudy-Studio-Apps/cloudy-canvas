@@ -1,4 +1,4 @@
-import type { HttpAuth, HttpBodyKind } from "../../sources";
+import type { HttpAuth, HttpBodyKind, HttpPagination } from "../../sources";
 import type { JsonRow } from "./json-body.types";
 import type { PairRow } from "./pair-row.types";
 
@@ -30,4 +30,11 @@ export interface ConnectionDraft {
   /** A JSON body built from rows (`jsonMode` `"rows"`). */
   jsonRows: JsonRow[];
   jsonMode: JsonMode;
+  pagination: HttpPagination;
+  /** The setting holding the page number (page) or the offset (offset); `""`: the default. */
+  pageParam: string;
+  sizeParam: string;
+  pageSize: number;
+  nextPath: string;
+  maxPages: number;
 }

@@ -1,3 +1,5 @@
+import { Info } from "lucide-react";
+
 import { Badge, SelectField } from "@shared/ui/kit";
 import { t } from "../../data.i18n";
 import { FieldTypeIcon } from "../data-tab/field-type-icon";
@@ -32,6 +34,12 @@ export function TryResult({ result, rowsPath, onRowsPath }: TryResultProps) {
         options={rowsFromOptions(result.lists, rowsPath)}
         onChange={(value) => onRowsPath(value === AUTO_ROWS ? null : value)}
       />
+      {result.notes?.map((note) => (
+        <p key={note} className="flex items-start gap-1 text-xs text-warning">
+          <Info className="mt-0.5 size-3 shrink-0" />
+          {note}
+        </p>
+      ))}
       {extras && <p className="text-xs text-muted-foreground">{extras}</p>}
       <div className="flex flex-wrap gap-1">
         {[...top.entries()].map(([head, field]) => {

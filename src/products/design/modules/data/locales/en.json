@@ -39,7 +39,17 @@
       "bodyForm": "Form",
       "bodyJson": "JSON",
       "bodyText": "Text",
-      "form": "Form values"
+      "form": "Form values",
+      "pagination": "Pages",
+      "paginationNone": "One response",
+      "paginationPage": "By page number",
+      "paginationOffset": "By offset",
+      "paginationNext": "By a link to the next page",
+      "pageParam": "Page setting",
+      "sizeParam": "Size setting",
+      "pageSize": "Rows per page",
+      "nextPath": "Next link comes from",
+      "maxPages": "Most pages to read"
     }
   },
   "formats": {
@@ -332,7 +342,8 @@
       "params": "Link settings",
       "auth": "Sign in",
       "headers": "Headers",
-      "body": "Body"
+      "body": "Body",
+      "pages": "Pages"
     },
     "summary": {
       "aLink": "a link",
@@ -458,7 +469,23 @@
         "form": "Form body",
         "json": "JSON body",
         "text": "Text body"
+      },
+      "pages": {
+        "page": "By page number",
+        "offset": "By offset",
+        "next": "Pages by link"
       }
+    },
+    "pages": {
+      "intro": "Some sites give their rows a few at a time. Choose how this one does, and Cloudy Canvas reads every page and joins the rows. Try it reads only the first page.",
+      "pageHint": "Asks for page 1, 2, 3… by changing one setting of the link.",
+      "offsetHint": "Asks for rows starting at 0, then after the rows already read.",
+      "nextHint": "Follows the link each answer gives for the next page.",
+      "pageParamHint": "The name in the link that holds the page number.",
+      "offsetParamHint": "The name in the link that holds where to start.",
+      "sizeParamHint": "The name in the link that holds how many rows to get. Leave empty if the site has none.",
+      "nextPathHint": "Where in the answer the next page's link is, like links.next. When it's missing or empty, that was the last page.",
+      "maxHint": "Reading stops here even if the site has more, so a site that never ends can't run forever."
     }
   },
   "rowsFrom": {
@@ -492,5 +519,13 @@
     "rowOf": "{n} of {count}",
     "empty": "No rows",
     "unreadable": "Not on this device"
+  },
+  "paging": {
+    "firstOnly": "Showing only the first page. Update reads every page.",
+    "repeated": "Stopped after {pages} pages: the next page was a link already read. The rows so far were kept.",
+    "same": "Stopped after {pages} pages: the next page gave the same rows again, so the site may be ignoring the page setting. The rows so far were kept.",
+    "limit": "Stopped at the limit of {pages} pages. The rows so far were kept; raise the limit under Pages to read more.",
+    "notJson": "{url} didn't answer JSON, which reading in pages needs.",
+    "warnings": "Read with a warning"
   }
 }

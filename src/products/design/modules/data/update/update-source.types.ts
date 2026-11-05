@@ -15,6 +15,8 @@ export interface UpdateOptions {
   onProgress?(done: number, total: number): void;
   /** The pictures that couldn't be saved, with why, once the Update succeeds. */
   onImageFailures?(failed: ImageFailure[], overLimit: number): void;
+  /** What the source type said about the fetch (a link stopped paging early), once it succeeds. */
+  onWarnings?(warnings: string[]): void;
 }
 
 export interface UpdateResult {
@@ -29,6 +31,8 @@ export interface UpdateResult {
   imagesOverLimit: number;
   /** How many of `imagesFailed` were over the size limit of one picture (25 MB). */
   imagesTooLarge?: number;
+  /** What the source type said about the fetch; the rows it got are kept. */
+  warnings?: string[];
   /** The Update was cancelled (its signal aborted): not a failure to report. */
   aborted?: boolean;
 }

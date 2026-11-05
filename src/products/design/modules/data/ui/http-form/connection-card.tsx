@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Braces, KeyRound, Link, List, Pencil } from "lucide-react";
+import { Braces, KeyRound, Layers, Link, List, Pencil } from "lucide-react";
 
 import { Button, cn } from "@shared/ui/kit";
 import { t } from "../../data.i18n";
@@ -45,6 +45,14 @@ export function ConnectionCard({ values, stored, onOpen }: ConnectionCardProps) 
       icon: <Braces />,
       label: t(`connection.card.body.${draft.bodyKind}`),
       key: "body",
+    });
+  }
+  if (draft.pagination !== "none") {
+    chips.push({
+      tab: "pages",
+      icon: <Layers />,
+      label: t(`connection.card.pages.${draft.pagination}`),
+      key: "pages",
     });
   }
 

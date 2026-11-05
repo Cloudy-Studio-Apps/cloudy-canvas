@@ -74,5 +74,21 @@ export function httpSettings(): SettingSpec[] {
     },
     { key: "form", kind: "pairs", label: t("sources.http.form") },
     { key: "body", kind: "multiline", label: t("sources.http.body") },
+    {
+      key: "pagination",
+      kind: "select",
+      label: t("sources.http.pagination"),
+      options: [
+        { value: "none", label: t("sources.http.paginationNone") },
+        { value: "page", label: t("sources.http.paginationPage") },
+        { value: "offset", label: t("sources.http.paginationOffset") },
+        { value: "next", label: t("sources.http.paginationNext") },
+      ],
+    },
+    { key: "pageParam", kind: "text", label: t("sources.http.pageParam"), placeholder: "page" },
+    { key: "sizeParam", kind: "text", label: t("sources.http.sizeParam"), placeholder: "limit" },
+    { key: "pageSize", kind: "number", label: t("sources.http.pageSize"), min: 1, max: 100000 },
+    { key: "nextPath", kind: "text", label: t("sources.http.nextPath"), placeholder: "links.next" },
+    { key: "maxPages", kind: "number", label: t("sources.http.maxPages"), min: 1, max: 500 },
   ];
 }

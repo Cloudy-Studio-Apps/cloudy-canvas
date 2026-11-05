@@ -9,4 +9,8 @@ export interface ReadDataInput {
   files: Record<string, string>;
   format: string;
   formatOptions: Record<string, SettingValue>;
+  /** The source's "Rows come from" path, which a type that pages reads each page with. */
+  rowsPath: string | null;
+  /** Try it asks, so a type that pages gets only the first page. */
+  preview?: boolean;
 }

@@ -1,6 +1,6 @@
 import { createId } from "@shared/core";
 
-import { httpAuth, httpBodyKind } from "../../sources";
+import { httpAuth, httpBodyKind, pagingSettings } from "../../sources";
 import type { SettingValue } from "../../source";
 import type { ConnectionDraft } from "./connection-draft.types";
 import { jsonToRows, rowsToJson } from "./json-body";
@@ -39,6 +39,7 @@ export function toDraft(
   const body = text(values.body);
   const jsonRows = jsonToRows(body);
   const url = text(values.url);
+  const paging = pagingSettings(values);
   return {
     url,
     params: urlParts(url).params,
@@ -60,7 +61,27 @@ export function toDraft(
     body,
     jsonRows: jsonRows ?? [],
     jsonMode: jsonRows ? "rows" : "code",
+    pagination: paging.mode,
+    pageParam: text(values.pageParam).trim(),
+    sizeParam: paging.sizeParam,
+    pageSize: paging.pageSize,
+    nextPath: paging.nextPath,
+    maxPages: paging.maxPages,
   };
+}
+
+/** The paging settings a draft saves: only the ones its mode reads. */
+function pagingValues(draft: ConnectionDraft): Record<string, SettingValue> {
+  const { pagination: mode } = draft;
+  if (mode === "none") return {};
+  const values: Record<string, SettingValue> = { pagination: mode, maxPages: draft.maxPages };
+  if (mode === "next") return { ...values, nextPath: draft.nextPath.trim() };
+  values.pageParam = draft.pageParam.trim();
+  if (mode === "offset") {
+    values.sizeParam = draft.sizeParam.trim();
+    values.pageSize = draft.pageSize;
+  }
+  return values;
 }
 
 /**
@@ -86,5 +107,6 @@ export function fromDraft(draft: ConnectionDraft): Record<string, SettingValue> 
       draft.bodyKind === "json" && draft.jsonMode === "rows"
         ? rowsToJson(draft.jsonRows)
         : draft.body,
+    ...pagingValues(draft),
   };
 }

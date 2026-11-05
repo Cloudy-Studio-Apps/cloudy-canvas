@@ -31,5 +31,7 @@ export type PreviewResult =
       fields: DataField[];
       lists: DataList[];
       extras: Record<string, DataExtraValue>;
+      /** What the source type said about this run (Try it reads only a link's first page). */
+      notes?: string[];
     }
   | { ok: false; error: string; aborted?: boolean };

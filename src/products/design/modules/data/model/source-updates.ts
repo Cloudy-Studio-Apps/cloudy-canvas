@@ -4,10 +4,11 @@ import type { UpdateOptions, UpdateResult, UpdateStage } from "../update";
 import type { ImageFailures, UpdateProgress } from "./source-updates.types";
 
 const NO_FAILURES: ImageFailures = { failed: [], overLimit: 0 };
+const NO_WARNINGS: string[] = [];
 
 /**
  * This device's Update state per source: the running Update (one at a time), its stage and
- * progress, the last failure's message and the pictures the last good Update couldn't save. In
+ * progress, the last failure's message and the pictures the last good Update couldn't save and what its source type warned about. In
  * memory only, never in the file.
  */
 export class SourceUpdates {
@@ -16,6 +17,7 @@ export class SourceUpdates {
   private readonly stages = new Map<string, UpdateStage>();
   private readonly progresses = new Map<string, UpdateProgress>();
   private readonly failures = new Map<string, ImageFailures>();
+  private readonly warned = new Map<string, string[]>();
   private readonly running = new Map<string, Promise<UpdateResult>>();
   /** The run each source's state belongs to; gone once the source is forgotten. */
   private readonly tokens = new Map<string, object>();
@@ -44,6 +46,12 @@ export class SourceUpdates {
         this.progresses.set(id, { done, total });
         this.emitter.emit();
         options.onProgress?.(done, total);
+      },
+      onWarnings: (warnings) => {
+        if (this.tokens.get(id) !== token) return;
+        if (warnings.length > 0) this.warned.set(id, warnings);
+        else this.warned.delete(id);
+        options.onWarnings?.(warnings);
       },
       onImageFailures: (failed, overLimit) => {
         if (this.tokens.get(id) !== token) return;
@@ -84,12 +92,18 @@ export class SourceUpdates {
     return this.failures.get(id) ?? NO_FAILURES;
   }
 
+  /** What the last good Update's source type said about the fetch (none before one). */
+  warnings(id: string): string[] {
+    return this.warned.get(id) ?? NO_WARNINGS;
+  }
+
   /** Drops everything kept for a source (it was removed); a run still going records nothing. */
   forget(id: string): void {
     this.errors.delete(id);
     this.stages.delete(id);
     this.progresses.delete(id);
     this.failures.delete(id);
+    this.warned.delete(id);
     this.running.delete(id);
     this.tokens.delete(id);
   }

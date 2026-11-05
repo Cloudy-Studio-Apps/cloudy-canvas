@@ -323,6 +323,11 @@ export class DesignDataSources {
     return this.updates.imageFailures(id).overLimit;
   }
 
+  /** What the last good Update on this device was warned about (a link that stopped paging early). */
+  updateWarnings(id: string): string[] {
+    return this.updates.warnings(id);
+  }
+
   private ready(sourceType: string): DataContext & { type: DataSourceType } {
     if (!this.context) throw new Error(NOT_READY);
     const type = this.context.types.find((t) => t.id === sourceType);
