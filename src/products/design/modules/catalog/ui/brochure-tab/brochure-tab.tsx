@@ -59,6 +59,7 @@ export function BrochureTab() {
   );
   const { rowDrag, carried, ghost } = usePageListDrag({ list, folders });
 
+  const bySlot = new Map(pages.map((page) => [page.slot.id, page]));
   const pageRow = (page: BrochurePage, depth: number, bracket: number | null) => (
     <BrochurePageRow
       key={page.slot.id}
@@ -71,6 +72,7 @@ export function BrochureTab() {
       rowDrag={rowDrag}
       depth={depth}
       bracket={bracket}
+      templateName={page.slot.generated && bySlot.get(page.slot.generated.from)?.frame.name}
     />
   );
 

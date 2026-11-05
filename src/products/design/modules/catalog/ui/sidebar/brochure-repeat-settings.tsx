@@ -1,3 +1,4 @@
+import { useScrubUndo } from "@canvas-ui";
 import { Button, NumberInput } from "@shared/ui/kit";
 import { repeatRows } from "../../../data";
 import { LimitFields, PreviewRowInput, RepeatRowsFields, SettingRow } from "../../../data/ui";
@@ -12,6 +13,8 @@ import { t } from "../../catalog.i18n";
  */
 export function BrochureRepeatSettings({ state, repeat }: BrochureRepeatSettingsProps) {
   const { scope, apply } = state;
+  // A drag of "Rows per page" is one undo step (the limits and the preview row join theirs too).
+  const scrubUndo = useScrubUndo();
   const settings = repeatSettings(repeat);
   // Every row (the export's), which the copies and the preview row count.
   const rows = repeatRows(settings, scope, "export").rows.length;
@@ -31,6 +34,7 @@ export function BrochureRepeatSettings({ state, repeat }: BrochureRepeatSettings
               decimals={0}
               onChange={(perPage) => apply({ perPage })}
               className="min-w-0 flex-1"
+              {...scrubUndo}
             />
           </SettingRow>
         )}

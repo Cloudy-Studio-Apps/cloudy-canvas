@@ -24,6 +24,8 @@ export interface BrochurePageRowProps {
   depth: number;
   /** Its repeat run's bracket depth (`PageTreeRow.bracket`). */
   bracket: number | null;
+  /** A page a repeat made: its template page's frame name ("Copy of …"). */
+  templateName?: string;
 }
 
 export interface BrochureOptionsListProps {

@@ -13,6 +13,11 @@ export interface StartingSection {
   from: string;
   /** How deep it reads (`placeSections`). */
   depth: number;
+  /**
+   * The `BrochurePage.number` after its last page (its range in the expansion, `first`/`end`): a
+   * repeating section's stops before the back cover, so pages after its run aren't in it.
+   */
+  end: number;
 }
 
 /** A brochure page as it is now: its slot with the frames that still exist. */

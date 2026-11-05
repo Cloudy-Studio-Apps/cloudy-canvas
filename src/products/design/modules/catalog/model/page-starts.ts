@@ -8,7 +8,7 @@ import type { PlacedPage } from "./page-starts.types";
  * a copy of it with its own name, starts on the first page that prints within its range in the
  * expansion (`ExpandedSection.first`/`end`, the loops' own tree, so a repeating section's run
  * never reaches the back cover); a section with no page that prints starts nowhere (so the
- * contents leave it out).
+ * contents leave it out). Each says where its pages end (`end`), as the page list closes it.
  */
 export function pageStarts(
   record: Pick<BrochureElement, "sections">,
@@ -25,10 +25,15 @@ export function pageStarts(
     );
     const page = pages[first];
     if (!page) continue;
+    // Pages are in the expansion's order: its pages run on from its first.
+    let last = first;
+    while ((pages[last + 1]?.order ?? Infinity) < item.end) last++;
     starts[first]?.push({
       section: { ...original, id: item.id, name: item.name, start: page.slot, level: item.level },
       from: item.from,
       depth: item.level,
+      // Page numbers are 1-based: the page after its last one.
+      end: last + 2,
     });
   }
   return starts;

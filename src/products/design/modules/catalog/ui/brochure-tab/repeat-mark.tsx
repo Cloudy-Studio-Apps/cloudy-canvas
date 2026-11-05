@@ -8,7 +8,12 @@ import type { RepeatMarkProps } from "./repeat-marks.types";
  */
 export function RepeatMark({ kind, label }: RepeatMarkProps) {
   return (
-    <span title={label} aria-label={label} className="flex shrink-0 text-primary [&_svg]:size-3">
+    <span
+      role="img"
+      title={label}
+      aria-label={label}
+      className="flex shrink-0 text-primary [&_svg]:size-3"
+    >
       {kind === "template" ? <Repeat /> : <Database />}
     </span>
   );

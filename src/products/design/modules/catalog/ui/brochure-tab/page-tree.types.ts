@@ -55,3 +55,11 @@ export interface NotPrintedRow extends TreeRow {
 
 /** A row of the page list, in order, with how far it's indented. */
 export type PageTreeRow = FolderRow | SideRow | SpreadRow | PendingRow | NotPrintedRow;
+
+/** A section open while `pageTree` walks the sides: its row (`null` for a copy not made yet). */
+export interface OpenFolder {
+  row: FolderRow | null;
+  repeats: boolean;
+  /** The page number its pages end before (`StartingSection.end`). */
+  end: number;
+}

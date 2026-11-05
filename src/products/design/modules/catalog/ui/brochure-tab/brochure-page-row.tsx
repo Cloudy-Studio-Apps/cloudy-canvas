@@ -34,9 +34,10 @@ export function BrochurePageRow({
   rowDrag,
   depth,
   bracket,
+  templateName,
 }: BrochurePageRowProps) {
   const engine = useDesignEngine();
-  const { brochure, pages } = useBrochure();
+  const { brochure } = useBrochure();
   const { drag } = rowDrag;
   const target = dropId({ kind: "page", slotId: page.slot.id });
   const up = engine.keymap.label(CATALOG_COMMANDS.movePageUp);
@@ -45,11 +46,10 @@ export function BrochurePageRow({
   const chosen = page.options.findIndex((option) => option.id === page.frame.id);
   const paper = paperSize(page.frame);
   const { generated, repeat } = page.slot;
-  const template = generated && pages.find((item) => item.slot.id === generated.from)?.frame;
   const detail = page.notPrinted
     ? t("repeat.notPrinted")
     : generated
-      ? t("repeat.copyOf", { name: template?.name ?? page.frame.name })
+      ? t("repeat.copyOf", { name: templateName ?? page.frame.name })
       : page.options.length > 1
         ? t("tab.page.options", {
             count: page.options.length,

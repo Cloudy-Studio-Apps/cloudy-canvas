@@ -1,13 +1,7 @@
 import type { BookLayout } from "../../model/book-layout.types";
 import type { BrochurePage } from "../../model/brochure-pages.types";
 import type { PageInfo } from "../../model/numbering/page-numbers.types";
-import type { FolderRow, PageTreeRow, PendingRow } from "./page-tree.types";
-
-/** A section open while the tree is walked: its row (`null` for a copy not made yet) and loop. */
-interface OpenFolder {
-  row: FolderRow | null;
-  repeats: boolean;
-}
+import type { FolderRow, OpenFolder, PageTreeRow, PendingRow } from "./page-tree.types";
 
 /** Whether a page is in a repeat run of its own: it repeats, or a repeat made it. */
 const repeatsItself = (page: BrochurePage) =>
@@ -33,8 +27,10 @@ function notPrintedAfter(pages: readonly BrochurePage[]): Map<string | null, Bro
  * with `spreads` a heading before each spread. A section starting on a spread's first side opens
  * before that spread's heading. Pending pages next to each other are one row ("+36 pages at
  * export"), copy sections not made yet included (they get no folder); a template page that
- * doesn't print for its row follows the page before it. Rows in a repeat run carry its bracket.
- * What's in a collapsed folder is left out.
+ * doesn't print for its row follows the page before it. A folder closes where its section's pages
+ * end (`StartingSection.end`), so pages after a run (the back cover) are in none of its copies; a
+ * spread whose sides are all pending gets no heading, so a run's pending pages stay one row. Rows
+ * in a repeat run carry its bracket. What's in a collapsed folder is left out.
  */
 export function pageTree(
   layout: BookLayout,
@@ -70,15 +66,36 @@ export function pageTree(
     }
   };
 
+  // The page number a side is read at: its page's, a blank's the next page's (none: past all).
+  const numberAt = (index: number): number => {
+    for (let at = index; at < layout.sides.length; at++) {
+      const side = layout.sides[at];
+      if (side?.kind === "page") return side.page.number;
+    }
+    return Infinity;
+  };
+  // Closes the folders whose pages end before side `index`.
+  const closeBefore = (index: number) => {
+    const n = numberAt(index);
+    const at = open.findIndex((folder) => folder.end <= n);
+    if (at >= 0) open.length = at;
+  };
+  const allPending = (spread: readonly number[]) =>
+    spread.every((index) => {
+      const side = layout.sides[index];
+      return side?.kind === "page" && !!side.page.pending;
+    });
+
   const openFolders = (index: number) => {
     const side = layout.sides[index];
     if (side?.kind !== "page" || side.part === "right") return;
     for (const placed of side.page.starts) {
       open.length = Math.min(open.length, placed.depth);
       const repeats = !!placed.section.repeat;
+      const { end } = placed;
       // A copy not made yet is in the pending row, not a folder.
       if (side.page.pending) {
-        open.push({ row: null, repeats });
+        open.push({ row: null, repeats, end });
         continue;
       }
       const folder: FolderRow = {
@@ -93,17 +110,25 @@ export function pageTree(
       };
       push(folder);
       numbered.set(folder, []);
-      open.push({ row: folder, repeats });
+      open.push({ row: folder, repeats, end });
     }
   };
 
   pushUnprinted(null);
   for (const spread of layout.spreads) {
     const first = spread[0];
-    if (first !== undefined) openFolders(first);
-    if (spreads) push({ kind: "spread", spread, depth: depth(), bracket: bracket(false) });
+    if (first !== undefined) {
+      closeBefore(first);
+      openFolders(first);
+    }
+    if (spreads && !allPending(spread)) {
+      push({ kind: "spread", spread, depth: depth(), bracket: bracket(false) });
+    }
     for (const index of spread) {
-      if (index !== first) openFolders(index);
+      if (index !== first) {
+        closeBefore(index);
+        openFolders(index);
+      }
       const side = layout.sides[index];
       if (!side) continue;
       const label = numbers[index]?.label;
