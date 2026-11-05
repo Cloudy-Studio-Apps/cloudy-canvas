@@ -41,15 +41,20 @@ export function expandBrochure(
 
   const section = (node: RepeatSectionNode, ctx: ExpandContext) => {
     const { section: item, depth } = node.placed;
-    sections.push({
+    const placed: ExpandedSection = {
       id: expandedId(item.id, ctx.path),
       from: item.id,
       path: ctx.path,
       name: copyName(item.name, ctx.scope, locale),
       level: depth,
       start: expandedId(item.start, ctx.path),
-    });
+      first: pages.length,
+      end: pages.length,
+    };
+    sections.push(placed);
     walk(node.children, ctx);
+    // Its range is the tree's: a repeating section's run already stops before the back cover.
+    placed.end = pages.length;
   };
 
   const walk = (nodes: readonly RepeatNode[], ctx: ExpandContext) => {

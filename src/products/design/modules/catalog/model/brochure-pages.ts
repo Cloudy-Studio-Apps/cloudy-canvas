@@ -9,9 +9,7 @@ import type { PlacedPage } from "./page-starts.types";
 import { brochureExpansion } from "./repeats/brochure-expansion";
 import { slotKey } from "./repeats/slot-key";
 import type { BrochureExpansion, ExpandedPage } from "./repeats/expand-brochure.types";
-import type { BrochurePage } from "./brochure-pages.types";
-
-type Unnumbered = Omit<BrochurePage, "number" | "starts">;
+import type { BrochurePage, UnnumberedPage } from "./brochure-pages.types";
 
 /** The slot a pending page reads as: its template's, under the expanded page's id. */
 function pendingSlot(page: ExpandedPage, template: BrochureSlot, frame: string): BrochureSlot {
@@ -55,7 +53,7 @@ export function brochurePages(
   for (const slot of brochure.slots)
     if (!bySlot.has(slotKey(slot))) bySlot.set(slotKey(slot), slot);
 
-  const pages: { page: Unnumbered; order: number }[] = [];
+  const pages: { page: UnnumberedPage; order: number }[] = [];
   const used = new Set<string>();
   expansion.pages.forEach((item, order) => {
     const slot = bySlot.get(item.id);

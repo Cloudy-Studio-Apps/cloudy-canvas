@@ -27,37 +27,42 @@ function sourcesChanged(doc: CanvasDocument, change: EditedChange): boolean {
   return false;
 }
 
-/** Whether the edit changed what the loops around the brochure's pages read (or made it). */
-function loopsChanged(record: BrochureElement, change: EditedChange): boolean {
-  if (!change.updated.has(record.id)) return false;
-  const before = change.before.get(record.id);
-  if (!before) return true;
-  return repeatSignature({ ...record, ...before } as BrochureElement) !== repeatSignature(record);
+/**
+ * What the edit did to a brochure's record: whether it repeats (now or before the edit, or has
+ * copies left), and whether every page must be filled again: its loops changed (with repeats) or
+ * its language did (data on its pages is written in it).
+ */
+function recordChange(
+  record: BrochureElement,
+  change: EditedChange,
+): { repeats: boolean; refill: boolean } {
+  const edited = change.updated.has(record.id);
+  const before = edited ? change.before.get(record.id) : undefined;
+  const was = before ? ({ ...record, ...before } as BrochureElement) : record;
+  const repeats =
+    hasRepeats(record) || hasRepeats(was) || record.slots.some((slot) => slot.generated);
+  const language = was.settings.language !== record.settings.language;
+  const loops = edited && (!before || repeatSignature(was) !== repeatSignature(record));
+  return { repeats, refill: language || (repeats && loops) };
 }
 
 /**
  * The catalog's `afterEdit` hook that makes a brochure's repeats' copies, in the edit's undo
  * step and before the page items (so masters are stamped on new pages): for each brochure with
- * repeats (or copies left) whose record, template pages or sources the edit changed, it expands
- * the brochure once (`expandBrochure` in the document's data phase) and writes what differs from
+ * repeats (now or before the edit, or copies left) whose record, template pages or sources the
+ * edit changed, it expands the brochure once (`expandBrochure` in the document's data phase) and writes what differs from
  * its generated pages and slots (`planBrochureRepeats`, `writeBrochureRepeats`), so its own
  * writes, which run it again, end it. The brochure is arranged again when pages came or moved and
  * its `arrange` is on. Then the pages it made or changed, and every page of a brochure whose loops
- * changed (a list, a preview row, its language), are filled from their rows (`syncDataFor`).
+ * changed (a list, a preview row) or whose language changed (any brochure's) are filled from their
+ * rows (`syncDataFor`).
  */
 export function syncBrochureRepeats(
   doc: CanvasDocument,
   change: EditedChange,
   kinds: ElementKinds,
 ): void {
-  const records = brochuresOf(doc)
-    .records()
-    .filter(
-      (record) =>
-        hasRepeats(record) ||
-        record.slots.some((slot) => slot.generated) ||
-        change.updated.has(record.id),
-    );
+  const records = brochuresOf(doc).records();
   if (records.length === 0) return;
   const sources = sourcesChanged(doc, change);
   const tops = sources ? new Set<string>() : touchedTops(doc, change);
@@ -65,7 +70,8 @@ export function syncBrochureRepeats(
   let children: ReturnType<typeof childrenMap> | null = null;
 
   for (const record of records) {
-    const loops = loopsChanged(record, change);
+    const { repeats, refill } = recordChange(record, change);
+    if (!repeats && !refill) continue;
     const affected =
       sources ||
       change.updated.has(record.id) ||
@@ -85,7 +91,7 @@ export function syncBrochureRepeats(
       arrangeBrochure(doc, after, bookLayout(pages, after.settings), pages, after.settings.arrange);
     }
     const fill = new Set(touched);
-    if (loops) for (const slot of after.slots) for (const id of slot.frames) fill.add(id);
+    if (refill) for (const slot of after.slots) for (const id of slot.frames) fill.add(id);
     if (fill.size > 0) syncDataFor(doc, [...fill], kinds);
   }
 }

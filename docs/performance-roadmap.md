@@ -32,6 +32,10 @@ What could make the canvas cheaper as files, features and live sessions grow, wi
   - Keep the children map up to date from each plan (`add`, reparenting `patch`, `remove`) instead of reading it again, and keep pending iterators in a heap by depth.
   - **Trigger:** a document with nested iterators (or hundreds of copies) makes edits inside a template, or an Update, visibly slow.
   - **Risk:** small: a stale children map would plan from a tree that isn't there, so the incremental update must mirror `writeDataCopies` exactly.
+- [ ] **Brochure repeats: fewer expansions.** Every local write inside a brochure's template page (each drag step and keystroke, and the passes that follow data and page-item fills) re-runs `syncBrochureRepeats` in full: `expandBrochure`, a `childrenMap` of the whole document and `planPageCopy` for every copy made, which only writes what differs. Separately, every `DesignBrochure.pages()`/`layout()` call (the UI calls both often) and every `syncPageItems` pass expands the brochure again.
+  - Memoize `brochureExpansion` per record and root (or per document version), and plan only the copies of the template pages the edit touched when neither the record nor a source changed.
+  - **Trigger:** a brochure with repeats and many pages made (or an export's scratch copy) makes typing or dragging on a template page visibly slow.
+  - **Risk:** small: a stale expansion would number or copy from rows that changed, so the memo key must include every source snapshot and the record.
 
 ## Worth it with heavy collaboration or agents
 

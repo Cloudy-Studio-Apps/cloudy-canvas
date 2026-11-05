@@ -2,11 +2,13 @@ import type { CanvasDocument, Rect } from "@canvas";
 import { createId } from "@shared/core";
 
 import type { DesignNode } from "../../../core";
+import type { FrameElement } from "../../../frame";
 import type { BrochureElement, BrochureSlot } from "../../brochure";
 import { ARRANGE_GAPS } from "../arrange/arrange.constants";
 import { isPageFrame } from "../page-frame";
 import { copyPathKey, segmentOwner } from "./copy-segment";
-import { generatedLayers } from "./generated-layers";
+import { brochureCopies } from "./brochure-copies";
+import { orphanLayers } from "./orphan-layers";
 import { planPageCopy } from "./plan-page-copy";
 import { repeatCopyTag } from "./repeat-copy-tag";
 import { slotKey } from "./slot-key";
@@ -24,9 +26,12 @@ function treeOf(root: DesignNode, children: ReadonlyMap<string, readonly DesignN
  * What a brochure's generated pages need so they match its expansion: each copy made that prints
  * gets a page (`planPageCopy` of its template slot's printed frame; a new one placed after the page
  * before it), listed as a slot with `generated` (its template slot's master and detached master
- * layers too), the slots in the expansion's order. A copy no longer made goes, frame and slot,
- * but a copy of a list this device can't read stays as it is, after the slot before it. Pure: it
- * only reads the document (`children`: every layer's children by parent).
+ * layers too), the slots in the expansion's order. A copy is found by its slot, else by its tag
+ * (template frame and copy path; the first in sibling order wins), so two clients that made the
+ * same copy end with one. A copy no longer made goes, frame and slot, and so does any copy frame
+ * no slot lists (`orphanLayers`), but a copy of a list this device can't read stays as it is,
+ * after the slot before it. Pure: it only reads the document (`children`: every layer's children
+ * by parent).
  */
 export function planBrochureRepeats(
   doc: CanvasDocument,
@@ -46,6 +51,15 @@ export function planBrochureRepeats(
     const el = doc.get(id);
     return isPageFrame(el) && el.pageId === record.page ? el : null;
   };
+  // Every copy made, listed or not: a copy is found by its slot, else by its tag, the first wins.
+  const copies = brochureCopies(doc, record);
+  const byTag = new Map<string, FrameElement>();
+  for (const copy of copies) {
+    const tag = repeatCopyTag(copy);
+    const key = tag ? `${tag.source}|${tag.key}` : "";
+    if (tag && !byTag.has(key)) byTag.set(key, copy);
+  }
+  const taken = new Set<string>();
 
   const slots: BrochureSlot[] = [];
   const kept = new Set<string>();
@@ -65,7 +79,11 @@ export function planBrochureRepeats(
     const frame = template && !template.generated ? frameOf(template.chosen) : null;
     if (!template || !frame) continue;
     const old = own ? frameOf(own.chosen) : null;
-    const copy = old && repeatCopyTag(old)?.brochure === record.id ? old : null;
+    const listed = old && repeatCopyTag(old)?.brochure === record.id ? old : null;
+    const tagged = byTag.get(`${frame.id}|${copyPathKey(page.path)}`) ?? null;
+    const copy =
+      listed && !taken.has(listed.id) ? listed : tagged && !taken.has(tagged.id) ? tagged : null;
+    if (copy) taken.add(copy.id);
     const at = before
       ? { x: before.x + before.w + ARRANGE_GAPS.spread, y: before.y }
       : { x: frame.x, y: frame.y + frame.h + ARRANGE_GAPS.spread };
@@ -95,13 +113,9 @@ export function planBrochureRepeats(
     before = copy ?? { ...at, w: frame.w, h: frame.h };
   }
 
-  const stale: BrochureSlot[] = [];
   record.slots.forEach((slot, i) => {
     if (kept.has(slot.id)) return;
-    if (slot.generated && !unreadable.has(slot.generated.from)) {
-      stale.push(slot);
-      return;
-    }
+    if (slot.generated && !unreadable.has(slot.generated.from)) return;
     // A copy of a list this device can't read stays, after the slot before it (and so would a
     // page the expansion missed).
     kept.add(slot.id);
@@ -112,7 +126,7 @@ export function planBrochureRepeats(
     }
     slots.splice(at, 0, slot);
   });
-  plan.remove = generatedLayers(doc, record.id, stale);
+  plan.remove = orphanLayers(record, copies, slots, unreadable, children);
   if (JSON.stringify(slots) !== JSON.stringify(record.slots)) plan.slots = slots;
   return plan;
 }

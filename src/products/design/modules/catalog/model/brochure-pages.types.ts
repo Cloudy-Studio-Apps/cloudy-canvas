@@ -39,3 +39,6 @@ export interface BrochurePage {
   /** The sections starting on it, outermost first (copy sections included). */
   starts: readonly StartingSection[];
 }
+
+/** A page before it's numbered and its sections placed (`brochurePages` builds them). */
+export type UnnumberedPage = Omit<BrochurePage, "number" | "starts">;

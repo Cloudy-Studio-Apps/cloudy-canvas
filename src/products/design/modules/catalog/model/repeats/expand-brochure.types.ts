@@ -35,6 +35,12 @@ export interface ExpandedSection {
   level: number;
   /** The `ExpandedPage` id it starts at. */
   start: string;
+  /**
+   * Its pages: `BrochureExpansion.pages` from `first` up to (not including) `end`, its subsections'
+   * included. A repeating section's stop before the back cover, as `repeatTree` cuts its run.
+   */
+  first: number;
+  end: number;
 }
 
 /** Every page and section of a brochure, its repeats expanded, in reading order. */
