@@ -87,7 +87,6 @@ export async function fetchPages(
   let link: string | null = firstPageUrl(input.url, paging);
   let before: string | null = null;
   let pages = 0;
-  let firstLength = 0;
   // Secrets go only to the first link's site: a next link elsewhere ends the reading.
   const origin = new URL(input.url).origin;
   while (link !== null) {
@@ -128,11 +127,8 @@ export async function fetchPages(
     pages++;
     before = fingerprint;
     for (const row of list) rows.push(row);
-    if (pages === 1) firstLength = list.length;
-    // By page number or offset a page with fewer rows than a full one is the last: no more pages
-    // to ask for (and no limit warning when it came exactly at the limit).
-    const fullPage = paging.mode === "offset" && paging.sizeParam ? paging.pageSize : firstLength;
-    if (paging.mode !== "next" && list.length < fullPage) break;
+    // A short page doesn't end the reading: servers cap or vary page sizes, so only an empty page,
+    // a repeat or the limit does (the limit's warning says the site may have more).
     if (paging.mode === "next") {
       link = nextLink(page, paging, link);
       if (link !== null && new URL(link).origin !== origin) {
