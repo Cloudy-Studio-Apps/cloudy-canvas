@@ -47,6 +47,7 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - Exported brochures now open with bookmarks in the PDF reader's sidebar that follow your sections,
   and every line of the table of contents and every page reference takes you to its page. Print
   files in CMYK keep the bookmarks.
+- Data sources can now read Excel files and APIs that return their rows in pages, and an optional step can pick and rename fields before they're used. Plugins can add their own kinds of source.
 
 ### Fixed
 

@@ -54,6 +54,7 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 - Los folletos exportados ya se abren con marcadores en la barra lateral del lector de PDF, que siguen
   tus secciones, y cada línea del índice y cada referencia a página te lleva a su página. Los
   archivos de imprenta en CMYK conservan los marcadores.
+- Las fuentes de datos ahora pueden leer archivos de Excel y APIs que devuelven sus filas por páginas, y un paso opcional permite elegir y renombrar campos antes de usarlos. Los plugins pueden añadir sus propios tipos de fuente.
 
 ### Correcciones
 

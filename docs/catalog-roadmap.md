@@ -28,7 +28,7 @@ translations.
 
 ### C2. A catalog built from data (data merge)
 
-- [ ] Decide · Priority: —
+- [x] Decide · Priority: P1
 
 You design one product card (photo, name, code, price, specs), link it to a CSV, JSON or
 spreadsheet, and the app fills as many pages as it needs. Updating the file updates the pages.
@@ -46,8 +46,12 @@ Phase 1 shipped: sources (files and APIs), the Data tab, Update and agent tools.
 
 Phase 4 shipped: brochure sections and pages repeat for each row of a list (a page also for each N
 rows), nested like loops (categories holding their products), with an In scope view, canvas tags,
-Detach, and an export that makes every page on a throwaway copy of the document. Left (phase 5):
-Excel files, the Shape step, API pagination and an example plugin.
+Detach, and an export that makes every page on a throwaway copy of the document.
+
+Phase 5 shipped: Excel files, an optional Shape step (rename and include fields), APIs that return
+rows in pages, and plugin-provided source types (example: `examples/plugins/sample-products-source`).
+
+Done: sources, bindings, repeat on frames and pages, export.
 
 ### C3. Bookmarks and links in the PDF
 
