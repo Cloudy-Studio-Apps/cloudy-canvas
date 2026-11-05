@@ -9,3 +9,5 @@ export type {
   PagedRows,
   PagingSettings,
 } from "./http-pagination.types";
+export { pagingMessage, readPagingMessage } from "./paging-messages";
+export type { PagingMessageKey } from "./paging-messages.types";

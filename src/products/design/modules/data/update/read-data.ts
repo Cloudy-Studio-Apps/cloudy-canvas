@@ -30,16 +30,16 @@ export async function readData(
   if (isWebPage(raw)) throw new Error(UPDATE_ERRORS.webPage);
 
   onStage?.("parsing");
+  // Rows a type read in pages come as JSON whatever format is chosen.
+  const chosen = raw.rowsPlaced ? "json" : input.format;
   const format =
-    input.format === "auto"
+    chosen === "auto"
       ? detectFormat(raw, ctx.formats)
-      : (ctx.formats.find((f) => f.id === input.format) ?? null);
+      : (ctx.formats.find((f) => f.id === chosen) ?? null);
   if (!format) {
-    throw new Error(
-      input.format === "auto" ? UPDATE_ERRORS.noFormat : `Unknown format "${input.format}".`,
-    );
+    throw new Error(chosen === "auto" ? UPDATE_ERRORS.noFormat : `Unknown format "${chosen}".`);
   }
-  const parsed = await format.parse(raw, input.formatOptions);
+  const parsed = await format.parse(raw, raw.rowsPlaced ? {} : input.formatOptions);
   signal.throwIfAborted();
   return { parsed, placed: raw.rowsPlaced === true };
 }

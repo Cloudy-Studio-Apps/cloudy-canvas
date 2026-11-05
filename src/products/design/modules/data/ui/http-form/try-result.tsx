@@ -2,6 +2,7 @@ import { Info } from "lucide-react";
 
 import { Badge, SelectField } from "@shared/ui/kit";
 import { t } from "../../data.i18n";
+import { errorText } from "../data-tab/error-text";
 import { FieldTypeIcon } from "../data-tab/field-type-icon";
 import { RowsTable } from "../data-tab/rows-table";
 import { AUTO_ROWS, extrasText, rowsFromOptions } from "../data-tab/rows-from";
@@ -37,7 +38,7 @@ export function TryResult({ result, rowsPath, onRowsPath }: TryResultProps) {
       {result.notes?.map((note) => (
         <p key={note} className="flex items-start gap-1 text-xs text-warning">
           <Info className="mt-0.5 size-3 shrink-0" />
-          {note}
+          {errorText(note)}
         </p>
       ))}
       {extras && <p className="text-xs text-muted-foreground">{extras}</p>}

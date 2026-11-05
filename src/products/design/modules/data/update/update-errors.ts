@@ -29,3 +29,8 @@ export function readAnsweredMessage(message: string): { url: string; status: str
 export function noSourceTypeMessage(id: string): string {
   return `No source type ${id}.`;
 }
+
+/** The source type id of a `noSourceTypeMessage`, or `null` for any other message. */
+export function readNoSourceType(message: string): string | null {
+  return /^No source type (.+)\.$/.exec(message)?.[1] ?? null;
+}

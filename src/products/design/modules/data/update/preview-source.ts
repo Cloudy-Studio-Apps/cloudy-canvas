@@ -1,7 +1,8 @@
 import { holdsDevicePath, isAbsolutePath, missingSettings, splitSecrets } from "../settings";
-import { extraValues, findLists, guessFields, normalizeRows, shapeRows } from "../table";
+import { extraValues, findLists, guessFields } from "../table";
 import { loadFilePaths } from "./file-paths";
 import { readData } from "./read-data";
+import { shapedData } from "./shaped-data";
 import { loadSourceSecrets, missingSecretKeys } from "./source-secrets";
 import { noSourceTypeMessage, UPDATE_ERRORS } from "./update-errors";
 import type { PreviewInput, PreviewResult } from "./preview-source.types";
@@ -73,9 +74,8 @@ export async function previewSource(
       undefined,
       (message) => notes.push(message),
     );
-    const found = normalizeRows(parsed, input.rowsPath);
-    if (!found) throw new Error(`${UPDATE_ERRORS.noList}${input.rowsPath ?? ""}`);
-    const rows = shapeRows(found, input.shape);
+    // Shaped as Update shapes (a collision is refused here too).
+    const { rows } = shapedData(parsed, input.rowsPath, input.shape ?? null);
     return {
       ok: true,
       rows: rows.slice(0, PREVIEW_ROWS),

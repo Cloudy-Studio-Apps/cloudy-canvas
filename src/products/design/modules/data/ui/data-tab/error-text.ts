@@ -1,11 +1,13 @@
 import { REPEAT_ERRORS } from "../../repeat";
-import { readAnsweredMessage, UPDATE_ERRORS } from "../../update";
+import { readAnsweredMessage, readNoSourceType, UPDATE_ERRORS } from "../../update";
+import { readPagingMessage } from "../../sources";
 import { readShapeError, SHAPE_ERRORS } from "../../table";
 import { t } from "../../data.i18n";
 
 /**
  * An engine message as the user reads it: the ones an Update is known to fail with translated
- * (`UPDATE_ERRORS`, a link's HTTP error), a shape's refusals (`SHAPE_ERRORS`, `readShapeError`)
+ * (`UPDATE_ERRORS`, a link's HTTP error, a type that isn't installed, reading pages' messages;
+ * several joined by a line break are each translated), a shape's refusals (`SHAPE_ERRORS`, `readShapeError`)
  * and `REPEAT_ERRORS`, any other one as it is.
  */
 export function errorText(message: string): string {
@@ -17,6 +19,15 @@ export function errorText(message: string): string {
   }
   const answered = readAnsweredMessage(message);
   if (answered) return t("errors.answered", answered);
+  const noType = readNoSourceType(message);
+  if (noType !== null) return t("errors.noSourceType", { type: noType });
+  if (message.includes("\n")) return message.split("\n").map(errorText).join(" ");
+  const paging = readPagingMessage(message);
+  if (paging) {
+    const values = { ...paging.values };
+    if (values.message !== undefined) values.message = errorText(values.message);
+    return t(`paging.${paging.key}`, values);
+  }
   const shape = readShapeError(message);
   if (shape) {
     return shape.kind === "collision"

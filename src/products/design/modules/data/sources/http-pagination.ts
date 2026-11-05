@@ -1,8 +1,8 @@
-import { t } from "../data.i18n";
 import type { SettingValue } from "../source";
 import { normalizeRows, readPath } from "../table";
 import { UPDATE_ERRORS } from "../update";
 import type { DataRow } from "../table";
+import { pagingMessage } from "./paging-messages";
 import type {
   FetchPagesInput,
   HttpPagination,
@@ -22,6 +22,8 @@ const count = (value: unknown, fallback: number, max: number): number =>
   typeof value === "number" && Number.isFinite(value)
     ? Math.min(max, Math.max(1, Math.floor(value)))
     : fallback;
+const whole = (value: unknown, fallback: number): number =>
+  typeof value === "number" && Number.isFinite(value) ? Math.max(0, Math.floor(value)) : fallback;
 
 /** A link's paging settings (`none` when unset or unknown), with their defaults. */
 export function pagingSettings(settings: Record<string, SettingValue>): PagingSettings {
@@ -31,6 +33,7 @@ export function pagingSettings(settings: Record<string, SettingValue>): PagingSe
     pageParam: text(settings.pageParam) || (mode === "offset" ? "offset" : "page"),
     sizeParam: text(settings.sizeParam),
     pageSize: count(settings.pageSize, DEFAULT_PAGE_SIZE, 100000),
+    firstPage: whole(settings.firstPage, 1),
     nextPath: text(settings.nextPath),
     maxPages: count(settings.maxPages, DEFAULT_MAX_PAGES, MAX_PAGES_LIMIT),
   };
@@ -45,8 +48,10 @@ export function firstPageUrl(url: string, paging: PagingSettings): string {
 function pageUrl(base: string, paging: PagingSettings, index: number, offset: number): string {
   const url = new URL(base);
   if (paging.mode === "page") {
-    const start = Number(url.searchParams.get(paging.pageParam));
-    url.searchParams.set(paging.pageParam, String((start >= 1 ? start : 1) + index));
+    // A whole number already in the link is where it starts; otherwise the `firstPage` setting.
+    const given = url.searchParams.get(paging.pageParam) ?? "";
+    const start = /^\d+$/.test(given) ? Number(given) : paging.firstPage;
+    url.searchParams.set(paging.pageParam, String(start + index));
   } else {
     if (paging.sizeParam) url.searchParams.set(paging.sizeParam, String(paging.pageSize));
     url.searchParams.set(paging.pageParam, String(offset));
@@ -67,7 +72,9 @@ function nextLink(page: unknown, paging: PagingSettings, current: string): strin
  * names. Each page's rows are found as a single response's are (`rowsPath`, else the first list).
  * It ends on an empty page or (`next`) a response without a next link, and stops, keeping the rows
  * it has and saying so with `warn`, on a link it already read, a page with the same rows as the one
- * before (a site that ignores the page setting) and the page limit. Stops between pages when
+ * before (a site that ignores the page setting) and the page limit. By page number or offset, a
+ * page shorter than the first (or than `pageSize`) is the last. Messages are English (`pagingMessage`),
+ * translated where they are shown. Stops between pages when
  * `signal` aborts.
  */
 export async function fetchPages(
@@ -80,16 +87,17 @@ export async function fetchPages(
   let link: string | null = firstPageUrl(input.url, paging);
   let before: string | null = null;
   let pages = 0;
+  let firstLength = 0;
   // Secrets go only to the first link's site: a next link elsewhere ends the reading.
   const origin = new URL(input.url).origin;
   while (link !== null) {
     signal.throwIfAborted();
     if (seen.has(link)) {
-      input.warn(t("paging.repeated", { pages }));
+      input.warn(pagingMessage("repeated", { pages }));
       break;
     }
     if (pages >= paging.maxPages) {
-      input.warn(t("paging.limit", { pages }));
+      input.warn(pagingMessage("limit", { pages }));
       break;
     }
     seen.add(link);
@@ -105,7 +113,7 @@ export async function fetchPages(
       // The first page failing fails the Update; a later one keeps the rows read, with a warning.
       if (pages === 0 || signal.aborted) throw error;
       const message = error instanceof Error ? error.message : String(error);
-      input.warn(t("paging.failed", { page: pages + 1, message }));
+      input.warn(pagingMessage("failed", { page: pages + 1, message }));
       break;
     }
     // With no rows path, a response without a list reads as one row (itself): after the first
@@ -114,16 +122,21 @@ export async function fetchPages(
     if (ended) break;
     const fingerprint = JSON.stringify(list);
     if (fingerprint === before) {
-      input.warn(t("paging.same", { pages }));
+      input.warn(pagingMessage("same", { pages }));
       break;
     }
     pages++;
     before = fingerprint;
     for (const row of list) rows.push(row);
+    if (pages === 1) firstLength = list.length;
+    // By page number or offset a page with fewer rows than a full one is the last: no more pages
+    // to ask for (and no limit warning when it came exactly at the limit).
+    const fullPage = paging.mode === "offset" && paging.sizeParam ? paging.pageSize : firstLength;
+    if (paging.mode !== "next" && list.length < fullPage) break;
     if (paging.mode === "next") {
       link = nextLink(page, paging, link);
       if (link !== null && new URL(link).origin !== origin) {
-        input.warn(t("paging.otherSite", { pages }));
+        input.warn(pagingMessage("otherSite", { pages }));
         break;
       }
     } else link = pageUrl(input.url, paging, pages, rows.length);

@@ -11,6 +11,8 @@ export interface PagingSettings {
   /** The query parameter holding how many rows a page has (offset paging); `""` for none. */
   sizeParam: string;
   pageSize: number;
+  /** The number of the first page (page paging): 1, or 0 for an API that counts from 0. */
+  firstPage: number;
   /** Where the response holds the next page's link (`next` paging). */
   nextPath: string;
   maxPages: number;

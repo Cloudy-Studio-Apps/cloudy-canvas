@@ -35,6 +35,8 @@ export interface ConnectionDraft {
   pageParam: string;
   sizeParam: string;
   pageSize: number;
+  /** The first page's number (page paging). */
+  firstPage: number;
   nextPath: string;
   maxPages: number;
 }

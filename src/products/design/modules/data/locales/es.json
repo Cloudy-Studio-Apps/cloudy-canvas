@@ -46,6 +46,7 @@
       "paginationOffset": "Por desplazamiento",
       "paginationNext": "Por un enlace a la página siguiente",
       "pageParam": "Ajuste de página",
+      "firstPage": "Número de la primera página",
       "sizeParam": "Ajuste de tamaño",
       "pageSize": "Filas por página",
       "nextPath": "El enlace siguiente viene de",
@@ -180,6 +181,7 @@
     }
   },
   "errors": {
+    "noSourceType": "Su complemento no está instalado ({type}).",
     "missing": "Falta: {keys}",
     "answered": "{url} respondió con el error {status}.",
     "noFormat": "No se pudo saber el formato de los datos. Elige uno en Formato.",
@@ -483,6 +485,7 @@
       "offsetHint": "Pide filas desde la 0 y luego a continuación de las ya leídas.",
       "nextHint": "Sigue el enlace que cada respuesta da para la página siguiente.",
       "pageParamHint": "El nombre en el enlace que lleva el número de página.",
+      "firstPageHint": "El número de la primera página. La mayoría empieza en 1; algunas en 0. Un número ya escrito en el enlace tiene prioridad.",
       "offsetParamHint": "El nombre en el enlace que lleva desde dónde empezar.",
       "sizeParamHint": "El nombre en el enlace que lleva cuántas filas pedir. Déjalo vacío si el sitio no tiene uno.",
       "nextPathHint": "Dónde está en la respuesta el enlace de la página siguiente, como links.next. Si falta o está vacío, esa fue la última página.",
@@ -525,7 +528,7 @@
     "firstOnly": "Se muestra solo la primera página. Actualizar lee todas.",
     "repeated": "Se detuvo tras {pages} páginas: la siguiente era un enlace ya leído. Se conservaron las filas leídas.",
     "same": "Se detuvo tras {pages} páginas: la siguiente devolvió las mismas filas, así que el sitio puede estar ignorando el ajuste de página. Se conservaron las filas leídas.",
-    "limit": "Se detuvo en el límite de {pages} páginas. Se conservaron las filas leídas; sube el límite en Páginas para leer más.",
+    "limit": "Se detuvo en el límite de {pages} páginas; puede que el sitio tenga más. Se conservaron las filas leídas; sube el límite en Páginas para leer más.",
     "notJson": "{url} no respondió JSON, que es lo que necesita la lectura por páginas.",
     "warnings": "Leído con un aviso",
     "failed": "Se detuvo en la página {page}: {message} Se conservaron las filas leídas antes.",

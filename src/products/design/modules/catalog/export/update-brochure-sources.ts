@@ -4,8 +4,10 @@ import { SourceUpdateError } from "./source-update-error";
 
 /**
  * Updates sources one after another before an export, as their Update buttons do (one undo step
- * each, in the workspace's history): the first that fails throws a `SourceUpdateError` and the
- * rest aren't updated, so an export never goes on with data the user asked to refresh.
+ * each, in the workspace's history): the first that fails, or that finishes with warnings (a
+ * paged API that stopped early, so its rows are partial), throws a `SourceUpdateError` and the
+ * rest aren't updated, so an export never goes on with data the user asked to refresh and didn't
+ * get whole. The warnings are the error's reason, one per line; the Update stays saved.
  * `onSource` hears each source's name as its Update starts.
  */
 export async function updateBrochureSources(
@@ -20,7 +22,8 @@ export async function updateBrochureSources(
     let error: string | null;
     try {
       const result = await sources.update(id);
-      error = result.ok ? null : (result.error ?? "it failed");
+      if (!result.ok) error = result.error ?? "it failed";
+      else error = result.warnings?.length ? result.warnings.join("\n") : null;
     } catch (thrown) {
       error = thrown instanceof Error ? thrown.message : String(thrown);
     }

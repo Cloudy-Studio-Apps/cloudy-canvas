@@ -3,6 +3,7 @@ import { TriangleAlert } from "lucide-react";
 import { useService } from "@canvas-ui";
 import { cn } from "@shared/ui/kit";
 import { DESIGN_DATA_SOURCES } from "../../model";
+import { errorText } from "./error-text";
 import { useDataVersion } from "../hooks/use-data-version";
 import type { UpdateWarningsLineProps } from "./update-warnings-line.types";
 
@@ -20,7 +21,7 @@ export function UpdateWarningsLine({ sourceId, className }: UpdateWarningsLinePr
       {warnings.map((warning) => (
         <p key={warning} className="flex items-start gap-1">
           <TriangleAlert className="mt-0.5 size-3 shrink-0" />
-          <span className="min-w-0 break-words">{warning}</span>
+          <span className="min-w-0 break-words">{errorText(warning)}</span>
         </p>
       ))}
     </div>

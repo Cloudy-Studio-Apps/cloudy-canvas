@@ -60,7 +60,8 @@ export async function startUpdateAll(sources: DesignDataSources): Promise<void> 
   try {
     for (const source of sources.list()) {
       if (controller.signal.aborted) break;
-      if (updates.bySource.has(source.id)) continue;
+      // A source whose plugin isn't installed can't update: it is skipped, not reported.
+      if (updates.bySource.has(source.id) || !sources.hasType(source.sourceType)) continue;
       await runOne(sources, source.id, controller);
     }
   } finally {

@@ -87,6 +87,7 @@ export function httpSettings(): SettingSpec[] {
     },
     { key: "pageParam", kind: "text", label: t("sources.http.pageParam"), placeholder: "page" },
     { key: "sizeParam", kind: "text", label: t("sources.http.sizeParam"), placeholder: "limit" },
+    { key: "firstPage", kind: "number", label: t("sources.http.firstPage"), min: 0, max: 100000 },
     { key: "pageSize", kind: "number", label: t("sources.http.pageSize"), min: 1, max: 100000 },
     { key: "nextPath", kind: "text", label: t("sources.http.nextPath"), placeholder: "links.next" },
     { key: "maxPages", kind: "number", label: t("sources.http.maxPages"), min: 1, max: 500 },

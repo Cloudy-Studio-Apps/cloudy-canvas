@@ -76,6 +76,18 @@ export function PagesTab({ draft, onChange }: ConnectionTabProps) {
           )}
         </div>
       )}
+      {mode === "page" && (
+        <Field label={t("sources.http.firstPage")} hint={t("connection.pages.firstPageHint")}>
+          <NumberInput
+            label={t("sources.http.firstPage")}
+            value={draft.firstPage}
+            min={0}
+            max={100000}
+            decimals={0}
+            onChange={(firstPage, info) => info.done && onChange({ ...draft, firstPage })}
+          />
+        </Field>
+      )}
       {mode === "offset" && (
         <Field label={t("sources.http.pageSize")}>
           <NumberInput

@@ -46,6 +46,7 @@
       "paginationOffset": "By offset",
       "paginationNext": "By a link to the next page",
       "pageParam": "Page setting",
+      "firstPage": "First page number",
       "sizeParam": "Size setting",
       "pageSize": "Rows per page",
       "nextPath": "Next link comes from",
@@ -180,6 +181,7 @@
     }
   },
   "errors": {
+    "noSourceType": "Its plugin isn't installed ({type}).",
     "missing": "Missing: {keys}",
     "answered": "{url} answered with error {status}.",
     "noFormat": "Couldn't tell the data's format. Choose one under Format.",
@@ -483,6 +485,7 @@
       "offsetHint": "Asks for rows starting at 0, then after the rows already read.",
       "nextHint": "Follows the link each answer gives for the next page.",
       "pageParamHint": "The name in the link that holds the page number.",
+      "firstPageHint": "The number of the first page. Most sites start at 1; some at 0. A number already in the link wins.",
       "offsetParamHint": "The name in the link that holds where to start.",
       "sizeParamHint": "The name in the link that holds how many rows to get. Leave empty if the site has none.",
       "nextPathHint": "Where in the answer the next page's link is, like links.next. When it's missing or empty, that was the last page.",
@@ -525,7 +528,7 @@
     "firstOnly": "Showing only the first page. Update reads every page.",
     "repeated": "Stopped after {pages} pages: the next page was a link already read. The rows so far were kept.",
     "same": "Stopped after {pages} pages: the next page gave the same rows again, so the site may be ignoring the page setting. The rows so far were kept.",
-    "limit": "Stopped at the limit of {pages} pages. The rows so far were kept; raise the limit under Pages to read more.",
+    "limit": "Stopped at the limit of {pages} pages; the site may have more. The rows so far were kept; raise the limit under Pages to read more.",
     "notJson": "{url} didn't answer JSON, which reading in pages needs.",
     "warnings": "Read with a warning",
     "failed": "Stopped at page {page}: {message} The rows read before it were kept.",

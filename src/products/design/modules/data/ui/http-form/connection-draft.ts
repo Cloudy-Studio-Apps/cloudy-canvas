@@ -65,6 +65,7 @@ export function toDraft(
     pageParam: text(values.pageParam).trim(),
     sizeParam: paging.sizeParam,
     pageSize: paging.pageSize,
+    firstPage: paging.firstPage,
     nextPath: paging.nextPath,
     maxPages: paging.maxPages,
   };
@@ -77,6 +78,7 @@ function pagingValues(draft: ConnectionDraft): Record<string, SettingValue> {
   const values: Record<string, SettingValue> = { pagination: mode, maxPages: draft.maxPages };
   if (mode === "next") return { ...values, nextPath: draft.nextPath.trim() };
   values.pageParam = draft.pageParam.trim();
+  if (mode === "page") values.firstPage = draft.firstPage;
   if (mode === "offset") {
     values.sizeParam = draft.sizeParam.trim();
     values.pageSize = draft.pageSize;

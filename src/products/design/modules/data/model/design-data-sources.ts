@@ -252,10 +252,16 @@ export class DesignDataSources {
     return previewSource(context, input, signal);
   }
 
-  /** Updates every source, one after another; the results are in list order. */
+  /**
+   * Updates every source, one after another; the results are in list order. A source whose
+   * plugin isn't installed is skipped (it has no result).
+   */
   async updateAll(options: UpdateOptions = {}): Promise<UpdateResult[]> {
     const results: UpdateResult[] = [];
-    for (const source of this.list()) results.push(await this.update(source.id, options));
+    for (const source of this.list()) {
+      if (this.context && !this.hasType(source.sourceType)) continue;
+      results.push(await this.update(source.id, options));
+    }
     return results;
   }
 

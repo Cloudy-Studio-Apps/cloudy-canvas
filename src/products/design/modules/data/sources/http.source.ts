@@ -6,6 +6,7 @@ import { answeredMessage } from "../update";
 import { buildHttpRequest } from "./http-request";
 import { fetchPages, firstPageUrl, pagingSettings } from "./http-pagination";
 import { httpSettings } from "./http-settings";
+import { pagingMessage } from "./paging-messages";
 
 function textSetting(value: unknown): string {
   return typeof value === "string" ? value : "";
@@ -65,7 +66,8 @@ export const HTTP_SOURCE: DataSourceType = {
     const url = textSetting(settings.url).trim();
     if (!url) throw new Error("No URL.");
     const paging = pagingSettings(settings);
-    if (paging.mode === "next" && paging.nextPath === "") throw new Error(t("paging.noNextPath"));
+    if (paging.mode === "next" && paging.nextPath === "")
+      throw new Error(pagingMessage("noNextPath"));
     // One request to `at`, with the link's headers and sign-in (every page gets them).
     const get = async (at: string) => {
       const request = buildHttpRequest({ ...settings, url: at }, ctx.secrets);
@@ -75,7 +77,7 @@ export const HTTP_SOURCE: DataSourceType = {
     };
     if (paging.mode === "none" || ctx.preview) {
       // Try it reads only the first page, and says so.
-      if (paging.mode !== "none") ctx.warn(t("paging.firstOnly"));
+      if (paging.mode !== "none") ctx.warn(pagingMessage("firstOnly"));
       const res = await get(firstPageUrl(url, paging));
       return { bytes: res.bytes, mime: res.headers["content-type"], fileName: lastSegment(url) };
     }
@@ -86,7 +88,7 @@ export const HTTP_SOURCE: DataSourceType = {
         try {
           return JSON.parse(new TextDecoder().decode(res.bytes)) as unknown;
         } catch {
-          throw new Error(t("paging.notJson", { url: at }));
+          throw new Error(pagingMessage("notJson", { url: at }));
         }
       },
     );

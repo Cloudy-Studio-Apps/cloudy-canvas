@@ -228,12 +228,19 @@ export const dataTools: DesignMcpTool[] = [
       const { engine } = requireDesign(host);
       const sources = engine.service(DESIGN_DATA_SOURCES);
       const source = readSource(engine, args);
-      const type = requireType(sources.types(), source.sourceType);
+      // Only settings and secrets need the source's type: a source whose plugin isn't installed
+      // can still be renamed, reshaped and have its fields changed.
+      const needsType = (args.settings ?? args.secrets ?? null) !== null;
+      const type = needsType ? requireType(sources.types(), source.sourceType) : null;
       const name = optionalString(args, "name");
       if (name !== undefined && name.trim() === "") throw new Error('"name" is empty.');
-      const given = readSettingValues(args, "settings", type.settings, `Source type "${type.id}"`);
+      const given = type
+        ? readSettingValues(args, "settings", type.settings, `Source type "${type.id}"`)
+        : undefined;
       const settings = given ? { ...source.settings, ...given } : undefined;
-      const secrets = readSecretValues(args, type.settings, settings ?? source.settings);
+      const secrets = type
+        ? readSecretValues(args, type.settings, settings ?? source.settings)
+        : undefined;
       const format = optionalString(args, "format");
       if (format !== undefined) checkFormat(sources.formats(), format);
       const nextFormat = format ?? source.format;
