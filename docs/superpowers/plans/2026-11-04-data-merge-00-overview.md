@@ -5,13 +5,13 @@
 Five plans, one per phase of the spec, in order. Each ships on its own (lint, typecheck, format,
 changelog entry) and the next builds on it.
 
-| Phase | Plan                                                             | Ships                                                                                         |
-| ----- | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| 1     | [Sources](2026-11-04-data-merge-01-sources.md)                   | The `data` module, file and HTTP sources, CSV and JSON, Update, the Data tab, agent tools     |
-| 2     | [Bindings](2026-11-04-data-merge-02-bindings.md)                 | Text tokens, field bindings, formats, conditions, images into assets, preview row             |
-| 3     | [Element iterator](2026-11-04-data-merge-03-element-iterator.md) | Repeat on a frame, row keys, filter, sort, limits, Detach, data checks                        |
-| 4     | [Page iterator](2026-11-04-data-merge-04-page-iterator.md)       | Repeat this page, rows per page, group by into sections, counted pages, export prompt/scratch |
-| 5     | [Finish](2026-11-04-data-merge-05-finish.md)                     | Excel, the Shape step, API pagination, an example plugin, plugin docs                         |
+| Phase | Plan                                                                      | Ships                                                                                        |
+| ----- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| 1     | [Sources](2026-11-04-data-merge-01-sources.md)                            | The `data` module, file and HTTP sources, CSV and JSON, Update, the Data tab, agent tools    |
+| 2     | [Bindings](2026-11-04-data-merge-02-bindings.md)                          | Text tokens, field bindings, formats, conditions, images into assets, preview row            |
+| 3     | [Element iterator](2026-11-04-data-merge-03-element-iterator.md)          | Repeat on a frame, row keys, filter, sort, limits, Detach, data checks                       |
+| 4     | [Repeating sections and pages](2026-11-04-data-merge-04-page-iterator.md) | Section and page repeats (nested loops), In scope view, counted pages, export prompt/scratch |
+| 5     | [Finish](2026-11-04-data-merge-05-finish.md)                              | Excel, the Shape step, API pagination, an example plugin, plugin docs                        |
 
 ## Rules every plan follows
 

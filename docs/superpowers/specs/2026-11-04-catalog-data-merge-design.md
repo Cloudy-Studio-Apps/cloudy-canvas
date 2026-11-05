@@ -31,9 +31,9 @@ iterator is a brochure thing.
    to.
 5. **Bindings:** tokens in text (`{product.name}`) and fields bound from the properties panel
    (an image fill to an image field, a color, visibility), with formatting per binding.
-6. **Element iterator** ("Repeat" on a frame) and **page iterator** ("Repeat this page" in a
-   brochure), both with filter, sort and an optional limit; the page iterator also chunks rows per
-   page and groups by a field into sections.
+6. **Element iterator** ("Repeat" on a frame) and, in a brochure, **repeating sections and pages**
+   (a group of pages per row; a page per row or per N rows of a list), all with filter, sort and an
+   optional limit; nested, like loops in code.
 7. **Design with a few, export all:** an iterator can show only N copies while designing; the export
    makes all of them, and page numbers, the table of contents and checks count the full set.
 8. **Fetch only on demand:** nothing updates on its own. The export asks whether to update the
@@ -75,7 +75,7 @@ Verification is `pnpm lint`, `pnpm typecheck`, `pnpm format:check`.
   plugins extend (`dataSourceTypes`, `dataFormats`) and adds fields other modules read (bindings).
   Requires `core`, `pages`, `frame`; uses `text`, `image`, `auto-layout`. It holds sources,
   snapshots, the Update pipeline, bindings, the element iterator, the Data tab and their agent tools.
-- **`catalog`** gains `uses: data` for the page iterator, the export prompt and data checks.
+- **`catalog`** gains `uses: data` for repeating sections and pages, the export prompt and data checks.
 
 ### Sources
 
@@ -193,24 +193,40 @@ as, filter[], sort[], limit?, designLimit? }`. The frame's **first child is the 
 - `limit` caps the rows everywhere; `designLimit` caps only the copies made while designing (the
   export makes all of them, below).
 
-### The page iterator ("Repeat this page", Catalog)
+### Repeating sections and pages (Catalog)
 
-- On a brochure slot: `repeat: { source, as, filter[], sort[], perPage, groupBy?, groupOpener?,
-limit?, designLimit? }`. The slot's frame is the template; generated pages are copies of it on the
-  design page, tagged, added as generated slots right after it, and arranged with the brochure.
-- **perPage:** each page takes N rows. On the page the rows are a list in scope (`{page.rows}`, with
-  `as` naming each), so an element iterator inside the page frame repeats a card over them: a
-  9-card grid page is a page iterator with `perPage: 9` around an element iterator over its rows.
-  With `perPage: 1` the row itself is in scope.
-- **groupBy** a field: rows are grouped in order, each group starts a **section** named by its value
-  (so the page list's folders, the table of contents and, later, C3's PDF bookmarks follow), and an
-  optional `groupOpener` frame (a second template) opens each group.
-- Master copies are stamped on generated pages by the existing page-items sync, which runs after
-  the data sync (module order); the template's own master copies are never copied.
-- **Counting what isn't on the canvas:** with a `designLimit`, the brochure's layout counts the
-  pages the data will make (rows, chunks and groups are known without making them), so "Page 3 of
-  240", printed numbers and `{toc}` are right while designing. The page list shows a row "+237 pages
-  from products, made at export".
+Revised 2026-11-05 with the user: what repeats in a brochure is a **group of pages**, not one
+page. A product can have a cover, a description and 0…n gallery pages; anything with rows works the
+same (hotels, menu items, people). It reads like code: a repeating section is a `for` loop and its
+pages are the loop body; the layers inside read the loop variables of every loop around them.
+
+- **A section repeats** (`BrochureSection.repeat`): "Repeat for each row" on a section (select pages
+  → Make section → Repeat). Settings as the element iterator's: `source` (a list in scope: a source,
+  or `category.products` inside an outer repeat), `as`, `key`, `filter[]`, `sort[]`, `limit?`,
+  `designLimit?` (copies of the section made while designing, default 3), `previewRow?`,
+  `detached[]`. Each row gets a copy of every page of the section, nested subsections included.
+  The section's name may hold tokens (`{product.name}`), so each copy is a real section with its
+  own name in the page list, `{section}` and the table of contents.
+- **A page repeats** (`BrochureSlot.repeat`): "Repeat this page" over a list in scope, with
+  `perPage` rows on each copy (default 1). With `perPage: 1`, `as` is the row; above 1, `as` is the
+  page's list of rows (an array a card repeater inside iterates). An empty list makes **no page**
+  (the template page itself is left out of the print), which is how "n+ pages or none" works.
+- **Groups are nested sections:** "a section per category with an opener page" is a repeating
+  section over categories whose first page is the opener, holding a repeating subsection over
+  `category.products`. There is no separate `groupBy`/opener setting.
+- **Templates are the first copy:** the pages you designed show the preview row (step it ◀ ▶ to test
+  other rows, e.g. one with no photos); a few real copies follow, locked and tagged; the rest are
+  **pending** pages, counted but not made ("+36 pages at export"). Edits to the template flow to every
+  copy; Detach frees a copy, as with cards.
+- **Scope flows down:** a layer reads the rows of every loop around it: card repeaters (phase 3),
+  page repeat, section repeats, out to the sources. The data module offers a point for extra rows
+  around a layer; catalog answers it for pages, so bindings work the same in Design mode and the
+  Catalog mode. The Data section shows **In scope**: each name, where it comes from and its row
+  (◀ 3 of 40 ▶). Template page frames carry a tag on the canvas ("Product · row 1 of 40").
+- Master copies are stamped on generated pages by the existing page-items sync; the template's own
+  master copies are never copied.
+- **Counting what isn't on the canvas:** pending copies are planned (rows, nested repeats, chunks)
+  without being made, so "Page 3 of 240", printed numbers and `{toc}` are right while designing.
 
 ### Export
 
@@ -222,7 +238,7 @@ limit?, designLimit? }`. The slot's frame is the template; generated pages are c
 
 ### The Data tab
 
-A left tab of the Design editor, also shown in the Catalog mode (where the page iterator picks from
+A left tab of the Design editor, also shown in the Catalog mode (where section and page repeats pick from
 it). Lists sources (name, type icon, rows, "updated 3 days ago", error state, Update), with **+ Add
 source** (pick a type, then its form). A source's detail: its settings, the optional Shape step, the
 fields (path, name, type, format, a sample value) and the rows in a virtualized table. Kit
@@ -240,7 +256,7 @@ whose row is gone; a source with an error or never updated; a generated set larg
 `data` module: `list_data_sources`, `get_data_source` (fields, types, a few sample rows),
 `add_data_source`, `update_data_source`, `set_data_source` (settings, format, shape, field names,
 types and formats), `remove_data_source`, `bind_data` (text templates, field bindings, conditions),
-`set_repeat` / `remove_repeat`, `detach_data_copy`. `catalog`: `set_brochure_page_repeat`, and
+`set_repeat` / `remove_repeat`, `detach_data_copy`. `catalog`: `set_brochure_repeat` / `remove_brochure_repeat` (a section or a page), and
 `updateSources` on `export_brochure_pdf`. Secrets an agent passes go to the device store too.
 
 ## Phases (one plan each, each shippable)
@@ -251,8 +267,8 @@ types and formats), `remove_data_source`, `bind_data` (text templates, field bin
    into assets, the Data section, `bind_data`. (The preview row moved to phase 3, where templates
    first have rows.)
 3. **Element iterator:** Repeat, keys, filter/sort/limit/designLimit, Detach, checks.
-4. **Page iterator:** Repeat this page, perPage, groupBy into sections with openers, counted pages,
-   export on a scratch copy, the export prompt, catalog agent tools.
+4. **Repeating sections and pages:** section and page repeats, nested scopes and the In scope view,
+   counted pending pages, export on a scratch copy, the export prompt, catalog agent tools.
 5. **Finish:** Excel, the Shape step, pagination for APIs, the remaining checks, an example plugin
    (`examples/plugins/`) that registers a source type to prove the API, docs/plugins.md.
 
