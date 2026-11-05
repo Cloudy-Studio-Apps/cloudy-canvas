@@ -4,6 +4,7 @@ import { missingSettings } from "../settings";
 import { isDataSource, type DataSourceElement } from "../source";
 import { extraValues, findLists, guessFields, SHAPE_ERRORS } from "../table";
 import { shapedData } from "./shaped-data";
+import { removeAddedPictures } from "./remove-added-pictures";
 import type { SourceRead } from "./shaped-data.types";
 import { addSnapshot, encodeRows } from "./snapshot";
 import { downloadImages } from "./download-images";
@@ -109,14 +110,22 @@ export async function updateSource(
     // Read again: the record may have changed (or gone) while fetching. A rows path or shape set
     // meanwhile is applied to the data fetched, so the rows match the fields and bindings it left
     // (pictures were saved by the rows read first: a field it brings saves its own next Update).
-    // The pictures' assets are in, so a cancel no longer stops it.
-    let current = record(doc, id);
-    for (let tries = 0; !sameRead(current, read); tries++) {
-      if (tries >= MAX_RESHAPES) throw new Error(SHAPE_ERRORS.changed);
-      read = { rowsPath: current.rowsPath, shape: current.shape ?? null };
-      ({ rows, raw: kept } = shapedData(parsed, read.rowsPath, read.shape));
-      encoded = await encodeRows(rows, kept);
+    // The pictures' assets are in, so a cancel no longer stops it: it ends as a finished Update.
+    // A failure here removes the pictures it added (`removeAddedPictures`).
+    let current: DataSourceElement;
+    try {
       current = record(doc, id);
+      for (let tries = 0; !sameRead(current, read); tries++) {
+        if (tries >= MAX_RESHAPES) throw new Error(SHAPE_ERRORS.changed);
+        read = { rowsPath: current.rowsPath, shape: current.shape ?? null };
+        ({ rows, raw: kept } = shapedData(parsed, read.rowsPath, read.shape));
+        encoded = await encodeRows(rows, kept);
+        current = record(doc, id);
+      }
+    } catch (error) {
+      // Failing here, the pictures this Update just saved would be pointed at by nothing.
+      removeAddedPictures(doc, id, before.images, downloaded.images);
+      throw error;
     }
     const previous = current.snapshot;
     const changed = previous?.hash !== encoded.hash;
