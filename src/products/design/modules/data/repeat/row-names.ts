@@ -9,7 +9,10 @@ import type { RepeatSettings, RowNames } from "./repeat.types";
  * → `item.price`) so formats and types apply inside copies, and the list's source so pictures
  * resolve per source.
  */
-export function rowNames(parent: DataScope, repeat: RepeatSettings): RowNames {
+export function rowNames(
+  parent: DataScope,
+  repeat: Pick<RepeatSettings, "source" | "as">,
+): RowNames {
   const fields = new Map<string, DataField>();
   const sources = new Map<string, string>();
   const found = lookup(parent, repeat.source);

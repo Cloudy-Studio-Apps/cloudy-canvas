@@ -1,6 +1,7 @@
 import type { CanvasElement, ElementDefaults } from "@canvas";
 
 import type { DataExtraValue, DataList } from "../table/find-lists.types";
+import type { DataShape } from "../table/shape.types";
 
 /** A setting of a source type or format: text, a number, a switch, a map (headers) or unset. */
 export type SettingValue = string | number | boolean | Record<string, string> | null;
@@ -80,6 +81,11 @@ export interface DataSourceElement extends CanvasElement {
    * the first list found.
    */
   rowsPath: string | null;
+  /**
+   * The optional step that renames and picks fields once the rows are found (`shapeRows`), or
+   * `null`: the rows as they are.
+   */
+  shape: DataShape | null;
   fields: DataField[];
   snapshot: DataSnapshot | null;
   /** Image assets the data points at, by the value that names them. */
@@ -92,6 +98,7 @@ export interface DataSourceDefaults extends ElementDefaults {
   format: string;
   formatOptions: Record<string, SettingValue>;
   rowsPath: string | null;
+  shape: DataShape | null;
   fields: DataField[];
   snapshot: DataSnapshot | null;
   images: Record<string, string>;

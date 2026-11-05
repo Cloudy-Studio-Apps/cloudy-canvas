@@ -24,3 +24,4 @@ export { brochurePreviewSetter } from "./brochure-preview-setter";
 export { brochureFrameTags } from "./brochure-frame-tags";
 export { brochurePhase, setBrochureExport } from "./brochure-phase";
 export { unkeyedDetach } from "./unkeyed-detach";
+export { renameBrochureFields } from "./rename-brochure-fields";

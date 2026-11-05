@@ -6,6 +6,7 @@ import type { SettingSpec } from "./settings";
 import type { SettingValue } from "./source";
 import type { ScopeLayer } from "./repeat/scope-layer.types";
 import type { DataScope } from "./bindings/scope.types";
+import type { DataFieldRenameHook } from "./repeat/field-renamer.types";
 
 /** Where data comes from (a file, a link, a sheet). Built-ins and plugins register these. */
 export interface DataSourceType {
@@ -57,10 +58,11 @@ export type DataScopeProvider = (
  */
 export type DataLocaleProvider = (doc: CanvasDocument, node: DesignNode) => string | null;
 
-/** Both providers' entries, as the module host has them now. */
+/** Both providers' entries and the field rename hooks, as the module host has them now. */
 export interface DataAround {
   scopes: readonly DataScopeProvider[];
   locales: readonly DataLocaleProvider[];
+  fieldRenames: readonly DataFieldRenameHook[];
 }
 
 /** A loop's preview row, stepped from the In scope view. */

@@ -467,6 +467,18 @@
     "whole": "Toda la respuesta",
     "extras": "También en los datos: {list}"
   },
+  "shape": {
+    "title": "Dar forma a los datos",
+    "add": "Añadir un paso para dar forma a los datos",
+    "addHint": "Cambia el nombre de los campos y quédate solo con los que necesitas antes de que tus capas los usen. No se vuelve a descargar nada.",
+    "rowsNote": "Dónde están las filas se elige en Las filas vienen de.",
+    "kept_one": "{count} de {total} campos conservados",
+    "kept_other": "{count} de {total} campos conservados",
+    "keep": "Conservar {field}",
+    "rename": "Nuevo nombre para {field}",
+    "remove": "Quitar el paso",
+    "failed": "No se pudo dar forma a los datos"
+  },
   "scope": {
     "title": "En el ámbito",
     "from": {

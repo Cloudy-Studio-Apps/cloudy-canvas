@@ -5,16 +5,28 @@ import { parseTokens } from "./parse-tokens";
 import { renamePath } from "./rename-path";
 
 /**
- * The template with `from` renamed to `to` in its tokens, or `null` when no token names it. The
- * text between tokens is copied as it is; the runs move with their text (a run that touched a
- * token now covers the whole renamed token), clipped so they stay sorted, in range and apart.
- * Never throws: a stored template that breaks `bindData`'s rules (an older or hand-made file) is
- * left as it is (`null`), so one bad layer never stops a rename halfway.
+ * The template with `from` renamed to `to` in its tokens (`rewriteTemplate` with `renamePath`),
+ * or `null` when no token names it.
  */
 export function renameTemplate(
   template: DataTemplate,
   from: string,
   to: string,
+): DataTemplate | null {
+  return rewriteTemplate(template, (expr) => renamePath(expr, from, to));
+}
+
+/**
+ * The template with each token's expression rewritten (`rewrite` gives the new one, or `null` to
+ * keep it), or `null` when none changed. The text between tokens is copied as it is; the runs
+ * move with their text (a run that touched a token now covers the whole rewritten token), clipped
+ * so they stay sorted, in range and apart. Never throws: a stored template that breaks
+ * `bindData`'s rules (an older or hand-made file) is left as it is (`null`), so one bad layer
+ * never stops a rename halfway.
+ */
+export function rewriteTemplate(
+  template: DataTemplate,
+  rewrite: (expr: string) => string | null,
 ): DataTemplate | null {
   if (!valid(template)) return null;
   const source = template.text;
@@ -24,7 +36,7 @@ export function renameTemplate(
   let at = 0;
   for (const part of parseTokens(source)) {
     if (part.kind !== "token") continue;
-    const expr = renamePath(part.expr, from, to);
+    const expr = rewrite(part.expr);
     if (expr === null) continue;
     out += source.slice(at, part.start);
     const newStart = out.length;

@@ -467,6 +467,18 @@
     "whole": "The whole answer",
     "extras": "Also in the data: {list}"
   },
+  "shape": {
+    "title": "Shape the data",
+    "add": "Add a step to shape the data",
+    "addHint": "Rename fields and keep only the ones you need before your layers use them. Nothing is fetched again.",
+    "rowsNote": "Where the rows are is set in Rows come from.",
+    "kept_one": "{count} of {total} fields kept",
+    "kept_other": "{count} of {total} fields kept",
+    "keep": "Keep {field}",
+    "rename": "New name for {field}",
+    "remove": "Remove step",
+    "failed": "Couldn't shape the data"
+  },
   "scope": {
     "title": "In scope",
     "from": {

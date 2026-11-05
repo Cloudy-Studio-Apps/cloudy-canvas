@@ -5,6 +5,7 @@ import { DESIGN_DATA_SOURCES } from "../model";
 import { describeSource, summarizeSource } from "./describe-source";
 import { patchFields } from "./field-args";
 import { readRowsPath, ROWS_PATH_SCHEMA } from "./rows-path-arg";
+import { readShapeArg, SHAPE_SCHEMA } from "./shape-arg";
 import {
   checkFormat,
   inUndoStep,
@@ -175,9 +176,10 @@ export const dataTools: DesignMcpTool[] = [
     name: "set_data_source",
     description:
       "Changes a data source in one undo step: `name`, `settings` (merged into the current " +
-      "ones; null removes a secret setting), `secrets`, `format` and `formatOptions`, `rowsPath`, and " +
+      "ones; null removes a secret setting), `secrets`, `format` and `formatOptions`, `rowsPath`, " +
       "`fields` (patches matched by `path`: alias, type, format, hidden; an unknown path is an " +
-      `error). Nothing is fetched: call update_data_source after changing where data comes ` +
+      "error) and `shape` (applied last, so `fields` names the paths as they are now). Nothing " +
+      `is fetched: call update_data_source after changing where data comes ` +
       `from. ${DEVICE_NOTE} ${BINDING_NOTE}`,
     inputSchema: {
       type: "object",
@@ -190,6 +192,7 @@ export const dataTools: DesignMcpTool[] = [
         format: FORMAT_SCHEMA,
         formatOptions: { type: "object", description: "The format's options by key." },
         rowsPath: ROWS_PATH_SCHEMA,
+        shape: SHAPE_SCHEMA,
         fields: {
           type: "array",
           items: {
@@ -242,6 +245,10 @@ export const dataTools: DesignMcpTool[] = [
         throw new Error('"formatOptions" needs an explicit "format" (not "auto").');
       const fields = patchFields(source, args);
       const rowsPath = readRowsPath(args);
+      const shape = readShapeArg(args, sources.rawRows(source.id));
+      if (shape !== undefined && source.snapshot && !engine.doc.hasAsset(source.snapshot.assetId)) {
+        throw new Error("This source's data isn't on this device: update it before shaping it.");
+      }
       const keepOptions = format === undefined || format === source.format;
       await inUndoStep(engine, async () => {
         if (name !== undefined) sources.rename(source.id, name);
@@ -253,6 +260,7 @@ export const dataTools: DesignMcpTool[] = [
           await sources.setSettings(source.id, settings ?? source.settings, secrets);
         if (fields) sources.setFields(source.id, fields);
         if (rowsPath !== undefined) sources.setRowsPath(source.id, rowsPath);
+        if (shape !== undefined) await sources.setShape(source.id, shape);
       });
       return describeSource(engine, sources.get(source.id) ?? source, 5);
     },

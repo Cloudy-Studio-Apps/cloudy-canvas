@@ -2,7 +2,14 @@ import type { CanvasDocument, ElementPatch } from "@canvas";
 
 import { missingSettings } from "../settings";
 import { isDataSource, type DataSourceElement } from "../source";
-import { extraValues, findLists, guessFields, normalizeRows } from "../table";
+import {
+  extraValues,
+  findLists,
+  guessFields,
+  isPlainShape,
+  normalizeRows,
+  shapeRows,
+} from "../table";
 import { addSnapshot, encodeRows } from "./snapshot";
 import { downloadImages } from "./download-images";
 import { requireFilePaths } from "./file-paths";
@@ -62,11 +69,16 @@ export async function updateSource(
       signal,
       options.onStage,
     );
-    const rows = normalizeRows(parsed, source.rowsPath);
-    if (!rows) throw new Error(`${UPDATE_ERRORS.noList}${source.rowsPath ?? ""}`);
+    const raw = normalizeRows(parsed, source.rowsPath);
+    if (!raw) throw new Error(`${UPDATE_ERRORS.noList}${source.rowsPath ?? ""}`);
+    // The shape step, when the source has one: its rows as read are kept too, so the step can
+    // change without fetching again (`reshapeSource`).
+    const shape = source.shape ?? null;
+    const kept = isPlainShape(shape) ? undefined : raw;
+    const rows = shapeRows(raw, shape);
     signal.throwIfAborted();
 
-    const encoded = await encodeRows(rows);
+    const encoded = await encodeRows(rows, kept);
     signal.throwIfAborted();
 
     // The pictures the data names, saved in the file; their assets are added (outside undo)
@@ -103,7 +115,7 @@ export async function updateSource(
     const base =
       previous && !changed && doc.hasAsset(previous.assetId)
         ? { ...previous, updatedAt: Date.now() }
-        : { ...addSnapshot(doc, rows, encoded), ...(replaced ? { previous: replaced } : {}) };
+        : { ...addSnapshot(doc, rows, encoded, kept), ...(replaced ? { previous: replaced } : {}) };
     // What else the data holds, for the "Rows come from" picker: kept with the snapshot.
     const snapshot = { ...base, lists: findLists(parsed), extras: extraValues(parsed) };
     doc.checkpoint();

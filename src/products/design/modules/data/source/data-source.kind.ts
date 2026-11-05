@@ -4,6 +4,7 @@ import type { DesignToolOptions } from "../../../design-options.types";
 import { DATA_SOURCE_TYPE } from "./data-source.constants";
 import { DATA_SOURCE_DEFAULTS } from "./data-source.defaults";
 import type { DataSourceDefaults, DataSourceElement } from "./data-source.types";
+import { storedShape } from "./stored-shape";
 
 /** A data source is a record, not a layer: never drawn or hit, and never on a page's canvas. */
 export class DataSourceKind extends ElementKind<DataSourceElement, DesignToolOptions> {
@@ -39,6 +40,7 @@ export class DataSourceKind extends ElementKind<DataSourceElement, DesignToolOpt
       format: el.format ?? DATA_SOURCE_DEFAULTS.format,
       formatOptions: el.formatOptions ?? {},
       rowsPath: typeof el.rowsPath === "string" ? el.rowsPath : null,
+      shape: storedShape(el.shape),
       fields: el.fields ?? [],
       snapshot: el.snapshot ?? null,
       images: el.images ?? {},

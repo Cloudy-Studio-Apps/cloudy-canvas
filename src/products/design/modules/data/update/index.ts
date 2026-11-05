@@ -1,7 +1,7 @@
 export type * from "./snapshot.types";
 export type * from "./update-source.types";
 export type * from "./preview-source.types";
-export { encodeRows, readSnapshot, writeSnapshot } from "./snapshot";
+export { addSnapshot, encodeRows, readSnapshot, readSnapshotRows, writeSnapshot } from "./snapshot";
 export {
   loadSecrets,
   loadSourceSecrets,

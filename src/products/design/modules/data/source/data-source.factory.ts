@@ -24,6 +24,7 @@ export function createDataSource(
     format: init.format ?? DATA_SOURCE_DEFAULTS.format,
     formatOptions: init.formatOptions ?? {},
     rowsPath: init.rowsPath ?? null,
+    shape: null,
     fields: [],
     snapshot: null,
     images: {},

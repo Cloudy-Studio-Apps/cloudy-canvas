@@ -7,6 +7,7 @@ import type {
   DataScopeProvider,
   DataSourceType,
 } from "./data.points.types";
+import type { DataFieldRenameHook } from "./repeat/field-renamer.types";
 
 /** Where data comes from, keyed by id: the built-ins, and any a plugin adds. */
 export const dataSourceTypes = definePoint<DataSourceType>("design.data.sourceTypes", {
@@ -32,3 +33,10 @@ export const dataLocaleProviders = definePoint<DataLocaleProvider>("design.data.
  * brochure's section and page repeats), for the In scope view; the first answer wins.
  */
 export const dataPreviewSetters = definePoint<DataPreviewSetter>("design.data.previewSetters");
+
+/**
+ * What another module keeps outside layers that reads data fields (a brochure's section and page
+ * repeats, its section names): when a source's shape step renames fields, each hook rewrites its
+ * own with the renamer it's given, in the same undo step.
+ */
+export const dataFieldRenames = definePoint<DataFieldRenameHook>("design.data.fieldRenames");

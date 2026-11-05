@@ -3,12 +3,18 @@ import type { CanvasDocument } from "@canvas";
 import { dataSourcesIn } from "../source";
 import { heldSnapshots } from "./held-snapshots";
 
-/** How every snapshot asset starts (`encodeRows`: `{ version: 1, rows }` as JSON, in UTF-8). */
-const SNAPSHOT_START = new TextEncoder().encode('{"version":1,"rows":');
+/**
+ * How every snapshot asset starts (`encodeRows`: `{ version: 1, rows }` or, with the rows before
+ * a shape step, `{ version: 2, raw, rows }`, as JSON in UTF-8).
+ */
+const SNAPSHOT_STARTS = ['{"version":1,"rows":', '{"version":2,"raw":'].map((text) =>
+  new TextEncoder().encode(text),
+);
 
 function isSnapshot(bytes: Uint8Array): boolean {
-  if (bytes.length < SNAPSHOT_START.length) return false;
-  return SNAPSHOT_START.every((byte, i) => bytes[i] === byte);
+  return SNAPSHOT_STARTS.some(
+    (start) => bytes.length >= start.length && start.every((byte, i) => bytes[i] === byte),
+  );
 }
 
 /**

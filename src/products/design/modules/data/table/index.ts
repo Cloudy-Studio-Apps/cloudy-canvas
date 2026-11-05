@@ -6,3 +6,7 @@ export { extraValues, findLists, valueAtRowsPath } from "./find-lists";
 export type * from "./find-lists.types";
 export { guessFields } from "./guess-fields";
 export { keyStep, joinKey, formatPath, normalizePath } from "./path-text";
+export type * from "./shape.types";
+export { isIncluded, isPlainShape, rowFields, shapedPath, shapeRows } from "./shape-rows";
+export { checkShape, fieldPaths, readShape } from "./check-shape";
+export { shapeRenames } from "./shape-renames";

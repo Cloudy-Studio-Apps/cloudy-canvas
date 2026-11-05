@@ -16,6 +16,7 @@ import { ImageFailuresLine } from "./image-failures-line";
 import { RemoveSourceButton } from "./remove-source-button";
 import { RowsFromField } from "./rows-from-field";
 import { RowsTable } from "./rows-table";
+import { ShapeStep } from "./shape-step";
 import { SourceIssues } from "./source-issues";
 import { SourceSettingsForm } from "./source-settings-form";
 import type { SourceSectionsProps } from "./source-sections.types";
@@ -56,6 +57,7 @@ export function SourceSections({ source, sourceType, issues, onRemoved }: Source
         format: source.format,
         formatOptions: source.formatOptions,
         rowsPath,
+        shape: source.shape,
         fields: source.fields,
       },
       signal,
@@ -105,6 +107,7 @@ export function SourceSections({ source, sourceType, issues, onRemoved }: Source
             onChange={(format, options) => sources.setFormat(source.id, format, options)}
           />
           <RowsFromField source={source} />
+          <ShapeStep source={source} />
         </div>
       </PanelSection>
       <PanelSection title={t("fields.title")}>

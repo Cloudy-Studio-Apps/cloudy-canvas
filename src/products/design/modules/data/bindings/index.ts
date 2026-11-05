@@ -17,7 +17,7 @@ export { readValue } from "./read-value";
 export { sameValue } from "./same-value";
 export { BOUND_TEXT_TEMPLATE } from "./bound-text-template";
 export { renamePath } from "./rename-path";
-export { renameTemplate } from "./rename-template";
+export { renameTemplate, rewriteTemplate } from "./rename-template";
 export { bindData } from "./bind-data";
 export type * from "./bind-data.types";
 export { CONDITION_OPS, opTakesValue } from "./condition-ops";

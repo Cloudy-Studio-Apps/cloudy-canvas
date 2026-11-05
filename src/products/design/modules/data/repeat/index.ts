@@ -34,3 +34,6 @@ export { mirroredField } from "./mirror-field";
 export { dataResolvedPaths, layoutPlacedPaths } from "./data-resolved-paths";
 export { defaultRepeatKey } from "./default-key";
 export { checkRepeatSource } from "./check-repeat";
+export type * from "./field-renamer.types";
+export { fieldRenamer } from "./field-renamer";
+export { renameFieldReferences } from "./rename-field-references";

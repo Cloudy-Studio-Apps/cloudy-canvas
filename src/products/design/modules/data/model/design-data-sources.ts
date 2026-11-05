@@ -14,11 +14,12 @@ import {
   type DataField,
   type DataSourceElement,
 } from "../source";
-import type { DataRow, DataTable } from "../table";
+import type { DataRow, DataShape, DataTable } from "../table";
 import {
   heldSnapshots,
   previewSource,
   readSnapshot,
+  readSnapshotRows,
   updateSource,
   type DataContext,
   type PreviewInput,
@@ -36,6 +37,7 @@ import type { SourceUpdates } from "./source-updates";
 import type { UpdateProgress } from "./source-updates.types";
 import { missingFiles, missingSecrets } from "./missing-device-state";
 import { clearSecrets, writeSecrets } from "./write-secrets";
+import { setShape } from "./set-shape";
 
 const NOT_READY = "Data sources aren't ready: no editor is open.";
 
@@ -190,6 +192,17 @@ export class DesignDataSources {
     this.patch(id, { rowsPath });
   }
 
+  /**
+   * Sets the step that renames and picks a source's fields once its rows are found (`null`
+   * removes it), in one undo step and without fetching: the saved rows are shaped again and what
+   * reads a renamed field follows it (`setShape`). Throws, writing nothing, for a shape that
+   * would put two fields at one path or while the data isn't on this device.
+   */
+  setShape(id: string, shape: DataShape | null): Promise<void> {
+    this.require(id);
+    return setShape(this.doc, id, shape);
+  }
+
   /** Deletes a source and its secrets on this device (its snapshot asset stays, for undo). */
   async remove(id: string): Promise<void> {
     const source = this.require(id);
@@ -229,6 +242,14 @@ export class DesignDataSources {
   /** The rows of a source's last snapshot (none while its asset can't be read). */
   rows(id: string): readonly DataRow[] {
     return readSnapshot(this.doc, this.get(id)?.snapshot ?? null) ?? [];
+  }
+
+  /**
+   * The rows of a source's last snapshot as read, before its shape step (the same as `rows`
+   * without one; none while its asset can't be read).
+   */
+  rawRows(id: string): readonly DataRow[] {
+    return readSnapshotRows(this.doc, this.get(id)?.snapshot ?? null)?.raw ?? [];
   }
 
   table(id: string): DataTable {

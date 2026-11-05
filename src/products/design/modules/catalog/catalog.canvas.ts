@@ -1,6 +1,11 @@
 import type { ModuleHost } from "@shared/core";
 import { designCanvas, designMigrations } from "../../design-points";
-import { dataLocaleProviders, dataPreviewSetters, dataScopeProviders } from "../data";
+import {
+  dataFieldRenames,
+  dataLocaleProviders,
+  dataPreviewSetters,
+  dataScopeProviders,
+} from "../data";
 import { BrochureKind } from "./brochure";
 import { editCatalogPage } from "./mode";
 import {
@@ -10,6 +15,7 @@ import {
   prepareItemCopies,
   prepareRepeatCopies,
   pruneBrochure,
+  renameBrochureFields,
   splitLegacyBrochure,
   syncBrochureRepeats,
   syncPageItems,
@@ -37,6 +43,8 @@ export function registerCatalogCanvas(host: ModuleHost): void {
   host.contribute(dataLocaleProviders, pageLocaleProvider);
   // In scope names a section's or page's loop and steps its preview row from the template pages.
   host.contribute(dataPreviewSetters, brochurePreviewSetter);
+  // A source's shape step renaming fields rewrites the brochures' repeats and section names too.
+  host.contribute(dataFieldRenames, renameBrochureFields);
   // One brochure per design, from before brochures belonged to a page, is split by page.
   host.contribute(designMigrations, { id: "catalog.brochures", migrate: splitLegacyBrochure });
   host.contribute(designCanvas.editElement, editCatalogPage);

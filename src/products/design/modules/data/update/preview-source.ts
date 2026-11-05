@@ -1,5 +1,5 @@
 import { holdsDevicePath, isAbsolutePath, missingSettings, splitSecrets } from "../settings";
-import { extraValues, findLists, guessFields, normalizeRows } from "../table";
+import { extraValues, findLists, guessFields, normalizeRows, shapeRows } from "../table";
 import { loadFilePaths } from "./file-paths";
 import { readData } from "./read-data";
 import { loadSourceSecrets, missingSecretKeys } from "./source-secrets";
@@ -61,8 +61,9 @@ export async function previewSource(
       ctx,
       signal,
     );
-    const rows = normalizeRows(parsed, input.rowsPath);
-    if (!rows) throw new Error(`${UPDATE_ERRORS.noList}${input.rowsPath ?? ""}`);
+    const found = normalizeRows(parsed, input.rowsPath);
+    if (!found) throw new Error(`${UPDATE_ERRORS.noList}${input.rowsPath ?? ""}`);
+    const rows = shapeRows(found, input.shape);
     return {
       ok: true,
       rows: rows.slice(0, PREVIEW_ROWS),

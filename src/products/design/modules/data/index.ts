@@ -9,6 +9,7 @@ export {
   dataScopeProviders,
   dataLocaleProviders,
   dataPreviewSetters,
+  dataFieldRenames,
 } from "./data.points";
 export type * from "./data.points.types";
 export * from "./update";

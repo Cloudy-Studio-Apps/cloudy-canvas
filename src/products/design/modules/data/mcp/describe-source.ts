@@ -1,6 +1,7 @@
 import type { DesignWorkspace } from "../../../design-engine.types";
 import { DESIGN_DATA_SOURCES } from "../model";
 import { holdsDevicePath } from "../settings";
+import { fieldPaths } from "../table";
 import { secretKeys } from "../update";
 import type { DataSourceElement } from "../source";
 import { sourceOf } from "../checks/source-of";
@@ -57,6 +58,9 @@ export async function describeSource(
     ...(await summarizeSource(engine, source)),
     formatOptions: source.formatOptions,
     rowsPath: source.rowsPath,
+    shape: source.shape,
+    // The fields as read, before the shape step (what `shape.rename` and `include` name).
+    ...(source.shape ? { rawFields: fieldPaths(sources.rawRows(source.id)) } : {}),
     lists: source.snapshot?.lists ?? [],
     settings: source.settings,
     secrets: (type ? secretKeys(type.settings, source.settings) : []).map((key) => ({

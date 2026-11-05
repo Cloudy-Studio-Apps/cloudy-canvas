@@ -5,6 +5,7 @@ export const DATA_SOURCE_DEFAULTS = {
   format: "auto",
   formatOptions: {},
   rowsPath: null,
+  shape: null,
   fields: [],
   snapshot: null,
   images: {},
