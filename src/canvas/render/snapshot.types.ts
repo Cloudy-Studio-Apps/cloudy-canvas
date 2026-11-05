@@ -1,6 +1,6 @@
 import type { GlyphOutliner } from "@shared/core";
 
-import type { ElementClip } from "./layer-placement.types";
+import type { ElementClip, ScenePlacement } from "./layer-placement.types";
 import type { SvgText } from "../export/export.types";
 import type { Rect } from "../geometry.types";
 import type { CanvasLinks } from "../links";
@@ -17,7 +17,12 @@ export interface SnapshotOptions {
   links: readonly CanvasLinks[];
   /** What clips each element, when they're drawn changed from the canvas (see `ExportHost.clipsOf`). */
   clips?: ReadonlyMap<string, ElementClip>;
+  /** Where the elements are drawn, when they come from another scene than the canvas's. */
+  placement?: ScenePlacement;
 }
+
+/** What an export says about where its elements are drawn (see `Renderer.snapshot`). */
+export type PlacementOptions = Pick<SnapshotOptions, "clips" | "placement">;
 
 /** What the off-screen tree of an export needs to be built (see `withSnapshotTree`). */
 export type SnapshotTreeOptions = Pick<SnapshotOptions, "scale" | "links">;
@@ -34,6 +39,8 @@ export interface VectorSnapshotOptions {
   links: readonly CanvasLinks[];
   /** What clips each element, as `SnapshotOptions.clips`. */
   clips?: ReadonlyMap<string, ElementClip>;
+  /** Where the elements are drawn, as `SnapshotOptions.placement`. */
+  placement?: ScenePlacement;
   /** Text as glyph outlines or as live text. */
   text: SvgText;
   /** `pdf` flattens what a PDF can't hold, for `svgToPdf`. */

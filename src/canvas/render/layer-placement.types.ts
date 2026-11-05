@@ -140,3 +140,10 @@ export interface LayerPlacement {
   /** Whether a view is drawn (not when its element is drawn by another, e.g. a boolean's). */
   drawn: (el: CanvasElement) => boolean;
 }
+
+/**
+ * What a scene says about where its elements are drawn: a `LayerPlacement` without the effect
+ * renderers (the product's). An export of another scene than the canvas's (a collaborator's page,
+ * a scratch copy of the document) draws with its own.
+ */
+export type ScenePlacement = Omit<LayerPlacement, "effectRenderers">;

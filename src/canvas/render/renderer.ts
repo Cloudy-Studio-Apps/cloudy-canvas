@@ -4,7 +4,7 @@ import "pixi.js/advanced-blend-modes";
 
 import type { Camera } from "../camera";
 import type { CanvasElement, ElementKinds } from "../elements";
-import type { ElementClip, LayerPlacement } from "./layer-placement.types";
+import type { LayerPlacement } from "./layer-placement.types";
 import type { Point, Rect } from "../geometry.types";
 import type { CanvasLinks, Guide } from "../links";
 import type { SnapFeedback } from "../snapping";
@@ -27,7 +27,7 @@ import { SizeLabelLayer } from "./layers/size-label-layer";
 import { SnapLayer } from "./layers/snap-layer";
 import type { OverlayState } from "./overlay-state.types";
 import { drawSnapshot, withSnapshotTree } from "./snapshot";
-import type { SnapshotOptions, VectorSnapshotOptions } from "./snapshot.types";
+import type { PlacementOptions, SnapshotOptions, VectorSnapshotOptions } from "./snapshot.types";
 import { drawSvg } from "./vector";
 import type { CaptureOptions, ChunkedSyncOptions, RendererOptions } from "./renderer.types";
 
@@ -381,7 +381,7 @@ export class Renderer {
       this.images,
       this.exportTheme,
       elements,
-      this.placementFor(options.clips),
+      this.placementFor(options),
       options,
     );
   }
@@ -398,15 +398,18 @@ export class Renderer {
       this.images,
       this.exportTheme,
       elements,
-      this.placementFor(options.clips),
+      this.placementFor(options),
       { scale: options.imageScale ?? VECTOR_IMAGE_SCALE, links: options.links },
       (root, textures, assets) => drawSvg(renderer, root, textures, assets, options),
     );
   }
 
-  /** The canvas's placement, with the clips an export gives instead of the canvas's. */
-  private placementFor(clips: ReadonlyMap<string, ElementClip> | undefined): LayerPlacement {
-    const { placement } = this.options;
+  /**
+   * The canvas's placement, or the scene's an export gives, with the clips an export gives
+   * instead of the scene's.
+   */
+  private placementFor({ clips, placement: scene }: PlacementOptions): LayerPlacement {
+    const placement = scene ? { ...this.options.placement, ...scene } : this.options.placement;
     return clips ? { ...placement, clipOf: (el) => clips.get(el.id) ?? null } : placement;
   }
 

@@ -19,3 +19,9 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
 ## Read-only
 
 - **Read-only:** `CanvasDocument.setReadOnly(true)` makes every local edit (elements, assets, meta, undo/redo) a no-op, tools, panels and agents alike; a viewer's editor has it and no toolbar.
+
+## Forks
+
+- **Forks:** `doc.fork()` is a throwaway copy of the document as it is now, for work the user's file must never see (the brochure export's repeated pages and card copies): a new Y.Doc built from `encode()`, an empty undo history, no after-edit hook or placement until they're set, writable even when the original is read-only, and `destroy()` destroys its Y.Doc too. `engine.scratchWorkspace(fork)` sets the product's `afterEdit` on it (so syncs run on its edits) and gives a headless `ActorWorkspace` over it, as agents' are; catalog's `scratchWorkspace(engine)` wraps both with a `dispose()`.
+  - **Assets are copied, not shared:** the fork holds its own `"assets"` map, so an asset written to it (`addAsset`) never reaches the original or its file. But the engine's renderer reads pictures from the original document, so a fork's exports show only assets the original has: a fork must not add assets it means to draw. Copying the bytes costs memory while it lives; dispose of it as soon as the work is done.
+  - **What a fork must not do:** be saved or encoded to a file, be handed to a live session (provider, awareness, `doc.onChange` listeners for autosave or dirty tracking), or outlive the work it was made for. State kept per Y.Doc in memory (the data module's `SharedState`: its editor context, Updates and data phase) starts afresh on it, so it has no editor context (data sources can't be Updated on it, and removing one there deletes no device secrets) and its data phase is its own.

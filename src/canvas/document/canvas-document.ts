@@ -51,6 +51,8 @@ export class CanvasDocument {
   private afterEdit: AfterEdit | null = null;
   /** Local edits are ignored (see `setReadOnly`). */
   private readOnly = false;
+  /** A fork's own Y.Doc, destroyed with it (see `fork`). */
+  private ownsYDoc = false;
   /** How deep the edits running now are nested (the hook runs when the outermost ends). */
   private depth = 0;
   /** How many `deferAfterEdit` holds are open. */
@@ -459,9 +461,22 @@ export class CanvasDocument {
     return Y.encodeStateAsUpdate(this.doc);
   }
 
+  /**
+   * A throwaway copy of the document as it is now (an export's): a new Y.Doc with this one's
+   * state, its own copy of the assets, an empty undo history, writable even when this one is
+   * read-only, no after-edit hook, placement or live session. Its edits never reach this document
+   * or its file; `destroy()` destroys its Y.Doc too. See the README's Forks for what it must not do.
+   */
+  fork(): CanvasDocument {
+    const copy = CanvasDocument.fromUpdate(this.kinds, this.encode());
+    copy.ownsYDoc = true;
+    return copy;
+  }
+
   destroy(): void {
     this.doc.off("beforeObserverCalls", this.forgetChanged);
     this.history.destroy();
+    if (this.ownsYDoc) this.doc.destroy();
   }
 
   /** The highest index in the document (every type, registered or not), or `null` when empty. */

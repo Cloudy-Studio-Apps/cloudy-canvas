@@ -28,6 +28,7 @@ import {
   type ElementEffects,
   type ElementMask,
   type ElementMasks,
+  type ScenePlacement,
   type OverlayState,
   type ScopeSlot,
 } from "./render";
@@ -250,6 +251,17 @@ export class Scene {
 
   get(id: string): CanvasElement | undefined {
     return this.byId.get(id);
+  }
+
+  /** Where this scene's elements are drawn, for an export of it that isn't the canvas's scene. */
+  placement(): ScenePlacement {
+    return {
+      orderOf: (el, kind) => this.orderKey(el, kind),
+      clipOf: (el) => this.clipOf(el),
+      masks: () => this.masks,
+      effects: () => this.effects,
+      drawn: (el) => this.drawn(el),
+    };
   }
 
   /** Whether the element can be pointed at and selected: inside the isolation and, unless asked, unlocked. */

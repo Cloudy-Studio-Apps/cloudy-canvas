@@ -604,6 +604,24 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     return workspace;
   }
 
+  /**
+   * A headless workspace over `doc`, a fork of this engine's document (`CanvasDocument.fork`):
+   * the product's after-edit hook runs on it, so its edits bring syncs along as the user's do, and
+   * its exports draw with this engine's renderer (the assets read are this document's). It's never
+   * listed with collaborators'; the caller destroys it, then the fork (see the README's Forks).
+   */
+  scratchWorkspace(doc: CanvasDocument, init?: Partial<WorkspaceInit>): ActorWorkspace<O> {
+    if (this.product.afterEdit) doc.setAfterEdit(this.product.afterEdit.bind(this.product));
+    return new ActorWorkspace(
+      this.actorHostFor(doc, () => []),
+      Symbol("scratch"),
+      {
+        scope: init?.scope ?? this.shownScopeOr(this.scene.scope),
+        viewport: init?.viewport ?? this.camera.visibleWorldRect(),
+      },
+    );
+  }
+
   /** Collaborator `id`'s workspace, if it has one. */
   findWorkspace(id: string): ActorWorkspace<O> | undefined {
     return this.actors.get(id);
@@ -1491,14 +1509,18 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
 
   /** What exports of `scene` reach: its elements and the renderer's off-screen snapshot. */
   private exportHostFor(scene: Scene, selected: () => Iterable<string>): ExportHost {
+    // Another scene than the canvas's (a collaborator's page, a scratch copy) draws with its own
+    // stacking, masks and effects: its elements may not be on the canvas at all.
+    const placement = scene === this.scene ? undefined : scene.placement();
     return sceneExportHost(
       { ...this.parts, scene },
       {
         selected,
         background: this.renderer.exportBackground,
-        snapshot: (elements, options) => this.renderer.snapshot(elements, options),
+        snapshot: (elements, options) =>
+          this.renderer.snapshot(elements, { placement, ...options }),
         vector: (elements, options) =>
-          this.renderer.vectorSnapshot(elements, { ...options, glyphs: this.glyphs }),
+          this.renderer.vectorSnapshot(elements, { placement, ...options, glyphs: this.glyphs }),
         webp: this.webp,
         color: this.color,
       },
@@ -2058,12 +2080,17 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
 
   /** What collaborators' workspaces reach of the engine. */
   private get actorHost(): ActorWorkspaceHost<O> {
+    return this.actorHostFor(this.doc, () => this.selectedIds());
+  }
+
+  /** What a workspace over `doc` (this document, or a fork of it) reaches of the engine. */
+  private actorHostFor(doc: CanvasDocument, userSelection: () => string[]): ActorWorkspaceHost<O> {
     return {
       product: this.product,
-      doc: this.doc,
+      doc,
       options: () => this.toolOptions,
       viewAspect: () => this.camera.viewport.w / Math.max(this.camera.viewport.h, 1) || 1,
-      userSelection: () => this.selectedIds(),
+      userSelection,
       exportHost: (scene, selected) => this.exportHostFor(scene, selected),
       copyPng: (host, ids) => this.copyPng(host, ids),
       copySvg: (host, ids) => this.copySvg(host, ids),
