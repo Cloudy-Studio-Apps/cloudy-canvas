@@ -22,7 +22,7 @@ export function drawSnapshot(
   theme: CanvasTheme,
   elements: readonly CanvasElement[],
   placement: LayerPlacement,
-  { rect, scale, background, links }: SnapshotOptions,
+  { rect, scale, background, links, readAsset }: SnapshotOptions,
 ): Promise<HTMLCanvasElement> {
   return withSnapshotTree(
     renderer,
@@ -31,7 +31,7 @@ export function drawSnapshot(
     theme,
     elements,
     placement,
-    { scale, links },
+    { scale, links, readAsset },
     (root) =>
       Promise.resolve(
         renderer.extract.canvas({
@@ -58,14 +58,14 @@ export async function withSnapshotTree<T>(
   theme: CanvasTheme,
   elements: readonly CanvasElement[],
   placement: LayerPlacement,
-  { scale, links }: SnapshotTreeOptions,
+  { scale, links, readAsset }: SnapshotTreeOptions,
   draw: (root: Container, textures: ExportImages, assets: readonly string[]) => Promise<T>,
 ): Promise<T> {
   const assets = [...new Set(elements.flatMap((el) => kinds.kindOf(el).assets(el)))];
   // The canvas's copies give the sizes of pictures whose files' headers don't say.
   await Promise.all(assets.map((id) => images.load(id)));
 
-  const textures = images.forExport(maxTexturePixels(renderer));
+  const textures = images.forExport(maxTexturePixels(renderer), readAsset);
   const frames = new ElementLayer(kinds, textures, placement);
   const others = new ElementLayer(kinds, textures, placement);
   const lines = new LinkLayer(links);

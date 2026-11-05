@@ -43,6 +43,11 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   and every line of the table of contents and every page reference takes you to its page. Print
   files in CMYK keep the bookmarks.
 
+### Fixed
+
+- Exporting a page that isn't the one on screen, including exports made by an AI agent, now keeps
+  its layers in the right order and draws its masks and effects as the canvas shows them.
+
 ## 0.8.0 - 2026-11-04
 
 ### New

@@ -27,10 +27,12 @@ export class DocumentHistory implements UndoHistory {
   /** How many `hold`s are open: while any is, every change joins the current step. */
   private holds = 0;
 
-  constructor(scope: HistoryScope, origin: symbol) {
+  /** `record` false keeps no steps at all (a throwaway fork's, see `CanvasDocument.fork`). */
+  constructor(scope: HistoryScope, origin: symbol, record = true) {
     this.manager = new Y.UndoManager(scope, {
       trackedOrigins: new Set([origin]),
       captureTimeout: CAPTURE_TIMEOUT_MS,
+      captureTransaction: () => record,
     });
     this.manager.on("stack-item-added", ({ stackItem }) => {
       const label = this.manager.undoing || this.manager.redoing ? this.moving : this.nextLabel;

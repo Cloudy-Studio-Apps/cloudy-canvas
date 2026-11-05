@@ -49,6 +49,12 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   tus secciones, y cada línea del índice y cada referencia a página te lleva a su página. Los
   archivos de imprenta en CMYK conservan los marcadores.
 
+### Correcciones
+
+- Al exportar una página que no es la que está en pantalla, también las exportaciones que hace un
+  agente de IA, sus capas mantienen el orden correcto y sus máscaras y efectos se dibujan como en el
+  lienzo.
+
 ## 0.8.0 - 2026-11-04
 
 ### Novedades

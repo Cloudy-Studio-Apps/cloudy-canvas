@@ -83,6 +83,8 @@ export class CanvasDocument {
   constructor(
     private readonly kinds: ElementKinds,
     doc = new Y.Doc(),
+    /** Whether its histories keep undo steps (a fork's keep none). */
+    private readonly recordsHistory = true,
   ) {
     this.doc = doc;
     // The map keeps its original name so existing files load.
@@ -152,7 +154,11 @@ export class CanvasDocument {
 
   /** A new undo history recording only the edits made with `origin` (see `runAs`). */
   createHistory(origin: symbol): DocumentHistory {
-    return new DocumentHistory([this.elements, this.metaMap, this.tokensMap], origin);
+    return new DocumentHistory(
+      [this.elements, this.metaMap, this.tokensMap],
+      origin,
+      this.recordsHistory,
+    );
   }
 
   /**
@@ -463,12 +469,14 @@ export class CanvasDocument {
 
   /**
    * A throwaway copy of the document as it is now (an export's): a new Y.Doc with this one's
-   * state, its own copy of the assets, an empty undo history, writable even when this one is
-   * read-only, no after-edit hook, placement or live session. Its edits never reach this document
-   * or its file; `destroy()` destroys its Y.Doc too. See the README's Forks for what it must not do.
+   * state, its own copy of the assets, no undo history (its histories, an actor's too, keep no
+   * steps), writable even when this one is read-only, no after-edit hook, placement or live
+   * session. Its edits never reach this document or its file; `destroy()` destroys its Y.Doc too. See the README's Forks for what it must not do.
    */
   fork(): CanvasDocument {
-    const copy = CanvasDocument.fromUpdate(this.kinds, this.encode());
+    const ydoc = new Y.Doc();
+    Y.applyUpdate(ydoc, this.encode());
+    const copy = new CanvasDocument(this.kinds, ydoc, false);
     copy.ownsYDoc = true;
     return copy;
   }

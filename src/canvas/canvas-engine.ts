@@ -210,6 +210,8 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   private readonly glide = new CameraGlide(this.camera, () => this.onCameraChange());
   /** Other collaborators' contexts on this document, by collaborator id (see `workspace`). */
   private readonly actors = new Map<string, ActorWorkspace<O>>();
+  /** Scratch workspaces over forks of the document, with their fork (see `scratchWorkspace`). */
+  private readonly scratches = new Map<ActorWorkspace<O>, CanvasDocument>();
   /** Whose history Undo and Redo step through instead of the user's (see `setHistoryTarget`). */
   private historyTarget: HistoryTarget | null = null;
   private stopHistoryTarget: (() => void) | null = null;
@@ -426,6 +428,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     this.glide.cancel();
     this.setHistoryTarget(null);
     for (const id of [...this.actors.keys()]) this.dropWorkspace(id);
+    for (const workspace of [...this.scratches.keys()]) this.dropScratchWorkspace(workspace);
     this.elementActions.clear();
     this.contextMenus.clear();
     if (this.scopes) this.doc.setPlacement(null);
@@ -607,12 +610,13 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   /**
    * A headless workspace over `doc`, a fork of this engine's document (`CanvasDocument.fork`):
    * the product's after-edit hook runs on it, so its edits bring syncs along as the user's do, and
-   * its exports draw with this engine's renderer (the assets read are this document's). It's never
-   * listed with collaborators'; the caller destroys it, then the fork (see the README's Forks).
+   * its exports draw with this engine's renderer, reading the fork's pictures. It's never listed
+   * with collaborators'; the caller drops it (`dropScratchWorkspace`), then destroys the fork. The
+   * engine drops it too when it's destroyed, and its exports fail from then on.
    */
   scratchWorkspace(doc: CanvasDocument, init?: Partial<WorkspaceInit>): ActorWorkspace<O> {
     if (this.product.afterEdit) doc.setAfterEdit(this.product.afterEdit.bind(this.product));
-    return new ActorWorkspace(
+    const workspace = new ActorWorkspace(
       this.actorHostFor(doc, () => []),
       Symbol("scratch"),
       {
@@ -620,6 +624,17 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
         viewport: init?.viewport ?? this.camera.visibleWorldRect(),
       },
     );
+    this.scratches.set(workspace, doc);
+    return workspace;
+  }
+
+  /** Destroys a scratch workspace and takes the product's after-edit hook off its fork. */
+  dropScratchWorkspace(workspace: ActorWorkspace<O>): void {
+    const doc = this.scratches.get(workspace);
+    if (!doc) return;
+    this.scratches.delete(workspace);
+    workspace.destroy();
+    doc.setAfterEdit(null);
   }
 
   /** Collaborator `id`'s workspace, if it has one. */
@@ -1508,23 +1523,38 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   }
 
   /** What exports of `scene` reach: its elements and the renderer's off-screen snapshot. */
-  private exportHostFor(scene: Scene, selected: () => Iterable<string>): ExportHost {
+  private exportHostFor(
+    scene: Scene,
+    selected: () => Iterable<string>,
+    doc: CanvasDocument = this.doc,
+  ): ExportHost {
     // Another scene than the canvas's (a collaborator's page, a scratch copy) draws with its own
     // stacking, masks and effects: its elements may not be on the canvas at all.
     const placement = scene === this.scene ? undefined : scene.placement();
+    // A fork's pictures are read from the fork (the canvas's image cache never takes them).
+    const readAsset = doc === this.doc ? undefined : (id: string) => doc.getAsset(id);
+    const drawn = { placement, readAsset };
     return sceneExportHost(
-      { ...this.parts, scene },
+      { doc, kinds: this.kinds, product: this.product, scene },
       {
         selected,
         background: this.renderer.exportBackground,
         snapshot: (elements, options) =>
-          this.renderer.snapshot(elements, { placement, ...options }),
+          this.whileOpen(() => this.renderer.snapshot(elements, { ...drawn, ...options })),
         vector: (elements, options) =>
-          this.renderer.vectorSnapshot(elements, { placement, ...options, glyphs: this.glyphs }),
+          this.whileOpen(() =>
+            this.renderer.vectorSnapshot(elements, { ...drawn, ...options, glyphs: this.glyphs }),
+          ),
         webp: this.webp,
         color: this.color,
       },
     );
+  }
+
+  /** Runs a draw that needs the renderer, refused once the engine is destroyed. */
+  private whileOpen<T>(draw: () => Promise<T>): Promise<T> {
+    if (this.destroyed) return Promise.reject(new Error("The canvas was closed."));
+    return draw();
   }
 
   private createTextEditor(container: HTMLElement): TextEditor {
@@ -2091,7 +2121,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
       options: () => this.toolOptions,
       viewAspect: () => this.camera.viewport.w / Math.max(this.camera.viewport.h, 1) || 1,
       userSelection,
-      exportHost: (scene, selected) => this.exportHostFor(scene, selected),
+      exportHost: (scene, selected) => this.exportHostFor(scene, selected, doc),
       copyPng: (host, ids) => this.copyPng(host, ids),
       copySvg: (host, ids) => this.copySvg(host, ids),
     };

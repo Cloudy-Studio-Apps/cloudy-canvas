@@ -399,7 +399,11 @@ export class Renderer {
       this.exportTheme,
       elements,
       this.placementFor(options),
-      { scale: options.imageScale ?? VECTOR_IMAGE_SCALE, links: options.links },
+      {
+        scale: options.imageScale ?? VECTOR_IMAGE_SCALE,
+        links: options.links,
+        readAsset: options.readAsset,
+      },
       (root, textures, assets) => drawSvg(renderer, root, textures, assets, options),
     );
   }

@@ -6,6 +6,7 @@ import { Emitter } from "../utils";
 import { decodeImage, isVectorImage, knownImageSize } from "./decode-image";
 import { ExportImages } from "./export-images";
 import { GifPlayback } from "./gif-playback";
+import type { AssetReader } from "./snapshot.types";
 import type {
   CachedImage,
   ImageCacheHost,
@@ -145,10 +146,13 @@ export class ImageCache implements ImageTextures {
     this.gifs.setEnabled(enabled);
   }
 
-  /** A cache for one export, decoding pictures at the size it draws them (see `ExportImages`). */
-  forExport(maxPixels: number): ExportImages {
+  /**
+   * A cache for one export, decoding pictures at the size it draws them (see `ExportImages`),
+   * reading their files with `read` (by default the canvas's document).
+   */
+  forExport(maxPixels: number, read?: AssetReader): ExportImages {
     return new ExportImages({
-      read: (assetId) => this.host.read(assetId),
+      read: read ?? ((assetId) => this.host.read(assetId)),
       naturalSize: (assetId) => this.naturalSize(assetId),
       cached: (assetId, pixels) => this.atLeast(assetId, pixels),
       maxPixels,

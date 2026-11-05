@@ -11,6 +11,9 @@ export interface ScratchWorkspace {
   readonly workspace: DesignWorkspace;
   /** The fork itself (the data phase is set on it, see `setDataPhase`). */
   readonly doc: CanvasDocument;
-  /** Drops the workspace, then destroys the fork and its Y.Doc. Call it once the work is done. */
+  /**
+   * Drops the workspace, then destroys the fork and its Y.Doc. Call it once the work is done (in a
+   * `finally`), also when the editor closed meanwhile.
+   */
   dispose(): void;
 }

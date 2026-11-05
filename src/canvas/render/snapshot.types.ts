@@ -19,13 +19,21 @@ export interface SnapshotOptions {
   clips?: ReadonlyMap<string, ElementClip>;
   /** Where the elements are drawn, when they come from another scene than the canvas's. */
   placement?: ScenePlacement;
+  /**
+   * Where pictures' files are read, when the elements come from another document than the
+   * canvas's (a fork): the canvas's image cache is borrowed only for what it holds already.
+   */
+  readAsset?: AssetReader;
 }
+
+/** Reads a picture's file by asset id. */
+export type AssetReader = (assetId: string) => Uint8Array | undefined;
 
 /** What an export says about where its elements are drawn (see `Renderer.snapshot`). */
 export type PlacementOptions = Pick<SnapshotOptions, "clips" | "placement">;
 
 /** What the off-screen tree of an export needs to be built (see `withSnapshotTree`). */
-export type SnapshotTreeOptions = Pick<SnapshotOptions, "scale" | "links">;
+export type SnapshotTreeOptions = Pick<SnapshotOptions, "scale" | "links" | "readAsset">;
 
 /** Who reads a vector document: SVG viewers, or `svgToPdf`. */
 export type VectorTarget = "svg" | "pdf";
@@ -41,6 +49,8 @@ export interface VectorSnapshotOptions {
   clips?: ReadonlyMap<string, ElementClip>;
   /** Where the elements are drawn, as `SnapshotOptions.placement`. */
   placement?: ScenePlacement;
+  /** Where pictures' files are read, as `SnapshotOptions.readAsset`. */
+  readAsset?: AssetReader;
   /** Text as glyph outlines or as live text. */
   text: SvgText;
   /** `pdf` flattens what a PDF can't hold, for `svgToPdf`. */
