@@ -20,6 +20,8 @@ export async function summarizeSource(engine: DesignWorkspace, source: DataSourc
     updatedAt: source.snapshot ? new Date(source.snapshot.updatedAt).toISOString() : null,
     lastError: sources.error(source.id),
     needsSecrets: await sources.missingSecrets(source.id),
+    // The source's type isn't registered: its plugin isn't installed, so it can't be updated.
+    pluginMissing: sources.types().length > 0 && !sources.hasType(source.sourceType),
   };
 }
 

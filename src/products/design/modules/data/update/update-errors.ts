@@ -24,3 +24,8 @@ export function readAnsweredMessage(message: string): { url: string; status: str
   const match = /^(.+) answered (\d{3})\.$/.exec(message);
   return match ? { url: match[1] ?? "", status: match[2] ?? "" } : null;
 }
+
+/** The error for a source whose type isn't registered (its plugin isn't installed). */
+export function noSourceTypeMessage(id: string): string {
+  return `No source type ${id}.`;
+}

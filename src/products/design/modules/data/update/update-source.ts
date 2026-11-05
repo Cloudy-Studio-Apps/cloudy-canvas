@@ -18,7 +18,7 @@ import { downloadImages } from "./download-images";
 import { requireFilePaths } from "./file-paths";
 import { readData } from "./read-data";
 import { loadSourceSecrets, missingSecretKeys } from "./source-secrets";
-import { UPDATE_ERRORS } from "./update-errors";
+import { noSourceTypeMessage, UPDATE_ERRORS } from "./update-errors";
 import type { DataContext, UpdateOptions, UpdateResult } from "./update-source.types";
 
 /** How many times a save shapes the data again for a rows path or shape changed meanwhile. */
@@ -55,7 +55,7 @@ export async function updateSource(
   try {
     const source = record(doc, id);
     const type = ctx.types.find((t) => t.id === source.sourceType);
-    if (!type) throw new Error(`No source type ${source.sourceType}.`);
+    if (!type) throw new Error(noSourceTypeMessage(source.sourceType));
     const specs = type.settings;
     // Secrets bound to another origin than the settings' read as missing (never sent there).
     const secrets = await loadSourceSecrets(ctx.services, id, type, source.settings);

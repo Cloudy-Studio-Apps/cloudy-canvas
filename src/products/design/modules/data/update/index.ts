@@ -11,7 +11,12 @@ export {
   secretStoreKey,
 } from "./source-secrets";
 export { deviceKeys, filePathKey, loadFilePaths, requireFilePaths } from "./file-paths";
-export { answeredMessage, readAnsweredMessage, UPDATE_ERRORS } from "./update-errors";
+export {
+  answeredMessage,
+  noSourceTypeMessage,
+  readAnsweredMessage,
+  UPDATE_ERRORS,
+} from "./update-errors";
 export { isWebPage } from "./is-web-page";
 export { imageKey } from "./image-key";
 export type * from "./download-images.types";

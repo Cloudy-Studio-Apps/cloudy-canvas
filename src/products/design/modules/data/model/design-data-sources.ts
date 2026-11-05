@@ -17,6 +17,7 @@ import {
 import type { DataRow, DataTable } from "../table";
 import {
   heldSnapshots,
+  noSourceTypeMessage,
   previewSource,
   readSnapshot,
   readSnapshotRows,
@@ -281,12 +282,15 @@ export class DesignDataSources {
    */
   missingSecrets(id: string): Promise<string[]> {
     const source = this.require(id);
+    // A source whose plugin isn't installed lists nothing missing (listings never fail on it).
+    if (this.context && !this.hasType(source.sourceType)) return Promise.resolve([]);
     return missingSecrets(source, this.ready(source.sourceType));
   }
 
   /** The file and folder settings this device has no path for (pick them again here). */
   missingFiles(id: string): Promise<string[]> {
     const source = this.require(id);
+    if (this.context && !this.hasType(source.sourceType)) return Promise.resolve([]);
     return missingFiles(source, this.ready(source.sourceType));
   }
 
@@ -328,10 +332,15 @@ export class DesignDataSources {
     return this.updates.warnings(id);
   }
 
+  /** Whether a source type is registered in the open editor (a plugin's may be missing). */
+  hasType(sourceType: string): boolean {
+    return this.types().some((t) => t.id === sourceType);
+  }
+
   private ready(sourceType: string): DataContext & { type: DataSourceType } {
     if (!this.context) throw new Error(NOT_READY);
     const type = this.context.types.find((t) => t.id === sourceType);
-    if (!type) throw new Error(`Unknown source type "${sourceType}".`);
+    if (!type) throw new Error(noSourceTypeMessage(sourceType));
     return { ...this.context, type };
   }
 

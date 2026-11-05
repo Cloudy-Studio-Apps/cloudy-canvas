@@ -3,7 +3,7 @@ import { extraValues, findLists, guessFields, normalizeRows, shapeRows } from ".
 import { loadFilePaths } from "./file-paths";
 import { readData } from "./read-data";
 import { loadSourceSecrets, missingSecretKeys } from "./source-secrets";
-import { UPDATE_ERRORS } from "./update-errors";
+import { noSourceTypeMessage, UPDATE_ERRORS } from "./update-errors";
 import type { PreviewInput, PreviewResult } from "./preview-source.types";
 import type { DataContext } from "./update-source.types";
 
@@ -21,7 +21,7 @@ export async function previewSource(
 ): Promise<PreviewResult> {
   try {
     const type = ctx.types.find((t) => t.id === input.sourceType);
-    if (!type) throw new Error(`Unknown source type "${input.sourceType}".`);
+    if (!type) throw new Error(noSourceTypeMessage(input.sourceType));
     const specs = type.settings;
     const { settings, secrets: typed } = splitSecrets(specs, input.settings);
     const stored = input.sourceId

@@ -1,1 +1,5 @@
-{ "label": "Sample products", "count": "How many products", "name": "Sample products" }
+{
+  "label": "Sample products",
+  "count": "How many products (24 if empty)",
+  "name": "Sample products"
+}
