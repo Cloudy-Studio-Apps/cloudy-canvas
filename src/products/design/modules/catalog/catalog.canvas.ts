@@ -1,9 +1,10 @@
 import type { ModuleHost } from "@shared/core";
 import { designCanvas, designMigrations } from "../../design-points";
-import { dataLocaleProviders, dataScopeProviders } from "../data";
+import { dataLocaleProviders, dataPreviewSetters, dataScopeProviders } from "../data";
 import { BrochureKind } from "./brochure";
 import { editCatalogPage } from "./mode";
 import {
+  brochurePreviewSetter,
   pageLocaleProvider,
   pageScopeProvider,
   prepareItemCopies,
@@ -17,7 +18,7 @@ import {
 /**
  * The catalog's canvas side: the brochure records, their pruning and migration, the syncs that
  * keep their pages (repeats' copies, masters and page items), what copying their copies does, the
- * loops and language data reads on their pages, and double-click to design a page.
+ * loops and language data reads on their pages (and In scope's names and preview steppers for them), and double-click to design a page.
  */
 export function registerCatalogCanvas(host: ModuleHost): void {
   host.contribute(designCanvas.kinds, new BrochureKind());
@@ -34,6 +35,8 @@ export function registerCatalogCanvas(host: ModuleHost): void {
   // A page's layers read the rows of the loops around it, in its brochure's language.
   host.contribute(dataScopeProviders, pageScopeProvider);
   host.contribute(dataLocaleProviders, pageLocaleProvider);
+  // In scope names a section's or page's loop and steps its preview row from the template pages.
+  host.contribute(dataPreviewSetters, brochurePreviewSetter);
   // One brochure per design, from before brochures belonged to a page, is split by page.
   host.contribute(designMigrations, { id: "catalog.brochures", migrate: splitLegacyBrochure });
   host.contribute(designCanvas.editElement, editCatalogPage);

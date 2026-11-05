@@ -460,5 +460,15 @@
     "missing": "{list} (not in the data any more)",
     "whole": "The whole answer",
     "extras": "Also in the data: {list}"
+  },
+  "scope": {
+    "title": "In scope",
+    "from": {
+      "card": "Card repeater in {name}"
+    },
+    "row": "Row",
+    "rowOf": "{n} of {count}",
+    "empty": "No rows",
+    "unreadable": "Not on this device"
   }
 }

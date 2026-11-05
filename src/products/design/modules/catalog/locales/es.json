@@ -202,7 +202,14 @@
       "add_other": "Añadir {count} páginas",
       "update": "Actualizar páginas"
     },
-    "optionOfPage": "Opción de la página {page}"
+    "optionOfPage": "Opción de la página {page}",
+    "tag": {
+      "row": "{label} · fila {n} de {count}",
+      "page": "{label} · página {n} de {count}",
+      "notPrinted": "{label} · no se imprime para esta fila",
+      "unreadable": "{label} · datos no disponibles en este dispositivo",
+      "copy": "Copia de {label}"
+    }
   },
   "sidebar": {
     "none": "Esta página aún no tiene folleto. Crea uno en la pestaña Folleto o elige marcos.",
@@ -378,5 +385,11 @@
     "deleteCopy": "Eliminar las páginas de esta copia",
     "deletePages": "Eliminar estas páginas",
     "unreadable": "Los datos de esta página aún no están en este dispositivo; actualiza primero la fuente."
+  },
+  "scope": {
+    "from": {
+      "section": "Sección {name}",
+      "page": "Página {name}"
+    }
   }
 }

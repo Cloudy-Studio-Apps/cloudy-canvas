@@ -62,3 +62,38 @@ export interface DataAround {
   scopes: readonly DataScopeProvider[];
   locales: readonly DataLocaleProvider[];
 }
+
+/** A loop's preview row, stepped from the In scope view. */
+export interface DataPreviewStep {
+  /** The rows (or a page repeat's pages) the preview can show, ≥ 1. */
+  count: number;
+  /** The one it shows now, 0-based. */
+  row: number;
+  /** Shows `row` (0-based) in one undo step; throws when the edit is refused. */
+  set(row: number): void;
+}
+
+/** Where a loop around a layer comes from, and how its preview row is stepped from that layer. */
+export interface DataLoopPreview {
+  /**
+   * Where it comes from, as In scope names it ("Section Product", "Page Gallery"); left out for a
+   * card repeater's loop (a module answering for a card on a page it made), which data names.
+   */
+  from?: string;
+  /**
+   * Its preview row's stepper, or `null` when the layer doesn't show that preview (it's in a copy
+   * the loop made, whose row is fixed): In scope shows the row as text.
+   */
+  step: DataPreviewStep | null;
+}
+
+/**
+ * A module's answer for a loop it puts around a layer (`ScopeLayer.owner` one of its sections or
+ * pages): where it comes from and its preview row's stepper as seen from `nodeId`; `null` when the
+ * loop isn't its own. The first answer wins; card repeaters are the data module's own.
+ */
+export type DataPreviewSetter = (
+  doc: CanvasDocument,
+  layer: ScopeLayer,
+  nodeId: string,
+) => DataLoopPreview | null;

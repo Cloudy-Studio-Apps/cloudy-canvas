@@ -460,5 +460,15 @@
     "missing": "{list} (ya no está en los datos)",
     "whole": "Toda la respuesta",
     "extras": "También en los datos: {list}"
+  },
+  "scope": {
+    "title": "En el ámbito",
+    "from": {
+      "card": "Tarjetas repetidas en {name}"
+    },
+    "row": "Fila",
+    "rowOf": "{n} de {count}",
+    "empty": "Sin filas",
+    "unreadable": "No está en este dispositivo"
   }
 }

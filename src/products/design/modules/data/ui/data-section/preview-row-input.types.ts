@@ -5,4 +5,6 @@ export interface PreviewRowInputProps {
   value: number;
   /** Shows row `row` (0-based); a drag of the field is one undo step. */
   onChange: (row: number) => void;
+  /** The label before it; "Preview row" when left out. */
+  label?: string;
 }

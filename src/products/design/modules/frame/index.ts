@@ -2,6 +2,8 @@
 // `BoxDrawTool`, F) and the size presets. The module (`frame.module.ts`) plugs them in with the frame section.
 export type * from "./frame.types";
 export type * from "./frame-options.types";
+export type * from "./frame.points.types";
+export { frameLabelTags } from "./frame.points";
 export { createFrame } from "./frame.factory";
 export { frameNodes } from "./frame-nodes";
 export { FRAME_DEFAULTS } from "./frame.defaults";

@@ -8,6 +8,7 @@ import { BoxDrawTool } from "../core";
 import { designStarters } from "../core/ui";
 import { frameTools } from "./frame.mcp";
 import { FrameKind } from "./frame.kind";
+import { frameLabelTags } from "./frame.points";
 import { FrameSection } from "./ui/frame-section";
 import { FramePresetsSidebar } from "./ui/frame-presets-sidebar";
 import { FRAME_STARTERS } from "./ui/starters/frame-starters";
@@ -24,7 +25,14 @@ export const frameModule = defineModule({
   requires: ["core"],
   exports: { ...frameApi, ...frameUi },
   register(host) {
-    const kind = new FrameKind();
+    // The words other modules add after a frame's name (the first answer wins).
+    const kind = new FrameKind((frame) => {
+      for (const tagOf of host.get(frameLabelTags)) {
+        const tag = tagOf(frame);
+        if (tag) return tag;
+      }
+      return null;
+    });
     host.contribute(designCanvas.kinds, kind);
     host.contribute(designCanvas.tools, {
       id: "frame",

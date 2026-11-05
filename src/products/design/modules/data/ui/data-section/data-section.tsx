@@ -7,16 +7,16 @@ import { scopeAt } from "../../repeat";
 import { useDataSources } from "../hooks/use-data-sources";
 import { DataFieldsBlock } from "./data-fields-block";
 import { pickerNames } from "./picker-names";
-import { PreviewRowField } from "./preview-row-field";
+import { InScope } from "./in-scope";
 import { ShowWhenBlock } from "./show-when-block";
 import { TextDataBlock } from "./text-data-block";
 import { useBindData } from "./use-bind-data";
 import { t } from "../../data.i18n";
 
 /**
- * The selected layer's data: the preview row of the template it's in, its text's template
- * (texts, except those a catalog fills), the fields filled from data, and when it shows. Every
- * change is one `bindData` step. Without sources it points at the Data tab and keeps only what
+ * The selected layer's data: what it has in scope (the loops around it, a template's preview rows
+ * stepped there), its text's template (texts, except those a catalog fills), the fields filled
+ * from data, and when it shows. Every change is one `bindData` step. Without sources it points at the Data tab and keeps only what
  * is bound, so it can still be undone.
  */
 export function DataSection({ selection: { nodes } }: PropertySectionProps) {
@@ -36,7 +36,7 @@ export function DataSection({ selection: { nodes } }: PropertySectionProps) {
     <PanelSection title={t("section.title")}>
       <div className="flex flex-col gap-3">
         {empty && <p className="text-xs text-muted-foreground">{t("section.noSources")}</p>}
-        {!empty && <PreviewRowField nodeId={node.id} />}
+        {!empty && <InScope nodeId={node.id} />}
         {text && <TextDataBlock text={text} names={names} apply={apply} />}
         <DataFieldsBlock
           bindable={dataBindableFields(node, engine.kinds)}

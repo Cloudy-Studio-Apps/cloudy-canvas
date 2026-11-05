@@ -8,6 +8,7 @@ export {
   dataFormats,
   dataScopeProviders,
   dataLocaleProviders,
+  dataPreviewSetters,
 } from "./data.points";
 export type * from "./data.points.types";
 export * from "./update";

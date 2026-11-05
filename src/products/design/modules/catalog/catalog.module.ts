@@ -17,6 +17,9 @@ import { a4BrochureStarter } from "./ui/starters/a4-brochure.starter";
 import { BUILT_IN_PAGE_ITEMS } from "./ui/page-items/built-in-page-items";
 import { catalogPageItems } from "./ui/catalog.points";
 import { textTemplates } from "../text";
+import { frameLabelTags } from "../frame";
+import { shownFrameTag } from "./ui/canvas/shown-frame-tags";
+import { useFrameLabelTags } from "./ui/hooks/use-frame-label-tags";
 import * as catalogApi from ".";
 import * as catalogUi from "./ui";
 
@@ -92,6 +95,13 @@ export const catalogModule = defineModule({
           enabled: ({ selectionCount }) => selectionCount > 0,
         },
       ],
+    });
+    // A repeat's template pages say their row next to their name on the canvas, its copies whose
+    // copy they are, in every mode.
+    host.contribute(frameLabelTags, shownFrameTag);
+    host.contribute(designEditor.sessionHooks, {
+      id: "catalog.frame-tags",
+      use: useFrameLabelTags,
     });
     host.contribute(designMcpTools, { id: "catalog", tools: () => catalogTools });
     host.contribute(designStarters, a4BrochureStarter);

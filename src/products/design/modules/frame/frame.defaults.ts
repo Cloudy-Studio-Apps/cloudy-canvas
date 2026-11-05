@@ -5,5 +5,5 @@ export const FRAME_DEFAULTS = {
   fill: "#FFFFFF",
   cornerRadius: 0,
   clipsContent: true,
-  label: { fontSize: 12, gap: 4, color: "#6B7280" },
+  label: { fontSize: 12, gap: 4, color: "#6B7280", tagGap: 6, tagColor: "#9CA3AF" },
 } as const satisfies FrameDefaults;

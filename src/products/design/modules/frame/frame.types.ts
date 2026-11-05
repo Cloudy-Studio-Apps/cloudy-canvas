@@ -19,8 +19,11 @@ export interface FrameDefaults extends ElementDefaults {
   fill: string;
   cornerRadius: number;
   clipsContent: boolean;
-  /** The name drawn above frames at the top of the page. */
-  label: { fontSize: number; gap: number; color: string };
+  /**
+   * The name drawn above frames at the top of the page, and the words another module adds after
+   * it (`frameLabelTags`), `tagGap` apart, in `tagColor`.
+   */
+  label: { fontSize: number; gap: number; color: string; tagGap: number; tagColor: string };
 }
 
 /** A common frame size, picked in the frame tool's panel and the frame section. */

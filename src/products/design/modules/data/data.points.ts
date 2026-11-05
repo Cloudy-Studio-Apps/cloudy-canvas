@@ -3,6 +3,7 @@ import { definePoint } from "@shared/core";
 import type {
   DataFormat,
   DataLocaleProvider,
+  DataPreviewSetter,
   DataScopeProvider,
   DataSourceType,
 } from "./data.points.types";
@@ -25,3 +26,9 @@ export const dataScopeProviders = definePoint<DataScopeProvider>("design.data.sc
 
 /** The language data is written in inside a top-level layer (a brochure's), first answer wins. */
 export const dataLocaleProviders = definePoint<DataLocaleProvider>("design.data.localeProviders");
+
+/**
+ * Where a loop another module puts around a layer comes from, and its preview row's stepper (a
+ * brochure's section and page repeats), for the In scope view; the first answer wins.
+ */
+export const dataPreviewSetters = definePoint<DataPreviewSetter>("design.data.previewSetters");

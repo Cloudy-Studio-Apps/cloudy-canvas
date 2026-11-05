@@ -41,6 +41,7 @@ import { FRAME_DEFAULTS } from "./frame.defaults";
 import { drawFrame } from "./frame.draw";
 import { labelRect, showsLabel } from "./frame-label";
 import type { FrameElement } from "./frame.types";
+import type { FrameLabelTag } from "./frame.points.types";
 import { t } from "./frame.i18n";
 
 /** Frames hold other nodes; at the top of the page they show their name and are hit by it too. */
@@ -55,6 +56,16 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
   override readonly sidedStrokes = true;
   override readonly fillScope = "frame-fill";
   override readonly fillExportToggle = true;
+
+  /** `tagOf` gives the words drawn after its name (`frameLabelTags`); none by default. */
+  constructor(private readonly tagOf: FrameLabelTag = () => null) {
+    super();
+  }
+
+  /** The words after its name, when it shows its name. */
+  private tag(el: FrameElement): string | null {
+    return showsLabel(el) ? this.tagOf(el) : null;
+  }
 
   /** Its corner radius, and its auto layout's gaps and padding. */
   override bindable(el: FrameElement): BindableField[] {
@@ -218,8 +229,13 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
     return networkGeometry(rectNetwork(el.w, el.h, el.cornerRadius), false);
   }
 
+  /** The words after its name come from outside the frame: new words draw it again. */
+  override drawnFrom(el: FrameElement): unknown {
+    return this.tag(el);
+  }
+
   draw(view: ElementView, el: FrameElement): void {
-    drawFrame(view, el, this.geometry(el) ?? EMPTY_GEOMETRY, this.strokeOf(el));
+    drawFrame(view, el, this.geometry(el) ?? EMPTY_GEOMETRY, this.strokeOf(el), this.tag(el));
   }
 
   protected override hitsShape(el: FrameElement, p: Point, tolerance: number): boolean {

@@ -202,7 +202,14 @@
       "add_other": "Add {count} pages",
       "update": "Update pages"
     },
-    "optionOfPage": "Option of page {page}"
+    "optionOfPage": "Option of page {page}",
+    "tag": {
+      "row": "{label} · row {n} of {count}",
+      "page": "{label} · page {n} of {count}",
+      "notPrinted": "{label} · not printed for this row",
+      "unreadable": "{label} · data not on this device",
+      "copy": "Copy of {label}"
+    }
   },
   "sidebar": {
     "none": "This page has no brochure yet. Create one in the Brochure tab, or pick frames.",
@@ -378,5 +385,11 @@
     "deleteCopy": "Delete this copy's pages",
     "deletePages": "Delete these pages",
     "unreadable": "This page's data isn't on this device yet; update the source first."
+  },
+  "scope": {
+    "from": {
+      "section": "Section {name}",
+      "page": "Page {name}"
+    }
   }
 }
