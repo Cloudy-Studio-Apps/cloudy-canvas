@@ -44,6 +44,11 @@ so that way we can reuse it in the brochure correctly, and declare what value is
 
 Phase 1 shipped: sources (files and APIs), the Data tab, Update and agent tools.
 
+Phase 4 shipped: brochure sections and pages repeat for each row of a list (a page also for each N
+rows), nested like loops (categories holding their products), with an In scope view, canvas tags,
+Detach, and an export that makes every page on a throwaway copy of the document. Left (phase 5):
+Excel files, the Shape step, API pagination and an example plugin.
+
 ### C3. Bookmarks and links in the PDF
 
 - [x] Decide · Priority: P1

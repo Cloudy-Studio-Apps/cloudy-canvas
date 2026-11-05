@@ -2,6 +2,7 @@ import type { DesignMcpTool } from "../../../mcp";
 import { brochureEditTools } from "./brochure-edit.mcp";
 import { brochureListTools } from "./brochure-list.mcp";
 import { brochureMasterTools } from "./brochure-masters.mcp";
+import { brochureRepeatTools } from "./brochure-repeat.mcp";
 import { brochureReadTools } from "./brochure-read.mcp";
 import { brochureSettingsTools } from "./brochure-settings.mcp";
 
@@ -15,4 +16,5 @@ export const catalogTools: DesignMcpTool[] = [
   ...brochureEditTools,
   ...brochureSettingsTools,
   ...brochureMasterTools,
+  ...brochureRepeatTools,
 ];

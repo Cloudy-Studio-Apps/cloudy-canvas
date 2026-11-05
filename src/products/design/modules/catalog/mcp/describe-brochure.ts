@@ -10,6 +10,7 @@ import {
   spanOf,
   type DesignBrochure,
 } from "../model";
+import { describeRepeats } from "./describe-repeats";
 import { pageItemsIn } from "./page-item-summary";
 
 /**
@@ -43,8 +44,14 @@ export async function describeBrochure(engine: DesignWorkspace, brochure: Design
       printedNumber: printed.get(page.slot.id) ?? null,
       // `default` (the brochure's default master), `none` or a master's id.
       master: page.slot.master === undefined ? "default" : (page.slot.master ?? "none"),
-      frame: page.frame.id,
+      // A pending page has no frame of its own yet: `template` is the page it copies.
+      ...(page.pending
+        ? { pending: true, frame: null, template: page.frame.id }
+        : { frame: page.frame.id }),
       name: page.frame.name,
+      ...(page.slot.generated ? { generated: true } : {}),
+      ...(page.slot.detached ? { detached: true } : {}),
+      ...(page.notPrinted ? { notPrinted: true } : {}),
       span: size ? spanOf(page.frame, size) : 1,
       options: page.options.map((option) => ({ id: option.id, name: option.name })),
     })),
@@ -52,6 +59,8 @@ export async function describeBrochure(engine: DesignWorkspace, brochure: Design
       side.kind === "blank" ? [{ printedPage: i + 1, reason: side.reason }] : [],
     ),
     printedPages: layout.pageCount,
+    pendingPages: brochure.pendingPages(),
+    repeats: describeRepeats(brochure),
     spreads: layout.spreadNumbers,
     settings,
     masters: (record?.masters ?? []).map((master) => ({

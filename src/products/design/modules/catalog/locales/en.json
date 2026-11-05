@@ -147,7 +147,16 @@
     "roundedPage": "“{name}” has rounded corners, so it prints without bleed.",
     "tocOverflow": "“{name}” doesn't fit its page: its contents run past the bottom margin. Make the text smaller or give it more room.",
     "pageRefMissing": "“{name}” refers to “{target}”, which isn't a section or page of this brochure. Pick what it points to in its properties.",
-    "pageRefEmpty": "“{name}” doesn't point to a page yet: pick one in its properties."
+    "pageRefEmpty": "“{name}” doesn't point to a page yet: pick one in its properties.",
+    "emptySource": "“{name}” repeats over a list with nothing in it, so it prints no pages.",
+    "tooManyPages": "The brochure has {count} pages, over {max}: the export will be slow and heavy.",
+    "data": {
+      "unresolved": "“{name}” reads {detail}, which has no data here.",
+      "overflow": "“{name}” is taller than its box with the data in it.",
+      "manyCopies": "“{name}” repeats {count} times in the design: lower how many are made while designing.",
+      "stacked": "“{name}” makes several copies with no auto layout, so they sit on top of each other.",
+      "other": "“{name}”: {detail}"
+    }
   },
   "settings": {
     "quality": {

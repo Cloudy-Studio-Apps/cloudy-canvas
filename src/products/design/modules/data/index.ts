@@ -13,7 +13,7 @@ export {
 export type * from "./data.points.types";
 export * from "./update";
 export * from "./model";
-export { dataTools } from "./mcp";
+export { dataTools, readRepeatArgs } from "./mcp";
 export * from "./bindings";
 export * from "./sync";
 export * from "./repeat";

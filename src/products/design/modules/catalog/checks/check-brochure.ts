@@ -4,6 +4,7 @@ import type { DesignWorkspace } from "../../../design-engine.types";
 import { pageNumbers, pageRefs, type DesignBrochure } from "../model";
 import { brochureIssues } from "./brochure-checks";
 import type { BrochureIssue } from "./brochure-checks.types";
+import { repeatIssues } from "./repeat-issues";
 import { knownPictureSize, pictureSize } from "./picture-size";
 
 /**
@@ -36,8 +37,9 @@ export async function checkBrochure(
       },
     });
 
+  const more = () => repeatIssues(workspace, brochure);
   const issues = check();
-  if (missing.size === 0) return issues;
+  if (missing.size === 0) return [...issues, ...more()];
   await Promise.all([...missing].map((assetId) => pictureSize(doc, assetId)));
-  return check();
+  return [...check(), ...more()];
 }

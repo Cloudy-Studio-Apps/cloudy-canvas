@@ -14,7 +14,10 @@ export type BrochureIssueKind =
   | "stops-at-edge"
   | "rounded-page"
   | "toc-overflow"
-  | "page-ref-missing";
+  | "page-ref-missing"
+  | "data"
+  | "empty-source"
+  | "too-many-pages";
 
 /** Something that would print badly, on one page. */
 export interface BrochureIssue {

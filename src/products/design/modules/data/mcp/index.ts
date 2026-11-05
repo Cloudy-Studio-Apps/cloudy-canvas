@@ -7,3 +7,4 @@ export {
   detachDataCopyTool,
   dataIssuesTool,
 } from "./repeat.mcp";
+export { readRepeatArgs } from "./repeat-args";

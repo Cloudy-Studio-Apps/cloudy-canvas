@@ -1,7 +1,7 @@
 import type { CanvasDocument } from "@canvas";
 import { getLocale } from "@shared/core";
 
-import { isDesignNode } from "../../core";
+import { isDesignNode, type DesignNode } from "../../core";
 import { isFrame } from "../../frame";
 import { hasDataFields, isCatalogText, rootScope } from "../bindings";
 import type { BindingContext } from "../bindings";
@@ -18,7 +18,7 @@ import { sourceIssues } from "./source-issues";
 /**
  * The data that doesn't fit, for the Data tab and agents: a bound layer's expressions that read
  * nothing (in its own scope, through `planBindings`), a fixed-size bound text taller than its
- * box, an iterator making over 500 copies (a `designLimit` set that high), copies stacked for
+ * box (measured in the layer's language: a brochure page's own, else the app's), an iterator making over 500 copies (a `designLimit` set that high), copies stacked for
  * want of an auto layout, detached rows gone from the list, and, with the service, each source's
  * last Update error, pictures it couldn't save and whether it was never updated. The root scope and the
  * iterators' rows are made once per call; it stops after `MAX_ISSUES` (`truncated`). A copy is
@@ -34,17 +34,24 @@ export function dataIssues(doc: CanvasDocument, options: DataIssueOptions = {}):
   const root = rootScope(sources, (id) => readSnapshot(doc, byId.get(id)?.snapshot ?? null));
   const scopes = dataScopes(doc, root);
   const kinds = options.kinds;
-  const ctx: BindingContext | null = kinds
-    ? { kinds, locale: getLocale(), images: () => null }
-    : null;
+  // One context per language: a brochure page's data is written in the brochure's.
+  const contexts = new Map<string, BindingContext>();
+  const contextFor = (el: DesignNode): BindingContext | null => {
+    if (!kinds) return null;
+    const locale = scopes.localeFor(el) ?? getLocale();
+    let ctx = contexts.get(locale);
+    if (!ctx) contexts.set(locale, (ctx = { kinds, locale, images: () => null }));
+    return ctx;
+  };
 
   for (const el of doc.all()) {
     if (sink.full()) break;
     if (limit && !limit.has(el.id)) continue;
     if (!isDesignNode(el)) continue;
     if (isFrame(el) && repeatOf(el) && !dataCopyTag(el)) iteratorIssues(doc, el, scopes, sink);
-    if (ctx && !dataCopyTag(el) && hasDataFields(el) && !isCatalogText(el)) {
-      nodeIssues(el, scopes.scopeFor(el), ctx, sink);
+    if (kinds && !dataCopyTag(el) && hasDataFields(el) && !isCatalogText(el)) {
+      const ctx = contextFor(el);
+      if (ctx) nodeIssues(el, scopes.scopeFor(el), ctx, sink);
     }
   }
   return sink.result();

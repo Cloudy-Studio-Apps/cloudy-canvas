@@ -147,7 +147,16 @@
     "roundedPage": "«{name}» tiene esquinas redondeadas, así que se imprime sin sangrado.",
     "tocOverflow": "«{name}» no cabe en su página: el índice pasa del margen inferior. Reduce el texto o dale más espacio.",
     "pageRefMissing": "«{name}» remite a «{target}», que no es una sección ni una página de este folleto. Elige a qué remite en sus propiedades.",
-    "pageRefEmpty": "«{name}» aún no remite a ninguna página: elige una en sus propiedades."
+    "pageRefEmpty": "«{name}» aún no remite a ninguna página: elige una en sus propiedades.",
+    "emptySource": "«{name}» se repite sobre una lista vacía, así que no imprime páginas.",
+    "tooManyPages": "El folleto tiene {count} páginas, más de {max}: la exportación será lenta y pesada.",
+    "data": {
+      "unresolved": "«{name}» lee {detail}, que no tiene datos aquí.",
+      "overflow": "«{name}» es más alto que su caja con los datos dentro.",
+      "manyCopies": "«{name}» se repite {count} veces en el diseño: baja cuántas se hacen mientras diseñas.",
+      "stacked": "«{name}» hace varias copias sin diseño automático, así que quedan unas sobre otras.",
+      "other": "«{name}»: {detail}"
+    }
   },
   "settings": {
     "quality": {
