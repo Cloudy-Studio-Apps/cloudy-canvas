@@ -13,7 +13,8 @@ function isSnapshot(bytes: Uint8Array): boolean {
 
 /**
  * Deletes the data snapshots no source points at any more (each Update of changed data saves a
- * new one), so they don't pile up in the file: each source keeps its latest. Run when the file is
+ * new one), so they don't pile up in the file: each source keeps its latest and the one it
+ * replaced (`DataSnapshot.previous`). Run when the file is
  * saved. The ones undo could bring back while the file is open (`heldSnapshots`: pointed at since
  * it opened) stay until a later session saves it. Returns how many went.
  */
@@ -21,6 +22,8 @@ export function pruneSnapshots(doc: CanvasDocument): number {
   const kept = new Set(heldSnapshots(doc));
   for (const source of dataSourcesIn(doc)) {
     if (source.snapshot) kept.add(source.snapshot.assetId);
+    // The one before it too: undoing the last Update (a peer's as well) points back at it.
+    if (source.snapshot?.previous) kept.add(source.snapshot.previous);
   }
   const gone = doc.assetIds().filter((id) => {
     if (kept.has(id)) return false;

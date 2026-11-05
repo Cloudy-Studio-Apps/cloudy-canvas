@@ -11,7 +11,11 @@ import {
 } from "../model";
 import { brochureOutline } from "./brochure-outline";
 import { brochureSources } from "./brochure-sources";
-import { needsBrochureCopy, prepareBrochureCopy } from "./brochure-export-copy";
+import {
+  needsBrochureCopy,
+  prepareBrochureCopy,
+  requireMadeBrochure,
+} from "./brochure-export-copy";
 import { partRect } from "./draw-frame";
 import type { BrochureExport, BrochureExportOptions } from "./export-brochure.types";
 import { printedPages } from "./printed-pages";
@@ -20,6 +24,8 @@ import { printOptions } from "./print-options";
 import { pageLinks } from "./page-links";
 import { sidePdfPages } from "./side-pdf-pages";
 import { updateBrochureSources } from "./update-brochure-sources";
+
+const NO_PAGES = "The brochure has no pages yet.";
 
 /** Lets the window paint (the loading screen's step) before a long synchronous stretch. */
 const breathe = () =>
@@ -35,8 +41,9 @@ const breathe = () =>
  * the document holds fewer pages than the export must print (`needsBrochureCopy`: repeats' pending
  * pages, template pages showing their preview row, card repeaters past their design caps), every
  * page is made on a copy of the design readied for the export (`exportCopy`,
- * `prepareBrochureCopy`) and printed from there; the user's file never changes. The copy is
- * dropped however the export ends.
+ * `prepareBrochureCopy`) and printed from there; the user's file never changes. If making them
+ * was cut short (too deeply nested, `CanvasDocument.settled`) or a page is still pending, it
+ * throws and nothing is exported. The copy is dropped however the export ends.
  */
 export async function exportBrochure(
   workspace: DesignWorkspace,
@@ -44,6 +51,8 @@ export async function exportBrochure(
   options: BrochureExportOptions = {},
 ): Promise<BrochureExport> {
   const { data = "saved", onStep } = options;
+  // Checked before any source is updated, so a brochure that can't print changes nothing.
+  if (brochure.pages().length === 0) throw new Error(NO_PAGES);
   const before = brochure.record();
   if (before && data === "update") {
     const ids = brochureSources(workspace.doc, before).map((source) => source.id);
@@ -60,6 +69,7 @@ export async function exportBrochure(
     prepareBrochureCopy(copy.workspace, brochure.id);
     const made = copy.workspace.service(DESIGN_BROCHURES).get(brochure.id);
     if (!made) throw new Error("The brochure is gone.");
+    requireMadeBrochure(made);
     return await printBrochure(copy.workspace, made, options);
   } finally {
     copy.dispose();
@@ -80,7 +90,7 @@ async function printBrochure(
   { onProgress }: BrochureExportOptions,
 ): Promise<BrochureExport> {
   const pages = brochure.pages();
-  if (pages.length === 0) throw new Error("The brochure has no pages yet.");
+  if (pages.length === 0) throw new Error(NO_PAGES);
   const settings = brochure.settings();
   const layout = brochure.layout();
   const printed = printedPages(pages, layout, settings.splitSpreads);

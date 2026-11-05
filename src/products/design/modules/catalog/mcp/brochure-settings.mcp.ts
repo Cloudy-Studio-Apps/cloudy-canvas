@@ -184,7 +184,9 @@ export const brochureSettingsTools: DesignMcpTool[] = [
       "its rows' pages, and a repeated layer all its rows, also the ones not made in the design " +
       "yet, on a copy, so the design itself doesn't change. `updateSources` (false by default: the " +
       "data saved in the file) updates the data sources the brochure reads first, one undo step " +
-      "each; if one can't be updated, nothing is exported. Returns the path written and the page " +
+      "each; if one can't be updated, nothing is exported (the ones before it stay updated). A " +
+      "brochure too deeply nested to make in one go fails with nothing written. Returns the path " +
+      "written and the page " +
       "count.",
     inputSchema: {
       type: "object",

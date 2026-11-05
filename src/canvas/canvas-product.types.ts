@@ -135,7 +135,8 @@ export interface CanvasProduct<O extends object = object> {
    * Readies a copy of the document for an export (`CanvasWorkspace.exportCopy`): `needed` says
    * whether the document as it is would export less than it should (e.g. a design's repeats make
    * only a few copies while designing), `prepare` writes what the export needs on the copy, in one
-   * transaction (so `afterEdit` follows). Composed from every module's hook, in module order.
+   * transaction (so `afterEdit` follows). Composed from every module's hook, in module order: the
+   * copy is needed when any hook needs it, and only the hooks that need it prepare it.
    */
   exportCopy?: {
     needed(doc: CanvasDocument): boolean;

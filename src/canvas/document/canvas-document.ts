@@ -49,6 +49,8 @@ export class CanvasDocument {
   private actor: DocumentActor = { origin: LOCAL_ORIGIN, placement: null };
   /** What runs after each edit (see `setAfterEdit`). */
   private afterEdit: AfterEdit | null = null;
+  /** The last outermost edit's after-edit passes ran out with changes left (`settled`). */
+  private unsettled = false;
   /** Local edits are ignored (see `setReadOnly`). */
   private readOnly = false;
   /** A fork's own Y.Doc, destroyed with it (see `fork`). */
@@ -562,10 +564,20 @@ export class CanvasDocument {
     this.run(fn, this.actor.origin);
   }
 
+  /**
+   * Whether the last outermost edit's `AfterEdit` passes ran out (`AFTER_EDIT_PASSES`) with
+   * changes still to follow, which were dropped: fine while editing (the next edit carries on),
+   * but an export copy must not print what's half made (see `CanvasEngine.exportCopy`).
+   */
+  settled(): boolean {
+    return !this.unsettled;
+  }
+
   /** Runs an edit in a transaction; when the outermost one ends, the `AfterEdit` hook runs. */
   private run(fn: () => void, origin: symbol): void {
     if (this.readOnly) return;
     this.doc.transact(() => {
+      if (this.depth === 0) this.unsettled = false;
       this.depth++;
       try {
         fn();
@@ -608,6 +620,11 @@ export class CanvasDocument {
         this.depth--;
       }
     }
+    this.unsettled =
+      this.edited.size > 0 ||
+      this.removedSince.length > 0 ||
+      this.tokensSince.size > 0 ||
+      this.metaSince;
     this.edited.clear();
     this.removedSince = [];
     this.beforeSince.clear();

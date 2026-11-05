@@ -97,7 +97,7 @@ export function composeProduct<O extends object>(
           exportCopy: {
             needed: (doc) => exportCopies.some((hook) => hook.needed(doc)),
             prepare: (doc) => {
-              for (const hook of exportCopies) hook.prepare(doc, kinds);
+              for (const hook of exportCopies) if (hook.needed(doc)) hook.prepare(doc, kinds);
             },
           },
         }

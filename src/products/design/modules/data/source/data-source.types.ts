@@ -52,6 +52,11 @@ export interface DataSnapshot {
   updatedAt: number;
   rowCount: number;
   hash: string;
+  /**
+   * The snapshot this one replaced, while the data last changed: kept in the file with it, so
+   * undoing that Update (a peer's too) still finds its rows (see `pruneSnapshots`).
+   */
+  previous?: string;
   /** The lists of objects the data had that could be its rows (`findLists`), for the picker. */
   lists?: DataList[];
   /** The plain values at the top of the data, beside its rows (`total: 194`). */

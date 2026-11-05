@@ -9,8 +9,12 @@ import {
   hasRepeats,
   syncBrochureRepeats,
   type BrochureExpansion,
+  type DesignBrochure,
 } from "../model";
 import { brochureFrames } from "./brochure-frames";
+
+const TOO_NESTED =
+  "The brochure has too many nested repeats to make in one go, so nothing was exported.";
 
 /** Whether two expansions print the same pages, showing the same rows. */
 function samePages(a: BrochureExpansion, b: BrochureExpansion): boolean {
@@ -45,7 +49,8 @@ export function needsBrochureCopy(doc: CanvasDocument, record: BrochureElement):
  * Makes every page of a brochure on a copy of the design readied for an export (its data phase
  * `"export"`): its repeats' copies, each filled from its rows, the template pages from the first
  * row, in one transaction, whose `afterEdit` stamps the masters and page items on the new pages and
- * fills the card repeaters in them.
+ * fills the card repeaters in them. Throws when those passes ran out with changes left
+ * (`CanvasDocument.settled`).
  */
 export function prepareBrochureCopy(workspace: DesignWorkspace, brochureId: string): void {
   const { doc, kinds } = workspace;
@@ -59,4 +64,14 @@ export function prepareBrochureCopy(workspace: DesignWorkspace, brochureId: stri
     meta: false,
   };
   doc.batch(() => syncBrochureRepeats(doc, change, kinds));
+  // Its follow-up passes ran out: pages or rows would be missing, so nothing is exported.
+  if (!doc.settled()) throw new Error(TOO_NESTED);
+}
+
+/**
+ * Checks a brochure made on an export copy before it prints: every page made (none pending).
+ * Throws otherwise, so an export never prints half of it.
+ */
+export function requireMadeBrochure(brochure: DesignBrochure): void {
+  if (brochure.pages().some((page) => page.pending)) throw new Error(TOO_NESTED);
 }

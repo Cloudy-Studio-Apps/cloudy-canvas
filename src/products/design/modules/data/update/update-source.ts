@@ -98,10 +98,12 @@ export async function updateSource(
     const images = { ...current.images, ...downloaded.images };
     const imagesChanged = JSON.stringify(images) !== JSON.stringify(current.images);
     // Same data keeps its asset, unless this device lacks it: then the rows are saved again.
+    // A new snapshot names the one it replaces (`previous`), so pruning keeps that one too.
+    const replaced = changed ? previous?.assetId : previous?.previous;
     const base =
       previous && !changed && doc.hasAsset(previous.assetId)
         ? { ...previous, updatedAt: Date.now() }
-        : addSnapshot(doc, rows, encoded);
+        : { ...addSnapshot(doc, rows, encoded), ...(replaced ? { previous: replaced } : {}) };
     // What else the data holds, for the "Rows come from" picker: kept with the snapshot.
     const snapshot = { ...base, lists: findLists(parsed), extras: extraValues(parsed) };
     doc.checkpoint();

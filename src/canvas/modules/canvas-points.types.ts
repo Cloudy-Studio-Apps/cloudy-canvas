@@ -117,7 +117,7 @@ export type AfterEditHook<O extends object> = (
 
 /**
  * See `CanvasProduct.exportCopy`; several modules may give one: the copy is made when any needs
- * it, and every one prepares it, in module order.
+ * it, and each that needs it (on the copy) prepares it, in module order.
  */
 export interface ExportCopyHook<O extends object> {
   needed(doc: CanvasDocument): boolean;

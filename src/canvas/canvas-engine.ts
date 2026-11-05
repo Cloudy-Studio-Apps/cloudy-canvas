@@ -156,6 +156,11 @@ const CLOSE_TIMEOUT_MS = 3000;
 /** Longest `mount` waits for images and fonts; whatever is still loading pops in later. */
 const CONTENT_TIMEOUT_MS = 8000;
 
+/** Why an export copy can't be used: what its preparation set off didn't finish. */
+const UNSETTLED_COPY =
+  "There are too many nested repeats to make everything for the export in one go, so nothing " +
+  "was exported.";
+
 /**
  * Framework-agnostic infinite canvas, shared by every product (boards, designs). Wires the
  * document, camera, renderer, tools and input together; the product it's created with brings the
@@ -639,7 +644,9 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
 
   /**
    * A fork of the document with a scratch workspace over it, opening on `init`, readied by the
-   * product (`CanvasProduct.exportCopy`) in one transaction of its workspace's document.
+   * product (`CanvasProduct.exportCopy`) in one transaction of its workspace's document. Throws
+   * (the fork disposed) when the after-edit passes that follow the preparation ran out
+   * (`CanvasDocument.settled`): an export never prints something half made.
    */
   private makeExportCopy(init: Partial<WorkspaceInit>): ScratchCopy<O> {
     const doc = this.doc.fork();
@@ -654,6 +661,8 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     const prepare = this.product.exportCopy?.prepare;
     try {
       if (prepare) workspace.doc.batch(() => prepare(workspace.doc));
+      // What follows from the preparation was cut short: never export it half made.
+      if (!doc.settled()) throw new Error(UNSETTLED_COPY);
     } catch (error) {
       dispose();
       throw error;
