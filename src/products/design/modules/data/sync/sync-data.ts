@@ -7,7 +7,7 @@ import type {
 } from "@canvas";
 import { getLocale } from "@shared/core";
 
-import { isDesignNode } from "../../core";
+import { isDesignNode, type DesignNode } from "../../core";
 import { hasDataFields, rootScope } from "../bindings";
 import type { BindingContext } from "../bindings";
 import {
@@ -76,15 +76,16 @@ export function syncDataFor(
   nodeIds: readonly string[],
   kinds: ElementKinds,
 ): void {
-  const roots = nodeIds.filter((id) => doc.get(id) !== undefined);
+  const roots: string[] = [];
+  const own: DesignNode[] = [];
+  for (const id of nodeIds) {
+    const el = doc.get(id);
+    if (!el) continue;
+    roots.push(id);
+    if (isDesignNode(el)) own.push(el);
+  }
   if (roots.length === 0) return;
-  const layers = [
-    ...roots.flatMap((id) => {
-      const el = doc.get(id);
-      return el && isDesignNode(el) ? [el] : [];
-    }),
-    ...walkDescendants(childrenMap(doc), roots),
-  ];
+  const layers = [...own, ...walkDescendants(childrenMap(doc), roots)];
   const affected: AffectedData = { all: false, nodes: [], iterators: [] };
   for (const el of layers) {
     if (repeatOf(el)) affected.iterators.push(el.id);
@@ -93,7 +94,7 @@ export function syncDataFor(
   fillData(doc, affected, new Map(), kinds);
 }
 
-/** Plans and writes what `affected` asks for; `before` holds the edit's hand edits (none: `{}`). */
+/** Plans and writes what `affected` asks for; `before` holds the edit's hand edits (none: an empty map). */
 function fillData(
   doc: CanvasDocument,
   affected: AffectedData,

@@ -10,6 +10,7 @@ import {
 import { brochurePhase } from "./brochure-phase";
 import { isBrochure, type BrochureElement } from "../../brochure";
 import { arrangeBrochure, arrangedPages } from "../arrange";
+import { brochureCopies } from "./brochure-copies";
 import { bookLayout } from "../book-layout";
 import { brochurePages } from "../brochure-pages";
 import { brochuresOf } from "../design-brochures";
@@ -30,18 +31,24 @@ function sourcesChanged(doc: CanvasDocument, change: EditedChange): boolean {
 
 /**
  * What the edit did to a brochure's record: whether it repeats (now or before the edit, or has
- * copies left), and whether every page must be filled again: its loops changed (with repeats) or
+ * copies left, listed or, on a record edit, not), and whether every page must be filled again: its loops changed (with repeats) or
  * its language did (data on its pages is written in it).
  */
 function recordChange(
+  doc: CanvasDocument,
   record: BrochureElement,
   change: EditedChange,
 ): { repeats: boolean; refill: boolean } {
   const edited = change.updated.has(record.id);
   const before = edited ? change.before.get(record.id) : undefined;
   const was = before ? ({ ...record, ...before } as BrochureElement) : record;
+  // On a record edit, copy frames no slot lists count too (a concurrent edit that dropped the
+  // repeat and its slots), so they're swept; the scan only runs then.
   const repeats =
-    hasRepeats(record) || hasRepeats(was) || record.slots.some((slot) => slot.generated);
+    hasRepeats(record) ||
+    hasRepeats(was) ||
+    record.slots.some((slot) => slot.generated) ||
+    (edited && brochureCopies(doc, record).length > 0);
   const language = was.settings.language !== record.settings.language;
   const loops = edited && (!before || repeatSignature(was) !== repeatSignature(record));
   return { repeats, refill: language || (repeats && loops) };
@@ -71,7 +78,7 @@ export function syncBrochureRepeats(
   let children: ReturnType<typeof childrenMap> | null = null;
 
   for (const record of records) {
-    const { repeats, refill } = recordChange(record, change);
+    const { repeats, refill } = recordChange(doc, record, change);
     if (!repeats && !refill) continue;
     const affected =
       sources ||

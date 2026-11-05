@@ -29,7 +29,8 @@ function notPrintedAfter(pages: readonly BrochurePage[]): Map<string | null, Bro
  * export"), copy sections not made yet included (they get no folder); a template page that
  * doesn't print for its row follows the page before it. A folder closes where its section's pages
  * end (`StartingSection.end`), so pages after a run (the back cover) are in none of its copies; a
- * spread whose sides are all pending gets no heading, so a run's pending pages stay one row. Rows
+ * spread whose pages are all pending gets no heading and shows no blank side, so a run's pending
+ * pages stay one row. Rows
  * in a repeat run carry its bracket. What's in a collapsed folder is left out.
  */
 export function pageTree(
@@ -80,11 +81,16 @@ export function pageTree(
     const at = open.findIndex((folder) => folder.end <= n);
     if (at >= 0) open.length = at;
   };
-  const allPending = (spread: readonly number[]) =>
-    spread.every((index) => {
-      const side = layout.sides[index];
-      return side?.kind === "page" && !!side.page.pending;
-    });
+  // Its pages all pending (blank sides aside): no heading, and its blanks join the pending row.
+  const allPending = (spread: readonly number[]) => {
+    const sides = spread.map((index) => layout.sides[index]);
+    const pages = sides.filter((side) => side?.kind === "page");
+    return (
+      pages.length > 0 &&
+      pages.length + sides.filter((side) => side?.kind === "blank").length === sides.length &&
+      pages.every((side) => side?.kind === "page" && !!side.page.pending)
+    );
+  };
 
   const openFolders = (index: number) => {
     const side = layout.sides[index];
@@ -121,7 +127,8 @@ export function pageTree(
       closeBefore(first);
       openFolders(first);
     }
-    if (spreads && !allPending(spread)) {
+    const pendingSpread = allPending(spread);
+    if (spreads && !pendingSpread) {
       push({ kind: "spread", spread, depth: depth(), bracket: bracket(false) });
     }
     for (const index of spread) {
@@ -142,6 +149,7 @@ export function pageTree(
       }
       // A spread frame's two sides are one row, at its left side.
       if (side.kind === "page" && side.part === "right") continue;
+      if (pendingSpread && side.kind === "blank") continue;
       if (page?.pending) {
         if (!pending) {
           pending = {

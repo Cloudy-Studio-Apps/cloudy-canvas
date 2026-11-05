@@ -2,6 +2,7 @@ import { layerScope, readsUnreadable, type ScopeLayer } from "../../../data";
 import type { BrochureRepeat } from "./brochure-repeat.types";
 import { DEFAULT_BROCHURE_DESIGN_LIMIT } from "./brochure-repeat.constants";
 import { copyPathKey, copySegment } from "./copy-segment";
+import { expandedId } from "./expanded-id";
 import { loopNames, loopUnits, repeatSettings } from "./loop-units";
 import type { ExpandContext, LoopOwner, LoopUnit } from "./repeat-tree.types";
 
@@ -21,8 +22,9 @@ function templatePass(wanted: number, count: number, isDetached: (at: number) =>
  * follows the rows and a copy's pages show the same rows in both; either way the first one not
  * detached from there. Each pass adds its row to `rows`, template passes too. The
  * other rows follow as copies (path + `copySegment(owner, key)`), made while their place among the
- * copies is within `designLimit` (3 unset) and every loop around is made, all of them in an
- * export; detached copies (their whole path in `detached`) make none. An empty list, or one whose
+ * copies is within `designLimit` (3 unset; a page repeat's pages taken out by hand, in its
+ * `detachedPages`, take no place) and every loop around is made, all of them in an export;
+ * detached copies (their whole path in `detached`) make none. An empty list, or one whose
  * every row is detached, gives the template alone, not printed; a list this device can't read
  * gives the template alone, printed. Pending copies are planned all the same: only `made` differs.
  *
@@ -90,11 +92,18 @@ export function loopContexts(
   if (!shown) return [enter(null, ctx.path, ctx.made, unreadable && ctx.printed)];
   const out = [enter(shown, ctx.path, ctx.made, ctx.printed)];
   const limit = repeat.designLimit ?? DEFAULT_BROCHURE_DESIGN_LIMIT;
+  // A page repeat's single pages taken out by hand (`detachedPages`, named by their rows) aren't
+  // made, so they don't use a place among the copies made while designing.
+  const takenOut = new Set(repeat.detachedPages);
+  const isTakenOut = (unit: LoopUnit) =>
+    takenOut.size > 0 &&
+    takenOut.has(expandedId(owner.id, [...ctx.rows, copySegment(owner.id, unit.key)]));
   let copies = 0;
   units.forEach((unit, at) => {
     if (at === preview || isDetached(at)) return;
-    copies++;
-    const made = phase === "export" || (ctx.made && copies <= limit);
+    const counted = !isTakenOut(unit);
+    if (counted) copies++;
+    const made = phase === "export" || (ctx.made && (!counted || copies <= limit));
     out.push(enter(unit, pathOf(unit), made, ctx.printed));
   });
   return out;

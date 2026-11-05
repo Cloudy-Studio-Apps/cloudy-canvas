@@ -1,4 +1,4 @@
-import { repeatRuns, segmentOwner, type DesignBrochure } from "../model";
+import { repeatRuns, repeatSettings, segmentOwner, type DesignBrochure } from "../model";
 
 /**
  * A brochure's repeats as agents read them: for each repeating section or page (`section` or
@@ -23,7 +23,7 @@ export function describeRepeats(brochure: DesignBrochure) {
         ...(section ? { section: id, name: section.name } : { page: first + 1 }),
         position: first === -1 ? null : first + 1,
         source: repeat.source,
-        as: repeat.as,
+        as: repeatSettings(repeat).as,
         key: repeat.key ?? null,
         filter: repeat.filter,
         sort: repeat.sort,
