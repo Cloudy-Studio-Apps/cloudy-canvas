@@ -27,6 +27,7 @@ export function pageStarts(
     if (!page) continue;
     starts[first]?.push({
       section: { ...original, id: item.id, name: item.name, start: page.slot, level: item.level },
+      from: item.from,
       depth: item.level,
     });
   }

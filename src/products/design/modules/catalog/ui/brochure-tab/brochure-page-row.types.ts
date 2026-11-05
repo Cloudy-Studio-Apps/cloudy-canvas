@@ -22,6 +22,8 @@ export interface BrochurePageRowProps {
   rowDrag: RowDrag;
   /** How far it's indented: the sections it's in. */
   depth: number;
+  /** Its repeat run's bracket depth (`PageTreeRow.bracket`). */
+  bracket: number | null;
 }
 
 export interface BrochureOptionsListProps {
@@ -38,6 +40,8 @@ export interface BlankPageRowProps {
   dropId: string;
   /** How far it's indented: the sections it's in. */
   depth: number;
+  /** Its repeat run's bracket depth (`PageTreeRow.bracket`). */
+  bracket: number | null;
 }
 
 export interface SpreadHeadingRowProps {
@@ -48,6 +52,8 @@ export interface SpreadHeadingRowProps {
   dropId: string;
   /** How far it's indented: the sections it's in. */
   depth: number;
+  /** Its repeat run's bracket depth (`PageTreeRow.bracket`). */
+  bracket: number | null;
 }
 
 export interface ListEndDropProps {

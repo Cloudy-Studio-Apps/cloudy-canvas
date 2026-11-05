@@ -344,5 +344,33 @@
       "dropHere": "Suelta en una página o una maestra",
       "added": "{item} añadido"
     }
+  },
+  "repeat": {
+    "menuSection": "Repetir por cada fila…",
+    "menuPage": "Repetir esta página…",
+    "menuSettings": "Ajustes de la repetición…",
+    "remove": "Quitar repetición",
+    "sectionTitle": "{name}: Repetir por cada fila",
+    "pageTitle": "Repetir esta página",
+    "startSection": "Repetir por cada fila",
+    "startPage": "Repetir esta página",
+    "sectionHint": "Cada fila de una lista recibe una copia de las páginas de esta sección, con sus subsecciones. Los tokens de su nombre, como {token}, dan nombre a cada copia.",
+    "pageHint": "Cada fila de una lista recibe una copia de esta página. Con varias filas por página, una tarjeta repetida en ella las enumera.",
+    "noLists": "Aún no hay ninguna lista que repetir. Añade una fuente en la pestaña Datos.",
+    "perPage": "Filas por página",
+    "designLimit": "Mientras diseñas, crear",
+    "copyCount_one": "{count} copia",
+    "copyCount_other": "{count} copias",
+    "copiesFrom_one": "{copies} de {count} fila",
+    "copiesFrom_other": "{copies} de {count} filas",
+    "badge": "Se repite por cada fila de {source}",
+    "copyOf": "Copia de {name}",
+    "pending_one": "+{count} página al exportar",
+    "pending_other": "+{count} páginas al exportar",
+    "pendingHint": "Se crean al exportar. Ya se cuentan, así que los números de página y el índice son correctos.",
+    "notPrinted": "No se imprime para esta fila",
+    "copyTitle": "Página repetida",
+    "copyHint": "Una repetición creó esta página para una fila de su lista. Sigue a su página plantilla: edita esa.",
+    "showTemplate": "Mostrar la página plantilla"
   }
 }

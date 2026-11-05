@@ -9,6 +9,8 @@ export interface StartingSection {
    * tokens read, its `start` this page's slot.
    */
   section: BrochureSection;
+  /** The section's own id in the record: `section.id` for itself, another for a copy. */
+  from: string;
   /** How deep it reads (`placeSections`). */
   depth: number;
 }

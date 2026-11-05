@@ -24,7 +24,13 @@ export function usePageListSelection(pages: readonly BrochurePage[]): PageListSe
       if (event.shiftKey && from >= 0) {
         const to = order.indexOf(page.slot.id);
         const [start, end] = from < to ? [from, to] : [to, from];
-        engine.select(pages.slice(start, end + 1).map((item) => item.frame.id));
+        // Pending pages show their template's frame: never select it for them.
+        engine.select(
+          pages
+            .slice(start, end + 1)
+            .filter((item) => !item.pending)
+            .map((item) => item.frame.id),
+        );
         return;
       }
       anchor.current = page.slot.id;

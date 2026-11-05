@@ -344,5 +344,33 @@
       "dropHere": "Drop on a page or a master",
       "added": "{item} added"
     }
+  },
+  "repeat": {
+    "menuSection": "Repeat for each row…",
+    "menuPage": "Repeat this page…",
+    "menuSettings": "Repeat settings…",
+    "remove": "Remove repeat",
+    "sectionTitle": "{name}: Repeat for each row",
+    "pageTitle": "Repeat this page",
+    "startSection": "Repeat for each row",
+    "startPage": "Repeat this page",
+    "sectionHint": "Each row of a list gets a copy of this section's pages, its subsections included. Tokens in its name, like {token}, name each copy.",
+    "pageHint": "Each row of a list gets a copy of this page. With several rows per page, a repeated card on it lists them.",
+    "noLists": "There's no list to repeat yet. Add a source in the Data tab.",
+    "perPage": "Rows per page",
+    "designLimit": "While designing, make",
+    "copyCount_one": "{count} copy",
+    "copyCount_other": "{count} copies",
+    "copiesFrom_one": "{copies} from {count} row",
+    "copiesFrom_other": "{copies} from {count} rows",
+    "badge": "Repeats for each row of {source}",
+    "copyOf": "Copy of {name}",
+    "pending_one": "+{count} page at export",
+    "pending_other": "+{count} pages at export",
+    "pendingHint": "Made when you export. They're counted now, so page numbers and the contents are right.",
+    "notPrinted": "Not printed for this row",
+    "copyTitle": "Repeated page",
+    "copyHint": "A repeat made this page for one row of its list. It follows its template page: edit that one.",
+    "showTemplate": "Show the template page"
   }
 }

@@ -2,7 +2,7 @@ import { ListChecks } from "lucide-react";
 
 import { DragGhost } from "@canvas-ui";
 import { CATALOG_PICK_TOOL } from "../../mode/catalog-mode.constants";
-import { placeSections } from "../../model/sections";
+import type { BrochurePage } from "../../model/brochure-pages.types";
 import { PanelIconButton } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useBrochure } from "../hooks/use-brochure";
@@ -19,6 +19,7 @@ import { MastersSection } from "./masters-section";
 import { NoBrochure } from "./no-brochure";
 import { PagesListMenu } from "./pages-list-menu";
 import { pageTree } from "./page-tree";
+import { PendingPagesRow } from "./pending-pages-row";
 import type { PageTreeRow } from "./page-tree.types";
 import { SectionFolderRow } from "./section-folder-row";
 import { SpreadHeadingRow } from "./spread-heading-row";
@@ -38,29 +39,40 @@ import { t } from "../../catalog.i18n";
  * "Pick frames" ticks frames on the canvas; "+" and a right-click on the list add a blank page the
  * size of the last one or a new section on one, and a right-click on a page adds them after it.
  * Its masters are listed above the pages. Sections are folders over their pages, subsections
- * inside them (`pageTree`), that fold away, drag with their pages and take dropped pages.
+ * inside them (`pageTree`), that fold away, drag with their pages and take dropped pages. Repeats
+ * show in place: a repeating section or page badged and bracketed with its copies (the data mark,
+ * copy sections as folders), the pages still to make as one row a run ("+36 pages at export"),
+ * and a template page that doesn't print for its row dimmed.
  */
 export function BrochureTab() {
   const engine = useDesignEngine();
-  const { brochure, pages, settings, layout, label, sections, numbers } = useBrochure();
+  const { brochure, pages, settings, layout, label, numbers } = useBrochure();
   const selection = useCatalogSelection();
   const collapsed = useCatalogViewStore((state) => state.collapsed);
   const selectedSlot = selection.kind === "page" ? selection.page.slot.id : null;
   const last = pages.at(-1)?.frame;
   const list = usePageListSelection(pages);
   const adds = useAddPageEntries(last);
-  const slots = brochure?.record()?.slots ?? [];
-  const rows = pageTree(
-    layout,
-    placeSections(sections, slots),
-    numbers,
-    new Set(collapsed),
-    settings.layout === "book",
-  );
+  const rows = pageTree(layout, pages, numbers, new Set(collapsed), settings.layout === "book");
   const folders = new Map(
     rows.flatMap((row) => (row.kind === "folder" ? [[row.placed.section.id, row] as const] : [])),
   );
   const { rowDrag, carried, ghost } = usePageListDrag({ list, folders });
+
+  const pageRow = (page: BrochurePage, depth: number, bracket: number | null) => (
+    <BrochurePageRow
+      key={page.slot.id}
+      page={page}
+      label={label(page)}
+      selected={list.selected.has(page.slot.id)}
+      expanded={page.slot.id === selectedSlot}
+      carried={carried.has(page.slot.id)}
+      onClick={(event) => list.click(page, event)}
+      rowDrag={rowDrag}
+      depth={depth}
+      bracket={bracket}
+    />
+  );
 
   const render = (row: PageTreeRow) => {
     switch (row.kind) {
@@ -81,10 +93,22 @@ export function BrochureTab() {
             rowDrag={rowDrag}
             dropId={dropId({ kind: "spread", first: row.spread[0] ?? 0 })}
             depth={row.depth}
+            bracket={row.bracket}
           />
         );
+      case "pending":
+        return (
+          <PendingPagesRow
+            key={`pending:${row.first}`}
+            count={row.count}
+            depth={row.depth}
+            bracket={row.bracket}
+          />
+        );
+      case "notPrinted":
+        return pageRow(row.page, row.depth, row.bracket);
       case "side": {
-        const { side, index, depth } = row;
+        const { side, index, depth, bracket } = row;
         if (side.kind === "blank")
           return (
             <BlankPageRow
@@ -94,22 +118,10 @@ export function BrochureTab() {
               rowDrag={rowDrag}
               dropId={dropId({ kind: "blank", side: index })}
               depth={depth}
+              bracket={bracket}
             />
           );
-        const { page } = side;
-        return (
-          <BrochurePageRow
-            key={page.slot.id}
-            page={page}
-            label={label(page)}
-            selected={list.selected.has(page.slot.id)}
-            expanded={page.slot.id === selectedSlot}
-            carried={carried.has(page.slot.id)}
-            onClick={(event) => list.click(page, event)}
-            rowDrag={rowDrag}
-            depth={depth}
-          />
-        );
+        return pageRow(side.page, depth, bracket);
       }
     }
   };

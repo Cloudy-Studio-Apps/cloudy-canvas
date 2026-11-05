@@ -8,6 +8,8 @@ import { Button, cn } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
 import { optionLetter } from "../option-letter";
 import { editInDesign, showPage } from "../page-actions";
+import { BrochureRepeatSection } from "./brochure-repeat-section";
+import { GeneratedPageSection } from "./generated-page-section";
 import { PageMasterField } from "./page-master-field";
 import { SectionFields } from "./section-fields";
 import type { PageSectionProps } from "./sidebar.types";
@@ -16,11 +18,16 @@ import { t } from "../../catalog.i18n";
 /**
  * The selected page: its number, frame and size, its master, the section it starts, the option it
  * prints (picked among its options), and going back to design it or taking it out of the brochure.
+ * A template page sets its repeat ("Repeat this page") and the repeats of the sections starting on
+ * it; a page a repeat made only says what it follows (its master and sections are its template's).
  */
 export function PageSection({ page }: PageSectionProps) {
   const engine = useDesignEngine();
-  const { brochure, label } = useBrochure();
+  const { brochure, label, sections } = useBrochure();
   const paper = paperSize(page.frame);
+  const copy = !!page.slot.generated;
+  // The sections the user started on it (a copy section isn't in the record).
+  const starting = sections.filter((section) => section.start === page.slot.id);
 
   return (
     <>
@@ -31,12 +38,22 @@ export function PageSection({ page }: PageSectionProps) {
           {paper.width} × {paper.height} mm
         </p>
       </PanelSection>
-      <PanelSection title={t("pageMaster.label")}>
-        <PageMasterField slotIds={[page.slot.id]} />
-      </PanelSection>
-      <PanelSection title={t("section.title")}>
-        <SectionFields page={page} />
-      </PanelSection>
+      {copy ? (
+        <GeneratedPageSection page={page} />
+      ) : (
+        <>
+          <PanelSection title={t("pageMaster.label")}>
+            <PageMasterField slotIds={[page.slot.id]} />
+          </PanelSection>
+          <PanelSection title={t("section.title")}>
+            <SectionFields page={page} />
+          </PanelSection>
+          {starting.map((section) => (
+            <BrochureRepeatSection key={section.id} target={{ section: section.id }} />
+          ))}
+          <BrochureRepeatSection target={{ slot: page.slot.id }} />
+        </>
+      )}
       <PanelSection title={t("page.options")}>
         {page.options.length > 1 ? (
           <ul className="flex flex-col gap-1.5">

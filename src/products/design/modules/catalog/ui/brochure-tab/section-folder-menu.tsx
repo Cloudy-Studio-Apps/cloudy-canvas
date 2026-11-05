@@ -1,4 +1,12 @@
-import { BookmarkPlus, FilePlus, IndentDecrease, IndentIncrease, Pencil, X } from "lucide-react";
+import {
+  BookmarkPlus,
+  FilePlus,
+  IndentDecrease,
+  IndentIncrease,
+  Pencil,
+  Repeat,
+  X,
+} from "lucide-react";
 
 import { tCommon } from "@shared/core";
 import {
@@ -9,6 +17,7 @@ import {
   ContextMenuTrigger,
 } from "@shared/ui/kit";
 import { useDesignEngine } from "@design/ui/design-engine-context";
+import { runRepeat } from "../../../data/ui";
 import { paperSize } from "../../model/paper-size";
 import { useBrochure } from "../hooks/use-brochure";
 import { addBlankPage, addSectionPage } from "../page-actions";
@@ -18,7 +27,9 @@ import { t } from "../../catalog.i18n";
 
 /**
  * A section folder's right-click menu: rename it, add a blank page or a subsection at its end,
- * move it a level in or out (with its subsections), or remove it (its pages stay).
+ * move it a level in or out (with its subsections), or remove it (its pages stay). "Repeat for each
+ * row…" (or its settings, when it repeats) selects its pages, whose panel sets the repeat;
+ * "Remove repeat" takes it off, with the copies it made.
  */
 export function SectionFolderMenu({ folder, onRename, children }: SectionFolderMenuProps) {
   const engine = useDesignEngine();
@@ -30,6 +41,10 @@ export function SectionFolderMenu({ folder, onRename, children }: SectionFolderM
   const at = (brochure.record()?.slots.findIndex((slot) => slot.id === lastSlot) ?? -1) + 1;
   const label = last ? (paperSize(last).name ?? "Page") : "Page";
   const item = "gap-2 text-xs";
+  const showPages = () => {
+    const slots = new Set(folder.slots);
+    engine.select(pages.filter((page) => slots.has(page.slot.id)).map((page) => page.frame.id));
+  };
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
@@ -38,6 +53,19 @@ export function SectionFolderMenu({ folder, onRename, children }: SectionFolderM
           <Pencil className="size-3.5" />
           {tCommon("rename")}
         </ContextMenuItem>
+        <ContextMenuItem className={item} onSelect={showPages}>
+          <Repeat className="size-3.5" />
+          {section.repeat ? t("repeat.menuSettings") : t("repeat.menuSection")}
+        </ContextMenuItem>
+        {section.repeat && (
+          <ContextMenuItem
+            className={item}
+            onSelect={() => runRepeat(() => brochure.setRepeat({ section: section.id }, null))}
+          >
+            <X className="size-3.5" />
+            {t("repeat.remove")}
+          </ContextMenuItem>
+        )}
         <ContextMenuSeparator />
         <ContextMenuItem
           className={item}

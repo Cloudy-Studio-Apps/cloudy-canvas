@@ -1,4 +1,4 @@
-import { Bookmark, BookmarkPlus, BookmarkX, Trash2, X } from "lucide-react";
+import { Bookmark, BookmarkPlus, BookmarkX, Repeat, Trash2, X } from "lucide-react";
 
 import {
   ContextMenu,
@@ -9,8 +9,10 @@ import {
 } from "@shared/ui/kit";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { toast } from "@shared/stores/toast-store";
+import { runRepeat } from "../../../data/ui";
 import { deleteSelectedPages } from "../../mode/delete-selected-pages";
 import { useBrochure } from "../hooks/use-brochure";
+import { showPage } from "../page-actions";
 import { startSection, removeSection } from "../section-actions";
 import { startLevels } from "../../model/sections";
 import type { PageRowMenuProps } from "./add-page-menu.types";
@@ -20,7 +22,9 @@ import { t } from "../../catalog.i18n";
 /**
  * A page's right-click menu: a blank page or a new section after it, a section or a subsection
  * starting at it (`startLevels`), removing the ones that do, taking it out of the brochure and
- * deleting its frame (`deleteSelectedPages`).
+ * deleting its frame (`deleteSelectedPages`). "Repeat this page…" (or its settings, when it repeats)
+ * shows the page, whose panel sets the repeat, and "Remove repeat" takes it off with its copies. A
+ * page a repeat made follows its template: it starts no section and doesn't repeat.
  */
 export function PageRowMenu({ page, children }: PageRowMenuProps) {
   const engine = useDesignEngine();
@@ -29,7 +33,11 @@ export function PageRowMenu({ page, children }: PageRowMenuProps) {
   const entries = useAddPageEntries(page.frame, position + 1);
   if (!brochure) return children;
   const slots = brochure.record()?.slots ?? [];
-  const levels = startLevels(sections, slots, page.slot.id);
+  const copy = !!page.slot.generated;
+  const levels = copy
+    ? { section: null, subsection: null }
+    : startLevels(sections, slots, page.slot.id);
+  const { repeat } = page.slot;
   const starting = sections.filter((section) => section.start === page.slot.id);
   return (
     <ContextMenu>
@@ -42,6 +50,21 @@ export function PageRowMenu({ page, children }: PageRowMenuProps) {
           </ContextMenuItem>
         ))}
         <ContextMenuSeparator />
+        {!copy && (
+          <ContextMenuItem className="gap-2 text-xs" onSelect={() => showPage(engine, page.frame)}>
+            <Repeat className="size-3.5" />
+            {repeat ? t("repeat.menuSettings") : t("repeat.menuPage")}
+          </ContextMenuItem>
+        )}
+        {repeat && (
+          <ContextMenuItem
+            className="gap-2 text-xs"
+            onSelect={() => runRepeat(() => brochure.setRepeat({ slot: page.slot.id }, null))}
+          >
+            <X className="size-3.5" />
+            {t("repeat.remove")}
+          </ContextMenuItem>
+        )}
         {levels.section !== null && (
           <ContextMenuItem
             className="gap-2 text-xs"

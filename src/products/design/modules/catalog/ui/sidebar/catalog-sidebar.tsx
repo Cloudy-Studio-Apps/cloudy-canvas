@@ -5,7 +5,9 @@ import { useDesignEngine, useDesignState } from "@design/ui/design-engine-contex
 import { Button } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
 import { useCatalogSelection } from "../hooks/use-catalog-selection";
+import { selectedSlots } from "../../model/selected-slots";
 import { BrochureChecksSection } from "./brochure-checks-section";
+import { BrochureRepeatSection } from "./brochure-repeat-section";
 import { BrochureSettingsSection } from "./brochure-settings-section";
 import { FramesSection } from "./frames-section";
 import { LooseFrameSection } from "./loose-frame-section";
@@ -16,12 +18,14 @@ import { PageItemsSection } from "./page-items-section";
 import { PageSection } from "./page-section";
 import { PickSection } from "./pick-section";
 import { PrintSection } from "./print-section";
+import { selectedSection } from "./selected-section";
 import { t } from "../../catalog.i18n";
 
 /**
  * The properties panel in the Catalog mode (its `sidebar`): while picking, how to; a
  * selected page with its options, page items and pictures; a side of a master and its page items; a frame that isn't in it;
- * several frames; or the brochure itself (settings, numbering, checks, preview and export).
+ * several frames (a section's pages: its repeat too); or the brochure itself (settings, numbering,
+ * checks, preview and export).
  */
 export function CatalogSidebar() {
   const engine = useDesignEngine();
@@ -48,7 +52,19 @@ export function CatalogSidebar() {
     );
   }
   if (selection.kind === "loose") return <LooseFrameSection frame={selection.frame} />;
-  if (selection.kind === "several") return <FramesSection frames={selection.frames} />;
+  if (selection.kind === "several") {
+    const slots = selectedSlots(
+      pages,
+      selection.frames.map((frame) => frame.id),
+    );
+    const section = slots.length === selection.frames.length && selectedSection(pages, slots);
+    return (
+      <>
+        <FramesSection frames={selection.frames} />
+        {section && <BrochureRepeatSection target={{ section }} />}
+      </>
+    );
+  }
   if (!brochure) {
     return <p className="px-3 py-2.5 text-xs text-muted-foreground">{t("sidebar.none")}</p>;
   }

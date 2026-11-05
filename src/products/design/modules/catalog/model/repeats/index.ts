@@ -8,6 +8,7 @@ export { expandedId } from "./expanded-id";
 export { repeatRuns } from "./repeat-runs";
 export { repeatSettings, rowsPerPage } from "./loop-units";
 export { templateSlots } from "./repeat-tree";
+export { loopsAround } from "./loops-around";
 export type * from "./repeat-copy-tag.types";
 export type * from "./repeat-edits.types";
 export { brochureExpansion } from "./brochure-expansion";

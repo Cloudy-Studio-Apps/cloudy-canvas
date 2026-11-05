@@ -264,7 +264,9 @@
     "failed": "No se pudo cambiar la repetición",
     "preview": {
       "label": "Fila de vista previa",
-      "of": "de {count}"
+      "of": "de {count}",
+      "previous": "Fila anterior",
+      "next": "Fila siguiente"
     },
     "card": {
       "label": "Tarjeta",

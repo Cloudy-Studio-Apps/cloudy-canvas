@@ -264,7 +264,9 @@
     "failed": "Couldn't change the repeat",
     "preview": {
       "label": "Preview row",
-      "of": "of {count}"
+      "of": "of {count}",
+      "previous": "Previous row",
+      "next": "Next row"
     },
     "card": {
       "label": "Card",

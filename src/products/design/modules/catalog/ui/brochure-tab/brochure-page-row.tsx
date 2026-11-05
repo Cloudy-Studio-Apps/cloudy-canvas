@@ -11,7 +11,9 @@ import { CATALOG_COMMANDS } from "../../mode/catalog-mode.constants";
 import { BrochureOptionsList } from "./brochure-options-list";
 import { dropId } from "./drop-position";
 import { PageRowMenu } from "./page-row-menu";
-import { INDENT_PX } from "./section-folder-row";
+import { RepeatBracket } from "./repeat-bracket";
+import { RepeatMark } from "./repeat-mark";
+import { INDENT_PX } from "./page-list.constants";
 import type { BrochurePageRowProps } from "./brochure-page-row.types";
 import { t } from "../../catalog.i18n";
 
@@ -19,6 +21,8 @@ import { t } from "../../catalog.i18n";
  * One brochure page: its number, picture, frame and options. A click selects it (`onClick`, with
  * Ctrl/⌘ and Shift for several, owned by the list); rows drag to reorder (`rowDrag`), several when
  * they're selected; × takes it out of the brochure, and a right-click opens its menu (`PageRowMenu`). The one page selected lists its options.
+ * A page that repeats is badged, a copy a repeat made carries the data mark ("Copy of …"), and a
+ * template page that doesn't print for its row is dimmed ("Not printed for this row").
  */
 export function BrochurePageRow({
   page,
@@ -29,9 +33,10 @@ export function BrochurePageRow({
   onClick,
   rowDrag,
   depth,
+  bracket,
 }: BrochurePageRowProps) {
   const engine = useDesignEngine();
-  const { brochure } = useBrochure();
+  const { brochure, pages } = useBrochure();
   const { drag } = rowDrag;
   const target = dropId({ kind: "page", slotId: page.slot.id });
   const up = engine.keymap.label(CATALOG_COMMANDS.movePageUp);
@@ -39,13 +44,23 @@ export function BrochurePageRow({
   const hint = up && down ? t("tab.page.moveHint", { up, down }) : undefined;
   const chosen = page.options.findIndex((option) => option.id === page.frame.id);
   const paper = paperSize(page.frame);
-  const detail =
-    page.options.length > 1
-      ? t("tab.page.options", {
-          count: page.options.length,
-          letter: optionLetter(chosen),
-        })
-      : (paper.name ?? `${paper.width} × ${paper.height} mm`);
+  const { generated, repeat } = page.slot;
+  const template = generated && pages.find((item) => item.slot.id === generated.from)?.frame;
+  const detail = page.notPrinted
+    ? t("repeat.notPrinted")
+    : generated
+      ? t("repeat.copyOf", { name: template?.name ?? page.frame.name })
+      : page.options.length > 1
+        ? t("tab.page.options", {
+            count: page.options.length,
+            letter: optionLetter(chosen),
+          })
+        : (paper.name ?? `${paper.width} × ${paper.height} mm`);
+  const mark = generated ? (
+    <RepeatMark kind="copy" label={detail} />
+  ) : repeat ? (
+    <RepeatMark kind="template" label={t("repeat.badge", { source: repeat.source })} />
+  ) : null;
 
   return (
     <li>
@@ -62,20 +77,24 @@ export function BrochurePageRow({
             "group relative flex cursor-default items-center gap-2 rounded-sm px-1 py-1 hover:bg-hover",
             selected && "bg-primary-soft hover:bg-primary-soft",
             rowDropLine(drag?.overId === target ? drag.side : null),
-            carried && "opacity-50",
+            (carried || page.notPrinted) && "opacity-50",
           )}
         >
+          <RepeatBracket depth={bracket} />
           <span
             className={cn(
               "min-w-5 shrink-0 text-right text-xs font-semibold text-muted-foreground tabular-nums",
               selected && "text-primary-soft-foreground",
             )}
           >
-            {label}
+            {page.notPrinted ? "–" : label}
           </span>
           <ElementThumbnail id={page.frame.id} className="h-10 w-14" />
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm text-foreground">{page.frame.name}</span>
+            <span className="flex min-w-0 items-center gap-1">
+              <span className="truncate text-sm text-foreground">{page.frame.name}</span>
+              {mark}
+            </span>
             <span className="block truncate text-xs text-muted-foreground">{detail}</span>
           </span>
           {/* Taking a page out doesn't show it too. */}

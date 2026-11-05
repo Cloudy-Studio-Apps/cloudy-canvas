@@ -1,69 +1,144 @@
 import type { BookLayout } from "../../model/book-layout.types";
+import type { BrochurePage } from "../../model/brochure-pages.types";
 import type { PageInfo } from "../../model/numbering/page-numbers.types";
-import type { PlacedSection } from "../../model/sections/sections.types";
-import type { FolderRow, PageTreeRow } from "./page-tree.types";
+import type { FolderRow, PageTreeRow, PendingRow } from "./page-tree.types";
+
+/** A section open while the tree is walked: its row (`null` for a copy not made yet) and loop. */
+interface OpenFolder {
+  row: FolderRow | null;
+  repeats: boolean;
+}
+
+/** Whether a page is in a repeat run of its own: it repeats, or a repeat made it. */
+const repeatsItself = (page: BrochurePage) =>
+  !!page.slot.repeat || !!page.slot.generated || !!page.pending;
+
+/** The pages that don't print, by the slot of the page before them (`null`: first). */
+function notPrintedAfter(pages: readonly BrochurePage[]): Map<string | null, BrochurePage[]> {
+  const after = new Map<string | null, BrochurePage[]>();
+  let last: string | null = null;
+  for (const page of pages) {
+    if (!page.notPrinted) {
+      last = page.slot.id;
+      continue;
+    }
+    after.set(last, [...(after.get(last) ?? []), page]);
+  }
+  return after;
+}
 
 /**
  * The page list's rows: the layout's sides in order, each section a folder over its pages (its
- * subsections folders inside it), and with `spreads` a heading before each spread. A section
- * starting on a spread's first side opens before that spread's heading. What's in a collapsed
- * folder is left out.
+ * subsections folders inside it, copies of a repeating one included, `BrochurePage.starts`), and
+ * with `spreads` a heading before each spread. A section starting on a spread's first side opens
+ * before that spread's heading. Pending pages next to each other are one row ("+36 pages at
+ * export"), copy sections not made yet included (they get no folder); a template page that
+ * doesn't print for its row follows the page before it. Rows in a repeat run carry its bracket.
+ * What's in a collapsed folder is left out.
  */
 export function pageTree(
   layout: BookLayout,
-  sections: readonly PlacedSection[],
+  pages: readonly BrochurePage[],
   numbers: readonly PageInfo[],
   collapsed: ReadonlySet<string>,
   spreads: boolean,
 ): PageTreeRow[] {
-  const startingAt = new Map<string, PlacedSection[]>();
-  for (const placed of sections) {
-    startingAt.set(placed.section.start, [...(startingAt.get(placed.section.start) ?? []), placed]);
-  }
+  const unprinted = notPrintedAfter(pages);
   const rows: PageTreeRow[] = [];
-  const open: FolderRow[] = [];
+  const open: OpenFolder[] = [];
   const numbered = new Map<FolderRow, string[]>();
+  let pending: PendingRow | null = null;
   // Shown while no folder it's in is collapsed.
-  const shown = () => open.every((folder) => !folder.collapsed);
+  const shown = () => open.every((folder) => !folder.row?.collapsed);
+  const depth = () => open.filter((folder) => folder.row).length;
+  // The outermost repeating folder's depth, else this row's own when it repeats itself.
+  const bracket = (own: boolean): number | null => {
+    let at = 0;
+    for (const folder of open) {
+      if (folder.repeats) return at;
+      if (folder.row) at++;
+    }
+    return own ? at : null;
+  };
   const push = (row: PageTreeRow) => {
+    if (row.kind !== "pending") pending = null;
     if (shown()) rows.push(row);
+  };
+  const pushUnprinted = (after: string | null) => {
+    for (const page of unprinted.get(after) ?? []) {
+      push({ kind: "notPrinted", page, depth: depth(), bracket: bracket(repeatsItself(page)) });
+    }
   };
 
   const openFolders = (index: number) => {
     const side = layout.sides[index];
     if (side?.kind !== "page" || side.part === "right") return;
-    for (const placed of startingAt.get(side.page.slot.id) ?? []) {
+    for (const placed of side.page.starts) {
       open.length = Math.min(open.length, placed.depth);
+      const repeats = !!placed.section.repeat;
+      // A copy not made yet is in the pending row, not a folder.
+      if (side.page.pending) {
+        open.push({ row: null, repeats });
+        continue;
+      }
       const folder: FolderRow = {
         kind: "folder",
         placed,
-        depth: open.length,
+        copy: placed.section.id !== placed.from,
+        depth: depth(),
+        bracket: bracket(repeats),
         range: "",
         slots: [],
         collapsed: collapsed.has(placed.section.id),
       };
       push(folder);
       numbered.set(folder, []);
-      open.push(folder);
+      open.push({ row: folder, repeats });
     }
   };
 
+  pushUnprinted(null);
   for (const spread of layout.spreads) {
     const first = spread[0];
     if (first !== undefined) openFolders(first);
-    if (spreads) push({ kind: "spread", spread, depth: open.length });
+    if (spreads) push({ kind: "spread", spread, depth: depth(), bracket: bracket(false) });
     for (const index of spread) {
       if (index !== first) openFolders(index);
       const side = layout.sides[index];
       if (!side) continue;
       const label = numbers[index]?.label;
-      for (const folder of open) {
-        if (side.kind === "page" && side.part !== "right") folder.slots.push(side.page.slot.id);
-        if (label) numbered.get(folder)?.push(label);
+      const page = side.kind === "page" ? side.page : null;
+      for (const { row } of open) {
+        if (!row) continue;
+        if (page && !page.pending && side.kind === "page" && side.part !== "right") {
+          row.slots.push(page.slot.id);
+        }
+        if (label) numbered.get(row)?.push(label);
       }
       // A spread frame's two sides are one row, at its left side.
       if (side.kind === "page" && side.part === "right") continue;
-      push({ kind: "side", side, index, depth: open.length });
+      if (page?.pending) {
+        if (!pending) {
+          pending = {
+            kind: "pending",
+            first: page.slot.id,
+            count: 0,
+            depth: depth(),
+            bracket: bracket(true),
+          };
+          push(pending);
+        }
+        pending.count++;
+      } else {
+        push({
+          kind: "side",
+          side,
+          index,
+          depth: depth(),
+          bracket: bracket(page ? repeatsItself(page) : false),
+        });
+      }
+      if (page) pushUnprinted(page.slot.id);
     }
   }
 

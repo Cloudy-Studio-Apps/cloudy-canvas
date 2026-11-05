@@ -46,7 +46,10 @@ export function repeatEdit(
     return { slots: slots.map((item) => (item.id === id ? without(item) : item)), gone };
   }
 
-  const next: BrochureRepeat = { ...EMPTY, ...current, ...repeat };
+  // A field set to `undefined` is taken out (a key, a cap), so the record holds no gaps.
+  const next = Object.fromEntries(
+    Object.entries({ ...EMPTY, ...current, ...repeat }).filter(([, value]) => value !== undefined),
+  ) as unknown as BrochureRepeat;
   if (!next.source.trim()) throw new Error("A repeat needs a list to repeat over (its source).");
   if (JSON.stringify(next) === JSON.stringify(current)) return null;
   if (section) {
