@@ -19,6 +19,8 @@ import { BrochureTab } from "./ui/brochure-tab/brochure-tab";
 import { BrochureCanvasLayer } from "./ui/canvas/brochure-canvas-layer";
 import { useArrangeGlide } from "./ui/hooks/use-arrange-glide";
 import { useArrangeOnEnter } from "./ui/hooks/use-arrange-on-enter";
+import { useRefusedToast } from "./ui/hooks/use-refused-toast";
+import { runCopyEdit } from "./ui/run-copy-edit";
 import { useExportCommand } from "./ui/hooks/use-export-command";
 import { BrochurePreview } from "./ui/preview/brochure-preview";
 import { CatalogSidebar } from "./ui/sidebar/catalog-sidebar";
@@ -83,7 +85,7 @@ export const catalogMode = defineDesignMode({
       id: CATALOG_COMMANDS.deletePages,
       label: t("mode.deletePages"),
       run: (engine) => {
-        const kept = deleteSelectedPages(engine);
+        const kept = runCopyEdit(() => deleteSelectedPages(engine)) ?? 0;
         if (kept > 0) toast({ title: t("mode.deleteKept", { count: kept }) });
       },
     },
@@ -100,5 +102,5 @@ export const catalogMode = defineDesignMode({
   sidebar: CatalogSidebar,
   overlays: [BrochureCanvasLayer, BrochurePreview],
   onLeave: () => useBrochurePreviewStore.getState().close(),
-  hooks: [useExportCommand, useArrangeGlide, useArrangeOnEnter],
+  hooks: [useExportCommand, useArrangeGlide, useArrangeOnEnter, useRefusedToast],
 });

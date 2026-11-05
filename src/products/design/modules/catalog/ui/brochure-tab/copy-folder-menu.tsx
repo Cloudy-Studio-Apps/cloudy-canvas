@@ -12,6 +12,7 @@ import { deleteCopySection } from "../../mode/delete-copy-section";
 import { deleteSelectedPages } from "../../mode/delete-selected-pages";
 import { copyPassPath } from "../../model/repeats/copy-pass-path";
 import { useBrochure } from "../hooks/use-brochure";
+import { runCopyEdit } from "../run-copy-edit";
 import type { CopyFolderMenuProps } from "./copy-folder-menu.types";
 import { t } from "../../catalog.i18n";
 
@@ -31,18 +32,19 @@ export function CopyFolderMenu({ folder, children }: CopyFolderMenuProps) {
   const whole = copyPassPath(brochure.expansion(), id) !== null;
   const slots = new Set(folder.slots);
   const own = pages.filter((page) => slots.has(page.slot.id));
-  const detach = () => {
-    if (whole) brochure.detachSection(id);
-    else
-      brochure.removePages(own.filter((page) => page.slot.generated).map((page) => page.slot.id));
-  };
+  const detach = () =>
+    runCopyEdit(() => {
+      if (whole) brochure.detachSection(id);
+      else
+        brochure.removePages(own.filter((page) => page.slot.generated).map((page) => page.slot.id));
+    });
   const remove = () => {
-    let kept: number;
-    if (whole) kept = deleteCopySection(engine, id);
-    else {
-      engine.select(own.map((page) => page.frame.id));
-      kept = deleteSelectedPages(engine);
-    }
+    const kept =
+      runCopyEdit(() => {
+        if (whole) return deleteCopySection(engine, id);
+        engine.select(own.map((page) => page.frame.id));
+        return deleteSelectedPages(engine);
+      }) ?? 0;
     if (kept > 0) toast({ title: t("mode.deleteKept", { count: kept }) });
   };
   return (

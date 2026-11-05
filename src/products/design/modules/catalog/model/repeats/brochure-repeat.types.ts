@@ -62,6 +62,9 @@ export interface DetachedSlot {
   from: string;
   /** The copy segments it was made for (`GeneratedSlot.path`). */
   path: string[];
-  /** The rows it showed (`ExpandedPage.rows`): its place among the copies. */
-  rows: string[];
+  /**
+   * The rows it showed (`ExpandedPage.rows`): its place among the copies. Missing in slots
+   * detached before it was kept: read `rows ?? path` (`detachedRows`).
+   */
+  rows?: string[];
 }

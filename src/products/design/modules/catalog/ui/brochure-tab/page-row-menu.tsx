@@ -12,6 +12,7 @@ import { toast } from "@shared/stores/toast-store";
 import { runRepeat } from "../../../data/ui";
 import { deleteSelectedPages } from "../../mode/delete-selected-pages";
 import { useBrochure } from "../hooks/use-brochure";
+import { runCopyEdit } from "../run-copy-edit";
 import { showPage } from "../page-actions";
 import { startSection, removeSection } from "../section-actions";
 import { startLevels } from "../../model/sections";
@@ -99,7 +100,7 @@ export function PageRowMenu({ page, children }: PageRowMenuProps) {
         <ContextMenuSeparator />
         <ContextMenuItem
           className="gap-2 text-xs text-destructive"
-          onSelect={() => brochure.removePages([page.slot.id])}
+          onSelect={() => runCopyEdit(() => brochure.removePages([page.slot.id]))}
         >
           <X className="size-3.5" />
           {copy ? t("repeat.detach") : t("mode.takeOut")}
@@ -108,7 +109,7 @@ export function PageRowMenu({ page, children }: PageRowMenuProps) {
           className="gap-2 text-xs text-destructive"
           onSelect={() => {
             engine.select([page.frame.id]);
-            const kept = deleteSelectedPages(engine);
+            const kept = runCopyEdit(() => deleteSelectedPages(engine)) ?? 0;
             if (kept > 0) toast({ title: t("mode.deleteKept", { count: kept }) });
           }}
         >

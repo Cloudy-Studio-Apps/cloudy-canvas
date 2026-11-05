@@ -1,5 +1,6 @@
 import type { BrochureElement, BrochureSlot } from "../../brochure";
 import { segmentOwner } from "./copy-segment";
+import { detachedRows } from "./detached-rows";
 import type { BrochureRepeat } from "./brochure-repeat.types";
 
 /** The copy segments of an expanded id (`expandedId`): none for a template's. */
@@ -40,7 +41,7 @@ export function withoutStaleDetached<R extends Pick<BrochureElement, "slots" | "
   const slots = record.slots.map((slot): BrochureSlot => {
     const cleaned = clean(slot);
     const { detached } = cleaned;
-    if (!detached || detached.rows.some((segment) => loops.has(segmentOwner(segment)))) {
+    if (!detached || detachedRows(detached).some((segment) => loops.has(segmentOwner(segment)))) {
       return cleaned;
     }
     changed = true;

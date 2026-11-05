@@ -6,6 +6,7 @@ import { detachPages } from "./repeats/detach-pages";
 import { detachPasses } from "./repeats/detach-passes";
 import { copyPassPath } from "./repeats/copy-pass-path";
 import { copyRows } from "./repeats/copy-rows";
+import { UnreadableCopyError } from "./repeats/unreadable-copy-error";
 import type { DetachEdit } from "./repeats/detach-generated.types";
 import { freedCopyPatches } from "./repeats/freed-copy-patches";
 import { withoutStaleDetached } from "./repeats/stale-detached";
@@ -140,9 +141,29 @@ export class BrochurePageEdits extends BrochureHandle {
     );
   }
 
-  /** The rows each copy shows now (`copyRows`), read before an edit changes them. */
+  /**
+   * The rows each copy shows now (`copyRows`), read before an edit changes them. Throws
+   * `UnreadableCopyError` for a copy whose rows can't be read here: nothing is written then.
+   */
   protected rowsOf(): (slot: BrochureSlot) => readonly string[] {
-    return copyRows(this.expansion());
+    const read = copyRows(this.expansion());
+    return (slot) => {
+      const rows = read(slot);
+      if (!rows) throw new UnreadableCopyError();
+      return rows;
+    };
+  }
+
+  /**
+   * Throws `UnreadableCopyError` when one of `frames` is a page a repeat made whose rows can't be
+   * read on this device, before deleting it (`deleteSelectedPages`).
+   */
+  checkCopies(frames: Iterable<string>): void {
+    const ids = new Set(frames);
+    const read = this.rowsOf();
+    for (const slot of this.copies((item) => item.frames.some((frame) => ids.has(frame)))) {
+      read(slot);
+    }
   }
 
   /** The pages its repeats made that `test` picks. */

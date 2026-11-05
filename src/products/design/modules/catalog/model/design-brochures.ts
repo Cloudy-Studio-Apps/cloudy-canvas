@@ -28,6 +28,7 @@ export class DesignBrochures {
   private readonly feed: DocumentFeed;
   private readonly handles = new Map<string, DesignBrochure>();
   private readonly arranged = new Set<ArrangedListener>();
+  private readonly refusals = new Set<(error: Error) => void>();
 
   constructor(private readonly doc: CanvasDocument) {
     // Renamed or redrawn frames change what the pages show, so every change counts.
@@ -43,6 +44,17 @@ export class DesignBrochures {
     this.arranged.add(listener);
     return () => this.arranged.delete(listener);
   };
+
+  /** Listens for edits a tool couldn't make (`refused`), for the UI to say why. */
+  onRefused = (listener: (error: Error) => void): (() => void) => {
+    this.refusals.add(listener);
+    return () => this.refusals.delete(listener);
+  };
+
+  /** Reports an edit a tool couldn't make (an `UnreadableCopyError`): tools can't show it. */
+  refused(error: Error): void {
+    for (const listener of this.refusals) listener(error);
+  }
 
   /** Every brochure's record, in order (or only a design page's). */
   records(page?: string): BrochureElement[] {

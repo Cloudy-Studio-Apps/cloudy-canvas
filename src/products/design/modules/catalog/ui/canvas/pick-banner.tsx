@@ -5,6 +5,7 @@ import { FloatingPanel } from "@canvas-ui";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
 import { Button } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
+import { runCopyEdit } from "../run-copy-edit";
 import { t } from "../../catalog.i18n";
 
 /** While frames are being picked: how many are ticked, applying them, or cancelling. */
@@ -13,7 +14,7 @@ export function PickBanner() {
   const ticked = useDesignState((state) => state.selectionCount);
   const { pages } = useBrochure();
   const done = (apply: boolean) => {
-    if (apply) applyPick(engine);
+    if (apply) runCopyEdit(() => applyPick(engine));
     engine.select([]);
     engine.setTool(CATALOG_TOOL);
   };

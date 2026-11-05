@@ -5,6 +5,7 @@ import { copyName } from "./copy-name";
 import { expandedId } from "./expanded-id";
 import { loopContexts } from "./loop-contexts";
 import { rowsPerPage } from "./loop-units";
+import { detachedRows } from "./detached-rows";
 import { detachedPage, placeDetached } from "./place-detached";
 import { repeatTree } from "./repeat-tree";
 import type { BrochureExpansion, ExpandedPage, ExpandedSection } from "./expand-brochure.types";
@@ -19,7 +20,8 @@ import type { ExpandContext, RepeatNode, RepeatSectionNode } from "./repeat-tree
  * (their own inner loops too) so page counts and numbers are right; in an export all are made.
  * Section names read their tokens in each copy's scope, in the brochure's language. A page taken
  * out of a repeat by hand (its id in its loop's `detachedPages`) isn't made: its detached slot, if
- * it was detached rather than deleted, stands in its place as a plain page; pages of whole copies
+ * it was detached rather than deleted, stands in its place as a plain page (in an export a user's
+ * template page showing that row doesn't print either, `printed: false`); pages of whole copies
  * taken out (`detached`) are plain pages after the slot before them (`placeDetached`). Pure:
  * nothing is written.
  */
@@ -39,7 +41,7 @@ export function expandBrochure(
   const standIns = new Map<string, BrochureSlot>();
   for (const slot of record.slots) {
     const { detached } = slot;
-    const id = detached ? expandedId(detached.from, detached.rows) : "";
+    const id = detached ? expandedId(detached.from, detachedRows(detached)) : "";
     if (detached && !slot.generated && skipped.has(id) && !standIns.has(id)) standIns.set(id, slot);
   }
   const placed = new Set<string>();
@@ -48,15 +50,7 @@ export function expandBrochure(
     const id = expandedId(slot.id, ctx.path);
     // Named by the rows it shows, so the same page is left out in both phases.
     const shown = expandedId(slot.id, ctx.rows);
-    if (ctx.path.length > 0 && skipped.has(shown)) {
-      const standIn = standIns.get(shown);
-      if (standIn) {
-        pages.push(detachedPage(standIn));
-        placed.add(standIn.id);
-      }
-      return;
-    }
-    pages.push({
+    const own = {
       id,
       from: slot.id,
       path: ctx.path,
@@ -64,7 +58,20 @@ export function expandBrochure(
       layers: ctx.layers,
       made: ctx.made,
       printed: ctx.printed,
-    });
+    };
+    if (!skipped.has(shown) || (ctx.path.length === 0 && phase === "design")) {
+      pages.push(own);
+      return;
+    }
+    // In an export the user's own template takes the first row, which may be a copy's taken out
+    // while designing: its frame stays (not printed), and like any such copy the detached page,
+    // if any, stands in its place.
+    if (ctx.path.length === 0) pages.push({ ...own, printed: false });
+    const standIn = standIns.get(shown);
+    if (standIn) {
+      pages.push(detachedPage(standIn));
+      placed.add(standIn.id);
+    }
   };
 
   const section = (node: RepeatSectionNode, ctx: ExpandContext) => {

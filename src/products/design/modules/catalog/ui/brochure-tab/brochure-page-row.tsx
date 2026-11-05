@@ -6,6 +6,7 @@ import { PanelIconButton } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { cn } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
+import { runCopyEdit } from "../run-copy-edit";
 import { optionLetter } from "../option-letter";
 import { CATALOG_COMMANDS } from "../../mode/catalog-mode.constants";
 import { BrochureOptionsList } from "./brochure-options-list";
@@ -106,7 +107,7 @@ export function BrochurePageRow({
           >
             <PanelIconButton
               label={generated ? t("repeat.detach") : t("tab.page.remove")}
-              onClick={() => brochure?.removePages([page.slot.id])}
+              onClick={() => runCopyEdit(() => brochure?.removePages([page.slot.id]))}
             >
               <X />
             </PanelIconButton>

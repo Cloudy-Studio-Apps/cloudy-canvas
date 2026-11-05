@@ -2,6 +2,7 @@ import { PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
+import { runCopyEdit } from "../run-copy-edit";
 import { showPage } from "../page-actions";
 import type { PageSectionProps } from "./sidebar.types";
 import { t } from "../../catalog.i18n";
@@ -34,7 +35,7 @@ export function GeneratedPageSection({ page }: PageSectionProps) {
           variant="outline"
           className="w-full"
           title={t("repeat.detachHint")}
-          onClick={() => brochure?.removePages([page.slot.id])}
+          onClick={() => runCopyEdit(() => brochure?.removePages([page.slot.id]))}
         >
           {t("repeat.detach")}
         </Button>

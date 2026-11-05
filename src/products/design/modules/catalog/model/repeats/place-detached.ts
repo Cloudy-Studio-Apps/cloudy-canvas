@@ -1,4 +1,5 @@
 import type { BrochureElement, BrochureSlot } from "../../brochure";
+import { detachedRows } from "./detached-rows";
 import { slotKey } from "./slot-key";
 import type { ExpandedPage, ExpandedSection } from "./expand-brochure.types";
 
@@ -38,6 +39,7 @@ export function placeDetached(
   record.slots.forEach((slot, i) => {
     const { detached } = slot;
     if (!detached || slot.generated || placed.has(slot.id)) return;
+    const rows = detachedRows(detached);
     let at = 0;
     for (let j = i - 1; j >= 0; j--) {
       const before = record.slots[j];
@@ -51,7 +53,7 @@ export function placeDetached(
     for (let moved = true; moved;) {
       moved = false;
       for (const section of sections) {
-        if (section.first < at && at < section.end && !within(detached.rows, section.rows)) {
+        if (section.first < at && at < section.end && !within(rows, section.rows)) {
           at = section.end;
           moved = true;
         }
@@ -62,7 +64,7 @@ export function placeDetached(
       if (section.first >= at) {
         section.first++;
         section.end++;
-      } else if (section.end > at || (section.end === at && within(detached.rows, section.rows))) {
+      } else if (section.end > at || (section.end === at && within(rows, section.rows))) {
         section.end++;
       }
     }

@@ -376,6 +376,7 @@
     "detach": "Detach from the repeat",
     "detachHint": "Detached, it stays here as a normal page you can edit, and the repeat doesn't make this page again. The rest of its copy still follows the template; to detach a whole copy of a repeated section, use its folder's menu.",
     "deleteCopy": "Delete this copy's pages",
-    "deletePages": "Delete these pages"
+    "deletePages": "Delete these pages",
+    "unreadable": "This page's data isn't on this device yet; update the source first."
   }
 }

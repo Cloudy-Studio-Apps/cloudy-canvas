@@ -6,6 +6,7 @@ import { PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { Button, cn } from "@shared/ui/kit";
 import { useBrochure } from "../hooks/use-brochure";
+import { runCopyEdit } from "../run-copy-edit";
 import { optionLetter } from "../option-letter";
 import { editInDesign, showPage } from "../page-actions";
 import { BrochureRepeatSection } from "./brochure-repeat-section";
@@ -103,7 +104,11 @@ export function PageSection({ page }: PageSectionProps) {
           <PenLine />
           {t("page.edit")}
         </Button>
-        <Button size="sm" variant="ghost" onClick={() => brochure?.removePages([page.slot.id])}>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => runCopyEdit(() => brochure?.removePages([page.slot.id]))}
+        >
           {copy ? t("repeat.detach") : t("tab.page.remove")}
         </Button>
       </div>

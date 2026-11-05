@@ -1,6 +1,6 @@
 import type { CanvasDocument, ElementPatch } from "@canvas";
 
-import { BROCHURE_TYPE, isBrochure, type BrochureElement } from "../brochure";
+import { BROCHURE_TYPE, isBrochure, type BrochureElement, type BrochureSlot } from "../brochure";
 import { keptSections, prunedMasters, withoutMaster } from "./masters/master-edits";
 import { brochureExpansion } from "./repeats/brochure-expansion";
 import { copyRows } from "./repeats/copy-rows";
@@ -31,8 +31,12 @@ export function pruneBrochure(doc: CanvasDocument, removed: ReadonlySet<string>)
     const copies = brochure.slots.filter(
       (slot) => slot.generated && slot.frames.some((frame) => removed.has(frame)),
     );
-    const rowsOf = copies.length > 0 ? copyRows(brochureExpansion(doc, brochure)) : () => [];
-    const detach = detachPages(brochure, copies, rowsOf, new Set(copies.map((slot) => slot.id)));
+    // A copy whose rows can't be read here is only dropped (never named by a guess); the
+    // Catalog mode refuses deleting one (`checkCopies`), other deletes still remove it.
+    const read = copies.length > 0 ? copyRows(brochureExpansion(doc, brochure)) : () => null;
+    const named = copies.filter((slot) => read(slot));
+    const rowsOf = (slot: BrochureSlot) => read(slot) ?? [];
+    const detach = detachPages(brochure, named, rowsOf, new Set(named.map((slot) => slot.id)));
     const kept = withoutStaleDetached({
       slots: removeFrames(detach.slots, removed),
       sections: detach.sections,

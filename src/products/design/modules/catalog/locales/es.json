@@ -376,6 +376,7 @@
     "detach": "Separar de la repetición",
     "detachHint": "Separada, se queda aquí como una página normal que puedes editar, y la repetición no vuelve a crear esta página. El resto de su copia sigue a la plantilla; para separar la copia entera de una sección repetida, usa el menú de su carpeta.",
     "deleteCopy": "Eliminar las páginas de esta copia",
-    "deletePages": "Eliminar estas páginas"
+    "deletePages": "Eliminar estas páginas",
+    "unreadable": "Los datos de esta página aún no están en este dispositivo; actualiza primero la fuente."
   }
 }
