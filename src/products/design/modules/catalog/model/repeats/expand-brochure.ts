@@ -77,5 +77,5 @@ export function expandBrochure(
   };
 
   walk(repeatTree(record), { scope: root, layers: [], path: [], made: true, printed: true });
-  return { pages, sections, pending: pages.filter((item) => !item.made).length };
+  return { pages, sections, pending: pages.filter((item) => !item.made && item.printed).length };
 }

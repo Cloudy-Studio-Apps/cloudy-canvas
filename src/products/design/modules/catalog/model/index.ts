@@ -17,6 +17,7 @@ export * from "./sections";
 export { currentBrochure, ensureBrochure } from "./current-brochure";
 export { DesignBrochure } from "./design-brochure";
 export { brochuresOf, DESIGN_BROCHURES, DesignBrochures } from "./design-brochures";
+export { backCoverSlot } from "./back-cover-slot";
 export { isBackCover } from "./is-back-cover";
 export { isPageFrame } from "./page-frame";
 export { pagePictures } from "./page-pictures";

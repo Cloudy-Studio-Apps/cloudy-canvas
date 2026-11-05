@@ -20,8 +20,8 @@ export interface RepeatSlotNode {
 /** Where the expansion is: the loops around and what the pages inside read. */
 export interface ExpandContext {
   scope: DataScope;
-  layers: ScopeLayer[];
-  path: string[];
+  layers: readonly ScopeLayer[];
+  path: readonly string[];
   made: boolean;
   printed: boolean;
 }

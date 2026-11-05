@@ -4,11 +4,12 @@ import type { RepeatNode } from "./repeat-tree.types";
 
 /**
  * What each repeat copies, by the repeating section's or slot's id: a section's template slots
- * from its start to the next section at its depth or less, nested subsections included; a page
+ * from its start to the next section at its depth or less (or the back cover, `repeatTree`),
+ * nested subsections included; a page
  * repeat's run is its one slot.
  */
 export function repeatRuns(
-  record: Pick<BrochureElement, "slots" | "sections">,
+  record: Pick<BrochureElement, "slots" | "sections" | "settings">,
 ): Map<string, string[]> {
   const runs = new Map<string, string[]>();
   const visit = (nodes: readonly RepeatNode[]) => {

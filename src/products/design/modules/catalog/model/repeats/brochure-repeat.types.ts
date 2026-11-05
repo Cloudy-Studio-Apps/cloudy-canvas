@@ -23,7 +23,11 @@ export interface BrochureRepeat {
   previewRow?: number;
   /** Pages only: the rows on each copy (≥ 1, default 1); above 1, `as` is the page's list of rows. */
   perPage?: number;
-  /** Copy keys of detached copies: never made again. */
+  /**
+   * Detached copies, each its whole copy path (`copyPathKey`: the segments of the copies around
+   * it, then its own `copySegment(owner, key)`), so detaching product 3 in one category leaves
+   * product 3 of the others alone. Never made again, nor shown on the template.
+   */
   detached: string[];
 }
 
@@ -31,6 +35,6 @@ export interface BrochureRepeat {
 export interface GeneratedSlot {
   /** The template slot's id. */
   from: string;
-  /** Copy keys, outermost first. */
+  /** Its copy segments (`copySegment`), outermost first: the `ExpandedPage.path` it was made for. */
   path: string[];
 }
