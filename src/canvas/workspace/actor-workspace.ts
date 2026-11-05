@@ -35,7 +35,7 @@ import {
   type WorkspaceParts,
 } from "./operations";
 import { productSceneHooks } from "./scene-hooks";
-import type { CanvasWorkspace, WorkspaceInit } from "./workspace.types";
+import type { CanvasWorkspace, ScratchCopy, WorkspaceInit } from "./workspace.types";
 
 /**
  * A collaborator's own context on the document (an agent's): a headless scene of its scope, its
@@ -248,6 +248,14 @@ export class ActorWorkspace<O extends object> implements CanvasWorkspace<O> {
     const { color } = this.exportHost();
     if (!color) throw new Error("Color management isn't available here.");
     return color.readProfile(profile);
+  }
+
+  needsExportCopy(): boolean {
+    return this.host.product.exportCopy?.needed(this.host.doc) ?? false;
+  }
+
+  exportCopy(): ScratchCopy<O> {
+    return this.host.exportCopy({ scope: this.scope, viewport: this.view });
   }
 
   pdfBook(options: Partial<PdfExportOptions> = {}): PdfBook {

@@ -93,6 +93,7 @@ import {
   type ActorWorkspaceHost,
   type CanvasWorkspace,
   type HistoryTarget,
+  type ScratchCopy,
   type WorkspaceInit,
 } from "./workspace";
 import { productSceneHooks } from "./workspace/scene-hooks";
@@ -626,6 +627,38 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     );
     this.scratches.set(workspace, doc);
     return workspace;
+  }
+
+  needsExportCopy(): boolean {
+    return this.product.exportCopy?.needed(this.doc) ?? false;
+  }
+
+  exportCopy(): ScratchCopy<O> {
+    return this.makeExportCopy({ scope: this.scene.scope });
+  }
+
+  /**
+   * A fork of the document with a scratch workspace over it, opening on `init`, readied by the
+   * product (`CanvasProduct.exportCopy`) in one transaction of its workspace's document.
+   */
+  private makeExportCopy(init: Partial<WorkspaceInit>): ScratchCopy<O> {
+    const doc = this.doc.fork();
+    const workspace = this.scratchWorkspace(doc, init);
+    let disposed = false;
+    const dispose = () => {
+      if (disposed) return;
+      disposed = true;
+      this.dropScratchWorkspace(workspace);
+      doc.destroy();
+    };
+    const prepare = this.product.exportCopy?.prepare;
+    try {
+      if (prepare) workspace.doc.batch(() => prepare(workspace.doc));
+    } catch (error) {
+      dispose();
+      throw error;
+    }
+    return { workspace, doc, dispose };
   }
 
   /** Destroys a scratch workspace and takes the product's after-edit hook off its fork. */
@@ -2124,6 +2157,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
       exportHost: (scene, selected) => this.exportHostFor(scene, selected, doc),
       copyPng: (host, ids) => this.copyPng(host, ids),
       copySvg: (host, ids) => this.copySvg(host, ids),
+      exportCopy: (init) => this.makeExportCopy(init),
     };
   }
 

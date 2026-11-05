@@ -7,6 +7,7 @@ import {
   type ExportFormat,
   type PdfExportOptions,
   type SvgText,
+  withExportCopy,
 } from "@canvas";
 import { exportFile } from "@platform";
 import { Button } from "@shared/ui/components/ui/button";
@@ -82,13 +83,18 @@ export function ExportDialog({ name, framePagesLabel }: ExportDialogProps) {
         () =>
           moduleFormat
             ? moduleFormat.run(engine, name)
-            : engine.exportElements({
-                format: chosen,
-                background: solidOnly ? "solid" : background,
-                area: exportArea,
-                svgText,
-                pdf,
-              }),
+            : // A copy when the product readies one (a design's repeats draw every row).
+              withExportCopy(engine, (workspace) =>
+                workspace.exportElements({
+                  format: chosen,
+                  background: solidOnly ? "solid" : background,
+                  area: exportArea,
+                  // Named: a copy's workspace has no selection of its own.
+                  ids: exportArea === "selection" ? engine.selectedIds() : undefined,
+                  svgText,
+                  pdf,
+                }),
+              ),
         { loading: t("export.progress", { format: file.name }), error: t("export.failed") },
       );
       if (!blob) return;

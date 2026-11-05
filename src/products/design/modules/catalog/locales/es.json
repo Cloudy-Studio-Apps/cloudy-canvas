@@ -86,7 +86,19 @@
     "label": "Documento PDF",
     "exporting": "Exportando el folleto",
     "drawing": "Dibujando las páginas",
-    "failed": "No se pudo exportar el folleto"
+    "failed": "No se pudo exportar el folleto",
+    "updating": "Actualizando {name}",
+    "making": "Creando todas las páginas",
+    "updateFailed": "No se pudo actualizar {name}, así que el folleto no se exportó"
+  },
+  "exportData": {
+    "title": "¿Actualizar los datos primero?",
+    "description": "Este folleto lee estas fuentes de datos. Actualízalas para exportar sus filas más recientes, o exporta los datos guardados en el archivo.",
+    "update": "Actualizar los datos primero",
+    "saved": "Usar los datos guardados",
+    "updatedAgo": "actualizada {time}",
+    "updatedNow": "actualizada ahora mismo",
+    "neverUpdated": "nunca actualizada"
   },
   "images": {
     "replace": {

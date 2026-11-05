@@ -115,6 +115,15 @@ export type AfterEditHook<O extends object> = (
   kinds: ElementKinds<O>,
 ) => void;
 
+/**
+ * See `CanvasProduct.exportCopy`; several modules may give one: the copy is made when any needs
+ * it, and every one prepares it, in module order.
+ */
+export interface ExportCopyHook<O extends object> {
+  needed(doc: CanvasDocument): boolean;
+  prepare(doc: CanvasDocument, kinds: ElementKinds<O>): void;
+}
+
 /** See `CanvasProduct.onMoved`; hooks run one after another in module order. */
 export type OnMovedHook<O extends object> = (
   doc: CanvasDocument,
@@ -184,6 +193,8 @@ export interface CanvasPoints<O extends object> {
   onMoved: ExtensionPoint<OnMovedHook<O>>;
   /** What follows from every edit (one module at most; two throw). */
   afterEdit: ExtensionPoint<AfterEditHook<O>>;
+  /** What readies a copy of the document for an export (several, in module order). */
+  exportCopies: ExtensionPoint<ExportCopyHook<O>>;
   links: ExtensionPoint<() => CanvasLinks>;
   resolveElements: ExtensionPoint<ResolveElementsHook<O>>;
   withMembers: ExtensionPoint<WithMembersHook<O>>;

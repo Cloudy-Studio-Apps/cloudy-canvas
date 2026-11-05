@@ -1,3 +1,5 @@
+import { withExportCopy } from "@canvas";
+
 import { layerNameOf, type DesignNode } from "../core";
 import type { DesignWorkspace } from "../../design-engine.types";
 import { uniqueFileName } from "./export-file-name";
@@ -29,9 +31,18 @@ export function plannedExports(
 
 /**
  * Draws the planned files, one at a time: exactly the layer with what it holds, no padding, and
- * what can be transparent stays so.
+ * what can be transparent stays so. Drawn from a copy of the design when one is needed
+ * (`withExportCopy`: repeats past their design caps show every row), never changing the file.
  */
-export async function renderExports(
+export function renderExports(
+  workspace: DesignWorkspace,
+  planned: readonly PlannedExport[],
+): Promise<RenderedExport[]> {
+  return withExportCopy(workspace, (drawn) => drawExports(drawn, planned));
+}
+
+/** `renderExports` on the workspace given (a copy readied for the export, or the design). */
+export async function drawExports(
   workspace: Pick<DesignWorkspace, "exportElements">,
   planned: readonly PlannedExport[],
 ): Promise<RenderedExport[]> {

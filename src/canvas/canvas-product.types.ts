@@ -132,6 +132,16 @@ export interface CanvasProduct<O extends object = object> {
    */
   afterEdit?(doc: CanvasDocument, change: EditedChange): void;
   /**
+   * Readies a copy of the document for an export (`CanvasWorkspace.exportCopy`): `needed` says
+   * whether the document as it is would export less than it should (e.g. a design's repeats make
+   * only a few copies while designing), `prepare` writes what the export needs on the copy, in one
+   * transaction (so `afterEdit` follows). Composed from every module's hook, in module order.
+   */
+  exportCopy?: {
+    needed(doc: CanvasDocument): boolean;
+    prepare(doc: CanvasDocument): void;
+  };
+  /**
    * Gives elements whose geometry follows others (e.g. a box around a group) their current
    * geometry. Returns the list with those replaced by new objects and the rest as they were;
    * the replaced ones are redrawn on every change.

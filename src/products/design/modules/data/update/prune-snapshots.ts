@@ -1,0 +1,32 @@
+import type { CanvasDocument } from "@canvas";
+
+import { dataSourcesIn } from "../source";
+import { heldSnapshots } from "./held-snapshots";
+
+/** How every snapshot asset starts (`encodeRows`: `{ version: 1, rows }` as JSON, in UTF-8). */
+const SNAPSHOT_START = new TextEncoder().encode('{"version":1,"rows":');
+
+function isSnapshot(bytes: Uint8Array): boolean {
+  if (bytes.length < SNAPSHOT_START.length) return false;
+  return SNAPSHOT_START.every((byte, i) => bytes[i] === byte);
+}
+
+/**
+ * Deletes the data snapshots no source points at any more (each Update of changed data saves a
+ * new one), so they don't pile up in the file: each source keeps its latest. Run when the file is
+ * saved. The ones undo could bring back while the file is open (`heldSnapshots`: pointed at since
+ * it opened) stay until a later session saves it. Returns how many went.
+ */
+export function pruneSnapshots(doc: CanvasDocument): number {
+  const kept = new Set(heldSnapshots(doc));
+  for (const source of dataSourcesIn(doc)) {
+    if (source.snapshot) kept.add(source.snapshot.assetId);
+  }
+  const gone = doc.assetIds().filter((id) => {
+    if (kept.has(id)) return false;
+    const bytes = doc.getAsset(id);
+    return bytes !== undefined && isSnapshot(bytes);
+  });
+  if (gone.length > 0) doc.removeAssets(gone);
+  return gone.length;
+}

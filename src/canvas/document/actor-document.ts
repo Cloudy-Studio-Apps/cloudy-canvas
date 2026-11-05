@@ -13,6 +13,7 @@ const ACTOR_WRITES = new Set<PropertyKey>([
   "remove",
   "batch",
   "addAsset",
+  "removeAssets",
   "setMeta",
 ]);
 

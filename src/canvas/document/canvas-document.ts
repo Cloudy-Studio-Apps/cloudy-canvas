@@ -288,6 +288,24 @@ export class CanvasDocument {
     return this.assets.has(id);
   }
 
+  /** The ids of every asset stored. */
+  assetIds(): string[] {
+    return [...this.assets.keys()];
+  }
+
+  /**
+   * Deletes assets (unknown ids are ignored). Not an undo step, as adding one isn't: only for
+   * assets nothing points at any more (e.g. a data source's old snapshots).
+   */
+  removeAssets(ids: Iterable<string>): void {
+    if (this.readOnly) return;
+    const gone = [...ids].filter((id) => this.assets.has(id));
+    if (gone.length === 0) return;
+    this.doc.transact(() => {
+      for (const id of gone) this.assets.delete(id);
+    }, this.actor.origin);
+  }
+
   /** Stores binary data under an id. Not an undo step: undoing the element that shows it is enough. */
   addAsset(id: string, data: Uint8Array): void {
     if (this.readOnly) return;

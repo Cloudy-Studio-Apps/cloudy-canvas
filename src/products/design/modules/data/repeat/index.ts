@@ -6,6 +6,7 @@ export { repeatOf, dataCopyTag } from "./repeat-fields";
 export { repeatRows, rowScope } from "./repeat-rows";
 export { rowNames } from "./row-names";
 export { DEFAULT_DESIGN_LIMIT } from "./design-limit";
+export { cappedRepeats } from "./capped-repeats";
 export { copyNode, copyPatch } from "./copy-node";
 export { planDataCopies } from "./plan-data-copies";
 export { emptyCopyPlan, writeDataCopies } from "./write-data-copies";

@@ -4,6 +4,7 @@ import { createId } from "@shared/core";
 import type { DataSnapshot } from "../source";
 import type { DataRow } from "../table";
 import type { EncodedRows, SnapshotFile } from "./snapshot.types";
+import { heldSnapshots } from "./held-snapshots";
 
 /**
  * Parsed rows by Yjs doc, then asset id: an asset never changes, so each is parsed once (`null`:
@@ -44,6 +45,8 @@ export function addSnapshot(
   { bytes, hash }: EncodedRows,
 ): DataSnapshot {
   const assetId = createId();
+  // Held before it's added, so the snapshot it replaces is held too (undo may bring it back).
+  heldSnapshots(doc).add(assetId);
   doc.addAsset(assetId, bytes);
   cacheOf(doc).set(assetId, freezeRows(rows.map((row) => ({ ...row }))));
   return { assetId, updatedAt: Date.now(), rowCount: rows.length, hash };

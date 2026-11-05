@@ -15,7 +15,7 @@ import {
   BROCHURE_LAYOUTS,
   type BrochureSettings,
 } from "../brochure";
-import { exportBrochure, printedPages, storePrintProfile } from "../export";
+import { exportBrochure, storePrintProfile } from "../export";
 import { BROCHURE_SCHEMA, readBrochure } from "./brochure-args";
 import { readMaster } from "./master-args";
 
@@ -180,12 +180,21 @@ export const brochureSettingsTools: DesignMcpTool[] = [
       "it. An existing file is replaced. The PDF opens with bookmarks in the reader's sidebar " +
       "(the table of contents' entries: the sections, nested, else the pages), and every table " +
       "of contents line and page reference ({page:Name}) opens its page; CMYK (PDF/X) files keep " +
-      "the bookmarks and have no links. Returns the path written and the page count.",
+      "the bookmarks and have no links. Every page prints: a repeated section or page makes all " +
+      "its rows' pages, and a repeated layer all its rows, also the ones not made in the design " +
+      "yet, on a copy, so the design itself doesn't change. `updateSources` (false by default: the " +
+      "data saved in the file) updates the data sources the brochure reads first, one undo step " +
+      "each; if one can't be updated, nothing is exported. Returns the path written and the page " +
+      "count.",
     inputSchema: {
       type: "object",
       required: ["brochure"],
       properties: {
         path: { type: "string", description: "Absolute path of the file to write." },
+        updateSources: {
+          type: "boolean",
+          description: "Update the sources the brochure reads before exporting (default false).",
+        },
         brochure: BROCHURE_SCHEMA,
       },
     },
@@ -193,14 +202,12 @@ export const brochureSettingsTools: DesignMcpTool[] = [
       const design = requireDesign(host);
       const brochure = readBrochure(design.engine, args);
       const path = exportPath(design, "pdf", optionalString(args, "path"), "design");
-      const file = await exportBrochure(design.engine, brochure);
+      const update = optionalBoolean(args, "updateSources") ?? false;
+      const { file, pages } = await exportBrochure(design.engine, brochure, {
+        data: update ? "update" : "saved",
+      });
       await host.writeFile(path, file);
-      const pages = brochure.pages();
-      return {
-        path,
-        bytes: file.size,
-        pages: printedPages(pages, brochure.layout(), brochure.settings().splitSpreads).length,
-      };
+      return { path, bytes: file.size, pages };
     },
   },
 ];

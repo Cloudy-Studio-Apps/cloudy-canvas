@@ -46,6 +46,7 @@ export function composeProduct<O extends object>(
   const rulerFrame = single(host.get(points.rulerFrame), `what the ${id}'s rulers measure`);
   const frames = single(host.get(points.frames), `the frames N steps through in the ${id}`);
   const afterEdits = host.get(points.afterEdit);
+  const exportCopies = host.get(points.exportCopies);
   const editors = host.get(points.editElement);
   const editor: EditElementHook<O> | undefined =
     editors.length > 0 ? (el, ctx) => editors.some((edit) => edit(el, ctx)) : undefined;
@@ -88,6 +89,16 @@ export function composeProduct<O extends object>(
       ? {
           afterEdit: (doc, change) => {
             for (const afterEdit of afterEdits) afterEdit(doc, change, kinds);
+          },
+        }
+      : {}),
+    ...(exportCopies.length > 0
+      ? {
+          exportCopy: {
+            needed: (doc) => exportCopies.some((hook) => hook.needed(doc)),
+            prepare: (doc) => {
+              for (const hook of exportCopies) hook.prepare(doc, kinds);
+            },
           },
         }
       : {}),

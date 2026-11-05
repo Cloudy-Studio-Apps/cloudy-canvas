@@ -24,6 +24,8 @@ import { runCopyEdit } from "./ui/run-copy-edit";
 import { useExportCommand } from "./ui/hooks/use-export-command";
 import { BrochurePreview } from "./ui/preview/brochure-preview";
 import { CatalogSidebar } from "./ui/sidebar/catalog-sidebar";
+import { ExportDataPrompt } from "./ui/export-data-prompt";
+import { useExportDataStore } from "./ui/stores/export-data-store";
 import { useBrochurePreviewStore } from "./ui/stores/preview-store";
 import { useCatalogToolbarItems } from "./ui/toolbar/use-catalog-toolbar-items";
 import { t } from "./catalog.i18n";
@@ -100,7 +102,11 @@ export const catalogMode = defineDesignMode({
     keep: ["data"],
   },
   sidebar: CatalogSidebar,
-  overlays: [BrochureCanvasLayer, BrochurePreview],
-  onLeave: () => useBrochurePreviewStore.getState().close(),
+  overlays: [BrochureCanvasLayer, BrochurePreview, ExportDataPrompt],
+  onLeave: () => {
+    useBrochurePreviewStore.getState().close();
+    // An export still asking about its data is cancelled.
+    useExportDataStore.getState().answer(null);
+  },
   hooks: [useExportCommand, useArrangeGlide, useArrangeOnEnter, useRefusedToast],
 });

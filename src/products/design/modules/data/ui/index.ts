@@ -35,3 +35,4 @@ export { listNames } from "./repeat-section/list-names";
 export { runRepeat } from "./repeat-section/run-repeat";
 export { PreviewRowInput } from "./data-section/preview-row-input";
 export type * from "./data-section/preview-row-input.types";
+export { errorText as updateErrorText } from "./data-tab/error-text";

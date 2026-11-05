@@ -7,6 +7,7 @@ import {
   PDF_ARG_SCHEMA,
   pdfArg,
   type ExportFormat,
+  withExportCopy,
 } from "@canvas";
 import { ToolImage } from "@shared/core";
 
@@ -30,7 +31,8 @@ export const designExportTools: DesignMcpTool[] = [
       "Exports the design, or some layers, to a file as the Export dialog does: png, jpg or webp (an " +
       'image), svg (vector) or pdf (one page, with the pdf options). The file goes to "path" (absolute; the extension is added when ' +
       "missing), or next to the design's file, named after it. An existing file is replaced. " +
-      "Returns the path written.",
+      "Repeated layers export every row, also the ones past their design limit. Returns the path " +
+      "written.",
     inputSchema: {
       type: "object",
       required: ["format"],
@@ -58,15 +60,14 @@ export const designExportTools: DesignMcpTool[] = [
       if (!format) throw new Error(`"format" must be one of: ${FORMATS.join(", ")}.`);
       const ids = optionalNodeIds(design.engine, args);
       const path = exportPath(design, format, optionalString(args, "path"), "design");
-      const file = await design.engine.exportElements({
-        format,
-        background: optionalChoice(args, "background", BACKGROUNDS) ?? "solid",
-        area: "board",
-        ids,
-        scale: optionalNumber(args, "scale"),
-        svgText: optionalChoice(args, "text", SVG_TEXTS),
-        pdf: pdfArg(args),
-      });
+      const background = optionalChoice(args, "background", BACKGROUNDS) ?? "solid";
+      const scale = optionalNumber(args, "scale");
+      const svgText = optionalChoice(args, "text", SVG_TEXTS);
+      const pdf = pdfArg(args);
+      // From a copy when repeats have rows past their design caps: the file gets every row.
+      const file = await withExportCopy(design.engine, (workspace) =>
+        workspace.exportElements({ format, background, area: "board", ids, scale, svgText, pdf }),
+      );
       await host.writeFile(path, file);
       return { path, bytes: file.size };
     },

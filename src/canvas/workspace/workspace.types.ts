@@ -62,6 +62,18 @@ export interface CanvasWorkspace<O extends object = object> {
 
   // View.
   exportElements(options: ExportOptions): Promise<Blob>;
+  /**
+   * Whether an export must draw from a copy of the document the product readies first
+   * (`CanvasProduct.exportCopy`), e.g. a design whose repeats make only a few copies while
+   * designing. `withExportCopy` asks it.
+   */
+  needsExportCopy(): boolean;
+  /**
+   * A throwaway copy of the document (`CanvasDocument.fork`) readied for an export by the product
+   * (`CanvasProduct.exportCopy`), with a headless workspace over it on this workspace's page:
+   * whatever it draws or writes never reaches the document or its file. Call `dispose` once done.
+   */
+  exportCopy(): ScratchCopy<O>;
   /** Reads a print profile (`.icc`), rejecting with a message when it isn't a CMYK one. */
   readPrintProfile(profile: Uint8Array): Promise<PrintProfileInfo>;
   /** A PDF written a page at a time, reading the workspace as each page is added. */
@@ -76,6 +88,22 @@ export interface CanvasWorkspace<O extends object = object> {
   redo(): void;
   canUndo(): boolean;
   canRedo(): boolean;
+}
+
+/**
+ * A copy of the document to work on and export from (`CanvasWorkspace.exportCopy`): edits through
+ * `workspace` reach only `doc`, never the document it was copied from.
+ */
+export interface ScratchCopy<O extends object = object> {
+  /** A headless workspace over the copy; the product's `afterEdit` runs on its edits. */
+  readonly workspace: CanvasWorkspace<O>;
+  /** The copy itself. */
+  readonly doc: CanvasDocument;
+  /**
+   * Drops the workspace and destroys the copy. Call it once the work is done (in a `finally`),
+   * also when the editor closed meanwhile; calling it again does nothing.
+   */
+  dispose(): void;
 }
 
 /** What an `ActorWorkspace` starts with: the scope and view it opens on. */

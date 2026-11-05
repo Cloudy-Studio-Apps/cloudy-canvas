@@ -108,7 +108,7 @@ export {
   LOCAL_ORIGIN,
   ReadOnlyDocumentError,
 } from "./document";
-export { ActorWorkspace, followEdit, showArea, withAspect } from "./workspace";
+export { ActorWorkspace, followEdit, showArea, withAspect, withExportCopy } from "./workspace";
 export { HOST_ORIGIN, ShareGuest, ShareHost } from "./share";
 export type * from "./share";
 export type * from "./file/read-file-tokens.types";

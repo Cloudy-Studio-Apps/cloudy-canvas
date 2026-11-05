@@ -2,6 +2,7 @@ import type { CanvasProduct } from "../canvas-product.types";
 import type { CanvasDocument } from "../document";
 import type { ExportHost } from "../export";
 import type { Scene } from "../scene";
+import type { ScratchCopy, WorkspaceInit } from "./workspace.types";
 
 /** What an `ActorWorkspace` reaches of the engine it belongs to. */
 export interface ActorWorkspaceHost<O extends object> {
@@ -17,4 +18,6 @@ export interface ActorWorkspaceHost<O extends object> {
   /** Copies elements of an export host to the system clipboard as a PNG. */
   copyPng(host: ExportHost, ids: readonly string[]): Promise<void>;
   copySvg(host: ExportHost, ids: readonly string[]): Promise<void>;
+  /** A copy of the document readied for an export, opening on `init` (`CanvasWorkspace.exportCopy`). */
+  exportCopy(init: WorkspaceInit): ScratchCopy<O>;
 }

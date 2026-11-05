@@ -16,6 +16,7 @@ import {
 } from "../source";
 import type { DataRow, DataTable } from "../table";
 import {
+  heldSnapshots,
   previewSource,
   readSnapshot,
   updateSource,
@@ -50,6 +51,8 @@ export class DesignDataSources {
 
   constructor(private readonly doc: CanvasDocument) {
     this.shared = sharedState(doc);
+    // The snapshots the sources point at now stay through saves while it's open (undo).
+    heldSnapshots(doc);
     this.feed = new DocumentFeed(
       doc,
       (change) =>

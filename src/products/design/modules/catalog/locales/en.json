@@ -86,7 +86,19 @@
     "label": "PDF document",
     "exporting": "Exporting the brochure",
     "drawing": "Drawing the pages",
-    "failed": "The brochure couldn't be exported"
+    "failed": "The brochure couldn't be exported",
+    "updating": "Updating {name}",
+    "making": "Making every page",
+    "updateFailed": "{name} couldn't be updated, so the brochure wasn't exported"
+  },
+  "exportData": {
+    "title": "Update the data first?",
+    "description": "This brochure reads these data sources. Update them to export their latest rows, or export the data saved in the file.",
+    "update": "Update the data first",
+    "saved": "Use the saved data",
+    "updatedAgo": "updated {time}",
+    "updatedNow": "updated just now",
+    "neverUpdated": "never updated"
   },
   "images": {
     "replace": {
