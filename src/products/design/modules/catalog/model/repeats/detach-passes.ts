@@ -17,6 +17,7 @@ const within = (path: readonly string[], prefix: readonly string[]) =>
 export function detachPasses(
   record: Pick<BrochureElement, "slots" | "sections">,
   paths: readonly (readonly string[])[],
+  rowsOf: (slot: BrochureSlot) => readonly string[],
   drop: ReadonlySet<string> = new Set(),
 ): DetachEdit {
   const cuts: DetachCut[] = [];
@@ -41,7 +42,12 @@ export function detachPasses(
     if (drop.has(slot.id)) return [];
     const plain: BrochureSlot = {
       ...slot,
-      detached: { owner: cut.owner, from: generated.from, path: [...generated.path] },
+      detached: {
+        owner: cut.owner,
+        from: generated.from,
+        path: [...generated.path],
+        rows: [...rowsOf(slot)],
+      },
     };
     delete plain.generated;
     return [plain];

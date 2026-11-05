@@ -4,6 +4,8 @@ import { BrochureHandle } from "./brochure-handle";
 import { keptSections } from "./masters/master-edits";
 import { detachPages } from "./repeats/detach-pages";
 import { detachPasses } from "./repeats/detach-passes";
+import { copyPassPath } from "./repeats/copy-pass-path";
+import { copyRows } from "./repeats/copy-rows";
 import type { DetachEdit } from "./repeats/detach-generated.types";
 import { freedCopyPatches } from "./repeats/freed-copy-patches";
 import { withoutStaleDetached } from "./repeats/stale-detached";
@@ -75,7 +77,7 @@ export class BrochurePageEdits extends BrochureHandle {
     for (const slot of copies) ids.delete(slot.id);
     this.writeSlots(
       (slots) => removeSlots(slots, ids),
-      (edited) => detachPages(edited, copies),
+      (edited) => detachPages(edited, copies, this.rowsOf()),
     );
   }
 
@@ -87,26 +89,29 @@ export class BrochurePageEdits extends BrochureHandle {
     const out = [...gone].filter((frame) => !copied.has(frame));
     this.writeSlots(
       (slots) => removeFrames(slots, out),
-      (edited) => detachPages(edited, copies),
+      (edited) => detachPages(edited, copies, this.rowsOf()),
     );
   }
 
   /**
-   * Detaches a copy section's pages (a folder, `sectionId` its expanded id) from the repeat, as a
-   * whole: its row's copy is never made again, and every page made in it (its subsections' and
-   * inner loops' too) stays where it is as a plain page (`detachPasses`). Nothing for a section
-   * that isn't a copy. Returns the slots detached.
+   * Detaches a whole copy (a copy section's folder, `sectionId` its expanded id, that is a pass of
+   * its own repeat, `copyPassPath`) from the repeat: its row's pass is never made again, and every
+   * page made in it (its subsections' and inner loops' too) stays where it is as a plain page
+   * (`detachPasses`). Nothing for another section. Returns the slots of the copy's pages, those
+   * detached before included.
    */
   detachSection(sectionId: string): string[] {
-    const section = this.expansion().sections.find((item) => item.id === sectionId);
-    const path = section?.path ?? [];
-    if (!section || section.id === section.from || path.length === 0) return [];
-    const inside = (slot: BrochureSlot) =>
-      path.every((segment, i) => slot.generated?.path[i] === segment);
-    const ids = this.copies(inside).map((slot) => slot.id);
+    const path = copyPassPath(this.expansion(), sectionId);
+    if (!path) return [];
+    const inside = (of: readonly string[] | undefined) =>
+      !!of && path.every((segment, i) => of[i] === segment);
+    const ids = (this.record()?.slots ?? [])
+      .filter((slot) => inside(slot.generated?.path) || inside(slot.detached?.path))
+      .map((slot) => slot.id);
+    const rowsOf = this.rowsOf();
     this.writeSlots(
       (slots) => [...slots],
-      (edited) => detachPasses(edited, [path]),
+      (edited) => detachPasses(edited, [path], rowsOf),
     );
     return ids;
   }
@@ -117,7 +122,7 @@ export class BrochurePageEdits extends BrochureHandle {
     const copies = this.copies((slot) => onPage.has(slot.chosen) && !keep.has(slot.chosen));
     this.writeSlots(
       (slots) => pickPages(slots, ticked, onPage),
-      (edited) => detachPages(edited, copies),
+      (edited) => detachPages(edited, copies, this.rowsOf()),
     );
   }
 
@@ -131,8 +136,13 @@ export class BrochurePageEdits extends BrochureHandle {
     const copies = this.copies((slot) => !kept.has(slot.id));
     this.writeSlots(
       () => next,
-      (edited) => detachPages(edited, copies),
+      (edited) => detachPages(edited, copies, this.rowsOf()),
     );
+  }
+
+  /** The rows each copy shows now (`copyRows`), read before an edit changes them. */
+  protected rowsOf(): (slot: BrochureSlot) => readonly string[] {
+    return copyRows(this.expansion());
   }
 
   /** The pages its repeats made that `test` picks. */

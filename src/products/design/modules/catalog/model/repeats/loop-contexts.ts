@@ -15,9 +15,11 @@ function templatePass(wanted: number, count: number, isDetached: (at: number) =>
 }
 
 /**
- * The passes of one loop inside `ctx`, the template's first: while designing it shows the preview
- * row (`previewRow`, clamped; with several rows a page, the page holding it), in an export the
- * first row, so the print follows the rows; either way the first one not detached from there. The
+ * The passes of one loop inside `ctx`, the template's first: while designing the user's own
+ * template (no copy around) shows the preview row (`previewRow`, clamped; with several rows a
+ * page, the page holding it); in an export, and inside any copy, the first row, so the print
+ * follows the rows and a copy's pages show the same rows in both; either way the first one not
+ * detached from there. Each pass adds its row to `rows`, template passes too. The
  * other rows follow as copies (path + `copySegment(owner, key)`), made while their place among the
  * copies is within `designLimit` (3 unset) and every loop around is made, all of them in an
  * export; detached copies (their whole path in `detached`) make none. An empty list, or one whose
@@ -70,12 +72,16 @@ export function loopContexts(
       scope: layerScope(ctx.scope, layer),
       layers: [...ctx.layers, layer],
       path,
+      rows: unit ? [...ctx.rows, copySegment(owner.id, unit.key)] : ctx.rows,
       made,
       printed,
     };
   };
 
-  const wanted = phase === "export" ? 0 : Math.floor((repeat.previewRow ?? 0) / perPage);
+  // The preview row is the user's own template's alone: inside a copy, passes start at row 0 in
+  // both phases, so a copy's page shows the same rows while designing and in an export.
+  const own = phase === "design" && ctx.path.length === 0;
+  const wanted = own ? Math.floor((repeat.previewRow ?? 0) / perPage) : 0;
   const clamped = Math.min(Math.max(Number.isFinite(wanted) ? wanted : 0, 0), count - 1);
   const preview = count === 0 ? -1 : templatePass(clamped, count, isDetached);
   const shown = units[preview];

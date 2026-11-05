@@ -39,15 +39,17 @@ export function expandBrochure(
   const standIns = new Map<string, BrochureSlot>();
   for (const slot of record.slots) {
     const { detached } = slot;
-    const id = detached ? expandedId(detached.from, detached.path) : "";
+    const id = detached ? expandedId(detached.from, detached.rows) : "";
     if (detached && !slot.generated && skipped.has(id) && !standIns.has(id)) standIns.set(id, slot);
   }
   const placed = new Set<string>();
 
   const page = (slot: BrochureSlot, ctx: ExpandContext) => {
     const id = expandedId(slot.id, ctx.path);
-    if (ctx.path.length > 0 && skipped.has(id)) {
-      const standIn = standIns.get(id);
+    // Named by the rows it shows, so the same page is left out in both phases.
+    const shown = expandedId(slot.id, ctx.rows);
+    if (ctx.path.length > 0 && skipped.has(shown)) {
+      const standIn = standIns.get(shown);
       if (standIn) {
         pages.push(detachedPage(standIn));
         placed.add(standIn.id);
@@ -58,6 +60,7 @@ export function expandBrochure(
       id,
       from: slot.id,
       path: ctx.path,
+      rows: ctx.rows,
       layers: ctx.layers,
       made: ctx.made,
       printed: ctx.printed,
@@ -70,6 +73,7 @@ export function expandBrochure(
       id: expandedId(item.id, ctx.path),
       from: item.id,
       path: ctx.path,
+      rows: ctx.rows,
       name: copyName(item.name, ctx.scope, locale),
       level: depth,
       start: expandedId(item.start, ctx.path),
@@ -106,7 +110,14 @@ export function expandBrochure(
     }
   };
 
-  walk(repeatTree(record), { scope: root, layers: [], path: [], made: true, printed: true });
+  walk(repeatTree(record), {
+    scope: root,
+    layers: [],
+    path: [],
+    rows: [],
+    made: true,
+    printed: true,
+  });
   placeDetached(record, pages, sections, placed);
   return { pages, sections, pending: pages.filter((item) => !item.made && item.printed).length };
 }

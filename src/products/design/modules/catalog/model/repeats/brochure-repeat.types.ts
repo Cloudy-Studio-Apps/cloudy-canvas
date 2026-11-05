@@ -19,7 +19,12 @@ export interface BrochureRepeat {
   limit?: number;
   /** The copies made while designing; the rest are pending pages, made at export. Default 3. */
   designLimit?: number;
-  /** The row the template pages show while designing (0 when unset). */
+  /**
+   * The row the user's own template pages show while designing (0 when unset). Only there: in an
+   * export the template takes the first row, and every pass inside a copy (an inner repeat's
+   * template pass too) always starts at its first row not detached, so a copy's pages show the
+   * same rows while designing and in an export.
+   */
   previewRow?: number;
   /** Pages only: the rows on each copy (≥ 1, default 1); above 1, `as` is the page's list of rows. */
   perPage?: number;
@@ -30,9 +35,10 @@ export interface BrochureRepeat {
    */
   detached: string[];
   /**
-   * Single pages of its copies taken out by hand (detached or deleted), each its `ExpandedPage` id
-   * (`expandedId(from, path)`): no copy is made for them, while the rest of their pass still is.
-   * A detached one's slot (`BrochureSlot.detached`) stands in its place.
+   * Single pages of its copies taken out by hand (detached or deleted), each named by the rows it
+   * showed (`expandedId(from, ExpandedPage.rows)`, its innermost loop's): no copy is made for them,
+   * while the rest of their pass still is. A detached one's slot (`BrochureSlot.detached`) stands
+   * in its place.
    */
   detachedPages?: string[];
 }
@@ -56,4 +62,6 @@ export interface DetachedSlot {
   from: string;
   /** The copy segments it was made for (`GeneratedSlot.path`). */
   path: string[];
+  /** The rows it showed (`ExpandedPage.rows`): its place among the copies. */
+  rows: string[];
 }

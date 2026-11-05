@@ -11,6 +11,12 @@ export interface ExpandedPage {
    * a copy, outermost first; `[]` for a template page.
    */
   path: readonly string[];
+  /**
+   * The row (or chunk) of every loop around it, template passes included, as `copySegment`s,
+   * outermost first: which rows it shows, the same while designing and in an export, so a page
+   * taken out by hand is named by it (`detachedPages`, `expandedId(from, rows)`).
+   */
+  rows: readonly string[];
   /** The rows of the loops around it, outermost first. */
   layers: readonly ScopeLayer[];
   /** `false`: a pending page, counted but not made until the export. */
@@ -29,6 +35,8 @@ export interface ExpandedSection {
   /** The section's id. */
   from: string;
   path: readonly string[];
+  /** Its pages' rows of the loops around it (`ExpandedPage.rows`). */
+  rows: readonly string[];
   /** Its name with its tokens read in its scope (`copyName`). */
   name: string;
   /** Its depth as `placeSections` reads it. */

@@ -3,9 +3,10 @@ import { DESIGN_BROCHURES } from "../model/design-brochures";
 import { deleteSelectedPages } from "./delete-selected-pages";
 
 /**
- * Deletes a copy section's pages (a folder, `sectionId` its expanded id) in one undo step: the
- * whole copy is detached from its repeat first (`detachSection`: its row is never made again),
- * then its pages' frames are deleted (`deleteSelectedPages`). Returns how many frames were kept
+ * Deletes a whole copy's pages (a folder that is a copy of its own repeat, `sectionId` its
+ * expanded id) in one undo step: the copy is detached from its repeat first (`detachSection`: its
+ * row is never made again), then its pages' frames are deleted, those detached before too
+ * (`deleteSelectedPages`). Nothing for another section. Returns how many frames were kept
  * for another brochure.
  */
 export function deleteCopySection(engine: CanvasEngine, sectionId: string): number {

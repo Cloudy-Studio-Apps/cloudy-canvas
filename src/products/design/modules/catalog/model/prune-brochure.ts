@@ -2,6 +2,8 @@ import type { CanvasDocument, ElementPatch } from "@canvas";
 
 import { BROCHURE_TYPE, isBrochure, type BrochureElement } from "../brochure";
 import { keptSections, prunedMasters, withoutMaster } from "./masters/master-edits";
+import { brochureExpansion } from "./repeats/brochure-expansion";
+import { copyRows } from "./repeats/copy-rows";
 import { detachPages } from "./repeats/detach-pages";
 import { withoutStaleDetached } from "./repeats/stale-detached";
 import { removeFrames } from "./slot-edits";
@@ -29,7 +31,8 @@ export function pruneBrochure(doc: CanvasDocument, removed: ReadonlySet<string>)
     const copies = brochure.slots.filter(
       (slot) => slot.generated && slot.frames.some((frame) => removed.has(frame)),
     );
-    const detach = detachPages(brochure, copies, new Set(copies.map((slot) => slot.id)));
+    const rowsOf = copies.length > 0 ? copyRows(brochureExpansion(doc, brochure)) : () => [];
+    const detach = detachPages(brochure, copies, rowsOf, new Set(copies.map((slot) => slot.id)));
     const kept = withoutStaleDetached({
       slots: removeFrames(detach.slots, removed),
       sections: detach.sections,

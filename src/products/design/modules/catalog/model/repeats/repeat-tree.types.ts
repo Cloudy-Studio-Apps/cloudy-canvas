@@ -22,6 +22,8 @@ export interface ExpandContext {
   scope: DataScope;
   layers: readonly ScopeLayer[];
   path: readonly string[];
+  /** Every pass around it, template passes included (`ExpandedPage.rows`). */
+  rows: readonly string[];
   made: boolean;
   printed: boolean;
 }

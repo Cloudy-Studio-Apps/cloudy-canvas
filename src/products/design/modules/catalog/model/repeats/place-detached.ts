@@ -4,18 +4,30 @@ import type { ExpandedPage, ExpandedSection } from "./expand-brochure.types";
 
 /** A page taken out of a repeat as the expansion lists it: plain, outside every loop. */
 export function detachedPage(slot: BrochureSlot): ExpandedPage {
-  return { id: slot.id, from: slot.id, path: [], layers: [], made: true, printed: true };
+  return {
+    id: slot.id,
+    from: slot.id,
+    path: [],
+    rows: [],
+    layers: [],
+    made: true,
+    printed: true,
+  };
 }
+
+/** Whether `rows` are `prefix` or inside it (a page shown in that pass). */
+const within = (rows: readonly string[], prefix: readonly string[]) =>
+  prefix.length <= rows.length && prefix.every((segment, i) => rows[i] === segment);
 
 /**
  * Puts the pages taken out of a repeat (`BrochureSlot.detached`) that don't stand in a page's
  * place (`placed`: those `expandBrochure` already listed where their page was, its
  * `detachedPages`; a whole copy taken out isn't walked) into an expansion, in place: each right
- * after the page of the slot before it in the record (the first that's in the expansion),
- * as a plain page outside every loop (no path, no layers), so the run goes on around it. It's in
- * the sections around that page, but at the end of a pass of the repeating section it came from
- * it stays out of that pass (and of the sections inside it): it's in the sections around the loop.
- * Changes `pages` and the sections' ranges in place.
+ * after the page of the slot before it in the record (the first that's in the expansion), as a
+ * plain page outside every loop (no path, no layers), so the run goes on around it. It's only
+ * ever in the sections it showed rows of (a section's `rows` a prefix of its own): never inside
+ * another copy's (it goes after that copy instead), and at a section's end only in those it was
+ * in. Changes `pages` and the sections' ranges in place.
  */
 export function placeDetached(
   record: Pick<BrochureElement, "slots">,
@@ -23,11 +35,9 @@ export function placeDetached(
   sections: ExpandedSection[],
   placed: ReadonlySet<string>,
 ): void {
-  const levelOf = new Map<string, number>();
-  for (const section of sections)
-    if (!levelOf.has(section.from)) levelOf.set(section.from, section.level);
   record.slots.forEach((slot, i) => {
-    if (!slot.detached || slot.generated || placed.has(slot.id)) return;
+    const { detached } = slot;
+    if (!detached || slot.generated || placed.has(slot.id)) return;
     let at = 0;
     for (let j = i - 1; j >= 0; j--) {
       const before = record.slots[j];
@@ -37,17 +47,22 @@ export function placeDetached(
         break;
       }
     }
+    // Not inside a section it wasn't in (another copy's): after it.
+    for (let moved = true; moved;) {
+      moved = false;
+      for (const section of sections) {
+        if (section.first < at && at < section.end && !within(detached.rows, section.rows)) {
+          at = section.end;
+          moved = true;
+        }
+      }
+    }
     pages.splice(at, 0, detachedPage(slot));
-    // A section loop's passes, and what's inside them, are at its level or deeper.
-    const loop = levelOf.get(slot.detached.owner);
     for (const section of sections) {
       if (section.first >= at) {
         section.first++;
         section.end++;
-      } else if (
-        section.end > at ||
-        (section.end === at && (loop === undefined || section.level < loop))
-      ) {
+      } else if (section.end > at || (section.end === at && within(detached.rows, section.rows))) {
         section.end++;
       }
     }

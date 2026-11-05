@@ -40,7 +40,7 @@ export function withoutStaleDetached<R extends Pick<BrochureElement, "slots" | "
   const slots = record.slots.map((slot): BrochureSlot => {
     const cleaned = clean(slot);
     const { detached } = cleaned;
-    if (!detached || detached.path.some((segment) => loops.has(segmentOwner(segment)))) {
+    if (!detached || detached.rows.some((segment) => loops.has(segmentOwner(segment)))) {
       return cleaned;
     }
     changed = true;

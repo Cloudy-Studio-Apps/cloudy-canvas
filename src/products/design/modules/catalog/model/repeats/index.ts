@@ -18,3 +18,4 @@ export { slotKey } from "./slot-key";
 export { syncBrochureRepeats } from "./sync-brochure-repeats";
 export { pageLocaleProvider, pageScopeProvider } from "./page-scope-provider";
 export { prepareRepeatCopies } from "./prepare-repeat-copies";
+export { copyPassPath } from "./copy-pass-path";
