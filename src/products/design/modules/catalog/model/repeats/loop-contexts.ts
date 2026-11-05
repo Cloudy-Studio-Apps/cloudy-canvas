@@ -1,4 +1,4 @@
-import { rowScope, type ScopeLayer } from "../../../data";
+import { layerScope, readsUnreadable, type ScopeLayer } from "../../../data";
 import type { BrochureRepeat } from "./brochure-repeat.types";
 import { DEFAULT_BROCHURE_DESIGN_LIMIT } from "./brochure-repeat.constants";
 import { copyPathKey, copySegment } from "./copy-segment";
@@ -39,6 +39,8 @@ export function loopContexts(
   const units = loopUnits(settings, ctx.scope, perPage);
   const names = loopNames(ctx.scope, settings, perPage);
   const count = units.length;
+  // A list this device can't read: its names read as unreadable, so what reads them is left alone.
+  const unreadable = readsUnreadable(ctx.scope, settings.source);
   const pathOf = (unit: LoopUnit) => [...ctx.path, copySegment(owner.id, unit.key)];
   const detached = new Set(repeat.detached);
   const isDetached = (at: number) => {
@@ -61,9 +63,11 @@ export function loopContexts(
       label: owner.label,
       index,
       count,
+      names,
+      ...(unreadable ? { unreadable: true } : {}),
     };
     return {
-      scope: rowScope(ctx.scope, settings, value, index, count, names),
+      scope: layerScope(ctx.scope, layer),
       layers: [...ctx.layers, layer],
       path,
       made,

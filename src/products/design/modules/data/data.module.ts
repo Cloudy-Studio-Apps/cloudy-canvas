@@ -18,6 +18,7 @@ import { CSV_FORMAT, JSON_FORMAT } from "./formats";
 import { FILE_SOURCE, HTTP_SOURCE } from "./sources";
 import { forgetRemovedSources } from "./model";
 import { syncData } from "./sync";
+import { readAroundFrom } from "./repeat/data-around";
 import { dataCopyTag, prepareDataCopies, pruneData } from "./repeat";
 import { BOUND_TEXT_TEMPLATE } from "./bindings";
 import { textTemplates } from "../text";
@@ -50,6 +51,8 @@ export const dataModule = defineModule({
   uses: ["text", "image", "auto-layout"],
   exports: { ...dataApi, ...dataUi },
   register(host) {
+    // Scopes read the loops other modules put around a page (a brochure's) and its language.
+    readAroundFrom(host);
     host.contribute(designCanvas.kinds, new DataSourceKind());
     host.contribute(designCanvas.onRemove, forgetRemovedSources);
     host.contribute(designCanvas.onRemove, pruneData);

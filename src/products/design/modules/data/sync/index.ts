@@ -1,4 +1,4 @@
-export { syncData } from "./sync-data";
+export { syncData, syncDataFor } from "./sync-data";
 export { affectedData } from "./affected-data";
 export { droppedBindings, droppedVisibility } from "./hand-edits";
 export type * from "./affected-data.types";

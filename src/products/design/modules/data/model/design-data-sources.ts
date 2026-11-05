@@ -30,7 +30,7 @@ import {
 import type { DataSourceInit } from "./design-data-sources.types";
 import { sourceName } from "./source-name";
 import { sharedState } from "./shared-state";
-import type { SharedState } from "./shared-state.types";
+import type { DataPhase, SharedState } from "./shared-state.types";
 import type { SourceUpdates } from "./source-updates";
 import type { UpdateProgress } from "./source-updates.types";
 import { missingFiles, missingSecrets } from "./missing-device-state";
@@ -69,6 +69,18 @@ export class DesignDataSources {
   /** Sets (or clears, with `null`) what Updates and secrets need from the open editor. */
   setContext(context: DataContext | null): void {
     this.shared.context = context;
+  }
+
+  /**
+   * What repeats make: `"design"` (the default), their design caps of copies; `"export"`, every
+   * row (`repeatRows` in the sync). Per document, in memory: an export sets it on its scratch copy.
+   */
+  phase(): DataPhase {
+    return this.shared.phase;
+  }
+
+  setPhase(phase: DataPhase): void {
+    this.shared.phase = phase;
   }
 
   /** Fires when a source's record changes and when an Update moves on, ends or fails. */

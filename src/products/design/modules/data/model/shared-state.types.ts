@@ -8,4 +8,9 @@ import type { SourceUpdates } from "./source-updates";
 export interface SharedState {
   context: DataContext | null;
   updates: SourceUpdates;
+  /** What repeats make: a few copies while designing, every row in an export (`dataPhase`). */
+  phase: DataPhase;
 }
+
+/** `"design"`: repeats make their design caps' copies; `"export"`: every row. */
+export type DataPhase = "design" | "export";

@@ -1,3 +1,5 @@
+import type { RowNames } from "./repeat.types";
+
 /**
  * One loop around a layer, outermost first in a list: a row (or a page's rows) under `name`, the
  * loop it comes from and where the row is in it. Its scope is `rowScope` over the layers outside
@@ -16,4 +18,14 @@ export interface ScopeLayer {
   index: number;
   /** How many rows (or pages) the loop has. */
   count: number;
+  /**
+   * What the name carries (`rowNames`: the list's fields under it and its source), so formats,
+   * types and pictures apply to the row; left out, it carries none.
+   */
+  names?: RowNames;
+  /**
+   * Its list reads a source this device can't read: the name, `$index`, `$number` and `$count`
+   * read as unreadable, so what reads them is left alone.
+   */
+  unreadable?: boolean;
 }

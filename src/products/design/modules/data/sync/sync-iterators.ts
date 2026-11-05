@@ -30,7 +30,7 @@ function syncIterator(
   doc: CanvasDocument,
   id: string,
   scopes: DataScopes,
-  ctx: BindingContext,
+  ctxOf: (el: DesignNode) => BindingContext,
 ): string[] {
   const frame = doc.get(id);
   if (!isFrame(frame)) return [];
@@ -85,7 +85,7 @@ function syncIterator(
   const nested: string[] = [];
   const stack = [...scopes.children(frame.id)];
   for (let el = stack.pop(); el; el = stack.pop()) {
-    const patch = planLayer(el, undefined, true, scopes.scopeFor(el), ctx);
+    const patch = planLayer(el, undefined, true, scopes.scopeFor(el), ctxOf(el));
     if (patch) patches.set(el.id, patch);
     // An iterator inside fills its own children, in its own turn; so does a frame that stopped
     // repeating but still holds its copies (a copied iterator whose template's repeat went), whose
@@ -102,13 +102,13 @@ function syncIterator(
 /**
  * Brings iterators in step, outermost first: an iterator inside a template is copied with it
  * (its `repeat` too), and each copy of it then makes its own copies in its copy's row scope.
- * Each iterator is done once per sync.
+ * Each iterator is done once per sync. `ctxOf` gives a layer's binding context (its language).
  */
 export function syncIterators(
   doc: CanvasDocument,
   ids: readonly string[],
   scopes: DataScopes,
-  ctx: BindingContext,
+  ctxOf: (el: DesignNode) => BindingContext,
 ): void {
   const pending = new Map<string, number>();
   const done = new Set<string>();
@@ -124,6 +124,6 @@ export function syncIterators(
     }
     pending.delete(next);
     done.add(next);
-    syncIterator(doc, next, scopes, ctx).forEach(queue);
+    syncIterator(doc, next, scopes, ctxOf).forEach(queue);
   }
 }

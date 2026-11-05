@@ -9,7 +9,7 @@ const SHARED = new WeakMap<object, SharedState>();
 export function sharedState(doc: CanvasDocument): SharedState {
   let state = SHARED.get(doc.doc);
   if (!state) {
-    state = { context: null, updates: new SourceUpdates() };
+    state = { context: null, updates: new SourceUpdates(), phase: "design" };
     SHARED.set(doc.doc, state);
   }
   return state;
