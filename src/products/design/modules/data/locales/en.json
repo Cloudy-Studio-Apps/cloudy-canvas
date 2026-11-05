@@ -179,7 +179,11 @@
     "privateFolder": "This folder is in the app's own data folder, which data sources can't read.",
     "noLayer": "This frame has no layer to repeat: add one to it first.",
     "noParentFrame": "Put the layer inside a frame first.",
-    "noList": "There's no list at \"{path}\" in the data any more. Pick where the rows come from again."
+    "noList": "There's no list at \"{path}\" in the data any more. Pick where the rows come from again.",
+    "shapeCollision": "Two fields would both be called \"{name}\". Give one of them another name.",
+    "shapeGroup": "A field can't be called \"{name}\": other fields are inside that name.",
+    "shapeUnreadable": "This source's data isn't on this device yet. Update it before shaping it.",
+    "shapeChanged": "The source changed while its shape was applied. Try again."
   },
   "format": {
     "yes": "Yes",

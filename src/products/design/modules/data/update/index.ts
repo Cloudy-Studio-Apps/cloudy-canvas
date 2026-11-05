@@ -22,3 +22,4 @@ export { updateSource } from "./update-source";
 export { previewSource } from "./preview-source";
 export { pruneSnapshots } from "./prune-snapshots";
 export { heldSnapshots } from "./held-snapshots";
+export type * from "./shaped-data.types";

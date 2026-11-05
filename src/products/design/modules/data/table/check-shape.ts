@@ -3,6 +3,7 @@ import { formatPath } from "./path-text";
 import { parsePath } from "./read-path";
 import { isIncluded, rowFields, shapedPath } from "./shape-rows";
 import type { DataShape } from "./shape.types";
+import { collisionMessage, groupMessage } from "./shape-errors";
 
 const isObject = (v: unknown): v is Record<string, unknown> =>
   v !== null && typeof v === "object" && !Array.isArray(v);
@@ -63,14 +64,14 @@ export function checkShape(shape: DataShape, paths: readonly string[]): void {
     if (!isIncluded(next, shape)) continue;
     const other = taken.get(next);
     if (other !== undefined) {
-      throw new Error(`"${path}" and "${other}" would both be called "${next}".`);
+      throw new Error(collisionMessage(next, path, other));
     }
     taken.set(next, path);
   }
   for (const [next, path] of taken) {
     for (const [inside, from] of taken) {
       if (inside !== next && (inside.startsWith(`${next}.`) || inside.startsWith(`${next}[`))) {
-        throw new Error(`"${path}" can't be called "${next}": "${from}" is inside it.`);
+        throw new Error(groupMessage(next, path, from));
       }
     }
   }

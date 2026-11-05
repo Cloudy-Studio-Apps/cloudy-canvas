@@ -6,6 +6,8 @@ import { describeSource, summarizeSource } from "./describe-source";
 import { patchFields } from "./field-args";
 import { readRowsPath, ROWS_PATH_SCHEMA } from "./rows-path-arg";
 import { readShapeArg, SHAPE_SCHEMA } from "./shape-arg";
+import { SHAPE_ERRORS } from "../table";
+import { readSnapshotRows } from "../update";
 import {
   checkFormat,
   inUndoStep,
@@ -245,10 +247,11 @@ export const dataTools: DesignMcpTool[] = [
         throw new Error('"formatOptions" needs an explicit "format" (not "auto").');
       const fields = patchFields(source, args);
       const rowsPath = readRowsPath(args);
-      const shape = readShapeArg(args, sources.rawRows(source.id));
-      if (shape !== undefined && source.snapshot && !engine.doc.hasAsset(source.snapshot.assetId)) {
-        throw new Error("This source's data isn't on this device: update it before shaping it.");
-      }
+      // Checked before anything is written: data this device can't read (missing or broken)
+      // can't be shaped again.
+      const read = args.shape === undefined ? null : readSnapshotRows(engine.doc, source.snapshot);
+      if (args.shape !== undefined && !read) throw new Error(SHAPE_ERRORS.unreadable);
+      const shape = readShapeArg(args, read?.raw ?? []);
       const keepOptions = format === undefined || format === source.format;
       await inUndoStep(engine, async () => {
         if (name !== undefined) sources.rename(source.id, name);

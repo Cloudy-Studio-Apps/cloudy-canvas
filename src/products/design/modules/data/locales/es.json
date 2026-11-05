@@ -179,7 +179,11 @@
     "privateFolder": "Esta carpeta está en la carpeta de datos de la propia app, que las fuentes de datos no pueden leer.",
     "noLayer": "Este marco no tiene ninguna capa que repetir: añade una primero.",
     "noParentFrame": "Primero pon la capa dentro de un marco.",
-    "noList": "Ya no hay una lista en \"{path}\" en los datos. Vuelve a elegir de dónde vienen las filas."
+    "noList": "Ya no hay una lista en \"{path}\" en los datos. Vuelve a elegir de dónde vienen las filas.",
+    "shapeCollision": "Dos campos se llamarían \"{name}\". Dale otro nombre a uno de ellos.",
+    "shapeGroup": "Un campo no puede llamarse \"{name}\": hay otros campos dentro de ese nombre.",
+    "shapeUnreadable": "Los datos de esta fuente aún no están en este dispositivo. Actualízala antes de darles forma.",
+    "shapeChanged": "La fuente cambió mientras se aplicaba su forma. Inténtalo de nuevo."
   },
   "format": {
     "yes": "Sí",

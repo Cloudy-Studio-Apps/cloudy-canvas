@@ -4,8 +4,8 @@ import { Plus, Trash2 } from "lucide-react";
 import { useService } from "@canvas-ui";
 import { Button } from "@shared/ui/kit";
 import { notifyError } from "@shared/stores/toast-store";
-import { DESIGN_DATA_SOURCES } from "../../model";
-import { fieldPaths, isIncluded, shapedPath, type DataShape } from "../../table";
+import { DESIGN_DATA_SOURCES, type ShapeChange } from "../../model";
+import { fieldPaths, isIncluded, shapedPath } from "../../table";
 import { t } from "../../data.i18n";
 import { translatedError } from "./error-text";
 import { ShapeFieldRow } from "./shape-field-row";
@@ -21,21 +21,24 @@ import type { ShapeStepProps } from "./shape-step.types";
 export function ShapeStep({ source }: ShapeStepProps) {
   const sources = useService(DESIGN_DATA_SOURCES);
   const assetId = source.snapshot?.assetId;
-  // The fields as read, once per snapshot.
-  const paths = useMemo(
-    () => (assetId ? fieldPaths(sources.rawRows(source.id)) : []),
-    [sources, source.id, assetId],
-  );
   const shape = source.shape;
+  const shaped = shape !== null;
+  // The fields as read, once per snapshot, and only once there is a step (a full scan of the rows).
+  const paths = useMemo(
+    () => (assetId && shaped ? fieldPaths(sources.rawRows(source.id)) : []),
+    [sources, source.id, assetId, shaped],
+  );
 
-  const apply = (next: DataShape | null) => {
-    sources.setShape(source.id, next).catch((error: unknown) => {
+  // Each edit is made from the shape the source has when it runs, so quick edits all apply.
+  const apply = (change: ShapeChange) => {
+    sources.setShape(source.id, change).catch((error: unknown) => {
       notifyError(t("shape.failed"), translatedError(error));
     });
   };
 
   if (!shape) {
-    if (paths.length === 0) return null;
+    // Without a step the rows are as read, so their fields say whether there's anything to shape.
+    if (!source.snapshot || source.fields.length === 0) return null;
     return (
       <div className="flex flex-col items-start gap-1">
         <Button size="xs" variant="outline" onClick={() => apply({ rename: {} })}>
@@ -68,10 +71,10 @@ export function ShapeStep({ source }: ShapeStepProps) {
             path={path}
             name={shape.rename[path] ?? ""}
             kept={isIncluded(shapedPath(path, shape), shape)}
-            onKeep={(keep) => apply(withIncluded(shape, paths, path, keep))}
+            onKeep={(keep) => apply((now) => now && withIncluded(now, paths, path, keep))}
             onRename={(name) => {
               if (name.trim() === (shape.rename[path] ?? "")) return;
-              apply(withRenamed(shape, path, name));
+              apply((now) => now && withRenamed(now, path, name));
             }}
           />
         ))}

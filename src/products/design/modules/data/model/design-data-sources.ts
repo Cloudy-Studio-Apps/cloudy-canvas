@@ -14,7 +14,7 @@ import {
   type DataField,
   type DataSourceElement,
 } from "../source";
-import type { DataRow, DataShape, DataTable } from "../table";
+import type { DataRow, DataTable } from "../table";
 import {
   heldSnapshots,
   previewSource,
@@ -29,7 +29,7 @@ import {
   type UpdateResult,
   type UpdateStage,
 } from "../update";
-import type { DataSourceInit } from "./design-data-sources.types";
+import type { DataSourceInit, ShapeChange } from "./design-data-sources.types";
 import { sourceName } from "./source-name";
 import { sharedState } from "./shared-state";
 import type { DataPhase, SharedState } from "./shared-state.types";
@@ -50,6 +50,8 @@ const NOT_READY = "Data sources aren't ready: no editor is open.";
 export class DesignDataSources {
   private readonly feed: DocumentFeed;
   private readonly shared: SharedState;
+  /** Each source's last shape change, so the next waits for it (`setShape`). */
+  private readonly shaping = new Map<string, Promise<void>>();
 
   constructor(private readonly doc: CanvasDocument) {
     this.shared = sharedState(doc);
@@ -196,11 +198,28 @@ export class DesignDataSources {
    * Sets the step that renames and picks a source's fields once its rows are found (`null`
    * removes it), in one undo step and without fetching: the saved rows are shaped again and what
    * reads a renamed field follows it (`setShape`). Throws, writing nothing, for a shape that
-   * would put two fields at one path or while the data isn't on this device.
+   * would put two fields at one path or while the data isn't on this device. A source's changes
+   * run one after another, and a function is given the shape the source has when its turn comes,
+   * so quick edits each apply to the one before.
    */
-  setShape(id: string, shape: DataShape | null): Promise<void> {
+  setShape(id: string, change: ShapeChange): Promise<void> {
     this.require(id);
-    return setShape(this.doc, id, shape);
+    const run = () =>
+      setShape(
+        this.doc,
+        id,
+        typeof change === "function" ? change(this.require(id).shape ?? null) : change,
+      );
+    const next = (this.shaping.get(id) ?? Promise.resolve()).then(run, run);
+    const settled = next.then(
+      () => undefined,
+      () => undefined,
+    );
+    this.shaping.set(id, settled);
+    void settled.then(() => {
+      if (this.shaping.get(id) === settled) this.shaping.delete(id);
+    });
+    return next;
   }
 
   /** Deletes a source and its secrets on this device (its snapshot asset stays, for undo). */

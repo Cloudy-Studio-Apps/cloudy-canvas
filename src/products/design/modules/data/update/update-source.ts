@@ -2,14 +2,9 @@ import type { CanvasDocument, ElementPatch } from "@canvas";
 
 import { missingSettings } from "../settings";
 import { isDataSource, type DataSourceElement } from "../source";
-import {
-  extraValues,
-  findLists,
-  guessFields,
-  isPlainShape,
-  normalizeRows,
-  shapeRows,
-} from "../table";
+import { extraValues, findLists, guessFields, SHAPE_ERRORS } from "../table";
+import { shapedData } from "./shaped-data";
+import type { SourceRead } from "./shaped-data.types";
 import { addSnapshot, encodeRows } from "./snapshot";
 import { downloadImages } from "./download-images";
 import { requireFilePaths } from "./file-paths";
@@ -17,6 +12,17 @@ import { readData } from "./read-data";
 import { loadSourceSecrets, missingSecretKeys } from "./source-secrets";
 import { UPDATE_ERRORS } from "./update-errors";
 import type { DataContext, UpdateOptions, UpdateResult } from "./update-source.types";
+
+/** How many times a save shapes the data again for a rows path or shape changed meanwhile. */
+const MAX_RESHAPES = 3;
+
+/** Whether the record reads its rows as `read` says (the same rows path and shape step). */
+function sameRead(source: DataSourceElement, read: SourceRead): boolean {
+  return (
+    source.rowsPath === read.rowsPath &&
+    JSON.stringify(source.shape ?? null) === JSON.stringify(read.shape)
+  );
+}
 
 function record(doc: CanvasDocument, id: string): DataSourceElement {
   const el = doc.get(id);
@@ -69,16 +75,14 @@ export async function updateSource(
       signal,
       options.onStage,
     );
-    const raw = normalizeRows(parsed, source.rowsPath);
-    if (!raw) throw new Error(`${UPDATE_ERRORS.noList}${source.rowsPath ?? ""}`);
-    // The shape step, when the source has one: its rows as read are kept too, so the step can
-    // change without fetching again (`reshapeSource`).
-    const shape = source.shape ?? null;
-    const kept = isPlainShape(shape) ? undefined : raw;
-    const rows = shapeRows(raw, shape);
+    // The rows path and shape step read now; the record's may change while this runs, and the
+    // ones current when it writes win (below). With a shape step that changes something the rows
+    // as read are kept too, so the step can change without fetching again (`setShape`).
+    let read: SourceRead = { rowsPath: source.rowsPath, shape: source.shape ?? null };
+    let { rows, raw: kept } = shapedData(parsed, read.rowsPath, read.shape);
     signal.throwIfAborted();
 
-    const encoded = await encodeRows(rows, kept);
+    let encoded = await encodeRows(rows, kept);
     signal.throwIfAborted();
 
     // The pictures the data names, saved in the file; their assets are added (outside undo)
@@ -102,8 +106,18 @@ export async function updateSource(
     });
 
     options.onStage?.("saving");
-    // Read again: the record may have changed (or gone) while fetching.
-    const current = record(doc, id);
+    // Read again: the record may have changed (or gone) while fetching. A rows path or shape set
+    // meanwhile is applied to the data fetched, so the rows match the fields and bindings it left
+    // (pictures were saved by the rows read first: a field it brings saves its own next Update).
+    // The pictures' assets are in, so a cancel no longer stops it.
+    let current = record(doc, id);
+    for (let tries = 0; !sameRead(current, read); tries++) {
+      if (tries >= MAX_RESHAPES) throw new Error(SHAPE_ERRORS.changed);
+      read = { rowsPath: current.rowsPath, shape: current.shape ?? null };
+      ({ rows, raw: kept } = shapedData(parsed, read.rowsPath, read.shape));
+      encoded = await encodeRows(rows, kept);
+      current = record(doc, id);
+    }
     const previous = current.snapshot;
     const changed = previous?.hash !== encoded.hash;
     const fields = guessFields(rows, current.fields);

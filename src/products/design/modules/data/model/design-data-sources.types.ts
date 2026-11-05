@@ -1,4 +1,5 @@
 import type { SettingValue } from "../source";
+import type { DataShape } from "../table";
 
 /** What a new source is made from; `settings` may hold secret values, which stay on the device. */
 export interface DataSourceInit {
@@ -11,3 +12,6 @@ export interface DataSourceInit {
   rowsPath?: string | null;
   name?: string;
 }
+
+/** A shape step to set: the shape (`null`: none), or made from the one the source has then. */
+export type ShapeChange = DataShape | null | ((current: DataShape | null) => DataShape | null);

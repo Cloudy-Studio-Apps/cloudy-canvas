@@ -10,3 +10,4 @@ export type * from "./shape.types";
 export { isIncluded, isPlainShape, rowFields, shapedPath, shapeRows } from "./shape-rows";
 export { checkShape, fieldPaths, readShape } from "./check-shape";
 export { shapeRenames } from "./shape-renames";
+export { readShapeError, SHAPE_ERRORS } from "./shape-errors";

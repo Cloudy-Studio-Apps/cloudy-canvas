@@ -13,14 +13,13 @@ import {
   readShape,
   shapeRenames,
   shapeRows,
+  SHAPE_ERRORS,
   type DataRow,
   type DataShape,
 } from "../table";
 import { addSnapshot, encodeRows, readSnapshotRows } from "../update";
 
-const UNREADABLE =
-  "This source's data isn't on this device yet: update it before changing its shape.";
-const CHANGED = "The source changed while its shape was applied: try again.";
+const { unreadable: UNREADABLE, changed: CHANGED } = SHAPE_ERRORS;
 
 function record(doc: CanvasDocument, id: string): DataSourceElement {
   const el = doc.get(id);
