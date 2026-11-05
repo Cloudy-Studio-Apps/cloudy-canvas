@@ -2,12 +2,18 @@ import { useScrubUndo } from "@canvas-ui";
 import { Button, NumberInput } from "@shared/ui/kit";
 import { repeatRows } from "../../../data";
 import { LimitFields, PreviewRowInput, RepeatRowsFields, SettingRow } from "../../../data/ui";
-import { DEFAULT_BROCHURE_DESIGN_LIMIT, repeatSettings, rowsPerPage } from "../../model/repeats";
+import {
+  DEFAULT_BROCHURE_DESIGN_LIMIT,
+  repeatSettings,
+  rowsPerPage,
+  unkeyedDetach,
+} from "../../model/repeats";
 import type { BrochureRepeatSettingsProps } from "./brochure-repeat-section.types";
 import { t } from "../../catalog.i18n";
 
 /**
- * A section's or page's repeat: the list, the row's name, the key, rows per page (pages only),
+ * A section's or page's repeat: the list, the row's name, the key (with a hint to set one when
+ * pages were taken out of it without, `unkeyedDetach`), rows per page (pages only),
  * which rows (filter, sort, limit), the copies made while designing (3 unset), the row the
  * template pages show, how many copies its rows make, and Remove repeat. Each change is one step.
  */
@@ -24,6 +30,9 @@ export function BrochureRepeatSettings({ state, repeat }: BrochureRepeatSettings
   return (
     <div className="flex flex-col gap-3">
       <RepeatRowsFields repeat={settings} scope={scope} apply={apply} />
+      {unkeyedDetach(repeat) && (
+        <p className="text-xs text-muted-foreground">{t("repeat.keyHint")}</p>
+      )}
       <div className="flex flex-col gap-1.5">
         {page && (
           <SettingRow label={t("repeat.perPage")}>

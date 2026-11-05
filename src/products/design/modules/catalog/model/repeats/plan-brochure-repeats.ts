@@ -1,4 +1,4 @@
-import type { CanvasDocument, Rect } from "@canvas";
+import type { CanvasDocument, Point, Rect } from "@canvas";
 import { createId } from "@shared/core";
 
 import type { DesignNode } from "../../../core";
@@ -7,6 +7,7 @@ import type { BrochureElement, BrochureSlot } from "../../brochure";
 import { ARRANGE_GAPS } from "../arrange/arrange.constants";
 import { isPageFrame } from "../page-frame";
 import { copyPathKey, segmentOwner } from "./copy-segment";
+import { copyShelf } from "./copy-shelf";
 import { brochureCopies } from "./brochure-copies";
 import { orphanLayers } from "./orphan-layers";
 import { planPageCopy } from "./plan-page-copy";
@@ -25,7 +26,8 @@ function treeOf(root: DesignNode, children: ReadonlyMap<string, readonly DesignN
 /**
  * What a brochure's generated pages need so they match its expansion: each copy made that prints
  * gets a page (`planPageCopy` of its template slot's printed frame; a new one placed after the page
- * before it), listed as a slot with `generated` (its template slot's master and detached master
+ * before it, which arranging then moves, or on a row below every layer of the design page when
+ * the brochure isn't arranged, `copyShelf`), listed as a slot with `generated` (its template slot's master and detached master
  * layers too), the slots in the expansion's order. A copy is found by its slot, else by its tag
  * (template frame and copy path; the first in sibling order wins), so two clients that made the
  * same copy end with one. A copy no longer made goes, frame and slot, and so does any copy frame
@@ -64,6 +66,9 @@ export function planBrochureRepeats(
   const slots: BrochureSlot[] = [];
   const kept = new Set<string>();
   let before: Rect | null = null;
+  // Not arranged: new copies go on a row below everything, never over what's there.
+  const arranged = record.settings.arrange !== "off";
+  let shelf: ((w: number) => Point) | null = null;
   for (const page of expansion.pages) {
     const own = byKey.get(page.id);
     if (page.path.length === 0) {
@@ -84,9 +89,12 @@ export function planBrochureRepeats(
     const copy =
       listed && !taken.has(listed.id) ? listed : tagged && !taken.has(tagged.id) ? tagged : null;
     if (copy) taken.add(copy.id);
-    const at = before
-      ? { x: before.x + before.w + ARRANGE_GAPS.spread, y: before.y }
-      : { x: frame.x, y: frame.y + frame.h + ARRANGE_GAPS.spread };
+    const at =
+      !copy && !arranged
+        ? (shelf ??= copyShelf(doc, record.page, frame.x))(frame.w)
+        : before
+          ? { x: before.x + before.w + ARRANGE_GAPS.spread, y: before.y }
+          : { x: frame.x, y: frame.y + frame.h + ARRANGE_GAPS.spread };
     const copyPlan = planPageCopy({
       template: frame,
       tree: treeOf(frame, children),

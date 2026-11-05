@@ -1,5 +1,6 @@
 import type { ElementPatch } from "@canvas";
 
+import { documentScopes, layeredScope } from "../../data";
 import type { BrochureSettings } from "../brochure";
 import type { FrameElement } from "../../frame";
 import { BrochurePageEdits } from "./brochure-page-edits";
@@ -7,6 +8,7 @@ import { BrochureMasters } from "./masters/brochure-masters";
 import { withSection } from "./sections/section-edits";
 import { brochureLanguage, retranslateItems } from "./language";
 import { generatedLayers } from "./repeats/generated-layers";
+import { loopsAround } from "./repeats/loops-around";
 import { repeatEdit } from "./repeats/repeat-edits";
 import type { BrochureRepeat } from "./repeats/brochure-repeat.types";
 import type { RepeatTarget } from "./repeats/repeat-edits.types";
@@ -23,12 +25,21 @@ export class DesignBrochure extends BrochurePageEdits {
    * Sets a section's or page's repeat (merged over the one there), or removes it (`null`): the
    * pages its loop made go, frames and slots, and the template pages stay as normal pages. One
    * undo step; the copies are then made by the edit's sync (`syncBrochureRepeats`). Throws for a
-   * section or page not in the brochure, a page a repeat made, or a repeat with no list.
+   * section or page not in the brochure, a page a repeat made, a repeat with no list or a new
+   * list that isn't one in its scope; a new list with no key given takes an id-like field
+   * (`repeatEdit`).
    */
   setRepeat(target: RepeatTarget, repeat: Partial<BrochureRepeat> | null): void {
     const record = this.record();
     if (!record) return;
-    const edit = repeatEdit(record, target, repeat);
+    const scope =
+      repeat === null
+        ? undefined
+        : layeredScope(
+            documentScopes(this.doc).root,
+            loopsAround(record, this.expansion(), target),
+          );
+    const edit = repeatEdit(record, target, repeat, scope);
     if (!edit) return;
     const { gone, ...patch } = edit;
     const layers = generatedLayers(this.doc, record.id, gone);

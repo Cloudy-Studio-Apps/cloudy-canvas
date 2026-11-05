@@ -1,7 +1,7 @@
 import { isDesignNode } from "../../core";
 import { dataIssues, type DataIssue } from "../../data";
 import type { DesignWorkspace } from "../../../design-engine.types";
-import { repeatRuns, type DesignBrochure } from "../model";
+import { repeatRuns, unkeyedDetach, type DesignBrochure } from "../model";
 import { t } from "../catalog.i18n";
 import type { BrochureIssue } from "./brochure-checks.types";
 import { shownNodes } from "./shown-nodes";
@@ -26,7 +26,9 @@ function dataMessage(issue: DataIssue, name: string): string {
 
 /**
  * What a brochure's repeats and data get wrong: the data issues of its pages' layers (read in the
- * page's language and scope), a repeat whose list leaves nothing to print (`empty-source`) and
+ * page's language and scope), a repeat with pages taken out by hand and no key, whose pages then
+ * follow row positions (`unkeyed-detach`), a repeat whose list leaves nothing to print
+ * (`empty-source`) and
  * more than `MANY_PAGES` pages, made and pending (`too-many-pages`).
  */
 export function repeatIssues(
@@ -67,11 +69,22 @@ export function repeatIssues(
   if (record) {
     const expansion = brochure.expansion();
     for (const [id, run] of repeatRuns(record)) {
-      const mine = expansion.pages.filter((item) => run.includes(item.from));
-      if (mine.length === 0 || mine.some((item) => item.printed)) continue;
       const first = pages.find((page) => page.slot.id === run[0]);
       if (!first) continue;
-      const name = record.sections.find((item) => item.id === id)?.name ?? first.frame.name;
+      const section = record.sections.find((item) => item.id === id);
+      const name = section?.name ?? first.frame.name;
+      const repeat = (section ?? record.slots.find((item) => item.id === id))?.repeat;
+      if (repeat && unkeyedDetach(repeat)) {
+        issues.push({
+          kind: "unkeyed-detach",
+          page: label(first),
+          frameId: first.frame.id,
+          nodeId: first.frame.id,
+          message: t("checks.unkeyedDetach", { name }),
+        });
+      }
+      const mine = expansion.pages.filter((item) => run.includes(item.from));
+      if (mine.length === 0 || mine.some((item) => item.printed)) continue;
       issues.push({
         kind: "empty-source",
         page: label(first),

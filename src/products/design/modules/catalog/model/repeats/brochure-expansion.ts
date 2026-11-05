@@ -1,13 +1,13 @@
 import type { CanvasDocument } from "@canvas";
 
 import {
-  dataPhase,
   dataSourcesIn,
   documentScopes,
   rootScope,
   type DataScope,
   type DataSourceElement,
 } from "../../../data";
+import { brochurePhase } from "./brochure-phase";
 import type { BrochureElement } from "../../brochure";
 import type { ExpansionMemo } from "./brochure-expansion.types";
 import { expandBrochure } from "./expand-brochure";
@@ -30,13 +30,14 @@ const same = (a: readonly unknown[], b: readonly unknown[]) =>
 
 /**
  * A brochure's pages and sections with its repeats expanded (`expandBrochure`) over the document's
- * sources, in the document's data phase (`dataPhase`: an export's scratch copy makes every page).
+ * sources, in the document's brochure phase (`brochurePhase`: a brochure export's copy makes every
+ * page).
  * A brochure without repeats reads no data. Remembered per brochure until its record, a source,
  * the snapshots this device holds or the phase change, so every page row and panel reading it
  * after an edit share one expansion (the result is shared: never change it).
  */
 export function brochureExpansion(doc: CanvasDocument, record: BrochureElement): BrochureExpansion {
-  const phase = dataPhase(doc);
+  const phase = brochurePhase(doc);
   const repeats = hasRepeats(record);
   const sources = repeats ? dataSourcesIn(doc) : [];
   const held = heldKey(doc, sources);

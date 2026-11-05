@@ -89,7 +89,8 @@
     "failed": "No se pudo exportar el folleto",
     "updating": "Actualizando {name}",
     "making": "Creando todas las páginas",
-    "updateFailed": "No se pudo actualizar {name}, así que el folleto no se exportó"
+    "updateFailed": "No se pudo actualizar {name}, así que el folleto no se exportó",
+    "missingData": "Los datos de {name} aún no están en este dispositivo; actualiza la fuente primero."
   },
   "exportData": {
     "title": "¿Actualizar los datos primero?",
@@ -98,7 +99,8 @@
     "saved": "Usar los datos guardados",
     "updatedAgo": "actualizada {time}",
     "updatedNow": "actualizada ahora mismo",
-    "neverUpdated": "nunca actualizada"
+    "neverUpdated": "nunca actualizada",
+    "missing": "no está en este dispositivo"
   },
   "images": {
     "replace": {
@@ -149,6 +151,7 @@
     "pageRefMissing": "«{name}» remite a «{target}», que no es una sección ni una página de este folleto. Elige a qué remite en sus propiedades.",
     "pageRefEmpty": "«{name}» aún no remite a ninguna página: elige una en sus propiedades.",
     "emptySource": "«{name}» se repite sobre una lista vacía, así que no imprime páginas.",
+    "unkeyedDetach": "“{name}” tiene páginas separadas o eliminadas de su repetición pero ninguna clave, así que siguen la posición de las filas: si se quitan o reordenan filas, acaban en otras. Define una clave en sus ajustes de repetición.",
     "tooManyPages": "El folleto tiene {count} páginas, más de {max}: la exportación será lenta y pesada.",
     "data": {
       "unresolved": "«{name}» lee {detail}, que no tiene datos aquí.",
@@ -405,7 +408,8 @@
     "detachHint": "Separada, se queda aquí como una página normal que puedes editar, y la repetición no vuelve a crear esta página. El resto de su copia sigue a la plantilla; para separar la copia entera de una sección repetida, usa el menú de su carpeta.",
     "deleteCopy": "Eliminar las páginas de esta copia",
     "deletePages": "Eliminar estas páginas",
-    "unreadable": "Los datos de esta página aún no están en este dispositivo; actualiza primero la fuente."
+    "unreadable": "Los datos de esta página aún no están en este dispositivo; actualiza primero la fuente.",
+    "keyHint": "Define una clave para que las páginas que separaste o eliminaste sigan con su fila."
   },
   "scope": {
     "from": {

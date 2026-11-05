@@ -32,3 +32,5 @@ export { childrenMap, walkDescendants } from "./descendants";
 export { templateParts as templateCopyParts } from "./template-parts";
 export { mirroredField } from "./mirror-field";
 export { dataResolvedPaths, layoutPlacedPaths } from "./data-resolved-paths";
+export { defaultRepeatKey } from "./default-key";
+export { checkRepeatSource } from "./check-repeat";

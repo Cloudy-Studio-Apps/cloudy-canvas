@@ -10,13 +10,14 @@ import {
   type DesignBrochure,
 } from "../model";
 import { brochureOutline } from "./brochure-outline";
-import { brochureSources } from "./brochure-sources";
+import { brochureSources, unreadableSources } from "./brochure-sources";
 import {
   needsBrochureCopy,
   prepareBrochureCopy,
   requireMadeBrochure,
 } from "./brochure-export-copy";
 import { partRect } from "./draw-frame";
+import { MissingDataError } from "./missing-data-error";
 import type { BrochureExport, BrochureExportOptions } from "./export-brochure.types";
 import { printedPages } from "./printed-pages";
 import type { PrintedPage } from "./printed-pages.types";
@@ -38,6 +39,8 @@ const breathe = () =>
  * A brochure as one PDF, every page it prints. With `data: "update"` the sources it reads
  * (`brochureSources`) are updated first, in the workspace's history (`updateBrochureSources`: a
  * failure throws and nothing is exported); `"saved"`, the default, reads them as they are. When
+ * a source it reads still has no data on this device (`unreadableSources`), it throws a
+ * `MissingDataError` before anything is made, rather than print pages without their rows. When
  * the document holds fewer pages than the export must print (`needsBrochureCopy`: repeats' pending
  * pages, template pages showing their preview row, card repeaters past their design caps), every
  * page is made on a copy of the design readied for the export (`exportCopy`,
@@ -59,6 +62,10 @@ export async function exportBrochure(
     await updateBrochureSources(workspace, ids, (source) => onStep?.({ step: "updating", source }));
   }
   const record = brochure.record();
+  const [missing] = record
+    ? unreadableSources(workspace.doc, brochureSources(workspace.doc, record))
+    : [];
+  if (missing) throw new MissingDataError(missing.name);
   if (!record || !needsBrochureCopy(workspace.doc, record)) {
     return printBrochure(workspace, brochure, options);
   }

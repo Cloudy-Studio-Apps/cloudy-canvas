@@ -2,12 +2,12 @@ import type { CanvasDocument, EditedChange, ElementKinds } from "@canvas";
 
 import {
   childrenMap,
-  dataPhase,
   DATA_SOURCE_TYPE,
   documentScopes,
   syncDataFor,
   type DataScope,
 } from "../../../data";
+import { brochurePhase } from "./brochure-phase";
 import { isBrochure, type BrochureElement } from "../../brochure";
 import { arrangeBrochure, arrangedPages } from "../arrange";
 import { bookLayout } from "../book-layout";
@@ -51,7 +51,7 @@ function recordChange(
  * The catalog's `afterEdit` hook that makes a brochure's repeats' copies, in the edit's undo
  * step and before the page items (so masters are stamped on new pages): for each brochure with
  * repeats (now or before the edit, or copies left) whose record, template pages or sources the
- * edit changed, it expands the brochure once (`expandBrochure` in the document's data phase) and writes what differs from
+ * edit changed, it expands the brochure once (`expandBrochure` in the document's `brochurePhase`) and writes what differs from
  * its generated pages and slots (`planBrochureRepeats`, `writeBrochureRepeats`), so its own
  * writes, which run it again, end it. The brochure is arranged again when pages came or moved and
  * its `arrange` is on. Then the pages it made or changed, and every page of a brochure whose loops
@@ -79,7 +79,7 @@ export function syncBrochureRepeats(
       templateSlots(record).some((slot) => slot.frames.some((id) => tops.has(id)));
     if (!affected) continue;
     root ??= documentScopes(doc).root;
-    const expansion = expandBrochure(record, root, dataPhase(doc));
+    const expansion = expandBrochure(record, root, brochurePhase(doc));
     const plan = planBrochureRepeats(doc, record, expansion, (children ??= childrenMap(doc)));
     const empty = emptyRepeatsPlan(plan);
     const touched = empty ? [] : writeBrochureRepeats(doc, record, plan);

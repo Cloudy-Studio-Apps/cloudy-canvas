@@ -5,6 +5,7 @@ import { cappedRepeats, documentScopes, setDataPhase } from "../../data";
 import type { BrochureElement } from "../brochure";
 import {
   brochureExpansion,
+  setBrochureExport,
   expandBrochure,
   hasRepeats,
   syncBrochureRepeats,
@@ -47,7 +48,7 @@ export function needsBrochureCopy(doc: CanvasDocument, record: BrochureElement):
 
 /**
  * Makes every page of a brochure on a copy of the design readied for an export (its data phase
- * `"export"`): its repeats' copies, each filled from its rows, the template pages from the first
+ * `"export"`, and its brochure phase, `setBrochureExport`): its repeats' copies, each filled from its rows, the template pages from the first
  * row, in one transaction, whose `afterEdit` stamps the masters and page items on the new pages and
  * fills the card repeaters in them. Throws when those passes ran out with changes left
  * (`CanvasDocument.settled`).
@@ -55,6 +56,7 @@ export function needsBrochureCopy(doc: CanvasDocument, record: BrochureElement):
 export function prepareBrochureCopy(workspace: DesignWorkspace, brochureId: string): void {
   const { doc, kinds } = workspace;
   setDataPhase(doc, "export");
+  setBrochureExport(doc);
   // As if its record changed: the sync expands it again and refills every page.
   const change: EditedChange = {
     updated: new Set([brochureId]),

@@ -22,3 +22,5 @@ export { copyPassPath } from "./copy-pass-path";
 export { UnreadableCopyError } from "./unreadable-copy-error";
 export { brochurePreviewSetter } from "./brochure-preview-setter";
 export { brochureFrameTags } from "./brochure-frame-tags";
+export { brochurePhase, setBrochureExport } from "./brochure-phase";
+export { unkeyedDetach } from "./unkeyed-detach";

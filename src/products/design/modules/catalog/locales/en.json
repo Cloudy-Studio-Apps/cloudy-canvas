@@ -89,7 +89,8 @@
     "failed": "The brochure couldn't be exported",
     "updating": "Updating {name}",
     "making": "Making every page",
-    "updateFailed": "{name} couldn't be updated, so the brochure wasn't exported"
+    "updateFailed": "{name} couldn't be updated, so the brochure wasn't exported",
+    "missingData": "{name}'s data isn't on this device yet; update it first."
   },
   "exportData": {
     "title": "Update the data first?",
@@ -98,7 +99,8 @@
     "saved": "Use the saved data",
     "updatedAgo": "updated {time}",
     "updatedNow": "updated just now",
-    "neverUpdated": "never updated"
+    "neverUpdated": "never updated",
+    "missing": "not on this device"
   },
   "images": {
     "replace": {
@@ -149,6 +151,7 @@
     "pageRefMissing": "“{name}” refers to “{target}”, which isn't a section or page of this brochure. Pick what it points to in its properties.",
     "pageRefEmpty": "“{name}” doesn't point to a page yet: pick one in its properties.",
     "emptySource": "“{name}” repeats over a list with nothing in it, so it prints no pages.",
+    "unkeyedDetach": "“{name}” has pages taken out of its repeat but no key, so they follow row positions: when rows are removed or reordered they end up on other rows. Set a key in its Repeat settings.",
     "tooManyPages": "The brochure has {count} pages, over {max}: the export will be slow and heavy.",
     "data": {
       "unresolved": "“{name}” reads {detail}, which has no data here.",
@@ -405,7 +408,8 @@
     "detachHint": "Detached, it stays here as a normal page you can edit, and the repeat doesn't make this page again. The rest of its copy still follows the template; to detach a whole copy of a repeated section, use its folder's menu.",
     "deleteCopy": "Delete this copy's pages",
     "deletePages": "Delete these pages",
-    "unreadable": "This page's data isn't on this device yet; update the source first."
+    "unreadable": "This page's data isn't on this device yet; update the source first.",
+    "keyHint": "Set a key so pages you took out stay with their row."
   },
   "scope": {
     "from": {

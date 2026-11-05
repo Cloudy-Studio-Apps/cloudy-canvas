@@ -35,7 +35,8 @@ export const brochureReadTools: DesignMcpTool[] = [
       "profile, layers stopping at the page edge with no bleed, rounded pages, a table of " +
       "contents past the bottom margin (toc-overflow), a page reference naming no section or page " +
       "(page-ref-missing), data that doesn't fit (data), a repeat with nothing to print " +
-      "(empty-source), over 1,000 pages (too-many-pages)). Pages a repeat made are marked " +
+      "(empty-source), a repeat with pages taken out and no key, so they follow row positions " +
+      "(unkeyed-detach), over 1,000 pages (too-many-pages)). Pages a repeat made are marked " +
       "`generated`, ones taken out of a repeat `detached`, pages a repeat will make at export " +
       "`pending` (no `frame` yet, `template` is the page they copy; counted in `pendingPages`), " +
       "and `repeats` lists each repeating section or page with its settings and pending count " +

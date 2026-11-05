@@ -1,11 +1,7 @@
 import type { CanvasDocument } from "@canvas";
 
-import {
-  dataPhase,
-  type DataLocaleProvider,
-  type DataScope,
-  type DataScopeProvider,
-} from "../../../data";
+import { type DataLocaleProvider, type DataScope, type DataScopeProvider } from "../../../data";
+import { brochurePhase } from "./brochure-phase";
 import { brochuresOf } from "../design-brochures";
 import { brochureLanguage } from "../language";
 import { expandBrochure } from "./expand-brochure";
@@ -30,7 +26,7 @@ function framesAround(doc: CanvasDocument, root: DataScope): FramesAround {
     return known;
   }
   const out: FramesAround = { layers: new Map(), locales: new Map() };
-  const phase = dataPhase(doc);
+  const phase = brochurePhase(doc);
   for (const record of brochuresOf(doc).records()) {
     const locale = brochureLanguage(record.settings);
     for (const slot of record.slots) {

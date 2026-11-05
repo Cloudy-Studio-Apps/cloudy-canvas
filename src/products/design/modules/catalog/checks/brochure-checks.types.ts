@@ -17,6 +17,7 @@ export type BrochureIssueKind =
   | "page-ref-missing"
   | "data"
   | "empty-source"
+  | "unkeyed-detach"
   | "too-many-pages";
 
 /** Something that would print badly, on one page. */

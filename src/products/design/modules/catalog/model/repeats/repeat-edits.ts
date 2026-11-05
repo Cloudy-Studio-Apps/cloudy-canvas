@@ -1,4 +1,6 @@
+import { checkRepeatSource, defaultRepeatKey, type DataScope } from "../../../data";
 import type { BrochureElement, BrochureSlot } from "../../brochure";
+import { repeatSettings } from "./loop-units";
 import type { BrochureRepeat } from "./brochure-repeat.types";
 import { segmentOwner } from "./copy-segment";
 import type { RepeatEdit, RepeatTarget } from "./repeat-edits.types";
@@ -22,13 +24,17 @@ function without<T extends { repeat?: BrochureRepeat }>(item: T): T {
  * A section's or page's repeat set (`repeat` merged over the one there; a list to read is
  * required) or removed (`null`: the copies its loop made go, the template pages stay as normal
  * pages, and so do the pages taken out of it by hand when no other loop holds them). `null` when
- * nothing changes. Throws for a section or page that isn't in the brochure, a copy a repeat made
- * (or one taken out of it), or a repeat with no list. Pure.
+ * nothing changes. With `scope` (where its list is read: the sources, then the loops around it), a
+ * new or changed list must be a list there (a source not readable here passes), and with no `key`
+ * given it takes an id-like field of the rows (`defaultRepeatKey`). Throws for a section or page
+ * that isn't in the brochure, a copy a repeat made (or one taken out of it), or a repeat with no
+ * list. Pure.
  */
 export function repeatEdit(
   record: Pick<BrochureElement, "slots" | "sections">,
   target: RepeatTarget,
   repeat: Partial<BrochureRepeat> | null,
+  scope?: DataScope,
 ): RepeatEdit | null {
   const id = "section" in target ? target.section : target.slot;
   const section = "section" in target ? record.sections.find((item) => item.id === id) : undefined;
@@ -55,6 +61,15 @@ export function repeatEdit(
     Object.entries({ ...EMPTY, ...current, ...repeat }).filter(([, value]) => value !== undefined),
   ) as unknown as BrochureRepeat;
   if (!next.source.trim()) throw new Error("A repeat needs a list to repeat over (its source).");
+  const listed = !current || current.source !== next.source;
+  if (scope && listed) {
+    checkRepeatSource(scope, next.source);
+    // A new list with no key given goes by an id-like field when its rows have one.
+    if (next.key === undefined && !("key" in repeat)) {
+      const key = defaultRepeatKey(scope, repeatSettings(next));
+      if (key !== undefined) next.key = key;
+    }
+  }
   if (JSON.stringify(next) === JSON.stringify(current)) return null;
   if (section) {
     const sections = record.sections.map((item) =>

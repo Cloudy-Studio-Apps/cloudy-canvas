@@ -8,6 +8,7 @@ import { descendants } from "./descendants";
 import { renameReferences } from "./rename-references";
 import { REPEAT_ERRORS } from "./repeat-errors";
 import { renameRepeatPaths } from "./rename-repeat-paths";
+import { defaultRepeatKey } from "./default-key";
 import { dataCopyTag, repeatOf } from "./repeat-fields";
 import { addRepeatLayout } from "./repeat-layout";
 import { scopeAt } from "./scope-at";
@@ -68,7 +69,8 @@ function removeRepeat(doc: CanvasDocument, frameId: string): void {
  * empty `filter`, `sort` and `detached`. Everything is checked first, with English errors: a
  * frame with a layer; `source` a list in the frame's scope (a source not readable here passes);
  * a new `as` a name that isn't a brochure placeholder, a source's name or the row name of an
- * iterator around or inside it; the rules' paths, ops and caps. A changed `as` renames what
+ * iterator around or inside it; the rules' paths, ops and caps. A new repeat or list with no
+ * `key` given takes an id-like field of its rows (`defaultRepeatKey`). A changed `as` renames what
  * reads it under the frame (and the repeat's own row paths) in the same step. With `addLayout`,
  * a frame without an auto layout gets a wrapping row. `null` removes the repeat and its copies
  * (and those of its copies in outer copies); the sync writes the copies otherwise. Fields it
@@ -126,7 +128,13 @@ export function setRepeat(
     const value = field in repeat ? repeat[field] : current?.[field];
     if (value !== undefined) (next as unknown as Record<string, unknown>)[field] = value;
   }
-  checkRepeatSource(scopeAt(doc, frameId), next.source);
+  const scope = scopeAt(doc, frameId);
+  checkRepeatSource(scope, next.source);
+  // A new repeat (or a new list) with no key given goes by an id-like field when its rows have one.
+  if (next.key === undefined && !("key" in repeat) && (current === null || relisted)) {
+    const key = defaultRepeatKey(scope, next);
+    if (key !== undefined) next.key = key;
+  }
   checkRepeatRules(next);
   if (opts.addLayout && !opts.kinds) {
     throw new Error("setRepeat: adding a layout needs the design's kinds.");

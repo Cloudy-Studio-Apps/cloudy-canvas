@@ -6,6 +6,7 @@ import { t } from "../catalog.i18n";
 
 /** When a source's data was last updated, in words ("updated 3 days ago"). */
 function updatedText(source: ExportDataSource): string {
+  if (source.missing) return t("exportData.missing");
   if (source.updatedAt === null) return t("exportData.neverUpdated");
   const ago = relativeTime(source.updatedAt);
   return ago ? t("exportData.updatedAgo", { time: ago }) : t("exportData.updatedNow");
@@ -13,8 +14,9 @@ function updatedText(source: ExportDataSource): string {
 
 /**
  * Asks how a brochure export reads its data: updating the sources it reads first (the main
- * choice) or using the data saved in the file, each source listed with when it was last updated.
- * Esc cancels the export.
+ * choice) or using the data saved in the file, each source listed with when it was last updated
+ * (or that its data isn't on this device: the export then refuses the saved data). Esc cancels
+ * the export.
  */
 export function ExportDataDialog({ sources, onAnswer }: ExportDataDialogProps) {
   return (

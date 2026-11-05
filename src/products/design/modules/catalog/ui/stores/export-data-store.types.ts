@@ -7,6 +7,8 @@ export interface ExportDataSource {
   name: string;
   /** When its data was last updated, `null` when it never was. */
   updatedAt: number | null;
+  /** Its data isn't on this device: only "Update the data first" can export. */
+  missing: boolean;
 }
 
 /** The question an export is waiting on, if any. */
