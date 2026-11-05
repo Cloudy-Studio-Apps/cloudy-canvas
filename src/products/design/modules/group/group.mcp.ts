@@ -1,4 +1,4 @@
-import { asUndoStep, optionalString, stringList, type ElementPatch } from "@canvas";
+import { asUndoStep, optionalString, stringList } from "@canvas";
 
 import { requireDesign, requireNodes, type DesignMcpTool } from "../../mcp";
 import { frameNodes } from "../frame";
@@ -23,11 +23,10 @@ export const groupTools: DesignMcpTool[] = [
       const { engine } = requireDesign(host);
       const ids = new Set(requireNodes(engine, stringList(args, "ids")));
       const name = optionalString(args, "name");
-      const group = asUndoStep(engine.doc, () => {
-        const id = groupNodes(engine.doc, ids, engine.elements(), engine.kinds);
-        if (id && name) engine.doc.update(id, { name } as ElementPatch);
-        return id;
-      });
+      // Named as it's made, so the step sees it as new (a repeated card wrapped keeps its repeat).
+      const group = asUndoStep(engine.doc, () =>
+        groupNodes(engine.doc, ids, engine.elements(), engine.kinds, name || undefined),
+      );
       if (!group) throw new Error("Nothing to group.");
       return { group };
     },
@@ -48,11 +47,9 @@ export const groupTools: DesignMcpTool[] = [
       const { engine } = requireDesign(host);
       const ids = new Set(requireNodes(engine, stringList(args, "ids")));
       const name = optionalString(args, "name");
-      const frame = asUndoStep(engine.doc, () => {
-        const id = frameNodes(engine.doc, ids, engine.elements(), engine.kinds);
-        if (id && name) engine.doc.update(id, { name } as ElementPatch);
-        return id;
-      });
+      const frame = asUndoStep(engine.doc, () =>
+        frameNodes(engine.doc, ids, engine.elements(), engine.kinds, name || undefined),
+      );
       if (!frame) throw new Error("Nothing to frame.");
       return { frame };
     },

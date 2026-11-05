@@ -19,21 +19,23 @@ import { isGroup } from "./group-tree";
 
 /**
  * Puts the nodes (those whose ancestors aren't among them) into a new group, as one undo step,
- * where the topmost of them was. Returns the group's id, or `null` when there was nothing to group.
- * `elements` are the scene's, bottom to top.
+ * where the topmost of them was, named `name` (else the next "Group n") when it's made, so no later
+ * patch in the step makes it look older than the edit. Returns the group's id, or `null` when
+ * there was nothing to group. `elements` are the scene's, bottom to top.
  */
 export function groupNodes(
   doc: CanvasDocument,
   ids: ReadonlySet<string>,
   elements: readonly CanvasElement[],
   kinds: ElementKinds,
+  name?: string,
 ): string | null {
   const nodes = selectionRoots(ids, elements);
   if (nodes.length === 0) return null;
-  const name = nextLayerName(doc.all(), "Group");
+  const groupName = name ?? nextLayerName(doc.all(), "Group");
   doc.checkpoint();
   return wrapNodes(doc, nodes, kinds, (rect, index, parentId) =>
-    createGroup(rect, name, index, parentId),
+    createGroup(rect, groupName, index, parentId),
   );
 }
 

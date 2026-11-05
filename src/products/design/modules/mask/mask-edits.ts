@@ -42,9 +42,9 @@ export function maskNodes(
     doc.update(bottom.id, patch as ElementPatch);
     return [bottom.id];
   }
-  const group = groupNodes(doc, new Set(nodes.map((node) => node.id)), elements, kinds);
+  const name = nextLayerName(doc.all(), t("defaults.maskGroup"));
+  const group = groupNodes(doc, new Set(nodes.map((node) => node.id)), elements, kinds, name);
   if (!group) return [];
-  doc.update(group, { name: nextLayerName(doc.all(), t("defaults.maskGroup")) } as ElementPatch);
   doc.update(bottom.id, patch as ElementPatch);
   return [group];
 }
