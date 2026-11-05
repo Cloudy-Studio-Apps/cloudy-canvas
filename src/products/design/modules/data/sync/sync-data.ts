@@ -10,7 +10,14 @@ import { getLocale } from "@shared/core";
 import { isDesignNode } from "../../core";
 import { hasDataFields, rootScope } from "../bindings";
 import type { BindingContext } from "../bindings";
-import { childrenMap, dataCopyTag, dataScopes, repeatOf, walkDescendants } from "../repeat";
+import {
+  childrenMap,
+  dataCopyTag,
+  dataScopes,
+  followWrappedTemplate,
+  repeatOf,
+  walkDescendants,
+} from "../repeat";
 import { dataPhase } from "../model/data-phase";
 import { dataSourcesIn, type DataSourceElement } from "../source";
 import { imageKey, readSnapshot } from "../update";
@@ -51,6 +58,8 @@ function picturesBySource(
  * name) and each iterator's rows are built once per run.
  */
 export function syncData(doc: CanvasDocument, change: EditedChange, kinds: ElementKinds): void {
+  // A card wrapped in place: the wrapper becomes the card (before the copies it held are freed).
+  followWrappedTemplate(doc, change);
   // Copies that lost their iterator become ordinary layers.
   sweepOrphans(doc, change);
   fillData(doc, affectedData(doc, change), change.before, kinds);

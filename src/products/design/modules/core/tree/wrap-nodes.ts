@@ -31,7 +31,7 @@ export function selectionRoots(
 
 /**
  * Puts nodes into a new host (a group, a boolean) made by `make` round their bounds, where the
- * topmost of them was, and returns its id. Call it in an undo step; `elements` are the scene's.
+ * topmost of them was, as one edit, and returns its id. Call it in an undo step; `elements` are the scene's.
  */
 export function wrapNodes(
   doc: CanvasDocument,
@@ -43,7 +43,10 @@ export function wrapNodes(
   if (!topmost) return null;
   const rect = unionRects(nodes.map((node) => elementBounds(kinds.kindOf(node), node)))!;
   const host = make(rect, topmost.index, topmost.parentId);
-  doc.add(host);
-  doc.updateMany(new Map(nodes.map((node) => [node.id, { parentId: host.id } as ElementPatch])));
+  // One edit, so what follows from it (a repeated card wrapped in place) sees the host as new.
+  doc.batch(() => {
+    doc.add(host);
+    doc.updateMany(new Map(nodes.map((node) => [node.id, { parentId: host.id } as ElementPatch])));
+  });
   return host.id;
 }
