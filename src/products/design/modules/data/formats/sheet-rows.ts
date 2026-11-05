@@ -1,5 +1,5 @@
-/** One cell as the library reads it (its typings call a date `typeof Date`, so it is `unknown`). */
-type Cell = unknown;
+import { columnNames } from "./column-names";
+import type { Cell } from "./sheet-rows.types";
 
 function plain(cell: Cell): string | number | boolean | null {
   if (cell instanceof Date) return Number.isNaN(cell.getTime()) ? null : cell.toISOString();
@@ -24,15 +24,10 @@ export function sheetRows(
   if (at < 0 || !header) return [];
   const body = data.slice(at + 1).filter((row) => !isEmpty(row));
   const width = body.reduce((max, row) => Math.max(max, row.length), header.length);
-  const used = new Set<string>();
-  const names = Array.from({ length: width }, (_, i) => {
-    const raw = String(plain(header[i]) ?? "").trim();
-    const base = raw === "" ? `column_${i + 1}` : raw;
-    let name = base;
-    for (let n = 2; used.has(name); n++) name = `${base}_${n}`;
-    used.add(name);
-    return name;
-  });
+  const names = columnNames(
+    Array.from({ length: width }, (_, i) => String(plain(header[i]) ?? "")),
+    width,
+  );
   return body.map((row) => {
     const out: Record<string, string | number | boolean | null> = {};
     names.forEach((name, i) => {

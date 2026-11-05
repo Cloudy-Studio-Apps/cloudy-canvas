@@ -41,28 +41,37 @@ export const XLSX_FORMAT: DataFormat = {
   async parse(raw, options) {
     if (!raw.bytes) throw new Error("Excel: the file's bytes are missing.");
     // The package has no root export: the browser entry is the one for the webview and the web.
-    const { default: readXlsxFile } = await import("read-excel-file/browser");
-    let sheets;
-    try {
-      sheets = await readXlsxFile(new Blob([raw.bytes as BlobPart]));
-    } catch (e) {
-      throw new Error(`Excel: ${e instanceof Error ? e.message : String(e)}`, { cause: e });
-    }
+    const { readSheet, SheetNotFoundError } = await import("read-excel-file/browser");
+    const blob = new Blob([raw.bytes as BlobPart]);
     const wanted = String(options.sheet ?? "").trim();
-    let found = sheets[0];
-    if (wanted !== "") {
-      found =
-        sheets.find((s) => s.sheet === wanted) ??
-        sheets.find((s) => s.sheet.toLowerCase() === wanted.toLowerCase()) ??
-        (/^\d+$/.test(wanted) ? sheets[Number(wanted) - 1] : undefined);
-      if (!found) {
-        throw new Error(
-          `Excel: no sheet "${wanted}". Sheets: ${sheets.map((s) => s.sheet).join(", ")}.`,
-        );
+    const headerRow = options.headerRow;
+    if (headerRow !== undefined && headerRow !== null && headerRow !== "") {
+      if (typeof headerRow !== "number" || !Number.isInteger(headerRow) || headerRow < 1) {
+        throw new Error("Excel: the header row must be a whole number, 1 or more.");
       }
     }
-    if (!found) return [];
-    const headerRow = typeof options.headerRow === "number" ? options.headerRow : 0;
-    return sheetRows(found.data, headerRow);
+    const read = async (sheet?: string | number) => {
+      try {
+        return await (sheet === undefined ? readSheet(blob) : readSheet(blob, sheet));
+      } catch (e) {
+        if (e instanceof SheetNotFoundError || !(e instanceof Error)) throw e;
+        throw new Error(`Excel: ${e.message}`, { cause: e });
+      }
+    };
+    let data;
+    try {
+      data = await read(wanted === "" ? undefined : wanted);
+    } catch (e) {
+      if (!(e instanceof SheetNotFoundError)) throw e;
+      // `sheets` (the names) is on the error but missing from the package's typings.
+      const names = (e as { sheets?: string[] }).sheets ?? [];
+      const byName = names.find((n) => n.toLowerCase() === wanted.toLowerCase());
+      const byNumber = /^\d+$/.test(wanted) && Number(wanted) <= names.length ? Number(wanted) : 0;
+      if (byName === undefined && byNumber < 1) {
+        throw new Error(`Excel: no sheet "${wanted}". Sheets: ${names.join(", ")}.`, { cause: e });
+      }
+      data = await read(byName ?? byNumber);
+    }
+    return sheetRows(data, typeof headerRow === "number" ? headerRow : 0);
   },
 };
