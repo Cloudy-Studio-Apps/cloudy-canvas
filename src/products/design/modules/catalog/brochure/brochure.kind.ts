@@ -42,7 +42,8 @@ export class BrochureKind extends ElementKind<BrochureElement, DesignToolOptions
       // Brochures from before pages had one (`splitLegacyBrochure` gives them theirs on open).
       page: el.page ?? "",
       slots: el.slots ?? [],
-      // Brochures from before masters and sections had neither.
+      // Brochures from before masters and sections had neither. Repeats (`repeat`, `generated` on
+      // slots and sections) are optional and need no default.
       masters: el.masters ?? [],
       sections: el.sections ?? [],
       settings: {

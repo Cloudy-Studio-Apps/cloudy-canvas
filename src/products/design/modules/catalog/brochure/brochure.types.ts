@@ -1,5 +1,6 @@
 import type { CanvasElement, ElementDefaults, PdfMode } from "@canvas";
 import type { RenderingIntent } from "@shared/core";
+import type { BrochureRepeat, GeneratedSlot } from "../model/repeats/brochure-repeat.types";
 
 /**
  * One page of a brochure: the frames that could be it (its options, e.g. "Opción A/B/C") and the
@@ -18,6 +19,10 @@ export interface BrochureSlot {
   master?: string | null;
   /** The master layers detached on this page (their ids on the master): they're no longer stamped. */
   skip?: string[];
+  /** "Repeat this page": a copy of it for each row, or each `perPage` rows, of a list in scope. */
+  repeat?: BrochureRepeat;
+  /** A copy made by a repeat (a section's or a page's), never edited by hand. */
+  generated?: GeneratedSlot;
 }
 
 /**
@@ -69,6 +74,8 @@ export interface BrochureSection {
   restart?: number;
   /** How its pages' numbers are written, when it changes there. */
   style?: PageNumberStyle;
+  /** "Repeat for each row": its pages, subsections included, copied for each row of a list. */
+  repeat?: BrochureRepeat;
 }
 
 /**

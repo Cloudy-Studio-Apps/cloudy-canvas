@@ -40,7 +40,8 @@ export const catalogModule = defineModule({
   // Replaces a page's pictures with image's `replaceImageFill`; `uses`, not `requires`: catalog loads
   // before image (its `editElement` takes frames first).
   // Reads and sizes page items' texts with text's helpers.
-  uses: ["image", "text"],
+  // Repeats sections and pages over data's rows (`repeatRows`, `rowScope`).
+  uses: ["image", "text", "data"],
   exports: { ...catalogApi, ...catalogUi },
   register(host) {
     host.contribute(designCanvas.kinds, new BrochureKind());
