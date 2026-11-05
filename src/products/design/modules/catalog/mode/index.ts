@@ -8,5 +8,6 @@ export {
 } from "./catalog-mode.constants";
 export { CatalogPickTool } from "./catalog-pick.tool";
 export { CatalogTool } from "./catalog.tool";
+export { deleteCopySection } from "./delete-copy-section";
 export { deleteSelectedPages } from "./delete-selected-pages";
 export { editCatalogPage } from "./edit-catalog-page";

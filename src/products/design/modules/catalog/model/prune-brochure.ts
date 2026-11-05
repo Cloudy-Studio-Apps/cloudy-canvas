@@ -2,16 +2,17 @@ import type { CanvasDocument, ElementPatch } from "@canvas";
 
 import { BROCHURE_TYPE, isBrochure, type BrochureElement } from "../brochure";
 import { keptSections, prunedMasters, withoutMaster } from "./masters/master-edits";
-import { detachGenerated } from "./repeats/detach-generated";
-import { freedCopyPatches } from "./repeats/freed-copy-patches";
+import { detachPages } from "./repeats/detach-pages";
+import { withoutStaleDetached } from "./repeats/stale-detached";
 import { removeFrames } from "./slot-edits";
 
 /**
  * After a deletion, in its undo step (an `onRemove`): deleted frames leave every brochure (its
  * pages and masters, and a section starting on a page that went goes), and the brochures of a
- * deleted design page go with it. A deleted page a repeat made is detached first
- * (`detachGenerated`): its row isn't made again, and the other pages of its copy stay where they
- * are as plain pages, freed.
+ * deleted design page go with it. A deleted page a repeat made is taken out of its repeat
+ * (`detachPages`), so that page isn't made again while the rest of its copy still is (a copy
+ * folder's delete detaches the whole copy first, `deleteCopySection`). What a loop that went
+ * (its template page deleted) left is cleared (`withoutStaleDetached`).
  */
 export function pruneBrochure(doc: CanvasDocument, removed: ReadonlySet<string>): void {
   const gone: string[] = [];
@@ -28,19 +29,12 @@ export function pruneBrochure(doc: CanvasDocument, removed: ReadonlySet<string>)
     const copies = brochure.slots.filter(
       (slot) => slot.generated && slot.frames.some((frame) => removed.has(frame)),
     );
-    const detach = detachGenerated(brochure, copies, new Set(copies.map((slot) => slot.id)));
-    const freed = freedCopyPatches(
-      doc,
-      id,
-      detach.free.filter((frame) => !removed.has(frame)),
-    );
-    if (freed.size > 0) doc.updateMany(freed);
-    let next: BrochureElement = {
-      ...brochure,
+    const detach = detachPages(brochure, copies, new Set(copies.map((slot) => slot.id)));
+    const kept = withoutStaleDetached({
       slots: removeFrames(detach.slots, removed),
       sections: detach.sections,
-      masters,
-    };
+    });
+    let next: BrochureElement = { ...brochure, ...kept, masters };
     for (const master of goneMasters) next = { ...next, ...withoutMaster(next, master) };
     next = { ...next, sections: keptSections(next.sections, next.slots) };
     const patch: ElementPatch<BrochureElement> = {};

@@ -29,6 +29,12 @@ export interface BrochureRepeat {
    * product 3 of the others alone. Never made again, nor shown on the template.
    */
   detached: string[];
+  /**
+   * Single pages of its copies taken out by hand (detached or deleted), each its `ExpandedPage` id
+   * (`expandedId(from, path)`): no copy is made for them, while the rest of their pass still is.
+   * A detached one's slot (`BrochureSlot.detached`) stands in its place.
+   */
+  detachedPages?: string[];
 }
 
 /** A slot a repeat made: the template slot it copies and the copy keys of every loop around it. */
@@ -40,12 +46,14 @@ export interface GeneratedSlot {
 }
 
 /**
- * A page taken out of a repeat (`BrochureSlot.detached`): it was a copy, its copy path is in its
- * loop's `detached`, and it's now a plain page where it was, outside every run.
+ * A page taken out of a repeat (`BrochureSlot.detached`): it was a copy, and it's now a plain page
+ * outside every run, where the copy was.
  */
 export interface DetachedSlot {
-  /** The loop it was made by: the repeating section's or slot's id. */
+  /** The loop it was made by (the innermost of its path): the repeating section's or slot's id. */
   owner: string;
-  /** Its copy's path (`copyPathKey`), as in the loop's `detached`. */
-  key: string;
+  /** The template slot it copied. */
+  from: string;
+  /** The copy segments it was made for (`GeneratedSlot.path`). */
+  path: string[];
 }

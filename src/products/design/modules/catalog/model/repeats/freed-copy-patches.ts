@@ -2,13 +2,16 @@ import type { CanvasDocument, ElementPatch } from "@canvas";
 
 import { childrenByParent } from "../../../core";
 import { freedPatch } from "../../../data";
+import { pageItemTag } from "../page-items/page-item-fields";
 import { repeatCopyTag } from "./repeat-copy-tag";
 
 /**
  * What frees the pages of copies taken out of a brochure's repeats (`frames`, those still in the
- * document): each layer in them its repeats made (`repeatCopy` naming `brochure`) is untagged,
- * unlocked and loses its data fields (data's `freedPatch`), so it keeps what it shows; a detached
- * page has no row to read. The master copies stamped on them are left to the page items' sync.
+ * document), as data's own detach frees a card: every layer in them is unlocked and loses its data
+ * fields and tags (data's `freedPatch`: `dataCopy`, a card repeater's `repeat` and its cards'
+ * bindings; and the `repeatCopy` of this brochure), so the page keeps what it shows and is all
+ * plain layers; a detached page has no row to read. The master copies stamped on them
+ * (`catalogCopy`) are left to the page items' sync.
  */
 export function freedCopyPatches(
   doc: CanvasDocument,
@@ -24,10 +27,12 @@ export function freedCopyPatches(
   for (let next = queue.shift(); next !== undefined; next = queue.shift()) {
     if (seen.has(next)) continue;
     seen.add(next);
-    queue.push(...(children.get(next) ?? []));
     const el = doc.get(next);
-    if (!el || repeatCopyTag(el)?.brochure !== brochure) continue;
-    patches.set(next, { ...freedPatch(el), repeatCopy: null } as ElementPatch);
+    if (!el || pageItemTag(el)) continue;
+    queue.push(...(children.get(next) ?? []));
+    const patch: Record<string, unknown> = { ...freedPatch(el) };
+    if (repeatCopyTag(el)?.brochure === brochure) patch.repeatCopy = null;
+    if (Object.keys(patch).length > 0) patches.set(next, patch as ElementPatch);
   }
   return patches;
 }

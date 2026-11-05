@@ -8,36 +8,34 @@ import {
 } from "@shared/ui/kit";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { toast } from "@shared/stores/toast-store";
-import { deleteSelectedPages } from "../../mode/delete-selected-pages";
+import { deleteCopySection } from "../../mode/delete-copy-section";
 import { useBrochure } from "../hooks/use-brochure";
 import type { CopyFolderMenuProps } from "./copy-folder-menu.types";
 import { t } from "../../catalog.i18n";
 
 /**
- * A copy section's right-click menu: detach its made pages from the repeat (they stay where they
- * are as normal pages, `removePages`) or delete them (`deleteSelectedPages`); either way its row
- * isn't made again. One undo step each.
+ * A copy section's right-click menu: detach the whole copy from the repeat (its made pages stay
+ * where they are as normal pages, `detachSection`) or delete its pages (`deleteCopySection`);
+ * either way its row isn't made again. One undo step each.
  */
 export function CopyFolderMenu({ folder, children }: CopyFolderMenuProps) {
   const engine = useDesignEngine();
-  const { brochure, pages } = useBrochure();
+  const { brochure } = useBrochure();
   if (!brochure || folder.slots.length === 0) return children;
-  const item = "gap-2 text-xs text-destructive";
+  const id = folder.placed.section.id;
   const remove = () => {
-    const slots = new Set(folder.slots);
-    engine.select(pages.filter((page) => slots.has(page.slot.id)).map((page) => page.frame.id));
-    const kept = deleteSelectedPages(engine);
+    const kept = deleteCopySection(engine, id);
     if (kept > 0) toast({ title: t("mode.deleteKept", { count: kept }) });
   };
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
       <ContextMenuContent className="w-56">
-        <ContextMenuItem className={item} onSelect={() => brochure.removePages(folder.slots)}>
+        <ContextMenuItem className="gap-2 text-xs" onSelect={() => brochure.detachSection(id)}>
           <X className="size-3.5" />
           {t("repeat.detach")}
         </ContextMenuItem>
-        <ContextMenuItem className={item} onSelect={remove}>
+        <ContextMenuItem className="gap-2 text-xs text-destructive" onSelect={remove}>
           <Trash2 className="size-3.5" />
           {t("repeat.deleteCopy")}
         </ContextMenuItem>

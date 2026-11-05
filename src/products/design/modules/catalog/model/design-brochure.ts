@@ -1,104 +1,24 @@
-import type { CanvasDocument, ElementPatch, Point } from "@canvas";
+import type { ElementPatch } from "@canvas";
 
-import {
-  BROCHURE_DEFAULTS,
-  isBrochure,
-  type BrochureElement,
-  type BrochureSettings,
-  type BrochureSlot,
-} from "../brochure";
+import type { BrochureSettings } from "../brochure";
 import type { FrameElement } from "../../frame";
-import { arrangeBrochure, arrangedPages, type ArrangeMode } from "./arrange";
-import { bookLayout } from "./book-layout";
-import type { BookLayout } from "./book-layout.types";
-import { brochurePages } from "./brochure-pages";
-import type { BrochurePage } from "./brochure-pages.types";
-import type { ArrangedListener } from "./design-brochure.types";
+import { BrochurePageEdits } from "./brochure-page-edits";
 import { BrochureMasters } from "./masters/brochure-masters";
-import { keptSections } from "./masters/master-edits";
 import { withSection } from "./sections/section-edits";
 import { brochureLanguage, retranslateItems } from "./language";
-import { brochureExpansion } from "./repeats/brochure-expansion";
-import { detachGenerated } from "./repeats/detach-generated";
-import { freedCopyPatches } from "./repeats/freed-copy-patches";
 import { generatedLayers } from "./repeats/generated-layers";
 import { repeatEdit } from "./repeats/repeat-edits";
 import type { BrochureRepeat } from "./repeats/brochure-repeat.types";
-import type { BrochureExpansion } from "./repeats/expand-brochure.types";
 import type { RepeatTarget } from "./repeats/repeat-edits.types";
-import {
-  addOption,
-  addPages,
-  chooseOption,
-  keepingSlots,
-  moveSlot,
-  moveSlots,
-  pickPages,
-  removeFrames,
-  removeSlots,
-  sameSlots,
-  setOptions,
-} from "./slot-edits";
 
 /**
  * One brochure (a record of `DESIGN_BROCHURES`, which hands these out) and the only place that
  * edits its pages and settings: each edit is one undo step. Frames are kept by id; deleted ones
- * are pruned with their deletion (`pruneBrochure`). Reads go to the document each time, so a
- * handle never holds stale data; once its record is gone it reads as empty and writes nothing.
- * While its `arrange` setting isn't `off`, every edit also lays its frames out on the canvas in the
- * same undo step (`arrangeBrochure`), and what moved is reported to `onArranged`.
+ * are pruned with their deletion (`pruneBrochure`). Its reads, write and arranging are
+ * `BrochureHandle`'s, its page edits `BrochurePageEdits`'; here are its repeats, settings,
+ * sections and masters.
  */
-export class DesignBrochure {
-  constructor(
-    private readonly doc: CanvasDocument,
-    readonly id: string,
-    private readonly onArranged: ArrangedListener = () => {},
-  ) {}
-
-  /** The record, or `undefined` once it's deleted. */
-  record(): BrochureElement | undefined {
-    const el = this.doc.get(this.id);
-    return el && isBrochure(el) ? el : undefined;
-  }
-
-  get name(): string {
-    return this.record()?.name ?? BROCHURE_DEFAULTS.name;
-  }
-
-  /** The design page it belongs to. */
-  get page(): string {
-    return this.record()?.page ?? "";
-  }
-
-  /** The pages, in order, with the frames that still exist on its design page. */
-  pages(): BrochurePage[] {
-    const brochure = this.record();
-    return brochure ? brochurePages(this.doc, brochure) : [];
-  }
-
-  /** How the pages print and are read: sides, spreads, numbers (see `bookLayout`). */
-  layout(): BookLayout {
-    return bookLayout(this.pages(), this.settings());
-  }
-
-  /** The page a frame is printed on or is an option of (never a pending page). */
-  pageOf(frameId: string): BrochurePage | undefined {
-    return this.pages().find(
-      (page) => !page.pending && page.options.some((option) => option.id === frameId),
-    );
-  }
-
-  /** Its pages and sections with its repeats expanded (see `expandBrochure`). */
-  expansion(): BrochureExpansion {
-    const record = this.record();
-    return record ? brochureExpansion(this.doc, record) : { pages: [], sections: [], pending: 0 };
-  }
-
-  /** How many pages its repeats will make at export but haven't ("+36 pages at export"). */
-  pendingPages(): number {
-    return this.expansion().pending;
-  }
-
+export class DesignBrochure extends BrochurePageEdits {
   /**
    * Sets a section's or page's repeat (merged over the one there), or removes it (`null`): the
    * pages its loop made go, frames and slots, and the template pages stay as normal pages. One
@@ -119,25 +39,6 @@ export class DesignBrochure {
     });
   }
 
-  settings(): BrochureSettings {
-    return this.record()?.settings ?? { ...BROCHURE_DEFAULTS.settings };
-  }
-
-  /** Adds a page per frame not in the brochure yet, at `at` (default: the end). */
-  addPages(frames: readonly string[], at?: number): void {
-    this.writeSlots((slots) => addPages(slots, frames, at));
-  }
-
-  /** Adds a new frame to the design as a page at `at` (default: the end), in one undo step. */
-  addNewPage(frame: FrameElement, at?: number): void {
-    this.doc.checkpoint();
-    // One transaction: the frame and its page are one step.
-    this.doc.batch(() => {
-      this.doc.add(frame);
-      this.addPages([frame.id], at);
-    });
-  }
-
   /**
    * Adds a new frame to the design as a page at `at` (default: the end) that starts a section
    * named `name` at `level` (0, the top), in one undo step.
@@ -151,76 +52,6 @@ export class DesignBrochure {
       if (!slot) return;
       this.masters.setSections(withSection(this.masters.sections(), slot.id, level, name));
     });
-  }
-
-  /** Gives a page these options, in order, printing `chosen` (see `setOptions`). */
-  setOptions(slotId: string, frames: readonly string[], chosen?: string): void {
-    this.writeSlots((slots) => setOptions(slots, slotId, frames, chosen));
-  }
-
-  /** Makes a frame an option of a page (taking it off another). */
-  addOption(slotId: string, frame: string): void {
-    this.writeSlots((slots) => addOption(slots, slotId, frame));
-  }
-
-  /** Picks which option of a page is printed. */
-  choose(slotId: string, frame: string): void {
-    this.writeSlots((slots) => chooseOption(slots, slotId, frame));
-  }
-
-  /** Moves a page to `position` (0-based). */
-  move(slotId: string, position: number): void {
-    this.writeSlots((slots) => moveSlot(slots, slotId, position));
-  }
-
-  /** Moves pages together to `position` (0-based, among the others), keeping their order. */
-  moveMany(slotIds: readonly string[], position: number): void {
-    this.writeSlots((slots) => moveSlots(slots, slotIds, position));
-  }
-
-  /**
-   * Takes pages out of the brochure (their frames stay in the design). A page a repeat made is
-   * detached instead (`detachGenerated`): it stays where it is as a plain page, untagged and
-   * unlocked, and its row isn't made again (a section's copy is detached with all its pages).
-   */
-  removePages(slotIds: Iterable<string>): void {
-    const ids = new Set(slotIds);
-    const copies = this.copies((slot) => ids.has(slot.id));
-    for (const slot of copies) ids.delete(slot.id);
-    this.writeSlots((slots) => removeSlots(slots, ids), copies);
-  }
-
-  /** Takes frames out of the brochure (they stay in the design); a copy's is detached (`removePages`). */
-  removeFrames(frames: Iterable<string>): void {
-    const gone = new Set(frames);
-    const copies = this.copies((slot) => slot.frames.some((frame) => gone.has(frame)));
-    const copied = new Set(copies.flatMap((slot) => slot.frames));
-    const out = [...gone].filter((frame) => !copied.has(frame));
-    this.writeSlots((slots) => removeFrames(slots, out), copies);
-  }
-
-  /**
-   * What the pick tool's ticks on its design page make of the brochure (see `pickPages`); a page a
-   * repeat made that's unticked is detached and taken out (`detachGenerated`).
-   */
-  pick(ticked: readonly string[], onPage: ReadonlySet<string>): void {
-    const keep = new Set(ticked);
-    const copies = this.copies((slot) => onPage.has(slot.chosen) && !keep.has(slot.chosen));
-    this.writeSlots((slots) => pickPages(slots, ticked, onPage), copies);
-  }
-
-  /**
-   * Replaces every page (agents' `set_brochure_pages`; the slots are checked by the caller). A page
-   * printing the frame one printed is that one (`keepingSlots`); a page a repeat made that's left
-   * out is detached and taken out (`detachGenerated`).
-   */
-  setSlots(slots: readonly BrochureSlot[]): void {
-    const next = keepingSlots(this.record()?.slots ?? [], slots);
-    const kept = new Set(next.map((slot) => slot.id));
-    this.writeSlots(
-      () => next,
-      this.copies((slot) => !kept.has(slot.id)),
-    );
   }
 
   /**
@@ -246,87 +77,8 @@ export class DesignBrochure {
     });
   }
 
-  /**
-   * Lays the frames out once as the `arrange` setting says (`below` while it's `off`), pushing
-   * other layers out of the way, in one undo step. Returns what moved (empty when it already was).
-   */
-  arrange(): ReadonlyMap<string, Point> {
-    const record = this.record();
-    if (!record) return new Map();
-    const mode = record.settings.arrange === "off" ? "below" : record.settings.arrange;
-    this.doc.checkpoint();
-    let moved = new Map<string, Point>();
-    this.doc.batch(() => {
-      moved = this.arrangeAs(mode);
-    });
-    if (moved.size > 0) this.onArranged(moved);
-    return moved;
-  }
-
-  /**
-   * Lays the frames out again when the `arrange` setting is on (frames may have moved outside the
-   * Catalog mode), in one undo step; nothing while it's off. Returns what moved.
-   */
-  keepArranged(): ReadonlyMap<string, Point> {
-    return this.settings().arrange === "off" ? new Map() : this.arrange();
-  }
-
   /** Its masters, sections and numbering (see `BrochureMasters`). */
   get masters(): BrochureMasters {
     return new BrochureMasters(this.doc, this);
-  }
-
-  /** The pages its repeats made that `test` picks. */
-  private copies(test: (slot: BrochureSlot) => boolean): BrochureSlot[] {
-    return (this.record()?.slots ?? []).filter((slot) => slot.generated && test(slot));
-  }
-
-  /** Writes a slot edit; `copies`, pages its repeats made, are detached with it, in one step. */
-  private writeSlots(
-    edit: (slots: readonly BrochureSlot[]) => BrochureSlot[],
-    copies: readonly BrochureSlot[] = [],
-  ): void {
-    const record = this.record();
-    const current = record?.slots ?? [];
-    if (record && copies.length > 0) {
-      const detach = detachGenerated({ slots: edit(current), sections: record.sections }, copies);
-      const freed = freedCopyPatches(this.doc, record.id, detach.free);
-      this.doc.checkpoint();
-      this.doc.batch(() => {
-        if (freed.size > 0) this.doc.updateMany(freed);
-        this.write({ slots: detach.slots, sections: keptSections(detach.sections, detach.slots) });
-      });
-      return;
-    }
-    const slots = edit(current);
-    if (sameSlots(slots, current)) return;
-    // A section starting on a page that went goes; the one before it runs on.
-    const sections = keptSections(record?.sections ?? [], slots);
-    const changed = sections.length !== (record?.sections.length ?? 0);
-    this.write(changed ? { slots, sections } : { slots });
-  }
-
-  /**
-   * One undo step patching the record (nothing once it's deleted), arranging the frames when
-   * that's on; what follows from it (the pages' master copies) is written by the edit's hooks.
-   */
-  write(patch: ElementPatch<BrochureElement>): void {
-    if (!this.record()) return;
-    this.doc.checkpoint();
-    let moved = new Map<string, Point>();
-    this.doc.batch(() => {
-      this.doc.update(this.id, patch);
-      const { arrange } = this.settings();
-      if (arrange !== "off") moved = this.arrangeAs(arrange);
-    });
-    if (moved.size > 0) this.onArranged(moved);
-  }
-
-  /** Lays the frames out as `mode` says, without a checkpoint (see `arrangeBrochure`). */
-  private arrangeAs(mode: ArrangeMode): Map<string, Point> {
-    const record = this.record();
-    if (!record) return new Map();
-    const pages = arrangedPages(brochurePages(this.doc, record));
-    return arrangeBrochure(this.doc, record, bookLayout(pages, record.settings), pages, mode);
   }
 }

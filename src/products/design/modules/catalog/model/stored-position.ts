@@ -5,9 +5,10 @@ import type { BrochurePage } from "./brochure-pages.types";
  * Where a place among the pages shown (`at`, 0-based among `pages` without `moving`, as the page
  * list and agents count them: pending and not printed pages included) falls among the stored
  * slots (among `slots` without `moving`, what `moveMany` and `addPages` take), so a page put after
- * a run of pending pages lands after it: before the first stored page at or after `at` (`next`,
- * else last), or before the last stored page at or before `at` (`previous`, moving up past such
- * a run, else first).
+ * a run of pending pages lands after it. Copies (made or pending) are passed over: their stored
+ * place isn't theirs to keep, as the sync puts them back after their template. The place is
+ * before the first other stored page at or after `at` (`next`, else last), or before the last at
+ * or before `at` (`previous`, moving up past a run, else first).
  */
 export function storedPosition(
   slots: readonly BrochureSlot[],
@@ -22,7 +23,7 @@ export function storedPosition(
   );
   const shown = pages.filter((page) => !skip.has(page.slot.id));
   const indexOf = (page: BrochurePage | undefined) =>
-    page && !page.pending ? stored.get(page.slot.id) : undefined;
+    page && !page.pending && !page.slot.generated ? stored.get(page.slot.id) : undefined;
   if (toward === "previous") {
     for (let i = Math.min(at, shown.length - 1); i >= 0; i--) {
       const index = indexOf(shown[i]);

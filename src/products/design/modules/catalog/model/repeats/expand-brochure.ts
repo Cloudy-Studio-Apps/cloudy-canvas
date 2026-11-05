@@ -5,7 +5,7 @@ import { copyName } from "./copy-name";
 import { expandedId } from "./expanded-id";
 import { loopContexts } from "./loop-contexts";
 import { rowsPerPage } from "./loop-units";
-import { placeDetached } from "./place-detached";
+import { detachedPage, placeDetached } from "./place-detached";
 import { repeatTree } from "./repeat-tree";
 import type { BrochureExpansion, ExpandedPage, ExpandedSection } from "./expand-brochure.types";
 import type { ExpandContext, RepeatNode, RepeatSectionNode } from "./repeat-tree.types";
@@ -17,9 +17,11 @@ import type { ExpandContext, RepeatNode, RepeatSectionNode } from "./repeat-tree
  * `perPage` rows; inner repeats expand inside each copy. While designing the template pages show
  * the preview row, a few copies are made and the rest are pending (`made: false`), planned in full
  * (their own inner loops too) so page counts and numbers are right; in an export all are made.
- * Section names read their tokens in each copy's scope, in the brochure's language. Copies taken
- * out of a repeat (`detached`) are plain pages where they were (`placeDetached`). Pure: nothing
- * is written.
+ * Section names read their tokens in each copy's scope, in the brochure's language. A page taken
+ * out of a repeat by hand (its id in its loop's `detachedPages`) isn't made: its detached slot, if
+ * it was detached rather than deleted, stands in its place as a plain page; pages of whole copies
+ * taken out (`detached`) are plain pages after the slot before them (`placeDetached`). Pure:
+ * nothing is written.
  */
 export function expandBrochure(
   record: Pick<BrochureElement, "slots" | "sections" | "settings">,
@@ -29,10 +31,31 @@ export function expandBrochure(
   const locale = brochureLanguage(record.settings);
   const pages: ExpandedPage[] = [];
   const sections: ExpandedSection[] = [];
+  // Single copies taken out by hand: none is made; a detached one stands in its place.
+  const skipped = new Set<string>();
+  for (const item of [...record.sections, ...record.slots]) {
+    for (const id of item.repeat?.detachedPages ?? []) skipped.add(id);
+  }
+  const standIns = new Map<string, BrochureSlot>();
+  for (const slot of record.slots) {
+    const { detached } = slot;
+    const id = detached ? expandedId(detached.from, detached.path) : "";
+    if (detached && !slot.generated && skipped.has(id) && !standIns.has(id)) standIns.set(id, slot);
+  }
+  const placed = new Set<string>();
 
   const page = (slot: BrochureSlot, ctx: ExpandContext) => {
+    const id = expandedId(slot.id, ctx.path);
+    if (ctx.path.length > 0 && skipped.has(id)) {
+      const standIn = standIns.get(id);
+      if (standIn) {
+        pages.push(detachedPage(standIn));
+        placed.add(standIn.id);
+      }
+      return;
+    }
     pages.push({
-      id: expandedId(slot.id, ctx.path),
+      id,
       from: slot.id,
       path: ctx.path,
       layers: ctx.layers,
@@ -84,6 +107,6 @@ export function expandBrochure(
   };
 
   walk(repeatTree(record), { scope: root, layers: [], path: [], made: true, printed: true });
-  placeDetached(record, pages, sections);
+  placeDetached(record, pages, sections, placed);
   return { pages, sections, pending: pages.filter((item) => !item.made && item.printed).length };
 }

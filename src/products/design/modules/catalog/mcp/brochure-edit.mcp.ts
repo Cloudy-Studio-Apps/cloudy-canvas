@@ -25,8 +25,8 @@ export const brochureEditTools: DesignMcpTool[] = [
       "frames that could be it (`frames`, its options) and the one printed (`chosen`, the first " +
       "by default). Frames must be on the brochure's design page; a frame can be in one page only. " +
       "A page printing the frame a page printed stays that page (its sections, master and " +
-      "repeat). A page a repeat made that's left out is detached from its repeat (its row isn't " +
-      "made again, and the other pages of a repeated section's copy stay as normal pages). " +
+      "repeat). A page a repeat made that's left out is detached from its repeat: that page " +
+      "isn't made again (the rest of its copy still is) and its frame stays as a normal frame. " +
       "The frames themselves don't change.",
     inputSchema: {
       type: "object",
@@ -142,8 +142,8 @@ export const brochureEditTools: DesignMcpTool[] = [
     description:
       "Takes pages (by `positions`, from 1) out of the brochure with their options, in one undo " +
       "step. Their frames stay in the design. A page a repeat made isn't taken out but detached: " +
-      "it stays where it is as a normal page, unlocked, and its row isn't made again (a repeated " +
-      "section's copy is detached with all its pages). Returns the brochure.",
+      "it stays where it is as a normal page, unlocked, and that page isn't made again (the rest " +
+      "of its copy still is). Returns the brochure.",
     inputSchema: {
       type: "object",
       required: ["brochure", "positions"],

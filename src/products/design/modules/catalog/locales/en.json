@@ -374,7 +374,7 @@
     "showTemplate": "Show the template page",
     "generatedMove": "Pages a repeat made follow their template, so they can't be moved. Detach one from the repeat to move it on its own.",
     "detach": "Detach from the repeat",
-    "detachHint": "Detached, it stays here as a normal page you can edit, and the repeat doesn't make its row again. A copy of a repeated section is detached with all its pages.",
+    "detachHint": "Detached, it stays here as a normal page you can edit, and the repeat doesn't make this page again. The rest of its copy still follows the template; to detach a whole copy of a repeated section, use its folder's menu.",
     "deleteCopy": "Delete this copy's pages"
   }
 }

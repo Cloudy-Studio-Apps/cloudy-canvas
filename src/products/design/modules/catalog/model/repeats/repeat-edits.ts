@@ -2,6 +2,7 @@ import type { BrochureElement, BrochureSlot } from "../../brochure";
 import type { BrochureRepeat } from "./brochure-repeat.types";
 import { segmentOwner } from "./copy-segment";
 import type { RepeatEdit, RepeatTarget } from "./repeat-edits.types";
+import { withoutStaleDetached } from "./stale-detached";
 
 /** A repeat as it reads with nothing set yet. */
 const EMPTY: BrochureRepeat = { source: "", as: "", filter: [], sort: [], detached: [] };
@@ -20,8 +21,9 @@ function without<T extends { repeat?: BrochureRepeat }>(item: T): T {
 /**
  * A section's or page's repeat set (`repeat` merged over the one there; a list to read is
  * required) or removed (`null`: the copies its loop made go, the template pages stay as normal
- * pages). `null` when nothing changes. Throws for a section or page that isn't in the brochure,
- * a copy a repeat made (or one taken out of it), or a repeat with no list. Pure.
+ * pages, and so do the pages taken out of it by hand when no other loop holds them). `null` when
+ * nothing changes. Throws for a section or page that isn't in the brochure, a copy a repeat made
+ * (or one taken out of it), or a repeat with no list. Pure.
  */
 export function repeatEdit(
   record: Pick<BrochureElement, "slots" | "sections">,
@@ -39,12 +41,13 @@ export function repeatEdit(
   if (repeat === null) {
     if (!current) return null;
     const gone = record.slots.filter((item) => madeBy(item, id));
-    const slots = record.slots.filter((item) => !madeBy(item, id));
-    if (section) {
-      const sections = record.sections.map((item) => (item.id === id ? without(item) : item));
-      return { sections, slots, gone };
-    }
-    return { slots: slots.map((item) => (item.id === id ? without(item) : item)), gone };
+    const kept = record.slots.filter((item) => !madeBy(item, id));
+    // What it left: its pages taken out by hand, inner loops' keys through it.
+    const { slots, sections } = withoutStaleDetached({
+      slots: section ? kept : kept.map((item) => (item.id === id ? without(item) : item)),
+      sections: record.sections.map((item) => (item.id === id ? without(item) : item)),
+    });
+    return { sections, slots, gone };
   }
 
   // A field set to `undefined` is taken out (a key, a cap), so the record holds no gaps.
