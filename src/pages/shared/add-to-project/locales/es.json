@@ -35,7 +35,7 @@
   "failed": {
     "add": "No se pudo añadir el archivo al proyecto",
     "open": "No se pudo abrir el archivo",
-    "original": "El archivo ya está en el proyecto, pero no se pudo eliminar el original. Sigue en {path}."
+    "original": "El archivo ya está en el proyecto, pero no se pudo mover el original a la papelera del proyecto. Sigue en {path}."
   },
   "inProject": "«{name}» ya está en un proyecto"
 }

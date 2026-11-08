@@ -56,7 +56,8 @@ export interface ProjectFs {
   exists(path: string): Promise<boolean>;
   /**
    * Deletes a file for good (not a folder): the original of a file added to a project, once its
-   * copy in the project is written. Throws for a folder.
+   * copy in the project and a copy in the project's trash (`copyToTrash`) are written. Throws for
+   * a folder.
    */
   removeFile(path: string): Promise<void>;
   makeHidden(path: string): Promise<void>;

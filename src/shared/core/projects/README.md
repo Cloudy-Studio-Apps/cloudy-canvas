@@ -69,4 +69,5 @@ project home writes the manifest back to that file and renaming the project rena
 unreadable manifests, and returns the nearest one whose `id` is `id` or whose `copiedFrom` is
 (`FoundManifest`, with its `root`). `samePath` and `isPathInside` compare absolute paths of either
 separator style, ignoring case for Windows-style ones (`relativeTo` uses the same rule). `removeFile(path)` deletes a file for good (never a folder): only the original of a file
-added to a project, once its copy in the project is written.
+added to a project, once its copy in the project and a copy in its trash (`copyToTrash(root, name,
+bytes)`, restored to the project's root) are written.

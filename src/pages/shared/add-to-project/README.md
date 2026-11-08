@@ -32,8 +32,9 @@ file's Add to project…) and the project home (New ▾ › Add existing file…
   library's save (`hub.flush`), sets the link, then writes the file: in place when it's in the chosen
   folder already, else as a new file there (`targetPath`: its name made free; a draft is named after
   its title) through `storage.save`, which points the recent file at it (same id, with the project
-  id) and drops a draft's own file. Only then is the original deleted (`projectFs.removeFile`); if
-  that fails a toast says where it still is. Anything failing before the copy is written leaves the
+  id) and drops a draft's own file. Only then does the original go, into the project's trash: a copy
+  of its bytes with `projectFs.copyToTrash` (restoring it puts it in the project's root under its
+  name), then `projectFs.removeFile`; if that fails a toast says where it still is. Anything failing before the copy is written leaves the
   original untouched. `close` waits for a running commit.
 
 Its strings are `t` from `add-to-project.i18n.ts` (`locales/`).

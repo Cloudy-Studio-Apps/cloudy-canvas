@@ -8,7 +8,7 @@ import {
 } from "@canvas";
 import { LibraryHub, type OpenedHub } from "@canvas-ui";
 import { projectFs, storage } from "@platform";
-import { displayName, type FileInfo, type ProjectRecord } from "@shared/core";
+import { displayName, fileNameFromPath, type FileInfo, type ProjectRecord } from "@shared/core";
 import { notifyError } from "@shared/stores/toast-store";
 import { libraryColorList } from "@pages/shared/projects";
 import { t } from "./add-to-project.i18n";
@@ -94,7 +94,8 @@ export class MergeSession {
   /**
    * Merges the file's styles and pictures into the library (saved before anything else), links
    * the file to the project and writes it into `folder`: in place when it's there already, else
-   * as a new file there, the recent files pointed at it (same id), and then the original deleted.
+   * as a new file there, the recent files pointed at it (same id), and then the original moved
+   * to the project's trash.
    * A failure before the copy is written leaves the original as it was. Returns the file's entry.
    * A session commits once; `close` waits for it.
    */
@@ -150,9 +151,12 @@ export class MergeSession {
       description,
       projectId: project.id,
     });
-    // A draft's own file went with the save; another file's original goes now.
+    // A draft's own file went with the save; another file's original goes now, into the
+    // project's trash (a copy of its bytes, restored to the project's root), never for good.
     if (path !== file.path && !file.draft) {
       try {
+        const bytes = await projectFs.readBytes(file.path);
+        await projectFs.copyToTrash(project.root, fileNameFromPath(file.path), bytes);
         await projectFs.removeFile(file.path);
       } catch (error) {
         notifyError(t("failed.original", { path: file.path }), error);

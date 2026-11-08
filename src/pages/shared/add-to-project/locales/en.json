@@ -35,7 +35,7 @@
   "failed": {
     "add": "The file couldn't be added to the project",
     "open": "The file couldn't be opened",
-    "original": "The file is in the project now, but its original couldn't be deleted. It's still at {path}."
+    "original": "The file is in the project now, but its original couldn't be moved to the project's trash. It's still at {path}."
   },
   "inProject": "“{name}” is already in a project"
 }
