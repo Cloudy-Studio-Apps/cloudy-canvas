@@ -238,10 +238,11 @@ function fileEntry(
   meta: FileMeta | undefined,
 ): FileInfo {
   const now = new Date().toISOString();
-  const { title, description } = meta ?? previous ?? {};
+  const { title, description, projectId } = meta ?? previous ?? {};
   return {
     ...(title && { title }),
     ...(description && { description }),
+    ...(projectId && { projectId }),
     id,
     name,
     type,

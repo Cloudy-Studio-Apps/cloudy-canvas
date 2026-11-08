@@ -40,6 +40,10 @@ field, drops unknown ones and defaults `cover` to null and `folders` to `{}`.
 
 A file saved inside a project carries `FileMeta.projectId`, so it can find its project again.
 
+## Registry (`ProjectRegistry`)
+
+The projects this device knows are `ProjectRecord`s (`id`, `name`, `root`, `color`, `pinned`, `openedAt`) in `<appData>/projects.json`, implemented in `platform/tauri-project-registry.ts` (exported as `projectRegistry`). Records are validated on read (`isProjectRecord`), writes are atomic and queued, and an unreadable file is set aside as `projects.corrupt.json`. `useProjectsStore` (`shared/stores`) is the UI side. A file's index entry keeps `projectId` when saved with it.
+
 ## Disk access (`ProjectFs`)
 
 Implemented in `platform/tauri-project-fs.ts` (exported as `projectFs` from `@platform`) with the
@@ -48,5 +52,5 @@ Tauri fs plugin. `scan` lists one level and skips dotfiles and the `.cproject`. 
 an item to `.cloudy/trash/<entry id>/<name>`, records it in `index.json` and refuses anything inside
 `.cloudy`. Text and bytes are written atomically (`platform/write-atomic.ts`: a `.tmp` file renamed
 over the target, writes to one path queued). `makeHidden` calls the `set_hidden` command (Windows
-hidden attribute; no-op elsewhere). `findManifestAbove` walks up from a file, skipping unreadable
+hidden attribute; no-op elsewhere). `readManifest(root)` reads the project in a folder. `findManifestAbove` walks up from a file to the top of its drive or share, skipping unreadable
 manifests.

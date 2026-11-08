@@ -1,3 +1,4 @@
+import type { ProjectManifest } from "./project-manifest.types";
 import type { TrashEntry } from "./trash-index.types";
 
 export interface ProjectEntry {
@@ -30,6 +31,8 @@ export interface ProjectFs {
   writeBytesAtomic(path: string, bytes: Uint8Array): Promise<void>;
   exists(path: string): Promise<boolean>;
   makeHidden(path: string): Promise<void>;
+  /** The manifest of the project whose `.cproject` is in `root`; null when there is none or it is unreadable. */
+  readManifest(root: string): Promise<ProjectManifest | null>;
   /** The folder holding a `.cproject` whose `id` is `projectId`, walking up from `filePath`; null if none. */
   findManifestAbove(filePath: string, projectId: string): Promise<string | null>;
 }

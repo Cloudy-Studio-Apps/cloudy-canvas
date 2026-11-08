@@ -52,10 +52,31 @@ export async function sizeOfTree(path: string): Promise<number> {
   return total;
 }
 
-/** The folder containing `path`, or null at the top. */
+/** The drive (`C:`), UNC share (`\\server\share`) or `/` a path starts with; null for a relative path. */
+function rootOf(path: string): string | null {
+  const unc = /^[\\/]{2}[^\\/]+[\\/][^\\/]+/.exec(path);
+  if (unc) return unc[0];
+  const drive = /^[A-Za-z]:/.exec(path);
+  if (drive) return drive[0];
+  return path.startsWith("/") ? "" : null;
+}
+
+/**
+ * The folder containing `path`, or null at the top. The top of a Windows drive is `C:\`, of a
+ * share `\\server\share\`, of a Unix path `/`; a bare `C:` goes to `C:\` (never to the drive's
+ * current directory).
+ */
 export function parentPath(path: string): string | null {
-  const parent = path.replace(/[\\/]+[^\\/]*$/, "");
-  if (parent === path) return null;
-  if (parent === "") return path.startsWith("/") && path !== "/" ? "/" : null;
-  return parent;
+  const root = rootOf(path);
+  if (root === null) {
+    const parent = path.replace(/[\\/]+[^\\/]*$/, "");
+    return parent === path || parent === "" ? null : parent;
+  }
+  const sep = path.includes("\\") ? "\\" : path.includes("/") ? "/" : "\\";
+  const top = root === "" ? "/" : `${root}${sep}`;
+  const trimmed = path.replace(/[\\/]+$/, "");
+  if (trimmed.length <= root.length) return path === top ? null : top;
+  const cut = Math.max(trimmed.lastIndexOf("/"), trimmed.lastIndexOf("\\"));
+  const parent = trimmed.slice(0, cut);
+  return parent.length <= root.length ? top : parent;
 }

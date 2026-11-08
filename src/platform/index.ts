@@ -37,3 +37,4 @@ export { pickFolder } from "./pick-folder";
 export { pluginStorage } from "./plugin-storage";
 export { openFile } from "./open-file";
 export { projectFs } from "./project-fs";
+export { projectRegistry } from "./project-registry";

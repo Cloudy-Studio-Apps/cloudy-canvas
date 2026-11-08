@@ -24,6 +24,7 @@ import {
   uniqueName,
   type ProjectEntry,
   type ProjectFs,
+  type ProjectManifest,
   type TrashEntry,
 } from "@shared/core";
 import {
@@ -207,24 +208,33 @@ export class TauriProjectFs implements ProjectFs {
     return null;
   }
 
+  async readManifest(root: string): Promise<ProjectManifest | null> {
+    return (await this.manifestsIn(root))[0] ?? null;
+  }
+
   /** Whether `dir` holds a `.cproject` with this id; unreadable ones don't count. */
   private async hasManifest(dir: string, projectId: string): Promise<boolean> {
+    return (await this.manifestsIn(dir)).some((manifest) => manifest.id === projectId);
+  }
+
+  /** The readable manifests of the `.cproject` files directly in `dir`. */
+  private async manifestsIn(dir: string): Promise<ProjectManifest[]> {
     let items;
     try {
       items = await readDir(dir);
     } catch {
-      return false;
+      return [];
     }
+    const found: ProjectManifest[] = [];
     for (const item of items) {
       if (!item.isFile || !item.name.toLowerCase().endsWith(`.${PROJECT_EXTENSION}`)) continue;
       try {
-        const manifest = parseManifest(await readTextFile(childPath(dir, item.name)));
-        if (manifest.id === projectId) return true;
+        found.push(parseManifest(await readTextFile(childPath(dir, item.name))));
       } catch {
         // Not a readable manifest: keep looking.
       }
     }
-    return false;
+    return found;
   }
 
   /** Makes `.cloudy` (hidden on Windows) when the project has none yet. */
