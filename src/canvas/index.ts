@@ -189,6 +189,7 @@ export {
 } from "./tools";
 export {
   bytesToBase64,
+  deepEqual,
   clamp,
   debounce,
   Emitter,

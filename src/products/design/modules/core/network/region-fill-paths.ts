@@ -1,3 +1,5 @@
+import { deepEqual } from "@canvas";
+
 import type { VectorNetwork } from "./network.types";
 
 const PREFIX = "network.regions.";
@@ -19,8 +21,10 @@ export const REGIONS_FIELD = "network.regions";
 
 /**
  * Where each area of `before` is in `after`, for bindings to follow them: the same index while the
- * count stays (edits that keep areas keep their order), else the area keeping the same fills
- * (edits copy an area's fills along), else gone.
+ * count stays (edits that keep areas keep their order); else, as edits only drop areas or add them
+ * at the end, each area with fills of its own matched in order to the next area of `after` with
+ * the same fills (by value, so an agent's JSON matches too). Areas without fills of their own carry
+ * no bindings and map nowhere.
  */
 export function regionIndexMap(
   before: VectorNetwork,
@@ -29,10 +33,19 @@ export function regionIndexMap(
   if (before.regions.length === after.regions.length) {
     return (i) => (i < after.regions.length ? i : null);
   }
-  return (i) => {
-    const fills = before.regions[i]?.fills;
-    if (!fills) return null;
-    const found = after.regions.findIndex((region) => region.fills === fills);
-    return found >= 0 ? found : null;
-  };
+  const moved = new Map<number, number>();
+  let next = 0;
+  before.regions.forEach((region, i) => {
+    const fills = region.fills;
+    if (!fills) return;
+    for (let j = next; j < after.regions.length; j++) {
+      const other = after.regions[j]?.fills;
+      if (other && (other === fills || deepEqual(other, fills))) {
+        moved.set(i, j);
+        next = j + 1;
+        return;
+      }
+    }
+  });
+  return (i) => moved.get(i) ?? null;
 }
