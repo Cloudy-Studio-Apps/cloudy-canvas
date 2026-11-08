@@ -24,8 +24,12 @@ the libraries, saving them, when to sync) is in [canvas-ui/libraries/](../../can
   adds the tag a file stores, `untaggedRecord` drops it for the library. Every token record kind
   takes the tag (axes, collections, variables, styles, generators, scales).
 - **A mode axis's `current` is the file's own view:** `libraryEditsOf` ignores a change of only that and puts axes without it (`withoutView`), and `mirrorLibraries` keeps the file's `current` when the library's axis still has the mode (`withFileView`), so switching modes never reaches a library or other files, and works while the libraries aren't open.
-- **Which libraries (`librariesUsedBy(link, entries)`):** a link with `libraryIds: "all"` uses the
-  manifest's libraries with `autoAdd`; a list uses those of them the project still has.
+- **Which libraries (`librariesUsedBy(link, entries, held)`):** a link with `libraryIds: "all"`
+  uses the manifest's libraries with `autoAdd` plus every manifest library the file already holds
+  tagged records of (`held`, from `heldLibraries(doc)`): the rule is sticky, so turning a library's
+  `autoAdd` off only stops it reaching `"all"` files that don't have it yet (files that already use
+  it keep it), while a new `autoAdd` library still arrives in every `"all"` file. A list is exact:
+  the libraries listed that the project still has.
 - **`mirrorLibraries(doc, libraries, readBytes, { keep, usedAssets })`:** makes the file match the
   libraries: each library record is stored tagged (the library wins), tagged records that are no
   longer in a used library (deleted there, or the file stopped using it, or the project deleted the

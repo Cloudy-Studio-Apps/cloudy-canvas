@@ -182,7 +182,7 @@
     "nameTaken": "Otra biblioteca ya tiene ese nombre.",
     "usedBy_one": "Usada por {count} archivo",
     "usedBy_other": "Usada por {count} archivos",
-    "usedManual": "Usada por los archivos que la activan",
+    "usedManual": "Usada por los archivos que la tienen o la activan",
     "aa": "Aa",
     "sample": "El veloz zorro marrón",
     "facts": {
@@ -215,6 +215,10 @@
       "autoOff": "No añadir a los archivos nuevos",
       "delete": "Eliminar…"
     },
+    "autoOff": {
+      "title": "¿Dejar de añadir «{name}» a los archivos nuevos?",
+      "text": "Los archivos que ya la usan la conservan. Los archivos nuevos, y los que aún no la tienen, la activan desde su menú de bibliotecas."
+    },
     "rename": {
       "title": "Renombrar biblioteca",
       "description": "Cambia el nombre de la biblioteca y el de su archivo."
@@ -223,7 +227,7 @@
       "title": "¿Eliminar «{name}»?",
       "text_one": "La usa {count} archivo. El archivo conserva los colores y estilos que tiene, pero deja de seguir la biblioteca. Puedes restaurarla desde la papelera.",
       "text_other": "La usan {count} archivos. Los archivos conservan los colores y estilos que tienen, pero dejan de seguir la biblioteca. Puedes restaurarla desde la papelera.",
-      "textManual": "Los archivos que la activaron conservan los colores y estilos que tienen, pero dejan de seguir la biblioteca. Puedes restaurarla desde la papelera."
+      "textManual": "Los archivos que la usan conservan los colores y estilos que tienen, pero dejan de seguir la biblioteca. Puedes restaurarla desde la papelera."
     },
     "removed": "«{name}» se movió a la papelera del proyecto",
     "imported_one": "Se añadió {count} elemento de {name}",
@@ -253,7 +257,7 @@
       "chosen": "Archivo: {name}",
       "copyOf": "Biblioteca que copiar",
       "autoAdd": "Añadirla a todos los archivos",
-      "autoAddHint": "Los archivos nuevos, y los que usan todas las bibliotecas, la toman. Desactivado: cada archivo la activa desde su menú de bibliotecas.",
+      "autoAddHint": "Los archivos nuevos, y los que usan todas las bibliotecas, la toman. Desactivado: los archivos que ya la usan la conservan, y los demás la activan desde su menú de bibliotecas.",
       "create": "Crear biblioteca",
       "creating": "Creando…"
     },

@@ -21,4 +21,4 @@ export { moveToLibrary } from "./move-to-library";
 export type * from "./move-to-library.types";
 export { revertLibraryEdits } from "./revert-library-edits";
 export { writeUntracked } from "./untracked";
-export { librariesUsedBy } from "./used-libraries";
+export { heldLibraries, librariesUsedBy } from "./used-libraries";

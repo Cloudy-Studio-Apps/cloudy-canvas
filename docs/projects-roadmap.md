@@ -29,3 +29,4 @@ What Projects and libraries (see [the design](superpowers/specs/2026-11-08-proje
 - Adding a file to a project keeps library records already written if the file write then fails (a retry is idempotent) and deletes the original once the copy is written.
 - On Windows, `set_hidden` (the `.cloudy` hidden attribute) uses `attrib +h` and has not been run on a real machine.
 - `library-hub.ts` is past the ~200 line guideline.
+- A file using all the project's libraries keeps a library that stopped being added to new files only while it holds some of its items: one whose items were all deleted meanwhile isn't kept, and it no longer gets that library's new items.

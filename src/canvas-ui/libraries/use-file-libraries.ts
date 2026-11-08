@@ -1,6 +1,6 @@
 import { useEffect, useReducer } from "react";
 
-import { detachLibrary, librariesUsedBy, libraryUsers } from "@canvas";
+import { detachLibrary, heldLibraries, librariesUsedBy, libraryUsers } from "@canvas";
 import { useEngine } from "../engine-context";
 import { notifyError } from "@shared/stores/toast-store";
 import { useProjectLibrariesState } from "./project-libraries-context";
@@ -26,7 +26,7 @@ export function useFileLibraries(): FileLibraries {
     a.order < b.order ? -1 : a.order > b.order ? 1 : 0,
   );
   const link = doc.projectLink();
-  const used = new Set(link ? librariesUsedBy(link, entries) : []);
+  const used = new Set(link ? librariesUsedBy(link, entries, heldLibraries(doc)) : []);
   const unreadable = hub?.unreadable() ?? new Set<string>();
 
   const setUsed = (libraryId: string, on: boolean) => {

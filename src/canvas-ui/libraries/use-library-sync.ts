@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 
 import {
+  heldLibraries,
   librariesUsedBy,
   libraryEditsOf,
   mirrorLibraries,
@@ -31,7 +32,7 @@ export function useLibrarySync<O extends object>(
 
     const used = (): string[] => {
       const link = doc.projectLink();
-      return link ? librariesUsedBy(link, hub.entries()) : [];
+      return link ? librariesUsedBy(link, hub.entries(), heldLibraries(doc)) : [];
     };
     const readBytes = async (library: LibraryDocument, asset: { id: string }) => {
       try {

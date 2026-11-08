@@ -16,11 +16,15 @@ import { usedByCount } from "./library-usage";
 import { RenameLibraryDialog } from "./rename-library-dialog";
 import { t } from "../project.i18n";
 
-/** A library's ⋯ menu: Rename…, whether new files take it, and Delete… (asks first). */
+/**
+ * A library's ⋯ menu: Rename…, whether new files take it (turning it off asks first: files that
+ * already use it keep it), and Delete… (asks first).
+ */
 export function LibraryMenu({ library }: LibraryMenuProps) {
   const { libraryActions, fileCount } = useProjectContext();
   const [renaming, setRenaming] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [stopping, setStopping] = useState(false);
   const { entry } = library;
   const used = usedByCount(entry, fileCount);
 
@@ -38,7 +42,9 @@ export function LibraryMenu({ library }: LibraryMenuProps) {
             {t("libraries.menu.rename")}
           </DropdownMenuItem>
           <DropdownMenuItem
-            onSelect={() => void libraryActions.setAutoAdd(library, !entry.autoAdd)}
+            onSelect={() =>
+              entry.autoAdd ? setStopping(true) : void libraryActions.setAutoAdd(library, true)
+            }
           >
             {t(entry.autoAdd ? "libraries.menu.autoOff" : "libraries.menu.autoOn")}
           </DropdownMenuItem>
@@ -53,6 +59,14 @@ export function LibraryMenu({ library }: LibraryMenuProps) {
         </DropdownMenuContent>
       </DropdownMenu>
       <RenameLibraryDialog open={renaming} onOpenChange={setRenaming} library={library} />
+      <ConfirmDialog
+        open={stopping}
+        onOpenChange={setStopping}
+        title={t("libraries.autoOff.title", { name: entry.name })}
+        description={t("libraries.autoOff.text")}
+        confirmLabel={t("libraries.menu.autoOff")}
+        onConfirm={() => void libraryActions.setAutoAdd(library, false)}
+      />
       <ConfirmDialog
         open={deleting}
         onOpenChange={setDeleting}

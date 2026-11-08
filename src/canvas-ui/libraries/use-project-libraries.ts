@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import { useSearchParams } from "react-router";
 
 import {
+  heldLibraries,
   librariesUsedBy,
   type CanvasEngine,
   type LibraryDocument,
@@ -46,6 +47,14 @@ export function useProjectLibraries<O extends object>(
     JSON.stringify(doc.projectLink()?.libraryIds ?? null),
   );
   const projectId = linked ?? newProject;
+  // The libraries the file holds items of: an `"all"` link keeps using them (`librariesUsedBy`).
+  const subscribeTokens = useCallback(
+    (listener: () => void) => doc.observeTokens(() => listener()),
+    [doc],
+  );
+  const held = useSyncExternalStore(subscribeTokens, () =>
+    [...heldLibraries(doc)].sort().join("\n"),
+  );
 
   const [attempt, setAttempt] = useState(0);
   const request = `${projectId}:${attempt}`;
@@ -97,12 +106,12 @@ export function useProjectLibraries<O extends object>(
     const libraryIds = JSON.parse(used) as ProjectLink["libraryIds"] | null;
     const ids =
       hub && projectId && libraryIds
-        ? librariesUsedBy({ projectId, libraryIds }, hub.entries())
+        ? librariesUsedBy({ projectId, libraryIds }, hub.entries(), new Set(held.split("\n")))
         : [];
     const libraries = ids.flatMap((id): LibraryDocument[] => {
       const library = hub?.library(id);
       return library ? [library] : [];
     });
     return { status, projectId, project, hub, libraries, locate };
-  }, [used, hub, status, projectId, project, locate]);
+  }, [used, held, hub, status, projectId, project, locate]);
 }

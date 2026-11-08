@@ -182,7 +182,7 @@
     "nameTaken": "Another library already has that name.",
     "usedBy_one": "Used by {count} file",
     "usedBy_other": "Used by {count} files",
-    "usedManual": "Used by the files that turn it on",
+    "usedManual": "Used by the files that have it or turn it on",
     "aa": "Aa",
     "sample": "The quick brown fox",
     "facts": {
@@ -215,6 +215,10 @@
       "autoOff": "Don't add to new files",
       "delete": "Delete…"
     },
+    "autoOff": {
+      "title": "Stop adding “{name}” to new files?",
+      "text": "Files that already use it keep it. New files, and files that don't have it yet, turn it on from their libraries menu."
+    },
     "rename": {
       "title": "Rename library",
       "description": "Changes the library's name and its file."
@@ -223,7 +227,7 @@
       "title": "Delete “{name}”?",
       "text_one": "Used by {count} file. The file keeps the colors and styles it has but stops following the library. You can restore the library from the trash.",
       "text_other": "Used by {count} files. The files keep the colors and styles they have but stop following the library. You can restore the library from the trash.",
-      "textManual": "Files that turned it on keep the colors and styles they have but stop following the library. You can restore the library from the trash."
+      "textManual": "Files that use it keep the colors and styles they have but stop following the library. You can restore the library from the trash."
     },
     "removed": "“{name}” was moved to the project's trash",
     "imported_one": "Added {count} item from {name}",
@@ -253,7 +257,7 @@
       "chosen": "File: {name}",
       "copyOf": "Library to copy",
       "autoAdd": "Add it to every file",
-      "autoAddHint": "New files, and files that use all the libraries, take it. Off: a file turns it on from its libraries menu.",
+      "autoAddHint": "New files, and files that use all the libraries, take it. Off: files that already use it keep it, and another file turns it on from its libraries menu.",
       "create": "Create library",
       "creating": "Creating…"
     },
