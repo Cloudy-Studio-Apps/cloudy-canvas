@@ -15,9 +15,9 @@ export function startSession(flow: PrototypeFlowElement, at?: string): PlayerSta
   return { flow: flow.id, stack: [{ screen: at ?? flow.start, via: null }], overlays: [] };
 }
 
-/** The screen shown under the overlays. */
-export function currentScreen(state: PlayerState): string {
-  return state.stack.at(-1)?.screen ?? "";
+/** The screen shown under the overlays (`null` only for a state built by hand with an empty stack). */
+export function currentScreen(state: PlayerState): string | null {
+  return state.stack.at(-1)?.screen ?? null;
 }
 
 /**
@@ -39,6 +39,7 @@ export function applyInteraction(
     case "navigate": {
       if (target === null) return none;
       const from = currentScreen(state);
+      if (from === null) return none;
       return {
         state: {
           ...state,
@@ -56,14 +57,15 @@ export function applyInteraction(
         };
       }
       const popped = state.stack.at(-1);
-      if (state.stack.length < 2 || !popped) return none;
       const next = state.stack.slice(0, -1);
+      const prev = next.at(-1);
+      if (!popped || !prev) return none;
       return {
         state: { ...state, stack: next },
         step: {
           kind: "screen",
           from: popped.screen,
-          to: currentScreen({ ...state, stack: next }),
+          to: prev.screen,
           transition: popped.via ? mirrorTransition(popped.via) : INSTANT,
         },
       };
