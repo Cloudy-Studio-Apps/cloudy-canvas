@@ -1,9 +1,13 @@
+import type { CanvasElement } from "@canvas";
+
 import type { FrameElement } from "../../../frame";
 
 /** One screen picture the player keeps. */
 export interface ScreenPictureEntry {
-  /** The screen as it was drawn: a changed screen is a new object, so it's drawn again. */
+  /** The screen as it was drawn. */
   screen: FrameElement;
+  /** The screen and every layer inside it as they were drawn (see `screenContent`). */
+  content: readonly CanvasElement[];
   /** Pixels per world unit it was drawn at. */
   scale: number;
   picture: Promise<string>;

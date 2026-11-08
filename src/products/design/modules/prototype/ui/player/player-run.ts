@@ -169,7 +169,11 @@ export class PlayerRun {
   private fresh(at?: string): PlayerState {
     const flow = this.engine.service(DESIGN_PROTOTYPE).flow(this.target.flow);
     if (!flow) return { flow: this.target.flow, stack: [], overlays: [] };
-    return startSession(flow, at !== undefined && this.exists(at) ? at : undefined);
+    // A start screen that's gone or moved to another page leaves nothing to show: the player closes.
+    const start = at !== undefined && this.exists(at) ? at : flow.start;
+    return this.exists(start)
+      ? startSession(flow, start)
+      : { flow: flow.id, stack: [], overlays: [] };
   }
 
   /** Whether a screen can show: a screen of the flow's page. */
