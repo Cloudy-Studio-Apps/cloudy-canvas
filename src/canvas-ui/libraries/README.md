@@ -29,7 +29,9 @@ edits travel both ways while the project is found.
     tries it again; the last `release` and
     quitting the app (`appLifecycle.onBeforeQuit`, which the window waits for) write what's
     pending, and opening the project again waits for those writes.
-- **`useProjectLibraries(engine, file)`** (both products' file sessions; live guests never call it):
+- **`useProjectLibraries(engine, file)`** (both products' file sessions; live guests never call it;
+  where projects aren't supported, `projectsSupported()` false on Android and in the browser build,
+  it stays `none`: no hub, no missing dialog, and the file's library items read-only):
   reads the project from the document's link (a new file opened with `?project=` gets
   `{ projectId, libraryIds: "all" }`), finds it with `useProjectsStore.resolve(id, file.path)` and
   opens its hub. When that returns another project (the file is in a copied project folder made its

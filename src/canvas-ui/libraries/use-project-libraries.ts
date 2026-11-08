@@ -8,6 +8,7 @@ import {
   type LibraryDocument,
   type ProjectLink,
 } from "@canvas";
+import { projectsSupported } from "@platform";
 import { useProjectsStore } from "@shared/stores/projects-store";
 import { notifyError } from "@shared/stores/toast-store";
 import type { CanvasFileContextValue } from "../file";
@@ -21,7 +22,8 @@ import { t } from "./libraries.i18n";
  * Connects a saved file's editor to its project's libraries (never a live guest's): finds the
  * project in the file's link (a new file made in a project gets its `?project=` link), opens the
  * project's `LibraryHub` and keeps the file and the libraries in sync (`useLibrarySync`); when the
- * project isn't found, its library items can't be edited (`useLibraryGuard`).
+ * project isn't found, its library items can't be edited (`useLibraryGuard`). Where projects
+ * aren't supported it does nothing (`none`: library items read-only).
  */
 export function useProjectLibraries<O extends object>(
   engine: CanvasEngine<O>,
@@ -46,7 +48,9 @@ export function useProjectLibraries<O extends object>(
   const used = useSyncExternalStore(subscribe, () =>
     JSON.stringify(doc.projectLink()?.libraryIds ?? null),
   );
-  const projectId = linked ?? newProject;
+  // Where projects don't exist (Android, the browser build) a file's project is never looked
+  // for: its library items stay read-only, with no hub and no "project not found".
+  const projectId = projectsSupported() ? (linked ?? newProject) : null;
   // The libraries the file holds items of: an `"all"` link keeps using them (`librariesUsedBy`).
   const subscribeTokens = useCallback(
     (listener: () => void) => doc.observeTokens(() => listener()),
