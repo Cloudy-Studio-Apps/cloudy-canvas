@@ -16,7 +16,7 @@ What Projects and libraries (see [the design](superpowers/specs/2026-11-08-proje
 ## Known limits
 
 - A `.cproject` is trusted: a library entry's `file` or cover `file` isn't checked for separators or `..`, so a hostile file could point outside `.cloudy`.
-- Every file operation re-measures the whole project and re-lists its trash; very large projects may lag.
+- Every file operation re-measures the whole project (at most once per 500 ms, an older walk cancelled) and re-lists its trash; very large projects may still lag.
 - `ProjectFs` has no delete, so replacing a project's icon or cover with a different extension leaves the old file in `.cloudy`.
 - A picture deleted from a design stays in the file's bytes (no cleanup), so undo can still show it.
 - Renaming a library moves its files in steps; an asset added in that sub-second window lands in the old `.assets` folder, and a quit mid-move leaves an orphan file (no content is lost).

@@ -154,8 +154,8 @@ export class TauriProjectFs implements ProjectFs {
     return this.trash.list(root);
   }
 
-  size(path: string): Promise<number> {
-    return sizeOfTree(path);
+  size(path: string, signal?: AbortSignal): Promise<number> {
+    return sizeOfTree(path, signal);
   }
 
   readText(path: string): Promise<string> {

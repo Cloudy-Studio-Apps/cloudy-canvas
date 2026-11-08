@@ -43,12 +43,15 @@ export async function copyTree(from: string, to: string): Promise<void> {
   }
 }
 
-/** Bytes in a file, or in everything inside a folder. */
-export async function sizeOfTree(path: string): Promise<number> {
+/** Bytes in a file, or in everything inside a folder; an aborted `signal` stops the walk (throws). */
+export async function sizeOfTree(path: string, signal?: AbortSignal): Promise<number> {
+  signal?.throwIfAborted();
   const info = await stat(path);
   if (!info.isDirectory) return info.size;
   let total = 0;
-  for (const entry of await readDir(path)) total += await sizeOfTree(childPath(path, entry.name));
+  for (const entry of await readDir(path)) {
+    total += await sizeOfTree(childPath(path, entry.name), signal);
+  }
   return total;
 }
 

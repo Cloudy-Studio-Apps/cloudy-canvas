@@ -48,7 +48,8 @@ export interface ProjectFs {
   removeFromTrash(root: string, entryIds: string[] | "all"): Promise<void>;
   /** The trash's entries whose item is there. */
   listTrash(root: string): Promise<TrashEntry[]>;
-  size(path: string): Promise<number>;
+  /** Bytes in a file or folder; an aborted `signal` stops the walk (it throws). */
+  size(path: string, signal?: AbortSignal): Promise<number>;
   readText(path: string): Promise<string>;
   writeTextAtomic(path: string, text: string): Promise<void>;
   readBytes(path: string): Promise<Uint8Array>;

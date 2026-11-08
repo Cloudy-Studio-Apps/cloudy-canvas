@@ -30,7 +30,7 @@ field, drops unknown ones and defaults `cover` to null and `folders` to `{}`.
 
 ## Sizes
 
-`formatSize(bytes)` writes a byte count for people ("48 MB") in the app's language. `measureProject(fs, root)` splits a project's size into `files` (outside `.cloudy`), `libraries` (`.cloudy/libraries/`), `trash` (`.cloudy/trash/`), their `total` and the trash's item count.
+`formatSize(bytes)` writes a byte count for people ("48 MB") in the app's language. `measureProject(fs, root, signal?)` (an aborted signal stops the walk) splits a project's size into `files` (outside `.cloudy`), `libraries` (`.cloudy/libraries/`), `trash` (`.cloudy/trash/`), their `total` and the trash's item count.
 
 ## Trash index (`trash-index.ts`)
 
