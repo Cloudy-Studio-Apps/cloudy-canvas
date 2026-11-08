@@ -9,4 +9,6 @@ export type ImageChooseButtonProps = {
   replace?: boolean;
   /** The file dialog's title (default "Choose an image"). */
   title?: string;
-} & Omit<ComponentProps<typeof Button>, "onClick" | "children" | "title">;
+  /** Makes the asset's id (default `createId`). */
+  id?: () => string;
+} & Omit<ComponentProps<typeof Button>, "onClick" | "children" | "title" | "id">;

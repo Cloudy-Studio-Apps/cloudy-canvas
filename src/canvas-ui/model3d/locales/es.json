@@ -19,5 +19,38 @@
     "loadFailed": "No se pudo abrir el modelo en 3D",
     "loading": "Preparando el modelo 3D",
     "view": "Modelo 3D: arrastra para girarlo, desplaza para acercarlo, Esc para terminar"
+  },
+  "panel": {
+    "model": "Modelo",
+    "size": "{size} MB",
+    "rotation": "Rotación",
+    "axis": {
+      "x": "Rotación X",
+      "y": "Rotación Y",
+      "z": "Rotación Z"
+    },
+    "view": "Vista",
+    "zoom": "Zoom",
+    "reset": "Restablecer vista",
+    "textures": "Texturas",
+    "actions": "Acciones",
+    "edit": "Editar en 3D",
+    "convert": "Convertir a PNG",
+    "readOnly": "Este archivo es de solo lectura.",
+    "heldBy": "Lo está editando {name}",
+    "someone": "otra persona",
+    "noData": "Los datos 3D están en el archivo del que se copió. Aquí solo se puede convertir a PNG.",
+    "texture": {
+      "missing": "Falta",
+      "embedded": "En el modelo",
+      "none": "Sin textura",
+      "empty": "Este modelo no tiene texturas que asignar.",
+      "choose": "Elige una textura para «{name}»"
+    }
+  },
+  "convert": {
+    "title": "¿Convertir a PNG?",
+    "description": "El modelo pasa a ser una imagen normal y se eliminan sus datos 3D. No se puede deshacer. El archivo pesará menos cuando lo cierres.",
+    "confirm": "Convertir a PNG"
   }
 }

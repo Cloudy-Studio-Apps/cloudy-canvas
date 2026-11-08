@@ -11,12 +11,12 @@ import { t } from "./images.i18n";
  */
 export async function chooseImageAsset(
   engine: CanvasEngine,
-  { title, errorTitle = t("error") }: ChooseImageOptions,
+  { title, errorTitle = t("error"), id = createId }: ChooseImageOptions,
 ): Promise<string | null> {
   try {
     const [file] = await pickImageFiles({ title, multiple: false });
     if (!file) return null;
-    const assetId = createId();
+    const assetId = id();
     engine.doc.addAsset(assetId, file.data);
     return assetId;
   } catch (error) {

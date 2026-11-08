@@ -150,11 +150,14 @@ export { useService } from "./use-service";
 export { useSnapping } from "./use-snapping";
 export {
   confirmModelSize,
+  ConvertModelDialog,
   finishModelEdit,
+  hasModelData,
   importModelFiles,
   MODEL_ACTIONS,
   modelBaker,
   ModelLiveView,
+  ModelPanel,
   ModelSizeDialog,
   pickModelFiles,
   useModelEditSession,
@@ -167,6 +170,8 @@ export type {
   ModelEditState,
   ModelEditStatus,
   ModelLiveViewProps,
+  ModelPanelProps,
+  ConvertModelDialogProps,
   PlaceModel,
 } from "./model3d";
 export { isModelFileName } from "./model3d";

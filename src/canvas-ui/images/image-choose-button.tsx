@@ -11,11 +11,12 @@ export function ImageChooseButton({
   onChoose,
   replace = false,
   title = t("chooseTitle"),
+  id,
   ...props
 }: ImageChooseButtonProps) {
   const engine = useEngine();
   const choose = async () => {
-    const assetId = await chooseImageAsset(engine, { title });
+    const assetId = await chooseImageAsset(engine, { title, id });
     if (assetId) onChoose(assetId);
   };
   return (

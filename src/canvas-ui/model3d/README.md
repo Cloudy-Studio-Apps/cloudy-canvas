@@ -86,3 +86,15 @@ model live, and finishing writes the result once.
   leaves the selection or goes and when the editor unmounts, and returns `{ id, element, data,
 frame }` to pass to `<ModelLiveView engine frame data />`. While a model is live
   (`MODEL_EDIT_LOCKS.localLock() === id`) its kind should not draw the old picture under the view.
+
+## The panel (`ui/`)
+
+`ModelPanel` (`{ engine, id, data, onConvert }`) is the properties panel both products show for a
+selected model: Model (file name, size), Rotation, View (zoom in %, Reset view), Textures
+(`ImageChooseButton` per slot, assets named with `newModelAssetId`), then Edit in 3D and Convert to
+PNG. It shows the live draft when this model is live, else the element's data. The first change
+calls `useModelEditStore.start` and goes to the draft (no document undo steps until the edit
+finishes). Fields are disabled when the document is read-only, someone else holds the model
+("Being edited by ..."), or the model's file isn't in this document (`hasModelData`; only Convert
+stays enabled). `ConvertModelDialog` (`{ open, onOpenChange, onConfirm }`) asks before converting:
+it's permanent, and the file gets lighter once it's closed.

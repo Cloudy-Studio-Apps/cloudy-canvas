@@ -19,5 +19,38 @@
     "loadFailed": "Couldn't open the model in 3D",
     "loading": "Preparing the 3D model",
     "view": "3D model: drag to turn it, scroll to zoom, Esc to finish"
+  },
+  "panel": {
+    "model": "Model",
+    "size": "{size} MB",
+    "rotation": "Rotation",
+    "axis": {
+      "x": "Rotation X",
+      "y": "Rotation Y",
+      "z": "Rotation Z"
+    },
+    "view": "View",
+    "zoom": "Zoom",
+    "reset": "Reset view",
+    "textures": "Textures",
+    "actions": "Actions",
+    "edit": "Edit in 3D",
+    "convert": "Convert to PNG",
+    "readOnly": "This file is read-only.",
+    "heldBy": "Being edited by {name}",
+    "someone": "someone else",
+    "noData": "The 3D data is in the file this was copied from. Only converting to PNG is possible here.",
+    "texture": {
+      "missing": "Missing",
+      "embedded": "In the model",
+      "none": "No texture",
+      "empty": "This model has no textures to assign.",
+      "choose": "Choose a texture for “{name}”"
+    }
+  },
+  "convert": {
+    "title": "Convert to PNG?",
+    "description": "The model becomes a plain picture and its 3D data is removed. This can't be undone. The file gets lighter once it's closed.",
+    "confirm": "Convert to PNG"
   }
 }
