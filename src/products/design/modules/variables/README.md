@@ -147,7 +147,8 @@ tagged with their library's id.
   `TokenSourceHeader` on the board; while it can't be edited the collection can't be renamed or
   deleted, the board offers no "+" card, new group, group rename or empty-collection starters, the
   picked variable's inspector is shown inside a disabled `fieldset`, a library's mode group can't
-  be renamed, deleted, given modes or have modes dragged in or out (it can still be shown on the
+  be renamed, deleted, given modes or have modes dragged in or out (its library's heading above
+  it says why; it can still be shown on the
   board), and "Generate a palette" starts in the file's own collection; "Unused" leaves those items out.
 - **New variables:** "+" adds to the file's own first collection (a new one when it has none);
   adding in a library's collection makes the library's (`collectionSource`).
