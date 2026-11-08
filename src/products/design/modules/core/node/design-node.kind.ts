@@ -38,6 +38,7 @@ import {
 } from "./node-stroke";
 import { GEOMETRY_CACHE } from "./node-geometry";
 import type { NodeBuildContext } from "./node-build.types";
+import type { Paint } from "./paint.types";
 import { flipPaints } from "./flip-paints";
 import { scaleTiles } from "./scale-tiles";
 import { flipPlacement } from "./flip-placement";
@@ -511,6 +512,19 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
     return [...el.fills, ...el.strokes].flatMap((paint) =>
       paint.type === "image" ? [paint.assetId] : [],
     );
+  }
+
+  /** Points its image fills and strokes showing `from` at `to`, keeping how they place it. */
+  override relinkAsset(el: E, from: string, to: string): ElementPatch<E> | null {
+    const swap = (paints: Paint[]): Paint[] =>
+      paints.map((paint) =>
+        paint.type === "image" && paint.assetId === from ? { ...paint, assetId: to } : paint,
+      );
+    const fills = swap(el.fills);
+    const strokes = swap(el.strokes);
+    const changed =
+      fills.some((p, i) => p !== el.fills[i]) || strokes.some((p, i) => p !== el.strokes[i]);
+    return changed ? ({ fills, strokes } as ElementPatch<E>) : null;
   }
 
   override describe(el: E): ElementDescription {

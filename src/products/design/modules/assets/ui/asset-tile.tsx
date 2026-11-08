@@ -17,7 +17,7 @@ export function AssetTile({ source, asset, view, depth, actions, drag, local }: 
   const thumb = url ? (
     <img src={url} alt="" draggable={false} className="size-full object-contain" />
   ) : failed ? (
-    <ImageOff className="size-4 text-subtle-foreground" aria-label={t("broken")} />
+    <ImageOff role="img" className="size-4 text-subtle-foreground" aria-label={t("broken")} />
   ) : null;
   const handlers = {
     ...drag.grabProps(ref),

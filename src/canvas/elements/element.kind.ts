@@ -244,6 +244,15 @@ export abstract class ElementKind<
   }
 
   /**
+   * The patch that makes the element show the asset `to` wherever it shows `from` (see `assets`),
+   * or `null` when it doesn't show `from` or can't be pointed elsewhere. Kinds that list assets
+   * but don't override it are skipped by whoever relinks.
+   */
+  relinkAsset(_el: E, _from: string, _to: string): ElementPatch<E> | null {
+    return null;
+  }
+
+  /**
    * How many times larger than the element's box one of its assets is drawn (a picture cropped to
    * a part of it shows that part across the box): what an export needs to keep it sharp.
    */
