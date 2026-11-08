@@ -8,3 +8,6 @@ export * from "./project-registry";
 export type * from "./project-registry.types";
 export * from "./trash-index";
 export type * from "./trash-index.types";
+export * from "./format-size";
+export * from "./project-size";
+export type * from "./project-size.types";

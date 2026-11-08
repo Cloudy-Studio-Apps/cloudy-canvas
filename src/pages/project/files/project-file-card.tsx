@@ -35,9 +35,9 @@ export function ProjectFileCard({ entry, where, view = "grid" }: ProjectFileCard
         aria-label={t("file.open", { name })}
         onClick={() => void ctx.actions.open(entry)}
         onKeyDown={(event) => {
-          if (event.key === "Enter" && event.target === event.currentTarget) {
-            void ctx.actions.open(entry);
-          }
+          if (event.target !== event.currentTarget) return;
+          if (event.key === "Enter") void ctx.actions.open(entry);
+          if (event.key === "Delete") void ctx.actions.trash(entry);
         }}
         {...ctx.drag.grabProps(dragId("file", entry.rel), ctx.renaming !== entry.rel)}
         className={cn(

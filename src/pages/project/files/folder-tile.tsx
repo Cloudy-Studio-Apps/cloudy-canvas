@@ -28,9 +28,9 @@ export function FolderTile({ entry }: FolderTileProps) {
         aria-label={t("folder.open", { name: entry.name })}
         onClick={() => ctx.setFolder(entry.rel)}
         onKeyDown={(event) => {
-          if (event.key === "Enter" && event.target === event.currentTarget) {
-            ctx.setFolder(entry.rel);
-          }
+          if (event.target !== event.currentTarget) return;
+          if (event.key === "Enter") ctx.setFolder(entry.rel);
+          if (event.key === "Delete") void ctx.actions.trash(entry);
         }}
         {...ctx.drag.grabProps(dragId("folder", entry.rel), ctx.renaming !== entry.rel)}
         {...ctx.drag.dropProps(dragId("folder", entry.rel))}

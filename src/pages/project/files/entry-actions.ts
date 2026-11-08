@@ -1,4 +1,4 @@
-import { Copy, ExternalLink, FolderInput, FolderOpen, Pencil } from "lucide-react";
+import { Copy, ExternalLink, FolderInput, FolderOpen, Pencil, Trash2 } from "lucide-react";
 
 import type { ProjectEntry } from "@shared/core";
 import type { FileAction } from "@pages/shared/files";
@@ -39,6 +39,13 @@ export function entryActions(entry: ProjectEntry, ctx: ProjectContextValue): Fil
       label: t("menu.reveal"),
       icon: FolderOpen,
       run: () => void actions.reveal(entry.rel),
+    },
+    {
+      id: "trash",
+      label: t("menu.trash"),
+      icon: Trash2,
+      destructive: true,
+      run: () => void actions.trash(entry),
     },
   ];
 }

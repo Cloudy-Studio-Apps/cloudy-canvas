@@ -5,8 +5,10 @@ import type {
   ProjectEntry,
   ProjectManifest,
   ProjectRecord,
+  TrashEntry,
 } from "@shared/core";
 import type { UseProject } from "./use-project.types";
+import type { ProjectTrash } from "./use-project-trash.types";
 
 export interface ProjectActions {
   /** Opens a board or design in its editor. */
@@ -21,6 +23,12 @@ export interface ProjectActions {
   reveal: (rel: string) => Promise<void>;
   /** Opens a new board or design that will be saved in `folder`. */
   newFile: (type: FileType, folder: string) => void;
+  /** Moves a file or folder to the project's trash; it is forgotten from the recent files. */
+  trash: (entry: ProjectEntry) => Promise<void>;
+  /** Puts a trashed item back where it was. */
+  restore: (entry: TrashEntry) => Promise<void>;
+  /** Deletes everything in the trash for good. */
+  emptyTrash: () => Promise<void>;
   /** Sets a folder's color; null resets it. */
   setFolderColor: (rel: string, color: string | null) => Promise<void>;
 }
@@ -49,4 +57,6 @@ export interface ProjectContextValue {
   infoFor: (entry: ProjectEntry) => FileInfo;
   /** The project's newest files. */
   recent: FileInfo[];
+  /** What waits in the project's trash. */
+  trash: ProjectTrash;
 }

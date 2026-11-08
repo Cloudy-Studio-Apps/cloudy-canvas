@@ -4,7 +4,8 @@ import { useNavigate } from "react-router";
 import { projectFs, revealFile } from "@platform";
 import { createId, extensionOf, joinRelative, type FileType } from "@shared/core";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
-import { notifyError } from "@shared/stores/toast-store";
+import { notifyError, toast } from "@shared/stores/toast-store";
+import { forgetRecents } from "./forget-recents";
 import { isInside, joinRel, parentRel, rekeyFolders } from "./project-rel";
 import { relocateRecents } from "./relocate-recents";
 import type { ProjectActions } from "./project-context.types";
@@ -83,6 +84,25 @@ export function useProjectActions(options: ProjectActionsOptions): ProjectAction
         }),
       reveal: (rel) =>
         attempt(t("actions.revealFailed"), () => revealFile(joinRelative(root, rel))),
+      trash: (entry) =>
+        attempt(t("actions.trashFailed"), async () => {
+          await projectFs.toTrash(root, entry.rel);
+          // The disk changed: whatever refers to it lets go, and a folder open inside it closes.
+          if (isInside(entry.rel, folder)) setFolder(parentRel(entry.rel));
+          bump();
+          await forgetRecents(root, entry.rel);
+        }),
+      restore: (entry) =>
+        attempt(t("actions.restoreFailed"), async () => {
+          const rel = await projectFs.restore(root, entry.id);
+          bump();
+          toast({ title: t("trash.restored", { name: entry.name }), description: rel });
+        }),
+      emptyTrash: () =>
+        attempt(t("actions.emptyTrashFailed"), async () => {
+          await projectFs.removeFromTrash(root, "all");
+          bump();
+        }),
       newFile: (type: FileType, target) => {
         const dir = encodeURIComponent(joinRelative(root, target));
         void navigate(`/${type}/${createId()}?dir=${dir}&project=${projectId}`);

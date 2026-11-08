@@ -12,9 +12,12 @@ import type { ProjectTab } from "./components/project-tabs.types";
 import { ProjectContext, relOfDragId } from "./project-context";
 import type { ProjectContextValue } from "./project-context.types";
 import { useProjectActions } from "./project-file-actions";
+import { ProjectFooter } from "./project-footer";
 import type { ProjectHomeProps } from "./project-home.types";
 import { isInside, nameOfRel } from "./project-rel";
+import { TrashTab } from "./trash-tab";
 import { useProjectRecents } from "./use-project-recents";
+import { useProjectTrash } from "./use-project-trash";
 import { t } from "./project.i18n";
 
 /** A ready project: the sidebar, the header with its tabs and the tab's content. */
@@ -54,6 +57,7 @@ function ProjectHomeReady({
     bump,
   });
   const { infoFor, recent } = useProjectRecents(record.root);
+  const trash = useProjectTrash(record.root, scanRev);
   const drag = useRowDrag({
     onDrop: (id, overId) =>
       void actions.move(relOfDragId(id), relOfDragId(overId), id.startsWith("folder:")),
@@ -79,25 +83,27 @@ function ProjectHomeReady({
     actions,
     infoFor,
     recent,
+    trash,
   };
 
   return (
     <ProjectContext.Provider value={value}>
-      <div className="flex min-h-0 flex-1">
-        <ProjectSidebar tab={tab} onTrash={() => setTab("trash")} />
-        <main className="min-w-0 flex-1 overflow-y-auto">
-          <ProjectHeader tab={tab} onTab={setTab} />
-          {tab === "files" && <FilesTab />}
-          {tab === "libraries" && (
-            <PlaceholderTab
-              title={t("soon.librariesTitle")}
-              description={t("soon.librariesText")}
-            />
-          )}
-          {tab === "trash" && (
-            <PlaceholderTab title={t("soon.trashTitle")} description={t("soon.trashText")} />
-          )}
-        </main>
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="flex min-h-0 flex-1">
+          <ProjectSidebar tab={tab} onTrash={() => setTab("trash")} />
+          <main className="min-w-0 flex-1 overflow-y-auto">
+            <ProjectHeader tab={tab} onTab={setTab} />
+            {tab === "files" && <FilesTab />}
+            {tab === "libraries" && (
+              <PlaceholderTab
+                title={t("soon.librariesTitle")}
+                description={t("soon.librariesText")}
+              />
+            )}
+            {tab === "trash" && <TrashTab />}
+          </main>
+        </div>
+        <ProjectFooter onOpenTrash={() => setTab("trash")} />
       </div>
       <MoveDialog />
       {drag.drag && (

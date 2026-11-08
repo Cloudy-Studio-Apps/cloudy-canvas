@@ -7,6 +7,13 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Novedades
 
+- Lo que borras va a la papelera del proyecto: usa Mover a la papelera en un archivo o carpeta, o
+  pulsa Suprimir sobre él, y espera en la pestaña Papelera del proyecto, con dónde estaba y cuándo
+  se borró, hasta que lo restaures o vacíes la papelera. El proyecto muestra cuánto guarda la
+  papelera y nada se borra hasta que tú lo decidas.
+- Los ajustes muestran cuánto espacio usan los proyectos y sus papeleras: una nueva página
+  Proyectos y almacenamiento elige dónde van los proyectos nuevos, muestra el tamaño de cada
+  proyecto y lo que hay en su papelera, y puede vaciar la de un proyecto o la de todos.
 - Inicio del proyecto: abre un proyecto para ver y organizar sus archivos en carpetas. Arriba están
   la portada, el icono y el nombre del proyecto, con sus archivos, bibliotecas y la última edición.
   Crea diseños y pizarras en la carpeta donde estás, crea carpetas y ponles color, y arrastra

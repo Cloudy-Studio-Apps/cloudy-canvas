@@ -32,9 +32,7 @@
   },
   "soon": {
     "librariesTitle": "Libraries are coming",
-    "librariesText": "A library will hold the project's colors, text styles and images.",
-    "trashTitle": "Trash is coming",
-    "trashText": "Files you delete from the project will wait here before they are gone."
+    "librariesText": "A library will hold the project's colors, text styles and images."
   },
   "cover": {
     "change": "Change cover",
@@ -115,7 +113,8 @@
     "rename": "Rename",
     "move": "Move to…",
     "duplicate": "Duplicate",
-    "reveal": "Show in folder"
+    "reveal": "Show in folder",
+    "trash": "Move to trash"
   },
   "move": {
     "title": "Move “{name}” to…",
@@ -131,6 +130,34 @@
     "duplicateFailed": "It couldn't be duplicated",
     "revealFailed": "It couldn't be shown in its folder",
     "updateFailed": "The change couldn't be saved",
-    "followFailed": "Done, but the recent files and folder colors couldn't be updated"
+    "followFailed": "Done, but the recent files and folder colors couldn't be updated",
+    "trashFailed": "It couldn't be moved to the trash",
+    "restoreFailed": "It couldn't be restored",
+    "emptyTrashFailed": "The trash couldn't be emptied"
+  },
+  "trash": {
+    "readFailed": "The trash couldn't be read",
+    "emptyTitle": "The trash is empty",
+    "emptyText": "Files and folders you delete from the project wait here until you empty the trash.",
+    "summary_one": "{count} item · {size}. Kept until you empty the trash.",
+    "summary_other": "{count} items · {size}. Kept until you empty the trash.",
+    "empty": "Empty trash",
+    "confirmTitle": "Empty the trash?",
+    "confirmText_one": "{count} item ({size}) will be deleted for good. This can't be undone.",
+    "confirmText_other": "{count} items ({size}) will be deleted for good. This can't be undone.",
+    "name": "Name",
+    "wasIn": "Was in",
+    "deleted": "Deleted",
+    "size": "Size",
+    "restore": "Restore",
+    "restored": "“{name}” was restored",
+    "root": "Project folder"
+  },
+  "footer": {
+    "trash_one": "{count} item in trash · {size}",
+    "trash_other": "{count} items in trash · {size}",
+    "trashEmpty": "Trash is empty",
+    "openTrash": "Open trash",
+    "size": "Project size {size}"
   }
 }

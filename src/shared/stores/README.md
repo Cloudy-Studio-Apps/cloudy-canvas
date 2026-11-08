@@ -15,6 +15,8 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
 - **Language:** `useLocaleStore` (`locale-store.ts`, `cloudy-canvas:locale`) keeps Settings › Language (`system`, `en` or `es`). `app/i18n-boot.ts` reads it once, before anything else runs, so a change applies on the next launch (see `shared/core/i18n/`).
 - **Projects:** `useProjectsStore` (`projects-store.ts`) holds the projects this device knows (`projects.json` in the app data folder through `projectRegistry`): `refresh` re-reads them and recomputes `missing` (a project whose root has no `.cproject` with its id), `open(root)` records a folder, `locate(id)` asks for the folder of a missing one (`null` on cancel, throws when the folder is another project), `setPinned`, `forget` (the folder stays), and `resolve(id, nearFile)` finds a project from the registry or, failing that, by walking up from a file (also when the registry has no record), fixing or filling the registry silently. Like recent files, an unreadable `projects.json` is set aside as `projects.corrupt.json`.
 
+- **Projects settings:** `useProjectsSettingsStore` (`projects-settings-store.ts`, `cloudy-canvas:projects`) keeps where new projects go (`projectsFolder`, null for the default); `resolveProjectsFolder()` gives that folder or the default, which the New project dialog starts from.
+
 ## Updates
 
 - **Updates:** `useUpdateStore` (`update-store.ts`) checks for and installs new versions; `useWhatsNewStore` (`whats-new-store.ts`, `openWhatsNew`) opens the "What's new" dialog; `useLastSeenVersionStore` (`last-seen-version-store.ts`, `cloudy-canvas:last-seen-version`) remembers the version the "Updated" notice last ran for. See `shared/core/app-updates/`.

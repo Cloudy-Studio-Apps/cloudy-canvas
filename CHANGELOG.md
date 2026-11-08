@@ -7,6 +7,13 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### New
 
+- Deleted files go to the project's trash: use Move to trash on a file or folder, or press Delete on
+  it, and it waits in the project's Trash tab, with where it was and when it was deleted, until you
+  restore it or empty the trash. The project shows how much the trash holds, and nothing is deleted
+  until you say so.
+- Settings shows how much space projects and their trash use: a new Projects & storage page chooses
+  where new projects go, shows each project's size and what is in its trash, and can empty one
+  project's trash or all of them.
 - Project home: open a project to browse and organize its files in folders. A cover, the project's
   icon and name sit on top, with its files, libraries and last edit. Make designs and boards in the
   folder you are in, create folders and color them, and drag files and folders onto other folders

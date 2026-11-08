@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { defaultProjectsFolder, pickFolder, pickImageFiles, projectFs } from "@platform";
+import { pickFolder, pickImageFiles, projectFs } from "@platform";
 import { isReservedName, type ImageFile } from "@shared/core";
+import { resolveProjectsFolder } from "@shared/stores/projects-settings-store";
 import { notifyError } from "@shared/stores/toast-store";
 import { projectRootFor } from "./create-project";
 import { randomProjectColor } from "@pages/shared/projects";
@@ -17,7 +18,7 @@ export function useNewProjectForm() {
   const [takenRoot, setTakenRoot] = useState<string | null>(null);
 
   useEffect(() => {
-    defaultProjectsFolder().then(setParent, (error: unknown) =>
+    resolveProjectsFolder().then(setParent, (error: unknown) =>
       notifyError(t("dialog.createFailed"), error),
     );
   }, []);

@@ -32,9 +32,7 @@
   },
   "soon": {
     "librariesTitle": "Las bibliotecas llegan pronto",
-    "librariesText": "Una biblioteca reunirá los colores, los estilos de texto y las imágenes del proyecto.",
-    "trashTitle": "La papelera llega pronto",
-    "trashText": "Los archivos que borres del proyecto esperarán aquí antes de desaparecer."
+    "librariesText": "Una biblioteca reunirá los colores, los estilos de texto y las imágenes del proyecto."
   },
   "cover": {
     "change": "Cambiar portada",
@@ -115,7 +113,8 @@
     "rename": "Renombrar",
     "move": "Mover a…",
     "duplicate": "Duplicar",
-    "reveal": "Mostrar en la carpeta"
+    "reveal": "Mostrar en la carpeta",
+    "trash": "Mover a la papelera"
   },
   "move": {
     "title": "Mover «{name}» a…",
@@ -131,6 +130,34 @@
     "duplicateFailed": "No se pudo duplicar",
     "revealFailed": "No se pudo mostrar en su carpeta",
     "updateFailed": "No se pudo guardar el cambio",
-    "followFailed": "Hecho, pero no se pudieron actualizar los archivos recientes ni los colores de carpeta"
+    "followFailed": "Hecho, pero no se pudieron actualizar los archivos recientes ni los colores de carpeta",
+    "trashFailed": "No se pudo mover a la papelera",
+    "restoreFailed": "No se pudo restaurar",
+    "emptyTrashFailed": "No se pudo vaciar la papelera"
+  },
+  "trash": {
+    "readFailed": "No se pudo leer la papelera",
+    "emptyTitle": "La papelera está vacía",
+    "emptyText": "Los archivos y carpetas que borres del proyecto esperan aquí hasta que vacíes la papelera.",
+    "summary_one": "{count} elemento · {size}. Se conserva hasta que vacíes la papelera.",
+    "summary_other": "{count} elementos · {size}. Se conservan hasta que vacíes la papelera.",
+    "empty": "Vaciar papelera",
+    "confirmTitle": "¿Vaciar la papelera?",
+    "confirmText_one": "{count} elemento ({size}) se borrará para siempre. No se puede deshacer.",
+    "confirmText_other": "{count} elementos ({size}) se borrarán para siempre. No se puede deshacer.",
+    "name": "Nombre",
+    "wasIn": "Estaba en",
+    "deleted": "Borrado",
+    "size": "Tamaño",
+    "restore": "Restaurar",
+    "restored": "Se restauró «{name}»",
+    "root": "Carpeta del proyecto"
+  },
+  "footer": {
+    "trash_one": "{count} elemento en la papelera · {size}",
+    "trash_other": "{count} elementos en la papelera · {size}",
+    "trashEmpty": "La papelera está vacía",
+    "openTrash": "Abrir papelera",
+    "size": "Tamaño del proyecto {size}"
   }
 }

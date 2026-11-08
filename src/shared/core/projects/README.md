@@ -27,6 +27,10 @@ registry access are the `ProjectFs` and `ProjectRegistry` interfaces, implemente
 `autoAdd` default true) and `folders` (folder path to `{color?}`). `parseManifest` validates every
 field, drops unknown ones and defaults `cover` to null and `folders` to `{}`.
 
+## Sizes
+
+`formatSize(bytes)` writes a byte count for people ("48 MB") in the app's language. `measureProject(fs, root)` splits a project's size into `files` (outside `.cloudy`), `libraries` (`.cloudy/libraries/`), `trash` (`.cloudy/trash/`), their `total` and the trash's item count.
+
 ## Trash index (`trash-index.ts`)
 
 `.cloudy/trash/index.json` is an array of `TrashEntry` (`id`, `name`, `from` relative path,
