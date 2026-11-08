@@ -1,4 +1,5 @@
 import { cn } from "@shared/ui/kit";
+import { readableTextOn } from "@shared/ui/lib/readable-text";
 import { projectInitials } from "./project-initials";
 import type { ProjectIconProps } from "./project-icon.types";
 
@@ -12,8 +13,8 @@ export function ProjectIcon({ name, color, image, size = "md", className }: Proj
         size === "sm" ? "size-6 text-[10px]" : size === "lg" ? "size-14 text-lg" : "size-9 text-xs",
         className,
       )}
-      // The color is the project's own, so the text on it is white whatever the theme.
-      style={{ background: color, color: "#fff" }}
+      // The color is the project's own, so the text on it follows it, whatever the theme.
+      style={{ background: color, color: readableTextOn(color) }}
     >
       {image ? (
         <img

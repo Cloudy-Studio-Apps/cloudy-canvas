@@ -1,5 +1,6 @@
 import * as Y from "yjs";
 
+import { isLibraryAsset } from "../document";
 import { isTokenRecord } from "../tokens/is-token-record";
 import type { TokenRecord } from "../tokens/token.types";
 import { decodeLibraryFile, encodeLibraryFile } from "./library-file";
@@ -130,17 +131,4 @@ export class LibraryDocument {
     this.ydoc.on("afterTransaction", handler);
     return () => this.ydoc.off("afterTransaction", handler);
   }
-}
-
-function isLibraryAsset(value: unknown): value is LibraryAsset {
-  if (typeof value !== "object" || value === null) return false;
-  const asset = value as Partial<LibraryAsset>;
-  return (
-    typeof asset.id === "string" &&
-    typeof asset.name === "string" &&
-    typeof asset.group === "string" &&
-    typeof asset.hash === "string" &&
-    typeof asset.ext === "string" &&
-    typeof asset.order === "string"
-  );
 }

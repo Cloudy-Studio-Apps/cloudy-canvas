@@ -1,6 +1,7 @@
 import type {
   FolderStyle,
   LibraryEntry,
+  ManifestJson,
   ProjectCover,
   ProjectManifest,
 } from "./project-manifest.types";
@@ -12,13 +13,11 @@ export const LIBRARIES_DIR = "libraries";
 export const TRASH_DIR = "trash";
 export const MANIFEST_FORMAT = 1;
 
-type Obj = Record<string, unknown>;
-
-function isObj(value: unknown): value is Obj {
+function isObj(value: unknown): value is ManifestJson {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function str(obj: Obj, key: string, where: string): string {
+function str(obj: ManifestJson, key: string, where: string): string {
   const v = obj[key];
   if (typeof v !== "string") throw new Error(`Project manifest: ${where}${key} must be a string`);
   return v;

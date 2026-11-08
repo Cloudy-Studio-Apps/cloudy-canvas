@@ -17,6 +17,7 @@ import type {
   UnregisteredElement,
 } from "./canvas-document.types";
 import { DocumentHistory } from "./document-history";
+import { isLibraryAsset } from "./is-library-asset";
 import type { LibraryAsset } from "./library-asset.types";
 import type { HistoryChange } from "./document-history.types";
 import { keyBetween, nKeysBetween } from "../utils";
@@ -771,15 +772,4 @@ function isProjectLink(value: unknown): value is ProjectLink {
 
 export function compareByIndex(a: CanvasElement, b: CanvasElement): number {
   return a.index < b.index ? -1 : a.index > b.index ? 1 : 0;
-}
-
-function isLibraryAsset(value: unknown): value is LibraryAsset {
-  if (typeof value !== "object" || value === null) return false;
-  const asset = value as Partial<LibraryAsset>;
-  return (
-    typeof asset.id === "string" &&
-    typeof asset.name === "string" &&
-    typeof asset.hash === "string" &&
-    typeof asset.order === "string"
-  );
 }

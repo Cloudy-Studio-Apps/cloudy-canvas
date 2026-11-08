@@ -31,3 +31,6 @@ export interface ProjectManifest {
    */
   copiedFrom?: string;
 }
+
+/** A JSON object being read as (part of) a manifest, before its fields are checked. */
+export type ManifestJson = Record<string, unknown>;

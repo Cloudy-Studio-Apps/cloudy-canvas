@@ -1,21 +1,21 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Palette } from "lucide-react";
 
 import { ColorPopover } from "@canvas-ui";
 import { Button, IconButton } from "@shared/ui/kit";
+import { resolveCssHex } from "@shared/ui/lib/css-color";
 import { useProjectContext } from "../project-context";
 import type { FolderColorButtonProps } from "./folder-color-button.types";
 import { t } from "../project.i18n";
-
-/** What the picker starts from for a folder without a color. */
-const NEUTRAL_FOLDER_COLOR = "#8a8a8a";
 
 /** The palette button on a folder row: pick the folder's color, or go back to the default. */
 export function FolderColorButton({ rel, name }: FolderColorButtonProps) {
   const { manifest, actions } = useProjectContext();
   const saved = manifest.folders[rel]?.color;
   const [draft, setDraft] = useState<string | null>(null);
-  const shown = draft ?? saved ?? NEUTRAL_FOLDER_COLOR;
+  // A folder without a color shows the muted text color (`FolderGlyph`): the picker starts there.
+  const neutral = useMemo(() => resolveCssHex("--muted-foreground"), []);
+  const shown = draft ?? saved ?? neutral;
 
   return (
     <ColorPopover
