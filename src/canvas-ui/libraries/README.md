@@ -11,7 +11,9 @@ edits travel both ways while the project is found.
   cache by project id, counted) returns an `OpenedHub`, `{ hub, release }`: each opener calls its
   `release` once (a second call does nothing), and the last one drops the hub. It reads the
   manifest and each `.clib`: `entries()` is every library of the manifest, `libraries()` and
-  `library(id)` the ones that could be read, `unreadable()` the ids that couldn't (with a toast).
+  `library(id)` the ones that could be read, `unreadable()` the ids that couldn't (with a toast; a
+  `.clib` whose own id isn't its manifest entry's counts as unreadable too: kept in files, never
+  mirrored or written).
   `apply(edits, from)` writes edits per item, the later one winning (a record another loaded
   library holds is skipped with a warning, `withoutForeignRecords`: one id lives in one library), and `onChange` fires with the
   ids of the libraries that changed and `from` (`null` for changes nobody applied), so an editor

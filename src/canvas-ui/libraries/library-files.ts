@@ -15,11 +15,18 @@ export function sortedLibraries(manifest: ProjectManifest): LibraryEntry[] {
   );
 }
 
-/** Reads a library's `.clib`. Throws when it's missing or isn't a library. */
+/**
+ * Reads a library's `.clib`. Throws when it's missing, isn't a library, or is another library
+ * (its own id isn't the manifest entry's: a file swapped in by hand), so it counts as unreadable.
+ */
 export async function readLibrary(root: string, entry: LibraryEntry): Promise<LibraryDocument> {
-  return LibraryDocument.fromFile(
+  const library = LibraryDocument.fromFile(
     await projectFs.readBytes(projectPaths(root).library(entry.file)),
   );
+  if (library.id !== entry.id) {
+    throw new Error(`${entry.file} holds the library ${library.id}, not ${entry.id}`);
+  }
+  return library;
 }
 
 /** Where a library picture's bytes are: `<library>.assets/<id>.<ext>`. */
