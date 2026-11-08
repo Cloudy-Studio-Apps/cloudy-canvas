@@ -25,7 +25,7 @@ What Projects and libraries (see [the design](superpowers/specs/2026-11-08-proje
 - While a project is missing or a library unreadable, edits to library items are reverted or stay file-only, and a toast says so once per session.
 - Moving a variable to a library moves its whole collection; a collection never mixes sources.
 - Copying a library doesn't remap asset ids inside its records, and renaming one doesn't update the name inside the `.clib` (the manifest's wins).
-- `createProject` writes the first library twice and leaves a half-made folder if creation fails midway; `rename` and `duplicate` don't refuse `.cloudy` paths; `toTrash` renames before writing the trash index.
+- `createProject` writes the first library twice and leaves a half-made folder if creation fails midway; `rename` and `duplicate` don't refuse `.cloudy` paths.
 - Adding a file to a project keeps library records already written if the file write then fails (a retry is idempotent) and deletes the original once the copy is written.
 - On Windows, `set_hidden` (the `.cloudy` hidden attribute) uses `attrib +h` and has not been run on a real machine.
 - `library-hub.ts` is past the ~200 line guideline.

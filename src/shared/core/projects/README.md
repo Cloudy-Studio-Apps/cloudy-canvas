@@ -54,9 +54,12 @@ The projects this device knows are `ProjectRecord`s (`id`, `name`, `root`, `colo
 
 Implemented in `platform/tauri-project-fs.ts` (exported as `projectFs` from `@platform`) with the
 Tauri fs plugin. `scan` lists one level and skips dotfiles and the `.cproject`. `move`, `rename`,
-`duplicate` and `restore` never overwrite: they pick a free name with `uniqueName`. `toTrash` moves
-an item to `.cloudy/trash/<entry id>/<name>`, records it in `index.json` and refuses anything inside
-`.cloudy` except a library's `.clib` file and `.assets` folder (`.cloudy/libraries/<item>`), which deleting a library moves there. Text and bytes are written atomically (`platform/write-atomic.ts`: a `.tmp` file renamed
+`duplicate` and `restore` never overwrite: they pick a free name with `uniqueName`. `toTrash` records
+an item in `index.json`, then moves it to `.cloudy/trash/<entry id>/<name>` (the trash is
+`platform/tauri-project-trash.ts`: one queue for every change to the index, and `listTrash` leaves
+out an entry whose item isn't there, so a crash between the two steps leaves nothing invisible), and
+refuses anything inside `.cloudy` except a library's `.clib` file and `.assets` folder
+(`.cloudy/libraries/<item>`), which deleting a library moves there. Text and bytes are written atomically (`platform/write-atomic.ts`: a `.tmp` file renamed
 over the target, writes to one path queued). `makeHidden` calls the `set_hidden` command (Windows
 hidden attribute; no-op elsewhere). `readManifest(root, id?)` reads the project in a folder (the one with `id` when given);
 `readManifestFile(root, id?)` also says which `.cproject` it read (`ManifestFile`: `file` name and

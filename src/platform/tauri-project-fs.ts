@@ -11,17 +11,14 @@ import {
 } from "@tauri-apps/plugin-fs";
 
 import {
-  createId,
   fileTypeFromPath,
   isReservedName,
   joinRelative,
   LIBRARIES_DIR,
   parseManifest,
-  parseTrashIndex,
   PROJECT_DATA_DIR,
   PROJECT_EXTENSION,
   projectPaths,
-  serializeTrashIndex,
   uniqueName,
   type FoundManifest,
   type ManifestFile,
@@ -40,6 +37,7 @@ import {
   parentRel,
   sizeOfTree,
 } from "./project-fs-tree";
+import { TauriProjectTrash } from "./tauri-project-trash";
 import { writeAtomic } from "./write-atomic";
 
 const encoder = new TextEncoder();
@@ -63,8 +61,7 @@ function isLibraryItem(rel: string): boolean {
 
 /** Projects on disk through the Tauri file system plugin. */
 export class TauriProjectFs implements ProjectFs {
-  /** Trash index edits run one after another, so two edits never read the same old index. */
-  private trashQueue: Promise<unknown> = Promise.resolve();
+  private readonly trash = new TauriProjectTrash((root) => this.ensureDataFolder(root));
 
   async scan(root: string, rel = ""): Promise<ProjectEntry[]> {
     const dir = joinRelative(root, rel);
@@ -132,60 +129,29 @@ export class TauriProjectFs implements ProjectFs {
     return target;
   }
 
-  async toTrash(root: string, rel: string): Promise<TrashEntry> {
+  toTrash(root: string, rel: string): Promise<TrashEntry> {
     if (insideDataFolder(rel) && !isLibraryItem(rel)) {
-      throw new Error("The project data folder can't be deleted.");
+      return Promise.reject(new Error("The project data folder can't be deleted."));
     }
-    const paths = projectPaths(root);
-    const source = joinRelative(root, rel);
-    const info = await stat(source);
-    const name = nameOfRel(rel);
-    const entry: TrashEntry = {
-      id: createId(),
-      name,
-      from: rel,
-      deletedAt: new Date().toISOString(),
-      size: await sizeOfTree(source),
-      folder: info.isDirectory,
-    };
-    await this.ensureDataFolder(root);
-    const holder = childPath(paths.trash, entry.id);
-    await mkdir(holder, { recursive: true });
-    await rename(source, childPath(holder, name));
-    await this.editTrash(root, (entries) => [...entries, entry]);
-    return entry;
+    return this.trash.put(root, rel);
   }
 
-  async restore(root: string, entryId: string): Promise<string> {
-    const paths = projectPaths(root);
-    const entry = (await this.listTrash(root)).find((e) => e.id === entryId);
-    if (!entry) throw new Error(`Unknown trash entry: ${entryId}`);
-    const parent = parentRel(entry.from);
-    const parentDir = joinRelative(root, parent);
-    await mkdir(parentDir, { recursive: true });
-    const name = uniqueName(entry.name, await namesIn(parentDir));
-    const holder = childPath(paths.trash, entry.id);
-    await rename(childPath(holder, entry.name), childPath(parentDir, name));
-    await remove(holder, { recursive: true }).catch(() => undefined);
-    await this.editTrash(root, (entries) => entries.filter((e) => e.id !== entryId));
-    return joinRel(parent, name);
+  copyToTrash(root: string, name: string, bytes: Uint8Array): Promise<TrashEntry> {
+    if (isReservedName(name))
+      return Promise.reject(new Error(`"${name}" can't be used as a name.`));
+    return this.trash.putCopy(root, name, bytes);
   }
 
-  async removeFromTrash(root: string, entryIds: string[] | "all"): Promise<void> {
-    const paths = projectPaths(root);
-    const entries = await this.listTrash(root);
-    const gone = entryIds === "all" ? entries : entries.filter((e) => entryIds.includes(e.id));
-    for (const entry of gone) {
-      const holder = childPath(paths.trash, entry.id);
-      if (await exists(holder)) await remove(holder, { recursive: true });
-    }
-    const ids = new Set(gone.map((e) => e.id));
-    await this.editTrash(root, (all) => all.filter((e) => !ids.has(e.id)));
+  restore(root: string, entryId: string): Promise<string> {
+    return this.trash.restore(root, entryId);
   }
 
-  async listTrash(root: string): Promise<TrashEntry[]> {
-    const index = projectPaths(root).trashIndex;
-    return (await exists(index)) ? parseTrashIndex(await readTextFile(index)) : [];
+  removeFromTrash(root: string, entryIds: string[] | "all"): Promise<void> {
+    return this.trash.remove(root, entryIds);
+  }
+
+  listTrash(root: string): Promise<TrashEntry[]> {
+    return this.trash.list(root);
   }
 
   size(path: string): Promise<number> {
@@ -270,17 +236,5 @@ export class TauriProjectFs implements ProjectFs {
     if (await exists(data)) return;
     await mkdir(data, { recursive: true });
     await this.makeHidden(data);
-  }
-
-  /** Reads the trash index, applies `edit` and writes it back, after any edit already running. */
-  private editTrash(root: string, edit: (entries: TrashEntry[]) => TrashEntry[]): Promise<void> {
-    const run = this.trashQueue.then(async () => {
-      const entries = edit(await this.listTrash(root));
-      await this.ensureDataFolder(root);
-      await mkdir(projectPaths(root).trash, { recursive: true });
-      await this.writeTextAtomic(projectPaths(root).trashIndex, serializeTrashIndex(entries));
-    });
-    this.trashQueue = run.catch(() => undefined);
-    return run;
   }
 }

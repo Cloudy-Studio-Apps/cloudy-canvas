@@ -33,10 +33,20 @@ export interface ProjectFs {
   move(root: string, fromRel: string, toFolderRel: string): Promise<string>;
   rename(root: string, rel: string, name: string): Promise<string>;
   duplicate(root: string, rel: string): Promise<string>;
+  /**
+   * Moves `rel` into `.cloudy/trash/`; the index entry is written first (an entry whose item is
+   * missing isn't listed), so a crash midway never leaves an item nobody sees.
+   */
   toTrash(root: string, rel: string): Promise<TrashEntry>;
+  /**
+   * Puts a copy of a file from outside the project (`bytes`) into its trash, as if `name` had
+   * been deleted from the root: restoring it puts it in the project's root.
+   */
+  copyToTrash(root: string, name: string, bytes: Uint8Array): Promise<TrashEntry>;
   /** Returns the rel it was restored to. */
   restore(root: string, entryId: string): Promise<string>;
   removeFromTrash(root: string, entryIds: string[] | "all"): Promise<void>;
+  /** The trash's entries whose item is there. */
   listTrash(root: string): Promise<TrashEntry[]>;
   size(path: string): Promise<number>;
   readText(path: string): Promise<string>;
