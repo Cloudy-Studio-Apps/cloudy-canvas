@@ -5,6 +5,7 @@ import {
   isReservedName,
   joinRelative,
   MANIFEST_FORMAT,
+  parentFolder,
   projectPaths,
   serializeManifest,
   type ProjectManifest,
@@ -16,17 +17,27 @@ import type { CreateProjectInput } from "./create-project.types";
 import { t } from "./projects.i18n";
 import { firstLibraryRecords, writeProjectImage } from "@pages/shared/projects";
 
-/** The project's folder: `name` inside `parent`. */
-export function projectRootFor(parent: string, name: string): string {
-  return joinRelative(parent, name.trim());
+/** The project folder a name gives inside the projects folder: `name` inside `base`. */
+export function projectRootFor(base: string, name: string): string {
+  return joinRelative(base, name.trim());
+}
+
+/** The highest folder of `path` that doesn't exist yet (what creating `path` makes), or null. */
+async function firstMissing(path: string): Promise<string | null> {
+  let missing: string | null = null;
+  for (let dir = path; dir !== "" && !(await projectFs.exists(dir)); dir = parentFolder(dir)) {
+    missing = dir;
+  }
+  return missing;
 }
 
 /**
- * Creates `<parent>/<name>/` with the hidden data folder, the first library ("Brand system", filled
- * from `input.firstLibrary`) and the `.cproject`, and records the
- * project as opened. Throws when the name can't be a folder or the folder already exists; a
- * step failing before the `.cproject` is written removes what it made (the project's folder, and
- * the parent folder when it made that too and it's empty).
+ * Makes `input.root` a project, as JetBrains IDEs do: the folder is the project itself, new or one
+ * that already holds files (they become the project's). Creates it if needed, with the hidden data
+ * folder, the first library ("Brand system", filled from `input.firstLibrary`) and the `.cproject`,
+ * and records the project as opened. Throws when the name can't be a project's or the folder is a
+ * project already. A step failing before the `.cproject` is written removes only what this made:
+ * the folders it created, or the data folder inside a folder that was already there.
  */
 export async function createProject(input: CreateProjectInput): Promise<ProjectRecord> {
   const name = input.name.trim();
@@ -34,12 +45,12 @@ export async function createProject(input: CreateProjectInput): Promise<ProjectR
   // Read the source first, so a file that can't be read leaves nothing behind.
   const records = firstLibraryRecords(input.firstLibrary);
 
-  const root = projectRootFor(input.parent, name);
-  if (await projectFs.exists(root)) throw new Error(`"${root}" already exists`);
+  const root = input.root;
+  if (await projectFs.readManifestFile(root)) throw new Error(`"${root}" is a project already`);
 
   const paths = projectPaths(root);
-  const madeParent = !(await projectFs.exists(input.parent));
-  await ensureFolder(input.parent);
+  const made = await firstMissing(root);
+  const madeData = made !== null || !(await projectFs.exists(paths.data));
   try {
     await ensureFolder(root);
     await ensureFolder(paths.data);
@@ -57,10 +68,15 @@ export async function createProject(input: CreateProjectInput): Promise<ProjectR
     };
     await projectFs.writeTextAtomic(paths.manifest(name), serializeManifest(manifest));
   } catch (error) {
-    // Only what this made: the project's folder (new, so nothing else is in it) and an empty parent.
+    // Only what this made: folders it created (new, so nothing else is in them), else the data
+    // folder it added to the user's folder, and a manifest's temporary file.
     try {
-      await removeCreatedFolder(root, true);
-      if (madeParent) await removeCreatedFolder(input.parent, false);
+      if (made !== null) await removeCreatedFolder(made, true);
+      else {
+        if (madeData) await removeCreatedFolder(paths.data, true);
+        const temp = `${paths.manifest(name)}.tmp`;
+        if (await projectFs.exists(temp)) await projectFs.removeFile(temp);
+      }
     } catch (cleanup) {
       notifyError(t("cleanupFailed", { path: root }), cleanup);
     }

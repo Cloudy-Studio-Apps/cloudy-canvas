@@ -50,7 +50,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   project as a .zip from the project's menu.
 - Projects: group a client's boards and designs in one folder on your computer. The new Projects
   page, opened from Home, lists your projects with their color, size and when you last opened them;
-  create one from Home or from that page, open an existing one from its folder or its project file,
+  create one from Home or from that page, in a new folder or in one that already holds your files,
+  open an existing one from its folder or its project file,
   pin the ones you use most, and find a project again if its folder moved. Double-clicking a project
   file opens it.
 - The new Prototype mode links the layers of your screens together: choose a layer and the screen

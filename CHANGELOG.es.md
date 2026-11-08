@@ -54,7 +54,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   cambiar la portada o exportar todo el proyecto como .zip.
 - Proyectos: reúne las pizarras y los diseños de un cliente en una sola carpeta de tu ordenador. La
   nueva página de Proyectos, que se abre desde Inicio, lista tus proyectos con su color, su tamaño y
-  cuándo los abriste por última vez; crea uno desde Inicio o desde esa página, abre uno existente
+  cuándo los abriste por última vez; crea uno desde Inicio o desde esa página, en una carpeta nueva o en una que ya tenga tus archivos,
+  abre uno existente
   desde su carpeta o su archivo de proyecto, fija los que más usas y vuelve a encontrar un proyecto
   si su carpeta cambió de sitio. Al hacer doble clic en un archivo de proyecto, se abre.
 - El nuevo modo Prototipo enlaza las capas de tus pantallas: elige una capa y la pantalla que abre,

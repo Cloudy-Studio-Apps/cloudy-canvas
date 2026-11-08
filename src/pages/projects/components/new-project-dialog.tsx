@@ -31,7 +31,7 @@ function NewProjectForm({ open, onOpenChange, onCreated }: NewProjectDialogProps
   const iconUrl = useImageUrl(form.iconImage);
 
   const create = async () => {
-    if (!form.ready || form.parent === null) return;
+    if (!form.ready || form.root === null) return;
     setCreating(true);
     try {
       const project = await createProject({
@@ -39,7 +39,7 @@ function NewProjectForm({ open, onOpenChange, onCreated }: NewProjectDialogProps
         color: form.color,
         icon: null,
         iconImage: form.iconImage,
-        parent: form.parent,
+        root: form.root,
         firstLibrary: form.firstLibrary,
       });
       onOpenChange(false);
@@ -75,12 +75,7 @@ function NewProjectForm({ open, onOpenChange, onCreated }: NewProjectDialogProps
           void create();
         }}
       >
-        <Field
-          label={t("dialog.name")}
-          error={
-            form.invalid ? t("dialog.nameInvalid") : form.taken ? t("dialog.nameTaken") : undefined
-          }
-        >
+        <Field label={t("dialog.name")} error={form.invalid ? t("dialog.nameInvalid") : undefined}>
           {(id) => (
             <Input
               id={id}
@@ -111,12 +106,26 @@ function NewProjectForm({ open, onOpenChange, onCreated }: NewProjectDialogProps
         </Field>
         <Field
           label={t("dialog.location")}
-          hint={form.root ? t("dialog.locationHint", { path: form.root }) : undefined}
+          hint={
+            form.folder === "new"
+              ? t("dialog.locationNew")
+              : form.folder === "existing"
+                ? t("dialog.locationExisting")
+                : undefined
+          }
+          error={form.folder === "project" ? t("dialog.locationProject") : undefined}
         >
           {(id) => (
             <div className="flex items-center gap-2">
-              <Input id={id} readOnly value={form.parent ?? ""} className="font-mono text-xs" />
-              <Button type="button" variant="outline" onClick={() => void form.changeParent()}>
+              <Input
+                id={id}
+                value={form.location}
+                placeholder={form.locationPlaceholder}
+                spellCheck={false}
+                className="font-mono text-xs"
+                onChange={(event) => form.setLocation(event.target.value)}
+              />
+              <Button type="button" variant="outline" onClick={() => void form.changeLocation()}>
                 {t("dialog.change")}
               </Button>
             </div>

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 
-import { pickFolder, pickImageFiles, projectFs } from "@platform";
+import { pickFolder, pickImageFiles } from "@platform";
 import { isReservedName, type ImageFile } from "@shared/core";
 import { resolveProjectsFolder } from "@shared/stores/projects-settings-store";
 import { notifyError } from "@shared/stores/toast-store";
 import { projectRootFor } from "./create-project";
+import { useFolderStatus } from "./use-folder-status";
 import {
   librarySourceOf,
   pickStylesSource,
@@ -19,39 +20,29 @@ export function useNewProjectForm() {
   const [name, setName] = useState("");
   const [color, setColor] = useState(randomProjectColor);
   const [iconImage, setIconImage] = useState<ImageFile | null>(null);
-  const [parent, setParent] = useState<string | null>(null);
+  // The projects folder a new project's folder goes in until a folder is chosen or typed.
+  const [base, setBase] = useState<string | null>(null);
+  // The project folder itself, once chosen or typed (as JetBrains IDEs do); null: follow the name.
+  const [chosen, setChosen] = useState<string | null>(null);
   const [styles, setStyles] = useState<StylesSource>({ kind: "empty" });
-  // The folder known to exist already, so `taken` follows the name without resetting anything.
-  const [takenRoot, setTakenRoot] = useState<string | null>(null);
 
   useEffect(() => {
-    resolveProjectsFolder().then(setParent, (error: unknown) =>
+    resolveProjectsFolder().then(setBase, (error: unknown) =>
       notifyError(t("dialog.createFailed"), error),
     );
   }, []);
 
   const trimmed = name.trim();
   const invalid = trimmed !== "" && isReservedName(trimmed);
-  const root =
-    parent !== null && trimmed !== "" && !invalid ? projectRootFor(parent, trimmed) : null;
+  const location =
+    chosen ?? (base !== null && trimmed !== "" && !invalid ? projectRootFor(base, trimmed) : null);
+  const root = location !== null && location.trim() !== "" ? location.trim() : null;
+  const folder = useFolderStatus(root);
 
-  // The folder to create may already be there.
-  useEffect(() => {
-    if (!root) return;
-    let cancelled = false;
-    void projectFs.exists(root).then((exists) => {
-      if (!cancelled) setTakenRoot(exists ? root : null);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [root]);
-  const taken = root !== null && takenRoot === root;
-
-  const changeParent = async () => {
+  const changeLocation = async () => {
     try {
       const picked = await pickFolder(t("dialog.pickLocation"));
-      if (picked) setParent(picked);
+      if (picked) setChosen(picked);
     } catch (error) {
       notifyError(t("dialog.createFailed"), error);
     }
@@ -98,11 +89,16 @@ export function useNewProjectForm() {
     setName,
     color,
     setColor,
-    parent,
-    changeParent,
+    /** The project folder shown in the Location field (follows the name until one is chosen). */
+    location: location ?? "",
+    /** Typing a path chooses it; clearing the field follows the name again. */
+    setLocation: (text: string) => setChosen(text === "" ? null : text),
+    /** Where the folder goes while there's no name yet. */
+    locationPlaceholder: base !== null ? projectRootFor(base, t("dialog.namePlaceholder")) : "",
+    changeLocation,
     root,
+    folder,
     invalid,
-    taken,
-    ready: parent !== null && trimmed !== "" && !invalid && !taken,
+    ready: root !== null && trimmed !== "" && !invalid && folder !== null && folder !== "project",
   };
 }
