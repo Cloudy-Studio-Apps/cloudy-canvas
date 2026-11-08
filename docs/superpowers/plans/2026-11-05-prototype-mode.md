@@ -49,9 +49,11 @@
     platform's first).
   - Player pictures are redrawn when any layer inside the screen changes.
   - Shift+Enter (select parent) works in the mode.
+- **Merged:** the whole branch merged into master on 2026-11-08 (`f16c4a50`, after merging
+  master's projects and libraries plan in with no conflicts; every changelog entry kept).
 - **Next:** the user tries the feature in the app (never run at runtime) and confirms it's done;
-  then merge the branch into master, delete this plan and the spec, and write the result to
-  memory. Remaining minors are in the ledger.
+  then delete this plan and the spec, and write the result to memory. Remaining minors are in
+  the ledger.
 - **Known gap, outside this plan:** deleting a design page through `DESIGN_PAGES.remove` (Pages
   panel, `delete_page`) never runs `onRemove`, so that page's flows and links into its screens
   stay (brochures have the same gap). It belongs in the core pages module.
