@@ -5,6 +5,7 @@ import { enumSize, type DbEnumElement } from "../enum";
 import type { ParsedEnum } from "./dbml";
 import { pairByName } from "./pair-by-name";
 import { ReconcileError } from "./reconcile-error";
+import { t } from "../db.i18n";
 
 /** An enum's final content; values keep their ids when matched by name (or position). */
 export function buildEnum(parsed: ParsedEnum, existing: DbEnumElement | undefined): DbEnumElement {
@@ -12,7 +13,7 @@ export function buildEnum(parsed: ParsedEnum, existing: DbEnumElement | undefine
   for (const value of parsed.values) {
     if (names.has(value.name)) {
       throw new ReconcileError(
-        `Value "${value.name}" is listed twice in "${parsed.name}"`,
+        t("reconcile.valueTwice", { value: value.name, name: parsed.name }),
         parsed.line,
       );
     }

@@ -1,6 +1,7 @@
 import type { DbRefKind } from "../../table";
 import type { TokenCursor } from "./token-cursor";
 import type { ParsedEndpoint } from "./parser.types";
+import { t } from "../../db.i18n";
 
 const REF_KINDS = new Set<string>([">", "<", "-", "<>"]);
 
@@ -19,7 +20,7 @@ export function parseSettings(
     if (cursor.acceptSymbol("]")) return;
     const words: string[] = [];
     while (cursor.peek().kind === "ident") words.push(cursor.next().value.toLowerCase());
-    if (words.length === 0) throw cursor.error("Expected a setting");
+    if (words.length === 0) throw cursor.error(t("syntax.expectedSetting"));
     const hasValue = cursor.acceptSymbol(":");
     if (!onSetting(words.join(" "), hasValue) && hasValue) skipValue(cursor);
     cursor.skipNewlines();
@@ -42,25 +43,26 @@ export function parseValue(cursor: TokenCursor): string {
   ) {
     return cursor.next().raw;
   }
-  throw cursor.error("Expected a value");
+  throw cursor.error(t("syntax.expectedValue"));
 }
 
 export function parseRefKind(cursor: TokenCursor): DbRefKind {
   const token = cursor.peek();
   if (token.kind !== "symbol" || !REF_KINDS.has(token.value)) {
-    throw cursor.error("Expected a relation kind (>, <, - or <>)");
+    throw cursor.error(t("syntax.expectedRefKind"));
   }
   return cursor.next().value as DbRefKind;
 }
 
 /** `table.column` (or `schema.table.column`; the schema becomes part of the table name). */
 export function parseEndpoint(cursor: TokenCursor): ParsedEndpoint {
-  const parts = [cursor.expectName("a table name").value];
+  const parts = [cursor.expectName(t("expect.tableName")).value];
   while (cursor.acceptSymbol(".")) {
-    if (cursor.isSymbol("(")) throw cursor.error("Composite refs aren't supported yet");
-    parts.push(cursor.expectName("a column name").value);
+    if (cursor.isSymbol("("))
+      throw cursor.error(t("syntax.compositeRef"), cursor.peek(), "composite-ref");
+    parts.push(cursor.expectName(t("expect.columnName")).value);
   }
-  if (parts.length < 2) throw cursor.error('Expected "table.column"');
+  if (parts.length < 2) throw cursor.error(t("syntax.expectedEndpoint"));
   const column = parts.pop()!;
   return { table: parts.join("."), column };
 }

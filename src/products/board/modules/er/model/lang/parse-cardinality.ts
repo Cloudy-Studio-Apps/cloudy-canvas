@@ -1,12 +1,13 @@
 import type { TokenCursor } from "../../../db";
 import type { Cardinality } from "./parser.types";
+import { t } from "../../er.i18n";
 
 /** `(0,n)`, `(1,1)`, `(1:n)`, `(0,*)`. */
 export function parseCardinality(cursor: TokenCursor): Cardinality {
   cursor.expectSymbol("(");
-  const min = bound(cursor, "a minimum like 0 or 1");
+  const min = bound(cursor, t("expect.minimum"));
   if (!cursor.acceptSymbol(":")) cursor.expectSymbol(",");
-  const max = bound(cursor, "a maximum like 1 or n");
+  const max = bound(cursor, t("expect.maximum"));
   cursor.expectSymbol(")");
   return { min, max };
 }
@@ -21,5 +22,5 @@ function bound(cursor: TokenCursor, what: string): string {
   if (cursor.acceptSymbol("*")) return "n";
   if (token.kind === "ident" && /^[nm]$/i.test(token.value))
     return cursor.next().value.toLowerCase();
-  throw cursor.error(`Expected ${what}`);
+  throw cursor.expected(what);
 }

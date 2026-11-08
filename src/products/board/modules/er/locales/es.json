@@ -17,13 +17,16 @@
       "description": "Una relación (rombo) entre entidades de un diagrama ER."
     },
     "isa": {
-      "label": "Jerarquía"
+      "label": "Jerarquía",
+      "description": "Una generalización (un triángulo «es un») de una entidad padre a sus hijas."
     },
     "constraint": {
-      "label": "Restricción"
+      "label": "Restricción",
+      "description": "Una restricción de exclusión, inclusión, exclusiva o inclusiva entre relaciones."
     },
     "union": {
-      "label": "Tipo unión"
+      "label": "Tipo unión",
+      "description": "Una categoría: una entidad cuyas instancias son, cada una, de una de sus superclases (un círculo U)."
     }
   },
   "mode": {
@@ -677,5 +680,54 @@
     "saved": "Archivo Markdown guardado",
     "saveError": "No se pudo guardar el archivo Markdown",
     "fileType": "Archivo Markdown"
+  },
+  "parse": {
+    "expectedBlock": "Se esperaba Entity, Relation, Isa, Union, Aggregate, Constraint o Diagram",
+    "expectedConstraintKind": "Se esperaba exclusive, inclusive, exclusion o inclusion"
+  },
+  "expect": {
+    "relationName": "un nombre de relación",
+    "entityOrAttribute": "un nombre de entidad o de atributo",
+    "attributeName": "un nombre de atributo",
+    "roleName": "un nombre de rol",
+    "attribute": "un atributo",
+    "parentEntity": "la entidad padre",
+    "aParentEntity": "una entidad padre",
+    "childEntity": "una entidad hija",
+    "aggregationName": "un nombre de agregación",
+    "groupedRelation": "la relación que agrupa",
+    "entityName": "un nombre de entidad",
+    "entity": "una entidad",
+    "relation": "una relación",
+    "categoryEntity": "la entidad categoría",
+    "superclassEntity": "una entidad superclase",
+    "style": "chen o lollipop",
+    "setting": "un valor para {key}",
+    "minimum": "un mínimo como 0 o 1",
+    "maximum": "un máximo como 1 o n"
+  },
+  "reconcile": {
+    "twice": {
+      "entity": "La entidad \"{name}\" está definida dos veces",
+      "aggregation": "La agregación \"{name}\" está definida dos veces",
+      "relation": "La relación \"{name}\" está definida dos veces",
+      "associative": "La entidad asociativa \"{name}\" está definida dos veces"
+    },
+    "taken": {
+      "entity": "Ya hay otra entidad en la pizarra llamada \"{name}\"",
+      "aggregation": "Ya hay otra agregación en la pizarra llamada \"{name}\"",
+      "relation": "Ya hay otra relación en la pizarra llamada \"{name}\"",
+      "associative": "Ya hay otra entidad asociativa en la pizarra llamada \"{name}\""
+    },
+    "unknownEntity": "Entidad desconocida \"{name}\" (se crea al salir del editor)",
+    "unknownRelation": "Relación desconocida \"{name}\"",
+    "noAttribute": "\"{entity}\" no tiene el atributo \"{attribute}\" (se crea al salir del editor)"
+  },
+  "completions": {
+    "hierarchy": "jerarquía",
+    "category": "categoría",
+    "constraint": "restricción",
+    "discriminator": "discriminador",
+    "notation": "notación"
   }
 }

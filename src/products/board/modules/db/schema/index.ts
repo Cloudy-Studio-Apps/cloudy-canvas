@@ -3,6 +3,7 @@
 export type * from "./db-schema.types";
 export type * from "./column-types.types";
 export type { DbmlError } from "./dbml";
+export type * from "./reconcile-error.types";
 // The DBML language's pieces the ER language shares (tokens, settings, names, errors).
 export {
   DbmlSyntaxError,

@@ -25,7 +25,7 @@ export function parseTable(
   };
   if (cursor.isKeyword("as")) {
     cursor.next();
-    table.alias = cursor.expectName("an alias").value;
+    table.alias = cursor.expectName(t("expect.alias")).value;
   }
   if (cursor.isSymbol("[")) {
     parseSettings(cursor, (key, hasValue) => {
@@ -34,7 +34,7 @@ export function parseTable(
         return true;
       }
       if (key === "note" && hasValue) {
-        table.note = cursor.expectString("a note");
+        table.note = cursor.expectString(t("expect.note"));
         return true;
       }
       warnings.push(unsupported(t("dbml.tableSetting", { key }), keyword));
@@ -46,7 +46,7 @@ export function parseTable(
   for (;;) {
     cursor.skipNewlines();
     if (cursor.acceptSymbol("}")) break;
-    if (cursor.atEnd()) throw cursor.error(`Missing "}" for table "${table.name}"`);
+    if (cursor.atEnd()) throw cursor.error(t("syntax.missingTableBrace", { name: table.name }));
 
     if (cursor.isKeyword("note") && (cursor.isSymbol(":", 1) || cursor.isSymbol("{", 1))) {
       table.note = parseNote(cursor);
@@ -66,7 +66,7 @@ function parseColumn(
   refs: ParsedRef[],
   warnings: DbmlError[],
 ): ParsedColumn {
-  const nameToken = cursor.expectName("a column name");
+  const nameToken = cursor.expectName(t("expect.columnName"));
   const column: ParsedColumn = {
     name: nameToken.value,
     ...splitColumnType(parseType(cursor)),
@@ -94,7 +94,7 @@ function parseColumn(
       return true;
     }
     if (key === "note") {
-      column.note = cursor.expectString("a note");
+      column.note = cursor.expectString(t("expect.note"));
       return true;
     }
     if (key === "ref") {
@@ -112,7 +112,7 @@ function parseColumn(
 
 /** A column type: `int`, `varchar(255)`, `decimal(10, 2)`, `int[]`, `"timestamp with time zone"`. */
 function parseType(cursor: TokenCursor): string {
-  const first = cursor.expectName("a column type");
+  const first = cursor.expectName(t("expect.columnType"));
   let type = first.value;
   while (cursor.isSymbol(".") && cursor.peek(1).kind === "ident") {
     cursor.next();
@@ -123,8 +123,7 @@ function parseType(cursor: TokenCursor): string {
     cursor.next();
     while (!cursor.acceptSymbol(")")) {
       const token = cursor.next();
-      if (token.kind === "eof" || token.kind === "newline")
-        throw cursor.error('Missing ")"', token);
+      if (token.kind === "eof" || token.kind === "newline") throw cursor.missingClosing(")", token);
       args.push(token.raw);
     }
     type += `(${args.join(" ")})`;
@@ -140,10 +139,10 @@ function parseType(cursor: TokenCursor): string {
 /** `Note: '…'` or `Note { '…' }`. */
 export function parseNote(cursor: TokenCursor): string {
   cursor.next();
-  if (cursor.acceptSymbol(":")) return cursor.expectString("a note");
+  if (cursor.acceptSymbol(":")) return cursor.expectString(t("expect.note"));
   cursor.expectSymbol("{");
   cursor.skipNewlines();
-  const note = cursor.expectString("a note");
+  const note = cursor.expectString(t("expect.note"));
   cursor.skipNewlines();
   cursor.expectSymbol("}");
   return note;

@@ -16,8 +16,7 @@ import { t } from "../er.i18n";
 export class ErUnionKind extends ErKind<ErUnionElement> {
   readonly type = "er-union";
   readonly label = t("kinds.union.label");
-  readonly description =
-    "A category: an entity whose instances are each one of its superclasses' (a U circle).";
+  readonly description = t("kinds.union.description");
 
   /** Connect dots: drag one onto an entity to make it a superclass. */
   override handles(el: ErUnionElement, zoom: number): ElementHandle[] {

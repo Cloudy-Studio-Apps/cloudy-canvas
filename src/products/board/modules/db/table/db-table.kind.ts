@@ -46,7 +46,15 @@ export class DbTableKind extends DbCardKind<DbTableElement> {
   override rows(el: DbTableElement): string[][] {
     return [
       [el.name],
-      ["Column", "Type", "Primary key", "Not null", "Unique", "Default", "Note"],
+      [
+        t("rows.column"),
+        t("rows.type"),
+        t("rows.primaryKey"),
+        t("rows.notNull"),
+        t("rows.unique"),
+        t("rows.default"),
+        t("rows.note"),
+      ],
       ...el.columns.map((column) => [
         column.name,
         formatColumnType(column),
@@ -80,5 +88,5 @@ function fillColumnDefaults(column: DbColumn): DbColumn {
 }
 
 function yesNo(value: boolean): string {
-  return value ? "yes" : "no";
+  return value ? t("rows.yes") : t("rows.no");
 }

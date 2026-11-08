@@ -53,8 +53,7 @@ function parseModel(cursor: TokenCursor): ParsedEr {
       model.aggregates.push(parseAggregate(cursor, model.warnings));
     else if (cursor.isKeyword("constraint")) model.constraints.push(parseConstraint(cursor));
     else if (cursor.isKeyword("diagram")) parseDiagram(cursor, model);
-    else
-      throw cursor.error("Expected Entity, Relation, Isa, Union, Aggregate, Constraint or Diagram");
+    else throw cursor.error(t("parse.expectedBlock"));
   }
   model.entities = entities.map(withoutIsa);
   mergeInlineIsa(entities, model);
@@ -86,7 +85,7 @@ function parseDiagram(cursor: TokenCursor, model: ParsedEr): void {
   const at = cursor.peek();
   parseSettings(cursor, (key, hasValue) => {
     if (hasValue && isNotationSetting(key)) {
-      const value = cursor.expectName(`a ${key}`).value.toLowerCase();
+      const value = cursor.expectName(t("expect.setting", { key })).value.toLowerCase();
       const setting = readNotationSetting(key, value);
       if (setting) model.notation = { ...model.notation, ...setting };
       else model.warnings.push(unknownSetting(`${key}: ${value}`, at));
@@ -103,7 +102,7 @@ function parseDiagram(cursor: TokenCursor, model: ParsedEr): void {
       model.warnings.push(unknownSetting(key, at));
       return false;
     }
-    const style = cursor.expectName("chen or lollipop").value.toLowerCase();
+    const style = cursor.expectName(t("expect.style")).value.toLowerCase();
     if (style === "lollipop") model.style = "lollipop";
     else if (style === "chen") model.style = "ellipse";
     else model.warnings.push(unknownSetting(`style: ${style}`, at));

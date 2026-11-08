@@ -56,6 +56,13 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   archivos de imprenta en CMYK conservan los marcadores.
 - Las fuentes de datos ahora pueden leer archivos de Excel y APIs que devuelven sus filas por páginas, y un paso opcional permite elegir y renombrar campos antes de usarlos. Los plugins pueden añadir sus propios tipos de fuente.
 
+### Mejoras
+
+- Los editores de texto del esquema de base de datos y de los diagramas ER ahora muestran sus
+  errores, avisos y sugerencias en español cuando la aplicación está en español. Las palabras clave
+  del lenguaje que escribes, como Table, Entity o Relation, siguen siendo las mismas en todos los
+  idiomas.
+
 ### Correcciones
 
 - Al exportar una página que no es la que está en pantalla, también las exportaciones que hace un

@@ -2,11 +2,12 @@ import { parseSettings, type DbmlError, type TokenCursor } from "../../../db";
 import { endOfItem, unknownSetting } from "./parse-attributes";
 import { optionalCardinality } from "./parse-cardinality";
 import type { ParsedErIsa } from "./parser.types";
+import { t } from "../../er.i18n";
 
 /** `Isa Parent (1,1) [exclusive|overlapping, total|partial, by: tipo] { Child (0,1) … }`. */
 export function parseIsa(cursor: TokenCursor, warnings: DbmlError[]): ParsedErIsa {
   const keyword = cursor.next();
-  const parent = cursor.expectName("the parent entity").value;
+  const parent = cursor.expectName(t("expect.parentEntity")).value;
   const { min, max } = optionalCardinality(cursor);
   const isa: ParsedErIsa = {
     parent,
@@ -26,7 +27,7 @@ export function parseIsa(cursor: TokenCursor, warnings: DbmlError[]): ParsedErIs
       else if (key === "total") isa.total = true;
       else if (key === "partial") isa.total = false;
       else if (key === "by" && hasValue)
-        isa.discriminator = cursor.expectName("an attribute").value;
+        isa.discriminator = cursor.expectName(t("expect.attribute")).value;
       else {
         warnings.push(unknownSetting(key, at));
         return false;
@@ -38,8 +39,8 @@ export function parseIsa(cursor: TokenCursor, warnings: DbmlError[]): ParsedErIs
   for (;;) {
     cursor.skipNewlines();
     if (cursor.acceptSymbol("}")) return isa;
-    if (cursor.atEnd()) throw cursor.error('Missing closing "}"');
-    const token = cursor.expectName("a child entity");
+    if (cursor.atEnd()) throw cursor.missingClosing("}");
+    const token = cursor.expectName(t("expect.childEntity"));
     isa.children.push({ entity: token.value, ...optionalCardinality(cursor), line: token.line });
     endOfItem(cursor);
   }

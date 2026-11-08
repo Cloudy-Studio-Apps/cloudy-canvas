@@ -29,13 +29,13 @@ export function parseEnum(cursor: TokenCursor, warnings: DbmlError[]): ParsedEnu
   for (;;) {
     cursor.skipNewlines();
     if (cursor.acceptSymbol("}")) return result;
-    if (cursor.atEnd()) throw cursor.error(`Missing "}" for enum "${result.name}"`);
-    const name = cursor.expectName("an enum value").value;
+    if (cursor.atEnd()) throw cursor.error(t("syntax.missingEnumBrace", { name: result.name }));
+    const name = cursor.expectName(t("expect.enumValue")).value;
     let note = "";
     if (cursor.isSymbol("[")) {
       parseSettings(cursor, (key, hasValue) => {
         if (key === "note" && hasValue) {
-          note = cursor.expectString("a note");
+          note = cursor.expectString(t("expect.note"));
           return true;
         }
         warnings.push(unsupported(t("dbml.enumValueSetting", { key }), keyword));

@@ -10,6 +10,7 @@ import {
 } from "./parse-attributes";
 import { parseCardinality } from "./parse-cardinality";
 import type { RawRelation, RelationLine } from "./parser.types";
+import { t } from "../../er.i18n";
 
 /**
  * `Relation name [identifying, id, color: #hex] { Entity.attribute (min,max) as role [arrow] |
@@ -17,7 +18,7 @@ import type { RawRelation, RelationLine } from "./parser.types";
  */
 export function parseRelation(cursor: TokenCursor, warnings: DbmlError[]): RawRelation {
   const keyword = cursor.next();
-  const name = cursor.expectName("a relation name").value;
+  const name = cursor.expectName(t("expect.relationName")).value;
   const relation: RawRelation = {
     name,
     identifying: false,
@@ -47,7 +48,7 @@ export function parseRelation(cursor: TokenCursor, warnings: DbmlError[]): RawRe
   for (;;) {
     cursor.skipNewlines();
     if (cursor.acceptSymbol("}")) break;
-    if (cursor.atEnd()) throw cursor.error('Missing closing "}"');
+    if (cursor.atEnd()) throw cursor.missingClosing("}");
     relation.lines.push(parseLine(cursor, warnings));
     endOfItem(cursor);
   }
@@ -63,10 +64,10 @@ function parseLine(cursor: TokenCursor, warnings: DbmlError[]): RelationLine {
     (next.kind === "ident" || next.kind === "string" || isPrefix(next.value));
   if (forcedAttribute) cursor.next();
   const flags = parsePrefixes(cursor);
-  const token = cursor.expectName("an entity or attribute name");
+  const token = cursor.expectName(t("expect.entityOrAttribute"));
   const attribute = attributeNamed(token.value, token.line);
   flags.forEach((apply) => apply(attribute));
-  const via = cursor.acceptSymbol(".") ? cursor.expectName("an attribute name").value : "";
+  const via = cursor.acceptSymbol(".") ? cursor.expectName(t("expect.attributeName")).value : "";
 
   const line: RelationLine = {
     attribute,
@@ -79,7 +80,7 @@ function parseLine(cursor: TokenCursor, warnings: DbmlError[]): RelationLine {
   if (cursor.isSymbol("(")) line.cardinality = parseCardinality(cursor);
   if (cursor.isKeyword("as")) {
     cursor.next();
-    line.role = cursor.expectName("a role name").value;
+    line.role = cursor.expectName(t("expect.roleName")).value;
   }
   if (cursor.isSymbol("[")) {
     const at = cursor.peek();

@@ -6,6 +6,7 @@ import { checkNames, ReconcileError } from "./reconcile-error";
 import { buildNote } from "./reconcile-notes";
 import { applyRefs, buildTable } from "./reconcile-tables";
 import type { ReconcileInput, ReconcileResult } from "./reconcile.types";
+import { t } from "../db.i18n";
 
 /**
  * Works out how the board's schema changes for a parsed DBML text. Tables, enums and sticky notes
@@ -14,9 +15,15 @@ import type { ReconcileInput, ReconcileResult } from "./reconcile.types";
  */
 export function reconcile({ schema, replaced, others }: ReconcileInput): ReconcileResult {
   try {
-    checkNames(schema.tables, new Set(others.tables.map((t) => t.name)), "Table");
-    checkNames(schema.enums, new Set(others.enums.map((e) => e.name)), "Enum");
-    checkNames(schema.notes, new Set(others.notes.map((n) => n.noteName ?? "")), "Note");
+    checkNames(schema.tables, new Set(others.tables.map((table) => table.name)), (problem, name) =>
+      t(`reconcile.${problem}.table`, { name }),
+    );
+    checkNames(schema.enums, new Set(others.enums.map((e) => e.name)), (problem, name) =>
+      t(`reconcile.${problem}.enum`, { name }),
+    );
+    checkNames(schema.notes, new Set(others.notes.map((n) => n.noteName ?? "")), (problem, name) =>
+      t(`reconcile.${problem}.note`, { name }),
+    );
 
     const added = new Set<string>();
     const track = <T extends CanvasElement>(shape: T, existing: unknown): T => {

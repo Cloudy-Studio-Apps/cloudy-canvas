@@ -13,8 +13,7 @@ const LINE_WIDTH = 2;
 export class ErConstraintKind extends ErKind<ErConstraintElement> {
   readonly type = "er-constraint";
   readonly label = t("kinds.constraint.label");
-  readonly description =
-    "An exclusion, inclusion, exclusive or inclusive constraint between relations.";
+  readonly description = t("kinds.constraint.description");
 
   draw(view: ElementView, el: ErConstraintElement): void {
     drawErConstraint(view, el);

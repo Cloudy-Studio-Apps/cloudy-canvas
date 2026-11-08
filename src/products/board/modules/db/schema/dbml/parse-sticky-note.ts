@@ -2,6 +2,7 @@ import { parseSettings } from "./parse-settings";
 import { parseQualifiedName } from "./parse-name";
 import type { TokenCursor } from "./token-cursor";
 import type { ParsedNote } from "./parser.types";
+import { t } from "../../db.i18n";
 
 /** Parses a top-level sticky note `Note name [settings] { '…' }`. The cursor is on `Note`. */
 export function parseStickyNote(cursor: TokenCursor): ParsedNote {
@@ -21,7 +22,7 @@ export function parseStickyNote(cursor: TokenCursor): ParsedNote {
   }
   cursor.expectSymbol("{");
   cursor.skipNewlines();
-  if (!cursor.isSymbol("}")) note.text = cursor.expectString("the note text");
+  if (!cursor.isSymbol("}")) note.text = cursor.expectString(t("expect.noteText"));
   cursor.skipNewlines();
   cursor.expectSymbol("}");
   return note;

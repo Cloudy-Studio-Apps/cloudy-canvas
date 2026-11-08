@@ -179,5 +179,81 @@
   },
   "viewer": {
     "schema": "Schema"
+  },
+  "syntax": {
+    "found": "{message}, found {found}",
+    "endOfText": "end of text",
+    "endOfLine": "end of line",
+    "expected": "Expected {what}",
+    "expectedSymbol": "Expected \"{symbol}\"",
+    "expectedQuoted": "Expected {what} as a quoted string",
+    "expectedColor": "Expected a color like #cfe4f8",
+    "expectedEndOfLine": "Expected the end of the line",
+    "missingClosing": "Missing closing \"{symbol}\"",
+    "unclosedComment": "Unclosed comment",
+    "unclosedString": "Unclosed {quote} string",
+    "unexpectedChar": "Unexpected character \"{char}\"",
+    "expectedSetting": "Expected a setting",
+    "expectedValue": "Expected a value",
+    "expectedRefKind": "Expected a relation kind (>, <, - or <>)",
+    "compositeRef": "Composite refs aren't supported yet",
+    "expectedEndpoint": "Expected \"table.column\"",
+    "expectedBlock": "Expected Table, Enum, Ref or Note",
+    "missingTableBrace": "Missing \"}\" for table \"{name}\"",
+    "missingEnumBrace": "Missing \"}\" for enum \"{name}\"",
+    "missingIndexesBrace": "Missing \"}\" for indexes"
+  },
+  "expect": {
+    "name": "a name",
+    "tableName": "a table name",
+    "columnName": "a column name",
+    "alias": "an alias",
+    "note": "a note",
+    "noteText": "the note text",
+    "columnType": "a column type",
+    "enumValue": "an enum value",
+    "indexName": "an index name",
+    "indexType": "an index type",
+    "indexColumn": "a column name or `expression`"
+  },
+  "reconcile": {
+    "twice": {
+      "table": "Table \"{name}\" is defined twice",
+      "enum": "Enum \"{name}\" is defined twice",
+      "note": "Note \"{name}\" is defined twice"
+    },
+    "taken": {
+      "table": "Another table on the board is named \"{name}\"",
+      "enum": "Another enum on the board is named \"{name}\"",
+      "note": "Another note on the board is named \"{name}\""
+    },
+    "valueTwice": "Value \"{value}\" is listed twice in \"{name}\"",
+    "columnTwice": "Column \"{column}\" is defined twice in \"{name}\"",
+    "indexUnknownColumn": "Index uses unknown column \"{column}\"",
+    "refOutside": "A ref here must start or end at this table",
+    "columnHasRef": "Column \"{column}\" already has a relation",
+    "unknownTable": "Unknown table \"{name}\". It's created when you leave the editor",
+    "unknownColumn": "Unknown column \"{column}\""
+  },
+  "rows": {
+    "column": "Column",
+    "type": "Type",
+    "primaryKey": "Primary key",
+    "notNull": "Not null",
+    "unique": "Unique",
+    "default": "Default",
+    "note": "Note",
+    "yes": "yes",
+    "no": "no"
+  },
+  "completions": {
+    "table": "table",
+    "enum": "enum",
+    "relation": "relation",
+    "tableNote": "table note",
+    "primaryKey": "primary key",
+    "manyToOne": "many-to-one",
+    "type": "type",
+    "column": "column"
   }
 }

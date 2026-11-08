@@ -19,7 +19,7 @@ export function parseAttributeBlock(
   for (;;) {
     cursor.skipNewlines();
     if (cursor.acceptSymbol("}")) return attributes;
-    if (cursor.atEnd()) throw cursor.error('Missing closing "}"');
+    if (cursor.atEnd()) throw cursor.missingClosing("}");
     attributes.push(parseAttribute(cursor, warnings));
     endOfItem(cursor);
   }
@@ -28,7 +28,7 @@ export function parseAttributeBlock(
 /** `*name [pk, multi, derived, partial, optional] { parts }`; all but the name is optional. */
 export function parseAttribute(cursor: TokenCursor, warnings: DbmlError[]): ParsedErAttribute {
   const flags = parsePrefixes(cursor);
-  const token = cursor.expectName("an attribute name");
+  const token = cursor.expectName(t("expect.attributeName"));
   const attribute = attributeNamed(token.value, token.line);
   flags.forEach((apply) => apply(attribute));
   parseAttributeTail(cursor, attribute, warnings);

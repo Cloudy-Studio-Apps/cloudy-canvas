@@ -49,6 +49,12 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   files in CMYK keep the bookmarks.
 - Data sources can now read Excel files and APIs that return their rows in pages, and an optional step can pick and rename fields before they're used. Plugins can add their own kinds of source.
 
+### Improved
+
+- The database schema and ER diagram text editors now show their errors, warnings and suggestions
+  in Spanish when the app is in Spanish. The language keywords you write, such as Table, Entity or
+  Relation, stay the same in every language.
+
 ### Fixed
 
 - Exporting a page that isn't the one on screen, including exports made by an AI agent, now keeps

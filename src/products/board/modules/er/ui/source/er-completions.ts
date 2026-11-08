@@ -11,6 +11,7 @@ import {
 } from "@board/ui/components/source-editor";
 import { entityAttributeNames } from "./entity-attribute-names";
 import { notationValues } from "../../model";
+import { t } from "../../er.i18n";
 
 const TOP_LEVEL: Completion[] = [
   snippetCompletion("Entity ${name} {\n\t${}\n}", { label: "Entity", type: "keyword" }),
@@ -18,12 +19,12 @@ const TOP_LEVEL: Completion[] = [
   snippetCompletion("Isa ${parent} {\n\t${}\n}", {
     label: "Isa",
     type: "keyword",
-    detail: "hierarchy",
+    detail: t("completions.hierarchy"),
   }),
   snippetCompletion("Union ${category} {\n\t${}\n}", {
     label: "Union",
     type: "keyword",
-    detail: "category",
+    detail: t("completions.category"),
   }),
   snippetCompletion("Aggregate ${name} { ${} }", { label: "Aggregate", type: "keyword" }),
   snippetCompletion("Constraint ${}", { label: "Constraint", type: "keyword" }),
@@ -31,7 +32,7 @@ const TOP_LEVEL: Completion[] = [
 ];
 
 const CONSTRAINT_KINDS: Completion[] = ["exclusive", "inclusive", "exclusion", "inclusion"].map(
-  (label) => ({ label, type: "keyword", detail: "constraint" }),
+  (label) => ({ label, type: "keyword", detail: t("completions.constraint") }),
 );
 
 const SETTINGS: Completion[] = [
@@ -49,7 +50,11 @@ const SETTINGS: Completion[] = [
     "ak",
   ].map((label) => ({ label, type: "constant" })),
   ...["exclusive", "overlapping", "total", "arrow"].map((label) => ({ label, type: "constant" })),
-  snippetCompletion("by: ${}", { label: "by", type: "constant", detail: "discriminator" }),
+  snippetCompletion("by: ${}", {
+    label: "by",
+    type: "constant",
+    detail: t("completions.discriminator"),
+  }),
   snippetCompletion("color: #${}", { label: "color", type: "constant" }),
   snippetCompletion("style: ${}", { label: "style", type: "constant" }),
   ...[
@@ -63,7 +68,11 @@ const SETTINGS: Completion[] = [
     "arrows",
     "joins",
   ].map((label) =>
-    snippetCompletion(`${label}: \${}`, { label, type: "constant", detail: "notation" }),
+    snippetCompletion(`${label}: \${}`, {
+      label,
+      type: "constant",
+      detail: t("completions.notation"),
+    }),
   ),
 ];
 

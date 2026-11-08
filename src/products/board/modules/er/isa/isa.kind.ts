@@ -16,8 +16,7 @@ import { t } from "../er.i18n";
 export class ErIsaKind extends ErKind<ErIsaElement> {
   readonly type = "er-isa";
   readonly label = t("kinds.isa.label");
-  readonly description =
-    'A generalization (an "is a" triangle) from a parent entity to its children.';
+  readonly description = t("kinds.isa.description");
 
   /** Connect dots: drag one onto an entity to make it a child, or onto empty board for a new one. */
   override handles(el: ErIsaElement, zoom: number): ElementHandle[] {

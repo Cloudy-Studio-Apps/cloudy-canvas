@@ -29,6 +29,12 @@ Every folder that shows text (a module, a page, an area like `canvas-ui`) owns i
   (`common/`); anything more specific belongs to the folder, even when another says it too.
 - **Stays English**: MCP tool names and descriptions, ids, element types, file formats, key caps,
   "Cloudy Canvas", and developer messages (thrown `Error`s, `console`).
+- **Languages users write** (DBML, the ER language): keywords and settings (`Table`, `Entity`,
+  `pk`, `[weak]`) are syntax and stay as written; their syntax and reconcile errors, warnings and
+  completion hints are translated (`syntax.*`, `expect.*`, `reconcile.*`, `completions.*` in the db
+  and er modules). `TokenCursor.expectName(what)` takes `what` already translated ("a column
+  name"), and since messages are translated, the parser tells a recoverable error apart by
+  `DbmlSyntaxError.code`, never by its text.
 
 ## The locale
 
@@ -68,5 +74,3 @@ ago"; `null` under a minute, which the caller words).
 
 - Figma and FigJam import warnings (`products/design/figma`, `products/board/figjam`): built in a
   worker, which has no locale, often from type names. They need message codes the UI translates.
-- DBML and ER syntax and reconcile errors (`board/modules/db/schema/dbml`, `board/modules/er`):
-  thrown `Error`s that the editors show.

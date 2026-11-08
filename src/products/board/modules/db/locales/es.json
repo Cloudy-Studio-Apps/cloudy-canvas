@@ -179,5 +179,81 @@
   },
   "viewer": {
     "schema": "Esquema"
+  },
+  "syntax": {
+    "found": "{message}, pero se encontró {found}",
+    "endOfText": "el final del texto",
+    "endOfLine": "el final de la línea",
+    "expected": "Se esperaba {what}",
+    "expectedSymbol": "Se esperaba \"{symbol}\"",
+    "expectedQuoted": "Se esperaba {what} entre comillas",
+    "expectedColor": "Se esperaba un color como #cfe4f8",
+    "expectedEndOfLine": "Se esperaba el final de la línea",
+    "missingClosing": "Falta el \"{symbol}\" de cierre",
+    "unclosedComment": "Comentario sin cerrar",
+    "unclosedString": "Texto entre {quote} sin cerrar",
+    "unexpectedChar": "Carácter inesperado \"{char}\"",
+    "expectedSetting": "Se esperaba un ajuste",
+    "expectedValue": "Se esperaba un valor",
+    "expectedRefKind": "Se esperaba un tipo de relación (>, <, - o <>)",
+    "compositeRef": "Las referencias compuestas aún no son compatibles",
+    "expectedEndpoint": "Se esperaba \"tabla.columna\"",
+    "expectedBlock": "Se esperaba Table, Enum, Ref o Note",
+    "missingTableBrace": "Falta la \"}\" de la tabla \"{name}\"",
+    "missingEnumBrace": "Falta la \"}\" del enum \"{name}\"",
+    "missingIndexesBrace": "Falta la \"}\" de los índices"
+  },
+  "expect": {
+    "name": "un nombre",
+    "tableName": "un nombre de tabla",
+    "columnName": "un nombre de columna",
+    "alias": "un alias",
+    "note": "una nota",
+    "noteText": "el texto de la nota",
+    "columnType": "un tipo de columna",
+    "enumValue": "un valor del enum",
+    "indexName": "un nombre de índice",
+    "indexType": "un tipo de índice",
+    "indexColumn": "un nombre de columna o una `expresión`"
+  },
+  "reconcile": {
+    "twice": {
+      "table": "La tabla \"{name}\" está definida dos veces",
+      "enum": "El enum \"{name}\" está definido dos veces",
+      "note": "La nota \"{name}\" está definida dos veces"
+    },
+    "taken": {
+      "table": "Ya hay otra tabla en la pizarra llamada \"{name}\"",
+      "enum": "Ya hay otro enum en la pizarra llamado \"{name}\"",
+      "note": "Ya hay otra nota en la pizarra llamada \"{name}\""
+    },
+    "valueTwice": "El valor \"{value}\" aparece dos veces en \"{name}\"",
+    "columnTwice": "La columna \"{column}\" está definida dos veces en \"{name}\"",
+    "indexUnknownColumn": "El índice usa la columna desconocida \"{column}\"",
+    "refOutside": "Una relación aquí debe empezar o terminar en esta tabla",
+    "columnHasRef": "La columna \"{column}\" ya tiene una relación",
+    "unknownTable": "Tabla desconocida \"{name}\". Se crea al salir del editor",
+    "unknownColumn": "Columna desconocida \"{column}\""
+  },
+  "rows": {
+    "column": "Columna",
+    "type": "Tipo",
+    "primaryKey": "Clave primaria",
+    "notNull": "No nulo",
+    "unique": "Único",
+    "default": "Por defecto",
+    "note": "Nota",
+    "yes": "sí",
+    "no": "no"
+  },
+  "completions": {
+    "table": "tabla",
+    "enum": "enum",
+    "relation": "relación",
+    "tableNote": "nota de tabla",
+    "primaryKey": "clave primaria",
+    "manyToOne": "muchos a uno",
+    "type": "tipo",
+    "column": "columna"
   }
 }

@@ -1,5 +1,6 @@
 import { DbmlSyntaxError } from "./dbml-error";
 import type { Token, TokenKind } from "./tokenizer.types";
+import { t } from "../../db.i18n";
 
 const SYMBOLS = new Set([
   "{",
@@ -56,7 +57,7 @@ export function tokenize(source: string): Token[] {
       while (i < source.length && source[i] !== "\n") i++;
     } else if (ch === "/" && source[i + 1] === "*") {
       const end = source.indexOf("*/", i + 2);
-      if (end === -1) throw new DbmlSyntaxError("Unclosed comment", startLine, startCol);
+      if (end === -1) throw new DbmlSyntaxError(t("syntax.unclosedComment"), startLine, startCol);
       for (let j = i; j < end; j++) {
         if (source[j] === "\n") {
           line++;
@@ -66,7 +67,12 @@ export function tokenize(source: string): Token[] {
       i = end + 2;
     } else if (ch === "'" && source.startsWith("'''", i)) {
       const end = source.indexOf("'''", i + 3);
-      if (end === -1) throw new DbmlSyntaxError("Unclosed ''' string", startLine, startCol);
+      if (end === -1)
+        throw new DbmlSyntaxError(
+          t("syntax.unclosedString", { quote: "'''" }),
+          startLine,
+          startCol,
+        );
       const value = source.slice(i + 3, end);
       for (let j = i; j < end; j++) {
         if (source[j] === "\n") {
@@ -81,13 +87,13 @@ export function tokenize(source: string): Token[] {
       i++;
       while (i < source.length && source[i] !== ch) {
         if (source[i] === "\n")
-          throw new DbmlSyntaxError(`Unclosed ${ch} string`, startLine, startCol);
+          throw new DbmlSyntaxError(t("syntax.unclosedString", { quote: ch }), startLine, startCol);
         if (source[i] === "\\" && i + 1 < source.length) i++;
         value += source[i];
         i++;
       }
       if (i >= source.length)
-        throw new DbmlSyntaxError(`Unclosed ${ch} string`, startLine, startCol);
+        throw new DbmlSyntaxError(t("syntax.unclosedString", { quote: ch }), startLine, startCol);
       i++;
       push(ch === "`" ? "expr" : "string", value, start, startLine, startCol);
     } else if (ch === "#" && HEX.test(source[i + 1] ?? "")) {
@@ -107,7 +113,7 @@ export function tokenize(source: string): Token[] {
       i++;
       push("symbol", ch, start, startLine, startCol);
     } else {
-      throw new DbmlSyntaxError(`Unexpected character "${ch}"`, startLine, startCol);
+      throw new DbmlSyntaxError(t("syntax.unexpectedChar", { char: ch }), startLine, startCol);
     }
   }
 

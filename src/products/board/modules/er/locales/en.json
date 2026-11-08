@@ -17,13 +17,16 @@
       "description": "A relation (diamond) between entities of an ER diagram."
     },
     "isa": {
-      "label": "Hierarchy"
+      "label": "Hierarchy",
+      "description": "A generalization (an \"is a\" triangle) from a parent entity to its children."
     },
     "constraint": {
-      "label": "Constraint"
+      "label": "Constraint",
+      "description": "An exclusion, inclusion, exclusive or inclusive constraint between relations."
     },
     "union": {
-      "label": "Union type"
+      "label": "Union type",
+      "description": "A category: an entity whose instances are each one of its superclasses' (a U circle)."
     }
   },
   "mode": {
@@ -677,5 +680,54 @@
     "saved": "Markdown file saved",
     "saveError": "The Markdown file couldn't be saved",
     "fileType": "Markdown file"
+  },
+  "parse": {
+    "expectedBlock": "Expected Entity, Relation, Isa, Union, Aggregate, Constraint or Diagram",
+    "expectedConstraintKind": "Expected exclusive, inclusive, exclusion or inclusion"
+  },
+  "expect": {
+    "relationName": "a relation name",
+    "entityOrAttribute": "an entity or attribute name",
+    "attributeName": "an attribute name",
+    "roleName": "a role name",
+    "attribute": "an attribute",
+    "parentEntity": "the parent entity",
+    "aParentEntity": "a parent entity",
+    "childEntity": "a child entity",
+    "aggregationName": "an aggregation name",
+    "groupedRelation": "the relation it groups",
+    "entityName": "an entity name",
+    "entity": "an entity",
+    "relation": "a relation",
+    "categoryEntity": "the category entity",
+    "superclassEntity": "a superclass entity",
+    "style": "chen or lollipop",
+    "setting": "a {key}",
+    "minimum": "a minimum like 0 or 1",
+    "maximum": "a maximum like 1 or n"
+  },
+  "reconcile": {
+    "twice": {
+      "entity": "Entity \"{name}\" is defined twice",
+      "aggregation": "Aggregation \"{name}\" is defined twice",
+      "relation": "Relation \"{name}\" is defined twice",
+      "associative": "Associative entity \"{name}\" is defined twice"
+    },
+    "taken": {
+      "entity": "Another entity on the board is named \"{name}\"",
+      "aggregation": "Another aggregation on the board is named \"{name}\"",
+      "relation": "Another relation on the board is named \"{name}\"",
+      "associative": "Another associative entity on the board is named \"{name}\""
+    },
+    "unknownEntity": "Unknown entity \"{name}\" (it's created when you leave the editor)",
+    "unknownRelation": "Unknown relation \"{name}\"",
+    "noAttribute": "\"{entity}\" has no attribute \"{attribute}\" (it's created when you leave the editor)"
+  },
+  "completions": {
+    "hierarchy": "hierarchy",
+    "category": "category",
+    "constraint": "constraint",
+    "discriminator": "discriminator",
+    "notation": "notation"
   }
 }

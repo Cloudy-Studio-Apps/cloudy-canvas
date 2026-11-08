@@ -12,30 +12,47 @@ import {
 } from "@board/ui/components/source-editor";
 import { COLUMN_TYPES } from "../../schema";
 import type { DbmlNames } from "./dbml-completions.types";
+import { t } from "../../db.i18n";
 
 const TOP_LEVEL: Completion[] = [
   snippetCompletion("Table ${name} {\n\t${}\n}", {
     label: "Table",
     type: "keyword",
-    detail: "table",
+    detail: t("completions.table"),
   }),
-  snippetCompletion("Enum ${name} {\n\t${}\n}", { label: "Enum", type: "keyword", detail: "enum" }),
-  snippetCompletion("Ref: ${from} > ${to}", { label: "Ref", type: "keyword", detail: "relation" }),
+  snippetCompletion("Enum ${name} {\n\t${}\n}", {
+    label: "Enum",
+    type: "keyword",
+    detail: t("completions.enum"),
+  }),
+  snippetCompletion("Ref: ${from} > ${to}", {
+    label: "Ref",
+    type: "keyword",
+    detail: t("completions.relation"),
+  }),
 ];
 
 const IN_TABLE: Completion[] = [
-  snippetCompletion("Note: '${}'", { label: "Note", type: "keyword", detail: "table note" }),
+  snippetCompletion("Note: '${}'", {
+    label: "Note",
+    type: "keyword",
+    detail: t("completions.tableNote"),
+  }),
   snippetCompletion("indexes {\n\t${}\n}", { label: "indexes", type: "keyword" }),
 ];
 
 const COLUMN_SETTINGS: Completion[] = [
-  { label: "pk", type: "constant", detail: "primary key" },
+  { label: "pk", type: "constant", detail: t("completions.primaryKey") },
   { label: "not null", type: "constant" },
   { label: "null", type: "constant" },
   { label: "unique", type: "constant" },
   { label: "increment", type: "constant" },
   snippetCompletion("default: ${}", { label: "default", type: "constant" }),
-  snippetCompletion("ref: > ${}", { label: "ref", type: "constant", detail: "many-to-one" }),
+  snippetCompletion("ref: > ${}", {
+    label: "ref",
+    type: "constant",
+    detail: t("completions.manyToOne"),
+  }),
   snippetCompletion("note: '${}'", { label: "note", type: "constant" }),
 ];
 
@@ -46,7 +63,11 @@ const INDEX_SETTINGS: Completion[] = [
   snippetCompletion("type: ${}", { label: "type", type: "constant" }),
 ];
 
-const TYPES: Completion[] = COLUMN_TYPES.map((label) => ({ label, type: "type", detail: "type" }));
+const TYPES: Completion[] = COLUMN_TYPES.map((label) => ({
+  label,
+  type: "type",
+  detail: t("completions.type"),
+}));
 
 /** `ref: > users.id` inside settings, or the right side of a `Ref:` line. */
 const REF_IN_SETTINGS = /\bref\s*:\s*[<>\-~]*\s*[\p{L}\p{N}_."]*$/iu;
@@ -95,12 +116,12 @@ function refTargets(names: DbmlNames, context: CompletionContext): Completion[] 
   return tables.flatMap((table) => {
     const prefix = writtenName(table.name);
     return [
-      { label: table.name, apply: prefix, type: "class", detail: "table" },
+      { label: table.name, apply: prefix, type: "class", detail: t("completions.table") },
       ...table.columns.map((column) => ({
         label: `${table.name}.${column}`,
         apply: `${prefix}.${writtenName(column)}`,
         type: "property",
-        detail: "column",
+        detail: t("completions.column"),
       })),
     ];
   });

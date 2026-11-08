@@ -1,5 +1,8 @@
 import type { DbRefKind } from "../../table";
 
+/** Marks a syntax error the parser recovers from (its message is translated, so it can't be matched). */
+export type DbmlSyntaxErrorCode = "composite-ref";
+
 export interface DbmlError {
   message: string;
   line: number;

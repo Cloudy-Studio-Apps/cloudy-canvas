@@ -12,7 +12,7 @@ export function parseIndexes(cursor: TokenCursor, warnings: DbmlError[]): Parsed
   for (;;) {
     cursor.skipNewlines();
     if (cursor.acceptSymbol("}")) return indexes;
-    if (cursor.atEnd()) throw cursor.error('Missing "}" for indexes');
+    if (cursor.atEnd()) throw cursor.error(t("syntax.missingIndexesBrace"));
     indexes.push(parseIndex(cursor, warnings));
     cursor.expectEndOfLine();
   }
@@ -43,9 +43,10 @@ function parseIndex(cursor: TokenCursor, warnings: DbmlError[]): ParsedIndex {
   parseSettings(cursor, (key, hasValue) => {
     if (!hasValue && key === "pk") index.pk = true;
     else if (!hasValue && key === "unique") index.unique = true;
-    else if (hasValue && key === "name") index.name = cursor.expectString("an index name");
-    else if (hasValue && key === "note") index.note = cursor.expectString("a note");
-    else if (hasValue && key === "type") index.type = cursor.expectName("an index type").value;
+    else if (hasValue && key === "name") index.name = cursor.expectString(t("expect.indexName"));
+    else if (hasValue && key === "note") index.note = cursor.expectString(t("expect.note"));
+    else if (hasValue && key === "type")
+      index.type = cursor.expectName(t("expect.indexType")).value;
     else {
       warnings.push(unsupported(t("dbml.indexSetting", { key }), start));
       return false;
@@ -58,5 +59,5 @@ function parseIndex(cursor: TokenCursor, warnings: DbmlError[]): ParsedIndex {
 function parsePart(cursor: TokenCursor): ParsedIndexPart {
   const token = cursor.peek();
   if (token.kind === "expr") return { kind: "expr", expr: cursor.next().value };
-  return { kind: "column", column: cursor.expectName("a column name or `expression`").value };
+  return { kind: "column", column: cursor.expectName(t("expect.indexColumn")).value };
 }

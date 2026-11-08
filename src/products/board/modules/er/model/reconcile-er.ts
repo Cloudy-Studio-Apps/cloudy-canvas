@@ -14,6 +14,7 @@ import type { ReconcileContext } from "./reconcile-context.types";
 import type { ErReconcileResult } from "./reconcile-er.types";
 import { buildAggregates, buildConstraints, buildIsas, buildUnions } from "./reconcile-extended";
 import { entityId } from "./reconcile-names";
+import { t } from "../er.i18n";
 
 /**
  * Works out the board's ER shapes for a parsed text. Everything is matched by name (then by
@@ -21,14 +22,20 @@ import { entityId } from "./reconcile-names";
  */
 export function reconcileEr(model: ParsedEr, existing: ErShapes): ErReconcileResult {
   try {
-    checkNames(model.entities, new Set(), "Entity");
-    checkNames(model.aggregates, new Set(model.entities.map((e) => e.name)), "Aggregation");
-    checkNames(model.relations, new Set(), "Relation");
+    checkNames(model.entities, new Set(), (problem, name) =>
+      t(`reconcile.${problem}.entity`, { name }),
+    );
+    checkNames(model.aggregates, new Set(model.entities.map((e) => e.name)), (problem, name) =>
+      t(`reconcile.${problem}.aggregation`, { name }),
+    );
+    checkNames(model.relations, new Set(), (problem, name) =>
+      t(`reconcile.${problem}.relation`, { name }),
+    );
     // An associative entity is named among the entities too.
     checkNames(
       model.relations.filter((r) => r.associative),
       new Set([...model.entities, ...model.aggregates].map((e) => e.name)),
-      "Associative entity",
+      (problem, name) => t(`reconcile.${problem}.associative`, { name }),
     );
 
     const ctx: ReconcileContext = {
@@ -151,7 +158,7 @@ function joinVias(
       );
       if (!attribute) {
         throw new ReconcileError(
-          `"${written.entity}" has no attribute "${written.via}" (it's created when you leave the editor)`,
+          t("reconcile.noAttribute", { entity: written.entity, attribute: written.via }),
           written.line,
         );
       }

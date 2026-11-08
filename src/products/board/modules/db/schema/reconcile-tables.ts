@@ -11,6 +11,7 @@ import {
 import type { ParsedEndpoint, ParsedIndex, ParsedRef, ParsedTable } from "./dbml";
 import { pairByName } from "./pair-by-name";
 import { ReconcileError } from "./reconcile-error";
+import { t } from "../db.i18n";
 
 const FLIPPED: Record<DbRefKind, DbRefKind> = { ">": "<", "<": ">", "-": "-", "<>": "<>" };
 
@@ -23,7 +24,7 @@ export function buildTable(
   for (const column of parsed.columns) {
     if (names.has(column.name)) {
       throw new ReconcileError(
-        `Column "${column.name}" is defined twice in "${parsed.name}"`,
+        t("reconcile.columnTwice", { column: column.name, name: parsed.name }),
         parsed.line,
       );
     }
@@ -65,7 +66,7 @@ function buildIndex(
     const column = columns.find((c) => c.name === part.column);
     if (!column) {
       throw new ReconcileError(
-        `Index uses unknown column "${tableName}.${part.column}"`,
+        t("reconcile.indexUnknownColumn", { column: `${tableName}.${part.column}` }),
         parsed.line,
       );
     }
@@ -97,13 +98,13 @@ export function applyRefs(
       { owner: to, target: from, kind: FLIPPED[ref.kind] },
     ].filter((end) => edited.has(end.owner.table.id));
     if (ends.length === 0) {
-      throw new ReconcileError("A ref here must start or end at this table", ref.line);
+      throw new ReconcileError(t("reconcile.refOutside"), ref.line);
     }
     const end = ends.find((candidate) => !candidate.owner.column.ref);
     if (!end) {
       const { table, column } = ends[0]!.owner;
       throw new ReconcileError(
-        `Column "${table.name}.${column.name}" already has a relation`,
+        t("reconcile.columnHasRef", { column: `${table.name}.${column.name}` }),
         ref.line,
       );
     }
@@ -122,13 +123,13 @@ function resolve(
 ): { table: DbTableElement; column: DbColumn } {
   const table = lookup.get(endpoint.table);
   if (!table) {
-    throw new ReconcileError(
-      `Unknown table "${endpoint.table}". It's created when you leave the editor`,
-      line,
-    );
+    throw new ReconcileError(t("reconcile.unknownTable", { name: endpoint.table }), line);
   }
   const column = table.columns.find((c) => c.name === endpoint.column);
   if (!column)
-    throw new ReconcileError(`Unknown column "${endpoint.table}.${endpoint.column}"`, line);
+    throw new ReconcileError(
+      t("reconcile.unknownColumn", { column: `${endpoint.table}.${endpoint.column}` }),
+      line,
+    );
   return { table, column };
 }

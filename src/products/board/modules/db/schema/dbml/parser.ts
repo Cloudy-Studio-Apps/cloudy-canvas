@@ -47,12 +47,12 @@ function parseSchema(cursor: TokenCursor): ParsedSchema {
       cursor.next();
       schema.warnings.push(unsupported(UNSUPPORTED_BLOCKS[keyword]!, token));
       while (!cursor.isSymbol("{")) {
-        if (cursor.atEnd()) throw cursor.error('Expected "{"');
+        if (cursor.atEnd()) throw cursor.error(t("syntax.expectedSymbol", { symbol: "{" }));
         cursor.next();
       }
       cursor.skipBlock();
     } else {
-      throw cursor.error("Expected Table, Enum, Ref or Note");
+      throw cursor.error(t("syntax.expectedBlock"));
     }
   }
 }
@@ -71,7 +71,7 @@ function parseRef(cursor: TokenCursor, refs: ParsedRef[], warnings: DbmlError[])
     const to = parseEndpoint(cursor);
     refs.push({ from, to, kind, line: keyword.line });
   } catch (error) {
-    if (!(error instanceof DbmlSyntaxError) || !error.message.startsWith("Composite")) throw error;
+    if (!(error instanceof DbmlSyntaxError) || error.code !== "composite-ref") throw error;
     warnings.push(unsupported(t("dbml.compositeRef"), keyword));
     while (!cursor.atEnd() && cursor.peek().kind !== "newline" && !cursor.isSymbol("}"))
       cursor.next();
