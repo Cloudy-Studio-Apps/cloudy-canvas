@@ -8,7 +8,7 @@ import type { LibraryMovePlan } from "./move-to-library.types";
 /**
  * What moving the file's own variables, collections or styles `ids` to the library `libraryId`
  * moves: a variable or a collection moves the whole collection (its variables, generators and
- * scales), with the file's own axes they vary by; a style moves alone. Records already in a
+ * scales), with the file's own axes they (and its shade generators) vary by; a style moves alone. Records already in a
  * library are left out. `blockers` lists what they read that stays behind (aliases, expressions,
  * style bindings or generator bases on the file's own variables, or another library's).
  */
@@ -49,6 +49,8 @@ export function planLibraryMove(
       Object.values(record.bindings ?? {}).forEach((r) => reads.add(r));
     } else if (record.kind === "generator" || record.kind === "scale") {
       if (record.baseVar) reads.add(record.baseVar);
+      // A shade generator's own axis (its shades vary by it) goes with it too.
+      if (record.kind === "generator" && record.axisId) axes.add(record.axisId);
     }
   }
   for (const id of axes) {

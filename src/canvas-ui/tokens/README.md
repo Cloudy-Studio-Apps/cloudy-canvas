@@ -21,5 +21,5 @@ React pieces both products use for variables and styles.
   read-only too, since the host's library wins. `groupBySource(items, sources, recordOf?)` splits a
   list by them (`tokenSources` is the pure part). `TokenSourceHeader` heads each group (a library's
   name with a Library badge and the note that editing reaches every file using it, or why it can't
-  be edited; "This file" with Local), and `LibraryBadge` marks a library's item. The picker groups
+  be edited; "This file" with Local), and `LibraryBadge` marks a library's item, and `useTokenEditable()` answers the same question for one record. The picker groups
   its collections so, with the note at its foot.

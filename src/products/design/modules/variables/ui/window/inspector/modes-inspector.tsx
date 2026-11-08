@@ -19,13 +19,16 @@ import { t } from "../../../variables.i18n";
  */
 export function ModesInspector() {
   const engine = useDesignEngine();
-  const { tokens, store, axis } = useBoard();
+  const { tokens, store, axis, canEdit } = useBoard();
   const setAxis = useVariablesWindowStore((state) => state.setAxis);
   const axes = store.axes();
 
   const move = (modeId: string, axisId: string, beforeId?: string) => {
     const from = store.axes().find((a) => a.modes.some((m) => m.id === modeId));
     const mode = from?.modes.find((m) => m.id === modeId);
+    const to = store.axis(axisId);
+    // Neither out of nor into a library's group that can't be edited.
+    if ((from && !canEdit(from)) || (to && !canEdit(to))) return;
     try {
       const { dropped } = tokens.moveMode(modeId, axisId, beforeId);
       if (dropped > 0 && from && mode) {
@@ -47,6 +50,8 @@ export function ModesInspector() {
   const rowDrag = useRowDrag({
     canDrop: (id, overId) => {
       const target = axisIdOf(overId);
+      const into = target !== null ? store.axis(target) : axisOfMode(overId);
+      if (into && !canEdit(into)) return false;
       if (target !== null) return axisOfMode(id)?.id !== target;
       return axisOfMode(overId)?.modes[0]?.id !== overId;
     },

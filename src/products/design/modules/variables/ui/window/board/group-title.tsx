@@ -5,7 +5,7 @@ import { t } from "../../../variables.i18n";
 
 /** A group's title: its name, renamed in place (its variables move), its count and what it holds. */
 export function GroupTitle({ group, count, label }: GroupTitleProps) {
-  const { tokens, collection } = useBoard();
+  const { tokens, collection, editable } = useBoard();
   return (
     <div className="mb-2 flex items-baseline gap-2">
       {group ? (
@@ -13,6 +13,7 @@ export function GroupTitle({ group, count, label }: GroupTitleProps) {
           aria-label={t("board.groupName")}
           title={t("board.renameGroup")}
           value={group}
+          disabled={!editable}
           onCommit={(to) => {
             if (collection && to.trim()) tokens.renameGroup(collection.id, group, to);
           }}

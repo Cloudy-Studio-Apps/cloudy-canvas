@@ -11,18 +11,21 @@ import { t } from "../../variables.i18n";
 
 /**
  * Find unused: the variables and styles nothing uses (no layer, alias, style or generator), to
- * delete some or all of them in one undo step.
+ * delete some or all of them in one undo step (a library's only while it can be edited).
  */
 export function UnusedView() {
-  const { tokens, store } = useBoard();
+  const { tokens, store, canEdit } = useBoard();
   const engine = useDesignEngine();
   // Binding a layer changes no token: any document change reads the list again.
   const [changes, bump] = useReducer((n: number) => n + 1, 0);
   useEffect(() => engine.doc.onChange(bump), [engine]);
   const unused = useMemo(
-    () => tokens.unused(countedUse(engine.doc)),
+    () =>
+      tokens
+        .unused(countedUse(engine.doc))
+        .filter((id) => canEdit(store.variable(id) ?? store.style(id))),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- read again on every change
-    [tokens, engine, store, changes],
+    [tokens, engine, store, changes, canEdit],
   );
   const [picked, setPicked] = useState<ReadonlySet<string>>(new Set());
   const [deleting, setDeleting] = useState<string[] | null>(null);

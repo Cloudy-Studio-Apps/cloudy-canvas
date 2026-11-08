@@ -10,9 +10,10 @@ import { t } from "../../../variables.i18n";
 
 /**
  * A mode in its group: renamed in place, dragged by its grip to another group (or dropped on
- * here, a dragged mode goes before it), moved with its menu, removed. The first mode stays.
+ * here, a dragged mode goes before it), moved with its menu, removed. The first mode stays, and
+ * a library's that can't be edited (`readOnly`) is only shown.
  */
-export function ModeRow({ axis, mode, first, moves }: ModeRowProps) {
+export function ModeRow({ axis, mode, first, readOnly, moves }: ModeRowProps) {
   const { tokens } = useBoard();
   const { rowDrag } = moves;
   const { drag } = rowDrag;
@@ -26,11 +27,11 @@ export function ModeRow({ axis, mode, first, moves }: ModeRowProps) {
       )}
     >
       <span
-        {...rowDrag.grabProps(mode.id, !first)}
-        title={first ? undefined : t("inspector.dragToGroup")}
+        {...rowDrag.grabProps(mode.id, !first && !readOnly)}
+        title={first || readOnly ? undefined : t("inspector.dragToGroup")}
         className={cn(
           "flex size-5 shrink-0 items-center justify-center text-subtle-foreground",
-          first ? "opacity-30" : "cursor-grab active:cursor-grabbing",
+          first || readOnly ? "opacity-30" : "cursor-grab active:cursor-grabbing",
         )}
       >
         <GripVertical className="size-3.5" />
@@ -38,6 +39,7 @@ export function ModeRow({ axis, mode, first, moves }: ModeRowProps) {
       <CommitInput
         aria-label={t("inspector.modeName")}
         value={mode.name}
+        disabled={readOnly}
         onCommit={(name) => tokens.renameMode(axis.id, mode.id, name)}
         className="h-7 min-w-0 flex-1 text-xs"
       />
@@ -48,7 +50,7 @@ export function ModeRow({ axis, mode, first, moves }: ModeRowProps) {
         >
           {t("inspector.first")}
         </span>
-      ) : (
+      ) : readOnly ? null : (
         <>
           <MoveModeMenu axis={axis} mode={mode} moves={moves} />
           <button

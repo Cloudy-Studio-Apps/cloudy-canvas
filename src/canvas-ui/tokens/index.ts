@@ -10,4 +10,5 @@ export { VariableValue } from "./variable-value";
 export { LibraryBadge } from "./library-badge";
 export { groupBySource, tokenSources } from "./token-sources";
 export { TokenSourceHeader } from "./token-source-header";
+export { useTokenEditable } from "./use-token-editable";
 export { useTokenSources } from "./use-token-sources";

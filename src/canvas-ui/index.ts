@@ -52,6 +52,7 @@ export {
   TokenSourceHeader,
   TokenSwatch,
   useDocumentTokens,
+  useTokenEditable,
   useTokenSources,
   VariableChip,
   VariablePicker,

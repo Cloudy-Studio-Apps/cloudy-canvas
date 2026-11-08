@@ -87,6 +87,9 @@ export function useLibrarySync<O extends object>(
         queueMicrotask(() => void mirror());
         return;
       }
+      // Only libraries the file uses now: this is what keeps taking a library out of the file
+      // (`detachLibrary`, its records removed) from deleting them in the library, so the link
+      // must stop listing it before the detach (and undo restores both together).
       const using = new Set(used());
       for (const id of edits.keys()) if (!using.has(id)) edits.delete(id);
       hub.apply(edits, self);

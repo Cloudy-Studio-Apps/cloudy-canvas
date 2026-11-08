@@ -1,9 +1,11 @@
 import type { CanvasDocument } from "../document";
 import type { CanvasElement } from "../elements/element.types";
+import { canVaryBy } from "./axis-source";
 import { withCollectionSources, withLibraryTag } from "./collection-source";
+import { withoutOverrides } from "./token-edits-base";
 import { isTokenRecord } from "./is-token-record";
 import { TokenStore } from "./token-store";
-import type { TokenRecord } from "./token.types";
+import type { ModeAxisRecord, TokenRecord } from "./token.types";
 import { valueRefs } from "./value-refs";
 
 /**
@@ -61,7 +63,8 @@ export function clipboardTokens(
  * own are kept, so pasting never changes its values), as part of the edit running now. A record
  * mirrored from a project library keeps its `libraryId` only when the document has records of
  * that library already (it uses it; the next mirror settles them); otherwise it becomes the
- * document's own. Variables pasted into a collection the document has take its source.
+ * document's own. Variables pasted into a collection the document has take its source, and a
+ * library's variable varying by an axis of another source keeps only its default value.
  */
 export function restoreTokens(doc: CanvasDocument, records: readonly unknown[]): void {
   const missing = records.filter(
@@ -74,5 +77,18 @@ export function restoreTokens(doc: CanvasDocument, records: readonly unknown[]):
       ? record
       : withLibraryTag(record, undefined),
   );
-  doc.setTokenRecords(withCollectionSources(tagged, TokenStore.of(doc)));
+  const placed = withCollectionSources(tagged, TokenStore.of(doc));
+  // A library's variable can't vary by an axis of another source: it keeps its default only.
+  const axes = new Map<string, ModeAxisRecord>();
+  for (const record of placed) if (record.kind === "axis") axes.set(record.id, record);
+  for (const record of doc.tokenRecords()) {
+    if (record.kind === "axis" && !axes.has(record.id)) axes.set(record.id, record);
+  }
+  doc.setTokenRecords(
+    placed.map((record) => {
+      if (record.kind !== "variable" || !record.axisId) return record;
+      const axis = axes.get(record.axisId);
+      return axis && !canVaryBy(record, axis) ? withoutOverrides(record) : record;
+    }),
+  );
 }

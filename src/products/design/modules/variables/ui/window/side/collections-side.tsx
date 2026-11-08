@@ -20,13 +20,18 @@ import { t } from "../../../variables.i18n";
  * library, then the file's own.
  */
 export function CollectionsSide() {
-  const { tokens, store, collection } = useBoard();
+  const { tokens, store, collection, editable } = useBoard();
   const { showCollection, setDraft } = useVariablesWindowStore();
   const [deleting, setDeleting] = useState<CollectionRecord | null>(null);
   const collections = store.collections();
   const sources = useTokenSources(collections);
   const startPalette = () => {
-    const target = collection ?? tokens.createCollection(t("defaults.collection"));
+    // Into the shown collection unless it's a library's that can't be edited: the file's own then.
+    const target =
+      (editable ? collection : undefined) ??
+      collections.find((c) => c.libraryId === undefined) ??
+      tokens.createCollection(t("defaults.collection"));
+    if (target.id !== collection?.id) showCollection(target.id);
     setDraft(draftFromColor(target.id, freeGroup(store.variables(target.id), "brand")));
   };
   return (
