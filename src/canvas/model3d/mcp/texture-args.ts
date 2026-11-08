@@ -1,4 +1,6 @@
-import { optionalRecord, type ModelTextureSlot, type ToolArgs } from "@canvas";
+import type { ToolArgs } from "../../mcp/mcp-tool.types";
+import { optionalRecord } from "../../mcp/tool-args";
+import type { ModelTextureSlot } from "../model3d.types";
 
 /**
  * `textures` as slot name to file path (`null` clears the slot, when `allowNull`). Every name must

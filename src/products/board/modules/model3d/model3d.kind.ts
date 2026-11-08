@@ -1,7 +1,7 @@
 import {
   BoxKind,
   ELEMENT_DEFAULTS,
-  ZOOM_RANGE,
+  checkViewPatch,
   type ElementPatch,
   type ElementView,
   type ModelData,
@@ -51,26 +51,6 @@ export class Model3dKind extends BoxKind<ModelElement, BoardToolOptions> impleme
     _el: ModelElement,
     patch: ElementPatch<ModelElement>,
   ): ElementPatch<ModelElement> {
-    const { angle, zoom } = patch;
-    if (angle !== undefined && !isAngle(angle)) {
-      throw new Error('"angle" must be { x, y, z }, finite numbers in degrees.');
-    }
-    if (zoom !== undefined && !(Number.isFinite(zoom) && inZoomRange(zoom))) {
-      throw new Error(`"zoom" must be between ${ZOOM_RANGE.min} and ${ZOOM_RANGE.max}.`);
-    }
-    return angle ? { ...patch, angle: { x: angle.x, y: angle.y, z: angle.z } } : patch;
+    return checkViewPatch(patch);
   }
-}
-
-function inZoomRange(zoom: number): boolean {
-  return zoom >= ZOOM_RANGE.min && zoom <= ZOOM_RANGE.max;
-}
-
-function isAngle(value: unknown): value is { x: number; y: number; z: number } {
-  const angle = value as Partial<Record<"x" | "y" | "z", unknown>> | null;
-  return (
-    typeof angle === "object" &&
-    angle !== null &&
-    (["x", "y", "z"] as const).every((axis) => Number.isFinite(angle[axis]))
-  );
 }

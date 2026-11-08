@@ -1,17 +1,8 @@
-import {
-  asUndoStep,
-  modelSource,
-  newModelAssetId,
-  stringArg,
-  type ElementPatch,
-  type ModelBaker,
-  type ModelTextureSlot,
-} from "@canvas";
+import { SET_MODEL_VIEW_PROPERTIES, setModelView, stringArg, type ModelBaker } from "@canvas";
 
 import { requireBoard } from "../../../mcp/board-access";
 import type { BoardMcpTool } from "../../../mcp/board-mcp.types";
-import { angleArg, assertModelFree, requireModel, zoomArg } from "./model-access";
-import { textureArgs } from "./texture-args";
+import { requireModel } from "./model-access";
 
 /** `set_model_view`: turns, zooms and re-textures a model, drawing its new picture off screen. */
 export function setModelViewTool(baker: ModelBaker): BoardMcpTool {
@@ -26,66 +17,19 @@ export function setModelViewTool(baker: ModelBaker): BoardMcpTool {
     inputSchema: {
       type: "object",
       required: ["id"],
-      properties: {
-        id: { type: "string" },
-        angle: {
-          type: "object",
-          properties: { x: { type: "number" }, y: { type: "number" }, z: { type: "number" } },
-        },
-        zoom: { type: "number" },
-        textures: {
-          type: "object",
-          additionalProperties: { type: ["string", "null"] },
-        },
-      },
+      properties: SET_MODEL_VIEW_PROPERTIES,
     },
     run: async (host, args) => {
       const { engine } = requireBoard(host);
       const el = requireModel(engine, stringArg(args, "id"));
-      assertModelFree(engine, el.id);
-      const angle = angleArg(args);
-      const zoom = zoomArg(args);
-      const chosen = textureArgs(args, el.textures, true);
-      if (!angle && zoom === undefined && chosen.size === 0) {
-        throw new Error("Give at least one of angle, zoom or textures.");
-      }
-      const base = modelSource(engine.doc, el);
-      if (!base)
-        throw new Error("This model's file is not in this board, so it cannot be changed.");
-      const textures = new Map(base.textures);
-      const slots: ModelTextureSlot[] = [];
-      const added = new Map<string, Uint8Array>();
-      for (const slot of el.textures) {
-        const path = chosen.get(slot.name);
-        if (path === undefined) {
-          slots.push(slot);
-        } else if (path === null) {
-          textures.delete(slot.name);
-          slots.push({ ...slot, assetId: null, embedded: false });
-        } else {
-          const bytes = await host.readFile(path);
-          textures.set(slot.name, bytes);
-          added.set(slot.name, bytes);
-          slots.push({ ...slot, assetId: newModelAssetId(), embedded: false });
-        }
-      }
-      const view = { angle: angle ?? el.angle, zoom: zoom ?? el.zoom };
-      const missing = slots
-        .filter((slot) => slot.file !== null && !slot.embedded && !textures.has(slot.name))
-        .map((slot) => slot.name);
-      const picture = await baker.bake({ ...base, textures, missing }, view, el);
-      // The awaits above gave the user time: check again before writing.
-      assertModelFree(engine, el.id);
-      if (!engine.getElement(el.id)) throw new Error(`The model ${el.id} was removed meanwhile.`);
-      const pictureAssetId = newModelAssetId();
-      engine.doc.addAsset(pictureAssetId, picture);
-      for (const slot of slots) {
-        const bytes = added.get(slot.name);
-        if (bytes && slot.assetId) engine.doc.addAsset(slot.assetId, bytes);
-      }
-      const patch = { ...view, textures: slots, pictureAssetId };
-      asUndoStep(engine.doc, () => engine.doc.update(el.id, patch as ElementPatch));
-      return { id: el.id, ...view, missing };
+      return setModelView({
+        engine,
+        el,
+        args,
+        baker,
+        readFile: (path) => host.readFile(path),
+        noun: "board",
+      });
     },
   };
 }

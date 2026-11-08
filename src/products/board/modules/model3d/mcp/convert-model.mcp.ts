@@ -1,9 +1,9 @@
-import { stringArg } from "@canvas";
+import { assertModelFree, stringArg } from "@canvas";
 
 import { requireBoard } from "../../../mcp/board-access";
 import type { BoardMcpTool } from "../../../mcp/board-mcp.types";
 import { convertModelToImage } from "../convert-model";
-import { assertModelFree, requireModel } from "./model-access";
+import { requireModel } from "./model-access";
 
 /** `convert_model_to_png`: the model becomes a plain image of its picture (permanent). */
 export const convertModelTool: BoardMcpTool = {
@@ -21,7 +21,7 @@ export const convertModelTool: BoardMcpTool = {
   run: async (host, args) => {
     const { engine } = requireBoard(host);
     const el = requireModel(engine, stringArg(args, "id"));
-    assertModelFree(engine, el.id);
+    assertModelFree(engine, el.id, "board");
     return { id: convertModelToImage(engine, el) };
   },
 };

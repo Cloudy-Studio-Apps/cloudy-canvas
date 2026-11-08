@@ -22,3 +22,4 @@ export { MODEL_EDIT_LOCKS, ModelEditLocks } from "./model-edit-locks";
 export type * from "./model-edit-locks.types";
 export { importedSource } from "./imported-source";
 export { storeModel } from "./store-model";
+export * from "./mcp";
