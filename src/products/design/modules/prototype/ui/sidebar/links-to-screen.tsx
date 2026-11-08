@@ -33,7 +33,11 @@ export function LinksToScreen({ id }: LinksToScreenProps) {
               size="sm"
               icon={<Zap />}
               label={nameOf(engine.doc.get(linkId))}
-              meta={nameOf(screenOf(engine.doc, linkId))}
+              meta={
+                linkId === screenOf(engine.doc, linkId)?.id
+                  ? undefined
+                  : nameOf(screenOf(engine.doc, linkId))
+              }
               onSelect={() => engine.select([linkId])}
             />
           ))}

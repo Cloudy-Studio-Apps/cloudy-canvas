@@ -29,7 +29,7 @@
   "sidebar": {
     "title": "Prototipo",
     "emptyTitle": "Nada seleccionado",
-    "empty": "Selecciona una capa para añadir una interacción, una pantalla para su desplazamiento y el inicio de flujo, o un flujo a la izquierda."
+    "empty": "Selecciona una capa para añadir una interacción, una pantalla para su inicio de flujo, o un flujo a la izquierda."
   },
   "canvas": {
     "flagTitle": "Seleccionar {name}",

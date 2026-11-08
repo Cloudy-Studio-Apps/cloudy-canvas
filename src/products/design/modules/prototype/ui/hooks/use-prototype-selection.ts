@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
 import { isScreen, screenOf, type PrototypeSelection } from "../../model";
+import { usePrototypePage } from "./use-prototype-page";
 import { usePrototypeViewStore } from "../stores/prototype-view-store";
 
 /**
@@ -12,10 +13,13 @@ import { usePrototypeViewStore } from "../stores/prototype-view-store";
 export function usePrototypeSelection(): PrototypeSelection {
   const engine = useDesignEngine();
   const ids = useDesignState((state) => state.selectedIds);
-  const flow = usePrototypeViewStore((state) => state.selectedFlow);
+  const picked = usePrototypeViewStore((state) => state.selectedFlow);
+  // A picked flow that is gone (undone, deleted elsewhere) counts as none.
+  const { flows } = usePrototypePage();
+  const flow = picked !== null && flows.some((f) => f.id === picked) ? picked : null;
   useEffect(() => {
-    if (ids.length > 0 && flow !== null) usePrototypeViewStore.getState().selectFlow(null);
-  }, [ids, flow]);
+    if (ids.length > 0 && picked !== null) usePrototypeViewStore.getState().selectFlow(null);
+  }, [ids, picked]);
   return useMemo(() => {
     if (ids.length === 0) return flow ? { kind: "flow", id: flow } : { kind: "none" };
     const [id, ...others] = ids;
