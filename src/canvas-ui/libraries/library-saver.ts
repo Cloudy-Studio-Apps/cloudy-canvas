@@ -8,7 +8,8 @@ const SAVE_DELAY_MS = 300;
 /**
  * Writes changed libraries to their `.clib` files, each 300 ms after its last edit, atomically
  * (`writeBytesAtomic`), one write at a time; `flush` writes what's pending now. A failed write is
- * passed to `onError` and tried again on the next edit.
+ * passed to `onError` and stays pending (unless a newer edit replaced it or the library left the
+ * project), so the next edit, flush or save tries again.
  */
 export class LibrarySaver {
   private readonly timers = new Map<string, ReturnType<typeof setTimeout>>();
@@ -78,6 +79,10 @@ export class LibrarySaver {
         await this.fs.writeBytesAtomic(path, library().encodeFile());
       } catch (error) {
         this.onError(error);
+        // Still unsaved: tried again by the next write of it (a newer edit's, a flush, quitting).
+        if (!this.pending.has(libraryId) && this.pathOf(libraryId)) {
+          this.pending.set(libraryId, library);
+        }
       }
     });
     return this.queue;
