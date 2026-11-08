@@ -12,6 +12,7 @@ import type {
   ElementMap,
   Placement,
   ProjectLink,
+  TokenChangeSource,
   UnregisteredElement,
 } from "./canvas-document.types";
 import { DocumentHistory } from "./document-history";
@@ -392,9 +393,23 @@ export class CanvasDocument {
     }, UI_ORIGIN);
   }
 
-  /** Fires with the ids of the records that changed (local edits, undo, redo, remote updates). */
-  observeTokens(listener: (changed: ReadonlySet<string>) => void): () => void {
-    const handler = (event: Y.YMapEvent<unknown>) => listener(new Set(event.keysChanged));
+  /**
+   * Fires with the ids of the records that changed (local edits, undo, redo, remote updates) and
+   * who changed them (`TokenChangeSource`: local or remote, with the values they had before).
+   */
+  observeTokens(
+    listener: (changed: ReadonlySet<string>, source: TokenChangeSource) => void,
+  ): () => void {
+    const handler = (event: Y.YMapEvent<unknown>) => {
+      const { transaction } = event;
+      const previous = new Map<string, unknown>();
+      for (const [id, info] of event.changes.keys) previous.set(id, info.oldValue);
+      listener(new Set(event.keysChanged), {
+        local: transaction.local && transaction.origin !== UI_ORIGIN,
+        remote: !transaction.local,
+        previous,
+      });
+    };
     this.tokensMap.observe(handler);
     return () => this.tokensMap.unobserve(handler);
   }

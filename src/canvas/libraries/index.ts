@@ -1,7 +1,16 @@
 export { assetKindOf } from "./asset-kind";
+export { bakeRemoved } from "./bake-removed";
 export { contentHash } from "./content-hash";
 export { createLibraryFile } from "./create-library-file";
 export type * from "./library-asset.types";
 export { LibraryDocument } from "./library-document";
 export type * from "./library-document.types";
+export type * from "./library-edits.types";
+export { libraryEditsOf } from "./library-edits";
 export { LIBRARY_MAGIC, decodeLibraryFile, encodeLibraryFile } from "./library-file";
+export { libraryIdOf, taggedRecord, untaggedRecord } from "./library-tags";
+export { mirrorLibraries } from "./mirror";
+export type * from "./mirror.types";
+export { revertLibraryEdits } from "./revert-library-edits";
+export { writeUntracked } from "./untracked";
+export { librariesUsedBy } from "./used-libraries";

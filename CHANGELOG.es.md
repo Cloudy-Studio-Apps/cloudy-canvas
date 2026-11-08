@@ -7,6 +7,11 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Novedades
 
+- Los archivos de un proyecto comparten sus bibliotecas: cada diseño que creas en un proyecto usa
+  sus colores, variables y estilos, cada pizarra sus colores, y al editar un color de la biblioteca en un
+  archivo se actualizan todos los demás archivos que lo usan, estén abiertos o no. Cada archivo
+  guarda una copia, así que se sigue viendo bien si lo envías solo; si su proyecto se movió, la app
+  te pide que lo busques, y los elementos de biblioteca no se pueden editar hasta que lo encuentres.
 - Un proyecto nuevo empieza con una biblioteca llamada Sistema de marca, que puedes rellenar al
   crear el proyecto: con las variables y los estilos de un diseño o una pizarra, o con un archivo
   de tokens. Empieza vacía si prefieres construirla más tarde.

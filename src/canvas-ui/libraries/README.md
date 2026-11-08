@@ -1,0 +1,38 @@
+# Project libraries in the editor
+
+_How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md); the engine side (mirror,
+edits, baking) is in [canvas/libraries/](../../canvas/libraries/README.md)._
+
+A file in a project uses the project's libraries: a copy of their records lives in the file, and
+edits travel both ways while the project is found.
+
+- **`LibraryHub`** (`library-hub.ts`): a project's libraries in memory, one per project, shared by
+  whoever opens it (`LibraryHub.open(record)`, a module-level cache by project id, counted; each
+  `open` needs a `close`). It reads the manifest and each `.clib` (an unreadable one is left out,
+  with a toast), keeps one `LibraryDocument` per library (`libraries()`, `entries()`,
+  `library(id)`), writes edits per item, the later `apply(edits)` winning, and fires `onChange`
+  with the ids of the libraries that changed. `addAssetFile(libraryId, bytes, input)` stores a
+  picture in `<library>.assets/<id>.<ext>` (the same bytes, by `hash`, return the asset it has
+  already); `readAssetBytes` reads one back.
+  - **Saving** (`library-saver.ts`): a changed library's `.clib` is written 300 ms after its last
+    edit, atomically (`projectFs.writeBytesAtomic`), one write at a time; the last `close` and
+    quitting the app (`appLifecycle.onBeforeQuit`) write what's pending.
+- **`useProjectLibraries(engine, file)`** (both products' file sessions; live guests never call it):
+  reads the project from the document's link (a new file opened with `?project=` gets
+  `{ projectId, libraryIds: "all" }`), finds it with `useProjectsStore.resolve(id, file.path)` and
+  opens its hub. Its `ProjectLibrariesState` (`status` `none` · `loading` · `ready` · `missing`,
+  `projectId`, `project`, `hub`, the `libraries` the file uses, `locate`) goes to the chrome through
+  `ProjectLibrariesContext` (`useProjectLibrariesState()`; `NO_PROJECT_LIBRARIES` for live guests).
+- **Sync** (`use-library-sync.ts`, while `ready`): the libraries are mirrored into the file when
+  the hub opens, when a library changes (any opener's edit) and when the file's link changes, one
+  mirror at a time (`mirrorLibraries`; library pictures the layers show are copied in). The user's
+  own token writes (`observeTokens`, `source.local`: edits, agents, undo and redo) to library
+  records go to the hub (`libraryEditsOf`, only for libraries the file uses), so undoing a library
+  edit reverts it in the library too. A live session's guest writing a library record
+  (`source.remote`, on the host) reaches nothing: the host mirrors again right after, so the
+  library's value comes back for everyone.
+- **Project not found** (`missing`): `ProjectMissingDialog` offers Locate project…
+  (`useProjectsStore.locate`, then the hub opens from there) or Continue without the project. Until
+  it's found, `useLibraryGuard` puts back every edit the user makes to a library record, untracked,
+  after the edit's transaction (`revertLibraryEdits`), and a toast says why once per editor. The
+  user's undo step stays in the stack, with nothing left to undo.

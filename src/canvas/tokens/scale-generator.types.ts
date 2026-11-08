@@ -20,6 +20,8 @@ export interface ScaleSettings {
  * them linked to its base (a variable, or a fixed number), so editing the base regenerates them.
  */
 export interface ScaleRecord extends ScaleSettings {
+  /** The library it comes from, when mirrored from a project library (see `canvas/libraries`). */
+  libraryId?: string;
   kind: "scale";
   id: string;
   collectionId: string;

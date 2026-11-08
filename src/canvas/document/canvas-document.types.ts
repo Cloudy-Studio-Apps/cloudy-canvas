@@ -32,6 +32,19 @@ export interface ProjectLink {
   libraryIds: string[] | "all";
 }
 
+/** Who changed token records, handed to `CanvasDocument.observeTokens` listeners. */
+export interface TokenChangeSource {
+  /**
+   * Made here by the user, an agent, or undo/redo: not an untracked write (`UI_ORIGIN`, e.g. a
+   * project library's mirror or a migration) and not a remote update.
+   */
+  local: boolean;
+  /** Applied from another peer (a live session's guest or host). */
+  remote: boolean;
+  /** Each changed record's value before the change (`undefined` for one just added). */
+  previous: ReadonlyMap<string, unknown>;
+}
+
 /** What one edit changed, handed to the document's `AfterEdit` hook. */
 export interface EditedChange {
   /** Ids added or whose fields changed. */

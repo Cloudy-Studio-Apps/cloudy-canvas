@@ -7,6 +7,11 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### New
 
+- Files in a project share its libraries: every design you make in a project uses the project's
+  colors, variables and styles, every board its colors, and editing a library color in one file updates every
+  other file that uses it, open or not. A file keeps a copy, so it still looks right when sent
+  alone; if its project moved, the app asks you to locate it, and library items can't be edited
+  until you do.
 - A new project starts with a library named Brand system, which you can fill when you create the
   project: with the variables and styles of a design or a board, or with a tokens file. Start
   empty if you prefer to build it later.

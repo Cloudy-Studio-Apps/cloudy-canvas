@@ -57,11 +57,23 @@ export function clipboardTokens(
 
 /**
  * Adds the pasted variables and collections the document doesn't have (same id: the document's
- * own are kept, so pasting never changes its values), as part of the edit running now.
+ * own are kept, so pasting never changes its values), as part of the edit running now. A record
+ * mirrored from a project library keeps its `libraryId` only when the document has records of
+ * that library already (it uses it; the next mirror settles them); otherwise it becomes the
+ * document's own.
  */
 export function restoreTokens(doc: CanvasDocument, records: readonly unknown[]): void {
   const missing = records.filter(
     (record): record is TokenRecord => isTokenRecord(record) && !doc.tokenRecord(record.id),
   );
-  if (missing.length > 0) doc.setTokenRecords(missing);
+  if (missing.length === 0) return;
+  const used = new Set(doc.tokenRecords().flatMap((record) => record.libraryId ?? []));
+  doc.setTokenRecords(
+    missing.map((record) => {
+      if (record.libraryId === undefined || used.has(record.libraryId)) return record;
+      const own = { ...record };
+      delete own.libraryId;
+      return own;
+    }),
+  );
 }

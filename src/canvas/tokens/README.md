@@ -8,4 +8,4 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
 
 ## Library tags
 
-- **`libraryId`:** an optional field on `ModeAxisRecord`, `CollectionRecord`, `VariableRecord` and `StyleRecord` (accepted by `isTokenRecord`) marking a record mirrored from a project library (see [libraries/](../libraries/README.md)). The library itself stores records without it.
+- **`libraryId`:** an optional field on every record (`ModeAxisRecord`, `CollectionRecord`, `VariableRecord`, `StyleRecord`, `GeneratorRecord`, `ScaleRecord`; accepted by `isTokenRecord`) marking a record mirrored from a project library (see [libraries/](../libraries/README.md)). The library itself stores records without it. Pasting keeps a record's tag only when the target file already has records of that library (`restoreTokens`); otherwise the pasted record becomes the file's own.

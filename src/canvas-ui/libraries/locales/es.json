@@ -1,0 +1,20 @@
+{
+  "hub": {
+    "openFailed": "No se pudieron abrir las bibliotecas del proyecto",
+    "unreadable": "No se pudieron leer algunas bibliotecas del proyecto",
+    "saveFailed": "No se pudo guardar una biblioteca",
+    "syncFailed": "No se pudieron traer las bibliotecas del proyecto a este archivo",
+    "assetUnreadable": "No se pudo leer una imagen de la biblioteca"
+  },
+  "missing": {
+    "title": "No se encontró el proyecto",
+    "description": "“{name}” pertenece a un proyecto que ya no está donde estaba. El archivo se sigue viendo igual, pero hasta que se encuentre el proyecto no se pueden editar los elementos de sus bibliotecas ni llegan los cambios hechos en otros archivos.",
+    "locate": "Buscar el proyecto…",
+    "continue": "Continuar sin el proyecto",
+    "locateFailed": "No se pudo encontrar el proyecto"
+  },
+  "readOnly": {
+    "title": "Los elementos de biblioteca no se pueden editar",
+    "description": "No se encontró el proyecto de este archivo. Búscalo para volver a editar los elementos de biblioteca."
+  }
+}

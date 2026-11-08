@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router";
 
 import type { CanvasEngine } from "@canvas";
 import { FILE_EXTENSIONS, isAndroidPlatform, type FileInfo } from "@shared/core";
@@ -14,6 +15,7 @@ import type {
   SaveKind,
   SaveStatus,
 } from "./canvas-file.types";
+import { freeFilePath } from "./free-file-path";
 import { useCanvasAutosave } from "./use-canvas-autosave";
 import { t } from "./file.i18n";
 
@@ -23,6 +25,8 @@ const SAVED_NOTICE_MS = 3000;
 /**
  * Saves the document to its file in the product's `format` (asking where the first time), autosaves
  * it after changes (as a draft in the app data while it has no file) and tracks unsaved changes.
+ * A new file opened with `?dir=` (made in a project's folder) goes there, with a free untitled
+ * name, without asking.
  */
 export function useCanvasFileSaver<O extends object>(
   id: string,
@@ -47,6 +51,10 @@ export function useCanvasFileSaver<O extends object>(
   /** A failed autosave is reported once, until a save works again. */
   const autosaveFailed = useRef(false);
   const savedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const [params] = useSearchParams();
+  /** The folder a new file made in a project goes to, and the path picked there once. */
+  const folder = useRef(initialInfo === null ? params.get("dir") : null);
+  const folderPath = useRef<Promise<string | null> | null>(null);
 
   useEffect(
     () =>
@@ -67,16 +75,18 @@ export function useCanvasFileSaver<O extends object>(
     return () => setAppDirty(false);
   }, [dirty, autosaveEnabled, status]);
 
-  /** Writes the file to `path`, or to its draft when `path` is `null`. */
+  /** Writes the file to `path` (once it's known), or to its draft when `path` is `null`. */
   const write = useCallback(
-    (path: string | null, kind: SaveKind): Promise<boolean> => {
+    (target: string | null | Promise<string | null>, kind: SaveKind): Promise<boolean> => {
       // Encoded now, so a save queued as the editor closes still has the document.
       const data = encode(engine.doc);
-      const fileMeta = engine.doc.meta();
+      const projectId = engine.doc.projectLink()?.projectId;
+      const fileMeta = { ...engine.doc.meta(), ...(projectId && { projectId }) };
       const at = revision.current;
       const run = queue.current.then(async () => {
         setStatus("saving");
         try {
+          const path = await target;
           const file = path
             ? await storage.save(id, path, data, fileMeta)
             : await storage.saveDraft(id, fileMeta.title || untitled, type, data, fileMeta);
@@ -106,6 +116,19 @@ export function useCanvasFileSaver<O extends object>(
     [engine, id, encode, untitled, type, noun],
   );
 
+  /** Where a file with no file yet goes without asking (`?dir=`), `null` for nowhere. */
+  const firstPath = useCallback((): Promise<string | null> => {
+    const dir = folder.current;
+    if (!dir) return Promise.resolve(null);
+    folderPath.current ??= freeFilePath(dir, untitled, FILE_EXTENSIONS[type]).catch(
+      (error: unknown) => {
+        notifyError(t("save.error", { noun }), error);
+        return null;
+      },
+    );
+    return folderPath.current;
+  }, [untitled, type, noun]);
+
   const save = useCallback(
     async (asNew: boolean): Promise<boolean> => {
       const current = infoRef.current;
@@ -118,18 +141,19 @@ export function useCanvasFileSaver<O extends object>(
           label: noun,
         });
       }
-      const path =
-        !asNew && current && !current.draft ? current.path : await saveCanvasFileDialog(type, name);
+      const saved = current && !current.draft ? current.path : null;
+      let path = asNew ? null : (saved ?? (await firstPath()));
+      path ??= await saveCanvasFileDialog(type, name);
       return path ? write(path, "manual") : false;
     },
-    [engine, write, encode, type, noun, untitled],
+    [engine, write, encode, type, noun, untitled, firstPath],
   );
 
   const autosave = useCallback(async () => {
     if (revision.current === savedRevision.current) return;
     const current = infoRef.current;
-    await write(current && !current.draft ? current.path : null, "auto");
-  }, [write]);
+    await write(current && !current.draft ? current.path : firstPath(), "auto");
+  }, [write, firstPath]);
 
   useCanvasAutosave(engine, autosave, autosaveEnabled);
 
