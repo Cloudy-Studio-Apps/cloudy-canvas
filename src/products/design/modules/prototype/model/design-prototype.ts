@@ -2,6 +2,7 @@ import { createElementBase, defineService, keyBetween, type CanvasDocument } fro
 
 import { t } from "../prototype.i18n";
 import { PROTOTYPE_FLOW_TYPE } from "../prototype.constants";
+import { allFlows } from "./all-flows";
 import { defaultFlowDevice, firstDevice } from "./devices";
 import { PROTOTYPE_FLOW_DEFAULTS } from "./flow.defaults";
 import type { PrototypeFlowElement, PrototypeFlowPatch } from "./flow.types";
@@ -10,9 +11,6 @@ import { isFlow } from "./is-flow";
 import { nodeInteractions } from "./node-interactions";
 import { isScreen } from "./screens";
 import { interactionsPatch, writeInteractions } from "./write-interactions";
-
-const byIndex = (a: PrototypeFlowElement, b: PrototypeFlowElement): number =>
-  a.index < b.index ? -1 : a.index > b.index ? 1 : 0;
 
 /**
  * The design's prototype: its flows (records, several per design page) and its nodes'
@@ -137,13 +135,7 @@ export class DesignPrototype {
   }
 
   private allFlows(): PrototypeFlowElement[] {
-    const flows: PrototypeFlowElement[] = [];
-    for (const id of this.doc.ids()) {
-      if (this.doc.field(id, "type") !== PROTOTYPE_FLOW_TYPE) continue;
-      const el = this.doc.get(id);
-      if (isFlow(el)) flows.push(el);
-    }
-    return flows.sort(byIndex);
+    return allFlows(this.doc);
   }
 
   /** Whether a node stores interactions (read without reading the whole node). */
