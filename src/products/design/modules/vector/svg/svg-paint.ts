@@ -1,6 +1,6 @@
 import { transformFromHandles, type Point, type Rect, type SvgPaint } from "@canvas";
 
-import { solidPaint, type Paint } from "../core";
+import { solidPaint, type Paint } from "../../core";
 
 /**
  * An SVG layer's paint as a design paint of a layer whose box is `box` (world units); `place`

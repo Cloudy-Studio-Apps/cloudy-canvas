@@ -2,26 +2,19 @@ import {
   booleanPaths,
   isSvg,
   mapPath,
-  normalizePath,
   outlineStroke,
   placePath,
   readSvg,
-  unionRects,
   type CanvasDocument,
   type PathOperand,
   type PathShape,
   type Point,
   type SvgDocument,
-  type SvgLayer,
-  nKeysBetween,
 } from "@canvas";
 import { createId } from "@shared/core";
 
-import { pathToNetwork, solidPaint, type DesignNode, type NodeEffect } from "../core";
-import { createGroup } from "../group";
-import { createVector, type VectorElement } from "../vector";
-import { openNetwork } from "./open-network";
-import { svgPaint } from "./svg-paints";
+import { solidPaint, type NodeEffect } from "../core";
+import { createVector, svgNetwork, type VectorElement } from "../vector";
 import type { StickerNodeElement } from "./sticker.types";
 
 /** The sticker's picture as SVG layers, or `null` when it's a raster picture. */
@@ -42,11 +35,11 @@ export function canConvertSticker(doc: CanvasDocument, el: StickerNodeElement): 
 }
 
 /**
- * Turns a sticker into a group of vectors, one per shape of its SVG, so each can be recolored:
- * its die-cut edge becomes an "Edge" vector under the art (the art's outline grown by the edge),
- * its soft shadow and outline become the group's effects. The group keeps the sticker's id, name,
- * place in the tree, opacity and effects. Call it in an undo step; returns the group's id, or
- * `null` when the picture isn't an SVG.
+ * Turns a sticker into one vector, as Figma makes an SVG: each shape of its SVG an area with its
+ * own paint (a stroke the area it covers), so each can be recolored; its die-cut edge is the
+ * bottom area (the art's outline grown by the edge), its soft shadow and outline become the
+ * vector's effects. The vector keeps the sticker's id, name, place in the tree, opacity and
+ * effects. Call it in an undo step; returns its id, or `null` when the picture isn't an SVG.
  */
 export function stickerToVectors(doc: CanvasDocument, el: StickerNodeElement): string | null {
   const svg = stickerSvg(doc, el);
@@ -64,12 +57,12 @@ export function stickerToVectors(doc: CanvasDocument, el: StickerNodeElement): s
   const place = (p: Point): Point =>
     toWorld({ contours: [{ start: p, segments: [], closed: false }] }).contours[0]?.start ?? p;
 
-  const group = createGroup({ x: el.x, y: el.y, w: el.w, h: el.h }, el.name, el.index, el.parentId);
-  const layers = svg.layers.flatMap((layer) => layerVector(layer, toWorld, place, scale, group.id));
-  const edge = svg.edge ? edgeVector(svg, toWorld, scale, el.edgeColor, group.id) : null;
-  const children = edge ? [edge, ...layers] : layers;
-  if (children.length === 0) return null;
-  const indexes = nKeysBetween(null, null, children.length);
+  const edge = svg.edge ? edgeShape(svg, toWorld, scale) : null;
+  const under = edge
+    ? [{ shape: edge, paint: solidPaint(el.edgeColor ?? svg.edge?.color ?? "#FFFFFF") }]
+    : [];
+  const network = svgNetwork(svg, { toWorld, place, scale }, under);
+  if (!network) return null;
 
   const effects: NodeEffect[] = [];
   if (el.outline?.visible && el.outline.width > 0) {
@@ -81,12 +74,9 @@ export function stickerToVectors(doc: CanvasDocument, el: StickerNodeElement): s
       shadow(cast.color, cast.opacity, cast.dx * scale, cast.dy * scale, cast.blur * scale, 0),
     );
   }
-  const bounds = unionRects(
-    children.map((child) => ({ x: child.x, y: child.y, w: child.w, h: child.h })),
-  );
-  const host: DesignNode = {
-    ...group,
-    ...(bounds ?? {}),
+  const vector = createVector(network, el.name, el.index, el.parentId, { fills: [], strokes: [] });
+  const placed: VectorElement = {
+    ...vector,
     id: el.id,
     pageId: el.pageId,
     visible: el.visible,
@@ -98,60 +88,16 @@ export function stickerToVectors(doc: CanvasDocument, el: StickerNodeElement): s
     ...(el.locked ? { locked: true } : {}),
   };
   doc.remove([el.id]);
-  doc.add(host);
-  children.forEach((child, i) => {
-    const placed: VectorElement = {
-      ...child,
-      parentId: el.id,
-      pageId: el.pageId,
-      index: indexes[i] ?? child.index,
-    };
-    doc.add(placed);
-  });
+  doc.add(placed);
   return el.id;
 }
 
-/** One SVG shape as a vector: its fill area normalized (holes open), or its stroked lines. */
-function layerVector(
-  layer: SvgLayer,
-  toWorld: (shape: PathShape) => PathShape,
-  place: (p: Point) => Point,
-  scale: number,
-  parentId: string,
-): VectorElement[] {
-  const world = toWorld(layer.shape);
-  const filled = layer.fill ? normalizePath(world, layer.fillRule) : null;
-  const network =
-    filled && filled.contours.length > 0
-      ? pathToNetwork(filled)
-      : layer.stroke
-        ? openNetwork(world)
-        : null;
-  if (!network) return [];
-  const vector = createVector(network, layer.name, "a0", parentId, { fills: [], strokes: [] });
-  const box = { x: vector.x, y: vector.y, w: vector.w, h: vector.h };
-  return [
-    {
-      ...vector,
-      opacity: layer.opacity,
-      fills: layer.fill && filled?.contours.length ? [svgPaint(layer.fill, box, place)] : [],
-      strokes: layer.stroke ? [svgPaint(layer.stroke, box, place)] : [],
-      strokeWeight: layer.strokeWidth * scale,
-      strokeAlign: "center",
-      strokeCap: layer.strokeCap === "butt" ? "none" : layer.strokeCap,
-      strokeJoin: layer.strokeJoin,
-    },
-  ];
-}
-
-/** The die-cut edge as a vector: what the edged art covers, grown by the edge's width. */
-function edgeVector(
+/** The die-cut edge's area: what the edged art covers, grown by the edge's width. */
+function edgeShape(
   svg: SvgDocument,
   toWorld: (shape: PathShape) => PathShape,
   scale: number,
-  edgeColor: string | null,
-  parentId: string,
-): VectorElement | null {
+): PathShape | null {
   const edge = svg.edge;
   if (!edge) return null;
   const operands: PathOperand[] = [];
@@ -178,11 +124,7 @@ function edgeVector(
     { shape: art, fillRule: "nonzero" },
     { shape: ring, fillRule: "nonzero" },
   ]);
-  if (grown.contours.length === 0) return null;
-  return createVector(pathToNetwork(grown), "Edge", "a0", parentId, {
-    fills: [solidPaint(edgeColor ?? edge.color)],
-    strokes: [],
-  });
+  return grown.contours.length > 0 ? grown : null;
 }
 
 function shadow(

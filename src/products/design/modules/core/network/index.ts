@@ -36,3 +36,4 @@ export {
   regionOfFillsPath,
 } from "./region-fill-paths";
 export { withLegacyRegionIds, withRegionIds } from "./region-ids";
+export { mergeNetworks } from "./merge-networks";

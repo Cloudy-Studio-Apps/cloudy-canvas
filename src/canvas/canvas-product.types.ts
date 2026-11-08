@@ -9,6 +9,7 @@ import type { CanvasGuides } from "./ruler-guides";
 import type { CanvasLinks } from "./links";
 import type { Tool, ToolContext } from "./tools";
 import type { CanvasMode } from "./modes";
+import type { SvgDocument } from "./svg";
 
 /**
  * What makes a canvas a board or a design file: its element types, its tools, its shortcuts and
@@ -192,6 +193,12 @@ export interface CanvasProduct<O extends object = object> {
    * z-order `index`, or `null` to ignore it.
    */
   pasteImage?(image: PastedImage, view: Rect, index: string, options: O): CanvasElement | null;
+  /**
+   * An element drawing an SVG file pasted or dropped from outside the app as shapes (e.g. a
+   * design's vector), fit and centered in `view` at z-order `index`; `null` pastes it as an image
+   * through `pasteImage`. Asked first for SVG files.
+   */
+  pasteSvg?(svg: SvgDocument, view: Rect, index: string, options: O): CanvasElement | null;
   /**
    * An element copied from another product (`from`, e.g. a board's sticker pasted into a
    * design) as one of this product's, keeping its id, or `null` to leave it out. The assets it

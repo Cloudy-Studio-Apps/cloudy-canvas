@@ -12,6 +12,10 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   color style or variables, show data, and edit its gradient on the canvas, and its colors appear
   in the page's colors and the color wizard. Figma files keep the colors of multi-colored vectors
   such as logos and icons, as one editable vector.
+- SVG files pasted or dropped into a design now become one editable vector, as in Figma: each
+  shape of the file is an area with its own color, gradient or outline, instead of a flat picture.
+  Converting a sticker to vectors works the same way, giving one vector you can recolor area by
+  area.
 - Designs can now hold data sources, such as a CSV or JSON file or a web API: the new Data tab lists
   them with their rows, and Update reads them again whenever you choose. API keys stay on this
   device and are never saved in the file, and a key is only sent to the site it was typed for. A

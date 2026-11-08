@@ -13,6 +13,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   y editar su degradado en el lienzo, y sus colores aparecen entre los colores de la página y en el
   asistente de color. Los archivos de Figma conservan los colores de los vectores de varios
   colores, como logotipos e iconos, en un solo vector editable.
+- Los archivos SVG que pegas o sueltas en un diseño ahora se convierten en un solo vector editable,
+  como en Figma: cada forma del archivo es un área con su propio color, degradado o contorno, en
+  lugar de una imagen plana. Convertir una pegatina en vectores funciona igual y da un solo vector
+  que puedes recolorear área por área.
 - Los diseños ya pueden tener fuentes de datos, como un archivo CSV o JSON o una API web: la nueva
   pestaña Datos las lista con sus filas, y Actualizar vuelve a leerlas cuando tú lo elijas. Las
   claves de API se quedan en este dispositivo y nunca se guardan en el archivo, y cada clave solo se
