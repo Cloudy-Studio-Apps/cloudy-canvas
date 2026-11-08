@@ -47,7 +47,13 @@ export function ProjectCard({
           disabled={missing}
           aria-label={t("card.openLabel", { name: project.name })}
           onClick={() => onOpen(project)}
-          className="flex min-w-0 flex-1 cursor-pointer items-center gap-2.5 rounded-md text-left outline-none after:absolute after:inset-0 after:rounded-card focus-visible:after:ring-[3px] focus-visible:after:ring-ring/40 disabled:cursor-default"
+          className={cn(
+            "flex min-w-0 flex-1 cursor-pointer items-center gap-2.5 rounded-md text-left outline-none disabled:cursor-default",
+            // The whole card opens the project; a missing one's card doesn't, so its Locate and
+            // Remove buttons get every click.
+            !missing &&
+              "after:absolute after:inset-0 after:rounded-card focus-visible:after:ring-[3px] focus-visible:after:ring-ring/40",
+          )}
         >
           <ProjectIcon
             name={project.name}
@@ -118,7 +124,7 @@ export function ProjectCard({
         />
       )}
       {missing && (
-        <div className="flex items-center gap-1.5">
+        <div className="relative flex items-center gap-1.5">
           <Button variant="outline" size="sm" onClick={() => onLocate(project)}>
             {t("card.locate")}
           </Button>
