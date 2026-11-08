@@ -15,7 +15,8 @@ export const NETWORK_SCHEMA = {
     "segments: [{start, end, tangentStart?, tangentEnd?}] (vertex indexes, tangents relative to " +
     "their vertex, omitted for straight); regions: [{loops: [[segment indexes]], fills?}] are " +
     "filled, each with its own fills ([paint], as a layer's fills) or, without them, the vector's; " +
-    "keep a region's id when sending a network back, so what is bound to it follows it.",
+    "keep a region's id when sending a network back, so what is bound to it follows it. Only a " +
+    "region with fills of its own takes a paint style or variables (network.regions.N.fills).",
   properties: {
     vertices: { type: "array", items: { type: "object" } },
     segments: { type: "array", items: { type: "object" } },

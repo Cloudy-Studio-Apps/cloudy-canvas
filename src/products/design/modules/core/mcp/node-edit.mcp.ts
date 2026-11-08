@@ -52,10 +52,14 @@ export const nodeEditTools: DesignMcpTool[] = [
       const patches = agentPatches(engine, updates);
       const bound = new Map([...patches.keys()].map((id) => [id, engine.doc.get(id)?.bindings]));
       asUndoStep(engine.doc, () => engine.doc.updateMany(patches));
-      // Fields bound to variables that the patch wrote are unlinked by the token sync.
+      // Fields bound to variables that the patch wrote are unlinked by the token sync. A binding
+      // that only moved (a vector area's, when areas before it went) keeps its variable or style.
       const unlinked = [...bound].flatMap(([id, before]) => {
         const after = engine.doc.get(id)?.bindings ?? {};
-        const paths = Object.keys(before ?? {}).filter((path) => !(path in after));
+        const kept = new Set(Object.values(after));
+        const paths = Object.entries(before ?? {})
+          .filter(([path, token]) => !(path in after) && !kept.has(token))
+          .map(([path]) => path);
         return paths.length > 0 ? [{ id, paths }] : [];
       });
       return { updated: [...patches.keys()], ...(unlinked.length > 0 ? { unlinked } : {}) };
