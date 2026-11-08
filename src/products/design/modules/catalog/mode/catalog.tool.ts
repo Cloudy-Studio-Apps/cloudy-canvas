@@ -15,6 +15,8 @@ export class CatalogTool extends SelectTool {
   override readonly id = CATALOG_TOOL;
   override readonly resizeMode: ResizeMode = "none";
   override readonly movesSelection = false;
+  /** A page's background picks the page. */
+  override readonly boxesOnBackground = false;
 
   constructor(private readonly context: ToolContext<DesignToolOptions>) {
     super(context);

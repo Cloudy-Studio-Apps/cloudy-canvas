@@ -7,7 +7,16 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### New
 
-- The new Prototype mode links the layers of your screens together: choose a layer and the screen it opens, and arrows on the canvas show every link. Flows start at a screen and are set up for a device, such as a phone, a tablet, a desktop app or a website, so one file can hold an app's flows and a website's side by side.
+- The new Prototype mode links the layers of your screens together: choose a layer and the screen
+  it opens, and arrows on the canvas show every link. Flows start at a screen and are set up for a
+  device, such as a phone, a tablet, a desktop app or a website, so one file can hold an app's flows
+  and a website's side by side.
+- The database schema now exports as Java too: plain classes with a field per column and the
+  related objects and lists, or JPA entities for Spring Boot 4 with only the annotations Spring
+  doesn't already assume. Both are written to copy from, without packages or imports.
+- Selecting a frame, a group, a vector or several layers now shows a Selection colors section in
+  the properties panel with every color used inside them. Change a color there and it updates
+  everywhere it's used at once, or select the layers that use it, without opening each layer.
 - Each closed area of a vector can now have its own fill: in vector edit mode, click
   inside an area to select it and change its fill in the Fills section. An area's fill can use a
   color style or variables, show data, and edit its gradient on the canvas, and its colors appear
@@ -60,6 +69,13 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - Data sources can now read Excel files and APIs that return their rows in pages, and an optional step can pick and rename fields before they're used. Plugins can add their own kinds of source.
 
 ### Improved
+
+- Frames now work as in other design tools: dragging on the background of a frame that holds
+  layers draws a selection box to pick the layers inside, and the frame itself is selected by its
+  name. Dragging inside a selected frame moves it, even when you press on a layer in it, and a
+  click without dragging still selects that layer. Enter selects the layers inside what's
+  selected and Shift+Enter selects the layer that holds it, so you can move between levels without
+  the Layers panel.
 
 - The database schema and ER diagram text editors now show their errors, warnings and suggestions
   in Spanish when the app is in Spanish. The language keywords you write, such as Table, Entity or

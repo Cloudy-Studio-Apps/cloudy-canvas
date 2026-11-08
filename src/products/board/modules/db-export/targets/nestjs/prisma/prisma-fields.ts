@@ -3,7 +3,7 @@ import type { CodeColumn, CodeDefault, CodeTable } from "../../../model";
 import { warn } from "../../warnings";
 import type { CodeWarning } from "../../warnings.types";
 import type { NestProvider } from "../nestjs-provider.types";
-import type { RelationProps } from "../relation-props.types";
+import type { RelationProps } from "../../../code";
 import type { PrismaField } from "./prisma-block.types";
 import { prismaEnumValue } from "./prisma-enum-value";
 import { prismaType } from "./prisma-type-map";

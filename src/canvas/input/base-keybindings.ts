@@ -48,6 +48,7 @@ export const BASE_KEYBINDINGS = {
   nudgeUpFar: [{ key: "ArrowUp", shift: true, label: "↑" }],
   nudgeDownFar: [{ key: "ArrowDown", shift: true, label: "↓" }],
   editSelection: [{ key: "Enter", label: "↵" }],
+  selectParent: [{ key: "Enter", shift: true, label: "↵" }],
   cancel: [{ key: "Escape", label: "Esc" }],
   zoomIn: [
     { key: "=", mod: true, label: "+" },

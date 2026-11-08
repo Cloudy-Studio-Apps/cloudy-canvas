@@ -290,15 +290,15 @@ export class Scene {
   }
 
   /**
-   * Unlocked elements touching the rect where they show (clipped and masked). Frames only count
-   * when the rect encloses them.
+   * Unlocked elements touching the rect where they show (clipped and masked). Frames (and what
+   * `marqueeEncloses`) only count when the rect encloses them.
    */
   elementsInRect(rect: Rect): CanvasElement[] {
     return this.list.filter((el) => {
       if (!this.reachable(el)) return false;
       const kind = this.kinds.kindOf(el);
       const bounds = elementBounds(kind, el);
-      if (kind.frame) return rectContainsRect(rect, bounds);
+      if (kind.marqueeEncloses(el)) return rectContainsRect(rect, bounds);
       const shown = this.shownBounds(el);
       // Clipped or masked away entirely (a line's bounds may be flat, but not a point).
       if (shown.w === 0 && shown.h === 0 && (bounds.w > 0 || bounds.h > 0)) return false;

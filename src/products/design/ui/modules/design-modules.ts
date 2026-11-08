@@ -24,6 +24,7 @@ import { pluginsTabModule } from "@design/modules/plugins-tab/plugins-tab.module
 import { polygonModule } from "@design/modules/polygon/polygon.module";
 import { prototypeModule } from "@design/modules/prototype/prototype.module";
 import { rectangleModule } from "@design/modules/rectangle/rectangle.module";
+import { selectionColorsModule } from "@design/modules/selection-colors/selection-colors.module";
 import { sectionModule } from "@design/modules/section/section.module";
 import { shaderEffectModule } from "@design/modules/shader-effect/shader-effect.module";
 import { starModule } from "@design/modules/star/star.module";
@@ -65,6 +66,7 @@ let modules: AppModule[] = [
   textModule,
   vectorModule,
   booleanModule,
+  selectionColorsModule,
   imageModule,
   stickerModule,
   assetsModule,

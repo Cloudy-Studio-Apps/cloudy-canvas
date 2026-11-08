@@ -1,0 +1,9 @@
+{
+  "section": {
+    "title": "Selection colors",
+    "color": "Selection color {hex}",
+    "selectUses": "Select layers using this color",
+    "seeAll": "See all {count} colors",
+    "seeFewer": "See fewer colors"
+  }
+}

@@ -24,6 +24,11 @@ export type Gesture =
       /** Shift-click on an already selected element deselects it — unless it turns into a drag. */
       toggleOnClick: string | null;
       /**
+       * A press on this element inside a selected one (e.g. a layer of the selected frame) kept
+       * the selection, so a drag moves it; a click (not a drag) selects this element instead.
+       */
+      selectOnClick: string | null;
+      /**
        * A click (not a drag) on this already selected element selects its part there (a table
        * cell), or extends `partBefore` with Shift or Ctrl/Cmd.
        */

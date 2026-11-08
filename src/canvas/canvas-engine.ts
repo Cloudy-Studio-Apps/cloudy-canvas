@@ -1332,15 +1332,52 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     return this.textEditor?.applyRichStyle(patch) ?? false;
   }
 
-  /** Opens the text editor on the selected element. Returns `false` if it has no text. */
+  /**
+   * Enter: edits the selected element (its text, or what the product edits), else selects the
+   * selection's children. Returns `false` when it did neither.
+   */
   editSelection(): boolean {
     const id = this.scene.selection.single();
     const el = id ? this.scene.get(id) : undefined;
     if (el && this.product.editElement?.(el, this.toolContext)) return true;
-    if (!el || !this.kinds.kindOf(el).text) return false;
+    if (!el || !this.kinds.kindOf(el).text) return this.selectChildren();
     // A selected part (e.g. a table cell) is edited rather than the element's first text.
     this.textEditor?.start(el.id, this.scene.selection.part);
     return true;
+  }
+
+  /** Selects the children of the selection (`layerTree`). Returns `false` when it has none. */
+  selectChildren(): boolean {
+    const tree = this.product.layerTree;
+    if (!tree) return false;
+    const elements = this.scene.elements;
+    const children = [...this.scene.selection.ids]
+      .flatMap((id) => tree.childrenOf(id, elements))
+      .filter((id) => this.selectable(id));
+    if (children.length === 0) return false;
+    this.setSelection(children);
+    return true;
+  }
+
+  /** Shift+Enter: selects the parents of the selection. Returns `false` when it has none. */
+  selectParent(): boolean {
+    const tree = this.product.layerTree;
+    if (!tree) return false;
+    const parents = new Set<string>();
+    for (const id of this.scene.selection.ids) {
+      const el = this.scene.get(id);
+      const parent = el ? tree.parentOf(el) : null;
+      if (parent && this.selectable(parent)) parents.add(parent);
+    }
+    if (parents.size === 0) return false;
+    this.setSelection(parents);
+    return true;
+  }
+
+  /** Whether an element on the canvas can be selected (not locked, nor isolated away). */
+  private selectable(id: string): boolean {
+    const el = this.scene.get(id);
+    return el !== undefined && this.scene.reachable(el);
   }
 
   /** Clears the selection, or returns to the select tool when nothing is selected. */
@@ -1466,9 +1503,10 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
       setSelection: (ids) => this.setSelection(ids),
       setTool: (id) => this.setTool(id),
       elementAt: (world) => this.elementAt(world),
-      targetAt: (world, deep) => {
+      targetAt: (world, deep, background = false) => {
         const hit = this.elementAt(world);
-        return hit && this.scene.get(this.targetOf(hit.id, { deep }));
+        const target = hit && this.pressTarget(hit.id, deep, background ? world : undefined);
+        return target ? this.scene.get(target) : undefined;
       },
       targetOf: (id) => this.targetOf(id),
       getTool: () => this.tool.id,
@@ -1826,6 +1864,17 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
       this.refreshElements(ids);
     }
     this.requestRender();
+  }
+
+  /**
+   * What a press on `id` picks (see `CanvasProduct.selectTarget`); given `world`, `null` may say
+   * it's on a background, which picks nothing, so the press starts a selection box.
+   */
+  private pressTarget(id: string, deep: boolean, world?: Point): string | null {
+    const selection = this.scene.selection.ids;
+    const request = { selection, deep, enter: false, ...(world ? { world } : {}) };
+    const target = this.product.selectTarget?.(id, request, this.scene.elements);
+    return target === undefined ? id : target;
   }
 
   /** What selecting `id` selects (see `CanvasProduct.selectTarget`). */

@@ -1,4 +1,4 @@
-import type { CodeRelation } from "../../model";
+import type { CodeRelation } from "../model";
 
 /** The properties a relation adds: on the foreign key's model and on the model it points at. */
 export interface RelationProps {

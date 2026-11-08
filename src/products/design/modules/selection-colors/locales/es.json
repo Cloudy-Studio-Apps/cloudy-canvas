@@ -1,0 +1,9 @@
+{
+  "section": {
+    "title": "Colores de la selección",
+    "color": "Color de la selección {hex}",
+    "selectUses": "Seleccionar las capas que usan este color",
+    "seeAll": "Ver los {count} colores",
+    "seeFewer": "Ver menos colores"
+  }
+}

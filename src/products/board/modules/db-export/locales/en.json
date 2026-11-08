@@ -48,6 +48,7 @@
     "name-collision": "{names} all become {converted}; the later ones get a number.",
     "no-primary-key": "{table} has no primary key.",
     "composite-key": "{table} has a composite primary key, which {target} models can't express.",
+    "composite-key-class": "{table} has a composite primary key: add an @IdClass or @EmbeddedId class for it, since JPA needs one.",
     "fk-cycle": "{table}.{column} closes a cycle of foreign keys, so it's added after every table.",
     "many-to-many": "{from} and {to} are many to many: add a pivot table to the schema to export it.",
     "unsupported-default": "{table}.{column}: the default {value} can't be written in {target}.",
