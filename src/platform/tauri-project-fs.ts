@@ -23,6 +23,7 @@ import {
   projectPaths,
   serializeTrashIndex,
   uniqueName,
+  type FoundManifest,
   type ManifestFile,
   type ProjectEntry,
   type ProjectFs,
@@ -220,10 +221,14 @@ export class TauriProjectFs implements ProjectFs {
     if (isTauri()) await invoke("set_hidden", { path });
   }
 
-  async findManifestAbove(filePath: string, projectId: string): Promise<string | null> {
+  async findManifestAbove(filePath: string, projectId: string): Promise<FoundManifest | null> {
     let dir = parentPath(filePath);
     while (dir !== null) {
-      if (await this.hasManifest(dir, projectId)) return dir;
+      const files = await this.manifestsIn(dir);
+      const found =
+        files.find((f) => f.manifest.id === projectId) ??
+        files.find((f) => f.manifest.copiedFrom === projectId);
+      if (found) return { ...found, root: dir };
       dir = parentPath(dir);
     }
     return null;
@@ -236,11 +241,6 @@ export class TauriProjectFs implements ProjectFs {
   async readManifestFile(root: string, id?: string): Promise<ManifestFile | null> {
     const files = await this.manifestsIn(root);
     return (id === undefined ? files[0] : files.find((f) => f.manifest.id === id)) ?? null;
-  }
-
-  /** Whether `dir` holds a `.cproject` with this id; unreadable ones don't count. */
-  private async hasManifest(dir: string, projectId: string): Promise<boolean> {
-    return (await this.manifestsIn(dir)).some((f) => f.manifest.id === projectId);
   }
 
   /** The readable manifests of the `.cproject` files directly in `dir`. */

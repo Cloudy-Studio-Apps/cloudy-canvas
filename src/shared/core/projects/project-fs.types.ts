@@ -19,6 +19,11 @@ export interface ManifestFile {
   path: string;
 }
 
+/** A manifest found by walking up from a file (`findManifestAbove`), with its project's folder. */
+export interface FoundManifest extends ManifestFile {
+  root: string;
+}
+
 /** Disk access for projects. Relative paths are `/`-separated; `root` is absolute. */
 export interface ProjectFs {
   /** One level of `rel` (the root when omitted); the `.cloudy` folder and the `.cproject` are skipped. */
@@ -54,6 +59,9 @@ export interface ProjectFs {
    * `readManifest` with the file it read: writes go back to that file, whatever its name.
    */
   readManifestFile(root: string, id?: string): Promise<ManifestFile | null>;
-  /** The folder holding a `.cproject` whose `id` is `projectId`, walking up from `filePath`; null if none. */
-  findManifestAbove(filePath: string, projectId: string): Promise<string | null>;
+  /**
+   * The nearest `.cproject` above `filePath` whose `id` is `projectId`, or whose `copiedFrom` is
+   * (a copy of that project made its own), walking up to the top of the drive; null if none.
+   */
+  findManifestAbove(filePath: string, projectId: string): Promise<FoundManifest | null>;
 }

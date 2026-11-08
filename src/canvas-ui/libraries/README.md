@@ -30,7 +30,9 @@ edits travel both ways while the project is found.
 - **`useProjectLibraries(engine, file)`** (both products' file sessions; live guests never call it):
   reads the project from the document's link (a new file opened with `?project=` gets
   `{ projectId, libraryIds: "all" }`), finds it with `useProjectsStore.resolve(id, file.path)` and
-  opens its hub. Its `ProjectLibrariesState` (`status` `none` · `loading` · `ready` · `missing`,
+  opens its hub. When that returns another project (the file is in a copied project folder made its
+  own), the file's link is pointed at the copy's id instead (the recent file follows the link) and
+  the copy's hub opens. Its `ProjectLibrariesState` (`status` `none` · `loading` · `ready` · `missing`,
   `projectId`, `project`, `hub`, the `libraries` the file uses, `locate`) goes to the chrome through
   `ProjectLibrariesContext` (`useProjectLibrariesState()`; `NO_PROJECT_LIBRARIES` for live guests).
 - **Sync** (`use-library-sync.ts`, while `ready`): the libraries are mirrored into the file when

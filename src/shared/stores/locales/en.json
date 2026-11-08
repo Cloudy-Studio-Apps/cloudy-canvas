@@ -19,7 +19,9 @@
     "locateTitle": "Locate the project folder",
     "notThisProject": "That folder isn't this project.",
     "updateFailed": "The project couldn't be updated",
-    "removeFailed": "The project couldn't be removed from the list"
+    "removeFailed": "The project couldn't be removed from the list",
+    "openedAsCopy": "Opened as a separate project",
+    "openedAsCopyText": "“{name}” is a copy of a project in another folder, so it gets its own libraries and settings from now on."
   },
   "updates": {
     "checkFailed": "Couldn't check for updates",

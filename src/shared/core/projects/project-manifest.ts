@@ -79,6 +79,10 @@ export function parseManifest(text: string): ProjectManifest {
   }
   const libraries = data.libraries ?? [];
   if (!Array.isArray(libraries)) throw new Error("Project manifest: libraries must be an array");
+  const copiedFrom = data.copiedFrom;
+  if (copiedFrom !== undefined && typeof copiedFrom !== "string") {
+    throw new Error("Project manifest: copiedFrom must be a string");
+  }
   return {
     format: 1,
     id: str(data, "id", ""),
@@ -88,6 +92,7 @@ export function parseManifest(text: string): ProjectManifest {
     cover: parseCover(data.cover),
     libraries: libraries.map(parseLibrary),
     folders: parseFolders(data.folders),
+    ...(copiedFrom !== undefined && { copiedFrom }),
   };
 }
 

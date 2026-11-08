@@ -24,7 +24,8 @@ registry access are the `ProjectFs` and `ProjectRegistry` interfaces, implemente
 
 `format` (1), `id`, `name`, `color`, `icon` (or null), `cover` (`{kind: "colors"}`,
 `{kind: "image", file}` or null), `libraries` (`id`, `name`, `file`, `order` fractional index,
-`autoAdd` default true) and `folders` (folder path to `{color?}`). `parseManifest` validates every
+`autoAdd` default true), `folders` (folder path to `{color?}`) and, optionally, `copiedFrom` (the
+id a copied project folder had before it was made its own project). `parseManifest` validates every
 field, drops unknown ones and defaults `cover` to null and `folders` to `{}`.
 
 ## Sizes
@@ -61,6 +62,8 @@ hidden attribute; no-op elsewhere). `readManifest(root, id?)` reads the project 
 `readManifestFile(root, id?)` also says which `.cproject` it read (`ManifestFile`: `file` name and
 `path`), which isn't always `<manifest name>.cproject` (a file renamed outside the app): the
 project home writes the manifest back to that file and renaming the project renames it.
-`findManifestAbove` walks up from a file to the top of its drive or share, skipping unreadable
-manifests. `removeFile(path)` deletes a file for good (never a folder): only the original of a file
+`findManifestAbove(file, id)` walks up from a file to the top of its drive or share, skipping
+unreadable manifests, and returns the nearest one whose `id` is `id` or whose `copiedFrom` is
+(`FoundManifest`, with its `root`). `samePath` and `isPathInside` compare absolute paths of either
+separator style, ignoring case for Windows-style ones (`relativeTo` uses the same rule). `removeFile(path)` deletes a file for good (never a folder): only the original of a file
 added to a project, once its copy in the project is written.

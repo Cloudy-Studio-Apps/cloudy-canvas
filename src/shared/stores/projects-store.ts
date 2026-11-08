@@ -1,9 +1,16 @@
 import { create } from "zustand";
 
 import { pickFolder, projectFs, projectRegistry } from "@platform";
-import type { ProjectManifest, ProjectRecord } from "@shared/core";
+import {
+  createId,
+  samePath,
+  serializeManifest,
+  type ManifestFile,
+  type ProjectManifest,
+  type ProjectRecord,
+} from "@shared/core";
 import type { ProjectsState } from "./projects-store.types";
-import { notifyError } from "./toast-store";
+import { notifyError, toast } from "./toast-store";
 import { t } from "./stores.i18n";
 
 const NONE: ReadonlySet<string> = new Set();
@@ -37,6 +44,31 @@ export const useProjectsStore = create<ProjectsState>()((set) => {
     return record;
   };
 
+  /**
+   * Whether the project in `root` is a copy: its id is registered at another folder that still
+   * holds that project.
+   */
+  const isCopy = async (root: string, previous: ProjectRecord | null): Promise<boolean> =>
+    previous !== null &&
+    !samePath(previous.root, root) &&
+    (await projectFs.readManifest(previous.root, previous.id)) !== null;
+
+  /** Makes the copy in `root` its own project: a new id, the old one kept as `copiedFrom`. */
+  const separate = async (root: string, read: ManifestFile): Promise<ProjectRecord> => {
+    const manifest: ProjectManifest = {
+      ...read.manifest,
+      id: createId(),
+      copiedFrom: read.manifest.id,
+    };
+    await projectFs.writeTextAtomic(read.path, serializeManifest(manifest));
+    const record = await store(recordFor(root, manifest, null));
+    toast({
+      title: t("projects.openedAsCopy"),
+      description: t("projects.openedAsCopyText", { name: manifest.name }),
+    });
+    return record;
+  };
+
   return {
     projects: [],
     missing: NONE,
@@ -53,9 +85,11 @@ export const useProjectsStore = create<ProjectsState>()((set) => {
       }
     },
     open: async (root) => {
-      const manifest = await projectFs.readManifest(root);
-      if (!manifest) throw new Error(`No project found in ${root}`);
-      return store(recordFor(root, manifest, await projectRegistry.get(manifest.id)));
+      const read = await projectFs.readManifestFile(root);
+      if (!read) throw new Error(`No project found in ${root}`);
+      const previous = await projectRegistry.get(read.manifest.id);
+      if (await isCopy(root, previous)) return separate(root, read);
+      return store(recordFor(root, read.manifest, previous));
     },
     locate: async (id) => {
       const root = await pickFolder(t("projects.locateTitle"));
@@ -85,13 +119,24 @@ export const useProjectsStore = create<ProjectsState>()((set) => {
     },
     resolve: async (id, nearFile) => {
       const record = await projectRegistry.get(id);
+      // The project above the file wins over the registry's folder: a file of a copied folder
+      // belongs to the copy.
+      const above = nearFile ? await projectFs.findManifestAbove(nearFile, id) : null;
+      if (above) {
+        const { root, manifest } = above;
+        if (manifest.id !== id) {
+          // A copy made its own already (`copiedFrom`): the caller links the file to it.
+          const known = await projectRegistry.get(manifest.id);
+          if (known && samePath(known.root, root)) return known;
+          return store(recordFor(root, manifest, known));
+        }
+        if (record && samePath(record.root, root)) return record;
+        if (await isCopy(root, record)) return separate(root, above);
+        const found = recordFor(root, manifest, record);
+        return store(record ? { ...found, openedAt: record.openedAt } : found);
+      }
       if (record && (await projectFs.readManifest(record.root, id))) return record;
-      if (!nearFile) return null;
-      const root = await projectFs.findManifestAbove(nearFile, id);
-      const manifest = root ? await projectFs.readManifest(root, id) : null;
-      if (!root || !manifest) return null;
-      const found = recordFor(root, manifest, record);
-      return store(record ? { ...found, openedAt: record.openedAt } : found);
+      return null;
     },
   };
 });

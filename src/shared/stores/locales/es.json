@@ -19,7 +19,9 @@
     "locateTitle": "Localiza la carpeta del proyecto",
     "notThisProject": "Esa carpeta no es este proyecto.",
     "updateFailed": "No se pudo actualizar el proyecto",
-    "removeFailed": "No se pudo quitar el proyecto de la lista"
+    "removeFailed": "No se pudo quitar el proyecto de la lista",
+    "openedAsCopy": "Abierto como un proyecto aparte",
+    "openedAsCopyText": "«{name}» es una copia de un proyecto de otra carpeta, así que desde ahora tiene sus propias bibliotecas y ajustes."
   },
   "updates": {
     "checkFailed": "No se pudo buscar actualizaciones",

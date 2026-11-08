@@ -71,6 +71,13 @@ export function useProjectLibraries<O extends object>(
           .resolve(projectId, path.current ?? undefined);
         if (cancelled) return;
         if (!record) return setFound(missing);
+        if (record.id !== projectId) {
+          // The file is in a copy of the project made its own: it follows the copy now (the
+          // link's change runs this again with the copy's id; the recent file follows the link).
+          const libraryIds = doc.projectLink()?.libraryIds ?? "all";
+          doc.setProjectLink({ projectId: record.id, libraryIds });
+          return;
+        }
         const opened = await LibraryHub.open(record);
         if (cancelled) return void opened.release();
         release = opened.release;
@@ -84,7 +91,7 @@ export function useProjectLibraries<O extends object>(
       cancelled = true;
       void release?.();
     };
-  }, [projectId, request]);
+  }, [doc, projectId, request]);
 
   const current = projectId && found?.request === request ? found : null;
   const status = !projectId ? "none" : (current?.status ?? "loading");

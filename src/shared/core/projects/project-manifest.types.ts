@@ -25,4 +25,9 @@ export interface ProjectManifest {
   libraries: LibraryEntry[];
   /** Folder path relative to the root (`/`-separated) to its style. */
   folders: Record<string, FolderStyle>;
+  /**
+   * The id this project had before it became its own: a copied folder opened while the original
+   * was still where the registry says. Files of the copy that link the old id find it by this.
+   */
+  copiedFrom?: string;
 }

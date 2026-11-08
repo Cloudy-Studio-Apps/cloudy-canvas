@@ -50,18 +50,46 @@ export function parentFolder(path: string): string {
   return cut > 0 ? path.slice(0, cut) : "";
 }
 
-/** `path` relative to `root`, `/`-separated. Throws when `path` is not inside `root`. */
-export function relativeTo(root: string, path: string): string {
-  const windows = separatorOf(root) === "\\" || /^[a-z]:/i.test(root);
-  const norm = (value: string) => trimEnd(value.replace(/\\/g, "/"));
-  const base = norm(root);
-  const full = norm(path);
+/** Whether `path` is Windows-style (a `\` separator or a drive letter): compared ignoring case. */
+function isWindowsPath(path: string): boolean {
+  return separatorOf(path) === "\\" || /^[a-z]:/i.test(path);
+}
+
+/** `path` with `/` separators and no trailing one. */
+function normalized(path: string): string {
+  return trimEnd(path.replace(/\\/g, "/"));
+}
+
+/**
+ * The rest of `path` after `folder` (`""` for the folder itself, else starting with `/`), or
+ * `null` when `path` isn't inside it. Separators of either style; case-insensitive for
+ * Windows-style paths.
+ */
+function restAfter(folder: string, path: string): string | null {
+  const windows = isWindowsPath(folder) || isWindowsPath(path);
+  const base = normalized(folder);
+  const full = normalized(path);
   const same = (a: string, b: string) => (windows ? a.toLowerCase() === b.toLowerCase() : a === b);
   if (same(full, base)) return "";
-  if (!same(full.slice(0, base.length + 1), `${base}/`)) {
-    throw new Error(`"${path}" is not inside "${root}"`);
-  }
-  return full.slice(base.length + 1);
+  if (!same(full.slice(0, base.length + 1), `${base}/`)) return null;
+  return full.slice(base.length);
+}
+
+/** Whether two absolute paths name the same place (Windows-style ones ignoring case). */
+export function samePath(a: string, b: string): boolean {
+  return restAfter(a, b) === "";
+}
+
+/** Whether `path` is `folder` itself or inside it (Windows-style paths ignoring case). */
+export function isPathInside(folder: string, path: string): boolean {
+  return restAfter(folder, path) !== null;
+}
+
+/** `path` relative to `root`, `/`-separated. Throws when `path` is not inside `root`. */
+export function relativeTo(root: string, path: string): string {
+  const rest = restAfter(root, path);
+  if (rest === null) throw new Error(`"${path}" is not inside "${root}"`);
+  return rest.slice(1);
 }
 
 /** The absolute path of `rel` (`/`-separated) under `root`, in the root's style. */
