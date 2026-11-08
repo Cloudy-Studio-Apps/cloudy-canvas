@@ -1,7 +1,11 @@
-/** The paint the picker edits: a fill or stroke of the selection, by position. */
+/**
+ * The paint the picker edits: a fill or stroke of the selection, by position, or a fill of one of
+ * a vector's areas (`region`).
+ */
 export interface GradientEditTarget {
   field: "fills" | "strokes";
   index: number;
+  region?: number;
 }
 
 export interface GradientEditState {

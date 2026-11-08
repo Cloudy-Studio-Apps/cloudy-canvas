@@ -1,6 +1,6 @@
 import type { ElementKinds } from "@canvas";
 
-import { DesignNodeKind, type DesignNode } from "../../core";
+import { DesignNodeKind, networkOf, regionFillsPath, type DesignNode } from "../../core";
 import type { FieldType } from "../source";
 import { t } from "../data.i18n";
 import { isImageBinding } from "./binding-values";
@@ -12,7 +12,8 @@ export const IMAGE_TYPES: readonly FieldType[] = ["image-url", "image-base64", "
 
 /**
  * The data types that fit a field: a variable type's (`color`, `number`), or a picture's for
- * `fills.<i>.image`; `null` when any fits (a boolean or a text is read from anything).
+ * `fills.<i>.image` (or an area's `network.regions.<r>.fills.<i>.image`); `null` when any fits
+ * (a boolean or a text is read from anything).
  */
 export function acceptedTypes(type: string, path: string): readonly FieldType[] | null {
   if (isImageBinding(path)) return IMAGE_TYPES;
@@ -23,8 +24,9 @@ export function acceptedTypes(type: string, path: string): readonly FieldType[] 
 
 /**
  * The fields of a layer the Data section offers: its kind's color and number fields (what
- * variables can drive) and a picture for each fill when its kind takes image fills. Booleans and
- * visibility go through the show condition, a text's content through its template.
+ * variables can drive, a vector area's own colors included) and a picture for each fill (a vector
+ * area's own ones too) when its kind takes image fills. Booleans and visibility go through the
+ * show condition, a text's content through its template.
  */
 export function dataBindableFields(el: DesignNode, kinds: ElementKinds): DataBindableField[] {
   const kind = kinds.kindOf(el);
@@ -42,6 +44,16 @@ export function dataBindableFields(el: DesignNode, kinds: ElementKinds): DataBin
         accepts: IMAGE_TYPES,
       });
     }
+    // A vector's areas with fills of their own take pictures too.
+    networkOf(el)?.regions.forEach((region, area) => {
+      for (const i of region.fills?.keys() ?? []) {
+        out.push({
+          path: `${regionFillsPath(area)}.${i}.image`,
+          label: t("section.fields.areaImage", { area: area + 1, index: i + 1 }),
+          accepts: IMAGE_TYPES,
+        });
+      }
+    });
   }
   return out;
 }

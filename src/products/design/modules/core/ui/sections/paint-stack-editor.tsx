@@ -19,6 +19,7 @@ export function PaintStackEditor({
   onChange,
   bindPrefix,
   handlesField,
+  handlesRegion,
   size,
   children,
 }: PaintStackEditorProps) {
@@ -34,7 +35,15 @@ export function PaintStackEditor({
             paint={paint}
             label={label}
             allowImage={allowImage}
-            target={handlesField ? { field: handlesField, index: i } : undefined}
+            target={
+              handlesField
+                ? {
+                    field: handlesField,
+                    index: i,
+                    ...(handlesRegion === undefined ? {} : { region: handlesRegion }),
+                  }
+                : undefined
+            }
             bindPath={bindPrefix ? `${bindPrefix}.${i}.color` : undefined}
             size={size}
             onChange={(next, info) =>

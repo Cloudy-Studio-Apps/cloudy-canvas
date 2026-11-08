@@ -8,8 +8,10 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 ### New
 
 - Each closed area of a vector can now have its own fill, as in Figma: in vector edit mode, click
-  inside an area to select it and change its fill in the Fills section. Figma files keep the colors
-  of multi-colored vectors such as logos and icons, as one editable vector.
+  inside an area to select it and change its fill in the Fills section. An area's fill can use a
+  color style or variables, show data, and edit its gradient on the canvas, and its colors appear
+  in the page's colors and the color wizard. Figma files keep the colors of multi-colored vectors
+  such as logos and icons, as one editable vector.
 - Designs can now hold data sources, such as a CSV or JSON file or a web API: the new Data tab lists
   them with their rows, and Update reads them again whenever you choose. API keys stay on this
   device and are never saved in the file, and a key is only sent to the site it was typed for. A

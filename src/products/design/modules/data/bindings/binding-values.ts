@@ -7,12 +7,15 @@ import type { DataBinding } from "./binding.types";
 import type { BindingContext, BindingWrite } from "./plan-bindings.types";
 import type { LookupResult } from "./scope.types";
 
-/** `fills.<i>.image` / `strokes.<i>.image`: a paint's picture, data's own binding. */
-const IMAGE_PATH = /^((?:fills|strokes)\.\d+)\.image$/;
+/**
+ * `fills.<i>.image` / `strokes.<i>.image` / `network.regions.<r>.fills.<i>.image`: a paint's
+ * picture, data's own binding.
+ */
+const IMAGE_PATH = /^((?:fills|strokes|network\.regions\.\d+\.fills)\.\d+)\.image$/;
 
 const KEEP: BindingWrite = { value: null, image: null, emptyImage: false };
 
-/** Whether a binding path is a paint's picture. */
+/** Whether a binding path is a paint's picture (a layer's, or a vector area's own fill's). */
 export function isImageBinding(path: string): boolean {
   return IMAGE_PATH.test(path);
 }

@@ -15,5 +15,5 @@ export const useGradientEditStore = create<GradientEditState>()((set) => ({
 }));
 
 function sameTarget(a: GradientEditState["target"], b: GradientEditState["target"]): boolean {
-  return a?.field === b?.field && a?.index === b?.index;
+  return a?.field === b?.field && a?.index === b?.index && a?.region === b?.region;
 }

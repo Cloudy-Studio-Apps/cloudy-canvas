@@ -1,13 +1,16 @@
 import {
   identityKey,
   optionalBoolean,
+  remapStackBindings,
   pointInPath,
+  type BindableField,
   type ElementBuildContext,
   type ElementPatch,
   type ElementSpec,
   type ElementView,
   type Point,
   type Rect,
+  type ResolvedValue,
   type ScaleTransform,
 } from "@canvas";
 
@@ -23,16 +26,26 @@ import {
   hitSegment,
   networkGeometry,
   NETWORK_SCHEMA,
+  PAINT_STYLE,
+  paintBindable,
+  paintStyleField,
   placeNetwork,
   polygonNetwork,
   polylineNetwork,
   readNetwork,
+  readPaintStyle,
+  REGIONS_FIELD,
+  regionFillsPath,
+  regionIndexMap,
+  regionOfFillsPath,
+  setRegionFills,
   regionPaints,
   regionShapes,
   scaleNetwork,
   scaleTilePaints,
   type FlipAxis,
   type ImagePaint,
+  type Paint,
   type NodeBuildContext,
   type NodeGeometry,
   type VectorNetwork,
@@ -126,6 +139,50 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
     return super.mirrorsOnFlip(el) || regionImages(el).length > 0;
   }
 
+  /**
+   * Its areas too: each area's fills can take a color style (it then gets fills of its own), and
+   * the colors of an area's own fills can take variables, as a layer's fills do.
+   */
+  override bindable(el: VectorElement): BindableField[] {
+    const areas = el.network.regions.flatMap((region, i) => {
+      const path = regionFillsPath(i);
+      const name = t("bindable.areaFill", { index: i + 1 });
+      return [
+        paintStyleField(path, t("bindable.areaFillStyle", { index: i + 1 })),
+        ...(region.fills
+          ? paintBindable(region.fills, path, ["all-fills", this.fillScope], name)
+          : []),
+      ];
+    });
+    return [...super.bindable(el), ...areas];
+  }
+
+  /** A color style on an area gives it the style's paints as its own fills. */
+  override bindValues(
+    el: VectorElement,
+    path: string,
+    value: ResolvedValue,
+  ): Record<string, unknown> {
+    if (regionOfFillsPath(path) === null || value.type !== "style") {
+      return super.bindValues(el, path, value);
+    }
+    const paints = value.styleType === PAINT_STYLE ? readPaintStyle(value.value) : null;
+    return paints ? { [path]: paints.paints } : {};
+  }
+
+  /** An area's style is written as its own fills, even when it had none before. */
+  override bindPatch(
+    el: VectorElement,
+    path: string,
+    value: ResolvedValue,
+  ): ElementPatch<VectorElement> | null {
+    const region = regionOfFillsPath(path);
+    if (region === null || value.type !== "style") return super.bindPatch(el, path, value);
+    const paints = this.bindValues(el, path, value)[path];
+    if (!Array.isArray(paints) || !el.network.regions[region]) return null;
+    return { network: setRegionFills(el.network, [region], paints as Paint[]) };
+  }
+
   /** Scaled, its areas' tiled pictures scale their tiles too, as the layer's do. */
   override scale(el: VectorElement, t: ScaleTransform): ElementPatch<VectorElement> {
     const patch = super.scale(el, t);
@@ -180,7 +237,6 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
     return polygonNetwork(corners);
   }
 
-  /** A new `network` (relative to x, y) re-wraps the vector's box around what it draws. */
   /**
    * Flipping mirrors its points (and their handles) within its box too; a vector showing a
    * picture is drawn mirrored instead, so the picture flips with it.
@@ -202,11 +258,20 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
     return { ...flipPlacement(el, axis, at), network, ...flipPaints(el, axis) };
   }
 
+  /**
+   * A new `network` (relative to x, y) re-wraps the vector's box around what it draws, and the
+   * variables and styles on its areas follow the areas when an edit adds or removes some.
+   */
   override completePatch(
     el: VectorElement,
     patch: ElementPatch<VectorElement>,
     context: ElementBuildContext,
   ): ElementPatch<VectorElement> {
+    if ("network" in patch && patch.network && !("bindings" in patch) && el.bindings) {
+      const map = regionIndexMap(el.network, patch.network);
+      const bindings = remapStackBindings(el.bindings, REGIONS_FIELD, map);
+      if (JSON.stringify(bindings) !== JSON.stringify(el.bindings)) patch = { ...patch, bindings };
+    }
     const next =
       "network" in patch
         ? {

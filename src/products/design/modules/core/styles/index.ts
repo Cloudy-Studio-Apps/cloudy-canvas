@@ -8,3 +8,4 @@ export type { EffectStyleValue } from "./effect-style.types";
 export type { PaintStyleValue } from "./paint-style.types";
 export type { StrokeStyleValue } from "./stroke-style.types";
 export { effectBindingsOf, paintBindingsOf, strokeBindingsOf } from "./style-bindings-of";
+export { paintStyleField } from "./node-style-bindings";

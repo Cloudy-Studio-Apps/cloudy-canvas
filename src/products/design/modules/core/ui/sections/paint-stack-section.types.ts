@@ -32,6 +32,8 @@ export interface PaintStackSectionProps {
   bindPrefix?: string;
   /** The layers' field, so a gradient's handles show on the canvas (layers only). */
   handlesField?: "fills" | "strokes";
+  /** With `handlesField`, the vector area whose fills these are. */
+  handlesRegion?: number;
   /** The edited layer's size (one layer), for copying a gradient as CSS. */
   size?: Size;
   /** Shown under the paints (e.g. the stroke weight). */

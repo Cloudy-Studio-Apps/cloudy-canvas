@@ -78,3 +78,5 @@ export { movedTo, removedAt, stackBindingsPatch } from "./stack-bindings";
 export type * from "./region-selection.types";
 export { REGION_SELECTION, RegionSelectionSession } from "./region-selection";
 export { scaleTilePaints } from "./scale-tiles";
+export type * from "./node-paint-stacks.types";
+export { nodePaintStacks } from "./node-paint-stacks";

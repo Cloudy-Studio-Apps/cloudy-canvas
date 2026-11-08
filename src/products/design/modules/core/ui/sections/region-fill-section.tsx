@@ -1,13 +1,19 @@
 import { Layers } from "lucide-react";
 
-import type { ElementPatch } from "@canvas";
+import { withoutBindingsUnder, type ElementPatch } from "@canvas";
 import type { DesignNode } from "../../node/design-node.types";
 import { solidPaint } from "../../node/solid-paint";
+import { stackBindingsPatch } from "../../node/stack-bindings";
 import { setRegionFills } from "../../network/network-region-fills";
+import { regionFillsPath } from "../../network/region-fill-paths";
 import { regionPaints } from "../../network/region-paints";
 import type { VectorNetwork } from "../../network/network.types";
+import { PAINT_STYLE } from "../../styles/style-paths";
+import { movedBindings } from "@canvas";
 import { PanelIconButton } from "@design/ui/components/panel";
+import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useEditNodes } from "@design/ui/hooks";
+import { StyleChip, StyleControl, createNodeStyle, useNodeStyleBinding } from "../styles";
 import { PaintStackSection } from "./paint-stack-section";
 import type { RegionFillSectionProps } from "./region-fill-section.types";
 import { t } from "../../core.i18n";
@@ -17,23 +23,45 @@ const NEW_FILL = "#D9D9D9";
 
 /**
  * The Fill section while areas of a vector are picked in its edit mode: it edits those areas'
- * own fills, as in Figma, and "Use layer fill" gives them the layer's fills back. Area fills
- * can't be bound to styles or variables yet.
+ * own fills, as in Figma, and "Use layer fill" gives them the layer's fills back. One picked area
+ * also takes a color style and variables on its colors, as a layer's fills do.
  */
 export function RegionFillSection({ node, regions }: RegionFillSectionProps) {
+  const engine = useDesignEngine();
   const edit = useEditNodes();
   const { network } = node;
   const picked = regions.flatMap((i) => (network.regions[i] ? [network.regions[i]] : []));
   const ownFills = picked.some((region) => region.fills !== undefined);
+  const [only] = regions;
+  const path = regions.length === 1 && only !== undefined ? regionFillsPath(only) : null;
+  const style = useNodeStyleBinding([node], path ?? "");
+  const styled = path !== null && style.bound !== undefined;
 
-  const write = (next: (net: VectorNetwork) => VectorNetwork, checkpoint: boolean) =>
+  const write = (
+    next: (net: VectorNetwork) => VectorNetwork,
+    checkpoint: boolean,
+    bindings?: (current: DesignNode) => ElementPatch<DesignNode>,
+  ) =>
     edit(
       [node],
       (current) => {
         const net = (current as RegionFillSectionProps["node"]).network;
-        return { network: next(net) } as ElementPatch<DesignNode>;
+        return { network: next(net), ...bindings?.(current) } as ElementPatch<DesignNode>;
       },
       { checkpoint },
+    );
+
+  /** Each picked area's own fills, or the layer's back, with what was bound on them dropped. */
+  const useLayerFill = () =>
+    write(
+      (net) => setRegionFills(net, regions, undefined),
+      true,
+      (current) => ({
+        bindings: regions.reduce(
+          (bindings, i) => withoutBindingsUnder(bindings, regionFillsPath(i)),
+          current.bindings ?? {},
+        ),
+      }),
     );
 
   return (
@@ -43,12 +71,17 @@ export function RegionFillSection({ node, regions }: RegionFillSectionProps) {
       newPaint={() => solidPaint(NEW_FILL)}
       allowImage
       size={{ w: node.w, h: node.h }}
+      bindPrefix={path ?? undefined}
+      handlesField={path === null ? undefined : "fills"}
+      handlesRegion={path === null ? undefined : only}
+      hideAdd={styled}
+      replacement={styled ? <StyleChip binding={style} /> : undefined}
       note={
         regions.length === 1
           ? t("sections.selectedArea")
           : t("sections.selectedAreas", { count: regions.length })
       }
-      onChange={(paints, checkpoint) =>
+      onChange={(paints, checkpoint, map) =>
         write(
           (net) =>
             regions.reduce((acc, i) => {
@@ -56,17 +89,34 @@ export function RegionFillSection({ node, regions }: RegionFillSectionProps) {
               return region ? setRegionFills(acc, [i], paints(regionPaints(region, node))) : acc;
             }, net),
           checkpoint,
+          path === null || map === undefined
+            ? undefined
+            : (current) => stackBindingsPatch(current, path, map),
         )
       }
       actions={
-        ownFills && (
-          <PanelIconButton
-            label={t("paints.useLayerFill")}
-            onClick={() => write((net) => setRegionFills(net, regions, undefined), true)}
-          >
-            <Layers className="size-3.5" />
-          </PanelIconButton>
-        )
+        <>
+          {path !== null && (
+            <StyleControl
+              binding={style}
+              styleType={PAINT_STYLE}
+              createLabel={t("paints.createStyle", { name: t("sections.fills").toLowerCase() })}
+              create={() =>
+                createNodeStyle(
+                  engine,
+                  PAINT_STYLE,
+                  () => ({ paints: structuredClone([...(picked[0]?.fills ?? node.fills)]) }),
+                  (current) => movedBindings(current.bindings, path, "paints"),
+                )
+              }
+            />
+          )}
+          {ownFills && (
+            <PanelIconButton label={t("paints.useLayerFill")} onClick={useLayerFill}>
+              <Layers className="size-3.5" />
+            </PanelIconButton>
+          )}
+        </>
       }
     />
   );

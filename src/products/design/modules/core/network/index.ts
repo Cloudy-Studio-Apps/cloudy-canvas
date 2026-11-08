@@ -29,3 +29,9 @@ export { NETWORK_SCHEMA, readNetwork } from "./network-args";
 export { hasOwnRegionFills, networkOf, regionPaints, shownFills } from "./region-paints";
 export { regionShapes } from "./region-shapes";
 export { liveRegions, pickRegions, regionKey } from "./region-picks";
+export {
+  REGIONS_FIELD,
+  regionFillsPath,
+  regionIndexMap,
+  regionOfFillsPath,
+} from "./region-fill-paths";

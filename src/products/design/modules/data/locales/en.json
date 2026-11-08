@@ -233,7 +233,8 @@
       "choose": "Choose a field",
       "clear": "Unbind",
       "none": "No fields of this type",
-      "count": "Number of rows"
+      "count": "Number of rows",
+      "areaImage": "Area {area} fill {index} image"
     },
     "show": {
       "title": "Show when",

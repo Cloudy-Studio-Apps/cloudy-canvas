@@ -48,11 +48,12 @@ export function PaintField({
   const editing = open && isGradientPaint(paint) && target !== undefined;
   const field = target?.field;
   const index = target?.index;
+  const region = target?.region;
   useEffect(() => {
     if (!editing || field === undefined || index === undefined) return;
-    setEditTarget({ field, index });
+    setEditTarget({ field, index, ...(region === undefined ? {} : { region }) });
     return () => setEditTarget(null);
-  }, [editing, field, index, setEditTarget]);
+  }, [editing, field, index, region, setEditTarget]);
 
   // A crop being edited in the picker shows its crop box on the canvas (one layer selected).
   const nodes = useSelectedNodes();
@@ -64,10 +65,12 @@ export function PaintField({
   const startCrop = useImageCropStore((state) => state.start);
   const stopCrop = useImageCropStore((state) => state.stop);
   useEffect(() => {
-    if (!cropping || field !== "fills" || index === undefined || !nodeId) return;
+    // The crop box edits a layer's fill; an area's picture is cropped in the picker only.
+    if (!cropping || field !== "fills" || region !== undefined || index === undefined || !nodeId)
+      return;
     startCrop({ nodeId, index });
     return () => stopCrop();
-  }, [cropping, field, index, nodeId, startCrop, stopCrop]);
+  }, [cropping, field, region, index, nodeId, startCrop, stopCrop]);
 
   return (
     <div className={cn("group/bind flex items-center gap-1", !paint.visible && "opacity-50")}>

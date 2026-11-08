@@ -8,6 +8,11 @@ import { readStrokeStyle } from "./stroke-style";
 import { EFFECT_STYLE, PAINT_STYLE, STROKE_STYLE, STROKE_STYLE_PATH } from "./style-paths";
 import { t } from "../core.i18n";
 
+/** A paint (color) style that can stand for the paint stack at `path`. */
+export function paintStyleField(path: string, label: string): BindableField {
+  return styleField(path, PAINT_STYLE, label);
+}
+
 function styleField(path: string, styleType: string, label: string): BindableField {
   return { path, type: "style", styleType, scopes: [], label };
 }

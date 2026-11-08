@@ -31,5 +31,9 @@
       "label": "Cortar",
       "description": "Haz clic en un segmento para cortarlo."
     }
+  },
+  "bindable": {
+    "areaFill": "Relleno del área {index}",
+    "areaFillStyle": "Estilo de relleno del área {index}"
   }
 }

@@ -9,14 +9,17 @@ const EFFECT_NUMBERS = ["x", "y", "blur", "spread", "radius"] as const;
 const SIDES = ["top", "right", "bottom", "left"] as const;
 const LIMITS = ["minW", "maxW", "minH", "maxH"] as const;
 
-/** A paint stack's colors: each solid paint's, each gradient stop's. */
+/**
+ * A paint stack's colors: each solid paint's, each gradient stop's, under `field` (`fills`,
+ * `strokes`, a vector area's `network.regions.<i>.fills`); `name` labels them ("Fill").
+ */
 export function paintBindable(
   paints: readonly Paint[],
-  field: "fills" | "strokes",
+  field: string,
   scopes: TokenScope[],
+  name: string = field === "strokes" ? t("fields.stroke") : t("fields.fill"),
 ): BindableField[] {
   const fields: BindableField[] = [];
-  const name = field === "fills" ? t("fields.fill") : t("fields.stroke");
   for (const [i, paint] of paints.entries()) {
     if (paint.type === "solid") {
       fields.push({

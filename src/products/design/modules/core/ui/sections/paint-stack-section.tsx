@@ -25,6 +25,7 @@ export function PaintStackSection({
   note,
   bindPrefix,
   handlesField,
+  handlesRegion,
   size,
   children,
 }: PaintStackSectionProps) {
@@ -80,6 +81,7 @@ export function PaintStackSection({
           onChange={setPaints}
           bindPrefix={bindPrefix}
           handlesField={handlesField}
+          handlesRegion={handlesRegion}
           size={size}
         >
           {children}

@@ -233,7 +233,8 @@
       "choose": "Elige un campo",
       "clear": "Desvincular",
       "none": "No hay campos de este tipo",
-      "count": "Número de filas"
+      "count": "Número de filas",
+      "areaImage": "Imagen del relleno {index} del área {area}"
     },
     "show": {
       "title": "Mostrar cuando",

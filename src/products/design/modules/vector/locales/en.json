@@ -31,5 +31,9 @@
       "label": "Cut",
       "description": "Click a segment to cut it."
     }
+  },
+  "bindable": {
+    "areaFill": "Area {index} fill",
+    "areaFillStyle": "Area {index} fill style"
   }
 }

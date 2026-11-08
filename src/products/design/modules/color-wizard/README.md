@@ -38,10 +38,10 @@ it (`useExistingPalette`, `existingPalette`), so running it again edits the syst
      (`ChoiceCards`); dragging the base handle moves the harmony, in Custom each handle moves alone.
    - **Brand:** up to three colors to keep, locked and named primary, secondary, accent; the rest
      from a harmony around the first (`buildFromBrand`).
-   - **Image:** the file's image fills (`collectImages`), or one chosen, dropped or pasted (kept
+   - **Image:** the file's image fills (`collectImages`, vectors' areas' own ones too, `nodePaintStacks`), or one chosen, dropped or pasted (kept
      out of the file). `extractImageColors` (seeded k-means in OKLab on a ~96 px copy, weighted by
      the mood) gives each color a pin; dragging a pin samples the spot under it.
-   - **This file:** the solid colors layers paint without a variable (`collectFills`, not on pages
+   - **This file:** the solid colors layers paint without a variable (`collectFills`, fills, strokes and vectors' areas' own fills, bound back by their paths, not on pages
      a feature keeps), near-duplicates merged (`mergeFills`, by OKLab distance); the colors keep
      their paints so Create can bind them.
    - **Gallery:** palettes generated per category from OKLCH recipes (`gallery/`), seeded by the
