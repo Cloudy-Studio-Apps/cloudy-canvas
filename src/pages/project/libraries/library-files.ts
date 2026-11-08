@@ -33,53 +33,81 @@ export function newLibraryEntry(
   return createLibraryFile(projectFs, root, name).then((entry) => ({ ...entry, autoAdd }));
 }
 
-/**
- * Renames a library's `.clib` and `.assets` folder on disk to `name` and returns the new file
- * name (one no other library has). The manifest is the caller's.
- */
-export async function renameLibraryFiles(
-  root: string,
+/** The file name for a library renamed to `name`: `<name>.clib`, or a numbered one no other library has. */
+export function renamedLibraryFile(
   manifest: ProjectManifest,
   entry: LibraryEntry,
   name: string,
-): Promise<string> {
+): string {
   const taken = new Set(manifest.libraries.filter((l) => l.id !== entry.id).map((l) => l.file));
-  const wanted = uniqueName(`${name.trim()}.clib`, taken);
-  const from = libraryRels(root, entry.file);
-  const hadAssets = await projectFs.exists(projectPaths(root).libraryAssets(entry.file));
-  const moved = lastSegment(await projectFs.rename(root, from.file, wanted));
+  return uniqueName(`${name.trim()}.clib`, taken);
+}
+
+const stemOf = (file: string) => file.replace(/\.clib$/i, "");
+
+/**
+ * Renames a library's `.clib` and `.assets` folder on disk from the file name `from` to `wanted`
+ * and returns the name the file got. If the folder can't follow, the `.clib` goes back and this
+ * throws. The manifest and the hub are the caller's.
+ */
+export async function moveLibraryFiles(
+  root: string,
+  from: string,
+  wanted: string,
+): Promise<string> {
+  const rels = libraryRels(root, from);
+  const hadAssets = await projectFs.exists(projectPaths(root).libraryAssets(from));
+  const moved = lastSegment(await projectFs.rename(root, rels.file, wanted));
   if (hadAssets) {
-    await projectFs.rename(root, from.assets, `${moved.replace(/\.clib$/i, "")}.assets`);
+    try {
+      await projectFs.rename(root, rels.assets, `${stemOf(moved)}.assets`);
+    } catch (error) {
+      await projectFs.rename(root, libraryRels(root, moved).file, from);
+      throw error;
+    }
   }
   return moved;
 }
 
-/** Puts a library's files renamed to `moved` back under their `original` file name. */
-export async function revertLibraryRename(
-  root: string,
-  moved: string,
-  original: string,
-): Promise<void> {
-  const to = libraryRels(root, moved);
-  await projectFs.rename(root, to.file, original);
-  if (await projectFs.exists(projectPaths(root).libraryAssets(moved))) {
-    await projectFs.rename(root, to.assets, `${original.replace(/\.clib$/i, "")}.assets`);
-  }
+const LIBRARIES_REL = `${PROJECT_DATA_DIR}/${LIBRARIES_DIR}`;
+
+/** A library file or folder in the data folder: its stem and kind, or `null` for any other path. */
+function libraryItemOf(rel: string): { stem: string; ext: "clib" | "assets" } | null {
+  if (!rel.toLowerCase().startsWith(`${LIBRARIES_REL}/`)) return null;
+  const match = /^([^/]+)\.(clib|assets)$/i.exec(rel.slice(LIBRARIES_REL.length + 1));
+  return match ? { stem: match[1] ?? "", ext: match[2]?.toLowerCase() as "clib" | "assets" } : null;
 }
 
 /**
- * After a `.clib` came back from the trash as `file` (it was `from`, a name that was taken), its
- * `.assets` folder, if it came back earlier under the old stem, takes the new one.
+ * A library file or folder was restored from the trash to `rel` (it was at `from`): restores the
+ * other half of the pair from the trash too, and gives both the `.clib`'s stem. Returns the
+ * `.clib`'s file name, or `null` when `rel` isn't a library item or the `.clib` isn't back.
  */
-export async function matchRestoredAssets(root: string, file: string, from: string): Promise<void> {
-  const stem = (name: string) => name.replace(/\.clib$/i, "");
-  const old = stem(lastSegment(from));
-  if (old === stem(file)) return;
-  const paths = projectPaths(root);
-  const oldFolder = paths.libraryAssets(`${old}.clib`);
-  if ((await projectFs.exists(oldFolder)) && !(await projectFs.exists(paths.libraryAssets(file)))) {
-    await projectFs.rename(root, libraryRels(root, `${old}.clib`).assets, `${stem(file)}.assets`);
+export async function restoreLibraryPair(
+  root: string,
+  rel: string,
+  from: string,
+): Promise<string | null> {
+  const item = libraryItemOf(rel);
+  const origin = libraryItemOf(from);
+  if (!item || !origin) return null;
+  let clib = item.ext === "clib" ? item.stem : null;
+  let assets = item.ext === "assets" ? item.stem : null;
+  const otherExt = item.ext === "clib" ? "assets" : "clib";
+  const other = (await projectFs.listTrash(root)).find(
+    (e) => e.from.toLowerCase() === `${LIBRARIES_REL}/${origin.stem}.${otherExt}`.toLowerCase(),
+  );
+  if (other) {
+    const back = libraryItemOf(await projectFs.restore(root, other.id));
+    if (back?.ext === "clib") clib = back.stem;
+    else if (back) assets = back.stem;
   }
+  if (clib === null) return null;
+  if (assets !== null && assets !== clib) {
+    const free = !(await projectFs.exists(projectPaths(root).libraryAssets(`${clib}.clib`)));
+    if (free) await projectFs.rename(root, `${LIBRARIES_REL}/${assets}.assets`, `${clib}.assets`);
+  }
+  return `${clib}.clib`;
 }
 
 /** Moves a library's `.clib` and `.assets` folder to the project's trash. */
@@ -89,10 +117,4 @@ export async function trashLibraryFiles(root: string, entry: LibraryEntry): Prom
   if (await projectFs.exists(projectPaths(root).libraryAssets(entry.file))) {
     await projectFs.toTrash(root, rels.assets);
   }
-}
-
-/** Whether `rel` is a library's `.clib` inside the data folder (a restored one). */
-export function isLibraryRel(rel: string): boolean {
-  const folder = `${PROJECT_DATA_DIR}/${LIBRARIES_DIR}/`;
-  return rel.toLowerCase().startsWith(folder) && /^[^/]+\.clib$/i.test(rel.slice(folder.length));
 }

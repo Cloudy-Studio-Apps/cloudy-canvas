@@ -147,6 +147,14 @@ export class LibraryHub {
     }
   }
 
+  /**
+   * Points a library at a new file name in memory (its file was renamed on disk), so a save at
+   * any moment, quitting included, writes to the right place. `refresh()` reads the manifest.
+   */
+  relocate(libraryId: string, file: string): void {
+    this.list = this.list.map((entry) => (entry.id === libraryId ? { ...entry, file } : entry));
+  }
+
   /** Writes a library's pending edits to its file now and waits until every save has ended. */
   flush(libraryId: string): Promise<void> {
     return this.saver.flushOne(libraryId);

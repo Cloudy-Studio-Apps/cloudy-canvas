@@ -255,6 +255,8 @@
       "autoAddHint": "New files, and files that use all the libraries, take it. Off: a file turns it on from its libraries menu.",
       "create": "Create library",
       "creating": "Creating…"
-    }
+    },
+    "rollbackFailed": "The library was renamed on disk but the change couldn't be undone; its files may have a different name than the project says",
+    "cleanupFailed": "A half-made library couldn't be cleaned up"
   }
 }

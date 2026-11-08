@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 
 import { imageSize, keyBetween, LibraryDocument } from "@canvas";
 import { pickImageFiles, projectFs } from "@platform";
-import { baseNameFromPath, createId, projectPaths, type LibraryEntry } from "@shared/core";
+import { createId, projectPaths, type LibraryEntry } from "@shared/core";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import {
@@ -15,11 +15,10 @@ import {
 } from "@pages/shared/projects";
 import { copyLibraryRecords } from "./copy-library-records";
 import {
-  isLibraryRel,
   newLibraryEntry,
-  matchRestoredAssets,
-  renameLibraryFiles,
-  revertLibraryRename,
+  moveLibraryFiles,
+  renamedLibraryFile,
+  restoreLibraryPair,
   trashLibraryFiles,
 } from "./library-files";
 import type { LibraryActions, LibraryActionsOptions } from "./use-library-actions.types";
@@ -70,23 +69,36 @@ export function useLibraryActions(options: LibraryActionsOptions): LibraryAction
           const entry = await newLibraryEntry(record.root, input.name, input.autoAdd);
           await project.saveManifest({ libraries: [...manifest.libraries, entry] });
           await reload();
-          const doc = hub.library(entry.id);
-          if (!doc)
-            throw new Error(`The library "${input.name}" couldn't be read after it was made`);
-          if (records.length > 0) doc.setTokenRecords(records);
-          if (typeof input.source === "object" && "copyOf" in input.source) {
-            for (const asset of hub.library(input.source.copyOf)?.assets() ?? []) {
-              const bytes = await hub.readAssetBytes(input.source.copyOf, asset.id);
-              await hub.addAssetFile(entry.id, bytes, {
-                name: asset.name,
-                group: asset.group,
-                type: asset.type,
-                mime: asset.mime,
-                ext: asset.ext,
-                width: asset.width,
-                height: asset.height,
-              });
+          try {
+            const doc = hub.library(entry.id);
+            if (!doc)
+              throw new Error(`The library "${input.name}" couldn't be read after it was made`);
+            if (records.length > 0) doc.setTokenRecords(records);
+            if (typeof input.source === "object" && "copyOf" in input.source) {
+              for (const asset of hub.library(input.source.copyOf)?.assets() ?? []) {
+                const bytes = await hub.readAssetBytes(input.source.copyOf, asset.id);
+                await hub.addAssetFile(entry.id, bytes, {
+                  name: asset.name,
+                  group: asset.group,
+                  type: asset.type,
+                  mime: asset.mime,
+                  ext: asset.ext,
+                  width: asset.width,
+                  height: asset.height,
+                });
+              }
             }
+          } catch (error) {
+            // Leave nothing half made: out of the manifest, its files in the trash.
+            try {
+              await project.saveManifest({ libraries: manifest.libraries });
+              await reload();
+              await trashLibraryFiles(record.root, entry);
+              bump();
+            } catch (cleanup) {
+              notifyError(t("libraries.cleanupFailed"), cleanup);
+            }
+            throw error;
           }
           bump();
           return entry;
@@ -95,25 +107,37 @@ export function useLibraryActions(options: LibraryActionsOptions): LibraryAction
         const name = raw.trim();
         if (name === library.entry.name) return true;
         const done = await attempt(t("libraries.renameFailed"), async () => {
-          // Its pending save is written first and later edits wait, so none lands on the old name.
-          const release = (await hub?.hold(library.entry.id)) ?? (() => {});
+          if (!hub) throw new Error("The project's libraries aren't open yet");
+          const { id, file: oldFile } = library.entry;
+          // Its pending save is written first and later edits wait; `relocate` makes any save
+          // after the rename (quitting included) go to the new name.
+          const release = await hub.hold(id);
           try {
-            const file = await renameLibraryFiles(record.root, manifest, library.entry, name);
+            await hub.flush(id);
+            const file = await moveLibraryFiles(
+              record.root,
+              oldFile,
+              renamedLibraryFile(manifest, library.entry, name),
+            );
+            hub.relocate(id, file);
             try {
               await project.saveManifest({
-                libraries: manifest.libraries.map((l) =>
-                  l.id === library.entry.id ? { ...l, name, file } : l,
-                ),
+                libraries: manifest.libraries.map((l) => (l.id === id ? { ...l, name, file } : l)),
               });
             } catch (error) {
-              await revertLibraryRename(record.root, file, library.entry.file).catch(() => {});
+              try {
+                await moveLibraryFiles(record.root, file, oldFile);
+                hub.relocate(id, oldFile);
+              } catch (rollback) {
+                notifyError(t("libraries.rollbackFailed"), rollback);
+              }
               throw error;
             }
-            await reload();
-            return true;
           } finally {
             release();
           }
+          await reload();
+          return true;
         });
         return done === true;
       },
@@ -186,8 +210,9 @@ export function useLibraryActions(options: LibraryActionsOptions): LibraryAction
         });
       },
       adoptRestored: async (rel, from) => {
-        if (!isLibraryRel(rel)) return;
-        const file = baseNameFromPath(rel);
+        const file = await restoreLibraryPair(record.root, rel, from);
+        if (!file) return;
+        bump();
         if (manifest.libraries.some((l) => l.file === file)) return;
         const bytes = await projectFs.readBytes(projectPaths(record.root).library(file));
         const doc = LibraryDocument.fromFile(bytes);
@@ -199,7 +224,6 @@ export function useLibraryActions(options: LibraryActionsOptions): LibraryAction
           order: lastOrder(manifest.libraries),
           autoAdd: false,
         };
-        await matchRestoredAssets(record.root, file, from);
         await project.saveManifest({ libraries: [...manifest.libraries, entry] });
         await reload();
       },

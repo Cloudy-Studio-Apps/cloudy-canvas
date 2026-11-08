@@ -21,7 +21,7 @@ edits travel both ways while the project is found.
   using `"all"`). `addAssetFile(libraryId, bytes, input)` stores a picture in
   `<library>.assets/<id>.<ext>` (the same bytes, by `hash`, return the asset it has already);
   `readAssetBytes` reads one back.
-  - **`flush(libraryId)` and `hold(libraryId)`:** `flush` writes a library's pending edit now and waits for the saves; `hold` does that and then keeps its later edits from being written until the returned function runs, so the project home can rename the `.clib` (it calls `refresh()` before releasing, and the held edits go to the new name).
+  - **`flush(libraryId)` and `hold(libraryId)`:** `flush` writes a library's pending edit now and waits for the saves; `hold` does that and then keeps its later edits from being written until the returned function runs, so the project home can rename the `.clib`. `relocate(libraryId, file)` points the library at its new file name in memory right after the rename, so any save from then on (the last `release`, quitting) writes to the right name; `refresh()` reads the manifest afterwards.
   - **Saving** (`library-saver.ts`): a changed library's `.clib` is written 300 ms after its last
     edit, atomically (`projectFs.writeBytesAtomic`), one write at a time; the last `release` and
     quitting the app (`appLifecycle.onBeforeQuit`, which the window waits for) write what's

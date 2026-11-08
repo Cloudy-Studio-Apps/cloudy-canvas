@@ -255,6 +255,8 @@
       "autoAddHint": "Los archivos nuevos, y los que usan todas las bibliotecas, la toman. Desactivado: cada archivo la activa desde su menú de bibliotecas.",
       "create": "Crear biblioteca",
       "creating": "Creando…"
-    }
+    },
+    "rollbackFailed": "La biblioteca se renombró en disco pero no se pudo deshacer el cambio; sus archivos pueden tener otro nombre que el del proyecto",
+    "cleanupFailed": "No se pudo limpiar una biblioteca a medio crear"
   }
 }
