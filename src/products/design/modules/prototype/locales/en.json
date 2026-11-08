@@ -32,7 +32,11 @@
     "empty": "Select a layer to add an interaction, a screen for its scrolling and flow start, or a flow on the left."
   },
   "canvas": {
-    "flagTitle": "Select {name}"
+    "flagTitle": "Select {name}",
+    "title": "Canvas",
+    "showLinks": "Show links",
+    "all": "All",
+    "selection": "Selection"
   },
   "stub": {
     "back": "Back",
@@ -43,7 +47,15 @@
     "interactions": "Has interactions"
   },
   "flow": {
-    "defaultName": "{screen} flow"
+    "defaultName": "{screen} flow",
+    "kind": "Flow",
+    "title": "Flow",
+    "name": "Name",
+    "nameEmpty": "A flow needs a name",
+    "startsAt": "Starts at",
+    "playback": "Playback",
+    "hints": "Show hotspots on a missed click",
+    "delete": "Delete flow"
   },
   "trigger": {
     "click": "On click",
@@ -116,5 +128,40 @@
     "duration": "Duration",
     "easing": "Easing",
     "remove": "Remove interaction"
+  },
+  "screen": {
+    "kind": "Screen",
+    "flowStart": "Flow start",
+    "starts": "Starts “{flow}”",
+    "startHere": "Start a flow here"
+  },
+  "links": {
+    "title": "Links to this screen",
+    "empty": "Nothing links here yet."
+  },
+  "device": {
+    "title": "Device",
+    "platform": "Platform",
+    "device": "Device",
+    "orientation": "Orientation",
+    "portrait": "Portrait",
+    "landscape": "Landscape",
+    "iphone-16": "iPhone 16 · 393 × 852",
+    "iphone-se": "iPhone SE · 375 × 667",
+    "pixel-9": "Pixel 9 · 412 × 915",
+    "ipad-air": "iPad Air · 820 × 1180",
+    "galaxy-tab": "Galaxy Tab S9 · 800 × 1280",
+    "window-mac": "Window · macOS",
+    "window-windows": "Window · Windows",
+    "window-linux": "Window · Linux",
+    "browser-1280": "Browser · 1280",
+    "browser-1440": "Browser · 1440",
+    "browser-fit": "Browser · fit the window",
+    "note": {
+      "mobile": "Plays in a phone, taps instead of clicks.",
+      "tablet": "Plays in a tablet, taps instead of clicks.",
+      "desktop": "Plays in an app window with its title bar.",
+      "web": "Plays in a browser with an address bar; Open link opens a tab."
+    }
   }
 }

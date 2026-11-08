@@ -86,6 +86,16 @@ export class DesignPrototype {
     this.doc.remove([id]);
   }
 
+  /** Deletes every flow starting at the screen `screen`, in one undo step. */
+  removeFlowsStartingAt(screen: string): void {
+    const ids = this.allFlows()
+      .filter((flow) => flow.start === screen)
+      .map((flow) => flow.id);
+    if (ids.length === 0) return;
+    this.doc.checkpoint();
+    this.doc.remove(ids);
+  }
+
   /** A node's interactions, `[]` for none. */
   interactions(nodeId: string): PrototypeInteraction[] {
     return nodeInteractions(this.doc.get(nodeId));
