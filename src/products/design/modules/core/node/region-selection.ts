@@ -17,8 +17,9 @@ export class RegionSelectionSession {
   }
 
   set(target: RegionTarget | null): void {
-    if (!target && !this.current) return;
-    this.current = target && target.regions.length > 0 ? target : null;
+    const next = target && target.picks.length > 0 ? target : null;
+    if (sameTarget(this.current, next)) return;
+    this.current = next;
     this.version++;
     this.changes.emit();
   }
@@ -26,6 +27,15 @@ export class RegionSelectionSession {
   subscribe = (listener: () => void): (() => void) => this.changes.subscribe(listener);
 
   getVersion = (): number => this.version;
+}
+
+function sameTarget(a: RegionTarget | null, b: RegionTarget | null): boolean {
+  if (a === null || b === null) return a === b;
+  return (
+    a.elementId === b.elementId &&
+    a.picks.length === b.picks.length &&
+    a.picks.every((pick, i) => pick.index === b.picks[i]?.index && pick.key === b.picks[i]?.key)
+  );
 }
 
 /** The design's picked vector regions (`engine.service(REGION_SELECTION)`). */

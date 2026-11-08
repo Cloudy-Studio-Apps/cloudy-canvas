@@ -1,12 +1,12 @@
 import { defineService, Emitter } from "@canvas";
 
-import type { RegionSelectionSession } from "../../core";
+import type { RegionPick, RegionSelectionSession } from "../../core";
 import type { VectorEditSelection } from "./vector-edit.types";
 
 const NOTHING: VectorEditSelection = {
   vertices: new Set(),
   segments: new Set(),
-  regions: new Set(),
+  regionPicks: [],
 };
 
 /**
@@ -48,15 +48,10 @@ export class VectorEditSession {
   select(
     vertices: Iterable<number>,
     segments: Iterable<number> = [],
-    regions: Iterable<number> = [],
+    regionPicks: readonly RegionPick[] = [],
   ): void {
-    this.picked = {
-      vertices: new Set(vertices),
-      segments: new Set(segments),
-      regions: new Set(regions),
-    };
-    const picked = [...this.picked.regions];
-    this.regionStore?.set(this.id ? { elementId: this.id, regions: picked } : null);
+    this.picked = { vertices: new Set(vertices), segments: new Set(segments), regionPicks };
+    this.regionStore?.set(this.id ? { elementId: this.id, picks: regionPicks } : null);
     this.changed();
   }
 

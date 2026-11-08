@@ -1,13 +1,16 @@
 import type { CanvasPointer } from "@canvas";
 
-import type { SegmentHit } from "../../core";
+import type { RegionPick, SegmentHit } from "../../core";
 import type { VectorElement } from "../vector.types";
 
-/** What's selected in the vector being edited: vertex, segment and region indices of its network. */
+/**
+ * What's selected in the vector being edited: vertex and segment indices of its network, and
+ * picked regions (`liveRegions` finds them in the network as it is now).
+ */
 export interface VectorEditSelection {
   vertices: ReadonlySet<number>;
   segments: ReadonlySet<number>;
-  regions: ReadonlySet<number>;
+  regionPicks: readonly RegionPick[];
 }
 
 /** What a press lands on in the edited vector, nearest first. */

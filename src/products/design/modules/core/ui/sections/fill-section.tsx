@@ -4,6 +4,7 @@ import { DesignNodeKind } from "../../node/design-node.kind";
 import type { DesignNode } from "../../node/design-node.types";
 import { solidPaint } from "../../node/solid-paint";
 import type { PropertySectionProps } from "@design/ui/modules";
+import { liveRegions } from "../../network/region-picks";
 import { PaintListSection } from "./paint-list-section";
 import { RegionFillSection } from "./region-fill-section";
 import type { RegionFillSectionProps } from "./region-fill-section.types";
@@ -22,8 +23,8 @@ export function FillSection({ selection: { nodes, kinds } }: PropertySectionProp
   const only = nodes.length === 1 ? nodes[0] : undefined;
   if (target && only && target.elementId === only.id && "network" in only) {
     const node = only as RegionFillSectionProps["node"];
-    // Areas an undo or an edit took away don't count.
-    const regions = target.regions.filter((i) => node.network.regions[i] !== undefined);
+    // Found again after an undo or an edit renumbered them; ones taken away don't count.
+    const regions = liveRegions(node.network, target.picks);
     if (regions.length > 0) return <RegionFillSection node={node} regions={regions} />;
   }
   // Image fills only when every selected node can show one (text can't).

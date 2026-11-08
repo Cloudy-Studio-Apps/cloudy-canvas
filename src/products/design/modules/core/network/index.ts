@@ -2,6 +2,7 @@
 // filled regions. Shapes convert to them, and vectors are edited as them.
 export type * from "./network.types";
 export type * from "./region-shapes.types";
+export type * from "./region-picks.types";
 export { bendThrough, flatten, nearestT, pointAt, splitAt } from "@canvas";
 export { loopCurves, otherEnd, segmentCurve, segmentsAt, tangentAt } from "./network-curves";
 export {
@@ -27,3 +28,4 @@ export { curvesContour, pathToNetwork, regionPath, strokePath } from "./network-
 export { NETWORK_SCHEMA, readNetwork } from "./network-args";
 export { hasOwnRegionFills, regionPaints } from "./region-paints";
 export { regionShapes } from "./region-shapes";
+export { liveRegions, pickRegions, regionKey } from "./region-picks";

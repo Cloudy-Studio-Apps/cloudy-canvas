@@ -1,7 +1,7 @@
 import type { Graphics } from "pixi.js";
 import { fillPath, mapPath, type GuideView, type Point } from "@canvas";
 
-import { regionShapes, segmentCurve, segmentsAt, tangentAt } from "../../core";
+import { liveRegions, regionShapes, segmentCurve, segmentsAt, tangentAt } from "../../core";
 import type { VectorElement } from "../vector.types";
 import type { VectorEditSelection } from "./vector-edit.types";
 import { vectorWorldPoint } from "./vector-world-point";
@@ -37,9 +37,9 @@ export function drawVectorOverlay(
   const world = (p: Point) => vectorWorldPoint(el, p);
   const { network } = el;
 
+  const picked = new Set(liveRegions(network, selection.regionPicks));
   for (const { region, shape } of regionShapes(network)) {
-    if (selection.regions.has(region))
-      fillPath(g, mapPath(shape, world), { color, alpha: REGION_TINT });
+    if (picked.has(region)) fillPath(g, mapPath(shape, world), { color, alpha: REGION_TINT });
   }
 
   network.segments.forEach((_, i) => {

@@ -12,7 +12,9 @@ import {
 import type { DesignToolOptions } from "../../../design-options.types";
 import {
   hitSegment,
+  liveRegions,
   moveVertices,
+  pickRegions,
   placeNetwork,
   removeParts,
   removeRegions,
@@ -117,7 +119,8 @@ export abstract class VectorEditTool implements Tool {
     segments: Iterable<number> = [],
     regions: Iterable<number> = [],
   ): void {
-    this.session.select(vertices, segments, regions);
+    const el = this.vector();
+    this.session.select(vertices, segments, el ? pickRegions(el.network, regions) : []);
     this.ctx.requestRender();
   }
 
@@ -170,10 +173,11 @@ export abstract class VectorEditTool implements Tool {
         this.select([]);
         return true;
       case "deleteSelection": {
-        const { vertices, segments, regions } = this.session.selection;
+        const { vertices, segments, regionPicks } = this.session.selection;
         if (vertices.size + segments.size === 0) {
           // Only areas picked: they're unfilled, as the paint bucket does.
-          if (regions.size > 0) this.commit(el, removeRegions(el.network, [...regions]));
+          const regions = liveRegions(el.network, regionPicks);
+          if (regions.length > 0) this.commit(el, removeRegions(el.network, regions));
           this.select([]);
           return true;
         }

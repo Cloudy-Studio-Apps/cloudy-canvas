@@ -8,6 +8,7 @@ import {
   type ElementView,
   type Point,
   type Rect,
+  type ScaleTransform,
 } from "@canvas";
 
 import {
@@ -29,6 +30,7 @@ import {
   regionPaints,
   regionShapes,
   scaleNetwork,
+  scaleTilePaints,
   type FlipAxis,
   type ImagePaint,
   type NodeBuildContext,
@@ -64,9 +66,18 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
     network: NETWORK_SCHEMA,
   };
 
-  /** Its network, which is replaced (not changed) when edited: the same object, the same shape. */
+  /**
+   * Its curves and which regions it fills: networks are replaced (not changed) when edited, and a
+   * new fill of an area keeps the curves and loops, so a color drag doesn't work the shape out
+   * again.
+   */
   override geometryKey(el: VectorElement): string {
-    return String(identityKey(el.network));
+    const { vertices, segments, regions } = el.network;
+    const parts = regions.map(
+      (region) =>
+        `${identityKey(region.loops)}${region.windingRule[0]}${region.fills?.length === 0 ? "-" : ""}`,
+    );
+    return `${identityKey(vertices)}|${identityKey(segments)}|${parts.join(",")}`;
   }
 
   /** Its regions filled by their winding rules (holes open) and its segments stroked. */
@@ -113,6 +124,20 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
   /** An area showing a picture flips by a mirrored drawing too, as a layer's picture does. */
   override mirrorsOnFlip(el: VectorElement): boolean {
     return super.mirrorsOnFlip(el) || regionImages(el).length > 0;
+  }
+
+  /** Scaled, its areas' tiled pictures scale their tiles too, as the layer's do. */
+  override scale(el: VectorElement, t: ScaleTransform): ElementPatch<VectorElement> {
+    const patch = super.scale(el, t);
+    const net = patch.network ?? el.network;
+    if (!net.regions.some((region) => region.fills && scaleTilePaints(region.fills, t))) {
+      return patch;
+    }
+    const regions = net.regions.map((region) => {
+      const fills = region.fills && scaleTilePaints(region.fills, t);
+      return fills ? { ...region, fills } : region;
+    });
+    return { ...patch, network: { ...net, regions } };
   }
 
   /** Its points and curves stretch with its box. */

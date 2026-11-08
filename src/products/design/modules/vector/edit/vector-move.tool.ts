@@ -6,7 +6,14 @@ import {
   type CanvasPointer,
 } from "@canvas";
 
-import { moveVertices, regionAt, segmentsAt, setTangent, type VectorNetwork } from "../../core";
+import {
+  liveRegions,
+  moveVertices,
+  regionAt,
+  segmentsAt,
+  setTangent,
+  type VectorNetwork,
+} from "../../core";
 import type { MoveGesture } from "./vector-edit.types";
 import { VectorEditTool } from "./vector-edit.tool";
 import { VECTOR_TOOLS } from "./vector-tools";
@@ -57,7 +64,9 @@ export class VectorMoveTool extends VectorEditTool {
     }
     const region = regionAt(el.network, this.local(el, p.world));
     if (region !== null) {
-      const picked = new Set(p.shiftKey ? this.session.selection.regions : []);
+      const picked = new Set(
+        p.shiftKey ? liveRegions(el.network, this.session.selection.regionPicks) : [],
+      );
       if (picked.has(region)) picked.delete(region);
       else picked.add(region);
       this.select(p.shiftKey ? vertices : [], p.shiftKey ? segments : [], picked);
