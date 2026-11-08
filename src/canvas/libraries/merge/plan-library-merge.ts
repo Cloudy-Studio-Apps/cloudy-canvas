@@ -57,15 +57,15 @@ export function planLibraryMerge(
       continue;
     }
     plan.axisMap[axis.id] = match.id;
-    const missing: ModeDef[] = [];
+    // Two file axes of that name share the modes the first one added.
+    const added: ModeDef[] = plan.newModes[match.id] ?? [];
     for (const mode of axis.modes) {
-      const same = match.modes.find((other) => sameName(other.name, mode.name));
-      if (same) plan.modeMap[mode.id] = same.id;
-      else missing.push(mode);
+      const same = [...match.modes, ...added].find((other) => sameName(other.name, mode.name));
+      if (same) {
+        if (same.id !== mode.id) plan.modeMap[mode.id] = same.id;
+      } else added.push(mode);
     }
-    if (missing.length > 0) {
-      plan.newModes[match.id] = [...(plan.newModes[match.id] ?? []), ...missing];
-    }
+    if (added.length > 0) plan.newModes[match.id] = added;
   }
 
   const libraryCollections = ofKind<CollectionRecord>(library, "collection");

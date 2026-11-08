@@ -14,6 +14,7 @@ import { libraryColorList } from "@pages/shared/projects";
 import { t } from "./add-to-project.i18n";
 import { FILE_CODECS } from "./file-codecs";
 import type { FileCodec } from "./file-codecs.types";
+import { loadMergeFonts } from "./load-merge-fonts";
 import type { MergeCommit, MergeLibrary } from "./merge-session.types";
 import { targetPath } from "./target-path";
 
@@ -120,6 +121,8 @@ export class MergeSession {
     if (libraryId !== null && plan !== null) {
       const library = hub.library(libraryId);
       if (!library) throw new Error(`The library ${libraryId} couldn't be read`);
+      // Text is measured again as the merge runs: with the file's fonts, as in its editor.
+      await loadMergeFonts(doc, library, plan, codec);
       doc.setAfterEdit(codec.afterEdit());
       try {
         const relink = codec.relink;

@@ -24,7 +24,11 @@ file's Add to project…) and the project home (New ▾ › Add existing file…
   so the file isn't open) with its product's codec (`FILE_CODECS`: open with the modules'
   migrations, the product's after-edit hook while merging, the editor's encoder, the design's
   picture relink), and the project's `LibraryHub`. `plan(libraryId)` is `planLibraryMerge`;
-  `commit` moves the file's pictures with `moveAssetToLibrary`, applies the merge, waits for the
+  `commit` first loads the fonts the file uses and those it will use once merged
+  (`loadMergeFonts`: `previewLibraryMerge` on a fork, then `documentFonts` and `loadDocumentFonts`
+  with `fontLibrary`, as an editor opening the file does; one that can't be loaded falls back as in
+  the editor), since the product's after-edit hook measures and lays out text again during the
+  merge. Then it moves the file's pictures with `moveAssetToLibrary`, applies the merge, waits for the
   library's save (`hub.flush`), sets the link, then writes the file: in place when it's in the chosen
   folder already, else as a new file there (`targetPath`: its name made free; a draft is named after
   its title) through `storage.save`, which points the recent file at it (same id, with the project

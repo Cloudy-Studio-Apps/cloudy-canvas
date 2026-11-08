@@ -92,7 +92,8 @@ libraries (`planLibraryMerge`, then `applyLibraryMerge`; the page side is
   a name another of the file's variables took there) keeps both and renames the file's
   (`renamedByType`). Everything else is `added`, keeping its id. A generator or scale whose base
   or variables clash or were renamed stays out (`droppedGenerators`; its variables keep their
-  values, unlinked). Pictures match by their bytes' hash (`assetMap`).
+  values, unlinked). Pictures match by their bytes' hash (`assetMap`). Two file axes with the
+  same name share the modes the first adds (deduplicated by name).
 - **`applyLibraryMerge(doc, library, plan)`:** writes the file's added records to the library in
   its terms (`mergedRecords`: references, axes and mode keys remapped with `remapValues` from
   `tokens/exchange/`, the target axis's first mode as the default; new records ordered after the
@@ -102,6 +103,10 @@ libraries (`planLibraryMerge`, then `applyLibraryMerge`; the page side is
   frames' `variableModes` at the library's axes and modes, and removes the file's merged, replaced
   and dropped records. The after-edit hook (the token sync) then gives the relinked layers the
   library's values. Pictures move separately, one by one, with `moveAssetToLibrary`.
+- **`previewLibraryMerge(doc, library, plan, afterEdit)`:** the merge applied to a fork of the file
+  and a copy of the library, touching neither, to read what the merged file will ask for (the
+  fonts of a library text style replacing the file's) before merging for real; the caller
+  destroys the fork.
 - **Calls the builder made:** clashes are checked against the receiving library only (another
   library of the project with the same names keeps both, as libraries may today); collections
   never clash, they merge by name, and their variables are compared one by one; everything the

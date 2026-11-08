@@ -14,6 +14,7 @@ export const FILE_CODECS: Record<FileType, FileCodec> = {
   design: {
     open: (bytes) =>
       openDesignDocument(bytes, getDesignProduct().kinds, getDesignModules().get(designMigrations)),
+    kinds: () => getDesignProduct().kinds,
     encode: (doc) => DESIGN_FILE_FORMAT.encode(doc),
     untitled: () => DESIGN_FILE_FORMAT.untitled,
     afterEdit: () => getDesignProduct().afterEdit?.bind(getDesignProduct()) ?? null,
@@ -22,6 +23,7 @@ export const FILE_CODECS: Record<FileType, FileCodec> = {
   board: {
     open: (bytes) =>
       openBoardDocument(bytes, getBoardProduct().kinds, getBoardModules().get(boardMigrations)),
+    kinds: () => getBoardProduct().kinds,
     encode: (doc) => BOARD_FILE_FORMAT.encode(doc),
     untitled: () => BOARD_FILE_FORMAT.untitled,
     afterEdit: () => getBoardProduct().afterEdit?.bind(getBoardProduct()) ?? null,
