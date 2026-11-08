@@ -1,4 +1,5 @@
 import type { CanvasDocument } from "../document";
+import type { Size } from "../geometry.types";
 import type { CanvasElement, ElementKinds } from "../elements";
 
 /** The file formats a model can be imported from. */
@@ -95,4 +96,28 @@ export interface ModelSource {
   textures: ReadonlyMap<string, Uint8Array>;
   /** Slots whose named file was not found; their materials are shown neutral gray. */
   missing: readonly string[];
+}
+
+/** How a model is looked at. */
+export interface ModelView {
+  angle: ModelRotation;
+  zoom: number;
+}
+
+/** Reads a file the model refers to from where the model lives; `null` when it isn't there. */
+export type ModelSiblingReader = (name: string) => Promise<Uint8Array | null>;
+
+/**
+ * Turns models into what a document stores and into pictures. Implemented in `canvas-ui` (it needs
+ * three.js and WebGL), so plain-TS code takes it as a dependency.
+ */
+export interface ModelBaker {
+  /** Reads a model file into what the document stores; throws an `Error` when it can't be parsed. */
+  importModel(
+    main: ImportFile,
+    others: readonly ImportFile[],
+    readSibling: ModelSiblingReader | null,
+  ): Promise<ModelImport>;
+  /** Draws the model as a transparent PNG of `box` (world units) at the picture scale. */
+  bake(source: ModelSource, view: ModelView, box: Size): Promise<Uint8Array>;
 }

@@ -148,3 +148,4 @@ export { useScrubUndo } from "./use-scrub-undo";
 export type * from "./use-scrub-undo.types";
 export { useService } from "./use-service";
 export { useSnapping } from "./use-snapping";
+export { modelBaker } from "./model3d";

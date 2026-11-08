@@ -27,3 +27,14 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   sphere in a 35° perspective camera (it fills the frame at zoom 1; zoom divides the distance) and
   turns the model by the view's `angle` around its box center. It gives the projected bounds'
   aspect (clamped 0.25 to 4), which becomes `ModelImport.aspect`.
+
+## The picture
+
+- `modelBaker` (`bake/model-baker.ts`, a `ModelBaker` from `canvas/model3d/`) is what plain-TS code
+  gets to import models and draw their picture: `bake(source, view, box)` loads the model, draws it
+  with one shared off-screen `WebGLRenderer` (transparent, created on the first bake) and returns
+  PNG bytes. The size is the box times `PICTURE_SCALE`, the longest side capped at
+  `PICTURE_MAX_SIDE`. Bakes run one at a time and the loaded model is always disposed.
+- `buildPictureScene`, `addLighting` (a hemisphere light and a key light from the camera's upper
+  left, fixed values) and `renderPicture` build and draw the scene. The live view reuses them with
+  its own canvas, so the picture matches what the user saw.
