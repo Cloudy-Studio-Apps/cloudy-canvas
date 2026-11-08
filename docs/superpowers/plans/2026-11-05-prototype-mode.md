@@ -10,7 +10,7 @@
 
 **Spec:** [docs/superpowers/specs/2026-11-05-prototype-mode-design.md](../specs/2026-11-05-prototype-mode-design.md). Mockup: [docs/prototype/prototype-mode.html](../../prototype/prototype-mode.html) (the look and the copy; open it next to each UI task).
 
-## Status (2026-11-08, after Phase 2)
+## Status (2026-11-08, after Phase 3)
 
 - **Where:** local branch `prototype-mode` in the sibling worktree
   `/home/mcris112/Storage/Projects/CloudyStudio/cloudy-canvas-prototype` (the user asked for a local
@@ -23,19 +23,26 @@
   (changelog conflicts resolved keeping every entry; master's new selection colors section lost
   its `tab` field), and master fast-forwarded to it on 2026-11-08. The user won't release until
   this plan and the projects plan are both done, so a half-built mode on master is fine.
-- **Phase 2 (Tasks 5–7): done** (`04de2a55..d834f700`) on the branch, not merged to master yet:
+- **Phase 2 (Tasks 5–7): done** (`04de2a55..d834f700`), merged into master by fast-forward on 2026-11-08 (`9bf3679e`):
   the interaction editor, the screen, flow and empty panels, and connect by dragging.
   - Task 7 ruling: V and L are bound in the mode's own `keybindings` layer, not as tool `keys`
     (tool keys go into the product-wide keymap, where L would take over the Line tool in Design).
   - `editInteraction` moved to `model/` so engine-side tools can use it.
-- **Next:** Phase 3, starting at Task 8. Stop after each phase for the user's go-ahead.
+- **Phase 3 (Tasks 8–9): done** (`9bf3679e..1f5f0780`) on the branch, not merged to master yet:
+  the player's session model and the player (devices, transitions, overlays, triggers, keys).
+  - Ctrl+Enter (play) is bound in the mode's `keybindings` layer, like V and L.
+  - The editor's shortcuts are held while the player is open: the player takes its keys in the
+    window's capture phase and stops every other keydown at the document.
+  - Outside the module: mode toolbar command items gained a `primary` flag (canvas-ui), and
+    `IconButton`'s tooltip became the kit's `ShortcutTooltip`.
+  - Never run at runtime: transitions, overlays, hover/press/drag, key and delay triggers, Esc, R,
+    H, Alt+← and Ctrl+Z during play need one manual pass.
+- **Next:** Phase 4, Task 10 (MCP tools), then the final review. Stop after each phase for the
+  user's go-ahead.
 - **Carry into later tasks:**
   - `readInteraction` rejects an interaction without a non-empty `id`. Task 10's
     `set_interactions` (which takes entries without ids) must give each one `createId()` before
     validating.
-  - Task 9: the flow flag's title uses `canvas.flagTitle` ("Select {name}") until the player
-    exists; switch it to the play wording and make the click play. The flow panel's Play button
-    is disabled until then too.
   - A press on a screen's empty area selects the screen in this mode (spec, "The mode"; decided
     with the user).
 - **Known gap, outside this plan:** deleting a design page through `DESIGN_PAGES.remove` (Pages
