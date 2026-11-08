@@ -2,9 +2,10 @@ import { asUndoStep, stringList } from "@canvas";
 
 import { requireDesign, requireNodes, type DesignMcpTool } from "../../mcp";
 import { shapeToVector } from "./shape-to-vector";
+import { importSvgTool } from "./mcp/import-svg.mcp";
 import type { VectorElement } from "./vector.types";
 
-/** Turning shapes into vectors, as editing their points does. */
+/** Turning shapes into vectors, as editing their points does, and placing SVG files as vectors. */
 export const vectorTools: DesignMcpTool[] = [
   {
     name: "convert_to_vector",
@@ -36,4 +37,5 @@ export const vectorTools: DesignMcpTool[] = [
       return { converted: vectors.map((vector) => vector.id) };
     },
   },
+  importSvgTool,
 ];

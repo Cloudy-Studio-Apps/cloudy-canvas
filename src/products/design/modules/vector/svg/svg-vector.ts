@@ -68,10 +68,19 @@ export function svgToVector(
   index: string,
   name: string,
 ): VectorElement | null {
+  const rect = fitInView(svgSize(svg), view, FIT_IN_VIEW);
+  return svgToVectorIn(svg, rect, index, name);
+}
+
+/** An SVG as one vector filling `rect` (its view box scaled to the rect's width). */
+export function svgToVectorIn(
+  svg: SvgDocument,
+  rect: Rect,
+  index: string,
+  name: string,
+): VectorElement | null {
   const { viewBox } = svg;
-  const size = { w: Math.max(viewBox.w, 1), h: Math.max(viewBox.h, 1) };
-  const rect = fitInView(size, view, FIT_IN_VIEW);
-  const scale = rect.w / size.w;
+  const scale = rect.w / svgSize(svg).w;
   const place = (p: { x: number; y: number }) => ({
     x: rect.x + (p.x - viewBox.x) * scale,
     y: rect.y + (p.y - viewBox.y) * scale,
@@ -79,6 +88,11 @@ export function svgToVector(
   const network = svgNetwork(svg, { toWorld: (shape) => mapPath(shape, place), place, scale });
   if (!network) return null;
   return createVector(network, name, index, null, { fills: [], strokes: [] });
+}
+
+/** An SVG's size: its view box's (at least 1 × 1). */
+export function svgSize(svg: SvgDocument): { w: number; h: number } {
+  return { w: Math.max(svg.viewBox.w, 1), h: Math.max(svg.viewBox.h, 1) };
 }
 
 function layerAreas(layer: SvgLayer, { toWorld, scale }: SvgPlacement): SvgArea[] {
