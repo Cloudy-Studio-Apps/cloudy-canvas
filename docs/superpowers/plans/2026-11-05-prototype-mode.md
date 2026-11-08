@@ -10,7 +10,7 @@
 
 **Spec:** [docs/superpowers/specs/2026-11-05-prototype-mode-design.md](../specs/2026-11-05-prototype-mode-design.md). Mockup: [docs/prototype/prototype-mode.html](../../prototype/prototype-mode.html) (the look and the copy; open it next to each UI task).
 
-## Status (2026-11-08, after Phase 3)
+## Status (2026-11-08, all phases and the final review done)
 
 - **Where:** local branch `prototype-mode` in the sibling worktree
   `/home/mcris112/Storage/Projects/CloudyStudio/cloudy-canvas-prototype` (the user asked for a local
@@ -37,14 +37,21 @@
     `IconButton`'s tooltip became the kit's `ShortcutTooltip`.
   - Never run at runtime: transitions, overlays, hover/press/drag, key and delay triggers, Esc, R,
     H, Alt+← and Ctrl+Z during play need one manual pass.
-- **Next:** Phase 4, Task 10 (MCP tools), then the final review. Stop after each phase for the
-  user's go-ahead.
-- **Carry into later tasks:**
-  - `readInteraction` rejects an interaction without a non-empty `id`. Task 10's
-    `set_interactions` (which takes entries without ids) must give each one `createId()` before
-    validating.
-  - A press on a screen's empty area selects the screen in this mode (spec, "The mode"; decided
-    with the user).
+- **Phase 3 merged** with master (`6575089a`, master's board text commit merged in, no
+  conflicts) and master fast-forwarded to it on 2026-11-08.
+- **Phase 4 (Task 10): done** (`6575089a..3e3a2f9f`): the MCP tools `list_flows`, `set_flow`,
+  `remove_flow`, `get_interactions`, `set_interactions`.
+- **Final review (Opus): done.** 0 Critical, 4 Important, all fixed (`3e3a2f9f..HEAD`):
+  - Delete never deletes layers in the mode, whatever the tool: `deleteSelection` isn't allowed;
+    the mode's `prototype.removeInteractions` takes Delete/Backspace and is the context menu's
+    "Remove interactions" (a `contextMenu` group shown only in the mode).
+  - Flow records are normalized on read (unknown platform → `mobile`, unknown device → the
+    platform's first).
+  - Player pictures are redrawn when any layer inside the screen changes.
+  - Shift+Enter (select parent) works in the mode.
+- **Next:** the user tries the feature in the app (never run at runtime) and confirms it's done;
+  then merge the branch into master, delete this plan and the spec, and write the result to
+  memory. Remaining minors are in the ledger.
 - **Known gap, outside this plan:** deleting a design page through `DESIGN_PAGES.remove` (Pages
   panel, `delete_page`) never runs `onRemove`, so that page's flows and links into its screens
   stay (brochures have the same gap). It belongs in the core pages module.
