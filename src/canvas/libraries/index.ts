@@ -19,6 +19,7 @@ export { mirrorLibraries } from "./mirror";
 export type * from "./mirror.types";
 export { moveToLibrary } from "./move-to-library";
 export type * from "./move-to-library.types";
+export { withoutForeignRecords } from "./one-owner";
 export { revertLibraryEdits } from "./revert-library-edits";
 export { writeUntracked } from "./untracked";
 export { heldLibraries, librariesUsedBy } from "./used-libraries";

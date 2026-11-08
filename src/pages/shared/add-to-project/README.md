@@ -28,7 +28,7 @@ file's Add to project…) and the project home (New ▾ › Add existing file…
   (`loadMergeFonts`: `previewLibraryMerge` on a fork, then `documentFonts` and `loadDocumentFonts`
   with `fontLibrary`, as an editor opening the file does; one that can't be loaded falls back as in
   the editor), since the product's after-edit hook measures and lays out text again during the
-  merge. Then it moves the file's pictures with `moveAssetToLibrary`, applies the merge, waits for the
+  merge. Then it moves the file's pictures with `moveAssetToLibrary`, applies the merge (with the project's other libraries, so a record one of them holds isn't written to a second one), waits for the
   library's save (`hub.flush`), sets the link, then writes the file: in place when it's in the chosen
   folder already, else as a new file there (`targetPath`: its name made free; a draft is named after
   its title) through `storage.save`, which points the recent file at it (same id, with the project

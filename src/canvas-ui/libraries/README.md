@@ -12,7 +12,8 @@ edits travel both ways while the project is found.
   `release` once (a second call does nothing), and the last one drops the hub. It reads the
   manifest and each `.clib`: `entries()` is every library of the manifest, `libraries()` and
   `library(id)` the ones that could be read, `unreadable()` the ids that couldn't (with a toast).
-  `apply(edits, from)` writes edits per item, the later one winning, and `onChange` fires with the
+  `apply(edits, from)` writes edits per item, the later one winning (a record another loaded
+  library holds is skipped with a warning, `withoutForeignRecords`: one id lives in one library), and `onChange` fires with the
   ids of the libraries that changed and `from` (`null` for changes nobody applied), so an editor
   skips its own. `refresh()` reads the manifest again (the project home after adding, removing or
   renaming a library): new libraries load, removed ones leave (their pending save dropped),

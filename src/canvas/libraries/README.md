@@ -51,6 +51,10 @@ the libraries, saving them, when to sync) is in [canvas-ui/libraries/](../../can
   file's own now: undoing a move to a library) are `removed` from the library they had. The sync
   applies them only to libraries the file still uses, so a library the file stopped using is never
   written; other files bake removed records out when they mirror.
+- **One id, one library (`withoutForeignRecords(records, libraryId, libraries, released?)`):** the
+  records to write to a library without those another loaded library of the project holds (ids
+  leaving that library in the same write, `released`, don't count), each skipped one reported
+  with `console.warn`. The hub's `apply` and `applyLibraryMerge` write through it.
 - **`revertLibraryEdits(doc, ids, previous)`:** puts library records back as they were before the
   change, untracked (records it added are removed); for a file whose project is missing.
 
@@ -99,8 +103,8 @@ libraries (`planLibraryMerge`, then `applyLibraryMerge`; the page side is
   values, unlinked). Pictures match by their bytes' hash (`assetMap`). Two file axes with the
   same name share the modes the first adds (deduplicated by name); within one axis each library
   or earlier-added mode is taken once, so its own same-named modes stay distinct.
-- **`applyLibraryMerge(doc, library, plan)`:** writes the file's added records to the library in
-  its terms (`mergedRecords`: references, axes and mode keys remapped with `remapValues` from
+- **`applyLibraryMerge(doc, library, plan, others?)`:** writes the file's added records to the library in
+  its terms (except any one of `others`, the project's other loaded libraries, holds already) (`mergedRecords`: references, axes and mode keys remapped with `remapValues` from
   `tokens/exchange/`, the target axis's first mode as the default; new records ordered after the
   library's), then, in one untracked transaction, stores every library record in the file tagged
   as a mirror would (each axis keeps the mode the file showed, so the first mirror changes

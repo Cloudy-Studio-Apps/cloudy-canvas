@@ -9,6 +9,7 @@ export { projectInitials } from "./project-initials";
 export { imageExtension, writeProjectImage } from "./project-images";
 export { useProjectFileCount } from "./use-project-file-count";
 export { useImageUrl, useProjectImage } from "./use-project-image";
+export { copyLibraryRecords } from "./copy-library-records";
 export { firstLibraryRecords } from "./first-library";
 export { libraryColorList, libraryColors } from "./library-colors";
 export { LibraryStrip } from "./library-strip";

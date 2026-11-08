@@ -2,6 +2,7 @@ import {
   assetKindOf,
   contentHash,
   keyBetween,
+  withoutForeignRecords,
   type LibraryAsset,
   type LibraryDocument,
 } from "@canvas";
@@ -132,14 +133,20 @@ export class LibraryHub {
     return run;
   }
 
-  /** Writes a file's edits to the libraries (unknown libraries are skipped); `from` is told back. */
+  /**
+   * Writes a file's edits to the libraries (unknown libraries are skipped); `from` is told back.
+   * A record another library holds isn't put (one id, one library; `withoutForeignRecords`).
+   */
   apply(edits: LibraryEdits, from: unknown = null): void {
     this.applying = from;
     try {
+      const released = new Map([...edits].map(([id, edit]) => [id, new Set(edit.removed)]));
+      const loaded = this.libraries();
       for (const [id, edit] of edits) {
         const library = this.library(id);
         if (!library) continue;
-        if (edit.put.length > 0) library.setTokenRecords(edit.put);
+        const put = withoutForeignRecords(edit.put, id, loaded, released);
+        if (put.length > 0) library.setTokenRecords(put);
         if (edit.removed.length > 0) library.removeTokenRecords(edit.removed);
       }
     } finally {

@@ -4,6 +4,7 @@ import type { TokenRecord } from "../../tokens/token.types";
 import { withFileView } from "../axis-view";
 import type { LibraryDocument } from "../library-document";
 import { taggedRecord } from "../library-tags";
+import { withoutForeignRecords } from "../one-owner";
 import { writeUntracked } from "../untracked";
 import type { MergePlan } from "./library-merge.types";
 import { mergedRecords } from "./merged-records";
@@ -16,15 +17,19 @@ import { mergedRecords } from "./merged-records";
  * are bound to the library's, pages and frames picking a merged axis's mode pick the library
  * axis's, and the file's records that were merged, replaced or dropped leave it. One untracked
  * transaction: the after-edit hook (the token sync) updates the layers whose values changed.
- * Pictures are moved separately (`moveAssetToLibrary`).
+ * Pictures are moved separately (`moveAssetToLibrary`). A record one of `others` (the project's
+ * other loaded libraries) holds already isn't written to `library` (`withoutForeignRecords`).
  */
 export function applyLibraryMerge(
   doc: CanvasDocument,
   library: LibraryDocument,
   plan: MergePlan,
+  others: readonly LibraryDocument[] = [],
 ): void {
   const file = doc.tokenRecords();
-  const { puts, idOf, modeOf, leaving } = mergedRecords(file, library.tokenRecords(), plan);
+  const merged = mergedRecords(file, library.tokenRecords(), plan);
+  const { idOf, modeOf, leaving } = merged;
+  const puts = withoutForeignRecords(merged.puts, library.id, others);
   if (puts.length > 0) library.setTokenRecords(puts);
 
   // A merged axis shows, in the file, the library mode named like the one it showed.

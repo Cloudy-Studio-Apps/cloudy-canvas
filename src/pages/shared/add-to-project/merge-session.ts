@@ -135,7 +135,8 @@ export class MergeSession {
             relink ? (from, to) => relink(doc, from, to) : undefined,
           );
         }
-        applyLibraryMerge(doc, library, plan);
+        const others = hub.libraries().filter((other) => other.id !== libraryId);
+        applyLibraryMerge(doc, library, plan, others);
       } finally {
         doc.setAfterEdit(null);
       }

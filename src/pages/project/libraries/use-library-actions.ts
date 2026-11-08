@@ -7,13 +7,13 @@ import { createId, projectPaths, type LibraryEntry } from "@shared/core";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import {
+  copyLibraryRecords,
   firstLibraryRecords,
   imageExtension,
   librarySourceOf,
   pickStylesSource,
   type FirstLibrarySource,
 } from "@pages/shared/projects";
-import { copyLibraryRecords } from "./copy-library-records";
 import {
   newLibraryEntry,
   moveLibraryFiles,
@@ -51,14 +51,22 @@ export function useLibraryActions(options: LibraryActionsOptions): LibraryAction
       }
     };
 
-    /** A source's records; a copy of a library also gets new ids. */
+    /** The record ids the project's libraries other than `except` hold. */
+    const takenIds = (except?: string) =>
+      new Set(
+        (hub?.libraries() ?? [])
+          .filter((library) => library.id !== except)
+          .flatMap((library) => library.tokenRecords().map((r) => r.id)),
+      );
+
+    /** A source's records, never under an id another library holds (a copy gets new ids). */
     const recordsOf = (source: FirstLibrarySource | { copyOf: string }) => {
       if (typeof source === "object" && "copyOf" in source) {
         const from = hub?.library(source.copyOf);
         if (!from) throw new Error("That library isn't loaded");
         return copyLibraryRecords(from.tokenRecords());
       }
-      return firstLibraryRecords(source);
+      return firstLibraryRecords(source, takenIds());
     };
 
     return {
@@ -191,7 +199,7 @@ export function useLibraryActions(options: LibraryActionsOptions): LibraryAction
             filterJson: t("libraries.filterJson"),
           });
           if (!source) return;
-          const records = firstLibraryRecords(librarySourceOf(source));
+          const records = firstLibraryRecords(librarySourceOf(source), takenIds(library.entry.id));
           library.doc.setTokenRecords(records);
           toast({ title: t("libraries.imported", { count: records.length, name: source.name }) });
         });
