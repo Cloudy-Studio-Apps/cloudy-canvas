@@ -1,16 +1,15 @@
 import type { PerspectiveCamera, Scene, WebGLRenderer } from "three";
 import { PICTURE_MAX_SIDE, PICTURE_SCALE } from "@canvas";
 import type { Size } from "@canvas";
-import type { ThreeKit } from "../load";
+import type { LoadedModel, ThreeKit } from "../load";
 import { frameModel } from "./frame-model";
 import type { ModelView } from "./frame-model.types";
 import { addLighting } from "./lighting";
-import type { LoadedModel } from "../load";
 
 /** Pixels of the picture for a box in world units: `PICTURE_SCALE` times it, longest side capped. */
-export function pictureSize(box: Size): Size {
+export function pictureSize(box: Size, maxTexture = PICTURE_MAX_SIDE): Size {
   const longest = Math.max(box.w, box.h, 1);
-  const k = Math.min(PICTURE_SCALE, PICTURE_MAX_SIDE / longest);
+  const k = Math.min(PICTURE_SCALE, Math.min(PICTURE_MAX_SIDE, maxTexture) / longest);
   return { w: Math.max(1, Math.round(box.w * k)), h: Math.max(1, Math.round(box.h * k)) };
 }
 
