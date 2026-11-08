@@ -76,7 +76,6 @@ export const dataModule = defineModule({
     // One layer's bindings, after Effects and before Export.
     host.contribute(designEditor.propertySections, {
       id: "data.bindings",
-      tab: "design",
       order: 85,
       when: ({ nodes }) => nodes.length === 1,
       component: DataSection,
@@ -84,7 +83,6 @@ export const dataModule = defineModule({
     // Repeating a layer (the card) in its frame, right after the frame's auto layout.
     host.contribute(designEditor.propertySections, {
       id: "data.repeat",
-      tab: "design",
       order: 33,
       when: ({ nodes, elements }) => {
         if (nodes.length !== 1) return false;
@@ -97,7 +95,6 @@ export const dataModule = defineModule({
     host.contribute(designEditor.layerBadges, { id: "data.copy", component: DataCopyBadge });
     host.contribute(designEditor.propertySections, {
       id: "data.copy",
-      tab: "design",
       order: 1,
       when: ({ nodes }) => nodes.some((node) => dataCopyTag(node)),
       component: DataCopySection,

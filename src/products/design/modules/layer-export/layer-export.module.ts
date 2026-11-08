@@ -35,7 +35,6 @@ export const layerExportModule = defineModule({
     });
     host.contribute(designEditor.propertySections, {
       id: "export",
-      tab: "design",
       order: 90,
       when: () => true,
       component: ExportSection,

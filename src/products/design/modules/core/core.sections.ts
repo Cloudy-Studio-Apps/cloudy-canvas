@@ -12,7 +12,6 @@ import {
   FillSection,
   LayoutSection,
   PositionSection,
-  PrototypeSection,
   StrokeSection,
 } from "./ui/sections";
 import { useFlipCommands } from "./ui/use-flip-commands";
@@ -54,35 +53,25 @@ export function registerCoreSections(host: ModuleHost): void {
 
   host.contribute(
     designEditor.propertySections,
-    { id: "position", tab: "design", order: 20, when: someNodes, component: PositionSection },
+    { id: "position", order: 20, when: someNodes, component: PositionSection },
     {
       id: "layout",
-      tab: "design",
       order: 30,
       when: allKinds((kind) => kind.resizable),
       component: LayoutSection,
     },
-    { id: "appearance", tab: "design", order: 40, when: someNodes, component: AppearanceSection },
+    { id: "appearance", order: 40, when: someNodes, component: AppearanceSection },
     {
       id: "fills",
-      tab: "design",
       order: 60,
       when: allKinds((kind) => kind.fillable),
       component: FillSection,
     },
     {
       id: "strokes",
-      tab: "design",
       order: 70,
       when: allKinds((kind) => kind.strokable),
       component: StrokeSection,
-    },
-    {
-      id: "prototype",
-      tab: "prototype",
-      order: 10,
-      when: () => true,
-      component: PrototypeSection,
     },
   );
   host.contribute(designEditor.toolSidebars, { tool: "scale", component: ScaleSidebar });

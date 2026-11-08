@@ -30,7 +30,6 @@ export const starModule = defineModule({
     });
     host.contribute(designEditor.propertySections, {
       id: "star",
-      tab: "design",
       order: 16,
       when: ofType("star"),
       component: StarSection,

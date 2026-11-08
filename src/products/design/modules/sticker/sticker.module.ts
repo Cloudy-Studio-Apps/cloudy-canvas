@@ -47,7 +47,6 @@ export const stickerModule = defineModule({
     host.contribute(designEditor.toolPanels, { tool: "sticker", component: DesignStickerWheel });
     host.contribute(designEditor.propertySections, {
       id: "sticker",
-      tab: "design",
       order: 16,
       when: ofType("sticker"),
       component: StickerSection,

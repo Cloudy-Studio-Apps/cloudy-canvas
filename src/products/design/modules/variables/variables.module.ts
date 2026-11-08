@@ -91,11 +91,10 @@ export const variablesModule = defineModule({
 
     host.contribute(
       designEditor.propertySections,
-      { id: "variables", tab: "design", order: 15, when: noNodes, component: VariablesSection },
-      { id: "styles", tab: "design", order: 16, when: noNodes, component: StylesSection },
+      { id: "variables", order: 15, when: noNodes, component: VariablesSection },
+      { id: "styles", order: 16, when: noNodes, component: StylesSection },
       {
         id: "variable-modes",
-        tab: "design",
         order: 45,
         when: allKinds((kind) => kind.container || kind.childHost),
         component: VariableModesSection,

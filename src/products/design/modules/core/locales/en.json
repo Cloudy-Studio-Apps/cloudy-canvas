@@ -90,8 +90,6 @@
     "strokes": "Strokes",
     "layout": "Layout",
     "position": "Position",
-    "interactions": "Interactions",
-    "interactionsHint": "Links between frames and transitions come in a later version.",
     "selectedArea": "Selected area",
     "selectedAreas": "{count} selected areas"
   },

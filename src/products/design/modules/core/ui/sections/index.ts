@@ -3,5 +3,4 @@ export { AppearanceSection } from "./appearance-section";
 export { FillSection } from "./fill-section";
 export { LayoutSection } from "./layout-section";
 export { PositionSection } from "./position-section";
-export { PrototypeSection } from "./prototype-section";
 export { StrokeSection } from "./stroke";

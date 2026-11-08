@@ -52,7 +52,6 @@ export const frameModule = defineModule({
     host.contribute(designEditor.toolSidebars, { tool: "frame", component: FramePresetsSidebar });
     host.contribute(designEditor.propertySections, {
       id: "frame",
-      tab: "design",
       order: 15,
       when: ofType("frame"),
       component: FrameSection,

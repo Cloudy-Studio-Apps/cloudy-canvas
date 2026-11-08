@@ -56,14 +56,12 @@ export const autoLayoutModule = defineModule({
     });
     host.contribute(designEditor.propertySections, {
       id: "auto-layout",
-      tab: "design",
       order: 32,
       when: ofType("frame"),
       component: AutoLayoutSection,
     });
     host.contribute(designEditor.propertySections, {
       id: "resizing",
-      tab: "design",
       order: 31,
       when: ({ nodes, kinds, elements }) => showsSizing(nodes, kinds, elements),
       component: SizingSection,
