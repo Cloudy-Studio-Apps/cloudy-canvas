@@ -21,6 +21,27 @@ export const MARKER_COLORS = [
   { name: "White", value: "#ffffff" },
 ] as const;
 
+/** Colors for free text (the last one is white, for text on dark elements). */
+export const TEXT_COLORS = [
+  { name: "Ink", value: "#2a2f37" },
+  { name: "Gray", value: "#6b7280" },
+  { name: "Red", value: "#e0484d" },
+  { name: "Orange", value: "#ee8a36" },
+  { name: "Green", value: "#2f9a62" },
+  { name: "Blue", value: "#3a83c9" },
+  { name: "Violet", value: "#8761cf" },
+  { name: "White", value: "#ffffff" },
+] as const;
+
+/** Font size presets for free text, in world units. */
+export const TEXT_SIZES = [
+  { id: "small", value: 14 },
+  { id: "medium", value: 20 },
+  { id: "large", value: 32 },
+  { id: "extraLarge", value: 48 },
+  { id: "huge", value: 96 },
+] as const;
+
 /** Pen thicknesses in world units. */
 export const MARKER_SIZES = [
   { name: "Fine", value: 2 },

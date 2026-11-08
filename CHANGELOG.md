@@ -70,6 +70,11 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### Improved
 
+- Text on boards now has its own options: pick a size from the presets or type an exact one, make
+  it bold or italic, align its lines and choose its color, including a board color. New text uses
+  what you picked, and selecting text lets you change it the same way. Drag a text's handles to give
+  it a fixed width: its lines wrap to fit and its height follows them, and Auto width makes it grow
+  with its text again.
 - Frames now work as in other design tools: dragging on the background of a frame that holds
   layers draws a selection box to pick the layers inside, and the frame itself is selected by its
   name. Dragging inside a selected frame moves it, even when you press on a layer in it, and a
