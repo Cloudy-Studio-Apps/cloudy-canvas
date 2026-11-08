@@ -9,7 +9,8 @@ export type BoardColorOption =
   | "sectionColor"
   | "tableColor"
   | "connectorColor"
-  | "markerColor";
+  | "markerColor"
+  | "textColor";
 
 /** The option holding the variable a color option is bound to. */
 export type BoardColorToken = `${BoardColorOption}Token`;

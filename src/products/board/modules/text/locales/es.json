@@ -1,5 +1,26 @@
 {
   "label": "Texto",
   "description": "Haz clic en cualquier lugar para escribir una etiqueta.",
-  "color": "Color"
+  "color": "Color",
+  "options": {
+    "group": "Opciones de texto",
+    "fontSize": "Tamaño de fuente",
+    "bold": "Negrita",
+    "italic": "Cursiva",
+    "colorLabel": "Color del texto {color}",
+    "size": {
+      "small": "Pequeño",
+      "medium": "Mediano",
+      "large": "Grande",
+      "extraLarge": "Muy grande",
+      "huge": "Enorme"
+    },
+    "align": {
+      "left": "Alinear a la izquierda",
+      "center": "Centrar",
+      "right": "Alinear a la derecha"
+    },
+    "autoWidth": "Ancho automático: crece con su texto",
+    "fixedWidth": "Ancho fijo: las líneas se ajustan. Haz clic para ajustarlo a su texto"
+  }
 }

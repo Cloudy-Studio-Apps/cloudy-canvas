@@ -8,6 +8,7 @@ import type {
   StickerToolOptions,
   StickyToolOptions,
   TableToolOptions,
+  TextToolOptions,
 } from "./modules";
 
 /**
@@ -24,5 +25,6 @@ export interface BoardToolOptions
     ConnectorToolOptions,
     SectionToolOptions,
     TableToolOptions,
+    TextToolOptions,
     ImageToolOptions,
     DbToolOptions {}

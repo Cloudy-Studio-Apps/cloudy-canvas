@@ -84,6 +84,11 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Mejoras
 
+- El texto de las pizarras ahora tiene sus propias opciones: elige un tamaño predefinido o escribe
+  uno exacto, ponlo en negrita o cursiva, alinea sus líneas y elige su color, también un color de
+  la pizarra. El texto nuevo usa lo que elegiste, y al seleccionar un texto puedes cambiarlo igual.
+  Arrastra los tiradores de un texto para darle un ancho fijo: sus líneas se ajustan a él y su
+  altura las sigue, y Ancho automático hace que vuelva a crecer con su texto.
 - Los marcos ahora funcionan como en otras herramientas de diseño: arrastrar sobre el fondo de un
   marco con capas dibuja un recuadro de selección para elegir las capas que contiene, y el marco
   se selecciona por su nombre. Arrastrar dentro de un marco seleccionado lo mueve, aunque
