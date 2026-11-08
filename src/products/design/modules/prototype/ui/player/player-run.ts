@@ -92,6 +92,11 @@ export class PlayerRun {
     return this.busy;
   }
 
+  /** Settles once the step playing now (if any) has. */
+  whenIdle(): Promise<unknown> {
+    return this.idle;
+  }
+
   /** Does what an interaction says; resolves to the overlay it opened, if any. */
   run(ix: PrototypeInteraction): Promise<OverlayEntry | null> {
     if (this.busy) return Promise.resolve(null);

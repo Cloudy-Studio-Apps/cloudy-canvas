@@ -12,8 +12,3 @@ export interface DeviceFrameProps {
   /** The screen's content. */
   children: ReactNode;
 }
-
-export interface DeviceChromeProps {
-  flow: PrototypeFlowElement;
-  address: string;
-}

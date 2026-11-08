@@ -8,7 +8,8 @@ import type { PlayerKeysOptions } from "./use-player-keys.types";
 /**
  * The player's keys while it's open: first a key press interaction on what's showing (the top
  * overlay or the screen, its `key` compared case-insensitively), then Esc closes, R restarts, H
- * keeps the hotspots shown and Alt+← goes back. The flow picker keeps its own keys.
+ * keeps the hotspots shown and Alt+← goes back. The flow picker keeps the keys of its open list
+ * and those that open it.
  *
  * The editor's shortcuts (`bindKeyboard`, on the window as keys bubble up) never run meanwhile:
  * the player's keys are taken on the way down, and every other key stops at the document, after
@@ -39,7 +40,7 @@ export function usePlayerKeys({ run, surfaces, onClose, onToggleHints }: PlayerK
       return true;
     };
     const onKey = (event: KeyboardEvent) => {
-      if (isTypingTarget(event.target) || inPicker(event.target) || !handle(event)) return;
+      if (isTypingTarget(event.target) || inPicker(event) || !handle(event)) return;
       event.preventDefault();
       event.stopPropagation();
     };
@@ -53,9 +54,16 @@ export function usePlayerKeys({ run, surfaces, onClose, onToggleHints }: PlayerK
   }, [run]);
 }
 
-/** Whether a key goes to the flow picker (its button or its open list). */
-function inPicker(target: EventTarget | null): boolean {
-  return (
-    target instanceof Element && target.closest("[role='combobox'], [role='listbox']") !== null
-  );
+/** The keys the flow picker's button opens its list with. */
+const PICKER_KEYS = new Set(["Enter", " ", "ArrowUp", "ArrowDown"]);
+
+/**
+ * Whether a key belongs to the flow picker: anything while its list is open, or a key that opens
+ * it while its button has the focus. Esc and the player's other keys still work on the button.
+ */
+function inPicker(event: KeyboardEvent): boolean {
+  const { target } = event;
+  if (!(target instanceof Element)) return false;
+  if (target.closest("[role='listbox']")) return true;
+  return target.closest("[role='combobox']") !== null && PICKER_KEYS.has(event.key);
 }

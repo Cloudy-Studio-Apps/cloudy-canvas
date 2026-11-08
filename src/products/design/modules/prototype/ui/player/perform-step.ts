@@ -48,9 +48,13 @@ export async function performStep(
     }
     case "closeOverlay": {
       const parts = ctx.overlay(step.entry);
-      if (parts) await hideOverlay(parts.page, parts.backdrop, step.entry.interaction.transition);
-      else await Promise.resolve();
-      ctx.commit(next);
+      const remove = () => ctx.commit(next);
+      if (parts) {
+        await hideOverlay(parts.page, parts.backdrop, step.entry.interaction.transition, remove);
+      } else {
+        await Promise.resolve();
+        remove();
+      }
       return null;
     }
   }

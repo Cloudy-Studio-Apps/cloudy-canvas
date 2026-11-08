@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 
 import { rectContainsPoint, type Point, type Rect } from "@canvas";
-import type { OverlayEntry } from "../../model";
+import type { OverlayEntry, PrototypeInteraction } from "../../model";
 import type { PlayerTarget } from "./player-surfaces.types";
 import { activeSurface, firstWith, onOverlay, targetsAt } from "./trigger-hits";
-import type { PointerTrack, TriggerHold, TriggerOptions } from "./use-triggers.types";
+import type { FiredDelays, PointerTrack, TriggerHold, TriggerOptions } from "./use-triggers.types";
 
 /** How far (CSS px) a press moves before it's a drag. */
 const DRAG_PX = 12;
@@ -15,7 +15,8 @@ const DRAG_PX = 12;
  * an overlay that closes on a click outside, it closes it. Hover runs on entering and closes the
  * overlay it opened once the pointer is off the target and that overlay; press runs on the press
  * and closes its overlay on release; enter and leave run on crossing; drag after 12 px. Delays
- * start when a screen or overlay shows and are cleared when it goes or the player closes. The
+ * start when a screen or overlay shows and are cleared when it goes or the player closes; one that
+ * ends mid-step runs after it, and the screen's don't run twice for one showing. The
  * pointer is hit-tested in device units, so layers never need events of their own.
  */
 export function useTriggers({ run, box, surfaces, scale, onMiss }: TriggerOptions): void {
@@ -24,17 +25,38 @@ export function useTriggers({ run, box, surfaces, scale, onMiss }: TriggerOption
     latest.current = { surfaces, scale, onMiss };
   });
 
+  // Delays belong to a showing: the base screen's that fired stay fired while overlays come and go
+  // over it (closing one doesn't run them again), until another screen shows under them.
+  const fired = useRef<FiredDelays>({ base: null, ids: new Set() });
+  const baseKey = surfaces.base?.key ?? null;
   const shownKey = activeSurface(surfaces)?.key ?? null;
   useEffect(() => {
+    if (fired.current.base !== baseKey) fired.current = { base: baseKey, ids: new Set() };
     const surface = activeSurface(latest.current.surfaces);
     if (!surface || shownKey === null) return;
+    const done = surface.key === baseKey ? fired.current.ids : new Set<string>();
+    let gone = false;
+    // A delay that ends while a step plays (the transition that showed the screen, often) runs
+    // once it's over, if this is still what shows.
+    const fire = (ix: PrototypeInteraction) => {
+      if (gone) return;
+      if (run.isBusy()) {
+        void run.whenIdle().then(() => fire(ix));
+        return;
+      }
+      done.add(ix.id);
+      void run.run(ix);
+    };
     const timers = surface.targets.flatMap(({ interactions }) =>
       interactions
-        .filter((ix) => ix.trigger === "delay")
-        .map((ix) => window.setTimeout(() => void run.run(ix), ix.delay ?? 0)),
+        .filter((ix) => ix.trigger === "delay" && !done.has(ix.id))
+        .map((ix) => window.setTimeout(() => fire(ix), ix.delay ?? 0)),
     );
-    return () => timers.forEach((timer) => window.clearTimeout(timer));
-  }, [run, shownKey]);
+    return () => {
+      gone = true;
+      timers.forEach((timer) => window.clearTimeout(timer));
+    };
+  }, [run, shownKey, baseKey]);
 
   useEffect(() => {
     if (!box) return;

@@ -26,19 +26,32 @@ export async function showOverlay(
 }
 
 /**
- * An overlay going out the way it came in, reversed, quicker (200 ms at most) and easing in. It
- * stays on its last frame: the caller removes it.
+ * An overlay going out the way it came in, reversed, quicker (200 ms at most) and easing in, then
+ * `remove` takes it away while it's still on its last frame (so it never shows again first). Its
+ * animations are cancelled whatever happens, so a failure never leaves an invisible overlay (and
+ * its backdrop) over the screen.
  */
 export async function hideOverlay(
   page: HTMLElement,
   backdrop: HTMLElement,
   t: PrototypeTransition,
+  remove: () => void,
 ): Promise<void> {
-  if (isInstant(t)) return;
+  if (isInstant(t)) {
+    await Promise.resolve();
+    remove();
+    return;
+  }
   const how: PrototypeTransition = { ...t, duration: Math.min(t.duration, 200), easing: "ease-in" };
   const frames =
     t.animation === "dissolve"
       ? FADE_OUT
       : [{ transform: "none" }, { transform: shift(t.direction) }];
-  await settle([play(page, frames, how), play(backdrop, FADE_OUT, how)]);
+  const animations = [play(page, frames, how), play(backdrop, FADE_OUT, how)];
+  try {
+    await settle(animations);
+    remove();
+  } finally {
+    for (const animation of animations) animation.cancel();
+  }
 }

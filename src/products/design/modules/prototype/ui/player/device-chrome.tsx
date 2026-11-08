@@ -1,6 +1,6 @@
 import { ArrowLeft, ArrowRight, Globe, Minus, RotateCcw, Square, X } from "lucide-react";
 
-import type { DeviceChromeProps } from "./device-frame.types";
+import type { DeviceChromeProps } from "./device-chrome.types";
 
 // A picture of a device's own bars, like canvas content: its colors are literal and the app's
 // chrome rules (tokens, radii) don't apply.

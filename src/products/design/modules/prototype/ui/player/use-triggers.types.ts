@@ -36,3 +36,9 @@ export interface PointerTrack {
   /** The press became a drag: its click is ignored. */
   dragged: boolean;
 }
+
+/** The delays of the screen under the overlays that already ran, for the showing `base` (its key). */
+export interface FiredDelays {
+  base: string | null;
+  ids: Set<string>;
+}

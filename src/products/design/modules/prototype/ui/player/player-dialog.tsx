@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { useDocVersion } from "../hooks/use-doc-version";
@@ -11,6 +11,7 @@ import { PlayerStage } from "./player-stage";
 import { usePlayerStore } from "./player-store";
 import type { PlayerSurfaces } from "./player-surfaces.types";
 import { ScreenPictures } from "./screen-pictures";
+import { useFocusTrap } from "./use-focus-trap";
 import { useHints } from "./use-hints";
 import { usePlayerKeys } from "./use-player-keys";
 import { t } from "../../prototype.i18n";
@@ -42,15 +43,16 @@ export function PlayerDialog({ target }: PlayerDialogProps) {
   useEffect(() => {
     if (gone) close();
   }, [gone, close]);
-  // Keys go to the player, not to whatever had the focus in the editor.
-  const focus = useCallback((el: HTMLDivElement | null) => el?.focus(), []);
+  // Keys go to the player, never to whatever had the focus in the editor behind it.
+  const [root, setRoot] = useState<HTMLDivElement | null>(null);
+  useFocusTrap(root);
   if (!shown) return null;
 
   const { flow, flows, device, surfaces, address } = shown;
   const { stack, overlays } = view.state;
   return (
     <div
-      ref={focus}
+      ref={setRoot}
       tabIndex={-1}
       role="dialog"
       aria-modal="true"
