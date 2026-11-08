@@ -44,5 +44,77 @@
   },
   "flow": {
     "defaultName": "Flujo {screen}"
+  },
+  "trigger": {
+    "click": "Al hacer clic",
+    "hover": "Al pasar el cursor",
+    "press": "Al mantener pulsado",
+    "enter": "Al entrar el cursor",
+    "leave": "Al salir el cursor",
+    "drag": "Al arrastrar",
+    "key": "Al pulsar una tecla",
+    "delay": "Tras una espera"
+  },
+  "action": {
+    "navigate": "Ir a",
+    "back": "Atrás",
+    "overlay": "Abrir superposición",
+    "swap": "Cambiar superposición",
+    "close": "Cerrar superposición",
+    "link": "Abrir enlace"
+  },
+  "animation": {
+    "instant": "Instantánea",
+    "dissolve": "Disolver",
+    "move-in": "Entrar moviéndose",
+    "move-out": "Salir moviéndose",
+    "push": "Empujar",
+    "slide-in": "Deslizar hacia dentro",
+    "slide-out": "Deslizar hacia fuera"
+  },
+  "easing": {
+    "linear": "Lineal",
+    "ease-in": "Aceleración",
+    "ease-out": "Desaceleración",
+    "ease-in-out": "Aceleración y desaceleración",
+    "spring": "Muelle suave"
+  },
+  "direction": {
+    "left": "Desde la derecha",
+    "right": "Desde la izquierda",
+    "up": "Desde abajo",
+    "down": "Desde arriba"
+  },
+  "position": {
+    "top": "Arriba",
+    "center": "Centro",
+    "bottom": "Abajo"
+  },
+  "section": {
+    "title": "Interacciones",
+    "add": "Añadir interacción",
+    "empty": "Sin interacciones. Pulsa + o arrastra desde el cuadrado a la derecha de la capa hasta una pantalla."
+  },
+  "layer": {
+    "in": "En {screen}"
+  },
+  "card": {
+    "trigger": "Disparador",
+    "key": "Tecla",
+    "keyEmpty": "Escribe una tecla, como Enter",
+    "after": "Tras",
+    "action": "Acción",
+    "to": "A",
+    "pickScreen": "Elige una pantalla",
+    "url": "URL",
+    "urlInvalid": "Usa una dirección que empiece por http:// o https://",
+    "position": "Posición",
+    "closeOutside": "Cerrar al hacer clic fuera",
+    "dim": "Atenuar lo que hay detrás",
+    "animation": "Animación",
+    "from": "Desde",
+    "duration": "Duración",
+    "easing": "Curva",
+    "remove": "Quitar interacción"
   }
 }

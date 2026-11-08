@@ -44,5 +44,77 @@
   },
   "flow": {
     "defaultName": "{screen} flow"
+  },
+  "trigger": {
+    "click": "On click",
+    "hover": "While hovering",
+    "press": "While pressing",
+    "enter": "Mouse enter",
+    "leave": "Mouse leave",
+    "drag": "On drag",
+    "key": "Key press",
+    "delay": "After delay"
+  },
+  "action": {
+    "navigate": "Navigate to",
+    "back": "Back",
+    "overlay": "Open overlay",
+    "swap": "Swap overlay",
+    "close": "Close overlay",
+    "link": "Open link"
+  },
+  "animation": {
+    "instant": "Instant",
+    "dissolve": "Dissolve",
+    "move-in": "Move in",
+    "move-out": "Move out",
+    "push": "Push",
+    "slide-in": "Slide in",
+    "slide-out": "Slide out"
+  },
+  "easing": {
+    "linear": "Linear",
+    "ease-in": "Ease in",
+    "ease-out": "Ease out",
+    "ease-in-out": "Ease in and out",
+    "spring": "Gentle spring"
+  },
+  "direction": {
+    "left": "From the right",
+    "right": "From the left",
+    "up": "From below",
+    "down": "From above"
+  },
+  "position": {
+    "top": "Top",
+    "center": "Center",
+    "bottom": "Bottom"
+  },
+  "section": {
+    "title": "Interactions",
+    "add": "Add interaction",
+    "empty": "No interactions. Press + or drag from the square on the right of the layer onto a screen."
+  },
+  "layer": {
+    "in": "In {screen}"
+  },
+  "card": {
+    "trigger": "Trigger",
+    "key": "Key",
+    "keyEmpty": "Type a key, such as Enter",
+    "after": "After",
+    "action": "Action",
+    "to": "To",
+    "pickScreen": "Pick a screen",
+    "url": "URL",
+    "urlInvalid": "Use an address that starts with http:// or https://",
+    "position": "Position",
+    "closeOutside": "Close on a click outside",
+    "dim": "Dim what's behind",
+    "animation": "Animation",
+    "from": "From",
+    "duration": "Duration",
+    "easing": "Easing",
+    "remove": "Remove interaction"
   }
 }
