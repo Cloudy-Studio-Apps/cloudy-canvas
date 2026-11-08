@@ -41,7 +41,7 @@
   },
   "delete": {
     "title": "¿Eliminar «{name}»?",
-    "text": "Ninguna capa muestra esta imagen. Se quitará de este archivo.",
+    "text": "Ninguna capa muestra esta imagen. Se quitará de esta lista.",
     "confirm": "Eliminar"
   },
   "move": {
@@ -52,6 +52,7 @@
     "library": "Esta biblioteca aún no tiene imágenes para diseños.",
     "search": "Ninguna imagen coincide."
   },
+  "broken": "No se pudo leer esta imagen",
   "drag": {
     "dropHere": "Suelta en el lienzo"
   },

@@ -41,7 +41,7 @@
   },
   "delete": {
     "title": "Delete “{name}”?",
-    "text": "No layer shows this picture. It is removed from this file.",
+    "text": "No layer shows this picture. It is removed from this list.",
     "confirm": "Delete"
   },
   "move": {
@@ -52,6 +52,7 @@
     "library": "This library has no pictures for designs yet.",
     "search": "No pictures match."
   },
+  "broken": "Couldn't read this picture",
   "drag": {
     "dropHere": "Drop on the canvas"
   },

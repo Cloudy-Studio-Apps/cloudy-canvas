@@ -7,5 +7,6 @@ export interface AssetLibraryWriter {
     libraryId: string,
     bytes: Uint8Array,
     input: Omit<LibraryAsset, "id" | "hash" | "kind" | "order">,
+    id?: string,
   ): Promise<LibraryAsset>;
 }

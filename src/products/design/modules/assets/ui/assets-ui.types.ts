@@ -1,6 +1,7 @@
-import type { PointerEvent as ReactPointerEvent, ReactNode } from "react";
+import type { ReactNode } from "react";
 
-import type { Point, LibraryAsset, LibraryAssetType } from "@canvas";
+import type { LibraryAsset, LibraryAssetType, Point } from "@canvas";
+import type { DropOnCanvas } from "@design/ui/hooks";
 
 /** What the Assets tab's chips show: every picture, or one type. */
 export type AssetFilter = "all" | LibraryAssetType;
@@ -36,20 +37,8 @@ export interface AssetRef {
   asset: LibraryAsset;
 }
 
-/** A picture being dragged out of the tab. */
-export interface AssetDragState {
-  ref: AssetRef;
-  /** The pointer, in client pixels. */
-  pointer: Point;
-  /** Over the canvas, where it can drop. */
-  over: boolean;
-}
-
-export interface AssetDrag {
-  drag: AssetDragState | null;
-  /** Starts a drag from a press on a tile. */
-  press: (event: ReactPointerEvent<HTMLElement>, ref: AssetRef) => void;
-}
+/** A picture dragged out of the tab onto the canvas (`useDropOnCanvas`). */
+export type AssetDrag = DropOnCanvas<AssetRef>;
 
 export interface AssetActions {
   /** Places the picture on the canvas: at a world point, or the view's center. */
@@ -149,4 +138,10 @@ export interface RenameFormProps {
   name: string;
   onClose: () => void;
   onRename: (name: string) => void;
+}
+
+/** A picture's thumbnail: its object URL once read, or that it couldn't be. */
+export interface AssetUrl {
+  url: string | null;
+  failed: boolean;
 }

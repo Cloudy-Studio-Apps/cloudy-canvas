@@ -13,40 +13,44 @@ export function addLocalAsset(doc: CanvasDocument, asset: LibraryAsset, bytes: U
 }
 
 /**
- * Takes a picture out of the file: its record and its bytes. Only for one no layer shows (the
- * caller checks); neither is an undo step.
+ * Takes a picture out of the file's list (its record). Its bytes stay in the document's assets,
+ * so layers showing it, and undoing the deletion of one that did, still work; only a picture no
+ * layer shows is deleted (the caller checks).
  */
 export function removeLocalAsset(doc: CanvasDocument, id: string): void {
   doc.removeAssetIndexEntry(id);
-  doc.removeAssets([id]);
 }
 
 /**
- * Moves one of the file's own pictures to the library `libraryId`: the library gets the bytes
- * (a picture it has already, by hash, is the one used) and the file's record goes; the file keeps
- * the bytes under the library asset's id too, so it works alone. Layers showing the old picture
- * keep its bytes. Returns the library's asset.
+ * Moves one of the file's own pictures to the library `libraryId`. The library takes the picture
+ * under the same id, so the layers showing it already point at the library's asset (the bytes are
+ * in the file under that id, which the library mirror sees). Only when the library has the same
+ * bytes already, under another id, `relink(from, to)` is called, after a checkpoint, to point the
+ * layers at that one (one undo step); the file keeps the bytes under both ids. The file's record
+ * goes either way. Returns the library's asset.
  */
 export async function moveAssetToLibrary(
   doc: CanvasDocument,
   writer: AssetLibraryWriter,
   assetId: string,
   libraryId: string,
+  relink?: (from: string, to: string) => void,
 ): Promise<LibraryAsset> {
   const asset = doc.assetIndex().find((item) => item.id === assetId);
   const bytes = doc.getAsset(assetId);
   if (!asset || !bytes) throw new Error(`No picture ${assetId} in this file`);
   const { name, group, type, mime, ext, width, height } = asset;
-  const moved = await writer.addAssetFile(libraryId, bytes, {
-    name,
-    group,
-    type,
-    mime,
-    ext,
-    width,
-    height,
-  });
+  const moved = await writer.addAssetFile(
+    libraryId,
+    bytes,
+    { name, group, type, mime, ext, width, height },
+    assetId,
+  );
   if (!doc.hasAsset(moved.id)) doc.addAsset(moved.id, bytes);
+  if (moved.id !== assetId && relink) {
+    doc.checkpoint();
+    relink(assetId, moved.id);
+  }
   doc.removeAssetIndexEntry(assetId);
   return moved;
 }

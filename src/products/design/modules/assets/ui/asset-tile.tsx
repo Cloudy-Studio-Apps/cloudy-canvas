@@ -1,10 +1,11 @@
-import type { PointerEvent } from "react";
+import { ImageOff } from "lucide-react";
 
 import { ListRow, cn } from "@shared/ui/kit";
 import { LibraryBadge } from "@canvas-ui";
 import type { AssetTileProps } from "./assets-ui.types";
 import { LocalAssetMenu } from "./local-asset-menu";
 import { useAssetUrl } from "./use-asset-url";
+import { t } from "../assets.i18n";
 
 /**
  * A picture of a source, as a thumbnail (grid) or a row (list). Drag it onto the canvas, or
@@ -12,12 +13,14 @@ import { useAssetUrl } from "./use-asset-url";
  */
 export function AssetTile({ source, asset, view, depth, actions, drag, local }: AssetTileProps) {
   const ref = { source, asset };
-  const url = useAssetUrl(ref, actions);
+  const { url, failed } = useAssetUrl(ref, actions);
   const thumb = url ? (
     <img src={url} alt="" draggable={false} className="size-full object-contain" />
+  ) : failed ? (
+    <ImageOff className="size-4 text-subtle-foreground" aria-label={t("broken")} />
   ) : null;
   const handlers = {
-    onPointerDown: (event: PointerEvent<HTMLElement>) => drag.press(event, ref),
+    ...drag.grabProps(ref),
     onDoubleClick: () => void actions.place(ref),
     title: asset.group ? `${asset.group}/${asset.name}` : asset.name,
   };
@@ -30,7 +33,7 @@ export function AssetTile({ source, asset, view, depth, actions, drag, local }: 
         <div
           className={cn(
             "flex aspect-square items-center justify-center overflow-hidden rounded-sm border bg-surface p-1",
-            !url && "animate-pulse",
+            !url && !failed && "animate-pulse",
           )}
         >
           {thumb}

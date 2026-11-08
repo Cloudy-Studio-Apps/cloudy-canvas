@@ -1,33 +1,52 @@
-import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 
 import { MOVE_THRESHOLD_PX, type Point } from "@canvas";
-import { useDesignEngine } from "@design/ui/design-engine-context";
-import type { AssetDrag, AssetDragState, AssetRef } from "./assets-ui.types";
+import { useDesignEngine } from "../design-engine-context";
+import type {
+  CanvasDragState,
+  DropOnCanvas,
+  DropOnCanvasOptions,
+} from "./use-drop-on-canvas.types";
 
 /**
- * Dragging a picture out of the tab onto the canvas, with pointer events (never HTML5
- * `draggable`): a press past `MOVE_THRESHOLD_PX` drags, a release over the canvas drops at that
- * world point (`engine.clientToWorld`), Esc cancels, and the click ending a drag is swallowed.
+ * Dragging a row (any `payload`) out of a panel onto the canvas, with pointer events like `useRowDrag` (never
+ * HTML5 `draggable`): a press past `MOVE_THRESHOLD_PX` drags, the page under the pointer is
+ * `targetAt` it (any point of the canvas when there is no `targetAt`), a release over one drops there, Esc cancels, and the click ending a drag is
+ * swallowed.
  */
-export function useAssetDrag(onDrop: (ref: AssetRef, world: Point) => void): AssetDrag {
+export function useDropOnCanvas<P, T = Point>(options: DropOnCanvasOptions<P, T>): DropOnCanvas<P> {
   const engine = useDesignEngine();
-  const [drag, setDrag] = useState<AssetDragState | null>(null);
-  const latest = useRef(onDrop);
+  const [drag, setDrag] = useState<CanvasDragState<P> | null>(null);
+  const latest = useRef(options);
   const stopActive = useRef<(() => void) | null>(null);
   useEffect(() => {
-    latest.current = onDrop;
+    latest.current = options;
   });
   useEffect(() => () => stopActive.current?.(), []);
 
   const press = useCallback(
-    (event: PointerEvent<HTMLElement>, ref: AssetRef) => {
+    (event: ReactPointerEvent<HTMLElement>, payload: P) => {
       if (event.button !== 0) return;
       const start = { x: event.clientX, y: event.clientY };
       const root = document.documentElement.style;
       const previous = { userSelect: root.userSelect, cursor: root.cursor };
       let dragging = false;
+      let world: Point | null = null;
 
-      const move = (e: globalThis.PointerEvent) => {
+      const targetAt = (pointer: Point): T | null => {
+        world = engine.clientToWorld(pointer);
+        if (!world) return null;
+        const { targetAt: hit } = latest.current;
+        // Without a hit test the target is the world point (`T` is `Point`).
+        return hit ? hit(world) : (world as unknown as T);
+      };
+      const move = (e: PointerEvent) => {
         const pointer = { x: e.clientX, y: e.clientY };
         if (!dragging) {
           if (Math.hypot(pointer.x - start.x, pointer.y - start.y) < MOVE_THRESHOLD_PX) return;
@@ -35,18 +54,19 @@ export function useAssetDrag(onDrop: (ref: AssetRef, world: Point) => void): Ass
           root.userSelect = "none";
           root.cursor = "grabbing";
         }
-        setDrag({ ref, pointer, over: engine.clientToWorld(pointer) !== null });
+        setDrag({ payload, pointer, over: targetAt(pointer) !== null });
       };
-      const finish = (e: globalThis.PointerEvent | null) => {
+      const finish = (e: PointerEvent | null) => {
         stop();
         if (!dragging) return;
         const swallow = (click: MouseEvent) => click.stopPropagation();
         window.addEventListener("click", swallow, { capture: true, once: true });
         window.setTimeout(() => window.removeEventListener("click", swallow, { capture: true }));
-        const world = e && engine.clientToWorld({ x: e.clientX, y: e.clientY });
-        if (world) latest.current(ref, world);
+        if (!e) return;
+        const target = targetAt({ x: e.clientX, y: e.clientY });
+        if (target && world) latest.current.onDrop(payload, target, world);
       };
-      const up = (e: globalThis.PointerEvent) => finish(e);
+      const up = (e: PointerEvent) => finish(e);
       const cancel = () => finish(null);
       const key = (e: KeyboardEvent) => {
         if (e.key !== "Escape" || !dragging) return;
@@ -74,5 +94,8 @@ export function useAssetDrag(onDrop: (ref: AssetRef, world: Point) => void): Ass
     [engine],
   );
 
-  return { drag, press };
+  return {
+    drag,
+    grabProps: (payload) => ({ onPointerDown: (event) => press(event, payload) }),
+  };
 }

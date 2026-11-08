@@ -1,14 +1,16 @@
 import { useState } from "react";
 
+import type { Point } from "@canvas";
+
 import { DragGhost } from "@canvas-ui";
-import { useDesignPanelStore } from "@design/ui";
+import { useDropOnCanvas } from "@design/ui/hooks";
+import { useDesignPanelStore } from "@design/ui/stores/design-panel-store";
 import { AddAssetMenu } from "./add-asset-menu";
 import { AssetSourceSection } from "./asset-source-section";
 import { filterAssets } from "./asset-tree";
 import { AssetsToolbar } from "./assets-toolbar";
-import type { AssetFilter } from "./assets-ui.types";
+import type { AssetFilter, AssetRef } from "./assets-ui.types";
 import { useAssetActions } from "./use-asset-actions";
-import { useAssetDrag } from "./use-asset-drag";
 import { useAssetSources } from "./use-asset-sources";
 import { useLocalAssetActions } from "./use-local-asset-actions";
 import { useUploadAssets } from "./use-upload-assets";
@@ -29,7 +31,9 @@ export function AssetsTab() {
   const actions = useAssetActions();
   const local = useLocalAssetActions();
   const upload = useUploadAssets();
-  const drag = useAssetDrag((ref, world) => void actions.place(ref, world));
+  const drag = useDropOnCanvas<AssetRef, Point>({
+    onDrop: (ref, _target, world) => void actions.place(ref, world),
+  });
 
   const searching = query.trim() !== "" || filter !== "all";
   const shown = sources.map((source) => ({
@@ -76,7 +80,7 @@ export function AssetsTab() {
       </div>
       {drag.drag && (
         <DragGhost
-          label={drag.drag.over ? drag.drag.ref.asset.name : t("drag.dropHere")}
+          label={drag.drag.over ? drag.drag.payload.asset.name : t("drag.dropHere")}
           pointer={drag.drag.pointer}
           muted={!drag.drag.over}
         />

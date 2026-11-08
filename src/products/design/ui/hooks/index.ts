@@ -11,3 +11,5 @@ export type * from "./use-field-binding.types";
 export { useFieldBinding } from "./use-field-binding";
 export type * from "./field-binding-scope.types";
 export { FieldBindingScopeContext } from "./field-binding-scope";
+export type * from "./use-drop-on-canvas.types";
+export { useDropOnCanvas } from "./use-drop-on-canvas";

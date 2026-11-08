@@ -4,6 +4,7 @@
 export { createImageRectangle } from "./image-rectangle";
 export { placeImage } from "./place-image";
 export type * from "./place-image.types";
+export { relinkImageAsset } from "./relink-image-asset";
 export { firstImageFill, replaceImageFill } from "./replace-image-fill";
 export {
   addPlaceholderPaint,

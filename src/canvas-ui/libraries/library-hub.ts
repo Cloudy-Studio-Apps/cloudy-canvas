@@ -177,12 +177,14 @@ export class LibraryHub {
 
   /**
    * Adds a picture to a library: its bytes as a file in the library's `.assets/` folder and its
-   * metadata in the library. A picture the library has already (same bytes) is returned as it is.
+   * metadata in the library, under `id` when given (a file's own picture moving in keeps its id). A picture
+   * the library has already (same bytes) is returned as it is, under whatever id it has.
    */
   async addAssetFile(
     libraryId: string,
     bytes: Uint8Array,
     input: LibraryAssetInput,
+    id?: string,
   ): Promise<LibraryAsset> {
     const entry = this.entry(libraryId);
     const library = this.library(libraryId);
@@ -192,7 +194,7 @@ export class LibraryHub {
     if (known) return known;
     const asset: LibraryAsset = {
       ...input,
-      id: createId(),
+      id: id ?? createId(),
       hash,
       kind: assetKindOf(input.type),
       order: keyBetween(library.assets().at(-1)?.order ?? null, null),

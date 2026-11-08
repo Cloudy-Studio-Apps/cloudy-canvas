@@ -18,7 +18,7 @@ edits travel both ways while the project is found.
   renaming a library): new libraries load, removed ones leave (their pending save dropped),
   unreadable ones are tried again, and listeners hear the ids that changed, so open files mirror
   again (a removed library's records are baked out of them, a new `autoAdd` library comes into files
-  using `"all"`). `addAssetFile(libraryId, bytes, input)` stores a picture in
+  using `"all"`). `addAssetFile(libraryId, bytes, input, id?)` (a moved file picture passes its own id) stores a picture in
   `<library>.assets/<id>.<ext>` (the same bytes, by `hash`, return the asset it has already);
   `readAssetBytes` reads one back.
   - **`flush(libraryId)` and `hold(libraryId)`:** `flush` writes a library's pending edit now and waits for the saves; `hold` does that and then keeps its later edits from being written until the returned function runs, so the project home can rename the `.clib`. `relocate(libraryId, file)` points the library at its new file name in memory right after the rename, so any save from then on (the last `release`, quitting) writes to the right name; `refresh()` reads the manifest afterwards.

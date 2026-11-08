@@ -4,6 +4,7 @@ import { moveAssetToLibrary, removeLocalAsset, localAssets, type LibraryAsset } 
 import { useProjectLibrariesState } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { notifyError, toast } from "@shared/stores/toast-store";
+import { relinkImageAsset } from "../../image";
 import { ConfirmDialog } from "@shared/ui/kit";
 import type { LocalAssetActions } from "./assets-ui.types";
 import { RenameAssetDialog } from "./rename-asset-dialog";
@@ -35,7 +36,9 @@ export function useLocalAssetActions(): LocalAssetActions {
   const moveTo = (asset: LibraryAsset, libraryId: string) => {
     if (!hub) return;
     const library = targets.find((target) => target.id === libraryId)?.name ?? "";
-    moveAssetToLibrary(doc, hub, asset.id, libraryId).then(
+    moveAssetToLibrary(doc, hub, asset.id, libraryId, (from, to) =>
+      relinkImageAsset(doc, engine.kinds, from, to),
+    ).then(
       () => toast({ title: t("move.done", { name: asset.name, library }) }),
       (error: unknown) => notifyError(t("error.move"), error),
     );
