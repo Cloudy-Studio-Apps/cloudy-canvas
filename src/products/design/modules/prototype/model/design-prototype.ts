@@ -1,15 +1,11 @@
-import { createElementBase, defineService, keyBetween, type CanvasDocument } from "@canvas";
+import { defineService, type CanvasDocument } from "@canvas";
 
-import { t } from "../prototype.i18n";
-import { PROTOTYPE_FLOW_TYPE } from "../prototype.constants";
 import { allFlows } from "./all-flows";
-import { defaultFlowDevice, firstDevice } from "./devices";
-import { PROTOTYPE_FLOW_DEFAULTS } from "./flow.defaults";
+import { addFlowRecord, flowPatch } from "./flow-edits";
 import type { PrototypeFlowElement, PrototypeFlowPatch } from "./flow.types";
 import type { PrototypeInteraction } from "./interaction.types";
 import { isFlow } from "./is-flow";
 import { nodeInteractions } from "./node-interactions";
-import { isScreen } from "./screens";
 import { interactionsPatch, writeInteractions } from "./write-interactions";
 
 /**
@@ -35,26 +31,8 @@ export class DesignPrototype {
    * the screen, on the device its size suggests (`defaultFlowDevice`). Returns it.
    */
   addFlow(page: string, start: string, name?: string): PrototypeFlowElement {
-    const screen = this.doc.get(start);
-    if (!isScreen(screen) || screen.pageId !== page) {
-      throw new Error(`"${start}" isn't a screen of the page "${page}".`);
-    }
-    const last = this.allFlows().at(-1);
-    const flow: PrototypeFlowElement = {
-      ...createElementBase(
-        PROTOTYPE_FLOW_TYPE,
-        { x: 0, y: 0, w: 0, h: 0 },
-        keyBetween(last?.index ?? null, null),
-      ),
-      name: name?.trim() || t("flow.defaultName", { screen: screen.name }),
-      page,
-      start,
-      ...defaultFlowDevice(screen),
-      ...PROTOTYPE_FLOW_DEFAULTS,
-    };
     this.doc.checkpoint();
-    this.doc.add(flow);
-    return flow;
+    return addFlowRecord(this.doc, page, start, name);
   }
 
   /**
@@ -62,16 +40,7 @@ export class DesignPrototype {
    * platform's first device.
    */
   updateFlow(id: string, patch: PrototypeFlowPatch): void {
-    const flow = this.require(id);
-    const next: PrototypeFlowPatch = { ...patch };
-    if (next.name !== undefined) {
-      const name = next.name.trim();
-      if (name) next.name = name;
-      else delete next.name;
-    }
-    if (next.platform && next.platform !== flow.platform && next.device === undefined) {
-      next.device = firstDevice(next.platform);
-    }
+    const next = flowPatch(this.require(id), patch);
     if (Object.keys(next).length === 0) return;
     this.doc.checkpoint();
     this.doc.update(id, next);

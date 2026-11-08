@@ -1,6 +1,7 @@
 import { defineModule } from "@shared/core";
 import { designEditor, registerDesignMode } from "@design/ui/modules";
-import { designCanvas } from "../../design-points";
+import { designCanvas, designMcpTools } from "../../design-points";
+import { prototypeTools } from "./mcp";
 import { registerPrototypeCanvas } from "./prototype.canvas";
 import { PROTOTYPE_COMMANDS } from "./prototype.constants";
 import { prototypeMode } from "./prototype.mode";
@@ -38,5 +39,6 @@ export const prototypeModule = defineModule({
       id: "prototype.interactions",
       component: InteractionBadge,
     });
+    host.contribute(designMcpTools, { id: "prototype", tools: () => prototypeTools });
   },
 });

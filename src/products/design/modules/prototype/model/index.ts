@@ -12,6 +12,7 @@ export { nodeInteractions } from "./node-interactions";
 export { interactionsPatch, writeInteractions } from "./write-interactions";
 export { PROTOTYPE_FLOW_DEFAULTS } from "./flow.defaults";
 export { PrototypeFlowKind } from "./flow.kind";
+export { addFlowRecord, flowPatch } from "./flow-edits";
 export { isFlow } from "./is-flow";
 export { defaultFlowDevice, firstDevice, PROTOTYPE_DEVICES } from "./devices";
 export { isScreen, screenOf, screensOf } from "./screens";
