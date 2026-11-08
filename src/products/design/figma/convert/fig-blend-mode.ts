@@ -1,7 +1,7 @@
 import type { BlendMode } from "@canvas";
-import type { FigImportContext } from "@canvas/figma";
 
 import type { LayerBlendMode } from "../../modules";
+import type { FigmaContext } from "../figma-warning.types";
 
 /** Figma's blend modes by name (its linear burn and dodge are "plus darker" and "plus lighter"). */
 const BLEND_MODES: Record<string, BlendMode> = {
@@ -26,7 +26,7 @@ const BLEND_MODES: Record<string, BlendMode> = {
 };
 
 /** A layer's blend mode (pass-through when the file has none; unknown ones too, counted). */
-export function figLayerBlendMode(name: string | undefined, ctx: FigImportContext): LayerBlendMode {
+export function figLayerBlendMode(name: string | undefined, ctx: FigmaContext): LayerBlendMode {
   if (name === undefined || name === "PASS_THROUGH") return "pass-through";
   return figBlendMode(name, ctx) ?? "pass-through";
 }
@@ -34,14 +34,14 @@ export function figLayerBlendMode(name: string | undefined, ctx: FigImportContex
 /** A paint's blend mode, left out when it's normal (unknown ones too, counted). */
 export function figPaintBlendMode(
   name: string | undefined,
-  ctx: FigImportContext,
+  ctx: FigmaContext,
 ): { blendMode?: BlendMode } {
   const mode = name === undefined ? undefined : figBlendMode(name, ctx);
   return mode && mode !== "normal" ? { blendMode: mode } : {};
 }
 
-function figBlendMode(name: string, ctx: FigImportContext): BlendMode | undefined {
+function figBlendMode(name: string, ctx: FigmaContext): BlendMode | undefined {
   const mode = BLEND_MODES[name];
-  if (!mode) ctx.warnings.add("unknown blend modes became normal");
+  if (!mode) ctx.warnings.add("blendMode");
   return mode;
 }

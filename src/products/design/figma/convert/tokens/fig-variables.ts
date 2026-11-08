@@ -9,7 +9,8 @@ import {
   type VariableRecord,
   nKeysBetween,
 } from "@canvas";
-import { guidKey, type FigImportContext, type FigNode } from "@canvas/figma";
+import { guidKey, type FigNode } from "@canvas/figma";
+import type { FigmaContext } from "../../figma-warning.types";
 import { createId } from "@shared/core";
 
 import { figScopes } from "./fig-scopes";
@@ -29,7 +30,7 @@ const PLATFORMS: Record<string, keyof TokenCodeSyntax> = {
  */
 export function figVariables(
   nodes: readonly FigNode[],
-  ctx: FigImportContext,
+  ctx: FigmaContext,
 ): (CollectionRecord | VariableRecord)[] {
   const live = nodes.filter((n) => n.phase !== "REMOVED");
   const sets = live.filter((n) => n.type === "VARIABLE_SET").sort(byPosition);
@@ -71,9 +72,9 @@ export function figVariables(
     const type = figVariableType(node.variableResolvedType);
     const id = ctx.tokenId(node.guid);
     if (!type || !id) {
-      ctx.warnings.add(
-        `${(node.variableResolvedType ?? "unknown").toLowerCase()} variables were left out`,
-      );
+      ctx.warnings.add("variableType", {
+        type: (node.variableResolvedType ?? "unknown").toLowerCase(),
+      });
       continue;
     }
     const values: Record<string, TokenValue> = {};
@@ -122,7 +123,7 @@ function recordValues(
   records: readonly (CollectionRecord | VariableRecord)[],
   nodes: readonly FigNode[],
   unread: ReadonlySet<string>,
-  ctx: FigImportContext,
+  ctx: FigmaContext,
 ): void {
   const migration = migrateCollectionModes(records);
   const migrated = new Map((migration?.records ?? []).map((r) => [r.id, r]));

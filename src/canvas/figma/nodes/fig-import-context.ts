@@ -5,9 +5,12 @@ import type { FigGuid, FigStyleRef } from "./fig-node.types";
 import { guidKey } from "./fig-tree";
 import { ImportWarnings } from "./import-warnings";
 
-/** What converting a file's nodes shares: its blobs and images, and what it has collected. */
-export class FigImportContext {
-  readonly warnings = new ImportWarnings();
+/**
+ * What converting a file's nodes shares: its blobs and images, and what it has collected (losses
+ * as the product's message codes, `Code`).
+ */
+export class FigImportContext<Code extends string = string> {
+  readonly warnings = new ImportWarnings<Code>();
   /** Document assets to add: image files by their new asset id. */
   readonly assets = new Map<string, Uint8Array>();
   private readonly blobs: readonly Uint8Array[];

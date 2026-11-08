@@ -11,7 +11,7 @@ export const convertWidget: FigJamNodeConverter = (node, placement) => {
   const url = linkOf(node.linkPreviewData?.url);
   if (!url) {
     const name = node.widgetMetadata?.widgetName ?? "widget";
-    return ctx.warnings.add(`“${name}” widgets were left out`);
+    return ctx.warnings.add("widget", { name });
   }
   const rect = nodeRect(node, placement);
   const embed = createEmbed(url, { x: rect.x, y: rect.y }, "", rect.w);

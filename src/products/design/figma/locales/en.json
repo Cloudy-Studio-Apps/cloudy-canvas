@@ -1,0 +1,31 @@
+{
+  "stages": {
+    "unpacking": "Unpacking",
+    "decoding": "Decoding",
+    "converting": "Converting layers"
+  },
+  "warnings": {
+    "unknownMask": "unknown mask types became alpha masks",
+    "missingComponent": "instances whose component isn't in the file were left empty",
+    "missingImage": "images missing from the file were left out",
+    "paintType": "{type} paints were left out",
+    "emptyGradient": "gradients without colors were left out",
+    "variableType": "{type} variables were left out",
+    "libraryAlias": "variables aliasing a library's variables lost those values",
+    "expression": "variable expressions Cloudy Canvas doesn't have were left out",
+    "variableValue": "{type} variable values were left out",
+    "styleType": "{type} styles were left out",
+    "textCase": "texts' case per range was left out",
+    "blendMode": "unknown blend modes became normal",
+    "skewedFrame": "skewed frames were straightened",
+    "skewedText": "skewed texts were straightened",
+    "layerVector": "{type} layers became vectors",
+    "layerType": "{type} layers were left out",
+    "mixedRadii": "corners with different radii took the largest",
+    "booleanOperation": "unknown boolean operations became unions",
+    "unboundField": "fields bound to variables we can't bind kept their values",
+    "mixedRadiusVariables": "corner radii bound to different variables kept their values",
+    "effectBlendMode": "effects' blend modes were left out",
+    "effectType": "{type} effects were left out"
+  }
+}

@@ -54,6 +54,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - The database schema and ER diagram text editors now show their errors, warnings and suggestions
   in Spanish when the app is in Spanish. The language keywords you write, such as Table, Entity or
   Relation, stay the same in every language.
+- Importing a Figma or FigJam file now shows its progress and the list of what couldn't be brought
+  over as it was in Spanish when the app is in Spanish.
 
 ### Fixed
 

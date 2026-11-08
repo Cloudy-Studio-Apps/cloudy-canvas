@@ -27,14 +27,14 @@ export function convertFigJam(
   const pages = tree
     .childrenOf(tree.root)
     .filter((page) => page.type === "CANVAS" && !page.internalOnly);
-  if (pages.length > 1) ctx.warnings.add("pages after the first were left out");
+  if (pages.length > 1) ctx.warnings.add("extraPages");
   const page = pages[0];
   const nodes = page ? tree.childrenOf(page) : [];
   if (page) ctx.visit(page, IDENTITY);
   const out = new FigJamOutput();
   nodes.forEach((node, i) => {
     convertFigJamNode(tree, node, { parentWorld: IDENTITY, out, ctx });
-    onProgress?.("Converting board", { done: i + 1, total: nodes.length });
+    onProgress?.("converting", { done: i + 1, total: nodes.length });
   });
   return {
     name: container.name,

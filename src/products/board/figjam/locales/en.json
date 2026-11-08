@@ -1,0 +1,19 @@
+{
+  "stages": {
+    "unpacking": "Unpacking",
+    "decoding": "Decoding",
+    "converting": "Converting board"
+  },
+  "warnings": {
+    "shapeType": "{type} shapes became rectangles",
+    "connectorLabel": "connector labels became texts beside their line",
+    "curvedConnector": "curved connectors became straight",
+    "widget": "“{name}” widgets were left out",
+    "rotated": "rotated items were straightened",
+    "extraPages": "pages after the first were left out",
+    "notStroke": "drawings that aren't strokes were left out",
+    "codeBlock": "code blocks became plain text",
+    "itemType": "{type} items were left out",
+    "missingImage": "images missing from the file were left out"
+  }
+}

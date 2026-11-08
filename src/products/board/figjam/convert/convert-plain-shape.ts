@@ -18,7 +18,7 @@ export const convertPlainShape: FigJamNodeConverter = (node, placement) => {
   const hash = imageHash(node.fillPaints);
   if (hash) {
     const assetId = ctx.imageAsset(hash);
-    if (!assetId) return ctx.warnings.add("images missing from the file were left out");
+    if (!assetId) return ctx.warnings.add("missingImage");
     const picture = { ...createImage(assetId, rect, ""), crop: imageCrop(node.fillPaints) };
     const image = framedImage(node, picture);
     ctx.place(node, image.id);

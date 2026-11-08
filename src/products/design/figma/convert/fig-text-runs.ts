@@ -1,5 +1,6 @@
 import { normalizeRuns } from "@canvas";
-import type { FigImportContext, FigNode, FigTextOverride } from "@canvas/figma";
+import type { FigNode, FigTextOverride } from "@canvas/figma";
+import type { FigmaContext } from "../figma-warning.types";
 
 import type { TextNodeRun, TextRunStyle } from "../../modules";
 import { convertPaints } from "./fig-paints";
@@ -10,7 +11,7 @@ import { decorationOf, faceOf, letterSpacingOf, lineHeightOf } from "./fig-typog
  * each group but the node's own (id 0) styled by its entry of the `styleOverrideTable` (font,
  * size, line height, spacing, fills, decoration). A range's own case is left out, counted.
  */
-export function figTextRuns(node: FigNode, length: number, ctx: FigImportContext): TextNodeRun[] {
+export function figTextRuns(node: FigNode, length: number, ctx: FigmaContext): TextNodeRun[] {
   const ids = node.textData?.characterStyleIDs ?? [];
   const table = new Map<number, FigTextOverride>();
   for (const entry of node.textData?.styleOverrideTable ?? []) {
@@ -38,7 +39,7 @@ export function figTextRuns(node: FigNode, length: number, ctx: FigImportContext
 }
 
 /** What one mixed style sets over the text's own fields. */
-function runStyleOf(entry: FigTextOverride, node: FigNode, ctx: FigImportContext): TextRunStyle {
+function runStyleOf(entry: FigTextOverride, node: FigNode, ctx: FigmaContext): TextRunStyle {
   const style: TextRunStyle = {};
   const fontSize = entry.fontSize ?? node.fontSize;
   if (entry.fontName) Object.assign(style, faceOf(entry.fontName));
@@ -54,7 +55,7 @@ function runStyleOf(entry: FigTextOverride, node: FigNode, ctx: FigImportContext
   const textStyle = ctx.styleId(entry.styleIdForText);
   if (textStyle) style.textStyle = textStyle;
   if (entry.textCase !== undefined && entry.textCase !== node.textCase) {
-    ctx.warnings.add("texts' case per range was left out");
+    ctx.warnings.add("textCase");
   }
   return style;
 }

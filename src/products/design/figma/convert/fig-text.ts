@@ -1,5 +1,6 @@
 import type { TextAlign } from "@canvas";
-import type { FigImportContext, FigNode } from "@canvas/figma";
+import type { FigNode } from "@canvas/figma";
+import type { FigmaContext } from "../figma-warning.types";
 
 import { TEXT_DEFAULTS, type DesignNode, type TextNodeElement } from "../../modules";
 import { figTextRuns } from "./fig-text-runs";
@@ -15,7 +16,7 @@ const ALIGN: Record<string, TextAlign> = {
 /** The text fields of a text layer (its node base is built by the caller), mixed styles too. */
 export function textFields(
   node: FigNode,
-  ctx: FigImportContext,
+  ctx: FigmaContext,
 ): Omit<TextNodeElement, keyof DesignNode> {
   const fontSize = node.fontSize ?? TEXT_DEFAULTS.typography.fontSize;
   const text = withCase(node.textData?.characters ?? "", node.textCase);

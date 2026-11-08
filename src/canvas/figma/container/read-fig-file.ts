@@ -29,7 +29,7 @@ export function isFigmaFile(bytes: Uint8Array): boolean {
  */
 export function readFigFile(bytes: Uint8Array, onProgress?: FigmaImportProgress): FigContainer {
   if (!isZip(bytes)) return { ...readCanvas(bytes, onProgress), images: new Map(), name: null };
-  onProgress?.("Unpacking");
+  onProgress?.("unpacking");
   const entries = unzipSync(bytes);
   const canvas = entries[CANVAS_ENTRY];
   if (!canvas) throw new Error("This zip isn't a Figma file: it has no canvas.");
@@ -66,7 +66,7 @@ function readCanvas(
   }
   const [schemaChunk, dataChunk] = chunks;
   if (!schemaChunk || !dataChunk) throw new Error("The Figma file is incomplete.");
-  onProgress?.("Decoding");
+  onProgress?.("decoding");
   const schema = decodeKiwiSchema(decompressChunk(schemaChunk));
   return { kind, version, message: decodeKiwi(schema, "Message", decompressChunk(dataChunk)) };
 }

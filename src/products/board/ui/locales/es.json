@@ -34,5 +34,13 @@
   },
   "export": {
     "pagePerSection": "Una página por sección"
+  },
+  "import": {
+    "figjam": {
+      "reading": "Leyendo el archivo",
+      "building": "Creando la pizarra",
+      "saving": "Guardando el borrador",
+      "importing": "Importando {name}"
+    }
   }
 }

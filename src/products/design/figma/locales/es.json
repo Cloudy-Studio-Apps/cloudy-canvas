@@ -1,0 +1,31 @@
+{
+  "stages": {
+    "unpacking": "Descomprimiendo",
+    "decoding": "Decodificando",
+    "converting": "Convirtiendo capas"
+  },
+  "warnings": {
+    "unknownMask": "máscaras de tipo desconocido pasaron a ser máscaras alfa",
+    "missingComponent": "instancias cuyo componente no está en el archivo quedaron vacías",
+    "missingImage": "imágenes que faltan en el archivo se omitieron",
+    "paintType": "rellenos de tipo {type} se omitieron",
+    "emptyGradient": "degradados sin colores se omitieron",
+    "variableType": "variables de tipo {type} se omitieron",
+    "libraryAlias": "variables que apuntan a variables de una biblioteca perdieron esos valores",
+    "expression": "expresiones de variables que Cloudy Canvas no tiene se omitieron",
+    "variableValue": "valores de variables de tipo {type} se omitieron",
+    "styleType": "estilos de tipo {type} se omitieron",
+    "textCase": "mayúsculas y minúsculas por tramo de texto se omitieron",
+    "blendMode": "modos de fusión desconocidos pasaron a ser normales",
+    "skewedFrame": "marcos sesgados se enderezaron",
+    "skewedText": "textos sesgados se enderezaron",
+    "layerVector": "capas de tipo {type} pasaron a ser vectores",
+    "layerType": "capas de tipo {type} se omitieron",
+    "mixedRadii": "esquinas con radios distintos tomaron el mayor",
+    "booleanOperation": "operaciones booleanas desconocidas pasaron a ser uniones",
+    "unboundField": "campos vinculados a variables que no se pueden vincular conservaron sus valores",
+    "mixedRadiusVariables": "radios de esquina vinculados a variables distintas conservaron sus valores",
+    "effectBlendMode": "modos de fusión de los efectos se omitieron",
+    "effectType": "efectos de tipo {type} se omitieron"
+  }
+}

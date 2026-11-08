@@ -62,6 +62,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   errores, avisos y sugerencias en español cuando la aplicación está en español. Las palabras clave
   del lenguaje que escribes, como Table, Entity o Relation, siguen siendo las mismas en todos los
   idiomas.
+- Al importar un archivo de Figma o FigJam, el progreso y la lista de lo que no se pudo traer tal
+  cual ahora se muestran en español cuando la aplicación está en español.
 
 ### Correcciones
 

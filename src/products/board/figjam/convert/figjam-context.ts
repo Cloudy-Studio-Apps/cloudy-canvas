@@ -6,11 +6,13 @@ import {
   type FigNode,
 } from "@canvas/figma";
 
+import type { FigJamWarning } from "../figjam-warning.types";
+
 /**
  * What converting a FigJam file's nodes shares (its blobs, images and warnings), plus where each
  * node went: its world transform, and the element it became, so connectors can find their ends.
  */
-export class FigJamContext extends FigImportContext {
+export class FigJamContext extends FigImportContext<FigJamWarning> {
   private readonly worlds = new Map<string, FigMatrix>();
   private readonly ids = new Map<string, string>();
 

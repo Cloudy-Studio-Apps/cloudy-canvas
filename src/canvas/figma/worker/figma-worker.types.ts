@@ -1,4 +1,8 @@
-import type { FigmaImportCount, FigmaImportProgress } from "../figma-progress.types";
+import type {
+  FigmaImportCount,
+  FigmaImportProgress,
+  FigmaImportStage,
+} from "../figma-progress.types";
 
 /** What an import worker is sent: the file's bytes. */
 export interface FigmaWorkerRequest {
@@ -7,7 +11,7 @@ export interface FigmaWorkerRequest {
 
 /** What an import worker answers: progress while it works, then the import or the error. */
 export type FigmaWorkerResponse<R> =
-  | { type: "progress"; stage: string; count?: FigmaImportCount }
+  | { type: "progress"; stage: FigmaImportStage; count?: FigmaImportCount }
   | { type: "done"; result: R }
   | { type: "error"; message: string };
 

@@ -7,6 +7,7 @@ import {
   type FigmaImportProgress,
   type FigNode,
 } from "@canvas/figma";
+import type { FigmaWarning } from "../figma-warning.types";
 
 import { createPage } from "../../modules";
 import type { FigmaImport } from "../figma-import.types";
@@ -26,7 +27,7 @@ export function convertFigma(
   onProgress?: FigmaImportProgress,
 ): FigmaImport {
   if (container.kind !== "design") throw new Error("This is a FigJam board, not a design.");
-  const ctx = new FigImportContext(container);
+  const ctx = new FigImportContext<FigmaWarning>(container);
   const nodeChanges = container.message.nodeChanges;
   const nodes = Array.isArray(nodeChanges) ? (nodeChanges as FigNode[]) : [];
   const tree = buildFigTree(nodes);
@@ -54,7 +55,7 @@ export function convertFigma(
       layers,
       { world: IDENTITY, parentId: null, pageId: page.id, out: elements },
       ctx,
-      () => onProgress?.("Converting layers", { done: ++done, total }),
+      () => onProgress?.("converting", { done: ++done, total }),
     );
   });
   return {

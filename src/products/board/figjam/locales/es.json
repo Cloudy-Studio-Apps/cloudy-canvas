@@ -1,0 +1,19 @@
+{
+  "stages": {
+    "unpacking": "Descomprimiendo",
+    "decoding": "Decodificando",
+    "converting": "Convirtiendo pizarra"
+  },
+  "warnings": {
+    "shapeType": "formas de tipo {type} pasaron a ser rectángulos",
+    "connectorLabel": "etiquetas de conectores pasaron a ser textos junto a su línea",
+    "curvedConnector": "conectores curvos pasaron a ser rectos",
+    "widget": "widgets «{name}» se omitieron",
+    "rotated": "elementos girados se enderezaron",
+    "extraPages": "páginas después de la primera se omitieron",
+    "notStroke": "dibujos que no son trazos se omitieron",
+    "codeBlock": "bloques de código pasaron a ser texto simple",
+    "itemType": "elementos de tipo {type} se omitieron",
+    "missingImage": "imágenes que faltan en el archivo se omitieron"
+  }
+}

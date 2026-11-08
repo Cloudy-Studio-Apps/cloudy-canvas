@@ -1,5 +1,6 @@
 import type { CanvasElement } from "@canvas";
-import type { FigImportContext, FigNode } from "@canvas/figma";
+import type { FigNode } from "@canvas/figma";
+import type { FigmaContext } from "../../figma-warning.types";
 
 import { figLayerBindings, figRunBindings } from "./fig-bindings";
 import { figVariableModes } from "./fig-variable-modes";
@@ -16,7 +17,7 @@ const STACKS = ["fills", "strokes", "effects"];
 export function withFigBindings(
   el: CanvasElement,
   node: FigNode,
-  ctx: FigImportContext,
+  ctx: FigmaContext,
 ): CanvasElement {
   const runs = (el as { runs?: unknown }).runs;
   const bindings: Record<string, string> = {

@@ -11,7 +11,7 @@ import { convertText } from "./convert-text";
 import { convertWidget } from "./convert-widget";
 
 const convertCodeBlock: FigJamNodeConverter = (node, placement) => {
-  placement.ctx.warnings.add("code blocks became plain text");
+  placement.ctx.warnings.add("codeBlock");
   convertText(node, placement);
 };
 
@@ -62,6 +62,6 @@ export function convertFigJamNode(
       convertFigJamNode(tree, child, { ...placement, parentWorld: world });
     }
   } else if (!convert) {
-    here.ctx.warnings.add(`${type.toLowerCase().replaceAll("_", " ")} items were left out`);
+    here.ctx.warnings.add("itemType", { type: type.toLowerCase().replaceAll("_", " ") });
   }
 }

@@ -1,4 +1,5 @@
-import type { FigColor, FigEffect, FigImportContext, FigNode } from "@canvas/figma";
+import type { FigColor, FigEffect, FigNode } from "@canvas/figma";
+import type { FigmaContext } from "../figma-warning.types";
 
 import { createEffect, type DesignEffect, type NoiseEffect } from "../../modules";
 
@@ -14,18 +15,18 @@ const NOISE_TYPES: Record<string, NoiseEffect["noiseType"]> = {
  * spread, color, "show behind"), layer blurs (progressive ones too), background blurs, noise and
  * texture. Other effects, and effects' blend modes, are counted in the import's warnings.
  */
-export function figEffects(node: FigNode, ctx: FigImportContext): DesignEffect[] {
+export function figEffects(node: FigNode, ctx: FigmaContext): DesignEffect[] {
   const effects: DesignEffect[] = [];
   for (const fig of node.effects ?? []) {
     const effect = figEffect(fig);
     if (effect && fig.blendMode && fig.blendMode !== "NORMAL") {
-      ctx.warnings.add("effects' blend modes were left out");
+      ctx.warnings.add("effectBlendMode");
     }
     if (effect) effects.push(effect);
     else
-      ctx.warnings.add(
-        `${(fig.type ?? "unknown").toLowerCase().replace(/_/g, " ")} effects were left out`,
-      );
+      ctx.warnings.add("effectType", {
+        type: (fig.type ?? "unknown").toLowerCase().replace(/_/g, " "),
+      });
   }
   return effects;
 }

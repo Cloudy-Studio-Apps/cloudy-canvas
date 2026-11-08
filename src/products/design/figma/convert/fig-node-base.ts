@@ -1,5 +1,6 @@
 import type { Rect } from "@canvas";
-import type { FigImportContext, FigNode } from "@canvas/figma";
+import type { FigNode } from "@canvas/figma";
+import type { FigmaContext } from "../figma-warning.types";
 
 import { createNodeBase, type DesignNode, type MaskType } from "../../modules";
 import { convertPaintsFrom } from "./fig-paints";
@@ -20,7 +21,7 @@ export function figNodeBase<K extends string>(
   node: FigNode,
   rect: Rect,
   placement: NodePlacement,
-  ctx: FigImportContext,
+  ctx: FigmaContext,
   paints: NodePaints = {},
 ): DesignNode & { type: K } {
   const fills = paints.fills
@@ -58,7 +59,7 @@ export function figNodeBase<K extends string>(
 }
 
 /** How a Figma mask masks (alpha when Figma's type is unknown, with a warning). */
-function figMaskType(node: FigNode, ctx: FigImportContext): MaskType {
+function figMaskType(node: FigNode, ctx: FigmaContext): MaskType {
   switch (node.maskType) {
     case "OUTLINE":
     case "VECTOR":
@@ -70,7 +71,7 @@ function figMaskType(node: FigNode, ctx: FigImportContext): MaskType {
     case undefined:
       return node.maskIsOutline ? "vector" : "alpha";
     default:
-      ctx.warnings.add("unknown mask types became alpha masks");
+      ctx.warnings.add("unknownMask");
       return "alpha";
   }
 }

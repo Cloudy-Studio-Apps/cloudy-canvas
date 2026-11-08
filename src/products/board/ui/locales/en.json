@@ -34,5 +34,13 @@
   },
   "export": {
     "pagePerSection": "One page per section"
+  },
+  "import": {
+    "figjam": {
+      "reading": "Reading file",
+      "building": "Building board",
+      "saving": "Saving draft",
+      "importing": "Importing {name}"
+    }
   }
 }

@@ -5,13 +5,8 @@ import {
   type GradientTransform,
   type GradientType,
 } from "@canvas";
-import {
-  hexBytes,
-  hexOf,
-  type FigImportContext,
-  type FigMatrix,
-  type FigPaint,
-} from "@canvas/figma";
+import { hexBytes, hexOf, type FigMatrix, type FigPaint } from "@canvas/figma";
+import type { FigmaContext } from "../figma-warning.types";
 
 import { solidPaint, type GradientPaint, type Paint } from "../../modules";
 import { figPaintBlendMode } from "./fig-blend-mode";
@@ -30,7 +25,7 @@ const GRADIENTS: Record<string, GradientType> = {
  */
 export function convertPaints(
   paints: readonly FigPaint[] | undefined,
-  ctx: FigImportContext,
+  ctx: FigmaContext,
   allowImages = true,
 ): Paint[] {
   return convertPaintsFrom(paints, ctx, allowImages).paints;
@@ -39,7 +34,7 @@ export function convertPaints(
 /** `convertPaints`, with each converted paint's index in Figma's stack (`from`). */
 export function convertPaintsFrom(
   paints: readonly FigPaint[] | undefined,
-  ctx: FigImportContext,
+  ctx: FigmaContext,
   allowImages = true,
 ): { paints: Paint[]; from: number[] } {
   const result: Paint[] = [];
@@ -53,16 +48,12 @@ export function convertPaintsFrom(
   return { paints: result, from };
 }
 
-function convertPaint(paint: FigPaint, ctx: FigImportContext, allowImages: boolean): Paint | null {
+function convertPaint(paint: FigPaint, ctx: FigmaContext, allowImages: boolean): Paint | null {
   const converted = convertPaintLook(paint, ctx, allowImages);
   return converted && { ...converted, ...figPaintBlendMode(paint.blendMode, ctx) };
 }
 
-function convertPaintLook(
-  paint: FigPaint,
-  ctx: FigImportContext,
-  allowImages: boolean,
-): Paint | null {
+function convertPaintLook(paint: FigPaint, ctx: FigmaContext, allowImages: boolean): Paint | null {
   const visible = paint.visible ?? true;
   const opacity = paint.opacity ?? 1;
   const type = paint.type ?? "SOLID";
@@ -84,12 +75,12 @@ function convertPaintLook(
     const hash = paint.image?.hash ?? paint.imageThumbnail?.hash;
     const assetId = hash ? ctx.imageAsset(hexBytes(hash)) : null;
     if (!assetId) {
-      ctx.warnings.add("images missing from the file were left out");
+      ctx.warnings.add("missingImage");
       return null;
     }
     return { ...convertImagePaint(paint, assetId), opacity, visible };
   }
-  ctx.warnings.add(`${type.toLowerCase()} paints were left out`);
+  ctx.warnings.add("paintType", { type: type.toLowerCase() });
   return null;
 }
 
@@ -98,7 +89,7 @@ function convertGradient(
   type: GradientType,
   opacity: number,
   visible: boolean,
-  ctx: FigImportContext,
+  ctx: FigmaContext,
 ): GradientPaint | null {
   const stops = (paint.stops ?? []).map((stop) => ({
     position: Math.min(1, Math.max(0, stop.position ?? 0)),
@@ -106,7 +97,7 @@ function convertGradient(
     opacity: stop.color?.a ?? 1,
   }));
   if (stops.length === 0) {
-    ctx.warnings.add("gradients without colors were left out");
+    ctx.warnings.add("emptyGradient");
     return null;
   }
   // One stop draws as one color everywhere.

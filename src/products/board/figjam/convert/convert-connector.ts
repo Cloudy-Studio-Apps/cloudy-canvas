@@ -57,7 +57,7 @@ export const convertConnector: FigJamNodeConverter = (node, { parentWorld, out, 
     const elements: CanvasElement[] = [line];
     const label = generatedText(node).trim();
     if (label) {
-      ctx.warnings.add("connector labels became texts beside their line");
+      ctx.warnings.add("connectorLabel");
       const fontSize = generatedPart(node, TEXT_PART)?.fontSize ?? LABEL_FONT_SIZE;
       const w = Math.round(label.length * fontSize * CHARACTER_WIDTH);
       const at = { x: (start.x + end.x) / 2 - w / 2, y: (start.y + end.y) / 2 };
@@ -94,7 +94,7 @@ function connectorEnd(
 
 function lineStyle(style: string | undefined, ctx: FigJamContext): ConnectorStyle {
   if (style === "ELBOWED") return "elbow";
-  if (style === "CURVED") ctx.warnings.add("curved connectors became straight");
+  if (style === "CURVED") ctx.warnings.add("curvedConnector");
   return "straight";
 }
 

@@ -1,7 +1,6 @@
 # Translations (i18n)
 
-_How it works. The rules are in the root [CLAUDE.md](../../../../CLAUDE.md); the design is in
-[docs/superpowers/specs/2026-10-27-i18n-design.md](../../../../docs/superpowers/specs/2026-10-27-i18n-design.md)._
+_How it works. The rules are in the root [CLAUDE.md](../../../../CLAUDE.md)._
 
 English is the source language and the fallback; Spanish is the one translation (`SUPPORTED_LOCALES`).
 
@@ -35,6 +34,10 @@ Every folder that shows text (a module, a page, an area like `canvas-ui`) owns i
   and er modules). `TokenCursor.expectName(what)` takes `what` already translated ("a column
   name"), and since messages are translated, the parser tells a recoverable error apart by
   `DbmlSyntaxError.code`, never by its text.
+- **Work in a worker** (the Figma and FigJam imports): a worker has no locale, so it reports codes
+  (`FigmaImportStage`, `ImportWarnings.add(code, values)`) and the product words them on the main
+  thread with its own translator (`stages.*`, `warnings.*` in `design/figma`, `board/figjam`).
+  Figma type names in a warning (`{type}`) stay as Figma writes them.
 
 ## The locale
 
@@ -69,8 +72,3 @@ ago"; `null` under a minute, which the caller words).
   `<code>` and `<Kbd>`. Sample content (the color wizard's previews, type and diagram samples) is
   ignored in `eslint.config.js`; a one-off says why with
   `eslint-disable-next-line cloudy/no-literal-ui-text -- <why>`. Plain `.ts` files aren't checked.
-
-## Not translated yet
-
-- Figma and FigJam import warnings (`products/design/figma`, `products/board/figjam`): built in a
-  worker, which has no locale, often from type names. They need message codes the UI translates.

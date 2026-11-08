@@ -7,6 +7,7 @@ import {
   type ResolvedFigNode,
   withFigStyles,
 } from "@canvas/figma";
+import type { FigmaWarning } from "../figma-warning.types";
 
 import type { InstanceScope } from "./resolve-instances.types";
 
@@ -22,7 +23,7 @@ const MAX_DEPTH = 40;
 export function resolveFigNode(
   tree: FigTree,
   node: FigNode,
-  warnings: ImportWarnings,
+  warnings: ImportWarnings<FigmaWarning>,
 ): ResolvedFigNode {
   return resolve(tree, node, null, [], warnings, 0);
 }
@@ -32,7 +33,7 @@ function resolve(
   raw: FigNode,
   scope: InstanceScope | null,
   path: readonly string[],
-  warnings: ImportWarnings,
+  warnings: ImportWarnings<FigmaWarning>,
   depth: number,
 ): ResolvedFigNode {
   // Overrides can swap a style, so styles apply after them.
@@ -47,7 +48,7 @@ function resolve(
   }
   const component = tree.node(node.overriddenSymbolID ?? node.symbolData?.symbolID);
   if (!component || depth >= MAX_DEPTH) {
-    warnings.add("instances whose component isn't in the file were left empty");
+    warnings.add("missingComponent");
     return { node, children: [] };
   }
   const inner = instanceScope(node, scope, path);

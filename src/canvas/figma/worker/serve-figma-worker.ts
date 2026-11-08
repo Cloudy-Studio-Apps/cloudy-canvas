@@ -1,4 +1,4 @@
-import type { FigmaImportCount } from "../figma-progress.types";
+import type { FigmaImportCount, FigmaImportStage } from "../figma-progress.types";
 import type {
   FigmaWorkerConvert,
   FigmaWorkerRequest,
@@ -20,9 +20,9 @@ export function serveFigmaWorker<R extends FigmaWorkerResult>(
 ): void {
   const scope = self as unknown as FigmaWorkerScope<R>;
   scope.onmessage = ({ data }: MessageEvent<FigmaWorkerRequest>) => {
-    let lastStage = "";
+    let lastStage: FigmaImportStage | null = null;
     let lastPost = 0;
-    const progress = (stage: string, count?: FigmaImportCount) => {
+    const progress = (stage: FigmaImportStage, count?: FigmaImportCount) => {
       const now = performance.now();
       const last = count !== undefined && count.done === count.total;
       if (stage === lastStage && !last && now - lastPost < PROGRESS_INTERVAL_MS) return;

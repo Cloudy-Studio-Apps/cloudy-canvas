@@ -1,6 +1,7 @@
 export type * from "./fig-node.types";
 export type * from "./fig-tree.types";
 export type * from "./fig-variable.types";
+export type * from "./import-warnings.types";
 export { hexBytes, hexOf } from "./fig-color";
 export {
   applyLinear,
@@ -14,4 +15,4 @@ export {
 export { buildFigTree, guidKey } from "./fig-tree";
 export { withFigStyles } from "./fig-styles";
 export { FigImportContext } from "./fig-import-context";
-export { ImportWarnings } from "./import-warnings";
+export { importWarningLines, ImportWarnings } from "./import-warnings";

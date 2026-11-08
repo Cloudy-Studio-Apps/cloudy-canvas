@@ -1,5 +1,6 @@
 import type { StyleRecord } from "@canvas";
-import type { FigImportContext, FigNode } from "@canvas/figma";
+import type { FigNode } from "@canvas/figma";
+import type { FigmaContext } from "../../figma-warning.types";
 import { createId } from "@shared/core";
 
 import { EFFECT_STYLE, PAINT_STYLE, TEXT_STYLE, type TextStyleValue } from "../../../modules";
@@ -14,7 +15,7 @@ import { keyBetween } from "@canvas";
  * stack, its colors bound to the variables they use) and effect styles; grids have no
  * counterpart and are counted. Ids are recorded in `ctx` for the layers that use them.
  */
-export function figStyles(nodes: readonly FigNode[], ctx: FigImportContext): StyleRecord[] {
+export function figStyles(nodes: readonly FigNode[], ctx: FigmaContext): StyleRecord[] {
   const styles: StyleRecord[] = [];
   const orders = new Map<string, string | null>();
   const sorted = nodes
@@ -23,7 +24,7 @@ export function figStyles(nodes: readonly FigNode[], ctx: FigImportContext): Sty
   for (const node of sorted) {
     const style = figStyle(node, ctx);
     if (!style) {
-      ctx.warnings.add(`${(node.styleType ?? "").toLowerCase()} styles were left out`);
+      ctx.warnings.add("styleType", { type: (node.styleType ?? "").toLowerCase() });
       continue;
     }
     const order = keyBetween(orders.get(style.styleType) ?? null, null);
@@ -34,7 +35,7 @@ export function figStyles(nodes: readonly FigNode[], ctx: FigImportContext): Sty
   return styles;
 }
 
-function figStyle(node: FigNode, ctx: FigImportContext): StyleRecord | null {
+function figStyle(node: FigNode, ctx: FigmaContext): StyleRecord | null {
   const base = {
     kind: "style" as const,
     id: createId(),

@@ -4,12 +4,12 @@ import {
   IDENTITY,
   multiply,
   placementOf,
-  type FigImportContext,
   type FigMatrix,
   type FigNode,
   type FigPlacement,
   type ResolvedFigNode,
 } from "@canvas/figma";
+import type { FigmaContext } from "../figma-warning.types";
 
 import {
   layoutOf,
@@ -52,7 +52,7 @@ const STAR_INNER_SCALE = 0.382;
 export function convertChildren(
   children: readonly ResolvedFigNode[],
   parent: Omit<NodePlacement, "index">,
-  ctx: FigImportContext,
+  ctx: FigmaContext,
   onEach?: () => void,
 ): void {
   const keys = nKeysBetween(null, null, children.length);
@@ -63,11 +63,7 @@ export function convertChildren(
   });
 }
 
-function convertNode(
-  resolved: ResolvedFigNode,
-  placement: NodePlacement,
-  ctx: FigImportContext,
-): void {
+function convertNode(resolved: ResolvedFigNode, placement: NodePlacement, ctx: FigmaContext): void {
   const { node } = resolved;
   const world = multiply(placement.world, node.transform ?? IDENTITY);
   const own = convertOwn(node, world, placement, ctx);
@@ -90,7 +86,7 @@ function convertOwn(
   node: FigNode,
   world: FigMatrix,
   placement: NodePlacement,
-  ctx: FigImportContext,
+  ctx: FigmaContext,
 ): CanvasElement | null {
   const type = node.type ?? "";
   const size = node.size ?? { x: 0, y: 0 };
@@ -124,7 +120,7 @@ function convertOwn(
     return group;
   }
   if (FRAMES.has(type) || type === "SECTION") {
-    if (!placed) ctx.warnings.add("skewed frames were straightened");
+    if (!placed) ctx.warnings.add("skewedFrame");
     if (type === "SECTION") return base("section") satisfies SectionElement;
     const frame: FrameElement = {
       ...base("frame"),
@@ -167,8 +163,8 @@ function convertOwn(
   }
   // Boolean operations and anything else with an outline keep their look as a vector.
   const vector = vectorFromGeometry(node, world, placement, ctx);
-  if (vector) ctx.warnings.add(`${type.toLowerCase()} layers became vectors`);
-  else ctx.warnings.add(`${type.toLowerCase()} layers were left out`);
+  if (vector) ctx.warnings.add("layerVector", { type: type.toLowerCase() });
+  else ctx.warnings.add("layerType", { type: type.toLowerCase() });
   return vector;
 }
 
@@ -177,9 +173,9 @@ function convertText(
   placed: FigPlacement | null,
   rect: { x: number; y: number; w: number; h: number },
   placement: NodePlacement,
-  ctx: FigImportContext,
+  ctx: FigmaContext,
 ): TextNodeElement {
-  if (!placed) ctx.warnings.add("skewed texts were straightened");
+  if (!placed) ctx.warnings.add("skewedText");
   const base = {
     ...figNodeBase("text", node, rect, placement, ctx, { allowImages: false, strokes: [] }),
     rotation: placed?.rotation ?? 0,
@@ -190,7 +186,7 @@ function convertText(
 }
 
 /** The corner radius; corners with their own radii take the largest (one radius for now). */
-function cornerRadiusOf(node: FigNode, ctx: FigImportContext): number {
+function cornerRadiusOf(node: FigNode, ctx: FigmaContext): number {
   const radius = node.cornerRadius ?? 0;
   if (!node.rectangleCornerRadiiIndependent) return radius;
   const corners = [
@@ -201,7 +197,7 @@ function cornerRadiusOf(node: FigNode, ctx: FigImportContext): number {
   ];
   const largest = Math.max(...corners);
   if (corners.some((corner) => corner !== largest)) {
-    ctx.warnings.add("corners with different radii took the largest");
+    ctx.warnings.add("mixedRadii");
   }
   return largest;
 }
@@ -214,7 +210,7 @@ function holdsChildren(el: CanvasElement): boolean {
 }
 
 /** A Figma boolean's operation (union when Figma's is unknown, with a warning). */
-function booleanOperationOf(node: FigNode, ctx: FigImportContext): BooleanOperation {
+function booleanOperationOf(node: FigNode, ctx: FigmaContext): BooleanOperation {
   switch (node.booleanOperation) {
     case "SUBTRACT":
       return "subtract";
@@ -226,7 +222,7 @@ function booleanOperationOf(node: FigNode, ctx: FigImportContext): BooleanOperat
     case undefined:
       return "union";
     default:
-      ctx.warnings.add("unknown boolean operations became unions");
+      ctx.warnings.add("booleanOperation");
       return "union";
   }
 }

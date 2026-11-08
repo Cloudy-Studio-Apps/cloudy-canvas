@@ -25,9 +25,7 @@ export const convertShape: FigJamNodeConverter = (node, placement) => {
   const body = generatedPart(node, BODY_PART);
   let kind = GEO_KINDS[type];
   if (!kind) {
-    placement.ctx.warnings.add(
-      `${type.toLowerCase().replaceAll("_", " ")} shapes became rectangles`,
-    );
+    placement.ctx.warnings.add("shapeType", { type: type.toLowerCase().replaceAll("_", " ") });
     kind = "rectangle";
   } else if (kind === "rectangle" && (body?.cornerRadius ?? 0) > 0) {
     kind = "rounded";

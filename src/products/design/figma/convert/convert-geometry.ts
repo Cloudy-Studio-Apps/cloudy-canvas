@@ -1,10 +1,5 @@
-import {
-  applyMatrix,
-  type FigImportContext,
-  type FigMatrix,
-  type FigNode,
-  type FigPath,
-} from "@canvas/figma";
+import { applyMatrix, type FigMatrix, type FigNode, type FigPath } from "@canvas/figma";
+import type { FigmaContext } from "../figma-warning.types";
 
 import {
   lineFromEnds,
@@ -24,7 +19,7 @@ export function convertVector(
   node: FigNode,
   world: FigMatrix,
   placement: NodePlacement,
-  ctx: FigImportContext,
+  ctx: FigmaContext,
 ): VectorElement | null {
   const blob = ctx.blob(node.vectorData?.vectorNetworkBlob);
   if (!blob) return vectorFromGeometry(node, world, placement, ctx);
@@ -45,7 +40,7 @@ export function vectorFromGeometry(
   node: FigNode,
   world: FigMatrix,
   placement: NodePlacement,
-  ctx: FigImportContext,
+  ctx: FigmaContext,
 ): VectorElement | null {
   const fill = networkOf(node.fillGeometry, world, ctx);
   if (fill) return vectorElement(node, fill, placement, ctx);
@@ -62,7 +57,7 @@ export function convertLine(
   node: FigNode,
   world: FigMatrix,
   placement: NodePlacement,
-  ctx: FigImportContext,
+  ctx: FigmaContext,
 ): LineNodeElement {
   const start = applyMatrix(world, { x: 0, y: 0 });
   const end = applyMatrix(world, { x: node.size?.x ?? 0, y: 0 });
@@ -79,7 +74,7 @@ export function convertLine(
 function networkOf(
   paths: readonly FigPath[] | undefined,
   world: FigMatrix,
-  ctx: FigImportContext,
+  ctx: FigmaContext,
 ): VectorNetwork | null {
   let network: VectorNetwork | null = null;
   for (const path of paths ?? []) {
@@ -95,7 +90,7 @@ function vectorElement(
   node: FigNode,
   network: VectorNetwork,
   placement: NodePlacement,
-  ctx: FigImportContext,
+  ctx: FigmaContext,
   paints?: NodePaints,
 ): VectorElement {
   const { network: placed, ...rect } = placeNetwork({ x: 0, y: 0 }, network);

@@ -1,4 +1,5 @@
-import type { FigImportContext, FigNode, FigPaint } from "@canvas/figma";
+import type { FigNode, FigPaint } from "@canvas/figma";
+import type { FigmaContext } from "../../figma-warning.types";
 
 import { RUN_STYLE_PREFIX, TEXT_STYLE_PATH } from "../../../modules";
 
@@ -36,7 +37,7 @@ export function figPaintBindings(
   paints: readonly FigPaint[] | undefined,
   from: readonly number[],
   field: string,
-  ctx: FigImportContext,
+  ctx: FigmaContext,
 ): Record<string, string> {
   const bindings: Record<string, string> = {};
   from.forEach((source, i) => {
@@ -53,7 +54,7 @@ export function figPaintBindings(
  * one radius when they share a variable), and the shared styles it uses (text, color, effect),
  * when the file holds them. Fields we don't have are counted.
  */
-export function figLayerBindings(node: FigNode, ctx: FigImportContext): Record<string, string> {
+export function figLayerBindings(node: FigNode, ctx: FigmaContext): Record<string, string> {
   const bindings: Record<string, string> = {};
   const corners = new Map<string, string>();
   for (const entry of node.variableConsumptionMap?.entries ?? []) {
@@ -63,13 +64,12 @@ export function figLayerBindings(node: FigNode, ctx: FigImportContext): Record<s
     if (!id) continue;
     if (CORNERS.includes(entry.variableField)) corners.set(entry.variableField, id);
     else if (FIELDS[entry.variableField]) bindings[FIELDS[entry.variableField] as string] = id;
-    else ctx.warnings.add("fields bound to variables we can't bind kept their values");
+    else ctx.warnings.add("unboundField");
   }
   const radii = new Set(corners.values());
   if (corners.size === CORNERS.length && radii.size === 1)
     bindings.cornerRadius = [...radii][0] as string;
-  else if (corners.size > 0)
-    ctx.warnings.add("corner radii bound to different variables kept their values");
+  else if (corners.size > 0) ctx.warnings.add("mixedRadiusVariables");
 
   const text = ctx.styleId(node.styleIdForText);
   if (text && node.type === "TEXT") bindings[TEXT_STYLE_PATH] = text;

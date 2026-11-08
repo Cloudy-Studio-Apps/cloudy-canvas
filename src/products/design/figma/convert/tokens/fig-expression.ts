@@ -1,4 +1,5 @@
-import type { FigExpression, FigImportContext, FigVariableData } from "@canvas/figma";
+import type { FigExpression, FigVariableData } from "@canvas/figma";
+import type { FigmaContext } from "../../figma-warning.types";
 
 /** Figma's arithmetic as our operators; other functions (comparisons, text…) aren't read. */
 const OPERATORS: Readonly<Record<string, string>> = {
@@ -14,7 +15,7 @@ const OPERATORS: Readonly<Record<string, string>> = {
  */
 export function figExpression(
   expression: FigExpression | undefined,
-  ctx: FigImportContext,
+  ctx: FigmaContext,
 ): string | null {
   const fn = expression?.expressionFunction ?? "";
   const args = (expression?.expressionArguments ?? []).map((arg) => operand(arg, ctx));
@@ -25,7 +26,7 @@ export function figExpression(
 }
 
 /** One argument as text: a number, a `{reference}`, or a nested expression in parentheses. */
-function operand(data: FigVariableData, ctx: FigImportContext): string | null {
+function operand(data: FigVariableData, ctx: FigmaContext): string | null {
   const value = data.value;
   switch (data.dataType) {
     case "FLOAT":

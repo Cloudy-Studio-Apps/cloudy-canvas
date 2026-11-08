@@ -24,7 +24,7 @@ export const convertStroke: FigJamNodeConverter = (node, { world, ctx, out }) =>
         return [at.x, at.y];
       })
     : [];
-  if (points.length < 4) return ctx.warnings.add("drawings that aren't strokes were left out");
+  if (points.length < 4) return ctx.warnings.add("notStroke");
   const color =
     solidColor(node.strokePaints) ?? solidColor(node.fillPaints) ?? MARKER_COLORS[0].value;
   const stroke = createStroke(

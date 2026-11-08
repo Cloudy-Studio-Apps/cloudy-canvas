@@ -8,7 +8,7 @@ import type { FigJamPlacement } from "./convert-figjam-node.types";
  * around it (counted in the warnings).
  */
 export function nodeRect(node: FigNode, { world, ctx }: FigJamPlacement): Rect {
-  if (!isAxisAligned(world)) ctx.warnings.add("rotated items were straightened");
+  if (!isAxisAligned(world)) ctx.warnings.add("rotated");
   const size = node.size ?? { x: 0, y: 0 };
   return roundRect(boxOf(world, size.x, size.y));
 }

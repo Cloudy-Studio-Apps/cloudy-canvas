@@ -1,5 +1,6 @@
 import { joinTokenColor, type TokenValue, type VariableType } from "@canvas";
-import { hexOf, type FigImportContext, type FigVariableData } from "@canvas/figma";
+import { hexOf, type FigVariableData } from "@canvas/figma";
+import type { FigmaContext } from "../../figma-warning.types";
 
 import { figExpression } from "./fig-expression";
 
@@ -22,13 +23,13 @@ export function figVariableType(type: string | undefined): VariableType | null {
  */
 export function figVariableValue(
   data: FigVariableData | undefined,
-  ctx: FigImportContext,
+  ctx: FigmaContext,
 ): TokenValue | null {
   const value = data?.value;
   switch (data?.dataType) {
     case "ALIAS": {
       const id = ctx.tokenId(value?.alias?.guid);
-      if (!id) ctx.warnings.add("variables aliasing a library's variables lost those values");
+      if (!id) ctx.warnings.add("libraryAlias");
       return id ? { alias: id } : null;
     }
     case "COLOR":
@@ -45,10 +46,10 @@ export function figVariableValue(
       const expr =
         data.resolvedDataType === "FLOAT" ? figExpression(value?.expressionValue, ctx) : null;
       if (expr) return { expr };
-      ctx.warnings.add("variable expressions Cloudy Canvas doesn't have were left out");
+      ctx.warnings.add("expression");
       return null;
     }
   }
-  ctx.warnings.add(`${(data?.dataType ?? "unknown").toLowerCase()} variable values were left out`);
+  ctx.warnings.add("variableValue", { type: (data?.dataType ?? "unknown").toLowerCase() });
   return null;
 }

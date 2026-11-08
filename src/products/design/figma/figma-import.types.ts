@@ -1,4 +1,7 @@
 import type { CanvasElement, TokenRecord } from "@canvas";
+import type { ImportWarning } from "@canvas/figma";
+
+import type { FigmaWarning } from "./figma-warning.types";
 
 /** A Figma file converted to a design's content, before it goes into a document. */
 export interface FigmaImport {
@@ -13,13 +16,14 @@ export interface FigmaImport {
   tokens: TokenRecord[];
   /** Image files by the asset ids the elements' image paints use. */
   assets: ReadonlyMap<string, Uint8Array>;
-  /** What couldn't be brought over as it was, one line per kind of loss. */
-  warnings: string[];
+  /** What couldn't be brought over as it was, per kind of loss: codes, worded on the main thread. */
+  warnings: ImportWarning<FigmaWarning>[];
 }
 
 /** A design document made from a Figma file, and what its import reported. */
 export interface FigmaDesign<D> {
   doc: D;
   name: string | null;
+  /** What couldn't be brought over as it was, one line per kind of loss, in the user's language. */
   warnings: string[];
 }
