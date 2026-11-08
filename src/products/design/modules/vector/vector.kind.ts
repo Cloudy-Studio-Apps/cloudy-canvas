@@ -30,6 +30,7 @@ import {
   regionShapes,
   scaleNetwork,
   type FlipAxis,
+  type ImagePaint,
   type NodeBuildContext,
   type NodeGeometry,
   type VectorNetwork,
@@ -102,6 +103,16 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
       const data = el.network.regions[region];
       return !!data && visible(regionPaints(data, el)) && pointInPath(shape, local);
     });
+  }
+
+  /** Its areas' own image fills count too, so copies and exports carry their pictures. */
+  override assets(el: VectorElement): string[] {
+    return [...super.assets(el), ...regionImages(el).map((paint) => paint.assetId)];
+  }
+
+  /** An area showing a picture flips by a mirrored drawing too, as a layer's picture does. */
+  override mirrorsOnFlip(el: VectorElement): boolean {
+    return super.mirrorsOnFlip(el) || regionImages(el).length > 0;
   }
 
   /** Its points and curves stretch with its box. */
@@ -202,4 +213,11 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
       strokeJoin: el.strokeJoin ?? "round",
     };
   }
+}
+
+/** The image paints of the vector's areas' own fills. */
+function regionImages(el: VectorElement): ImagePaint[] {
+  return el.network.regions.flatMap((region) =>
+    (region.fills ?? []).filter((paint): paint is ImagePaint => paint.type === "image"),
+  );
 }

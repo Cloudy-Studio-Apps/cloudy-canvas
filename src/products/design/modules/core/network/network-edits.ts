@@ -276,7 +276,9 @@ export function toggleSmooth(net: VectorNetwork, vertex: number): VectorNetwork 
 }
 
 /**
- * Fills the area `loop` encloses, or unfills it when it's already a region (the paint bucket).
+ * Fills the area `loop` encloses, or unfills it when it's already a region (the paint bucket). A
+ * region emptied of its own fills (`fills: []`, e.g. from Figma) looks unfilled, so it's filled
+ * again with the layer's fills instead.
  */
 export function toggleRegion(net: VectorNetwork, loop: readonly number[]): VectorNetwork {
   const next = copy(net);
@@ -285,7 +287,10 @@ export function toggleRegion(net: VectorNetwork, loop: readonly number[]): Vecto
   const index = next.regions.findIndex(
     (region) => region.loops.length === 1 && same(region.loops[0]!),
   );
-  if (index >= 0) next.regions.splice(index, 1);
+  const found = next.regions[index];
+  if (found?.fills?.length === 0)
+    next.regions[index] = { loops: found.loops, windingRule: found.windingRule };
+  else if (found) next.regions.splice(index, 1);
   else next.regions.push({ loops: [[...loop]], windingRule: "nonzero" });
   return next;
 }
