@@ -1,33 +1,37 @@
 import type { ImportFile } from "@canvas";
-import { baseName } from "./external-texture";
-import { findFile } from "./find-file";
-import type { SiblingReader } from "./import-model.types";
 import { toText } from "./bytes";
+import { baseName, safeDecode } from "./external-texture";
+import { findFile } from "./find-file";
+import type { GltfFiles, GltfJson } from "./gltf-files.types";
+import { missingMaterials } from "./gltf-missing";
+import type { SiblingReader } from "./import-model.types";
 
 /**
  * The files a `.gltf` refers to (its buffers and images), found like textures are, by lower-case
- * name. A missing buffer is an error (the model can't be read without it); a missing picture only
- * leaves its texture missing.
+ * name, and which materials refer to a picture that wasn't found (read from the glTF's JSON, since
+ * the loader can't tell). A missing buffer is an error (the model can't be read without it).
  */
 export async function gltfFiles(
   gltf: Uint8Array,
   others: readonly ImportFile[],
   readSibling: SiblingReader | null,
-): Promise<Map<string, Uint8Array>> {
-  let json: { buffers?: { uri?: string }[]; images?: { uri?: string }[] };
+): Promise<GltfFiles> {
+  let json: GltfJson;
   try {
-    json = JSON.parse(toText(gltf)) as typeof json;
+    json = JSON.parse(toText(gltf)) as GltfJson;
   } catch {
     throw new Error("The glTF file isn't valid JSON");
   }
   const files = new Map<string, Uint8Array>();
+  const notFound = new Map<number, string>();
   const fetchAll = async (uris: (string | undefined)[], required: boolean) => {
-    for (const uri of uris) {
+    for (const [index, uri] of uris.entries()) {
       if (!uri || uri.startsWith("data:")) continue;
-      const name = decodeURIComponent(uri);
+      const name = safeDecode(uri);
       const bytes = await findFile(name, others, readSibling);
       if (bytes) files.set(baseName(name).toLowerCase(), bytes);
       else if (required) throw new Error(`The glTF file needs "${name}", which wasn't found`);
+      else notFound.set(index, name);
     }
   };
   await fetchAll(
@@ -38,5 +42,5 @@ export async function gltfFiles(
     (json.images ?? []).map((i) => i.uri),
     false,
   );
-  return files;
+  return { files, missing: missingMaterials(json, notFound) };
 }

@@ -12,8 +12,9 @@ export interface ModelRotation {
 }
 
 /**
- * One texture the model asks for. Missing is `!embedded && assetId === null`: the file named by
- * `file` was not found next to the model.
+ * One material of the model, which a texture can be assigned to. Untextured is `file === null &&
+ * !embedded` (the material keeps its own look until one is assigned). Missing is
+ * `file !== null && !embedded && assetId === null`: the model names a file that was not found.
  */
 export interface ModelTextureSlot {
   /** The slot's name (e.g. a material's map). */
@@ -92,4 +93,6 @@ export interface ModelSource {
   format: ModelFormat;
   /** Slot name to image bytes. */
   textures: ReadonlyMap<string, Uint8Array>;
+  /** Slots whose named file was not found; their materials are shown neutral gray. */
+  missing: readonly string[];
 }

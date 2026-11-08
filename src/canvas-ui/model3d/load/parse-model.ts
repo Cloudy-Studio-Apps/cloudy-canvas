@@ -1,5 +1,6 @@
 import type { LoadingManager, Object3D } from "three";
 import type { ModelFormat } from "@canvas";
+import { collectMaterials, GLTF_INDEX } from "./collect-materials";
 import { toArrayBuffer, toText } from "./bytes";
 import type { ThreeKit } from "./load-three.types";
 import { createModelManager } from "./model-manager";
@@ -38,6 +39,7 @@ async function build(
     case "glb":
     case "gltf": {
       const gltf = await new kit.GLTFLoader(manager).parseAsync(toArrayBuffer(model), "");
+      tagMaterials(gltf.scene, gltf.parser.associations);
       return gltf.scene;
     }
     case "fbx":
@@ -52,4 +54,12 @@ async function build(
 
 function describe(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
+}
+
+/** Remembers each material's index in the glTF (`GLTF_INDEX`), which the file's JSON speaks in. */
+function tagMaterials(scene: Object3D, associations: Map<object, { materials?: number }>): void {
+  for (const { material } of collectMaterials(scene, false)) {
+    const index = associations.get(material)?.materials;
+    if (index !== undefined) material.userData[GLTF_INDEX] = index;
+  }
 }

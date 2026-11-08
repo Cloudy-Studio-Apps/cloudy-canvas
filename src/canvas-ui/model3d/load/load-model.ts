@@ -1,7 +1,7 @@
 import type { Material, Mesh, MeshStandardMaterial, Object3D } from "three";
 import type { ModelSource } from "@canvas";
 import { collectMaterials } from "./collect-materials";
-import { disposeObject } from "./dispose-object";
+import { disposeMaterial, disposeObject } from "./dispose-object";
 import { externalFileOf } from "./external-texture";
 import { loadThree } from "./load-three";
 import type { LoadedModel } from "./load-model.types";
@@ -12,7 +12,8 @@ const GRAY = 0xb0b0b0;
 
 /**
  * Builds the model to show: the textures of the source go on the materials of the same name as
- * their `map`; a material whose picture is missing (or an OBJ with no picture) is a neutral gray.
+ * their `map`; a material whose picture is missing (`source.missing`) is a neutral gray, and an
+ * untextured one keeps its own look.
  * Throws `Error` when the model can't be parsed. Call `dispose` when it isn't shown any more.
  */
 export async function loadModel(source: ModelSource): Promise<LoadedModel> {
@@ -25,6 +26,7 @@ export async function loadModel(source: ModelSource): Promise<LoadedModel> {
   const { object } = parsed;
   const urls: string[] = [];
   try {
+    const missing = new Set(source.missing);
     const bare = source.format === "obj" && !source.mtl;
     for (const { slot, material } of collectMaterials(object, bare)) {
       const bytes = source.textures.get(slot);
@@ -32,10 +34,14 @@ export async function loadModel(source: ModelSource): Promise<LoadedModel> {
         const { texture, url } = await textureFromBytes(kit, bytes);
         urls.push(url);
         const lit = material as Material & { map?: unknown; color?: { set(c: number): void } };
+        (lit.map as { dispose?(): void } | undefined)?.dispose?.();
         lit.map = texture;
         lit.color?.set(0xffffff);
         material.needsUpdate = true;
-      } else if (bare || externalFileOf((material as { map?: { image?: unknown } }).map?.image)) {
+      } else if (
+        missing.has(slot) ||
+        externalFileOf((material as { map?: { image?: unknown } }).map?.image)
+      ) {
         replaceWithGray(object, material, kit.THREE.MeshStandardMaterial);
       }
     }
@@ -70,5 +76,5 @@ function replaceWithGray(
       mesh.material = mesh.material.map((m: Material) => (m === old ? gray : m));
     }
   });
-  old.dispose();
+  disposeMaterial(old);
 }

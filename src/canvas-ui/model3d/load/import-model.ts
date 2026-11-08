@@ -27,15 +27,18 @@ export async function importModel(
   const kit = await loadThree();
 
   const mtl = format === "obj" ? await findMtl(main, others, readSibling) : null;
-  const files = format === "gltf" ? await gltfFiles(main.data, others, readSibling) : undefined;
-  const parsed = await parseModel(kit, { format, model: main.data, mtl, files });
+  const gltf = format === "gltf" ? await gltfFiles(main.data, others, readSibling) : null;
+  const parsed = await parseModel(kit, { format, model: main.data, mtl, files: gltf?.files });
   try {
     const slots = await resolveTextures(
-      slotsOf(parsed.object, format === "obj" && !mtl),
+      slotsOf(parsed.object, format === "obj" && !mtl, gltf?.missing),
       others,
       readSibling,
     );
-    const model = format === "gltf" ? await repackGltf(kit, parsed.object) : main.data;
+    const model =
+      format === "gltf"
+        ? await repackGltf(kit, parsed.object, gltf?.missing ?? new Map())
+        : main.data;
     const camera = new kit.THREE.PerspectiveCamera(35, 1, 0.1, 1000);
     const { aspect } = frameModel(parsed.object, camera, DEFAULT_MODEL_VIEW);
     const totalBytes =

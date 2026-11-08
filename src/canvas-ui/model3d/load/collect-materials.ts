@@ -1,6 +1,9 @@
 import type { Material, Mesh, Object3D } from "three";
 import type { MaterialRef } from "./collect-materials.types";
 
+/** Where a glTF material's index is kept in its `userData`. */
+export const GLTF_INDEX = "gltfMaterial";
+
 /** The slot name of an OBJ that has no material file. */
 export const BARE_SLOT = "Model";
 

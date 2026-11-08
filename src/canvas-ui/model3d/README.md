@@ -10,13 +10,15 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   throws an `Error` when it can't be parsed; `loadModel(source)` builds the three.js object to show
   from stored assets (`ModelSource`) and returns it with a `dispose`. Formats: GLB, glTF, OBJ
   (+ `.mtl`) and FBX. A `.gltf` is re-packed as one GLB on import (its buffers and pictures
-  resolved first), `format` staying `gltf`. A slot is one per material with a texture (an OBJ with
-  no `.mtl` has one called `Model`); a texture inside the model is `embedded`. A texture file is
+  resolved first), `format` staying `gltf`. A slot is one per material (an OBJ with no `.mtl`
+  has one called `Model`); a material with no texture is untextured (`file: null`, keeps its own
+  look), and only a slot whose `file` wasn't found is missing (`ModelSource.missing`, drawn gray); a texture inside the model is `embedded`. A texture file is
   looked for in this order: embedded, next to the model on disk (`siblingReader(path)` over
   `readLocalFile`; any failure is "not there"), then the other files picked or dropped with the
   model, by name regardless of case; else `data: null` (listed as missing, drawn gray). Files a
   loader asks for that were not given are answered by a stand-in picture whose URL names the file
-  (`external-texture.ts`), which is how missing ones are told apart.
+  (`external-texture.ts`, a 1x1 PNG), which is how missing ones are told apart; a `.gltf`'s are read
+  from its JSON (`gltf-files.ts`), since its loader gives no URL back.
 - **The lazy rule**: `load/load-three.ts` is the only file that imports `three` and its loaders at
   run time, with dynamic `import()`, memoized (`loadThree`). Everything else uses `import type`, and
   `canvas/` never names three, so no one who never opens a model pays for it at startup or in the

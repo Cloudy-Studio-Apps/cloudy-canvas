@@ -1,6 +1,6 @@
 import type { ThreeKit } from "./load-three.types";
 import type { ModelManager } from "./model-manager.types";
-import { baseName, externalUrl } from "./external-texture";
+import { baseName, externalUrl, safeDecode } from "./external-texture";
 
 /**
  * A loading manager that serves the files it was given (by lower-case name) from blob URLs and
@@ -18,7 +18,7 @@ export function createModelManager(
 
   manager.setURLModifier((url) => {
     if (url.startsWith("data:") || url.startsWith("blob:")) return url;
-    const name = baseName(decodeURIComponent(url));
+    const name = baseName(safeDecode(url));
     const bytes = files.get(name.toLowerCase());
     if (!bytes) return externalUrl(name);
     const blobUrl = URL.createObjectURL(new Blob([bytes as BlobPart]));
