@@ -36,3 +36,4 @@ export { pickPluginFolder } from "./plugin-folder-dialog";
 export { pickFolder } from "./pick-folder";
 export { pluginStorage } from "./plugin-storage";
 export { openFile } from "./open-file";
+export { projectFs } from "./project-fs";

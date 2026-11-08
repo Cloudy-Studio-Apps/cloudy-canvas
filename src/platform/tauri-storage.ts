@@ -7,7 +7,6 @@ import {
   readTextFile,
   remove,
   rename,
-  writeFile,
   writeTextFile,
 } from "@tauri-apps/plugin-fs";
 
@@ -26,6 +25,7 @@ import {
 } from "@shared/core";
 import { renameWithRetry } from "./rename-with-retry";
 import type { IndexEdit } from "./tauri-storage.types";
+import { writeAtomic } from "./write-atomic";
 
 /** Recent files index, kept in the app data folder. */
 const INDEX_FILE = "recent-files.json";
@@ -250,12 +250,6 @@ function fileEntry(
     updatedAt: now,
     formatVersion: CURRENT_FORMAT_VERSION,
   };
-}
-
-/** Writes beside the file and swaps it in, so a failed save never leaves half a file. */
-async function writeAtomic(path: string, data: Uint8Array): Promise<void> {
-  await writeFile(`${path}.tmp`, data);
-  await renameWithRetry(`${path}.tmp`, path);
 }
 
 /** Whether the list is the only way back to a file: a draft, or anything on Android. */

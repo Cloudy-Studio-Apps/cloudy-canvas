@@ -18,6 +18,8 @@
     "fs:allow-mkdir",
     "fs:allow-rename",
     "fs:allow-remove",
+    "fs:allow-stat",
+    "fs:allow-copy-file",
     "clipboard-manager:allow-read-text",
     "clipboard-manager:allow-read-image",
     "clipboard-manager:allow-write-text",
