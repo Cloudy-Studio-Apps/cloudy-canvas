@@ -7,6 +7,7 @@ import { DESIGN_PROTOTYPE } from "../../model";
 import { t } from "../../prototype.i18n";
 import { PLATFORM_ICONS } from "../flows-tab/platform-icons";
 import { usePrototypePage } from "../hooks/use-prototype-page";
+import { usePlayerStore } from "../player/player-store";
 import { usePrototypeViewStore } from "../stores/prototype-view-store";
 import { DeviceFields } from "./device-fields";
 import { InteractionRow } from "./interaction-row";
@@ -15,6 +16,7 @@ import type { FlowPanelProps } from "./flow-panel.types";
 /** The Prototype panel of a picked flow: name, start, device, hotspots; Play and Delete. */
 export function FlowPanel({ id }: FlowPanelProps) {
   const prototype = useService(DESIGN_PROTOTYPE);
+  const open = usePlayerStore((state) => state.open);
   const { screens, flows } = usePrototypePage();
   const flow = flows.find((candidate) => candidate.id === id);
   if (!flow) return null;
@@ -66,8 +68,7 @@ export function FlowPanel({ id }: FlowPanelProps) {
             checked={flow.hints}
             onChange={(hints) => prototype.updateFlow(flow.id, { hints })}
           />
-          {/* The player arrives later: until then it can't be played. */}
-          <Button variant="outline" size="sm" disabled>
+          <Button variant="outline" size="sm" onClick={() => open({ flow: flow.id })}>
             <Play />
             {t("flows.play", { name: flow.name })}
           </Button>

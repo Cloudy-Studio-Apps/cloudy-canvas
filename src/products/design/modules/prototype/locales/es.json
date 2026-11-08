@@ -11,7 +11,9 @@
     "addFlow": "Añadir inicio de flujo",
     "addFlowHint": "Empieza un flujo en la pantalla seleccionada",
     "connect": "Conectar",
-    "connectHint": "Arrastra desde una capa hasta una pantalla para enlazarlas. Suelta en el lienzo vacío para Atrás."
+    "connectHint": "Arrastra desde una capa hasta una pantalla para enlazarlas. Suelta en el lienzo vacío para Atrás.",
+    "play": "Reproducir",
+    "playHint": "Reproduce un flujo en su dispositivo: el seleccionado, o el que empieza en la pantalla seleccionada"
   },
   "connect": {
     "linked": "Se enlazó “{layer}” con {screen}",
@@ -38,7 +40,6 @@
     "empty": "Selecciona una capa para añadir una interacción, una pantalla para su inicio de flujo, o un flujo a la izquierda."
   },
   "canvas": {
-    "flagTitle": "Seleccionar {name}",
     "title": "Lienzo",
     "showLinks": "Mostrar enlaces",
     "all": "Todos",
@@ -168,6 +169,24 @@
       "tablet": "Se reproduce en una tableta, con toques en lugar de clics.",
       "desktop": "Se reproduce en una ventana de app con su barra de título.",
       "web": "Se reproduce en un navegador con barra de direcciones; Abrir enlace abre una pestaña."
+    }
+  },
+  "player": {
+    "label": "Reproduciendo “{name}”",
+    "flow": "Flujo",
+    "back": "Atrás",
+    "restart": "Reiniciar",
+    "hints": "Mostrar las zonas activas",
+    "noFlow": "Primero añade un flujo: selecciona una pantalla y pulsa la bandera",
+    "linkFailed": "No se pudo abrir el enlace",
+    "drawFailed": "No se pudo dibujar la pantalla",
+    "failed": "No se pudo reproducir esa interacción",
+    "foot": {
+      "tap": "Toca la pantalla para seguir sus enlaces; un toque fallido los muestra",
+      "tapPlain": "Toca la pantalla para seguir sus enlaces",
+      "click": "Haz clic en la pantalla para seguir sus enlaces; un clic fallido los muestra",
+      "clickPlain": "Haz clic en la pantalla para seguir sus enlaces",
+      "keys": "{restart} reinicia · {close} cierra"
     }
   }
 }

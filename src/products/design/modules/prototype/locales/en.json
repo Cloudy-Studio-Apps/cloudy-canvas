@@ -11,7 +11,9 @@
     "addFlow": "Add flow start",
     "addFlowHint": "Start a flow at the selected screen",
     "connect": "Connect",
-    "connectHint": "Drag from a layer onto a screen to link them. Drop on empty canvas for Back."
+    "connectHint": "Drag from a layer onto a screen to link them. Drop on empty canvas for Back.",
+    "play": "Play",
+    "playHint": "Play a flow in its device: the selected one, or the one the selected screen starts"
   },
   "connect": {
     "linked": "Linked “{layer}” to {screen}",
@@ -38,7 +40,6 @@
     "empty": "Select a layer to add an interaction, a screen for its flow start, or a flow on the left."
   },
   "canvas": {
-    "flagTitle": "Select {name}",
     "title": "Canvas",
     "showLinks": "Show links",
     "all": "All",
@@ -168,6 +169,24 @@
       "tablet": "Plays in a tablet, taps instead of clicks.",
       "desktop": "Plays in an app window with its title bar.",
       "web": "Plays in a browser with an address bar; Open link opens a tab."
+    }
+  },
+  "player": {
+    "label": "Playing “{name}”",
+    "flow": "Flow",
+    "back": "Back",
+    "restart": "Restart",
+    "hints": "Show hotspots",
+    "noFlow": "Add a flow first: select a screen and press the flag",
+    "linkFailed": "Couldn't open the link",
+    "drawFailed": "Couldn't draw the screen",
+    "failed": "Couldn't play that interaction",
+    "foot": {
+      "tap": "Tap the screen to follow its links; a missed tap shows them",
+      "tapPlain": "Tap the screen to follow its links",
+      "click": "Click the screen to follow its links; a missed click shows them",
+      "clickPlain": "Click the screen to follow its links",
+      "keys": "{restart} restarts · {close} closes"
     }
   }
 }

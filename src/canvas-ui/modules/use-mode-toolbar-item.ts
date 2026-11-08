@@ -29,6 +29,7 @@ export function useModeToolbarItem(
       badge: undefined,
       active: tool === item.tool,
       disabled: undefined,
+      primary: false,
       run: () => engine.setTool(item.tool),
     };
   }
@@ -41,6 +42,7 @@ export function useModeToolbarItem(
       badge: item.badge,
       active: item.activeWhen !== undefined && tool === item.activeWhen.tool,
       disabled: item.disabled,
+      primary: item.primary ?? false,
       run: () => engine.runHostAction(item.command),
     };
   }
@@ -52,6 +54,7 @@ export function useModeToolbarItem(
     badge: item.badge,
     active: item.active,
     disabled: item.disabled,
+    primary: false,
     run: item.run,
   };
 }

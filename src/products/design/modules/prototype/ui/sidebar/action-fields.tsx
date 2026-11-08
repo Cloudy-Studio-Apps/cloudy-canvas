@@ -1,19 +1,10 @@
 import { CommitInput } from "@canvas-ui";
 import { SelectField } from "@shared/ui/kit";
+import { isWebAddress } from "../../model";
 import { PROTOTYPE_ACTIONS, PROTOTYPE_TARGET_ACTIONS } from "../../prototype.constants";
 import { t } from "../../prototype.i18n";
 import { InteractionRow } from "./interaction-row";
 import type { ActionFieldsProps } from "./interaction-fields.types";
-
-/** Whether an address is one the player opens: `http:` or `https:`. */
-function isWebAddress(url: string): boolean {
-  try {
-    const { protocol } = new URL(url);
-    return protocol === "http:" || protocol === "https:";
-  } catch {
-    return false;
-  }
-}
 
 /**
  * The action's select, and what it needs: the screen to show (`navigate`, `overlay`, `swap`;

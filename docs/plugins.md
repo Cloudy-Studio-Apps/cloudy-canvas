@@ -186,6 +186,7 @@ Build panels, dialogs and menus with `api.ui.kit`, and color them only with the 
 | Component                                                    | For                                                                                                                               |
 | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
 | `IconButton`                                                 | a square icon button with its label (and shortcut) in a tooltip; `active` for toggles; sizes `xs` (panel rows) to `lg` (toolbars) |
+| `ShortcutTooltip`                                            | the tooltip `IconButton` shows (label, shortcut, a line under them), for any other control                                        |
 | `SegmentedControl`                                           | one choice out of a few, as joined buttons (text or `iconOnly`)                                                                   |
 | `Field`                                                      | a labelled control with a hint or an error; `layout: "inline"` for settings rows                                                  |
 | `SelectField`, `CheckboxField`, `SwitchField`                | a labelled select (`layout` `bare`, `inline` or `stacked`), checkbox or switch row of a panel                                     |

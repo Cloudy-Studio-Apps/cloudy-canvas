@@ -18,6 +18,7 @@ export * from "./section";
 export * from "./segmented-control";
 export * from "./select-field";
 export * from "./selectable-card";
+export * from "./shortcut-tooltip";
 export * from "./swatch";
 export * from "./switch-field";
 export * from "./toolbar";

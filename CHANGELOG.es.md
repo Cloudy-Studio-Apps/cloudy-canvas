@@ -11,7 +11,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   o arrastra desde una capa hasta una pantalla para enlazarlas, y unas flechas en el lienzo muestran
   cada enlace. Los flujos empiezan en una pantalla y se preparan para un dispositivo, como un
   teléfono, una tableta, una app de escritorio o un sitio web, así que un archivo puede tener los
-  flujos de una app y los de un sitio web a la vez.
+  flujos de una app y los de un sitio web a la vez. Reproduce un flujo para probarlo en su
+  dispositivo, un teléfono, una tableta, una ventana de escritorio o un navegador: los clics y los
+  toques siguen los enlaces con sus animaciones, las superposiciones se abren sobre la pantalla y
+  un clic fallido muestra dónde están los enlaces.
 - El esquema de la base de datos ahora también se exporta a Java: clases simples con un campo por
   columna y los objetos y listas relacionados, o entidades JPA para Spring Boot 4 con solo las
   anotaciones que Spring no da por supuestas. Ambos se escriben para copiarlos, sin paquetes ni
