@@ -1,7 +1,7 @@
 import type { CanvasElement, CanvasPointer, Tool, ToolContext } from "@canvas";
 
 import type { DesignToolOptions } from "../../../design-options.types";
-import { screenOf } from "../model";
+import { DESIGN_PROTOTYPE, screenOf } from "../model";
 import { PROTOTYPE_TOOLS } from "../prototype.constants";
 import { ConnectGesture } from "./connect-gesture";
 
@@ -46,8 +46,15 @@ export class ConnectTool implements Tool {
     this.ctx.setCursor(this.cursor);
   }
 
-  /** Esc mid-drag drops the link; otherwise it does what it always does. */
+  /**
+   * Esc mid-drag drops the link, otherwise it does what it always does. Delete clears the
+   * selection's interactions (the context menu's "Remove interactions"); layers are never deleted.
+   */
   onCommand(command: string): boolean {
+    if (command === "deleteSelection") {
+      this.ctx.service(DESIGN_PROTOTYPE).removeInteractions(this.ctx.getSelection());
+      return true;
+    }
     if (command !== "cancel" || !this.gesture.active) return false;
     this.gesture.cancel();
     return true;

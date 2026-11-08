@@ -96,4 +96,5 @@ export const PROTOTYPE_COMMANDS = {
   toggle: "prototype.toggle",
   addFlow: "prototype.addFlow",
   play: "prototype.play",
+  removeInteractions: "prototype.removeInteractions",
 } as const;

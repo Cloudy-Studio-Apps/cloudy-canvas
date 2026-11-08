@@ -4,6 +4,7 @@ import { defineDesignMode } from "@design/ui/modules";
 import { ConnectTool, PROTOTYPE_ALLOWED_COMMANDS, PrototypeSelectTool } from "./mode";
 import { PROTOTYPE_COMMANDS, PROTOTYPE_MODE_ID, PROTOTYPE_TOOLS } from "./prototype.constants";
 import { addFlowAtSelection } from "./ui/add-flow";
+import { removeSelectionInteractions } from "./ui/remove-interactions";
 import { ConnectHandle } from "./ui/canvas/connect-handle";
 import { DragLine } from "./ui/canvas/drag-line";
 import { LinksLayer } from "./ui/canvas/links-layer";
@@ -42,6 +43,12 @@ export const prototypeMode = defineDesignMode({
     [`tool.${PROTOTYPE_TOOLS.connect}`]: [{ key: "l" }],
     [PROTOTYPE_COMMANDS.addFlow]: [{ key: "f", shift: true }],
     [PROTOTYPE_COMMANDS.play]: [{ key: "Enter", mod: true, label: "↵" }],
+    // Delete never reaches the engine's `deleteSelection` here (it isn't an allowed command): the
+    // mode's layer takes the keys for every tool, the shared hand included.
+    [PROTOTYPE_COMMANDS.removeInteractions]: [
+      { key: "Delete", label: "Del" },
+      { key: "Backspace", label: "⌫" },
+    ],
   },
   // Delete clears interactions here; layers are never deleted.
   commandLabels: { deleteSelection: t("mode.removeInteractions") },
@@ -50,6 +57,11 @@ export const prototypeMode = defineDesignMode({
       id: PROTOTYPE_COMMANDS.addFlow,
       label: t("toolbar.addFlow"),
       run: addFlowAtSelection,
+    },
+    {
+      id: PROTOTYPE_COMMANDS.removeInteractions,
+      label: t("mode.removeInteractions"),
+      run: removeSelectionInteractions,
     },
     { id: PROTOTYPE_COMMANDS.play, label: t("toolbar.play"), run: playFromSelection },
   ],
