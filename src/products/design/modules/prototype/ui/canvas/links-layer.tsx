@@ -22,18 +22,17 @@ const MIN_SCREEN_SIZE = 48;
  */
 export function LinksLayer() {
   const engine = useDesignEngine();
-  const { flows, screens, version } = usePrototypePage();
+  const { flows, screens } = usePrototypePage();
   const selection = usePrototypeSelection();
   const showLinks = usePrototypeViewStore((state) => state.showLinks);
   const [, redraw] = useReducer((n: number) => n + 1, 0);
   useEffect(() => engine.onViewChange(redraw), [engine]);
 
-  // The nodes with links are read when the document changes, not on every pan or zoom.
+  // The nodes with links are read when the document or the page changes (`screens` is read again
+  // for either), not on every pan or zoom.
   const links = useMemo(
     () => collectLinks(engine, new Set(screens.map((screen) => screen.id))),
-    // `version` is what says the document changed (`screens` changes with it).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [engine, version],
+    [engine, screens],
   );
   const drawn: ReactElement[] = [];
   for (const link of links) {
