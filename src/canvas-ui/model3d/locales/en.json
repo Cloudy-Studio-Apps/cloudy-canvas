@@ -1,0 +1,7 @@
+{
+  "import": {
+    "title": "Import 3D model",
+    "failed": "Couldn't import the model",
+    "unsupported": "This file type isn't a supported 3D model."
+  }
+}
