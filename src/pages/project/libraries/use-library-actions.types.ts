@@ -1,5 +1,5 @@
 import type { FirstLibrarySource } from "@pages/shared/projects";
-import type { FileInfo, LibraryEntry, ProjectManifest, ProjectRecord } from "@shared/core";
+import type { LibraryEntry, ProjectManifest, ProjectRecord } from "@shared/core";
 import type { UseProject } from "../use-project.types";
 import type { LibrarySummary } from "./library-summary.types";
 import type { ProjectLibraryDocs } from "./use-project-library-docs.types";
@@ -26,8 +26,11 @@ export interface LibraryActions {
   addAssets: (library: LibrarySummary) => Promise<void>;
   /** Asks for a design, board or tokens JSON and writes its variables and styles into the library. */
   importStyles: (library: LibrarySummary, kind: "file" | "tokens") => Promise<void>;
-  /** Opens the project's newest file (or a new design) to edit the library's colors and styles. */
-  editInFile: () => void;
+  /**
+   * Opens the project's newest design using the library (or a new design that uses it) to edit
+   * the library's colors and styles.
+   */
+  editInFile: (library: LibrarySummary) => void;
   /** Puts a restored library file back in the manifest. */
   adoptRestored: (rel: string, from: string) => Promise<void>;
 }
@@ -37,8 +40,6 @@ export interface LibraryActionsOptions {
   manifest: ProjectManifest;
   project: UseProject;
   libs: ProjectLibraryDocs;
-  /** The project's newest files. */
-  recent: FileInfo[];
   /** Files changed on disk (the trash too): reads again. */
   bump: () => void;
 }

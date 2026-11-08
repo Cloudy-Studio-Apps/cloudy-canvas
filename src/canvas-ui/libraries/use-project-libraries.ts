@@ -32,6 +32,8 @@ export function useProjectLibraries<O extends object>(
   const { doc } = engine;
   const [params] = useSearchParams();
   const [newProject] = useState(() => (file.isNew ? params.get("project") : null));
+  // The libraries a new file uses when it shouldn't take all (`libraries=<id>,<id>`).
+  const [newLibraries] = useState(() => (file.isNew ? params.get("libraries") : null));
   const path = useRef(file.path);
   useEffect(() => {
     path.current = file.path;
@@ -39,9 +41,10 @@ export function useProjectLibraries<O extends object>(
 
   useEffect(() => {
     if (newProject && !doc.projectLink()) {
-      doc.setProjectLink({ projectId: newProject, libraryIds: "all" });
+      const libraryIds = newLibraries ? newLibraries.split(",").filter(Boolean) : "all";
+      doc.setProjectLink({ projectId: newProject, libraryIds });
     }
-  }, [doc, newProject]);
+  }, [doc, newProject, newLibraries]);
 
   const subscribe = useCallback((listener: () => void) => doc.observeProjectLink(listener), [doc]);
   const linked = useSyncExternalStore(subscribe, () => doc.projectLink()?.projectId ?? null);

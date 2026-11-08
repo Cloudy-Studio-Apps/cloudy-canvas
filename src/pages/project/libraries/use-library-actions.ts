@@ -14,6 +14,7 @@ import {
   pickStylesSource,
   type FirstLibrarySource,
 } from "@pages/shared/projects";
+import { designForLibrary } from "./design-for-library";
 import {
   newLibraryEntry,
   moveLibraryFiles,
@@ -37,7 +38,7 @@ function lastOrder(entries: readonly LibraryEntry[]): string {
 
 /** What can be done with a project's libraries: make, rename, remove, fill, edit in a file. */
 export function useLibraryActions(options: LibraryActionsOptions): LibraryActions {
-  const { record, manifest, project, libs, recent, bump } = options;
+  const { record, manifest, project, libs, bump } = options;
   const { hub, reload } = libs;
   const navigate = useNavigate();
 
@@ -204,17 +205,22 @@ export function useLibraryActions(options: LibraryActionsOptions): LibraryAction
           toast({ title: t("libraries.imported", { count: records.length, name: source.name }) });
         });
       },
-      editInFile: () => {
-        const latest = recent.find((file) => file.projectId === record.id) ?? recent[0];
-        if (!latest) {
-          // The editor links a new design to the project (`project=`) and its libraries.
-          const dir = encodeURIComponent(record.root);
-          void navigate(`/design/${createId()}?dir=${dir}&project=${record.id}`);
-          return;
-        }
+      editInFile: (library) => {
         void attempt(t("libraries.editFailed"), async () => {
-          const file = await useRecentFilesStore.getState().open(latest.path);
-          await navigate(`/${file.type}/${file.id}`);
+          const { id } = library.entry;
+          const latest = await designForLibrary(record.root, record.id, id, manifest.libraries);
+          if (latest) {
+            const file = await useRecentFilesStore.getState().open(latest.path);
+            await navigate(`/${file.type}/${file.id}`);
+            return;
+          }
+          // The editor links a new design to the project (`project=`); one that new files don't
+          // take is listed with the ones they do (`libraries=`), so the design uses it.
+          const dir = encodeURIComponent(record.root);
+          const using = library.entry.autoAdd
+            ? ""
+            : `&libraries=${[...manifest.libraries.filter((l) => l.autoAdd).map((l) => l.id), id].join(",")}`;
+          await navigate(`/design/${createId()}?dir=${dir}&project=${record.id}${using}`);
         });
       },
       adoptRestored: async (rel, from) => {
@@ -236,5 +242,5 @@ export function useLibraryActions(options: LibraryActionsOptions): LibraryAction
         await reload();
       },
     };
-  }, [record, manifest, project, hub, reload, recent, bump, navigate]);
+  }, [record, manifest, project, hub, reload, bump, navigate]);
 }

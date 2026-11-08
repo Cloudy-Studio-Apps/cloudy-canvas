@@ -27,8 +27,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   imágenes y SVG, importa estilos de un archivo, renómbrala o elimínala (queda en la papelera) y
   elige si los archivos nuevos la toman. Contenido muestra un tipo de elemento de todas las
   bibliotecas, la portada del proyecto y la página Proyectos usan los colores de la primera
-  biblioteca, y Editar en un archivo abre tu último archivo para cambiar los colores y estilos de
-  una biblioteca.
+  biblioteca, y Editar en un archivo abre tu último diseño que usa la biblioteca (o uno nuevo) para
+  cambiar sus colores y estilos.
 - Los archivos de un proyecto comparten sus bibliotecas: cada diseño que creas en un proyecto usa
   sus colores, variables y estilos, cada pizarra sus colores, y al editar un color de la biblioteca en un
   archivo se actualizan todos los demás archivos que lo usan, estén abiertos o no. Cada archivo

@@ -38,7 +38,7 @@ export function LibraryPage({ library }: LibraryPageProps) {
           <h2 className="truncate text-lg font-semibold">{entry.name}</h2>
           {meta && <p className="truncate text-xs text-muted-foreground">{meta}</p>}
         </div>
-        <Button variant="outline" size="sm" onClick={libraryActions.editInFile}>
+        <Button variant="outline" size="sm" onClick={() => libraryActions.editInFile(library)}>
           {t("libraries.editInFile")}
         </Button>
         <DropdownMenu>

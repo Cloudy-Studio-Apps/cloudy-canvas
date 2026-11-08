@@ -25,7 +25,7 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   tokens file, add images and SVGs, import styles from a file, rename or delete it (it waits in the
   trash), and choose whether new files take it. Content shows one kind across all libraries, the
   project's cover and the Projects page use the first library's colors, and Edit in a file opens
-  your latest file to change a library's colors and styles.
+  your latest design that uses the library (or a new one) to change its colors and styles.
 - Files in a project share its libraries: every design you make in a project uses the project's
   colors, variables and styles, every board its colors, and editing a library color in one file updates every
   other file that uses it, open or not. A file keeps a copy, so it still looks right when sent

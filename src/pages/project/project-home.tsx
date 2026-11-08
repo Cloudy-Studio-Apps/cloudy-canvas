@@ -75,7 +75,7 @@ function ProjectHomeReady({
   const fileCount = useProjectFileCount(record.root, true);
   const { infoFor, recent } = useProjectRecents(record.root);
   const libs = useProjectLibraryDocs(record);
-  const libraryActions = useLibraryActions({ record, manifest, project, libs, recent, bump });
+  const libraryActions = useLibraryActions({ record, manifest, project, libs, bump });
   const actions = useProjectActions({
     root: record.root,
     projectId: record.id,
