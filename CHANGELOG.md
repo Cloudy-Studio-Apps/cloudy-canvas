@@ -7,6 +7,9 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### New
 
+- A new project starts with a library named Brand system, which you can fill when you create the
+  project: with the variables and styles of a design or a board, or with a tokens file. Start
+  empty if you prefer to build it later.
 - Deleted files go to the project's trash: use Move to trash on a file or folder, or press Delete on
   it, and it waits in the project's Trash tab, with where it was and when it was deleted, until you
   restore it or empty the trash. The project shows how much the trash holds, and nothing is deleted

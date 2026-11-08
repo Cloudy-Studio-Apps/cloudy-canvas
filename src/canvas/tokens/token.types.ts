@@ -43,6 +43,8 @@ export interface ModeDef {
  * and frames may pick another). Axes combine freely; a file starts with one.
  */
 export interface ModeAxisRecord {
+  /** The library it comes from, when mirrored from a project library (see `canvas/libraries`). */
+  libraryId?: string;
   kind: "axis";
   id: string;
   name: string;
@@ -59,6 +61,8 @@ export interface ModeAxisRecord {
  * modes here; opening them moves those modes to an axis (`modes` then stays unset).
  */
 export interface CollectionRecord {
+  /** The library it comes from, when mirrored from a project library (see `canvas/libraries`). */
+  libraryId?: string;
   kind: "collection";
   id: string;
   name: string;
@@ -86,6 +90,8 @@ export type TokenValue =
  * mode uses the default).
  */
 export interface VariableRecord {
+  /** The library it comes from, when mirrored from a project library (see `canvas/libraries`). */
+  libraryId?: string;
   kind: "variable";
   id: string;
   collectionId: string;
@@ -123,6 +129,8 @@ export interface TokenCodeSyntax {
  * modes.
  */
 export interface StyleRecord {
+  /** The library it comes from, when mirrored from a project library (see `canvas/libraries`). */
+  libraryId?: string;
   kind: "style";
   id: string;
   /** e.g. `"text"`. */

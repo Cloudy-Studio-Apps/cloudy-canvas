@@ -54,7 +54,6 @@
     "stylesEmpty": "Nada (vacío)",
     "stylesFile": "Los estilos de un archivo… (.cdesign / .cboard)",
     "stylesTokens": "Un JSON de tokens…",
-    "stylesSoon": "Disponible pronto",
     "cancel": "Cancelar",
     "create": "Crear proyecto",
     "creating": "Creando…",
@@ -62,6 +61,14 @@
     "icon": "Elegir imagen…",
     "iconRemove": "Usar iniciales",
     "iconPick": "Elige el icono del proyecto",
-    "iconHint": "Opcional. Sin imagen, el proyecto muestra sus iniciales."
-  }
+    "iconHint": "Opcional. Sin imagen, el proyecto muestra sus iniciales.",
+    "stylesFileChosen": "Archivo: {name}",
+    "stylesTokensChosen": "Tokens: {name}",
+    "stylesPickFile": "Elige un diseño o un tablero",
+    "stylesPickTokens": "Elige un archivo de tokens",
+    "stylesReadFailed": "No se pudieron leer los estilos de ese archivo",
+    "filterDesignBoard": "Diseños y tableros",
+    "filterJson": "JSON de tokens"
+  },
+  "firstLibrary": "Sistema de marca"
 }

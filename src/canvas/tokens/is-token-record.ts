@@ -38,6 +38,7 @@ export function isTokenRecord(data: unknown): data is TokenRecord {
   if (!isObject(data) || typeof data.id !== "string" || typeof data.order !== "string") {
     return false;
   }
+  if (data.libraryId !== undefined && typeof data.libraryId !== "string") return false;
   if (data.kind === "generator") {
     return (
       typeof data.collectionId === "string" &&

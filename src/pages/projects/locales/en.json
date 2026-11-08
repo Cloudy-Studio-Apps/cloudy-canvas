@@ -54,7 +54,6 @@
     "stylesEmpty": "Nothing (empty)",
     "stylesFile": "A file's styles… (.cdesign / .cboard)",
     "stylesTokens": "A tokens JSON…",
-    "stylesSoon": "Available soon",
     "cancel": "Cancel",
     "create": "Create project",
     "creating": "Creating…",
@@ -62,6 +61,14 @@
     "icon": "Choose image…",
     "iconRemove": "Use initials",
     "iconPick": "Choose the project's icon",
-    "iconHint": "Optional. Without an image the project shows its initials."
-  }
+    "iconHint": "Optional. Without an image the project shows its initials.",
+    "stylesFileChosen": "File: {name}",
+    "stylesTokensChosen": "Tokens: {name}",
+    "stylesPickFile": "Choose a design or board",
+    "stylesPickTokens": "Choose a tokens file",
+    "stylesReadFailed": "That file's styles couldn't be read",
+    "filterDesignBoard": "Designs and boards",
+    "filterJson": "Tokens JSON"
+  },
+  "firstLibrary": "Brand system"
 }

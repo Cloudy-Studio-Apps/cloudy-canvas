@@ -25,6 +25,13 @@ export interface DocumentMeta {
 
 export type DocumentMetaPatch = Partial<DocumentMeta>;
 
+/** The project a file belongs to and which of its libraries the file uses. */
+export interface ProjectLink {
+  projectId: string;
+  /** The libraries used by id, or `"all"` (every library, including ones added later). */
+  libraryIds: string[] | "all";
+}
+
 /** What one edit changed, handed to the document's `AfterEdit` hook. */
 export interface EditedChange {
   /** Ids added or whose fields changed. */

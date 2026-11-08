@@ -7,6 +7,9 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Novedades
 
+- Un proyecto nuevo empieza con una biblioteca llamada Sistema de marca, que puedes rellenar al
+  crear el proyecto: con las variables y los estilos de un diseño o una pizarra, o con un archivo
+  de tokens. Empieza vacía si prefieres construirla más tarde.
 - Lo que borras va a la papelera del proyecto: usa Mover a la papelera en un archivo o carpeta, o
   pulsa Suprimir sobre él, y espera en la pestaña Papelera del proyecto, con dónde estaba y cuándo
   se borró, hasta que lo restaures o vacíes la papelera. El proyecto muestra cuánto guarda la

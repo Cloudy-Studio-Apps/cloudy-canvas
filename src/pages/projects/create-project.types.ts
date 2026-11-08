@@ -1,7 +1,11 @@
 import type { ImageFile } from "@shared/core";
 
-/** Where a new project's first library starts from. */
-export type FirstLibrarySource = "empty" | { fromFile: string } | { fromTokensJson: string };
+/**
+ * Where a new project's first library starts from: nothing, the styles of a `.cdesign`/`.cboard`
+ * (its bytes), or a tokens JSON (its bytes).
+ */
+export type FirstLibrarySource =
+  "empty" | { fromFile: Uint8Array } | { fromTokensJson: Uint8Array };
 
 export interface CreateProjectInput {
   /** Also the project's folder and `.cproject` file name. */

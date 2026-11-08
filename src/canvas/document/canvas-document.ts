@@ -11,6 +11,7 @@ import type {
   DocumentMetaPatch,
   ElementMap,
   Placement,
+  ProjectLink,
   UnregisteredElement,
 } from "./canvas-document.types";
 import { DocumentHistory } from "./document-history";
@@ -41,6 +42,8 @@ export class CanvasDocument {
   private readonly metaMap: Y.Map<string>;
   /** Variables and their collections (`TokenRecord`s) by id, undoable like elements. */
   private readonly tokensMap: Y.Map<unknown>;
+  /** The project link (`ProjectLink`), saved with the file; not an undo step. */
+  private readonly projectMap: Y.Map<unknown>;
   /** Bumps on every change to `tokensMap`, whoever makes it (see `tokensVersion`). */
   private tokensRevision = 0;
   /** What `add` does to new elements first (see `setPlacement`). */
@@ -94,6 +97,7 @@ export class CanvasDocument {
     this.assets = doc.getMap<Uint8Array>("assets");
     this.metaMap = doc.getMap<string>("meta");
     this.tokensMap = doc.getMap<unknown>("tokens");
+    this.projectMap = doc.getMap<unknown>("project");
     this.history = this.createHistory(LOCAL_ORIGIN);
     // Undo, redo and remote updates change maps without going through this class's writes.
     doc.on("beforeObserverCalls", this.forgetChanged);
@@ -400,6 +404,31 @@ export class CanvasDocument {
     return this.tokensRevision;
   }
 
+  // ── Project link ────────────────────────────────────────────────────
+
+  /** The project this file belongs to and the libraries it uses; `null` for a loose file. */
+  projectLink(): ProjectLink | null {
+    const value = this.projectMap.get("link");
+    return isProjectLink(value) ? value : null;
+  }
+
+  /** Links the file to a project (`null` unlinks). Saved with the file, but not an undo step. */
+  setProjectLink(link: ProjectLink | null): void {
+    if (this.readOnly) return;
+    this.doc.transact(() => {
+      if (link)
+        this.projectMap.set("link", { projectId: link.projectId, libraryIds: link.libraryIds });
+      else this.projectMap.delete("link");
+    }, UI_ORIGIN);
+  }
+
+  /** Fires when the project link changes (local edits, remote updates). */
+  observeProjectLink(listener: () => void): () => void {
+    const handler = () => listener();
+    this.projectMap.observe(handler);
+    return () => this.projectMap.unobserve(handler);
+  }
+
   // ── History (the local user's changes only, see `history`) ──────────
 
   /** Ends the current undo step so the next change starts a new one. */
@@ -674,6 +703,16 @@ export class CanvasDocument {
     // Reads are shared: a reader changing one would change everyone's.
     return import.meta.env.DEV ? Object.freeze(el) : el;
   }
+}
+
+function isProjectLink(value: unknown): value is ProjectLink {
+  if (typeof value !== "object" || value === null) return false;
+  const link = value as Partial<ProjectLink>;
+  return (
+    typeof link.projectId === "string" &&
+    (link.libraryIds === "all" ||
+      (Array.isArray(link.libraryIds) && link.libraryIds.every((id) => typeof id === "string")))
+  );
 }
 
 export function compareByIndex(a: CanvasElement, b: CanvasElement): number {

@@ -16,6 +16,7 @@ import { notifyError } from "@shared/stores/toast-store";
 import { createProject } from "../create-project";
 import { useImageUrl, ProjectIcon } from "@pages/shared/projects";
 import { useNewProjectForm } from "../use-new-project-form";
+import type { StylesSourceKind } from "../use-new-project-form.types";
 import type { NewProjectDialogProps } from "./new-project-dialog.types";
 import { t } from "../projects.i18n";
 
@@ -40,7 +41,7 @@ function NewProjectForm({ open, onOpenChange, onCreated }: NewProjectDialogProps
         icon: null,
         iconImage: form.iconImage,
         parent: form.parent,
-        firstLibrary: "empty",
+        firstLibrary: form.firstLibrary,
       });
       onOpenChange(false);
       onCreated(project);
@@ -122,20 +123,31 @@ function NewProjectForm({ open, onOpenChange, onCreated }: NewProjectDialogProps
             </div>
           )}
         </Field>
-        <Field label={t("dialog.styles")}>
+        <Field
+          label={t("dialog.styles")}
+          hint={
+            form.styles.kind === "empty"
+              ? undefined
+              : t(
+                  form.styles.kind === "file"
+                    ? "dialog.stylesFileChosen"
+                    : "dialog.stylesTokensChosen",
+                  { name: form.styles.name },
+                )
+          }
+        >
           {(id) => (
-            <Select value="empty">
+            <Select
+              value={form.styles.kind}
+              onValueChange={(kind) => void form.chooseStyles(kind as StylesSourceKind)}
+            >
               <SelectTrigger id={id} className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="empty">{t("dialog.stylesEmpty")}</SelectItem>
-                <SelectItem value="file" disabled title={t("dialog.stylesSoon")}>
-                  {t("dialog.stylesFile")}
-                </SelectItem>
-                <SelectItem value="tokens" disabled title={t("dialog.stylesSoon")}>
-                  {t("dialog.stylesTokens")}
-                </SelectItem>
+                <SelectItem value="file">{t("dialog.stylesFile")}</SelectItem>
+                <SelectItem value="tokens">{t("dialog.stylesTokens")}</SelectItem>
               </SelectContent>
             </Select>
           )}
