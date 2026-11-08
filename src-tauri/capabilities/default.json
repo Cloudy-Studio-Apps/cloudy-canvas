@@ -40,7 +40,13 @@
     },
     {
       "identifier": "fs:scope",
-      "allow": [{ "path": "$APPDATA" }, { "path": "$APPDATA/**" }, { "path": "**" }]
+      "allow": [
+        { "path": "$APPDATA" },
+        { "path": "$APPDATA/**" },
+        { "path": "**" },
+        { "path": "**/.cloudy" },
+        { "path": "**/.cloudy/**" }
+      ]
     }
   ]
 }
