@@ -1,0 +1,23 @@
+{
+  "label": "Modelo 3D",
+  "description": "Un modelo 3D mostrado como imagen; edítalo en 3D para girarlo.",
+  "commands": {
+    "edit": "Editar en 3D",
+    "convert": "Convertir el modelo 3D a PNG",
+    "place": "Colocar modelo 3D"
+  },
+  "menu": {
+    "edit": "Editar en 3D",
+    "convert": "Convertir a PNG",
+    "place": "Colocar modelo 3D…"
+  },
+  "panel": {
+    "label": "Modelo 3D"
+  },
+  "place": {
+    "failed": "No se pudo colocar el modelo"
+  },
+  "convert": {
+    "failed": "No se pudo convertir el modelo"
+  }
+}

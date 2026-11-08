@@ -35,3 +35,9 @@ _Plain TypeScript both products share. The three.js side (loaders, live view, pi
   (default view; a slot keeps its `file` and `embedded` and gets its stored picture's asset id).
   `MODEL_BASE_SIZE` (400) is the height a model is placed at before it is fit to the view. The
   drop flow is the `importFiles` point (see `clipboard/`); the work is in `canvas-ui/model3d/import/`.
+- **Live flag** (`live-models.ts`): `isModelLive(id)` is true while this user has the model live
+  (`ModelEditLocks.lockLocal` sets it). A kind's `draw`/`drawnFrom` reads it to skip the saved picture
+  under the transparent live view; `useModelEditSession` redraws the element when it flips.
+- **Storing an import** (`store-model.ts`): `storeModel(baker, imp, rect, doc)` bakes the first picture
+  and adds the model, material, textures and picture as assets, returning the `ModelData`; the drop
+  flow and agents' `add_model` both use it (`importedSource` is the `ModelSource` of an import).

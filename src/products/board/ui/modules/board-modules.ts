@@ -19,6 +19,7 @@ import { embedModule } from "@board/modules/embed/embed.module";
 import { erModule } from "@board/modules/er/er.module";
 import { geoModule } from "@board/modules/geo/geo.module";
 import { imageModule } from "@board/modules/image/image.module";
+import { model3dModule } from "@board/modules/model3d/model3d.module";
 import { libraryModule } from "@board/modules/library/library.module";
 import { sectionModule } from "@board/modules/section/section.module";
 import { stickerModule } from "@board/modules/sticker/sticker.module";
@@ -42,6 +43,7 @@ let modules: AppModule[] = [
   sectionModule,
   tableModule,
   imageModule,
+  model3dModule,
   embedModule,
   dbModule,
   dbExportModule,

@@ -8,6 +8,7 @@ import { embedViewerModule } from "@board/modules/embed/embed.viewer";
 import { erViewerModule } from "@board/modules/er/er.viewer";
 import { geoViewerModule } from "@board/modules/geo/geo.viewer";
 import { imageViewerModule } from "@board/modules/image/image.viewer";
+import { model3dViewerModule } from "@board/modules/model3d/model3d.viewer";
 import { sectionViewerModule } from "@board/modules/section/section.viewer";
 import { stickerViewerModule } from "@board/modules/sticker/sticker.viewer";
 import { stickyViewerModule } from "@board/modules/sticky/sticky.viewer";
@@ -28,6 +29,7 @@ export const BOARD_VIEWER_MODULES: readonly AppModule[] = [
   sectionViewerModule,
   tableViewerModule,
   imageViewerModule,
+  model3dViewerModule,
   embedViewerModule,
   dbViewerModule,
   erViewerModule,

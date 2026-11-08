@@ -9,6 +9,7 @@ export * from "./embed";
 export * from "./er";
 export * from "./geo";
 export * from "./image";
+export * from "./model3d";
 export * from "./section";
 export * from "./sticker";
 export * from "./sticky";

@@ -1,5 +1,6 @@
 import { defineService } from "../services";
 import { Emitter } from "../utils";
+import { setModelLive } from "./live-models";
 import type { LocalLockHolder } from "./model-edit-locks.types";
 
 /** The holder id of a lock this user holds. */
@@ -27,7 +28,9 @@ export class ModelEditLocks {
 
   lockLocal(elementId: string | null): void {
     if (this.local === elementId) return;
+    if (this.local) setModelLive(this.local, false);
     this.local = elementId;
+    if (elementId) setModelLive(elementId, true);
     this.changes.emit();
   }
 

@@ -1,7 +1,7 @@
-import type { ModelImport, ModelSource } from "@canvas";
+import type { ModelImport, ModelSource } from "./model3d.types";
 
 /** What the viewer needs to draw an import: its bytes, the found textures and the missing slots. */
-export function sourceOf(imp: ModelImport): ModelSource {
+export function importedSource(imp: ModelImport): ModelSource {
   const textures = new Map<string, Uint8Array>();
   const missing: string[] = [];
   for (const slot of imp.slots) {

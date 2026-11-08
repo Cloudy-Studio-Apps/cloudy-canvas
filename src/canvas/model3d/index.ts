@@ -20,3 +20,6 @@ export type * from "./to-model-data.types";
 export { unusedModelAssets } from "./sweep-model-assets";
 export { MODEL_EDIT_LOCKS, ModelEditLocks } from "./model-edit-locks";
 export type * from "./model-edit-locks.types";
+export { isModelLive } from "./live-models";
+export { importedSource } from "./imported-source";
+export { storeModel } from "./store-model";

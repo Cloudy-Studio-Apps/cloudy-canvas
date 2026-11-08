@@ -44,6 +44,21 @@ export function useModelEditSession(engine: CanvasEngine<object>): ModelEditSess
     [engine],
   );
 
+  // The kind skips the saved picture while the model is live (`isModelLive`): redraw it when the
+  // edit starts and when it ends.
+  useEffect(() => {
+    if (!id) return;
+    const redraw = () => {
+      try {
+        if (engine.getElement(id)) engine.refreshElements([id]);
+      } catch {
+        // The editor is closing: there is no canvas left to redraw.
+      }
+    };
+    redraw();
+    return redraw;
+  }, [engine, id]);
+
   if (!id || !element || !data) return null;
   const { x, y, w, h, rotation = 0, mirrored } = element;
   return { id, element, data, frame: { x, y, w, h, rotation, mirrored } };

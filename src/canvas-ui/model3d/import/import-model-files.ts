@@ -1,11 +1,9 @@
 import {
-  DEFAULT_MODEL_VIEW,
   fitInView,
   MODEL_BASE_SIZE,
   MODEL_SIZE_WARNING_BYTES,
-  newModelAssetId,
   PASTE_STEP,
-  toModelData,
+  storeModel,
 } from "@canvas";
 import type { CanvasDocument, FileImportResult, ImportFile, ModelImport, Rect } from "@canvas";
 import { notifyError } from "@shared/stores/toast-store";
@@ -16,7 +14,6 @@ import { t } from "../model3d.i18n";
 import { companionNames } from "./claimed-files";
 import { confirmModelSize } from "./confirm-model-size";
 import type { PlaceModel } from "./import-model-files.types";
-import { sourceOf } from "./model-source";
 
 /**
  * Imports the model files among `files` (the rest are textures and companions for them, or not
@@ -61,19 +58,5 @@ async function build(
   nextIndex: () => string,
 ) {
   const rect = fitInView({ w: MODEL_BASE_SIZE * imp.aspect, h: MODEL_BASE_SIZE }, view, 0.8);
-  const picture = await modelBaker.bake(sourceOf(imp), DEFAULT_MODEL_VIEW, rect);
-  const ids = {
-    model: newModelAssetId(),
-    mtl: imp.mtl ? newModelAssetId() : null,
-    picture: newModelAssetId(),
-    textures: imp.slots.map((slot) => (slot.data ? newModelAssetId() : null)),
-  };
-  doc.addAsset(ids.model, imp.model);
-  if (imp.mtl && ids.mtl) doc.addAsset(ids.mtl, imp.mtl);
-  doc.addAsset(ids.picture, picture);
-  imp.slots.forEach((slot, i) => {
-    const id = ids.textures[i];
-    if (slot.data && id) doc.addAsset(id, slot.data);
-  });
-  return place(toModelData(imp, ids), rect, nextIndex());
+  return place(await storeModel(modelBaker, imp, rect, doc), rect, nextIndex());
 }
