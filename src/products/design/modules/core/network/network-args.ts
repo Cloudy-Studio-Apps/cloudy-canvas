@@ -1,6 +1,7 @@
 import type { Point } from "@canvas";
 
 import { pointArg } from "../node/number-args";
+import { readPaints } from "../node/paint-args";
 import type { VectorNetwork, VectorRegion, VectorSegment, WindingRule } from "./network.types";
 
 const ZERO: Point = { x: 0, y: 0 };
@@ -12,7 +13,8 @@ export const NETWORK_SCHEMA = {
   description:
     "Vector: points joined by bezier segments, relative to the vector's x, y. vertices: [{x, y}]; " +
     "segments: [{start, end, tangentStart?, tangentEnd?}] (vertex indexes, tangents relative to " +
-    "their vertex, omitted for straight); regions: [{loops: [[segment indexes]]}] are filled.",
+    "their vertex, omitted for straight); regions: [{loops: [[segment indexes]], fills?}] are " +
+    "filled, each with its own fills ([paint], as a layer's fills) or, without them, the vector's.",
   properties: {
     vertices: { type: "array", items: { type: "object" } },
     segments: { type: "array", items: { type: "object" } },
@@ -60,7 +62,8 @@ function readRegion(value: unknown, key: string, segmentCount: number): VectorRe
   if (!WINDING_RULES.includes(windingRule)) {
     throw new Error(`"${key}.windingRule" must be one of: ${WINDING_RULES.join(", ")}.`);
   }
-  return { loops, windingRule };
+  if (r.fills === undefined) return { loops, windingRule };
+  return { loops, windingRule, fills: readPaints(r.fills, `${key}.fills`, true) };
 }
 
 function list(value: unknown, key: string): unknown[] {

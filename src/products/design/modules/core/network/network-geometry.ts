@@ -1,9 +1,10 @@
-import { boundsOfPoints, type Point, type Rect } from "@canvas";
+import { boundsOfPoints, pointInPath, type Point, type Rect } from "@canvas";
 
 import { pointInPolygon } from "../node/shape-points";
 import { flatten, nearestT } from "@canvas";
 import { loopCurves, segmentCurve } from "./network-curves";
 import type { SegmentHit, VectorNetwork } from "./network.types";
+import { regionShapes } from "./region-shapes";
 
 /** The box around everything the network draws (its curves, not just its vertices). */
 export function networkBounds(net: VectorNetwork): Rect {
@@ -50,4 +51,17 @@ export function insideRegion(net: VectorNetwork, p: Point): boolean {
     }
     return inside;
   });
+}
+
+/**
+ * The topmost region containing `p` (local), by its winding rule; unfilled ones count too, so
+ * they can be picked and filled again. `null` outside every region.
+ */
+export function regionAt(net: VectorNetwork, p: Point): number | null {
+  const shapes = regionShapes(net);
+  for (let i = shapes.length - 1; i >= 0; i--) {
+    const entry = shapes[i];
+    if (entry && pointInPath(entry.shape, p)) return entry.region;
+  }
+  return null;
 }
