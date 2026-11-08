@@ -15,4 +15,4 @@ Vector networks: the pen (P) and pencil (Shift+P), and the edit mode for a vecto
 
 An area's own image fills are in the kind's `assets`, make a flip draw mirrored and have their tiles scaled by the Scale tool, as a layer's do; the kind's `geometryKey` is its curves and filled loops, so a new area fill doesn't work the shape out again; the paint bucket fills an area emptied of its own fills (`fills: []`) instead of removing it.
 
-**Not yet** (areas' own fills): binding an area's fill to a color style or variable, gradient handles on the canvas for an area's gradient, area colors in the paint picker's page colors and in the color wizard, data bindings on area fills, and Flatten and Outline stroke keeping areas' fills (both rebuild the network and use the layer's fills).
+**Not yet** (areas' own fills): binding an area's fill to a color style or variable, gradient handles on the canvas for an area's gradient, area colors in the paint picker's page colors and in the color wizard, data bindings on area fills.

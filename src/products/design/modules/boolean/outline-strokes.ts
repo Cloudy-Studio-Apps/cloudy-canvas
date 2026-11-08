@@ -12,6 +12,7 @@ import {
   DesignNodeKind,
   pathToNetwork,
   selectionRoots,
+  shownFills,
   type DesignNode,
   type Paint,
 } from "../core";
@@ -19,8 +20,9 @@ import { createVector, type VectorElement } from "../vector";
 
 /**
  * Outline stroke (Ctrl+Shift+O), as in Figma: each selected layer's strokes become a filled
- * vector of the area they cover, painted with them. A layer with fills keeps them (the vector
- * goes right above it); one without (a line) is replaced by the vector, which keeps its id.
+ * vector of the area they cover, painted with them. A layer with fills (its own or its areas')
+ * keeps them (the vector goes right above it); one without (a line) is replaced by the vector,
+ * which keeps its id.
  * Returns what to select. Call it in an undo step.
  */
 export function outlineStrokes(
@@ -33,7 +35,7 @@ export function outlineStrokes(
   for (const node of selectionRoots(ids, elements)) {
     const vector = strokeVector(node, kinds);
     if (!vector) continue;
-    const keepsFill = node.fills.some((paint) => paint.visible);
+    const keepsFill = shownFills(node).some((paint) => paint.visible);
     if (keepsFill) {
       doc.update(node.id, { strokes: [] } as ElementPatch);
       const above = siblingAbove(node, elements);

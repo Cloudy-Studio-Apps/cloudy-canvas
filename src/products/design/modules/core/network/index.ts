@@ -26,6 +26,6 @@ export { traceRegions, traceStrokes } from "./network-trace";
 export { strokeChains } from "./network-chains";
 export { curvesContour, pathToNetwork, regionPath, strokePath } from "./network-path";
 export { NETWORK_SCHEMA, readNetwork } from "./network-args";
-export { hasOwnRegionFills, regionPaints } from "./region-paints";
+export { hasOwnRegionFills, networkOf, regionPaints, shownFills } from "./region-paints";
 export { regionShapes } from "./region-shapes";
 export { liveRegions, pickRegions, regionKey } from "./region-picks";

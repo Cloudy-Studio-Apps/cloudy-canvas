@@ -12,9 +12,12 @@ import {
 import {
   childrenByParent,
   DesignNodeKind,
+  hasOwnRegionFills,
   isDesignNode,
+  networkOf,
   pathToNetwork,
   selectionRoots,
+  shownFills,
   withDescendants,
   type DesignNode,
 } from "../core";
@@ -23,7 +26,9 @@ import { t } from "./boolean.i18n";
 
 /**
  * Flatten (Ctrl+E), as in Figma: the selected layers become one vector with their shapes (a
- * boolean's result, a text's glyphs, a group's layers), painted like the bottom one. One layer
+ * boolean's result, a text's glyphs, a group's layers), painted like the bottom one (its first
+ * area's fills when only its areas are filled). A vector whose areas have fills of their own is
+ * left as it is. One layer
  * keeps its id, name and turn. Returns what to select, or an empty list when nothing has a shape.
  * Call it in an undo step.
  */
@@ -36,6 +41,9 @@ export function flattenNodes(
   const roots = selectionRoots(ids, elements);
   const [base] = roots;
   if (!base) return [];
+  // A vector whose areas have fills of their own is flat already; one stack can't keep its colors.
+  const network = roots.length === 1 ? networkOf(base) : null;
+  if (network && hasOwnRegionFills(network)) return [base.id];
   const children = childrenByParent(elements);
   const byId = new Map(elements.map((el) => [el.id, el]));
   const childrenOf = (el: CanvasElement) =>
@@ -90,7 +98,10 @@ function worldContours(
 
 /** One layer's shape as a vector in its own frame, turned like it. */
 function turnedVector(node: DesignNode, shape: PathShape): VectorElement {
-  const vector = createVector(pathToNetwork(shape), node.name, node.index, node.parentId, node);
+  const vector = createVector(pathToNetwork(shape), node.name, node.index, node.parentId, {
+    ...node,
+    fills: [...shownFills(node)],
+  });
   const rotation = node.rotation ?? 0;
   const corner = rotatePoint({ x: node.x + vector.x, y: node.y + vector.y }, node, rotation);
   return { ...vector, x: corner.x, y: corner.y, rotation };
@@ -105,6 +116,6 @@ function worldVector(nodes: readonly DesignNode[], contours: PathContour[]): Vec
     t("defaults.vector"),
     base.index,
     base.parentId,
-    base,
+    { ...base, fills: [...shownFills(base)] },
   );
 }
