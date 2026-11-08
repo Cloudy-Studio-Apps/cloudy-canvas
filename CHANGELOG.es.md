@@ -105,6 +105,7 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   tus secciones, y cada línea del índice y cada referencia a página te lleva a su página. Los
   archivos de imprenta en CMYK conservan los marcadores.
 - Las fuentes de datos ahora pueden leer archivos de Excel y APIs que devuelven sus filas por páginas, y un paso opcional permite elegir y renombrar campos antes de usarlos. Los plugins pueden añadir sus propios tipos de fuente.
+- La pestaña Recursos ahora lista tus imágenes: las de cada biblioteca del proyecto que usa el archivo y las que pertenecen solo a este archivo, en grupos que se pueden plegar. Puedes buscarlas, filtrar por imágenes, SVG o iconos, alternar entre cuadrícula y lista, subir más desde el botón más, y arrastrar cualquier imagen al lienzo o hacer doble clic para colocarla. Una imagen de una biblioteca viaja con el archivo, así que el archivo sigue funcionando por sí solo.
 
 ### Mejoras
 

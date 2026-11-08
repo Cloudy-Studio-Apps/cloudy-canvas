@@ -12,6 +12,8 @@ export { planLibraryMove } from "./library-move-plan";
 export { libraryUsers } from "./library-users";
 export { LIBRARY_MAGIC, decodeLibraryFile, encodeLibraryFile } from "./library-file";
 export { libraryIdOf, taggedRecord, untaggedRecord } from "./library-tags";
+export { addLocalAsset, localAssets, moveAssetToLibrary, removeLocalAsset } from "./local-assets";
+export type * from "./local-assets.types";
 export { mirrorLibraries } from "./mirror";
 export type * from "./mirror.types";
 export { moveToLibrary } from "./move-to-library";

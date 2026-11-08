@@ -17,6 +17,7 @@ import type {
   UnregisteredElement,
 } from "./canvas-document.types";
 import { DocumentHistory } from "./document-history";
+import type { LibraryAsset } from "./library-asset.types";
 import type { HistoryChange } from "./document-history.types";
 import { keyBetween, nKeysBetween } from "../utils";
 
@@ -40,6 +41,8 @@ export class CanvasDocument {
   private readonly elements: Y.Map<ElementMap>;
   /** Binary data elements show (e.g. image files), by id. Shared by copies, outside undo history. */
   private readonly assets: Y.Map<Uint8Array>;
+  /** The file's own pictures' records (`LibraryAsset`) by id; the bytes are in `assets`. */
+  private readonly assetIndexMap: Y.Map<unknown>;
   /** The document's own title and description (`DocumentMeta`), undoable like elements. */
   private readonly metaMap: Y.Map<string>;
   /** Variables and their collections (`TokenRecord`s) by id, undoable like elements. */
@@ -97,6 +100,7 @@ export class CanvasDocument {
     // The map keeps its original name so existing files load.
     this.elements = doc.getMap<ElementMap>("shapes");
     this.assets = doc.getMap<Uint8Array>("assets");
+    this.assetIndexMap = doc.getMap<unknown>("assetIndex");
     this.metaMap = doc.getMap<string>("meta");
     this.tokensMap = doc.getMap<unknown>("tokens");
     this.projectMap = doc.getMap<unknown>("project");
@@ -319,6 +323,34 @@ export class CanvasDocument {
   addAsset(id: string, data: Uint8Array): void {
     if (this.readOnly) return;
     this.doc.transact(() => this.assets.set(id, data), this.actor.origin);
+  }
+
+  /** The file's own pictures (records of the bytes in `assets`), in no particular order. */
+  assetIndex(): LibraryAsset[] {
+    const list: LibraryAsset[] = [];
+    this.assetIndexMap.forEach((value) => {
+      if (isLibraryAsset(value)) list.push(value);
+    });
+    return list;
+  }
+
+  /** Stores or replaces a picture's record. Not an undo step, as `addAsset` isn't. */
+  setAssetIndexEntry(asset: LibraryAsset): void {
+    if (this.readOnly) return;
+    this.doc.transact(() => this.assetIndexMap.set(asset.id, { ...asset }), this.actor.origin);
+  }
+
+  /** Deletes a picture's record (its bytes stay until `removeAssets`). */
+  removeAssetIndexEntry(id: string): void {
+    if (this.readOnly || !this.assetIndexMap.has(id)) return;
+    this.doc.transact(() => this.assetIndexMap.delete(id), this.actor.origin);
+  }
+
+  /** Fires when the file's pictures' records change (local edits, remote updates). */
+  observeAssetIndex(listener: () => void): () => void {
+    const handler = () => listener();
+    this.assetIndexMap.observe(handler);
+    return () => this.assetIndexMap.unobserve(handler);
   }
 
   // ── Metadata ────────────────────────────────────────────────────────
@@ -739,4 +771,15 @@ function isProjectLink(value: unknown): value is ProjectLink {
 
 export function compareByIndex(a: CanvasElement, b: CanvasElement): number {
   return a.index < b.index ? -1 : a.index > b.index ? 1 : 0;
+}
+
+function isLibraryAsset(value: unknown): value is LibraryAsset {
+  if (typeof value !== "object" || value === null) return false;
+  const asset = value as Partial<LibraryAsset>;
+  return (
+    typeof asset.id === "string" &&
+    typeof asset.name === "string" &&
+    typeof asset.hash === "string" &&
+    typeof asset.order === "string"
+  );
 }

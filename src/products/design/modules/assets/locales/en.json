@@ -1,7 +1,64 @@
 {
   "title": "Assets",
-  "local": {
-    "title": "Local components",
-    "empty": "Components you make in this file will show here. Coming in a later version."
+  "search": "Search assets",
+  "view": { "label": "View", "grid": "Grid", "list": "List" },
+  "filter": {
+    "label": "Type",
+    "all": "All",
+    "image": "Images",
+    "svg": "SVG",
+    "icon": "Icons"
+  },
+  "add": {
+    "title": "Add assets",
+    "upload": "Upload pictures",
+    "intoGroup": "Upload into “{group}”",
+    "toLibrary": "Upload to {library}",
+    "toFile": "Upload to this file only",
+    "group": "New group…"
+  },
+  "group": {
+    "title": "New group",
+    "description": "The pictures you upload next go into this group. Use slashes for groups inside groups, like Brand/Logo. Leave it empty for no group.",
+    "placeholder": "Brand/Logo",
+    "confirm": "Use group"
+  },
+  "upload": {
+    "title": "Choose pictures",
+    "done_one": "{count} picture added",
+    "done_other": "{count} pictures added"
+  },
+  "menu": {
+    "rename": "Rename",
+    "moveTo": "Move to {library}…",
+    "delete": "Delete",
+    "inUse": "In use, can't be deleted"
+  },
+  "rename": {
+    "title": "Rename picture",
+    "label": "Name",
+    "confirm": "Rename"
+  },
+  "delete": {
+    "title": "Delete “{name}”?",
+    "text": "No layer shows this picture. It is removed from this file.",
+    "confirm": "Delete"
+  },
+  "move": {
+    "done": "“{name}” moved to {library}"
+  },
+  "empty": {
+    "file": "Pictures you add to this file only will show here.",
+    "library": "This library has no pictures for designs yet.",
+    "search": "No pictures match."
+  },
+  "drag": {
+    "dropHere": "Drop on the canvas"
+  },
+  "error": {
+    "place": "Couldn't place the picture",
+    "upload": "Couldn't add the picture",
+    "unreadable": "{name} isn't a picture that can be read",
+    "move": "Couldn't move the picture"
   }
 }

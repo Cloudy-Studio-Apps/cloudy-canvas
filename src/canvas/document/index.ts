@@ -1,5 +1,6 @@
 export type * from "./canvas-document.types";
 export type * from "./document-history.types";
+export type * from "./library-asset.types";
 export type * from "./actor-document.types";
 export { CanvasDocument, LOCAL_ORIGIN, compareByIndex } from "./canvas-document";
 export { changesOnly, GEOMETRY_FIELDS } from "./change-fields";

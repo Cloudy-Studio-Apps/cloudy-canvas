@@ -12,6 +12,8 @@ TypeScript, so the web build can reuse it.
 - **File (`library-file.ts`):** `CLIB` magic, the format version and the Yjs update, through `encodeCanvasFile`/`decodeCanvasFile`.
 - **`createLibraryFile(fs, root, name)`:** writes an empty `.clib` and its `.assets/` folder through the `ProjectFs` it is given (never `@platform`), with a file name free in the project (`uniqueName`), and returns the `LibraryEntry` (`autoAdd: true`) for the caller to put in the manifest.
 
+- **The file's own pictures (`local-assets.ts`):** `localAssets(doc)` lists the `LibraryAsset` records of the document's `"assetIndex"` in order, `addLocalAsset(doc, asset, bytes)` stores the bytes under `asset.id` with the record, `removeLocalAsset(doc, id)` drops both (only for a picture no layer shows), and `moveAssetToLibrary(doc, writer, assetId, libraryId)` hands the bytes to a library (`writer.addAssetFile`, the hub's; a picture it has by hash is the one used), removes the file's record and keeps the bytes under the library asset's id so the file works alone. Layers that showed the old picture keep its bytes.
+
 ## Sync with files
 
 A file in a project keeps a copy of the libraries it uses in its own `"tokens"` and `"assets"`
