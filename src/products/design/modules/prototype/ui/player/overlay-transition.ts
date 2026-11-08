@@ -47,8 +47,10 @@ export async function hideOverlay(
     t.animation === "dissolve"
       ? FADE_OUT
       : [{ transform: "none" }, { transform: shift(t.direction) }];
-  const animations = [play(page, frames, how), play(backdrop, FADE_OUT, how)];
+  const animations: Animation[] = [];
   try {
+    animations.push(play(page, frames, how));
+    animations.push(play(backdrop, FADE_OUT, how));
     await settle(animations);
     remove();
   } finally {
