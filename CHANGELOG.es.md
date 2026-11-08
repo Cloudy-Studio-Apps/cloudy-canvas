@@ -7,6 +7,12 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Novedades
 
+- Añade un archivo existente a un proyecto: haz clic derecho en un archivo de Inicio (o usa su menú
+  ⋯) y elige Añadir a un proyecto…, o usa Añadir un archivo existente… en el menú Nuevo de un
+  proyecto. Elige el proyecto y la carpeta, y el archivo se mueve allí y empieza a usar las
+  bibliotecas del proyecto. Sus colores, variables, estilos e imágenes que el proyecto no tiene se
+  añaden a una biblioteca, y para cada uno que se llame igual que uno del proyecto eliges usar el
+  del proyecto o conservar ambos. Inicio ahora muestra el proyecto y la carpeta de cada archivo.
 - Las variables y los estilos de un diseño muestran de dónde vienen: cada biblioteca del proyecto
   que usa el archivo y después los del propio archivo, en el panel, la ventana Variables y los selectores.
   Elige qué bibliotecas del proyecto usa el archivo con el botón Bibliotecas de la sección

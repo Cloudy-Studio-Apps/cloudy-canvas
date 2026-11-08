@@ -8,6 +8,7 @@ import {
   FileContextMenu,
   FileKindIcon,
   FilePreview,
+  ProjectPlace,
 } from "@pages/shared/files";
 import { formatRelativeTime } from "../format-relative-time";
 import { useFileActions } from "../use-file-actions";
@@ -44,6 +45,7 @@ export function ContinueCard({ file, next, kindOf, onOpen }: ContinueCardProps) 
           <h2 className="truncate text-2xl font-semibold tracking-tight" title={name}>
             {name}
           </h2>
+          <ProjectPlace file={file} />
           <p className="truncate text-xs text-muted-foreground" title={file.path}>
             {file.draft ? t("card.draftLocation") : file.path}
           </p>

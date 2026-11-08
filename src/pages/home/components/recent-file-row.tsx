@@ -6,6 +6,7 @@ import {
   FileContextMenu,
   FileKindIcon,
   FilePreview,
+  useProjectLabel,
 } from "@pages/shared/files";
 import { formatRelativeTime } from "../format-relative-time";
 import { useFileActions } from "../use-file-actions";
@@ -19,11 +20,13 @@ export function RecentFileRow({ file, kind, missing, onOpen }: FileCardProps) {
   const actions = useFileActions({ file, missing, onOpen });
   const typeLabel = KIND_LABEL[kind];
   const name = displayName(file);
+  const place = useProjectLabel(file);
+  // A file in a project says where in it; any other its path.
   const location = missing
     ? t("card.missingLocation")
     : file.draft
       ? t("card.draftLocation")
-      : file.path;
+      : (place ?? file.path);
 
   const row = (
     // eslint-disable-next-line no-restricted-syntax -- bespoke: Home's list row

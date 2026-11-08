@@ -7,6 +7,12 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### New
 
+- Add an existing file to a project: right-click a file on Home (or use its ⋯ menu) and choose Add
+  to project…, or use Add existing file… in a project's New menu. Pick the project and the folder,
+  and the file moves there and starts using the project's libraries. Its colors, variables, styles
+  and pictures that are new to the project are added to a library, and for each one with the same
+  name as the project's you choose to use the project's or keep both. Home now shows the project
+  and folder each file belongs to.
 - A design's variables and styles show where they come from: each project library the file uses,
   then the file's own, in the panel, the Variables window and the pickers. Choose which of the project's
   libraries the file uses from the Libraries button in the Variables section (turning one off

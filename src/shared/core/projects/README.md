@@ -59,4 +59,5 @@ an item to `.cloudy/trash/<entry id>/<name>`, records it in `index.json` and ref
 over the target, writes to one path queued). `makeHidden` calls the `set_hidden` command (Windows
 hidden attribute; no-op elsewhere). `readManifest(root, id?)` reads the project in a folder (the one with `id` when given).
 `findManifestAbove` walks up from a file to the top of its drive or share, skipping unreadable
-manifests.
+manifests. `removeFile(path)` deletes a file for good (never a folder): only the original of a file
+added to a project, once its copy in the project is written.

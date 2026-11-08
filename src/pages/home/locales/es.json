@@ -54,7 +54,8 @@
     "open": "Abrir",
     "reveal": "Mostrar en la carpeta",
     "revealFailed": "No se pudo abrir la carpeta",
-    "openFailed": "No se pudo abrir el archivo"
+    "openFailed": "No se pudo abrir el archivo",
+    "addToProject": "Añadir a un proyecto…"
   },
   "card": {
     "missingLabel": "Falta {type} {name}. Mostrar opciones",

@@ -14,6 +14,7 @@ import { MoveDialog } from "./components/move-dialog";
 import { ProjectHeader } from "./components/project-header";
 import { ProjectSidebar } from "./components/project-sidebar";
 import type { ProjectTab } from "./components/project-tabs.types";
+import { AddToProjectProvider } from "@pages/shared/add-to-project";
 import { useProjectFileCount } from "@pages/shared/projects";
 import { ProjectContext, relOfDragId } from "./project-context";
 import type { ProjectContextValue, ProjectNav } from "./project-context.types";
@@ -126,28 +127,30 @@ function ProjectHomeReady({
 
   return (
     <ProjectContext.Provider value={value}>
-      <div className="flex min-h-0 flex-1 flex-col">
-        <div className="flex min-h-0 flex-1">
-          <ProjectSidebar />
-          <main className="min-w-0 flex-1 overflow-y-auto">
-            <ProjectHeader />
-            {tab === "files" && <FilesTab />}
-            {tab === "libraries" && <LibrariesTab />}
-            {tab === "content" && <ContentView />}
-            {tab === "trash" && <TrashTab />}
-          </main>
+      <AddToProjectProvider project={record} folder={folder} onAdded={bump}>
+        <div className="flex min-h-0 flex-1 flex-col">
+          <div className="flex min-h-0 flex-1">
+            <ProjectSidebar />
+            <main className="min-w-0 flex-1 overflow-y-auto">
+              <ProjectHeader />
+              {tab === "files" && <FilesTab />}
+              {tab === "libraries" && <LibrariesTab />}
+              {tab === "content" && <ContentView />}
+              {tab === "trash" && <TrashTab />}
+            </main>
+          </div>
+          <ProjectFooter onOpenTrash={() => setTab("trash")} />
         </div>
-        <ProjectFooter onOpenTrash={() => setTab("trash")} />
-      </div>
-      <MoveDialog />
-      <NewLibraryDialog open={newLibraryOpen} onOpenChange={setNewLibraryOpen} />
-      {drag.drag && (
-        <DragGhost
-          label={nameOfRel(relOfDragId(drag.drag.id))}
-          pointer={drag.drag.pointer}
-          muted={drag.drag.overId === null}
-        />
-      )}
+        <MoveDialog />
+        <NewLibraryDialog open={newLibraryOpen} onOpenChange={setNewLibraryOpen} />
+        {drag.drag && (
+          <DragGhost
+            label={nameOfRel(relOfDragId(drag.drag.id))}
+            pointer={drag.drag.pointer}
+            muted={drag.drag.overId === null}
+          />
+        )}
+      </AddToProjectProvider>
     </ProjectContext.Provider>
   );
 }

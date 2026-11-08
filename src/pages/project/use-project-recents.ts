@@ -8,8 +8,8 @@ import {
   type ProjectEntry,
 } from "@shared/core";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
+import { folderOfFile } from "@pages/shared/files";
 import { normalizePath } from "./project-rel";
-import { folderOfFile } from "./relocate-recents";
 
 /** How many files "Recently edited" shows. */
 const RECENT_COUNT = 3;

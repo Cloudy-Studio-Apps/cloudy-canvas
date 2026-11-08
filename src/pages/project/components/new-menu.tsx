@@ -1,5 +1,6 @@
 import {
   ChevronDown,
+  FileInput,
   FolderPlus,
   ImagePlus,
   Library,
@@ -19,13 +20,18 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@shared/ui/kit";
+import { chooseExistingFile, useAddToProject } from "@pages/shared/add-to-project";
 import { useProjectContext } from "../project-context";
 import { t } from "../project.i18n";
 
-/** New ▾: a design or a board saved in the folder being shown, a folder in it, a library, or pictures added to one. */
+/**
+ * New ▾: a design or a board saved in the folder being shown, a folder in it, a library, pictures
+ * added to one, or a file from elsewhere added to the project.
+ */
 export function NewMenu() {
   const { actions, folder, setRenaming, setNewLibraryOpen, libs, libraryActions } =
     useProjectContext();
+  const addToProject = useAddToProject();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -43,6 +49,13 @@ export function NewMenu() {
         <DropdownMenuItem onSelect={() => actions.newFile("board", folder)}>
           <StickyNote />
           {t("new.board")}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          disabled={!addToProject}
+          onSelect={() => void chooseExistingFile().then((file) => file && addToProject?.(file))}
+        >
+          <FileInput />
+          {t("new.addExisting")}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem

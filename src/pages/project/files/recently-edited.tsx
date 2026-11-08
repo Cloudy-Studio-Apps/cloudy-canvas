@@ -1,7 +1,7 @@
 import { fileNameFromPath, relativeTime, type FileInfo } from "@shared/core";
 import { FilePreview, KIND_LABEL, useFileKindOf } from "@pages/shared/files";
+import { folderOfFile } from "@pages/shared/files";
 import { useProjectContext } from "../project-context";
-import { folderOfFile } from "../relocate-recents";
 import { t } from "../project.i18n";
 
 /** The project's newest files, wherever they are in its folders. */

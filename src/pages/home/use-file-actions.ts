@@ -1,10 +1,27 @@
 import { useMemo } from "react";
-import { Copy, Download, ExternalLink, FolderOpen, FolderSearch, Trash2, X } from "lucide-react";
+import {
+  Briefcase,
+  Copy,
+  Download,
+  ExternalLink,
+  FolderOpen,
+  FolderSearch,
+  Trash2,
+  X,
+} from "lucide-react";
 
-import { clipboard, confirmDelete, exportFile, revealFile, storage } from "@platform";
+import {
+  clipboard,
+  confirmDelete,
+  exportFile,
+  projectsSupported,
+  revealFile,
+  storage,
+} from "@platform";
 import { FILE_EXTENSIONS, isAndroidPlatform, type FileInfo } from "@shared/core";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 import { notifyError, toast } from "@shared/stores/toast-store";
+import { useAddToProject } from "@pages/shared/add-to-project";
 import type { FileAction, FileActionsOptions } from "./use-file-actions.types";
 import { t } from "./home.i18n";
 
@@ -18,6 +35,7 @@ async function saveCopy({ id, name, type }: FileInfo): Promise<void> {
 export function useFileActions({ file, missing, onOpen }: FileActionsOptions): FileAction[] {
   const relocate = useRecentFilesStore((s) => s.relocate);
   const forget = useRecentFilesStore((s) => s.forget);
+  const addToProject = useAddToProject();
 
   return useMemo(() => {
     const android = isAndroidPlatform();
@@ -79,8 +97,21 @@ export function useFileActions({ file, missing, onOpen }: FileActionsOptions): F
       };
       return [open, copy, remove];
     }
+    // Only a file outside every project can be added to one (desktop only, where projects are).
+    const add: FileAction[] =
+      addToProject && !file.projectId && projectsSupported()
+        ? [
+            {
+              id: "add-to-project",
+              label: t("actions.addToProject"),
+              icon: Briefcase,
+              run: () => addToProject(file),
+            },
+          ]
+        : [];
     return [
       open,
+      ...add,
       {
         id: "reveal",
         label: t("actions.reveal"),
@@ -93,5 +124,5 @@ export function useFileActions({ file, missing, onOpen }: FileActionsOptions): F
       copyPath,
       remove,
     ];
-  }, [file, missing, onOpen, relocate, forget]);
+  }, [file, missing, onOpen, relocate, forget, addToProject]);
 }

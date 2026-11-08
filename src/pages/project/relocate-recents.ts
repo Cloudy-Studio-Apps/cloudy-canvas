@@ -1,5 +1,5 @@
 import { storage } from "@platform";
-import { joinRelative, relativeTo } from "@shared/core";
+import { joinRelative } from "@shared/core";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 import { isInside, normalizePath } from "./project-rel";
 
@@ -18,15 +18,4 @@ export async function relocateRecents(root: string, fromRel: string, toRel: stri
     await storage.relocate(file.id, joinRelative(root, toRel + inner));
   }
   await useRecentFilesStore.getState().refresh();
-}
-
-/** The folder a recent file sits in, relative to `root`; `null` when it is outside it. */
-export function folderOfFile(root: string, path: string): string | null {
-  try {
-    const rel = relativeTo(root, path);
-    const cut = rel.lastIndexOf("/");
-    return cut < 0 ? "" : rel.slice(0, cut);
-  } catch {
-    return null;
-  }
 }

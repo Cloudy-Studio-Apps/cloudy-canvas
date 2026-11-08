@@ -210,6 +210,11 @@ export class TauriProjectFs implements ProjectFs {
     return exists(path);
   }
 
+  async removeFile(path: string): Promise<void> {
+    if (!(await stat(path)).isFile) throw new Error(`"${path}" isn't a file.`);
+    await remove(path);
+  }
+
   async makeHidden(path: string): Promise<void> {
     if (isTauri()) await invoke("set_hidden", { path });
   }

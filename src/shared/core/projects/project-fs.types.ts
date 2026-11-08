@@ -30,6 +30,11 @@ export interface ProjectFs {
   readBytes(path: string): Promise<Uint8Array>;
   writeBytesAtomic(path: string, bytes: Uint8Array): Promise<void>;
   exists(path: string): Promise<boolean>;
+  /**
+   * Deletes a file for good (not a folder): the original of a file added to a project, once its
+   * copy in the project is written. Throws for a folder.
+   */
+  removeFile(path: string): Promise<void>;
   makeHidden(path: string): Promise<void>;
   /**
    * The manifest of a project whose `.cproject` is in `root` (the one with `id` when given); null

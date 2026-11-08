@@ -8,6 +8,7 @@ import {
   FileContextMenu,
   FileKindIcon,
   FilePreview,
+  ProjectPlace,
 } from "@pages/shared/files";
 import { useFileActions } from "../use-file-actions";
 import { MissingFilePopover } from "./missing-file-popover";
@@ -53,6 +54,7 @@ export function FileCard({ file, kind, missing, onOpen }: FileCardProps) {
               {t("card.meta", { type: typeLabel, time: formatRelativeTime(file.updatedAt) })}
             </time>
           </p>
+          {!missing && <ProjectPlace file={file} />}
         </div>
         {missing ? (
           <Badge variant="destructive">{t("card.missing")}</Badge>

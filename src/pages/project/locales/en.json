@@ -25,7 +25,8 @@
     "board": "New board",
     "folder": "New folder",
     "library": "New library",
-    "addImages": "Add images to a library…"
+    "addImages": "Add images to a library…",
+    "addExisting": "Add existing file…"
   },
   "tabs": {
     "files": "Files",

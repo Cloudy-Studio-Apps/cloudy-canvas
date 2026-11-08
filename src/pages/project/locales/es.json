@@ -25,7 +25,8 @@
     "board": "Nueva pizarra",
     "folder": "Nueva carpeta",
     "library": "Nueva biblioteca",
-    "addImages": "Añadir imágenes a una biblioteca…"
+    "addImages": "Añadir imágenes a una biblioteca…",
+    "addExisting": "Añadir un archivo existente…"
   },
   "tabs": {
     "files": "Archivos",

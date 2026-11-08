@@ -14,6 +14,7 @@ export { LIBRARY_MAGIC, decodeLibraryFile, encodeLibraryFile } from "./library-f
 export { libraryIdOf, taggedRecord, untaggedRecord } from "./library-tags";
 export { addLocalAsset, localAssets, moveAssetToLibrary, removeLocalAsset } from "./local-assets";
 export type * from "./local-assets.types";
+export * from "./merge";
 export { mirrorLibraries } from "./mirror";
 export type * from "./mirror.types";
 export { moveToLibrary } from "./move-to-library";

@@ -73,3 +73,36 @@ the libraries, saving them, when to sync) is in [canvas-ui/libraries/](../../can
   library may have changed meanwhile; the file's copy wins).
 - **`libraryUsers(doc, libraryId)`:** the layers bound to the library's variables and styles (the
   count a file shows before it stops using a library).
+
+## Adding a file to a project (`merge/`)
+
+A loose file added to a project gives its own records and pictures to one of the project's
+libraries (`planLibraryMerge`, then `applyLibraryMerge`; the page side is
+[pages/shared/add-to-project](../../pages/shared/add-to-project/README.md)).
+
+- **`planLibraryMerge(file, library, fileAssets, libraryAssets, fileName)`** (`MergePlan`): the file's
+  records (a tag of another project's library is ignored) against the library's. A record the
+  library has under the same id is the library's. Mode axes and collections match by name (case
+  and outer spaces aside, `axisMap`, `collectionMap`), modes of a matched axis by name
+  (`modeMap`); the file's modes the library's axis lacks are added to it (`newModes`, ids kept),
+  and the library's modes the file lacks arrive with the library's axis. Variables are compared
+  within the collection they land in, styles across the library's: the same name and type
+  (`type`, `styleType`) is a `Clash` (`choice` `project` by default, or `both`, which adds the
+  file's as `bothName`, `"<name> (<file name>)"` made free), the same name with another type (or
+  a name another of the file's variables took there) keeps both and renames the file's
+  (`renamedByType`). Everything else is `added`, keeping its id. A generator or scale whose base
+  or variables clash or were renamed stays out (`droppedGenerators`; its variables keep their
+  values, unlinked). Pictures match by their bytes' hash (`assetMap`).
+- **`applyLibraryMerge(doc, library, plan)`:** writes the file's added records to the library in
+  its terms (`mergedRecords`: references, axes and mode keys remapped with `remapValues` from
+  `tokens/exchange/`, the target axis's first mode as the default; new records ordered after the
+  library's), then, in one untracked transaction, stores every library record in the file tagged
+  as a mirror would (each axis keeps the mode the file showed, so the first mirror changes
+  nothing), points layers' `bindings` at the library's records ("Use project's") and pages' and
+  frames' `variableModes` at the library's axes and modes, and removes the file's merged, replaced
+  and dropped records. The after-edit hook (the token sync) then gives the relinked layers the
+  library's values. Pictures move separately, one by one, with `moveAssetToLibrary`.
+- **Calls the builder made:** clashes are checked against the receiving library only (another
+  library of the project with the same names keeps both, as libraries may today); collections
+  never clash, they merge by name, and their variables are compared one by one; everything the
+  file owned goes to the library, so the file keeps no records of its own afterwards.

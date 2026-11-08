@@ -1,0 +1,41 @@
+{
+  "dialog": {
+    "title": "Add “{name}” to a project",
+    "description": "The file moves into the project's folder and uses its styles.",
+    "projects": "Project",
+    "newProject": "New project…",
+    "noProjects": "You have no projects yet. Create one, then add the file to it.",
+    "folder": "Folder",
+    "root": "Project root",
+    "library": "Library for its styles",
+    "styles": "This file's styles",
+    "reading": "Reading the file and the project's libraries…",
+    "readFailed": "The file or the project's libraries couldn't be read.",
+    "linked": "This file already belongs to a project.",
+    "noLibrary": "The project has no library every file uses, so the file's styles stay in the file.",
+    "added_one": "1 of its variables and styles is new to the project and goes to “{library}”.",
+    "added_other": "{count} of its variables and styles are new to the project and go to “{library}”.",
+    "nothingNew": "It has no variables or styles the project doesn't have.",
+    "clashes_one": "1 has the same name as one of the project's:",
+    "clashes_other": "{count} have the same name as the project's:",
+    "pictures_one": "Its picture goes to “{library}” too.",
+    "pictures_other": "Its {count} pictures go to “{library}” too.",
+    "note": "Its layers use the project's styles. “Keep both” adds the file's version as “{example}”.",
+    "fileValue": "this file's",
+    "projectValue": "project's",
+    "variable": "Variable",
+    "style": "Style",
+    "useProject": "Use project's",
+    "keepBoth": "Keep both",
+    "choice": "What to do with {name}",
+    "add": "Add to project",
+    "adding": "Adding…"
+  },
+  "done": "Moved to {place}",
+  "failed": {
+    "add": "The file couldn't be added to the project",
+    "open": "The file couldn't be opened",
+    "original": "The file is in the project now, but its original couldn't be deleted. It's still at {path}."
+  },
+  "inProject": "“{name}” is already in a project"
+}

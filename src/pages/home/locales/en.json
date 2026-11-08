@@ -54,7 +54,8 @@
     "open": "Open",
     "reveal": "Show in folder",
     "revealFailed": "The folder couldn't be opened",
-    "openFailed": "The file couldn't be opened"
+    "openFailed": "The file couldn't be opened",
+    "addToProject": "Add to project…"
   },
   "card": {
     "missingLabel": "{type} {name} is missing. Show options",
