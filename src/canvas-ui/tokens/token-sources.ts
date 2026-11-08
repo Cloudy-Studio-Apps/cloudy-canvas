@@ -10,7 +10,7 @@ export function tokenSources(
   records: readonly unknown[],
   order: readonly string[],
   name: (libraryId: string) => string,
-  editable: boolean,
+  editable: (libraryId: string) => boolean,
 ): TokenSource[] {
   const libraries = new Set<string>();
   let local = false;
@@ -25,7 +25,7 @@ export function tokenSources(
   };
   const sources: TokenSource[] = [...libraries]
     .sort((a, b) => rank(a) - rank(b))
-    .map((id) => ({ libraryId: id, name: name(id), editable }));
+    .map((id) => ({ libraryId: id, name: name(id), editable: editable(id) }));
   if (local) sources.push({ libraryId: null, name: "", editable: true });
   return sources;
 }

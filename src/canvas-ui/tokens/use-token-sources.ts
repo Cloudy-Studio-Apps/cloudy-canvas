@@ -6,7 +6,7 @@ import { t } from "./tokens.i18n";
 /**
  * The sources of `records` for a list grouped by where its items come from (`tokenSources`):
  * library names from the project, library items editable only while its libraries are open
- * (`ready`). `null` when none comes from a library: the list shows as one, as in a loose file.
+ * (`ready`) and that library could be read. `null` when none comes from a library: the list shows as one, as in a loose file.
  */
 export function useTokenSources(records: readonly unknown[]): TokenSource[] | null {
   const { status, hub, libraries } = useProjectLibrariesState();
@@ -19,7 +19,7 @@ export function useTokenSources(records: readonly unknown[]): TokenSource[] | nu
     records,
     entries.map((entry) => entry.id),
     name,
-    status === "ready",
+    (id) => status === "ready" && hub?.library(id) !== undefined,
   );
   return sources.some((source) => source.libraryId !== null) ? sources : null;
 }

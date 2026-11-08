@@ -17,7 +17,8 @@ React pieces both products use for variables and styles.
   come from (`TokenSource`: a library, by id and name, or the file itself with `libraryId: null`),
   each library in the project's order, then the file's own, or `null` when none comes from a
   library (the list shows as one, as in a loose file). A library's items are `editable` only while
-  the project's libraries are open (`ProjectLibrariesState.status` `ready`); a live guest sees them
+  the project's libraries are open (`ProjectLibrariesState.status` `ready`) and that library could
+  be read (`hub.library(id)`; an unreadable one's items stay read-only); a live guest sees them
   read-only too, since the host's library wins. `groupBySource(items, sources, recordOf?)` splits a
   list by them (`tokenSources` is the pure part). `TokenSourceHeader` heads each group (a library's
   name with a Library badge and the note that editing reaches every file using it, or why it can't
