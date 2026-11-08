@@ -70,5 +70,6 @@
     "filterDesignBoard": "Diseños y tableros",
     "filterJson": "JSON de tokens"
   },
-  "firstLibrary": "Sistema de marca"
+  "firstLibrary": "Sistema de marca",
+  "cleanupFailed": "No se pudo quitar la carpeta del proyecto a medio crear. Está en {path}."
 }

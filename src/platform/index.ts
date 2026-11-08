@@ -39,5 +39,5 @@ export { openFile } from "./open-file";
 export { projectFs } from "./project-fs";
 export { projectRegistry } from "./project-registry";
 export { projectsSupported } from "./projects-support";
-export { defaultProjectsFolder, ensureFolder } from "./project-folders";
+export { defaultProjectsFolder, ensureFolder, removeCreatedFolder } from "./project-folders";
 export { pickProjectFile } from "./pick-project-file";

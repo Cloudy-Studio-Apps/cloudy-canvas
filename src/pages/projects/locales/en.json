@@ -70,5 +70,6 @@
     "filterDesignBoard": "Designs and boards",
     "filterJson": "Tokens JSON"
   },
-  "firstLibrary": "Brand system"
+  "firstLibrary": "Brand system",
+  "cleanupFailed": "The half-made project folder couldn't be removed. It's at {path}."
 }

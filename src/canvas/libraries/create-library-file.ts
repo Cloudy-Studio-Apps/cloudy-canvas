@@ -10,6 +10,7 @@ import {
   type ProjectFs,
 } from "@shared/core";
 
+import type { TokenRecord } from "../tokens/token.types";
 import { keyBetween } from "../utils";
 import { LibraryDocument } from "./library-document";
 
@@ -17,14 +18,15 @@ import { LibraryDocument } from "./library-document";
 const LIBRARIES_REL = `${PROJECT_DATA_DIR}/${LIBRARIES_DIR}`;
 
 /**
- * Writes an empty library named `name` (its `.clib` and `.assets/` folder, with a file name no
- * other library of the project at `root` has) and returns its manifest entry; the caller adds it
- * to the manifest. Throws when `name` can't be a file name.
+ * Writes a library named `name` (its `.clib`, holding `records` if any, and `.assets/` folder,
+ * with a file name no other library of the project at `root` has) and returns its manifest entry;
+ * the caller adds it to the manifest. Throws when `name` can't be a file name.
  */
 export async function createLibraryFile(
   fs: ProjectFs,
   root: string,
   name: string,
+  records: readonly TokenRecord[] = [],
 ): Promise<LibraryEntry> {
   const label = name.trim();
   if (isReservedName(label)) throw new Error(`"${label}" can't be a library name`);
@@ -58,6 +60,7 @@ export async function createLibraryFile(
     autoAdd: true,
   };
   const library = LibraryDocument.create(entry.id, label);
+  if (records.length > 0) library.setTokenRecords(records);
   await fs.writeBytesAtomic(paths.library(file), library.encodeFile());
   return entry;
 }

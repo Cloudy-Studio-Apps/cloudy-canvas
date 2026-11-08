@@ -1,5 +1,5 @@
-import { ensureFolder, projectFs } from "@platform";
-import { createLibraryFile, LibraryDocument } from "@canvas";
+import { ensureFolder, projectFs, removeCreatedFolder } from "@platform";
+import { createLibraryFile } from "@canvas";
 import {
   createId,
   isReservedName,
@@ -11,6 +11,7 @@ import {
   type ProjectRecord,
 } from "@shared/core";
 import { useProjectsStore } from "@shared/stores/projects-store";
+import { notifyError } from "@shared/stores/toast-store";
 import type { CreateProjectInput } from "./create-project.types";
 import { t } from "./projects.i18n";
 import { firstLibraryRecords, writeProjectImage } from "@pages/shared/projects";
@@ -23,7 +24,9 @@ export function projectRootFor(parent: string, name: string): string {
 /**
  * Creates `<parent>/<name>/` with the hidden data folder, the first library ("Brand system", filled
  * from `input.firstLibrary`) and the `.cproject`, and records the
- * project as opened. Throws when the name can't be a folder or the folder already exists.
+ * project as opened. Throws when the name can't be a folder or the folder already exists; a
+ * step failing before the `.cproject` is written removes what it made (the project's folder, and
+ * the parent folder when it made that too and it's empty).
  */
 export async function createProject(input: CreateProjectInput): Promise<ProjectRecord> {
   const name = input.name.trim();
@@ -35,30 +38,33 @@ export async function createProject(input: CreateProjectInput): Promise<ProjectR
   if (await projectFs.exists(root)) throw new Error(`"${root}" already exists`);
 
   const paths = projectPaths(root);
+  const madeParent = !(await projectFs.exists(input.parent));
   await ensureFolder(input.parent);
-  await ensureFolder(root);
-  await ensureFolder(paths.data);
-  await projectFs.makeHidden(paths.data);
-
-  const library = await createLibraryFile(projectFs, root, t("firstLibrary"));
-  if (records.length > 0) {
-    const document = LibraryDocument.fromFile(
-      await projectFs.readBytes(paths.library(library.file)),
-    );
-    document.setTokenRecords(records);
-    await projectFs.writeBytesAtomic(paths.library(library.file), document.encodeFile());
+  try {
+    await ensureFolder(root);
+    await ensureFolder(paths.data);
+    await projectFs.makeHidden(paths.data);
+    const library = await createLibraryFile(projectFs, root, t("firstLibrary"), records);
+    const manifest: ProjectManifest = {
+      format: MANIFEST_FORMAT,
+      id: createId(),
+      name,
+      color: input.color,
+      icon: input.iconImage ? await writeProjectImage(root, "icon", input.iconImage) : input.icon,
+      cover: null,
+      libraries: [library],
+      folders: {},
+    };
+    await projectFs.writeTextAtomic(paths.manifest(name), serializeManifest(manifest));
+  } catch (error) {
+    // Only what this made: the project's folder (new, so nothing else is in it) and an empty parent.
+    try {
+      await removeCreatedFolder(root, true);
+      if (madeParent) await removeCreatedFolder(input.parent, false);
+    } catch (cleanup) {
+      notifyError(t("cleanupFailed", { path: root }), cleanup);
+    }
+    throw error;
   }
-
-  const manifest: ProjectManifest = {
-    format: MANIFEST_FORMAT,
-    id: createId(),
-    name,
-    color: input.color,
-    icon: input.iconImage ? await writeProjectImage(root, "icon", input.iconImage) : input.icon,
-    cover: null,
-    libraries: [library],
-    folders: {},
-  };
-  await projectFs.writeTextAtomic(paths.manifest(name), serializeManifest(manifest));
   return useProjectsStore.getState().open(root);
 }
