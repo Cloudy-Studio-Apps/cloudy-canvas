@@ -1,13 +1,16 @@
 import type { Graphics } from "pixi.js";
-import type { GuideView, Point } from "@canvas";
+import { fillPath, mapPath, type GuideView, type Point } from "@canvas";
 
-import { segmentCurve, segmentsAt, tangentAt } from "../../core";
+import { regionShapes, segmentCurve, segmentsAt, tangentAt } from "../../core";
 import type { VectorElement } from "../vector.types";
 import type { VectorEditSelection } from "./vector-edit.types";
 import { vectorWorldPoint } from "./vector-world-point";
 
 /** Sizes on screen, in pixels. */
 export const OVERLAY_PX = { vertex: 7, handle: 3.5, line: 1.5 } as const;
+
+/** How strongly a selected area is tinted with the selection color. */
+const REGION_TINT = 0.15;
 
 /** The vertices whose tangent handles show: the selected ones and the ends of selected segments. */
 export function activeVertices(el: VectorElement, selection: VectorEditSelection): Set<number> {
@@ -20,7 +23,7 @@ export function activeVertices(el: VectorElement, selection: VectorEditSelection
 }
 
 /**
- * Draws the edited vector's skeleton above it: its segments, its vertices (filled when selected)
+ * Draws the edited vector's skeleton above it: its selected areas tinted, its segments, its vertices (filled when selected)
  * and the tangent handles of the active ones, all at a constant size on screen.
  */
 export function drawVectorOverlay(
@@ -33,6 +36,11 @@ export function drawVectorOverlay(
   const color = view.theme.selection;
   const world = (p: Point) => vectorWorldPoint(el, p);
   const { network } = el;
+
+  for (const { region, shape } of regionShapes(network)) {
+    if (selection.regions.has(region))
+      fillPath(g, mapPath(shape, world), { color, alpha: REGION_TINT });
+  }
 
   network.segments.forEach((_, i) => {
     const [p0, c1, c2, p3] = segmentCurve(network, i).map(world) as [Point, Point, Point, Point];

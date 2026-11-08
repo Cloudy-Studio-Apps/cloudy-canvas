@@ -18,7 +18,7 @@ export {
 } from "./network-edits";
 export { faceAt, networkFaces } from "./network-faces";
 export { hitSegment, insideRegion, networkBounds, regionAt, vertexAt } from "./network-geometry";
-export { setRegionFills } from "./network-region-fills";
+export { removeRegions, setRegionFills } from "./network-region-fills";
 export { placeNetwork, scaleNetwork } from "./network-placement";
 export { ellipseNetwork, polygonNetwork, polylineNetwork, rectNetwork } from "./network-shapes";
 export { traceRegions, traceStrokes } from "./network-trace";

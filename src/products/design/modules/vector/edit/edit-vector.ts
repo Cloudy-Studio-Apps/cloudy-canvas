@@ -1,6 +1,7 @@
 import type { CanvasElement, ToolContext } from "@canvas";
 
 import type { DesignToolOptions } from "../../../design-options.types";
+import { REGION_SELECTION } from "../../core";
 import { shapeToVector } from "../shape-to-vector";
 import type { VectorElement } from "../vector.types";
 import { VECTOR_EDIT } from "./vector-edit-session";
@@ -24,7 +25,7 @@ export function editVector(el: CanvasElement, ctx: ToolContext<DesignToolOptions
     ctx.doc.remove([el.id]);
     ctx.doc.add(vector);
   }
-  ctx.service(VECTOR_EDIT).start(el.id);
+  ctx.service(VECTOR_EDIT).start(el.id, ctx.service(REGION_SELECTION));
   ctx.setSelection([el.id]);
   ctx.setTool(VECTOR_TOOLS.move);
   return true;

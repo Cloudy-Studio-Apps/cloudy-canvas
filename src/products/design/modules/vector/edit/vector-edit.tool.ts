@@ -15,6 +15,7 @@ import {
   moveVertices,
   placeNetwork,
   removeParts,
+  removeRegions,
   segmentsAt,
   tangentAt,
   vertexAt,
@@ -37,8 +38,8 @@ const EDIT_TOOLS: ReadonlySet<string> = new Set(Object.values(VECTOR_TOOLS));
 /**
  * The base of the vector edit tools (template method): it shows the overlay while it's on, finds
  * what a press lands on, writes network edits (re-placing the node around its curves), and takes
- * the mode's commands: Enter (Done) leaves it, Esc lets go of the selected points, V is Move
- * points, Delete removes the selected points and segments, Ctrl+A selects every point, the
+ * the mode's commands: Enter (Done) leaves it, Esc lets go of the selected points and areas, V is
+ * Move points, Delete removes the selected points and segments (or unfills the selected areas), Ctrl+A selects every point, the
  * arrow keys nudge the selected points. Subclasses handle the pointer.
  */
 export abstract class VectorEditTool implements Tool {
@@ -110,9 +111,13 @@ export abstract class VectorEditTool implements Tool {
     this.write(origin, network);
   }
 
-  /** Selects points and segments of the edited vector (and redraws the overlay). */
-  protected select(vertices: Iterable<number>, segments: Iterable<number> = []): void {
-    this.session.select(vertices, segments);
+  /** Selects points, segments and regions of the edited vector (and redraws the overlay). */
+  protected select(
+    vertices: Iterable<number>,
+    segments: Iterable<number> = [],
+    regions: Iterable<number> = [],
+  ): void {
+    this.session.select(vertices, segments, regions);
     this.ctx.requestRender();
   }
 
@@ -165,8 +170,13 @@ export abstract class VectorEditTool implements Tool {
         this.select([]);
         return true;
       case "deleteSelection": {
-        const { vertices, segments } = this.session.selection;
-        if (vertices.size + segments.size === 0) return true;
+        const { vertices, segments, regions } = this.session.selection;
+        if (vertices.size + segments.size === 0) {
+          // Only areas picked: they're unfilled, as the paint bucket does.
+          if (regions.size > 0) this.commit(el, removeRegions(el.network, [...regions]));
+          this.select([]);
+          return true;
+        }
         this.commit(el, removeParts(el.network, vertices, segments));
         this.select([]);
         return true;

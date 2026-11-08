@@ -6,14 +6,16 @@ import {
   type CanvasPointer,
 } from "@canvas";
 
-import { moveVertices, segmentsAt, setTangent, type VectorNetwork } from "../../core";
+import { moveVertices, regionAt, segmentsAt, setTangent, type VectorNetwork } from "../../core";
 import type { MoveGesture } from "./vector-edit.types";
 import { VectorEditTool } from "./vector-edit.tool";
 import { VECTOR_TOOLS } from "./vector-tools";
 
 /**
  * Picks and drags points (Shift adds or removes), segments (their two points) and tangent handles
- * (Alt breaks a smooth point's mirror), or marquee-selects points (a click away lets go of them).
+ * (Alt breaks a smooth point's mirror), picks the areas a click lands inside (Shift adds or
+ * removes; the Fill section then edits their fills), or marquee-selects points from outside every
+ * area (a click away lets go of them).
  */
 export class VectorMoveTool extends VectorEditTool {
   readonly id = VECTOR_TOOLS.move;
@@ -51,6 +53,14 @@ export class VectorMoveTool extends VectorEditTool {
         part.kind === "segment" && !p.shiftKey ? [part.segment] : p.shiftKey ? segments : [],
       );
       this.gesture = { kind: "points", start: p, origin: el, vertices: next, started: false };
+      return;
+    }
+    const region = regionAt(el.network, this.local(el, p.world));
+    if (region !== null) {
+      const picked = new Set(p.shiftKey ? this.session.selection.regions : []);
+      if (picked.has(region)) picked.delete(region);
+      else picked.add(region);
+      this.select(p.shiftKey ? vertices : [], p.shiftKey ? segments : [], picked);
       return;
     }
     this.gesture = {

@@ -75,3 +75,5 @@ export {
   strokeSideFields,
 } from "./node-bindable";
 export { movedTo, removedAt, stackBindingsPatch } from "./stack-bindings";
+export type * from "./region-selection.types";
+export { REGION_SELECTION, RegionSelectionSession } from "./region-selection";

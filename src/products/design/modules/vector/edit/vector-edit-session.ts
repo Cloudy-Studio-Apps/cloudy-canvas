@@ -1,16 +1,23 @@
 import { defineService, Emitter } from "@canvas";
 
+import type { RegionSelectionSession } from "../../core";
 import type { VectorEditSelection } from "./vector-edit.types";
 
-const NOTHING: VectorEditSelection = { vertices: new Set(), segments: new Set() };
+const NOTHING: VectorEditSelection = {
+  vertices: new Set(),
+  segments: new Set(),
+  regions: new Set(),
+};
 
 /**
- * The vector being edited and what's selected in it, shared by the edit tools, their overlay and
- * the edit toolbar. `subscribe`/`getVersion` work with React's `useSyncExternalStore`.
+ * The vector being edited and what's selected in it (points, segments, regions), shared by the edit
+ * tools, their overlay and the edit toolbar. Picked regions are mirrored into the core's
+ * `REGION_SELECTION`, given at `start`, so the Fill section edits their fills. `subscribe`/`getVersion` work with React's `useSyncExternalStore`.
  */
 export class VectorEditSession {
   private id: string | null = null;
   private picked: VectorEditSelection = NOTHING;
+  private regionStore: RegionSelectionSession | null = null;
   private version = 0;
   private readonly changes = new Emitter();
 
@@ -22,20 +29,34 @@ export class VectorEditSession {
     return this.picked;
   }
 
-  start(id: string): void {
+  start(id: string, regionStore: RegionSelectionSession): void {
+    this.regionStore?.set(null);
     this.id = id;
+    this.regionStore = regionStore;
     this.picked = NOTHING;
     this.changed();
   }
 
   stop(): void {
+    this.regionStore?.set(null);
+    this.regionStore = null;
     this.id = null;
     this.picked = NOTHING;
     this.changed();
   }
 
-  select(vertices: Iterable<number>, segments: Iterable<number> = []): void {
-    this.picked = { vertices: new Set(vertices), segments: new Set(segments) };
+  select(
+    vertices: Iterable<number>,
+    segments: Iterable<number> = [],
+    regions: Iterable<number> = [],
+  ): void {
+    this.picked = {
+      vertices: new Set(vertices),
+      segments: new Set(segments),
+      regions: new Set(regions),
+    };
+    const picked = [...this.picked.regions];
+    this.regionStore?.set(this.id ? { elementId: this.id, regions: picked } : null);
     this.changed();
   }
 

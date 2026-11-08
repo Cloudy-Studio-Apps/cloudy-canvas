@@ -21,3 +21,9 @@ function withFills(region: VectorRegion, fills: Paint[] | undefined): VectorRegi
   if (fills) return { ...region, fills };
   return { loops: region.loops, windingRule: region.windingRule };
 }
+
+/** A copy of `net` without the listed regions (their areas unfilled, as the paint bucket does). */
+export function removeRegions(net: VectorNetwork, regions: readonly number[]): VectorNetwork {
+  const dropped = new Set(regions);
+  return { ...net, regions: net.regions.filter((_, i) => !dropped.has(i)) };
+}

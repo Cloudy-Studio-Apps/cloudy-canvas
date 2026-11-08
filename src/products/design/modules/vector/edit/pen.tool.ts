@@ -13,6 +13,7 @@ import {
   parentFor,
   setTangent,
   splitSegment,
+  REGION_SELECTION,
   type VectorNetwork,
 } from "../../core";
 import { createVector } from "../vector.factory";
@@ -117,7 +118,7 @@ export class PenTool extends VectorEditTool {
     const vector: VectorElement = { ...draft, parentId: parentFor(this.ctx, draft) };
     doc.checkpoint();
     doc.add(vector);
-    this.session.start(vector.id);
+    this.session.start(vector.id, this.ctx.service(REGION_SELECTION));
     this.ctx.setSelection([vector.id]);
     this.select([0]);
     this.pull = { start: p, vertex: 0, segment: null };
