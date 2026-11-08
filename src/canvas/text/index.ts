@@ -20,6 +20,7 @@ export {
 } from "./rich/text-runs";
 export type * from "./text-font.types";
 export { TextEditor } from "./text-editor";
+export { documentFonts, loadDocumentFonts } from "./load-document-fonts";
 export { loadFonts } from "./load-fonts";
 export { cssFont, fontFamilyList, textFont } from "./text-font";
 export {

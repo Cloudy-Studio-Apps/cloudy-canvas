@@ -20,3 +20,11 @@ export function resolveCssColor(
   const [r = 0, g = 0, b = 0] = probe.getImageData(0, 0, 1, 1).data;
   return (r << 16) | (g << 8) | b;
 }
+
+/** `resolveCssColor` as `#rrggbb`, for pickers that start from a theme color. */
+export function resolveCssHex(
+  variable: string,
+  element: Element = document.documentElement,
+): string {
+  return `#${resolveCssColor(variable, 0x000000, element).toString(16).padStart(6, "0")}`;
+}

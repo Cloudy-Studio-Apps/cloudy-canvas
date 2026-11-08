@@ -1,5 +1,6 @@
 import { Bot, HardDrive, Info, Keyboard, Languages, Palette, Puzzle, Users } from "lucide-react";
 
+import { projectsSupported } from "@platform";
 import { isAndroidPlatform } from "@shared/core";
 import { AboutPage } from "./sections/about-page";
 import { AppearanceSection } from "./sections/appearance";
@@ -8,6 +9,7 @@ import { CollaborationSection } from "./sections/collaboration";
 import { FilesSection } from "./sections/files-section";
 import { LanguageSection } from "./sections/language-section";
 import { PluginsSection } from "./sections/plugins";
+import { ProjectsStorageSection } from "./sections/projects-storage";
 import { ShortcutsSection } from "./sections/shortcuts-section";
 import type { SettingsGroup, SettingsSectionEntry } from "./settings-sections.types";
 import { t } from "./settings.i18n";
@@ -48,6 +50,13 @@ export const SETTINGS_SECTIONS: readonly SettingsSectionEntry[] = (
       component: FilesSection,
     },
     {
+      id: "projects",
+      label: t("nav.projects"),
+      icon: HardDrive,
+      group: "preferences",
+      component: ProjectsStorageSection,
+    },
+    {
       id: "collaboration",
       label: t("nav.collaboration"),
       icon: Users,
@@ -77,7 +86,10 @@ export const SETTINGS_SECTIONS: readonly SettingsSectionEntry[] = (
     },
     { id: "about", label: t("nav.about"), icon: Info, group: "help", component: AboutPage },
   ] satisfies SettingsSectionEntry[]
-).filter((section) => hasGroup({ id: section.group }));
+).filter(
+  (section) =>
+    hasGroup({ id: section.group }) && (section.id !== "projects" || projectsSupported()),
+);
 
 export function findSettingsSection(id: string | undefined): SettingsSectionEntry | undefined {
   return SETTINGS_SECTIONS.find((section) => section.id === id);

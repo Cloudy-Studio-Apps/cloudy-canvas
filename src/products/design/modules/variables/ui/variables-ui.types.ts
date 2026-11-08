@@ -1,6 +1,14 @@
 import type { ComponentProps } from "react";
 
-import type { ModeContext, TokenGroupNode, VariableRecord } from "@canvas";
+import type {
+  CollectionRecord,
+  ModeContext,
+  StyleRecord,
+  TokenGroupNode,
+  VariableRecord,
+} from "@canvas";
+import type { TokenSource } from "@canvas-ui";
+import type { StyleTypeEntry } from "../../core/ui";
 
 export interface VariableRowProps {
   variable: VariableRecord;
@@ -8,6 +16,8 @@ export interface VariableRowProps {
   editing: boolean;
   setEditing: (open: boolean) => void;
   onDelete: () => void;
+  /** Where it comes from, when the list is grouped by source (a file using libraries). */
+  source?: TokenSource;
 }
 
 export interface VariableEditorProps {
@@ -75,6 +85,15 @@ export interface SidebarGroupRowProps extends SidebarGroupsProps {
   collectionId: string;
   group: string;
   items: readonly VariableRecord[];
+  /** Where the collection comes from, when grouped by source. */
+  source?: TokenSource;
+}
+
+export interface SidebarCollectionProps extends SidebarGroupsProps {
+  collection: CollectionRecord;
+  /** Its name above its groups (several collections, or grouped by source). */
+  caption: boolean;
+  source?: TokenSource;
 }
 
 /** A text or true/false variable's own value for one mode. */
@@ -83,4 +102,15 @@ export interface PlainValueInputProps<T> {
   label: string;
   onChange: (value: T) => void;
   className?: string;
+}
+
+export interface StyleSourceListProps {
+  /** Where they come from; unset in a file without libraries. */
+  source?: TokenSource;
+  styles: readonly StyleRecord[];
+  /** The style types, in order. */
+  types: readonly StyleTypeEntry[];
+  editingId: string | null;
+  setEditingId: (id: string | null) => void;
+  onDelete: (id: string) => void;
 }

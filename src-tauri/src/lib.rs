@@ -1,6 +1,7 @@
 // Rust is only for desktop-specific integration. Business logic lives in TypeScript (src/core, src/engine)
 // so the future web version can reuse it.
 mod app_links;
+mod hidden;
 mod install_kind;
 #[cfg(target_os = "macos")]
 mod mac_menu;
@@ -58,6 +59,7 @@ pub fn run() {
             install_kind::install_kind,
             system_fonts::system_fonts,
             system_fonts::system_font_data,
+            hidden::set_hidden,
             leave_app
         ])
         .setup(|app| {

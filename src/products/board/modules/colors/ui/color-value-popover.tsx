@@ -9,12 +9,13 @@ import { t } from "../colors.i18n";
  * (an alias picked over becomes a color of its own; a drag is one undo step) and its description
  * (what it's for, as agents and exports read it).
  */
-export function ColorValuePopover({ variable }: ColorValuePopoverProps) {
+export function ColorValuePopover({ variable, editable = true }: ColorValuePopoverProps) {
   const { tokens, store } = useDocumentTokens();
   const resolved = resolveVariable(store, variable.id, {});
   const color = resolved?.type === "color" ? resolved.color : "#000000FF";
   const { hex, alpha } = splitTokenColor(color);
   const mode = colorMode(store, variable);
+  if (!editable) return <TokenSwatch color={color} className="size-5 shrink-0" />;
   return (
     <ColorPopover
       color={hex}

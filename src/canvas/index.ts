@@ -28,6 +28,8 @@ export type {
   EditedChange,
   HistoryChange,
   Placement,
+  ProjectLink,
+  ProjectLinkOptions,
   UndoHistory,
 } from "./document";
 export type * from "./workspace";
@@ -129,6 +131,7 @@ export * from "./rotation";
 export * from "./path";
 export * from "./svg";
 export * from "./tokens";
+export * from "./libraries";
 export { smoothPoints } from "./smooth-points";
 export { BASE_COMMAND_LABELS, BASE_KEYBINDINGS, Keymap } from "./input";
 export { composeProduct, createCanvasPoints } from "./modules";
@@ -166,11 +169,13 @@ export {
   clearRunFields,
   cssFont,
   decorationRect,
+  documentFonts,
   outlineRun,
   fontFamilyList,
   fontsVersion,
   fragmentOffsets,
   layoutRichText,
+  loadDocumentFonts,
   measureText,
   measureTextBlock,
   measureWrapped,

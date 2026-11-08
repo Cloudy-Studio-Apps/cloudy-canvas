@@ -45,6 +45,10 @@ export interface StyleRowProps {
   editing: boolean;
   setEditing: (open: boolean) => void;
   onDelete: () => void;
+  /** Only its row, with no editor (a library's style while the library can't be edited). */
+  readOnly?: boolean;
+  /** After its name (e.g. the mark of a library's style). */
+  badge?: ReactNode;
 }
 
 export interface StyleEditorPopoverProps {

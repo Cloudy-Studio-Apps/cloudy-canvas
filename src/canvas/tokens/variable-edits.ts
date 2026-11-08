@@ -8,6 +8,7 @@ import { deletionRewrites } from "./token-deletion";
 import { ModeEdits } from "./mode-edits";
 import { normalizeTokenPath, renamePrefix } from "./token-path";
 import { baseModes } from "./token-edits-base";
+import { collectionSource } from "./collection-source";
 import { TokenStore } from "./token-store";
 import type { TokenValue, VariableRecord } from "./token.types";
 import { keyBetween } from "../utils";
@@ -35,6 +36,7 @@ export abstract class VariableEdits extends ModeEdits {
         store.variables(collection.id).at(-1);
       const value = this.checkValue(store, null, spec.type, spec.value);
       records.push({
+        ...collectionSource(store, collection.id),
         kind: "variable",
         id: createId(),
         collectionId: collection.id,

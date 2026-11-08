@@ -13,7 +13,8 @@ import { t } from "../variables.i18n";
 
 /**
  * A group in the properties panel, as the Variables window's outline shows it (swatches or its
- * number kind, its count); it unfolds to its variables, and ↗ opens the window at it.
+ * number kind, its count); it unfolds to its variables, and ↗ opens the window at it (not for a
+ * library's group while the library can't be edited).
  */
 export function SidebarGroupRow({
   collectionId,
@@ -23,6 +24,7 @@ export function SidebarGroupRow({
   editingId,
   setEditingId,
   onDelete,
+  source,
 }: SidebarGroupRowProps) {
   const { store } = useDocumentTokens();
   const [open, setOpen] = useState(false);
@@ -66,15 +68,17 @@ export function SidebarGroupRow({
           <span className="min-w-0 flex-1 truncate">{group || t("common.ungrouped")}</span>
           <span className="text-[11px] text-subtle-foreground">{items.length}</span>
         </button>
-        <button
-          type="button"
-          aria-label={group ? t("sidebar.openGroup", { group }) : t("sidebar.openThisGroup")}
-          title={t("sidebar.open")}
-          onClick={() => openWindowAt(collectionId, group)}
-          className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-0 group-hover/row:opacity-100 hover:bg-surface hover:text-foreground"
-        >
-          <SquareArrowOutUpRight className="size-3" />
-        </button>
+        {source?.editable !== false && (
+          <button
+            type="button"
+            aria-label={group ? t("sidebar.openGroup", { group }) : t("sidebar.openThisGroup")}
+            title={t("sidebar.open")}
+            onClick={() => openWindowAt(collectionId, group)}
+            className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-0 group-hover/row:opacity-100 hover:bg-surface hover:text-foreground"
+          >
+            <SquareArrowOutUpRight className="size-3" />
+          </button>
+        )}
       </div>
       {open && (
         <div className="ml-4 flex flex-col">
@@ -86,6 +90,7 @@ export function SidebarGroupRow({
               editing={editingId === variable.id}
               setEditing={(on) => setEditingId(on ? variable.id : null)}
               onDelete={() => onDelete([variable.id])}
+              source={source}
             />
           ))}
         </div>

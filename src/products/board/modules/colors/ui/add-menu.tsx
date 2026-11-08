@@ -8,14 +8,15 @@ import {
   DropdownMenuTrigger,
   IconButton,
 } from "@shared/ui/kit";
+import { localCollection } from "./local-collection";
 import { NEW_COLOR } from "./new-color";
 import { t } from "../colors.i18n";
 
-/** The colors panel's "+": a color (in the first collection, "Colors" when there's none) or a collection. */
+/** The colors panel's "+": a color (in the first own collection, "Colors" when there's none) or a collection. */
 export function AddMenu() {
   const { tokens } = useDocumentTokens();
   const addColor = () => {
-    const collection = tokens.store().collections()[0] ?? tokens.createCollection("Colors");
+    const collection = localCollection(tokens);
     tokens.createVariable({ ...NEW_COLOR, collectionId: collection.id });
   };
   return (

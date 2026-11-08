@@ -1,19 +1,26 @@
 import type { CollectionRecord, VariableRecord } from "@canvas";
+import type { TokenSource } from "@canvas-ui";
 import type { ColorSource } from "../../../tokens";
 
 export interface CollectionColorsProps {
   collection: CollectionRecord;
   /** Its color variables. */
   colors: readonly VariableRecord[];
+  /** Where it comes from, when the panel is grouped by source (a file using libraries). */
+  source?: TokenSource;
 }
 
 export interface ColorRowProps {
   variable: VariableRecord;
   onDelete: (variable: VariableRecord) => void;
+  /** The color can be edited (a library's only while its libraries are open). */
+  editable?: boolean;
 }
 
 export interface ColorValuePopoverProps {
   variable: VariableRecord;
+  /** Without it the swatch only shows the color (default on). */
+  editable?: boolean;
 }
 
 export interface InlineRenameProps {

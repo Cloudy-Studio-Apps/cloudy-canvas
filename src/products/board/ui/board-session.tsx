@@ -3,10 +3,14 @@ import {
   CloseFileGuard,
   EditorModulesContext,
   EngineContext,
+  NO_PROJECT_LIBRARIES,
+  ProjectLibrariesContext,
+  ProjectMissingDialog,
   ModuleSession,
   useCanvasThumbnail,
   useHostedFile,
   useLiveGuestFile,
+  useProjectLibraries,
 } from "@canvas-ui";
 
 import { useAgentBoard } from "./agent";
@@ -36,7 +40,8 @@ export function BoardSession({ id, engine, info, live }: BoardSessionProps) {
 function FileBoardSession({ id, engine, info }: FileBoardSessionProps) {
   const file = useHostedFile(useBoardSaver(id, engine, info), engine);
   const capture = useCanvasThumbnail(id, engine, file.saved);
-  return <BoardSessionView engine={engine} file={file} capture={capture} />;
+  const libraries = useProjectLibraries(engine, file);
+  return <BoardSessionView engine={engine} file={file} capture={capture} libraries={libraries} />;
 }
 
 function LiveBoardSession({ engine, live }: LiveBoardSessionProps) {
@@ -44,15 +49,18 @@ function LiveBoardSession({ engine, live }: LiveBoardSessionProps) {
   return <BoardSessionView engine={engine} file={file} />;
 }
 
-function BoardSessionView({ engine, file, capture }: BoardSessionViewProps) {
+function BoardSessionView({ engine, file, capture, libraries }: BoardSessionViewProps) {
   useAgentBoard(file.id, engine, file);
   return (
     <EngineContext value={engine}>
       <EditorModulesContext value={getBoardEditorModules()}>
         <CanvasFileContext value={file}>
-          {capture && <CloseFileGuard capture={capture} />}
-          <ModuleSession />
-          <BoardChrome />
+          <ProjectLibrariesContext value={libraries ?? NO_PROJECT_LIBRARIES}>
+            {capture && <CloseFileGuard capture={capture} />}
+            {libraries && <ProjectMissingDialog libraries={libraries} fileName={file.name} />}
+            <ModuleSession />
+            <BoardChrome />
+          </ProjectLibrariesContext>
         </CanvasFileContext>
       </EditorModulesContext>
     </EngineContext>

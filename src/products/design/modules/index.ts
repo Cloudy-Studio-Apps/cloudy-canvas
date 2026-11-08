@@ -25,3 +25,5 @@ export * from "./catalog";
 export * from "./sticker";
 export * from "./styleguide";
 export * from "./color-wizard";
+export { BUILT_IN_TOKEN_FORMATS, readTokenSource } from "./variables";
+export type { TokenSourceRead } from "./variables";

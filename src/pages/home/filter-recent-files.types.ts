@@ -1,4 +1,4 @@
-import type { HomeFileKind } from "./file-kind.types";
+import type { HomeFileKind } from "@pages/shared/files";
 
 /** `recent` keeps the order of the recent files list (last opened or saved first). */
 export type RecentFilesSort = "recent" | "edited" | "name";

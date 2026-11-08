@@ -123,6 +123,28 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
     });
   }
 
+  /** Also points its areas' own image fills at `to`. */
+  override relinkAsset(
+    el: VectorElement,
+    from: string,
+    to: string,
+  ): ElementPatch<VectorElement> | null {
+    const own = super.relinkAsset(el, from, to);
+    let touched = false;
+    const regions = el.network.regions.map((region) => {
+      if (!region.fills?.some((p) => p.type === "image" && p.assetId === from)) return region;
+      touched = true;
+      return {
+        ...region,
+        fills: region.fills.map((p) =>
+          p.type === "image" && p.assetId === from ? { ...p, assetId: to } : p,
+        ),
+      };
+    });
+    if (!touched) return own;
+    return { ...own, network: { ...el.network, regions } };
+  }
+
   /** Its areas' own image fills count too, so copies and exports carry their pictures. */
   override assets(el: VectorElement): string[] {
     return [...super.assets(el), ...areaImages(el).map((paint) => paint.assetId)];

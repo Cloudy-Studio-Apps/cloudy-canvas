@@ -1,5 +1,7 @@
+import type { ReactNode } from "react";
 import { createBrowserRouter, Navigate, type RouteObject } from "react-router";
 
+import { projectsSupported } from "@platform";
 import { HomePage } from "@pages/home/home-page";
 import { RouteErrorPage } from "./error";
 import { lazyPage } from "./lazy-page";
@@ -10,7 +12,17 @@ const designEditor = lazyPage(() => import("@design/ui").then((ui) => ui.DesignE
 const settings = lazyPage(() =>
   import("@pages/settings/settings-page").then((page) => page.SettingsPage),
 );
+const projects = lazyPage(() =>
+  import("@pages/projects/projects-page").then((page) => page.ProjectsPage),
+);
+const project = lazyPage(() =>
+  import("@pages/project/project-page").then((page) => page.ProjectPage),
+);
 const join = lazyPage(() => import("@pages/join/join-page").then((page) => page.JoinPage));
+
+// Projects are a desktop feature: elsewhere their routes go Home.
+const desktopOnly = (page: ReactNode): ReactNode =>
+  projectsSupported() ? page : <Navigate to="/" replace />;
 
 // Dev-only tooling routes; tree-shaken from production builds.
 const devRoutes: RouteObject[] = import.meta.env.DEV
@@ -32,6 +44,8 @@ export const router = createBrowserRouter([
       { path: "/", element: <HomePage /> },
       { path: "/board/:id", element: boardEditor },
       { path: "/design/:id", element: designEditor },
+      { path: "/projects", element: desktopOnly(projects) },
+      { path: "/project/:id", element: desktopOnly(project) },
       { path: "/settings", element: settings },
       { path: "/settings/:section", element: settings },
       { path: "/join/:ticket", element: join },

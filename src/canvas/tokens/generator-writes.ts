@@ -1,6 +1,7 @@
 import { createId } from "@shared/core";
 
 import type { CanvasDocument } from "../document";
+import { collectionSource } from "./collection-source";
 import { generatedScale, scaleBase } from "./generated-scale";
 import { generatedShades, generatorBase } from "./generated-shades";
 import type { ScaleRecord } from "./scale-generator.types";
@@ -12,9 +13,11 @@ import { keyBetween } from "../utils";
 /** Makes new variables for a generator, ordered after the collection's last one. */
 function maker(store: TokenStore, collectionId: string, type: VariableType) {
   let last = store.variables(collectionId).at(-1)?.order ?? null;
+  const source = collectionSource(store, collectionId);
   return (name: string): VariableRecord => {
     last = keyBetween(last, null);
     return {
+      ...source,
       kind: "variable",
       id: createId(),
       collectionId,

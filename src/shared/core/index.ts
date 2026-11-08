@@ -16,6 +16,7 @@ export * from "./keyboard";
 export type * from "./keyboard.types";
 export * from "./mcp";
 export * from "./presence";
+export * from "./projects";
 export * from "./share";
 export type * from "./sticker-library.types";
 export * from "./stickers";

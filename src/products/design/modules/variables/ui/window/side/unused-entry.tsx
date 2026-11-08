@@ -7,11 +7,13 @@ import { t } from "../../../variables.i18n";
 
 /** The side's "Unused · N" entry: shows the variables and styles nothing uses. */
 export function UnusedEntry() {
-  const { tokens } = useBoard();
+  const { tokens, store, canEdit } = useBoard();
   const showing = useVariablesWindowStore((state) => state.showingUnused);
   const showUnused = useVariablesWindowStore((state) => state.showUnused);
   const engine = useDesignEngine();
-  const count = tokens.unused(countedUse(engine.doc)).length;
+  const count = tokens
+    .unused(countedUse(engine.doc))
+    .filter((id) => canEdit(store.variable(id) ?? store.style(id))).length;
   return (
     <div className="mt-2 border-t border-border pt-2">
       <ListRow

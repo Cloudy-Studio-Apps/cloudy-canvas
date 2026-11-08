@@ -1,12 +1,12 @@
 import { Plus, Ruler } from "lucide-react";
 import { useState } from "react";
 
-import { groupTree } from "@canvas";
 import {
   ExtensionIconView,
-  TokenGroupAccordion,
+  groupBySource,
   useDocumentTokens,
   useEditorModules,
+  useTokenSources,
 } from "@canvas-ui";
 import { PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
@@ -17,13 +17,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@shared/ui/kit";
-import { DeleteTokensDialog, StyleRow, designStyleTypes } from "../../core/ui";
+import { DeleteTokensDialog, designStyleTypes } from "../../core/ui";
+import { StyleSourceList } from "./style-source-list";
 import { TypeScaleDialog } from "./type-scale/type-scale-dialog";
 import { t } from "../variables.i18n";
 
 /**
  * With nothing selected, Figma's Styles: "+" adds a style of a kind (Text, …) or a type scale, and each kind's
- * styles are listed under their heading, in their groups. Click one to edit it.
+ * styles are listed under their heading, in their groups. Click one to edit it. In a file using
+ * project libraries, grouped by where they come from: each library, then the file's own.
  */
 export function StylesSection() {
   const engine = useDesignEngine();
@@ -33,7 +35,14 @@ export function StylesSection() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string[] | null>(null);
   const [typeScale, setTypeScale] = useState(false);
+  const styles = store.styles();
+  const sources = useTokenSources(styles);
   if (types.length === 0) return null;
+  const groups = sources ? groupBySource(styles, sources) : [{ source: undefined, items: styles }];
+  const remove = (id: string) => {
+    setEditingId(null);
+    setDeleting([id]);
+  };
 
   return (
     <PanelSection
@@ -61,32 +70,19 @@ export function StylesSection() {
         </DropdownMenu>
       }
     >
-      <div className="flex flex-col gap-2">
-        {types.map((type) => {
-          const styles = store.styles(type.id);
-          if (styles.length === 0) return null;
-          return (
-            <div key={type.id} className="flex flex-col">
-              <p className="pt-1 pb-1.5 text-xs text-muted-foreground">{type.heading}</p>
-              <TokenGroupAccordion
-                group={groupTree(styles)}
-                storageKey={`styles:${type.id}`}
-                renderVariable={(style) => (
-                  <StyleRow
-                    style={style}
-                    editing={editingId === style.id}
-                    setEditing={(open) => setEditingId(open ? style.id : null)}
-                    onDelete={() => {
-                      setEditingId(null);
-                      setDeleting([style.id]);
-                    }}
-                  />
-                )}
-              />
-            </div>
-          );
-        })}
-        {store.styles().length === 0 && (
+      <div className="flex flex-col gap-3">
+        {groups.map(({ source, items }) => (
+          <StyleSourceList
+            key={source?.libraryId ?? "file"}
+            source={source}
+            styles={items}
+            types={types}
+            editingId={editingId}
+            setEditingId={setEditingId}
+            onDelete={remove}
+          />
+        ))}
+        {styles.length === 0 && (
           <p className="text-xs text-muted-foreground">{t("styles.empty")}</p>
         )}
       </div>

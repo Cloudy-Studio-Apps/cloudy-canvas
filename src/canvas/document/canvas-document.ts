@@ -11,9 +11,14 @@ import type {
   DocumentMetaPatch,
   ElementMap,
   Placement,
+  ProjectLink,
+  ProjectLinkOptions,
+  TokenChangeSource,
   UnregisteredElement,
 } from "./canvas-document.types";
 import { DocumentHistory } from "./document-history";
+import { isLibraryAsset } from "./is-library-asset";
+import type { LibraryAsset } from "./library-asset.types";
 import type { HistoryChange } from "./document-history.types";
 import { keyBetween, nKeysBetween } from "../utils";
 
@@ -37,10 +42,14 @@ export class CanvasDocument {
   private readonly elements: Y.Map<ElementMap>;
   /** Binary data elements show (e.g. image files), by id. Shared by copies, outside undo history. */
   private readonly assets: Y.Map<Uint8Array>;
+  /** The file's own pictures' records (`LibraryAsset`) by id; the bytes are in `assets`. */
+  private readonly assetIndexMap: Y.Map<unknown>;
   /** The document's own title and description (`DocumentMeta`), undoable like elements. */
   private readonly metaMap: Y.Map<string>;
   /** Variables and their collections (`TokenRecord`s) by id, undoable like elements. */
   private readonly tokensMap: Y.Map<unknown>;
+  /** The project link (`ProjectLink`), saved with the file; an undo step only when asked. */
+  private readonly projectMap: Y.Map<unknown>;
   /** Bumps on every change to `tokensMap`, whoever makes it (see `tokensVersion`). */
   private tokensRevision = 0;
   /** What `add` does to new elements first (see `setPlacement`). */
@@ -92,8 +101,10 @@ export class CanvasDocument {
     // The map keeps its original name so existing files load.
     this.elements = doc.getMap<ElementMap>("shapes");
     this.assets = doc.getMap<Uint8Array>("assets");
+    this.assetIndexMap = doc.getMap<unknown>("assetIndex");
     this.metaMap = doc.getMap<string>("meta");
     this.tokensMap = doc.getMap<unknown>("tokens");
+    this.projectMap = doc.getMap<unknown>("project");
     this.history = this.createHistory(LOCAL_ORIGIN);
     // Undo, redo and remote updates change maps without going through this class's writes.
     doc.on("beforeObserverCalls", this.forgetChanged);
@@ -157,7 +168,8 @@ export class CanvasDocument {
   /** A new undo history recording only the edits made with `origin` (see `runAs`). */
   createHistory(origin: symbol): DocumentHistory {
     return new DocumentHistory(
-      [this.elements, this.metaMap, this.tokensMap],
+      // The project link only for its undoable writes (`setProjectLink`); the rest are untracked.
+      [this.elements, this.metaMap, this.tokensMap, this.projectMap],
       origin,
       this.recordsHistory,
     );
@@ -314,6 +326,34 @@ export class CanvasDocument {
     this.doc.transact(() => this.assets.set(id, data), this.actor.origin);
   }
 
+  /** The file's own pictures (records of the bytes in `assets`), in no particular order. */
+  assetIndex(): LibraryAsset[] {
+    const list: LibraryAsset[] = [];
+    this.assetIndexMap.forEach((value) => {
+      if (isLibraryAsset(value)) list.push(value);
+    });
+    return list;
+  }
+
+  /** Stores or replaces a picture's record. Not an undo step, as `addAsset` isn't. */
+  setAssetIndexEntry(asset: LibraryAsset): void {
+    if (this.readOnly) return;
+    this.doc.transact(() => this.assetIndexMap.set(asset.id, { ...asset }), this.actor.origin);
+  }
+
+  /** Deletes a picture's record (its bytes stay until `removeAssets`). */
+  removeAssetIndexEntry(id: string): void {
+    if (this.readOnly || !this.assetIndexMap.has(id)) return;
+    this.doc.transact(() => this.assetIndexMap.delete(id), this.actor.origin);
+  }
+
+  /** Fires when the file's pictures' records change (local edits, remote updates). */
+  observeAssetIndex(listener: () => void): () => void {
+    const handler = () => listener();
+    this.assetIndexMap.observe(handler);
+    return () => this.assetIndexMap.unobserve(handler);
+  }
+
   // ── Metadata ────────────────────────────────────────────────────────
 
   meta(): DocumentMeta {
@@ -388,9 +428,23 @@ export class CanvasDocument {
     }, UI_ORIGIN);
   }
 
-  /** Fires with the ids of the records that changed (local edits, undo, redo, remote updates). */
-  observeTokens(listener: (changed: ReadonlySet<string>) => void): () => void {
-    const handler = (event: Y.YMapEvent<unknown>) => listener(new Set(event.keysChanged));
+  /**
+   * Fires with the ids of the records that changed (local edits, undo, redo, remote updates) and
+   * who changed them (`TokenChangeSource`: local or remote, with the values they had before).
+   */
+  observeTokens(
+    listener: (changed: ReadonlySet<string>, source: TokenChangeSource) => void,
+  ): () => void {
+    const handler = (event: Y.YMapEvent<unknown>) => {
+      const { transaction } = event;
+      const previous = new Map<string, unknown>();
+      for (const [id, info] of event.changes.keys) previous.set(id, info.oldValue);
+      listener(new Set(event.keysChanged), {
+        local: transaction.local && transaction.origin !== UI_ORIGIN,
+        remote: !transaction.local,
+        previous,
+      });
+    };
     this.tokensMap.observe(handler);
     return () => this.tokensMap.unobserve(handler);
   }
@@ -398,6 +452,36 @@ export class CanvasDocument {
   /** Changes whenever any token record does, for caches built from them. */
   tokensVersion(): number {
     return this.tokensRevision;
+  }
+
+  // ── Project link ────────────────────────────────────────────────────
+
+  /** The project this file belongs to and the libraries it uses; `null` for a loose file. */
+  projectLink(): ProjectLink | null {
+    const value = this.projectMap.get("link");
+    return isProjectLink(value) ? value : null;
+  }
+
+  /**
+   * Links the file to a project (`null` unlinks). Saved with the file; not an undo step unless
+   * `options.undoable` (then it joins the step being recorded).
+   */
+  setProjectLink(link: ProjectLink | null, options: ProjectLinkOptions = {}): void {
+    if (this.readOnly) return;
+    const write = () => {
+      if (link)
+        this.projectMap.set("link", { projectId: link.projectId, libraryIds: link.libraryIds });
+      else this.projectMap.delete("link");
+    };
+    if (options.undoable) this.transact(write);
+    else this.doc.transact(write, UI_ORIGIN);
+  }
+
+  /** Fires when the project link changes (local edits, remote updates). */
+  observeProjectLink(listener: () => void): () => void {
+    const handler = () => listener();
+    this.projectMap.observe(handler);
+    return () => this.projectMap.unobserve(handler);
   }
 
   // ── History (the local user's changes only, see `history`) ──────────
@@ -674,6 +758,16 @@ export class CanvasDocument {
     // Reads are shared: a reader changing one would change everyone's.
     return import.meta.env.DEV ? Object.freeze(el) : el;
   }
+}
+
+function isProjectLink(value: unknown): value is ProjectLink {
+  if (typeof value !== "object" || value === null) return false;
+  const link = value as Partial<ProjectLink>;
+  return (
+    typeof link.projectId === "string" &&
+    (link.libraryIds === "all" ||
+      (Array.isArray(link.libraryIds) && link.libraryIds.every((id) => typeof id === "string")))
+  );
 }
 
 export function compareByIndex(a: CanvasElement, b: CanvasElement): number {

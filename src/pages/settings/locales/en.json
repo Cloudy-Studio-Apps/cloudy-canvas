@@ -20,7 +20,8 @@
     "agents": "Agents (MCP)",
     "plugins": "Plugins",
     "shortcuts": "Keyboard shortcuts",
-    "about": "About"
+    "about": "About",
+    "projects": "Projects & storage"
   },
   "page": {
     "home": "Home",
@@ -147,5 +148,31 @@
     "installed": "{name} installed",
     "added": "{name} added",
     "turnOnBelow": "Turn it on below, then reload to use it."
+  },
+  "storage": {
+    "description": "Where new projects go, how much room your projects take and what is waiting in their trash.",
+    "whereNew": "Where new projects go",
+    "change": "Change…",
+    "useDefault": "Use default",
+    "pickFolder": "Choose where new projects go",
+    "folderFailed": "The projects folder couldn't be changed",
+    "whereHint": "You can still pick another place when you create a project.",
+    "spaceUsed": "Space used",
+    "files": "Files",
+    "assets": "Library assets",
+    "trash": "Trash",
+    "project": "Project",
+    "size": "Size",
+    "inTrash": "In trash",
+    "trashEmpty": "Empty",
+    "trashItems_one": "{count} item · {size}",
+    "trashItems_other": "{count} items · {size}",
+    "emptyTrash": "Empty trash",
+    "emptyAll": "Empty all trash ({size})",
+    "keptHint": "Trash is kept until you empty it.",
+    "confirmTitle": "Empty the trash?",
+    "confirmOne": "Everything in the trash of “{name}” will be deleted for good. This can't be undone.",
+    "confirmAll": "The trash of every project ({size}) will be deleted for good. This can't be undone.",
+    "emptyFailed": "The trash couldn't be emptied"
   }
 }

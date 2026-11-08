@@ -10,6 +10,14 @@ _How it works. The rules are in the root [CLAUDE.md](../../CLAUDE.md)._
 
 - **Starters (`starters/`):** `CanvasStarter<E>` is a ready-made start for a new file (`id`, `label`, `description`, a `preview` picture, `order`, `start(engine)`), listed on Home's first run from each product's starters point. `useStartStarter(engine, starters)` is the session hook a product's core runs: on a new file (`useCanvasFile().isNew`) whose link has `?starter=<id>`, it runs that starter's `start` once with its own origin (`doc.runAs`), so the user's undo history doesn't hold it and the first Ctrl+Z doesn't empty the file, then drops the parameter.
 
+## Tokens
+
+- **Tokens (`tokens/`):** the variable picker, chips, values and swatches both products use, and the grouping of variables and styles by the project library they come from. See [tokens/](tokens/README.md).
+
+## Project libraries
+
+- **Project libraries (`libraries/`):** `useProjectLibraries(engine, file)` connects a saved file's editor to its project's libraries through the project's `LibraryHub` and keeps them in sync; `ProjectLibrariesContext` gives the chrome its state and `ProjectMissingDialog` asks for a project that moved. See [libraries/](libraries/README.md).
+
 ## Adding a product
 
 - **Adding a product:** give it points (`createCanvasPoints<O>(id)`, `createEditorPoints(id)`), write its features as modules, compose it with `composeProduct`, and build its `ui/` editor from the `canvas-ui` module chrome, like the board and the design.

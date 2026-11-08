@@ -17,6 +17,7 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
 ## Document content colors
 
 - Document content colors (sticky/marker palettes in `products/board/palette.ts`) are data saved with the file, not theme tokens.
+- **Colors from code (`lib/`):** `resolveCssColor(variable)` reads a token as a number for non-DOM renderers and `resolveCssHex(variable)` as `#rrggbb` (a picker that starts from a theme color); `readableTextOn(color)` picks black or white text for a user-picked background by its luminance (a project's initials on its color).
 
 ## Roles
 

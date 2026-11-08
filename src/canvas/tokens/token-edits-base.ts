@@ -1,4 +1,5 @@
 import type { CanvasDocument } from "../document";
+import { checkAxisSource } from "./axis-source";
 import { DEFAULT_VALUE } from "./default-value";
 import { evaluateExpression, expressionRefs, parseExpression } from "./expression";
 import { aliasCreatesCycle, resolveVariable } from "./resolve-token";
@@ -67,6 +68,7 @@ export abstract class TokenEditsBase {
       const by = this.store().axis(own)?.name ?? own;
       throw new Error(`${variable.name} varies by ${by}; clear its values there first.`);
     }
+    if (axis.id !== own) checkAxisSource(variable, axis);
     return { key: mode, axisId: axis.id };
   }
 

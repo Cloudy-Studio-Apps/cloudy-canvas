@@ -11,6 +11,7 @@ export { getActiveDesign, waitForActiveDesign } from "./agent";
 export { DesignEditor } from "./design-editor";
 export { DesignEditorPage } from "./design-editor-page";
 export { useDesignEngine, useDesignState } from "./design-engine-context";
-export { importFigmaFile, importFigmaWithLoading } from "./file";
+export { DESIGN_FILE_FORMAT, importFigmaFile, importFigmaWithLoading } from "./file";
 export { useDesignModeStore } from "@shared/stores/design-mode-store";
+export { useDesignPanelStore } from "./stores/design-panel-store";
 export { useImageCropStore } from "./stores/image-crop-store";

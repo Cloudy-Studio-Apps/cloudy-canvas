@@ -13,4 +13,9 @@
     <icon name="application-x-cloudy-canvas-design"/>
     <glob pattern="*.cdesign"/>
   </mime-type>
+  <mime-type type="application/x-cloudy-canvas-project">
+    <comment>Cloudy Canvas project</comment>
+    <icon name="application-x-cloudy-canvas-project"/>
+    <glob pattern="*.cproject"/>
+  </mime-type>
 </mime-info>

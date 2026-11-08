@@ -7,6 +7,53 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### New
 
+- Add an existing file to a project: right-click a file on Home (or use its ⋯ menu) and choose Add
+  to project…, or use Add existing file… in a project's New menu. Pick the project and the folder,
+  and the file moves there and starts using the project's libraries. Its colors, variables, styles
+  and pictures that are new to the project are added to a library, and for each one with the same
+  name as the project's you choose to use the project's or keep both. Home now shows the project
+  and folder each file belongs to.
+- A design's variables and styles show where they come from: each project library the file uses,
+  then the file's own, in the panel, the Variables window and the pickers. Choose which of the project's
+  libraries the file uses from the Libraries button in the Variables section (turning one off
+  keeps your layers looking the same), move your own variables, collections and styles to a
+  library with a right-click so every file of the project gets them, and jump to the file's
+  folder from the project name above the file's name.
+- Libraries in the project home: the Libraries tab shows each library with its colors, type sample
+  and the files that use it, and a library's page lists its colors, text styles, images, SVGs and
+  effects. Create a library empty, from a file's styles, from a copy of another library or from a
+  tokens file, add images and SVGs, import styles from a file, rename or delete it (it waits in the
+  trash), and choose whether new files take it. Content shows one kind across all libraries, the
+  project's cover and the Projects page use the first library's colors, and Edit in a file opens
+  your latest design that uses the library (or a new one) to change its colors and styles.
+- Files in a project share its libraries: every design you make in a project uses the project's
+  colors, variables and styles, every board its colors, and editing a library color in one file updates every
+  other file that uses it, open or not. A file keeps a copy, so it still looks right when sent
+  alone; if its project moved, the app asks you to locate it, and library items can't be edited
+  until you do.
+- A new project starts with a library named Brand system, which you can fill when you create the
+  project: with the variables and styles of a design or a board, or with a tokens file. Start
+  empty if you prefer to build it later.
+- Deleted files go to the project's trash: use Move to trash on a file or folder, or press Delete on
+  it, and it waits in the project's Trash tab, with where it was and when it was deleted, until you
+  restore it or empty the trash. The project shows how much the trash holds, and nothing is deleted
+  until you say so.
+- Settings shows how much space projects and their trash use: a new Projects & storage page chooses
+  where new projects go, shows each project's size and what is in its trash, and can empty one
+  project's trash or all of them.
+- Project home: open a project to browse and organize its files in folders. A cover, the project's
+  icon and name sit on top, with its files, libraries and last edit. Make designs and boards in the
+  folder you are in, create folders and color them, and drag files and folders onto other folders
+  (or use Move to…) to organize them; files you moved still show up in Recent files on Home. The
+  Files tab lists the newest files, searches the current folder and below, sorts them, and shows a
+  grid or a list. Rename the project, choose its icon and color, change the cover or export the whole
+  project as a .zip from the project's menu.
+- Projects: group a client's boards and designs in one folder on your computer. The new Projects
+  page, opened from Home, lists your projects with their color, size and when you last opened them;
+  create one from Home or from that page, in a new folder or in one that already holds your files,
+  open an existing one from its folder or its project file,
+  pin the ones you use most, and find a project again if its folder moved. Double-clicking a project
+  file opens it.
 - The new Prototype mode links the layers of your screens together: choose a layer and the screen
   it opens, or drag from a layer onto a screen to link them, and arrows on the canvas show every
   link. Flows start at a screen and are set up for a device, such as a phone, a tablet, a desktop
@@ -70,6 +117,12 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   and every line of the table of contents and every page reference takes you to its page. Print
   files in CMYK keep the bookmarks.
 - Data sources can now read Excel files and APIs that return their rows in pages, and an optional step can pick and rename fields before they're used. Plugins can add their own kinds of source.
+- The Assets tab now lists your pictures: the ones in each project library the file uses and the ones that belong only to this file, in collapsible groups. Search them, filter by images, SVG or icons, switch between a grid and a list, upload more from the plus button, and drag any picture onto the canvas or double-click it to place it. A picture from a library travels with the file, so the file still works on its own.
+- A board's colors panel shows where each color comes from, like the design: a section for each
+  project library the board uses, then "Board colors". Library colors can be edited from the board
+  and the change reaches every file of the project; choose which libraries the board uses from the
+  Libraries button in the panel, and move your own colors or collections to a library with a
+  right-click.
 
 ### Improved
 

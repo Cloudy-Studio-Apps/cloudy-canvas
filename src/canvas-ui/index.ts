@@ -9,6 +9,7 @@ export type * from "./components/commit-field";
 export type * from "./components/context-menu";
 export type * from "./file";
 export type * from "./images";
+export type * from "./libraries";
 export type * from "./components/export-dialog";
 export type * from "./components/overwrite-dialog";
 export type * from "./components/row-drag";
@@ -42,11 +43,17 @@ export {
 } from "./thumbnails";
 export type * from "./tokens";
 export {
+  groupBySource,
   ImportConflicts,
+  LibraryBadge,
   matchesScopes,
   TokenGroupAccordion,
+  tokenSources,
+  TokenSourceHeader,
   TokenSwatch,
   useDocumentTokens,
+  useTokenEditable,
+  useTokenSources,
   VariableChip,
   VariablePicker,
   VariableValue,
@@ -143,6 +150,18 @@ export * from "./modules";
 export { normalizedToScreen, screenToLocal, screenToNormalized, useViewMapping } from "./overlay";
 export { useAssetUrl } from "./use-asset-url";
 export { chooseImageAsset, ImageChooseButton } from "./images";
+export {
+  FileLibrariesMenu,
+  LibraryHub,
+  MoveToLibraryMenu,
+  NO_PROJECT_LIBRARIES,
+  ProjectLibrariesContext,
+  ProjectMissingDialog,
+  useFileLibraries,
+  useMoveToLibrary,
+  useProjectLibraries,
+  useProjectLibrariesState,
+} from "./libraries";
 export { useImageQuality } from "./use-image-quality";
 export { useScrubUndo } from "./use-scrub-undo";
 export type * from "./use-scrub-undo.types";

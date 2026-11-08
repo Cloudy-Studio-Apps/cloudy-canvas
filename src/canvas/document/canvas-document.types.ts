@@ -25,6 +25,36 @@ export interface DocumentMeta {
 
 export type DocumentMetaPatch = Partial<DocumentMeta>;
 
+/** The project a file belongs to and which of its libraries the file uses. */
+export interface ProjectLink {
+  projectId: string;
+  /** The libraries used by id, or `"all"` (every library, including ones added later). */
+  libraryIds: string[] | "all";
+}
+
+/** How `CanvasDocument.setProjectLink` writes the link. */
+export interface ProjectLinkOptions {
+  /**
+   * Writes it as the current actor (the user), so it joins the undo step being recorded: the
+   * file's libraries menu, whose undo restores the link with the records it took out. Otherwise
+   * (the default) it's outside every undo history.
+   */
+  undoable?: boolean;
+}
+
+/** Who changed token records, handed to `CanvasDocument.observeTokens` listeners. */
+export interface TokenChangeSource {
+  /**
+   * Made here by the user, an agent, or undo/redo: not an untracked write (`UI_ORIGIN`, e.g. a
+   * project library's mirror or a migration) and not a remote update.
+   */
+  local: boolean;
+  /** Applied from another peer (a live session's guest or host). */
+  remote: boolean;
+  /** Each changed record's value before the change (`undefined` for one just added). */
+  previous: ReadonlyMap<string, unknown>;
+}
+
 /** What one edit changed, handed to the document's `AfterEdit` hook. */
 export interface EditedChange {
   /** Ids added or whose fields changed. */

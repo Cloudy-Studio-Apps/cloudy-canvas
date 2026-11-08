@@ -5,6 +5,7 @@
     "newColor": "Nuevo color",
     "newCollection": "Nueva colección",
     "closePanel": "Cerrar panel",
+    "boardColors": "Colores de la pizarra",
     "emptyTitle": "Aún no hay colores de la pizarra",
     "emptyDescription": "Los colores que nombres aquí se ofrecen primero en cada barra de color; los elementos que usan uno lo siguen cuando cambia. Trae los colores de un diseño con Importar.",
     "addColor": "Añadir un color",

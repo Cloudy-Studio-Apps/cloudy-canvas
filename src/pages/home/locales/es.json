@@ -8,7 +8,9 @@
     "design": "Nuevo diseño",
     "designHint": "Interfaces y elementos visuales",
     "catalog": "Nuevo catálogo",
-    "catalogHint": "Folletos para imprimir"
+    "catalogHint": "Folletos para imprimir",
+    "project": "Nuevo proyecto",
+    "projectHint": "Una carpeta con sus propios estilos"
   },
   "welcome": {
     "title": "Bienvenido a Cloudy Canvas",
@@ -52,11 +54,10 @@
     "open": "Abrir",
     "reveal": "Mostrar en la carpeta",
     "revealFailed": "No se pudo abrir la carpeta",
-    "openFailed": "No se pudo abrir el archivo"
+    "openFailed": "No se pudo abrir el archivo",
+    "addToProject": "Añadir a un proyecto…"
   },
   "card": {
-    "board": "Pizarra",
-    "design": "Diseño",
     "missingLabel": "Falta {type} {name}. Mostrar opciones",
     "openLabel": "Abrir {type} {name}",
     "meta": "{type} · Editado {time}",
@@ -64,7 +65,6 @@
     "draft": "Borrador",
     "more": "Más acciones para {name}",
     "justNow": "justo ahora",
-    "catalog": "Catálogo",
     "draftLocation": "Borrador, aún sin guardar",
     "missingLocation": "Movido o eliminado"
   },
@@ -106,6 +106,7 @@
     }
   },
   "top": {
+    "projects": "Proyectos",
     "agents": "Agentes",
     "designSystem": "Sistema de diseño",
     "theme": "Tema",

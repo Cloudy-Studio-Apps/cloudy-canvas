@@ -1,4 +1,3 @@
-import { DEFAULT_VALUE } from "../default-value";
 import type { TokenStore } from "../token-store";
 import type { GeneratorRecord } from "../shade-generator.types";
 import type { ScaleRecord } from "../scale-generator.types";
@@ -7,13 +6,11 @@ import type {
   ModeAxisRecord,
   StyleRecord,
   TokenRecord,
-  TokenValue,
   VariableRecord,
 } from "../token.types";
 import type { ImportChoice, ImportConflict, TokenImportPlan } from "./exchange.types";
-import type { ImportMatches } from "./import-plan.types";
 import { matchImport, ofKind } from "./match-import";
-import { mapValueRefs } from "../value-refs";
+import { remapValues } from "./remap-values";
 import { keyBetween } from "../../utils";
 
 /** The incoming variables and styles named like the file's, with other ids. */
@@ -118,7 +115,12 @@ export function planTokenImport(
       ...v,
       id,
       collectionId,
-      ...remapValues(v, store, matches, incomingBases.get(v.axisId ?? ""), idOf),
+      ...remapValues(v, {
+        idOf,
+        modeOf: (id) => matches.modes.get(id) ?? id,
+        sourceBase: incomingBases.get(v.axisId ?? ""),
+        targetBaseOf: (axisId) => store.axis(axisId)?.modes[0]?.id,
+      }),
       contrastWith: v.contrastWith?.map(idOf),
       generatorId: v.generatorId ? idOf(v.generatorId) : (v.generatorId ?? null),
       name:
@@ -196,38 +198,6 @@ export function planTokenImport(
     });
   }
   return { records: out, added, updated, skipped };
-}
-
-/**
- * A variable's axis and values in the file's terms: aliases and expressions' references remapped, mode keys turned into the
- * file's mode ids (the incoming default is its axis's first mode's value), and the value of the
- * file's base mode as the default.
- */
-function remapValues(
-  v: VariableRecord,
-  store: TokenStore,
-  matches: ImportMatches,
-  incomingBase: string | undefined,
-  idOf: (id: string) => string,
-): Pick<VariableRecord, "axisId" | "values"> {
-  const remap = (value: TokenValue): TokenValue => mapValueRefs(value, idOf);
-  const base = v.values[DEFAULT_VALUE];
-  if (!v.axisId) return { axisId: null, values: base ? { [DEFAULT_VALUE]: remap(base) } : {} };
-  const axisId = idOf(v.axisId);
-  // A new axis's base is the incoming one's (its first mode, as the file will have it).
-  const targetBase =
-    store.axis(axisId)?.modes[0]?.id ??
-    (incomingBase === undefined ? undefined : (matches.modes.get(incomingBase) ?? incomingBase));
-  const values: Record<string, TokenValue> = {};
-  // The default first, so an override landing on the file's base mode wins over it.
-  const entries = Object.entries(v.values).sort(([a]) => (a === DEFAULT_VALUE ? -1 : 1));
-  for (const [key, value] of entries) {
-    const from = key === DEFAULT_VALUE ? incomingBase : key;
-    const mode = from === undefined ? DEFAULT_VALUE : (matches.modes.get(from) ?? from);
-    values[mode === targetBase ? DEFAULT_VALUE : mode] = remap(value);
-  }
-  if (base && !(DEFAULT_VALUE in values)) values[DEFAULT_VALUE] = remap(base);
-  return { axisId, values };
 }
 
 /**

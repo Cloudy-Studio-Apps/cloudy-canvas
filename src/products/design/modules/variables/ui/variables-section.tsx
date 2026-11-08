@@ -1,7 +1,7 @@
 import { Table2 } from "lucide-react";
 import { useState } from "react";
 
-import { useDocumentTokens } from "@canvas-ui";
+import { FileLibrariesMenu, useDocumentTokens } from "@canvas-ui";
 import { PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { DeleteTokensDialog } from "../../core/ui";
@@ -15,7 +15,8 @@ import { t } from "../variables.i18n";
 /**
  * With nothing selected, Figma's way: the file's mode switches, "Local variables" (the table),
  * then each collection's groups as the Variables window's outline shows them, unfolding to their
- * variables (click one to edit it). "+" adds one of a type.
+ * variables (click one to edit it). "+" adds one of a type. In a project, the libraries button
+ * turns the project's libraries on and off for the file.
  */
 export function VariablesSection() {
   const engine = useDesignEngine();
@@ -30,7 +31,15 @@ export function VariablesSection() {
   const list = { modes, editingId, setEditingId, onDelete: remove };
 
   return (
-    <PanelSection title={t("section.title")} actions={<NewVariableMenu onCreated={setEditingId} />}>
+    <PanelSection
+      title={t("section.title")}
+      actions={
+        <div className="flex items-center">
+          <FileLibrariesMenu />
+          <NewVariableMenu onCreated={setEditingId} />
+        </div>
+      }
+    >
       <div className="flex flex-col gap-2">
         <GlobalModes />
         <button
