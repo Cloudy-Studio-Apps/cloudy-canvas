@@ -2,6 +2,7 @@ import type { ModelBaker } from "@canvas";
 import type { WebGLRenderer } from "three";
 import { importModel, loadModel, loadThree } from "../load";
 import type { ThreeKit } from "../load";
+import { canvasBytes } from "./canvas-bytes";
 import {
   buildPictureScene,
   createPictureRenderer,
@@ -17,15 +18,6 @@ function inTurn<T>(job: () => Promise<T>): Promise<T> {
   const result = queue.then(job, job);
   queue = result.catch(() => undefined);
   return result;
-}
-
-function toBytes(canvas: HTMLCanvasElement): Promise<Uint8Array> {
-  return new Promise((resolve, reject) => {
-    canvas.toBlob((blob) => {
-      if (!blob) return reject(new Error("The picture could not be encoded"));
-      blob.arrayBuffer().then((buffer) => resolve(new Uint8Array(buffer)), reject);
-    }, "image/png");
-  });
 }
 
 /** The shared renderer; a new one when the cached one lost its WebGL context. */
@@ -65,7 +57,7 @@ export const modelBaker: ModelBaker = {
           view,
           pictureSize(box, gl.capabilities.maxTextureSize),
         );
-        return await toBytes(gl.domElement);
+        return await canvasBytes(gl.domElement);
       } finally {
         loaded.dispose();
       }

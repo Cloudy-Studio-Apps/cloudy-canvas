@@ -9,7 +9,11 @@ _Plain TypeScript both products share. The three.js side (loaders, live view, pi
   `zoom`) and the `textures` slots. A slot is missing when it is neither `embedded` nor has an
   `assetId`. `model3d.constants.ts` has the size warning (`MODEL_SIZE_WARNING_BYTES`), the
   accepted `MODEL_EXTENSIONS`, the picture's scale and side cap, the live view's release delay,
-  `DEFAULT_MODEL_VIEW` and `ZOOM_RANGE`.
+  `DEFAULT_MODEL_VIEW`, `ZOOM_RANGE` and `MODEL_ACTIONS` (`edit`: the element action a kind's
+  `editElement` or a context menu sends to open the live view).
+- **Source** (`model-source.ts`): `modelSource(doc, data)` reads what the viewer draws a stored
+  model from (`ModelSource`): its bytes, the picture of every slot whose asset is in the document
+  and the missing slots; `null` when the model's asset isn't there.
 - **Kinds** (`model-kind.ts`): a kind that holds a model has `modelData(el)` (`ModelKind`,
   `isModelKind`). `modelAssets(data)` lists every asset id it holds. Kinds still report the
   picture through `kind.assets(el)` so copies, exports and the renderer find it.

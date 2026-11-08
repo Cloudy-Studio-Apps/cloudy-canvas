@@ -52,3 +52,37 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   overlay (a module-level request, `model-size-prompt.ts`); without it the promise never resolves.
 - `pickModelFiles()` is the file picker for models (`openFile`, desktop only, one file; `[]` if
   cancelled or on the web).
+
+## Editing
+
+`live/` is the one editing path: right click → Edit and the panel's first change both make the
+model live, and finishing writes the result once.
+
+- **The session** (`useModelEditStore`, app UI state): `start(engine, id, data)` makes one model
+  live (one at a time across editors; starting another finishes the current one). It's refused
+  with a toast when the document is read-only or `MODEL_EDIT_LOCKS.assertFree` throws; otherwise
+  it takes the lock (`lockLocal(id)`) and the draft starts from `data`. The store holds the
+  engine, so two editors never confuse their ids. `change(patch)` edits only the draft (angle,
+  zoom kept in `ZOOM_RANGE`, textures): nothing is written while it's live. `stop()` releases the
+  lock at once and calls `finishModelEdit`; an editor closing mid-edit still finishes it
+  (`engine.onClose`).
+- **Finishing** (`finishModelEdit(engine, id, data, draft)`): when the draft differs, bakes the
+  picture at the element's current box (from the live scene when it's still kept, else with
+  `modelBaker`), adds it as a new asset (`newModelAssetId()`) and writes `angle`, `zoom`, `textures`
+  and `pictureAssetId` in one `asUndoStep`, so the whole edit is one undo step. Nothing changed:
+  nothing is written. The old picture stays until the sweep, as undo may need it.
+- **The view** (`ModelLiveView`): a DOM overlay over the element, placed with `useViewMapping`
+  like `ImageCropOverlay`, holding three.js's own canvas (transparent, drawn only when the view,
+  zoom or size changes, never in a loop). Dragging turns the model (0.5° per pixel: across around
+  Y, up and down around X); the wheel zooms the model and is prevented, so the canvas doesn't
+  zoom; Esc, caught before the canvas and its mode, finishes. A spinner shows while it loads
+  (`status: "loading"`).
+- **Release** (`live-model.ts`): one live scene and its `WebGLRenderer` are kept for
+  `LIVE_RELEASE_DELAY_MS` after the view closes, then the model, its textures and the WebGL
+  context are freed. Reopening the same model before then is instant; other textures load it
+  again into the same renderer.
+- **Mounting it** (`useModelEditSession(engine)`): an editor's overlay calls it once; it starts an
+  edit on `MODEL_ACTIONS.edit` (the element's kind must be a `ModelKind`), finishes when the element
+  leaves the selection or goes and when the editor unmounts, and returns `{ id, element, data,
+frame }` to pass to `<ModelLiveView engine frame data />`. While a model is live
+  (`MODEL_EDIT_LOCKS.localLock() === id`) its kind should not draw the old picture under the view.

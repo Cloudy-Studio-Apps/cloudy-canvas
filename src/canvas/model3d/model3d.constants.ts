@@ -26,3 +26,6 @@ export const DEFAULT_MODEL_VIEW: { angle: ModelRotation; zoom: number } = {
 
 /** What a model's zoom can be. */
 export const ZOOM_RANGE = { min: 0.1, max: 10 } as const;
+
+/** What a model element asks its editor for (`CanvasEngine.onElementAction`): its live 3D view. */
+export const MODEL_ACTIONS = { edit: "model3d.edit" } as const;

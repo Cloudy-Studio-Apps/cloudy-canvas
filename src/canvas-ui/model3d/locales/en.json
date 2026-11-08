@@ -10,5 +10,14 @@
     "title": "This model is large",
     "description": "“{name}” is {size} MB. Adding it makes the file heavier and slower to open and share.",
     "continue": "Add anyway"
+  },
+  "edit": {
+    "readOnly": "This file is read-only, so the model can't be edited.",
+    "busy": "Someone else is editing this model",
+    "busyHint": "Wait until they finish, then try again.",
+    "failed": "Couldn't save the model's new view",
+    "loadFailed": "Couldn't open the model in 3D",
+    "loading": "Preparing the 3D model",
+    "view": "3D model: drag to turn it, scroll to zoom, Esc to finish"
   }
 }

@@ -4,6 +4,7 @@ export type * from "./model3d.types";
 export {
   DEFAULT_MODEL_VIEW,
   LIVE_RELEASE_DELAY_MS,
+  MODEL_ACTIONS,
   MODEL_BASE_SIZE,
   MODEL_EXTENSIONS,
   MODEL_SIZE_WARNING_BYTES,
@@ -13,6 +14,7 @@ export {
 } from "./model3d.constants";
 export { isModelAssetId, newModelAssetId } from "./model-asset-id";
 export { isModelKind, modelAssets } from "./model-kind";
+export { modelSource } from "./model-source";
 export { toModelData } from "./to-model-data";
 export type * from "./to-model-data.types";
 export { unusedModelAssets } from "./sweep-model-assets";

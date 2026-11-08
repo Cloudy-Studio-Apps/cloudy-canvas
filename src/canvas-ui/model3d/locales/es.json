@@ -10,5 +10,14 @@
     "title": "Este modelo es grande",
     "description": "“{name}” pesa {size} MB. Añadirlo hace el archivo más pesado y lento de abrir y compartir.",
     "continue": "Añadir igualmente"
+  },
+  "edit": {
+    "readOnly": "Este archivo es de solo lectura, así que el modelo no se puede editar.",
+    "busy": "Otra persona está editando este modelo",
+    "busyHint": "Espera a que termine y vuelve a intentarlo.",
+    "failed": "No se pudo guardar la nueva vista del modelo",
+    "loadFailed": "No se pudo abrir el modelo en 3D",
+    "loading": "Preparando el modelo 3D",
+    "view": "Modelo 3D: arrastra para girarlo, desplaza para acercarlo, Esc para terminar"
   }
 }

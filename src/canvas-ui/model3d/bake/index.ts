@@ -8,3 +8,4 @@ export {
   renderPicture,
 } from "./render-picture";
 export { modelBaker } from "./model-baker";
+export { canvasBytes } from "./canvas-bytes";
