@@ -1,4 +1,7 @@
 import type { CanvasDocument } from "../document";
+import { isTokenRecord } from "../tokens/is-token-record";
+import { deepEqual } from "../utils";
+import { withoutView } from "./axis-view";
 import type { LibraryEdit } from "./library-edits.types";
 import { libraryIdOf, untaggedRecord } from "./library-tags";
 
@@ -10,6 +13,9 @@ import { libraryIdOf, untaggedRecord } from "./library-tags";
  * caller passes only the user's own changes (`source.local`), and only for libraries the file
  * uses, so taking a library out of a file (`detachLibrary`, after the link stops listing it) never
  * reaches it.
+ *
+ * A mode axis's `current` is the file's own view: a change of only that is no library edit, and
+ * axes are put without it.
  */
 export function libraryEditsOf(
   ids: ReadonlySet<string>,
@@ -29,7 +35,15 @@ export function libraryEditsOf(
     const record = doc.tokenRecord(id);
     const now = record ? libraryIdOf(record) : undefined;
     const before = libraryIdOf(previous.get(id));
-    if (record && now !== undefined) editOf(now).put.push(untaggedRecord(record));
+    const was = previous.get(id);
+    const viewOnly =
+      record?.kind === "axis" &&
+      before === now &&
+      isTokenRecord(was) &&
+      deepEqual(withoutView(untaggedRecord(was)), withoutView(untaggedRecord(record)));
+    if (record && now !== undefined && !viewOnly) {
+      editOf(now).put.push(withoutView(untaggedRecord(record)));
+    }
     if (before !== undefined && before !== now) editOf(before).removed.push(id);
   }
   return edits;

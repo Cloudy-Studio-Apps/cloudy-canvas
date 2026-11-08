@@ -1,6 +1,7 @@
 import type { CanvasDocument } from "../document";
 import type { TokenRecord } from "../tokens/token.types";
 import { deepEqual } from "../utils";
+import { withFileView } from "./axis-view";
 import { bakeRemoved } from "./bake-removed";
 import type { LibraryDocument } from "./library-document";
 import { libraryIdOf, taggedRecord } from "./library-tags";
@@ -13,6 +14,7 @@ import { writeUntracked } from "./untracked";
  *
  * - every record of these libraries is stored in the file with its library's id as `libraryId`,
  *   replacing the file's copy (the library wins);
+ * - a mode axis keeps the file's own `current` when the library's axis still has that mode;
  * - tagged records the libraries no longer have, or of libraries not in `libraries` (the file
  *   stopped using them, or the project deleted them), leave the file, baked into the layers using
  *   them first (`bakeRemoved`); those of the libraries in `options.keep` (used, but unreadable
@@ -35,7 +37,10 @@ export async function mirrorLibraries(
   const wanted = new Map<string, TokenRecord>();
   for (const library of libraries) {
     for (const record of library.tokenRecords()) {
-      wanted.set(record.id, taggedRecord(record, library.id));
+      wanted.set(
+        record.id,
+        withFileView(taggedRecord(record, library.id), doc.tokenRecord(record.id)),
+      );
     }
   }
   const puts = [...wanted.values()].filter(

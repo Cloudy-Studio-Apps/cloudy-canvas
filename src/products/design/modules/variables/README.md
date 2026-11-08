@@ -152,13 +152,13 @@ tagged with their library's id.
   board), and "Generate a palette" starts in the file's own collection; "Unused" leaves those items out.
 - **New variables:** "+" adds to the file's own first collection (a new one when it has none);
   adding in a library's collection makes the library's (`collectionSource`).
-- **The file's libraries** (`FileLibrariesMenu`, `useFileLibraries`, now in `canvas-ui/libraries/`, the section's Libraries
+- **The file's libraries** (`FileLibrariesMenu`, `useFileLibraries`, in `canvas-ui/libraries/`: the section's Libraries
   button, files of a project only): each project library with a switch. The first change writes an
   explicit `libraryIds` list into the file's link (a new file has `"all"`); turning one on lets the
   sync mirror it in, and turning one off sets the link, then `detachLibrary`, after asking when
   layers use it (`libraryUsers`). Either is one undo step with the link in it
   (`setProjectLink(link, { undoable: true })`), so undo puts the link and the records back.
-- **Move to library** (`useMoveToLibrary`, in `MoveToLibraryMenu`, both in `canvas-ui/libraries/`, the right-click menu of the
+- **Move to library** (`useMoveToLibrary` and `MoveToLibraryMenu`, in `canvas-ui/libraries/`: the right-click menu of the
   file's own variables, collection captions and styles, and in the window's `CollectionItem` menu,
   while the libraries are open): one item per library the file
   uses. `planLibraryMove` says what goes (a variable takes its whole collection, which the

@@ -23,6 +23,7 @@ the libraries, saving them, when to sync) is in [canvas-ui/libraries/](../../can
 - **Tags (`library-tags.ts`):** `libraryIdOf(value)` reads a stored record's library, `taggedRecord`
   adds the tag a file stores, `untaggedRecord` drops it for the library. Every token record kind
   takes the tag (axes, collections, variables, styles, generators, scales).
+- **A mode axis's `current` is the file's own view:** `libraryEditsOf` ignores a change of only that and puts axes without it (`withoutView`), and `mirrorLibraries` keeps the file's `current` when the library's axis still has the mode (`withFileView`), so switching modes never reaches a library or other files, and works while the libraries aren't open.
 - **Which libraries (`librariesUsedBy(link, entries)`):** a link with `libraryIds: "all"` uses the
   manifest's libraries with `autoAdd`; a list uses those of them the project still has.
 - **`mirrorLibraries(doc, libraries, readBytes, { keep, usedAssets })`:** makes the file match the

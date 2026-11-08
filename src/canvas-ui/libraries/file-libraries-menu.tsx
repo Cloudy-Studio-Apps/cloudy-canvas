@@ -14,9 +14,8 @@ import { useFileLibraries } from "./use-file-libraries";
 import { t } from "./libraries.i18n";
 
 /**
- * The libraries button of a section of variables or colors, in a file of a project: each project library with a
- * switch saying whether the file uses it. Turning off one that layers use asks first, with how
- * many. Only while the project's libraries are open; files of no project get no button.
+ * The libraries button of a file in a project: each project library with a switch for whether the
+ * file uses it; turning off one that layers use asks first. Files of no project get no button.
  */
 export function FileLibrariesMenu() {
   const { status } = useProjectLibrariesState();
