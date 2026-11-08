@@ -9,4 +9,5 @@ export const EMPTY_COLLABORATOR_STATE: CollaboratorState = {
   viewport: null,
   selection: [],
   activity: null,
+  editing: null,
 };

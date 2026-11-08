@@ -51,6 +51,8 @@ export interface CollaboratorState {
   /** The ids it has selected. */
   selection: readonly string[];
   activity: CollaboratorActivity | null;
+  /** The id of the 3D model it has live (turning or texturing it), `null` when none. */
+  editing: string | null;
 }
 
 /** The person someone else's agent works for (an agent in a live session). */

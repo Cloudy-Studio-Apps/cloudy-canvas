@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import type { Awareness } from "y-protocols/awareness";
 
-import type { CanvasEngine } from "@canvas";
+import { MODEL_EDIT_LOCKS, type CanvasEngine } from "@canvas";
 import type { CollaboratorState, PresencePoint, ShareIdentity } from "@shared/core";
 import { useCollaboratorsStore } from "@shared/stores/collaborators-store";
+import { useRemoteModelLocks } from "../model3d";
 import { ownAgentsOn, roomAgents, sameCollaborators } from "./room-agents";
 import { mirrorRoomPresence } from "./room-presence";
 import type { RoomPresence } from "./room-presence.types";
@@ -22,6 +23,7 @@ export function useRoomPresence(
   fileId: string,
   identity: ShareIdentity,
 ): void {
+  useRemoteModelLocks(engine, fileId);
   useEffect(() => {
     if (!awareness) return;
     return mirrorRoomPresence(awareness, useCollaboratorsStore.getState());
@@ -31,6 +33,7 @@ export function useRoomPresence(
   useEffect(() => {
     if (!awareness) return;
     const collaborators = useCollaboratorsStore;
+    const locks = engine.service(MODEL_EDIT_LOCKS);
     let cursor: PresencePoint | null = null;
     let agents = ownAgentsOn(collaborators.getState().collaborators, fileId);
     let timer: ReturnType<typeof setTimeout> | null = null;
@@ -45,6 +48,7 @@ export function useRoomPresence(
         viewport: engine.visibleWorldRect(),
         selection: engine.selectedIds(),
         activity: null,
+        editing: locks.localLock(),
       };
       const state: RoomPresence = {
         user: { name, color },
@@ -65,6 +69,7 @@ export function useRoomPresence(
     window.addEventListener("pointermove", onPointer);
     const stopView = engine.onViewChange(schedule);
     const stopState = engine.subscribe(schedule);
+    const stopLocks = locks.onChange(schedule);
     // Only the user's agents: mirroring the others' writes to the store too.
     const stopAgents = collaborators.subscribe((state) => {
       const next = ownAgentsOn(state.collaborators, fileId);
@@ -77,6 +82,7 @@ export function useRoomPresence(
       window.removeEventListener("pointermove", onPointer);
       stopView();
       stopState();
+      stopLocks();
       stopAgents();
       awareness.setLocalState(null);
     };

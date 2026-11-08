@@ -13,3 +13,5 @@ export {
 export { isModelAssetId, newModelAssetId } from "./model-asset-id";
 export { isModelKind, modelAssets } from "./model-kind";
 export { unusedModelAssets } from "./sweep-model-assets";
+export { MODEL_EDIT_LOCKS, ModelEditLocks } from "./model-edit-locks";
+export type * from "./model-edit-locks.types";
