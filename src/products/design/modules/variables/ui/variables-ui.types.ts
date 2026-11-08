@@ -139,3 +139,16 @@ export interface FileLibraries {
   /** Turns a library on or off for the file. */
   setUsed: (libraryId: string, on: boolean) => void;
 }
+
+/** A library the right-click menu can move items to. */
+export interface MoveTarget {
+  id: string;
+  label: string;
+  select: () => void;
+}
+
+/** `useMoveToLibrary`'s menu items and the confirmation to render. */
+export interface MoveToLibrary {
+  targets: MoveTarget[];
+  dialog: ReactNode;
+}

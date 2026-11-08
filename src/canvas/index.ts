@@ -24,6 +24,7 @@ export type {
   HistoryChange,
   Placement,
   ProjectLink,
+  ProjectLinkOptions,
   UndoHistory,
 } from "./document";
 export type * from "./workspace";

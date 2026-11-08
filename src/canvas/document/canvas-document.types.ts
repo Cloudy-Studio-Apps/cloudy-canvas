@@ -32,6 +32,16 @@ export interface ProjectLink {
   libraryIds: string[] | "all";
 }
 
+/** How `CanvasDocument.setProjectLink` writes the link. */
+export interface ProjectLinkOptions {
+  /**
+   * Writes it as the current actor (the user), so it joins the undo step being recorded: the
+   * file's libraries menu, whose undo restores the link with the records it took out. Otherwise
+   * (the default) it's outside every undo history.
+   */
+  undoable?: boolean;
+}
+
 /** Who changed token records, handed to `CanvasDocument.observeTokens` listeners. */
 export interface TokenChangeSource {
   /**

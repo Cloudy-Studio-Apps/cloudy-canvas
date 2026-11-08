@@ -12,6 +12,7 @@ import type {
   ElementMap,
   Placement,
   ProjectLink,
+  ProjectLinkOptions,
   TokenChangeSource,
   UnregisteredElement,
 } from "./canvas-document.types";
@@ -43,7 +44,7 @@ export class CanvasDocument {
   private readonly metaMap: Y.Map<string>;
   /** Variables and their collections (`TokenRecord`s) by id, undoable like elements. */
   private readonly tokensMap: Y.Map<unknown>;
-  /** The project link (`ProjectLink`), saved with the file; not an undo step. */
+  /** The project link (`ProjectLink`), saved with the file; an undo step only when asked. */
   private readonly projectMap: Y.Map<unknown>;
   /** Bumps on every change to `tokensMap`, whoever makes it (see `tokensVersion`). */
   private tokensRevision = 0;
@@ -162,7 +163,8 @@ export class CanvasDocument {
   /** A new undo history recording only the edits made with `origin` (see `runAs`). */
   createHistory(origin: symbol): DocumentHistory {
     return new DocumentHistory(
-      [this.elements, this.metaMap, this.tokensMap],
+      // The project link only for its undoable writes (`setProjectLink`); the rest are untracked.
+      [this.elements, this.metaMap, this.tokensMap, this.projectMap],
       origin,
       this.recordsHistory,
     );
@@ -427,14 +429,19 @@ export class CanvasDocument {
     return isProjectLink(value) ? value : null;
   }
 
-  /** Links the file to a project (`null` unlinks). Saved with the file, but not an undo step. */
-  setProjectLink(link: ProjectLink | null): void {
+  /**
+   * Links the file to a project (`null` unlinks). Saved with the file; not an undo step unless
+   * `options.undoable` (then it joins the step being recorded).
+   */
+  setProjectLink(link: ProjectLink | null, options: ProjectLinkOptions = {}): void {
     if (this.readOnly) return;
-    this.doc.transact(() => {
+    const write = () => {
       if (link)
         this.projectMap.set("link", { projectId: link.projectId, libraryIds: link.libraryIds });
       else this.projectMap.delete("link");
-    }, UI_ORIGIN);
+    };
+    if (options.undoable) this.transact(write);
+    else this.doc.transact(write, UI_ORIGIN);
   }
 
   /** Fires when the project link changes (local edits, remote updates). */

@@ -1,5 +1,6 @@
 export type * from "./token.types";
 export { isTokenRecord } from "./is-token-record";
+export { canVaryBy } from "./axis-source";
 export { joinTokenColor, parseTokenColor, splitTokenColor } from "./token-color";
 export {
   inTokenGroup,

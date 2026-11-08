@@ -1,5 +1,6 @@
 import { createId } from "@shared/core";
 
+import { checkAxisSource } from "./axis-source";
 import { DEFAULT_VALUE } from "./default-value";
 import { detachEverywhere } from "./detach-bindings";
 import { deletionRewrites } from "./token-deletion";
@@ -170,7 +171,10 @@ export abstract class ModeEdits extends TokenEditsBase {
     const variables = this.onAxis(from.id).flatMap((v) => {
       if (!(modeId in v.values)) return [];
       const others = Object.keys(v.values).filter((k) => k !== DEFAULT_VALUE && k !== modeId);
-      if (others.length === 0) return [{ ...v, axisId: to.id }];
+      if (others.length === 0) {
+        checkAxisSource(v, to);
+        return [{ ...v, axisId: to.id }];
+      }
       dropped++;
       const values = { ...v.values };
       delete values[modeId];
@@ -218,8 +222,8 @@ export abstract class ModeEdits extends TokenEditsBase {
   /** Makes a variable vary by an axis (`null`: by none), dropping overrides it had for another. */
   setVariableAxis(id: string, axisId: string | null): void {
     const variable = this.requireVariable(id);
-    if (axisId) this.requireAxis(axisId);
     if ((variable.axisId ?? null) === axisId) return;
+    if (axisId) checkAxisSource(variable, this.requireAxis(axisId));
     this.write(() => this.doc.setTokenRecords([{ ...withoutOverrides(variable), axisId }]));
   }
 }

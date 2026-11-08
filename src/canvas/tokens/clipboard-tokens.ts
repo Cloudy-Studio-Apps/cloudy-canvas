@@ -1,5 +1,6 @@
 import type { CanvasDocument } from "../document";
 import type { CanvasElement } from "../elements/element.types";
+import { withCollectionSources, withLibraryTag } from "./collection-source";
 import { isTokenRecord } from "./is-token-record";
 import { TokenStore } from "./token-store";
 import type { TokenRecord } from "./token.types";
@@ -60,7 +61,7 @@ export function clipboardTokens(
  * own are kept, so pasting never changes its values), as part of the edit running now. A record
  * mirrored from a project library keeps its `libraryId` only when the document has records of
  * that library already (it uses it; the next mirror settles them); otherwise it becomes the
- * document's own.
+ * document's own. Variables pasted into a collection the document has take its source.
  */
 export function restoreTokens(doc: CanvasDocument, records: readonly unknown[]): void {
   const missing = records.filter(
@@ -68,12 +69,10 @@ export function restoreTokens(doc: CanvasDocument, records: readonly unknown[]):
   );
   if (missing.length === 0) return;
   const used = new Set(doc.tokenRecords().flatMap((record) => record.libraryId ?? []));
-  doc.setTokenRecords(
-    missing.map((record) => {
-      if (record.libraryId === undefined || used.has(record.libraryId)) return record;
-      const own = { ...record };
-      delete own.libraryId;
-      return own;
-    }),
+  const tagged = missing.map((record) =>
+    record.libraryId === undefined || used.has(record.libraryId)
+      ? record
+      : withLibraryTag(record, undefined),
   );
+  doc.setTokenRecords(withCollectionSources(tagged, TokenStore.of(doc)));
 }

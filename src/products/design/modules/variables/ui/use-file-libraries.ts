@@ -10,8 +10,10 @@ import { t } from "../variables.i18n";
 /**
  * The project's libraries for the file's libraries menu, which of them the file uses, and turning
  * one on or off. The first change writes an explicit list into the file's link (a new file uses
- * `"all"`, the libraries new files take); turning one on mirrors it in, and turning one off takes
- * its items out of the file, unlinked from the layers using them (`detachLibrary`, one undo step).
+ * `"all"`, the libraries new files take). Each change is one undo step with the link in it:
+ * turning one on mirrors it in, and turning one off takes its items out of the file, unlinked
+ * from the layers using them (`detachLibrary`); undoing either puts the link back and the next
+ * mirror settles the records.
  */
 export function useFileLibraries(): FileLibraries {
   const { doc } = useDesignEngine();
@@ -29,15 +31,20 @@ export function useFileLibraries(): FileLibraries {
 
   const setUsed = (libraryId: string, on: boolean) => {
     if (!link) return;
+    const libraryIds = entries
+      .filter((entry) => (entry.id === libraryId ? on : used.has(entry.id)))
+      .map((entry) => entry.id);
+    doc.checkpoint();
+    const release = doc.holdCheckpoints();
     try {
-      const libraryIds = entries
-        .filter((entry) => (entry.id === libraryId ? on : used.has(entry.id)))
-        .map((entry) => entry.id);
-      // The link first: the library sync then no longer writes this library's records anywhere.
-      doc.setProjectLink({ projectId: link.projectId, libraryIds });
+      // The link first, as part of the undo step: the library sync then no longer writes this
+      // library's records anywhere, and undoing brings the link back with them.
+      doc.setProjectLink({ projectId: link.projectId, libraryIds }, { undoable: true });
       if (!on) detachLibrary(doc, libraryId);
     } catch (error) {
       notifyError(t("libraries.changeFailed"), error);
+    } finally {
+      release();
     }
   };
 

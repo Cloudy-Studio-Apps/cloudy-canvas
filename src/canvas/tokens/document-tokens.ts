@@ -12,7 +12,7 @@ import type {
   SetValueOptions,
   StylePatch,
 } from "./document-tokens.types";
-import { collectionSource } from "./collection-source";
+import { collectionSource, withCollectionSources, withLibraryTag } from "./collection-source";
 import { followBase, regenerate } from "./generator-writes";
 import type { ImportChoice, TokenImportPlan } from "./exchange/exchange.types";
 import { planTokenImport } from "./exchange/import-plan";
@@ -131,11 +131,21 @@ export class DocumentTokens extends VariableEdits {
   /**
    * Brings variables and styles from another file in, one undo step (`planTokenImport`: ids kept,
    * so importing the same source again updates them; `choice` for ones named like the file's).
-   * Layers bound to what it changes follow.
+   * Layers bound to what it changes follow. A record the file has keeps its source (a library's
+   * stays the library's), a new one is the file's own, and what lands in a collection takes the
+   * collection's (`withCollectionSources`).
    */
   importTokens(incoming: readonly TokenRecord[], choice: ImportChoice): TokenImportPlan {
-    const plan = planTokenImport(this.store(), incoming, choice);
-    if (plan.records.length > 0) this.write(() => this.doc.setTokenRecords(plan.records));
+    const store = this.store();
+    const plan = planTokenImport(store, incoming, choice);
+    if (plan.records.length === 0) return plan;
+    const records = withCollectionSources(
+      plan.records.map((record) =>
+        withLibraryTag(record, this.doc.tokenRecord(record.id)?.libraryId),
+      ),
+      store,
+    );
+    this.write(() => this.doc.setTokenRecords(records));
     return plan;
   }
 

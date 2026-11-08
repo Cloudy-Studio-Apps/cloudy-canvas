@@ -134,7 +134,9 @@ A file of a project uses the project's libraries (see
 tagged with their library's id.
 
 - **Grouped by source:** the Variables section (`SidebarGroups` → `SidebarCollection`), the Styles
-  section (`StyleSourceList` per source) and the variable picker show each library the file uses
+  section (`StyleSourceList` per source), the Variables window's collections (`CollectionsSide`;
+  a library's collection can't be renamed or deleted there while it can't be edited), core's
+  `StyleList` (the section headers' style buttons) and the variable picker show each library the file uses
   (`TokenSourceHeader`, `useTokenSources`, from `canvas-ui/tokens/`), then "This file". A library's
   items carry `LibraryBadge`; they're edited as any while the project's libraries are open
   (`ready`), and the edit reaches every file using the library. Otherwise their rows open nothing
@@ -145,10 +147,12 @@ tagged with their library's id.
 - **The file's libraries** (`FileLibrariesMenu`, `useFileLibraries`, the section's Libraries
   button, files of a project only): each project library with a switch. The first change writes an
   explicit `libraryIds` list into the file's link (a new file has `"all"`); turning one on lets the
-  sync mirror it in, and turning one off sets the link, then `detachLibrary` (one undo step), after
-  asking when layers use it (`libraryUsers`).
-- **Move to library** (`MoveToLibraryMenu`, the right-click menu of the file's own variables,
-  collection captions and styles, while the libraries are open): one item per library the file
+  sync mirror it in, and turning one off sets the link, then `detachLibrary`, after asking when
+  layers use it (`libraryUsers`). Either is one undo step with the link in it
+  (`setProjectLink(link, { undoable: true })`), so undo puts the link and the records back.
+- **Move to library** (`useMoveToLibrary`, in `MoveToLibraryMenu`, the right-click menu of the
+  file's own variables, collection captions and styles, and in the window's `CollectionItem` menu,
+  while the libraries are open): one item per library the file
   uses. `planLibraryMove` says what goes (a variable takes its whole collection, which the
   confirmation names with its count); one that reads variables staying in the file is refused with
   a toast naming them. `moveToLibrary` tags the records and the library sync writes them to the

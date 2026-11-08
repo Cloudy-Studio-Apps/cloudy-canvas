@@ -40,8 +40,10 @@ the libraries, saving them, when to sync) is in [canvas-ui/libraries/](../../can
   `observeTokens` reports these writes as not `local`.
 - **`libraryEditsOf(ids, previous, doc)`:** from an `observeTokens` change (ids and their earlier
   values), the library records the user wrote, by library: tagged records now are `put` untagged,
-  tagged records gone (or moved to another library) are `removed`. A record that lost its tag stays
-  in its library.
+  tagged records gone, moved to another library or untagged (the record is still there but the
+  file's own now: undoing a move to a library) are `removed` from the library they had. The sync
+  applies them only to libraries the file still uses, so a library the file stopped using is never
+  written; other files bake removed records out when they mirror.
 - **`revertLibraryEdits(doc, ids, previous)`:** puts library records back as they were before the
   change, untracked (records it added are removed); for a file whose project is missing.
 
@@ -57,12 +59,14 @@ the libraries, saving them, when to sync) is in [canvas-ui/libraries/](../../can
 - **`moveToLibrary(doc, ids, libraryId)`:** tags the plan's records with the library's id, one undo
   step, and returns them tagged (it throws when there are blockers). It's an ordinary edit of the
   file: the editor's library sync (`observeTokens` → `libraryEditsOf`) writes the records to the
-  library, as long as the file uses it. Undoing it untags them, which leaves them in the library
-  (a record that lost its tag stays there), so the next mirror tags them again.
-- **`detachLibrary(doc, libraryId)`:** takes a library's records out of the file, one undo step:
-  they lose their tag in one transaction, then `bakeRemoved` removes them (the layers keep what
-  they showed, unlinked), so the sync never reads the removal as an edit to the library. Call it
-  after the file's link stops listing the library. Undoing it brings the records back tagged; while
-  the file doesn't use the library they go nowhere, and the next mirror bakes them out again.
+  library, as long as the file uses it. Undoing it untags them, which removes them from the
+  library again (other files bake them out); redoing puts them back.
+- **`detachLibrary(doc, libraryId)`:** takes a library's records out of the file through
+  `bakeRemoved` (the layers keep what they showed, unlinked). Call it after the file's link stops
+  listing the library, in the same undo step (`doc.setProjectLink(link, { undoable: true })` inside
+  `holdCheckpoints`, as the design's libraries menu does): the sync then doesn't take the removal as
+  an edit to the library, and undoing brings the link back with the records, which the next mirror
+  settles. The records undo brings back are written to the library as the file had them (the
+  library may have changed meanwhile; the file's copy wins).
 - **`libraryUsers(doc, libraryId)`:** the layers bound to the library's variables and styles (the
   count a file shows before it stops using a library).
