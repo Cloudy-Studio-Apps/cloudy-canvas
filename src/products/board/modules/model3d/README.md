@@ -17,10 +17,9 @@ edited, and convertible to a plain PNG image.
   `rotation`) and `zoom`, its `textures` slots and the saved `pictureAssetId`. It keeps its
   proportions, isn't created with the shape tools and is not rotatable. `assets(el)` is only the
   picture, so copies, exports and the HTML viewer draw the picture and carry nothing else.
-- **At rest** it draws the picture (`view.placeImage`). While this user has it live
-  (`isModelLive(id)`, set by `ModelEditLocks.lockLocal`) it draws nothing, because the live view is
-  transparent and the old picture would show behind it; `useModelEditSession` redraws it
-  (`engine.refreshElements`) when the edit starts and ends.
+- **At rest** it draws the picture (`view.placeImage`), always. While this user has it live the
+  editor covers it on screen (`engine.coverElements`, done by `useModelEditSession`) because the
+  live view is transparent; exports, thumbnails and agents' pictures keep showing the picture.
 - **Dropping** model files goes through the `importFiles` hook (`importModelFiles` with
   `createModel`); the canvas menu's **Place 3D model…** picks a file and places it in the view.
   `ModelSizeDialog` (an overlay) answers the warning over 10 MB.

@@ -185,6 +185,8 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   private readonly camera = new Camera();
   /** What the active tool fades (`ToolContext.setFaded`), on top of what the mode isolates. */
   private toolFaded: string[] = [];
+  /** What each overlay covers on screen (`coverElements`), by who asked. */
+  private readonly covers = new Map<string, readonly string[]>();
   private mode: CanvasMode = DEFAULT_MODE;
   private readonly renderer: Renderer;
   private readonly scene: Scene;
@@ -2013,6 +2015,18 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
       Promise.all([images, this.fontTracker.settled()]),
       delay(CONTENT_TIMEOUT_MS),
     ]);
+  }
+
+  /**
+   * Hides elements on this engine's canvas while an overlay edits them in their place (a model's
+   * live 3D view): `source` names the overlay, `ids` what it covers (`[]` uncovers). Only the
+   * on-screen canvas: exports, copies, agents' pictures and file previews still show them.
+   */
+  coverElements(source: string, ids: readonly string[]): void {
+    if (ids.length === 0) this.covers.delete(source);
+    else this.covers.set(source, ids);
+    this.renderer.setCovered([...this.covers.values()].flat());
+    this.requestRender();
   }
 
   /** Re-reads the elements, and re-resolves the links between them. */

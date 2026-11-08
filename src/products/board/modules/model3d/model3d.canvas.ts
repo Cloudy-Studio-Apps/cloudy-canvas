@@ -15,7 +15,7 @@ function editModel(
   ctx: { doc: CanvasDocument; activate(id: string, action: string): void },
 ) {
   if (el.type !== "model3d") return false;
-  if (ctx.doc.getAsset((el as CanvasElement & ModelData).modelAssetId)) {
+  if (!ctx.doc.isReadOnly && ctx.doc.getAsset((el as CanvasElement & ModelData).modelAssetId)) {
     ctx.activate(el.id, MODEL_ACTIONS.edit);
   }
   return true;

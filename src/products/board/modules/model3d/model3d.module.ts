@@ -11,7 +11,7 @@ import * as model3dUi from "./ui";
 /**
  * 3D models on the board: the kind and the picture it shows (`model3d.canvas.ts`), dropping and
  * placing model files, the live 3D view, the panel and the context menu (`model3d.sections.ts`),
- * and the agents' tools (`model3d.mcp.ts`).
+ * and the agents' tools (`mcp/`).
  */
 export const model3dModule = defineModule({
   id: "model3d",

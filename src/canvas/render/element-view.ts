@@ -77,6 +77,8 @@ export class ElementView extends Container {
   /** Clipped to nothing (what a hidden parent holds), or drawn by another element. */
   private clippedAway = false;
   private undrawn = false;
+  /** An editing overlay covers it on screen (see `setCovered`). */
+  private covered = false;
 
   constructor(
     el: CanvasElement,
@@ -346,8 +348,18 @@ export class ElementView extends Container {
     this.applyVisible();
   }
 
+  /**
+   * Hides the view while a DOM overlay edits the element in its place (e.g. a 3D model's live
+   * view, transparent, would show the old picture behind it). Only the on-screen view: exports and
+   * thumbnails build their own views and captures put it back.
+   */
+  setCovered(covered: boolean): void {
+    this.covered = covered;
+    this.applyVisible();
+  }
+
   private applyVisible(): void {
-    const visible = !this.clippedAway && !this.undrawn;
+    const visible = !this.clippedAway && !this.undrawn && !this.covered;
     if (this.visible !== visible) this.visible = visible;
   }
 

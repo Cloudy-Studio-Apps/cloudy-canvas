@@ -67,6 +67,8 @@ export class Renderer {
   private readonly world = new Container();
   /** What's dimmed (`setFaded`), so a capture can draw it undimmed and put it back. */
   private faded: string[] = [];
+  /** What overlays cover (`setCovered`), which a capture shows and puts back. */
+  private covered: string[] = [];
   private readonly rulerGuides = new RulerGuideLayer();
   private rulerGuidesView: RulerGuidesView | null = null;
   private readonly overlay = new OverlayLayer();
@@ -241,6 +243,14 @@ export class Renderer {
     this.frames.setFaded(list);
   }
 
+  /** Hides these elements on screen while overlays edit them; an empty list clears it. */
+  setCovered(ids: Iterable<string>): void {
+    const list = [...ids];
+    this.covered = list;
+    this.elements.setCovered(list);
+    this.frames.setCovered(list);
+  }
+
   /** Shows a tool's gesture feedback above the elements; `null` clears it. */
   setGuide(guide: Guide | null): void {
     this.guide.set(guide);
@@ -350,6 +360,9 @@ export class Renderer {
       this.elements.setFaded([]);
       this.frames.setFaded([]);
     }
+    // Covered elements are shown: a preview never has a hole where an overlay is editing.
+    this.elements.setCovered([]);
+    this.frames.setCovered([]);
     try {
       return this.app.renderer.extract.canvas({
         target: this.world,
@@ -367,6 +380,8 @@ export class Renderer {
         this.elements.setFaded(this.faded);
         this.frames.setFaded(this.faded);
       }
+      this.elements.setCovered(this.covered);
+      this.frames.setCovered(this.covered);
     }
   }
 

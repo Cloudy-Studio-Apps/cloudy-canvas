@@ -74,6 +74,9 @@ export function setModelViewTool(baker: ModelBaker): BoardMcpTool {
         .filter((slot) => slot.file !== null && !slot.embedded && !textures.has(slot.name))
         .map((slot) => slot.name);
       const picture = await baker.bake({ ...base, textures, missing }, view, el);
+      // The awaits above gave the user time: check again before writing.
+      assertModelFree(engine, el.id);
+      if (!engine.getElement(el.id)) throw new Error(`The model ${el.id} was removed meanwhile.`);
       const pictureAssetId = newModelAssetId();
       engine.doc.addAsset(pictureAssetId, picture);
       for (const slot of slots) {

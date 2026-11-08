@@ -1,7 +1,6 @@
 import {
   BoxKind,
   ELEMENT_DEFAULTS,
-  isModelLive,
   ZOOM_RANGE,
   type ElementPatch,
   type ElementView,
@@ -17,7 +16,7 @@ import { t } from "./model3d.i18n";
 
 /**
  * A 3D model. At rest it is its saved picture (`pictureAssetId`); the live 3D view is an overlay
- * the editor mounts while it is edited, and the picture is not drawn under it. It keeps its
+ * the editor mounts while it is edited (the engine covers the picture on screen meanwhile). It keeps its
  * proportions, and agents move and resize it and set its view (`angle`, `zoom`), but never create
  * it with the shape tools.
  */
@@ -36,13 +35,7 @@ export class Model3dKind extends BoxKind<ModelElement, BoardToolOptions> impleme
 
   draw(view: ElementView, el: ModelElement): void {
     view.graphics.clear();
-    if (isModelLive(el.id)) return view.clearImage();
     view.placeImage(el.pictureAssetId, { x: 0, y: 0, w: el.w, h: el.h });
-  }
-
-  /** Redraws when the model goes live or stops being live. */
-  override drawnFrom(el: ModelElement): unknown {
-    return isModelLive(el.id);
   }
 
   override assets(el: ModelElement): string[] {

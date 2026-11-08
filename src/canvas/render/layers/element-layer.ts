@@ -39,6 +39,7 @@ export class ElementLayer extends Container {
   private effectScale = 1;
   private hiddenText: HiddenText | null = null;
   private faded = new Set<string>();
+  private covered = new Set<string>();
   private textResolution = 1;
   /** Elements playing their entrance, with when it started. */
   private readonly entrances = new Map<string, number>();
@@ -226,6 +227,14 @@ export class ElementLayer extends Container {
     this.faded = next;
   }
 
+  /** Hides these elements while overlays edit them (`ElementView.setCovered`); an empty list clears it. */
+  setCovered(ids: Iterable<string>): void {
+    const next = new Set(ids);
+    for (const id of this.covered) if (!next.has(id)) this.views.get(id)?.setCovered(false);
+    for (const id of next) this.views.get(id)?.setCovered(true);
+    this.covered = next;
+  }
+
   /** Hides an element's canvas text (or one part of it) while the DOM text editor is showing it. */
   setHiddenText(hidden: HiddenText | null): void {
     if (this.hiddenText) this.showText(this.views.get(this.hiddenText.id), null);
@@ -259,6 +268,7 @@ export class ElementLayer extends Container {
     view.setTextResolution(this.textResolution);
     if (this.hiddenText?.id === el.id) this.showText(view, this.hiddenText);
     if (this.faded.has(el.id)) view.setFaded(true);
+    if (this.covered.has(el.id)) view.setCovered(true);
     this.views.set(el.id, view);
     return view;
   }

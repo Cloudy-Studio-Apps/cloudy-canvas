@@ -84,8 +84,7 @@ model live, and finishing writes the result once.
 - **Mounting it** (`useModelEditSession(engine)`): an editor's overlay calls it once; it starts an
   edit on `MODEL_ACTIONS.edit` (the element's kind must be a `ModelKind`), finishes when the element
   leaves the selection or goes and when the editor unmounts, and returns `{ id, element, data,
-frame }` to pass to `<ModelLiveView engine frame data />`. While a model is live
-  (`MODEL_EDIT_LOCKS.localLock() === id`) its kind should not draw the old picture under the view.
+frame }` to pass to `<ModelLiveView engine frame data />`. While a model is live it also covers the element on this canvas (`engine.coverElements`), so the old picture doesn't show under the view; the kind always draws the picture.
 
 ## The panel (`ui/`)
 

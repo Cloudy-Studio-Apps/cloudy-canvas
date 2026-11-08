@@ -9,7 +9,8 @@ import { Model3dConvert, Model3dLive, Model3dPanel, useModelCommands } from "./u
 import { selectedModel } from "./ui/selected-model";
 import { t } from "./model3d.i18n";
 
-const isModelSelected = (_context: unknown, engine: CanvasEngine) => selectedModel(engine) !== null;
+const canConvert = (_context: unknown, engine: CanvasEngine) =>
+  selectedModel(engine) !== null && !engine.doc.isReadOnly;
 
 /** The panel, the live view, the dialogs, the commands and the context menu items. */
 export function registerModel3dSections(host: ModuleHost): void {
@@ -44,7 +45,7 @@ export function registerModel3dSections(host: ModuleHost): void {
           );
         },
       },
-      { command: CONVERT_MODEL_COMMAND, label: t("menu.convert"), enabled: isModelSelected },
+      { command: CONVERT_MODEL_COMMAND, label: t("menu.convert"), enabled: canConvert },
     ],
   });
   host.contribute(boardEditor.contextMenu, {
