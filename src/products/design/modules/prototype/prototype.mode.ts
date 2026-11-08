@@ -50,8 +50,6 @@ export const prototypeMode = defineDesignMode({
       { key: "Backspace", label: "⌫" },
     ],
   },
-  // Delete clears interactions here; layers are never deleted.
-  commandLabels: { deleteSelection: t("mode.removeInteractions") },
   hostCommands: [
     {
       id: PROTOTYPE_COMMANDS.addFlow,

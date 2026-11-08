@@ -7,8 +7,9 @@ import type { ScreenPictureEntry as Entry } from "./screen-pictures.types";
 /**
  * The player's screen pictures, drawn in the `prototype:player` workspace and kept per screen for
  * the session: a picture stays while the screen and every layer inside it are the objects it was
- * drawn from (an edit to any of them makes a new object, drawn again, `stillShows`) and it was drawn at least as sharp as asked. A replaced picture's URL
- * is revoked once the new one is drawn, so what's on screen never goes blank; `clear` revokes all.
+ * drawn from (an edit to any of them makes a new object, drawn again, `stillShows`) and it was
+ * drawn at least as sharp as asked. A replaced picture's URL is revoked once the new one is drawn,
+ * so what's on screen never goes blank; `clear` revokes all.
  */
 export class ScreenPictures {
   private readonly entries = new Map<string, Entry>();
