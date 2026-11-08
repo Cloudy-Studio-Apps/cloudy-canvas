@@ -17,8 +17,9 @@ export interface ProjectsState {
   /** Removes a project from the registry (its folder stays on disk). */
   forget: (id: string) => Promise<void>;
   /**
-   * The project `id`: where the registry says, else found by walking up from `nearFile` (the registry
-   * is fixed silently). `null` when neither works.
+   * The project `id`: where the registry says, else (no record, or its folder no longer holds the
+   * project) found by walking up from `nearFile`, and the registry is fixed or filled silently.
+   * `null` when neither works.
    */
   resolve: (id: string, nearFile?: string) => Promise<ProjectRecord | null>;
 }

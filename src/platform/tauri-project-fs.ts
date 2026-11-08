@@ -208,8 +208,9 @@ export class TauriProjectFs implements ProjectFs {
     return null;
   }
 
-  async readManifest(root: string): Promise<ProjectManifest | null> {
-    return (await this.manifestsIn(root))[0] ?? null;
+  async readManifest(root: string, id?: string): Promise<ProjectManifest | null> {
+    const manifests = await this.manifestsIn(root);
+    return (id === undefined ? manifests[0] : manifests.find((m) => m.id === id)) ?? null;
   }
 
   /** Whether `dir` holds a `.cproject` with this id; unreadable ones don't count. */

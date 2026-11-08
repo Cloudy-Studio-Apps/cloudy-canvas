@@ -52,5 +52,6 @@ Tauri fs plugin. `scan` lists one level and skips dotfiles and the `.cproject`. 
 an item to `.cloudy/trash/<entry id>/<name>`, records it in `index.json` and refuses anything inside
 `.cloudy`. Text and bytes are written atomically (`platform/write-atomic.ts`: a `.tmp` file renamed
 over the target, writes to one path queued). `makeHidden` calls the `set_hidden` command (Windows
-hidden attribute; no-op elsewhere). `readManifest(root)` reads the project in a folder. `findManifestAbove` walks up from a file to the top of its drive or share, skipping unreadable
+hidden attribute; no-op elsewhere). `readManifest(root, id?)` reads the project in a folder (the one with `id` when given).
+`findManifestAbove` walks up from a file to the top of its drive or share, skipping unreadable
 manifests.

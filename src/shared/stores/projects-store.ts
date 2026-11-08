@@ -44,7 +44,7 @@ export const useProjectsStore = create<ProjectsState>()((set) => {
       try {
         const projects = await projectRegistry.list();
         const found = await Promise.all(
-          projects.map(async (p) => (await projectFs.readManifest(p.root))?.id === p.id),
+          projects.map(async (p) => (await projectFs.readManifest(p.root, p.id)) !== null),
         );
         const missing = new Set(projects.filter((_, i) => !found[i]).map((p) => p.id));
         set({ projects, missing: missing.size > 0 ? missing : NONE });
@@ -60,8 +60,8 @@ export const useProjectsStore = create<ProjectsState>()((set) => {
     locate: async (id) => {
       const root = await pickFolder(t("projects.locateTitle"));
       if (!root) return null;
-      const manifest = await projectFs.readManifest(root);
-      if (manifest?.id !== id) throw new Error(t("projects.notThisProject"));
+      const manifest = await projectFs.readManifest(root, id);
+      if (!manifest) throw new Error(t("projects.notThisProject"));
       return store(recordFor(root, manifest, await projectRegistry.get(id)));
     },
     setPinned: async (id, pinned) => {
@@ -85,13 +85,13 @@ export const useProjectsStore = create<ProjectsState>()((set) => {
     },
     resolve: async (id, nearFile) => {
       const record = await projectRegistry.get(id);
-      if (!record) return null;
-      if ((await projectFs.readManifest(record.root))?.id === id) return record;
+      if (record && (await projectFs.readManifest(record.root, id))) return record;
       if (!nearFile) return null;
       const root = await projectFs.findManifestAbove(nearFile, id);
-      const manifest = root ? await projectFs.readManifest(root) : null;
-      if (!root || manifest?.id !== id) return null;
-      return store({ ...recordFor(root, manifest, record), openedAt: record.openedAt });
+      const manifest = root ? await projectFs.readManifest(root, id) : null;
+      if (!root || !manifest) return null;
+      const found = recordFor(root, manifest, record);
+      return store(record ? { ...found, openedAt: record.openedAt } : found);
     },
   };
 });
