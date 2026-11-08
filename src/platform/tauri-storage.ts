@@ -92,6 +92,17 @@ export class TauriStorage implements Storage {
     });
   }
 
+  setProject(id: string, projectId: string | null): Promise<FileInfo | null> {
+    return this.mutate((files) => {
+      const previous = files.find((f) => f.id === id);
+      if (!previous) return { files, result: null };
+      const file: FileInfo = { ...previous };
+      if (projectId) file.projectId = projectId;
+      else delete file.projectId;
+      return { files: files.map((f) => (f.id === id ? file : f)), result: file };
+    });
+  }
+
   async forget(id: string): Promise<void> {
     const forgotten = await this.mutate((files) => ({
       files: files.filter((f) => f.id !== id),

@@ -17,6 +17,7 @@ import type {
 } from "./canvas-file.types";
 import { freeFilePath } from "./free-file-path";
 import { useCanvasAutosave } from "./use-canvas-autosave";
+import { useRecentProject } from "./use-recent-project";
 import { t } from "./file.i18n";
 
 /** How long the top bar shows that the file was just saved. */
@@ -156,6 +157,7 @@ export function useCanvasFileSaver<O extends object>(
   }, [write, firstPath]);
 
   useCanvasAutosave(engine, autosave, autosaveEnabled);
+  useRecentProject(id, engine, info);
 
   const saveFile = useCallback(() => save(false), [save]);
   const saveFileAs = useCallback(() => save(true), [save]);

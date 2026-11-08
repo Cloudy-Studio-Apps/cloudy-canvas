@@ -1,21 +1,21 @@
-import { assetKindOf, contentHash, keyBetween, LibraryDocument } from "@canvas";
-import type { LibraryAsset } from "@canvas";
 import {
-  createId,
-  joinRelative,
-  projectPaths,
-  relativeTo,
-  type LibraryEntry,
-  type ProjectRecord,
-} from "@shared/core";
+  assetKindOf,
+  contentHash,
+  keyBetween,
+  type LibraryAsset,
+  type LibraryDocument,
+} from "@canvas";
+import { createId, projectPaths, type LibraryEntry, type ProjectRecord } from "@shared/core";
 import { appLifecycle, projectFs } from "@platform";
 import { notifyError } from "@shared/stores/toast-store";
+import { assetFilePath, readLibrary, sortedLibraries, writeAssetFile } from "./library-files";
 import type {
   HeldHub,
   HubCount,
   LibraryAssetInput,
   LibraryEdits,
   LibraryHubListener,
+  OpenedHub,
 } from "./library-hub.types";
 import { LibrarySaver } from "./library-saver";
 import { t } from "./libraries.i18n";
@@ -27,17 +27,24 @@ const closing = new Map<string, Promise<void>>();
 
 /**
  * A project's libraries in memory while something uses them (an editor, the project home): one
- * per project, shared by its openers (`open`, `close`). Edits are written to the libraries per
- * item, the later one winning, and each changed `.clib` is saved 300 ms after its last edit,
- * atomically; closing (and quitting the app) saves what's pending.
+ * per project, shared by its openers (`open` gives each a `release`). Edits are written to the
+ * libraries per item, the later one winning, and each changed `.clib` is saved 300 ms after its
+ * last edit, atomically; the last release (and quitting the app) saves what's pending.
  */
 export class LibraryHub {
+  private list: LibraryEntry[] = [];
+  private readonly docs = new Map<string, LibraryDocument>();
+  private readonly failed = new Set<string>();
+  private readonly observers = new Map<string, () => void>();
   private readonly listeners = new Set<LibraryHubListener>();
   private readonly saver: LibrarySaver;
-  private readonly releases: (() => void)[] = [];
+  private readonly releaseQuit: () => void;
+  /** Who the `apply` running now is for, handed to the listeners. */
+  private applying: unknown = null;
+  private refreshing: Promise<void> = Promise.resolve();
 
-  /** The hub of a project, loading its libraries the first time. Each call needs a `close`. */
-  static async open(record: ProjectRecord): Promise<LibraryHub> {
+  /** The hub of a project, loading its libraries the first time. Each opener calls `release`. */
+  static async open(record: ProjectRecord): Promise<OpenedHub> {
     let held = hubs.get(record.id);
     if (!held) {
       const count: HubCount = { refs: 0 };
@@ -46,42 +53,38 @@ export class LibraryHub {
     }
     const { count } = held;
     count.refs++;
+    let hub: LibraryHub;
     try {
-      return await held.hub;
+      hub = await held.hub;
     } catch (error) {
       if (--count.refs === 0 && hubs.get(record.id)?.count === count) hubs.delete(record.id);
       throw error;
     }
+    let released = false;
+    return {
+      hub,
+      release: () => {
+        if (released) return Promise.resolve();
+        released = true;
+        return hub.release();
+      },
+    };
   }
 
   private static async load(record: ProjectRecord, count: HubCount): Promise<LibraryHub> {
     await closing.get(record.id);
-    const manifest = await projectFs.readManifest(record.root, record.id);
-    if (!manifest) throw new Error(`The project ${record.id} isn't in ${record.root}`);
-    const paths = projectPaths(record.root);
-    const entries = [...manifest.libraries].sort((a, b) =>
-      a.order < b.order ? -1 : a.order > b.order ? 1 : 0,
-    );
-    const loaded: [LibraryEntry, LibraryDocument][] = [];
-    const unreadable: string[] = [];
-    for (const entry of entries) {
-      try {
-        const bytes = await projectFs.readBytes(paths.library(entry.file));
-        loaded.push([entry, LibraryDocument.fromFile(bytes)]);
-      } catch (error) {
-        console.warn(`Library ${entry.file} couldn't be read`, error);
-        unreadable.push(entry.name);
-      }
+    const hub = new LibraryHub(record, count);
+    try {
+      await hub.readManifest();
+    } catch (error) {
+      hub.dispose();
+      throw error;
     }
-    if (unreadable.length > 0) {
-      notifyError(t("hub.unreadable"), new Error(unreadable.join(", ")));
-    }
-    return new LibraryHub(record, loaded, count);
+    return hub;
   }
 
   private constructor(
     readonly project: ProjectRecord,
-    private readonly loaded: readonly [LibraryEntry, LibraryDocument][],
     private readonly count: HubCount,
   ) {
     const paths = projectPaths(project.root);
@@ -93,43 +96,58 @@ export class LibraryHub {
       },
       (error) => notifyError(t("hub.saveFailed"), error),
     );
-    for (const [entry, library] of loaded) {
-      this.releases.push(
-        library.observe(() => {
-          this.saver.schedule(entry.id, () => library);
-          const ids = new Set([entry.id]);
-          for (const listener of this.listeners) listener(ids);
-        }),
-      );
-    }
-    this.releases.push(appLifecycle.onBeforeQuit(() => this.saver.flush()));
+    this.releaseQuit = appLifecycle.onBeforeQuit(() => this.saver.flush());
   }
 
-  /** The project's libraries that could be read, in its order. */
-  libraries(): LibraryDocument[] {
-    return this.loaded.map(([, library]) => library);
-  }
-
-  /** The manifest entries of the libraries `libraries()` holds. */
+  /** Every library of the project's manifest, in its order (loaded or not). */
   entries(): LibraryEntry[] {
-    return this.loaded.map(([entry]) => entry);
+    return [...this.list];
+  }
+
+  /** The libraries that could be read, in the project's order. */
+  libraries(): LibraryDocument[] {
+    return this.list.flatMap((entry) => this.docs.get(entry.id) ?? []);
   }
 
   library(id: string): LibraryDocument | undefined {
-    return this.loaded.find(([entry]) => entry.id === id)?.[1];
+    return this.docs.get(id);
   }
 
-  /** Writes a file's edits to the libraries (unknown libraries are skipped). */
-  apply(edits: LibraryEdits): void {
-    for (const [id, edit] of edits) {
-      const library = this.library(id);
-      if (!library) continue;
-      if (edit.put.length > 0) library.setTokenRecords(edit.put);
-      if (edit.removed.length > 0) library.removeTokenRecords(edit.removed);
+  /** The manifest's libraries whose `.clib` couldn't be read. */
+  unreadable(): ReadonlySet<string> {
+    return this.failed;
+  }
+
+  /**
+   * Reads the manifest again: libraries added since load in, removed ones out (their pending save
+   * dropped), unreadable ones tried again. Listeners hear the ids that changed, so open files
+   * mirror again.
+   */
+  refresh(): Promise<void> {
+    const run = this.refreshing.then(async () => {
+      const changed = await this.readManifest();
+      if (changed.size > 0) this.emit(changed, null);
+    });
+    this.refreshing = run.catch(() => undefined);
+    return run;
+  }
+
+  /** Writes a file's edits to the libraries (unknown libraries are skipped); `from` is told back. */
+  apply(edits: LibraryEdits, from: unknown = null): void {
+    this.applying = from;
+    try {
+      for (const [id, edit] of edits) {
+        const library = this.library(id);
+        if (!library) continue;
+        if (edit.put.length > 0) library.setTokenRecords(edit.put);
+        if (edit.removed.length > 0) library.removeTokenRecords(edit.removed);
+      }
+    } finally {
+      this.applying = null;
     }
   }
 
-  /** Fires with the ids of the libraries that changed. */
+  /** Fires with the ids of the libraries that changed and who applied the change (`null`: none). */
   onChange(listener: LibraryHubListener): () => void {
     this.listeners.add(listener);
     return () => this.listeners.delete(listener);
@@ -150,10 +168,6 @@ export class LibraryHub {
     const hash = await contentHash(bytes);
     const known = library.assets().find((asset) => asset.hash === hash);
     if (known) return known;
-    const folder = projectPaths(this.project.root).libraryAssets(entry.file);
-    if (!(await projectFs.exists(folder))) {
-      await projectFs.createFolder(this.project.root, relativeTo(this.project.root, folder));
-    }
     const asset: LibraryAsset = {
       ...input,
       id: createId(),
@@ -161,7 +175,7 @@ export class LibraryHub {
       kind: assetKindOf(input.type),
       order: keyBetween(library.assets().at(-1)?.order ?? null, null),
     };
-    await projectFs.writeBytesAtomic(joinRelative(folder, `${asset.id}.${asset.ext}`), bytes);
+    await writeAssetFile(this.project.root, entry, asset, bytes);
     library.putAsset(asset);
     return asset;
   }
@@ -173,23 +187,82 @@ export class LibraryHub {
       ?.assets()
       .find((item) => item.id === assetId);
     if (!entry || !asset) return Promise.reject(new Error(`No asset ${assetId} in ${libraryId}`));
-    const folder = projectPaths(this.project.root).libraryAssets(entry.file);
-    return projectFs.readBytes(joinRelative(folder, `${asset.id}.${asset.ext}`));
+    return projectFs.readBytes(assetFilePath(this.project.root, entry, asset));
   }
 
-  /** Lets go of the hub; the last opener's close saves what's pending and drops it. */
-  async close(): Promise<void> {
-    if (this.count.refs === 0 || --this.count.refs > 0) return;
+  /** One opener lets go; the last one saves what's pending and drops the hub. */
+  private async release(): Promise<void> {
+    if (--this.count.refs > 0) return;
     if (hubs.get(this.project.id)?.count === this.count) hubs.delete(this.project.id);
-    for (const release of this.releases) release();
-    this.listeners.clear();
+    this.dispose();
     const saved = this.saver.flush();
     closing.set(this.project.id, saved);
     await saved;
     if (closing.get(this.project.id) === saved) closing.delete(this.project.id);
   }
 
+  private dispose(): void {
+    for (const off of this.observers.values()) off();
+    this.observers.clear();
+    this.releaseQuit();
+    this.listeners.clear();
+  }
+
+  /** Syncs the libraries held with the manifest; returns the ids added, removed or now read. */
+  private async readManifest(): Promise<Set<string>> {
+    const { root, id } = this.project;
+    const manifest = await projectFs.readManifest(root, id);
+    if (!manifest) throw new Error(`The project ${id} isn't in ${root}`);
+    const entries = sortedLibraries(manifest);
+    const listed = new Set(entries.map((entry) => entry.id));
+    const changed = new Set<string>();
+    for (const known of [...this.docs.keys(), ...this.failed]) {
+      if (listed.has(known)) continue;
+      this.drop(known);
+      changed.add(known);
+    }
+    const unreadable: string[] = [];
+    for (const entry of entries) {
+      if (this.docs.has(entry.id)) continue;
+      try {
+        this.adopt(entry.id, await readLibrary(root, entry));
+        this.failed.delete(entry.id);
+        changed.add(entry.id);
+      } catch (error) {
+        console.warn(`Library ${entry.file} couldn't be read`, error);
+        if (!this.failed.has(entry.id)) unreadable.push(entry.name);
+        this.failed.add(entry.id);
+      }
+    }
+    this.list = entries;
+    if (unreadable.length > 0) notifyError(t("hub.unreadable"), new Error(unreadable.join(", ")));
+    return changed;
+  }
+
+  private adopt(id: string, library: LibraryDocument): void {
+    this.docs.set(id, library);
+    this.observers.set(
+      id,
+      library.observe(() => {
+        this.saver.schedule(id, () => library);
+        this.emit(new Set([id]), this.applying);
+      }),
+    );
+  }
+
+  private drop(id: string): void {
+    this.observers.get(id)?.();
+    this.observers.delete(id);
+    this.docs.delete(id);
+    this.failed.delete(id);
+    this.saver.cancel(id);
+  }
+
+  private emit(ids: ReadonlySet<string>, from: unknown): void {
+    for (const listener of this.listeners) listener(ids, from);
+  }
+
   private entry(id: string): LibraryEntry | undefined {
-    return this.loaded.find(([entry]) => entry.id === id)?.[0];
+    return this.list.find((entry) => entry.id === id);
   }
 }

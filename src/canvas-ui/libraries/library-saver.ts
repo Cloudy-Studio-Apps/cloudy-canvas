@@ -31,6 +31,13 @@ export class LibrarySaver {
     );
   }
 
+  /** Drops a library's pending write (it left the project). */
+  cancel(libraryId: string): void {
+    clearTimeout(this.timers.get(libraryId));
+    this.timers.delete(libraryId);
+    this.pending.delete(libraryId);
+  }
+
   /** Writes every pending library now and waits for every write to end. */
   async flush(): Promise<void> {
     for (const id of [...this.pending.keys()]) void this.write(id);

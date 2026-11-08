@@ -54,6 +54,7 @@ export function useLibrarySync<O extends object>(
           again = false;
           const ids = used();
           const libraries = ids.flatMap((id) => hub.library(id) ?? []);
+          // Used but not loaded (unreadable, or read while the manifest is read again): kept.
           const keep = new Set(ids.filter((id) => !hub.library(id)));
           const usedAssets = libraries.some((library) => library.assets().length > 0)
             ? new Set(doc.all().flatMap((el) => engine.kinds.kindOf(el).assets(el)))
@@ -71,8 +72,12 @@ export function useLibrarySync<O extends object>(
       }
     };
 
+    /** This editor's own edits, which the file has already: no mirror needed after them. */
+    const self = {};
     void mirror();
-    const offHub = hub.onChange(() => void mirror());
+    const offHub = hub.onChange((_ids, from) => {
+      if (from !== self) void mirror();
+    });
     const offLink = doc.observeProjectLink(() => void mirror());
     const offTokens = doc.observeTokens((ids, source) => {
       if (!source.local && !source.remote) return;
@@ -84,7 +89,7 @@ export function useLibrarySync<O extends object>(
       }
       const using = new Set(used());
       for (const id of edits.keys()) if (!using.has(id)) edits.delete(id);
-      hub.apply(edits);
+      hub.apply(edits, self);
     });
     return () => {
       closed = true;

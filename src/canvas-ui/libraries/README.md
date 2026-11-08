@@ -6,17 +6,25 @@ edits, baking) is in [canvas/libraries/](../../canvas/libraries/README.md)._
 A file in a project uses the project's libraries: a copy of their records lives in the file, and
 edits travel both ways while the project is found.
 
-- **`LibraryHub`** (`library-hub.ts`): a project's libraries in memory, one per project, shared by
-  whoever opens it (`LibraryHub.open(record)`, a module-level cache by project id, counted; each
-  `open` needs a `close`). It reads the manifest and each `.clib` (an unreadable one is left out,
-  with a toast), keeps one `LibraryDocument` per library (`libraries()`, `entries()`,
-  `library(id)`), writes edits per item, the later `apply(edits)` winning, and fires `onChange`
-  with the ids of the libraries that changed. `addAssetFile(libraryId, bytes, input)` stores a
-  picture in `<library>.assets/<id>.<ext>` (the same bytes, by `hash`, return the asset it has
-  already); `readAssetBytes` reads one back.
+- **`LibraryHub`** (`library-hub.ts`, file access in `library-files.ts`): a project's libraries in
+  memory, one per project, shared by whoever opens it. `LibraryHub.open(record)` (a module-level
+  cache by project id, counted) returns an `OpenedHub`, `{ hub, release }`: each opener calls its
+  `release` once (a second call does nothing), and the last one drops the hub. It reads the
+  manifest and each `.clib`: `entries()` is every library of the manifest, `libraries()` and
+  `library(id)` the ones that could be read, `unreadable()` the ids that couldn't (with a toast).
+  `apply(edits, from)` writes edits per item, the later one winning, and `onChange` fires with the
+  ids of the libraries that changed and `from` (`null` for changes nobody applied), so an editor
+  skips its own. `refresh()` reads the manifest again (the project home after adding, removing or
+  renaming a library): new libraries load, removed ones leave (their pending save dropped),
+  unreadable ones are tried again, and listeners hear the ids that changed, so open files mirror
+  again (a removed library's records are baked out of them, a new `autoAdd` library comes into files
+  using `"all"`). `addAssetFile(libraryId, bytes, input)` stores a picture in
+  `<library>.assets/<id>.<ext>` (the same bytes, by `hash`, return the asset it has already);
+  `readAssetBytes` reads one back.
   - **Saving** (`library-saver.ts`): a changed library's `.clib` is written 300 ms after its last
-    edit, atomically (`projectFs.writeBytesAtomic`), one write at a time; the last `close` and
-    quitting the app (`appLifecycle.onBeforeQuit`) write what's pending.
+    edit, atomically (`projectFs.writeBytesAtomic`), one write at a time; the last `release` and
+    quitting the app (`appLifecycle.onBeforeQuit`, which the window waits for) write what's
+    pending, and opening the project again waits for those writes.
 - **`useProjectLibraries(engine, file)`** (both products' file sessions; live guests never call it):
   reads the project from the document's link (a new file opened with `?project=` gets
   `{ projectId, libraryIds: "all" }`), finds it with `useProjectsStore.resolve(id, file.path)` and
@@ -24,8 +32,10 @@ edits travel both ways while the project is found.
   `projectId`, `project`, `hub`, the `libraries` the file uses, `locate`) goes to the chrome through
   `ProjectLibrariesContext` (`useProjectLibrariesState()`; `NO_PROJECT_LIBRARIES` for live guests).
 - **Sync** (`use-library-sync.ts`, while `ready`): the libraries are mirrored into the file when
-  the hub opens, when a library changes (any opener's edit) and when the file's link changes, one
-  mirror at a time (`mirrorLibraries`; library pictures the layers show are copied in). The user's
+  the hub opens, when a library changes (another opener's edit, or `refresh`) and when the file's
+  link changes, one mirror at a time (`mirrorLibraries`; library pictures the layers show are
+  copied in). Libraries the file uses that aren't loaded (unreadable) are `keep`: their records stay
+  in the file as they are, never baked out. The user's
   own token writes (`observeTokens`, `source.local`: edits, agents, undo and redo) to library
   records go to the hub (`libraryEditsOf`, only for libraries the file uses), so undoing a library
   edit reverts it in the library too. A live session's guest writing a library record

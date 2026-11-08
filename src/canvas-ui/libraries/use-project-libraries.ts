@@ -53,7 +53,7 @@ export function useProjectLibraries<O extends object>(
   useEffect(() => {
     if (!projectId) return;
     let cancelled = false;
-    let opened: LibraryHub | null = null;
+    let release: (() => Promise<void>) | null = null;
     const missing: FoundProject = { request, status: "missing", project: null, hub: null };
     void (async () => {
       try {
@@ -62,10 +62,10 @@ export function useProjectLibraries<O extends object>(
           .resolve(projectId, path.current ?? undefined);
         if (cancelled) return;
         if (!record) return setFound(missing);
-        const hub = await LibraryHub.open(record);
-        if (cancelled) return void hub.close();
-        opened = hub;
-        setFound({ request, status: "ready", project: record, hub });
+        const opened = await LibraryHub.open(record);
+        if (cancelled) return void opened.release();
+        release = opened.release;
+        setFound({ request, status: "ready", project: record, hub: opened.hub });
       } catch (error) {
         notifyError(t("hub.openFailed"), error);
         if (!cancelled) setFound(missing);
@@ -73,7 +73,7 @@ export function useProjectLibraries<O extends object>(
     })();
     return () => {
       cancelled = true;
-      if (opened) void opened.close();
+      void release?.();
     };
   }, [projectId, request]);
 
