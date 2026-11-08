@@ -10,6 +10,15 @@ export interface ProjectEntry {
   updatedAt: string | null;
 }
 
+/** A project's manifest with the `.cproject` it was read from. */
+export interface ManifestFile {
+  manifest: ProjectManifest;
+  /** The `.cproject`'s name in the project root (not always `<manifest.name>.cproject`). */
+  file: string;
+  /** Its absolute path. */
+  path: string;
+}
+
 /** Disk access for projects. Relative paths are `/`-separated; `root` is absolute. */
 export interface ProjectFs {
   /** One level of `rel` (the root when omitted); the `.cloudy` folder and the `.cproject` are skipped. */
@@ -41,6 +50,10 @@ export interface ProjectFs {
    * when there is none or it is unreadable.
    */
   readManifest(root: string, id?: string): Promise<ProjectManifest | null>;
+  /**
+   * `readManifest` with the file it read: writes go back to that file, whatever its name.
+   */
+  readManifestFile(root: string, id?: string): Promise<ManifestFile | null>;
   /** The folder holding a `.cproject` whose `id` is `projectId`, walking up from `filePath`; null if none. */
   findManifestAbove(filePath: string, projectId: string): Promise<string | null>;
 }

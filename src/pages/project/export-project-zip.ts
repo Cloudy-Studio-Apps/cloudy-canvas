@@ -1,7 +1,7 @@
 import { zipSync } from "fflate";
 
 import { exportFile, projectFs } from "@platform";
-import { PROJECT_DATA_DIR, TRASH_DIR, joinRelative, projectPaths } from "@shared/core";
+import { PROJECT_DATA_DIR, TRASH_DIR, joinRelative } from "@shared/core";
 import { joinRel } from "./project-rel";
 import { t } from "./project.i18n";
 
@@ -20,11 +20,16 @@ async function collect(
 
 /**
  * Packs the whole project (its files, folders, `.cproject` and `.cloudy` data) into a .zip the
- * user saves. Returns whether it was saved.
+ * user saves, named `name`. `manifestFile` is the `.cproject` the project was read from. Returns
+ * whether it was saved.
  */
-export async function exportProjectZip(root: string, name: string): Promise<boolean> {
+export async function exportProjectZip(
+  root: string,
+  manifestFile: string,
+  name: string,
+): Promise<boolean> {
   const files: Record<string, Uint8Array> = {};
-  files[`${name}.cproject`] = await projectFs.readBytes(projectPaths(root).manifest(name));
+  files[manifestFile] = await projectFs.readBytes(joinRelative(root, manifestFile));
   await collect(root, "", files);
   await collect(root, PROJECT_DATA_DIR, files);
   const zip = zipSync(files, { level: 1 });

@@ -21,7 +21,7 @@ import { t } from "../project.i18n";
 
 /** The header's ⋯ menu: rename, icon and color, show in folder, export as .zip, remove from list. */
 export function ProjectMoreMenu() {
-  const { record, manifest } = useProjectContext();
+  const { record, manifest, project } = useProjectContext();
   const navigate = useNavigate();
   const [dialog, setDialog] = useState<"rename" | "appearance" | null>(null);
 
@@ -61,10 +61,16 @@ export function ProjectMoreMenu() {
           </DropdownMenuItem>
           <DropdownMenuItem
             onSelect={() =>
-              void toastProgress(() => exportProjectZip(record.root, manifest.name), {
-                loading: t("more.exporting"),
-                error: t("more.exportFailed"),
-              }).then((saved) => saved && toast({ title: t("more.exported") }))
+              void toastProgress(
+                async () => {
+                  if (!project.manifestFile) throw new Error("The project's file isn't read yet");
+                  return exportProjectZip(record.root, project.manifestFile, manifest.name);
+                },
+                {
+                  loading: t("more.exporting"),
+                  error: t("more.exportFailed"),
+                },
+              ).then((saved) => saved && toast({ title: t("more.exported") }))
             }
           >
             <Download />

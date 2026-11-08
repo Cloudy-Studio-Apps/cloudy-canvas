@@ -57,7 +57,10 @@ Tauri fs plugin. `scan` lists one level and skips dotfiles and the `.cproject`. 
 an item to `.cloudy/trash/<entry id>/<name>`, records it in `index.json` and refuses anything inside
 `.cloudy` except a library's `.clib` file and `.assets` folder (`.cloudy/libraries/<item>`), which deleting a library moves there. Text and bytes are written atomically (`platform/write-atomic.ts`: a `.tmp` file renamed
 over the target, writes to one path queued). `makeHidden` calls the `set_hidden` command (Windows
-hidden attribute; no-op elsewhere). `readManifest(root, id?)` reads the project in a folder (the one with `id` when given).
+hidden attribute; no-op elsewhere). `readManifest(root, id?)` reads the project in a folder (the one with `id` when given);
+`readManifestFile(root, id?)` also says which `.cproject` it read (`ManifestFile`: `file` name and
+`path`), which isn't always `<manifest name>.cproject` (a file renamed outside the app): the
+project home writes the manifest back to that file and renaming the project renames it.
 `findManifestAbove` walks up from a file to the top of its drive or share, skipping unreadable
 manifests. `removeFile(path)` deletes a file for good (never a folder): only the original of a file
 added to a project, once its copy in the project is written.

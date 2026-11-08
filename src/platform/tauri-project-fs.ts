@@ -23,6 +23,7 @@ import {
   projectPaths,
   serializeTrashIndex,
   uniqueName,
+  type ManifestFile,
   type ProjectEntry,
   type ProjectFs,
   type ProjectManifest,
@@ -229,28 +230,33 @@ export class TauriProjectFs implements ProjectFs {
   }
 
   async readManifest(root: string, id?: string): Promise<ProjectManifest | null> {
-    const manifests = await this.manifestsIn(root);
-    return (id === undefined ? manifests[0] : manifests.find((m) => m.id === id)) ?? null;
+    return (await this.readManifestFile(root, id))?.manifest ?? null;
+  }
+
+  async readManifestFile(root: string, id?: string): Promise<ManifestFile | null> {
+    const files = await this.manifestsIn(root);
+    return (id === undefined ? files[0] : files.find((f) => f.manifest.id === id)) ?? null;
   }
 
   /** Whether `dir` holds a `.cproject` with this id; unreadable ones don't count. */
   private async hasManifest(dir: string, projectId: string): Promise<boolean> {
-    return (await this.manifestsIn(dir)).some((manifest) => manifest.id === projectId);
+    return (await this.manifestsIn(dir)).some((f) => f.manifest.id === projectId);
   }
 
   /** The readable manifests of the `.cproject` files directly in `dir`. */
-  private async manifestsIn(dir: string): Promise<ProjectManifest[]> {
+  private async manifestsIn(dir: string): Promise<ManifestFile[]> {
     let items;
     try {
       items = await readDir(dir);
     } catch {
       return [];
     }
-    const found: ProjectManifest[] = [];
+    const found: ManifestFile[] = [];
     for (const item of items) {
       if (!item.isFile || !item.name.toLowerCase().endsWith(`.${PROJECT_EXTENSION}`)) continue;
+      const path = childPath(dir, item.name);
       try {
-        found.push(parseManifest(await readTextFile(childPath(dir, item.name))));
+        found.push({ manifest: parseManifest(await readTextFile(path)), file: item.name, path });
       } catch {
         // Not a readable manifest: keep looking.
       }

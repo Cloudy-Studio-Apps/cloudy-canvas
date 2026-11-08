@@ -3,9 +3,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { projectFs } from "@platform";
 import {
   isReservedName,
+  joinRelative,
   PROJECT_EXTENSION,
   projectPaths,
   serializeManifest,
+  type ManifestFile,
   type ProjectManifest,
 } from "@shared/core";
 import { useProjectsStore } from "@shared/stores/projects-store";
@@ -21,6 +23,9 @@ export function useProject(id: string): UseProject {
   const [manifest, setManifest] = useState<ProjectManifest | null>(null);
   const [rev, setRev] = useState(0);
   const latest = useRef<ProjectManifest | null>(null);
+  /** The `.cproject` the manifest was read from: every write goes back to it. */
+  const fileRef = useRef<string | null>(null);
+  const [manifestFile, setManifestFile] = useState<string | null>(null);
   const root = record?.root ?? null;
 
   useEffect(() => {
@@ -28,20 +33,22 @@ export function useProject(id: string): UseProject {
   }, [refresh, id]);
 
   /** Takes a manifest just read from disk as the current one. */
-  const adopt = useCallback((read: ProjectManifest | null) => {
-    latest.current = read;
-    setManifest(read);
+  const adopt = useCallback((read: ManifestFile | null) => {
+    latest.current = read?.manifest ?? null;
+    fileRef.current = read?.file ?? null;
+    setManifest(latest.current);
+    setManifestFile(fileRef.current);
     setRev((n) => n + 1);
   }, []);
 
   const reload = useCallback(async () => {
-    if (root) adopt(await projectFs.readManifest(root, id));
+    if (root) adopt(await projectFs.readManifestFile(root, id));
   }, [root, id, adopt]);
 
   useEffect(() => {
     if (!root) return;
     let cancelled = false;
-    void projectFs.readManifest(root, id).then((read) => {
+    void projectFs.readManifestFile(root, id).then((read) => {
       if (!cancelled) adopt(read);
     });
     return () => {
@@ -51,14 +58,12 @@ export function useProject(id: string): UseProject {
 
   const write = useCallback(
     async (next: ProjectManifest) => {
-      if (!root || !latest.current) return;
+      const file = fileRef.current;
+      if (!root || !latest.current || !file) return;
       const previous = latest.current;
       latest.current = next;
       try {
-        await projectFs.writeTextAtomic(
-          projectPaths(root).manifest(next.name),
-          serializeManifest(next),
-        );
+        await projectFs.writeTextAtomic(joinRelative(root, file), serializeManifest(next));
       } catch (error) {
         latest.current = previous;
         throw error;
@@ -81,15 +86,17 @@ export function useProject(id: string): UseProject {
     async (raw: string) => {
       const name = raw.trim();
       const current = latest.current;
-      if (!root || !current || name === current.name) return;
+      const file = fileRef.current;
+      if (!root || !current || !file || name === current.name) return;
       if (isReservedName(name)) throw new Error(t("rename.invalid"));
-      const paths = projectPaths(root);
-      if (await projectFs.exists(paths.manifest(name))) throw new Error(t("rename.taken"));
-      await projectFs.rename(
-        root,
-        `${current.name}.${PROJECT_EXTENSION}`,
-        `${name}.${PROJECT_EXTENSION}`,
-      );
+      const wanted = `${name}.${PROJECT_EXTENSION}`;
+      // The file read is renamed, whatever its name was; only another file of that name refuses.
+      const taken = wanted.toLowerCase() !== file.toLowerCase();
+      if (taken && (await projectFs.exists(projectPaths(root).manifest(name)))) {
+        throw new Error(t("rename.taken"));
+      }
+      fileRef.current = await projectFs.rename(root, file, wanted);
+      setManifestFile(fileRef.current);
       await write({ ...current, name });
     },
     [root, write],
@@ -105,5 +112,5 @@ export function useProject(id: string): UseProject {
           : manifest
             ? "ready"
             : "loading";
-  return { status, record, manifest, rev, reload, saveManifest, renameProject };
+  return { status, record, manifest, manifestFile, rev, reload, saveManifest, renameProject };
 }
