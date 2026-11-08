@@ -10,6 +10,9 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - The database schema now exports as Java too: plain classes with a field per column and the
   related objects and lists, or JPA entities for Spring Boot 4 with only the annotations Spring
   doesn't already assume. Both are written to copy from, without packages or imports.
+- Selecting a frame, a group, a vector or several layers now shows a Selection colors section in
+  the properties panel with every color used inside them. Change a color there and it updates
+  everywhere it's used at once, or select the layers that use it, without opening each layer.
 - Each closed area of a vector can now have its own fill: in vector edit mode, click
   inside an area to select it and change its fill in the Fills section. An area's fill can use a
   color style or variables, show data, and edit its gradient on the canvas, and its colors appear

@@ -11,6 +11,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   columna y los objetos y listas relacionados, o entidades JPA para Spring Boot 4 con solo las
   anotaciones que Spring no da por supuestas. Ambos se escriben para copiarlos, sin paquetes ni
   imports.
+- Al seleccionar un marco, un grupo, un vector o varias capas, el panel de propiedades muestra la
+  nueva sección Colores de la selección con todos los colores que usan. Cambia un color allí y se
+  actualiza en todos los lugares donde aparece a la vez, o selecciona las capas que lo usan, sin
+  tener que abrir cada capa.
 - Cada área cerrada de un vector ya puede tener su propio relleno: en el modo de
   edición de vectores, haz clic dentro de un área para seleccionarla y cambia su relleno en la
   sección Rellenos. El relleno de un área puede usar un estilo de color o variables, mostrar datos

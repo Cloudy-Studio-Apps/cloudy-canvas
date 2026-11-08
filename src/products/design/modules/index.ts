@@ -12,6 +12,7 @@ export * from "./pages";
 export * from "./polygon";
 export * from "./rectangle";
 export * from "./section";
+export * from "./selection-colors";
 export * from "./star";
 export * from "./text";
 export * from "./vector";
