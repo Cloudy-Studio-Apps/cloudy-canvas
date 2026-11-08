@@ -3,8 +3,8 @@ import type { CodeTable } from "../../../model";
 import type { CodeFile } from "../../code-target.types";
 import type { CodeWarning } from "../../warnings.types";
 import type { NestProvider } from "../nestjs-provider.types";
-import { nestModel } from "../relation-props";
-import type { RelationProps } from "../relation-props.types";
+import { nestModel } from "../nest-model";
+import type { RelationProps } from "../../../code";
 import { typeormColumn } from "./typeorm-column";
 import { entityPath, enumPath, relativeImport } from "./typeorm-paths";
 

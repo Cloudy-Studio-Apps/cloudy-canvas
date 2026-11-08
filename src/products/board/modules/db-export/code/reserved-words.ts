@@ -1,6 +1,6 @@
 const words = (list: string) => new Set(list.split(/\s+/).filter(Boolean));
 
-/** Lowercase words a name can't be (PHP class names, TS identifiers, unquoted SQL identifiers). */
+/** Lowercase words a name can't be (PHP class names, TS and Java identifiers, unquoted SQL identifiers). */
 export const RESERVED = {
   php: words(`
     abstract and array as bool break callable case catch class clone const continue declare default
@@ -14,6 +14,12 @@ export const RESERVED = {
     finally for function if import in instanceof new null return super switch this throw true try
     typeof var void while with implements interface let package private protected public static
     yield any boolean number string symbol object never unknown type`),
+  java: words(`
+    abstract assert boolean break byte case catch char class const continue default do double else
+    enum extends final finally float for goto if implements import instanceof int interface long
+    native new package private protected public return short static strictfp super switch
+    synchronized this throw throws transient try void volatile while true false null record var
+    yield sealed permits`),
   mysql: words(`
     add all alter and as asc between by call case change check column condition constraint create
     cross current_date current_time current_timestamp database default delete desc describe distinct

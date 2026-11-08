@@ -7,6 +7,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Novedades
 
+- El esquema de la base de datos ahora también se exporta a Java: clases simples con un campo por
+  columna y los objetos y listas relacionados, o entidades JPA para Spring Boot 4 con solo las
+  anotaciones que Spring no da por supuestas. Ambos se escriben para copiarlos, sin paquetes ni
+  imports.
 - Cada área cerrada de un vector ya puede tener su propio relleno: en el modo de
   edición de vectores, haz clic dentro de un área para seleccionarla y cambia su relleno en la
   sección Rellenos. El relleno de un área puede usar un estilo de color o variables, mostrar datos

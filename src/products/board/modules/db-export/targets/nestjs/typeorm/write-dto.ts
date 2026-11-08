@@ -1,7 +1,7 @@
 import { CodeWriter, toCamel, toKebab, toPascal, tsImport } from "../../../code";
 import type { CodeColumn, CodeTable } from "../../../model";
 import type { CodeFile } from "../../code-target.types";
-import { nestModel } from "../relation-props";
+import { nestModel } from "../nest-model";
 import { enumPath, featureFolder, relativeImport } from "./typeorm-paths";
 
 const GENERATED = new Set(["created_at", "updated_at", "deleted_at"]);

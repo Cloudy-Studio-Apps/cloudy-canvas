@@ -1,5 +1,6 @@
-import { className, plural, singular, toCamel, toPascal } from "../../code";
-import type { CodeRelation, CodeSchema } from "../../model";
+import type { CodeRelation, CodeSchema } from "../model";
+import { plural, singular } from "./inflect";
+import { toCamel, toPascal } from "./naming";
 import type { RelationProps } from "./relation-props.types";
 
 /**
@@ -51,6 +52,3 @@ export function relationProps(
     };
   });
 }
-
-/** A table's model class name (`order_items` → `OrderItem`). */
-export const nestModel = (table: string) => className(table);

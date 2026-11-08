@@ -6,6 +6,7 @@ export type CodeWarningId =
   | "name-collision"
   | "no-primary-key"
   | "composite-key"
+  | "composite-key-class"
   | "fk-cycle"
   | "many-to-many"
   | "unsupported-default"
