@@ -47,3 +47,10 @@ edits travel both ways while the project is found.
   it's found, `useLibraryGuard` puts back every edit the user makes to a library record, untracked,
   after the edit's transaction (`revertLibraryEdits`), and a toast says why once per editor. The
   user's undo step stays in the stack, with nothing left to undo.
+- **The file's libraries and Move to library (both products):** `FileLibrariesMenu` (the libraries
+  button: each project library with a switch for the file, hidden in a file without a project;
+  `useFileLibraries` writes the link and `detachLibrary` as one undo step, asking first when layers
+  use the library) and `MoveToLibraryMenu` / `useMoveToLibrary(ids)` (right-click → Move to
+  “library”… for the file's own variables, collections and styles while the libraries are `ready`;
+  a confirmation says what goes with it, a move that would leave references behind is refused with a
+  toast). The design's Variables and Styles sections and the board's colors panel use them.

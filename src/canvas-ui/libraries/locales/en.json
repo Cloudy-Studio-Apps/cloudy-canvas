@@ -16,5 +16,30 @@
   "readOnly": {
     "title": "Library items can't be edited",
     "description": "This file's project wasn't found. Locate it to edit library items again."
+  },
+  "move": {
+    "to": "Move to library “{library}”…",
+    "title": "Move to “{library}”?",
+    "collection_one": "Moves the collection “{collection}” with its {count} variable to “{library}”.",
+    "collection_other": "Moves the collection “{collection}” with its {count} variables to “{library}”.",
+    "style": "Moves the style “{style}” to “{library}”.",
+    "shared": "Every file that uses the library gets it, and editing it in any of them updates them all.",
+    "confirm": "Move",
+    "refusedTitle": "Can't move to “{library}”",
+    "refused": "It refers to variables that would stay in this file: {names}. Move those first, or stop referring to them.",
+    "failed": "Couldn't move to the library"
+  },
+  "libraries": {
+    "title": "Libraries",
+    "ofProject": "Libraries of {project}",
+    "unavailable": "The project's libraries aren't open, so they can't be turned on or off now.",
+    "none": "This project has no libraries yet.",
+    "unreadable": "{name} (can't be read)",
+    "hint": "A library that's on brings its variables and styles into this file.",
+    "leaveTitle": "Stop using “{name}”?",
+    "leaveText_one": "{count} layer uses its variables and styles. It keeps how it looks, unlinked from the library.",
+    "leaveText_other": "{count} layers use its variables and styles. They keep how they look, unlinked from the library.",
+    "leave": "Stop using",
+    "changeFailed": "Couldn't change the file's libraries"
   }
 }

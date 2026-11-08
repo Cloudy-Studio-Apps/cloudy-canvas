@@ -5,7 +5,7 @@ import {
   ContextMenuTrigger,
 } from "@shared/ui/kit";
 import { useMoveToLibrary } from "./use-move-to-library";
-import type { MoveToLibraryMenuProps } from "./variables-ui.types";
+import type { MoveToLibraryMenuProps } from "./file-libraries.types";
 
 /**
  * Right-click → Move to a library, on the file's own variables, collections and styles `ids`

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { CommitInput, LibraryBadge } from "@canvas-ui";
+import { CommitInput, LibraryBadge, useMoveToLibrary } from "@canvas-ui";
 import { tCommon } from "@shared/core";
 import {
   cn,
@@ -10,7 +10,6 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@shared/ui/kit";
-import { useMoveToLibrary } from "../../use-move-to-library";
 import { useBoard } from "../use-board";
 import { useVariablesWindowStore } from "../variables-window-store";
 import { GroupOutline } from "./group-outline";

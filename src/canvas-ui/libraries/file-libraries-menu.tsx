@@ -1,7 +1,6 @@
 import { Library } from "lucide-react";
 import { useState } from "react";
 
-import { useProjectLibrariesState } from "@canvas-ui";
 import {
   ConfirmDialog,
   Popover,
@@ -9,12 +8,13 @@ import {
   PopoverTrigger,
   SwitchField,
 } from "@shared/ui/kit";
-import { useFileLibraries } from "./use-file-libraries";
 import type { LibraryEntry } from "@shared/core";
-import { t } from "../variables.i18n";
+import { useProjectLibrariesState } from "./project-libraries-context";
+import { useFileLibraries } from "./use-file-libraries";
+import { t } from "./libraries.i18n";
 
 /**
- * The Variables section's libraries button, in a file of a project: each project library with a
+ * The libraries button of a section of variables or colors, in a file of a project: each project library with a
  * switch saying whether the file uses it. Turning off one that layers use asks first, with how
  * many. Only while the project's libraries are open; files of no project get no button.
  */

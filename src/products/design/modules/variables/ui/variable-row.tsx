@@ -1,9 +1,8 @@
 import { CornerDownRight } from "lucide-react";
 
 import { hasOverrides, tokenLeafOf, valueIn } from "@canvas";
-import { LibraryBadge, useDocumentTokens, VariableValue } from "@canvas-ui";
+import { LibraryBadge, MoveToLibraryMenu, useDocumentTokens, VariableValue } from "@canvas-ui";
 import { cn, Popover, PopoverContent, PopoverTrigger } from "@shared/ui/kit";
-import { MoveToLibraryMenu } from "./move-to-library-menu";
 import { VariableEditor } from "./variable-editor";
 import { typeGlyph } from "./window/group-kinds";
 import type { VariableRowProps } from "./variables-ui.types";

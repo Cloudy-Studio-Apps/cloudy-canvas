@@ -108,6 +108,8 @@ export interface TokenSourceHeaderProps {
   source: TokenSource;
   /** Under a library's heading, what editing its items does (default on). */
   note?: boolean;
+  /** What the file's own group is called ("This file" by default). */
+  localName?: string;
   className?: string;
 }
 

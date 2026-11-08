@@ -1,5 +1,4 @@
-import { useDocumentTokens } from "@canvas-ui";
-import { MoveToLibraryMenu } from "./move-to-library-menu";
+import { MoveToLibraryMenu, useDocumentTokens } from "@canvas-ui";
 import { SidebarGroupRow } from "./sidebar-group-row";
 import { variablesByGroup } from "./window/group-paths";
 import type { SidebarCollectionProps } from "./variables-ui.types";

@@ -1,11 +1,11 @@
 import { useEffect, useReducer } from "react";
 
 import { detachLibrary, librariesUsedBy, libraryUsers } from "@canvas";
-import { useProjectLibrariesState } from "@canvas-ui";
-import { useDesignEngine } from "@design/ui/design-engine-context";
+import { useEngine } from "../engine-context";
 import { notifyError } from "@shared/stores/toast-store";
-import type { FileLibraries } from "./variables-ui.types";
-import { t } from "../variables.i18n";
+import { useProjectLibrariesState } from "./project-libraries-context";
+import type { FileLibraries } from "./file-libraries.types";
+import { t } from "./libraries.i18n";
 
 /**
  * The project's libraries for the file's libraries menu, which of them the file uses, and turning
@@ -16,7 +16,7 @@ import { t } from "../variables.i18n";
  * mirror settles the records.
  */
 export function useFileLibraries(): FileLibraries {
-  const { doc } = useDesignEngine();
+  const { doc } = useEngine();
   const { status, hub, project } = useProjectLibrariesState();
   // Library names and the manifest's list change without the file changing.
   const [, refresh] = useReducer((n: number) => n + 1, 0);

@@ -1,7 +1,11 @@
 import { groupTree } from "@canvas";
-import { LibraryBadge, TokenGroupAccordion, TokenSourceHeader } from "@canvas-ui";
+import {
+  LibraryBadge,
+  MoveToLibraryMenu,
+  TokenGroupAccordion,
+  TokenSourceHeader,
+} from "@canvas-ui";
 import { StyleRow } from "../../core/ui";
-import { MoveToLibraryMenu } from "./move-to-library-menu";
 import type { StyleSourceListProps } from "./variables-ui.types";
 
 /**

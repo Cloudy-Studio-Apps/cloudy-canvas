@@ -7,12 +7,12 @@ import {
   type LibraryDocument,
   type LibraryMovePlan,
 } from "@canvas";
-import { useProjectLibrariesState } from "@canvas-ui";
-import { useDesignEngine } from "@design/ui/design-engine-context";
+import { useEngine } from "../engine-context";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import { ConfirmDialog } from "@shared/ui/kit";
-import type { MoveToLibrary } from "./variables-ui.types";
-import { t } from "../variables.i18n";
+import { useProjectLibrariesState } from "./project-libraries-context";
+import type { MoveToLibrary } from "./file-libraries.types";
+import { t } from "./libraries.i18n";
 
 /**
  * Moving the file's own variables, collections or styles `ids` to a library the file uses, while
@@ -22,7 +22,7 @@ import { t } from "../variables.i18n";
  * refused with a toast naming them.
  */
 export function useMoveToLibrary(ids: readonly string[]): MoveToLibrary {
-  const { doc } = useDesignEngine();
+  const { doc } = useEngine();
   const { status, hub, libraries } = useProjectLibrariesState();
   const [pending, setPending] = useState<{ library: LibraryDocument; plan: LibraryMovePlan }>();
   const nameOf = (library: LibraryDocument) =>

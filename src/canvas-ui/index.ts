@@ -151,10 +151,14 @@ export { normalizedToScreen, screenToLocal, screenToNormalized, useViewMapping }
 export { useAssetUrl } from "./use-asset-url";
 export { chooseImageAsset, ImageChooseButton } from "./images";
 export {
+  FileLibrariesMenu,
   LibraryHub,
+  MoveToLibraryMenu,
   NO_PROJECT_LIBRARIES,
   ProjectLibrariesContext,
   ProjectMissingDialog,
+  useFileLibraries,
+  useMoveToLibrary,
   useProjectLibraries,
   useProjectLibrariesState,
 } from "./libraries";

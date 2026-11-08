@@ -1,11 +1,10 @@
 import { Table2 } from "lucide-react";
 import { useState } from "react";
 
-import { useDocumentTokens } from "@canvas-ui";
+import { FileLibrariesMenu, useDocumentTokens } from "@canvas-ui";
 import { PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { DeleteTokensDialog } from "../../core/ui";
-import { FileLibrariesMenu } from "./file-libraries-menu";
 import { NewVariableMenu } from "./new-variable-menu";
 import { GlobalModes } from "./global-modes";
 import { SidebarGroups } from "./sidebar-groups";

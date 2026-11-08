@@ -94,6 +94,11 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   files in CMYK keep the bookmarks.
 - Data sources can now read Excel files and APIs that return their rows in pages, and an optional step can pick and rename fields before they're used. Plugins can add their own kinds of source.
 - The Assets tab now lists your pictures: the ones in each project library the file uses and the ones that belong only to this file, in collapsible groups. Search them, filter by images, SVG or icons, switch between a grid and a list, upload more from the plus button, and drag any picture onto the canvas or double-click it to place it. A picture from a library travels with the file, so the file still works on its own.
+- A board's colors panel shows where each color comes from, like the design: a section for each
+  project library the board uses, then "Board colors". Library colors can be edited from the board
+  and the change reaches every file of the project; choose which libraries the board uses from the
+  Libraries button in the panel, and move your own colors or collections to a library with a
+  right-click.
 
 ### Improved
 

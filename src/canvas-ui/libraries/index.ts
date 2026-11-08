@@ -1,14 +1,19 @@
 // A file's project libraries in its editor: the project's `LibraryHub`, the sync between the file
 // and the libraries (`useProjectLibraries`), its context for the chrome, and the dialog shown
 // when the project isn't found.
+export type * from "./file-libraries.types";
 export type * from "./library-hub.types";
 export type * from "./project-missing-dialog.types";
 export type * from "./use-project-libraries.types";
+export { FileLibrariesMenu } from "./file-libraries-menu";
 export { LibraryHub } from "./library-hub";
+export { MoveToLibraryMenu } from "./move-to-library-menu";
 export {
   NO_PROJECT_LIBRARIES,
   ProjectLibrariesContext,
   useProjectLibrariesState,
 } from "./project-libraries-context";
 export { ProjectMissingDialog } from "./project-missing-dialog";
+export { useFileLibraries } from "./use-file-libraries";
+export { useMoveToLibrary } from "./use-move-to-library";
 export { useProjectLibraries } from "./use-project-libraries";
