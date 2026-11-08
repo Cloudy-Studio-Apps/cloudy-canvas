@@ -31,6 +31,9 @@
     "emptyTitle": "Nothing selected",
     "empty": "Select a layer to add an interaction, a screen for its scrolling and flow start, or a flow on the left."
   },
+  "canvas": {
+    "flagTitle": "Select {name}"
+  },
   "stub": {
     "back": "Back",
     "close": "Close",

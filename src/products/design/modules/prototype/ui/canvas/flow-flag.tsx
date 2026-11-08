@@ -12,7 +12,7 @@ export function FlowFlag({ rect, flow }: FlowFlagProps) {
     // eslint-disable-next-line no-restricted-syntax -- bespoke: a canvas chip sized to its label
     <button
       type="button"
-      title={t("flows.play", { name: flow.name })}
+      title={t("canvas.flagTitle", { name: flow.name })}
       className="pointer-events-auto absolute flex h-5 max-w-48 cursor-pointer items-center gap-1 rounded-md bg-primary px-1.5 text-[11px] font-semibold whitespace-nowrap text-primary-foreground"
       style={{ left: rect.x, top: rect.y - 24 }}
       onClick={() => pickFlow(engine, flow.id)}

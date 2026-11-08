@@ -29,9 +29,8 @@ export function usePrototypePage(): PrototypePageView {
       page,
       flows: page === null ? [] : prototype.flows(page),
       screens: page === null ? [] : screensOf(engine.doc, page),
+      version,
     }),
-    // `version` is what says the document changed.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [engine, prototype, page, version],
   );
 }

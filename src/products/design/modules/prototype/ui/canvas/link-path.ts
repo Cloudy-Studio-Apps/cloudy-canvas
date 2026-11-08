@@ -19,7 +19,11 @@ export function linkPath(from: Rect, fromScreen: Rect, to: Rect): LinkPath {
     const sx = from.x + from.w;
     const sy = from.y + from.h / 2;
     const ex = to.x;
-    const ey = Math.min(Math.max(sy, to.y + EDGE_INSET), to.y + to.h - EDGE_INSET);
+    // A target too short for the inset takes it at its middle.
+    const ey =
+      to.h < EDGE_INSET * 2
+        ? to.y + to.h / 2
+        : Math.min(Math.max(sy, to.y + EDGE_INSET), to.y + to.h - EDGE_INSET);
     const k = Math.max(40, (ex - sx) / 2);
     return {
       d: `M ${sx} ${sy} C ${sx + k} ${sy}, ${ex - k} ${ey}, ${ex - HEAD} ${ey}`,

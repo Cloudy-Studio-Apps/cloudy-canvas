@@ -4,11 +4,14 @@ import { t } from "../../prototype.i18n";
 /** The length of a stub's line (screen px). */
 const STUB = 18;
 
+/** The chip's text for each action a stub stands for. */
+const STUB_LABELS = { back: "stub.back", close: "stub.close", link: "stub.link" } as const;
+
 /** An interaction with no screen to point at (Back, Close, Open link): a short line and a chip. */
 export function LinkStub({ rect, action, active }: LinkStubProps) {
   const sx = rect.x + rect.w;
   const sy = rect.y + rect.h / 2;
-  const label = t(`stub.${action === "close" ? "close" : action === "link" ? "link" : "back"}`);
+  const label = t(STUB_LABELS[action]);
   const width = label.length * 6 + 10;
   return (
     <g>

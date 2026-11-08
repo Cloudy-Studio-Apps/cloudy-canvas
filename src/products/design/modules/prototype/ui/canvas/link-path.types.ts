@@ -24,7 +24,7 @@ export interface LinkArrowProps {
 export interface LinkStubProps {
   /** The layer on screen. */
   rect: Rect;
-  action: PrototypeInteraction["action"];
+  action: "back" | "close" | "link";
   active: boolean;
 }
 
@@ -32,4 +32,11 @@ export interface FlowFlagProps {
   /** The flow's starting screen on screen. */
   rect: Rect;
   flow: { id: string; name: string };
+}
+
+/** A node of the page with interactions, and the screen it's on. */
+export interface PageLink {
+  id: string;
+  screenId: string;
+  interactions: PrototypeInteraction[];
 }

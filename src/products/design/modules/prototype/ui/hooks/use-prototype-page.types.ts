@@ -9,4 +9,6 @@ export interface PrototypePageView {
   flows: PrototypeFlowElement[];
   /** Its screens, in layer order. */
   screens: FrameElement[];
+  /** Counts the document's changes: what to key a memo on that reads the page's nodes. */
+  version: number;
 }
