@@ -125,6 +125,7 @@ export * from "./geometry";
 export * from "./modes";
 export * from "./gradient";
 export * from "./image";
+export * from "./model3d";
 export * from "./rotation";
 export * from "./path";
 export * from "./svg";

@@ -4,6 +4,7 @@ import type { CanvasDocument, EditedChange } from "./document";
 import type { CanvasElement, ElementKinds, ElementPatch } from "./elements";
 import type { Point, Rect } from "./geometry.types";
 import type { Keybindings } from "./input";
+import type { AssetSweep } from "./model3d";
 import type { EffectRenderers, ElementClip, ElementEffects, ElementMasks } from "./render";
 import type { CanvasGuides } from "./ruler-guides";
 import type { CanvasLinks } from "./links";
@@ -201,6 +202,11 @@ export interface CanvasProduct<O extends object = object> {
    * z-order `index`, or `null` to ignore it.
    */
   pasteImage?(image: PastedImage, view: Rect, index: string, options: O): CanvasElement | null;
+  /**
+   * Finds assets nothing uses any more (`CanvasEngine.sweepAssets`, run when a file opens and
+   * when it closes, as undo can no longer bring them back). Composed from every module's sweep.
+   */
+  assetSweeps?: readonly AssetSweep[];
   /**
    * An element drawing an SVG file pasted or dropped from outside the app as shapes (e.g. a
    * design's vector), fit and centered in `view` at z-order `index`; `null` pastes it as an image

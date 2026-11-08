@@ -15,6 +15,7 @@ import type { CanvasGuides } from "../ruler-guides";
 import type { Rect } from "../geometry.types";
 import type { CanvasLinks } from "../links";
 import type { CanvasMode } from "../modes";
+import type { AssetSweep } from "../model3d";
 import type { Tool, ToolContext } from "../tools";
 
 /** A tool a module adds, with its shortcuts (bound to `tool.<id>`). */
@@ -212,6 +213,8 @@ export interface CanvasPoints<O extends object> {
   pasteText: ExtensionPoint<PasteTextHook<O>>;
   pasteOnto: ExtensionPoint<PasteOntoHook<O>>;
   pasteImage: ExtensionPoint<PasteImageHook<O>>;
+  /** What finds the assets nothing uses any more, to remove on open and at close (several). */
+  assetSweeps: ExtensionPoint<AssetSweep>;
   pasteSvg: ExtensionPoint<PasteSvgHook<O>>;
   pasteForeign: ExtensionPoint<PasteForeignHook>;
 }

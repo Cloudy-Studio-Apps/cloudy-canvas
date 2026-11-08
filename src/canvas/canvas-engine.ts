@@ -402,6 +402,21 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   }
 
   /**
+   * Removes the assets nothing uses any more, as the product's `assetSweeps` find them (a 3D
+   * model's data after it was converted or deleted). Run when a file opens and when it closes:
+   * undo could bring the data back before. Returns how many went; nothing happens on a read-only
+   * document (a guest's).
+   */
+  sweepAssets(): number {
+    const sweeps = this.product.assetSweeps;
+    if (!sweeps || this.doc.isReadOnly) return 0;
+    const gone = new Set<string>();
+    for (const sweep of sweeps) for (const id of sweep(this.doc, this.kinds)) gone.add(id);
+    this.doc.removeAssets(gone);
+    return gone.size;
+  }
+
+  /**
    * Work to finish before the engine closes (e.g. a thumbnail of the canvas), keyed so setting it
    * again replaces it. It runs in `close()`, while the engine can still draw.
    */

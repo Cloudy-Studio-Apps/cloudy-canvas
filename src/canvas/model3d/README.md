@@ -1,0 +1,29 @@
+# 3D models (engine side)
+
+_Plain TypeScript both products share. The three.js side (loaders, live view, picture bake) is in
+`canvas-ui/model3d/`; each product's element kind lives in its own `modules/model3d/`._
+
+- **Data** (`model3d.types.ts`): `ModelData` is what a model element holds on top of its product's
+  base: the model's asset (`modelAssetId`, plus `mtlAssetId` for an OBJ), `format`, `fileName`,
+  `fileSize`, the saved `pictureAssetId` the canvas and exports show, the view (`angle` in degrees,
+  `zoom`) and the `textures` slots. A slot is missing when it is neither `embedded` nor has an
+  `assetId`. `model3d.constants.ts` has the size warning (`MODEL_SIZE_WARNING_BYTES`), the
+  accepted `MODEL_EXTENSIONS`, the picture's scale and side cap, the live view's release delay,
+  `DEFAULT_MODEL_VIEW` and `ZOOM_RANGE`.
+- **Kinds** (`model-kind.ts`): a kind that holds a model has `modelData(el)` (`ModelKind`,
+  `isModelKind`). `modelAssets(data)` lists every asset id it holds. Kinds still report the
+  picture through `kind.assets(el)` so copies, exports and the renderer find it.
+- **Ids** (`model-asset-id.ts`): every asset of a 3D object is made with `newModelAssetId()`, which
+  starts with `model3d:`. `isModelAssetId` is how the sweep tells them apart from images and
+  others, so it never removes an asset it doesn't own. Never use the prefix for anything else.
+- **The sweep** (`sweep-model-assets.ts`): `unusedModelAssets(doc, kinds)` lists the `model3d:`
+  assets no element of the document refers to (every page, not only the one on screen; a copy
+  keeps the data alive). It is the module's `assetSweeps` hook; `engine.sweepAssets()` runs all
+  hooks and removes the result with `doc.removeAssets`.
+- **When it runs:** only when undo can no longer reach the data. Assets are outside undo and a
+  file autosaves, so removing a model's data as soon as the element goes would break Ctrl+Z, and
+  every edit leaves an old picture undo may need. So `useCanvasAutosave` sweeps when the file opens,
+  before the app quits and when the editor closes (just before the closing save writes it), never
+  in the debounced autosave. Guests never save, and a read-only document is left alone, so only
+  the host sweeps. The file gets lighter on close, not when a model is deleted or converted.
+  Yjs drops the deleted bytes from the saved update (the document keeps `gc` on).

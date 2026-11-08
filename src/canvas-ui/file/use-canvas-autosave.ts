@@ -11,7 +11,8 @@ const AUTOSAVE_MAX_WAIT_MS = 10_000;
 /**
  * Runs `autosave` shortly after the document changes, and once more when the editor or the window
  * closes, the app goes to the background or autosave is turned off, so nothing pending is lost.
- * `autosave` skips a file with no changes.
+ * `autosave` skips a file with no changes. The engine also sweeps the assets nothing uses (see
+ * `CanvasEngine.sweepAssets`) on open, before quitting and on close, ahead of the closing save.
  */
 export function useCanvasAutosave<O extends object>(
   engine: CanvasEngine<O>,
@@ -22,6 +23,22 @@ export function useCanvasAutosave<O extends object>(
   useEffect(() => {
     autosaveRef.current = autosave;
   }, [autosave]);
+
+  // Sweeps unused 3D data when the file opens, before quitting and when the editor closes (never
+  // in the autosave: undo could still need it). It is declared before the autosave effect, so on
+  // unmount its cleanup runs first and the closing save writes the sweep, and its quit task is
+  // registered first: quit tasks start in registration order and this one does its work before its
+  // first `await`, so the save task finds the document already swept. Not gated by `enabled`.
+  useEffect(() => {
+    engine.sweepAssets();
+    const removeQuitTask = appLifecycle.onBeforeQuit(async () => {
+      engine.sweepAssets();
+    });
+    return () => {
+      removeQuitTask();
+      engine.sweepAssets();
+    };
+  }, [engine]);
 
   useEffect(() => {
     if (!enabled) return;
