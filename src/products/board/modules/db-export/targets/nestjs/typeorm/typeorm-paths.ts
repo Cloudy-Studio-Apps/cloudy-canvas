@@ -1,5 +1,5 @@
 import { plural, toKebab, toPascal } from "../../../code";
-import { nestModel } from "../relation-props";
+import { nestModel } from "../nest-model";
 
 /** Nest's feature folder of a table: `order_items` → `order-items`. */
 export const featureFolder = (table: string) => toKebab(plural(nestModel(table)));

@@ -90,8 +90,6 @@
     "strokes": "Trazos",
     "layout": "Disposición",
     "position": "Posición",
-    "interactions": "Interacciones",
-    "interactionsHint": "Los vínculos entre marcos y las transiciones llegarán en una versión futura.",
     "selectedArea": "Área seleccionada",
     "selectedAreas": "{count} áreas seleccionadas"
   },

@@ -48,6 +48,7 @@
     "name-collision": "{names} se convierten en {converted}; los siguientes llevan un número.",
     "no-primary-key": "{table} no tiene clave primaria.",
     "composite-key": "{table} tiene una clave primaria compuesta, que los modelos de {target} no pueden expresar.",
+    "composite-key-class": "{table} tiene una clave primaria compuesta: añádele una clase @IdClass o @EmbeddedId, que JPA necesita.",
     "fk-cycle": "{table}.{column} cierra un ciclo de claves foráneas, así que se añade después de todas las tablas.",
     "many-to-many": "{from} y {to} son de muchos a muchos: añade una tabla intermedia al esquema para exportarla.",
     "unsupported-default": "{table}.{column}: el valor por defecto {value} no se puede escribir en {target}.",

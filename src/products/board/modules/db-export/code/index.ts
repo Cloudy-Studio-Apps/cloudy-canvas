@@ -1,6 +1,7 @@
 // Helpers every code target shares, knowing no framework: naming (cases, inflection, reserved
 // words, collisions) and `CodeWriter`.
 export type * from "./naming.types";
+export type * from "./relation-props.types";
 export { CodeWriter } from "./code-writer";
 export { indexName } from "./index-name";
 export { plural, singular } from "./inflect";
@@ -16,4 +17,5 @@ export {
   words,
 } from "./naming";
 export { RESERVED } from "./reserved-words";
+export { relationProps } from "./relation-props";
 export { tsImport } from "./ts-import";

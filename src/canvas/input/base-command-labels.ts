@@ -43,6 +43,7 @@ export const BASE_COMMAND_LABELS: Record<keyof typeof BASE_KEYBINDINGS, string> 
   nudgeUpFar: t("commands.nudgeUpFar"),
   nudgeDownFar: t("commands.nudgeDownFar"),
   editSelection: t("commands.editSelection"),
+  selectParent: t("commands.selectParent"),
   cancel: t("commands.cancel"),
   zoomIn: t("commands.zoomIn"),
   zoomOut: t("commands.zoomOut"),

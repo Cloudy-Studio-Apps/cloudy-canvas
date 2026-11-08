@@ -44,7 +44,6 @@ export const maskModule = defineModule({
     });
     host.contribute(designEditor.propertySections, {
       id: "mask",
-      tab: "design",
       order: 45,
       when: maskSectionShown,
       component: MaskSection,

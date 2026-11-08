@@ -140,10 +140,11 @@ export const stickerAgentTools: DesignMcpTool[] = [
   {
     name: "convert_stickers_to_vectors",
     description:
-      "Turns stickers drawn as SVG (seals, common stamps, emojis, plugin art) into groups of " +
-      "vector layers that can be recolored one by one, as one undo step: the die-cut edge is an " +
-      '"Edge" vector at the bottom, the shadow and outline the group\'s effects. Each group keeps ' +
-      "the sticker's id. Raster stickers (the user's PNG or JPG) are left out.",
+      "Turns stickers drawn as SVG (seals, common stamps, emojis, plugin art) into one vector " +
+      "each, as one undo step: every shape of the SVG an area of it with its own fill (strokes " +
+      "as the areas they cover), recolored one by one through network.regions[i].fills; the " +
+      "die-cut edge is the bottom area, the shadow and outline the vector's effects. Each vector " +
+      "keeps the sticker's id. Raster stickers (the user's PNG or JPG) are left out.",
     inputSchema: {
       type: "object",
       required: ["ids"],

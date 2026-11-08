@@ -21,8 +21,10 @@ import {
   segmentsAt,
   tangentAt,
   vertexAt,
+  withRegionIds,
   type VectorNetwork,
 } from "../../core";
+import { areaBindingsPatch } from "../vector-area-bindings";
 import { isVector } from "./edit-vector";
 import { activeVertices, drawVectorOverlay, OVERLAY_PX } from "./vector-overlay";
 import { VECTOR_EDIT, type VectorEditSession } from "./vector-edit-session";
@@ -101,10 +103,15 @@ export abstract class VectorEditTool implements Tool {
 
   /**
    * Writes a new network for `origin` (the vector as it was when the gesture started, so drags
-   * don't drift): the node moves and resizes to wrap its curves.
+   * don't drift): the node moves and resizes to wrap its curves, and the variables and styles on
+   * its areas follow them when areas were added or removed.
    */
   protected write(origin: VectorElement, network: VectorNetwork): void {
-    this.ctx.doc.update(origin.id, placeNetwork(origin, network));
+    const next = withRegionIds(network);
+    this.ctx.doc.update(origin.id, {
+      ...placeNetwork(origin, next),
+      ...areaBindingsPatch(origin, next),
+    });
   }
 
   /** Starts a new undo step and writes, for one-shot edits (a click). */

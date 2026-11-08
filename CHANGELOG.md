@@ -53,11 +53,28 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   create one from Home or from that page, open an existing one from its folder or its project file,
   pin the ones you use most, and find a project again if its folder moved. Double-clicking a project
   file opens it.
-- Each closed area of a vector can now have its own fill, as in Figma: in vector edit mode, click
+- The new Prototype mode links the layers of your screens together: choose a layer and the screen
+  it opens, or drag from a layer onto a screen to link them, and arrows on the canvas show every
+  link. Flows start at a screen and are set up for a device, such as a phone, a tablet, a desktop
+  app or a website, so one file can hold an app's flows and a website's side by side. Play a flow
+  to try it in its device, a phone, a tablet, a desktop window or a browser: clicks and taps follow
+  the links with their animations, overlays open over the screen, and a missed click shows where
+  the links are.
+- The database schema now exports as Java too: plain classes with a field per column and the
+  related objects and lists, or JPA entities for Spring Boot 4 with only the annotations Spring
+  doesn't already assume. Both are written to copy from, without packages or imports.
+- Selecting a frame, a group, a vector or several layers now shows a Selection colors section in
+  the properties panel with every color used inside them. Change a color there and it updates
+  everywhere it's used at once, or select the layers that use it, without opening each layer.
+- Each closed area of a vector can now have its own fill: in vector edit mode, click
   inside an area to select it and change its fill in the Fills section. An area's fill can use a
   color style or variables, show data, and edit its gradient on the canvas, and its colors appear
-  in the page's colors and the color wizard. Figma files keep the colors of multi-colored vectors
+  in the page's colors and the color wizard. Imported .fig files keep the colors of multi-colored vectors
   such as logos and icons, as one editable vector.
+- SVG files pasted or dropped into a design now become one editable vector: each
+  shape of the file is an area with its own color, gradient or outline, instead of a flat picture.
+  Converting a sticker to vectors works the same way, giving one vector you can recolor area by
+  area.
 - Designs can now hold data sources, such as a CSV or JSON file or a web API: the new Data tab lists
   them with their rows, and Update reads them again whenever you choose. API keys stay on this
   device and are never saved in the file, and a key is only sent to the site it was typed for. A
@@ -108,10 +125,22 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### Improved
 
+- Text on boards now has its own options: pick a size from the presets or type an exact one, make
+  it bold or italic, align its lines and choose its color, including a board color. New text uses
+  what you picked, and selecting text lets you change it the same way. Drag a text's handles to give
+  it a fixed width: its lines wrap to fit and its height follows them, and Auto width makes it grow
+  with its text again.
+- Frames now work as in other design tools: dragging on the background of a frame that holds
+  layers draws a selection box to pick the layers inside, and the frame itself is selected by its
+  name. Dragging inside a selected frame moves it, even when you press on a layer in it, and a
+  click without dragging still selects that layer. Enter selects the layers inside what's
+  selected and Shift+Enter selects the layer that holds it, so you can move between levels without
+  the Layers panel.
+
 - The database schema and ER diagram text editors now show their errors, warnings and suggestions
   in Spanish when the app is in Spanish. The language keywords you write, such as Table, Entity or
   Relation, stay the same in every language.
-- Importing a Figma or FigJam file now shows its progress and the list of what couldn't be brought
+- Importing a .fig or .jam file now shows its progress and the list of what couldn't be brought
   over as it was in Spanish when the app is in Spanish.
 
 ### Fixed

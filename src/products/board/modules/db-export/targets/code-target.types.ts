@@ -1,7 +1,7 @@
 import type { CodeSchema } from "../model";
 import type { CodeWarning } from "./warnings.types";
 
-export type CodeLanguage = "php" | "ts" | "sql" | "prisma" | "js" | "markdown";
+export type CodeLanguage = "php" | "ts" | "sql" | "prisma" | "js" | "java" | "markdown";
 
 /** A generated file: its path inside the project, from the project's root. */
 export interface CodeFile {

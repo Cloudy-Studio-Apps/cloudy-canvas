@@ -35,7 +35,6 @@ export function registerStyleguideSections(host: ModuleHost): void {
   // A live element on a page: what it shows, its template, Convert to design.
   host.contribute(designEditor.propertySections, {
     id: "styleguide.sheet",
-    tab: "design",
     order: 5,
     when: (selection) => selection.nodes.length > 0 && selection.nodes.every(isSheet),
     component: SheetSection,

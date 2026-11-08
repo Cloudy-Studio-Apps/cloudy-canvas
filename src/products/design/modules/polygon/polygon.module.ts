@@ -30,7 +30,6 @@ export const polygonModule = defineModule({
     });
     host.contribute(designEditor.propertySections, {
       id: "polygon",
-      tab: "design",
       order: 16,
       when: ofType("polygon"),
       component: PolygonSection,

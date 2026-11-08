@@ -53,7 +53,6 @@ export const pagesModule = defineModule({
     host.contribute(designEditor.sessionHooks, { id: "page-commands", use: usePageCommands });
     host.contribute(designEditor.propertySections, {
       id: "page",
-      tab: "design",
       order: 10,
       when: noNodes,
       component: PageSection,

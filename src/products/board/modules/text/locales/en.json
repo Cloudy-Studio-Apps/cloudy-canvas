@@ -1,5 +1,26 @@
 {
   "label": "Text",
   "description": "Click anywhere to type a label.",
-  "color": "Color"
+  "color": "Color",
+  "options": {
+    "group": "Text options",
+    "fontSize": "Font size",
+    "bold": "Bold",
+    "italic": "Italic",
+    "colorLabel": "Text color {color}",
+    "size": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large",
+      "extraLarge": "Extra large",
+      "huge": "Huge"
+    },
+    "align": {
+      "left": "Align left",
+      "center": "Align center",
+      "right": "Align right"
+    },
+    "autoWidth": "Auto width: grows with its text",
+    "fixedWidth": "Fixed width: lines wrap. Click to size it to its text"
+  }
 }

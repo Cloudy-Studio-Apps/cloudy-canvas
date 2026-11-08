@@ -5,6 +5,7 @@ import { rectCenter } from "../geometry";
 import type { Point, Rect } from "../geometry.types";
 import { imageHeaderSize } from "../image";
 import { isSvg, svgSize } from "../render/svg-image";
+import { readSvg } from "../svg";
 import type { ElementClipboardHost } from "./element-clipboard.types";
 import type { ExternalElement, PastedImage } from "./paste-external.types";
 
@@ -43,7 +44,8 @@ export function pasteText<O extends object>(
 
 /**
  * The product's element for an image file (raster or SVG), fit and centered in `view`, with the
- * new asset holding the file; `null` when the product doesn't take images or it can't be decoded.
+ * new asset holding the file (an SVG the product draws as shapes, `pasteSvg`, needs none);
+ * `null` when the product doesn't take images or it can't be decoded.
  */
 export async function buildImage<O extends object>(
   host: ElementClipboardHost<O>,
@@ -52,12 +54,31 @@ export async function buildImage<O extends object>(
   index: string,
 ): Promise<ExternalElement | null> {
   const { product } = host;
+  const shapes = isSvg(data) ? buildSvg(host, data, view, index) : null;
+  if (shapes) return shapes;
   if (!product.pasteImage) return null;
   const size = await imageSize(data);
   if (!size) return null;
   const image: PastedImage = { assetId: createId(), ...size };
   const el = product.pasteImage(image, view, index, host.getOptions());
   return el ? { el, asset: { id: image.assetId, data } } : null;
+}
+
+/**
+ * The product's shapes for an SVG file (`pasteSvg`), fit and centered in `view`; `null` when it
+ * doesn't take SVGs as shapes or the file draws nothing, so it's pasted as an image.
+ */
+function buildSvg<O extends object>(
+  host: ElementClipboardHost<O>,
+  data: Uint8Array,
+  view: Rect,
+  index: string,
+): ExternalElement | null {
+  if (!host.product.pasteSvg) return null;
+  const svg = readSvg(new TextDecoder().decode(data));
+  if (!svg || svg.layers.length === 0) return null;
+  const el = host.product.pasteSvg(svg, view, index, host.getOptions());
+  return el ? { el } : null;
 }
 
 /** The product's element for text, centered on `at`; `null` when it doesn't take it. */

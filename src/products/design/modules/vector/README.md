@@ -4,10 +4,10 @@ Vector networks: the pen (P) and pencil (Shift+P), and the edit mode for a vecto
 
 - **Tier:** core
 - **Requires:** core
-- **Contributes:** kinds `VectorKind`; designCanvas: `editElement`, `kinds`, `tools`; designEditor: `layerIcons`, `toolbars`, `tools`; `designMcpTools`
+- **Contributes:** kinds `VectorKind`; designCanvas: `editElement`, `kinds`, `pasteSvg`, `tools`; designEditor: `layerIcons`, `toolbars`, `tools`; `designMcpTools`
 - **Points it owns:** —
-- **MCP tools:** `convert_to_vector`
-- **Files:** `vector.kind.ts`, `pencil.tool.ts`, `shape-to-vector.ts`, `edit/` (the edit mode), `vector.mcp.ts`, `ui/`.
+- **MCP tools:** `convert_to_vector`, `import_svg` (`mcp/import-svg.mcp.ts`: an SVG file as one vector, as dropping it does)
+- **Files:** `svg/` (SVG files as one vector: `svgNetwork`, `svgToVector`, `svgPaint`; pasted and dropped SVGs through `designCanvas.pasteSvg`), `vector.kind.ts` (with `vector-area-bindings.ts`, `vector-area-paints.ts` and `vector-spec-network.ts`), `pencil.tool.ts`, `shape-to-vector.ts`, `edit/` (the edit mode), `vector.mcp.ts`, `ui/`.
 
 ## How it works
 
@@ -15,4 +15,4 @@ Vector networks: the pen (P) and pencil (Shift+P), and the edit mode for a vecto
 
 An area's own image fills are in the kind's `assets`, make a flip draw mirrored and have their tiles scaled by the Scale tool, as a layer's do; the kind's `geometryKey` is its curves and filled loops, so a new area fill doesn't work the shape out again; the paint bucket fills an area emptied of its own fills (`fills: []`) instead of removing it.
 
-**Bindings:** `VectorKind.bindable` offers each area's fills a color style (`network.regions.<i>.fills`; `bindPatch` writes it as the area's own fills with `setRegionFills`) and the colors of an area's own fills variables, as a layer's; data bindings take them and an area's pictures. When an edit adds or removes areas, `completePatch` moves their bindings along (`regionIndexMap`: the same index while the count stays, else the area keeping the same fills); data bindings on areas aren't moved yet. Page colors and gradients and the color wizard read areas' fills through `nodePaintStacks`.
+**Bindings:** `VectorKind.bindable` (`areaBindable`) offers each area with fills of its own a color style (`network.regions.<i>.fills`; `bindPatch` writes it as the area's own fills with `setRegionFills`) and the colors of an area's own fills variables, as a layer's; data bindings take them and an area's pictures. When an edit adds or removes areas, their bindings move along (`areaBindingsPatch`, in the edit tools' `write`, the paint bucket and `completePatch` for agents; `regionIndexMap`: the same index while the count stays, else each area matched in order to the next with equal fills); data bindings on areas follow them too, and go when their area does or shows the layer's fills again (the data module's `followAreas`). The Fills section gives an area showing the layer's fills its own before applying a style to it, in the same undo step; areas keep ids (`withRegionIds`), so picks survive renumbering edits and undo. Page colors and gradients and the color wizard read areas' fills through `nodePaintStacks`.

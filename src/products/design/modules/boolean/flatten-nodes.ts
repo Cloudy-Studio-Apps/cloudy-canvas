@@ -28,9 +28,8 @@ import { t } from "./boolean.i18n";
  * Flatten (Ctrl+E), as in Figma: the selected layers become one vector with their shapes (a
  * boolean's result, a text's glyphs, a group's layers), painted like the bottom one (its first
  * area's fills when only its areas are filled). A vector whose areas have fills of their own is
- * left as it is. One layer
- * keeps its id, name and turn. Returns what to select, or an empty list when nothing has a shape.
- * Call it in an undo step.
+ * left as it is. One layer keeps its id, name and turn. Returns what to select, or an empty list
+ * when nothing has a shape. Call it in an undo step.
  */
 export function flattenNodes(
   doc: CanvasDocument,

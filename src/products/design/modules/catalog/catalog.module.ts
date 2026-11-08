@@ -50,7 +50,6 @@ export const catalogModule = defineModule({
     });
     host.contribute(designEditor.propertySections, {
       id: "catalog.from-master",
-      tab: "design",
       order: 1,
       when: ({ nodes }) => nodes.some((node) => pageItemTag(node)),
       component: FromMasterSection,
@@ -58,7 +57,6 @@ export const catalogModule = defineModule({
     // Page items that write the section say how many of its parents they write.
     host.contribute(designEditor.propertySections, {
       id: "catalog.section-parents",
-      tab: "design",
       order: 2,
       when: ({ nodes }) =>
         nodes.some((node) => {
@@ -70,7 +68,6 @@ export const catalogModule = defineModule({
     // A page reference picks the section or page it points to.
     host.contribute(designEditor.propertySections, {
       id: "catalog.page-ref",
-      tab: "design",
       order: 3,
       when: ({ nodes }) =>
         nodes.length === 1 &&

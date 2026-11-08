@@ -1,12 +1,13 @@
 import { Layers } from "lucide-react";
 
-import { withoutBindingsUnder, type ElementPatch } from "@canvas";
+import { setBindings, withoutBindingsUnder, type ElementPatch } from "@canvas";
 import type { DesignNode } from "../../node/design-node.types";
 import { solidPaint } from "../../node/solid-paint";
 import { stackBindingsPatch } from "../../node/stack-bindings";
 import { setRegionFills } from "../../network/network-region-fills";
 import { regionFillsPath } from "../../network/region-fill-paths";
 import { regionPaints } from "../../network/region-paints";
+import { withRegionIds } from "../../network/region-ids";
 import type { VectorNetwork } from "../../network/network.types";
 import { PAINT_STYLE } from "../../styles/style-paths";
 import { movedBindings } from "@canvas";
@@ -16,6 +17,7 @@ import { useEditNodes } from "@design/ui/hooks";
 import { StyleChip, StyleControl, createNodeStyle, useNodeStyleBinding } from "../styles";
 import { PaintStackSection } from "./paint-stack-section";
 import type { RegionFillSectionProps } from "./region-fill-section.types";
+import type { StyleBinding } from "../styles/styles.types";
 import { t } from "../../core.i18n";
 
 /** New fills are a light gray, like new rectangles. */
@@ -34,7 +36,29 @@ export function RegionFillSection({ node, regions }: RegionFillSectionProps) {
   const ownFills = picked.some((region) => region.fills !== undefined);
   const [only] = regions;
   const path = regions.length === 1 && only !== undefined ? regionFillsPath(only) : null;
-  const style = useNodeStyleBinding([node], path ?? "");
+  const fieldStyle = useNodeStyleBinding([node], path ?? "");
+  /**
+   * A style picked for an area that shows the layer's fills first gives it fills of its own (only
+   * those take styles), in the same undo step.
+   */
+  const style: StyleBinding = {
+    bound: fieldStyle.bound,
+    bind: (styleId) => {
+      if (path === null || only === undefined) return;
+      engine.doc.checkpoint();
+      engine.doc.batch(() => {
+        const current = engine.getElement(node.id) as RegionFillSectionProps["node"] | undefined;
+        const area = current?.network.regions[only];
+        if (styleId !== null && current && area && !area.fills) {
+          const own = setRegionFills(current.network, [only], [...current.fills]);
+          engine.doc.update(node.id, {
+            network: withRegionIds(own),
+          } as ElementPatch<DesignNode>);
+        }
+        setBindings(engine.doc, [node.id], path, styleId);
+      });
+    },
+  };
   const styled = path !== null && style.bound !== undefined;
 
   const write = (
@@ -46,7 +70,10 @@ export function RegionFillSection({ node, regions }: RegionFillSectionProps) {
       [node],
       (current) => {
         const net = (current as RegionFillSectionProps["node"]).network;
-        return { network: next(net), ...bindings?.(current) } as ElementPatch<DesignNode>;
+        return {
+          network: withRegionIds(next(net)),
+          ...bindings?.(current),
+        } as ElementPatch<DesignNode>;
       },
       { checkpoint },
     );

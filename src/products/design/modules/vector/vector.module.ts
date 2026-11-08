@@ -13,6 +13,7 @@ import { VECTOR_TOOLS } from "./edit/vector-tools";
 import { PencilTool } from "./pencil.tool";
 import { vectorTools } from "./vector.mcp";
 import { VectorEditToolbar } from "./ui/vector-edit-toolbar";
+import { svgToVector } from "./svg";
 import { VectorKind } from "./vector.kind";
 import { t } from "./vector.i18n";
 import * as vectorApi from ".";
@@ -30,6 +31,10 @@ export const vectorModule = defineModule({
   register(host) {
     host.contribute(designCanvas.kinds, new VectorKind());
     host.contribute(designCanvas.editElement, editVector);
+    // A pasted or dropped SVG is one vector, each shape an area with its own paint (Figma's way).
+    host.contribute(designCanvas.pasteSvg, (svg, view, index) =>
+      svgToVector(svg, view, index, t("label")),
+    );
     host.contribute(designMcpTools, { id: "vector", tools: () => vectorTools });
     host.contribute(
       designCanvas.tools,

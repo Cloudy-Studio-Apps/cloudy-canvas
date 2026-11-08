@@ -1,7 +1,5 @@
 import {
   identityKey,
-  optionalBoolean,
-  remapStackBindings,
   pointInPath,
   type BindableField,
   type ElementBuildContext,
@@ -18,7 +16,6 @@ import {
   DesignNodeKind,
   drawPaints,
   drawRegionPaints,
-  flipPaintList,
   flipPaints,
   hasOwnRegionFills,
   flipPlacement,
@@ -26,26 +23,15 @@ import {
   hitSegment,
   networkGeometry,
   NETWORK_SCHEMA,
-  PAINT_STYLE,
-  paintBindable,
-  paintStyleField,
   placeNetwork,
-  polygonNetwork,
   polylineNetwork,
   readNetwork,
-  readPaintStyle,
-  REGIONS_FIELD,
-  regionFillsPath,
-  regionIndexMap,
-  regionOfFillsPath,
-  setRegionFills,
   regionPaints,
   regionShapes,
   scaleNetwork,
-  scaleTilePaints,
+  withLegacyRegionIds,
+  withRegionIds,
   type FlipAxis,
-  type ImagePaint,
-  type Paint,
   type NodeBuildContext,
   type NodeGeometry,
   type VectorNetwork,
@@ -54,6 +40,14 @@ import { VECTOR_DEFAULTS } from "./vector.defaults";
 import { createVector } from "./vector.factory";
 import type { VectorElement } from "./vector.types";
 import { t } from "./vector.i18n";
+import { specNetwork } from "./vector-spec-network";
+import {
+  areaBindable,
+  areaBindingsPatch,
+  areaStylePatch,
+  areaStyleValues,
+} from "./vector-area-bindings";
+import { areaImages, flipAreaFills, scaleAreaTiles } from "./vector-area-paints";
 
 /**
  * Vectors: their regions are filled and their segments stroked; hit inside a filled region or
@@ -153,70 +147,41 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
 
   /** Its areas' own image fills count too, so copies and exports carry their pictures. */
   override assets(el: VectorElement): string[] {
-    return [...super.assets(el), ...regionImages(el).map((paint) => paint.assetId)];
+    return [...super.assets(el), ...areaImages(el).map((paint) => paint.assetId)];
   }
 
   /** An area showing a picture flips by a mirrored drawing too, as a layer's picture does. */
   override mirrorsOnFlip(el: VectorElement): boolean {
-    return super.mirrorsOnFlip(el) || regionImages(el).length > 0;
+    return super.mirrorsOnFlip(el) || areaImages(el).length > 0;
   }
 
-  /**
-   * Its areas too: each area's fills can take a color style (it then gets fills of its own), and
-   * the colors of an area's own fills can take variables, as a layer's fills do.
-   */
+  /** Its areas' fills take color styles and variables too (`areaBindable`). */
   override bindable(el: VectorElement): BindableField[] {
-    const areas = el.network.regions.flatMap((region, i) => {
-      const path = regionFillsPath(i);
-      const name = t("bindable.areaFill", { index: i + 1 });
-      return [
-        paintStyleField(path, t("bindable.areaFillStyle", { index: i + 1 })),
-        ...(region.fills
-          ? paintBindable(region.fills, path, ["all-fills", this.fillScope], name)
-          : []),
-      ];
-    });
-    return [...super.bindable(el), ...areas];
+    return [...super.bindable(el), ...areaBindable(el, ["all-fills", this.fillScope])];
   }
 
-  /** A color style on an area gives it the style's paints as its own fills. */
   override bindValues(
     el: VectorElement,
     path: string,
     value: ResolvedValue,
   ): Record<string, unknown> {
-    if (regionOfFillsPath(path) === null || value.type !== "style") {
-      return super.bindValues(el, path, value);
-    }
-    const paints = value.styleType === PAINT_STYLE ? readPaintStyle(value.value) : null;
-    return paints ? { [path]: paints.paints } : {};
+    return areaStyleValues(path, value) ?? super.bindValues(el, path, value);
   }
 
-  /** An area's style is written as its own fills, even when it had none before. */
   override bindPatch(
     el: VectorElement,
     path: string,
     value: ResolvedValue,
   ): ElementPatch<VectorElement> | null {
-    const region = regionOfFillsPath(path);
-    if (region === null || value.type !== "style") return super.bindPatch(el, path, value);
-    const paints = this.bindValues(el, path, value)[path];
-    if (!Array.isArray(paints) || !el.network.regions[region]) return null;
-    return { network: setRegionFills(el.network, [region], paints as Paint[]) };
+    const area = areaStylePatch(el, path, value);
+    return area === undefined ? super.bindPatch(el, path, value) : area;
   }
 
   /** Scaled, its areas' tiled pictures scale their tiles too, as the layer's do. */
   override scale(el: VectorElement, t: ScaleTransform): ElementPatch<VectorElement> {
     const patch = super.scale(el, t);
-    const net = patch.network ?? el.network;
-    if (!net.regions.some((region) => region.fills && scaleTilePaints(region.fills, t))) {
-      return patch;
-    }
-    const regions = net.regions.map((region) => {
-      const fills = region.fills && scaleTilePaints(region.fills, t);
-      return fills ? { ...region, fills } : region;
-    });
-    return { ...patch, network: { ...net, regions } };
+    const network = scaleAreaTiles(patch.network ?? el.network, t);
+    return network ? { ...patch, network } : patch;
   }
 
   /** Its points and curves stretch with its box. */
@@ -232,31 +197,7 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
     index: string,
     context: NodeBuildContext,
   ): VectorElement {
-    return createVector(this.specNetwork(spec), context.nameFor(this.label), index, null);
-  }
-
-  /** The spec's network in world coordinates. */
-  private specNetwork({ x, y, args }: ElementSpec): VectorNetwork {
-    if (args.network !== undefined) {
-      const net = readNetwork(args.network, "network");
-      return { ...net, vertices: net.vertices.map((v) => ({ x: v.x + x, y: v.y + y })) };
-    }
-    const flat = args.points;
-    if (
-      !Array.isArray(flat) ||
-      flat.length < 4 ||
-      flat.length % 2 !== 0 ||
-      !flat.every((n) => typeof n === "number" && Number.isFinite(n))
-    ) {
-      throw new Error(
-        'A vector needs "points" ([x0, y0, x1, y1, …], at least 2 points) or "network".',
-      );
-    }
-    const points = flat as number[];
-    if (!optionalBoolean(args, "closed")) return polylineNetwork(points);
-    const corners: Point[] = [];
-    for (let i = 0; i < points.length; i += 2) corners.push({ x: points[i]!, y: points[i + 1]! });
-    return polygonNetwork(corners);
+    return createVector(specNetwork(spec), context.nameFor(this.label), index, null);
   }
 
   /**
@@ -269,10 +210,7 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
     const mirrored = scaleNetwork(el.network, across ? -1 : 1, across ? 1 : -1);
     const network: VectorNetwork = {
       ...mirrored,
-      // Areas' own gradients flip with them, as the layer's do.
-      regions: mirrored.regions.map((region) =>
-        region.fills ? { ...region, fills: flipPaintList(region.fills, axis) } : region,
-      ),
+      regions: flipAreaFills(mirrored, axis),
       vertices: mirrored.vertices.map((v) =>
         across ? { x: v.x + el.w, y: v.y } : { x: v.x, y: v.y + el.h },
       ),
@@ -281,42 +219,37 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
   }
 
   /**
-   * A new `network` (relative to x, y) re-wraps the vector's box around what it draws, and the
-   * variables and styles on its areas follow the areas when an edit adds or removes some.
+   * A new `network` (relative to x, y) re-wraps the vector's box around what it draws, its areas
+   * get ids (an agent may leave them out), and the variables and styles on its areas follow them
+   * when the edit adds or removes some.
    */
   override completePatch(
     el: VectorElement,
     patch: ElementPatch<VectorElement>,
     context: ElementBuildContext,
   ): ElementPatch<VectorElement> {
-    if ("network" in patch && patch.network && !("bindings" in patch) && el.bindings) {
-      const map = regionIndexMap(el.network, patch.network);
-      const bindings = remapStackBindings(el.bindings, REGIONS_FIELD, map);
-      if (JSON.stringify(bindings) !== JSON.stringify(el.bindings)) patch = { ...patch, bindings };
-    }
-    const next =
-      "network" in patch
-        ? {
-            ...patch,
-            ...placeNetwork(
-              {
-                x: patch.x ?? el.x,
-                y: patch.y ?? el.y,
-                rotation: patch.rotation ?? el.rotation ?? 0,
-                w: el.w,
-                mirrored: patch.mirrored ?? el.mirrored ?? false,
-              },
-              readNetwork(patch.network, "network"),
-            ),
-          }
-        : patch;
+    if (!("network" in patch) || !patch.network) return super.completePatch(el, patch, context);
+    const network = withRegionIds(readNetwork(patch.network, "network"));
+    const origin = {
+      x: patch.x ?? el.x,
+      y: patch.y ?? el.y,
+      rotation: patch.rotation ?? el.rotation ?? 0,
+      w: el.w,
+      mirrored: patch.mirrored ?? el.mirrored ?? false,
+    };
+    const next = {
+      ...patch,
+      ...("bindings" in patch ? {} : areaBindingsPatch(el, network)),
+      ...placeNetwork(origin, network),
+    };
     return super.completePatch(el, next, context);
   }
 
   /** Pencil lines from before networks stored `points`: they become an open chain. */
   override fillDefaults(el: VectorElement): VectorElement {
     const old = el as VectorElement & { points?: number[] };
-    const network = el.network ?? polylineNetwork(old.points ?? []);
+    // Areas saved before they had ids get them from their places, the same at every read.
+    const network = withLegacyRegionIds(el.network ?? polylineNetwork(old.points ?? []));
     return {
       ...super.fillDefaults(el),
       network,
@@ -325,11 +258,4 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
       strokeJoin: el.strokeJoin ?? "round",
     };
   }
-}
-
-/** The image paints of the vector's areas' own fills. */
-function regionImages(el: VectorElement): ImagePaint[] {
-  return el.network.regions.flatMap((region) =>
-    (region.fills ?? []).filter((paint): paint is ImagePaint => paint.type === "image"),
-  );
 }

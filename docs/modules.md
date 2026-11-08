@@ -32,23 +32,23 @@ plugins' modules leave it unset. `scripts/check-modules.mjs` reads it.
 
 ### Design
 
-| Module                                                                                                   | Tier    | Why                                                                               |
-| -------------------------------------------------------------------------------------------------------- | ------- | --------------------------------------------------------------------------------- |
-| `core`                                                                                                   | Core    | node base, layer tree, paints and strokes, panels, the style types point and UI   |
-| `pages`                                                                                                  | Core    | every node has `pageId`; the design's `scopes`                                    |
-| `layers`                                                                                                 | Core    | the Layers tab (`layersTabSections`) and the tree-move rules                      |
-| `frame`                                                                                                  | Core    | containers and clipping; auto layout, section, catalog and styleguide require it  |
-| `data`                                                                                                   | Core    | data sources, bindings and iterators; the `dataSourceTypes`/`dataFormats` points  |
-| `group`                                                                                                  | Core    | child hosts; mask and sticker require it; the Figma import                        |
-| `text`                                                                                                   | Core    | text styles, fonts, outlines; the Figma import                                    |
-| `vector`                                                                                                 | Core    | booleans, Flatten, Outline stroke and the Figma import produce vectors            |
-| `variables`                                                                                              | Core    | the variables engine, `bindings` on every node, the Styles section                |
-| `effects`                                                                                                | Core    | `effects` on every node, the effects pipeline, the `designEffectTypes` point      |
-| `auto-layout`                                                                                            | Core    | `sizing`, `layoutAbsolute`, `sizeLimits` on every node; relayout after every edit |
-| `plugins-tab`                                                                                            | Core    | the plugin manager                                                                |
-| `layer-export`                                                                                           | Core    | `exports` on every node, the Export section                                       |
-| `rectangle`, `ellipse`, `polygon`, `star`, `line`, `section`, `boolean`, `mask`, `image`                 | Feature | kinds, tools and commands built on the core; the Figma import makes them          |
-| `sticker`, `shader-effect` (one effect type), `catalog` (a mode), `styleguide`, `assets`, `color-wizard` | Feature | built on the core and on each other                                               |
+| Module                                                                                                                         | Tier    | Why                                                                               |
+| ------------------------------------------------------------------------------------------------------------------------------ | ------- | --------------------------------------------------------------------------------- |
+| `core`                                                                                                                         | Core    | node base, layer tree, paints and strokes, panels, the style types point and UI   |
+| `pages`                                                                                                                        | Core    | every node has `pageId`; the design's `scopes`                                    |
+| `layers`                                                                                                                       | Core    | the Layers tab (`layersTabSections`) and the tree-move rules                      |
+| `frame`                                                                                                                        | Core    | containers and clipping; auto layout, section, catalog and styleguide require it  |
+| `data`                                                                                                                         | Core    | data sources, bindings and iterators; the `dataSourceTypes`/`dataFormats` points  |
+| `group`                                                                                                                        | Core    | child hosts; mask and sticker require it; the Figma import                        |
+| `text`                                                                                                                         | Core    | text styles, fonts, outlines; the Figma import                                    |
+| `vector`                                                                                                                       | Core    | booleans, Flatten, Outline stroke and the Figma import produce vectors            |
+| `variables`                                                                                                                    | Core    | the variables engine, `bindings` on every node, the Styles section                |
+| `effects`                                                                                                                      | Core    | `effects` on every node, the effects pipeline, the `designEffectTypes` point      |
+| `auto-layout`                                                                                                                  | Core    | `sizing`, `layoutAbsolute`, `sizeLimits` on every node; relayout after every edit |
+| `plugins-tab`                                                                                                                  | Core    | the plugin manager                                                                |
+| `layer-export`                                                                                                                 | Core    | `exports` on every node, the Export section                                       |
+| `rectangle`, `ellipse`, `polygon`, `star`, `line`, `section`, `boolean`, `mask`, `image`                                       | Feature | kinds, tools and commands built on the core; the Figma import makes them          |
+| `sticker`, `shader-effect` (one effect type), `catalog` (a mode), `prototype` (a mode), `styleguide`, `assets`, `color-wizard` | Feature | built on the core and on each other                                               |
 
 ### Board
 

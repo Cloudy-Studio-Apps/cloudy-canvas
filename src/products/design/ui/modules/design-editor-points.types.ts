@@ -36,7 +36,6 @@ export interface PropertySectionProps {
  */
 export interface PropertySectionEntry {
   id: string;
-  tab: "design" | "prototype";
   /** Position in its tab, lowest first. Built-ins are spaced by 10. */
   order: number;
   /** Whether it shows for this selection (an empty selection is the page). */

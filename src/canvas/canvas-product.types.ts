@@ -9,6 +9,7 @@ import type { CanvasGuides } from "./ruler-guides";
 import type { CanvasLinks } from "./links";
 import type { Tool, ToolContext } from "./tools";
 import type { CanvasMode } from "./modes";
+import type { SvgDocument } from "./svg";
 
 /**
  * What makes a canvas a board or a design file: its element types, its tools, its shortcuts and
@@ -82,12 +83,15 @@ export interface CanvasProduct<O extends object = object> {
    * What a click on the element `hitId` selects (e.g. the group holding it, as in Figma), given
    * the current selection: `deep` (Ctrl/Cmd+click) asks for the element itself, `enter`
    * (double-click) for one level further into a group. Without it, clicks select what they hit.
+   * Asked about a press (`request.world` set), `null` picks nothing there, so the press starts a
+   * selection box as on the empty canvas (the background of a design's top-level frame, as in
+   * Figma); otherwise `null` counts as the hit element.
    */
   selectTarget?(
     hitId: string,
     request: SelectTargetRequest,
     elements: readonly CanvasElement[],
-  ): string;
+  ): string | null;
   /**
    * What a single element is aligned with (the align commands): the box that holds it (e.g. a
    * design's parent frame, a board's section), or `null` when nothing does.
@@ -99,6 +103,11 @@ export interface CanvasProduct<O extends object = object> {
    * Read from the document, so it works for elements of any scope.
    */
   rootOf?(doc: CanvasDocument, id: string): string | null;
+  /**
+   * The layer tree, for Enter (select the selection's children, when there's no text to edit)
+   * and Shift+Enter (select their parents), as in Figma. Without it, Enter only edits text.
+   */
+  layerTree?: LayerTree;
   /**
    * The frame the rulers measure for this selection (e.g. the design frame it's in, as in Figma):
    * they count from its top-left corner and number only its span (the page's while it's turned),
@@ -193,6 +202,12 @@ export interface CanvasProduct<O extends object = object> {
    */
   pasteImage?(image: PastedImage, view: Rect, index: string, options: O): CanvasElement | null;
   /**
+   * An element drawing an SVG file pasted or dropped from outside the app as shapes (e.g. a
+   * design's vector), fit and centered in `view` at z-order `index`; `null` pastes it as an image
+   * through `pasteImage`. Asked first for SVG files.
+   */
+  pasteSvg?(svg: SvgDocument, view: Rect, index: string, options: O): CanvasElement | null;
+  /**
    * An element copied from another product (`from`, e.g. a board's sticker pasted into a
    * design) as one of this product's, keeping its id, or `null` to leave it out. The assets it
    * shows are pasted with it.
@@ -208,6 +223,11 @@ export interface SelectTargetRequest {
   deep: boolean;
   /** Go one level further in (double-click). */
   enter: boolean;
+  /**
+   * Where a press (or hover) is, when the tool lets a background start a selection box (the select
+   * tool; not the Catalog's, which picks pages). Unset for marquees, double-clicks and menus.
+   */
+  world?: Point;
 }
 
 /**
@@ -230,4 +250,12 @@ export interface CanvasScopes {
    * Only `setScope` shows it.
    */
   background?(doc: CanvasDocument, scope: string): boolean;
+}
+
+/** Parents and children of elements (see `CanvasProduct.layerTree`). */
+export interface LayerTree {
+  /** The element holding `el`, or `null` at the top. */
+  parentOf(el: CanvasElement): string | null;
+  /** The elements `id` holds directly, bottom to top (`elements` are the scene's, in that order). */
+  childrenOf(id: string, elements: readonly CanvasElement[]): string[];
 }

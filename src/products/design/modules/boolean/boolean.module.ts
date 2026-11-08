@@ -62,7 +62,6 @@ export const booleanModule = defineModule({
     });
     host.contribute(designEditor.propertySections, {
       id: "boolean",
-      tab: "design",
       order: 16,
       // Booleans, or two or more layers to combine.
       when: (selection) => selection.nodes.length >= 2 || ofType(BOOLEAN_TYPE)(selection),

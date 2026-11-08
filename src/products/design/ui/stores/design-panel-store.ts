@@ -8,12 +8,10 @@ export const useDesignPanelStore = create<DesignPanelState>()(
   persist(
     (set) => ({
       leftTab: "layers",
-      propertiesTab: "design",
       assetsView: "grid",
       leftOpen: true,
       rightOpen: true,
       setLeftTab: (leftTab) => set({ leftTab }),
-      setPropertiesTab: (propertiesTab) => set({ propertiesTab }),
       setAssetsView: (assetsView) => set({ assetsView }),
       setLeftOpen: (leftOpen) => set({ leftOpen }),
       setRightOpen: (rightOpen) => set({ rightOpen }),

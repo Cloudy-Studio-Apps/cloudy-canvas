@@ -68,7 +68,6 @@ export const textModule = defineModule({
     });
     host.contribute(designEditor.propertySections, {
       id: "typography",
-      tab: "design",
       order: 16,
       when: ofType("text"),
       component: TypographySection,

@@ -3,6 +3,7 @@ import { designCanvas, designSelectRedirects } from "../../design-points";
 import { pasteGradientOnto } from "./node/paste-gradient";
 import { containerAlignTarget } from "./tree/align-target";
 import { hostSelectTarget } from "./tree/host-select-target";
+import { designLayerTree } from "./tree/layer-tree";
 import { treeOrderKeys } from "./tree/order-keys";
 import { prepareTreeCopies } from "./tree/prepare-tree-copies";
 import { reparentMoved } from "./tree/reparent";
@@ -39,6 +40,7 @@ export function registerCoreCanvas(host: ModuleHost): void {
   host.contribute(designCanvas.onMoved, reparentMoved);
   host.contribute(designCanvas.alignTarget, containerAlignTarget);
   host.contribute(designCanvas.rootOf, treeRootOf);
+  host.contribute(designCanvas.layerTree, designLayerTree);
   host.contribute(designCanvas.pasteOnto, pasteGradientOnto);
   host.contribute(designCanvas.rulerFrame, selectionRulerFrame);
   host.contribute(designCanvas.frames, topFrames);

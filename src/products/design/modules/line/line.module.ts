@@ -49,7 +49,6 @@ export const lineModule = defineModule({
     );
     host.contribute(designEditor.propertySections, {
       id: "line",
-      tab: "design",
       order: 16,
       when: ofType("line"),
       component: LineSection,

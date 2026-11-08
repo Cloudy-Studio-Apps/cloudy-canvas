@@ -59,6 +59,14 @@ export abstract class ElementKind<
    * further back, and a marquee selects them only when it encloses them.
    */
   readonly frame: boolean = false;
+
+  /**
+   * Whether a marquee selects it only when it encloses it (not when it touches it): frames, and
+   * what a kind says (a design's top-level frame, so a marquee inside it picks its layers).
+   */
+  marqueeEncloses(_el: E): boolean {
+    return this.frame;
+  }
   /** Whether connectors (and other lines that attach to elements) can attach to it. */
   readonly connectable: boolean = false;
   /** Whether selection and hover outline its bounds (lines show their handles instead). */

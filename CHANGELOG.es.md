@@ -57,12 +57,32 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   cuándo los abriste por última vez; crea uno desde Inicio o desde esa página, abre uno existente
   desde su carpeta o su archivo de proyecto, fija los que más usas y vuelve a encontrar un proyecto
   si su carpeta cambió de sitio. Al hacer doble clic en un archivo de proyecto, se abre.
-- Cada área cerrada de un vector ya puede tener su propio relleno, como en Figma: en el modo de
+- El nuevo modo Prototipo enlaza las capas de tus pantallas: elige una capa y la pantalla que abre,
+  o arrastra desde una capa hasta una pantalla para enlazarlas, y unas flechas en el lienzo muestran
+  cada enlace. Los flujos empiezan en una pantalla y se preparan para un dispositivo, como un
+  teléfono, una tableta, una app de escritorio o un sitio web, así que un archivo puede tener los
+  flujos de una app y los de un sitio web a la vez. Reproduce un flujo para probarlo en su
+  dispositivo, un teléfono, una tableta, una ventana de escritorio o un navegador: los clics y los
+  toques siguen los enlaces con sus animaciones, las superposiciones se abren sobre la pantalla y
+  un clic fallido muestra dónde están los enlaces.
+- El esquema de la base de datos ahora también se exporta a Java: clases simples con un campo por
+  columna y los objetos y listas relacionados, o entidades JPA para Spring Boot 4 con solo las
+  anotaciones que Spring no da por supuestas. Ambos se escriben para copiarlos, sin paquetes ni
+  imports.
+- Al seleccionar un marco, un grupo, un vector o varias capas, el panel de propiedades muestra la
+  nueva sección Colores de la selección con todos los colores que usan. Cambia un color allí y se
+  actualiza en todos los lugares donde aparece a la vez, o selecciona las capas que lo usan, sin
+  tener que abrir cada capa.
+- Cada área cerrada de un vector ya puede tener su propio relleno: en el modo de
   edición de vectores, haz clic dentro de un área para seleccionarla y cambia su relleno en la
   sección Rellenos. El relleno de un área puede usar un estilo de color o variables, mostrar datos
   y editar su degradado en el lienzo, y sus colores aparecen entre los colores de la página y en el
-  asistente de color. Los archivos de Figma conservan los colores de los vectores de varios
+  asistente de color. Los archivos .fig importados conservan los colores de los vectores de varios
   colores, como logotipos e iconos, en un solo vector editable.
+- Los archivos SVG que pegas o sueltas en un diseño ahora se convierten en un solo vector editable:
+  cada forma del archivo es un área con su propio color, degradado o contorno, en
+  lugar de una imagen plana. Convertir una pegatina en vectores funciona igual y da un solo vector
+  que puedes recolorear área por área.
 - Los diseños ya pueden tener fuentes de datos, como un archivo CSV o JSON o una API web: la nueva
   pestaña Datos las lista con sus filas, y Actualizar vuelve a leerlas cuando tú lo elijas. Las
   claves de API se quedan en este dispositivo y nunca se guardan en el archivo, y cada clave solo se
@@ -120,11 +140,23 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Mejoras
 
+- El texto de las pizarras ahora tiene sus propias opciones: elige un tamaño predefinido o escribe
+  uno exacto, ponlo en negrita o cursiva, alinea sus líneas y elige su color, también un color de
+  la pizarra. El texto nuevo usa lo que elegiste, y al seleccionar un texto puedes cambiarlo igual.
+  Arrastra los tiradores de un texto para darle un ancho fijo: sus líneas se ajustan a él y su
+  altura las sigue, y Ancho automático hace que vuelva a crecer con su texto.
+- Los marcos ahora funcionan como en otras herramientas de diseño: arrastrar sobre el fondo de un
+  marco con capas dibuja un recuadro de selección para elegir las capas que contiene, y el marco
+  se selecciona por su nombre. Arrastrar dentro de un marco seleccionado lo mueve, aunque
+  presiones sobre una de sus capas, y un clic sin arrastrar sigue seleccionando esa capa. Enter selecciona las capas
+  que hay dentro de lo seleccionado y Mayús+Enter la capa que lo contiene, para moverte entre
+  niveles sin abrir el panel de capas.
+
 - Los editores de texto del esquema de base de datos y de los diagramas ER ahora muestran sus
   errores, avisos y sugerencias en español cuando la aplicación está en español. Las palabras clave
   del lenguaje que escribes, como Table, Entity o Relation, siguen siendo las mismas en todos los
   idiomas.
-- Al importar un archivo de Figma o FigJam, el progreso y la lista de lo que no se pudo traer tal
+- Al importar un archivo .fig o .jam, el progreso y la lista de lo que no se pudo traer tal
   cual ahora se muestran en español cuando la aplicación está en español.
 
 ### Correcciones

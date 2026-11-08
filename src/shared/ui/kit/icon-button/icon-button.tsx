@@ -1,6 +1,5 @@
-import { Kbd } from "@shared/ui/components/ui/kbd";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@shared/ui/components/ui/tooltip";
 import { cn } from "@shared/ui/lib/utils";
+import { ShortcutTooltip } from "../shortcut-tooltip";
 import type { IconButtonProps, IconButtonSize } from "./icon-button.types";
 
 const SIZES: Record<IconButtonSize, string> = {
@@ -46,19 +45,8 @@ export function IconButton({
   );
   if (tooltip === false) return button;
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>{button}</TooltipTrigger>
-      <TooltipContent side={tooltip} className="flex max-w-56 flex-col items-start gap-0.5">
-        <span className="flex items-center gap-2">
-          {label}
-          {shortcut && (
-            <Kbd className="h-4 min-w-4 border-background/20 bg-transparent text-background/80">
-              {shortcut}
-            </Kbd>
-          )}
-        </span>
-        {description && <span className="text-background/70">{description}</span>}
-      </TooltipContent>
-    </Tooltip>
+    <ShortcutTooltip label={label} shortcut={shortcut} description={description} side={tooltip}>
+      {button}
+    </ShortcutTooltip>
   );
 }

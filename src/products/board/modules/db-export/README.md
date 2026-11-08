@@ -34,6 +34,8 @@ Four layers, each reading only the ones above it:
 2. **`code/`**: helpers that know no framework: `words`, `toPascal`/`toCamel`/`toSnake`/`toKebab`/
    `toConstant`, `singular`/`plural` (the last word only, with irregulars and uncountables),
    `className` (`order_items` → `OrderItem`), `collisions` and `uniqueNames` (`OrderItem2`),
+   `relationProps` (every relation's two property names, named once for the schema so both sides
+   agree: `user` / `orders`, named when two models share several or a model points at itself),
    `RESERVED` words per language, `indexName` and `CodeWriter` (lines, blocks, indentation; no blank
    line before a closing bracket).
 3. **`targets/`**: `CodeTargetDefinition` (`defineCodeTarget`): an `id`, a `label`, `profiles`
@@ -66,9 +68,7 @@ Four layers, each reading only the ones above it:
      nested objects or arrays), enums as a `<NAME>_VALUES` constant and the type it forms, and an
      `index.ts`. The `modelSuffix` flag names files `<name>.model.ts` / `<name>.enum.ts`.
    - `nestjs/`: the `orm` option picks `prisma/` or `typeorm/`, `provider` (PostgreSQL or MySQL) the
-     native types both write, `dtos` TypeORM's DTOs. `relation-props.ts` names every relation's two
-     properties once for the schema (`user` / `orders`), so both sides agree, and names the relation
-     when two models share several or a model points at itself. Prisma (`write-prisma.ts`): one
+     native types both write, `dtos` TypeORM's DTOs. Both name relations with `relationProps`. Prisma (`write-prisma.ts`): one
      `prisma/schema.prisma` (generator, datasource, enums, models with `@map`/`@@map`, `@relation`
      on both sides, implicit many to many, `@@id`, `@@index`/`@@unique`), aligned like `prisma
 format`; single mode: `prisma/<table>.prisma` with the model and its enums. TypeORM: an entity
@@ -77,6 +77,21 @@ format`; single mode: `prisma/<table>.prisma` with the model and its enums. Type
      `@ManyToOne` + `@JoinColumn`, `@OneToMany`, `@OneToOne`, `@ManyToMany` + `@JoinTable`,
      `@Index`), `create-`/`update-<name>.dto.ts` with `class-validator` and `PartialType`
      (`write-dto.ts`) and string enums in `src/common/enums/`.
+   - `java/`: two targets sharing one field model (`javaFields`: a class's fields in column order;
+     a foreign key column becomes the object it points at, `post_id` → `Post post`, then the lists
+     and objects of relations pointing here and many to many lists, all named by `relationProps`;
+     `java-type-map.ts`, primitives for not null columns; defaults as initializers when Java has a
+     literal, else a comment; keywords get a trailing `_` with a warning). Both are guides to copy
+     from: no package or imports, one `<Class>.java` per table and per enum (single mode: the
+     table's class). `java.target.ts`: plain classes of private fields, references started as
+     `new Other()` unless that would loop (`objectInit`: a self-reference, or a chain leading back),
+     enum constants in Java's style. `spring.target.ts`: the same classes as JPA entities
+     (`write-spring-entity.ts`, `spring-annotations.ts`), with annotations only when they say
+     something Spring Boot wouldn't guess (`springPhysicalName` is its default naming: `@Table`,
+     `@Column(name)` and `@JoinColumn` only when the names differ; `nullable`, `unique`, lengths
+     other than 255, precision and scale), `@ManyToOne`/`@OneToMany(mappedBy)`/`@ManyToMany`,
+     `@Index` in `@Table`, and enum constants that keep the database values, as
+     `EnumType.STRING` stores them. Composite primary keys and tables without one are warnings.
    - `mermaid/`: an `erDiagram` in a fenced block for Markdown files, in `schema.md` (single mode:
      `<table>.md`, with its relations). `writeErDiagram` quotes every name, since words like `class`
      break Mermaid's parser, and cleans column names and types to the words it accepts; an enum's

@@ -73,7 +73,6 @@ export const effectsModule = defineModule({
     host.contribute(designEditor.overlays, { id: "effects.handles", component: EffectHandles });
     host.contribute(designEditor.propertySections, {
       id: "effects",
-      tab: "design",
       order: 80,
       when: someNodes,
       component: EffectsSection,

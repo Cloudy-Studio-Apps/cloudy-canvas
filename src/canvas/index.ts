@@ -10,7 +10,12 @@ export type {
   HostAction,
 } from "./canvas-engine.types";
 export type { Alignment, DistributeAxis, RotatePivot, ScaleAnchor } from "./arrange";
-export type { CanvasProduct, CanvasScopes, SelectTargetRequest } from "./canvas-product.types";
+export type {
+  CanvasProduct,
+  CanvasScopes,
+  LayerTree,
+  SelectTargetRequest,
+} from "./canvas-product.types";
 export type { CanvasGrid, CanvasViewOptions } from "./canvas-view.types";
 export type { CopyContext, DropResult, PastedImage } from "./clipboard";
 export type { CommandHandler, Commands } from "./commands.types";
@@ -194,6 +199,7 @@ export {
 } from "./tools";
 export {
   bytesToBase64,
+  deepEqual,
   clamp,
   debounce,
   Emitter,

@@ -1,0 +1,192 @@
+{
+  "mode": {
+    "label": "Prototipo",
+    "description": "Enlaza pantallas y reproduce el resultado",
+    "removeInteractions": "Quitar interacciones",
+    "toggle": "Alternar el modo Prototipo"
+  },
+  "toolbar": {
+    "select": "Seleccionar",
+    "selectHint": "Selecciona pantallas y capas para enlazarlas",
+    "addFlow": "Añadir inicio de flujo",
+    "addFlowHint": "Empieza un flujo en la pantalla seleccionada",
+    "connect": "Conectar",
+    "connectHint": "Arrastra desde una capa hasta una pantalla para enlazarlas. Suelta en el lienzo vacío para Atrás.",
+    "play": "Reproducir",
+    "playHint": "Reproduce un flujo en su dispositivo: el seleccionado, o el que empieza en la pantalla seleccionada"
+  },
+  "connect": {
+    "linked": "Se enlazó “{layer}” con {screen}",
+    "back": "“{layer}” ahora vuelve Atrás"
+  },
+  "platform": {
+    "mobile": "Móvil",
+    "tablet": "Tableta",
+    "desktop": "App de escritorio",
+    "web": "Web"
+  },
+  "flows": {
+    "title": "Flujos",
+    "add": "Añadir flujo",
+    "play": "Reproducir {name}",
+    "startsAt": "{platform} · empieza en {screen}",
+    "hint": "Un flujo empieza en una pantalla y se reproduce en un dispositivo. Un archivo puede tener los flujos de una app y los de un sitio web a la vez.",
+    "needScreen": "Selecciona una pantalla para empezar un flujo en ella",
+    "alreadyStarts": "Esta pantalla ya empieza un flujo"
+  },
+  "sidebar": {
+    "title": "Prototipo",
+    "emptyTitle": "Nada seleccionado",
+    "empty": "Selecciona una capa para añadir una interacción, una pantalla para su inicio de flujo, o un flujo a la izquierda."
+  },
+  "canvas": {
+    "title": "Lienzo",
+    "showLinks": "Mostrar enlaces",
+    "all": "Todos",
+    "selection": "Selección"
+  },
+  "stub": {
+    "back": "Atrás",
+    "close": "Cerrar",
+    "link": "Abrir enlace"
+  },
+  "badge": {
+    "interactions": "Tiene interacciones"
+  },
+  "flow": {
+    "defaultName": "Flujo {screen}",
+    "kind": "Flujo",
+    "title": "Flujo",
+    "name": "Nombre",
+    "nameEmpty": "Un flujo necesita un nombre",
+    "startsAt": "Empieza en",
+    "playback": "Reproducción",
+    "hints": "Mostrar las zonas activas al fallar un clic",
+    "delete": "Eliminar flujo"
+  },
+  "trigger": {
+    "click": "Al hacer clic",
+    "hover": "Al pasar el cursor",
+    "press": "Al mantener pulsado",
+    "enter": "Al entrar el cursor",
+    "leave": "Al salir el cursor",
+    "drag": "Al arrastrar",
+    "key": "Al pulsar una tecla",
+    "delay": "Tras una espera"
+  },
+  "action": {
+    "navigate": "Ir a",
+    "back": "Atrás",
+    "overlay": "Abrir superposición",
+    "swap": "Cambiar superposición",
+    "close": "Cerrar superposición",
+    "link": "Abrir enlace"
+  },
+  "animation": {
+    "instant": "Instantánea",
+    "dissolve": "Disolver",
+    "move-in": "Entrar moviéndose",
+    "move-out": "Salir moviéndose",
+    "push": "Empujar",
+    "slide-in": "Deslizar hacia dentro",
+    "slide-out": "Deslizar hacia fuera"
+  },
+  "easing": {
+    "linear": "Lineal",
+    "ease-in": "Aceleración",
+    "ease-out": "Desaceleración",
+    "ease-in-out": "Aceleración y desaceleración",
+    "spring": "Muelle suave"
+  },
+  "direction": {
+    "left": "Desde la derecha",
+    "right": "Desde la izquierda",
+    "up": "Desde abajo",
+    "down": "Desde arriba"
+  },
+  "position": {
+    "top": "Arriba",
+    "center": "Centro",
+    "bottom": "Abajo"
+  },
+  "section": {
+    "title": "Interacciones",
+    "add": "Añadir interacción",
+    "empty": "Sin interacciones. Pulsa + o arrastra desde el cuadrado a la derecha de la capa hasta una pantalla."
+  },
+  "layer": {
+    "in": "En {screen}"
+  },
+  "card": {
+    "trigger": "Disparador",
+    "key": "Tecla",
+    "keyEmpty": "Escribe una tecla, como Enter",
+    "after": "Tras",
+    "action": "Acción",
+    "to": "A",
+    "pickScreen": "Elige una pantalla",
+    "url": "URL",
+    "urlInvalid": "Usa una dirección que empiece por http:// o https://",
+    "position": "Posición",
+    "closeOutside": "Cerrar al hacer clic fuera",
+    "dim": "Atenuar lo que hay detrás",
+    "animation": "Animación",
+    "from": "Desde",
+    "duration": "Duración",
+    "easing": "Curva",
+    "remove": "Quitar interacción"
+  },
+  "screen": {
+    "kind": "Pantalla",
+    "flowStart": "Inicio de flujo",
+    "starts": "Empieza «{flow}»",
+    "startHere": "Empezar un flujo aquí"
+  },
+  "links": {
+    "title": "Enlaces a esta pantalla",
+    "empty": "Nada enlaza aquí todavía."
+  },
+  "device": {
+    "title": "Dispositivo",
+    "platform": "Plataforma",
+    "device": "Dispositivo",
+    "orientation": "Orientación",
+    "portrait": "Vertical",
+    "landscape": "Horizontal",
+    "iphone-16": "iPhone 16 · 393 × 852",
+    "iphone-se": "iPhone SE · 375 × 667",
+    "pixel-9": "Pixel 9 · 412 × 915",
+    "ipad-air": "iPad Air · 820 × 1180",
+    "galaxy-tab": "Galaxy Tab S9 · 800 × 1280",
+    "window-mac": "Ventana · macOS",
+    "window-windows": "Ventana · Windows",
+    "window-linux": "Ventana · Linux",
+    "browser-1280": "Navegador · 1280",
+    "browser-1440": "Navegador · 1440",
+    "browser-fit": "Navegador · ajustado a la ventana",
+    "note": {
+      "mobile": "Se reproduce en un móvil, con toques en lugar de clics.",
+      "tablet": "Se reproduce en una tableta, con toques en lugar de clics.",
+      "desktop": "Se reproduce en una ventana de app con su barra de título.",
+      "web": "Se reproduce en un navegador con barra de direcciones; Abrir enlace abre una pestaña."
+    }
+  },
+  "player": {
+    "label": "Reproduciendo “{name}”",
+    "flow": "Flujo",
+    "back": "Atrás",
+    "restart": "Reiniciar",
+    "hints": "Mostrar las zonas activas",
+    "noFlow": "Primero añade un flujo: selecciona una pantalla y pulsa la bandera",
+    "linkFailed": "No se pudo abrir el enlace",
+    "drawFailed": "No se pudo dibujar la pantalla",
+    "failed": "No se pudo reproducir esa interacción",
+    "foot": {
+      "tap": "Toca la pantalla para seguir sus enlaces; un toque fallido los muestra",
+      "tapPlain": "Toca la pantalla para seguir sus enlaces",
+      "click": "Haz clic en la pantalla para seguir sus enlaces; un clic fallido los muestra",
+      "clickPlain": "Haz clic en la pantalla para seguir sus enlaces",
+      "keys": "{restart} reinicia · {close} cierra"
+    }
+  }
+}

@@ -89,6 +89,15 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
   }
 
   /**
+   * Whether `p` (world, unturned) is on its background: where a press on it, at the top of the
+   * page and holding layers, starts a selection box instead of picking it (a frame's body, not
+   * its name), as in Figma. Never by default.
+   */
+  backgroundAt(_el: E, _p: Point): boolean {
+    return false;
+  }
+
+  /**
    * Whether it may go into this container when drawn or dropped there (sections only go into
    * sections; everything else into any container).
    */

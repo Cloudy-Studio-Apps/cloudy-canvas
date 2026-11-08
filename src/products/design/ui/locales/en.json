@@ -105,10 +105,6 @@
   "properties": {
     "label": "Properties",
     "hide": "Hide properties panel",
-    "tabs": {
-      "design": "Design",
-      "prototype": "Prototype"
-    },
     "show": "Show properties panel"
   },
   "rail": {

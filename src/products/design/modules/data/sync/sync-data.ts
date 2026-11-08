@@ -25,6 +25,7 @@ import { affectedData } from "./affected-data";
 import type { AffectedData } from "./affected-data.types";
 import { planLayer } from "./plan-layer";
 import { sweepOrphans } from "./sweep-orphans";
+import { followAreas } from "./follow-areas";
 import { syncIterators } from "./sync-iterators";
 
 /**
@@ -62,6 +63,8 @@ export function syncData(doc: CanvasDocument, change: EditedChange, kinds: Eleme
   followWrappedTemplate(doc, change);
   // Copies that lost their iterator become ordinary layers.
   sweepOrphans(doc, change);
+  // Bindings on a vector's areas follow them, or go with them.
+  followAreas(doc, change);
   fillData(doc, affectedData(doc, change), change.before, kinds);
 }
 

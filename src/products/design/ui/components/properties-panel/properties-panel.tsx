@@ -8,7 +8,6 @@ import {
   useEngineState,
   ZoomMenu,
 } from "@canvas-ui";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@shared/ui/components/ui/tabs";
 import { DESIGN_LAYOUT } from "../../design-layout";
 import { designEditor } from "../../modules";
 import { useDesignPanelStore } from "../../stores/design-panel-store";
@@ -16,13 +15,11 @@ import { PropertySections } from "./property-sections";
 import { t } from "../../design-ui.i18n";
 
 /**
- * The right panel: history, sharing and the button that hides it, then the
- * Design/Prototype tabs and the zoom, or the active tool's sidebar (`toolSidebars`), or the current
+ * The right panel: history, sharing and the button that hides it, then a
+ * row with the zoom and the sections, or the active tool's sidebar (`toolSidebars`), or the current
  * mode's (`modePanels`). Export is in the main menu's File, the context menus and its section.
  */
 export function PropertiesPanel() {
-  const tab = useDesignPanelStore((state) => state.propertiesTab);
-  const setTab = useDesignPanelStore((state) => state.setPropertiesTab);
   const setOpen = useDesignPanelStore((state) => state.setRightOpen);
   const { host } = useEditorModules();
   const tool = useEngineState((state) => state.tool);
@@ -57,32 +54,17 @@ export function PropertiesPanel() {
       ) : ModeSidebar ? (
         <div className="min-h-0 flex-1 overflow-y-auto pb-75">
           <ModeSidebar />
-          {panel.keepSections && <PropertySections tab="design" only={panel.keepSections} />}
+          {panel.keepSections && <PropertySections only={panel.keepSections} />}
         </div>
       ) : (
-        <Tabs
-          value={tab}
-          onValueChange={(value) => setTab(value === "prototype" ? "prototype" : "design")}
-          className="min-h-0 flex-1 gap-0"
-        >
-          <div className="flex h-11 shrink-0 items-center justify-between border-b px-2">
-            <TabsList className="h-7">
-              <TabsTrigger value="design" className="px-2.5 text-xs">
-                {t("properties.tabs.design")}
-              </TabsTrigger>
-              <TabsTrigger value="prototype" className="px-2.5 text-xs">
-                {t("properties.tabs.prototype")}
-              </TabsTrigger>
-            </TabsList>
+        <>
+          <div className="flex h-11 shrink-0 items-center justify-end border-b px-2">
             <ZoomMenu side="bottom" />
           </div>
-          <TabsContent value="design" className="min-h-0 overflow-y-auto pb-75">
-            <PropertySections tab="design" />
-          </TabsContent>
-          <TabsContent value="prototype" className="min-h-0 overflow-y-auto pb-75">
-            <PropertySections tab="prototype" />
-          </TabsContent>
-        </Tabs>
+          <div className="min-h-0 flex-1 overflow-y-auto pb-75">
+            <PropertySections />
+          </div>
+        </>
       )}
     </aside>
   );

@@ -7,6 +7,7 @@ import {
   type LineNodeElement,
   type VectorElement,
   type VectorNetwork,
+  withRegionIds,
 } from "../../modules";
 import { decodeNetworkBlob } from "./fig-network";
 import { figNodeBase } from "./fig-node-base";
@@ -25,7 +26,7 @@ export function convertVector(
 ): VectorElement | null {
   const decoded = decodeVector(node, world, ctx);
   if (!decoded) return vectorFromGeometry(node, world, placement, ctx);
-  return vectorElement(node, withRegionFills(decoded, node, ctx), placement, ctx);
+  return vectorElement(node, withRegionIds(withRegionFills(decoded, node, ctx)), placement, ctx);
 }
 
 /** A Figma vector's network in the world, with its regions' style ids; `null` without one. */

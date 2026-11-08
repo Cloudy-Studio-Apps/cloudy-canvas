@@ -1,5 +1,6 @@
 import type { CodeTargetDefinition } from "./code-target.types";
 import { angularTarget } from "./angular";
+import { javaTarget, springTarget } from "./java";
 import { laravelTarget } from "./laravel";
 import { mermaidTarget } from "./mermaid";
 import { mongodbTarget } from "./mongodb";
@@ -11,6 +12,8 @@ export const BUILT_IN_CODE_TARGETS: readonly CodeTargetDefinition[] = [
   laravelTarget,
   angularTarget,
   nestjsTarget,
+  javaTarget,
+  springTarget,
   mysqlTarget,
   postgresTarget,
   mongodbTarget,
