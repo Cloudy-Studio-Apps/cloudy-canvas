@@ -57,15 +57,21 @@ export function planLibraryMerge(
       continue;
     }
     plan.axisMap[axis.id] = match.id;
-    // Two file axes of that name share the modes the first one added.
-    const added: ModeDef[] = plan.newModes[match.id] ?? [];
+    // Another file axis of that name shares the modes an earlier one added; within one axis,
+    // each library (or earlier) mode is taken once, so its same-named modes stay distinct.
+    const earlier: ModeDef[] = plan.newModes[match.id] ?? [];
+    const added: ModeDef[] = [];
+    const taken = new Set<string>();
     for (const mode of axis.modes) {
-      const same = [...match.modes, ...added].find((other) => sameName(other.name, mode.name));
+      const same = [...match.modes, ...earlier].find(
+        (other) => !taken.has(other.id) && sameName(other.name, mode.name),
+      );
       if (same) {
+        taken.add(same.id);
         if (same.id !== mode.id) plan.modeMap[mode.id] = same.id;
       } else added.push(mode);
     }
-    if (added.length > 0) plan.newModes[match.id] = added;
+    if (added.length > 0) plan.newModes[match.id] = [...earlier, ...added];
   }
 
   const libraryCollections = ofKind<CollectionRecord>(library, "collection");

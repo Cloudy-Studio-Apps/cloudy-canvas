@@ -19,6 +19,9 @@ export function previewLibraryMerge(
   fork.setAfterEdit(afterEdit);
   try {
     applyLibraryMerge(fork, LibraryDocument.fromFile(library.encodeFile()), plan);
+  } catch (error) {
+    fork.destroy();
+    throw error;
   } finally {
     fork.setAfterEdit(null);
   }

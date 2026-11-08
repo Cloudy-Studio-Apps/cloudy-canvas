@@ -93,7 +93,8 @@ libraries (`planLibraryMerge`, then `applyLibraryMerge`; the page side is
   (`renamedByType`). Everything else is `added`, keeping its id. A generator or scale whose base
   or variables clash or were renamed stays out (`droppedGenerators`; its variables keep their
   values, unlinked). Pictures match by their bytes' hash (`assetMap`). Two file axes with the
-  same name share the modes the first adds (deduplicated by name).
+  same name share the modes the first adds (deduplicated by name); within one axis each library
+  or earlier-added mode is taken once, so its own same-named modes stay distinct.
 - **`applyLibraryMerge(doc, library, plan)`:** writes the file's added records to the library in
   its terms (`mergedRecords`: references, axes and mode keys remapped with `remapValues` from
   `tokens/exchange/`, the target axis's first mode as the default; new records ordered after the
