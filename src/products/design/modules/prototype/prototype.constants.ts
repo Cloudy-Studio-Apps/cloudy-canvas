@@ -85,7 +85,7 @@ export const WIDE_SCREEN_WIDTH = 600;
 /** The Prototype mode's id (`engine.setMode`, `EngineState.mode`). */
 export const PROTOTYPE_MODE_ID = "prototype";
 
-/** The mode's tools (the connect tool arrives with the links). */
+/** The mode's tools. */
 export const PROTOTYPE_TOOLS = {
   select: "prototype.select",
   connect: "prototype.connect",

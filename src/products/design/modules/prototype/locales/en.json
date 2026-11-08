@@ -9,7 +9,13 @@
     "select": "Select",
     "selectHint": "Select screens and layers to link",
     "addFlow": "Add flow start",
-    "addFlowHint": "Start a flow at the selected screen"
+    "addFlowHint": "Start a flow at the selected screen",
+    "connect": "Connect",
+    "connectHint": "Drag from a layer onto a screen to link them. Drop on empty canvas for Back."
+  },
+  "connect": {
+    "linked": "Linked “{layer}” to {screen}",
+    "back": "“{layer}” now goes Back"
   },
   "platform": {
     "mobile": "Mobile",

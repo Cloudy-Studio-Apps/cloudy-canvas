@@ -9,7 +9,13 @@
     "select": "Seleccionar",
     "selectHint": "Selecciona pantallas y capas para enlazarlas",
     "addFlow": "Añadir inicio de flujo",
-    "addFlowHint": "Empieza un flujo en la pantalla seleccionada"
+    "addFlowHint": "Empieza un flujo en la pantalla seleccionada",
+    "connect": "Conectar",
+    "connectHint": "Arrastra desde una capa hasta una pantalla para enlazarlas. Suelta en el lienzo vacío para Atrás."
+  },
+  "connect": {
+    "linked": "Se enlazó “{layer}” con {screen}",
+    "back": "“{layer}” ahora vuelve Atrás"
   },
   "platform": {
     "mobile": "Móvil",

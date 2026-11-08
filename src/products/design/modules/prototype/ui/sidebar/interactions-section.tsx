@@ -4,11 +4,10 @@ import { useDesignEngine } from "@design/ui/design-engine-context";
 import { PanelSection } from "@design/ui/components/panel";
 import { useService } from "@canvas-ui";
 import { IconButton } from "@shared/ui/kit";
-import { DESIGN_PROTOTYPE, newInteraction, screenOf } from "../../model";
+import { DESIGN_PROTOTYPE, editInteraction, newInteraction, screenOf } from "../../model";
 import type { PrototypeInteraction } from "../../model";
 import { t } from "../../prototype.i18n";
 import { usePrototypePage } from "../hooks/use-prototype-page";
-import { editInteraction } from "./edit-interaction";
 import { InteractionCard } from "./interaction-card";
 import type { InteractionsSectionProps } from "./interactions-section.types";
 

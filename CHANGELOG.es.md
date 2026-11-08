@@ -8,9 +8,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 ### Novedades
 
 - El nuevo modo Prototipo enlaza las capas de tus pantallas: elige una capa y la pantalla que abre,
-  y unas flechas en el lienzo muestran cada enlace. Los flujos empiezan en una pantalla y se
-  preparan para un dispositivo, como un teléfono, una tableta, una app de escritorio o un sitio web,
-  así que un archivo puede tener los flujos de una app y los de un sitio web a la vez.
+  o arrastra desde una capa hasta una pantalla para enlazarlas, y unas flechas en el lienzo muestran
+  cada enlace. Los flujos empiezan en una pantalla y se preparan para un dispositivo, como un
+  teléfono, una tableta, una app de escritorio o un sitio web, así que un archivo puede tener los
+  flujos de una app y los de un sitio web a la vez.
 - El esquema de la base de datos ahora también se exporta a Java: clases simples con un campo por
   columna y los objetos y listas relacionados, o entidades JPA para Spring Boot 4 con solo las
   anotaciones que Spring no da por supuestas. Ambos se escriben para copiarlos, sin paquetes ni

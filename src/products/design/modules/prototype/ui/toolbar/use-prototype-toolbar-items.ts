@@ -1,4 +1,4 @@
-import { Flag, MousePointer2 } from "lucide-react";
+import { Flag, MousePointer2, Spline } from "lucide-react";
 
 import type { ModeToolbarEntry } from "@canvas-ui";
 import { PROTOTYPE_COMMANDS, PROTOTYPE_TOOLS } from "../../prototype.constants";
@@ -6,7 +6,10 @@ import { usePrototypePage } from "../hooks/use-prototype-page";
 import { usePrototypeSelection } from "../hooks/use-prototype-selection";
 import { t } from "../../prototype.i18n";
 
-/** The Prototype mode's toolbar: select and hand, then the flow start (needs a free screen). */
+/**
+ * The Prototype mode's toolbar: select, hand and connect, then the flow start (needs a free
+ * screen).
+ */
 export function usePrototypeToolbarItems(): readonly ModeToolbarEntry[] {
   const selection = usePrototypeSelection();
   const { flows } = usePrototypePage();
@@ -25,6 +28,12 @@ export function usePrototypeToolbarItems(): readonly ModeToolbarEntry[] {
       icon: MousePointer2,
     },
     { tool: "hand" },
+    {
+      tool: PROTOTYPE_TOOLS.connect,
+      label: t("toolbar.connect"),
+      description: t("toolbar.connectHint"),
+      icon: Spline,
+    },
     "divider",
     {
       command: PROTOTYPE_COMMANDS.addFlow,

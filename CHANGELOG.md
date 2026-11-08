@@ -8,9 +8,9 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 ### New
 
 - The new Prototype mode links the layers of your screens together: choose a layer and the screen
-  it opens, and arrows on the canvas show every link. Flows start at a screen and are set up for a
-  device, such as a phone, a tablet, a desktop app or a website, so one file can hold an app's flows
-  and a website's side by side.
+  it opens, or drag from a layer onto a screen to link them, and arrows on the canvas show every
+  link. Flows start at a screen and are set up for a device, such as a phone, a tablet, a desktop
+  app or a website, so one file can hold an app's flows and a website's side by side.
 - The database schema now exports as Java too: plain classes with a field per column and the
   related objects and lists, or JPA entities for Spring Boot 4 with only the annotations Spring
   doesn't already assume. Both are written to copy from, without packages or imports.

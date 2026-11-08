@@ -1,6 +1,6 @@
-import { PROTOTYPE_OVERLAY_ACTIONS, PROTOTYPE_TARGET_ACTIONS } from "../../prototype.constants";
-import { DEFAULT_OVERLAY } from "../../model";
-import type { PrototypeInteraction } from "../../model";
+import { PROTOTYPE_OVERLAY_ACTIONS, PROTOTYPE_TARGET_ACTIONS } from "../prototype.constants";
+import { DEFAULT_OVERLAY } from "./interaction-defaults";
+import type { PrototypeInteraction } from "./interaction.types";
 
 /** The key a `key` trigger listens to when it's first chosen. */
 const DEFAULT_KEY = "Enter";
