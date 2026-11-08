@@ -8,7 +8,9 @@
     "design": "Nuevo diseño",
     "designHint": "Interfaces y elementos visuales",
     "catalog": "Nuevo catálogo",
-    "catalogHint": "Folletos para imprimir"
+    "catalogHint": "Folletos para imprimir",
+    "project": "Nuevo proyecto",
+    "projectHint": "Una carpeta con sus propios estilos"
   },
   "welcome": {
     "title": "Bienvenido a Cloudy Canvas",
@@ -106,6 +108,7 @@
     }
   },
   "top": {
+    "projects": "Proyectos",
     "agents": "Agentes",
     "designSystem": "Sistema de diseño",
     "theme": "Tema",

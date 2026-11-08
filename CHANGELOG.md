@@ -7,6 +7,11 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### New
 
+- Projects: group a client's boards and designs in one folder on your computer. The new Projects
+  page, opened from Home, lists your projects with their color, size and when you last opened them;
+  create one from Home or from that page, open an existing one from its folder or its project file,
+  pin the ones you use most, and find a project again if its folder moved. Double-clicking a project
+  file opens it.
 - Each closed area of a vector can now have its own fill, as in Figma: in vector edit mode, click
   inside an area to select it and change its fill in the Fills section. An area's fill can use a
   color style or variables, show data, and edit its gradient on the canvas, and its colors appear

@@ -17,7 +17,8 @@ registry access are the `ProjectFs` and `ProjectRegistry` interfaces, implemente
 ```
 
 `projectPaths(root)` builds those paths in the style of `root` (`/` or `\`). `relativeTo` and
-`joinRelative` convert between absolute paths and `/`-separated paths relative to the root.
+`joinRelative` convert between absolute paths and `/`-separated paths relative to the root;
+`isProjectFilePath` tells a `.cproject` path and `parentFolder` gives the folder holding a path.
 
 ## Manifest (`project-manifest.ts`)
 

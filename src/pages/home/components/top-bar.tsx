@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router";
-import { Bot, Moon, Palette, Settings, Sun } from "lucide-react";
+import { Bot, FolderKanban, Moon, Palette, Settings, Sun } from "lucide-react";
 
+import { projectsSupported } from "@platform";
 import { formatShortcut } from "@shared/core";
 import { openAbout } from "@shared/about";
 import { AgentServerMenu } from "@shared/agent-server";
@@ -23,6 +24,14 @@ export function TopBar() {
         <>
           <CollaboratorStack className="mr-1" />
           <JoinSessionButton />
+          {projectsSupported() && (
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/projects">
+                <FolderKanban />
+                <span className="max-sm:sr-only">{t("top.projects")}</span>
+              </Link>
+            </Button>
+          )}
           <AgentServerMenu
             align="end"
             trigger={

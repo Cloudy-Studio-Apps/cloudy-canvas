@@ -39,6 +39,17 @@ export function projectPaths(root: string): ProjectPaths {
   };
 }
 
+/** Whether `path` names a project's `.cproject` file. */
+export function isProjectFilePath(path: string): boolean {
+  return path.toLowerCase().endsWith(`.${PROJECT_EXTENSION}`);
+}
+
+/** The folder holding `path`, in its own style; `""` when it has no folder part. */
+export function parentFolder(path: string): string {
+  const cut = Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\"));
+  return cut > 0 ? path.slice(0, cut) : "";
+}
+
 /** `path` relative to `root`, `/`-separated. Throws when `path` is not inside `root`. */
 export function relativeTo(root: string, path: string): string {
   const windows = separatorOf(root) === "\\" || /^[a-z]:/i.test(root);

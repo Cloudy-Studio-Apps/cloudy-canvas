@@ -7,6 +7,11 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Novedades
 
+- Proyectos: reúne las pizarras y los diseños de un cliente en una sola carpeta de tu ordenador. La
+  nueva página de Proyectos, que se abre desde Inicio, lista tus proyectos con su color, su tamaño y
+  cuándo los abriste por última vez; crea uno desde Inicio o desde esa página, abre uno existente
+  desde su carpeta o su archivo de proyecto, fija los que más usas y vuelve a encontrar un proyecto
+  si su carpeta cambió de sitio. Al hacer doble clic en un archivo de proyecto, se abre.
 - Cada área cerrada de un vector ya puede tener su propio relleno, como en Figma: en el modo de
   edición de vectores, haz clic dentro de un área para seleccionarla y cambia su relleno en la
   sección Rellenos. El relleno de un área puede usar un estilo de color o variables, mostrar datos

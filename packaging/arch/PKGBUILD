@@ -33,7 +33,7 @@ package() {
   local size type
   for size in 32x32 64x64 128x128 256x256 512x512; do
     install -d "$share/$size/mimetypes"
-    for type in board design; do
+    for type in board design project; do
       ln -s ../apps/cloudy-canvas.png "$share/$size/mimetypes/application-x-cloudy-canvas-$type.png"
     done
   done

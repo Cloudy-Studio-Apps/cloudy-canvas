@@ -1,0 +1,63 @@
+{
+  "page": {
+    "home": "Inicio",
+    "title": "Proyectos",
+    "description": "Cada proyecto es una carpeta de tu ordenador, con sus propios estilos y recursos.",
+    "search": "Buscar proyectos",
+    "pinned": "Fijados",
+    "all": "Todos los proyectos",
+    "noMatches": "Ningún proyecto coincide con “{query}”.",
+    "readFailed": "No se pudo abrir el proyecto"
+  },
+  "empty": {
+    "title": "Aún no hay proyectos",
+    "description": "Un proyecto reúne las pizarras y los diseños de un cliente en una carpeta, con los estilos que comparten."
+  },
+  "open": {
+    "button": "Abrir proyecto…",
+    "file": "Abrir un archivo de proyecto…",
+    "folder": "Abrir una carpeta de proyecto…",
+    "fileTitle": "Abrir un archivo de proyecto",
+    "folderTitle": "Abrir una carpeta de proyecto",
+    "notProject": "Esa carpeta no contiene un proyecto."
+  },
+  "new": "Nuevo proyecto",
+  "card": {
+    "files_one": "{count} archivo",
+    "files_other": "{count} archivos",
+    "edited": "editado {time}",
+    "justNow": "ahora mismo",
+    "missing": "No se encuentra la carpeta",
+    "locate": "Localizar…",
+    "forget": "Quitar de la lista",
+    "pin": "Fijar {name}",
+    "unpin": "Dejar de fijar {name}",
+    "more": "Más acciones para {name}",
+    "openLabel": "Abrir el proyecto {name}",
+    "locateFailed": "No se pudo localizar el proyecto",
+    "forgotten": "“{name}” se quitó de la lista. Su carpeta no se ha tocado."
+  },
+  "dialog": {
+    "title": "Nuevo proyecto",
+    "description": "Una carpeta para un cliente o una marca, con estilos que comparten todos sus archivos.",
+    "name": "Nombre",
+    "namePlaceholder": "Nombre del proyecto",
+    "nameInvalid": "Ese nombre no se puede usar para una carpeta.",
+    "nameTaken": "Ya existe una carpeta con ese nombre ahí.",
+    "color": "Icono y color",
+    "colorLabel": "Color del proyecto",
+    "location": "Ubicación",
+    "locationHint": "El proyecto se crea en {path}",
+    "change": "Cambiar…",
+    "pickLocation": "Elige dónde crear el proyecto",
+    "styles": "Empezar los estilos desde",
+    "stylesEmpty": "Nada (vacío)",
+    "stylesFile": "Los estilos de un archivo… (.cdesign / .cboard)",
+    "stylesTokens": "Un JSON de tokens…",
+    "stylesSoon": "Disponible pronto",
+    "cancel": "Cancelar",
+    "create": "Crear proyecto",
+    "creating": "Creando…",
+    "createFailed": "No se pudo crear el proyecto"
+  }
+}

@@ -1,4 +1,13 @@
-import { figmaImportOf, fileNameFromPath, isOpenablePath, type FileType } from "@shared/core";
+import {
+  figmaImportOf,
+  fileNameFromPath,
+  isOpenablePath,
+  isProjectFilePath,
+  parentFolder,
+  type FileType,
+} from "@shared/core";
+import { projectsSupported } from "@platform";
+import { useProjectsStore } from "@shared/stores/projects-store";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import { router } from "../router";
@@ -9,6 +18,14 @@ import { t } from "../app.i18n";
 /** Opens the first Cloudy Canvas file among `paths`, or imports the first Figma or FigJam file. */
 export function openPaths(paths: string[]): void {
   if (paths.length === 0) return;
+  const projectPath = projectsSupported() ? paths.find(isProjectFilePath) : undefined;
+  if (projectPath) {
+    confirmLeave(
+      t("links.openFile", { name: fileNameFromPath(projectPath) }),
+      () => void openProject(projectPath),
+    );
+    return;
+  }
   const path = paths.find(isOpenablePath);
   if (!path) {
     toast({
@@ -43,5 +60,15 @@ async function openPath(path: string): Promise<void> {
     await router.navigate(`/${file.type}/${file.id}`);
   } catch (error) {
     notifyError(importer?.failed ?? t("files.openFailed"), error);
+  }
+}
+
+/** Opens the project a `.cproject` file belongs to: its folder is the project. */
+async function openProject(path: string): Promise<void> {
+  try {
+    const project = await useProjectsStore.getState().open(parentFolder(path));
+    await router.navigate(`/project/${project.id}`);
+  } catch (error) {
+    notifyError(t("files.openFailed"), error);
   }
 }

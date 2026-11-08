@@ -13,7 +13,8 @@
     "figma": "Figma and FigJam files",
     "board": "Cloudy Canvas board",
     "design": "Cloudy Canvas design",
-    "images": "Images"
+    "images": "Images",
+    "project": "Cloudy Canvas project"
   },
   "saveBoard": "Save board",
   "saveDesign": "Save design",

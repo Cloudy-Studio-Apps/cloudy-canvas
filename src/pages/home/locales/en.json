@@ -8,7 +8,9 @@
     "design": "New design",
     "designHint": "Interfaces and visuals",
     "catalog": "New catalog",
-    "catalogHint": "Print brochures"
+    "catalogHint": "Print brochures",
+    "project": "New project",
+    "projectHint": "A folder with its own styles"
   },
   "welcome": {
     "title": "Welcome to Cloudy Canvas",
@@ -106,6 +108,7 @@
     }
   },
   "top": {
+    "projects": "Projects",
     "agents": "Agents",
     "designSystem": "Design system",
     "theme": "Theme",

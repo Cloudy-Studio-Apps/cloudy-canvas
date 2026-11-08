@@ -1,0 +1,63 @@
+{
+  "page": {
+    "home": "Home",
+    "title": "Projects",
+    "description": "Each project is a folder on your computer, with its own styles and assets.",
+    "search": "Search projects",
+    "pinned": "Pinned",
+    "all": "All projects",
+    "noMatches": "No project matches “{query}”.",
+    "readFailed": "The project couldn't be opened"
+  },
+  "empty": {
+    "title": "No projects yet",
+    "description": "A project groups a client's boards and designs in one folder, with the styles they share."
+  },
+  "open": {
+    "button": "Open project…",
+    "file": "Open a project file…",
+    "folder": "Open a project folder…",
+    "fileTitle": "Open a project file",
+    "folderTitle": "Open a project folder",
+    "notProject": "That folder doesn't hold a project."
+  },
+  "new": "New project",
+  "card": {
+    "files_one": "{count} file",
+    "files_other": "{count} files",
+    "edited": "edited {time}",
+    "justNow": "just now",
+    "missing": "Folder not found",
+    "locate": "Locate…",
+    "forget": "Remove from list",
+    "pin": "Pin {name}",
+    "unpin": "Unpin {name}",
+    "more": "More actions for {name}",
+    "openLabel": "Open project {name}",
+    "locateFailed": "The project couldn't be located",
+    "forgotten": "“{name}” was removed from the list. Its folder is untouched."
+  },
+  "dialog": {
+    "title": "New project",
+    "description": "A folder for a client or a brand, with styles all its files share.",
+    "name": "Name",
+    "namePlaceholder": "Project name",
+    "nameInvalid": "That name can't be used for a folder.",
+    "nameTaken": "A folder with that name already exists there.",
+    "color": "Icon and color",
+    "colorLabel": "Project color",
+    "location": "Location",
+    "locationHint": "The project is created in {path}",
+    "change": "Change…",
+    "pickLocation": "Choose where to create the project",
+    "styles": "Start the styles from",
+    "stylesEmpty": "Nothing (empty)",
+    "stylesFile": "A file's styles… (.cdesign / .cboard)",
+    "stylesTokens": "A tokens JSON…",
+    "stylesSoon": "Available soon",
+    "cancel": "Cancel",
+    "create": "Create project",
+    "creating": "Creating…",
+    "createFailed": "The project couldn't be created"
+  }
+}
