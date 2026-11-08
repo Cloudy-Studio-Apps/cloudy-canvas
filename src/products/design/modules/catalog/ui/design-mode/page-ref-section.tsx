@@ -22,7 +22,10 @@ export function PageRefSection({ selection: { nodes } }: PropertySectionProps) {
   if (!node || template === null || current === null) return null;
 
   const options = pageRefOptions(layout, numbers);
-  if (current.trim() && !options.some((option) => option.value === current)) {
+  // Matched as `{page:Name}` reads it: trimmed and in any case.
+  const key = current.trim().toLocaleLowerCase();
+  const chosen = options.find((option) => option.value.trim().toLocaleLowerCase() === key);
+  if (key && !chosen) {
     options.push({ value: current, label: t("design.pageRef.missing", { name: current }) });
   }
   const choose = (name: string) => {
@@ -35,7 +38,7 @@ export function PageRefSection({ selection: { nodes } }: PropertySectionProps) {
       <SelectField
         label={t("design.pageRef.target")}
         layout="stacked"
-        value={current}
+        value={chosen?.value ?? current}
         options={options}
         placeholder={t("design.pageRef.placeholder")}
         onChange={choose}
