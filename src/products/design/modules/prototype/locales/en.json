@@ -31,6 +31,11 @@
     "emptyTitle": "Nothing selected",
     "empty": "Select a layer to add an interaction, a screen for its scrolling and flow start, or a flow on the left."
   },
+  "stub": {
+    "back": "Back",
+    "close": "Close",
+    "link": "Open link"
+  },
   "badge": {
     "interactions": "Has interactions"
   },

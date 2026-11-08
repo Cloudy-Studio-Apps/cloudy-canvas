@@ -7,6 +7,7 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### New
 
+- The new Prototype mode links the layers of your screens together: choose a layer and the screen it opens, and arrows on the canvas show every link. Flows start at a screen and are set up for a device, such as a phone, a tablet, a desktop app or a website, so one file can hold an app's flows and a website's side by side.
 - Each closed area of a vector can now have its own fill: in vector edit mode, click
   inside an area to select it and change its fill in the Fills section. An area's fill can use a
   color style or variables, show data, and edit its gradient on the canvas, and its colors appear

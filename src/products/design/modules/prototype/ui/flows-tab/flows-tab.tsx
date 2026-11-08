@@ -5,7 +5,7 @@ import { IconButton, Section } from "@shared/ui/kit";
 import { addFlowAt, selectedScreenId } from "../add-flow";
 import { usePrototypePage } from "../hooks/use-prototype-page";
 import { usePrototypeSelection } from "../hooks/use-prototype-selection";
-import { usePrototypeViewStore } from "../stores/prototype-view-store";
+import { pickFlow } from "../pick-flow";
 import { FlowRow } from "./flow-row";
 import { t } from "../../prototype.i18n";
 
@@ -18,14 +18,9 @@ export function FlowsTab() {
   const engine = useDesignEngine();
   const { flows, screens } = usePrototypePage();
   const selection = usePrototypeSelection();
-  const selectFlow = usePrototypeViewStore((state) => state.selectFlow);
   const add = () => {
     const start = selectedScreenId(engine) ?? screens[0]?.id;
     if (start) addFlowAt(engine, start);
-  };
-  const pick = (id: string) => {
-    engine.select([]);
-    selectFlow(id);
   };
   return (
     <div className="min-h-0 flex-1 overflow-y-auto">
@@ -49,7 +44,7 @@ export function FlowsTab() {
               flow={flow}
               screens={screens}
               selected={selection.kind === "flow" && selection.id === flow.id}
-              onSelect={() => pick(flow.id)}
+              onSelect={() => pickFlow(engine, flow.id)}
             />
           ))}
         </div>

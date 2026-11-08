@@ -4,6 +4,7 @@ import { defineDesignMode } from "@design/ui/modules";
 import { PROTOTYPE_ALLOWED_COMMANDS, PrototypeSelectTool } from "./mode";
 import { PROTOTYPE_COMMANDS, PROTOTYPE_MODE_ID, PROTOTYPE_TOOLS } from "./prototype.constants";
 import { addFlowAtSelection } from "./ui/add-flow";
+import { LinksLayer } from "./ui/canvas/links-layer";
 import { FlowsTab } from "./ui/flows-tab/flows-tab";
 import { PrototypeSidebar } from "./ui/sidebar/prototype-sidebar";
 import { usePrototypeToolbarItems } from "./ui/toolbar/use-prototype-toolbar-items";
@@ -46,5 +47,5 @@ export const prototypeMode = defineDesignMode({
     keep: ["layers"],
   },
   sidebar: PrototypeSidebar,
-  overlays: [],
+  overlays: [LinksLayer],
 });

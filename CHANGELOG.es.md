@@ -7,6 +7,7 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Novedades
 
+- El nuevo modo Prototipo enlaza las capas de tus pantallas: elige una capa y la pantalla que abre, y unas flechas en el lienzo muestran cada enlace. Los flujos empiezan en una pantalla y se preparan para un dispositivo, como un teléfono, una tableta, una app de escritorio o un sitio web, así que un archivo puede tener los flujos de una app y los de un sitio web a la vez.
 - Cada área cerrada de un vector ya puede tener su propio relleno: en el modo de
   edición de vectores, haz clic dentro de un área para seleccionarla y cambia su relleno en la
   sección Rellenos. El relleno de un área puede usar un estilo de color o variables, mostrar datos
