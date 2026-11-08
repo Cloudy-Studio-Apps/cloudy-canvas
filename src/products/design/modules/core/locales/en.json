@@ -91,7 +91,9 @@
     "layout": "Layout",
     "position": "Position",
     "interactions": "Interactions",
-    "interactionsHint": "Links between frames and transitions come in a later version."
+    "interactionsHint": "Links between frames and transitions come in a later version.",
+    "selectedArea": "Selected area",
+    "selectedAreas": "{count} selected areas"
   },
   "layout": {
     "keptRatio": "Proportions kept",
@@ -102,7 +104,8 @@
   "paints": {
     "add": "Add {name}",
     "createStyle": "Create style from these {name}",
-    "mixedHint": "Mixed. Click + to replace them all."
+    "mixedHint": "Mixed. Click + to replace them all.",
+    "useLayerFill": "Use layer fill"
   },
   "stroke": {
     "styles": "Stroke styles",

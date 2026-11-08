@@ -91,7 +91,9 @@
     "layout": "Disposición",
     "position": "Posición",
     "interactions": "Interacciones",
-    "interactionsHint": "Los vínculos entre marcos y las transiciones llegarán en una versión futura."
+    "interactionsHint": "Los vínculos entre marcos y las transiciones llegarán en una versión futura.",
+    "selectedArea": "Área seleccionada",
+    "selectedAreas": "{count} áreas seleccionadas"
   },
   "layout": {
     "keptRatio": "Proporciones bloqueadas",
@@ -102,7 +104,8 @@
   "paints": {
     "add": "Añadir {name}",
     "createStyle": "Crear estilo con estos {name}",
-    "mixedHint": "Mixto. Haz clic en + para reemplazarlos todos."
+    "mixedHint": "Mixto. Haz clic en + para reemplazarlos todos.",
+    "useLayerFill": "Usar el relleno de la capa"
   },
   "stroke": {
     "styles": "Estilos de trazo",

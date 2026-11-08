@@ -23,8 +23,8 @@ export interface PaintStackEditorProps {
     info?: ColorChangeInfo,
     map?: PaintStackMap,
   ) => void;
-  /** Where the paints' colors are bound: `fills`, `strokes`, or a style's `paints`. */
-  bindPrefix: string;
+  /** Where the paints' colors are bound: `fills`, `strokes`, or a style's `paints`; unset: unbound. */
+  bindPrefix?: string;
   /** The layers' field, so a gradient's handles show on the canvas (layers only). */
   handlesField?: "fills" | "strokes";
   /** The edited layer's size (one layer), for copying a gradient as CSS. */

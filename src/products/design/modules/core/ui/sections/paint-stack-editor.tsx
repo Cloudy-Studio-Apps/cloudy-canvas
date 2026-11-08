@@ -35,7 +35,7 @@ export function PaintStackEditor({
             label={label}
             allowImage={allowImage}
             target={handlesField ? { field: handlesField, index: i } : undefined}
-            bindPath={`${bindPrefix}.${i}.color`}
+            bindPath={bindPrefix ? `${bindPrefix}.${i}.color` : undefined}
             size={size}
             onChange={(next, info) =>
               onChange((current) => current.map((p, j) => (j === i ? next : p)), info)
