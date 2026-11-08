@@ -1,15 +1,18 @@
 import type { Point } from "@canvas";
 import { applyLinear, applyMatrix, type FigMatrix } from "@canvas/figma";
 
-import type { VectorNetwork, VectorRegion, VectorSegment } from "../../modules";
+import type { VectorRegion, VectorSegment } from "../../modules";
+import type { DecodedNetwork } from "./fig-network.types";
 
 /**
  * A vector network blob (little-endian u32 counts and indices, f32 coordinates): vertices,
  * segments with their tangents relative to their vertices, and regions of segment loops, as
  * Figma's own model is ours. Its coordinates are scaled by `scale` (the node's size over the
- * network's) and placed in the world by `m`.
+ * network's) and placed in the world by `m`. A region's style word is its style id (an entry of
+ * the node's `styleOverrideTable`, which can give it its own fill) shifted left once, with the
+ * nonzero winding rule in the low bit.
  */
-export function decodeNetworkBlob(bytes: Uint8Array, scale: Point, m: FigMatrix): VectorNetwork {
+export function decodeNetworkBlob(bytes: Uint8Array, scale: Point, m: FigMatrix): DecodedNetwork {
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   let offset = 0;
   const u32 = () => {
@@ -42,6 +45,7 @@ export function decodeNetworkBlob(bytes: Uint8Array, scale: Point, m: FigMatrix)
     segments.push({ start, end, tangentStart, tangentEnd });
   }
   const regions: VectorRegion[] = [];
+  const regionStyles: number[] = [];
   for (let i = 0; i < regionCount; i++) {
     const style = u32();
     const loops: number[][] = [];
@@ -53,6 +57,7 @@ export function decodeNetworkBlob(bytes: Uint8Array, scale: Point, m: FigMatrix)
       loops.push(loop);
     }
     regions.push({ loops, windingRule: style & 1 ? "nonzero" : "evenodd" });
+    regionStyles.push(style >>> 1);
   }
-  return { vertices, segments, regions };
+  return { network: { vertices, segments, regions }, regionStyles };
 }

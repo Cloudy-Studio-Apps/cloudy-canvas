@@ -124,6 +124,19 @@ export interface FigTextData {
 /** One mixed style of a text: the node fields it sets for the characters with its `styleID`. */
 export type FigTextOverride = Partial<FigNode> & { styleID?: number };
 
+export interface FigVectorData {
+  vectorNetworkBlob?: number;
+  normalizedSize?: FigVector;
+  /**
+   * What each region style id sets over the node's own fields (its fill paints and color style):
+   * a vector's regions can each have their own fill. Style id 0 is the node's own.
+   */
+  styleOverrideTable?: FigStyleOverride[];
+}
+
+/** One style of a vector's regions: the node fields it sets for the regions with its `styleID`. */
+export type FigStyleOverride = Partial<FigNode> & { styleID?: number };
+
 /** A node in an instance's component, by the guids leading to it (nested instances first). */
 export interface FigGuidPath {
   guids?: FigGuid[];
@@ -260,7 +273,7 @@ export interface FigNode extends FigVariableFields {
   resizeToFit?: boolean;
   count?: number;
   starInnerScale?: number;
-  vectorData?: { vectorNetworkBlob?: number; normalizedSize?: FigVector };
+  vectorData?: FigVectorData;
   textData?: FigTextData;
   fontSize?: number;
   fontName?: { family?: string; style?: string };

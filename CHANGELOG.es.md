@@ -7,6 +7,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Novedades
 
+- Cada área cerrada de un vector ya puede tener su propio relleno, como en Figma: en el modo de
+  edición de vectores, haz clic dentro de un área para seleccionarla y cambia su relleno en la
+  sección Rellenos. Los archivos de Figma conservan los colores de los vectores de varios colores,
+  como logotipos e iconos, en un solo vector editable.
 - Los diseños ya pueden tener fuentes de datos, como un archivo CSV o JSON o una API web: la nueva
   pestaña Datos las lista con sus filas, y Actualizar vuelve a leerlas cuando tú lo elijas. Las
   claves de API se quedan en este dispositivo y nunca se guardan en el archivo, y cada clave solo se

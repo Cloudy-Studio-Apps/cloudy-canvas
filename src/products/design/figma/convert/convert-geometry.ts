@@ -10,9 +10,11 @@ import {
 } from "../../modules";
 import { decodeNetworkBlob } from "./fig-network";
 import { figNodeBase } from "./fig-node-base";
+import { withRegionFills } from "./fig-region-fills";
 import { convertPaints } from "./fig-paints";
 import { pathToNetwork } from "./fig-path";
 import type { NodePaints, NodePlacement } from "./convert-node.types";
+import type { DecodedNetwork } from "./fig-network.types";
 
 /** A Figma vector from its network, placed in the world (rotation and flips included). */
 export function convertVector(
@@ -21,15 +23,22 @@ export function convertVector(
   placement: NodePlacement,
   ctx: FigmaContext,
 ): VectorElement | null {
+  const decoded = decodeVector(node, world, ctx);
+  if (!decoded) return vectorFromGeometry(node, world, placement, ctx);
+  return vectorElement(node, withRegionFills(decoded, node, ctx), placement, ctx);
+}
+
+/** A Figma vector's network in the world, with its regions' style ids; `null` without one. */
+function decodeVector(node: FigNode, world: FigMatrix, ctx: FigmaContext): DecodedNetwork | null {
   const blob = ctx.blob(node.vectorData?.vectorNetworkBlob);
-  if (!blob) return vectorFromGeometry(node, world, placement, ctx);
+  if (!blob) return null;
   const size = node.size ?? { x: 0, y: 0 };
   const normalized = node.vectorData?.normalizedSize ?? size;
   const scale = {
     x: normalized.x ? size.x / normalized.x : 1,
     y: normalized.y ? size.y / normalized.y : 1,
   };
-  return vectorElement(node, decodeNetworkBlob(blob, scale, world), placement, ctx);
+  return decodeNetworkBlob(blob, scale, world);
 }
 
 /**
@@ -86,6 +95,7 @@ function networkOf(
   return network && network.vertices.length > 0 ? network : null;
 }
 
+/** A vector element of `node` drawing `network` (world coordinates), placed at its bounds. */
 function vectorElement(
   node: FigNode,
   network: VectorNetwork,

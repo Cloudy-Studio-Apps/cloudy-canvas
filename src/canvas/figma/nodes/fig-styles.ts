@@ -15,9 +15,9 @@ const TEXT_STYLE_FIELDS = [
 /**
  * `node` with the shared styles it uses applied: a text style's typography, a color style's fill
  * and stroke paints, an effect style's effects, and in a text's mixed styles (its
- * `styleOverrideTable`) the text and color styles each one uses. A styled node can keep stale
- * values of its own (files written by plugins do), so the style wins, as when Figma draws it.
- * Styles missing from the file change nothing.
+ * `styleOverrideTable`) the text and color styles each one uses, as in a vector's region styles.
+ * A styled node can keep stale values of its own (files written by plugins do), so the style
+ * wins, as when Figma draws it. Styles missing from the file change nothing.
  */
 export function withFigStyles(tree: FigTree, node: FigNode): FigNode {
   let styled = withOwnStyles(tree, node);
@@ -27,6 +27,11 @@ export function withFigStyles(tree: FigTree, node: FigNode): FigNode {
   if (table?.some((entry) => entry.styleIdForText || entry.styleIdForFill)) {
     const styleOverrideTable = table.map((entry) => withOwnStyles(tree, entry));
     styled = { ...styled, textData: { ...styled.textData, styleOverrideTable } };
+  }
+  const regions = node.vectorData?.styleOverrideTable;
+  if (regions?.some((entry) => entry.styleIdForFill)) {
+    const styleOverrideTable = regions.map((entry) => withOwnStyles(tree, entry));
+    styled = { ...styled, vectorData: { ...styled.vectorData, styleOverrideTable } };
   }
   return styled;
 }
