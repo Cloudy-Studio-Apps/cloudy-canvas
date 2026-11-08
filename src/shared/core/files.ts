@@ -106,7 +106,8 @@ export function isFileInfo(value: unknown): value is FileInfo {
     typeof file.formatVersion === "number" &&
     (file.draft === undefined || typeof file.draft === "boolean") &&
     (file.title === undefined || typeof file.title === "string") &&
-    (file.description === undefined || typeof file.description === "string")
+    (file.description === undefined || typeof file.description === "string") &&
+    (file.projectId === undefined || typeof file.projectId === "string")
   );
 }
 

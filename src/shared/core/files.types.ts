@@ -5,6 +5,8 @@ export interface FileMeta {
   /** Shown instead of the file name when set. */
   title?: string;
   description?: string;
+  /** The project the file belongs to, when it is saved inside one. */
+  projectId?: string;
 }
 
 export interface FileInfo extends FileMeta {
