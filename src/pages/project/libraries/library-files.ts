@@ -54,6 +54,34 @@ export async function renameLibraryFiles(
   return moved;
 }
 
+/** Puts a library's files renamed to `moved` back under their `original` file name. */
+export async function revertLibraryRename(
+  root: string,
+  moved: string,
+  original: string,
+): Promise<void> {
+  const to = libraryRels(root, moved);
+  await projectFs.rename(root, to.file, original);
+  if (await projectFs.exists(projectPaths(root).libraryAssets(moved))) {
+    await projectFs.rename(root, to.assets, `${original.replace(/\.clib$/i, "")}.assets`);
+  }
+}
+
+/**
+ * After a `.clib` came back from the trash as `file` (it was `from`, a name that was taken), its
+ * `.assets` folder, if it came back earlier under the old stem, takes the new one.
+ */
+export async function matchRestoredAssets(root: string, file: string, from: string): Promise<void> {
+  const stem = (name: string) => name.replace(/\.clib$/i, "");
+  const old = stem(lastSegment(from));
+  if (old === stem(file)) return;
+  const paths = projectPaths(root);
+  const oldFolder = paths.libraryAssets(`${old}.clib`);
+  if ((await projectFs.exists(oldFolder)) && !(await projectFs.exists(paths.libraryAssets(file)))) {
+    await projectFs.rename(root, libraryRels(root, `${old}.clib`).assets, `${stem(file)}.assets`);
+  }
+}
+
 /** Moves a library's `.clib` and `.assets` folder to the project's trash. */
 export async function trashLibraryFiles(root: string, entry: LibraryEntry): Promise<void> {
   const rels = libraryRels(root, entry.file);

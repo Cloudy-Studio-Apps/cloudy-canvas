@@ -147,6 +147,20 @@ export class LibraryHub {
     }
   }
 
+  /** Writes a library's pending edits to its file now and waits until every save has ended. */
+  flush(libraryId: string): Promise<void> {
+    return this.saver.flushOne(libraryId);
+  }
+
+  /**
+   * Saves a library, then holds its later edits back (in memory only) until the returned function
+   * runs, so its file can be renamed: call `refresh()` before releasing, and the held edits are
+   * written to the new name.
+   */
+  hold(libraryId: string): Promise<() => void> {
+    return this.saver.hold(libraryId);
+  }
+
   /** Fires with the ids of the libraries that changed and who applied the change (`null`: none). */
   onChange(listener: LibraryHubListener): () => void {
     this.listeners.add(listener);

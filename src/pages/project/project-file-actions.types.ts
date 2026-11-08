@@ -11,5 +11,5 @@ export interface ProjectActionsOptions {
   /** Files changed on disk: scans read again. */
   bump: () => void;
   /** A trashed item was put back at `rel`. */
-  afterRestore?: (rel: string) => Promise<void>;
+  afterRestore?: (rel: string, from: string) => Promise<void>;
 }

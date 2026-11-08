@@ -50,8 +50,10 @@ function insideDataFolder(rel: string): boolean {
 /** Whether a relative path is a library's file or `.assets` folder, which the trash takes. */
 function isLibraryItem(rel: string): boolean {
   const parts = rel.split("/");
+  const name = parts[2]?.toLowerCase() ?? "";
   return (
     parts.length === 3 &&
+    (name.endsWith(".clib") || name.endsWith(".assets")) &&
     parts[0]?.toLowerCase() === PROJECT_DATA_DIR &&
     parts[1]?.toLowerCase() === LIBRARIES_DIR
   );

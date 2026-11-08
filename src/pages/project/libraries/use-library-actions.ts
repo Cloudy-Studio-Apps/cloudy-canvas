@@ -17,7 +17,9 @@ import { copyLibraryRecords } from "./copy-library-records";
 import {
   isLibraryRel,
   newLibraryEntry,
+  matchRestoredAssets,
   renameLibraryFiles,
+  revertLibraryRename,
   trashLibraryFiles,
 } from "./library-files";
 import type { LibraryActions, LibraryActionsOptions } from "./use-library-actions.types";
@@ -69,7 +71,9 @@ export function useLibraryActions(options: LibraryActionsOptions): LibraryAction
           await project.saveManifest({ libraries: [...manifest.libraries, entry] });
           await reload();
           const doc = hub.library(entry.id);
-          if (doc && records.length > 0) doc.setTokenRecords(records);
+          if (!doc)
+            throw new Error(`The library "${input.name}" couldn't be read after it was made`);
+          if (records.length > 0) doc.setTokenRecords(records);
           if (typeof input.source === "object" && "copyOf" in input.source) {
             for (const asset of hub.library(input.source.copyOf)?.assets() ?? []) {
               const bytes = await hub.readAssetBytes(input.source.copyOf, asset.id);
@@ -91,14 +95,25 @@ export function useLibraryActions(options: LibraryActionsOptions): LibraryAction
         const name = raw.trim();
         if (name === library.entry.name) return true;
         const done = await attempt(t("libraries.renameFailed"), async () => {
-          const file = await renameLibraryFiles(record.root, manifest, library.entry, name);
-          await project.saveManifest({
-            libraries: manifest.libraries.map((l) =>
-              l.id === library.entry.id ? { ...l, name, file } : l,
-            ),
-          });
-          await reload();
-          return true;
+          // Its pending save is written first and later edits wait, so none lands on the old name.
+          const release = (await hub?.hold(library.entry.id)) ?? (() => {});
+          try {
+            const file = await renameLibraryFiles(record.root, manifest, library.entry, name);
+            try {
+              await project.saveManifest({
+                libraries: manifest.libraries.map((l) =>
+                  l.id === library.entry.id ? { ...l, name, file } : l,
+                ),
+              });
+            } catch (error) {
+              await revertLibraryRename(record.root, file, library.entry.file).catch(() => {});
+              throw error;
+            }
+            await reload();
+            return true;
+          } finally {
+            release();
+          }
         });
         return done === true;
       },
@@ -170,7 +185,7 @@ export function useLibraryActions(options: LibraryActionsOptions): LibraryAction
           await navigate(`/${file.type}/${file.id}`);
         });
       },
-      adoptRestored: async (rel) => {
+      adoptRestored: async (rel, from) => {
         if (!isLibraryRel(rel)) return;
         const file = baseNameFromPath(rel);
         if (manifest.libraries.some((l) => l.file === file)) return;
@@ -184,6 +199,7 @@ export function useLibraryActions(options: LibraryActionsOptions): LibraryAction
           order: lastOrder(manifest.libraries),
           autoAdd: false,
         };
+        await matchRestoredAssets(record.root, file, from);
         await project.saveManifest({ libraries: [...manifest.libraries, entry] });
         await reload();
       },

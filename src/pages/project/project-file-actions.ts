@@ -97,7 +97,7 @@ export function useProjectActions(options: ProjectActionsOptions): ProjectAction
         attempt(t("actions.restoreFailed"), async () => {
           const rel = await projectFs.restore(root, entry.id);
           bump();
-          await afterRestore?.(rel);
+          await afterRestore?.(rel, entry.from);
           toast({ title: t("trash.restored", { name: entry.name }), description: rel });
         }),
       emptyTrash: () =>

@@ -13,6 +13,7 @@ const SAVE_DELAY_MS = 300;
 export class LibrarySaver {
   private readonly timers = new Map<string, ReturnType<typeof setTimeout>>();
   private readonly pending = new Map<string, () => LibraryDocument>();
+  private readonly held = new Set<string>();
   private queue: Promise<void> = Promise.resolve();
 
   constructor(
@@ -25,6 +26,7 @@ export class LibrarySaver {
   schedule(libraryId: string, library: () => LibraryDocument): void {
     this.pending.set(libraryId, library);
     clearTimeout(this.timers.get(libraryId));
+    if (this.held.has(libraryId)) return;
     this.timers.set(
       libraryId,
       setTimeout(() => void this.write(libraryId), SAVE_DELAY_MS),
@@ -36,6 +38,26 @@ export class LibrarySaver {
     clearTimeout(this.timers.get(libraryId));
     this.timers.delete(libraryId);
     this.pending.delete(libraryId);
+    this.held.delete(libraryId);
+  }
+
+  /** Writes one library's pending edit now and waits for every write to end. */
+  flushOne(libraryId: string): Promise<void> {
+    if (this.pending.has(libraryId)) void this.write(libraryId);
+    return this.queue;
+  }
+
+  /**
+   * Writes the library's pending edit, then keeps its later edits from being written until the
+   * returned function runs (which writes them, to wherever its path is by then): for moving its file.
+   */
+  async hold(libraryId: string): Promise<() => void> {
+    this.held.add(libraryId);
+    await this.flushOne(libraryId);
+    return () => {
+      this.held.delete(libraryId);
+      if (this.pending.has(libraryId)) void this.write(libraryId);
+    };
   }
 
   /** Writes every pending library now and waits for every write to end. */

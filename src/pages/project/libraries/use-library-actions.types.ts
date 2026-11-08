@@ -29,7 +29,7 @@ export interface LibraryActions {
   /** Opens the project's newest file (or a new design) to edit the library's colors and styles. */
   editInFile: () => void;
   /** Puts a restored library file back in the manifest. */
-  adoptRestored: (rel: string) => Promise<void>;
+  adoptRestored: (rel: string, from: string) => Promise<void>;
 }
 
 export interface LibraryActionsOptions {
