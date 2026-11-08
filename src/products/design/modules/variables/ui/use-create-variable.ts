@@ -5,8 +5,9 @@ import { FIRST_COLLECTION, NEW_NAMES, NEW_VALUES } from "./scope-options";
 import { t } from "../variables.i18n";
 
 /**
- * Adds a variable of a type in a collection (the first, or a new "Primitives" when the file has
- * none) and group, named after its type; returns its id, or `null` when it failed (toasted).
+ * Adds a variable of a type in a collection (the file's own first, or a new "Primitives" when the
+ * file has none of its own: a project library's collections are only used when asked for) and
+ * group, named after its type; returns its id, or `null` when it failed (toasted).
  */
 export function useCreateVariable(): (
   type: VariableType,
@@ -19,7 +20,10 @@ export function useCreateVariable(): (
       const tokens = engine.service(DOCUMENT_TOKENS);
       const target =
         collectionId ??
-        tokens.store().collections()[0]?.id ??
+        tokens
+          .store()
+          .collections()
+          .find((collection) => collection.libraryId === undefined)?.id ??
         tokens.createCollection(FIRST_COLLECTION).id;
       const name = NEW_NAMES[type];
       return tokens.createVariable({

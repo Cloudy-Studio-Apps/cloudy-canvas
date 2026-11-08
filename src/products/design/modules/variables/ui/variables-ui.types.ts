@@ -1,6 +1,15 @@
-import type { ComponentProps } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
-import type { ModeContext, TokenGroupNode, VariableRecord } from "@canvas";
+import type {
+  CollectionRecord,
+  ModeContext,
+  StyleRecord,
+  TokenGroupNode,
+  VariableRecord,
+} from "@canvas";
+import type { TokenSource } from "@canvas-ui";
+import type { LibraryEntry } from "@shared/core";
+import type { StyleTypeEntry } from "../../core/ui";
 
 export interface VariableRowProps {
   variable: VariableRecord;
@@ -8,6 +17,8 @@ export interface VariableRowProps {
   editing: boolean;
   setEditing: (open: boolean) => void;
   onDelete: () => void;
+  /** Where it comes from, when the list is grouped by source (a file using libraries). */
+  source?: TokenSource;
 }
 
 export interface VariableEditorProps {
@@ -75,6 +86,15 @@ export interface SidebarGroupRowProps extends SidebarGroupsProps {
   collectionId: string;
   group: string;
   items: readonly VariableRecord[];
+  /** Where the collection comes from, when grouped by source. */
+  source?: TokenSource;
+}
+
+export interface SidebarCollectionProps extends SidebarGroupsProps {
+  collection: CollectionRecord;
+  /** Its name above its groups (several collections, or grouped by source). */
+  caption: boolean;
+  source?: TokenSource;
 }
 
 /** A text or true/false variable's own value for one mode. */
@@ -83,4 +103,39 @@ export interface PlainValueInputProps<T> {
   label: string;
   onChange: (value: T) => void;
   className?: string;
+}
+
+export interface MoveToLibraryMenuProps {
+  /** The file's own variables, collections or styles it moves. */
+  ids: readonly string[];
+  /** What is right-clicked. */
+  children: ReactNode;
+}
+
+export interface StyleSourceListProps {
+  /** Where they come from; unset in a file without libraries. */
+  source?: TokenSource;
+  styles: readonly StyleRecord[];
+  /** The style types, in order. */
+  types: readonly StyleTypeEntry[];
+  editingId: string | null;
+  setEditingId: (id: string | null) => void;
+  onDelete: (id: string) => void;
+}
+
+/** The file's project libraries for its libraries menu (`useFileLibraries`). */
+export interface FileLibraries {
+  /** The project's libraries are open (switches work only then). */
+  ready: boolean;
+  projectName: string;
+  /** The project's libraries, in its order. */
+  entries: LibraryEntry[];
+  /** The ones the file uses. */
+  used: ReadonlySet<string>;
+  /** The ones whose file can't be read now. */
+  unreadable: ReadonlySet<string>;
+  /** How many layers use a library's variables and styles. */
+  users: (libraryId: string) => number;
+  /** Turns a library on or off for the file. */
+  setUsed: (libraryId: string, on: boolean) => void;
 }

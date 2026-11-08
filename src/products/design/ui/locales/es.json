@@ -159,7 +159,8 @@
     "draft": "Borrador",
     "saved": "Archivo guardado",
     "notSaved": "Aún sin guardar",
-    "design": "Diseño"
+    "design": "Diseño",
+    "openProject": "Abrir {project} en la carpeta de este archivo"
   },
   "import": {
     "figma": {

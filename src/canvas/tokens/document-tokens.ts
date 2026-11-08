@@ -12,6 +12,7 @@ import type {
   SetValueOptions,
   StylePatch,
 } from "./document-tokens.types";
+import { collectionSource } from "./collection-source";
 import { followBase, regenerate } from "./generator-writes";
 import type { ImportChoice, TokenImportPlan } from "./exchange/exchange.types";
 import { planTokenImport } from "./exchange/import-plan";
@@ -63,6 +64,7 @@ export class DocumentTokens extends VariableEdits {
       : store.generators().find((g) => g.collectionId === input.collectionId && g.group === group);
     const generator: GeneratorRecord = {
       ...input,
+      ...collectionSource(store, input.collectionId),
       kind: "generator",
       id: known?.id ?? createId(),
       group,
@@ -102,6 +104,7 @@ export class DocumentTokens extends VariableEdits {
       : store.scales().find((sc) => sc.collectionId === input.collectionId && sc.group === group);
     const scale: ScaleRecord = {
       ...input,
+      ...collectionSource(store, input.collectionId),
       kind: "scale",
       id: known?.id ?? createId(),
       group,

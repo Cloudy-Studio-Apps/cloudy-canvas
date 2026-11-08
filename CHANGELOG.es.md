@@ -7,6 +7,13 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Novedades
 
+- Las variables y los estilos de un diseño muestran de dónde vienen: cada biblioteca del proyecto
+  que usa el archivo y después los del propio archivo, en el panel y en el selector de variables.
+  Elige qué bibliotecas del proyecto usa el archivo con el botón Bibliotecas de la sección
+  Variables (al desactivar una, tus capas se siguen viendo igual), mueve tus propias variables,
+  colecciones y estilos a una biblioteca con clic derecho para que todos los archivos del proyecto
+  los reciban, y ve a la carpeta del archivo desde el nombre del proyecto que aparece sobre el
+  nombre del archivo.
 - Bibliotecas en la página del proyecto: la pestaña Bibliotecas muestra cada biblioteca con sus
   colores, una muestra de tipografía y los archivos que la usan, y la página de una biblioteca
   lista sus colores, estilos de texto, imágenes, SVG y efectos. Crea una biblioteca vacía, con los

@@ -44,3 +44,25 @@ the libraries, saving them, when to sync) is in [canvas-ui/libraries/](../../can
   in its library.
 - **`revertLibraryEdits(doc, ids, previous)`:** puts library records back as they were before the
   change, untracked (records it added are removed); for a file whose project is missing.
+
+## Moving and detaching
+
+- **`planLibraryMove(doc, ids, libraryId)`:** what moving the file's own variables, collections or
+  styles to a library moves (`LibraryMovePlan`): a variable or a collection moves the whole
+  collection (its variables, generators and scales, `variables` counts them) with the file's own
+  axes they vary by, a style moves alone; records already in a library are left out. `blockers`
+  are what they read that would stay behind (aliases, expressions, style bindings and generator
+  bases on the file's own variables or another library's, or another library's axis): the library
+  would point at a file, so the move is refused while there are any.
+- **`moveToLibrary(doc, ids, libraryId)`:** tags the plan's records with the library's id, one undo
+  step, and returns them tagged (it throws when there are blockers). It's an ordinary edit of the
+  file: the editor's library sync (`observeTokens` → `libraryEditsOf`) writes the records to the
+  library, as long as the file uses it. Undoing it untags them, which leaves them in the library
+  (a record that lost its tag stays there), so the next mirror tags them again.
+- **`detachLibrary(doc, libraryId)`:** takes a library's records out of the file, one undo step:
+  they lose their tag in one transaction, then `bakeRemoved` removes them (the layers keep what
+  they showed, unlinked), so the sync never reads the removal as an edit to the library. Call it
+  after the file's link stops listing the library. Undoing it brings the records back tagged; while
+  the file doesn't use the library they go nowhere, and the next mirror bakes them out again.
+- **`libraryUsers(doc, libraryId)`:** the layers bound to the library's variables and styles (the
+  count a file shows before it stops using a library).

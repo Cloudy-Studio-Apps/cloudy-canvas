@@ -26,5 +26,14 @@
     "search": "Buscar variables",
     "empty": "Este archivo aún no tiene variables.",
     "noFit": "Ninguna variable encaja en este campo."
+  },
+  "source": {
+    "thisFile": "Este archivo",
+    "libraryBadge": "Biblioteca",
+    "localBadge": "Local",
+    "library": "Biblioteca",
+    "fromLibrary": "De la biblioteca “{name}”",
+    "sharedNote": "Editar un elemento de una biblioteca actualiza todos los archivos que la usan.",
+    "readOnlyNote": "Las bibliotecas del proyecto no están abiertas, así que sus elementos no se pueden editar aquí."
   }
 }

@@ -159,7 +159,8 @@
     "draft": "Draft",
     "saved": "Saved file",
     "notSaved": "Not saved yet",
-    "design": "Design"
+    "design": "Design",
+    "openProject": "Open {project} at this file's folder"
   },
   "import": {
     "figma": {

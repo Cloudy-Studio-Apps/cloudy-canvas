@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import type {
+  CollectionRecord,
   DocumentTokens,
   ImportChoice,
   ModeContext,
@@ -86,4 +87,50 @@ export interface ImportConflictsProps {
   names: readonly string[];
   choice: ImportChoice;
   onChoice: (choice: ImportChoice) => void;
+}
+
+/** Where a list's items come from: a project library, or the file itself (`libraryId: null`). */
+export interface TokenSource {
+  libraryId: string | null;
+  /** The library's name (empty for the file's own). */
+  name: string;
+  /** Its items can be edited here: the file's own always, a library's while its project is open. */
+  editable: boolean;
+}
+
+/** A source's items (`groupBySource`). */
+export interface TokenSourceGroup<T> {
+  source: TokenSource;
+  items: T[];
+}
+
+export interface TokenSourceHeaderProps {
+  source: TokenSource;
+  /** Under a library's heading, what editing its items does (default on). */
+  note?: boolean;
+  className?: string;
+}
+
+export interface LibraryBadgeProps {
+  /** The library's name, for its label. */
+  name: string;
+  className?: string;
+}
+
+/** A collection and its variables that fit, in `VariablePicker`. */
+export interface PickerCollectionEntry {
+  collection: CollectionRecord;
+  variables: VariableRecord[];
+}
+
+/** The picker's collections of one source (`null`: not grouped, a file with no libraries). */
+export interface PickerSourceGroup {
+  source: TokenSource | null;
+  items: PickerCollectionEntry[];
+}
+
+export interface PickerCollectionProps extends PickerCollectionEntry {
+  /** Its groups start open (search results). */
+  open: boolean;
+  render: (variable: VariableRecord) => ReactNode;
 }

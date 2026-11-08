@@ -431,5 +431,30 @@
     "extra_other": "También incluye {count} variables que usan las marcadas.",
     "emptyTitle": "Nada marcado",
     "emptyDescription": "Marca una colección, un grupo o un estilo para ver su archivo."
+  },
+  "move": {
+    "to": "Mover a la biblioteca “{library}”…",
+    "title": "¿Mover a “{library}”?",
+    "collection_one": "Mueve la colección “{collection}” con su {count} variable a “{library}”.",
+    "collection_other": "Mueve la colección “{collection}” con sus {count} variables a “{library}”.",
+    "style": "Mueve el estilo “{style}” a “{library}”.",
+    "shared": "Todos los archivos que usan la biblioteca lo reciben, y editarlo en cualquiera de ellos los actualiza todos.",
+    "confirm": "Mover",
+    "refusedTitle": "No se puede mover a “{library}”",
+    "refused": "Hace referencia a variables que se quedarían en este archivo: {names}. Muévelas primero o deja de hacer referencia a ellas.",
+    "failed": "No se pudo mover a la biblioteca"
+  },
+  "libraries": {
+    "title": "Bibliotecas",
+    "ofProject": "Bibliotecas de {project}",
+    "unavailable": "Las bibliotecas del proyecto no están abiertas, así que ahora no se pueden activar ni desactivar.",
+    "none": "Este proyecto aún no tiene bibliotecas.",
+    "unreadable": "{name} (no se puede leer)",
+    "hint": "Una biblioteca activada trae sus variables y estilos a este archivo.",
+    "leaveTitle": "¿Dejar de usar “{name}”?",
+    "leaveText_one": "{count} capa usa sus variables y estilos. Se seguirá viendo igual, desvinculada de la biblioteca.",
+    "leaveText_other": "{count} capas usan sus variables y estilos. Se seguirán viendo igual, desvinculadas de la biblioteca.",
+    "leave": "Dejar de usar",
+    "changeFailed": "No se pudieron cambiar las bibliotecas del archivo"
   }
 }

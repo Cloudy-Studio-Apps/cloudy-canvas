@@ -9,3 +9,4 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
 ## Library tags
 
 - **`libraryId`:** an optional field on every record (`ModeAxisRecord`, `CollectionRecord`, `VariableRecord`, `StyleRecord`, `GeneratorRecord`, `ScaleRecord`; accepted by `isTokenRecord`) marking a record mirrored from a project library (see [libraries/](../libraries/README.md)). The library itself stores records without it. Pasting keeps a record's tag only when the target file already has records of that library (`restoreTokens`); otherwise the pasted record becomes the file's own.
+- **A collection's source:** a collection's variables, generators and scales always come from where it does. `DocumentTokens` gives what it makes in a collection (`createVariables`, a generator's shades or a scale's steps, `saveGenerator`, `saveScale`) the collection's `libraryId` (`collectionSource`), so a variable added to a library's collection is the library's.

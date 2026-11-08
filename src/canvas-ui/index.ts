@@ -43,11 +43,16 @@ export {
 } from "./thumbnails";
 export type * from "./tokens";
 export {
+  groupBySource,
   ImportConflicts,
+  LibraryBadge,
   matchesScopes,
   TokenGroupAccordion,
+  tokenSources,
+  TokenSourceHeader,
   TokenSwatch,
   useDocumentTokens,
+  useTokenSources,
   VariableChip,
   VariablePicker,
   VariableValue,

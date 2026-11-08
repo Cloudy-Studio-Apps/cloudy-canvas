@@ -7,6 +7,12 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### New
 
+- A design's variables and styles show where they come from: each project library the file uses,
+  then the file's own, in the panel and in the variable picker. Choose which of the project's
+  libraries the file uses from the Libraries button in the Variables section (turning one off
+  keeps your layers looking the same), move your own variables, collections and styles to a
+  library with a right-click so every file of the project gets them, and jump to the file's
+  folder from the project name above the file's name.
 - Libraries in the project home: the Libraries tab shows each library with its colors, type sample
   and the files that use it, and a library's page lists its colors, text styles, images, SVGs and
   effects. Create a library empty, from a file's styles, from a copy of another library or from a

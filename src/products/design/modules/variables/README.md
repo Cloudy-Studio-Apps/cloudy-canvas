@@ -127,6 +127,33 @@ the controls that list and apply styles (`StyleControl`, `StyleChip`, `StyleRow`
 - **UI:** the Styles section lists them. `StyleControl` and `StyleChip` sit in the Fills, Strokes,
   Effects and Typography headers.
 
+### Project libraries (`ui/`, the engine in `canvas/libraries/`)
+
+A file of a project uses the project's libraries (see
+[canvas-ui/libraries/](../../../../canvas-ui/libraries/README.md)); their records are in the file,
+tagged with their library's id.
+
+- **Grouped by source:** the Variables section (`SidebarGroups` → `SidebarCollection`), the Styles
+  section (`StyleSourceList` per source) and the variable picker show each library the file uses
+  (`TokenSourceHeader`, `useTokenSources`, from `canvas-ui/tokens/`), then "This file". A library's
+  items carry `LibraryBadge`; they're edited as any while the project's libraries are open
+  (`ready`), and the edit reaches every file using the library. Otherwise their rows open nothing
+  (`VariableRow` and core's `StyleRow` with `readOnly`, no ↗ to the window) and the header says
+  why. A file with no library records looks as before.
+- **New variables:** "+" adds to the file's own first collection (a new one when it has none);
+  adding in a library's collection makes the library's (`collectionSource`).
+- **The file's libraries** (`FileLibrariesMenu`, `useFileLibraries`, the section's Libraries
+  button, files of a project only): each project library with a switch. The first change writes an
+  explicit `libraryIds` list into the file's link (a new file has `"all"`); turning one on lets the
+  sync mirror it in, and turning one off sets the link, then `detachLibrary` (one undo step), after
+  asking when layers use it (`libraryUsers`).
+- **Move to library** (`MoveToLibraryMenu`, the right-click menu of the file's own variables,
+  collection captions and styles, while the libraries are open): one item per library the file
+  uses. `planLibraryMove` says what goes (a variable takes its whole collection, which the
+  confirmation names with its count); one that reads variables staying in the file is refused with
+  a toast naming them. `moveToLibrary` tags the records and the library sync writes them to the
+  library.
+
 ### Design system view (phase 3, `../styleguide/`)
 
 The file's variables and styles drawn as a style guide that stays up to date.
