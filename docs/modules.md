@@ -48,6 +48,7 @@ plugins' modules leave it unset. `scripts/check-modules.mjs` reads it.
 | `plugins-tab`                                                                                                                  | Core    | the plugin manager                                                                |
 | `layer-export`                                                                                                                 | Core    | `exports` on every node, the Export section                                       |
 | `rectangle`, `ellipse`, `polygon`, `star`, `line`, `section`, `boolean`, `mask`, `image`                                       | Feature | kinds, tools and commands built on the core; the Figma import makes them          |
+| `model3d` (requires `rectangle`)                                                                                               | Feature | a 3D model layer; Convert to PNG makes a rectangle                                |
 | `sticker`, `shader-effect` (one effect type), `catalog` (a mode), `prototype` (a mode), `styleguide`, `assets`, `color-wizard` | Feature | built on the core and on each other                                               |
 
 ### Board

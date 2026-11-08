@@ -1,0 +1,19 @@
+{
+  "label": "3D model",
+  "description": "A 3D model shown as a picture; edit it in 3D to turn it.",
+  "commands": {
+    "edit": "Edit in 3D",
+    "convert": "Convert 3D model to PNG"
+  },
+  "menu": {
+    "edit": "Edit in 3D",
+    "convert": "Convert to PNG",
+    "place": "Place 3D model…"
+  },
+  "place": {
+    "failed": "Couldn't place the model"
+  },
+  "convert": {
+    "failed": "Couldn't convert the model"
+  }
+}

@@ -23,5 +23,6 @@ export * from "./layer-export";
 export * from "./auto-layout";
 export * from "./catalog";
 export * from "./sticker";
+export * from "./model3d";
 export * from "./styleguide";
 export * from "./color-wizard";

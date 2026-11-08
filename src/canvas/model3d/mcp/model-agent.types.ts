@@ -3,7 +3,7 @@ import type { ModelBaker, ModelData, ModelImport } from "../model3d.types";
 import type { Rect } from "../../geometry.types";
 
 /** What the shared model tool code needs of an agent's workspace. */
-export type ModelAgentWorkspace = Pick<CanvasWorkspace, "doc" | "service" | "getElement" | "kinds">;
+export type ModelAgentWorkspace = Pick<CanvasWorkspace, "doc" | "service" | "getElement">;
 
 /** What a model tool says in its messages: "board" or "design". */
 export type ModelFileNoun = "board" | "design";

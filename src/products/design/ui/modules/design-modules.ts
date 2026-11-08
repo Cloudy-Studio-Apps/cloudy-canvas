@@ -18,6 +18,7 @@ import { imageModule } from "@design/modules/image/image.module";
 import { layerExportModule } from "@design/modules/layer-export/layer-export.module";
 import { layersModule } from "@design/modules/layers/layers.module";
 import { lineModule } from "@design/modules/line/line.module";
+import { model3dModule } from "@design/modules/model3d/model3d.module";
 import { maskModule } from "@design/modules/mask/mask.module";
 import { pagesModule } from "@design/modules/pages/pages.module";
 import { pluginsTabModule } from "@design/modules/plugins-tab/plugins-tab.module";
@@ -69,6 +70,7 @@ let modules: AppModule[] = [
   selectionColorsModule,
   imageModule,
   stickerModule,
+  model3dModule,
   assetsModule,
   pluginsTabModule,
 ];
