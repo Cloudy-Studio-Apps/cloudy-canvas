@@ -238,6 +238,17 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
     drawFrame(view, el, this.geometry(el) ?? EMPTY_GEOMETRY, this.strokeOf(el), this.tag(el));
   }
 
+  /** A marquee selects a top-level frame only when it encloses it, so one inside picks its layers. */
+  override marqueeEncloses(el: FrameElement): boolean {
+    return el.parentId === null;
+  }
+
+  /** Its body is background; its name, above it, isn't. */
+  override backgroundAt(el: FrameElement, p: Point): boolean {
+    // A mirrored frame's box is the same box, so `p` needs no un-mirroring here.
+    return rectContainsPoint({ x: el.x, y: el.y, w: el.w, h: el.h }, p, 0);
+  }
+
   protected override hitsShape(el: FrameElement, p: Point, tolerance: number): boolean {
     if (super.hitsShape(el, p, tolerance)) return true;
     // `p` comes mirrored for a mirrored frame; its name isn't drawn mirrored.

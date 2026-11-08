@@ -1,5 +1,6 @@
 import { elementBounds, type CanvasElement, type ElementPatch } from "../elements";
 import { rectContainsPoint, rectFromPoints, unionRects } from "../geometry";
+import { pointInRotatedRect } from "../rotation";
 import { measureGaps } from "../snapping";
 import { cornerRotateCursor, resizeCursor, type Interaction, type ResizeMode } from "../handles";
 import { GuideDrag, guideCursor } from "./guide-drag";
@@ -24,6 +25,11 @@ export class SelectTool implements Tool {
   readonly editsOnDoubleClick: boolean = true;
   /** Whether dragging the selection moves it (a tool that only selects keeps it in place). */
   readonly movesSelection: boolean = true;
+  /**
+   * Whether a press on a background (a design frame's body holding layers, `selectTarget`) starts
+   * a selection box instead of picking it, as in Figma (a tool that picks those keeps it off).
+   */
+  readonly boxesOnBackground: boolean = true;
   private gesture: Gesture | null = null;
   /** Whether Alt + hover distances are on screen. */
   private measuring = false;
@@ -43,7 +49,7 @@ export class SelectTool implements Tool {
     // click on the same element may pick a new one, or extend it with Shift or Ctrl/Cmd.
     const partBefore = this.ctx.getPart();
     this.ctx.setPart(null);
-    const hit = this.ctx.targetAt(p.world, p.modKey);
+    const hit = this.ctx.targetAt(p.world, p.modKey, this.boxesOnBackground);
     this.ctx.setHover(null);
 
     if (!hit) {
@@ -54,6 +60,7 @@ export class SelectTool implements Tool {
     }
 
     let toggleOnClick: string | null = null;
+    let selectOnClick: string | null = null;
     const onlySelected = this.ctx.getSelection().size === 1 && this.ctx.getSelection().has(hit.id);
     // Shift-clicking the selected element extends its part when one is selected; otherwise Shift
     // adds or removes elements as usual.
@@ -63,7 +70,11 @@ export class SelectTool implements Tool {
       if (this.ctx.getSelection().has(hit.id)) toggleOnClick = hit.id;
       else this.ctx.setSelection([...this.ctx.getSelection(), hit.id]);
     } else if (!this.ctx.getSelection().has(hit.id)) {
-      this.ctx.setSelection([hit.id]);
+      // A press inside a selected element (e.g. on a layer of the selected frame) keeps it
+      // selected, so a drag moves it, as in Figma; a click without a drag selects what's hit.
+      // Ctrl/Cmd (deep select) always takes what's hit.
+      if (this.movesSelection && !p.modKey && this.insideSelection(p)) selectOnClick = hit.id;
+      else this.ctx.setSelection([hit.id]);
     }
 
     const origins = new Map<string, CanvasElement>();
@@ -81,6 +92,7 @@ export class SelectTool implements Tool {
       snapper: null,
       release: null,
       toggleOnClick,
+      selectOnClick,
       partOnClick,
       partBefore,
     };
@@ -150,6 +162,9 @@ export class SelectTool implements Tool {
       next.delete(g.toggleOnClick);
       this.ctx.setSelection(next);
     }
+    if (g?.kind === "move" && !g.started && g.selectOnClick) {
+      this.ctx.setSelection([g.selectOnClick]);
+    }
     if (g?.kind === "move" && !g.started && g.partOnClick) {
       const el = this.ctx.getElement(g.partOnClick);
       const click = { current: g.partBefore, shiftKey: p.shiftKey, modKey: p.modKey };
@@ -166,7 +181,7 @@ export class SelectTool implements Tool {
   onHover(p: CanvasPointer): void {
     const interaction = this.ctx.interactionAt(p.world);
     this.ctx.setCursor(interaction ? interactionCursor(interaction) : this.cursor);
-    const hit = this.ctx.targetAt(p.world, p.modKey);
+    const hit = this.ctx.targetAt(p.world, p.modKey, this.boxesOnBackground);
     this.measure(p.altKey ? hit : undefined);
     if (!hit && (interaction || this.keepsHover(p))) return;
     this.ctx.setHover(hit && !this.ctx.getSelection().has(hit.id) ? hit.id : null);
@@ -235,6 +250,19 @@ export class SelectTool implements Tool {
       this.measuring = false;
       this.ctx.setSnapFeedback(null);
     }
+  }
+
+  /** Whether the pointer is inside a selected element that isn't locked (where it shows). */
+  private insideSelection(p: CanvasPointer): boolean {
+    for (const id of this.ctx.getSelection()) {
+      const el = this.ctx.getElement(id);
+      if (!el || el.locked) continue;
+      const bounds = this.ctx.kinds.kindOf(el).bounds(el);
+      // A turned element turns round its top-left corner (x, y), as `elementBounds` reads it.
+      const box = el.rotation ? { ...bounds, x: el.x, y: el.y } : bounds;
+      if (pointInRotatedRect(p.world, box, el.rotation ?? 0)) return true;
+    }
+    return false;
   }
 
   /** Whether the pointer is still close enough to the hovered element to reach its handles. */

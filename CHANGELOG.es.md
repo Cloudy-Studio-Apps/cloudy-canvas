@@ -76,6 +76,13 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Mejoras
 
+- Los marcos ahora funcionan como en otras herramientas de diseño: arrastrar sobre el fondo de un
+  marco con capas dibuja un recuadro de selección para elegir las capas que contiene, y el marco
+  se selecciona por su nombre. Arrastrar dentro de un marco seleccionado lo mueve, aunque
+  presiones sobre una de sus capas, y un clic sin arrastrar sigue seleccionando esa capa. Enter selecciona las capas
+  que hay dentro de lo seleccionado y Mayús+Enter la capa que lo contiene, para moverte entre
+  niveles sin abrir el panel de capas.
+
 - Los editores de texto del esquema de base de datos y de los diagramas ER ahora muestran sus
   errores, avisos y sugerencias en español cuando la aplicación está en español. Las palabras clave
   del lenguaje que escribes, como Table, Entity o Relation, siguen siendo las mismas en todos los

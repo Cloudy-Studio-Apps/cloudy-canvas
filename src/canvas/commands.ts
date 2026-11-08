@@ -57,6 +57,7 @@ export function createCommands(
     toggleLock: () => engine.toggleLockSelection(),
     unlockAll: () => engine.unlockAll(),
     editSelection: () => engine.editSelection(),
+    selectParent: () => engine.selectParent(),
     cancel: () => engine.cancel(),
     zoomIn: () => engine.zoomIn(),
     zoomOut: () => engine.zoomOut(),

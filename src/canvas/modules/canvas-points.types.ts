@@ -1,6 +1,11 @@
 import type { ExtensionPoint, Shortcut } from "@shared/core";
 
-import type { CanvasProduct, CanvasScopes, SelectTargetRequest } from "../canvas-product.types";
+import type {
+  CanvasProduct,
+  CanvasScopes,
+  LayerTree,
+  SelectTargetRequest,
+} from "../canvas-product.types";
 import type { CanvasViewOptions } from "../canvas-view.types";
 import type { CanvasDocument, EditedChange } from "../document";
 import type { CanvasElement, ElementKind, ElementKinds, ElementPatch } from "../elements";
@@ -77,7 +82,7 @@ export type SelectTargetHook<O extends object> = (
   request: SelectTargetRequest,
   elements: readonly CanvasElement[],
   kinds: ElementKinds<O>,
-) => string;
+) => string | null;
 
 /** See `CanvasProduct.alignTarget`; only one module may decide it. */
 export type AlignTargetHook<O extends object> = (
@@ -186,6 +191,8 @@ export interface CanvasPoints<O extends object> {
   alignTarget: ExtensionPoint<AlignTargetHook<O>>;
   /** The top-level element one is drawn in (one module at most; two throw). */
   rootOf: ExtensionPoint<RootOfHook>;
+  /** Parents and children, for Enter and Shift+Enter (one module at most; two throw). */
+  layerTree: ExtensionPoint<LayerTree>;
   /** What the rulers measure (one module at most; two throw). */
   rulerFrame: ExtensionPoint<RulerFrameHook<O>>;
   /** The frames N and Shift+N step through (one module at most; two throw). */

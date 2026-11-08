@@ -33,9 +33,11 @@ export interface ToolContext<O extends object = object> {
   elementAt(world: Point): CanvasElement | undefined;
   /**
    * What a click at `world` selects (the product's `selectTarget`, e.g. the group around what's
-   * hit); `deep` (Ctrl/Cmd) selects what's hit itself.
+   * hit); `deep` (Ctrl/Cmd) selects what's hit itself. With `background`, a product may answer
+   * that a press there is on a background (a design frame's body) and picks nothing, so it
+   * starts a selection box.
    */
-  targetAt(world: Point, deep: boolean): CanvasElement | undefined;
+  targetAt(world: Point, deep: boolean, background?: boolean): CanvasElement | undefined;
   /** What selecting this element selects instead (e.g. its group), as `targetAt` does. */
   targetOf(id: string): string;
   /** An element as the scene sees it. */

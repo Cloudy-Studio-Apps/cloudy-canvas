@@ -66,6 +66,13 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### Improved
 
+- Frames now work as in other design tools: dragging on the background of a frame that holds
+  layers draws a selection box to pick the layers inside, and the frame itself is selected by its
+  name. Dragging inside a selected frame moves it, even when you press on a layer in it, and a
+  click without dragging still selects that layer. Enter selects the layers inside what's
+  selected and Shift+Enter selects the layer that holds it, so you can move between levels without
+  the Layers panel.
+
 - The database schema and ER diagram text editors now show their errors, warnings and suggestions
   in Spanish when the app is in Spanish. The language keywords you write, such as Table, Entity or
   Relation, stay the same in every language.
