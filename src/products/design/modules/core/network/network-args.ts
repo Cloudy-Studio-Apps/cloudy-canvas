@@ -14,7 +14,8 @@ export const NETWORK_SCHEMA = {
     "Vector: points joined by bezier segments, relative to the vector's x, y. vertices: [{x, y}]; " +
     "segments: [{start, end, tangentStart?, tangentEnd?}] (vertex indexes, tangents relative to " +
     "their vertex, omitted for straight); regions: [{loops: [[segment indexes]], fills?}] are " +
-    "filled, each with its own fills ([paint], as a layer's fills) or, without them, the vector's.",
+    "filled, each with its own fills ([paint], as a layer's fills) or, without them, the vector's; " +
+    "keep a region's id when sending a network back, so what is bound to it follows it.",
   properties: {
     vertices: { type: "array", items: { type: "object" } },
     segments: { type: "array", items: { type: "object" } },
@@ -62,8 +63,9 @@ function readRegion(value: unknown, key: string, segmentCount: number): VectorRe
   if (!WINDING_RULES.includes(windingRule)) {
     throw new Error(`"${key}.windingRule" must be one of: ${WINDING_RULES.join(", ")}.`);
   }
-  if (r.fills === undefined) return { loops, windingRule };
-  return { loops, windingRule, fills: readPaints(r.fills, `${key}.fills`, true) };
+  const id = typeof r.id === "string" && r.id ? { id: r.id } : {};
+  if (r.fills === undefined) return { loops, windingRule, ...id };
+  return { loops, windingRule, fills: readPaints(r.fills, `${key}.fills`, true), ...id };
 }
 
 function list(value: unknown, key: string): unknown[] {

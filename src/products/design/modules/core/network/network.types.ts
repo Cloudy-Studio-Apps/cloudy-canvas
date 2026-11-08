@@ -27,6 +27,11 @@ export interface VectorRegion {
    * (but stays an area that can be selected and filled again).
    */
   fills?: Paint[];
+  /**
+   * The area's id among its vector's (`withRegionIds`), which edits keep, so picks and bindings
+   * find it whatever renumbers the regions. Older files get ids from their places when read.
+   */
+  id?: string;
 }
 
 /**

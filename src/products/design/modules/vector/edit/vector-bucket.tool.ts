@@ -1,6 +1,6 @@
 import type { CanvasPointer } from "@canvas";
 
-import { faceAt, placeNetwork, solidPaint, toggleRegion } from "../../core";
+import { faceAt, placeNetwork, solidPaint, toggleRegion, withRegionIds } from "../../core";
 import { areaBindingsPatch } from "../vector-area-bindings";
 import { VectorEditTool } from "./vector-edit.tool";
 import { VECTOR_TOOLS } from "./vector-tools";
@@ -21,7 +21,7 @@ export class VectorBucketTool extends VectorEditTool {
     if (!el) return this.leave();
     const face = faceAt(el.network, this.local(el, p.world));
     if (!face) return;
-    const network = toggleRegion(el.network, face.loop);
+    const network = withRegionIds(toggleRegion(el.network, face.loop));
     this.ctx.doc.checkpoint();
     this.ctx.doc.update(el.id, {
       ...placeNetwork(el, network),

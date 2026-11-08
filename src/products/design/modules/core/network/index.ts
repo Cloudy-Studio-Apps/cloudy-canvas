@@ -35,3 +35,4 @@ export {
   regionIndexMap,
   regionOfFillsPath,
 } from "./region-fill-paths";
+export { withLegacyRegionIds, withRegionIds } from "./region-ids";

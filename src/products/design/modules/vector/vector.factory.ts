@@ -3,6 +3,7 @@ import {
   placeNetwork,
   polylineNetwork,
   solidPaint,
+  withRegionIds,
   type VectorNetwork,
 } from "../core";
 import { VECTOR_DEFAULTS } from "./vector.defaults";
@@ -20,7 +21,7 @@ export function createVector(
   parentId: string | null,
   look: VectorLook = {},
 ): VectorElement {
-  const { network: placed, ...rect } = placeNetwork({ x: 0, y: 0 }, network);
+  const { network: placed, ...rect } = placeNetwork({ x: 0, y: 0 }, withRegionIds(network));
   // Only the look's fields: callers pass whole nodes, whose type, id and place aren't the vector's.
   const { fills = [], strokes, strokeWeight } = look;
   return {

@@ -21,6 +21,7 @@ import {
   segmentsAt,
   tangentAt,
   vertexAt,
+  withRegionIds,
   type VectorNetwork,
 } from "../../core";
 import { areaBindingsPatch } from "../vector-area-bindings";
@@ -106,9 +107,10 @@ export abstract class VectorEditTool implements Tool {
    * its areas follow them when areas were added or removed.
    */
   protected write(origin: VectorElement, network: VectorNetwork): void {
+    const next = withRegionIds(network);
     this.ctx.doc.update(origin.id, {
-      ...placeNetwork(origin, network),
-      ...areaBindingsPatch(origin, network),
+      ...placeNetwork(origin, next),
+      ...areaBindingsPatch(origin, next),
     });
   }
 

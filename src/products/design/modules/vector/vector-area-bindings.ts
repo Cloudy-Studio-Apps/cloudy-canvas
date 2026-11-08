@@ -23,17 +23,17 @@ import type { VectorElement } from "./vector.types";
 import { t } from "./vector.i18n";
 
 /**
- * What variables and styles can drive on a vector's areas: each area's fills a color style (it
- * then gets fills of its own), and the colors of an area's own fills variables, as a layer's.
+ * What variables and styles can drive on a vector's areas with fills of their own (the others
+ * show the layer's, which its own fields drive): their fills a color style, their colors
+ * variables, as a layer's. The Fills section gives an area its own fills before a style.
  */
 export function areaBindable(el: VectorElement, scopes: TokenScope[]): BindableField[] {
   return el.network.regions.flatMap((region, i) => {
+    if (!region.fills) return [];
     const path = regionFillsPath(i);
     return [
       paintStyleField(path, t("bindable.areaFillStyle", { index: i + 1 })),
-      ...(region.fills
-        ? paintBindable(region.fills, path, scopes, t("bindable.areaFill", { index: i + 1 }))
-        : []),
+      ...paintBindable(region.fills, path, scopes, t("bindable.areaFill", { index: i + 1 })),
     ];
   });
 }

@@ -29,6 +29,8 @@ import {
   regionPaints,
   regionShapes,
   scaleNetwork,
+  withLegacyRegionIds,
+  withRegionIds,
   type FlipAxis,
   type NodeBuildContext,
   type NodeGeometry,
@@ -195,40 +197,37 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
   }
 
   /**
-   * A new `network` (relative to x, y) re-wraps the vector's box around what it draws, and the
-   * variables and styles on its areas follow the areas when an edit adds or removes some.
+   * A new `network` (relative to x, y) re-wraps the vector's box around what it draws, its areas
+   * get ids (an agent may leave them out), and the variables and styles on its areas follow them
+   * when the edit adds or removes some.
    */
   override completePatch(
     el: VectorElement,
     patch: ElementPatch<VectorElement>,
     context: ElementBuildContext,
   ): ElementPatch<VectorElement> {
-    const next =
-      "network" in patch
-        ? {
-            ...patch,
-            ...("bindings" in patch
-              ? {}
-              : areaBindingsPatch(el, readNetwork(patch.network, "network"))),
-            ...placeNetwork(
-              {
-                x: patch.x ?? el.x,
-                y: patch.y ?? el.y,
-                rotation: patch.rotation ?? el.rotation ?? 0,
-                w: el.w,
-                mirrored: patch.mirrored ?? el.mirrored ?? false,
-              },
-              readNetwork(patch.network, "network"),
-            ),
-          }
-        : patch;
+    if (!("network" in patch) || !patch.network) return super.completePatch(el, patch, context);
+    const network = withRegionIds(readNetwork(patch.network, "network"));
+    const origin = {
+      x: patch.x ?? el.x,
+      y: patch.y ?? el.y,
+      rotation: patch.rotation ?? el.rotation ?? 0,
+      w: el.w,
+      mirrored: patch.mirrored ?? el.mirrored ?? false,
+    };
+    const next = {
+      ...patch,
+      ...("bindings" in patch ? {} : areaBindingsPatch(el, network)),
+      ...placeNetwork(origin, network),
+    };
     return super.completePatch(el, next, context);
   }
 
   /** Pencil lines from before networks stored `points`: they become an open chain. */
   override fillDefaults(el: VectorElement): VectorElement {
     const old = el as VectorElement & { points?: number[] };
-    const network = el.network ?? polylineNetwork(old.points ?? []);
+    // Areas saved before they had ids get them from their places, the same at every read.
+    const network = withLegacyRegionIds(el.network ?? polylineNetwork(old.points ?? []));
     return {
       ...super.fillDefaults(el),
       network,
