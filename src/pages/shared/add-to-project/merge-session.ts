@@ -8,7 +8,7 @@ import {
 } from "@canvas";
 import { LibraryHub, type OpenedHub } from "@canvas-ui";
 import { projectFs, storage } from "@platform";
-import { displayName, fileNameFromPath, type FileInfo, type ProjectRecord } from "@shared/core";
+import { baseNameFromPath, displayName, type FileInfo, type ProjectRecord } from "@shared/core";
 import { notifyError } from "@shared/stores/toast-store";
 import { libraryColorList } from "@pages/shared/projects";
 import { t } from "./add-to-project.i18n";
@@ -156,7 +156,7 @@ export class MergeSession {
     if (path !== file.path && !file.draft) {
       try {
         const bytes = await projectFs.readBytes(file.path);
-        await projectFs.copyToTrash(project.root, fileNameFromPath(file.path), bytes);
+        await projectFs.copyToTrash(project.root, baseNameFromPath(file.path), bytes);
         await projectFs.removeFile(file.path);
       } catch (error) {
         notifyError(t("failed.original", { path: file.path }), error);
