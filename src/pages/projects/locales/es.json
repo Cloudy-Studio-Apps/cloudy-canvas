@@ -58,6 +58,10 @@
     "cancel": "Cancelar",
     "create": "Crear proyecto",
     "creating": "Creando…",
-    "createFailed": "No se pudo crear el proyecto"
+    "createFailed": "No se pudo crear el proyecto",
+    "icon": "Elegir imagen…",
+    "iconRemove": "Usar iniciales",
+    "iconPick": "Elige el icono del proyecto",
+    "iconHint": "Opcional. Sin imagen, el proyecto muestra sus iniciales."
   }
 }

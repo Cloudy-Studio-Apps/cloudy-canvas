@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { defaultProjectsFolder, pickFolder, projectFs } from "@platform";
-import { isReservedName } from "@shared/core";
+import { defaultProjectsFolder, pickFolder, pickImageFiles, projectFs } from "@platform";
+import { isReservedName, type ImageFile } from "@shared/core";
 import { notifyError } from "@shared/stores/toast-store";
 import { projectRootFor } from "./create-project";
 import { randomProjectColor } from "./project-colors";
@@ -11,6 +11,7 @@ import { t } from "./projects.i18n";
 export function useNewProjectForm() {
   const [name, setName] = useState("");
   const [color, setColor] = useState(randomProjectColor);
+  const [iconImage, setIconImage] = useState<ImageFile | null>(null);
   const [parent, setParent] = useState<string | null>(null);
   // The folder known to exist already, so `taken` follows the name without resetting anything.
   const [takenRoot, setTakenRoot] = useState<string | null>(null);
@@ -48,7 +49,19 @@ export function useNewProjectForm() {
     }
   };
 
+  const pickIcon = async () => {
+    try {
+      const [picked] = await pickImageFiles({ title: t("dialog.iconPick"), multiple: false });
+      if (picked) setIconImage(picked);
+    } catch (error) {
+      notifyError(t("dialog.createFailed"), error);
+    }
+  };
+
   return {
+    iconImage,
+    pickIcon,
+    clearIcon: () => setIconImage(null),
     name,
     setName,
     color,

@@ -7,6 +7,14 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Novedades
 
+- Inicio del proyecto: abre un proyecto para ver y organizar sus archivos en carpetas. Arriba están
+  la portada, el icono y el nombre del proyecto, con sus archivos, bibliotecas y la última edición.
+  Crea diseños y pizarras en la carpeta donde estás, crea carpetas y ponles color, y arrastra
+  archivos y carpetas sobre otras carpetas (o usa Mover a…) para organizarlos; los archivos que
+  moviste siguen apareciendo en los archivos recientes de Inicio. La pestaña Archivos muestra los
+  más recientes, busca en la carpeta actual y en las de dentro, los ordena y los presenta en
+  cuadrícula o en lista. Desde el menú del proyecto puedes renombrarlo, elegir su icono y su color,
+  cambiar la portada o exportar todo el proyecto como .zip.
 - Proyectos: reúne las pizarras y los diseños de un cliente en una sola carpeta de tu ordenador. La
   nueva página de Proyectos, que se abre desde Inicio, lista tus proyectos con su color, su tamaño y
   cuándo los abriste por última vez; crea uno desde Inicio o desde esa página, abre uno existente

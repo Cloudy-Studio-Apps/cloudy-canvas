@@ -14,6 +14,7 @@ import {
 } from "@shared/ui/kit";
 import { notifyError } from "@shared/stores/toast-store";
 import { createProject } from "../create-project";
+import { useImageUrl } from "../use-project-image";
 import { useNewProjectForm } from "../use-new-project-form";
 import { ProjectIcon } from "./project-icon";
 import type { NewProjectDialogProps } from "./new-project-dialog.types";
@@ -28,6 +29,7 @@ export function NewProjectDialog(props: NewProjectDialogProps) {
 function NewProjectForm({ open, onOpenChange, onCreated }: NewProjectDialogProps) {
   const form = useNewProjectForm();
   const [creating, setCreating] = useState(false);
+  const iconUrl = useImageUrl(form.iconImage);
 
   const create = async () => {
     if (!form.ready || form.parent === null) return;
@@ -37,6 +39,7 @@ function NewProjectForm({ open, onOpenChange, onCreated }: NewProjectDialogProps
         name: form.name,
         color: form.color,
         icon: null,
+        iconImage: form.iconImage,
         parent: form.parent,
         firstLibrary: "empty",
       });
@@ -89,14 +92,22 @@ function NewProjectForm({ open, onOpenChange, onCreated }: NewProjectDialogProps
             />
           )}
         </Field>
-        <Field label={t("dialog.color")}>
+        <Field label={t("dialog.color")} hint={t("dialog.iconHint")}>
           <div className="flex items-center gap-2">
-            <ProjectIcon name={form.name || " "} color={form.color} />
+            <ProjectIcon name={form.name || " "} color={form.color} image={iconUrl} />
             <ColorPopover
               color={form.color}
               label={t("dialog.colorLabel")}
               onChange={(next) => form.setColor(next.color)}
             />
+            <Button type="button" variant="outline" size="sm" onClick={() => void form.pickIcon()}>
+              {t("dialog.icon")}
+            </Button>
+            {form.iconImage && (
+              <Button type="button" variant="ghost" size="sm" onClick={form.clearIcon}>
+                {t("dialog.iconRemove")}
+              </Button>
+            )}
           </div>
         </Field>
         <Field

@@ -7,6 +7,13 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### New
 
+- Project home: open a project to browse and organize its files in folders. A cover, the project's
+  icon and name sit on top, with its files, libraries and last edit. Make designs and boards in the
+  folder you are in, create folders and color them, and drag files and folders onto other folders
+  (or use Move to…) to organize them; files you moved still show up in Recent files on Home. The
+  Files tab lists the newest files, searches the current folder and below, sorts them, and shows a
+  grid or a list. Rename the project, choose its icon and color, change the cover or export the whole
+  project as a .zip from the project's menu.
 - Projects: group a client's boards and designs in one folder on your computer. The new Projects
   page, opened from Home, lists your projects with their color, size and when you last opened them;
   create one from Home or from that page, open an existing one from its folder or its project file,

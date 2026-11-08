@@ -1,4 +1,135 @@
 {
   "back": "Projects",
-  "notFound": "This project isn't on this device's list."
+  "notFound": "This project isn't on this device's list.",
+  "justNow": "just now",
+  "scanFailed": "A folder of the project couldn't be read",
+  "page": {
+    "missingTitle": "The project's folder wasn't found",
+    "missingText": "It was moved or deleted. Locate it again to keep working.",
+    "locate": "Locate…",
+    "locateFailed": "The project couldn't be located"
+  },
+  "header": {
+    "files_one": "{count} file",
+    "files_other": "{count} files",
+    "libraries_one": "{count} library",
+    "libraries_other": "{count} libraries",
+    "edited": "Edited {time}",
+    "reveal": "Show the project's folder",
+    "pin": "Pin to top",
+    "unpin": "Unpin"
+  },
+  "new": {
+    "button": "New",
+    "design": "New design",
+    "board": "New board",
+    "folder": "New folder"
+  },
+  "tabs": {
+    "files": "Files",
+    "libraries": "Libraries",
+    "trash": "Trash"
+  },
+  "soon": {
+    "librariesTitle": "Libraries are coming",
+    "librariesText": "A library will hold the project's colors, text styles and images.",
+    "trashTitle": "Trash is coming",
+    "trashText": "Files you delete from the project will wait here before they are gone."
+  },
+  "cover": {
+    "change": "Change cover",
+    "image": "Choose an image…",
+    "colors": "Use the project's colors",
+    "pick": "Choose the cover image",
+    "failed": "The cover couldn't be changed"
+  },
+  "more": {
+    "label": "Project actions",
+    "rename": "Rename project…",
+    "appearance": "Icon and color…",
+    "reveal": "Show in folder",
+    "export": "Export as .zip",
+    "exporting": "Exporting the project…",
+    "exported": "Project exported",
+    "exportFailed": "The project couldn't be exported",
+    "zipLabel": "ZIP archive",
+    "forget": "Remove from list",
+    "forgotten": "“{name}” was removed from the list. Its folder is untouched."
+  },
+  "rename": {
+    "title": "Rename project",
+    "description": "Changes the project's name and its project file. The folder keeps its name.",
+    "name": "Name",
+    "cancel": "Cancel",
+    "save": "Rename",
+    "invalid": "That name can't be used.",
+    "taken": "A project file with that name already exists.",
+    "failed": "The project couldn't be renamed"
+  },
+  "appearance": {
+    "title": "Icon and color",
+    "description": "The mark that stands for the project in lists.",
+    "label": "Mark",
+    "colorLabel": "Project color",
+    "choose": "Choose image…",
+    "remove": "Use initials",
+    "pick": "Choose the project's icon",
+    "cancel": "Cancel",
+    "save": "Save",
+    "failed": "The icon and color couldn't be saved"
+  },
+  "tree": {
+    "files": "Files",
+    "all": "All files",
+    "expand": "Expand {name}",
+    "collapse": "Collapse {name}"
+  },
+  "folder": {
+    "new": "New folder",
+    "newName": "New folder",
+    "open": "Open folder {name}",
+    "more": "More actions for {name}",
+    "color": "Color of {name}",
+    "colorLabel": "{name} color",
+    "colorReset": "Back to the default color"
+  },
+  "file": {
+    "open": "Open {name}",
+    "more": "More actions for {name}"
+  },
+  "files": {
+    "recent": "Recently edited",
+    "search": "Search this project",
+    "sort": "Sort by",
+    "sortEdited": "Last edited",
+    "sortName": "Name",
+    "view": "View",
+    "viewGrid": "Grid",
+    "viewList": "List",
+    "noMatches": "Nothing matches “{query}”.",
+    "emptyTitle": "{name} is empty",
+    "emptyDescription": "Make a design or a board with New, or drag files here from another folder."
+  },
+  "menu": {
+    "open": "Open",
+    "rename": "Rename",
+    "move": "Move to…",
+    "duplicate": "Duplicate",
+    "reveal": "Show in folder"
+  },
+  "move": {
+    "title": "Move “{name}” to…",
+    "description": "Pick the folder to move it into.",
+    "cancel": "Cancel",
+    "confirm": "Move here"
+  },
+  "actions": {
+    "openFailed": "The file couldn't be opened",
+    "createFolderFailed": "The folder couldn't be created",
+    "renameFailed": "It couldn't be renamed",
+    "moveFailed": "It couldn't be moved",
+    "duplicateFailed": "It couldn't be duplicated",
+    "revealFailed": "It couldn't be shown in its folder",
+    "updateFailed": "The change couldn't be saved"
+  }
 }

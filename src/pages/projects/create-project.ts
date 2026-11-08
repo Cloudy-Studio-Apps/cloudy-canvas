@@ -11,6 +11,7 @@ import {
 } from "@shared/core";
 import { useProjectsStore } from "@shared/stores/projects-store";
 import type { CreateProjectInput } from "./create-project.types";
+import { writeProjectImage } from "./project-images";
 
 /** The project's folder: `name` inside `parent`. */
 export function projectRootFor(parent: string, name: string): string {
@@ -41,7 +42,7 @@ export async function createProject(input: CreateProjectInput): Promise<ProjectR
     id: createId(),
     name,
     color: input.color,
-    icon: input.icon,
+    icon: input.iconImage ? await writeProjectImage(root, "icon", input.iconImage) : input.icon,
     cover: null,
     libraries: [],
     folders: {},

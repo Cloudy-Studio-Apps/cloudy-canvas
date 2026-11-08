@@ -58,6 +58,10 @@
     "cancel": "Cancel",
     "create": "Create project",
     "creating": "Creating…",
-    "createFailed": "The project couldn't be created"
+    "createFailed": "The project couldn't be created",
+    "icon": "Choose image…",
+    "iconRemove": "Use initials",
+    "iconPick": "Choose the project's icon",
+    "iconHint": "Optional. Without an image the project shows its initials."
   }
 }
