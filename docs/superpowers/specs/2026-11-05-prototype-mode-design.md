@@ -91,6 +91,13 @@ resizes the screen.
 - Toolbar: Select, Hand, Connect | Add flow start (Shift+F) | Play (Ctrl+Enter).
 - Delete removes the selected layers' interactions, never the layers (its menu label says
   "Remove interactions"); layers are deleted in the Design mode.
+- A press on a screen's empty area **selects the screen** (decided with the user, 2026-11-08). The
+  Design mode differs: since "select inside frames" there, the same press starts a selection box.
+  In this mode screens are the second most common target (flow start, a screen's own triggers,
+  "Links to this screen") and the drop target of a dragged link, while a selection box is rarely
+  needed (Shift+click covers multi-select for Delete). The name label and Shift+Enter (select
+  parent) work in both modes. `PrototypeSelectTool` gets this by passing `SelectTool` a context
+  whose `targetAt(world)` is always `targetAt(world, true)`, never asking for the background.
 - `prototype.toggle` (Shift+E), a product host command, switches between Design and Prototype
   from either mode.
 - Rail: a **Flows** tab, `keep: ["layers"]`.

@@ -10,6 +10,33 @@
 
 **Spec:** [docs/superpowers/specs/2026-11-05-prototype-mode-design.md](../specs/2026-11-05-prototype-mode-design.md). Mockup: [docs/prototype/prototype-mode.html](../../prototype/prototype-mode.html) (the look and the copy; open it next to each UI task).
 
+## Status (2026-11-08)
+
+- **Where:** local branch `prototype-mode` in the sibling worktree
+  `/home/mcris112/Storage/Projects/CloudyStudio/cloudy-canvas-prototype` (the user asked for a local
+  branch; another session uses master's folder). Run subagent-driven; implementer models per task
+  tag, task reviews Sonnet, small re-reviews Haiku (or checked directly), final review Opus. No
+  co-author lines. Never pushed.
+- **Ledger:** `.superpowers/sdd/2026-11-05-prototype-mode/progress.md` in that worktree
+  (git-ignored): every task's commits, rulings and deferred minors.
+- **Phase 1 (Tasks 1–4): done** (`fbccb553..c72f29e6`), merged with master in `e7eaeef9`
+  (changelog conflicts resolved keeping every entry; master's new selection colors section lost
+  its `tab` field), and master fast-forwarded to it on 2026-11-08. The user won't release until
+  this plan and the projects plan are both done, so a half-built mode on master is fine.
+- **Next:** Phase 2, starting at Task 5. Stop after each phase for the user's go-ahead.
+- **Carry into later tasks:**
+  - `readInteraction` rejects an interaction without a non-empty `id`. Task 5's +, Task 7's drop
+    and Task 10's `set_interactions` (which takes entries without ids) must give each one
+    `createId()` before validating.
+  - Task 9: the flow flag's title uses `canvas.flagTitle` ("Select {name}") until the player
+    exists; switch it to the play wording and make the click play.
+  - A press on a screen's empty area selects the screen in this mode (spec, "The mode"; decided
+    with the user). Keep it in Task 7's handle hit test.
+- **Known gap, outside this plan:** deleting a design page through `DESIGN_PAGES.remove` (Pages
+  panel, `delete_page`) never runs `onRemove`, so that page's flows and links into its screens
+  stay (brochures have the same gap). It belongs in the core pages module.
+- **Deferred minors for the final review:** listed in the ledger (`minor (deferred)` lines).
+
 ## Global Constraints
 
 - Follow every rule in `CLAUDE.md`; read `docs/modules.md` and the READMEs of the folders you touch (and parents up to `src/`) before changing code, and update them in the same task.
