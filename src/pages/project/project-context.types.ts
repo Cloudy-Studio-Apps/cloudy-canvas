@@ -7,6 +7,10 @@ import type {
   ProjectRecord,
   TrashEntry,
 } from "@shared/core";
+import type { LibraryKind } from "./libraries/library-kinds.types";
+import type { LibraryActions } from "./libraries/use-library-actions.types";
+import type { ProjectLibraryDocs } from "./libraries/use-project-library-docs.types";
+import type { ProjectTab } from "./components/project-tabs.types";
 import type { UseProject } from "./use-project.types";
 import type { ProjectTrash } from "./use-project-trash.types";
 
@@ -33,11 +37,35 @@ export interface ProjectActions {
   setFolderColor: (rel: string, color: string | null) => Promise<void>;
 }
 
+/** Moving between a library's page and a kind's view (the URL's `library` and `kind`). */
+export interface ProjectNav {
+  /** The Libraries tab: one library's page, or `null` for all of them. */
+  openLibrary: (id: string | null) => void;
+  /** The Content view of one kind across the libraries. */
+  openKind: (kind: LibraryKind) => void;
+}
+
 export interface ProjectContextValue {
   /** The project's record and manifest, read. */
   record: ProjectRecord;
   manifest: ProjectManifest;
   project: UseProject;
+  /** The tab shown (the URL's `tab`; Files without one). */
+  tab: ProjectTab;
+  setTab: (tab: ProjectTab) => void;
+  /** The library open on the Libraries tab, if any (`?library=`). */
+  libraryId: string | null;
+  /** The kind shown on the Content view (`?kind=`). */
+  kind: LibraryKind | null;
+  nav: ProjectNav;
+  /** The project's libraries, read while the home is shown. */
+  libs: ProjectLibraryDocs;
+  libraryActions: LibraryActions;
+  /** The New library dialog is open. */
+  newLibraryOpen: boolean;
+  setNewLibraryOpen: (open: boolean) => void;
+  /** How many boards and designs the project holds, `null` while counted. */
+  fileCount: number | null;
   /** The folder open in the Files tab (`""` is the root). */
   folder: string;
   setFolder: (rel: string) => void;

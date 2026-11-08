@@ -6,7 +6,7 @@ import {
   type TokenRecord,
 } from "@canvas";
 import { BUILT_IN_TOKEN_FORMATS, readTokenSource } from "@design";
-import type { FirstLibrarySource } from "./create-project.types";
+import type { FirstLibrarySource } from "./first-library.types";
 
 const FILE_KINDS: Record<string, CanvasFileKind> = {
   CCDS: { magic: "CCDS", noun: "design" },

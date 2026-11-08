@@ -12,9 +12,8 @@ import {
 } from "@shared/core";
 import { useProjectsStore } from "@shared/stores/projects-store";
 import type { CreateProjectInput } from "./create-project.types";
-import { firstLibraryRecords } from "./first-library";
 import { t } from "./projects.i18n";
-import { writeProjectImage } from "@pages/shared/projects";
+import { firstLibraryRecords, writeProjectImage } from "@pages/shared/projects";
 
 /** The project's folder: `name` inside `parent`. */
 export function projectRootFor(parent: string, name: string): string {

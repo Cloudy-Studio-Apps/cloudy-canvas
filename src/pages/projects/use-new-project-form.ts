@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 
-import { openFile, pickFolder, pickImageFiles, projectFs } from "@platform";
+import { pickFolder, pickImageFiles, projectFs } from "@platform";
 import { isReservedName, type ImageFile } from "@shared/core";
 import { resolveProjectsFolder } from "@shared/stores/projects-settings-store";
 import { notifyError } from "@shared/stores/toast-store";
 import { projectRootFor } from "./create-project";
-import type { FirstLibrarySource } from "./create-project.types";
-import { firstLibraryRecords } from "./first-library";
-import type { StylesSource, StylesSourceKind } from "./use-new-project-form.types";
-import { randomProjectColor } from "@pages/shared/projects";
+import {
+  librarySourceOf,
+  pickStylesSource,
+  randomProjectColor,
+  type StylesSource,
+  type StylesSourceKind,
+} from "@pages/shared/projects";
 import { t } from "./projects.i18n";
 
 /** The New project dialog's fields and what's wrong with them. Mount it when the dialog opens. */
@@ -70,29 +73,19 @@ export function useNewProjectForm() {
       return;
     }
     try {
-      const picked = await openFile(
-        kind === "file"
-          ? {
-              title: t("dialog.stylesPickFile"),
-              filters: [{ name: t("dialog.filterDesignBoard"), extensions: ["cdesign", "cboard"] }],
-            }
-          : {
-              title: t("dialog.stylesPickTokens"),
-              filters: [{ name: t("dialog.filterJson"), extensions: ["json"] }],
-            },
-      );
-      if (!picked) return;
-      const source = sourceOf(kind, picked.bytes);
-      // Reading it now flags a file that has no styles to give before the project is created.
-      firstLibraryRecords(source);
-      setStyles({ kind, name: picked.name, bytes: picked.bytes });
+      const source = await pickStylesSource(kind, {
+        pickFile: t("dialog.stylesPickFile"),
+        pickTokens: t("dialog.stylesPickTokens"),
+        filterDesignBoard: t("dialog.filterDesignBoard"),
+        filterJson: t("dialog.filterJson"),
+      });
+      if (source) setStyles(source);
     } catch (error) {
       notifyError(t("dialog.stylesReadFailed"), error);
     }
   };
 
-  const firstLibrary: FirstLibrarySource =
-    styles.kind === "empty" ? "empty" : sourceOf(styles.kind, styles.bytes);
+  const firstLibrary = librarySourceOf(styles);
 
   return {
     styles,
@@ -112,8 +105,4 @@ export function useNewProjectForm() {
     taken,
     ready: parent !== null && trimmed !== "" && !invalid && !taken,
   };
-}
-
-function sourceOf(kind: Exclude<StylesSourceKind, "empty">, bytes: Uint8Array): FirstLibrarySource {
-  return kind === "file" ? { fromFile: bytes } : { fromTokensJson: bytes };
 }

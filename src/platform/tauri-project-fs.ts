@@ -15,6 +15,7 @@ import {
   fileTypeFromPath,
   isReservedName,
   joinRelative,
+  LIBRARIES_DIR,
   parseManifest,
   parseTrashIndex,
   PROJECT_DATA_DIR,
@@ -44,6 +45,16 @@ const encoder = new TextEncoder();
 /** Whether a relative path is the data folder or inside it. */
 function insideDataFolder(rel: string): boolean {
   return rel.split("/")[0]?.toLowerCase() === PROJECT_DATA_DIR;
+}
+
+/** Whether a relative path is a library's file or `.assets` folder, which the trash takes. */
+function isLibraryItem(rel: string): boolean {
+  const parts = rel.split("/");
+  return (
+    parts.length === 3 &&
+    parts[0]?.toLowerCase() === PROJECT_DATA_DIR &&
+    parts[1]?.toLowerCase() === LIBRARIES_DIR
+  );
 }
 
 /** Projects on disk through the Tauri file system plugin. */
@@ -118,7 +129,9 @@ export class TauriProjectFs implements ProjectFs {
   }
 
   async toTrash(root: string, rel: string): Promise<TrashEntry> {
-    if (insideDataFolder(rel)) throw new Error("The project data folder can't be deleted.");
+    if (insideDataFolder(rel) && !isLibraryItem(rel)) {
+      throw new Error("The project data folder can't be deleted.");
+    }
     const paths = projectPaths(root);
     const source = joinRelative(root, rel);
     const info = await stat(source);

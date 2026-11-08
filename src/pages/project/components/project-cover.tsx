@@ -9,16 +9,17 @@ import {
   DropdownMenuTrigger,
 } from "@shared/ui/kit";
 import { notifyError } from "@shared/stores/toast-store";
-import { writeProjectImage, useProjectImage } from "@pages/shared/projects";
+import { LibraryStrip, writeProjectImage, useProjectImage } from "@pages/shared/projects";
 import { useProjectContext } from "../project-context";
 import { t } from "../project.i18n";
 
 /**
  * The band across the top of the project home: the manifest's cover image, else a band of the
- * project's color (the libraries' colors take its place once a project has libraries).
+ * first library's colors, else of the project's color.
  */
 export function ProjectCover() {
-  const { record, manifest, project } = useProjectContext();
+  const { record, manifest, project, libs } = useProjectContext();
+  const colors = (libs.summaries[0]?.colors ?? []).slice(0, 8).map((item) => item.color);
   const file = manifest.cover?.kind === "image" ? manifest.cover.file : null;
   const image = useProjectImage(record.root, file, project.rev);
 
@@ -41,6 +42,7 @@ export function ProjectCover() {
         backgroundImage: image ? `url("${image}")` : undefined,
       }}
     >
+      {!image && colors.length > 0 && <LibraryStrip colors={colors} className="absolute inset-0" />}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary" size="sm" className="absolute right-4 bottom-3">

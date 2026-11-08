@@ -10,7 +10,12 @@ import {
   DropdownMenuTrigger,
   IconButton,
 } from "@shared/ui/kit";
-import { useProjectFileCount, ProjectIcon } from "@pages/shared/projects";
+import {
+  LibraryStrip,
+  ProjectIcon,
+  useProjectFileCount,
+  useProjectLibraryColors,
+} from "@pages/shared/projects";
 import type { ProjectCardProps } from "./project-card.types";
 import { t } from "../projects.i18n";
 
@@ -24,6 +29,7 @@ export function ProjectCard({
   onTogglePin,
 }: ProjectCardProps) {
   const count = useProjectFileCount(project.root, !missing);
+  const colors = useProjectLibraryColors(project.root, project.id, !missing);
   const when = relativeTime(project.openedAt) ?? t("card.justNow");
 
   return (
@@ -105,6 +111,12 @@ export function ProjectCard({
           </div>
         )}
       </div>
+      {!missing && (
+        <LibraryStrip
+          colors={colors.length > 0 ? colors : [project.color]}
+          className="h-2 rounded-sm"
+        />
+      )}
       {missing && (
         <div className="flex items-center gap-1.5">
           <Button variant="outline" size="sm" onClick={() => onLocate(project)}>

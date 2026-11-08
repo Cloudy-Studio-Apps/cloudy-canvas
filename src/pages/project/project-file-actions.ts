@@ -15,7 +15,8 @@ import { t } from "./project.i18n";
 /** What can be done with a project's files and folders; failures are shown as toasts. */
 export function useProjectActions(options: ProjectActionsOptions): ProjectActions {
   const navigate = useNavigate();
-  const { root, projectId, manifest, saveManifest, folder, setFolder, bump } = options;
+  const { root, projectId, manifest, saveManifest, folder, setFolder, bump, afterRestore } =
+    options;
 
   return useMemo<ProjectActions>(() => {
     const attempt = async (title: string, run: () => Promise<void>) => {
@@ -96,6 +97,7 @@ export function useProjectActions(options: ProjectActionsOptions): ProjectAction
         attempt(t("actions.restoreFailed"), async () => {
           const rel = await projectFs.restore(root, entry.id);
           bump();
+          await afterRestore?.(rel);
           toast({ title: t("trash.restored", { name: entry.name }), description: rel });
         }),
       emptyTrash: () =>
@@ -115,5 +117,15 @@ export function useProjectActions(options: ProjectActionsOptions): ProjectAction
           await saveManifest({ folders });
         }),
     };
-  }, [root, projectId, manifest.folders, saveManifest, folder, setFolder, bump, navigate]);
+  }, [
+    root,
+    projectId,
+    manifest.folders,
+    saveManifest,
+    folder,
+    setFolder,
+    bump,
+    afterRestore,
+    navigate,
+  ]);
 }

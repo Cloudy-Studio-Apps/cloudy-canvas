@@ -1,4 +1,12 @@
-import { ChevronDown, FolderPlus, PenTool, Plus, StickyNote } from "lucide-react";
+import {
+  ChevronDown,
+  FolderPlus,
+  ImagePlus,
+  Library,
+  PenTool,
+  Plus,
+  StickyNote,
+} from "lucide-react";
 
 import {
   Button,
@@ -6,14 +14,18 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@shared/ui/kit";
 import { useProjectContext } from "../project-context";
 import { t } from "../project.i18n";
 
-/** New ▾: a design or a board saved in the folder being shown, or a folder in it. */
+/** New ▾: a design or a board saved in the folder being shown, a folder in it, a library, or pictures added to one. */
 export function NewMenu() {
-  const { actions, folder, setRenaming } = useProjectContext();
+  const { actions, folder, setRenaming, setNewLibraryOpen, libs, libraryActions } =
+    useProjectContext();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -43,6 +55,27 @@ export function NewMenu() {
           <FolderPlus />
           {t("new.folder")}
         </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onSelect={() => setNewLibraryOpen(true)}>
+          <Library />
+          {t("new.library")}
+        </DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger disabled={libs.summaries.length === 0}>
+            <ImagePlus />
+            {t("new.addImages")}
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            {libs.summaries.map((library) => (
+              <DropdownMenuItem
+                key={library.entry.id}
+                onSelect={() => void libraryActions.addAssets(library)}
+              >
+                {library.entry.name}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
       </DropdownMenuContent>
     </DropdownMenu>
   );

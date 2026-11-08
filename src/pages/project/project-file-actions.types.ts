@@ -10,4 +10,6 @@ export interface ProjectActionsOptions {
   setFolder: (rel: string) => void;
   /** Files changed on disk: scans read again. */
   bump: () => void;
+  /** A trashed item was put back at `rel`. */
+  afterRestore?: (rel: string) => Promise<void>;
 }

@@ -23,16 +23,14 @@
     "button": "Nuevo",
     "design": "Nuevo diseño",
     "board": "Nueva pizarra",
-    "folder": "Nueva carpeta"
+    "folder": "Nueva carpeta",
+    "library": "Nueva biblioteca",
+    "addImages": "Añadir imágenes a una biblioteca…"
   },
   "tabs": {
     "files": "Archivos",
     "libraries": "Bibliotecas",
     "trash": "Papelera"
-  },
-  "soon": {
-    "librariesTitle": "Las bibliotecas llegan pronto",
-    "librariesText": "Una biblioteca reunirá los colores, los estilos de texto y las imágenes del proyecto."
   },
   "cover": {
     "change": "Cambiar portada",
@@ -159,5 +157,104 @@
     "trashEmpty": "La papelera está vacía",
     "openTrash": "Abrir papelera",
     "size": "Tamaño del proyecto {size}"
+  },
+  "kinds": {
+    "colors": "Colores",
+    "text": "Estilos de texto",
+    "images": "Imágenes",
+    "svg": "SVG e iconos",
+    "components": "Componentes",
+    "effects": "Efectos"
+  },
+  "libraries": {
+    "sidebar": "Bibliotecas",
+    "all": "Todas las bibliotecas",
+    "content": "Contenido",
+    "new": "Nueva biblioteca",
+    "newHint": "Vacía, o con los estilos de un archivo",
+    "intro": "Una biblioteca guarda los colores, estilos de texto, imágenes, SVG e iconos de una marca. Un proyecto puede tener varias: cada archivo elige las que usa, todas por defecto.",
+    "open": "Abrir",
+    "more": "Más acciones para {name}",
+    "notFound": "Esta biblioteca ya no está en el proyecto.",
+    "name": "Nombre",
+    "nameInvalid": "Ese nombre no se puede usar.",
+    "nameTaken": "Otra biblioteca ya tiene ese nombre.",
+    "usedBy_one": "Usada por {count} archivo",
+    "usedBy_other": "Usada por {count} archivos",
+    "usedManual": "Usada por los archivos que la activan",
+    "aa": "Aa",
+    "sample": "El veloz zorro marrón",
+    "facts": {
+      "colors_one": "{count} color",
+      "colors_other": "{count} colores",
+      "text_one": "{count} estilo de texto",
+      "text_other": "{count} estilos de texto",
+      "assets_one": "{count} imagen",
+      "assets_other": "{count} imágenes",
+      "empty": "Aún no tiene nada"
+    },
+    "empty": {
+      "colors": "Aún no hay colores",
+      "text": "Aún no hay estilos de texto",
+      "images": "Aún no hay imágenes",
+      "svg": "Aún no hay SVG ni iconos",
+      "components": "Aún no hay componentes. Llegarán en una versión posterior.",
+      "effects": "Aún no hay efectos"
+    },
+    "componentsTitle": "Aún no hay componentes",
+    "componentsText": "Piezas reutilizables de un diseño, guardadas en una biblioteca para que todos los archivos las usen. Llegarán en una versión posterior.",
+    "editInFile": "Editar en un archivo",
+    "add": "Añadir",
+    "addImages": "Imágenes o SVG…",
+    "importFile": "Importar los estilos de un archivo…",
+    "importTokens": "Importar un JSON de tokens…",
+    "menu": {
+      "rename": "Renombrar…",
+      "autoOn": "Añadir a los archivos nuevos",
+      "autoOff": "No añadir a los archivos nuevos",
+      "delete": "Eliminar…"
+    },
+    "rename": {
+      "title": "Renombrar biblioteca",
+      "description": "Cambia el nombre de la biblioteca y el de su archivo."
+    },
+    "delete": {
+      "title": "¿Eliminar «{name}»?",
+      "text_one": "La usa {count} archivo. El archivo conserva los colores y estilos que tiene, pero deja de seguir la biblioteca. Puedes restaurarla desde la papelera.",
+      "text_other": "La usan {count} archivos. Los archivos conservan los colores y estilos que tienen, pero dejan de seguir la biblioteca. Puedes restaurarla desde la papelera.",
+      "textManual": "Los archivos que la activaron conservan los colores y estilos que tienen, pero dejan de seguir la biblioteca. Puedes restaurarla desde la papelera."
+    },
+    "removed": "«{name}» se movió a la papelera del proyecto",
+    "imported_one": "Se añadió {count} elemento de {name}",
+    "imported_other": "Se añadieron {count} elementos de {name}",
+    "pickImages": "Elige imágenes o SVG",
+    "pickFile": "Elige un diseño o una pizarra",
+    "pickTokens": "Elige un archivo de tokens",
+    "filterDesignBoard": "Diseños y pizarras",
+    "filterJson": "JSON de tokens",
+    "openFailed": "No se pudieron abrir las bibliotecas del proyecto",
+    "createFailed": "No se pudo crear la biblioteca",
+    "renameFailed": "No se pudo renombrar la biblioteca",
+    "removeFailed": "No se pudo eliminar la biblioteca",
+    "updateFailed": "No se pudo guardar el cambio",
+    "addFailed": "No se pudieron añadir las imágenes",
+    "importFailed": "No se pudieron leer los estilos de ese archivo",
+    "editFailed": "No se pudo abrir el archivo",
+    "dialog": {
+      "title": "Nueva biblioteca",
+      "description": "Un conjunto de colores, estilos de texto e imágenes que comparten los archivos del proyecto.",
+      "namePlaceholder": "Nombre de la biblioteca",
+      "start": "Empezar desde",
+      "startEmpty": "Nada (vacía)",
+      "startFile": "Los estilos de un archivo… (.cdesign / .cboard)",
+      "startCopy": "Una copia de otra biblioteca",
+      "startTokens": "Un JSON de tokens…",
+      "chosen": "Archivo: {name}",
+      "copyOf": "Biblioteca que copiar",
+      "autoAdd": "Añadirla a todos los archivos",
+      "autoAddHint": "Los archivos nuevos, y los que usan todas las bibliotecas, la toman. Desactivado: cada archivo la activa desde su menú de bibliotecas.",
+      "create": "Crear biblioteca",
+      "creating": "Creando…"
+    }
   }
 }

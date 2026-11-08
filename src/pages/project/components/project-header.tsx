@@ -5,19 +5,17 @@ import { relativeTime } from "@shared/core";
 import { Button, IconButton } from "@shared/ui/kit";
 import { useProjectsStore } from "@shared/stores/projects-store";
 import { notifyError } from "@shared/stores/toast-store";
-import { ProjectIcon, useProjectFileCount, useProjectImage } from "@pages/shared/projects";
+import { ProjectIcon, useProjectImage } from "@pages/shared/projects";
 import { useProjectContext } from "../project-context";
 import { NewMenu } from "./new-menu";
 import { ProjectCover } from "./project-cover";
 import { ProjectMoreMenu } from "./project-more-menu";
 import { ProjectTabs } from "./project-tabs";
-import type { ProjectHeaderProps } from "./project-header.types";
 import { t } from "../project.i18n";
 
 /** The project's cover, mark, name and facts, its Pin, ⋯ and New buttons, and the tabs. */
-export function ProjectHeader({ tab, onTab }: ProjectHeaderProps) {
-  const { record, manifest, recent, project } = useProjectContext();
-  const count = useProjectFileCount(record.root, true);
+export function ProjectHeader() {
+  const { record, manifest, recent, project, tab, setTab, fileCount: count } = useProjectContext();
   const icon = useProjectImage(record.root, manifest.icon, project.rev);
   const edited = relativeTime(recent[0]?.updatedAt ?? record.openedAt) ?? t("justNow");
   const meta = [
@@ -73,7 +71,7 @@ export function ProjectHeader({ tab, onTab }: ProjectHeaderProps) {
         </div>
       </div>
       <div className="px-6 pt-2 pb-2">
-        <ProjectTabs value={tab} onChange={onTab} />
+        <ProjectTabs value={tab} onChange={setTab} />
       </div>
     </header>
   );

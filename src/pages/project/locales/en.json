@@ -23,16 +23,14 @@
     "button": "New",
     "design": "New design",
     "board": "New board",
-    "folder": "New folder"
+    "folder": "New folder",
+    "library": "New library",
+    "addImages": "Add images to a library…"
   },
   "tabs": {
     "files": "Files",
     "libraries": "Libraries",
     "trash": "Trash"
-  },
-  "soon": {
-    "librariesTitle": "Libraries are coming",
-    "librariesText": "A library will hold the project's colors, text styles and images."
   },
   "cover": {
     "change": "Change cover",
@@ -159,5 +157,104 @@
     "trashEmpty": "Trash is empty",
     "openTrash": "Open trash",
     "size": "Project size {size}"
+  },
+  "kinds": {
+    "colors": "Colors",
+    "text": "Text styles",
+    "images": "Images",
+    "svg": "SVG & icons",
+    "components": "Components",
+    "effects": "Effects"
+  },
+  "libraries": {
+    "sidebar": "Libraries",
+    "all": "All libraries",
+    "content": "Content",
+    "new": "New library",
+    "newHint": "Empty, or from a file's styles",
+    "intro": "A library holds a brand's colors, text styles, images, SVGs and icons. A project can have several: each file picks the ones it uses, all of them by default.",
+    "open": "Open",
+    "more": "More actions for {name}",
+    "notFound": "This library isn't in the project anymore.",
+    "name": "Name",
+    "nameInvalid": "That name can't be used.",
+    "nameTaken": "Another library already has that name.",
+    "usedBy_one": "Used by {count} file",
+    "usedBy_other": "Used by {count} files",
+    "usedManual": "Used by the files that turn it on",
+    "aa": "Aa",
+    "sample": "The quick brown fox",
+    "facts": {
+      "colors_one": "{count} color",
+      "colors_other": "{count} colors",
+      "text_one": "{count} text style",
+      "text_other": "{count} text styles",
+      "assets_one": "{count} image",
+      "assets_other": "{count} images",
+      "empty": "Nothing in it yet"
+    },
+    "empty": {
+      "colors": "No colors yet",
+      "text": "No text styles yet",
+      "images": "No images yet",
+      "svg": "No SVGs or icons yet",
+      "components": "No components yet. They're coming in a later version.",
+      "effects": "No effects yet"
+    },
+    "componentsTitle": "No components yet",
+    "componentsText": "Reusable pieces of a design, kept in a library so every file can use them. Coming in a later version.",
+    "editInFile": "Edit in a file",
+    "add": "Add",
+    "addImages": "Images or SVG…",
+    "importFile": "Import a file's styles…",
+    "importTokens": "Import a tokens JSON…",
+    "menu": {
+      "rename": "Rename…",
+      "autoOn": "Add to new files",
+      "autoOff": "Don't add to new files",
+      "delete": "Delete…"
+    },
+    "rename": {
+      "title": "Rename library",
+      "description": "Changes the library's name and its file."
+    },
+    "delete": {
+      "title": "Delete “{name}”?",
+      "text_one": "Used by {count} file. The file keeps the colors and styles it has but stops following the library. You can restore the library from the trash.",
+      "text_other": "Used by {count} files. The files keep the colors and styles they have but stop following the library. You can restore the library from the trash.",
+      "textManual": "Files that turned it on keep the colors and styles they have but stop following the library. You can restore the library from the trash."
+    },
+    "removed": "“{name}” was moved to the project's trash",
+    "imported_one": "Added {count} item from {name}",
+    "imported_other": "Added {count} items from {name}",
+    "pickImages": "Choose images or SVGs",
+    "pickFile": "Choose a design or board",
+    "pickTokens": "Choose a tokens file",
+    "filterDesignBoard": "Designs and boards",
+    "filterJson": "Tokens JSON",
+    "openFailed": "The project's libraries couldn't be opened",
+    "createFailed": "The library couldn't be created",
+    "renameFailed": "The library couldn't be renamed",
+    "removeFailed": "The library couldn't be deleted",
+    "updateFailed": "The change couldn't be saved",
+    "addFailed": "The images couldn't be added",
+    "importFailed": "That file's styles couldn't be read",
+    "editFailed": "The file couldn't be opened",
+    "dialog": {
+      "title": "New library",
+      "description": "A set of colors, text styles and images the project's files share.",
+      "namePlaceholder": "Library name",
+      "start": "Start from",
+      "startEmpty": "Nothing (empty)",
+      "startFile": "A file's styles… (.cdesign / .cboard)",
+      "startCopy": "A copy of another library",
+      "startTokens": "A tokens JSON…",
+      "chosen": "File: {name}",
+      "copyOf": "Library to copy",
+      "autoAdd": "Add it to every file",
+      "autoAddHint": "New files, and files that use all the libraries, take it. Off: a file turns it on from its libraries menu.",
+      "create": "Create library",
+      "creating": "Creating…"
+    }
   }
 }
