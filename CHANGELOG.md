@@ -7,12 +7,12 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### New
 
-- Each closed area of a vector can now have its own fill, as in Figma: in vector edit mode, click
+- Each closed area of a vector can now have its own fill: in vector edit mode, click
   inside an area to select it and change its fill in the Fills section. An area's fill can use a
   color style or variables, show data, and edit its gradient on the canvas, and its colors appear
-  in the page's colors and the color wizard. Figma files keep the colors of multi-colored vectors
+  in the page's colors and the color wizard. Imported .fig files keep the colors of multi-colored vectors
   such as logos and icons, as one editable vector.
-- SVG files pasted or dropped into a design now become one editable vector, as in Figma: each
+- SVG files pasted or dropped into a design now become one editable vector: each
   shape of the file is an area with its own color, gradient or outline, instead of a flat picture.
   Converting a sticker to vectors works the same way, giving one vector you can recolor area by
   area.
@@ -63,7 +63,7 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - The database schema and ER diagram text editors now show their errors, warnings and suggestions
   in Spanish when the app is in Spanish. The language keywords you write, such as Table, Entity or
   Relation, stay the same in every language.
-- Importing a Figma or FigJam file now shows its progress and the list of what couldn't be brought
+- Importing a .fig or .jam file now shows its progress and the list of what couldn't be brought
   over as it was in Spanish when the app is in Spanish.
 
 ### Fixed

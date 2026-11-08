@@ -7,14 +7,14 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Novedades
 
-- Cada área cerrada de un vector ya puede tener su propio relleno, como en Figma: en el modo de
+- Cada área cerrada de un vector ya puede tener su propio relleno: en el modo de
   edición de vectores, haz clic dentro de un área para seleccionarla y cambia su relleno en la
   sección Rellenos. El relleno de un área puede usar un estilo de color o variables, mostrar datos
   y editar su degradado en el lienzo, y sus colores aparecen entre los colores de la página y en el
-  asistente de color. Los archivos de Figma conservan los colores de los vectores de varios
+  asistente de color. Los archivos .fig importados conservan los colores de los vectores de varios
   colores, como logotipos e iconos, en un solo vector editable.
-- Los archivos SVG que pegas o sueltas en un diseño ahora se convierten en un solo vector editable,
-  como en Figma: cada forma del archivo es un área con su propio color, degradado o contorno, en
+- Los archivos SVG que pegas o sueltas en un diseño ahora se convierten en un solo vector editable:
+  cada forma del archivo es un área con su propio color, degradado o contorno, en
   lugar de una imagen plana. Convertir una pegatina en vectores funciona igual y da un solo vector
   que puedes recolorear área por área.
 - Los diseños ya pueden tener fuentes de datos, como un archivo CSV o JSON o una API web: la nueva
@@ -72,7 +72,7 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   errores, avisos y sugerencias en español cuando la aplicación está en español. Las palabras clave
   del lenguaje que escribes, como Table, Entity o Relation, siguen siendo las mismas en todos los
   idiomas.
-- Al importar un archivo de Figma o FigJam, el progreso y la lista de lo que no se pudo traer tal
+- Al importar un archivo .fig o .jam, el progreso y la lista de lo que no se pudo traer tal
   cual ahora se muestran en español cuando la aplicación está en español.
 
 ### Correcciones
