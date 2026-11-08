@@ -5,7 +5,7 @@ import { CATALOG_MODE_ID, type FileInfo } from "@shared/core";
 import { useDesignModeStore } from "@shared/stores/design-mode-store";
 import type { FileTypeStyle } from "@shared/ui/components/file-type-icon.types";
 import type { HomeFileKind } from "./file-kind.types";
-import { t } from "./home.i18n";
+import { t } from "./files.i18n";
 
 /** A catalog's icon chip: the accent (blush) tint and a book. */
 export const CATALOG_STYLE: FileTypeStyle = {
@@ -21,9 +21,9 @@ export const KIND_TINT: Record<HomeFileKind, string> = {
 };
 
 export const KIND_LABEL: Record<HomeFileKind, string> = {
-  board: t("card.board"),
-  design: t("card.design"),
-  catalog: t("card.catalog"),
+  board: t("kind.board"),
+  design: t("kind.design"),
+  catalog: t("kind.catalog"),
 };
 
 /**

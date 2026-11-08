@@ -10,8 +10,7 @@ import {
   DropdownMenuTrigger,
   IconButton,
 } from "@shared/ui/kit";
-import { useProjectFileCount } from "../use-project-file-count";
-import { ProjectIcon } from "./project-icon";
+import { useProjectFileCount, ProjectIcon } from "@pages/shared/projects";
 import type { ProjectCardProps } from "./project-card.types";
 import { t } from "../projects.i18n";
 

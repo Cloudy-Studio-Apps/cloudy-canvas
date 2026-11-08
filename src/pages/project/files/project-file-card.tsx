@@ -1,10 +1,13 @@
 import { fileNameFromPath, relativeTime } from "@shared/core";
 import { cn } from "@shared/ui/kit";
-import { FileActionsMenu } from "@pages/home/components/file-actions-menu";
-import { FileContextMenu } from "@pages/home/components/file-context-menu";
-import { FileKindIcon } from "@pages/home/components/file-kind-icon";
-import { FilePreview } from "@pages/home/components/file-preview";
-import { KIND_LABEL, useFileKindOf } from "@pages/home/file-kind";
+import {
+  FileActionsMenu,
+  FileContextMenu,
+  FileKindIcon,
+  FilePreview,
+  KIND_LABEL,
+  useFileKindOf,
+} from "@pages/shared/files";
 import { dragId, useProjectContext } from "../project-context";
 import { entryActions } from "./entry-actions";
 import { InlineName } from "./inline-name";

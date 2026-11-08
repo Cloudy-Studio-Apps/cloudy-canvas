@@ -1,5 +1,5 @@
 import { FileTypeIcon } from "@shared/ui/components/file-type-icon";
-import { CATALOG_STYLE } from "../file-kind";
+import { CATALOG_STYLE } from "./file-kind";
 import type { FileKindIconProps } from "./file-kind-icon.types";
 
 /** A file's icon chip: its type's, or the catalog's for a catalog. */

@@ -1,5 +1,5 @@
 import { cn } from "@shared/ui/kit";
-import { projectInitials } from "../project-initials";
+import { projectInitials } from "./project-initials";
 import type { ProjectIconProps } from "./project-icon.types";
 
 /** A project's mark: its picture, or its initials on its color. */

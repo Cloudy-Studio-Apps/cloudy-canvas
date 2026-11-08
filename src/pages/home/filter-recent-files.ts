@@ -1,5 +1,5 @@
 import { displayName, type FileInfo } from "@shared/core";
-import type { HomeFileKind } from "./file-kind.types";
+import type { HomeFileKind } from "@pages/shared/files";
 import type { RecentFilesFilter } from "./filter-recent-files.types";
 
 export const DEFAULT_RECENT_FILES_FILTER: RecentFilesFilter = {

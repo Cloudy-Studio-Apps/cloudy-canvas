@@ -1,6 +1,6 @@
 import { cn } from "@shared/ui/lib/utils";
-import { KIND_TINT } from "../file-kind";
-import { useFileThumbnail } from "../use-file-thumbnail";
+import { KIND_TINT } from "./file-kind";
+import { useFileThumbnail } from "./use-file-thumbnail";
 import { FileKindIcon } from "./file-kind-icon";
 import type { FilePreviewProps } from "./file-preview.types";
 

@@ -1,15 +1,7 @@
-import type { LucideIcon } from "lucide-react";
-
 import type { FileInfo } from "@shared/core";
+import type { FileAction } from "@pages/shared/files";
 
-export interface FileAction {
-  id: string;
-  label: string;
-  icon: LucideIcon;
-  run: () => void;
-  /** Drawn in the destructive color, after a separator. */
-  destructive?: boolean;
-}
+export type { FileAction };
 
 export interface FileActionsOptions {
   file: FileInfo;

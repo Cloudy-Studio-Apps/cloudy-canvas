@@ -4,7 +4,7 @@ import { defaultProjectsFolder, pickFolder, pickImageFiles, projectFs } from "@p
 import { isReservedName, type ImageFile } from "@shared/core";
 import { notifyError } from "@shared/stores/toast-store";
 import { projectRootFor } from "./create-project";
-import { randomProjectColor } from "./project-colors";
+import { randomProjectColor } from "@pages/shared/projects";
 import { t } from "./projects.i18n";
 
 /** The New project dialog's fields and what's wrong with them. Mount it when the dialog opens. */

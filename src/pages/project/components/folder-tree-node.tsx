@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
 import { cn, ListRow } from "@shared/ui/kit";
-import { FileContextMenu } from "@pages/home/components/file-context-menu";
+import { FileContextMenu } from "@pages/shared/files";
 import { entryActions } from "../files/entry-actions";
 import { FolderGlyph } from "../files/folder-glyph";
 import { InlineName } from "../files/inline-name";

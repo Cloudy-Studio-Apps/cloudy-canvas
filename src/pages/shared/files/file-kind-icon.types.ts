@@ -1,4 +1,4 @@
-import type { HomeFileKind } from "../file-kind.types";
+import type { HomeFileKind } from "./file-kind.types";
 
 export interface FileKindIconProps {
   kind: HomeFileKind;

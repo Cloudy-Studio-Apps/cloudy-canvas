@@ -9,8 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@shared/ui/kit";
 import { notifyError } from "@shared/stores/toast-store";
-import { writeProjectImage } from "@pages/projects/project-images";
-import { useProjectImage } from "@pages/projects/use-project-image";
+import { writeProjectImage, useProjectImage } from "@pages/shared/projects";
 import { useProjectContext } from "../project-context";
 import { t } from "../project.i18n";
 

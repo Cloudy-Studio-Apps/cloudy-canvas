@@ -11,7 +11,7 @@ import { RecentFiles } from "./components/recent-files";
 import { StartersRow } from "./components/starters-row";
 import { TopBar } from "./components/top-bar";
 import { Welcome } from "./components/welcome";
-import { useFileKindOf } from "./file-kind";
+import { useFileKindOf } from "@pages/shared/files";
 import { OPEN_FILE_SHORTCUT, SETTINGS_SHORTCUT } from "./home-shortcuts";
 import { useFileDragOver } from "@shared/ui/hooks/use-file-drag-over";
 import { useOpenFile } from "./use-open-file";

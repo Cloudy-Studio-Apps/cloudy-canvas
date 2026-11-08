@@ -1,6 +1,5 @@
 import { fileNameFromPath, relativeTime, type FileInfo } from "@shared/core";
-import { FilePreview } from "@pages/home/components/file-preview";
-import { KIND_LABEL, useFileKindOf } from "@pages/home/file-kind";
+import { FilePreview, KIND_LABEL, useFileKindOf } from "@pages/shared/files";
 import { useProjectContext } from "../project-context";
 import { folderOfFile } from "../relocate-recents";
 import { t } from "../project.i18n";

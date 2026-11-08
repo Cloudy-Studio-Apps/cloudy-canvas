@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { FileAction } from "../use-file-actions.types";
+import type { FileAction } from "./file-action.types";
 
 export interface FileContextMenuProps {
   actions: FileAction[];

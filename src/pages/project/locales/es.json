@@ -130,6 +130,7 @@
     "moveFailed": "No se pudo mover",
     "duplicateFailed": "No se pudo duplicar",
     "revealFailed": "No se pudo mostrar en su carpeta",
-    "updateFailed": "No se pudo guardar el cambio"
+    "updateFailed": "No se pudo guardar el cambio",
+    "followFailed": "Hecho, pero no se pudieron actualizar los archivos recientes ni los colores de carpeta"
   }
 }

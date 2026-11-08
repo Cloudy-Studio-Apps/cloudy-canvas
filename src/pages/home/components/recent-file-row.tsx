@@ -1,12 +1,14 @@
 import { displayName } from "@shared/core";
 import { cn } from "@shared/ui/kit";
-import { KIND_LABEL } from "../file-kind";
+import {
+  KIND_LABEL,
+  FileActionsMenu,
+  FileContextMenu,
+  FileKindIcon,
+  FilePreview,
+} from "@pages/shared/files";
 import { formatRelativeTime } from "../format-relative-time";
 import { useFileActions } from "../use-file-actions";
-import { FileActionsMenu } from "./file-actions-menu";
-import { FileContextMenu } from "./file-context-menu";
-import { FileKindIcon } from "./file-kind-icon";
-import { FilePreview } from "./file-preview";
 import { MissingFilePopover } from "./missing-file-popover";
 import { ROW_COLUMNS } from "./recent-files-columns";
 import type { FileCardProps } from "./file-card.types";

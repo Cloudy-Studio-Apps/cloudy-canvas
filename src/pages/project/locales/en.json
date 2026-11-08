@@ -130,6 +130,7 @@
     "moveFailed": "It couldn't be moved",
     "duplicateFailed": "It couldn't be duplicated",
     "revealFailed": "It couldn't be shown in its folder",
-    "updateFailed": "The change couldn't be saved"
+    "updateFailed": "The change couldn't be saved",
+    "followFailed": "Done, but the recent files and folder colors couldn't be updated"
   }
 }

@@ -1,8 +1,5 @@
 import { cn } from "@shared/ui/kit";
-import { FileContextMenu } from "@pages/home/components/file-context-menu";
-import { FileActionsMenu } from "@pages/home/components/file-actions-menu";
-import { FilePreview } from "@pages/home/components/file-preview";
-import { useFileKindOf } from "@pages/home/file-kind";
+import { FileContextMenu, FileActionsMenu, FilePreview, useFileKindOf } from "@pages/shared/files";
 import { dragId, useProjectContext } from "../project-context";
 import { useFolderScan } from "../use-folder-scan";
 import { entryActions } from "./entry-actions";

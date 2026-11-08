@@ -5,9 +5,12 @@ import { ColorPopover } from "@canvas-ui";
 import type { ImageFile } from "@shared/core";
 import { AppDialog, Button, Field } from "@shared/ui/kit";
 import { notifyError } from "@shared/stores/toast-store";
-import { ProjectIcon } from "@pages/projects/components/project-icon";
-import { writeProjectImage } from "@pages/projects/project-images";
-import { useImageUrl, useProjectImage } from "@pages/projects/use-project-image";
+import {
+  ProjectIcon,
+  writeProjectImage,
+  useImageUrl,
+  useProjectImage,
+} from "@pages/shared/projects";
 import { useProjectContext } from "../project-context";
 import type { ProjectDialogProps } from "./project-dialog.types";
 import { t } from "../project.i18n";

@@ -27,15 +27,22 @@ export function useProjectActions(options: ProjectActionsOptions): ProjectAction
 
     /** A file or folder moved from `from` to `to`: what refers to it follows. */
     const followed = async (from: string, to: string, isFolder: boolean) => {
-      await relocateRecents(root, from, to);
-      if (isFolder) {
-        const folders = rekeyFolders(manifest.folders, from, to);
-        if (Object.keys(folders).some((k) => !(k in manifest.folders))) {
-          await saveManifest({ folders });
-        }
-        if (isInside(from, folder)) setFolder(to + folder.slice(from.length));
-      }
+      // The disk already changed: show it first, whatever happens to what refers to it.
       bump();
+      try {
+        await relocateRecents(root, from, to);
+        if (isFolder) {
+          const folders = rekeyFolders(manifest.folders, from, to);
+          if (Object.keys(folders).some((k) => !(k in manifest.folders))) {
+            await saveManifest({ folders });
+          }
+          if (isInside(from, folder)) setFolder(to + folder.slice(from.length));
+        }
+      } catch (error) {
+        notifyError(t("actions.followFailed"), error);
+      } finally {
+        bump();
+      }
     };
 
     return {

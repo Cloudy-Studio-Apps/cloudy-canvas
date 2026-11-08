@@ -14,9 +14,8 @@ import {
 } from "@shared/ui/kit";
 import { notifyError } from "@shared/stores/toast-store";
 import { createProject } from "../create-project";
-import { useImageUrl } from "../use-project-image";
+import { useImageUrl, ProjectIcon } from "@pages/shared/projects";
 import { useNewProjectForm } from "../use-new-project-form";
-import { ProjectIcon } from "./project-icon";
 import type { NewProjectDialogProps } from "./new-project-dialog.types";
 import { t } from "../projects.i18n";
 

@@ -27,27 +27,27 @@ export function useProject(id: string): UseProject {
     void refresh().then(() => setListed(true));
   }, [refresh, id]);
 
-  const reload = useCallback(async () => {
-    if (!root) return;
-    const read = await projectFs.readManifest(root, id);
+  /** Takes a manifest just read from disk as the current one. */
+  const adopt = useCallback((read: ProjectManifest | null) => {
     latest.current = read;
     setManifest(read);
     setRev((n) => n + 1);
-  }, [root, id]);
+  }, []);
+
+  const reload = useCallback(async () => {
+    if (root) adopt(await projectFs.readManifest(root, id));
+  }, [root, id, adopt]);
 
   useEffect(() => {
     if (!root) return;
     let cancelled = false;
     void projectFs.readManifest(root, id).then((read) => {
-      if (cancelled) return;
-      latest.current = read;
-      setManifest(read);
-      setRev((n) => n + 1);
+      if (!cancelled) adopt(read);
     });
     return () => {
       cancelled = true;
     };
-  }, [root, id]);
+  }, [root, id, adopt]);
 
   const write = useCallback(
     async (next: ProjectManifest) => {

@@ -57,8 +57,6 @@
     "openFailed": "No se pudo abrir el archivo"
   },
   "card": {
-    "board": "Pizarra",
-    "design": "Diseño",
     "missingLabel": "Falta {type} {name}. Mostrar opciones",
     "openLabel": "Abrir {type} {name}",
     "meta": "{type} · Editado {time}",
@@ -66,7 +64,6 @@
     "draft": "Borrador",
     "more": "Más acciones para {name}",
     "justNow": "justo ahora",
-    "catalog": "Catálogo",
     "draftLocation": "Borrador, aún sin guardar",
     "missingLocation": "Movido o eliminado"
   },

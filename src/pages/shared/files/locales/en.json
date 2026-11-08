@@ -1,0 +1,7 @@
+{
+  "kind": {
+    "board": "Board",
+    "design": "Design",
+    "catalog": "Catalog"
+  }
+}

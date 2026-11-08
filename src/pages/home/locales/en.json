@@ -57,8 +57,6 @@
     "openFailed": "The file couldn't be opened"
   },
   "card": {
-    "board": "Board",
-    "design": "Design",
     "missingLabel": "{type} {name} is missing. Show options",
     "openLabel": "Open {type} {name}",
     "meta": "{type} · Edited {time}",
@@ -66,7 +64,6 @@
     "draft": "Draft",
     "more": "More actions for {name}",
     "justNow": "just now",
-    "catalog": "Catalog",
     "draftLocation": "Draft, not saved yet",
     "missingLocation": "Moved or deleted"
   },

@@ -11,7 +11,7 @@ import {
 } from "@shared/core";
 import { useProjectsStore } from "@shared/stores/projects-store";
 import type { CreateProjectInput } from "./create-project.types";
-import { writeProjectImage } from "./project-images";
+import { writeProjectImage } from "@pages/shared/projects";
 
 /** The project's folder: `name` inside `parent`. */
 export function projectRootFor(parent: string, name: string): string {

@@ -2,13 +2,15 @@ import { ArrowRight } from "lucide-react";
 
 import { displayName } from "@shared/core";
 import { Button } from "@shared/ui/kit";
-import { KIND_LABEL } from "../file-kind";
+import {
+  KIND_LABEL,
+  FileActionsMenu,
+  FileContextMenu,
+  FileKindIcon,
+  FilePreview,
+} from "@pages/shared/files";
 import { formatRelativeTime } from "../format-relative-time";
 import { useFileActions } from "../use-file-actions";
-import { FileActionsMenu } from "./file-actions-menu";
-import { FileContextMenu } from "./file-context-menu";
-import { FileKindIcon } from "./file-kind-icon";
-import { FilePreview } from "./file-preview";
 import type { ContinueCardProps } from "./continue-card.types";
 import { t } from "../home.i18n";
 

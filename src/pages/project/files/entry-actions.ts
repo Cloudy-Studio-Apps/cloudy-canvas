@@ -1,7 +1,7 @@
 import { Copy, ExternalLink, FolderInput, FolderOpen, Pencil } from "lucide-react";
 
 import type { ProjectEntry } from "@shared/core";
-import type { FileAction } from "@pages/home/use-file-actions.types";
+import type { FileAction } from "@pages/shared/files";
 import { parentRel } from "../project-rel";
 import type { ProjectContextValue } from "../project-context.types";
 import { t } from "../project.i18n";

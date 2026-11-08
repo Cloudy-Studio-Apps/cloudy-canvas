@@ -1,4 +1,4 @@
-import type { FileAction } from "../use-file-actions.types";
+import type { FileAction } from "./file-action.types";
 
 export interface FileActionsMenuProps {
   actions: FileAction[];

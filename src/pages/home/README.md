@@ -13,7 +13,8 @@ The Projects button and the New project tile show only where projects exist (`pr
 
 ## Recent files
 
-- **Kinds** (`file-kind.ts`): a design left in Catalog mode is shown as a **catalog** (`fileKindOf`: the mode each design was left in, `useDesignModeStore` from `@design/ui`, which is per device, so a catalog opened only elsewhere shows as a design until it opens here). `FileKindIcon` is `FileTypeIcon`, with `CATALOG_STYLE` (a book on the accent tint) for catalogs; `KIND_TINT` and `KIND_LABEL` give each kind's wash and name.
+- **Shared pieces:** the previews, kinds, icons and file menus (`FilePreview`, `FileKindIcon`, `FileActionsMenu`, `FileContextMenu`, `file-kind.ts`) live in `@pages/shared/files` ([README](../shared/files/README.md)), used by the project home too.
+- **Kinds** (`@pages/shared/files`): a design left in Catalog mode is shown as a **catalog** (`fileKindOf`: the mode each design was left in, `useDesignModeStore` from `@design/ui`, which is per device, so a catalog opened only elsewhere shows as a design until it opens here). `FileKindIcon` is `FileTypeIcon`, with `CATALOG_STYLE` (a book on the accent tint) for catalogs; `KIND_TINT` and `KIND_LABEL` give each kind's wash and name.
 - **Toolbar** (`RecentFilesToolbar`): search (name, title, description), the kind tabs (All, Boards, Designs, Catalogs; `filterRecentFiles(files, filter, kindOf)`), the sort order and `RecentFilesViewToggle` (grid or list, `useHomeStore.recentView`, kept between sessions).
 - **Grid** (`FileCard`) and **list** (`RecentFilesList`, rows `RecentFileRow` in the columns of `recent-files-columns.ts`: preview, name, kind, location, edited, ⋯). Both draw the picture with `FilePreview` (`useFileThumbnail`, or the kind's icon) and share the file's actions (`useFileActions`: the ⋯ menu, the context menu, and `MissingFilePopover` for a missing file, which offers Locate instead of opening).
 
