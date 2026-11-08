@@ -1,5 +1,5 @@
 import type { CanvasViewOptions } from "./canvas-view.types";
-import type { CopyContext, PastedImage } from "./clipboard";
+import type { CopyContext, ImportFilesHook, PastedImage } from "./clipboard";
 import type { CanvasDocument, EditedChange } from "./document";
 import type { CanvasElement, ElementKinds, ElementPatch } from "./elements";
 import type { Point, Rect } from "./geometry.types";
@@ -202,6 +202,11 @@ export interface CanvasProduct<O extends object = object> {
    * z-order `index`, or `null` to ignore it.
    */
   pasteImage?(image: PastedImage, view: Rect, index: string, options: O): CanvasElement | null;
+  /**
+   * Takes files dropped on the canvas before the rest are handled (a 3D model with its textures),
+   * in order; each claims the names it used (`ImportFilesHook`). Composed from every module's hook.
+   */
+  importFiles?: readonly ImportFilesHook[];
   /**
    * Finds assets nothing uses any more (`CanvasEngine.sweepAssets`, run when a file opens and
    * when it closes, as undo can no longer bring them back). Composed from every module's sweep.

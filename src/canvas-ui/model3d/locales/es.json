@@ -2,6 +2,13 @@
   "import": {
     "title": "Importar modelo 3D",
     "failed": "No se pudo importar el modelo",
-    "unsupported": "Este tipo de archivo no es un modelo 3D compatible."
+    "unsupported": "Este tipo de archivo no es un modelo 3D compatible.",
+    "error": "No se pudo importar “{name}”",
+    "filter": "Modelos 3D"
+  },
+  "size": {
+    "title": "Este modelo es grande",
+    "description": "“{name}” pesa {size} MB. Añadirlo hace el archivo más pesado y lento de abrir y compartir.",
+    "continue": "Añadir igualmente"
   }
 }

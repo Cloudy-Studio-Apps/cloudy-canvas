@@ -17,7 +17,14 @@ export type {
   SelectTargetRequest,
 } from "./canvas-product.types";
 export type { CanvasGrid, CanvasViewOptions } from "./canvas-view.types";
-export type { CopyContext, DropResult, PastedImage } from "./clipboard";
+export type {
+  CopyContext,
+  DropResult,
+  FileImportRequest,
+  FileImportResult,
+  ImportFilesHook,
+  PastedImage,
+} from "./clipboard";
 export type { CommandHandler, Commands } from "./commands.types";
 export type {
   AfterEdit,
@@ -101,7 +108,7 @@ export {
 export { CanvasEngine } from "./canvas-engine";
 export { MIN_ZOOM, MAX_ZOOM } from "./camera";
 export { DEFAULT_VIEW_OPTIONS } from "./canvas-view";
-export { cloneElements, imageSize } from "./clipboard";
+export { cloneElements, imageSize, PASTE_STEP } from "./clipboard";
 export {
   actorDocument,
   CanvasDocument,

@@ -7,6 +7,7 @@ import type {
   SelectTargetRequest,
 } from "../canvas-product.types";
 import type { CanvasViewOptions } from "../canvas-view.types";
+import type { ImportFilesHook } from "../clipboard";
 import type { CanvasDocument, EditedChange } from "../document";
 import type { CanvasElement, ElementKind, ElementKinds, ElementPatch } from "../elements";
 import type { Keybindings } from "../input";
@@ -213,6 +214,8 @@ export interface CanvasPoints<O extends object> {
   pasteText: ExtensionPoint<PasteTextHook<O>>;
   pasteOnto: ExtensionPoint<PasteOntoHook<O>>;
   pasteImage: ExtensionPoint<PasteImageHook<O>>;
+  /** What takes dropped files before the rest are handled (several, in order). */
+  importFiles: ExtensionPoint<ImportFilesHook>;
   /** What finds the assets nothing uses any more, to remove on open and at close (several). */
   assetSweeps: ExtensionPoint<AssetSweep>;
   pasteSvg: ExtensionPoint<PasteSvgHook<O>>;

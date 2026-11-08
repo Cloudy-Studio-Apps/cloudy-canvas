@@ -4,6 +4,7 @@ export type * from "./model3d.types";
 export {
   DEFAULT_MODEL_VIEW,
   LIVE_RELEASE_DELAY_MS,
+  MODEL_BASE_SIZE,
   MODEL_EXTENSIONS,
   MODEL_SIZE_WARNING_BYTES,
   PICTURE_MAX_SIDE,
@@ -12,6 +13,8 @@ export {
 } from "./model3d.constants";
 export { isModelAssetId, newModelAssetId } from "./model-asset-id";
 export { isModelKind, modelAssets } from "./model-kind";
+export { toModelData } from "./to-model-data";
+export type * from "./to-model-data.types";
 export { unusedModelAssets } from "./sweep-model-assets";
 export { MODEL_EDIT_LOCKS, ModelEditLocks } from "./model-edit-locks";
 export type * from "./model-edit-locks.types";

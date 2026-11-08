@@ -8,7 +8,7 @@
   "drop": {
     "oneFailed": "No se pudo añadir “{name}”",
     "manyFailed": "No se pudieron añadir {count} archivos",
-    "hint": "Suelta imágenes, SVG o archivos .txt en el lienzo.",
+    "hint": "Suelta imágenes, SVG, archivos .txt o modelos 3D en el lienzo.",
     "error": "No se pudieron añadir los archivos"
   },
   "copyPng": {

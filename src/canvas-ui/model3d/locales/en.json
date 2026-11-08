@@ -2,6 +2,13 @@
   "import": {
     "title": "Import 3D model",
     "failed": "Couldn't import the model",
-    "unsupported": "This file type isn't a supported 3D model."
+    "unsupported": "This file type isn't a supported 3D model.",
+    "error": "Couldn't import “{name}”",
+    "filter": "3D models"
+  },
+  "size": {
+    "title": "This model is large",
+    "description": "“{name}” is {size} MB. Adding it makes the file heavier and slower to open and share.",
+    "continue": "Add anyway"
   }
 }

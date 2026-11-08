@@ -27,3 +27,7 @@ _Plain TypeScript both products share. The three.js side (loaders, live view, pi
   in the debounced autosave. Guests never save, and a read-only document is left alone, so only
   the host sweeps. The file gets lighter on close, not when a model is deleted or converted.
   Yjs drops the deleted bytes from the saved update (the document keeps `gc` on).
+- **Import** (`to-model-data.ts`): `toModelData(imp, ids)` builds the `ModelData` of a fresh import
+  (default view; a slot keeps its `file` and `embedded` and gets its stored picture's asset id).
+  `MODEL_BASE_SIZE` (400) is the height a model is placed at before it is fit to the view. The
+  drop flow is the `importFiles` point (see `clipboard/`); the work is in `canvas-ui/model3d/import/`.

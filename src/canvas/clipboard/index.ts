@@ -2,6 +2,7 @@ export type * from "./clipboard-payload.types";
 export type * from "./clone-elements.types";
 export type * from "./drop-files.types";
 export type * from "./element-clipboard.types";
+export type * from "./import-files.types";
 export type * from "./insert-copies.types";
 export type * from "./paste-external.types";
 export { collectAssets, restoreAssets } from "./clipboard-assets";

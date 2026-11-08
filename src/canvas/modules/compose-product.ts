@@ -29,6 +29,7 @@ export function composeProduct<O extends object>(
   const textPasters = host.get(points.pasteText);
   const ontoPasters = host.get(points.pasteOnto);
   const imagePasters = host.get(points.pasteImage);
+  const importers = host.get(points.importFiles);
   const assetSweeps = host.get(points.assetSweeps);
   const svgPasters = host.get(points.pasteSvg);
   const foreignPasters = host.get(points.pasteForeign);
@@ -175,6 +176,7 @@ export function composeProduct<O extends object>(
           },
         }
       : {}),
+    ...(importers.length > 0 ? { importFiles: importers } : {}),
     ...(assetSweeps.length > 0 ? { assetSweeps } : {}),
     ...(svgPasters.length > 0
       ? {

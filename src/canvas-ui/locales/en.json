@@ -8,7 +8,7 @@
   "drop": {
     "oneFailed": "“{name}” couldn't be added",
     "manyFailed": "{count} files couldn't be added",
-    "hint": "Drop images, SVGs or .txt files on the canvas.",
+    "hint": "Drop images, SVGs, .txt files or 3D models on the canvas.",
     "error": "The files couldn't be added"
   },
   "copyPng": {

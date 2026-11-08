@@ -38,3 +38,17 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
 - `buildPictureScene`, `addLighting` (a hemisphere light and a key light from the camera's upper
   left, fixed values) and `renderPicture` build and draw the scene. The live view reuses them with
   its own canvas, so the picture matches what the user saw.
+
+## Import
+
+- `importModelFiles(files, view, place, doc, nextIndex)` (`import/`) is what a product's
+  `importFiles` hook calls: for each model file it imports, asks to continue when the total is over
+  `MODEL_SIZE_WARNING_BYTES` (`confirmModelSize`), bakes the first picture at the rect
+  `fitInView({ 400 x aspect, 400 }, view, 0.8)`, stores the model, material, textures and picture as
+  assets (`newModelAssetId()`) and makes the element with the product's `place(data, rect, index)`.
+  A failure shows `notifyError` and the file is still claimed. Companion textures and `.mtl`/`.bin`
+  files that were used are claimed too.
+- `confirmModelSize(name, bytes)` shows the `ModelSizeDialog`, which an editor mounts once as an
+  overlay (a module-level request, `model-size-prompt.ts`); without it the promise never resolves.
+- `pickModelFiles()` is the file picker for models (`openFile`, desktop only, one file; `[]` if
+  cancelled or on the web).

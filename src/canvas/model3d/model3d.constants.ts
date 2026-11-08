@@ -15,6 +15,9 @@ export const PICTURE_MAX_SIDE = 4096;
 /** How long the live view stays up after the pointer leaves, before it is released. */
 export const LIVE_RELEASE_DELAY_MS = 3000;
 
+/** How tall (world units) a model is placed before it is fit to the view; its width follows. */
+export const MODEL_BASE_SIZE = 400;
+
 /** How a model is first shown. */
 export const DEFAULT_MODEL_VIEW: { angle: ModelRotation; zoom: number } = {
   angle: { x: 0, y: 0, z: 0 },
