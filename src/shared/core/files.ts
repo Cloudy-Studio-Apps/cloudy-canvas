@@ -62,6 +62,12 @@ export function imageTypeFromName(name: string): string | null {
   return IMAGE_FILE_TYPES[extensionOf(name)] ?? null;
 }
 
+/** The extension that stands for an image's media type (`png` for `image/png`, and by default). */
+export function imageExtension(type: string): string {
+  const found = Object.entries(IMAGE_FILE_TYPES).find(([, mime]) => mime === type);
+  return found ? found[0] : "png";
+}
+
 /** Appends the file type's extension when the path doesn't already end with it. */
 export function withFileExtension(path: string, type: FileType): string {
   const ext = `.${FILE_EXTENSIONS[type]}`;

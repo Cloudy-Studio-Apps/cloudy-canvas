@@ -3,13 +3,12 @@ import { useNavigate } from "react-router";
 
 import { imageSize, keyBetween, LibraryDocument } from "@canvas";
 import { pickImageFiles, projectFs } from "@platform";
-import { createId, projectPaths, type LibraryEntry } from "@shared/core";
+import { createId, imageExtension, projectPaths, type LibraryEntry } from "@shared/core";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import {
   copyLibraryRecords,
   firstLibraryRecords,
-  imageExtension,
   librarySourceOf,
   pickStylesSource,
   type FirstLibrarySource,
