@@ -10,7 +10,7 @@
 
 **Spec:** [docs/superpowers/specs/2026-11-05-prototype-mode-design.md](../specs/2026-11-05-prototype-mode-design.md). Mockup: [docs/prototype/prototype-mode.html](../../prototype/prototype-mode.html) (the look and the copy; open it next to each UI task).
 
-## Status (2026-11-08)
+## Status (2026-11-08, after Phase 2)
 
 - **Where:** local branch `prototype-mode` in the sibling worktree
   `/home/mcris112/Storage/Projects/CloudyStudio/cloudy-canvas-prototype` (the user asked for a local
@@ -23,15 +23,21 @@
   (changelog conflicts resolved keeping every entry; master's new selection colors section lost
   its `tab` field), and master fast-forwarded to it on 2026-11-08. The user won't release until
   this plan and the projects plan are both done, so a half-built mode on master is fine.
-- **Next:** Phase 2, starting at Task 5. Stop after each phase for the user's go-ahead.
+- **Phase 2 (Tasks 5–7): done** (`04de2a55..d834f700`) on the branch, not merged to master yet:
+  the interaction editor, the screen, flow and empty panels, and connect by dragging.
+  - Task 7 ruling: V and L are bound in the mode's own `keybindings` layer, not as tool `keys`
+    (tool keys go into the product-wide keymap, where L would take over the Line tool in Design).
+  - `editInteraction` moved to `model/` so engine-side tools can use it.
+- **Next:** Phase 3, starting at Task 8. Stop after each phase for the user's go-ahead.
 - **Carry into later tasks:**
-  - `readInteraction` rejects an interaction without a non-empty `id`. Task 5's +, Task 7's drop
-    and Task 10's `set_interactions` (which takes entries without ids) must give each one
-    `createId()` before validating.
+  - `readInteraction` rejects an interaction without a non-empty `id`. Task 10's
+    `set_interactions` (which takes entries without ids) must give each one `createId()` before
+    validating.
   - Task 9: the flow flag's title uses `canvas.flagTitle` ("Select {name}") until the player
-    exists; switch it to the play wording and make the click play.
+    exists; switch it to the play wording and make the click play. The flow panel's Play button
+    is disabled until then too.
   - A press on a screen's empty area selects the screen in this mode (spec, "The mode"; decided
-    with the user). Keep it in Task 7's handle hit test.
+    with the user).
 - **Known gap, outside this plan:** deleting a design page through `DESIGN_PAGES.remove` (Pages
   panel, `delete_page`) never runs `onRemove`, so that page's flows and links into its screens
   stay (brochures have the same gap). It belongs in the core pages module.
