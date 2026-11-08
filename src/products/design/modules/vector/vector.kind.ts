@@ -13,7 +13,10 @@ import {
 import {
   DesignNodeKind,
   drawPaints,
+  drawRegionPaints,
+  flipPaintList,
   flipPaints,
+  hasOwnRegionFills,
   flipPlacement,
   EMPTY_GEOMETRY,
   hitSegment,
@@ -23,6 +26,8 @@ import {
   polygonNetwork,
   polylineNetwork,
   readNetwork,
+  regionPaints,
+  regionShapes,
   scaleNetwork,
   type FlipAxis,
   type NodeBuildContext,
@@ -68,8 +73,15 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
     return networkGeometry(el.network, true);
   }
 
+  /** Areas with fills of their own are drawn one by one, bottom to top; else as one shape. */
   draw(view: ElementView, el: VectorElement): void {
-    drawPaints(view, el, this.geometry(el) ?? EMPTY_GEOMETRY, this.strokeOf(el));
+    const geometry = this.geometry(el) ?? EMPTY_GEOMETRY;
+    if (!hasOwnRegionFills(el.network)) return drawPaints(view, el, geometry, this.strokeOf(el));
+    const regions = regionShapes(el.network).flatMap(({ region, shape }) => {
+      const data = el.network.regions[region];
+      return data ? [{ shape, fills: regionPaints(data, el) }] : [];
+    });
+    drawRegionPaints(view, el, regions, geometry, this.strokeOf(el));
   }
 
   protected override hitsShape(el: VectorElement, p: Point, tolerance: number): boolean {
@@ -77,9 +89,19 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
     if (!super.hitsShape(el, p, reachOut)) return false;
     const local = { x: p.x - el.x, y: p.y - el.y };
     const reach = el.strokeWeight / 2 + tolerance + VECTOR_DEFAULTS.reach;
-    const filled = el.fills.some((paint) => paint.visible);
-    const inside = () => pointInPath((this.geometry(el) ?? EMPTY_GEOMETRY).fill, local);
-    return hitSegment(el.network, local, reach) !== null || (filled && inside());
+    return hitSegment(el.network, local, reach) !== null || this.hitsFill(el, local);
+  }
+
+  /** Whether `local` is inside an area that shows a fill (its own, or the layer's). */
+  private hitsFill(el: VectorElement, local: Point): boolean {
+    const visible = (paints: readonly { visible: boolean }[]) => paints.some((p) => p.visible);
+    if (!hasOwnRegionFills(el.network)) {
+      return visible(el.fills) && pointInPath((this.geometry(el) ?? EMPTY_GEOMETRY).fill, local);
+    }
+    return regionShapes(el.network).some(({ region, shape }) => {
+      const data = el.network.regions[region];
+      return !!data && visible(regionPaints(data, el)) && pointInPath(shape, local);
+    });
   }
 
   /** Its points and curves stretch with its box. */
@@ -133,6 +155,10 @@ export class VectorKind extends DesignNodeKind<VectorElement> {
     const mirrored = scaleNetwork(el.network, across ? -1 : 1, across ? 1 : -1);
     const network: VectorNetwork = {
       ...mirrored,
+      // Areas' own gradients flip with them, as the layer's do.
+      regions: mirrored.regions.map((region) =>
+        region.fills ? { ...region, fills: flipPaintList(region.fills, axis) } : region,
+      ),
       vertices: mirrored.vertices.map((v) =>
         across ? { x: v.x + el.w, y: v.y } : { x: v.x, y: v.y + el.h },
       ),

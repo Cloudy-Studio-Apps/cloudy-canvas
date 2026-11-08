@@ -13,15 +13,19 @@ export const GEOMETRY_CACHE = new LruCache<string, NodeGeometry | null>(2048);
 export const EMPTY_GEOMETRY: NodeGeometry = { fill: { contours: [] }, stroke: { contours: [] } };
 
 /**
- * A network's geometry: its regions filled and its segments stroked. `normalize` resolves its
+ * A network's geometry: its regions filled (but those with empty fills of their own) and its
+ * segments stroked. `normalize` resolves its
  * regions by their winding rules (holes, overlaps, self-crossings); shapes known to be simple
  * outlines (a box, an ellipse, a polygon) skip it.
  */
 export function networkGeometry(net: VectorNetwork, normalize: boolean): NodeGeometry {
-  const regions = net.regions.map((region) => ({
-    shape: regionPath(net, region),
-    fillRule: region.windingRule,
-  }));
+  // An area emptied of its own fills is no part of what the vector fills (hits, masks, booleans).
+  const regions = net.regions
+    .filter((region) => region.fills?.length !== 0)
+    .map((region) => ({
+      shape: regionPath(net, region),
+      fillRule: region.windingRule,
+    }));
   const fill = normalize
     ? booleanPaths("union", regions)
     : { contours: regions.flatMap((region) => region.shape.contours) };

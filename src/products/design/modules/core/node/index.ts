@@ -12,7 +12,8 @@ export { createNodeBase } from "./create-node-base";
 export { DesignNodeKind } from "./design-node.kind";
 export { ChildHostKind } from "./child-host.kind";
 export type * from "./child-host.types";
-export { drawPaints } from "./draw-paints";
+export { drawPaints, drawRegionPaints } from "./draw-paints";
+export type { PaintedShape } from "./draw-paints.types";
 export {
   LAYER_BLEND_MODES,
   layerBlendMode,
@@ -49,7 +50,7 @@ export {
   isPlaceholderPaint,
   PLACEHOLDER_ASSET_PREFIX,
 } from "./placeholder-paint";
-export { flipPaints } from "./flip-paints";
+export { flipPaintList, flipPaints } from "./flip-paints";
 export { distanceToOutline, pointInPolygon, pointsInBox } from "./shape-points";
 export { BoxShapeKind } from "./box-shape.kind";
 export { PointsShapeKind } from "./points-shape.kind";

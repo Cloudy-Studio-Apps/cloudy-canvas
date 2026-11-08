@@ -1,5 +1,7 @@
 import type { CubicCurve, Point } from "@canvas";
 
+import type { Paint } from "../node/paint.types";
+
 export type { CubicCurve };
 
 /**
@@ -20,6 +22,11 @@ export type WindingRule = "nonzero" | "evenodd";
 export interface VectorRegion {
   loops: number[][];
   windingRule: WindingRule;
+  /**
+   * The area's own fills, as in Figma: missing, it shows the layer's fills; empty, it's unfilled
+   * (but stays an area that can be selected and filled again).
+   */
+  fills?: Paint[];
 }
 
 /**

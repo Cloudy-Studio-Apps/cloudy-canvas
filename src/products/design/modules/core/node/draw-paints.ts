@@ -5,10 +5,11 @@ import {
   type BlendMode,
   type ElementView,
   type PaintLayer,
+  type PathShape,
   type Rect,
 } from "@canvas";
 import type { DesignNode, NodeGeometry, NodeStroke, PaintOutline } from "./design-node.types";
-import type { StrokeDrawing, Trace } from "./draw-paints.types";
+import type { PaintedShape, StrokeDrawing, Trace } from "./draw-paints.types";
 import { isGradientPaint } from "./gradient-paint";
 import { imagePlacement } from "./image-paint";
 import { hasVisibleStroke, strokeShapeOf } from "./node-stroke";
@@ -28,14 +29,47 @@ export function drawPaints(
   shape: NodeGeometry | PaintOutline,
   stroke?: NodeStroke | null,
 ): void {
-  const box = { x: 0, y: 0, w: node.w, h: node.h };
   const layers: PaintLayer[] = [];
-  addPaints(layers, node.fills, node, box, fillTrace(shape));
+  addPaints(layers, node.fills, node, boxOf(node), fillTrace(shape));
+  setPaints(view, node, layers, shape, stroke);
+}
+
+/**
+ * `drawPaints` for a node whose areas have fills of their own (a vector's regions): each area's
+ * paints over its shape, bottom to top, then the node's strokes over `geometry` as `drawPaints`
+ * draws them.
+ */
+export function drawRegionPaints(
+  view: ElementView,
+  node: DesignNode,
+  regions: readonly PaintedShape[],
+  geometry: NodeGeometry,
+  stroke?: NodeStroke | null,
+): void {
+  const layers: PaintLayer[] = [];
+  for (const region of regions) {
+    addPaints(layers, region.fills, node, boxOf(node), pathTrace(region.shape));
+  }
+  setPaints(view, node, layers, geometry, stroke);
+}
+
+/** Adds the node's strokes to `layers` and gives them all to the view. */
+function setPaints(
+  view: ElementView,
+  node: DesignNode,
+  layers: PaintLayer[],
+  shape: NodeGeometry | PaintOutline,
+  stroke: NodeStroke | null | undefined,
+): void {
   const strokes = stroke === undefined ? defaultStroke(node, shape) : stroke;
   if (strokes && hasVisibleStroke(node)) {
-    addPaints(layers, node.strokes, node, strokeBox(strokes, box), strokeTrace(strokes));
+    addPaints(layers, node.strokes, node, strokeBox(strokes, boxOf(node)), strokeTrace(strokes));
   }
   view.setPaints(layers, { alpha: node.opacity, visible: node.visible });
+}
+
+function boxOf(node: DesignNode): Rect {
+  return { x: 0, y: 0, w: node.w, h: node.h };
 }
 
 /**
@@ -96,12 +130,16 @@ function blendOf(paint: Paint | undefined): BlendMode {
 }
 
 function fillTrace(shape: NodeGeometry | PaintOutline): Trace {
-  if (isGeometry(shape)) return (g, style) => fillPath(g, shape.fill, style);
+  if (isGeometry(shape)) return pathTrace(shape.fill);
   const outline = typeof shape === "function" ? shape : shape.fill;
   return (g, style) => {
     outline(g);
     g.fill(style);
   };
+}
+
+function pathTrace(shape: PathShape): Trace {
+  return (g, style) => fillPath(g, shape, style);
 }
 
 function strokeTrace(stroke: StrokeDrawing): Trace {
