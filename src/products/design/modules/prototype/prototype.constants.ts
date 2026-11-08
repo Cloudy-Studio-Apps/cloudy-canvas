@@ -81,3 +81,19 @@ export const MAX_TRIGGER_DELAY = 60000;
 
 /** A screen wider than this (in canvas units) plays in a browser by default, else on a phone. */
 export const WIDE_SCREEN_WIDTH = 600;
+
+/** The Prototype mode's id (`engine.setMode`, `EngineState.mode`). */
+export const PROTOTYPE_MODE_ID = "prototype";
+
+/** The mode's tools (the connect tool arrives with the links). */
+export const PROTOTYPE_TOOLS = {
+  select: "prototype.select",
+  connect: "prototype.connect",
+} as const;
+
+/** The mode's host commands (toggle works in every mode; play arrives with the player). */
+export const PROTOTYPE_COMMANDS = {
+  toggle: "prototype.toggle",
+  addFlow: "prototype.addFlow",
+  play: "prototype.play",
+} as const;

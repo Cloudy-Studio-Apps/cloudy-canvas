@@ -1,4 +1,39 @@
 {
+  "mode": {
+    "label": "Prototype",
+    "description": "Link screens and play the result",
+    "removeInteractions": "Remove interactions",
+    "toggle": "Toggle Prototype mode"
+  },
+  "toolbar": {
+    "select": "Select",
+    "selectHint": "Select screens and layers to link",
+    "addFlow": "Add flow start",
+    "addFlowHint": "Start a flow at the selected screen"
+  },
+  "platform": {
+    "mobile": "Mobile",
+    "tablet": "Tablet",
+    "desktop": "Desktop app",
+    "web": "Web"
+  },
+  "flows": {
+    "title": "Flows",
+    "add": "Add flow",
+    "play": "Play {name}",
+    "startsAt": "{platform} · starts at {screen}",
+    "hint": "A flow starts at a screen and plays on one device. A file can hold an app's flows and a website's side by side.",
+    "needScreen": "Select a screen to start a flow from it",
+    "alreadyStarts": "This screen already starts a flow"
+  },
+  "sidebar": {
+    "title": "Prototype",
+    "emptyTitle": "Nothing selected",
+    "empty": "Select a layer to add an interaction, a screen for its scrolling and flow start, or a flow on the left."
+  },
+  "badge": {
+    "interactions": "Has interactions"
+  },
   "flow": {
     "defaultName": "{screen} flow"
   }

@@ -1,4 +1,39 @@
 {
+  "mode": {
+    "label": "Prototipo",
+    "description": "Enlaza pantallas y reproduce el resultado",
+    "removeInteractions": "Quitar interacciones",
+    "toggle": "Alternar el modo Prototipo"
+  },
+  "toolbar": {
+    "select": "Seleccionar",
+    "selectHint": "Selecciona pantallas y capas para enlazarlas",
+    "addFlow": "Añadir inicio de flujo",
+    "addFlowHint": "Empieza un flujo en la pantalla seleccionada"
+  },
+  "platform": {
+    "mobile": "Móvil",
+    "tablet": "Tableta",
+    "desktop": "App de escritorio",
+    "web": "Web"
+  },
+  "flows": {
+    "title": "Flujos",
+    "add": "Añadir flujo",
+    "play": "Reproducir {name}",
+    "startsAt": "{platform} · empieza en {screen}",
+    "hint": "Un flujo empieza en una pantalla y se reproduce en un dispositivo. Un archivo puede tener los flujos de una app y los de un sitio web a la vez.",
+    "needScreen": "Selecciona una pantalla para empezar un flujo en ella",
+    "alreadyStarts": "Esta pantalla ya empieza un flujo"
+  },
+  "sidebar": {
+    "title": "Prototipo",
+    "emptyTitle": "Nada seleccionado",
+    "empty": "Selecciona una capa para añadir una interacción, una pantalla para su desplazamiento y el inicio de flujo, o un flujo a la izquierda."
+  },
+  "badge": {
+    "interactions": "Tiene interacciones"
+  },
   "flow": {
     "defaultName": "Flujo {screen}"
   }

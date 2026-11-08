@@ -3,6 +3,7 @@
 // after deletes.
 export type * from "./interaction.types";
 export type * from "./flow.types";
+export type * from "./prototype-selection.types";
 export { DEFAULT_OVERLAY, DEFAULT_TRANSITION, newInteraction } from "./interaction-defaults";
 export { readInteraction } from "./read-interaction";
 export { nodeInteractions } from "./node-interactions";
