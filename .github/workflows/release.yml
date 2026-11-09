@@ -6,8 +6,9 @@
 # every build passed, `publish` publishes it and installed apps see the update; a failed build
 # leaves the draft unpublished (re-run the failed job: when it passes, the release is published).
 #
-# Needs the repository secrets TAURI_SIGNING_PRIVATE_KEY and TAURI_SIGNING_PRIVATE_KEY_PASSWORD
-# (from `pnpm tauri signer generate`), which sign the files the updater downloads.
+# Needs the secrets TAURI_SIGNING_PRIVATE_KEY and TAURI_SIGNING_PRIVATE_KEY_PASSWORD
+# (Cloudy-Studio-Apps organization secrets, the one key every Cloudy app signs with), which sign
+# the files the updater downloads.
 name: Release
 
 on:
@@ -36,6 +37,20 @@ jobs:
           version=$(jq -r .version src-tauri/tauri.conf.json)
           if [ "v$version" != "$GITHUB_REF_NAME" ]; then
             echo "::error::Tag $GITHUB_REF_NAME doesn't match tauri.conf.json's version $version"
+            exit 1
+          fi
+
+      # Fails before anything is built when the signing key can't be reached. It comes from the
+      # Cloudy-Studio-Apps organization secrets (a repository secret of the same name overrides it).
+      # On GitHub's Free plan, private repositories don't get organization secrets: set them on
+      # the repository instead.
+      - name: Check the signing key is available
+        env:
+          KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEY" ] || [ -z "$PASSWORD" ]; then
+            echo "::error::TAURI_SIGNING_PRIVATE_KEY or TAURI_SIGNING_PRIVATE_KEY_PASSWORD isn't available to this repository. Check the organization secrets' repository access."
             exit 1
           fi
 
