@@ -36,7 +36,12 @@
     "search": "Search tools",
     "noMatch": "No tools match.",
     "none": "No tools are available here.",
-    "available": "{name} is available"
+    "available": "{name} is available",
+    "section": {
+      "shared": "Shared",
+      "board": "Board",
+      "design": "Design"
+    }
   },
   "connect": {
     "title": "Connect Cloudy Canvas to your agents",

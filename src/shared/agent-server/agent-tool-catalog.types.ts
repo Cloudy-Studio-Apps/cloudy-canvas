@@ -4,10 +4,13 @@ export interface AgentToolInfo {
   description: string;
 }
 
-/** The tools of one product or plugin. */
+/**
+ * The tools of one group. The built-in groups (`shared`, `board`, `design`) have no `title`: the
+ * menu names them in the user's language; a plugin's section carries the plugin's name.
+ */
 export interface AgentToolSection {
   id: string;
-  title: string;
+  title?: string;
   tools: readonly AgentToolInfo[];
 }
 

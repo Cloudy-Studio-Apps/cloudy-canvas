@@ -36,7 +36,12 @@
     "search": "Buscar herramientas",
     "noMatch": "Ninguna herramienta coincide.",
     "none": "No hay herramientas disponibles aquí.",
-    "available": "{name} está disponible"
+    "available": "{name} está disponible",
+    "section": {
+      "shared": "Compartidas",
+      "board": "Pizarra",
+      "design": "Diseño"
+    }
   },
   "connect": {
     "title": "Conecta Cloudy Canvas con tus agentes",
