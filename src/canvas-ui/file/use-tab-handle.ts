@@ -21,6 +21,7 @@ export function useTabHandle(
       save,
       flush: () => settled(autosave.flush),
       finish: () => settled(autosave.finish),
+      closed: autosave.closed,
       capture,
       needsSave,
     };

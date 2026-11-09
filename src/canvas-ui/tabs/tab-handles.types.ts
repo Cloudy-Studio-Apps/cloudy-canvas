@@ -5,10 +5,16 @@ export interface TabHandle {
   /** Runs the pending autosave now and waits for it (nothing when autosave is off). */
   flush(): Promise<void>;
   /**
-   * The editor's closing work, for a tab about to close: the engine's last writes (a live 3D
-   * edit), then the pending autosave, while the document is still there.
+   * The closing work, for a document about to go (the tab closing or hibernating): the engine's
+   * last writes (a live 3D edit), the sweep of unused assets, then the pending autosave, while
+   * the document is still there.
    */
   finish(): Promise<void>;
+  /**
+   * Once the editor unmounted: resolves when the work and save it started then are done (its
+   * last save has the document's data). At once while it's mounted.
+   */
+  closed(): Promise<void>;
   /** Takes the file's preview for Home now (skipped when it didn't change). */
   capture(): Promise<void>;
   /** Whether the file has changes nothing will save (autosave off or failing). */
@@ -20,6 +26,6 @@ export interface TabHandles {
   /** Registers the tab's handle; returns how to remove it. */
   set(id: string, handle: TabHandle): () => void;
   get(id: string): TabHandle | undefined;
-  /** Resolves once the tab has no handle (its editor unmounted); at once when it has none. */
-  whenRemoved(id: string): Promise<void>;
+  /** Calls `listener` with each handle of the tab removed (its editor unmounting); returns how to stop. */
+  onRemove(id: string, listener: (handle: TabHandle) => void): () => void;
 }

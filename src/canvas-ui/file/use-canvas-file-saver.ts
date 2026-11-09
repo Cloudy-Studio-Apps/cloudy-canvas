@@ -168,7 +168,9 @@ export function useCanvasFileSaver<O extends object>(
     [write, firstPath],
   );
 
-  const autosaveControls = useCanvasAutosave(engine, autosave, autosaveEnabled);
+  // The tab dropped to `document`: the editor goes but the document (and its undo) stays.
+  const keepsDocument = useCallback(() => tab.tabs.get(tab.tabId)?.state === "document", [tab]);
+  const autosaveControls = useCanvasAutosave(engine, autosave, autosaveEnabled, keepsDocument);
   useRecentProject(id, engine, info);
   const capture = useCanvasThumbnail(id, engine, saved);
 

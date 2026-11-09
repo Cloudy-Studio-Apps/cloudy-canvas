@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { debounce, type CanvasEngine } from "@canvas";
 import { appLifecycle } from "@platform";
+import { finalWork, lastWrites } from "./closing-work";
 import type { AutosaveControls, FinalWork } from "./use-canvas-autosave.types";
 
 /** Changes are saved once they stop for this long… */
@@ -15,28 +16,39 @@ const noop = (): void => undefined;
  * Runs `autosave` shortly after the document changes, and once more when the editor or the window
  * closes, the app goes to the background or autosave is turned off, so nothing pending is lost.
  * `autosave` skips a file with no changes. The engine also sweeps the assets nothing uses (see
- * `CanvasEngine.sweepAssets`) on open, and when the editor or the window closes: the closing save
- * first awaits the engine's `onBeforeSave` tasks (a live 3D edit writing itself), then sweeps, then
- * saves. It returns `flush` (the pending autosave now) and `finish` (the closing work now, for a
- * tab about to close), both doing no saving while autosave is off.
+ * `CanvasEngine.sweepAssets`) on open, and when its document goes (the window quits, the editor
+ * closes for good): the closing save first awaits the engine's `onBeforeSave` tasks (a live 3D
+ * edit writing itself), then sweeps, then saves. An editor that goes while its document stays
+ * (`keepsDocument()` true as it unmounts: its tab dropped to `document`) only awaits those tasks
+ * before its closing save: undo may still need the assets. It returns `flush` (the pending
+ * autosave now), `finish` (the closing work now, for a document about to go), both doing no saving
+ * while autosave is off, and `closed` (the work and save started as the editor unmounted).
  */
 export function useCanvasAutosave<O extends object>(
   engine: CanvasEngine<O>,
   autosave: (force?: boolean) => Promise<void>,
   enabled: boolean,
+  keepsDocument: () => boolean = () => false,
 ): AutosaveControls {
   const autosaveRef = useRef(autosave);
   const enabledRef = useRef(enabled);
+  const keepsRef = useRef(keepsDocument);
   useEffect(() => {
     autosaveRef.current = autosave;
     enabledRef.current = enabled;
-  }, [autosave, enabled]);
-  /** The engine's last work before its closing save, once it started (see `finalWork`). */
+    keepsRef.current = keepsDocument;
+  }, [autosave, enabled, keepsDocument]);
+  /** The engine's final work, once started (see `finalWork`). */
   const finalRef = useRef<FinalWork | null>(null);
+  /** The work started as the editor unmounted: the final work, or only the last writes. */
+  const closingRef = useRef<FinalWork | null>(null);
+  /** That work, and the save after it, for `closed`. */
+  const closedWorkRef = useRef<Promise<unknown>>(Promise.resolve());
+  const closedSaveRef = useRef<Promise<unknown>>(Promise.resolve());
   /** Cancels the scheduled autosave, while autosave is on. */
   const cancelRef = useRef<() => void>(noop);
 
-  // Sweeps unused 3D data when the file opens, and starts the final work before quitting and when
+  // Sweeps unused 3D data when the file opens, and starts the closing work before quitting and when
   // the editor closes (never in the autosave: undo could still need it). Not gated by `enabled`.
   useEffect(() => {
     engine.sweepAssets();
@@ -45,25 +57,28 @@ export function useCanvasAutosave<O extends object>(
     });
     return () => {
       removeQuitTask();
-      void finalWork(finalRef, engine);
+      const done = keepsRef.current() ? lastWrites(engine) : finalWork(finalRef, engine);
+      closingRef.current = { engine, done };
+      closedWorkRef.current = done.catch(noop);
     };
   }, [engine]);
 
   useEffect(() => {
     if (!enabled) return;
-    // Read when the cleanup runs, on purpose: the final work starts in the other effect's cleanup.
-    const finals = finalRef;
+    // Read when the cleanup runs, on purpose: the closing work starts in the other effect's cleanup.
+    const closings = closingRef;
+    const closedSave = closedSaveRef;
     let maxWait: ReturnType<typeof setTimeout> | undefined;
     const run = (force = false) => {
       debounced.cancel();
       clearTimeout(maxWait);
       maxWait = undefined;
-      void autosaveRef.current(force);
+      return autosaveRef.current(force);
     };
-    const debounced = debounce(() => run(), AUTOSAVE_DELAY_MS);
+    const debounced = debounce(() => void run(), AUTOSAVE_DELAY_MS);
     const schedule = () => {
       debounced();
-      maxWait ??= setTimeout(() => run(), AUTOSAVE_MAX_WAIT_MS);
+      maxWait ??= setTimeout(() => void run(), AUTOSAVE_MAX_WAIT_MS);
     };
     // Changes made while autosave was off are saved now.
     schedule();
@@ -90,13 +105,15 @@ export function useCanvasAutosave<O extends object>(
       removeQuitTask();
       removeBackgroundTask();
       // Decided once every cleanup of this commit ran, whatever their order: the editor closing
-      // (the final work started) saves once that's done, even when only that work changed the
+      // (its closing work started) saves once that's done, even when only that work changed the
       // document (the file's change count stopped with the editor); autosave turned off saves
-      // what's there.
-      queueMicrotask(() => {
-        const final = finals.current?.engine === engine ? finals.current.done : null;
-        if (final) void final.then(run, () => run(true));
-        else run();
+      // what's there. Set now, so `closed` read after this commit waits for it.
+      closedSave.current = new Promise<void>((resolve) => {
+        queueMicrotask(() => {
+          const closing = closings.current?.engine === engine ? closings.current.done : null;
+          const save = closing ? closing.then(run, () => run(true)) : run();
+          void save.then(resolve, resolve);
+        });
       });
     };
   }, [engine, enabled]);
@@ -114,32 +131,9 @@ export function useCanvasAutosave<O extends object>(
     await autosaveRef.current(changed);
   }, [engine]);
 
-  return useMemo(() => ({ flush, finish }), [flush, finish]);
-}
+  const closed = useCallback(async () => {
+    await Promise.all([closedWorkRef.current, closedSaveRef.current]);
+  }, []);
 
-/**
- * Finishes what must be written before the last save (`engine.finishBeforeSave`), then sweeps the
- * unused assets; resolves to whether that changed the document. Runs once per engine: quitting
- * and closing share it, and the closing save awaits it whichever started it.
- */
-function finalWork<O extends object>(
-  ref: { current: FinalWork | null },
-  engine: CanvasEngine<O>,
-): Promise<boolean> {
-  if (ref.current?.engine === engine) return ref.current.done;
-  const done = (async () => {
-    let changed = false;
-    const stop = engine.doc.onChange(() => {
-      changed = true;
-    });
-    try {
-      await engine.finishBeforeSave();
-      engine.sweepAssets();
-    } finally {
-      stop();
-    }
-    return changed;
-  })();
-  ref.current = { engine, done };
-  return done;
+  return useMemo(() => ({ flush, finish, closed }), [flush, finish, closed]);
 }

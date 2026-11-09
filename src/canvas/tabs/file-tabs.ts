@@ -5,15 +5,13 @@ import type {
   FileTab,
   FileTabsOptions,
   FileTabsSnapshot,
-  LeaveTarget,
   OpenTabOptions,
   TabLeaveGuard,
   TabSource,
   TabState,
 } from "./file-tabs.types";
-import { TAB_POLICY_INTERVAL_MS } from "./tab-limits";
 import { createTab, moveTab, patchTab, tabFileId } from "./tab-list";
-import { mayHibernate, planTabStates } from "./tab-policy";
+import { TabMemory } from "./tab-memory";
 
 /** How many closed tabs `reopenClosed` remembers (this session only). */
 export const CLOSED_TABS_REMEMBERED = 10;
@@ -33,19 +31,18 @@ export class FileTabs {
   private readonly loads = new Map<string, Promise<CanvasDocument>>();
   private closed: TabSource[] = [];
   private disposed = false;
-  /** What the host does before an editor goes (`setLeaveGuard`). */
-  private leaveGuard: TabLeaveGuard | null = null;
-  /** Background tabs on their way down from `headless`, left alone by the policy meanwhile. */
-  private readonly leaving = new Set<string>();
-  /** Tabs whose host kept their editor (changes nothing would save), until the next timed run. */
-  private readonly kept = new Set<string>();
-  private evaluateQueued = false;
-  private readonly stopWatching: () => void;
+  /** The memory policy, applied after every change. */
+  private readonly memory: TabMemory;
 
   constructor(options: FileTabsOptions) {
     this.options = options;
     this.now = options.now ?? Date.now;
-    this.stopWatching = this.store.subscribe(() => this.queueEvaluate());
+    this.memory = new TabMemory({
+      store: this.store,
+      get: (id) => this.get(id),
+      setState: (id, state) => this.setState(id, state),
+      now: this.now,
+    });
   }
 
   open(source: TabSource, options: OpenTabOptions = {}): FileTab {
@@ -88,7 +85,7 @@ export class FileTabs {
     this.unload(tab);
     tab.live?.leave();
     this.sources.delete(id);
-    this.kept.delete(id);
+    this.memory.forget(id);
     this.publish({ tabs: this.tabs.filter((other) => other.id !== id) });
     // A live session can't be joined again from here: only stored files are remembered.
     if (source && !source.live) {
@@ -219,10 +216,7 @@ export class FileTabs {
    * preview); returns how to remove it. Without one, editors go at once.
    */
   setLeaveGuard(guard: TabLeaveGuard): () => void {
-    this.leaveGuard = guard;
-    return () => {
-      if (this.leaveGuard === guard) this.leaveGuard = null;
-    };
+    return this.memory.setGuard(guard);
   }
 
   /**
@@ -230,34 +224,19 @@ export class FileTabs {
    * after every change; `startPolicy` also runs it on a timer, since time alone moves tabs down.
    */
   evaluate(): void {
-    if (this.disposed) return;
-    const { tabs, activeId } = this.store.get();
-    const plan = planTabStates({ tabs, activeId, now: this.now(), leaving: this.leaving });
-    for (const [id, state] of plan) {
-      const tab = this.get(id);
-      if (!tab || tab.state === state) continue;
-      // The plan only lowers a headless tab: its editor goes through `leave`.
-      if (tab.state !== "headless") this.setState(id, state);
-      else if ((state === "document" || state === "hibernated") && !this.kept.has(id))
-        void this.leave(id, state);
-    }
+    this.memory.evaluate();
   }
 
   /** Runs `evaluate` every `TAB_POLICY_INTERVAL_MS`; returns how to stop. */
   startPolicy(): () => void {
-    const timer = setInterval(() => {
-      this.kept.clear();
-      this.evaluate();
-    }, TAB_POLICY_INTERVAL_MS);
-    this.evaluate();
-    return () => clearInterval(timer);
+    return this.memory.start();
   }
 
   /** Destroys every tab's document and leaves their live sessions. */
   dispose(): void {
     if (this.disposed) return;
     this.disposed = true;
-    this.stopWatching();
+    this.memory.dispose();
     for (const tab of this.tabs) {
       this.unload(tab);
       tab.live?.leave();
@@ -286,44 +265,6 @@ export class FileTabs {
       if (!oldest) return;
       this.close(oldest.id);
     }
-  }
-
-  /**
-   * Takes a background tab's editor away, toward `target`: the host readies it first (its save
-   * and preview), and it stays mounted until then. Shown again meanwhile, it keeps it. Going to
-   * `hibernated`, the document is destroyed only once the editor is gone and its last save has
-   * its data.
-   */
-  private async leave(id: string, target: LeaveTarget): Promise<void> {
-    this.leaving.add(id);
-    try {
-      const guard = this.leaveGuard;
-      if (guard && !(await guard.prepare(id, target))) {
-        this.kept.add(id);
-        return;
-      }
-      if (this.get(id)?.state !== "headless") return;
-      this.setState(id, "document");
-      if (target !== "hibernated") return;
-      await guard?.unmounted(id);
-      const tab = this.get(id);
-      if (tab?.state === "document" && mayHibernate(tab)) this.setState(id, "hibernated");
-    } catch {
-      // The editor stays; the policy tries again on its next timed run.
-      this.kept.add(id);
-    } finally {
-      this.leaving.delete(id);
-    }
-  }
-
-  /** Runs `evaluate` once after the current change (changes made together are evaluated once). */
-  private queueEvaluate(): void {
-    if (this.evaluateQueued || this.disposed) return;
-    this.evaluateQueued = true;
-    queueMicrotask(() => {
-      this.evaluateQueued = false;
-      this.evaluate();
-    });
   }
 
   /** Drops the tab's document (destroyed, or destroyed when its load ends) and sets it idle. */

@@ -91,12 +91,20 @@ dropped. A hosting tab stays `headless` while it's in the background, since its 
 autosave lives in its editor; once the document autosaves on its own it will drop to `document`
 like a joined one.
 
-**Leaving `headless`** (`leave`): a background tab's editor goes only after the host readied it,
-through the `TabLeaveGuard` it sets with `setLeaveGuard` (`canvas-ui/tabs/tabLeaveGuard`): its
-pending autosave is flushed, its preview taken, and before hibernating its closing work run (the
-engine's last writes and their save). Meanwhile the tab stays `headless` with its editor mounted
-and the policy leaves it alone. Then it goes to `document` (the editor unmounts) and, toward
-`hibernated`, its document is destroyed only once the editor is gone and its last save took the
-data (`guard.unmounted`). A tab shown again meanwhile keeps its editor. A tab whose changes
-nothing would save (autosave off or failing) keeps its editor (so the cap can be passed): the
-policy tries it again on its next timed run.
+`TabMemory` (`tab-memory.ts`) does this for `FileTabs` (which keeps `evaluate`, `startPolicy` and
+`setLeaveGuard` as its API), acting through its `get` and `setState`.
+
+**Leaving `headless`** (`TabMemory.leave`): a background tab's editor goes only after the host
+readied it, through the `TabLeaveGuard` it sets with `setLeaveGuard`
+(`canvas-ui/tabs/tabLeaveGuard`): its pending autosave is flushed, its preview taken, and before
+hibernating its closing work run (the engine's last writes, the sweep of unused assets and their
+save). Meanwhile the tab stays `headless` with its editor mounted and the policy leaves it alone.
+Then it goes to `document` (the editor unmounts) and, toward `hibernated`, its document is
+destroyed only once the editor's slot has unmounted and the save its editor started then is done
+(`guard.unmounted`). A tab shown again meanwhile keeps its editor (and isn't hibernated).
+
+**The cap can be passed**: a tab whose changes nothing would save (autosave off or failing)
+keeps its editor, since a `document` tab has no editor to save it or ask about it; so does a
+hosting tab. Such tabs can make more than `maxHeadless` engines. A kept tab is tried again on the
+next timed run. A failing `prepare` is logged once per tab (`console.warn`) and tried again then
+too.

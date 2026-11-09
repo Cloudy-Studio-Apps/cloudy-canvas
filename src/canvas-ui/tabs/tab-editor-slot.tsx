@@ -1,7 +1,8 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 import { cn } from "@shared/ui/lib/utils";
 import { ReconnectingBanner } from "../share/reconnecting-banner";
+import { editorSlots } from "./editor-slots";
 import { TabContext } from "./tab-context";
 import { tabContextValue } from "./tab-context-value";
 import type { TabEditorSlotProps } from "./tab-host.types";
@@ -14,6 +15,7 @@ import type { TabEditorSlotProps } from "./tab-host.types";
  */
 export function TabEditorSlot({ tabs, tab, active, Editor }: TabEditorSlotProps) {
   const context = useMemo(() => tabContextValue(tabs, tab.id), [tabs, tab.id]);
+  useEffect(() => editorSlots.mount(tab.id), [tab.id]);
   return (
     <div
       className={cn("absolute inset-0", !active && "pointer-events-none invisible")}

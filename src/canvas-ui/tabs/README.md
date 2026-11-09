@@ -34,10 +34,11 @@ knows a product: the app gives `TabHost` each product's editor (`app/tabs/`).
   router's search params, since a tab outlives its route.
 - **`tabHandles`** (`tab-handles.ts`) holds, by tab id, the `TabHandle` of each tab whose editor is
   mounted, registered by its file's saver (`useCanvasFileSaver`): `save()`, `flush()` (the pending
-  autosave now, awaited), `finish()` (the closing work: the engine's last writes, then the
-  autosave), `capture()` (the preview) and `needsSave()` (changes nothing will save, as of now).
+  autosave now, awaited), `finish()` (the closing work for a document about to go: the engine's
+  last writes, the sweep of unused assets, then the autosave), `closed()` (after the editor
+  unmounted: the work and save it started then are done), `capture()` (the preview) and `needsSave()` (changes nothing will save, as of now).
   Not reactive: the app reads it when closing a tab or the window (`app/tabs/`), and
-  `whenRemoved(id)` resolves once a tab's editor has unmounted. A tab with no handle (hibernated,
+  `onRemove(id, listener)` hands over each handle removed as a tab's editor unmounts. A tab with no handle (hibernated,
   `document`, a live guest) has nothing to save.
 - **`tabLeaveGuard`** (`tab-leave-guard.ts`), set by `TabHost` on the `FileTabs`
   (`setLeaveGuard`), readies a background editor before the memory policy takes it away
@@ -45,4 +46,7 @@ knows a product: the app gives `TabHost` each product's editor (`app/tabs/`).
   preview needs the engine, so it's taken here, as the editor no longer unmounts when the user
   goes Home or switches tabs), and toward `hibernated` also `finish()`, since the document goes
   next. When `needsSave()` the editor stays. The slot unmounts only after; `unmounted(id)` waits
-  for that and for the editor's closing save to take the document's data.
+  until the tab's slot really unmounted (`editorSlots`, `editor-slots.ts`: each `TabEditorSlot`
+  marks itself mounted, and `whenUnmounted(id)` resolves after the commit that removes it) and
+  then for the `closed()` of every handle removed meanwhile, so the document is never destroyed
+  while that save is still to read it.
