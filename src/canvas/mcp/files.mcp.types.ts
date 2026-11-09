@@ -16,8 +16,8 @@ export interface AgentFileOpened {
   id: string;
   /** The tab's name: the document's title, else the file's name. */
   name: string;
-  title: string;
-  description: string;
+  title?: string | undefined;
+  description?: string | undefined;
   /** `null` until the file is saved for the first time. */
   path: string | null;
 }
