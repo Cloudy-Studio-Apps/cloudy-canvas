@@ -7,7 +7,7 @@ export type * from "./stores/image-crop-store.types";
 export * from "./components/panel";
 export * from "./hooks";
 export * from "./modules";
-export { getActiveDesign, waitForActiveDesign } from "./agent";
+export { designFiles, getActiveDesign } from "./agent";
 export { DesignEditor } from "./design-editor";
 export { useDesignEngine, useDesignState } from "./design-engine-context";
 export {

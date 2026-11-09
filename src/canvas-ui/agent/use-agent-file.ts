@@ -2,19 +2,23 @@ import { useEffect } from "react";
 
 import type { AgentFile } from "@canvas";
 import type { CanvasFileContextValue } from "../file";
-import type { ActiveFile } from "./active-file.types";
+import { useTabContext } from "../tabs/tab-context";
+import { useIsActiveTab } from "../tabs/use-is-active-tab";
+import type { AgentFiles } from "./agent-files.types";
 
-/** Makes this file the one agents act on while its editor is open. */
+/** Registers this file for agents under its tab while its editor is mounted. */
 export function useAgentFile<Engine>(
-  active: ActiveFile<AgentFile<Engine>>,
+  files: AgentFiles<AgentFile<Engine>>,
   id: string,
   engine: Engine,
   file: CanvasFileContextValue,
 ): void {
+  const { tabId } = useTabContext();
+  const active = useIsActiveTab();
   const { name, path, dirty, save } = file;
 
   useEffect(() => {
-    active.set({
+    files.set(tabId, {
       id,
       engine,
       name,
@@ -24,12 +28,17 @@ export function useAgentFile<Engine>(
         await save();
       },
     });
-  }, [active, id, engine, name, path, dirty, save]);
+  }, [files, tabId, id, engine, name, path, dirty, save]);
 
   useEffect(
     () => () => {
-      if (active.get()?.engine === engine) active.set(null);
+      if (files.get(tabId)?.engine === engine) files.set(tabId, null);
     },
-    [active, engine],
+    [files, tabId, engine],
   );
+
+  useEffect(() => {
+    files.setActive(tabId, active);
+    return () => files.setActive(tabId, false);
+  }, [files, tabId, active]);
 }

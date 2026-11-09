@@ -57,7 +57,8 @@ least that). A document whose load ends after its tab was hibernated or closed i
 ## Agents
 
 `bindAgent(id, session)` binds an agent session to one tab (moving it out of the one it was in),
-`unbindAgent(session)` frees it, and `noteAgentCall(id)` sets `lastAgentCallAt`. `move(id, index)`
+`unbindAgent(session)` frees it, and `noteAgentCall(id)` sets `lastAgentCallAt` (the app calls it
+before each of a bound agent's calls, [app/mcp/](../../app/mcp/README.md#agents-and-tabs)). `move(id, index)`
 reorders the tabs; `dispose()` destroys every document and leaves every live session.
 
 ## The memory policy

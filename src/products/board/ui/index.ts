@@ -6,7 +6,7 @@ export type * from "./stores/board-panel-store.types";
 export * from "./components/board-colors";
 export * from "./components/source-editor";
 export * from "./modules";
-export { getActiveBoard, setActiveBoard, waitForActiveBoard } from "./agent";
+export { boardFiles, getActiveBoard } from "./agent";
 export { BoardEditor } from "./board-editor";
 export { useBoardEngine, useBoardState } from "./board-engine-context";
 export { BoardShortcutsList } from "./components/shortcuts-list";

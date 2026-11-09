@@ -1,22 +1,25 @@
-import type { McpMessageContext, McpServerDefinition } from "@shared/core";
-import { BOARD_MCP_INSTRUCTIONS, createBoardMcpTools, type AgentHost } from "@board";
+import type { McpServerDefinition } from "@shared/core";
+import { BOARD_MCP_INSTRUCTIONS, createBoardMcpTools } from "@board";
 import { getBoardModules, getBoardProduct } from "@board/ui";
-import { createDesignMcpTools, DESIGN_MCP_INSTRUCTIONS, type DesignAgentHost } from "@design";
+import { createDesignMcpTools, DESIGN_MCP_INSTRUCTIONS } from "@design";
 import { getDesignModules, getDesignProduct } from "@design/ui";
 import { notifyError } from "@shared/stores/toast-store";
 import { t } from "../app.i18n";
+import type { AgentServerOptions } from "./agent-server-definition.types";
 
 const SERVER_NAME = "cloudy-canvas";
 const SERVER_VERSION = "0.1.0";
 
 /**
  * The MCP server agents see: every product's agent tools, each call bound to the host of the
- * agent making it (`hostFor`: its own workspace on the open file), and the notes it's owed.
+ * agent making it (`hostFor`: its own workspace on its tab's file) after `prepare` readied that
+ * tab, and the notes it's owed.
  */
-export function createAgentServerDefinition(
-  hostFor: (context: McpMessageContext) => AgentHost & DesignAgentHost,
-  notesFor?: (context: McpMessageContext) => string[],
-): McpServerDefinition {
+export function createAgentServerDefinition({
+  hostFor,
+  prepare,
+  notesFor,
+}: AgentServerOptions): McpServerDefinition {
   // One set of names for both products, so a design tool can't shadow a board tool.
   const taken = new Set<string>();
   const skipped = (tool: { name: string }, group: { id: string }) =>
@@ -36,7 +39,10 @@ export function createAgentServerDefinition(
       name: tool.name,
       description: tool.description,
       inputSchema: tool.inputSchema,
-      run: (args, context) => tool.run(hostFor(context), args),
+      run: async (args, context) => {
+        await prepare?.(context);
+        return tool.run(hostFor(context), args);
+      },
     })),
     ...(notesFor ? { notesFor } : {}),
   };

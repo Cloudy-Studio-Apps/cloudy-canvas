@@ -32,7 +32,7 @@ export type * from "./starters";
 export type * from "./stickers";
 export type * from "./tabs";
 export type * from "./thumbnails";
-export { createActiveFile, useAgentFile } from "./agent";
+export { createAgentFiles, useAgentFile } from "./agent";
 export { EXPORT_THEME_SCOPE } from "@shared/core";
 export { readCanvasTheme, readExportCanvasTheme } from "./canvas-theme";
 export { MainMenuSectionsView } from "./main-menu";

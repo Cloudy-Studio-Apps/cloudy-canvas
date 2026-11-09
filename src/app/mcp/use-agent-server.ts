@@ -40,9 +40,12 @@ export function useAgentServer(): void {
     void channel
       .listen(({ id, body, session, userAgent, ended }) => {
         loadRuntime()
-          .then(async ({ agentServer, presence }) => {
+          .then(async ({ agentServer, agentTabs, presence }) => {
             if (ended) {
-              if (session) presence.leave(session);
+              if (session) {
+                presence.leave(session);
+                agentTabs.unbind(session);
+              }
               return;
             }
             const context = { session, userAgent };
