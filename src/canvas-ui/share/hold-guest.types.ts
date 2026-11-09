@@ -5,4 +5,6 @@ export interface HeldGuest {
   key: string;
   guest: ShareGuest;
   holders: number;
+  /** Given to a file tab, which leaves it when it closes: nothing here leaves it anymore. */
+  handedOver: boolean;
 }

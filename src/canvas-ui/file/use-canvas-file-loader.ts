@@ -1,53 +1,40 @@
 import { useEffect, useState } from "react";
 
-import type { CanvasDocument } from "@canvas";
-import { storage } from "@platform";
+import type { CanvasDocument, ShareGuest } from "@canvas";
 import type { CanvasFileLoadState, CanvasFileSource } from "./canvas-file.types";
-import { t } from "./file.i18n";
+import { loadCanvasFile } from "./load-canvas-file";
 
 /**
- * Loads the file with this id from storage, or starts an empty document when the id isn't a saved
- * file (one just created from Home), or takes a live session's document (`source.live`). The
- * document is destroyed on unmount. `source` is read once per id.
+ * `loadCanvasFile` for a host that isn't a file tab (the editors take their document from their
+ * tab): loads once per id and destroys the document on unmount. `source` and `live` are read once
+ * per id.
  */
-export function useCanvasFileLoader(id: string, source: CanvasFileSource): CanvasFileLoadState {
+export function useCanvasFileLoader(
+  id: string,
+  source: CanvasFileSource,
+  live: ShareGuest | null = null,
+): CanvasFileLoadState {
   const [state, setState] = useState<CanvasFileLoadState>({ status: "loading" });
-  const [initialSource] = useState(source);
+  const [initial] = useState(() => ({ source, live }));
 
   useEffect(() => {
     let active = true;
     let loaded: CanvasDocument | null = null;
-    const { noun, open, create, live } = initialSource;
-
-    void (async () => {
-      try {
-        if (live) {
-          const document = live();
-          loaded = document;
-          setState({ status: "ready", document, info: null });
-          return;
-        }
-        const info = await storage.get(id);
-        const document = info ? open(await storage.load(id)) : create();
+    loadCanvasFile(id, initial.source, initial.live).then(
+      ({ document, info }) => {
         if (!active) return document.destroy();
         loaded = document;
         setState({ status: "ready", document, info });
-      } catch (error) {
-        console.error(`[${noun}] Failed to open the file:`, error);
-        if (active) {
-          setState({
-            status: "error",
-            message: error instanceof Error ? error.message : t("errors.open", { noun }),
-          });
-        }
-      }
-    })();
-
+      },
+      (error: unknown) => {
+        if (active) setState({ status: "error", message: (error as Error).message });
+      },
+    );
     return () => {
       active = false;
       loaded?.destroy();
     };
-  }, [id, initialSource]);
+  }, [id, initial]);
 
   return state;
 }

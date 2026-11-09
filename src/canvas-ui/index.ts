@@ -29,12 +29,23 @@ export type * from "./overlay";
 export type * from "./share";
 export type * from "./starters";
 export type * from "./stickers";
+export type * from "./tabs";
 export type * from "./thumbnails";
 export { createActiveFile, useAgentFile } from "./agent";
 export { EXPORT_THEME_SCOPE } from "@shared/core";
 export { readCanvasTheme, readExportCanvasTheme } from "./canvas-theme";
 export { useStartStarter } from "./starters";
 export { StickerWheel } from "./stickers";
+export {
+  FileTabsContext,
+  TabContext,
+  TabHost,
+  useDropTabParam,
+  useFileTabs,
+  useFileTabsModel,
+  useTab,
+  useTabParam,
+} from "./tabs";
 export {
   ElementThumbnail,
   ElementThumbnails,
@@ -114,6 +125,7 @@ export {
   CloseFileGuard,
   DocumentInfoPopover,
   importStep,
+  loadCanvasFile,
   SaveIndicator,
   toastImportWarnings,
   useCanvasFile,
@@ -126,6 +138,8 @@ export { useEngineElement } from "./use-engine-element";
 export { useCanvasEngine } from "./use-canvas-engine";
 export {
   LiveSessionLayer,
+  handOverGuest,
+  ReconnectingBanner,
   ShareButton,
   stopSharing,
   useHeldGuest,

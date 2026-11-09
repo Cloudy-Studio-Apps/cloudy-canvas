@@ -20,7 +20,3 @@ export interface JoinedSessionProps {
   /** The session is over: leave the page. */
   onEnd: () => void;
 }
-
-export interface ReconnectingBannerProps {
-  host: string;
-}

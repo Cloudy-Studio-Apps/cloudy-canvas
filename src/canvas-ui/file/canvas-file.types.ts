@@ -1,4 +1,4 @@
-import type { CanvasDocument } from "@canvas";
+import type { CanvasDocument, ElementKinds } from "@canvas";
 import type { FileInfo, FileType, ShareIdentity, ShareRole } from "@shared/core";
 
 export type SaveStatus = "idle" | "saving" | "error";
@@ -28,11 +28,8 @@ export interface CanvasFileSource {
   open(bytes: Uint8Array): CanvasDocument;
   /** An empty document, for an id that isn't a saved file (just created from Home). */
   create(): CanvasDocument;
-  /**
-   * The document of a live session joined as a guest (its Yjs doc comes from the host), instead
-   * of a file: nothing is read from storage.
-   */
-  live?: () => CanvasDocument;
+  /** The product's element kinds, for a live session's document (its Yjs doc is the host's). */
+  kinds: ElementKinds;
 }
 
 export type CanvasFileLoadState =

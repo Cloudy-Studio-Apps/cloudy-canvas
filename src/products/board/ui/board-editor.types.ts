@@ -1,7 +1,4 @@
-import type { ShareGuest } from "@canvas";
-
 export interface BoardEditorProps {
-  id: string;
-  /** A live session joined as a guest: its board instead of a file (`id` is then a key only). */
-  live?: ShareGuest;
+  /** The file tab it shows: its document, and its live session when it's a joined one. */
+  tabId: string;
 }

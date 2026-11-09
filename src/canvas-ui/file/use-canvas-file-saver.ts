@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router";
 
 import type { CanvasEngine } from "@canvas";
 import { FILE_EXTENSIONS, isAndroidPlatform, type FileInfo } from "@shared/core";
@@ -8,6 +7,7 @@ import { useAutosaveStore } from "@shared/stores/autosave-store";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 import { notifyError } from "@shared/stores/toast-store";
 import { useUnsavedChangesStore } from "@shared/stores/unsaved-changes-store";
+import { useTabParam } from "../tabs/tab-context";
 import { useDocumentMeta } from "../use-document-meta";
 import type {
   CanvasFileContextValue,
@@ -26,8 +26,8 @@ const SAVED_NOTICE_MS = 3000;
 /**
  * Saves the document to its file in the product's `format` (asking where the first time), autosaves
  * it after changes (as a draft in the app data while it has no file) and tracks unsaved changes.
- * A new file opened with `?dir=` (made in a project's folder) goes there, with a free untitled
- * name, without asking.
+ * A new file whose tab opened with `?dir=` (made in a project's folder) goes there, with a free
+ * untitled name, without asking.
  */
 export function useCanvasFileSaver<O extends object>(
   id: string,
@@ -52,9 +52,9 @@ export function useCanvasFileSaver<O extends object>(
   /** A failed autosave is reported once, until a save works again. */
   const autosaveFailed = useRef(false);
   const savedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const [params] = useSearchParams();
+  const dir = useTabParam("dir");
   /** The folder a new file made in a project goes to, and the path picked there once. */
-  const folder = useRef(initialInfo === null ? params.get("dir") : null);
+  const folder = useRef(initialInfo === null ? dir : null);
   const folderPath = useRef<Promise<string | null> | null>(null);
 
   useEffect(

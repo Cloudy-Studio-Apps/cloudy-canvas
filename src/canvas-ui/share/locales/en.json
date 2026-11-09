@@ -76,5 +76,9 @@
   },
   "guestFile": {
     "name": "Shared {noun}"
+  },
+  "reconnecting": {
+    "message": "Reconnecting to {host}… Your changes are kept and sent once it's back.",
+    "theHost": "the host"
   }
 }

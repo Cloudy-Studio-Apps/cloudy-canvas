@@ -76,5 +76,9 @@
   },
   "guestFile": {
     "name": "Copia compartida de {noun}"
+  },
+  "reconnecting": {
+    "message": "Reconectando con {host}… Tus cambios se conservan y se envían cuando vuelva.",
+    "theHost": "el anfitrión"
   }
 }

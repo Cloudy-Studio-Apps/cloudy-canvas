@@ -15,13 +15,20 @@ A release shouldn't act like a browser page. `installBrowserGuard()` (`platform/
 - **Crash symbols:** `pnpm release:play` builds the Rust libraries unstripped (`CARGO_PROFILE_RELEASE_STRIP=false`, overriding `strip = true` in `Cargo.toml`) and the release build type sets `debugSymbolLevel = "SYMBOL_TABLE"`, so the `.aab` carries the native symbols Play uses to name functions in crash and ANR reports. Gradle still strips the libraries it installs.
 - **Not there yet:** opening files from other apps. A file manager rarely sends a `.cboard` with the type the manifest's intent filters ask for.
 
+## Window
+
+The router's root element is `AppFrame` (`tabs/`): the Home area (Home, Settings, Projects, Join
+through `<Outlet />`) with the open file tabs' editors over it. File routes (`/board/:id`,
+`/design/:id`) open their tab through the route sync, and the active tab's route stays in the
+address. See [tabs/](tabs/README.md).
+
 ## Startup
 
 The first load holds Home and the app's shell, never a product or the canvas engine, so the window shows something fast. Anything in Home's static imports that reaches `@board`, `@design`, `@canvas` or `@canvas-ui` (a type import doesn't) brings them all back into the first load: a value Home needs from a product moves to `shared/` instead.
 
 1. `index.html` shows the splash (see `shared/ui`), which needs none of the app's code.
 2. `main.tsx` runs `loadPlugins()`. The products only load this early when a plugin is enabled and trusted (`plugins/activate-plugin.ts`), because the plugin API holds both and their modules must register before the products compose.
-3. React renders, replacing the splash. Every route but Home is a `lazyPage` (`lazy-page.tsx`): opening one loads it, with the loading screen until it's there.
+3. React renders, replacing the splash. Every route sits under `AppFrame` (see Window below); every route but Home is a `lazyPage` (`lazy-page.tsx`, built on `lazyComponent`, which the tabs' editors use too): opening one loads it, with the loading screen until it's there.
 4. `preloadProducts()` (`preload-products.ts`) loads the board, the design and, where agents can connect, `mcp/agent-runtime.ts` behind the first page, with gaps so the window can answer, then sets `useProductsStore`'s `ready`: Home's starters wait for it, and from then on opening a product is instant. The agent menu's tools are empty until this finishes.
 
 An agent's request that arrives before that loads `agent-runtime.ts` itself, so agents never depend on the preload.

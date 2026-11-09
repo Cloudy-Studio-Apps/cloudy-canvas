@@ -5,10 +5,9 @@ import { projectsSupported } from "@platform";
 import { HomePage } from "@pages/home/home-page";
 import { RouteErrorPage } from "./error";
 import { lazyPage } from "./lazy-page";
+import { AppFrame } from "./tabs/app-frame";
 
 // Only Home is part of the first load: the rest needs the products, or isn't needed at startup.
-const boardEditor = lazyPage(() => import("@board/ui").then((ui) => ui.BoardEditorPage));
-const designEditor = lazyPage(() => import("@design/ui").then((ui) => ui.DesignEditorPage));
 const settings = lazyPage(() =>
   import("@pages/settings/settings-page").then((page) => page.SettingsPage),
 );
@@ -36,14 +35,16 @@ const devRoutes: RouteObject[] = import.meta.env.DEV
     ]
   : [];
 
-// Every route sits under one pathless parent whose errorElement catches what any of them throws.
+// Every route sits under one pathless parent, the app frame, whose errorElement catches what any of
+// them throws. File routes render nothing themselves: the frame opens their tab (`app/tabs/`).
 export const router = createBrowserRouter([
   {
+    element: <AppFrame />,
     errorElement: <RouteErrorPage />,
     children: [
       { path: "/", element: <HomePage /> },
-      { path: "/board/:id", element: boardEditor },
-      { path: "/design/:id", element: designEditor },
+      { path: "/board/:id", element: null },
+      { path: "/design/:id", element: null },
       { path: "/projects", element: desktopOnly(projects) },
       { path: "/project/:id", element: desktopOnly(project) },
       { path: "/settings", element: settings },
