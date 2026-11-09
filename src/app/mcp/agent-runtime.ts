@@ -7,7 +7,7 @@ import { presenceKey } from "./agent-presence-key";
 import { createAgentPresenceSource } from "./agent-presence-source";
 import { createAgentServerDefinition } from "./agent-server-definition";
 import { createAgentTabs } from "./agent-tab-binding";
-import { prepareAgentCall, presenceFileFor } from "./agent-tab-files";
+import { agentProductFor, prepareAgentCall, presenceFileFor } from "./agent-tab-files";
 import { agentToolCatalog } from "./agent-tool-catalog";
 import { createUndoNotes } from "./agent-undo-notes";
 
@@ -58,6 +58,7 @@ export function agentServer(): McpServerDefinition {
       }
       return end;
     },
+    productFor: (context) => agentProductFor(agentTabs, presenceKey(context)),
     notesFor: (context) => undoNotes.take(presenceKey(context)),
   });
   return server;

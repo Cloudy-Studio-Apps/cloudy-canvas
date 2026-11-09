@@ -4,6 +4,7 @@ import type { BoardMcpTool } from "../../../mcp/board-mcp.types";
 export const pluginTools: BoardMcpTool[] = [
   {
     name: "list_plugins",
+    scope: "app",
     description:
       "The plugins installed in the app: id, name, version, whether each is enabled, disabled or " +
       "failed (with the error), and the agent tools it adds. Plugins are installed and enabled by " +

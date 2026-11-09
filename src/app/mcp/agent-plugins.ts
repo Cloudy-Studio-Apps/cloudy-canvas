@@ -1,6 +1,7 @@
 import type { AgentPlugin } from "@board";
 import { usePluginsStore } from "@shared/stores/plugins-store";
 import { agentTools } from "./agent-tools";
+import { toolImplementations } from "./merge-product-tools";
 
 /**
  * The installed plugins for `list_plugins`, with the agent tools their modules add and those that
@@ -22,7 +23,9 @@ export function agentPlugins(): AgentPlugin[] {
       ...(manifest.description ? { description: manifest.description } : {}),
       state: status?.state ?? "disabled",
       ...(status?.error ? { error: status.error } : {}),
-      tools: served.filter((tool) => tool.pluginId === manifest.id).map((tool) => tool.name),
+      tools: served
+        .filter((tool) => toolImplementations(tool).some((each) => each.pluginId === manifest.id))
+        .map((tool) => tool.name),
       ...(refused.length > 0 ? { refusedTools: refused } : {}),
     };
   });

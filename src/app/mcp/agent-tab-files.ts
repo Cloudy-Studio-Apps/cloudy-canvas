@@ -1,3 +1,4 @@
+import type { FileType } from "@shared/core";
 import type { FileTab } from "@canvas";
 import type { OpenBoard } from "@board";
 import { boardFiles } from "@board/ui";
@@ -23,6 +24,23 @@ export function tabAgentFile(tabId: string): OpenBoard | OpenDesign | null {
 export function presenceFileFor(tabs: AgentTabs, session: string): OpenBoard | OpenDesign | null {
   const tabId = tabs.tabFor(session) ?? fileTabs.store.get().activeId;
   return tabId === null ? null : tabAgentFile(tabId);
+}
+
+/**
+ * The product a session's product tool runs on: its bound tab's type, else (unbound) the active
+ * tab's, else `null` (Home). Bound to a tab closed since, it's unbound and this throws, once, as
+ * its file calls do.
+ */
+export function agentProductFor(tabs: AgentTabs, session: string): FileType | null {
+  const bound = tabs.tabFor(session);
+  if (bound !== null) {
+    const tab = fileTabs.get(bound);
+    if (tab) return tab.type;
+    tabs.unbind(session);
+    throw new Error(TAB_CLOSED);
+  }
+  const { activeId } = fileTabs.store.get();
+  return activeId === null ? null : (fileTabs.get(activeId)?.type ?? null);
 }
 
 /**

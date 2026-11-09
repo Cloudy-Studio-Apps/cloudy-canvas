@@ -2,6 +2,7 @@ import type { CollectedMcpTool } from "@canvas";
 import type { AgentToolInfo, AgentToolSection } from "@shared/agent-server";
 import { agentPlugins } from "./agent-plugins";
 import { agentTools } from "./agent-tools";
+import { listedTool } from "./merge-product-tools";
 
 /**
  * The tools agents see, as the agent menu lists them: the board's, the design's and one section
@@ -10,7 +11,7 @@ import { agentTools } from "./agent-tools";
 export function agentToolCatalog(): AgentToolSection[] {
   const { board, design, served } = agentTools();
   const plugins = agentPlugins().filter((plugin) => plugin.tools.length > 0);
-  const all = new Map(served.map((tool) => [tool.name, info(tool)]));
+  const all = new Map(served.map((tool) => [tool.name, info(listedTool(tool))]));
   const own = (tools: readonly CollectedMcpTool<unknown>[]) =>
     tools.filter((tool) => tool.pluginId === undefined).map(info);
 

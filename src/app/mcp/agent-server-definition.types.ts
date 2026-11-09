@@ -1,4 +1,4 @@
-import type { McpMessageContext } from "@shared/core";
+import type { FileType, McpMessageContext } from "@shared/core";
 import type { TabsAgentHost } from "@canvas";
 import type { AgentHost } from "@board";
 import type { DesignAgentHost } from "@design";
@@ -14,6 +14,11 @@ export interface AgentServerOptions {
    * to run once the call settles.
    */
   prepare?(context: McpMessageContext): Promise<() => void>;
+  /**
+   * The product of the agent's tab, read when a product tool runs (after `prepare`): its bound
+   * tab's type, else the active tab's, else `null` (no file).
+   */
+  productFor(context: McpMessageContext): FileType | null;
   /** The notes the agent is owed after a result. */
   notesFor?(context: McpMessageContext): string[];
 }

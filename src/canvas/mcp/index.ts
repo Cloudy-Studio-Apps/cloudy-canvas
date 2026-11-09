@@ -28,6 +28,7 @@ export { buildElement, creatableTypes, elementSpec } from "./build-element";
 export { builtInPrefixes } from "./built-in-prefixes";
 export { collectMcpTools } from "./collect-mcp-tools";
 export { mcpPrefixFor } from "./mcp-prefix";
+export { sameSchema } from "./same-schema";
 export { checkMcpToolName, MCP_TOOL_NAME_MAX, mcpToolName } from "./mcp-tool-name";
 export { mcpToolOwner } from "./mcp-tool-owner";
 export { elementPatch } from "./element-patch";

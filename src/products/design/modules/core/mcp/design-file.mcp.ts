@@ -19,6 +19,7 @@ const NAME_PROPERTY = {
 export const designFileTools: DesignMcpTool[] = [
   {
     name: "list_recent_designs",
+    scope: "app",
     description:
       "Designs recently opened or saved in Cloudy Canvas, newest first, with their title and " +
       "description when they have one. Designs marked missing were moved or deleted and can't " +
@@ -41,6 +42,7 @@ export const designFileTools: DesignMcpTool[] = [
   },
   {
     name: "open_design",
+    scope: "app",
     description:
       "Opens a design in its own tab and moves you there; the user's view doesn't change. Give " +
       "its id (from list_recent_designs) or its name: the name is matched case-insensitively " +
@@ -60,6 +62,7 @@ export const designFileTools: DesignMcpTool[] = [
   },
   {
     name: "new_design",
+    scope: "app",
     description:
       "Creates a new empty design in its own tab and moves you there; the user's view doesn't " +
       "change. It's a draft the app saves by itself unless you save it with save_design. With " +

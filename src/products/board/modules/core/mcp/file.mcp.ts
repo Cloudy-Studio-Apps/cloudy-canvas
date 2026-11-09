@@ -20,6 +20,7 @@ const NAME_PROPERTY = {
 export const fileTools: BoardMcpTool[] = [
   {
     name: "list_recent_boards",
+    scope: "app",
     description:
       "Boards recently opened or saved in Cloudy Canvas, newest first, with their title and " +
       "description when they have one. Boards marked missing were moved or deleted and can't " +
@@ -42,6 +43,7 @@ export const fileTools: BoardMcpTool[] = [
   },
   {
     name: "open_board",
+    scope: "app",
     description:
       "Opens a board in its own tab and moves you there; the user's view doesn't change. Give " +
       "its id (from list_recent_boards) or its name: the name is matched case-insensitively " +
@@ -61,6 +63,7 @@ export const fileTools: BoardMcpTool[] = [
   },
   {
     name: "new_board",
+    scope: "app",
     description:
       "Creates a new empty board in its own tab and moves you there; the user's view doesn't " +
       "change. It's a draft the app saves by itself unless you save it with save_board. With a " +
