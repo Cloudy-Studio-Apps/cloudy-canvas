@@ -27,23 +27,10 @@ export function zoomArg(args: Args): number | undefined {
 }
 
 /**
- * An element patch's `angle` and `zoom` checked (what a model kind's `completePatch` does), with
- * `angle` copied to a plain `{ x, y, z }`.
+ * Throws when an agent's element patch sets `angle` or `zoom`: they only change through the view
+ * tool, which draws the new picture (`tool` names it), so the picture never goes stale.
  */
-export function checkViewPatch<P extends { angle?: unknown; zoom?: unknown }>(patch: P): P {
-  const { angle, zoom } = patch;
-  const checked: Args = { ...patch };
-  if (angle !== undefined) {
-    checked.angle = angleArg({ angle });
-    if (checked.angle === undefined) {
-      throw new Error('"angle" must be { x, y, z }, finite numbers in degrees.');
-    }
-  }
-  if (zoom !== undefined) {
-    if (typeof zoom !== "number") {
-      throw new Error(`"zoom" must be between ${ZOOM_RANGE.min} and ${ZOOM_RANGE.max}.`);
-    }
-    zoomArg({ zoom });
-  }
-  return checked as P;
+export function rejectViewPatch(patch: object, tool: string): void {
+  const field = (["angle", "zoom"] as const).find((key) => key in patch);
+  if (field) throw new Error(`A model's "${field}" can't be patched: use ${tool}.`);
 }

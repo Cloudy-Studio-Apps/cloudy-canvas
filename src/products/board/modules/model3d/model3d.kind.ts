@@ -1,7 +1,7 @@
 import {
   BoxKind,
   ELEMENT_DEFAULTS,
-  checkViewPatch,
+  rejectViewPatch,
   type ElementPatch,
   type ElementView,
   type ModelData,
@@ -51,6 +51,7 @@ export class Model3dKind extends BoxKind<ModelElement, BoardToolOptions> impleme
     _el: ModelElement,
     patch: ElementPatch<ModelElement>,
   ): ElementPatch<ModelElement> {
-    return checkViewPatch(patch);
+    rejectViewPatch(patch, "set_model_view");
+    return patch;
   }
 }

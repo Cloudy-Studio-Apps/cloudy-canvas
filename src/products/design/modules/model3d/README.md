@@ -39,5 +39,5 @@ edited, and convertible to a rectangle filled with its PNG.
   textures and picture in one undo step, `convert_model_node_to_png` converts. The last two fail
   with "being edited" while the model is live for anyone (the user included), checked before any
   read or write and again before writing. The tools' shared pieces live in `canvas/model3d/mcp/`
-  and are the board's too. Agents move and resize models with `update_nodes` (`angle` and `zoom`
-  are checked; the model's files can't be patched).
+  and are the board's too. Agents move and resize models with `update_nodes` (`angle`, `zoom`
+  and the model's files can't be patched: `set_model_node_view` redraws the picture).

@@ -8,4 +8,4 @@ export { ADD_MODEL_PROPERTIES, SET_MODEL_VIEW_PROPERTIES } from "./model-propert
 export { setModelView } from "./set-model-view";
 export { sizeWarning } from "./size-warning";
 export { textureArgs } from "./texture-args";
-export { angleArg, checkViewPatch, zoomArg } from "./view-args";
+export { angleArg, rejectViewPatch, zoomArg } from "./view-args";

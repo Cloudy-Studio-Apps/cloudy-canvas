@@ -35,4 +35,4 @@ edited, and convertible to a plain PNG image.
   `set_model_view` re-bakes off screen and writes angle, zoom, textures and picture in one undo
   step, `convert_model_to_png` converts. The last two fail with "being edited" while the model is
   live for anyone (the user included), checked before any read or write. Agents move and resize
-  models with `update_shapes` (`x y w h angle zoom` are patchable).
+  models with `update_shapes` (`x y w h` are patchable; `angle` and `zoom` are refused and only change through `set_model_view`, which redraws the picture).

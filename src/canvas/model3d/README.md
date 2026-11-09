@@ -42,8 +42,8 @@ _Plain TypeScript both products share. The three.js side (loaders, live view, pi
 - **Storing an import** (`store-model.ts`): `storeModel(baker, imp, rect, doc)` bakes the first picture
   and adds the model, material, textures and picture as assets, returning the `ModelData`; the drop
   flow and agents' `add_model` both use it (`importedSource` is the `ModelSource` of an import).
-- **Agent tool pieces** (`mcp/`): what the products' model tools share. `angleArg`/`zoomArg`/`checkViewPatch`
-  (a kind's `completePatch` uses the last), `textureArgs`, `assertModelFree(engine, id, noun)` (read-only
+- **Agent tool pieces** (`mcp/`): what the products' model tools share. `angleArg`/`zoomArg`/`rejectViewPatch`
+  (a kind's `completePatch` uses the last to refuse `angle`/`zoom` patches), `textureArgs`, `assertModelFree(engine, id, noun)` (read-only
   or anyone holds the model live, the user included), `readAgentModel` + `agentModelReport` (the
   reading half of `add_model`-style tools and the slots, missing ones and size warning they report;
   `storeModel` writes), `setModelView` (the whole `set_model_view`: validate, read, bake off screen,
