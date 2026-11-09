@@ -25,7 +25,7 @@ function weight(args: ToolArgs, key: string, fallback: FontWeight): FontWeight {
 /** Making a type scale. */
 export const typeScaleTools: DesignMcpTool[] = [
   {
-    name: "generate_type_scale",
+    name: "type_scale_generate",
     description:
       "Makes a type scale as one undo step: font sizes as a number scale (group/xs … group/4xl, " +
       "scope font-size, the base at md; editing its base or ratio later regenerates them) and a " +

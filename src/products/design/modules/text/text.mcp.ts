@@ -28,7 +28,7 @@ function rangeTextStyle(engine: DesignWorkspace, ref: unknown): Partial<TextRunS
   if (typeof ref !== "string") throw new Error('"textStyle" is a text style\'s id or name.');
   const style = engine.service(DOCUMENT_TOKENS).store().findStyle(ref);
   if (!style || style.styleType !== TEXT_STYLE) {
-    throw new Error(`No text style "${ref}". Call list_styles for the names and ids.`);
+    throw new Error(`No text style "${ref}". Call variables_styles_list for the names and ids.`);
   }
   return runStylePatch(style.id, style.value);
 }
@@ -40,7 +40,7 @@ const DEFAULT_LIMIT = 50;
  */
 export const textTools = (templates: TextTemplates): DesignMcpTool[] => [
   {
-    name: "list_fonts",
+    name: "fonts_list",
     description:
       "Font families texts can use (a text's fontFamily), as the font picker lists them: installed " +
       "ones first, then Google Fonts (downloaded when a text uses them). Each has its source, " +
@@ -75,13 +75,13 @@ export const textTools = (templates: TextTemplates): DesignMcpTool[] => [
     },
   },
   {
-    name: "style_text_range",
+    name: "range_style",
     description:
       "Styles part of a text layer as one undo step, as selecting characters in Figma does " +
       "(mixed styles): characters start to end (end excluded, UTF-16 indexes into its text) take " +
       "the style's fields; the rest of the text keeps its own. A text's ranges are its `runs` in " +
-      "get_nodes; setting a field for the whole text (update_nodes) clears it from them. " +
-      "`textStyle` (a text style's id or name from list_styles, or null) gives the range that " +
+      "nodes_get; setting a field for the whole text (nodes_update) clears it from them. " +
+      "`textStyle` (a text style's id or name from variables_styles_list, or null) gives the range that " +
       "style: it follows the style's changes until its typography is set by hand. A text bound " +
       "to data can only be styled whole here.",
     inputSchema: {

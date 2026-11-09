@@ -6,7 +6,7 @@ Vector networks: the pen (P) and pencil (Shift+P), and the edit mode for a vecto
 - **Requires:** core
 - **Contributes:** kinds `VectorKind`; designCanvas: `editElement`, `kinds`, `pasteSvg`, `tools`; designEditor: `layerIcons`, `toolbars`, `tools`; `designMcpTools`
 - **Points it owns:** —
-- **MCP tools:** `convert_to_vector`, `import_svg` (`mcp/import-svg.mcp.ts`: an SVG file as one vector, as dropping it does)
+- **MCP tools:** `vector_convert`, `vector_svg_import` (`mcp/import-svg.mcp.ts`: an SVG file as one vector, as dropping it does)
 - **Files:** `svg/` (SVG files as one vector: `svgNetwork`, `svgToVector`, `svgPaint`; pasted and dropped SVGs through `designCanvas.pasteSvg`), `vector.kind.ts` (with `vector-area-bindings.ts`, `vector-area-paints.ts` and `vector-spec-network.ts`), `pencil.tool.ts`, `shape-to-vector.ts`, `edit/` (the edit mode), `vector.mcp.ts`, `ui/`.
 
 ## How it works

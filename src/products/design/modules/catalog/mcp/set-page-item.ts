@@ -15,12 +15,12 @@ import {
 import { BROCHURE_SCHEMA } from "./brochure-args";
 
 export const SET_PAGE_ITEM_DESCRIPTION =
-  "Changes a page item (`node`: a text add_page_item made, listed in get_brochure_page's " +
+  "Changes a page item (`node`: a text catalog_page_item_add made, listed in catalog_page_get's " +
   "`pageItems`, on a page or a master) in one undo step: `template` rewrites its words with " +
   'their tokens ({page}, {pages}, {title}, {section}, {date}, {toc}, {page:Name}; e.g. "Page ' +
   '{page} of {pages}"), and `target` points its page reference ({page:…}) at the section or ' +
   "page called that (added at the end when it has none). Writing a page item's `text` with " +
-  "update_nodes doesn't last: the brochure writes it again from the template. A master's " +
+  "nodes_update doesn't last: the brochure writes it again from the template. A master's " +
   "locked copy on a page can't be changed: change the master layer it copies (`fromMaster`). " +
   "Returns the template, the text it now shows and any {page:Name} that names no section or " +
   "page (`unmatched`).";
@@ -39,13 +39,13 @@ export const SET_PAGE_ITEM_SCHEMA = {
   },
 };
 
-/** `set_page_item`: checks every argument, then writes the template (see the description). */
+/** `catalog_page_item_set`: checks every argument, then writes the template (see the description). */
 export function setPageItem(engine: DesignWorkspace, brochure: DesignBrochure, args: ToolArgs) {
   const id = optionalString(args, "node");
   const el = id === undefined ? undefined : engine.doc.get(id);
   const current = pageItemTemplate(el);
   if (!id || !el || !isText(el) || current === null) {
-    throw new Error('"node" must be a page item (see get_brochure_page\'s pageItems).');
+    throw new Error('"node" must be a page item (see catalog_page_get\'s pageItems).');
   }
   const tag = pageItemTag(el);
   if (tag) {
@@ -66,7 +66,7 @@ export function setPageItem(engine: DesignWorkspace, brochure: DesignBrochure, a
   const record = brochure.record();
   const refs = pageRefs(layout, record ? pageNumbers(layout, record) : []);
   if (target !== undefined && (!canReferTo(target) || !refs(target))) {
-    throw new Error(`"${target}" isn't a section or page of this brochure (get_brochure).`);
+    throw new Error(`"${target}" isn't a section or page of this brochure (catalog_brochure_get).`);
   }
   let next = template ?? current;
   if (target !== undefined) next = withPageRef(next, target);

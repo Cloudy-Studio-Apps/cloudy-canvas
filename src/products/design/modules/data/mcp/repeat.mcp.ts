@@ -23,9 +23,9 @@ import { readRepeatArgs } from "./repeat-args";
 const CARD_NOTE =
   "A frame repeats one of its own layers (the card, `template`; the first child when not given) " +
   "once per row of a list, `source` (an expression such as `products`). Design the card with " +
-  "bind_data first, reading the row by its name (`as`, `item` by default): `{item.name}`. " +
+  "data_bind first, reading the row by its name (`as`, `item` by default): `{item.name}`. " +
   "Copies follow the card and the data, are locked and are kept in step by the app; detach one " +
-  "(detach_data_copy) to edit it by hand.";
+  "(data_copy_detach) to edit it by hand.";
 
 const OPTIONS = {
   source: { type: "string", description: "The list to repeat for: `products`, `product.specs`." },
@@ -83,7 +83,7 @@ function layerArg(host: DesignAgentHost, args: ToolArgs, name: string) {
 
 /** Repeats a frame's card for each row of a source. */
 export const setRepeatTool = ({ kinds }: DesignAgentContext): DesignMcpTool => ({
-  name: "set_repeat",
+  name: "repeat_set",
   description:
     `Makes a frame repeat a card for each row of a data source, or changes its repeat, in one ` +
     `undo step. ${CARD_NOTE} Only what you pass changes (null clears key, limit, designLimit and ` +
@@ -110,10 +110,10 @@ export const setRepeatTool = ({ kinds }: DesignAgentContext): DesignMcpTool => (
 
 /** Repeats a card inside its parent frame. */
 export const repeatLayerTool = ({ kinds }: DesignAgentContext): DesignMcpTool => ({
-  name: "repeat_layer",
+  name: "layer_repeat",
   description:
     "Repeats a layer (the card) for each row of a source, inside its parent frame, which holds " +
-    `and lays out the copies: set_repeat on the parent with this layer as \`template\`. ` +
+    `and lays out the copies: data_repeat_set on the parent with this layer as \`template\`. ` +
     `${CARD_NOTE} Returns the parent frame's repeat settings and \`copies\`.`,
   inputSchema: {
     type: "object",
@@ -123,7 +123,9 @@ export const repeatLayerTool = ({ kinds }: DesignAgentContext): DesignMcpTool =>
   run: async (host, args) => {
     const { engine, id } = layerArg(host, args, "layer");
     if (args.template !== undefined) {
-      throw new Error("repeat_layer takes no template: the layer is the card. Use set_repeat.");
+      throw new Error(
+        "data_layer_repeat takes no template: the layer is the card. Use data_repeat_set.",
+      );
     }
     const { repeat, addLayout } = readRepeatArgs(args);
     asUndoStep(engine.doc, () => repeatLayer(engine.doc, id, repeat, { addLayout, kinds }));
@@ -134,7 +136,7 @@ export const repeatLayerTool = ({ kinds }: DesignAgentContext): DesignMcpTool =>
 
 /** Stops a frame repeating. */
 export const removeRepeatTool: DesignMcpTool = {
-  name: "remove_repeat",
+  name: "repeat_remove",
   description:
     "Stops a frame repeating and deletes the copies it made (the card stays), in one undo step.",
   inputSchema: {
@@ -151,7 +153,7 @@ export const removeRepeatTool: DesignMcpTool = {
 
 /** Detaches a copy so it can be edited by hand. */
 export const detachDataCopyTool: DesignMcpTool = {
-  name: "detach_data_copy",
+  name: "copy_detach",
   description:
     "Detaches a copy a repeat made (its root or a layer inside it), in one undo step: it keeps " +
     "what it shows now, is unlocked and unlinked from its row and the card, and the repeat " +
@@ -170,7 +172,7 @@ export const detachDataCopyTool: DesignMcpTool = {
 
 /** The data that doesn't fit. */
 export const dataIssuesTool = ({ kinds }: DesignAgentContext): DesignMcpTool => ({
-  name: "get_data_issues",
+  name: "issues_get",
   description:
     "Lists the data that doesn't fit: bound expressions that read nothing, texts taller than " +
     "their box, repeats with too many copies or stacked copies, detached rows gone from the " +

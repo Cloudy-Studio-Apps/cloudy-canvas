@@ -8,12 +8,12 @@ const IDS_SCHEMA = { type: "array", items: { type: "string" } };
 /** Adding and removing auto layout, as Shift+A and Alt+Shift+A do. */
 export const autoLayoutTools: DesignMcpTool[] = [
   {
-    name: "add_auto_layout",
+    name: "add",
     description:
       "Figma's Add auto layout (Shift+A), in one undo step: frames without one get an auto " +
       "layout guessed from where their layers are (direction, gap, padding, alignment); other " +
       "layers are wrapped in a new auto layout frame that hugs them. Their layers' x/y then " +
-      "follow the layout. Tune it with update_nodes (`layout`, children's `sizing`). Returns the " +
+      "follow the layout. Tune it with nodes_update (`layout`, children's `sizing`). Returns the " +
       "frames.",
     inputSchema: { type: "object", required: ["ids"], properties: { ids: IDS_SCHEMA } },
     run: (host, args) => {
@@ -27,7 +27,7 @@ export const autoLayoutTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "remove_auto_layout",
+    name: "remove",
     description:
       "Removes frames' auto layout (Alt+Shift+A), in one undo step: the frames keep their size " +
       "and their layers stay where they are. Ids without one are ignored.",

@@ -26,10 +26,10 @@ import { describeFlow } from "./describe-flow";
 
 const PAGE_SCHEMA = {
   type: "string",
-  description: "A design page's id (list_pages). Default: your design page.",
+  description: "A design page's id (pages_list). Default: your design page.",
 };
 
-const FLOW_SCHEMA = { type: "string", description: "A flow's id (list_flows)." };
+const FLOW_SCHEMA = { type: "string", description: "A flow's id (prototype_flows_list)." };
 
 const ORIENTATIONS = ["portrait", "landscape"] as const;
 
@@ -37,7 +37,7 @@ const ORIENTATIONS = ["portrait", "landscape"] as const;
 function readPage(engine: DesignWorkspace, args: ToolArgs): string {
   const id = optionalString(args, "page") ?? engine.scope;
   if (id === null || !engine.service(DESIGN_PAGES).page(id)) {
-    throw new Error(`There's no design page "${id ?? ""}" (see list_pages).`);
+    throw new Error(`There's no design page "${id ?? ""}" (see pages_list).`);
   }
   return id;
 }
@@ -45,7 +45,7 @@ function readPage(engine: DesignWorkspace, args: ToolArgs): string {
 function readFlow(engine: DesignWorkspace, args: ToolArgs): PrototypeFlowElement {
   const id = stringArg(args, "flow");
   const flow = engine.service(DESIGN_PROTOTYPE).flow(id);
-  if (!flow) throw new Error(`There's no flow with the id "${id}" (see list_flows).`);
+  if (!flow) throw new Error(`There's no flow with the id "${id}" (see prototype_flows_list).`);
   return flow;
 }
 
@@ -80,12 +80,12 @@ function readSettings(args: ToolArgs, current: PrototypePlatform): PrototypeFlow
 /** Listing, making, changing and deleting a design's prototype flows. */
 export const flowTools: DesignMcpTool[] = [
   {
-    name: "list_flows",
+    name: "flows_list",
     description:
       "The prototype flows of a design page (the Prototype mode): id, name, starting screen " +
       "(`start`, its id, and `startName`), platform and device. A flow says which screen a " +
       "prototype starts at and which device it plays on. A screen is a top-level frame of a " +
-      "design page; layers inside screens get interactions (get_interactions, set_interactions) " +
+      "design page; layers inside screens get interactions (prototype_interactions_get, prototype_interactions_set) " +
       "that link screens together. Every other flow tool takes one of these ids as `flow`.",
     inputSchema: { type: "object", properties: { page: PAGE_SCHEMA } },
     run: (host, args) => {
@@ -96,7 +96,7 @@ export const flowTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "set_flow",
+    name: "flow_set",
     description:
       "Creates or changes a prototype flow, in one undo step. Without `flow` it creates one on " +
       "`page` (default: your design page) and needs `start`: the id of a screen (a top-level " +
@@ -159,7 +159,7 @@ export const flowTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "remove_flow",
+    name: "flow_remove",
     description: "Deletes a prototype flow, in one undo step. Its screens and links stay.",
     inputSchema: {
       type: "object",

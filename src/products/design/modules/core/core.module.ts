@@ -45,7 +45,7 @@ export const coreModule = defineModule({
     registerCoreCanvas(host);
     registerCoreCommands(host);
 
-    // The topics designs share with boards, then the layer tools (renamed to `nodes_*` later).
+    // The topics designs share with boards, then the layer tools (`nodes_*`).
     host.contribute(
       designMcpTools,
       { id: "file", prefix: "file", tools: () => fileTools },
@@ -55,18 +55,18 @@ export const coreModule = defineModule({
       { id: "clipboard", prefix: "clipboard", tools: () => clipboardTools },
       { id: "arrange", prefix: "arrange", tools: () => arrangeTools },
       { id: "style", prefix: "style", tools: () => styleTools },
-      { id: "read", prefix: "design", tools: () => designReadTools },
+      { id: "read", prefix: "nodes", tools: () => designReadTools },
       {
         id: "nodes",
-        prefix: "design",
+        prefix: "nodes",
         tools: (context) => [createNodesTool(context), ...nodeEditTools],
       },
       {
         id: "order",
-        prefix: "design",
+        prefix: "nodes",
         tools: () => [...nodeOrderTools, ...nodeTransformTools],
       },
-      { id: "export", prefix: "design", tools: () => designExportTools },
+      { id: "export", prefix: "nodes", tools: () => designExportTools },
     );
 
     registerCoreSections(host);

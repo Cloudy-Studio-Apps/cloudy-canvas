@@ -17,8 +17,8 @@ import * as imageApi from ".";
  * as a document asset, in the same undo step). Image fills are edited in the paint picker and
  * cropped on the canvas (Crop image, or the picker's Crop). Use as image placeholder (and the
  * picker's Add placeholder) marks where a picture goes, for the Catalog to list until it's
- * replaced. Agents place picture files with `add_image` and placeholders with
- * `add_image_placeholder`.
+ * replaced. Agents place picture files with `image_add` and placeholders with
+ * `image_placeholder_add`.
  */
 export const imageModule = defineModule({
   id: "image",

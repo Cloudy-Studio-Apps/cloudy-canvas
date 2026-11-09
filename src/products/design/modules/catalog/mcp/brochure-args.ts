@@ -9,17 +9,21 @@ import { DESIGN_BROCHURES, isPageFrame, type BrochurePage, type DesignBrochure }
 export function readBrochure(engine: DesignWorkspace, args: ToolArgs): DesignBrochure {
   const id = optionalString(args, "brochure");
   if (id === undefined) {
-    throw new Error('Give "brochure": the brochure\'s id (list_brochures, create_brochure).');
+    throw new Error(
+      'Give "brochure": the brochure\'s id (catalog_brochures_list, catalog_brochure_create).',
+    );
   }
   const brochure = engine.service(DESIGN_BROCHURES).get(id);
-  if (!brochure) throw new Error(`There's no brochure with the id "${id}" (see list_brochures).`);
+  if (!brochure)
+    throw new Error(`There's no brochure with the id "${id}" (see catalog_brochures_list).`);
   return brochure;
 }
 
 /** The JSON schema of the `brochure` argument every brochure tool takes. */
 export const BROCHURE_SCHEMA = {
   type: "string",
-  description: "The brochure's id (list_brochures, or create_brochure for a new one).",
+  description:
+    "The brochure's id (catalog_brochures_list, or catalog_brochure_create for a new one).",
 };
 
 /** The pages an agent gave, checked: top-level frames of the brochure's page, each in one page. */
@@ -57,7 +61,7 @@ export function readPageFrames(
   for (const frame of frames) {
     const el = engine.doc.get(frame);
     if (!isPageFrame(el)) {
-      throw new Error(`${frame} isn't a frame at the top of a page (see list_nodes).`);
+      throw new Error(`${frame} isn't a frame at the top of a page (see nodes_list).`);
     }
     if (el.pageId !== brochure.page) {
       throw new Error(`${frame} is on another design page than the brochure "${brochure.name}".`);
@@ -66,7 +70,7 @@ export function readPageFrames(
   return frames;
 }
 
-/** The brochure page at a 1-based `position` an agent gave under `key` (see get_brochure). */
+/** The brochure page at a 1-based `position` an agent gave under `key` (see catalog_brochure_get). */
 export function requirePagePosition(
   brochure: DesignBrochure,
   args: ToolArgs,
@@ -77,7 +81,7 @@ export function requirePagePosition(
   const page = typeof position === "number" ? pages[Math.round(position) - 1] : undefined;
   if (!page) {
     throw new Error(
-      `"${key}" must be a page position from 1 to ${pages.length} (see get_brochure).`,
+      `"${key}" must be a page position from 1 to ${pages.length} (see catalog_brochure_get).`,
     );
   }
   if (page.pending) {
@@ -102,7 +106,7 @@ export function optionalPlace(args: ToolArgs, key: string, count: number): numbe
 export const POSITION_SCHEMA = {
   type: "number",
   minimum: 1,
-  description: "A page's position in the brochure, from 1 (`position` in get_brochure).",
+  description: "A page's position in the brochure, from 1 (`position` in catalog_brochure_get).",
 };
 
 /** The pages at the 1-based positions an agent gave (`positions`), checked, as slot ids. */

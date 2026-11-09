@@ -7,7 +7,7 @@ import type { VectorNetwork, VectorRegion, VectorSegment, WindingRule } from "./
 const ZERO: Point = { x: 0, y: 0 };
 const WINDING_RULES: readonly WindingRule[] = ["nonzero", "evenodd"];
 
-/** The `network` field agents give vectors, in the `create_nodes` schema. */
+/** The `network` field agents give vectors, in the `nodes_create` schema. */
 export const NETWORK_SCHEMA = {
   type: "object",
   description:

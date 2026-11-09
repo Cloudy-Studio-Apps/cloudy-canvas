@@ -15,7 +15,7 @@ import { requireDesign, type DesignMcpTool } from "../../../mcp";
 /** Shades of a color, kept linked to it (the Variables window's generator). */
 export const shadeTools: DesignMcpTool[] = [
   {
-    name: "generate_shades",
+    name: "shades_generate",
     description:
       'Makes the lighter and darker shades of a color as variables in a group ("primary" → ' +
       "primary/50 … primary/950, the base at 500), evenly spaced in OKLab, as one undo step. " +

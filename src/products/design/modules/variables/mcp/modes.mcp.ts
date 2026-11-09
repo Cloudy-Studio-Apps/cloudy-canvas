@@ -18,10 +18,10 @@ import { requireDesign, type DesignMcpTool } from "../../../mcp";
 /** Collections (folders of variables) and mode axes. */
 export const modesTools: DesignMcpTool[] = [
   {
-    name: "create_collection",
+    name: "collection_create",
     description:
       'Adds a collection: a folder of variables (e.g. "Primitives", "Semantic"). Modes aren\'t ' +
-      "a collection's: they're the file's axes (create_mode_axis). Returns its id.",
+      "a collection's: they're the file's axes (variables_mode_axis_create). Returns its id.",
     inputSchema: { type: "object", required: ["name"], properties: { name: { type: "string" } } },
     run: (host, args) => {
       const { engine } = requireDesign(host);
@@ -33,7 +33,7 @@ export const modesTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "update_collection",
+    name: "collection_update",
     description: "Renames a collection (by id or name).",
     inputSchema: {
       type: "object",
@@ -49,7 +49,7 @@ export const modesTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "create_mode_axis",
+    name: "mode_axis_create",
     description:
       'Adds a mode axis to the file (e.g. "Theme" with ["Light", "Dark"]; axes combine, like ' +
       'Theme × "Brand"). The first mode is the base: variables\' default values are its. ' +
@@ -69,7 +69,7 @@ export const modesTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "update_mode_axis",
+    name: "mode_axis_update",
     description:
       "Changes a mode axis (by id or name), as one undo step: rename it, add, rename or remove " +
       "modes, `moveModes` (modes of other axes, by name or id, moved into this one: variables " +

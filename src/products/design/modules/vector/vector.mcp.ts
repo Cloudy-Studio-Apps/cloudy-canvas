@@ -8,11 +8,11 @@ import type { VectorElement } from "./vector.types";
 /** Turning shapes into vectors, as editing their points does, and placing SVG files as vectors. */
 export const vectorTools: DesignMcpTool[] = [
   {
-    name: "convert_to_vector",
+    name: "convert",
     description:
       "Turns rectangles, ellipses, polygons and stars into vectors with the same id, place and " +
       "look, as editing their points does, in one undo step. Then change their points with " +
-      "update_nodes (network). Ids that are already vectors are left alone. Returns the ids " +
+      "nodes_update (network). Ids that are already vectors are left alone. Returns the ids " +
       "converted.",
     inputSchema: {
       type: "object",

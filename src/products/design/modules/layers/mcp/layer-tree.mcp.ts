@@ -8,7 +8,7 @@ import { moveLayersTool } from "./move-layers.mcp";
 /** The layer tree as the Layers tab shows it, and moving layers in it. */
 export const layersTools: DesignMcpTool[] = [
   {
-    name: "get_layer_tree",
+    name: "tree_get",
     description:
       "The design's layer tree as the Layers tab shows it, topmost first: each layer's id, type, " +
       "name and the layers it holds (children). Hidden and locked layers are marked. Pass `root` " +

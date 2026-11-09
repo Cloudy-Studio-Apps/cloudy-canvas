@@ -1,6 +1,6 @@
 import type { MaskType } from "../core";
 
-/** A layer in `get_layer_tree`, with what it holds. */
+/** A layer in `layers_tree_get`, with what it holds. */
 export interface LayerTreeNode {
   id: string;
   type: string;
@@ -13,7 +13,7 @@ export interface LayerTreeNode {
   children?: LayerTreeNode[];
 }
 
-/** How a mask layer masks (`get_layer_tree`, `list_nodes`). */
+/** How a mask layer masks (`layers_tree_get`, `nodes_list`). */
 export interface LayerMask {
   type: MaskType;
   inverted?: true;

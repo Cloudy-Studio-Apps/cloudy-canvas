@@ -20,12 +20,12 @@ const NUMBER_STYLES = ["arabic", "roman-lower", "roman-upper"] as const;
 /** A brochure's masters (headers and footers stamped on its pages), sections and page items. */
 export const brochureMasterTools: DesignMcpTool[] = [
   {
-    name: "create_brochure_master",
+    name: "master_create",
     description:
       "Adds a master to the brochure, in one undo step: a frame for left pages and one for right " +
       "pages (the brochure's page size, transparent, above the design page's layers), named " +
-      '`name` (else "A-Master", …). Layers put inside its frames (create_nodes with the frame as `parent`, ' +
-      "or add_page_item) appear, locked, on every page that uses it; the first master made is " +
+      '`name` (else "A-Master", …). Layers put inside its frames (nodes_create with the frame as `parent`, ' +
+      "or catalog_page_item_add) appear, locked, on every page that uses it; the first master made is " +
       "the default. Returns the master's id and its frames.",
     inputSchema: {
       type: "object",
@@ -43,7 +43,7 @@ export const brochureMasterTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "remove_brochure_master",
+    name: "master_remove",
     description:
       "Takes a master out of the brochure, in one undo step: its copies leave the pages, and " +
       "pages that used it show the default master. Its frames stay in the design, as ordinary " +
@@ -62,7 +62,7 @@ export const brochureMasterTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "set_brochure_sections",
+    name: "sections_set",
     description:
       "Replaces the brochure's sections, in one undo step. A section runs from its first page " +
       "(`startPosition`, from 1) to the next section's at its `level` or above (0, the default, a " +
@@ -133,7 +133,7 @@ export const brochureMasterTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "add_page_item",
+    name: "page_item_add",
     description: ADD_PAGE_ITEM_DESCRIPTION,
     inputSchema: ADD_PAGE_ITEM_SCHEMA,
     run: (host, args) => {
@@ -143,7 +143,7 @@ export const brochureMasterTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "set_page_item",
+    name: "page_item_set",
     description: SET_PAGE_ITEM_DESCRIPTION,
     inputSchema: SET_PAGE_ITEM_SCHEMA,
     run: (host, args) => {
@@ -157,10 +157,10 @@ export const brochureMasterTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "detach_master_layer",
+    name: "master_layer_detach",
     description:
       "Detaches a master layer's locked copy on a page (`node`, a layer marked `catalogCopy` in " +
-      "get_nodes) in one undo step: it becomes an ordinary layer of that page, to edit there " +
+      "nodes_get) in one undo step: it becomes an ordinary layer of that page, to edit there " +
       "only, and that page no longer gets that master layer. Returns how many layers were " +
       "detached (the copy and what it holds).",
     inputSchema: {
@@ -175,7 +175,7 @@ export const brochureMasterTools: DesignMcpTool[] = [
       const el = node === undefined ? undefined : engine.doc.get(node);
       const tag = pageItemTag(el);
       if (!node || !tag || isPageFrame(el)) {
-        throw new Error('"node" must be a master layer\'s copy on a page (see get_layer_tree).');
+        throw new Error('"node" must be a master layer\'s copy on a page (see layers_tree_get).');
       }
       if (tag.brochure !== brochure.id) {
         throw new Error(`"${node}" comes from another brochure (${tag.brochure}).`);

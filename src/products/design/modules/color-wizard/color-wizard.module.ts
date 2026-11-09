@@ -15,7 +15,7 @@ import * as colorWizardUi from "./ui";
  * The color wizard: a dialog that builds a palette (wheel, brand colors, an image, the file's
  * fills, a gallery, pasted tokens), its roles and shades, a Light/Dark theme and text styles, and
  * writes them as one undo step. Opened from the Design system's empty state and the main menu;
- * agents run it with `run_color_wizard`.
+ * agents run it with `color-wizard_run`.
  */
 export const colorWizardModule = defineModule({
   id: "color-wizard",

@@ -9,14 +9,14 @@ export const PAPER_PRESETS = FRAME_PRESETS.filter((preset) => preset.group === "
   (preset) => preset.id,
 );
 
-/** A new empty page frame for `add_brochure_pages`: a paper preset, or the last page's size. */
+/** A new empty page frame for `catalog_pages_add`: a paper preset, or the last page's size. */
 export function blankFrame(
   engine: DesignWorkspace,
   brochure: DesignBrochure,
   blank: ToolArgs,
 ): FrameElement {
   if (engine.scope !== brochure.page) {
-    throw new Error("Blank pages are added on your design page: switch_page to the brochure's.");
+    throw new Error("Blank pages are added on your design page: pages_switch to the brochure's.");
   }
   const presetId = optionalChoice(blank, "preset", PAPER_PRESETS);
   const preset = presetId === undefined ? undefined : findPreset(presetId);

@@ -22,9 +22,9 @@ const INTERACTION_DESCRIPTION =
 /** Reading and replacing the interactions of layers and screens. */
 export const interactionTools: DesignMcpTool[] = [
   {
-    name: "get_interactions",
+    name: "interactions_get",
     description:
-      "The prototype interactions of layers or screens (set_interactions, list_flows). " +
+      "The prototype interactions of layers or screens (prototype_interactions_set, prototype_flows_list). " +
       INTERACTION_DESCRIPTION,
     inputSchema: {
       type: "object",
@@ -45,7 +45,7 @@ export const interactionTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "set_interactions",
+    name: "interactions_set",
     description:
       "Replaces a layer's (or screen's) interactions with `interactions` (an empty list clears " +
       "them), in one undo step. Everything is checked before anything is written; the first " +

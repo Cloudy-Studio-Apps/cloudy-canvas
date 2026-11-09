@@ -22,7 +22,7 @@ const IDS_SCHEMA = {
 
 export const designExportTools: DesignMcpTool[] = [
   {
-    name: "export_nodes",
+    name: "export",
     description:
       "Exports the design, or some layers, to a file as the Export dialog does: png, jpg or webp (an " +
       'image), svg (vector) or pdf (one page, with the pdf options). The file goes to "path" (absolute; the extension is added when ' +

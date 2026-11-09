@@ -75,7 +75,7 @@ function readType(args: ToolArgs): WizardType | null {
 /** The color wizard as one tool: what the wizard's UI makes, from a list of colors. */
 export const colorWizardTools: DesignMcpTool[] = [
   {
-    name: "run_color_wizard",
+    name: "run",
     description:
       "Sets up a design system from a few colors, as the Design system's color wizard does, in " +
       "one undo step: each color's 50–950 shades as a shade generator in the palette collection " +

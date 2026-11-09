@@ -35,7 +35,7 @@ export abstract class ChildHostKind<E extends DesignNode = DesignNode> extends D
     return {};
   }
 
-  /** Its turn is its children's: agents turn it with `rotate_nodes`. */
+  /** Its turn is its children's: agents turn it with `nodes_rotate`. */
   override completePatch(
     el: E,
     patch: ElementPatch<E>,
@@ -43,7 +43,7 @@ export abstract class ChildHostKind<E extends DesignNode = DesignNode> extends D
   ): ElementPatch<E> {
     if ("rotation" in patch) {
       throw new Error(
-        `A ${this.label.toLowerCase()} doesn't turn itself: turn it (its layers) with rotate_nodes.`,
+        `A ${this.label.toLowerCase()} doesn't turn itself: turn it (its layers) with nodes_rotate.`,
       );
     }
     return super.completePatch(el, patch, context);

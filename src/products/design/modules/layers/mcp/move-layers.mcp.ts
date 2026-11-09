@@ -5,7 +5,7 @@ import { layerDestinationAt, moveLayers, type LayerDestination, type LayerPlace 
 
 const PLACES: readonly LayerPlace[] = ["above", "below", "inside"];
 
-/** Where `move_layers` puts the layers: next to or into a layer, or into a parent at a position. */
+/** Where `layers_move` puts the layers: next to or into a layer, or into a parent at a position. */
 function destinationOf(args: ToolArgs, elements: Parameters<typeof layerDestinationAt>[0]) {
   const given = PLACES.filter((place) => args[place] !== undefined);
   if (given.length > 1) throw new Error(`Give only one of: ${PLACES.join(", ")}.`);
@@ -33,7 +33,7 @@ function destinationOf(args: ToolArgs, elements: Parameters<typeof layerDestinat
 
 /** Moving layers in the tree, as dragging them in the Layers tab does. */
 export const moveLayersTool: DesignMcpTool = {
-  name: "move_layers",
+  name: "move",
   description:
     "Moves layers in the layer tree as dragging them in the Layers tab does, in one undo step: " +
     "just above or below a layer (its sibling), on top inside a frame, section, group or boolean " +

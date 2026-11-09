@@ -8,7 +8,7 @@ import type { PageItemSummary } from "./page-item-summary.types";
 /**
  * The page items inside a frame (a page's or a master's) as agents read them: the text shown,
  * its template, a page reference's target, and for a master's copy the master layer it copies
- * (the one set_page_item changes).
+ * (the one catalog_page_item_set changes).
  */
 export function pageItemsIn(
   frameId: string,

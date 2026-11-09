@@ -39,7 +39,7 @@ const SCOPES: ReadonlySet<string> = new Set<TokenScope>([
 export function requireVariable(
   store: TokenStore,
   ref: string,
-  listTool = "list_variables",
+  listTool = "variables_list",
 ): VariableRecord {
   const variable = store.find(ref);
   if (!variable) {
@@ -52,7 +52,7 @@ export function requireVariable(
 export function requireCollection(
   store: TokenStore,
   ref: string,
-  listTool = "list_variables",
+  listTool = "variables_list",
 ): CollectionRecord {
   const collection = store.collection(ref) ?? store.collections().find((c) => c.name === ref);
   if (!collection) {
@@ -65,7 +65,7 @@ export function requireCollection(
 export function requireAxis(
   store: TokenStore,
   ref: string,
-  listTool = "list_variables",
+  listTool = "variables_list",
 ): ModeAxisRecord {
   const axis = store.axis(ref) ?? store.axes().find((a) => a.name === ref);
   if (!axis) throw new Error(`No mode axis "${ref}". Call ${listTool} for the axes.`);
@@ -83,7 +83,7 @@ export function requireMode(axis: ModeAxisRecord, ref: string): string {
 }
 
 /** A mode of any axis by id or name (unique across axes); throws when unknown. */
-export function findMode(store: TokenStore, ref: string, listTool = "list_variables"): string {
+export function findMode(store: TokenStore, ref: string, listTool = "variables_list"): string {
   const matches = store
     .axes()
     .flatMap((axis) => axis.modes.filter((m) => m.id === ref || m.name === ref));

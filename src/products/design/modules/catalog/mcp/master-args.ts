@@ -10,10 +10,12 @@ export function readMaster(
   key = "master",
 ): BrochureMaster {
   const id = optionalString(args, key);
-  if (id === undefined) throw new Error(`Give "${key}": a master's id (see get_brochure).`);
+  if (id === undefined) throw new Error(`Give "${key}": a master's id (see catalog_brochure_get).`);
   const master = brochure.masters.list().find((item) => item.id === id);
   if (!master) {
-    throw new Error(`The brochure "${brochure.name}" has no master "${id}" (see get_brochure).`);
+    throw new Error(
+      `The brochure "${brochure.name}" has no master "${id}" (see catalog_brochure_get).`,
+    );
   }
   return master;
 }

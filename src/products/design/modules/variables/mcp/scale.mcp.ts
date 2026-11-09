@@ -16,7 +16,7 @@ import { requireDesign, type DesignMcpTool } from "../../../mcp";
 /** Number scales (spacing, type sizes), kept linked to their base. */
 export const scaleTools: DesignMcpTool[] = [
   {
-    name: "generate_scale",
+    name: "scale_generate",
     description:
       'Makes a number scale as variables in a group ("space" → space/xs, sm, md, lg …, the base ' +
       "at md), each step the one before times `ratio` (1.25 by default; 1.2, 1.333, 1.5, 1.618 " +

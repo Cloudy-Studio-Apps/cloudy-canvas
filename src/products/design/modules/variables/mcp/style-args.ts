@@ -52,14 +52,15 @@ const STROKE_FIELDS = [
 /** What each style type's `value` holds, for the tools' schemas and descriptions. */
 export const STYLE_VALUE_HELP =
   'text: { fontFamily, fontSize, fontWeight ("100"…"900"), fontStyle, lineHeight (a multiple), ' +
-  "letterSpacing, textDecoration }; paint: { paints: [paints as in create_nodes' fills] }; " +
-  "effect: { effects: [effects as in create_nodes] }; stroke: { strokeWeight, strokeWeights?, " +
+  "letterSpacing, textDecoration }; paint: { paints: [paints as in nodes_create' fills] }; " +
+  "effect: { effects: [effects as in nodes_create] }; stroke: { strokeWeight, strokeWeights?, " +
   "strokeAlign, strokeCap, strokeJoin, strokeMiterAngle, strokeDashes }.";
 
 /** A style by id or a name unique among styles; throws when unknown. */
 export function requireStyle(store: TokenStore, ref: string): StyleRecord {
   const style = store.findStyle(ref);
-  if (!style) throw new Error(`No style "${ref}". Call list_styles for the names and ids.`);
+  if (!style)
+    throw new Error(`No style "${ref}". Call variables_styles_list for the names and ids.`);
   return style;
 }
 

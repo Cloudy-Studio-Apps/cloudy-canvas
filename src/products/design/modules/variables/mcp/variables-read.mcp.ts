@@ -14,7 +14,7 @@ import { requireDesign, type DesignMcpTool } from "../../../mcp";
 /** Reading the design's variables. */
 export const variablesReadTools: DesignMcpTool[] = [
   {
-    name: "list_variables",
+    name: "list",
     description:
       "Lists the design's variables: the file's mode axes (each with its modes, the first the " +
       "base, and the one shown), collections (folders) and each variable with its name (a slash " +
@@ -40,7 +40,7 @@ export const variablesReadTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "get_variables",
+    name: "get",
     description:
       'Reads variables by id, "Collection/path" or a path unique in the design, with the ids of ' +
       "the layers using each.",

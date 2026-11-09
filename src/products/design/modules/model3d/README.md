@@ -38,10 +38,10 @@ edited, and convertible to a rectangle filled with its PNG.
   modes and prototype `interactions`; the new rectangle (a new id) is selected. The user's
   unfinished edit is written first. It refuses while anyone has the model live; the UI checks first
   and says so with a toast (`modelHeldNotice`).
-- **Agents:** `model3d_add` imports, bakes and adds (`parent` as `add_image`; the size warning is
+- **Agents:** `model3d_add` imports, bakes and adds (`parent` as `image_add`; the size warning is
   in the result, no dialog), `model3d_view_set` re-bakes off screen and writes angle, zoom,
   textures and picture in one undo step, `model3d_convert_to_png` converts. The last two fail
   with "being edited" while the model is live for anyone (the user included), checked before any
   read or write and again before writing. The tools' shared pieces live in `canvas/model3d/mcp/`,
-  their name, description and schema too: each is one tool for both products. Agents move and resize models with `update_nodes` (`angle`, `zoom`
+  their name, description and schema too: each is one tool for both products. Agents move and resize models with `nodes_update` (`angle`, `zoom`
   and the model's files can't be patched: `model3d_view_set` redraws the picture).

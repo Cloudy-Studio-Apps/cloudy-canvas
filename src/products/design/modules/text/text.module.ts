@@ -22,7 +22,7 @@ import * as textUi from "./ui";
 
 /**
  * Text: the kind, the tool (T), the Typography section (with the font picker) and the fonts for
- * agents (`list_fonts`).
+ * agents (`text_fonts_list`).
  */
 export const textModule = defineModule({
   id: "text",

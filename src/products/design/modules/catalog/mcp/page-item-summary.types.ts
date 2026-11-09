@@ -1,4 +1,4 @@
-/** A page item as get_brochure_page lists it. */
+/** A page item as catalog_page_get lists it. */
 export interface PageItemSummary {
   node: string;
   name: string;

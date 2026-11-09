@@ -93,7 +93,7 @@ export interface SheetBuildContext {
 }
 
 /**
- * A layer a sheet generates: an agent's `create_nodes` spec (built through the kinds) with the
+ * A layer a sheet generates: an agent's `nodes_create` spec (built through the kinds) with the
  * variables it's bound to and its children.
  */
 export interface GeneratedSpec {

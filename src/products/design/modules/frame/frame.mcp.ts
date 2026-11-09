@@ -7,11 +7,11 @@ import { FRAME_PRESET_GROUPS, FRAME_PRESETS, findPreset } from "./frame-presets"
 /** Frame presets, as the frame tool's sidebar offers them. */
 export const frameTools: DesignMcpTool[] = [
   {
-    name: "list_frame_presets",
+    name: "presets_list",
     description:
       "The frame sizes the frame tool offers (phones, tablets, desktops, presentations, watches, " +
       "paper, social media), by group: id, label, w, h. Use an id as a frame's preset in " +
-      "create_nodes, or with add_preset_frame.",
+      "nodes_create, or with frame_preset_add.",
     inputSchema: { type: "object", properties: {} },
     run: () =>
       FRAME_PRESET_GROUPS.map(({ group, presets }) => ({
@@ -20,7 +20,7 @@ export const frameTools: DesignMcpTool[] = [
       })),
   },
   {
-    name: "add_preset_frame",
+    name: "preset_add",
     description:
       "Adds a frame of a preset's size, named after it, to the right of what's on the page (or at " +
       "0, 0 on an empty page), as picking a preset in the frame tool's sidebar does. One undo " +
@@ -29,7 +29,7 @@ export const frameTools: DesignMcpTool[] = [
       type: "object",
       required: ["preset"],
       properties: {
-        preset: { type: "string", description: "A preset id from list_frame_presets." },
+        preset: { type: "string", description: "A preset id from frame_presets_list." },
         zoom: { type: "boolean", description: "Show the new frame in your view." },
       },
     },

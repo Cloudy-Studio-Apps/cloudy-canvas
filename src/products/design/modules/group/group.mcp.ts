@@ -9,7 +9,7 @@ const IDS_SCHEMA = { type: "array", items: { type: "string" } };
 /** Grouping and framing, as Ctrl+G, Ctrl+Shift+G and Ctrl+Alt+G do. */
 export const groupTools: DesignMcpTool[] = [
   {
-    name: "group_nodes",
+    name: "create",
     description:
       'Puts layers into a new group (named "Group 2" unless `name` is given) where the topmost ' +
       "of them was, as Ctrl+G does, in one undo step. The group's bounds follow its layers, and a " +
@@ -32,7 +32,7 @@ export const groupTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "frame_nodes",
+    name: "frame_create",
     description:
       'Puts layers into a new frame round them (named "Frame 2" unless `name` is given) where the ' +
       "topmost of them was, as Ctrl+Alt+G does, in one undo step. Unlike a group, its size stays " +
@@ -55,7 +55,7 @@ export const groupTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "ungroup_nodes",
+    name: "release",
     description:
       "Dissolves groups, as Ctrl+Shift+G does, in one undo step: their layers go to the group's " +
       "parent. Ids that aren't groups are ignored. Returns the layers that were in them.",

@@ -22,7 +22,7 @@ const DESCRIPTION =
   "currency, dateStyle }) or null to unbind; the data's type must fit the field (colors need " +
   "color values, numbers need numbers, pictures need image fields). Binding a field replaces " +
   "its variable binding. Editing a bound field by hand unlinks it. Pictures must have been " +
-  "downloaded by update_data_source first, or the layer keeps its picture. `visibleWhen` " +
+  "downloaded by data_source_update first, or the layer keeps its picture. `visibleWhen` " +
   "{ path, op: exists|empty|eq|neq|gt|lt|contains, value? } shows the layer only while it " +
   "holds; `hideWhenEmpty` hides a layer whose text or picture comes out empty. Numbers, " +
   "prices and dates are written in the app's language. Returns the layer's data fields and " +
@@ -31,7 +31,7 @@ const DESCRIPTION =
 
 /** Binds a layer's text, fields and visibility to data. */
 export const bindDataTool = ({ kinds }: DesignAgentContext): DesignMcpTool => ({
-  name: "bind_data",
+  name: "bind",
   description: DESCRIPTION,
   inputSchema: {
     type: "object",

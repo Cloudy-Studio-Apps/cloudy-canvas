@@ -11,7 +11,7 @@ import * as layersUi from "./ui";
 
 /**
  * The Layers tab: the page's layer tree (select, rename,
- * hide, lock), and the tree for agents (`get_layer_tree`).
+ * hide, lock), and the tree for agents (`layers_tree_get`).
  */
 export const layersModule = defineModule({
   id: "layers",

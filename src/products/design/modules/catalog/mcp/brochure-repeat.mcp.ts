@@ -12,16 +12,16 @@ import {
 import { describeRepeats } from "./describe-repeats";
 
 const NOTE =
-  "A section (`section`, its id from get_brochure) repeats its pages, subsections included, for " +
+  "A section (`section`, its id from catalog_brochure_get) repeats its pages, subsections included, for " +
   "each row of a list, or a page (`position`) repeats for each row or each `perPage` rows. " +
   "`source` is an expression read in the scope of the repeats around it (`products`, " +
   "`category.products`); inside, the row is `as` (`item` by default; with perPage above 1 it " +
-  "is the page's list, `item[]`). Design the pages with bind_data first. While designing, the " +
+  "is the page's list, `item[]`). Design the pages with data_bind first. While designing, the " +
   "first `designLimit` copies are made (3 when unset) and the rest are pending pages, counted " +
   "in numbers and the table of contents and made at export.";
 
 const TARGET = {
-  section: { type: "string", description: "The section's id (get_brochure `sections`)." },
+  section: { type: "string", description: "The section's id (catalog_brochure_get `sections`)." },
   position: POSITION_SCHEMA,
 };
 
@@ -33,7 +33,7 @@ function readTarget(brochure: DesignBrochure, args: ToolArgs): RepeatTarget {
   }
   if (section !== undefined) {
     if (!brochure.record()?.sections.some((item) => item.id === section)) {
-      throw new Error(`There's no section with the id "${section}" (see get_brochure).`);
+      throw new Error(`There's no section with the id "${section}" (see catalog_brochure_get).`);
     }
     return { section };
   }
@@ -54,7 +54,7 @@ function readPerPage(args: ToolArgs): number | null | undefined {
 /** Repeating sections and pages of a brochure over a list of data. */
 export const brochureRepeatTools: DesignMcpTool[] = [
   {
-    name: "set_brochure_repeat",
+    name: "repeat_set",
     description:
       `Makes a brochure section or page repeat for each row of a data list, or changes its ` +
       `repeat, in one undo step. ${NOTE} Only what you pass changes (null clears key, limit, ` +
@@ -105,7 +105,7 @@ export const brochureRepeatTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "remove_brochure_repeat",
+    name: "repeat_remove",
     description:
       "Stops a brochure section or page repeating, in one undo step: the pages it made go and " +
       "the template pages stay as normal pages (undo brings the copies back). Give `section` or " +

@@ -12,10 +12,10 @@ import { contrastChecks } from "../contrast";
 /** WCAG contrast of the design's color pairs. */
 export const contrastTools: DesignMcpTool[] = [
   {
-    name: "check_contrast",
+    name: "contrast_check",
     description:
       "WCAG 2 contrast of the design's color pairs, in every mode their colors vary by: pairs " +
-      "declared on a variable (contrastWith in create/update_variables) and pairs found by scope " +
+      "declared on a variable (contrastWith in create/variables_update) and pairs found by scope " +
       "(text-fill colors on frame/shape-fill colors of the same collection). Grades: AAA (7:1), " +
       "AA (4.5:1), AA large (3:1, large text only), fail. Failing pairs first.",
     inputSchema: {

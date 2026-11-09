@@ -9,7 +9,7 @@ const IDS_SCHEMA = { type: "array", items: { type: "string" } };
 /** Masks, as "Use as mask" (Ctrl+Alt+M) and "Release mask" do. */
 export const maskTools: DesignMcpTool[] = [
   {
-    name: "mask_nodes",
+    name: "create",
     description:
       "Masks layers, as Figma's Use as mask (Ctrl+Alt+M), in one undo step. With several ids " +
       'they go into a new "Mask group" whose bottom-most layer becomes the mask: the layers ' +
@@ -40,7 +40,7 @@ export const maskTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "release_masks",
+    name: "release",
     description:
       "Turns masks back into ordinary, drawn layers, in one undo step: the given masks, or the " +
       "masks right inside the given layers (a mask group's). The layers they masked show whole. " +

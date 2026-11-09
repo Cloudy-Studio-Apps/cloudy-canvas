@@ -73,7 +73,7 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
   override readonly connectable: boolean = false;
   /** Layers turn (`rotation`, round their top-left corner); the engine draws and hits them turned. */
   override readonly rotatable: boolean = true;
-  /** Whether agents can create it (`create_nodes`); kinds that can give `nodeFromSpec`. */
+  /** Whether agents can create it (`nodes_create`); kinds that can give `nodeFromSpec`. */
   override readonly creatable: boolean = false;
   /**
    * Whether it holds other nodes (a frame). Nodes drawn or dropped inside a container go into the
@@ -541,7 +541,7 @@ export abstract class DesignNodeKind<E extends DesignNode = DesignNode> extends 
   }
 
   /**
-   * A new node from an agent's spec (`create_nodes`): the kind's own fields (`nodeFromSpec`),
+   * A new node from an agent's spec (`nodes_create`): the kind's own fields (`nodeFromSpec`),
    * then what every node takes (name, visibility, opacity, paints). The tool places it in a
    * container afterwards. Throws with a message the agent can act on.
    */

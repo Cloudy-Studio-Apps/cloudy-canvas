@@ -11,12 +11,12 @@ const DIRECTIONS = ["horizontal", "vertical"] as const;
 /** Turning and mirroring layers, as the panel's rotation row does. */
 export const nodeTransformTools: DesignMcpTool[] = [
   {
-    name: "rotate_nodes",
+    name: "rotate",
     description:
       "Turns layers (with what they hold) by some degrees, counterclockwise, as one undo step: " +
       'round the middle of them all (around: "selection", the default) or each round its own ' +
       'middle ("each"). Lines turn their ends; a group turns its layers. Returns the turned ids; ' +
-      "get_nodes shows each one's rotation (round its top-left corner).",
+      "nodes_get shows each one's rotation (round its top-left corner).",
     inputSchema: {
       type: "object",
       required: ["ids", "degrees"],
@@ -37,7 +37,7 @@ export const nodeTransformTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "flip_nodes",
+    name: "flip",
     description:
       "Mirrors layers (with what they hold) across the middle of them all, as Shift+H and " +
       "Shift+V do, as one undo step: vectors and lines mirror their points, shapes land mirrored " +

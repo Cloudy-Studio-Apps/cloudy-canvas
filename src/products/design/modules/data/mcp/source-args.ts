@@ -9,14 +9,14 @@ import type { DataSourceType } from "../data.points.types";
 /** The JSON schema of the `source` argument every source tool takes. */
 export const SOURCE_SCHEMA = {
   type: "string",
-  description: "The data source's id (list_data_sources, or add_data_source for a new one).",
+  description: "The data source's id (data_sources_list, or data_source_add for a new one).",
 };
 
 /** The data source an agent named (`source`, an id). */
 export function readSource(engine: DesignWorkspace, args: ToolArgs): DataSourceElement {
   const id = optionalString(args, "source");
   const source = id === undefined ? undefined : engine.service(DESIGN_DATA_SOURCES).get(id);
-  if (!source) throw new Error(`No data source ${id ?? ""}. Call list_data_sources.`);
+  if (!source) throw new Error(`No data source ${id ?? ""}. Call data_sources_list.`);
   return source;
 }
 

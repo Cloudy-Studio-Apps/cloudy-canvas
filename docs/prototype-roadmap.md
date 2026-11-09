@@ -15,7 +15,7 @@ What Prototype mode left for later: small issues found in review and deferred. T
 
 - [ ] A drop on a locked layer or screen counts as empty canvas and adds a Back interaction.
 - [ ] Unreadable interactions are erased on any write to the layer.
-- [ ] `set_flow` / `set_interactions` with unchanged values record a no-op undo step.
+- [ ] `prototype_flow_set` / `prototype_interactions_set` with unchanged values record a no-op undo step.
 - [ ] Flow `page`, `start` and `name` aren't normalized on read (platform and device are).
 - [ ] A stored `delay` is kept on triggers other than "after delay".
 - [ ] Shift+E may be blocked inside Catalog and Design system (their command allowlists).

@@ -11,5 +11,5 @@ export interface LabelLook {
   lineHeight?: number;
 }
 
-/** Extra fields of a generated layer (an agent's `create_nodes` spec fields). */
+/** Extra fields of a generated layer (an agent's `nodes_create` spec fields). */
 export type SpecExtra = ToolArgs;

@@ -18,7 +18,7 @@ const PAINTS = {
   items: { type: "object" },
 };
 
-/** What every layer's spec takes in `create_nodes`; kinds add theirs (`specProperties`). */
+/** What every layer's spec takes in `nodes_create`; kinds add theirs (`specProperties`). */
 export const NODE_SPEC_PROPERTIES = {
   key: {
     type: "string",
@@ -101,7 +101,7 @@ export const NODE_SPEC_PROPERTIES = {
     type: "boolean",
     description:
       "Makes it a mask: it isn't drawn, and the layers above it in the same parent (up to the " +
-      "next mask) show only through it. Prefer mask_nodes, which also groups them.",
+      "next mask) show only through it. Prefer mask_create, which also groups them.",
   },
   maskType: {
     type: "string",
@@ -143,7 +143,7 @@ export const NODE_SPEC_PROPERTIES = {
     type: "boolean",
     description:
       "Drawn mirrored left to right inside its box (before its rotation), e.g. a flipped text " +
-      "or picture; its x, y, w, h don't change. flip_nodes sets it where a flip needs it.",
+      "or picture; its x, y, w, h don't change. nodes_flip sets it where a flip needs it.",
   },
   rotation: {
     type: "number",

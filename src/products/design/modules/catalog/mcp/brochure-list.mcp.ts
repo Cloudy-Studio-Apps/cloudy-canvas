@@ -9,13 +9,13 @@ import { describeBrochure } from "./describe-brochure";
 
 const PAGE_SCHEMA = {
   type: "string",
-  description: "A design page's id (list_pages). Default: your design page.",
+  description: "A design page's id (pages_list). Default: your design page.",
 };
 
 /** Listing a design page's brochures, and making, renaming and deleting them. */
 export const brochureListTools: DesignMcpTool[] = [
   {
-    name: "list_brochures",
+    name: "brochures_list",
     description:
       "The brochures of a design page (each belongs to one page and uses only its top-level " +
       "frames; a page can hold several): id, name, page count and whether it's the one open in " +
@@ -38,11 +38,11 @@ export const brochureListTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "create_brochure",
+    name: "brochure_create",
     description:
       'Adds an empty brochure to a design page (named `name`, or "Brochure N"), in one undo ' +
-      "step. It's opened when the page had none. Fill it with add_brochure_pages or " +
-      "set_brochure_pages (giving its `brochure` id). Returns it.",
+      "step. It's opened when the page had none. Fill it with catalog_pages_add or " +
+      "catalog_pages_set (giving its `brochure` id). Returns it.",
     inputSchema: {
       type: "object",
       properties: { name: { type: "string" }, page: PAGE_SCHEMA },
@@ -57,7 +57,7 @@ export const brochureListTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "rename_brochure",
+    name: "brochure_rename",
     description: "Renames a brochure, in one undo step.",
     inputSchema: {
       type: "object",
@@ -72,7 +72,7 @@ export const brochureListTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "duplicate_brochure",
+    name: "brochure_duplicate",
     description:
       "Copies a brochure (its pages, options, masters, sections and settings; the frames are " +
       'shared) as "<name> ' +
@@ -89,7 +89,7 @@ export const brochureListTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "delete_brochure",
+    name: "brochure_delete",
     description: "Deletes a brochure, in one undo step. Its frames stay in the design.",
     inputSchema: {
       type: "object",
@@ -109,7 +109,7 @@ export const brochureListTools: DesignMcpTool[] = [
 function readPage(engine: DesignWorkspace, args: ToolArgs): string {
   const id = optionalString(args, "page") ?? engine.scope;
   if (id === null || !engine.service(DESIGN_PAGES).page(id)) {
-    throw new Error(`There's no design page "${id ?? ""}" (see list_pages).`);
+    throw new Error(`There's no design page "${id ?? ""}" (see pages_list).`);
   }
   return id;
 }

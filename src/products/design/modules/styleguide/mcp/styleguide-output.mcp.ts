@@ -15,15 +15,15 @@ const VIEW_MAX_SIDE = 2000;
 export function styleguideOutputTools(sources: StyleguideToolSources): DesignMcpTool[] {
   return [
     {
-      name: "view_design_system",
+      name: "view",
       description:
         "Returns a PNG picture of the Design system view (the style guide on its hidden page, " +
-        "which switch_page can't reach), or of one category of it, to check how templates and " +
+        "which pages_switch can't reach), or of one category of it, to check how templates and " +
         `options look. At most ${VIEW_MAX_SIDE} pixels on its longest side.`,
       inputSchema: {
         type: "object",
         properties: {
-          category: { type: "string", description: "One category's section (get_design_system)." },
+          category: { type: "string", description: "One category's section (styleguide_get)." },
           scale: { type: "number", description: "Pixels per world unit (0.5 by default)." },
         },
       },
@@ -68,12 +68,12 @@ export function styleguideOutputTools(sources: StyleguideToolSources): DesignMcp
       },
     },
     {
-      name: "export_design_system",
+      name: "export",
       description:
         "Exports the whole Design system (every category the view shows, in its order) as one " +
         'PDF, a page per category sized to its content. The file goes to "path" (absolute; ' +
         ".pdf is added when missing), or next to the design's file, named after it. An existing " +
-        "file is replaced. Returns the path written. (export_nodes exports layers of a page.)",
+        "file is replaced. Returns the path written. (nodes_export exports layers of a page.)",
       inputSchema: {
         type: "object",
         properties: {

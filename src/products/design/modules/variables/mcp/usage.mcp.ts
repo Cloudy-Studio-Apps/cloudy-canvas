@@ -16,7 +16,7 @@ const TOKEN = { type: "string", description: "A variable or a style, by id or na
 /** Where tokens are used, unused ones, replacing and detaching them. */
 export const usageTools: DesignMcpTool[] = [
   {
-    name: "get_token_usage",
+    name: "usage_get",
     description:
       "Where a variable or a style is used: layers bound to it (by page), layers using it " +
       "through a style, variables aliasing it, styles using it and generators following it.",
@@ -50,10 +50,10 @@ export const usageTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "find_unused_tokens",
+    name: "unused_find",
     description:
       "The variables and styles nothing uses (no layer, alias, style or generator), to clean up " +
-      "with delete_variables / delete_styles.",
+      "with variables_delete / variables_styles_delete.",
     inputSchema: { type: "object", properties: {} },
     run: (host) => {
       const { engine } = requireDesign(host);
@@ -69,7 +69,7 @@ export const usageTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "replace_token",
+    name: "token_replace",
     description:
       "Moves every use of a variable (or style) to another of its type, as one undo step: layers, " +
       "variables aliasing it, styles using it, generators and contrast pairs. The first stays " +
@@ -92,7 +92,7 @@ export const usageTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "detach_tokens",
+    name: "tokens_detach",
     description:
       "Unlinks layers from variables and styles, keeping what they show, as one undo step: " +
       "`tokens` everywhere (the tokens stay in the file), or `layers` (all their variables and " +

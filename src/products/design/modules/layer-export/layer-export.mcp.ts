@@ -19,11 +19,11 @@ const IDS_SCHEMA = { type: "array", items: { type: "string" } };
 /** Exports saved on layers, as the Export section's rows, and running them. */
 export const layerExportTools: DesignMcpTool[] = [
   {
-    name: "set_layer_exports",
+    name: "set",
     description:
       "Sets the exports saved on layers, as the rows of the Export section, replacing the ones " +
       "they have, in one undo step. An empty list clears them. They stay in the file, so " +
-      "export_layers can make the same files again.",
+      "layer-export_run can make the same files again.",
     inputSchema: {
       type: "object",
       required: ["ids", "exports"],
@@ -58,9 +58,9 @@ export const layerExportTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "export_layers",
+    name: "run",
     description:
-      'Makes the files of the exports saved on layers (set_layer_exports) in "folder" (absolute; ' +
+      'Makes the files of the exports saved on layers (layer-export_set) in "folder" (absolute; ' +
       "it must exist): each layer exactly, with no padding, named after it and its suffix. " +
       "Existing files are replaced. Returns the paths written.",
     inputSchema: {

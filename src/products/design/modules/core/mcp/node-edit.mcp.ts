@@ -11,19 +11,19 @@ import { requireDesign, requireNodes, type DesignMcpTool } from "../../../mcp";
 
 const IDS_SCHEMA = { type: "array", items: { type: "string" } };
 
-/** Editing layers (`create_nodes` is in `create-nodes.mcp.ts`, as it needs the kinds). */
+/** Editing layers (`nodes_create` is in `create-nodes.mcp.ts`, as it needs the kinds). */
 export const nodeEditTools: DesignMcpTool[] = [
   {
-    name: "update_nodes",
+    name: "update",
     description:
       "Changes fields of existing layers as one undo step, e.g. { id, patch: { x, y, name, " +
-      "fills } }. Field names are the ones get_nodes returns. Moving a frame, section or group " +
+      "fills } }. Field names are the ones nodes_get returns. Moving a frame, section or group " +
       "moves what it holds. A new w/h resizes as the handles do (texts lay out again, vectors " +
-      "stretch). fills/strokes are full paint arrays (see create_nodes); parentId moves a layer " +
+      "stretch). fills/strokes are full paint arrays (see nodes_create); parentId moves a layer " +
       "into a frame or section (null: the top of the page); a text's text and typography relayout " +
       "it; a line takes points [x0, y0, x1, y1] relative to its x, y; a vector takes a network; " +
       "rotation turns it to that angle round its top-left corner (to turn layers round their " +
-      "middle, use rotate_nodes).",
+      "middle, use nodes_rotate).",
     inputSchema: {
       type: "object",
       required: ["updates"],
@@ -65,7 +65,7 @@ export const nodeEditTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "delete_nodes",
+    name: "delete",
     description: "Deletes layers as one undo step, with what they hold (a frame's layers).",
     inputSchema: { type: "object", required: ["ids"], properties: { ids: IDS_SCHEMA } },
     run: (host, args) => {
@@ -74,7 +74,7 @@ export const nodeEditTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "duplicate_nodes",
+    name: "duplicate",
     description:
       "Copies layers as one undo step, as Ctrl+D does: what they hold is copied too, and the " +
       "copies stay in the same parent. Returns each id's copy. The copies are offset by dx/dy " +

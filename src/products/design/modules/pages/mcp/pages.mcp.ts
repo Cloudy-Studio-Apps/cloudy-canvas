@@ -4,7 +4,7 @@ import { requireDesign, requireNodes, type DesignMcpTool } from "../../../mcp";
 import type { DesignWorkspace } from "../../../design-engine.types";
 import { DESIGN_PAGES } from "../design-pages";
 
-const PAGE_ID = { type: "string", description: "The page's id (from list_pages)." };
+const PAGE_ID = { type: "string", description: "The page's id (from pages_list)." };
 
 /** The pages with what agents need to pick one. */
 function listPages(engine: DesignWorkspace) {
@@ -21,7 +21,7 @@ function listPages(engine: DesignWorkspace) {
 /** A page id of the design, checked. */
 function requirePage(engine: DesignWorkspace, id: string): string {
   if (!engine.service(DESIGN_PAGES).page(id)) {
-    throw new Error(`No page with id ${id}. Call list_pages for the ids.`);
+    throw new Error(`No page with id ${id}. Call pages_list for the ids.`);
   }
   return id;
 }
@@ -29,18 +29,18 @@ function requirePage(engine: DesignWorkspace, id: string): string {
 /** Pages, as the Pages list of the Layers tab works with them. */
 export const pagesTools: DesignMcpTool[] = [
   {
-    name: "list_pages",
+    name: "list",
     description:
       "Lists the design's pages in order: id, name, position, whether it's the page you work on " +
       "(`current`; the user may be on another) and how many layers it has. Every other layer " +
-      "tool works on your current page; switch_page changes it.",
+      "tool works on your current page; pages_switch changes it.",
     inputSchema: { type: "object", properties: {} },
     run: (host) => ({ pages: listPages(requireDesign(host).engine) }),
   },
   {
-    name: "switch_page",
+    name: "switch",
     description:
-      "Switches the page you work on, so the layer tools (list_nodes, create_nodes, …) act on " +
+      "Switches the page you work on, so the layer tools (nodes_list, nodes_create, …) act on " +
       "it. Only yours changes: the user stays on their page. Your selection is cleared.",
     inputSchema: { type: "object", required: ["id"], properties: { id: PAGE_ID } },
     run: (host, args) => {
@@ -50,7 +50,7 @@ export const pagesTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "create_page",
+    name: "create",
     description:
       'Adds a page after the current one (named "Page N" unless `name` is given), in one undo ' +
       "step, and switches to it unless `switchTo` is false. Returns its id.",
@@ -69,7 +69,7 @@ export const pagesTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "rename_page",
+    name: "rename",
     description: "Renames a page, in one undo step.",
     inputSchema: {
       type: "object",
@@ -85,7 +85,7 @@ export const pagesTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "duplicate_page",
+    name: "duplicate",
     description:
       'Adds a copy of a page and all its layers right after it, named "<name> copy", in one ' +
       "undo step, and switches to it unless `switchTo` is false. Returns its id.",
@@ -103,7 +103,7 @@ export const pagesTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "delete_page",
+    name: "delete",
     description:
       "Deletes a page and every layer on it, in one undo step. The last page can't be deleted; " +
       "when the current page goes, the next one is shown.",
@@ -115,7 +115,7 @@ export const pagesTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "reorder_page",
+    name: "reorder",
     description: "Moves a page to `position` (0-based) in the page order, in one undo step.",
     inputSchema: {
       type: "object",
@@ -131,7 +131,7 @@ export const pagesTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "move_nodes_to_page",
+    name: "nodes_move",
     description:
       "Moves layers of the current page, with everything they hold, to another page (on top of " +
       "its layers), in one undo step. Layers whose parent stays behind go to the top of the page. " +

@@ -35,7 +35,7 @@ export function patchFields(source: DataSourceElement, args: ToolArgs): DataFiel
         ? fields.find((f) => normalizePath(f.path) === normalizePath(p.path as string))
         : undefined;
     if (typeof p.path !== "string" || !field) {
-      throw new Error(`${where}: no field "${String(p.path)}" (see get_data_source).`);
+      throw new Error(`${where}: no field "${String(p.path)}" (see data_source_get).`);
     }
     if (p.alias !== undefined) {
       if (typeof p.alias !== "string") throw new Error(`${where}.alias must be text.`);

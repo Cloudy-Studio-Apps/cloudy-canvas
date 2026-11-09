@@ -6,7 +6,7 @@ Frames: containers that clip their children, drawn with F (or A) and its device 
 - **Requires:** core
 - **Contributes:** kinds `FrameKind`; designCanvas: `kinds`, `options`, `tools`; designEditor: `propertySections`, `toolSidebars`, `tools`; `designMcpTools`, `designStarters` (Mobile app and Desktop landing: one iPhone 16 or Desktop frame, `ui/starters/`)
 - **Points it owns:** `frameLabelTags` (`frame.points.ts`, `FrameLabelTag`, `(frame) => string | null`: words drawn after a top-level frame's name on the canvas, the first answer that isn't `null` winning; asked on every redraw of the frame, so an answer reads what's already worked out, and a module whose answer changes calls `engine.refreshElements` on those frames. Catalog's: a repeat's template page "Product · row 2 of 40", a page it made "Copy of Product")
-- **MCP tools:** `add_preset_frame`, `list_frame_presets`
+- **MCP tools:** `frame_preset_add`, `frame_presets_list`
 - **Files:** `frame.kind.ts`, `frame.draw.ts`, `frame-presets.ts`, `create-preset-frame.ts`, `frame-nodes.ts` (Frame selection, a command of the group module), `frame.mcp.ts`, `ui/` (presets sidebar, section, `FramePresetPicker`: the sizes menu, exported from `ui/index.ts` for other modules, e.g. the catalog's blank pages).
 
 ## How it works

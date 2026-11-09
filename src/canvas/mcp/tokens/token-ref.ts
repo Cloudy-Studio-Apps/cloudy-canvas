@@ -4,7 +4,7 @@ import type { StyleRecord, TokenStore, VariableRecord } from "../../tokens";
 export function requireToken(store: TokenStore, ref: string): VariableRecord | StyleRecord {
   const token = store.find(ref) ?? store.findStyle(ref);
   if (!token) {
-    throw new Error(`No variable or style "${ref}". Call list_variables or list_styles.`);
+    throw new Error(`No variable or style "${ref}". Call variables_list or variables_styles_list.`);
   }
   return token;
 }

@@ -1,6 +1,6 @@
 import type { DesignNode } from "./design-node.types";
 
-/** The stroke settings agents give (`create_nodes`, `update_nodes`). */
+/** The stroke settings agents give (`nodes_create`, `nodes_update`). */
 export type StrokeFields = Partial<
   Pick<
     DesignNode,

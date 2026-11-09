@@ -7,12 +7,12 @@ import { firstImageFill, replaceImageFill } from "../replace-image-fill";
 
 /** Another picture in a layer's image fill, keeping how the fill places it. */
 export const replaceImageTool: DesignMcpTool = {
-  name: "replace_image",
+  name: "replace",
   description:
     "Puts a picture file (PNG, JPG, GIF, WebP, SVG, …) in a layer's image fill instead of its " +
     "picture, keeping how the fill places it (fill, fit, crop, tile, turn, opacity), in one undo " +
     "step, as Replace in the Catalog's page pictures does. `fill` is the fill's index among the " +
-    "layer's fills (get_brochure_page and get_nodes list them; default: its first image fill). " +
+    "layer's fills (catalog_page_get and nodes_get list them; default: its first image fill). " +
     "The layer may be on any page. Returns the picture's assetId and pixel size.",
   inputSchema: {
     type: "object",
@@ -29,7 +29,7 @@ export const replaceImageTool: DesignMcpTool = {
     const node = engine.doc.get(id);
     if (!node || !isDesignNode(node)) throw new Error(`No layer with id ${id}.`);
     const fill = optionalNumber(args, "fill") ?? firstImageFill(node);
-    if (fill < 0) throw new Error(`“${node.name}” has no image fill (add one with update_nodes).`);
+    if (fill < 0) throw new Error(`“${node.name}” has no image fill (add one with nodes_update).`);
     const path = stringArg(args, "path");
     const data = await host.readFile(path);
     const size = await imageSize(data);

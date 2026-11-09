@@ -11,7 +11,7 @@ export const SHAPE_SCHEMA = {
     'its new path, e.g. {"attributes.title": "name"}) and `include` (only these fields, by ' +
     "their path after renaming; left out, all). Bindings, conditions and repeats reading a " +
     "renamed field follow it; one left out shows as a field not found. null removes the step. " +
-    "get_data_source shows `rawFields`, the fields as read, once a source has a shape (without " +
+    "data_source_get shows `rawFields`, the fields as read, once a source has a shape (without " +
     "one they are its `fields`).",
   properties: {
     rename: { type: "object", additionalProperties: { type: "string" } },

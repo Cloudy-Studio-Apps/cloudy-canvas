@@ -16,7 +16,7 @@ export function readImagePaint(
   shared: Pick<ImagePaint, "opacity" | "visible">,
 ): ImagePaint {
   if (typeof paint.assetId !== "string" || paint.assetId === "") {
-    throw new Error(`"${key}.assetId" must be the asset id of an image (see add_image).`);
+    throw new Error(`"${key}.assetId" must be the asset id of an image (see image_add).`);
   }
   const scaleMode = (paint.scaleMode ?? "fill") as ImagePaint["scaleMode"];
   if (!SCALE_MODES.includes(scaleMode)) {

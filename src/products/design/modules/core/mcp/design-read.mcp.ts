@@ -7,11 +7,11 @@ import { summarizeNode } from "./summarize-node";
 
 export const designReadTools: DesignMcpTool[] = [
   {
-    name: "list_nodes",
+    name: "list",
     description:
       "Lists the design's layers in drawing order (bottom to top) as summaries: id, type, bounds, " +
       "label (the layer's name), parentId. Filter by type, by parent (null: the top of the page) " +
-      "or by a world-space area. Use get_nodes for every field, get_layer_tree for the tree.",
+      "or by a world-space area. Use nodes_get for every field, layers_tree_get for the tree.",
     inputSchema: {
       type: "object",
       properties: {
@@ -51,7 +51,7 @@ export const designReadTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "get_nodes",
+    name: "get",
     description:
       "Every field of the given layers (fills and strokes are paint arrays; a vector's network " +
       "and a line's points are relative to its x, y).",

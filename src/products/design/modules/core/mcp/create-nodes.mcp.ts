@@ -14,15 +14,15 @@ import { nextLayerName } from "../tools";
 import { containerAt } from "../tree";
 import { NODE_SPEC_PROPERTIES } from "./node-spec-properties";
 
-/** `create_nodes`, listing the design's creatable types and their fields (plugins' too). */
+/** `nodes_create`, listing the design's creatable types and their fields (plugins' too). */
 export const createNodesTool = ({ kinds }: DesignAgentContext): DesignMcpTool => ({
-  name: "create_nodes",
+  name: "create",
   description:
     "Adds layers to the open design as one undo step and returns their ids. Coordinates are " +
     "world units (the design's pixels), x/y the top-left corner, never relative to a parent. A " +
     "layer goes into the frame or section under its center unless `parent` says where; later " +
     "layers in the call are drawn above earlier ones. Colors are hex strings. Groups are made " +
-    "with group_nodes and pictures with add_image.",
+    "with group_create and pictures with image_add.",
   // A getter, so the schema lists the types registered when an agent asks (plugins too).
   get inputSchema() {
     return {

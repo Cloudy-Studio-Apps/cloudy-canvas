@@ -23,10 +23,10 @@ function readGuide(engine: DesignWorkspace, args: ToolArgs): RulerGuide {
 function readIndexes(args: ToolArgs, count: number): number[] {
   const indexes = args.indexes;
   if (!Array.isArray(indexes) || indexes.length === 0)
-    throw new Error("Give `indexes` (from list_guides) or `all: true`.");
+    throw new Error("Give `indexes` (from pages_guides_list) or `all: true`.");
   return indexes.map((index) => {
     if (typeof index !== "number" || !Number.isInteger(index) || index < 0 || index >= count)
-      throw new Error(`No guide at index ${String(index)}. Call list_guides for them.`);
+      throw new Error(`No guide at index ${String(index)}. Call pages_guides_list for them.`);
     return index;
   });
 }
@@ -34,7 +34,7 @@ function readIndexes(args: ToolArgs, count: number): number[] {
 /** The current page's ruler guides, as the rulers make them. */
 export const guidesTools: DesignMcpTool[] = [
   {
-    name: "list_guides",
+    name: "guides_list",
     description:
       "Lists the ruler guides of the page on screen, by index: `axis` x is a vertical line at " +
       "x = `value`, y a horizontal one at y = `value`. A page guide's value is in world units " +
@@ -48,7 +48,7 @@ export const guidesTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "add_guides",
+    name: "guides_add",
     description:
       "Adds ruler guides to the page on screen, in one undo step: page guides, or a frame's " +
       "(give `frame`, a frame or section id; `value` then counts from its top-left corner).",
@@ -82,9 +82,9 @@ export const guidesTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "remove_guides",
+    name: "guides_remove",
     description:
-      "Removes ruler guides of the page on screen by their index (list_guides), or all of them " +
+      "Removes ruler guides of the page on screen by their index (pages_guides_list), or all of them " +
       "with `all: true`, in one undo step.",
     inputSchema: {
       type: "object",

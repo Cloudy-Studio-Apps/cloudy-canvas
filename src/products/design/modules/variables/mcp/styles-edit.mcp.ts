@@ -42,7 +42,7 @@ function writeBindings(
 /** Making, changing and deleting styles. */
 export const stylesEditTools: DesignMcpTool[] = [
   {
-    name: "create_styles",
+    name: "styles_create",
     description:
       "Adds styles, as one undo step. Each: type (text, paint, effect, stroke), name (a slash " +
       'path like "Heading/H1"), and its value from `fromNode` (a layer\'s look, with the variables ' +
@@ -95,7 +95,7 @@ export const stylesEditTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "update_styles",
+    name: "styles_update",
     description:
       "Changes styles (by id or name), as one undo step: name, description, `value` fields " +
       `(merged over the current ones) and \`bindings\`. ${STYLE_VALUE_HELP} The layers using ` +
@@ -147,7 +147,7 @@ export const stylesEditTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "delete_styles",
+    name: "styles_delete",
     description:
       "Deletes styles (by id or name), as one undo step; layers using them keep their look, " +
       "unlinked.",

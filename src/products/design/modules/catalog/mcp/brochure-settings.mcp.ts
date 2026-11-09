@@ -28,7 +28,7 @@ const COVER_NUMBERINGS = ["numbered", "hidden", "uncounted"] as const;
 /** How the brochure prints, and its PDF. */
 export const brochureSettingsTools: DesignMcpTool[] = [
   {
-    name: "set_brochure_settings",
+    name: "brochure_settings_set",
     description:
       "Changes how the brochure prints, in one undo step: `layout` (`book`: pages facing each " +
       "other across a spine; `single`: one at a time), `covers` (the book's covers, which stand " +
@@ -148,7 +148,7 @@ export const brochureSettingsTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "arrange_brochure",
+    name: "brochure_arrange",
     description:
       "Lays the brochure's frames out on the canvas once as its `arrange` setting says (`below` " +
       "when it's off: the printed pages in a row by spread, each page's other options under it) " +
@@ -171,7 +171,7 @@ export const brochureSettingsTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "export_brochure_pdf",
+    name: "brochure_pdf_export",
     description:
       "Writes the brochure as one PDF, a page per brochure page in order, each the printed " +
       "frame as its print settings say: trimmed to its size (an A4 frame trims to A4), with bleed, " +

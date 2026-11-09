@@ -128,7 +128,7 @@ export class BrochurePageEdits extends BrochureHandle {
   }
 
   /**
-   * Replaces every page (agents' `set_brochure_pages`; the slots are checked by the caller). A page
+   * Replaces every page (agents' `catalog_pages_set`; the slots are checked by the caller). A page
    * printing the frame one printed is that one (`keepingSlots`); a copy left out is detached.
    */
   setSlots(slots: readonly BrochureSlot[]): void {

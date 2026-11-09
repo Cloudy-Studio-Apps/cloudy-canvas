@@ -47,7 +47,7 @@ export const ADD_PAGE_ITEM_SCHEMA = {
   required: ["brochure", "item"],
   properties: {
     item: { enum: ITEM_IDS },
-    master: { type: "string", description: "A master's id (get_brochure)." },
+    master: { type: "string", description: "A master's id (catalog_brochure_get)." },
     side: { enum: SIDES },
     position: POSITION_SCHEMA,
     x: { type: "number" },
@@ -60,7 +60,7 @@ export const ADD_PAGE_ITEM_SCHEMA = {
   },
 };
 
-/** `add_page_item`: checks every argument, then inserts the item (see the description). */
+/** `catalog_page_item_add`: checks every argument, then inserts the item (see the description). */
 export function addPageItem(
   engine: DesignWorkspace,
   brochure: DesignBrochure,
@@ -90,7 +90,9 @@ export function addPageItem(
   if (item.id === "page-ref") {
     if (target === undefined) throw new Error('Give "target": the section or page it points to.');
     if (target.includes("}") || !pageRefs(layout, input.numbers)(target)) {
-      throw new Error(`"${target}" isn't a section or page of this brochure (get_brochure).`);
+      throw new Error(
+        `"${target}" isn't a section or page of this brochure (catalog_brochure_get).`,
+      );
     }
   } else if (target !== undefined) {
     throw new Error('"target" is only for the `page-ref` item.');

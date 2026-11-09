@@ -21,10 +21,10 @@ const VIEW_MAX_SIDE = 2000;
 /** Reading a brochure: all of it, one page with its pictures, or how it looks as it's read. */
 export const brochureReadTools: DesignMcpTool[] = [
   {
-    name: "get_brochure",
+    name: "brochure_get",
     description:
       "A brochure (the Catalog mode; each belongs to one design page, which can hold several: " +
-      "list_brochures): its id, name, design page and the page's other brochures; its pages in " +
+      "catalog_brochures_list): its id, name, design page and the page's other brochures; its pages in " +
       "order, each printing one top-level frame (`frame`) chosen among its options (other frames " +
       'kept as alternatives), with its page numbers (`number`, "6–7" for a spread frame: `span` ' +
       "2, twice the page's width); the blank pages the layout adds, the printed page count, the " +
@@ -40,7 +40,7 @@ export const brochureReadTools: DesignMcpTool[] = [
       "`generated`, ones taken out of a repeat `detached`, pages a repeat will make at export " +
       "`pending` (no `frame` yet, `template` is the page they copy; counted in `pendingPages`), " +
       "and `repeats` lists each repeating section or page with its settings and pending count " +
-      "(set_brochure_repeat). Each master lists its own `pageItems` (template and target).",
+      "(catalog_repeat_set). Each master lists its own `pageItems` (template and target).",
     inputSchema: {
       type: "object",
       required: ["brochure"],
@@ -52,14 +52,14 @@ export const brochureReadTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "get_brochure_page",
+    name: "page_get",
     description:
       "One brochure page (by `position`, from 1): its printed frame, page numbers, span and " +
       "options, every picture on it (the layer, which of its fills, the assetId, the " +
       "picture's pixel size, its dpi at print size and whether that's low, or `placeholder: true` " +
-      "for an image placeholder waiting for its picture; replace_image swaps one), its page " +
+      "for an image placeholder waiting for its picture; image_replace swaps one), its page " +
       "items (`pageItems`: the text shown, its `template`, a page reference's `target`, and on a " +
-      "master's copy `fromMaster`, the master layer to change instead; set_page_item changes " +
+      "master's copy `fromMaster`, the master layer to change instead; catalog_page_item_set changes " +
       "them) and its print issues.",
     inputSchema: {
       type: "object",
@@ -115,7 +115,7 @@ export const brochureReadTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "view_brochure",
+    name: "brochure_view",
     description:
       "Returns a PNG of the brochure as it's read, to check its pages and order: with " +
       "`position`, the spread holding that page (covers alone on their side, a spread frame's " +

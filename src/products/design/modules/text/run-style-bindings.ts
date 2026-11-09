@@ -14,7 +14,7 @@ function same(a: unknown, b: unknown): boolean {
 
 /**
  * The runs with `textStyle` cleared where the range no longer shows its style: the style is gone,
- * or its typography was changed by hand (the Scale tool, an agent's `update_nodes`). `null` when
+ * or its typography was changed by hand (the Scale tool, an agent's `nodes_update`). `null` when
  * nothing changes.
  */
 function unlinkedRuns(doc: CanvasDocument, el: TextNodeElement): TextNodeRun[] | null {

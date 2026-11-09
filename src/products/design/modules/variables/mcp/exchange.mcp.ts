@@ -20,7 +20,7 @@ export function exchangeTools(formats: () => readonly TokenFormat[]): DesignMcpT
   const readers = () => formats().filter((f) => f.read);
   return [
     {
-      name: "export_tokens",
+      name: "tokens_export",
       description:
         "The design's variables and styles as a file's text: dtcg (W3C Design Tokens JSON, " +
         "modes and ids in its extension so importing it back is exact), css (custom properties, " +
@@ -54,7 +54,7 @@ export function exchangeTools(formats: () => readonly TokenFormat[]): DesignMcpT
       },
     },
     {
-      name: "import_tokens",
+      name: "tokens_import",
       description:
         "Brings variables and styles in from another .cdesign file or a tokens JSON file (W3C " +
         "DTCG or Tokens Studio, detected), one undo step. Ids are kept, so importing the same " +

@@ -11,7 +11,7 @@ const IDS_SCHEMA = { type: "array", items: { type: "string" } };
 /** Booleans, Flatten and Outline stroke, as the toolbar's boolean menu does them. */
 export const booleanTools: DesignMcpTool[] = [
   {
-    name: "boolean_nodes",
+    name: "apply",
     description:
       "Combines layers into a boolean, as Figma's boolean operations, in one undo step: union " +
       "(all of them), subtract (the bottom one minus the others), intersect (where all overlap) " +
@@ -43,7 +43,7 @@ export const booleanTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "flatten_nodes",
+    name: "flatten",
     description:
       "Flattens layers into one vector, as Ctrl+E does, in one undo step: a boolean's result, " +
       "shapes, texts (their glyphs) and groups' layers, painted like the bottom layer. One layer " +
@@ -60,7 +60,7 @@ export const booleanTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "outline_strokes",
+    name: "strokes_outline",
     description:
       "Turns layers' strokes into filled vectors of the area they cover, as Ctrl+Shift+O does, " +
       "in one undo step. A layer with fills keeps them (the vector goes right above it); a line " +

@@ -14,13 +14,13 @@ const HEX = /^#?[0-9a-f]{6}$/i;
 
 /** Placeholders for pictures not chosen yet, which the Catalog lists to replace. */
 export const imagePlaceholderTool: DesignMcpTool = {
-  name: "add_image_placeholder",
+  name: "placeholder_add",
   description:
     "Marks where a picture goes when you don't have it yet (catalog and brochure pages, " +
     "mockups): an image fill showing the layer's color with the foca watona and a “?” in the " +
     "middle. Use it instead of a plain gray rectangle: the Catalog mode lists placeholders as " +
-    "pictures to replace (get_brochure reports them as `placeholder` issues) and the user swaps " +
-    "them with Replace, or you with replace_image. With `ids`, those layers' fills become one " +
+    "pictures to replace (catalog_brochure_get reports them as `placeholder` issues) and the user swaps " +
+    "them with Replace, or you with image_replace. With `ids`, those layers' fills become one " +
     "placeholder of their own solid fill's color (or `color`), keeping their size and place; " +
     'without, it adds a rectangle named "Image placeholder" at x, y, w, h (default 400 × 300) ' +
     "in the frame under its center unless `parent` says where. One undo step. Returns the " +

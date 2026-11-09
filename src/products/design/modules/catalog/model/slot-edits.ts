@@ -136,7 +136,7 @@ export function pickPages(
 }
 
 /**
- * New slots for the pages (`set_brochure_pages`) where each that prints the frame a page printed
+ * New slots for the pages (`catalog_pages_set`) where each that prints the frame a page printed
  * is that page, with its frames and choice from `next`: its id (so sections starting on it and its
  * copies stay), master, repeat and what a repeat gave it.
  */

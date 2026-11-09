@@ -13,7 +13,7 @@ export function readCategory(sources: StyleguideToolSources, args: ToolArgs): St
       .categories()
       .map((c) => c.id)
       .join(", ");
-    throw new Error(`"category" is one of: ${ids}. Call get_design_system for their groups.`);
+    throw new Error(`"category" is one of: ${ids}. Call styleguide_get for their groups.`);
   }
   return category;
 }
@@ -53,9 +53,7 @@ export function readGroup(
 ): string | undefined {
   const group = optionalString(args, "group");
   if (group !== undefined && !groups.some((g) => g.id === group)) {
-    throw new Error(
-      `${category.id} has no group "${group}". Call get_design_system for its groups.`,
-    );
+    throw new Error(`${category.id} has no group "${group}". Call styleguide_get for its groups.`);
   }
   return group;
 }

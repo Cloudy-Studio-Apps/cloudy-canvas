@@ -15,7 +15,7 @@ export const RUN_STYLE_PROPERTIES = {
   lineHeight: { type: "number", description: "A multiple of the font size." },
   letterSpacing: { type: "number" },
   color: { type: "string", description: "Its color (or a CSS gradient), as its fills." },
-  fills: { type: "array", items: { type: "object" }, description: "Paints (see create_nodes)." },
+  fills: { type: "array", items: { type: "object" }, description: "Paints (see nodes_create)." },
   textDecoration: { enum: DECORATIONS },
 };
 

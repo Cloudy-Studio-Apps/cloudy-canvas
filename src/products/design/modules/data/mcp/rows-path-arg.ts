@@ -7,8 +7,8 @@ export const ROWS_PATH_SCHEMA = {
   type: ["string", "null"],
   description:
     'Where the rows are in the data: a path such as "products" or "data.items" ("" the data ' +
-    "itself), or null for the first list found (get_data_source lists the `lists` the last " +
-    "Update found). Takes effect on the next update_data_source.",
+    "itself), or null for the first list found (data_source_get lists the `lists` the last " +
+    "Update found). Takes effect on the next data_source_update.",
 };
 
 /** `args.rowsPath`: `undefined` when not given, `null` for the first list, else a checked path. */

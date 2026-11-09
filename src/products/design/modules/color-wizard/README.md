@@ -11,7 +11,7 @@ the result on sample designs with contrast fixes, then write it all as one undo 
   ("Color wizard…"); designCanvas: `hostCommands` (`openColorWizard`); `styleguideStartActions`
   (the Design system empty state's "Color wizard"); `designMcpTools`
 - **Points it owns:** —
-- **MCP tools:** `run_color_wizard`
+- **MCP tools:** `color-wizard_run`
 - **Files:** `color/` (conversions, OKLab distance, color-vision simulation, seeded random),
   `harmony/`, `sources/` (image colors, the file's fills and images, pasted palettes),
   `gallery/` (categories and their recipes), `theme/` (roles, added colors, the Theme, contrast
@@ -98,6 +98,6 @@ step (`asUndoStep`):
 
 ### Agents
 
-`run_color_wizard` takes the colors as `{ role, hex }`, the options, the modes, Theme overrides
+`color-wizard_run` takes the colors as `{ role, hex }`, the options, the modes, Theme overrides
 and text styles; it fixes contrast by default and returns the contrast results and look-alike
 pairs with what it wrote, or only the plan with `preview: true`.

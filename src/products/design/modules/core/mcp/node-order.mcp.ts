@@ -5,10 +5,10 @@ import { requireDesign, requireNodes, type DesignMcpTool } from "../../../mcp";
 const DIRECTIONS: readonly ReorderDirection[] = ["front", "forward", "backward", "back"];
 const IDS_SCHEMA = { type: "array", items: { type: "string" } };
 
-/** The drawing order and locking (`reorder_nodes`, `lock_nodes`). */
+/** The drawing order and locking (`nodes_reorder`, `nodes_lock`). */
 export const nodeOrderTools: DesignMcpTool[] = [
   {
-    name: "reorder_nodes",
+    name: "reorder",
     description:
       "Moves layers in the drawing order as one undo step, as ] and [ do: to the front or back, " +
       "or one step forward or backward past the nearest layer they overlap. Layers stay in their " +
@@ -27,7 +27,7 @@ export const nodeOrderTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "lock_nodes",
+    name: "lock",
     description:
       "Locks layers (with what they hold) in place as one undo step, or unlocks them with " +
       "locked: false. The user can't select or drag locked layers on the canvas until they're " +

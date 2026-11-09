@@ -35,7 +35,7 @@ export function moveIntoProblem(
   }
   const page = isDesignNode(node) ? node.pageId : "";
   if (page && parent.pageId && page !== parent.pageId) {
-    return "A layer can only go into a layer on its own page (use move_nodes_to_page).";
+    return "A layer can only go into a layer on its own page (use pages_nodes_move).";
   }
   const seen = new Set<string>();
   for (let at: DesignNode | undefined = parent; at;) {

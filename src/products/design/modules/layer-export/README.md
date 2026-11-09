@@ -6,7 +6,7 @@ Figma's Export section: rows saved on a layer, each a size, a name suffix and a 
 - **Requires:** core
 - **Contributes:** designEditor: `propertySections`; `designMcpTools`
 - **Points it owns:** —
-- **MCP tools:** `set_layer_exports`, `export_layers`
+- **MCP tools:** `layer-export_set`, `layer-export_run`
 - **Files:** `node-exports.ts` (sizes, default suffixes, new rows), `export-file-name.ts`, `export-nodes.ts` (what the rows make), `export-all.ts` (what Export all lists and draws), `layer-export.mcp.ts`, `ui/` (the section, its rows, saving).
 
 ## How it works

@@ -18,7 +18,7 @@ import type { StyleguideToolSources } from "./styleguide-mcp.types";
 const MODE_VIEWS = ["current", "all"] as const;
 
 const TEMPLATE_PROPS = {
-  template: { type: "string", description: "A template id of the category (get_design_system)." },
+  template: { type: "string", description: "A template id of the category (styleguide_get)." },
   options: {
     type: "object",
     description: "The template's options, by id; missing ones keep their default.",
@@ -30,7 +30,7 @@ const TEMPLATE_PROPS = {
 export function styleguideEditTools(sources: StyleguideToolSources): DesignMcpTool[] {
   return [
     {
-      name: "set_system_template",
+      name: "template_set",
       description:
         "Sets how the Design system draws a category (its default template), one of its groups " +
         "(an override; clear: true goes back to the category's), or a live element (`element`: " +
@@ -113,7 +113,7 @@ export function styleguideEditTools(sources: StyleguideToolSources): DesignMcpTo
       },
     },
     {
-      name: "add_system_element",
+      name: "element_add",
       description:
         "Places a live design-system element on a page (the page you're on unless `page`): a " +
         "frame drawing a category, or one group of it, with a template, kept up to date as the " +
@@ -124,7 +124,7 @@ export function styleguideEditTools(sources: StyleguideToolSources): DesignMcpTo
         properties: {
           category: { type: "string" },
           group: { type: "string" },
-          page: { type: "string", description: "A page id (list_pages)." },
+          page: { type: "string", description: "A page id (pages_list)." },
           x: { type: "number" },
           y: { type: "number" },
           ...TEMPLATE_PROPS,
@@ -137,7 +137,7 @@ export function styleguideEditTools(sources: StyleguideToolSources): DesignMcpTo
         const group = readGroup(category, groups, args);
         const pageId = optionalString(args, "page") ?? engine.scope;
         if (!pageId || !engine.service(DESIGN_PAGES).page(pageId)) {
-          throw new Error(`No page "${String(pageId)}". Call list_pages for their ids.`);
+          throw new Error(`No page "${String(pageId)}". Call pages_list for their ids.`);
         }
         const picked = readTemplate(sources, category, args);
         const x = optionalNumber(args, "x");
@@ -161,7 +161,7 @@ export function styleguideEditTools(sources: StyleguideToolSources): DesignMcpTo
       },
     },
     {
-      name: "convert_system_element",
+      name: "element_convert",
       description:
         "Turns live design-system elements into ordinary layers: they stop updating, and their " +
         "layers become editable while keeping their variable bindings. The Design system view's " +

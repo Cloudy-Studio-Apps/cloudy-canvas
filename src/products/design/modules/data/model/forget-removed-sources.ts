@@ -5,7 +5,7 @@ import { clearSecrets } from "./write-secrets";
 import { sharedState } from "./shared-state";
 
 /**
- * After a deletion that didn't go through the service (an agent's `delete_nodes`, an `onRemove`):
+ * After a deletion that didn't go through the service (an agent's `nodes_delete`, an `onRemove`):
  * forgets the removed sources' Update state and deletes what they kept on this device (secrets,
  * their origin, file paths) when an editor is open. Undo brings a record back, not its secrets.
  */

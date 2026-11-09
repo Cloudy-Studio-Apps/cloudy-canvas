@@ -54,7 +54,7 @@ function readCondition(value: unknown): DataCondition | null {
   return value as unknown as DataCondition;
 }
 
-/** What `bind_data` was asked to change, as a `BindDataPatch` (shapes only; `bindData` checks the rest). */
+/** What `data_bind` was asked to change, as a `BindDataPatch` (shapes only; `bindData` checks the rest). */
 export function readBindPatch(el: DesignNode, args: ToolArgs): BindDataPatch {
   const patch: BindDataPatch = {};
   if (args.text !== undefined) {

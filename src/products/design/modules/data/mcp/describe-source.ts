@@ -8,7 +8,7 @@ import { sourceOf } from "../checks/source-of";
 import { dataCopyTag, documentScopes, repeatOf } from "../repeat";
 import { isFrame } from "../../frame";
 
-/** The summary `list_data_sources` and the other tools give of a source. */
+/** The summary `data_sources_list` and the other tools give of a source. */
 export async function summarizeSource(engine: DesignWorkspace, source: DataSourceElement) {
   const sources = engine.service(DESIGN_DATA_SOURCES);
   return {

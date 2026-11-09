@@ -55,7 +55,7 @@ const VARIABLE_FIELDS = {
     type: "array",
     items: { type: "string" },
     description:
-      "Colors (ids or names) this color is read on: text on a surface, checked by check_contrast. [] clears them.",
+      "Colors (ids or names) this color is read on: text on a surface, checked by variables_contrast_check. [] clears them.",
   },
 };
 
@@ -98,7 +98,7 @@ function writeValues(tokens: DocumentTokens, id: string, item: ToolArgs): void {
 /** Creating and changing variables. */
 export const variablesEditTools: DesignMcpTool[] = [
   {
-    name: "create_variables",
+    name: "create",
     description:
       "Adds variables to a collection, as one undo step. Each: name (a slash path like " +
       '"brand/primary/500"; groups come from it), type ("color", "number", "string" for text, "boolean"), `value` (its ' +
@@ -161,7 +161,7 @@ export const variablesEditTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "update_variables",
+    name: "update",
     description:
       "Changes variables (by id or name), as one undo step: name (moving it between groups), " +
       "`value` (default), `values` for modes by name, `clear` (mode names going back to the " +
@@ -209,7 +209,7 @@ export const variablesEditTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "delete_variables",
+    name: "delete",
     description:
       "Deletes variables (by id or name), as one undo step. Layers using them keep the values " +
       "they show, no longer linked; returns how many were unlinked.",

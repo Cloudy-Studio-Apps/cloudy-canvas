@@ -25,11 +25,11 @@ const VERTICAL_ALIGNS: readonly TextVerticalAlign[] = ["top", "middle", "bottom"
 const AUTO_RESIZES: readonly TextAutoResize[] = ["width", "height", "none"];
 const DECORATIONS: readonly TextDecoration[] = ["none", "underline", "strikethrough"];
 
-/** The text fields agents may give or patch, in the `create_nodes` schema. */
+/** The text fields agents may give or patch, in the `nodes_create` schema. */
 export const TEXT_SPEC_PROPERTIES = {
   fontFamily: {
     type: "string",
-    description: "Text: a font family (list_fonts); Inter by default.",
+    description: "Text: a font family (text_fonts_list); Inter by default.",
   },
   fontSize: { type: "number" },
   fontWeight: { enum: WEIGHTS, description: "Text: 400 is regular, 700 bold." },

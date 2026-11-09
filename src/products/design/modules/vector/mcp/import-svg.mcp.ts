@@ -15,14 +15,14 @@ import { svgSize, svgToVectorIn } from "../svg";
 
 /** Placing an SVG file as one vector, as dropping it on the canvas does. */
 export const importSvgTool: DesignMcpTool = {
-  name: "import_svg",
+  name: "svg_import",
   description:
     "Places an SVG file as one vector, as dropping it does, in one undo step: each shape of the " +
     "file is an area of the vector with its own fill (a stroke becomes the area it covers), " +
     "recolored through network.regions[i].fills. It's at the file's size unless w and/or h are " +
     "given (one keeps the proportions), and goes into the frame under its center unless " +
     "`parent` says where. Text, embedded pictures and <use> in the file are left out. To place " +
-    "it as a picture instead, use add_image. Returns the vector's id and how many areas it has.",
+    "it as a picture instead, use image_add. Returns the vector's id and how many areas it has.",
   inputSchema: {
     type: "object",
     required: ["path"],

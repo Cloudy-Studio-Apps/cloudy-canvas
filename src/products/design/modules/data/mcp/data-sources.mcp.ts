@@ -19,7 +19,7 @@ import {
 } from "./source-args";
 
 const DEVICE_NOTE =
-  "Nothing updates on its own: call update_data_source. Secrets (keys, header values) are kept " +
+  "Nothing updates on its own: call data_source_update. Secrets (keys, header values) are kept " +
   "on this device, never in the file, and are never returned.";
 
 const BINDING_NOTE =
@@ -55,7 +55,7 @@ const FORMAT_SCHEMA = {
 /** Data sources: listing them, and adding, configuring, updating and removing them. */
 export const dataTools: DesignMcpTool[] = [
   {
-    name: "list_data_sources",
+    name: "sources_list",
     description:
       "The data sources of the design (a file or a link whose rows can fill layers): id, name " +
       "(the identifier bindings use), type, format, row count, when it was last updated, the " +
@@ -68,7 +68,7 @@ export const dataTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "get_data_source",
+    name: "source_get",
     description:
       "One data source in full: settings, fields (path, alias, type, format, hidden), the " +
       "secrets it uses with `set` true or false (their values are never returned), the files it " +
@@ -91,7 +91,7 @@ export const dataTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "add_data_source",
+    name: "source_add",
     description:
       "Adds a data source in one undo step and, unless `update` is false, fetches it right " +
       "away. `type` is a source type id (file, http); see the settings each one takes in the " +
@@ -141,7 +141,7 @@ export const dataTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "update_data_source",
+    name: "source_update",
     description:
       "Fetches a data source again into a new snapshot (one undo step; a failure changes " +
       "nothing), or every source with `all: true`. May take a while. Returns the result of " +
@@ -176,13 +176,13 @@ export const dataTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "set_data_source",
+    name: "source_set",
     description:
       "Changes a data source in one undo step: `name`, `settings` (merged into the current " +
       "ones; null removes a secret setting), `secrets`, `format` and `formatOptions`, `rowsPath`, " +
       "`fields` (patches matched by `path`: alias, type, format, hidden; an unknown path is an " +
       "error) and `shape` (applied last, so `fields` names the paths as they are now). Nothing " +
-      `is fetched: call update_data_source after changing where data comes ` +
+      `is fetched: call data_source_update after changing where data comes ` +
       `from. ${DEVICE_NOTE} ${BINDING_NOTE}`,
     inputSchema: {
       type: "object",
@@ -202,7 +202,7 @@ export const dataTools: DesignMcpTool[] = [
             type: "object",
             required: ["path"],
             properties: {
-              path: { type: "string", description: "The field's path (get_data_source)." },
+              path: { type: "string", description: "The field's path (data_source_get)." },
               alias: {
                 type: "string",
                 description:
@@ -277,7 +277,7 @@ export const dataTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "remove_data_source",
+    name: "source_remove",
     description:
       "Deletes a data source in one undo step (undo brings the source back, not its secrets, " +
       "which are removed from this device).",

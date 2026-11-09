@@ -104,7 +104,7 @@ export class FrameKind extends BoxShapeKind<FrameElement> {
   override readonly specProperties = {
     preset: {
       type: "string",
-      description: "Frame: a preset size when w/h aren't given (list_frame_presets).",
+      description: "Frame: a preset size when w/h aren't given (frame_presets_list).",
     },
     cornerRadius: { type: "number", description: "Frame or rectangle: corner radius." },
     clipsContent: {

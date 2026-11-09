@@ -19,7 +19,7 @@ import { PAGE_MASTER_SCHEMA, readPageMaster } from "./master-args";
 /** Changing a brochure's pages, page by page or all at once, each one undo step. */
 export const brochureEditTools: DesignMcpTool[] = [
   {
-    name: "set_brochure_pages",
+    name: "pages_set",
     description:
       "Replaces the brochure's pages, in order, in one undo step. Each page lists the top-level " +
       "frames that could be it (`frames`, its options) and the one printed (`chosen`, the first " +
@@ -54,7 +54,7 @@ export const brochureEditTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "add_brochure_pages",
+    name: "pages_add",
     description:
       "Adds pages to the brochure at `at` (a page position from 1; the end by default), in one " +
       "undo step: `frames` (top-level frames not in it yet, in the order given; frames already " +
@@ -96,7 +96,7 @@ export const brochureEditTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "move_brochure_page",
+    name: "page_move",
     description:
       "Moves a page (by `position`, from 1), or several (`positions`, kept in the brochure's " +
       "order and moved together), so the first starts at position `to`, as dragging them in the " +
@@ -123,7 +123,7 @@ export const brochureEditTools: DesignMcpTool[] = [
       if (made) {
         throw new Error(
           `Page ${made.number} was made by a repeat: it follows its template page and can't be ` +
-            "moved. Remove it (remove_brochure_pages) to detach it from its repeat first.",
+            "moved. Remove it (catalog_pages_remove) to detach it from its repeat first.",
         );
       }
       const room = pages.length - slots.length + 1;
@@ -138,7 +138,7 @@ export const brochureEditTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "remove_brochure_pages",
+    name: "pages_remove",
     description:
       "Takes pages (by `positions`, from 1) out of the brochure with their options, in one undo " +
       "step. Their frames stay in the design. A page a repeat made isn't taken out but detached: " +
@@ -161,7 +161,7 @@ export const brochureEditTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "set_brochure_page_options",
+    name: "page_options_set",
     description:
       "Sets a page's options (`frames`, top-level frames in the order they're listed; frames " +
       "taken from other pages leave them) and the one it prints (`chosen`, the first by " +

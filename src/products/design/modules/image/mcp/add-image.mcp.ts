@@ -23,14 +23,14 @@ const SCALE_MODES: readonly ImageScaleMode[] = ["fill", "fit", "tile"];
  */
 export const imageTools: DesignMcpTool[] = [
   {
-    name: "add_image",
+    name: "add",
     description:
       'Places a picture file (PNG, JPG, GIF, WebP, SVG, …) as a rectangle named "Image" filled ' +
       "with it, as dropping a raster file does, in one undo step. It's at its pixel size unless w " +
       "and/or h are given (one keeps the proportions), and goes into the frame under its center " +
       "unless `parent` says where. An animated GIF plays on the canvas. Returns the layer's id and the image's assetId, which other " +
       'layers can use in an image paint ({ type: "image", assetId }). Without a picture yet, ' +
-      "use add_image_placeholder instead. An SVG placed here stays a picture; import_svg places " +
+      "use image_placeholder_add instead. An SVG placed here stays a picture; vector_svg_import places " +
       "it as an editable vector, as dropping it does.",
     inputSchema: {
       type: "object",
@@ -50,7 +50,7 @@ export const imageTools: DesignMcpTool[] = [
           enum: SCALE_MODES,
           description:
             "fill crops to cover (default), fit shows it all, tile repeats it at half its pixel " +
-            "size; to crop it, give the fill a crop with update_nodes.",
+            "size; to crop it, give the fill a crop with nodes_update.",
         },
       },
     },

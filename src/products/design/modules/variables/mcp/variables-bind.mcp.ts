@@ -17,7 +17,7 @@ import { requireStyle } from "./style-args";
 /** Binding layers' fields to variables, and picking modes. */
 export const variablesBindTools: DesignMcpTool[] = [
   {
-    name: "bind_variables",
+    name: "bind",
     description:
       "Makes layers' fields use variables, as one undo step: each binding gives layer ids, a " +
       'field path and a variable (id or name). Paths: "fills.N.color" / "strokes.N.color" ' +
@@ -28,10 +28,10 @@ export const variablesBindTools: DesignMcpTool[] = [
       'multiplier), "letterSpacing", "fontWeight"; polygons\' and stars\' "pointCount", stars\' ' +
       '"innerRadius"; text variables: texts\' "text", "fontFamily", "fontStyle" (a face name like ' +
       '"Bold Italic"); boolean variables: "visible", "layoutAbsolute", frames\' "clipsContent", ' +
-      'masks\' "maskInverted". Styles (list_styles): "fills"/"strokes" take a paint style, ' +
+      'masks\' "maskInverted". Styles (variables_styles_list): "fills"/"strokes" take a paint style, ' +
       '"effects" an effect style, "strokeStyle" a stroke style, texts\' "textStyle" a text style ' +
-      "(a range's: style_text_range's textStyle). get_nodes lists each layer's `bindings`. A " +
-      "field written later by hand or by update_nodes is unlinked (a style: any field it sets).",
+      "(a range's: text_range_style's textStyle). nodes_get lists each layer's `bindings`. A " +
+      "field written later by hand or by nodes_update is unlinked (a style: any field it sets).",
     inputSchema: {
       type: "object",
       required: ["bindings"],
@@ -93,7 +93,7 @@ export const variablesBindTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "unbind_variables",
+    name: "unbind",
     description:
       "Unlinks layers' fields from variables (all of them, or `paths`); the fields keep the values " +
       "they show. One undo step.",
@@ -123,7 +123,7 @@ export const variablesBindTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "set_variable_mode",
+    name: "mode_set",
     description:
       "Sets which mode of an axis a page or a frame/section/group (and everything in it) " +
       'uses, e.g. "Dark"; mode null goes back to inheriting it. Layers update in the same undo step.',
@@ -131,7 +131,7 @@ export const variablesBindTools: DesignMcpTool[] = [
       type: "object",
       required: ["target", "axis", "mode"],
       properties: {
-        target: { type: "string", description: "A page id (list_pages) or a layer id." },
+        target: { type: "string", description: "A page id (pages_list) or a layer id." },
         axis: { type: "string", description: "The mode axis (id or name)." },
         mode: { type: ["string", "null"] },
       },

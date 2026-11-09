@@ -14,7 +14,7 @@ import { describeRepeats } from "./describe-repeats";
 import { pageItemsIn } from "./page-item-summary";
 
 /**
- * A brochure as agents read it (get_brochure, and what the edit tools return): its pages with
+ * A brochure as agents read it (catalog_brochure_get, and what the edit tools return): its pages with
  * their printed numbers and masters, its masters, sections and settings, and its issues.
  */
 export async function describeBrochure(engine: DesignWorkspace, brochure: DesignBrochure) {
@@ -66,7 +66,7 @@ export async function describeBrochure(engine: DesignWorkspace, brochure: Design
     masters: (record?.masters ?? []).map((master) => ({
       ...master,
       default: master.id === settings.defaultMaster,
-      // Its own page items, the ones set_page_item changes for every page.
+      // Its own page items, the ones catalog_page_item_set changes for every page.
       pageItems: [master.left, master.right].flatMap((frame) =>
         frame ? pageItemsIn(frame, elements) : [],
       ),
