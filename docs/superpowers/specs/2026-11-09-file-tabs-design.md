@@ -19,7 +19,8 @@ heavier than one window per file would.
 
 1. On desktop, several files open at once as **tabs in the window's title bar**, with Home as a
    fixed first tab.
-2. **Only the tab on screen draws.** Background tabs cost as little as possible (states below).
+2. **Only the tab on screen draws.** Background tabs cost as little as possible (see Tab
+   states and memory).
 3. **Agents are collaborators bound to one tab**, like a friend who joined one file through a
    live link. Several agents can work on different tabs at the same time, in the background,
    while the user works on another.
@@ -43,7 +44,7 @@ heavier than one window per file would.
 - An agent never sees or touches a file other than the tab it's bound to.
 - Background tabs never draw, and many open tabs never make the active one slower.
 - No tab that can't be clicked: a loading tab is clickable and closable.
-- An unsaved tab is never closed or put to sleep without the user agreeing.
+- An unsaved tab is never closed or hibernated without the user agreeing.
 
 ## The window (decided)
 
@@ -92,36 +93,63 @@ Title bar, left to right (prototype v2):
 - **Closing a tab** with unsaved changes asks first (save / don't save / cancel); otherwise it
   flushes its pending autosave and closes. **Closing the window** keeps today's `CloseFileGuard`
   behavior, once for all tabs: flush every tab's pending autosave, and ask only when some tab
-  has changes nothing will save. Asleep tabs are never unsaved, so they're never loaded for
+  has changes nothing will save. Hibernated tabs are never unsaved, so they're never loaded for
   this.
 - **Shortcuts** (bound in the app's keybindings, labels through `keymap.label`, never
   hard-coded): next / previous tab, close tab, reopen the last closed tab, go to tab 1–9.
 - **Restart**: the open tabs come back in their order with the same active tab, but each file
-  loads only when its tab is clicked (or an agent binds to it). Tabs are remembered by file id,
+  loads only when its tab is clicked (or an agent calls on it). Tabs are remembered by file id,
   drafts included (a draft has a stable id in storage); a file that's gone by then is dropped
   from the list. _Builder-check call:_ "reopen closed tab" keeps a stack of the last 10 closed
   tabs for the running session.
 
-## Tab states (decided)
+## Tab states and memory (decided)
 
-Each file tab is in one of four states; only the active one draws.
+The user's priority: the best optimization possible without breaking the experience. A tab
+holds two things with very different costs, and each is kept only while something needs it:
 
-| State       | In memory                                        | When                                                          |
-| ----------- | ------------------------------------------------ | ------------------------------------------------------------- |
-| **Asleep**  | the file id, name, type, path                    | restored at startup and never opened; or put to sleep (below) |
-| **Loaded**  | the document (Yjs doc) and its undo history      | a tab the user left, nobody working in it                     |
-| **Running** | + the engine and scene, **no drawing, no input** | an agent or a live-session collaborator is working in it      |
-| **Active**  | + drawing and the user's mouse and keyboard      | the tab on screen (exactly one, or none on Home)              |
+- **The document**: the Yjs doc and its undo history. Fairly cheap; all that sync, autosave and
+  live sessions need.
+- **The engine**: scene, drawing, images, 3D data, caches, GPU resources. The expensive part;
+  needed only to show the file or for agent tools (geometry comes from the scene, root rule 12).
 
-- Switching back to a Loaded or Running tab is instant and keeps its undo history.
-- **Sleep**: a tab that is saved, has nobody in it, and hasn't been active for a while is
-  dropped to Asleep (its undo history goes with it). Tabs with unsaved changes, agents or a live
-  session never sleep. The thresholds (how many tabs, how long) are the builder's call, as
-  constants that are easy to tune; a sensible start is "beyond the 5 most recent tabs, or 10
-  minutes unused".
-- Autosave, thumbnails and agent reads work on a background tab's document without starting
-  drawing. Agent tools need the scene (geometry comes from it, root rule 12), which is why an
-  agent's tab is Running, not Loaded.
+So a tab is in one of four states, and only the active one draws:
+
+| State          | In memory                                        |
+| -------------- | ------------------------------------------------ |
+| **Hibernated** | the file id, name, type, path                    |
+| **Document**   | the document and its undo history                |
+| **Headless**   | + the engine and scene, **no drawing, no input** |
+| **Active**     | + drawing and the user's mouse and keyboard      |
+
+What decides a tab's state:
+
+| Tab situation                                                   | State                     | Why                                                                                               |
+| --------------------------------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------- |
+| On screen                                                       | Active                    |                                                                                                   |
+| Just left (a short grace, ~30 s)                                | Headless                  | quick back-and-forth switching stays instant                                                      |
+| An agent bound and calling (until ~2 min since its last call)   | Headless                  | agent tools need the scene                                                                        |
+| An agent bound but quiet                                        | Document                  | agents work in bursts; the engine is rebuilt on its next call (the call waits; agents don't mind) |
+| A live session (hosting or joined), no agent calling            | Document, still connected | remote edits only need the document; the engine is rebuilt when the user comes back               |
+| Nobody there, among the 5 most recent tabs or used < 10 min ago | Document                  | coming back keeps the undo history; the engine is rebuilt in a moment                             |
+| Nobody there, older than that, saved                            | Hibernated                | reloads from the file when clicked                                                                |
+| Restored at startup, never clicked                              | Hibernated                |                                                                                                   |
+
+- **Never hibernated**: tabs with an agent bound, a live session, or unsaved changes.
+  Hibernating a live tab would disconnect it: a host's guests would lose the session, and a
+  guest would vanish from the others' screens and re-download the whole file each time, so a
+  live tab stays connected with its document only.
+- **Hibernating loses the tab's undo history** (the user accepted this; closing a file loses it
+  today too). Coming back from Document or Headless keeps it.
+- **Cap**: at most ~3 Headless engines at once; past that, the least recently used one drops to
+  Document and rebuilds on its next need.
+- Coming back to a Document tab shows the in-editor loader only if rebuilding the engine takes
+  long enough to notice (builder's call on the delay before it shows).
+- The numbers (30 s, 2 min, 5 tabs, 10 min, 3 engines) are tunable constants; these are the
+  starting values.
+- Autosave and thumbnails work on a background tab's document without drawing (a thumbnail
+  needs the engine, so it's taken when the tab leaves Headless, as the editor does on close
+  today).
 
 ## Agents and tabs (decided)
 
@@ -135,9 +163,8 @@ file: it never gets access to the user's whole workspace.
   session id, so calls don't carry a tab id; the session id already identifies the agent
   (`app/mcp`, `presenceKey(context)`). Bindings live in memory only: after an app restart every
   session starts unbound and binds again by the same rule.
-- **A bound tab is Running and never sleeps.** Being Running is what lets it apply the agent's
-  edits (and a live session's remote edits) in the background; the same holds for a tab with a
-  live session.
+- **A bound tab never hibernates.** It is Headless while the agent is calling and drops to
+  Document when the agent goes quiet (see Tab states and memory).
 - **Stays put**: when the user switches tabs, the agent keeps working in its own tab, in the
   background. Its avatar shows on that tab's button and pulses while it edits a tab that isn't
   on screen; the user can click in to watch.
@@ -178,8 +205,8 @@ file: it never gets access to the user's whole workspace.
 ## Live sessions
 
 A live session stays per file: hosting a session shares that tab only; the guests' avatars show on
-that tab. Joining someone's session opens it as a new active tab. A tab with a live session never
-sleeps.
+that tab. Joining someone's session opens it as a new active tab. In the background a live tab
+keeps its document connected and drops its engine; it never hibernates.
 
 ## What exists to build on
 
@@ -196,12 +223,12 @@ sleeps.
 
 - How tabs map to routing (keep the router for Home/Settings/Projects and hold editors in a tab
   host, or a route per tab), as long as background tabs keep their state.
-- How an editor goes between Running and Active (pausing the renderer and input, detaching the
+- How an editor goes between Document, Headless and Active (pausing the renderer and input, detaching the
   canvas element) and whether the engine is kept per tab or rebuilt from the document.
 - The tab list resource vs. tool, and the exact MCP tool names and shapes (following
   `docs/modules.md` MCP files and the existing tool naming).
 - Where the tab model lives (plain TS, so a future web build can reuse it) and where the title
   bar lives (desktop UI), within the layering rules.
-- The sleep thresholds, and how a closed tab is remembered for "reopen closed tab".
+- Exact tuning of the memory thresholds, and how a closed tab is remembered for "reopen closed tab".
 - Settings, Projects and other non-file pages: whether they show in the Home tab or as their own
   tab; keep it simple (in the Home tab is fine).
