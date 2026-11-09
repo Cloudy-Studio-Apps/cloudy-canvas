@@ -27,6 +27,7 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
     id: "claude-code",
     label: "Claude Code",
     match: /claude[- ]?code/i,
+    refreshesTools: true,
     icon: siClaudecode,
     snippetLabel: t("clients.terminalCommand"),
     where: t("clients.runTerminal"),

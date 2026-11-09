@@ -1,5 +1,6 @@
 export type * from "./agent-server-menu.types";
 export type * from "./agent-client-icon.types";
+export type * from "./agent-clients.types";
 export type * from "./agent-tool-catalog.types";
 export type * from "./identify-agent.types";
 export { AgentClientIconView } from "./agent-client-icon";

@@ -17,7 +17,13 @@ export interface McpServerDefinition {
   version: string;
   /** Guidance sent to agents when they connect. */
   instructions?: string;
+  /** Every tool: `tools/call` finds a tool here, even one left out of the caller's list. */
   tools: readonly McpServerTool[];
+  /**
+   * The tools `tools/list` gives the caller, when they depend on who asks (e.g. only its file's
+   * product); `tools` when left out.
+   */
+  toolsFor?(context: McpMessageContext): readonly McpServerTool[];
   /**
    * Notes for the caller, sent after a tool's result as extra text (e.g. "the user undid your
    * last change"); each is sent once.

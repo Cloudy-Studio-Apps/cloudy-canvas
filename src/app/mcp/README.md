@@ -65,6 +65,38 @@ file_open or create one with file_new.`; with a product the tool doesn't have, `
 designs; your tab holds a board. Use tabs_switch or file_open.` (`toolProducts(tool)` lists a
 tool's products, none for an app tool). Otherwise the implementation of that product runs.
 
+## Tool lists per session
+
+The server announces `tools: { listChanged: true }`, but only some sessions get a narrower list
+(`createAgentToolLists`, `agent-tool-lists.ts`, made as `toolLists` in `agent-runtime.ts`).
+
+- **Filtered** sessions are those whose event stream is open (an MCP GET; `AgentMessage.stream`
+  `"opened"`/`"closed"`, handed to `streamOpened`/`streamClosed` by `use-agent-server.ts`; a second
+  `"opened"` from a replacing GET changes nothing) **and** whose app re-reads the list on
+  `notifications/tools/list_changed`: `AgentClient.refreshesTools` on its `AGENT_CLIENTS` entry
+  (`true` only for Claude Code so far; add others once checked), learned on `initialize` by
+  `agentObserver` (`identifyAgent`, as presence names agents). Opening a stream doesn't prove an app
+  handles the notice, and MCP has no capability saying so.
+- **Every other session** (an app without the flag, an unidentified one, a session with no stream)
+  lists every tool and is **never notified**: `filtered(session)` answers `"all"` and `refresh()`
+  only looks at filtered sessions (`check` returns early for any other). Calls to the other
+  product's tools fail with the message in Which product a call runs on.
+- A filtered session lists its product's tools, the shared ones and the app tools (`listsTool`):
+  the product is `agentListProductFor` (`agent-tab-files.ts`), its bound tab's type, else the active
+  tab's, else `null` (Home: app and shared tools only). Unlike `agentProductFor` it never throws
+  nor unbinds; a bound session whose tab closed lists no product until its next file call says so.
+- `createAgentServerDefinition`'s `listFor` (`toolLists.filtered(context.session)`) becomes the
+  server's `toolsFor`; each `tools/list` records what the session was served. `tools/call` still
+  finds every tool, listed or not.
+- **Notifying**: `refresh()` runs on every `fileTabs.store` change (the active tab, tabs closing, and
+  agent bindings, which `bindAgent`/`unbindAgent` publish there) and sends
+  `{"jsonrpc":"2.0","method":"notifications/tools/list_changed"}` (`AgentChannel.notify`) to a
+  filtered session whose product differs from what it was last served or notified; a session that
+  never listed isn't told. Opening the stream (or connecting) checks the same way, so a session
+  served the full list before its stream opened is told to re-read it. A rejected `notify` is
+  ignored (the stream just closed; the next `tools/list` is right anyway). An ended session
+  (`ended`) is forgotten before it's unbound.
+
 ## The app wires it up
 
 - **The app wires it up** in `app/mcp/` (`useAgentServer`, mounted by `<AgentServer />` in the providers, which imports what needs the products from `agent-runtime.ts` when they load or a request arrives, see [Startup](../README.md#startup)): one server with the board's and the design's tools and both products' instructions; `agentTools()` (`agent-tools.ts`) is the one source of the tools: it collects both products' tools with their full names (`<prefix>_<name>`, see [canvas/mcp](../../canvas/mcp/README.md#tool-names)), finding each plugin's modules through the plugins store's statuses (`status.modules`) and reserving the app topics (`tabs`, `file`, `plugins`) and every built-in prefix of both products (`builtInPrefixes`: every built-in module id and the declared topics), then `mergeProductTools` (`merge-product-tools.ts`) makes one `ProductTool` per name: the app tools first (the app groups above and every tool with `scope: "app"` from either product, e.g. the sticker list), then the products' tools. The same name in both products is one **shared tool** with both implementations when their `inputSchema`s are equal (`sameSchema`), else an error naming both modules and the tool; an app tool may not share its name with any other tool. An error throws for a built-in and puts a plugin's tool in `refused`. The server (`agent-server-definition.ts`) lists `served` (each with the description and schema of `listedTool`: the app one, else the board's, else the design's) and reports each refused plugin tool once with `notifyError(t("mcp.toolLeftOut"), …)`; `agentPlugins()` (`plugins_list`) gives each plugin's served tool names and its `refusedTools` (name, reason), and `agentToolCatalog()` (the agent menu) reads the same result; `agentHost` implements `AgentHost` and `DesignAgentHost`. Each mounted board and design registers itself for agents under its tab with `useAgentBoard` (`products/board/ui/agent/`, `boardFiles`) and `useAgentDesign` (`products/design/ui/agent/`, `designFiles`), both `useAgentFile` on a `createAgentFiles` registry ([canvas-ui/agent/](../../canvas-ui/agent/README.md)); `getActiveBoard()`/`getActiveDesign()` are the active tab's. The on/off setting is `shared/stores/agent-server-store.ts`, and `shared/agent-server/` is the menu in the top bars and the Settings panel (switch, URL, "Connect an agent…"), which open `ConnectAgentDialog` (`connect-agent-dialog/`): a grid of agent apps with their logos (`brand-icons.ts`, copied from Simple Icons, Lucide where there's none), "Other AI tools", one app's setup (snippet, where it goes, "Add to …") and "Install manually" (the default settings: URL, transport, the generic JSON). The apps are data, `AGENT_CLIENTS` (`agent-clients.ts`: Claude Code, Codex, Cursor, VS Code, Antigravity, Gemini CLI, Claude Desktop through `mcp-remote`, Windsurf, and under `more` Zed and opencode; `GENERIC_AGENT_CLIENT` is the manual JSON); Cursor and VS Code have a one-click `installLink`, whose `cursor://`/`vscode:` schemes are allowed in the capabilities.

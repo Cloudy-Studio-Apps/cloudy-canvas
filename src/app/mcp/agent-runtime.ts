@@ -1,5 +1,6 @@
-import type { McpServerDefinition } from "@shared/core";
-import { setAgentToolCatalog } from "@shared/agent-server";
+import type { McpObserver, McpServerDefinition } from "@shared/core";
+import { agentChannel } from "@platform";
+import { identifyAgent, setAgentToolCatalog } from "@shared/agent-server";
 import { useCollaboratorsStore } from "@shared/stores/collaborators-store";
 import { fileTabs } from "../tabs/file-tabs-instance";
 import { agentHostFor } from "./agent-host";
@@ -7,8 +8,14 @@ import { presenceKey } from "./agent-presence-key";
 import { createAgentPresenceSource } from "./agent-presence-source";
 import { createAgentServerDefinition } from "./agent-server-definition";
 import { createAgentTabs } from "./agent-tab-binding";
-import { agentProductFor, prepareAgentCall, presenceFileFor } from "./agent-tab-files";
+import {
+  agentListProductFor,
+  agentProductFor,
+  prepareAgentCall,
+  presenceFileFor,
+} from "./agent-tab-files";
 import { agentToolCatalog } from "./agent-tool-catalog";
+import { createAgentToolLists } from "./agent-tool-lists";
 import { createUndoNotes } from "./agent-undo-notes";
 
 // Everything of the agent server that needs the products; `use-agent-server.ts` imports this file
@@ -36,6 +43,26 @@ export const presence = createAgentPresenceSource({
   notes: undoNotes,
 });
 
+/**
+ * Which tools each session lists: an agent whose app re-reads the list, with its stream open, sees
+ * its tab's product only and is told when that changes (active tab, tabs closing, bindings).
+ */
+export const toolLists = createAgentToolLists({
+  notify: (session, body) => agentChannel?.notify(session, body) ?? Promise.resolve(),
+  productFor: (session) => agentListProductFor(agentTabs, session),
+});
+fileTabs.store.subscribe(() => toolLists.refresh());
+
+/** Hears agents for their presence and, once they're identified, for their tool lists. */
+export const agentObserver: McpObserver = {
+  connected(session, client, context) {
+    presence.connected?.(session, client, context);
+    toolLists.connected(session, identifyAgent(client?.name ?? null, context.userAgent).client);
+  },
+  seen: (context) => presence.seen?.(context),
+  toolCall: (name, args, context) => presence.toolCall?.(name, args, context),
+};
+
 let server: McpServerDefinition | null = null;
 
 /**
@@ -59,6 +86,7 @@ export function agentServer(): McpServerDefinition {
       return end;
     },
     productFor: (context) => agentProductFor(agentTabs, presenceKey(context)),
+    listFor: (context) => toolLists.filtered(context.session),
     notesFor: (context) => undoNotes.take(presenceKey(context)),
   });
   return server;

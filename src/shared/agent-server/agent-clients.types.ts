@@ -13,6 +13,11 @@ export interface AgentClient {
   icon: AgentClientIcon;
   /** Recognizes the app by the name it connects with (MCP `clientInfo`) or its User-Agent. */
   match?: RegExp;
+  /**
+   * The app re-reads the tool list on `notifications/tools/list_changed` (checked by hand: MCP
+   * has no capability saying so), so the server may list it only its tab's product's tools.
+   */
+  refreshesTools?: boolean;
   /** Listed under "Other AI tools" instead of the main grid. */
   more?: boolean;
   /** What the snippet is, e.g. "Terminal command" or "mcp.json". */

@@ -73,11 +73,13 @@ async function handleOne(message: unknown, exchange: Exchange): Promise<JsonRpcR
       return rpcResult(id, {});
     case "tools/list":
       return rpcResult(id, {
-        tools: server.tools.map(({ name, description, inputSchema }) => ({
-          name,
-          description,
-          inputSchema,
-        })),
+        tools: (server.toolsFor?.(exchange.context) ?? server.tools).map(
+          ({ name, description, inputSchema }) => ({
+            name,
+            description,
+            inputSchema,
+          }),
+        ),
       });
     case "tools/call":
       return callTool(message, exchange);
@@ -94,7 +96,7 @@ function initializeResult(request: JsonRpcRequest, server: McpServerDefinition) 
       : PROTOCOL_VERSIONS[0];
   return {
     protocolVersion,
-    capabilities: { tools: { listChanged: false } },
+    capabilities: { tools: { listChanged: true } },
     serverInfo: { name: server.name, version: server.version },
     ...(server.instructions ? { instructions: server.instructions } : {}),
   };

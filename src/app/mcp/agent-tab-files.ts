@@ -44,6 +44,18 @@ export function agentProductFor(tabs: AgentTabs, session: string): FileType | nu
 }
 
 /**
+ * The product a session's tool list follows, as `agentProductFor` but read only: a bound session
+ * whose tab was closed lists no product's tools (`null`) and stays bound, so its next file call
+ * still says the tab closed.
+ */
+export function agentListProductFor(tabs: AgentTabs, session: string): FileType | null {
+  const bound = tabs.tabFor(session);
+  if (bound !== null) return fileTabs.get(bound)?.type ?? null;
+  const { activeId } = fileTabs.store.get();
+  return activeId === null ? null : (fileTabs.get(activeId)?.type ?? null);
+}
+
+/**
  * Readies the session's tab before each of its calls and returns how to end the call. A bound
  * session's call is begun on its tab first (`beginAgentCall`: the memory policy raises a
  * `document` or `hibernated` tab to `headless` and takes nothing away while it runs), then it waits

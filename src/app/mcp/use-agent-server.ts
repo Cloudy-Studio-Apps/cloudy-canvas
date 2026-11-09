@@ -39,19 +39,27 @@ export function useAgentServer(): void {
     let disposed = false;
     void channel
       .listen(({ id, body, session, userAgent, ended, stream }) => {
-        // Streams opening and closing expect no reply; what they mean for tool lists comes later.
-        if (stream) return;
         loadRuntime()
-          .then(async ({ agentServer, agentTabs, presence }) => {
+          .then(async ({ agentObserver, agentServer, agentTabs, presence, toolLists }) => {
+            // Streams opening and closing expect no reply: they decide whether the session's tool
+            // list is filtered.
+            if (stream) {
+              if (session === null) return;
+              if (stream === "opened") toolLists.streamOpened(session);
+              else toolLists.streamClosed(session);
+              return;
+            }
             if (ended) {
               if (session) {
+                // First, so unbinding doesn't notify a session that's gone.
+                toolLists.ended(session);
                 presence.leave(session);
                 agentTabs.unbind(session);
               }
               return;
             }
             const context = { session, userAgent };
-            const reply = await handleMcpMessage(body, agentServer(), context, presence);
+            const reply = await handleMcpMessage(body, agentServer(), context, agentObserver);
             await channel.reply(id, reply.body, reply.session);
           })
           .catch((error: unknown) => notifyError(t("products.loadFailed"), error));
