@@ -7,7 +7,8 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   load never holds a product (only `@canvas/tabs` and `@canvas-ui/tabs` are imported by path, not
   their whole barrels). Where tabs aren't supported (`tabsSupported()` false: Android) it keeps one
   file tab (`maxFileTabs: 1`): opening a file closes the open one, as before tabs.
-- **`AppFrame`** (`app-frame.tsx`) is the root route's element: it provides `FileTabsContext`, runs
+- **`AppFrame`** (`app-frame.tsx`) is the root route's element: on desktop it puts the
+  [title bar](../title-bar/README.md) on top, with everything below it in its own area; it provides `FileTabsContext`, runs
   the route sync and renders the Home area (`<Outlet />`: Home, Settings, Projects, Join, …) with
   the tabs' editors over it (`TabHost` with `TAB_EDITORS`, each product's editor loaded with
   `lazyComponent`, the full-window loading screen until it's there). While a file tab is shown, the

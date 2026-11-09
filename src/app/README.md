@@ -22,7 +22,7 @@ through `<Outlet />`) with the open file tabs' editors over it. File routes (`/b
 `/design/:id`) open their tab through the route sync, and the active tab's route stays in the
 address. On desktop closing a tab (`closeTab`) or the window (`AppCloseGuard`) saves or asks
 for every tab's changes, and opening a file from the OS never asks (it opens a tab:
-`confirmLeave` only asks on Android). See [tabs/](tabs/README.md).
+`confirmLeave` only asks on Android). See [tabs/](tabs/README.md) and the desktop [title-bar/](title-bar/README.md).
 
 ## Startup
 

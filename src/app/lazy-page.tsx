@@ -3,7 +3,7 @@ import { lazy, Suspense, type ComponentType, type ReactNode } from "react";
 import { LoadingScreen } from "@shared/ui/components/loading-screen";
 import { t } from "./app.i18n";
 
-/** A component loaded the first time it renders. The seal covers the window until it's there. */
+/** A component loaded the first time it renders. The seal covers its area (under the title bar) until it's there. */
 export function lazyComponent<P extends object>(
   load: () => Promise<ComponentType<P>>,
 ): ComponentType<P> {
@@ -15,7 +15,7 @@ export function lazyComponent<P extends object>(
           <LoadingScreen
             title={t("products.opening")}
             stage={t("products.openingHint")}
-            className="fixed inset-0 z-40 bg-background"
+            className="absolute inset-0 z-40 bg-background"
           />
         }
       >
