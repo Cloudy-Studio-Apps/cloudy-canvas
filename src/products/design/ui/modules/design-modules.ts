@@ -90,8 +90,14 @@ export function registerDesignModule(module: AppModule, options: DesignModuleOpt
   if (host) {
     throw new Error(`The module "${module.id}" was registered after the design's modules loaded.`);
   }
-  modules.push(module);
+  // A plugin's module has no tier: that is what keeps it from reserving its id as a built-in's.
+  modules.push(options.plugin ? { ...module, tier: undefined } : module);
   if (options.plugin) pluginOf.set(module.id, options.plugin);
+}
+
+/** The plugin a module was registered by, if any; kept when the plugin later fails. */
+export function designModulePlugin(moduleId: string): string | undefined {
+  return pluginOf.get(moduleId);
 }
 
 /** The design's loaded modules (composing the product first, which may leave plugins out). */

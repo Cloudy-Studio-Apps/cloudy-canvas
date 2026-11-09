@@ -9,5 +9,6 @@ export {
   getDesignEditorModules,
   getDesignModules,
   getDesignProduct,
+  designModulePlugin,
   registerDesignModule,
 } from "./design-modules";

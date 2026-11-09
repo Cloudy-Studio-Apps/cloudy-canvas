@@ -67,8 +67,14 @@ export function registerBoardModule(module: AppModule, options: BoardModuleOptio
   if (host) {
     throw new Error(`The module "${module.id}" was registered after the board's modules loaded.`);
   }
-  modules.push(module);
+  // A plugin's module has no tier: that is what keeps it from reserving its id as a built-in's.
+  modules.push(options.plugin ? { ...module, tier: undefined } : module);
   if (options.plugin) pluginOf.set(module.id, options.plugin);
+}
+
+/** The plugin a module was registered by, if any; kept when the plugin later fails. */
+export function boardModulePlugin(moduleId: string): string | undefined {
+  return pluginOf.get(moduleId);
 }
 
 /** The board's loaded modules (composing the product first, which may leave plugins out). */

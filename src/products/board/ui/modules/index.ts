@@ -7,5 +7,6 @@ export {
   getBoardEditorModules,
   getBoardModules,
   getBoardProduct,
+  boardModulePlugin,
   registerBoardModule,
 } from "./board-modules";
