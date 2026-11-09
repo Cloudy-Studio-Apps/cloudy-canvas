@@ -22,7 +22,9 @@ _Plain TypeScript both products share. The three.js side (loaders, live view, pi
   others, so it never removes an asset it doesn't own. Never use the prefix for anything else.
 - **The sweep** (`sweep-model-assets.ts`): `unusedModelAssets(doc, kinds)` lists the `model3d:`
   assets no element of the document refers to (every page, not only the one on screen; a copy
-  keeps the data alive). It is the module's `assetSweeps` hook; `engine.sweepAssets()` runs all
+  keeps the data alive), nor the file's picture list (`doc.assetIndex()`) nor a style or variable
+  (any `model3d:` id written in `doc.tokenRecords()`, e.g. an image paint made from a converted
+  model's picture). It is the module's `assetSweeps` hook; `engine.sweepAssets()` runs all
   hooks and removes the result with `doc.removeAssets`.
 - **When it runs:** only when undo can no longer reach the data. Assets are outside undo and a
   file autosaves, so removing a model's data as soon as the element goes would break Ctrl+Z, and
