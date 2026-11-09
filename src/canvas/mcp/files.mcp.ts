@@ -20,9 +20,13 @@ const TYPE_PROPERTY = {
   description: '"board" (.cboard) or "design" (.cdesign).',
 };
 
-const fileOpened = ({ name, type }: AgentFileOpened) => ({
+const fileOpened = ({ type, id, name, title, description, path }: AgentFileOpened) => ({
   type,
+  id,
   name,
+  title,
+  description,
+  path,
   message: `Opened the ${type} in the tab "${name}"; you now work there.`,
 });
 

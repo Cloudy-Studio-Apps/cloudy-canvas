@@ -12,8 +12,14 @@ import type { AgentPlugin } from "./plugins.mcp.types";
 /** A file the agent opened or created: it now works in its tab. */
 export interface AgentFileOpened {
   type: FileType;
+  /** Its storage id. */
+  id: string;
   /** The tab's name: the document's title, else the file's name. */
   name: string;
+  title: string;
+  description: string;
+  /** `null` until the file is saved for the first time. */
+  path: string | null;
 }
 
 /** What the file and plugin tools reach, for the calling agent (see `app/mcp/agent-host.ts`). */

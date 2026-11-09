@@ -2,10 +2,10 @@ import { createId, type FileType } from "@shared/core";
 import {
   asUndoStep,
   type AgentFileCandidates,
+  type AgentFileOpened,
   type AgentFileRef,
   type CanvasDocument,
   type TabSource,
-  type AgentFileOpened,
   type FilesAgentHost,
   type TabsAgentHost,
 } from "@canvas";
@@ -82,7 +82,8 @@ export function agentHostFor(
   ): Promise<AgentFileOpened> => {
     const file =
       type === "board" ? await showBoard(source, title) : await showDesign(source, title);
-    return { type, name: file.engine.doc.meta().title || file.name };
+    const { title, description } = file.engine.doc.meta();
+    return { type, id: file.id, name: title || file.name, title, description, path: file.path };
   };
   const openFile: FilesAgentHost["openFile"] = async (type, ref) => {
     const found = await resolve(type, ref);
