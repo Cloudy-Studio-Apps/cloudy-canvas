@@ -10,11 +10,11 @@ import type {
   TabSource,
   TabState,
 } from "./file-tabs.types";
+import { ClosedTabs } from "./closed-tabs";
+import { bindAgentTo, countAgentCall, unbindAgentFrom } from "./tab-agents";
 import { createTab, moveTab, patchTab, tabFileId } from "./tab-list";
+import { TabLoads } from "./tab-loads";
 import { TabMemory } from "./tab-memory";
-
-/** How many closed tabs `reopenClosed` remembers (this session only). */
-export const CLOSED_TABS_REMEMBERED = 10;
 
 /**
  * The open file tabs and the document each one owns (see the README). Plain data in a `Store`,
@@ -27,9 +27,9 @@ export class FileTabs {
   private readonly now: () => number;
   /** Each tab's source, for its loader and for reopening it. */
   private readonly sources = new Map<string, TabSource>();
-  /** Loads in flight; a tab hibernated or closed meanwhile drops its entry, and the load its document. */
-  private readonly loads = new Map<string, Promise<CanvasDocument>>();
-  private closed: TabSource[] = [];
+  /** Each tab's document load (`TabLoads`). */
+  private readonly loads: TabLoads;
+  private readonly closed = new ClosedTabs();
   private disposed = false;
   /** The memory policy, applied after every change. */
   private readonly memory: TabMemory;
@@ -37,6 +37,12 @@ export class FileTabs {
   constructor(options: FileTabsOptions) {
     this.options = options;
     this.now = options.now ?? Date.now;
+    this.loads = new TabLoads({
+      loaders: options.loaders,
+      get: (id) => this.get(id),
+      source: (id) => this.sources.get(id),
+      patch: (id, patch) => this.publish({ tabs: patchTab(this.tabs, id, patch) }),
+    });
     this.memory = new TabMemory({
       store: this.store,
       get: (id) => this.get(id),
@@ -69,7 +75,7 @@ export class FileTabs {
     if (activeId) tabs = patchTab(tabs, activeId, () => ({ state: "headless", lastActiveAt: now }));
     if (id) tabs = patchTab(tabs, id, () => ({ state: "active", lastActiveAt: now }));
     this.publish({ tabs, activeId: id });
-    if (id) this.loadQuietly(id);
+    if (id) this.loads.quietly(id);
   }
 
   /** Closes the tab, destroying its document; the active one hands over to a neighbor. */
@@ -82,26 +88,18 @@ export class FileTabs {
       this.activate(neighbor?.id ?? null);
     }
     const source = this.sources.get(id);
-    this.unload(tab);
+    this.loads.unload(tab);
     tab.live?.leave();
     this.sources.delete(id);
     this.memory.forget(id);
     this.publish({ tabs: this.tabs.filter((other) => other.id !== id) });
-    // A live session can't be joined again from here: only stored files are remembered.
-    if (source && !source.live) {
-      const params = { ...tab.params };
-      this.closed = [...this.closed, { ...source, name: tab.name, params }].slice(
-        -CLOSED_TABS_REMEMBERED,
-      );
-    }
+    if (source) this.closed.remember(source, tab);
   }
 
   /** Opens the last closed tab again, or `null` when none is remembered. */
   reopenClosed(): FileTab | null {
-    const source = this.closed.at(-1);
-    if (!source) return null;
-    this.closed = this.closed.slice(0, -1);
-    return this.open(source);
+    const source = this.closed.takeLast();
+    return source ? this.open(source) : null;
   }
 
   move(id: string, index: number): void {
@@ -143,72 +141,27 @@ export class FileTabs {
     if (!tab || tab.state === state) return;
     if (state === "active" || this.store.get().activeId === id)
       throw new Error("FileTabs.setState: the active tab changes only through activate()");
-    if (state === "hibernated") this.unload(tab);
+    if (state === "hibernated") this.loads.unload(tab);
     this.publish({ tabs: patchTab(this.tabs, id, () => ({ state })) });
-    if (state !== "hibernated") this.loadQuietly(id);
+    if (state !== "hibernated") this.loads.quietly(id);
   }
 
   /** The tab's document, loading it once; concurrent calls share one load. */
   ensureLoaded(id: string): Promise<CanvasDocument> {
-    const tab = this.get(id);
-    const source = this.sources.get(id);
-    if (!tab || !source) return Promise.reject(new Error(`No file tab ${id}`));
-    if (tab.load.status === "ready") return Promise.resolve(tab.load.document);
-    const pending = this.loads.get(id);
-    if (pending) return pending;
-    const load = this.options.loaders[tab.type]
-      .load(source.fileId, tab.live)
-      .then(({ document, info }) => {
-        if (this.loads.get(id) !== load) {
-          document.destroy();
-          throw new Error(`File tab ${id} was closed or hibernated while loading`);
-        }
-        this.loads.delete(id);
-        const name = info?.name ?? this.get(id)?.name ?? "";
-        this.publish({
-          // A tab holding its document is at least `document`.
-          tabs: patchTab(this.tabs, id, (tab) => ({
-            name,
-            load: { status: "ready", document, info },
-            ...(tab.state === "hibernated" && { state: "document" as const }),
-          })),
-        });
-        return document;
-      })
-      .catch((error: unknown) => {
-        if (this.loads.get(id) === load) {
-          this.loads.delete(id);
-          const message = error instanceof Error ? error.message : String(error);
-          this.publish({
-            tabs: patchTab(this.tabs, id, () => ({ load: { status: "error", message } })),
-          });
-        }
-        throw error;
-      });
-    this.loads.set(id, load);
-    this.publish({ tabs: patchTab(this.tabs, id, () => ({ load: { status: "loading" } })) });
-    return load;
+    return this.loads.ensure(id);
   }
 
   /** Binds an agent session to the tab, moving it out of the tab it was in. */
   bindAgent(id: string, session: string): void {
-    if (!this.get(id)) return;
-    this.unbindAgent(session);
-    this.publish({
-      tabs: patchTab(this.tabs, id, (tab) => ({ agents: [...tab.agents, session] })),
-    });
+    this.publish({ tabs: bindAgentTo(this.tabs, id, session) });
   }
 
   unbindAgent(session: string): void {
-    const tab = this.tabs.find((other) => other.agents.includes(session));
-    if (!tab) return;
-    const agents = tab.agents.filter((other) => other !== session);
-    this.publish({ tabs: patchTab(this.tabs, tab.id, () => ({ agents })) });
+    this.publish({ tabs: unbindAgentFrom(this.tabs, session) });
   }
 
   noteAgentCall(id: string): void {
-    const now = this.now();
-    this.publish({ tabs: patchTab(this.tabs, id, () => ({ lastAgentCallAt: now })) });
+    this.publish({ tabs: countAgentCall(this.tabs, id, 0, this.now()) });
   }
 
   /**
@@ -216,51 +169,30 @@ export class FileTabs {
    * back) its engine, past `maxHeadless` too, and a leave in progress gives up.
    */
   beginAgentCall(id: string): void {
-    const now = this.now();
-    this.publish({
-      tabs: patchTab(this.tabs, id, (tab) => ({
-        agentCalls: tab.agentCalls + 1,
-        lastAgentCallAt: now,
-      })),
-    });
+    this.publish({ tabs: countAgentCall(this.tabs, id, 1, this.now()) });
   }
 
   /** An agent call that `beginAgentCall` started in the tab is over. */
   endAgentCall(id: string): void {
-    const now = this.now();
-    this.publish({
-      tabs: patchTab(this.tabs, id, (tab) => ({
-        agentCalls: Math.max(0, tab.agentCalls - 1),
-        lastAgentCallAt: now,
-      })),
-    });
+    this.publish({ tabs: countAgentCall(this.tabs, id, -1, this.now()) });
   }
 
-  /**
-   * Sets what the host does before the policy takes a background tab's editor away (its save and
-   * preview); returns how to remove it. Without one, editors go at once.
-   */
+  // The memory policy (`TabMemory`, see the README): what the host does before a background
+  // tab's editor goes (without a guard, at once), whether autosave is on (off, a hosted tab keeps
+  // its editor), applying it now (it runs after every change) and on a timer (time alone moves
+  // tabs down), returning how to stop.
   setLeaveGuard(guard: TabLeaveGuard): () => void {
     return this.memory.setGuard(guard);
   }
 
-  /**
-   * Tells the memory policy whether autosave is on: while it's off, a hosted file's tab keeps its
-   * editor (brought back if it had dropped to `document`).
-   */
   setAutosave(enabled: boolean): void {
     this.memory.setAutosave(enabled);
   }
 
-  /**
-   * Applies the memory policy (`planTabStates`, see the README) to the background tabs. It runs
-   * after every change; `startPolicy` also runs it on a timer, since time alone moves tabs down.
-   */
   evaluate(): void {
     this.memory.evaluate();
   }
 
-  /** Runs `evaluate` every `TAB_POLICY_INTERVAL_MS`; returns how to stop. */
   startPolicy(): () => void {
     return this.memory.start();
   }
@@ -271,11 +203,11 @@ export class FileTabs {
     this.disposed = true;
     this.memory.dispose();
     for (const tab of this.tabs) {
-      this.unload(tab);
+      this.loads.unload(tab);
       tab.live?.leave();
     }
     this.sources.clear();
-    this.closed = [];
+    this.closed.clear();
     this.store.set({ tabs: [], activeId: null });
     this.store.destroy();
   }
@@ -300,19 +232,6 @@ export class FileTabs {
       if (!oldest) return;
       this.close(oldest.id);
     }
-  }
-
-  /** Drops the tab's document (destroyed, or destroyed when its load ends) and sets it idle. */
-  private unload(tab: FileTab): void {
-    this.loads.delete(tab.id);
-    if (tab.load.status === "ready") tab.load.document.destroy();
-    if (tab.load.status !== "idle")
-      this.publish({ tabs: patchTab(this.tabs, tab.id, () => ({ load: { status: "idle" } })) });
-  }
-
-  /** Starts a load nobody awaits; a failure is in the tab's `load`. */
-  private loadQuietly(id: string): void {
-    this.ensureLoaded(id).catch(() => undefined);
   }
 
   private publish(patch: Partial<FileTabsSnapshot>): void {

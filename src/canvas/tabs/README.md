@@ -6,7 +6,10 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
 each tab's `CanvasDocument`. The tabs are plain data (`FileTab`) in a `Store<FileTabsSnapshot>`
 (`tabs` in order, `activeId`, `null` for Home); every change publishes a new snapshot, which React
 reads with `useSyncExternalStore`. It never holds an engine: the host builds one for the tabs that
-need it, from the tab's state.
+need it, from the tab's state. Its parts have files of their own: loading and dropping documents
+(`TabLoads`, `tab-loads.ts`), the agent bookkeeping as changes to the tab list (`tab-agents.ts`),
+the closed tabs `reopenClosed` remembers (`ClosedTabs`, `closed-tabs.ts`), the tab list helpers
+(`tab-list.ts`) and the memory policy (`TabMemory`, below).
 
 ## A tab
 
