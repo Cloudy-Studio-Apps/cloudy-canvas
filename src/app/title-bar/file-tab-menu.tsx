@@ -2,12 +2,13 @@ import { useNavigate } from "react-router";
 
 import { MainMenuSectionsView, tabMenus } from "@canvas-ui";
 import { DropdownMenuSeparator } from "@shared/ui/components/ui/dropdown-menu";
+import { SettingsAboutItems } from "./settings-about-items";
 import { ThemeSubmenu } from "./theme-submenu";
 import type { FileTabMenuProps } from "./title-bar.types";
 
 /**
  * The seal menu on a file tab: the menu its editor registered (`tabMenus`), read as the menu
- * opens, then Theme. An editor still loading has none yet, so only Theme shows.
+ * opens, then Theme. An editor still loading has none yet, so Settings and About stand in.
  */
 export function FileTabMenu({ tabId }: FileTabMenuProps) {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ export function FileTabMenu({ tabId }: FileTabMenuProps) {
         </>
       )}
       <ThemeSubmenu />
+      {!menu && <SettingsAboutItems />}
     </>
   );
 }

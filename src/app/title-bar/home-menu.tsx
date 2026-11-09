@@ -1,11 +1,11 @@
-import { Folder, Info, PenTool, Settings, StickyNote } from "lucide-react";
+import { Folder, PenTool, StickyNote } from "lucide-react";
 import { useNavigate } from "react-router";
 
-import { openAbout } from "@shared/about";
 import { createId } from "@shared/core";
 import { DropdownMenuItem, DropdownMenuSeparator } from "@shared/ui/components/ui/dropdown-menu";
 import { MenuItemContent } from "@shared/ui/kit";
 import { useOpenFile } from "@pages/home/use-open-file";
+import { SettingsAboutItems } from "./settings-about-items";
 import { ThemeSubmenu } from "./theme-submenu";
 import { t } from "./title-bar.i18n";
 
@@ -26,12 +26,7 @@ export function HomeMenu() {
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <ThemeSubmenu />
-      <DropdownMenuItem onSelect={() => void navigate("/settings/appearance")}>
-        <MenuItemContent icon={<Settings />} label={t("settings")} />
-      </DropdownMenuItem>
-      <DropdownMenuItem onSelect={openAbout}>
-        <MenuItemContent icon={<Info />} label={t("about")} />
-      </DropdownMenuItem>
+      <SettingsAboutItems />
     </>
   );
 }

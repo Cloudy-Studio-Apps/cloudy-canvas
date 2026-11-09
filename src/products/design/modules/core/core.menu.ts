@@ -26,8 +26,7 @@ export const TRANSFORM_ITEMS = [
 ];
 
 /**
- * The main menu's groups: home, File, Edit, Transform, View, what's shown, Theme, Settings and
- * About.
+ * The main menu's groups: home, File, Edit, Transform, View, what's shown, Settings and About.
  */
 export function registerCoreMenu(host: ModuleHost): void {
   // With file tabs the Home tab replaces "Back to home".
