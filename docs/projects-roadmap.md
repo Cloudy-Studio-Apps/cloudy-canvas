@@ -1,6 +1,6 @@
 # Projects roadmap
 
-What Projects and libraries (see [the design](superpowers/specs/2026-11-08-projects-design.md)) left for later, and the limits of what shipped. The code is described in [src/shared/core/projects/](../src/shared/core/projects/README.md), [src/canvas/libraries/](../src/canvas/libraries/README.md) and [src/canvas-ui/libraries/](../src/canvas-ui/libraries/README.md).
+What Projects and libraries left for later, and the limits of what shipped. The code is described in [src/shared/core/projects/](../src/shared/core/projects/README.md), [src/canvas/libraries/](../src/canvas/libraries/README.md) and [src/canvas-ui/libraries/](../src/canvas-ui/libraries/README.md).
 
 ## Left for later
 
