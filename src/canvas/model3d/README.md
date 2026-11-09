@@ -27,10 +27,16 @@ _Plain TypeScript both products share. The three.js side (loaders, live view, pi
 - **When it runs:** only when undo can no longer reach the data. Assets are outside undo and a
   file autosaves, so removing a model's data as soon as the element goes would break Ctrl+Z, and
   every edit leaves an old picture undo may need. So `useCanvasAutosave` sweeps when the file opens,
-  before the app quits and when the editor closes (just before the closing save writes it), never
-  in the debounced autosave. Guests never save, and a read-only document is left alone, so only
+  before the app quits and when the editor closes (after a live edit wrote itself and just before
+  the closing save writes it), never in the debounced autosave. Guests never save, and a read-only document is left alone, so only
   the host sweeps. The file gets lighter on close, not when a model is deleted or converted.
   Yjs drops the deleted bytes from the saved update (the document keeps `gc` on).
+- **Edit locks** (`model-edit-locks.ts`): `MODEL_EDIT_LOCKS` is who has each model live (one
+  person at a time): this user's own lock (`lockLocal`, `holderOf` gives `"self"`) and the
+  others' from presence (`setRemote`). It is one registry per shared document, kept in a `WeakMap`
+  by the document's `Y.Doc`: an agent's workspace has its own service cache over its own proxy of
+  the document, and must still see the user's lock and everyone else's. Agents treat any holder,
+  the user included, as busy (`assertModelFree`).
 - **Import** (`to-model-data.ts`): `toModelData(imp, ids)` builds the `ModelData` of a fresh import
   (default view; a slot keeps its `file` and `embedded` and gets its stored picture's asset id).
   `MODEL_BASE_SIZE` (400) is the height a model is placed at before it is fit to the view. The

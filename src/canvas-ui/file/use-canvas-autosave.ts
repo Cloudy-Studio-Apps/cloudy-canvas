@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 
 import { debounce, type CanvasEngine } from "@canvas";
 import { appLifecycle } from "@platform";
+import type { FinalWork } from "./use-canvas-autosave.types";
 
 /** Changes are saved once they stop for this long… */
 const AUTOSAVE_DELAY_MS = 1500;
@@ -12,65 +13,105 @@ const AUTOSAVE_MAX_WAIT_MS = 10_000;
  * Runs `autosave` shortly after the document changes, and once more when the editor or the window
  * closes, the app goes to the background or autosave is turned off, so nothing pending is lost.
  * `autosave` skips a file with no changes. The engine also sweeps the assets nothing uses (see
- * `CanvasEngine.sweepAssets`) on open, before quitting and on close, ahead of the closing save.
+ * `CanvasEngine.sweepAssets`) on open, and when the editor or the window closes: the closing save
+ * first awaits the engine's `onBeforeSave` tasks (a live 3D edit writing itself), then sweeps, then
+ * saves.
  */
 export function useCanvasAutosave<O extends object>(
   engine: CanvasEngine<O>,
-  autosave: () => Promise<void>,
+  autosave: (force?: boolean) => Promise<void>,
   enabled: boolean,
 ): void {
   const autosaveRef = useRef(autosave);
   useEffect(() => {
     autosaveRef.current = autosave;
   }, [autosave]);
+  /** The engine's last work before its closing save, once it started (see `finalWork`). */
+  const finalRef = useRef<FinalWork | null>(null);
 
-  // Sweeps unused 3D data when the file opens, before quitting and when the editor closes (never
-  // in the autosave: undo could still need it). It is declared before the autosave effect, so on
-  // unmount its cleanup runs first and the closing save writes the sweep, and its quit task is
-  // registered first: quit tasks start in registration order and this one does its work before its
-  // first `await`, so the save task finds the document already swept. Not gated by `enabled`.
+  // Sweeps unused 3D data when the file opens, and starts the final work before quitting and when
+  // the editor closes (never in the autosave: undo could still need it). Not gated by `enabled`.
   useEffect(() => {
     engine.sweepAssets();
     const removeQuitTask = appLifecycle.onBeforeQuit(async () => {
-      engine.sweepAssets();
+      await finalWork(finalRef, engine);
     });
     return () => {
       removeQuitTask();
-      engine.sweepAssets();
+      void finalWork(finalRef, engine);
     };
   }, [engine]);
 
   useEffect(() => {
     if (!enabled) return;
+    // Read when the cleanup runs, on purpose: the final work starts in the other effect's cleanup.
+    const finals = finalRef;
     let maxWait: ReturnType<typeof setTimeout> | undefined;
-    const run = () => {
+    const run = (force = false) => {
       debounced.cancel();
       clearTimeout(maxWait);
       maxWait = undefined;
-      void autosaveRef.current();
+      void autosaveRef.current(force);
     };
-    const debounced = debounce(run, AUTOSAVE_DELAY_MS);
+    const debounced = debounce(() => run(), AUTOSAVE_DELAY_MS);
     const schedule = () => {
       debounced();
-      maxWait ??= setTimeout(run, AUTOSAVE_MAX_WAIT_MS);
+      maxWait ??= setTimeout(() => run(), AUTOSAVE_MAX_WAIT_MS);
     };
     // Changes made while autosave was off are saved now.
     schedule();
     const removeObserver = engine.doc.onChange(schedule);
-    const saveNow = () => {
+    const saveNow = (force = false) => {
       debounced.cancel();
       clearTimeout(maxWait);
       maxWait = undefined;
-      return autosaveRef.current();
+      return autosaveRef.current(force);
     };
     // Closing the window waits for pending changes to be saved; a phone may not warn it's closing.
-    const removeQuitTask = appLifecycle.onBeforeQuit(saveNow);
-    const removeBackgroundTask = appLifecycle.onBackground(saveNow);
+    const removeQuitTask = appLifecycle.onBeforeQuit(async () => {
+      await saveNow(await finalWork(finalRef, engine));
+    });
+    const removeBackgroundTask = appLifecycle.onBackground(() => saveNow());
     return () => {
       removeObserver();
       removeQuitTask();
       removeBackgroundTask();
-      run();
+      // Decided once every cleanup of this commit ran, whatever their order: the editor closing
+      // (the final work started) saves once that's done, even when only that work changed the
+      // document (the file's change count stopped with the editor); autosave turned off saves
+      // what's there.
+      queueMicrotask(() => {
+        const final = finals.current?.engine === engine ? finals.current.done : null;
+        if (final) void final.then(run);
+        else run();
+      });
     };
   }, [engine, enabled]);
+}
+
+/**
+ * Finishes what must be written before the last save (`engine.finishBeforeSave`), then sweeps the
+ * unused assets; resolves to whether that changed the document. Runs once per engine: quitting
+ * and closing share it, and the closing save awaits it whichever started it.
+ */
+function finalWork<O extends object>(
+  ref: { current: FinalWork | null },
+  engine: CanvasEngine<O>,
+): Promise<boolean> {
+  if (ref.current?.engine === engine) return ref.current.done;
+  const done = (async () => {
+    let changed = false;
+    const stop = engine.doc.onChange(() => {
+      changed = true;
+    });
+    try {
+      await engine.finishBeforeSave();
+      engine.sweepAssets();
+    } finally {
+      stop();
+    }
+    return changed;
+  })();
+  ref.current = { engine, done };
+  return done;
 }

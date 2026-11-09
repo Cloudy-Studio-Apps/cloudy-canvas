@@ -1,10 +1,14 @@
 import { clamp, MODEL_EDIT_LOCKS, ZOOM_RANGE } from "@canvas";
+import type { CanvasEngine, ModelData } from "@canvas";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import { create } from "zustand";
 
 import { t } from "../model3d.i18n";
 import { finishModelEdit } from "./finish-model-edit";
-import type { ModelEditState } from "./model-edit-store.types";
+import type { FinishingEdit, ModelDraft, ModelEditState } from "./model-edit-store.types";
+
+/** The edit being written after it finished, until it's written (see `stopIn`). */
+let finishing: FinishingEdit | null = null;
 
 const IDLE = { engine: null, id: null, data: null, status: "idle", draft: null } as const;
 
@@ -27,8 +31,9 @@ export const useModelEditStore = create<ModelEditState>()((set, get) => ({
       return;
     }
     locks.lockLocal(id);
-    // An editor closing mid-edit still writes it.
+    // An editor closing mid-edit still writes it, and its closing save waits for that.
     engine.onClose("model3d.edit", () => get().stopIn(engine));
+    engine.onBeforeSave("model3d.edit", () => get().stopIn(engine));
     set({
       engine,
       id,
@@ -46,18 +51,42 @@ export const useModelEditStore = create<ModelEditState>()((set, get) => ({
     }),
   ready: (id) =>
     set((state) => (state.id === id && state.status === "loading" ? { status: "live" } : state)),
-  stop: async () => {
+  stop: () => {
     const { engine, id, data, draft } = get();
-    if (!engine || !id) return;
+    if (!engine || !id) return Promise.resolve();
     set(IDLE);
-    const locks = engine.service(MODEL_EDIT_LOCKS);
-    if (locks.localLock() === id) locks.lockLocal(null);
-    if (!data || !draft) return;
-    try {
-      await finishModelEdit(engine, id, data, draft);
-    } catch (error) {
-      notifyError(t("edit.failed"), error);
-    }
+    const done = finish(engine, id, data, draft, get);
+    finishing = { engine, done };
+    void done.then(() => {
+      if (finishing?.done === done) finishing = null;
+    });
+    return done;
   },
-  stopIn: (engine) => (get().engine === engine ? get().stop() : Promise.resolve()),
+  stopIn: (engine) => {
+    if (get().engine === engine) return get().stop();
+    return finishing?.engine === engine ? finishing.done : Promise.resolve();
+  },
 }));
+
+/**
+ * Writes a finished edit, then releases this user's lock: the model counts as held until its
+ * write landed, whatever happens, unless a new edit of the same model took the lock meanwhile.
+ */
+async function finish(
+  engine: CanvasEngine<object>,
+  id: string,
+  data: ModelData | null,
+  draft: ModelDraft | null,
+  get: () => ModelEditState,
+): Promise<void> {
+  try {
+    if (data && draft) await finishModelEdit(engine, id, data, draft);
+  } catch (error) {
+    notifyError(t("edit.failed"), error);
+  } finally {
+    const locks = engine.service(MODEL_EDIT_LOCKS);
+    const current = get();
+    const editedAgain = current.engine === engine && current.id === id;
+    if (locks.localLock() === id && !editedAgain) locks.lockLocal(null);
+  }
+}

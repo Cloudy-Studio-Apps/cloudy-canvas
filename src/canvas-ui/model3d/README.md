@@ -63,14 +63,18 @@ model live, and finishing writes the result once.
   with a toast when the document is read-only or `MODEL_EDIT_LOCKS.assertFree` throws; otherwise
   it takes the lock (`lockLocal(id)`) and the draft starts from `data`. The store holds the
   engine, so two editors never confuse their ids. `change(patch)` edits only the draft (angle,
-  zoom kept in `ZOOM_RANGE`, textures): nothing is written while it's live. `stop()` releases the
-  lock at once and calls `finishModelEdit`; an editor closing mid-edit still finishes it
-  (`engine.onClose`).
+  zoom kept in `ZOOM_RANGE`, textures): nothing is written while it's live. `stop()` ends the session
+  at once and calls `finishModelEdit`; the lock stays until that write landed (or failed), unless
+  a new edit of the same model took it meanwhile. An editor closing or the window quitting
+  mid-edit still finishes it: the store sets it as the engine's `onClose` and `onBeforeSave` task
+  (`stopIn(engine)`, which also awaits an edit still being written), and `useCanvasAutosave`
+  awaits `engine.finishBeforeSave()` before it sweeps and makes the closing save.
 - **Finishing** (`finishModelEdit(engine, id, data, draft)`): when the draft differs, bakes the
   picture at the element's current box (from the live scene when it's still kept, else with
   `modelBaker`), adds it as a new asset (`newModelAssetId()`) and writes `angle`, `zoom`, `textures`
   and `pictureAssetId` in one `asUndoStep`, so the whole edit is one undo step. Nothing changed:
-  nothing is written. The old picture stays until the sweep, as undo may need it.
+  nothing is written. The document turned read-only meanwhile: nothing is written and a toast
+  says the change wasn't saved. The old picture stays until the sweep, as undo may need it.
 - **The view** (`ModelLiveView`): a DOM overlay over the element, placed with `useViewMapping`
   like `ImageCropOverlay`, holding three.js's own canvas (transparent, drawn only when the view,
   zoom or size changes, never in a loop). Dragging turns the model (0.5° per pixel: across around

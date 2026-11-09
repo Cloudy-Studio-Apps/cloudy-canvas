@@ -34,10 +34,20 @@ export interface ModelEditState {
   /** The live view has the model ready. */
   ready(id: string): void;
   /**
-   * Finishes the edit: releases the lock at once and writes the new picture and view as one undo
-   * step (nothing when nothing changed). Resolves when it's written.
+   * Finishes the edit: writes the new picture and view as one undo step (nothing when nothing
+   * changed), then releases the lock (held while it's written). Resolves when it's written.
    */
   stop(): Promise<void>;
-  /** Finishes the edit if it is in `engine` (an editor closing). */
+  /**
+   * Finishes the edit if it is in `engine` (an editor closing, its closing save), or awaits the one
+   * of `engine` still being written.
+   */
   stopIn(engine: CanvasEngine<object>): Promise<void>;
+}
+
+/** An edit that finished and is being written. */
+export interface FinishingEdit {
+  engine: CanvasEngine<object>;
+  /** Resolves once it's written (or failed). */
+  done: Promise<void>;
 }

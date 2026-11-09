@@ -130,6 +130,7 @@ import { fontsChanged } from "./text/rich/font-metrics";
 import type { TextSelection } from "./text/rich-editor/rich-editor.types";
 import { createBaseTools, type CanvasPointer, type Tool, type ToolContext } from "./tools";
 import { GuideDrag } from "./tools/guide-drag";
+import { BeforeSaveTasks } from "./before-save-tasks";
 import { debounce, delay, Disposables, Emitter, FrameScheduler, Store } from "./utils";
 import type {
   CanvasEngineOptions,
@@ -153,6 +154,11 @@ const TEXT_ZOOM_DELAY_MS = 150;
 const COPY_PNG_SCALE = 2;
 /** How long `close()` waits for its tasks before destroying the engine anyway. */
 const CLOSE_TIMEOUT_MS = 3000;
+/**
+ * How long a closing save waits for the `onBeforeSave` tasks: quitting gives all its tasks 5 s,
+ * and the save still has to fit after them.
+ */
+const BEFORE_SAVE_TIMEOUT_MS = 3000;
 /** Longest `mount` waits for images and fonts; whatever is still loading pops in later. */
 const CONTENT_TIMEOUT_MS = 8000;
 
@@ -227,6 +233,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   private readonly contextMenus = new Set<(request: ContextMenuRequest) => void>();
   private readonly hostActions = new Map<string, HostAction>();
   private readonly closeTasks = new Map<string, () => Promise<void>>();
+  private readonly beforeSaveTasks = new BeforeSaveTasks();
   private readonly scopes: CanvasScopes | undefined;
   /** The scopes as of the last document change, to find the next one when the shown one goes. */
   private scopeList: string[] = [];
@@ -424,6 +431,23 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
    */
   onClose(key: string, task: () => Promise<void>): void {
     this.closeTasks.set(key, task);
+  }
+
+  /**
+   * Work that must be written to the document before the file's last save, when the editor or the
+   * window closes (a live edit that writes when it finishes), keyed so setting it again replaces
+   * it. Returns a function that removes it.
+   */
+  onBeforeSave(key: string, task: () => Promise<void>): () => void {
+    return this.beforeSaveTasks.set(key, task);
+  }
+
+  /**
+   * Runs the `onBeforeSave` tasks one after another (at most a few seconds). The closing save
+   * awaits it, then sweeps the unused assets, then saves.
+   */
+  finishBeforeSave(): Promise<void> {
+    return this.beforeSaveTasks.run(BEFORE_SAVE_TIMEOUT_MS);
   }
 
   /** Stops taking input, runs the `onClose` tasks (for at most a few seconds), then destroys. */

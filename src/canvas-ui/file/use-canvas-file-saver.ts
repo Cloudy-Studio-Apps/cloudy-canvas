@@ -125,11 +125,15 @@ export function useCanvasFileSaver<O extends object>(
     [engine, write, encode, type, noun, untitled],
   );
 
-  const autosave = useCallback(async () => {
-    if (revision.current === savedRevision.current) return;
-    const current = infoRef.current;
-    await write(current && !current.draft ? current.path : null, "auto");
-  }, [write]);
+  /** `force`: save even with no counted change (the editor's last work after it closed). */
+  const autosave = useCallback(
+    async (force = false) => {
+      if (!force && revision.current === savedRevision.current) return;
+      const current = infoRef.current;
+      await write(current && !current.draft ? current.path : null, "auto");
+    },
+    [write],
+  );
 
   useCanvasAutosave(engine, autosave, autosaveEnabled);
 
