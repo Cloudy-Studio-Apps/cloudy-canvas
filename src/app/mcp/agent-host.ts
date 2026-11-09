@@ -82,8 +82,15 @@ export function agentHostFor(
   ): Promise<AgentFileOpened> => {
     const file =
       type === "board" ? await showBoard(source, title) : await showDesign(source, title);
-    const { title, description } = file.engine.doc.meta();
-    return { type, id: file.id, name: title || file.name, title, description, path: file.path };
+    const meta = file.engine.doc.meta();
+    return {
+      type,
+      id: file.id,
+      name: meta.title || file.name,
+      title: meta.title,
+      description: meta.description,
+      path: file.path,
+    };
   };
   const openFile: FilesAgentHost["openFile"] = async (type, ref) => {
     const found = await resolve(type, ref);
