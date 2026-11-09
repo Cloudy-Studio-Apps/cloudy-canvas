@@ -40,7 +40,7 @@ export const frameModule = defineModule({
       keys: [{ key: "f" }, { key: "a" }],
     });
     host.contribute(designCanvas.options, { framePreset: "desktop" });
-    host.contribute(designMcpTools, { id: "frame", tools: () => frameTools });
+    host.contribute(designMcpTools, { id: "frame", prefix: "design", tools: () => frameTools });
     host.contribute(designStarters, ...FRAME_STARTERS);
 
     host.contribute(designEditor.tools, {

@@ -1,20 +1,26 @@
-import { collectMcpTools, type ElementKinds } from "@canvas";
+import { collectMcpTools, mcpToolOwner, type CollectedMcpTools, type ElementKinds } from "@canvas";
 import type { ModuleHost } from "@shared/core";
 
 import type { DesignToolOptions } from "../design-options.types";
 import { designMcpTools } from "../design-points";
-import type { DesignMcpTool, DesignMcpToolGroup } from "./design-mcp.types";
+import type { DesignAgentHost } from "./design-mcp.types";
 
 /**
  * Every tool agents can call on designs: the groups the design's modules contribute to
- * `designMcpTools`, in module order. A tool whose name is in `taken` or an earlier one took is
- * left out and passed to `onSkipped`.
+ * `designMcpTools`, in module order, named with their owner's prefix (`collectMcpTools`).
+ * `pluginOf` tells which plugin a module belongs to; `reserved` holds the built-in prefixes a
+ * plugin id may not take.
  */
 export function createDesignMcpTools(
   modules: ModuleHost,
   kinds: ElementKinds<DesignToolOptions>,
-  onSkipped?: (tool: DesignMcpTool, group: DesignMcpToolGroup) => void,
-  taken?: Set<string>,
-): DesignMcpTool[] {
-  return collectMcpTools(modules.get(designMcpTools), { kinds }, onSkipped, taken);
+  pluginOf: (moduleId: string) => string | undefined,
+  reserved: ReadonlySet<string>,
+): CollectedMcpTools<DesignAgentHost> {
+  return collectMcpTools(
+    modules.get(designMcpTools),
+    { kinds },
+    (group) => mcpToolOwner(modules, designMcpTools, group.id, pluginOf),
+    reserved,
+  );
 }

@@ -1,33 +1,22 @@
+import type { CollectedMcpTool } from "@canvas";
 import type { AgentToolInfo, AgentToolSection } from "@shared/agent-server";
-import { createBoardMcpTools } from "@board";
-import { getBoardModules, getBoardProduct } from "@board/ui";
-import { createDesignMcpTools } from "@design";
-import { getDesignModules, getDesignProduct } from "@design/ui";
 import { agentPlugins } from "./agent-plugins";
+import { agentTools } from "./agent-tools";
 
 /**
  * The tools agents see, as the agent menu lists them: the board's, the design's and one section
  * per plugin with the tools its modules add.
  */
 export function agentToolCatalog(): AgentToolSection[] {
-  // The same names as the server's, which leaves out a tool whose name is taken.
-  const taken = new Set<string>();
-  const board = createBoardMcpTools(getBoardModules(), getBoardProduct().kinds, undefined, taken);
-  const design = createDesignMcpTools(
-    getDesignModules(),
-    getDesignProduct().kinds,
-    undefined,
-    taken,
-  );
+  const { board, design } = agentTools();
   const plugins = agentPlugins().filter((plugin) => plugin.tools.length > 0);
-  const byPlugin = new Set(plugins.flatMap((plugin) => plugin.tools));
-  const all = new Map([...board, ...design].map((tool) => [tool.name, info(tool)]));
-  const own = (tools: readonly AgentToolInfo[]) =>
-    tools.filter((tool) => !byPlugin.has(tool.name)).map(info);
+  const all = new Map([...board.tools, ...design.tools].map((tool) => [tool.name, info(tool)]));
+  const own = (tools: readonly CollectedMcpTool<unknown>[]) =>
+    tools.filter((tool) => tool.pluginId === undefined).map(info);
 
   const sections: AgentToolSection[] = [
-    { id: "board", title: "Board", tools: own(board) },
-    { id: "design", title: "Design", tools: own(design) },
+    { id: "board", title: "Board", tools: own(board.tools) },
+    { id: "design", title: "Design", tools: own(design.tools) },
     ...plugins.map((plugin) => ({
       id: `plugin:${plugin.id}`,
       title: plugin.name,
@@ -37,6 +26,6 @@ export function agentToolCatalog(): AgentToolSection[] {
   return sections.filter((section) => section.tools.length > 0);
 }
 
-function info({ name, description }: AgentToolInfo): AgentToolInfo {
-  return { name, description };
+function info({ name, tool }: CollectedMcpTool<unknown>): AgentToolInfo {
+  return { name, description: tool.description };
 }

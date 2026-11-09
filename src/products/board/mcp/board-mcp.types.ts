@@ -68,6 +68,8 @@ export interface AgentPlugin {
   description?: string;
   state: "enabled" | "disabled" | "failed";
   error?: string;
-  /** The agent tools it adds (when enabled). */
+  /** The full names of the agent tools it adds (when enabled). */
   tools: string[];
+  /** Its agent tools that were left out, and why (a taken or invalid name, a reserved id). */
+  refusedTools?: { name: string; reason: string }[];
 }

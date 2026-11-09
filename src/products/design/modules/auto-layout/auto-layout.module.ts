@@ -48,7 +48,11 @@ export const autoLayoutModule = defineModule({
         keys: [{ code: "KeyA", alt: true, shift: true, label: "A" }],
       },
     );
-    host.contribute(designMcpTools, { id: "auto-layout", tools: () => autoLayoutTools });
+    host.contribute(designMcpTools, {
+      id: "auto-layout",
+      prefix: "design",
+      tools: () => autoLayoutTools,
+    });
 
     host.contribute(designEditor.sessionHooks, {
       id: "auto-layout-commands",

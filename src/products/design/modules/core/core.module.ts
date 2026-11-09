@@ -43,13 +43,21 @@ export const coreModule = defineModule({
 
     host.contribute(
       designMcpTools,
-      { id: "read", tools: () => designReadTools },
-      { id: "info", tools: () => designInfoTools },
-      { id: "nodes", tools: (context) => [createNodesTool(context), ...nodeEditTools] },
-      { id: "arrange", tools: () => [...nodeArrangeTools, ...nodeTransformTools] },
-      { id: "view", tools: () => designViewTools },
-      { id: "export", tools: () => designExportTools },
-      { id: "files", tools: () => designFileTools },
+      { id: "read", prefix: "design", tools: () => designReadTools },
+      { id: "info", prefix: "design", tools: () => designInfoTools },
+      {
+        id: "nodes",
+        prefix: "design",
+        tools: (context) => [createNodesTool(context), ...nodeEditTools],
+      },
+      {
+        id: "arrange",
+        prefix: "design",
+        tools: () => [...nodeArrangeTools, ...nodeTransformTools],
+      },
+      { id: "view", prefix: "design", tools: () => designViewTools },
+      { id: "export", prefix: "design", tools: () => designExportTools },
+      { id: "files", prefix: "design", tools: () => designFileTools },
     );
 
     registerCoreSections(host);

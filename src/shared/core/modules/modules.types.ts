@@ -29,6 +29,8 @@ export interface ModuleHost {
   ownerOf<T>(point: ExtensionPoint<T>, key: string): string | undefined;
   /** Whether a module with this id is loaded. */
   has(moduleId: string): boolean;
+  /** A module's `tier`: `"core"` or `"feature"` for built-ins, `undefined` for plugins' (or unknown ids). */
+  tierOf(moduleId: string): "core" | "feature" | undefined;
   /**
    * The `exports` of a module this one `requires` or `uses`, or of any core module (the same object
    * on every call). Only while registering; throws for a module that isn't listed (nor core) or
@@ -49,7 +51,8 @@ export interface AppModule {
   readonly id: string;
   /**
    * Its tier (`docs/modules.md#tiers`): built-in modules say `"core"` or `"feature"`; plugins'
-   * modules leave it unset. Only `scripts/check-modules.mjs` reads it.
+   * modules leave it unset. Read by `scripts/check-modules.mjs` and `host.tierOf` (agent tool
+   * prefixes, `require`).
    */
   readonly tier?: "core" | "feature";
   /** Modules that must be loaded; this one registers after them. */

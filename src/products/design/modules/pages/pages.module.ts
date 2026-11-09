@@ -45,8 +45,8 @@ export const pagesModule = defineModule({
     );
     host.contribute(
       designMcpTools,
-      { id: "pages", tools: () => pagesTools },
-      { id: "guides", tools: () => guidesTools },
+      { id: "pages", prefix: "design", tools: () => pagesTools },
+      { id: "guides", prefix: "design", tools: () => guidesTools },
     );
 
     host.contribute(layersTabSections, { id: "pages", order: 10, component: PagesSection });

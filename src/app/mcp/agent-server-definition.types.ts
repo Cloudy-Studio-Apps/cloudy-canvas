@@ -3,9 +3,12 @@ import type { TabsAgentHost } from "@canvas";
 import type { AgentHost } from "@board";
 import type { DesignAgentHost } from "@design";
 
+/** What a tool call reaches, whichever product the tool is from. */
+export type AgentCallHost = AgentHost & DesignAgentHost & TabsAgentHost;
+
 export interface AgentServerOptions {
   /** The host of the agent making a call (its own workspace on its tab's file). */
-  hostFor(context: McpMessageContext): AgentHost & DesignAgentHost & TabsAgentHost;
+  hostFor(context: McpMessageContext): AgentCallHost;
   /**
    * Runs before every tool call: readies the agent's tab (`prepareAgentCall`). Resolves with what
    * to run once the call settles.

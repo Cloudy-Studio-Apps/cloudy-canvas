@@ -52,14 +52,18 @@ export const coreModule = defineModule({
     });
     host.contribute(
       boardMcpTools,
-      { id: "read", tools: () => boardReadTools },
-      { id: "info", tools: () => boardInfoTools },
-      { id: "shapes", tools: (context) => [createShapesTool(context), ...shapeEditTools] },
-      { id: "arrange", tools: () => arrangeTools },
-      { id: "view", tools: () => viewTools },
-      { id: "export", tools: () => exportTools },
-      { id: "files", tools: () => fileTools },
-      { id: "plugins", tools: () => pluginTools },
+      { id: "read", prefix: "board", tools: () => boardReadTools },
+      { id: "info", prefix: "board", tools: () => boardInfoTools },
+      {
+        id: "shapes",
+        prefix: "board",
+        tools: (context) => [createShapesTool(context), ...shapeEditTools],
+      },
+      { id: "arrange", prefix: "board", tools: () => arrangeTools },
+      { id: "view", prefix: "board", tools: () => viewTools },
+      { id: "export", prefix: "board", tools: () => exportTools },
+      { id: "files", prefix: "board", tools: () => fileTools },
+      { id: "plugins", prefix: "board", tools: () => pluginTools },
     );
 
     host.contribute(

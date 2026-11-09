@@ -101,6 +101,7 @@ export const dataModule = defineModule({
     });
     host.contribute(designMcpTools, {
       id: "data",
+      prefix: "design",
       tools: (context) => [
         ...dataTools,
         bindDataTool(context),

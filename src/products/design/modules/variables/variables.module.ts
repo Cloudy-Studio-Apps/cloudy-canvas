@@ -41,6 +41,7 @@ export const variablesModule = defineModule({
 
     host.contribute(designMcpTools, {
       id: "variables",
+      prefix: "design",
       tools: () => [...variableTools, ...exchangeTools(() => host.get(tokenFormats))],
     });
     // Import and export: DTCG both ways, Tokens Studio in, code out (plugins add their own).

@@ -7,9 +7,12 @@ export type ToolArgs = Record<string, unknown>;
  * `H` is what the tool can reach beyond its arguments, given by the product (e.g. the open board).
  */
 export interface McpTool<H = unknown> {
+  /** Its local name; the server lists it as `<prefix>_<name>` (`collectMcpTools`). */
   name: string;
   description: string;
   inputSchema: JsonSchema;
+  /** `"app"` when it needs no open file (tabs, recent files, plugins); `"file"` by default. */
+  scope?: "file" | "app";
   /**
    * Returns a string, a `ToolImage` (from `@shared/core`) or a JSON value; throws with a message
    * the agent can act on.
