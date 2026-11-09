@@ -10,9 +10,9 @@ import { GroupTitle } from "./group-title";
 import { NumberCard } from "./number-card";
 import { PlainCard } from "./plain-card";
 
-/** One group on the board: its title, its cards and the "+" card. */
+/** One group on the board: its title, its cards and the "+" card (while it can be edited). */
 export function GroupSection({ group, items }: GroupSectionProps) {
-  const { store, shown } = useBoard();
+  const { store, shown, editable } = useBoard();
   const selectedId = useVariablesWindowStore((state) => state.selectedId);
   const max = Math.max(
     1,
@@ -40,7 +40,7 @@ export function GroupSection({ group, items }: GroupSectionProps) {
             <PlainCard key={v.id} variable={v} shown={shown} selected={v.id === selectedId} />
           ),
         )}
-        <AddCardMenu group={group} items={items} />
+        {editable && <AddCardMenu group={group} items={items} />}
       </CardGrid>
     </section>
   );

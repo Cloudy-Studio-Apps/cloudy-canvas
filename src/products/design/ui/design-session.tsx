@@ -3,10 +3,14 @@ import {
   CloseFileGuard,
   EditorModulesContext,
   EngineContext,
+  NO_PROJECT_LIBRARIES,
+  ProjectLibrariesContext,
+  ProjectMissingDialog,
   useCanvasFileSaver,
   useCanvasThumbnail,
   useHostedFile,
   useLiveGuestFile,
+  useProjectLibraries,
 } from "@canvas-ui";
 import { useAgentDesign } from "./agent";
 import { DesignChrome } from "./design-chrome";
@@ -35,7 +39,8 @@ export function DesignSession({ id, engine, info, live }: DesignSessionProps) {
 function FileDesignSession({ id, engine, info }: FileDesignSessionProps) {
   const file = useHostedFile(useCanvasFileSaver(id, engine, info, DESIGN_FILE_FORMAT), engine);
   const capture = useCanvasThumbnail(id, engine, file.saved);
-  return <DesignSessionView engine={engine} file={file} capture={capture} />;
+  const libraries = useProjectLibraries(engine, file);
+  return <DesignSessionView engine={engine} file={file} capture={capture} libraries={libraries} />;
 }
 
 function LiveDesignSession({ engine, live }: LiveDesignSessionProps) {
@@ -43,14 +48,17 @@ function LiveDesignSession({ engine, live }: LiveDesignSessionProps) {
   return <DesignSessionView engine={engine} file={file} />;
 }
 
-function DesignSessionView({ engine, file, capture }: DesignSessionViewProps) {
+function DesignSessionView({ engine, file, capture, libraries }: DesignSessionViewProps) {
   useAgentDesign(file.id, engine, file);
   return (
     <EngineContext value={engine}>
       <EditorModulesContext value={getDesignEditorModules()}>
         <CanvasFileContext value={file}>
-          {capture && <CloseFileGuard capture={capture} />}
-          <DesignChrome />
+          <ProjectLibrariesContext value={libraries ?? NO_PROJECT_LIBRARIES}>
+            {capture && <CloseFileGuard capture={capture} />}
+            {libraries && <ProjectMissingDialog libraries={libraries} fileName={file.name} />}
+            <DesignChrome />
+          </ProjectLibrariesContext>
         </CanvasFileContext>
       </EditorModulesContext>
     </EngineContext>

@@ -1,6 +1,6 @@
 import { Trash2 } from "lucide-react";
 
-import { DEFAULT_VALUE, DOCUMENT_TOKENS } from "@canvas";
+import { canVaryBy, DEFAULT_VALUE, DOCUMENT_TOKENS } from "@canvas";
 import { CommitInput, useDocumentTokens } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import {
@@ -22,17 +22,20 @@ const NONE = "none";
 /**
  * A variable: its name (a slash path: changing the groups moves it), its value (one per mode once
  * the file has modes; a mode left alone uses the default) and a short description. Where it's
- * offered, its names in code and hiding it are under Advanced.
+ * offered, its names in code and hiding it are under Advanced. A library's variable can only vary
+ * by its library's mode groups.
  */
 export function VariableEditor({ variable, onDelete }: VariableEditorProps) {
   const engine = useDesignEngine();
   const tokens = engine.service(DOCUMENT_TOKENS);
   const { store } = useDocumentTokens();
   const axes = store.switchableAxes();
-  // With one axis there's nothing to choose: its modes are the rows.
+  // With one axis there's nothing to choose: its modes are the rows (a library's variable only
+  // varies by that library's axes).
+  const only = axes.length === 1 ? axes[0] : undefined;
   const axis =
     (variable.axisId ? store.axis(variable.axisId) : undefined) ??
-    (axes.length === 1 ? axes[0] : undefined);
+    (only && canVaryBy(variable, only) ? only : undefined);
   return (
     <div className="flex flex-col gap-3 text-xs">
       <CommitInput
@@ -54,7 +57,7 @@ export function VariableEditor({ variable, onDelete }: VariableEditorProps) {
             <SelectContent>
               <SelectItem value={NONE}>{t("editor.sameInEvery")}</SelectItem>
               {axes.map((a) => (
-                <SelectItem key={a.id} value={a.id}>
+                <SelectItem key={a.id} value={a.id} disabled={!canVaryBy(variable, a)}>
                   {t("editor.changesWith", { name: a.name })}
                 </SelectItem>
               ))}

@@ -2,12 +2,15 @@ import { displayName } from "@shared/core";
 import { Badge } from "@shared/ui/components/ui/badge";
 import { cn } from "@shared/ui/lib/utils";
 import { formatRelativeTime } from "../format-relative-time";
-import { KIND_LABEL } from "../file-kind";
+import {
+  KIND_LABEL,
+  FileActionsMenu,
+  FileContextMenu,
+  FileKindIcon,
+  FilePreview,
+  ProjectPlace,
+} from "@pages/shared/files";
 import { useFileActions } from "../use-file-actions";
-import { FileActionsMenu } from "./file-actions-menu";
-import { FileContextMenu } from "./file-context-menu";
-import { FileKindIcon } from "./file-kind-icon";
-import { FilePreview } from "./file-preview";
 import { MissingFilePopover } from "./missing-file-popover";
 import type { FileCardProps } from "./file-card.types";
 import { t } from "../home.i18n";
@@ -51,6 +54,7 @@ export function FileCard({ file, kind, missing, onOpen }: FileCardProps) {
               {t("card.meta", { type: typeLabel, time: formatRelativeTime(file.updatedAt) })}
             </time>
           </p>
+          {!missing && <ProjectPlace file={file} />}
         </div>
         {missing ? (
           <Badge variant="destructive">{t("card.missing")}</Badge>

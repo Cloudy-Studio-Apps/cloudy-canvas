@@ -20,7 +20,8 @@
     "agents": "Agentes (MCP)",
     "plugins": "Complementos",
     "shortcuts": "Atajos de teclado",
-    "about": "Acerca de"
+    "about": "Acerca de",
+    "projects": "Proyectos y almacenamiento"
   },
   "page": {
     "home": "Inicio",
@@ -147,5 +148,31 @@
     "installed": "{name} instalado",
     "added": "{name} añadido",
     "turnOnBelow": "Actívalo abajo y luego recarga para usarlo."
+  },
+  "storage": {
+    "description": "Dónde van los proyectos nuevos, cuánto espacio ocupan tus proyectos y qué espera en su papelera.",
+    "whereNew": "Dónde van los proyectos nuevos",
+    "change": "Cambiar…",
+    "useDefault": "Usar la predeterminada",
+    "pickFolder": "Elige dónde van los proyectos nuevos",
+    "folderFailed": "No se pudo cambiar la carpeta de proyectos",
+    "whereHint": "Al crear un proyecto aún puedes elegir otro lugar.",
+    "spaceUsed": "Espacio usado",
+    "files": "Archivos",
+    "assets": "Recursos de bibliotecas",
+    "trash": "Papelera",
+    "project": "Proyecto",
+    "size": "Tamaño",
+    "inTrash": "En la papelera",
+    "trashEmpty": "Vacía",
+    "trashItems_one": "{count} elemento · {size}",
+    "trashItems_other": "{count} elementos · {size}",
+    "emptyTrash": "Vaciar papelera",
+    "emptyAll": "Vaciar todas las papeleras ({size})",
+    "keptHint": "La papelera se conserva hasta que la vacíes.",
+    "confirmTitle": "¿Vaciar la papelera?",
+    "confirmOne": "Todo lo que hay en la papelera de «{name}» se borrará para siempre. No se puede deshacer.",
+    "confirmAll": "La papelera de todos los proyectos ({size}) se borrará para siempre. No se puede deshacer.",
+    "emptyFailed": "No se pudo vaciar la papelera"
   }
 }

@@ -96,3 +96,5 @@ It exposes `kinds`, `keymap`, `commands` and `elementInfo(type)` to hosts. `moun
 ## UI state
 
 - **UI state** is exposed as an immutable `EngineState` snapshot (`utils/store.ts`, shallow-compared), via `engine.subscribe` / `engine.getState`.
+
+Project libraries (`.clib`: shared styles and assets) are in [libraries/](libraries/README.md).

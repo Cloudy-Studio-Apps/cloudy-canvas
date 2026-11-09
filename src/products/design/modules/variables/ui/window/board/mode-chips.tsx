@@ -7,10 +7,10 @@ import { t } from "../../../variables.i18n";
 
 /**
  * Which modes the board draws: all side by side, or one (the board turns dark for a dark one), and
- * "+ Mode" to add one. Hidden pieces stay hidden until a file has modes.
+ * "+ Mode" to add one (not to a library's mode group that can't be edited). Hidden pieces stay hidden until a file has modes.
  */
 export function ModeChips() {
-  const { tokens, axis, modes } = useBoard();
+  const { tokens, axis, modes, canEdit } = useBoard();
   const { view, setView } = useVariablesWindowStore();
   const chip = (id: string, label: string) => (
     <button
@@ -33,13 +33,15 @@ export function ModeChips() {
           {modes.map((mode) => chip(mode.id, mode.name))}
         </div>
       )}
-      <button
-        type="button"
-        onClick={() => tokens.addMode(axis?.id ?? null)}
-        className="flex h-7 items-center gap-1 rounded-md px-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
-      >
-        <Plus className="size-3.5" /> {t("board.mode")}
-      </button>
+      {(!axis || canEdit(axis)) && (
+        <button
+          type="button"
+          onClick={() => tokens.addMode(axis?.id ?? null)}
+          className="flex h-7 items-center gap-1 rounded-md px-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+        >
+          <Plus className="size-3.5" /> {t("board.mode")}
+        </button>
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import type { BoardEngine } from "@board";
 import type { ShareGuest } from "@canvas";
-import type { CanvasFileContextValue } from "@canvas-ui";
+import type { CanvasFileContextValue, ProjectLibrariesState } from "@canvas-ui";
 import type { FileInfo } from "@shared/core";
 
 export interface BoardSessionProps {
@@ -27,4 +27,6 @@ export interface BoardSessionViewProps {
   file: CanvasFileContextValue;
   /** Takes the file's preview; a saved file asks before it closes (live sessions don't). */
   capture?: () => Promise<void>;
+  /** The file's project libraries; live guests have none. */
+  libraries?: ProjectLibrariesState;
 }

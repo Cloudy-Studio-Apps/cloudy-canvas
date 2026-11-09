@@ -16,6 +16,11 @@ export interface Storage {
   /** Points a known file at its new location (it was moved), keeping its id. */
   relocate(id: string, path: string): Promise<FileInfo>;
   /**
+   * Records the project a known file belongs to (`null`: none) without saving it, keeping its
+   * place in the list. Returns the updated entry, or `null` for an unknown id.
+   */
+  setProject(id: string, projectId: string | null): Promise<FileInfo | null>;
+  /**
    * Removes a file from the recent files, with its preview picture. The file itself is left
    * alone, unless it's a draft.
    */

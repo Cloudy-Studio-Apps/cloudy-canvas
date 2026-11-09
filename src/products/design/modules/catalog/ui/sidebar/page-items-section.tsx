@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import { DragGhost, useEditorModules } from "@canvas-ui";
 import type { Point } from "@canvas";
+import type { PageItemTarget } from "../../model/page-items/page-item-definition.types";
 import { insertPageItems } from "../../model/page-items/insert-page-items";
 import { brochureLanguage } from "../../model/language/document-texts";
 import { localizedItem } from "../../model/language/localized-item";
@@ -10,10 +11,10 @@ import { isPageFrame } from "../../model/page-frame";
 import { mmToUnits } from "../../model/paper-size";
 import { PanelSection } from "@design/ui/components/panel";
 import { useDesignEngine } from "@design/ui/design-engine-context";
+import { useDropOnCanvas } from "@design/ui/hooks";
 import { CheckboxField, ListRow } from "@shared/ui/kit";
 import { catalogPageItems } from "../catalog.points";
 import { useBrochure } from "../hooks/use-brochure";
-import { useDropOnCanvas } from "../hooks/use-drop-on-canvas";
 import { itemPreview } from "../page-items/item-preview";
 import type { PageItemsSectionProps } from "./sidebar.types";
 import { t } from "../../catalog.i18n";
@@ -55,14 +56,14 @@ export function PageItemsSection({ frame }: PageItemsSectionProps) {
     }
     return null;
   };
-  const drop = useDropOnCanvas({
+  const drop = useDropOnCanvas<string, PageItemTarget>({
     targetAt,
     onDrop: (id, target, at) => {
       const item = items.find((entry) => entry.id === id);
       if (item) insertPageItems(engine.doc, item, [target], margin, language, at);
     },
   });
-  const dragged = items.find((item) => item.id === drop.drag?.id);
+  const dragged = items.find((item) => item.id === drop.drag?.payload);
 
   return (
     <PanelSection title={t("items.panel.title")}>

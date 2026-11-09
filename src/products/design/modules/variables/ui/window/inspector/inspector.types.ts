@@ -45,6 +45,8 @@ export interface ModeRowProps {
   mode: ModeDef;
   /** Its group's first mode: its values are the defaults, so it stays put. */
   first: boolean;
+  /** A library's mode group that can't be edited: only shown. */
+  readOnly: boolean;
   moves: ModeMoves;
 }
 

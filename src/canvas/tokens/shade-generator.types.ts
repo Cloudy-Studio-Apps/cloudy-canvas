@@ -21,6 +21,8 @@ export interface ShadeSettings {
  * them linked to its base (a variable, or a fixed color), so editing the base regenerates them.
  */
 export interface GeneratorRecord extends ShadeSettings {
+  /** The library it comes from, when mirrored from a project library (see `canvas/libraries`). */
+  libraryId?: string;
   kind: "generator";
   id: string;
   collectionId: string;

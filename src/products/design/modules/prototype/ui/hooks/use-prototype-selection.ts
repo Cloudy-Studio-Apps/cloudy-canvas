@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
-import { isScreen, screenOf, type PrototypeSelection } from "../../model";
+import { prototypeSelection, type PrototypeSelection } from "../../model";
 import { usePrototypePage } from "./use-prototype-page";
 import { usePrototypeViewStore } from "../stores/prototype-view-store";
 
@@ -20,14 +20,5 @@ export function usePrototypeSelection(): PrototypeSelection {
   useEffect(() => {
     if (ids.length > 0 && picked !== null) usePrototypeViewStore.getState().selectFlow(null);
   }, [ids, picked]);
-  return useMemo(() => {
-    if (ids.length === 0) return flow ? { kind: "flow", id: flow } : { kind: "none" };
-    const [id, ...others] = ids;
-    if (id === undefined || others.length > 0) return { kind: "none" };
-    const screen = screenOf(engine.doc, id);
-    if (!screen) return { kind: "none" };
-    return isScreen(engine.doc.get(id))
-      ? { kind: "screen", id }
-      : { kind: "layer", id, screen: screen.id };
-  }, [engine, ids, flow]);
+  return useMemo(() => prototypeSelection(engine.doc, ids, flow), [engine, ids, flow]);
 }

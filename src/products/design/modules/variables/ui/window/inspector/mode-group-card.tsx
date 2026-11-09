@@ -13,10 +13,12 @@ import { t } from "../../../variables.i18n";
 
 /**
  * A mode group (Theme, Language…): its name, its modes (dropping a dragged mode on the group puts
- * it at the end), "+ Mode", showing it on the board, and deleting it after asking.
+ * it at the end), "+ Mode", showing it on the board, and deleting it after asking. A library's
+ * group that can't be edited is only shown (and can still be shown on the board).
  */
 export function ModeGroupCard({ axis, shown, moves }: ModeGroupCardProps) {
-  const { tokens, store } = useBoard();
+  const { tokens, store, canEdit } = useBoard();
+  const readOnly = !canEdit(axis);
   const setAxis = useVariablesWindowStore((state) => state.setAxis);
   const [confirming, setConfirming] = useState(false);
   const { rowDrag } = moves;
@@ -35,6 +37,7 @@ export function ModeGroupCard({ axis, shown, moves }: ModeGroupCardProps) {
         <CommitInput
           aria-label={t("inspector.modeGroupName")}
           value={axis.name}
+          disabled={readOnly}
           onCommit={(name) => tokens.renameAxis(axis.id, name)}
           className="h-7 min-w-0 flex-1 text-xs font-medium"
         />
@@ -50,15 +53,17 @@ export function ModeGroupCard({ axis, shown, moves }: ModeGroupCardProps) {
         >
           <Eye className="size-3.5" />
         </button>
-        <button
-          type="button"
-          aria-label={t("inspector.delete", { name: axis.name })}
-          title={t("inspector.delete", { name: axis.name })}
-          onClick={() => setConfirming(true)}
-          className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-destructive"
-        >
-          <Trash2 className="size-3.5" />
-        </button>
+        {!readOnly && (
+          <button
+            type="button"
+            aria-label={t("inspector.delete", { name: axis.name })}
+            title={t("inspector.delete", { name: axis.name })}
+            onClick={() => setConfirming(true)}
+            className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-destructive"
+          >
+            <Trash2 className="size-3.5" />
+          </button>
+        )}
       </div>
       {confirming && (
         <div className="flex flex-col gap-1.5 rounded-md bg-surface-sunken p-2">
@@ -88,15 +93,24 @@ export function ModeGroupCard({ axis, shown, moves }: ModeGroupCardProps) {
         </div>
       )}
       {axis.modes.map((mode, i) => (
-        <ModeRow key={mode.id} axis={axis} mode={mode} first={i === 0} moves={moves} />
+        <ModeRow
+          key={mode.id}
+          axis={axis}
+          mode={mode}
+          first={i === 0}
+          readOnly={readOnly}
+          moves={moves}
+        />
       ))}
-      <button
-        type="button"
-        onClick={() => tokens.addMode(axis.id)}
-        className="flex items-center gap-1 self-start rounded-md px-1.5 py-1 text-muted-foreground hover:bg-muted hover:text-foreground"
-      >
-        <Plus className="size-3.5" /> {t("board.mode")}
-      </button>
+      {!readOnly && (
+        <button
+          type="button"
+          onClick={() => tokens.addMode(axis.id)}
+          className="flex items-center gap-1 self-start rounded-md px-1.5 py-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+        >
+          <Plus className="size-3.5" /> {t("board.mode")}
+        </button>
+      )}
     </div>
   );
 }

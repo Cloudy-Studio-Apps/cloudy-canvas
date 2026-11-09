@@ -11,5 +11,5 @@ export { BoardEditor } from "./board-editor";
 export { BoardEditorPage } from "./board-editor-page";
 export { useBoardEngine, useBoardState } from "./board-engine-context";
 export { BoardShortcutsList } from "./components/shortcuts-list";
-export { importFigJamFile, importFigJamWithLoading } from "./file";
+export { BOARD_FILE_FORMAT, importFigJamFile, importFigJamWithLoading } from "./file";
 export { useBoardPanelStore } from "./stores/board-panel-store";

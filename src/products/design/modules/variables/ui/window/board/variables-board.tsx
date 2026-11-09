@@ -1,4 +1,5 @@
 import { resolveVariable } from "@canvas";
+import { TokenSourceHeader } from "@canvas-ui";
 import { cn } from "@shared/ui/kit";
 import { leafName, variablesByGroup } from "../group-paths";
 import { luminance } from "../luminance";
@@ -14,10 +15,11 @@ import { t } from "../../../variables.i18n";
 
 /**
  * The middle of the window: the collection's groups as card grids (filtered by the search), the
- * generator's preview in its group, and "+ New group". Showing one dark mode turns it dark.
+ * generator's preview in its group, and "+ New group". Showing one dark mode turns it dark. A
+ * library's collection says so; while it can't be edited, nothing adds to it.
  */
 export function VariablesBoard() {
-  const { store, collection, modes, shown } = useBoard();
+  const { store, collection, modes, shown, source, editable } = useBoard();
   const { query, draft, scaleDraft, view, select } = useVariablesWindowStore();
   const text = query.trim().toLowerCase();
   const variables = collection
@@ -49,7 +51,8 @@ export function VariablesBoard() {
       )}
     >
       <BoardToolbar />
-      {groups.size === 0 && !text && <EmptyCollection />}
+      {source && <TokenSourceHeader source={source} />}
+      {groups.size === 0 && !text && editable && <EmptyCollection />}
       {groups.size === 0 && text && (
         <p className="text-xs text-muted-foreground">{t("board.noMatch")}</p>
       )}
@@ -62,7 +65,7 @@ export function VariablesBoard() {
           <GroupSection key={group} group={group} items={items} />
         ) : null,
       )}
-      {groups.size > 0 && <NewGroupMenu />}
+      {groups.size > 0 && editable && <NewGroupMenu />}
     </div>
   );
 }

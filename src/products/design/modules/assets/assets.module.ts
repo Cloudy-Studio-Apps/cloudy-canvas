@@ -6,10 +6,14 @@ import { AssetsTab } from "./ui/assets-tab";
 import { t } from "./assets.i18n";
 import * as assetsApi from ".";
 
-/** The Assets tab (components and libraries; a placeholder for now). */
+/**
+ * The Assets tab: the pictures of the project libraries the file uses and the file's own, to drag
+ * onto the canvas or double-click to place (through the image module).
+ */
 export const assetsModule = defineModule({
   id: "assets",
   tier: "feature",
+  requires: ["image"],
   exports: { ...assetsApi },
   register(host) {
     host.contribute(designEditor.leftTabs, {

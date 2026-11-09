@@ -1,8 +1,9 @@
 import { defineModule } from "@shared/core";
 import { designEditor, registerDesignMode } from "@design/ui/modules";
-import { designCanvas } from "../../design-points";
+import { designCanvas, designMcpTools } from "../../design-points";
+import { prototypeTools } from "./mcp";
 import { registerPrototypeCanvas } from "./prototype.canvas";
-import { PROTOTYPE_COMMANDS } from "./prototype.constants";
+import { PROTOTYPE_COMMANDS, PROTOTYPE_MODE_ID } from "./prototype.constants";
 import { prototypeMode } from "./prototype.mode";
 import { InteractionBadge } from "./ui/interaction-badge";
 import { useToggleCommand } from "./ui/hooks/use-toggle-command";
@@ -38,5 +39,21 @@ export const prototypeModule = defineModule({
       id: "prototype.interactions",
       component: InteractionBadge,
     });
+    // The mode doesn't run `deleteSelection`, so the menu's Delete is hidden there: this is its
+    // stand-in, which clears the selection's interactions and never deletes layers.
+    host.contribute(designEditor.contextMenu, {
+      id: "prototype.removeInteractions",
+      menu: "selection",
+      modes: [PROTOTYPE_MODE_ID],
+      items: [
+        {
+          command: PROTOTYPE_COMMANDS.removeInteractions,
+          label: t("mode.removeInteractions"),
+          enabled: ({ selectionCount }) => selectionCount > 0,
+          destructive: true,
+        },
+      ],
+    });
+    host.contribute(designMcpTools, { id: "prototype", tools: () => prototypeTools });
   },
 });

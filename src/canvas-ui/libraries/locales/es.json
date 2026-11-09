@@ -1,0 +1,45 @@
+{
+  "hub": {
+    "openFailed": "No se pudieron abrir las bibliotecas del proyecto",
+    "unreadable": "No se pudieron leer algunas bibliotecas del proyecto",
+    "saveFailed": "No se pudo guardar una biblioteca",
+    "syncFailed": "No se pudieron traer las bibliotecas del proyecto a este archivo",
+    "assetUnreadable": "No se pudo leer una imagen de la biblioteca"
+  },
+  "missing": {
+    "title": "No se encontró el proyecto",
+    "description": "“{name}” pertenece a un proyecto que ya no está donde estaba. El archivo se sigue viendo igual, pero hasta que se encuentre el proyecto no se pueden editar los elementos de sus bibliotecas ni llegan los cambios hechos en otros archivos.",
+    "locate": "Buscar el proyecto…",
+    "continue": "Continuar sin el proyecto",
+    "locateFailed": "No se pudo encontrar el proyecto"
+  },
+  "readOnly": {
+    "title": "Los elementos de biblioteca no se pueden editar",
+    "description": "No se encontró el proyecto de este archivo. Búscalo para volver a editar los elementos de biblioteca."
+  },
+  "move": {
+    "to": "Mover a la biblioteca “{library}”…",
+    "title": "¿Mover a “{library}”?",
+    "collection_one": "Mueve la colección “{collection}” con su {count} variable a “{library}”.",
+    "collection_other": "Mueve la colección “{collection}” con sus {count} variables a “{library}”.",
+    "style": "Mueve el estilo “{style}” a “{library}”.",
+    "shared": "Todos los archivos que usan la biblioteca lo reciben, y editarlo en cualquiera de ellos los actualiza todos.",
+    "confirm": "Mover",
+    "refusedTitle": "No se puede mover a “{library}”",
+    "refused": "Hace referencia a variables que se quedarían en este archivo: {names}. Muévelas primero o deja de hacer referencia a ellas.",
+    "failed": "No se pudo mover a la biblioteca"
+  },
+  "libraries": {
+    "title": "Bibliotecas",
+    "ofProject": "Bibliotecas de {project}",
+    "unavailable": "Las bibliotecas del proyecto no están abiertas, así que ahora no se pueden activar ni desactivar.",
+    "none": "Este proyecto aún no tiene bibliotecas.",
+    "unreadable": "{name} (no se puede leer)",
+    "hint": "Una biblioteca activada trae sus variables y estilos a este archivo.",
+    "leaveTitle": "¿Dejar de usar “{name}”?",
+    "leaveText_one": "{count} capa usa sus variables y estilos. Se seguirá viendo igual, desvinculada de la biblioteca.",
+    "leaveText_other": "{count} capas usan sus variables y estilos. Se seguirán viendo igual, desvinculadas de la biblioteca.",
+    "leave": "Dejar de usar",
+    "changeFailed": "No se pudieron cambiar las bibliotecas del archivo"
+  }
+}

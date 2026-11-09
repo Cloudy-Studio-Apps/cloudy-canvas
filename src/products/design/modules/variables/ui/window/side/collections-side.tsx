@@ -2,6 +2,7 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 
 import type { CollectionRecord } from "@canvas";
+import { groupBySource, TokenSourceHeader, useTokenSources } from "@canvas-ui";
 import { PaintingSeal } from "@shared/ui/brand/painting-seal";
 import { freeGroup } from "../group-paths";
 import { draftFromColor } from "../shade-drafts";
@@ -14,14 +15,23 @@ import { t } from "../../../variables.i18n";
 
 /**
  * The window's left column: the collections (right-click to rename or delete one), the open one
- * unfolded into its groups, "+ New collection", and the painting seal, which starts a palette.
+ * unfolded into its groups, "+ New collection", and the painting seal, which starts a palette. In
+ * a file using project libraries, the collections are grouped by where they come from: each
+ * library, then the file's own.
  */
 export function CollectionsSide() {
-  const { tokens, store, collection } = useBoard();
+  const { tokens, store, collection, editable } = useBoard();
   const { showCollection, setDraft } = useVariablesWindowStore();
   const [deleting, setDeleting] = useState<CollectionRecord | null>(null);
+  const collections = store.collections();
+  const sources = useTokenSources(collections);
   const startPalette = () => {
-    const target = collection ?? tokens.createCollection(t("defaults.collection"));
+    // Into the shown collection unless it's a library's that can't be edited: the file's own then.
+    const target =
+      (editable ? collection : undefined) ??
+      collections.find((c) => c.libraryId === undefined) ??
+      tokens.createCollection(t("defaults.collection"));
+    if (target.id !== collection?.id) showCollection(target.id);
     setDraft(draftFromColor(target.id, freeGroup(store.variables(target.id), "brand")));
   };
   return (
@@ -29,9 +39,18 @@ export function CollectionsSide() {
       <p className="px-1.5 py-1 text-[11px] text-subtle-foreground uppercase">
         {t("side.collections")}
       </p>
-      {store.collections().map((c) => (
-        <CollectionItem key={c.id} collection={c} onDelete={setDeleting} />
-      ))}
+      {sources
+        ? groupBySource(collections, sources).map(({ source, items }) => (
+            <div key={source.libraryId ?? "file"} className="flex flex-col">
+              <TokenSourceHeader source={source} className="px-1.5 pt-2 pb-1" />
+              {items.map((c) => (
+                <CollectionItem key={c.id} collection={c} source={source} onDelete={setDeleting} />
+              ))}
+            </div>
+          ))
+        : collections.map((c) => (
+            <CollectionItem key={c.id} collection={c} onDelete={setDeleting} />
+          ))}
       <button
         type="button"
         onClick={() =>

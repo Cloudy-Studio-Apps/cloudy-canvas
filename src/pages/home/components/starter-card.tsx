@@ -1,6 +1,5 @@
 import { cn } from "@shared/ui/kit";
-import { KIND_LABEL, KIND_TINT } from "../file-kind";
-import { FileKindIcon } from "./file-kind-icon";
+import { KIND_LABEL, KIND_TINT, FileKindIcon } from "@pages/shared/files";
 import type { StarterCardProps } from "./starter-card.types";
 import { t } from "../home.i18n";
 

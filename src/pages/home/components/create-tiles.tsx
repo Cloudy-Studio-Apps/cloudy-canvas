@@ -1,6 +1,6 @@
 import { CATALOG_MODE_ID } from "@shared/core";
 import { CreateTile } from "./create-tile";
-import { FileKindIcon } from "./file-kind-icon";
+import { FileKindIcon } from "@pages/shared/files";
 import type { CreateTilesProps } from "./create-tiles.types";
 import { t } from "../home.i18n";
 

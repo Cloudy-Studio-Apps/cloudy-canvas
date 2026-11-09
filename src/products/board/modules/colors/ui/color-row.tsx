@@ -1,7 +1,7 @@
 import { Link2, Link2Off, Trash2 } from "lucide-react";
 
 import { resolveVariable } from "@canvas";
-import { CommitInput, useDocumentTokens, VariablePicker } from "@canvas-ui";
+import { CommitInput, MoveToLibraryMenu, useDocumentTokens, VariablePicker } from "@canvas-ui";
 import { IconButton } from "@shared/ui/kit";
 import { colorMode } from "./color-mode";
 import { ColorValuePopover } from "./color-value-popover";
@@ -10,9 +10,10 @@ import { t } from "../colors.i18n";
 
 /**
  * A board color: its swatch (edit), its name (rename; slashes put it in groups), the color it
- * follows when it's an alias of another, and delete.
+ * follows when it's an alias of another, and delete; right-click → Move to a library on the board's
+ * own. A library's color with its libraries closed only shows.
  */
-export function ColorRow({ variable, onDelete }: ColorRowProps) {
+export function ColorRow({ variable, onDelete, editable = true }: ColorRowProps) {
   const { tokens, store } = useDocumentTokens();
   const slash = variable.name.lastIndexOf("/");
   const group = slash < 0 ? "" : variable.name.slice(0, slash + 1);
@@ -33,48 +34,58 @@ export function ColorRow({ variable, onDelete }: ColorRowProps) {
   };
 
   return (
-    <div
-      className="group/row flex h-8 items-center gap-2 px-1"
-      title={variable.description || undefined}
-    >
-      <ColorValuePopover variable={variable} />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <CommitInput
-          aria-label={t("color.name")}
-          value={leaf}
-          onCommit={rename}
-          className="h-6 min-w-0 rounded-md bg-transparent px-1 text-xs hover:bg-muted focus:bg-muted focus:outline-none"
-        />
-        {target && (
-          <span className="truncate px-1 text-[11px] text-muted-foreground">→ {target.name}</span>
+    <MoveToLibraryMenu ids={[variable.id]}>
+      <div
+        className="group/row flex h-8 items-center gap-2 px-1"
+        title={variable.description || undefined}
+      >
+        <ColorValuePopover variable={variable} editable={editable} />
+        <div className="flex min-w-0 flex-1 flex-col">
+          {editable ? (
+            <CommitInput
+              aria-label={t("color.name")}
+              value={leaf}
+              onCommit={rename}
+              className="h-6 min-w-0 rounded-md bg-transparent px-1 text-xs hover:bg-muted focus:bg-muted focus:outline-none"
+            />
+          ) : (
+            <span className="truncate px-1 text-xs">{leaf}</span>
+          )}
+          {target && (
+            <span className="truncate px-1 text-[11px] text-muted-foreground">→ {target.name}</span>
+          )}
+        </div>
+        {editable && (
+          <>
+            <VariablePicker
+              type="color"
+              scopes={[]}
+              value={target?.id ?? null}
+              modes={{}}
+              onPick={(id) => {
+                if (id !== variable.id) tokens.setValue(variable.id, mode, { alias: id });
+              }}
+            >
+              <IconButton label={t("color.follow")} size="xs" revealOnHover={!target}>
+                <Link2 />
+              </IconButton>
+            </VariablePicker>
+            {target && (
+              <IconButton label={t("color.unfollow")} size="xs" onClick={unalias}>
+                <Link2Off />
+              </IconButton>
+            )}
+            <IconButton
+              label={t("color.delete")}
+              size="xs"
+              revealOnHover
+              onClick={() => onDelete(variable)}
+            >
+              <Trash2 />
+            </IconButton>
+          </>
         )}
       </div>
-      <VariablePicker
-        type="color"
-        scopes={[]}
-        value={target?.id ?? null}
-        modes={{}}
-        onPick={(id) => {
-          if (id !== variable.id) tokens.setValue(variable.id, mode, { alias: id });
-        }}
-      >
-        <IconButton label={t("color.follow")} size="xs" revealOnHover={!target}>
-          <Link2 />
-        </IconButton>
-      </VariablePicker>
-      {target && (
-        <IconButton label={t("color.unfollow")} size="xs" onClick={unalias}>
-          <Link2Off />
-        </IconButton>
-      )}
-      <IconButton
-        label={t("color.delete")}
-        size="xs"
-        revealOnHover
-        onClick={() => onDelete(variable)}
-      >
-        <Trash2 />
-      </IconButton>
-    </div>
+    </MoveToLibraryMenu>
   );
 }

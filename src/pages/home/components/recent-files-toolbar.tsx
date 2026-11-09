@@ -10,7 +10,7 @@ import {
 } from "@shared/ui/components/ui/dropdown-menu";
 import { SearchInput } from "@shared/ui/kit";
 import { Tabs, TabsList, TabsTrigger } from "@shared/ui/components/ui/tabs";
-import { isHomeFileKind } from "../file-kind";
+import { isHomeFileKind } from "@pages/shared/files";
 import type { RecentFilesSort } from "../filter-recent-files.types";
 import { RecentFilesViewToggle } from "./recent-files-view-toggle";
 import type { RecentFilesToolbarProps } from "./recent-files-toolbar.types";

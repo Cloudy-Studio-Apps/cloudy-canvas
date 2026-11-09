@@ -1,5 +1,5 @@
 import type { ShareGuest } from "@canvas";
-import type { CanvasFileContextValue } from "@canvas-ui";
+import type { CanvasFileContextValue, ProjectLibrariesState } from "@canvas-ui";
 import type { DesignEngine } from "@design";
 import type { FileInfo } from "@shared/core";
 
@@ -28,4 +28,6 @@ export interface DesignSessionViewProps {
   file: CanvasFileContextValue;
   /** Takes the file's preview; a saved file asks before it closes (live sessions don't). */
   capture?: () => Promise<void>;
+  /** The file's project libraries; live guests have none. */
+  libraries?: ProjectLibrariesState;
 }

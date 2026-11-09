@@ -10,11 +10,65 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 - Los tableros y los diseños ahora pueden contener modelos 3D: suelta o inserta archivos FBX, OBJ o
   glTF, gíralos a cualquier ángulo directamente en el lienzo y asígnales texturas. Cuando ya no
   necesites girarlo, conviértelo en una imagen para que el archivo pese menos.
+- Añade un archivo existente a un proyecto: haz clic derecho en un archivo de Inicio (o usa su menú
+  ⋯) y elige Añadir a un proyecto…, o usa Añadir un archivo existente… en el menú Nuevo de un
+  proyecto. Elige el proyecto y la carpeta, y el archivo se mueve allí y empieza a usar las
+  bibliotecas del proyecto. Sus colores, variables, estilos e imágenes que el proyecto no tiene se
+  añaden a una biblioteca, y para cada uno que se llame igual que uno del proyecto eliges usar el
+  del proyecto o conservar ambos. Inicio ahora muestra el proyecto y la carpeta de cada archivo.
+- Las variables y los estilos de un diseño muestran de dónde vienen: cada biblioteca del proyecto
+  que usa el archivo y después los del propio archivo, en el panel, la ventana Variables y los selectores.
+  Elige qué bibliotecas del proyecto usa el archivo con el botón Bibliotecas de la sección
+  Variables (al desactivar una, tus capas se siguen viendo igual), mueve tus propias variables,
+  colecciones y estilos a una biblioteca con clic derecho para que todos los archivos del proyecto
+  los reciban, y ve a la carpeta del archivo desde el nombre del proyecto que aparece sobre el
+  nombre del archivo.
+- Bibliotecas en la página del proyecto: la pestaña Bibliotecas muestra cada biblioteca con sus
+  colores, una muestra de tipografía y los archivos que la usan, y la página de una biblioteca
+  lista sus colores, estilos de texto, imágenes, SVG y efectos. Crea una biblioteca vacía, con los
+  estilos de un archivo, con una copia de otra biblioteca o con un archivo de tokens, añade
+  imágenes y SVG, importa estilos de un archivo, renómbrala o elimínala (queda en la papelera) y
+  elige si los archivos nuevos la toman. Contenido muestra un tipo de elemento de todas las
+  bibliotecas, la portada del proyecto y la página Proyectos usan los colores de la primera
+  biblioteca, y Editar en un archivo abre tu último diseño que usa la biblioteca (o uno nuevo) para
+  cambiar sus colores y estilos.
+- Los archivos de un proyecto comparten sus bibliotecas: cada diseño que creas en un proyecto usa
+  sus colores, variables y estilos, cada pizarra sus colores, y al editar un color de la biblioteca en un
+  archivo se actualizan todos los demás archivos que lo usan, estén abiertos o no. Cada archivo
+  guarda una copia, así que se sigue viendo bien si lo envías solo; si su proyecto se movió, la app
+  te pide que lo busques, y los elementos de biblioteca no se pueden editar hasta que lo encuentres.
+- Un proyecto nuevo empieza con una biblioteca llamada Sistema de marca, que puedes rellenar al
+  crear el proyecto: con las variables y los estilos de un diseño o una pizarra, o con un archivo
+  de tokens. Empieza vacía si prefieres construirla más tarde.
+- Lo que borras va a la papelera del proyecto: usa Mover a la papelera en un archivo o carpeta, o
+  pulsa Suprimir sobre él, y espera en la pestaña Papelera del proyecto, con dónde estaba y cuándo
+  se borró, hasta que lo restaures o vacíes la papelera. El proyecto muestra cuánto guarda la
+  papelera y nada se borra hasta que tú lo decidas.
+- Los ajustes muestran cuánto espacio usan los proyectos y sus papeleras: una nueva página
+  Proyectos y almacenamiento elige dónde van los proyectos nuevos, muestra el tamaño de cada
+  proyecto y lo que hay en su papelera, y puede vaciar la de un proyecto o la de todos.
+- Inicio del proyecto: abre un proyecto para ver y organizar sus archivos en carpetas. Arriba están
+  la portada, el icono y el nombre del proyecto, con sus archivos, bibliotecas y la última edición.
+  Crea diseños y pizarras en la carpeta donde estás, crea carpetas y ponles color, y arrastra
+  archivos y carpetas sobre otras carpetas (o usa Mover a…) para organizarlos; los archivos que
+  moviste siguen apareciendo en los archivos recientes de Inicio. La pestaña Archivos muestra los
+  más recientes, busca en la carpeta actual y en las de dentro, los ordena y los presenta en
+  cuadrícula o en lista. Desde el menú del proyecto puedes renombrarlo, elegir su icono y su color,
+  cambiar la portada o exportar todo el proyecto como .zip.
+- Proyectos: reúne las pizarras y los diseños de un cliente en una sola carpeta de tu ordenador. La
+  nueva página de Proyectos, que se abre desde Inicio, lista tus proyectos con su color, su tamaño y
+  cuándo los abriste por última vez; crea uno desde Inicio o desde esa página, en una carpeta nueva o en una que ya tenga tus archivos,
+  abre uno existente
+  desde su carpeta o su archivo de proyecto, fija los que más usas y vuelve a encontrar un proyecto
+  si su carpeta cambió de sitio. Al hacer doble clic en un archivo de proyecto, se abre.
 - El nuevo modo Prototipo enlaza las capas de tus pantallas: elige una capa y la pantalla que abre,
   o arrastra desde una capa hasta una pantalla para enlazarlas, y unas flechas en el lienzo muestran
   cada enlace. Los flujos empiezan en una pantalla y se preparan para un dispositivo, como un
   teléfono, una tableta, una app de escritorio o un sitio web, así que un archivo puede tener los
-  flujos de una app y los de un sitio web a la vez.
+  flujos de una app y los de un sitio web a la vez. Reproduce un flujo para probarlo en su
+  dispositivo, un teléfono, una tableta, una ventana de escritorio o un navegador: los clics y los
+  toques siguen los enlaces con sus animaciones, las superposiciones se abren sobre la pantalla y
+  un clic fallido muestra dónde están los enlaces.
 - El esquema de la base de datos ahora también se exporta a Java: clases simples con un campo por
   columna y los objetos y listas relacionados, o entidades JPA para Spring Boot 4 con solo las
   anotaciones que Spring no da por supuestas. Ambos se escriben para copiarlos, sin paquetes ni
@@ -81,6 +135,12 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   tus secciones, y cada línea del índice y cada referencia a página te lleva a su página. Los
   archivos de imprenta en CMYK conservan los marcadores.
 - Las fuentes de datos ahora pueden leer archivos de Excel y APIs que devuelven sus filas por páginas, y un paso opcional permite elegir y renombrar campos antes de usarlos. Los plugins pueden añadir sus propios tipos de fuente.
+- La pestaña Recursos ahora lista tus imágenes: las de cada biblioteca del proyecto que usa el archivo y las que pertenecen solo a este archivo, en grupos que se pueden plegar. Puedes buscarlas, filtrar por imágenes, SVG o iconos, alternar entre cuadrícula y lista, subir más desde el botón más, y arrastrar cualquier imagen al lienzo o hacer doble clic para colocarla. Una imagen de una biblioteca viaja con el archivo, así que el archivo sigue funcionando por sí solo.
+- El panel de colores de una pizarra muestra de dónde viene cada color, como en el diseño: una
+  sección por cada biblioteca del proyecto que usa la pizarra y después "Colores de la pizarra".
+  Los colores de una biblioteca se pueden editar desde la pizarra y el cambio llega a todos los
+  archivos del proyecto; elige qué bibliotecas usa la pizarra con el botón Bibliotecas del panel y
+  pasa tus propios colores o colecciones a una biblioteca con clic derecho.
 
 ### Mejoras
 

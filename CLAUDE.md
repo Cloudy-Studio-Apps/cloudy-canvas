@@ -170,12 +170,15 @@ src/
   app/          shell: entry, router, providers, theme sync, MCP server wiring (app/mcp)
   platform/     Tauri implementations of the shared/core interfaces (storage, dialogs, agent channel)
   shared/       app-wide, product-agnostic
-    core/       plain TS: ids, files, keyboard, Storage/AgentChannel interfaces, MCP protocol
+    core/       plain TS: ids, files, keyboard, Storage/AgentChannel interfaces, MCP protocol,
+                projects (manifest, registry, trash)
     ui/         design system: tokens, shadcn components, layout, hooks, brand
     stores/     Zustand stores for app UI state (theme, recent files, agent server)
     agent-server/  the "Agents" menu shown in every top bar
-  canvas/       the canvas engine every product shares (plain TS, no React, no product code)
-  canvas-ui/    React pieces every editor shares: hosting an engine, chrome components
+  canvas/       the canvas engine every product shares (plain TS, no React, no product code);
+                libraries/ holds the project libraries' engine side
+  canvas-ui/    React pieces every editor shares: hosting an engine, chrome components,
+                libraries/ (an editor's link to its project's libraries)
   products/
     board/      engine side: its points, palette, shared agent tools, file format
       modules/  one folder per feature (its element types, tools, agent tools + `ui/` +
@@ -184,28 +187,33 @@ src/
     design/     engine side: its points, file format and modules (core: the node base and the
                 layer tree; frame, rectangle, layers, assets, plugins-tab)
       ui/       the design editor (React): rail, left panel, properties panel, toolbar
-  pages/        app pages that aren't a product: home, settings, join, design-system
+  pages/        app pages that aren't a product: home, projects, project, settings, join,
+                design-system (shared/ holds the pieces projects and project both use)
   viewer/       the board HTML export's runtime: a shell built into one HTML file (vite.viewer.config.ts)
 server/relay/   the live sessions' relay (iroh-relay config, Docker, deploy script, guide)
 ```
 
 Each folder below explains itself in its `README.md`. The main ones:
 
-| Topic                                                                                | README                                                                                                                                                                   |
-| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| The canvas engine (document, scene, tools, modes, render, export, rotation, …)       | [src/canvas/](src/canvas/README.md) and its folders (`document/`, `tools/`, `render/`, …)                                                                                |
-| Elements and kinds                                                                   | [src/canvas/elements/](src/canvas/elements/README.md)                                                                                                                    |
-| Variables (engine)                                                                   | [src/canvas/tokens/](src/canvas/tokens/README.md)                                                                                                                        |
-| Shared editor pieces (hosting, color picker, files, module chrome, live sessions UI) | [src/canvas-ui/](src/canvas-ui/README.md) and its folders                                                                                                                |
-| The module API                                                                       | [src/shared/core/modules/](src/shared/core/modules/README.md)                                                                                                            |
-| Plugins (loading, `api`, stickers, themes)                                           | [src/app/plugins/](src/app/plugins/README.md), [docs/plugins.md](docs/plugins.md)                                                                                        |
-| The agent (MCP) server                                                               | [src/app/mcp/](src/app/mcp/README.md)                                                                                                                                    |
-| Collaborators, workspaces, live sessions                                             | [src/shared/core/presence/](src/shared/core/presence/README.md), [src/canvas/workspace/](src/canvas/workspace/README.md), [docs/collaboration.md](docs/collaboration.md) |
-| The board and its modules                                                            | [src/products/board/](src/products/board/README.md), `src/products/board/modules/*/`                                                                                     |
-| The design and its modules                                                           | [src/products/design/](src/products/design/README.md), `src/products/design/modules/*/`                                                                                  |
-| Translations (i18n)                                                                  | [src/shared/core/i18n/](src/shared/core/i18n/README.md)                                                                                                                  |
-| Design system, themes, kit                                                           | [src/shared/ui/](src/shared/ui/README.md), [src/shared/ui/kit/](src/shared/ui/kit/README.md)                                                                             |
-| 3D models (kind, live view, panel, agent tools)                                      | [src/canvas/model3d/](src/canvas/model3d/README.md), [src/canvas-ui/model3d/](src/canvas-ui/model3d/README.md)                                                           |
-| Module conventions and tiers                                                         | [docs/modules.md](docs/modules.md)                                                                                                                                       |
-| ER language                                                                          | [docs/er-language.md](docs/er-language.md)                                                                                                                               |
-| Performance work parked for later                                                    | [docs/performance-roadmap.md](docs/performance-roadmap.md)                                                                                                               |
+| Topic                                                                                | README                                                                                                                                                                                                                         |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| The canvas engine (document, scene, tools, modes, render, export, rotation, …)       | [src/canvas/](src/canvas/README.md) and its folders (`document/`, `tools/`, `render/`, …)                                                                                                                                      |
+| Elements and kinds                                                                   | [src/canvas/elements/](src/canvas/elements/README.md)                                                                                                                                                                          |
+| Variables (engine)                                                                   | [src/canvas/tokens/](src/canvas/tokens/README.md)                                                                                                                                                                              |
+| Shared editor pieces (hosting, color picker, files, module chrome, live sessions UI) | [src/canvas-ui/](src/canvas-ui/README.md) and its folders                                                                                                                                                                      |
+| The module API                                                                       | [src/shared/core/modules/](src/shared/core/modules/README.md)                                                                                                                                                                  |
+| Plugins (loading, `api`, stickers, themes)                                           | [src/app/plugins/](src/app/plugins/README.md), [docs/plugins.md](docs/plugins.md)                                                                                                                                              |
+| The agent (MCP) server                                                               | [src/app/mcp/](src/app/mcp/README.md)                                                                                                                                                                                          |
+| Collaborators, workspaces, live sessions                                             | [src/shared/core/presence/](src/shared/core/presence/README.md), [src/canvas/workspace/](src/canvas/workspace/README.md), [docs/collaboration.md](docs/collaboration.md)                                                       |
+| The board and its modules                                                            | [src/products/board/](src/products/board/README.md), `src/products/board/modules/*/`                                                                                                                                           |
+| The design and its modules                                                           | [src/products/design/](src/products/design/README.md), `src/products/design/modules/*/`                                                                                                                                        |
+| Translations (i18n)                                                                  | [src/shared/core/i18n/](src/shared/core/i18n/README.md)                                                                                                                                                                        |
+| Design system, themes, kit                                                           | [src/shared/ui/](src/shared/ui/README.md), [src/shared/ui/kit/](src/shared/ui/kit/README.md)                                                                                                                                   |
+| 3D models (kind, live view, panel, agent tools)                                      | [src/canvas/model3d/](src/canvas/model3d/README.md), [src/canvas-ui/model3d/](src/canvas-ui/model3d/README.md)                                                                                                                 |
+| Module conventions and tiers                                                         | [docs/modules.md](docs/modules.md)                                                                                                                                                                                             |
+| ER language                                                                          | [docs/er-language.md](docs/er-language.md)                                                                                                                                                                                     |
+| Projects (folder, `.cproject`, trash) and their pages                                | [src/shared/core/projects/](src/shared/core/projects/README.md), [src/pages/projects/](src/pages/projects/README.md), [src/pages/project/](src/pages/project/README.md), [src/pages/shared/](src/pages/shared/files/README.md) |
+| Libraries (`.clib`: shared styles and assets, sync with files)                       | [src/canvas/libraries/](src/canvas/libraries/README.md), [src/canvas-ui/libraries/](src/canvas-ui/libraries/README.md)                                                                                                         |
+| Performance work parked for later                                                    | [docs/performance-roadmap.md](docs/performance-roadmap.md)                                                                                                                                                                     |
+| Projects and libraries left for later                                                | [docs/projects-roadmap.md](docs/projects-roadmap.md)                                                                                                                                                                           |
+| Prototype mode left for later                                                        | [docs/prototype-roadmap.md](docs/prototype-roadmap.md)                                                                                                                                                                         |

@@ -8,7 +8,9 @@
     "design": "New design",
     "designHint": "Interfaces and visuals",
     "catalog": "New catalog",
-    "catalogHint": "Print brochures"
+    "catalogHint": "Print brochures",
+    "project": "New project",
+    "projectHint": "A folder with its own styles"
   },
   "welcome": {
     "title": "Welcome to Cloudy Canvas",
@@ -52,11 +54,10 @@
     "open": "Open",
     "reveal": "Show in folder",
     "revealFailed": "The folder couldn't be opened",
-    "openFailed": "The file couldn't be opened"
+    "openFailed": "The file couldn't be opened",
+    "addToProject": "Add to project…"
   },
   "card": {
-    "board": "Board",
-    "design": "Design",
     "missingLabel": "{type} {name} is missing. Show options",
     "openLabel": "Open {type} {name}",
     "meta": "{type} · Edited {time}",
@@ -64,7 +65,6 @@
     "draft": "Draft",
     "more": "More actions for {name}",
     "justNow": "just now",
-    "catalog": "Catalog",
     "draftLocation": "Draft, not saved yet",
     "missingLocation": "Moved or deleted"
   },
@@ -106,6 +106,7 @@
     }
   },
   "top": {
+    "projects": "Projects",
     "agents": "Agents",
     "designSystem": "Design system",
     "theme": "Theme",

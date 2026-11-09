@@ -91,9 +91,10 @@ export const PROTOTYPE_TOOLS = {
   connect: "prototype.connect",
 } as const;
 
-/** The mode's host commands (toggle works in every mode; play arrives with the player). */
+/** The mode's host commands (toggle works in every mode; play opens the player). */
 export const PROTOTYPE_COMMANDS = {
   toggle: "prototype.toggle",
   addFlow: "prototype.addFlow",
   play: "prototype.play",
+  removeInteractions: "prototype.removeInteractions",
 } as const;

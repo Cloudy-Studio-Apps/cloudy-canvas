@@ -5,6 +5,7 @@
     "newColor": "New color",
     "newCollection": "New collection",
     "closePanel": "Close panel",
+    "boardColors": "Board colors",
     "emptyTitle": "No board colors yet",
     "emptyDescription": "Colors you name here are offered first in every color bar; elements using one follow it when it changes. Bring a design's colors in with Import.",
     "addColor": "Add a color",

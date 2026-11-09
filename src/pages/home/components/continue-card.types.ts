@@ -1,5 +1,5 @@
 import type { FileInfo } from "@shared/core";
-import type { HomeFileKind } from "../file-kind.types";
+import type { HomeFileKind } from "@pages/shared/files";
 
 export interface ContinueCardProps {
   /** The file opened last that's still there. */

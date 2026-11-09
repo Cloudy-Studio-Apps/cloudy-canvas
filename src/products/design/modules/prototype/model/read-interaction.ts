@@ -13,6 +13,7 @@ import {
   PROTOTYPE_TRIGGERS,
 } from "../prototype.constants";
 import { DEFAULT_OVERLAY, DEFAULT_TRANSITION } from "./interaction-defaults";
+import { isWebAddress } from "./is-web-address";
 import type {
   PrototypeInteraction,
   PrototypeOverlay,
@@ -29,15 +30,6 @@ function oneOf<T extends string>(list: readonly T[], value: unknown): value is T
 
 function isNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
-}
-
-function isWebAddress(url: string): boolean {
-  try {
-    const { protocol } = new URL(url);
-    return protocol === "http:" || protocol === "https:";
-  } catch {
-    return false;
-  }
 }
 
 /** A transition, its missing or unknown fields the default's; `null` for an unknown animation. */

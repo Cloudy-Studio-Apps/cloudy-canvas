@@ -7,7 +7,6 @@ import {
   readTextFile,
   remove,
   rename,
-  writeFile,
   writeTextFile,
 } from "@tauri-apps/plugin-fs";
 
@@ -26,6 +25,7 @@ import {
 } from "@shared/core";
 import { renameWithRetry } from "./rename-with-retry";
 import type { IndexEdit } from "./tauri-storage.types";
+import { writeAtomic } from "./write-atomic";
 
 /** Recent files index, kept in the app data folder. */
 const INDEX_FILE = "recent-files.json";
@@ -89,6 +89,17 @@ export class TauriStorage implements Storage {
       // Another entry for the new path is the same file now.
       const rest = files.filter((f) => f.id !== id && f.path !== path);
       return { files: [file, ...rest], result: file };
+    });
+  }
+
+  setProject(id: string, projectId: string | null): Promise<FileInfo | null> {
+    return this.mutate((files) => {
+      const previous = files.find((f) => f.id === id);
+      if (!previous) return { files, result: null };
+      const file: FileInfo = { ...previous };
+      if (projectId) file.projectId = projectId;
+      else delete file.projectId;
+      return { files: files.map((f) => (f.id === id ? file : f)), result: file };
     });
   }
 
@@ -238,10 +249,11 @@ function fileEntry(
   meta: FileMeta | undefined,
 ): FileInfo {
   const now = new Date().toISOString();
-  const { title, description } = meta ?? previous ?? {};
+  const { title, description, projectId } = meta ?? previous ?? {};
   return {
     ...(title && { title }),
     ...(description && { description }),
+    ...(projectId && { projectId }),
     id,
     name,
     type,
@@ -250,12 +262,6 @@ function fileEntry(
     updatedAt: now,
     formatVersion: CURRENT_FORMAT_VERSION,
   };
-}
-
-/** Writes beside the file and swaps it in, so a failed save never leaves half a file. */
-async function writeAtomic(path: string, data: Uint8Array): Promise<void> {
-  await writeFile(`${path}.tmp`, data);
-  await renameWithRetry(`${path}.tmp`, path);
 }
 
 /** Whether the list is the only way back to a file: a draft, or anything on Android. */

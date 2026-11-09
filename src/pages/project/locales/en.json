@@ -1,0 +1,267 @@
+{
+  "back": "Projects",
+  "notFound": "This project isn't on this device's list.",
+  "justNow": "just now",
+  "scanFailed": "A folder of the project couldn't be read",
+  "page": {
+    "missingTitle": "The project's folder wasn't found",
+    "missingText": "It was moved or deleted. Locate it again to keep working.",
+    "locate": "Locate…",
+    "locateFailed": "The project couldn't be located"
+  },
+  "header": {
+    "files_one": "{count} file",
+    "files_other": "{count} files",
+    "libraries_one": "{count} library",
+    "libraries_other": "{count} libraries",
+    "edited": "Edited {time}",
+    "reveal": "Show the project's folder",
+    "pin": "Pin to top",
+    "unpin": "Unpin"
+  },
+  "new": {
+    "button": "New",
+    "design": "New design",
+    "board": "New board",
+    "folder": "New folder",
+    "library": "New library",
+    "addImages": "Add images to a library…",
+    "addExisting": "Add existing file…"
+  },
+  "tabs": {
+    "files": "Files",
+    "libraries": "Libraries",
+    "trash": "Trash"
+  },
+  "cover": {
+    "change": "Change cover",
+    "image": "Choose an image…",
+    "colors": "Use the project's colors",
+    "pick": "Choose the cover image",
+    "failed": "The cover couldn't be changed"
+  },
+  "more": {
+    "label": "Project actions",
+    "rename": "Rename project…",
+    "appearance": "Icon and color…",
+    "reveal": "Show in folder",
+    "export": "Export as .zip",
+    "exporting": "Exporting the project…",
+    "exported": "Project exported",
+    "exportFailed": "The project couldn't be exported",
+    "zipLabel": "ZIP archive",
+    "forget": "Remove from list",
+    "forgotten": "“{name}” was removed from the list. Its folder is untouched."
+  },
+  "rename": {
+    "title": "Rename project",
+    "description": "Changes the project's name and its project file. The folder keeps its name.",
+    "name": "Name",
+    "cancel": "Cancel",
+    "save": "Rename",
+    "invalid": "That name can't be used.",
+    "taken": "A project file with that name already exists.",
+    "failed": "The project couldn't be renamed"
+  },
+  "appearance": {
+    "title": "Icon and color",
+    "description": "The mark that stands for the project in lists.",
+    "label": "Mark",
+    "colorLabel": "Project color",
+    "choose": "Choose image…",
+    "remove": "Use initials",
+    "pick": "Choose the project's icon",
+    "cancel": "Cancel",
+    "save": "Save",
+    "failed": "The icon and color couldn't be saved"
+  },
+  "tree": {
+    "files": "Files",
+    "all": "All files",
+    "expand": "Expand {name}",
+    "collapse": "Collapse {name}"
+  },
+  "folder": {
+    "new": "New folder",
+    "newName": "New folder",
+    "open": "Open folder {name}",
+    "more": "More actions for {name}",
+    "color": "Color of {name}",
+    "colorLabel": "{name} color",
+    "colorReset": "Back to the default color"
+  },
+  "file": {
+    "open": "Open {name}",
+    "more": "More actions for {name}"
+  },
+  "files": {
+    "recent": "Recently edited",
+    "search": "Search this project",
+    "sort": "Sort by",
+    "sortEdited": "Last edited",
+    "sortName": "Name",
+    "view": "View",
+    "viewGrid": "Grid",
+    "viewList": "List",
+    "noMatches": "Nothing matches “{query}”.",
+    "emptyTitle": "{name} is empty",
+    "emptyDescription": "Make a design or a board with New, or drag files here from another folder."
+  },
+  "menu": {
+    "open": "Open",
+    "rename": "Rename",
+    "move": "Move to…",
+    "duplicate": "Duplicate",
+    "reveal": "Show in folder",
+    "trash": "Move to trash"
+  },
+  "move": {
+    "title": "Move “{name}” to…",
+    "description": "Pick the folder to move it into.",
+    "cancel": "Cancel",
+    "confirm": "Move here"
+  },
+  "actions": {
+    "openFailed": "The file couldn't be opened",
+    "createFolderFailed": "The folder couldn't be created",
+    "renameFailed": "It couldn't be renamed",
+    "moveFailed": "It couldn't be moved",
+    "duplicateFailed": "It couldn't be duplicated",
+    "revealFailed": "It couldn't be shown in its folder",
+    "updateFailed": "The change couldn't be saved",
+    "followFailed": "Done, but the recent files and folder colors couldn't be updated",
+    "trashFailed": "It couldn't be moved to the trash",
+    "restoreFailed": "It couldn't be restored",
+    "emptyTrashFailed": "The trash couldn't be emptied"
+  },
+  "trash": {
+    "readFailed": "The trash couldn't be read",
+    "emptyTitle": "The trash is empty",
+    "emptyText": "Files and folders you delete from the project wait here until you empty the trash.",
+    "summary_one": "{count} item · {size}. Kept until you empty the trash.",
+    "summary_other": "{count} items · {size}. Kept until you empty the trash.",
+    "empty": "Empty trash",
+    "confirmTitle": "Empty the trash?",
+    "confirmText_one": "{count} item ({size}) will be deleted for good. This can't be undone.",
+    "confirmText_other": "{count} items ({size}) will be deleted for good. This can't be undone.",
+    "name": "Name",
+    "wasIn": "Was in",
+    "deleted": "Deleted",
+    "size": "Size",
+    "restore": "Restore",
+    "restored": "“{name}” was restored",
+    "root": "Project folder"
+  },
+  "footer": {
+    "trash_one": "{count} item in trash · {size}",
+    "trash_other": "{count} items in trash · {size}",
+    "trashEmpty": "Trash is empty",
+    "openTrash": "Open trash",
+    "size": "Project size {size}"
+  },
+  "kinds": {
+    "colors": "Colors",
+    "text": "Text styles",
+    "images": "Images",
+    "svg": "SVG & icons",
+    "components": "Components",
+    "effects": "Effects"
+  },
+  "libraries": {
+    "sidebar": "Libraries",
+    "all": "All libraries",
+    "content": "Content",
+    "new": "New library",
+    "newHint": "Empty, or from a file's styles",
+    "intro": "A library holds a brand's colors, text styles, images, SVGs and icons. A project can have several: each file picks the ones it uses, all of them by default.",
+    "open": "Open",
+    "more": "More actions for {name}",
+    "notFound": "This library isn't in the project anymore.",
+    "name": "Name",
+    "nameInvalid": "That name can't be used.",
+    "nameTaken": "Another library already has that name.",
+    "usedBy_one": "Used by {count} file",
+    "usedBy_other": "Used by {count} files",
+    "usedManual": "Used by the files that have it or turn it on",
+    "aa": "Aa",
+    "sample": "The quick brown fox",
+    "facts": {
+      "colors_one": "{count} color",
+      "colors_other": "{count} colors",
+      "text_one": "{count} text style",
+      "text_other": "{count} text styles",
+      "assets_one": "{count} image",
+      "assets_other": "{count} images",
+      "empty": "Nothing in it yet"
+    },
+    "empty": {
+      "colors": "No colors yet",
+      "text": "No text styles yet",
+      "images": "No images yet",
+      "svg": "No SVGs or icons yet",
+      "components": "No components yet. They're coming in a later version.",
+      "effects": "No effects yet"
+    },
+    "componentsTitle": "No components yet",
+    "componentsText": "Reusable pieces of a design, kept in a library so every file can use them. Coming in a later version.",
+    "editInFile": "Edit in a file",
+    "add": "Add",
+    "addImages": "Images or SVG…",
+    "importFile": "Import a file's styles…",
+    "importTokens": "Import a tokens JSON…",
+    "menu": {
+      "rename": "Rename…",
+      "autoOn": "Add to new files",
+      "autoOff": "Don't add to new files",
+      "delete": "Delete…"
+    },
+    "autoOff": {
+      "title": "Stop adding “{name}” to new files?",
+      "text": "Files that already use it keep it. New files, and files that don't have it yet, turn it on from their libraries menu."
+    },
+    "rename": {
+      "title": "Rename library",
+      "description": "Changes the library's name and its file."
+    },
+    "delete": {
+      "title": "Delete “{name}”?",
+      "text_one": "Used by {count} file. The file keeps the colors and styles it has but stops following the library. You can restore the library from the trash.",
+      "text_other": "Used by {count} files. The files keep the colors and styles they have but stop following the library. You can restore the library from the trash.",
+      "textManual": "Files that use it keep the colors and styles they have but stop following the library. You can restore the library from the trash."
+    },
+    "removed": "“{name}” was moved to the project's trash",
+    "imported_one": "Added {count} item from {name}",
+    "imported_other": "Added {count} items from {name}",
+    "pickImages": "Choose images or SVGs",
+    "pickFile": "Choose a design or board",
+    "pickTokens": "Choose a tokens file",
+    "filterDesignBoard": "Designs and boards",
+    "filterJson": "Tokens JSON",
+    "openFailed": "The project's libraries couldn't be opened",
+    "createFailed": "The library couldn't be created",
+    "renameFailed": "The library couldn't be renamed",
+    "removeFailed": "The library couldn't be deleted",
+    "updateFailed": "The change couldn't be saved",
+    "addFailed": "The images couldn't be added",
+    "importFailed": "That file's styles couldn't be read",
+    "editFailed": "The file couldn't be opened",
+    "dialog": {
+      "title": "New library",
+      "description": "A set of colors, text styles and images the project's files share.",
+      "namePlaceholder": "Library name",
+      "start": "Start from",
+      "startEmpty": "Nothing (empty)",
+      "startFile": "A file's styles… (.cdesign / .cboard)",
+      "startCopy": "A copy of another library",
+      "startTokens": "A tokens JSON…",
+      "chosen": "File: {name}",
+      "copyOf": "Library to copy",
+      "autoAdd": "Add it to every file",
+      "autoAddHint": "New files, and files that use all the libraries, take it. Off: files that already use it keep it, and another file turns it on from its libraries menu.",
+      "create": "Create library",
+      "creating": "Creating…"
+    },
+    "rollbackFailed": "The library was renamed on disk but the change couldn't be undone; its files may have a different name than the project says",
+    "cleanupFailed": "A half-made library couldn't be cleaned up"
+  }
+}

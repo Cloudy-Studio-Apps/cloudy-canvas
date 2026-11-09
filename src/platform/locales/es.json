@@ -13,7 +13,8 @@
     "figma": "Archivos de Figma y FigJam",
     "board": "Pizarra de Cloudy Canvas",
     "design": "Diseño de Cloudy Canvas",
-    "images": "Imágenes"
+    "images": "Imágenes",
+    "project": "Proyecto de Cloudy Canvas"
   },
   "saveBoard": "Guardar pizarra",
   "saveDesign": "Guardar diseño",

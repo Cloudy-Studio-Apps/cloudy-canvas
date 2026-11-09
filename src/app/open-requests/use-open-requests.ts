@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { isOpenablePath, type FileDrop } from "@shared/core";
+import { isOpenablePath, isProjectFilePath, type FileDrop } from "@shared/core";
 import { appLinks, fileOpenRequests } from "@platform";
 import { useFileDropStore } from "@shared/stores/file-drop-store";
 import { openAppLinks } from "./open-app-links";
@@ -37,7 +37,7 @@ export function useOpenRequests(): void {
 function dropFiles(drop: FileDrop): void {
   const paths = drop.files.map((file) => file.path).filter((path) => path !== null);
   const target = useFileDropStore.getState().target;
-  if (paths.some(isOpenablePath) || !target) {
+  if (paths.some((path) => isOpenablePath(path) || isProjectFilePath(path)) || !target) {
     openPaths(paths);
     return;
   }

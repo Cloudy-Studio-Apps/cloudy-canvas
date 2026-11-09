@@ -26,5 +26,14 @@
     "search": "Search variables",
     "empty": "This file has no variables yet.",
     "noFit": "No variables fit this field."
+  },
+  "source": {
+    "thisFile": "This file",
+    "libraryBadge": "Library",
+    "localBadge": "Local",
+    "library": "Library",
+    "fromLibrary": "From the library “{name}”",
+    "sharedNote": "Editing a library item updates every file that uses it.",
+    "readOnlyNote": "The project's libraries aren't open, so their items can't be edited here."
   }
 }

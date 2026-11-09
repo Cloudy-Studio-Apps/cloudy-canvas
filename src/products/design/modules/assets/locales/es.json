@@ -1,7 +1,65 @@
 {
   "title": "Recursos",
-  "local": {
-    "title": "Componentes locales",
-    "empty": "Los componentes que crees en este archivo aparecerán aquí. Llegará en una versión futura."
+  "search": "Buscar recursos",
+  "view": { "label": "Vista", "grid": "Cuadrícula", "list": "Lista" },
+  "filter": {
+    "label": "Tipo",
+    "all": "Todo",
+    "image": "Imágenes",
+    "svg": "SVG",
+    "icon": "Iconos"
+  },
+  "add": {
+    "title": "Añadir recursos",
+    "upload": "Subir imágenes",
+    "intoGroup": "Subir en «{group}»",
+    "toLibrary": "Subir a {library}",
+    "toFile": "Subir solo a este archivo",
+    "group": "Nuevo grupo…"
+  },
+  "group": {
+    "title": "Nuevo grupo",
+    "description": "Las imágenes que subas a continuación irán a este grupo. Usa barras para grupos dentro de grupos, como Marca/Logo. Déjalo vacío para no usar grupo.",
+    "placeholder": "Marca/Logo",
+    "confirm": "Usar grupo"
+  },
+  "upload": {
+    "title": "Elige imágenes",
+    "done_one": "{count} imagen añadida",
+    "done_other": "{count} imágenes añadidas"
+  },
+  "menu": {
+    "rename": "Renombrar",
+    "moveTo": "Mover a {library}…",
+    "delete": "Eliminar",
+    "inUse": "En uso, no se puede eliminar"
+  },
+  "rename": {
+    "title": "Renombrar imagen",
+    "label": "Nombre",
+    "confirm": "Renombrar"
+  },
+  "delete": {
+    "title": "¿Eliminar «{name}»?",
+    "text": "Ninguna capa muestra esta imagen. Se quitará de esta lista.",
+    "confirm": "Eliminar"
+  },
+  "move": {
+    "done": "«{name}» movida a {library}"
+  },
+  "empty": {
+    "file": "Aquí aparecerán las imágenes que añadas solo a este archivo.",
+    "library": "Esta biblioteca aún no tiene imágenes para diseños.",
+    "search": "Ninguna imagen coincide."
+  },
+  "broken": "No se pudo leer esta imagen",
+  "drag": {
+    "dropHere": "Suelta en el lienzo"
+  },
+  "error": {
+    "place": "No se pudo colocar la imagen",
+    "upload": "No se pudo añadir la imagen",
+    "unreadable": "{name} no es una imagen que se pueda leer",
+    "move": "No se pudo mover la imagen"
   }
 }

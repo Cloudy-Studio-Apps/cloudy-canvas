@@ -1,0 +1,267 @@
+{
+  "back": "Proyectos",
+  "notFound": "Este proyecto no está en la lista de este dispositivo.",
+  "justNow": "ahora mismo",
+  "scanFailed": "No se pudo leer una carpeta del proyecto",
+  "page": {
+    "missingTitle": "No se encontró la carpeta del proyecto",
+    "missingText": "Se movió o se borró. Búscala de nuevo para seguir trabajando.",
+    "locate": "Buscar…",
+    "locateFailed": "No se pudo localizar el proyecto"
+  },
+  "header": {
+    "files_one": "{count} archivo",
+    "files_other": "{count} archivos",
+    "libraries_one": "{count} biblioteca",
+    "libraries_other": "{count} bibliotecas",
+    "edited": "Editado {time}",
+    "reveal": "Mostrar la carpeta del proyecto",
+    "pin": "Fijar arriba",
+    "unpin": "Desfijar"
+  },
+  "new": {
+    "button": "Nuevo",
+    "design": "Nuevo diseño",
+    "board": "Nueva pizarra",
+    "folder": "Nueva carpeta",
+    "library": "Nueva biblioteca",
+    "addImages": "Añadir imágenes a una biblioteca…",
+    "addExisting": "Añadir un archivo existente…"
+  },
+  "tabs": {
+    "files": "Archivos",
+    "libraries": "Bibliotecas",
+    "trash": "Papelera"
+  },
+  "cover": {
+    "change": "Cambiar portada",
+    "image": "Elegir una imagen…",
+    "colors": "Usar los colores del proyecto",
+    "pick": "Elige la imagen de portada",
+    "failed": "No se pudo cambiar la portada"
+  },
+  "more": {
+    "label": "Acciones del proyecto",
+    "rename": "Renombrar proyecto…",
+    "appearance": "Icono y color…",
+    "reveal": "Mostrar en la carpeta",
+    "export": "Exportar como .zip",
+    "exporting": "Exportando el proyecto…",
+    "exported": "Proyecto exportado",
+    "exportFailed": "No se pudo exportar el proyecto",
+    "zipLabel": "Archivo ZIP",
+    "forget": "Quitar de la lista",
+    "forgotten": "Se quitó «{name}» de la lista. Su carpeta no se ha tocado."
+  },
+  "rename": {
+    "title": "Renombrar proyecto",
+    "description": "Cambia el nombre del proyecto y de su archivo de proyecto. La carpeta conserva su nombre.",
+    "name": "Nombre",
+    "cancel": "Cancelar",
+    "save": "Renombrar",
+    "invalid": "No se puede usar ese nombre.",
+    "taken": "Ya existe un archivo de proyecto con ese nombre.",
+    "failed": "No se pudo renombrar el proyecto"
+  },
+  "appearance": {
+    "title": "Icono y color",
+    "description": "La marca que representa al proyecto en las listas.",
+    "label": "Marca",
+    "colorLabel": "Color del proyecto",
+    "choose": "Elegir imagen…",
+    "remove": "Usar iniciales",
+    "pick": "Elige el icono del proyecto",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "failed": "No se pudieron guardar el icono y el color"
+  },
+  "tree": {
+    "files": "Archivos",
+    "all": "Todos los archivos",
+    "expand": "Expandir {name}",
+    "collapse": "Contraer {name}"
+  },
+  "folder": {
+    "new": "Nueva carpeta",
+    "newName": "Nueva carpeta",
+    "open": "Abrir la carpeta {name}",
+    "more": "Más acciones para {name}",
+    "color": "Color de {name}",
+    "colorLabel": "Color de {name}",
+    "colorReset": "Volver al color predeterminado"
+  },
+  "file": {
+    "open": "Abrir {name}",
+    "more": "Más acciones para {name}"
+  },
+  "files": {
+    "recent": "Editados recientemente",
+    "search": "Buscar en este proyecto",
+    "sort": "Ordenar por",
+    "sortEdited": "Última edición",
+    "sortName": "Nombre",
+    "view": "Vista",
+    "viewGrid": "Cuadrícula",
+    "viewList": "Lista",
+    "noMatches": "Nada coincide con «{query}».",
+    "emptyTitle": "{name} está vacía",
+    "emptyDescription": "Crea un diseño o una pizarra con Nuevo, o arrastra aquí archivos de otra carpeta."
+  },
+  "menu": {
+    "open": "Abrir",
+    "rename": "Renombrar",
+    "move": "Mover a…",
+    "duplicate": "Duplicar",
+    "reveal": "Mostrar en la carpeta",
+    "trash": "Mover a la papelera"
+  },
+  "move": {
+    "title": "Mover «{name}» a…",
+    "description": "Elige la carpeta a la que moverlo.",
+    "cancel": "Cancelar",
+    "confirm": "Mover aquí"
+  },
+  "actions": {
+    "openFailed": "No se pudo abrir el archivo",
+    "createFolderFailed": "No se pudo crear la carpeta",
+    "renameFailed": "No se pudo renombrar",
+    "moveFailed": "No se pudo mover",
+    "duplicateFailed": "No se pudo duplicar",
+    "revealFailed": "No se pudo mostrar en su carpeta",
+    "updateFailed": "No se pudo guardar el cambio",
+    "followFailed": "Hecho, pero no se pudieron actualizar los archivos recientes ni los colores de carpeta",
+    "trashFailed": "No se pudo mover a la papelera",
+    "restoreFailed": "No se pudo restaurar",
+    "emptyTrashFailed": "No se pudo vaciar la papelera"
+  },
+  "trash": {
+    "readFailed": "No se pudo leer la papelera",
+    "emptyTitle": "La papelera está vacía",
+    "emptyText": "Los archivos y carpetas que borres del proyecto esperan aquí hasta que vacíes la papelera.",
+    "summary_one": "{count} elemento · {size}. Se conserva hasta que vacíes la papelera.",
+    "summary_other": "{count} elementos · {size}. Se conservan hasta que vacíes la papelera.",
+    "empty": "Vaciar papelera",
+    "confirmTitle": "¿Vaciar la papelera?",
+    "confirmText_one": "{count} elemento ({size}) se borrará para siempre. No se puede deshacer.",
+    "confirmText_other": "{count} elementos ({size}) se borrarán para siempre. No se puede deshacer.",
+    "name": "Nombre",
+    "wasIn": "Estaba en",
+    "deleted": "Borrado",
+    "size": "Tamaño",
+    "restore": "Restaurar",
+    "restored": "Se restauró «{name}»",
+    "root": "Carpeta del proyecto"
+  },
+  "footer": {
+    "trash_one": "{count} elemento en la papelera · {size}",
+    "trash_other": "{count} elementos en la papelera · {size}",
+    "trashEmpty": "La papelera está vacía",
+    "openTrash": "Abrir papelera",
+    "size": "Tamaño del proyecto {size}"
+  },
+  "kinds": {
+    "colors": "Colores",
+    "text": "Estilos de texto",
+    "images": "Imágenes",
+    "svg": "SVG e iconos",
+    "components": "Componentes",
+    "effects": "Efectos"
+  },
+  "libraries": {
+    "sidebar": "Bibliotecas",
+    "all": "Todas las bibliotecas",
+    "content": "Contenido",
+    "new": "Nueva biblioteca",
+    "newHint": "Vacía, o con los estilos de un archivo",
+    "intro": "Una biblioteca guarda los colores, estilos de texto, imágenes, SVG e iconos de una marca. Un proyecto puede tener varias: cada archivo elige las que usa, todas por defecto.",
+    "open": "Abrir",
+    "more": "Más acciones para {name}",
+    "notFound": "Esta biblioteca ya no está en el proyecto.",
+    "name": "Nombre",
+    "nameInvalid": "Ese nombre no se puede usar.",
+    "nameTaken": "Otra biblioteca ya tiene ese nombre.",
+    "usedBy_one": "Usada por {count} archivo",
+    "usedBy_other": "Usada por {count} archivos",
+    "usedManual": "Usada por los archivos que la tienen o la activan",
+    "aa": "Aa",
+    "sample": "El veloz zorro marrón",
+    "facts": {
+      "colors_one": "{count} color",
+      "colors_other": "{count} colores",
+      "text_one": "{count} estilo de texto",
+      "text_other": "{count} estilos de texto",
+      "assets_one": "{count} imagen",
+      "assets_other": "{count} imágenes",
+      "empty": "Aún no tiene nada"
+    },
+    "empty": {
+      "colors": "Aún no hay colores",
+      "text": "Aún no hay estilos de texto",
+      "images": "Aún no hay imágenes",
+      "svg": "Aún no hay SVG ni iconos",
+      "components": "Aún no hay componentes. Llegarán en una versión posterior.",
+      "effects": "Aún no hay efectos"
+    },
+    "componentsTitle": "Aún no hay componentes",
+    "componentsText": "Piezas reutilizables de un diseño, guardadas en una biblioteca para que todos los archivos las usen. Llegarán en una versión posterior.",
+    "editInFile": "Editar en un archivo",
+    "add": "Añadir",
+    "addImages": "Imágenes o SVG…",
+    "importFile": "Importar los estilos de un archivo…",
+    "importTokens": "Importar un JSON de tokens…",
+    "menu": {
+      "rename": "Renombrar…",
+      "autoOn": "Añadir a los archivos nuevos",
+      "autoOff": "No añadir a los archivos nuevos",
+      "delete": "Eliminar…"
+    },
+    "autoOff": {
+      "title": "¿Dejar de añadir «{name}» a los archivos nuevos?",
+      "text": "Los archivos que ya la usan la conservan. Los archivos nuevos, y los que aún no la tienen, la activan desde su menú de bibliotecas."
+    },
+    "rename": {
+      "title": "Renombrar biblioteca",
+      "description": "Cambia el nombre de la biblioteca y el de su archivo."
+    },
+    "delete": {
+      "title": "¿Eliminar «{name}»?",
+      "text_one": "La usa {count} archivo. El archivo conserva los colores y estilos que tiene, pero deja de seguir la biblioteca. Puedes restaurarla desde la papelera.",
+      "text_other": "La usan {count} archivos. Los archivos conservan los colores y estilos que tienen, pero dejan de seguir la biblioteca. Puedes restaurarla desde la papelera.",
+      "textManual": "Los archivos que la usan conservan los colores y estilos que tienen, pero dejan de seguir la biblioteca. Puedes restaurarla desde la papelera."
+    },
+    "removed": "«{name}» se movió a la papelera del proyecto",
+    "imported_one": "Se añadió {count} elemento de {name}",
+    "imported_other": "Se añadieron {count} elementos de {name}",
+    "pickImages": "Elige imágenes o SVG",
+    "pickFile": "Elige un diseño o una pizarra",
+    "pickTokens": "Elige un archivo de tokens",
+    "filterDesignBoard": "Diseños y pizarras",
+    "filterJson": "JSON de tokens",
+    "openFailed": "No se pudieron abrir las bibliotecas del proyecto",
+    "createFailed": "No se pudo crear la biblioteca",
+    "renameFailed": "No se pudo renombrar la biblioteca",
+    "removeFailed": "No se pudo eliminar la biblioteca",
+    "updateFailed": "No se pudo guardar el cambio",
+    "addFailed": "No se pudieron añadir las imágenes",
+    "importFailed": "No se pudieron leer los estilos de ese archivo",
+    "editFailed": "No se pudo abrir el archivo",
+    "dialog": {
+      "title": "Nueva biblioteca",
+      "description": "Un conjunto de colores, estilos de texto e imágenes que comparten los archivos del proyecto.",
+      "namePlaceholder": "Nombre de la biblioteca",
+      "start": "Empezar desde",
+      "startEmpty": "Nada (vacía)",
+      "startFile": "Los estilos de un archivo… (.cdesign / .cboard)",
+      "startCopy": "Una copia de otra biblioteca",
+      "startTokens": "Un JSON de tokens…",
+      "chosen": "Archivo: {name}",
+      "copyOf": "Biblioteca que copiar",
+      "autoAdd": "Añadirla a todos los archivos",
+      "autoAddHint": "Los archivos nuevos, y los que usan todas las bibliotecas, la toman. Desactivado: los archivos que ya la usan la conservan, y los demás la activan desde su menú de bibliotecas.",
+      "create": "Crear biblioteca",
+      "creating": "Creando…"
+    },
+    "rollbackFailed": "La biblioteca se renombró en disco pero no se pudo deshacer el cambio; sus archivos pueden tener otro nombre que el del proyecto",
+    "cleanupFailed": "No se pudo limpiar una biblioteca a medio crear"
+  }
+}

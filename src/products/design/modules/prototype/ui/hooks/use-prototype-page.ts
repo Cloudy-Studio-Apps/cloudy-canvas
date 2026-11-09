@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { useService } from "@canvas-ui";
 import { useDesignEngine, useDesignState } from "@design/ui/design-engine-context";
 import { DESIGN_PROTOTYPE, screensOf } from "../../model";
+import { useDocVersion } from "./use-doc-version";
 import type { PrototypePageView } from "./use-prototype-page.types";
 
 /** The page on screen's flows and screens, read again when the document changes (once a frame). */
@@ -10,20 +11,7 @@ export function usePrototypePage(): PrototypePageView {
   const engine = useDesignEngine();
   const prototype = useService(DESIGN_PROTOTYPE);
   const page = useDesignState((state) => state.scope);
-  const [version, setVersion] = useState(0);
-  useEffect(() => {
-    let frame = 0;
-    const off = engine.doc.onChange(() => {
-      frame ||= requestAnimationFrame(() => {
-        frame = 0;
-        setVersion((value) => value + 1);
-      });
-    });
-    return () => {
-      off();
-      cancelAnimationFrame(frame);
-    };
-  }, [engine]);
+  const version = useDocVersion();
   return useMemo(
     () => ({
       page,

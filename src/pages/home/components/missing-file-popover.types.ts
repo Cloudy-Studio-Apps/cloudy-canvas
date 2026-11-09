@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import type { FileInfo } from "@shared/core";
-import type { FileAction } from "../use-file-actions.types";
+import type { FileAction } from "@pages/shared/files";
 
 export interface MissingFilePopoverProps {
   file: FileInfo;

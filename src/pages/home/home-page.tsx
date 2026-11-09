@@ -1,7 +1,9 @@
 import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router";
 
+import { projectsSupported } from "@platform";
 import { createId, type FileInfo, type FileType } from "@shared/core";
+import { useProjectsStore } from "@shared/stores/projects-store";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 import { useHotkey } from "@shared/ui/hooks/use-hotkey";
 import { PageContainer } from "@shared/ui/layout/page-container";
@@ -11,7 +13,8 @@ import { RecentFiles } from "./components/recent-files";
 import { StartersRow } from "./components/starters-row";
 import { TopBar } from "./components/top-bar";
 import { Welcome } from "./components/welcome";
-import { useFileKindOf } from "./file-kind";
+import { AddToProjectProvider } from "@pages/shared/add-to-project";
+import { useFileKindOf } from "@pages/shared/files";
 import { OPEN_FILE_SHORTCUT, SETTINGS_SHORTCUT } from "./home-shortcuts";
 import { useFileDragOver } from "@shared/ui/hooks/use-file-drag-over";
 import { useOpenFile } from "./use-open-file";
@@ -44,43 +47,50 @@ export function HomePage() {
     return () => window.removeEventListener("focus", onFocus);
   }, [refreshRecents]);
 
+  // The projects name where each file is (its card's label) and take Add to project.
+  useEffect(() => {
+    if (projectsSupported()) void useProjectsStore.getState().refresh();
+  }, []);
+
   useHotkey(OPEN_FILE_SHORTCUT, () => void openFile());
   useHotkey(SETTINGS_SHORTCUT, () => void navigate("/settings"));
 
   return (
-    <div className="flex min-h-full flex-col">
-      <TopBar />
-      <PageContainer as="main" className="flex-1 space-y-12 pt-10 pb-16 sm:pt-12">
-        {recentFiles.length === 0 ? (
-          <>
-            <Welcome
-              onCreate={(type, mode) => void createFile(type, mode)}
-              onOpenFile={() => void openFile()}
-            />
-            <StartersRow />
-          </>
-        ) : (
-          <>
-            <ContinueSection
-              hero={hero}
-              next={others}
-              kindOf={kindOf}
-              onOpen={(file) => void openRecent(file)}
-              onCreate={(type, mode) => void createFile(type, mode)}
-              onOpenFile={() => void openFile()}
-            />
-            {others.length > 0 && (
-              <RecentFiles
-                files={others}
-                missing={missingFiles}
+    <AddToProjectProvider>
+      <div className="flex min-h-full flex-col">
+        <TopBar />
+        <PageContainer as="main" className="flex-1 space-y-12 pt-10 pb-16 sm:pt-12">
+          {recentFiles.length === 0 ? (
+            <>
+              <Welcome
+                onCreate={(type, mode) => void createFile(type, mode)}
+                onOpenFile={() => void openFile()}
+              />
+              <StartersRow />
+            </>
+          ) : (
+            <>
+              <ContinueSection
+                hero={hero}
+                next={others}
                 kindOf={kindOf}
                 onOpen={(file) => void openRecent(file)}
+                onCreate={(type, mode) => void createFile(type, mode)}
+                onOpenFile={() => void openFile()}
               />
-            )}
-          </>
-        )}
-      </PageContainer>
-      {draggingFiles && <DropOverlay />}
-    </div>
+              {others.length > 0 && (
+                <RecentFiles
+                  files={others}
+                  missing={missingFiles}
+                  kindOf={kindOf}
+                  onOpen={(file) => void openRecent(file)}
+                />
+              )}
+            </>
+          )}
+        </PageContainer>
+        {draggingFiles && <DropOverlay />}
+      </div>
+    </AddToProjectProvider>
   );
 }

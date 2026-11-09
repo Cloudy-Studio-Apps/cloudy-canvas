@@ -78,6 +78,18 @@
           "identifier": "com.darkredgm.cloudycanvas.design",
           "conformsTo": ["public.data"]
         }
+      },
+      {
+        "ext": ["cproject"],
+        "name": "Cloudy Canvas project",
+        "description": "Cloudy Canvas project",
+        "mimeType": "application/x-cloudy-canvas-project",
+        "role": "Editor",
+        "contentTypes": ["com.darkredgm.cloudycanvas.project"],
+        "exportedType": {
+          "identifier": "com.darkredgm.cloudycanvas.project",
+          "conformsTo": ["public.data"]
+        }
       }
     ],
     "linux": {

@@ -1,7 +1,8 @@
 import { ElementKind } from "@canvas";
 
 import type { DesignToolOptions } from "../../../design-options.types";
-import { PROTOTYPE_FLOW_TYPE } from "../prototype.constants";
+import { PROTOTYPE_FLOW_TYPE, PROTOTYPE_PLATFORMS } from "../prototype.constants";
+import { firstDevice, PROTOTYPE_DEVICES } from "./devices";
 import { PROTOTYPE_FLOW_DEFAULTS } from "./flow.defaults";
 import type { PrototypeFlowDefaults, PrototypeFlowElement } from "./flow.types";
 
@@ -23,9 +24,23 @@ export class PrototypeFlowKind extends ElementKind<PrototypeFlowElement, DesignT
     return false;
   }
 
+  /**
+   * Every read of a flow passes here, so a record from a newer version, a peer or a plugin is
+   * safe to use: an unknown platform reads as the first one, an unknown device as its platform's
+   * first. Nothing is written back by reading.
+   */
   override fillDefaults(el: PrototypeFlowElement): PrototypeFlowElement {
+    const platform = PROTOTYPE_PLATFORMS.includes(el.platform)
+      ? el.platform
+      : PROTOTYPE_PLATFORMS[0];
+    const device =
+      platform !== undefined && PROTOTYPE_DEVICES[platform].includes(el.device)
+        ? el.device
+        : firstDevice(platform ?? "mobile");
     return {
       ...el,
+      platform: platform ?? "mobile",
+      device,
       orientation: el.orientation ?? PROTOTYPE_FLOW_DEFAULTS.orientation,
       hints: el.hints ?? PROTOTYPE_FLOW_DEFAULTS.hints,
     };

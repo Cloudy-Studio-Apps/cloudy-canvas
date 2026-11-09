@@ -1,12 +1,14 @@
 import { Play } from "lucide-react";
 
 import { IconButton, ListRow } from "@shared/ui/kit";
+import { usePlayerStore } from "../player/player-store";
 import { PLATFORM_ICONS } from "./platform-icons";
 import type { FlowRowProps } from "./flow-row.types";
 import { t } from "../../prototype.i18n";
 
-/** A flow in the Flows tab: its platform, name and where it starts; ▶ plays it (with the player). */
+/** A flow in the Flows tab: its platform, name and where it starts; ▶ plays it. */
 export function FlowRow({ flow, screens, selected, onSelect }: FlowRowProps) {
+  const open = usePlayerStore((state) => state.open);
   const Icon = PLATFORM_ICONS[flow.platform];
   const start = screens.find((screen) => screen.id === flow.start)?.name ?? "";
   return (
@@ -24,8 +26,11 @@ export function FlowRow({ flow, screens, selected, onSelect }: FlowRowProps) {
         </span>
       }
       actions={
-        // The player arrives later: until then it can't be played.
-        <IconButton size="xs" label={t("flows.play", { name: flow.name })} disabled>
+        <IconButton
+          size="xs"
+          label={t("flows.play", { name: flow.name })}
+          onClick={() => open({ flow: flow.id })}
+        >
           <Play />
         </IconButton>
       }

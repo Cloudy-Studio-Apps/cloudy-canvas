@@ -29,5 +29,8 @@
   },
   "errors": {
     "open": "No se pudo abrir {noun}."
+  },
+  "recents": {
+    "projectFailed": "No se pudieron actualizar los archivos recientes"
   }
 }

@@ -1,0 +1,41 @@
+{
+  "dialog": {
+    "title": "Añadir «{name}» a un proyecto",
+    "description": "El archivo se mueve a la carpeta del proyecto y usa sus estilos.",
+    "projects": "Proyecto",
+    "newProject": "Nuevo proyecto…",
+    "noProjects": "Aún no tienes proyectos. Crea uno y después añade el archivo.",
+    "folder": "Carpeta",
+    "root": "Raíz del proyecto",
+    "library": "Biblioteca para sus estilos",
+    "styles": "Estilos de este archivo",
+    "reading": "Leyendo el archivo y las bibliotecas del proyecto…",
+    "readFailed": "No se pudieron leer el archivo o las bibliotecas del proyecto.",
+    "linked": "Este archivo ya pertenece a un proyecto.",
+    "noLibrary": "El proyecto no tiene ninguna biblioteca que usen todos sus archivos, así que los estilos del archivo se quedan en el archivo.",
+    "added_one": "1 de sus variables y estilos es nuevo en el proyecto y va a «{library}».",
+    "added_other": "{count} de sus variables y estilos son nuevos en el proyecto y van a «{library}».",
+    "nothingNew": "No tiene variables ni estilos que el proyecto no tenga.",
+    "clashes_one": "1 tiene el mismo nombre que uno del proyecto:",
+    "clashes_other": "{count} tienen el mismo nombre que los del proyecto:",
+    "pictures_one": "Su imagen también va a «{library}».",
+    "pictures_other": "Sus {count} imágenes también van a «{library}».",
+    "note": "Sus capas usan los estilos del proyecto. «Conservar ambos» añade la versión del archivo como «{example}».",
+    "fileValue": "el de este archivo",
+    "projectValue": "el del proyecto",
+    "variable": "Variable",
+    "style": "Estilo",
+    "useProject": "Usar el del proyecto",
+    "keepBoth": "Conservar ambos",
+    "choice": "Qué hacer con {name}",
+    "add": "Añadir al proyecto",
+    "adding": "Añadiendo…"
+  },
+  "done": "Movido a {place}",
+  "failed": {
+    "add": "No se pudo añadir el archivo al proyecto",
+    "open": "No se pudo abrir el archivo",
+    "original": "El archivo ya está en el proyecto, pero no se pudo mover el original a la papelera del proyecto. Sigue en {path}."
+  },
+  "inProject": "«{name}» ya está en un proyecto"
+}

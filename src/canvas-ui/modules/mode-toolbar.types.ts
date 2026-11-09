@@ -19,6 +19,8 @@ export interface ModeToolbarCommandEntry {
   activeWhen?: { tool: string };
   /** A count drawn over the icon (left out or 0: none). */
   badge?: number;
+  /** Drawn as a primary button with its label next to its icon: the mode's main action. */
+  primary?: boolean;
 }
 
 /** A button that calls `run`. */
@@ -56,6 +58,8 @@ export interface ModeToolbarItemView {
   badge: number | undefined;
   active: boolean | undefined;
   disabled: boolean | undefined;
+  /** A primary button with its label shown (a command's `primary`). */
+  primary: boolean;
   run: () => void;
 }
 

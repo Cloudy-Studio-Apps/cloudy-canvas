@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react";
 
-import { DragGhost, useRowDrag } from "@canvas-ui";
+import { DragGhost, TokenSourceHeader, useRowDrag, useTokenSources } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { notifyError, toast } from "@shared/stores/toast-store";
 import { useBoard } from "../use-board";
@@ -15,17 +15,22 @@ import { t } from "../../../variables.i18n";
  * With nothing picked: the mode groups (Theme, Language… each a set of modes; variables vary by
  * one of them, and pages and frames pick a mode of each), made, renamed, deleted and shown on the
  * board, and their modes added, renamed, removed and moved between groups by dragging them or
- * with their menu. A group's first mode holds the defaults the others fall back to.
+ * with their menu. A group's first mode holds the defaults the others fall back to. A library's
+ * group has its library's heading above it, which says why it can't be edited when it can't.
  */
 export function ModesInspector() {
   const engine = useDesignEngine();
-  const { tokens, store, axis } = useBoard();
+  const { tokens, store, axis, canEdit } = useBoard();
   const setAxis = useVariablesWindowStore((state) => state.setAxis);
   const axes = store.axes();
+  const sources = useTokenSources(axes);
 
   const move = (modeId: string, axisId: string, beforeId?: string) => {
     const from = store.axes().find((a) => a.modes.some((m) => m.id === modeId));
     const mode = from?.modes.find((m) => m.id === modeId);
+    const to = store.axis(axisId);
+    // Neither out of nor into a library's group that can't be edited.
+    if ((from && !canEdit(from)) || (to && !canEdit(to))) return;
     try {
       const { dropped } = tokens.moveMode(modeId, axisId, beforeId);
       if (dropped > 0 && from && mode) {
@@ -47,6 +52,8 @@ export function ModesInspector() {
   const rowDrag = useRowDrag({
     canDrop: (id, overId) => {
       const target = axisIdOf(overId);
+      const into = target !== null ? store.axis(target) : axisOfMode(overId);
+      if (into && !canEdit(into)) return false;
       if (target !== null) return axisOfMode(id)?.id !== target;
       return axisOfMode(overId)?.modes[0]?.id !== overId;
     },
@@ -98,14 +105,17 @@ export function ModesInspector() {
         ) : (
           <>
             <p className="text-muted-foreground">{t("inspector.dragHint")}</p>
-            {axes.map((group) => (
-              <ModeGroupCard
-                key={group.id}
-                axis={group}
-                shown={group.id === axis?.id}
-                moves={moves}
-              />
-            ))}
+            {axes.map((group) => {
+              const source = group.libraryId
+                ? sources?.find((s) => s.libraryId === group.libraryId)
+                : undefined;
+              return (
+                <div key={group.id} className="flex flex-col gap-1.5">
+                  {source && <TokenSourceHeader source={source} />}
+                  <ModeGroupCard axis={group} shown={group.id === axis?.id} moves={moves} />
+                </div>
+              );
+            })}
           </>
         )}
       </InspectorSection>
