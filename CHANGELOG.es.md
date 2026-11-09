@@ -14,8 +14,9 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 - Las pestañas son ligeras: solo la pestaña a la vista usa recursos de dibujo, las de segundo plano
   conservan su historial de deshacer y las que llevas un rato sin usar se duermen y se recargan al
   hacer clic en ellas. Tus pestañas vuelven tras reiniciar y cada una se carga solo cuando la abres.
-  Una sesión en vivo sigue activa en una pestaña de segundo plano, y un archivo alojado sigue
-  guardando las ediciones de tus invitados.
+  Una sesión en vivo sigue activa en una pestaña de segundo plano, un archivo alojado sigue
+  guardando las ediciones de tus invitados, y quienes piden unirse aparecen estés en la pestaña que
+  estés, con el nombre del archivo.
 - Los agentes (asistentes de IA conectados a la app) ahora trabajan en su propia pestaña en segundo
   plano sin mover tu vista. Pueden listar, abrir, crear y cambiar de archivo por nombre, y al crear
   un archivo sugieren un proyecto adecuado antes de guardarlo allí.

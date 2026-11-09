@@ -14,7 +14,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 - Tabs stay light: only the tab on screen uses drawing resources, background tabs keep their undo
   history and the ones you haven't used for a while sleep and reload when you click them. Your tabs
   come back after a restart and each one loads only when you open it. A live session keeps running
-  in a background tab, and a hosted file keeps saving your guests' edits.
+  in a background tab, a hosted file keeps saving your guests' edits, and people asking to join
+  are shown whichever tab you're on, with the file's name.
 - Agents (AI assistants connected to the app) now work in their own tab in the background without
   moving your view. They can list, open, create and switch files by name, and when they create a
   file they suggest a matching project before saving it there.
