@@ -7,6 +7,17 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### New
 
+- Tabs on desktop: open several files at once as tabs in the window's title bar, with Home as the
+  first tab and the app's main menu at its left. Switch with next and previous tab shortcuts or go
+  to tab 1 to 9, close a tab, or reopen one you closed by mistake. Closing a tab with unsaved
+  changes asks first.
+- Tabs stay light: only the tab on screen uses drawing resources, background tabs keep their undo
+  history and the ones you haven't used for a while sleep and reload when you click them. Your tabs
+  come back after a restart and each one loads only when you open it. A live session keeps running
+  in a background tab, and a hosted file keeps saving your guests' edits.
+- Agents (AI assistants connected to the app) now work in their own tab in the background without
+  moving your view. They can list, open, create and switch files by name, and when they create a
+  file they suggest a matching project before saving it there.
 - Boards and designs can now hold 3D models: drop or insert FBX, OBJ or glTF files, turn a model
   to any angle right on the canvas, and assign textures to it. When you no longer need to turn it,
   convert it to a picture to keep the file light.
