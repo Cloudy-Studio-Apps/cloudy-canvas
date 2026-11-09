@@ -149,6 +149,7 @@ Agent tools are groups contributed to `api.board.boardMcpTools`: `{ id, tools: (
 
 A tool declares only its **local name**; the app serves it as `<plugin id>_<name>`, with your plugin's id as the prefix, whatever the plugin says. A plugin with the id `callout` and a tool named `create` is served as `callout_create`; one with `my-plugin` and `text_get`, as `my-plugin_text_get`. The prefix is forced: a group that declares its own `prefix` is refused.
 
+- The loader **enforces** the characters of the full name (`a-z`, `0-9`, `_`, `-`) and its 44-character limit; a tool breaking either is refused. The grammar of the local name below is a convention, not checked.
 - The local name is lowercase words joined by `_` (`^[a-z0-9]+(_[a-z0-9]+)*$`), with the action last: `[<object>_]<verb>`, e.g. `notes_list`, `note_create`. Leave the object out when your plugin id already says it.
 - The full name is at most **44 characters** (`a-z`, `0-9`, `_` and `-`), and your plugin id counts toward it, so a short id leaves more room: some agent apps add their own prefix and cap names at 64.
 - **Reserved prefixes**: every built-in module id and topic (`shapes`, `nodes`, `file`, `selection`, `history`, `view`, `arrange`, `style`, `tabs`, `plugins`, `catalog`, `er`, …). A plugin whose id is one of them has all its tools refused, so the tools can't pass for built-in ones.
