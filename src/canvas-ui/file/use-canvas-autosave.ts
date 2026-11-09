@@ -69,7 +69,8 @@ export function useCanvasAutosave<O extends object>(
     };
     // Closing the window waits for pending changes to be saved; a phone may not warn it's closing.
     const removeQuitTask = appLifecycle.onBeforeQuit(async () => {
-      await saveNow(await finalWork(finalRef, engine));
+      const changed = await finalWork(finalRef, engine).catch(() => true);
+      await saveNow(changed);
     });
     const removeBackgroundTask = appLifecycle.onBackground(() => saveNow());
     return () => {
@@ -82,7 +83,7 @@ export function useCanvasAutosave<O extends object>(
       // what's there.
       queueMicrotask(() => {
         const final = finals.current?.engine === engine ? finals.current.done : null;
-        if (final) void final.then(run);
+        if (final) void final.then(run, () => run(true));
         else run();
       });
     };
