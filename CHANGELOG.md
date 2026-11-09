@@ -158,6 +158,10 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   Relation, stay the same in every language.
 - Importing a .fig or .jam file now shows its progress and the list of what couldn't be brought
   over as it was in Spanish when the app is in Spanish.
+- Agent tools have new, organized names that group them by feature, so an assistant finds what it
+  needs more easily, and tools that boards and designs share are now one. Assistants that support it
+  only see the tools of the file they are working on. If you saved permission lists for agent
+  tools, allow the new names.
 
 ### Fixed
 

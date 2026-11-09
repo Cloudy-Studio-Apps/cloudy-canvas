@@ -177,7 +177,19 @@ before and after changing `requires`/`after`, since chained hooks run in that or
 - The module file imports only `./<name>.mcp` or `./mcp`, never a single tool file.
 - **"Agent" is who calls, "MCP tool" is what it calls.** Files that define tools are `.mcp.ts`; files
   about the collaborator stay `agent-*.ts` (`agent-host.ts`, `agent-presence-source.ts`).
-- MCP tool _names_ (`shapes_create`, `nodes_update`, …) are a separate plan; keep the existing ones.
+- **Tool names are `<prefix>_<rest>`, and a tool's code declares only `<rest>`**: the host adds the
+  prefix when it collects the groups (`collectMcpTools`, `src/canvas/mcp/`), so nobody can forget it
+  or fake another module's. The prefix is the module's id (`catalog_pages_add`, `auto-layout_add`);
+  only `core` modules and the shared groups in `src/canvas/mcp` may declare a topic instead with
+  `prefix` on the group (`shapes`, `nodes`, `file`, `selection`, …), and a plugin's tools always take
+  the plugin's id. `<rest>` is lowercase words joined by `_`, `[<object>_]<verb>[_to_<target>]`, with
+  **the action last** (`er_text_get`, `variables_mode_set`, `model3d_convert_to_png`) and the object
+  left out when the prefix already says it (`group_create`, not `group_group_create`): plural for
+  verbs over many (`pages_list`), singular for one (`catalog_page_move`). A full name is at most 44
+  characters of `a-z 0-9 _ -`; a clash or a longer name throws at startup (a plugin's tool is refused
+  and shown in `plugins_list`). The same name in both products is one shared tool and needs the same
+  `inputSchema`. `scripts/check-modules.mjs` checks the literal local names and who declares a
+  `prefix`.
 
 ## Modes
 

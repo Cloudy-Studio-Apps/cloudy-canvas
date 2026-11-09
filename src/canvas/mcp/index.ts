@@ -29,6 +29,7 @@ export { pluginsTools } from "./plugins.mcp";
 export { arrangeTools } from "./arrange.mcp";
 export { copyPropertiesTool } from "./style.mcp";
 export * from "./shared";
+export { SHARED_MCP_INSTRUCTIONS } from "./mcp-instructions";
 export { asUndoStep } from "./as-undo-step";
 export { buildElement, creatableTypes, elementSpec } from "./build-element";
 export { builtInPrefixes } from "./built-in-prefixes";

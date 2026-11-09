@@ -1,4 +1,5 @@
 import type { McpServerDefinition, McpServerTool } from "@shared/core";
+import { SHARED_MCP_INSTRUCTIONS } from "@canvas";
 import { BOARD_MCP_INSTRUCTIONS } from "@board";
 import { DESIGN_MCP_INSTRUCTIONS } from "@design";
 import { notifyError } from "@shared/stores/toast-store";
@@ -39,7 +40,9 @@ export function createAgentServerDefinition(options: AgentServerOptions): McpSer
   return {
     name: SERVER_NAME,
     version: SERVER_VERSION,
-    instructions: `${BOARD_MCP_INSTRUCTIONS}\n${DESIGN_MCP_INSTRUCTIONS}`,
+    instructions: [SHARED_MCP_INSTRUCTIONS, BOARD_MCP_INSTRUCTIONS, DESIGN_MCP_INSTRUCTIONS].join(
+      "\n",
+    ),
     tools: all,
     ...(listFor
       ? {

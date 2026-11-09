@@ -143,7 +143,16 @@ Names from before the API became the barrels:
 
 What each point takes is described in the READMEs of `src/shared/core/modules/`, `src/canvas/modules/`, `src/canvas-ui/modules/` and `src/canvas/elements/` and in the types in `src/canvas/modules/canvas-points.types.ts` and `src/canvas-ui/modules/editor-points.types.ts`.
 
-Agent tools are groups contributed to `api.board.boardMcpTools`: `{ id, tools: ({ kinds }) => [{ name, description, inputSchema, run(host, args) }] }`. They're listed by the app's MCP server like the built-in ones, and `plugins_list` tells agents which plugin adds what. Tool names must be unique; a tool whose name is taken is left out.
+Agent tools are groups contributed to `api.board.boardMcpTools`: `{ id, tools: ({ kinds }) => [{ name, description, inputSchema, run(host, args) }] }`. They're listed by the app's MCP server like the built-in ones, and `plugins_list` tells agents which plugin adds what. Tool names are explained below.
+
+### Tool names
+
+A tool declares only its **local name**; the app serves it as `<plugin id>_<name>`, with your plugin's id as the prefix, whatever the plugin says. A plugin with the id `callout` and a tool named `create` is served as `callout_create`; one with `my-plugin` and `text_get`, as `my-plugin_text_get`. The prefix is forced: a group that declares its own `prefix` is refused.
+
+- The local name is lowercase words joined by `_` (`^[a-z0-9]+(_[a-z0-9]+)*$`), with the action last: `[<object>_]<verb>`, e.g. `notes_list`, `note_create`. Leave the object out when your plugin id already says it.
+- The full name is at most **44 characters** (`a-z`, `0-9`, `_` and `-`), and your plugin id counts toward it, so a short id leaves more room: some agent apps add their own prefix and cap names at 64.
+- **Reserved prefixes**: every built-in module id and topic (`shapes`, `nodes`, `file`, `selection`, `history`, `view`, `arrange`, `style`, `tabs`, `plugins`, `catalog`, `er`, …). A plugin whose id is one of them has all its tools refused, so the tools can't pass for built-in ones.
+- Two tools with the same full name are an error: the later one is refused. A refused tool (clash, too long, bad characters, reserved prefix) is left out of the server and listed with its reason under `refusedTools` of that plugin in `plugins_list`, and the Plugins page shows it like other plugin errors.
 
 ## Stickers
 
@@ -567,4 +576,4 @@ export function activateViewer(api) {
 2. Turn it on (the app asks you to trust it), then press **Reload**.
 3. **Install from folder…** copies a plugin into the app data folder (`<appData>/plugins/<id>/`), replacing an older copy.
 
-`examples/plugins/callout/` is a complete plugin in plain JavaScript: an element type (`TextBoxKind`), its tool with the `O` key, a toolbar button with an SVG icon, a color panel, the `create_callout` agent tool, and its text in English and Spanish (`locales/`).
+`examples/plugins/callout/` is a complete plugin in plain JavaScript: an element type (`TextBoxKind`), its tool with the `O` key, a toolbar button with an SVG icon, a color panel, the `callout_create` agent tool, and its text in English and Spanish (`locales/`).

@@ -37,7 +37,7 @@ export default async function activate(api) {
     label = t("kind.label");
     description = t("kind.description");
     tool = "callout";
-    // Agents create callouts with create_callout, and change them with update_shapes.
+    // Agents create callouts with callout_create, and change them with shapes_update.
     creatable = false;
     patchableFields = new Set(["x", "y", "w", "h", "text", "color"]);
 
@@ -107,7 +107,7 @@ export default async function activate(api) {
   }
 
   const createCalloutTool = {
-    name: "create_callout",
+    name: "create", // served as callout_create: the host adds the plugin id
     description:
       "Adds a callout (a highlighted note with a colored edge) to the open board as one undo " +
       "step and returns its id. x/y are its center in world units.",

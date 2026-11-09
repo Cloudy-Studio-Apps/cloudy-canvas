@@ -1,7 +1,7 @@
 # Design MCP plumbing
 
 The host the design's MCP tools reach (`DesignAgentHost`, `requireDesign`, `requireNodes`), the
-server's instructions (`DESIGN_MCP_INSTRUCTIONS`) and `createDesignMcpTools`. The tools themselves
+server's instructions (`DESIGN_MCP_INSTRUCTIONS`, after the shared and the board's parts) and `createDesignMcpTools`. The tools themselves
 live in their modules (`modules/*/<name>.mcp.ts` or `modules/*/mcp/`).
 
 _How it works. The rules are in the root [CLAUDE.md](../../../../CLAUDE.md)._

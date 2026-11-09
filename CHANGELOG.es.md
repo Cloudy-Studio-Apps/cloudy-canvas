@@ -175,6 +175,11 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   idiomas.
 - Al importar un archivo .fig o .jam, el progreso y la lista de lo que no se pudo traer tal
   cual ahora se muestran en español cuando la aplicación está en español.
+- Las herramientas de los agentes tienen nombres nuevos y ordenados que las agrupan por función,
+  para que un asistente encuentre mejor lo que necesita, y las que comparten tableros y diseños
+  ahora son una sola. Los asistentes que lo admiten solo ven las herramientas del archivo en el que
+  trabajan. Si guardaste listas de permisos para las herramientas de los agentes, permite los
+  nombres nuevos.
 
 ### Correcciones
 

@@ -7,6 +7,8 @@
 //   requires      a module imports a feature that isn't in its `requires` or `uses`
 //   core-feature  a core module imports a feature
 //   mcp           an old *.agent-tool*.ts file, or a .mcp.ts outside <name>.mcp.ts / mcp/
+//   mcp-name      a tool's literal local name in a .mcp.ts isn't lowercase words joined by "_"
+//   mcp-prefix    a module that isn't core (or a file outside src/canvas/mcp) declares a `prefix:`
 //   size          a <name>.module.ts over 120 lines (wiring only; split it)
 //   barrel        a module imports its own product's barrel (`@design`, `@board`) instead of the
 //                 file or module that declares the name
@@ -78,6 +80,13 @@ function exportsValues(file) {
     .some((line) => /^export (\{|\*|const|function|class)/.test(line));
 }
 
+// A tool's local name (the host adds the owner's prefix): `name: "words_like_this",` straight
+// before the tool's `description:` (or its `scope:` line). Schema properties named `name` hold an
+// object, never a string literal followed by `description:`, so they don't match.
+const TOOL_NAME = /^[ \t]*name:\s*"([^"]*)",?[ \t]*\n(?:[ \t]*scope:[^\n]*\n)?[ \t]*description:/gm;
+const LOCAL_NAME = /^[a-z0-9]+(_[a-z0-9]+)*$/;
+const PREFIX_DECLARATION = /\bprefix:\s*["'`]/;
+
 const PUBLIC_ENTRIES = new Set(["", "index", "ui", "ui/index"]);
 const catalog = new Map(PRODUCTS.map((product) => [product, readModules(product)]));
 
@@ -130,6 +139,25 @@ for (const file of sourceFiles("src")) {
     !/^src\/products\/[^/]+\/modules\/([^/]+)\/(\1\.mcp\.ts|mcp\/)/.test(posix)
   ) {
     report(file, 1, "mcp", "a module's MCP tools are <name>.mcp.ts or mcp/<topic>.mcp.ts");
+  }
+
+  if (posix.endsWith(".mcp.ts") || posix.endsWith(".module.ts")) {
+    const text = readFileSync(file, "utf8");
+    if (posix.endsWith(".mcp.ts")) {
+      for (const match of text.matchAll(TOOL_NAME)) {
+        if (LOCAL_NAME.test(match[1])) continue;
+        const line = text.slice(0, match.index).split("\n").length;
+        report(file, line, "mcp-name", `"${match[1]}" must be lowercase words joined by "_"`);
+      }
+    }
+    const declaring = ownerOf(file);
+    const declaringTier = declaring && catalog.get(declaring.product).get(declaring.module)?.tier;
+    const mayDeclare = posix.startsWith("src/canvas/mcp/") || declaringTier === "core";
+    const declared = text.match(PREFIX_DECLARATION);
+    if (declared && !mayDeclare) {
+      const line = text.slice(0, declared.index).split("\n").length;
+      report(file, line, "mcp-prefix", "only core modules and src/canvas/mcp declare a prefix");
+    }
   }
 
   const owner = ownerOf(file);

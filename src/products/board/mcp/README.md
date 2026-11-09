@@ -1,7 +1,7 @@
 # Board MCP plumbing
 
 The host the board's MCP tools reach (`AgentHost`, `requireBoard`), the server's instructions
-(`BOARD_MCP_INSTRUCTIONS`), `createBoardMcpTools` (collects the modules' groups) and `reportApplied`.
+(`BOARD_MCP_INSTRUCTIONS`, after the shared part in `canvas/mcp`), `createBoardMcpTools` (collects the modules' groups) and `reportApplied`.
 The tools themselves live in their modules: the general ones in `modules/core/mcp/`.
 
 _How it works. The rules are in the root [CLAUDE.md](../../../../CLAUDE.md)._
