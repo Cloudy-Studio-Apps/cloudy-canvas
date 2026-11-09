@@ -6,7 +6,8 @@ import type { TabContextValue, TabParam } from "./tab-context.types";
 /** The tab an editor shows, provided by the tab host around each editor. */
 export const TabContext = createContext<TabContextValue | null>(null);
 
-function useTabContext(): TabContextValue {
+/** The editor's tab context: its id and where its file reports to. */
+export function useTabContext(): TabContextValue {
   const value = useContext(TabContext);
   if (!value) throw new Error("useTab must be used inside a file tab (TabContext)");
   return value;

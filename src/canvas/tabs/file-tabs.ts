@@ -1,3 +1,4 @@
+import type { FileInfo } from "@shared/core";
 import type { CanvasDocument } from "../document";
 import { Store } from "../utils";
 import type {
@@ -109,6 +110,17 @@ export class FileTabs {
     patch: Partial<Pick<FileTab, "name" | "unsaved" | "hosting" | "params">>,
   ): void {
     this.publish({ tabs: patchTab(this.tabs, id, () => patch) });
+  }
+
+  /**
+   * The file a loaded tab's document is now saved in (its first save, Save as, a draft becoming a
+   * file), so an editor mounted on it again doesn't take it for a new file.
+   */
+  setInfo(id: string, info: FileInfo): void {
+    const tab = this.get(id);
+    if (tab?.load.status !== "ready" || tab.load.info === info) return;
+    const load = { ...tab.load, info };
+    this.publish({ tabs: patchTab(this.tabs, id, () => ({ load })) });
   }
 
   /**

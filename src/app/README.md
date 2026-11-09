@@ -20,7 +20,9 @@ A release shouldn't act like a browser page. `installBrowserGuard()` (`platform/
 The router's root element is `AppFrame` (`tabs/`): the Home area (Home, Settings, Projects, Join
 through `<Outlet />`) with the open file tabs' editors over it. File routes (`/board/:id`,
 `/design/:id`) open their tab through the route sync, and the active tab's route stays in the
-address. See [tabs/](tabs/README.md).
+address. On desktop closing a tab (`closeTab`) or the window (`AppCloseGuard`) saves or asks
+for every tab's changes, and opening a file from the OS never asks (it opens a tab:
+`confirmLeave` only asks on Android). See [tabs/](tabs/README.md).
 
 ## Startup
 

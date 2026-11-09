@@ -21,3 +21,19 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   active tab, a joined session's tab), its route (`tabRoute`: `/<type>/<fileId>`, no params) replaces
   the address, or `/` for Home, so switching tabs doesn't fill the history. A joined session's route
   (`/<type>/live:<fileId>`) only shows its open tab; once that's closed it goes Home.
+- **Closing** (desktop; `AppFrame` mounts these only where `tabsSupported()`):
+  - `closeTab(id)` (`close-tab.ts`) closes a tab without losing its changes. Through its
+    `tabHandles` handle (`canvas-ui/tabs/`): changes nothing will save (autosave off or failing,
+    `needsSave()`) ask first, `CloseTabDialog`: Save · Don't save · Cancel (`askToCloseTab` in
+    `close-tab-prompt.ts`, shown by `CloseTabDialogHost`; the dialog waits while saving, and a
+    cancelled or failed save keeps the tab). Otherwise it runs `finish()` (the engine's last writes
+    and the pending autosave, while the document is still there) and asks if that autosave failed.
+    Then it takes the preview and calls `fileTabs.close`, which leaves a joined live session; the
+    agents bound to the tab go with it. A tab with no editor mounted (hibernated, a live guest) just
+    closes. A tab already closing isn't asked about twice.
+  - `AppCloseGuard` (`app-close-guard.tsx`) is the window's one `appLifecycle.onCloseRequest`: it
+    flushes every mounted tab's pending autosave, then quits once the previews are taken (at most
+    5 s for each step), or asks once when some tab has changes nothing will save: Save all and
+    quit (one tab at a time, stopping at a cancelled or failed save) · Quit without saving ·
+    Cancel. Each editor's quit tasks run after it. Android keeps each file's `CloseFileGuard`
+    instead.

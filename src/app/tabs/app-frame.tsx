@@ -2,6 +2,9 @@ import { useSyncExternalStore } from "react";
 import { Outlet } from "react-router";
 
 import { FileTabsContext, TabHost } from "@canvas-ui/tabs";
+import { tabsSupported } from "@platform";
+import { AppCloseGuard } from "./app-close-guard";
+import { CloseTabDialogHost } from "./close-tab-dialog-host";
 import { fileTabs } from "./file-tabs-instance";
 import { TAB_EDITORS } from "./tab-editors";
 import { useRouteTabSync } from "./use-route-tab-sync";
@@ -9,7 +12,8 @@ import { useRouteTabSync } from "./use-route-tab-sync";
 /**
  * The window under every route: the Home area (Home, Settings, Projects, … through `<Outlet />`)
  * and the open file tabs' editors over it. The route opens and shows tabs (`useRouteTabSync`);
- * while a file tab is shown, the Home area is hidden.
+ * while a file tab is shown, the Home area is hidden. On desktop it also holds the window's close
+ * guard and the close-tab question (Android keeps each file's own guard).
  */
 export function AppFrame() {
   useRouteTabSync();
@@ -24,6 +28,12 @@ export function AppFrame() {
           <Outlet />
         </div>
         <TabHost editors={TAB_EDITORS} />
+        {tabsSupported() && (
+          <>
+            <AppCloseGuard />
+            <CloseTabDialogHost />
+          </>
+        )}
       </div>
     </FileTabsContext>
   );

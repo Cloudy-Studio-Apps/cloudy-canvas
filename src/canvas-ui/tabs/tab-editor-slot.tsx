@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { cn } from "@shared/ui/lib/utils";
 import { ReconnectingBanner } from "../share/reconnecting-banner";
 import { TabContext } from "./tab-context";
+import { tabContextValue } from "./tab-context-value";
 import type { TabEditorSlotProps } from "./tab-host.types";
 
 /**
@@ -12,7 +13,7 @@ import type { TabEditorSlotProps } from "./tab-host.types";
  * (`useSuspendWhenHidden`). A joined live session shows the reconnecting banner over it.
  */
 export function TabEditorSlot({ tabs, tab, active, Editor }: TabEditorSlotProps) {
-  const context = useMemo(() => ({ tabs, tabId: tab.id }), [tabs, tab.id]);
+  const context = useMemo(() => tabContextValue(tabs, tab.id), [tabs, tab.id]);
   return (
     <div
       className={cn("absolute inset-0", !active && "pointer-events-none invisible")}

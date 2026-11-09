@@ -6,8 +6,7 @@ import { exportFile, saveCanvasFileDialog, storage } from "@platform";
 import { useAutosaveStore } from "@shared/stores/autosave-store";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 import { notifyError } from "@shared/stores/toast-store";
-import { useUnsavedChangesStore } from "@shared/stores/unsaved-changes-store";
-import { useTabParam } from "../tabs/tab-context";
+import { useTabContext, useTabParam } from "../tabs/tab-context";
 import { useDocumentMeta } from "../use-document-meta";
 import type {
   CanvasFileContextValue,
@@ -17,7 +16,10 @@ import type {
 } from "./canvas-file.types";
 import { freeFilePath } from "./free-file-path";
 import { useCanvasAutosave } from "./use-canvas-autosave";
+import { useCanvasThumbnail } from "./use-canvas-thumbnail";
 import { useRecentProject } from "./use-recent-project";
+import { useReportUnsaved } from "./use-report-unsaved";
+import { useTabHandle } from "./use-tab-handle";
 import { t } from "./file.i18n";
 
 /** How long the top bar shows that the file was just saved. */
@@ -27,7 +29,9 @@ const SAVED_NOTICE_MS = 3000;
  * Saves the document to its file in the product's `format` (asking where the first time), autosaves
  * it after changes (as a draft in the app data while it has no file) and tracks unsaved changes.
  * A new file whose tab opened with `?dir=` (made in a project's folder) goes there, with a free
- * untitled name, without asking.
+ * untitled name, without asking. It reports to its tab whether it has unsaved changes, the file it
+ * was saved in and its name, takes the file's preview (`useCanvasThumbnail`) and registers the tab's
+ * handle (`tabHandles`: save, flush, finish, capture), which closing a tab or the window uses.
  */
 export function useCanvasFileSaver<O extends object>(
   id: string,
@@ -42,6 +46,9 @@ export function useCanvasFileSaver<O extends object>(
   const [saved, setSaved] = useState<SaveKind | null>(null);
   const autosaveEnabled = useAutosaveStore((state) => state.enabled);
   const meta = useDocumentMeta(engine.doc);
+  const tab = useTabContext();
+  /** Opened without a saved file; kept for the editor's life, even once it's saved. */
+  const [isNew] = useState(initialInfo === null);
 
   const infoRef = useRef(info);
   /** Counts document changes, so a change made while saving keeps the file dirty. */
@@ -51,6 +58,8 @@ export function useCanvasFileSaver<O extends object>(
   const queue = useRef<Promise<unknown>>(Promise.resolve());
   /** A failed autosave is reported once, until a save works again. */
   const autosaveFailed = useRef(false);
+  /** `status` as of now, for the tab's handle (read between renders). */
+  const statusRef = useRef<SaveStatus>("idle");
   const savedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const dir = useTabParam("dir");
   /** The folder a new file made in a project goes to, and the path picked there once. */
@@ -69,12 +78,7 @@ export function useCanvasFileSaver<O extends object>(
 
   useEffect(() => () => clearTimeout(savedTimer.current), []);
 
-  useEffect(() => {
-    const { setDirty: setAppDirty } = useUnsavedChangesStore.getState();
-    // Autosave flushes when the editor closes, so only a file it can't save needs a warning.
-    setAppDirty(dirty && (!autosaveEnabled || status === "error"));
-    return () => setAppDirty(false);
-  }, [dirty, autosaveEnabled, status]);
+  useReportUnsaved(tab, dirty, dirty && (!autosaveEnabled || status === "error"));
 
   /** Writes the file to `path` (once it's known), or to its draft when `path` is `null`. */
   const write = useCallback(
@@ -85,6 +89,7 @@ export function useCanvasFileSaver<O extends object>(
       const fileMeta = { ...engine.doc.meta(), ...(projectId && { projectId }) };
       const at = revision.current;
       const run = queue.current.then(async () => {
+        statusRef.current = "saving";
         setStatus("saving");
         try {
           const path = await target;
@@ -93,8 +98,10 @@ export function useCanvasFileSaver<O extends object>(
             : await storage.saveDraft(id, fileMeta.title || untitled, type, data, fileMeta);
           infoRef.current = file;
           setInfo(file);
+          tab.reportInfo(file);
           savedRevision.current = Math.max(savedRevision.current, at);
           setDirty(revision.current !== savedRevision.current);
+          statusRef.current = "idle";
           setStatus("idle");
           autosaveFailed.current = false;
           useRecentFilesStore.getState().upsert(file);
@@ -107,6 +114,7 @@ export function useCanvasFileSaver<O extends object>(
             notifyError(t("save.error", { noun }), error);
           }
           if (kind === "auto") autosaveFailed.current = true;
+          statusRef.current = "error";
           setStatus("error");
           return false;
         }
@@ -114,7 +122,7 @@ export function useCanvasFileSaver<O extends object>(
       queue.current = run;
       return run;
     },
-    [engine, id, encode, untitled, type, noun],
+    [engine, id, encode, untitled, type, noun, tab],
   );
 
   /** Where a file with no file yet goes without asking (`?dir=`), `null` for nowhere. */
@@ -160,11 +168,27 @@ export function useCanvasFileSaver<O extends object>(
     [write, firstPath],
   );
 
-  useCanvasAutosave(engine, autosave, autosaveEnabled);
+  const autosaveControls = useCanvasAutosave(engine, autosave, autosaveEnabled);
   useRecentProject(id, engine, info);
+  const capture = useCanvasThumbnail(id, engine, saved);
 
   const saveFile = useCallback(() => save(false), [save]);
   const saveFileAs = useCallback(() => save(true), [save]);
+
+  // From refs and the store, so it's right straight after a save, before React re-renders.
+  const needsSave = useCallback(
+    () =>
+      revision.current !== savedRevision.current &&
+      (!useAutosaveStore.getState().enabled || statusRef.current === "error"),
+    [],
+  );
+  useTabHandle(tab.tabId, {
+    save: saveFile,
+    autosave: autosaveControls,
+    capture,
+    queue,
+    needsSave,
+  });
 
   useEffect(() => {
     const removeSave = engine.handleHostAction("save", () => void save(false));
@@ -176,15 +200,17 @@ export function useCanvasFileSaver<O extends object>(
   }, [engine, save]);
 
   const draft = info?.draft === true;
+  const name = meta.title || (info?.name ?? untitled);
+  useEffect(() => tab.reportName(name), [tab, name]);
   return {
     id,
-    name: meta.title || (info?.name ?? untitled),
+    name,
     fileName: info?.name ?? untitled,
     title: meta.title,
     description: meta.description,
     noun,
     path: info && !draft ? info.path : null,
-    isNew: initialInfo === null,
+    isNew,
     draft,
     dirty,
     status,

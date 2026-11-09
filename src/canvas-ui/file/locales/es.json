@@ -19,6 +19,12 @@
     "saveQuit": "Guardar y salir",
     "quit": "Salir"
   },
+  "closeTab": {
+    "title": "¿Guardar los cambios en “{name}”?",
+    "description": "Se perderán si cierras la pestaña sin guardarlos.",
+    "save": "Guardar",
+    "discard": "No guardar"
+  },
   "info": {
     "title": "Título",
     "description": "Descripción",

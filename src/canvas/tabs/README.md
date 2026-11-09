@@ -17,7 +17,10 @@ when it was last shown (`lastActiveAt`) or called by an agent (`lastAgentCallAt`
 session's tab has `live` (its `ShareGuest`) and the `fileId` `live:<fileId>`, so it never matches
 the stored file. Documents come from the product's `TabLoader` (`loaders`, one per `FileType`),
 which reads storage, or the session when `live` is given: a live tab never reloads from storage.
-Once loaded, the tab's `name` is the file's (`info.name`, drafts included).
+Once loaded, the tab's `name` is the file's (`info.name`, drafts included); its editor then keeps
+it in step with the title. `setInfo(id, info)` replaces a loaded tab's `load.info` when its file is
+saved somewhere new (the first save, Save as, a draft becoming a file), so an editor mounted again
+on the document sees the saved file, not a new one.
 
 ## The four states
 

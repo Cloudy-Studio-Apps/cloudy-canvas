@@ -2,6 +2,7 @@ export type * from "./canvas-file.types";
 export type * from "./close-dialog";
 export type * from "./document-info-popover.types";
 export type * from "./load-canvas-file.types";
+export type { AutosaveControls } from "./use-canvas-autosave.types";
 export { CanvasFileContext, useCanvasFile } from "./canvas-file-context";
 export { CloseFileGuard } from "./close-dialog";
 export { DocumentInfoPopover } from "./document-info-popover";

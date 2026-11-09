@@ -25,8 +25,6 @@ export interface LiveBoardSessionProps {
 export interface BoardSessionViewProps {
   engine: BoardEngine;
   file: CanvasFileContextValue;
-  /** Takes the file's preview; a saved file asks before it closes (live sessions don't). */
-  capture?: () => Promise<void>;
   /** The file's project libraries; live guests have none. */
   libraries?: ProjectLibrariesState;
 }

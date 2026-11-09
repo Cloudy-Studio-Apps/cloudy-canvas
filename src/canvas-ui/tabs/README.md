@@ -23,9 +23,18 @@ knows a product: the app gives `TabHost` each product's editor (`app/tabs/`).
   editor: the file drop target (`useCanvasFileDrop`), the crop overlay's and the live 3D edit's
   Enter/Esc, the color wizard's keys; presence stops following the pointer while the engine is
   `suspended`.
-- **`TabContext`** (`tab-context.ts`) is the tab an editor shows (`{ tabs, tabId }`). `useTab()` is
+- **`TabContext`** (`tab-context.ts`) is the tab an editor shows (`{ tabs, tabId }`, plus what its
+  file reports to it, built by the slot with `tabContextValue`: `reportUnsaved`, `reportInfo`
+  (`FileTabs.setInfo`) and `reportName`, each changing the tab only when the value differs;
+  `useTabContext()` reads it). `useTab()` is
   the `FileTab`, re-read when it changes: its `load` (the document, owned by the tab: editors never
   destroy it), `fileId`, `live`. `useTabParam(name)` reads the search params of the route the tab
   opened with (`dir`, `project`, `libraries`, `starter`, `mode`), and `useDropTabParam()` forgets
   one once used (a starter runs once). Editors and their session hooks read these instead of the
   router's search params, since a tab outlives its route.
+- **`tabHandles`** (`tab-handles.ts`) holds, by tab id, the `TabHandle` of each tab whose editor is
+  mounted, registered by its file's saver (`useCanvasFileSaver`): `save()`, `flush()` (the pending
+  autosave now, awaited), `finish()` (the closing work: the engine's last writes, then the
+  autosave), `capture()` (the preview) and `needsSave()` (changes nothing will save, as of now).
+  Not reactive: the app reads it when closing a tab or the window (`app/tabs/`). A tab with no
+  handle (hibernated, a live guest) has nothing to save.

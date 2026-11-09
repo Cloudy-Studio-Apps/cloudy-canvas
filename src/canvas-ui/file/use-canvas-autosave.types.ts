@@ -5,3 +5,14 @@ export interface FinalWork {
   /** Whether the work changed the document. */
   done: Promise<boolean>;
 }
+
+/** What a file's saver can ask of its autosave. */
+export interface AutosaveControls {
+  /** Runs the pending autosave now and waits for it. */
+  flush(): Promise<void>;
+  /**
+   * The closing work now: the engine's last writes (`finishBeforeSave`, then the sweep), then the
+   * autosave, forced when that work changed the document.
+   */
+  finish(): Promise<void>;
+}

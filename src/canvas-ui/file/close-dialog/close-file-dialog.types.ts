@@ -11,8 +11,3 @@ export interface CloseFileDialogProps {
   busy: boolean;
   onChoose: (choice: CloseChoice) => void;
 }
-
-export interface CloseFileGuardProps {
-  /** Takes the file's preview now (see `useCanvasThumbnail`); called when the dialog opens. */
-  capture: () => Promise<void>;
-}
