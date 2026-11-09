@@ -2,10 +2,12 @@ import { useEffect, useRef, useSyncExternalStore } from "react";
 import { useLocation, useNavigate } from "react-router";
 
 import { tabsSupported } from "@platform";
+import { notifyError } from "@shared/stores/toast-store";
 import { fileTabs } from "./file-tabs-instance";
 import { leaveFile } from "./leave-file";
 import { openRouteTab } from "./open-route-tab";
 import { fileRouteOf, tabRoute } from "./tab-route";
+import { t } from "./tabs.i18n";
 
 /** Android's route changes, applied one after another (see `useRouteTabSync`). */
 let androidRoutes: Promise<void> = Promise.resolve();
@@ -42,17 +44,27 @@ export function useRouteTabSync(): void {
     }
     let current = true;
     pending.current += 1;
-    androidRoutes = androidRoutes.then(async () => {
-      try {
-        if (!current) return;
-        const leaving = fileTabs.store.get().tabs.filter((tab) => tab.fileId !== file?.id);
-        for (const tab of leaving) await leaveFile(tab.id);
-      } finally {
-        // Counted down and shown in one step, so the effect below sees both or neither.
-        pending.current -= 1;
-        if (current) show();
-      }
-    });
+    androidRoutes = androidRoutes
+      .then(async () => {
+        try {
+          if (!current) return;
+          const leaving = fileTabs.store.get().tabs.filter((tab) => tab.fileId !== file?.id);
+          for (const tab of leaving) {
+            // One file that fails to close doesn't keep the others, or this route, from going on.
+            await leaveFile(tab.id).catch((error: unknown) => {
+              notifyError(t("close.failed"), error);
+            });
+          }
+        } finally {
+          // Counted down and shown in one step, so the effect below sees both or neither.
+          pending.current -= 1;
+          if (current) show();
+        }
+      })
+      // The queue never stays rejected: a failure here would skip every later route change.
+      .catch((error: unknown) => {
+        notifyError(t("close.failed"), error);
+      });
     return () => {
       current = false;
     };

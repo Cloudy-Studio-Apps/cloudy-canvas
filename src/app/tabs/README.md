@@ -25,7 +25,9 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   last writes, the sweep and the pending autosave see the document, then `fileTabs.close`), as
   leaving the editor did before tabs; Android's route changes run one after another (a newer one
   makes an older one skip showing its route), and the route doesn't follow the active tab while
-  one is pending. `FileTabs`' own `maxFileTabs` limit is only a safety net. The other way, when the active tab changes from elsewhere (a tab click, closing the
+  one is pending. The queue never stays stuck: waiting for `finish()` is capped at 5 s (as the
+  quit tasks are), and a file that fails to close is reported (`notifyError`) without stopping the
+  other leaves or the route. `FileTabs`' own `maxFileTabs` limit is only a safety net. The other way, when the active tab changes from elsewhere (a tab click, closing the
   active tab, a joined session's tab), its route (`tabRoute`: `/<type>/<fileId>`, no params) replaces
   the address, or `/` for Home, so switching tabs doesn't fill the history. A joined session's route
   (`/<type>/live:<fileId>`) only shows its open tab; once that's closed it goes Home.
