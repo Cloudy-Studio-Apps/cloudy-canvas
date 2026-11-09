@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 
 import { ShareGuest } from "@canvas";
-import { useHeldGuest, useStoreState } from "@canvas-ui";
+import { useFileTabsModel, useHeldGuest, useStoreState } from "@canvas-ui";
 import { shareTransport } from "@platform";
 import type { ShareTransport } from "@shared/core";
 import { JoinMessage } from "./join-message";
@@ -32,6 +32,7 @@ export function JoinSession({ ticketText, ticket, identity }: JoinSessionProps) 
 
 function JoinedSession({ guest, onEnd }: JoinedSessionProps) {
   const state = useStoreState(guest.state);
+  const fileTabs = useFileTabsModel();
   /** Given to its tab: what happens to it next is the tab's. */
   const handedOver = useRef(false);
   useMissingPluginsNotice(state.file);
@@ -40,12 +41,12 @@ function JoinedSession({ guest, onEnd }: JoinedSessionProps) {
     if (handedOver.current) return;
     const { status, end } = state;
     if (status === "live") {
-      handedOver.current = openLiveTab(guest);
+      handedOver.current = openLiveTab(fileTabs, guest);
     } else if (status === "closed" && end) {
       toastSessionEnd(end);
       onEnd();
     }
-  }, [guest, state, onEnd]);
+  }, [fileTabs, guest, state, onEnd]);
 
   const host = state.host?.name ?? t("session.theHost");
   switch (state.status) {
