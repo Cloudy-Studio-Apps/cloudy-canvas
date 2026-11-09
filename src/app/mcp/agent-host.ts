@@ -1,42 +1,79 @@
 import { createId, type FileType } from "@shared/core";
+import type { AgentFileRef, AgentNewFile, TabSource, TabsAgentHost } from "@canvas";
 import type { AgentHost, OpenBoard } from "@board";
 import { boardFiles } from "@board/ui";
 import type { DesignAgentHost, OpenDesign } from "@design";
 import { designFiles } from "@design/ui";
 import { fontLibrary, readLocalFile, storage, writeExportFile } from "@platform";
+import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 import { fileTabs } from "../tabs/file-tabs-instance";
 import { withWorkspace } from "./agent-call-host";
+import { openInAgentTab } from "./agent-open-tab";
 import { agentPlugins } from "./agent-plugins";
 import type { AgentTabs } from "./agent-tab-binding.types";
-import { prepareAgentCall, TAB_CLOSED, tabAgentFile } from "./agent-tab-files";
+import { TAB_CLOSED, tabAgentFile } from "./agent-tab-files";
+import { findFilesByName, searchedPlaces } from "./tabs/agent-file-lookup";
+import { resolveNewFile } from "./tabs/agent-new-file";
+import { tabsHostFor } from "./tabs/tabs-host";
 
 /**
  * What agent tools reach outside the engine, for one collaborator: the board or design of its
  * tab (in its own workspace, see `withWorkspace`), recent files, opening files in background
  * tabs, plugins, reading and writing files and the fonts.
  */
-export function agentHostFor(collaboratorId: string, tabs: AgentTabs): AgentHost & DesignAgentHost {
+export function agentHostFor(
+  collaboratorId: string,
+  tabs: AgentTabs,
+): AgentHost & DesignAgentHost & TabsAgentHost {
   const board = (file: OpenBoard) => withWorkspace(file, collaboratorId);
   const design = (file: OpenDesign) => withWorkspace(file, collaboratorId);
-  /**
-   * Opens the file in a background tab (never shown), moves the session there and waits for its
-   * editor; resolves with the tab's id.
-   */
-  const openInTab = async (type: FileType, fileId: string): Promise<string> => {
-    const tab = fileTabs.open({ type, fileId }, { activate: false });
-    tabs.bind(collaboratorId, tab.id);
-    const end = await prepareAgentCall(tabs, collaboratorId);
-    end();
-    return tab.id;
-  };
+  const openInTab = (source: TabSource) => openInAgentTab(tabs, collaboratorId, source);
   const opened = <F>(file: F | null): F => {
     if (!file) throw new Error("The file opened in another kind of tab.");
     return file;
   };
-  const showBoard = async (id: string) =>
-    board(opened(boardFiles.get(await openInTab("board", id))));
-  const showDesign = async (id: string) =>
-    design(opened(designFiles.get(await openInTab("design", id))));
+  const showBoard = async (source: TabSource) =>
+    board(opened(boardFiles.get(await openInTab(source))));
+  const showDesign = async (source: TabSource) =>
+    design(opened(designFiles.get(await openInTab(source))));
+  /** The storage id of what `ref` names, or the candidates when several files have the name. */
+  const resolve = async (type: FileType, ref: AgentFileRef) => {
+    if ("id" in ref) {
+      await checkOpenable(ref.id, type);
+      return { id: ref.id };
+    }
+    const hits = await findFilesByName(type, ref.name);
+    const [only, ...others] = hits;
+    if (!only) {
+      throw new Error(`No ${type} named "${ref.name}" in ${await searchedPlaces()}.`);
+    }
+    if (others.length > 0) return { candidates: hits.map((hit) => hit.match) };
+    const id = only.id ?? (await useRecentFilesStore.getState().open(only.match.path)).id;
+    await checkOpenable(id, type);
+    return { id };
+  };
+  const openFile = async <F>(
+    type: FileType,
+    ref: AgentFileRef,
+    show: (source: TabSource) => Promise<F>,
+  ) => {
+    const found = await resolve(type, ref);
+    return found.id === undefined ? found : show({ type, fileId: found.id });
+  };
+  const createFile = async <F>(
+    type: FileType,
+    options: AgentNewFile,
+    show: (source: TabSource) => Promise<F>,
+  ) => {
+    const where = await resolveNewFile(options);
+    if ("matchingProjects" in where) return where;
+    return show({
+      type,
+      fileId: createId(),
+      params: where.params,
+      ...(options.name && { name: options.name }),
+    });
+  };
   /** The session's tab's file of one product (binding it, see `sessionTab`). */
   const fileOf = <F>(files: { get(tabId: string): F | null }): F | null => {
     const tabId = sessionTab(tabs, collaboratorId);
@@ -50,16 +87,11 @@ export function agentHostFor(collaboratorId: string, tabs: AgentTabs): AgentHost
       const found = await Promise.all(files.map((file) => storage.exists(file.id)));
       return files.map((file, i) => ({ ...file, missing: !found[i] }));
     },
-    openBoard: async (id) => {
-      await checkOpenable(id, "board");
-      return showBoard(id);
-    },
-    newBoard: () => showBoard(createId()),
-    openDesign: async (id) => {
-      await checkOpenable(id, "design");
-      return showDesign(id);
-    },
-    newDesign: () => showDesign(createId()),
+    openBoard: (ref) => openFile("board", ref, showBoard),
+    newBoard: (options) => createFile("board", options, showBoard),
+    openDesign: (ref) => openFile("design", ref, showDesign),
+    newDesign: (options) => createFile("design", options, showDesign),
+    ...tabsHostFor(collaboratorId, tabs),
     plugins: agentPlugins,
     writeFile: writeExportFile,
     readFile: readLocalFile,

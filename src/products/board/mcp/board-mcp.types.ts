@@ -1,4 +1,14 @@
-import type { AgentFile, AgentRecentFile, McpTool, McpToolGroup, ElementKinds } from "@canvas";
+import type {
+  AgentFile,
+  AgentFileCandidates,
+  AgentFileRef,
+  AgentNewFile,
+  AgentProjectChoice,
+  AgentRecentFile,
+  McpTool,
+  McpToolGroup,
+  ElementKinds,
+} from "@canvas";
 
 import type { BoardEngine, BoardWorkspace } from "../board-engine.types";
 import type { BoardToolOptions } from "../board-options.types";
@@ -18,9 +28,16 @@ export type OpenBoard = AgentFile<BoardEngine>;
 export interface AgentHost {
   board(): AgentBoard | null;
   recentFiles(): Promise<AgentRecentFile[]>;
-  /** Opens a board in the window and resolves once it's ready. */
-  openBoard(id: string): Promise<AgentBoard>;
-  newBoard(): Promise<AgentBoard>;
+  /**
+   * Opens a board (by id or name) in a background tab, moves the agent there and resolves once
+   * it's ready; several boards with that name resolve with the candidates, changing nothing.
+   */
+  openBoard(file: AgentFileRef): Promise<AgentBoard | AgentFileCandidates>;
+  /**
+   * A new board in a background tab. A name that matches a project resolves with the matching
+   * projects, creating nothing, until `project` says which (or `"none"`).
+   */
+  newBoard(options: AgentNewFile): Promise<AgentBoard | AgentProjectChoice>;
   /** The installed plugins and what happened to them when the app started. */
   plugins(): AgentPlugin[];
   /** Writes a file to an absolute path (exports), replacing what's there. */

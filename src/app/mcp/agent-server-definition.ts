@@ -1,4 +1,5 @@
 import type { McpServerDefinition } from "@shared/core";
+import { tabsTools } from "@canvas";
 import { BOARD_MCP_INSTRUCTIONS, createBoardMcpTools } from "@board";
 import { getBoardModules, getBoardProduct } from "@board/ui";
 import { createDesignMcpTools, DESIGN_MCP_INSTRUCTIONS } from "@design";
@@ -27,7 +28,9 @@ export function createAgentServerDefinition({
       t("mcp.toolLeftOut"),
       new Error(`"${tool.name}" (from "${group.id}") has the name of another tool.`),
     );
+  for (const tool of tabsTools) taken.add(tool.name);
   const tools = [
+    ...tabsTools,
     ...createBoardMcpTools(getBoardModules(), getBoardProduct().kinds, skipped, taken),
     ...createDesignMcpTools(getDesignModules(), getDesignProduct().kinds, skipped, taken),
   ];

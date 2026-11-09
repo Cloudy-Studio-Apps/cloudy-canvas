@@ -1,8 +1,20 @@
-import { stringArg } from "@canvas";
+import {
+  ASK_ABOUT_PROJECT,
+  fileRefArg,
+  isFileCandidates,
+  isProjectChoice,
+  newFileArgs,
+  SEVERAL_FILES_MATCH,
+} from "@canvas";
 
 import { requireDesign, type AgentDesign, type DesignMcpTool } from "../../../mcp";
 
 const NO_ARGS = { type: "object", properties: {} };
+
+const NAME_PROPERTY = {
+  type: "string",
+  description: "The whole name, case-insensitive, of a recent design or a design inside a project.",
+};
 
 export const designFileTools: DesignMcpTool[] = [
   {
@@ -30,16 +42,47 @@ export const designFileTools: DesignMcpTool[] = [
   {
     name: "open_design",
     description:
-      "Opens a design from list_recent_designs in the app window. Unsaved changes on the file " +
-      "open now stay unsaved, so save it first if needed.",
-    inputSchema: { type: "object", required: ["id"], properties: { id: { type: "string" } } },
-    run: async (host, args) => designInfo(await host.openDesign(stringArg(args, "id"))),
+      "Opens a design in its own tab and moves you there; the user's view doesn't change. Give " +
+      "its id (from list_recent_designs) or its name: the name is matched case-insensitively " +
+      "against the recent designs and the designs inside the user's projects. If several " +
+      "designs match, nothing is opened and you get the candidates: ask the user which one. " +
+      "Unsaved changes elsewhere stay unsaved, so call save_design first if needed.",
+    inputSchema: {
+      type: "object",
+      properties: { id: { type: "string" }, name: NAME_PROPERTY },
+    },
+    run: async (host, args) => {
+      const opened = await host.openDesign(fileRefArg(args));
+      return isFileCandidates(opened)
+        ? { message: SEVERAL_FILES_MATCH, candidates: opened.candidates }
+        : designInfo(opened);
+    },
   },
   {
     name: "new_design",
-    description: "Opens a new empty design in the app window. It's saved with save_design.",
-    inputSchema: NO_ARGS,
-    run: async (host) => designInfo(await host.newDesign()),
+    description:
+      "Creates a new empty design in its own tab and moves you there; the user's view doesn't " +
+      "change. It's a draft the app saves by itself unless you save it with save_design. With " +
+      "a name, if a project's name matches the name's words (every word of one is among the " +
+      "words of the other, case-insensitive), nothing is created and you get " +
+      "matchingProjects: ask the user whether to save it in that project, then call again " +
+      'with project set to its id, or "none" for a draft.',
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "The name of the new design." },
+        project: {
+          type: "string",
+          description: 'A project id (from matchingProjects) to create it in, or "none".',
+        },
+      },
+    },
+    run: async (host, args) => {
+      const created = await host.newDesign(newFileArgs(args));
+      return isProjectChoice(created)
+        ? { message: ASK_ABOUT_PROJECT, matchingProjects: created.matchingProjects }
+        : designInfo(created);
+    },
   },
   {
     name: "save_design",
@@ -62,5 +105,13 @@ export const designFileTools: DesignMcpTool[] = [
 
 function designInfo({ id, name, path, engine }: AgentDesign) {
   const { title, description } = engine.doc.meta();
-  return { id, name: title || name, title, description, path };
+  const shown = title || name;
+  return {
+    id,
+    name: shown,
+    title,
+    description,
+    path,
+    message: `Opened in the tab "${shown}"; you now work there.`,
+  };
 }
