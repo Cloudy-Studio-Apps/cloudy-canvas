@@ -4,6 +4,7 @@ export * from "./app-links";
 export * from "./app-repository";
 export * from "./app-updates";
 export type * from "./app-lifecycle.types";
+export type * from "./window-chrome.types";
 export type * from "./clipboard.types";
 export type * from "./color-conversion.types";
 export * from "./file-modes";

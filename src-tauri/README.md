@@ -16,3 +16,12 @@ never matches a name starting with a dot unless the pattern has the dot itself (
 `requireLiteralLeadingDot`, on by default there). So hidden folders the app writes are listed by
 name: `**/.cloudy` and `**/.cloudy/**`, a project's data folder. Add new hidden folders the same
 way rather than turning the option off, which would open every dotfile (`~/.ssh`, …) to the webview.
+
+## Window chrome
+
+The main window has no system decorations (`decorations: false` in `tauri.conf.json`): the app draws
+its own title bar (`windowChrome` in `src/platform/`). `tauri.macos.conf.json` puts the native
+decorations back on macOS with an overlay title bar and a hidden title, so the traffic lights stay
+native. Tauri merges platform configs over the base, but arrays are replaced, not merged, so the macOS
+file repeats the whole window entry. The window permissions the title bar needs (`start-dragging`,
+`minimize`, `toggle-maximize`, `close`, `is-maximized`, `set-title`) are in `capabilities/desktop.json`.
