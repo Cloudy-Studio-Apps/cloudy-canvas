@@ -26,6 +26,6 @@ export const layersModule = defineModule({
       order: 10,
       component: LayersTab,
     });
-    host.contribute(designMcpTools, { id: "layers", prefix: "design", tools: () => layersTools });
+    host.contribute(designMcpTools, { id: "layers", tools: () => layersTools });
   },
 });

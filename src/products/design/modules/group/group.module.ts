@@ -35,7 +35,7 @@ export const groupModule = defineModule({
       },
       { id: "ungroup", label: t("commands.ungroup"), keys: [{ key: "g", mod: true, shift: true }] },
     );
-    host.contribute(designMcpTools, { id: "group", prefix: "design", tools: () => groupTools });
+    host.contribute(designMcpTools, { id: "group", tools: () => groupTools });
 
     host.contribute(designEditor.sessionHooks, { id: "group-commands", use: useGroupCommands });
     host.contribute(designEditor.layerIcons, { type: "group", icon: Group });

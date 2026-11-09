@@ -35,7 +35,7 @@ export const vectorModule = defineModule({
     host.contribute(designCanvas.pasteSvg, (svg, view, index) =>
       svgToVector(svg, view, index, t("label")),
     );
-    host.contribute(designMcpTools, { id: "vector", prefix: "design", tools: () => vectorTools });
+    host.contribute(designMcpTools, { id: "vector", tools: () => vectorTools });
     host.contribute(
       designCanvas.tools,
       { id: "pencil", create: (ctx) => new PencilTool(ctx), keys: [{ key: "p", shift: true }] },

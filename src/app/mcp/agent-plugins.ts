@@ -1,4 +1,3 @@
-import type { CollectedMcpTools } from "@canvas";
 import type { AgentPlugin } from "@board";
 import { usePluginsStore } from "@shared/stores/plugins-store";
 import { agentTools } from "./agent-tools";
@@ -9,11 +8,11 @@ import { agentTools } from "./agent-tools";
  */
 export function agentPlugins(): AgentPlugin[] {
   const { installed, statuses } = usePluginsStore.getState();
-  const { board, design } = agentTools();
+  const { served, refused: allRefused } = agentTools();
 
   return installed.map(({ manifest }) => {
     const status = statuses[manifest.id];
-    const refused = [...board.refused, ...design.refused]
+    const refused = allRefused
       .filter((tool) => tool.pluginId === manifest.id)
       .map(({ name, reason }) => ({ name, reason }));
     return {
@@ -23,13 +22,8 @@ export function agentPlugins(): AgentPlugin[] {
       ...(manifest.description ? { description: manifest.description } : {}),
       state: status?.state ?? "disabled",
       ...(status?.error ? { error: status.error } : {}),
-      tools: [...toolNames(board, manifest.id), ...toolNames(design, manifest.id)],
+      tools: served.filter((tool) => tool.pluginId === manifest.id).map((tool) => tool.name),
       ...(refused.length > 0 ? { refusedTools: refused } : {}),
     };
   });
-}
-
-/** The full names of a plugin's tools in one product. */
-function toolNames(collected: CollectedMcpTools<unknown>, pluginId: string): string[] {
-  return collected.tools.filter((tool) => tool.pluginId === pluginId).map((tool) => tool.name);
 }

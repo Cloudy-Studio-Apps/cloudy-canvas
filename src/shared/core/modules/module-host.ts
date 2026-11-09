@@ -63,6 +63,7 @@ export function createModuleHost(
     ownerOf: <T>(point: ExtensionPoint<T>, key: string) =>
       points.get(point as ExtensionPoint<unknown>)?.keys.get(key)?.module,
     has: (moduleId) => loaded.has(moduleId),
+    moduleIds: () => [...loaded],
     tierOf: (moduleId) => byId.get(moduleId)?.tier,
     require<T extends object>(moduleId: string): T {
       if (!registering) {

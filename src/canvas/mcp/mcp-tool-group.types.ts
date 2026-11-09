@@ -7,9 +7,9 @@ import type { McpTool } from "./mcp-tool.types";
 export interface McpToolGroup<H, C> {
   id: string;
   /**
-   * The topic its tools' names start with (`shapes` → `shapes_create`). Only core modules' and
-   * the shared groups declare one (core ones must); a feature's tools take its module id, a
-   * plugin's its plugin id.
+   * The topic its tools' names start with (`shapes` → `shapes_create`). Only core modules and the
+   * shared groups may declare one; without it the tools take the module id, and a plugin's always
+   * take its plugin id.
    */
   prefix?: string;
   tools(context: C): McpTool<H>[];

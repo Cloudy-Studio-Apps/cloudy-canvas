@@ -8,9 +8,9 @@ import { agentTools } from "./agent-tools";
  * per plugin with the tools its modules add.
  */
 export function agentToolCatalog(): AgentToolSection[] {
-  const { board, design } = agentTools();
+  const { board, design, served } = agentTools();
   const plugins = agentPlugins().filter((plugin) => plugin.tools.length > 0);
-  const all = new Map([...board.tools, ...design.tools].map((tool) => [tool.name, info(tool)]));
+  const all = new Map(served.map((tool) => [tool.name, info(tool)]));
   const own = (tools: readonly CollectedMcpTool<unknown>[]) =>
     tools.filter((tool) => tool.pluginId === undefined).map(info);
 

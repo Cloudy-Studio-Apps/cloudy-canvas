@@ -1,12 +1,10 @@
 import type { McpServerDefinition } from "@shared/core";
-import { tabsTools } from "@canvas";
 import { BOARD_MCP_INSTRUCTIONS } from "@board";
 import { DESIGN_MCP_INSTRUCTIONS } from "@design";
 import { notifyError } from "@shared/stores/toast-store";
 import { t } from "../app.i18n";
 import type { AgentServerOptions } from "./agent-server-definition.types";
 import { agentTools } from "./agent-tools";
-import { servedAgentTools } from "./served-agent-tools";
 
 const SERVER_NAME = "cloudy-canvas";
 const SERVER_VERSION = "0.1.0";
@@ -21,16 +19,7 @@ export function createAgentServerDefinition({
   prepare,
   notesFor,
 }: AgentServerOptions): McpServerDefinition {
-  const { board, design } = agentTools();
-  const refused = [...board.refused, ...design.refused];
-  const tools = servedAgentTools(
-    [
-      ...tabsTools.map((tool) => ({ name: tool.name, tool, moduleId: "tabs" })),
-      ...board.tools,
-      ...design.tools,
-    ],
-    refused,
-  );
+  const { served: tools, refused } = agentTools();
   for (const { name, pluginId, reason } of refused) {
     notifyError(t("mcp.toolLeftOut"), new Error(`"${name}" (plugin "${pluginId}"): ${reason}`));
   }

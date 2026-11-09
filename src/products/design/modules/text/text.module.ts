@@ -40,7 +40,6 @@ export const textModule = defineModule({
     host.contribute(designCanvas.options, { textTypography: TEXT_DEFAULTS.typography });
     host.contribute(designMcpTools, {
       id: "text",
-      prefix: "design",
       tools: () => textTools(() => host.get(textTemplates)),
     });
     // Ranges using a text style are bound to it, so the token sync restyles them.

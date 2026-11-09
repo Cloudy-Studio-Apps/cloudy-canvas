@@ -39,10 +39,6 @@ export const layerExportModule = defineModule({
       when: () => true,
       component: ExportSection,
     });
-    host.contribute(designMcpTools, {
-      id: "layer-export",
-      prefix: "design",
-      tools: () => layerExportTools,
-    });
+    host.contribute(designMcpTools, { id: "layer-export", tools: () => layerExportTools });
   },
 });

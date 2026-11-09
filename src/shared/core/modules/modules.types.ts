@@ -29,6 +29,8 @@ export interface ModuleHost {
   ownerOf<T>(point: ExtensionPoint<T>, key: string): string | undefined;
   /** Whether a module with this id is loaded. */
   has(moduleId: string): boolean;
+  /** The ids of the loaded modules, in load order. */
+  moduleIds(): readonly string[];
   /** A module's `tier`: `"core"` or `"feature"` for built-ins, `undefined` for plugins' (or unknown ids). */
   tierOf(moduleId: string): "core" | "feature" | undefined;
   /**
