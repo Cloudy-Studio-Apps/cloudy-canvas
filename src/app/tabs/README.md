@@ -12,7 +12,8 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   the route sync and renders the Home area (`<Outlet />`: Home, Settings, Projects, Join, …) with
   the tabs' editors over it (`TabHost` with `TAB_EDITORS`, each product's editor loaded with
   `lazyComponent`, the full-window loading screen until it's there). While a file tab is shown, the
-  Home area is hidden.
+  Home area is hidden. It starts the tabs' memory policy (`fileTabs.startPolicy()`, every 10 s,
+  [canvas/tabs/](../../canvas/tabs/README.md#the-memory-policy)) for the app's life.
 - **Route sync** (`useRouteTabSync`): the file routes `/board/:id` and `/design/:id` render nothing
   themselves. A file route opens its tab (`fileTabs.open({ type, fileId, params })`, `params` from
   the search params; an id that isn't in storage is a new file, as before), so every existing

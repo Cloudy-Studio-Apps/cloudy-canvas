@@ -35,21 +35,23 @@ Who changes them:
 
 - `open(source, { activate })` reuses the tab with the same `fileId`. A new one starts
   `hibernated` with nothing loaded; with `activate` (the default) it's shown at once.
-  `maxFileTabs` (1 on Android) closes the least recently shown tabs to make room.
+  `maxFileTabs` (1 on Android) closes the least recently shown tabs to make room; the one on
+  screen goes only for a tab opened to replace it, never for one opened in the background.
 - `activate(id)` shows a tab (`null`: Home): it becomes `active` and loads, and the tab left
   becomes `headless`. Both get `lastActiveAt`.
 - `setState(id, state)` moves a background tab between `hibernated`, `document` and `headless`
   (the active one changes only through `activate`). `hibernated` destroys the document (its undo
   history goes with it) and sets `load` back to `idle`; the others load it if it isn't in memory.
-  The memory policy (to come) is what calls it; it must never hibernate a tab with an agent bound,
-  a live session or unsaved changes.
+  The memory policy (below) is what calls it; it never hibernates a tab with an agent bound, a
+  live session or unsaved changes (`mayHibernate`).
 - `close(id)` destroys the document, leaves the tab's live session and, for a stored file,
   remembers it: `reopenClosed()` opens the last of the 10 closed ones (this session only). Closing
   the active tab shows its right neighbor, else its left one, else Home. Asking about unsaved
   changes is the host's job, before it calls `close`.
 
-`ensureLoaded(id)` returns the document, loading it once (concurrent calls share the load). A
-document whose load ends after its tab was hibernated or closed is destroyed. A failed load leaves
+`ensureLoaded(id)` returns the document, loading it once (concurrent calls share the load); a
+`hibernated` tab whose document it loads becomes `document` (a tab holding its document is at
+least that). A document whose load ends after its tab was hibernated or closed is destroyed. A failed load leaves
 `load` in `error`; the next `ensureLoaded` tries again.
 
 ## Agents
@@ -57,3 +59,44 @@ document whose load ends after its tab was hibernated or closed is destroyed. A 
 `bindAgent(id, session)` binds an agent session to one tab (moving it out of the one it was in),
 `unbindAgent(session)` frees it, and `noteAgentCall(id)` sets `lastAgentCallAt`. `move(id, index)`
 reorders the tabs; `dispose()` destroys every document and leaves every live session.
+
+## The memory policy
+
+`evaluate()` moves the background tabs between states; it runs after every change (once per batch,
+in a microtask) and every `TAB_POLICY_INTERVAL_MS` (10 s) once the app calls `startPolicy()`
+(`app/tabs/AppFrame`), since time alone moves tabs down. `targetState(tab, ctx)` (`tab-policy.ts`)
+is the table below, first match wins (`ctx.recentRank`: the tab's place among the most recently
+shown ones, 0 the most recent, the active tab included):
+
+| Tab                                                                           | State        |
+| ----------------------------------------------------------------------------- | ------------ |
+| On screen                                                                     | `active`     |
+| Left less than `leaveGraceMs` ago                                             | `headless`   |
+| An agent bound and calling (`now - lastAgentCallAt < agentActiveMs`)          | `headless`   |
+| Hosting a live session (for now, see below)                                   | `headless`   |
+| An agent bound but quiet, a joined live session, or `unsaved`                 | `document`   |
+| Among the `recentTabs` most recent, or shown less than `hibernateAfterMs` ago | `document`   |
+| Otherwise                                                                     | `hibernated` |
+
+The numbers are `TAB_LIMITS` (`tab-limits.ts`), tunable: `leaveGraceMs` 30 s, `agentActiveMs` 2 min
+(the title bar's pulsing agent avatar uses it too), `recentTabs` 5, `hibernateAfterMs` 10 min,
+`maxHeadless` 3.
+
+`planTabStates` turns that into moves: a tab only goes **down** to its target, never up, so a tab
+opened in the background or restored and never clicked stays `hibernated` with no document until
+it's shown; the one exception is an agent calling, which brings its tab's engine back
+(`headless`). Then at most `maxHeadless` tabs keep an engine: past that, the least recently shown
+headless tabs drop to `document`, the ones an agent is calling last; a hosting tab is never
+dropped. A hosting tab stays `headless` while it's in the background, since its session's
+autosave lives in its editor; once the document autosaves on its own it will drop to `document`
+like a joined one.
+
+**Leaving `headless`** (`leave`): a background tab's editor goes only after the host readied it,
+through the `TabLeaveGuard` it sets with `setLeaveGuard` (`canvas-ui/tabs/tabLeaveGuard`): its
+pending autosave is flushed, its preview taken, and before hibernating its closing work run (the
+engine's last writes and their save). Meanwhile the tab stays `headless` with its editor mounted
+and the policy leaves it alone. Then it goes to `document` (the editor unmounts) and, toward
+`hibernated`, its document is destroyed only once the editor is gone and its last save took the
+data (`guard.unmounted`). A tab shown again meanwhile keeps its editor. A tab whose changes
+nothing would save (autosave off or failing) keeps its editor (so the cap can be passed): the
+policy tries it again on its next timed run.

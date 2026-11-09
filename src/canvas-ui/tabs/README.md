@@ -36,5 +36,13 @@ knows a product: the app gives `TabHost` each product's editor (`app/tabs/`).
   mounted, registered by its file's saver (`useCanvasFileSaver`): `save()`, `flush()` (the pending
   autosave now, awaited), `finish()` (the closing work: the engine's last writes, then the
   autosave), `capture()` (the preview) and `needsSave()` (changes nothing will save, as of now).
-  Not reactive: the app reads it when closing a tab or the window (`app/tabs/`). A tab with no
-  handle (hibernated, a live guest) has nothing to save.
+  Not reactive: the app reads it when closing a tab or the window (`app/tabs/`), and
+  `whenRemoved(id)` resolves once a tab's editor has unmounted. A tab with no handle (hibernated,
+  `document`, a live guest) has nothing to save.
+- **`tabLeaveGuard`** (`tab-leave-guard.ts`), set by `TabHost` on the `FileTabs`
+  (`setLeaveGuard`), readies a background editor before the memory policy takes it away
+  ([canvas/tabs/](../../canvas/tabs/README.md#the-memory-policy)): `flush()`, then `capture()` (the
+  preview needs the engine, so it's taken here, as the editor no longer unmounts when the user
+  goes Home or switches tabs), and toward `hibernated` also `finish()`, since the document goes
+  next. When `needsSave()` the editor stays. The slot unmounts only after; `unmounted(id)` waits
+  for that and for the editor's closing save to take the document's data.

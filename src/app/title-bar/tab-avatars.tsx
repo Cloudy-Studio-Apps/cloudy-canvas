@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { TAB_LIMITS } from "@canvas/tabs";
 import { CollaboratorAvatar } from "@shared/collaborators";
 import { useCollaboratorsStore } from "@shared/stores/collaborators-store";
 import { cn } from "@shared/ui/lib/utils";
 import type { TabAvatarsProps } from "./title-bar.types";
 
-/** An agent counts as working on a tab for this long after its last call. */
-const AGENT_CALLING_MS = 2 * 60_000;
 const MAX_SHOWN = 3;
 
 /**
@@ -27,7 +26,7 @@ export function TabAvatars({ tab, active }: TabAvatarsProps) {
     return () => window.clearInterval(timer);
   }, [lastCall]);
   if (here.length === 0) return null;
-  const calling = !active && lastCall !== null && now - lastCall < AGENT_CALLING_MS;
+  const calling = !active && lastCall !== null && now - lastCall < TAB_LIMITS.agentActiveMs;
   const shown = here.slice(0, MAX_SHOWN);
   return (
     <span className="flex shrink-0 items-center -space-x-1.5">

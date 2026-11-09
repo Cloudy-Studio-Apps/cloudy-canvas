@@ -20,4 +20,6 @@ export interface TabHandles {
   /** Registers the tab's handle; returns how to remove it. */
   set(id: string, handle: TabHandle): () => void;
   get(id: string): TabHandle | undefined;
+  /** Resolves once the tab has no handle (its editor unmounted); at once when it has none. */
+  whenRemoved(id: string): Promise<void>;
 }

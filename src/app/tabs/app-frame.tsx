@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { Outlet } from "react-router";
 
 import { FileTabsContext, TabHost } from "@canvas-ui/tabs";
@@ -14,10 +14,12 @@ import { useRouteTabSync } from "./use-route-tab-sync";
  * The window under every route: the title bar (desktop), the Home area (Home, Settings, Projects, … through `<Outlet />`)
  * and the open file tabs' editors over it. The route opens and shows tabs (`useRouteTabSync`);
  * while a file tab is shown, the Home area is hidden. On desktop it also holds the window's close
- * guard and the close-tab question (Android keeps each file's own guard).
+ * guard and the close-tab question (Android keeps each file's own guard). It runs the tabs' memory
+ * policy on its timer for the app's life.
  */
 export function AppFrame() {
   useRouteTabSync();
+  useEffect(() => fileTabs.startPolicy(), []);
   const fileShown = useSyncExternalStore(
     fileTabs.store.subscribe,
     () => fileTabs.store.get().activeId !== null,

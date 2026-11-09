@@ -73,3 +73,20 @@ export interface OpenTabOptions {
   /** Default `true`. A tab opened in the background starts `hibernated`, not loading. */
   activate?: boolean;
 }
+
+/** The states a mounted tab's editor can be let go toward. */
+export type LeaveTarget = Extract<TabState, "document" | "hibernated">;
+
+/**
+ * What the host does before the policy takes a background tab's editor away
+ * (`FileTabs.setLeaveGuard`): the editor stays mounted until `prepare` resolves.
+ */
+export interface TabLeaveGuard {
+  /**
+   * Readies the tab's editor to go (its pending save, its preview, and before `hibernated` its
+   * closing work). Resolves to `false` when it must keep its editor (changes nothing would save).
+   */
+  prepare(id: string, target: LeaveTarget): Promise<boolean>;
+  /** Resolves once the tab's editor is gone and its last save took the document's data. */
+  unmounted(id: string): Promise<void>;
+}
