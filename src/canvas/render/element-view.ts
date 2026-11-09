@@ -231,7 +231,9 @@ export class ElementView extends Container {
     if (texture) return this.fitImage(texture);
     this.image.visible = false;
     void this.images.load(assetId).then((loaded) => {
-      if (loaded && !this.destroyed && this.imageAsset === assetId) this.fitImage(loaded);
+      if (!loaded || this.destroyed || this.imageAsset !== assetId) return;
+      this.fitImage(loaded);
+      this.imageLoaded();
     });
   }
 
@@ -243,7 +245,7 @@ export class ElementView extends Container {
   setPaints(layers: readonly PaintLayer[], options: PaintStackOptions): void {
     if (!this.paintStack && layers.length === 0) return;
     if (!this.paintStack) {
-      this.paintStack = new PaintStack(this.images);
+      this.paintStack = new PaintStack(this.images, () => this.imageLoaded());
       this.addChildAt(this.paintStack, this.getChildIndex(this.graphics) + 1);
     }
     this.drawn = null;
@@ -549,6 +551,17 @@ export class ElementView extends Container {
     const q = rotatePoint(p, this.bounds, -this.turn);
     const x = q.x - this.bounds.x;
     return { x: this.mirrored ? this.bounds.w - x : x, y: q.y - this.bounds.y };
+  }
+
+  /**
+   * A picture arrived after the view was drawn: it's measured again (until then it counted as
+   * nothing, so culling would hide the view once its corner left the screen) and its clip
+   * decided again (a mask may be needed now).
+   */
+  private imageLoaded(): void {
+    if (this.destroyed) return;
+    this.drawn = null;
+    if (this.clipArea) this.setClip(this.clipArea);
   }
 
   private fitImage(texture: Texture): void {

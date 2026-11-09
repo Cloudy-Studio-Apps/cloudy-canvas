@@ -22,7 +22,10 @@ class ImageSlot extends Container {
   /** The picture it shows, and how (see `ElementView.imageUses`). */
   use: ImageUse | null = null;
 
-  constructor(private readonly images: ImageTextures) {
+  constructor(
+    private readonly images: ImageTextures,
+    private readonly onLoad: () => void,
+  ) {
     super();
     this.addChild(this.clip);
   }
@@ -36,7 +39,9 @@ class ImageSlot extends Container {
     if (texture) return this.show(texture, layer);
     if (this.picture) this.picture.visible = false;
     void this.images.load(layer.assetId).then((loaded) => {
-      if (loaded && !this.destroyed && this.assetId === layer.assetId) this.show(loaded, layer);
+      if (!loaded || this.destroyed || this.assetId !== layer.assetId) return;
+      this.show(loaded, layer);
+      this.onLoad();
     });
   }
 
@@ -111,10 +116,14 @@ class ShapeSlot extends Graphics {
 
 /**
  * An element's paints, bottom to top (see `ElementView.setPaints`). Each call redraws the layers
- * in place, reusing the drawn objects position by position.
+ * in place, reusing the drawn objects position by position. `onLoad` is called when an image
+ * paint's picture arrives after it was drawn (what the stack covers changed).
  */
 export class PaintStack extends Container<ImageSlot | ShapeSlot> {
-  constructor(private readonly images: ImageTextures) {
+  constructor(
+    private readonly images: ImageTextures,
+    private readonly onLoad: () => void,
+  ) {
     super();
   }
 
@@ -125,7 +134,7 @@ export class PaintStack extends Container<ImageSlot | ShapeSlot> {
       let slot = this.children[i];
       if (slot?.kind !== layer.kind) {
         slot?.destroy({ children: true });
-        slot = layer.kind === "image" ? new ImageSlot(this.images) : new ShapeSlot();
+        slot = layer.kind === "image" ? new ImageSlot(this.images, this.onLoad) : new ShapeSlot();
         this.addChildAt(slot, i);
       }
       if (layer.kind === "image") (slot as ImageSlot).draw(layer);

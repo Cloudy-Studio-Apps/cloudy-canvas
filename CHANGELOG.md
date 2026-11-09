@@ -165,6 +165,10 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### Fixed
 
+- Pictures no longer vanish while they're still on screen when you zoom in or move the view
+  sideways: right after a file opened, a picture was only drawn while its top-left corner was in
+  view.
+
 - Pictures and 3D models inside a frame with Clip content no longer show past the frame's edges
   when their picture finishes loading after the frame, as happened right after editing a model in 3D.
 

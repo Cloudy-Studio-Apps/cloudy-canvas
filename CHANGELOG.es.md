@@ -183,6 +183,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Correcciones
 
+- Las imágenes ya no desaparecen mientras siguen en pantalla al acercar la vista o moverla hacia
+  los lados: justo después de abrir un archivo, una imagen solo se dibujaba mientras su esquina
+  superior izquierda estaba a la vista.
+
 - Las imágenes y los modelos 3D dentro de un marco con Recortar contenido ya no se ven fuera de los
   bordes del marco cuando su imagen termina de cargar después que el marco, como pasaba justo después
   de editar un modelo en 3D.
