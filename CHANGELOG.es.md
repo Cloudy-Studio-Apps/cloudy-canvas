@@ -7,6 +7,9 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Novedades
 
+- Los tableros y los diseños ahora pueden contener modelos 3D: suelta o inserta archivos FBX, OBJ o
+  glTF, gíralos a cualquier ángulo directamente en el lienzo y asígnales texturas. Cuando ya no
+  necesites girarlo, conviértelo en una imagen para que el archivo pese menos.
 - El nuevo modo Prototipo enlaza las capas de tus pantallas: elige una capa y la pantalla que abre,
   o arrastra desde una capa hasta una pantalla para enlazarlas, y unas flechas en el lienzo muestran
   cada enlace. Los flujos empiezan en una pantalla y se preparan para un dispositivo, como un

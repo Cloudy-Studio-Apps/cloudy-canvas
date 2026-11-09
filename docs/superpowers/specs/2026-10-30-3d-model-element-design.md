@@ -1,6 +1,6 @@
 # 3D models on the canvas
 
-Status: design, awaiting approval. Date: 2026-10-30.
+Status: implemented (2026-11-09). Date: 2026-10-30.
 
 ## Intent
 

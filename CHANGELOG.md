@@ -7,6 +7,9 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### New
 
+- Boards and designs can now hold 3D models: drop or insert FBX, OBJ or glTF files, turn a model
+  to any angle right on the canvas, and assign textures to it. When you no longer need to turn it,
+  convert it to a picture to keep the file light.
 - The new Prototype mode links the layers of your screens together: choose a layer and the screen
   it opens, or drag from a layer onto a screen to link them, and arrows on the canvas show every
   link. Flows start at a screen and are set up for a device, such as a phone, a tablet, a desktop
