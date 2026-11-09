@@ -5,6 +5,10 @@ import { fileTabs } from "./file-tabs-instance";
 import { closeTab } from "./close-tab";
 import { tabKeymap } from "./tab-keybindings";
 
+/** An open modal dialog (the kit's Radix dialogs): shortcuts must not act on the tabs behind it. */
+const OPEN_MODAL =
+  '[data-slot="dialog-content"][data-state="open"], [role="alertdialog"][data-state="open"]';
+
 /** Runs a tab command; `Home` is `null`. */
 function run(command: string): void {
   const { tabs, activeId } = fileTabs.store.get();
@@ -34,6 +38,7 @@ export function useTabShortcuts(): void {
   useEffect(() => {
     if (!tabsSupported()) return;
     const onKeyDown = (event: KeyboardEvent) => {
+      if (document.querySelector(OPEN_MODAL)) return;
       const command = tabKeymap.commandFor(event);
       if (!command) return;
       event.preventDefault();

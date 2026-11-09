@@ -84,3 +84,8 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   Ctrl+Shift+T or Ctrl+digit (the engine's zoom keys are Shift+1 and Shift+2 without Ctrl), so the
   tab shortcuts win nowhere over an editing shortcut. The Windows browser guard only blocks
   F3/F5/F7 and Ctrl+F/G/J/P/R, so it doesn't touch these.
+  The shortcuts do nothing while a modal dialog is open (an open `dialog-content` or alertdialog in
+  the document, which covers the close-tab and window-close questions), and the key goes on to the
+  dialog. On macOS, Cmd+Tab is the system's, so next/previous are shown as Cmd+Shift+] / [ (Ctrl+Tab
+  works too). Not changed here (Rust, to verify on a Mac): the native menu's Close Window (Cmd+W)
+  may take Cmd+W before the webview sees it.
