@@ -20,4 +20,8 @@ export class TauriAgentChannel implements AgentChannel {
   setEnabled(enabled: boolean): Promise<void> {
     return invoke("mcp_set_enabled", { enabled });
   }
+
+  notify(session: string, body: string): Promise<void> {
+    return invoke("mcp_notify", { session, body });
+  }
 }

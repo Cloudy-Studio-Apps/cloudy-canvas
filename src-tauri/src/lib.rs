@@ -47,6 +47,7 @@ pub fn run() {
             mcp::commands::mcp_reply,
             mcp::commands::mcp_status,
             mcp::commands::mcp_set_enabled,
+            mcp::commands::mcp_notify,
             share::commands::share_host,
             share::commands::share_join,
             share::commands::share_send,

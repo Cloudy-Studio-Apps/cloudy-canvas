@@ -7,7 +7,15 @@ export interface AgentMessage {
   userAgent: string | null;
   /** The agent ended its session; there is nothing to answer. */
   ended: boolean;
+  /**
+   * The session's event stream (an MCP GET) opened or closed; there is nothing to answer. Left
+   * out for every other message.
+   */
+  stream?: AgentStreamChange;
 }
+
+/** What happened to a session's event stream. */
+export type AgentStreamChange = "opened" | "closed";
 
 export interface AgentServerStatus {
   /** Where agents connect, or `null` while (or if) the endpoint isn't listening. */
@@ -29,4 +37,9 @@ export interface AgentChannel {
   reply(id: number, body: string, session: string | null): Promise<void>;
   status(): Promise<AgentServerStatus>;
   setEnabled(enabled: boolean): Promise<void>;
+  /**
+   * Sends `body` (a JSON-RPC notification) down `session`'s event stream. A session without an
+   * open stream drops it and this still resolves: there is nothing to report.
+   */
+  notify(session: string, body: string): Promise<void>;
 }

@@ -2,7 +2,8 @@ use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 
-use tokio::sync::oneshot;
+use axum::response::sse::Event;
+use tokio::sync::{mpsc, oneshot};
 
 /// The webview's answer: the body (empty for none) and the MCP session to name in the response.
 pub struct Reply {
@@ -10,7 +11,8 @@ pub struct Reply {
     pub session: Option<String>,
 }
 
-/// Shared between the HTTP server and the Tauri commands: requests waiting for the webview's reply.
+/// Shared between the HTTP server and the Tauri commands: requests waiting for the webview's reply
+/// and each session's open event stream (GET).
 #[derive(Clone)]
 pub struct McpState(Arc<Inner>);
 
@@ -19,6 +21,8 @@ struct Inner {
     enabled: AtomicBool,
     next_id: AtomicU64,
     pending: Mutex<HashMap<u64, oneshot::Sender<Reply>>>,
+    /// Session → (stream id, sender). The id tells a replaced stream from the current one.
+    streams: Mutex<HashMap<String, (u64, mpsc::UnboundedSender<Event>)>>,
 }
 
 impl McpState {
@@ -28,6 +32,7 @@ impl McpState {
             enabled: AtomicBool::new(true),
             next_id: AtomicU64::new(1),
             pending: Mutex::new(HashMap::new()),
+            streams: Mutex::new(HashMap::new()),
         }))
     }
 
@@ -69,6 +74,37 @@ impl McpState {
     pub fn cancel(&self, id: u64) {
         if let Ok(mut pending) = self.0.pending.lock() {
             pending.remove(&id);
+        }
+    }
+
+    /// Opens `session`'s event stream, replacing any earlier one (whose receiver then ends).
+    /// Returns the stream's id, for `close_stream`, and the receiver its events arrive on.
+    pub fn open_stream(&self, session: String) -> (u64, mpsc::UnboundedReceiver<Event>) {
+        let id = self.0.next_id.fetch_add(1, Ordering::Relaxed);
+        let (sender, receiver) = mpsc::unbounded_channel();
+        if let Ok(mut streams) = self.0.streams.lock() {
+            streams.insert(session, (id, sender));
+        }
+        (id, receiver)
+    }
+
+    /// Forgets `session`'s stream if `id` is still the current one. True when it was removed.
+    pub fn close_stream(&self, session: &str, id: u64) -> bool {
+        let Ok(mut streams) = self.0.streams.lock() else { return false };
+        if streams.get(session).is_some_and(|(current, _)| *current == id) {
+            streams.remove(session);
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Sends `event` down `session`'s stream. Without an open stream it's dropped.
+    pub fn notify(&self, session: &str, event: Event) {
+        if let Ok(streams) = self.0.streams.lock() {
+            if let Some((_, sender)) = streams.get(session) {
+                let _ = sender.send(event);
+            }
         }
     }
 }

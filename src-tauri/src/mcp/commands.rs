@@ -1,3 +1,4 @@
+use axum::response::sse::Event;
 use serde::Serialize;
 use tauri::State;
 
@@ -24,4 +25,12 @@ pub fn mcp_status(state: State<'_, McpState>) -> McpStatus {
 #[tauri::command]
 pub fn mcp_set_enabled(state: State<'_, McpState>, enabled: bool) {
     state.set_enabled(enabled);
+}
+
+/// Sends `body` to `session`'s event stream as one `message` event. A session without an open
+/// stream (it never opened one, or it closed) is not an error: the event is dropped.
+#[tauri::command]
+pub fn mcp_notify(state: State<'_, McpState>, session: String, body: String) -> Result<(), String> {
+    state.notify(&session, Event::default().event("message").data(body));
+    Ok(())
 }

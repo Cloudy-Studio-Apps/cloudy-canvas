@@ -38,7 +38,9 @@ export function useAgentServer(): void {
     let stop: (() => void) | null = null;
     let disposed = false;
     void channel
-      .listen(({ id, body, session, userAgent, ended }) => {
+      .listen(({ id, body, session, userAgent, ended, stream }) => {
+        // Streams opening and closing expect no reply; what they mean for tool lists comes later.
+        if (stream) return;
         loadRuntime()
           .then(async ({ agentServer, agentTabs, presence }) => {
             if (ended) {
