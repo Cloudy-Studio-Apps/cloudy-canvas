@@ -7,27 +7,30 @@ import {
   useCanvasEngine,
   useCanvasFileDrop,
   useMissingFontsNotice,
+  useSuspendWhenHidden,
+  useTab,
 } from "@canvas-ui";
 import { Button } from "@shared/ui/components/ui/button";
 import { useFileDragOver } from "@shared/ui/hooks/use-file-drag-over";
 import type { DesignEditorProps } from "./design-editor.types";
 import { DesignSession } from "./design-session";
-import { useDesignLoader } from "./file";
 import { useCanvasInset, useKeepCanvasInPlace } from "./hooks";
 import { getDesignProduct } from "./modules";
 import { t } from "./design-ui.i18n";
 
 /**
- * Loads a design and mounts the engine between the docked panels. The canvas container stays
- * where it is while the session (and its chrome) comes and goes, so the engine keeps its canvas.
+ * Shows its tab's design (the tab owns the document) and mounts the engine between the docked
+ * panels. The canvas container stays where it is while the session (and its chrome) comes and
+ * goes, so the engine keeps its canvas.
  */
-export function DesignEditor({ id, live }: DesignEditorProps) {
+export function DesignEditor(_props: DesignEditorProps) {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
-  const load = useDesignLoader(id, live ?? null);
+  const { fileId: id, live, load } = useTab();
   const document = load.status === "ready" ? load.document : null;
   const { engine, loading } = useCanvasEngine(containerRef, getDesignProduct(), document);
   const draggingFiles = useFileDragOver();
+  useSuspendWhenHidden(engine);
   useCanvasFileDrop(engine);
   useMissingFontsNotice(engine);
   const inset = useCanvasInset();
@@ -44,7 +47,7 @@ export function DesignEditor({ id, live }: DesignEditorProps) {
         style={inset}
       />
       {engine && load.status === "ready" && (
-        <DesignSession id={id} engine={engine} info={load.info} live={live} />
+        <DesignSession id={id} engine={engine} info={load.info} live={live ?? undefined} />
       )}
       {engine && draggingFiles && (
         <div

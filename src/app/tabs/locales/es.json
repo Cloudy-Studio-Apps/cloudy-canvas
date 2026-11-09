@@ -1,0 +1,16 @@
+{
+  "close": {
+    "failed": "No se pudo cerrar la pestaña"
+  },
+  "quit": {
+    "title": "¿Salir de Cloudy Canvas?",
+    "one": "“{name}” tiene cambios sin guardar. Se perderán si no los guardas.",
+    "many": "{count} archivos tienen cambios sin guardar: {names}. Se perderán si no los guardas.",
+    "saveOne": "Guardar y salir",
+    "saveAll": "Guardar todo y salir",
+    "discard": "Salir sin guardar"
+  },
+  "autosave": {
+    "failed": "No se pudo guardar {noun}"
+  }
+}

@@ -14,6 +14,7 @@ import {
   useCanvasFile,
   useEngine,
 } from "@canvas-ui";
+import { tabsSupported } from "@platform";
 import { AgentServerMenu } from "@shared/agent-server";
 import { CollaboratorStack } from "@shared/collaborators";
 import { useAgentServerStore } from "@shared/stores/agent-server-store";
@@ -30,10 +31,14 @@ export function BoardTopBar() {
 
   return (
     <FloatingPanel className="gap-1 pr-2" scrollsOnPhones>
-      <ToolButton label={t("topBar.backHome")} side="bottom" onClick={() => void navigate("/")}>
-        <ArrowLeft />
-      </ToolButton>
-      <PanelDivider />
+      {!tabsSupported() && (
+        <>
+          <ToolButton label={t("topBar.backHome")} side="bottom" onClick={() => void navigate("/")}>
+            <ArrowLeft />
+          </ToolButton>
+          <PanelDivider />
+        </>
+      )}
       <ToolButton
         label={t("topBar.about")}
         side="bottom"

@@ -28,8 +28,7 @@
     "opening": "Abriendo {product} de {host}…",
     "board": "la pizarra",
     "design": "el diseño",
-    "file": "el archivo",
-    "reconnecting": "Reconectando con {host}… Tus cambios se conservan y se envían cuando vuelva."
+    "file": "el archivo"
   },
   "plugins": {
     "title": "Puede que parte de este archivo no se vea",

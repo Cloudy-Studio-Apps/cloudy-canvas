@@ -1,14 +1,21 @@
 import { useEffect } from "react";
 
+import { useIsActiveTab } from "@canvas-ui";
+
 import { randomizePalette, redoPalette, undoPalette } from "../store";
 
 const typing = (target: EventTarget | null) =>
   target instanceof HTMLElement &&
   (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
 
-/** Space generates a random palette; Ctrl+Z / Ctrl+Shift+Z undo and redo the palette. */
+/**
+ * Space generates a random palette; Ctrl+Z / Ctrl+Shift+Z undo and redo the palette (only while
+ * its tab is on screen).
+ */
 export function useRandomShortcut(): void {
+  const active = useIsActiveTab();
   useEffect(() => {
+    if (!active) return;
     const onKey = (event: KeyboardEvent) => {
       if (typing(event.target)) return;
       const mod = event.ctrlKey || event.metaKey;
@@ -22,5 +29,5 @@ export function useRandomShortcut(): void {
     };
     window.addEventListener("keydown", onKey, true);
     return () => window.removeEventListener("keydown", onKey, true);
-  }, []);
+  }, [active]);
 }

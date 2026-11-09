@@ -1,0 +1,65 @@
+# File tabs (UI)
+
+_How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
+
+The React side of the file tabs (`FileTabs`, [canvas/tabs/](../../canvas/tabs/README.md)). It never
+knows a product: the app gives `TabHost` each product's editor (`app/tabs/`).
+
+- **`FileTabsContext`** holds the app's one `FileTabs`. `useFileTabs(selector)` reads a slice of its
+  snapshot with `useSyncExternalStore` (the selector returns something stable: a field, a tab, a
+  primitive); `useFileTabsModel()` is the `FileTabs` itself, to act on it.
+- **`TabHost({ editors })`** renders a `TabEditorSlot` for every tab that needs an engine, the active
+  one and the `headless` ones (a `hibernated` or `document` tab has no editor). Each slot fills the
+  window, provides its `TabContext` and renders `editors[tab.type]` with `tabId`. Only the active
+  tab's slot is visible; the others stay mounted (engine and editor state kept) at the same size
+  (`inset-0`, so the camera's viewport and the engine's `ResizeObserver` stay right) but
+  `invisible`, `inert`, `aria-hidden` and `pointer-events-none`. A joined live session's slot also
+  shows `ReconnectingBanner` (`share/`).
+- **Headless editors.** Each editor calls `useSuspendWhenHidden(engine)` once it has an engine: it
+  runs `engine.setSuspended(!active)`, so a background tab's engine draws nothing and ignores input
+  (the engine listens for keys on the whole window, so `inert` alone wouldn't stop them) while its
+  scene keeps following the document (agents, exports and thumbnails still work).
+  `useIsActiveTab()` (`true` outside a tab) gates the other window-wide listeners that act on an
+  editor: the file drop target (`useCanvasFileDrop`), the crop overlay's and the live 3D edit's
+  Enter/Esc, the color wizard's keys and paste, the canvas context menu (it closes when its tab
+  leaves the screen); presence stops following the pointer while the engine is `suspended`.
+- **Several editors are mounted.** Two editors of one product are routinely mounted at once (the
+  grace after leaving a tab, agents), so UI driven by an app-wide store would open in each of them,
+  portaled out of the background slot. `ModuleSession` (`canvas-ui/modules/`) draws the modules'
+  `overlays` (and so the modes' overlays) only in the active tab, inside `ActiveTabOnly`
+  (`active-tab-only.tsx`: its children only while the tab is on screen, always outside a tab);
+  leaving the tab unmounts them, which closes the prototype player and drops transient overlay
+  state as leaving an editor did. Other UI that follows an app-wide store uses `ActiveTabOnly` too
+  (see [docs/modules.md](../../../docs/modules.md#several-editors-are-mounted)).
+- **`TabContext`** (`tab-context.ts`) is the tab an editor shows (`{ tabs, tabId }`, plus what its
+  file reports to it, built by the slot with `tabContextValue`: `reportUnsaved`, `reportInfo`
+  (`FileTabs.setInfo`) and `reportName`, each changing the tab only when the value differs;
+  `useTabContext()` reads it). `useTab()` is
+  the `FileTab`, re-read when it changes: its `load` (the document, owned by the tab: editors never
+  destroy it), `fileId`, `live`. `useTabParam(name)` reads the search params of the route the tab
+  opened with (`dir`, `project`, `libraries`, `starter`, `mode`), and `useDropTabParam()` forgets
+  one once used (a starter runs once). Editors and their session hooks read these instead of the
+  router's search params, since a tab outlives its route.
+- **`tabHandles`** (`tab-handles.ts`) holds, by tab id, the `TabHandle` of each tab whose editor is
+  mounted, registered by its file's saver (`useCanvasFileSaver`): `save()`, `flush()` (the pending
+  autosave now, awaited), `finish()` (the closing work for a document about to go: the engine's
+  last writes, the sweep of unused assets, then the autosave), `closed()` (after the editor
+  unmounted: the work and save it started then are done), `capture()` (the preview) and `needsSave()` (changes nothing will save, as of now).
+  Not reactive: the app reads it when closing a tab or the window (`app/tabs/`), and
+  `onRemove(id, listener)` hands over each handle removed as a tab's editor unmounts. A tab with no handle (hibernated,
+  `document`, a live guest) has nothing to save.
+- **`tabMenus`** (`tab-menus.ts`) holds, by tab id, the main menu of each tab whose editor is
+  mounted (`TabMenu`: the engine and the `MainMenuGroup`s, `canvas-ui/main-menu/`), set by the
+  editor with `useTabMenu(engine, groups)` (its chrome, from the product's `mainMenu` point). Not
+  reactive: the title bar's seal reads the active tab's as it opens. It is a registry of its own,
+  not a field of `TabHandle`, because the handle is built by the file's saver.
+- **`tabLeaveGuard`** (`tab-leave-guard.ts`), set by `TabHost` on the `FileTabs`
+  (`setLeaveGuard`), readies a background editor before the memory policy takes it away
+  ([canvas/tabs/](../../canvas/tabs/README.md#the-memory-policy)): `flush()`, then `capture()` (the
+  preview needs the engine, so it's taken here, as the editor no longer unmounts when the user
+  goes Home or switches tabs), and toward `hibernated` also `finish()`, since the document goes
+  next. When `needsSave()` the editor stays. The slot unmounts only after; `unmounted(id)` waits
+  until the tab's slot really unmounted (`editorSlots`, `editor-slots.ts`: each `TabEditorSlot`
+  marks itself mounted, and `whenUnmounted(id)` resolves after the commit that removes it) and
+  then for the `closed()` of every handle removed meanwhile, so the document is never destroyed
+  while that save is still to read it.

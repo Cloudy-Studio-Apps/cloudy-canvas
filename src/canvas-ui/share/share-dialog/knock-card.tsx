@@ -3,8 +3,8 @@ import { PersonBadge } from "./person-badge";
 import type { KnockCardProps } from "./share-dialog.types";
 import { t } from "../share.i18n";
 
-/** "Ana wants to join": let them in to edit or to view, or not. */
-export function KnockCard({ host, knock }: KnockCardProps) {
+/** "Ana wants to join" (in which file, given `fileName`): let them in to edit or to view, or not. */
+export function KnockCard({ host, knock, fileName }: KnockCardProps) {
   const { peer, identity, appVersion } = knock;
   const otherVersion = appVersion !== __APP_VERSION__;
   return (
@@ -19,6 +19,11 @@ export function KnockCard({ host, knock }: KnockCardProps) {
           <p className="truncate text-sm font-medium">
             {t("knock.title", { name: identity.name })}
           </p>
+          {fileName && (
+            <p className="truncate text-xs text-muted-foreground">
+              {t("knock.file", { file: fileName })}
+            </p>
+          )}
           {otherVersion && (
             <p className="text-xs text-muted-foreground">
               {t("knock.version", { theirs: appVersion, yours: __APP_VERSION__ })}

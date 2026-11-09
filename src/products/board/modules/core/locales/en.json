@@ -17,5 +17,12 @@
       "label": "Hand",
       "description": "Pan around the board."
     }
+  },
+  "menu": {
+    "file": "File",
+    "edit": "Edit",
+    "view": "View",
+    "settings": "Settings",
+    "about": "About Cloudy Canvas"
   }
 }

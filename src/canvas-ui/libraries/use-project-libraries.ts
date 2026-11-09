@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import { useSearchParams } from "react-router";
 
 import {
   heldLibraries,
@@ -12,6 +11,7 @@ import { projectsSupported } from "@platform";
 import { useProjectsStore } from "@shared/stores/projects-store";
 import { notifyError } from "@shared/stores/toast-store";
 import type { CanvasFileContextValue } from "../file";
+import { useTabParam } from "../tabs/tab-context";
 import { LibraryHub } from "./library-hub";
 import { useLibraryGuard } from "./use-library-guard";
 import { useLibrarySync } from "./use-library-sync";
@@ -30,10 +30,11 @@ export function useProjectLibraries<O extends object>(
   file: CanvasFileContextValue,
 ): ProjectLibrariesState {
   const { doc } = engine;
-  const [params] = useSearchParams();
-  const [newProject] = useState(() => (file.isNew ? params.get("project") : null));
+  const projectParam = useTabParam("project");
+  const librariesParam = useTabParam("libraries");
+  const [newProject] = useState(() => (file.isNew ? projectParam : null));
   // The libraries a new file uses when it shouldn't take all (`libraries=<id>,<id>`).
-  const [newLibraries] = useState(() => (file.isNew ? params.get("libraries") : null));
+  const [newLibraries] = useState(() => (file.isNew ? librariesParam : null));
   const path = useRef(file.path);
   useEffect(() => {
     path.current = file.path;

@@ -2,22 +2,29 @@ import { useRef } from "react";
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
 
-import { CanvasLoadingOverlay, useCanvasEngine, useCanvasFileDrop } from "@canvas-ui";
+import {
+  CanvasLoadingOverlay,
+  useCanvasEngine,
+  useCanvasFileDrop,
+  useSuspendWhenHidden,
+  useTab,
+} from "@canvas-ui";
 import { Button } from "@shared/ui/components/ui/button";
 import { useFileDragOver } from "@shared/ui/hooks/use-file-drag-over";
 import { BoardSession } from "./board-session";
-import { useBoardLoader } from "./file";
 import { getBoardProduct } from "./modules";
 import type { BoardEditorProps } from "./board-editor.types";
 import { t } from "./board-ui.i18n";
 
-export function BoardEditor({ id, live }: BoardEditorProps) {
+/** Shows its tab's board (the tab owns the document) and mounts the engine on it. */
+export function BoardEditor(_props: BoardEditorProps) {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
-  const load = useBoardLoader(id, live ?? null);
+  const { fileId: id, live, load } = useTab();
   const document = load.status === "ready" ? load.document : null;
   const { engine, loading } = useCanvasEngine(containerRef, getBoardProduct(), document);
   const draggingFiles = useFileDragOver();
+  useSuspendWhenHidden(engine);
   useCanvasFileDrop(engine);
 
   return (
@@ -29,7 +36,7 @@ export function BoardEditor({ id, live }: BoardEditorProps) {
         className="absolute inset-0"
       />
       {engine && load.status === "ready" && (
-        <BoardSession id={id} engine={engine} info={load.info} live={live} />
+        <BoardSession id={id} engine={engine} info={load.info} live={live ?? undefined} />
       )}
       {engine && draggingFiles && (
         <div

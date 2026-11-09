@@ -34,7 +34,7 @@ edits travel both ways while the project is found.
 - **`useProjectLibraries(engine, file)`** (both products' file sessions; live guests never call it;
   where projects aren't supported, `projectsSupported()` false on Android and in the browser build,
   it stays `none`: no hub, no missing dialog, and the file's library items read-only):
-  reads the project from the document's link (a new file opened with `?project=` gets
+  reads the project from the document's link (a new file whose tab opened with `?project=` gets
   `{ projectId, libraryIds: "all" }`, or the listed ids with `&libraries=<id>,<id>`), finds it with `useProjectsStore.resolve(id, file.path)` and
   opens its hub. When that returns another project (the file is in a copied project folder made its
   own), the file's link is pointed at the copy's id instead (the recent file follows the link) and

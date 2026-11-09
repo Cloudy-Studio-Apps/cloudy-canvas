@@ -1,0 +1,22 @@
+{
+  "home": "Home",
+  "newTab": "New file",
+  "newBoard": "New board",
+  "newDesign": "New design",
+  "closeTab": "Close tab",
+  "unsaved": "Unsaved changes",
+  "opening": "Opening…",
+  "seal": "Main menu",
+  "settings": "Settings",
+  "about": "About Cloudy Canvas",
+  "window": {
+    "minimize": "Minimize",
+    "maximize": "Maximize",
+    "restore": "Restore",
+    "close": "Close"
+  },
+  "openFile": "Open file…",
+  "theme": "Theme",
+  "matchSystem": "Match system",
+  "knocking": "Someone is asking to join"
+}

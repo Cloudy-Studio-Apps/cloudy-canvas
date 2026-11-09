@@ -19,6 +19,12 @@
     "saveQuit": "Save and quit",
     "quit": "Quit"
   },
+  "closeTab": {
+    "title": "Save the changes to “{name}”?",
+    "description": "They'll be lost if you close the tab without saving them.",
+    "save": "Save",
+    "discard": "Don't save"
+  },
   "info": {
     "title": "Title",
     "description": "Description",

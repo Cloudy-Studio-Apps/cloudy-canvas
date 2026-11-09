@@ -10,6 +10,7 @@ import {
   Undo2,
 } from "lucide-react";
 
+import { tabsSupported } from "@platform";
 import { openAbout } from "@shared/about";
 import type { ModuleHost } from "@shared/core";
 import { designEditor } from "@design/ui/modules/design-editor-points";
@@ -25,17 +26,19 @@ export const TRANSFORM_ITEMS = [
 ];
 
 /**
- * The main menu's groups: home, File, Edit, Transform, View, what's shown, Theme, Settings and
- * About.
+ * The main menu's groups: home, File, Edit, Transform, View, what's shown, Settings and About.
  */
 export function registerCoreMenu(host: ModuleHost): void {
-  host.contribute(
-    designEditor.mainMenu,
-    {
+  // With file tabs the Home tab replaces "Back to home".
+  if (!tabsSupported()) {
+    host.contribute(designEditor.mainMenu, {
       id: "home",
       order: 10,
       items: [{ label: t("menu.backHome"), icon: House, run: ({ navigate }) => navigate("/") }],
-    },
+    });
+  }
+  host.contribute(
+    designEditor.mainMenu,
     {
       id: "file",
       order: 20,

@@ -1,10 +1,15 @@
 export type * from "./canvas-file.types";
 export type * from "./close-dialog";
 export type * from "./document-info-popover.types";
+export type * from "./load-canvas-file.types";
+export type * from "./save-canvas-document.types";
+export type { AutosaveControls } from "./use-canvas-autosave.types";
 export { CanvasFileContext, useCanvasFile } from "./canvas-file-context";
 export { CloseFileGuard } from "./close-dialog";
 export { DocumentInfoPopover } from "./document-info-popover";
 export { importStep, toastImportWarnings } from "./import-steps";
+export { loadCanvasFile } from "./load-canvas-file";
+export { saveCanvasDocument } from "./save-canvas-document";
 export { SaveIndicator } from "./save-indicator";
 export { useCanvasAutosave } from "./use-canvas-autosave";
 export { useCanvasFileLoader } from "./use-canvas-file-loader";

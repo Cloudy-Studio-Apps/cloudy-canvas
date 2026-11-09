@@ -1,7 +1,7 @@
 import { Plus } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { useAssetUrl, useFileDropZone } from "@canvas-ui";
+import { useAssetUrl, useFileDropZone, useIsActiveTab } from "@canvas-ui";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { imageTypeFromName, type DroppedFile } from "@shared/core";
 import { notifyError, toast } from "@shared/stores/toast-store";
@@ -53,14 +53,17 @@ export function ImageSource() {
   const assetUrl = useAssetUrl(picked);
   const url = image.upload ?? assetUrl;
 
+  // Only the tab on screen takes a paste (another file's wizard may be open in the background).
+  const active = useIsActiveTab();
   useEffect(() => {
+    if (!active) return;
     const onPaste = (event: ClipboardEvent) => {
       const file = [...(event.clipboardData?.files ?? [])].find((f) => f.type.startsWith("image/"));
       if (file) takeImageFile(file);
     };
     window.addEventListener("paste", onPaste);
     return () => window.removeEventListener("paste", onPaste);
-  }, []);
+  }, [active]);
 
   return (
     <div className="flex flex-col gap-3 p-4">

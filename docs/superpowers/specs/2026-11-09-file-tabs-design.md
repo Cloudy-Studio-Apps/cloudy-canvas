@@ -1,6 +1,6 @@
 # File tabs (desktop)
 
-Status: design, approved for planning once reviewed. Prototype (throwaway):
+Status: implemented. Prototype (throwaway):
 `.superpowers/brainstorm/60521-1794210440/content/tabs-prototype-v2.html`.
 
 ## Why

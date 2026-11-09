@@ -1,10 +1,14 @@
 export type * from "./hold-guest.types";
 export type * from "./use-store-state.types";
 export type * from "./host-session.types";
+export type * from "./sharing-state.types";
 export type * from "./share-dialog";
-export { useHeldGuest } from "./hold-guest";
+export type * from "./reconnecting-banner.types";
+export { handOverGuest, useHeldGuest } from "./hold-guest";
+export { ReconnectingBanner } from "./reconnecting-banner";
 export { useLiveGuestFile } from "./use-live-guest-file";
 export { useStoreState } from "./use-store-state";
-export { isSharing, startSharing, stopSharing, useHostedSession } from "./host-session";
+export { endSharing, isSharing, startSharing, stopSharing, useHostedSession } from "./host-session";
+export { sharingState } from "./sharing-state";
 export { LiveSessionLayer, ShareButton } from "./share-dialog";
 export { useHostedFile } from "./use-hosted-file";

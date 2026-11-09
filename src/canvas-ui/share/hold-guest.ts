@@ -11,8 +11,8 @@ let current: HeldGuest | null = null;
 
 /**
  * The guest session for `key` (a session's ticket), joined with `start` the first time and left
- * once nothing holds it anymore. Rendering again or remounting (StrictMode, a route re-render)
- * keeps the same session.
+ * once nothing holds it anymore, until it's handed over to a file tab (`handOverGuest`). Rendering
+ * again or remounting (StrictMode, a route re-render) keeps the same session.
  */
 export function useHeldGuest(key: string, start: () => ShareGuest): ShareGuest {
   const [initialStart] = useState(() => start);
@@ -29,7 +29,7 @@ function acquire(key: string, start: () => ShareGuest): HeldGuest {
     return current;
   }
   current?.guest.leave();
-  const held: HeldGuest = { key, guest: start(), holders: 0 };
+  const held: HeldGuest = { key, guest: start(), holders: 0, handedOver: false };
   current = held;
   setTimeout(() => leaveIfUnheld(held), UNHELD_MS);
   return held;
@@ -47,8 +47,18 @@ function hold(held: HeldGuest): () => void {
   };
 }
 
+/**
+ * Gives the session to the file tab that shows it: the tab leaves it when it closes, and joining
+ * the same link again starts a new session.
+ */
+export function handOverGuest(guest: ShareGuest): void {
+  if (current?.guest !== guest) return;
+  current.handedOver = true;
+  current = null;
+}
+
 function leaveIfUnheld(held: HeldGuest): void {
-  if (held.holders > 0) return;
+  if (held.holders > 0 || held.handedOver) return;
   held.guest.leave();
   if (current === held) current = null;
 }

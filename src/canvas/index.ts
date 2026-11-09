@@ -125,6 +125,8 @@ export {
 export { ActorWorkspace, followEdit, showArea, withAspect, withExportCopy } from "./workspace";
 export { HOST_ORIGIN, ShareGuest, ShareHost } from "./share";
 export type * from "./share";
+export { CLOSED_TABS_REMEMBERED, FileTabs, TAB_LIMITS, TAB_POLICY_INTERVAL_MS } from "./tabs";
+export type * from "./tabs";
 export type * from "./file/read-file-tokens.types";
 export { canvasFileMagic, decodeCanvasFile, encodeCanvasFile, readFileTokens } from "./file";
 export { canvasBlob, DEFAULT_PDF_OPTIONS, PdfBook } from "./export";

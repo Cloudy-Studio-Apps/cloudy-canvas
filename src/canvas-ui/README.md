@@ -8,7 +8,15 @@ _How it works. The rules are in the root [CLAUDE.md](../../CLAUDE.md)._
 
 ## Starters
 
-- **Starters (`starters/`):** `CanvasStarter<E>` is a ready-made start for a new file (`id`, `label`, `description`, a `preview` picture, `order`, `start(engine)`), listed on Home's first run from each product's starters point. `useStartStarter(engine, starters)` is the session hook a product's core runs: on a new file (`useCanvasFile().isNew`) whose link has `?starter=<id>`, it runs that starter's `start` once with its own origin (`doc.runAs`), so the user's undo history doesn't hold it and the first Ctrl+Z doesn't empty the file, then drops the parameter.
+- **Starters (`starters/`):** `CanvasStarter<E>` is a ready-made start for a new file (`id`, `label`, `description`, a `preview` picture, `order`, `start(engine)`), listed on Home's first run from each product's starters point. `useStartStarter(engine, starters)` is the session hook a product's core runs: on a new file (`useCanvasFile().isNew`) whose link had `?starter=<id>` (its tab's param, `useTabParam`), it runs that starter's `start` once with its own origin (`doc.runAs`), so the user's undo history doesn't hold it and the first Ctrl+Z doesn't empty the file, then drops the param from the tab (`useDropTabParam`).
+
+## Main menu
+
+- **Main menu (`main-menu/`):** the shared pieces of a product's `mainMenu` (`MainMenuSectionsView`, item and group types); see [main-menu/](main-menu/README.md).
+
+## File tabs
+
+- **File tabs (`tabs/`):** `TabHost` mounts each product's editor for the open file tabs (the app's `FileTabs`, `canvas/tabs/`, given by `FileTabsContext`), and editors read their tab with `useTab()` and its route params with `useTabParam`. See [tabs/](tabs/README.md).
 
 ## Tokens
 

@@ -25,11 +25,9 @@ export function bindPinch(
     onChange();
   };
   const end = (event: Event) => event.preventDefault();
-  // Not in the DOM's event types, so `disposables.listen` can't take them.
-  const listen = (type: string, handler: (event: Event) => void) => {
-    canvas.addEventListener(type, handler, { passive: false });
-    disposables.add(() => canvas.removeEventListener(type, handler));
-  };
+  // Not in the DOM's event types, hence the cast (`disposables.listen` may gate them).
+  const listen = (type: string, handler: (event: Event) => void) =>
+    disposables.listen(canvas, type as keyof HTMLElementEventMap, handler, { passive: false });
   listen("gesturestart", start);
   listen("gesturechange", change);
   listen("gestureend", end);

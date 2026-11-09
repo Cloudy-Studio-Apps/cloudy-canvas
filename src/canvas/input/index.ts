@@ -9,4 +9,5 @@ export { PointerInput } from "./pointer-input";
 export { bindPinch } from "./pinch-input";
 export { bindWheel } from "./wheel-input";
 export { EdgeAutoPan } from "./edge-auto-pan";
+export { SuspendableListeners } from "./suspendable-listeners";
 export { toCanvasPointer } from "./canvas-pointer";

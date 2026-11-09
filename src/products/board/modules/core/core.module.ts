@@ -21,6 +21,7 @@ import * as coreApi from ".";
 import * as coreUi from "./ui";
 import { useBoardStartStarter } from "./ui/use-board-start-starter";
 import { registerCoreCanvas } from "./core.canvas";
+import { registerCoreMenu } from "./core.menu";
 
 /**
  * What every board has whatever its modules: the select, scale (Shift+K; K is the sticker tool) and
@@ -34,6 +35,7 @@ export const coreModule = defineModule({
   exports: { ...coreApi, ...coreUi },
   register(host) {
     registerCoreCanvas(host);
+    registerCoreMenu(host);
 
     host.contribute(
       boardEditor.sessionHooks,

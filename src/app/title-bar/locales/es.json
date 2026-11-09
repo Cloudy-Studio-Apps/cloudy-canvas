@@ -1,0 +1,22 @@
+{
+  "home": "Inicio",
+  "newTab": "Nuevo archivo",
+  "newBoard": "Nueva pizarra",
+  "newDesign": "Nuevo diseño",
+  "closeTab": "Cerrar pestaña",
+  "unsaved": "Cambios sin guardar",
+  "opening": "Abriendo…",
+  "seal": "Menú principal",
+  "settings": "Ajustes",
+  "about": "Acerca de Cloudy Canvas",
+  "window": {
+    "minimize": "Minimizar",
+    "maximize": "Maximizar",
+    "restore": "Restaurar",
+    "close": "Cerrar"
+  },
+  "openFile": "Abrir archivo…",
+  "theme": "Tema",
+  "matchSystem": "Igual que el sistema",
+  "knocking": "Alguien pide unirse"
+}

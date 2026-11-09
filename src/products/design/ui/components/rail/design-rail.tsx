@@ -1,6 +1,7 @@
 import { Bot, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
 import { CollaboratorUndoButton, ExtensionIconView, ToolButton } from "@canvas-ui";
+import { tabsSupported } from "@platform";
 import { AgentServerMenu } from "@shared/agent-server";
 import { CollaboratorStack } from "@shared/collaborators";
 import { useAgentServerStore } from "@shared/stores/agent-server-store";
@@ -30,7 +31,7 @@ export function DesignRail() {
       className="flex shrink-0 flex-col items-center gap-1 border-r bg-surface py-2"
       style={{ width: DESIGN_LAYOUT.rail }}
     >
-      <DesignMainMenu />
+      {!tabsSupported() && <DesignMainMenu />}
       {tabs.map((tab) => (
         <ToolButton
           key={tab.id}

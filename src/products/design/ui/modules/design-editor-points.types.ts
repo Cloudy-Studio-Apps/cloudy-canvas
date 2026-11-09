@@ -1,7 +1,13 @@
 import type { ComponentType } from "react";
 
 import type { CanvasElement, ElementKinds } from "@canvas";
-import type { EditorPoints, ExtensionIcon } from "@canvas-ui";
+import type {
+  EditorPoints,
+  ExtensionIcon,
+  MainMenuContext as CanvasMainMenuContext,
+  MainMenuGroup as CanvasMainMenuGroup,
+  MainMenuItem as CanvasMainMenuItem,
+} from "@canvas-ui";
 import type { DesignEngine, DesignNode, DesignToolOptions } from "@design";
 import type { ExtensionPoint } from "@shared/core";
 
@@ -91,27 +97,13 @@ export interface LayerBadgeEntry {
 }
 
 /** What a main menu item can reach when it's picked. */
-export interface MainMenuContext {
-  engine: DesignEngine;
-  /** Goes to an app route, e.g. `"/"` (Home). */
-  navigate(to: string): void;
-}
+export type MainMenuContext = CanvasMainMenuContext<DesignEngine>;
 
 /** An item of the main menu: an engine command (named and bound by the keymap) or an action. */
-export type MainMenuItem = {
-  icon?: ExtensionIcon;
-  /** Shows the item as a checkbox, ticked while this is true (e.g. whether the rulers show). */
-  checked?: (engine: DesignEngine) => boolean;
-} & ({ command: string; label?: string } | { label: string; run(context: MainMenuContext): void });
+export type MainMenuItem = CanvasMainMenuItem<DesignEngine>;
 
 /** Items of the main menu (the logo's) between separators, with an optional heading. */
-export interface MainMenuGroup {
-  id: string;
-  /** Position in the menu, lowest first. Built-ins are spaced by 10. */
-  order: number;
-  label?: string;
-  items: readonly MainMenuItem[];
-}
+export type MainMenuGroup = CanvasMainMenuGroup<DesignEngine>;
 
 /** The design editor's points: the shared editor points plus its own panels and menu. */
 export interface DesignEditorPoints extends EditorPoints {

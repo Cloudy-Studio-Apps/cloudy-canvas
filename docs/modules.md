@@ -217,6 +217,17 @@ A feature imports the product's pieces by their path (`@design/ui/components/pan
 importing `@design/ui` from a module would loop through the module list; `@design/ui` exports them
 all, and `check-public-api` keeps the two in step.
 
+### Several editors are mounted
+
+On desktop every open file is a tab, and the editors of the tab on screen and of a few in the
+background (left a moment ago, or worked on by an agent) stay mounted at once, often two of one
+product. So a module's UI state that opens UI must be per editor (keyed by its engine), or the UI
+must render only in the tab on screen. The `overlays` already do (`ModuleSession` draws them only
+in the active tab, so a store that opens a dialog, the player or anything portaled to `<body>` opens
+it once); UI mounted elsewhere that follows an app-wide store goes inside `ActiveTabOnly`, and a
+window-wide listener checks `useIsActiveTab()` (`@canvas-ui`). Session hooks run in every mounted
+editor.
+
 ## README template
 
 Every module's `README.md` (and every folder whose behavior needs explaining) says what it is, next to

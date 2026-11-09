@@ -1,0 +1,16 @@
+{
+  "close": {
+    "failed": "The tab couldn't be closed"
+  },
+  "quit": {
+    "title": "Quit Cloudy Canvas?",
+    "one": "“{name}” has changes that aren't saved. They'll be lost unless you save them.",
+    "many": "{count} files have changes that aren't saved: {names}. They'll be lost unless you save them.",
+    "saveOne": "Save and quit",
+    "saveAll": "Save all and quit",
+    "discard": "Quit without saving"
+  },
+  "autosave": {
+    "failed": "The {noun} couldn't be saved"
+  }
+}

@@ -41,3 +41,6 @@ export { projectRegistry } from "./project-registry";
 export { projectsSupported } from "./projects-support";
 export { defaultProjectsFolder, ensureFolder, removeCreatedFolder } from "./project-folders";
 export { pickProjectFile } from "./pick-project-file";
+export { tabsSupported } from "./tabs-support";
+export { windowChrome } from "./window-chrome";
+export { TauriWindowChrome } from "./tauri-window-chrome";

@@ -9,6 +9,7 @@ import {
 import type { ContextMenuEntryGroup } from "../../modules/editor-points.types";
 import { useEngine } from "../../engine-context";
 import { useOptionalEditorPoint } from "../../modules/editor-modules-context";
+import { useIsActiveTab } from "../../tabs/use-is-active-tab";
 import type { OpenContextMenu } from "./canvas-context-menu.types";
 import { allowedGroups } from "./context-menu-allowed";
 import { ContextMenuGroups } from "./context-menu-groups";
@@ -19,12 +20,19 @@ import { MENU_FITS_SCREEN } from "./menu-fits-screen";
 /**
  * The canvas's right-click menu: the selection's actions on elements, or paste, select all and
  * export on the empty canvas, less what the current mode doesn't run. Opens where the engine reports
- * a right-click; items run commands.
+ * a right-click; items run commands. It closes when its tab leaves the screen (a key can switch
+ * tabs with it open, and its items would then act on a file in the background).
  */
 export function CanvasContextMenu() {
   const engine = useEngine();
   const [menu, setMenu] = useState<OpenContextMenu | null>(null);
   const moduleGroups = useOptionalEditorPoint((points) => points.contextMenu);
+  const active = useIsActiveTab();
+  const [wasActive, setWasActive] = useState(active);
+  if (active !== wasActive) {
+    setWasActive(active);
+    if (!active) setMenu(null);
+  }
 
   useEffect(
     () =>

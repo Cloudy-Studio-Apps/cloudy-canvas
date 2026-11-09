@@ -14,6 +14,7 @@ import {
 import { BoardToolbar } from "./components/board-toolbar";
 import { BoardTopBar } from "./components/board-top-bar";
 import { t } from "./board-ui.i18n";
+import { useBoardTabMenu } from "./use-board-tab-menu";
 
 /**
  * UI around the canvas. Never holds canvas content — it only reflects engine UI state. With the UI
@@ -25,6 +26,7 @@ export function BoardChrome() {
   const hidden = useUiHidden();
   const viewing = live?.role === "view";
   useCopyAs();
+  useBoardTabMenu();
   return (
     <div className="pointer-events-none absolute inset-0">
       <CollaboratorLayer />

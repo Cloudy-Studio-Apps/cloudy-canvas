@@ -1,17 +1,30 @@
 import { useEffect, useRef, useState } from "react";
 
-import { appLifecycle } from "@platform";
+import { appLifecycle, tabsSupported } from "@platform";
+import { useTabContext } from "../../tabs/tab-context";
+import { tabHandles } from "../../tabs/tab-handles";
 import { useCanvasFile } from "../canvas-file-context";
 import { CloseFileDialog } from "./close-file-dialog";
-import type { CloseChoice, CloseFileGuardProps } from "./close-file-dialog.types";
+import type { CloseChoice } from "./close-file-dialog.types";
 
 /**
- * Asks before the window closes (its ✕, `appLifecycle.onCloseRequest`) while a file is open.
- * The preview is taken while the dialog is open, so quitting goes straight on. Leaving the editor
- * inside the app doesn't ask.
+ * Asks before the window closes (its ✕, `appLifecycle.onCloseRequest`) while a file is open, where
+ * there are no tabs (Android); on desktop the app's one guard asks for every tab. A joined live
+ * session isn't a file here, so it doesn't ask. Sessions mount it for every file.
  */
-export function CloseFileGuard({ capture }: CloseFileGuardProps) {
+export function CloseFileGuard() {
   const file = useCanvasFile();
+  if (tabsSupported() || file.live?.side === "guest") return null;
+  return <WindowCloseGuard />;
+}
+
+/**
+ * The guard itself. The preview is taken while the dialog is open (the tab's `capture`), so
+ * quitting goes straight on. Leaving the editor inside the app doesn't ask.
+ */
+function WindowCloseGuard() {
+  const file = useCanvasFile();
+  const { tabId } = useTabContext();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   /** How the pending question is answered. */
@@ -25,7 +38,7 @@ export function CloseFileGuard({ capture }: CloseFileGuardProps) {
           pending.current?.(false);
           pending.current = resolve;
           setOpen(true);
-          void capture();
+          void tabHandles.get(tabId)?.capture();
         }),
     );
     return () => {
@@ -33,7 +46,7 @@ export function CloseFileGuard({ capture }: CloseFileGuardProps) {
       pending.current?.(false);
       pending.current = null;
     };
-  }, [capture]);
+  }, [tabId]);
 
   const answer = (quit: boolean) => {
     const resolve = pending.current;

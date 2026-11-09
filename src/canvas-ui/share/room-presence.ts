@@ -14,7 +14,7 @@ const MAX_NAME = 40;
  * Mirrors the other people's awareness states into the collaborators (`sink`), so their cursors,
  * selections and pages show like agents', and so do their agents': drawn in their owner's colour
  * and never undone from here (their history is on their owner's computer). Returns the function
- * that stops and forgets them.
+ * that stops and forgets them (this room's only, so several sessions can be mirrored at once).
  */
 export function mirrorRoomPresence(awareness: Awareness, sink: PresenceSink): () => void {
   const joined = new Set<number>();
@@ -93,7 +93,8 @@ export function mirrorRoomPresence(awareness: Awareness, sink: PresenceSink): ()
   awareness.on("update", sync);
   return () => {
     awareness.off("update", sync);
-    sink.clearSource(ROOM_SOURCE);
+    // Only this room's people: another session's stay.
+    for (const client of [...joined]) forget(client);
   };
 }
 

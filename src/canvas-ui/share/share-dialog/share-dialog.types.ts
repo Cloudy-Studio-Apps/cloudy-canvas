@@ -29,11 +29,20 @@ export interface GuestRowProps {
 
 export interface ShareKnocksProps {
   host: ShareHost;
+  /** The shared file's name, said on each card (the app's knocks, shown over any tab). */
+  fileName?: string;
 }
 
 export interface KnockCardProps {
   host: ShareHost;
   knock: ShareKnock;
+  fileName?: string;
+}
+
+export interface HostedKnocksProps {
+  /** The shared file's id. */
+  fileId: string;
+  fileName: string;
 }
 
 export interface PersonBadgeProps {

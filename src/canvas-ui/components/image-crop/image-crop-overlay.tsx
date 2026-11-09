@@ -3,6 +3,7 @@ import { useEffect, useId, useRef, type PointerEvent as ReactPointerEvent } from
 import { imageQuad, type Point } from "@canvas";
 
 import { normalizedToScreen, screenToLocal, useViewMapping } from "../../overlay";
+import { useIsActiveTab } from "../../tabs/use-is-active-tab";
 import { dragCrop } from "./crop-drag";
 import { CROP_EDGES, edgePoint } from "./crop-edges";
 import type { CropGrip, ImageCropOverlayProps, ImageCropValue } from "./image-crop-overlay.types";
@@ -38,8 +39,10 @@ export function ImageCropOverlay({
   const view = useViewMapping();
   const svg = useRef<SVGSVGElement>(null);
   const clipId = useId();
+  const active = useIsActiveTab();
 
   useEffect(() => {
+    if (!active) return;
     const keyDown = (event: KeyboardEvent) => {
       if (event.key !== "Enter" && event.key !== "Escape") return;
       // Typing in a field (a panel's) keeps its keys.
@@ -51,7 +54,7 @@ export function ImageCropOverlay({
     };
     window.addEventListener("keydown", keyDown, { capture: true });
     return () => window.removeEventListener("keydown", keyDown, { capture: true });
-  }, [onDone]);
+  }, [onDone, active]);
 
   const screen = (p: Point) => normalizedToScreen(p, frame, view);
   const quad = imageQuad(transform).map(screen);
