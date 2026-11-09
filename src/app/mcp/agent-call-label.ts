@@ -4,6 +4,17 @@ import { usePluginsStore } from "@shared/stores/plugins-store";
 const OVERRIDES: Record<string, [doing: string, done: string]> = {
   history_undo: ["Undoing", "Undid"],
   history_redo: ["Redoing", "Redid"],
+  arrange_tidy_up: ["Tidying up", "Tidied up"],
+  arrange_align: ["Aligning elements", "Aligned elements"],
+  arrange_distribute: ["Distributing elements", "Distributed elements"],
+  arrange_scale: ["Scaling elements", "Scaled elements"],
+  view_fit: ["Fitting the view", "Fitted the view"],
+  view_fit_elements: ["Zooming to elements", "Zoomed to elements"],
+  view_snapshot: ["Looking at the file", "Looked at the file"],
+  clipboard_png_copy: ["Copying a PNG to the clipboard", "Copied a PNG to the clipboard"],
+  file_recent_list: ["Listing recent files", "Listed recent files"],
+  er_relayout: ["Rearranging the ER diagram", "Rearranged the ER diagram"],
+  variables_unused_find: ["Finding unused variables", "Found unused variables"],
 };
 
 /** Verbs whose -ing and past forms aren't made by the usual rules. */
@@ -32,6 +43,9 @@ const IRREGULAR: Record<string, [doing: string, done: string]> = {
   swap: ["Swapping", "Swapped"],
   group: ["Grouping", "Grouped"],
   remove: ["Removing", "Removed"],
+  fit: ["Fitting", "Fitted"],
+  bind: ["Binding", "Bound"],
+  unbind: ["Unbinding", "Unbound"],
 };
 
 function forms(verb: string): [doing: string, done: string] {
