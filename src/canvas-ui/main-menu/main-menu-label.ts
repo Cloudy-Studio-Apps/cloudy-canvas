@@ -1,6 +1,6 @@
 import { BASE_COMMAND_LABELS } from "@canvas";
 
-import type { MainMenuItem } from "../../modules";
+import type { MainMenuItem } from "./main-menu.types";
 
 const COMMAND_LABELS: Readonly<Record<string, string | undefined>> = BASE_COMMAND_LABELS;
 

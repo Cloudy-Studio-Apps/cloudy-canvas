@@ -14,5 +14,8 @@
     "maximize": "Maximize",
     "restore": "Restore",
     "close": "Close"
-  }
+  },
+  "openFile": "Open file…",
+  "theme": "Theme",
+  "matchSystem": "Match system"
 }

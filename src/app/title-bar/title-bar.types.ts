@@ -28,3 +28,8 @@ export interface TabReorder {
   /** Which side of tab `id` a dragged tab would drop on, `null` when it isn't the target. */
   dropSideOf: (id: string) => "before" | "after" | null;
 }
+
+export interface FileTabMenuProps {
+  /** The active file tab, whose editor registered the menu. */
+  tabId: string;
+}

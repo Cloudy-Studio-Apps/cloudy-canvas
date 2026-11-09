@@ -1,10 +1,9 @@
-import { ExtensionIconView } from "@canvas-ui";
 import {
   DropdownMenuCheckboxItem,
   DropdownMenuItem,
   DropdownMenuShortcut,
 } from "@shared/ui/components/ui/dropdown-menu";
-import { useDesignEngine } from "../../design-engine-context";
+import { ExtensionIconView } from "../modules/extension-icon-view";
 import { mainMenuLabel } from "./main-menu-label";
 import type { MainMenuEntryProps } from "./main-menu.types";
 
@@ -12,8 +11,7 @@ import type { MainMenuEntryProps } from "./main-menu.types";
  * One item of the main menu, with its shortcut from the keymap; a checkbox when it has `checked`.
  * A command the current mode doesn't run (`engine.allowsCommand`) is shown disabled.
  */
-export function MainMenuEntry({ item, onPick }: MainMenuEntryProps) {
-  const engine = useDesignEngine();
+export function MainMenuEntry({ item, engine, onPick }: MainMenuEntryProps) {
   const label = mainMenuLabel(item);
   const disabled = "command" in item && !engine.allowsCommand(item.command);
   const shortcut = "command" in item && (

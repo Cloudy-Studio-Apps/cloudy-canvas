@@ -8,8 +8,12 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   (`data-tauri-drag-region`; double-click maximizes) and the window controls. Where the system
   draws the controls (`windowChrome.drawsControls` false: macOS) it leaves room on the left for
   the native traffic lights instead. The active tab has a 2px `bg-primary` top line.
-- **`SealMenu`** (`seal-menu.tsx`) is the seal trigger with the app-level items only for now (New
-  board, New design, Settings, About).
+- **`SealMenu`** (`seal-menu.tsx`) is the seal trigger and the one main menu for every tab. On
+  Home (`HomeMenu`): New board, New design, Open file… (`useOpenFile` from `@pages/home`), Theme,
+  Settings, About. On a file tab (`FileTabMenu`): the menu its editor registered
+  (`tabMenus.get(activeId)`, read as the menu opens, rendered with `canvas-ui`'s
+  `MainMenuSectionsView`: File, Edit, View, Settings, About from the product's `mainMenu` point),
+  then Theme (`ThemeSubmenu`). There is no "Back to home" item: the Home tab does that.
 - **`HomeTabButton`**: icon only, first, never closed or moved; `fileTabs.activate(null)`.
 - **`TabButton`**: the product's icon (a spinner while `load.status === "loading"`), the name with
   an ellipsis, `TabAvatars`, and a dot while `unsaved` that the close button replaces on hover or

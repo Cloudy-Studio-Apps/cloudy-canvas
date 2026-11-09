@@ -1,5 +1,4 @@
-import type { MainMenuGroup } from "../../modules";
-import type { MainMenuSection } from "./main-menu.types";
+import type { MainMenuGroup, MainMenuSection } from "./main-menu.types";
 
 /**
  * Splits the main menu's groups (sorted) into sections: a group without a label is shown as its

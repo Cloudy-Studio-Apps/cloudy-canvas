@@ -14,5 +14,8 @@
     "maximize": "Maximizar",
     "restore": "Restaurar",
     "close": "Cerrar"
-  }
+  },
+  "openFile": "Abrir archivo…",
+  "theme": "Tema",
+  "matchSystem": "Igual que el sistema"
 }

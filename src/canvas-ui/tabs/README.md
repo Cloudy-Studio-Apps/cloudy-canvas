@@ -40,6 +40,11 @@ knows a product: the app gives `TabHost` each product's editor (`app/tabs/`).
   Not reactive: the app reads it when closing a tab or the window (`app/tabs/`), and
   `onRemove(id, listener)` hands over each handle removed as a tab's editor unmounts. A tab with no handle (hibernated,
   `document`, a live guest) has nothing to save.
+- **`tabMenus`** (`tab-menus.ts`) holds, by tab id, the main menu of each tab whose editor is
+  mounted (`TabMenu`: the engine and the `MainMenuGroup`s, `canvas-ui/main-menu/`), set by the
+  editor with `useTabMenu(engine, groups)` (its chrome, from the product's `mainMenu` point). Not
+  reactive: the title bar's seal reads the active tab's as it opens. It is a registry of its own,
+  not a field of `TabHandle`, because the handle is built by the file's saver.
 - **`tabLeaveGuard`** (`tab-leave-guard.ts`), set by `TabHost` on the `FileTabs`
   (`setLeaveGuard`), readies a background editor before the memory policy takes it away
   ([canvas/tabs/](../../canvas/tabs/README.md#the-memory-policy)): `flush()`, then `capture()` (the

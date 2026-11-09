@@ -13,3 +13,4 @@ export type * from "./field-binding-scope.types";
 export { FieldBindingScopeContext } from "./field-binding-scope";
 export type * from "./use-drop-on-canvas.types";
 export { useDropOnCanvas } from "./use-drop-on-canvas";
+export { useDesignTabMenu } from "./use-design-tab-menu";

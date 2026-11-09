@@ -24,6 +24,7 @@ export type { FloatingPanelProps, PanelDividerProps } from "./components/floatin
 export type { OptionButtonProps } from "./components/option-button.types";
 export type { ToolButtonProps } from "./components/tool-button.types";
 export type { ZoomMenuProps } from "./components/zoom-menu.types";
+export type * from "./main-menu";
 export type * from "./modules";
 export type * from "./overlay";
 export type * from "./share";
@@ -34,6 +35,7 @@ export type * from "./thumbnails";
 export { createActiveFile, useAgentFile } from "./agent";
 export { EXPORT_THEME_SCOPE } from "@shared/core";
 export { readCanvasTheme, readExportCanvasTheme } from "./canvas-theme";
+export { MainMenuSectionsView } from "./main-menu";
 export { useStartStarter } from "./starters";
 export { StickerWheel } from "./stickers";
 export {
@@ -44,8 +46,10 @@ export {
   useFileTabs,
   useFileTabsModel,
   useIsActiveTab,
+  tabMenus,
   useSuspendWhenHidden,
   useTab,
+  useTabMenu,
   useTabParam,
 } from "./tabs";
 export {

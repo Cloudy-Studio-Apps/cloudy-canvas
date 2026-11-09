@@ -14,7 +14,7 @@ import {
 import { LeftPanel } from "./components/left-panel";
 import { PropertiesPanel, ShowPropertiesButton } from "./components/properties-panel";
 import { DesignRail } from "./components/rail";
-import { useCanvasInset, usePhonePanels } from "./hooks";
+import { useCanvasInset, useDesignTabMenu, usePhonePanels } from "./hooks";
 import { useDesignPanelStore } from "./stores/design-panel-store";
 import { t } from "./design-ui.i18n";
 
@@ -34,6 +34,7 @@ export function DesignChrome() {
   const rightOpen = useDesignPanelStore((state) => state.rightOpen);
   useCopyAs();
   usePhonePanels();
+  useDesignTabMenu();
 
   return (
     <div className="pointer-events-none absolute inset-0">

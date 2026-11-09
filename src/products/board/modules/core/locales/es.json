@@ -17,5 +17,12 @@
       "label": "Mano",
       "description": "Desplázate por la pizarra."
     }
+  },
+  "menu": {
+    "file": "Archivo",
+    "edit": "Editar",
+    "view": "Ver",
+    "settings": "Ajustes",
+    "about": "Acerca de Cloudy Canvas"
   }
 }
