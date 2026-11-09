@@ -156,6 +156,7 @@ export {
   importModelFiles,
   MODEL_ACTIONS,
   modelBaker,
+  modelHeldNotice,
   ModelLiveView,
   ModelPanel,
   ModelSizeDialog,

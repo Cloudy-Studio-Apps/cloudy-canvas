@@ -31,6 +31,8 @@ export function addModelTool(baker: ModelBaker): BoardMcpTool {
       if (engine.doc.isReadOnly) throw new Error("This board is read-only.");
       const { imp, rect } = await readAgentModel(args, baker, (path) => host.readFile(path));
       const stored = await storeModel(baker, imp, rect, engine.doc);
+      // The bake took time: check again before writing.
+      if (engine.doc.isReadOnly) throw new Error("This board is read-only.");
       const model = createModel(stored, rect, engine.doc.nextIndex());
       asUndoStep(engine.doc, () => engine.doc.add(model));
       return { id: model.id, ...agentModelReport(stored, imp, "board"), ...rect };

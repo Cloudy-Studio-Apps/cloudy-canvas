@@ -28,9 +28,10 @@ edited, and convertible to a plain PNG image.
   (`ui/model3d-panel.tsx`, in the side dock since it is taller than the selection bar) is the shared
   `ModelPanel`. Edit is disabled for a copy that has only the picture (no model file).
 - **Convert:** **Convert to PNG** (menu and panel) opens `ConvertModelDialog`, then
-  `convertModelToImage(engine, el)` swaps the model for an `image` with the same box and z-order in
-  one undo step and the new image is selected. The user's unfinished edit is written first. It
-  refuses while anyone has the model live.
+  `convertModelToImage(engine, el)` swaps the model for an `image` with the same box, z-order,
+  rotation, mirroring and lock in one undo step and the new image (a new id) is selected. The
+  user's unfinished edit is written first. It refuses while anyone has the model live; the UI
+  checks first and says so with a toast (`modelHeldNotice`).
 - **Agents:** `add_model` imports, bakes and adds (the size warning is in the result, no dialog),
   `set_model_view` re-bakes off screen and writes angle, zoom, textures and picture in one undo
   step, `convert_model_to_png` converts. The last two fail with "being edited" while the model is

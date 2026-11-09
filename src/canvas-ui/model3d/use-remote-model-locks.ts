@@ -13,8 +13,11 @@ export function useRemoteModelLocks(engine: CanvasEngine<object>, fileId: string
     const sync = () => {
       const holders = new Map<string, string>();
       for (const collaborator of Object.values(useCollaboratorsStore.getState().collaborators)) {
-        const { fileId: openId, editing } = collaborator.state;
-        if (openId === fileId && editing) holders.set(editing, collaborator.id);
+        // A peer's state comes off the network: only a string names a model.
+        const editing: unknown = collaborator.state.editing;
+        if (collaborator.state.fileId === fileId && typeof editing === "string" && editing) {
+          holders.set(editing, collaborator.id);
+        }
       }
       locks.setRemote(holders);
     };

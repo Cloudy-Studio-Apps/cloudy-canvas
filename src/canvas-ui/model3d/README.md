@@ -4,7 +4,9 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
 
 - **Edit locks** (`use-remote-model-locks.ts`): `useRemoteModelLocks(engine, fileId)` feeds the
   engine's `MODEL_EDIT_LOCKS` (`canvas/model3d/`) with the model each collaborator on the file has
-  live (`CollaboratorState.editing`). A lock disappears with its collaborator.
+  live (`CollaboratorState.editing`, taken only when it's a string). A lock disappears with its
+  collaborator. `modelHeldNotice(engine, id)` says with a toast when someone has a model live,
+  before an action that needs it free (the products' Convert to PNG).
 - **Loading** (`load/`): `importModel(main, others, readSibling)` reads a model file into what the
   document stores (`ModelImport`: bytes, material file, texture slots, first-framing aspect) and
   throws an `Error` when it can't be parsed; `loadModel(source)` builds the three.js object to show

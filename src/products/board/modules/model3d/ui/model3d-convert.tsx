@@ -1,4 +1,4 @@
-import { ConvertModelDialog, useModelEditStore } from "@canvas-ui";
+import { ConvertModelDialog, modelHeldNotice, useModelEditStore } from "@canvas-ui";
 import { notifyError } from "@shared/stores/toast-store";
 import { useBoardEngine } from "@board/ui/board-engine-context";
 import { convertModelToImage } from "../convert-model";
@@ -18,7 +18,7 @@ export function Model3dConvert() {
       // The unfinished edit (the panel's changes) is written first, so the picture is current.
       await useModelEditStore.getState().stopIn(engine);
       const el = engine.getElement(id);
-      if (el?.type !== "model3d") return;
+      if (el?.type !== "model3d" || modelHeldNotice(engine, id)) return;
       engine.select([convertModelToImage(engine, el as ModelElement)]);
     } catch (error) {
       notifyError(t("convert.failed"), error);

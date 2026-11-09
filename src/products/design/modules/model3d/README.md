@@ -31,9 +31,11 @@ edited, and convertible to a rectangle filled with its PNG.
   disabled for a copy that has only the picture (no model file) and for a read-only design.
 - **Convert:** **Convert to PNG** (menu and panel) opens `ConvertModelDialog`, then
   `convertModelToRectangle(engine, el)` swaps the model for a `rectangle` with an image fill of the
-  picture, in one undo step, keeping its box, name, parent, z-order, page, rotation, opacity,
-  visibility, lock and other layer settings; the new rectangle is selected. The user's unfinished
-  edit is written first. It refuses while anyone has the model live.
+  picture (`fit`, as the model draws it), in one undo step, keeping its box, name, parent,
+  z-order, page, rotation, opacity, visibility, lock, other layer settings, variable bindings and
+  modes and prototype `interactions`; the new rectangle (a new id) is selected. The user's
+  unfinished edit is written first. It refuses while anyone has the model live; the UI checks first
+  and says so with a toast (`modelHeldNotice`).
 - **Agents:** `add_model_node` imports, bakes and adds (`parent` as `add_image`; the size warning is
   in the result, no dialog), `set_model_node_view` re-bakes off screen and writes angle, zoom,
   textures and picture in one undo step, `convert_model_node_to_png` converts. The last two fail

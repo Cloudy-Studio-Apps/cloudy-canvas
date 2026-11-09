@@ -26,17 +26,18 @@ function rendererFor(kit: ThreeKit): WebGLRenderer {
     renderer.dispose();
     renderer = null;
   }
-  if (!renderer) {
-    renderer = createPictureRenderer(kit);
-    renderer.domElement.addEventListener("webglcontextlost", () => {
-      renderer = null;
-    });
-  }
-  if (renderer.getContext().isContextLost()) {
-    renderer = null;
+  if (renderer) return renderer;
+  const created = createPictureRenderer(kit);
+  if (created.getContext().isContextLost()) {
+    created.dispose();
     throw new Error("WebGL is not available to draw the model's picture");
   }
-  return renderer;
+  // Only forgets it while it's still the cached one (a lost old one never drops a newer one).
+  created.domElement.addEventListener("webglcontextlost", () => {
+    if (renderer === created) renderer = null;
+  });
+  renderer = created;
+  return created;
 }
 
 /** Imports models and draws their picture off screen with one shared WebGL renderer. */

@@ -1,4 +1,4 @@
-import { ConvertModelDialog, useModelEditStore } from "@canvas-ui";
+import { ConvertModelDialog, modelHeldNotice, useModelEditStore } from "@canvas-ui";
 import { notifyError } from "@shared/stores/toast-store";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { convertModelToRectangle } from "../convert-model";
@@ -18,7 +18,7 @@ export function Model3dConvert() {
       // The unfinished edit (the panel's changes) is written first, so the picture is current.
       await useModelEditStore.getState().stopIn(engine);
       const el = engine.getElement(id);
-      if (el?.type !== "model3d") return;
+      if (el?.type !== "model3d" || modelHeldNotice(engine, id)) return;
       engine.select([convertModelToRectangle(engine, el as ModelNodeElement)]);
     } catch (error) {
       notifyError(t("convert.failed"), error);
