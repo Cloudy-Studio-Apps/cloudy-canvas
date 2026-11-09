@@ -15,7 +15,12 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   look), and only a slot whose `file` wasn't found is missing (`ModelSource.missing`, drawn gray); a texture inside the model is `embedded`. A texture file is
   looked for in this order: embedded, next to the model on disk (`siblingReader(path)` over
   `readLocalFile`; any failure is "not there"), then the other files picked or dropped with the
-  model, by name regardless of case; else `data: null` (listed as missing, drawn gray). Files a
+  model, by name regardless of case; else `data: null` (listed as missing, drawn gray). On disk
+  (`find-file.ts`, `sibling-paths.ts`) it tries the reference as written when it's relative with
+  no `..`, then its name alone, then `textures/` and `Textures/` + name; an absolute path (an
+  FBX's `C:\Users\…\wood.png`) or a `..` path is never read as it is, and `siblingReader` refuses
+  both too. Only companions of the expected type are read and stored (`companion-names.ts`): a
+  `.mtl` for `mtllib`, a `.bin` for a glTF buffer, a picture for a texture or glTF image. Files a
   loader asks for that were not given are answered by a stand-in picture whose URL names the file
   (`external-texture.ts`, a 1x1 PNG), which is how missing ones are told apart; a `.gltf`'s are read
   from its JSON (`gltf-files.ts`), since its loader gives no URL back.

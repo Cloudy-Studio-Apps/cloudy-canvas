@@ -1,5 +1,6 @@
 import type { ImportedSlot, ImportFile } from "@canvas";
-import { imageTypeFromName } from "@shared/core";
+import { isPictureName } from "./companion-names";
+import { baseName } from "./external-texture";
 import { findFile } from "./find-file";
 import type { SiblingReader } from "./import-model.types";
 
@@ -14,8 +15,8 @@ export function resolveTextures(
 ): Promise<ImportedSlot[]> {
   return Promise.all(
     slots.map(async (slot) => {
-      if (slot.embedded || !slot.file || !imageTypeFromName(slot.file)) return slot;
-      return { ...slot, data: await findFile(slot.file, others, readSibling) };
+      if (slot.embedded || !slot.file || !isPictureName(baseName(slot.file))) return slot;
+      return { ...slot, data: await findFile(slot.file, others, readSibling, isPictureName) };
     }),
   );
 }
