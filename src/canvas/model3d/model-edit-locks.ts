@@ -1,3 +1,6 @@
+import type * as Y from "yjs";
+
+import type { CanvasDocument } from "../document";
 import { defineService } from "../services";
 import { Emitter } from "../utils";
 import type { LocalLockHolder } from "./model-edit-locks.types";
@@ -59,4 +62,21 @@ function sameHolders(a: ReadonlyMap<string, string>, b: ReadonlyMap<string, stri
   return true;
 }
 
-export const MODEL_EDIT_LOCKS = defineService("model3d.locks", () => new ModelEditLocks());
+/** One registry per shared document (its `Y.Doc`), whoever's view of it asks. */
+const byDoc = new WeakMap<Y.Doc, ModelEditLocks>();
+
+/**
+ * The locks of a document. Keyed by its `Y.Doc`, not by the `CanvasDocument` asking: an agent's
+ * workspace has its own service cache over its own proxy of the document (`actorDocument`), and
+ * must still see the user's lock and the others'.
+ */
+function locksOf(doc: CanvasDocument): ModelEditLocks {
+  let locks = byDoc.get(doc.doc);
+  if (!locks) {
+    locks = new ModelEditLocks();
+    byDoc.set(doc.doc, locks);
+  }
+  return locks;
+}
+
+export const MODEL_EDIT_LOCKS = defineService("model3d.locks", locksOf);
