@@ -30,7 +30,10 @@ view never moves for it.
   in `boardFiles`/`designFiles`; 15 s, then `The board "Sprint board" couldn't be opened.`). A tab
   whose file failed to load fails the call at once with the load's message and unbinds the
   session, so it can open another file. An unbound session waits for the active tab's editor while
-  it loads, so its first file call binds there instead of finding no file. A headless editor is
+  it loads, so its first file call binds there instead of finding no file; `prepare` doesn't know
+  which tool runs, so that wait also holds its calls that need no file (`list_tabs`, recent files,
+  projects) until the active tab's editor is there (at most 15 s), which is accepted: it only
+  happens for an unbound session while the tab on screen is loading. A headless editor is
   suspended (no drawing, no input), but its scene follows the document and `engine.workspace(id)`
   works, so tools run there as on screen.
 - **The host** (`agentHostFor`): `board()`/`design()` are the bound tab's file in the agent's
@@ -47,7 +50,9 @@ view never moves for it.
 - **Its tab closed**: the binding stays, pointing at a tab that's gone, so the session's next file
   call throws `Your tab was closed: open, create or switch to a file.` and unbinds it; the call
   after binds again by the rule above. A session that ends (`ended`, `use-agent-server.ts`) leaves
-  and is unbound.
+  and is unbound. An agent quiet long enough to be pruned (`presence.prune`) leaves its file but
+  keeps its binding, on purpose: unbinding would let its next call bind silently to whatever tab is
+  on screen. Its tab therefore stays at least `document` (never hibernated) until the app restarts.
 
 ## The app wires it up
 
