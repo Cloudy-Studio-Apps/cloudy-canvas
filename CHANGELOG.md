@@ -5,6 +5,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ## Unreleased
 
+## 0.9.0 - 2026-11-09
+
 ### New
 
 - Tabs on desktop: open several files at once as tabs in the window's title bar, with Home as the

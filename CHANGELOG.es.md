@@ -5,6 +5,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ## Sin publicar
 
+## 0.9.0 - 2026-11-09
+
 ### Novedades
 
 - Pestañas en el escritorio: abre varios archivos a la vez como pestañas en la barra de título de la
