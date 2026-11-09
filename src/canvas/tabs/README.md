@@ -15,7 +15,8 @@ opened), its `load` (`idle`, `loading`, `ready` with the document and its `FileI
 whether it's `unsaved` or `hosting` a live session (set by the app: `watchHostedTabs`), the agent sessions bound to it (`agents`) and
 when it was last shown (`lastActiveAt`) or called by an agent (`lastAgentCallAt`). A joined live
 session's tab has `live` (its `ShareGuest`) and the `fileId` `live:<fileId>`, so it never matches
-the stored file. Documents come from the product's `TabLoader` (`loaders`, one per `FileType`),
+the stored file; its people report the host's file id, so `tabPresenceFileIds(tab)` gives both
+(the title bar's avatars and the agents' `list_tabs` use it). Documents come from the product's `TabLoader` (`loaders`, one per `FileType`),
 which reads storage, or the session when `live` is given: a live tab never reloads from storage.
 Once loaded, the tab's `name` is the file's (`info.name`, drafts included); its editor then keeps
 it in step with the title. `setInfo(id, info)` replaces a loaded tab's `load.info` when its file is

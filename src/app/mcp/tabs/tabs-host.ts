@@ -1,4 +1,5 @@
 import type { AgentFileMatch, AgentTab, FileTab, TabsAgentHost } from "@canvas";
+import { tabPresenceFileIds } from "@canvas/tabs";
 import { sameFileName } from "@canvas";
 import type { Collaborator } from "@shared/core";
 import { useCollaboratorsStore } from "@shared/stores/collaborators-store";
@@ -11,7 +12,7 @@ import { tabDisplayName } from "./tab-display-name";
 /** Who is in a tab: the collaborators in its file (the rule of its button's avatars), and its bound agents. */
 function collaboratorsIn(tab: FileTab): string[] {
   const known = useCollaboratorsStore.getState().collaborators;
-  const fileIds = new Set([tab.fileId, tab.fileId.replace(/^live:/, "")]);
+  const fileIds = new Set(tabPresenceFileIds(tab));
   const here = new Map<string, Collaborator>();
   for (const c of Object.values(known))
     if (c.state.fileId && fileIds.has(c.state.fileId)) here.set(c.id, c);

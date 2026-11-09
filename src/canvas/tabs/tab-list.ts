@@ -7,6 +7,15 @@ export function tabFileId(source: TabSource): string {
   return source.live ? `live:${source.fileId}` : source.fileId;
 }
 
+/**
+ * The file ids the people in a tab's file report in their presence: its `fileId`, and for a joined
+ * live session also the host's file id (`live:` stripped), which the room's people report.
+ */
+export function tabPresenceFileIds(tab: Pick<FileTab, "fileId">): readonly string[] {
+  const shared = tab.fileId.replace(/^live:/, "");
+  return shared === tab.fileId ? [tab.fileId] : [tab.fileId, shared];
+}
+
 /** A new tab for `source`, hibernated until something loads it. */
 export function createTab(source: TabSource, now: number): FileTab {
   return {

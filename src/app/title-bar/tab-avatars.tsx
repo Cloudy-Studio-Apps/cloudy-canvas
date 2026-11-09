@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { TAB_LIMITS } from "@canvas/tabs";
+import { TAB_LIMITS, tabPresenceFileIds } from "@canvas/tabs";
 import { CollaboratorAvatar } from "@shared/collaborators";
 import { useCollaboratorsStore } from "@shared/stores/collaborators-store";
 import { cn } from "@shared/ui/lib/utils";
@@ -14,10 +14,13 @@ const MAX_SHOWN = 3;
  */
 export function TabAvatars({ tab, active }: TabAvatarsProps) {
   const collaborators = useCollaboratorsStore((s) => s.collaborators);
-  const here = useMemo(
-    () => Object.values(collaborators).filter((c) => c.state.fileId === tab.fileId),
-    [collaborators, tab.fileId],
-  );
+  const here = useMemo(() => {
+    // A joined session's people report the host's file id (see `tabPresenceFileIds`).
+    const fileIds = tabPresenceFileIds({ fileId: tab.fileId });
+    return Object.values(collaborators).filter(
+      (c) => c.state.fileId !== null && fileIds.includes(c.state.fileId),
+    );
+  }, [collaborators, tab.fileId]);
   const [now, setNow] = useState(() => Date.now());
   const lastCall = tab.lastAgentCallAt;
   useEffect(() => {
