@@ -332,7 +332,7 @@ host.contribute(
 );
 ```
 
-It then shows in the dialog's target picker and in the `export_schema_code` agent tool. An id that's taken throws, naming both modules.
+It then shows in the dialog's target picker and in the `db-export_code_get` agent tool. An id that's taken throws, naming both modules.
 
 ## Design plugins
 

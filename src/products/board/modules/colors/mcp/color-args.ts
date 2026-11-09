@@ -10,7 +10,7 @@ import {
 } from "@canvas";
 
 /** Where the board's color tools point agents for names and ids. */
-export const LIST_TOOL = "list_board_colors";
+export const LIST_TOOL = "colors_list";
 
 /** A board color by id, `Collection/path` or a unique path; throws for unknown ones and non-colors. */
 export function requireColor(tokens: DocumentTokens, ref: string): VariableRecord {

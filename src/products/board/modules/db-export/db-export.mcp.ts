@@ -22,9 +22,9 @@ const NO_ARGS = { type: "object", properties: {} };
 /** The database schema as framework code (read-only: nothing on the board changes). */
 export const dbExportTools: BoardMcpTool[] = [
   {
-    name: "list_code_targets",
+    name: "targets_list",
     description:
-      "The frameworks the database schema exports to as code (export_schema_code): each target's " +
+      "The frameworks the database schema exports to as code (db-export_code_get): each target's " +
       "id, its versions (profiles, newest first) and its options with their defaults.",
     inputSchema: NO_ARGS,
     run: () => ({
@@ -42,13 +42,13 @@ export const dbExportTools: BoardMcpTool[] = [
     }),
   },
   {
-    name: "export_schema_code",
+    name: "code_get",
     description:
       "The board's database schema as a framework's files (models, migrations, entities, DDL), " +
       "returned as { files: [{ path, content, language }], warnings }; nothing is written. " +
       "mode single returns one table's model (tables must name exactly one), project the " +
       "framework's whole structure for the named tables or, without tables, the whole schema. " +
-      "Warnings are ids with params (what the target couldn't express). See list_code_targets.",
+      "Warnings are ids with params (what the target couldn't express). See db-export_targets_list.",
     inputSchema: {
       type: "object",
       required: ["target"],

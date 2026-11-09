@@ -45,7 +45,7 @@ function shapeField(board: AgentBoard, item: ToolArgs): { el: CanvasElement; fie
 /** Linking shapes' colors to board colors, and the mode the board shows. */
 export const colorsBindTools: BoardMcpTool[] = [
   {
-    name: "bind_board_colors",
+    name: "bind",
     description:
       "Links shapes' colors to board colors: each takes the color's value now and follows it " +
       "when it (or the board's mode) changes. Setting the field by hand later unlinks it.",
@@ -89,7 +89,7 @@ export const colorsBindTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "unbind_board_colors",
+    name: "unbind",
     description: "Unlinks shapes' colors from board colors; they keep the color they show.",
     inputSchema: {
       type: "object",
@@ -136,7 +136,7 @@ export const colorsBindTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "set_board_color_mode",
+    name: "mode_set",
     description:
       "Picks the mode the whole board shows on an axis (e.g. Theme: Dark): every shape bound to " +
       "a color varying by it takes that mode's color.",

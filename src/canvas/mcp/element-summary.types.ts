@@ -1,4 +1,4 @@
-/** A compact view of an element for listings; `get_shapes` returns the full fields. */
+/** A compact view of an element for listings; `shapes_get` returns the full fields. */
 export interface ElementSummary {
   id: string;
   type: string;

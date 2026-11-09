@@ -177,7 +177,7 @@ before and after changing `requires`/`after`, since chained hooks run in that or
 - The module file imports only `./<name>.mcp` or `./mcp`, never a single tool file.
 - **"Agent" is who calls, "MCP tool" is what it calls.** Files that define tools are `.mcp.ts`; files
   about the collaborator stay `agent-*.ts` (`agent-host.ts`, `agent-presence-source.ts`).
-- MCP tool _names_ (`create_shapes`, `update_nodes`, …) are a separate plan; keep the existing ones.
+- MCP tool _names_ (`shapes_create`, `update_nodes`, …) are a separate plan; keep the existing ones.
 
 ## Modes
 

@@ -280,7 +280,7 @@ Diagram Ventas [standard: elmasri, participation: both, crowfeet: off]
 
 Every standard allows the other constructs: weak entities (`weak-entities`), identifying relations (`identifying-relations`), relations of three or more sides (`nary-relations`), relations of an entity with itself (`self-relations`), attributes of relations (`relation-attributes`), multivalued, derived, composite and optional attributes (`multivalued-attributes`, `derived-attributes`, `composite-attributes`, `optional-attributes`). Plugins can add constructs and standards that forbid them (`docs/plugins.md`).
 
-**S28. Check diagram.** The Visual tab (with nothing selected), the ER mode's **Check** button and the `check_er_diagram` agent tool list what breaks the model's rules or the standard's, errors first; clicking one selects its shape:
+**S28. Check diagram.** The Visual tab (with nothing selected), the ER mode's **Check** button and the `er_diagram_check` agent tool list what breaks the model's rules or the standard's, errors first; clicking one selects its shape:
 
 | Finding                                                      | Level   |
 | ------------------------------------------------------------ | ------- |
@@ -313,7 +313,7 @@ Relation evalua {
 }
 ```
 
-Its name must not be an entity's. **Convert to entity** (the relation form, the context menu, the `convert_relation_to_entity` agent tool) goes further: it replaces a relation of two sides or more with an entity named after it and one two-way relation per side (each side keeps its cardinality, the new entity's is `(1,1)`, and the relation's attributes move to the entity), one undo step. A relation an aggregation holds can't be converted.
+Its name must not be an entity's. **Convert to entity** (the relation form, the context menu, the `er_relation_convert_to_entity` agent tool) goes further: it replaces a relation of two sides or more with an entity named after it and one two-way relation per side (each side keeps its cardinality, the new entity's is `(1,1)`, and the relation's attributes move to the entity), one undo step. A relation an aggregation holds can't be converted.
 
 **S30. Alternate keys.** `[ak]` (or `[alternate]`) marks a candidate key that isn't the primary key: a dotted underline (a ring in the lollipop look). In tables it's a unique column (or a unique index when composite).
 
@@ -330,7 +330,7 @@ Union Propietario {
 
 Missing entities are created on commit. Dragging a union's connect dot onto an entity adds it as a superclass; dropped on empty board it offers a new superclass entity. In tables, the category gets a surrogate key (`Propietario_id`) and each superclass a unique foreign key to it.
 
-**S33. ER to tables.** **Create tables** (the ER mode's toolbar, the Visual tab with nothing selected, the context menu, the `er_to_tables` agent tool) writes the diagram as tables into the board's database schema, one undo step: entities become tables keyed by their keys (an `id` is added when there's none), composite attributes their parts, multivalued ones their own tables; weak entities are keyed by their owner's key and their partial key; a two-way relation with a side that takes part at most once becomes a foreign key on that side (to the join attribute when one is named; unique when both sides do), the others link tables; aggregations and associative entities are tables others point at. The dialog asks how each hierarchy becomes tables (one per entity, or one for all with a discriminator column) and shows the DBML first. Converting again updates the same tables by name and keeps column types edited in the database panel; foreign keys follow their target's type.
+**S33. ER to tables.** **Create tables** (the ER mode's toolbar, the Visual tab with nothing selected, the context menu, the `er_convert_to_tables` agent tool) writes the diagram as tables into the board's database schema, one undo step: entities become tables keyed by their keys (an `id` is added when there's none), composite attributes their parts, multivalued ones their own tables; weak entities are keyed by their owner's key and their partial key; a two-way relation with a side that takes part at most once becomes a foreign key on that side (to the join attribute when one is named; unique when both sides do), the others link tables; aggregations and associative entities are tables others point at. The dialog asks how each hierarchy becomes tables (one per entity, or one for all with a discriminator column) and shows the DBML first. Converting again updates the same tables by name and keeps column types edited in the database panel; foreign keys follow their target's type.
 
 ---
 

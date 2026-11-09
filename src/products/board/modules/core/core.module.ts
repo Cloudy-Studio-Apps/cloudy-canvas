@@ -53,7 +53,7 @@ export const coreModule = defineModule({
       icon: PencilLine,
       order: 0,
     });
-    // The topics boards share with designs, then the shape tools (renamed to `shapes_*` later).
+    // The topics boards share with designs, then the shape tools.
     host.contribute(
       boardMcpTools,
       { id: "file", prefix: "file", tools: () => fileTools },
@@ -63,14 +63,14 @@ export const coreModule = defineModule({
       { id: "clipboard", prefix: "clipboard", tools: () => clipboardTools },
       { id: "arrange", prefix: "arrange", tools: () => arrangeTools },
       { id: "style", prefix: "style", tools: () => styleTools },
-      { id: "read", prefix: "board", tools: () => boardReadTools },
+      { id: "read", prefix: "shapes", tools: () => boardReadTools },
       {
         id: "shapes",
-        prefix: "board",
+        prefix: "shapes",
         tools: (context) => [createShapesTool(context), ...shapeEditTools],
       },
-      { id: "order", prefix: "board", tools: () => orderTools },
-      { id: "export", prefix: "board", tools: () => exportTools },
+      { id: "order", prefix: "shapes", tools: () => orderTools },
+      { id: "export", prefix: "shapes", tools: () => exportTools },
     );
 
     host.contribute(

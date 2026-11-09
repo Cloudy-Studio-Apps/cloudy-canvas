@@ -30,10 +30,10 @@ function collectionFor(tokens: DocumentTokens, item: ToolArgs): string {
 /** Making, changing and deleting the board's colors; one undo step per call. */
 export const colorsEditTools: BoardMcpTool[] = [
   {
-    name: "create_board_colors",
+    name: "create",
     description:
       "Adds colors to the board (color variables): offered first in every color bar, and shapes " +
-      "bound to one (bind_board_colors) follow it when it changes. Slashes in a name group it " +
+      "bound to one (colors_bind) follow it when it changes. Slashes in a name group it " +
       '("brand/blue").',
     inputSchema: {
       type: "object",
@@ -83,7 +83,7 @@ export const colorsEditTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "update_board_colors",
+    name: "update",
     description:
       "Changes board colors: their name (slashes group it), description, values per mode or " +
       "the color they follow. Shapes using them follow.",
@@ -130,7 +130,7 @@ export const colorsEditTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "delete_board_colors",
+    name: "delete",
     description:
       "Deletes board colors. Shapes using them keep their color, unlinked; colors following one " +
       "keep its color as their own.",
@@ -149,7 +149,7 @@ export const colorsEditTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "create_board_color_collection",
+    name: "collection_create",
     description: "Adds a collection (a folder of board colors).",
     inputSchema: { type: "object", required: ["name"], properties: { name: { type: "string" } } },
     run: (host, args) => {

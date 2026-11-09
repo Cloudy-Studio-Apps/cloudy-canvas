@@ -9,7 +9,7 @@ const STYLES = ["normal", "italic"];
 /** Throws, for agents, when a patch would give a label text or a font it can't have. */
 export function checkTextPatch(patch: ElementPatch<TextElement>): void {
   if (patch.text !== undefined && !patch.text.trim()) {
-    throw new Error("A text element needs some text; remove it with delete_shapes instead.");
+    throw new Error("A text element needs some text; remove it with shapes_delete instead.");
   }
   const { minFontSize, maxFontSize } = TEXT_DEFAULTS;
   if (

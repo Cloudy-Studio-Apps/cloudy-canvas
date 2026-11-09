@@ -6,10 +6,10 @@ import type { BoardMcpTool } from "../../../mcp/board-mcp.types";
 const DIRECTIONS: readonly ReorderDirection[] = ["front", "forward", "backward", "back"];
 const IDS_SCHEMA = { type: "array", items: { type: "string" } };
 
-/** The drawing order and locking (`reorder_shapes`, `lock_shapes`). */
+/** The drawing order and locking (`shapes_reorder`, `shapes_lock`). */
 export const orderTools: BoardMcpTool[] = [
   {
-    name: "reorder_shapes",
+    name: "reorder",
     description:
       "Moves shapes (with what moves with them) in the drawing order as one undo step, as the " +
       "context menu does: to the front or back of everything, or one step forward or backward " +
@@ -29,11 +29,11 @@ export const orderTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "lock_shapes",
+    name: "lock",
     description:
       "Locks shapes (with what moves with them) in place as one undo step, or unlocks them with " +
       "locked: false. The user can't select or drag locked shapes until they're unlocked; " +
-      "list_shapes marks them locked (unlock them all by passing those ids). Returns the ids " +
+      "shapes_list marks them locked (unlock them all by passing those ids). Returns the ids " +
       "that changed.",
     inputSchema: {
       type: "object",

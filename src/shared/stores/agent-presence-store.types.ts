@@ -1,6 +1,6 @@
 /** What an agent is doing, or did last. */
 export interface AgentActivity {
-  /** The tool's MCP name, e.g. `create_shapes`. */
+  /** The tool's MCP name, e.g. `shapes_create`. */
   tool: string;
   /** A sentence for people: "Creating shapes", then "Created 3 shapes". */
   label: string;

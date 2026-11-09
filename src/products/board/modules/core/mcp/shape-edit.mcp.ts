@@ -12,16 +12,16 @@ import type { BoardMcpTool } from "../../../mcp/board-mcp.types";
 
 const IDS_SCHEMA = { type: "array", items: { type: "string" } };
 
-/** Editing shapes (`create_shapes` is in `create-shapes-tool.ts`, as it needs the kinds). */
+/** Editing shapes (`shapes_create` is in `create-shapes-tool.ts`, as it needs the kinds). */
 export const shapeEditTools: BoardMcpTool[] = [
   {
-    name: "update_shapes",
+    name: "update",
     description:
       "Changes fields of existing shapes as one undo step, e.g. { id, patch: { x, y, text, color } }. " +
-      "Field names are the ones get_shapes returns; an error lists what a type allows. Moving a " +
+      "Field names are the ones shapes_get returns; an error lists what a type allows. Moving a " +
       "section, an ER entity or an aggregation moves what's in it. A new w/h resizes as the handles " +
       "do (images, stickers and links keep their proportions; tables scale their rows and columns). " +
-      "Connectors take from/to like create_shapes to re-attach an end; tables take fills (cell " +
+      "Connectors take from/to like shapes_create to re-attach an end; tables take fills (cell " +
       'colors, one array per row, "" for none); images take background (none, white) and padding; ' +
       "strokes take color and size; links take url. Database tables, enums and ER elements can " +
       "only be moved (edit them as DBML or ER text).",
@@ -55,7 +55,7 @@ export const shapeEditTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "delete_shapes",
+    name: "delete",
     description:
       "Deletes shapes as one undo step. A section takes the shapes inside it; connectors " +
       "attached to deleted shapes stay with a free end.",
@@ -66,7 +66,7 @@ export const shapeEditTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "duplicate_shapes",
+    name: "duplicate",
     description:
       "Copies shapes as one undo step, as Ctrl+D does: what moves with them is copied too (a " +
       "section's contents, an entity's attributes), copied database tables get free names, copied " +

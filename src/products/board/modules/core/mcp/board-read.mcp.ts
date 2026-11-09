@@ -14,10 +14,10 @@ import type { BoardMcpTool } from "../../../mcp/board-mcp.types";
 
 export const boardReadTools: BoardMcpTool[] = [
   {
-    name: "list_shapes",
+    name: "list",
     description:
       "Lists the board's shapes bottom to top as summaries (id, type, bounds, label). Filter by " +
-      "type or by a world-space area. Use get_shapes for every field.",
+      "type or by a world-space area. Use shapes_get for every field.",
     inputSchema: {
       type: "object",
       properties: {
@@ -49,7 +49,7 @@ export const boardReadTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "get_shapes",
+    name: "get",
     description: "Every field of the given shapes.",
     inputSchema: {
       type: "object",

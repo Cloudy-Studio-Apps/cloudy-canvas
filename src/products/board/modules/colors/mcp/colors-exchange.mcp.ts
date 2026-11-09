@@ -21,7 +21,7 @@ const CHOICES: readonly ImportChoice[] = ["replace", "keep-both", "skip"];
 /** Bringing colors in from a design, a board or tokens JSON, and writing them out. */
 export const colorsExchangeTools: BoardMcpTool[] = [
   {
-    name: "import_board_colors",
+    name: "import",
     description:
       "Brings colors into the board from a .cdesign or .cboard file or tokens JSON (W3C DTCG or " +
       "Tokens Studio, detected): only color variables, with the collections and mode axes they " +
@@ -90,7 +90,7 @@ export const colorsExchangeTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "export_board_colors",
+    name: "export",
     description:
       "The board's colors as a file's text: dtcg (W3C Design Tokens JSON; a design imports it " +
       "back exactly) or css (custom properties, modes as [data-<axis>] blocks). With `path`, " +

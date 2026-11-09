@@ -6,7 +6,7 @@ import type { ErDiagram, ErModel } from "./model";
 export const ER_DIAGRAM_ARG = {
   type: "string",
   description:
-    "Diagram id or name from list_er_diagrams. Can be left out when the board has one diagram.",
+    "Diagram id or name from er_diagrams_list. Can be left out when the board has one diagram.",
 };
 
 /**

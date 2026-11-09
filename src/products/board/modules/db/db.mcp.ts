@@ -13,19 +13,19 @@ const TABLE = { type: "string", description: "Table id or name." };
 /** The database schema, read and written as DBML. */
 export const dbTools: BoardMcpTool[] = [
   {
-    name: "get_schema_dbml",
+    name: "schema_get",
     description:
       "The board's database schema (every table, enum, relation, index and DBML sticky note) as DBML.",
     inputSchema: NO_ARGS,
     run: (host) => requireBoard(host).engine.service(DB_SCHEMA).schemaDbml(),
   },
   {
-    name: "apply_schema_dbml",
+    name: "schema_apply",
     description:
       "Replaces the whole schema with this DBML as one undo step: tables and enums missing from " +
       "the text are removed, new ones are placed on the board, and those matched by name keep " +
       "their ids and positions. Tables named by refs but not defined are created. Read " +
-      "get_schema_dbml first and send the full edited text.",
+      "db_schema_get first and send the full edited text.",
     inputSchema: { type: "object", required: ["dbml"], properties: { dbml: TEXT } },
     run: (host, args) => {
       const { engine } = requireBoard(host);
@@ -37,7 +37,7 @@ export const dbTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "import_schema_dbml",
+    name: "schema_import",
     description:
       "Merges DBML into the schema as one undo step: tables and enums are added or updated by " +
       "name and nothing else is removed.",
@@ -50,7 +50,7 @@ export const dbTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "tidy_schema",
+    name: "schema_tidy",
     description:
       "Lays the schema's tables and enums out again (one undo step): each group of linked cards " +
       "in columns that read left to right with few crossings. With a table, only that table and " +
@@ -64,7 +64,7 @@ export const dbTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "get_table_dbml",
+    name: "table_get",
     description: "One table as DBML.",
     inputSchema: { type: "object", required: ["table"], properties: { table: TABLE } },
     run: (host, args) => {
@@ -73,7 +73,7 @@ export const dbTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "apply_table_dbml",
+    name: "table_apply",
     description:
       "Replaces one table with this DBML (a single Table block) as one undo step; columns matched " +
       "by name keep their ids, so relations survive.",

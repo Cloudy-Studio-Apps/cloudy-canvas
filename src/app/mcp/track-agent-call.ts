@@ -3,7 +3,7 @@ import type { CallTracker } from "./track-agent-call.types";
 
 /** Argument names that hold element ids (`id`, `ids`, `shapeId`, `parentIds`, …). */
 const ID_KEY = /^(ids?|\w+Ids?)$/;
-/** How deep ids are looked for in the arguments (`update_shapes`' `shapes[].id`). */
+/** How deep ids are looked for in the arguments (`shapes_update`' `shapes[].id`). */
 const MAX_DEPTH = 3;
 
 /**

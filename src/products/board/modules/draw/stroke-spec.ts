@@ -7,7 +7,7 @@ import type { StrokeElement, StrokePen } from "./stroke.types";
 
 const PENS: readonly StrokePen[] = ["pen", "highlighter"];
 
-/** The stroke fields of `create_shapes`. */
+/** The stroke fields of `shapes_create`. */
 export const STROKE_SPEC_PROPERTIES = {
   points: {
     type: "array",

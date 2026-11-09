@@ -20,7 +20,7 @@ const END_SCHEMA = {
   },
 };
 
-/** The connector fields of `create_shapes`. */
+/** The connector fields of `shapes_create`. */
 export const CONNECTOR_SPEC_PROPERTIES = {
   from: END_SCHEMA,
   to: END_SCHEMA,

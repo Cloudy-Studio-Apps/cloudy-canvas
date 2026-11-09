@@ -11,7 +11,7 @@ const DIAGRAM_ONLY = { type: "object", properties: { diagram: ER_DIAGRAM_ARG } }
 /** ER diagrams, read and written as text (see `docs/er-language.md`). */
 export const erTools: BoardMcpTool[] = [
   {
-    name: "list_er_diagrams",
+    name: "diagrams_list",
     description:
       "The board's ER diagrams. A board can hold several; each has its own text, layout and " +
       "names (two diagrams may both have a `Cliente` entity).",
@@ -22,7 +22,7 @@ export const erTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "get_er_text",
+    name: "text_get",
     description:
       "One ER (Chen notation) diagram as text. Syntax: `Diagram Name [standard: …]` (optional), " +
       "`Entity Name [weak] { attribute [pk, ak, multi, derived, partial] … }`, " +
@@ -34,7 +34,7 @@ export const erTools: BoardMcpTool[] = [
       diagramArg(requireBoard(host).engine.service(ER_MODEL), args, false).text(),
   },
   {
-    name: "get_er_mermaid",
+    name: "mermaid_get",
     description:
       "One ER diagram as a fenced Mermaid flowchart block, ready to paste into a Markdown file: " +
       "the board's Chen shapes and labels, placed by Mermaid. Nothing changes on the board.",
@@ -43,12 +43,12 @@ export const erTools: BoardMcpTool[] = [
       diagramArg(requireBoard(host).engine.service(ER_MODEL), args, false).mermaid(),
   },
   {
-    name: "apply_er_text",
+    name: "text_apply",
     description:
       "Replaces one ER diagram with this text as one undo step. Entities, relations and " +
       "attributes matched by name keep their ids and positions; new ones are laid out " +
       "automatically. Entities a relation names but nothing defines are created. Read " +
-      "get_er_text first and send the full edited text. Pass `new: true` to start a separate " +
+      "er_text_get first and send the full edited text. Pass `new: true` to start a separate " +
       "diagram instead.",
     inputSchema: {
       type: "object",
@@ -70,7 +70,7 @@ export const erTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "relayout_er",
+    name: "relayout",
     description: "Lays one ER diagram out again (one undo step).",
     inputSchema: DIAGRAM_ONLY,
     run: (host, args) => {
@@ -82,7 +82,7 @@ export const erTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "check_er_diagram",
+    name: "diagram_check",
     description:
       "Checks one ER diagram against the rules of the ER model and of the standard it follows " +
       "(its `Diagram [standard: …]`): missing keys, weak entities without an identifying " +
@@ -97,7 +97,7 @@ export const erTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "er_to_tables",
+    name: "convert_to_tables",
     description:
       "Turns one ER diagram into database tables on the board (DBML, one undo step): entities " +
       "become tables keyed by their keys, multivalued attributes and many-to-many or larger " +
@@ -132,7 +132,7 @@ export const erTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "convert_relation_to_entity",
+    name: "relation_convert_to_entity",
     description:
       "Replaces an ER relation (two sides or more, not held by an aggregation) with an entity " +
       "named after it and a two-way relation per side: each side keeps its cardinality, the new " +

@@ -6,7 +6,7 @@ import type { BoardMcpTool } from "../../../mcp/board-mcp.types";
 /** Reading the board's colors. */
 export const colorsReadTools: BoardMcpTool[] = [
   {
-    name: "list_board_colors",
+    name: "list",
     description:
       "The board's colors (its color variables): by collection, with their values per mode, " +
       "what each follows (an alias) and how many shapes use it; and the mode axes with the " +

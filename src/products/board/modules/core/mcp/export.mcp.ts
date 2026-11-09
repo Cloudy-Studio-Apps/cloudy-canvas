@@ -22,7 +22,7 @@ const IDS_SCHEMA = {
 
 export const exportTools: BoardMcpTool[] = [
   {
-    name: "export_shapes",
+    name: "export",
     description:
       "Exports the board, or some shapes, to a file as the Export dialog does: png, jpg or webp (an " +
       "image), svg (vector), pdf (one page, with the pdf options) or csv (the tables' and database tables' cells). The file goes to " +

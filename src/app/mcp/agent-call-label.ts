@@ -21,7 +21,7 @@ function forms(verb: string): [doing: string, done: string] {
 }
 
 /**
- * A tool call as a sentence for people, made from the tool's name: `create_shapes` is "Creating
+ * A tool call as a sentence for people, made from the tool's name: `shapes_create` is "Creating
  * shapes" while it runs and "Created shapes" after (with how many elements it touched).
  */
 export function agentCallLabel(tool: string, state: "running" | "done", touched = 0): string {

@@ -38,4 +38,4 @@ edited, and convertible to a plain PNG image.
   step, `model3d_convert_to_png` converts. The last two fail with "being edited" while the model is
   live for anyone (the user included), checked before any read or write. The three are shared with
   designs (one name and schema, `canvas/model3d/mcp/`); the board ignores `model3d_add`'s `name`
-  and `parent`. Agents move and resize models with `update_shapes` (`x y w h` are patchable; `angle` and `zoom` are refused and only change through `model3d_view_set`, which redraws the picture).
+  and `parent`. Agents move and resize models with `shapes_update` (`x y w h` are patchable; `angle` and `zoom` are refused and only change through `model3d_view_set`, which redraws the picture).

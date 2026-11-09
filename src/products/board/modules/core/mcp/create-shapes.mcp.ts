@@ -11,9 +11,9 @@ import {
 import { requireBoard } from "../../../mcp/board-access";
 import type { BoardAgentContext, BoardMcpTool } from "../../../mcp/board-mcp.types";
 
-/** `create_shapes`, listing the board's creatable types. */
+/** `shapes_create`, listing the board's creatable types. */
 export const createShapesTool = ({ kinds }: BoardAgentContext): BoardMcpTool => ({
-  name: "create_shapes",
+  name: "create",
   description:
     "Adds shapes to the open board as one undo step and returns their ids. Coordinates are world " +
     "units, x/y the top-left corner (a sticky is 200x200). Give a shape a `key` to connect it " +

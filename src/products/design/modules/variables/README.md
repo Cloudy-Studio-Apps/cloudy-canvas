@@ -284,10 +284,10 @@ Each product's tools are files in its `agent/` folder.
   `import_tokens`.
 - **Design system** (`styleguide/agent/`): `get_design_system`, `set_system_template`,
   `add_system_element` and `convert_system_element`.
-- **Board** (`board/modules/colors/agent/`): `list_board_colors`, `create_board_colors`,
-  `update_board_colors`, `delete_board_colors`, `create_board_color_collection`,
-  `bind_board_colors`, `unbind_board_colors`, `set_board_color_mode`, `import_board_colors` and
-  `export_board_colors`.
+- **Board** (`board/modules/colors/agent/`): `colors_list`, `colors_create`,
+  `colors_update`, `colors_delete`, `colors_collection_create`,
+  `colors_bind`, `colors_unbind`, `colors_mode_set`, `colors_import` and
+  `colors_export`.
 - **References and values:** agents name variables by id, `Collection/path` or a unique path
   (`requireVariable`). Values are read by `readTokenValue`: `"#3A83C9"`, `8`, `{ alias: "…" }` or
   `{ expr: "{Spacing/base} * 2" }`.
