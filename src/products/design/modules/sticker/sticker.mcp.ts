@@ -4,6 +4,7 @@ import {
   recordList,
   stringArg,
   stringList,
+  STICKER_STAMP_TOOL,
   type ToolArgs,
 } from "@canvas";
 import { findStampableSticker, pickSticker } from "@shared/core";
@@ -36,37 +37,8 @@ const EDGE_SCHEMA = {
 /** Stamping stickers on designs, restyling them and turning them into vectors. */
 export const stickerAgentTools: DesignMcpTool[] = [
   {
-    name: "stamp_design_stickers",
-    description:
-      "Stamps stickers on the design's page on screen as one undo step and returns their ids. " +
-      "Each one gives a sticker id from list_stickers and the center of the stamp (x, y), with " +
-      `an optional size (square; ${STICKER_NODE_DEFAULTS.size.w} by default), edgeColor, ` +
-      "outline and parent (the frame under its center otherwise).",
-    inputSchema: {
-      type: "object",
-      required: ["stickers"],
-      properties: {
-        stickers: {
-          type: "array",
-          items: {
-            type: "object",
-            required: ["sticker", "x", "y"],
-            properties: {
-              sticker: { type: "string", description: "Sticker id, e.g. seal:happy." },
-              x: { type: "number" },
-              y: { type: "number" },
-              size: { type: "number" },
-              edgeColor: EDGE_SCHEMA,
-              outline: OUTLINE_SCHEMA,
-              parent: {
-                type: ["string", "null"],
-                description: "Frame or section to put it in; null for the top of the page.",
-              },
-            },
-          },
-        },
-      },
-    },
+    // Its schema is the board's too; boards ignore edgeColor, outline and parent.
+    ...STICKER_STAMP_TOOL,
     run: async (host, args) => {
       const stamps = recordList(args, "stickers").map(readStamp);
       const { engine } = requireDesign(host);
@@ -103,7 +75,7 @@ export const stickerAgentTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "restyle_design_stickers",
+    name: "restyle",
     description:
       "Changes stickers' edgeColor and/or outline as one undo step (only seal, common and " +
       "plugin art stickers have an edge to recolor).",
@@ -138,7 +110,7 @@ export const stickerAgentTools: DesignMcpTool[] = [
     },
   },
   {
-    name: "convert_stickers_to_vectors",
+    name: "convert_to_vector",
     description:
       "Turns stickers drawn as SVG (seals, common stamps, emojis, plugin art) into one vector " +
       "each, as one undo step: every shape of the SVG an area of it with its own fill (strokes " +

@@ -164,6 +164,14 @@ export class ActorWorkspace<O extends object> implements CanvasWorkspace<O> {
     this.setView(showArea(bounds, this.host.viewAspect()));
   }
 
+  /** Shows these elements in the view and selects them. */
+  zoomToElements(ids: readonly string[]): void {
+    const bounds = this.elementsBounds(ids);
+    if (!bounds) return;
+    this.select([...ids]);
+    this.setView(showArea(bounds, this.host.viewAspect()));
+  }
+
   /** Fires when the scope, selection or view changes. Returns an unsubscribe function. */
   onChange(listener: () => void): () => void {
     return this.changes.subscribe(listener);

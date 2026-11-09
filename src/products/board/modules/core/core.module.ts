@@ -6,12 +6,16 @@ import { defineModule } from "@shared/core";
 import { boardEditor } from "@board/ui/modules/board-editor-points";
 import {
   arrangeTools,
-  boardInfoTools,
   boardReadTools,
+  clipboardTools,
   createShapesTool,
   exportTools,
   fileTools,
+  historyTools,
+  orderTools,
+  selectionTools,
   shapeEditTools,
+  styleTools,
   viewTools,
 } from "./mcp";
 import { boardMcpTools } from "../../board-points";
@@ -49,19 +53,24 @@ export const coreModule = defineModule({
       icon: PencilLine,
       order: 0,
     });
+    // The topics boards share with designs, then the shape tools (renamed to `shapes_*` later).
     host.contribute(
       boardMcpTools,
+      { id: "file", prefix: "file", tools: () => fileTools },
+      { id: "selection", prefix: "selection", tools: () => selectionTools },
+      { id: "history", prefix: "history", tools: () => historyTools },
+      { id: "view", prefix: "view", tools: () => viewTools },
+      { id: "clipboard", prefix: "clipboard", tools: () => clipboardTools },
+      { id: "arrange", prefix: "arrange", tools: () => arrangeTools },
+      { id: "style", prefix: "style", tools: () => styleTools },
       { id: "read", prefix: "board", tools: () => boardReadTools },
-      { id: "info", prefix: "board", tools: () => boardInfoTools },
       {
         id: "shapes",
         prefix: "board",
         tools: (context) => [createShapesTool(context), ...shapeEditTools],
       },
-      { id: "arrange", prefix: "board", tools: () => arrangeTools },
-      { id: "view", prefix: "board", tools: () => viewTools },
+      { id: "order", prefix: "board", tools: () => orderTools },
       { id: "export", prefix: "board", tools: () => exportTools },
-      { id: "files", prefix: "board", tools: () => fileTools },
     );
 
     host.contribute(

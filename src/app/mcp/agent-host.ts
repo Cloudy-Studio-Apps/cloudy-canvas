@@ -39,7 +39,7 @@ export function agentHostFor(
   const openInTab = (source: TabSource) => openInAgentTab(tabs, collaboratorId, source);
   /**
    * Names a new file: its document's title, written through the agent's workspace as one undo
-   * step (like `set_board_info`), so it's the agent's step, not the user's. The editor is ready
+   * step (like `file_info_set`), so it's the agent's step, not the user's. The editor is ready
    * by now (`openInAgentTab` waited); if its file isn't there the call fails rather than drop it.
    */
   const titled = <F extends { engine: { doc: CanvasDocument } }>(file: F, title?: string): F => {

@@ -12,7 +12,7 @@ import type {
 } from "./model-agent.types";
 
 /**
- * Reads and imports the model file an `add_model`-style call names (its `path`, siblings, hand
+ * Reads and imports the model file a `model3d_add`-style call names (its `path`, siblings, hand
  * `textures`) and works out where it goes (`x`, `y`, `h`, the width follows). Writes nothing.
  */
 export async function readAgentModel(

@@ -7,7 +7,7 @@ edited, and convertible to a rectangle filled with its PNG.
 - **Requires:** rectangle (converting a model makes a `rectangle`)
 - **Contributes:** kinds `ModelNodeKind`; designCanvas: `kinds`, `editElement`, `assetSweeps`, `importFiles`, `hostCommands`; designEditor: `propertySections`, `layerIcons`, `overlays`, `sessionHooks`, `mainMenu`, `contextMenu`; `designMcpTools`
 - **Points it owns:** —
-- **MCP tools:** `add_model_node`, `set_model_node_view`, `convert_model_node_to_png`
+- **MCP tools:** `model3d_add`, `model3d_view_set`, `model3d_convert_to_png`
 - **Files:** `model3d.canvas.ts` (kind, double-click, the asset sweep, host commands), `model3d.kind.ts`, `model3d.factory.ts`, `convert-model.ts`, `model3d.commands.ts`, `model3d.sections.ts` (the editor's entries), `mcp/`, `ui/`.
 
 ## How it works
@@ -38,10 +38,10 @@ edited, and convertible to a rectangle filled with its PNG.
   modes and prototype `interactions`; the new rectangle (a new id) is selected. The user's
   unfinished edit is written first. It refuses while anyone has the model live; the UI checks first
   and says so with a toast (`modelHeldNotice`).
-- **Agents:** `add_model_node` imports, bakes and adds (`parent` as `add_image`; the size warning is
-  in the result, no dialog), `set_model_node_view` re-bakes off screen and writes angle, zoom,
-  textures and picture in one undo step, `convert_model_node_to_png` converts. The last two fail
+- **Agents:** `model3d_add` imports, bakes and adds (`parent` as `add_image`; the size warning is
+  in the result, no dialog), `model3d_view_set` re-bakes off screen and writes angle, zoom,
+  textures and picture in one undo step, `model3d_convert_to_png` converts. The last two fail
   with "being edited" while the model is live for anyone (the user included), checked before any
-  read or write and again before writing. The tools' shared pieces live in `canvas/model3d/mcp/`
-  and are the board's too. Agents move and resize models with `update_nodes` (`angle`, `zoom`
-  and the model's files can't be patched: `set_model_node_view` redraws the picture).
+  read or write and again before writing. The tools' shared pieces live in `canvas/model3d/mcp/`,
+  their name, description and schema too: each is one tool for both products. Agents move and resize models with `update_nodes` (`angle`, `zoom`
+  and the model's files can't be patched: `model3d_view_set` redraws the picture).

@@ -49,11 +49,14 @@ _Plain TypeScript both products share. The three.js side (loaders, live view, pi
   model; a kind's `draw` always draws the saved picture.
 - **Storing an import** (`store-model.ts`): `storeModel(baker, imp, rect, doc)` bakes the first picture
   and adds the model, material, textures and picture as assets, returning the `ModelData`; the drop
-  flow and agents' `add_model` both use it (`importedSource` is the `ModelSource` of an import).
+  flow and agents' `model3d_add` both use it (`importedSource` is the `ModelSource` of an import).
 - **Agent tool pieces** (`mcp/`): what the products' model tools share. `angleArg`/`zoomArg`/`rejectViewPatch`
   (a kind's `completePatch` uses the last to refuse `angle`/`zoom` patches), `textureArgs`, `assertModelFree(engine, id, noun)` (read-only
   or anyone holds the model live, the user included), `readAgentModel` + `agentModelReport` (the
-  reading half of `add_model`-style tools and the slots, missing ones and size warning they report;
-  `storeModel` writes), `setModelView` (the whole `set_model_view`: validate, read, bake off screen,
-  recheck, one undo step) and the input schemas `ADD_MODEL_PROPERTIES`/`SET_MODEL_VIEW_PROPERTIES`.
-  Each product keeps its own `requireModel`, factory, convert and tool names.
+  reading half of `model3d_add` and the slots, missing ones and size warning they report;
+  `storeModel` writes), `setModelView` (the whole `model3d_view_set`: validate, read, bake off screen,
+  recheck, one undo step), the input schemas `ADD_MODEL_PROPERTIES`/`SET_MODEL_VIEW_PROPERTIES` and
+  the shared tools' name, description and schema (`MODEL_ADD_TOOL`, `MODEL_VIEW_SET_TOOL`,
+  `MODEL_CONVERT_TO_PNG_TOOL`, `model-tool-specs.ts`: `model3d_add` takes the design's `name` and
+  `parent` too, "Designs only."), so both products serve one `model3d_*` tool each. Each product
+  keeps its own `requireModel`, factory, convert and `run`.

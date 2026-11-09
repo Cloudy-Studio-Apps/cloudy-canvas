@@ -1,8 +1,7 @@
 import {
-  ADD_MODEL_PROPERTIES,
   agentModelReport,
   asUndoStep,
-  MODEL_BASE_SIZE,
+  MODEL_ADD_TOOL,
   optionalString,
   readAgentModel,
   storeModel,
@@ -29,33 +28,13 @@ const EMPTY_MODEL: ModelData = {
   textures: [],
 };
 
-/** `add_model_node`: places a model file as a 3D model layer, as dropping it does (no dialog). */
+/**
+ * `model3d_add` (shared with boards): places a model file as a 3D model layer, as dropping it does
+ * (no dialog).
+ */
 export function addModelNodeTool(baker: ModelBaker): DesignMcpTool {
   return {
-    name: "add_model_node",
-    description:
-      "Places a 3D model file (GLB, glTF, OBJ with its .mtl, FBX) on the design as a 3D model " +
-      "layer, as dropping it does, in one undo step. Textures next to the file are found by " +
-      "their names; `textures` assigns a picture file to a slot by hand. It is shown as a " +
-      "picture of the model (turn it with set_model_node_view, move and resize it with " +
-      `update_nodes); it is \`h\` tall (${MODEL_BASE_SIZE} by default) with the width of its ` +
-      "framing, named after the file unless `name` is given, and goes into the frame under its " +
-      "center unless `parent` says where. Returns its id, its texture slots, the `missing` ones " +
-      "(shown gray) and, over 10 MB, a `warning` that large files can cause problems. A placed " +
-      "model is reused: move or resize it with update_nodes and turn it with set_model_node_view " +
-      "instead of adding the file again.",
-    inputSchema: {
-      type: "object",
-      required: ["path"],
-      properties: {
-        ...ADD_MODEL_PROPERTIES,
-        name: { type: "string" },
-        parent: {
-          type: ["string", "null"],
-          description: "Frame or section to put it in; null for the top of the page.",
-        },
-      },
-    },
+    ...MODEL_ADD_TOOL,
     run: async (host, args) => {
       const { engine } = requireDesign(host);
       if (engine.doc.isReadOnly) throw new Error("This design is read-only.");

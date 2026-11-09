@@ -82,6 +82,8 @@ export interface CanvasWorkspace<O extends object = object> {
   copyAsSvg(ids?: readonly string[]): Promise<void>;
   zoomToFit(): void;
   zoomToElement(id: string): void;
+  /** Shows these elements in the view and selects them. */
+  zoomToElements(ids: readonly string[]): void;
 
   // History.
   undo(): void;

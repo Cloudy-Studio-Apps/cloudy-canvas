@@ -147,7 +147,7 @@ Agent tools are groups contributed to `api.board.boardMcpTools`: `{ id, tools: (
 
 ## Stickers
 
-`api.stickers` adds stickers to the app's one catalog, so they show in the sticker picker of boards **and** designs (whatever the plugin's `products`) and agents can stamp them (`list_stickers`, `stamp_stickers`, `stamp_design_stickers`):
+`api.stickers` adds stickers to the app's one catalog, so they show in the sticker picker of boards **and** designs (whatever the plugin's `products`) and agents can stamp them (`sticker_list`, `sticker_stamp`):
 
 ```js
 api.stickers.registerGroup({ id: "cats", label: "Cats", description: "Cat moods", order: 30 });

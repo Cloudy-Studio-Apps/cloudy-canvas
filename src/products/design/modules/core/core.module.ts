@@ -9,15 +9,19 @@ import { registerCoreCommands } from "./core.commands";
 import { registerCoreMenu } from "./core.menu";
 import { registerCoreSections } from "./core.sections";
 import {
+  arrangeTools,
+  clipboardTools,
   createNodesTool,
   designExportTools,
-  designFileTools,
-  designInfoTools,
   designReadTools,
-  designViewTools,
-  nodeArrangeTools,
-  nodeTransformTools,
+  fileTools,
+  historyTools,
   nodeEditTools,
+  nodeOrderTools,
+  nodeTransformTools,
+  selectionTools,
+  styleTools,
+  viewTools,
 } from "./mcp";
 import { designStyleTypes } from "./ui/core.points";
 import { CORE_STYLE_TYPES } from "./ui/styles";
@@ -41,23 +45,28 @@ export const coreModule = defineModule({
     registerCoreCanvas(host);
     registerCoreCommands(host);
 
+    // The topics designs share with boards, then the layer tools (renamed to `nodes_*` later).
     host.contribute(
       designMcpTools,
+      { id: "file", prefix: "file", tools: () => fileTools },
+      { id: "selection", prefix: "selection", tools: () => selectionTools },
+      { id: "history", prefix: "history", tools: () => historyTools },
+      { id: "view", prefix: "view", tools: () => viewTools },
+      { id: "clipboard", prefix: "clipboard", tools: () => clipboardTools },
+      { id: "arrange", prefix: "arrange", tools: () => arrangeTools },
+      { id: "style", prefix: "style", tools: () => styleTools },
       { id: "read", prefix: "design", tools: () => designReadTools },
-      { id: "info", prefix: "design", tools: () => designInfoTools },
       {
         id: "nodes",
         prefix: "design",
         tools: (context) => [createNodesTool(context), ...nodeEditTools],
       },
       {
-        id: "arrange",
+        id: "order",
         prefix: "design",
-        tools: () => [...nodeArrangeTools, ...nodeTransformTools],
+        tools: () => [...nodeOrderTools, ...nodeTransformTools],
       },
-      { id: "view", prefix: "design", tools: () => designViewTools },
       { id: "export", prefix: "design", tools: () => designExportTools },
-      { id: "files", prefix: "design", tools: () => designFileTools },
     );
 
     registerCoreSections(host);

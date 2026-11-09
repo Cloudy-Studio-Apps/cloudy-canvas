@@ -1,22 +1,12 @@
-import {
-  arrangeTools,
-  optionalBoolean,
-  optionalChoice,
-  stringList,
-  type ReorderDirection,
-} from "@canvas";
+import { optionalBoolean, optionalChoice, stringList, type ReorderDirection } from "@canvas";
 
-import {
-  requireDesign,
-  requireNodes,
-  type DesignAgentHost,
-  type DesignMcpTool,
-} from "../../../mcp";
+import { requireDesign, requireNodes, type DesignMcpTool } from "../../../mcp";
 
 const DIRECTIONS: readonly ReorderDirection[] = ["front", "forward", "backward", "back"];
 const IDS_SCHEMA = { type: "array", items: { type: "string" } };
 
-export const nodeArrangeTools: DesignMcpTool[] = [
+/** The drawing order and locking (`reorder_nodes`, `lock_nodes`). */
+export const nodeOrderTools: DesignMcpTool[] = [
   {
     name: "reorder_nodes",
     description:
@@ -57,13 +47,4 @@ export const nodeArrangeTools: DesignMcpTool[] = [
       return { changed: engine.setLocked(engine.withMembers(ids, "move"), locked) };
     },
   },
-  ...arrangeTools<DesignAgentHost>({
-    noun: "nodes",
-    things: "layers",
-    holder: "the frame or section it's in",
-    resolve: (host, ids) => {
-      const { engine } = requireDesign(host);
-      return { engine, ids: requireNodes(engine, ids) };
-    },
-  }),
 ];

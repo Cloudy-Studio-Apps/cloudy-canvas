@@ -10,6 +10,6 @@ export async function findStampableSticker(id: string): Promise<StickerDef> {
     throw new Error(`"${id}" is one of the user's own stickers, which agents can't stamp.`);
   }
   const found = await stickerCatalog.find(id);
-  if (!found) throw new Error(`No sticker "${id}". Find ids with list_stickers.`);
+  if (!found) throw new Error(`No sticker "${id}". Find ids with sticker_list.`);
   return found;
 }

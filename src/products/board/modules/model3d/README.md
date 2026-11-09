@@ -7,7 +7,7 @@ edited, and convertible to a plain PNG image.
 - **Requires:** — (converting a model makes an `image`, a core module)
 - **Contributes:** kinds `Model3dKind`; boardCanvas: `kinds`, `editElement`, `assetSweeps`, `importFiles`, `hostCommands`; boardEditor: `sidePanels`, `overlays`, `sessionHooks`, `contextMenu`; `boardMcpTools`
 - **Points it owns:** —
-- **MCP tools:** `add_model`, `set_model_view`, `convert_model_to_png`
+- **MCP tools:** `model3d_add`, `model3d_view_set`, `model3d_convert_to_png`
 - **Files:** `model3d.viewer.ts` (the module the HTML viewer loads: the canvas side only, so the export shows the picture), `model3d.canvas.ts` (kind, double-click, the asset sweep), `model3d.kind.ts`, `model3d.factory.ts`, `convert-model.ts`, `model3d.commands.ts`, `model3d.sections.ts`, `mcp/`, `ui/`.
 
 ## How it works
@@ -33,8 +33,9 @@ edited, and convertible to a plain PNG image.
   rotation, mirroring and lock in one undo step and the new image (a new id) is selected. The
   user's unfinished edit is written first. It refuses while anyone has the model live; the UI
   checks first and says so with a toast (`modelHeldNotice`).
-- **Agents:** `add_model` imports, bakes and adds (the size warning is in the result, no dialog),
-  `set_model_view` re-bakes off screen and writes angle, zoom, textures and picture in one undo
-  step, `convert_model_to_png` converts. The last two fail with "being edited" while the model is
-  live for anyone (the user included), checked before any read or write. Agents move and resize
-  models with `update_shapes` (`x y w h` are patchable; `angle` and `zoom` are refused and only change through `set_model_view`, which redraws the picture).
+- **Agents:** `model3d_add` imports, bakes and adds (the size warning is in the result, no dialog),
+  `model3d_view_set` re-bakes off screen and writes angle, zoom, textures and picture in one undo
+  step, `model3d_convert_to_png` converts. The last two fail with "being edited" while the model is
+  live for anyone (the user included), checked before any read or write. The three are shared with
+  designs (one name and schema, `canvas/model3d/mcp/`); the board ignores `model3d_add`'s `name`
+  and `parent`. Agents move and resize models with `update_shapes` (`x y w h` are patchable; `angle` and `zoom` are refused and only change through `model3d_view_set`, which redraws the picture).

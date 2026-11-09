@@ -1,5 +1,4 @@
 import {
-  bytesToBase64,
   exportPath,
   optionalChoice,
   optionalNumber,
@@ -9,15 +8,12 @@ import {
   type ExportFormat,
   withExportCopy,
 } from "@canvas";
-import { ToolImage } from "@shared/core";
 
 import { optionalNodeIds, requireDesign, type DesignMcpTool } from "../../../mcp";
 
 const FORMATS: readonly ExportFormat[] = ["png", "jpg", "webp", "svg", "pdf"];
 const SVG_TEXTS = ["outlines", "live"] as const;
 const BACKGROUNDS = ["solid", "transparent"] as const;
-/** Keeps pictures sent to agents small enough to read. */
-const VIEW_MAX_SIDE = 2000;
 const IDS_SCHEMA = {
   type: "array",
   items: { type: "string" },
@@ -70,51 +66,6 @@ export const designExportTools: DesignMcpTool[] = [
       );
       await host.writeFile(path, file);
       return { path, bytes: file.size };
-    },
-  },
-  {
-    name: "view_design",
-    description:
-      "Returns a PNG picture of the design, or of some layers, as the user sees them, to check " +
-      `how your changes look. At most ${VIEW_MAX_SIDE} pixels on its longest side.`,
-    inputSchema: {
-      type: "object",
-      properties: {
-        ids: IDS_SCHEMA,
-        scale: { type: "number", description: "Pixels per world unit (1 by default)." },
-      },
-    },
-    run: async (host, args) => {
-      const { engine } = requireDesign(host);
-      const png = await engine.exportElements({
-        format: "png",
-        background: "solid",
-        area: "board",
-        ids: optionalNodeIds(engine, args),
-        scale: optionalNumber(args, "scale") ?? 1,
-        maxSide: VIEW_MAX_SIDE,
-        asShown: true,
-      });
-      return new ToolImage(bytesToBase64(new Uint8Array(await png.arrayBuffer())), "image/png");
-    },
-  },
-  {
-    name: "copy_nodes_as_png",
-    description:
-      "Copies layers (with what they hold) to the system clipboard as a PNG image with a " +
-      "transparent background and no margin, as Ctrl+Shift+C does. Without ids, copies the user's selection.",
-    inputSchema: {
-      type: "object",
-      properties: { ids: { type: "array", items: { type: "string" } } },
-    },
-    run: async (host, args) => {
-      const { engine } = requireDesign(host);
-      const ids = optionalNodeIds(engine, args);
-      if (!ids && engine.selectedIds().length === 0) {
-        throw new Error('Nothing is selected: pass "ids".');
-      }
-      await engine.copyAsPng(ids);
-      return "Copied to the clipboard.";
     },
   },
 ];

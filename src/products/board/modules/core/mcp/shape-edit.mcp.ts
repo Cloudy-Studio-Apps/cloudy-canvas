@@ -1,7 +1,6 @@
 import {
   agentPatches,
   asUndoStep,
-  optionalBoolean,
   optionalNumber,
   recordList,
   stringArg,
@@ -87,30 +86,6 @@ export const shapeEditTools: BoardMcpTool[] = [
       const dy = optionalNumber(args, "dy");
       const offset = dx === undefined && dy === undefined ? undefined : { x: dx ?? 0, y: dy ?? 0 };
       return { copies: Object.fromEntries(engine.duplicateElements(ids, offset)) };
-    },
-  },
-  {
-    name: "select_shapes",
-    description:
-      "Sets your selection (the user sees it outlined in your colour), e.g. to show what changed. Empty clears it. It doesn't change the user's selection.",
-    inputSchema: {
-      type: "object",
-      required: ["ids"],
-      properties: {
-        ids: IDS_SCHEMA,
-        zoom: {
-          type: "boolean",
-          description: "Also show the shape in your view when selecting one.",
-        },
-      },
-    },
-    run: (host, args) => {
-      const { engine } = requireBoard(host);
-      const ids = stringList(args, "ids").filter((id) => engine.getElement(id));
-      const [first] = ids;
-      if (optionalBoolean(args, "zoom") && first && ids.length === 1) engine.zoomToElement(first);
-      else engine.select(ids);
-      return { selected: engine.selectedIds() };
     },
   },
 ];

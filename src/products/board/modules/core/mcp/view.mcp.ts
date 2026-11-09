@@ -1,54 +1,49 @@
-import { stringArg } from "@canvas";
+import {
+  bytesToBase64,
+  optionalNumber,
+  stringList,
+  VIEW_FIT_ELEMENTS_TOOL,
+  VIEW_FIT_TOOL,
+  VIEW_SNAPSHOT_MAX_SIDE,
+  VIEW_SNAPSHOT_TOOL,
+} from "@canvas";
+import { ToolImage } from "@shared/core";
 
-import { requireBoard } from "../../../mcp/board-access";
+import { optionalShapeIds, requireBoard, requireShapes } from "../../../mcp/board-access";
 import type { BoardMcpTool } from "../../../mcp/board-mcp.types";
 
-const NO_ARGS = { type: "object", properties: {} };
-
+/** The board's side of the shared `view` topic: `view_fit`, `view_fit_elements`, `view_snapshot`. */
 export const viewTools: BoardMcpTool[] = [
   {
-    name: "zoom_to_fit",
-    description: "Fits the whole board in your own view (the user sees it when they follow you).",
-    inputSchema: NO_ARGS,
+    ...VIEW_FIT_TOOL,
     run: (host) => {
       requireBoard(host).engine.zoomToFit();
       return "Done.";
     },
   },
   {
-    name: "zoom_to_shape",
-    description:
-      "Shows one shape in your own view and selects it (your selection, not the user's).",
-    inputSchema: { type: "object", required: ["id"], properties: { id: { type: "string" } } },
+    ...VIEW_FIT_ELEMENTS_TOOL,
     run: (host, args) => {
       const { engine } = requireBoard(host);
-      const id = stringArg(args, "id");
-      if (!engine.getElement(id)) throw new Error(`No shape with id ${id}.`);
-      engine.zoomToElement(id);
+      const ids = requireShapes(engine, stringList(args, "ids"));
+      if (ids.length === 0) throw new Error('Give the "ids" of the shapes to show.');
+      engine.zoomToElements(ids);
       return "Done.";
     },
   },
   {
-    name: "undo",
-    description:
-      "Undoes your last change on the board (yours only: the user and other agents have their own undo).",
-    inputSchema: NO_ARGS,
-    run: (host) => {
+    ...VIEW_SNAPSHOT_TOOL,
+    run: async (host, args) => {
       const { engine } = requireBoard(host);
-      if (!engine.canUndo()) return "Nothing to undo.";
-      engine.undo();
-      return "Undone.";
-    },
-  },
-  {
-    name: "redo",
-    description: "Redoes your last undone change on the board.",
-    inputSchema: NO_ARGS,
-    run: (host) => {
-      const { engine } = requireBoard(host);
-      if (!engine.canRedo()) return "Nothing to redo.";
-      engine.redo();
-      return "Redone.";
+      const png = await engine.exportElements({
+        format: "png",
+        background: "solid",
+        area: "board",
+        ids: optionalShapeIds(engine, args),
+        scale: optionalNumber(args, "scale") ?? 1,
+        maxSide: VIEW_SNAPSHOT_MAX_SIDE,
+      });
+      return new ToolImage(bytesToBase64(new Uint8Array(await png.arrayBuffer())), "image/png");
     },
   },
 ];

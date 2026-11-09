@@ -11,14 +11,14 @@ export type ModelFileNoun = "board" | "design";
 /** Reads a file from an absolute path (the agent host's `readFile`). */
 export type ReadAgentFile = (path: string) => Promise<Uint8Array>;
 
-/** A model file read for `add_model`/`add_model_node`, validated and not stored yet. */
+/** A model file read for `model3d_add`, validated and not stored yet. */
 export interface AgentModelImport {
   imp: ModelImport;
   /** Where and how big it is placed. */
   rect: Rect;
 }
 
-/** What `add_model`/`add_model_node` report of a stored model. */
+/** What `model3d_add` report of a stored model. */
 export interface AgentModelReport {
   slots: string[];
   /** Texture slots whose file was not found (shown gray). */

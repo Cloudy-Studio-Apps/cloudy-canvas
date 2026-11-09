@@ -1,4 +1,4 @@
-/** The input schema of the tools that place a model file (`add_model`, `add_model_node`). */
+/** The input schema of the tools that place a model file (`model3d_add`). */
 export const ADD_MODEL_PROPERTIES = {
   path: { type: "string", description: "Absolute path of the model file." },
   x: { type: "number", description: "Left edge. Default 0." },
@@ -11,7 +11,7 @@ export const ADD_MODEL_PROPERTIES = {
   },
 } as const;
 
-/** The input schema of the tools that change a model's view (`set_model_view`, …). */
+/** The input schema of the tools that change a model's view (`model3d_view_set`, …). */
 export const SET_MODEL_VIEW_PROPERTIES = {
   id: { type: "string" },
   angle: {

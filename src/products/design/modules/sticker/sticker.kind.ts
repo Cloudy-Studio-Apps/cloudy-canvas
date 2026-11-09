@@ -84,7 +84,7 @@ export class StickerNodeKind extends DesignNodeKind<StickerNodeElement> {
     const stamped = STAMPED_FIELDS.find((field) => field in patch);
     if (stamped) {
       throw new Error(
-        `A sticker's "${stamped}" can't be patched: restyle it with restyle_design_stickers.`,
+        `A sticker's "${stamped}" can't be patched: restyle it with sticker_restyle.`,
       );
     }
     const next = { ...patch };

@@ -27,6 +27,8 @@ export { tabsTools } from "./tabs.mcp";
 export { filesTools } from "./files.mcp";
 export { pluginsTools } from "./plugins.mcp";
 export { arrangeTools } from "./arrange.mcp";
+export { copyPropertiesTool } from "./style.mcp";
+export * from "./shared";
 export { asUndoStep } from "./as-undo-step";
 export { buildElement, creatableTypes, elementSpec } from "./build-element";
 export { builtInPrefixes } from "./built-in-prefixes";

@@ -5,47 +5,7 @@ import { isDesignNode } from "../node";
 import { siblingMasks } from "../tree";
 import { summarizeNode } from "./summarize-node";
 
-const NO_ARGS = { type: "object", properties: {} };
-
 export const designReadTools: DesignMcpTool[] = [
-  {
-    name: "get_design",
-    description:
-      "The design open in Cloudy Canvas: id, name (its title, or its file name), title and " +
-      "description (set with set_design_info), file path, unsaved changes, the page you work on " +
-      "(`currentPage`, yours: the user may be on another one; see list_pages), layer counts by " +
-      "type on it, how many ruler guides it has (`guides`, see list_guides), the user's " +
-      "selection (`selection`) and yours (`yourSelection`), your undo state, and `editable` " +
-      "(false when the design is shared with the user to view only: then you can only read it). " +
-      "Returns { open: false } when no design is open.",
-    inputSchema: NO_ARGS,
-    run: (host) => {
-      const design = host.design();
-      if (!design) return { open: false };
-      const { engine } = design;
-      const nodesByType: Record<string, number> = {};
-      for (const el of engine.elements()) nodesByType[el.type] = (nodesByType[el.type] ?? 0) + 1;
-      const { title, description } = engine.doc.meta();
-      return {
-        open: true,
-        id: design.id,
-        name: title || design.name,
-        title,
-        description,
-        path: design.path,
-        dirty: design.dirty,
-        editable: !engine.doc.isReadOnly,
-        currentPage: engine.scope,
-        nodeCount: engine.elements().length,
-        nodesByType,
-        guides: engine.guides().length,
-        selection: engine.userSelection(),
-        yourSelection: engine.selectedIds(),
-        canUndo: engine.canUndo(),
-        canRedo: engine.canRedo(),
-      };
-    },
-  },
   {
     name: "list_nodes",
     description:
@@ -103,22 +63,6 @@ export const designReadTools: DesignMcpTool[] = [
     run: (host, args) => {
       const { engine } = requireDesign(host);
       return stringList(args, "ids").map((id) => engine.getElement(id) ?? { id, missing: true });
-    },
-  },
-  {
-    name: "get_design_selection",
-    description:
-      "The layers the user has selected in the design, as summaries (not yours: select_nodes " +
-      "sets yours). They may be on another page than yours.",
-    inputSchema: NO_ARGS,
-    run: (host) => {
-      const { engine } = requireDesign(host);
-      const masked = siblingMasks(engine.elements());
-      return engine
-        .userSelection()
-        .map((id) => engine.getElement(id) ?? engine.doc.get(id))
-        .filter((el) => el !== undefined)
-        .map((el) => summarizeNode(engine.kinds, el, masked));
     },
   },
 ];

@@ -18,7 +18,7 @@ export const createShapesTool = ({ kinds }: BoardAgentContext): BoardMcpTool => 
     "Adds shapes to the open board as one undo step and returns their ids. Coordinates are world " +
     "units, x/y the top-left corner (a sticky is 200x200). Give a shape a `key` to connect it " +
     "with a connector in the same call. Colors are hex strings. Stickers are stamped with " +
-    "stamp_stickers instead.",
+    "sticker_stamp instead.",
   // A getter, so the schema lists the types and variants registered when an agent asks (plugins too).
   get inputSchema() {
     return {

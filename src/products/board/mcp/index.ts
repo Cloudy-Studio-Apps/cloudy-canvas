@@ -3,5 +3,5 @@
 export type * from "./board-mcp.types";
 export { BOARD_MCP_INSTRUCTIONS } from "./mcp-instructions";
 export { createBoardMcpTools } from "./create-mcp-tools";
-export { requireBoard, requireShapes } from "./board-access";
+export { optionalShapeIds, requireBoard, requireShapes } from "./board-access";
 export { reportApplied } from "./apply-result";

@@ -1481,6 +1481,15 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     this.onCameraChange();
   }
 
+  /** Fits elements in the view and selects them. */
+  zoomToElements(ids: readonly string[]): void {
+    const bounds = this.elementsBounds(ids);
+    if (!bounds) return;
+    this.camera.fitRect(bounds);
+    this.setSelection([...ids]);
+    this.onCameraChange();
+  }
+
   zoomIn(): void {
     this.zoomTo(this.camera.zoom * ZOOM_STEP);
   }

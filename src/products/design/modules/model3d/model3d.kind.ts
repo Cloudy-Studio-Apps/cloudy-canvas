@@ -69,10 +69,10 @@ export class ModelNodeKind extends DesignNodeKind<ModelNodeElement> implements M
     patch: ElementPatch<ModelNodeElement>,
     context: ElementBuildContext,
   ): ElementPatch<ModelNodeElement> {
-    rejectViewPatch(patch, "set_model_node_view");
+    rejectViewPatch(patch, "model3d_view_set");
     const stored = MODEL_STORED_FIELDS.find((field) => field in patch);
     if (stored) {
-      throw new Error(`A model's "${stored}" can't be patched: use set_model_node_view.`);
+      throw new Error(`A model's "${stored}" can't be patched: use model3d_view_set.`);
     }
     return super.completePatch(el, patch, context);
   }

@@ -51,7 +51,7 @@ export class Model3dKind extends BoxKind<ModelElement, BoardToolOptions> impleme
     _el: ModelElement,
     patch: ElementPatch<ModelElement>,
   ): ElementPatch<ModelElement> {
-    rejectViewPatch(patch, "set_model_view");
+    rejectViewPatch(patch, "model3d_view_set");
     return patch;
   }
 }

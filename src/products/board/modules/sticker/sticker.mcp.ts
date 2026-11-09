@@ -4,6 +4,7 @@ import {
   optionalString,
   recordList,
   stringArg,
+  STICKER_STAMP_TOOL,
   type ToolArgs,
 } from "@canvas";
 import {
@@ -22,15 +23,18 @@ import { stickerSections } from "./mcp-stickers";
 
 const MAX_RESULTS = 60;
 
-/** Stamping reactions: seals, common stamps and emojis. */
+/**
+ * Stamping reactions: seals, common stamps and emojis. `sticker_list` needs no file (the catalog is
+ * app-wide), `sticker_stamp` is shared with designs.
+ */
 export const stickerTools: BoardMcpTool[] = [
   {
-    name: "list_stickers",
+    name: "list",
     scope: "app",
     description:
-      "Stickers agents can stamp with stamp_stickers (boards) and stamp_design_stickers " +
-      "(designs): the foca watona seal moods (set seal), common stamps (common), the sets " +
-      "plugins add and emojis (smileys, people, nature, food, travel, activities, objects, " +
+      "Stickers agents can stamp on boards and designs with sticker_stamp: the foca watona seal " +
+      "moods (set seal), common stamps (common), the sets plugins add and emojis (smileys, " +
+      "people, nature, food, travel, activities, objects, " +
       `symbols, flags). Search by words in the name; at most ${MAX_RESULTS} results.`,
     inputSchema: {
       type: "object",
@@ -53,33 +57,8 @@ export const stickerTools: BoardMcpTool[] = [
     },
   },
   {
-    name: "stamp_stickers",
-    description:
-      "Stamps stickers on the board as one undo step and returns their ids. Each one gives a " +
-      "sticker id from list_stickers and the center of the stamp (x, y), with an optional size " +
-      `(it's square; ${STICKER_DEFAULTS.size.w} by default).`,
-    inputSchema: {
-      type: "object",
-      required: ["stickers"],
-      properties: {
-        stickers: {
-          type: "array",
-          items: {
-            type: "object",
-            required: ["sticker", "x", "y"],
-            properties: {
-              sticker: {
-                type: "string",
-                description: "Sticker id, e.g. seal:happy or emoji:1f44d.",
-              },
-              x: { type: "number" },
-              y: { type: "number" },
-              size: { type: "number" },
-            },
-          },
-        },
-      },
-    },
+    // Its schema is the design's too (edgeColor, outline and parent are designs only).
+    ...STICKER_STAMP_TOOL,
     run: async (host, args) => {
       const stamps = recordList(args, "stickers").map(readStamp);
       // Load every picture before writing, so a bad id or a failed load changes nothing.
