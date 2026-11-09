@@ -18,8 +18,9 @@ const noop = (): void => undefined;
  * before the window closes. Each save
  * reports the file to the tab (`setInfo`), so an editor mounted again sees it, and the tab's
  * `unsaved` follows while a save is pending. Writes go in line with the editor's for the same file
- * (`saveCanvasDocument`). Returns how to stop; stopping saves the pending changes at once
- * (encoded then, so the document may go right after).
+ * (`saveCanvasDocument`). It starts with one save scheduled, since edits may have come in
+ * after the editor's closing save and before it began watching. Returns how to stop; stopping
+ * saves the pending changes at once (encoded then, so the document may go right after).
  */
 export function startDocumentAutosave(tab: FileTab, format: CanvasFileFormat): () => void {
   if (tab.load.status !== "ready") return noop;
@@ -28,7 +29,9 @@ export function startDocumentAutosave(tab: FileTab, format: CanvasFileFormat): (
   let info = tab.load.info;
   // A file never saved goes to its project's folder, like its editor's first save.
   const dir = info === null ? (tab.params.dir ?? null) : null;
-  let revision = 0;
+  // Starts dirty: guests' edits that came between the editor's closing save and this observer
+  // aren't counted by it, so the first save writes whatever the document holds now.
+  let revision = 1;
   let savedRevision = 0;
   let failed = false;
   let stopped = false;
@@ -81,6 +84,8 @@ export function startDocumentAutosave(tab: FileTab, format: CanvasFileFormat): (
   const removeQuitTask = appLifecycle.onBeforeQuit(async () => {
     if (useAutosaveStore.getState().enabled) await save();
   });
+  report();
+  schedule();
 
   return () => {
     if (stopped) return;

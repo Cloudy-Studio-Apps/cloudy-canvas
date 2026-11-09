@@ -46,7 +46,8 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   to `document`. While a hosted tab is `document`, `startDocumentAutosave(tab, format)`
   (`document-autosave.ts`; the product's `CanvasFileFormat` from `FILE_FORMATS`, imported with the
   product) saves the guests' edits as the editor would (1.5 s after changes stop, at most every
-  10 s, only while autosave is on, and before quitting) with `saveCanvasDocument`
+  10 s, only while autosave is on, and before quitting; it starts with one save scheduled, so guest
+  edits made between the editor's closing save and its start aren't lost) with `saveCanvasDocument`
   (`canvas-ui/file/`), reporting the file to the tab (`setInfo`) and its `unsaved`. It starts once
   the editor's closing save is done (`tabLeaveGuard.unmounted`) and stops, saving what's pending,
   when an editor mounts for the tab again, sharing stops or the tab closes; writes to one file go
