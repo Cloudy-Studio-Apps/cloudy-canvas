@@ -2,7 +2,13 @@ import { useRef } from "react";
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
 
-import { CanvasLoadingOverlay, useCanvasEngine, useCanvasFileDrop, useTab } from "@canvas-ui";
+import {
+  CanvasLoadingOverlay,
+  useCanvasEngine,
+  useCanvasFileDrop,
+  useSuspendWhenHidden,
+  useTab,
+} from "@canvas-ui";
 import { Button } from "@shared/ui/components/ui/button";
 import { useFileDragOver } from "@shared/ui/hooks/use-file-drag-over";
 import { BoardSession } from "./board-session";
@@ -18,6 +24,7 @@ export function BoardEditor(_props: BoardEditorProps) {
   const document = load.status === "ready" ? load.document : null;
   const { engine, loading } = useCanvasEngine(containerRef, getBoardProduct(), document);
   const draggingFiles = useFileDragOver();
+  useSuspendWhenHidden(engine);
   useCanvasFileDrop(engine);
 
   return (

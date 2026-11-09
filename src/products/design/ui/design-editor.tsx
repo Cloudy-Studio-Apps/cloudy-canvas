@@ -7,6 +7,7 @@ import {
   useCanvasEngine,
   useCanvasFileDrop,
   useMissingFontsNotice,
+  useSuspendWhenHidden,
   useTab,
 } from "@canvas-ui";
 import { Button } from "@shared/ui/components/ui/button";
@@ -29,6 +30,7 @@ export function DesignEditor(_props: DesignEditorProps) {
   const document = load.status === "ready" ? load.document : null;
   const { engine, loading } = useCanvasEngine(containerRef, getDesignProduct(), document);
   const draggingFiles = useFileDragOver();
+  useSuspendWhenHidden(engine);
   useCanvasFileDrop(engine);
   useMissingFontsNotice(engine);
   const inset = useCanvasInset();

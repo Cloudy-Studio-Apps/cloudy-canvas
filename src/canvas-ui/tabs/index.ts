@@ -4,3 +4,5 @@ export { FileTabsContext } from "./file-tabs-context";
 export { TabContext, useDropTabParam, useTab, useTabParam } from "./tab-context";
 export { TabHost } from "./tab-host";
 export { useFileTabs, useFileTabsModel } from "./use-file-tabs";
+export { useIsActiveTab } from "./use-is-active-tab";
+export { useSuspendWhenHidden } from "./use-suspend-when-hidden";

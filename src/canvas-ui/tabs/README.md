@@ -11,9 +11,18 @@ knows a product: the app gives `TabHost` each product's editor (`app/tabs/`).
 - **`TabHost({ editors })`** renders a `TabEditorSlot` for every tab that needs an engine, the active
   one and the `headless` ones (a `hibernated` or `document` tab has no editor). Each slot fills the
   window, provides its `TabContext` and renders `editors[tab.type]` with `tabId`. Only the active
-  tab's slot is visible; the others stay mounted (engine and editor state kept) but `invisible`.
-  Pausing their drawing and input is still to come (they're hidden, nothing more). A joined live
-  session's slot also shows `ReconnectingBanner` (`share/`).
+  tab's slot is visible; the others stay mounted (engine and editor state kept) at the same size
+  (`inset-0`, so the camera's viewport and the engine's `ResizeObserver` stay right) but
+  `invisible`, `inert`, `aria-hidden` and `pointer-events-none`. A joined live session's slot also
+  shows `ReconnectingBanner` (`share/`).
+- **Headless editors.** Each editor calls `useSuspendWhenHidden(engine)` once it has an engine: it
+  runs `engine.setSuspended(!active)`, so a background tab's engine draws nothing and ignores input
+  (the engine listens for keys on the whole window, so `inert` alone wouldn't stop them) while its
+  scene keeps following the document (agents, exports and thumbnails still work).
+  `useIsActiveTab()` (`true` outside a tab) gates the other window-wide listeners that act on an
+  editor: the file drop target (`useCanvasFileDrop`), the crop overlay's and the live 3D edit's
+  Enter/Esc, the color wizard's keys; presence stops following the pointer while the engine is
+  `suspended`.
 - **`TabContext`** (`tab-context.ts`) is the tab an editor shows (`{ tabs, tabId }`). `useTab()` is
   the `FileTab`, re-read when it changes: its `load` (the document, owned by the tab: editors never
   destroy it), `fileId`, `live`. `useTabParam(name)` reads the search params of the route the tab

@@ -43,6 +43,8 @@ export {
   useDropTabParam,
   useFileTabs,
   useFileTabsModel,
+  useIsActiveTab,
+  useSuspendWhenHidden,
   useTab,
   useTabParam,
 } from "./tabs";

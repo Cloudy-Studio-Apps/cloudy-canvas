@@ -67,6 +67,7 @@ import {
   EdgeAutoPan,
   Keymap,
   PointerInput,
+  SuspendableListeners,
   toCanvasPointer,
 } from "./input";
 import {
@@ -209,6 +210,11 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   private readonly store: Store<EngineState<O>>;
   private readonly disposables = new Disposables();
   private readonly frames = new FrameScheduler(() => this.draw());
+  /** The input listeners, ignored while suspended (see `setSuspended`). */
+  private readonly input = new SuspendableListeners(this.disposables, () => this.isSuspended);
+  private isSuspended = false;
+  /** Input is bound and drawing may start (the end of `mount`). */
+  private started = false;
   private readonly autoPan = new EdgeAutoPan(this.camera, (dx, dy) => {
     this.camera.panBy(dx, dy);
     this.onCameraChange();
@@ -404,10 +410,36 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     }
 
     this.bindInput(container, canvas);
-    this.frames.start();
+    this.started = true;
+    if (!this.isSuspended) this.frames.start();
     this.setCursor(this.tool.cursor);
     this.requestRender();
     this.emitChange();
+  }
+
+  /** Whether the engine is suspended: its tab is in the background (see `setSuspended`). */
+  get suspended(): boolean {
+    return this.isSuspended;
+  }
+
+  /**
+   * Suspends the engine while its tab is in the background: it draws nothing and ignores keys,
+   * clicks, wheel and pinch, while the scene keeps following the document (agents' edits,
+   * `workspace(id)`) and resizes keep the camera's viewport. Thumbnails and exports still work.
+   * Resuming draws one full frame.
+   */
+  setSuspended(suspended: boolean): void {
+    if (suspended === this.isSuspended || this.destroyed) return;
+    this.isSuspended = suspended;
+    if (suspended) {
+      this.textEditor?.commit();
+      this.autoPan.stop();
+      this.frames.stop();
+      return;
+    }
+    if (!this.started || this.closing) return;
+    this.frames.start();
+    this.requestRender();
   }
 
   /**
@@ -1716,10 +1748,10 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
       onContextMenu: (p) => this.handleContextMenu(p),
       onCameraChange: () => this.onUserCameraChange(),
     });
-    pointer.bind(this.disposables);
-    bindWheel(this.disposables, canvas, this.camera, () => this.onUserCameraChange());
-    bindPinch(this.disposables, canvas, this.camera, () => this.onUserCameraChange());
-    bindKeyboard(this.disposables, {
+    pointer.bind(this.input);
+    bindWheel(this.input, canvas, this.camera, () => this.onUserCameraChange());
+    bindPinch(this.input, canvas, this.camera, () => this.onUserCameraChange());
+    bindKeyboard(this.input, {
       pointer,
       keymap: this.keymap,
       isEditingText: () => this.textEditor?.editingId != null,
@@ -1736,6 +1768,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
       this.renderer.resize(width, height);
       // Resizing clears the canvas: drawing now, before the browser paints (observers run after
       // layout), keeps it from showing a blank frame while a docked panel opens or closes.
+      // Suspended, frames are stopped: the camera follows, and resuming draws.
       this.frames.flush();
       this.viewChanges.emit();
     });

@@ -61,6 +61,8 @@ export function useRoomPresence(
       timer ??= setTimeout(send, SEND_EVERY_MS);
     };
     const onPointer = (event: PointerEvent) => {
+      // A tab in the background keeps the cursor where it last was on its canvas.
+      if (engine.suspended) return;
       cursor = engine.clientToWorld({ x: event.clientX, y: event.clientY });
       schedule();
     };
