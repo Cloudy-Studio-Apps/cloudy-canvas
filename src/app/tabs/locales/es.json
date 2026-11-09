@@ -9,5 +9,8 @@
     "saveOne": "Guardar y salir",
     "saveAll": "Guardar todo y salir",
     "discard": "Salir sin guardar"
+  },
+  "autosave": {
+    "failed": "No se pudo guardar {noun}"
   }
 }

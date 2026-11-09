@@ -12,7 +12,7 @@ need it, from the tab's state.
 
 A `FileTab` is one file (`type`, `fileId`, `name`, `params`: the route's search params when it
 opened), its `load` (`idle`, `loading`, `ready` with the document and its `FileInfo`, or `error`),
-whether it's `unsaved` or `hosting` a live session, the agent sessions bound to it (`agents`) and
+whether it's `unsaved` or `hosting` a live session (set by the app: `watchHostedTabs`), the agent sessions bound to it (`agents`) and
 when it was last shown (`lastActiveAt`) or called by an agent (`lastAgentCallAt`). A joined live
 session's tab has `live` (its `ShareGuest`) and the `fileId` `live:<fileId>`, so it never matches
 the stored file. Documents come from the product's `TabLoader` (`loaders`, one per `FileType`),
@@ -73,8 +73,7 @@ shown ones, 0 the most recent, the active tab included):
 | On screen                                                                     | `active`     |
 | Left less than `leaveGraceMs` ago                                             | `headless`   |
 | An agent bound and calling (`now - lastAgentCallAt < agentActiveMs`)          | `headless`   |
-| Hosting a live session (for now, see below)                                   | `headless`   |
-| An agent bound but quiet, a joined live session, or `unsaved`                 | `document`   |
+| An agent bound but quiet, a live session (hosted or joined), or `unsaved`     | `document`   |
 | Among the `recentTabs` most recent, or shown less than `hibernateAfterMs` ago | `document`   |
 | Otherwise                                                                     | `hibernated` |
 
@@ -86,10 +85,10 @@ The numbers are `TAB_LIMITS` (`tab-limits.ts`), tunable: `leaveGraceMs` 30 s, `a
 opened in the background or restored and never clicked stays `hibernated` with no document until
 it's shown; the one exception is an agent calling, which brings its tab's engine back
 (`headless`). Then at most `maxHeadless` tabs keep an engine: past that, the least recently shown
-headless tabs drop to `document`, the ones an agent is calling last; a hosting tab is never
-dropped. A hosting tab stays `headless` while it's in the background, since its session's
-autosave lives in its editor; once the document autosaves on its own it will drop to `document`
-like a joined one.
+headless tabs drop to `document`, the ones an agent is calling last. A live tab keeps its session
+connected with its document only, and never hibernates (`mayHibernate`): a joined one's
+`ShareGuest` is the tab's, and a hosted file's session outlives its editor, which the app saves
+meanwhile (`watchHostedTabs`, [app/tabs/](../../app/tabs/README.md)).
 
 `TabMemory` (`tab-memory.ts`) does this for `FileTabs` (which keeps `evaluate`, `startPolicy` and
 `setLeaveGuard` as its API), acting through its `get` and `setState`.
@@ -104,7 +103,6 @@ destroyed only once the editor's slot has unmounted and the save its editor star
 (`guard.unmounted`). A tab shown again meanwhile keeps its editor (and isn't hibernated).
 
 **The cap can be passed**: a tab whose changes nothing would save (autosave off or failing)
-keeps its editor, since a `document` tab has no editor to save it or ask about it; so does a
-hosting tab. Such tabs can make more than `maxHeadless` engines. A kept tab is tried again on the
+keeps its editor, since a `document` tab has no editor to save it or ask about it. Such tabs can make more than `maxHeadless` engines. A kept tab is tried again on the
 next timed run. A failing `prepare` is logged once per tab (`console.warn`) and tried again then
 too.

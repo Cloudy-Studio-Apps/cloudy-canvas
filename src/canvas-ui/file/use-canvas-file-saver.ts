@@ -2,9 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { CanvasEngine } from "@canvas";
 import { FILE_EXTENSIONS, isAndroidPlatform, type FileInfo } from "@shared/core";
-import { exportFile, saveCanvasFileDialog, storage } from "@platform";
+import { exportFile, saveCanvasFileDialog } from "@platform";
 import { useAutosaveStore } from "@shared/stores/autosave-store";
-import { useRecentFilesStore } from "@shared/stores/recent-files-store";
 import { notifyError } from "@shared/stores/toast-store";
 import { useTabContext, useTabParam } from "../tabs/tab-context";
 import { useDocumentMeta } from "../use-document-meta";
@@ -15,6 +14,7 @@ import type {
   SaveStatus,
 } from "./canvas-file.types";
 import { freeFilePath } from "./free-file-path";
+import { saveCanvasDocument } from "./save-canvas-document";
 import { useCanvasAutosave } from "./use-canvas-autosave";
 import { useCanvasThumbnail } from "./use-canvas-thumbnail";
 import { useRecentProject } from "./use-recent-project";
@@ -84,18 +84,22 @@ export function useCanvasFileSaver<O extends object>(
   const write = useCallback(
     (target: string | null | Promise<string | null>, kind: SaveKind): Promise<boolean> => {
       // Encoded now, so a save queued as the editor closes still has the document.
-      const data = encode(engine.doc);
-      const projectId = engine.doc.projectLink()?.projectId;
-      const fileMeta = { ...engine.doc.meta(), ...(projectId && { projectId }) };
+      const saving = saveCanvasDocument({
+        id,
+        doc: engine.doc,
+        info: infoRef.current,
+        format,
+        dir: null,
+        path: target,
+      });
+      // Awaited in line below; a failure is reported there.
+      saving.catch(() => undefined);
       const at = revision.current;
       const run = queue.current.then(async () => {
         statusRef.current = "saving";
         setStatus("saving");
         try {
-          const path = await target;
-          const file = path
-            ? await storage.save(id, path, data, fileMeta)
-            : await storage.saveDraft(id, fileMeta.title || untitled, type, data, fileMeta);
+          const file = await saving;
           infoRef.current = file;
           setInfo(file);
           tab.reportInfo(file);
@@ -104,7 +108,6 @@ export function useCanvasFileSaver<O extends object>(
           statusRef.current = "idle";
           setStatus("idle");
           autosaveFailed.current = false;
-          useRecentFilesStore.getState().upsert(file);
           setSaved(kind);
           clearTimeout(savedTimer.current);
           savedTimer.current = setTimeout(() => setSaved(null), SAVED_NOTICE_MS);
@@ -122,7 +125,7 @@ export function useCanvasFileSaver<O extends object>(
       queue.current = run;
       return run;
     },
-    [engine, id, encode, untitled, type, noun, tab],
+    [engine, id, format, noun, tab],
   );
 
   /** Where a file with no file yet goes without asking (`?dir=`), `null` for nowhere. */

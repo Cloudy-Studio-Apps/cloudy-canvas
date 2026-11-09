@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import type { Awareness } from "y-protocols/awareness";
 
 import { MODEL_EDIT_LOCKS, type CanvasEngine } from "@canvas";
+import { tabsSupported } from "@platform";
 import type { CollaboratorState, PresencePoint, ShareIdentity } from "@shared/core";
 import { useCollaboratorsStore } from "@shared/stores/collaborators-store";
 import { useRemoteModelLocks } from "../model3d";
@@ -37,6 +38,8 @@ export function useRoomPresence(
     let cursor: PresencePoint | null = null;
     let agents = ownAgentsOn(collaborators.getState().collaborators, fileId);
     let timer: ReturnType<typeof setTimeout> | null = null;
+    /** What was sent last, to leave in the room (pointer and selection cleared) as the editor goes. */
+    let sent: RoomPresence | null = null;
 
     const send = () => {
       timer = null;
@@ -55,6 +58,7 @@ export function useRoomPresence(
         presence,
         agents: roomAgents(agents, Date.now()),
       };
+      sent = state;
       awareness.setLocalState(state);
     };
     const schedule = () => {
@@ -86,7 +90,15 @@ export function useRoomPresence(
       stopState();
       stopLocks();
       stopAgents();
-      awareness.setLocalState(null);
+      // With tabs, the session outlives the editor (its tab keeps the document connected): the
+      // user stays in the room, only without a pointer, a selection or a live 3D edit. An
+      // awareness already gone (the session ended or was left) has no state to keep.
+      if (tabsSupported() && sent && awareness.getLocalState() !== null) {
+        const presence = { ...sent.presence, cursor: null, selection: [], editing: null };
+        awareness.setLocalState({ ...sent, presence } satisfies RoomPresence);
+      } else {
+        awareness.setLocalState(null);
+      }
     };
   }, [awareness, engine, fileId, name, color]);
 }

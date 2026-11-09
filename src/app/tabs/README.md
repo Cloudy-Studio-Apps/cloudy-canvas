@@ -23,6 +23,18 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   active tab, a joined session's tab), its route (`tabRoute`: `/<type>/<fileId>`, no params) replaces
   the address, or `/` for Home, so switching tabs doesn't fill the history. A joined session's route
   (`/<type>/live:<fileId>`) only shows its open tab; once that's closed it goes Home.
+- **Hosted tabs** (`watchHostedTabs`, `hosted-tabs.ts`; desktop, started by `AppFrame`): the tab of
+  the file this app shares is `hosting` (from `sharingState`, `canvas-ui/share/`, with or without
+  its editor), and a live session outlives its editor: the memory policy drops a background live tab
+  to `document`. While a hosted tab is `document`, `startDocumentAutosave(tab, format)`
+  (`document-autosave.ts`; the product's `CanvasFileFormat` from `FILE_FORMATS`, imported with the
+  product) saves the guests' edits as the editor would (1.5 s after changes stop, at most every
+  10 s, only while autosave is on, and before quitting) with `saveCanvasDocument`
+  (`canvas-ui/file/`), reporting the file to the tab (`setInfo`) and its `unsaved`. It starts once
+  the editor's closing save is done (`tabLeaveGuard.unmounted`) and stops, saving what's pending,
+  when an editor mounts for the tab again, sharing stops or the tab closes; writes to one file go
+  in line whoever makes them, so the editor's and this one never overlap. A joined session's tab
+  needs nothing here: its `ShareGuest` is the tab's.
 - **Closing** (desktop; `AppFrame` mounts these only where `tabsSupported()`):
   - `closeTab(id)` (`close-tab.ts`) closes a tab without losing its changes. Through its
     `tabHandles` handle (`canvas-ui/tabs/`): changes nothing will save (autosave off or failing,
@@ -30,8 +42,10 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
     `close-tab-prompt.ts`, shown by `CloseTabDialogHost`; the dialog waits while saving, and a
     cancelled or failed save keeps the tab). Otherwise it runs `finish()` (the engine's last writes
     and the pending autosave, while the document is still there) and asks if that autosave failed.
-    Then it takes the preview and calls `fileTabs.close`, which leaves a joined live session; the
-    agents bound to the tab go with it. A tab with no editor mounted (hibernated, a live guest) just
+    A hosted file's session ends with its tab (`endSharing`, with a toast) and what the guests
+    wrote meanwhile is saved (the editor's `flush`, or the document autosave's last save). Then it
+    takes the preview and calls `fileTabs.close`, which leaves a joined live session; the agents
+    bound to the tab go with it. A tab with no editor mounted (hibernated, a live guest) just
     closes. A tab already closing isn't asked about twice.
   - `AppCloseGuard` (`app-close-guard.tsx`) is the window's one `appLifecycle.onCloseRequest`: it
     flushes every mounted tab's pending autosave, then quits once the previews are taken (at most

@@ -2,13 +2,9 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { debounce, type CanvasEngine } from "@canvas";
 import { appLifecycle } from "@platform";
+import { AUTOSAVE_DELAY_MS, AUTOSAVE_MAX_WAIT_MS } from "./autosave-delays";
 import { finalWork, lastWrites } from "./closing-work";
 import type { AutosaveControls, FinalWork } from "./use-canvas-autosave.types";
-
-/** Changes are saved once they stop for this long… */
-const AUTOSAVE_DELAY_MS = 1500;
-/** …or after this long of continuous editing. */
-const AUTOSAVE_MAX_WAIT_MS = 10_000;
 
 const noop = (): void => undefined;
 

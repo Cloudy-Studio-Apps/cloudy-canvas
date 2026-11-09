@@ -1,13 +1,15 @@
-import { useCallback, useSyncExternalStore } from "react";
+import { useSyncExternalStore } from "react";
 
 import type { ShareHost, ShareHostOptions } from "@canvas";
 import { appLifecycle } from "@platform";
+import { toast } from "@shared/stores/toast-store";
 import type { HostedSession } from "./host-session.types";
+import { sharingState } from "./sharing-state";
 import { startHost } from "./start-host";
+import { t } from "./share.i18n";
 
 /** The one file this app shares at a time. */
 let current: HostedSession | null = null;
-const listeners = new Set<() => void>();
 
 /**
  * Starts sharing a file (ending any other session first), through n0's public relays when the
@@ -19,7 +21,7 @@ export async function startSharing(fileId: string, options: ShareHostOptions): P
   const host = await startHost(options);
   const releaseQuit = appLifecycle.onBeforeQuit(() => host.stop());
   current = { fileId, host, releaseQuit };
-  notify();
+  sharingState.set(fileId);
   return host;
 }
 
@@ -28,18 +30,14 @@ export async function stopSharing(): Promise<void> {
   const session = current;
   if (!session) return;
   current = null;
-  notify();
+  sharingState.set(null);
   session.releaseQuit();
   await session.host.stop();
 }
 
 /** The session sharing the file with this id, `null` while it isn't shared. */
 export function useHostedSession(fileId: string): ShareHost | null {
-  const subscribe = useCallback((listener: () => void) => {
-    listeners.add(listener);
-    return () => listeners.delete(listener);
-  }, []);
-  return useSyncExternalStore(subscribe, () =>
+  return useSyncExternalStore(sharingState.subscribe, () =>
     current && current.fileId === fileId ? current.host : null,
   );
 }
@@ -49,6 +47,12 @@ export function isSharing(fileId: string): boolean {
   return current?.fileId === fileId;
 }
 
-function notify(): void {
-  for (const listener of listeners) listener();
+/**
+ * Ends the session when it shares the file with this id (its tab closing, or its editor where
+ * there are no tabs), saying so.
+ */
+export async function endSharing(fileId: string): Promise<void> {
+  if (!isSharing(fileId)) return;
+  await stopSharing();
+  toast({ title: t("hostedStopped.title"), description: t("hostedStopped.description") });
 }

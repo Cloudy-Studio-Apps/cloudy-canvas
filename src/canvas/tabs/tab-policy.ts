@@ -19,9 +19,7 @@ export function targetState(tab: FileTab, ctx: PolicyContext): TabState {
   if (tab.id === ctx.activeId) return "active";
   if (ctx.now - tab.lastActiveAt < TAB_LIMITS.leaveGraceMs) return "headless";
   if (agentCalling(tab, ctx.now)) return "headless";
-  // A host's session lives in its editor until the document autosaves on its own (to come).
-  if (tab.hosting) return "headless";
-  if (tab.agents.length > 0 || tab.live || tab.unsaved) return "document";
+  if (tab.agents.length > 0 || tab.live || tab.hosting || tab.unsaved) return "document";
   if (ctx.recentRank < TAB_LIMITS.recentTabs) return "document";
   if (ctx.now - tab.lastActiveAt < TAB_LIMITS.hibernateAfterMs) return "document";
   return "hibernated";
@@ -31,7 +29,7 @@ export function targetState(tab: FileTab, ctx: PolicyContext): TabState {
  * The background tabs to move, and where: each goes down to its `targetState`, never up (a tab
  * opened in the background or restored stays hibernated until it's shown), except that a calling
  * agent brings its tab's engine back. Then at most `maxHeadless` keep an engine: past that, the
- * least recently shown drop to `document`, those an agent is calling last; a hosting tab keeps it.
+ * least recently shown drop to `document`, those an agent is calling last.
  */
 export function planTabStates({ tabs, activeId, now, leaving }: PolicyInput): TabStatePlan {
   const ranks = new Map(
@@ -50,9 +48,9 @@ export function planTabStates({ tabs, activeId, now, leaving }: PolicyInput): Ta
   const over = headless.length - TAB_LIMITS.maxHeadless;
   if (over > 0) {
     const calling = (tab: FileTab) => (agentCalling(tab, now) ? 1 : 0);
-    const demotable = headless
-      .filter((tab) => !tab.hosting)
-      .sort((a, b) => calling(a) - calling(b) || a.lastActiveAt - b.lastActiveAt);
+    const demotable = headless.sort(
+      (a, b) => calling(a) - calling(b) || a.lastActiveAt - b.lastActiveAt,
+    );
     for (const tab of demotable.slice(0, over)) {
       if (tab.state === "headless") plan.set(tab.id, "document");
       else plan.delete(tab.id);

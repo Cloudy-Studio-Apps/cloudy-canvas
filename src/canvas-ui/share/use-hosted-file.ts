@@ -1,16 +1,17 @@
 import { useEffect, useMemo } from "react";
 
 import type { CanvasEngine } from "@canvas";
+import { tabsSupported } from "@platform";
 import { useCollaborationStore } from "@shared/stores/collaboration-store";
-import { toast } from "@shared/stores/toast-store";
 import type { CanvasFileContextValue } from "../file";
-import { isSharing, stopSharing, useHostedSession } from "./host-session";
+import { endSharing, useHostedSession } from "./host-session";
 import { useRoomPresence } from "./use-room-presence";
-import { t } from "./share.i18n";
 
 /**
- * The open file, marked live while this app shares it, with the session's presence. Closing the
- * editor of a shared file ends the session.
+ * The open file, marked live while this app shares it, with the session's presence. On desktop the
+ * session outlives the editor (its tab keeps the document connected in the background): it ends
+ * when the user stops it or the tab closes (`closeTab`, `app/tabs/`). Where there are no tabs
+ * (Android), closing the editor of a shared file ends the session.
  */
 export function useHostedFile<O extends object>(
   file: CanvasFileContextValue,
@@ -25,12 +26,7 @@ export function useHostedFile<O extends object>(
   const { id } = file;
   useEffect(
     () => () => {
-      if (!isSharing(id)) return;
-      void stopSharing();
-      toast({
-        title: t("hostedStopped.title"),
-        description: t("hostedStopped.description"),
-      });
+      if (!tabsSupported()) void endSharing(id);
     },
     [id],
   );

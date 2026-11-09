@@ -9,5 +9,8 @@
     "saveOne": "Save and quit",
     "saveAll": "Save all and quit",
     "discard": "Quit without saving"
+  },
+  "autosave": {
+    "failed": "The {noun} couldn't be saved"
   }
 }
