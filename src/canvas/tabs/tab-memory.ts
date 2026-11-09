@@ -1,7 +1,7 @@
 import type { LeaveTarget, TabLeaveGuard } from "./file-tabs.types";
 import { TAB_POLICY_INTERVAL_MS } from "./tab-limits";
 import type { TabMemoryHost } from "./tab-memory.types";
-import { mayHibernate, planTabStates } from "./tab-policy";
+import { agentCalling, mayHibernate, planTabStates } from "./tab-policy";
 
 /**
  * Applies the memory policy to a `FileTabs`' background tabs (see the README): after every change
@@ -95,7 +95,9 @@ export class TabMemory {
         this.kept.add(id);
         return;
       }
-      if (host.get(id)?.state !== "headless") return;
+      // An agent call that began while the host readied it keeps the editor.
+      const ready = host.get(id);
+      if (ready?.state !== "headless" || agentCalling(ready, host.now())) return;
       host.setState(id, "document");
       if (target !== "hibernated") return;
       if (guard) await this.whileDocument(id, guard.unmounted(id));

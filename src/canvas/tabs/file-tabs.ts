@@ -212,6 +212,31 @@ export class FileTabs {
   }
 
   /**
+   * An agent call starts in the tab: until its `endAgentCall`, the memory policy keeps (or brings
+   * back) its engine, past `maxHeadless` too, and a leave in progress gives up.
+   */
+  beginAgentCall(id: string): void {
+    const now = this.now();
+    this.publish({
+      tabs: patchTab(this.tabs, id, (tab) => ({
+        agentCalls: tab.agentCalls + 1,
+        lastAgentCallAt: now,
+      })),
+    });
+  }
+
+  /** An agent call that `beginAgentCall` started in the tab is over. */
+  endAgentCall(id: string): void {
+    const now = this.now();
+    this.publish({
+      tabs: patchTab(this.tabs, id, (tab) => ({
+        agentCalls: Math.max(0, tab.agentCalls - 1),
+        lastAgentCallAt: now,
+      })),
+    });
+  }
+
+  /**
    * Sets what the host does before the policy takes a background tab's editor away (its save and
    * preview); returns how to remove it. Without one, editors go at once.
    */

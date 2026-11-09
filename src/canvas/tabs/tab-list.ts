@@ -23,6 +23,7 @@ export function createTab(source: TabSource, now: number): FileTab {
     agents: [],
     lastActiveAt: now,
     lastAgentCallAt: null,
+    agentCalls: 0,
   };
 }
 

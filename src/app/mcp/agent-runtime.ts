@@ -48,8 +48,9 @@ export function agentServer(): McpServerDefinition {
     hostFor: (context) => agentHostFor(presenceKey(context), agentTabs),
     prepare: async (context) => {
       const key = presenceKey(context);
-      await prepareAgentCall(agentTabs, key);
+      const end = await prepareAgentCall(agentTabs, key);
       presence.prepared(key);
+      return end;
     },
     notesFor: (context) => undoNotes.take(presenceKey(context)),
   });

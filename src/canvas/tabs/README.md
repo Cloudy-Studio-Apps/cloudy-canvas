@@ -57,8 +57,11 @@ least that). A document whose load ends after its tab was hibernated or closed i
 ## Agents
 
 `bindAgent(id, session)` binds an agent session to one tab (moving it out of the one it was in),
-`unbindAgent(session)` frees it, and `noteAgentCall(id)` sets `lastAgentCallAt` (the app calls it
-before each of a bound agent's calls, [app/mcp/](../../app/mcp/README.md#agents-and-tabs)). `move(id, index)`
+`unbindAgent(session)` frees it, and `noteAgentCall(id)` sets `lastAgentCallAt`.
+`beginAgentCall(id)`/`endAgentCall(id)` count the agent calls running in the tab (`agentCalls`; the
+app wraps each of a bound agent's calls in them, [app/mcp/](../../app/mcp/README.md#agents-and-tabs)):
+while one runs the tab keeps its engine whatever the policy says, past `maxHeadless` too, and a
+leave in progress gives up (`TabMemory` checks again once the host readied the editor). `move(id, index)`
 reorders the tabs; `dispose()` destroys every document and leaves every live session.
 
 ## The memory policy
@@ -69,15 +72,15 @@ in a microtask) and every `TAB_POLICY_INTERVAL_MS` (10 s) once the app calls `st
 is the table below, first match wins (`ctx.recentRank`: the tab's place among the most recently
 shown ones, 0 the most recent, the active tab included):
 
-| Tab                                                                           | State        |
-| ----------------------------------------------------------------------------- | ------------ |
-| On screen                                                                     | `active`     |
-| Left less than `leaveGraceMs` ago                                             | `headless`   |
-| An agent bound and calling (`now - lastAgentCallAt < agentActiveMs`)          | `headless`   |
-| Hosting a live session while autosave is off (`needsEditor`)                  | `headless`   |
-| An agent bound but quiet, a live session (hosted or joined), or `unsaved`     | `document`   |
-| Among the `recentTabs` most recent, or shown less than `hibernateAfterMs` ago | `document`   |
-| Otherwise                                                                     | `hibernated` |
+| Tab                                                                                       | State        |
+| ----------------------------------------------------------------------------------------- | ------------ |
+| On screen                                                                                 | `active`     |
+| Left less than `leaveGraceMs` ago                                                         | `headless`   |
+| An agent call running, or one bound and calling (`now - lastAgentCallAt < agentActiveMs`) | `headless`   |
+| Hosting a live session while autosave is off (`needsEditor`)                              | `headless`   |
+| An agent bound but quiet, a live session (hosted or joined), or `unsaved`                 | `document`   |
+| Among the `recentTabs` most recent, or shown less than `hibernateAfterMs` ago             | `document`   |
+| Otherwise                                                                                 | `hibernated` |
 
 The numbers are `TAB_LIMITS` (`tab-limits.ts`), tunable: `leaveGraceMs` 30 s, `agentActiveMs` 2 min
 (the title bar's pulsing agent avatar uses it too), `recentTabs` 5, `hibernateAfterMs` 10 min,
@@ -87,7 +90,8 @@ The numbers are `TAB_LIMITS` (`tab-limits.ts`), tunable: `leaveGraceMs` 30 s, `a
 opened in the background or restored and never clicked stays `hibernated` with no document until
 it's shown; the exceptions are an agent calling and a hosted tab with autosave off
 (`needsEditor`), which bring the tab's engine back (`headless`). Then at most `maxHeadless` tabs keep an engine: past that, the least recently shown
-headless tabs drop to `document`, the ones an agent is calling last. A live tab keeps its session
+headless tabs drop to `document`, the ones an agent is calling last; one with an agent call running
+(`agentCalls`) never does, so the cap may be passed until it ends. A live tab keeps its session
 connected with its document only, and never hibernates (`mayHibernate`): a joined one's
 `ShareGuest` is the tab's, and a hosted file's session outlives its editor, which the app saves
 meanwhile (`watchHostedTabs`, [app/tabs/](../../app/tabs/README.md)). That autosave follows the

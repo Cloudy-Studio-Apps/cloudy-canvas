@@ -40,8 +40,12 @@ export function createAgentServerDefinition({
       description: tool.description,
       inputSchema: tool.inputSchema,
       run: async (args, context) => {
-        await prepare?.(context);
-        return tool.run(hostFor(context), args);
+        const end = await prepare?.(context);
+        try {
+          return await tool.run(hostFor(context), args);
+        } finally {
+          end?.();
+        }
       },
     })),
     ...(notesFor ? { notesFor } : {}),

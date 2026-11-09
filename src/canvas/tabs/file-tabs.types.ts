@@ -36,6 +36,8 @@ export interface FileTab {
   readonly agents: readonly string[];
   readonly lastActiveAt: number;
   readonly lastAgentCallAt: number | null;
+  /** Agent calls running in it now (`beginAgentCall`): while any runs, it keeps its engine. */
+  readonly agentCalls: number;
 }
 
 export interface FileTabsSnapshot {

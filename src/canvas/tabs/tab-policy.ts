@@ -5,12 +5,13 @@ import type { PolicyContext, PolicyInput, TabStatePlan } from "./tab-policy.type
 /** How much each state holds, to compare them. */
 const LEVEL: Record<TabState, number> = { hibernated: 0, document: 1, headless: 2, active: 3 };
 
-/** Whether an agent bound to the tab called it within `agentActiveMs`. */
+/** Whether an agent call runs in the tab now, or one bound to it called within `agentActiveMs`. */
 export function agentCalling(tab: FileTab, now: number): boolean {
   return (
-    tab.agents.length > 0 &&
-    tab.lastAgentCallAt !== null &&
-    now - tab.lastAgentCallAt < TAB_LIMITS.agentActiveMs
+    tab.agentCalls > 0 ||
+    (tab.agents.length > 0 &&
+      tab.lastAgentCallAt !== null &&
+      now - tab.lastAgentCallAt < TAB_LIMITS.agentActiveMs)
   );
 }
 
@@ -38,7 +39,8 @@ export function targetState(tab: FileTab, ctx: PolicyContext): TabState {
  * opened in the background or restored stays hibernated until it's shown), except that a calling
  * agent, or a hosted file's tab with autosave off (`needsEditor`), brings its tab's engine back.
  * Then at most `maxHeadless` keep an engine: past that, the least recently shown drop to
- * `document`, those an agent is calling last; a tab that `needsEditor` keeps it.
+ * `document`, those an agent is calling last; a tab that `needsEditor` or has an agent call running
+ * (`agentCalls`) keeps it, so the cap may be passed until those calls end.
  */
 export function planTabStates({
   tabs,
@@ -65,7 +67,7 @@ export function planTabStates({
   if (over > 0) {
     const calling = (tab: FileTab) => (agentCalling(tab, now) ? 1 : 0);
     const demotable = headless
-      .filter((tab) => !needsEditor(tab, autosave))
+      .filter((tab) => !needsEditor(tab, autosave) && tab.agentCalls === 0)
       .sort((a, b) => calling(a) - calling(b) || a.lastActiveAt - b.lastActiveAt);
     for (const tab of demotable.slice(0, over)) {
       if (tab.state === "headless") plan.set(tab.id, "document");
@@ -77,5 +79,7 @@ export function planTabStates({
 
 /** Whether the tab may lose its document: never with an agent, a live session or unsaved changes. */
 export function mayHibernate(tab: FileTab): boolean {
-  return tab.agents.length === 0 && !tab.live && !tab.hosting && !tab.unsaved;
+  return (
+    tab.agents.length === 0 && tab.agentCalls === 0 && !tab.live && !tab.hosting && !tab.unsaved
+  );
 }

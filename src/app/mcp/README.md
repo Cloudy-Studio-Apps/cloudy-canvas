@@ -22,11 +22,17 @@ view never moves for it.
   to the active tab, when that has an editor; on Home it stays unbound and the tool answers that no
   file is open. Calls that need no file (recent files) don't bind; opening or creating one binds there.
 - **Before every call** (`prepareAgentCall`, `agent-tab-files.ts`, the server definition's
-  `prepare`): a bound session's call is noted on its tab (`fileTabs.noteAgentCall`), so the policy
-  raises a `document` or `hibernated` tab to `headless` (loading it) and keeps it there while the
-  agent calls, and the call waits for the tab's editor (`boardFiles`/`designFiles.waitFor(tabId)`,
-  15 s). A headless editor is suspended (no drawing, no input), but its scene follows the document
-  and `engine.workspace(id)` works, so tools run there as on screen.
+  `prepare`, which ends the call once its `run` settles): a bound session's call is begun on its
+  tab (`fileTabs.beginAgentCall`, before anything is checked), so the policy raises a `document` or
+  `hibernated` tab to `headless` (loading it) and, until `endAgentCall`, takes nothing away: not
+  past `maxHeadless` (the cap waits for the call to end), not by a leave already in progress. Then
+  it waits for the tab's editor (`waitForTabEditor`: the tab `headless` or `active` and its file
+  in `boardFiles`/`designFiles`; 15 s, then `The board "Sprint board" couldn't be opened.`). A tab
+  whose file failed to load fails the call at once with the load's message and unbinds the
+  session, so it can open another file. An unbound session waits for the active tab's editor while
+  it loads, so its first file call binds there instead of finding no file. A headless editor is
+  suspended (no drawing, no input), but its scene follows the document and `engine.workspace(id)`
+  works, so tools run there as on screen.
 - **The host** (`agentHostFor`): `board()`/`design()` are the bound tab's file in the agent's
   workspace (`null` for the other product); `openBoard(id)`/`openDesign(id)` open the file in a
   **background** tab (`fileTabs.open(…, { activate: false })`, an already open tab is reused),

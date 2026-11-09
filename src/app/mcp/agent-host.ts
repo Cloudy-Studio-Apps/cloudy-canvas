@@ -8,10 +8,7 @@ import { fileTabs } from "../tabs/file-tabs-instance";
 import { withWorkspace } from "./agent-call-host";
 import { agentPlugins } from "./agent-plugins";
 import type { AgentTabs } from "./agent-tab-binding.types";
-import { prepareAgentCall, tabAgentFile } from "./agent-tab-files";
-
-/** What a session's next file call says once its tab was closed. */
-const TAB_CLOSED = "Your tab was closed: open, create or switch to a file.";
+import { prepareAgentCall, TAB_CLOSED, tabAgentFile } from "./agent-tab-files";
 
 /**
  * What agent tools reach outside the engine, for one collaborator: the board or design of its
@@ -21,17 +18,25 @@ const TAB_CLOSED = "Your tab was closed: open, create or switch to a file.";
 export function agentHostFor(collaboratorId: string, tabs: AgentTabs): AgentHost & DesignAgentHost {
   const board = (file: OpenBoard) => withWorkspace(file, collaboratorId);
   const design = (file: OpenDesign) => withWorkspace(file, collaboratorId);
-  /** Opens the file in a background tab (never shown), moves the session there, waits for it. */
+  /**
+   * Opens the file in a background tab (never shown), moves the session there and waits for its
+   * editor; resolves with the tab's id.
+   */
   const openInTab = async (type: FileType, fileId: string): Promise<string> => {
     const tab = fileTabs.open({ type, fileId }, { activate: false });
     tabs.bind(collaboratorId, tab.id);
-    await prepareAgentCall(tabs, collaboratorId);
+    const end = await prepareAgentCall(tabs, collaboratorId);
+    end();
     return tab.id;
   };
+  const opened = <F>(file: F | null): F => {
+    if (!file) throw new Error("The file opened in another kind of tab.");
+    return file;
+  };
   const showBoard = async (id: string) =>
-    board(await boardFiles.waitFor(await openInTab("board", id)));
+    board(opened(boardFiles.get(await openInTab("board", id))));
   const showDesign = async (id: string) =>
-    design(await designFiles.waitFor(await openInTab("design", id)));
+    design(opened(designFiles.get(await openInTab("design", id))));
   /** The session's tab's file of one product (binding it, see `sessionTab`). */
   const fileOf = <F>(files: { get(tabId: string): F | null }): F | null => {
     const tabId = sessionTab(tabs, collaboratorId);
