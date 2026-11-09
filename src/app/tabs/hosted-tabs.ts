@@ -2,6 +2,7 @@ import type { CanvasDocument } from "@canvas";
 import type { FileTab, FileTabs } from "@canvas/tabs";
 import { sharingState } from "@canvas-ui/share/sharing-state";
 import { tabLeaveGuard } from "@canvas-ui/tabs/tab-leave-guard";
+import { useAutosaveStore } from "@shared/stores/autosave-store";
 import { startDocumentAutosave } from "./document-autosave";
 import { FILE_FORMATS } from "./file-formats";
 
@@ -24,7 +25,9 @@ function documentOf(tab: FileTab | undefined): CanvasDocument | null {
  * shares `hosting` (`sharingState`, whether its editor is mounted or not), and while that tab is
  * `document` saves its document (`startDocumentAutosave`), from once its editor's closing save is
  * done (`tabLeaveGuard.unmounted`) until an editor mounts for it again, sharing stops or the tab
- * closes. Returns how to stop watching.
+ * closes. It also tells the memory policy whether autosave is on (`FileTabs.setAutosave`): off, a
+ * hosted tab keeps its editor, so its changes are asked about like any other. Returns how to stop
+ * watching.
  */
 export function watchHostedTabs(tabs: FileTabs): () => void {
   const syncHosting = () => {
@@ -72,12 +75,15 @@ export function watchHostedTabs(tabs: FileTabs): () => void {
 
   syncHosting();
   sync();
+  tabs.setAutosave(useAutosaveStore.getState().enabled);
+  const stopSettingWatch = useAutosaveStore.subscribe((state) => tabs.setAutosave(state.enabled));
   const stopSharingWatch = sharingState.subscribe(syncHosting);
   const stopTabsWatch = tabs.store.subscribe(() => {
     syncHosting();
     sync();
   });
   return () => {
+    stopSettingWatch();
     stopSharingWatch();
     stopTabsWatch();
     for (const id of [...running.keys()]) stopDocumentAutosave(id);

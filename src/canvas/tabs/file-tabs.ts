@@ -220,6 +220,14 @@ export class FileTabs {
   }
 
   /**
+   * Tells the memory policy whether autosave is on: while it's off, a hosted file's tab keeps its
+   * editor (brought back if it had dropped to `document`).
+   */
+  setAutosave(enabled: boolean): void {
+    this.memory.setAutosave(enabled);
+  }
+
+  /**
    * Applies the memory policy (`planTabStates`, see the README) to the background tabs. It runs
    * after every change; `startPolicy` also runs it on a timer, since time alone moves tabs down.
    */

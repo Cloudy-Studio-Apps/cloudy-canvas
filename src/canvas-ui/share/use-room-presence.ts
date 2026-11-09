@@ -14,9 +14,10 @@ import type { RoomPresence } from "./room-presence.types";
 const SEND_EVERY_MS = 50;
 
 /**
- * A live session's presence on the open file: the others' cursors, selections and pages (and their
- * agents') become collaborators, and this user's own (pointer, view, selection, page) goes to
- * them, with the agents working on the file through this app.
+ * A live session's presence on the open file: this user's own (pointer, view, selection, page)
+ * goes to the others, with the agents working on the file through this app. Where there are no
+ * tabs (Android) it also mirrors the others' cursors, selections and pages (and their agents') into
+ * the collaborators; with tabs the app does that (`watchRoomPresence`).
  */
 export function useRoomPresence(
   awareness: Awareness | null,
@@ -26,7 +27,9 @@ export function useRoomPresence(
 ): void {
   useRemoteModelLocks(engine, fileId);
   useEffect(() => {
-    if (!awareness) return;
+    // With tabs the app mirrors each session's people for as long as it lasts (`watchRoomPresence`,
+    // `app/tabs/`), editor or not.
+    if (!awareness || tabsSupported()) return;
     return mirrorRoomPresence(awareness, useCollaboratorsStore.getState());
   }, [awareness]);
 

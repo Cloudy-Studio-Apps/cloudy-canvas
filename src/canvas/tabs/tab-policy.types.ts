@@ -7,6 +7,8 @@ export interface PolicyContext {
   now: number;
   /** The tab's place among the most recently shown ones (0 = most recent). */
   recentRank: number;
+  /** Whether autosave is on: off, a hosted file's tab keeps its editor (`needsEditor`). */
+  autosave: boolean;
 }
 
 /** What `planTabStates` reads. */
@@ -16,6 +18,8 @@ export interface PolicyInput {
   now: number;
   /** Tabs already on their way down (left alone until they get there). */
   leaving: ReadonlySet<string>;
+  /** Whether autosave is on. */
+  autosave: boolean;
 }
 
 /** The background tabs whose state should change, and to what. */

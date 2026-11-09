@@ -12,9 +12,6 @@ export interface SaveCanvasDocumentInput {
   format: CanvasFileFormat;
   /** The folder a never-saved file goes to (a project's, `?dir=`), `null` for its draft. */
   dir: string | null;
-  /**
-   * Where to write instead of what `info` and `dir` give: a path (Save as, the folder path the
-   * saver picked once), `null` for the draft. It may still be resolving.
-   */
-  path?: string | null | Promise<string | null>;
+  /** Where to write instead of what `info` and `dir` give: a path (Save as), `null` for the draft. */
+  path?: string | null;
 }

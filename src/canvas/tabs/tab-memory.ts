@@ -17,6 +17,8 @@ export class TabMemory {
   private readonly kept = new Set<string>();
   /** Tabs whose leaving failed and was reported (once each). */
   private readonly warned = new Set<string>();
+  /** Whether autosave is on (`setAutosave`). */
+  private autosave = true;
   private queued = false;
   private disposed = false;
   private readonly stopWatching: () => void;
@@ -34,10 +36,19 @@ export class TabMemory {
     };
   }
 
+  /** Tells the policy whether autosave is on (off, a hosted file's tab keeps its editor). */
+  setAutosave(enabled: boolean): void {
+    if (this.autosave === enabled) return;
+    this.autosave = enabled;
+    this.kept.clear();
+    this.queue();
+  }
+
   evaluate(): void {
     if (this.disposed) return;
     const { tabs, activeId } = this.host.store.get();
-    const plan = planTabStates({ tabs, activeId, now: this.host.now(), leaving: this.leaving });
+    const { leaving, autosave } = this;
+    const plan = planTabStates({ tabs, activeId, now: this.host.now(), leaving, autosave });
     for (const [id, state] of plan) {
       const tab = this.host.get(id);
       if (!tab || tab.state === state) continue;
@@ -99,6 +110,8 @@ export class TabMemory {
       }
     } finally {
       this.leaving.delete(id);
+      // What changed meanwhile (autosave turned off, say) may move it again.
+      this.queue();
     }
   }
 

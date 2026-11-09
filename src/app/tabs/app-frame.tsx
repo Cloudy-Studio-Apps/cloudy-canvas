@@ -8,6 +8,7 @@ import { AppCloseGuard } from "./app-close-guard";
 import { CloseTabDialogHost } from "./close-tab-dialog-host";
 import { fileTabs } from "./file-tabs-instance";
 import { watchHostedTabs } from "./hosted-tabs";
+import { watchRoomPresence } from "./room-presence-mirrors";
 import { TAB_EDITORS } from "./tab-editors";
 import { useRouteTabSync } from "./use-route-tab-sync";
 
@@ -17,12 +18,14 @@ import { useRouteTabSync } from "./use-route-tab-sync";
  * while a file tab is shown, the Home area is hidden. On desktop it also holds the window's close
  * guard and the close-tab question (Android keeps each file's own guard). It runs the tabs' memory
  * policy on its timer for the app's life and, on desktop, keeps the hosted file's tab live and
- * saved without an editor (`watchHostedTabs`).
+ * saved without an editor (`watchHostedTabs`) and mirrors the live sessions' people
+ * (`watchRoomPresence`).
  */
 export function AppFrame() {
   useRouteTabSync();
   useEffect(() => fileTabs.startPolicy(), []);
   useEffect(() => (tabsSupported() ? watchHostedTabs(fileTabs) : undefined), []);
+  useEffect(() => (tabsSupported() ? watchRoomPresence(fileTabs) : undefined), []);
   const fileShown = useSyncExternalStore(
     fileTabs.store.subscribe,
     () => fileTabs.store.get().activeId !== null,

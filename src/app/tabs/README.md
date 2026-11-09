@@ -34,7 +34,16 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   the editor's closing save is done (`tabLeaveGuard.unmounted`) and stops, saving what's pending,
   when an editor mounts for the tab again, sharing stops or the tab closes; writes to one file go
   in line whoever makes them, so the editor's and this one never overlap. A joined session's tab
-  needs nothing here: its `ShareGuest` is the tab's.
+  needs nothing here: its `ShareGuest` is the tab's. It also passes the autosave setting to the
+  memory policy (`fileTabs.setAutosave`): while autosave is off a hosted tab keeps its editor (one
+  in `document` is brought back after the document autosave's last save), so its changes are
+  asked about on close and quit as usual.
+- **Room presence** (`watchRoomPresence`, `room-presence-mirrors.ts`; desktop, started by
+  `AppFrame`): mirrors the people of every live session the app is in (the hosted file's,
+  `sharingState`, and each joined tab's `live`) into the collaborators with `mirrorRoomPresence`
+  (`canvas-ui/share/`), for as long as the session lasts, editor or not, so a live tab in the
+  background still shows who is in it (`TabAvatars`). Each room forgets only its own people when it
+  ends. The editor only publishes the user's own presence while it's mounted.
 - **Closing** (desktop; `AppFrame` mounts these only where `tabsSupported()`):
   - `closeTab(id)` (`close-tab.ts`) closes a tab without losing its changes. Through its
     `tabHandles` handle (`canvas-ui/tabs/`): changes nothing will save (autosave off or failing,

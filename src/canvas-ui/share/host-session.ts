@@ -21,7 +21,7 @@ export async function startSharing(fileId: string, options: ShareHostOptions): P
   const host = await startHost(options);
   const releaseQuit = appLifecycle.onBeforeQuit(() => host.stop());
   current = { fileId, host, releaseQuit };
-  sharingState.set(fileId);
+  sharingState.set({ fileId, awareness: host.awareness });
   return host;
 }
 

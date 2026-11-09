@@ -73,6 +73,7 @@ shown ones, 0 the most recent, the active tab included):
 | On screen                                                                     | `active`     |
 | Left less than `leaveGraceMs` ago                                             | `headless`   |
 | An agent bound and calling (`now - lastAgentCallAt < agentActiveMs`)          | `headless`   |
+| Hosting a live session while autosave is off (`needsEditor`)                  | `headless`   |
 | An agent bound but quiet, a live session (hosted or joined), or `unsaved`     | `document`   |
 | Among the `recentTabs` most recent, or shown less than `hibernateAfterMs` ago | `document`   |
 | Otherwise                                                                     | `hibernated` |
@@ -83,15 +84,19 @@ The numbers are `TAB_LIMITS` (`tab-limits.ts`), tunable: `leaveGraceMs` 30 s, `a
 
 `planTabStates` turns that into moves: a tab only goes **down** to its target, never up, so a tab
 opened in the background or restored and never clicked stays `hibernated` with no document until
-it's shown; the one exception is an agent calling, which brings its tab's engine back
-(`headless`). Then at most `maxHeadless` tabs keep an engine: past that, the least recently shown
+it's shown; the exceptions are an agent calling and a hosted tab with autosave off
+(`needsEditor`), which bring the tab's engine back (`headless`). Then at most `maxHeadless` tabs keep an engine: past that, the least recently shown
 headless tabs drop to `document`, the ones an agent is calling last. A live tab keeps its session
 connected with its document only, and never hibernates (`mayHibernate`): a joined one's
 `ShareGuest` is the tab's, and a hosted file's session outlives its editor, which the app saves
-meanwhile (`watchHostedTabs`, [app/tabs/](../../app/tabs/README.md)).
+meanwhile (`watchHostedTabs`, [app/tabs/](../../app/tabs/README.md)). That autosave follows the
+setting, which the app passes to `setAutosave(enabled)`: while autosave is off a hosted tab keeps
+its editor (one already `document` is brought back once the document autosave saved what it had),
+so the guests' edits are unsaved changes its editor holds, asked about on close and quit like any
+other.
 
-`TabMemory` (`tab-memory.ts`) does this for `FileTabs` (which keeps `evaluate`, `startPolicy` and
-`setLeaveGuard` as its API), acting through its `get` and `setState`.
+`TabMemory` (`tab-memory.ts`) does this for `FileTabs` (which keeps `evaluate`, `startPolicy`,
+`setLeaveGuard` and `setAutosave` as its API), acting through its `get` and `setState`.
 
 **Leaving `headless`** (`TabMemory.leave`): a background tab's editor goes only after the host
 readied it, through the `TabLeaveGuard` it sets with `setLeaveGuard`
@@ -103,6 +108,8 @@ destroyed only once the editor's slot has unmounted and the save its editor star
 (`guard.unmounted`). A tab shown again meanwhile keeps its editor (and isn't hibernated).
 
 **The cap can be passed**: a tab whose changes nothing would save (autosave off or failing)
-keeps its editor, since a `document` tab has no editor to save it or ask about it. Such tabs can make more than `maxHeadless` engines. A kept tab is tried again on the
+keeps its editor, since a `document` tab has no editor to save it or ask about it; a hosted
+tab while autosave is off (`needsEditor`) is never dropped either. Such tabs can make more than
+`maxHeadless` engines. A kept tab is tried again on the
 next timed run. A failing `prepare` is logged once per tab (`console.warn`) and tried again then
 too.

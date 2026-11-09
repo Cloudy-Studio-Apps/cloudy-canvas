@@ -6,6 +6,8 @@ import type { SaveCanvasDocumentInput } from "./save-canvas-document.types";
 
 /** Each file's writes in line, resolving to the file the last one wrote (`null` if it failed). */
 const writes = new Map<string, Promise<FileInfo | null>>();
+/** The file each id was last written to this session, for a caller that doesn't know it yet. */
+const lastWritten = new Map<string, FileInfo>();
 
 /**
  * Writes a document to its file: encoded now (so a save queued as its editor or tab goes still has
@@ -22,10 +24,11 @@ export function saveCanvasDocument(input: SaveCanvasDocumentInput): Promise<File
   const meta = { ...doc.meta(), ...(projectId && { projectId }) };
   const before = writes.get(id) ?? Promise.resolve(null);
   const run = before.then(async (written) => {
-    const path = await targetPath(input, written ?? info, dir);
+    const path = await targetPath(input, written ?? info ?? lastWritten.get(id) ?? null, dir);
     const file = path
       ? await storage.save(id, path, data, meta)
       : await storage.saveDraft(id, meta.title || format.untitled, format.type, data, meta);
+    lastWritten.set(id, file);
     useRecentFilesStore.getState().upsert(file);
     return file;
   });

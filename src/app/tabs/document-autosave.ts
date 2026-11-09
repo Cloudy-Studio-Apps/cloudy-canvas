@@ -14,9 +14,10 @@ const noop = (): void => undefined;
 /**
  * Autosaves a tab's document while no editor does (a hosted file in the background: its guests
  * keep editing it), as the editor would: 1.5 s after changes stop, at most every 10 s, only while
- * autosave is on (turning it off saves what's there), and before the window closes. Each save
+ * autosave is on (turning it off saves what's there: the tab then gets its editor back), and
+ * before the window closes. Each save
  * reports the file to the tab (`setInfo`), so an editor mounted again sees it, and the tab's
- * `unsaved` follows. Writes go in line with the editor's for the same file
+ * `unsaved` follows while a save is pending. Writes go in line with the editor's for the same file
  * (`saveCanvasDocument`). Returns how to stop; stopping saves the pending changes at once
  * (encoded then, so the document may go right after).
  */
@@ -86,7 +87,9 @@ export function startDocumentAutosave(tab: FileTab, format: CanvasFileFormat): (
     cancel();
     removeObserver();
     removeSetting();
-    const last = useAutosaveStore.getState().enabled ? save() : Promise.resolve();
+    // Whatever is pending, autosave on or not: with it off the tab gets its editor back, which
+    // starts from what's saved.
+    const last = save();
     stopped = true;
     // Quitting still waits for that last save.
     void last.finally(removeQuitTask);

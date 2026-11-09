@@ -13,7 +13,6 @@ import type {
   SaveKind,
   SaveStatus,
 } from "./canvas-file.types";
-import { freeFilePath } from "./free-file-path";
 import { saveCanvasDocument } from "./save-canvas-document";
 import { useCanvasAutosave } from "./use-canvas-autosave";
 import { useCanvasThumbnail } from "./use-canvas-thumbnail";
@@ -62,9 +61,8 @@ export function useCanvasFileSaver<O extends object>(
   const statusRef = useRef<SaveStatus>("idle");
   const savedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const dir = useTabParam("dir");
-  /** The folder a new file made in a project goes to, and the path picked there once. */
+  /** The folder a new file made in a project goes to (its free path is picked as it's written). */
   const folder = useRef(initialInfo === null ? dir : null);
-  const folderPath = useRef<Promise<string | null> | null>(null);
 
   useEffect(
     () =>
@@ -80,17 +78,20 @@ export function useCanvasFileSaver<O extends object>(
 
   useReportUnsaved(tab, dirty, dirty && (!autosaveEnabled || status === "error"));
 
-  /** Writes the file to `path` (once it's known), or to its draft when `path` is `null`. */
+  /**
+   * Writes the file to `target`, or to its draft when it's `null`; `undefined`: where it was saved,
+   * else a free name in its project folder, else its draft (`saveCanvasDocument`).
+   */
   const write = useCallback(
-    (target: string | null | Promise<string | null>, kind: SaveKind): Promise<boolean> => {
+    (target: string | null | undefined, kind: SaveKind): Promise<boolean> => {
       // Encoded now, so a save queued as the editor closes still has the document.
       const saving = saveCanvasDocument({
         id,
         doc: engine.doc,
         info: infoRef.current,
         format,
-        dir: null,
-        path: target,
+        dir: folder.current,
+        ...(target !== undefined && { path: target }),
       });
       // Awaited in line below; a failure is reported there.
       saving.catch(() => undefined);
@@ -128,19 +129,6 @@ export function useCanvasFileSaver<O extends object>(
     [engine, id, format, noun, tab],
   );
 
-  /** Where a file with no file yet goes without asking (`?dir=`), `null` for nowhere. */
-  const firstPath = useCallback((): Promise<string | null> => {
-    const dir = folder.current;
-    if (!dir) return Promise.resolve(null);
-    folderPath.current ??= freeFilePath(dir, untitled, FILE_EXTENSIONS[type]).catch(
-      (error: unknown) => {
-        notifyError(t("save.error", { noun }), error);
-        return null;
-      },
-    );
-    return folderPath.current;
-  }, [untitled, type, noun]);
-
   const save = useCallback(
     async (asNew: boolean): Promise<boolean> => {
       const current = infoRef.current;
@@ -154,21 +142,21 @@ export function useCanvasFileSaver<O extends object>(
         });
       }
       const saved = current && !current.draft ? current.path : null;
-      let path = asNew ? null : (saved ?? (await firstPath()));
-      path ??= await saveCanvasFileDialog(type, name);
+      // A new file made in a project goes to its folder without asking.
+      if (!asNew && (saved || folder.current)) return write(saved ?? undefined, "manual");
+      const path = await saveCanvasFileDialog(type, name);
       return path ? write(path, "manual") : false;
     },
-    [engine, write, encode, type, noun, untitled, firstPath],
+    [engine, write, encode, type, noun, untitled],
   );
 
   /** `force`: save even with no counted change (the editor's last work after it closed). */
   const autosave = useCallback(
     async (force = false) => {
       if (!force && revision.current === savedRevision.current) return;
-      const current = infoRef.current;
-      await write(current && !current.draft ? current.path : firstPath(), "auto");
+      await write(undefined, "auto");
     },
-    [write, firstPath],
+    [write],
   );
 
   // The tab dropped to `document`: the editor goes but the document (and its undo) stays.
