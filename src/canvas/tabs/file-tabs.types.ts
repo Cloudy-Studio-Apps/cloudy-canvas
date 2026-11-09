@@ -34,6 +34,7 @@ export interface FileTab {
   readonly hosting: boolean;
   /** The agent sessions bound to it. */
   readonly agents: readonly string[];
+  /** When it was last shown; 0 while it never was (opened in the background, restored). */
   readonly lastActiveAt: number;
   readonly lastAgentCallAt: number | null;
   /** Agent calls running in it now (`beginAgentCall`): while any runs, it keeps its engine. */

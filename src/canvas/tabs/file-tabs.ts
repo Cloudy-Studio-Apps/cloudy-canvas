@@ -59,7 +59,7 @@ export class FileTabs {
       return this.get(existing.id) ?? existing;
     }
     this.makeRoom(activate);
-    const tab = createTab(source, this.now());
+    const tab = createTab(source);
     this.sources.set(tab.id, source);
     this.publish({ tabs: [...this.tabs, tab] });
     if (activate) this.activate(tab.id);

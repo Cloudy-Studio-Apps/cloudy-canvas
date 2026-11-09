@@ -16,8 +16,12 @@ export function tabPresenceFileIds(tab: Pick<FileTab, "fileId">): readonly strin
   return shared === tab.fileId ? [tab.fileId] : [tab.fileId, shared];
 }
 
-/** A new tab for `source`, hibernated until something loads it. */
-export function createTab(source: TabSource, now: number): FileTab {
+/**
+ * A new tab for `source`, hibernated until something loads it, and never shown yet
+ * (`lastActiveAt` 0 until `activate`), so a tab opened in the background or restored doesn't count
+ * as recently used.
+ */
+export function createTab(source: TabSource): FileTab {
   return {
     id: createId(),
     type: source.type,
@@ -30,7 +34,7 @@ export function createTab(source: TabSource, now: number): FileTab {
     unsaved: false,
     hosting: false,
     agents: [],
-    lastActiveAt: now,
+    lastActiveAt: 0,
     lastAgentCallAt: null,
     agentCalls: 0,
   };

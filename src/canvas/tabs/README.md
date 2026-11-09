@@ -16,7 +16,8 @@ the closed tabs `reopenClosed` remembers (`ClosedTabs`, `closed-tabs.ts`), the t
 A `FileTab` is one file (`type`, `fileId`, `name`, `params`: the route's search params when it
 opened), its `load` (`idle`, `loading`, `ready` with the document and its `FileInfo`, or `error`),
 whether it's `unsaved` or `hosting` a live session (set by the app: `watchHostedTabs`), the agent sessions bound to it (`agents`) and
-when it was last shown (`lastActiveAt`) or called by an agent (`lastAgentCallAt`). A joined live
+when it was last shown (`lastActiveAt`, 0 for a tab never shown: opened in the background or
+restored, so it doesn't count among the recently used) or called by an agent (`lastAgentCallAt`). A joined live
 session's tab has `live` (its `ShareGuest`) and the `fileId` `live:<fileId>`, so it never matches
 the stored file; its people report the host's file id, so `tabPresenceFileIds(tab)` gives both
 (the title bar's avatars and the agents' `list_tabs` use it). Documents come from the product's `TabLoader` (`loaders`, one per `FileType`),
