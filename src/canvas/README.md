@@ -20,6 +20,10 @@ It exposes `kinds`, `keymap`, `commands` and `elementInfo(type)` to hosts. `moun
 
 `model3d/` ([README](model3d/README.md)) holds the data a 3D model element carries (`ModelData`), its asset ids and the sweep that removes the data nothing uses.
 
+## File tabs
+
+`tabs/` ([README](tabs/README.md)) holds the open file tabs on desktop (`FileTabs`): each tab's state and the document it owns.
+
 ## Registries are per product, never global
 
 - **Registries are per product, never global.** Everything that needs an element's kind (document, scene, renderer, overlay, text editor, tools via `ctx.kinds`, agent helpers) gets the product's `ElementKinds` and calls `kinds.kindOf(el)`.
