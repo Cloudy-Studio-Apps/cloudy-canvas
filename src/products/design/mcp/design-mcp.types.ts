@@ -1,14 +1,4 @@
-import type {
-  AgentFile,
-  AgentFileCandidates,
-  AgentFileRef,
-  AgentNewFile,
-  AgentProjectChoice,
-  AgentRecentFile,
-  McpTool,
-  McpToolGroup,
-  ElementKinds,
-} from "@canvas";
+import type { AgentFile, McpTool, McpToolGroup, ElementKinds } from "@canvas";
 import type { FontFamily } from "@shared/core";
 
 import type { DesignEngine, DesignWorkspace } from "../design-engine.types";
@@ -26,17 +16,6 @@ export type OpenDesign = AgentFile<DesignEngine>;
 /** What design tools can reach beyond the engine, implemented by the app. */
 export interface DesignAgentHost {
   design(): AgentDesign | null;
-  recentFiles(): Promise<AgentRecentFile[]>;
-  /**
-   * Opens a design (by id or name) in a background tab, moves the agent there and resolves once
-   * it's ready; several designs with that name resolve with the candidates, changing nothing.
-   */
-  openDesign(file: AgentFileRef): Promise<AgentDesign | AgentFileCandidates>;
-  /**
-   * A new design in a background tab. A name that matches a project resolves with the matching
-   * projects, creating nothing, until `project` says which (or `"none"`).
-   */
-  newDesign(options: AgentNewFile): Promise<AgentDesign | AgentProjectChoice>;
   /** Writes a file to an absolute path (exports), replacing what's there. */
   writeFile(path: string, file: Blob): Promise<void>;
   /** Reads a file from an absolute path (images to place). */

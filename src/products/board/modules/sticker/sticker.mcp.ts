@@ -26,6 +26,7 @@ const MAX_RESULTS = 60;
 export const stickerTools: BoardMcpTool[] = [
   {
     name: "list_stickers",
+    scope: "app",
     description:
       "Stickers agents can stamp with stamp_stickers (boards) and stamp_design_stickers " +
       "(designs): the foca watona seal moods (set seal), common stamps (common), the sets " +

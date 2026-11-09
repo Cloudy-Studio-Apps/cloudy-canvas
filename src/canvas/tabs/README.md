@@ -20,7 +20,7 @@ when it was last shown (`lastActiveAt`, 0 for a tab never shown: opened in the b
 restored, so it doesn't count among the recently used) or called by an agent (`lastAgentCallAt`). A joined live
 session's tab has `live` (its `ShareGuest`) and the `fileId` `live:<fileId>`, so it never matches
 the stored file; its people report the host's file id, so `tabPresenceFileIds(tab)` gives both
-(the title bar's avatars and the agents' `list_tabs` use it). Documents come from the product's `TabLoader` (`loaders`, one per `FileType`),
+(the title bar's avatars and the agents' `tabs_list` use it). Documents come from the product's `TabLoader` (`loaders`, one per `FileType`),
 which reads storage, or the session when `live` is given: a live tab never reloads from storage.
 Once loaded, the tab's `name` is the file's (`info.name`, drafts included); its editor then keeps
 it in step with the title. `setInfo(id, info)` replaces a loaded tab's `load.info` when its file is

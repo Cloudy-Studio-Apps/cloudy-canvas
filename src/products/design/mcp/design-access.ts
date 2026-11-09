@@ -5,7 +5,7 @@ import type { AgentDesign, DesignAgentHost } from "./design-mcp.types";
 
 export function requireDesign(host: DesignAgentHost): AgentDesign {
   const design = host.design();
-  if (!design) throw new Error("No design is open. Call open_design or new_design first.");
+  if (!design) throw new Error("No design is open. Call file_open or file_new first.");
   return design;
 }
 

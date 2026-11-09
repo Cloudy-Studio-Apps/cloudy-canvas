@@ -3,6 +3,8 @@
 export type * from "./agent-file.types";
 export type * from "./agent-patches.types";
 export type * from "./agent-tabs.types";
+export type * from "./files.mcp.types";
+export type * from "./plugins.mcp.types";
 export type * from "./mcp-tool.types";
 export type * from "./mcp-tool-group.types";
 export type * from "./mcp-prefix.types";
@@ -22,6 +24,8 @@ export {
   sameFileName,
 } from "./agent-tabs";
 export { tabsTools } from "./tabs.mcp";
+export { filesTools } from "./files.mcp";
+export { pluginsTools } from "./plugins.mcp";
 export { arrangeTools } from "./arrange.mcp";
 export { asUndoStep } from "./as-undo-step";
 export { buildElement, creatableTypes, elementSpec } from "./build-element";

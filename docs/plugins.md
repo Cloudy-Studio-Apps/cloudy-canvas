@@ -143,7 +143,7 @@ Names from before the API became the barrels:
 
 What each point takes is described in the READMEs of `src/shared/core/modules/`, `src/canvas/modules/`, `src/canvas-ui/modules/` and `src/canvas/elements/` and in the types in `src/canvas/modules/canvas-points.types.ts` and `src/canvas-ui/modules/editor-points.types.ts`.
 
-Agent tools are groups contributed to `api.board.boardMcpTools`: `{ id, tools: ({ kinds }) => [{ name, description, inputSchema, run(host, args) }] }`. They're listed by the app's MCP server like the built-in ones, and `list_plugins` tells agents which plugin adds what. Tool names must be unique; a tool whose name is taken is left out.
+Agent tools are groups contributed to `api.board.boardMcpTools`: `{ id, tools: ({ kinds }) => [{ name, description, inputSchema, run(host, args) }] }`. They're listed by the app's MCP server like the built-in ones, and `plugins_list` tells agents which plugin adds what. Tool names must be unique; a tool whose name is taken is left out.
 
 ## Stickers
 

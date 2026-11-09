@@ -1,10 +1,10 @@
-import type { AgentPlugin } from "@board";
+import type { AgentPlugin } from "@canvas";
 import { usePluginsStore } from "@shared/stores/plugins-store";
 import { agentTools } from "./agent-tools";
 import { toolImplementations } from "./merge-product-tools";
 
 /**
- * The installed plugins for `list_plugins`, with the agent tools their modules add and those that
+ * The installed plugins for `plugins_list`, with the agent tools their modules add and those that
  * were refused (and why).
  */
 export function agentPlugins(): AgentPlugin[] {

@@ -1,10 +1,12 @@
 import { createId, type FileType } from "@shared/core";
 import {
   asUndoStep,
+  type AgentFileCandidates,
   type AgentFileRef,
-  type AgentNewFile,
   type CanvasDocument,
   type TabSource,
+  type AgentFileOpened,
+  type FilesAgentHost,
   type TabsAgentHost,
 } from "@canvas";
 import type { AgentHost, OpenBoard } from "@board";
@@ -31,7 +33,7 @@ import { tabsHostFor } from "./tabs/tabs-host";
 export function agentHostFor(
   collaboratorId: string,
   tabs: AgentTabs,
-): AgentHost & DesignAgentHost & TabsAgentHost {
+): AgentHost & DesignAgentHost & TabsAgentHost & FilesAgentHost {
   const board = (file: OpenBoard) => withWorkspace(file, collaboratorId);
   const design = (file: OpenDesign) => withWorkspace(file, collaboratorId);
   const openInTab = (source: TabSource) => openInAgentTab(tabs, collaboratorId, source);
@@ -52,38 +54,44 @@ export function agentHostFor(
     titled(board(opened(boardFiles.get(await openInTab(source)))), title);
   const showDesign = async (source: TabSource, title?: string) =>
     titled(design(opened(designFiles.get(await openInTab(source)))), title);
-  /** The storage id of what `ref` names, or the candidates when several files have the name. */
-  const resolve = async (type: FileType, ref: AgentFileRef) => {
+  /** The storage id and type of what `ref` names, or the candidates when several files match. */
+  const resolve = async (
+    type: FileType | undefined,
+    ref: AgentFileRef,
+  ): Promise<{ id: string; type: FileType } | AgentFileCandidates> => {
     if ("id" in ref) {
-      await checkOpenable(ref.id, type);
-      return { id: ref.id };
+      const found = await checkOpenable(ref.id, type);
+      return { id: ref.id, type: found };
     }
-    const hits = await findFilesByName(type, ref.name);
+    const types: FileType[] = type ? [type] : ["board", "design"];
+    const hits = (await Promise.all(types.map((each) => findFilesByName(each, ref.name)))).flat();
     const [only, ...others] = hits;
     if (!only) {
-      throw new Error(`No ${type} named "${ref.name}" in ${await searchedPlaces()}.`);
+      throw new Error(`No ${type ?? "file"} named "${ref.name}" in ${await searchedPlaces()}.`);
     }
     if (others.length > 0) return { candidates: hits.map((hit) => hit.match) };
     const id = only.id ?? (await useRecentFilesStore.getState().open(only.match.path)).id;
-    await checkOpenable(id, type);
-    return { id };
+    await checkOpenable(id, only.match.type);
+    return { id, type: only.match.type };
   };
-  const openFile = async <F>(
+  /** Shows a file in its own tab (`openInTab`) and names it as its tab is. */
+  const show = async (
     type: FileType,
-    ref: AgentFileRef,
-    show: (source: TabSource, title?: string) => Promise<F>,
-  ) => {
+    source: TabSource,
+    title?: string,
+  ): Promise<AgentFileOpened> => {
+    const file =
+      type === "board" ? await showBoard(source, title) : await showDesign(source, title);
+    return { type, name: file.engine.doc.meta().title || file.name };
+  };
+  const openFile: FilesAgentHost["openFile"] = async (type, ref) => {
     const found = await resolve(type, ref);
-    return found.id === undefined ? found : show({ type, fileId: found.id });
+    return "candidates" in found ? found : show(found.type, { type: found.type, fileId: found.id });
   };
-  const createFile = async <F>(
-    type: FileType,
-    options: AgentNewFile,
-    show: (source: TabSource, title?: string) => Promise<F>,
-  ) => {
+  const newFile: FilesAgentHost["newFile"] = async (type, options) => {
     const where = await resolveNewFile(options);
     if ("matchingProjects" in where) return where;
-    return show({ type, fileId: createId(), params: where.params }, options.name);
+    return show(type, { type, fileId: createId(), params: where.params }, options.name);
   };
   /** The session's tab's file of one product (binding it, see `sessionTab`). */
   const fileOf = <F>(files: { get(tabId: string): F | null }): F | null => {
@@ -93,15 +101,13 @@ export function agentHostFor(
   return {
     board: () => mapOpen(fileOf(boardFiles), board),
     design: () => mapOpen(fileOf(designFiles), design),
-    recentFiles: async () => {
-      const files = await storage.list();
+    recentFiles: async (type) => {
+      const files = (await storage.list()).filter((file) => !type || file.type === type);
       const found = await Promise.all(files.map((file) => storage.exists(file.id)));
       return files.map((file, i) => ({ ...file, missing: !found[i] }));
     },
-    openBoard: (ref) => openFile("board", ref, showBoard),
-    newBoard: (options) => createFile("board", options, showBoard),
-    openDesign: (ref) => openFile("design", ref, showDesign),
-    newDesign: (options) => createFile("design", options, showDesign),
+    openFile,
+    newFile,
     ...tabsHostFor(collaboratorId, tabs),
     plugins: agentPlugins,
     writeFile: writeExportFile,
@@ -132,10 +138,14 @@ function mapOpen<F, T>(file: F | null, map: (file: F) => T): T | null {
   return file ? map(file) : null;
 }
 
-async function checkOpenable(id: string, type: "board" | "design"): Promise<void> {
+/** The type of the recent file with that id (which must be `type` when given), if it can open. */
+async function checkOpenable(id: string, type: FileType | undefined): Promise<FileType> {
   const file = await storage.get(id);
-  if (!file || file.type !== type) throw new Error(`No ${type} with id ${id}.`);
+  if (!file || (type && file.type !== type)) throw new Error(`No ${type ?? "file"} with id ${id}.`);
   if (!(await storage.exists(id))) {
-    throw new Error(`The ${type} "${file.name}" was moved or deleted (it was at ${file.path}).`);
+    throw new Error(
+      `The ${file.type} "${file.name}" was moved or deleted (it was at ${file.path}).`,
+    );
   }
+  return file.type;
 }

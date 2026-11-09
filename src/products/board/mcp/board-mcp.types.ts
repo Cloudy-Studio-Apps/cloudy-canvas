@@ -1,19 +1,9 @@
-import type {
-  AgentFile,
-  AgentFileCandidates,
-  AgentFileRef,
-  AgentNewFile,
-  AgentProjectChoice,
-  AgentRecentFile,
-  McpTool,
-  McpToolGroup,
-  ElementKinds,
-} from "@canvas";
+import type { AgentFile, McpTool, McpToolGroup, ElementKinds } from "@canvas";
 
 import type { BoardEngine, BoardWorkspace } from "../board-engine.types";
 import type { BoardToolOptions } from "../board-options.types";
 
-export type { AgentRecentFile } from "@canvas";
+export type { AgentPlugin, AgentRecentFile } from "@canvas";
 
 /**
  * The board open in the window as an agent works on it: `engine` is the agent's own workspace
@@ -27,19 +17,6 @@ export type OpenBoard = AgentFile<BoardEngine>;
 /** What board tools can reach beyond the engine, implemented by the app. */
 export interface AgentHost {
   board(): AgentBoard | null;
-  recentFiles(): Promise<AgentRecentFile[]>;
-  /**
-   * Opens a board (by id or name) in a background tab, moves the agent there and resolves once
-   * it's ready; several boards with that name resolve with the candidates, changing nothing.
-   */
-  openBoard(file: AgentFileRef): Promise<AgentBoard | AgentFileCandidates>;
-  /**
-   * A new board in a background tab. A name that matches a project resolves with the matching
-   * projects, creating nothing, until `project` says which (or `"none"`).
-   */
-  newBoard(options: AgentNewFile): Promise<AgentBoard | AgentProjectChoice>;
-  /** The installed plugins and what happened to them when the app started. */
-  plugins(): AgentPlugin[];
   /** Writes a file to an absolute path (exports), replacing what's there. */
   writeFile(path: string, file: Blob): Promise<void>;
   /** Reads a file at an absolute path (imports). */
@@ -59,17 +36,3 @@ export interface BoardAgentContext {
  * groups ignore the context.
  */
 export type BoardMcpToolGroup = McpToolGroup<AgentHost, BoardAgentContext>;
-
-/** An installed plugin, as agents see it. */
-export interface AgentPlugin {
-  id: string;
-  name: string;
-  version: string;
-  description?: string;
-  state: "enabled" | "disabled" | "failed";
-  error?: string;
-  /** The full names of the agent tools it adds (when enabled). */
-  tools: string[];
-  /** Its agent tools that were left out, and why (a taken or invalid name, a reserved id). */
-  refusedTools?: { name: string; reason: string }[];
-}

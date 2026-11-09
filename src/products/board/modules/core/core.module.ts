@@ -11,7 +11,6 @@ import {
   createShapesTool,
   exportTools,
   fileTools,
-  pluginTools,
   shapeEditTools,
   viewTools,
 } from "./mcp";
@@ -27,7 +26,7 @@ import { registerCoreMenu } from "./core.menu";
  * What every board has whatever its modules: the select, scale (Shift+K; K is the sticker tool) and
  * hand tools' buttons (the tools are built into the engine), Hide UI (Ctrl+\) and the agent tools
  * that work on any element (reading, creating and editing through the kinds, arranging, viewing,
- * exporting, files and plugins).
+ * exporting and saving).
  */
 export const coreModule = defineModule({
   id: "core",
@@ -63,7 +62,6 @@ export const coreModule = defineModule({
       { id: "view", prefix: "board", tools: () => viewTools },
       { id: "export", prefix: "board", tools: () => exportTools },
       { id: "files", prefix: "board", tools: () => fileTools },
-      { id: "plugins", prefix: "board", tools: () => pluginTools },
     );
 
     host.contribute(

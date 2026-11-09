@@ -3,7 +3,7 @@ import type { AgentBoard, AgentHost } from "./board-mcp.types";
 
 export function requireBoard(host: AgentHost): AgentBoard {
   const board = host.board();
-  if (!board) throw new Error("No board is open. Call open_board or new_board first.");
+  if (!board) throw new Error("No board is open. Call file_open or file_new first.");
   return board;
 }
 
