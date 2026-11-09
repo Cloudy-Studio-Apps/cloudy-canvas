@@ -84,7 +84,8 @@ model live, and finishing writes the result once.
   like `ImageCropOverlay`, holding three.js's own canvas (transparent, drawn only when the view,
   zoom or size changes, never in a loop). Dragging turns the model (0.5° per pixel: across around
   Y, up and down around X); the wheel zooms the model and is prevented, so the canvas doesn't
-  zoom; Esc, caught before the canvas and its mode, finishes. A spinner shows while it loads
+  zoom; Esc, caught before the canvas and its mode, finishes, unless a field has the focus
+  or a dialog, popover or menu is open or focused (its Esc closes it instead). A spinner shows while it loads
   (`status: "loading"`).
 - **Release** (`live-model.ts`): one live scene and its `WebGLRenderer` are kept for
   `LIVE_RELEASE_DELAY_MS` after the view closes, then the model, its textures and the WebGL

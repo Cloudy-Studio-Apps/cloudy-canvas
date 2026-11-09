@@ -18,7 +18,8 @@
     "failed": "No se pudo guardar la nueva vista del modelo",
     "loadFailed": "No se pudo abrir el modelo en 3D",
     "loading": "Preparando el modelo 3D",
-    "view": "Modelo 3D: arrastra para girarlo, desplaza para acercarlo, Esc para terminar"
+    "view": "Modelo 3D: arrastra para girarlo, desplaza para acercarlo, Esc para terminar",
+    "readOnlyLost": "El archivo pasó a ser de solo lectura, así que la nueva vista del modelo no se guardó."
   },
   "panel": {
     "model": "Modelo",
@@ -50,7 +51,7 @@
   },
   "convert": {
     "title": "¿Convertir a PNG?",
-    "description": "El modelo pasa a ser una imagen normal y se eliminan sus datos 3D. No se puede deshacer. El archivo pesará menos cuando lo cierres.",
+    "description": "El modelo se convierte en una imagen. Hasta que cierres el archivo, Deshacer lo recupera; al cerrarlo, sus datos 3D se eliminan para siempre y el archivo pesa menos.",
     "confirm": "Convertir a PNG"
   }
 }

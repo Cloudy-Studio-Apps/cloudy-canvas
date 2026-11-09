@@ -18,7 +18,8 @@
     "failed": "Couldn't save the model's new view",
     "loadFailed": "Couldn't open the model in 3D",
     "loading": "Preparing the 3D model",
-    "view": "3D model: drag to turn it, scroll to zoom, Esc to finish"
+    "view": "3D model: drag to turn it, scroll to zoom, Esc to finish",
+    "readOnlyLost": "The file became read-only, so the model's new view wasn't saved."
   },
   "panel": {
     "model": "Model",
@@ -50,7 +51,7 @@
   },
   "convert": {
     "title": "Convert to PNG?",
-    "description": "The model becomes a plain picture and its 3D data is removed. This can't be undone. The file gets lighter once it's closed.",
+    "description": "The model becomes a plain picture. Until the file is closed, Undo brings the model back; once it's closed, its 3D data is gone for good and the file gets lighter.",
     "confirm": "Convert to PNG"
   }
 }
