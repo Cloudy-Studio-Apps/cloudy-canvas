@@ -38,9 +38,14 @@ export async function projectFilesNamed(
 function listProjectFiles(project: ProjectRecord): Promise<ProjectFile[]> {
   const kept = cache.get(project.root);
   if (kept && Date.now() - kept.at < CACHE_MS) return kept.files;
-  const files = scanProject(project).catch(() => []);
-  cache.set(project.root, { at: Date.now(), files });
-  return files;
+  const entry = { at: Date.now(), files: Promise.resolve<ProjectFile[]>([]) };
+  entry.files = scanProject(project).catch(() => {
+    // A failed scan isn't kept: the next lookup reads the folder again.
+    if (cache.get(project.root) === entry) cache.delete(project.root);
+    return [];
+  });
+  cache.set(project.root, entry);
+  return entry.files;
 }
 
 async function scanProject(project: ProjectRecord): Promise<ProjectFile[]> {

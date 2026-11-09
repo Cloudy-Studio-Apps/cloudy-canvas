@@ -1,5 +1,12 @@
 import { createId, type FileType } from "@shared/core";
-import type { AgentFileRef, AgentNewFile, TabSource, TabsAgentHost } from "@canvas";
+import {
+  asUndoStep,
+  type AgentFileRef,
+  type AgentNewFile,
+  type CanvasDocument,
+  type TabSource,
+  type TabsAgentHost,
+} from "@canvas";
 import type { AgentHost, OpenBoard } from "@board";
 import { boardFiles } from "@board/ui";
 import type { DesignAgentHost, OpenDesign } from "@design";
@@ -27,21 +34,24 @@ export function agentHostFor(
 ): AgentHost & DesignAgentHost & TabsAgentHost {
   const board = (file: OpenBoard) => withWorkspace(file, collaboratorId);
   const design = (file: OpenDesign) => withWorkspace(file, collaboratorId);
-  /** Opens the tab (see `openInAgentTab`); a `title` becomes its document's title, so the draft and the tab are named after it. */
-  const openInTab = async (source: TabSource, title?: string) => {
-    const tabId = await openInAgentTab(tabs, collaboratorId, source);
-    const load = fileTabs.get(tabId)?.load;
-    if (title && load?.status === "ready") load.document.setMeta({ title });
-    return tabId;
+  const openInTab = (source: TabSource) => openInAgentTab(tabs, collaboratorId, source);
+  /**
+   * Names a new file: its document's title, written through the agent's workspace as one undo
+   * step (like `set_board_info`), so it's the agent's step, not the user's. The editor is ready
+   * by now (`openInAgentTab` waited); if its file isn't there the call fails rather than drop it.
+   */
+  const titled = <F extends { engine: { doc: CanvasDocument } }>(file: F, title?: string): F => {
+    if (title) asUndoStep(file.engine.doc, () => file.engine.doc.setMeta({ title }));
+    return file;
   };
   const opened = <F>(file: F | null): F => {
     if (!file) throw new Error("The file opened in another kind of tab.");
     return file;
   };
   const showBoard = async (source: TabSource, title?: string) =>
-    board(opened(boardFiles.get(await openInTab(source, title))));
+    titled(board(opened(boardFiles.get(await openInTab(source)))), title);
   const showDesign = async (source: TabSource, title?: string) =>
-    design(opened(designFiles.get(await openInTab(source, title))));
+    titled(design(opened(designFiles.get(await openInTab(source)))), title);
   /** The storage id of what `ref` names, or the candidates when several files have the name. */
   const resolve = async (type: FileType, ref: AgentFileRef) => {
     if ("id" in ref) {
