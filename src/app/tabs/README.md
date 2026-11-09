@@ -73,3 +73,14 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
     quit (one tab at a time, stopping at a cancelled or failed save) · Quit without saving ·
     Cancel. Each editor's quit tasks run after it. Android keeps each file's `CloseFileGuard`
     instead.
+- **Shortcuts** (`useTabShortcuts`, `tab-keybindings.ts`; desktop, mounted by `AppFrame`):
+  `TAB_KEYBINDINGS` is the one source and `tabKeymap` the one `Keymap` for matching and for labels
+  (the close button's tooltip): Ctrl+Tab / Ctrl+Shift+Tab next and previous (Home first, then the
+  file tabs, wrapping), Ctrl+W closes the active file tab (`closeTab`; Home does nothing),
+  Ctrl+Shift+T reopens the last closed one, Ctrl+1…9 go to the 1st…9th file tab (nothing if there
+  are fewer; Home is reached with next/previous or its tab). They're matched on the window in the
+  capture phase, before a canvas or text field sees them (they work while typing), and a matched key
+  is stopped; a key repeat only repeats next/previous. No product binds Ctrl+W, Ctrl+Tab,
+  Ctrl+Shift+T or Ctrl+digit (the engine's zoom keys are Shift+1 and Shift+2 without Ctrl), so the
+  tab shortcuts win nowhere over an editing shortcut. The Windows browser guard only blocks
+  F3/F5/F7 and Ctrl+F/G/J/P/R, so it doesn't touch these.

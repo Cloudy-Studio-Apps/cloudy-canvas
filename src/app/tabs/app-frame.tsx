@@ -12,6 +12,7 @@ import { watchRoomPresence } from "./room-presence-mirrors";
 import { TAB_EDITORS } from "./tab-editors";
 import { fileRouteOf } from "./tab-route";
 import { startTabsPersistence } from "./tabs-persistence";
+import { useTabShortcuts } from "./use-tab-shortcuts";
 import { useRouteTabSync } from "./use-route-tab-sync";
 
 /**
@@ -26,6 +27,7 @@ import { useRouteTabSync } from "./use-route-tab-sync";
  */
 export function AppFrame() {
   useRouteTabSync();
+  useTabShortcuts();
   const navigate = useNavigate();
   useEffect(
     () =>

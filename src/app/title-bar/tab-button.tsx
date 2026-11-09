@@ -3,6 +3,7 @@ import { Loader2, X } from "lucide-react";
 import { FileTypeIcon } from "@shared/ui/components/file-type-icon";
 import { cn } from "@shared/ui/lib/utils";
 import { closeTab } from "../tabs/close-tab";
+import { tabKeymap } from "../tabs/tab-keybindings";
 import { fileTabs } from "../tabs/file-tabs-instance";
 import { TabAvatars } from "./tab-avatars";
 import { t } from "./title-bar.i18n";
@@ -70,6 +71,7 @@ export function TabButton({ tab, active, dropSide, dragging, rowProps }: TabButt
         <button
           type="button"
           aria-label={t("closeTab")}
+          title={`${t("closeTab")} (${tabKeymap.label("tab.close")})`}
           onClick={(event) => {
             event.stopPropagation();
             void closeTab(tab.id);
