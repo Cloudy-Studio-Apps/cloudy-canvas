@@ -16,9 +16,10 @@ import { t } from "./model3d.i18n";
 
 /**
  * A 3D model. At rest it is its saved picture (`pictureAssetId`); the live 3D view is an overlay
- * the editor mounts while it is edited (the engine covers the picture on screen meanwhile). It keeps its
- * proportions, and agents move and resize it and set its view (`angle`, `zoom`), but never create
- * it with the shape tools.
+ * the editor mounts while it is edited (the engine covers the picture on screen meanwhile). It
+ * resizes freely (Shift keeps the proportions), the picture fitted inside its box until the next
+ * edit draws it for the box's shape. Agents move and resize it and set its view (`angle`, `zoom`),
+ * but never create it with the shape tools.
  */
 export class Model3dKind extends BoxKind<ModelElement, BoardToolOptions> implements ModelKind {
   readonly type = "model3d";
@@ -26,7 +27,6 @@ export class Model3dKind extends BoxKind<ModelElement, BoardToolOptions> impleme
   readonly description = t("description");
   override readonly defaults = MODEL_DEFAULTS;
   override readonly creatable = false;
-  override readonly keepsRatio = true;
   override readonly patchableFields = MODEL_PATCHABLE_FIELDS;
 
   modelData(el: ModelElement): ModelData {

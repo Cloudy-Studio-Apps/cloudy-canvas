@@ -15,8 +15,10 @@ edited, and convertible to a rectangle filled with its PNG.
 - `ModelNodeKind extends DesignNodeKind` and implements `ModelKind` (`modelData(el)`), modelled on
   the sticker: a `ModelNodeElement` is a `DesignNode` plus `ModelData` (`@canvas`: the model's
   assets, its `angle`, `zoom`, `textures` slots and the saved `pictureAssetId`). It draws the
-  picture as a `fit` image paint over its box, takes no fills or strokes, keeps its proportions,
-  flips mirrored and reports only the picture as its `assets`. The layer's own `rotation` turns the
+  picture as a `fit` image paint over its box, takes no fills or strokes, resizes freely like any
+  layer (Shift or Scale keep the proportions; the picture stays fitted inside the box until the
+  next 3D edit draws it for the box's shape), flips mirrored and reports only the picture as its
+  `assets`. The layer's own `rotation` turns the
   picture like any layer; `angle` is the model's turn. `createModelNode(data, rect, index, name?)`
   names it after the file.
 - **At rest** it always draws the picture. While this user has it live the editor covers it on

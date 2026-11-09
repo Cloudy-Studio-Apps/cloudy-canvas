@@ -14,8 +14,9 @@ edited, and convertible to a plain PNG image.
 
 - `Model3dKind extends BoxKind` and implements `ModelKind` (`modelData(el)`). A `ModelElement` is the
   base element plus `ModelData` (`@canvas`): the model's assets, its `angle` (the model's turn; never
-  `rotation`) and `zoom`, its `textures` slots and the saved `pictureAssetId`. It keeps its
-  proportions, isn't created with the shape tools and is not rotatable. `assets(el)` is only the
+  `rotation`) and `zoom`, its `textures` slots and the saved `pictureAssetId`. It resizes freely
+  (Shift keeps the proportions; the picture stays fitted inside the box until the next 3D edit
+  draws it for the box's shape), isn't created with the shape tools and is not rotatable. `assets(el)` is only the
   picture, so copies, exports and the HTML viewer draw the picture and carry nothing else.
 - **At rest** it draws the picture (`view.placeImage`), always. While this user has it live the
   editor covers it on screen (`engine.coverElements`, done by `useModelEditSession`) because the

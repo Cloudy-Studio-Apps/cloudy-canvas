@@ -24,15 +24,15 @@ import type { ModelNodeElement } from "./model3d.types";
 /**
  * A 3D model layer. At rest it is its saved picture (`pictureAssetId`) fitted in its box; the
  * live 3D view is an overlay the editor mounts while it is edited (the engine covers the picture
- * on screen meanwhile). It keeps its proportions and takes no fills or strokes. `angle` is the
- * model's turn; the layer's own `rotation` turns the picture like any layer.
+ * on screen meanwhile). It resizes freely, the picture fitted inside its box until the next edit
+ * draws it for the box's shape, and takes no fills or strokes. `angle` is the model's turn;
+ * the layer's own `rotation` turns the picture like any layer.
  */
 export class ModelNodeKind extends DesignNodeKind<ModelNodeElement> implements ModelKind {
   readonly type = "model3d";
   readonly label = t("label");
   readonly description = t("description");
   override readonly defaults = MODEL_NODE_DEFAULTS;
-  override readonly keepsRatio = true;
   override readonly fillable = false;
   override readonly strokable = false;
   override readonly imageFills = false;

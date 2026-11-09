@@ -149,6 +149,9 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### Fixed
 
+- Pictures and 3D models inside a frame with Clip content no longer show past the frame's edges
+  when their picture finishes loading after the frame, as happened right after editing a model in 3D.
+
 - Exporting a page that isn't the one on screen, including exports made by an AI agent, now keeps
   its layers in the right order and draws its masks and effects as the canvas shows them.
 

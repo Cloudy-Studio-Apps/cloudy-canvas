@@ -119,9 +119,15 @@ export class ElementView extends Container {
     kind.draw(this, el);
   }
 
-  /** Draws the element again as it was last shown (e.g. a sharper texture of its picture arrived). */
+  /**
+   * Draws the element again as it was last shown (e.g. a sharper texture of its picture arrived),
+   * and clips it again: what it draws may have grown past its clip (a picture that wasn't loaded
+   * when the clip was set drew nothing, so it got no mask).
+   */
   redraw(): void {
-    if (this.source && this.sourceKind) this.sync(this.source, this.sourceKind, this.order, true);
+    if (!this.source || !this.sourceKind) return;
+    this.sync(this.source, this.sourceKind, this.order, true);
+    if (this.clipArea) this.setClip(this.clipArea);
   }
 
   /** Moves the view, as drawn, so its box's corner is at (`x`, `y`). */

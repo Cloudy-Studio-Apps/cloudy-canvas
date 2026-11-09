@@ -165,6 +165,10 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Correcciones
 
+- Las imágenes y los modelos 3D dentro de un marco con Recortar contenido ya no se ven fuera de los
+  bordes del marco cuando su imagen termina de cargar después que el marco, como pasaba justo después
+  de editar un modelo en 3D.
+
 - Al exportar una página que no es la que está en pantalla, también las exportaciones que hace un
   agente de IA, sus capas mantienen el orden correcto y sus máscaras y efectos se dibujan como en el
   lienzo.
