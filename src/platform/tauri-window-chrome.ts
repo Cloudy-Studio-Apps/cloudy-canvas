@@ -32,7 +32,13 @@ export class TauriWindowChrome implements WindowChrome {
     let unlisten: (() => void) | null = null;
     void getCurrentWindow()
       .onResized(async () => {
-        const maximized = await this.isMaximized();
+        let maximized: boolean;
+        try {
+          maximized = await this.isMaximized();
+        } catch {
+          // The window may be going away; the next resize asks again.
+          return;
+        }
         if (disposed || maximized === last) return;
         last = maximized;
         listener(maximized);

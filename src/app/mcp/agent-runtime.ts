@@ -49,7 +49,13 @@ export function agentServer(): McpServerDefinition {
     prepare: async (context) => {
       const key = presenceKey(context);
       const end = await prepareAgentCall(agentTabs, key);
-      presence.prepared(key);
+      try {
+        presence.prepared(key);
+      } catch (error) {
+        // The call won't run, so its tab mustn't stay pinned.
+        end();
+        throw error;
+      }
       return end;
     },
     notesFor: (context) => undoNotes.take(presenceKey(context)),
