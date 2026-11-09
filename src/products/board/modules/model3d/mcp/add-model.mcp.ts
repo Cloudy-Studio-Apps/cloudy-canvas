@@ -23,7 +23,8 @@ export function addModelTool(baker: ModelBaker): BoardMcpTool {
       "(turn it with set_model_view, move and resize it with update_shapes); it is `h` tall " +
       `(${MODEL_BASE_SIZE} by default) with the width of its framing. Returns its id, its texture ` +
       "slots, the `missing` ones (shown gray) and, over 10 MB, a `warning` that large files can " +
-      "cause problems.",
+      "cause problems. A placed model is reused: move or resize it with update_shapes and turn it " +
+      "with set_model_view instead of adding the file again.",
     inputSchema: { type: "object", required: ["path"], properties: ADD_MODEL_PROPERTIES },
     run: async (host, args) => {
       const { engine } = requireBoard(host);

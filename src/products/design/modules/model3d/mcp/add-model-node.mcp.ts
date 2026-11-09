@@ -41,7 +41,9 @@ export function addModelNodeTool(baker: ModelBaker): DesignMcpTool {
       `update_nodes); it is \`h\` tall (${MODEL_BASE_SIZE} by default) with the width of its ` +
       "framing, named after the file unless `name` is given, and goes into the frame under its " +
       "center unless `parent` says where. Returns its id, its texture slots, the `missing` ones " +
-      "(shown gray) and, over 10 MB, a `warning` that large files can cause problems.",
+      "(shown gray) and, over 10 MB, a `warning` that large files can cause problems. A placed " +
+      "model is reused: move or resize it with update_nodes and turn it with set_model_node_view " +
+      "instead of adding the file again.",
     inputSchema: {
       type: "object",
       required: ["path"],
