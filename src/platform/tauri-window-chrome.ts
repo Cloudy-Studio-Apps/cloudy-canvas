@@ -1,10 +1,10 @@
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
-import type { WindowChrome } from "@shared/core";
+import { isApplePlatform, type WindowChrome } from "@shared/core";
 
 /** The Tauri window's controls. The app draws them everywhere except macOS. */
 export class TauriWindowChrome implements WindowChrome {
-  readonly drawsControls = !/Mac/i.test(navigator.userAgent);
+  readonly drawsControls = !isApplePlatform();
 
   minimize(): void {
     void getCurrentWindow().minimize();

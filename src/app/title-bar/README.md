@@ -18,7 +18,9 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
 - **`TabButton`**: the product's icon (a spinner while `load.status === "loading"`), the name with
   an ellipsis, `TabAvatars`, and a dot while `unsaved` that the close button replaces on hover or
   focus. A click activates it (the route follows, see [app/tabs](../tabs/README.md)), a
-  middle-click or the close button calls `closeTab`, never `fileTabs.close` directly.
+  middle-click or the close button calls `closeTab`, never `fileTabs.close` directly. Known a11y
+  gap, left for later: the close button sits inside the `role="tab"` element (an interactive
+  control nested in another).
 - **`TabKnockBadge`**: on the hosting tab while someone asks to join its session (`sharingState.knocks()`;
   the cards themselves are the app's, `HostedKnocksHost` in `app/tabs/`).
 - **`TabAvatars`**: the collaborators whose state's `fileId` is the tab's (`CollaboratorAvatar`;
