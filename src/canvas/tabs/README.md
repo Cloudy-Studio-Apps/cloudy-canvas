@@ -36,7 +36,9 @@ Who changes them:
 - `open(source, { activate })` reuses the tab with the same `fileId`. A new one starts
   `hibernated` with nothing loaded; with `activate` (the default) it's shown at once.
   `maxFileTabs` (1 on Android) closes the least recently shown tabs to make room; the one on
-  screen goes only for a tab opened to replace it, never for one opened in the background.
+  screen goes only for a tab opened to replace it, never for one opened in the background. It's a
+  safety net: it destroys the document before the editor's closing work, so the app closes the
+  open file through its editor first (`leaveFile`, `app/tabs/`).
 - `activate(id)` shows a tab (`null`: Home): it becomes `active` and loads, and the tab left
   becomes `headless`. Both get `lastActiveAt`.
 - `setState(id, state)` moves a background tab between `hibernated`, `document` and `headless`

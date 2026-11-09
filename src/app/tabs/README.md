@@ -6,7 +6,8 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   with each product's `TabLoader` imported the first time a tab of it loads, so the shell's first
   load never holds a product (only `@canvas/tabs` and `@canvas-ui/tabs` are imported by path, not
   their whole barrels). Where tabs aren't supported (`tabsSupported()` false: Android) it keeps one
-  file tab (`maxFileTabs: 1`): opening a file closes the open one, as before tabs.
+  file tab (`maxFileTabs: 1`): opening a file closes the open one, as before tabs (the route sync
+  leaves it first, see below).
 - **`AppFrame`** (`app-frame.tsx`) is the root route's element: on desktop it puts the
   [title bar](../title-bar/README.md) on top, with everything below it in its own area; it provides `FileTabsContext`, runs
   the route sync and renders the Home area (`<Outlet />`: Home, Settings, Projects, Join, …) with
@@ -18,8 +19,13 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   themselves. A file route opens its tab (`fileTabs.open({ type, fileId, params })`, `params` from
   the search params; an id that isn't in storage is a new file, as before), so every existing
   `navigate("/<type>/<id>?…")` keeps working; an open file linked to again with params takes them.
-  Any other route shows Home (`activate(null)`; on Android it closes the open file, as leaving the
-  editor did). The other way, when the active tab changes from elsewhere (a tab click, closing the
+  Any other route shows Home (`activate(null)`, `openRouteTab` in `open-route-tab.ts`). On Android
+  (one file at a time) a route to another file or away from files first leaves the open one
+  (`leaveFile`, `leave-file.ts`: the editor's `finish()` while it's still mounted, so the engine's
+  last writes, the sweep and the pending autosave see the document, then `fileTabs.close`), as
+  leaving the editor did before tabs; Android's route changes run one after another (a newer one
+  makes an older one skip showing its route), and the route doesn't follow the active tab while
+  one is pending. `FileTabs`' own `maxFileTabs` limit is only a safety net. The other way, when the active tab changes from elsewhere (a tab click, closing the
   active tab, a joined session's tab), its route (`tabRoute`: `/<type>/<fileId>`, no params) replaces
   the address, or `/` for Home, so switching tabs doesn't fill the history. A joined session's route
   (`/<type>/live:<fileId>`) only shows its open tab; once that's closed it goes Home.

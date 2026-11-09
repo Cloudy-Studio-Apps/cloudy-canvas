@@ -286,7 +286,9 @@ export class FileTabs {
 
   /**
    * Below `maxFileTabs`, closing the least recently used tabs. The one on screen goes only for a
-   * tab about to replace it (`activate`): the view never jumps on its own.
+   * tab about to replace it (`activate`): the view never jumps on its own. A safety net only: it
+   * destroys the document before an editor's closing work, so a host that limits the tabs (Android)
+   * closes the open one itself first, through its editor.
    */
   private makeRoom(activate: boolean): void {
     const max = Math.max(1, this.options.maxFileTabs ?? Infinity);
