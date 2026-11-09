@@ -27,11 +27,14 @@ export function createAgentToolLists({
 
   const isFiltered = (session: string) => streams.has(session) && refreshing.has(session);
 
-  /** Tells a filtered session that listed before when its list is no longer what it was served. */
-  const check = (session: string) => {
+  /**
+   * Tells a filtered session that listed before when its list is no longer what it was served
+   * (`force`: even if it looks unchanged).
+   */
+  const check = (session: string, force = false) => {
     if (!isFiltered(session) || !served.has(session)) return;
     const product = productFor(session);
-    if (served.get(session) === product) return;
+    if (!force && served.get(session) === product) return;
     served.set(session, product);
     // A stream that just closed drops it; the session's next `tools/list` is right anyway, so a
     // failure is ignored rather than reported on every tab change.
@@ -46,7 +49,8 @@ export function createAgentToolLists({
     },
     streamOpened(session) {
       streams.add(session);
-      check(session);
+      // Always tell it: a notice sent while the stream was closing may have been lost.
+      check(session, true);
     },
     streamClosed(session) {
       streams.delete(session);
