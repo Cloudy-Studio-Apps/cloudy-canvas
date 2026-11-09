@@ -6,6 +6,7 @@ import { tabsSupported } from "@platform";
 import { TitleBar } from "../title-bar";
 import { AppCloseGuard } from "./app-close-guard";
 import { CloseTabDialogHost } from "./close-tab-dialog-host";
+import { HostedKnocksHost } from "./hosted-knocks-host";
 import { fileTabs } from "./file-tabs-instance";
 import { watchHostedTabs } from "./hosted-tabs";
 import { watchRoomPresence } from "./room-presence-mirrors";
@@ -19,7 +20,8 @@ import { useRouteTabSync } from "./use-route-tab-sync";
  * The window under every route: the title bar (desktop), the Home area (Home, Settings, Projects, … through `<Outlet />`)
  * and the open file tabs' editors over it. The route opens and shows tabs (`useRouteTabSync`);
  * while a file tab is shown, the Home area is hidden. On desktop it also holds the window's close
- * guard and the close-tab question (Android keeps each file's own guard). It runs the tabs' memory
+ * guard and the close-tab question (Android keeps each file's own guard), and the knocks on the
+ * file it shares, whichever tab is on screen. It runs the tabs' memory
  * policy on its timer for the app's life and, on desktop, keeps the hosted file's tab live and
  * saved without an editor (`watchHostedTabs`) and mirrors the live sessions' people
  * (`watchRoomPresence`). On desktop it also reopens the last session's tabs once at start and
@@ -58,6 +60,7 @@ export function AppFrame() {
           <>
             <AppCloseGuard />
             <CloseTabDialogHost />
+            <HostedKnocksHost />
           </>
         )}
       </div>

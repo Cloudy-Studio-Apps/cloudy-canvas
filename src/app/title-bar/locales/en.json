@@ -17,5 +17,6 @@
   },
   "openFile": "Open file…",
   "theme": "Theme",
-  "matchSystem": "Match system"
+  "matchSystem": "Match system",
+  "knocking": "Someone is asking to join"
 }

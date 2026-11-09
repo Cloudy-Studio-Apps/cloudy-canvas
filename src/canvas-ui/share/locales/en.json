@@ -46,7 +46,8 @@
     "label": "{name} wants to join",
     "title": "{name} wants to join",
     "version": "Uses Cloudy Canvas {theirs} (you have {yours})",
-    "deny": "Deny"
+    "deny": "Deny",
+    "file": "In “{file}”"
   },
   "badge": {
     "viewingHint": "{host} lets you view this file",

@@ -46,7 +46,8 @@
     "label": "{name} quiere unirse",
     "title": "{name} quiere unirse",
     "version": "Usa Cloudy Canvas {theirs} (tú tienes {yours})",
-    "deny": "Denegar"
+    "deny": "Denegar",
+    "file": "En «{file}»"
   },
   "badge": {
     "viewingHint": "{host} te deja ver este archivo",

@@ -13,6 +13,9 @@ export interface SharingState {
   /** The shared file and its session's awareness, `null` while nothing is shared. */
   current(): SharedFile | null;
   set(shared: SharedFile | null): void;
-  /** Calls `listener` whenever the shared file changes; returns how to stop. */
+  /** How many people are asking to join the shared session now (0 while nothing is shared). */
+  knocks(): number;
+  setKnocks(count: number): void;
+  /** Calls `listener` whenever the shared file or its knock count changes; returns how to stop. */
   subscribe(listener: () => void): () => void;
 }

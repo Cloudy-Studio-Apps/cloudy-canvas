@@ -17,5 +17,6 @@
   },
   "openFile": "Abrir archivo…",
   "theme": "Tema",
-  "matchSystem": "Igual que el sistema"
+  "matchSystem": "Igual que el sistema",
+  "knocking": "Alguien pide unirse"
 }

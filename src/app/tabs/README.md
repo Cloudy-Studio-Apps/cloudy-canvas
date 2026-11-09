@@ -56,6 +56,11 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   memory policy (`fileTabs.setAutosave`): while autosave is off a hosted tab keeps its editor (one
   in `document` is brought back after the document autosave's last save), so its changes are
   asked about on close and quit as usual.
+- **Knocks** (`HostedKnocksHost`, `hosted-knocks-host.tsx`; desktop, mounted by `AppFrame`): while
+  this app shares a file (`sharingState`), it loads `HostedKnocks` (`canvas-ui/share/`, a lazy
+  import, so the shell never holds the sharing code) and shows the people asking to join over any
+  tab, naming the file (its tab's name): the hosted file's editor may be in the background or gone.
+  The hosting tab's button shows a badge meanwhile (`TabKnockBadge`, `title-bar/`).
 - **Room presence** (`watchRoomPresence`, `room-presence-mirrors.ts`; desktop, started by
   `AppFrame`): mirrors the people of every live session the app is in (the hosted file's,
   `sharingState`, and each joined tab's `live`) into the collaborators with `mirrorRoomPresence`

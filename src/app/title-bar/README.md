@@ -19,6 +19,8 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   an ellipsis, `TabAvatars`, and a dot while `unsaved` that the close button replaces on hover or
   focus. A click activates it (the route follows, see [app/tabs](../tabs/README.md)), a
   middle-click or the close button calls `closeTab`, never `fileTabs.close` directly.
+- **`TabKnockBadge`**: on the hosting tab while someone asks to join its session (`sharingState.knocks()`;
+  the cards themselves are the app's, `HostedKnocksHost` in `app/tabs/`).
 - **`TabAvatars`**: the collaborators whose state's `fileId` is the tab's (`CollaboratorAvatar`;
   `tabPresenceFileIds`, so a joined session's tab shows the people in its room).
   They pulse while an agent called the tab within the last 2 minutes and it isn't the active one.

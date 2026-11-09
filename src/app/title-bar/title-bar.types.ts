@@ -16,6 +16,10 @@ export interface HomeTabButtonProps {
   active: boolean;
 }
 
+export interface TabKnockBadgeProps {
+  tab: FileTab;
+}
+
 export interface TabAvatarsProps {
   tab: FileTab;
   active: boolean;

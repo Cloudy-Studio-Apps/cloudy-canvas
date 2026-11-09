@@ -4,6 +4,6 @@ import type { ShareHost } from "@canvas";
 export interface HostedSession {
   fileId: string;
   host: ShareHost;
-  /** Stops waiting on the session when the window closes. */
-  releaseQuit: () => void;
+  /** Stops waiting on the session when the window closes, and following its knocks. */
+  release: () => void;
 }

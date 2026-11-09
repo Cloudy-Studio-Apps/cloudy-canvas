@@ -14,14 +14,24 @@ let current: HostedSession | null = null;
 /**
  * Starts sharing a file (ending any other session first), through n0's public relays when the
  * built-in one can't be reached (`startHost`). Closing the window tells the guests the session
- * ended before it goes.
+ * ended before it goes. `sharingState` follows its knocks' count (the hosting tab's badge).
  */
 export async function startSharing(fileId: string, options: ShareHostOptions): Promise<ShareHost> {
   await stopSharing();
   const host = await startHost(options);
   const releaseQuit = appLifecycle.onBeforeQuit(() => host.stop());
-  current = { fileId, host, releaseQuit };
+  const countKnocks = () => sharingState.setKnocks(host.state.get().knocks.length);
+  const stopKnocks = host.state.subscribe(countKnocks);
+  current = {
+    fileId,
+    host,
+    release: () => {
+      releaseQuit();
+      stopKnocks();
+    },
+  };
   sharingState.set({ fileId, awareness: host.awareness });
+  countKnocks();
   return host;
 }
 
@@ -31,7 +41,7 @@ export async function stopSharing(): Promise<void> {
   if (!session) return;
   current = null;
   sharingState.set(null);
-  session.releaseQuit();
+  session.release();
   await session.host.stop();
 }
 

@@ -6,11 +6,13 @@ import { closeTab } from "../tabs/close-tab";
 import { tabKeymap } from "../tabs/tab-keybindings";
 import { fileTabs } from "../tabs/file-tabs-instance";
 import { TabAvatars } from "./tab-avatars";
+import { TabKnockBadge } from "./tab-knock-badge";
 import { t } from "./title-bar.i18n";
 import type { TabButtonProps } from "./title-bar.types";
 
 /**
- * A file tab: its product's icon (a spinner while it loads), its name, who is in it, and the close
+ * A file tab: its product's icon (a spinner while it loads), its name, a badge while someone knocks
+ * on its shared file, who is in it, and the close
  * button, which an unsaved dot stands in for until the tab is hovered. Middle-click closes.
  */
 export function TabButton({ tab, active, dropSide, dragging, rowProps }: TabButtonProps) {
@@ -58,6 +60,7 @@ export function TabButton({ tab, active, dropSide, dragging, rowProps }: TabButt
         <FileTypeIcon type={tab.type} size="sm" className="size-5 rounded-sm [&_svg]:size-3.5" />
       )}
       <span className="min-w-0 flex-1 truncate">{tab.name}</span>
+      <TabKnockBadge tab={tab} />
       <TabAvatars tab={tab} active={active} />
       <span className="relative flex size-5 shrink-0 items-center justify-center">
         {tab.unsaved && (
