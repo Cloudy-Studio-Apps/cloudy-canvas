@@ -39,6 +39,7 @@ export { MainMenuSectionsView } from "./main-menu";
 export { useStartStarter } from "./starters";
 export { StickerWheel } from "./stickers";
 export {
+  ActiveTabOnly,
   FileTabsContext,
   TabContext,
   TabHost,

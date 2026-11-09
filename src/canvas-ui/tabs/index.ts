@@ -1,7 +1,9 @@
+export type * from "./active-tab-only.types";
 export type * from "./tab-context.types";
 export type * from "./tab-handles.types";
 export type * from "./tab-host.types";
 export type * from "./tab-menu.types";
+export { ActiveTabOnly } from "./active-tab-only";
 export { FileTabsContext } from "./file-tabs-context";
 export { TabContext, useDropTabParam, useTab, useTabContext, useTabParam } from "./tab-context";
 export { tabHandles } from "./tab-handles";

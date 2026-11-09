@@ -21,8 +21,16 @@ knows a product: the app gives `TabHost` each product's editor (`app/tabs/`).
   scene keeps following the document (agents, exports and thumbnails still work).
   `useIsActiveTab()` (`true` outside a tab) gates the other window-wide listeners that act on an
   editor: the file drop target (`useCanvasFileDrop`), the crop overlay's and the live 3D edit's
-  Enter/Esc, the color wizard's keys; presence stops following the pointer while the engine is
-  `suspended`.
+  Enter/Esc, the color wizard's keys and paste, the canvas context menu (it closes when its tab
+  leaves the screen); presence stops following the pointer while the engine is `suspended`.
+- **Several editors are mounted.** Two editors of one product are routinely mounted at once (the
+  grace after leaving a tab, agents), so UI driven by an app-wide store would open in each of them,
+  portaled out of the background slot. `ModuleSession` (`canvas-ui/modules/`) draws the modules'
+  `overlays` (and so the modes' overlays) only in the active tab, inside `ActiveTabOnly`
+  (`active-tab-only.tsx`: its children only while the tab is on screen, always outside a tab);
+  leaving the tab unmounts them, which closes the prototype player and drops transient overlay
+  state as leaving an editor did. Other UI that follows an app-wide store uses `ActiveTabOnly` too
+  (see [docs/modules.md](../../../docs/modules.md#several-editors-are-mounted)).
 - **`TabContext`** (`tab-context.ts`) is the tab an editor shows (`{ tabs, tabId }`, plus what its
   file reports to it, built by the slot with `tabContextValue`: `reportUnsaved`, `reportInfo`
   (`FileTabs.setInfo`) and `reportName`, each changing the tab only when the value differs;
