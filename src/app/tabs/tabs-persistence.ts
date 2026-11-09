@@ -48,8 +48,16 @@ function snapshot(tabs: FileTabs): SavedTabs {
   };
 }
 
-/** Opens the saved files hibernated, in order; files gone from storage (drafts are kept) drop. */
-async function restore(tabs: FileTabs, options: TabsPersistenceOptions): Promise<void> {
+/**
+ * Opens the saved files hibernated, in order; files gone from storage (drafts are kept) drop.
+ * Nothing happens once `stopped()`, and the saved active tab is shown only if the app is still on
+ * Home: the user may have gone elsewhere while the files were looked up.
+ */
+async function restore(
+  tabs: FileTabs,
+  options: TabsPersistenceOptions,
+  stopped: () => boolean,
+): Promise<void> {
   const saved = read();
   if (!saved) return;
   const found: SavedTab[] = [];
@@ -60,10 +68,13 @@ async function restore(tabs: FileTabs, options: TabsPersistenceOptions): Promise
       // Unreadable now: leave it out rather than open a tab that can't load.
     }
   }
+  if (stopped()) return;
   for (const { type, fileId } of found) tabs.open({ type, fileId }, { activate: false });
-  // A launch to a file chose its own active tab; only a start on Home takes the saved one.
+  // A launch to a file chose its own active tab; only a start on Home takes the saved one, and
+  // only while the user is still there (not on Settings or Projects meanwhile).
   const active = found.find((tab) => tab.fileId === saved.active);
-  if (options.startedOnHome && active && tabs.store.get().activeId === null) {
+  const onHome = window.location.pathname === "/" && tabs.store.get().activeId === null;
+  if (options.startedOnHome && active && onHome) {
     options.navigate(tabRoute(active));
   }
 }
@@ -84,7 +95,7 @@ export function startTabsPersistence(tabs: FileTabs, options: TabsPersistenceOpt
     write(snapshot(tabs));
   };
 
-  void restore(tabs, options)
+  void restore(tabs, options, () => stopped)
     .catch(() => {})
     .then(() => {
       if (stopped) return;

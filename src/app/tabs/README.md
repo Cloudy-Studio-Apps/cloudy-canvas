@@ -36,7 +36,8 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   `FileInfo`) aren't saved. At startup each saved file whose `storage.get` finds it (drafts have
   stable ids there, so they come back; a missing file is dropped silently) is opened with
   `open(…, { activate: false })`: a `hibernated` tab that loads nothing until it's clicked. Then,
-  only if the app started on Home, it navigates to the saved active tab's route and the route sync
+  only if the app started on Home and is still there (the user may have gone to Settings or
+  Projects meanwhile; nothing happens at all once persistence was stopped), it navigates to the saved active tab's route and the route sync
   shows (and loads) it. A start on a file (the OS opened it, a link) keeps the tab that launch
   chose, and the others still come back behind it. Saving begins only after this restore, so the
   empty tab list at startup never overwrites the saved one. Android keeps today's behavior.
