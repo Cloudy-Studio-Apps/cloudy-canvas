@@ -6,7 +6,7 @@ export interface AgentTab {
   type: FileType;
   /** The calling agent works in it. */
   mine: boolean;
-  /** The names of the agents and people working in it. */
+  /** The names of the agents and people in it, as its button shows them. */
   collaborators: string[];
 }
 
@@ -41,7 +41,7 @@ export interface AgentNewFile {
 
 /** What the tab tools reach, for the calling agent (see `app/mcp/tabs`). */
 export interface TabsAgentHost {
-  tabs(): AgentTab[];
+  tabs(): Promise<AgentTab[]>;
   /** Moves the agent to the open tab with that name. */
   switchTab(name: string): Promise<AgentTab | AgentFileCandidates>;
 }

@@ -27,15 +27,21 @@ export function agentHostFor(
 ): AgentHost & DesignAgentHost & TabsAgentHost {
   const board = (file: OpenBoard) => withWorkspace(file, collaboratorId);
   const design = (file: OpenDesign) => withWorkspace(file, collaboratorId);
-  const openInTab = (source: TabSource) => openInAgentTab(tabs, collaboratorId, source);
+  /** Opens the tab (see `openInAgentTab`); a `title` becomes its document's title, so the draft and the tab are named after it. */
+  const openInTab = async (source: TabSource, title?: string) => {
+    const tabId = await openInAgentTab(tabs, collaboratorId, source);
+    const load = fileTabs.get(tabId)?.load;
+    if (title && load?.status === "ready") load.document.setMeta({ title });
+    return tabId;
+  };
   const opened = <F>(file: F | null): F => {
     if (!file) throw new Error("The file opened in another kind of tab.");
     return file;
   };
-  const showBoard = async (source: TabSource) =>
-    board(opened(boardFiles.get(await openInTab(source))));
-  const showDesign = async (source: TabSource) =>
-    design(opened(designFiles.get(await openInTab(source))));
+  const showBoard = async (source: TabSource, title?: string) =>
+    board(opened(boardFiles.get(await openInTab(source, title))));
+  const showDesign = async (source: TabSource, title?: string) =>
+    design(opened(designFiles.get(await openInTab(source, title))));
   /** The storage id of what `ref` names, or the candidates when several files have the name. */
   const resolve = async (type: FileType, ref: AgentFileRef) => {
     if ("id" in ref) {
@@ -55,7 +61,7 @@ export function agentHostFor(
   const openFile = async <F>(
     type: FileType,
     ref: AgentFileRef,
-    show: (source: TabSource) => Promise<F>,
+    show: (source: TabSource, title?: string) => Promise<F>,
   ) => {
     const found = await resolve(type, ref);
     return found.id === undefined ? found : show({ type, fileId: found.id });
@@ -63,16 +69,11 @@ export function agentHostFor(
   const createFile = async <F>(
     type: FileType,
     options: AgentNewFile,
-    show: (source: TabSource) => Promise<F>,
+    show: (source: TabSource, title?: string) => Promise<F>,
   ) => {
     const where = await resolveNewFile(options);
     if ("matchingProjects" in where) return where;
-    return show({
-      type,
-      fileId: createId(),
-      params: where.params,
-      ...(options.name && { name: options.name }),
-    });
+    return show({ type, fileId: createId(), params: where.params }, options.name);
   };
   /** The session's tab's file of one product (binding it, see `sessionTab`). */
   const fileOf = <F>(files: { get(tabId: string): F | null }): F | null => {

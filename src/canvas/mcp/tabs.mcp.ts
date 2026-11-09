@@ -15,7 +15,7 @@ export const tabsTools: McpTool<TabsAgentHost>[] = [
       "whether you work in it (mine) and the names of the agents working in it. It never changes " +
       "anything and shows no content.",
     inputSchema: { type: "object", properties: {} },
-    run: (host) => ({ tabs: host.tabs() }),
+    run: async (host) => ({ tabs: await host.tabs() }),
   },
   {
     name: "switch_tab",
