@@ -1,5 +1,5 @@
 import { useEffect, useSyncExternalStore } from "react";
-import { Outlet } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 
 import { FileTabsContext, TabHost } from "@canvas-ui/tabs";
 import { tabsSupported } from "@platform";
@@ -10,6 +10,8 @@ import { fileTabs } from "./file-tabs-instance";
 import { watchHostedTabs } from "./hosted-tabs";
 import { watchRoomPresence } from "./room-presence-mirrors";
 import { TAB_EDITORS } from "./tab-editors";
+import { fileRouteOf } from "./tab-route";
+import { startTabsPersistence } from "./tabs-persistence";
 import { useRouteTabSync } from "./use-route-tab-sync";
 
 /**
@@ -19,10 +21,20 @@ import { useRouteTabSync } from "./use-route-tab-sync";
  * guard and the close-tab question (Android keeps each file's own guard). It runs the tabs' memory
  * policy on its timer for the app's life and, on desktop, keeps the hosted file's tab live and
  * saved without an editor (`watchHostedTabs`) and mirrors the live sessions' people
- * (`watchRoomPresence`).
+ * (`watchRoomPresence`). On desktop it also reopens the last session's tabs once at start and
+ * saves them as they change (`startTabsPersistence`).
  */
 export function AppFrame() {
   useRouteTabSync();
+  const navigate = useNavigate();
+  useEffect(
+    () =>
+      startTabsPersistence(fileTabs, {
+        startedOnHome: !fileRouteOf(window.location.pathname),
+        navigate: (route) => void navigate(route, { replace: true }),
+      }),
+    [navigate],
+  );
   useEffect(() => fileTabs.startPolicy(), []);
   useEffect(() => (tabsSupported() ? watchHostedTabs(fileTabs) : undefined), []);
   useEffect(() => (tabsSupported() ? watchRoomPresence(fileTabs) : undefined), []);

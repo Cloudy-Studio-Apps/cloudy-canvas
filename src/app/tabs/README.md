@@ -23,6 +23,17 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   active tab, a joined session's tab), its route (`tabRoute`: `/<type>/<fileId>`, no params) replaces
   the address, or `/` for Home, so switching tabs doesn't fill the history. A joined session's route
   (`/<type>/live:<fileId>`) only shows its open tab; once that's closed it goes Home.
+- **Restoring tabs** (`startTabsPersistence`, `tabs-persistence.ts`; desktop, started once by
+  `AppFrame` after the route sync): the tabs are saved to `localStorage` (`cloudy-canvas:tabs`,
+  `{ tabs: { type, fileId }[], active }`, file ids not tab ids) 0.5 s after they change and when the
+  window hides. Joined sessions (`live:` ids) and files never saved anywhere (loaded, no
+  `FileInfo`) aren't saved. At startup each saved file whose `storage.get` finds it (drafts have
+  stable ids there, so they come back; a missing file is dropped silently) is opened with
+  `open(…, { activate: false })`: a `hibernated` tab that loads nothing until it's clicked. Then,
+  only if the app started on Home, it navigates to the saved active tab's route and the route sync
+  shows (and loads) it. A start on a file (the OS opened it, a link) keeps the tab that launch
+  chose, and the others still come back behind it. Saving begins only after this restore, so the
+  empty tab list at startup never overwrites the saved one. Android keeps today's behavior.
 - **Hosted tabs** (`watchHostedTabs`, `hosted-tabs.ts`; desktop, started by `AppFrame`): the tab of
   the file this app shares is `hosting` (from `sharingState`, `canvas-ui/share/`, with or without
   its editor), and a live session outlives its editor: the memory policy drops a background live tab

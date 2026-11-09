@@ -16,6 +16,6 @@ export function fileRouteOf(pathname: string): FileRoute | null {
 }
 
 /** The route that shows a tab (its params were only read when it opened). */
-export function tabRoute(tab: FileTab): string {
+export function tabRoute(tab: Pick<FileTab, "type" | "fileId">): string {
   return `/${tab.type}/${encodeURIComponent(tab.fileId)}`;
 }
