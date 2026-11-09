@@ -1,17 +1,11 @@
 import { projectFs, projectRegistry, projectsSupported } from "@platform";
 import { fileNameFromPath, joinRelative, type FileType, type ProjectRecord } from "@shared/core";
+import type { ProjectFile } from "./agent-project-files.types";
 
 /** How deep inside a project's folders agents look for a file by name. */
 const MAX_DEPTH = 6;
 /** How long a project's file list is reused (agents often open several files in a row). */
 const CACHE_MS = 10_000;
-
-/** A board or design inside a project: its name without the extension, and its path. */
-interface ProjectFile {
-  name: string;
-  type: FileType;
-  path: string;
-}
 
 const cache = new Map<string, { at: number; files: Promise<ProjectFile[]> }>();
 
