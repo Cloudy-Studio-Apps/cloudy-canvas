@@ -28,12 +28,14 @@ import {
   SelectValue,
 } from "@shared/ui/components/ui/select";
 import { notifyError, toast, toastProgress } from "@shared/stores/toast-store";
+import { cn, NumberInput } from "@shared/ui/kit";
 import { useEngine, useEngineState } from "../../engine-context";
 import { useOptionalEditorPoint } from "../../modules/editor-modules-context";
 import type { ExportDialogProps } from "./export-dialog.types";
 import { ExportField } from "./export-field";
 import { EXPORT_FORMATS } from "./export-formats";
 import { ExportPdfOptions } from "./export-pdf-options";
+import { ExportPreview } from "./export-preview";
 import { ExportSvgTextField } from "./export-svg-text-field";
 import { t } from "../components.i18n";
 
@@ -52,6 +54,7 @@ export function ExportDialog({ name, framePagesLabel }: ExportDialogProps) {
   const [area, setArea] = useState<ExportArea>("selection");
   const [svgText, setSvgText] = useState<SvgText>("outlines");
   const [pdf, setPdf] = useState<PdfExportOptions>(DEFAULT_PDF_OPTIONS);
+  const [margin, setMargin] = useState(0);
   const [busy, setBusy] = useState(false);
 
   useEffect(
@@ -75,6 +78,7 @@ export function ExportDialog({ name, framePagesLabel }: ExportDialogProps) {
   const splits =
     open && chosen === "pdf" && !!framePagesLabel && engine.pdfPageCount(exportArea) > 1;
   const note = open && moduleFormat?.note ? moduleFormat.note(engine) : null;
+  const previewing = open && !moduleFormat && chosen !== "csv";
 
   const run = async () => {
     setBusy(true);
@@ -91,6 +95,7 @@ export function ExportDialog({ name, framePagesLabel }: ExportDialogProps) {
                   area: exportArea,
                   // Named: a copy's workspace has no selection of its own.
                   ids: exportArea === "selection" ? engine.selectedIds() : undefined,
+                  padding: margin,
                   svgText,
                   pdf,
                 }),
@@ -113,7 +118,7 @@ export function ExportDialog({ name, framePagesLabel }: ExportDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
-        className="pointer-events-auto"
+        className={cn("pointer-events-auto", previewing && "sm:max-w-3xl")}
         // Keys pressed in the dialog aren't canvas shortcuts.
         onKeyDown={(event) => event.stopPropagation()}
       >
@@ -121,75 +126,103 @@ export function ExportDialog({ name, framePagesLabel }: ExportDialogProps) {
           <DialogTitle>{t("export.title")}</DialogTitle>
           <DialogDescription className="sr-only">{t("export.description")}</DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 px-4 py-4">
-          <ExportField label={t("export.fileType")}>
-            <RadioGroup
-              value={moduleFormat ? moduleFormat.id : chosen}
-              onValueChange={setFormat}
-              aria-label={t("export.fileType")}
-            >
-              {EXPORT_FORMATS.map(({ id, name: formatName }) => (
-                <label
-                  key={id}
-                  className="flex items-center gap-2 py-0.5 text-sm has-disabled:text-muted-foreground"
-                >
-                  <RadioGroupItem value={id} disabled={id === "csv" && !csvAvailable} />
-                  {formatName}
-                </label>
-              ))}
-              {moduleFormats.map(({ id, name: formatName }) => (
-                <label key={id} className="flex items-center gap-2 py-0.5 text-sm">
-                  <RadioGroupItem value={id} />
-                  {formatName}
-                </label>
-              ))}
-            </RadioGroup>
-          </ExportField>
-          {note && <p className="text-sm text-muted-foreground">{note}</p>}
-          {!moduleFormat && (
-            <>
-              {chosen === "svg" && (
-                <>
-                  <p className="text-sm text-muted-foreground">{t("export.svgNote")}</p>
-                  <ExportSvgTextField value={svgText} onChange={setSvgText} />
-                </>
-              )}
-              {chosen === "pdf" && (
-                <ExportPdfOptions
-                  options={pdf}
-                  onChange={(patch) => setPdf({ ...pdf, ...patch })}
-                  framePagesLabel={splits ? (framePagesLabel ?? null) : null}
-                />
-              )}
-              <ExportField label={t("export.background")} id="export-background">
-                <Select
-                  value={solidOnly ? "solid" : background}
-                  onValueChange={(value) => setBackground(value as ExportBackground)}
-                  disabled={solidOnly}
-                >
-                  <SelectTrigger id="export-background" className="w-40">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="solid">{t("export.solid")}</SelectItem>
-                    <SelectItem value="transparent">{t("export.transparent")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </ExportField>
-              <ExportField label={t("export.area")} id="export-area">
-                <Select value={exportArea} onValueChange={(value) => setArea(value as ExportArea)}>
-                  <SelectTrigger id="export-area" className="w-40">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="selection" disabled={!hasSelection}>
-                      {t("export.selectionOnly")}
-                    </SelectItem>
-                    <SelectItem value="board">{t("export.entireBoard")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </ExportField>
-            </>
+        <div className="flex flex-col gap-4 px-4 py-4 sm:flex-row">
+          <div
+            className={cn("grid flex-1 content-start gap-4", previewing && "sm:w-88 sm:flex-none")}
+          >
+            <ExportField label={t("export.fileType")}>
+              <RadioGroup
+                value={moduleFormat ? moduleFormat.id : chosen}
+                onValueChange={setFormat}
+                aria-label={t("export.fileType")}
+              >
+                {EXPORT_FORMATS.map(({ id, name: formatName }) => (
+                  <label
+                    key={id}
+                    className="flex items-center gap-2 py-0.5 text-sm has-disabled:text-muted-foreground"
+                  >
+                    <RadioGroupItem value={id} disabled={id === "csv" && !csvAvailable} />
+                    {formatName}
+                  </label>
+                ))}
+                {moduleFormats.map(({ id, name: formatName }) => (
+                  <label key={id} className="flex items-center gap-2 py-0.5 text-sm">
+                    <RadioGroupItem value={id} />
+                    {formatName}
+                  </label>
+                ))}
+              </RadioGroup>
+            </ExportField>
+            {note && <p className="text-sm text-muted-foreground">{note}</p>}
+            {!moduleFormat && (
+              <>
+                {chosen === "svg" && (
+                  <>
+                    <p className="text-sm text-muted-foreground">{t("export.svgNote")}</p>
+                    <ExportSvgTextField value={svgText} onChange={setSvgText} />
+                  </>
+                )}
+                {chosen === "pdf" && (
+                  <ExportPdfOptions
+                    options={pdf}
+                    onChange={(patch) => setPdf({ ...pdf, ...patch })}
+                    framePagesLabel={splits ? (framePagesLabel ?? null) : null}
+                  />
+                )}
+                <ExportField label={t("export.background")} id="export-background">
+                  <Select
+                    value={solidOnly ? "solid" : background}
+                    onValueChange={(value) => setBackground(value as ExportBackground)}
+                    disabled={solidOnly}
+                  >
+                    <SelectTrigger id="export-background" className="w-40">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="solid">{t("export.solid")}</SelectItem>
+                      <SelectItem value="transparent">{t("export.transparent")}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </ExportField>
+                {chosen !== "csv" && (
+                  <ExportField label={t("export.margin")}>
+                    <NumberInput
+                      value={margin}
+                      onChange={setMargin}
+                      label={t("export.margin")}
+                      suffix="px"
+                      min={0}
+                      max={1000}
+                      decimals={0}
+                      className="w-40"
+                    />
+                  </ExportField>
+                )}
+                <ExportField label={t("export.area")} id="export-area">
+                  <Select
+                    value={exportArea}
+                    onValueChange={(value) => setArea(value as ExportArea)}
+                  >
+                    <SelectTrigger id="export-area" className="w-40">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="selection" disabled={!hasSelection}>
+                        {t("export.selectionOnly")}
+                      </SelectItem>
+                      <SelectItem value="board">{t("export.entireBoard")}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </ExportField>
+              </>
+            )}
+          </div>
+          {previewing && (
+            <ExportPreview
+              area={exportArea}
+              background={solidOnly ? "solid" : background}
+              margin={margin}
+            />
           )}
         </div>
         <DialogFooter>

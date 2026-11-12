@@ -5,6 +5,12 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ## Unreleased
 
+### Improved
+
+- Exports no longer add a margin around what you export, so the file matches the selection exactly,
+  the same as exports made by an agent. The Export window has a Margin field for when you want one,
+  and a preview of the first element shows how the file will look before you save it.
+
 ## 0.9.0 - 2026-11-09
 
 ### New

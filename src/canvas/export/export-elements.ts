@@ -7,8 +7,8 @@ import { encodeWebp } from "./encode-webp";
 import type { ExportArea, ExportHost, ExportOptions } from "./export.types";
 import { exportPdf, pdfPageGroups } from "./pdf";
 
-/** Space around the exported elements, in world units. */
-const EXPORT_PADDING = 16;
+/** Space around the exported elements, in world units: none unless asked for. */
+const EXPORT_PADDING = 0;
 const DEFAULT_SCALE = 2;
 /** Keeps the image within what GPUs can render in one texture. */
 const MAX_PIXELS_PER_SIDE = 8192;

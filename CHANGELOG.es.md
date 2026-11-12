@@ -5,6 +5,13 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ## Sin publicar
 
+### Mejoras
+
+- Las exportaciones ya no añaden un margen alrededor de lo que exportas, así que el archivo coincide
+  exactamente con la selección, igual que las exportaciones hechas por un agente. La ventana Exportar
+  tiene un campo Margen para cuando quieras uno, y una vista previa del primer elemento muestra cómo
+  quedará el archivo antes de guardarlo.
+
 ## 0.9.0 - 2026-11-09
 
 ### Novedades

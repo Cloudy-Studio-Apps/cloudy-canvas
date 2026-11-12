@@ -102,7 +102,10 @@
       "margin": "Margin",
       "letter": "Letter",
       "pages": "Pages"
-    }
+    },
+    "margin": "Margin",
+    "preview": "Export preview",
+    "previewNote": "Preview of the first element"
   },
   "crop": {
     "move": "Move the picture",

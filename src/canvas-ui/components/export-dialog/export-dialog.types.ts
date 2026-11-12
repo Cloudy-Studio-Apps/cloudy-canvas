@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { PdfExportOptions, SvgText } from "@canvas";
+import type { ExportArea, ExportBackground, PdfExportOptions, SvgText } from "@canvas";
 
 export interface ExportDialogProps {
   /** The exported file's name without its extension, e.g. the board's name. */
@@ -26,4 +26,12 @@ export interface ExportPdfOptionsProps {
   onChange(patch: Partial<PdfExportOptions>): void;
   /** The label of the one-page-per-frame choice, when there are frames to split by. */
   framePagesLabel: string | null;
+}
+
+export interface ExportPreviewProps {
+  /** Exported as the file would be; the preview shows the first of these. */
+  area: ExportArea;
+  background: ExportBackground;
+  /** World units left round the element. */
+  margin: number;
 }
