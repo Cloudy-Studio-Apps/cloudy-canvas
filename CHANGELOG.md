@@ -13,8 +13,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   you kept.
 - Split a page into its own file: right-click a page in the Pages list, or open its menu, and
   choose Split into new file. The page moves to a new design file with the variables, styles,
-  design system, pictures, data, brochures and prototype flows it needs, and in a project the new file is saved next to the
-  current one.
+  design system, pictures, data, brochures and prototype flows it needs, and in a project the new
+  file is saved next to the current one.
 
 ### Improved
 
@@ -32,16 +32,15 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   scenes, especially in designs with brochures.
 - Leaving the Catalog mode no longer freezes the window on large brochures: the print checks run
   about eight times faster.
-- Large designs open faster, zoom more smoothly and enter the Catalog mode with less work behind
-  the scenes: what's on screen is drawn first, text is sharpened only where you can see it, and
-  page thumbnails are drawn as their rows scroll into view, with a soft pulse until they're ready.
+- Large designs open faster, zoom more smoothly and switch to the Catalog mode faster: what's on
+  screen is drawn first, text is sharpened only where you can see it, page thumbnails are drawn as
+  their rows scroll into view, with a soft pulse until they're ready, and the brochure's pages are
+  worked out once for the whole window instead of once for each panel that shows them.
 - Going back to a large page, from another page or from the Design system mode, no longer freezes
   the window: what's on screen fades in first, the rest follows, and a thin bar along the top of
   the canvas shows the page loading.
 - Switching modes shows the new mode at once: its panels appear a moment later, with a placeholder
   while they load, instead of the whole window waiting for them.
-- Switching a large design to the Catalog mode is faster: the brochure's pages are worked out once
-  for the whole window instead of once for each panel that shows them.
 - Exports no longer add a margin around what you export, so the file matches the selection exactly,
   the same as exports made by an agent. The Export window has a Margin field for when you want one,
   and a preview of the first element shows how the file will look before you save it.

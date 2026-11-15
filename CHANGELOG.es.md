@@ -12,8 +12,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   sigue con tu elección. Puedes añadirle una nota, como qué cambiar en la que elegiste.
 - Separa una página en su propio archivo: haz clic derecho en una página de la lista de Páginas,
   o abre su menú, y elige Separar en un archivo nuevo. La página pasa a un archivo de diseño nuevo
-  con las variables, estilos, sistema de diseño, imágenes, datos, folletos y flujos de prototipo que necesita, y en un proyecto el
-  archivo nuevo se guarda junto al actual.
+  con las variables, estilos, sistema de diseño, imágenes, datos, folletos y flujos de prototipo
+  que necesita, y en un proyecto el archivo nuevo se guarda junto al actual.
 
 ### Mejoras
 
@@ -32,17 +32,16 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   trabajo por detrás, sobre todo en diseños con folletos.
 - Salir del modo Catálogo ya no congela la ventana en folletos grandes: las comprobaciones de
   impresión son unas ocho veces más rápidas.
-- Los diseños grandes se abren antes, el zoom es más fluido y el modo Catálogo trabaja menos al
-  entrar: lo que está en pantalla se dibuja primero, el texto se afina solo donde se ve y las
+- Los diseños grandes se abren antes, el zoom es más fluido y el cambio al modo Catálogo es más
+  rápido: lo que está en pantalla se dibuja primero, el texto se afina solo donde se ve, las
   miniaturas de las páginas se dibujan al aparecer en la lista, con un pulso suave hasta que están
-  listas.
+  listas, y las páginas del folleto se calculan una sola vez para toda la ventana en lugar de una
+  vez por cada panel que las muestra.
 - Volver a una página grande, desde otra página o desde el modo Sistema de diseño, ya no congela la
   ventana: lo que está en pantalla aparece primero con un fundido, el resto le sigue y una barra
   fina en la parte superior del lienzo muestra la carga de la página.
 - Al cambiar de modo, el nuevo modo aparece al instante: sus paneles se muestran un momento
   después, con un marcador mientras cargan, en lugar de que toda la ventana espere por ellos.
-- Cambiar un diseño grande al modo Catálogo es más rápido: las páginas del folleto se calculan una
-  sola vez para toda la ventana en lugar de una vez por cada panel que las muestra.
 - Las exportaciones ya no añaden un margen alrededor de lo que exportas, así que el archivo coincide
   exactamente con la selección, igual que las exportaciones hechas por un agente. La ventana Exportar
   tiene un campo Margen para cuando quieras uno, y una vista previa del primer elemento muestra cómo
