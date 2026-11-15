@@ -45,7 +45,11 @@
         { "path": "$APPDATA/**" },
         { "path": "**" },
         { "path": "**/.cloudy" },
-        { "path": "**/.cloudy/**" }
+        { "path": "**/.cloudy/**" },
+        { "path": "$HOME/.claude.json" },
+        { "path": "$HOME/.claude.json.tmp" },
+        { "path": "$CONFIG/Claude" },
+        { "path": "$CONFIG/Claude/**" }
       ]
     }
   ]

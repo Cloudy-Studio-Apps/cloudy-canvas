@@ -7,6 +7,9 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Mejoras
 
+- Claude Code y Claude Desktop se conectan con un clic: si cualquiera de los dos está instalado, su
+  página en Conectar un agente tiene un botón Añadir que escribe la configuración por ti, sin tener
+  que pegarla a mano.
 - Mantén Shift mientras arrastras para mover en línea recta: la selección se mueve solo en
   horizontal o solo en vertical, según hacia dónde arrastres más.
 - Salir del modo Catálogo ya no congela la ventana en folletos grandes: las comprobaciones de

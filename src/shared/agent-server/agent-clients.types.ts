@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 
+import type { AgentConfigFile } from "./agent-config.types";
 import type { BrandIcon } from "./brand-icons.types";
 
 /** An app's logo: a brand icon (drawn in its color) or a Lucide icon for apps without one. */
@@ -28,4 +29,6 @@ export interface AgentClient {
   snippet(url: string): string;
   /** A link that installs the server in the app in one click, when the app has one. */
   installLink?(url: string): string;
+  /** The app's config file, which the app adds the server to in one click when the app is installed. */
+  configFile?: AgentConfigFile;
 }

@@ -1,4 +1,6 @@
 export { agentChannel } from "./agent-channel";
+export type * from "./agent-config-files.types";
+export { agentConfigFiles } from "./agent-config-files";
 export { shareTransport } from "./share-transport";
 export { appInfo } from "./app-info";
 export { appLinks } from "./app-links";

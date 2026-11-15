@@ -56,7 +56,8 @@
     "manual": {
       "body": "Any agent that speaks MCP can connect. Add a server named {name} with the {transport} transport, no authentication, at this URL. It only accepts connections from this computer.",
       "serverUrl": "Server URL"
-    }
+    },
+    "added": "Added to {client}"
   },
   "clients": {
     "terminalCommand": "Terminal command",
@@ -71,6 +72,12 @@
     "windsurf": "Paste into ~/.codeium/windsurf/mcp_config.json.",
     "zed": "Merge into Zed's settings.json.",
     "opencode": "Merge into opencode.json (in a project or ~/.config/opencode/).",
-    "generic": "The usual mcpServers entry: .mcp.json, Cline and most other agents."
+    "generic": "The usual mcpServers entry: .mcp.json, Cline and most other agents.",
+    "claudeCodeDone": "Start a new Claude Code session to use it.",
+    "claudeDesktopDone": "Restart Claude to use it. Needs Node.js."
+  },
+  "install": {
+    "done": "Added to {client}",
+    "failed": "Couldn't add Cloudy Canvas to {client}"
   }
 }

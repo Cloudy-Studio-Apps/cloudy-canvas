@@ -13,13 +13,14 @@ import {
   siZedindustries,
 } from "./brand-icons";
 import { t } from "./agent-server.i18n";
-
-/** The name agents list the server under. */
-const SERVER_NAME = "cloudy-canvas";
+import { SERVER_NAME } from "./server-name";
 
 function jsonSnippet(value: unknown): string {
   return JSON.stringify(value, null, 2);
 }
+
+/** Claude Desktop speaks only stdio to local servers, so `mcp-remote` bridges it to HTTP. */
+const claudeDesktopEntry = (url: string) => ({ command: "npx", args: ["-y", "mcp-remote", url] });
 
 /** The agent apps the connect dialog gives setups for, the most used first. */
 export const AGENT_CLIENTS: readonly AgentClient[] = [
@@ -32,6 +33,13 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
     snippetLabel: t("clients.terminalCommand"),
     where: t("clients.runTerminal"),
     snippet: (url) => `claude mcp add --transport http ${SERVER_NAME} ${url}`,
+    // The user-scope servers `claude mcp add --scope user` writes.
+    configFile: {
+      base: "home",
+      path: [".claude.json"],
+      entry: (url) => ({ type: "http", url }),
+      done: t("clients.claudeCodeDone"),
+    },
   },
   {
     id: "codex",
@@ -89,10 +97,13 @@ export const AGENT_CLIENTS: readonly AgentClient[] = [
     icon: siClaude,
     snippetLabel: "claude_desktop_config.json",
     where: t("clients.claudeDesktop"),
-    snippet: (url) =>
-      jsonSnippet({
-        mcpServers: { [SERVER_NAME]: { command: "npx", args: ["-y", "mcp-remote", url] } },
-      }),
+    snippet: (url) => jsonSnippet({ mcpServers: { [SERVER_NAME]: claudeDesktopEntry(url) } }),
+    configFile: {
+      base: "config",
+      path: ["Claude", "claude_desktop_config.json"],
+      entry: claudeDesktopEntry,
+      done: t("clients.claudeDesktopDone"),
+    },
   },
   {
     id: "windsurf",

@@ -7,6 +7,9 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### Improved
 
+- Claude Code and Claude Desktop can be connected in one click: when either is installed, its page
+  in Connect an agent has an Add button that writes the setup into its settings for you, instead
+  of you pasting it by hand.
 - Hold Shift while dragging to keep the move straight: the selection moves only horizontally or
   only vertically, along whichever way you drag further.
 - Leaving the Catalog mode no longer freezes the window on large brochures: the print checks run
