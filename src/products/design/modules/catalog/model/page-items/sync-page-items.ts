@@ -7,6 +7,7 @@ import { brochurePages } from "../brochure-pages";
 import { brochuresOf } from "../design-brochures";
 import { pageNumbers } from "../numbering/page-numbers";
 import { affectedPages } from "./affected-pages";
+import { pageItemTag, pageItemTemplate } from "./page-item-fields";
 import { planPageItems } from "./plan-page-items";
 import { stampTargets } from "./stamp-targets";
 import { brochureContext } from "./template-context";
@@ -36,13 +37,23 @@ export function syncPageItems(doc: CanvasDocument, change: EditedChange): void {
   const pages = affectedPages(doc, change, records);
   if (pages.size === 0) return;
   const elements = doc.all();
-  const children = childrenByParent(elements);
+  let children: Map<string, string[]> | null = null;
 
   for (const page of pages) {
     const byId = new Map<string, CanvasElement>();
-    for (const el of elements) if (isDesignNode(el) && el.pageId === page) byId.set(el.id, el);
+    let items = false;
+    for (const el of elements) {
+      if (!isDesignNode(el) || el.pageId !== page) continue;
+      byId.set(el.id, el);
+      items ||= pageItemTag(el) !== null || pageItemTemplate(el) !== null;
+    }
+    const brochures = brochuresOn(records, page);
+    // No masters to stamp and no page items or copies to read or remove: nothing to plan (laying
+    // out every brochure to find that out was most of an edit's time on large designs).
+    if (!items && brochures.every((record) => record.masters.length === 0)) continue;
+    children ??= childrenByParent(elements);
     const plan = planPageItems({
-      brochures: brochuresOn(records, page).map((record) => {
+      brochures: brochures.map((record) => {
         const layout = bookLayout(brochurePages(doc, record), record.settings);
         const numbers = pageNumbers(layout, record);
         return {

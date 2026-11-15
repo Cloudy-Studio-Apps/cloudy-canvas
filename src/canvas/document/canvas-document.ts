@@ -83,6 +83,12 @@ export class CanvasDocument {
   private readonly cache = new Map<string, CanvasElement | null>();
   /** Every element bottom to top, while no element changed since it was built. */
   private sorted: CanvasElement[] | null = null;
+  /**
+   * The ids in that order, kept while edits leave the order alone (no element added or removed,
+   * no `index` or `type` changed), so `all()` after a rename or a move re-reads the changed
+   * elements in place instead of sorting the whole document again.
+   */
+  private order: string[] | null = null;
 
   /** A document restored from `encode()` output. Loading it isn't an undoable change. */
   static fromUpdate(kinds: ElementKinds, update: Uint8Array): CanvasDocument {
@@ -116,6 +122,14 @@ export class CanvasDocument {
 
   /** All elements sorted bottom-to-top (a new array; the elements are shared, see `cache`). */
   all(): CanvasElement[] {
+    if (!this.sorted && this.order) {
+      const list: CanvasElement[] = [];
+      for (const id of this.order) {
+        const el = this.cached(id);
+        if (el) list.push(el);
+      }
+      this.sorted = list;
+    }
     if (!this.sorted) {
       const list: CanvasElement[] = [];
       for (const id of this.elements.keys()) {
@@ -123,6 +137,7 @@ export class CanvasDocument {
         if (el) list.push(el);
       }
       this.sorted = list.sort(compareByIndex);
+      this.order = this.sorted.map((el) => el.id);
     }
     return [...this.sorted];
   }
@@ -640,7 +655,7 @@ export class CanvasDocument {
         this.beforeSince.set(id, before);
       }
       map.set(key, value);
-      this.forget(id);
+      this.forget(id, [key]);
     }
   }
 
@@ -727,10 +742,18 @@ export class CanvasDocument {
     return el;
   }
 
-  /** Drops an element's cached read (it changed, or is gone). */
-  private forget(id: string): void {
+  /**
+   * Drops an element's cached read (it changed, or is gone). `fields`: the fields that changed;
+   * without them (added, removed) or with `index` or `type` among them, the order is sorted again.
+   */
+  private forget(id: string, fields?: Iterable<string | null>): void {
     this.cache.delete(id);
     this.sorted = null;
+    if (!fields) {
+      this.order = null;
+      return;
+    }
+    for (const field of fields) if (field === "index" || field === "type") this.order = null;
   }
 
   /** Drops the cached reads of the elements a transaction changed. */
@@ -745,7 +768,7 @@ export class CanvasDocument {
       } else if (type.parent === elements) {
         // A field changed inside an element map: its key in the parent map is the element id.
         const id = type._item?.parentSub;
-        if (id) this.forget(id);
+        if (id) this.forget(id, keys);
       }
     }
   };
