@@ -5,6 +5,7 @@ export type * from "./agent-patches.types";
 export type * from "./agent-tabs.types";
 export type * from "./files.mcp.types";
 export type * from "./plugins.mcp.types";
+export type * from "./variants.mcp.types";
 export type * from "./mcp-tool.types";
 export type * from "./mcp-tool-group.types";
 export type * from "./mcp-prefix.types";
@@ -26,6 +27,8 @@ export {
 export { tabsTools } from "./tabs.mcp";
 export { filesTools } from "./files.mcp";
 export { pluginsTools } from "./plugins.mcp";
+export { variantsTools } from "./variants.mcp";
+export * from "./variants";
 export { arrangeTools } from "./arrange.mcp";
 export { copyPropertiesTool } from "./style.mcp";
 export * from "./shared";

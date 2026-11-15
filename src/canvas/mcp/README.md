@@ -15,3 +15,19 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
 - **Instructions** (`mcp-instructions.ts`): `SHARED_MCP_INSTRUCTIONS` is the first part of the text agents get on connect: files, tabs, the rule that a call runs on the product of the agent's tab, and every tool both products share, each described once. The app joins it with the board's and the design's (`agent-server-definition.ts`), so a product's own text only covers what is its alone.
 - **Checks**: `scripts/check-modules.mjs` (in `pnpm lint`) checks that a literal tool name in a `.mcp.ts` is lowercase words joined by `_` and that only core modules and this folder declare a `prefix`.
 - **Shared tools** (`shared/`, see its [README](shared/README.md)): a tool both products serve under one full name is one listed tool, so its `inputSchema` must be the same in both (`sameSchema`, or the server throws when it starts). Its local name, its one description and its schema are one `SharedToolSpec` constant both products spread before their own `run`: `FILE_GET_TOOL`, `FILE_INFO_SET_TOOL`, `FILE_SAVE_TOOL`, `SELECTION_GET_TOOL`, `SELECTION_SET_TOOL`, `HISTORY_UNDO_TOOL`, `HISTORY_REDO_TOOL`, `VIEW_FIT_TOOL`, `VIEW_FIT_ELEMENTS_TOOL`, `VIEW_SNAPSHOT_TOOL` (with `VIEW_SNAPSHOT_MAX_SIDE`), `CLIPBOARD_PNG_COPY_TOOL`, `STICKER_STAMP_TOOL`; the 3D model ones are in `canvas/model3d/mcp/`. The factories build whole tools for both instead: `arrangeTools(options)` (`arrange.mcp.ts`: `align`, `distribute`, `tidy_up` and `scale.mcp.ts`'s `scale`) and `copyPropertiesTool(options)` (`style.mcp.ts`: `copy`), given only `resolve` (`ArrangeToolsOptions`), with descriptions that say "elements". The schema is the union of both products' arguments: one only a product honors says "Boards only." or "Designs only." and the other ignores it.
+
+## Variant choices
+
+`variantsTools` (`variants.mcp.ts`, an app group like `tabsTools`, on `VariantsAgentHost`) lets an
+agent ask the user to pick between variants it drew side by side: `variants_choose({ ids, labels?,
+question? })` (2 to 6 ids; labels default to A, B, C…, `variantLabels`) and `variants_choice()`.
+`createVariantChoices()` (`variants/`) holds the pending requests, one per tab at most, in a
+`Store` (`byTab`) the chooser bar and the tab badge read. `open(request)` waits up to
+`VARIANT_WAIT_MS` (25 s, under the transport's 30 s reply timeout and the 60 s most agent apps
+allow) and answers the pick, or `null` when the wait ends first: the tool then answers `pending`
+with `VARIANTS_WAIT_MESSAGE` ("end your turn"). A session is **locked** while it has a request
+pending, during the wait or after it (`isLocked`; the app refuses its other calls). A pick made
+during the wait is the call's answer and is never repeated; one made after it becomes a note
+(`variantNote`, `takeNote`) for the agent's next reply, and `last(session)` keeps answering it
+until the session's next request. `dropTab` dismisses a closed tab's request; `dropSession`
+forgets an ended session's.
