@@ -89,14 +89,14 @@ export function createAgentPresenceSource(
   };
 
   return {
+    // An agent shows once it calls a tool (`ensureJoined`): one that only connects, like a script
+    // that runs and quits, never does.
     connected: (session, client, context) => {
-      const key = presenceKey({ ...context, session });
-      clients.set(key, client?.name ?? null);
-      join(key, client?.name ?? null, context.userAgent);
+      clients.set(presenceKey({ ...context, session }), client?.name ?? null);
     },
-    // Messages before a session (`initialize` itself) are left to `connected`.
     seen: (context) => {
-      if (context.session) sink.patch(ensureJoined(context), {}, { lastSeen: Date.now() });
+      const key = presenceKey(context);
+      if (read(key)) sink.patch(key, {}, { lastSeen: Date.now() });
     },
     toolCall(tool, args, context) {
       const key = ensureJoined(context);

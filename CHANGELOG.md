@@ -7,6 +7,9 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### Improved
 
+- Agents that reach the app through scripts now show as one agent instead of a new one for every
+  script they run, and an agent appears only once it starts working, so the list of agents stays
+  short and the window stays responsive.
 - Claude Code and Claude Desktop can be connected in one click: when either is installed, its page
   in Connect an agent has an Add button that writes the setup into its settings for you, instead
   of you pasting it by hand.

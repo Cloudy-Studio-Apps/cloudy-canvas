@@ -7,6 +7,9 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Mejoras
 
+- Los agentes que llegan a la aplicación mediante scripts aparecen ahora como un solo agente en
+  lugar de uno nuevo por cada script que ejecutan, y un agente aparece solo cuando empieza a
+  trabajar, así la lista de agentes se mantiene corta y la ventana sigue respondiendo con fluidez.
 - Claude Code y Claude Desktop se conectan con un clic: si cualquiera de los dos está instalado, su
   página en Conectar un agente tiene un botón Añadir que escribe la configuración por ti, sin tener
   que pegarla a mano.
