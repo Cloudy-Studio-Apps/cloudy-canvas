@@ -13,3 +13,6 @@ What editors give agents ([app/mcp/](../../app/mcp/README.md#agents-and-tabs) re
   (`useAgentBoard`, `useAgentDesign`), registers the file under its tab (`useTabContext().tabId`)
   while its editor is mounted, removes it on unmount and marks it active while its tab is on
   screen (`useIsActiveTab`).
+- **`variantChoices`** (`variant-choices-instance.ts`) is the app's one `createVariantChoices()`
+  registry (see [canvas/mcp](../../canvas/mcp/README.md#variant-choices)): the agent host opens
+  requests on it, and the chooser bar and the title bar's badge read its `store`.

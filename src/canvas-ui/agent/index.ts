@@ -2,3 +2,4 @@
 export type * from "./agent-files.types";
 export { createAgentFiles } from "./agent-files";
 export { useAgentFile } from "./use-agent-file";
+export { variantChoices } from "./variant-choices-instance";

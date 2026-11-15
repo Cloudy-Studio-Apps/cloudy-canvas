@@ -40,7 +40,8 @@ export function useAgentServer(): void {
     void channel
       .listen(({ id, body, session, userAgent, ended, stream }) => {
         loadRuntime()
-          .then(async ({ agentObserver, agentServer, agentTabs, presence, toolLists }) => {
+          .then(async (runtime) => {
+            const { agentObserver, agentServer, agentTabs, presence, toolLists } = runtime;
             // Streams opening and closing expect no reply: they decide whether the session's tool
             // list is filtered.
             if (stream) {
@@ -55,6 +56,7 @@ export function useAgentServer(): void {
                 toolLists.ended(session);
                 presence.leave(session);
                 agentTabs.unbind(session);
+                runtime.variantChoices.dropSession(session);
               }
               return;
             }

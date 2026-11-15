@@ -1,4 +1,6 @@
 import type { McpObserver, McpServerDefinition } from "@shared/core";
+import { VARIANTS_WAIT_MESSAGE } from "@canvas";
+import { variantChoices } from "@canvas-ui";
 import { agentChannel } from "@platform";
 import { identifyAgent, setAgentToolCatalog } from "@shared/agent-server";
 import { useCollaboratorsStore } from "@shared/stores/collaborators-store";
@@ -23,6 +25,9 @@ import { createUndoNotes } from "./agent-undo-notes";
 
 // The agent menu lists the tools agents see.
 setAgentToolCatalog(agentToolCatalog);
+
+/** Re-exported for `use-agent-server.ts`, which loads this file lazily. */
+export { variantChoices };
 
 /** What the user undid or redid of each agent's work, for its next reply. */
 const undoNotes = createUndoNotes();
@@ -51,7 +56,13 @@ export const toolLists = createAgentToolLists({
   notify: (session, body) => agentChannel?.notify(session, body) ?? Promise.resolve(),
   productFor: (session) => agentListProductFor(agentTabs, session),
 });
-fileTabs.store.subscribe(() => toolLists.refresh());
+fileTabs.store.subscribe(() => {
+  toolLists.refresh();
+  // A closed tab's chooser is dismissed, so an agent waiting on it gets its answer.
+  for (const tabId of Object.keys(variantChoices.store.get().byTab)) {
+    if (!fileTabs.get(tabId)) variantChoices.dropTab(tabId);
+  }
+});
 
 /** Hears agents for their presence and, once they're identified, for their tool lists. */
 export const agentObserver: McpObserver = {
@@ -62,6 +73,9 @@ export const agentObserver: McpObserver = {
   seen: (context) => presence.seen?.(context),
   toolCall: (name, args, context) => presence.toolCall?.(name, args, context),
 };
+
+/** The one call an agent waiting for the user's pick may still make. */
+const VARIANTS_CHOICE_TOOL = "variants_choice";
 
 let server: McpServerDefinition | null = null;
 
@@ -87,7 +101,17 @@ export function agentServer(): McpServerDefinition {
     },
     productFor: (context) => agentProductFor(agentTabs, presenceKey(context)),
     listFor: (context) => toolLists.filtered(context.session),
-    notesFor: (context) => undoNotes.take(presenceKey(context)),
+    // A call the lock refuses takes no notes: they wait for the first call that runs.
+    refuse: (context, name) =>
+      name !== VARIANTS_CHOICE_TOOL && variantChoices.isLocked(presenceKey(context))
+        ? VARIANTS_WAIT_MESSAGE
+        : null,
+    notesFor: (context) => {
+      const key = presenceKey(context);
+      if (variantChoices.isLocked(key)) return [];
+      const note = variantChoices.takeNote(key);
+      return [...undoNotes.take(key), ...(note === null ? [] : [note])];
+    },
   });
   return server;
 }

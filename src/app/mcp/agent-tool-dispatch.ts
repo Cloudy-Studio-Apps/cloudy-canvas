@@ -23,10 +23,12 @@ export function toolProducts(tool: ProductTool): FileType[] {
  */
 export async function runAgentTool(
   tool: ProductTool,
-  { hostFor, prepare, productFor }: AgentServerOptions,
+  { hostFor, prepare, productFor, refuse }: AgentServerOptions,
   context: McpMessageContext,
   args: ToolArgs,
 ): Promise<unknown> {
+  const refusal = refuse?.(context, tool.name) ?? null;
+  if (refusal !== null) throw new Error(refusal);
   const end = await prepare?.(context);
   try {
     if (tool.app) return await tool.app.tool.run(hostFor(context), args);

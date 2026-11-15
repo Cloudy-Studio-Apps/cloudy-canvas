@@ -7,33 +7,30 @@ import {
   type CanvasDocument,
   type TabSource,
   type FilesAgentHost,
-  type TabsAgentHost,
 } from "@canvas";
-import type { AgentHost, OpenBoard } from "@board";
+import type { OpenBoard } from "@board";
 import { boardFiles } from "@board/ui";
-import type { DesignAgentHost, OpenDesign } from "@design";
+import type { OpenDesign } from "@design";
 import { designFiles } from "@design/ui";
 import { fontLibrary, readLocalFile, storage, writeExportFile } from "@platform";
 import { useRecentFilesStore } from "@shared/stores/recent-files-store";
-import { fileTabs } from "../tabs/file-tabs-instance";
 import { withWorkspace } from "./agent-call-host";
 import { openInAgentTab } from "./agent-open-tab";
 import { agentPlugins } from "./agent-plugins";
+import type { AgentCallHost } from "./agent-server-definition.types";
 import type { AgentTabs } from "./agent-tab-binding.types";
-import { TAB_CLOSED, tabAgentFile } from "./agent-tab-files";
+import { sessionTab } from "./session-tab";
 import { findFilesByName, searchedPlaces } from "./tabs/agent-file-lookup";
 import { resolveNewFile } from "./tabs/agent-new-file";
 import { tabsHostFor } from "./tabs/tabs-host";
+import { variantsHostFor } from "./variants/variants-host";
 
 /**
  * What agent tools reach outside the engine, for one collaborator: the board or design of its
  * tab (in its own workspace, see `withWorkspace`), recent files, opening files in background
  * tabs, plugins, reading and writing files and the fonts.
  */
-export function agentHostFor(
-  collaboratorId: string,
-  tabs: AgentTabs,
-): AgentHost & DesignAgentHost & TabsAgentHost & FilesAgentHost {
+export function agentHostFor(collaboratorId: string, tabs: AgentTabs): AgentCallHost {
   const board = (file: OpenBoard) => withWorkspace(file, collaboratorId);
   const design = (file: OpenDesign) => withWorkspace(file, collaboratorId);
   const openInTab = (source: TabSource) => openInAgentTab(tabs, collaboratorId, source);
@@ -117,29 +114,12 @@ export function agentHostFor(
     openFile,
     newFile,
     ...tabsHostFor(collaboratorId, tabs),
+    ...variantsHostFor(collaboratorId, tabs),
     plugins: agentPlugins,
     writeFile: writeExportFile,
     readFile: readLocalFile,
     fontFamilies: () => fontLibrary.families(),
   };
-}
-
-/**
- * The tab the session works in. Unbound, it binds to the active tab when that has a file (else
- * `null`: Home). Bound to a tab closed since, it's unbound and this throws, once.
- */
-function sessionTab(tabs: AgentTabs, session: string): string | null {
-  const bound = tabs.tabFor(session);
-  if (bound !== null) {
-    if (fileTabs.get(bound)) return bound;
-    tabs.unbind(session);
-    throw new Error(TAB_CLOSED);
-  }
-  const { activeId } = fileTabs.store.get();
-  if (activeId === null || !tabAgentFile(activeId)) return null;
-  tabs.bind(session, activeId);
-  fileTabs.noteAgentCall(activeId);
-  return activeId;
 }
 
 function mapOpen<F, T>(file: F | null, map: (file: F) => T): T | null {

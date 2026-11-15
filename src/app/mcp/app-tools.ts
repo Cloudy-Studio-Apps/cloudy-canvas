@@ -3,13 +3,19 @@ import {
   filesTools,
   pluginsTools,
   tabsTools,
+  variantsTools,
   type CollectedMcpTool,
   type McpToolGroup,
 } from "@canvas";
 import type { AgentCallHost } from "./agent-server-definition.types";
 
 /** The shared groups whose tools need no open file, whichever product. */
-const APP_GROUPS: McpToolGroup<AgentCallHost, unknown>[] = [tabsTools, filesTools, pluginsTools];
+const APP_GROUPS: McpToolGroup<AgentCallHost, unknown>[] = [
+  tabsTools,
+  filesTools,
+  pluginsTools,
+  variantsTools,
+];
 
 /** Their topics, which no plugin id may take. */
 export const APP_PREFIXES: string[] = APP_GROUPS.flatMap((group) =>

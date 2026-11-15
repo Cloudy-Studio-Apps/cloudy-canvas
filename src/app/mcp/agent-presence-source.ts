@@ -1,4 +1,4 @@
-import type { ActorWorkspace } from "@canvas";
+import { VARIANTS_WAIT_MESSAGE, type ActorWorkspace } from "@canvas";
 import { AGENT_SOURCE, type CollaboratorState, type McpMessageContext } from "@shared/core";
 import { agentColor, agentName, identifyAgent } from "@shared/agent-server";
 import { COLLABORATOR_GONE_MS } from "@shared/stores/collaborators-store";
@@ -163,7 +163,8 @@ export function createAgentPresenceSource(
           running: Math.max(0, (read(key)?.running ?? 1) - 1),
           lastSeen: Date.now(),
         });
-        if (!ok) {
+        // A call refused while the agent waits for the user's pick isn't news to the user.
+        if (!ok && error !== VARIANTS_WAIT_MESSAGE) {
           const name = read(key)?.name ?? "An agent";
           notifyError(`${name}: ${agentCallLabel(tool, "running").toLowerCase()} failed`, error);
         }
