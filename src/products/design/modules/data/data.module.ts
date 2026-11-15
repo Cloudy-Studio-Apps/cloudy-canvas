@@ -18,6 +18,8 @@ import { CSV_FORMAT, JSON_FORMAT, XLSX_FORMAT } from "./formats";
 import { FILE_SOURCE, HTTP_SOURCE } from "./sources";
 import { forgetRemovedSources } from "./model";
 import { everyRowCopy, syncData } from "./sync";
+import { copySourcesForSplit } from "./split";
+import { pageSplitSteps } from "../pages/ui";
 import { readAroundFrom } from "./repeat/data-around";
 import { dataCopyTag, prepareDataCopies, pruneData } from "./repeat";
 import { BOUND_TEXT_TEMPLATE } from "./bindings";
@@ -58,6 +60,7 @@ export const dataModule = defineModule({
     host.contribute(designCanvas.onRemove, pruneData);
     host.contribute(designCanvas.prepareCopies, prepareDataCopies);
     host.contribute(designCanvas.afterEdit, (doc, change, kinds) => syncData(doc, change, kinds));
+    host.contribute(pageSplitSteps, { id: "data", order: 30, copy: copySourcesForSplit });
     // Exports draw every row: a copy of the design makes the copies past the design caps.
     host.contribute(designCanvas.exportCopies, everyRowCopy);
     // A bound text is edited as its template; the sync then writes what it shows.
