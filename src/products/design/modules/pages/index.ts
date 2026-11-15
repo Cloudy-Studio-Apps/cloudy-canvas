@@ -9,3 +9,4 @@ export { allPagesOf, pagesOf } from "./pages-of";
 export { guidesTools } from "./mcp/guides.mcp";
 export { pagesTools } from "./mcp/pages.mcp";
 export { countedUse } from "./counted-use";
+export { copyPageInto, copyUsedAssets } from "./split";
