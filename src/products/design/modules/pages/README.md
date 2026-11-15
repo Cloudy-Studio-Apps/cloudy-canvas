@@ -26,8 +26,11 @@ returning `false` cancels and nothing is written), then every `copy(ctx, prepare
 into `ctx.target` what its module owns. A step checks itself whether the new file needs anything
 from it and otherwise does nothing; the pages module never knows the others. The built-ins:
 variables (10, the variables and styles: the file's own in a project, all of them outside one),
-design system (20, its hidden page when variables were copied), data (30, the data sources when the
-page has bound layers). Last, `copyUsedAssets` copies the pictures the result uses, and
+design system (20, its hidden page when variables were copied), catalog (25, the page's brochures,
+and the data sources when one repeats rows), data (30, the data sources when the page has bound
+layers), prototype (40, the page's flows). Records that belong to a page by a `page` field
+(brochures, flows) aren't layers: without their step the removal's `onRemove` hooks would delete
+them from the design and the new file wouldn't have them. Last, `copyUsedAssets` copies the pictures the result uses, and
 `saveNewCanvasFile` writes it: next to the current file in a project, else where the Save dialog
 says. Only once the file is written does the page leave the design (`DESIGN_PAGES.remove`, one undo
 step; undoing it keeps the new file), and the new file opens in a tab. A failure is toasted and

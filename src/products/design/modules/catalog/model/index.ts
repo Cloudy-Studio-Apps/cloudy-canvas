@@ -23,6 +23,7 @@ export { isPageFrame } from "./page-frame";
 export { pagePictures } from "./page-pictures";
 export { brochurePageSize, fitsPage, sideWidth, spanOf } from "./page-span";
 export { mmToUnits, paperSize, unitsToMm } from "./paper-size";
+export { copyBrochuresForSplit } from "./copy-brochures-for-split";
 export { pruneBrochure } from "./prune-brochure";
 export { splitLegacyBrochure } from "./split-legacy-brochure";
 export { newSlot } from "./slot-edits";

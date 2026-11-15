@@ -17,6 +17,7 @@ export { isFlow } from "./is-flow";
 export { defaultFlowDevice, firstDevice, PROTOTYPE_DEVICES } from "./devices";
 export { isScreen, screenOf, screensOf } from "./screens";
 export { DESIGN_PROTOTYPE, DesignPrototype } from "./design-prototype";
+export { copyFlowsForSplit } from "./copy-flows-for-split";
 export { prunePrototype } from "./prune-prototype";
 export type * from "./player-session.types";
 export type * from "./play-target.types";

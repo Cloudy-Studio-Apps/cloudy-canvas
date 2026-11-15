@@ -2,6 +2,8 @@ import { defineModule } from "@shared/core";
 import { designEditor, registerDesignMode } from "@design/ui/modules";
 import { designCanvas, designMcpTools } from "../../design-points";
 import { prototypeTools } from "./mcp";
+import { copyFlowsForSplit } from "./model";
+import { pageSplitSteps } from "../pages/ui";
 import { registerPrototypeCanvas } from "./prototype.canvas";
 import { PROTOTYPE_COMMANDS, PROTOTYPE_MODE_ID } from "./prototype.constants";
 import { prototypeMode } from "./prototype.mode";
@@ -23,6 +25,11 @@ export const prototypeModule = defineModule({
   exports: { ...prototypeApi, ...prototypeUi },
   register(host) {
     registerPrototypeCanvas(host);
+    host.contribute(pageSplitSteps, {
+      id: "prototype",
+      order: 40,
+      copy: ({ source, target, page }) => copyFlowsForSplit(source, target, page.id),
+    });
     registerDesignMode(host, prototypeMode);
     // Shift+E enters and leaves the mode, from any mode.
     host.contribute(designCanvas.hostCommands, {

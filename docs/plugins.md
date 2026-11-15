@@ -422,7 +422,7 @@ plugin whose data a page can depend on adds a step the same way. A step checks f
 the new file needs anything from it, and does nothing otherwise.
 
 A step is `{ id, order?, before?(ctx), copy?(ctx, prepared) }`. Steps run lowest `order` first (unset
-is 100; the built-ins are variables 10, design system 20, data 30): every `before` first, before
+is 100; the built-ins are variables 10, design system 20, catalog 25, data 30, prototype 40): every `before` first, before
 anything is written, then every `copy`. `before` may ask the user with `ctx.dialog(render)`, which
 shows what `render(done)` returns over the editor until `done(value)` runs and resolves with that
 value (`null` when cancelled); what `before` returns reaches `copy` as `prepared`, and `false`
@@ -459,10 +459,10 @@ export default function activate(api) {
               </DialogContent>
             </Dialog>
           ));
-          return keep === null ? false : keep; // closing the dialog cancels the split
+          return keep === null ? false : { keep }; // closing the dialog cancels the split
         },
-        copy({ source, target, nodes }, keep) {
-          if (!keep) return;
+        copy({ source, target, nodes }, prepared) {
+          if (!prepared?.keep) return;
           const ids = new Set(nodes.map((node) => node.noteId).filter(Boolean));
           target.addAllUntracked(source.all().filter((el) => el.type === NOTE && ids.has(el.id)));
         },

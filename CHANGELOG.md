@@ -9,7 +9,7 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 - Split a page into its own file: right-click a page in the Pages list, or open its menu, and
   choose Split into new file. The page moves to a new design file with the variables, styles,
-  design system, pictures and data it needs, and in a project the new file is saved next to the
+  design system, pictures, data, brochures and prototype flows it needs, and in a project the new file is saved next to the
   current one.
 
 ### Improved

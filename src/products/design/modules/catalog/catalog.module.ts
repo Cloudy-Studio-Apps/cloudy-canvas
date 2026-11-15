@@ -6,7 +6,8 @@ import { catalogMode } from "./catalog.mode";
 import { t } from "./catalog.i18n";
 import { catalogTools } from "./mcp";
 import { CATALOG_COMMANDS, CATALOG_MODE_ID } from "./mode";
-import { CATALOG_TEXT_TEMPLATE, readPageRef } from "./model";
+import { CATALOG_TEXT_TEMPLATE, copyBrochuresForSplit, readPageRef } from "./model";
+import { pageSplitSteps } from "../pages/ui";
 import { registerCatalogCanvas } from "./catalog.canvas";
 import { pageItemTag, pageItemTemplate } from "./model/page-items/page-item-fields";
 import { FromMasterBadge } from "./ui/design-mode/from-master-badge";
@@ -42,6 +43,11 @@ export const catalogModule = defineModule({
   exports: { ...catalogApi, ...catalogUi },
   register(host) {
     registerCatalogCanvas(host);
+    host.contribute(pageSplitSteps, {
+      id: "catalog",
+      order: 25,
+      copy: ({ source, target, page }) => copyBrochuresForSplit(source, target, page.id),
+    });
     registerDesignMode(host, catalogMode);
     // In the Design mode they're marked, and say where they come from.
     host.contribute(designEditor.layerBadges, {
