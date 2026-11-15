@@ -11,6 +11,7 @@ export { installBrowserGuard } from "./browser-guard";
 export { clipboard } from "./clipboard";
 export { confirmDelete } from "./confirm-delete";
 export { openCanvasFileDialog, saveCanvasFileDialog } from "./file-dialog";
+export { syncFile } from "./sync-file";
 export { fileOpenRequests } from "./file-open-requests";
 export { http } from "./http";
 export { openExternal } from "./open-external";

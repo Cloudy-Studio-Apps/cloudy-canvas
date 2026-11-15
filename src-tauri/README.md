@@ -8,6 +8,9 @@ transports; business logic lives in TypeScript.
 - `set_hidden(path)` (`src/hidden.rs`): sets the hidden attribute on a file or folder on Windows (runs
   `attrib +h`), does nothing elsewhere. Used for a project's `.cloudy` folder
   (`platform/tauri-project-fs.ts`).
+- `sync_file(path)` (`src/sync_file.rs`): waits until a written file is on the disk (`sync_all`,
+  and on Unix its folder too, so a new file's name survives a power cut). `syncFile` in
+  `platform/sync-file.ts`; a page split waits for it before removing the page from its design.
 
 ## File access
 

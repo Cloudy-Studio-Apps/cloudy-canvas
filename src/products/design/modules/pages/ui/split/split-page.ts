@@ -11,7 +11,7 @@ import type { SplitPageInput } from "./split-page.types";
  * Moves a page into a new file: builds it in memory (the page, its layers, the project link in a
  * project), runs every step's `before` (one returning `false` cancels), then every `copy`, copies
  * the pictures the result uses and writes it. The page leaves the design (one undo step) only once
- * the file is written. Resolves the new file, or `null` when a step or the Save dialog cancelled.
+ * the file is written and on the disk, so a crash or power cut never loses it (at worst it's in both). Resolves the new file, or `null` when a step or the Save dialog cancelled.
  */
 export async function splitPage(input: SplitPageInput): Promise<FileInfo | null> {
   const { engine, pageId, inProject, folder, dialog } = input;

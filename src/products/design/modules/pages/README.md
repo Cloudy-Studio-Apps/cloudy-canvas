@@ -32,7 +32,9 @@ layers), prototype (40, the page's flows). Records that belong to a page by a `p
 (brochures, flows) aren't layers: without their step the removal's `onRemove` hooks would delete
 them from the design and the new file wouldn't have them. Last, `copyUsedAssets` copies the pictures the result uses, and
 `saveNewCanvasFile` writes it: next to the current file in a project, else where the Save dialog
-says. Only once the file is written does the page leave the design (`DESIGN_PAGES.remove`, one undo
+says. Only once the file is written and flushed to the disk does the page leave the design (`DESIGN_PAGES.remove`, one undo
 step; undoing it keeps the new file), and the new file opens in a tab. A failure is toasted and
-leaves the design as it was. Plugins contribute steps the same way (`docs/plugins.md`, Splitting a
+leaves the design as it was. So a crash or a power cut at any moment loses nothing: before the
+flush the design still has the page (the new file, written atomically, is whole or absent), after it
+the new file is on the disk; at worst the page is in both. Plugins contribute steps the same way (`docs/plugins.md`, Splitting a
 page).

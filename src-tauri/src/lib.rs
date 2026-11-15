@@ -8,6 +8,7 @@ mod mac_menu;
 mod mcp;
 mod open_files;
 mod share;
+mod sync_file;
 mod system_fonts;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -61,6 +62,7 @@ pub fn run() {
             system_fonts::system_fonts,
             system_fonts::system_font_data,
             hidden::set_hidden,
+            sync_file::sync_file,
             leave_app
         ])
         .setup(|app| {
