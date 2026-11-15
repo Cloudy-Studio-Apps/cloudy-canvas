@@ -8,6 +8,7 @@ import {
   useEngineState,
   ZoomMenu,
 } from "@canvas-ui";
+import { Deferred, PanelSkeleton } from "@shared/ui/kit";
 import { DESIGN_LAYOUT } from "../../design-layout";
 import { designEditor } from "../../modules";
 import { useDesignPanelStore } from "../../stores/design-panel-store";
@@ -53,8 +54,10 @@ export function PropertiesPanel() {
         </div>
       ) : ModeSidebar ? (
         <div className="min-h-0 flex-1 overflow-y-auto pb-75">
-          <ModeSidebar />
-          {panel.keepSections && <PropertySections only={panel.keepSections} />}
+          <Deferred key={mode} fallback={<PanelSkeleton />}>
+            <ModeSidebar />
+            {panel.keepSections && <PropertySections only={panel.keepSections} />}
+          </Deferred>
         </div>
       ) : (
         <>

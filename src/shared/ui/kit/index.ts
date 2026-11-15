@@ -7,6 +7,7 @@ export * from "./checkbox-field";
 export * from "./choice-cards";
 export * from "./confirm-dialog";
 export * from "./confetti";
+export * from "./deferred";
 export * from "./empty-state";
 export * from "./field";
 export * from "./field-box";

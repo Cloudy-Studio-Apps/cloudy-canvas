@@ -2,6 +2,7 @@ import { useEffect, useRef, type ComponentType } from "react";
 
 import type { CanvasMode } from "@canvas";
 import type { ModuleHost } from "@shared/core";
+import { Deferred } from "@shared/ui/kit";
 import { useEngine, useEngineState } from "../../engine-context";
 import { ModeToolbar } from "../mode-toolbar";
 import type { EditorModeDefinition, ModePoints, ModeToolbarSpec } from "./editor-mode.types";
@@ -117,6 +118,11 @@ function toolbarOf(
 function whileOn(id: string, Overlay: ComponentType): ComponentType {
   return function ModeOverlay() {
     const on = useEngineState((state) => state.mode === id);
-    return on ? <Overlay /> : null;
+    // A frame after the switch, so the mode shows at once.
+    return on ? (
+      <Deferred>
+        <Overlay />
+      </Deferred>
+    ) : null;
   };
 }

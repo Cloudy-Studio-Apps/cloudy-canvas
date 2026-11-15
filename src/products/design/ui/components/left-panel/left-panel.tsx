@@ -2,6 +2,7 @@ import { ChevronDown } from "lucide-react";
 
 import { DocumentInfoPopover, SaveIndicator, useCanvasFile } from "@canvas-ui";
 import { Badge } from "@shared/ui/components/ui/badge";
+import { Deferred, PanelSkeleton } from "@shared/ui/kit";
 import { DESIGN_LAYOUT } from "../../design-layout";
 import { ProjectCrumb } from "./project-crumb";
 import { useLeftTabs } from "./use-left-tabs";
@@ -40,7 +41,11 @@ export function LeftPanel() {
           <Badge variant="design">{t("leftPanel.design")}</Badge>
         </div>
       </header>
-      {tab && <tab.component />}
+      {tab && (
+        <Deferred key={tab.id} fallback={<PanelSkeleton />}>
+          <tab.component />
+        </Deferred>
+      )}
     </aside>
   );
 }
