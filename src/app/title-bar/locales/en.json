@@ -18,5 +18,6 @@
   "openFile": "Open file…",
   "theme": "Theme",
   "matchSystem": "Match system",
-  "knocking": "Someone is asking to join"
+  "knocking": "Someone is asking to join",
+  "variantsWaiting": "An agent is waiting for you to pick a variant"
 }

@@ -16,3 +16,12 @@ What editors give agents ([app/mcp/](../../app/mcp/README.md#agents-and-tabs) re
 - **`variantChoices`** (`variant-choices-instance.ts`) is the app's one `createVariantChoices()`
   registry (see [canvas/mcp](../../canvas/mcp/README.md#variant-choices)): the agent host opens
   requests on it, and the chooser bar and the title bar's badge read its `store`.
+- **`VariantChooserBar`** (mounted by `BoardChrome` and `DesignChrome`, also with the UI hidden)
+  shows the tab's pending request through **`useVariantChooser()`**: the agent (its avatar and
+  colour), its question, "B · 2 of 3", previous/next (`engine.zoomToElement`), "Compare all"
+  (`engine.zoomToElements`), a note (`CommitInput`), "Keep this", "Keep all" and close. Only the
+  variants still in the document count (re-read on every document change). The user's view moves
+  only on these buttons and once, the first time the request is shown on its page in the active tab
+  (fit all). "Keep this" deletes the other variants with `engine.deleteElements` (one step in the
+  user's history: the user chose) and resolves the request; on another page the bar offers only
+  "Back to variants" (`engine.setScope`), so nothing is deleted on a page the user isn't looking at.

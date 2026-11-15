@@ -11,6 +11,7 @@ import {
   useCanvasFile,
   useCopyAs,
   useUiHidden,
+  VariantChooserBar,
 } from "@canvas-ui";
 import { LeftPanel } from "./components/left-panel";
 import { PropertiesPanel, ShowPropertiesButton } from "./components/properties-panel";
@@ -59,6 +60,7 @@ export function DesignChrome() {
         {!hidden && <Rulers />}
         <ScopeLoadingBar />
         <CollaboratorLayer />
+        <VariantChooserBar />
         <CanvasContextMenu />
         <ModuleSession />
         {!hidden && (

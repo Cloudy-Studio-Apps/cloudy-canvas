@@ -8,6 +8,7 @@ import {
   useCanvasFile,
   useCopyAs,
   useUiHidden,
+  VariantChooserBar,
   ZoomControls,
 } from "@canvas-ui";
 
@@ -30,6 +31,7 @@ export function BoardChrome() {
   return (
     <div className="pointer-events-none absolute inset-0">
       <CollaboratorLayer />
+      <VariantChooserBar />
       <LiveSessionLayer />
       <CanvasContextMenu />
       <ExportDialog name={name} framePagesLabel={t("export.pagePerSection")} />

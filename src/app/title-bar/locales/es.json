@@ -18,5 +18,6 @@
   "openFile": "Abrir archivo…",
   "theme": "Tema",
   "matchSystem": "Igual que el sistema",
-  "knocking": "Alguien pide unirse"
+  "knocking": "Alguien pide unirse",
+  "variantsWaiting": "Un agente espera que elijas una variante"
 }

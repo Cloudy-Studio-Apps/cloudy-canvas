@@ -20,5 +20,17 @@
     "loading": "Copiando como SVG…",
     "success": "Copiado como SVG",
     "error": "No se pudo copiar como SVG"
+  },
+  "variants": {
+    "pick": "Elige una variante",
+    "position": "{label} · {index} de {count}",
+    "previous": "Variante anterior",
+    "next": "Variante siguiente",
+    "compareAll": "Comparar todas",
+    "notePlaceholder": "Añade una nota para el agente",
+    "keepThis": "Quedarme con esta",
+    "keepAll": "Quedarme con todas",
+    "back": "Volver a las variantes",
+    "close": "Cerrar sin elegir"
   }
 }

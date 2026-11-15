@@ -7,6 +7,9 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Novedades
 
+- Elige entre las opciones de un agente sin salir de la app: cuando le pides variantes, aparecen
+  una al lado de otra con una barra para recorrerlas y quedarte con una o con todas, y el agente
+  sigue con tu elección. Puedes añadirle una nota, como qué cambiar en la que elegiste.
 - Separa una página en su propio archivo: haz clic derecho en una página de la lista de Páginas,
   o abre su menú, y elige Separar en un archivo nuevo. La página pasa a un archivo de diseño nuevo
   con las variables, estilos, sistema de diseño, imágenes, datos, folletos y flujos de prototipo que necesita, y en un proyecto el

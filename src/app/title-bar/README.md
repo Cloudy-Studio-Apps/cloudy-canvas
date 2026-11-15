@@ -21,6 +21,9 @@ _How it works. The rules are in the root [CLAUDE.md](../../../CLAUDE.md)._
   middle-click or the close button calls `closeTab`, never `fileTabs.close` directly. Known a11y
   gap, left for later: the close button sits inside the `role="tab"` element (an interactive
   control nested in another).
+- **`TabVariantsBadge`**: on a tab where an agent waits for the user to pick one of its variants
+  (`variantChoices.pending(tab.id)`, see [canvas-ui/agent](../../canvas-ui/agent/README.md)), so a
+  background tab that waits shows it.
 - **`TabKnockBadge`**: on the hosting tab while someone asks to join its session (`sharingState.knocks()`;
   the cards themselves are the app's, `HostedKnocksHost` in `app/tabs/`).
 - **`TabAvatars`**: the collaborators whose state's `fileId` is the tab's (`CollaboratorAvatar`;
