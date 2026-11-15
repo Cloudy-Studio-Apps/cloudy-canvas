@@ -7,9 +7,15 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ### Improved
 
+- Hold Shift while dragging to keep the move straight: the selection moves only horizontally or
+  only vertically, along whichever way you drag further.
 - Exports no longer add a margin around what you export, so the file matches the selection exactly,
   the same as exports made by an agent. The Export window has a Margin field for when you want one,
   and a preview of the first element shows how the file will look before you save it.
+
+### Fixed
+
+- The Windows installer now shows the Cloudy Canvas icon instead of a generic installer icon.
 
 ## 0.9.0 - 2026-11-09
 

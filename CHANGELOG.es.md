@@ -7,10 +7,17 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ### Mejoras
 
+- Mantén Shift mientras arrastras para mover en línea recta: la selección se mueve solo en
+  horizontal o solo en vertical, según hacia dónde arrastres más.
 - Las exportaciones ya no añaden un margen alrededor de lo que exportas, así que el archivo coincide
   exactamente con la selección, igual que las exportaciones hechas por un agente. La ventana Exportar
   tiene un campo Margen para cuando quieras uno, y una vista previa del primer elemento muestra cómo
   quedará el archivo antes de guardarlo.
+
+### Correcciones
+
+- El instalador de Windows ahora muestra el icono de Cloudy Canvas en lugar de un icono genérico
+  de instalador.
 
 ## 0.9.0 - 2026-11-09
 

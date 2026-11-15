@@ -135,10 +135,14 @@ export class SelectTool implements Tool {
 
     let dx = p.world.x - g.start.world.x;
     let dy = p.world.y - g.start.world.y;
+    // Shift keeps the move on the axis the pointer has gone furthest along.
+    const lock = p.shiftKey ? (Math.abs(dx) >= Math.abs(dy) ? "y" : "x") : null;
+    if (lock === "x") dx = 0;
+    if (lock === "y") dy = 0;
     if (g.box && g.snapper) {
       const snap = g.snapper.move({ ...g.box, x: g.box.x + dx, y: g.box.y + dy }, p);
-      dx += snap.x;
-      dy += snap.y;
+      if (lock !== "x") dx += snap.x;
+      if (lock !== "y") dy += snap.y;
     }
     const patches = new Map<string, ElementPatch>();
     for (const [id, origin] of g.origins)
