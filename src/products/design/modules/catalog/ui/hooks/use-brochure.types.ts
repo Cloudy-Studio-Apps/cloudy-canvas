@@ -35,3 +35,10 @@ export interface BrochureView {
   /** Changes with every document change (for effects that re-read the brochure). */
   version: number;
 }
+
+/** The last `BrochureView` read, with the scope and version it was read at. */
+export interface CachedBrochureView {
+  scope: string | null;
+  version: number;
+  view: BrochureView;
+}

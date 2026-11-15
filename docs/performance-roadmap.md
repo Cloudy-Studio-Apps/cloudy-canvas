@@ -37,6 +37,20 @@ What could make the canvas cheaper as files, features and live sessions grow, wi
   - **Trigger:** a brochure with repeats and many pages made (or an export's scratch copy) makes typing or dragging on a template page visibly slow.
   - **Risk:** small: a stale expansion would number or copy from rows that changed, so the memo key must include every source snapshot and the record.
 
+## Entering the Catalog mode on a large design
+
+Switching a large design (5,575 layers, a 28-page brochure) from the Design mode to the Catalog mode froze the screen for a moment. What runs on entry, most suspect first, and what to do about each. Profile the switch (dev tools, Performance) to see which one is left.
+
+- [x] **A. One brochure read for the whole UI.** `useBrochure` was called by about 44 components, each with its own `useMemo`, so every document change (and the entry, and the arrange that follows it) ran `brochure.pages()`, `bookLayout`, `pageNumbers` and `printedLabels` once per component. They now share one read per scope and version (`use-brochure.ts`).
+- [ ] **B. Dim less often.** `catalogFaded` builds a children map of the whole document and walks it (`withDescendants`) on every `refreshScene`, not only on the switch. Memoize it on the brochure's printed and master frames and the scene's element set, so a move doesn't redo it.
+  - **Trigger:** A alone doesn't make the switch smooth, or edits in the Catalog mode feel slow.
+- [ ] **C. The canvas first, the panels a frame later.** Mount the sidebar and the Brochure tab in a transition (`startTransition`/`useDeferredValue`) with a skeleton, so the canvas switches at once. Hides what's left after A and B, doesn't remove it.
+  - **Trigger:** the switch still shows a pause after A and B.
+- [ ] **D. Skeletons for thumbnails only.** The page thumbnails already draw one at a time when idle; a placeholder box until each is drawn is enough. Loading the canvas's elements asynchronously doesn't fit: they're already drawn in the Design mode, the Catalog mode only dims them.
+- [ ] **E. Off the main thread.** Each thumbnail is one long render, and the print checks (`checkBrochure`) read `doc.all()` and picture files. Move them to a worker / `OffscreenCanvas`.
+  - **Trigger:** a profile shows thumbnails or checks as the long tasks after the switch. Large work: last.
+- [ ] **Arrange on entry.** `useArrangeOnEnter` writes to the document 150 ms after the switch (frames glide), so everything that follows the version runs again. Skip the write when nothing would move.
+
 ## Worth it with heavy collaboration or agents
 
 - [ ] **Deferred redraws for off-screen views.** A document change redraws every changed view (`handleDocumentChange` → `renderer.syncElements` → `kind.draw`), seen or not. A view that's culled and whose new bounds stay out of view could keep the change pending and draw it when it shows (`cull` flushes it before `app.render()`). The same pending state would cover `redrawImages` and `refreshText`.

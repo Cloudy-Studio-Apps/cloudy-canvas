@@ -9,6 +9,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 - Hold Shift while dragging to keep the move straight: the selection moves only horizontally or
   only vertically, along whichever way you drag further.
+- Switching a large design to the Catalog mode is faster: the brochure's pages are worked out once
+  for the whole window instead of once for each panel that shows them.
 - Exports no longer add a margin around what you export, so the file matches the selection exactly,
   the same as exports made by an agent. The Export window has a Margin field for when you want one,
   and a preview of the first element shows how the file will look before you save it.

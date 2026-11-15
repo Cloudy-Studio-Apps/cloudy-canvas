@@ -9,6 +9,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 - Mantén Shift mientras arrastras para mover en línea recta: la selección se mueve solo en
   horizontal o solo en vertical, según hacia dónde arrastres más.
+- Cambiar un diseño grande al modo Catálogo es más rápido: las páginas del folleto se calculan una
+  sola vez para toda la ventana en lugar de una vez por cada panel que las muestra.
 - Las exportaciones ya no añaden un margen alrededor de lo que exportas, así que el archivo coincide
   exactamente con la selección, igual que las exportaciones hechas por un agente. La ventana Exportar
   tiene un campo Margen para cuando quieras uno, y una vista previa del primer elemento muestra cómo
