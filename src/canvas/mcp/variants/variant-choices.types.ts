@@ -30,8 +30,11 @@ export interface VariantChoicesSnapshot {
  */
 export interface VariantChoices {
   readonly store: Store<VariantChoicesSnapshot>;
-  /** Shows the request and waits for the pick; `null` when the wait ended first (still pending). */
-  open(request: VariantRequest): Promise<VariantPick | null>;
+  /**
+   * Shows the request and waits for the pick (`waitMs`, else the registry's); `null` when the
+   * wait ended first (still pending).
+   */
+  open(request: VariantRequest, waitMs?: number): Promise<VariantPick | null>;
   pending(tabId: string): VariantRequest | null;
   /** The user's pick for the tab's request; nothing without one. */
   resolve(tabId: string, pick: VariantPick): void;

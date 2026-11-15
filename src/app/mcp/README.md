@@ -107,7 +107,9 @@ An agent asks the user to pick between variants it drew side by side with `varia
   call does; no file throws `NO_FILE_OPEN`), each id an element of the agent's page
   (`workspace.getElement`) and top-level (`engine.rootOf(id) === id`), then
   `variantChoices.open(…)` (the app's one registry, from `@canvas-ui`, which the chooser bar and the
-  tab badge read). The call answers the pick, or `pending` after 25 s.
+  tab badge read). The call answers the pick, or `pending` once 25 s have passed since the call began
+  (`runAgentTool` makes the host before `prepare`, so readying the tab counts and the call always
+  answers inside the transport's 30 s; at least 1 s is left to wait).
 - **The lock**: `AgentServerOptions.refuse(context, toolName)`, checked first in `runAgentTool`
   (before `prepare`, so a refused call never pins the tab), refuses every call of a session with a
   request pending except `variants_choice`, with "end your turn". While locked `notesFor` gives

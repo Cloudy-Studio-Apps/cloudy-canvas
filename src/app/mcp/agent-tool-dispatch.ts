@@ -29,9 +29,11 @@ export async function runAgentTool(
 ): Promise<unknown> {
   const refusal = refuse?.(context, tool.name) ?? null;
   if (refusal !== null) throw new Error(refusal);
+  // Made before `prepare`, so a host can tell how long the call has run (variants_choose's wait).
+  const host = hostFor(context);
   const end = await prepare?.(context);
   try {
-    if (tool.app) return await tool.app.tool.run(hostFor(context), args);
+    if (tool.app) return await tool.app.tool.run(host, args);
     const product = productFor(context);
     if (product === null) throw new Error(NO_FILE_OPEN);
     const implementation = tool[product];
@@ -43,7 +45,7 @@ export async function runAgentTool(
         `This tool works on ${products}; your tab holds a ${product}. Use tabs_switch or file_open.`,
       );
     }
-    return await implementation.tool.run(hostFor(context), args);
+    return await implementation.tool.run(host, args);
   } finally {
     end?.();
   }

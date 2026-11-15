@@ -44,7 +44,7 @@ export function createVariantChoices(options: VariantChoicesOptions = {}): Varia
 
   return {
     store,
-    open(request) {
+    open(request, wait = waitMs) {
       const taken = store.get().byTab[request.tabId];
       if (taken) {
         throw new Error(
@@ -63,7 +63,7 @@ export function createVariantChoices(options: VariantChoicesOptions = {}): Varia
         const timer = setTimeout(() => {
           waits.delete(request.tabId);
           done(null);
-        }, waitMs);
+        }, wait);
         waits.set(request.tabId, (pick) => {
           clearTimeout(timer);
           done(pick);

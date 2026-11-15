@@ -114,7 +114,7 @@ export function agentHostFor(collaboratorId: string, tabs: AgentTabs): AgentCall
     openFile,
     newFile,
     ...tabsHostFor(collaboratorId, tabs),
-    ...variantsHostFor(collaboratorId, tabs),
+    ...variantsHostFor(collaboratorId, tabs, Date.now()),
     plugins: agentPlugins,
     writeFile: writeExportFile,
     readFile: readLocalFile,

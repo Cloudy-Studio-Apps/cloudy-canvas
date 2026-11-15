@@ -24,21 +24,24 @@ export function useVariantChooser(): VariantChooser | null {
   const [, changed] = useReducer((count: number) => count + 1, 0);
   const pending = request !== null;
   useEffect(() => (pending ? engine.doc.observe(changed) : undefined), [engine, pending]);
-  const [index, setIndex] = useState(0);
+  // The variant on screen, by id, so deleting another one never moves the choice.
+  const [chosen, setChosen] = useState<string | null>(null);
   const [note, setNote] = useState("");
   const shown = useRef<typeof request>(null);
 
-  const present = request ? request.ids.filter((id) => engine.doc.get(id) !== undefined) : [];
+  // Only the variants still on the page on screen (the scene's), so one moved away is never deleted.
+  const present = request ? request.ids.filter((id) => engine.getElement(id) !== undefined) : [];
   const onPage = request !== null && scope === request.scope;
-  const current = present.length > 0 ? mod(index, present.length) : 0;
+  const current = request ? currentIndex(present, request.ids, chosen) : 0;
 
   // The first time the request is on screen, fit all the variants (once per request).
   useEffect(() => {
     if (!request || !active || !onPage || shown.current === request) return;
     shown.current = request;
-    setIndex(0);
+    const onScreen = request.ids.filter((id) => engine.getElement(id) !== undefined);
+    setChosen(onScreen[0] ?? null);
     setNote("");
-    engine.zoomToElements(request.ids.filter((id) => engine.doc.get(id) !== undefined));
+    engine.zoomToElements(onScreen);
   }, [request, active, onPage, engine]);
 
   if (!request) return null;
@@ -46,10 +49,10 @@ export function useVariantChooser(): VariantChooser | null {
   const resolve = (pick: VariantPick) => variantChoices.resolve(tabId, pick);
   const withNote = note.trim() ? { note: note.trim() } : {};
   const go = (step: number) => {
-    const next = mod(current + step, present.length);
-    setIndex(next);
-    const id = present[next];
-    if (id) engine.zoomToElement(id);
+    const id = present[mod(current + step, present.length)];
+    if (id === undefined) return;
+    setChosen(id);
+    engine.zoomToElement(id);
   };
 
   return {
@@ -76,4 +79,17 @@ export function useVariantChooser(): VariantChooser | null {
     keepAll: () => resolve({ choice: "all", ...withNote }),
     close: () => resolve({ choice: "dismissed" }),
   };
+}
+
+/**
+ * Where the chosen variant is in `present`; when it's gone, the next listed one still there (else
+ * the last), so the choice stays next to where it was.
+ */
+function currentIndex(present: string[], ids: string[], chosen: string | null): number {
+  if (present.length === 0) return 0;
+  const found = chosen === null ? -1 : present.indexOf(chosen);
+  if (found !== -1) return found;
+  const from = chosen === null ? 0 : ids.indexOf(chosen);
+  const after = present.findIndex((id) => ids.indexOf(id) >= from);
+  return after === -1 ? present.length - 1 : after;
 }

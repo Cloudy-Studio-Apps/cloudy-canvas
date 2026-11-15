@@ -20,7 +20,8 @@ What editors give agents ([app/mcp/](../../app/mcp/README.md#agents-and-tabs) re
   shows the tab's pending request through **`useVariantChooser()`**: the agent (its avatar and
   colour), its question, "B · 2 of 3", previous/next (`engine.zoomToElement`), "Compare all"
   (`engine.zoomToElements`), a note (`CommitInput`), "Keep this", "Keep all" and close. Only the
-  variants still in the document count (re-read on every document change). The user's view moves
+  variants still on the page on screen count (`engine.getElement`, re-read on every document
+  change), and the one shown is kept by id, so deleting another never moves the choice. The user's view moves
   only on these buttons and once, the first time the request is shown on its page in the active tab
   (fit all). "Keep this" deletes the other variants with `engine.deleteElements` (one step in the
   user's history: the user chose) and resolves the request; on another page the bar offers only
