@@ -12,6 +12,10 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
   of you pasting it by hand.
 - Hold Shift while dragging to keep the move straight: the selection moves only horizontally or
   only vertically, along whichever way you drag further.
+- Autosave no longer interrupts you: it waits until you pause instead of saving in the middle of
+  a drag, a zoom or typing, and large files, which take longer to save, wait for a longer pause.
+- Edits on large designs respond faster: renaming or changing a layer does less work behind the
+  scenes, especially in designs with brochures.
 - Leaving the Catalog mode no longer freezes the window on large brochures: the print checks run
   about eight times faster.
 - Large designs open faster, zoom more smoothly and enter the Catalog mode with less work behind

@@ -12,6 +12,11 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
   que pegarla a mano.
 - Mantén Shift mientras arrastras para mover en línea recta: la selección se mueve solo en
   horizontal o solo en vertical, según hacia dónde arrastres más.
+- El guardado automático ya no te interrumpe: espera a que hagas una pausa en lugar de guardar en
+  medio de un arrastre, un zoom o mientras escribes, y los archivos grandes, que tardan más en
+  guardarse, esperan una pausa más larga.
+- Las ediciones en diseños grandes responden más rápido: renombrar o cambiar una capa hace menos
+  trabajo por detrás, sobre todo en diseños con folletos.
 - Salir del modo Catálogo ya no congela la ventana en folletos grandes: las comprobaciones de
   impresión son unas ocho veces más rápidas.
 - Los diseños grandes se abren antes, el zoom es más fluido y el modo Catálogo trabaja menos al

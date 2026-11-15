@@ -49,6 +49,21 @@ Switching a large design (5,575 layers, a 28-page brochure) from the Design mode
   - **Trigger:** a profile shows thumbnails or checks as the long tasks after the switch. Large work: last.
 - [x] **Arrange on entry.** Already cheap: `arrangeBrochure` writes only what moves and the document notifies only on a real change, so an entry with nothing to move changes nothing. What's left is the computing (a brochure expansion), see "Brochure repeats: fewer expansions".
 
+## Autosave and edits on large files
+
+Measured on a 186 MB design (5,575 layers on the page, 18,788 in the file, mostly pictures by size) with a temporary probe that made an untracked one-letter edit and timed what followed:
+
+- [x] **Autosave at real pauses.** Every autosave ran `Y.encodeStateAsUpdate` of the whole document on the main thread (~0.8–0.9 s) and handed 186 MB to Rust, 1.5 s after an edit stopped and every 10 s during continuous editing, so it landed mid-drag and mid-zoom. Now it waits until the document and the user's input (press, drag, wheel, key) are both still, for 1.5 s or three times the last save's cost, and an overdue save waits for a half-second pause (`AutosaveScheduler`). Tried first and dropped: encoding on a worker holding a replica of the document (main thread 0.9 s → 30 ms), because the replica cost ~250 MB more memory, which on a machine already swapping made everything, zoom included, stutter more.
+  - **Next, if saves still bother:** pictures outside the Yjs update (a file format change), so each save is small.
+- [x] **What one edit costs.** A one-letter rename blocked ~340–360 ms. Two fixes: `syncPageItems` skips a page with no masters to stamp and no page items or copies (it laid out every brochure for nothing, ~90 ms), and `doc.all()` keeps its order across edits that can't change it (it re-sorted all 18,788 elements on every edit). Now ~170–245 ms.
+- [ ] **Incremental scene refresh.** What's left of an edit is mostly `Scene.refresh` recomputing everything (scopes, resolve, order keys, clips, masks and effects over every element, ~50–90 ms here) and React following the version. Making it follow only what changed is a larger refactor of `scene.ts`.
+  - **Trigger:** edits on large files still feel laggy.
+- [ ] **Print checks in a worker.** Not needed now: after indexing the layers once they take ~0.3 s, once, 0.5 s after entering the Catalog mode or editing in it. A worker would need the design's kinds and brochure model there (text bounds, data sources), a large move for that gain.
+  - **Trigger:** brochures several times larger make the checks a visible pause again.
+- [ ] **Thumbnails in a worker** (Pixi on an `OffscreenCanvas`, with its own fonts and pictures). Not needed now: only thumbnails in view are drawn, ~70 ms each.
+  - **Trigger:** long lists of thumbnails in view stutter.
+- **Not a thread:** the save on a worker (a replica of the document costs as much memory again), writing the file from a worker (workers can't reach Tauri's IPC), and opening files on a worker (it happens behind the loading screen, and the document must end up on the main thread).
+
 ## Worth it with heavy collaboration or agents
 
 - [ ] **Deferred redraws for off-screen views.** A document change redraws every changed view (`handleDocumentChange` → `renderer.syncElements` → `kind.draw`), seen or not. A view that's culled and whose new bounds stay out of view could keep the change pending and draw it when it shows (`cull` flushes it before `app.render()`). The same pending state would cover `redrawImages` and `refreshText`.

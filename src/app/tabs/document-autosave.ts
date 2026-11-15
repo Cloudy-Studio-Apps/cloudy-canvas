@@ -1,6 +1,5 @@
 import type { FileTab } from "@canvas/tabs";
-import { debounce } from "@canvas/utils";
-import { AUTOSAVE_DELAY_MS, AUTOSAVE_MAX_WAIT_MS } from "@canvas-ui/file/autosave-delays";
+import { AutosaveScheduler } from "@canvas-ui/file/autosave-scheduler";
 import type { CanvasFileFormat } from "@canvas-ui/file/canvas-file.types";
 import { saveCanvasDocument } from "@canvas-ui/file/save-canvas-document";
 import { appLifecycle } from "@platform";
@@ -35,18 +34,13 @@ export function startDocumentAutosave(tab: FileTab, format: CanvasFileFormat): (
   let savedRevision = 0;
   let failed = false;
   let stopped = false;
-  let maxWait: ReturnType<typeof setTimeout> | undefined;
 
   const report = () => {
     const unsaved = revision !== savedRevision;
     const current = fileTabs.get(id);
     if (!stopped && current && current.unsaved !== unsaved) fileTabs.patch(id, { unsaved });
   };
-  const cancel = () => {
-    debounced.cancel();
-    clearTimeout(maxWait);
-    maxWait = undefined;
-  };
+  const cancel = () => scheduler.cancel();
   const save = async (): Promise<void> => {
     cancel();
     if (revision === savedRevision) return;
@@ -63,11 +57,10 @@ export function startDocumentAutosave(tab: FileTab, format: CanvasFileFormat): (
     }
     report();
   };
-  const debounced = debounce(() => void save(), AUTOSAVE_DELAY_MS);
+  // Saves once the document and the user's input are still, never mid-gesture.
+  const scheduler = new AutosaveScheduler(() => save());
   const schedule = () => {
-    if (!useAutosaveStore.getState().enabled) return;
-    debounced();
-    maxWait ??= setTimeout(() => void save(), AUTOSAVE_MAX_WAIT_MS);
+    if (useAutosaveStore.getState().enabled) scheduler.changed();
   };
 
   const removeObserver = doc.onChange(() => {

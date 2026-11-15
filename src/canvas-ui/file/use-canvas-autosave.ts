@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
-import { debounce, type CanvasEngine } from "@canvas";
+import type { CanvasEngine } from "@canvas";
 import { appLifecycle } from "@platform";
-import { AUTOSAVE_DELAY_MS, AUTOSAVE_MAX_WAIT_MS } from "./autosave-delays";
+import { AutosaveScheduler } from "./autosave-scheduler";
 import { finalWork, lastWrites } from "./closing-work";
 import type { AutosaveControls, FinalWork } from "./use-canvas-autosave.types";
 
 const noop = (): void => undefined;
 
 /**
- * Runs `autosave` shortly after the document changes, and once more when the editor or the window
+ * Runs `autosave` once the document and the user's input are still (`AutosaveScheduler`), and once more when the editor or the window
  * closes, the app goes to the background or autosave is turned off, so nothing pending is lost.
  * `autosave` skips a file with no changes. The engine also sweeps the assets nothing uses (see
  * `CanvasEngine.sweepAssets`) on open, and when its document goes (the window quits, the editor
@@ -64,26 +64,13 @@ export function useCanvasAutosave<O extends object>(
     // Read when the cleanup runs, on purpose: the closing work starts in the other effect's cleanup.
     const closings = closingRef;
     const closedSave = closedSaveRef;
-    let maxWait: ReturnType<typeof setTimeout> | undefined;
-    const run = (force = false) => {
-      debounced.cancel();
-      clearTimeout(maxWait);
-      maxWait = undefined;
-      return autosaveRef.current(force);
-    };
-    const debounced = debounce(() => void run(), AUTOSAVE_DELAY_MS);
-    const schedule = () => {
-      debounced();
-      maxWait ??= setTimeout(() => void run(), AUTOSAVE_MAX_WAIT_MS);
-    };
+    const scheduler = new AutosaveScheduler((force) => autosaveRef.current(force));
+    const run = (force = false) => scheduler.run(force);
+    const schedule = () => scheduler.changed();
     // Changes made while autosave was off are saved now.
     schedule();
     const removeObserver = engine.doc.onChange(schedule);
-    const cancel = () => {
-      debounced.cancel();
-      clearTimeout(maxWait);
-      maxWait = undefined;
-    };
+    const cancel = () => scheduler.cancel();
     cancelRef.current = cancel;
     const saveNow = (force = false) => {
       cancel();
