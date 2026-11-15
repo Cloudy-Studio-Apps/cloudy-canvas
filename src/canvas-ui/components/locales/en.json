@@ -113,7 +113,8 @@
     "resize": "Resize the crop"
   },
   "loading": {
-    "opening": "Opening file"
+    "opening": "Opening file",
+    "page": "Loading page"
   },
   "quality": {
     "onScreen": "On screen ≈ {px} px",

@@ -1,3 +1,4 @@
+import type { CanvasElement } from "../elements";
 import type { CanvasGrid } from "../canvas-view.types";
 import type { LayerPlacement } from "./layer-placement.types";
 
@@ -16,6 +17,11 @@ export interface ChunkedSyncOptions {
   onProgress: (done: number, total: number) => void;
   /** Whether to stop (the engine is closing). */
   cancelled: () => boolean;
+  /**
+   * The element as it is now, `undefined` once it's gone: read for each slice when the document
+   * can change while the views are built (showing another scope).
+   */
+  latest?: (id: string) => CanvasElement | undefined;
 }
 
 /** How `Renderer.captureView` draws. */

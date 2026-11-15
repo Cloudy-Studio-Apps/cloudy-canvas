@@ -4,7 +4,7 @@ import type { CanvasElement, ElementKinds } from "../../elements";
 import type { Point, Rect } from "../../geometry.types";
 import type { HiddenText } from "../element-view.types";
 import { ElementView } from "../element-view";
-import { entranceAt } from "../entrance";
+import { entranceAt, fadeInAt } from "../entrance";
 import { MOVE_GLIDE, moveGlideAt } from "../move-glide";
 import type { ImageTextures, ImageUse } from "../image-cache.types";
 import { DEFAULT_PLACEMENT, homeOf, NO_EFFECTS, NO_MASKS, scopeHome } from "../layer-placement";
@@ -15,6 +15,7 @@ import type {
   ScopeSlot,
 } from "../layer-placement.types";
 import { textResolution } from "../text-resolution";
+import type { Entrance } from "./element-layer.types";
 import { EffectScopeView } from "./effect-scope-view";
 import { insertOrdered } from "./insert-ordered";
 import { MaskScopeView } from "./mask-scope-view";
@@ -41,8 +42,8 @@ export class ElementLayer extends Container {
   private faded = new Set<string>();
   private covered = new Set<string>();
   private textResolution = 1;
-  /** Elements playing their entrance, with when it started. */
-  private readonly entrances = new Map<string, number>();
+  /** Elements playing their entrance, with when it started and how it looks over time. */
+  private readonly entrances = new Map<string, Entrance>();
   /**
    * Elements gliding to where they moved: how far from it they started, how far along they are
    * (ms, advanced by drawn frames, see `MOVE_GLIDE.maxStepMs`) and when they were last advanced.
@@ -154,13 +155,17 @@ export class ElementLayer extends Container {
     for (const scope of this.effectScopes.values()) scope.setScale(scale);
   }
 
-  /** Starts the entrance of these elements (those this layer doesn't draw are ignored). */
-  animateIn(ids: Iterable<string>, now: number): void {
+  /**
+   * Starts the entrance of these elements (those this layer doesn't draw are ignored): a pop, or
+   * a plain fade (`fade`, views appearing as a large page loads).
+   */
+  animateIn(ids: Iterable<string>, now: number, fade = false): void {
+    const look = fade ? fadeInAt : entranceAt;
     for (const id of ids) {
       const view = this.views.get(id);
       if (!view) continue;
-      this.entrances.set(id, now);
-      view.setEntrance(0, 0);
+      this.entrances.set(id, { start: now, look });
+      view.setEntrance(fade ? 1 : 0, 0);
     }
   }
 
@@ -197,9 +202,9 @@ export class ElementLayer extends Container {
       view?.setGlide(0, 0);
       this.glides.delete(id);
     }
-    for (const [id, start] of this.entrances) {
+    for (const [id, entrance] of this.entrances) {
       const view = this.views.get(id);
-      const look = view ? entranceAt(now - start) : null;
+      const look = view ? entrance.look(now - entrance.start) : null;
       if (look) {
         view?.setEntrance(look.scale, look.alpha);
         continue;

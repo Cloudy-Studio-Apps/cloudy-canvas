@@ -22,6 +22,11 @@ export interface EngineState<O extends object = object> {
   textSelection: TextSelection | null;
   /** The scope on screen (a design's page), `null` when the product has none. */
   scope: string | null;
+  /**
+   * How much of a large scope just shown has its views built, from 0 to 1, while they're built a
+   * slice at a time (see `CanvasEngine.setScope`); `null` otherwise.
+   */
+  scopeLoading: number | null;
   /** What snaps (the same object until it changes). */
   snapping: SnapSettings;
   /** Whether the ruler guides show (see `CanvasEngine.setGuidesShown`). */

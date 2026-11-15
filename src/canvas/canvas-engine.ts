@@ -271,6 +271,12 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   private destroyed = false;
   private closing = false;
   private rendererReady = false;
+  /** Counts the scopes shown, so a newer one stops the older one's view build. */
+  private scopeBuild = 0;
+  /** The views of the scope on screen still being built (`showScope`); captures wait for it. */
+  private viewsBuilt: Promise<void> = Promise.resolve();
+  /** `EngineState.scopeLoading`. */
+  private scopeLoading: number | null = null;
 
   constructor({
     product,
@@ -1003,8 +1009,9 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
   }
 
   /** A small JPEG of the whole canvas for file previews, or `null` when it's empty. */
-  thumbnail(options: ThumbnailOptions): Promise<Blob | null> {
-    if (!this.rendererReady) return Promise.resolve(null);
+  async thumbnail(options: ThumbnailOptions): Promise<Blob | null> {
+    await this.whenViewsBuilt();
+    if (!this.rendererReady || this.destroyed) return null;
     const host = this.exportHost;
     return renderThumbnail(
       {
@@ -1027,11 +1034,12 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
    * and encoded off the UI thread; `null` before the canvas can draw. Elements of other scopes
    * aren't in it: draw those with `exportElements`.
    */
-  captureArea(
+  async captureArea(
     rect: Rect,
     { scale, unfaded, quality = 0.85 }: CaptureAreaOptions,
   ): Promise<Blob | null> {
-    if (!this.rendererReady) return Promise.resolve(null);
+    await this.whenViewsBuilt();
+    if (!this.rendererReady || this.destroyed) return null;
     const canvas = this.renderer.captureView(rect, {
       scale,
       background: this.exportHost.background,
@@ -1910,7 +1918,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     }
     const now = new Set(this.scene.elements.map((el) => el.id));
     this.renderer.syncElements(
-      this.scene.elements,
+      [],
       shown.filter((id) => !now.has(id)),
     );
     const view = scope === null ? undefined : this.scopeViews.get(scope);
@@ -1923,8 +1931,55 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
       if (content) this.camera.fitRect(content);
       else this.camera.reset();
     }
+    this.buildScopeViews();
     this.textEditor?.reposition();
     this.onCameraChange();
+  }
+
+  /**
+   * Builds the views of the scope just shown a slice at a time, what's on screen first, so a large
+   * page shows without freezing the window (a small one is built at once, in the first slice).
+   * Each slice reads the elements again, so an edit meanwhile is never undone by an older copy.
+   */
+  private buildScopeViews(): void {
+    const build = ++this.scopeBuild;
+    const visible = this.camera.visibleWorldRect();
+    const onScreen = (el: CanvasElement) =>
+      rectsIntersect(elementBounds(this.kinds.kindOf(el), el), visible);
+    const elements = this.scene.elements;
+    const ordered = [...elements.filter(onScreen), ...elements.filter((el) => !onScreen(el))];
+    /** Built so far, and whether it took more than one slice (then it shows as loading). */
+    let built = 0;
+    let loading = false;
+    this.viewsBuilt = this.renderer.syncElementsChunked(ordered, {
+      onProgress: (done, total) => {
+        loading ||= done < total;
+        if (loading) this.renderer.fadeIn(ordered.slice(built, done).map((el) => el.id));
+        built = done;
+        this.setScopeLoading(loading && done < total ? done / total : null);
+        this.requestRender();
+      },
+      cancelled: () => build !== this.scopeBuild || this.destroyed || this.closing,
+      latest: (id) => this.scene.get(id),
+    });
+    // An empty scope reports no progress: this ends the loading of the one before too.
+    void this.viewsBuilt.then(() => {
+      if (build === this.scopeBuild) this.setScopeLoading(null);
+    });
+  }
+
+  private setScopeLoading(share: number | null): void {
+    if (share === this.scopeLoading) return;
+    this.scopeLoading = share;
+    this.emitChange();
+  }
+
+  /** Resolves once the scope on screen has all its views (a newer scope's build included). */
+  private async whenViewsBuilt(): Promise<void> {
+    for (let build = this.viewsBuilt; ; build = this.viewsBuilt) {
+      await build;
+      if (build === this.viewsBuilt) return;
+    }
   }
 
   /** A font some elements use has loaded: they're measured (`fontsLoaded`) and drawn again. */
@@ -2330,6 +2385,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
       guidesShown: this.guidesShown,
       rulersShown: this.rulersShown,
       scope: this.scene.scope,
+      scopeLoading: this.scopeLoading,
       canUndo: this.activeHistory.canUndo(),
       canRedo: this.activeHistory.canRedo(),
       historyOwner: this.historyTarget?.owner ?? null,

@@ -9,6 +9,11 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 - Hold Shift while dragging to keep the move straight: the selection moves only horizontally or
   only vertically, along whichever way you drag further.
+- Going back to a large page, from another page or from the Design system mode, no longer freezes
+  the window: what's on screen fades in first, the rest follows, and a thin bar along the top of
+  the canvas shows the page loading.
+- Switching modes shows the new mode at once: its panels appear a moment later, with a placeholder
+  while they load, instead of the whole window waiting for them.
 - Switching a large design to the Catalog mode is faster: the brochure's pages are worked out once
   for the whole window instead of once for each panel that shows them.
 - Exports no longer add a margin around what you export, so the file matches the selection exactly,

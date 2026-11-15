@@ -115,6 +115,7 @@ export { ColorSwatch } from "./components/color-swatch";
 export { CustomColorSwatch } from "./components/custom-color-swatch";
 export { FloatingPanel, PanelDivider } from "./components/floating-panel";
 export { CanvasLoadingOverlay } from "./components/canvas-loading-overlay";
+export { ScopeLoadingBar } from "./components/scope-loading-bar";
 export { HistoryControls } from "./components/history-controls";
 export { OptionButton } from "./components/option-button";
 export { ToolButton } from "./components/tool-button";

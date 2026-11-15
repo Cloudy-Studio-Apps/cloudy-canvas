@@ -21,3 +21,13 @@ export function entranceAt(elapsed: number): { scale: number; alpha: number } | 
     alpha: Math.min(1, p / ENTRANCE.fade),
   };
 }
+
+/** How long a view built while a large page loads takes to fade in (`fadeInAt`). */
+const FADE_IN_MS = 260;
+
+/** A plain fade, for views appearing as a large page loads, or `null` once it's over. */
+export function fadeInAt(elapsed: number): { scale: number; alpha: number } | null {
+  const t = elapsed / FADE_IN_MS;
+  if (t >= 1) return null;
+  return { scale: 1, alpha: 1 - (1 - Math.max(0, t)) ** 2 };
+}

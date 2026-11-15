@@ -157,7 +157,7 @@ export class Renderer {
    */
   async syncElementsChunked(
     elements: readonly CanvasElement[],
-    { onProgress, cancelled }: ChunkedSyncOptions,
+    { onProgress, cancelled, latest }: ChunkedSyncOptions,
   ): Promise<void> {
     const total = elements.length;
     let done = 0;
@@ -166,7 +166,8 @@ export class Renderer {
       const start = performance.now();
       while (done < total && performance.now() - start < SLICE_MS) {
         const next = Math.min(done + SYNC_BATCH, total);
-        this.syncElements(elements.slice(done, next));
+        const slice = elements.slice(done, next);
+        this.syncElements(latest ? slice.flatMap((el) => latest(el.id) ?? []) : slice);
         done = next;
       }
       onProgress(done, total);
@@ -214,6 +215,14 @@ export class Renderer {
     const now = performance.now();
     this.elements.animateIn(ids, now);
     this.frames.animateIn(ids, now);
+  }
+
+  /** Fades in views just built while a large page loads, unless motion is reduced. */
+  fadeIn(ids: readonly string[]): void {
+    if (prefersReducedMotion()) return;
+    const now = performance.now();
+    this.elements.animateIn(ids, now, true);
+    this.frames.animateIn(ids, now, true);
   }
 
   /** Has elements an edit just moved glide there from where they were, unless motion is reduced. */

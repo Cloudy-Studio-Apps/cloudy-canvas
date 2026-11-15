@@ -113,7 +113,8 @@
     "resize": "Cambiar el tamaño del recorte"
   },
   "loading": {
-    "opening": "Abriendo archivo"
+    "opening": "Abriendo archivo",
+    "page": "Cargando página"
   },
   "quality": {
     "onScreen": "En pantalla ≈ {px} px",

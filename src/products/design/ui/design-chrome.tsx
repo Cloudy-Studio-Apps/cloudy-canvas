@@ -7,6 +7,7 @@ import {
   ModuleToolbar,
   ModuleToolOptions,
   Rulers,
+  ScopeLoadingBar,
   useCanvasFile,
   useCopyAs,
   useUiHidden,
@@ -56,6 +57,7 @@ export function DesignChrome() {
       {/* Laid over the canvas exactly, so screen positions from the engine line up. */}
       <div className="absolute inset-y-0" style={inset}>
         {!hidden && <Rulers />}
+        <ScopeLoadingBar />
         <CollaboratorLayer />
         <CanvasContextMenu />
         <ModuleSession />

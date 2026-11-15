@@ -43,9 +43,11 @@ Switching a large design (5,575 layers, a 28-page brochure) from the Design mode
 
 - [x] **A. One brochure read for the whole UI.** `useBrochure` was called by about 44 components, each with its own `useMemo`, so every document change (and the entry, and the arrange that follows it) ran `brochure.pages()`, `bookLayout`, `pageNumbers` and `printedLabels` once per component. They now share one read per scope and version (`use-brochure.ts`).
 - [ ] **B. Dim less often.** `catalogFaded` builds a children map of the whole document and walks it (`withDescendants`) on every `refreshScene`, not only on the switch. Memoize it on the brochure's printed and master frames and the scene's element set, so a move doesn't redo it.
-  - **Trigger:** A alone doesn't make the switch smooth, or edits in the Catalog mode feel slow.
-- [ ] **C. The canvas first, the panels a frame later.** Mount the sidebar and the Brochure tab in a transition (`startTransition`/`useDeferredValue`) with a skeleton, so the canvas switches at once. Hides what's left after A and B, doesn't remove it.
-  - **Trigger:** the switch still shows a pause after A and B.
+  - It runs once per switch (`setMode` → `applyFaded`; `setTool` dims under the default mode first, which costs nothing), so caching it doesn't speed the switch up; it saves work on every edit made in the Catalog mode. Its real cost is `brochure.pages()` (a brochure expansion), see "Brochure repeats: fewer expansions".
+  - **Trigger:** edits in the Catalog mode feel slow.
+- [x] **C. The canvas first, the panels a frame later.** Every mode's overlays (`whileOn`), the design's mode sidebar and its left panel tabs mount in the kit's `Deferred` (`useDeferredValue(true, false)`), with a `PanelSkeleton` until they're drawn. Hides what's left, doesn't remove it.
+- [x] **Coming back to a large page.** Showing a scope (`setScope`, a mode that shows its own page like the Design system's, a plugin's) built every view at once. It builds them a slice at a time now, what's on screen first (`buildScopeViews`).
+- [ ] **Thumbnails after the switch.** A profile after A showed the CPU busy for ~6 s after entering, with a steady stream of small requests: the page thumbnails drawing one by one (`ElementThumbnails`). See D and E.
 - [ ] **D. Skeletons for thumbnails only.** The page thumbnails already draw one at a time when idle; a placeholder box until each is drawn is enough. Loading the canvas's elements asynchronously doesn't fit: they're already drawn in the Design mode, the Catalog mode only dims them.
 - [ ] **E. Off the main thread.** Each thumbnail is one long render, and the print checks (`checkBrochure`) read `doc.all()` and picture files. Move them to a worker / `OffscreenCanvas`.
   - **Trigger:** a profile shows thumbnails or checks as the long tasks after the switch. Large work: last.
