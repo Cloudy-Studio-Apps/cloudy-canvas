@@ -100,6 +100,11 @@
         }
       }
     },
+    "windows": {
+      "nsis": {
+        "installerIcon": "icons/icon.ico"
+      }
+    },
     "macOS": {
       "signingIdentity": "-",
       "minimumSystemVersion": "12.0"
