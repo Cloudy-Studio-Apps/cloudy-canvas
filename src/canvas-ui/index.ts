@@ -135,6 +135,7 @@ export {
   importStep,
   loadCanvasFile,
   SaveIndicator,
+  saveNewCanvasFile,
   toastImportWarnings,
   useCanvasFile,
   useCanvasFileLoader,
