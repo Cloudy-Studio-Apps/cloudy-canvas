@@ -398,7 +398,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     let changed = false;
     const stopWatching = this.doc.onChange(() => (changed = true));
     try {
-      await this.renderer.syncElementsChunked(this.scene.elements, {
+      await this.renderer.syncElementsChunked(this.onScreenFirst(this.scene.elements), {
         onProgress: (done, total) =>
           onLoading({ stage: t("loading.layers"), progress: { done, total } }),
         cancelled: () => this.destroyed || this.closing,
@@ -1943,11 +1943,7 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
    */
   private buildScopeViews(): void {
     const build = ++this.scopeBuild;
-    const visible = this.camera.visibleWorldRect();
-    const onScreen = (el: CanvasElement) =>
-      rectsIntersect(elementBounds(this.kinds.kindOf(el), el), visible);
-    const elements = this.scene.elements;
-    const ordered = [...elements.filter(onScreen), ...elements.filter((el) => !onScreen(el))];
+    const ordered = this.onScreenFirst(this.scene.elements);
     /** Built so far, and whether it took more than one slice (then it shows as loading). */
     let built = 0;
     let loading = false;
@@ -1966,6 +1962,14 @@ export class CanvasEngine<O extends object = object> implements CanvasWorkspace<
     void this.viewsBuilt.then(() => {
       if (build === this.scopeBuild) this.setScopeLoading(null);
     });
+  }
+
+  /** The elements the camera shows first, then the rest (each in its order): views built so show sooner. */
+  private onScreenFirst(elements: readonly CanvasElement[]): CanvasElement[] {
+    const visible = this.camera.visibleWorldRect();
+    const onScreen = (el: CanvasElement) =>
+      rectsIntersect(elementBounds(this.kinds.kindOf(el), el), visible);
+    return [...elements.filter(onScreen), ...elements.filter((el) => !onScreen(el))];
   }
 
   private setScopeLoading(share: number | null): void {

@@ -70,6 +70,8 @@ export class ElementView extends Container {
   /** Drawn mirrored left to right inside its box (`CanvasElement.mirrored`). */
   private mirrored = false;
   private entranceScale = 1;
+  /** Its texts wait for `textResolution` until it's on screen again (see `setTextResolution`). */
+  private textResolutionStale = false;
   private entranceAlpha = 1;
   /** How far from its place the view is drawn while it glides there (see `setGlide`). */
   private glide = { x: 0, y: 0 };
@@ -387,6 +389,10 @@ export class ElementView extends Container {
   cull(visible: Rect): void {
     const shown = this.entranceScale !== 1 || rectsIntersect(this.extent(), visible);
     if (this.culled === shown) this.culled = !shown;
+    if (shown && this.textResolutionStale) {
+      this.textResolutionStale = false;
+      this.applyTextResolution();
+    }
   }
 
   /** Creates or updates the label stored under `key` (positioned by the caller). */
@@ -474,9 +480,18 @@ export class ElementView extends Container {
     if (hidden) hidden.visible = false;
   }
 
-  /** The resolution its texts are drawn at, capped by its size (see `cappedTextResolution`). */
+  /**
+   * The resolution its texts are drawn at, capped by its size (see `cappedTextResolution`). While
+   * culled it's only kept, and applied when `cull` shows the view again: zooming doesn't redraw
+   * the texts off screen.
+   */
   setTextResolution(resolution: number): void {
     this.textResolution = resolution;
+    this.textResolutionStale = this.culled;
+    if (!this.culled) this.applyTextResolution();
+  }
+
+  private applyTextResolution(): void {
     const capped = this.nodeResolution();
     for (const node of [this.textNode, ...this.textSlots.values()]) {
       if (node && node.resolution !== capped) node.resolution = capped;

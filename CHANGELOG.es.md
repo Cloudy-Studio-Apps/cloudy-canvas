@@ -9,6 +9,12 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 - Mantén Shift mientras arrastras para mover en línea recta: la selección se mueve solo en
   horizontal o solo en vertical, según hacia dónde arrastres más.
+- Salir del modo Catálogo ya no congela la ventana en folletos grandes: las comprobaciones de
+  impresión son unas ocho veces más rápidas.
+- Los diseños grandes se abren antes, el zoom es más fluido y el modo Catálogo trabaja menos al
+  entrar: lo que está en pantalla se dibuja primero, el texto se afina solo donde se ve y las
+  miniaturas de las páginas se dibujan al aparecer en la lista, con un pulso suave hasta que están
+  listas.
 - Volver a una página grande, desde otra página o desde el modo Sistema de diseño, ya no congela la
   ventana: lo que está en pantalla aparece primero con un fundido, el resto le sigue y una barra
   fina en la parte superior del lienzo muestra la carga de la página.

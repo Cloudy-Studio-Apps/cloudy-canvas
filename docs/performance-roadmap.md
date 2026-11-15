@@ -10,10 +10,7 @@ What could make the canvas cheaper as files, features and live sessions grow, wi
 
 ## Cheap, low risk
 
-- [ ] **Text sharpness only for what's on screen.** `ElementLayer.setTextZoom` gives every view its new resolution, and `RichTextSprite.setResolution` draws a new canvas texture right away, for every design text on the page, on screen or not, each time the zoom crosses a step (`textResolution`).
-  - A culled `ElementView` keeps the resolution and applies it when `cull` shows it again. Its drawing and extent don't change, so nothing else needs to know.
-  - **Trigger:** zooming stutters on pages with a few hundred texts.
-  - **Risk:** a text scrolling in may be soft for one frame.
+- [x] **Text sharpness only for what's on screen.** A culled `ElementView` keeps the zoom's text resolution and applies it when `cull` shows it again (`textResolutionStale`), so a zoom step only redraws the texts on screen. A text scrolling in may be soft for one frame.
 - [ ] **Collaborators' outlines only for what's on screen.** `CollaboratorSelections` works out `engine.elementsBounds([id])` and renders a div for every id each collaborator selected, on every view change.
   - Leave out boxes that don't meet `engine.visibleWorldRect()`, with the name tag on the first one shown.
   - **Trigger:** panning is slow while an agent or a guest has a large selection (agents keep what they just made selected).
@@ -21,9 +18,7 @@ What could make the canvas cheaper as files, features and live sessions grow, wi
 
 ## Worth it when files get large
 
-- [ ] **Build what's on screen first when a file opens.** `syncElementsChunked` builds views in document order; sorting the list so elements meeting the fitted view come first shows the first picture sooner. The rest keep building as now.
-  - **Trigger:** large files (thousands of elements, big Figma imports) take long to show anything.
-  - **Risk:** small. Mask sources and effect scopes are synced once per batch already, so order doesn't matter to them.
+- [x] **Build what's on screen first when a file opens.** `mount` builds the views meeting the fitted view first (`onScreenFirst`, shared with `buildScopeViews`), so the first picture shows sooner.
 - [ ] **Font loading by what's on screen.** `mount` waits for every face the scope uses (at most 8 s). Waiting only for the faces of what shows, and loading the rest after, opens text-heavy files sooner.
   - **Trigger:** files with many fonts open slowly, mostly offline or with Google fonts not cached yet.
   - **Risk:** text off screen shows in a fallback face until its font arrives (it's redrawn then, as now).
@@ -47,11 +42,12 @@ Switching a large design (5,575 layers, a 28-page brochure) from the Design mode
   - **Trigger:** edits in the Catalog mode feel slow.
 - [x] **C. The canvas first, the panels a frame later.** Every mode's overlays (`whileOn`), the design's mode sidebar and its left panel tabs mount in the kit's `Deferred` (`useDeferredValue(true, false)`), with a `PanelSkeleton` until they're drawn. Hides what's left, doesn't remove it.
 - [x] **Coming back to a large page.** Showing a scope (`setScope`, a mode that shows its own page like the Design system's, a plugin's) built every view at once. It builds them a slice at a time now, what's on screen first (`buildScopeViews`).
-- [ ] **Thumbnails after the switch.** A profile after A showed the CPU busy for ~6 s after entering, with a steady stream of small requests: the page thumbnails drawing one by one (`ElementThumbnails`). See D and E.
-- [ ] **D. Skeletons for thumbnails only.** The page thumbnails already draw one at a time when idle; a placeholder box until each is drawn is enough. Loading the canvas's elements asynchronously doesn't fit: they're already drawn in the Design mode, the Catalog mode only dims them.
+- [x] **Thumbnails after the switch.** A profile after A showed the CPU busy for ~6 s after entering: all 28 page thumbnails drawing one by one. `ElementThumbnail` now asks for its picture only once the tile has come into view (`useInView`, 200 px ahead), and pulses until it's drawn, so a long page list draws only the rows shown.
+- [x] **D. Skeletons for thumbnails only.** Done with the item above (the tile pulses until drawn).
+- [x] **Print checks in one pass.** Measured in the app with a temporary probe: `checkBrochure` blocked the window 2.6 s about a second after entering (switching back to the Design mode then waited for it, which looked like that switch freezing). `shownNodes` read the whole document (18,788 elements) for each page, twice per page and again in `repeatIssues`. It now indexes the layers once per element list (a `WeakMap`), so the checks take ~0.3 s; `repeatIssues`' data issues are most of what's left.
 - [ ] **E. Off the main thread.** Each thumbnail is one long render, and the print checks (`checkBrochure`) read `doc.all()` and picture files. Move them to a worker / `OffscreenCanvas`.
   - **Trigger:** a profile shows thumbnails or checks as the long tasks after the switch. Large work: last.
-- [ ] **Arrange on entry.** `useArrangeOnEnter` writes to the document 150 ms after the switch (frames glide), so everything that follows the version runs again. Skip the write when nothing would move.
+- [x] **Arrange on entry.** Already cheap: `arrangeBrochure` writes only what moves and the document notifies only on a real change, so an entry with nothing to move changes nothing. What's left is the computing (a brochure expansion), see "Brochure repeats: fewer expansions".
 
 ## Worth it with heavy collaboration or agents
 

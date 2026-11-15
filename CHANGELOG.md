@@ -9,6 +9,11 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 - Hold Shift while dragging to keep the move straight: the selection moves only horizontally or
   only vertically, along whichever way you drag further.
+- Leaving the Catalog mode no longer freezes the window on large brochures: the print checks run
+  about eight times faster.
+- Large designs open faster, zoom more smoothly and enter the Catalog mode with less work behind
+  the scenes: what's on screen is drawn first, text is sharpened only where you can see it, and
+  page thumbnails are drawn as their rows scroll into view, with a soft pulse until they're ready.
 - Going back to a large page, from another page or from the Design system mode, no longer freezes
   the window: what's on screen fades in first, the rest follows, and a thin bar along the top of
   the canvas shows the page loading.
