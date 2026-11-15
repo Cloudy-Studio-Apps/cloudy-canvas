@@ -5,6 +5,13 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ## Unreleased
 
+### New
+
+- Split a page into its own file: right-click a page in the Pages list, or open its menu, and
+  choose Split into new file. The page moves to a new design file with the variables, styles,
+  design system, pictures and data it needs, and in a project the new file is saved next to the
+  current one.
+
 ### Improved
 
 - Agents that reach the app through scripts now show as one agent instead of a new one for every

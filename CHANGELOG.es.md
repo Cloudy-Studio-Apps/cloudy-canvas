@@ -5,6 +5,13 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ## Sin publicar
 
+### Novedades
+
+- Separa una página en su propio archivo: haz clic derecho en una página de la lista de Páginas,
+  o abre su menú, y elige Separar en un archivo nuevo. La página pasa a un archivo de diseño nuevo
+  con las variables, estilos, sistema de diseño, imágenes y datos que necesita, y en un proyecto el
+  archivo nuevo se guarda junto al actual.
+
 ### Mejoras
 
 - Los agentes que llegan a la aplicación mediante scripts aparecen ahora como un solo agente en

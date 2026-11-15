@@ -413,6 +413,65 @@ Tools that don't draw a box (like the line tool, which draws between two ends) e
 
 Design agent tools are groups contributed to `api.design.designMcpTools`, like the board's (`run(host, args)` gets the design host; `api.design.requireDesign(host)` is the open design, `{ engine, path, … }`). A kind agents may create with `nodes_create` sets `creatable = true`, lists its own fields in `specProperties` and overrides `nodeFromSpec(spec, index, context)` (`BoxShapeKind` already does: `w`/`h` or its click size, named with `context.nameFor(label)`); `nodes_update` checks patches with its `completePatch` (call `super.completePatch` for the shared fields: paints, opacity, parent).
 
+### Splitting a page
+
+A page's menu has **Split into new file…**: the page moves into a design file of its own. The pages
+module copies the page, its layers (same ids) and the pictures they use; everything else a page
+needs is copied by the modules that own it, through the pages module's point `pageSplitSteps`. A
+plugin whose data a page can depend on adds a step the same way. A step checks for itself whether
+the new file needs anything from it, and does nothing otherwise.
+
+A step is `{ id, order?, before?(ctx), copy?(ctx, prepared) }`. Steps run lowest `order` first (unset
+is 100; the built-ins are variables 10, design system 20, data 30): every `before` first, before
+anything is written, then every `copy`. `before` may ask the user with `ctx.dialog(render)`, which
+shows what `render(done)` returns over the editor until `done(value)` runs and resolves with that
+value (`null` when cancelled); what `before` returns reaches `copy` as `prepared`, and `false`
+cancels the split. `ctx` holds `source` (the design, read only), `target` (the new file in memory,
+the page and its layers already in it: write with the untracked methods, `addAllUntracked`,
+`setTokenRecordsUntracked`, `setMeta`), `page`, `nodes` (the page's layers) and `inProject` (the new
+file joins the design's project, whose libraries reach it on their own). Pictures the target refers
+to are copied after the steps, so a step that copies an element showing one needs nothing more.
+
+A plugin keeping its own records (notes of type `my-notes.note`, not on any page) takes along the
+ones the split page's layers point at, and asks first (written in JSX, built with `pnpm
+plugin:build`):
+
+```jsx
+export default function activate(api) {
+  const { Dialog, DialogContent, DialogTitle, Button } = api.ui.kit;
+  const NOTE = "my-notes.note";
+  return api.core.defineModule({
+    id: "my-notes",
+    register(host) {
+      const { pageSplitSteps } = host.require("pages"); // a core module: no `requires` needed
+      host.contribute(pageSplitSteps, {
+        id: "my-notes",
+        async before({ nodes, dialog }) {
+          if (!nodes.some((node) => node.noteId)) return undefined; // nothing to ask: go on
+          const keep = await dialog((done) => (
+            <Dialog open onOpenChange={(open) => !open && done(null)}>
+              <DialogContent>
+                <DialogTitle>Take the notes to the new file?</DialogTitle>
+                <Button onClick={() => done(true)}>Take them</Button>
+                <Button variant="ghost" onClick={() => done(false)}>
+                  Leave them
+                </Button>
+              </DialogContent>
+            </Dialog>
+          ));
+          return keep === null ? false : keep; // closing the dialog cancels the split
+        },
+        copy({ source, target, nodes }, keep) {
+          if (!keep) return;
+          const ids = new Set(nodes.map((node) => node.noteId).filter(Boolean));
+          target.addAllUntracked(source.all().filter((el) => el.type === NOTE && ids.has(el.id)));
+        },
+      });
+    },
+  });
+}
+```
+
 ## Data sources and formats
 
 A design's Data tab reads rows from **source types** (a file, a link) through **formats** (CSV, JSON,
