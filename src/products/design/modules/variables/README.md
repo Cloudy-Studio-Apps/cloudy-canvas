@@ -4,10 +4,11 @@ Figma's variables and more: collections, modes and variables bound to layers' fi
 
 - **Tier:** core
 - **Requires:** core, pages
-- **Contributes:** designCanvas: `afterEdit`, `hostCommands`; designEditor: `contextMenu`, `mainMenu`, `overlays`, `propertySections`, `sessionHooks`; `designMcpTools`, `designMigrations`, `tokenFormats`
+- **Contributes:** designCanvas: `afterEdit`, `hostCommands`; designEditor: `contextMenu`, `mainMenu`, `overlays`, `propertySections`, `sessionHooks`; `designMcpTools`, `designMigrations`, `tokenFormats`; pages: `pageSplitSteps`
 - **Points it owns:** `tokenFormats` (`exchange/`): the token file formats; plugins add theirs
 - **MCP tools:** `variables_bind`, `variables_contrast_check`, `variables_collection_create`, `variables_mode_axis_create`, `variables_styles_create`, `variables_create`, `variables_styles_delete`, `variables_delete`, `variables_tokens_detach`, `variables_tokens_export`, `variables_unused_find`, `variables_scale_generate`, `variables_shades_generate`, `variables_type_scale_generate`, `variables_usage_get`, `variables_get`, `variables_tokens_import`, `variables_styles_list`, `variables_list`, `variables_token_replace`, `variables_mode_set`, `variables_unbind`, `variables_collection_update`, `variables_mode_axis_update`, `variables_styles_update`, `variables_update`
-- **Files:** `bind-nodes.ts`, `set-variable-modes.ts`, `migrate-*.ts`, `exchange/` (formats), `contrast/`, `type-scale/`, `mcp/`, `ui/` (sections, the window); the engine is in `canvas/tokens`.
+- **Files:** `bind-nodes.ts`, `set-variable-modes.ts`, `migrate-*.ts`, `exchange/` (formats), `contrast/`, `type-scale/`, `mcp/`, `split/`, `ui/` (sections, the window); the engine is in `canvas/tokens`.
+- **Split into new file** (`split/copy-tokens-for-split.ts`, the `variables` step, order 10, of the pages module's `pageSplitSteps`): the new file gets the variables and styles: in a project only the file's own (records with no library tag; the libraries' arrive through the project link), outside one all of them; nothing when there are none.
 
 This folder is the design's **variables** module. The feature itself spans several folders,
 because the token engine is shared by both products. This guide covers all of it: what each

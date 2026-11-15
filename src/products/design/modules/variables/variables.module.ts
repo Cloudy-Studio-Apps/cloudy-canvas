@@ -12,6 +12,8 @@ import {
 import { exchangeTools, variableTools } from "./mcp";
 import { BUILT_IN_TOKEN_FORMATS, tokenFormats } from "./exchange";
 import { DESIGN_TOKEN_CONTEXT } from "../core";
+import { pageSplitSteps } from "../pages/ui";
+import { copyTokensForSplit } from "./split";
 import {
   ExportTokensDialog,
   useVariablesWindowCommand,
@@ -38,6 +40,11 @@ export const variablesModule = defineModule({
     host.contribute(designCanvas.afterEdit, (doc, change, kinds) =>
       syncTokens(doc, change, kinds, DESIGN_TOKEN_CONTEXT),
     );
+    host.contribute(pageSplitSteps, {
+      id: "variables",
+      order: 10,
+      copy: ({ source, target, inProject }) => copyTokensForSplit(source, target, inProject),
+    });
 
     host.contribute(designMcpTools, {
       id: "variables",

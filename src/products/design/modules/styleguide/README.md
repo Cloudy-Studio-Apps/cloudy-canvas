@@ -4,10 +4,10 @@ The file's variables and styles drawn as a living style guide: the Design system
 
 - **Tier:** feature
 - **Requires:** core, pages, frame, text, variables, auto-layout; after: variables
-- **Contributes:** designCanvas: `afterEdit`, `hostCommands`, `prepareCopies`; designEditor: `contextMenu`, `mainMenu`, `propertySections`, `tools`; the Design system mode (`registerDesignMode`: canvas `modes`, `tools`; designEditor `modes`, `leftTabs`, `modePanels`, `overlays`, `sessionHooks`); `designMcpTools`, `designSelectRedirects`, `styleguideCategories`, `styleguideTemplates`
+- **Contributes:** designCanvas: `afterEdit`, `hostCommands`, `prepareCopies`; pages: `pageSplitSteps`; designEditor: `contextMenu`, `mainMenu`, `propertySections`, `tools`; the Design system mode (`registerDesignMode`: canvas `modes`, `tools`; designEditor `modes`, `leftTabs`, `modePanels`, `overlays`, `sessionHooks`); `designMcpTools`, `designSelectRedirects`, `styleguideCategories`, `styleguideTemplates`
 - **Points it owns:** `styleguideCategories`, `styleguideTemplates` (`styleguide.points.ts`): what the guide shows and how; plugins add theirs. `styleguideStartActions` (`ui/styleguide.points.ts`, exported by `ui/index.ts`): buttons the empty state offers to start a system (the color wizard adds one)
 - **MCP tools:** `styleguide_element_add`, `styleguide_element_convert`, `styleguide_export`, `styleguide_get`, `styleguide_template_set`, `styleguide_view`
-- **Files:** `styleguide.canvas.ts`, `styleguide.mode.ts`, `styleguide.commands.ts`, `styleguide.sections.ts` (wiring), `categories/`, `templates/`, `system/` (the sync), `sheet/` (live elements), `mode/`, `tool/`, `mcp/`, `ui/`.
+- **Files:** `styleguide.canvas.ts`, `styleguide.mode.ts`, `styleguide.commands.ts`, `styleguide.sections.ts` (wiring), `categories/`, `templates/`, `system/` (the sync; `copy-system-page.ts`: a split page's new file gets the hidden system page, its settings and sheets, only when the variables step copied variables or styles and the design has the page: the `styleguide` step, order 20, of `pageSplitSteps`), `sheet/` (live elements), `mode/`, `tool/`, `mcp/`, `ui/`.
 
 ## How it works
 

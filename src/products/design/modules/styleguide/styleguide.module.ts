@@ -8,7 +8,9 @@ import { registerStyleguideCommands } from "./styleguide.commands";
 import { styleguideMode } from "./styleguide.mode";
 import { styleguideCategories, styleguideTemplates } from "./styleguide.points";
 import { registerStyleguideSections } from "./styleguide.sections";
+import { copySystemPage } from "./system";
 import { BUILT_IN_TEMPLATES } from "./templates";
+import { pageSplitSteps } from "../pages/ui";
 import * as styleguideApi from ".";
 import * as styleguideUi from "./ui";
 
@@ -28,6 +30,11 @@ export const styleguideModule = defineModule({
     host.contribute(styleguideCategories, ...BUILT_IN_CATEGORIES);
     host.contribute(styleguideTemplates, ...BUILT_IN_TEMPLATES);
     registerStyleguideCanvas(host);
+    host.contribute(pageSplitSteps, {
+      id: "styleguide",
+      order: 20,
+      copy: ({ source, target }) => copySystemPage(source, target),
+    });
 
     host.contribute(designMcpTools, {
       id: "styleguide",
