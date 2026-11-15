@@ -12,6 +12,7 @@ import { guidesTools, pagesTools } from "./mcp";
 import { MOVE_TO_PAGE } from "./ui/move-to-page";
 import { PageSection } from "./ui/page-section";
 import { PagesSection } from "./ui/pages-section";
+import { SplitDialogHost } from "./ui/split/split-dialog-host";
 import { usePageCommands } from "./ui/use-page-commands";
 import { t } from "./pages.i18n";
 import * as pagesApi from ".";
@@ -51,6 +52,10 @@ export const pagesModule = defineModule({
 
     host.contribute(layersTabSections, { id: "pages", order: 10, component: PagesSection });
     host.contribute(designEditor.sessionHooks, { id: "page-commands", use: usePageCommands });
+    host.contribute(designEditor.overlays, {
+      id: "pages.split-dialog",
+      component: SplitDialogHost,
+    });
     host.contribute(designEditor.propertySections, {
       id: "page",
       order: 10,

@@ -220,5 +220,6 @@ export {
   nKeysBetween,
   prefersReducedMotion,
   Registry,
+  Store,
   whenIdle,
 } from "./utils";

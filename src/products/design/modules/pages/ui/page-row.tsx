@@ -9,12 +9,13 @@ import { PageMenu } from "./page-menu";
 import type { PageRowProps } from "./page-row.types";
 
 /**
- * One page: click shows it, double-click renames it, ⋯ opens its menu, and rows drag to reorder
+ * One page: click shows it, double-click renames it, ⋯ or a right-click opens its menu, and rows drag to reorder
  * (`rowDrag`, owned by the list).
  */
-export function PageRow({ page, current, deletable, rowDrag }: PageRowProps) {
+export function PageRow({ page, current, deletable, splittable, rowDrag }: PageRowProps) {
   const engine = useDesignEngine();
   const [renaming, setRenaming] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const { drag } = rowDrag;
 
   return (
@@ -23,6 +24,10 @@ export function PageRow({ page, current, deletable, rowDrag }: PageRowProps) {
       {...rowDrag.dropProps(page.id)}
       onClick={() => engine.setScope(page.id)}
       onDoubleClick={() => setRenaming(true)}
+      onContextMenu={(event) => {
+        event.preventDefault();
+        setMenuOpen(true);
+      }}
       aria-current={current ? "page" : undefined}
       className={cn(
         "group relative flex h-7 cursor-default items-center gap-1 rounded-sm pr-1 pl-1 text-sm text-foreground hover:bg-hover",
@@ -37,7 +42,14 @@ export function PageRow({ page, current, deletable, rowDrag }: PageRowProps) {
         onRename={(name) => engine.service(DESIGN_PAGES).rename(page.id, name)}
         onDone={() => setRenaming(false)}
       />
-      <PageMenu page={page} deletable={deletable} onRename={() => setRenaming(true)} />
+      <PageMenu
+        page={page}
+        deletable={deletable}
+        splittable={splittable}
+        open={menuOpen}
+        onOpenChange={setMenuOpen}
+        onRename={() => setRenaming(true)}
+      />
     </li>
   );
 }

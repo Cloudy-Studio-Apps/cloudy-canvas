@@ -11,7 +11,8 @@
     "title": "Pages",
     "add": "Add page",
     "options": "{name} options",
-    "optionsTitle": "Page options"
+    "optionsTitle": "Page options",
+    "split": "Split into new file…"
   },
   "section": {
     "title": "Page",
@@ -20,7 +21,8 @@
     "zoom": "Zoom {percent}%"
   },
   "errors": {
-    "delete": "Couldn't delete the page"
+    "delete": "Couldn't delete the page",
+    "split": "Couldn't split the page"
   },
   "defaults": {
     "page": "Page {number}"

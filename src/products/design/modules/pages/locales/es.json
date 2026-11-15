@@ -11,7 +11,8 @@
     "title": "Páginas",
     "add": "Añadir página",
     "options": "Opciones de {name}",
-    "optionsTitle": "Opciones de la página"
+    "optionsTitle": "Opciones de la página",
+    "split": "Separar en un archivo nuevo…"
   },
   "section": {
     "title": "Página",
@@ -20,7 +21,8 @@
     "zoom": "Zoom {percent}%"
   },
   "errors": {
-    "delete": "No se pudo eliminar la página"
+    "delete": "No se pudo eliminar la página",
+    "split": "No se pudo separar la página"
   },
   "defaults": {
     "page": "Página {number}"

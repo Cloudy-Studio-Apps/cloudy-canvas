@@ -57,6 +57,7 @@ export function PagesSection() {
               page={page}
               current={page.id === current}
               deletable={pages.length > 1}
+              splittable={pages.length > 1}
               rowDrag={rowDrag}
             />
           ))}

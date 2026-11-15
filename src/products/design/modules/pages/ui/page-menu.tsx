@@ -11,14 +11,23 @@ import {
 } from "@shared/ui/kit";
 import { useDesignEngine } from "@design/ui/design-engine-context";
 import { deletePage, duplicatePage } from "./page-actions";
+import { usePageSplit } from "./split/use-page-split";
 import type { PageMenuProps } from "./page-row.types";
 import { t } from "../pages.i18n";
 
-/** A page's ⋯ menu: rename, duplicate and delete. */
-export function PageMenu({ page, deletable, onRename }: PageMenuProps) {
+/** A page's ⋯ menu (also its right-click menu): rename, duplicate, split into a new file, delete. */
+export function PageMenu({
+  page,
+  deletable,
+  splittable,
+  open,
+  onOpenChange,
+  onRename,
+}: PageMenuProps) {
   const engine = useDesignEngine();
+  const split = usePageSplit();
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={onOpenChange}>
       <DropdownMenuTrigger asChild>
         <IconButton
           size="xs"
@@ -43,6 +52,9 @@ export function PageMenu({ page, deletable, onRename }: PageMenuProps) {
         <DropdownMenuItem onSelect={() => duplicatePage(engine, page.id)}>
           {tCommon("duplicate")}
         </DropdownMenuItem>
+        {splittable && (
+          <DropdownMenuItem onSelect={() => split(page.id)}>{t("list.split")}</DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           disabled={!deletable}
