@@ -5,6 +5,8 @@ What changes in each version of Cloudy Canvas. The Spanish translation is in
 
 ## Unreleased
 
+## 0.10.0 - 2026-11-16
+
 ### New
 
 - Pick between an agent's options without leaving the app: when you ask an agent for variants,

@@ -5,6 +5,8 @@ Lo que cambia en cada versión de Cloudy Canvas. La versión en inglés está en
 
 ## Sin publicar
 
+## 0.10.0 - 2026-11-16
+
 ### Novedades
 
 - Elige entre las opciones de un agente sin salir de la app: cuando le pides variantes, aparecen
